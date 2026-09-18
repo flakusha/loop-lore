@@ -3,6 +3,14 @@
 
 # TASK-size-strict-debt: Close size-strict debt and promote size guard to CI gate
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status**: ✅ split complete — 0 offenders; promotion-to-CI pending
 **Priority**: medium
 **Labels**: tooling, size-check, ci, refactor

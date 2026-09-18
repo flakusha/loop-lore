@@ -3,6 +3,11 @@
 
 # EPIC: Prompt Improvement — Unified Text Enhancement
 
+**Effort:** Medium
+**Type:** epic
+**Overview:** (see sections below)
+
+
 **Status:** 🟡 In Progress
 **Priority:** High
 **Tags:** frontend, aux-pipeline, composer, prompt, security
@@ -48,7 +53,6 @@ JSON profile (intent, clarity, suggestions) of the draft before sending.
 | `TASK-prompt-improve-shared-service.md` | aux task + prompts + service + local fallback |
 | `TASK-prompt-improve-composer-ui.md` | composer button + level menu + Alpine module |
 | `TASK-prompt-injection-two-step-validation.md` | deterministic + LLM injection validation, wired to message submit and improve route |
-| `TASK-prompt-improve-testing.md` | mock-LLM unit/integration coverage for the above |
 
 ## Related Epics
 

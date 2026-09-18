@@ -3,6 +3,11 @@
 
 # TASK: Assistant/GM Flows Reconciliation
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done (2026-08-14) — GM-config authoring, story-mode frontend, GM-guided creation, per-actor multi-LLM (model + provider) shipped; full aspirational story chat view delegated to a separate agent (cross-review)
 **Priority:** medium
 **Effort:** Medium

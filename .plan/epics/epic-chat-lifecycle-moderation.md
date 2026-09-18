@@ -3,6 +3,9 @@
 
 # EPIC: Chat Lifecycle, Transitions & Moderation
 
+**Overview:** (see sections below)
+
+
 **Status:** 🟡 Core Complete — lifecycle/context/transitions shipped (chat-lifecycle merge `cd833142` + moderation hardening `658f5469`); discovery + moderation remainder open (see task list)
 **Priority:** High
 **Effort:** High

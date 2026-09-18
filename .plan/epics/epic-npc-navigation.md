@@ -3,6 +3,9 @@
 
 # Epic: NPC Navigation
 
+**Overview:** (see sections below)
+
+
 **Status:** 🟢 Code+tests+schema done (migration 001/p07); UNWIRED
 **Priority:** High
 **Effort:** High

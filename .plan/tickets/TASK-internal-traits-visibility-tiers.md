@@ -3,6 +3,11 @@
 
 # TASK: Internal Traits Visibility Tiers
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟡 Partial — visibility field + `buildPromptSection(includeHidden)` shipped (`44e22069`); `toPublicCard()` redaction + role-based API access + frontend view tiers pending
 **Priority:** high
 **Effort:** Medium

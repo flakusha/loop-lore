@@ -3,6 +3,9 @@
 
 # EPIC: RAG × Assets — Unified Storage, Decomposition & Assistant Flows
 
+**Overview:** (see sections below)
+
+
 **Status:** ⬜ Not Started
 **Priority:** High
 **Effort:** Very High (decomposes into RAG-side and asset-side sub-batches; each ships standalone)
@@ -505,17 +508,6 @@ docs/spec/
 3. **Tag co-occurrence:** compute inline per write, or as a nightly job? Default = nightly (offline, cheap); admin can switch to inline for small instances.
 4. **Hybrid ranking defaults:** `(0.5, 0.3, 0.1, 0.05, 0.05)` — vector-heavy by design; should this be admin-configurable per chat mode?
 5. **Reference-graph depth:** limit traversal depth to 2 hops by default to keep `delta`-weighted ranking cheap, or unbounded? Default = 2 hops; admin can lift cap.
-
-## Tickets (deferred to worktree after this epic lands)
-
-- `TASK-rag-doc-object-foundation.md` — B-R1
-- `TASK-rag-decomposer-image.md` / `-video.md` / `-audio.md` / `-file.md` / `-message.md` / `-character.md` / `-worldbook.md` / `-scenario.md` / `-url.md` — B-R2 family
-- `TASK-rag-model-roles-admin.md` — B-R3
-- `TASK-rag-hybrid-retrieval.md` — B-R4
-- `TASK-rag-assistant-commands.md` — B-R5
-- `TASK-rag-gallery-decomposition-ui.md` — B-R6
-- `TASK-rag-content-structuring.md` — B-R7
-- `TASK-rag-standards-survey.md` — research-only companion doc
 
 ## Related
 

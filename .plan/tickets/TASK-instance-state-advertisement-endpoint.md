@@ -3,11 +3,16 @@
 
 # TASK: Instance state advertisement endpoint (mesh/federation)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Implemented
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-federation-swarm-sync.md
-**Related:** TASK-nodeinfo-well-known-discovery-endpoints, TASK-federation-peer-connectivity-config, TASK-mesh-peer-discovery-gossip
+**Related:** TASK-nodeinfo-well-known-discovery-endpoints, TASK-mesh-peer-discovery-gossip
 
 ## Summary
 

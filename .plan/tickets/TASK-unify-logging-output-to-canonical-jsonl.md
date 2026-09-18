@@ -3,6 +3,11 @@
 
 # TASK: Unify logging output to canonical JSONL
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done
 **Priority:** high
 **Effort:** Medium

@@ -3,6 +3,11 @@
 
 # TASK-recon-critical-fixes: Backend reconciliation — Phase 1 critical wiring/logic fixes
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟡 In Progress (1.6 auto-rename done; rest open)
 **Priority:** High
 **Effort:** Medium

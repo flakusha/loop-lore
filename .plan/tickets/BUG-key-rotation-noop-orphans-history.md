@@ -3,6 +3,12 @@
 
 # BUG: Actor-key rotation is a silent no-op that orphans all encrypted history
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟢 Closed
 **Severity:** Critical
 **Priority:** High

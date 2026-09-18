@@ -1,4 +1,12 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Adopt Bun.CSRF for CSRF protection
+
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 
 **Status:** Implemented in `adopt-bun-and-elysia-remaining` worktree (2026-08-27). Smoke/e2e pending.
 **Priority:** high

@@ -3,6 +3,12 @@
 
 # EPIC: Enemies & Monsters Systems
 
+**Effort:** Medium
+**Type:** epic
+**Tags:** (none)
+**Overview:** (see sections below)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Low
 **Epic ID:** EPIC-2026-37

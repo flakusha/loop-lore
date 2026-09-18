@@ -3,6 +3,11 @@
 
 # TASK: Admin Content Review Queue
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done — review queue shipped (service + routes + Review tab) AND user Flag button/dialog shipped (message context menu + Detailed action row → POST /api/nsfw/moderation/flags). Reporter identity hardened (session-derived, not body).
 **Priority:** medium
 **Effort:** Medium

@@ -3,6 +3,9 @@
 
 # EPIC: Assistant Generation Extensions (SD, Intent, Scenario Source)
 
+**Overview:** (see sections below)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** High

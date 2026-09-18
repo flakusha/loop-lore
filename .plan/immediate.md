@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Immediate Plan
 
 > **Last updated:** 2026-09-15 — 2026-09-15: chat tool-result persistence + collapsible chat display and TUI session-token threading landed; tool-call `parent_id` threading evaluated and rejected (see tool-call ticket Resolution); four broken P2-B links fixed (invite docs under `tickets/`, invite epic repointed to `epics/epic-world-chat-channels-invites.md`). 2026-08-05 audit: route wiring verified (all src/routes wired except gated LoRA); chat filters UI + setup-template selector UI shipped post-doc; GM role runtime effect in working tree (uncommitted); **P3–P5 restructured to the 0.1.0 highest-value features** (Core Foundation → Core Experience → Wiring/Search/Polish; non-value → P6+); added **Post-P3 — Road to Happy 0.1.0** gate below.

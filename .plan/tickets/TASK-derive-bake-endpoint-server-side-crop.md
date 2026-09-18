@@ -3,6 +3,11 @@
 
 # TASK: Derive bake endpoint server-side crop
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium

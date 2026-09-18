@@ -3,6 +3,11 @@
 
 # TASK: Character Internal Traits Schema + API
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Epic:** epic-character-internal-traits
 **Priority:** High (P6-D — character/agentic core, matrix G27/G36 dep)
 **Effort:** Medium

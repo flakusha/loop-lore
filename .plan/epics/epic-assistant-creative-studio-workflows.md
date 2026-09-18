@@ -3,6 +3,9 @@
 
 # Epic: Assistant Creative Studio — Workflow Templates
 
+**Overview:** (see sections below)
+
+
 **Status:** 📝 Draft (coordination hub — split into 4 sub-epics)
 **Priority:** High (MVP scoped, post-Gate C)
 **Effort:** Large

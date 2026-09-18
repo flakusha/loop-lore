@@ -3,6 +3,11 @@
 
 # TASK: Encryption Architecture Clarification — Symmetric vs Asymmetric
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** High
 **Effort:** —

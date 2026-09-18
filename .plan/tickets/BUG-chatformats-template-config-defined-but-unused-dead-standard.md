@@ -3,6 +3,11 @@
 
 # BUG: chatFormats template config defined but unused (dead standard-template feature)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** not-a-bug
 **Priority:** medium
 **Effort:** Medium

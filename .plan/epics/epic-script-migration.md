@@ -3,6 +3,10 @@
 
 # EPIC: Script Migration to Modular Architecture
 
+**Tags:** (none)
+**Overview:** (see sections below)
+
+
 **Status:** 🟡 In Progress (tasks 1-2 complete)
 **Priority:** Medium
 **Effort:** Medium

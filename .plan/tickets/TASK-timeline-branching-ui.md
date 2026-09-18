@@ -3,6 +3,12 @@
 
 # TASK: Timeline branching UI — world detail page
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** Draft
 **Priority:** P0 — Critical
 **Epic:** `epic-timeline-system.md`

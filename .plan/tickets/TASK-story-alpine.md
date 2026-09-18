@@ -3,6 +3,11 @@
 
 # TASK: Story Alpine.js Logic
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟡 In Progress (2026-08-14 — story-state.ts + story-controls.ts built + tested in worktree story-chat-view)
 **Priority:** P1 — High
 **Effort:** Medium

@@ -3,6 +3,9 @@
 
 # EPIC: RPG Core Wiring & Registry
 
+**Overview:** (see sections below)
+
+
 **Status:** 🟡 In Progress — XP/loot + combat routes mounted (2026-08-14); registry module, barrel, combat persistence outstanding
 **Priority:** Medium
 **Effort:** High

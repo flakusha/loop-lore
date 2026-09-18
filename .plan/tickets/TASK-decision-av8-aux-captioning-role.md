@@ -3,6 +3,11 @@
 
 # TASK: Decision AV8 aux captioning role
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** Medium

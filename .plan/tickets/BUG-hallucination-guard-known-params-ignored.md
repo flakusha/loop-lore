@@ -3,6 +3,11 @@
 
 # BUG: hallucination-guard accepts knownActorIds/knownLocationIds params but isKnownEntity ignores them — uses global 500-row load instead
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** [OK] Resolved (dev, prior to 2026-09-13)
 **Severity:** medium
 **Priority:** medium

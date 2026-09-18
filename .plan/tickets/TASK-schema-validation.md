@@ -3,6 +3,14 @@
 
 # TASK: Shared Schema Validation
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status**: done
 **Priority**: medium
 **Labels**: schemas, validation

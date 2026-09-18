@@ -3,6 +3,11 @@
 
 # BUG: battle/equipment.ts loot POST handler has no auth guard
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Resolved (commit a4503d43 — fix(battle): gate loot POST on user session + world-owner + actor/location ownership)
 **Priority:** critical
 **Priority Tier:** P0

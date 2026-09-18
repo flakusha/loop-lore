@@ -3,6 +3,11 @@
 
 # TASK: Fix shared-state SQLite contamination in unit test suite (53 fail when full-run, all pass in isolation)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🔴 Not Started
 **Severity:** Medium
 **Priority:** Medium

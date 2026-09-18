@@ -3,6 +3,11 @@
 
 # BUG: `/create` duplicate check loads every owner-scoped entity row and filters in JS — O(N) on /create per chat
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Resolved
 **Severity:** medium
 **Priority:** medium

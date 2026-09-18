@@ -3,6 +3,14 @@
 
 # TASK-gallery-editor-structured-ui
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status**: open
 **Priority**: medium
 **Labels**: frontend, gallery-editor, ux, alpine, htmx, assets

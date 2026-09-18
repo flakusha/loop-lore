@@ -3,6 +3,11 @@
 
 # TASK: EPIC: Assistant Generation Extensions (Image Gen, Intent, Scenario Source)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟡 In Progress — `/image` command dispatch done, generation adapter pending (2026-08-01)
 **Priority:** Medium
 **Effort:** High

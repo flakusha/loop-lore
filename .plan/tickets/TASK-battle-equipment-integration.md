@@ -3,6 +3,12 @@
 
 # TASK: Battle Equipment Integration
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Partial (IS7 closed 2026-08-18)
 **Priority:** medium
 **Labels:** battle, equipment, durability

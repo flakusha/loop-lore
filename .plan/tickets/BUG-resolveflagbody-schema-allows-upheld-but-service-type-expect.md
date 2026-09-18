@@ -1,4 +1,12 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # BUG: resolveFlagBody schema allows upheld but service type expects confirmed — status mismatch
+
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 
 **Status:** ✅ Done (fix landed on branch `fix-nsfw-resolveflagbody-status-enum`; awaiting merge)
 **Priority:** medium

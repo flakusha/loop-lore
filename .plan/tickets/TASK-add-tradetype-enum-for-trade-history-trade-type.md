@@ -3,6 +3,11 @@
 
 # TASK: Add TradeType enum for trade_history.trade_type
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** Small

@@ -3,6 +3,11 @@
 
 # BUG: Type scanAllProviders db param as Kysely<DB> instead of unknown
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done
 **Priority:** Medium
 **Effort:** Medium

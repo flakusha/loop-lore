@@ -3,6 +3,11 @@
 
 # BUG: app: registerPlugins accepts asyncStore but never uses it
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** [OK] Resolved (worktree fix-register-plugins-asyncstore)
 
 **Priority:** low

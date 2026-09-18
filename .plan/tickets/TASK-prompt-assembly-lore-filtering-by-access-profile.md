@@ -3,6 +3,11 @@
 
 # TASK: Prompt assembly lore filtering by access profile
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** medium

@@ -3,6 +3,11 @@
 
 # BUG: routes/commands/index.ts:19 has unused import t
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Resolved (commit `4a1f56b8`)
 **Priority:** medium
 **Effort:** Trivial

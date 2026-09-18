@@ -3,6 +3,11 @@
 
 # FEAT: Character World Setup Bundle (Per-World Overlay)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Epic:** epic-character-world-setup
 **Status:** ✅ Done
 **Priority:** High

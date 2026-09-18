@@ -3,6 +3,11 @@
 
 # TASK: Apply JSDoc across src/ to satisfy jsdoc/require-{param,returns,throws}
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⏳ In Progress (partial — 227 of 2647 files done)
 **Priority:** medium
 **Effort:** Large (2-3 batches)

@@ -3,6 +3,11 @@
 
 # BUG: MoodHook + EmotionHook JSDoc claims "Uses the LLM"; both are regex-only
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Resolved
 **Priority:** P3
 **Effort:** Trivial

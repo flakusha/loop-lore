@@ -3,6 +3,12 @@
 
 # TASK: Document Profanity Filter spec
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟡 In Progress
 **Priority:** P3
 **Epic:** epic-docs-reconciliation

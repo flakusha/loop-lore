@@ -3,6 +3,11 @@
 
 # BUG: Security/auth merge wrapper `3ab26ccd` breaks the backend build
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Resolved (already on dev, 2026-09-03)
 **Priority:** critical
 **Effort:** Medium

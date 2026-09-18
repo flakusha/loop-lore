@@ -3,6 +3,11 @@
 
 # BUG: Diff-scoped coverage gate floors whole modules on partial lcov
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** [OK] Done - fixed on dev (5f145f7d0, verified in-tree 2026-09-16)
 **Priority:** Medium
 **Effort:** Medium

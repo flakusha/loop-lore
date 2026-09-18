@@ -3,6 +3,11 @@
 
 # TASK: Proactive Messaging
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done (backend + frontend 2026-08-16)
 **Priority:** Medium
 **Effort:** Medium

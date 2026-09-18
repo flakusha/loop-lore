@@ -3,6 +3,11 @@
 
 # TASK: Travel Mode — Party Migration Between Chats (Umbrella)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟡 In Progress — split into 3 child tickets (Phase 1 ✅ done; Phase 2 ✅ done; Phases 3–4 🔴 open)
 **Priority:** P2-B
 **Effort:** High

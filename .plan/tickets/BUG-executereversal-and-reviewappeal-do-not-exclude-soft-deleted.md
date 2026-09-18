@@ -1,4 +1,12 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # BUG: executeReversal and reviewAppeal do not exclude soft-deleted moderation_actions — deleted actions can be reinstated or re-appealed
+
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 
 **Status:** ✅ Done (worktree fix-nsfw-soft-deleted-exclusion)
 **Priority:** medium

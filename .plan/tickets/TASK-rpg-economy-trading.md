@@ -3,6 +3,11 @@
 
 # TASK: RPG: Economy & Trading
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** low
 **Effort:** Large

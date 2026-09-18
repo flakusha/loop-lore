@@ -3,6 +3,11 @@
 
 # BUG: Align seedDefaults null handling with resolveModelRole defensive checks
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** Medium

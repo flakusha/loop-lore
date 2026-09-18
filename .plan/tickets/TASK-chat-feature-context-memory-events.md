@@ -3,6 +3,11 @@
 
 # TASK: Context / Memory / Event Propagation with Compression & Injection
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** High

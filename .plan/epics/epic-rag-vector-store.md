@@ -3,6 +3,9 @@
 
 # EPIC: RAG Embedding & Vector Store
 
+**Overview:** (see sections below)
+
+
 **Status:** ⬜ Not Started
 **Priority:** High
 **Effort:** Medium

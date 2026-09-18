@@ -3,6 +3,9 @@
 
 # EPIC: Testing, Benchmarking & Performance
 
+**Overview:** (see sections below)
+
+
 **Status:** 🟡 In Progress — benchmark suite structure defined + first benchmark shipped (2026-08-15, branch `native-blake3`); broader framework tasks open
 **Priority:** High
 **Effort:** Very High (split into 7 sub-epics)

@@ -3,6 +3,11 @@
 
 # BUG: gmNotesSection injects shadow notes into all actors' prompts
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Resolved (already on dev, 2026-09-05)
 **Priority:** high
 **Effort:** Small

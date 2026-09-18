@@ -3,6 +3,9 @@
 
 # EPIC: Non-Standard Browser Encryption
 
+**Overview:** (see sections below)
+
+
 **Status:** 🟦 Research
 **Priority:** Medium
 **Effort:** High

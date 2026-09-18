@@ -3,6 +3,13 @@
 
 # Epic: Generation Flow Control — Pause, Throttling & Concurrency
 
+**Status:** Not Started
+**Effort:** Medium
+**Type:** epic
+**Tags:** (none)
+**Overview:** (see sections below)
+
+
 ## Status: Proposed
 
 **Priority:** High

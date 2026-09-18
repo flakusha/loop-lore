@@ -3,6 +3,12 @@
 
 # BUG: `scripts/check-db-schemas.ts` exit-code masks stale-generation drift as `[TOOLING ERROR]`
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Resolved — closed 2026-09-14
 **Priority:** Medium
 **Type:** BUG

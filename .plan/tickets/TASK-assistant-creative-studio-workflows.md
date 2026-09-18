@@ -3,6 +3,11 @@
 
 # TASK: Assistant Creative Studio — Workflow Templates
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 📝 Draft
 **Priority:** High (MVP scoped, post-Gate C)
 **Effort:** Large

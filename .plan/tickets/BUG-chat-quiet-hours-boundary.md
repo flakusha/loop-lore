@@ -3,6 +3,11 @@
 
 # BUG: proactive quiet-hours off-by-one at boundaries (timing.ts:14-16)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** Done
 **Priority:** medium
 **Priority Tier:** P3

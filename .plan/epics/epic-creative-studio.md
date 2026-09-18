@@ -3,6 +3,9 @@
 
 # EPIC: Creative Studio
 
+**Overview:** (see sections below)
+
+
 **Status:** 📝 Draft → 🟡 In Progress (MVP scoped)
 **Priority:** High (MVP), Medium (full)
 **Effort:** High

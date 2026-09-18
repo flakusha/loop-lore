@@ -3,6 +3,11 @@
 
 # BUG: idempotency_key column exists but no unique index — retried requests double-insert
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** Done
 **Severity:** high
 **Priority:** high

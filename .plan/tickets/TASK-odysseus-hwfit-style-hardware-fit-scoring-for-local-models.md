@@ -3,6 +3,11 @@
 
 # TASK: Odysseus hwfit-style hardware fit scoring for local models
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium

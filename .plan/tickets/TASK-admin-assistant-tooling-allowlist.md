@@ -3,6 +3,11 @@
 
 # TASK: Admin / Moderator Frontend for Assistant Tooling Allowlist + Capability Levels
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** Medium

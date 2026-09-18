@@ -3,6 +3,11 @@
 
 # BUG: WebP VP8X dimension truncation — 14-bit mask on 24-bit spec field
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Closed — already resolved in dev (verified 2026-09-18)
 
 ## Verification

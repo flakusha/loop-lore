@@ -3,6 +3,11 @@
 
 # TASK: Character vs World Data Separation
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Epic:** Character Core System
 **Priority:** High
 **Effort:** Very High

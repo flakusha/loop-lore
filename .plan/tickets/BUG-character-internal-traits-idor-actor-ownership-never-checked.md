@@ -1,4 +1,12 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # BUG: Character internal traits IDOR — actor ownership never checked
+
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 
 **Status:** ✅ Done — duplicate of BUG-character-internal-traits-idor-cross-user-read-write-delete (fixed on dev by 06ca7e9d + f2f0eb26)
 **Priority:** high

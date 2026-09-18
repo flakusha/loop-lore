@@ -3,6 +3,11 @@
 
 # BUG: typecheck scripts/worktree: ReferenceError-class bugs ship green
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** [OK] Done - fixed in batch (tsconfig.scripts.json + typecheck-scripts gate, 2026-09-16)
 **Priority:** high
 **Effort:** Medium

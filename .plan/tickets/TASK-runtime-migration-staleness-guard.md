@@ -3,6 +3,11 @@
 
 # TASK: Runtime migration staleness guard
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done
 **Priority:** high
 **Effort:** Medium

@@ -3,6 +3,9 @@
 
 # EPIC: Frontend ↔ Backend Integration — Wiring Backend Subsystems to UI
 
+**Overview:** (see sections below)
+
+
 **Status:** ⬜ Not Started
 **Priority:** High
 **Effort:** High

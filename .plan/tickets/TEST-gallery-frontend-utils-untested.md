@@ -3,6 +3,11 @@
 
 # TEST: gallery frontend chat-utils has zero unit tests
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** Open
 **Priority:** low
 **Priority Tier:** P5

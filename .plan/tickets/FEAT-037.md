@@ -3,6 +3,14 @@
 
 # FEAT-037: Legacy API redirect
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status**: closed
 **Priority**: medium
 **Labels**:

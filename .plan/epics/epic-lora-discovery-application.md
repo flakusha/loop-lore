@@ -3,6 +3,9 @@
 
 # EPIC: LoRA Discovery & Application
 
+**Overview:** (see sections below)
+
+
 **Status:** 🟡 Phase 1 Complete, Phase 2 Partial
 **Priority:** High
 **Effort:** Medium

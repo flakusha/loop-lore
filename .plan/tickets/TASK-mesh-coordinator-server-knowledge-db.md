@@ -3,6 +3,11 @@
 
 # TASK: Mesh Coordinator Server — Knowledge DB, Addresses, Trusted Keys, Negotiations, Resync Cron
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟡 In Progress — coordinator role landed (registry + negotiation + resync); inbound-key provision/rotate/revoke landed (`revokeInboundKey` in `src/federation/peer-keys.ts`); peer-handshake transport + operational rotation surface remain
 **Priority:** high
 **Effort:** Large

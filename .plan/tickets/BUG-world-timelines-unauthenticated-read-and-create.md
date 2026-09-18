@@ -1,4 +1,12 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # BUG: world timelines unauthenticated read and create
+
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 
 **Status:** ✅ Resolved (commit 88544034 — GET list/POST create GET-by-id gated on extractAuth + requireWorldAccess/Owner)
 **Priority:** critical

@@ -3,6 +3,11 @@
 
 # BUG: test-assertions-stale-gm-support-message
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** [OK] Resolved
 **Priority:** high
 **Effort:** Trivial

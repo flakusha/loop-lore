@@ -3,6 +3,12 @@
 
 # TASK: Memory Distillation & Dream System
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Priority:** Medium
 **Status:** ✅ Done (closed via git issue)
 **Epic:** epic-memory-systems-three-tier

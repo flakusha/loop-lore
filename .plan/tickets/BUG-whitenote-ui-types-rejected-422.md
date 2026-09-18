@@ -3,6 +3,11 @@
 
 # BUG: whitenote UI types rejected 422
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Resolved (fixed 2026-09-05)
 **Priority:** medium
 **Effort:** Small

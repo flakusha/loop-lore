@@ -3,6 +3,11 @@
 
 # TASK: RPG Rule System — Enforcement, Messages Review, Rule Definitions
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Low
 **Effort:** High

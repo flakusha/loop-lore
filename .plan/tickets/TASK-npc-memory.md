@@ -3,6 +3,11 @@
 
 # TASK: NPC Memory System
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Epic:** NPC/Actor System, Memory & Knowledge Systems
 **Priority:** High
 **Effort:** Medium

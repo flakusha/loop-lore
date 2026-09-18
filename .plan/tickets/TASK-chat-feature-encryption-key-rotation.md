@@ -3,6 +3,11 @@
 
 # TASK: Effective & Reliable Encryption + Membership-Triggered Key Rotation
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟨 In Progress (scoped suite green; rebase onto dev + merge pending GPG unlock)
 **Priority:** High
 **Effort:** High

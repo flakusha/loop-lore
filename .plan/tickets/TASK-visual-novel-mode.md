@@ -3,6 +3,11 @@
 
 # TASK: Visual Novel Mode
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Complete (2026-08-23) — Modal UI, scene renderer, choice/QA wiring all live
 **Priority:** Medium
 **Effort:** Med-High (frontend rendering)

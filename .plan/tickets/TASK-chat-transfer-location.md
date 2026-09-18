@@ -3,6 +3,11 @@
 
 # TASK: Chat Transfer & Location Change — Implementation
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟡 Foundation exists
 **Priority:** P2-B
 **Effort:** Medium

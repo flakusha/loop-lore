@@ -3,6 +3,10 @@
 
 # EPIC: Type-safe CLI Tooling via Optique
 
+**Tags:** (none)
+**Overview:** (see sections below)
+
+
 **Status:** 🟡 In Progress (foundation laid)
 **Priority:** Medium
 **Effort:** Medium

@@ -3,6 +3,9 @@
 
 # EPIC: Authentication Channel Provisioning — Messenger / E-mail / Federated Login & Unlock
 
+**Overview:** (see sections below)
+
+
 **Status:** 📝 Planned (this bundle)
 **Priority:** High (security-critical provisioning)
 **Effort:** High

@@ -3,6 +3,11 @@
 
 # BUG: gallery serveGalleryGrid declared twice — build error
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Closed (2026-08-22, verified on `dev`)
 **Priority:** high
 **Priority Tier:** P2

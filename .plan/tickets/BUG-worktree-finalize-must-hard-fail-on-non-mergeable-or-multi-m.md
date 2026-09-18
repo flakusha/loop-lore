@@ -3,6 +3,11 @@
 
 # BUG: worktree finalize must hard-fail on non-mergeable or multi-merge dev state, never blind stash round-trip
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Resolved (already implemented in scripts/worktree/commands/finalize.ts — checkDevMergeable hard-fail precheck L381, acquireFinalizeLock single-flight L382, transactional restoreDevFromStash with reset-on-conflict; --force skips gates only, never these invariants)
 **Priority:** high
 **Effort:** Medium

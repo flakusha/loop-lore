@@ -3,6 +3,14 @@
 
 # TASK-BKP-002: Recovery Validation Framework
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status**: drafted  
 **Priority**: high  
 **Labels**: backup, recovery, testing, validation, cron  

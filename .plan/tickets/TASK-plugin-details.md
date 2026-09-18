@@ -3,6 +3,11 @@
 
 # TASK: Plugin Details
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** P2 — Medium
 **Effort:** Small

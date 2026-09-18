@@ -3,6 +3,11 @@
 
 # TASK: Add E2eAlgorithm and E2eSessionKind enums for e2e tables
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** Small

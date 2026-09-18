@@ -3,6 +3,11 @@
 
 # TASK: Agentic Coding Sandbox — Per-Project `.git` Repo + External Coding Agents + Community Plugins
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Low (P6+, far-fetched but on-theme)
 **Effort:** Very High (security-sensitive; many sub-tickets)
@@ -206,11 +211,11 @@ Per spec "Schema Compatibility":
 
 This ticket is the umbrella; the following 5 child tickets split the work:
 
-1. **`TASK-agentic-workspace-sandbox.md`** — `subprocess-sandbox.ts` + capability matrix (foundation)
-2. **`TASK-agentic-workspace-agents.md`** — 5 external coding agent adapters
-3. **`TASK-agentic-workspace-repo.md`** — per-Epic `.git` lifecycle + worktree-per-task
-4. **`TASK-agentic-workspace-review.md`** — community plugin PR review cycle + automated reviewers
-5. **`TASK-agentic-workspace-audit.md`** — provenance log + rollback + rate limits + signing
+1. `subprocess-sandbox.ts` + capability matrix (foundation)
+2. 5 external coding agent adapters
+3. per-Epic `.git` lifecycle + worktree-per-task
+4. community plugin PR review cycle + automated reviewers
+5. provenance log + rollback + rate limits + signing
 
 ## Open questions (require user input before implementation)
 

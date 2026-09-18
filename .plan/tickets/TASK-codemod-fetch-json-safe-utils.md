@@ -3,6 +3,11 @@
 
 # TASK: Codemod `fetch`→`apiFetch` + `JSON.*`→`safeJson*` (no eslint/biome autofix exists)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟡 Partially Complete — manual pass done 2026-08-06
 **Priority:** Low
 **Effort:** Large

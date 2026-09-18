@@ -3,6 +3,11 @@
 
 # TASK: Wire Achievements Routes
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done (2026-08-14, `51a7bc01`) — wired under `/api/rpg/achievements` (`src/routes/rpg/achievements.ts` + schemas + tests)
 **Priority:** Medium
 **Effort:** Medium

@@ -3,6 +3,9 @@
 
 # EPIC: Logic Reconciliation (Permanently Ongoing)
 
+**Overview:** (see sections below)
+
+
 **Status:** 🟡 Permanently Ongoing
 **Priority:** High
 **Epic ID:** EPIC-2026-36

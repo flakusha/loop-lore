@@ -3,6 +3,14 @@
 
 # Epic: Database Backup & Recovery Infrastructure
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Type:** epic
+**Tags:** (none)
+**Overview:** (see sections below)
+
+
 ## Status: **Drafted**
 
 **Last Updated**: 2026-08-14

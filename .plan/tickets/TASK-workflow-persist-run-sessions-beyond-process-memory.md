@@ -3,6 +3,11 @@
 
 # TASK: Workflow: persist run sessions beyond process memory
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done (shipped: part 021 `workflow_sessions` table — numbered past search-unified's unmerged 020; src/assistant/workflow-session-store.ts write-through/rehydrate/lazy TTL expiry; dispatch rehydrates before routing; `/workflow` status/cancel/confirm resolve persisted runs. Verified: migration roundtrip + store/dispatch tests green.)
 **Priority:** Medium
 **Effort:** Medium

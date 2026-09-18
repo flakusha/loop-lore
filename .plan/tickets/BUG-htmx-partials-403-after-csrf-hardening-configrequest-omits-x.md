@@ -1,4 +1,12 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # BUG: htmx partials 403 after CSRF hardening - configRequest omits X-CSRF-Token
+
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 
 **Status:** ✅ Fixed (fix-review-quickwins; client wiring for ccac5b9d)
 **Priority:** high

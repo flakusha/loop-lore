@@ -3,6 +3,11 @@
 
 # TASK: NPC Behavior State Machine
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Epic:** NPC/Actor System, NPC Navigation
 **Priority:** High
 **Effort:** Medium

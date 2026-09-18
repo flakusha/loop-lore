@@ -3,6 +3,11 @@
 
 # FEAT: Assistant Intelligence
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done — emotion/intent detection, creative support, response length control, quick-regen all implemented (FEAT-070/071/072 + EmotionHook + command parser). Closed 2026-08-03.
 **Priority:** medium
 **Effort:** Medium

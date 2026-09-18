@@ -1,6 +1,14 @@
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # BUG: NotificationStreamer error path is unreachable — allSettled swallows failures
+
+**Priority:** medium
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 
 **Status:** ✅ Done — fixed in batch (loadNotificationSnapshot extracted, 4 tests green, 2026-09-16)
 

@@ -3,6 +3,14 @@
 
 # Security & Sandboxing — Epic
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Type:** epic
+**Tags:** (none)
+**Overview:** (see sections below)
+
+
 ## Overview
 
 LLM sandboxing, edge case automated testing, static asset escape prevention, and comprehensive security hardening.

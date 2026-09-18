@@ -3,6 +3,11 @@
 
 # TASK: Add AppealStatus state machine for moderation_appeals.status
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** Small

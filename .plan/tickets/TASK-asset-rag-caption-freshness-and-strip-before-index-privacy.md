@@ -3,6 +3,11 @@
 
 # TASK: Asset RAG caption freshness and strip-before-index privacy
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** Medium

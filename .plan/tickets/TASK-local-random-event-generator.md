@@ -3,6 +3,11 @@
 
 # TASK: Local Random Event Generator
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done (closed via git issue)
 **Priority:** medium
 **Effort:** Medium

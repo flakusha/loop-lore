@@ -3,6 +3,14 @@
 
 # GPU Instance Recommendations for Loop-Lore Development
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 ## Minimum Requirements
 
 - **GPU**: NVIDIA RTX 4090 (24GB VRAM)

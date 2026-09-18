@@ -3,6 +3,11 @@
 
 # BUG: pre-existing unit test failures blocking clean suite
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done — all listed failures resolved on dev prior to this batch.
 **Priority:** Medium
 **Effort:** Medium

@@ -3,6 +3,14 @@
 
 # Mini-Games: UI Components & API Contracts
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Type:** epic
+**Tags:** (none)
+**Overview:** (see sections below)
+
+
 ## UI Component Library
 
 ### Base Components

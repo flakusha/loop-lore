@@ -3,6 +3,11 @@
 
 # BUG: New migration parts never apply to existing databases
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** [OK] Done
 **Priority:** Medium
 **Effort:** Medium

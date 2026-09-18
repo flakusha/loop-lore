@@ -3,6 +3,11 @@
 
 # TASK: Assistant Creative Studio — Gallery Batch Operations
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 📝 Draft
 **Priority:** Medium (post-Gate C, with parent epic)
 **Effort:** Medium

@@ -3,6 +3,12 @@
 
 # TASK: Config Files for Gallery & File Attachment with Idempotent Load
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Priority:** Medium
 **Status:** ✅ Done — SHA-256 hash-based duplicate detection implemented in `createAsset`; same file by same owner returns existing asset ID with HTTP 200 + `duplicate: true` flag
 **Epic:** epic-config-extensions

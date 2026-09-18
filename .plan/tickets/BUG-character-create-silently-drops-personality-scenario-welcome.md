@@ -3,6 +3,11 @@
 
 # BUG: character create silently drops personality/scenario/welcomeMessage/tags
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Resolved (fixed 2026-09-05)
 **Priority:** high
 **Effort:** Small

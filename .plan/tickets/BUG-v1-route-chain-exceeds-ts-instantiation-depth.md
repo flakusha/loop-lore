@@ -3,6 +3,11 @@
 
 # BUG: v1 route chain exceeds TS instantiation depth
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Closed — fixed in dev (verified 2026-09-18)
 
 ## Resolution

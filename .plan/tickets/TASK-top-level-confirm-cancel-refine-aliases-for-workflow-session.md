@@ -3,6 +3,11 @@
 
 # TASK: Top-level /confirm /cancel /refine aliases for workflow sessions
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium

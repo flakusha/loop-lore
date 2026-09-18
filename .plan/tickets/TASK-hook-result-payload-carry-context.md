@@ -3,6 +3,11 @@
 
 # TASK: Add a canonical context-carrier wrapper to HookResult.data
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** P3
 **Effort:** Small

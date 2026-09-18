@@ -3,6 +3,11 @@
 
 # TASK: GitHub Pages — VitePress Static Site Hosting
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Low
 **Effort:** Low–Med

@@ -3,6 +3,11 @@
 
 # TASK: update docs/spec/terminal-ui.md to match current src/tui/ file layout
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** low
 **Effort:** trivial

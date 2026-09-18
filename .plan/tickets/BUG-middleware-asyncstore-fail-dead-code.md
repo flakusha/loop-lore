@@ -3,6 +3,11 @@
 
 # BUG: `asyncStore.fail()` error boundary is dead code
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** fixed-in-worktree
 **Priority:** high
 **Effort:** Small

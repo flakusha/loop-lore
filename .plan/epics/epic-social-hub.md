@@ -3,6 +3,14 @@
 
 # Social Hub — Epic
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Type:** epic
+**Tags:** (none)
+**Overview:** (see sections below)
+
+
 ## Overview
 
 Centralized hub for messengers, social networks, and email integration. Unified message handling, cross-platform bridging, and modern alternatives to legacy email.

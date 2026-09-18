@@ -3,6 +3,11 @@
 
 # TASK: Agent Memory Scoring Model
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Epic:** epic-memory-knowledge-systems, epic-character-core-system
 **Priority:** Medium (P6+ deferred)
 **Effort:** High

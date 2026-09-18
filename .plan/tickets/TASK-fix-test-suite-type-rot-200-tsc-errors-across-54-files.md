@@ -3,6 +3,11 @@
 
 # TASK: Fix test-suite type-rot: 200 tsc errors across 54 files
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Epic:** epic-code-quality
 **Priority:** Medium
