@@ -10449,6 +10449,19 @@
     "source": ".plan/tickets/TASK-assistant-creative-studio-workflow-npc.md",
     "status": "draft"
   },
+  "TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOW-SPECIES": {
+    "hash": "ef8690c",
+    "extid": "TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOW-SPECIES",
+    "type": "TASK",
+    "title": "Assistant Creative Studio — Species Generation Workflow",
+    "label": "task",
+    "priority": "High (post-Gate C, with parent epic)",
+    "epic": "`epic-assistant-creative-studio-workflows` (§7.6)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-assistant-creative-studio-workflow-species.md",
+    "status": "draft",
+    "git_issue": "ef8690c"
+  },
   "TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOW-WORLD": {
     "hash": "pending",
     "extid": "TASK-ASSISTANT-CREATIVE-STUDIO-WORKFLOW-WORLD",
@@ -14505,6 +14518,19 @@
     "source": ".plan/tickets/TASK-create-library-package.md",
     "git_issue": "a12dd85",
     "status": "open"
+  },
+  "TASK-CREATION-CHAT-WORLD-LOCATION-CONTEXT-SCOPING": {
+    "hash": "343c91d",
+    "extid": "TASK-CREATION-CHAT-WORLD-LOCATION-CONTEXT-SCOPING",
+    "type": "TASK",
+    "title": "Creation Chat World Location Context Scoping",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-assistant-gm-flows",
+    "tags": [],
+    "source": ".plan/tickets/TASK-creation-chat-world-location-context-scoping.md",
+    "status": "⬜ Not Started",
+    "git_issue": "343c91d"
   },
   "TASK-CREATION-QUALITY-GATING-CONFIRMATION": {
     "hash": "bd46b70",
@@ -18720,6 +18746,19 @@
     "source": ".plan/tickets/TASK-in-chat-asset-edit-flow.md",
     "status": "open"
   },
+  "TASK-IN-PLACE-GENERATION-OWNER-BACKFILL": {
+    "hash": "e34a49e",
+    "extid": "TASK-IN-PLACE-GENERATION-OWNER-BACKFILL",
+    "type": "TASK",
+    "title": "In-Place Generation Owner Backfill",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-assistant-gm-flows",
+    "tags": [],
+    "source": ".plan/tickets/TASK-in-place-generation-owner-backfill.md",
+    "status": "⬜ Not Started",
+    "git_issue": "e34a49e"
+  },
   "TASK-INFERENCE-BROWSER-WLLAMA-GGUF": {
     "hash": "pending",
     "extid": "TASK-INFERENCE-BROWSER-WLLAMA-GGUF",
@@ -20836,6 +20875,19 @@
     ],
     "source": ".plan/tickets/TASK-npc-burglary-steal-from-unconscious-targets.md",
     "status": "⬜ Not Started"
+  },
+  "TASK-NPC-CHARACTER-EDIT-STACK-PARITY": {
+    "hash": "c34f594",
+    "extid": "TASK-NPC-CHARACTER-EDIT-STACK-PARITY",
+    "type": "TASK",
+    "title": "NPC Character Edit Stack Parity",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-npcs",
+    "tags": [],
+    "source": ".plan/tickets/TASK-npc-character-edit-stack-parity.md",
+    "status": "⬜ Not Started",
+    "git_issue": "c34f594"
   },
   "TASK-NPC-CHAT-BUFFER": {
     "hash": "pending",
