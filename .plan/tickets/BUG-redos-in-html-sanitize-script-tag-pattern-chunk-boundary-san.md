@@ -1,6 +1,41 @@
 # BUG: ReDoS in html-sanitize script-tag pattern + chunk-boundary sanitization gap
 
-**Status:** 🔧 Partial (ReDoS done; chunk-boundary open)
+**Status:** 🔧 Partial (ReDoS done 1a15200b; chunk-boundary + tag/attr coverage deferred — handoff 2026-09-18)
+
+## Handoff (deferred to dedicated worktree)
+
+**ReDoS leg — DONE** (commit `1a15200b`):
+Linear `stripScriptTags()` scanner replaces the quadratic nested-quantifier
+regex. Test at `src/regex/html-sanitize.test.ts` regresses the
+`'<script'.repeat(40_000)` case.
+
+**Open legs — deferred to dedicated worktree** (out of scope for the
+`find-work-batch-tickets` batch per user direction 2026-09-18):
+
+1. **Chunk-boundary sanitization**
+   - `src/generation/auto-gen/stream-render.ts:17-19` still applies the
+     linear scanner per-chunk. A `<script>…</script>` tag split across
+     two SSE chunks slips through (opening in chunk N, closing in N+1).
+   - Suggested approach: maintain a 1-chunk tail buffer per stream;
+     re-scan the tail when a chunk boundary is detected. Buffer cap
+     should be ≤ the longest plausible HTML tag (8 KiB is generous).
+   - Test fixture: feed chunks where the boundary falls inside `<script>`
+     open + close tags; assert the concatenated output is sanitized.
+
+2. **Tag/attribute coverage audit**
+   - `stripScriptTags()` covers `<script>`. `DANGEROUS_TAGS` covers
+     `iframe`/`object`/`embed`/`svg foreignObject`. `JS_URL_ATTR` covers
+     `href`/`src` with `javascript:` URLs in quoted attrs.
+   - Open: unquoted event handlers (`onerror=alert(1)>`), `data:` URLs,
+     `style` attr with `expression(…)`, mixed-case evasion
+     (`<ScRiPt>` is already normalized, verify). The existing patterns
+     may already cover these; a regression test sweep is the right next
+     step before adding more patterns.
+
+**Why deferred**: per user direction 2026-09-18. Chunk-boundary work
+touches the streaming output surface and needs e2e coverage; the
+scope is too large for a single-batch worktree alongside unrelated
+fixes.
 **Priority:** high
 **Effort:** Medium
 

@@ -1,6 +1,10 @@
 # BUG: CRDT conflict policy missing leader-vs-swarm precedence and deletes
 
-**Status:** not-yet-implemented
+**Status:** 🚫 Closed — stale-premature (verified 2026-09-18)
+
+## Rationale
+
+The conflict policy this ticket asks to extend lives in `FEAT-swarm-mode-reconciliation` (status: undefined in `.plan/index.json`). That FEAT defines the LWW/OR-Set/RGA conflict policy and the leader-vs-swarm topology split; both `epic-federation-swarm-sync.md` and `BUG-leader-and-swarm-topologies-lack-simultaneous-write-arbitrat.md` defer to it. No CRDT code exists in `src/` (no `swarm-mode`/`crdt`/`cr-sqlite` matches); no `conflictPolicy` module exists. Extending a policy that does not yet exist is a contradiction. Re-open when `FEAT-swarm-mode-reconciliation` lands (after `epic-multi-instance-reconciliation` leader path is stable per matrix-federation-swarm.md).
 **Priority:** medium
 **Effort:** Medium
 

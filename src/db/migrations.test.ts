@@ -1,13 +1,13 @@
 import { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
-import { Kysely, } from "kysely";
+import { Kysely, sql, } from "kysely";
 import type { Migration, } from "kysely/migration";
 import { Migrator, } from "kysely/migration";
 import { readdirSync, readFileSync, } from "node:fs";
 import path from "node:path";
 import { createLogger, } from "../logger";
 import { createSqliteDialect, } from "./index";
-import { assertMigrationsNotStale, } from "./migrate";
+import { assertMigrationsNotStale, compareMigrationNames, } from "./migrate";
 
 // ── Helpers ──────────────────────────────────────────────────
 
@@ -21,11 +21,13 @@ function schemaTables(db: Database,): Set<string> {
   return new Set(rows.map((r,) => r.name),);
 }
 
+const MIGRATION_FILENAME = /^(\d{3})_(.+)\.ts$/;
+
 const MIGRATIONS_DIR = path.join(__dirname, "migrations",);
 const MIGRATION_NAMES = readdirSync(MIGRATIONS_DIR,)
-  .filter((f,): f is string => f.endsWith(".ts",))
+  .filter((f,): f is string => MIGRATION_FILENAME.test(f,))
   .map((f,) => f.replace(/\.ts$/, "",))
-  .sort((a, b,) => a.localeCompare(b,));
+  .toSorted(compareMigrationNames,);
 
 /**
  * @param name
@@ -307,6 +309,53 @@ describe("migration consistency flags", () => {
 
     await kysely.destroy();
     db.close();
+  });
+});
+
+// ── activitypub_actor_keys FK cascade (BUG-migration-activitypub-actor-keys-fk-missing-ondelete-cascade) ─
+
+describe("activitypub_actor_keys FK cascades on actor delete", () => {
+  test("deleting an actor removes its activitypub_actor_keys rows", async () => {
+    const { db, kysely, } = createTestKysely();
+    try {
+      const migrations = await loadAllMigrations();
+      for (const name of MIGRATION_NAMES) {
+        await migrations[name]!.up(kysely,);
+      }
+      // createTestKysely() enables PRAGMA foreign_keys = ON. Insert a
+      // user → actor → activitypub_actor_key chain so we can delete the
+      // actor and confirm the key row goes with it.
+      const userId = "u-" + crypto.randomUUID();
+      const worldId = "w-" + crypto.randomUUID();
+      const actorId = "a-" + crypto.randomUUID();
+      const keyId = "k-" + crypto.randomUUID();
+      await sql`INSERT INTO users (id, username, display_name, created_at) VALUES (${userId}, ${userId}, ${userId}, datetime('now'))`.execute(
+        kysely,
+      );
+      await sql`INSERT INTO worlds (id, owner_id, name, created_at) VALUES (${worldId}, ${userId}, ${worldId}, datetime('now'))`.execute(
+        kysely,
+      );
+      await sql`INSERT INTO actors (id, user_id, display_name, created_at) VALUES (${actorId}, ${userId}, ${actorId}, datetime('now'))`.execute(
+        kysely,
+      );
+      await sql`INSERT INTO activitypub_actor_keys (id, actor_id, key_id, public_jwk, encrypted_private_jwk, created_at) VALUES (${keyId}, ${actorId}, ${'key:' + keyId}, ${'{}'}, ${'{}'}, datetime('now'))`.execute(
+        kysely,
+      );
+      const before = await sql<{ c: number }>`SELECT COUNT(*) AS c FROM activitypub_actor_keys WHERE actor_id = ${actorId}`.execute(
+        kysely,
+      );
+      expect(Number(before.rows[0]?.c ?? 0),).toBe(1);
+      // Delete the actor. With onDelete: cascade, the key row is removed
+      // automatically. Pre-fix this throws FOREIGN KEY constraint failed.
+      await sql`DELETE FROM actors WHERE id = ${actorId}`.execute(kysely,);
+      const after = await sql<{ c: number }>`SELECT COUNT(*) AS c FROM activitypub_actor_keys WHERE actor_id = ${actorId}`.execute(
+        kysely,
+      );
+      expect(Number(after.rows[0]?.c ?? 0),).toBe(0);
+    } finally {
+      await kysely.destroy();
+      db.close();
+    }
   });
 });
 
