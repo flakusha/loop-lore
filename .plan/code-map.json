@@ -24437,6 +24437,12 @@
       "source": ".plan/tickets/TASK-frontend-story-item-instance-transfer.md"
     }
   ],
+  "src/routes/story-orchestration/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-2025-001-missing-data-id-start-chat-button.md"
+    }
+  ],
   "src/routes/story-states/npc.ts": [
     {
       "kind": "ticket",
