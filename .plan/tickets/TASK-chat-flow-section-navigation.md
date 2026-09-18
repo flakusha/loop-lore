@@ -48,18 +48,14 @@ UI/UX for navigating chat sections like a story — location chapters with visua
 
 ### 2. Story Map (Side Panel)
 
-```
-┌─────────────────────────────┐
-│  Story Map                  │
-│  ─────────────────────────  │
-│  ● The Dark Forest (12 msgs)│ ← visited
-│  │                          │
-│  ├─ Ancient Tavern (5 msgs) │ ← current
-│  │                          │
-│  ○ Castle Gates (0 msgs)    │ ← future (if known)
-│  │                          │
-│  ○ Throne Room (?)          │ ← unknown
-└─────────────────────────────┘
+```mermaid
+flowchart TD
+    SM["Story Map"]
+    SM --> DF["The Dark Forest (12 msgs)<br/>visited"]
+    SM --> AT["Ancient Tavern (5 msgs)<br/>current"]
+    SM --> CG["Castle Gates (0 msgs)<br/>future if known"]
+    SM --> TR["Throne Room (?)<br/>unknown"]
+    DF --> AT
 ```
 
 - Visual timeline of locations
@@ -68,43 +64,6 @@ UI/UX for navigating chat sections like a story — location chapters with visua
 - Future locations shown if discovered
 - Collapsible side panel
 
-### 3. Location Header (Sticky)
-
-```
-┌──────────────────────────────────────┐
-│ 📍 Ancient Tavern    [Map] [Transfer]│ ← sticky header
-├──────────────────────────────────────┤
-│ [message] [message]                  │
-│ [message]                            │
-└──────────────────────────────────────┘
-```
-
-- Always shows current location
-- Quick actions: view map, transfer
-- Changes on section transition
-- Smooth fade/wipe animation
-
-### 4. Transfer Dialog
-
-```
-┌──────────────────────────────────────┐
-│  Transfer to New Location            │
-│  ─────────────────────────────────── │
-│  Current: Ancient Tavern             │
-│                                      │
-│  Destination:                        │
-│  [Castle Gates ▼]                    │
-│                                      │
-│  Transition:                         │
-│  [Walk 🚶] [Teleport ⚡] [Narrative 📖]│
-│                                      │
-│  [Cancel]              [Transfer →]  │
-└──────────────────────────────────────┘
-```
-
-- Select destination from known locations
-- Choose transition type (affects background/animation)
-- Optional: add narrative text for transition
 
 ## Tasks
 

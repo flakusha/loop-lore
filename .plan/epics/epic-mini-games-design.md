@@ -39,34 +39,7 @@
 
 **UI/UX:**
 
-```
-┌─────────────────────────────────────────────┐
-│  YAHTZEE                    Pot: 50 gold    │
-├─────────────────────────────────────────────┤
-│  Dice: [🎲3] [🎲5] [🎲5] [🎲1] [🎲5]      │
-│                                             │
-│  ☐ Keep  ☐ Keep  ☑ Keep  ☐ Keep  ☑ Keep   │
-│                                             │
-│  [Roll (2 left)]  [Score]  [Forfeit]       │
-├─────────────────────────────────────────────┤
-│  SCORECARD               You  │ NPC         │
-│  Ones (3)               6    │ 8           │
-│  Twos (0)               —    │ 10          │
-│  Threes (15)            15   │ 12          │
-│  Fours (8)              8    │ 16          │
-│  Fives (15)             15   │ 20          │
-│  Sixes (18)             18   │ 18          │
-│  Three of Kind (0)      —    │ 22          │
-│  Four of Kind (0)       —    │ —           │
-│  Full House (25)        25   │ —           │
-│  Sm Straight (30)       30   │ —           │
-│  Lg Straight (40)       —    │ 40          │
-│  Yahtzee (50)           —    │ —           │
-│  Chance (14)            14   │ 19          │
-│  ─────────────────────────────────────────  │
-│  TOTAL                  131  │ 165         │
-└─────────────────────────────────────────────┘
-```
+<!-- ASCII UI mockup removed in favor of prose description: see preceding/following sections. -->
 
 **Chat Logic:**
 
@@ -103,23 +76,7 @@
 
 **UI/UX:**
 
-```
-┌─────────────────────────────────────────────┐
-│  DICE DUEL                      Round 3/5   │
-├─────────────────────────────────────────────┤
-│  You: [🎲4]    vs    Goblin: [🎲2]         │
-│                                             │
-│  You win! Damage: 2                         │
-│  Goblin HP: ████████░░ (80%)               │
-│                                             │
-│  [Roll Again]  [Forfeit]                    │
-├─────────────────────────────────────────────┤
-│  Round 1: You 5 vs 3 → You win (+2 dmg)    │
-│  Round 2: You 2 vs 6 → Goblin win (+4 dmg) │
-│  Round 3: You 4 vs 2 → You win (+2 dmg)    │
-│  You: 12 HP │ Goblin: 8 HP                 │
-└─────────────────────────────────────────────┘
-```
+<!-- ASCII UI mockup removed in favor of prose description: see preceding/following sections. -->
 
 **Chat Logic:**
 
@@ -155,19 +112,7 @@
 
 **UI/UX:**
 
-```
-┌─────────────────────────────────────────────┐
-│  CRAPS                         Bet: 100g    │
-├─────────────────────────────────────────────┤
-│  Phase: Point                               │
-│  Point: 8                                   │
-│                                             │
-│  Last Roll: [🎲3] [🎲5] = 8                │
-│  "You hit your point! You win 100 gold!"    │
-│                                             │
-│  [Roll]  [Double Down]  [Cash Out]          │
-└─────────────────────────────────────────────┘
-```
+<!-- ASCII UI mockup removed in favor of prose description: see preceding/following sections. -->
 
 **Chat Logic:**
 
@@ -200,23 +145,7 @@
 
 **UI/UX:**
 
-```
-┌─────────────────────────────────────────────┐
-│  BLACKJACK                      Bet: 50g    │
-├─────────────────────────────────────────────┤
-│  Dealer:  [🂠] [♥7]         Total: ?+7     │
-│                                             │
-│  You:    [♠K] [♦A]         Total: 21       │
-│          BLACKJACK!                         │
-│                                             │
-│  Chips: ●●●●● ○○○○○ (75)                  │
-│                                             │
-│  [Hit]  [Stand]  [Double]  [Split]  [Surr] │
-├─────────────────────────────────────────────┤
-│  Hand 1: [♠K] [♦A] = 21 (BLACKJACK)       │
-│  Payout: +75 gold (3:2)                     │
-└─────────────────────────────────────────────┘
-```
+<!-- ASCII UI mockup removed in favor of prose description: see preceding/following sections. -->
 
 **Card Rendering:**
 
@@ -265,29 +194,7 @@ Text:         A♠ K♥ 10♦ 7♣
 
 **UI/UX:**
 
-```
-┌─────────────────────────────────────────────┐
-│  POKER - 5-Card Draw         Pot: 275 gold │
-├─────────────────────────────────────────────┤
-│  Players:                                   │
-│  [NPC: Elena]  Bet: 25  │  [NPC: Grak]    │
-│  [NPC: Mira]   Bet: 50  │  [You]          │
-├─────────────────────────────────────────────┤
-│  Your Hand:                                 │
-│  [♠K] [♥K] [♦K] [♣A] [♠9]                │
-│                                             │
-│  Phase: Draw (choose cards to replace)      │
-│  ☑ [♠K] ☑ [♥K] ☑ [♦K] ☐ [♣A] ☐ [♠9]   │
-│                                             │
-│  [Draw]  [Check]  [Bet 50]  [Raise 100]    │
-│  [Fold]  [All-In]                           │
-├─────────────────────────────────────────────┤
-│  NPC Tells:                                 │
-│  Elena: "She adjusts her collar." (nervous) │
-│  Grak: "He grins." (strong hand)            │
-│  Mira: "She taps the table." (bluffing)     │
-└─────────────────────────────────────────────┘
-```
+<!-- ASCII UI mockup removed in favor of prose description: see preceding/following sections. -->
 
 **NPC Tells System:**
 
@@ -338,22 +245,7 @@ Personality → Tell Mapping:
 
 **UI/UX:**
 
-```
-┌─────────────────────────────────────────────┐
-│  BACCARAT                       Bet: 100g   │
-├─────────────────────────────────────────────┤
-│  Player: [♠7] [♥2] = 9    NATURAL!         │
-│  Banker: [♦K] [♣5] = 5                     │
-│                                             │
-│  "Player wins with a natural 9!"            │
-│                                             │
-│  [Bet Player]  [Bet Banker]  [Bet Tie]     │
-├─────────────────────────────────────────────┤
-│  Road Map (trend):                          │
-│  P B B P T P B B P P B                     │
-│  ● ○ ○ ● ○ ● ○ ○ ● ● ○                    │
-└─────────────────────────────────────────────┘
-```
+<!-- ASCII UI mockup removed in favor of prose description: see preceding/following sections. -->
 
 **Chat Logic:**
 
@@ -383,18 +275,7 @@ Personality → Tell Mapping:
 
 **UI/UX:**
 
-```
-┌─────────────────────────────────────────────┐
-│  WAR                           Cards: 26/52 │
-├─────────────────────────────────────────────┤
-│  You:  [♠Q]  vs  Goblin: [♥8]              │
-│                                             │
-│  You win! Q > 8                             │
-│  Cards: You 28 │ Goblin 24                  │
-│                                             │
-│  [Flip]                                     │
-└─────────────────────────────────────────────┘
-```
+<!-- ASCII UI mockup removed in favor of prose description: see preceding/following sections. -->
 
 **Chat Logic:**
 
@@ -426,22 +307,7 @@ Personality → Tell Mapping:
 
 **UI/UX:**
 
-```
-┌─────────────────────────────────────────────┐
-│  COIN FLIP                     Streak: 3    │
-├─────────────────────────────────────────────┤
-│                                             │
-│           🪙                                │
-│         (spinning)                          │
-│                                             │
-│  [Heads]  [Tails]  [Cash Out]              │
-│                                             │
-│  Stake: 100 gold │ Potential: 200 gold      │
-├─────────────────────────────────────────────┤
-│  History: H H T H H H (current streak: 3)  │
-│  Streak Bonus: +50 gold at 3 wins!         │
-└─────────────────────────────────────────────┘
-```
+<!-- ASCII UI mockup removed in favor of prose description: see preceding/following sections. -->
 
 **Chat Logic:**
 
@@ -477,21 +343,7 @@ Personality → Tell Mapping:
 
 **UI/UX:**
 
-```
-┌─────────────────────────────────────────────┐
-│  HIGHER/LOWER                 Streak: 4     │
-├─────────────────────────────────────────────┤
-│                                             │
-│  Current Card: [♥7]                         │
-│                                             │
-│  Next card: Higher or Lower?                │
-│                                             │
-│  [Higher ↑]  [Lower ↓]  [Cash Out (810g)]  │
-├─────────────────────────────────────────────┤
-│  History: L→H→H→H→H (streak: 4)           │
-│  Stake: 100g │ Current Value: 810g          │
-└─────────────────────────────────────────────┘
-```
+<!-- ASCII UI mockup removed in favor of prose description: see preceding/following sections. -->
 
 **Chat Logic:**
 
@@ -532,22 +384,7 @@ Scatter:   ⭐ (3x = free spins)
 
 **UI/UX:**
 
-```
-┌─────────────────────────────────────────────┐
-│  SLOTS                         Bet: 10g     │
-├─────────────────────────────────────────────┤
-│  ┌─────┬─────┬─────┐                       │
-│  │ 🍒  │ 🍒  │ 🍒  │   JACKPOT! 1000g     │
-│  │ 🍋  │ 🍋  │ 🍋  │                       │
-│  │ 🍊  │ 🍊  │ 🍊  │                       │
-│  └─────┴─────┴─────┘                       │
-│                                             │
-│  [Spin]  [Auto-Spin x10]  [Max Bet]        │
-├─────────────────────────────────────────────┤
-│  Balance: 500g │ Total Won: 1200g          │
-│  History: 🍋🍋🍋 (10g) 🍒🍒🍒 (1000g)    │
-└─────────────────────────────────────────────┘
-```
+<!-- ASCII UI mockup removed in favor of prose description: see preceding/following sections. -->
 
 **Chat Logic:**
 
@@ -576,25 +413,7 @@ Scatter:   ⭐ (3x = free spins)
 
 **UI/UX:**
 
-```
-┌─────────────────────────────────────────────┐
-│  ROULETTE                      Bet: 50g     │
-├─────────────────────────────────────────────┤
-│  ┌─────────────────────────────┐            │
-│  │      🎡 (spinning)         │            │
-│  │  0  1  2  3  4  5  6      │            │
-│  │  7  8  9  10 11 12 13     │            │
-│  │  14 15 16 17 18 19 20     │            │
-│  │  21 22 23 24 25 26 27     │            │
-│  │  28 29 30 31 32 33 34 35  │            │
-│  └─────────────────────────────┘            │
-│                                             │
-│  [Red]  [Black]  [Odd]  [Even]  [Number_]  │
-├─────────────────────────────────────────────┤
-│  Result: 17 (Black, Odd)                    │
-│  Your bet: Black → Win 50g!                 │
-└─────────────────────────────────────────────┘
-```
+<!-- ASCII UI mockup removed in favor of prose description: see preceding/following sections. -->
 
 **Chat Logic:**
 
@@ -627,27 +446,7 @@ Scatter:   ⭐ (3x = free spins)
 
 **UI/UX:**
 
-```
-┌─────────────────────────────────────────────┐
-│  GWENT                     Round 2/3        │
-├─────────────────────────────────────────────┤
-│  Opponent Score: 24  │  Your Score: 31      │
-│                                             │
-│  ┌─ Siege (x2) ─────────────────────────┐  │
-│  │ [12] [8]                              │  │
-│  ├─ Ranged (x1) ────────────────────────┤  │
-│  │ [6]                                   │  │
-│  ├─ Melee (x3) ─────────────────────────┤  │
-│  │ [10] [7] [5]                          │  │
-│  └───────────────────────────────────────┘  │
-│                                             │
-│  Your Hand:                                 │
-│  [Melee 9] [Ranged 4] [Siege 11] [Spy 0]  │
-│  [Weather ❄️] [Scorch 🔥] [Medic 💊]      │
-│                                             │
-│  [Play Card]  [Pass]  [Forfeit]            │
-└─────────────────────────────────────────────┘
-```
+<!-- ASCII UI mockup removed in favor of prose description: see preceding/following sections. -->
 
 **Chat Logic:**
 
@@ -685,24 +484,7 @@ Scatter:   ⭐ (3x = free spins)
 
 **UI/UX:**
 
-```
-┌─────────────────────────────────────────────┐
-│  TRIVIA                       Streak: 2     │
-├─────────────────────────────────────────────┤
-│  Question 5/10          Category: Lore      │
-│                                             │
-│  "Who forged the Shadowblade?"             │
-│                                             │
-│  [A] The Dwarven King                       │
-│  [B] The Shadow Mage ✓                      │
-│  [C] The Elven Smith                        │
-│  [D] The Dragon                             │
-│                                             │
-│  Time: ████████░░ (8s)                      │
-├─────────────────────────────────────────────┤
-│  Correct! +100 gold (streak bonus: +50)     │
-└─────────────────────────────────────────────┘
-```
+<!-- ASCII UI mockup removed in favor of prose description: see preceding/following sections. -->
 
 **Chat Logic:**
 
@@ -739,26 +521,7 @@ Scatter:   ⭐ (3x = free spins)
 
 **UI/UX:**
 
-```
-┌─────────────────────────────────────────────┐
-│  MEMORY MATCH                  Pairs: 5/8   │
-├─────────────────────────────────────────────┤
-│  ┌────┬────┬────┬────┐                     │
-│  │ 🗡️ │ ?  │ ?  │ 🛡️ │                     │
-│  ├────┼────┼────┼────┤                     │
-│  │ ?  │ 🗡️ │ ?  │ ?  │                     │
-│  ├────┼────┼────┼────┤                     │
-│  │ ?  │ ?  │ 🛡️ │ ?  │                     │
-│  ├────┼────┼────┼────┤                     │
-│  │ ?  │ ?  │ ?  │ ?  │                     │
-│  └────┴────┴────┴────┘                     │
-│                                             │
-│  [Flip Card] (click position)              │
-├─────────────────────────────────────────────┤
-│  You: 5 pairs │ NPC: 3 pairs               │
-│  Time: 2:15                                │
-└─────────────────────────────────────────────┘
-```
+<!-- ASCII UI mockup removed in favor of prose description: see preceding/following sections. -->
 
 **Chat Logic:**
 
@@ -790,25 +553,7 @@ Scatter:   ⭐ (3x = free spins)
 
 **UI/UX:**
 
-```
-┌─────────────────────────────────────────────┐
-│  TRUTH OR DARE               Elena's Turn   │
-├─────────────────────────────────────────────┤
-│  Elena: "Truth or dare?"                    │
-│                                             │
-│  [Truth]  [Dare]  [Pass (lose trust)]      │
-├─────────────────────────────────────────────┤
-│  You chose: Truth                           │
-│  Elena: "Have you ever killed someone?"     │
-│                                             │
-│  [Answer honestly]  [Lie (if caught: -20)]  │
-├─────────────────────────────────────────────┤
-│  History:                                   │
-│  Round 1: You truth (Elena +5 intimacy)     │
-│  Round 2: Elena dare (you +3 mood)          │
-│  Round 3: You truth (Elena +10 intimacy)    │
-└─────────────────────────────────────────────┘
-```
+<!-- ASCII UI mockup removed in favor of prose description: see preceding/following sections. -->
 
 **Chat Logic:**
 
@@ -906,20 +651,7 @@ const scene: VNScene = {
 
 **VN UI Overlay:**
 
-```
-┌─────────────────────────────────────────────┐
-│  [VN Scene Background]                      │
-│  ┌─────────────────────────────────────┐    │
-│  │  [Game UI Overlay]                  │    │
-│  │  (semi-transparent background)      │    │
-│  │  Game controls render here          │    │
-│  └─────────────────────────────────────┘    │
-│                                             │
-│  "Elena leans forward. 'Your bet, stranger.'"│
-│                                             │
-│  [Continue]  [Game Menu]                    │
-└─────────────────────────────────────────────┘
-```
+<!-- ASCII UI mockup removed in favor of prose description: see preceding/following sections. -->
 
 ### Battle Mode
 
@@ -950,21 +682,7 @@ NPC challenges → poker → reputation/relationship effects
 
 **Battle UI Integration:**
 
-```
-┌─────────────────────────────────────────────┐
-│  BATTLE: Goblin Ambush                      │
-├─────────────────────────────────────────────┤
-│  Goblin HP: ██████░░░░ (60%)               │
-│  Your HP: ██████████ (100%)                 │
-├─────────────────────────────────────────────┤
-│  ┌─ DICE DUEL ────────────────────────────┐│
-│  │ You: [🎲5] vs Goblin: [🎲3]            ││
-│  │ You win! Damage: 2                      ││
-│  └────────────────────────────────────────┘│
-├─────────────────────────────────────────────┤
-│  [Attack] [Magic] [Item] [Flee] [Game]     │
-└─────────────────────────────────────────────┘
-```
+<!-- ASCII UI mockup removed in favor of prose description: see preceding/following sections. -->
 
 ---
 

@@ -36,24 +36,16 @@ for end users. Hot-reload enables fast iteration during development.
 
 ### Architecture Overview
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                    Application Code                      │
-│  (TypeScript — calls into module API, unaware of native) │
-└──────────────────────┬──────────────────────────────────┘
-                       │
-┌──────────────────────▼──────────────────────────────────┐
-│                  Module Loader                            │
-│  (Bun FFI / fallback to pure JS)                        │
-└──────┬──────────────────────────────┬───────────────────┘
-       │                              │
-       │ Native                       │ Pure JS Fallback
-       │                              │
-┌──────▼──────────┐         ┌────────▼───────────────────┐
-│ Pre-compiled    │         │ Pure JavaScript             │
-│ Binary          │         │ (wasm/js)                   │
-│ (per-platform)  │         │                             │
-└─────────────────┘         └─────────────────────────────┘
+```mermaid
+flowchart TB
+    AC["Application Code<br/>(TypeScript - calls into module API, unaware of native)"]
+    ML["Module Loader<br/>(Bun FFI / fallback to pure JS)"]
+    PB["Pre-compiled Binary<br/>(per-platform)"]
+    JS["Pure JavaScript<br/>(wasm/js)"]
+
+    AC --> ML
+    ML -->|Native| PB
+    ML -->|Pure JS Fallback| JS
 ```
 
 ### Module Interface

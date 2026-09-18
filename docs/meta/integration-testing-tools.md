@@ -133,19 +133,8 @@ ts-rest, Dredd, Pact, any React/Next.js/Vue/Svelte-specific tool.
 
 ## 6. Implementation Path
 
-```
-Phase 1: Zod Schemas
-  ├── Add zod, create src/schemas/, define request/response schemas
-  ├── Wire validation into route handlers (replace parseBody)
-  └── Add response schema validation to E2E tests
-
-Phase 2: OpenAPI
-  ├── Add @asteasolutions/zod-to-openapi, register schemas + routes
-  ├── Serve Swagger UI at /api/docs
-  └── Add schemathesis to CI
-
-Phase 3: Browser Test Improvements
-  ├── Create playwright.config.ts
-  ├── Add htmx/alpine assertion helpers
-  └── Expand browser test coverage
+```mermaid
+flowchart LR
+  P1["Phase 1: Zod Schemas<br/>Add zod + src/schemas/<br/>Wire validation into routes<br/>Add response schema validation to E2E tests"] --> P2["Phase 2: OpenAPI<br/>Add zod-to-openapi<br/>Serve Swagger UI at /api/docs<br/>Add schemathesis in CI"]
+  P2 --> P3["Phase 3: Browser Test Improvements<br/>Create playwright.config.ts<br/>Add htmx/alpine assertion helpers<br/>Expand browser test coverage"]
 ```

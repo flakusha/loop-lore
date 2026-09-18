@@ -308,16 +308,6 @@ on mobile).
 
 Non-image assets render as file cards:
 
-```
-┌─────────────────────────────────────────┐
-│ Character says something...             │
-│                                         │
-│ ┌─────────────────────────────────────┐ │
-│ │ 📄 character_sheet.pdf      2.4 MB  │ │
-│ │    PDF document · Click to download │ │
-│ └─────────────────────────────────────┘ │
-└─────────────────────────────────────────┘
-```
 
 - File icon varies by type (📄 PDF, 📝 text, 📊 spreadsheet, etc.)
 - Shows filename, size, type
@@ -326,16 +316,6 @@ Non-image assets render as file cards:
 
 ### Audio/Video Display
 
-```
-┌─────────────────────────────────────────┐
-│ "Listen to this recording..."           │
-│                                         │
-│ ┌─────────────────────────────────────┐ │
-│ │ ▶ ──●────────────── 0:42 / 2:15    │ │
-│ │    ambient_forest.mp3     🔊 3.2 MB │ │
-│ └─────────────────────────────────────┘ │
-└─────────────────────────────────────────┘
-```
 
 - Audio: play/pause, progress bar, volume
 - Video: play/pause, progress, fullscreen toggle

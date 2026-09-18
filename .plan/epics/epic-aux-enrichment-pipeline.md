@@ -89,39 +89,27 @@ Audit of `src/` produced these actionable gaps. Severity: 🔴 high / 🟡 mediu
 | **Parallel** | Runs alongside main gen    | Doesn't block message flow                             |
 
 ## Architecture
+```mermaid
+flowchart TD
+  User["User message"] --> Pipeline["AUX LLM Pipeline (parallel, sub 5s)"]
+  subgraph classifiers
+    TC["Transition Classifier"] --> Bag
+    MC["Mood Classifier"] --> Bag
+    ME["Memory Extractor"] --> Bag
+    EI["Environment Interactor"] --> Bag
+    PC["Personality Check"] --> Bag
+    GT["GM Tool Detector"] --> Bag
+  end
+  Pipeline --> TC
+  Pipeline --> MC
+  Pipeline --> ME
+  Pipeline --> EI
+  Pipeline --> PC
+  Pipeline --> GT
+  Bag["Enrichment Bag<br/>transitions, mood, memory,<br/>environment, personality, tools"] --> MainGen["Main Generation (with enriched context)"]
+  MainGen --> Out["Response + Side Effects (DB writes for enrichment results)"]
+```
 
-```
-User message
-  ↓
-┌─────────────────────────────────────────────┐
-│ AUX LLM Pipeline (parallel, <5s)            │
-│                                             │
-│  ┌─────────────┐  ┌─────────────┐          │
-│  │ Transition  │  │   Mood      │          │
-│  │ Classifier  │  │  Classifier │          │
-│  └──────┬──────┘  └──────┬──────┘          │
-│         │                │                  │
-│  ┌──────┴──────┐  ┌──────┴──────┐          │
-│  │  Memory     │  │ Environment │          │
-│  │  Extractor  │  │ Interactor  │          │
-│  └──────┬──────┘  └──────┬──────┘          │
-│         │                │                  │
-│  ┌──────┴──────┐  ┌──────┴──────┐          │
-│  │  Personality│  │   GM Tool   │          │
-│  │  Check      │  │  Detector   │          │
-│  └──────┬──────┘  └──────┬──────┘          │
-│         │                │                  │
-│         └───────┬────────┘                  │
-│                 ↓                           │
-│         Enrichment Bag                      │
-│    { transitions, mood, memory,             │
-│      environment, personality, tools }      │
-└─────────────────────────────────────────────┘
-  ↓
-Main Generation (with enriched context)
-  ↓
-Response + Side Effects (DB writes for enrichment results)
-```
 
 ## Enrichment Tasks
 
