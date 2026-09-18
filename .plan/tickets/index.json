@@ -21101,6 +21101,19 @@
     "status": "done",
     "git_issue": "5fb353d"
   },
+  "TASK-PLAN-FORMAT-MIGRATION-BOLD-KEYWORD-SECTIONS-SPDX-ORPHAN-REF-": {
+    "hash": "1cfb6b2",
+    "git_issue": "1cfb6b2",
+    "extid": "TASK-PLAN-FORMAT-MIGRATION-BOLD-KEYWORD-SECTIONS-SPDX-ORPHAN-REF-",
+    "type": "TASK",
+    "title": "Plan-format migration: bold-keyword sections + SPDX + orphan ref cleanup across legacy tickets/epics",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-plan-format-migration-bold-keyword-sections-spdx-orphan-ref-.md",
+    "status": "open"
+  },
   "TASK-PLAN-LINT-TS-DEBT": {
     "hash": "cbb3073",
     "extid": "TASK-PLAN-LINT-TS-DEBT",
