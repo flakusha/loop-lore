@@ -108,7 +108,7 @@ function startDocsServer(): DocsServer {
       // Serve dist at /docs/* (matches vitepress `base: '/docs/'`).
       if (url.pathname === "/docs" || url.pathname === "/docs/") {
         return new Response(Bun.file(join(DIST_DIR, "index.html",),), {
-          headers: { "Content-Type": MIME.html, },
+          headers: { "Content-Type": MIME.html as string, },
         },);
       }
       if (url.pathname.startsWith("/docs/",)) {
