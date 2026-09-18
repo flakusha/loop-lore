@@ -27,7 +27,7 @@ actual world state: lore, location facts, existing inhabitants, items, and speci
 - **Context bundle:** seeded chat context = detected entity info (today) + world
   lore entries + introducing location details (population, connections) + existing
   entities at that location (characters present, items, species habitat matches)
-  + the story window around the introduction point.
+  and the story window around the introduction point.
 - **Lore access reuse:** lore filtering follows the creating user's access profile
   (`epic-character-npc-lore-access.md`); no lore the user cannot access enters the
   creation context.
