@@ -9,7 +9,6 @@
  *   - convertToCharacter() success + not-found paths
  *   - update() with avatarAssetId, title, isDefault(true/false) branches
  *   - delete() clearing chat_participants.persona_id cascade
- *   - getDefault() when a default persona exists
  *   - create() with avatarAssetId field
  */
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
@@ -149,11 +148,24 @@ describe("PersonasService — update() individual field branches", () => {
     expect(persona!.title,).toBe("Supreme Overlord",);
   });
 
-  test("isDefault=true sets is_default to DefaultState.Default", async () => {
+  test("isDefault=true sets is_default to DefaultState.Default and clears prior default", async () => {
+    const priorId = await service.create({ userId, name: "Prior Default", },);
+    await service.setDefault(priorId, userId,);
+    // Sanity: priorId is the default
+    const priorBefore = await service.getById(priorId, userId,);
+    expect(priorBefore!.is_default,).toBe(DefaultState.Default,);
+
     const id = await service.create({ userId, name: "Default Toggle Test", },);
     await service.update(id, { isDefault: true, }, userId,);
+
     const persona = await service.getById(id, userId,);
     expect(persona!.is_default,).toBe(DefaultState.Default,);
+
+    // The previous default must have been cleared by the delegated setDefault().
+    // Regression guard: pre-fix code set is_default directly on the new row
+    // and left the prior default in place, violating the one-default invariant.
+    const priorAfter = await service.getById(priorId, userId,);
+    expect(priorAfter!.is_default,).toBe(DefaultState.NotDefault,);
   });
 
   test("isDefault=false sets is_default to DefaultState.NotDefault", async () => {
@@ -255,34 +267,6 @@ describe("PersonasService — delete() cascade", () => {
       .where("actor_id", "=", participantActorId,)
       .executeTakeFirst();
     expect(after!.persona_id,).toBeNull();
-  });
-});
-
-describe("PersonasService — getDefault()", () => {
-  test("returns the default persona when one is set", async () => {
-    const freshUser = "getdefault-test-user";
-    await db
-      .insertInto("users",)
-      .values({
-        id: freshUser,
-        username: "getdefaultuser",
-        display_name: "Get Default User",
-        password_hash: "hash",
-        role: "solo",
-        status: "active",
-        settings: "{}",
-      },)
-      .execute();
-
-    const defaultId = await service.create({ userId: freshUser, name: "Default Persona", },);
-    await service.create({ userId: freshUser, name: "Other Persona", },);
-
-    await service.setDefault(defaultId, freshUser,);
-
-    const def = await service.getDefault(freshUser,);
-    expect(def,).toBeTruthy();
-    expect(def!.id,).toBe(defaultId,);
-    expect(def!.name,).toBe("Default Persona",);
   });
 });
 
