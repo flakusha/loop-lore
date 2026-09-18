@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Open
+**Status:** ✅ Done
 **Priority:** low
 **Priority Tier:** P6+
 **Effort:** Trivial
@@ -41,5 +41,16 @@ if (conflict) {
 
 ## Acceptance Criteria
 
-- [ ] Logic unchanged
-- [ ] No new test required (clarity-only change)
+- [x] Logic unchanged
+- [x] No new test required (clarity-only change)
+
+## Resolution (2026-09-18)
+
+**Status at scan**: Ticket stale w.r.t. HEAD. `src/chat/service/participants.ts:53-63` already carries both explicit `else` branches the ticket requested:
+
+- Line 58–60: `else { /* no conflict — proceed to update impersonation for this user */ }`
+- Line 61–63: `else { /* chat has no world_id — no cross-world conflict to check */ }`
+
+Likely landed via a prior reconcile sweep or scout-batch follow-up; the ticket never propagated to its tracked resolution state. No code change required.
+
+**Verification**: `bun test src/chat/service/participants.test.ts` → 7 pass / 0 fail. No regression.
