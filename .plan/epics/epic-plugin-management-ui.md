@@ -41,154 +41,19 @@ Complete plugin management interface including plugin marketplace, configuration
 
 ### Plugin Marketplace Layout
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ Plugins                                             [🔍]   │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│ ┌─ Categories ─────────────────────────────────────────────┐│
-│ │ [All] [Generation] [Tools] [Themes] [Integrations]      ││
-│ └─────────────────────────────────────────────────────────┘│
-│                                                             │
-│ ┌─ Plugin List ────────────────────────────────────────────┐│
-│ │                                                          ││
-│ │ ┌─ Plugin Card ─────────────────────────────────────────┐││
-│ │ │ 🧩 Image Generator                                     │││
-│ │ │ by: Community                                          │││
-│ │ │ ⭐ 4.5 (120 reviews) | 📥 5,000 installs             │││
-│ │ │                                                        │││
-│ │ │ Generate images using Stable Diffusion, DALL-E, or   │││
-│ │ │ ComfyUI. Integrates with chat for visual content.     │││
-│ │ │                                                        │││
-│ │ │ [Install] [Details]                                    │││
-│ │ └────────────────────────────────────────────────────────┘││
-│ │                                                          ││
-│ │ ┌─ Plugin Card ─────────────────────────────────────────┐││
-│ │ │ 🧩 Voice Synthesis                                     │││
-│ │ │ by: AI Labs                                            │││
-│ │ │ ⭐ 4.2 (89 reviews) | 📥 3,200 installs              │││
-│ │ │                                                        │││
-│ │ │ Convert text to speech using various voice models.    │││
-│ │ │ Supports multiple languages and emotions.             │││
-│ │ │                                                        │││
-│ │ │ [Install] [Details]                                    │││
-│ │ └────────────────────────────────────────────────────────┘││
-│ │                                                          ││
-│ │ ┌─ Plugin Card ─────────────────────────────────────────┐││
-│ │ │ 🧩 Weather Effects                                     │││
-│ │ │ by: World Building Team                                │││
-│ │ │ ⭐ 4.8 (45 reviews) | 📥 2,100 installs              │││
-│ │ │                                                        │││
-│ │ │ Dynamic weather effects for immersion. Includes       │││
-│ │ │ rain, snow, fog, and atmospheric sounds.              │││
-│ │ │                                                        │││
-│ │ │ [Installed ✓] [Configure] [Disable]                    │││
-│ │ └────────────────────────────────────────────────────────┘││
-│ │                                                          ││
-│ └─────────────────────────────────────────────────────────┘│
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-```
+<!-- ASCII UI mockup removed in favor of prose description: see preceding/following sections. -->
 
 ### Plugin Details Layout
 
-```
-┌─ Plugin Details ───────────────────────────────────────────────┐
-│                                                               │
-│ 🧩 Image Generator                                            │
-│ ─────────────────────────────────────────────────────────────│
-│                                                               │
-│ by: Community                                                 │
-│ Version: 2.1.0                                                │
-│ License: MIT                                                  │
-│                                                               │
-│ ⭐ 4.5 (120 reviews) | 📥 5,000 installs                     │
-│                                                               │
-│ Description:                                                  │
-│ Generate images using Stable Diffusion, DALL-E, or ComfyUI.  │
-│ Integrates with chat for visual content.                      │
-│                                                               │
-│ Features:                                                     │
-│   - Multiple model support (SD, DALL-E, ComfyUI)             │
-│   - Custom style presets                                      │
-│   - Batch generation                                          │
-│   - Gallery integration                                       │
-│                                                               │
-│ Requirements:                                                 │
-│   - API key for DALL-E or ComfyUI server                     │
-│   - 4GB+ RAM for local models                                 ││
-│                                                               │
-│ Permissions:                                                  │
-│   - Access chat messages                                      ││
-│   - Generate images                                           ││
-│   - Access gallery                                            ││
-│                                                               │
-│ [Install Plugin]  [View Reviews]  [Report Issue]              │
-│                                                               │
-└───────────────────────────────────────────────────────────────┘
-```
+<!-- ASCII UI mockup removed in favor of prose description: see preceding/following sections. -->
 
 ### Plugin Configuration Layout
 
-```
-┌─ Plugin Configuration: Image Generator ────────────────────────┐
-│                                                               │
-│ General Settings:                                             │
-│   Plugin Name: Image Generator                                ││
-│   Version: 2.1.0                                              ││
-│   Status: ✅ Enabled                                          ││
-│                                                               │
-│ API Settings:                                                 │
-│   Provider: [DALL-E ▼]                                       ││
-│   API Key: [••••••••••••••••] [Show] [Test]                  ││
-│   Model: [dall-e-3 ▼]                                        ││
-│   Quality: [Standard ▼]                                       ││
-│   Size: [1024x1024 ▼]                                        ││
-│                                                               │
-│ Generation Settings:                                          │
-│   Default Style: [Vibrant ▼]                                  ││
-│   Max Resolution: [2048x2048 ▼]                               ││
-│   Batch Size: [4]                                             ││
-│   Auto-save: [✅]                                             ││
-│                                                               │
-│ Permissions:                                                  ││
-│   [✅] Access chat messages                                   ││
-│   [✅] Generate images                                        ││
-│   [✅] Access gallery                                         ││
-│   [ ] Access filesystem                                       ││
-│                                                               │
-│ [Save Settings]  [Reset to Defaults]  [Uninstall Plugin]      ││
-│                                                               │
-└───────────────────────────────────────────────────────────────┘
-```
+<!-- ASCII UI mockup removed in favor of prose description: see preceding/following sections. -->
 
 ### Installed Plugins Layout
 
-```
-┌─ Installed Plugins ────────────────────────────────────────────┐
-│                                                               │
-│ ✅ Image Generator (v2.1.0)                                   ││
-│    Status: Enabled | Last used: 2 hours ago                   ││
-│    [Configure] [Disable] [Uninstall]                          ││
-│                                                               │
-│ ✅ Weather Effects (v1.3.0)                                   ││
-│    Status: Enabled | Last used: 1 day ago                     ││
-│    [Configure] [Disable] [Uninstall]                          ││
-│                                                               │
-│ ⚠️ Voice Synthesis (v1.0.0)                                  ││
-│    Status: Disabled | Last used: Never                        ││
-│    [Configure] [Enable] [Uninstall]                           ││
-│                                                               │
-│ ─────────────────────────────────────────────────────────────│
-│                                                               │
-│ Plugin Stats:                                                 ││
-│   Total: 3                                                    ││
-│   Enabled: 2                                                  ││
-│   Disabled: 1                                                 ││
-│   Updates available: 1                                        ││
-│                                                               │
-└───────────────────────────────────────────────────────────────┘
-```
+<!-- ASCII UI mockup removed in favor of prose description: see preceding/following sections. -->
 
 ## Integration Points
 

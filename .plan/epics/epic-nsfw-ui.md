@@ -41,94 +41,15 @@ Complete NSFW interaction interface for intimacy system, body state display, hea
 
 ### Intimacy Interface Layout
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ Intimacy: Private Chamber                                   │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│ ┌─ Partners ───────────────────────────────────────────────┐│
-│ │ [Alice] [Bob] [Select Partner...]                        ││
-│ └─────────────────────────────────────────────────────────┘│
-│                                                             │
-│ ┌─ Actions ────────────────────────────────────────────────┐│
-│ │ 💋 Kiss  🤗 Embrace  💬 Talk  🎭 Play  💤 Rest          ││
-│ │                                                         ││
-│ │ Selected: 💋 Kiss                                        ││
-│ │ Effects: +10 Affection, +5 Mood                         ││
-│ │ Duration: 5 minutes                                     ││
-│ │ Requirements: None                                      ││
-│ └─────────────────────────────────────────────────────────┘│
-│                                                             │
-│ ┌─ Body State ─────────────────────────────────────────────┐│
-│ │ ❤️ Health: 95%  😊 Mood: 80%  ⚡ Energy: 70%            ││
-│ │ 🩺 Status: Healthy                                      ││
-│ └─────────────────────────────────────────────────────────┘│
-│                                                             │
-│                          [Cancel]  [Confirm Action]         │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-```
+<!-- ASCII UI mockup removed in favor of prose description: see preceding/following sections. -->
 
 ### Body State Widget
 
-```
-┌─ Body State: Alice ──────────────────────────────────────────┐
-│                                                               │
-│ ❤️ Health                                                     │
-│ ████████████████████░░░░ 95%                                  │
-│                                                               │
-│ 😊 Mood                                                       │
-│ ████████████████░░░░░░░░ 80%                                  │
-│                                                               │
-│ ⚡ Energy                                                     │
-│ ██████████████░░░░░░░░░░ 70%                                  │
-│                                                               │
-│ 🩺 Status                                                     │
-│ [Healthy] [Well-Rested] [Happy]                               │
-│                                                               │
-│ 📊 Stats                                                      │
-│ Affection: 85/100                                             │
-│ Trust: 90/100                                                 │
-│ Comfort: 75/100                                               │
-│                                                               │
-└───────────────────────────────────────────────────────────────┘
-```
+<!-- ASCII UI mockup removed in favor of prose description: see preceding/following sections. -->
 
 ### Housing Management Layout
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ Housing: Player Home                      [+ Add Room]      │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│ ┌─ Rooms ──────────────────────────────────────────────────┐│
-│ │ 🛏️ Bedroom (2 beds, 1 storage)                          ││
-│ │ 🍳 Kitchen (stove, fridge, table)                        ││
-│ │ 📚 Library (bookshelf, desk, chair)                      ││
-│ │ 🏋️ Training Room (dummies, rack)                         ││
-│ └─────────────────────────────────────────────────────────┘│
-│                                                             │
-│ ┌─ Selected: Bedroom ─────────────────────────────────────┐│
-│ │                                                         ││
-│ │ Furniture:                                              ││
-│ │ [Bed] [Wardrobe] [Nightstand] [Mirror]                  ││
-│ │                                                         ││
-│ │ Storage: 12/20 slots                                    ││
-│ │ Items: [Blanket] [Pillow] [Clothes]                     ││
-│ │                                                         ││
-│ │ Effects: +10% Rest Speed, +5% Comfort                   ││
-│ │                                                         ││
-│ │ [Edit] [Move] [Remove]                                  ││
-│ └─────────────────────────────────────────────────────────┘│
-│                                                             │
-│ ┌─ Global Effects ─────────────────────────────────────────┐│
-│ │ 🏠 Home Bonus: +10% All Stats                           ││
-│ │ 🔒 Privacy: High                                        ││
-│ │ 💰 Maintenance: 50 gold/day                             ││
-│ └─────────────────────────────────────────────────────────┘│
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-```
+<!-- ASCII UI mockup removed in favor of prose description: see preceding/following sections. -->
 
 ## Integration Points
 

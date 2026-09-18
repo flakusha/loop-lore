@@ -5,31 +5,21 @@
 
 ## Architecture Overview
 
-```
-��─────────────────────────────────────────────────────────────────��
-│                        Loop-Lore Application                     │
-│  ��─────────────────��    ��─────────────────��    ��─────────────��  │
-│  │   Chat Server   │    │  Asset Service  │    │  LLM Proxy  │  │
-│  │  (Elysia/Bun)   │    │  (Images/Audio) │    │  (llama.cpp)│  │
-│  └────────��────────��    └────────��────────��    └──────��──────��  │
-��───────────��──────────────────────��────────────────────��──────────��
-            │                      │                    │
-            ��                      ��                    ��
-��─────────────────────────────────────────────────────────────────��
-│                    External GPU Services                         │
-│  ��─────────────────────────��  ��─────────────────────────────��  │
-│  │   RunPod ComfyUI        │  │   RunPod/Lambda LLM         │  │
-│  │   (runpod-comfy repo)   │  │   (llama-swap/llama.cpp)    │  │
-│  │                         │  │                             │  │
-│  │ • SDXL                  │  │ • Llama-2/3                 │  │
-│  │ • Anima (animation)     │  │ • LFM models                │  │
-│  │ • Krea 2                │  │ • Custom fine-tunes         │  │
-│  │ • Minimax H3 (video)    │  │                             │  │
-│  │                         │  │ GPU: RTX 4090/5090/PRO 6000 │  │
-│  │ GPU: RTX 4090/5090/     │  │                             │  │
-│  │ PRO 6000                │  │                             │  │
-│  └─────────────────────────��  └─────────────────────────────��  │
-��─────────────────────────────────────────────────────────────────��
+```mermaid
+flowchart TB
+    subgraph APP["Loop-Lore Application"]
+        CS["Chat Server<br/>(Elysia/Bun)"]
+        AS["Asset Service<br/>(Images/Audio)"]
+        LP["LLM Proxy<br/>(llama.cpp)"]
+    end
+    subgraph GPU["External GPU Services"]
+        RC["RunPod ComfyUI<br/>(runpod-comfy repo)<br/>SDXL, Anima, Krea 2, MiniMax H3<br/>GPU: RTX 4090/5090/PRO 6000"]
+        RL["RunPod/Lambda LLM<br/>(llama-swap/llama.cpp)<br/>Llama-2/3, LFM models, custom fine-tunes<br/>GPU: RTX 4090/5090/PRO 6000"]
+    end
+    CS --> RC
+    CS --> RL
+    AS --> RC
+    LP --> RL
 ```
 
 ## Service Separation

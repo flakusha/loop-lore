@@ -49,21 +49,13 @@ Ground truth (verified 2026-08-12):
   paying rewards. No existing infrastructure for this.
 
 ## Design
+```mermaid
+flowchart LR
+  Node["Contributor Node agent (GPU/CPU)"] -- "register/heartbeat" --> Hub["Platform Hub<br/>node registry, dispatcher + queue,<br/>provider integration, trust/validation,<br/>rewards ledger"]
+  Hub -- "task / result" --> Node
+  Hub -- "registerProvider(name, distributed)" --> Pipeline["existing generation pipeline<br/>resolveProvider then callWithFailover then circuit breaker"]
+```
 
-```
-┌────────────┐   register/heartbeat   ┌──────────────────────────┐
-│ Contributor│ ─────────────────────► │  Platform Hub            │
-│ Node agent │ ◄───────────────────── │  - node registry         │
-│ (GPU/CPU)  │   task / result        │  - dispatcher + queue    │
-└────────────┘                        │  - provider integration  │
-                                     │  - trust/validation      │
-                                     │  - rewards ledger        │
-                                     └──────────────────────────┘
-                                           │  registerProvider(name,"distributed")
-                                           ▼
-                              existing generation pipeline
-                              (resolveProvider → callWithFailover → circuit breaker)
-```
 
 ### Pillar 1 — Compute node agent (contributor side)
 

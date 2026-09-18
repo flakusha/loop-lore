@@ -110,28 +110,12 @@ interface TouchGesture {
 
 ### Mobile-Specific Patterns
 
-```
-┌─────────────────────────────────────────┐
-│ Mobile (<768px)                         │
-├─────────────────────────────────────────┤
-│                                         │
-│ ┌─ Header ──────────────────────────┐  │
-│ │ [☰] Title              [🔍] [👤] │  │
-│ └───────────────────────────────────┘  │
-│                                         │
-│ ┌─ Content ─────────────────────────┐  │
-│ │ Full-width, stacked layout        │  │
-│ │                                   │  │
-│ │ Cards: Full-width, 16px padding   │  │
-│ │ Lists: Full-width, swipe actions  │  │
-│ │ Forms: Full-width inputs          │  │
-│ └───────────────────────────────────┘  │
-│                                         │
-│ ┌─ Bottom Nav ──────────────────────┐  │
-│ │ [🏠] [💬] [🗺️] [🎒] [⚙️]         │  │
-│ └───────────────────────────────────┘  │
-│                                         │
-└─────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    M["Mobile (less than 768px)"]
+    M --> H["Header: [menu] Title [search] [profile]"]
+    M --> C["Content: Full-width, stacked layout<br/>Cards: Full-width, 16px padding<br/>Lists: Full-width, swipe actions<br/>Forms: Full-width inputs"]
+    M --> N["Bottom Nav: [home] [chat] [map] [bag] [settings]"]
 ```
 
 ### Desktop Keyboard Shortcuts

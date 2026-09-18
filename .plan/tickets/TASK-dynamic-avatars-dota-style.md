@@ -30,12 +30,13 @@ Dota 2 hero portraits:
 
 ### Animation Layers
 
-```
-Base Layer (VRM/Spine 2D)
-  ├── Idle animation (breathing, blinking)
-  ├── Expression layer (blend shapes / morph targets)
-  ├── Ambient particles (shader-based)
-  └── Audio layer (idle sounds, hover effects)
+```mermaid
+flowchart TD
+    BL["Base Layer (VRM/Spine 2D)"]
+    BL --> IA["Idle animation (breathing, blinking)"]
+    BL --> EL["Expression layer (blend shapes / morph targets)"]
+    BL --> AP["Ambient particles (shader-based)"]
+    BL --> AL["Audio layer (idle sounds, hover effects)"]
 ```
 
 ### Animation States

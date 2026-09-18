@@ -88,15 +88,16 @@ interface QuestionContext {
 
 ### Question Flow
 
-```
-Question Flow:
-├── Generate narrative segment
-├── Present question with options
-├── Player selects option
-├── Process consequences
-├── Update game state
-├── Generate next narrative
-└── Repeat
+```mermaid
+flowchart TD
+    QF["Question Flow"]
+    QF --> GNS["Generate narrative segment"]
+    GNS --> PQI["Present question with options"]
+    PQI --> PSO["Player selects option"]
+    PSO --> PC["Process consequences"]
+    PC --> UGS["Update game state"]
+    UGS --> GNN["Generate next narrative"]
+    GNN --> QF
 ```
 
 ### LLM Integration

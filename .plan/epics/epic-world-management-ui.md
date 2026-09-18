@@ -51,163 +51,19 @@ Complete world and location management interface, including world CRUD, location
 
 ### World Dashboard Layout
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ World: The Forgotten Realms                    ⚙️ Settings │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│ ┌─ Conditions ─────────────────────────────────────────────┐│
-│ │ 🌙 Night  🌧️ Rainy  🍂 Autumn  ⏰ Day 45, 14:30        ││
-│ │ Global Modifiers: +10% Stealth, -20% Fire Damage        ││
-│ └─────────────────────────────────────────────────────────┘│
-│                                                             │
-│ ┌─ Locations (12) ─────────────────────────────────────────┐│
-│ │ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐    ││
-│ │ │ 🏰       │ │ 🌲       │ │ ⛰️       │ │ 🏚️       │    ││
-│ │ │Castle    │ │Darkwood  │ │Mount     │ │Ruins     │    ││
-│ │ │Forest    │ │          │ │Spire     │ │          │    ││
-│ │ │ ⚠️ Danger│ │ 🌲 Forest│ │ ⛰️ Mountain│ │ 💀 High  │    ││
-│ │ └──────────┘ └──────────┘ └──────────┘ └──────────┘    ││
-│ │ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐    ││
-│ │ │ 🏘️       │ │ 🏛️       │ │ 🌊       │ │ 🏔️       │    ││
-│ │ │Village   │ │Temple    │ │Lake      │ │Peak      │    ││
-│ │ │of Mist   │ │of Light  │ │          │ │          │    ││
-│ │ │ 🟢 Safe  │ │ ✨ Holy  │ │ 🐟 Fish  │ │ ❄️ Cold  │    ││
-│ │ └──────────┘ └──────────┘ └──────────┘ └──────────┘    ││
-│ └─────────────────────────────────────────────────────────┘│
-│                                                             │
-│ ┌─ NPCs (8) ──────────────────────────────────────────────┐│
-│ │ [Merchant] [Guard] [Blacksmith] [Healer] [Quest Giver] ││
-│ │ [Innkeeper] [Guard Captain] [Mysterious Stranger]       ││
-│ └─────────────────────────────────────────────────────────┘│
-│                                                             │
-│ ┌─ Resources ──────────────────────────────────────────────┐│
-│ │ 🪨 Iron: 45% | 🌲 Wood: 80% | 💧 Water: 60%           ││
-│ └─────────────────────────────────────────────────────────┘│
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-```
+<!-- ASCII UI mockup removed in favor of prose description: see preceding/following sections. -->
 
 ### Location Explorer Layout
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ Locations: The Forgotten Realms        [+ Add] [🔍 Search] │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│ ┌─ Filters ────────────────────────────────────────────────┐│
-│ │ Type: [All ▼]  Danger: [All ▼]  Discovered: [All ▼]   ││
-│ │ Resources: [All ▼]  NPCs: [All ▼]                      ││
-│ └─────────────────────────────────────────────────────────┘│
-│                                                             │
-│ ┌─ List ──────────────────────────────────────────────────┐│
-│ │ 🏰 Castle Forest        ⚠️ High    🌲 Forest            ││
-│ │    Resources: Wood 80%, Iron 45%                        ││
-│ │    NPCs: 3 (Merchant, Guard, Guard Captain)             ││
-│ │    Anomalies: 1 (Glowing Runes)                         ││
-│ │                                                         ││
-│ │ 🌲 Darkwood              🟢 Low    🌲 Forest            ││
-│ │    Resources: Wood 95%, Herbs 60%                       ││
-│ │    NPCs: 2 (Ranger, Druid)                              ││
-│ │    Anomalies: 0                                         ││
-│ │                                                         ││
-│ │ ⛰️ Mount Spire           🔴 Very High ⛰️ Mountain       ││
-│ │    Resources: Stone 70%, Ore 40%                        ││
-│ │    NPCs: 1 (Dragon)                                     ││
-│ │    Anomalies: 2 (Mana Storm, Floating Rocks)            ││
-│ └─────────────────────────────────────────────────────────┘│
-│                                                             │
-│ ┌─ Location Details ──────────────────────────────────────┐│
-│ │ Castle Forest                                          ││
-│ │                                                         ││
-│ │ A crumbling castle deep in the ancient forest.          ││
-│ │ The walls are overgrown with vines, and the             ││
-│ │ towers are home to nesting eagles.                      ││
-│ │                                                         ││
-│ │ ⚠️ Danger Level: High (80/100)                          ││
-│ │ 🌲 Environment: Forest                                  ││
-│ │ 🕐 Last Visited: Day 32, 10:15                          ││
-│ │                                                         ││
-│ │ Connected Locations:                                    ││
-│ │   → Darkwood (2h travel)                                ││
-│ │   → Village of Mist (4h travel)                         ││
-│ │                                                         ││
-│ │ [Travel Here]  [Explore]  [Edit]  [Delete]              ││
-│ └─────────────────────────────────────────────────────────┘│
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-```
+<!-- ASCII UI mockup removed in favor of prose description: see preceding/following sections. -->
 
 ### Travel Interface Layout
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ Travel: Castle Forest → Village of Mist                     │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│ ┌─ Route ──────────────────────────────────────────────────┐│
-│ │ 🏰 Castle Forest ─── 🌲 Darkwood ─── 🏘️ Village of Mist││
-│ │                    │                │                     ││
-│ │                    ▼                ▼                     ││
-│ │              2h travel        2h travel                  ││
-│ │              🌲 Forest        🌲 Forest                  ││
-│ │              ⚠️ Wolves         🟢 Safe                   ││
-│ └─────────────────────────────────────────────────────────┘│
-│                                                             │
-│ ┌─ Travel Mode ────────────────────────────────────────────┐│
-│ │ 🚶 Walk (4h total)  🐎 Ride (2h total)  ✨ Teleport (0.5h)││
-│ │ Requirements: None     Requirements: Horse   Requirements: Mana 50││
-│ │ Cost: None             Cost: Gold 10        Cost: Mana 50││
-│ └─────────────────────────────────────────────────────────┘│
-│                                                             │
-│ ┌─ Hazards ────────────────────────────────────────────────┐│
-│ │ ⚠️ Wolf Pack (30% chance) — Difficulty: Medium           ││
-│ │ 💧 River Crossing (100% chance) — Cost: 30min            ││
-│ │ 🌲 Dense Forest (100% chance) — Speed: -20%              ││
-│ └─────────────────────────────────────────────────────────┘│
-│                                                             │
-│ ┌─ Resources ──────────────────────────────────────────────┐│
-│ │ 🌲 Wood: +15%  🌿 Herbs: +10%  🪨 Stone: +5%           ││
-│ │ Gathering possible during travel                         ││
-│ └─────────────────────────────────────────────────────────┘│
-│                                                             │
-│                          [Cancel]  [Start Travel]           │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-```
+<!-- ASCII UI mockup removed in favor of prose description: see preceding/following sections. -->
 
 ### Travel Progress Display
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ Traveling: Castle Forest → Village of Mist                  │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│ ┌─ Progress ───────────────────────────────────────────────┐│
-│ │ ████████████████░░░░░░░░░░░░░░░░░░░░░░░░░░ 60%          ││
-│ │ Time Elapsed: 2h 24min                                   ││
-│ │ Time Remaining: 1h 36min                                 ││
-│ │ Distance: 12/20 km                                       ││
-│ └─────────────────────────────────────────────────────────┘│
-│                                                             │
-│ ┌─ Current Location ───────────────────────────────────────┐│
-│ │ 🌲 Darkwood — Rest Stop                                  ││
-│ │ You are in the heart of the Darkwood forest.             ││
-│ │ The trees tower above you, blocking out the sun.         ││
-│ │                                                         ││
-│ │ Available Actions:                                       ││
-│ │ [Rest] [Gather Resources] [Scout Ahead] [Continue]      ││
-│ └─────────────────────────────────────────────────────────┘│
-│                                                             │
-│ ┌─ Events ─────────────────────────────────────────────────┐│
-│ │ ⚔️ Wolf Pack Encounter! (30% chance triggered)           ││
-│ │ You hear howling in the distance. Wolves are nearby!     ││
-│ │                                                         ││
-│ │ [Fight] [Hide] [Distract] [Continue Traveling]          ││
-│ └─────────────────────────────────────────────────────────┘│
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-```
+<!-- ASCII UI mockup removed in favor of prose description: see preceding/following sections. -->
 
 ## Integration Points
 

@@ -574,37 +574,22 @@ When multiple systems try to set the same layer simultaneously:
 
 The `dying` state has special resolution rules (it's the only transient state):
 
-```
-HP hits 0
-    │
-    ▼
-┌─────────┐     d20 10+      ┌─────────┐
-│  Dying  │──────────────────▶│ Stable  │ (3 successes)
-│ (start) │                   │ (uncon.)│
-└─────────┘                   └─────────┘
-    │                              ▲
-    │ d20 1-9                      │ Healed to >0 HP
-    │ (1 failure)                  │
-    ▼                              │
-┌─────────┐     d20 1           │
-│ Dying   │───────────────────  │
-│ (fail 1)│  (2 failures!)      │
-└─────────┘                      │
-    │                            │
-    │ 3 failures                 │
-    ▼                            │
-┌─────────┐                      │
-│  Dead   │    Resurrection      │
-│         │──────────────────────┘
-└─────────┘
-    │
-    │ d20 20
-    │ (natural 20!)
-    ▼
-┌──────────┐
-│ Stable + │  Regain 1 HP, exit dying
-│ 1 HP     │
-└──────────┘
+```mermaid
+stateDiagram-v2
+    [*] --> DyingStart : "HP hits 0"
+    DyingStart : Dying (start)
+    Stable : Stable (unconscious)
+    DyingFail : Dying (1 failure)
+    Dead : Dead
+    StableHp : Stable + 1 HP
+
+    DyingStart --> Stable : "d20 10+ (3 successes)"
+    DyingStart --> DyingFail : "d20 1-9 (1 failure)"
+    DyingFail --> Dead : "3 failures"
+    Dead --> Stable : Resurrection
+    DyingStart --> StableHp : "d20 20 (natural 20)"
+    StableHp --> [*] : "Regain 1 HP, exit dying"
+    Stable --> [*] : "Healed to greater than 0 HP"
 ```
 
 ## Resurrection & Revive Mechanics

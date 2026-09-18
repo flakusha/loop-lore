@@ -81,14 +81,15 @@ interface StoryEndCondition {
 
 ### Quest State Machine
 
-```
-Quest States:
-├── available — quest can be accepted
-├── active — quest is in progress
-├── completed — quest successfully finished
-├── failed — quest failed (conditions not met)
-├── abandoned — quest abandoned by player
-└── expired — quest time limit exceeded
+```mermaid
+flowchart TD
+    QS["Quest States"]
+    QS --> A["available<br/>quest can be accepted"]
+    QS --> AC["active<br/>quest is in progress"]
+    QS --> CO["completed<br/>quest successfully finished"]
+    QS --> FA["failed<br/>quest failed (conditions not met)"]
+    QS --> AB["abandoned<br/>quest abandoned by player"]
+    QS --> EX["expired<br/>quest time limit exceeded"]
 ```
 
 ### Quest Chains
