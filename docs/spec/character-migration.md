@@ -30,12 +30,13 @@ Defines detailed migration paths between character specification versions. The c
 
 ### Transitions
 
-```
-current ──(scheduled)──▶ pending_migration ──(started)──▶ migrating
-                                            │
-                            (failed) ◀─────┘
-                                            │
-                            (completed)──▶ migrated ──(revert)──▶ rolled_back
+```mermaid
+stateDiagram-v2
+    current --> pending_migration : scheduled
+    pending_migration --> migrating : started
+    migrating --> migrated : completed
+    migrating --> migration_failed : failed
+    migrated --> rolled_back : revert
 ```
 
 ### Transition Guards
