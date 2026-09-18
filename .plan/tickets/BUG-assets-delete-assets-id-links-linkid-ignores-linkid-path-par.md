@@ -3,7 +3,7 @@
 
 # BUG: assets DELETE /assets/:id/links/:linkId ignores linkId path parameter
 
-**Status:** ✅ Resolved (verified fixed on dev; code + regression tests present)
+**Status:** ✅ Resolved (p3-bugfix-batch, 2026-09-18)
 **Priority:** high
 **Effort:** Medium
 **Summary:** (see ## Summary)
@@ -35,8 +35,22 @@ high
 Either (a) replace the unlinkAsset call with a direct delete by linkId: `await db.deleteFrom('asset_links').where('id', '=', linkId).where('asset_id', '=', ctx.params.id).execute();`. Or (b) change the URL to drop linkId and document that body parameters are required. Add a regression test for the path-param case.
 
 
+## Resolution
+
+Fixed in dev by `f4c5ff5d0` (fix(assets): honor linkId param on link delete). Verified 2026-09-18 against current `dev`:
+
+- `src/assets/controller.ts` — DELETE handler passes `ctx.params.linkId` to new `deleteAssetLink()`; body tuple no longer read.
+- `src/assets/service/links.ts` — `deleteAssetLink()` deletes `WHERE asset_id = :id AND entity_id = :linkId`, returns whether a row was deleted (404 on no match).
+- Regression tests: `src/assets/service/links.test.ts` (sibling link survives, unknown id false, cross-asset isolation), `src/assets/controller.routes.test.ts` (path-id delete, repeat-delete 404, non-owner 404).
+
 ## Acceptance Criteria
 
 - [x] Implementation complete
 - [x] Tests passing
+- [x] Documentation updated (`docs/spec/api-routes.md` DELETE row documents `:linkId`)
+
+## Acceptance Criteria (original)
+
+- [ ] Implementation complete
+- [ ] Tests passing
 - [ ] Documentation updated

@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🔧 Partial (ReDoS done 1a15200b; chunk-boundary + tag/attr coverage deferred — handoff 2026-09-18)
+**Status:** 🔧 Partial → chunk-boundary leg RESOLVED (p3-bugfix-batch, 2026-09-18); tag/attr audit leg remains open
 
 ## Handoff (deferred to dedicated worktree)
 
@@ -64,7 +64,9 @@ The ReDoS vulnerability was fixed by replacing the quadratic nested-quantifier `
 - Test added: `src/regex/html-sanitize.test.ts` with a regression case using `'<script'.repeat(40_000)` that must complete in linear time.
 - Commit hash: `1a15200b`.
 
-## Open: chunk-boundary sanitization gap
+## RESOLVED: chunk-boundary sanitization gap (42ffc7643)
+
+The per-chunk gap described below is closed — see the Resolution block at the Acceptance Criteria. Historical description:
 
 The linear scanner is still applied per-chunk in `renderStreamMessage`; a `<script>…</script>` tag split across two SSE chunks will never have its opening and closing tags matched in the same call, so it passes through unsanitized. Buffering SSE chunks across boundaries before sanitizing is a separate change.
 
@@ -75,7 +77,17 @@ Unquoted event handlers (`onerror=alert(1)>`), `iframe`/`object`/`embed`/`svg fo
 ## Acceptance Criteria
 
 - [x] ReDoS portion: quadratic `SCRIPT_TAG` regex replaced with linear scanner (commit `1a15200b`)
-- [ ] Chunk-boundary sanitization: buffer SSE chunks before sanitizing (separate ticket to file)
-- [ ] Additional tag/attribute coverage audit (separate ticket to file)
+- [x] Chunk-boundary sanitization: resolved by `42ffc7643` (see Resolution below)
+- [ ] Additional tag/attribute coverage audit (remains open — unquoted event handlers, `data:` URLs, `style` expression audit not yet swept)
 - [ ] Documentation updated
+
+## Resolution (chunk-boundary leg — landed in 42ffc7643)
+
+Fixed in dev by `42ffc7643` (fix(regex): close streaming sanitizer boundary leaks). Verified 2026-09-18:
+
+- `src/regex/html-sanitize-streaming.ts` — `findEarliestUnclosedDangerousOpen()` scanner rewritten: (1) partial dangerous-name prefix at end-of-input held from its `<`, closing the `<scr`+`ipt>` split the old rescan window missed; (2) non-dangerous tags advance past NAME only, so a `<script` opener hidden in a preceding tag's attribute region is no longer jumped over; (3) incomplete closers (`</script` without `>`) no longer release the held opener.
+- Tests: `src/regex/html-sanitize-streaming.edge.test.ts` — two previously leak-pinning edge tests repinned to hold-back behavior; new acceptance tests for cross-boundary openers, bare trailing `<`, `<styl`+`e>`, hidden openers, late closers. `src/regex/html-sanitize.test.ts` ReDoS regression hardened (200k reps + wall-clock bound).
+- Differential property sweep (throwaway, 8 attack strings × every split position, 1061 checks) reported 0 violations.
+
+**Still open:** the tag/attribute coverage audit leg (unquoted `onerror=`, `data:` URLs, `style expression()`) — separate sweep, not part of this fix.
 
