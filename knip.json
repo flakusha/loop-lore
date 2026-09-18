@@ -200,6 +200,10 @@
     // Interaction-coverage suite. Executed by the shell glob in
     // package.json `test:e2e:browser` and .github/workflows/ci.yml
     // (test-browser job) — knip cannot trace a shell glob as an import edge.
-    "tests/e2e/flows/browser/harness-improvements.browser.ts"
+    "tests/e2e/flows/browser/harness-improvements.browser.ts",
+    // Docs site mermaid render gate. Built dist served by an in-process
+    // Bun.serve; not imported anywhere; Playwright discovers by glob.
+    // Same class as the .browser.ts entries above.
+    "tests/e2e/flows/browser/docs-mermaid.browser.ts"
   ]
 }
