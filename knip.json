@@ -58,7 +58,14 @@
     // CLI parsing migration (@optique): accessed via src/cli/parser.ts, which
     // is entry-unreachable (see ignore[] below). Same class as @noble/hashes.
     "@optique/core",
-    "@optique/run"
+    "@optique/run",
+    // Mermaid docs stack: resolved via docs/.vitepress/{config.mts,theme/index.ts}
+    // (not in knip's entry list) + invoked by bun run mermaid:lint (shell
+    // string, not import). Same class as @optique.
+    "@mermaid-js/parser",
+    "mermaid",
+    "vitepress-mermaid-renderer",
+    "vitepress-plugin-mermaid"
   ],
   "ignoreBinaries": [
     "abort", // worktree CLI subcommand literal in finalize-signal-safety.test.ts spawnSync; knip mistakes it for a binary
