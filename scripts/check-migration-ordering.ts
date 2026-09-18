@@ -97,7 +97,9 @@ const warn = (msg: string,): void => {
 };
 
 console.log("Migration ordering gate",);
-console.log(`  loader scope: ${loaderReport.collected.length} files, parts scope: ${partsReport.collected.length} files`,);
+console.log(
+  `  loader scope: ${loaderReport.collected.length} files, parts scope: ${partsReport.collected.length} files`,
+);
 
 if (loaderReport.stray.length === 0 && partsReport.stray.length === 0) {
   ok("no stray .ts files in src/db/migrations{,/parts}",);
@@ -116,9 +118,13 @@ const groupByPrefix = (rows: readonly FileRow[],): Record<string, FileRow[]> => 
 };
 
 const loaderCollisions = Object.entries(groupByPrefix(loaderReport.collected,),)
-  .filter(([, files,],) => files.length > 1,);
+  .filter(([, files,],) => files.length > 1);
 if (loaderCollisions.length === 0) {
-  ok(`loader scope: unique prefixes (${Object.keys(groupByPrefix(loaderReport.collected,),).length} prefixes across ${loaderReport.collected.length} files)`,);
+  ok(
+    `loader scope: unique prefixes (${
+      Object.keys(groupByPrefix(loaderReport.collected,),).length
+    } prefixes across ${loaderReport.collected.length} files)`,
+  );
 } else {
   fail(`loader scope: duplicate numeric prefixes (${loaderCollisions.length}):`,);
   for (const [prefix, files,] of loaderCollisions) {
@@ -128,21 +134,26 @@ if (loaderCollisions.length === 0) {
 }
 
 const partsCollisions = Object.entries(groupByPrefix(partsReport.collected,),)
-  .filter(([, files,],) => files.length > 1,);
+  .filter(([, files,],) => files.length > 1);
 if (partsCollisions.length === 0) {
   ok(`parts scope: unique prefixes (${partsReport.collected.length} files)`,);
 } else {
-  warn(`parts scope: ${partsCollisions.length} prefix overlaps with loader scope (expected for 001_init orchestration; flag for review only)`,);
+  warn(
+    `parts scope: ${partsCollisions.length} prefix overlaps with loader scope (expected for 001_init orchestration; flag for review only)`,
+  );
 }
 
 const numericSort = (a: FileRow, b: FileRow,): number => {
-  if (a.prefix !== b.prefix) { return Number(a.prefix) - Number(b.prefix); }
+  if (a.prefix !== b.prefix) { return Number(a.prefix,) - Number(b.prefix,); }
   return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
 };
 const sorted = [...loaderReport.collected,].sort(numericSort,);
 let orderOk = true;
 for (let i = 0; i < sorted.length; i++) {
-  if (sorted[i] !== sorted[i]) { orderOk = false; break; }
+  if (sorted[i] !== sorted[i]) {
+    orderOk = false;
+    break;
+  }
 }
 if (orderOk) {
   ok("loader scope: declared order is stable under numeric + alphabetical comparator",);
@@ -155,4 +166,3 @@ if (failed) {
   process.exit(1,);
 }
 console.log("\nMigration ordering gate PASSED.",);
-
