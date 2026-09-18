@@ -33,6 +33,25 @@ describe("dice", () => {
     }
   });
 
+  test("advantage compares raw totals and crit reflects the kept die (BUG-battle-dice regressions)", () => {
+    const originalRandom = Math.random;
+    let call = 0;
+    Math.random = () => (call++ === 0 ? 0.05 : 0.99);
+    try {
+      // First roll: floor(0.05*20)+1 = 2. Advantage reroll: floor(0.99*20)+1 = 20.
+      const r = rollDice("d20", 1, [
+        { source: "a", value: 0, type: "advantage", },
+        { source: "b", value: 5, type: "bonus", },
+      ],);
+      // Kept die is 20 (raw 20 > raw 2); bonus applies once to the kept total.
+      expect(r.total,).toBe(25,);
+      // Critical reflects the KEPT die (20), not the discarded results[0] (2).
+      expect(r.criticalSuccess,).toBe(true,);
+    } finally {
+      Math.random = originalRandom;
+    }
+  });
+
   test("rollDice detects critical success on d20", () => {
     // Run several rolls to test critical logic
     const results: any[] = [];

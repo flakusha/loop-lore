@@ -3,7 +3,7 @@
 
 # BUG: characters emotion-avatar: sortOrder derived from Object.values() insertion order
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (batch 2)
 **Priority:** low
 **Effort:** Medium
 **Summary:** (see ## Summary)
@@ -37,6 +37,6 @@ Define a `const EMOTION_ORDINAL: Record<EmotionType, number> = { Happy: 18, Sad:
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
+- [x] Implementation complete
+- [x] Tests passing
 - [ ] Documentation updated
