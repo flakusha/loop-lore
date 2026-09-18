@@ -225,7 +225,7 @@
 | 🟡 In Progress — blake3 + zstd benchmarks shipped (2026-08-15, branch `native-blake3`) | Native/WASM Module Performance Benchmarks | High | High | 10 | [epic-native-module-benchmarks.md](/.plan/epics/epic-native-module-benchmarks.md) |
 | 🟦 Research | Non-Standard Browser Encryption | Medium | High | 7 | [epic-non-standard-browser-crypto.md](/.plan/epics/epic-non-standard-browser-crypto.md) |
 | ⬜ Not Started | Notification System UI | Medium | Unknown | 0 | [epic-frontend-notifications.md](/.plan/epics/epic-frontend-notifications.md) |
-| 🟢 Implemented (mock data, UI shell) | NPC & Social UI | P2 — Medium | Medium | 19 | [epic-npc-management-ui.md](/.plan/epics/epic-npc-management-ui.md) |
+| 🟢 Implemented (mock data, UI shell) | NPC & Social UI | P2 — Medium | Medium | 17 | [epic-npc-management-ui.md](/.plan/epics/epic-npc-management-ui.md) |
 | ✅ In Review (Gating & Preferences + Consent cluster landed on dev via commit `49731047`) | NSFW Capabilities — Ratings, Consent & Gating | High | Medium | 0 | [epic-nsfw-capabilities.md](/.plan/epics/epic-nsfw-capabilities.md) |
 | ⬜ Not Started | NSFW Integration Gaps — Housing, Weather, Social, Disease | High | Medium | 5 | [epic-nsfw-integration-gaps.md](/.plan/epics/epic-nsfw-integration-gaps.md) |
 | ⬜ Not Started | NSFW Interaction UI | P0 — Critical | Medium | 14 | [epic-nsfw-ui.md](/.plan/epics/epic-nsfw-ui.md) |

@@ -563,6 +563,12 @@
       "source": ".plan/tickets/TASK-signed-urls-for-asset-downloads.md"
     }
   ],
+  "src/assets/controller/signed-url.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-jwtsecret-reused-across-three-security-domains-byok-pbkdf2-f.md"
+    }
+  ],
   "src/assets/controller/signed-url.ts": [
     {
       "kind": "ticket",
@@ -2841,6 +2847,12 @@
       "source": ".plan/tickets/TASK-recon-test-coverage.md"
     }
   ],
+  "src/auth/jwt.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-jwtsecret-reused-across-three-security-domains-byok-pbkdf2-f.md"
+    }
+  ],
   "src/auth/jwt.ts": [
     {
       "kind": "ticket",
@@ -4886,11 +4898,11 @@
   "src/chat/join-flow.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/invite-code-generation.md"
+      "source": ".plan/tickets/TASK-invite-code-generation.md"
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/join-flow-mechanics.md"
+      "source": ".plan/tickets/TASK-join-flow-mechanics.md"
     }
   ],
   "src/chat/memory-injection.ts": [
@@ -9586,7 +9598,7 @@
   "src/db/migrations/025-invite-codes.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/invite-code-generation.md"
+      "source": ".plan/tickets/TASK-invite-code-generation.md"
     }
   ],
   "src/db/migrations/025_character_systems.ts": [
@@ -19321,6 +19333,12 @@
       "source": "docs/spec/nsfw-integration.md"
     }
   ],
+  "src/nsfw/telemetry-id-hashes.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-jwtsecret-reused-across-three-security-domains-byok-pbkdf2-f.md"
+    }
+  ],
   "src/nsfw/telemetry-id-hashes.ts": [
     {
       "kind": "ticket",
@@ -21612,7 +21630,7 @@
   "src/routes/chat-join.test.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/join-flow-mechanics.md"
+      "source": ".plan/tickets/TASK-join-flow-mechanics.md"
     }
   ],
   "src/routes/chat-messages.ts": [
@@ -21714,7 +21732,7 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/gap-closure-report.md"
+      "source": ".plan/tickets/TASK-gap-closure-report.md"
     },
     {
       "kind": "ticket",
@@ -22642,7 +22660,7 @@
   "src/routes/invite.test.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/invite-code-generation.md"
+      "source": ".plan/tickets/TASK-invite-code-generation.md"
     }
   ],
   "src/routes/items-extended.ts": [
@@ -26914,11 +26932,11 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-SPLIT-SERVER.md"
+      "source": ".plan/tickets/TASK-split-server-ts.md"
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-split-server.ts.md"
+      "source": ".plan/tickets/TASK-SPLIT-SERVER.md"
     },
     {
       "kind": "ticket",
