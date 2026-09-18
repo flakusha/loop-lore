@@ -114,7 +114,8 @@
     "bench": "bun run scripts/run-benchmarks.ts",
     "bench:native": "bun run scripts/run-benchmarks.ts blake3",
     "bench:ci": "bun run scripts/run-benchmarks.ts",
-    "ci": "bun run check:ci && bun run test:unit && E2E_SAFEGUARD=1 bun run test:e2e && bun run build"
+    "ci": "bun run check:ci && bun run test:unit && E2E_SAFEGUARD=1 bun run test:e2e && bun run build",
+    "mermaid:lint": "bunx mmdlint docs/**/*.md .plan/**/*.md"
   },
   "dependencies": {
     "@alpinejs/morph": "^3.17.3",
@@ -142,7 +143,9 @@
     "@biomejs/biome": "^2.5.14",
     "@markuplint/html-spec": "^5.0.0",
     "@markuplint/mustache-parser": "5.0.0",
+    "@mermaid-js/parser": "^2.0.0",
     "@playwright/test": "^1.63.0",
+    "@sysid/mmdlint": "^0.1.1",
     "@types/blessed": "^0.1.27",
     "@types/bun": "^1.4.2",
     "@types/clean-css": "^4.2.11",
@@ -167,13 +170,16 @@
     "madge": "^8.0.0",
     "markdownlint-cli2": "^0.23.2",
     "markuplint": "^5.0.0",
+    "mermaid": "^12.0.0",
     "oxlint": "^1.83.0",
     "stylelint": "^17.15.0",
     "stylelint-config-standard": "^40.0.0",
     "type-coverage": "^2.30.1",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.70.0",
-    "vitepress": "^1.6.4"
+    "vitepress": "^1.6.4",
+    "vitepress-mermaid-renderer": "^1.2.2",
+    "vitepress-plugin-mermaid": "^2.0.17"
   },
   "madge": {
     "detectiveOptions": {
