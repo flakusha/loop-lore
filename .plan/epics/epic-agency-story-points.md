@@ -175,6 +175,7 @@ When generating NPC plans and reactions, the prompt includes:
 | `TASK-npc-chat-buffer` | Chat cooldown and buffer management | Medium | Not Started |
 | `TASK-npc-planning-prompt` | Prompt assembly for planning and reactions | High | Not Started |
 | `TASK-npc-planning-tests` | Planning, reaction, revision, buffer tests | High | Not Started |
+
 ### Open Questions
 
 1. Should NPC plans be visible to players, or only their actions?
