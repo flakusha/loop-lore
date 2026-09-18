@@ -58,3 +58,14 @@ in `epic-assistant-creative-studio-workflows.md` §7.6. The `npc-generation` wor
 target and wraps actor-insert (`is_npc: true`) with step building,
 `entity_type_presets.npc` validation, and schema/consistency/duplicate quality gates.
 Faction-allegiance steps reference `epic-faction-reputation.md`.
+
+### Character Edit Stack Parity
+
+NPC generation and editing **reuses the character edit capabilities wholesale** —
+picture/avatar generation, lore, traits, relationships, mood — through the same
+services, routes, and edit UI (`src/characters/`). No NPC-specific parallel editors:
+kind-specific concerns (faction allegiance, retinue/trade behavior) extend the
+shared surface rather than forking it. Parity audit + enforcement:
+`TASK-npc-character-edit-stack-parity.md`. Story-introduced NPCs generate in place
+through the unified mechanism
+(`FEAT-in-story-character-generation-via-assistant-chat-handoff.md`).
