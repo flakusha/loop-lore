@@ -27,21 +27,24 @@ Three-tier memory system — episodic, semantic, and procedural memory. Covers m
 
 ## Features
 
-| Feature                        | ID           | Effort | Description                                                                 |
-| ------------------------------ | ------------ | ------ | --------------------------------------------------------------------------- |
-| Three-tier memory              | FEA-2026-052 | High   | Episodic/semantic/procedural per spec                                       |
-| Memory selection UI            | FEA-2026-053 | Med    | Mid-chat panel for pinning, selection                                       |
-| Lorebook activation            | FEA-2026-054 | Med    | Sticky entries, cooldowns, activation conditions                            |
-| Cross-chat memory              | FEA-2026-055 | Med    | Persistent persona/knowledge across workspaces                              |
-| Emotion-impact fields          | FEA-2026-056 | Med    | Structured emotion on memories (neutral, sad, angry, grudge, etc.)          |
-| Character emotion integration  | FEA-2026-057 | Med    | Memory → mood/coping/relationship integration                               |
-| Timescape-aware memory         | FEA-2026-058 | Med    | Game-time timestamps, timeline-specific memory, time-based decay            |
-| Reflection/memory synthesis    | FEA-2026-059 | High   | Periodic synthesis of observations into higher-level conclusions (generative-agents pattern) |
-| Keyphrase-triggered recall     | FEA-2026-060 | Low-Med | Recall memories by keyphrase match; reliable retrieval for important facts (Kindroid journals pattern) |
-| Importance-based scoring       | FEA-2026-061 | High   | Retrieval scoring: recency×importance×relevance (generative-agents/RisuAI HypaMemory) |
-| Emotional pattern tracking     | FEA-2026-062 | Med    | Track emotional patterns across conversations; feed into mood system (Kindroid pattern) |
-| History search / try-hard recall | FEA-2026-063 | Med    | Memories bind source message chains; low-confidence recall reconstructs the quoted context on demand (008_memory_source_chain) |
-
+| Feature | ID | Ticket | Status | Description |
+| ------- | -- | ------ | ------ | ------------|
+| Three-tier memory | FEA-2026-052 | — | ✅ Done | Episodic/semantic/procedural per spec |
+| Memory selection UI | FEA-2026-053 | — | ✅ Done | Mid-chat panel for pinning, selection |
+| Lorebook activation | FEA-2026-054 | — | ✅ Done | Sticky entries, cooldowns, activation conditions |
+| Cross-chat memory | FEA-2026-055 | — | ✅ Done | Persistent persona/knowledge across workspaces |
+| Emotion-impact fields | FEA-2026-056 | `TASK-memory-emotion-impact.md` | 🟡 Partial | Structured emotion on memories (implemented); `TASK-memory-emotion-impact.md` adds character integration |
+| Character emotion integration | FEA-2026-057 | `TASK-memory-character-integration.md` | ⬜ Not Started | Memory → mood/coping/relationship integration |
+| Timescape-aware memory | FEA-2026-058 | `TASK-memory-timescape.md` | ⬜ Not Started | Game-time timestamps, timeline-specific memory, time-based decay |
+| Reflection/memory synthesis | FEA-2026-059 | `TASK-memory-distillation-dreams.md` | ⬜ Not Started | Periodic synthesis of observations into higher-level conclusions |
+| Keyphrase-triggered recall | FEA-2026-060 | `TASK-memory-retrieval-filtering-by-lore-access-profile.md` | ⬜ Not Started | Recall by keyphrase match; reliable retrieval for important facts |
+| Importance-based scoring | FEA-2026-061 | — | ⬜ Not Started | Retrieval scoring: recency×importance×relevance |
+| Emotional pattern tracking | FEA-2026-062 | `TASK-memory-happiness-patterns.md` | ⬜ Not Started | Track emotional patterns across conversations; feed into mood system |
+| History search / try-hard recall | FEA-2026-063 | `TASK-memory-history-search-bind-message-chain-reconstructable-con.md` | 🟡 Partial | Memories bind source message chains; `008_memory_source_chain` landed; pending finalize |
+| Memory decay logic | — | `TASK-memory-decay-logic.md` | ⬜ Not Started | Per game-day decay, permanent emotion survivorship |
+| Memory promotion pipeline | — | `TASK-memory-promotion-pipeline.md` | ⬜ Not Started | Extract → promote → inject pipeline |
+| Memory trust modifier | — | `TASK-memory-trust-modifier-wiring.md` | ⬜ Not Started | Trust modifier wired into memory retrieval |
+| Memory provision wiring | — | `TASK-memory-provision-wiring.md` | ⬜ Not Started | Provision service wired into extraction |
 ## Emotion-Impact Fields (FEA-2026-056)
 
 Structured emotion-impact on episodic memories that drives character behavior:

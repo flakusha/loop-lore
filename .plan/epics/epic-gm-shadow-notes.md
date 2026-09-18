@@ -87,3 +87,6 @@ Story steering uses whitenotes and shadow notes to guide the LLM's narrative dir
 
 - TASK-gm-whitenotes.md
 - TASK-gm-shadow-notes.md
+- `TASK-gm-trigger-and-timeline-backfill-propagation.md` — GM triggers fire and backfill the timeline via memory propagation
+- `TASK-invisible-gm-only-quest-and-ark-system.md` — GM-only quests + ARK system integration
+- `TASK-invisible-note-scope-global-local-temporal-random.md` — invisible-note scope (global/local/temporal/random)
