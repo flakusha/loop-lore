@@ -32,16 +32,21 @@ Captured by `lsof -p` and `ps -L` on the worktree `--parallel=4 src/ --isolate` 
 
 `tests/setup-globals.ts` is the bunfig.toml preload; it runs once per worker before any test imports. The "long-running test using setup-globals" diagnosis is correct by construction — every test file uses the preload, and the long-runner is whichever file holds the SQLite write lock.
 
+**2026-09-18 correction**: re-reading `src/db/migrations.test.ts:48` and `src/db/migration-roundtrip.test.ts:58`, both helpers already use `new Database(":memory:",)` and have done so for some time. The WAL contention described above is from `tests/setup-globals.ts` + other db-touching tests (which DO use the on-disk DB), not the migration tests themselves. The migration tests are **CPU-bound**, not I/O-bound — each migration's `up`/`down` is a synchronous JS pass over the schema, and 36 migrations × up+down × multiple describe-blocks serializes on a single CPU inside whichever worker ran them. The lsof snapshot captured the dominant DB file at that moment, which happened to be the disk-backed setup-globals DB, not the `:memory:` migration DBs.
+
+So the real next step is **faster migrations, not in-memory** — see candidates below.
+
 ## Mitigation candidates (next steps, not in this scope)
 
-1. **Per-test in-memory SQLite** (`bun:sqlite` `:memory:`) for migration roundtrip tests — eliminates WAL contention entirely; one migrate-up/down is sub-second. **This is the recommended path** — see acceptance criteria.
-2. **DB test serialization flag** — have `migrations.test.ts` set `--max-concurrency=1` so async tests don't compete for the writer.
-3. **Per-dir sharding + lcov merge** for `src/db/*` — keep these tests in their own worker slot via `pathIgnorePatterns` + scoped coverage.
-4. **Bun upgrade watch** — `--no-isolate` with `--parallel=N` lets workers share SQLite connections cleanly; revisit when bun ships the per-worker cache.
+1. **Faster migrations** — profile the migration chain. Suspected hot spots: `migrations/parts/013_generation.ts` DROP TABLE fires the FTS5 trigger on a now-dropped table (root-cause bug); `001_init.down()` walks every part in reverse and is the long pole. Once the trigger bug is fixed, full up/down should be sub-second.
+2. **Fix the FTS5 trigger dependency** in `migrations/parts/013_generation.ts` — `DROP TABLE memories_fts` fires `actor_memories_fts_ad` against an already-dropped object. Either drop the trigger before the table, or move the FTS5 index to a later migration that down()'s cleanly. This unblocks the skip-by-default override (`CHECK_INCLUDE_HEAVY_DB_TESTS=1 bun run check` will pass, not just run).
+3. **Per-test in-memory SQLite** — already done (see note above). Ineffective as an optimization; it's the migration CONTENT that's slow.
+4. **Per-dir sharding + lcov merge** for `src/db/*` — keep these tests in their own worker slot via path scoping, so the heavy work doesn't gate the rest of the coverage report.
+5. **Bun upgrade watch** — `--no-isolate` with `--parallel=N` lets workers share SQLite connections cleanly; revisit when bun ships the per-worker cache.
 
 ## Acceptance Criteria
 
 - [x] Skip-by-default shipped (coverage gate finishes sub-5min on `dev`)
-- [ ] Implementation complete: in-memory SQLite for `migrations.test.ts` + `migration-roundtrip.test.ts`
-- [ ] Tests passing (with `CHECK_INCLUDE_HEAVY_DB_TESTS=1 bun run check`)
+- [ ] Fix FTS5 trigger dependency in `migrations/parts/013_generation.ts` so `001_init.down()` is clean (unblocks `CHECK_INCLUDE_HEAVY_DB_TESTS=1`)
+- [ ] `CHECK_INCLUDE_HEAVY_DB_TESTS=1 bun run check` passes the migration tests sub-5min
 - [ ] Documentation updated
