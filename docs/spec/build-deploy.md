@@ -143,10 +143,36 @@ See [`docs/spec/config-file-separation.md`](./config-file-separation.md) for ful
 
 ## Documentation Hosting
 
-- `/docs/*` routes served from `docs/` directory
+The docs site is a VitePress build (`base: '/docs/'`) with mermaid
+diagram rendering wired in:
+
+| Command | Purpose |
+| --- | --- |
+| `bun run docs:dev` | VitePress dev server (hot reload) |
+| `bun run docs:build` | Build static site to `docs/.vitepress/dist/` |
+| `bun run docs:preview` | Preview the built site locally |
+| `bun run mermaid:lint` | Parse-validate mermaid fence blocks in `docs/` and `.plan/` |
+
+Mermaid fence blocks render client-side via
+`vitepress-plugin-mermaid` + `vitepress-mermaid-renderer`; the parse gate
+(`mermaid:lint`) also runs in `scripts/check-parallel.mjs` and in the
+GitHub Pages deploy workflow.
+
+### GitHub Pages
+
+`.github/workflows/deploy.yml` deploys the built site to GitHub Pages on
+every push to `dev` (and via `workflow_dispatch`): install deps →
+`mermaid:lint` → `docs:build` → `actions/deploy-pages@v4`. Requires the
+repo setting **Settings → Pages → Source: GitHub Actions** (first deploy
+fails until that toggle is flipped).
+
+### App-served docs (optional, separate)
+
+- `/docs/*` routes can also be served by the application itself from the
+  prebuilt `docs/.vitepress/dist/` directory
 - Disabled with `DOCS_ENABLED=false`
-- Sections can be individually hidden via config (e.g., hide internal architecture docs from public)
-- VitePress/SSG optional; plain Markdown served as default
+- Sections can be individually hidden via config (e.g., hide internal
+  architecture docs from public)
 
 ## Docker Compose (Production Template)
 

@@ -80,7 +80,7 @@ Seven-step journey for a typical web interaction:
 - Controlled by `docs` config block:
   - `docs.enabled: false` → all docs routes return 404
   - `docs.public: [list]` → allowlist of visible section prefixes. Example: `["guide", "frontend", "assets"]` restricts docs to user-facing content only. Empty or absent = all sections visible
-- VitePress or similar SSG optional for rich docs; plain Markdown is default
+- Docs are a VitePress site (`bun run docs:build` → `docs/.vitepress/dist/`); deployed to GitHub Pages via `.github/workflows/deploy.yml`
 
 ## Multi-Process/Session Architecture
 
