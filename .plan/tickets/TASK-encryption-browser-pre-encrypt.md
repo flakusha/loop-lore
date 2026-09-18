@@ -3,6 +3,11 @@
 
 # TASK: Encryption — Browser Pre-Encrypt Integration
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟨 Partial — browser.ts/browser-crypto/browser-compress + send path built; receive-decrypt, feature-detect, key-cache missing (see BUG-private-tier-no-true-e2e)
 **Priority:** Medium
 **Effort:** Med

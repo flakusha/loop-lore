@@ -3,6 +3,14 @@
 
 # Epic: Context Injection Templates
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Type:** epic
+**Tags:** (none)
+**Overview:** (see sections below)
+
+
 ## Goal
 
 Inventory the template systems that feed the LLM prompt context window and

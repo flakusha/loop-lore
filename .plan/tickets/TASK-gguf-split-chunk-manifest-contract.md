@@ -3,6 +3,11 @@
 
 # TASK: GGUF split-chunk manifest contract
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done (`gguf-downloader-policy`)
 **Priority:** high
 **Effort:** Small

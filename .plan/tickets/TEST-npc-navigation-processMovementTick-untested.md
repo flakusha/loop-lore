@@ -3,6 +3,11 @@
 
 # TEST: NpcNavigationService.processMovementTick has zero unit tests
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** Open
 **Priority:** medium
 **Priority Tier:** P5

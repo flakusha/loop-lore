@@ -3,6 +3,11 @@
 
 # TASK-e2e-state-contracts: Browser e2e Alpine state contracts, encryption flow, access + search correctness
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** Medium

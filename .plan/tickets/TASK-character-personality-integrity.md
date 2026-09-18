@@ -3,6 +3,11 @@
 
 # TASK: Character Personality Integrity
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Epic:** Character Core System
 **Priority:** High
 **Effort:** Medium

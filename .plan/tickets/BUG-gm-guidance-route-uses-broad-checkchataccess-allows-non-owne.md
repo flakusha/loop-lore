@@ -3,6 +3,11 @@
 
 # BUG: gm-guidance route uses broad checkChatAccess, allows non-owner to steer story
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Resolved (4835dcaf, 2026-09-04)
 **Priority:** medium
 **Effort:** Medium

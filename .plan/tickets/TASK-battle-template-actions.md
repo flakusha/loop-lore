@@ -3,6 +3,11 @@
 
 # TASK: Battle Pre-Configured Action Templates
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Priority:** Medium
 **Status:** ⬜ Not Started
 **Epic:** Epic Battle & Action Systems

@@ -3,6 +3,14 @@
 
 # TASK-001: Dockerize the application
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status**: pending
 **Priority**: high
 **Labels**: devops, docker, containerization

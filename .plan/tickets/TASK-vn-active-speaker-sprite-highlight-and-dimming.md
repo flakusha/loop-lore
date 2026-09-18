@@ -3,6 +3,11 @@
 
 # TASK: VN: active-speaker sprite highlight and dimming
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Complete (2026-09-10) — speaker-active/dimmed focus states from the message stream, narration dims all, reduced-motion respected
 **Priority:** medium
 **Epic:** Visual Novel Mode; Immersion & Presentation

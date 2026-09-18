@@ -3,6 +3,11 @@
 
 # TASK: Chat: Visual Novel Mode
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟡 Partial — frontend VN renderer foundation complete (6 files in src/frontend/vn/), choice/branching UI + chat.html wiring pending
 **Priority:** medium
 **Effort:** Medium-High (frontend rendering)

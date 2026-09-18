@@ -3,6 +3,11 @@
 
 # TASK: Search/RAG Coverage Bridge — epic recommendation + cross-ticket glue
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** High (planning only)
 **Effort:** Low (planning + glue tasks; no implementation in this ticket)

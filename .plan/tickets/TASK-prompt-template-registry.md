@@ -3,6 +3,11 @@
 
 # TASK: Prompt Template Registry — Typed Purposes, Single Defaults Source
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Complete
 **Priority:** Medium
 **Effort:** Low–Med

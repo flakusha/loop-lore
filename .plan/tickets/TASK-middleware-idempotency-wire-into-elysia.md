@@ -3,6 +3,11 @@
 
 # TASK: Wire `idempotent()` middleware into the Elysia route chain
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done (fixed in worktree merge-review-followups, 2026-08-27)
 **Priority:** high
 **Effort:** Medium

@@ -3,6 +3,11 @@
 
 # TASK-e2ee-receiver-wiring: Client-Side E2E — Phase E receiver-side wiring
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started (NEXT slice)
 **Priority:** Medium
 **Effort:** Medium

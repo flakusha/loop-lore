@@ -3,6 +3,11 @@
 
 # TASK: Blog Frontend Authoring
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟡 Partial (reader + authoring UI on `blog-frontend-left-menu`, unmerged)
 **Priority:** P1
 **Effort:** High

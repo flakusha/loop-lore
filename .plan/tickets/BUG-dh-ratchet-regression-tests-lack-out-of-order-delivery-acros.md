@@ -3,6 +3,11 @@
 
 # BUG: dh-ratchet regression tests lack out-of-order delivery across ratchet boundary
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** [OK] Fixed (fix-review-bugs-round2, `f32d0a45`)
 **Priority:** medium
 **Effort:** Medium

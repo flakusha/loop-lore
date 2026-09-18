@@ -3,6 +3,11 @@
 
 # TASK: Coverage waiver: tui/chat/index.ts at 51% under check gate
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** [OK] Done
 **Priority:** Low
 **Effort:** Trivial

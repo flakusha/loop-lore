@@ -3,6 +3,11 @@
 
 # TASK: RAG Internet Search — robots.txt, Retry, Rate Limits, Public/Private Split
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** High
 **Effort:** High

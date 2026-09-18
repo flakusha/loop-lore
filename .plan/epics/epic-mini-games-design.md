@@ -3,6 +3,13 @@
 
 # Mini-Games: Design Document
 
+**Priority:** medium
+**Effort:** Medium
+**Type:** epic
+**Tags:** (none)
+**Overview:** (see sections below)
+
+
 **Status:** Draft
 **Parent:** Epic: Mini-Games & Interactive Mechanics
 

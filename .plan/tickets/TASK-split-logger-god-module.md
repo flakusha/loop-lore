@@ -3,6 +3,11 @@
 
 # TASK: Split `src/logger/index.ts` (God Module, ~59 importers)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** Medium

@@ -3,6 +3,10 @@
 
 # EPIC: AUX LLM Enrichment Pipeline
 
+**Tags:** (none)
+**Overview:** (see sections below)
+
+
 **Status:** 🟡 Partial — transition detection + memory extraction implemented; shared runner missing, wiring gaps open (2026-08-01 review)
 **Priority:** P2-B
 **Effort:** Medium

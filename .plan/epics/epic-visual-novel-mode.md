@@ -3,6 +3,9 @@
 
 # EPIC: Visual Novel Mode — Dynamic Generation & Q&A Mode
 
+**Overview:** (see sections below)
+
+
 **Status:** 🟡 In Progress
 **Priority:** Medium
 **Effort:** Very High

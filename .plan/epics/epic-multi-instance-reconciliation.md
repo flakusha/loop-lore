@@ -3,6 +3,13 @@
 
 # Epic 26: Multi-Instance Reconciliation — Implementation Plan
 
+**Priority:** medium
+**Effort:** Medium
+**Type:** epic
+**Tags:** (none)
+**Overview:** (see sections below)
+
+
 **Status:** Draft — description pending (formerly in `chore-docs-reconcile`, worktree merged 2026-08-14)\
 **Proposed Epic Branch:** `epic/26`\
 **Owner:** TBD\

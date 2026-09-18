@@ -3,6 +3,11 @@
 
 # TASK: NSFW: wire consent gate into NSFW surfaces
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done — commit `nsfw-consent-gate-wiring` (see `agent-commit`); wired 2026-09-09
 **Priority:** Medium
 **Effort:** Medium

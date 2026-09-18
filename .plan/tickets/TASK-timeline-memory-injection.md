@@ -3,6 +3,12 @@
 
 # TASK: Timeline-aware memory injection
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** Draft
 **Priority:** P1 — High
 **Epic:** `epic-memory-propagation.md`

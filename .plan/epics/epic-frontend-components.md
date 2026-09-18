@@ -3,6 +3,12 @@
 
 # EPIC: UI Components Library
 
+**Effort:** Medium
+**Type:** epic
+**Tags:** (none)
+**Overview:** (see sections below)
+
+
 **Status:** 🟡 In Progress
 **Priority:** Medium
 

@@ -3,6 +3,11 @@
 
 # TASK: Reconcile `*.ts` import extensions (user-seeding session)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Open — follow-up for a future session
 **Priority:** Low
 **Effort:** Small

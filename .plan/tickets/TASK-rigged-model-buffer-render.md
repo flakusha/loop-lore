@@ -3,6 +3,11 @@
 
 # TASK: Rigged Model Buffer Render — Pre-rendered Expressions
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Low
 **Effort:** Med

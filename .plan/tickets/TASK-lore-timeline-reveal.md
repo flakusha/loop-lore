@@ -3,6 +3,12 @@
 
 # TASK: Add `timeline_id` + `reveal_condition` to lore entries
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** Draft
 **Priority:** High
 **Epic:** `epic-lore-knowledge.md`

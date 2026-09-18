@@ -3,6 +3,14 @@
 
 # Mini-Games: Deep Mechanics & Game-Specific Designs
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Type:** epic
+**Tags:** (none)
+**Overview:** (see sections below)
+
+
 ## Individual Game Deep-Dives
 
 ### Rock-Paper-Scissors (RPS)

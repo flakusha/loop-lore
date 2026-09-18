@@ -3,6 +3,11 @@
 
 # TASK: Middleware — accept frontend-supplied request id (UUID) + fall back to server-generated
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟡 Partial (commit 85657ffb on dev, 2026-08-26; wiring gap on Elysia side)
 **Priority:** medium
 **Effort:** Small

@@ -3,6 +3,11 @@
 
 # TASK: VN Pre-Configured Scene & Dialogue Templates
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Priority:** Medium
 **Status:** 🟡 Partial Complete — Pre-defined templates ✅, Renderer/UI application ⬜ not wired
 **Epic:** Epic Visual Novel Mode (51)

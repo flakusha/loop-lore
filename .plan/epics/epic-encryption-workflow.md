@@ -3,6 +3,12 @@
 
 # EPIC: Encryption Workflow
 
+**Effort:** Medium
+**Type:** epic
+**Tags:** (none)
+**Overview:** (see sections below)
+
+
 **Status:** 🟡 Core Built, Integration Pending
 **Priority:** Medium
 **Spec:** `docs/spec/encryption-workflow.md`

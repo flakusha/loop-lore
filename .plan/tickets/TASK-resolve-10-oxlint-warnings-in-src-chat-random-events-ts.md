@@ -3,6 +3,11 @@
 
 # TASK: Resolve 10 oxlint warnings in `src/chat/random-events.ts`
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done
 **Severity:** Low
 **Priority:** Low

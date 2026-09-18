@@ -3,6 +3,11 @@
 
 # TASK: Sessions API Routes
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done (2026-09-11, `f1-core-wiring` — list/revoke/switch on existing `sessions` table; `src/routes/auth/session.ts` + tests)
 **Priority:** medium
 **Effort:** Medium

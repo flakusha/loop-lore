@@ -1,4 +1,12 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # BUG: Key rotation non-transactional + incomplete re-encryption strands history under expired keys
+
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 
 **Status:** ✅ Done (verified landed on dev — `rotateKeyOnLeave` wraps message re-encrypt + key swap in one Kysely transaction, calls `reEncryptChatAssets` pre-transaction, `RE_ENCRYPT_LIMIT = MAX_SAFE_INTEGER` with `includeAll: true`)
 **Priority:** high

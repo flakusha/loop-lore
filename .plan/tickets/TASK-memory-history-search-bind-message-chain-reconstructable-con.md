@@ -3,6 +3,11 @@
 
 # TASK: memory history search: bind message chain + reconstructable context
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🔨 Implemented (memory-history-search worktree — pending finalize)
 **Priority:** high
 **Effort:** Large

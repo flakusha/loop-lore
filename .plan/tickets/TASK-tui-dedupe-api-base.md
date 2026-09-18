@@ -3,6 +3,11 @@
 
 # TASK: tui: dedupe API_BASE constant between app.ts and chat/api.ts
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** low
 **Effort:** trivial

@@ -3,6 +3,10 @@
 
 # EPIC: Transport Layer Expansion (HTTP/2, HTTP/3, WebSocket, WebTransport)
 
+**Tags:** (none)
+**Overview:** (see sections below)
+
+
 **Status:** 🟡 Partially Built — H2/WS handlers exist but http1/h2 send() are no-op stubs; NOT server-wired; H3/WebTransport missing
 **Priority:** Medium
 **Effort:** Medium (remaining gaps only)

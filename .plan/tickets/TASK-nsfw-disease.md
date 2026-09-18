@@ -3,6 +3,11 @@
 
 # TASK: NSFW-Disease Integration
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Epic:** NSFW Game Mechanics, Disease & Poison Systems
 **Priority:** Medium
 **Effort:** Medium

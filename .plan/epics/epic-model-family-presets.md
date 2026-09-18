@@ -3,6 +3,9 @@
 
 # Epic: Model Family Presets
 
+**Overview:** (see sections below)
+
+
 **Status:** ⬜ Not Started
 **Priority:** High (MVP scoped, post-Gate C)
 **Effort:** Medium

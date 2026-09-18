@@ -3,6 +3,9 @@
 
 # EPIC: NSFW Capabilities — Ratings, Consent & Gating
 
+**Overview:** (see sections below)
+
+
 **Status:** ✅ In Review (Gating & Preferences + Consent cluster landed on dev via commit `49731047`)
 **Priority:** High
 **Effort:** Medium

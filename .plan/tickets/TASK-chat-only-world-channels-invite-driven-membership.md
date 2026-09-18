@@ -3,6 +3,11 @@
 
 # TASK: Chat-only world channels (invite-driven membership)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Complete (merged to dev: backend `95680e00`, frontend `d61ce737`)
 **Priority:** Medium
 **Effort:** Medium

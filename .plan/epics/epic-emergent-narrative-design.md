@@ -3,6 +3,10 @@
 
 # EPIC: Emergent Narrative Design Principles
 
+**Tags:** (none)
+**Overview:** (see sections below)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** Low

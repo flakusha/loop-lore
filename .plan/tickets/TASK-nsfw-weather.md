@@ -3,6 +3,11 @@
 
 # TASK: NSFW-Weather Integration
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Epic:** NSFW Game Mechanics, Weather & Environment
 **Priority:** Medium
 **Effort:** Medium

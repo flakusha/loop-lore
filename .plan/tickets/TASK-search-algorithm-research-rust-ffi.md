@@ -3,6 +3,11 @@
 
 # TASK: Search Algorithm Deep Research — Multi-Algorithm + Rust FFI `rg` + TS Fallback + Dynamic Per-Task Selection
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Medium (research) → High (impl)
 **Effort:** High (research) + Very High (impl + dynamic selector)

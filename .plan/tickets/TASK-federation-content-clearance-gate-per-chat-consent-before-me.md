@@ -3,6 +3,11 @@
 
 # TASK: Federation content clearance gate: per-chat consent before mesh push
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** Medium

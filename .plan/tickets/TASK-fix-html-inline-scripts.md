@@ -3,6 +3,11 @@
 
 # TASK: Extract Inline HTML Script Blocks to Frontend TS
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** Small

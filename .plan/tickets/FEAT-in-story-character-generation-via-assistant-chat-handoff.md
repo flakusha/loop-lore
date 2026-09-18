@@ -3,6 +3,11 @@
 
 # FEAT: In-story character generation via assistant chat handoff
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** High
 **Effort:** Medium

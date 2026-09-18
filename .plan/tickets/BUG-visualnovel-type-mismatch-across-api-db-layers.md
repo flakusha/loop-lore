@@ -3,6 +3,11 @@
 
 # BUG: visualNovel type mismatch across API/DB layers
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ done
 **Priority:** medium
 **Effort:** Medium

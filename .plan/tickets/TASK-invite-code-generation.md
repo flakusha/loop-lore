@@ -3,6 +3,14 @@
 
 # Ticket: Invite Code Generation System
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 ## Description
 
 Implement invitation code generation and validation workflow.

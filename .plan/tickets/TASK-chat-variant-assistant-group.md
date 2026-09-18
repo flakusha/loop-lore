@@ -3,6 +3,11 @@
 
 # TASK: Chat Variant — Assistant Group Chat
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** High
 **Effort:** Medium

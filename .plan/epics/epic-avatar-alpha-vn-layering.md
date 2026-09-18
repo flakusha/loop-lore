@@ -3,6 +3,9 @@
 
 # EPIC: Avatar Alpha Channel + VN Layering
 
+**Overview:** (see sections below)
+
+
 **Status:** 🔴 Not Started
 **Priority:** Medium
 **Effort:** Medium

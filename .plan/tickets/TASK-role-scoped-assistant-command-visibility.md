@@ -3,6 +3,11 @@
 
 # TASK: Role-scoped assistant command visibility
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** Medium

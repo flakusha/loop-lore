@@ -3,6 +3,11 @@
 
 # TASK-3d-performance: Performance budgets & optimization (Phase 6)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Low
 **Effort:** Medium

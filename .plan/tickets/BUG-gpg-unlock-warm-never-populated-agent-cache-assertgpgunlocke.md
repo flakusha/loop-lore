@@ -3,6 +3,11 @@
 
 # BUG: gpg-unlock warm never populated agent cache; assertGpgUnlocked cache-blind
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Resolved (already on dev, 2026-09-14)
 **Priority:** high
 **Effort:** Medium

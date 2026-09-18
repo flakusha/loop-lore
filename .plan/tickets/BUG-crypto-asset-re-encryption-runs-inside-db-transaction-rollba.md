@@ -1,4 +1,12 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # BUG: crypto: asset re-encryption runs inside DB transaction; rollback orphans assets
+
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 
 **Status:** ✅ Done (verified landed on dev — asset files are re-encrypted BEFORE the transaction opens; DB rollback no longer affects already-written files)
 **Priority:** high

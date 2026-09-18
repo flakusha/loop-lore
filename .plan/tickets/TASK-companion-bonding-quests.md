@@ -3,6 +3,12 @@
 
 # TASK: Companion Bonding Quests & Companion Legacy
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Priority:** Medium
 **Status:** ⬜ Not Started
 **Epic:** epic-companion-pet-mount

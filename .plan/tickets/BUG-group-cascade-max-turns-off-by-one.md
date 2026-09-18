@@ -3,6 +3,11 @@
 
 # BUG: Group cascade depth boundary semantics off-by-one — max_turns=3 produces 4 AI messages
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Resolved
 **Severity:** high
 **Priority:** high

@@ -3,6 +3,11 @@
 
 # BUG: encrypted asset thumb/compressed preview serves raw ciphertext
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Resolved
 **Priority:** medium
 **Effort:** Medium

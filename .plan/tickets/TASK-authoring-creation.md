@@ -3,6 +3,11 @@
 
 # TASK: EPIC: Authoring & Creation Tools
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** Large

@@ -3,6 +3,9 @@
 
 # EPIC: Pre-Compiled Hot Binary Modules
 
+**Overview:** (see sections below)
+
+
 **Status:** 🟡 In Progress — Phase 1 infra + Phase 2 BLAKE3 sample shipped (2026-08-15, branch `native-blake3`); native-vs-TS benchmark 53× bound to bench suite
 **Priority:** Medium
 **Effort:** High
