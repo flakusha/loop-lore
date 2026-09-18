@@ -6,7 +6,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 In Progress — proxy-termination slice landed (57dc551de); work items below open
 **Priority:** High
 **Effort:** Large
 **Type:** Task
@@ -18,7 +18,7 @@ Move TLS from "dev-grade in-place key generation" to a managed certificate subsy
 
 ## Current State (reviewed)
 
-- `src/config/cert.ts` — `ensureTlsCerts()`: if `server.tls.{key,cert}` files are missing, spawns `openssl req -x509` (RSA-2048, 365 days, CN=localhost, no SAN beyond implicit CN) to generate an ephemeral self-signed pair. If OpenSSL is absent, logs a warning and returns null → server continues **HTTP-only**, unencrypted, with no config-level way to forbid that.
+- `src/config/cert.ts` — `ensureTlsCerts()`: if `server.tls.{key,cert}` files are missing, spawns `openssl req -x509` (RSA-2048, 365 days, CN=localhost, SAN=localhost + 127.0.0.1) to generate an ephemeral self-signed pair. If OpenSSL is absent, logs a warning and returns null → server continues **HTTP-only**, unencrypted, with no config-level way to forbid that.
 - `src/server/start.ts` — single `Bun.serve({ tls })` using the pair; WebSocket transport (`src/transport/factory.ts`, `base.ts`) shares the same `{key, cert}` object.
 - Config surface (`src/config/sections/server.ts`) is paths-only: no CA-chain slot, no encrypted-key passphrase, no minimum-TLS-version knob, no dev/prod mode distinction for the self-signed path.
 - Zero lifecycle handling anywhere: no expiry checks, no renewal, no monitoring hookup, no health-endpoint verdicts.
