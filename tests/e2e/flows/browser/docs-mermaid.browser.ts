@@ -6,34 +6,30 @@
  *
  * Builds `docs/.vitepress/dist` (if missing) and serves it under a
  * `/docs/...` URL prefix that matches VitePress's `base: '/docs/'`
- * setting. Then opens each known mermaid-bearing page in headless
- * Chromium and asserts that vitepress-mermaid-renderer has inserted
+ * setting. Then walks the dist for every HTML page containing a
+ * `<div class="mermaid">` block, opens each one in headless
+ * Chromium, and asserts that vitepress-mermaid-renderer has inserted
  * an `<svg>` child inside every `.mermaid` block.
  *
  * This is a behavior gate, not a parse gate — `bun run mermaid:lint`
  * (mmdlint via @mermaid-js/parser) covers parse-time validation. This
  * test covers render-time: a future theme/plugin regression that
  * leaves `.mermaid` blocks empty would slip past mmdlint but fail
- * here.
+ * here. Page enumeration is automatic so adding a new ```mermaid
+ * block to any docs/{meta,spec,frontend,...}/**.md file picks up
+ * coverage with no test edits.
  */
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { type Browser, chromium, type Page, } from "@playwright/test";
 import { spawnSync, } from "node:child_process";
-import { existsSync, } from "node:fs";
-import { join, } from "node:path";
+import { existsSync, readdirSync, readFileSync, statSync, } from "node:fs";
+import { join, relative, } from "node:path";
 import { trackPageErrors, } from "../../helpers/htmx-alpine";
 
 // ── Fixtures (paths from repo root) ────────────────────────────
 
 const REPO_ROOT = join(import.meta.dir, "..", "..", "..", "..",);
 const DIST_DIR = join(REPO_ROOT, "docs", ".vitepress", "dist",);
-
-// Pages confirmed to contain ```mermaid blocks in the built site.
-// Keep in sync with docs/{meta,spec}/**.md that have mermaid fences.
-const MERMAID_PAGES = [
- "/docs/spec/quests-encounters.html",
- "/docs/meta/integration-testing-tools.html",
-];
 
 // ── Build the docs site if needed ─────────────────────────────
 
@@ -48,6 +44,39 @@ function ensureDocsBuild(): void {
  `docs:build failed (exit ${result.status ?? "unknown"}): ${result.stderr?.toString() ?? ""}`,
  );
  }
+}
+
+// ── Discover pages with mermaid blocks ────────────────────────
+
+function findHtmlFiles(dir: string): string[] {
+ const out: string[] = [];
+ for (const entry of readdirSync(dir,)) {
+ const p = join(dir, entry,);
+ const s = statSync(p,);
+ if (s.isDirectory()) {
+ out.push(...findHtmlFiles(p,),);
+ } else if (entry.endsWith(".html",)) {
+ out.push(p,);
+ }
+ }
+ return out;
+}
+
+function findMermaidPages(distDir: string): string[] {
+ if (!existsSync(distDir,)) { return []; }
+ const mermaidPages: string[] = [];
+ for (const file of findHtmlFiles(distDir,)) {
+ const html = readFileSync(file, "utf8",);
+ if (html.includes(`class="mermaid"`,)) {
+ // Convert dist-relative path to URL path the server expects.
+ // node:path `relative` uses platform separators (\ on Windows, /
+ // on POSIX); normalize to forward slashes for the URL.
+ const rel = relative(distDir, file,).replaceAll("\\", "/",);
+ mermaidPages.push(`/docs/${rel}`,);
+ }
+ }
+ mermaidPages.sort();
+ return mermaidPages;
 }
 
 // ── Static server over the built dist (mounted at /docs/) ──────
@@ -104,13 +133,26 @@ function startDocsServer(): DocsServer {
 
 // ── Test suite ────────────────────────────────────────────────
 
+// Enumerate at module-load time so the per-page test list is populated
+// before bun:test starts running anything (the for-loop at the bottom
+// builds the test cases at module level, not inside beforeAll).
+ensureDocsBuild();
+const PAGES = findMermaidPages(DIST_DIR,);
+if (PAGES.length === 0) {
+ // Throw at load so the whole file fails loudly rather than silently
+ // producing zero tests. A future vitepress-plugin-mermaid regression
+ // that consumes class="mermaid" before render would land here.
+ throw new Error(
+ "findMermaidPages returned 0 pages — has the renderer stopped emitting class=\"mermaid\" divs? Check docs/.vitepress/config.mts (withMermaid) + theme/index.ts (createMermaidRenderer).",
+ );
+}
+
 describe("Docs site mermaid renderer", () => {
  let server: DocsServer;
  let browser: Browser;
  const openedPages: Page[] = [];
 
  beforeAll(async () => {
- ensureDocsBuild();
  server = startDocsServer();
  browser = await chromium.launch({ headless: true, },);
  }, 120_000,);
@@ -121,8 +163,8 @@ describe("Docs site mermaid renderer", () => {
  server?.stop();
  },);
 
- // Each page: navigate, wait for .mermaid, wait for svg, assert >= 1.
- for (const path of MERMAID_PAGES) {
+ // Per page: navigate, wait for .mermaid, wait for svg, assert >= 1.
+ for (const path of PAGES) {
  test(`${path} renders at least one svg inside .mermaid`, async () => {
  const page = await browser.newPage();
  openedPages.push(page,);
@@ -141,7 +183,7 @@ describe("Docs site mermaid renderer", () => {
  }, { timeout: 15_000, },);
  const svgCount = await page.locator(".mermaid svg",).count();
  expect(svgCount,).toBeGreaterThan(0,);
- // Sanity: every .mermaid rendered at least one svg
+ // Sanity: every .mermaid block rendered at least one svg
  const blockCount = await page.locator(".mermaid",).count();
  expect(svgCount,).toBeGreaterThanOrEqual(blockCount,);
  } finally {
