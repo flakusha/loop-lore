@@ -39,15 +39,15 @@ exists solely for headless stress-testing and is explicitly gated.
 
 ## Architecture
 
-```
-World clock (tick source: real-time | accelerated | manual)
-  └─ Autonomy scheduler (per world/chat)
-       ├─ selects due actors (BDI plan due? reaction pending? movement tick due?)
-       ├─ asks governor for budget  ←──── HARD GATE, denies by default
-       ├─ dispatches action through generation pipeline
-       │    (NPC decision → move / chat / interact / GM narrative beat)
-       ├─ writes results + episodic memory
-       └─ reschedules with cooldown + jitter (pseudoorganic pacing)
+```mermaid
+flowchart TD
+    WC["World clock (tick source: real-time, accelerated, or manual)"]
+    WC --> AS["Autonomy scheduler (per world/chat)"]
+    AS --> SA["selects due actors<br/>(BDI plan due? reaction pending? movement tick due?)"]
+    AS --> GB["asks governor for budget (HARD GATE, denies by default)"]
+    AS --> DP["dispatches action through generation pipeline<br/>(NPC decision: move / chat / interact / GM narrative beat)"]
+    AS --> WR["writes results + episodic memory"]
+    AS --> RS["reschedules with cooldown + jitter (pseudoorganic pacing)"]
 ```
 
 Key decisions:

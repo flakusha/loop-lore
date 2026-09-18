@@ -28,23 +28,6 @@ Admin panel link appears in the hamburger sidebar only for admin users.
 
 Left sidebar with section links. Main area shows the selected section.
 
-```
-┌──────────────────────────────────────────────────────┐
-│ Admin Panel                                    [×]  │
-├────────────┬─────────────────────────────────────────┤
-│            │                                         │
-│ 📊 Overview│  [section content]                      │
-│ 👥 Users   │                                         │
-│ 💬 Chats   │                                         │
-│ 🌍 Worlds  │                                         │
-│ 📝 Audit   │                                         │
-│ 🔍 Review  │                                         │
-│ ⚙️ System  │                                         │
-│            │                                         │
-├────────────┴─────────────────────────────────────────┤
-│ Version 0.1.0 · Bun + Kysely · 3 users online       │
-└──────────────────────────────────────────────────────┘
-```
 
 ---
 
@@ -52,23 +35,7 @@ Left sidebar with section links. Main area shows the selected section.
 
 Summary cards with key metrics:
 
-```
-┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐
-│ 👥 Users │ │ 💬 Chats │ │ 🌍 Worlds│ │ 📦 Assets│
-│    12    │ │    47    │ │     5    │ │   234    │
-│ +2 today │ │ +8 today │ │ +1 today │ │ +12 today│
-└──────────┘ └──────────┘ └──────────┘ └──────────┘
 
-┌──────────────────────────────────────────────────────┐
-│ Recent Activity                                      │
-│ ──────────────────────────────────────────────────── │
-│ 12:34  Alice created world "Darkwood"                │
-│ 12:28  Bob sent 5 messages in "Forest Quest"         │
-│ 12:15  Charlie registered                            │
-│ 12:02  Admin archived chat "Test Chat"               │
-│ 11:45  Alice updated location "Cave Entrance"        │
-└──────────────────────────────────────────────────────┘
-```
 
 - Metrics refresh every 30 seconds (auto-poll)
 - Click a metric card to jump to the relevant section

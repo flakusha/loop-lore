@@ -24,18 +24,20 @@ Time-based access control for encrypted content. Admins can set access time limi
 
 ### Access Control Model
 
-```
-Participant Access:
-  ├── Granted: key wrapped and distributed
-  ├── Active: key valid, can decrypt
-  ├── Expired: key invalid after time limit
-  └── Revoked: key rotated out (participant left)
-
-Time-Based Expiry:
-  ├── Admin sets: access_duration_days per chat
-  ├── On expiry: key becomes invalid
-  ├── Messages remain encrypted (not deleted)
-  └── Re-access: admin grants new key
+```mermaid
+flowchart TB
+    subgraph PA["Participant Access"]
+        PA1["Granted: key wrapped and distributed"]
+        PA2["Active: key valid, can decrypt"]
+        PA3["Expired: key invalid after time limit"]
+        PA4["Revoked: key rotated out (participant left)"]
+    end
+    subgraph TE["Time-Based Expiry"]
+        TE1["Admin sets: access_duration_days per chat"]
+        TE2["On expiry: key becomes invalid"]
+        TE3["Messages remain encrypted (not deleted)"]
+        TE4["Re-access: admin grants new key"]
+    end
 ```
 
 ### Schema

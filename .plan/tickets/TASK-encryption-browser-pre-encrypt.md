@@ -21,20 +21,18 @@ Wire existing `src/frontend/browser.ts` (browser-side pre-encrypt) into the chat
 
 ## Design
 
-```
-User types message
-  ↓
-Browser-side:
-  ├── Derive key from user's actor key
-  ├── Encrypt message content
-  └── Send encrypted payload to server
-  ↓
-Server stores encrypted payload (cannot decrypt)
-
-Other participants:
-  ├── Receive encrypted payload
-  ├── Derive key from their actor key
-  └── Decrypt in browser
+```mermaid
+flowchart LR
+    UTM["User types message"]
+    UTM --> BS["Browser-side"]
+    BS --> DK["Derive key from user's actor key"]
+    DK --> EM["Encrypt message content"]
+    EM --> SP["Send encrypted payload to server"]
+    SP --> SS["Server stores encrypted payload (cannot decrypt)"]
+    SS --> OP["Other participants"]
+    OP --> RP["Receive encrypted payload"]
+    RP --> DK2["Derive key from their actor key"]
+    DK2 --> DB["Decrypt in browser"]
 ```
 
 ## Fallbacks Support

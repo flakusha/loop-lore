@@ -94,16 +94,16 @@ stateDiagram-v2
     [*] --> disabled
     disabled --> booting: INIT
     booting --> idle: ready
-    idle --> typing: MESSAGE_IN (auto-advance off)
-    idle --> awaiting-advance: MESSAGE_IN (auto-advance on)
+    idle --> typing: "MESSAGE_IN (auto_advance off)"
+    idle --> awaiting_advance: "MESSAGE_IN (auto_advance on)"
     idle --> navigating: NAVIGATE
     navigating --> transitioning: TRANSITION_BEGIN
-    transitioning --> typing: TRANSITION_END + typing-active
-    transitioning --> idle: TRANSITION_END + idle
-    typing --> awaiting-advance: TYPEWRITER_END + auto-advance on
-    typing --> idle: TYPEWRITER_END + auto-advance off
-    awaiting-advance --> navigating: tick / NAVIGATE
-    awaiting-advance --> idle: SKIP
+    transitioning --> typing: "TRANSITION_END + typing_active"
+    transitioning --> idle: "TRANSITION_END + idle"
+    typing --> awaiting_advance: "TYPEWRITER_END + auto_advance on"
+    typing --> idle: "TYPEWRITER_END + auto_advance off)"
+    awaiting_advance --> navigating: "tick / NAVIGATE"
+    awaiting_advance --> idle: SKIP
     typing --> idle: SKIP
     any --> destroyed: DESTROY
     destroyed --> [*]

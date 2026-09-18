@@ -21,24 +21,22 @@ Encrypt asset blobs (images, audio, video) when stored in standard/private tier 
 
 ## Design
 
-```
-Asset Upload
-  ↓
-  ├── Determine tier from parent (chat/world/location)
-  ├── If tier ≠ public:
-  │   ├── Derive asset key (HKDF from parent key)
-  │   ├── Encrypt blob with AES-256-GCM
-  │   └── Store: encrypted_blob + IV + auth_tag
-  └── If tier = public:
-      └── Store plaintext (current behavior)
-
-Asset Download
-  ↓
-  ├── Check access (participant check)
-  ├── If encrypted:
-  │   ├── Derive asset key
-  │   └── Decrypt blob
-  └── Return plaintext to authorized user
+```mermaid
+flowchart TB
+    UP["Asset Upload"]
+    UP --> DT["Determine tier from parent (chat/world/location)"]
+    DT --> IFT["If tier != public"]
+    IFT --> DAK["Derive asset key (HKDF from parent key)"]
+    IFT --> EAB["Encrypt blob with AES-256-GCM"]
+    IFT --> SES["Store: encrypted_blob + IV + auth_tag"]
+    DT --> IFP["If tier = public"]
+    IFP --> SPT["Store plaintext (current behavior)"]
+    DOWN["Asset Download"]
+    DOWN --> CA["Check access (participant check)"]
+    CA --> IFE["If encrypted"]
+    IFE --> DAK2["Derive asset key"]
+    IFE --> DEB["Decrypt blob"]
+    CA --> RET["Return plaintext to authorized user"]
 ```
 
 ## Tasks

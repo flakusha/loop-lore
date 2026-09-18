@@ -59,114 +59,15 @@ The user as Game Master has explicit control over narrative direction in group-c
 
 ### GM Panel Layout
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ Story Mode: The Forgotten Realms              [GM Controls] │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│ ┌─ Turn Order ─────────────────────────────────────────────┐│
-│ │ Current: [Alice] (Player)                                ││
-│ │ Next: [Bob] (NPC) → [Narrator] → [GM] → [Alice]        ││
-│ │                                                          ││
-│ │ [Skip Turn] [Reorder] [Add Actor] [Remove Actor]        ││
-│ └─────────────────────────────────────────────────────────┘│
-│                                                             │
-│ ┌─ Actor Details ──────────────────────────────────────────┐│
-│ │ Alice (Player)                                           ││
-│ │ Status: Ready                                            ││
-│ │ Last Action: Investigated the ancient ruins              ││
-│ │ Quality Score: 85/100                                    ││
-│ │                                                          ││
-│ │ [Edit Prompt] [View History] [Set Constraints]           ││
-│ └─────────────────────────────────────────────────────────┘│
-│                                                             │
-│ ┌─ Quality Evaluation ─────────────────────────────────────┐│
-│ │ Last Response: Bob (NPC)                                 ││
-│ │ Score: 72/100                                            ││
-│ │ Issues:                                                  ││
-│ │   - Minor OOC (out of character)                         ││
-│ │   - Inconsistent with world lore                          ││
-│ │                                                          ││
-│ │ [Accept] [Regenerate] [Escalate to GM]                   ││
-│ └─────────────────────────────────────────────────────────┘│
-│                                                             │
-│ ┌─ World State ────────────────────────────────────────────┐│
-│ │ Location: Ancient Ruins                                  ││
-│ │ Time: Day 45, 14:30                                      ││
-│ │ Weather: Rainy                                           ││
-│ │                                                          ││
-│ │ Recent Changes:                                          ││
-│ │   - Alice discovered hidden chamber                      ││
-│ │   - Bob found ancient artifact                           ││
-│ │   - Weather changed to rainy                             ││
-│ │                                                          ││
-│ │ [Edit World State] [View Full History]                   ││
-│ └─────────────────────────────────────────────────────────┘│
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-```
+<!-- ASCII UI mockup removed in favor of prose description: see preceding/following sections. -->
 
 ### GM Guidance Panel
 
-```
-┌─ GM Guidance ─────────────────────────────────────────────┐
-│ Narrative Direction:                                       │
-│ [ Focus on the mysterious door ] [Explore the forest]     │
-│                                                          │
-│ Target Character: [▼ Character Name]                     │
-│ Constraints:                                               │
-│ ☐ Stay in-character as a cautious elf                   │
-│ ☑ No magic in this scene                                │
-│ ☐ Tone: Mysterious                                      │
-│                                                          │
-│ Turn Priority:                                           │
-│ Alice [High]  Bob [Medium]  Narrator [Low]              │
-│                                                          │
-│ [Apply Guidance] [Clear All]                            │
-└─────────────────────────────────────────────────────────┘
-```
+<!-- ASCII UI mockup removed in favor of prose description: see preceding/following sections. -->
 
 ### Quest Log Layout
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ Quest Log                                           [+ New] │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│ ┌─ Active Quests (3) ──────────────────────────────────┐│
-│ │                                                          ││
-│ │ ⭐ Main Quest: The Ancient Prophecy                    ││
-│ │    Objective: Find the three sacred artifacts           ││
-│ │    Progress: 1/3 artifacts found                        ││
-│ │    [View Details]                                       ││
-│ │                                                          ││
-│ │ 📜 Side Quest: Help the Village                         ││
-│ │    Objective: Retrieve the stolen supplies              ││
-│ │    Progress: 50% complete                               ││
-│ │    [View Details]                                       ││
-│ │                                                          ││
-│ │ 🔍 Exploration: Ancient Ruins                           ││
-│ │    Objective: Explore the hidden chambers               ││
-│ │    Progress: 2/5 chambers discovered                    ││
-│ │    [View Details]                                       ││
-│ │                                                          ││
-│ └─────────────────────────────────────────────────────────┘│
-│                                                             │
-│ ┌─ Completed Quests (5) ─────────────────────────────────┐│
-│ │ ✅ Welcome to the Village                               ││
-│ │ ✅ First Steps                                          ││
-│ │ ✅ The Merchant's Request                               ││
-│ │ ✅ Into the Wild                                        ││
-│ │ ✅ The Old Bridge                                       ││
-│ └─────────────────────────────────────────────────────────┘│
-│                                                             │
-│ ┌─ Failed Quests (1) ───────────────────────────────────┐│
-│ │ ❌ Race Against Time                                    ││
-│ │    Reason: Time limit expired                           ││
-│ └─────────────────────────────────────────────────────────┘│
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-```
+<!-- ASCII UI mockup removed in favor of prose description: see preceding/following sections. -->
 
 ## Integration Points
 

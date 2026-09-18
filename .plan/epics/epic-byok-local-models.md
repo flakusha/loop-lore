@@ -43,17 +43,11 @@ Players can download models and WASM modules to run inference locally in the bro
 
 ### Three Inference Modes
 
-```
-┌─────────────────┐  ┌──────────────────────┐  ┌─────────────────────┐
-│ Browser WASM    │  │ Local llama.cpp      │  │ Server Default      │
-│ (self-contained)│  │ (remote tunnel)      │  │ (server-side API)   │
-│                 │  │                      │  │                     │
-│ - No network    │  │ - Native speed       │  │ - Best quality      │
-│ - Full privacy  │  │ - Full privacy       │  │ - Requires API key  │
-│ - Slower        │  │ - Requires llama.cpp │  │ - Key visible to    │
-│ - Memory limit  │  │ - Player hosts       │  │   server operator   │
-│   (~2-4GB)      │  │                      │  │                     │
-└─────────────────┘  └──────────────────────┘  └─────────────────────┘
+```mermaid
+flowchart LR
+    W["Browser WASM (self-contained)<br/>- No network<br/>- Full privacy<br/>- Slower<br/>- Memory limit (~2-4GB)"]
+    L["Local llama.cpp (remote tunnel)<br/>- Native speed<br/>- Full privacy<br/>- Requires llama.cpp<br/>- Player hosts"]
+    S["Server Default (server-side API)<br/>- Best quality<br/>- Requires API key<br/>- Key visible to server operator"]
 ```
 
 ### Mode 1: Browser WASM Inference
