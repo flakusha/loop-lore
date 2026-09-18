@@ -124,22 +124,24 @@ export class PersonasService {
     if (params.maxTokens !== undefined) { updates.max_tokens = params.maxTokens; }
     if (params.model !== undefined) { updates.model = params.model; }
 
-    const result = await this.db
-      .updateTable("personas",)
-      .set(updates,)
-      .where("id", "=", id,)
-      .where("user_id", "=", userId,)
-      .executeTakeFirst();
+    await this.db.transaction().execute(async (trx,) => {
+      const res = await trx
+        .updateTable("personas",)
+        .set(updates,)
+        .where("id", "=", id,)
+        .where("user_id", "=", userId,)
+        .executeTakeFirst();
 
-    // 0 rows affected ⇒ either no such persona or owned by another user.
-    // Throw so the handler maps to 404 (matches getById/delete/convertToCharacter).
-    if (Number(result?.numUpdatedRows ?? 0,) === 0) {
-      throw new Error("Persona not found",);
-    }
+      // 0 rows affected ⇒ either no such persona or owned by another user.
+      // Throw so the handler maps to 404 (matches getById/delete/convertToCharacter).
+      if (Number(res?.numUpdatedRows ?? 0,) === 0) {
+        throw new Error("Persona not found",);
+      }
 
-    if (defaultFlip) {
-      await this.setDefault(id, userId,);
-    }
+      if (defaultFlip) {
+        await applyDefault(trx, id, userId,);
+      }
+    },);
   }
 
   /**
@@ -174,31 +176,9 @@ export class PersonasService {
    * @param userId
    */
   async setDefault(id: string, userId: string,): Promise<void> {
-    // Existence + ownership check, mirroring update() so callers can 404.
-    const owned = await this.db
-      .selectFrom("personas",)
-      .select("id",)
-      .where("id", "=", id,)
-      .where("user_id", "=", userId,)
-      .executeTakeFirst();
-    if (!owned) {
-      throw new Error("Persona not found",);
-    }
-
-    // Unset current default
-    await this.db
-      .updateTable("personas",)
-      .set({ is_default: DefaultState.NotDefault, },)
-      .where("user_id", "=", userId,)
-      .execute();
-
-    // Set new default
-    await this.db
-      .updateTable("personas",)
-      .set({ is_default: DefaultState.Default, updated_at: new Date().toISOString(), },)
-      .where("id", "=", id,)
-      .where("user_id", "=", userId,)
-      .execute();
+    await this.db.transaction().execute(async (trx,) => {
+      await applyDefault(trx, id, userId,);
+    },);
   }
 
   /**
@@ -211,4 +191,41 @@ export class PersonasService {
     // settings JSON (BUG-personas-converttocharacter-drops-…).
     return convertPersonaToCharacter(this.db, id, userId,);
   }
+}
+
+/**
+ * The single owner of the "one default per user" invariant: unset the
+ * current default, then mark `id` as default. Runs inside the caller's
+ * transaction so the flip cannot half-apply.
+ * @param db - transaction or pool executor
+ * @param id - persona id
+ * @param userId - owning user id
+ * @throws {Error} `"Persona not found"` when no row matches `id` + `userId`
+ */
+async function applyDefault(db: Kysely<DB>, id: string, userId: string,): Promise<void> {
+  // Existence + ownership check, mirroring update() so callers can 404.
+  const owned = await db
+    .selectFrom("personas",)
+    .select("id",)
+    .where("id", "=", id,)
+    .where("user_id", "=", userId,)
+    .executeTakeFirst();
+  if (!owned) {
+    throw new Error("Persona not found",);
+  }
+
+  // Unset current default, then set the new one — atomic with the caller's
+  // surrounding transaction (BUG-persona-default-flip-nontransactional).
+  await db
+    .updateTable("personas",)
+    .set({ is_default: DefaultState.NotDefault, },)
+    .where("user_id", "=", userId,)
+    .execute();
+
+  await db
+    .updateTable("personas",)
+    .set({ is_default: DefaultState.Default, updated_at: new Date().toISOString(), },)
+    .where("id", "=", id,)
+    .where("user_id", "=", userId,)
+    .execute();
 }
