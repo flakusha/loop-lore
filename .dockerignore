@@ -1,0 +1,25 @@
+# SPDX-License-Identifier: LGPL-3.0-or-later
+# SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
+# Keep the build context minimal: only src/, scripts/, package.json,
+# bun.lock, bunfig.toml are needed by the Dockerfile stages.
+.git
+.gitignore
+.agents
+.github
+.opencode
+.plan
+.ledger.jsonl
+.credentials.env
+.env
+*.log
+.tmp
+coverage
+dist
+docs
+native
+node_modules
+tests
+tree
+playwright-report
+test-results
