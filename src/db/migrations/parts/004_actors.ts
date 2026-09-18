@@ -21,7 +21,11 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("rotated_at", "text",)
     .addColumn("created_at", "text", (col,) => col.notNull(),)
     .addColumn("expires_at", "text",)
-    .addForeignKeyConstraint("fk_ap_actor_keys_actor", ["actor_id",], "actors", ["id",],)
+    // BUG-migration-activitypub-actor-keys-fk-missing-ondelete-cascade:
+    // every other FK in the codebase cascades on actor delete; this one
+    // omitted `.onDelete("cascade")` and would block actor removal with
+    // a FK constraint violation when signing keys exist.
+    .addForeignKeyConstraint("fk_ap_actor_keys_actor", ["actor_id",], "actors", ["id",], (cb,) => cb.onDelete("cascade",),)
     .execute();
 
   await database.schema
