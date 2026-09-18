@@ -39,8 +39,22 @@ services:
       DOCS_ENABLED: "false"
       SERVER_TRUST_PROXY: "1"
       SERVER_PUBLIC_ORIGIN: https://${DOMAIN:?DOMAIN is required}
+      # Behind Caddy the site is HTTPS-only: force the Secure flag on the
+      # ll_token + csrf_token cookies (setTokenCookie decision matrix,
+      # src/routes/auth/shared.ts). Narrow override — deliberately NOT
+      # NODE_ENV=production, which gates other behavior.
+      LL_COOKIE_SECURE: "true"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    volumes:
+      - app_data:/app/loop-lore-data
+    healthcheck:
+      test: ["CMD", "bun", "-e", "const r = await fetch('http://127.0.0.1:3000/api/health'); process.exit(r.ok ? 0 : 1);"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
 
   db:
     image: postgres:16-alpine
@@ -51,8 +65,14 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d looplore"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
 
 volumes:
   caddy_data:
   caddy_config:
   pgdata:
+  app_data:
