@@ -13,6 +13,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import type { ModelInfo, } from "../generation/providers/types";
 import { getLogger, } from "../logger";
+import { toDate, } from "../utils/date";
 import { jsonParseOr, jsonStringifyOr, } from "../utils/safe-json";
 import type { ResolvedModelCapabilities, } from "./model-capabilities-types";
 
@@ -120,7 +121,7 @@ export async function resolveModelCapabilities(
 
   if (!row) { return null; }
 
-  const isStale = Date.now() - new Date(row.last_seen,).getTime() > STALE_THRESHOLD_MS;
+  const isStale = Date.now() - toDate(row.last_seen,).getTime() > STALE_THRESHOLD_MS;
 
   return {
     providerId: row.provider_id,
@@ -167,7 +168,7 @@ export async function listModelCapabilities(
     modalities: row.modalities ? jsonParseOr<string[]>(row.modalities, [],) : [],
     paramSize: row.param_size,
     ownedBy: row.owned_by,
-    isStale: Date.now() - new Date(row.last_seen,).getTime() > STALE_THRESHOLD_MS,
+    isStale: Date.now() - toDate(row.last_seen,).getTime() > STALE_THRESHOLD_MS,
     lastSeen: row.last_seen,
     userOverride: row.user_override === 1,
     notes: row.notes,

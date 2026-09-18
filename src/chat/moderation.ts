@@ -30,6 +30,7 @@ import { type DB, } from "../db/schema";
 import { ModerationHook, } from "../generation/hooks/moderation-hook";
 import { getLogger, } from "../logger";
 import { can, } from "../users/permissions";
+import { parseExpiryMs, } from "../utils/date";
 import { jsonStringifyOr, } from "../utils/safe-json";
 import type {
   ApplyOptions,
@@ -558,8 +559,8 @@ export function isMuted(
 ): boolean {
   if (!participant || !participant.muted_until) { return false; }
   // ISO-8601 strings sort lexicographically — safe for `>` comparison.
-  const expiry = Date.parse(participant.muted_until,);
-  if (Number.isNaN(expiry,)) { return false; }
+  const expiry = parseExpiryMs(participant.muted_until,);
+  if (expiry === null) { return false; }
   return expiry > now;
 }
 
@@ -575,8 +576,8 @@ export function isParticipantBanned(
   now: number,
 ): boolean {
   if (!participant || !participant.banned_until) { return false; }
-  const expiry = Date.parse(participant.banned_until,);
-  if (Number.isNaN(expiry,)) { return false; }
+  const expiry = parseExpiryMs(participant.banned_until,);
+  if (expiry === null) { return false; }
   return expiry > now;
 }
 
