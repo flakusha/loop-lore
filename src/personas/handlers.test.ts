@@ -423,4 +423,38 @@ describe("handleConvertToCharacter", () => {
     expect(body.error,).toBe("Conversion failed",);
     expect(body.error,).not.toContain("secret",);
   });
+
+  test("carries persona title, temperature, maxTokens, and model into the actor settings", async () => {
+    // Regression for BUG-personas-converttocharacter-drops-title-temperature-
+    // max-toke: conversion previously wrote settings="{}" and silently lost
+    // the persona's title and generation tuning.
+    const id = await service.create({
+      userId: OWNER_ID,
+      name: "Tuned Convert",
+      title: "Dr.",
+      temperature: 0.7,
+      maxTokens: 2000,
+      model: "custom-model",
+    },);
+    const res = await handleConvertToCharacter({ database: db, personaId: id, context: ctxFor(OWNER_ID,), },);
+    expect(res.status,).toBe(201,);
+    const body: ActorBody = await res.json();
+    const actor = await db
+      .selectFrom("actors",)
+      .select("settings",)
+      .where("id", "=", body.actorId,)
+      .executeTakeFirst();
+    const settings = JSON.parse(actor!.settings,) as {
+      persona?: {
+        title: string | null;
+        temperature: number | null;
+        max_tokens: number | null;
+        model: string | null;
+      };
+    };
+    expect(settings.persona?.title,).toBe("Dr.",);
+    expect(settings.persona?.temperature ?? 0,).toBeCloseTo(0.7,);
+    expect(settings.persona?.max_tokens,).toBe(2000,);
+    expect(settings.persona?.model,).toBe("custom-model",);
+  });
 });
