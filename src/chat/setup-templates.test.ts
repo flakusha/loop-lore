@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { createTestDb, } from "../test-utils/create-test-db";
+import { insertChats, insertUsers, } from "../test-utils/insert-helpers";
 import {
   createChatSetupTemplate,
   deleteChatSetupTemplate,
@@ -142,5 +143,57 @@ describe("chat setup templates", () => {
     expect(again.ok,).toBe(false,);
     if (again.ok) { return; }
     expect(again.code,).toBe("not_found",);
+  });
+
+  it("template edits do not retroactively change bound chats (snapshot semantics)", async () => {
+    // Ponytail: this is the one missing explicit regression. Chat rows
+    // value-copy mode/turn_strategy/gm_config at create time, and the
+    // template_id FK is just a lineage pointer — so editing or deleting
+    // the template MUST leave bound chats untouched.
+    await createChatSetupTemplate(db, {
+      slug: "snap",
+      name: "Snapshot",
+      mode: "direct",
+      turnStrategy: "round_robin",
+      renderingOverride: null,
+    },);
+    const ownerId = crypto.randomUUID();
+    await insertUsers(db, "snap-user", "Snap User", { id: ownerId, },);
+    const chatId = crypto.randomUUID();
+    await insertChats(db, "Bound Chat", ownerId, {
+      id: chatId,
+      type: "direct" as never,
+      mode: "direct" as never,
+      turn_strategy: "round_robin" as never,
+      gm_config: JSON.stringify({ renderingOverride: null, },),
+    },);
+    // Bind the chat to the template via the FK lineage pointer.
+    const tpl = await db.selectFrom("chat_setup_templates",).select("id",).where("slug", "=", "snap",)
+      .executeTakeFirst();
+    expect(tpl,).not.toBeUndefined();
+    await db.updateTable("chats",).set({ template_id: tpl!.id, },).where("id", "=", chatId,).execute();
+
+    const before = await db.selectFrom("chats",).selectAll().where("id", "=", chatId,).executeTakeFirst();
+    expect(before?.mode,).toBe("direct",);
+
+    // Edit the template
+    const upd = await updateChatSetupTemplate(db, tpl!.id, {
+      mode: "story",
+      turnStrategy: "scene_based",
+    },);
+    expect(upd.ok,).toBe(true,);
+
+    const after = await db.selectFrom("chats",).selectAll().where("id", "=", chatId,).executeTakeFirst();
+    expect(after?.mode,).toBe("direct",);
+    expect(after?.turn_strategy,).toBe("round_robin",);
+    expect(after?.template_id,).toBe(tpl!.id,);
+
+    // Delete the template — chat survives, template_id is nulled via FK onDelete set null
+    const del = await deleteChatSetupTemplate(db, tpl!.id,);
+    expect(del.ok,).toBe(true,);
+    const surviving = await db.selectFrom("chats",).selectAll().where("id", "=", chatId,).executeTakeFirst();
+    expect(surviving,).not.toBeUndefined();
+    expect(surviving?.template_id,).toBeNull();
+    expect(surviving?.mode,).toBe("direct",);
   });
 });
