@@ -59,6 +59,8 @@
     "check:ci": "bun run check:parallel --ci",
     "check:fix": "bun run check:parallel --fix",
     "check:report-ls": "bun run check:parallel --report-ls",
+    "check:fast": "bun run check:parallel --gates 'typecheck - backend,typecheck - frontend,typecheck - scripts,lint - eslint,circular - imports (advisory),wiring - check,changelog - gate,db - schema gate,migrations - ordering,size - check,size - strict,no - shell - refs,frontend - innerHTML xss'",
+    "check:default": "bun run check:parallel --skip-gates 'coverage - per-module line %,plan - validate,format - dprint,md - lint,dead - code (knip)'",
     "check:full": "bun run build:frontend && bun run check",
     "test": "bun test --parallel=${TEST_JOBS:-4} --isolate",
     "test:watch": "bun test --watch",

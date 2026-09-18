@@ -27,6 +27,24 @@ bun run test:coverage  # unit + e2e with lcov output
 bun run test:e2e:browser
 ```
 
+### Lightweight check presets
+
+Three named `package.json` scripts (added 2026-09-18) hit different cost
+points without editing the gate list. All accept the same `--diff-base` /
+`--gates` / `--skip-gates` CLI args as `check:parallel` if you need to
+adjust further.
+
+| Preset | Wallclock | Skipped gates | Use |
+|---|---:|---|---|
+| `bun run check:fast` | ~15 s | coverage + plan-validate + format + md-lint + knip | pre-commit / inner loop |
+| `bun run check:default` | ~30 s | same 5 as `check:fast` | local pre-finalize |
+| `bun run check` | ~72 s | none | finalize / pre-PR |
+
+`check:full` still does `build:frontend && check` for release builds.
+Measured on `dev` HEAD 2026-09-18; tune `--jobs N` to your host. The
+audit document lives at `.tmp/heavy-gate-audit-2026-09-18.md` until next
+purge.
+
 ### Heavy-test opt-in (coverage gate)
 
 `scripts/check-parallel.mjs` skips `src/db/migrations.test.ts` and
