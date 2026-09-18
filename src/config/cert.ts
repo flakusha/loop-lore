@@ -66,6 +66,8 @@ export function ensureTlsCerts(configPath: TlsFiles,): TlsFiles | null {
         configPath.cert,
         "-subj",
         "/C=XX/ST=Development/L=Local/O=loop-lore/CN=localhost",
+        "-addext",
+        "subjectAltName=DNS:localhost,IP:127.0.0.1",
       ],);
 
       if (result.success) {
