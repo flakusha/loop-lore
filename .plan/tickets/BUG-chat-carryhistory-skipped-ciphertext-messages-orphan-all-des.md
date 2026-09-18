@@ -3,7 +3,7 @@
 
 # BUG: chat carryHistory: skipped ciphertext messages orphan all descendants
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (batch 2)
 **Priority:** high
 **Effort:** Medium
 **Summary:** (see ## Summary)
@@ -37,6 +37,6 @@ Move `idRemap.set(m.id, newId)` to BEFORE the undecryptable guard so the parent�
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
+- [x] Implementation complete
+- [x] Tests passing
 - [ ] Documentation updated

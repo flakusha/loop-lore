@@ -34,7 +34,9 @@ export async function carryHistory(
   // carried tree's parent_id links resolve within the new chat instead of
   // pointing back at stale source-chat ids. Rows are inserted in created_at
   // order, so a parent always precedes (and is remapped before) its children.
-  const idRemap = new Map<string, string>();
+  // Dropped (undecryptable) rows map to their parent's carried id so
+  // descendants re-parent past the gap instead of being severed.
+  const idRemap = new Map<string, string | null>();
 
   for (const m of messages) {
     // BUG-carryhistory-copies-key-id: `key_id` points at a chat_keys row
@@ -48,6 +50,10 @@ export async function carryHistory(
     const newId = crypto.randomUUID();
     const parentId = m.parent_id ? (idRemap.get(m.parent_id,) ?? null) : null;
     if (m.key_id && !m.content_plaintext) {
+      // BUG-carryhistory-orphan-descendants: record the dropped row's id
+      // BEFORE skipping so its descendants re-parent to the nearest carried
+      // ancestor instead of landing on parent_id = null.
+      idRemap.set(m.id, parentId,);
       continue;
     }
     await database

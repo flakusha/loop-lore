@@ -3,7 +3,7 @@
 
 # BUG: battle dice: advantage/disadvantage rolls ignore modifiers, biasing vs initial roll
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (batch 2)
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (see ## Summary)
@@ -37,6 +37,6 @@ Apply bonus/penalty to the advantage/disadvantage total as well, OR move the mod
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
+- [x] Implementation complete
+- [x] Tests passing
 - [ ] Documentation updated

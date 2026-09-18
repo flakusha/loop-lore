@@ -3,7 +3,7 @@
 
 # BUG: chat reunite: copyMessagesToPrimary carries source chat key_id verbatim
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (batch 2)
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (see ## Summary)
@@ -37,6 +37,6 @@ Change line 156 to `key_id: null`. This aligns copyMessagesToPrimary with carry-
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
+- [x] Implementation complete
+- [x] Tests passing
 - [ ] Documentation updated
