@@ -3,7 +3,7 @@
 
 # BUG: rpg loot: luckModifier inverts drop quality — positive luck produces worse drops
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (sign fixed: adjustedRoll = roll + luckModifier clamped to [1,100])
 **Priority:** high
 **Effort:** Medium
 **Summary:** (see ## Summary)
@@ -37,6 +37,6 @@ Change line 81 to `const adjustedRoll = Math.min(100, roll + luckModifier);` (or
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
+- [x] Implementation complete
+- [x] Tests passing
 - [ ] Documentation updated

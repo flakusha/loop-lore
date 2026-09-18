@@ -78,7 +78,9 @@ function rollOneDrop(
 
   // Roll weighted random
   const roll = rollDie(100,);
-  const adjustedRoll = Math.max(1, roll - luckModifier,);
+  // Positive luck raises the threshold so rarer (later-cumulative) entries win;
+  // regression guard for BUG-rpg-loot-luckmodifier-inverts-drop-quality.
+  const adjustedRoll = Math.min(100, Math.max(1, roll + luckModifier,),);
   const threshold = (adjustedRoll / 100) * totalWeight;
 
   let cumulative = 0;
