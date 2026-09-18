@@ -421,6 +421,12 @@ giwt state TASK-001 closed
 bun run plan:sync:fix                 # apply fixes (non-interactive) — runs giwt sync --fix
 bun run plan:sync                     # check — runs giwt sync
 
+# Comprehensive .plan/ validation (10 gates: format, linkage, backlog,
+# tickets, code-map, links, spdx, naming, epics-doc, all)
+bun run plan:validate                 # check — exits non-zero on findings
+bun run plan:validate:fix             # apply auto-fixable findings (giwt plan validate --fix)
+bun run plan:status                   # health summary (open/closed counts, gate pass/fail)
+
 # Direct git-issue
 giwt gi <command>
 ````
