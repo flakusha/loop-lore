@@ -17,16 +17,19 @@ import { Migrator, } from "kysely/migration";
 import { readdirSync, } from "node:fs";
 import path from "node:path";
 import { createLogger, } from "../logger";
+import { compareMigrationNames, } from "./migrate";
 import { createSqliteDialect, } from "./index";
 
 // ── Helpers ────────────────────────────────────────────────────
+
+const MIGRATION_FILENAME = /^(\d{3})_(.+)\.ts$/;
 
 /** List migration file names, excluding the parts/ subfolder. */
 function getMigrationNames(): string[] {
   const dir = path.join(__dirname, "migrations",);
   return readdirSync(dir,)
-    .filter((f,) => typeof f === "string" && f.endsWith(".ts",))
-    .toSorted((a, b,) => a.localeCompare(b,));
+    .filter((f,) => typeof f === "string" && MIGRATION_FILENAME.test(f,))
+    .toSorted(compareMigrationNames,);
 }
 
 /**

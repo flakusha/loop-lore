@@ -3,7 +3,11 @@
 
 # BUG: WebP VP8X dimension truncation — 14-bit mask on 24-bit spec field
 
-**Status:** [OK] Already resolved in dev — no code change needed
+**Status:** ✅ Closed — already resolved in dev (verified 2026-09-18)
+
+## Verification
+
+Re-checked `src/assets/metadata.ts:212-217` — VP8X parse uses `readUint24LE(buf, offset + 12/15,) + 1` with no `0x3FFF` mask. `readUint24LE` returns full 24-bit LE value (metadata.ts:51-53). No truncation. Ticket claim superseded by prior fix.
 
 **Priority:** medium
 

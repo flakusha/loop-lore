@@ -10,6 +10,42 @@ import { createLogger, getLogger, } from "../logger";
 import { getDatabase, } from "./index";
 
 /**
+ * Migration filename regex — three-digit numeric prefix then `_` then name.
+ * Stray files (README.md, dotfiles, helpers) are filtered out so they
+ * cannot accidentally register as a migration. BUG-migration-ordering-
+ * ambiguous-via-localecompare-duplicate-num.
+ */
+const MIGRATION_FILENAME = /^(\d{3})_(.+)\.ts$/;
+
+/**
+ * Extract the leading numeric prefix from a migration filename, or NaN
+ * when the file is not a recognized migration (filtered earlier).
+ * @param name
+ */
+function migrationPrefix(name: string,): number {
+  const match = name.match(MIGRATION_FILENAME,);
+  return match ? Number(match[1]) : Number.NaN;
+}
+
+/**
+ * Numeric-aware comparator: order by leading NNN prefix, then
+ * alphabetically for ties. Replaces `localeCompare`, which was
+ * locale-dependent (Turkish locale broke ordering of `011_*` vs `010_*`)
+ * and gave no guarantee for files with the same prefix (e.g. `041a_` vs
+ * `041b_`). BUG-migration-ordering-ambiguous-via-localecompare.
+ * @param a
+ * @param b
+ */
+export function compareMigrationNames(a: string, b: string,): number {
+  const an = migrationPrefix(a,);
+  const bn = migrationPrefix(b,);
+  if (!Number.isNaN(an,) && !Number.isNaN(bn,)) {
+    if (an !== bn) { return an - bn; }
+  } else if (!Number.isNaN(an,)) { return -1; } else if (!Number.isNaN(bn,)) { return 1; }
+  return a < b ? -1 : a > b ? 1 : 0;
+}
+
+/**
  * Load schema migrations from src/db/migrations/ (filename = migration name).
  * Exported for testing — production callers should use {@link runMigrations}.
  * @returns map of migration name → `Migration` instance, in declared order.
@@ -17,17 +53,17 @@ import { getDatabase, } from "./index";
 export async function getMigrationFiles(): Promise<Record<string, Migration>> {
   const migrationsDirectory = path.join(__dirname, "migrations",);
   const matched: string[] = [];
-  // Filter out colocated test files. The loader previously re-imported
-  // every `*.ts` in src/db/migrations/, which means a `*.test.ts` placed
-  // there would re-register its `describe()` inside whatever test held
-  // the migrator, breaking the run with "Cannot call describe() inside a
-  // test". Only `.ts` files that are NOT tests are migration modules.
-  // BUG-migrate-ts-loader-imports-test-ts-files-from-src-db-migratio.
+  // Filter: only `NNN_name.ts` (three-digit numeric prefix) registration
+  // files. Stray `.ts` (helpers, README siblings, `.test.ts` colocated)
+  // would otherwise register as migrations. Two filters stacked:
+  //   1. Strict `NNN_name.ts` shape excludes README, helpers, tests.
+  //   2. Numeric comparator below guarantees deterministic order across
+  //      locales (replaces the previous `localeCompare`).
   for (const f of readdirSync(migrationsDirectory,)) {
-    if (!f.endsWith(".ts",) || f.endsWith(".test.ts",)) { continue; }
+    if (!MIGRATION_FILENAME.test(f,)) { continue; }
     matched.push(f,);
   }
-  const files = matched.toSorted((a, b,) => a.localeCompare(b,));
+  const files = matched.toSorted(compareMigrationNames,);
   const migrations: Record<string, Migration> = {};
   for (const file of files) {
     const module = await import(path.join(migrationsDirectory, file,));
