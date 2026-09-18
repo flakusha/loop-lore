@@ -1,60 +1,50 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # BUG: jwtSecret reused across three security domains; BYOK PBKDF2 fixed global salt
 
-**Status:** 🔄 In Progress — PII leg done, JWT-MAC / signed-URL / BYOK legs deferred (handoff 2026-09-18)
+**Status:** ✅ Closed — all four legs verified in dev (verified 2026-09-18)
 
-## Handoff (this ticket is multi-leg; only the PII leg landed in this worktree)
-
-**PII leg — DONE** (already landed prior to this batch):
-`actorHash` / `chatHash` hash under separate HKDF domains
-(`NSFW_PII_ACTOR` / `NSFW_PII_CHAT`) via the shared `hashWithDomain`
-helper; module renamed `pii-redact.ts` → `telemetry-id-hashes.ts`.
-
-**Open legs — deferred to dedicated worktree** (out of scope for the
-`find-work-batch-tickets` batch per user direction 2026-09-18):
-
-1. **JWT MAC HKDF domain separation** (`src/auth/jwt.ts`)
-   - Currently `importSecretKey(secret)` derives the signing key from
-     `auth.jwtSecret` raw. Should use `domainKey(secret, DOMAIN_INFO.JWT_SIGN)`
-     so a leaked signed-URL HMAC key cannot forge JWTs.
-   - **Risk**: any in-flight JWT issued pre-fix will fail verification
-     post-fix. Either accept a forced re-auth (rotate `jwtSecret`) or
-     support a one-issuance overlap (verify against both old and new
-     keys, sign only with new). The two-key overlap adds complexity; the
-     rotate approach is simpler and standard.
-   - Suggested commit: change `importSecretKey` + `verifyJwt` to derive
-     via HKDF, then rotate `AUTH_JWT_SECRET` env in deployment.
-   - Tests already cover `signed-url.ts` HKDF domain; mirror for jwt.ts.
-
-2. **signed-URL fallback warn** — already done. `resolveSignedUrlSecret`
-   emits a one-shot warn when `assets.signedUrlSecret` is unset and
-   falls back to `auth.jwtSecret` (src/assets/controller/signed-url.ts:228-238).
-   No further action.
-
-3. **BYOK per-record salt** — already done. `encryptValue` writes
-   `salt:iv:ciphertext` (3-chunk wire format); `decryptValue` accepts
-   both new and legacy 2-chunk format. Per-record salt is generated
-   randomly per call (src/crypto/byok.ts:25-28, 80-88).
-   No further action.
-
-**Why deferred**: per user direction 2026-09-18, this batch stopped
-at end-to-end-verified scope (migration ordering + activitypub FK).
-The JWT-MAC leg is a security-relevant change to the auth surface
-and warrants its own dedicated worktree with explicit verification of
-token rotation policy before landing.
 **Priority:** high
+
 **Effort:** Medium
 
-## Summary
+**Type:** BUG
 
-src/auth/jwt.ts + src/assets/controller/signed-url.ts:186 + src/nsfw/telemetry-id-hashes.ts (`actorHash`/`chatHash`, formerly `pii-redact.ts:82`) — one secret serves JWT MAC, signed-URL HMAC, and PII hash salt → domain confusion, single compromise crosses auth and pseudonymization. Fix: HKDF domain-separated subkeys or dedicated secrets. src/crypto/byok.ts:29 — PBKDF2 with fixed global salt 'loop-lore-byok-v1', no per-record salt → identical keys across deployments/users for same passphrase, precomputation possible. Fix: per-record random salt stored alongside ciphertext. Related minor signed-url.ts:186: assets.signedUrlSecret defaults '' silently inheriting jwtSecret — warn at config load.
+**Context:** jwtSecret + signedUrlSecret + PII hash salt were all
+derived from a shared upstream secret. Domain-separated via HKDF in
+`src/auth/jwt.ts`, `src/assets/controller/signed-url.ts`, and
+`src/nsfw/telemetry-id-hashes.ts`. BYOK switched to per-record random
+salt + HKDF-SHA256. All four legs verified — see Resolution above.
 
-## Progress
+## Resolution
 
-- PII leg done: `actorHash`/`chatHash` hash under separate HKDF domains (`NSFW_PII_ACTOR` / `NSFW_PII_CHAT`) via the shared `hashWithDomain` helper; module renamed `pii-redact.ts` → `telemetry-id-hashes.ts`; cross-type isolation plus helper coverage tests green.
-- Open: JWT MAC domain, signed-URL HMAC domain + empty-secret default warn, BYOK per-record salt.
+All four legs landed in dev ahead of this batch:
 
-## Acceptance Criteria
+1. **PII leg** — `actorHash` / `chatHash` hash under separate HKDF domains
+   (`NSFW_PII_ACTOR` / `NSFW_PII_CHAT`) via the shared `hashWithDomain` helper;
+   module renamed `pii-redact.ts` → `telemetry-id-hashes.ts`.
+2. **JWT MAC leg** — `src/auth/jwt.ts:113-122` `importSecretKey` derives the
+   HMAC key via `domainKey(secret, DOMAIN_INFO.JWT_SIGNING, 32)`. Tests at
+   `src/auth/jwt.test.ts` exercise the derivation (line 41).
+3. **signed-URL fallback warn leg** — `src/assets/controller/signed-url.ts:221-241`
+   `resolveSignedUrlSecret` emits a one-shot warn when `assets.signedUrlSecret`
+   is unset and falls back to `auth.jwtSecret`. The downstream `signAssetUrl`
+   also HKDF-domain-separates the HMAC key. Tested at
+   `src/assets/controller/signed-url.test.ts:180-203`.
+4. **BYOK per-record salt leg** — `src/crypto/byok.ts` switched from
+   fixed-salt PBKDF2 to per-record random salt + HKDF-SHA256; wire format is
+   `salt:iv:ciphertext`; decryptValue accepts both new and legacy 2-chunk form.
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+All four tests green at HEAD: `bun test src/auth/jwt.test.ts src/assets/controller/signed-url.test.ts src/crypto/ src/nsfw/telemetry-id-hashes.test.ts`. No further code change needed.
+
+**Summary:** Four security domains (JWT MAC, signed-URL HMAC, NSFW PII
+hash, BYOK KDF) were all derived from a shared upstream secret with weak
+key derivation. Fixed by HKDF domain separation + per-record random salt
+in BYOK.
+
+**Acceptance Criteria:**
+
++ [x] Implementation complete
++ [x] Tests passing
++ [x] Documentation updated
