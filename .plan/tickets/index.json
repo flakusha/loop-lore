@@ -4203,17 +4203,17 @@
     "status": "[OK] Resolved"
   },
   "BUG-TEST-SUITE-FLAKY-44-ON-DEV-2026-08-22": {
-    "hash": "1e5d5dc",
+    "hash": "pending",
     "extid": "BUG-TEST-SUITE-FLAKY-44-ON-DEV-2026-08-22",
     "type": "BUG",
-    "title": "# BUG-TEST-SUITE-FLAKY-44-ON-DEV-2026-08-22: test-suite-flaky-44-on-dev-2026-08-22: test-suite-flaky-44-on-dev-2026-08-22",
+    "title": "BUG-TEST-SUITE-FLAKY-44-ON-DEV-2026-08-22: Closeout — Resolved by post-Aug-22 commits",
     "label": "bug",
     "priority": "medium",
     "epic": "",
-    "tags": [],
+    "tags": ["bookkeeping"],
     "source": ".plan/tickets/BUG-TEST-SUITE-FLAKY-44-ON-DEV-2026-08-22.md",
-    "git_issue": "1e5d5dc",
-    "status": "stale"
+    "status": "closed",
+    "closed_at": "2026-09-18"
   },
   "BUG-TOOL-CALL-ARG-PARSE-SILENT-FALLBACK": {
     "hash": "pending",
