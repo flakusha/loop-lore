@@ -29,6 +29,8 @@ export function serveFile(
   return new Response(data, {
     headers: {
       "Content-Type": contentType,
+      // MIME-sniff defense: assets may be attacker-controlled (e.g. SVG).
+      "X-Content-Type-Options": "nosniff",
       "Cache-Control": opts?.cacheControl ?? `public, max-age=${IMMUTABLE_CACHE_MAX_AGE}, immutable`,
       ...opts?.extraHeaders,
     },

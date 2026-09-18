@@ -43,4 +43,41 @@ describe("rpg/loot/generation (real logic)", () => {
     const result = generateLoot([entry,], 5, 1, 0,);
     expect(result.drops.length,).toBeGreaterThanOrEqual(1,);
   });
+
+  it("positive luck biases toward the rarer (later) entry, negative toward common (BUG-rpg-loot-luckmodifier-inverts-drop-quality)", () => {
+    const common: LootEntry = {
+      itemId: "c1",
+      name: "Pebble",
+      rarity: "common",
+      weight: 50,
+      minLevel: 1,
+      goldValue: 1,
+      description: "",
+      type: "material",
+      minQuantity: 1,
+      maxQuantity: 1,
+      metadata: {},
+    };
+    const rare: LootEntry = {
+      itemId: "r1",
+      name: "Gem",
+      rarity: "rare",
+      weight: 15,
+      minLevel: 1,
+      goldValue: 500,
+      description: "",
+      type: "material",
+      minQuantity: 1,
+      maxQuantity: 1,
+      metadata: {},
+    };
+    // luckModifier=99 forces adjustedRoll=100 -> threshold=totalWeight -> only
+    // the rare (last-cumulative) entry can cross it, deterministically.
+    const lucky = generateLoot([common, rare,], 1, 1, 99,);
+    expect(lucky.drops[0]?.name,).toBe("Gem",);
+    // luckModifier=-99 forces adjustedRoll=1 -> threshold near zero -> the
+    // common (first) entry wins, deterministically.
+    const unlucky = generateLoot([common, rare,], 1, 1, -99,);
+    expect(unlucky.drops[0]?.name,).toBe("Pebble",);
+  });
 });

@@ -280,7 +280,7 @@ describe("handleUpdatePersona", () => {
     expect((await service.getById(id, OWNER_ID,))?.name,).toBe("Untouched",);
   });
 
-  test("maps a service failure to 404", async () => {
+  test("maps not-found to 404 and other failures to generic 500", async () => {
     const failingDb = {
       updateTable: () => {
         throw new Error("boom",);
@@ -292,7 +292,9 @@ describe("handleUpdatePersona", () => {
       body: { name: "x", },
       context: ctxFor(OWNER_ID,),
     },);
-    expect(res.status,).toBe(404,);
+    expect(res.status,).toBe(500,);
+    const body: ErrorBody = await res.json();
+    expect(body.error,).toBe("Failed to update persona",);
   });
 
   test("returns 404 when updating another user's persona (cross-user guard)", async () => {
@@ -400,8 +402,25 @@ describe("handleConvertToCharacter", () => {
       personaId: "any-id",
       context: ctxFor(OWNER_ID,),
     },);
-    expect(res.status,).toBe(404,);
+    expect(res.status,).toBe(500,);
     const body: ErrorBody = await res.json();
     expect(body.error,).toBe("Conversion failed",);
+  });
+
+  test("does not leak internal error messages (500 generic)", async () => {
+    const failingDb = {
+      selectFrom: () => {
+        throw new Error("secret internal detail",);
+      },
+    } as unknown as Kysely<DB>;
+    const res = await handleConvertToCharacter({
+      database: failingDb,
+      personaId: "any-id",
+      context: ctxFor(OWNER_ID,),
+    },);
+    expect(res.status,).toBe(500,);
+    const body: ErrorBody = await res.json();
+    expect(body.error,).toBe("Conversion failed",);
+    expect(body.error,).not.toContain("secret",);
   });
 });
