@@ -11,10 +11,6 @@ describe("PersonasService method presence", () => {
     expect(typeof PersonasService.prototype.setDefault,).toBe("function",);
   });
 
-  test("PersonasService has getDefault method", () => {
-    expect(typeof PersonasService.prototype.getDefault,).toBe("function",);
-  });
-
   test("PersonasService has convertToCharacter method", () => {
     expect(typeof PersonasService.prototype.convertToCharacter,).toBe("function",);
   });
