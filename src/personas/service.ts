@@ -110,8 +110,15 @@ export class PersonasService {
     if (params.avatarAssetId !== undefined) { updates.avatar_asset_id = params.avatarAssetId; }
     if (params.description !== undefined) { updates.description = params.description; }
     if (params.title !== undefined) { updates.title = params.title; }
-    if (params.isDefault !== undefined) {
-      updates.is_default = params.isDefault ? DefaultState.Default : DefaultState.NotDefault;
+    let defaultFlip = false;
+    if (params.isDefault === true) {
+      // Delegate to the one code path that owns the default invariant
+      // (unsets the previous default first). Done AFTER the main UPDATE so
+      // a not-found/foreign id surfaces as a single 404 and field updates
+      // don't half-apply around a failed default flip.
+      defaultFlip = true;
+    } else if (params.isDefault === false) {
+      updates.is_default = DefaultState.NotDefault;
     }
     if (params.temperature !== undefined) { updates.temperature = params.temperature; }
     if (params.maxTokens !== undefined) { updates.max_tokens = params.maxTokens; }
@@ -128,6 +135,10 @@ export class PersonasService {
     // Throw so the handler maps to 404 (matches getById/delete/convertToCharacter).
     if (Number(result?.numUpdatedRows ?? 0,) === 0) {
       throw new Error("Persona not found",);
+    }
+
+    if (defaultFlip) {
+      await this.setDefault(id, userId,);
     }
   }
 
@@ -188,19 +199,6 @@ export class PersonasService {
       .where("id", "=", id,)
       .where("user_id", "=", userId,)
       .execute();
-  }
-
-  /**
-   * @param userId - owning user id
-   * @returns the default persona for `userId`, or `undefined` if none is marked default.
-   */
-  async getDefault(userId: string,) {
-    return this.db
-      .selectFrom("personas",)
-      .selectAll()
-      .where("user_id", "=", userId,)
-      .where("is_default", "=", DefaultState.Default,)
-      .executeTakeFirst();
   }
 
   /**
