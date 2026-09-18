@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** low
 **Effort:** Medium
+**Summary:** (see ## Summary)
+**Context:** (see ## Observed / ## Evidence)
+**Acceptance Criteria:** (see ## Acceptance Criteria)
 
 ## Summary
 
