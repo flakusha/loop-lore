@@ -107,6 +107,27 @@ describe("PersonasService", () => {
     });
   });
 
+  describe("update() isDefault", () => {
+    test("update isDefault=true unsets the previous default (TASK-persona-setdefault-getdefault-unwired)", async () => {
+      const id1 = await service.create({ userId, name: "Old Default", },);
+      const id2 = await service.create({ userId, name: "New Default", },);
+      await service.setDefault(id1, userId,);
+
+      // The frontend path: PATCH with isDefault=true must not produce two
+      // defaults (previously it set the flag without clearing id1's).
+      await service.update(id2, { isDefault: true, }, userId,);
+
+      const defaults = await db
+        .selectFrom("personas",)
+        .select("id",)
+        .where("user_id", "=", userId,)
+        .where("is_default", "=", "default",)
+        .execute();
+      expect(defaults,).toHaveLength(1,);
+      expect(defaults[0]!.id,).toBe(id2,);
+    });
+  });
+
   describe("setDefault()", () => {
     test("throws Persona not found for a missing or foreign persona", async () => {
       await expect(service.setDefault("no-such-id", userId,),).rejects.toThrow("Persona not found",);
@@ -115,7 +136,12 @@ describe("PersonasService", () => {
     test("sets a persona as default", async () => {
       const id = await service.create({ userId, name: "Default One", },);
       await service.setDefault(id, userId,);
-      const def = await service.getDefault(userId,);
+      const def = await db
+        .selectFrom("personas",)
+        .selectAll()
+        .where("user_id", "=", userId,)
+        .where("is_default", "=", "default",)
+        .executeTakeFirst();
       expect(def,).toBeTruthy();
       expect(def!.id,).toBe(id,);
     });
@@ -127,29 +153,13 @@ describe("PersonasService", () => {
       await service.setDefault(id1, userId,);
       await service.setDefault(id2, userId,);
 
-      const def = await service.getDefault(userId,);
+      const def = await db
+        .selectFrom("personas",)
+        .selectAll()
+        .where("user_id", "=", userId,)
+        .where("is_default", "=", "default",)
+        .executeTakeFirst();
       expect(def!.id,).toBe(id2,);
-    });
-  });
-
-  describe("getDefault()", () => {
-    test("returns null when no default set", async () => {
-      const freshId = "fresh-user-2";
-      await db
-        .insertInto("users",)
-        .values({
-          id: freshId,
-          username: "freshuser2",
-          display_name: "Fresh2",
-          role: "solo",
-          status: "active",
-          settings: "{}",
-          password_hash: "hash",
-        },)
-        .execute();
-
-      const def = await service.getDefault(freshId,);
-      expect(def,).toBeUndefined();
     });
   });
 
