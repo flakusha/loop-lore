@@ -65,7 +65,7 @@
 | 🟡 Partial (core CRUD + comments + follows + moderation built) | Blog System | Medium | High | 28 | [epic-blog-system.md](/.plan/epics/epic-blog-system.md) |
 | ⬜ Not Started | BYOK API Keys (Bring Your Own Key) | High | Large | 10 | [epic-byok-api-keys.md](/.plan/epics/epic-byok-api-keys.md) |
 | ⬜ Not Started | BYOK Local Models (Bring Your Own Model) | High | Large | 16 | [epic-byok-local-models.md](/.plan/epics/epic-byok-local-models.md) |
-| ⬜ Not Started | Certificate & TLS Management | High | Large | 6 | [epic-certificate-and-tls-management.md](/.plan/epics/epic-certificate-and-tls-management.md) |
+| 🟡 In Progress — proxy-termination slice landed (57dc551de); work items below open | Certificate & TLS Management | High | Large | 6 | [epic-certificate-and-tls-management.md](/.plan/epics/epic-certificate-and-tls-management.md) |
 | 🟡 Partial — character core services (traits, mood, relationships, avatars, licensing) + API/IO routes + tests complete; RPG stat system + template system in progress | Character Core System | High | High | 3 | [epic-character-core-system.md](/.plan/epics/epic-character-core-system.md) |
 | 🟡 Draft | Character Growth & Arc Progression | High | High | 0 | [epic-character-growth.md](/.plan/epics/epic-character-growth.md) |
 | 🟡 Draft — extended with behavioral dimensions (D7–D9: coping, approach, autonomy) | Character Internal Traits, Aspirations & Moral Disposition | High | Medium | 0 | [epic-character-internal-traits.md](/.plan/epics/epic-character-internal-traits.md) |
@@ -824,7 +824,7 @@ A blog subsystem supporting both **LLM-authored** and **human-authored** posts.
 
 ### Certificate & TLS Management
 
-- **Status:** ⬜ Not Started
+- **Status:** 🟡 In Progress — proxy-termination slice landed (57dc551de); work items below open
 - **Priority:** High
 - **Effort:** Large
 - **Type:** Task

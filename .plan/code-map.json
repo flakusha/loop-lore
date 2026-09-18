@@ -6894,6 +6894,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-caddy-tls-termination-with-automatic-https.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-certificate-lifecycle-expiry-monitoring-and-health-verdicts.md"
     },
     {
