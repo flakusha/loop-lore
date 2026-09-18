@@ -7,13 +7,13 @@
  * Wires the story-engine surface into the HTTP API per
  * docs/frontend/chat/multi-llm-story.md § API Endpoints:
  *
- *   GET  /api/chats/:chatId/story/state      — turn state snapshot
- *   POST /api/chats/:chatId/story/pause      — pause generation
- *   POST /api/chats/:chatId/story/resume     — resume generation
- *   POST /api/chats/:chatId/story/step       — execute a single GM turn
- *   POST /api/chats/:chatId/story/configure  — strategy/maxTurns/thresholds
- *   POST /api/chats/:chatId/story/narration  — inject a narration beat
- *   POST /api/chats/:chatId/gm/escalate      — escalate the latest open turn
+ *   GET  /api/chats/:id/story/state      — turn state snapshot
+ *   POST /api/chats/:id/story/pause      — pause generation
+ *   POST /api/chats/:id/story/resume     — resume generation
+ *   POST /api/chats/:id/story/step       — execute a single GM turn
+ *   POST /api/chats/:id/story/configure  — strategy/maxTurns/thresholds
+ *   POST /api/chats/:id/story/narration  — inject a narration beat
+ *   POST /api/chats/:id/gm/escalate      — escalate the latest open turn
  */
 import { Elysia, t, } from "elysia";
 import type { Config, } from "../../config/schema";
@@ -50,14 +50,14 @@ export function storyOrchestrationRoutes(
 
   return new Elysia({ name: "story-orchestration", },)
     .get(
-      `${prefix}/chats/:chatId/story/state`,
-      async ({ params, }: { params: { chatId: string } },) => {
-        const chat = await loadChat(db, params.chatId,);
+      `${prefix}/chats/:id/story/state`,
+      async ({ params, }: { params: { id: string } },) => {
+        const chat = await loadChat(db, params.id,);
         if (!chat) { return notFound(); }
-        const gm = createGm(db, opts.config, params.chatId, chat.gm_config, chat.created_by,);
+        const gm = createGm(db, opts.config, params.id, chat.gm_config, chat.created_by,);
         await gm.initialize();
         return jsonResponse({
-          chatId: params.chatId,
+          chatId: params.id,
           currentTurn: gm.currentTurn,
           isPaused: gm.isPaused,
           isComplete: gm.isComplete,
@@ -65,33 +65,33 @@ export function storyOrchestrationRoutes(
       },
     )
     .post(
-      `${prefix}/chats/:chatId/story/pause`,
-      async ({ params, }: { params: { chatId: string } },) => {
-        const chat = await loadChat(db, params.chatId,);
+      `${prefix}/chats/:id/story/pause`,
+      async ({ params, }: { params: { id: string } },) => {
+        const chat = await loadChat(db, params.id,);
         if (!chat) { return notFound(); }
-        const gm = createGm(db, opts.config, params.chatId, chat.gm_config, chat.created_by,);
+        const gm = createGm(db, opts.config, params.id, chat.gm_config, chat.created_by,);
         await gm.initialize();
         await gm.pause();
         return jsonResponse({ ok: true, isPaused: true, },);
       },
     )
     .post(
-      `${prefix}/chats/:chatId/story/resume`,
-      async ({ params, }: { params: { chatId: string } },) => {
-        const chat = await loadChat(db, params.chatId,);
+      `${prefix}/chats/:id/story/resume`,
+      async ({ params, }: { params: { id: string } },) => {
+        const chat = await loadChat(db, params.id,);
         if (!chat) { return notFound(); }
-        const gm = createGm(db, opts.config, params.chatId, chat.gm_config, chat.created_by,);
+        const gm = createGm(db, opts.config, params.id, chat.gm_config, chat.created_by,);
         await gm.initialize();
         await gm.resume();
         return jsonResponse({ ok: true, isPaused: false, },);
       },
     )
     .post(
-      `${prefix}/chats/:chatId/story/step`,
-      async ({ params, body, }: { params: { chatId: string }; body: { forceActorId?: string } },) => {
-        const chat = await loadChat(db, params.chatId,);
+      `${prefix}/chats/:id/story/step`,
+      async ({ params, body, }: { params: { id: string }; body: { forceActorId?: string } },) => {
+        const chat = await loadChat(db, params.id,);
         if (!chat) { return notFound(); }
-        const gm = createGm(db, opts.config, params.chatId, chat.gm_config, chat.created_by,);
+        const gm = createGm(db, opts.config, params.id, chat.gm_config, chat.created_by,);
         await gm.initialize();
         const result = await gm.executeTurn(body.forceActorId,);
         return jsonResponse({
@@ -104,12 +104,12 @@ export function storyOrchestrationRoutes(
       { body: StepBody, },
     )
     .post(
-      `${prefix}/chats/:chatId/story/configure`,
+      `${prefix}/chats/:id/story/configure`,
       async ({ params, body, }: {
-        params: { chatId: string };
+        params: { id: string };
         body: { turnStrategy?: TurnStrategy; maxTurns?: number; qualityThresholds?: Record<string, number> };
       },) => {
-        const chat = await loadChat(db, params.chatId,);
+        const chat = await loadChat(db, params.id,);
         if (!chat) { return notFound(); }
         const merged = parseGmConfig(chat.gm_config,);
         if (body.qualityThresholds) {
@@ -127,16 +127,16 @@ export function storyOrchestrationRoutes(
             gm_config: serialized.value,
             updated_at: new Date().toISOString(),
           },)
-          .where("id", "=", params.chatId,)
+          .where("id", "=", params.id,)
           .execute();
         return jsonResponse({ ok: true, },);
       },
       { body: ConfigureBody, },
     )
     .post(
-      `${prefix}/chats/:chatId/story/narration`,
-      async ({ params, body, }: { params: { chatId: string }; body: { text: string } },) => {
-        const chat = await loadChat(db, params.chatId,);
+      `${prefix}/chats/:id/story/narration`,
+      async ({ params, body, }: { params: { id: string }; body: { text: string } },) => {
+        const chat = await loadChat(db, params.id,);
         if (!chat) { return notFound(); }
         if (!chat.world_id) {
           return jsonError({
@@ -144,7 +144,7 @@ export function storyOrchestrationRoutes(
             status: HttpStatus.BadRequest,
           },);
         }
-        const gm = createGm(db, opts.config, params.chatId, chat.gm_config, chat.created_by,);
+        const gm = createGm(db, opts.config, params.id, chat.gm_config, chat.created_by,);
         await gm.initialize();
         await gm.injectNarration(chat.world_id, body.text,);
         return jsonResponse({ ok: true, },);
@@ -152,11 +152,11 @@ export function storyOrchestrationRoutes(
       { body: NarrationBody, },
     )
     .post(
-      `${prefix}/chats/:chatId/gm/escalate`,
-      async ({ params, }: { params: { chatId: string } },) => {
-        const chat = await loadChat(db, params.chatId,);
+      `${prefix}/chats/:id/gm/escalate`,
+      async ({ params, }: { params: { id: string } },) => {
+        const chat = await loadChat(db, params.id,);
         if (!chat) { return notFound(); }
-        const turn = await latestOpenTurn(db, params.chatId,);
+        const turn = await latestOpenTurn(db, params.id,);
         if (!turn) {
           return jsonError({ message: "No open story turn to escalate", status: HttpStatus.NotFound, },);
         }
