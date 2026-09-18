@@ -61,4 +61,4 @@ Frontend assessment (no FE code change required):
 - Credentialed requests exist (`credentials: "include"`, e.g. `src/frontend/e2e/recipient-pubkey.ts`): wildcard origin + credentials is browser-rejected, so credentialed external frontends require an explicit origin list (warn-on-start covers this).
 - `safeFetch` itself needs no change; CORS is browser↔server negotiation only.
 
-Adjacent finding: `TASK-adopt-elysiajs-helmet-for-security-headers.md` is superseded by the landed response-headers engine (`src/middleware/response-headers.ts` + `src/config/sections/headers.ts`: CSP with per-request nonce, HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy — config-driven and unit-tested).
+Adjacent finding: the @elysiajs/helmet adoption ticket is superseded by the landed response-headers engine (`src/middleware/response-headers.ts` + `src/config/sections/headers.ts`: CSP with per-request nonce, HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy — config-driven and unit-tested).
