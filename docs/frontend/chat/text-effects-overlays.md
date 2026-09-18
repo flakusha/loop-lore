@@ -287,13 +287,28 @@ Registration: `src/plugins/registry.ts` (existing plugin infrastructure).
 
 ## Files
 
-### Create
+<!-- GAP: `src/frontend/effects/` does NOT exist. The functionality described
+     here was re-architected into the `src/frontend/vn/` subsystem
+     (portrait-manager.ts, transition-engine.ts, typewriter.ts,
+     scene-renderer/, etc.). See `docs/frontend/chat/visual-novel-mode.md`.
+     This doc is preserved for historical context; path refs below are stale. -->
+<!-- (end GAP marker) -->
+### Create (aspirational — re-architected into `src/frontend/vn/`)
 
-- `src/frontend/effects/text-effects.ts` — effect renderer
-- `src/frontend/effects/overlays.ts` — overlay components
-- `src/frontend/effects/decorations.ts` — message decoration
-- `src/frontend/effects/styles.css` — effect and overlay styles
-- `src/frontend/effects/settings.ts` — effect preferences
+- `src/frontend/effects/text-effects.ts` — effect renderer (NEVER CREATED)
+- `src/frontend/effects/overlays.ts` — overlay components (NEVER CREATED)
+- `src/frontend/effects/decorations.ts` — message decoration (NEVER CREATED)
+- `src/frontend/effects/styles.css` — effect and overlay styles (NEVER CREATED)
+- `src/frontend/effects/settings.ts` — effect preferences (NEVER CREATED)
+
+### Actual implementation surface
+
+- `src/frontend/vn/scene-renderer.ts` ✅
+- `src/frontend/vn/transition-engine.ts` ✅
+- `src/frontend/vn/portrait-manager.ts` ✅
+- `src/frontend/vn/typewriter.ts` ✅
+- `src/frontend/vn/settings.ts` ✅
+- `src/public/css/vn.css` ✅
 
 ### Modify
 
