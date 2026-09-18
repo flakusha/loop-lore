@@ -4,8 +4,9 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
+import { withMermaid } from 'vitepress-plugin-mermaid'
 
-export default defineConfig({
+export default withMermaid(defineConfig({
   title: 'Loop Lore',
   description: 'A lightweight RPG chat application reimagining SillyTavern',
   base: '/docs/',
@@ -332,6 +333,7 @@ export default defineConfig({
   vite: {
     optimizeDeps: {
       exclude: ['@resvg/resvg-js'],
+      include: ['elkjs', 'mermaid'],
     },
   },
-})
+}))

@@ -98,6 +98,7 @@ coverage/
 # VitePress compiled output (generated from .mts)
 docs/.vitepress/config.mjs
 docs/.vitepress/cache/
+docs/.vitepress/dist/
 
 # Auto-generated issue tracker (regenerate with docs:gen)
 docs/meta/issues.md
