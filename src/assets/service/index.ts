@@ -21,6 +21,7 @@ export {
   getAssetFilePath,
 } from "./file-system";
 export {
+  deleteAssetLink,
   getAssetLinks,
   linkAsset,
   unlinkAsset,
@@ -64,6 +65,7 @@ export type {
   CreateAssetInput,
   CreateAssetOpts,
   CreateAssetResult,
+  DeleteAssetLinkOpts,
   DeleteAssetOpts,
   LinkAssetOpts,
   ShareAssetOpts,
