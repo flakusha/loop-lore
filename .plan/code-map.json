@@ -1815,7 +1815,6 @@
       "source": ".plan/tickets/FEAT-055.md"
     }
   ],
-
   "src/assistant/prompt/presets.ts": [
     {
       "kind": "ticket",
@@ -2338,7 +2337,6 @@
       "source": ".plan/epics/epic-impersonation.md"
     }
   ],
-
   "src/assistant/prompt/template-render.ts": [
     {
       "kind": "ticket",
@@ -5446,6 +5444,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-chat-template-config-lifecycle.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/FEAT-world-template-chat-lifecycle.md"
     },
     {
@@ -5499,6 +5501,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-settings-save-omits-gmconfig-for-online-chats.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-chat-template-config-lifecycle.md"
     },
     {
       "kind": "ticket",
@@ -5770,6 +5776,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-chat-template-config-lifecycle.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-bound-linked-travel-prompts.md"
     },
     {
@@ -5883,6 +5893,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-product-features.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-chat-template-config-lifecycle.md"
     },
     {
       "kind": "ticket",
@@ -9384,7 +9398,15 @@
   "src/db/migration-roundtrip.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-coverage-gate-true-multi-worker-fanout-investigation.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-memory-history-search-bind-message-chain-reconstructable-con.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/testing.md"
     }
   ],
   "src/db/migrations": [
@@ -9396,11 +9418,19 @@
   "src/db/migrations.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-coverage-gate-true-multi-worker-fanout-investigation.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-migration-compaction-data-version-hash.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/testing.md"
     }
   ],
   "src/db/migrations/001_init.ts": [
@@ -12250,6 +12280,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-chat-template-config-lifecycle.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-epic11-admin-settings-reconciliation.md"
     },
     {
@@ -14433,6 +14467,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-fe-be-harmony-checker-blind-to-elysia-app-direct-routes-fact.md"
+    }
+  ],
+  "src/frontend/pages/new-chat/submit.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-chat-template-config-lifecycle.md"
     }
   ],
   "src/frontend/pages/quests.ts": [
@@ -21654,6 +21694,10 @@
   "src/routes/chats.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-chat-template-config-lifecycle.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/gap-closure-report.md"
     },
     {
@@ -21854,6 +21898,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-chat-template-config-lifecycle.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-chat-rename-and-migrate.md"
     },
     {
@@ -21906,6 +21954,10 @@
     }
   ],
   "src/routes/chats/templates.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-chat-template-config-lifecycle.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-world-template-chat-lifecycle.md"
@@ -24199,7 +24251,6 @@
       "source": "docs/spec/template-system.md"
     }
   ],
-
   "src/routes/templates/templates.test.ts": [
     {
       "kind": "ticket",
@@ -29022,7 +29073,6 @@
       "source": ".plan/tickets/BUG-telemetry-errors-leaks-raw-event-data.md"
     }
   ],
-
   "src/validation/schemas/templates.ts": [
     {
       "kind": "ticket",
