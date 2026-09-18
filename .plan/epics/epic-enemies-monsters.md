@@ -15,16 +15,132 @@
 
 ## Summary
 
-Enemies & Monsters Systems — referenced in future-features-plan.md but epic file was missing.
+Catalog of every living inhabitant of a world — animals, monsters, plants,
+ambient creatures — with description, behaviour profile, base stats, loot
+tables, and bindings to one or more locations. Population is dynamic:
+time-based repopulation (seasonal, circadian, regrowth), admin/GM-triggered
+repopulation, and ecology balance (predator ↔ prey, territorial repulsion)
+drive counts over the world timeline.
+
+This epic expands the previously-stubbed `epic-enemies-monsters.md` into
+the full bestiary + ecology + repopulation system.
 
 ## Scope
 
-_TBD — expand based on future-features-plan.md description._
+- Flora (plants, fungus, ambient herbs/trees/crops) — passive inhabitants
+- Fauna (animals, insects, fish, birds) — ambient or aggressive
+- Monsters (hostile beasts, undead, elementals, dragons) — combat-grade
+- Per-entry behaviour: aggressiveness, intellect, friendliness, diet, schedule
+- Per-entry loot table and XP reward
+- Per-entry quest bindings (which quests target this species)
+- Per-entry state (health, alive/dead, generation count, time-of-death)
+- Population model: per-location per-species counts with repopulation rules
+- Admin/GM actions: force spawn, force cull, relocate, mutate
+- Time-based repopulation: circadian (day/night), seasonal, harvest regrowth
+- Ecology balance: predator→prey pressure, territorial repulsion
 
-## Related Epics
+## Key Integrations
 
-_TBD — link to related systems._
+| System | What It Provides | How This Epic Uses It |
+| ------ | ---------------- | --------------------- |
+| World & Locations | Location grid + travel rules | Per-location population tables |
+| World NPCs | NPC placement engine | Predators/herders register as world NPCs |
+| World Encounters | Encounter tables | Bestiary entries are encounter-table sources |
+| Timeline System | World tick | Per-tick population + ecology update |
+| Time Scale | Compressed real-time → game-time | Repopulation cadence realigned to game-time |
+| Items & Economy | Loot tables + currency | Bestiary loot rolls reuse economy tables |
+| RPG Mechanics | Stat model, dice, XP | Species stats feed battle resolution |
+| Quests & Encounters | Quest hooks | Species entries are quest targets |
+| Battle & Action | Combat resolution | Monster stats flow into encounter builders |
+| Admin / GM | Force-spawn, mutation, repopulation | Admin endpoints exposed in this epic |
 
-## Tickets
+## Tasks
 
-_TBD — create implementation tickets._
+- [ ] Bestiary catalog schema
+- [ ] Bestiary CRUD endpoints (admin/GM only)
+- [ ] Bestiary UI (compendium + per-location population)
+- [ ] Population tables per location per species
+- [ ] Time-based repopulation engine
+- [ ] Admin/GM force spawn and force cull endpoints
+- [ ] Ecology pressure model
+- [ ] Per-species quest bindings
+- [ ] Bestiary → encounter table integration
+- [ ] Bestiary → loot table integration
+- [ ] Bestiary → XP award integration
+- [ ] Bestiary state snapshots
+- [ ] Migration for bestiary + population tables
+
+## Design
+
+### Bestiary Entry
+
+```typescript
+interface BestiaryEntry {
+  id: string;
+  worldId: string;
+  category: "flora" | "fauna" | "monster";
+  name: string;
+  description: string;
+  behaviour: {
+    aggressiveness: number;
+    intellect: number;
+    friendliness: number;
+    diet: "herbivore" | "carnivore" | "omnivore" | "photosynth" | "fungivore" | "none";
+    schedule: "diurnal" | "nocturnal" | "crepuscular" | "constant";
+    territorial: boolean;
+    pack: boolean;
+  };
+  stats: CharacterStats;
+  lootTableId: string;
+  xpReward: number;
+  questIds: string[];
+  habitat: {
+    preferredLocationTags: string[];
+    predatorOfIds: string[];
+    preyOfIds: string[];
+  };
+  generation: {
+    defaultPopulation: number;
+    repopulation: RepopulationRule;
+  };
+}
+
+interface RepopulationRule {
+  mode: "circadian" | "seasonal" | "harvest-regrowth" | "manual" | "ecology";
+  interval: number;
+  cap: number;
+  probabilityPerTick: number;
+}
+```
+
+### Population State Per Location
+
+```typescript
+interface LocationPopulation {
+  locationId: string;
+  speciesId: string;
+  count: number;
+  lastDeathTick: number;
+  lastSpawnTick: number;
+  generation: number;
+  ecologyPressure: number;
+}
+```
+
+## Open Questions
+
+- Bestiary entries: world-scoped or template-scoped?
+- Flora harvest binding to economy vs fauna kills?
+- Predator-prey simulation: continual or world-tick only?
+- Ecology imbalance triggering NPC faction events?
+
+## Bind Tickets
+
+- TASK-bestiary-catalog-schema-and-migration
+- TASK-bestiary-crud-routes-admin-gm
+- TASK-bestiary-ui-compendium-and-per-location-population
+- TASK-bestiary-time-based-repopulation-engine
+- TASK-bestiary-admin-gm-force-spawn-and-cull
+- TASK-bestiary-ecology-pressure-model
+- TASK-bestiary-quest-bindings-integration
+- TASK-bestiary-loot-and-xp-integration

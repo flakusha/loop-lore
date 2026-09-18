@@ -18,8 +18,7 @@
 **Epic**: epic-social-interaction
 **Related**:
 
-## Summary
-
+**Summary:**
 NPC dialogue generation system
 
 ## Acceptance

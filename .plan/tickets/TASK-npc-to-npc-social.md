@@ -16,8 +16,7 @@
 **Platform Candidate:** E1 (Agentic NPC autonomy — generative-agents, Inworld AI)
 **Research Source:** Stanford generative-agents social simulation, Inworld AI multi-agent dialogue
 
-## Summary
-
+**Summary:**
 Enable NPCs to autonomously interact with each other — initiate conversations, form relationships, spread information, and create emergent social dynamics without player involvement.
 
 ## Background
@@ -76,8 +75,7 @@ interface NPCConversation {
 - **TASK-character-mood-happiness.md** — Mood affects social willingness
 - **epic-character-core-system.md** — Memory architecture provides facts for exchange
 
-## Acceptance Criteria
-
+**Acceptance Criteria:**
 - [ ] NPCs decide to interact based on proximity/activity/relationship/mood
 - [ ] NPC-to-NPC conversations generate with topics from shared context
 - [ ] Conversations affect relationship strength between NPCs

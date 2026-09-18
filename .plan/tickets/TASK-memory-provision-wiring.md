@@ -29,8 +29,7 @@ Connect the memory provision module to the prompt assembly pipeline.
 - Ensure token budget from context window is respected
 - Test: private memories not injected for non-owner viewers
 
-## Acceptance Criteria
-
+**Acceptance Criteria:**
 - [ ] `src/assistant/prompt/sections/memories.ts` calls `provisionMemories()`
 - [ ] Private memories only injected for owner
 - [ ] Secret memories respect shareability config

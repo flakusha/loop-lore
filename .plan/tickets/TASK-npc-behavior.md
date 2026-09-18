@@ -15,8 +15,7 @@
 **Created:** 2026-07-28
 **Cross-Mechanics Gap:** G12 (NPC/Actor ↔ Supporting System)
 
-## Summary
-
+**Summary:**
 Define NPC behavior state machines for autonomous NPC actions in combat, exploration, and social encounters.
 
 ## Background
@@ -31,8 +30,7 @@ NPCs need behavior state machines that drive autonomous decisions — patrol, ch
 2. Memory event recording and recall system
 3. Inventory management with trading interface
 
-## Acceptance Criteria
-
+**Acceptance Criteria:**
 - [ ] Behavior state machine defines states: idle, patrol, combat, social, trade, flee
 - [ ] NPC personality (aggressive, passive, territorial) affects behavior decisions
 - [ ] Faction membership influences behavior towards player and other NPCs

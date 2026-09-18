@@ -15,8 +15,7 @@
 **Created:** 2026-07-28
 **Cross-Mechanics Gap:** G13 (NPC/Actor ↔ Supporting System)
 
-## Summary
-
+**Summary:**
 Implement NPC memory system with event recall, relationship memory, and memory decay.
 
 ## Background
@@ -31,8 +30,7 @@ NPCs need memory of player interactions, past events, and relationships. Without
 2. Memory event recording and recall system
 3. Inventory management with trading interface
 
-## Acceptance Criteria
-
+**Acceptance Criteria:**
 - [ ] NPCs record player interactions as memory events
 - [ ] Memory events decay over time based on importance
 - [ ] NPCs recall relevant memories during conversations

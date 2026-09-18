@@ -13,12 +13,10 @@
 **Effort:** medium
 **Epic:** Character & NPC Lore Access
 
-## Summary
-
+**Summary:**
 NPC generation pipeline references lore only within the NPC access profile (dialogue, actions, reactions). Part of epic Character & NPC Lore Access.
 
-## Acceptance Criteria
-
+**Acceptance Criteria:**
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated

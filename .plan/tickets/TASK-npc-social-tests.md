@@ -18,8 +18,7 @@
 **Epic**: epic-social-interaction
 **Related**:
 
-## Summary
-
+**Summary:**
 Decision, conversation, memory, dynamics tests
 
 ## Acceptance

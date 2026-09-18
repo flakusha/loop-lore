@@ -17,8 +17,7 @@
 **Research Source:** Kindroid emotional pattern tracking
 **Related:** G31 (Agent Memory Scoring ↔ Emotion Impact), TASK-agent-memory-scoring.md, TASK-memory-emotion-impact.md
 
-## Summary
-
+**Summary:**
 Track recurring emotional patterns in a character's episodic memories and surface them
 as behavioral signals. Detects repeated emotional themes (frequent grudge events,
 chronic fear, recurring gratitude) from `MemoryEmotionImpact` data so memory scoring
@@ -54,8 +53,7 @@ interface EmotionPattern {
 - Memory scoring: emotional memories get importance boost (G31 cross-ref)
 - Mood system: patterns feed mood/happiness drift (G28/G34 family)
 
-## Acceptance Criteria
-
+**Acceptance Criteria:**
 - [ ] EmotionPattern aggregation over sliding windows
 - [ ] Trend detection (rising/steady/fading)
 - [ ] Pattern data consumed by memory scoring (G31)
