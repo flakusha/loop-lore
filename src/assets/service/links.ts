@@ -7,7 +7,7 @@
 import type { Kysely, } from "kysely";
 import type { AssetLinkEntity, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
-import type { LinkAssetOpts, UnlinkAssetOpts, } from "./types";
+import type { DeleteAssetLinkOpts, LinkAssetOpts, UnlinkAssetOpts, } from "./types";
 
 /**
  * Link an asset to an entity. Re-linking the same asset/entity pair is an
@@ -58,6 +58,28 @@ export async function unlinkAsset({
     .where("entity_type", "=", entityType,)
     .where("entity_id", "=", entityId,)
     .execute();
+}
+
+/**
+ * Delete a single link of an asset by its identifier (the linked entity's id).
+ * Matches both the asset and the link id; never touches another asset's links.
+ * @param root0
+ * @param root0.database
+ * @param root0.assetId
+ * @param root0.linkId
+ * @returns true when a link row was deleted, false when none matched
+ */
+export async function deleteAssetLink({
+  database,
+  assetId,
+  linkId,
+}: DeleteAssetLinkOpts,): Promise<boolean> {
+  const result = await database
+    .deleteFrom("asset_links",)
+    .where("asset_id", "=", assetId,)
+    .where("entity_id", "=", linkId,)
+    .executeTakeFirst();
+  return Number(result.numDeletedRows,) > 0;
 }
 
 /**

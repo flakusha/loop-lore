@@ -13,7 +13,7 @@ import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertAssetLinks, insertAssets, insertUsers, } from "../../test-utils/insert-helpers";
 import { describePristine, } from "../../test-utils/pristine";
-import { getAssetLinks, linkAsset, unlinkAsset, } from "./links";
+import { deleteAssetLink, getAssetLinks, linkAsset, unlinkAsset, } from "./links";
 
 // image-gen-route.test.ts replaces ../assets/service/links process-wide
 // with mockLinkAsset (no-op); skip rather than assert the stub.
@@ -140,6 +140,69 @@ describe("unlinkAsset", () => {
         entityType: AssetLinkEntity.Item,
         entityId: "ghost",
       },),).resolves.toBeUndefined();
+    } finally {
+      sqlite.close();
+    }
+  });
+});
+
+describe("deleteAssetLink", () => {
+  test("deletes only the targeted link, leaving sibling links", async () => {
+    const { db, sqlite, } = await createTestDb();
+    try {
+      await seedAsset(db,);
+      await insertAssetLinks(db, ASSET_ID, AssetLinkEntity.Character, "char-1",);
+      await insertAssetLinks(db, ASSET_ID, AssetLinkEntity.World, "world-1",);
+
+      const deleted = await deleteAssetLink({ database: db, assetId: ASSET_ID, linkId: "char-1", },);
+
+      expect(deleted,).toBe(true,);
+      const links = await getAssetLinks(db, ASSET_ID,);
+      expect(links,).toHaveLength(1,);
+      expect(links[0]!.entity_id,).toBe("world-1",);
+    } finally {
+      sqlite.close();
+    }
+  });
+
+  test("returns false for an unknown link id and keeps existing links", async () => {
+    const { db, sqlite, } = await createTestDb();
+    try {
+      await seedAsset(db,);
+      await insertAssetLinks(db, ASSET_ID, AssetLinkEntity.Character, "char-1",);
+
+      const deleted = await deleteAssetLink({ database: db, assetId: ASSET_ID, linkId: "ghost", },);
+
+      expect(deleted,).toBe(false,);
+      expect(await getAssetLinks(db, ASSET_ID,),).toHaveLength(1,);
+    } finally {
+      sqlite.close();
+    }
+  });
+
+  test("never touches the same entity id linked on a different asset", async () => {
+    const { db, sqlite, } = await createTestDb();
+    try {
+      await seedAsset(db,);
+      const owner = await db.selectFrom("users",).select("id",).where("username", "=", OWNER,)
+        .executeTakeFirstOrThrow();
+      await insertAssets(
+        db,
+        owner.id,
+        "other.png",
+        "image/png",
+        "image" as never,
+        5,
+        "raw/aa/bb/other.png",
+        { id: "other-asset" as never, },
+      );
+      await insertAssetLinks(db, ASSET_ID, AssetLinkEntity.Character, "char-1",);
+      await insertAssetLinks(db, "other-asset", AssetLinkEntity.Character, "char-1",);
+
+      const deleted = await deleteAssetLink({ database: db, assetId: ASSET_ID, linkId: "char-1", },);
+
+      expect(deleted,).toBe(true,);
+      expect(await getAssetLinks(db, "other-asset",),).toHaveLength(1,);
     } finally {
       sqlite.close();
     }

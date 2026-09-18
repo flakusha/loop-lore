@@ -84,6 +84,14 @@ export interface UnlinkAssetOpts {
 }
 
 /** */
+export interface DeleteAssetLinkOpts {
+  database: Kysely<DB>;
+  assetId: string;
+  /** Identifier of the link to delete — the linked entity's id (`entity_id`). */
+  linkId: string;
+}
+
+/** */
 export interface LinkAssetOpts {
   database: Kysely<DB>;
   assetId: string;
