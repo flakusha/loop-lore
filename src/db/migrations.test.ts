@@ -329,29 +329,38 @@ describe("activitypub_actor_keys FK cascades on actor delete", () => {
       const worldId = "w-" + crypto.randomUUID();
       const actorId = "a-" + crypto.randomUUID();
       const keyId = "k-" + crypto.randomUUID();
-      await sql`INSERT INTO users (id, username, display_name, created_at) VALUES (${userId}, ${userId}, ${userId}, datetime('now'))`.execute(
+      await sql`INSERT INTO users (id, username, display_name, created_at) VALUES (${userId}, ${userId}, ${userId}, datetime('now'))`
+        .execute(
+          kysely,
+        );
+      await sql`INSERT INTO worlds (id, owner_id, name, created_at) VALUES (${worldId}, ${userId}, ${worldId}, datetime('now'))`
+        .execute(
+          kysely,
+        );
+      await sql`INSERT INTO actors (id, user_id, display_name, created_at) VALUES (${actorId}, ${userId}, ${actorId}, datetime('now'))`
+        .execute(
+          kysely,
+        );
+      await sql`INSERT INTO activitypub_actor_keys (id, actor_id, key_id, public_jwk, encrypted_private_jwk, created_at) VALUES (${keyId}, ${actorId}, ${
+        "key:" + keyId
+      }, ${"{}"}, ${"{}"}, datetime('now'))`.execute(
         kysely,
       );
-      await sql`INSERT INTO worlds (id, owner_id, name, created_at) VALUES (${worldId}, ${userId}, ${worldId}, datetime('now'))`.execute(
+      const before = await sql<
+        { c: number }
+      >`SELECT COUNT(*) AS c FROM activitypub_actor_keys WHERE actor_id = ${actorId}`.execute(
         kysely,
       );
-      await sql`INSERT INTO actors (id, user_id, display_name, created_at) VALUES (${actorId}, ${userId}, ${actorId}, datetime('now'))`.execute(
-        kysely,
-      );
-      await sql`INSERT INTO activitypub_actor_keys (id, actor_id, key_id, public_jwk, encrypted_private_jwk, created_at) VALUES (${keyId}, ${actorId}, ${'key:' + keyId}, ${'{}'}, ${'{}'}, datetime('now'))`.execute(
-        kysely,
-      );
-      const before = await sql<{ c: number }>`SELECT COUNT(*) AS c FROM activitypub_actor_keys WHERE actor_id = ${actorId}`.execute(
-        kysely,
-      );
-      expect(Number(before.rows[0]?.c ?? 0),).toBe(1);
+      expect(Number(before.rows[0]?.c ?? 0,),).toBe(1,);
       // Delete the actor. With onDelete: cascade, the key row is removed
       // automatically. Pre-fix this throws FOREIGN KEY constraint failed.
       await sql`DELETE FROM actors WHERE id = ${actorId}`.execute(kysely,);
-      const after = await sql<{ c: number }>`SELECT COUNT(*) AS c FROM activitypub_actor_keys WHERE actor_id = ${actorId}`.execute(
+      const after = await sql<
+        { c: number }
+      >`SELECT COUNT(*) AS c FROM activitypub_actor_keys WHERE actor_id = ${actorId}`.execute(
         kysely,
       );
-      expect(Number(after.rows[0]?.c ?? 0),).toBe(0);
+      expect(Number(after.rows[0]?.c ?? 0,),).toBe(0,);
     } finally {
       await kysely.destroy();
       db.close();

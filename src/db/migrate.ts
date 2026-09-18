@@ -24,7 +24,7 @@ const MIGRATION_FILENAME = /^(\d{3})_(.+)\.ts$/;
  */
 function migrationPrefix(name: string,): number {
   const match = name.match(MIGRATION_FILENAME,);
-  return match ? Number(match[1]) : Number.NaN;
+  return match ? Number(match[1],) : Number.NaN;
 }
 
 /**
@@ -41,7 +41,8 @@ export function compareMigrationNames(a: string, b: string,): number {
   const bn = migrationPrefix(b,);
   if (!Number.isNaN(an,) && !Number.isNaN(bn,)) {
     if (an !== bn) { return an - bn; }
-  } else if (!Number.isNaN(an,)) { return -1; } else if (!Number.isNaN(bn,)) { return 1; }
+  } else if (!Number.isNaN(an,)) { return -1; }
+  else if (!Number.isNaN(bn,)) { return 1; }
   return a < b ? -1 : a > b ? 1 : 0;
 }
 
