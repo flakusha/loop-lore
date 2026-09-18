@@ -3,7 +3,7 @@
 
 # BUG: battle surrender: canSurrender is always true when morale ≤ 30, redundant with surrenderChance
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (batch 2)
 **Priority:** low
 **Effort:** Medium
 **Summary:** (see ## Summary)
@@ -36,6 +36,6 @@ Either remove canSurrender (and have callers consult surrenderChance > 0), or ma
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
+- [x] Implementation complete
+- [x] Tests passing
 - [ ] Documentation updated

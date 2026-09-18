@@ -12,7 +12,7 @@ import { loadConfig, } from "../../../config/load";
 import { pickSdProvider, } from "../../../config/schema";
 import type { ImageProviderConfig, } from "../../../config/schema";
 import type { EmotionEntry, } from "../../../config/sections/templates";
-import { AssetAlphaStatus, EmotionType, } from "../../../db/enums";
+import { AssetAlphaStatus, EMOTION_ORDINAL, EmotionType, } from "../../../db/enums";
 import type { DB, } from "../../../db/schema";
 import { generateImages, } from "../../../generation/image-engine";
 import { enqueueAutoMatting, } from "../../../generation/matting/auto-matte";
@@ -235,7 +235,7 @@ export async function generateEmotionAvatar(
       label: `${opts.emotion} expression`,
       tags: { emotion: opts.emotion, },
       isPrimary: false,
-      sortOrder: Object.values(EmotionType,).indexOf(opts.emotion,) + 1,
+      sortOrder: EMOTION_ORDINAL[opts.emotion],
     },);
     // Auto-enqueue matting for generated sprites. Providers typically emit
     // RGBA PNGs with fully opaque pixels, so header-level detection marks the

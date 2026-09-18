@@ -3,7 +3,7 @@
 
 # BUG: battle dice: critical success/failure checks discarded die under advantage/disadvantage
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (batch 2)
 **Priority:** high
 **Effort:** Medium
 **Summary:** (see ## Summary)
@@ -37,6 +37,6 @@ Track the kept die's face value separately. Add a `keptDie` field to the rollSet
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
+- [x] Implementation complete
+- [x] Tests passing
 - [ ] Documentation updated

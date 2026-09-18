@@ -123,7 +123,9 @@ export async function rollLootTable(
     return null;
   }
 
-  // Mark table as used
+  // `used` is an AUDIT marker only ("this table has been rolled at least
+  // once") — it deliberately does not gate re-rolls; loot tables are
+  // repeatable by design (see dice-xp-loot.coverage.test.ts).
   await database
     .updateTable("loot_tables",)
     .set({ used: 1, },)

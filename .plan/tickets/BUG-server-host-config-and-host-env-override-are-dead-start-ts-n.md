@@ -3,7 +3,7 @@
 
 # BUG: server.host config and HOST env override are dead - start.ts never passes hostname to Bun.serve
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (batch 2)
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (see ## Summary)
@@ -16,6 +16,6 @@ src/server/start.ts:120 and :129 call serve({ port, fetch }) without host/hostna
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
+- [x] Implementation complete
+- [x] Tests passing
 - [ ] Documentation updated

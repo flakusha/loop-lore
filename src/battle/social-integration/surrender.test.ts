@@ -11,9 +11,9 @@ describe("calculateSurrenderChance", () => {
     expect(result,).toEqual({ surrenderChance: 0, canSurrender: false, },);
   });
 
-  test("morale exactly 30 can surrender with zero base chance at full health", () => {
+  test("morale exactly 30 with no mitigating factors cannot surrender (0% chance)", () => {
     const result = calculateSurrenderChance(createMoraleState("t1", 30,), 0, 100,);
-    expect(result,).toEqual({ surrenderChance: 0, canSurrender: true, },);
+    expect(result,).toEqual({ surrenderChance: 0, canSurrender: false, },);
   });
 
   test("low morale alone yields 40% chance", () => {
@@ -58,10 +58,10 @@ describe("calculateSurrenderChance", () => {
   });
 
   test("negative reputation has no effect (chance stays >= 0)", () => {
-    // morale=30 → canSurrender=true; reputation<0 should not push below 0.
+    // morale=30 → chance clamps to 0 → canSurrender=false (not viable).
     const result = calculateSurrenderChance(createMoraleState("t1", 30,), -1000, 100,);
     expect(result.surrenderChance,).toBe(0,);
-    expect(result.canSurrender,).toBe(true,);
+    expect(result.canSurrender,).toBe(false,);
   });
 
   test("morale below 0 is treated like 0 (no bonus)", () => {
@@ -72,9 +72,9 @@ describe("calculateSurrenderChance", () => {
   });
 
   test("healthPercent above 100 is clamped (no extra surrender)", () => {
-    // (100-150)*0.5 = -25 → chance cannot drop below 0.
+    // (100-150)*0.5 = -25 → chance cannot drop below 0 → not viable.
     const result = calculateSurrenderChance(createMoraleState("t1", 30,), 0, 150,);
     expect(result.surrenderChance,).toBe(0,);
-    expect(result.canSurrender,).toBe(true,);
+    expect(result.canSurrender,).toBe(false,);
   });
 });

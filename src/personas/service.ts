@@ -163,6 +163,17 @@ export class PersonasService {
    * @param userId
    */
   async setDefault(id: string, userId: string,): Promise<void> {
+    // Existence + ownership check, mirroring update() so callers can 404.
+    const owned = await this.db
+      .selectFrom("personas",)
+      .select("id",)
+      .where("id", "=", id,)
+      .where("user_id", "=", userId,)
+      .executeTakeFirst();
+    if (!owned) {
+      throw new Error("Persona not found",);
+    }
+
     // Unset current default
     await this.db
       .updateTable("personas",)
