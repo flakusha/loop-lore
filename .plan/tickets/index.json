@@ -7006,7 +7006,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/FIX-parallelize-bun-test-invocations-isolate-pins-suite-to-one-c.md",
-    "status": "open"
+    "status": "done"
   },
   "IMPROVE-IMPERSONATE-EXPLICIT-ELSE-BRANCH": {
     "hash": "pending",
