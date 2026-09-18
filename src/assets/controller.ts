@@ -428,7 +428,7 @@ export async function handleUpload({
   if (!file || !(file instanceof File)) {
     return badRequestResponse("file field is required",);
   }
-  const bufferResult = safeFromUint8Array(Buffer.from(await file.arrayBuffer(),),);
+  const bufferResult = safeFromUint8Array(new Uint8Array(await file.arrayBuffer(),),);
   if (!bufferResult.ok) { return badRequestResponse(bufferResult.error.message,); }
   const buffer = bufferResult.buffer;
   const sizeError = validateFileSize(buffer.length, maxFileSize,);
