@@ -27,6 +27,30 @@ bun run test:coverage  # unit + e2e with lcov output
 bun run test:e2e:browser
 ```
 
+
+### Default finalize path (`giwt finalize`)
+
+`giwt finalize <branch>` runs the gates in this order (see
+`scripts/worktree/commands/finalize.ts`):
+
+1. **Step 2** — `bun run check --diff-base <merge-base>` (full gate
+   suite scoped to the branch's diff). Heavy gates are serialized after
+   the lights; the per-module coverage floor (80%) is enforced here.
+3. **Step 3** — `bun run test:unit` (behavioral, no coverage
+   instrumentation). Runs all unit tests with `--parallel=${TEST_JOBS:-4}
+   --isolate` (see `package.json:66`).
+
+`test:e2e` and `test:e2e:browser` are **not** part of the finalize
+chain — they run in CI as separate jobs (see `.github/workflows/ci.yml`)
+where flake budgets are acceptable. Finalize is for fast, sound gating
+on the critical path; CI catches integration regressions.
+
+Bypass gates selectively:
+```bash
+giwt finalize <branch> --skip-gates 'coverage - per-module line %,lint - oxlint (corrected)'  # example
+CHECK_INCLUDE_HEAVY_DB_TESTS=1 giwt finalize <branch>            # full migration test coverage
+```
+
 ### Lightweight check presets
 
 Three named `package.json` scripts (added 2026-09-18) hit different cost
