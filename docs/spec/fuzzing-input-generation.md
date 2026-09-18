@@ -128,20 +128,12 @@ Systematic approach to generating diverse, malicious, and edge-case inputs for f
 
 ## Generation Pipeline
 
-```
-┌─────────────┐     ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│  Schema/    │────▶│  Base       │────▶│  Mutation   │────▶│  Validation │
-│  Grammar    │     │  Corpus     │     │  Engine     │     │  & Filter   │
-└─────────────┘     └─────────────┘     └─────────────┘     └─────────────┘
-                           │                    │                    │
-                           ▼                    ▼                    ▼
-                    ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-                    │ Valid seeds │     │ Mutators:   │     │ - Crash     │
-                    │ from prod   │     │ - bitflip   │     │ - Timeout   │
-                    │ traffic     │     │ - arithmetic│     │ - Assertion │
-                    │ OpenAPI     │     │ - dictionary│     │ - Memory    │
-                    │ specs       │     │ - structure │     │ - Leak      │
-                    └─────────────┘     └─────────────┘     └─────────────┘
+```mermaid
+flowchart LR
+    SG["Schema/Grammar"] --> BC["Base Corpus"] --> ME["Mutation Engine"] --> VF["Validation & Filter"]
+    BC --> SEEDS["Valid seeds from prod traffic, OpenAPI specs"]
+    ME --> MUT["Mutators: bitflip, arithmetic, dictionary, structure"]
+    VF --> BUG["Crash, Timeout, Assertion, Memory, Leak"]
 ```
 
 ---
