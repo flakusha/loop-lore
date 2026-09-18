@@ -39,6 +39,10 @@ Add `tests/e2e/flows/users.flows.ts` and `tests/e2e/flows/personas.flows.ts`:
 
 - Run `E2E_SAFEGUARD=1 bun test tests/e2e/flows/users.flows.ts tests/e2e/flows/personas.flows.ts`
 
+## Progress (2026-09-18)
+
+Personas half **done**: `tests/e2e/flows/personas.test.ts:46-132` covers persona CRUD + non-owner authz, plus browser flow (`tests/e2e/browser/personas-flow.browser.ts`, scenario-catalog.json:76-81). Remaining: `users/*` e2e flows only.
+
 ## Acceptance Criteria
 
 - [ ] All user/persona CRUD paths covered
