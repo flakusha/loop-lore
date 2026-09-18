@@ -524,6 +524,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-assets-delete-fk-constraint-fails.md"
     },
     {
@@ -661,6 +665,18 @@
       "source": ".plan/tickets/TASK-asset-3d-models.md"
     }
   ],
+  "src/assets/serve-file.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-assets-serve-servefile-omits-x-content-type-options-nosniff-.md"
+    }
+  ],
+  "src/assets/serve-handlers.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-assets-serve-servefile-omits-x-content-type-options-nosniff-.md"
+    }
+  ],
   "src/assets/service": [
     {
       "kind": "epic",
@@ -792,6 +808,10 @@
     }
   ],
   "src/assets/service/links.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-item-asset-avatar-display-in-inventory-trading-and-provision.md"
@@ -3253,6 +3273,16 @@
       "source": "docs/spec/battle.md"
     }
   ],
+  "src/battle/integration-schemas/dice.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-battle-dice-advantage-disadvantage-rolls-ignore-modifiers-bi.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-battle-dice-critical-success-failure-checks-discarded-die-un.md"
+    }
+  ],
   "src/battle/items-integration.ts": [
     {
       "kind": "epic",
@@ -3335,6 +3365,12 @@
       "source": ".plan/tickets/TASK-rpg-mechanics-combat.md"
     }
   ],
+  "src/battle/resolution-integration/attacks.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-battle-attacks-calculatedamage-doubles-flat-dice-notation-bo.md"
+    }
+  ],
   "src/battle/resolution-integration/checks.ts": [
     {
       "kind": "epic",
@@ -3355,6 +3391,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/battle-integration.md"
+    }
+  ],
+  "src/battle/social-integration/surrender.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-battle-surrender-cansurrender-is-always-true-when-morale-30-.md"
     }
   ],
   "src/battle/social.ts": [
@@ -4244,6 +4286,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-characters-emotion-avatar-sortorder-derived-from-object-valu.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-emotion-avatar-fallback-metadata-incomplete.md"
     },
     {
@@ -4349,6 +4395,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-growth.md"
+    }
+  ],
+  "src/characters/services/personality-service/resolve.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-characters-resolvecharactertraits-silently-drops-world-layer.md"
     }
   ],
   "src/characters/services/relationships-service-bridge.ts": [
@@ -5395,6 +5447,12 @@
       "source": ".plan/tickets/TASK-chat-feature-location-transition-transfer.md"
     }
   ],
+  "src/chat/service/carry-history.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-carryhistory-skipped-ciphertext-messages-orphan-all-des.md"
+    }
+  ],
   "src/chat/service/carry-history.ts": [
     {
       "kind": "epic",
@@ -5403,6 +5461,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-carryhistory-copies-key-id-into-migrated-chat-history-breaks.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-carryhistory-skipped-ciphertext-messages-orphan-all-des.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-reunite-copymessagestoprimary-carries-source-chat-key-i.md"
     },
     {
       "kind": "ticket",
@@ -5471,6 +5537,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-test-assertions-stale-gm-support-message.md"
+    }
+  ],
+  "src/chat/service/crud/archive.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-reunite-secondary-chat-narrates-archived-but-is-never-a.md"
     }
   ],
   "src/chat/service/crud/create.ts": [
@@ -5722,6 +5794,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-reunite-copymessagestoprimary-carries-source-chat-key-i.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-rpg-chronological-navigation.md"
     },
     {
@@ -5743,6 +5819,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-product-features.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-reunite-secondary-chat-narrates-archived-but-is-never-a.md"
     },
     {
       "kind": "ticket",
@@ -8972,6 +9052,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-characters-emotion-avatar-sortorder-derived-from-object-valu.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-validation-avatarselectionruleschema-missing-action-first-an.md"
     },
     {
@@ -10635,6 +10719,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-emotion-avatar-fallback-metadata-incomplete.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-personas-converttocharacter-drops-title-temperature-max-toke.md"
     },
     {
       "kind": "ticket",
@@ -19715,6 +19803,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-persona-update-on-cross-user-id-returns-200-ok-instead-of-40.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-personas-handleconverttocharacter-catch-leaks-error-message-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-personas-handleupdatepersona-catch-maps-any-thrown-error-to-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-personas-setdefault-silently-succeeds-for-invalid-personaid-.md"
     }
   ],
   "src/personas/service.test.ts": [
@@ -19727,6 +19827,22 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-impersonation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-personas-converttocharacter-drops-title-temperature-max-toke.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-personas-handleconverttocharacter-catch-leaks-error-message-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-personas-handleupdatepersona-catch-maps-any-thrown-error-to-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-personas-setdefault-silently-succeeds-for-invalid-personaid-.md"
     },
     {
       "kind": "ticket",
@@ -25846,6 +25962,10 @@
   "src/rpg/loot/generation.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-rpg-loot-luckmodifier-inverts-drop-quality-positive-luck-pro.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-persist-loot-drops.md"
     }
   ],
@@ -25869,6 +25989,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-unify-item-types.md"
+    }
+  ],
+  "src/rpg/loot/weights.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-rpg-loot-luckmodifier-inverts-drop-quality-positive-luck-pro.md"
     }
   ],
   "src/rpg/magic/casting.ts": [
@@ -26361,6 +26487,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-rpg-core-wiring.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-rpg-loot-rollloottable-sets-used-flag-but-never-enforces-one.md"
     },
     {
       "kind": "ticket",
