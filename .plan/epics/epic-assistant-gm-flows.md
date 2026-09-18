@@ -321,3 +321,6 @@ Autonomy loop + rate governance for GM/actor self-driving: epic-actor-autonomy-s
 - `TASK-gm-guided-story-creation.md` — user as GM guiding LLM characters in chat/group-chat to create a story together
 - `TASK-precompiled-templates-injection.md` — pre-compiled schema+example prompt injection for creative generation processes
 - `FEAT-in-story-character-generation-via-assistant-chat-handoff.md` — story-introduced entity generation in place (characters lead; locations/items/quests/notes reuse the same detection -> assistant-chat handoff -> finalize -> review/approval mechanism; issue d08e2ff)
+- `TASK-in-place-generation-owner-backfill.md` — post-approval owner backfill of prior messages for in-place generated entities (characters/NPCs/items/species)
+- `TASK-creation-chat-world-location-context-scoping.md` — creation-chat context scoped to the introducing world/location
+- `TASK-assistant-creative-studio-workflow-species.md` — bestiary species as an entity-generation workflow kind (cross-epic with `epic-enemies-monsters.md`)

@@ -33,10 +33,11 @@ feeds straight into `WorkflowRunner.startWorkflow(...)`.
 | Location  | `location`      | ✅ (L41)              | world-location insert                                                          |
 | Item      | `item`          | ✅ (L34)              | `POST /api/worlds/:worldId/items/generate-llm` (see `TASK-item-generation.md`) |
 | NPC       | `npc`           | ❌ — needs new target | actor insert with `is_npc`                                                     |
+| Species   | `species`       | ❌ — needs new target | bestiary insert (`TASK-assistant-creative-studio-workflow-species.md`)          |
 
 **Decision (open):** add `npc` as a distinct `INTENT_PATTERNS` target (preferred — clean
 separation, matches `epic-npcs.md`), OR route NPC generation through the `character`
-target with an `is_npc: true` step default. Default to adding the `npc` target.
+target with an `is_npc: true` step default. Default to adding the `npc` target. `species` (bestiary flora/fauna/monster) follows the same rule — a distinct target, per `TASK-assistant-creative-studio-workflow-species.md`.
 
 ### Per-Entity Step Schemas (§7.6b)
 
@@ -52,6 +53,8 @@ model requires:
 - **item**: category, rarity range, stats intent, lore/flavor, tags/theme.
 - **npc**: role/function, faction allegiance (see `epic-faction-reputation.md`),
   personality, relationship to player/other actors.
+- **species**: category (flora/fauna/monster), behaviour profile, stats (monsters),
+  habitat, loot/XP binding, repopulation rule (see `epic-enemies-monsters.md`).
 
 ### Entity Type Presets (§7.6c)
 
@@ -93,6 +96,18 @@ Example workflow file (`configs/templates/workflows/character-generation.yaml`) 
 analogous `world-generation`, `location-generation`, `item-generation`, `npc-generation`
 files: see parent epic §7.6f.
 
+### In-Place Story-Triggered Generation
+
+Entity workflows are also the finalize/review substrate for **story-triggered
+in-place generation** (`FEAT-in-story-character-generation-via-assistant-chat-handoff.md`):
+a story-introduced entity hands off to an assistant creation chat whose context is
+scoped to the introducing world/location
+(`TASK-creation-chat-world-location-context-scoping.md`); the finalized spec passes
+the same quality gates and review/approval before insert, and the approved entity
+can be backfilled as owner of the messages that introduced it
+(`TASK-in-place-generation-owner-backfill.md`). One mechanism, per-kind templates —
+no per-kind forks.
+
 ## Tasks
 
 - [ ] Entity-generation workflow templates (character/world/location/item/npc) with `entity_type_presets` (§7.6c) + per-entity quality gates (§7.6d); wire `intent.target` bindings (§7.6a)
@@ -101,6 +116,7 @@ files: see parent epic §7.6f.
 
 - [ ] Entity-generation workflows (character/world/location/item/npc), each with: intent routing to its `INTENT_PATTERNS` target, per-entity step schema (§7.6b), `entity_type_presets` validation (§7.6c), schema/consistency/duplicate (+balance for items) quality gates, confirmation, and dispatch to the correct creation backend
 - [ ] User can add/override/replace workflows via config (merge strategies work)
+- [ ] Species-generation workflow template (`species` intent target, bestiary step schema, `entity_type_presets.species`, +balance gate); dispatch to bestiary insert — `TASK-assistant-creative-studio-workflow-species.md`
 
 ## Dependencies
 
@@ -114,5 +130,6 @@ files: see parent epic §7.6f.
 
 - `epic-character-spec.md` — character data model targeted by character workflows
 - `epic-items.md` / `epic-worlds-extension.md` / `epic-locations.md` / `epic-npcs.md` — entity systems these workflows create into
+- `epic-enemies-monsters.md` — bestiary data model species workflows create into
 - `epic-faction-reputation.md` — NPC faction allegiance steps
 - `TASK-item-generation.md` — item creation backend
