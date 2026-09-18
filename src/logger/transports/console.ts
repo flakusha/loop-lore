@@ -11,7 +11,7 @@
 import { formatConsole, } from "../formatters";
 import type { LogEntry, Transport, } from "../types";
 
-const isTty = process.stdout.isTTY;
+const isTty = typeof process !== "undefined" && process?.stdout?.isTTY === true;
 
 /** */
 export class ConsoleTransport implements Transport {
