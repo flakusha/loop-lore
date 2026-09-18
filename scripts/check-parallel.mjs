@@ -447,11 +447,15 @@ function coverageCommand() {
     : "";
   if (!DIFF_BASE) {
     // Plain mode: same flags and test set as `bun run test:coverage`
-    // (e2e safeguard included), but into the per-RUN dir. `tests/e2e/`
-    // and `src/` are directory args — bun recurses, so per-file filtering
-    // happens via `bun test`'s own discovery; only src-scoped paths are
-    // filtered here because that's where the slow tests live.
-    return `E2E_SAFEGUARD=1 bun test --parallel=${TEST_JOBS} tests/e2e/ src/ --isolate --coverage --coverage-reporter=text --coverage-reporter=lcov --coverage-dir=${COVERAGE_DIR_RELATIVE} && bun run scripts/check/coverage.mjs --floor=80 --coverage-dir=${COVERAGE_DIR_RELATIVE}${skipNote}`;
+    // (e2e safeguard included), but into the per-RUN dir. The plain
+    // branch needs the full path list expanded (no directory arg)
+    // so the skip patterns actually filter — bun recurses into `src/`
+    // and would discover the heavy tests otherwise. `tests/e2e/` and
+    // `src/**/*.test.ts` are both flattened here.
+    const srcTests = walkTestFiles(PROJECT_ROOT, "src",);
+    const allPaths = ["tests/e2e/", ...filterPaths(srcTests,),];
+    if (allPaths.length === 1) { return NOOP_OK; } // only `tests/e2e/` left
+    return `E2E_SAFEGUARD=1 bun test --parallel=${TEST_JOBS} ${allPaths.join(" ",)} --isolate --coverage --coverage-reporter=text --coverage-reporter=lcov --coverage-dir=${COVERAGE_DIR_RELATIVE} && bun run scripts/check/coverage.mjs --floor=80 --coverage-dir=${COVERAGE_DIR_RELATIVE}${skipNote}`;
   }
   if (SCOPED_COVERAGE_PATHS.length === 0) { return NOOP_OK; }
   if (SCOPED_DIFF_SRC_FILES.length === 0) { return NOOP_OK; }
@@ -466,6 +470,31 @@ function coverageCommand() {
   return `bun test --parallel=${TEST_JOBS} --isolate --coverage --coverage-reporter=text --coverage-reporter=lcov --coverage-dir=${COVERAGE_DIR_RELATIVE} ${
     filteredPaths.join(" ",)
   } && bun run scripts/check/coverage.mjs --floor=80 --coverage-dir=${COVERAGE_DIR_RELATIVE}${filesFlag}${skipNote}`;
+}
+
+/**
+ * Recursively collect every `*.test.ts` file under `root/<dir>/`, returned
+ * as repo-relative paths. Sorted for deterministic command lines.
+ */
+function walkTestFiles(root, dir,) {
+  const out = [];
+  const abs = path.resolve(root, dir,);
+  if (!existsSync(abs,)) { return out; }
+  const stack = [abs,];
+  while (stack.length > 0) {
+    const cur = stack.pop();
+    for (const entry of readdirSync(cur, { withFileTypes: true, },)) {
+      const full = path.join(cur, entry.name,);
+      if (entry.isDirectory()) {
+        stack.push(full,);
+        continue;
+      }
+      if (entry.isFile() && entry.name.endsWith(".test.ts",)) {
+        out.push(path.relative(root, full,),);
+      }
+    }
+  }
+  return out.sort();
 }
 
 checks["coverage - per-module line %"] = coverageCommand();
