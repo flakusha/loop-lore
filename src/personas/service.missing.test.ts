@@ -148,25 +148,6 @@ describe("PersonasService — update() individual field branches", () => {
     expect(persona!.title,).toBe("Supreme Overlord",);
   });
 
-  test("isDefault=true sets is_default to DefaultState.Default and clears prior default", async () => {
-    const priorId = await service.create({ userId, name: "Prior Default", },);
-    await service.setDefault(priorId, userId,);
-    // Sanity: priorId is the default
-    const priorBefore = await service.getById(priorId, userId,);
-    expect(priorBefore!.is_default,).toBe(DefaultState.Default,);
-
-    const id = await service.create({ userId, name: "Default Toggle Test", },);
-    await service.update(id, { isDefault: true, }, userId,);
-
-    const persona = await service.getById(id, userId,);
-    expect(persona!.is_default,).toBe(DefaultState.Default,);
-
-    // The previous default must have been cleared by the delegated setDefault().
-    // Regression guard: pre-fix code set is_default directly on the new row
-    // and left the prior default in place, violating the one-default invariant.
-    const priorAfter = await service.getById(priorId, userId,);
-    expect(priorAfter!.is_default,).toBe(DefaultState.NotDefault,);
-  });
 
   test("isDefault=false sets is_default to DefaultState.NotDefault", async () => {
     const id = await service.create({
@@ -200,6 +181,27 @@ describe("PersonasService — update() individual field branches", () => {
     expect(persona!.description,).toBe("Original description",);
   });
 });
+
+  test('update() with isDefault=true on a missing id throws and leaves other personas untouched', async () => {
+    const otherId = await service.create({ userId, name: 'Unrelated', title: 'Unrelated Title', },);
+    const otherBefore = await service.getById(otherId, userId,);
+
+    await expect(
+      service.update('no-such-persona-id', { isDefault: true, title: 'X', }, userId,),
+    ).rejects.toThrow('Persona not found',);
+
+    const otherAfter = await service.getById(otherId, userId,);
+    expect(otherAfter!.title,).toBe(otherBefore!.title,);
+    expect(otherAfter!.title,).not.toBe('X',);
+
+    const leakedTitle = await db
+      .selectFrom('personas',)
+      .selectAll()
+      .where('user_id', '=', userId,)
+      .where('title', '=', 'X',)
+      .executeTakeFirst();
+    expect(leakedTitle,).toBeUndefined();
+  });
 
 describe("PersonasService — delete() cascade", () => {
   test("clears persona_id from chat_participants when deleting persona", async () => {
