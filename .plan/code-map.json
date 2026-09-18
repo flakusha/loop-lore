@@ -29,6 +29,12 @@
       "source": "docs/spec/inventory.md"
     }
   ],
+  "src/admin/audit.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/observability.md"
+    }
+  ],
   "src/admin/config.test.ts": [
     {
       "kind": "ticket",
@@ -3873,6 +3879,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-mood-core.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/achievements.md"
     }
   ],
   "src/characters/normalizers/ccv2.test.ts": [
@@ -6429,6 +6439,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-world-template-chat-lifecycle.md"
+    },
+    {
+      "kind": "frontend",
+      "source": "docs/frontend/chat/search-and-filter.md"
     }
   ],
   "src/components/chat/chat-list.html": [
@@ -6603,6 +6617,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-story-mode-ui.md"
+    },
+    {
+      "kind": "frontend",
+      "source": "docs/frontend/chat/search-and-filter.md"
+    }
+  ],
+  "src/components/chat/message-search-bar.html": [
+    {
+      "kind": "frontend",
+      "source": "docs/frontend/chat/search-and-filter.md"
     }
   ],
   "src/components/chat/mobile-composer.html": [
@@ -6941,6 +6965,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-character-spec-inclusion-race-origin-culture.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/config-extensions.md"
     }
   ],
   "src/config/generate-domain-schemas.ts": [
@@ -6969,6 +6997,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-config-schema-emitter-missing-top-level-sections.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/config-extensions.md"
+    }
+  ],
+  "src/config/generate-toml-schema.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/config-extensions.md"
     }
   ],
   "src/config/hot-reload.test.ts": [
@@ -7107,6 +7145,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-cleanup-banned-types-console-logging-magic-strings.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-cors-middleware.md"
     }
   ],
   "src/config/migrate-config.ts": [
@@ -7123,6 +7165,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-prompt-template-registry.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/config-extensions.md"
     }
   ],
   "src/config/schema-class/encryption.ts": [
@@ -7286,6 +7332,10 @@
     },
     {
       "kind": "spec",
+      "source": "docs/spec/config-extensions.md"
+    },
+    {
+      "kind": "spec",
       "source": "docs/spec/logging.md"
     },
     {
@@ -7345,6 +7395,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-hsts-header-missing-from-response-policy.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-cors-middleware.md"
     }
   ],
   "src/config/schema/idempotency.ts": [
@@ -7539,6 +7593,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-hsts-header-missing-from-response-policy.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-adopt-elysiajs-helmet-for-security-headers.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-cors-middleware.md"
     },
     {
       "kind": "ticket",
@@ -7757,6 +7819,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-workflow-engine-schema-loader-template-types-workflow-discov.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/config-extensions.md"
     }
   ],
   "src/config/templates-loader/discovery.ts": [
@@ -7823,6 +7889,10 @@
     {
       "kind": "spec",
       "source": "docs/spec/content-compression.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/output-control-transforms.md"
     }
   ],
   "src/content/decode.ts": [
@@ -7890,6 +7960,10 @@
     }
   ],
   "src/cron/jobs.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/npc-navigation.md"
+    },
     {
       "kind": "spec",
       "source": "docs/spec/scheduler.md"
@@ -8795,6 +8869,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-migration-compaction-data-version-hash.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/db-versioning.md"
     }
   ],
   "src/db/data-migrations": [
@@ -9442,6 +9520,10 @@
     },
     {
       "kind": "spec",
+      "source": "docs/spec/db-versioning.md"
+    },
+    {
+      "kind": "spec",
       "source": "docs/spec/testing.md"
     }
   ],
@@ -9471,6 +9553,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/db-versioning.md"
     },
     {
       "kind": "spec",
@@ -10025,6 +10111,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-search-service-unified.md"
+    }
+  ],
+  "src/db/migrations/parts/016_telemetry_events.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/observability.md"
     }
   ],
   "src/db/migrations/parts/NNN_admin_assistant_tooling.ts": [
@@ -10987,10 +11079,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-shared-schemas.md"
-    },
-    {
-      "kind": "spec",
-      "source": "docs/spec/shared-schemas.md"
     }
   ],
   "src/db/schema-social.ts": [
@@ -11416,6 +11504,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-cors-middleware.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-creative-studio-search-api.md"
     },
     {
@@ -11453,6 +11545,10 @@
     {
       "kind": "spec",
       "source": "docs/spec/auth-middleware.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/openapi-reference.md"
     }
   ],
   "src/embed/auth.ts": [
@@ -11551,6 +11647,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-mesh-peer-discovery-gossip.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/headless-alternative-frontends.md"
     }
   ],
   "src/federation/peer-fetch.ts": [
@@ -11569,6 +11669,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-mesh-encrypted-content-sharing-reservation-duplication.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/headless-alternative-frontends.md"
     }
   ],
   "src/frontend": [
@@ -12603,6 +12707,12 @@
       "source": ".plan/tickets/BUG-xss-fail-open-when-dompurify-missing.md"
     }
   ],
+  "src/frontend/alpine/chat/search.ts": [
+    {
+      "kind": "frontend",
+      "source": "docs/frontend/chat/search-and-filter.md"
+    }
+  ],
   "src/frontend/alpine/chat/world.ts": [
     {
       "kind": "ticket",
@@ -12832,6 +12942,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-cors-middleware.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-html-dedup-audit.md"
     },
     {
@@ -12841,6 +12955,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-htmx-ajax-request-helper.md"
+    },
+    {
+      "kind": "frontend",
+      "source": "docs/frontend/chat/search-and-filter.md"
+    },
+    {
+      "kind": "frontend",
+      "source": "docs/frontend/component-architecture.md"
     },
     {
       "kind": "frontend",
@@ -14085,6 +14207,12 @@
       "source": ".plan/tickets/TASK-e2ee-double-ratchet.md"
     }
   ],
+  "src/frontend/e2e/recipient-pubkey.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-cors-middleware.md"
+    }
+  ],
   "src/frontend/effects/decorations.ts": [
     {
       "kind": "ticket",
@@ -14151,6 +14279,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-adopt-bun-csrf-for-csrf-protection.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-cors-middleware.md"
     },
     {
       "kind": "ticket",
@@ -15008,6 +15140,10 @@
     },
     {
       "kind": "frontend",
+      "source": "docs/frontend/chat/text-effects-overlays.md"
+    },
+    {
+      "kind": "frontend",
       "source": "docs/frontend/chat/visual-novel-mode.md"
     }
   ],
@@ -15048,6 +15184,10 @@
     },
     {
       "kind": "frontend",
+      "source": "docs/frontend/chat/text-effects-overlays.md"
+    },
+    {
+      "kind": "frontend",
       "source": "docs/frontend/chat/visual-novel-mode.md"
     }
   ],
@@ -15061,6 +15201,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-visual-novel-mode.md"
+    },
+    {
+      "kind": "frontend",
+      "source": "docs/frontend/chat/text-effects-overlays.md"
     },
     {
       "kind": "frontend",
@@ -15202,6 +15346,10 @@
     },
     {
       "kind": "frontend",
+      "source": "docs/frontend/chat/text-effects-overlays.md"
+    },
+    {
+      "kind": "frontend",
       "source": "docs/frontend/chat/visual-novel-mode.md"
     }
   ],
@@ -15221,6 +15369,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-vn-template-actions.md"
+    },
+    {
+      "kind": "frontend",
+      "source": "docs/frontend/chat/text-effects-overlays.md"
     },
     {
       "kind": "frontend",
@@ -18039,6 +18191,10 @@
     {
       "kind": "spec",
       "source": "docs/spec/logging.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/observability.md"
     }
   ],
   "src/logger/transports/console.ts": [
@@ -18441,6 +18597,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-architecture.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-adopt-elysiajs-helmet-for-security-headers.md"
     },
     {
       "kind": "frontend",
@@ -18955,6 +19115,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-hsts-header-missing-from-response-policy.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-adopt-elysiajs-helmet-for-security-headers.md"
     }
   ],
   "src/middleware/response-headers.ts": [
@@ -18977,6 +19141,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-static-asset-caching-unconditional-vary-immutable-on-short-t.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-cors-middleware.md"
     },
     {
       "kind": "ticket",
@@ -19968,6 +20136,10 @@
     },
     {
       "kind": "frontend",
+      "source": "docs/frontend/chat/text-effects-overlays.md"
+    },
+    {
+      "kind": "frontend",
       "source": "docs/frontend/chat/visual-novel-mode.md"
     }
   ],
@@ -20639,6 +20811,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/output-control-transforms.md"
     }
   ],
   "src/regex/index.ts": [
@@ -20777,6 +20953,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/multi-instance-reconciliation.md"
+    }
+  ],
+  "src/routes/activity.ts": [
+    {
+      "kind": "frontend",
+      "source": "docs/frontend/chat/search-and-filter.md"
     }
   ],
   "src/routes/actor-access.ts": [
@@ -22635,7 +22817,9 @@
     {
       "kind": "spec",
       "source": "docs/spec/auth-middleware.md"
-    },
+    }
+  ],
+  "src/routes/http-utils/index.ts": [
     {
       "kind": "spec",
       "source": "docs/spec/error-envelope.md"
@@ -24097,10 +24281,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-shared-schemas.md"
-    },
-    {
-      "kind": "spec",
-      "source": "docs/spec/shared-schemas.md"
     }
   ],
   "src/routes/search-bulk.ts": [
@@ -25025,6 +25205,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-wire-crafting-routes.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/crafting-professions.md"
     }
   ],
   "src/rpg/crafting/process.ts": [
@@ -25035,6 +25219,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-crafting-uses-shared-sync-connection-causing-database-is-loc.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/achievements.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/crafting-professions.md"
     }
   ],
   "src/rpg/crafting/professions/crud.ts": [
@@ -25059,6 +25251,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-professions-service-routes.md"
+    }
+  ],
+  "src/rpg/crafting/stations.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/crafting-professions.md"
     }
   ],
   "src/rpg/crime/bounty.ts": [
@@ -26107,6 +26305,26 @@
       "source": ".plan/tickets/TASK-nsfw-seduction-desire.md"
     }
   ],
+  "src/rpg/service/character-stats.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/achievements.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/companion-pet-mount.md"
+    }
+  ],
+  "src/rpg/service/dice-roll.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/enemies-monsters.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/output-control-transforms.md"
+    }
+  ],
   "src/rpg/service/loot-tables.ts": [
     {
       "kind": "epic",
@@ -26131,6 +26349,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/enemies-monsters.md"
     }
   ],
   "src/rpg/service/xp.ts": [
@@ -26355,6 +26577,12 @@
       "source": ".plan/tickets/TASK-rpg-mechanics.md"
     }
   ],
+  "src/rpg/stats/modifiers.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/companion-pet-mount.md"
+    }
+  ],
   "src/rpg/stealth/actions.ts": [
     {
       "kind": "epic",
@@ -26465,6 +26693,20 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-rpg-mechanics.md"
+    }
+  ],
+  "src/rpg/xp/sources.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/achievements.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/agency-story-points.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/crafting-professions.md"
     }
   ],
   "src/runtime/adapter.ts": [
@@ -27028,6 +27270,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-cors-middleware.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-headers-additional-useful-response-headers.md"
     },
     {
@@ -27277,6 +27523,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-map-battle-equipment.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/crafting-professions.md"
     }
   ],
   "src/services/external-server-utils.ts": [
@@ -27763,6 +28013,16 @@
       "source": ".plan/tickets/TASK-item-config-templates.md"
     }
   ],
+  "src/story/npc-states.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/enemies-monsters.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/npc-navigation.md"
+    }
+  ],
   "src/story/plot-autopilot.ts": [
     {
       "kind": "epic",
@@ -27973,6 +28233,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-telemetry-stores-raw-client-body-real-user-chat-session-ids.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/observability.md"
     }
   ],
   "src/telemetry/telemetry.test.ts": [
@@ -28293,6 +28557,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/transport-unified.md"
+    }
+  ],
+  "src/transport/unified.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/headless-alternative-frontends.md"
     }
   ],
   "src/transport/upgrade.ts": [
@@ -28828,6 +29098,10 @@
   "src/utils/safe-fetch/headers.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-cors-middleware.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-tui.md"
     }
   ],
@@ -29045,14 +29319,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-wardrobe-routes-validation-crud-outfit-override-endpoints.md"
-    },
-    {
-      "kind": "spec",
-      "source": "docs/spec/api-routes.md"
-    },
-    {
-      "kind": "spec",
-      "source": "docs/spec/implementation.md"
     },
     {
       "kind": "spec",
@@ -29419,6 +29685,10 @@
     {
       "kind": "frontend",
       "source": "docs/frontend/chat/visual-novel-mode.md"
+    },
+    {
+      "kind": "frontend",
+      "source": "docs/frontend/component-architecture.md"
     }
   ],
   "src/views/comfyui-gallery.html": [
@@ -29471,6 +29741,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/WIRE-frontend-keyboard-help-overlay.md"
+    },
+    {
+      "kind": "frontend",
+      "source": "docs/frontend/component-architecture.md"
     },
     {
       "kind": "frontend",

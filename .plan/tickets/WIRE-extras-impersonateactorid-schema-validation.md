@@ -3,6 +3,11 @@
 
 # WIRE: verify ChatImpersonateBody schema includes impersonateActorId
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** Closed (2026-09-18, reconciliation verified)
 **Priority:** low
 **Priority Tier:** P5
