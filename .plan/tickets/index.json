@@ -6995,6 +6995,19 @@
     "git_issue": "60af48a",
     "status": "open"
   },
+  "FIX-PARALLELIZE-BUN-TEST-INVOCATIONS-ISOLATE-PINS-SUITE-TO-ONE-C": {
+    "hash": "9778cc3",
+    "git_issue": "9778cc3",
+    "extid": "FIX-PARALLELIZE-BUN-TEST-INVOCATIONS-ISOLATE-PINS-SUITE-TO-ONE-C",
+    "type": "FIX",
+    "title": "Parallelize bun test invocations - isolate pins suite to one core",
+    "label": "fix",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FIX-parallelize-bun-test-invocations-isolate-pins-suite-to-one-c.md",
+    "status": "open"
+  },
   "IMPROVE-IMPERSONATE-EXPLICIT-ELSE-BRANCH": {
     "hash": "pending",
     "extid": "IMPROVE-IMPERSONATE-EXPLICIT-ELSE-BRANCH",
