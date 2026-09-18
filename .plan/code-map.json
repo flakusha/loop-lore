@@ -3607,30 +3607,6 @@
       "source": "docs/spec/content-compression.md"
     }
   ],
-  "src/character/characterLicense.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-030.md"
-    }
-  ],
-  "src/character/creator/LicenseSelector.vue": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-030.md"
-    }
-  ],
-  "src/character/mood.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-041.md"
-    }
-  ],
-  "src/character/schema.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-031.md"
-    }
-  ],
   "src/characters": [
     {
       "kind": "epic",
@@ -6359,36 +6335,6 @@
       "source": ".plan/tickets/TASK-optique-cli-tooling-integration.md"
     }
   ],
-  "src/components/3d/ViewModeSwitcher.vue": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-023.md"
-    }
-  ],
-  "src/components/AssetPreviewModal.vue": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-001.md"
-    }
-  ],
-  "src/components/AvatarCenterer.vue": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-001.md"
-    }
-  ],
-  "src/components/OverlayStack.vue": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-025.md"
-    }
-  ],
-  "src/components/TextFx.vue": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-025.md"
-    }
-  ],
   "src/components/analytics/dashboard.html": [
     {
       "kind": "ticket",
@@ -6549,12 +6495,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-actor-traits-frontend.md"
-    }
-  ],
-  "src/components/chat/QuestionPrompt.vue": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-029.md"
     }
   ],
   "src/components/chat/character-info-panel.html": [
@@ -9021,6 +8961,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-memory-history-search-bind-message-chain-reconstructable-con.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-world-requires-stats-flag-and-point-budget-config.md"
     }
   ],
   "src/db/content-version.test.ts": [
@@ -9133,16 +9077,6 @@
       "source": ".plan/tickets/TASK-character-emotion-definitions-crud-ui.md"
     }
   ],
-  "src/db/enums-character/character-species.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-038.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-045.md"
-    }
-  ],
   "src/db/enums-character/nsfw.ts": [
     {
       "kind": "epic",
@@ -9151,50 +9085,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-nsfw-integration-gaps.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-033.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-034.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-035.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-036.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-037.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-038.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-039.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-040.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-041.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-042.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-043.md"
     },
     {
       "kind": "ticket",
@@ -9514,30 +9404,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-049.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-051.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-052.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-054.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-055.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-056.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-map-battle-equipment.md"
     },
     {
@@ -9593,10 +9459,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-world-chat-channels-invites.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-054.md"
     },
     {
       "kind": "ticket",
@@ -10251,6 +10113,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-unify-item-types.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-world-requires-stats-flag-and-point-budget-config.md"
     }
   ],
   "src/db/migrations/parts/004_actors.ts": [
@@ -10933,6 +10799,10 @@
       "source": ".plan/tickets/TASK-timeline-id-world-timeline-events.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-world-requires-stats-flag-and-point-budget-config.md"
+    },
+    {
       "kind": "frontend",
       "source": "docs/frontend/chat/assistant.md"
     },
@@ -11177,6 +11047,10 @@
       "source": ".plan/tickets/TASK-timeline-id-world-timeline-events.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-world-requires-stats-flag-and-point-budget-config.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/gm-shadow-notes.md"
     },
@@ -11376,10 +11250,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-055.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-clean-transfer-orphans.md"
     },
     {
@@ -11498,14 +11368,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-051.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-055.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-apply-jsdoc-across-src-to-satisfy-jsdoc-require-param-return.md"
     },
     {
@@ -11569,32 +11431,12 @@
       "source": ".plan/tickets/TASK-world-location-encryption.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-world-requires-stats-flag-and-point-budget-config.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/migrations.md"
-    }
-  ],
-  "src/db/schema/nsfw-encounter.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-036.md"
-    }
-  ],
-  "src/db/schema/status-effect.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-035.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-039.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-041.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-044.md"
     }
   ],
   "src/db/seed-bootstrap-admin.test.ts": [
@@ -14721,6 +14563,12 @@
       "source": ".plan/tickets/BUG-gallery-openAssetPreview-context-safety.md"
     }
   ],
+  "src/frontend/modals/stat-allocation.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-character-stat-allocation-frontend-modal-and-edit-integration.md"
+    }
+  ],
   "src/frontend/nsfw/body-region.ts": [
     {
       "kind": "ticket",
@@ -17519,16 +17367,6 @@
       "source": ".plan/tickets/TASK-thinking-tag-context-prune.md"
     }
   ],
-  "src/generation/tools/create-item.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-055.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-056.md"
-    }
-  ],
   "src/generation/tools/create-location.ts": [
     {
       "kind": "ticket",
@@ -19487,12 +19325,6 @@
       "source": ".plan/tickets/TASK-middleware-request-id-elysia-derive.md"
     }
   ],
-  "src/migrations/character-world-split.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-031.md"
-    }
-  ],
   "src/native/blake3.ts": [
     {
       "kind": "ticket",
@@ -20079,12 +19911,6 @@
       "source": ".plan/epics/epic-comfyui-plugin.md"
     }
   ],
-  "src/plugins/config-merge.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-046.md"
-    }
-  ],
   "src/plugins/crypto-hooks.test.ts": [
     {
       "kind": "ticket",
@@ -20095,14 +19921,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-cron-scheduler.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-047.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-048.md"
     },
     {
       "kind": "spec",
@@ -20142,45 +19960,13 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-046.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-047.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-048.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-055.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-plugin-management-api.md"
-    }
-  ],
-  "src/plugins/mount-points.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-047.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-056.md"
     }
   ],
   "src/plugins/overrides.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-plugin-system.md"
-    }
-  ],
-  "src/plugins/placeholders.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-046.md"
     }
   ],
   "src/plugins/registry.ts": [
@@ -20203,14 +19989,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-046.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-047.md"
     },
     {
       "kind": "ticket",
@@ -20247,16 +20025,6 @@
       "source": ".plan/epics/epic-plugin-system.md"
     }
   ],
-  "src/plugins/tool-executor.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-047.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-048.md"
-    }
-  ],
   "src/plugins/tools.ts": [
     {
       "kind": "epic",
@@ -20271,18 +20039,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-plugin-extension-points.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-046.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-047.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-048.md"
     },
     {
       "kind": "ticket",
@@ -22097,6 +21853,16 @@
       "source": ".plan/tickets/TASK-char-editor-db-storage-sync.md"
     }
   ],
+  "src/routes/character-stat-allocation.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-character-stat-allocation-backend-api-and-db-integration.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-character-stat-allocation-integration-tests-e2e.md"
+    }
+  ],
   "src/routes/character-traits/location.ts": [
     {
       "kind": "ticket",
@@ -22153,6 +21919,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-character-personality-integrity.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-character-stat-allocation-backend-api-and-db-integration.md"
     },
     {
       "kind": "ticket",
@@ -25523,18 +25293,6 @@
       "source": ".plan/tickets/TASK-fix-eslint-errors.md"
     }
   ],
-  "src/rpg/body-systems/service/types.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-052.md"
-    }
-  ],
-  "src/rpg/body.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-035.md"
-    }
-  ],
   "src/rpg/body/appearance.ts": [
     {
       "kind": "ticket",
@@ -25577,16 +25335,6 @@
       "source": ".plan/epics/epic-rpg-progression.md"
     }
   ],
-  "src/rpg/chemistry.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-039.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-045.md"
-    }
-  ],
   "src/rpg/combat.test.ts": [
     {
       "kind": "epic",
@@ -25617,16 +25365,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-rpg-mechanics.md"
-    }
-  ],
-  "src/rpg/combat/damage.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-052.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-053.md"
     }
   ],
   "src/rpg/companions/progression.ts": [
@@ -25678,14 +25416,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-052.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-053.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-crafting-uses-shared-sync-connection-causing-database-is-loc.md"
     },
     {
@@ -25721,21 +25451,7 @@
       "source": ".plan/tickets/TASK-professions-service-routes.md"
     }
   ],
-  "src/rpg/crafting/station-types.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-051.md"
-    }
-  ],
   "src/rpg/crafting/stations.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-051.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-053.md"
-    },
     {
       "kind": "spec",
       "source": "docs/spec/crafting-professions.md"
@@ -25811,6 +25527,12 @@
       "source": ".plan/tickets/TASK-rpg-unify-roll-rng-onto-crypto-dice-engine-log-history.md"
     }
   ],
+  "src/rpg/dice/trait-roll.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-character-stat-modifiers-and-trait-application-engine.md"
+    }
+  ],
   "src/rpg/disease/cures.ts": [
     {
       "kind": "epic",
@@ -25877,20 +25599,6 @@
       "source": ".plan/epics/epic-economy-trading.md"
     }
   ],
-  "src/rpg/encounter.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-036.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-038.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-044.md"
-    }
-  ],
   "src/rpg/encounters/aftercare.ts": [
     {
       "kind": "ticket",
@@ -25913,12 +25621,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-nsfw-encounter-system.md"
-    }
-  ],
-  "src/rpg/encounters/service/types.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-052.md"
     }
   ],
   "src/rpg/encounters/skill-checks.ts": [
@@ -26003,12 +25705,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
-    }
-  ],
-  "src/rpg/fantasy.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-037.md"
     }
   ],
   "src/rpg/fantasy/categories.ts": [
@@ -26141,12 +25837,6 @@
       "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
     }
   ],
-  "src/rpg/intimacy.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-033.md"
-    }
-  ],
   "src/rpg/intimacy/actions.ts": [
     {
       "kind": "ticket",
@@ -26265,12 +25955,6 @@
       "source": ".plan/tickets/TASK-rpg-chat-questions.md"
     }
   ],
-  "src/rpg/location.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-043.md"
-    }
-  ],
   "src/rpg/locations-nsfw/atmosphere.ts": [
     {
       "kind": "ticket",
@@ -26341,34 +26025,6 @@
       "source": ".plan/tickets/TASK-persist-loot-drops.md"
     }
   ],
-  "src/rpg/loot/persist.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-049.md"
-    }
-  ],
-  "src/rpg/loot/persist.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-049.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-050.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-051.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-054.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-055.md"
-    }
-  ],
   "src/rpg/loot/table.test.ts": [
     {
       "kind": "ticket",
@@ -26384,10 +26040,6 @@
   "src/rpg/loot/types.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-049.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-persist-loot-drops.md"
     },
     {
@@ -26399,14 +26051,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-rpg-loot-luckmodifier-inverts-drop-quality-positive-luck-pro.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-053.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-054.md"
     }
   ],
   "src/rpg/magic/casting.ts": [
@@ -26499,12 +26143,6 @@
       "source": ".plan/tickets/TASK-nsfw-mood-emotional.md"
     }
   ],
-  "src/rpg/mood.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-041.md"
-    }
-  ],
   "src/rpg/mounts/riding.ts": [
     {
       "kind": "epic",
@@ -26563,12 +26201,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TEST-npc-navigation-processMovementTick-untested.md"
-    }
-  ],
-  "src/rpg/nsfw-skills.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-040.md"
     }
   ],
   "src/rpg/pets/battles.ts": [
@@ -26707,10 +26339,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-rpg-content-systems.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-029.md"
     }
   ],
   "src/rpg/quests/index.ts": [
@@ -26801,16 +26429,6 @@
       "source": ".plan/tickets/TASK-db-asset-delete-no-tx-n-1-memory-purge-column-allowlist-play.md"
     }
   ],
-  "src/rpg/reproduction.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-038.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-045.md"
-    }
-  ],
   "src/rpg/reputation-nsfw/conquests.ts": [
     {
       "kind": "ticket",
@@ -26847,40 +26465,10 @@
       "source": ".plan/tickets/TASK-nsfw-reputation-social.md"
     }
   ],
-  "src/rpg/reputation.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-042.md"
-    }
-  ],
   "src/rpg/resistance.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-disease-poison.md"
-    }
-  ],
-  "src/rpg/resolution.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-034.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-035.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-040.md"
-    }
-  ],
-  "src/rpg/seduction.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-034.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-037.md"
     }
   ],
   "src/rpg/seduction/arousal.ts": [
@@ -27135,12 +26723,6 @@
       "source": ".plan/epics/epic-social-interaction.md"
     }
   ],
-  "src/rpg/species-mechanics.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-045.md"
-    }
-  ],
   "src/rpg/species-nsfw/compatibility.ts": [
     {
       "kind": "ticket",
@@ -27216,21 +26798,21 @@
   "src/rpg/stats/modifiers.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-052.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-053.md"
+      "source": ".plan/tickets/TASK-character-stat-modifiers-and-trait-application-engine.md"
     },
     {
       "kind": "spec",
       "source": "docs/spec/companion-pet-mount.md"
     }
   ],
-  "src/rpg/stats/validation.ts": [
+  "src/rpg/stats/types.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-056.md"
+      "source": ".plan/tickets/TASK-character-stat-modifiers-and-trait-application-engine.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-world-requires-stats-flag-and-point-budget-config.md"
     }
   ],
   "src/rpg/stealth/actions.ts": [
@@ -27251,10 +26833,10 @@
       "source": ".plan/epics/epic-rpg-progression.md"
     }
   ],
-  "src/rpg/trauma.ts": [
+  "src/rpg/traits/catalog.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-044.md"
+      "source": ".plan/tickets/TASK-character-trait-catalog-for-gameplay-mechanics.md"
     }
   ],
   "src/rpg/trauma/effects.ts": [
@@ -27341,10 +26923,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-rpg-progression.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-040.md"
     },
     {
       "kind": "ticket",
@@ -27469,22 +27047,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-shared-schemas.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-033.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-034.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-036.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-037.md"
     },
     {
       "kind": "ticket",
@@ -28413,10 +27975,6 @@
   ],
   "src/social/reputation.ts": [
     {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-042.md"
-    },
-    {
       "kind": "spec",
       "source": "docs/spec/social-interaction.md"
     }
@@ -28623,12 +28181,6 @@
       "source": "docs/spec/rpg-mechanics.md"
     }
   ],
-  "src/story/items/balance.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-056.md"
-    }
-  ],
   "src/story/items/definitions.ts": [
     {
       "kind": "epic",
@@ -28637,28 +28189,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-story-items-cross-world-idor-read-transfer-destroy.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-049.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-050.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-054.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-055.md"
-    }
-  ],
-  "src/story/items/effects.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-052.md"
     }
   ],
   "src/story/items/index.ts": [
@@ -28673,14 +28203,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-story-items-cross-world-idor-read-transfer-destroy.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-049.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-050.md"
     },
     {
       "kind": "ticket",
@@ -28724,33 +28246,7 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-049.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-050.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-051.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-053.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-054.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-clean-transfer-orphans.md"
-    }
-  ],
-  "src/story/items/npc-inventory.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-050.md"
     }
   ],
   "src/story/items/types.ts": [
@@ -28760,29 +28256,7 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-049.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-051.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-052.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-053.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-item-config-templates.md"
-    }
-  ],
-  "src/story/items/unique-registry.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-054.md"
     }
   ],
   "src/story/npc-states.ts": [
@@ -29127,6 +28601,10 @@
       "source": ".plan/tickets/TASK-wire-xp-loot-routes.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-world-requires-stats-flag-and-point-budget-config.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/migrations.md"
     }
@@ -29198,10 +28676,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-058.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-adopt-bun-gzipsync-for-compression-standardization.md"
     },
     {
@@ -29249,10 +28723,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-transport-expansion.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-057.md"
     }
   ],
   "src/transport/http1.ts": [
@@ -29299,14 +28769,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-transport-negotiation-parsers-do-not-exclude-q-0-or-validate.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-057.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-059.md"
     },
     {
       "kind": "ticket",
@@ -29359,14 +28821,6 @@
       "source": ".plan/epics/epic-transport-expansion.md"
     },
     {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-057.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-058.md"
-    },
-    {
       "kind": "spec",
       "source": "docs/spec/transport-unified.md"
     }
@@ -29401,10 +28855,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-transport-expansion.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-059.md"
     },
     {
       "kind": "ticket",
@@ -29719,18 +29169,6 @@
       "source": ".plan/tickets/TASK-search-rag-coverage-bridge.md"
     }
   ],
-  "src/user/capabilities.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-032.md"
-    }
-  ],
-  "src/user/roles.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-032.md"
-    }
-  ],
   "src/users/index.ts": [
     {
       "kind": "ticket",
@@ -29997,6 +29435,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-migration-compaction-data-version-hash.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-world-requires-stats-flag-and-point-budget-config.md"
     },
     {
       "kind": "spec",
@@ -30267,12 +29709,6 @@
       "source": ".plan/tickets/BUG-frontend-minor-bugs-batch.md"
     }
   ],
-  "src/views/GalleryView.vue": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-001.md"
-    }
-  ],
   "src/views/admin.html": [
     {
       "kind": "epic",
@@ -30305,12 +29741,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-i18n-template-strings.md"
-    }
-  ],
-  "src/views/admin/UserListView.vue": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-032.md"
     }
   ],
   "src/views/blog.html": [
@@ -30355,12 +29785,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-mood-core.md"
-    }
-  ],
-  "src/views/character/CreatorView.vue": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-030.md"
     }
   ],
   "src/views/characters.html": [
@@ -30523,16 +29947,6 @@
     {
       "kind": "frontend",
       "source": "docs/frontend/component-architecture.md"
-    }
-  ],
-  "src/views/chat/ChatView.vue": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-025.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-029.md"
     }
   ],
   "src/views/comfyui-gallery.html": [
@@ -30891,12 +30305,6 @@
       "source": "docs/spec/worlds.md"
     }
   ],
-  "src/world/schema.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-031.md"
-    }
-  ],
   "src/world/state.ts": [
     {
       "kind": "ticket",
@@ -30929,12 +30337,6 @@
     {
       "kind": "spec",
       "source": "docs/spec/worlds.md"
-    }
-  ],
-  "src/world/weather.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-043.md"
     }
   ],
   "src/world/world.ts": [

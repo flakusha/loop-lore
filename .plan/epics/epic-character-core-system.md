@@ -125,6 +125,21 @@ The unified character API is **implemented and wired** — no `TBD` remains in `
 
 - `TASK-character-core-system.md` — implementation tasks
 
+### Stat Allocation & Trait Selection (Extension — 2026-09-18)
+
+When a world opts in via `requires_stats`, character creation/edit must allocate
+a point-buy stat block and pick gameplay-impact traits. The catalog drives dice,
+combat, and save outcomes; the modal surfaces the budget and trait picker to
+authors. Implementation slices below; new tickets are sequenced DB → catalog →
+engine → API → FE → tests so each phase has a verifiable boundary.
+
+- `TASK-world-requires-stats-flag-and-point-budget-config` — `worlds.requires_stats`, `stat_point_budget`, `stat_min`, `stat_max` columns
+- `TASK-character-trait-catalog-for-gameplay-mechanics` — typed catalog (`fast_reflexes`, `innate_magic`, `swift_hands`, …) with discriminated effects
+- `TASK-character-stat-modifiers-and-trait-application-engine` — `applyTraits`, `minimumRollValue`, `rollWithTraits` wired into combat/dice/saves
+- `TASK-character-stat-allocation-backend-api-and-db-integration` — migration 023 + `character_stat_allocation` / `character_trait_assignments` + PUT route
+- `TASK-character-stat-allocation-frontend-modal-and-edit-integration` — htmx/Alpine modal + catalog endpoint, gated by `requires_stats`
+- `TASK-character-stat-allocation-integration-tests-e2e` — DB + engine + route coverage, 80% floor
+
 ---
 
 ## Memory Architecture (Extension — Research-Driven)
