@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (verified fixed on dev; code + regression tests present)
 **Priority:** medium
 **Effort:** Medium
 
@@ -18,6 +18,6 @@ handleUpdatePersona (src/personas/handlers.ts:131) returns 200 {ok:true} when th
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
+- [x] Implementation complete
+- [x] Tests passing
 - [ ] Documentation updated
