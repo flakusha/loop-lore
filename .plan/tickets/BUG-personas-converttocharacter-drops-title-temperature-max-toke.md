@@ -3,7 +3,7 @@
 
 # BUG: personas convertToCharacter: drops title, temperature, max_tokens, model from persona
 
-**Status:** ✅ Resolved (verified fixed on dev; code + regression tests present)
+**Status:** ✅ Resolved (p3-bugfix-batch, 2026-09-18)
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (see ## Summary)
@@ -35,8 +35,22 @@ medium
 Extend the insert values to populate the actor's settings JSON with `{persona: { title, temperature, max_tokens, model }}` OR map individual fields where natural columns exist (welcome_message, personality). At minimum, document which persona fields are not transferred.
 
 
+## Resolution
+
+Fixed in dev by `249b379c1` (fix(personas): carry persona tuning into converted actor). Verified 2026-09-18 against current `dev`:
+
+- `src/personas/convert.ts` — `convertPersonaToCharacter()` writes `settings` JSON `{ persona: { title, temperature, max_tokens, model } }` (option (a) of the fix direction); throw on missing persona preserved for the handler's 404 mapping.
+- `src/personas/service.ts` — `convertToCharacter()` delegates to the extracted module.
+- Regression tests: `src/personas/handlers.test.ts` (all 4 fields carried), `src/personas/service.missing.test.ts` (persona block pinned, nulls preserved).
+
 ## Acceptance Criteria
 
 - [x] Implementation complete
 - [x] Tests passing
+- [x] Documentation updated (JSDoc on `convertPersonaToCharacter` documents the settings contract)
+
+## Acceptance Criteria (original)
+
+- [ ] Implementation complete
+- [ ] Tests passing
 - [ ] Documentation updated
