@@ -229,7 +229,7 @@ export class ComfyUIClient {
       throw new Error(`ComfyUI image download failed [${resp.status}]: ${filename}`,);
     }
 
-    const result = safeFromUint8Array(Buffer.from(await resp.arrayBuffer(),),);
+    const result = safeFromUint8Array(new Uint8Array(await resp.arrayBuffer(),),);
     if (!result.ok) { throw result.error; }
     return result.buffer;
   }
