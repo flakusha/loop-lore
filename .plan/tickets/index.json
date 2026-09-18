@@ -12514,6 +12514,57 @@
     "git_issue": "136220e",
     "status": "in_progress"
   },
+  "TASK-CHARACTER-STAT-ALLOCATION-BACKEND-API-AND-DB-INTEGRATION": {
+    "hash": "ff1f00c",
+    "git_issue": "ff1f00c",
+    "extid": "TASK-CHARACTER-STAT-ALLOCATION-BACKEND-API-AND-DB-INTEGRATION",
+    "type": "TASK",
+    "title": "Character Stat Allocation Backend API And DB Integration",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-character-core-system",
+    "tags": [],
+    "source": ".plan/tickets/TASK-character-stat-allocation-backend-api-and-db-integration.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-CHARACTER-STAT-ALLOCATION-FRONTEND-MODAL-AND-EDIT-INTEGRATION": {
+    "hash": "pending",
+    "extid": "TASK-CHARACTER-STAT-ALLOCATION-FRONTEND-MODAL-AND-EDIT-INTEGRATION",
+    "type": "TASK",
+    "title": "Character Stat Allocation Frontend Modal And Edit Integration",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-character-core-system",
+    "tags": [],
+    "source": ".plan/tickets/TASK-character-stat-allocation-frontend-modal-and-edit-integration.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-CHARACTER-STAT-ALLOCATION-INTEGRATION-TESTS-E2E": {
+    "hash": "725afaa",
+    "git_issue": "725afaa",
+    "extid": "TASK-CHARACTER-STAT-ALLOCATION-INTEGRATION-TESTS-E2E",
+    "type": "TASK",
+    "title": "Character Stat Allocation Integration Tests E2E",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-character-core-system",
+    "tags": [],
+    "source": ".plan/tickets/TASK-character-stat-allocation-integration-tests-e2e.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-CHARACTER-STAT-MODIFIERS-AND-TRAIT-APPLICATION-ENGINE": {
+    "hash": "a123a26",
+    "git_issue": "a123a26",
+    "extid": "TASK-CHARACTER-STAT-MODIFIERS-AND-TRAIT-APPLICATION-ENGINE",
+    "type": "TASK",
+    "title": "Character Stat Modifiers And Trait Application Engine",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-character-core-system",
+    "tags": [],
+    "source": ".plan/tickets/TASK-character-stat-modifiers-and-trait-application-engine.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-CHARACTER-SYSTEM-P2": {
     "hash": "d30e1d7",
     "extid": "TASK-CHARACTER-SYSTEM-P2",
@@ -12539,6 +12590,19 @@
     "source": ".plan/tickets/TASK-character-template-seeding.md",
     "git_issue": "e9ac22b",
     "status": "open"
+  },
+  "TASK-CHARACTER-TRAIT-CATALOG-FOR-GAMEPLAY-MECHANICS": {
+    "hash": "f322b26",
+    "git_issue": "f322b26",
+    "extid": "TASK-CHARACTER-TRAIT-CATALOG-FOR-GAMEPLAY-MECHANICS",
+    "type": "TASK",
+    "title": "Character Trait Catalog For Gameplay Mechanics",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-character-core-system",
+    "tags": [],
+    "source": ".plan/tickets/TASK-character-trait-catalog-for-gameplay-mechanics.md",
+    "status": "⬜ Not Started"
   },
   "TASK-CHARACTER-TRAITS-PAGE-INJECTS-UNESCAPED-GOAL-INTO-INNERHTML-": {
     "hash": "ac7ae01",
@@ -27092,6 +27156,19 @@
     "source": ".plan/tickets/TASK-world-lore-entries-frontend.md",
     "git_issue": "527db0b",
     "status": "open"
+  },
+  "TASK-WORLD-REQUIRES-STATS-FLAG-AND-POINT-BUDGET-CONFIG": {
+    "hash": "17a8bf4",
+    "git_issue": "17a8bf4",
+    "extid": "TASK-WORLD-REQUIRES-STATS-FLAG-AND-POINT-BUDGET-CONFIG",
+    "type": "TASK",
+    "title": "World Requires Stats Flag And Point Budget Config",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-character-core-system",
+    "tags": [],
+    "source": ".plan/tickets/TASK-world-requires-stats-flag-and-point-budget-config.md",
+    "status": "⬜ Not Started"
   },
   "TASK-WORLD-SHAPING-DIVINE": {
     "hash": "5ebaa9b",

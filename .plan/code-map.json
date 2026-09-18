@@ -7282,6 +7282,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-server-host-config-and-host-env-override-are-dead-start-ts-n.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-real-llm-sd-e2e-fixture-llama-cpp-llama-swap-sd-server.md"
     },
     {
@@ -7515,6 +7519,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/integrations/llm-serving.md"
+    }
+  ],
+  "src/config/schema/sections/server.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-server-host-config-and-host-env-override-are-dead-start-ts-n.md"
     }
   ],
   "src/config/schema/seeding.ts": [
@@ -8951,6 +8961,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-memory-history-search-bind-message-chain-reconstructable-con.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-world-requires-stats-flag-and-point-budget-config.md"
     }
   ],
   "src/db/content-version.test.ts": [
@@ -10099,6 +10113,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-unify-item-types.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-world-requires-stats-flag-and-point-budget-config.md"
     }
   ],
   "src/db/migrations/parts/004_actors.ts": [
@@ -10781,6 +10799,10 @@
       "source": ".plan/tickets/TASK-timeline-id-world-timeline-events.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-world-requires-stats-flag-and-point-budget-config.md"
+    },
+    {
       "kind": "frontend",
       "source": "docs/frontend/chat/assistant.md"
     },
@@ -11023,6 +11045,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-timeline-id-world-timeline-events.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-world-requires-stats-flag-and-point-budget-config.md"
     },
     {
       "kind": "spec",
@@ -11403,6 +11429,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-world-location-encryption.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-world-requires-stats-flag-and-point-budget-config.md"
     },
     {
       "kind": "spec",
@@ -14531,6 +14561,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-gallery-openAssetPreview-context-safety.md"
+    }
+  ],
+  "src/frontend/modals/stat-allocation.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-character-stat-allocation-frontend-modal-and-edit-integration.md"
     }
   ],
   "src/frontend/nsfw/body-region.ts": [
@@ -21817,6 +21853,16 @@
       "source": ".plan/tickets/TASK-char-editor-db-storage-sync.md"
     }
   ],
+  "src/routes/character-stat-allocation.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-character-stat-allocation-backend-api-and-db-integration.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-character-stat-allocation-integration-tests-e2e.md"
+    }
+  ],
   "src/routes/character-traits/location.ts": [
     {
       "kind": "ticket",
@@ -21873,6 +21919,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-character-personality-integrity.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-character-stat-allocation-backend-api-and-db-integration.md"
     },
     {
       "kind": "ticket",
@@ -25477,6 +25527,12 @@
       "source": ".plan/tickets/TASK-rpg-unify-roll-rng-onto-crypto-dice-engine-log-history.md"
     }
   ],
+  "src/rpg/dice/trait-roll.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-character-stat-modifiers-and-trait-application-engine.md"
+    }
+  ],
   "src/rpg/disease/cures.ts": [
     {
       "kind": "epic",
@@ -26741,8 +26797,22 @@
   ],
   "src/rpg/stats/modifiers.ts": [
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-character-stat-modifiers-and-trait-application-engine.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/companion-pet-mount.md"
+    }
+  ],
+  "src/rpg/stats/types.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-character-stat-modifiers-and-trait-application-engine.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-world-requires-stats-flag-and-point-budget-config.md"
     }
   ],
   "src/rpg/stealth/actions.ts": [
@@ -26761,6 +26831,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-rpg-progression.md"
+    }
+  ],
+  "src/rpg/traits/catalog.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-character-trait-catalog-for-gameplay-mechanics.md"
     }
   ],
   "src/rpg/trauma/effects.ts": [
@@ -27398,10 +27474,6 @@
     },
     {
       "kind": "spec",
-      "source": "docs/spec/build-deploy.md"
-    },
-    {
-      "kind": "spec",
       "source": "docs/spec/multi-instance-reconciliation.md"
     },
     {
@@ -27473,6 +27545,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-cross-platform-single-binary.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/build-deploy.md"
     }
   ],
   "src/server/init-background-services.ts": [
@@ -27533,6 +27609,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-new-migration-parts-never-apply-to-existing-databases.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-server-host-config-and-host-env-override-are-dead-start-ts-n.md"
     },
     {
       "kind": "ticket",
@@ -28521,6 +28601,10 @@
       "source": ".plan/tickets/TASK-wire-xp-loot-routes.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-world-requires-stats-flag-and-point-budget-config.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/migrations.md"
     }
@@ -29351,6 +29435,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-migration-compaction-data-version-hash.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-world-requires-stats-flag-and-point-budget-config.md"
     },
     {
       "kind": "spec",
