@@ -4037,6 +4037,19 @@
     "git_issue": "df71725",
     "status": "done"
   },
+  "BUG-SERVER-HOST-CONFIG-AND-HOST-ENV-OVERRIDE-ARE-DEAD-START-TS-N": {
+    "hash": "06cc3fb",
+    "git_issue": "06cc3fb",
+    "extid": "BUG-SERVER-HOST-CONFIG-AND-HOST-ENV-OVERRIDE-ARE-DEAD-START-TS-N",
+    "type": "BUG",
+    "title": "server.host config and HOST env override are dead - start.ts never passes hostname to Bun.serve",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-server-host-config-and-host-env-override-are-dead-start-ts-n.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-SERVER-VIEW-DATE-DISPLAY-IGNORES-USER-TIMEZONE-LOCALE": {
     "hash": "0c43ca5",
     "git_issue": "0c43ca5",
