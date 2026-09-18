@@ -3,7 +3,7 @@
 
 # FEAT-035: Version prefix routing
 
-**Status:** Not Started
+**Status:** closed
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

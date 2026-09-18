@@ -3,7 +3,7 @@
 
 # FEAT-065-LLM: LLM Prompt Template System
 
-**Status:** Not Started
+**Status:** closed
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
