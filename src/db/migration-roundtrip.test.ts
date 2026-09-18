@@ -17,8 +17,8 @@ import { Migrator, } from "kysely/migration";
 import { readdirSync, } from "node:fs";
 import path from "node:path";
 import { createLogger, } from "../logger";
-import { compareMigrationNames, } from "./migrate";
 import { createSqliteDialect, } from "./index";
+import { compareMigrationNames, } from "./migrate";
 
 // ── Helpers ────────────────────────────────────────────────────
 

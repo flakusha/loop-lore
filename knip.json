@@ -10,6 +10,7 @@
     "scripts/backup-sqlite.ts",
     "scripts/validate-backup-restore.ts",
     "scripts/check-no-shell-refs.ts",
+    "scripts/check-migration-ordering.ts",
     "scripts/lib/assertions.ts",
     "scripts/lib/colors.ts"
   ],
