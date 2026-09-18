@@ -57,9 +57,11 @@ Surfaced by the 5 surgical bug fixes shipped on 2026-09-03 (`c093f56d`, `7cbcea6
 - #3 typed Kysely upsert-by-unique-key helpers — ✅ Resolved — see `open-closed.md` (Retired 2026-09-18) for resolution evidence.
 - #4 schema-validate Alpine store fields at init — ✅ Resolved — see `open-closed.md` (Retired 2026-09-18) for resolution evidence.
 - #5 trust-boundary audit pass — ✅ Resolved pointer — see `open-closed.md` (Retired 2026-09-18).
+
 ## Audit Follow-up Cluster (from Bucket A/B/C close-outs — 2026-09-03) — ✅ RESOLVED 2026-09-10
 
 Closed 2026-09-10 — see `open-closed.md` Audit Follow-up Cluster (2026-09-10).
+
 ---
 
 ## 2026-09-10 landed (debt paydown)
