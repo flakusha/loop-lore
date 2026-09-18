@@ -146,6 +146,10 @@
   "src/age-gate/controller.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-TEST-SUITE-FLAKY-44-ON-DEV-2026-08-22.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-dbrt-validation-gaps.md"
     }
   ],
@@ -597,6 +601,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-asset-webp-vp8x-dimension-truncation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-TEST-SUITE-FLAKY-44-ON-DEV-2026-08-22.md"
     }
   ],
   "src/assets/metadata.ts": [
@@ -6967,6 +6975,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-hot-reload-test-ts-asserts-trivially-true-on-emfile-enoent-c.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-TEST-SUITE-FLAKY-44-ON-DEV-2026-08-22.md"
     }
   ],
   "src/config/hot-reload.ts": [
@@ -18344,6 +18356,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-TEST-SUITE-FLAKY-44-ON-DEV-2026-08-22.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-adopt-bun-hash-bun-cryptohasher-for-content-hashing.md"
     },
     {
@@ -21027,6 +21043,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-data-migration-transitivity.md"
+    }
+  ],
+  "src/routes/admin/model-roles.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-TEST-SUITE-FLAKY-44-ON-DEV-2026-08-22.md"
     }
   ],
   "src/routes/admin/model-roles.ts": [
@@ -27951,6 +27973,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-telemetry-stores-raw-client-body-real-user-chat-session-ids.md"
+    }
+  ],
+  "src/telemetry/telemetry.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-TEST-SUITE-FLAKY-44-ON-DEV-2026-08-22.md"
     }
   ],
   "src/test-utils": [
