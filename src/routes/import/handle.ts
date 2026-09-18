@@ -128,7 +128,7 @@ export async function handleImport(
       return jsonError({ message: "file field is required", status: HttpStatus.BadRequest, },);
     }
 
-    const fileBytesResult = safeFromUint8Array(Buffer.from(await file.arrayBuffer(),),);
+    const fileBytesResult = safeFromUint8Array(new Uint8Array(await file.arrayBuffer(),),);
     if (!fileBytesResult.ok) {
       return jsonError({ message: fileBytesResult.error.message, status: HttpStatus.BadRequest, },);
     }
