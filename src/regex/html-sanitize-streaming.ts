@@ -55,15 +55,25 @@ const DANGEROUS_PAIRED_TAG_SET: ReadonlySet<string> = new Set(DANGEROUS_PAIRED_T
  *
  * Performs a single left-to-right character scan. Linear in
  * `html.length`. Safe on adversarial input like `"<script".repeat(40_000)`
- * (no `>`) — the scan visits each char once, since the inner `<`-search
- * doesn't re-scan the suffix when a dangerous opener has no terminator
- * (we advance past the tag name and let the outer loop pick up the next
- * `<`).
+ * (no `>`) — each iteration advances the cursor, so the scan visits each
+ * char a constant number of times.
  *
- * The function is case-insensitive on tag names and respects quoted
- * attribute values when looking for the `>` terminator. A dangerous
- * opener without a `>` (chunk split mid-tag) is treated as still
- * open — that's exactly the XSS boundary case.
+ * The function is case-insensitive on tag names. A dangerous opener
+ * without a `>` (chunk split mid-tag) is treated as still open —
+ * that's exactly the XSS boundary case. Symmetrically, an incomplete
+ * closer (`</script` with no `>` yet) is not treated as closing
+ * anything until its `>` arrives. The same applies to a tag whose NAME
+ * is still incomplete at end-of-input but could complete into a
+ * dangerous tag in the next chunk (`<scr` + `ipt>` → `<script>`, or a
+ * bare trailing `<`): holding from that `<` guarantees the scan
+ * restarts at it once the boundary text arrives, instead of never
+ * re-reading an already-emitted prefix.
+ *
+ * Non-dangerous tags advance past their NAME only — a `<` inside the
+ * attribute region is re-examined as a potential dangerous opener.
+ * That mirrors `stripScriptTags`, which matches `<script` anywhere in
+ * the string (quotes and tag context notwithstanding), so the tracker
+ * never skips a position the sanitizer itself would have matched.
  * @param html Full accumulated HTML to scan.
  * @param fromIndex Index to start scanning from.
  * @returns Index of the leftmost unclosed dangerous opener, or html.length if none.
@@ -90,47 +100,49 @@ function findEarliestUnclosedDangerousOpen(html: string, fromIndex: number,): nu
           break;
         }
       }
-      const nameEnd = gt === -1 ? n : gt;
-      const name = lower.slice(i + 2, nameEnd,).trim();
+      if (gt === -1) {
+        // Incomplete closer at end-of-input (`</script` with no `>`
+        // yet) has not actually closed anything: a matching open tag
+        // must stay held. Orphan partial closers are inert text.
+        i = n;
+        continue;
+      }
+      const name = lower.slice(i + 2, gt,).trim();
       open.delete(name,);
-      i = gt === -1 ? n : gt + 1;
+      i = gt + 1;
       continue;
     }
     // Open tag: read name (stop at whitespace, `>`, `/`, `<`, or end).
     let nameEndIdx = lt + 1;
     while (nameEndIdx < n && isTagNameChar(lower[nameEndIdx],)) { nameEndIdx++; }
     const name = lower.slice(lt + 1, nameEndIdx,);
-    if (!DANGEROUS_PAIRED_TAG_SET.has(name,)) {
-      // Non-dangerous tag — find its terminator `>` (respecting quotes)
-      // so the scanner advances past it.
-      let gtIdx = -1;
-      let inQuote: string | null = null;
-      for (let k = nameEndIdx; k < n; k++) {
-        const c = lower[k] ?? "";
-        if (inQuote) {
-          if (c === inQuote) { inQuote = null; }
-          continue;
-        }
-        if (c === '"' || c === "'") {
-          inQuote = c;
-          continue;
-        }
-        if (c === ">") {
-          gtIdx = k;
-          break;
-        }
-      }
-      i = gtIdx === -1 ? n : gtIdx + 1;
+    if (DANGEROUS_PAIRED_TAG_SET.has(name,)) {
+      // Dangerous open tag. Record `lt` as the leftmost open position
+      // (no earlier open dangerous tag exists because we scan left-to-
+      // right), then advance past the tag name. If a matching
+      // `</name>` arrives we close the tag and clear it from the open
+      // set; if another dangerous opener arrives, `leftmostOpen` stays
+      // pinned to the first one.
+      if (lt < leftmostOpen) { leftmostOpen = lt; }
+      open.add(name,);
+      i = nameEndIdx;
       continue;
     }
-    // Dangerous open tag. Record `lt` as the leftmost open position
-    // (no earlier open dangerous tag exists because we scan left-to-
-    // right), then advance past the tag name. We'll keep scanning
-    // for further `<` characters; if a matching `</name>` arrives we
-    // close the tag and clear it from the open set. If a new dangerous
-    // opener arrives, `leftmostOpen` stays pinned to the first one.
-    if (lt < leftmostOpen) { leftmostOpen = lt; }
-    open.add(name,);
+    if (nameEndIdx === n && DANGEROUS_PAIRED_TAG_NAMES.some((d,) => d.startsWith(name,))) {
+      // The tag name is still arriving across the chunk boundary: a
+      // partial name that could complete into a dangerous tag in the
+      // next chunk (`<scr` + `ipt>` → `<script>`, or a bare trailing
+      // `<`). Hold from here so the rescan restarts at this exact `<`
+      // once the boundary text lands — otherwise the completed opener
+      // would sit BEFORE `emittedEnd` and never be re-read.
+      if (lt < leftmostOpen) { leftmostOpen = lt; }
+      open.add(name,);
+      i = n;
+      continue;
+    }
+    // Non-dangerous tag with a committed name — advance past the NAME
+    // only. Any `<` in the attribute region is re-examined by the outer
+    // loop as a potential dangerous opener.
     i = nameEndIdx;
   }
   // If any dangerous tag is still open at end-of-input, the suffix is
