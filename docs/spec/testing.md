@@ -29,11 +29,14 @@ bun run test:e2e:browser
 
 ### Heavy-test opt-in (coverage gate)
 
-`scripts/check-parallel.mjs` skips two slow db tests by default in the
-coverage gate (`src/db/migrations.test.ts`,
-`src/db/migration-roundtrip.test.ts`). They hold the SQLite write-lock for
-the full migration chain and serialize behind `--parallel=4`, blowing past
-any `giwt finalize` timeout. Default skip keeps the gate sub-minute.
+`scripts/check-parallel.mjs` skips `src/db/migrations.test.ts` and
+`src/db/migration-roundtrip.test.ts` by default in the coverage gate's path
+list — a latency decision dating from when these files were slow in the
+gate context. Both files are per-test in-memory SQLite and run in ~0.5s
+each today. They had also been red: `016_fts.ts` `down()` dropped
+`memories_fts` without dropping the `actor_memories_fts_ad/ai/au` triggers,
+so any full rollback failed (fixed 2026-09-18; both suites green, 49/49 in
+~1.2s with the opt-in below).
 
 Opt in to the full suite (when you actually want migration coverage):
 
