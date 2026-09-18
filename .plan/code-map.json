@@ -1139,6 +1139,12 @@
       "source": ".plan/tickets/TASK-rpg-gate-chat-commands-behind-world-opt-in.md"
     }
   ],
+  "src/assistant/commands/battle.integration.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/PERF-chat-dispatch-command-three-sequential-queries.md"
+    }
+  ],
   "src/assistant/commands/battle.ts": [
     {
       "kind": "ticket",
@@ -1583,6 +1589,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-assistant-generation-extensions.md"
+    }
+  ],
+  "src/assistant/commands/workflow-dispatch.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/PERF-chat-dispatch-command-three-sequential-queries.md"
     }
   ],
   "src/assistant/commands/workflow.ts": [
@@ -5789,6 +5801,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-coverage-waiver-chat-ownership-async-body-limit.md"
+    }
+  ],
+  "src/chat/service/participants.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/IMPROVE-impersonate-explicit-else-branch.md"
     }
   ],
   "src/chat/service/participants.ts": [
