@@ -3,7 +3,7 @@
 
 # BUG: assets DELETE /assets/:id/links/:linkId ignores linkId path parameter
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (verified fixed on dev; code + regression tests present)
 **Priority:** high
 **Effort:** Medium
 **Summary:** (see ## Summary)
@@ -37,6 +37,6 @@ Either (a) replace the unlinkAsset call with a direct delete by linkId: `await d
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
+- [x] Implementation complete
+- [x] Tests passing
 - [ ] Documentation updated

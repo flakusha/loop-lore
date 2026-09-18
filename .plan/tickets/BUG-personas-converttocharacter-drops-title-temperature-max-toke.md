@@ -3,7 +3,7 @@
 
 # BUG: personas convertToCharacter: drops title, temperature, max_tokens, model from persona
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (verified fixed on dev; code + regression tests present)
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (see ## Summary)
@@ -37,6 +37,6 @@ Extend the insert values to populate the actor's settings JSON with `{persona: {
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
+- [x] Implementation complete
+- [x] Tests passing
 - [ ] Documentation updated

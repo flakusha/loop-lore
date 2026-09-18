@@ -195,7 +195,9 @@ export async function reuniteChats(
 
   // BUG-reunite-narrates-archived: make the narration true — archive the
   // secondary so it leaves the active list and stops accepting messages.
-  await archiveChat(database, secondaryChatId, actorId, "user",);
+  // Role is undefined (not the route's session role) because both chats'
+  // ownership was already verified above; no admin bypass is needed.
+  await archiveChat(database, secondaryChatId, actorId, undefined,);
 
   return {
     ok: true,
