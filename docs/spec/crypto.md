@@ -133,3 +133,29 @@ AES-256-GCM for API key encryption at rest. PBKDF2 from config secret (100k iter
 - `src/crypto/index.ts` — barrel exports
 - `src/db/schema-core.ts` — `actor_keys`, `messages.key_id`
 - `.plan/implementation-plan.md` §17 — encryption foundation tasks
+
+---
+
+## BYOK API Keys
+
+> Folded in from `docs/spec/byok-api-keys.md` during Phase 2 spec reconciliation.
+
+### Overview
+
+Players can bring their own LLM API keys to the running instance. Keys are visible only to the player and the system (never stored in plaintext on the server or exposed to other players). This enables use of premium/feature-rich AI providers (e.g. GPT-4, Claude, Gemini) and lets community hosts roll out good models for everyone without requiring server-side key management.
+
+### Scope
+
+_TBD — expand with detailed requirements from the epic._
+
+### Technical Design
+
+_TBD — add implementation details, schemas, and API contracts._
+
+### Integration Points
+
+_TBD — document cross-system dependencies. See `## BYOK — src/crypto/byok.ts` above for the implemented at-rest encryption layer._
+
+### Related Epics
+
+- `.plan/epics/epic-byok-api-keys.md`
