@@ -3,6 +3,14 @@
 
 # TASK: Plan Validate Debt Cleanup
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 ## Status
 
 [ ] open

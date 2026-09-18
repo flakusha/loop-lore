@@ -4203,7 +4203,7 @@
     "status": "[OK] Resolved"
   },
   "BUG-TEST-SUITE-FLAKY-44-ON-DEV-2026-08-22": {
-    "hash": "pending",
+    "hash": "1e5d5dc",
     "extid": "BUG-TEST-SUITE-FLAKY-44-ON-DEV-2026-08-22",
     "type": "BUG",
     "title": "BUG-TEST-SUITE-FLAKY-44-ON-DEV-2026-08-22: Closeout — Resolved by post-Aug-22 commits",
@@ -4215,7 +4215,8 @@
     ],
     "source": ".plan/tickets/BUG-TEST-SUITE-FLAKY-44-ON-DEV-2026-08-22.md",
     "status": "closed",
-    "closed_at": "2026-09-18"
+    "closed_at": "2026-09-18",
+    "git_issue": "1e5d5dc"
   },
   "BUG-TOOL-CALL-ARG-PARSE-SILENT-FALLBACK": {
     "hash": "pending",

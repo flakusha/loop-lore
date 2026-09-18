@@ -3,6 +3,11 @@
 
 # FIX: Parallelize bun test invocations - isolate pins suite to one core
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Resolved (verified 2026-09-18 — all listed changes landed on `dev` HEAD `80b11e372`; ticket left open as bookkeeping)
 **Priority:** high
 **Effort:** Medium
