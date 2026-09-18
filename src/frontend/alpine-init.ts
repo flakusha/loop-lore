@@ -29,6 +29,7 @@ import "./ui";
 
 // ── 10. Asset preview global (openAssetPreview for embedded gallery grids) ──
 import "./asset-preview";
+import { toDate, } from "../utils/date";
 
 // ── 2. Expose on globalThis ─────────────────────────────────────
 const g = globalThis as Record<string, unknown>;
@@ -76,7 +77,7 @@ function hydrateClientDates(root: ParentNode = document,): void {
   for (const el of els) {
     const iso = el.getAttribute("datetime",);
     if (!iso) { continue; }
-    const d = new Date(iso,);
+    const d = toDate(iso,);
     if (Number.isNaN(d.getTime(),)) { continue; }
     el.textContent = el.getAttribute("data-client-date",) === "datetime"
       ? d.toLocaleString()

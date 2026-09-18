@@ -12,6 +12,7 @@ import { mkdirSync, readdirSync, renameSync, statSync, unlinkSync, } from "node:
 import path from "node:path";
 import { DATA_DIR, } from "../config/constants";
 import type { Logger, } from "../logger";
+import { toDate, } from "../utils/date";
 
 export const MAX_ARCHIVES = Number(process.env.LOOP_LORE_REINIT_MAX_ARCHIVES ?? 10,);
 export const MAX_AGE_DAYS = Number(process.env.LOOP_LORE_REINIT_MAX_AGE_DAYS ?? 90,);
@@ -52,7 +53,7 @@ export function parseArchiveStamp(name: string,): Date | null {
   if (!m) { return null; }
   const tz = m[6] ?? "";
   const iso = `${m[1]}${m[2]}:${m[3]}:${m[4]}.${m[5]}${tz}`;
-  const d = new Date(iso,);
+  const d = toDate(iso,);
   return Number.isNaN(d.getTime(),) ? null : d;
 }
 
