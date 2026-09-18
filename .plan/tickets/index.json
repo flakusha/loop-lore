@@ -18282,6 +18282,19 @@
     "git_issue": "d3b7eba",
     "status": "open"
   },
+  "TASK-INVESTIGATE-GIWT-FINALIZE-TEST-UNIT-FLAKE-UNDER-CONCURRENT-R": {
+    "hash": "27d9d16",
+    "git_issue": "27d9d16",
+    "extid": "TASK-INVESTIGATE-GIWT-FINALIZE-TEST-UNIT-FLAKE-UNDER-CONCURRENT-R",
+    "type": "TASK",
+    "title": "Investigate giwt finalize test:unit flake under concurrent runs",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-investigate-giwt-finalize-test-unit-flake-under-concurrent-r.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-INVITE-CODE-GENERATION": {
     "hash": "pending",
     "extid": "TASK-INVITE-CODE-GENERATION",
@@ -21065,6 +21078,19 @@
     "source": ".plan/tickets/TASK-party-migration.md",
     "git_issue": "69edfef",
     "status": "open"
+  },
+  "TASK-PATCH-PLANFILETICKET-FOOTER-OVERRIDES-HEADER-FOR-FIND-WORK": {
+    "hash": "c09968f",
+    "git_issue": "c09968f",
+    "extid": "TASK-PATCH-PLANFILETICKET-FOOTER-OVERRIDES-HEADER-FOR-FIND-WORK",
+    "type": "TASK",
+    "title": "Patch planFileTicket footer-overrides-header for /find-work",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-patch-planfileticket-footer-overrides-header-for-find-work.md",
+    "status": "⬜ Not Started"
   },
   "TASK-PER-ACTOR-LLM": {
     "hash": "pending",
