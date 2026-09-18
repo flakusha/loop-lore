@@ -21,13 +21,13 @@ Status: Planned (EPIC-2026-33). Partially implemented — migration 018 added `d
 
 ### Migrations
 
-24 migrations exist (`src/db/migrations/001_init.ts` through `024_encryption_level.ts`).
+~22 migration files exist (`src/db/migrations/001_init.ts` orchestrator + `parts/` sub-modules; `008` through `022_mesh_sharing.ts` as separate forward migrations). `017` is intentionally skipped (see `020_workflow_sessions.ts` comment).
 
 **Numbering gaps:**
 
 - `001_init.ts` — initial schema (orchestrates `parts/001_init/` sub-modules)
-- `002-007` — **missing** (folded into 001_init parts)
-- `008` through `024` — sequential
+- `002` through `007` — domain-specific parts in `parts/` subdirectory (`002_assets.ts`, `003_worlds.ts`, `004_actors.ts`, `005_characters.ts`, `006_chat.ts`, `007_personas.ts`)
+- `008` through `022` — sequential; `017` is intentionally skipped
 
 ### data_version Columns (Migration 018)
 
@@ -82,17 +82,16 @@ CREATE TABLE data_migrations (
 
 **Option C: Fresh start migration**
 
-- Create `025_squash_init.ts` that replaces 001-024 for new installs
+- Create a squash migration that replaces 001-022 for new installs
 - Old installs keep their history
 - **Verdict: Consider for v1.0 release**
-
-### 2. Schema Version Tracking
-
-Add `schema_version` table:
-
+<!-- GAP: schema_version table is aspirational; current state uses Kysely's
+     internal migration tracking table only. Do NOT add the schema_version table
+     unless explicitly needed by app code. -->
 ```sql
+-- src/db/schema_version.ts (planned; not yet implemented)
 CREATE TABLE schema_version (
-  version INTEGER PRIMARY KEY,     -- migration number (e.g. 24)
+  version INTEGER PRIMARY KEY,     -- migration number (e.g. 22)
   applied_at TEXT DEFAULT CURRENT_TIMESTAMP,
   checksum TEXT,                     -- SHA256 of migration SQL
   duration_ms INTEGER               -- how long migration took
@@ -115,12 +114,10 @@ export function getSchemaVersion(db: Db,): number {
 ### 3. Content Versioning Framework
 
 **Problem:** `data_version` columns exist but no code reads/writes them meaningfully.
-
-**Solution:** Content version registry:
+**Solution:** Content version registry (planned; current code uses `src/db/content-version.ts` for asset content versioning, NOT `content-versioning.ts`):
 
 ```ts
-// src/db/content-versioning.ts
-
+// src/db/content-versioning.ts (planned; not yet implemented)
 interface ContentVersionDef {
   table: string;
   column: string;
@@ -179,10 +176,11 @@ export async function migrateContent(
 
 ### 4. Migration Testing
 
+<!-- GAP: src/db/migrations/__tests__/ directory does not exist. Migration testing
+     is covered by src/db/migrations.test.ts + src/db/migration-roundtrip.test.ts
+     (top-level test files, gated by CHECK_INCLUDE_HEAVY_DB_TESTS=1 for finalize). -->
 ```ts
-// src/db/migrations/__tests__/migrate.test.ts
-
-import { describe, expect, it, } from "bun:test";
+// src/db/migrations.test.ts (illustrative — actual location)
 import { Kysely, } from "kysely";
 import { runMigrations, } from "../migrate";
 

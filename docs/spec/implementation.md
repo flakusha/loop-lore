@@ -21,10 +21,7 @@
 - **Server**: Bun's built-in HTTP server (no Express/Koa dependency)
 - **Middleware**: Lightweight composable pipeline (auth, role guard, logging)
   built on Bun fetch; no framework
-- **Validation**: Kysely type system at compile time; runtime validation via
-  Elysia's TypeBox-based `t` schemas in `src/validation/schemas.ts` — schema-per-route
-  group with shared field fragments, logger integration. (A Zod migration is
-  aspirational — see `docs/meta/code-practices-improvements/06-schemas-and-openapi.md`.)
+- **Validation**: Elysia's TypeBox-based `t` schemas in `src/validation/schemas/` (per-domain TypeBox files) — schema-per-route group with shared field fragments, logger integration. (A Zod migration is aspirational — see `docs/meta/code-practices-improvements/06-schemas-and-openapi.md`.)
 
 ### Frontend
 
@@ -108,18 +105,19 @@ limiting beyond login.
 ### Runtime Validation Layer
 
 > Note: a `src/schemas/` Zod layer does not exist. The implemented stack is
-> Elysia `t` (TypeBox) schemas centralized in `src/validation/schemas.ts`. The
-> design below describes the **current** TypeBox approach; the Zod/OpenAPI
-> migration is aspirational only (see `docs/meta/code-practices-improvements/06-schemas-and-openapi.md`).
+> Elysia `t` (TypeBox) schemas centralized in `src/validation/schemas/`
+> (per-domain files). The design below describes the **current** TypeBox
+> approach; the Zod/OpenAPI migration is aspirational only
+> (see `docs/meta/code-practices-improvements/06-schemas-and-openapi.md`).
 
-Request/response validation lives in `src/validation/schemas.ts` using Elysia's
+Request/response validation lives in `src/validation/schemas/` using Elysia's
 TypeBox `t` schemas. Each route group defines its request/response schemas there.
 
 #### Design
 
 - **Single source of truth**: Schema = TypeScript type + runtime validation +
   OpenAPI documentation. Use `t.Static<typeof schema>` for inferred types.
-- **Composition**: Shared field fragments in `src/validation/schemas.ts`
+- **Composition**: Shared field fragments in `src/validation/schemas/`
   eliminate per-field duplication across schemas — e.g. `uidField`,
   `displayNameField`, `optionalDescription`, `paginationQuery`.
 - **Enum sharing**: Route schemas import enum definitions from `src/db/enums.ts`
@@ -243,8 +241,8 @@ Located in `src/assistant/`
 
 #### **Note:** No dedicated `src/assistant/controller.ts` or `POST /api/assistant` endpoint exists.
 
-> The assistant is invoked internally by `src/routes/messages.ts` during
-> generation. A standalone API endpoint is aspirational (post-MVP).
+<!-- GAP: assistant standalone API endpoint is aspirational (post-MVP). The assistant
+     is invoked internally by `src/routes/messages.ts` during generation. -->
 
 ### Content Module
 
@@ -277,7 +275,10 @@ Provides user age verification for NSFW content compliance:
 
 ### Plugin System
 
-Located in `src/plugins/` (planned)
+Located in `src/plugins/` (planned — partial implementation in tree)
+
+<!-- GAP: full plugin API surface is partially implemented; bundled "core plugins"
+     (dice roller, code executor, web research) are not yet shipped. -->
 
 See [`docs/plugin-system.md`](./plugin-system.md) for the full specification.
 See also [`docs/use-case-agentic-workspace.md`](./use-case-agentic-workspace.md)
