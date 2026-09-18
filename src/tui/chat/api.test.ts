@@ -86,12 +86,33 @@ function makeHost(overrides: Partial<ChatHost> = {},): ChatHost & HostExtras {
   return host;
 }
 
+/** Flatten a `HeadersInit` into a plain record. Bun's `Headers` global does
+ * not expose `.entries()` at the type level under `tsconfig.backend.json`
+ * (BunHeadersOverride narrows the DOM interface), so we read whichever
+ * shape the caller passed instead of going through `new Headers(...).entries()`. */
+function headersToRecord(init: HeadersInit | undefined,): Record<string, string> {
+  if (!init) { return {}; }
+  if (init instanceof Headers) {
+    const out: Record<string, string> = {};
+    init.forEach((value, key,) => {
+      out[key] = value;
+    },);
+    return out;
+  }
+  if (Array.isArray(init,)) {
+    const out: Record<string, string> = {};
+    for (const [key, value,] of init) { out[key] = value; }
+    return out;
+  }
+  return { ...init, };
+}
+
 function stubFetchJson(status: number, payload: unknown,): void {
   setFetch(async (url: string | URL | Request, init?: RequestInit,) => {
     const captured: Captured = {
       url: String(url,),
       method: (init?.method ?? "GET").toUpperCase(),
-      headers: Object.fromEntries(new Headers(init?.headers,).entries(),),
+      headers: headersToRecord(init?.headers,),
       body: typeof init?.body === "string" ? init?.body : "",
     };
     (globalThis as CaptureGlobal)[CAPTURE_KEY] = captured;
