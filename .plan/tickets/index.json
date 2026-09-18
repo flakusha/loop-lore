@@ -13728,6 +13728,19 @@
     "source": ".plan/tickets/TASK-cover-frontend-vn-pages-new-chat-quests-worlds.md",
     "status": "open"
   },
+  "TASK-COVERAGE-GATE-TRUE-MULTI-WORKER-FANOUT-INVESTIGATION": {
+    "hash": "18c70e1",
+    "git_issue": "18c70e1",
+    "extid": "TASK-COVERAGE-GATE-TRUE-MULTI-WORKER-FANOUT-INVESTIGATION",
+    "type": "TASK",
+    "title": "Coverage gate: true multi-worker fanout investigation",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-coverage-gate-true-multi-worker-fanout-investigation.md",
+    "status": "in_progress"
+  },
   "TASK-COVERAGE-WAIVER-CHAT-OWNERSHIP-ASYNC-BODY-LIMIT": {
     "hash": "pending",
     "extid": "TASK-COVERAGE-WAIVER-CHAT-OWNERSHIP-ASYNC-BODY-LIMIT",
