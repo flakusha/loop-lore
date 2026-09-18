@@ -4,7 +4,7 @@
 
 /**
  * Parallel check runner for loop-lore
-    "plan - validate": "bun run plan:validate",
+ * Runs independent checks in parallel and aggregates results
  *
  * Usage:
  *   bun run scripts/check-parallel.mjs [--fix] [--ci] [--report-ls] [--jobs N]
