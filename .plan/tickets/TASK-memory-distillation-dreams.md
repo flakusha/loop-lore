@@ -22,8 +22,7 @@ Add memory distillation and dream mechanics to the Three-Tier Memory System epic
 
 Builds on the Three-Tier Memory System epic's episodic/semantic/procedural memory tiers. Adds distillation, dreaming, and sharing mechanics on top of the existing memory storage and decay logic.
 
-## Acceptance Criteria
-
+**Acceptance Criteria:**
 - [ ] Memory distillation — convert weak memories into stronger, more vivid forms
 - [ ] Dream system — characters experience dream sequences that blend memories
 - [ ] Memory sharing with companions (trust-based, privacy-aware)

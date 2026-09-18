@@ -1775,6 +1775,13 @@
       "source": ".plan/epics/epic-memory-propagation.md"
     }
   ],
+
+  "src/assistant/personality/presets.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-personality-presets-catalog.md"
+    }
+  ],
   "src/assistant/prompt-assembler.test.ts": [
     {
       "kind": "epic",
@@ -2953,6 +2960,13 @@
       "source": ".plan/tickets/BUG-getclientip-trusts-spoofable-proxy-headers-unconditionally.md"
     }
   ],
+
+  "src/auto-gen.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-action-karma-estimation-via-aux-model.md"
+    }
+  ],
   "src/aux-pipeline": [
     {
       "kind": "epic",
@@ -2983,6 +2997,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-callaux-graceful-failure-throws-on-empty-config.md"
+    }
+  ],
+
+  "src/aux-pipeline/config.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-personality-drift-aux-advisory.md"
     }
   ],
   "src/aux-pipeline/index.ts": [
@@ -3527,6 +3548,20 @@
       "source": ".plan/tickets/TASK-adopt-bun-randomuuidv7-for-time-sortable-ids.md"
     }
   ],
+
+  "src/bestiary/ecology.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-bestiary-ecology-pressure-model.md"
+    }
+  ],
+
+  "src/bestiary/repopulation.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-bestiary-time-based-repopulation-engine.md"
+    }
+  ],
   "src/blog/comments.ts": [
     {
       "kind": "epic",
@@ -3647,6 +3682,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-rpg-patterns.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-faction-leaders-and-cadre-generation.md"
     }
   ],
   "src/characters/admin-management.ts": [
@@ -4127,6 +4166,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-character-personality-integrity.md"
+    }
+  ],
+
+  "src/characters/relationships-service.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-npc-boss-retinue-lore-and-relationship-service.md"
     }
   ],
   "src/characters/resolver.ts": [
@@ -11915,6 +11961,13 @@
       "source": "docs/spec/quests-encounters.md"
     }
   ],
+
+  "src/factions/politics.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-faction-politics-coups-and-expansion-engine.md"
+    }
+  ],
   "src/factions/relations.ts": [
     {
       "kind": "spec",
@@ -12363,6 +12416,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-actor-traits-frontend.md"
+    }
+  ],
+
+  "src/frontend/alpine/admin-": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-bestiary-ui-compendium-and-per-location-population.md"
     }
   ],
   "src/frontend/alpine/admin-audit.ts": [
@@ -20021,6 +20081,13 @@
       "source": ".plan/tickets/TASK-world-item-frontend.md"
     }
   ],
+
+  "src/parties/travel.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-party-travel-engine-adjacency-and-fast-travel.md"
+    }
+  ],
   "src/personas": [
     {
       "kind": "epic",
@@ -22029,6 +22096,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-persist-loot-drops.md"
+    }
+  ],
+
+  "src/routes/bestiary.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-bestiary-crud-routes-admin-gm.md"
     }
   ],
   "src/routes/blog-admin.ts": [
@@ -24463,6 +24537,13 @@
       "source": ".plan/tickets/TASK-api-first-foundation.md"
     }
   ],
+
+  "src/routes/parties.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-party-schema-crud-routes-and-migration.md"
+    }
+  ],
   "src/routes/personality.ts": [
     {
       "kind": "ticket",
@@ -26395,6 +26476,13 @@
       "source": ".plan/tickets/TASK-nsfw-location-environment.md"
     }
   ],
+
+  "src/rpg/loot": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-bestiary-loot-and-xp-integration.md"
+    }
+  ],
   "src/rpg/loot.test.ts": [
     {
       "kind": "epic",
@@ -26651,6 +26739,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TEST-npc-navigation-processMovementTick-untested.md"
+    }
+  ],
+
+  "src/rpg/npc-navigation/tick-driver.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-world-simulation-npc-navigation-tick-driver.md"
     }
   ],
   "src/rpg/nsfw-skills.ts": [
@@ -28399,6 +28494,13 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-configs-path-resolution.md"
+    }
+  ],
+
+  "src/services/trade-core": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-npc-trade-inventory-and-loot-service.md"
     }
   ],
   "src/services/trade.test.ts": [
@@ -30219,6 +30321,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-capability-disclosure.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-bestiary-crud-routes-admin-gm.md"
     },
     {
       "kind": "ticket",

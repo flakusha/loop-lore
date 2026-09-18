@@ -13,8 +13,7 @@
 **Effort:** High
 **Epic:** epic-faction-reputation
 
-## Summary
-
+**Summary:**
 Worlds can define factions with reputation tracking, standing changes, and persistent consequences for player actions. From `epic-faction-reputation.md` (inferred).
 
 ## Scope
@@ -41,8 +40,7 @@ Worlds can define factions with reputation tracking, standing changes, and persi
 
 - `epic-faction-reputation.md`
 
-## Acceptance Criteria
-
+**Acceptance Criteria:**
 - [ ] Faction definition system with hierarchy
 - [ ] Faction relationships (allied, neutral, hostile)
 - [ ] Reputation tracking per faction

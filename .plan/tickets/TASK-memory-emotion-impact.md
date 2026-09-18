@@ -13,8 +13,7 @@
 **Effort:** Medium
 **Status:** Not Started
 
-## Summary
-
+**Summary:**
 Add structured emotion-impact fields to episodic memories that drive character behavior. Replaces the single `emotional_valence` scalar with a structured `MemoryEmotionImpact` type.
 
 ## Requirements
@@ -68,8 +67,7 @@ interface MemoryEmotionImpact {
 - `epic-character-core-system.md` (existing `emotional_valence` field)
 - `epic-character-internal-traits.md` (coping profile integration)
 
-## Acceptance Criteria
-
+**Acceptance Criteria:**
 - [ ] `EmotionImpact` type defined
 - [ ] `MemoryEmotionImpact` interface defined
 - [ ] `emotion_impact` field on episodic memories

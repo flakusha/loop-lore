@@ -8454,6 +8454,39 @@
     "git_issue": "5270026",
     "status": "open"
   },
+  "TASK-ACTION-KARMA-DISPLAY-AND-TIER-WIRING": {
+    "hash": "2706bdb",
+    "git_issue": "2706bdb",
+    "extid": "TASK-ACTION-KARMA-DISPLAY-AND-TIER-WIRING",
+    "type": "TASK",
+    "title": "Action Karma Display And Tier Wiring",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-world-diplomacy-karma",
+    "tags": [
+      "karma",
+      "display"
+    ],
+    "source": ".plan/tickets/TASK-action-karma-display-and-tier-wiring.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-ACTION-KARMA-ESTIMATION-VIA-AUX-MODEL": {
+    "hash": "a1baa73",
+    "git_issue": "a1baa73",
+    "extid": "TASK-ACTION-KARMA-ESTIMATION-VIA-AUX-MODEL",
+    "type": "TASK",
+    "title": "Action Karma Estimation Via AUX Model",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-aux-enrichment-pipeline",
+    "tags": [
+      "aux",
+      "karma",
+      "enrichment"
+    ],
+    "source": ".plan/tickets/TASK-action-karma-estimation-via-aux-model.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-ACTOR-AVAILABILITY-FRONTEND": {
     "hash": "3e8ec60",
     "extid": "TASK-ACTOR-AVAILABILITY-FRONTEND",
@@ -10647,6 +10680,91 @@
     "source": ".plan/tickets/TASK-assistant-nsfw-api-prefiltering.md",
     "status": "draft"
   },
+  "TASK-ASSISTANT-PERSONALITY-COMPOSER-INTEGRATION": {
+    "hash": "e7aaa77",
+    "git_issue": "e7aaa77",
+    "extid": "TASK-ASSISTANT-PERSONALITY-COMPOSER-INTEGRATION",
+    "type": "TASK",
+    "title": "Assistant Personality Composer Integration",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-character-multi-personality",
+    "tags": [
+      "assistant",
+      "prompt",
+      "composer"
+    ],
+    "source": ".plan/tickets/TASK-assistant-personality-composer-integration.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-ASSISTANT-PERSONALITY-CONTINUITY-ACROSS-CHATS": {
+    "hash": "d628a64",
+    "git_issue": "d628a64",
+    "extid": "TASK-ASSISTANT-PERSONALITY-CONTINUITY-ACROSS-CHATS",
+    "type": "TASK",
+    "title": "Assistant Personality Continuity Across Chats",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-character-multi-personality",
+    "tags": [
+      "assistant",
+      "personality",
+      "continuity"
+    ],
+    "source": ".plan/tickets/TASK-assistant-personality-continuity-across-chats.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-ASSISTANT-PERSONALITY-DRIFT-AUX-ADVISORY": {
+    "hash": "d295ce6",
+    "git_issue": "d295ce6",
+    "extid": "TASK-ASSISTANT-PERSONALITY-DRIFT-AUX-ADVISORY",
+    "type": "TASK",
+    "title": "Assistant Personality Drift Aux Advisory",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-character-multi-personality",
+    "tags": [
+      "assistant",
+      "personality",
+      "aux"
+    ],
+    "source": ".plan/tickets/TASK-assistant-personality-drift-aux-advisory.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-ASSISTANT-PERSONALITY-PRESETS-CATALOG": {
+    "hash": "cea72bd",
+    "git_issue": "cea72bd",
+    "extid": "TASK-ASSISTANT-PERSONALITY-PRESETS-CATALOG",
+    "type": "TASK",
+    "title": "Assistant Personality Presets Catalog",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-character-multi-personality",
+    "tags": [
+      "assistant",
+      "personality",
+      "presets"
+    ],
+    "source": ".plan/tickets/TASK-assistant-personality-presets-catalog.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-ASSISTANT-PERSONALITY-SELECTOR-UI": {
+    "hash": "1186089",
+    "git_issue": "1186089",
+    "extid": "TASK-ASSISTANT-PERSONALITY-SELECTOR-UI",
+    "type": "TASK",
+    "title": "Assistant Personality Selector UI",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-character-multi-personality",
+    "tags": [
+      "assistant",
+      "personality",
+      "ui"
+    ],
+    "source": ".plan/tickets/TASK-assistant-personality-selector-ui.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-ASSISTANT-SCENARIO-SOURCE": {
     "hash": "915842dc",
     "extid": "TASK-ASSISTANT-SCENARIO-SOURCE",
@@ -11464,6 +11582,131 @@
     "source": ".plan/tickets/TASK-battle-turn-order.md",
     "status": "open"
   },
+  "TASK-BESTIARY-ADMIN-GM-FORCE-SPAWN-AND-CULL": {
+    "hash": "pending",
+    "extid": "TASK-BESTIARY-ADMIN-GM-FORCE-SPAWN-AND-CULL",
+    "type": "TASK",
+    "title": "Bestiary Bestiary Admin GM Force Spawn And Cull",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-enemies-monsters",
+    "tags": [
+      "bestiary",
+      "admin",
+      "gm"
+    ],
+    "source": ".plan/tickets/TASK-bestiary-admin-gm-force-spawn-and-cull.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-BESTIARY-CATALOG-SCHEMA-AND-MIGRATION": {
+    "hash": "pending",
+    "extid": "TASK-BESTIARY-CATALOG-SCHEMA-AND-MIGRATION",
+    "type": "TASK",
+    "title": "Bestiary Bestiary Catalog Schema And Migration",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-enemies-monsters",
+    "tags": [
+      "bestiary",
+      "ecology",
+      "repopulation"
+    ],
+    "source": ".plan/tickets/TASK-bestiary-catalog-schema-and-migration.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-BESTIARY-CRUD-ROUTES-ADMIN-GM": {
+    "hash": "pending",
+    "extid": "TASK-BESTIARY-CRUD-ROUTES-ADMIN-GM",
+    "type": "TASK",
+    "title": "Bestiary Bestiary CRUD Routes Admin GM",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-enemies-monsters",
+    "tags": [
+      "bestiary",
+      "crud"
+    ],
+    "source": ".plan/tickets/TASK-bestiary-crud-routes-admin-gm.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-BESTIARY-ECOLOGY-PRESSURE-MODEL": {
+    "hash": "pending",
+    "extid": "TASK-BESTIARY-ECOLOGY-PRESSURE-MODEL",
+    "type": "TASK",
+    "title": "Bestiary Bestiary Ecology Pressure Model",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-enemies-monsters",
+    "tags": [
+      "bestiary",
+      "ecology",
+      "predator-prey"
+    ],
+    "source": ".plan/tickets/TASK-bestiary-ecology-pressure-model.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-BESTIARY-LOOT-AND-XP-INTEGRATION": {
+    "hash": "pending",
+    "extid": "TASK-BESTIARY-LOOT-AND-XP-INTEGRATION",
+    "type": "TASK",
+    "title": "Bestiary Bestiary Loot And XP Integration",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-enemies-monsters",
+    "tags": [
+      "bestiary",
+      "loot",
+      "xp"
+    ],
+    "source": ".plan/tickets/TASK-bestiary-loot-and-xp-integration.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-BESTIARY-QUEST-BINDINGS-INTEGRATION": {
+    "hash": "pending",
+    "extid": "TASK-BESTIARY-QUEST-BINDINGS-INTEGRATION",
+    "type": "TASK",
+    "title": "Bestiary Bestiary Quest Bindings Integration",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-enemies-monsters",
+    "tags": [
+      "bestiary",
+      "quests"
+    ],
+    "source": ".plan/tickets/TASK-bestiary-quest-bindings-integration.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-BESTIARY-TIME-BASED-REPOPULATION-ENGINE": {
+    "hash": "pending",
+    "extid": "TASK-BESTIARY-TIME-BASED-REPOPULATION-ENGINE",
+    "type": "TASK",
+    "title": "Bestiary Bestiary Time Based Repopulation Engine",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-enemies-monsters",
+    "tags": [
+      "bestiary",
+      "repopulation",
+      "tick"
+    ],
+    "source": ".plan/tickets/TASK-bestiary-time-based-repopulation-engine.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-BESTIARY-UI-COMPENDIUM-AND-PER-LOCATION-POPULATION": {
+    "hash": "pending",
+    "extid": "TASK-BESTIARY-UI-COMPENDIUM-AND-PER-LOCATION-POPULATION",
+    "type": "TASK",
+    "title": "Bestiary Bestiary UI Compendium And Per Location Population",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-enemies-monsters",
+    "tags": [
+      "bestiary",
+      "ui"
+    ],
+    "source": ".plan/tickets/TASK-bestiary-ui-compendium-and-per-location-population.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-BKP-001-SQLITE-AUTOMATED-BACKUP": {
     "hash": "pending",
     "extid": "TASK-BKP-001-SQLITE-AUTOMATED-BACKUP",
@@ -12198,6 +12441,23 @@
     "tags": [],
     "source": ".plan/tickets/TASK-char-template-full-model-coverage.md",
     "status": "open"
+  },
+  "TASK-CHARACTER-AS-ASSISTANT-PICK-CHARACTER-AS-GM": {
+    "hash": "9a6339a",
+    "git_issue": "9a6339a",
+    "extid": "TASK-CHARACTER-AS-ASSISTANT-PICK-CHARACTER-AS-GM",
+    "type": "TASK",
+    "title": "Character As Assistant Pick Character As GM",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-character-multi-personality",
+    "tags": [
+      "assistant",
+      "character",
+      "gm"
+    ],
+    "source": ".plan/tickets/TASK-character-as-assistant-pick-character-as-gm.md",
+    "status": "⬜ Not Started"
   },
   "TASK-CHARACTER-AVATAR-GALLERY-BINDING": {
     "hash": "5f54dbc",
@@ -16282,6 +16542,40 @@
     "source": ".plan/tickets/TASK-f9-factor-management-and-recovery-ui.md",
     "status": "open"
   },
+  "TASK-FACTION-LEADERS-AND-CADRE-GENERATION": {
+    "hash": "59580f1",
+    "git_issue": "59580f1",
+    "extid": "TASK-FACTION-LEADERS-AND-CADRE-GENERATION",
+    "type": "TASK",
+    "title": "Faction Leaders And Cadre Generation",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-faction-reputation",
+    "tags": [
+      "factions",
+      "leaders",
+      "npcs"
+    ],
+    "source": ".plan/tickets/TASK-faction-leaders-and-cadre-generation.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-FACTION-POLITICS-COUPS-AND-EXPANSION-ENGINE": {
+    "hash": "5fb88b9",
+    "git_issue": "5fb88b9",
+    "extid": "TASK-FACTION-POLITICS-COUPS-AND-EXPANSION-ENGINE",
+    "type": "TASK",
+    "title": "Faction Politics Coups And Expansion Engine",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-faction-reputation",
+    "tags": [
+      "factions",
+      "politics",
+      "coups"
+    ],
+    "source": ".plan/tickets/TASK-faction-politics-coups-and-expansion-engine.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-FACTION-RELATIONS-LIST-AND-STANDING": {
     "hash": "aa72df8",
     "extid": "TASK-FACTION-RELATIONS-LIST-AND-STANDING",
@@ -16307,6 +16601,22 @@
     "source": ".plan/tickets/TASK-faction-reputation.md",
     "git_issue": "9b4507c",
     "status": "open"
+  },
+  "TASK-FACTION-STANDING-AND-REPUTATION-DRIFT-INTEGRATION": {
+    "hash": "7a6e971",
+    "git_issue": "7a6e971",
+    "extid": "TASK-FACTION-STANDING-AND-REPUTATION-DRIFT-INTEGRATION",
+    "type": "TASK",
+    "title": "Faction Standing And Reputation Drift Integration",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-faction-reputation",
+    "tags": [
+      "factions",
+      "reputation"
+    ],
+    "source": ".plan/tickets/TASK-faction-standing-and-reputation-drift-integration.md",
+    "status": "⬜ Not Started"
   },
   "TASK-FACTION-STANDING-SCHEMA": {
     "hash": "c8f2e8a",
@@ -16700,6 +17010,23 @@
     "tags": [],
     "source": ".plan/tickets/TASK-flagbody-flagquery-resolveflagbody-schemas-lack-closed-postu.md",
     "status": "open"
+  },
+  "TASK-FLASHBACK-ROLEPLAY-CHAT-WITH-MEMORY-PROPAGATION": {
+    "hash": "de015ad",
+    "git_issue": "de015ad",
+    "extid": "TASK-FLASHBACK-ROLEPLAY-CHAT-WITH-MEMORY-PROPAGATION",
+    "type": "TASK",
+    "title": "Flashback Roleplay Chat With Memory Propagation",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-memory-knowledge-systems",
+    "tags": [
+      "memory",
+      "flashback",
+      "timeline"
+    ],
+    "source": ".plan/tickets/TASK-flashback-roleplay-chat-with-memory-propagation.md",
+    "status": "⬜ Not Started"
   },
   "TASK-FORMAT-VERSION-MIGRATION": {
     "hash": "e705303",
@@ -17675,6 +18002,23 @@
     "status": "done",
     "git_issue": "4d07b28"
   },
+  "TASK-GM-TRIGGER-AND-TIMELINE-BACKFILL-PROPAGATION": {
+    "hash": "d946c70",
+    "git_issue": "d946c70",
+    "extid": "TASK-GM-TRIGGER-AND-TIMELINE-BACKFILL-PROPAGATION",
+    "type": "TASK",
+    "title": "GM Trigger And Timeline Backfill Propagation",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-gm-shadow-notes",
+    "tags": [
+      "gm",
+      "trigger",
+      "backfill"
+    ],
+    "source": ".plan/tickets/TASK-gm-trigger-and-timeline-backfill-propagation.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-GM-WHITENOTES": {
     "hash": "dbe91d6",
     "extid": "TASK-GM-WHITENOTES",
@@ -18593,6 +18937,40 @@
     "source": ".plan/tickets/TASK-investigate-giwt-finalize-test-unit-flake-under-concurrent-r.md",
     "status": "⬜ Not Started"
   },
+  "TASK-INVISIBLE-GM-ONLY-QUEST-AND-ARK-SYSTEM": {
+    "hash": "1047a0a",
+    "git_issue": "1047a0a",
+    "extid": "TASK-INVISIBLE-GM-ONLY-QUEST-AND-ARK-SYSTEM",
+    "type": "TASK",
+    "title": "Invisible GM Only Quest And Ark System",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-gm-shadow-notes",
+    "tags": [
+      "quests",
+      "gm",
+      "visibility"
+    ],
+    "source": ".plan/tickets/TASK-invisible-gm-only-quest-and-ark-system.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-INVISIBLE-NOTE-SCOPE-GLOBAL-LOCAL-TEMPORAL-RANDOM": {
+    "hash": "29c9e6c",
+    "git_issue": "29c9e6c",
+    "extid": "TASK-INVISIBLE-NOTE-SCOPE-GLOBAL-LOCAL-TEMPORAL-RANDOM",
+    "type": "TASK",
+    "title": "Invisible Note Scope Global Local Temporal Random",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-gm-shadow-notes",
+    "tags": [
+      "notes",
+      "scope",
+      "visibility"
+    ],
+    "source": ".plan/tickets/TASK-invisible-note-scope-global-local-temporal-random.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-INVITE-CODE-GENERATION": {
     "hash": "pending",
     "extid": "TASK-INVITE-CODE-GENERATION",
@@ -19045,6 +19423,40 @@
     "git_issue": "c36e803",
     "status": "done"
   },
+  "TASK-LOCATION-GRAPH-EDITOR-AND-DISCOVERY-GATING": {
+    "hash": "30b4038",
+    "git_issue": "30b4038",
+    "extid": "TASK-LOCATION-GRAPH-EDITOR-AND-DISCOVERY-GATING",
+    "type": "TASK",
+    "title": "Location Graph Editor And Discovery Gating",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-world-travel-time",
+    "tags": [
+      "location",
+      "graph",
+      "discovery"
+    ],
+    "source": ".plan/tickets/TASK-location-graph-editor-and-discovery-gating.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-LOCATION-TRAVEL-CONNECTED-FAST-AND-FREE-JUMP": {
+    "hash": "c536b59",
+    "git_issue": "c536b59",
+    "extid": "TASK-LOCATION-TRAVEL-CONNECTED-FAST-AND-FREE-JUMP",
+    "type": "TASK",
+    "title": "Location Travel Connected Fast And Free Jump",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-world-travel-time",
+    "tags": [
+      "location",
+      "travel",
+      "fast-travel"
+    ],
+    "source": ".plan/tickets/TASK-location-travel-connected-fast-and-free-jump.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-LOG-ADD-TRACE-FATAL": {
     "hash": "pending",
     "extid": "TASK-LOG-ADD-TRACE-FATAL",
@@ -19386,6 +19798,23 @@
     "tags": [],
     "source": ".plan/tickets/TASK-memory-character-integration.md",
     "status": "open"
+  },
+  "TASK-MEMORY-COMPACT-POINTER-TO-MESSAGE-CHAIN": {
+    "hash": "fa54249",
+    "git_issue": "fa54249",
+    "extid": "TASK-MEMORY-COMPACT-POINTER-TO-MESSAGE-CHAIN",
+    "type": "TASK",
+    "title": "Memory Compact Pointer To Message Chain",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-memory-knowledge-systems",
+    "tags": [
+      "memory",
+      "pointer",
+      "source-chain"
+    ],
+    "source": ".plan/tickets/TASK-memory-compact-pointer-to-message-chain.md",
+    "status": "⬜ Not Started"
   },
   "TASK-MEMORY-DECAY-LOGIC": {
     "hash": "bf19355",
@@ -20357,6 +20786,57 @@
     "git_issue": "c4026dc",
     "status": "open"
   },
+  "TASK-NPC-BOSS-RETINUE-LORE-AND-RELATIONSHIP-SERVICE": {
+    "hash": "ae59e20",
+    "git_issue": "ae59e20",
+    "extid": "TASK-NPC-BOSS-RETINUE-LORE-AND-RELATIONSHIP-SERVICE",
+    "type": "TASK",
+    "title": "NPC Boss Retinue Lore And Relationship Service",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-npcs",
+    "tags": [
+      "npc",
+      "retinue",
+      "relationship"
+    ],
+    "source": ".plan/tickets/TASK-npc-boss-retinue-lore-and-relationship-service.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-NPC-BOSS-RETINUE-SCHEMA-AND-MIGRATION": {
+    "hash": "e6fdee4",
+    "git_issue": "e6fdee4",
+    "extid": "TASK-NPC-BOSS-RETINUE-SCHEMA-AND-MIGRATION",
+    "type": "TASK",
+    "title": "NPC Boss Retinue Schema And Migration",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-npcs",
+    "tags": [
+      "npc",
+      "retinue",
+      "boss"
+    ],
+    "source": ".plan/tickets/TASK-npc-boss-retinue-schema-and-migration.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-NPC-BURGLARY-STEAL-FROM-UNCONSCIOUS-TARGETS": {
+    "hash": "6cec524",
+    "git_issue": "6cec524",
+    "extid": "TASK-NPC-BURGLARY-STEAL-FROM-UNCONSCIOUS-TARGETS",
+    "type": "TASK",
+    "title": "NPC Burglary Steal From Unconscious Targets",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-stealth-crime",
+    "tags": [
+      "burglary",
+      "steal",
+      "status-effects"
+    ],
+    "source": ".plan/tickets/TASK-npc-burglary-steal-from-unconscious-targets.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-NPC-CHAT-BUFFER": {
     "hash": "pending",
     "extid": "TASK-NPC-CHAT-BUFFER",
@@ -20493,6 +20973,23 @@
     "source": ".plan/tickets/TASK-npc-reaction-system.md",
     "status": "open"
   },
+  "TASK-NPC-RETINUE-MINIMAL-CHAT-ACT-SEND-REACT-JOIN": {
+    "hash": "df91ce1",
+    "git_issue": "df91ce1",
+    "extid": "TASK-NPC-RETINUE-MINIMAL-CHAT-ACT-SEND-REACT-JOIN",
+    "type": "TASK",
+    "title": "NPC Retinue Minimal Chat Act Send React Join",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-npcs",
+    "tags": [
+      "npc",
+      "retinue",
+      "chat"
+    ],
+    "source": ".plan/tickets/TASK-npc-retinue-minimal-chat-act-send-react-join.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-NPC-SOCIAL-CONVERSATION": {
     "hash": "pending",
     "extid": "TASK-NPC-SOCIAL-CONVERSATION",
@@ -20576,6 +21073,23 @@
     "tags": [],
     "source": ".plan/tickets/TASK-npc-to-npc-social.md",
     "status": "open"
+  },
+  "TASK-NPC-TRADE-INVENTORY-AND-LOOT-SERVICE": {
+    "hash": "f863178",
+    "git_issue": "f863178",
+    "extid": "TASK-NPC-TRADE-INVENTORY-AND-LOOT-SERVICE",
+    "type": "TASK",
+    "title": "NPC Trade Inventory And Loot Service",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-stealth-crime",
+    "tags": [
+      "trade",
+      "loot",
+      "npc"
+    ],
+    "source": ".plan/tickets/TASK-npc-trade-inventory-and-loot-service.md",
+    "status": "⬜ Not Started"
   },
   "TASK-NPC-VIEWER-LIST-DETAILS-SCHEDULE": {
     "hash": "1b734cc",
@@ -21352,6 +21866,74 @@
     "source": ".plan/tickets/TASK-party-aux-transition.md",
     "status": "done"
   },
+  "TASK-PARTY-BOUND-NPC-RETINUE-AND-GROUP-BEHAVIOR": {
+    "hash": "64d3b19",
+    "git_issue": "64d3b19",
+    "extid": "TASK-PARTY-BOUND-NPC-RETINUE-AND-GROUP-BEHAVIOR",
+    "type": "TASK",
+    "title": "Party Bound NPC Retinue And Group Behavior",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-party-migration",
+    "tags": [
+      "party",
+      "npc",
+      "behavior"
+    ],
+    "source": ".plan/tickets/TASK-party-bound-npc-retinue-and-group-behavior.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-PARTY-CHAT-BRANCH-MERGE-ON-CONVERGE": {
+    "hash": "6d07908",
+    "git_issue": "6d07908",
+    "extid": "TASK-PARTY-CHAT-BRANCH-MERGE-ON-CONVERGE",
+    "type": "TASK",
+    "title": "Party Chat Branch Merge On Converge",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-party-migration",
+    "tags": [
+      "party",
+      "chat",
+      "branch-merge"
+    ],
+    "source": ".plan/tickets/TASK-party-chat-branch-merge-on-converge.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-PARTY-ECONOMY-SHARED-LOOT-AND-CURRENCY-SPLIT": {
+    "hash": "b2e6c0e",
+    "git_issue": "b2e6c0e",
+    "extid": "TASK-PARTY-ECONOMY-SHARED-LOOT-AND-CURRENCY-SPLIT",
+    "type": "TASK",
+    "title": "Party Economy Shared Loot And Currency Split",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-party-migration",
+    "tags": [
+      "party",
+      "economy",
+      "loot"
+    ],
+    "source": ".plan/tickets/TASK-party-economy-shared-loot-and-currency-split.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-PARTY-FREE-JUMP-LOCATION-GRAPH-EDGE": {
+    "hash": "0c36bd4",
+    "git_issue": "0c36bd4",
+    "extid": "TASK-PARTY-FREE-JUMP-LOCATION-GRAPH-EDGE",
+    "type": "TASK",
+    "title": "Party Free Jump Location Graph Edge",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-party-migration",
+    "tags": [
+      "party",
+      "travel",
+      "fast-travel"
+    ],
+    "source": ".plan/tickets/TASK-party-free-jump-location-graph-edge.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-PARTY-JOIN-LEAVE": {
     "hash": "pending",
     "extid": "TASK-PARTY-JOIN-LEAVE",
@@ -21376,6 +21958,90 @@
     "source": ".plan/tickets/TASK-party-migration.md",
     "git_issue": "69edfef",
     "status": "open"
+  },
+  "TASK-PARTY-SCHEDULE-AND-PATROL-ROUTES": {
+    "hash": "a1d34d0",
+    "git_issue": "a1d34d0",
+    "extid": "TASK-PARTY-SCHEDULE-AND-PATROL-ROUTES",
+    "type": "TASK",
+    "title": "Party Schedule And Patrol Routes",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-party-migration",
+    "tags": [
+      "party",
+      "schedule",
+      "patrol"
+    ],
+    "source": ".plan/tickets/TASK-party-schedule-and-patrol-routes.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-PARTY-SCHEMA-CRUD-ROUTES-AND-MIGRATION": {
+    "hash": "c0838f0",
+    "git_issue": "c0838f0",
+    "extid": "TASK-PARTY-SCHEMA-CRUD-ROUTES-AND-MIGRATION",
+    "type": "TASK",
+    "title": "Party Schema CRUD Routes And Migration",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-party-migration",
+    "tags": [
+      "party",
+      "schema",
+      "crud"
+    ],
+    "source": ".plan/tickets/TASK-party-schema-crud-routes-and-migration.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-PARTY-TRAVEL-ENGINE-ADJACENCY-AND-FAST-TRAVEL": {
+    "hash": "a8f1353",
+    "git_issue": "a8f1353",
+    "extid": "TASK-PARTY-TRAVEL-ENGINE-ADJACENCY-AND-FAST-TRAVEL",
+    "type": "TASK",
+    "title": "Party Travel Engine Adjacency And Fast Travel",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-party-migration",
+    "tags": [
+      "party",
+      "travel",
+      "location-graph"
+    ],
+    "source": ".plan/tickets/TASK-party-travel-engine-adjacency-and-fast-travel.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-PARTY-UI-ROSTER-ROUTE-SCHEDULE-STATS": {
+    "hash": "6c5cc93",
+    "git_issue": "6c5cc93",
+    "extid": "TASK-PARTY-UI-ROSTER-ROUTE-SCHEDULE-STATS",
+    "type": "TASK",
+    "title": "Party UI Roster Route Schedule Stats",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-party-migration",
+    "tags": [
+      "party",
+      "ui"
+    ],
+    "source": ".plan/tickets/TASK-party-ui-roster-route-schedule-stats.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-PARTY-WORLD-TICK-AND-CHAT-TRANSFER-INTEGRATION": {
+    "hash": "fd89c4e",
+    "git_issue": "fd89c4e",
+    "extid": "TASK-PARTY-WORLD-TICK-AND-CHAT-TRANSFER-INTEGRATION",
+    "type": "TASK",
+    "title": "Party World Tick And Chat Transfer Integration",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-party-migration",
+    "tags": [
+      "party",
+      "world-tick",
+      "chat-transfer"
+    ],
+    "source": ".plan/tickets/TASK-party-world-tick-and-chat-transfer-integration.md",
+    "status": "⬜ Not Started"
   },
   "TASK-PATCH-PLANFILETICKET-FOOTER-OVERRIDES-HEADER-FOR-FIND-WORK": {
     "hash": "c09968f",
@@ -25525,6 +26191,23 @@
     "git_issue": "bf194ee",
     "status": "open"
   },
+  "TASK-TIME-SYNC-REPLAY-PROHIBITION-POLICY": {
+    "hash": "9db069a",
+    "git_issue": "9db069a",
+    "extid": "TASK-TIME-SYNC-REPLAY-PROHIBITION-POLICY",
+    "type": "TASK",
+    "title": "Time Sync Replay Prohibition Policy",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-conversation-branching",
+    "tags": [
+      "time-sync",
+      "replay",
+      "policy"
+    ],
+    "source": ".plan/tickets/TASK-time-sync-replay-prohibition-policy.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-TIME-WEATHER": {
     "hash": "6154213",
     "extid": "TASK-TIME-WEATHER",
@@ -27183,6 +27866,57 @@
     "git_issue": "5ebaa9b",
     "status": "open"
   },
+  "TASK-WORLD-SIMULATION-DISCOVERY-AND-TRADE-EVENTS": {
+    "hash": "42327b4",
+    "git_issue": "42327b4",
+    "extid": "TASK-WORLD-SIMULATION-DISCOVERY-AND-TRADE-EVENTS",
+    "type": "TASK",
+    "title": "World Simulation Discovery And Trade Events",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-actor-autonomy-story-drive",
+    "tags": [
+      "world",
+      "simulation",
+      "trade"
+    ],
+    "source": ".plan/tickets/TASK-world-simulation-discovery-and-trade-events.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-WORLD-SIMULATION-NPC-NAVIGATION-TICK-DRIVER": {
+    "hash": "3895396",
+    "git_issue": "3895396",
+    "extid": "TASK-WORLD-SIMULATION-NPC-NAVIGATION-TICK-DRIVER",
+    "type": "TASK",
+    "title": "World Simulation NPC Navigation Tick Driver",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-actor-autonomy-story-drive",
+    "tags": [
+      "world",
+      "simulation",
+      "navigation"
+    ],
+    "source": ".plan/tickets/TASK-world-simulation-npc-navigation-tick-driver.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-WORLD-SIMULATION-TIMELINE-DRIVEN-TRAVEL-PATROL": {
+    "hash": "fbf4f84",
+    "git_issue": "fbf4f84",
+    "extid": "TASK-WORLD-SIMULATION-TIMELINE-DRIVEN-TRAVEL-PATROL",
+    "type": "TASK",
+    "title": "World Simulation Timeline Driven Travel Patrol",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-actor-autonomy-story-drive",
+    "tags": [
+      "world",
+      "simulation",
+      "tick"
+    ],
+    "source": ".plan/tickets/TASK-world-simulation-timeline-driven-travel-patrol.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-WORLD-STATE-MANAGEMENT": {
     "hash": "a612c78",
     "extid": "TASK-WORLD-STATE-MANAGEMENT",
@@ -27207,6 +27941,23 @@
     "tags": [],
     "source": ".plan/tickets/TASK-world-template-full-model-coverage.md",
     "status": "open"
+  },
+  "TASK-WORLD-TIME-SYNC-WAIT-AND-CHAT-BRANCH-MERGE": {
+    "hash": "c2e8e04",
+    "git_issue": "c2e8e04",
+    "extid": "TASK-WORLD-TIME-SYNC-WAIT-AND-CHAT-BRANCH-MERGE",
+    "type": "TASK",
+    "title": "World Time Sync Wait And Chat Branch Merge",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-conversation-branching",
+    "tags": [
+      "time-sync",
+      "branch",
+      "merge"
+    ],
+    "source": ".plan/tickets/TASK-world-time-sync-wait-and-chat-branch-merge.md",
+    "status": "⬜ Not Started"
   },
   "TASK-WORLDBOOK-RAG-DECOMPOSER": {
     "hash": "bd70e95",

@@ -13,12 +13,10 @@
 **Effort:** High
 **Epic:** epic-npc-navigation
 
-## Summary
-
+**Summary:**
 NPC navigation system — autonomous movement, pathfinding, and location-based behavior for non-player characters. Covers NPC movement patterns, location awareness, travel mechanics, and dynamic world interaction.
 
-## Acceptance Criteria
-
+**Acceptance Criteria:**
 - [ ] NPC movement model implemented
 - [ ] Pathfinding functional
 - [ ] Location awareness working

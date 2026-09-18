@@ -18,8 +18,7 @@
 **Epic**: epic-social-interaction
 **Related**:
 
-## Summary
-
+**Summary:**
 Store and retrieve NPC conversation history
 
 ## Acceptance

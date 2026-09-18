@@ -15,8 +15,7 @@
 **Created:** 2026-07-28
 **Cross-Mechanics Gap:** G14 (NPC/Actor ↔ Supporting System)
 
-## Summary
-
+**Summary:**
 NPC inventory management and trading system for NPC merchants and allies.
 
 ## Background
@@ -31,8 +30,7 @@ NPCs need inventories for items they carry, trade, or sell. Merchant NPCs need d
 2. Memory event recording and recall system
 3. Inventory management with trading interface
 
-## Acceptance Criteria
-
+**Acceptance Criteria:**
 - [ ] NPCs have inventory with item slots
 - [ ] Merchant NPCs have dynamic buying/selling inventories
 - [ ] NPC inventory affects trade availability

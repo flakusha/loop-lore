@@ -13,16 +13,14 @@
 **Priority:** Medium
 **Epic:** epic-party-migration
 
-## Summary
-
+**Summary:**
 Implementation tasks for Party Migration & Travel. See `.plan/epics/epic-party-migration.md` for full epic scope.
 
 ## Linked Epics
 
 - `epic-party-migration.md`
 
-## Acceptance Criteria
-
+**Acceptance Criteria:**
 - [ ] Core implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated

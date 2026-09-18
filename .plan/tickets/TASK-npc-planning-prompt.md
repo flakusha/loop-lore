@@ -18,8 +18,7 @@
 **Epic**: epic-agency-story-points
 **Related**:
 
-## Summary
-
+**Summary:**
 Prompt assembly for planning and reactions
 
 ## Acceptance
