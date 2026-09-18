@@ -73,6 +73,9 @@ describe("Personas E2E", () => {
     expect(list.status,).toBe(200,);
     const items = (list.data ?? []) as Array<{ id: string }>;
     expect(Array.isArray(items,),).toBe(true,);
+    if (typeof personaId !== "string" || personaId.length === 0) {
+      throw new Error("create did not return an id",);
+    }
     expect(items.map((p,) => p.id),).toContain(personaId,);
   });
 

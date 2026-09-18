@@ -25,7 +25,7 @@ import { getProvider, initializeProviders, registerProvider, } from "@/generatio
 import { createLogger, setGlobalLogger, } from "@/logger";
 import { resetSoloUserCache, } from "@/middleware/index";
 import { resetLoginRateLimiter, } from "@/routes/auth";
-import { createRequestHandler, } from "@/server";
+import { createRequestHandler, handleApiRequest, } from "@/server";
 import { MockLLMProvider, } from "@/test-utils/mock-provider";
 
 /**
@@ -385,6 +385,7 @@ export async function createTestServer(
     database: db,
     config,
     handleNonApiRequest: async () => new Response("Not found", { status: 404, },),
+    handleApiRequest,
   },);
 
   // Route through the same production handler so response-header and
