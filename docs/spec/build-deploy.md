@@ -31,11 +31,11 @@ That's it. No Docker, no Postgres, no build step. SQLite file created automatica
 | `bun run dev`        | Start dev server (hot reload via --watch) |
 | `bun run start`      | Start production server                   |
 | `bun run tui`        | Start TUI interface                       |
-| `bun run build`      | Build static assets + pre-compress        |
+| `bun run build`      | Build frontend + server bundle + native   |
 | `bun run db:migrate` | Run pending database migrations           |
 | `bun run db:reset`   | Drop and recreate DB (dev only)           |
 | `bun run lint`       | Lint TypeScript source                    |
-| `bun run format`     | Format code with Prettier                 |
+| `bun run format`     | Check formatting (dprint)                 |
 
 ## Build Process
 
@@ -45,7 +45,7 @@ The build process maps source to distribution in three steps:
 
 1. **HTML templates** — `src/views/` files are preprocessed and written to `dist/public/`
 2. **Static assets** — `src/public/` files are copied to `dist/public/`
-3. **Server bundle** — `src/server.ts` is bundled via `bun build --target bun` → `dist/server.js`
+3. **Server bundle** — `src/server/index.ts` is bundled via `bun build --outdir dist --target bun`
 
 ### Build Command
 
@@ -58,7 +58,8 @@ Steps:
 1. Copy/process HTML templates from `src/views/` to `dist/public/`
 2. Copy static assets from `src/public/` to `dist/public/`
 3. Pre-compress HTML/CSS/JS with gzip and brotli
-4. Bundle server with `bun build --target bun`
+4. Bundle server entry (`src/server/index.ts`) into `dist/`
+5. Build native acceleration module (Rust/cargo, optional)
 
 ### No-Build Dev Mode
 
@@ -90,34 +91,29 @@ Single binary with embedded SQLite. No deps needed. Works on any Linux x64.
 
 ### Option B: Docker container
 
-```dockerfile
-FROM oven/bun:1 AS build
-WORKDIR /app
-COPY . .
-RUN bun install && bun run build
+The canonical image is the repo-root `Dockerfile` (multi-stage: deps →
+frontend build → `oven/bun:1-debian-slim` runtime, prod-only install,
+non-root user, data volume at `/app/loop-lore-data`). Build and run:
 
-FROM oven/bun:1-slim
-WORKDIR /app
-COPY --from=build /app/dist ./dist
-COPY --from=build /app/node_modules ./node_modules
-EXPOSE 3000
-CMD ["bun", "run", "dist/server.js"]
+```bash
+docker build -t loop-lore:latest .
+# See deploy/docker-compose.yml for the full stack (Caddy TLS + app + Postgres)
 ```
 
 ### Option C: Reverse proxy (multi-user production)
 
 Production topology with three tiers:
 
-1. **Caddy** (automatic HTTPS via ACME, static cache, rate limiting, load balancing) receives client traffic
+1. **Caddy** (automatic HTTPS via ACME, security headers) receives client traffic
 2. **Bun** (dynamic API routes, session management, WebSocket connections) processes application logic
 3. **Postgres** (persistent data, concurrent writes, cross-session consistency) stores all state
 
 Caddy handles (see `deploy/Caddyfile` + `deploy/docker-compose.yml`):
 
 - TLS termination with automatic issuance + renewal (no certbot, no cron)
-- Static file serving (cached)
-- Rate limiting
-- Load balancing (multiple Bun workers)
+- Security headers (HSTS, nosniff, frame options)
+- gzip encoding
+- WebSocket/SSE pass-through (`flush_interval -1`)
 
 Required app env behind Caddy: `SERVER_TRUST_PROXY=1` (honor
 `X-Forwarded-*`) and `SERVER_PUBLIC_ORIGIN=https://<domain>` (public
