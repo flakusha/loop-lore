@@ -141,6 +141,7 @@ engine → API → FE → tests so each phase has a verifiable boundary.
 | Migration 023 + `character_stat_allocation` / `character_trait_assignments` + PUT route | `TASK-character-stat-allocation-backend-api-and-db-integration.md` | ⬜ Not Started |
 | htmx/Alpine modal + catalog endpoint, gated by `requires_stats` | `TASK-character-stat-allocation-frontend-modal-and-edit-integration.md` | ⬜ Not Started |
 | DB + engine + route coverage, 80% floor | `TASK-character-stat-allocation-integration-tests-e2e.md` | ⬜ Not Started |
+
 ---
 
 ## Memory Architecture (Extension — Research-Driven)

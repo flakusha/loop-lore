@@ -39,6 +39,7 @@ tiers (see `../priority.md`) · Gate C ✅ (complete — GM-guided story P2-Da d
 | [`bucket-x-build-integrity-close-out-2026-09-03.md`](./bucket-x-build-integrity-close-out-2026-09-03.md) | **Bucket X close-out (2026-09-03)** — 4 release-blocking tsc/tooling defects + 1 dprint follow-up; all Bucket X BUG tickets Resolved |
 | [`open-vn-settings-bugs.md`](./open-vn-settings-bugs.md) | **VN settings bug cluster** — 7 interlocking bugs around visualNovel type mismatch, mode lock, redundant state, gmConfig save path, role restriction, missing VN fields |
 | [`security-review-2026-08-25.md`](./security-review-2026-08-25.md) | **Security review plan** — auth/access surface findings (CRIT→LOW) + proposed fix tickets + next-review backlog (WS/RBAC/asset reviews done 2026-08-25) |
+| [open-build-integrity](open-build-integrity.md) | |
 
 `../priority.md` holds the priority ladder P0→P6+ — see its index.
 
