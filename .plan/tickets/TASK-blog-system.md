@@ -3,6 +3,11 @@
 
 # TASK: Blog System
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟡 Partial (core CRUD + comments + follows + moderation built; threading + visibility done)
 **Priority:** Medium
 **Effort:** High

@@ -3,6 +3,11 @@
 
 # TASK: Battle NPC AI Integration
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Epic:** Battle & Action Systems, NPC Navigation
 **Priority:** Medium
 **Effort:** High

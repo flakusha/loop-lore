@@ -3,6 +3,9 @@
 
 # EPIC: Distributed Computing & Sharing (Contributor Compute Network)
 
+**Overview:** (see sections below)
+
+
 **Status:** 🟡 Draft — analysis complete, tickets scoped
 **Priority:** Medium
 **Effort:** Very High

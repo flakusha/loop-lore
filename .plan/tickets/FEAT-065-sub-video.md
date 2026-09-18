@@ -3,6 +3,14 @@
 
 # FEAT-065-VID: Video Generation Templates
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status**: open
 **Priority**: low
 **Labels**: generation, video, prompts, templates

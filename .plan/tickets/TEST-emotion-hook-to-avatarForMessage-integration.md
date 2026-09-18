@@ -3,6 +3,12 @@
 
 # TEST: End-to-end emotion-hook → messages.emotion → avatarForMessage
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** P2
 **Epic:** epic-emotion-avatar-message-binding

@@ -706,8 +706,15 @@ async function runCheck(name, command,) {
 // (observed: `test - unit` dying after ~300 bytes of output when chunked
 // alongside the coverage run). They are therefore pulled out of the chunked
 // pool and run strictly one-at-a-time after the light gates.
+//
+// `plan - ticket index (sync)` also rides the serial tail: its giwt ticket
+// scan takes the index lock while `plan - validate` runs the same scan
+// internally. Chunked together, the loser's scan dies under lock contention
+// and reports a false "index out of sync" / truncated ticket-set (observed
+// deterministically across three consecutive runs).
 const HEAVY_NAMES = new Set([
   "coverage - per-module line %",
+  "plan - ticket index (sync)",
 ],);
 
 async function runAllChecks() {

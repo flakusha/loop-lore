@@ -3,6 +3,11 @@
 
 # FEAT: Character Spec Inclusion of Race, Origin & Culture Identity
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** Open
 **Priority:** Medium
 **Effort:** Medium

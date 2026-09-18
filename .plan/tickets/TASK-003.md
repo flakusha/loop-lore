@@ -3,6 +3,13 @@
 
 # TASK-003: Chat room filters
 
+**Priority:** medium
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** [OK] Done
 
 ## Resolution

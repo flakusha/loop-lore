@@ -3,6 +3,12 @@
 
 # TASK: Implement memory decay logic
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Issue:** d1b048b4-509a-43e8-b175-4798aa3c74fe
 **Status:** open
 **Priority:** medium

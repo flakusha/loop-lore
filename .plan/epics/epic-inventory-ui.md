@@ -3,6 +3,9 @@
 
 # EPIC: Inventory & Trading UI
 
+**Overview:** (see sections below)
+
+
 **Status:** ⬜ Not Started
 **Priority:** P1 — High
 **Effort:** Medium

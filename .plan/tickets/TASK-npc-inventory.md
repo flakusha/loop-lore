@@ -3,6 +3,11 @@
 
 # TASK: NPC Inventory and Trading
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Epic:** NPC/Actor System, Economy & Trading
 **Priority:** Medium
 **Effort:** High

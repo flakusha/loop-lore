@@ -3,6 +3,11 @@
 
 # TASK: Character Bundle Format Research
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Low
 **Effort:** Low

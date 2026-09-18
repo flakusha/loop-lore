@@ -3,6 +3,11 @@
 
 # TASK: Assistant Tool Capability Matrix + 2+ Level Prompt-Injection Guard
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** High (security)
 **Effort:** High
@@ -176,4 +181,3 @@ User message → Assistant intent parse → ToolCallRequest
 - Builds on: `src/assistant/gm-tool-detection.ts` (AUX-LLM pattern)
 - Builds on: `src/assistant/commands/registry.ts:requiredRole`
 - Enables: `TASK-assistant-capability-disclosure.md` (capability lookup depends on matrix)
-- Security review ticket: `TASK-security-prompt-injection-hardening.md` (sibling audit task)

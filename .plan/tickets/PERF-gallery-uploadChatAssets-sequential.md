@@ -3,6 +3,11 @@
 
 # PERF: gallery uploadChatAssets runs uploads sequentially
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done (2026-09-11 — already parallel via `Promise.allSettled`; 3 regression tests in `gallery.test.ts` prove parallel dispatch + per-file error isolation)
 **Priority:** medium
 **Priority Tier:** P3

@@ -3,6 +3,14 @@
 
 # TASK: Shared Reputation Schema
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status**: done
 **Priority**: high
 **Labels**: schemas, reputation

@@ -3,6 +3,11 @@
 
 # TASK: Waiver: coverage floor below 80 for plugins/frontend/native in coverage-batch-2 scope
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** Medium

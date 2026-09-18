@@ -3,6 +3,11 @@
 
 # TASK-BROWSER-E2E-COVERAGE-EXPANSION-PLAYWRIGHT-INTEGRATION: Browser e2e coverage expansion — Playwright integration
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟡 In Progress — umbrella; work split into 4 child tickets (open, harness first)
 **Priority:** High
 **Effort:** Large

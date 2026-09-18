@@ -3,6 +3,9 @@
 
 # Epic: Plugin Extension Points
 
+**Overview:** (see sections below)
+
+
 **Status:** 📝 Draft
 **Priority:** Medium
 **Effort:** Medium

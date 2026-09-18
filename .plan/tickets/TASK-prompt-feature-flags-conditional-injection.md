@@ -3,6 +3,14 @@
 
 # TASK-prompt-feature-flags-conditional-injection
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status**: open
 **Priority**: medium
 **Labels**: prompt-assembly, character-traits, feature-flags, architecture

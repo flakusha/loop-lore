@@ -3,6 +3,11 @@
 
 # TASK: Insert log.fatal and log.trace calls at key sites
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done
 **Priority:** medium
 **Effort:** Medium

@@ -3,6 +3,11 @@
 
 # FEAT: Configs path resolution — file-relative + Windows/macOS parity
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** Medium

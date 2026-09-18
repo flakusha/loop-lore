@@ -3,6 +3,9 @@
 
 # EPIC: Asset Platform Capabilities (Messenger/Social Patterns)
 
+**Overview:** (see sections below)
+
+
 **Status:** 🔴 Not Started
 **Priority:** Medium
 **Effort:** Large (batch-decomposable; each batch ships standalone value)

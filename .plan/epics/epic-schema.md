@@ -3,6 +3,9 @@
 
 # EPIC: Database Schema
 
+**Overview:** (see sections below)
+
+
 **Status:** ⬜ Not Started
 **Priority:** High
 **Effort:** Medium

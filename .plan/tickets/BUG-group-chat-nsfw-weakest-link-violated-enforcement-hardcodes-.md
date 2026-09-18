@@ -1,4 +1,12 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # BUG: Group chat NSFW weakest-link violated + enforcement hardcodes EXTREME rating
+
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 
 **Status:** ✅ Closed (commit 49731047 — fix(nsfw): gate correctness cluster)
 **Priority:** high

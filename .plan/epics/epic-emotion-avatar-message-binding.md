@@ -3,6 +3,9 @@
 
 # EPIC: Emotion-Avatar Message Binding
 
+**Overview:** (see sections below)
+
+
 **Status:** 🟡 In Progress (migration + schema done)
 **Priority:** High
 **Effort:** Medium
@@ -75,7 +78,7 @@ selection path is a manual `POST /api/actors/:actorId/avatars/select`.
 - [ ] Tests: migration/schema-sync, message-persist, message-read, and
       frontend message-list avatar resolution
 - [ ] Reconcile related epics/tickets (`TASK-aux-emotion-avatar`,
-      `TASK-emotions-avatar-edit-model`, `TASK-emotion-avatar-edit-model`,
+      `TASK-emotions-avatar-edit-model`,
       `FEAT-avatar-expression-system`, `TASK-character-mood-happiness`) to the
       new message-bound model
 
@@ -102,8 +105,7 @@ selection path is a manual `POST /api/actors/:actorId/avatars/select`.
 ## Related Epics / Tickets
 
 - `TASK-aux-emotion-avatar.md` — detects the dead-end; AUX-LLM classifier
-- `TASK-emotions-avatar-edit-model.md` / `TASK-emotion-avatar-edit-model.md` —
-  variant generation (done)
+- `TASK-emotions-avatar-edit-model.md` — variant generation (done)
 - `FEAT-avatar-expression-system.md` — expression system
 - `TASK-character-mood-happiness.md` — mood state (render context)
 - `epic-messages.md` — message pipeline (parent for message-path changes)

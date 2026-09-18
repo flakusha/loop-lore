@@ -3,6 +3,11 @@
 
 # BUG: assistant reply unique-constraint retry exhausts then throws raw SQLite error to the client
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Resolved (verified 2026-09-07; bookkeeping)
 **Severity:** medium
 **Priority:** medium

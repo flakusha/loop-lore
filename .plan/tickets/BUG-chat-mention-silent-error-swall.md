@@ -3,6 +3,11 @@
 
 # BUG: chat mentions silently swallow persist/notify failures (post.ts:176-188)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** Done
 **Priority:** medium
 **Priority Tier:** P3

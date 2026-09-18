@@ -3,6 +3,11 @@
 
 # TASK: Resource Provision Schema & Migrations
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Open
 **Priority:** high
 **Effort:** medium

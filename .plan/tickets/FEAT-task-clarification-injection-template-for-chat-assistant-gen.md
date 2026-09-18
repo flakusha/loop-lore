@@ -3,6 +3,11 @@
 
 # FEAT: Task-clarification injection template for chat/assistant generation
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done (2026-08-24, feat-injection-templates)
 **Priority:** high
 **Effort:** Medium

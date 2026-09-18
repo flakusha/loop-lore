@@ -3,6 +3,11 @@
 
 # BUG: computeContextWindow phase-3 trims newest instead of oldest
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done
 **Priority:** low
 **Effort:** Medium

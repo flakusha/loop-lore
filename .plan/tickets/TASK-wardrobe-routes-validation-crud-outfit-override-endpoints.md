@@ -3,6 +3,11 @@
 
 # TASK: Wardrobe routes + validation (CRUD + outfit override endpoints)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** Medium

@@ -3,6 +3,12 @@
 
 # TASK: World Event & Timeline System
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Priority:** Medium
 **Status:** ⬜ Not Started
 **Epic:** epic-world-locations

@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Feature Matrix — Federation, Decentralized Comms & Swarm Sync
 
 > Assessment of potential new features across three areas requested for planning:

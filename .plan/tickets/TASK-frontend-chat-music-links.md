@@ -3,11 +3,15 @@
 
 # TASK: Frontend — Chat Music Links
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** P2 — Medium
 **Effort:** Small
 **Epic:** epic-ambient-music-sfx
-**Related:** TASK-ambient-music-sfx
 **Source:** FE-BE harmonization check, 2026-09-17 — 3 routes in this slice.
 
 ## Summary

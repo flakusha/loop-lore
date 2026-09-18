@@ -3,6 +3,11 @@
 
 # TASK: Promote `check-file-size.ts` from Warn to CI Gate
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** Small

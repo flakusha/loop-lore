@@ -3,6 +3,12 @@
 
 # TASK: Extract chat business logic from routes
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Issue:** db5a19ae-d4b9-4860-9905-96036be43286
 **Status:** open
 **Priority:** medium

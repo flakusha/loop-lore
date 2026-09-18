@@ -3,6 +3,12 @@
 
 # TASK: Wire memory provision into prompt assembly
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Issue:** 3bfb101c-e553-4879-b239-a817bc68a83f
 **Status:** open
 **Priority:** high

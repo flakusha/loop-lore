@@ -3,6 +3,11 @@
 
 # BUG: Stale audit rows in TASK-aux-emotion-avatar.md + TASK-aux-mood-classification.md contradict current wiring
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** done
 **Priority:** P3
 **Effort:** Trivial

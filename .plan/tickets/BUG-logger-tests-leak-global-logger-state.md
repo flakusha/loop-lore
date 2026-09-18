@@ -1,6 +1,15 @@
 ---
 hash: 396b5e3
 ---
+
+
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # BUG: Logger tests leak global logger state
 
 **Status:** ✅ Finished (dev commit `02d2d1156`) — test isolation via `withLogger` helper.

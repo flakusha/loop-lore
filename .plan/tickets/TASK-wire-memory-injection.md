@@ -3,6 +3,11 @@
 
 # TASK: Wire memory injection into generation pipeline
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done (closed via git issue)
 **Priority:** High
 **Effort:** Medium

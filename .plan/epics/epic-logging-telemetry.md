@@ -3,6 +3,9 @@
 
 # EPIC: Logging & Telemetry — Complete Level Set + Canonical JSONL
 
+**Overview:** (see sections below)
+
+
 **Status:** 🟡 In Progress — TASK-add-trace-fatal, TASK-unify-logging-output-to-canonical-jsonl, TASK-insert-log-fatal-and-log-trace-calls, TASK-verify-logging-changes-green all ✅ Done (merged to dev 2026-08-07)
 **Priority:** High
 **Effort:** Medium

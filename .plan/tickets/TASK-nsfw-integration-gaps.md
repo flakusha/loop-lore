@@ -3,6 +3,11 @@
 
 # TASK: NSFW Integration Gaps — Housing, Weather, Social, Disease
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Complete
 **Priority:** High
 **Effort:** Medium

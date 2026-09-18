@@ -3,6 +3,12 @@
 
 # BUG: Auto key-rotation is effectively disabled by config drift (KEY_ROTATION_DAYS not wired)
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟢 Closed
 **Severity:** Medium
 **Priority:** Medium

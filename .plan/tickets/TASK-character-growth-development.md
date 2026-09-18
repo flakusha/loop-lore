@@ -3,6 +3,11 @@
 
 # TASK: Character Growth & Development System
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Epic:** epic-character-core-system
 **Priority:** Medium
 **Effort:** High

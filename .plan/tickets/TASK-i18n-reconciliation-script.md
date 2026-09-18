@@ -3,6 +3,11 @@
 
 # TASK: i18n Reconciliation Script
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Complete
 **Priority:** High
 **Effort:** Small

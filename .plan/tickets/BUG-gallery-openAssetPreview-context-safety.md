@@ -3,6 +3,11 @@
 
 # BUG: gallery grid onclick openAssetPreview ReferenceError when gallery not top-level
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** Done
 **Priority:** medium
 **Priority Tier:** P3

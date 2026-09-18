@@ -3,6 +3,11 @@
 
 # TASK: Prompt Template Per-Chat Override UX
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Complete (bc78ca36, 2026-08-16)
 **Priority:** medium
 **Effort:** Medium

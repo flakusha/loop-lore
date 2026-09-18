@@ -3,6 +3,11 @@
 
 # TASK: Per-Scope Preferred Chat Context Window with Pre-Cap Degradation
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** High
 **Effort:** High

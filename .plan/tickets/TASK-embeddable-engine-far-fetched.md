@@ -3,6 +3,11 @@
 
 # TASK: Embeddable Engine (Far-Fetched)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Low
 **Effort:** Very High

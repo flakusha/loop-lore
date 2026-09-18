@@ -3,6 +3,11 @@
 
 # FEAT: Achievements
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟡 In Progress
 **Priority:** medium
 **Effort:** Medium

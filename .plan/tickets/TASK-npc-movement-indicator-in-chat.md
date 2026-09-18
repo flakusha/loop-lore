@@ -3,6 +3,11 @@
 
 # TASK: NPC Movement Indicator in Chat
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done — service + route + message metadata column (migration 042) + frontend types shipped (`4809f056`, `c76b0ef5`); lint/typecheck cleanup `44e22069`
 **Priority:** high
 **Effort:** Medium

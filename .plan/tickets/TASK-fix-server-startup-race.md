@@ -3,6 +3,11 @@
 
 # TASK: Fix server startup migration race
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done (closed via git issue)
 **Priority:** Medium
 **Effort:** Small

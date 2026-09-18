@@ -3,6 +3,11 @@
 
 # BUG: talkativity selection-rate is consumed by TurnManager but never surfaced to the LLM as group-chat context
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Resolved (verified via commit 359a3d3; bookkeeping)
 **Severity:** low
 **Priority:** low

@@ -3,6 +3,11 @@
 
 # TASK-e2ee-double-ratchet: Client-Side E2E — Phase F Signal-grade double ratchet
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** Large

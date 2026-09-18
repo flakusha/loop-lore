@@ -3,6 +3,11 @@
 
 # BUG: aux-pipeline index.ts re-export set doesn't match AuxTaskName union
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** done
 **Priority:** P3
 **Effort:** Trivial

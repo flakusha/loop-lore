@@ -3,6 +3,14 @@
 
 # FEAT-038: Deprecation headers
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status**: Resolved
 **Priority**: medium
 **Labels**:

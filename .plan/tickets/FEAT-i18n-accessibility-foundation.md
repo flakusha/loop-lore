@@ -3,6 +3,11 @@
 
 # FEAT: i18n & Accessibility Foundation
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done
 **Priority:** high
 **Effort:** Large

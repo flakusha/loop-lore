@@ -3,6 +3,11 @@
 
 # TASK: Add unit tests for auth module (2 files, 0 tests)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** Small

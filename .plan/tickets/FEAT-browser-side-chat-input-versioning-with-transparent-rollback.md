@@ -3,6 +3,11 @@
 
 # FEAT: Browser-side chat input versioning with transparent rollback
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done
 **Epic:** epic-conversation-branching
 **Priority:** medium

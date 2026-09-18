@@ -3,6 +3,12 @@
 
 # EPIC: Settings & Preferences UI
 
+**Effort:** Medium
+**Type:** epic
+**Tags:** (none)
+**Overview:** (see sections below)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Medium
 

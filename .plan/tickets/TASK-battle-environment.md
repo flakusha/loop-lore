@@ -3,6 +3,11 @@
 
 # TASK: Battle-Environment Integration
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Epic:** Battle & Action Systems, Weather & Environment
 **Priority:** Medium
 **Effort:** High

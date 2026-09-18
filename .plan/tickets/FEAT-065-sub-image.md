@@ -3,6 +3,14 @@
 
 # FEAT-065-IMG: Image Prompt Template Persistence
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Epic:** epic-items
 
 **Status**: closed (implemented — see Resolution)

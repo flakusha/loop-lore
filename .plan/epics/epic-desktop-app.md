@@ -3,6 +3,9 @@
 
 # Epic: Desktop App
 
+**Overview:** (see sections below)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Low
 **Effort:** High

@@ -3,6 +3,9 @@
 
 # EPIC: Unified Spec Framework for `.plan/`
 
+**Overview:** (see sections below)
+
+
 **Status:** 🟡 Design (Phase A) — research + schema proposal complete; tooling to land
 **Priority:** High
 **Effort:** Large (spread across 4 phases)
@@ -76,32 +79,32 @@ loop-lore keeps one source of truth for that file.
 
 ### Phase A — Schema + validate + index-build (this branch / this epic)
 
-- [ ] TASK-spec-scaffold-scripts — scaffold `scripts/spec/{index,validate,index-build,new,status,search}.ts` with shared utils in `scripts/spec/utils/`
-- [ ] TASK-spec-templates — write `scripts/spec/templates/{epic,feat,task,bug,idea,test,perf,wire,improve}.md` with frontmatter + required sections
-- [ ] TASK-spec-schema-doc — write `docs/spec/spec-schema.md` documenting frontmatter keys, canonical enums, alias maps, section grammar
-- [ ] TASK-spec-package-script — add `"spec": "bun run scripts/spec/index.ts"` to `package.json`; add `scripts/check` gate that runs `validate`
-- [ ] TASK-spec-agent-learnings — add AGENTS.md rule for spec authoring: prefix + frontmatter + sections; reference index.json reuse
-- [ ] TASK-spec-index-delegation — wire `scripts/spec/index-build` to delegate writes to `scripts/worktree/sync.ts` (call existing function, don't rewrite it)
-- [ ] TASK-spec-tests — unit tests for validate, new, migrate, index-build (no-ops until Phase B; in Phase A, only validate + new tests)
+- [ ] scaffold `scripts/spec/{index,validate,index-build,new,status,search}.ts` with shared utils in `scripts/spec/utils/`
+- [ ] write `scripts/spec/templates/{epic,feat,task,bug,idea,test,perf,wire,improve}.md` with frontmatter + required sections
+- [ ] write `docs/spec/spec-schema.md` documenting frontmatter keys, canonical enums, alias maps, section grammar
+- [ ] add `"spec": "bun run scripts/spec/index.ts"` to `package.json`; add `scripts/check` gate that runs `validate`
+- [ ] add AGENTS.md rule for spec authoring: prefix + frontmatter + sections; reference index.json reuse
+- [ ] wire `scripts/spec/index-build` to delegate writes to `scripts/worktree/sync.ts` (call existing function, don't rewrite it)
+- [ ] unit tests for validate, new, migrate, index-build (no-ops until Phase B; in Phase A, only validate + new tests)
 
 ### Phase B — Migration sweep (separate worktree)
 
-- [ ] TASK-spec-migrate-run — `bun run scripts/spec/migrate` once; backfills frontmatter + `_legacy: true`; canonicalizes status/priority/effort
-- [ ] TASK-spec-migrate-index-update — `bun run scripts/spec/index-build` after migrate; entries gain `updated` / `frontmatter` / `legacy_aliases`
-- [ ] TASK-spec-check-gate — `bun run check` green project-wide with new validation gate
+- [ ] `bun run scripts/spec/migrate` once; backfills frontmatter + `_legacy: true`; canonicalizes status/priority/effort
+- [ ] `bun run scripts/spec/index-build` after migrate; entries gain `updated` / `frontmatter` / `legacy_aliases`
+- [ ] `bun run check` green project-wide with new validation gate
 
 ### Phase C — Per-change bundle + converge (separate worktree)
 
-- [ ] TASK-spec-converge — write `scripts/spec/converge.ts`; walk `.plan/changes/<slug>/specs/*.md` scenarios + diff branch commits
-- [ ] TASK-spec-archive — write `scripts/spec/archive.ts`; move `changes/<name>/` -> `changes/archive/<date>-<name>/`
-- [ ] TASK-spec-worktree-hook — update `scripts/worktree/finalize` to optionally call `spec converge` post-merge
-- [ ] TASK-spec-bundle-retrofit — retro-bundle 2 in-flight epics into `changes/<slug>/` as proof
+- [ ] write `scripts/spec/converge.ts`; walk `.plan/changes/<slug>/specs/*.md` scenarios + diff branch commits
+- [ ] write `scripts/spec/archive.ts`; move `changes/<name>/` -> `changes/archive/<date>-<name>/`
+- [ ] update `scripts/worktree/finalize` to optionally call `spec converge` post-merge
+- [ ] retro-bundle 2 in-flight epics into `changes/<slug>/` as proof
 
 ### Phase D — Extensions (separate worktree, as needed)
 
-- [ ] TASK-spec-idea-extension — idea pipeline: intake -> research -> define -> shape -> decide -> file
-- [ ] TASK-spec-bug-extension — bug pipeline: assess -> fix -> test -> close
-- [ ] TASK-spec-migrate-target — `spec migrate --target=epic` for epic scaffold backfill
+- [ ] idea pipeline: intake -> research -> define -> shape -> decide -> file
+- [ ] bug pipeline: assess -> fix -> test -> close
+- [ ] `spec migrate --target=epic` for epic scaffold backfill
 
 ## Files (Target Surface — Read/Write Split)
 

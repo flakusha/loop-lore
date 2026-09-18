@@ -1,4 +1,12 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Frontend / Backend / DB record content hashing
+
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 
 **Status:** 🟡 Partial (commit 2053bfe3 — helper + schema migration; service-layer hook + X-Record-Hash emission deferred to follow-up)
 **Priority:** high

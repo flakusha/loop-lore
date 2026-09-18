@@ -3,6 +3,11 @@
 
 # TASK: Wire Crafting Routes (Expose RecipesService via HTTP)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Complete (2026-08-18 — all items including deferred)
 **Priority:** P1 — High
 **Effort:** Large

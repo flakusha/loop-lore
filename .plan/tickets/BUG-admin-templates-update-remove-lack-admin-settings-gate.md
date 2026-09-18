@@ -3,6 +3,11 @@
 
 # BUG: admin-templates update-remove lack admin.settings gate
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Resolved
 **Priority:** Medium
 **Effort:** Medium

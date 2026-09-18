@@ -1,4 +1,12 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # BUG: BUG: CSRF cookie Secure flag hardcoded true; breaks over plain HTTP
+
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 
 **Status:** ✅ Fixed (ccac5b9d server + fix-review-quickwins clients)
 **Priority:** medium

@@ -3,6 +3,14 @@
 
 # FEAT-065: Prompt Library — Expanded Scope (Generation Templates)
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status**: closed (implemented — see Resolution)
 **Priority**: high
 **Labels**: generation, prompts, templates

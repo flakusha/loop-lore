@@ -3,6 +3,11 @@
 
 # BUG: Redundant VN state stored in two independent locations
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ done
 **Priority:** medium
 **Effort:** Medium

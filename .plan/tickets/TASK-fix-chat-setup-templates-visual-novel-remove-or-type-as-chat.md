@@ -3,6 +3,11 @@
 
 # TASK: Fix chat_setup_templates.visual_novel: remove or type as ChatRenderingOverride
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** Small

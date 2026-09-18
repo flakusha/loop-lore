@@ -14,7 +14,7 @@
  * If the chat is encrypted (standard), encryption keys are distributed to the
  * new participant (mirroring the existing POST /api/chats/:id/participants flow).
  *
- * See .plan/tickets/invite-code-generation.md and .plan/tickets/join-flow-mechanics.md.
+ * See .plan/tickets/TASK-invite-code-generation.md and .plan/tickets/TASK-join-flow-mechanics.md.
  */
 import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";

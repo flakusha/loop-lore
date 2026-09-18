@@ -3,6 +3,11 @@
 
 # TASK: Generation failure exposure: sanitize raw LLM/error output in chat-visible messages
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Resolved 2026-09-10 (worktree `core-hardening`, commit `3eb7656`): parse failure now logs raw output server-side (`module: create`) and returns a generic kind + retry hint; catch branch likewise sanitized (no `${msg}`). Confirm endpoint (`create-entity-confirm.ts`) verified clean (generic validation errors only). Regression tests: no-leak + no-persist on both paths, 5/5 green.
 **Priority:** high
 **Effort:** Medium

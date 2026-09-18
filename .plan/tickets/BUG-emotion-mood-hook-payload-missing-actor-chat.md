@@ -3,6 +3,11 @@
 
 # BUG: EmotionHook + MoodHook payloads don't carry actorId/chatId; ambiguous in group chats
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** [OK] Resolved (dev, 2026-08-30, fix(hooks) 563904ab4)
 **Priority:** P3
 **Effort:** Small

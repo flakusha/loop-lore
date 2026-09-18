@@ -3,6 +3,11 @@
 
 # TASK: Pre-Compiled Hot Binary Modules
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟡 In Progress — BLAKE3 + zstd samples shipped (branch `native-blake3`, 2026-08-15); hot-reload + packaging open
 **Priority:** Medium
 **Effort:** High

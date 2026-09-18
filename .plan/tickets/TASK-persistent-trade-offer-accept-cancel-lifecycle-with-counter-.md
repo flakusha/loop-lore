@@ -3,6 +3,11 @@
 
 # TASK: Two-sided trade counter-offers + offer deadline enforcement + trade-window UI (barter/swap)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Complete (2026-09-07, worktree trading-inventory-barter)
 **Priority:** high
 **Effort:** Medium

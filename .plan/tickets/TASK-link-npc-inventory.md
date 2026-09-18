@@ -3,6 +3,11 @@
 
 # TASK: Link NPC Inventory to World Items (Replace Denormalized JSON)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Complete (2026-08-12)
 **Priority:** P0 — Critical
 **Effort:** Medium

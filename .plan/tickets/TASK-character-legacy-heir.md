@@ -3,6 +3,12 @@
 
 # TASK: Character Legacy & Heir System
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Priority:** Medium
 **Status:** ⬜ Not Started
 **Epic:** epic-character-core-system

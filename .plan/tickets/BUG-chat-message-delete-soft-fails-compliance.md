@@ -3,6 +3,11 @@
 
 # BUG: DELETE /messages/:id sets visibility=hidden but doesn't clear FTS row or wipe ciphertext — violates right-to-be-forgotten
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Resolved (verified 2026-09-07; bookkeeping)
 **Severity:** medium
 **Priority:** medium

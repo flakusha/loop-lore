@@ -3,6 +3,11 @@
 
 # TASK: Chat Backgrounds — Static/Dynamic with Location Sync
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Low
 **Effort:** Med–High

@@ -3,6 +3,11 @@
 
 # TASK: Implement reusable bulk ticket-resolution helper
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium

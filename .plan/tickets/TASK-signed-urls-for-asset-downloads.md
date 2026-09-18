@@ -3,6 +3,11 @@
 
 # TASK: Signed URLs for Asset Downloads
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done (2026-08-16) — mechanism shipped in `in-chat-asset-preview` worktree
 **Priority:** Medium
 **Effort:** Small

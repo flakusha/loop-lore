@@ -3,6 +3,11 @@
 
 # TASK: Factions, Reputation & Persistent Consequences
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** High
 **Effort:** High

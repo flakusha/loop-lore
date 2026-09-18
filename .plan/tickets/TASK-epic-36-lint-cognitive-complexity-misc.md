@@ -3,6 +3,11 @@
 
 # TASK: epic-36 lint: cognitive complexity + misc
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Small

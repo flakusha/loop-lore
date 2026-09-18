@@ -3,6 +3,11 @@
 
 # TASK: VN: alpha extraction matting job for opaque character images
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** high
 **Epic:** Avatar Alpha Channel + VN Layering; Aux Enrichment Pipeline

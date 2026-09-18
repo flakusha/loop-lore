@@ -3,6 +3,9 @@
 
 # EPIC: Wardrobe / Loadout Avatar Variants
 
+**Overview:** (see sections below)
+
+
 **Status:** 🔴 Not Started
 **Priority:** Medium
 **Effort:** Large

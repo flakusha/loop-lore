@@ -1,4 +1,14 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # EPIC: Hidden Carriage — Chat-Includeable Structured Memory Context
+
+**Priority:** medium
+**Effort:** Medium
+**Type:** epic
+**Tags:** (none)
+**Overview:** (see sections below)
+
 
 **Status:** Proposed
 **Area:** Chat config + system-template injection + structured-output utils

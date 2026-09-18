@@ -3,6 +3,11 @@
 
 # BUG: triggerAutoGeneration fire-and-forget unhandled rejection (reply.ts:40-42)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Resolved (verified 2026-09-07; bookkeeping)
 **Priority:** low
 **Priority Tier:** P6+

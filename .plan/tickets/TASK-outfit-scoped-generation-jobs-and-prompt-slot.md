@@ -3,6 +3,11 @@
 
 # TASK: Outfit-scoped generation jobs and prompt slot
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium

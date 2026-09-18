@@ -3,6 +3,11 @@
 
 # TASK: World State Management
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Epic:** World & Locations
 **Priority:** High
 **Effort:** Large

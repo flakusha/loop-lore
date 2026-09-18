@@ -3,6 +3,12 @@
 
 # TASK: BYOK API Keys (Bring Your Own Key)
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** High
 **Epic:** epic-byok-api-keys

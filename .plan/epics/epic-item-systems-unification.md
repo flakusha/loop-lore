@@ -3,6 +3,9 @@
 
 # EPIC: Item Systems Unification & Gap Closure
 
+**Overview:** (see sections below)
+
+
 **Status:** 🟡 In Progress (backend wiring merged 2026-08-14 — `rpg-wire-routes`; item frontend/UX tickets remain)
 **Priority:** High
 **Effort:** High

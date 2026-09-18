@@ -3,6 +3,11 @@
 
 # TASK: Timeline steering: close roll race and empty timelineId gap
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟡 In Progress
 **Priority:** Medium
 **Effort:** Medium

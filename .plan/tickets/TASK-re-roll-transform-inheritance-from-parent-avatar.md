@@ -3,6 +3,11 @@
 
 # TASK: Re-roll transform inheritance from parent avatar
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** low
 **Effort:** Medium

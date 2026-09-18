@@ -3,6 +3,9 @@
 
 # EPIC: Narration / Actor Separation
 
+**Overview:** (see sections below)
+
+
 **Status:** Not Started
 **Priority:** High
 **Effort:** Medium–Large
@@ -81,11 +84,11 @@ embodiment) — better prompts and better rendering for both.
 
 ## Work Items
 
-- [ ] **Message kind column + backfill** — schema, migration, generation-path stamping. → TASK-narration-sep-message-kind
-- [ ] **Prompt role contracts** — narration vs actor ownership clauses in assembly. → TASK-narration-sep-contracts
-- [ ] **Narrator-absent ambient clause + coverage scorer** — scene-info surfacing and starvation detection. → TASK-narration-sep-narrator-absent
-- [ ] **Violation extraction** — regex/aux tagging of contract breaches → quality gate. → TASK-narration-sep-violations
-- [ ] **Rendering per kind** — web (htmx/Alpine) + TUI treatment. → TASK-narration-sep-rendering
+- [ ] **Message kind column + backfill** — schema, migration, generation-path stamping.
+- [ ] **Prompt role contracts** — narration vs actor ownership clauses in assembly.
+- [ ] **Narrator-absent ambient clause + coverage scorer** — scene-info surfacing and starvation detection.
+- [ ] **Violation extraction** — regex/aux tagging of contract breaches → quality gate.
+- [ ] **Rendering per kind** — web (htmx/Alpine) + TUI treatment.
 
 ## Non-Goals
 

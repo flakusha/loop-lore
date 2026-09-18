@@ -3,6 +3,11 @@
 
 # TASK: Admin module cleanup: index.ts exports, consistent error handling, test isolation
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** Medium

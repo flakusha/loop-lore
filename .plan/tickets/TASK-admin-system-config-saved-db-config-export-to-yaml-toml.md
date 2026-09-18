@@ -3,6 +3,11 @@
 
 # TASK: Admin system-config: saved DB config export to yaml/toml
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done (2026-09-16, tree/admin-config-impl)
 **Priority:** medium
 **Effort:** Medium

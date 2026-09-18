@@ -3,6 +3,11 @@
 
 # BUG: Chat history truncates to oldest messages, drops recent turns
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** [OK] Done
 **Priority:** high
 **Effort:** Medium

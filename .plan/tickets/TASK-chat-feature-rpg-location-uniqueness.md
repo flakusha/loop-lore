@@ -3,6 +3,11 @@
 
 # TASK: RPG Mode — Single-Location Uniqueness Per Actor
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Low
 **Effort:** Medium

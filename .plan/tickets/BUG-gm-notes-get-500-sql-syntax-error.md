@@ -3,6 +3,13 @@
 
 # BUG-2026-001: GM Notes GET endpoints return 500 `near "from": syntax error`
 
+**Priority:** medium
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done
 **Priority**: high
 **Labels**: bug, gm-notes, sqlite, kysely

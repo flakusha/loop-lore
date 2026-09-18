@@ -3,6 +3,9 @@
 
 # EPIC: World Chat Channels & Invite-Driven Membership
 
+**Overview:** (see sections below)
+
+
 **Status:** ✅ Complete (merged to dev: backend `95680e00`, frontend `d61ce737`)
 **Priority:** Medium
 **Effort:** Medium

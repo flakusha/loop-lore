@@ -3,6 +3,11 @@
 
 # TASK: Consolidate Quest Engines
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done (2026-08-14, `51a7bc01`) — dual quest system (`rpg/quests` vs `story/quest-engine`) consolidated to single engine; `src/rpg/quests/service/` removed
 **Priority:** High
 **Effort:** High

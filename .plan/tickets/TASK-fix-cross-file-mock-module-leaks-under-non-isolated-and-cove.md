@@ -3,6 +3,11 @@
 
 # TASK: Fix cross-file mock.module leaks under non-isolated and coverage-mode test runs
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🔄 In Progress (plain-run failures eliminated 2026-09-08; coverage-mode + gate-env verification pending)
 **Priority:** Medium
 **Effort:** Medium

@@ -3,6 +3,14 @@
 
 # FEAT-byok-local-models: BYOK Local Models
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status**: open
 **Priority**: high
 **Labels**: byok, local-models, wasm, inference, llama, browser, offline

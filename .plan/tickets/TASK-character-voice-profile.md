@@ -3,6 +3,11 @@
 
 # TASK: Character Voice & Speech Profile System
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Epic:** epic-character-internal-traits (D10)
 **Priority:** Medium
 **Effort:** Medium

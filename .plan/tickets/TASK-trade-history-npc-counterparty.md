@@ -3,6 +3,12 @@
 
 # TASK: Trade History + NPC Counterparty
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** open
 **Priority:** medium
 **Labels:** rpg, trade, economy, routes

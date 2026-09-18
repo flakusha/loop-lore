@@ -3,6 +3,11 @@
 
 # TASK: Context Cut & Memory Promotion
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done (closed via git issue)
 **Priority:** high
 **Effort:** Medium

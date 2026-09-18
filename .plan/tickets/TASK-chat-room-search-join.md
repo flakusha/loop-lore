@@ -3,6 +3,11 @@
 
 # TASK: Chat Room Search & Join
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done
 **Priority:** Medium
 **Effort:** Med

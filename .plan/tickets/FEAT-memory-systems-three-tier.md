@@ -3,6 +3,11 @@
 
 # FEAT: Memory Systems (Three-Tier)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟡 Partial — episodic/semantic/procedural typing + wiring built; cross-tier promotion + per-viewer isolation verification open
 **Priority:** medium
 **Effort:** Large

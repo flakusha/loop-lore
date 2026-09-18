@@ -3,6 +3,11 @@
 
 # TASK: Living-World Between-Session Persistence
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Epic:** epic-world-locations, epic-character-core-system
 **Priority:** Medium (P6+ deferred)
 **Effort:** High

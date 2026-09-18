@@ -3,6 +3,11 @@
 
 # FEAT: Origin & Culture Capture During Generation / Seeding
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** Open
 **Priority:** Medium
 **Effort:** Medium

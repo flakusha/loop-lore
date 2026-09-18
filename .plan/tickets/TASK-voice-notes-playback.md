@@ -3,6 +3,12 @@
 
 # TASK: Voice notes playback
 
+**Status:** Not Started
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Epic:** epic-chat-rich-engagement.md (proposed)
 **Type:** Feature | **Priority:** Low | **Effort:** M
 

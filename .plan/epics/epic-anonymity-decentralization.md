@@ -3,6 +3,14 @@
 
 # Anonymity & Decentralization — Epic
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Type:** epic
+**Tags:** (none)
+**Overview:** (see sections below)
+
+
 ## Overview
 
 Anonymous access via Tor/I2P, distributed infrastructure, and BYOK mesh networking for resource sharing between servers.

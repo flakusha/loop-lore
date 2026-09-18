@@ -3,6 +3,11 @@
 
 # BUG: executeToolCalls silently passes empty `{}` to handlers when tool-call arguments JSON is malformed
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done
 **Severity:** medium
 **Priority:** medium

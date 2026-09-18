@@ -3,6 +3,9 @@
 
 # EPIC: 3D Asset Generation (Future)
 
+**Overview:** (see sections below)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Low
 **Effort:** Very High

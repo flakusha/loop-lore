@@ -3,6 +3,11 @@
 
 # TASK: Clean Up Item Transfer Orphans (Zero-Quantity Rows)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Complete (2026-08-12)
 **Priority:** P2 — Medium
 **Effort:** Small

@@ -3,6 +3,12 @@
 
 # TASK: ComfyUI Workflow Template Registry
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Priority:** High
 **Status:** ⬜ Not Started
 **Epic:** epic-comfyui-plugin

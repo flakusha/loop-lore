@@ -3,6 +3,11 @@
 
 # TASK: Chat Ownership Transfer — Frontend & Backend
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🚧 In Progress (5/6 ACs proven by tests; moderator/GM reconciliation has no implementation — the spec `gm` role has not landed)
 **Priority:** High
 **Effort:** Medium

@@ -3,6 +3,11 @@
 
 # TASK: Backend Logic Reconciliation Plan
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟡 In Progress — analysis complete; execution split into 4 child tickets
 **Priority:** High
 **Effort:** Large

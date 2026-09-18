@@ -3,6 +3,11 @@
 
 # Issue Template
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 Replace TYPE with: BUG, FEAT, FIX, IDEA, TASK, SOL, INFRA.
 Filename = `TYPE-<kebab-case-title>.md` (created by
 `./scripts/worktree.sh ticket <TYPE> "<title>"` — no numeric IDs).

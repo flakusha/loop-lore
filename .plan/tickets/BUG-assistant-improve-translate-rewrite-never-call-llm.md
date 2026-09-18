@@ -3,6 +3,11 @@
 
 # BUG: /improve, /translate, /rewrite advertise LLM behaviour but only do local string manipulation
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Resolved (verified 2026-09-07; LLM-first path already wired)
 **Severity:** high
 **Priority:** high

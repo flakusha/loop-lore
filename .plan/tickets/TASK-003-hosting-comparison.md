@@ -3,6 +3,14 @@
 
 # Hosting Provider Comparison for Loop-Lore Deployment
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Date**: 2026-08-14  
 **Project**: loop-lore (RPG chat application)
 **Focus**: CPU instances for serverless requests to llama-swap/llama.cpp pods, GPU compute options, network sharing

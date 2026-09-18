@@ -3,6 +3,14 @@
 
 # Epic 16: Observability
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Type:** epic
+**Tags:** (none)
+**Overview:** (see sections below)
+
+
 **Status**: in-progress
 **Priority**: high
 **Labels**: epic, observability, telemetry

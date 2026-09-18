@@ -3,6 +3,11 @@
 
 # TASK-e2e-auth-flows: Browser e2e auth, registration, join/invite, redirection flows
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** High
 **Effort:** Medium

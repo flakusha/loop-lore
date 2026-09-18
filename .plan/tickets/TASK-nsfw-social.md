@@ -3,6 +3,11 @@
 
 # TASK: NSFW-Social Integration
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Epic:** NSFW Game Mechanics, Social Interaction
 **Priority:** Medium
 **Effort:** Medium

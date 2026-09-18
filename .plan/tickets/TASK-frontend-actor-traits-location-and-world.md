@@ -3,11 +3,16 @@
 
 # TASK: Frontend — Actor Location & World Traits CRUD
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** P2 — Medium
 **Effort:** Small–Medium
 **Epic:** epic-character-core-system
-**Related:** TASK-world-location-traits-routes, TASK-character-internal-traits
+**Related:** TASK-character-internal-traits
 **Source:** FE-BE harmonization check, 2026-09-17 — 6 routes in this slice.
 
 ## Summary

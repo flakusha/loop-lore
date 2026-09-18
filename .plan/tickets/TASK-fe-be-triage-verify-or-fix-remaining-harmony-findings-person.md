@@ -3,6 +3,11 @@
 
 # TASK: FE-BE triage: verify-or-fix remaining harmony findings (personas PUT, story action, movement, plugins POST, review PUTs)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium

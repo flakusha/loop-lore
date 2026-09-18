@@ -3,6 +3,11 @@
 
 # TASK: Split `src/config/schema.ts` (812L)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** Medium

@@ -3,6 +3,11 @@
 
 # BUG: chat-seen-currentActorId-never-assigned-markSeen-sends-null
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Resolved (89cc294a0)
 **Priority:** high
 **Effort:** Medium

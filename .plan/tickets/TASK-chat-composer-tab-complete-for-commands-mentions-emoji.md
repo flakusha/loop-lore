@@ -3,6 +3,11 @@
 
 # TASK: Chat composer: tab-complete for commands, mentions, emoji
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done
 **Priority:** medium
 **Effort:** Medium

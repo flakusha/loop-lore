@@ -3,6 +3,11 @@
 
 # BUG: NSFW consent state is in-memory only, never persisted
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done
 **Priority:** high
 **Effort:** Medium

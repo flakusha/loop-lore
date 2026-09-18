@@ -3,6 +3,14 @@
 
 # Mini-Games: Database Schema Design
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Type:** epic
+**Tags:** (none)
+**Overview:** (see sections below)
+
+
 ## Schema Overview
 
 ### Core Tables

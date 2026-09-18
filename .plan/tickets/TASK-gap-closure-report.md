@@ -3,6 +3,14 @@
 
 # Gap-closure report — P1–P6 18-item workstream
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 All 18 items complete and committed to `dev`, GPG-signed (agent key `E9DAF69C…`). Full `bun run typecheck` green.
 
 ## P1 — User-visible breaks

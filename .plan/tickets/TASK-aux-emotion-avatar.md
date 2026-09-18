@@ -3,6 +3,11 @@
 
 # TASK: AUX LLM — Emotion Avatar Selection
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟡 Partial — avatar selection infra + EmotionHook exist; no LLM wiring (2026-08-01). Binding model updated 2026-08-02: emotion avatars are now **per message/chat** (see `epic-emotion-avatar-message-binding`); the old global `_currentEmotionAvatar` mood-swap is replaced by per-message resolution.
 **Priority:** P2-B
 **Effort:** Small

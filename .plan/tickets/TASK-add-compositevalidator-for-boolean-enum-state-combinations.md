@@ -3,6 +3,11 @@
 
 # TASK: Add CompositeValidator for boolean × enum state combinations
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** Medium

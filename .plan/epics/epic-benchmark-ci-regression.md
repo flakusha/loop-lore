@@ -3,6 +3,9 @@
 
 # EPIC: Benchmark CI & Performance Regression Detection
 
+**Overview:** (see sections below)
+
+
 **Status:** 🟡 In Progress — benchmark suite structure defined + first benchmark shipped (2026-08-15, branch `native-blake3`)
 **Priority:** High
 **Effort:** High

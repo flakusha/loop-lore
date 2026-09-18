@@ -3,6 +3,11 @@
 
 # BUG: classifyIntent / parseGmToolDetection accept LLM confidence without numeric bounds check
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done
 **Severity:** low
 **Priority:** low

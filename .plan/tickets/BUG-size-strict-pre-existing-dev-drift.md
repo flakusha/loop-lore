@@ -3,6 +3,12 @@
 
 # BUG: size-strict pre-existing dev drift
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done
 **Priority:** Medium
 **Epic:** epic-code-quality.md

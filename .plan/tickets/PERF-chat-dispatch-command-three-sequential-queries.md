@@ -3,6 +3,11 @@
 
 # PERF: dispatchCommand runs 3 sequential DB queries (command.ts:47-60)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** Open
 **Priority:** low
 **Priority Tier:** P6+

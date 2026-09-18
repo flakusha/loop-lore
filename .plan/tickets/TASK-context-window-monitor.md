@@ -3,6 +3,11 @@
 
 # TASK: Context Window Monitor (FEAT-069)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done
 **Priority:** Medium
 **Effort:** Low–Med

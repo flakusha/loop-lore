@@ -3,6 +3,12 @@
 
 # TASK: Audit & document remaining undocumented src/ modules
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** P3
 **Epic:** epic-docs-reconciliation

@@ -3,6 +3,11 @@
 
 # BUG: Export status/download endpoints leak other users jobs via unguessable jobId
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Resolved (commit 242b78b44)
 **Priority:** high
 **Effort:** Medium

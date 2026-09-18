@@ -1,4 +1,12 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # BUG: fix(csrf): extract csrfPlugin factory so tests exercise the production wiring
+
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 
 **Status:** ✅ Closed (commits a4ae0e30 + 427d9344 on dev)
 **Priority:** Medium

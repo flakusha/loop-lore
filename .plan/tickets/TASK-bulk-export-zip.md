@@ -3,6 +3,11 @@
 
 # TASK: Bulk Export (ZIP Archive)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Deferred to v2\
 **Priority:** Medium\
 **Effort:** Medium\

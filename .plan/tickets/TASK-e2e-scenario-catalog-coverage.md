@@ -3,6 +3,13 @@
 
 # TASK: E2E scenario catalog + coverage
 
+**Priority:** medium
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟢 Done
 
 - [x] Implementation complete

@@ -3,6 +3,9 @@
 
 # EPIC: Configs Path Resolution — File-Relative Paths + Windows/macOS Parity
 
+**Overview:** (see sections below)
+
+
 **Status:** ⬜ Not Started
 **Priority:** High
 **Effort:** Medium

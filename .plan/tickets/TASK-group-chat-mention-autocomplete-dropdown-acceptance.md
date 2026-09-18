@@ -3,6 +3,11 @@
 
 # TASK: Group chat: @mention autocomplete dropdown acceptance
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done
 **Priority:** medium
 **Effort:** Medium

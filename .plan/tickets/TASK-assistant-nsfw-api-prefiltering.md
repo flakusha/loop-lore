@@ -3,6 +3,11 @@
 
 # TASK: Assistant — NSFW Prefiltering for Third-Party API Workflows
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 📝 Draft
 **Priority:** High (NSFW safety is a blocker for any third-party dispatch)
 **Effort:** Medium

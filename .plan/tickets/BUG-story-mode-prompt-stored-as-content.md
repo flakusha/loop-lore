@@ -3,6 +3,11 @@
 
 # BUG: story-mode.ts stores `turnResult.prompt` as the message content — `gmDecision.turnPrompt` is the prompt to LLM, not the user-visible AI response
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done
 **Severity:** high
 **Priority:** high

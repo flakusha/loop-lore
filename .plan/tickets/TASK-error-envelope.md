@@ -3,6 +3,12 @@
 
 # TASK: Error Envelope & Error Handling
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Epic:** epic-error-envelope

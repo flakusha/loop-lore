@@ -3,6 +3,11 @@
 
 # TASK: Adopt Hermes 5-category tool surface into agentic workspace epic
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** Medium

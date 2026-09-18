@@ -3,6 +3,11 @@
 
 # BUG: Alpine init hydration errors abort chat subtree rendering
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Resolved — verified stale (no code change required)
 **Priority:** High
 **Effort:** Medium

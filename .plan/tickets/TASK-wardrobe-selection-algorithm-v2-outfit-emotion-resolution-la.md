@@ -3,6 +3,11 @@
 
 # TASK: Wardrobe selection algorithm v2 (outfit, emotion) resolution ladder
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** Medium

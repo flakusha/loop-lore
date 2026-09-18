@@ -3,6 +3,11 @@
 
 # BUG: FE-BE: character-growth arc/confirm/reject declare unsatisfiable actorId param, Elysia 422s every call
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Resolved (already on dev, 2026-09-14)
 **Priority:** high
 **Effort:** Medium
