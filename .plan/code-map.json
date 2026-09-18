@@ -513,6 +513,12 @@
       "source": ".plan/tickets/TASK-wire-fswatcher-onreload-callback-in-server-startup.md"
     }
   ],
+  "src/assets/controller.routes.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par.md"
+    }
+  ],
   "src/assets/controller.ts": [
     {
       "kind": "epic",
@@ -805,6 +811,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-cross-platform-portability.md"
+    }
+  ],
+  "src/assets/service/links.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par.md"
     }
   ],
   "src/assets/service/links.ts": [
@@ -20029,6 +20041,18 @@
       "source": ".plan/tickets/BUG-actortype-persona-422-on-valid-ui-input.md"
     }
   ],
+  "src/personas/convert.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-personas-converttocharacter-drops-title-temperature-max-toke.md"
+    }
+  ],
+  "src/personas/handlers.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-personas-converttocharacter-drops-title-temperature-max-toke.md"
+    }
+  ],
   "src/personas/handlers.ts": [
     {
       "kind": "ticket",
@@ -20045,6 +20069,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-personas-setdefault-silently-succeeds-for-invalid-personaid-.md"
+    }
+  ],
+  "src/personas/service.missing.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-personas-converttocharacter-drops-title-temperature-max-toke.md"
     }
   ],
   "src/personas/service.test.ts": [
@@ -21239,6 +21269,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-vn-emotion-mood-and-action-driven-sprite-staging.md"
+    }
+  ],
+  "src/regex/html-sanitize-streaming.edge.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san.md"
+    }
+  ],
+  "src/regex/html-sanitize-streaming.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san.md"
     }
   ],
   "src/regex/html-sanitize.test.ts": [
