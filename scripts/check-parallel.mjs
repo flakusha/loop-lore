@@ -403,19 +403,19 @@ const checks = {
 // removes any pattern whose substring appears in that string (allows
 // trimming the skip set without editing the source).
 const DEFAULT_TEST_SKIP_PATTERNS = [
-  "src/db/migrations.test.ts",
-  "src/db/migration-roundtrip.test.ts",
-],
-SKIP_PATTERNS = (() => {
-  if (process.env.CHECK_INCLUDE_HEAVY_DB_TESTS === "1") { return []; }
-  const keep = process.env.CHECK_TEST_KEEP_REGEX;
-  const base = DEFAULT_TEST_SKIP_PATTERNS;
-  if (!keep) { return base; }
-  const re = new RegExp(keep,);
-  return base.filter((p,) => !re.test(p,),);
-})(),
-matchesSkip = (p,) => SKIP_PATTERNS.some((pat,) => p.includes(pat,),),
-filterPaths = (paths,) => paths.filter((p,) => !matchesSkip(p,),);
+    "src/db/migrations.test.ts",
+    "src/db/migration-roundtrip.test.ts",
+  ],
+  SKIP_PATTERNS = (() => {
+    if (process.env.CHECK_INCLUDE_HEAVY_DB_TESTS === "1") { return []; }
+    const keep = process.env.CHECK_TEST_KEEP_REGEX;
+    const base = DEFAULT_TEST_SKIP_PATTERNS;
+    if (!keep) { return base; }
+    const re = new RegExp(keep,);
+    return base.filter((p,) => !re.test(p,));
+  })(),
+  matchesSkip = (p,) => SKIP_PATTERNS.some((pat,) => p.includes(pat,)),
+  filterPaths = (paths,) => paths.filter((p,) => !matchesSkip(p,));
 
 /**
  * Build the coverage gate command. Lives here — after the multi-declarator
@@ -443,7 +443,7 @@ filterPaths = (paths,) => paths.filter((p,) => !matchesSkip(p,),);
  */
 function coverageCommand() {
   const skipNote = SKIP_PATTERNS.length > 0
-    ? ` # skip: ${SKIP_PATTERNS.join(", ")}`
+    ? ` # skip: ${SKIP_PATTERNS.join(", ",)}`
     : "";
   if (!DIFF_BASE) {
     // Plain mode: same flags and test set as `bun run test:coverage`
@@ -455,7 +455,9 @@ function coverageCommand() {
     const srcTests = walkTestFiles(PROJECT_ROOT, "src",);
     const allPaths = ["tests/e2e/", ...filterPaths(srcTests,),];
     if (allPaths.length === 1) { return NOOP_OK; } // only `tests/e2e/` left
-    return `E2E_SAFEGUARD=1 bun test --parallel=${TEST_JOBS} ${allPaths.join(" ",)} --isolate --coverage --coverage-reporter=text --coverage-reporter=lcov --coverage-dir=${COVERAGE_DIR_RELATIVE} && bun run scripts/check/coverage.mjs --floor=80 --coverage-dir=${COVERAGE_DIR_RELATIVE}${skipNote}`;
+    return `E2E_SAFEGUARD=1 bun test --parallel=${TEST_JOBS} ${
+      allPaths.join(" ",)
+    } --isolate --coverage --coverage-reporter=text --coverage-reporter=lcov --coverage-dir=${COVERAGE_DIR_RELATIVE} && bun run scripts/check/coverage.mjs --floor=80 --coverage-dir=${COVERAGE_DIR_RELATIVE}${skipNote}`;
   }
   if (SCOPED_COVERAGE_PATHS.length === 0) { return NOOP_OK; }
   if (SCOPED_DIFF_SRC_FILES.length === 0) { return NOOP_OK; }
@@ -694,8 +696,6 @@ async function runCheck(name, command,) {
 // alongside the coverage run). They are therefore pulled out of the chunked
 // pool and run strictly one-at-a-time after the light gates.
 const HEAVY_NAMES = new Set([
-  "test - unit",
-  "test - e2e",
   "coverage - per-module line %",
 ],);
 
