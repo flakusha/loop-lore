@@ -23,7 +23,8 @@ jobs:
           fetch-depth: 0
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: latest
+          # Match local toolchain pin for reproducible installs.
+          bun-version: '1.4.2'
       - uses: actions/configure-pages@v4
       - name: Install dependencies
         run: bun install --frozen-lockfile
