@@ -30,11 +30,11 @@ Quick CLI reference for loop-lore. See `.agents/references/recommendations.md` f
 | `bun run plan:sync`            | Ticket index ↔ git issue sync check                                                                                                                  |
 | `bun run plan:sync:fix`        | Apply ticket index fixes (`giwt sync --fix`)                                                                                                         |
 | `bun run plan:validate`        | Comprehensive `.plan/` validation (10 gates: format, linkage, backlog, tickets, code-map, links, spdx, naming, epics-doc, all)                       |
-| `bun run plan:validate:fix`    | Apply auto-fixable plan-validate findings (`giwt plan validate --fix`)                                                                              |
+| `bun run plan:validate:fix`    | Apply auto-fixable plan-validate findings (`giwt plan validate --fix`)                                                                               |
 | `bun run plan:status`          | Plan health summary (giwt plan status)                                                                                                               |
-| `bun run plan:backlog:sync`    | Backlog tier-file reconciliation                                                                                                                    |
-| `bun run plan:map`             | Build reverse code→plan index (`.plan/code-map.json`)                                                                                               |
-| `bun run plan:map:check`       | Verify `.plan/code-map.json` is fresh (CI gate)                                                                                                     |
+| `bun run plan:backlog:sync`    | Backlog tier-file reconciliation                                                                                                                     |
+| `bun run plan:map`             | Build reverse code→plan index (`.plan/code-map.json`)                                                                                                |
+| `bun run plan:map:check`       | Verify `.plan/code-map.json` is fresh (CI gate)                                                                                                      |
 | `bun run plan:find`            | Query owners of a `src/` path                                                                                                                        |
 | `bun test`                     | Bun test runner (Jest-compatible)                                                                                                                    |
 | `bun test --coverage`          | Test coverage report                                                                                                                                 |
