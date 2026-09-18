@@ -3,7 +3,7 @@
 
 # BUG-2025-001: Missing `data-id` on character detail "Start Chat" button
 
-**Status**: stale-resolved
+**Status**: closed
 **Priority**: high
 **Labels**: e2e-blocking, characters, ux
 **Assignee**:
