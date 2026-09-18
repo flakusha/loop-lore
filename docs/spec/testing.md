@@ -20,6 +20,31 @@ Colocated with source: `src/feature/feature.test.ts`. ~165 source files under `s
 
 ## Commands
 
+```bash
+bun run check          # full gate suite (heavy gates serialized after the light ones)
+bun run test:unit      # unit tests only
+bun run test:coverage  # unit + e2e with lcov output
+bun run test:e2e:browser
+```
+
+### Heavy-test opt-in (coverage gate)
+
+`scripts/check-parallel.mjs` skips two slow db tests by default in the
+coverage gate (`src/db/migrations.test.ts`,
+`src/db/migration-roundtrip.test.ts`). They hold the SQLite write-lock for
+the full migration chain and serialize behind `--parallel=4`, blowing past
+any `giwt finalize` timeout. Default skip keeps the gate sub-minute.
+
+Opt in to the full suite (when you actually want migration coverage):
+
+```bash
+CHECK_INCLUDE_HEAVY_DB_TESTS=1 bun run check       # empty skip list
+CHECK_TEST_KEEP_REGEX='migrations' bun run check   # drop one pattern
+```
+
+The authoritative reference is the comment block above
+`DEFAULT_TEST_SKIP_PATTERNS` in `scripts/check-parallel.mjs`.
+
 ## Coverage Goals
 
 - Core business logic (DB schema, gen pipeline, content): ≥90%
