@@ -28,6 +28,7 @@ export function general(): Partial<SettingsState> & ThisType<SettingsState> {
       await this.loadProviders();
       await this.loadSettings();
       await this.loadNsfwConsent();
+      await this.loadPendingRestart();
     },
 
     async loadLocales() {

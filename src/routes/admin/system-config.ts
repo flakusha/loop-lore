@@ -3,10 +3,23 @@
 
 import { Elysia, t, } from "elysia";
 import { dump as yamlDump, } from "js-yaml";
-import { deleteConfig, getAllConfig, setConfig, } from "../../admin/config";
+import {
+  decorateConfigEntry,
+  deleteConfig,
+  getAllConfig,
+  importConfigFromText,
+  REQUIRES_RESTART_KEYS,
+  SECRET_KEY_PATTERN,
+  setConfig,
+} from "../../admin/config";
 import { jsonSchema, } from "../../config/schema-class";
 import { can, } from "../../users/permissions";
-import { AdminSystemConfigBody, ErrorResponse, SuccessResponse, } from "../../validation/schemas";
+import {
+  AdminSystemConfigBody,
+  AdminSystemConfigImportBody,
+  ErrorResponse,
+  SuccessResponse,
+} from "../../validation/schemas";
 import {
   ErrorCode,
   extractAuth,
@@ -17,10 +30,6 @@ import {
   requireUserId,
 } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
-
-/** Keys whose values must never leave the server in cleartext. */
-const SECRET_KEY_PATTERN =
-  /secret|password|token|api.?key|private.?key|mesh.?psk|encryption.?key|signed.?url|db\.url|database.?url/iu;
 /**
  * @param opts
  * @param prefix
@@ -41,7 +50,10 @@ export function systemConfigRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             code: ErrorCode.Forbidden,
           },);
         }
-        return jsonResponse(jsonSchema(),);
+        return jsonResponse({
+          ...jsonSchema(),
+          requires_restart_keys: Object.keys(REQUIRES_RESTART_KEYS,),
+        },);
       }, {
         response: {
           200: t.Any(),
@@ -120,7 +132,8 @@ export function systemConfigRoutes(opts: AdminRouteOpts, prefix = "/api",) {
           },);
         }
         const configs = await getAllConfig(opts.database,);
-        return jsonResponse(configs,);
+        const decorated = configs.map((c,) => decorateConfigEntry(c,));
+        return jsonResponse(decorated,);
       }, {
         response: {
           200: t.Any(),
@@ -145,6 +158,59 @@ export function systemConfigRoutes(opts: AdminRouteOpts, prefix = "/api",) {
           return jsonResponse({ ok: true, },);
         },
         { body: AdminSystemConfigBody, response: { 200: SuccessResponse, 403: ErrorResponse, }, },
+      )
+      // -- Import YAML/TOML config into system_config --
+      .post(
+        `${prefix}/admin/system-config/import`,
+        async (ctx: any,) => {
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") { return userId; }
+          const { userRole, } = extractAuth(ctx,);
+          if (!can(userRole, "admin.system",)) {
+            return jsonError({
+              message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
+              status: HttpStatus.Forbidden,
+              code: ErrorCode.Forbidden,
+            },);
+          }
+          const { format, content, } = ctx.body as { format: "yaml" | "toml"; content: string };
+          try {
+            const results = await importConfigFromText(opts.database, content, format,);
+            // Audit trail: log only counts and secret-redacted keys, never values.
+            try {
+              await opts.database
+                .insertInto("log_entries",)
+                .values({
+                  id: crypto.randomUUID(),
+                  level: 6,
+                  timestamp: Date.now(),
+                  time: new Date().toISOString(),
+                  message: `System config imported from ${format} (${results.length} keys)`,
+                  module: "admin-system-config",
+                  action: "system-config.import",
+                  event_type: "admin",
+                  entity_type: "system",
+                },)
+                .execute();
+            } catch {
+              // Audit trail is best-effort; import still succeeds.
+            }
+            return jsonResponse({
+              imported: results.filter((r,) => r.action === "added").length,
+              changed: results.filter((r,) => r.action === "changed").length,
+              skipped: results.filter((r,) => r.action === "skipped").length,
+              conflicts: results.filter((r,) => r.action === "conflict").length,
+              results,
+            },);
+          } catch (error) {
+            return jsonError({
+              message: `Failed to parse ${format} payload: ${(error as Error).message}`,
+              status: HttpStatus.BadRequest,
+              code: ErrorCode.ValidationError,
+            },);
+          }
+        },
+        { body: AdminSystemConfigImportBody, response: { 200: t.Any(), 400: ErrorResponse, 403: ErrorResponse, }, },
       )
       .delete(`${prefix}/admin/system-config/:key`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);

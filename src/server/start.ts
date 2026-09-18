@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+import type { Config, } from "../config/schema";
 import { ServerExternalManager, } from "../services/server-external-manager";
 import { applyEnvironmentOverrides, seedConfiguredContent, seedConfiguredUsers, } from "../seeding";
 import { applyStoredNsfwConfig, initNsfwRuntimeConfig, } from "../nsfw/runtime-config";
@@ -16,6 +17,7 @@ import { initAssetCompression, } from "./init-asset-compression";
 import { initBackgroundServices, } from "./init-background-services";
 import { initDefaultHooks, } from "../generation/hooks";
 import { initializeProviders, } from "../generation";
+import { join, } from "node:path";
 import { loadAllPlugins, unloadAllPlugins, } from "../plugins";
 import { loadConfig, } from "../config/load";
 import { runMigrations, } from "../db/migrate";
@@ -146,6 +148,33 @@ export async function start() {
     logger.addTransport(new DBTransport(database,),);
   }
 
+  // ── Watch domain config files for live reload ────────────
+  // FSWatcher over `<cwd>/configs/*.toml|*.yaml`; on change, the in-memory
+  // Config instance is reloaded via loadConfig() so handlers pick up new values
+  // without a process restart. Restart-required keys (REQUIRES_RESTART_KEYS in
+  // src/admin/config.ts) still need a full restart — those are surfaced to
+  // the admin UI by `GET /api/admin/config-schema`.
+  let domainConfigWatcher: { close(): void } | undefined;
+  const configsDir = join(process.cwd(), "configs",);
+  try {
+    const { existsSync, } = await import("node:fs");
+    if (existsSync(configsDir,)) {
+      const { watchDomainConfigs, stopWatchingDomainConfigs, } = await import("../config/hot-reload");
+      domainConfigWatcher = watchDomainConfigs(configsDir, (domain: string, _updated: Config,) => {
+        logger.info(`domain config reloaded: ${domain}`, { module: "hot-reload", domain, },);
+        // Domain-specific handlers can subscribe here (provider registry,
+        // logger transports). The on-disk values are now the source of truth
+        // for the next read of `loadConfig()`.
+      },);
+      (domainConfigWatcher as { __close?: () => void }).__close = () =>
+        stopWatchingDomainConfigs(
+          domainConfigWatcher as ReturnType<typeof watchDomainConfigs>,
+        );
+    }
+  } catch (error) {
+    logger.warn(`failed to start domain config watcher: ${(error as Error).message}`, { module: "hot-reload", },);
+  }
+
   // ── Telemetry retention cleanup ──────────────────────────
   // Owned by the cron scheduler (`telemetry.retention` job, started in
   // createApp). No direct call here.
@@ -169,6 +198,7 @@ export async function start() {
 
   // ── Graceful shutdown ────────────────────────────────────
   const shutdown = async (_signal: string,) => {
+    (domainConfigWatcher as { __close?: () => void } | undefined)?.__close?.();
     getScheduler()?.stop();
     await serverManager.stopAll();
     await unloadAllPlugins();
