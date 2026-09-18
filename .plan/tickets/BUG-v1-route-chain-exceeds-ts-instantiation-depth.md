@@ -3,7 +3,11 @@
 
 # BUG: v1 route chain exceeds TS instantiation depth
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Closed — fixed in dev (verified 2026-09-18)
+
+## Resolution
+
+Commit `50f714a92` (2026-09-17) "fix(routes): split v1 .use() chain to clear TS2589; coverage tests" split the v1 barrel from a single 100+ `.use()` chain into 9 grouped `app = app.use(...)` assignments across `actors-surface.ts`, `admin-surface.ts`, `base-surface.ts`, `chats-surface.ts`, `content-surface.ts`, and `index.ts`. `bun run typecheck` green at HEAD; chain instantiation depth well under the limit. No further code change needed.
 **Priority:** high
 **Effort:** Medium
 

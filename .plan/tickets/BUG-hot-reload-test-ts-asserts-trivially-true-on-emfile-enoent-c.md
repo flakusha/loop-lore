@@ -1,6 +1,10 @@
 # BUG: hot-reload.test.ts asserts trivially-true on EMFILE/ENOENT (coverage regression)
 
-**Status:** 🚫 Stale premise (file already stubs node:fs.watch and exercises reload)
+**Status:** ✅ Closed — stale premise verified (2026-09-18)
+
+## Verification
+
+`src/config/hot-reload.test.ts` already stubs `node:fs.watch` with a controllable `stubWatch` (lines 35-50), registers `mock.module("node:fs", …)`, and exercises the reload callback path with a domain config file change (test at line 93). Coverage is non-trivial; the trivially-true assertion concern is moot.
 **Priority:** low
 **Effort:** Medium
 
