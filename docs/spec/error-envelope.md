@@ -101,6 +101,21 @@ Empty body. Used for DELETE and logout.
 
 ### ErrorCode Enum
 
+```ts
+export const ErrorCode = {
+  BadRequest: "BAD_REQUEST",
+  Unauthorized: "UNAUTHORIZED",
+  Forbidden: "FORBIDDEN",
+  NotFound: "NOT_FOUND",
+  ValidationError: "VALIDATION_ERROR",
+  TooManyRequests: "TOO_MANY_REQUESTS",
+  ServerError: "SERVER_ERROR",
+  Conflict: "CONFLICT",
+  NotImplemented: "NOT_IMPLEMENTED",
+  ServiceUnavailable: "SERVICE_UNAVAILABLE",
+} as const;
+```
+
 ### Typed Service Errors
 
 Service layer should throw typed errors. Controllers catch and map to responses:
@@ -145,4 +160,4 @@ The backend sends the same `{ error, code, details }` envelope regardless of the
 - [API Route Contract](./api-routes.md) — route-specific error handling
 - [Auth Middleware](./auth-middleware.md) — 401/429 handling
 - [Chat: Generation & Error Handling](../frontend/chat/generation.md) — 3-tier error display
-- `src/routes/http-utils.ts` — response helper implementation
+- `src/routes/http-utils/index.ts` — response helper implementation
