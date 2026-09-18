@@ -42,6 +42,12 @@ No task currently covers **item generation** — creating new items procedurally
    - Preview generated items before confirming creation
    - LLM mode: text area for description → preview → confirm
 4. **Batch generation** — generate N items at once (e.g., "populate a blacksmith shop")
+5. **Workflow-stack convergence (integration requirement)** — the LLM-assisted path routes through the entity-generation workflow stack rather than a parallel UX:
+   - `POST /api/worlds/:worldId/items/generate-llm` becomes the dispatch target of the item workflow template (`TASK-assistant-creative-studio-workflow-item.md`): intent detection (`intent.target = "item"` already exists in `src/regex/intent.ts`), step preview, `entity_type_presets.item` validation, schema/consistency/duplicate/balance gates, confirmation.
+   - The procedural path (template tables + randomization) stays a direct API — deterministic, no LLM — but keeps preview-before-create and feeds the same validation/taxonomy.
+   - Manual creation (form) and generated items share validation, unified taxonomy, review surface, and provisioning (unallocated pool).
+   - Story-introduced items reuse the unified in-place mechanism (`FEAT-in-story-character-generation-via-assistant-chat-handoff.md`) instead of a bespoke flow.
+   - Common world item pool: batch-generated definitions land as world-scoped, unallocated definitions; manual and generated items are indistinguishable downstream.
 
 ## Acceptance Criteria
 
@@ -51,6 +57,9 @@ No task currently covers **item generation** — creating new items procedurally
 - [ ] Batch generation (multiple items in one request)
 - [ ] Generated items respect world's item type taxonomy (unified enums)
 - [ ] Generated items appear in provisioning dashboard as unallocated
+- [ ] LLM generation dispatches via the item workflow template with confirmation + quality gates (no parallel generation UX)
+- [ ] Manual creation and generated items share validation + taxonomy + provisioning flow
+- [ ] Story-introduced items reuse the unified in-place mechanism
 - [ ] `bun test src/` green; `bun run check` green
 
 ## Files to Create
@@ -71,3 +80,5 @@ No task currently covers **item generation** — creating new items procedurally
 - `TASK-creative-studio-item-modal.md` — Creative Studio item modal
 - `TASK-unify-item-types.md` — generated items use unified types
 - `TASK-item-provisioning-dashboard.md` — generated items appear as unallocated
+- `TASK-assistant-creative-studio-workflow-item.md` (workflow wrapper over the LLM endpoint)
+- `FEAT-in-story-character-generation-via-assistant-chat-handoff.md` (in-place path)

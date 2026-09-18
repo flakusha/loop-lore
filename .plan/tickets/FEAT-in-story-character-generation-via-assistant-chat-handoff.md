@@ -36,19 +36,25 @@ The RPG/story flow introduces new entities (characters, locations, items, quests
 
 - New location generation: location introduced by story development; new details added via fast edit/development/assistant flow.
 - New game items, quests, notes/shadow notes, and other RPG assets generated in place.
+- Bestiary species (flora / fauna / monster) generated in place: the story introduces a species; per-kind template from `TASK-assistant-creative-studio-workflow-species.md` finalizes it against the bestiary model.
 - Tie-ins: intent detection, item tracking, note tracking, quest tracking, memory injection — these provide additional related context for in-place generation and can be updated by story progress.
 - Opt-in chat carriage toml (receipt-style ledger) may partly resolve context retention until the full character/item/etc. spec is introduced, or just naturally retain context when no detailed generation is involved.
+- Post-approval owner backfill: the approved entity can be backfilled as owner of the messages that introduced it (`TASK-in-place-generation-owner-backfill.md`).
+- Creation-chat context is scoped to the introducing world/location — lore, location facts, present entities (`TASK-creation-chat-world-location-context-scoping.md`).
 
 ## Related tickets
 
 - TASK-assistant-creative-studio-workflow-character.md — user-initiated studio workflow creation; this ticket covers story-triggered in-place generation feeding the same review gates.
 - epic-gm-shadow-notes.md — shadow notes steering; subchat/shadow-flow alternative rejected here.
+- TASK-in-place-generation-owner-backfill.md — post-approval backfill mechanism.
+- TASK-creation-chat-world-location-context-scoping.md — creation-chat context bundle.
+- TASK-assistant-creative-studio-workflow-species.md — species entity workflow (per-kind template source).
 
 ## Acceptance Criteria
 
 - [ ] Story-triggered detection: an introduced, non-generated character can be handed off to in-place generation without breaking the running story (ambient introduction remains a valid no-op path).
 - [ ] Frontend button reroutes to a new assistant chat/group chat seeded with the initial character info; finalized spec proceeds to review/approval before actor insert.
 - [ ] Creation-chat participant scope decided and enforced (GM only vs GM + introducing user).
-- [ ] Review/approval gate required before the character becomes a full game asset (aligns with epic quality gating).
+- [ ] Review/approval gate required before any generated entity kind (character, NPC, item, species, location) becomes a full game asset (aligns with epic quality gating).
 - [ ] No regression to existing chat/group-chat message flows (assistant-chat handoff, not subchat).
 - [ ] Unit/integration tests: handoff seeding, gate blocking dispatch without approval, participant scoping.

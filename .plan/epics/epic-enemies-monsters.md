@@ -69,6 +69,7 @@ the full bestiary + ecology + repopulation system.
 - [ ] Bestiary → XP award integration
 - [ ] Bestiary state snapshots
 - [ ] Migration for bestiary + population tables
+- [ ] Species generation workflow (LLM, gated, review/approved) — `TASK-assistant-creative-studio-workflow-species.md`
 
 ## Design
 
@@ -127,6 +128,30 @@ interface LocationPopulation {
 }
 ```
 
+## Generation & Review Integration
+
+Bestiary entries are not only admin-authored rows — species are a first-class
+**entity-generation kind**:
+
+- **Workflow generation** — `species` intent target + step schema + quality gates
+  (schema / consistency / duplicate / balance) + confirmation, dispatching to the
+  bestiary insert: `TASK-assistant-creative-studio-workflow-species.md` (extends
+  `epic-entity-generation-workflows.md` §7.6).
+- **In-place, story-introduced species** — flora/fauna/monsters introduced by the
+  story generate in place via the unified mechanism
+  (`FEAT-in-story-character-generation-via-assistant-chat-handoff.md`) with a
+  species per-kind template; ambient introduction (no generation) remains a valid
+  no-op path.
+- **Owner backfill** — an approved species can be backfilled as referenced-by owner
+  of the messages that introduced it
+  (`TASK-in-place-generation-owner-backfill.md`).
+- **Review/approve before game-asset** — generated species pass the same
+  review/approval surface as characters, items, and locations before becoming
+  world state; admin CRUD (`TASK-bestiary-crud-routes-admin-gm.md`) remains the
+  manual path.
+- **Monster stat reuse** — monster stats are `CharacterStats`; generation reuses
+  the character stat/edit capabilities rather than a bespoke species editor.
+
 ## Open Questions
 
 - Bestiary entries: world-scoped or template-scoped?
@@ -144,3 +169,4 @@ interface LocationPopulation {
 - TASK-bestiary-ecology-pressure-model
 - TASK-bestiary-quest-bindings-integration
 - TASK-bestiary-loot-and-xp-integration
+- TASK-assistant-creative-studio-workflow-species
