@@ -32,9 +32,13 @@ Part of the **Testing, Benchmarking & Performance** epic. See parent epic for th
 
 ## Generation Pipeline
 
-```
-Schema/Grammar ──▶ Base Corpus ──▶ Mutation Engine ──▶ Validation & Filter
-     (from OpenAPI specs, valid traffic, unit test seeds)
+```mermaid
+flowchart LR
+    SG["Schema/Grammar<br/>(from OpenAPI specs, valid traffic, unit test seeds)"]
+    BC["Base Corpus"]
+    ME["Mutation Engine"]
+    VF["Validation and Filter"]
+    SG --> BC --> ME --> VF
 ```
 
 ## Mutation Strategies

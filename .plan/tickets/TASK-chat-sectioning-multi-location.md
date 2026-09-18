@@ -74,19 +74,19 @@ interface ChatMessage {
 ### 3. Transition System
 
 ```
-Location Change Detected
-  ↓
-Transition Event:
-  ├── Old section → end timestamp
-  ├── New section → create with location
-  ├── Transition type + narrative
-  └── Background change trigger
-  ↓
-UI Update:
-  ├── Section divider (location change indicator)
-  ├── Background crossfade
-  ├── Character avatar update (if location affects appearance)
-  └── Ambient sound change
+```mermaid
+flowchart LR
+    LCD["Location Change Detected"]
+    LCD --> TE["Transition Event"]
+    TE --> OSE["Old section -> end timestamp"]
+    TE --> NSC["New section -> create with location"]
+    TE --> TTN["Transition type + narrative"]
+    TE --> BCT["Background change trigger"]
+    TE --> UI["UI Update"]
+    UI --> SD["Section divider<br/>(location change indicator)"]
+    UI --> BC["Background crossfade"]
+    UI --> CAU["Character avatar update<br/>(if location affects appearance)"]
+    UI --> ASC["Ambient sound change"]
 ```
 
 ### 4. Group Chat Complexity

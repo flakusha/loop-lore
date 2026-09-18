@@ -58,53 +58,35 @@ Extensible emotion system: admin/user-defined emotion list, LLM-based or rule-ba
 
 ### Emotion Registry
 
-```
-Emotions (extensible):
-  ├── Built-in: happy, sad, angry, surprised, neutral, love, fear, disgust
-  ├── User-defined: custom emotions with avatar mappings
-  ├── Admin-defined: system-wide custom emotions
-  └── Per-character: character-specific emotion overrides
-```
-
-### Emotion Interface
-
-```typescript
-interface Emotion {
-  id: string; // "happy", "custom-pensive"
-  name: string; // Display name: "Happy", "Pensive"
-  category: EmotionCategory; // basic | complex | custom | system
-  keywords: string[]; // Detection keywords
-  priority: number; // Conflict resolution (higher = wins)
-  parentId?: string; // For emotion hierarchies (happy → ecstatic)
-
-  // Avatar mapping
-  default_avatar_id?: string; // Default avatar for this emotion
-  avatar_tags: string[]; // Tags to match in avatar selection
-}
-
-type EmotionCategory = "basic" | "complex" | "custom" | "system";
-```
-
-### Detection Pipeline
-
-```
-Message Received
-  ↓
-Intent Detection (LLM or rule-based):
-  ├── Rule-based: keyword matching (fast, cheap)
-  ├── LLM-based: intent classification (accurate, expensive)
-  └── Hybrid: rules first, LLM fallback
-  ↓
-Emotion Resolution:
-  ├── Multiple detected emotions → priority resolution
-  ├── Per-character emotion overrides
-  ├── Group chat: each character gets own emotion
-  └── Emotional continuity (decay from previous state)
-  ↓
-Avatar Selection:
-  ├── Look up emotion → avatar mapping
-  ├── Select avatar based on context
-  └── Fallback to default if no match
+```mermaid
+flowchart TB
+    subgraph REG["Emotions (extensible)"]
+        BI["Built-in: happy, sad, angry, surprised, neutral, love, fear, disgust"]
+        UD["User-defined: custom emotions with avatar mappings"]
+        AD["Admin-defined: system-wide custom emotions"]
+        PC["Per-character: character-specific emotion overrides"]
+    end
+    MR["Message Received"]
+    subgraph IDET["Intent Detection (LLM or rule-based)"]
+        RB["Rule-based: keyword matching (fast, cheap)"]
+        LLM["LLM-based: intent classification (accurate, expensive)"]
+        HYB["Hybrid: rules first, LLM fallback"]
+    end
+    subgraph ERS["Emotion Resolution"]
+        PR["Multiple detected emotions -> priority resolution"]
+        PCO["Per-character emotion overrides"]
+        GC["Group chat: each character gets own emotion"]
+        EC["Emotional continuity (decay from previous state)"]
+    end
+    subgraph AS["Avatar Selection"]
+        LAM["Look up emotion -> avatar mapping"]
+        SAC["Select avatar based on context"]
+        FBM["Fallback to default if no match"]
+    end
+    REG --> MR
+    MR --> IDET
+    IDET --> ERS
+    ERS --> AS
 ```
 
 ### Detection Methods

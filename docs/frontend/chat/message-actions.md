@@ -37,15 +37,6 @@ The toolbar has two display modes based on the user's **detail level**:
 
 Actions appear as **hamburger menus** (⋮) that reveal on hover:
 
-```
-┌─────────────────────────────────────────┐
-│ Hi there!                               │
-│                              ┌────────┐ │
-│                              │Actions │ │  ← appears on hover
-│                              │   ⋮    │ │
-│                              └────────┘ │
-└─────────────────────────────────────────┘
-```
 
 - Primary hamburger (⋮): opens dropdown with all actions
 - Info hamburger (i): **Basic mode only** — opens stats dropdown
@@ -55,34 +46,11 @@ Actions appear as **hamburger menus** (⋮) that reveal on hover:
 **Dropdown positioning**: appears above the hamburger button, aligned to
 the right edge. Closes on outside click.
 
-```
-┌────────────────────┐
-│ 📋 Copy            │
-│ ✏️ Edit            │
-│ ♻ Regenerate       │
-│ ◀ Prev Variant     │
-│ ▶ Next Variant     │
-│ ↳ Continue         │  ← only for partial/cancelled
-│ 🎭 Impersonate     │  ← only for assistant
-│ 🖼 Generate Image  │
-│ 💬 Caption         │  ← only when attachments present
-│ 🗑 Remove          │  ← red, danger style
-└────────────────────┘
-```
 
 #### Detailed Mode
 
 Actions appear as a **flat button row** always visible below the content:
 
-```
-┌─────────────────────────────────────────┐
-│ Hi there!                               │
-│                                         │
-│ ┌──┐ ┌──┐ ┌──┐ ┌──┐ ┌──┐ ┌──┐ ┌──┐   │
-│ │📋│ │✏️│ │♻ │ │🎭│ │🖼│ │💬│ │🗑│   │
-│ └──┘ └──┘ └──┘ └──┘ └──┘ └──┘ └──┘   │
-└─────────────────────────────────────────┘
-```
 
 - Stats line below buttons: `claude-sonnet | 3.2s | 245t` (collapsible)
 - Variant switcher inline: `◀ 2/4 ▶`

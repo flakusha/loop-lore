@@ -61,14 +61,13 @@ _working set_ from memory and reserve the DB for writes + cold reads. The DB is 
 
 ### Hot / Cold Split
 
-```
-request → Elysia framework (auth → NSFW → rate-limit → i18n)
-            │
-            ▼
-      [Hot Cache Layer]  ─── hit ──► respond from memory (µs)
-            │ miss (single-flight)
-            ▼
-      [Cold DB]  Kysely / bun:sqlite (WAL) ── durable source of truth
+```mermaid
+flowchart TD
+    R["request"]
+    R --> E["Elysia framework: auth, NSFW, rate-limit, i18n"]
+    E --> H["Hot Cache Layer"]
+    H -->|hit| O["respond from memory (microseconds)"]
+    H -->|"miss (single-flight)"| C["Cold DB: Kysely / bun:sqlite (WAL)<br/>durable source of truth"]
 ```
 
 - **Hot layer:** bounded in-memory LRU + TTL, keyed by a canonical cache key

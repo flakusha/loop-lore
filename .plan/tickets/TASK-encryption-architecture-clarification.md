@@ -18,32 +18,23 @@ Two encryption models: **Symmetric** (local/public chats) and **Asymmetric** (e2
 
 ### Symmetric (Local/Public Chats)
 
-```
-Participants share a symmetric key
-  ├── Endpoint for users to exchange keys
-  ├── DB stores encrypted version (AES-256-GCM)
-  ├── Admin and others CANNOT access (unless invited)
-  ├── Explicit sharing required upon invite
-  └── Key rotation on message periods
-```
-
-**Characteristics:**
-
-- Single shared key per chat
-- Key exchange via dedicated endpoint
-- Admin cannot read (zero-knowledge)
-- New participants: explicit key share required
-- Key rotation: automatic on message period boundaries
-- Use case: group chats, team chats, world chats
-
-### Asymmetric (E2E/Private Chats)
-
-```
-Public/private key pairs
-  ├── Only access is required (not privacy)
-  ├── Non-private — content may be shared
-  ├── Access control via key grants
-  └── Admin can manage access (not content)
+```mermaid
+flowchart TB
+    subgraph SYM["Symmetric (Local/Public Chats)"]
+        PSK["Participants share a symmetric key"]
+        PSK --> EKU["Endpoint for users to exchange keys"]
+        PSK --> DBS["DB stores encrypted version (AES-256-GCM)"]
+        PSK --> ADM["Admin and others CANNOT access (unless invited)"]
+        PSK --> EKS["Explicit sharing required upon invite"]
+        PSK --> KRP["Key rotation on message periods"]
+    end
+    subgraph ASY["Asymmetric (E2E/Private Chats)"]
+        PPK["Public/private key pairs"]
+        PPK --> OAR["Only access is required (not privacy)"]
+        PPK --> NPC["Non-private — content may be shared"]
+        PPK --> ACK["Access control via key grants"]
+        PPK --> AMA["Admin can manage access (not content)"]
+    end
 ```
 
 **Characteristics:**

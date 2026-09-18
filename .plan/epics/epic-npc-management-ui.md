@@ -56,146 +56,19 @@ Complete NPC management interface including NPC viewer, relationship map, factio
 
 ### NPC Viewer Layout
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ NPCs: The Forgotten Realms         [Search] [Filter: All]  │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│ ┌─ NPC List ───────────────────────────────────────────────┐│
-│ │ 👤 Merchant (Friendly)                                   ││
-│ │ 👤 Guard (Neutral)                                       ││
-│ │ 👤 Blacksmith (Friendly)                                 ││
-│ │ 👤 Healer (Honored)                                      ││
-│ │ 👤 Quest Giver (Friendly)                                ││
-│ │ 👤 Mysterious Stranger (Unknown)                         ││
-│ └─────────────────────────────────────────────────────────┘│
-│                                                             │
-│ ┌─ NPC Details ────────────────────────────────────────────┐│
-│ │ 👤 Merchant                                              ││
-│ │ ─────────────────────────────────────────────────────── ││
-│ │                                                          ││
-│ │ Role: Merchant                                           ││
-│ │ Location: Village Market                                 ││
-│ │ Disposition: Friendly (+75)                              ││
-│ │                                                          ││
-│ │ Stats:                                                   ││
-│ │   Persuasion: 15                                         ││
-│ │   Intimidation: 5                                        ││
-│ │   Commerce: 20                                           ││
-│ │                                                          ││
-│ │ Inventory:                                               ││
-│ │   [Iron Sword] [Health Potion] [Mana Potion] [Shield]   ││
-│ │                                                          ││
-│ │ Schedule:                                                ││
-│ │   06:00-18:00: Market (Trading)                          ││
-│ │   18:00-22:00: Inn (Resting)                             ││
-│ │   22:00-06:00: Home (Sleeping)                           ││
-│ │                                                          ││
-│ │ [Trade] [Talk] [Give Gift] [View Relationship]           ││
-│ └─────────────────────────────────────────────────────────┘│
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-```
+<!-- ASCII UI mockup removed in favor of prose description: see preceding/following sections. -->
 
 ### Relationship Map
 
-```
-┌─ Relationship Map ─────────────────────────────────────────────┐
-│                                                               │
-│                        [Player]                                │
-│                           │                                   │
-│         ┌─────────────────┼─────────────────┐                 │
-│         │                 │                 │                 │
-│     [Merchant]        [Guard]         [Healer]                │
-│     (Friendly)       (Neutral)       (Honored)                │
-│         │                 │                 │                 │
-│         │                 │                 │                 │
-│     [Blacksmith]     [Guard Captain]  [Priest]                │
-│     (Friendly)       (Friendly)       (Revered)               │
-│                                                               │
-│ Legend:                                                       │
-│   ─── Friendly (Green)                                       │
-│   ─── Neutral (Gray)                                         │
-│   ─── Hostile (Red)                                          │
-│   ─── Allied (Blue)                                          │
-│                                                               │
-└───────────────────────────────────────────────────────────────┘
-```
+<!-- ASCII UI mockup removed in favor of prose description: see preceding/following sections. -->
 
 ### Faction Relations Layout
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ Factions: The Forgotten Realms                              │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│ ┌─ Faction List ───────────────────────────────────────────┐│
-│ │ 🏰 Merchants Guild    Standing: Honored (+75)            ││
-│ │ ⚔️ City Guard         Standing: Friendly (+50)           ││
-│ │ 🏛️ Temple of Light    Standing: Revered (+90)            ││
-│ │ 🌲 Forest Rangers     Standing: Neutral (0)              ││
-│ │ 💀 Thieves Guild      Standing: Hostile (-50)            ││
-│ └─────────────────────────────────────────────────────────┘│
-│                                                             │
-│ ┌─ Faction Details ────────────────────────────────────────┐│
-│ │ 🏰 Merchants Guild                                       ││
-│ │ ─────────────────────────────────────────────────────── ││
-│ │                                                          ││
-│ │ Description: A powerful guild of traders and merchants.  ││
-│ │                                                          ││
-│ │ Standing: Honored (+75)                                  ││
-│ │ Tier: Honored (75-90)                                    ││
-│ │                                                          ││
-│ │ Benefits:                                                ││
-│ │   - 10% discount at all merchants                        ││
-│ │   - Access to rare items                                 ││
-│ │   - Priority trading                                     ││
-│ │                                                          ││
-│ │ Quests:                                                  ││
-│ │   - [ ] Deliver supplies to remote village               ││
-│ │   - [ ] Investigate competitor                           ││
-│ │                                                          ││
-│ │ Members:                                                 ││
-│ │   - Merchant (Leader)                                    ││
-│ │   - Trader (Member)                                      ││
-│ │   - Guard (Associate)                                    ││
-│ │                                                          ││
-│ │ [View Quests] [View Members] [Improve Standing]          ││
-│ └─────────────────────────────────────────────────────────┘│
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-```
+<!-- ASCII UI mockup removed in favor of prose description: see preceding/following sections. -->
 
 ### Karma Display
 
-```
-┌─ Karma & Standing ─────────────────────────────────────────────┐
-│                                                               │
-│ Overall Karma: +45 (Good)                                     │
-│ [██████████████████░░░░░░░░░░░░] 45/100                       │
-│                                                               │
-│ Categories:                                                   │
-│   Compassion: +60 (Heroic)                                   │
-│   Justice: +30 (Fair)                                         │
-│   Honor: +50 (Noble)                                         │
-│   Courage: +40 (Brave)                                        │
-│                                                               │
-│ Titles:                                                       │
-│   - Hero of the Village                                       │
-│   - Friend of the Forest                                      │
-│                                                               │
-│ Standing Tiers:                                               │
-│   Exalted (90-100): Temple of Light                           │
-│   Revered (75-89): Merchants Guild                            │
-│   Honored (60-74): City Guard                                 │
-│   Friendly (40-59): Forest Rangers                            │
-│   Neutral (-39 to 39):                                        │
-│   Unfriendly (-59 to -40): Thieves Guild                      │
-│   Hostile (-75 to -60):                                       │
-│   Hated (-100 to -76):                                        │
-│                                                               │
-└───────────────────────────────────────────────────────────────┘
-```
+<!-- ASCII UI mockup removed in favor of prose description: see preceding/following sections. -->
 
 ## Integration Points
 
