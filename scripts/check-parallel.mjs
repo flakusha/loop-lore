@@ -257,6 +257,9 @@ const checks = {
     // Formatting
     "format - dprint": "bun run format",
     "md - lint": "bun run md:lint",
+    // Mermaid block lint — every ```mermaid fence in docs/ and .plan/ must parse.
+    // mmdlint is headless (jsdom-backed), no browser, bun-native, <30s on the whole tree.
+    "mermaid - lint (mmdlint)": "bun run mermaid:lint",
 
     // Dead-code analysis (knip)
     "dead - code (knip)": "bun run dead:code",
