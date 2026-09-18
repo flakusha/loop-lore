@@ -58,3 +58,14 @@ now-fixed Alpine initialization (cf. BUG-ALPINE-INIT-HYDRATION), the handler res
 correctly and no ReferenceError occurs. The original error was a symptom of the
 Alpine init problem, not a genuine undefined variable. No code change needed. Closing
 as stale-resolved. (An E2E smoke of characters-flow would confirm, but the code path is sound.)
+
+### Re-verification (2026-09-18, dev HEAD a3e6478c2)
+
+The originally reported `ReferenceError: view is not defined` was server-side
+catch-all logging (errors from any page render were attributed to the characters
+flow). The actual fault was a memoirist route collision (`/api/chats/:chatId/...`
+vs `/api/chats/:id/...`) that crashed the entire server bootstrap on every page
+load. Fixed by commit a3e6478c2. After the fix, server-side errors during
+characters-flow have dropped to the unrelated `ReferenceError: process is not
+defined` browser-bundle issue. The `view` variable scope in `gallery.html:24`
+remains correctly nested under the `x-data` parent. No code change to this ticket.
