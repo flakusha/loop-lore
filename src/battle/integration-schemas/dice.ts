@@ -86,34 +86,39 @@ export function rollDice(
   const sides = parseIntOr(type.slice(1,), 6,);
   let { rolls: results, total, } = rollSet(sides, count,);
 
-  // Apply modifiers
+  // Advantage/disadvantage: roll twice, keep higher/lower. Compared RAW
+  // (before bonus/penalty) so both rolls are on equal footing.
+  const hasAdvantage = modifiers.some((m,) => m.type === "advantage");
+  const hasDisadvantage = modifiers.some((m,) => m.type === "disadvantage");
+  let keptIdx = 0;
+  if (hasAdvantage && !hasDisadvantage) {
+    const reroll = rollSet(sides, count,);
+    if (reroll.total > total) {
+      keptIdx = results.length;
+      total = reroll.total;
+      results = [...results, ...reroll.rolls,];
+    }
+  } else if (hasDisadvantage && !hasAdvantage) {
+    const reroll = rollSet(sides, count,);
+    if (reroll.total < total) {
+      keptIdx = results.length;
+      total = reroll.total;
+      results = [...results, ...reroll.rolls,];
+    }
+  }
+
+  // Critical success/failure reflect the KEPT die, not results[0], which
+  // may be the discarded original under advantage/disadvantage.
+  const naturalRoll = results[keptIdx] ?? 0;
+  const criticalSuccess = type === "d20" && naturalRoll === 20;
+  const criticalFailure = type === "d20" && naturalRoll === 1;
+
+  // Bonus/penalty apply once to the final kept total.
   for (const mod of modifiers) {
     if (mod.type === "bonus" || mod.type === "penalty") {
       total += mod.value;
     }
   }
-
-  // Check for advantage/disadvantage (roll twice, take higher/lower)
-  const hasAdvantage = modifiers.some((m,) => m.type === "advantage");
-  const hasDisadvantage = modifiers.some((m,) => m.type === "disadvantage");
-  if (hasAdvantage && !hasDisadvantage) {
-    const advantage = rollSet(sides, count,);
-    if (advantage.total > total) {
-      total = advantage.total;
-      results = [...results, ...advantage.rolls,];
-    }
-  } else if (hasDisadvantage && !hasAdvantage) {
-    const disadvantage = rollSet(sides, count,);
-    if (disadvantage.total < total) {
-      total = disadvantage.total;
-      results = [...results, ...disadvantage.rolls,];
-    }
-  }
-
-  // Check critical success/failure (d20 only)
-  const naturalRoll = results[0] ?? 0;
-  const criticalSuccess = type === "d20" && naturalRoll === 20;
-  const criticalFailure = type === "d20" && naturalRoll === 1;
 
   return {
     type,

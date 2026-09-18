@@ -13,6 +13,7 @@
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
+import { archiveChat, } from "./crud/archive";
 import { copyMessagesToPrimary, createBranchChat, mergeParticipantsIntoPrimary, } from "./split-utils";
 import { injectNarration, } from "./transitions";
 import type { ServiceError, } from "./types";
@@ -191,6 +192,10 @@ export async function reuniteChats(
     secondaryChatId,
     "The party has reunited elsewhere. This branch is now archived.",
   );
+
+  // BUG-reunite-narrates-archived: make the narration true — archive the
+  // secondary so it leaves the active list and stops accepting messages.
+  await archiveChat(database, secondaryChatId, actorId, "user",);
 
   return {
     ok: true,

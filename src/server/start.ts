@@ -117,7 +117,7 @@ export async function start() {
   await seedChatSetupTemplates(database,);
 
   // ── Start HTTP server ──────────────────────────────────────
-  const httpServer = serve({ port: config.server.port, fetch: handleRequest, },);
+  const httpServer = serve({ port: config.server.port, hostname: config.server.host, fetch: handleRequest, },);
   serverLogger.info(`HTTP  → http://localhost:${config.server.port}`,);
 
   // ── HTTPS server (TLS certs configured or auto-generated) ─
@@ -128,6 +128,7 @@ export async function start() {
       const httpsPort = config.server.port + 443;
       httpsServer = serve({
         port: httpsPort,
+        hostname: config.server.host,
         tls: { key: Bun.file(tlsFiles.key,), cert: Bun.file(tlsFiles.cert,), },
         fetch: handleRequest,
       },);

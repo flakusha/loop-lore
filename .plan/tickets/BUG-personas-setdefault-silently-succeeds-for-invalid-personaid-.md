@@ -3,7 +3,7 @@
 
 # BUG: personas setDefault: silently succeeds for invalid personaId with no existence check
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (batch 2)
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (see ## Summary)
@@ -38,6 +38,6 @@ Add an existence check: `const owned = await this.db.selectFrom('personas').sele
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
+- [x] Implementation complete
+- [x] Tests passing
 - [ ] Documentation updated

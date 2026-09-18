@@ -3,7 +3,7 @@
 
 # BUG: chat reunite: secondary chat narrates 'archived' but is never archived
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (batch 2)
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (see ## Summary)
@@ -37,6 +37,6 @@ After the narration, call `archiveChat(database, secondaryChatId, actorId, userR
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
+- [x] Implementation complete
+- [x] Tests passing
 - [ ] Documentation updated
