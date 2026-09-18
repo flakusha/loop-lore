@@ -14,8 +14,7 @@
 **Epic:** epic-item-systems-unification
 **Tags:** items, npc, inventory, trade, frontend
 
-## Summary
-
+**Summary:**
 No frontend exists to **view NPC inventories** or **trade with NPCs**. `TASK-npc-inventory.md` describes the backend but has no UI component. After `TASK-link-npc-inventory.md` replaces the denormalized JSON with `world_items` references, we need a frontend to browse and interact with NPC inventories.
 
 ## Current State
@@ -43,8 +42,7 @@ No frontend exists to **view NPC inventories** or **trade with NPCs**. `TASK-npc
    - NPC disposition affects prices (friendly = better deals)
 4. **GM override** — world owner can directly add/remove items from NPC inventory (provisioning)
 
-## Acceptance Criteria
-
+**Acceptance Criteria:**
 - [ ] NPC inventory viewable in character/NPC detail panel
 - [ ] Items show name, quantity, category, rarity, equipped status
 - [ ] Trading interface: buy from NPC, sell to NPC

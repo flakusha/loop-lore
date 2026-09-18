@@ -18,8 +18,7 @@
 **Epic**: epic-agency-story-points
 **Related**:
 
-## Summary
-
+**Summary:**
 Chat cooldown and buffer management
 
 ## Acceptance

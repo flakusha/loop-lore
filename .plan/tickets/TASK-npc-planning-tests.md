@@ -18,8 +18,7 @@
 **Epic**: epic-agency-story-points
 **Related**:
 
-## Summary
-
+**Summary:**
 Planning, reaction, revision, buffer tests
 
 ## Acceptance

@@ -18,8 +18,7 @@
 **Epic**: epic-social-interaction
 **Related**:
 
-## Summary
-
+**Summary:**
 Implement `should_interact` logic for NPCs
 
 ## Acceptance

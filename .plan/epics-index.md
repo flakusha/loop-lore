@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 288 epics
+**Total:** 289 epics
 
 ## Summary
 
@@ -51,6 +51,7 @@
 | 🔴 Not Started | Asset Platform Capabilities (Messenger/Social Patterns) | Medium | Large (batch-decomposable; each batch ships standalone value) | 7 | [epic-asset-platform-capabilities.md](/.plan/epics/epic-asset-platform-capabilities.md) |
 | 🔴 Not Started | Asset Transform Editing + Metadata | Medium | Medium | 8 | [epic-asset-transform-metadata.md](/.plan/epics/epic-asset-transform-metadata.md) |
 | ⬜ Not Started | Assistant Generation Extensions (SD, Intent, Scenario Source) | Medium | High | 16 | [epic-assistant-generation-extensions.md](/.plan/epics/epic-assistant-generation-extensions.md) |
+| ⬜ Not Started | Assistant Personality — Presets & Character-as-Assistant | High | Medium | 10 | [epic-character-multi-personality.md](/.plan/epics/epic-character-multi-personality.md) |
 | 🟡 In Progress | Assistant/GM Flows Reconciliation | High | High | 13 | [epic-assistant-gm-flows.md](/.plan/epics/epic-assistant-gm-flows.md) |
 | ⬜ Not Started | Audio, Video & Sound Generation | Medium | Very High (split into 5 sub-epics) | 0 | [epic-audio-video-sound.md](/.plan/epics/epic-audio-video-sound.md) |
 | 📝 Planned (this bundle) | Authentication Channel Provisioning — Messenger / E-mail / Federated Login & Unlock | High (security-critical provisioning) | High | 19 | [epic-auth-channel-provisioning.md](/.plan/epics/epic-auth-channel-provisioning.md) |
@@ -107,7 +108,7 @@
 | 🟡 Partial | Encryption & Cryptographic Infrastructure | High | High | 0 | [epic-crypto.md](/.plan/epics/epic-crypto.md) |
 | 🟨 Partial — browser crypto + send path built; receive-decrypt + key-management UI pending | Encryption UI | Medium | Medium | 0 | [epic-frontend-encryption.md](/.plan/epics/epic-frontend-encryption.md) |
 | 🟡 Core Built, Integration Pending | Encryption Workflow | Medium | Medium | 27 | [epic-encryption-workflow.md](/.plan/epics/epic-encryption-workflow.md) |
-| ⬜ Not Started | Enemies & Monsters Systems | Low | Medium | 0 | [epic-enemies-monsters.md](/.plan/epics/epic-enemies-monsters.md) |
+| ⬜ Not Started | Enemies & Monsters Systems | Low | Medium | 13 | [epic-enemies-monsters.md](/.plan/epics/epic-enemies-monsters.md) |
 | ✅ Implemented (updated 2026-07-30 — code audit) | Epic 14: Import/Export & Data Portability | Medium | ~~High~~ Low (remaining work) | 3 | [epic-import-export-io.md](/.plan/epics/epic-import-export-io.md) |
 | Not Started | Epic 16: Observability | medium | Medium | 4 | [epic-observability-telemetry.md](/.plan/epics/epic-observability-telemetry.md) |
 | Draft — description pending (formerly in `chore-docs-reconcile`, worktree merged 2026-08-14)\ | Epic 25: Deployment Topologies & Packaging — Implementation Plan | medium | Medium | 0 | [epic-deployment-topologies.md](/.plan/epics/epic-deployment-topologies.md) |
@@ -233,7 +234,7 @@
 | ⬜ Not Started | NSFW Integration Gaps — Housing, Weather, Social, Disease | High | Medium | 5 | [epic-nsfw-integration-gaps.md](/.plan/epics/epic-nsfw-integration-gaps.md) |
 | ⬜ Not Started | NSFW Interaction UI | P0 — Critical | Medium | 14 | [epic-nsfw-ui.md](/.plan/epics/epic-nsfw-ui.md) |
 | ✅ Complete (merged epic-openapi-reference branch) | OpenAPI-Driven API Reference | P1-High | Medium | 23 | [epic-openapi-reference.md](/.plan/epics/epic-openapi-reference.md) |
-| ⬜ Not Started | Party Migration & Travel | Low | Medium | 0 | [epic-party-migration.md](/.plan/epics/epic-party-migration.md) |
+| ⬜ Not Started | Party Migration & Travel | Low | Medium | 14 | [epic-party-migration.md](/.plan/epics/epic-party-migration.md) |
 | 🟡 In Progress (schema + service + seed hook shipped; resolution integration pending) | Per-World Character Setup & Overlay | High | Medium | 0 | [epic-character-world-setup.md](/.plan/epics/epic-character-world-setup.md) |
 | ⬜ Not Started | Performance Dashboard & SLO Tracking | High | High | 19 | [epic-performance-dashboard-slo.md](/.plan/epics/epic-performance-dashboard-slo.md) |
 | Not Started | Perspective & Voice Control (1st / 3rd / Narrator) | High | Medium | 7 | [epic-perspective-narration-voice.md](/.plan/epics/epic-perspective-narration-voice.md) |
@@ -687,6 +688,15 @@ OpenAPI specification, request validation, rate limiting, telemetry, and resourc
 - **File:** `.plan/epics/epic-assistant-generation-extensions.md`
 
 Extends the Assistant/GM generation surface (see `epic-assistant-gm-flows.md`)
+
+### Assistant Personality — Presets & Character-as-Assistant
+
+- **Status:** ⬜ Not Started
+- **Priority:** High
+- **Effort:** Medium
+- **Type:** Feature Epic
+- **Tags:** assistant, personality, presets, character, gm, tone-of-voice, scenario
+- **File:** `.plan/epics/epic-character-multi-personality.md`
 
 ### Assistant/GM Flows Reconciliation
 

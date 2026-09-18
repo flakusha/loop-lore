@@ -13,8 +13,7 @@
 **Effort:** Medium
 **Related:** epic-faction-reputation.md, epic-worlds-extension.md, epic-social-interaction.md
 
-## Summary
-
+**Summary:**
 Design and implement the schema for **factions** and **per-character standing** so worlds
 can track reputation that shifts available quests/NPCs and persists in world state
 (Undertale-style). Foundation for `epic-faction-reputation.md`.
