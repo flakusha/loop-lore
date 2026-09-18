@@ -4,7 +4,7 @@
 
 # BUG-TEST-SUITE-FLAKY-44-ON-DEV-2026-08-22: Closeout — Resolved by post-Aug-22 commits
 
-**Status:** Not Started
+**Status:** closed
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
