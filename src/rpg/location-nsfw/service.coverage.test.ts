@@ -176,7 +176,7 @@ describe("encounter-facing API (TASK-043)", () => {
     const svc = new LocationNsfwService(db,);
     // Both canonical locations default to private: both clear semi_private.
     const available = await svc.listAvailable(worldId,);
-    expect(available.map((c,) => c.locationId,).sort(),).toEqual(
+    expect(available.map((c,) => c.locationId).sort(),).toEqual(
       [locationId, otherLocationId,].sort(),
     );
   });
@@ -185,7 +185,7 @@ describe("encounter-facing API (TASK-043)", () => {
     const svc = new LocationNsfwService(db,);
     await svc.updateConfig(locationId, { privacyLevel: "public", },);
     const available = await svc.listAvailable(worldId, "private",);
-    expect(available.map((c,) => c.locationId,),).toEqual([otherLocationId,],);
+    expect(available.map((c,) => c.locationId),).toEqual([otherLocationId,],);
   });
 
   test("listAvailable returns empty for a world with no locations", async () => {

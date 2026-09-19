@@ -261,8 +261,8 @@ describe("fulfill (TASK-037)", () => {
       .where("actor_id", "=", "actor-rival",)
       .where("target_actor_id", "=", "actor-hero",)
       .selectAll()
-      .executeTakeFirst()
-      ?? await db.selectFrom("character_intimacy",)
+      .executeTakeFirst() ??
+      await db.selectFrom("character_intimacy",)
         .where("actor_id", "=", "actor-hero",)
         .where("target_actor_id", "=", "actor-rival",)
         .selectAll()

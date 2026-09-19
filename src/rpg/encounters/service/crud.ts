@@ -78,7 +78,17 @@ export async function createEncounter(
   db: Kysely<DB>,
   opts: CreateEncounterOpts,
 ): Promise<NsfwEncounter> {
-  const { worldId, locationId, encounterType, intensity, narrativeStyle, participants, phases, outcomes, contentTags, } = opts;
+  const {
+    worldId,
+    locationId,
+    encounterType,
+    intensity,
+    narrativeStyle,
+    participants,
+    phases,
+    outcomes,
+    contentTags,
+  } = opts;
 
   const { id, now, } = nowAndId();
 
@@ -181,7 +191,7 @@ export async function createEncounter(
         source_id: id,
         started_at: now,
         expires_at: null,
-        meta: jsonStringifyOr({ location_id: locationId, }),
+        meta: jsonStringifyOr({ location_id: locationId, },),
       },)
       .execute();
   }

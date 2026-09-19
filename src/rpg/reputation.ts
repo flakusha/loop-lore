@@ -4,7 +4,7 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
-import { uid, } from "../utils";
+import { calculateEncounterReputationChange, } from "../nsfw/social-integration";
 import {
   applyReputationChange as applyCanonicalChange,
   createReputationScore as createCanonicalScore,
@@ -12,7 +12,7 @@ import {
   type ReputationScore,
   type ReputationSource,
 } from "../schemas/reputation";
-import { calculateEncounterReputationChange, } from "../nsfw/social-integration";
+import { jsonParseOr, jsonStringifyOr, uid, } from "../utils";
 import { getActiveEffects, } from "./status-effects";
 
 /**
@@ -80,13 +80,15 @@ export class ReputationService {
         source_id: source,
         started_at: new Date().toISOString(),
         expires_at: null,
-        meta: JSON.stringify({
-          event: "nsfw.reputation_changed",
-          actor: actorId,
-          axis,
-          delta,
-          source,
-        } satisfies ReputationChangedPayload & { event: string },),
+        meta: jsonStringifyOr(
+          {
+            event: "nsfw.reputation_changed",
+            actor: actorId,
+            axis,
+            delta,
+            source,
+          } satisfies ReputationChangedPayload & { event: string },
+        ),
       },)
       .execute();
     getLogger().child({ module: "reputation", },)
@@ -108,18 +110,14 @@ export class ReputationService {
     axis: "private" | "public" | "group" = "private",
     source: ReputationSource = "nsfw",
   ): Promise<ReputationScore> {
-    let score = createCanonicalScore({ source, });
+    let score = createCanonicalScore({ source, },);
     const rows = await getActiveEffects(this.db, actorId, { category: "reputation", },);
     const axisRows = [] as typeof rows;
     for (const row of rows) {
-      try {
-        const meta = row.meta ? JSON.parse(row.meta,) as { axis?: unknown } : {};
-        if (meta.axis === undefined || meta.axis === axis) { axisRows.push(row,); }
-      } catch {
-        axisRows.push(row,);
-      }
+      const meta = row.meta ? jsonParseOr(row.meta, {} as { axis?: unknown },) : {};
+      if (meta.axis === undefined || meta.axis === axis) { axisRows.push(row,); }
     }
-    axisRows.sort((a, b,) => a.startedAt.localeCompare(b.startedAt,),);
+    axisRows.sort((a, b,) => a.startedAt.localeCompare(b.startedAt,));
     for (const row of axisRows) {
       score = applyCanonicalChange(score, row.magnitude, row.sourceId ?? row.source, {
         actor_id: actorId,
@@ -143,13 +141,9 @@ export class ReputationService {
     for (const row of rows) {
       let axis = "private";
       let reason = row.sourceId ?? row.source;
-      try {
-        const meta = row.meta ? JSON.parse(row.meta,) as { axis?: unknown; reason?: unknown } : {};
-        if (typeof meta.axis === "string") { axis = meta.axis; }
-        if (typeof meta.reason === "string") { reason = meta.reason; }
-      } catch {
-        // fall through with defaults
-      }
+      const meta = row.meta ? jsonParseOr(row.meta, {} as { axis?: unknown; reason?: unknown },) : {};
+      if (typeof meta.axis === "string") { axis = meta.axis; }
+      if (typeof meta.reason === "string") { reason = meta.reason; }
       if (axis === "public" || axis === "group" || Math.abs(row.magnitude,) >= 10) {
         const tone = row.magnitude >= 0 ? "fondly" : "darkly";
         rumors.push(`They speak ${tone} of ${actorId} (${axis}, ${reason})`,);
@@ -176,7 +170,11 @@ export class ReputationService {
     intimacyLevel: number,
   ): Promise<ReputationScore> {
     const change = calculateEncounterReputationChange(
-      encounterId, actorId, success, socialContext, intimacyLevel,
+      encounterId,
+      actorId,
+      success,
+      socialContext,
+      intimacyLevel,
     );
     return this.applyDelta(actorId, `${encounterId}:${change.reason}`, change.reputationChange, socialContext,);
   }

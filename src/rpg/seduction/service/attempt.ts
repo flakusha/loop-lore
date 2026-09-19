@@ -12,16 +12,16 @@ import {
   getSeductionPrerequisites,
   type SocialSkillForNSFW,
 } from "../../../nsfw/seduction-prerequisites";
-import { getArousal, modifyArousal, } from "./arousal";
-import { getActiveEffects, } from "../../status-effects";
-import { getDesireProfile, } from "./desire";
-import { awardXp, getActorSkills, } from "./skills";
-import type { SeductionAttemptOpts, SeductionResult, SeductionSkill, } from "./types";
 import { rollDice, } from "../../dice";
+import { FantasyService, } from "../../fantasies/service";
 import { logXp, } from "../../service/xp";
 import { getModifier, } from "../../stats/modifiers";
 import type { StatBlock, } from "../../stats/types";
-import { FantasyService, } from "../../fantasies/service";
+import { getActiveEffects, } from "../../status-effects";
+import { getArousal, modifyArousal, } from "./arousal";
+import { getDesireProfile, } from "./desire";
+import { awardXp, getActorSkills, } from "./skills";
+import type { SeductionAttemptOpts, SeductionResult, SeductionSkill, } from "./types";
 
 /**
  * Bijective map between NSFW social skills and the physical seduction skill
@@ -131,9 +131,9 @@ function classifyApproachCategory(approach: string,): FantasyCategory | undefine
     degradation: ["degrad", "humiliat",],
     praise: ["praise", "compliment", "beautiful",],
   };
-  for (const [category, tokens] of Object.entries(aliases,)) {
+  for (const [category, tokens,] of Object.entries(aliases,)) {
     if (
-      text.includes(category.replaceAll("_", " ",)) ||
+      text.includes(category.replaceAll("_", " ",),) ||
       tokens.some((token,) => text.includes(token,))
     ) {
       return category as FantasyCategory;
@@ -189,7 +189,19 @@ async function settleAttempt(args: {
   /** Content-intensity tier bounding the arousal ceiling (TASK-034). */
   intensityTier?: ContentIntensity;
 },): Promise<void> {
-  const { db, log, actorId, targetId, skillCategory, worldId, relevantSkill, success, arousalDelta, xpGained, intensityTier, } = args;
+  const {
+    db,
+    log,
+    actorId,
+    targetId,
+    skillCategory,
+    worldId,
+    relevantSkill,
+    success,
+    arousalDelta,
+    xpGained,
+    intensityTier,
+  } = args;
   // Apply arousal change to target (TASK-034): tier ceiling enforced.
   if (arousalDelta !== 0) {
     await modifyArousal(db, targetId, arousalDelta, worldId, `seduction:${skillCategory}`, intensityTier,);
@@ -220,7 +232,9 @@ async function settleAttempt(args: {
       sourceId: `${actorId}:${skillCategory}`,
     },);
   } catch (cause) {
-    log.warn(`Mood follow-through skipped for ${targetId}:`, { error: cause instanceof Error ? cause.message : String(cause), },);
+    log.warn(`Mood follow-through skipped for ${targetId}:`, {
+      error: cause instanceof Error ? cause.message : String(cause,),
+    },);
   }
 }
 
@@ -302,7 +316,7 @@ export async function attemptSeduction(db: Kysely<DB>, opts: SeductionAttemptOpt
   // as active `physical` status rows, never by querying ChemistryService.
   const pheromones = await getActiveEffects(db, targetId, { category: "physical", },);
   const pheromoneDcBonus = pheromones
-    .filter((e,) => e.effectId === "aphrodisiac" || e.effectId.startsWith("pheromone_") || e.effectId === "arousal",)
+    .filter((e,) => e.effectId === "aphrodisiac" || e.effectId.startsWith("pheromone_",) || e.effectId === "arousal")
     .reduce((total, e,) => total - 5 * e.magnitude, 0,);
 
   // Calculate DC based on target's state
@@ -346,7 +360,19 @@ export async function attemptSeduction(db: Kysely<DB>, opts: SeductionAttemptOpt
   const intimacyDelta = success ? Math.floor(3 + skillLevel * 0.1,) : -2;
   const xpGained = success ? 15 + Math.floor(dc / 5,) : 5;
 
-  await settleAttempt({ db, log, actorId, targetId, skillCategory, worldId, relevantSkill, success, arousalDelta, xpGained, intensityTier: opts.intensityTier, },);
+  await settleAttempt({
+    db,
+    log,
+    actorId,
+    targetId,
+    skillCategory,
+    worldId,
+    relevantSkill,
+    success,
+    arousalDelta,
+    xpGained,
+    intensityTier: opts.intensityTier,
+  },);
 
   // Build description
   const description = success
