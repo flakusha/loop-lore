@@ -3202,7 +3202,6 @@ export async function insertBlogTags(db: Db, post_id: string, tag: string, opts?
     ...opts,
   } as any,).execute();
 }
-
 /** Insert a memory_audit_log row. */
 export async function insertMemoryAuditLog(
   db: Db,
@@ -3241,7 +3240,6 @@ export async function insertCharacterLicenseHistory(
     ...opts,
   } as any,).execute();
 }
-
 /** Insert a actor_memories row. */
 export async function insertActorMemories(
   db: Db,
