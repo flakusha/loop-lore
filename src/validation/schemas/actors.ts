@@ -60,6 +60,12 @@ export const ActorUpdateBody = t.Object({
   avatarFocusY: t.Optional(t.Number(),),
   /** Optimistic-concurrency version from the prior GET response. CHAR-1. */
   dataVersion: t.Optional(t.Integer({ minimum: 0, },),),
+}, {
+  // TASK-031: pass unknown keys through instead of silently stripping them
+  // so the character/world boundary guard can reject misdirected
+  // world-owned fields with 422 (the handler still writes only declared
+  // fields).
+  additionalProperties: true,
 },);
 
 export const ActorIdParams = t.Object({
