@@ -20,9 +20,23 @@ const BASE: EditFormValues = {
   avatarRemoveBtn: '<button id="remove-avatar">Remove</button>',
   characterId: "actor-aria",
   contentRating: "nsfw_moderate",
+  dataVersion: 4,
+  avatarFocusX: 50,
+  avatarFocusY: 50,
 };
 
 describe("views/character-edit-form", () => {
+  test("renders avatar focus sliders with saved values", () => {
+    const html = buildEditFormHtml({ ...BASE, avatarFocusX: 25, avatarFocusY: 80, },);
+    expect(html,).toContain('id="edit-avatar-focus-x"',);
+    expect(html,).toContain('id="edit-avatar-focus-y"',);
+    expect(html,).toContain('value="25"',);
+    expect(html,).toContain('value="80"',);
+    expect(html,).toContain("updateAvatarFocusPreview",);
+    expect(html,).toContain('id="char-data-version" value="4"',);
+    expect(html,).toContain('id="char-avatar-id" value="av1"',);
+  });
+
   test("renders core fields", () => {
     const html = buildEditFormHtml(BASE,);
     expect(html,).toContain("Aria",);

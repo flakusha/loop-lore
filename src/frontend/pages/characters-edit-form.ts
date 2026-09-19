@@ -6,6 +6,7 @@
 // declared in loaders.d.ts but never implemented. Fields mirror the fields
 // serveCharacterEditForm renders; the PUT contract is ActorUpdateBody.
 
+import { avatarFocusPosition, } from "../alpine/avatar-focus";
 import { jsonBody, } from "../alpine/json";
 import { feFetch, } from "../fe-fetch";
 import { showToast, } from "../ui";
@@ -17,6 +18,33 @@ import { escapeHtml, } from "./shared";
 function editField(id: string,): string {
   return document.querySelector<HTMLInputElement | HTMLTextAreaElement>(`#${id}`,)?.value ?? "";
 }
+
+/**
+ * Numeric field reader — undefined when the element is missing or empty so
+ * JSON.stringify drops the key and the stored value stays untouched.
+ * @param id
+ */
+function editNumberField(id: string,): number | undefined {
+  const raw = editField(id,);
+  if (raw === "") { return undefined; }
+  const n = Number(raw,);
+  return Number.isFinite(n,) ? n : undefined;
+}
+
+/** Apply the slider values to the avatar preview crop + value readouts. */
+globalThis.updateAvatarFocusPreview = function() {
+  for (const axis of ["x", "y",] as const) {
+    const val = document.querySelector(`#edit-avatar-focus-${axis}-val`,);
+    const slider = document.querySelector<HTMLInputElement>(`#edit-avatar-focus-${axis}`,);
+    if (val && slider) { val.textContent = slider.value; }
+  }
+  const img = document.querySelector<HTMLElement>("#avatar-preview img",);
+  if (!img) { return; }
+  img.style.objectPosition = avatarFocusPosition({
+    focusX: editNumberField("edit-avatar-focus-x",),
+    focusY: editNumberField("edit-avatar-focus-y",),
+  },);
+};
 
 globalThis.saveCharacterEdit = async function(characterId: string,) {
   const body = jsonBody({
@@ -35,6 +63,11 @@ globalThis.saveCharacterEdit = async function(characterId: string,) {
     avatarAssetId: editField("char-avatar-id",) || null,
     // 5-tier NSFW content rating; unchanged when the selector is absent.
     contentRating: editField("edit-content-rating",) || undefined,
+    // Avatar crop focus percentages; omitted when the sliders are absent.
+    avatarFocusX: editNumberField("edit-avatar-focus-x",),
+    avatarFocusY: editNumberField("edit-avatar-focus-y",),
+    // CHAR-1 optimistic concurrency: version captured when the form loaded.
+    dataVersion: editNumberField("char-data-version",),
   },);
   try {
     const res = await feFetch(`/api/actors/${characterId}`, {

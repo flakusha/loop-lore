@@ -105,6 +105,8 @@ export function chatState() {
       height?: number;
       alt_text?: string;
     }[],
+    galleryPage: 1,
+    galleryTotal: 0,
     userDisplayName: t("common.user",),
     userRole: "solo",
     currentCharacter: null as {

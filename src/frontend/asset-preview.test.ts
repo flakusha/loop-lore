@@ -137,7 +137,7 @@ const previewHost = globalThis as unknown as {
   openAssetPreview?: (id: string,) => Promise<void>;
   copyAssetUrl?: () => Promise<void>;
   downloadAsset?: () => Promise<void>;
-  deleteAssetPreview?: () => Promise<void>;
+  deleteAssetPreview?: () => Promise<boolean>;
   confirm?: (message: string,) => boolean;
   htmx?: { trigger(el: unknown, evt: string,): void };
 };
@@ -349,24 +349,23 @@ describe("downloadAsset", () => {
 
 describe("deleteAssetPreview", () => {
   test("deletes after confirm and closes the modal; guards and errors otherwise", async () => {
-    await previewHost.deleteAssetPreview!();
-    expect(calls,).toEqual([],); // no asset → nothing sent
+    expect(await previewHost.deleteAssetPreview!(),).toBe(false,); // no asset → nothing sent
     serveAsset(IMAGE,);
     await previewHost.openAssetPreview!("a1",);
     const afterOpen = calls.length;
     confirmAnswer = false;
-    await previewHost.deleteAssetPreview!();
-    expect(calls.length,).toBe(afterOpen,); // declined confirm → no DELETE sent
+    expect(await previewHost.deleteAssetPreview!(),).toBe(false,); // declined confirm → no DELETE
+    expect(calls.length,).toBe(afterOpen,);
     confirmAnswer = true;
     feHandler = () => {
       throw new Error("offline",); // network failure → module catch → toast
     };
-    await previewHost.deleteAssetPreview!();
+    expect(await previewHost.deleteAssetPreview!(),).toBe(false,);
     expect(doc.querySelector("#preview-modal",)!.classList.contains("open",),).toBe(true,);
     expect(doc.querySelector("#toast-container",)!.children[0]!.className,).toBe("toast error",);
     feHandler = null;
     serveAsset(IMAGE,);
-    await previewHost.deleteAssetPreview!();
+    expect(await previewHost.deleteAssetPreview!(),).toBe(true,); // success signal
     expect(calls.at(-1,)?.opts.method,).toBe("DELETE",);
     expect(doc.querySelector("#preview-modal",)!.classList.contains("open",),).toBe(false,);
     expect(previewHost.__previewAsset,).toBeNull();

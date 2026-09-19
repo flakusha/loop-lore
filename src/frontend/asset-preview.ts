@@ -188,9 +188,9 @@ export async function downloadAsset(): Promise<void> {
   }
 }
 
-export async function deleteAssetPreview(): Promise<void> {
+export async function deleteAssetPreview(): Promise<boolean> {
   const a = globalThis.__previewAsset;
-  if (!a?.id || !confirm("Delete this asset?",)) { return; }
+  if (!a?.id || !confirm("Delete this asset?",)) { return false; }
   const { showToast, } = await import("./ui");
   try {
     const res = await feFetch(`/api/assets/${a.id}`, { method: "DELETE", },);
@@ -202,10 +202,12 @@ export async function deleteAssetPreview(): Promise<void> {
       if (grid) {
         (globalThis.htmx as { trigger(el: HTMLElement, evt: string,): void }).trigger(grid as HTMLElement, "load",);
       }
+      return true;
     }
   } catch {
     showToast("error", "Failed to delete",);
   }
+  return false;
 }
 
 // Single attachment point; loaders.d.ts derives these ambient signatures
