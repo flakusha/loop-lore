@@ -142,6 +142,7 @@ const DOMAIN_MAP: Record<string, string> = {
   emotions: "character",
   character_emotions: "character",
   character_availability: "character",
+  character_license_history: "character",
   character_licensing: "character",
   admin_character_overrides: "character",
   character_intimacy: "character",

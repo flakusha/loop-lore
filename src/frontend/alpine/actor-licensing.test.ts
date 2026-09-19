@@ -274,3 +274,29 @@ describe("actorLicensingFactory", () => {
     expect(b._licActorId,).toBe("actor-b",);
   });
 });
+
+describe("actorLicensing.loadLicenseHistory", () => {
+  test("populates history on 200 and clears on failure", async () => {
+    const ctx = baseCtx();
+    handler = async () =>
+      Response.json([
+        {
+          id: "h-1",
+          license_type: "removed",
+          attribution: null,
+          changed_by: "owner",
+          created_at: "2026-01-02T00:00:00.000Z",
+        },
+      ],);
+    ctx.setActorId("actor-1",);
+    await flush();
+    expect(ctx.licenseHistory.length,).toBeGreaterThanOrEqual(1,);
+    expect(ctx.licenseHistory[0]?.license_type,).toBe("removed",);
+
+    handler = async () => Response.json({}, { status: 500, },);
+    ctx.licenseDirty = true;
+    ctx.setActorId("actor-2",);
+    await flush();
+    expect(ctx.licenseHistory,).toEqual([],);
+  });
+});

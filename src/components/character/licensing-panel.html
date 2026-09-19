@@ -135,4 +135,21 @@
       Add licensing
     </button>
   </div>
+
+  <!-- License change history (audit) -->
+  <div
+    class="licensing-history"
+    x-show="!licenseLoading && licenseHistory.length > 0"
+    data-testid="licensing-history"
+  >
+    <h5 class="licensing-history-title">History</h5>
+    <ul class="licensing-history-list">
+      <template x-for="entry in licenseHistory" :key="entry.id">
+        <li class="licensing-history-entry" data-testid="licensing-history-entry">
+          <span x-text="describeLicense(entry.license_type)"></span>
+          <span class="licensing-history-date" x-text="new Date(entry.created_at).toLocaleString()"></span>
+        </li>
+      </template>
+    </ul>
+  </div>
 </section>

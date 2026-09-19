@@ -242,4 +242,31 @@ describe("character-licensing routes", () => {
       .executeTakeFirst();
     expect(row,).toBeUndefined();
   });
+
+  test("license history requires auth and ownership", async () => {
+    const anon = await makeApp(db,).handle(
+      new Request(`http://localhost/api/actors/${MEMBER_ACTOR}/licensing/history`,),
+    );
+    expect(anon.status,).toBe(401,);
+
+    const other = await makeApp(db, "member", "user",).handle(
+      new Request(`http://localhost/api/actors/${OWNER_ACTOR}/licensing/history`,),
+    );
+    expect(other.status,).toBe(404,);
+  });
+
+  test("license changes are recorded in the audit history", async () => {
+    // MEMBER_ACTOR accumulated create → update → delete across the tests above.
+    const res = await makeApp(db, "member", "user",).handle(
+      new Request(`http://localhost/api/actors/${MEMBER_ACTOR}/licensing/history`,),
+    );
+    expect(res.status,).toBe(200,);
+    const history = await res.json() as Array<{ license_type: string; changed_by: string }>;
+    expect(history.length,).toBeGreaterThanOrEqual(3,);
+    expect(history[0]?.license_type,).toBe("removed",); // newest first
+    expect(history.every((h,) => h.changed_by === "member"),).toBe(true,);
+    const types = history.map((h,) => h.license_type);
+    expect(types,).toContain("custom",);
+    expect(types,).toContain("proprietary",);
+  });
 });
