@@ -1,0 +1,20 @@
+<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 giwt Contributors -->
+
+# TASK: Observability, Telemetry & Analytics
+
+**Status:** ⬜ Not Started
+**Priority:** medium
+**Effort:** Large
+**Epic:** epic-analytics-observability
+**Tags:** observability, telemetry
+
+## Summary
+
+Implement observability, telemetry & analytics per docs/spec/observability.md.
+
+## Acceptance Criteria
+
+- [ ] Implementation complete
+- [ ] Tests passing
+- [ ] Documentation updated

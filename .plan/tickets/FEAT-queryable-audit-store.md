@@ -1,0 +1,21 @@
+<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 giwt Contributors -->
+
+# FEAT: Queryable Audit Store
+
+**Status:** ⬜ Not Started
+**Priority:** high
+**Effort:** Large
+**Epic:** proposed:epic-audit-store
+**Tags:** audit, logging
+
+## Summary
+
+Implement queryable, tamper-evident audit log (who/called what/on what/result); distinct from logger/.
+Source: docs/meta/assessments/agentic-workspace.md.
+
+## Acceptance Criteria
+
+- [ ] Implementation complete
+- [ ] Tests passing
+- [ ] Documentation updated
