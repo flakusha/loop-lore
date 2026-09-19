@@ -111,8 +111,14 @@ describeReal("Assets E2E", () => {
     },);
     expect(linkRes.ok,).toBe(true,);
 
-    // The :linkId path param is vestigial — the body's entityType/entityId drive the unlink
-    const unlinkRes = await api.del(`/api/assets/${assetId}/links/any-link-id`, {
+    // :linkId is the linked entity's id; unknown ids are a 404
+    const badLinkRes = await api.del(`/api/assets/${assetId}/links/ghost-entity`, {
+      entityType: "chat",
+      entityId: SEED.chat.id,
+    },);
+    expect(badLinkRes.status,).toBe(404,);
+
+    const unlinkRes = await api.del(`/api/assets/${assetId}/links/${SEED.chat.id}`, {
       entityType: "chat",
       entityId: SEED.chat.id,
     },);
