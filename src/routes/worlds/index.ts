@@ -4,6 +4,7 @@
 import { Elysia, } from "elysia";
 import { chatsRoutes, } from "./chats";
 import { fractalLocationsRoutes, } from "./fractal-locations-routes";
+import { fractalTravelRoutes, } from "./fractal-travel-routes";
 import { locationRoutes, } from "./locations-routes";
 import { timelinesRoutes, } from "./timelines";
 import type { HandleOpts, } from "./types";
@@ -18,5 +19,6 @@ export function worldsRoutes(opts: HandleOpts, prefix = "/api",) {
     .use(locationRoutes(opts, prefix,),)
     .use(chatsRoutes(opts, prefix,),)
     .use(timelinesRoutes(opts, prefix,),)
-    .use(fractalLocationsRoutes(opts, prefix,),);
+    .use(fractalLocationsRoutes(opts, prefix,),)
+    .use(fractalTravelRoutes(opts, prefix,),);
 }
