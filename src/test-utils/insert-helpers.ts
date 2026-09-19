@@ -3189,6 +3189,29 @@ export async function insertBlogTags(db: Db, post_id: string, tag: string, opts?
   } as any,).execute();
 }
 
+/** Insert a character_license_history row. */
+export async function insertCharacterLicenseHistory(
+  db: Db,
+  actor_id: string,
+  license_type: string,
+  allow_derivatives: number,
+  allow_commercial: number,
+  share_alike: number,
+  changed_by: string,
+  opts?: { id?: string; custom_license_text?: string | null; attribution?: string | null; created_at?: string },
+): Promise<void> {
+  await db.insertInto("character_license_history",).values({
+    id: crypto.randomUUID(),
+    actor_id,
+    license_type,
+    allow_derivatives,
+    allow_commercial,
+    share_alike,
+    changed_by,
+    ...opts,
+  } as any,).execute();
+}
+
 /** Insert a actor_memories row. */
 export async function insertActorMemories(
   db: Db,

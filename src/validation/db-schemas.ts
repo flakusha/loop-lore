@@ -2326,6 +2326,19 @@ export const BlogTagsSchema = t.Object({
   tag: t.String(),
 },);
 
+// ── character_license_history ────────────────────────────────────────────
+export const CharacterLicenseHistorySchema = t.Object({
+  actor_id: t.String(),
+  license_type: t.String(),
+  allow_derivatives: t.Number(),
+  allow_commercial: t.Number(),
+  share_alike: t.Number(),
+  changed_by: t.String(),
+  custom_license_text: t.Optional(t.String(),),
+  attribution: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+},);
+
 // ── actor_memories ────────────────────────────────────────────
 export const ActorMemoriesSchema = t.Object({
   actor_id: t.String(),
