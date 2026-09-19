@@ -54,6 +54,7 @@ export interface Assets {
   content_hash: string | null;
   data_version: Generated<number>;
   record_hash: Generated<string>;
+  thumbnail_path: string | null;
 }
 
 // ── asset_tags ────────────────────────────────────────────

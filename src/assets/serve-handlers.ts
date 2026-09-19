@@ -1,25 +1,24 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 345
 
 /**
- * Asset serve handlers — raw / download / thumb / compressed.
+ * Asset serve handlers for compressed variants (thumb/compressed). Raw and
+ * download live in ./serve-raw.ts (extracted to keep this file under the
+ * per-module size-strict gate).
  *
  * Shared by the live router (controller.ts). A valid signed-URL token
  * replaces session auth on these paths; otherwise the actor access check
  * (`canAccessAsset`) applies.
  */
 import type { Kysely, } from "kysely";
-import { existsSync, } from "node:fs";
-import { IMMUTABLE_CACHE_MAX_AGE, } from "../config/constants";
 import type { Config, } from "../config/schema";
-import { deriveChatKeyForChat, getSmk, } from "../crypto";
 import type { DB, } from "../db/schema";
 import { forbiddenResponse, notFoundResponse, } from "../routes/http-utils";
 import { serveFile, } from "./serve-file";
-import { canAccessAsset, getAsset, getAssetData, getAssetFilePath, } from "./service";
+import { canAccessAsset, getAsset, getAssetFilePath, } from "./service";
 import type { AssetRecord, } from "./service";
 import { resolveSignedUrlSecret, type SignedUrlAction, verifyAssetUrl, } from "./signed-url";
+import { resolveCompressedVariantPath, } from "./variant-path";
 
 /** Serve-options for raw bytes and downloads (also compressed variants). */
 export interface ServeRawOpts {
@@ -116,7 +115,7 @@ export function signedUrlAuth(
  * @param opts - Serve request fields incl. optional signed-URL auth.
  * @returns The resolved asset, or a `Response` on auth failure.
  */
-async function resolveForServe(
+export async function resolveForServe(
   opts: Pick<ServeRawOpts, "database" | "assetId" | "actorId" | "actorRole"> & SignedUrlAuth,
 ): Promise<ResolvedAsset | Response> {
   if (opts.signedUrlToken) {
@@ -145,79 +144,6 @@ async function resolveForServe(
     return { asset, };
   }
   return resolveAsset(opts.database, opts.assetId, opts.actorId, opts.actorRole,);
-}
-
-/**
- * Serve the original file (raw bytes, decrypting chat-encrypted assets).
- * @param root0
- * @param root0.database
- * @param root0.assetId
- * @param root0.uploadDir
- * @param root0.actorId
- * @param root0.actorRole
- * @param root0.chatId
- * @param root0.signedUrlSecret
- * @param root0.signedUrlToken
- * @param root0.signedUrlExpires
- * @param root0.signedUrlAction
- * @returns Raw asset bytes response.
- */
-export async function handleServeRaw({
-  database,
-  assetId,
-  uploadDir,
-  actorId,
-  actorRole,
-  chatId,
-  signedUrlSecret,
-  signedUrlToken,
-  signedUrlExpires,
-  signedUrlAction,
-}: ServeRawOpts & { chatId?: string },): Promise<Response> {
-  const resolved = await resolveForServe({
-    database,
-    assetId,
-    actorId,
-    actorRole,
-    signedUrlSecret,
-    signedUrlToken,
-    signedUrlExpires,
-    signedUrlAction,
-  },);
-  if (resolved instanceof Response) { return resolved; }
-
-  const { asset, } = resolved;
-
-  // If asset is encrypted, try to decrypt
-  if (asset.encryption_tier !== "public" && asset.encrypted_key_id) {
-    try {
-      // Get SMK and derive chat key if chatId provided
-      const smk = getSmk();
-      if (!smk || !chatId) {
-        return new Response("Encrypted asset requires chat context", { status: 400, },);
-      }
-
-      const chatKey = await deriveChatKeyForChat(database, chatId, smk,);
-      const decryptedData = await getAssetData(database, assetId, uploadDir, chatKey,);
-
-      if (!decryptedData) {
-        return notFoundResponse("Failed to decrypt asset",);
-      }
-
-      return new Response(new Uint8Array(decryptedData,), {
-        headers: {
-          "Content-Type": asset.mime_type,
-          "Cache-Control": `public, max-age=${IMMUTABLE_CACHE_MAX_AGE}, immutable`,
-          "X-Content-Type-Options": "nosniff",
-        },
-      },);
-    } catch {
-      return new Response("Failed to decrypt asset", { status: 500, },);
-    }
-  }
-
-  // Non-encrypted asset — serve directly
-  return serveFile(getAssetFilePath(uploadDir, asset.storage_path,), asset.mime_type,);
 }
 
 /**
@@ -259,85 +185,16 @@ export async function handleServeCompressed({
   },);
   if (resolved instanceof Response) { return resolved; }
 
-  const subDir = `${assetId.slice(0, 2,)}/${assetId.slice(2, 4,)}`;
-  const compressedPath = `compressed/${subDir}/${assetId}_${variant}.webp`;
-  const fullPath = getAssetFilePath(uploadDir, compressedPath,);
+  const fullPath = resolveCompressedVariantPath({
+    uploadDir,
+    assetId,
+    variant,
+    thumbnailPath: resolved.asset.thumbnail_path,
+  },);
 
-  // Fall back to raw if no compressed variant
-  if (!existsSync(fullPath,)) {
+  // Fall back to raw if no compressed variant exists
+  if (!fullPath) {
     return serveFile(getAssetFilePath(uploadDir, resolved.asset.storage_path,), resolved.asset.mime_type,);
   }
   return serveFile(fullPath, "image/webp",);
-}
-
-/**
- * Serve the original file as an attachment download.
- * @param root0
- * @param root0.database
- * @param root0.assetId
- * @param root0.uploadDir
- * @param root0.actorId
- * @param root0.actorRole
- * @param root0.chatId
- * @param root0.signedUrlSecret
- * @param root0.signedUrlToken
- * @param root0.signedUrlExpires
- * @param root0.signedUrlAction
- * @returns Asset download response.
- */
-export async function handleDownload({
-  database,
-  assetId,
-  uploadDir,
-  actorId,
-  actorRole,
-  chatId,
-  signedUrlSecret,
-  signedUrlToken,
-  signedUrlExpires,
-  signedUrlAction,
-}: ServeRawOpts & { chatId?: string },): Promise<Response> {
-  const resolved = await resolveForServe({
-    database,
-    assetId,
-    actorId,
-    actorRole,
-    signedUrlSecret,
-    signedUrlToken,
-    signedUrlExpires,
-    signedUrlAction,
-  },);
-  if (resolved instanceof Response) { return resolved; }
-  const { asset, } = resolved;
-  const safeName = asset.filename.replaceAll(/[^\w.-]+/g, "_",);
-
-  // If asset is encrypted, try to decrypt
-  if (asset.encryption_tier !== "public" && asset.encrypted_key_id) {
-    try {
-      const smk = getSmk();
-      if (!smk || !chatId) {
-        return new Response("Encrypted asset requires chat context", { status: 400, },);
-      }
-
-      const chatKey = await deriveChatKeyForChat(database, chatId, smk,);
-      const decryptedData = await getAssetData(database, assetId, uploadDir, chatKey,);
-
-      if (!decryptedData) {
-        return notFoundResponse("Failed to decrypt asset",);
-      }
-
-      return new Response(new Uint8Array(decryptedData,), {
-        headers: {
-          "Content-Type": asset.mime_type,
-          "Content-Disposition": `attachment; filename="${safeName}"`,
-        },
-      },);
-    } catch {
-      return new Response("Failed to decrypt asset", { status: 500, },);
-    }
-  }
-
-  return serveFile(getAssetFilePath(uploadDir, asset.storage_path,), asset.mime_type, {
-    extraHeaders: { "Content-Disposition": `attachment; filename="${safeName}"`, },
-  },);
 }

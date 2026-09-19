@@ -35,6 +35,7 @@ export interface AssetRecord {
   encryption_tier: string;
   encrypted_key_id: string | null;
   alpha_status: AssetAlphaStatus;
+  thumbnail_path: string | null;
 }
 
 /** */
