@@ -7181,6 +7181,10 @@
       "source": ".plan/epics/epic-configs-path-resolution.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-eager-db-init-creates-on-disk-db-on-test-import.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/testing.md"
     }
@@ -9806,7 +9810,23 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-eager-db-init-creates-on-disk-db-on-test-import.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-settestdatabase-global-leak-on-test-throw.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-sqlite-foreign-keys-pragma-set-twice-redundant.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-sqlite-pragmas-skipped-when-dialect-built-from-existing-data.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-sqlite-wal-pragma-noop-on-in-memory-test-db.md"
     },
     {
       "kind": "ticket",
@@ -9852,6 +9872,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-create-test-db-custom-dialect-can-bypass-settestdatabase.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-migrate-ts-loader-imports-test-ts-files-from-src-db-migratio.md"
     },
     {
@@ -9888,7 +9912,15 @@
   "src/db/migration-roundtrip.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-create-test-db-custom-dialect-can-bypass-settestdatabase.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-migration-ordering-ambiguous-via-localecompare-duplicate-num.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-sqlite-foreign-keys-pragma-set-twice-redundant.md"
     },
     {
       "kind": "ticket",
@@ -9924,11 +9956,19 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-create-test-db-custom-dialect-can-bypass-settestdatabase.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-migration-activitypub-actor-keys-fk-missing-ondelete-cascade.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-migration-ordering-ambiguous-via-localecompare-duplicate-num.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-sqlite-foreign-keys-pragma-set-twice-redundant.md"
     },
     {
       "kind": "ticket",
@@ -10351,6 +10391,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-message-delete-soft-fails-compliance.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-create-test-db-custom-dialect-can-bypass-settestdatabase.md"
     },
     {
       "kind": "ticket",
@@ -11311,6 +11355,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-multi-instance-reconciliation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-create-test-db-custom-dialect-can-bypass-settestdatabase.md"
     },
     {
       "kind": "ticket",
@@ -28539,6 +28587,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-auto-rotation-config-drift.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-eager-db-init-creates-on-disk-db-on-test-import.md"
     },
     {
       "kind": "ticket",
