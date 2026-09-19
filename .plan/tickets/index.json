@@ -8038,7 +8038,6 @@
     "git_issue": "0144015",
     "status": "open"
   },
-
   "FEAT-WORLD-LORE-ENTRIES-ADD-ALPINE-JS-UI-FOR-CRUD": {
     "hash": "85ffcdd",
     "git_issue": "85ffcdd",
@@ -9423,6 +9422,31 @@
     "source": ".plan/tickets/TASK-actor-notes-items-lore-frontend.md",
     "git_issue": "f519ffe",
     "status": "open"
+  },
+  "TASK-ACTOR-POSITION-PHYSICAL-SPATIAL-SPLIT": {
+    "hash": "pending",
+    "extid": "TASK-ACTOR-POSITION-PHYSICAL-SPATIAL-SPLIT",
+    "type": "TASK",
+    "title": "Actor Position — Physical vs Spatial Split",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-fractal-locations",
+    "tags": [],
+    "source": ".plan/tickets/TASK-actor-position-physical-spatial-split.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-ACTOR-POSITION-PHYSICAL-VS-SPATIAL-SPLIT": {
+    "hash": "0674395",
+    "git_issue": "0674395",
+    "extid": "TASK-ACTOR-POSITION-PHYSICAL-VS-SPATIAL-SPLIT",
+    "type": "TASK",
+    "title": "Actor position physical vs spatial split",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-fractal-locations",
+    "tags": [],
+    "source": ".plan/tickets/TASK-actor-position-physical-vs-spatial-split.md",
+    "status": "⬜ Not Started"
   },
   "TASK-ACTOR-RELATIONSHIPS-FRONTEND": {
     "hash": "4e35a41",
@@ -18186,6 +18210,45 @@
     "git_issue": "e705303",
     "status": "open"
   },
+  "TASK-FRACTAL-LOCATIONS-API-ROUTES": {
+    "hash": "f66fc1a",
+    "git_issue": "f66fc1a",
+    "extid": "TASK-FRACTAL-LOCATIONS-API-ROUTES",
+    "type": "TASK",
+    "title": "Fractal Locations API Routes",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-fractal-locations",
+    "tags": [],
+    "source": ".plan/tickets/TASK-fractal-locations-api-routes.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-FRACTAL-LOCATIONS-INVARIANTS-TESTS": {
+    "hash": "edefc18",
+    "git_issue": "edefc18",
+    "extid": "TASK-FRACTAL-LOCATIONS-INVARIANTS-TESTS",
+    "type": "TASK",
+    "title": "Fractal Locations Invariants Tests",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-fractal-locations",
+    "tags": [],
+    "source": ".plan/tickets/TASK-fractal-locations-invariants-tests.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-FRACTAL-LOCATIONS-MIGRATION-013-LOCATIONS-FRACTAL-TS": {
+    "hash": "a2621f0",
+    "git_issue": "a2621f0",
+    "extid": "TASK-FRACTAL-LOCATIONS-MIGRATION-013-LOCATIONS-FRACTAL-TS",
+    "type": "TASK",
+    "title": "Fractal locations migration (013_locations_fractal.ts)",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-fractal-locations",
+    "tags": [],
+    "source": ".plan/tickets/TASK-fractal-locations-migration-013-locations-fractal-ts.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-FRONTEND-ACTOR-TRAITS-LOCATION-AND-WORLD": {
     "hash": "547a31a",
     "extid": "TASK-FRONTEND-ACTOR-TRAITS-LOCATION-AND-WORLD",
@@ -20594,6 +20657,31 @@
     "git_issue": "c36e803",
     "status": "done"
   },
+  "TASK-LOCATION-EXPLORER-RECURSIVE-TREE": {
+    "hash": "pending",
+    "extid": "TASK-LOCATION-EXPLORER-RECURSIVE-TREE",
+    "type": "TASK",
+    "title": "Location Explorer — Recursive Tree + Transport Badge",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-fractal-locations",
+    "tags": [],
+    "source": ".plan/tickets/TASK-location-explorer-recursive-tree.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-LOCATION-EXPLORER-RECURSIVE-TREE-TRANSPORT-BADGE": {
+    "hash": "f62c7cf",
+    "git_issue": "f62c7cf",
+    "extid": "TASK-LOCATION-EXPLORER-RECURSIVE-TREE-TRANSPORT-BADGE",
+    "type": "TASK",
+    "title": "Location explorer recursive tree + transport badge",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-fractal-locations",
+    "tags": [],
+    "source": ".plan/tickets/TASK-location-explorer-recursive-tree-transport-badge.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-LOCATION-GRAPH-EDITOR-AND-DISCOVERY-GATING": {
     "hash": "30b4038",
     "git_issue": "30b4038",
@@ -20626,6 +20714,43 @@
       "fast-travel"
     ],
     "source": ".plan/tickets/TASK-location-travel-connected-fast-and-free-jump.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-LOCATION-TREE-INTEGRITY-SERVICE": {
+    "hash": "bdef4f9",
+    "git_issue": "bdef4f9",
+    "extid": "TASK-LOCATION-TREE-INTEGRITY-SERVICE",
+    "type": "TASK",
+    "title": "Location tree integrity service",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-fractal-locations",
+    "tags": [],
+    "source": ".plan/tickets/TASK-location-tree-integrity-service.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-LOCATIONS-FRACTAL-MIGRATION": {
+    "hash": "pending",
+    "extid": "TASK-LOCATIONS-FRACTAL-MIGRATION",
+    "type": "TASK",
+    "title": "Fractal Locations Migration (`013_locations_fractal.ts`)",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-fractal-locations",
+    "tags": [],
+    "source": ".plan/tickets/TASK-locations-fractal-migration.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-LOCATIONS-TREE-INTEGRITY-SERVICE": {
+    "hash": "pending",
+    "extid": "TASK-LOCATIONS-TREE-INTEGRITY-SERVICE",
+    "type": "TASK",
+    "title": "Location Tree Integrity Service",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-fractal-locations",
+    "tags": [],
+    "source": ".plan/tickets/TASK-locations-tree-integrity-service.md",
     "status": "⬜ Not Started"
   },
   "TASK-LOG-ADD-TRACE-FATAL": {
@@ -28005,6 +28130,44 @@
     "source": ".plan/tickets/TASK-travel-party-migration.md",
     "git_issue": "58bb561",
     "status": "done"
+  },
+  "TASK-TRAVEL-ROUTES-SCHEMA-AND-CRUD": {
+    "hash": "pending",
+    "extid": "TASK-TRAVEL-ROUTES-SCHEMA-AND-CRUD",
+    "type": "TASK",
+    "title": "Travel Routes Schema + CRUD",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-fractal-locations",
+    "tags": [],
+    "source": ".plan/tickets/TASK-travel-routes-schema-and-crud.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-TRAVEL-ROUTES-SCHEMA-CRUD": {
+    "hash": "889c168",
+    "git_issue": "889c168",
+    "extid": "TASK-TRAVEL-ROUTES-SCHEMA-CRUD",
+    "type": "TASK",
+    "title": "Travel routes schema + CRUD",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-fractal-locations",
+    "tags": [],
+    "source": ".plan/tickets/TASK-travel-routes-schema-crud.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-TRAVEL-SCHEDULER-TICK": {
+    "hash": "e1a3dc9",
+    "git_issue": "e1a3dc9",
+    "extid": "TASK-TRAVEL-SCHEDULER-TICK",
+    "type": "TASK",
+    "title": "Travel Scheduler Tick",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-fractal-locations",
+    "tags": [],
+    "source": ".plan/tickets/TASK-travel-scheduler-tick.md",
+    "status": "⬜ Not Started"
   },
   "TASK-TTS-EDGE-INTEGRATION": {
     "hash": "904e035",
