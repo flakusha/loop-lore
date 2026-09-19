@@ -538,6 +538,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-background.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-encryption-asset-encryption.md"
     },
     {
@@ -683,12 +687,6 @@
       "source": ".plan/tickets/BUG-assets-serve-servefile-omits-x-content-type-options-nosniff-.md"
     }
   ],
-  "src/assets/serve-raw.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-thumbnail-generation-256px-webp-at-upload.md"
-    }
-  ],
   "src/assets/service": [
     {
       "kind": "epic",
@@ -745,6 +743,12 @@
       "source": "docs/spec/crypto.md"
     }
   ],
+  "src/assets/service/alpha-status.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-background.md"
+    }
+  ],
   "src/assets/service/create.test.ts": [
     {
       "kind": "ticket",
@@ -781,6 +785,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-assets-delete-fk-constraint-fails.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-background.md"
     },
     {
       "kind": "ticket",
@@ -863,16 +871,16 @@
       "source": ".plan/tickets/TASK-gallery-user-tagging-propositions.md"
     }
   ],
-  "src/assets/service/thumbnail.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-thumbnail-generation-256px-webp-at-upload.md"
-    }
-  ],
   "src/assets/service/transforms.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-assets-delete-fk-constraint-fails.md"
+    }
+  ],
+  "src/assets/signed-url.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-background.md"
     }
   ],
   "src/assistant": [
@@ -4413,6 +4421,10 @@
       "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-background.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/emotion-avatars.md"
     }
@@ -4841,12 +4853,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-reconciliation-plan.md"
-    }
-  ],
-  "src/chat-backgrounds": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-fractal-locations.md"
     }
   ],
   "src/chat/auto-rename.test.ts": [
@@ -7181,10 +7187,6 @@
       "source": ".plan/epics/epic-configs-path-resolution.md"
     },
     {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-eager-db-init-creates-on-disk-db-on-test-import.md"
-    },
-    {
       "kind": "spec",
       "source": "docs/spec/testing.md"
     }
@@ -9128,10 +9130,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-locations-fractal-migration.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-memory-history-search-bind-message-chain-reconstructable-con.md"
     },
     {
@@ -9383,6 +9381,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-video-generation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-background.md"
     },
     {
       "kind": "ticket",
@@ -9698,10 +9700,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-locations-fractal-migration.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-memory-history-search-bind-message-chain-reconstructable-con.md"
     }
   ],
@@ -9745,12 +9743,6 @@
     {
       "kind": "spec",
       "source": "docs/spec/schema.md"
-    }
-  ],
-  "src/db/fractal-locations-invariants.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-fractal-locations-invariants-tests.md"
     }
   ],
   "src/db/fts.ts": [
@@ -9810,23 +9802,7 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-eager-db-init-creates-on-disk-db-on-test-import.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-settestdatabase-global-leak-on-test-throw.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-sqlite-foreign-keys-pragma-set-twice-redundant.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/BUG-sqlite-pragmas-skipped-when-dialect-built-from-existing-data.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-sqlite-wal-pragma-noop-on-in-memory-test-db.md"
     },
     {
       "kind": "ticket",
@@ -9872,10 +9848,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-create-test-db-custom-dialect-can-bypass-settestdatabase.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/BUG-migrate-ts-loader-imports-test-ts-files-from-src-db-migratio.md"
     },
     {
@@ -9912,23 +9884,11 @@
   "src/db/migration-roundtrip.test.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-create-test-db-custom-dialect-can-bypass-settestdatabase.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/BUG-migration-ordering-ambiguous-via-localecompare-duplicate-num.md"
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-sqlite-foreign-keys-pragma-set-twice-redundant.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-coverage-gate-true-multi-worker-fanout-investigation.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-locations-fractal-migration.md"
     },
     {
       "kind": "ticket",
@@ -9951,14 +9911,6 @@
   ],
   "src/db/migrations.test.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-fractal-locations.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-create-test-db-custom-dialect-can-bypass-settestdatabase.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-migration-activitypub-actor-keys-fk-missing-ondelete-cascade.md"
     },
@@ -9968,19 +9920,7 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-sqlite-foreign-keys-pragma-set-twice-redundant.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-coverage-gate-true-multi-worker-fanout-investigation.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-fractal-locations-invariants-tests.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-locations-fractal-migration.md"
     },
     {
       "kind": "ticket",
@@ -10103,12 +10043,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-redundant-vn-state-stored-in-two-independent-locations.md"
-    }
-  ],
-  "src/db/migrations/013_locations_fractal.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-locations-fractal-migration.md"
     }
   ],
   "src/db/migrations/016_asset_encryption.ts": [
@@ -10381,24 +10315,12 @@
   ],
   "src/db/migrations/README.md": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-fractal-locations.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-fts-encrypt-mismatch.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-message-delete-soft-fails-compliance.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-create-test-db-custom-dialect-can-bypass-settestdatabase.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-locations-fractal-migration.md"
     },
     {
       "kind": "ticket",
@@ -10443,10 +10365,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-item-edit-permissions-history.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-locations-fractal-migration.md"
     },
     {
       "kind": "ticket",
@@ -11358,10 +11276,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-create-test-db-custom-dialect-can-bypass-settestdatabase.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-apply-jsdoc-across-src-to-satisfy-jsdoc-require-param-return.md"
     },
     {
@@ -11665,10 +11579,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-040.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-locations-fractal-migration.md"
     },
     {
       "kind": "spec",
@@ -12031,10 +11941,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-creative-studio-search-api.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-fractal-locations-api-routes.md"
     },
     {
       "kind": "ticket",
@@ -13634,10 +13540,6 @@
   "src/frontend/alpine/location-explorer.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-location-explorer-recursive-tree.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-location-explorer.md"
     }
   ],
@@ -14135,12 +14037,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-world-item-frontend.md"
-    }
-  ],
-  "src/frontend/alpine/world-lore-entries.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/FEAT-world-lore-entries-add-alpine-js-ui-for-crud.md"
     }
   ],
   "src/frontend/alpine/world-lore.ts": [
@@ -15788,6 +15684,10 @@
     }
   ],
   "src/frontend/vn/sprite-stage.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-background.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-vn-character-sprite-roster-per-chat.md"
@@ -17548,6 +17448,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-background.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-comfyui-template-registry.md"
     },
     {
@@ -17627,6 +17531,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-background.md"
     },
     {
       "kind": "ticket",
@@ -18123,6 +18031,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-config-templates.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-background.md"
     }
   ],
   "src/index.ts": [
@@ -20445,10 +20357,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-plugin-system.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-eventbus-toolregistry-core-wiring.md"
     }
   ],
   "src/plugins/hooks.ts": [
@@ -20593,10 +20501,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-plugin-extension-points.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-eventbus-toolregistry-core-wiring.md"
     }
   ],
   "src/plugins/types.ts": [
@@ -23800,10 +23704,6 @@
   "src/routes/location-explorer.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-fractal-locations-api-routes.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-location-editor-structured-ui.md"
     },
     {
@@ -25706,10 +25606,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/FEAT-world-lore-entries-add-alpine-js-ui-for-crud.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-world-lore-entries-ui.md"
     },
     {
@@ -25850,10 +25746,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-fractal-locations-api-routes.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-location-editor-structured-ui.md"
     },
     {
@@ -25957,12 +25849,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-fix-eslint-errors.md"
-    }
-  ],
-  "src/rpg/actor-locations/service.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-actor-position-physical-spatial-split.md"
     }
   ],
   "src/rpg/blog/service.ts": [
@@ -26723,24 +26609,6 @@
       "source": ".plan/tickets/TASK-rpg-chat-questions.md"
     }
   ],
-  "src/rpg/location-tree/invariants.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-fractal-locations-invariants-tests.md"
-    }
-  ],
-  "src/rpg/location-tree/service.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-locations-tree-integrity-service.md"
-    }
-  ],
-  "src/rpg/location-tree/service.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-locations-tree-integrity-service.md"
-    }
-  ],
   "src/rpg/location.ts": [
     {
       "kind": "ticket",
@@ -27029,12 +26897,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TEST-npc-navigation-processMovementTick-untested.md"
-    }
-  ],
-  "src/rpg/npc-navigation/service/movement.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-actor-position-physical-spatial-split.md"
     }
   ],
   "src/rpg/npc-navigation/service/processing.test.ts": [
@@ -27807,36 +27669,6 @@
       "source": ".plan/tickets/TASK-nsfw-trauma-recovery.md"
     }
   ],
-  "src/rpg/travel-routes/service.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-travel-routes-schema-and-crud.md"
-    }
-  ],
-  "src/rpg/travel-routes/service.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-travel-routes-schema-and-crud.md"
-    }
-  ],
-  "src/rpg/travel-scheduler/index.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-travel-scheduler-tick.md"
-    }
-  ],
-  "src/rpg/travel-scheduler/tick.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-travel-scheduler-tick.md"
-    }
-  ],
-  "src/rpg/travel-scheduler/tick.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-travel-scheduler-tick.md"
-    }
-  ],
   "src/rpg/validation.ts": [
     {
       "kind": "ticket",
@@ -28587,10 +28419,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-auto-rotation-config-drift.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-eager-db-init-creates-on-disk-db-on-test-import.md"
     },
     {
       "kind": "ticket",
@@ -30831,12 +30659,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-frontend-minor-bugs-batch.md"
-    }
-  ],
-  "src/views/.../lore-entries.partial.html": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/FEAT-world-lore-entries-add-alpine-js-ui-for-crud.md"
     }
   ],
   "src/views/GalleryView.vue": [
