@@ -137,6 +137,7 @@ export interface DB {
   playthroughs: import("./schema-core").Playthroughs;
   trade_history: import("./schema-core").TradeHistory;
   xp_ledger: import("./schema-core").XpLedger;
+  quest_reward_ledger: import("./schema-story").QuestRewardLedger;
   blog_comments: import("./schema-blog").BlogComments;
   blog_follows: import("./schema-blog").BlogFollows;
   blog_posts: import("./schema-blog").BlogPosts;
