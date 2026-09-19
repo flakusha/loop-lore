@@ -29,7 +29,6 @@ export const chatLifecycle: Partial<ChatState> & ThisType<ChatState> = {
     this._flagOther = "";
     this._flagBusy = false;
     this._reactionPicker = { visible: false, messageId: "", x: 0, y: 0, };
-
     // Defensive defaults for the `$store.chat` payload — templates may read
     // `$store.chat.children` / `$store.chat.visibility` before initAlpineStores
     // has wired the store, or before a fetched payload populates it. Without
@@ -81,6 +80,11 @@ export const chatLifecycle: Partial<ChatState> & ThisType<ChatState> = {
       }
     };
     addEventListener("storage", this._storageHandler,);
+    // Wire the `show-seen-popover` listener (populates _seenPopoverOpen /
+    // _seenPopoverX / _seenPopoverY / _seenPopoverViewers on dispatch).
+    // BUG-alpine-init-hydration: previously uncalled, leaving those fields
+    // undefined and triggering ReferenceError when templates read them.
+    this.initSeenPopover();
     this.restoreChatFilters();
     await this.loadChats();
     this.loadWorldChannels();
