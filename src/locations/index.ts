@@ -8,3 +8,5 @@ export { LocationTreeService, } from "./tree";
 export type { LocationTreeNode, InsertLocationInput, } from "./tree";
 export { TravelRouteService, } from "./routes";
 export type { CreateTravelRouteInput, AddStopInput, } from "./routes";
+export { ActorPositionService, } from "./positions";
+export type { ActorPosition, } from "./positions";
