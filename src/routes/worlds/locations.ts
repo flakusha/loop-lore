@@ -119,7 +119,13 @@ export async function handleCreateLocation(
               return r.ok ? r.value : "[]";
             })()
             : "[]",
-        },)
+          kind: ((body.kind as string | undefined) ?? "region") as never,
+          mobility_mode: ((body.mobilityMode as string | undefined) ?? "static") as never,
+          path: ((body.path as string | undefined) ?? undefined) as never,
+          coord_x: (body.coordX as number | undefined) ?? null,
+          coord_y: (body.coordY as number | undefined) ?? null,
+          coord_z: (body.coordZ as number | undefined) ?? null,
+        } as never,)
         .execute();
 
       await createLocationChat(tx, {
@@ -197,6 +203,12 @@ export async function handleUpdateLocation(
   if (body.name) { updates.name = body.name; }
   if (body.description) { updates.description = body.description; }
   if (body.parentLocationId) { updates.parent_location_id = body.parentLocationId; }
+  if (body.kind != null) { updates.kind = body.kind; }
+  if (body.mobilityMode != null) { updates.mobility_mode = body.mobilityMode; }
+  if (body.path !== undefined) { updates.path = body.path; }
+  if (body.coordX !== undefined) { updates.coord_x = body.coordX; }
+  if (body.coordY !== undefined) { updates.coord_y = body.coordY; }
+  if (body.coordZ !== undefined) { updates.coord_z = body.coordZ; }
   if (body.connections) {
     const connError = await validateConnections(database, worldId, body.connections, locId,);
     if (connError) { return connError; }
