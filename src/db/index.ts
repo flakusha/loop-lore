@@ -69,19 +69,16 @@ function createDialect(databasePath: string,): SqliteDialect {
   return createSqliteDialect(new Database(databasePath,),);
 }
 
-// Initialize database connection eagerly
-const database: Kysely<DB> = (() => {
-  const dbPath = process.env.LOOP_LORE_DB_PATH ?? path.resolve(DATA_DIR, "loop-lore.db",);
-  // Ensure the parent directory exists — idempotent, safe for sibling/XDG/custom paths
-  mkdirSync(path.dirname(dbPath,), { recursive: true, },);
-  return new Kysely<DB>({ dialect: createDialect(dbPath,), },);
-})();
-
 /** Test override — set by setTestDatabase(). When set, getDatabase() returns this instead. */
 let testDatabaseOverride: Kysely<DB> | null = null;
 
 /**
  * Override the global database instance for testing.
+ *
+ * Process-global under non-isolated runners; tests MUST clear it (`setTestDatabase(null)`)
+ * in `afterAll`/`finally` so a thrown assertion cannot leak the override into sibling files.
+ * Bun's `--isolate` is best-effort — see BUG-settestdatabase-global-leak-on-test-throw.
+ *
  * Pass null to clear the override.
  * @param db
  * @returns void
@@ -90,12 +87,24 @@ export function setTestDatabase(db: Kysely<DB> | null,): void {
   testDatabaseOverride = db;
 }
 
+// Lazy production singleton — only created on the first getDatabase() call when no test
+// override is in effect. Eager initialization at module load forced every test that imports
+// `@/db` to materialize `loop-lore-data/loop-lore.db` (see BUG-eager-db-init-creates-on-disk-db-on-test-import).
+let database: Kysely<DB> | null = null;
+
 /**
  * @param _databasePath - path is unused when a test override is set; resolution falls back to the singleton DB otherwise.
- * @returns the Kysely DB handle (test override if set, otherwise the singleton).
+ * @returns the Kysely DB handle (test override if set, otherwise the lazily-initialized singleton).
  */
 export function getDatabase(_databasePath?: string,): Kysely<DB> {
-  return testDatabaseOverride ?? database;
+  if (testDatabaseOverride) { return testDatabaseOverride; }
+  if (!database) {
+    const dbPath = process.env.LOOP_LORE_DB_PATH ?? path.resolve(DATA_DIR, "loop-lore.db",);
+    // Ensure the parent directory exists — idempotent, safe for sibling/XDG/custom paths
+    mkdirSync(path.dirname(dbPath,), { recursive: true, },);
+    database = new Kysely<DB>({ dialect: createDialect(dbPath,), },);
+  }
+  return database;
 }
 
 /** */
