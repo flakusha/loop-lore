@@ -20,6 +20,7 @@ import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
 import type { DB, } from "../db";
 import type { TransportKind, } from "../db/enums-story/world";
+import { jsonStringifyOr, } from "../utils/safe-json";
 
 export interface CreateTravelRouteInput {
   worldId: string;
@@ -53,7 +54,7 @@ export class TravelRouteService {
         world_id: input.worldId,
         name: input.name,
         kind: input.kind,
-        waypoints: JSON.stringify(input.waypoints ?? [],),
+        waypoints: jsonStringifyOr(input.waypoints ?? [], "[]",),
         loop: input.loop ? 1 : 0,
         seconds_per_unit: input.secondsPerUnit ?? 60,
       } as never,)
