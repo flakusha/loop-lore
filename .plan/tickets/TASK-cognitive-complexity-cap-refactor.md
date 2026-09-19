@@ -1,0 +1,21 @@
+<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 giwt Contributors -->
+
+# TASK: Cognitive Complexity Cap + Refactor
+
+**Status:** ⬜ Not Started
+**Priority:** medium
+**Effort:** Medium
+**Epic:** epic-tooling-improvement
+**Tags:** complexity, sonarjs
+
+## Summary
+
+Add sonarjs/cognitive-complexity cap + split 5 functions over limit.
+Source: docs/meta/code-practices-improvements/README.md + 02.
+
+## Acceptance Criteria
+
+- [ ] Implementation complete
+- [ ] Tests passing
+- [ ] Documentation updated
