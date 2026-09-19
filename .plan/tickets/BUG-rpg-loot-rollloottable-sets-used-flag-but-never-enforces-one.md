@@ -3,7 +3,7 @@
 
 # BUG: rpg loot: rollLootTable sets 'used' flag but never enforces one-shot use
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved — already on dev (commit f7e65f4ff "resolve 11 source-audit BUGs (batch 2)"); verified 2026-09-19
 **Priority:** low
 **Effort:** Medium
 **Summary:** (see ## Summary)
@@ -36,6 +36,10 @@ Either: (a) add `.where('used', '=', 0)` to the entries SELECT and refuse to rol
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete — option (b): `used` is an audit marker, not an enforcement gate
+- [x] Tests passing — dice-xp-loot.coverage.test.ts asserts the marker semantics
+- [x] Documentation updated — see Resolution below
+
+## Resolution (verified 2026-09-19)
+
+Took option (b): `rollLootTable` (src/rpg/service/loot-tables.ts) keeps writing `used: 1`, now documented in-source as an AUDIT marker only ("table rolled at least once") — loot tables are repeatable by design. `src/rpg/service/dice-xp-loot.coverage.test.ts` asserts `used` flips to 1 after a roll while repeated rolls keep succeeding. No `.where('used', '=', 0)` filter was added; dropping the column is a schema change with no payoff (audit value remains).
