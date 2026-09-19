@@ -19,9 +19,12 @@
 import type { Kysely, } from "kysely";
 import type { FantasyCategory, } from "../../../db/enums";
 import type { DB, } from "../../../db/schema";
+import { MoodService, } from "../../../characters/services/mood-service";
+import type { MoodState, } from "../../../characters/services/mood-service";
 import {
   createFantasy as createFantasyDispatch,
   deleteFantasy as deleteFantasyDispatch,
+  fulfillFantasy as fulfillFantasyDispatch,
   getActorFantasies as getActorFantasiesDispatch,
   getByCategory as getByCategoryDispatch,
   recordExploration as recordExplorationDispatch,
@@ -31,6 +34,7 @@ import type {
   CreateFantasyOpts,
   DiscoveryResult,
   Fantasy,
+  FulfillmentEffects,
 } from "./types";
 
 export type {
@@ -101,6 +105,61 @@ export class FantasyService {
     feeling?: string,
   ): Promise<boolean> {
     return recordExplorationDispatch(this.db, fantasyId, feeling,);
+  }
+
+  /**
+   * Fulfill a fantasy for a target: applies intimacy + mood legs,
+   * counts the exploration, returns the fulfillment effects.
+   * @param fantasyId
+   * @param forTarget
+   */
+  async fulfill(
+    fantasyId: string,
+    forTarget?: { actorId: string; worldId?: string | null },
+  ): Promise<FulfillmentEffects | null> {
+    return fulfillFantasyDispatch(this.db, fantasyId, forTarget,);
+  }
+
+  /**
+   * Mood state via the Character Core API (TASK-041).
+   *
+   * NSFW callers receive the same `MoodState` shape as non-NSFW
+   * callers — this wrapper owns no mood logic, it only threads the
+   * service handle. Mood state lives in Character Core
+   * (`character_mood`), never in an NSFW-private store.
+   * @param actorId
+   * @param worldId
+   */
+  async getMood(actorId: string, worldId?: string,): Promise<MoodState | undefined> {
+    return MoodService(this.db,).getMood(actorId, worldId,);
+  }
+
+  /**
+   * Apply a mood delta with a structured NSFW source tag (TASK-041).
+   *
+   * Sources are namespaced (`seduction.success`, `encounter.completed`,
+   * `fantasy.fulfilled`, ...) so downstream consumers can branch on
+   * the tag without re-parsing event history. Delegates to
+   * `MoodService.logEvent` — the Character Core primitive.
+   * @param actorId
+   * @param source
+   * @param delta
+   * @param worldId
+   */
+  async applyDelta(
+    actorId: string,
+    source: string,
+    delta: number,
+    worldId?: string,
+  ): Promise<string> {
+    return MoodService(this.db,).logEvent({
+      actorId,
+      worldId,
+      eventType: source,
+      happinessDelta: delta,
+      source: "nsfw",
+      sourceId: source,
+    },);
   }
 
   /**

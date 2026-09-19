@@ -4,7 +4,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../../db/schema";
 import { createLogger, } from "../../../logger";
 import { createTestDb, resetTestDb, } from "../../../test-utils/create-test-db";
-import { insertActors, } from "../../../test-utils/insert-helpers";
+import { insertActors, insertCharacterMood, } from "../../../test-utils/insert-helpers";
 import { FantasyService, } from "./index";
 
 createLogger({ level: "error", },);
@@ -212,5 +212,122 @@ describe("FantasyService", () => {
       1,
     );
     expect(repeat,).toEqual({ discovered: false, reason: "Already known", },);
+  });
+});
+
+describe("fulfill (TASK-037)", () => {
+  const NOW = "2026-01-01T00:00:00.000Z";
+
+  test("fulfill applies mood leg, counts exploration, returns effects", async () => {
+    const service = new FantasyService(db,);
+    await insertCharacterMood(db, "actor-hero", NOW, NOW, NOW,);
+    const fantasy = await service.createFantasy({
+      database: db,
+      actorId: "actor-hero",
+      name: "Moonlit Vow",
+      category: "roleplay",
+    },);
+    // Default effects: intimacyBonus 3, moodBonus 5.
+    const effects = await service.fulfill(fantasy.id,);
+    expect(effects?.intimacyBonus,).toBe(3,);
+    expect(effects?.moodBonus,).toBe(5,);
+    // Exploration counted.
+    const [stored,] = await service.getActorFantasies("actor-hero",);
+    expect(stored?.timesExplored,).toBe(1,);
+    // Mood leg: one fantasy.fulfilled event on the owner (self-target).
+    const events = await db.selectFrom("mood_events",)
+      .where("actor_id", "=", "actor-hero",)
+      .selectAll()
+      .execute();
+    expect(events.length,).toBe(1,);
+    expect(events[0]!.event_type,).toBe("fantasy.fulfilled",);
+    expect(events[0]!.source,).toBe("fantasy",);
+  });
+
+  test("fulfill for a target applies the intimacy pair leg", async () => {
+    const service = new FantasyService(db,);
+    await insertCharacterMood(db, "actor-rival", NOW, NOW, NOW,);
+    const fantasy = await service.createFantasy({
+      database: db,
+      actorId: "actor-hero",
+      name: "Silk Bonds",
+      category: "bondage",
+      fulfillmentEffects: { intimacyBonus: 8, moodBonus: 4, },
+    },);
+    const effects = await service.fulfill(fantasy.id, { actorId: "actor-rival", },);
+    expect(effects?.intimacyBonus,).toBe(8,);
+    // Pair leg: rival → hero pair exists with the +8 delta.
+    const pair = await db.selectFrom("character_intimacy",)
+      .where("actor_id", "=", "actor-rival",)
+      .where("target_actor_id", "=", "actor-hero",)
+      .selectAll()
+      .executeTakeFirst()
+      ?? await db.selectFrom("character_intimacy",)
+        .where("actor_id", "=", "actor-hero",)
+        .where("target_actor_id", "=", "actor-rival",)
+        .selectAll()
+        .executeTakeFirst();
+    expect(pair?.score,).toBe(8,);
+    // Mood leg lands on the target, not the owner.
+    const events = await db.selectFrom("mood_events",)
+      .where("actor_id", "=", "actor-rival",)
+      .selectAll()
+      .execute();
+    expect(events.length,).toBe(1,);
+    expect(events[0]!.event_type,).toBe("fantasy.fulfilled",);
+  });
+
+  test("fulfill on a missing fantasy returns null", async () => {
+    const service = new FantasyService(db,);
+    expect(await service.fulfill("fantasy-missing",),).toBeNull();
+  });
+
+  test("fulfill with zero bonuses writes no mood row and still counts", async () => {
+    const service = new FantasyService(db,);
+    const fantasy = await service.createFantasy({
+      database: db,
+      actorId: "actor-hero",
+      name: "Quiet Tea",
+      category: "service",
+      fulfillmentEffects: { intimacyBonus: 0, moodBonus: 0, },
+    },);
+    expect(await service.fulfill(fantasy.id,),).not.toBeNull();
+    expect(
+      await db.selectFrom("mood_events",).selectAll().execute(),
+    ).toEqual([],);
+    const [stored,] = await service.getActorFantasies("actor-hero",);
+    expect(stored?.timesExplored,).toBe(1,);
+  });
+});
+
+describe("mood wrapper (TASK-041)", () => {
+  const NOW = "2026-01-01T00:00:00.000Z";
+
+  test("getMood returns the Character Core shape", async () => {
+    const service = new FantasyService(db,);
+    await insertCharacterMood(db, "actor-hero", NOW, NOW, NOW, { happiness: 42, },);
+    const mood = await service.getMood("actor-hero",);
+    expect(mood?.happiness,).toBe(42,);
+    expect(mood?.actorId,).toBe("actor-hero",);
+  });
+
+  test("getMood returns undefined when no mood row exists", async () => {
+    const service = new FantasyService(db,);
+    expect(await service.getMood("actor-hero",),).toBeUndefined();
+  });
+
+  test("applyDelta logs a namespaced source-tagged event", async () => {
+    const service = new FantasyService(db,);
+    await insertCharacterMood(db, "actor-hero", NOW, NOW, NOW,);
+    const id = await service.applyDelta("actor-hero", "encounter.completed", 5,);
+    expect(typeof id,).toBe("string",);
+    const events = await db.selectFrom("mood_events",)
+      .where("actor_id", "=", "actor-hero",)
+      .selectAll()
+      .execute();
+    expect(events.length,).toBe(1,);
+    expect(events[0]!.event_type,).toBe("encounter.completed",);
+    expect(events[0]!.source,).toBe("nsfw",);
+    expect(events[0]!.happiness_delta,).toBe(5,);
   });
 });
