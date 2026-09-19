@@ -214,13 +214,27 @@ function routeConsts(src: string, dir: string, prefix: string,): Map<string, str
   for (const cm of src.matchAll(/const (\w+) =\s*"([^"]+)"/g,)) {
     consts.set(cm[1] ?? "", cm[2] ?? "",);
   }
+  // Template-literal RHS: `const R = \`\${prefix}/rpg\``. resolveRouteConsts
+  // (3-pass) substitutes ${...} refs against the const map; capture raw here.
+  for (const cm of src.matchAll(/const (\w+) =\s*`([^`]*)`/g,)) {
+    const name = cm[1] ?? "";
+    if (consts.has(name,)) { continue; }
+    consts.set(name, cm[2] ?? "",);
+  }
   try {
     const sib = readFileSync(path.join(dir, "schemas.ts",), "utf8",);
     for (const cm of sib.matchAll(/export const (\w+) =\s*"([^"]+)"/g,)) {
       if (!consts.has(cm[1] ?? "",)) { consts.set(cm[1] ?? "", cm[2] ?? "",); }
     }
   } catch { /* no sibling schemas */ }
-  consts.set("prefix", prefix,);
+  // Function-parameter default: `(opts: X, prefix = "/api")` — the dominant pattern
+  // across ~50 route files. Without this, ${prefix}/foo templates norm to
+  // "/:param/foo" and every such route is misreported as BE-no-FE.
+  for (const pm of src.matchAll(/\bprefix\s*=\s*["'](\/[^"']*)["']/g,)) {
+    if (!consts.has("prefix",)) { consts.set("prefix", pm[1] ?? prefix,); }
+  }
+  // ponytail: file-scoped heuristic; per-call param shadowing not modeled.
+  consts.set("prefix", consts.get("prefix",) ?? prefix,);
   return consts;
 }
 
@@ -270,6 +284,17 @@ function scanBe(): BeRoute[] {
       const rel = path.relative(ROOT, f,);
       const prefix = /prefix\s*=\s*"([^"]+)"/.exec(src,)?.[1] ?? "/api";
       const consts = routeConsts(src, path.dirname(f,), prefix,);
+      // Entity-factory files destructure `const { withIdPath, basePath } = entityPaths(...)`.
+      // Resolve those names so ${withIdPath}/carry etc. route templates expand correctly.
+      const ecfg =
+        /parentPrefix:\s*"([^"]+)"[\s\S]{0,200}?parentParam:\s*"([^"]+)"[\s\S]{0,200}?entityPath:\s*"([^"]+)"/
+          .exec(src,);
+      if (ecfg) {
+        const basePath = `${prefix}/${ecfg[1]}/:${ecfg[2]}/${ecfg[3]}`;
+        const withIdPath = `${basePath}/:entityId`;
+        consts.set("basePath", basePath,);
+        consts.set("withIdPath", withIdPath,);
+      }
       literalBeRoutes(src, rel, (s,) => resolveRouteConsts(s, consts,), out,);
       expandEntityFactories(src, rel, out,);
     }

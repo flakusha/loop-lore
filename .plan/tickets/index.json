@@ -8038,6 +8038,20 @@
     "git_issue": "0144015",
     "status": "open"
   },
+
+  "FEAT-WORLD-LORE-ENTRIES-ADD-ALPINE-JS-UI-FOR-CRUD": {
+    "hash": "85ffcdd",
+    "git_issue": "85ffcdd",
+    "extid": "FEAT-WORLD-LORE-ENTRIES-ADD-ALPINE-JS-UI-FOR-CRUD",
+    "type": "FEAT",
+    "title": "World Lore Entries: add Alpine.js UI for CRUD",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-world-lore-entries-add-alpine-js-ui-for-crud.md",
+    "status": "⬜ Not Started"
+  },
   "FEAT-WORLD-PERSISTENCE-SYNC": {
     "hash": "42a617d",
     "extid": "FEAT-WORLD-PERSISTENCE-SYNC",
