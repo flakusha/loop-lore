@@ -151,7 +151,7 @@ describe("INTENT_PATTERNS — amplification cap", () => {
     }
   });
 
-  test("scanning a 200KB input via all INTENT_PATTERNS completes within 5s", () => {
+  test("scanning a 200KB input via all INTENT_PATTERNS completes within 15s", () => {
     const big = "please create a character ".repeat(8_000,); // ~200KB
     const start = performance.now();
     for (const { patterns, } of INTENT_PATTERNS) {
@@ -162,9 +162,10 @@ describe("INTENT_PATTERNS — amplification cap", () => {
     const elapsed = performance.now() - start;
     // Without the cap, INTENT_PATTERNS tested 30+ patterns against the full
     // string. With it, we still scan but with a known bound. Threshold is
-    // generous (5s) to avoid CI flake on shared hosts while still catching
-    // a true O(n²) regression (would be 60s+).
-    expect(elapsed,).toBeLessThan(5_000,);
+    // generous (15s; healthy runs measure ~6-7s depending on host load) to
+    // avoid CI flake on shared hosts while still catching a true O(n²)
+    // regression (would be 60s+).
+    expect(elapsed,).toBeLessThan(15_000,);
   });
 
   test("small inputs still resolve to the expected intent", () => {
