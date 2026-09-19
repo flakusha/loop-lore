@@ -3,12 +3,12 @@
 
 # Template System — Unified Architecture Spec
 
-**Status:** Not Started
+**Status:** 🟡 Partial — LLM + image template foundations shipped (registry + per-modality `{{var}}` substitution, config-file builtins); DB-backed unified registry + video/audio scaffolds deferred (bookkeeping 2026-09-19)
 **Priority:** medium
 **Effort:** Medium
-**Summary:** (none captured)
+**Summary:** Unified prompt template system across LLM/Image/Video/Audio modalities — shared `TemplateRegistry` interface, DB-backed user templates, per-modality registries, model→template auto-matching.
 **Context:** (none captured)
-**Acceptance Criteria:** (none captured)
+**Acceptance Criteria:** LLM and image modality registries + per-modality `{{var}}` substitution shipped; DB-backed unified `prompt_templates` + `template_variables` tables, `/api/templates/:modality` routes, video/audio scaffolds future.
 
 
 **Status**: 🟡 In Progress — LLM + image template foundations shipped (spec reconciled with code 2026-09-13); DB-backed user templates + unified registry future
