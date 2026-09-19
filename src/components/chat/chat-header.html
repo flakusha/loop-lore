@@ -335,13 +335,13 @@
         >
           <!-- Stacked per-section segments (budget advisor breakdown) -->
           <div class="ctx-meter-fill" x-show="hasSections" x-bind:style="'flex-grow:' + percentage">
-            <span
-              class="ctx-seg"
-              x-bind:class="sectionColor(s.name)"
-              x-bind:style="'flex-grow:' + sectionGrow(s.name)"
-              x-for="s in sections"
-              :key="s.name"
-            ></span>
+            <template x-for="s in sections" :key="s.name">
+              <span
+                class="ctx-seg"
+                x-bind:class="sectionColor(s.name)"
+                x-bind:style="'flex-grow:' + sectionGrow(s.name)"
+              ></span>
+            </template>
           </div>
           <!-- Fallback: no breakdown → solid status-color usage fill -->
           <div
