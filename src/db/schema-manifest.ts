@@ -803,6 +803,26 @@ export const SCHEMA = new SchemaManifest()
     trade_type: col("text", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, },),
   },)
+  .table("travel_route_stops", {
+    id: col("text", { primaryKey: true, },),
+    route_id: col("text", { notNull: true, },),
+    location_id: col("text", { notNull: true, },),
+    stop_order: col("integer", { notNull: true, },),
+    dwell_seconds: col("integer", { notNull: true, hasDefault: true, },),
+    coord_x: col("real",),
+    coord_y: col("real",),
+    coord_z: col("real",),
+  },)
+  .table("travel_routes", {
+    id: col("text", { primaryKey: true, },),
+    world_id: col("text", { notNull: true, },),
+    name: col("text", { notNull: true, },),
+    kind: col("text", { notNull: true, },),
+    waypoints: col("text", { notNull: true, hasDefault: true, },),
+    loop: col("integer", { notNull: true, hasDefault: true, },),
+    seconds_per_unit: col("integer", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("vn_choices", {
     id: col("text", { primaryKey: true, },),
     chat_id: col("text", { notNull: true, },),
@@ -914,6 +934,12 @@ export const SCHEMA = new SchemaManifest()
     expires_at: col("text",),
     status: col("text", { notNull: true, hasDefault: true, },),
     public_key: col("text",),
+  },)
+  .table("actor_locations", {
+    actor_id: col("text", { primaryKey: true, },),
+    physical_location_id: col("text", { notNull: true, },),
+    spatial_location_id: col("text", { notNull: true, },),
+    entered_at: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("actor_lore_entries", {
     id: col("text", { primaryKey: true, },),
@@ -1797,6 +1823,14 @@ export const SCHEMA = new SchemaManifest()
     parent_location_id: col("text",),
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
+    kind: col("text", { notNull: true, hasDefault: true, },),
+    mobility_mode: col("text", { notNull: true, hasDefault: true, },),
+    path: col("text", { notNull: true, hasDefault: true, },),
+    coord_x: col("real",),
+    coord_y: col("real",),
+    coord_z: col("real",),
+    current_route_id: col("text",),
+    travel_progress: col("real", { notNull: true, hasDefault: true, },),
   },)
   .table("quest_progress", {
     id: col("text", { primaryKey: true, },),

@@ -259,6 +259,15 @@ export const LicenseTypeSchema = t.UnionEnum([
   "proprietary",
   "custom",
 ],);
+export const LocationKindSchema = t.UnionEnum([
+  "region",
+  "settlement",
+  "building",
+  "room",
+  "transit",
+  "transport",
+  "pocket",
+],);
 export const LogLevelSchema = t.UnionEnum(["trace", "debug", "info", "warn", "error", "fatal",],);
 export const LoreEntryStatusSchema = t.UnionEnum(["enabled", "disabled", "archived",],);
 export const LorePositionSchema = t.UnionEnum(["before_char", "after_char", "in_char",],);
@@ -292,6 +301,7 @@ export const MessageVisibilitySchema = t.UnionEnum([
   "auto_hidden",
   "redacted",
 ],);
+export const MobilityModeSchema = t.UnionEnum(["static", "free", "anchored",],);
 export const ModelRoleSchema = t.UnionEnum([
   "main",
   "auxiliary",
@@ -499,6 +509,7 @@ export const TransportErrorCodeSchema = t.UnionEnum([
   "BACKPRESSURE_TIMEOUT",
   "MAX_FRAME_EXCEEDED",
 ],);
+export const TransportKindSchema = t.UnionEnum(["sea", "road", "air", "custom",],);
 export const TransportProtocolSchema = t.UnionEnum([
   "http/1.1",
   "http/2",
@@ -845,6 +856,14 @@ export const LocationsSchema = t.Object({
   parent_location_id: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
+  kind: t.Optional(LocationKindSchema,),
+  mobility_mode: t.Optional(MobilityModeSchema,),
+  path: t.Optional(t.String(),),
+  coord_x: t.Optional(t.Number(),),
+  coord_y: t.Optional(t.Number(),),
+  coord_z: t.Optional(t.Number(),),
+  current_route_id: t.Optional(t.String(),),
+  travel_progress: t.Optional(t.Number(),),
 },);
 
 // ── world_avatar_config ────────────────────────────────────────────
@@ -2459,6 +2478,36 @@ export const PromptTemplatesSchema = t.Object({
   payload: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
+},);
+
+// ── travel_routes ────────────────────────────────────────────
+export const TravelRoutesSchema = t.Object({
+  world_id: t.String(),
+  name: t.String(),
+  kind: TransportKindSchema,
+  waypoints: t.Optional(t.String(),),
+  loop: t.Optional(t.Number(),),
+  seconds_per_unit: t.Optional(t.Number(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── travel_route_stops ────────────────────────────────────────────
+export const TravelRouteStopsSchema = t.Object({
+  route_id: t.String(),
+  location_id: t.String(),
+  stop_order: t.Number(),
+  dwell_seconds: t.Optional(t.Number(),),
+  coord_x: t.Optional(t.Number(),),
+  coord_y: t.Optional(t.Number(),),
+  coord_z: t.Optional(t.Number(),),
+},);
+
+// ── actor_locations ────────────────────────────────────────────
+export const ActorLocationsSchema = t.Object({
+  physical_location_id: t.String(),
+  spatial_location_id: t.String(),
+  actor_id: t.Optional(t.String(),),
+  entered_at: t.Optional(t.String(),),
 },);
 
 // ── content_flags ────────────────────────────────────────────
