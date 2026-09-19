@@ -494,6 +494,7 @@ export async function insertAssets(
     content_hash?: string | null;
     data_version?: number;
     record_hash?: string;
+    thumbnail_path?: string | null;
   },
 ): Promise<void> {
   await db.insertInto("assets",).values({

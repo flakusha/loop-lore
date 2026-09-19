@@ -793,6 +793,7 @@ export const AssetsSchema = t.Object({
   content_hash: t.Optional(t.String(),),
   data_version: t.Optional(t.Number(),),
   record_hash: t.Optional(t.String(),),
+  thumbnail_path: t.Optional(t.String(),),
 },);
 
 // ── asset_transforms ────────────────────────────────────────────

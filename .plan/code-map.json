@@ -857,6 +857,13 @@
       "source": ".plan/tickets/TASK-gallery-user-tagging-propositions.md"
     }
   ],
+
+  "src/assets/service/thumbnail.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-thumbnail-generation-256px-webp-at-upload.md"
+    }
+  ],
   "src/assets/service/transforms.ts": [
     {
       "kind": "ticket",
@@ -20320,6 +20327,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-plugin-system.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-eventbus-toolregistry-core-wiring.md"
     }
   ],
   "src/plugins/hooks.ts": [
@@ -20464,6 +20475,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-plugin-extension-points.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-eventbus-toolregistry-core-wiring.md"
     }
   ],
   "src/plugins/types.ts": [

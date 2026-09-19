@@ -65,7 +65,11 @@
     "@mermaid-js/parser",
     "mermaid",
     "vitepress-mermaid-renderer",
-    "vitepress-plugin-mermaid"
+    "vitepress-plugin-mermaid",
+    // sharp: used by src/assets/service/thumbnail.ts (imports + tests) which is
+    // reached only via routes/import/actor -> createAsset (not a static chain
+    // from knip's entry roots). Same class as @optique.
+    "sharp"
   ],
   "ignoreBinaries": [
     "abort", // worktree CLI subcommand literal in finalize-signal-safety.test.ts spawnSync; knip mistakes it for a binary
