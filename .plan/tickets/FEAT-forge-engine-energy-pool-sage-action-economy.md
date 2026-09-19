@@ -9,7 +9,7 @@
 **Summary:** Forge Engine Energy Pool (SAGE Action Economy)
 **Context:** Epic proposed:epic-rpg-action-economy; tags rpg, forge, sage.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
-**Epic:** proposed:epic-rpg-action-economy
+**Epic:** epic-resolution-system
 **Tags:** rpg, forge, sage
 
 ## Summary

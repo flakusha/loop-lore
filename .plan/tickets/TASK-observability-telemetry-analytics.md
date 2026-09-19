@@ -3,7 +3,7 @@
 
 # TASK: Observability, Telemetry & Analytics
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (duplicate, verified 2026-09-19)
 **Priority:** medium
 **Effort:** Large
 **Summary:** Observability, Telemetry & Analytics
@@ -15,6 +15,14 @@
 ## Summary
 
 Implement observability, telemetry & analytics per docs/spec/observability.md.
+
+## Resolution
+
+Duplicate of existing plan artifact(s) — verified 2026-09-19 docs-gap reconcile audit (epic-docs-vs-plan-gap-audit-2026-09-19.md):
+
+- epic-analytics-observability.md (covers this ticket's scope)
+- epic-observability-telemetry.md (covers this ticket's scope)
+- epic-api-telemetry.md (covers this ticket's scope)
 
 ## Acceptance Criteria
 

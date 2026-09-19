@@ -3,7 +3,7 @@
 
 # TASK: Replayability (Session-Seeded Random Tables)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (already on dev, 2026-09-19)
 **Priority:** low
 **Effort:** Small
 **Summary:** Replayability (Session-Seeded Random Tables)
@@ -15,6 +15,12 @@
 ## Summary
 
 --label
+
+## Resolution
+
+Already implemented on dev — verified 2026-09-19 docs-gap reconcile audit (epic-docs-vs-plan-gap-audit-2026-09-19.md):
+
+- epic-replayability.md: code+tests+schema done (migration 035); only route-wiring pending
 
 ## Acceptance Criteria
 

@@ -3,7 +3,7 @@
 
 # FEAT: Procedural Asset Pipelines (maps/portraits/music/sfx)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (duplicate, verified 2026-09-19)
 **Priority:** low
 **Effort:** XL
 **Summary:** Procedural Asset Pipelines (maps/portraits/music/sfx)
@@ -15,6 +15,13 @@
 ## Summary
 
 --label
+
+## Resolution
+
+Duplicate of existing plan artifact(s) — verified 2026-09-19 docs-gap reconcile audit (epic-docs-vs-plan-gap-audit-2026-09-19.md):
+
+- epic-authoring-creation.md (ideas #15)
+- epic-3d-generation.md:42-50
 
 ## Acceptance Criteria
 

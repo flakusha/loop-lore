@@ -3,7 +3,7 @@
 
 # TASK: Message Reply Threading (P1)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (duplicate, verified 2026-09-19)
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Message Reply Threading (P1)
@@ -15,6 +15,12 @@
 ## Summary
 
 --label
+
+## Resolution
+
+Duplicate of existing plan artifact(s) — verified 2026-09-19 docs-gap reconcile audit (epic-docs-vs-plan-gap-audit-2026-09-19.md):
+
+- TASK-chat-feature-topics-side-threads.md in epic-chat-product-features.md
 
 ## Acceptance Criteria
 

@@ -3,7 +3,7 @@
 
 # FEAT: Visual Novel Mode Full Implementation
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (already on dev, 2026-09-19)
 **Priority:** high
 **Effort:** XL
 **Summary:** Visual Novel Mode Full Implementation
@@ -15,6 +15,14 @@
 ## Summary
 
 --label
+
+## Resolution
+
+Already implemented on dev — verified 2026-09-19 docs-gap reconcile audit (epic-docs-vs-plan-gap-audit-2026-09-19.md):
+
+- src/frontend/vn/ + scene-renderer
+- src/routes/vn-generate/
+- TASK-chat-visual-novel-mode.md
 
 ## Acceptance Criteria
 

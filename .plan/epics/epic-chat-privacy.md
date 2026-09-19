@@ -123,3 +123,7 @@ The encryption tiers used by the code (`chats.encryption_level` =
 `none|standard|private`, default `"public"` — out-of-enum) do not match the
 `ChatPrivacy` enum here (`public|private|world|location|group`), and the tier
 is not enforced by the message pipeline. See `BUG-encryption-tier-not-enforced.md`.
+
+## Docs-Gap Audit Remainders (2026-09-19)
+
+- [ ] [gap-audit E14] Account hard-delete flow (soft→hard) + data-access audit log

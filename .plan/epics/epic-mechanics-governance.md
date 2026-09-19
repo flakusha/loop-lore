@@ -101,3 +101,7 @@ The registry it toggles against lives in `epic-rpg-core-wiring.md`
 - Should mechanics be enforced or suggested?
 - How to handle player vs. character knowledge?
 - Should mechanics be visible to all players or hidden?
+
+## Docs-Gap Audit Remainders (2026-09-19)
+
+- [ ] [gap-audit E21] MARS-style genre modules (magic/cybernetics/vehicles/sanity) + modes content packs

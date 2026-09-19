@@ -92,3 +92,9 @@ switch. Mixing families risks inconsistency and a dominant strategy.
 ## Linked Tasks
 
 - TASK-resolution-system.md
+
+## Docs-Gap Audit Remainders (2026-09-19)
+
+- [ ] [gap-audit E18] Forged-in-the-Dark progress clocks mechanic detail
+- [ ] [gap-audit E19] GURPS modular advantages/disadvantages catalogs + 3d6 roll-under battle switch
+- [ ] [gap-audit E20] Ironsworn d6+d10 oracle mechanic (action/organic truth tables)

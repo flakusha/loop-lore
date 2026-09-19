@@ -3,7 +3,7 @@
 
 # FEAT: Director's Mode (Camera/Scene-cut/Music Metadata)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (duplicate, verified 2026-09-19)
 **Priority:** low
 **Effort:** XL
 **Summary:** Director's Mode (Camera/Scene-cut/Music Metadata)
@@ -15,6 +15,13 @@
 ## Summary
 
 --label
+
+## Resolution
+
+Duplicate of existing plan artifact(s) — verified 2026-09-19 docs-gap reconcile audit (epic-docs-vs-plan-gap-audit-2026-09-19.md):
+
+- epic-immersion-presentation.md (ideas #5, src/story/director-mode.ts)
+- epic-assistant-gm-flows.md:81-219
 
 ## Acceptance Criteria
 

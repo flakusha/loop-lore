@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** Medium
+**Summary:** Module-global testDatabaseOverride leaks when test setup throws before the close()-path cleanup runs
+**Context:** Test-infra parallel-safety — src/db/index.ts:81, tests/e2e/helpers/{server,browser-server}.ts
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 
 ## Summary
 

@@ -3,7 +3,7 @@
 
 # FEAT: frontend.mode Config + Accept-Header Content Negotiation + CORS
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (duplicate, verified 2026-09-19)
 **Priority:** medium
 **Effort:** Large
 **Summary:** frontend.mode Config + Accept-Header Content Negotiation + CORS
@@ -16,6 +16,13 @@
 
 Implement config.frontend.mode: htmx|spa|none + Accept-header content negotiation + CORS middleware.
 Source: docs/meta/code-practices-improvements/README.md + 07.
+
+## Resolution
+
+Duplicate of existing plan artifact(s) — verified 2026-09-19 docs-gap reconcile audit (epic-docs-vs-plan-gap-audit-2026-09-19.md):
+
+- epic-api-first-foundation.md (api/openapi/headless/versioning/cors)
+- epic-headless-alternative-frontends.md (covers this ticket's scope)
 
 ## Acceptance Criteria
 

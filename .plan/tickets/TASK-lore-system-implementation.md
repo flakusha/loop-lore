@@ -3,7 +3,7 @@
 
 # TASK: Lore System Implementation
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (duplicate, verified 2026-09-19)
 **Priority:** high
 **Effort:** Large
 **Summary:** Lore System Implementation
@@ -15,6 +15,14 @@
 ## Summary
 
 Implement lore entry lifecycle (draft/active/deprecated), world-scoped activation rules, author attribution per docs/spec/lore.md.
+
+## Resolution
+
+Duplicate of existing plan artifact(s) — verified 2026-09-19 docs-gap reconcile audit (epic-docs-vs-plan-gap-audit-2026-09-19.md):
+
+- epic-lore-knowledge.md (6 tasks)
+- epic-character-npc-lore-access.md (covers this ticket's scope)
+- lorebook activation in epic-memory-knowledge-systems.md
 
 ## Acceptance Criteria
 

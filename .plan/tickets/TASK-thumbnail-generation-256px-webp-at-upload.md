@@ -3,7 +3,7 @@
 
 # TASK: Thumbnail Generation (256px WebP at upload)
 
-**Status:** ✅ Done
+**Status:** ✅ Resolved (already on dev, 2026-09-19)
 **Priority:** low
 **Effort:** Medium
 **Summary:** Thumbnail Generation (256px WebP at upload)
@@ -18,6 +18,12 @@ Implemented: `thumbnail_path` text column on `assets` (migration 012), 256px
 WebP generation on image upload via `sharp`, and a serve-side preference for
 the persisted `thumbnail_path` in `handleServeCompressed`. Spec at
 `docs/spec/assets.md` line 86.
+
+## Resolution
+
+Already implemented on dev — verified 2026-09-19 docs-gap reconcile audit (epic-docs-vs-plan-gap-audit-2026-09-19.md):
+
+- migration 012; src/assets/service/thumbnail.ts + 4 tests
 
 ## Acceptance Criteria
 

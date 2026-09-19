@@ -3,7 +3,7 @@
 
 # FEAT: Inventory Management UI
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (duplicate, verified 2026-09-19)
 **Priority:** medium
 **Effort:** Large
 **Summary:** Inventory Management UI
@@ -16,6 +16,13 @@
 
 Implement slots, weight/capacity, organization, sorting for inventory.
 Source: docs/meta/reviews/review-topics.md §12.
+
+## Resolution
+
+Duplicate of existing plan artifact(s) — verified 2026-09-19 docs-gap reconcile audit (epic-docs-vs-plan-gap-audit-2026-09-19.md):
+
+- epic-inventory-ui.md (covers this ticket's scope)
+- src/routes/trade/ (covers this ticket's scope)
 
 ## Acceptance Criteria
 

@@ -3,7 +3,7 @@
 
 # FEAT: Emotion-reactive Portraits (Auto-swap on emotion detect)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (already on dev, 2026-09-19)
 **Priority:** medium
 **Effort:** Large
 **Summary:** Emotion-reactive Portraits (Auto-swap on emotion detect)
@@ -15,6 +15,14 @@
 ## Summary
 
 --label
+
+## Resolution
+
+Already implemented on dev — verified 2026-09-19 docs-gap reconcile audit (epic-docs-vs-plan-gap-audit-2026-09-19.md):
+
+- src/frontend/alpine/mood/avatars.ts:135 avatarForMessage
+- src/components/chat/message-list.html:117
+- release-010 item 3 Done
 
 ## Acceptance Criteria
 

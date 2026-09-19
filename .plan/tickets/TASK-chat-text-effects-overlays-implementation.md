@@ -3,7 +3,7 @@
 
 # TASK: Chat Text Effects & Overlays Implementation
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (duplicate, verified 2026-09-19)
 **Priority:** medium
 **Effort:** Large
 **Summary:** Chat Text Effects & Overlays Implementation
@@ -15,6 +15,12 @@
 ## Summary
 
 --label
+
+## Resolution
+
+Duplicate of existing plan artifact(s) — verified 2026-09-19 docs-gap reconcile audit (epic-docs-vs-plan-gap-audit-2026-09-19.md):
+
+- TASK-text-effects-overlays.md under epic-immersion-presentation.md
 
 ## Acceptance Criteria
 
