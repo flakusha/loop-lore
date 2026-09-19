@@ -230,10 +230,10 @@ describe("TravelRouteService", () => {
     const worldId = await makeWorld();
     // BigInt is not JSON-serializable; jsonStringifyOr falls back to "[]".
     const routeId = await svc.createRoute(
-      { worldId, name: "bad-serialization", kind: "road", waypoints: [{ x: BigInt(1), y: 0 },] as never, },
+      { worldId, name: "bad-serialization", kind: "road", waypoints: [{ x: BigInt(1,), y: 0, },] as never, },
     );
     const row = testDb.sqlite.query(`SELECT waypoints FROM travel_routes WHERE id = ?`,).get(routeId,) as any;
-    expect(row.waypoints,).toBe("[]");
+    expect(row.waypoints,).toBe("[]",);
   });
 
   test("addStop rejects unknown route and unknown location", async () => {
