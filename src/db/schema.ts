@@ -143,6 +143,7 @@ export interface DB {
   blog_posts: import("./schema-blog").BlogPosts;
   blog_rag_sources: import("./schema-blog").BlogRagSources;
   blog_tags: import("./schema-blog").BlogTags;
+  character_license_history: import("./schema-character").CharacterLicenseHistory;
   actor_memories: import("./schema-story").ActorMemories;
   memory_embeddings: import("./schema-core").MemoryEmbeddings;
   generation_attempts: import("./schema-generation").GenerationAttempts;

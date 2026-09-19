@@ -260,4 +260,40 @@ describe("characters exportRoutes coverage", () => {
     expect([...bytes.slice(0, 2,),],).toEqual([80, 75,],);
     expect(bytes.length,).toBeGreaterThan(0,);
   });
+
+  test("export embeds license extension and attribution warning", async () => {
+    await db.insertInto("character_licensing",).values({
+      id: uid(),
+      actor_id: actorId,
+      license_type: "cc_by",
+      custom_license_text: null,
+      attribution: null,
+      allow_derivatives: 1,
+      allow_commercial: 1,
+      share_alike: 0,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    },).execute();
+
+    const res = await app.handle(
+      new Request(`http://localhost/api/actors/${actorId}/export`,),
+    );
+    expect(res.status,).toBe(200,);
+    expect(res.headers.get("x-license-type",),).toBe("cc_by",);
+    expect(res.headers.get("x-license-warning",),).toContain("attribution",);
+    const body = await res.json() as {
+      data: { extensions: { license: { license_type: string; attribution: null } } };
+    };
+    expect(body.data.extensions.license.license_type,).toBe("cc_by",);
+    expect(body.data.extensions.license.attribution,).toBeNull();
+  });
+
+  test("export without licensing omits license headers", async () => {
+    const res = await app.handle(
+      new Request(`http://localhost/api/actors/${publicActorId}/export`,),
+    );
+    expect(res.status,).toBe(200,);
+    expect(res.headers.get("x-license-type",),).toBeNull();
+    expect(res.headers.get("x-license-warning",),).toBeNull();
+  });
 });

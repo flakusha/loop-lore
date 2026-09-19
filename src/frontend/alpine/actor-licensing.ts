@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+// size-allow: 260
+
 // ── Character licensing panel.
 // Drives `/api/actors/:actorId/licensing` (GET / POST / DELETE). Pairs with
 // `src/components/character/licensing-panel.html`.
@@ -29,9 +31,21 @@ export interface CharacterLicensing {
   updated_at: string;
 }
 
+/**
+ * Audit entry for a licensing change (matches `character_license_history`).
+ */
+export interface LicenseHistoryEntry {
+  id: string;
+  license_type: string;
+  attribution: string | null;
+  changed_by: string;
+  created_at: string;
+}
+
 /** Human label for a license type. */
 const LICENSE_LABELS: Record<string, string> = {
   cc0: "CC0 (Public Domain)",
+  removed: "License removed",
   cc_by: "CC BY",
   cc_by_sa: "CC BY-SA",
   cc_by_nc: "CC BY-NC",
@@ -60,10 +74,14 @@ export interface ActorLicensingState {
   licenseSaving: boolean;
   licenseError: string;
   licenseDirty: boolean;
+  /** Audit trail of licensing changes, newest first. */
+  licenseHistory: LicenseHistoryEntry[];
   /** Bind the panel to a specific actor; clears any prior license data. */
   setActorId(actorId: string,): void;
   /** Fetch the current licensing record (200 → populates; 404 → null). */
   loadLicensing(): Promise<void>;
+  /** Fetch the licensing change history for the bound actor. */
+  loadLicenseHistory(): Promise<void>;
   /** Mark the form as dirty and surface the changes in `licenseForm`. */
   markDirty(): void;
   /** POST the current `licenseForm` to the upsert endpoint. */
@@ -91,6 +109,7 @@ export const actorLicensing: ActorLicensingState = {
   licenseSaving: false,
   licenseError: "",
   licenseDirty: false,
+  licenseHistory: [],
 
   setActorId(actorId: string,) {
     if (this._licActorId === actorId) { return; }
@@ -99,7 +118,9 @@ export const actorLicensing: ActorLicensingState = {
     this.licenseForm = { ...EMPTY_FORM, };
     this.licenseError = "";
     this.licenseDirty = false;
+    this.licenseHistory = [];
     void this.loadLicensing();
+    void this.loadLicenseHistory();
   },
 
   async loadLicensing() {
@@ -135,6 +156,22 @@ export const actorLicensing: ActorLicensingState = {
     }
   },
 
+  async loadLicenseHistory() {
+    const actorId = this._licActorId;
+    if (!actorId) { return; }
+    try {
+      const res = await apiFetch(`/api/actors/${actorId}/licensing/history`,);
+      if (!res.ok) {
+        this.licenseHistory = [];
+        return;
+      }
+      this.licenseHistory = (await res.json()) as LicenseHistoryEntry[];
+    } catch (error) {
+      log.error("Failed to load license history", error instanceof Error ? error : undefined, {},);
+      this.licenseHistory = [];
+    }
+  },
+
   markDirty() {
     this.licenseDirty = true;
   },
@@ -167,6 +204,7 @@ export const actorLicensing: ActorLicensingState = {
       }
       this.licenseDirty = false;
       await this.loadLicensing();
+      await this.loadLicenseHistory();
     } catch (error) {
       log.error("Failed to save licensing", error instanceof Error ? error : undefined, {},);
       this.licenseError = t("status.licensingSaveFailed",);
@@ -188,6 +226,7 @@ export const actorLicensing: ActorLicensingState = {
       this.license = null;
       this.licenseForm = { ...EMPTY_FORM, };
       this.licenseDirty = false;
+      await this.loadLicenseHistory();
     } catch (error) {
       log.error("Failed to delete licensing", error instanceof Error ? error : undefined, {},);
       this.licenseError = t("status.licensingDeleteFailed",);
@@ -211,6 +250,7 @@ export function actorLicensingFactory(actorId: string,): ActorLicensingState {
   state.licenseSaving = false;
   state.licenseError = "";
   state.licenseDirty = false;
+  state.licenseHistory = [];
   state.setActorId(actorId,);
   return state;
 }
