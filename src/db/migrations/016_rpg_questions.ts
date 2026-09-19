@@ -11,9 +11,10 @@
  *
  * Top-level (not a `001_init` part): `001_init.ts` is frozen. New top-level
  * migrations are auto-discovered by `getMigrationFiles()` (sorted by name).
- * Numbered 015: dev ships 013_locations_fractal (schema version 34) and
- * 014_asset_thumbnail / 014_avatar_focus (schema version 33), so the
- * original 013 number would collide in prefix and version.
+ * Numbered 016: dev ships 013_locations_fractal (schema version 34),
+ * 014_asset_thumbnail (schema version 33), and 015_avatar_focus (schema
+ * version 33), so the original 013 number would collide in prefix and
+ * version.
  */
 import { type Kysely, sql, } from "kysely";
 import { recordSchemaVersion, } from "../schema-version";
@@ -44,7 +45,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .columns(["chat_id", "status",],)
     .execute();
 
-  await recordSchemaVersion(database, 35, "rpg chat questions",);
+  await recordSchemaVersion(database, 36, "rpg chat questions",);
 }
 
 /**
