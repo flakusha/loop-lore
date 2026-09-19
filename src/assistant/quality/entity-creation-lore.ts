@@ -95,7 +95,8 @@ export function validateRawLoreEntries(raw: unknown[],): string[] {
  * Validation of raw input (subject kinds, selectors, position, key count/length)
  * must be performed by `validateRawLoreEntries` BEFORE normalization —
  * `normalizeLoreEntries` silently strips anything it can't normalize.
- * @param raw
+ * @param raw - raw lore entry array from the LLM completion
+ * @returns the normalized typed lore entries (unsafe content stripped)
  */
 export function normalizeLoreEntries(raw: unknown[],): GeneratedEntityLoreEntry[] {
   const result: GeneratedEntityLoreEntry[] = [];

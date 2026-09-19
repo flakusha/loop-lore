@@ -47,7 +47,11 @@ export interface ActorIdentity {
 /** Optional callback to test whether a location is inside another's scope tree. */
 export type LocationInScope = (locId: string, scopeLocId: string,) => boolean;
 
-/** Simple UUID v4 validator (used for subject locationId validation). */
+/**
+ * Simple UUID v4 validator (used for subject locationId validation).
+ * @param value - candidate string
+ * @returns true when the value matches the UUID v4 pattern
+ */
 export function isValidUuid(value: string,): boolean {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value,);
 }

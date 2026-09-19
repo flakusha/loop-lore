@@ -58,7 +58,11 @@ export const REQUIRED_FIELDS: Record<EntityKind, string[]> = {
   item: ["name", "description",],
 };
 
-/** Clamp a numeric/string input to a non-negative integer. */
+/**
+ * Clamp a numeric/string input to a non-negative integer.
+ * @param value - candidate value (number or numeric string)
+ * @returns the clamped integer, or undefined for non-numeric input
+ */
 export function clampNonNegativeInt(value: unknown,): number | undefined {
   if (typeof value === "number" && Number.isFinite(value,)) {
     return Math.max(0, Math.floor(value,),);
@@ -70,7 +74,13 @@ export function clampNonNegativeInt(value: unknown,): number | undefined {
   return undefined;
 }
 
-/** Clamp a numeric/string input to an integer in `[min, max]`. */
+/**
+ * Clamp a numeric/string input to an integer in `[min, max]`.
+ * @param value - candidate value (number or numeric string)
+ * @param min - lower bound
+ * @param max - upper bound
+ * @returns the clamped integer, or undefined for non-numeric input
+ */
 export function clampInt(value: unknown, min: number, max: number,): number | undefined {
   if (typeof value === "number" && Number.isFinite(value,)) {
     return Math.max(min, Math.min(max, Math.floor(value,),),);
@@ -82,7 +92,11 @@ export function clampInt(value: unknown, min: number, max: number,): number | un
   return undefined;
 }
 
-/** True when the string is a valid `LorePosition` enum member. */
+/**
+ * True when the string is a valid `LorePosition` enum member.
+ * @param value - candidate string
+ * @returns true when `value` matches a `LorePosition` member
+ */
 export function isValidLorePosition(value: string,): boolean {
   return Object.values(LorePosition,).includes(value as LorePosition,);
 }

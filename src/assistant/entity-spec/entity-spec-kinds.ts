@@ -61,12 +61,21 @@ export function findEntitySpec(kind: string,): EntitySpecDescriptor | undefined 
   return Object.hasOwn(record, kind,) ? record[kind] : undefined;
 }
 
-/** First non-empty line of a seed, as the tentative entity name. */
+/**
+ * First non-empty line of a seed, as the tentative entity name.
+ * @param seed - raw seed text (untrusted input)
+ * @returns the first non-empty trimmed line, or an empty string
+ */
 export function firstSeedLine(seed: string,): string {
   return seed.split("\n",).map((line,) => line.trim()).find((line,) => line !== "") ?? "";
 }
 
-/** Build the creation-chat title for a kind + raw seed (first line = name). */
+/**
+ * Build the creation-chat title for a kind + raw seed (first line = name).
+ * @param descriptor - kind descriptor carrying the chat title prefix
+ * @param seed - raw seed text; first non-empty line becomes the name
+ * @returns the prefixed chat title, "(unnamed)" when the seed is blank
+ */
 export function creationChatTitle(descriptor: EntitySpecDescriptor, seed: string,): string {
   const name = firstSeedLine(seed,);
   return `${descriptor.chatTitlePrefix}: ${name === "" ? "(unnamed)" : name}`;

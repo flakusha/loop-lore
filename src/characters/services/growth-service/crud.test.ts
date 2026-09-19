@@ -12,6 +12,7 @@ import { createTestActors, } from "../test-helpers.js";
 import { getArc, upsertArc, } from "./crud-arc.js";
 import { confirmGrowthEntry, rejectGrowthEntry, } from "./crud-confirm.js";
 import { getGrowthMode, insertGrowthLog, listGrowthLog, } from "./crud-log.js";
+import { CharacterGrowthService, characterGrowthService, } from "./index.js";
 import { GrowthServiceError, } from "./types.js";
 
 describe("growth-service arc + confirm", () => {
@@ -88,5 +89,52 @@ describe("growth-service insert/list", () => {
       .rejects.toMatchObject({ code: "static_mode_forbidden", },);
     const arc = await insertGrowthLog(db, { actorId, axis: "arc", eventType: "arc_stage_set", },);
     expect(arc.status,).toBe("applied",);
+  });
+});
+
+describe("growth-service facade (index.ts)", () => {
+  let db: Kysely<DB>;
+  let actorId: string;
+  let svc: CharacterGrowthService;
+
+  beforeAll(async () => {
+    createLogger({ level: "error", },);
+    db = (await createTestDb()).db;
+    ({ actorId, } = await createTestActors(db, "test-actor-growth-003",));
+    svc = characterGrowthService(db,);
+  },);
+
+  it("factory returns a facade instance", () => {
+    expect(svc,).toBeInstanceOf(CharacterGrowthService,);
+  });
+
+  it("round-trips growth mode, arc, and log through the facade", async () => {
+    expect((await svc.getGrowthMode(actorId,)).growthMode,).toBe("dynamic",);
+    expect(await svc.getArc(actorId,),).toBeNull();
+    const arc = await svc.upsertArc({ actorId, currentStage: "crisis", }, "u1",);
+    expect(arc.currentStage,).toBe("crisis",);
+    expect((await svc.getArc(actorId,))?.currentStage,).toBe("crisis",);
+    const entry = await svc.insertGrowthLog({ actorId, axis: "trait", eventType: "trait_drifted", },);
+    expect(entry.status,).toBe("applied",);
+    expect((await svc.listGrowthLog(actorId,)).some((e,) => e.id === entry.id),).toBe(true,);
+  });
+
+  it("confirms and rejects pending entries through the facade", async () => {
+    const pending = await svc.insertGrowthLog({
+      actorId,
+      axis: "trait",
+      eventType: "trait_drifted",
+      status: "pending",
+    },);
+    const confirmed = await svc.confirmGrowthEntry({ entryId: pending.id, actorId, confirmedBy: "u1", },);
+    expect(confirmed.status,).toBe("applied",);
+    const pending2 = await svc.insertGrowthLog({
+      actorId,
+      axis: "trait",
+      eventType: "trait_drifted",
+      status: "pending",
+    },);
+    const rejected = await svc.rejectGrowthEntry({ entryId: pending2.id, actorId, rejectedBy: "u1", },);
+    expect(rejected.status,).toBe("rejected",);
   });
 });

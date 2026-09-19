@@ -63,6 +63,7 @@ export class AvatarService {
   /**
    * Get all avatars for a character, sorted by sort_order
    * @param actorId
+   * @returns the character's avatars in sort order
    */
   async getAvatars(actorId: string,): Promise<Avatar[]> {
     return getAvatarsDispatch(this.db, actorId,);
@@ -71,6 +72,7 @@ export class AvatarService {
   /**
    * Get a specific avatar by ID
    * @param avatarId
+   * @returns the avatar, or undefined when missing
    */
   async getAvatar(avatarId: string,): Promise<Avatar | undefined> {
     return getAvatarDispatch(this.db, avatarId,);
@@ -79,6 +81,7 @@ export class AvatarService {
   /**
    * Create a new avatar
    * @param opts
+   * @returns the created avatar id
    */
   async createAvatar(opts: CreateAvatarOpts,): Promise<string> {
     return createAvatarDispatch(this.db, opts,);
@@ -88,6 +91,7 @@ export class AvatarService {
    * Update an avatar
    * @param avatarId
    * @param opts
+   * @returns void
    */
   async updateAvatar(avatarId: string, opts: UpdateAvatarOpts,): Promise<void> {
     return updateAvatarDispatch(this.db, avatarId, opts,);
@@ -96,6 +100,7 @@ export class AvatarService {
   /**
    * Delete an avatar
    * @param avatarId
+   * @returns void
    */
   async deleteAvatar(avatarId: string,): Promise<void> {
     return deleteAvatarDispatch(this.db, avatarId,);
@@ -106,6 +111,7 @@ export class AvatarService {
    * @param actorId
    * @param context
    * @param worldId
+   * @returns the selected avatar, or null when none matches
    */
   async selectAvatar(
     actorId: string,
@@ -118,6 +124,7 @@ export class AvatarService {
   /**
    * Get avatar config for a character
    * @param actorId
+   * @returns the avatar config, or undefined when unset
    */
   async getAvatarConfig(actorId: string,): Promise<AvatarConfig | undefined> {
     return getAvatarConfigDispatch(this.db, actorId,);
@@ -130,6 +137,7 @@ export class AvatarService {
    * @param config.selectionRule
    * @param config.weights
    * @param config.fallbackChain
+   * @returns the config id
    */
   async upsertAvatarConfig(
     actorId: string,
@@ -146,6 +154,7 @@ export class AvatarService {
    * Get world-specific avatar config
    * @param actorId
    * @param worldId
+   * @returns the world-specific config row
    */
   async getWorldAvatarConfig(actorId: string, worldId: string,) {
     return getWorldAvatarConfigDispatch(this.db, actorId, worldId,);
@@ -158,6 +167,7 @@ export class AvatarService {
    * @param config
    * @param config.selectionRuleOverride
    * @param config.weightsOverride
+   * @returns the world config id
    */
   async upsertWorldAvatarConfig(
     actorId: string,

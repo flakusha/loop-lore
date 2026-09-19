@@ -29,7 +29,8 @@ declare global {
 }
 
 /**
- * @param bytes
+ * @param bytes - size in bytes
+ * @returns human-readable size string
  */
 function formatSize(bytes: number,): string {
   if (bytes < 1024) { return `${bytes} B`; }
@@ -38,7 +39,8 @@ function formatSize(bytes: number,): string {
 }
 
 /**
- * @param s
+ * @param s - raw string
+ * @returns HTML-escaped string
  */
 function escapeHtml(s: string,): string {
   return s.replace(/[&<>"']/g, (c,) => {
@@ -59,7 +61,10 @@ function escapeHtml(s: string,): string {
   },);
 }
 
-/** Lazily mount the preview modal into `#modal-container`. */
+/**
+ * Lazily mount the preview modal into `#modal-container`.
+ * @returns the modal element, or null when unavailable
+ */
 async function ensurePreviewModal(): Promise<HTMLElement | null> {
   const existing = document.querySelector<HTMLElement>("#preview-modal",);
   if (existing) { return existing; }

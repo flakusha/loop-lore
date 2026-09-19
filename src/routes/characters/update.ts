@@ -16,8 +16,9 @@ import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-uti
 import type { HandlerOpts, } from "./types";
 
 /**
- * @param opts
- * @param prefix
+ * @param opts - handler options (database)
+ * @param prefix - route prefix
+ * @returns the Elysia character-update routes
  */
 export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
@@ -137,7 +138,8 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
 
 /**
  * Assemble the update column map from the request body (non-empty fields).
- * @param body
+ * @param body - validated update body
+ * @returns the column update map
  */
 function buildActorUpdates(
   body: Record<string, unknown>,
@@ -210,6 +212,8 @@ function clampFocusPercent(value: unknown,): number {
  * PUTs on legacy/skeletal rows never fail.
  * @param body - Raw request body (presence check)
  * @param actor - Stored actor row (merge source for the untouched half)
+ * @param actor.outfits - stored outfits JSON
+ * @param actor.default_outfit - stored default outfit
  * @returns Error message, or null when the merged wardrobe stays valid
  */
 function rejectClearedCharacterFields(

@@ -181,6 +181,7 @@ export function generateLoot(
  * Calculate item sell price based on quality and durability
  * @param item
  * @param basePrice
+ * @returns the rounded sell price
  */
 export function calculateSellPrice(
   item: EquipmentItem,
@@ -206,6 +207,7 @@ export function calculateSellPrice(
  * Get items in a specific equipment slot
  * @param items
  * @param slot
+ * @returns the equipped item in the slot, or undefined when empty
  */
 export function getEquippedInSlot(
   items: EquipmentItem[],
@@ -217,6 +219,7 @@ export function getEquippedInSlot(
 /**
  * Get all equipped items
  * @param items
+ * @returns the equipped subset
  */
 export function getEquippedItems(items: EquipmentItem[],): EquipmentItem[] {
   const equipped: EquipmentItem[] = [];
@@ -228,6 +231,7 @@ export function getEquippedItems(items: EquipmentItem[],): EquipmentItem[] {
  * Calculate total weight of items
  * @param items
  * @param weightMap
+ * @returns the summed weight (unknown items count 0)
  */
 export function calculateTotalWeight(
   items: EquipmentItem[],
