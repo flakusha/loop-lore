@@ -129,7 +129,7 @@ async function resolveAtmosphereBonus(
     if (atmosphere.dangerous >= 70) { return -2; }
     return 0;
   } catch (cause) {
-    log.warn(`Atmosphere consult skipped for ${encounterId}:`, cause instanceof Error ? cause : undefined,);
+    log.warn(`Atmosphere consult skipped for ${encounterId}:`, { error: cause instanceof Error ? cause.message : String(cause), },);
     return 0;
   }
 }
@@ -160,7 +160,7 @@ async function applyIntimacyLeg(db: Kysely<DB>, ctx: LegContext,): Promise<void>
       },);
     }
   } catch (cause) {
-    log.warn(`Intimacy fan-out skipped for ${participant}:`, cause instanceof Error ? cause : undefined,);
+    log.warn(`Intimacy fan-out skipped for ${participant}:`, { error: cause instanceof Error ? cause.message : String(cause), },);
   }
 }
 
@@ -180,7 +180,7 @@ async function applyMoodLeg(ctx: LegContext,): Promise<void> {
       sourceId: `${encounter.id}:${outcome.type}`,
     },);
   } catch (cause) {
-    log.warn(`Mood fan-out skipped for ${participant}:`, cause instanceof Error ? cause : undefined,);
+    log.warn(`Mood fan-out skipped for ${participant}:`, { error: cause instanceof Error ? cause.message : String(cause), },);
   }
 }
 
@@ -201,7 +201,7 @@ async function applyXpLeg(db: Kysely<DB>, ctx: LegContext,): Promise<void> {
       },);
     }
   } catch (cause) {
-    log.warn(`XP fan-out skipped for ${participant}:`, cause instanceof Error ? cause : undefined,);
+    log.warn(`XP fan-out skipped for ${participant}:`, { error: cause instanceof Error ? cause.message : String(cause), },);
   }
 }
 
@@ -244,12 +244,36 @@ async function applyMemoryLeg(db: Kysely<DB>, ctx: LegContext,): Promise<void> {
         .execute();
     }
   } catch (cause) {
-    log.warn(`Memory fan-out skipped for ${participant}:`, cause instanceof Error ? cause : undefined,);
+    log.warn(`Memory fan-out skipped for ${participant}:`, { error: cause instanceof Error ? cause.message : String(cause), },);
   }
 }
 
 /**
- * All per-participant legs for one outcome: intimacy, mood, XP, memory.
+ * Trauma leg (TASK-044): severity derives from the outcome shape via
+ * `severityFromOutcome` — never from LLM judgment. Satisfaction /
+ * bonding / discovery write nothing; dissatisfaction / injury write one
+ * shared `trauma` row per participant (recovery = row expiry, driven by
+ * the shared sweep). Best-effort like every other leg.
+ * @param db
+ * @param ctx
+ */
+async function applyTraumaLeg(db: Kysely<DB>, ctx: LegContext,): Promise<void> {
+  const { log, encounter, outcome, participant, } = ctx;
+  try {
+    const { TraumaService, } = await import("../../trauma");
+    await new TraumaService(db,).applyFromOutcome(
+      participant,
+      { type: outcome.type, effects: { moodChange: outcome.effects.moodChange, } as EncounterOutcome["effects"], },
+      false,
+      encounter.id,
+    );
+  } catch (cause) {
+    log.warn(`Trauma fan-out skipped for ${participant}:`, { error: cause instanceof Error ? cause.message : String(cause), },);
+  }
+}
+
+/**
+ * All per-participant legs for one outcome: intimacy, mood, XP, trauma, memory.
  * @param db
  * @param ctx
  */
@@ -257,6 +281,7 @@ async function applyParticipantLegs(db: Kysely<DB>, ctx: LegContext,): Promise<v
   await applyIntimacyLeg(db, ctx,);
   await applyMoodLeg(ctx,);
   await applyXpLeg(db, ctx,);
+  await applyTraumaLeg(db, ctx,);
   await applyMemoryLeg(db, ctx,);
 }
 
@@ -310,7 +335,7 @@ async function applyReputationLeg(
     }
     log.info(`Reputation recorded for ${encounter.id} (${outcome.type}, ${socialContext})`,);
   } catch (cause) {
-    log.warn(`Reputation fan-out skipped for ${encounter.id}:`, cause instanceof Error ? cause : undefined,);
+    log.warn(`Reputation fan-out skipped for ${encounter.id}:`, { error: cause instanceof Error ? cause.message : String(cause), },);
   }
 }
 

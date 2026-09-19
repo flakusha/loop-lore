@@ -6,10 +6,16 @@ import type { BodyProfile, } from "./types";
 
 /**
  * Calculate effective encounter duration based on stamina + endurance.
+ *
+ * The CON contribution arrives as `conModifier` — callers read it via
+ * the unified stat-modifier path (`getModifier(stats, "con")`, same as
+ * the seduction attempt roll), never duplicated in body logic. There is
+ * no separate `ResolutionSystem`; the stats module IS the unified path.
  * @param profile
+ * @param conModifier - CON modifier from the unified stat path (default 0)
  */
-export function calculateEncounterDuration(profile: BodyProfile,): number {
-  return Math.floor((profile.stamina + profile.endurance) / 10,);
+export function calculateEncounterDuration(profile: BodyProfile, conModifier = 0,): number {
+  return Math.floor((profile.stamina + profile.endurance) / 10,) + conModifier;
 }
 
 /**

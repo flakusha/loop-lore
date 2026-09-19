@@ -3,13 +3,9 @@
 
 import type { Kysely, } from "kysely";
 import { MoodService, } from "../../../characters/services/mood-service";
-import { IntimacyActionType, } from "../../../db/enums";
 import type { DB, } from "../../../db/schema";
 import { getLogger, } from "../../../logger";
-import {
-  assertNsfwCapability,
-  CapabilityBlockedError,
-} from "../../../nsfw/capability-gate";
+import { assertNsfwCapability, } from "../../../nsfw/capability-gate";
 import { getModifier, } from "../../stats/modifiers";
 import type { StatBlock, } from "../../stats/types";
 import { jsonStringifyOr, } from "../../../utils";
@@ -95,7 +91,7 @@ async function logLevelChangeMood(args: {
           sourceId: `${pairId}:${threshold.level}`,
         },);
       } catch (cause) {
-        log.warn(`Mood follow-through skipped for ${feltId}:`, cause instanceof Error ? cause : undefined,);
+        log.warn(`Mood follow-through skipped for ${feltId}:`, { error: cause instanceof Error ? cause.message : String(cause), },);
       }
     }
   }
@@ -151,18 +147,34 @@ export async function applyAction(
   // The gate's intimacy floor uses the pre-action score; non-consensual
   // progression is a violation path (trauma), not intimacy gain (Open Q1).
   if (opts.gate) {
-    await assertNsfwCapability({
-      database,
-      config: opts.gate.config,
-      userId: opts.gate.userId,
-      chatId: opts.gate.chatId,
-      actorId,
-      targetActorId,
-      worldId: worldId ?? null,
-      contentRating: opts.gate.contentRating,
-      ratingLimits: opts.gate.ratingLimits,
-      consentAction: opts.gate.consentAction,
-    },);
+    try {
+      await assertNsfwCapability({
+        database,
+        config: opts.gate.config,
+        userId: opts.gate.userId,
+        chatId: opts.gate.chatId,
+        actorId,
+        targetActorId,
+        worldId: worldId ?? null,
+        contentRating: opts.gate.contentRating,
+        ratingLimits: opts.gate.ratingLimits,
+        consentAction: opts.gate.consentAction,
+      },);
+    } catch (cause) {
+      // Violation path (TASK-044): gate denial escalates trauma on the
+      // target actor (best-effort — a missing row must not mask the
+      // denial), then the denial propagates unchanged.
+      try {
+        const { TraumaService, } = await import("../../trauma");
+        await new TraumaService(database,).escalateViolation(
+          targetActorId ?? actorId,
+          opts.gate.chatId ?? undefined,
+        );
+      } catch (escalation) {
+        log.warn(`Trauma escalation skipped for ${targetActorId ?? actorId}:`, { error: escalation instanceof Error ? escalation.message : String(escalation), },);
+      }
+      throw cause;
+    }
   }
 
   // Check minimum intimacy

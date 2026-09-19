@@ -34,6 +34,7 @@ describe("cron default jobs", () => {
       "federation.resync",
       "providers.health-rescan",
       "locations.tick",
+      "nsfw.status-sweep",
     ],);
     for (const job of jobs) {
       expect(Bun.cron.parse(job.schedule,),).not.toBeNull();
