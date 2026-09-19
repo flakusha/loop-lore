@@ -30,10 +30,10 @@ function rollOutcomes(outcomes: EncounterOutcome[],): EncounterOutcome[] {
 /**
  * Apply outcome effects.
  *
- * Fan-out (TASK-036/037/040/041/042): each triggered outcome's deltas
+ * Fan-out (TASK-036/037/038/040/041/042): each triggered outcome's deltas
  * land in the canonical stores — intimacy pairs, mood events, the
  * shared XP ledger, reputation deltas, fantasy exploration counts,
- * memory rows. Every leg is best-effort (try/catch) so a missing
+ * pregnancy rolls, memory rows. Every leg is best-effort (try/catch) so a missing
  * auxiliary row never fails the encounter completion itself. Outcomes
  * with `memoryCreated` persist one `actor_memories` row per participant
  * so the long-term memory pipeline (Open Q8) sees the encounter.
@@ -273,7 +273,31 @@ async function applyTraumaLeg(db: Kysely<DB>, ctx: LegContext,): Promise<void> {
 }
 
 /**
- * All per-participant legs for one outcome: intimacy, mood, XP, trauma, memory.
+ * Pregnancy leg (TASK-038): event-driven conception roll per outcome —
+ * never polled. The carrier is each participant in turn (sire = first
+ * other participant); species resolve from heat-cycle rows inside the
+ * service. Best-effort like every other leg.
+ * @param db
+ * @param ctx
+ */
+async function applyPregnancyLeg(db: Kysely<DB>, ctx: LegContext,): Promise<void> {
+  const { log, encounter, participant, } = ctx;
+  try {
+    const { ReproductionService, } = await import("../../reproduction");
+    const sire = firstOtherParticipant(encounter.participants, participant,) ?? participant;
+    await new ReproductionService(db,).rollPregnancy(
+      participant,
+      sire,
+      { id: encounter.id, worldId: encounter.worldId, },
+    );
+  } catch (cause) {
+    log.warn(`Pregnancy fan-out skipped for ${participant}:`, { error: cause instanceof Error ? cause.message : String(cause), },);
+  }
+}
+
+/**
+ * All per-participant legs for one outcome: intimacy, mood, XP, trauma,
+ * pregnancy, memory.
  * @param db
  * @param ctx
  */
@@ -282,6 +306,7 @@ async function applyParticipantLegs(db: Kysely<DB>, ctx: LegContext,): Promise<v
   await applyMoodLeg(ctx,);
   await applyXpLeg(db, ctx,);
   await applyTraumaLeg(db, ctx,);
+  await applyPregnancyLeg(db, ctx,);
   await applyMemoryLeg(db, ctx,);
 }
 

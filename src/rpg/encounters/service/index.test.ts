@@ -451,4 +451,54 @@ describe("outcome fan-out (TASK-036/040/041/042/043)", () => {
       await db.selectFrom("status_effect",).selectAll().execute(),
     ).toEqual([],);
   });
+
+  test("human pair completion rolls pregnancy per participant (TASK-038)", async () => {
+    const service = new EncounterService(db,);
+    const { a, b, } = await seedPair();
+    // Human baseline: both participants can conceive; the leg is
+    // best-effort (25% per carrier per completion) — complete enough
+    // encounters that at least one conception is near-certain, then
+    // assert the shared pregnancy row shape, not the count.
+    let conceived = false;
+    for (let i = 0; i < 30 && !conceived; i++) {
+      const enc = await service.createEncounter({
+        database: db,
+        worldId: "world-1",
+        encounterType: "romantic",
+        participants: [a, b,],
+        phases: [{
+          name: "Only",
+          duration: 1,
+          actionsAvailable: ["all",],
+          arousalEffects: [],
+          narrativeBeats: [],
+        },],
+        outcomes: [{
+          type: "satisfaction",
+          probability: 1,
+          effects: {
+            intimacyChange: 0,
+            moodChange: 0,
+            satisfactionBonus: 0,
+            memoryCreated: false,
+            reputationChange: 0,
+          },
+        },],
+      },);
+      await service.advancePhase(enc.id,);
+      const rows = await db.selectFrom("status_effect",)
+        .where("effect_id", "=", "pregnancy",)
+        .where("category", "=", "pregnancy",)
+        .selectAll()
+        .execute();
+      conceived = rows.length > 0;
+    }
+    expect(conceived,).toBeTrue();
+    const rows = await db.selectFrom("status_effect",)
+      .where("effect_id", "=", "pregnancy",)
+      .selectAll()
+      .executeTakeFirstOrThrow();
+    expect(rows.source,).toBe("reproduction",);
+    expect(rows.expires_at,).not.toBeNull();
+  });
 });
