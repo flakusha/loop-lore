@@ -218,6 +218,16 @@ export function badRequestResponse(message: string,): Response {
 }
 
 /**
+ * 409 Conflict — request collides with current resource state (e.g. ambiguous
+ * identifier, optimistic-lock mismatch). Use when the request is well-formed
+ * but the server cannot resolve to a single target.
+ * @param message
+ */
+export function conflictResponse(message: string,): Response {
+  return jsonError({ message, status: HttpStatus.Conflict, code: ErrorCode.Conflict, },);
+}
+
+/**
  * Extract userId from Elysia context or return a localized Unauthorized error response.
  * @param ctx
  */

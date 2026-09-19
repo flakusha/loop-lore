@@ -185,20 +185,27 @@ export class ResourceManager {
 
   private async runOne<T,>(handle: InternalHandle<T>, release: () => void,): Promise<void> {
     handle.transition("running",);
+    // Track whether the handle settled itself (resolve/reject/cancel) or
+    // ended in a non-terminal state (still queued/cancelled-before-run).
+    // onSettled is fired exactly once when the handle itself settles;
+    // runOne must NOT also call it in `finally` or it double-fires and
+    // the live-id set drops the same request twice.
+    let settled = false;
     try {
       if (!handle.isCancelled()) {
         try {
           const value = await handle.req.run();
           if (!handle.isCancelled()) {
             handle.resolve(value,);
-            handle.transition("complete",);
+            settled = true;
           }
         } catch (err) {
           handle.reject(err,);
+          settled = true;
         }
       }
     } finally {
-      handle.onSettled?.();
+      if (!settled) { handle.onSettled?.(); }
       release();
       this.kickDrain(handle.req.provider,);
     }

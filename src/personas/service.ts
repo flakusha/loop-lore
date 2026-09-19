@@ -105,41 +105,56 @@ export class PersonasService {
    *   200 and hide ownership mistakes.
    */
   async update(id: string, params: UpdatePersonaParams, userId: string,): Promise<void> {
-    const updates: Record<string, unknown> = { updated_at: new Date().toISOString(), };
+    let defaultFlip = false;
+    const updates: Record<string, unknown> = {};
     if (params.name !== undefined) { updates.name = params.name; }
     if (params.avatarAssetId !== undefined) { updates.avatar_asset_id = params.avatarAssetId; }
     if (params.description !== undefined) { updates.description = params.description; }
     if (params.title !== undefined) { updates.title = params.title; }
-    let defaultFlip = false;
     if (params.isDefault === true) {
       // Delegate to the one code path that owns the default invariant
       // (unsets the previous default first). Done AFTER the main UPDATE so
       // a not-found/foreign id surfaces as a single 404 and field updates
-      // don't half-apply around a failed default flip.
+      // don't half-apply around a failed default flip. applyDefault owns
+      // the updated_at write when flipping, so omit it here.
       defaultFlip = true;
     } else if (params.isDefault === false) {
       updates.is_default = DefaultState.NotDefault;
+      updates.updated_at = new Date().toISOString();
     }
     if (params.temperature !== undefined) { updates.temperature = params.temperature; }
     if (params.maxTokens !== undefined) { updates.max_tokens = params.maxTokens; }
     if (params.model !== undefined) { updates.model = params.model; }
+    // Only stamp updated_at for non-default-flip field updates; applyDefault
+    // owns the timestamp when it runs so we don't double-write.
+    if (!defaultFlip && Object.keys(updates,).length > 0 && updates.updated_at === undefined) {
+      updates.updated_at = new Date().toISOString();
+    }
 
     await this.db.transaction().execute(async (trx,) => {
-      const res = await trx
-        .updateTable("personas",)
-        .set(updates,)
-        .where("id", "=", id,)
-        .where("user_id", "=", userId,)
-        .executeTakeFirst();
+      let updateVerifiedRow = false;
+      if (Object.keys(updates,).length > 0) {
+        const res = await trx
+          .updateTable("personas",)
+          .set(updates,)
+          .where("id", "=", id,)
+          .where("user_id", "=", userId,)
+          .executeTakeFirst();
 
-      // 0 rows affected ⇒ either no such persona or owned by another user.
-      // Throw so the handler maps to 404 (matches getById/delete/convertToCharacter).
-      if (Number(res?.numUpdatedRows ?? 0,) === 0) {
-        throw new Error("Persona not found",);
+        // 0 rows affected ⇒ either no such persona or owned by another user.
+        // Throw so the handler maps to 404 (matches getById/delete/convertToCharacter).
+        if (Number(res?.numUpdatedRows ?? 0,) === 0) {
+          throw new Error("Persona not found",);
+        }
+        updateVerifiedRow = true;
       }
 
       if (defaultFlip) {
-        await applyDefault(trx, id, userId,);
+        // Only skip applyDefault's existence SELECT when the UPDATE above
+        // already verified the row in the same transaction. When the
+        // caller passes only `{ isDefault: true }` with no other fields,
+        // updates is empty and applyDefault must still 404 on missing id.
+        await applyDefault(trx, id, userId, updateVerifiedRow,);
       }
     },);
   }
@@ -200,18 +215,29 @@ export class PersonasService {
  * @param db - transaction or pool executor
  * @param id - persona id
  * @param userId - owning user id
+ * @param skipExistenceCheck - skip the existence SELECT (caller already
+ *   verified the row in the same transaction; re-checking is a wasted
+ *   round-trip on the write path)
  * @throws {Error} `"Persona not found"` when no row matches `id` + `userId`
+ *   and `skipExistenceCheck` is false
  */
-async function applyDefault(db: Kysely<DB>, id: string, userId: string,): Promise<void> {
-  // Existence + ownership check, mirroring update() so callers can 404.
-  const owned = await db
-    .selectFrom("personas",)
-    .select("id",)
-    .where("id", "=", id,)
-    .where("user_id", "=", userId,)
-    .executeTakeFirst();
-  if (!owned) {
-    throw new Error("Persona not found",);
+async function applyDefault(
+  db: Kysely<DB>,
+  id: string,
+  userId: string,
+  skipExistenceCheck = false,
+): Promise<void> {
+  if (!skipExistenceCheck) {
+    // Existence + ownership check, mirroring update() so callers can 404.
+    const owned = await db
+      .selectFrom("personas",)
+      .select("id",)
+      .where("id", "=", id,)
+      .where("user_id", "=", userId,)
+      .executeTakeFirst();
+    if (!owned) {
+      throw new Error("Persona not found",);
+    }
   }
 
   // Unset current default, then set the new one — atomic with the caller's
