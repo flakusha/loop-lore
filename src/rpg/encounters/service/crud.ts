@@ -78,7 +78,7 @@ export async function createEncounter(
   db: Kysely<DB>,
   opts: CreateEncounterOpts,
 ): Promise<NsfwEncounter> {
-  const { worldId, encounterType, intensity, narrativeStyle, participants, phases, outcomes, contentTags, } = opts;
+  const { worldId, locationId, encounterType, intensity, narrativeStyle, participants, phases, outcomes, contentTags, } = opts;
 
   const { id, now, } = nowAndId();
 
@@ -163,6 +163,28 @@ export async function createEncounter(
 
   const log = getLogger().child({ module: "encounters", },);
   log.info(`Encounter created: ${id} (${encounterType}, ${participants.length} participants)`,);
+
+  // Venue (TASK-043): persist the locationId as a status_effect row
+  // (category "venue") — no schema drift, expiry-free, readable via
+  // findEncounterLocation at completion. Skipped when no venue given.
+  if (locationId) {
+    await db
+      .insertInto("status_effect",)
+      .values({
+        id: `venue:${id}`,
+        actor_id: participants[0] ?? "system",
+        effect_id: "encounter_venue",
+        category: "venue",
+        affected_stat: null,
+        magnitude: 0,
+        source: "encounter",
+        source_id: id,
+        started_at: now,
+        expires_at: null,
+        meta: jsonStringifyOr({ location_id: locationId, }),
+      },)
+      .execute();
+  }
 
   return rowToEncounter({
     id,
