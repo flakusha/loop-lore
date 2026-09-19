@@ -740,12 +740,18 @@
                   <h3 style="margin-top: 0">Location tree</h3>
                   <div x-show="loadingTree" class="empty-state">Loading…</div>
                   <div x-show="error" class="empty-state"><div class="title">Tree load failed</div></div>
-                  <div x-show="loadedTree && tree.length === 0" class="empty-state"><div class="title">No locations yet</div></div>
+                  <div x-show="loadedTree && tree.length === 0" class="empty-state">
+                    <div class="title">No locations yet</div>
+                  </div>
                   <ul style="list-style: none; padding-left: 0; margin: 0">
                     <template x-for="node in tree" :key="node.id">
                       <li>
                         <div x-data="{ open: true }" style="padding: 2px 0">
-                          <span x-show="node.children.length > 0" @click="open = !open" style="cursor: pointer; user-select: none">
+                          <span
+                            x-show="node.children.length > 0"
+                            @click="open = !open"
+                            style="cursor: pointer; user-select: none"
+                          >
                             <span x-text="open ? '▾' : '▸'"></span>
                           </span>
                           <span x-text="node.name"></span>
@@ -754,7 +760,11 @@
                           <template x-for="child in node.children" :key="child.id">
                             <li>
                               <div x-data="{ open: true }" style="padding: 2px 0">
-                                <span x-show="child.children.length > 0" @click="open = !open" style="cursor: pointer; user-select: none">
+                                <span
+                                  x-show="child.children.length > 0"
+                                  @click="open = !open"
+                                  style="cursor: pointer; user-select: none"
+                                >
                                   <span x-text="open ? '▾' : '▸'"></span>
                                 </span>
                                 <span x-text="child.name"></span>
@@ -779,7 +789,14 @@
                   <!-- New route form -->
                   <div style="padding: var(--space-3); border: 1px solid var(--border-default); border-radius: var(--radius-md); margin-bottom: var(--space-4)">
                     <div style="display: flex; gap: var(--space-2); flex-wrap: wrap; align-items: center">
-                      <input class="form-input" type="text" placeholder="Route name" x-model="newRoute.name" style="flex: 1 1 200px; min-width: 0" data-testid="fractal-route-name" />
+                      <input
+                        class="form-input"
+                        type="text"
+                        placeholder="Route name"
+                        x-model="newRoute.name"
+                        style="flex: 1 1 200px; min-width: 0"
+                        data-testid="fractal-route-name"
+                      />
                       <select class="form-input" x-model="newRoute.kind" data-testid="fractal-route-kind">
                         <option value="sea">sea</option>
                         <option value="road">road</option>
@@ -788,28 +805,56 @@
                         <option value="custom">custom</option>
                       </select>
                       <label style="font-size: 12px"><input type="checkbox" x-model="newRoute.loop" /> loop</label>
-                      <input class="form-input" type="number" x-model.number="newRoute.secondsPerUnit" min="1" max="86400" style="width: 90px" data-testid="fractal-route-seconds" />
-                      <button class="btn btn-primary" :disabled="creatingRoute || !newRoute.name.trim()" @click="createRoute()" data-testid="fractal-route-create">Create</button>
+                      <input
+                        class="form-input"
+                        type="number"
+                        x-model.number="newRoute.secondsPerUnit"
+                        min="1"
+                        max="86400"
+                        style="width: 90px"
+                        data-testid="fractal-route-seconds"
+                      />
+                      <button
+                        class="btn btn-primary"
+                        :disabled="creatingRoute || !newRoute.name.trim()"
+                        @click="createRoute()"
+                        data-testid="fractal-route-create"
+                      >
+                        Create
+                      </button>
                     </div>
                   </div>
 
                   <!-- Routes list -->
                   <div x-show="loadingRoutes">Loading…</div>
-                  <div x-show="loadedRoutes && routes.length === 0" class="empty-state"><div class="title">No routes yet</div></div>
+                  <div x-show="loadedRoutes && routes.length === 0" class="empty-state">
+                    <div class="title">No routes yet</div>
+                  </div>
                   <ul style="list-style: none; padding-left: 0">
                     <template x-for="r in routes" :key="r.id">
-                      <li style="padding: var(--space-2); border: 1px solid var(--border-default); border-radius: var(--radius-sm); margin-bottom: var(--space-2); cursor: pointer" :class="{ active: selectedRouteId === r.id }" @click="selectRoute(r.id)">
+                      <li
+                        style="padding: var(--space-2); border: 1px solid var(--border-default); border-radius: var(--radius-sm); margin-bottom: var(--space-2); cursor: pointer"
+                        :class="{ active: selectedRouteId === r.id }"
+                        @click="selectRoute(r.id)"
+                      >
                         <div style="display: flex; gap: var(--space-2); align-items: center">
                           <strong x-text="r.name"></strong>
                           <span class="badge" x-text="r.kind"></span>
                           <span x-show="r.loop === 1" class="badge">loop</span>
                         </div>
-                        <div x-show="selectedRouteId === r.id && routeDetail" style="margin-top: var(--space-2); font-size: 13px">
+                        <div
+                          x-show="selectedRouteId === r.id && routeDetail"
+                          style="margin-top: var(--space-2); font-size: 13px"
+                        >
                           <div>seconds_per_unit: <span x-text="r.seconds_per_unit"></span></div>
                           <div>stops (<span x-text="routeDetail.stops.length"></span>):</div>
                           <ol>
                             <template x-for="s in routeDetail.stops" :key="s.id">
-                              <li>stop #<span x-text="s.stop_order"></span> — location <span x-text="s.location_id.slice(0, 8)"></span></li>
+                              <li>
+                                stop #<span x-text="s.stop_order"></span> — location <span
+                                  x-text="s.location_id.slice(0, 8)"
+                                ></span>
+                              </li>
                             </template>
                           </ol>
                         </div>
@@ -833,7 +878,14 @@
                           <option :value="loc.id" x-text="loc.label"></option>
                         </template>
                       </select>
-                      <button class="btn btn-primary" :disabled="attaching || !attachLocationId || !attachRouteId" @click="attachTransport()" data-testid="fractal-attach-btn">Attach</button>
+                      <button
+                        class="btn btn-primary"
+                        :disabled="attaching || !attachLocationId || !attachRouteId"
+                        @click="attachTransport()"
+                        data-testid="fractal-attach-btn"
+                      >
+                        Attach
+                      </button>
                     </div>
                   </div>
                 </div>

@@ -68,8 +68,8 @@ export class TravelTickEngine {
         "locations.travel_progress as travel_progress",
         "travel_routes.seconds_per_unit as seconds_per_unit",
         "travel_routes.loop as loop",
-        eb.fn.count("travel_route_stops.id",).as("stop_count"),
-      ],)
+        eb.fn.count("travel_route_stops.id",).as("stop_count",),
+      ])
       .groupBy([
         "locations.id",
         "locations.current_route_id",
@@ -94,7 +94,7 @@ export class TravelTickEngine {
           next = 0;
         } else if (target >= row.stop_count) {
           if (row.loop === 1) {
-            next = ((target as number) % row.stop_count);
+            next = (target as number) % row.stop_count;
           } else {
             next = row.stop_count - 1;
             arrived += 1;
@@ -106,7 +106,9 @@ export class TravelTickEngine {
           travel_progress: next,
         } as never,).execute();
         advanced += 1;
-      } catch { capped += 1; }
+      } catch {
+        capped += 1;
+      }
     }
     return { advanced, arrived, capped, skipped: 0, };
   }

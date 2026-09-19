@@ -27,13 +27,11 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
   // ── 1. ALTER locations: one column per statement ──
   await database.schema
     .alterTable("locations",)
-    .addColumn("kind", "text", (col,) =>
-      col.notNull().defaultTo(LocationKind.Region,),)
+    .addColumn("kind", "text", (col,) => col.notNull().defaultTo(LocationKind.Region,),)
     .execute();
   await database.schema
     .alterTable("locations",)
-    .addColumn("mobility_mode", "text", (col,) =>
-      col.notNull().defaultTo(MobilityMode.Static,),)
+    .addColumn("mobility_mode", "text", (col,) => col.notNull().defaultTo(MobilityMode.Static,),)
     .execute();
   await database.schema
     .alterTable("locations",)
@@ -94,18 +92,15 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("waypoints", "text", (col,) => col.notNull().defaultTo("[]",),)
     .addColumn("loop", "integer", (col,) => col.notNull().defaultTo(0,),)
     .addColumn("seconds_per_unit", "integer", (col,) => col.notNull().defaultTo(60,),)
-    .addColumn("created_at", "text", (col,) =>
-      col.notNull().defaultTo(sql`(datetime('now'))`,),)
+    .addColumn("created_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
     .execute();
 
   // ── 4. travel_route_stops table ──
   await database.schema
     .createTable("travel_route_stops",)
     .addColumn("id", "text", (col,) => col.primaryKey(),)
-    .addColumn("route_id", "text", (col,) =>
-      col.notNull().references("travel_routes.id",).onDelete("cascade",),)
-    .addColumn("location_id", "text", (col,) =>
-      col.notNull().references("locations.id",),)
+    .addColumn("route_id", "text", (col,) => col.notNull().references("travel_routes.id",).onDelete("cascade",),)
+    .addColumn("location_id", "text", (col,) => col.notNull().references("locations.id",),)
     .addColumn("stop_order", "integer", (col,) => col.notNull(),)
     .addColumn("dwell_seconds", "integer", (col,) => col.notNull().defaultTo(0,),)
     .addColumn("coord_x", "real",)
@@ -117,14 +112,10 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
   // ── 5. actor_locations table ──
   await database.schema
     .createTable("actor_locations",)
-    .addColumn("actor_id", "text", (col,) =>
-      col.primaryKey(),)
-    .addColumn("physical_location_id", "text", (col,) =>
-      col.notNull().references("locations.id",),)
-    .addColumn("spatial_location_id", "text", (col,) =>
-      col.notNull().references("locations.id",),)
-    .addColumn("entered_at", "text", (col,) =>
-      col.notNull().defaultTo(sql`(datetime('now'))`,),)
+    .addColumn("actor_id", "text", (col,) => col.primaryKey(),)
+    .addColumn("physical_location_id", "text", (col,) => col.notNull().references("locations.id",),)
+    .addColumn("spatial_location_id", "text", (col,) => col.notNull().references("locations.id",),)
+    .addColumn("entered_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
     .execute();
   await database.schema
     .createIndex("idx_actor_locations_physical",)
@@ -216,7 +207,8 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
   await recordSchemaVersion(
     database,
     34,
-    "locations fractal: kind/mobility/path/coords, travel_routes, actor_locations (TASK-locations-fractal-migration)",);
+    "locations fractal: kind/mobility/path/coords, travel_routes, actor_locations (TASK-locations-fractal-migration)",
+  );
 }
 
 /**

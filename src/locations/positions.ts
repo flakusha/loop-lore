@@ -47,10 +47,10 @@ export class ActorPositionService {
       .where("id", "in", ids,)
       .select(["id", "world_id",],)
       .execute();
-    if (rows.length !== ids.length) { throw new Error("location(s) not found"); }
-    const worlds = new Set(rows.map((r,) => r.world_id,),);
+    if (rows.length !== ids.length) { throw new Error("location(s) not found",); }
+    const worlds = new Set(rows.map((r,) => r.world_id),);
     if (worlds.size > 1) {
-      throw new Error("physical and spatial locations must share a world");
+      throw new Error("physical and spatial locations must share a world",);
     }
 
     const now = new Date().toISOString();
@@ -62,11 +62,13 @@ export class ActorPositionService {
         spatial_location_id: spatialLocationId,
         entered_at: now,
       } as never,)
-      .onConflict((oc,) => oc.column("actor_id",).doUpdateSet({
-        physical_location_id: physicalLocationId,
-        spatial_location_id: spatialLocationId,
-        entered_at: now,
-      }),)
+      .onConflict((oc,) =>
+        oc.column("actor_id",).doUpdateSet({
+          physical_location_id: physicalLocationId,
+          spatial_location_id: spatialLocationId,
+          entered_at: now,
+        },)
+      )
       .execute();
   }
 
@@ -114,20 +116,20 @@ export class ActorPositionService {
       .where("id", "=", transportLocationId,)
       .select(["kind", "mobility_mode", "travel_progress", "current_route_id",],)
       .executeTakeFirst();
-    if (!transport) { throw new Error("transport not found"); }
+    if (!transport) { throw new Error("transport not found",); }
     if (transport.kind !== "transport" || transport.mobility_mode === "static") {
-      throw new Error("location is not a moving transport");
+      throw new Error("location is not a moving transport",);
     }
     const effectiveRouteId = routeId ?? transport.current_route_id;
-    if (!effectiveRouteId) { throw new Error("transport has no current route"); }
+    if (!effectiveRouteId) { throw new Error("transport has no current route",); }
     const stops = await this.db
       .selectFrom("travel_route_stops",)
       .where("route_id", "=", effectiveRouteId,)
       .select(["stop_order", "location_id",],)
       .orderBy("stop_order",)
       .execute();
-    if (stops.length === 0) { throw new Error("route has no stops"); }
-    const idx = Math.min(Math.floor(transport.travel_progress ?? 0), stops.length - 1,);
+    if (stops.length === 0) { throw new Error("route has no stops",); }
+    const idx = Math.min(Math.floor(transport.travel_progress ?? 0,), stops.length - 1,);
     await this.setPosition(actorId, transportLocationId, stops[idx]!.location_id,);
   }
 }
