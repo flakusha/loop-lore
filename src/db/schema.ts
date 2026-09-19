@@ -160,6 +160,7 @@ export interface DB {
   nsfw_consent_state: import("./schema-core").NsfwConsentState;
   nsfw_encounters: import("./schema-character").NsfwEncounters;
   nsfw_user_preferences: import("./schema-moderation").NsfwUserPreferences;
+  rpg_questions: import("./schema-story").RpgQuestions;
   e2e_group_wraps: import("./schema-core").E2eGroupWraps;
   e2e_sessions: import("./schema-core").E2eSessions;
   e2e_skipped_keys: import("./schema-core").E2eSkippedKeys;
