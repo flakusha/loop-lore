@@ -213,6 +213,84 @@ describe("TravelRouteService", () => {
     expect(pos,).toEqual({ stopOrder: 1, stopLocationId: stopB, },);
   });
 
+  test("createRoute persists defaults (loop=0, seconds_per_unit=60, waypoints=[])", async () => {
+    const svc = new TravelRouteService(testDb.db,);
+    const worldId = await makeWorld();
+    const routeId = await svc.createRoute({ worldId, name: "Defaults", kind: "road", },);
+    const row = testDb.sqlite.query(`SELECT loop, seconds_per_unit, waypoints FROM travel_routes WHERE id = ?`,).get(
+      routeId,
+    ) as any;
+    expect(row.loop,).toBe(0,);
+    expect(row.seconds_per_unit,).toBe(60,);
+    expect(JSON.parse(row.waypoints as string,),).toEqual([],);
+  });
+
+  test("createRoute falls back to waypoints '[]' when serialization fails", async () => {
+    const svc = new TravelRouteService(testDb.db,);
+    const worldId = await makeWorld();
+    // BigInt is not JSON-serializable; jsonStringifyOr falls back to "[]".
+    const routeId = await svc.createRoute(
+      { worldId, name: "bad-serialization", kind: "road", waypoints: [{ x: BigInt(1), y: 0 },] as never, },
+    );
+    const row = testDb.sqlite.query(`SELECT waypoints FROM travel_routes WHERE id = ?`,).get(routeId,) as any;
+    expect(row.waypoints,).toBe("[]");
+  });
+
+  test("addStop rejects unknown route and unknown location", async () => {
+    const svc = new TravelRouteService(testDb.db,);
+    const worldId = await makeWorld();
+    const orphan = randomUUID();
+    testDb.sqlite.run(
+      `INSERT INTO locations (id, world_id, name, description, connections, publication_status, parent_location_id, kind, mobility_mode)
+       VALUES (?, ?, 'orphan', '', '[]', 'draft', NULL, 'transit', 'static')`,
+      [orphan, worldId,],
+    );
+    await expect(svc.addStop({ routeId: randomUUID(), locationId: orphan, stopOrder: 0, },),).rejects.toThrow(
+      /travel route not found/,
+    );
+    const routeId = await svc.createRoute({ worldId, name: "R6", kind: "road", },);
+    await expect(svc.addStop({ routeId, locationId: randomUUID(), stopOrder: 0, },),).rejects.toThrow(
+      /location not found/,
+    );
+  });
+
+  test("progressToLocation: null without route, null on stopless route, clamps on overshoot", async () => {
+    const svc = new TravelRouteService(testDb.db,);
+    const worldId = await makeWorld();
+    const drifter = await makeTransportKindLocation(worldId, null, "free",);
+    // No current_route_id at all.
+    expect(await svc.progressToLocation(drifter,),).toBeNull();
+
+    const routeId = await svc.createRoute({ worldId, name: "R8", kind: "road", },);
+    await svc.attachTransport(drifter, routeId,);
+    // Attached, but the route has no stops yet.
+    expect(await svc.progressToLocation(drifter,),).toBeNull();
+
+    const c1 = await (async () => {
+      const sid = randomUUID();
+      testDb.sqlite.run(
+        `INSERT INTO locations (id, world_id, name, description, connections, publication_status, parent_location_id, kind, mobility_mode)
+         VALUES (?, ?, 'c1', '', '[]', 'draft', NULL, 'transit', 'static')`,
+        [sid, worldId,],
+      );
+      return sid;
+    })();
+    const c2 = await (async () => {
+      const sid = randomUUID();
+      testDb.sqlite.run(
+        `INSERT INTO locations (id, world_id, name, description, connections, publication_status, parent_location_id, kind, mobility_mode)
+         VALUES (?, ?, 'c2', '', '[]', 'draft', NULL, 'transit', 'static')`,
+        [sid, worldId,],
+      );
+      return sid;
+    })();
+    await svc.addStop({ routeId, locationId: c1, stopOrder: 0, },);
+    await svc.addStop({ routeId, locationId: c2, stopOrder: 1, },);
+    // Overshoot the segment range; must clamp to the LAST stop.
+    testDb.sqlite.run(`UPDATE locations SET travel_progress = 9 WHERE id = ?`, [drifter,],);
+    expect(await svc.progressToLocation(drifter,),).toEqual({ stopOrder: 1, stopLocationId: c2, },);
+  });
+
   test("listRoutes returns routes in a world, ordered by name", async () => {
     const svc = new TravelRouteService(testDb.db,);
     const worldId = await makeWorld();

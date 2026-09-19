@@ -4,25 +4,9 @@
 // size-allow: 320
 
 /**
- * CSRF protection middleware backed by `Bun.CSRF`.
- *
- * Implements the double-submit cookie pattern:
- *   1. On the first GET/HEAD/OPTIONS response, generate a token bound to the
- *      requesting session (or `anonymous-<requestId>` when no session yet).
- *   2. The token is written into a non-HttpOnly `csrf_token` cookie so the
- *      frontend can read it (the cookie is sent back on every subsequent
- *      request, including unsafe methods).
- *   3. On unsafe methods (POST/PUT/PATCH/DELETE), the request must carry the
- *      token in the `X-CSRF-Token` header. We `Bun.CSRF.verify(token, …)`
- *      against the same secret + sessionId used during generation. Mismatch
- *      → 403 Forbidden.
- *
- * Routes that *create* a session (login, register, demo-login) are exempted
- * because the sessionId is unknown until the handler runs. All other unsafe
- * routes that run while authenticated use the session's id as the binding
- * principal — a token issued for one user cannot be replayed from another.
- *
- * Reference: https://bun.com/docs/runtime/csrf
+ * CSRF middleware backed by `Bun.CSRF` — double-submit cookie: mint on safe
+ * methods into a non-HttpOnly `csrf_token` cookie, verify `X-CSRF-Token` on
+ * unsafe methods, 403 on mismatch. https://bun.com/docs/runtime/csrf
  */
 
 import type { Logger, } from "../logger";
@@ -32,16 +16,9 @@ export const CSRF_COOKIE = "csrf_token";
 export const CSRF_COOKIE_MAX_AGE_SECS = 86_400; // 24h, mirrors Bun.CSRF default expiry
 
 /**
- * Routes that mint a new session MUST be exempted from CSRF verification —
- * the sessionId binding principal does not exist until the handler runs.
- * Format: method + route pattern (Elysia route key).
- *
- * IMPORTANT: `/api/auth/logout` is NOT in this set. The JWT-in-cookie
- * assumption ("logout carries its own proof") defeats CSRF: an attacker
- * page can force a logout cross-origin because the cookie is
- * auto-attached on every request. Logout requires CSRF verification
- * (same as any other unsafe method) — see
- * BUG-logout-route-exempt-from-csrf-verification-logoff-csrf.
+ * Session-minting routes (login/register/demo-login) are CSRF-exempt: the
+ * sessionId binding does not exist until the handler runs. `/api/auth/logout`
+ * is deliberately NOT exempt — see BUG-logout-route-exempt-from-csrf-verification-logoff-csrf.
  */
 export const CSRF_EXEMPT_ROUTES: ReadonlySet<string> = new Set([
   "POST /api/auth/login",
