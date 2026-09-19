@@ -20,7 +20,7 @@ import { initializeProviders, } from "../generation";
 import { join, } from "node:path";
 import { loadAllPlugins, unloadAllPlugins, } from "../plugins";
 import { loadConfig, } from "../config/load";
-import { runMigrations, } from "../db/migrate";
+import { runDataMigrations, runMigrations, } from "../db/migrate";
 import { runSchemaBackfill, } from "../db/schema-backfill";
 import { seedDefaultActors, } from "../db/seed";
 import { serve, } from "bun";
@@ -104,9 +104,9 @@ export async function start() {
   // Applied to EVERY outgoing response via createRequestHandler.
   const handleRequest = createRequestHandler(app, config, logger, database,);
 
-  // ── Run migrations before serving (ensure DB schema ready) ───
-  await runMigrations(database,);
+  await runMigrations(database,); // ensure DB schema ready before serving
   await runSchemaBackfill(database,);
+  await runDataMigrations(database,); // row-level, after schema is final, before seeding
   await seedDefaultActors(database, config,);
   const effectiveSeeding = applyEnvironmentOverrides(config.seeding,);
   await seedConfiguredUsers(database, { ...config, seeding: effectiveSeeding, },);

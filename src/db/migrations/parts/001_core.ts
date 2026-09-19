@@ -134,7 +134,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("completed_at", "text",)
     .addColumn("offloaded_at", "text",)
     .addColumn("offload_path", "text",)
-    .addColumn("data_version", "integer", (col,) => col.notNull().defaultTo(1,),)
+    .addColumn("data_version", "integer", (col,) => col.notNull().defaultTo(0,),)
     .addColumn("record_hash", "text", (col,) => col.notNull().defaultTo("",),)
     .execute();
 

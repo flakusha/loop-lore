@@ -10,7 +10,7 @@ import type { Kysely, } from "kysely";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import type { DB, } from "../schema";
-import { applyDataMigration, runDataMigrations, } from "./runner";
+import { applyDataMigration, discoverMigrations, runDataMigrations, } from "./runner";
 import type { DataMigration, } from "./types";
 
 let db: Kysely<DB>;
@@ -124,5 +124,33 @@ describe("runDataMigrations", () => {
     // One row per (table, to_version) — no duplicates across double runs.
     const versions = new Set(actorsRows.map((r,) => r.to_version),);
     expect(versions.size,).toBe(actorsRows.length,);
+  });
+});
+
+describe("discoverMigrations", () => {
+  test("orders v10 after v2 numerically and skips files without a migration export", async () => {
+    const { mkdtempSync, mkdirSync, writeFileSync, rmSync, } = await import("node:fs");
+    const { join, } = await import("node:path");
+    const { tmpdir, } = await import("node:os");
+
+    const base = mkdtempSync(join(tmpdir(), "cv-discover-",),);
+    try {
+      const tableDir = join(base, "actors",);
+      mkdirSync(tableDir, { recursive: true, },);
+      const body = (to: number,) =>
+        `export const migration = { table: "actors", fromVersion: ${
+          to - 1
+        }, toVersion: ${to}, description: "d${to}", up: async () => {} };`;
+      // Deliberately written in the order localeCompare would mis-sort.
+      writeFileSync(join(tableDir, "v10_second.ts",), body(10,),);
+      writeFileSync(join(tableDir, "v2_first.ts",), body(2,),);
+      // No `migration` export → must be skipped (with a warning), not crash.
+      writeFileSync(join(tableDir, "v3_bad.ts",), "export const broken = true;",);
+
+      const discovered = await discoverMigrations(base,);
+      expect(discovered.map((m,) => m.toVersion),).toEqual([2, 10,],);
+    } finally {
+      rmSync(base, { recursive: true, force: true, },);
+    }
   });
 });

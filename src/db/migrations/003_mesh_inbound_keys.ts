@@ -11,7 +11,7 @@
  */
 import type { Kysely, } from "kysely";
 import { sql, } from "kysely";
-import { recordSchemaVersion, } from "../schema-version";
+import { recordSchemaVersion, removeSchemaVersion, } from "../schema-version";
 
 /**
  * @param database
@@ -33,4 +33,5 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
  */
 export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema.dropTable("mesh_inbound_keys",).execute();
+  await removeSchemaVersion(database, 24,);
 }
