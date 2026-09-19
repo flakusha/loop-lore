@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium
+**Summary:** Cognitive Complexity Cap + Refactor
+**Context:** Epic epic-tooling-improvement; tags complexity, sonarjs.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-tooling-improvement
 **Tags:** complexity, sonarjs
 

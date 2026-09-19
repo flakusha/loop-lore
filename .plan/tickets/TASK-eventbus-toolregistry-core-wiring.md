@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** Large
+**Summary:** EventBus + ToolRegistry Core Wiring
+**Context:** Epic epic-plugin-extension-points; tags plugins, events.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-plugin-extension-points
 **Tags:** plugins, events
 

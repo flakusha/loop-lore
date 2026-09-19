@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** low
 **Effort:** Large
+**Summary:** Conversation Analytics (sentiment, word clouds, beat map)
+**Context:** Epic proposed:epic-conversation-analytics; tags analytics, conversation.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** proposed:epic-conversation-analytics
 **Tags:** analytics, conversation
 

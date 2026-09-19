@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Small
+**Summary:** Frontend tsconfig Strictness Alignment
+**Context:** Epic proposed:epic-frontend-strictness; tags frontend, tsconfig.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** proposed:epic-frontend-strictness
 **Tags:** frontend, tsconfig
 

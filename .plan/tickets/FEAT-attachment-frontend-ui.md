@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** low
 **Effort:** Large
+**Summary:** Attachment Frontend UI
+**Context:** Epic epic-frontend-gallery; tags attachments, frontend.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-frontend-gallery
 **Tags:** attachments, frontend
 

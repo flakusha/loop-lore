@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Large
+**Summary:** Community Template/World/Share Export-Import
+**Context:** Epic epic-import-export-io; tags community, share.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-import-export-io
 **Tags:** community, share
 

@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** XL
+**Summary:** RBAC + SSO + Tenant Isolation
+**Context:** Epic proposed:epic-rbac-tenancy; tags rbac, tenancy.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** proposed:epic-rbac-tenancy
 **Tags:** rbac, tenancy
 

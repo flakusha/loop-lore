@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Large
+**Summary:** Per-chat Assistant/GM Frontend
+**Context:** Epic epic-assistant-gm-flows; tags assistant, gm.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-assistant-gm-flows
 **Tags:** assistant, gm
 

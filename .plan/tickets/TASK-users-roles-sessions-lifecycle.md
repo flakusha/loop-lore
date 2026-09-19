@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** Large
+**Summary:** Users, Roles & Sessions Lifecycle
+**Context:** Epic epic-auth-access; tags users, sessions.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-auth-access
 **Tags:** users, sessions
 

@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** XL
+**Summary:** Quest System Backend Implementation
+**Context:** Epic epic-quests-encounters; tags quests, backend.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-quests-encounters
 **Tags:** quests, backend
 

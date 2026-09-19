@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** low
 **Effort:** XL
+**Summary:** Offline-first PWA + On-device Inference
+**Context:** Epic proposed:epic-offline-pwa; tags pwa, offline.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** proposed:epic-offline-pwa
 **Tags:** pwa, offline
 

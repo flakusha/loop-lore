@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Large
+**Summary:** Build & Deployment Pipeline
+**Context:** Epic epic-deployment-infrastructure; tags build, deploy.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-deployment-infrastructure
 **Tags:** build, deploy
 

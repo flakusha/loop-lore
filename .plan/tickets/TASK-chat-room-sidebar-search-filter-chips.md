@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium
+**Summary:** Chat Room Sidebar Search + Filter Chips
+**Context:** Epic epic-chat-product-features; tags chat, search.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-chat-product-features
 **Tags:** chat, search
 

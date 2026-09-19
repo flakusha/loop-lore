@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** XL
+**Summary:** Multi-LLM Story Mode Frontend
+**Context:** Epic epic-story-mode-ui; tags story, multi-llm.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-story-mode-ui
 **Tags:** story, multi-llm
 

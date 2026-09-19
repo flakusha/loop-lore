@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** low
 **Effort:** Medium
+**Summary:** Relationship-drift Timeline Visualizer
+**Context:** Epic epic-relationships; tags relationships, viz.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-relationships
 **Tags:** relationships, viz
 

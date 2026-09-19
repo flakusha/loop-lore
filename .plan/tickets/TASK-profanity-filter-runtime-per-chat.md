@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium
+**Summary:** Profanity Filter (Runtime, Per-Chat)
+**Context:** Epic epic-profanity-filter; tags profanity, moderation.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-profanity-filter
 **Tags:** profanity, moderation
 

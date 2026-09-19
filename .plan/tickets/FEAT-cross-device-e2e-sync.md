@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** low
 **Effort:** XL
+**Summary:** Cross-device E2E Sync
+**Context:** Epic proposed:epic-cross-device-sync; tags sync, e2e.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** proposed:epic-cross-device-sync
 **Tags:** sync, e2e
 

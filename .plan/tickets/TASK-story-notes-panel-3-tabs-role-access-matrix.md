@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium
+**Summary:** Story Notes Panel (3 tabs, role access matrix)
+**Context:** Epic epic-gm-shadow-notes; tags story, notes.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-gm-shadow-notes
 **Tags:** story, notes
 
