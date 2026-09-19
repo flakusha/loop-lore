@@ -5,4 +5,6 @@
  * Fractal Locations — Public API
  */
 export { LocationTreeService, } from "./tree";
-export type { LocationTreeNode, } from "./tree";
+export type { LocationTreeNode, InsertLocationInput, } from "./tree";
+export { TravelRouteService, } from "./routes";
+export type { CreateTravelRouteInput, AddStopInput, } from "./routes";
