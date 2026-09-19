@@ -11,6 +11,8 @@
 
 import { readFileSync, } from "node:fs";
 import { join, } from "node:path";
+import { avatarFocusSection, } from "./avatar-focus-section";
+import { panelsSection, } from "./character-panels-section";
 import { escapeHtml, } from "./layout";
 
 /** Stricter escape for values interpolated inside single- or double-quoted attributes
@@ -145,42 +147,6 @@ const PROACTIVE_SECTION = `
           <div id="proactive-status" style="font-size:var(--text-sm);color:var(--text-secondary);margin-top:var(--space-2)"></div>
         </details>`;
 
-/** Collapsible actor sub-resource panels (licensing, notes/items/lore, systems, traits, emotion avatars).
- *  Each wrapper binds its own Alpine factory; the outer x-data provides actorId.
- *  Panel bodies are inlined from `src/components/character/` (single source of
- *  truth — the same files served at `/partials/character/*`). Rendered in the
- *  character edit form just before the action footer.
- * @param characterId - actor id interpolated into the panel wrapper
- * @returns the panels section HTML
- */
-const PANELS_SECTION = (characterId: string,) => `
-        <details class="form-section" data-testid="actor-panels-section" style="margin-top:var(--space-4);border:1px solid var(--border-default);border-radius:var(--radius-md);padding:var(--space-4)">
-          <summary style="cursor:pointer;font-weight:600;font-size:var(--text-lg)">Sub-resources</summary>
-          <p class="form-hint" style="color:var(--text-secondary);margin:var(--space-2) 0 var(--space-4)">Licensing, notes / items / lore entries, systems export, permanent traits, and emotion avatar batch jobs.</p>
-          <div x-data="{ actorId: '${escapeAttr(characterId,)}' }">
-            <section x-data="actorLicensingFactory(actorId)" data-testid="character-licensing">${
-  loadPanelBody("licensing-panel.html",)
-}</section>
-            <section x-data="actorEntitiesFactory(actorId, 'notes')" data-testid="character-notes" style="margin-top:var(--space-4)">${
-  loadPanelBody("entities-panel.html",)
-}</section>
-            <section x-data="actorEntitiesFactory(actorId, 'items')" data-testid="character-items" style="margin-top:var(--space-4)">${
-  loadPanelBody("entities-panel.html",)
-}</section>
-            <section x-data="actorEntitiesFactory(actorId, 'lore-entries')" data-testid="character-lore" style="margin-top:var(--space-4)">${
-  loadPanelBody("entities-panel.html",)
-}</section>
-            <section x-data="actorSystemsFactory(actorId)" data-testid="character-systems" style="margin-top:var(--space-4)">${
-  loadPanelBody("systems-panel.html",)
-}</section>
-            <section x-data="actorTraitsFactory(actorId)" data-testid="character-traits" style="margin-top:var(--space-4)">${
-  loadPanelBody("traits-panel.html",)
-}</section>
-            <section x-data="actorEmotionAvatarsFactory(actorId)" data-testid="character-emotion-avatars" style="margin-top:var(--space-4)">${
-  loadPanelBody("emotion-avatars-panel.html",)
-}</section>
-          </div>
-        </details>`;
 /**
  * Called by serveCharacterEditForm after DB lookup.
  *
@@ -211,13 +177,7 @@ export function buildEditFormHtml(v: EditFormValues, options: { cspNonce?: strin
             ${v.avatarRemoveBtn}
           </div>
         </div>
-        <div class="form-group"><label class="form-label">Avatar Focus</label>
-          <p class="form-hint" style="color:var(--text-secondary)">Where the avatar is anchored when cropped: 0 = left/top edge, 50 = centered, 100 = right/bottom edge.</p>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4)">
-            <div><label class="form-label" for="edit-avatar-focus-x" style="font-size:var(--text-sm)">Horizontal</label><input type="range" id="edit-avatar-focus-x" min="0" max="100" step="1" value="${v.avatarFocusX}" style="width:100%" x-on:input="window.updateAvatarFocusPreview()" data-testid="avatar-focus-x" /><span id="edit-avatar-focus-x-val" style="font-size:var(--text-xs);color:var(--text-secondary)">${v.avatarFocusX}</span></div>
-            <div><label class="form-label" for="edit-avatar-focus-y" style="font-size:var(--text-sm)">Vertical</label><input type="range" id="edit-avatar-focus-y" min="0" max="100" step="1" value="${v.avatarFocusY}" style="width:100%" x-on:input="window.updateAvatarFocusPreview()" data-testid="avatar-focus-y" /><span id="edit-avatar-focus-y-val" style="font-size:var(--text-xs);color:var(--text-secondary)">${v.avatarFocusY}</span></div>
-          </div>
-        </div>
+${avatarFocusSection(v,)}
         <div class="form-group"><label class="form-label" for="edit-name">Display Name</label><input class="form-input" type="text" id="edit-name" value="${
     escapeHtml(v.name,)
   }" /></div>
@@ -258,7 +218,7 @@ export function buildEditFormHtml(v: EditFormValues, options: { cspNonce?: strin
         <p class="form-hint" style="color:var(--text-secondary)">Maximum explicit content this character may produce. Gated by your account&rsquo;s NSFW preference.</p></div>
 ${INTERNAL_TRAITS_SECTION}
 ${PROACTIVE_SECTION}
-${PANELS_SECTION(v.characterId,)}
+${panelsSection(v.characterId, loadPanelBody, escapeAttr,)}
         <div style="display:flex;gap:var(--space-3);justify-content:flex-end;margin-top:var(--space-6)">
           <a href="/views/characters" class="btn btn-secondary" data-testid="cancel-edit-character">Cancel</a>
           <button type="button" class="btn btn-primary" x-on:click="window.saveCharacterEdit('${
