@@ -124,16 +124,16 @@ export const flagBody = t.Object({
   worldId: t.Optional(t.String(),),
   flagReason: t.String(),
   description: t.Optional(t.String(),),
-},);
+}, CLOSED,);
 export const flagQuery = t.Object({
   status: t.Optional(t.String(),),
   limit: t.Optional(t.String(),),
   offset: t.Optional(t.String(),),
-},);
+}, CLOSED,);
 export const resolveFlagBody = t.Object({
   resolution: t.String(),
   status: t.Union([t.Literal("resolved",), t.Literal("dismissed",), t.Literal("confirmed",),],),
-},);
+}, CLOSED,);
 export const auditQuery = t.Object({
   limit: t.Optional(t.String(),),
   offset: t.Optional(t.String(),),
