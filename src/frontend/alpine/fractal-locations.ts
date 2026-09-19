@@ -164,7 +164,7 @@ export function buildFractalState(worldId: string,): FractalState {
       if (!this.newRoute.name.trim()) { return; }
       this.creatingRoute = true;
       try {
-// hint: Logic changed on both sides. Requires understanding intent of each change.
+        // hint: Logic changed on both sides. Requires understanding intent of each change.
         const res = await apiFetch(`/api/worlds/${this.worldId}/travel-routes`, {
           method: "POST",
           headers: { "Content-Type": "application/json", Accept: "application/json", },
