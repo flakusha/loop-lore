@@ -6,6 +6,7 @@
  *
  * Re-exports all memory services: extraction, budget, purge, provision, shareability, injection, audit.
  */
+export { estimateTokens, } from "../chat/token-utils";
 export {
   listAuditLog,
   recordAuditLog,
@@ -16,11 +17,11 @@ export type {
   MemoryAuditAction,
   MemoryAuditRow,
 } from "./audit";
-export { estimateTokens, } from "../chat/token-utils";
 export { getMemoriesWithinBudget, selectWithinBudget, } from "./budget";
-export { extractAndStoreMemories, extractMemories, storeMemories, } from "./extraction";
-export type { MemoryProvenance, } from "./extraction";
+export { extractAndStoreMemories, extractMemories, } from "./extraction";
 export { extractFromBurst, } from "./extraction-burst";
+export { storeMemories, } from "./extraction-store";
+export type { MemoryProvenance, } from "./extraction-store";
 export {
   expandMemoryContext,
   reconstructMessageChain,

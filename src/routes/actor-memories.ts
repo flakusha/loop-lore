@@ -7,7 +7,7 @@
  * CRUD for memories stored per actor.
  */
 
-import { Elysia, t, } from "elysia";
+import { Elysia, } from "elysia";
 import type { Config, } from "../config/schema";
 import type { Db, } from "../db";
 import { recordAuditLog, } from "../memory/audit";
@@ -16,6 +16,7 @@ import { can, } from "../users/permissions";
 import { parseIntOr, } from "../utils/parse-number";
 import { notFound, } from "../validation/middleware";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
+import { memoryCarryPlugin, } from "./actor-memories-carry";
 import { createEntityRoutes, } from "./entity-routes";
 import { checkOwnership, entityPaths, } from "./entity-routes/context";
 import { jsonResponse, } from "./http-utils";
@@ -121,124 +122,6 @@ export function actorMemoriesRoutes(opts: { database: Db; config: Config }, pref
       },
     },);
 
-  /**
-   * Carry a memory into a chat: create a chat-scoped copy so prompt assembly
-   * injects it for this chat without affecting other chats (per-chat inclusion).
-   */
-  const carryRoute = new Elysia({ name: "memories-carry", },)
-    .post(
-      `${withIdPath}/carry`,
-      async (ctx,) => {
-        const parentId = (ctx.params as any)[parentParam];
-        const { entityId, } = ctx.params as any;
-        const userId = (ctx as any).userId as string | null;
-        const userRole = (ctx as any).userRole as string | null;
-        const body = ctx.body as { chatId: string };
-
-        const ownershipOk = await checkOwnership(opts.database, entityConfig as never, parentId, userId, userRole,);
-        if (!ownershipOk) { return notFound("Memory not found",); }
-
-        const source = await (opts.database as any)
-          .selectFrom("actor_memories",)
-          .selectAll()
-          .where("id", "=", entityId,)
-          .where("actor_id", "=", parentId,)
-          .executeTakeFirst();
-        if (!source) { return notFound("Memory not found",); }
-
-        await (opts.database as any)
-          .insertInto("actor_memories",)
-          .values({
-            id: crypto.randomUUID(),
-            actor_id: source.actor_id,
-            source_chat_id: body.chatId,
-            memory_type: source.memory_type,
-            content: source.content,
-            confidence: source.confidence,
-            importance: source.importance,
-            keywords: source.keywords,
-            scope: source.scope,
-            pinned: source.pinned,
-            last_accessed_at: source.last_accessed_at,
-            created_at: source.created_at,
-            updated_at: new Date().toISOString(),
-          },)
-          .execute();
-        return jsonResponse({ ok: true, },);
-      },
-      {
-        body: t.Object({ chatId: t.String({ minLength: 1, },), },),
-        response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, },
-        detail: {
-          summary: "Carry Memory into chat",
-          description: "Create a chat-scoped copy of a Memory.",
-          tags: ["Memory",],
-        },
-      },
-    )
-    .post(
-      `${basePath}/carry-except`,
-      async (ctx,) => {
-        const parentId = (ctx.params as any)[parentParam];
-        const userId = (ctx as any).userId as string | null;
-        const userRole = (ctx as any).userRole as string | null;
-        const body = ctx.body as { chatId: string; excludeId: string };
-
-        const ownershipOk = await checkOwnership(opts.database, entityConfig as never, parentId, userId, userRole,);
-        if (!ownershipOk) { return notFound("Actor not found",); }
-
-        // Chat-scoped copies already carried for this chat (by content —
-        // originals keep source_chat_id null, so identity goes via content).
-        const existingCopies = await (opts.database as any)
-          .selectFrom("actor_memories",)
-          .select("content",)
-          .where("actor_id", "=", parentId,)
-          .where("source_chat_id", "=", body.chatId,)
-          .execute();
-        const carriedContents = new Set(existingCopies.map((c: { content: string },) => c.content),);
-
-        const sources = await (opts.database as any)
-          .selectFrom("actor_memories",)
-          .selectAll()
-          .where("actor_id", "=", parentId,)
-          .where("id", "!=", body.excludeId,)
-          .where("source_chat_id", "is", null,)
-          .limit(200,)
-          .execute();
-        const toCarry = sources.filter((s: { content: string },) => !carriedContents.has(s.content,));
-        for (const source of toCarry) {
-          await (opts.database as any)
-            .insertInto("actor_memories",)
-            .values({
-              id: crypto.randomUUID(),
-              actor_id: source.actor_id,
-              source_chat_id: body.chatId,
-              memory_type: source.memory_type,
-              content: source.content,
-              confidence: source.confidence,
-              importance: source.importance,
-              keywords: source.keywords,
-              scope: source.scope,
-              pinned: source.pinned,
-              last_accessed_at: source.last_accessed_at,
-              created_at: source.created_at,
-              updated_at: new Date().toISOString(),
-            },)
-            .execute();
-        }
-        return jsonResponse({ ok: true, carried: toCarry.length, },);
-      },
-      {
-        body: t.Object({ chatId: t.String({ minLength: 1, },), excludeId: t.String({ minLength: 1, },), },),
-        response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, },
-        detail: {
-          summary: "Carry all Memories except one",
-          description: "Convert a full-carry chat to selective by copying every memory except the excluded one.",
-          tags: ["Memory",],
-        },
-      },
-    );
-
   // FEAT-075: emit audit rows for memory CRUD performed via the generic
   // entity-routes layer. We scope this hook to /api/actors/:actorId/memories
   // paths only — no other entity mounted under actor-memories.ts — so a
@@ -265,7 +148,7 @@ export function actorMemoriesRoutes(opts: { database: Db; config: Config }, pref
       let action: "pin" | "unpin" | "modify" | "delete" | null = null;
       if (method === "DELETE") { action = "delete"; }
       else if (method === "PUT") {
-        const body = ((ctx as unknown as { body?: Record<string, unknown> }).body ?? {});
+        const body = (ctx as unknown as { body?: Record<string, unknown> }).body ?? {};
         if (body.pinned === true || body.pinned === "pinned") { action = "pin"; }
         else if (body.pinned === false || body.pinned === "unpinned") { action = "unpin"; }
         else { action = "modify"; }
@@ -284,6 +167,12 @@ export function actorMemoriesRoutes(opts: { database: Db; config: Config }, pref
   return auditHook
     .use(memoryAuditRoutes({ database: opts.database, }, prefix,),)
     .use(expandRoute,)
-    .use(carryRoute,)
+    .use(
+      memoryCarryPlugin({ database: opts.database, }, {
+        entityConfig: entityConfig as never,
+        withIdPath,
+        basePath,
+      },),
+    )
     .use(createEntityRoutes(entityConfig as never, opts, prefix,),);
 }

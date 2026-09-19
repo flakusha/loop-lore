@@ -6,7 +6,7 @@ export type { ChatState, } from "./chat-state";
 export type { ChatCoreState, } from "./core";
 export type { GmConfig, GmGuidance, GmParticipant, GmTurnPriority, } from "./gm";
 export type { ChatLocationState, } from "./location-state";
-export type { MemoryEntry, MemoryPanelState, } from "./memory";
+export type { AuditAction, AuditEntry, MemoryEntry, MemoryPanelState, } from "./memory";
 export type { ChatMemoryState, } from "./memory-state";
 export type { ChatMessageSearchState, } from "./message-search-state";
 export type {

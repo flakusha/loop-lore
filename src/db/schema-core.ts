@@ -1012,17 +1012,6 @@ export interface XpLedger {
   created_at: Generated<string>;
 }
 
-// ── memory_audit_log ────────────────────────────────────────────
-export interface MemoryAuditLog {
-  id: Generated<string>;
-  memory_id: string;
-  actor_id: string;
-  user_id: string | null;
-  action: string;
-  details: Generated<string>;
-  created_at: Generated<string>;
-}
-
 // ── memory_embeddings ────────────────────────────────────────────
 export interface MemoryEmbeddings {
   memory_id: Generated<string>;
@@ -1161,6 +1150,17 @@ export interface MessageSearchTokens {
   message_id: string;
   token: string;
   scope: string;
+}
+
+// ── memory_audit_log ────────────────────────────────────────────
+export interface MemoryAuditLog {
+  id: Generated<string>;
+  memory_id: string;
+  actor_id: string;
+  user_id: string | null;
+  action: string;
+  details: Generated<string>;
+  created_at: Generated<string>;
 }
 
 // ── schema_version ────────────────────────────────────────────

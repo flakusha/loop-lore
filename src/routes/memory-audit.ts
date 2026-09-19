@@ -87,7 +87,7 @@ export function memoryAuditRoutes(opts: { database: Db }, prefix = "/api",): Ely
         cursor?: string;
         limit?: string;
       };
-      const action = AUDIT_ACTIONS.find((a,) => a === query.action,);
+      const action = AUDIT_ACTIONS.find((a,) => a === query.action);
       const limit = query.limit ? Number.parseInt(query.limit, 10,) : undefined;
 
       const result = await listAuditLog(opts.database, parentId, {
@@ -95,7 +95,7 @@ export function memoryAuditRoutes(opts: { database: Db }, prefix = "/api",): Ely
         since: query.since,
         until: query.until,
         cursor: query.cursor,
-        limit: Number.isFinite(limit) ? limit : undefined,
+        limit: Number.isFinite(limit,) ? limit : undefined,
       },);
       return jsonResponse(result,);
     }, {

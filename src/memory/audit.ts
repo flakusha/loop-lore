@@ -19,7 +19,7 @@ import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
 import type { DB, } from "../db";
 import { getLogger, } from "../logger";
-import { jsonStringifyOr, } from "../utils";
+import { jsonParseOr, jsonStringifyOr, safeJsonParse, } from "../utils";
 
 /**
  * @returns logger scoped to the memory-audit module
@@ -89,12 +89,16 @@ function decodeCursor(cursor: string,): { createdAt: string; id: string } | null
   // this is a pagination cursor, not a security token.
   try {
     const decoded = Buffer.from(cursor, "base64url",).toString("utf8",);
-    const obj = JSON.parse(decoded,) as { c?: unknown; i?: unknown };
+    const parsed = safeJsonParse<{ c?: unknown; i?: unknown }>(decoded,);
+    if (!parsed.ok) { return null; }
+    const obj = parsed.value;
     if (typeof obj.c === "string" && obj.c.length > 0 && typeof obj.i === "string" && obj.i.length > 0) {
       return { createdAt: obj.c, id: obj.i, };
     }
     return null;
-  } catch { return null; }
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -107,7 +111,7 @@ function encodeNextCursor(lastRow: MemoryAuditRow, _requestedLimit: number,): st
   // Cursor encodes the last seen (created_at, id) so ties on
   // created_at (possible at second resolution) advance correctly via
   // the compound comparison in the query.
-  return Buffer.from(JSON.stringify({ c: lastRow.createdAt, i: lastRow.id, },),).toString("base64url",);
+  return Buffer.from(jsonStringifyOr({ c: lastRow.createdAt, i: lastRow.id, },),).toString("base64url",);
 }
 
 /**
@@ -131,7 +135,7 @@ export async function recordAuditLog(
     action: e.action,
     details: jsonStringifyOr(e.details ?? {},),
     created_at: now,
-  }),);
+  }));
   try {
     await db.insertInto("memory_audit_log",).values(rows,).execute();
   } catch (error) {
@@ -186,8 +190,8 @@ export async function listAuditLog(
           eb.and([
             eb("created_at", "=", decoded.createdAt,),
             eb("id", "<", decoded.id,),
-          ]),
-        ],),
+          ],),
+        ],)
       );
     }
   }
@@ -199,12 +203,10 @@ export async function listAuditLog(
   const entries: MemoryAuditRow[] = [];
   for (const r of pageRows) {
     let details: Record<string, unknown> = {};
-    try {
-      const parsed = JSON.parse(r.details,) as unknown;
-      if (parsed && typeof parsed === "object" && !Array.isArray(parsed,)) {
-        details = parsed as Record<string, unknown>;
-      }
-    } catch { /* leave empty */ }
+    const parsed = jsonParseOr<unknown>(r.details, {},);
+    if (parsed && typeof parsed === "object" && !Array.isArray(parsed,)) {
+      details = parsed as Record<string, unknown>;
+    }
     entries.push({
       id: r.id,
       memoryId: r.memory_id,
