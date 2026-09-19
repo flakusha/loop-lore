@@ -3863,3 +3863,31 @@ export async function insertMeshDeliveries(
     ...opts,
   } as any,).execute();
 }
+
+/** Insert a status_effect row. */
+export async function insertStatusEffect(
+  db: Db,
+  actor_id: string,
+  effect_id: string,
+  category: string,
+  source: string,
+  started_at: string,
+  opts?: {
+    id?: string;
+    affected_stat?: string | null;
+    magnitude?: number;
+    source_id?: string | null;
+    expires_at?: string | null;
+    meta?: string | null;
+  },
+): Promise<void> {
+  await db.insertInto("status_effect",).values({
+    id: crypto.randomUUID(),
+    actor_id,
+    effect_id,
+    category,
+    source,
+    started_at,
+    ...opts,
+  } as any,).execute();
+}

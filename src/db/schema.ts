@@ -172,4 +172,5 @@ export interface DB {
   mesh_negotiations: import("./schema-core").MeshNegotiations;
   mesh_reservations: import("./schema-core").MeshReservations;
   mesh_deliveries: import("./schema-core").MeshDeliveries;
+  status_effect: import("./schema-core").StatusEffect;
 }

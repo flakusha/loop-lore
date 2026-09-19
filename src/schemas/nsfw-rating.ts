@@ -6,6 +6,8 @@
 // Shared across Character Core, Chat Lifecycle, and NSFW systems.
 // Provides the 5-tier rating enum and runtime enforcement contract.
 
+import { ContentIntensity, } from "../db/enums-character/nsfw";
+
 // ── Rating Enum ───────────────────────────────────────────────
 
 /** 5-tier NSFW content rating system. */
@@ -141,3 +143,19 @@ export function createRatingEnforcement(params: {
     enforced_by: params.enforced_by ?? "system",
   };
 }
+
+// ── Arousal Ceiling ──────────────────────────────────────────
+
+/**
+ * Maximum permitted arousal (0–100 scale) per ContentIntensity tier.
+ * NSFW systems clamp arousal progression to the ceiling of the active
+ * tier; the map is total over the tier ladder and monotone non-decreasing
+ * with severity, so a lower tier can never gate a higher one.
+ */
+export const AROUSAL_CEILING: Record<ContentIntensity, number> = {
+  [ContentIntensity.Vanilla]: 40,
+  [ContentIntensity.Mild]: 55,
+  [ContentIntensity.Moderate]: 75,
+  [ContentIntensity.Intense]: 90,
+  [ContentIntensity.Extreme]: 100,
+};
