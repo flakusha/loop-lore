@@ -75,6 +75,7 @@ import { invitesRoutes, } from "../routes/invites";
 import { keyManagementRoutes, } from "../routes/key-management";
 import { livenessRoutes, } from "../routes/liveness";
 import { locationExplorerRoutes, } from "../routes/location-explorer";
+import { memoryAuditRoutes, } from "../routes/memory-audit";
 import { messageEncryptionRoutes, } from "../routes/message-encryption";
 import { messageReactionsRoutes, } from "../routes/message-reactions";
 import { messageSearchRoutes, } from "../routes/message-search";
@@ -156,6 +157,7 @@ export function registerPlugins(app: Elysia<any>, opts: RegisterPluginsOpts,): v
   app.use(actorE2EPubkeyRoutes(handleOpts,),);
   app.use(actorItemsRoutes(handleOpts,),);
   app.use(actorMemoriesRoutes(handleOpts,),);
+  app.use(memoryAuditRoutes({ database: handleOpts.database, },),);
   app.use(actorLoreEntriesRoutes(handleOpts,),);
   app.use(actorNotesRoutes(handleOpts,),);
   app.use(worldLoreEntriesRoutes(handleOpts,),);

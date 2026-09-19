@@ -55,157 +55,160 @@
 
     <!-- Memory tabs (character/assistant/world) -->
     <div x-show="memoryPanel.activeTab !== 'audit'">
-    <!-- Token Budget -->
-    <div style="font-size: 11px; color: var(--text-secondary); margin-bottom: var(--space-3)">
-      {{{t("chats.tokens")}}} <span x-text="memoryPanel.tokensUsed"></span>/<span
-        x-text="memoryPanel.tokenBudget"
-      ></span>
-    </div>
-
-    <!-- Search -->
-    <input
-      class="form-input"
-      style="font-size: 13px; margin-bottom: var(--space-3)"
-      x-bind:placeholder="t('chats.searchMemories')"
-      x-model="memoryPanel.searchQuery"
-      @input="searchMemories()"
-    />
-
-    <!-- Create Form (world memories are admin-managed) -->
-    <button
-      class="btn btn-primary btn-xs"
-      style="width: 100%; margin-bottom: var(--space-3)"
-      x-show="_canWriteActiveTab()"
-      @click="memoryPanel.showCreateForm = !memoryPanel.showCreateForm"
-    >
-      {{{t("chats.addMemory")}}}
-    </button>
-
-    <div x-show="memoryPanel.showCreateForm" style="margin-bottom: var(--space-3)">
-      <textarea
-        class="form-input form-textarea"
-        rows="2"
-        style="font-size: 13px; margin-bottom: var(--space-2)"
-        x-bind:placeholder="t('chats.enterMemory')"
-        x-model="memoryPanel.newMemoryContent"
-      ></textarea>
-      <div style="display: flex; gap: var(--space-2)">
-        <button class="btn btn-secondary btn-xs" @click="memoryPanel.showCreateForm = false">
-          {{{t("common.cancel")}}}
-        </button>
-        <button class="btn btn-primary btn-xs" @click="createMemory()">{{{t("common.save")}}}</button>
+      <!-- Token Budget -->
+      <div style="font-size: 11px; color: var(--text-secondary); margin-bottom: var(--space-3)">
+        {{{t("chats.tokens")}}} <span x-text="memoryPanel.tokensUsed"></span>/<span
+          x-text="memoryPanel.tokenBudget"
+        ></span>
       </div>
-    </div>
-    <!-- Memory List -->
-    <div style="display: grid; gap: var(--space-2)">
-      <template x-for="mem in getFilteredMemories()" :key="mem.id">
-        <div style="padding: var(--space-2); background: var(--bg-secondary, #f8f9fa); border-radius: 4px; font-size: 12px">
-          <!-- Inline edit mode -->
-          <template x-if="memoryPanel.editingMemoryId === mem.id">
-            <div>
-              <textarea
-                class="form-input form-textarea"
-                rows="2"
-                style="font-size: 12px; margin-bottom: var(--space-2)"
-                x-model="memoryPanel.editMemoryContent"
-              ></textarea>
-              <div style="display: flex; gap: var(--space-2)">
-                <button class="btn btn-secondary btn-xs" @click="cancelEditMemory()">{{{t("common.cancel")}}}</button>
-                <button class="btn btn-primary btn-xs" @click="saveEditMemory()">{{{t("common.save")}}}</button>
+
+      <!-- Search -->
+      <input
+        class="form-input"
+        style="font-size: 13px; margin-bottom: var(--space-3)"
+        x-bind:placeholder="t('chats.searchMemories')"
+        x-model="memoryPanel.searchQuery"
+        @input="searchMemories()"
+      />
+
+      <!-- Create Form (world memories are admin-managed) -->
+      <button
+        class="btn btn-primary btn-xs"
+        style="width: 100%; margin-bottom: var(--space-3)"
+        x-show="_canWriteActiveTab()"
+        @click="memoryPanel.showCreateForm = !memoryPanel.showCreateForm"
+      >
+        {{{t("chats.addMemory")}}}
+      </button>
+
+      <div x-show="memoryPanel.showCreateForm" style="margin-bottom: var(--space-3)">
+        <textarea
+          class="form-input form-textarea"
+          rows="2"
+          style="font-size: 13px; margin-bottom: var(--space-2)"
+          x-bind:placeholder="t('chats.enterMemory')"
+          x-model="memoryPanel.newMemoryContent"
+        ></textarea>
+        <div style="display: flex; gap: var(--space-2)">
+          <button class="btn btn-secondary btn-xs" @click="memoryPanel.showCreateForm = false">
+            {{{t("common.cancel")}}}
+          </button>
+          <button class="btn btn-primary btn-xs" @click="createMemory()">{{{t("common.save")}}}</button>
+        </div>
+      </div>
+      <!-- Memory List -->
+      <div style="display: grid; gap: var(--space-2)">
+        <template x-for="mem in getFilteredMemories()" :key="mem.id">
+          <div style="padding: var(--space-2); background: var(--bg-secondary, #f8f9fa); border-radius: 4px; font-size: 12px">
+            <!-- Inline edit mode -->
+            <template x-if="memoryPanel.editingMemoryId === mem.id">
+              <div>
+                <textarea
+                  class="form-input form-textarea"
+                  rows="2"
+                  style="font-size: 12px; margin-bottom: var(--space-2)"
+                  x-model="memoryPanel.editMemoryContent"
+                ></textarea>
+                <div style="display: flex; gap: var(--space-2)">
+                  <button class="btn btn-secondary btn-xs" @click="cancelEditMemory()">{{{t("common.cancel")}}}</button>
+                  <button class="btn btn-primary btn-xs" @click="saveEditMemory()">{{{t("common.save")}}}</button>
+                </div>
               </div>
-            </div>
-          </template>
-          <template x-if="memoryPanel.editingMemoryId !== mem.id">
-            <div>
-              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--space-1)">
-                <span x-text="mem.content"></span>
-                <div style="display: flex; gap: 2px">
+            </template>
+            <template x-if="memoryPanel.editingMemoryId !== mem.id">
+              <div>
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--space-1)">
+                  <span x-text="mem.content"></span>
+                  <div style="display: flex; gap: 2px">
+                    <button
+                      class="btn-icon"
+                      x-show="_canWriteActiveTab()"
+                      @click="startEditMemory(mem)"
+                      x-bind:title="t('common.edit')"
+                    >
+                      ✏️
+                    </button>
+                    <button
+                      class="btn-icon"
+                      x-show="_canWriteActiveTab()"
+                      :class="{'text-warning': mem.pinned}"
+                      @click="toggleMemoryPin(mem.id)"
+                      x-bind:title="t('chats.pin')"
+                    >
+                      📌
+                    </button>
+                    <button
+                      class="btn-icon"
+                      x-show="memoryPanel.activeTab === 'character'"
+                      @click="toggleMemoryInChat(mem)"
+                      x-bind:title="t('chats.inThisChat')"
+                      x-text="_isInChat(mem) ? '✅' : '⭕'"
+                    >
+                    </button>
+                    <button
+                      class="btn-icon"
+                      x-show="_canWriteActiveTab()"
+                      @click="deleteMemory(mem.id)"
+                      x-bind:title="t('common.delete')"
+                    >
+                      🗑
+                    </button>
+                  </div>
+                </div>
+                <div
+                  x-show="mem.reviewStatus === 'pending'"
+                  style="display: flex; gap: var(--space-2); align-items: center; margin-top: var(--space-1); font-size: 10px"
+                >
+                  <span class="badge badge-warning">pending</span>
                   <button
-                    class="btn-icon"
+                    class="btn btn-primary btn-xs"
                     x-show="_canWriteActiveTab()"
-                    @click="startEditMemory(mem)"
-                    x-bind:title="t('common.edit')"
+                    @click="approveMemory(mem.id)"
+                    x-bind:title="t('chats.approveMemory')"
                   >
-                    ✏️
+                    ✓
                   </button>
                   <button
-                    class="btn-icon"
+                    class="btn btn-secondary btn-xs"
                     x-show="_canWriteActiveTab()"
-                    :class="{'text-warning': mem.pinned}"
-                    @click="toggleMemoryPin(mem.id)"
-                    x-bind:title="t('chats.pin')"
+                    @click="rejectMemory(mem.id)"
+                    x-bind:title="t('chats.rejectMemory')"
                   >
-                    📌
+                    ✕
                   </button>
+                </div>
+                <div style="display: flex; gap: var(--space-2); font-size: 10px; color: var(--text-secondary)">
+                  <span x-text="mem.type"></span>
+                  <span x-text="'conf: ' + Math.round(mem.confidence * 100) + '%'"></span>
+                  <span x-text="'tokens: ' + (mem.tokenCount || 0)"></span>
+                  <span x-text="formatMemoryDate(mem.createdAt)"></span>
                   <button
                     class="btn-icon"
-                    x-show="memoryPanel.activeTab === 'character'"
-                    @click="toggleMemoryInChat(mem)"
-                    x-bind:title="t('chats.inThisChat')"
-                    x-text="_isInChat(mem) ? '✅' : '⭕'"
+                    x-show="mem.sourceMessageId"
+                    style="font-size: 10px"
+                    @click="jumpToMemorySource(mem.sourceMessageId)"
+                    x-bind:title="t('chats.viewSource')"
                   >
-                  </button>
-                  <button
-                    class="btn-icon"
-                    x-show="_canWriteActiveTab()"
-                    @click="deleteMemory(mem.id)"
-                    x-bind:title="t('common.delete')"
-                  >
-                    🗑
+                    🔗
                   </button>
                 </div>
               </div>
-              <div
-                x-show="mem.reviewStatus === 'pending'"
-                style="display: flex; gap: var(--space-2); align-items: center; margin-top: var(--space-1); font-size: 10px"
-              >
-                <span class="badge badge-warning">pending</span>
-                <button
-                  class="btn btn-primary btn-xs"
-                  x-show="_canWriteActiveTab()"
-                  @click="approveMemory(mem.id)"
-                  x-bind:title="t('chats.approveMemory')"
-                >
-                  ✓
-                </button>
-                <button
-                  class="btn btn-secondary btn-xs"
-                  x-show="_canWriteActiveTab()"
-                  @click="rejectMemory(mem.id)"
-                  x-bind:title="t('chats.rejectMemory')"
-                >
-                  ✕
-                </button>
-              </div>
-              <div style="display: flex; gap: var(--space-2); font-size: 10px; color: var(--text-secondary)">
-                <span x-text="mem.type"></span>
-                <span x-text="'conf: ' + Math.round(mem.confidence * 100) + '%'"></span>
-                <span x-text="'tokens: ' + (mem.tokenCount || 0)"></span>
-                <span x-text="formatMemoryDate(mem.createdAt)"></span>
-                <button
-                  class="btn-icon"
-                  x-show="mem.sourceMessageId"
-                  style="font-size: 10px"
-                  @click="jumpToMemorySource(mem.sourceMessageId)"
-                  x-bind:title="t('chats.viewSource')"
-                >
-                  🔗
-                </button>
-              </div>
-            </div>
-          </template>
-        </div>
-      </template>
-    </div>
+            </template>
+          </div>
+        </template>
+      </div>
 
-    <div x-show="getFilteredMemories().length === 0" class="empty-state" style="padding: var(--space-6)">
-      <div class="title">{{{t("chats.noMemories")}}}</div>
-    </div>
+      <div x-show="getFilteredMemories().length === 0" class="empty-state" style="padding: var(--space-6)">
+        <div class="title">{{{t("chats.noMemories")}}}</div>
+      </div>
     </div>
     <!-- /memory-tabs wrapper -->
     <!-- Audit panel (FEAT-075) -->
     <div x-show="memoryPanel.activeTab === 'audit'" data-testid="memory-audit-panel">
-      <div style="display: flex; flex-wrap: wrap; gap: var(--space-1); margin-bottom: var(--space-3)" data-testid="memory-audit-filters">
+      <div
+        style="display: flex; flex-wrap: wrap; gap: var(--space-1); margin-bottom: var(--space-3)"
+        data-testid="memory-audit-filters"
+      >
         <button
           class="btn btn-secondary btn-xs"
           :class="{'tab-active': memoryPanel.auditActionFilter === null}"
@@ -240,7 +243,8 @@
         style="padding: var(--space-6)"
         data-testid="memory-audit-empty"
       >
-        <div class="title">{{{t("chats.auditEmpty")}}}
+        <div class="title">
+          {{{t("chats.auditEmpty")}}}
         </div>
       </div>
 
@@ -254,7 +258,8 @@
               <span style="font-weight: 600" x-text="entry.action"></span>
               <span style="color: var(--text-secondary)" x-text="entry.createdAt"></span>
             </div>
-            <div style="color: var(--text-secondary); font-size: 11px; word-break: break-all" x-text="entry.details"></div>
+            <div style="color: var(--text-secondary); font-size: 11px; word-break: break-all" x-text="entry.details">
+            </div>
           </div>
         </template>
       </div>

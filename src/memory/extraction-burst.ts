@@ -7,7 +7,8 @@
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db";
-import { extractMemories, storeMemories, } from "./extraction";
+import { extractMemories, } from "./extraction";
+import { storeMemories, } from "./extraction-store";
 import { MAX_CHAIN_IDS, } from "./history-search";
 import type { ExtractionOpts, } from "./types";
 
