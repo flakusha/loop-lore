@@ -42,6 +42,12 @@ export const WorldUpdateBody = t.Object({
   rpgXp: t.Optional(Flag,),
   rpgLoot: t.Optional(Flag,),
   rpgQuests: t.Optional(Flag,),
+}, {
+  // TASK-031: pass unknown keys through instead of silently stripping them
+  // so the character/world boundary guard can reject misdirected
+  // character-owned fields with 422 (the handler still writes only declared
+  // fields).
+  additionalProperties: true,
 },);
 
 export const WorldIdParams = t.Object({

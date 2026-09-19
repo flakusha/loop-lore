@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, } from "elysia";
+import { assertNoCrossBoundaryWrite, } from "../../characters/world-boundary";
 import { updateWithVersionCheck, } from "../../db/optimistic-locking";
 import { can, } from "../../users/permissions";
 import { safeJsonParse, safeJsonStringify, } from "../../utils";
@@ -63,6 +64,17 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
           },);
         }
 
+        // TASK-031: character/world boundary. A body carrying world-owned
+        // fields is misdirected (the handler would silently drop them) -
+        // reject it and point the client at the world API instead.
+        const boundary = assertNoCrossBoundaryWrite(
+          "character",
+          Object.keys(ctx.body as Record<string, unknown>,),
+        );
+        if (!boundary.ok) {
+          return jsonError({ message: boundary.error.message, status: HttpStatus.UnprocessableEntity, },);
+        }
+
         const updates = buildActorUpdates(ctx.body,);
         // Spec-required fields (description/personality/appearance + wardrobe) are
         // enforced at the import/validator layer, not on partial PUTs: actors rows
@@ -112,6 +124,7 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
           403: ErrorResponse,
           404: ErrorResponse,
           409: ErrorResponse,
+          422: ErrorResponse,
         },
         detail: {
           summary: "Update actor",
