@@ -55,7 +55,9 @@ export async function applyDecay(
     .execute();
 
   let affected = 0;
-  const auditEntries: Array<{ memoryId: string; actorId: string; userId: null; action: "decay"; details: Record<string, unknown> }> = [];
+  const auditEntries: Array<
+    { memoryId: string; actorId: string; userId: null; action: "decay"; details: Record<string, unknown> }
+  > = [];
   for (const mem of memories) {
     // last_accessed_at may be NULL (never accessed / legacy rows). Fall back
     // to created_at, then to now — never the UUID id (new Date(uuid) is
@@ -131,7 +133,9 @@ export async function purgeStaleMemories(
       .execute();
 
     let deleted = 0;
-    const auditEntries: Array<{ memoryId: string; actorId: string; userId: null; action: "purge"; details: Record<string, unknown> }> = [];
+    const auditEntries: Array<
+      { memoryId: string; actorId: string; userId: null; action: "purge"; details: Record<string, unknown> }
+    > = [];
     for (const mem of toDelete) {
       await db.deleteFrom("actor_memories",).where("id", "=", mem.id,).execute();
       auditEntries.push({
@@ -167,7 +171,9 @@ export async function purgeStaleMemories(
     .execute();
 
   let stale = 0;
-  const decayAudit: Array<{ memoryId: string; actorId: string; userId: null; action: "decay"; details: Record<string, unknown> }> = [];
+  const decayAudit: Array<
+    { memoryId: string; actorId: string; userId: null; action: "decay"; details: Record<string, unknown> }
+  > = [];
   for (const mem of toMark) {
     await db
       .updateTable("actor_memories",)

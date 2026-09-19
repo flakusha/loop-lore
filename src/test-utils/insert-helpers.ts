@@ -3790,7 +3790,6 @@ export async function insertRpgQuestions(
     ...opts,
   } as any,).execute();
 }
-
 /** Insert a schema_version row. */
 export async function insertSchemaVersion(
   db: Db,

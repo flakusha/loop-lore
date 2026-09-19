@@ -79,7 +79,7 @@ describe("actorMemoriesRoutes", () => {
   it("expand endpoint reconstructs the bound chain", async () => {
     const { createTestDb, } = await import("../test-utils/create-test-db");
     const { insertChats, insertMessages, } = await import("../test-utils/insert-helpers");
-    const { storeMemories, } = await import("../memory/extraction");
+    const { storeMemories, } = await import("../memory/extraction-store");
     const { db: edb, } = await createTestDb();
     await insertUsers(edb, "exp-user", "Exp User", { id: "user-exp", } as never,);
     await insertChats(edb, "Exp Chat", "user-exp", { id: "chat-exp", } as never,);
@@ -120,7 +120,7 @@ describe("actorMemoriesRoutes", () => {
   it("expand endpoint denies non-owners", async () => {
     const { createTestDb, } = await import("../test-utils/create-test-db");
     const { insertChats, insertMessages, } = await import("../test-utils/insert-helpers");
-    const { storeMemories, } = await import("../memory/extraction");
+    const { storeMemories, } = await import("../memory/extraction-store");
     const { db: edb, } = await createTestDb();
     await insertUsers(edb, "own-user", "Own User", { id: "user-own", } as never,);
     await insertChats(edb, "Own Chat", "user-own", { id: "chat-own", } as never,);

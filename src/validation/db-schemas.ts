@@ -2363,16 +2363,6 @@ export const CharacterLicenseHistorySchema = t.Object({
   created_at: t.Optional(t.String(),),
 },);
 
-// ── memory_audit_log ────────────────────────────────────────────
-export const MemoryAuditLogSchema = t.Object({
-  memory_id: t.String(),
-  actor_id: t.String(),
-  action: t.String(),
-  user_id: t.Optional(t.String(),),
-  details: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-},);
-
 // ── actor_memories ────────────────────────────────────────────
 export const ActorMemoriesSchema = t.Object({
   actor_id: t.String(),
@@ -2687,6 +2677,16 @@ export const RpgQuestionsSchema = t.Object({
   selected_option_id: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
   answered_at: t.Optional(t.String(),),
+},);
+
+// ── memory_audit_log ────────────────────────────────────────────
+export const MemoryAuditLogSchema = t.Object({
+  memory_id: t.String(),
+  actor_id: t.String(),
+  action: t.String(),
+  user_id: t.Optional(t.String(),),
+  details: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
 },);
 
 // ── schema_version ────────────────────────────────────────────

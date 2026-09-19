@@ -16,7 +16,7 @@ import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { insertActors, insertChats, insertMessages, insertUsers, } from "../test-utils/insert-helpers";
-import { storeMemories, } from "./extraction";
+import { storeMemories, } from "./extraction-store";
 import {
   expandMemoryContext,
   reconstructMessageChain,

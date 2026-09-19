@@ -24,8 +24,9 @@ import type { GenerateRequest, GenerateResponse, LLMProvider, } from "../generat
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { insertActors, insertChats, insertMessages, insertUsers, } from "../test-utils/insert-helpers";
-import { extractAndStoreMemories, extractMemories, storeMemories, } from "./extraction";
+import { extractAndStoreMemories, extractMemories, } from "./extraction";
 import { extractFromBurst, } from "./extraction-burst";
+import { storeMemories, } from "./extraction-store";
 
 /**
  * Cast a raw string to MemoryType. The storing tests deliberately pass

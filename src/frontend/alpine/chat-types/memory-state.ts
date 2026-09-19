@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import type { MemoryEntry, MemoryPanelState, } from "./memory";
+import type { AuditAction, AuditEntry, MemoryEntry, MemoryPanelState, } from "./memory";
 
 // ── Memory System ───────────────────────────────────────────
 /** */
@@ -32,4 +32,10 @@ export interface ChatMemoryState {
   updateMemoryTokenCount(): void;
   _getCharacterActorId(): string | null;
   _updateTokenCount(): void;
+  auditActions: AuditAction[];
+  getFilteredAudit(): AuditEntry[];
+  _auditUrl(cursor: string | null, action: AuditAction | null,): string | null;
+  loadAudit(action?: AuditAction | null,): Promise<void>;
+  loadMoreAudit(): Promise<void>;
+  setAuditActionFilter(action: AuditAction | null,): Promise<void>;
 }

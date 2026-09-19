@@ -166,6 +166,7 @@ export interface DB {
   e2e_skipped_message_keys: import("./schema-core").E2eSkippedMessageKeys;
   message_search_tokens: import("./schema-core").MessageSearchTokens;
   rpg_questions: import("./schema-story").RpgQuestions;
+  memory_audit_log: import("./schema-core").MemoryAuditLog;
   schema_version: import("./schema-core").SchemaVersion;
   workflow_sessions: import("./schema-core").WorkflowSessions;
   mesh_peers: import("./schema-core").MeshPeers;
