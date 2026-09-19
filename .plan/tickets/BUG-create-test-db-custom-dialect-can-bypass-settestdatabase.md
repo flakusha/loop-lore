@@ -52,6 +52,7 @@ silently operates on the real on-disk DB.
 
 Risk is amplified by `src/db/migrations/README.md`'s append-only policy:
 bugs in this path can corrupt the production DB before any review.
+
 ## Acceptance Criteria
 
 - [ ] Add `setTestDatabase(db)` to `createTestKysely()` in
