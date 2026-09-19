@@ -94,43 +94,9 @@ export class PersonasService {
     return id;
   }
 
-  /**
-   * @param id
-   * @param params
-   * @param userId
-   * @throws {Error} `"Persona not found"` when no row matches `id` + `userId`
-   *   (i.e. either the persona does not exist or it belongs to a different
-   *   user). Callers must surface this as 404 to match getById / delete /
-   *   convertToCharacter — a silent no-op would let wrong-id probes return
-   *   200 and hide ownership mistakes.
-   */
+  /** @throws {Error} `"Persona not found"` ⇒ 404 (matches getById/delete/convertToCharacter). */
   async update(id: string, params: UpdatePersonaParams, userId: string,): Promise<void> {
-    let defaultFlip = false;
-    const updates: Record<string, unknown> = {};
-    if (params.name !== undefined) { updates.name = params.name; }
-    if (params.avatarAssetId !== undefined) { updates.avatar_asset_id = params.avatarAssetId; }
-    if (params.description !== undefined) { updates.description = params.description; }
-    if (params.title !== undefined) { updates.title = params.title; }
-    if (params.isDefault === true) {
-      // Delegate to the one code path that owns the default invariant
-      // (unsets the previous default first). Done AFTER the main UPDATE so
-      // a not-found/foreign id surfaces as a single 404 and field updates
-      // don't half-apply around a failed default flip. applyDefault owns
-      // the updated_at write when flipping, so omit it here.
-      defaultFlip = true;
-    } else if (params.isDefault === false) {
-      updates.is_default = DefaultState.NotDefault;
-      updates.updated_at = new Date().toISOString();
-    }
-    if (params.temperature !== undefined) { updates.temperature = params.temperature; }
-    if (params.maxTokens !== undefined) { updates.max_tokens = params.maxTokens; }
-    if (params.model !== undefined) { updates.model = params.model; }
-    // Only stamp updated_at for non-default-flip field updates; applyDefault
-    // owns the timestamp when it runs so we don't double-write.
-    if (!defaultFlip && Object.keys(updates,).length > 0 && updates.updated_at === undefined) {
-      updates.updated_at = new Date().toISOString();
-    }
-
+    const { updates, defaultFlip, } = buildPersonaUpdate(params,);
     await this.db.transaction().execute(async (trx,) => {
       let updateVerifiedRow = false;
       if (Object.keys(updates,).length > 0) {
@@ -141,8 +107,7 @@ export class PersonasService {
           .where("user_id", "=", userId,)
           .executeTakeFirst();
 
-        // 0 rows affected ⇒ either no such persona or owned by another user.
-        // Throw so the handler maps to 404 (matches getById/delete/convertToCharacter).
+        // 0 rows = no such persona or owned by another user; 404.
         if (Number(res?.numUpdatedRows ?? 0,) === 0) {
           throw new Error("Persona not found",);
         }
@@ -150,10 +115,8 @@ export class PersonasService {
       }
 
       if (defaultFlip) {
-        // Only skip applyDefault's existence SELECT when the UPDATE above
-        // already verified the row in the same transaction. When the
-        // caller passes only `{ isDefault: true }` with no other fields,
-        // updates is empty and applyDefault must still 404 on missing id.
+        // Skip applyDefault's existence SELECT when UPDATE verified the
+        // row; with no field changes, applyDefault still 404s on its own.
         await applyDefault(trx, id, userId, updateVerifiedRow,);
       }
     },);
@@ -254,4 +217,33 @@ async function applyDefault(
     .where("id", "=", id,)
     .where("user_id", "=", userId,)
     .execute();
+}
+
+/**
+ * Map an UpdatePersonaParams payload to the UPDATE column set; the
+ * returned defaultFlip defers the default-state change to applyDefault.
+ */
+function buildPersonaUpdate(params: UpdatePersonaParams,): {
+  updates: Record<string, unknown>;
+  defaultFlip: boolean;
+} {
+  const updates: Record<string, unknown> = {};
+  if (params.name !== undefined) { updates.name = params.name; }
+  if (params.avatarAssetId !== undefined) { updates.avatar_asset_id = params.avatarAssetId; }
+  if (params.description !== undefined) { updates.description = params.description; }
+  if (params.title !== undefined) { updates.title = params.title; }
+  let defaultFlip = false;
+  if (params.isDefault === true) {
+    defaultFlip = true;
+  } else if (params.isDefault === false) {
+    updates.is_default = DefaultState.NotDefault;
+    updates.updated_at = new Date().toISOString();
+  }
+  if (params.temperature !== undefined) { updates.temperature = params.temperature; }
+  if (params.maxTokens !== undefined) { updates.max_tokens = params.maxTokens; }
+  if (params.model !== undefined) { updates.model = params.model; }
+  if (!defaultFlip && updates.updated_at === undefined && Object.keys(updates,).length > 0) {
+    updates.updated_at = new Date().toISOString();
+  }
+  return { updates, defaultFlip, };
 }
