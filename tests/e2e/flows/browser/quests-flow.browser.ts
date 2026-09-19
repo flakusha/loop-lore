@@ -124,6 +124,7 @@ describe("Quests flow E2E", () => {
     const errors = trackPageErrors(page,);
     try {
       await gotoQuests(page, WORLD_ID,);
+// hint: Logic changed on both sides. Requires understanding intent of each change.
       // Seeded quest with name + description is visible.
       await page.getByText(QUEST_NAME,).first().waitFor({ state: "visible", timeout: 20_000, },);
       await page.getByText("Find the ancient relic",).first().waitFor({ state: "attached", timeout: 20_000, },);

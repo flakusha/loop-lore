@@ -119,6 +119,7 @@ describe("Settings flow E2E", () => {
     }, 60_000,);
   });
 
+// hint: Logic changed on both sides. Requires understanding intent of each change.
   test("every tab (general/chat/api/notifications/data/keys) renders its panel", async () => {
     const page = await ctx.openPage();
     const errors = trackPageErrors(page,);

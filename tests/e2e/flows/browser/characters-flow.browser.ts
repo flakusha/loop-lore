@@ -212,4 +212,35 @@ describe("Characters flow E2E", () => {
       }
     });
   });
+
+  describe("Character edit navigation", () => {
+    test("character-edit form renders sub-editors without console errors", async () => {
+      const page = await ctx.openPage();
+      const errors = trackPageErrors(page,);
+      try {
+        // Open the seeded character in the grid, click into the detail modal,
+        // then navigate to /characters/:id/edit and confirm the form mounts.
+        await page.goto(`${ctx.url}/views/characters`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
+        await page.locator("[data-testid='app-root']",).waitFor({ state: "attached", timeout: 30_000, },);
+        await page
+          .locator(`[data-testid='character-card-${SEED.character.id}']`,)
+          .waitFor({ state: "attached", timeout: 30_000, },);
+
+        // Navigate to the character-edit view directly — the form htmx-loads.
+        await page.goto(`${ctx.url}/characters/${SEED.character.id}/edit`, {
+          waitUntil: "domcontentloaded",
+          timeout: 30_000,
+        },);
+        await page
+          .locator("[data-testid='character-edit-header']",)
+          .waitFor({ state: "attached", timeout: 30_000, },);
+        await page.locator("#character-edit-form",).waitFor({ state: "attached", timeout: 30_000, },);
+        await page.waitForTimeout(500,);
+      } finally {
+        errors.assert();
+        errors.detach();
+        await page.close();
+      }
+    }, 90_000,);
+  });
 });
