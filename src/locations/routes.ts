@@ -189,12 +189,13 @@ export class TravelRouteService {
     return rows as Array<{ id: string; name: string; kind: TransportKind; loop: number; seconds_per_unit: number }>;
   }
 
-  /** Get a single route, scoped by world. Returns null if not found or in another world. */
+  /** Get a single route, scoped by world. Returns undefined if not found or in another world. */
   async getRoute(
     worldId: string,
     routeId: string,
   ): Promise<
-    { id: string; name: string; kind: TransportKind; loop: number; seconds_per_unit: number; world_id: string } | null
+    { id: string; name: string; kind: TransportKind; loop: number; seconds_per_unit: number; world_id: string }
+      | undefined
   > {
     const row = await this.db
       .selectFrom("travel_routes",)
@@ -209,7 +210,7 @@ export class TravelRouteService {
       loop: number;
       seconds_per_unit: number;
       world_id: string;
-    } | null;
+    } | undefined;
   }
 
   /** Remove a stop by id (no-op if missing). */
