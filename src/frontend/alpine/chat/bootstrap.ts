@@ -137,6 +137,31 @@ export function chatState() {
     _impersonationLoaded: false,
     _unseenCounts: {},
     _chatFilter: "",
+    // ── Seen-state popover defaults — chat-seen.initSeenPopover() only sets
+    // these inside the `show-seen-popover` listener (chat-seen.ts:80-88), so
+    // without these initial values templates reading _seenPopoverOpen /
+    // _seenPopoverX / _seenPopoverY / _seenPopoverViewers before the first
+    // event fire ReferenceError. BUG-alpine-init-hydration.
+    _seenPopoverOpen: false,
+    _seenPopoverX: 0,
+    _seenPopoverY: 0,
+    _seenPopoverViewers: [] as Array<{ actorId: string; state: string; seenAt: string | null }>,
+    // ── Chat-list / message-list defaults — chatLifecycle.init() also sets
+    // these (lines 25-31), but Alpine evaluates child templates synchronously
+    // and the inner storyState init() can race the outer chatState init()'s
+    // sync portion, leaving the fields undefined when message-list.html is
+    // first walked. Defining them here guarantees presence on first render.
+    _isScrolledUp: false,
+    _contextMenu: { visible: false, messageId: null, x: 0, y: 0, },
+    _reactionPicker: { visible: false, messageId: "", x: 0, y: 0, },
+    _flagDialog: { open: false, contentType: "message", contentId: null, chatId: null, },
+    _flagReason: "",
+    _flagOther: "",
+    _flagBusy: false,
+    // _quickEmojis: set in init() lines 48-64 — also define here for first-render safety.
+    _quickEmojis: ["👍", "❤️", "😂", "🎭", "⚔️", "🗡️", "🏰", "✨", "💀", "🐉", "🌲", "⚡", "🔥", "💧", "🌙",],
+    // _draftBackup: chat-drafts sets it; default undefined to keep type stable for first-render reads.
+    _draftBackup: undefined as string | undefined,
     _searchResults: [] as {
       chatId: string;
       chatName: string;

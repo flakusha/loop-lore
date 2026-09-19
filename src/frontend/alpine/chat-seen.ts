@@ -80,7 +80,11 @@ export const chatSeenMethods: Partial<ChatState> & ThisType<ChatState> = {
   initSeenPopover() {
     document.addEventListener("show-seen-popover", (e: Event,) => {
       const detail = (e as CustomEvent).detail;
-      this._seenPopoverViewers = detail.viewers;
+      // Defensive: dispatch without detail (or with malformed detail) must
+      // not throw — it would abort the surrounding Alpine effect and surface
+      // as a pageerror in browser tests. BUG-alpine-init-hydration.
+      if (!detail) { return; }
+      this._seenPopoverViewers = detail.viewers ?? [];
       this._seenPopoverX = detail.target?.getBoundingClientRect?.()?.left ?? 0;
       this._seenPopoverY = (detail.target?.getBoundingClientRect?.()?.bottom ?? 0) + 8;
       this._seenPopoverOpen = true;
