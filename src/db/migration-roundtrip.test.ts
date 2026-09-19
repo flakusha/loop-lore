@@ -17,7 +17,7 @@ import { Migrator, } from "kysely/migration";
 import { readdirSync, } from "node:fs";
 import path from "node:path";
 import { createLogger, } from "../logger";
-import { createSqliteDialect, } from "./index";
+import { createSqliteDialect, setTestDatabase, } from "./index";
 import { compareMigrationNames, } from "./migrate";
 
 // ── Helpers ────────────────────────────────────────────────────
@@ -57,12 +57,20 @@ function getColumnNames(sqlite: Database, table: string,): string[] {
   ).map((r,) => r.name);
 }
 
-/** Create a fresh in-memory SQLite + Kysely (no migrations applied). */
+/**
+ * Create a fresh in-memory SQLite + Kysely (no migrations applied).
+ *
+ * FK enforcement comes from `createSqliteDialect` (it always runs
+ * `PRAGMA foreign_keys = ON`) — we don't re-run it locally.
+ * Also registers this DB as the active test override so any
+ * `getDatabase()` call inside a migration callback resolves here,
+ * not at the production DB (BUG-create-test-db-custom-dialect-can-bypass-settestdatabase).
+ */
 function createFreshDb(): { db: Kysely<any>; sqlite: Database } {
   const sqlite = new Database(":memory:",);
-  sqlite.run("PRAGMA foreign_keys = ON",);
   const dialect = createSqliteDialect(sqlite,);
   const db = new Kysely({ dialect, },);
+  setTestDatabase(db as unknown as Kysely<import("./schema").DB>,);
   return { db, sqlite, };
 }
 
@@ -122,6 +130,7 @@ describe("migration roundtrip", () => {
 
     await db.destroy();
     sqlite.close();
+    setTestDatabase(null,);
   });
 
   test("migrateDown rolls back all migrations to empty DB", async () => {
@@ -153,6 +162,7 @@ describe("migration roundtrip", () => {
 
     await db.destroy();
     sqlite.close();
+    setTestDatabase(null,);
   });
 
   test("re-migrating after full roundtrip produces identical schema", async () => {
@@ -181,6 +191,7 @@ describe("migration roundtrip", () => {
 
     await db.destroy();
     sqlite.close();
+    setTestDatabase(null,);
   });
 
   test("each migration up adds its expected tables and down removes them", async () => {
@@ -220,6 +231,7 @@ describe("migration roundtrip", () => {
 
     await db.destroy();
     sqlite.close();
+    setTestDatabase(null,);
   });
 
   test("every migrated table has at least one column", async () => {
@@ -238,5 +250,6 @@ describe("migration roundtrip", () => {
 
     await db.destroy();
     sqlite.close();
+    setTestDatabase(null,);
   });
 });
