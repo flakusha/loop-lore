@@ -1,5 +1,6 @@
 import { describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
+import { ContentIntensity, } from "../../db/enums-character/nsfw";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
@@ -109,11 +110,56 @@ describe("SeductionService", () => {
       expect(newLevel,).toBe(20,);
     });
 
-    test("modifyArousal clamps to 0-100", async () => {
+    test("modifyArousal clamps to tier ceiling (Moderate default → 75)", async () => {
       const db = await seedTestDb();
       const service = new SeductionService(db,);
 
-      const newLevel = await service.modifyArousal("actor-1", 150,);
+      const newLevel = await service.modifyArousal("actor-1", 90,);
+
+      expect(newLevel,).toBe(75,);
+    });
+
+    test("modifyArousal with Vanilla tier clamps at 40", async () => {
+      const db = await seedTestDb();
+      const service = new SeductionService(db,);
+
+      const newLevel = await service.modifyArousal(
+        "actor-1",
+        90,
+        null,
+        undefined,
+        ContentIntensity.Vanilla,
+      );
+
+      expect(newLevel,).toBe(40,);
+    });
+
+    test("modifyArousal with Extreme tier allows up to 100", async () => {
+      const db = await seedTestDb();
+      const service = new SeductionService(db,);
+
+      const newLevel = await service.modifyArousal(
+        "actor-1",
+        90,
+        null,
+        undefined,
+        ContentIntensity.Extreme,
+      );
+
+      expect(newLevel,).toBe(90,);
+    });
+
+    test("modifyArousal clamps to tier ceiling under Extreme intensity", async () => {
+      const db = await seedTestDb();
+      const service = new SeductionService(db,);
+
+      const newLevel = await service.modifyArousal(
+        "actor-1",
+        150,
+        null,
+        undefined,
+        ContentIntensity.Extreme,
+      );
 
       expect(newLevel,).toBe(100,);
     });
@@ -187,12 +233,12 @@ describe("SeductionService", () => {
       expect(newLevel,).toBe(4,);
     });
 
-    test("modifyArousal with delta=Infinity clamps to 100", async () => {
+    test("modifyArousal with delta=Infinity clamps to tier ceiling (Moderate → 75)", async () => {
       const db = await seedTestDb();
       const service = new SeductionService(db,);
 
       const newLevel = await service.modifyArousal("actor-1", Infinity,);
-      expect(newLevel,).toBe(100,);
+      expect(newLevel,).toBe(75,);
     });
 
     test("modifyArousal with delta=NaN throws (NOT NULL constraint)", async () => {

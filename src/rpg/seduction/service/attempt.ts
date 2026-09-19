@@ -2,9 +2,12 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { Kysely, } from "kysely";
-import type { SeductionSkillCategory, } from "../../../db/enums";
+import { MoodService, } from "../../../characters/services/mood-service";
+import { type FantasyCategory, type SeductionSkillCategory, } from "../../../db/enums";
+import { ContentIntensity, } from "../../../db/enums-character/nsfw";
 import type { DB, } from "../../../db/schema";
 import { getLogger, } from "../../../logger";
+import { AROUSAL_CEILING, } from "../../../schemas";
 import {
   checkPrerequisites,
   getSeductionPrerequisites,
@@ -14,6 +17,11 @@ import { getArousal, modifyArousal, } from "./arousal";
 import { getDesireProfile, } from "./desire";
 import { awardXp, getActorSkills, } from "./skills";
 import type { SeductionAttemptOpts, SeductionResult, SeductionSkill, } from "./types";
+import { rollDice, } from "../../dice";
+import { logXp, } from "../../service/xp";
+import { getModifier, } from "../../stats/modifiers";
+import type { StatBlock, } from "../../stats/types";
+import { FantasyService, } from "../../fantasies/service";
 
 /**
  * Bijective map between NSFW social skills and the physical seduction skill
@@ -94,6 +102,129 @@ async function buildSkillLevels(
 }
 
 /**
+ * Tag a free-text approach with the FantasyCategory it invokes (TASK-034).
+ *
+ * The mapping is name-based: each canonical category matches its own token
+ * (e.g. "bondage" → Bondage) plus a small alias set for common wording.
+ * Unrecognized approaches return undefined — the attempt proceeds without a
+ * fantasy-flag DC adjustment rather than guessing.
+ * @param approach - Free-text approach description
+ * @returns The invoked FantasyCategory, or undefined when unrecognized
+ */
+function classifyApproachCategory(approach: string,): FantasyCategory | undefined {
+  const text = approach.toLowerCase();
+  const aliases: Record<FantasyCategory, string[]> = {
+    power_exchange: ["dominan", "submiss", "master", "mistress", "obey",],
+    exhibitionism: ["exhibition", "public", "watch me",],
+    voyeurism: ["voyeur", "watching", "spying",],
+    roleplay: ["roleplay", "role-play", "pretend", "costume",],
+    sensation: ["sensation", "feather", "ice", "wax",],
+    group: ["group", "threesome", "orgy",],
+    taboo: ["taboo", "forbidden",],
+    transformation: ["transform", "tf",],
+    worship: ["worship", "adore", "devot",],
+    pet_play: ["pet play", "petplay", "puppy", "kitten",],
+    breeding: ["breed", "pregnan",],
+    pain_play: ["pain", "spank", "whip", "flog",],
+    bondage: ["bondage", "tie", "bound", "rope", "cuff",],
+    service: ["service", "serve", "massage",],
+    degradation: ["degrad", "humiliat",],
+    praise: ["praise", "compliment", "beautiful",],
+  };
+  for (const [category, tokens] of Object.entries(aliases,)) {
+    if (
+      text.includes(category.replaceAll("_", " ",)) ||
+      tokens.some((token,) => text.includes(token,))
+    ) {
+      return category as FantasyCategory;
+    }
+  }
+  return undefined;
+}
+
+/** Default ability scores when no character_stats row exists (mods of 0). */
+const DEFAULT_STATS: StatBlock = { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10, };
+
+/**
+ * Load an actor's ability scores from `character_stats`, defaulting to
+ * all-10 when the row is missing.
+ * @param db
+ * @param actorId
+ */
+async function getActorStatBlock(db: Kysely<DB>, actorId: string,): Promise<StatBlock> {
+  const row = await db
+    .selectFrom("character_stats",)
+    .select(["str", "dex", "con", "int", "wis", "cha",],)
+    .where("actor_id", "=", actorId,)
+    .executeTakeFirst();
+  if (!row) { return { ...DEFAULT_STATS, }; }
+  return {
+    str: row.str,
+    dex: row.dex,
+    con: row.con,
+    int: row.int,
+    wis: row.wis,
+    cha: row.cha,
+  };
+}
+
+/**
+ * Settle a resolved attempt: arousal, dual XP, and mood follow-through.
+ *
+ * Best-effort on the mood event — a missing mood row must not fail the
+ * attempt outcome.
+ * @param args
+ */
+async function settleAttempt(args: {
+  db: Kysely<DB>;
+  log: ReturnType<typeof getLogger>;
+  actorId: string;
+  targetId: string;
+  skillCategory: SeductionSkillCategory;
+  worldId?: string | null;
+  relevantSkill: SeductionSkill | undefined;
+  success: boolean;
+  arousalDelta: number;
+  xpGained: number;
+  /** Content-intensity tier bounding the arousal ceiling (TASK-034). */
+  intensityTier?: ContentIntensity;
+},): Promise<void> {
+  const { db, log, actorId, targetId, skillCategory, worldId, relevantSkill, success, arousalDelta, xpGained, intensityTier, } = args;
+  // Apply arousal change to target (TASK-034): tier ceiling enforced.
+  if (arousalDelta !== 0) {
+    await modifyArousal(db, targetId, arousalDelta, worldId, `seduction:${skillCategory}`, intensityTier,);
+  }
+
+  // Award skill XP (category granularity) + shared-ledger XP (TASK-040).
+  // Record the category skill first, then mirror to the shared ledger.
+  if (relevantSkill) {
+    await awardXp(db, actorId, skillCategory, relevantSkill.name, xpGained,);
+    await logXp({ database: db, }, {
+      actorId,
+      amount: xpGained,
+      source: "nsfw_seduction",
+      description: `Seduction ${success ? "success" : "failure"} (${skillCategory})`,
+      chatId: undefined,
+    },);
+  }
+
+  // Mood follow-through (TASK-041): one source-tagged event on the target.
+  try {
+    const mood = MoodService(db,);
+    await mood.logEvent({
+      actorId: targetId,
+      worldId: worldId ?? undefined,
+      eventType: success ? "seduction.success" : "seduction.failure",
+      happinessDelta: success ? 2 : -1,
+      source: "seduction",
+      sourceId: `${actorId}:${skillCategory}`,
+    },);
+  } catch (cause) {
+    log.warn(`Mood follow-through skipped for ${targetId}:`, cause instanceof Error ? cause : undefined,);
+  }
+}
+
+/**
  * Attempt a seduction action.
  *
  * Skill check: roll 1d100 vs DC.
@@ -160,6 +291,12 @@ export async function attemptSeduction(db: Kysely<DB>, opts: SeductionAttemptOpt
   const relevantSkill = skills.find((s,) => s.category === skillCategory);
   const skillLevel = relevantSkill?.level ?? 1;
 
+  // ── Fantasy-flag desire matching (TASK-034) ─────────────────
+  // Turn-on/turn-off alignment comes from the target's FantasyCategory-
+  // keyed fantasy rows (read via FantasyService), not substring matching
+  // of free-text desire lists.
+  const fantasies = new FantasyService(db,);
+
   // Calculate DC based on target's state
   const targetArousal = await getArousal(db, targetId, worldId,);
   const targetDesire = await getDesireProfile(db, targetId,);
@@ -169,10 +306,13 @@ export async function attemptSeduction(db: Kysely<DB>, opts: SeductionAttemptOpt
   dc -= Math.floor(targetArousal.level * 0.3,); // Arousal makes them easier
   dc -= Math.floor(targetDesire.currentDesire * 0.2,); // Desire makes them easier
 
-  // Turn-ons reduce DC
-  const turnOnMatch = targetDesire.turnOns.some(
-    (on,) => approachLower.includes(on.toLowerCase(),),
-  );
+  // Turn-ons reduce DC — matched against the target's fantasy rows by
+  // FantasyCategory (approach is tagged by its invoked category).
+  const approachCategory = classifyApproachCategory(approach,);
+  const matchingFantasy = approachCategory
+    ? await fantasies.getByCategory(targetId, approachCategory,)
+    : [];
+  const turnOnMatch = matchingFantasy.length > 0;
   if (turnOnMatch) { dc -= 15; }
 
   // Turn-offs increase DC
@@ -183,8 +323,13 @@ export async function attemptSeduction(db: Kysely<DB>, opts: SeductionAttemptOpt
 
   dc = Math.max(10, Math.min(90, dc,),);
 
-  // Roll: skill level contributes to roll
-  const roll = Math.floor(Math.random() * 50,) + Math.floor(skillLevel / 2,);
+  // Roll (TASK-034): unified dice engine + CHA modifier, no bespoke RNG.
+  // d100 open roll keeps the legacy 0–100 result scale; the actor's CHA
+  // modifier replaces the old skillLevel/2 proxy.
+  const actorStats = await getActorStatBlock(db, actorId,);
+  const chaMod = getModifier(actorStats, "cha",);
+  const diceRoll = rollDice(100, 1,);
+  const roll = Math.max(0, diceRoll.rawTotal + chaMod,);
   const success = roll >= dc;
 
   // Calculate deltas
@@ -192,15 +337,7 @@ export async function attemptSeduction(db: Kysely<DB>, opts: SeductionAttemptOpt
   const intimacyDelta = success ? Math.floor(3 + skillLevel * 0.1,) : -2;
   const xpGained = success ? 15 + Math.floor(dc / 5,) : 5;
 
-  // Apply arousal change to target
-  if (arousalDelta !== 0) {
-    await modifyArousal(db, targetId, arousalDelta, worldId, `seduction:${skillCategory}`,);
-  }
-
-  // Award XP
-  if (relevantSkill) {
-    await awardXp(db, actorId, skillCategory, relevantSkill.name, xpGained,);
-  }
+  await settleAttempt({ db, log, actorId, targetId, skillCategory, worldId, relevantSkill, success, arousalDelta, xpGained, intensityTier: opts.intensityTier, },);
 
   // Build description
   const description = success
