@@ -43,8 +43,18 @@
       >
         {{{t("chats.tabWorld")}}}
       </button>
+      <button
+        :class="{'tab-active': memoryPanel.activeTab === 'audit'}"
+        class="btn btn-secondary btn-xs"
+        data-testid="memory-tab-audit"
+        @click="memoryPanel.activeTab = 'audit'; if (memoryPanel.auditEntries.length === 0 && !memoryPanel.auditLoading) loadAudit()"
+      >
+        {{{t("chats.tabAudit")}}}
+      </button>
     </div>
 
+    <!-- Memory tabs (character/assistant/world) -->
+    <div x-show="memoryPanel.activeTab !== 'audit'">
     <!-- Token Budget -->
     <div style="font-size: 11px; color: var(--text-secondary); margin-bottom: var(--space-3)">
       {{{t("chats.tokens")}}} <span x-text="memoryPanel.tokensUsed"></span>/<span
@@ -190,6 +200,78 @@
 
     <div x-show="getFilteredMemories().length === 0" class="empty-state" style="padding: var(--space-6)">
       <div class="title">{{{t("chats.noMemories")}}}</div>
+    </div>
+    </div>
+    <!-- /memory-tabs wrapper -->
+    <!-- Audit panel (FEAT-075) -->
+    <div x-show="memoryPanel.activeTab === 'audit'" data-testid="memory-audit-panel">
+      <div style="display: flex; flex-wrap: wrap; gap: var(--space-1); margin-bottom: var(--space-3)" data-testid="memory-audit-filters">
+        <button
+          class="btn btn-secondary btn-xs"
+          :class="{'tab-active': memoryPanel.auditActionFilter === null}"
+          data-testid="memory-audit-filter-all"
+          @click="setAuditActionFilter(null)"
+        >
+          {{{t("chats.auditAll")}}}
+        </button>
+        <template x-for="action in auditActions" :key="action">
+          <button
+            class="btn btn-secondary btn-xs"
+            :class="{'tab-active': memoryPanel.auditActionFilter === action}"
+            :data-testid="'memory-audit-filter-' + action"
+            @click="setAuditActionFilter(action)"
+          >
+            <span x-text="action"></span>
+          </button>
+        </template>
+      </div>
+
+      <div
+        x-show="memoryPanel.auditError"
+        style="margin-bottom: var(--space-3); padding: var(--space-2); background: var(--bg-error, #fee); border-radius: 4px; font-size: 12px; color: var(--text-error, #c33)"
+        data-testid="memory-audit-error"
+      >
+        <span x-text="memoryPanel.auditError"></span>
+      </div>
+
+      <div
+        x-show="!memoryPanel.auditLoading && getFilteredAudit().length === 0 && !memoryPanel.auditError"
+        class="empty-state"
+        style="padding: var(--space-6)"
+        data-testid="memory-audit-empty"
+      >
+        <div class="title">{{{t("chats.auditEmpty")}}}
+        </div>
+      </div>
+
+      <div style="display: grid; gap: var(--space-2)" data-testid="memory-audit-list">
+        <template x-for="entry in getFilteredAudit()" :key="entry.id">
+          <div
+            style="padding: var(--space-2); background: var(--bg-secondary, #f8f9fa); border-radius: 4px; font-size: 12px"
+            data-testid="memory-audit-row"
+          >
+            <div style="display: flex; justify-content: space-between; gap: var(--space-2); margin-bottom: var(--space-1)">
+              <span style="font-weight: 600" x-text="entry.action"></span>
+              <span style="color: var(--text-secondary)" x-text="entry.createdAt"></span>
+            </div>
+            <div style="color: var(--text-secondary); font-size: 11px; word-break: break-all" x-text="entry.details"></div>
+          </div>
+        </template>
+      </div>
+
+      <button
+        class="btn btn-secondary btn-xs"
+        style="width: 100%; margin-top: var(--space-3)"
+        x-show="memoryPanel.auditHasMore"
+        :disabled="memoryPanel.auditLoading"
+        data-testid="memory-audit-load-more"
+        @click="loadMoreAudit()"
+      >
+        <span x-show="!memoryPanel.auditLoading">{{{t("chats.auditLoadMore")}}}
+        </span>
+        <span x-show="memoryPanel.auditLoading">{{{t("common.loading")}}}
+        </span>
+      </button>
     </div>
   </div>
 </aside>

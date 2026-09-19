@@ -10,6 +10,7 @@
 import { Elysia, t, } from "elysia";
 import type { Config, } from "../config/schema";
 import type { Db, } from "../db";
+import { recordAuditLog, } from "../memory/audit";
 import { expandMemoryContext, } from "../memory/history-search";
 import { can, } from "../users/permissions";
 import { parseIntOr, } from "../utils/parse-number";
@@ -18,6 +19,7 @@ import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { createEntityRoutes, } from "./entity-routes";
 import { checkOwnership, entityPaths, } from "./entity-routes/context";
 import { jsonResponse, } from "./http-utils";
+import { memoryAuditRoutes, } from "./memory-audit";
 
 /**
  * @param opts
@@ -237,5 +239,51 @@ export function actorMemoriesRoutes(opts: { database: Db; config: Config }, pref
       },
     );
 
-  return expandRoute.use(carryRoute,).use(createEntityRoutes(entityConfig as never, opts, prefix,),);
+  // FEAT-075: emit audit rows for memory CRUD performed via the generic
+  // entity-routes layer. We scope this hook to /api/actors/:actorId/memories
+  // paths only — no other entity mounted under actor-memories.ts — so a
+  // PUT/DELETE/POST on a memory URL writes one audit row.
+  const auditHook = new Elysia({ name: "memory-audit-hook", },)
+    .onAfterHandle(async (ctx,) => {
+      const path = ctx.path;
+      const method = ctx.request.method.toUpperCase();
+      if (!path.startsWith(`${prefix}/actors/`,)) { return; }
+      if (!path.includes("/memories",)) { return; }
+      // Skip the audit-list sub-route itself (read-only; never audited).
+      if (path.endsWith("/audit",)) { return; }
+
+      const params = ctx.params as Record<string, string | undefined>;
+      const actorId = params.actorId;
+      const memoryId = params.entityId;
+      const userId = (ctx as unknown as { userId: string | null }).userId;
+      // Skip writes that did not actually mutate state (4xx handler returned early).
+      const setStatus = (ctx as unknown as { set?: { status?: number | string } }).set?.status;
+      const status = typeof setStatus === "number" ? setStatus : 200;
+      if (status >= 400) { return; }
+      if (!actorId || !memoryId) { return; }
+
+      let action: "pin" | "unpin" | "modify" | "delete" | null = null;
+      if (method === "DELETE") { action = "delete"; }
+      else if (method === "PUT") {
+        const body = ((ctx as unknown as { body?: Record<string, unknown> }).body ?? {});
+        if (body.pinned === true || body.pinned === "pinned") { action = "pin"; }
+        else if (body.pinned === false || body.pinned === "unpinned") { action = "unpin"; }
+        else { action = "modify"; }
+      }
+      if (!action) { return; }
+
+      await recordAuditLog(opts.database, [{
+        memoryId,
+        actorId,
+        userId,
+        action,
+        details: { method, path, },
+      },],);
+    },);
+
+  return auditHook
+    .use(memoryAuditRoutes({ database: opts.database, }, prefix,),)
+    .use(expandRoute,)
+    .use(carryRoute,)
+    .use(createEntityRoutes(entityConfig as never, opts, prefix,),);
 }

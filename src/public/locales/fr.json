@@ -947,7 +947,11 @@
     "budgetHealthy": "Context budget healthy — no trimming needed.",
     "invitesTitle": "Chat Invites",
     "loadingInvites": "Loading invites…",
-    "noChatInvites": "No invites yet — create one to share this chat."
+    "noChatInvites": "No invites yet — create one to share this chat.",
+    "tabAudit": "Audit",
+    "auditAll": "All",
+    "auditEmpty": "No audit entries yet",
+    "auditLoadMore": "Load more"
   },
   "personas": {
     "title": "Personas",
@@ -1336,7 +1340,6 @@
     "cancel": "Cancel",
     "editHint": "Edit fields below, then confirm to save."
   },
-
   "sideChannels": {
     "title": "Side Channels",
     "none": "No side channels yet",
@@ -1345,13 +1348,11 @@
     "created": "Side channel created",
     "failedCreate": "Failed to create side channel"
   },
-
   "analyze": {
     "ready": "Prompt analyzed",
     "failed": "Prompt analysis failed",
     "unavailable": "Prompt analysis unavailable"
   },
-
   "gifPicker": {
     "searchFailed": "GIF search failed. Try again.",
     "notConfigured": "GIF search is not configured.",
