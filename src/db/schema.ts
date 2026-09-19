@@ -150,6 +150,9 @@ export interface DB {
   synthetic_data: import("./schema-synthetic").SyntheticData;
   generation_jobs: import("./schema-core").GenerationJobs;
   prompt_templates: import("./schema-core").PromptTemplates;
+  travel_routes: import("./schema-core").TravelRoutes;
+  travel_route_stops: import("./schema-core").TravelRouteStops;
+  actor_locations: import("./schema-core").ActorLocations;
   content_flags: import("./schema-moderation").ContentFlags;
   location_nsfw_config: import("./schema-character").LocationNsfwConfig;
   moderation_actions: import("./schema-moderation").ModerationActions;
