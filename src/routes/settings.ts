@@ -162,7 +162,7 @@ export function settingsRoutes({ database, }: { database: Kysely<DB> }, prefix =
         return handleUpdateSettings(database, userId, body,);
       },
       {
-        body: t.Any(),
+        body: t.Record(t.String(), t.Unknown()),
         response: {
           200: t.Any(),
           400: ErrorResponse,
