@@ -10,6 +10,7 @@ import { craftingExecutionRoutes, } from "./crafting-execution";
 import { craftingStationRoutes, } from "./crafting-stations";
 import { diceRoutes, } from "./dice";
 import { npcNavigationRoutes, } from "./npc-navigation";
+import { questionsRoutes, } from "./questions";
 import { replayabilityRoutes, } from "./replayability";
 import { skillsRoutes, } from "./skills";
 import { skillsProgressionRoutes, } from "./skills-progression";
@@ -54,6 +55,10 @@ import { xpLootTablesRoutes, } from "./xp-loot-tables";
  *     /api/rpg/npc-navigation/actors/:actorId/... — state, pattern, move
  *     /api/rpg/npc-navigation/worlds/:worldId/tick — movement tick
  *
+ *   Questions (TASK-029):
+ *     POST/GET /api/chats/:id/questions — create/list open questions
+ *     POST /api/questions/:id/answer — record a choice
+ *
  *   World & Location Traits:
  *     /api/rpg/world-location-traits/worlds|locations/... — trait CRUD
  *     /api/rpg/world-location-traits/actors/:actorId — aggregate
@@ -72,6 +77,7 @@ export function rpgRoutes(opts: HandlerOpts, prefix = "/api",) {
       .use(skillsRoutes(opts, prefix,),)
       .use(skillsProgressionRoutes(opts, prefix,),)
       .use(npcNavigationRoutes(opts, prefix,),)
+      .use(questionsRoutes(opts, prefix,),)
       .use(worldLocationTraitsRoutes(opts, prefix,),)
       .use(combatRoutes(opts, prefix,),)
       .use(combatStatusRoutes(opts, prefix,),)
