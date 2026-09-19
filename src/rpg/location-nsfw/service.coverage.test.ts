@@ -170,3 +170,45 @@ describe("isSuitableForEncounter", () => {
     }
   });
 });
+
+describe("encounter-facing API (TASK-043)", () => {
+  test("listAvailable returns world locations clearing the minimum", async () => {
+    const svc = new LocationNsfwService(db,);
+    // Both canonical locations default to private: both clear semi_private.
+    const available = await svc.listAvailable(worldId,);
+    expect(available.map((c,) => c.locationId,).sort(),).toEqual(
+      [locationId, otherLocationId,].sort(),
+    );
+  });
+
+  test("listAvailable filters out locations below the minimum", async () => {
+    const svc = new LocationNsfwService(db,);
+    await svc.updateConfig(locationId, { privacyLevel: "public", },);
+    const available = await svc.listAvailable(worldId, "private",);
+    expect(available.map((c,) => c.locationId,),).toEqual([otherLocationId,],);
+  });
+
+  test("listAvailable returns empty for a world with no locations", async () => {
+    const svc = new LocationNsfwService(db,);
+    expect(await svc.listAvailable(uid(),),).toEqual([],);
+  });
+
+  test("resolveAtmosphere returns the stored scores", async () => {
+    const svc = new LocationNsfwService(db,);
+    await svc.updateConfig(locationId, { atmosphere: { romantic: 90, }, },);
+    const atmosphere = await svc.resolveAtmosphere(locationId,);
+    expect(atmosphere.romantic,).toBe(90,);
+    expect(atmosphere.comfortable,).toBe(50,);
+  });
+
+  test("isPrivate is true for private and isolated tiers only", async () => {
+    const svc = new LocationNsfwService(db,);
+    expect(await svc.isPrivate(locationId,),).toBeTrue();
+    await svc.updateConfig(locationId, { privacyLevel: "isolated", },);
+    expect(await svc.isPrivate(locationId,),).toBeTrue();
+    await svc.updateConfig(locationId, { privacyLevel: "public", },);
+    expect(await svc.isPrivate(locationId,),).toBeFalse();
+    await svc.updateConfig(locationId, { privacyLevel: "semi_private", },);
+    expect(await svc.isPrivate(locationId,),).toBeFalse();
+  });
+});
