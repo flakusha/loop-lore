@@ -19,6 +19,7 @@
  */
 import type { Kysely, } from "kysely";
 import type { SeductionSkillCategory, } from "../../../db/enums";
+import type { ContentIntensity, } from "../../../db/enums-character/nsfw";
 import type { DB, } from "../../../db/schema";
 import {
   addModifier as addModifierDispatch,
@@ -145,14 +146,18 @@ export class SeductionService {
    * @param delta
    * @param worldId
    * @param source
+   * @param intensityTier - Content-intensity tier bounding the ceiling
+   *   (defaults to Moderate); deltas clamp at AROUSAL_CEILING[tier]
+   *   (TASK-034).
    */
   async modifyArousal(
     actorId: string,
     delta: number,
     worldId: string | null = null,
     source?: string,
+    intensityTier?: ContentIntensity,
   ): Promise<number> {
-    return modifyArousalDispatch(this.db, actorId, delta, worldId, source,);
+    return modifyArousalDispatch(this.db, actorId, delta, worldId, source, intensityTier,);
   }
 
   /**
