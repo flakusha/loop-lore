@@ -18,10 +18,12 @@
  */
 import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
+import { loadConfig, } from "../../../config/load";
 import type { EmotionEntry, } from "../../../config/sections/templates";
 import type { EmotionType, } from "../../../db/enums";
 import { getDatabase, } from "../../../db/index";
 import type { DB, } from "../../../db/schema";
+import { resolveMattingProvider, } from "../../../generation/matting";
 import { getLogger, } from "../../../logger";
 import { AvatarService, } from "../avatar-service";
 import {
@@ -106,6 +108,14 @@ export class EmotionAvatarService {
     // Start generation in background (non-blocking)
     void (async () => {
       try {
+        // Auto-matting: an explicitly passed provider wins; otherwise resolve
+        // from `generation.matting`. Section absent / backend "none" /
+        // autoEnqueue false → no provider, raw assets stay usable.
+        const matting = loadConfig().generation.matting;
+        const mattingEnabled = matting ? matting.autoEnqueue !== false : false;
+        const mattingProvider = opts.mattingProvider ??
+          (mattingEnabled ? resolveMattingProvider(loadConfig(),) : null) ??
+          undefined;
         await runBatchGeneration(
           {
             db: this.db,
@@ -115,7 +125,7 @@ export class EmotionAvatarService {
             generateEmotionAvatar: (genOpts,) => this.generateEmotionAvatar(genOpts,),
           },
           job,
-          opts,
+          { ...opts, mattingProvider, },
         );
       } catch (error) {
         getLogger().error(

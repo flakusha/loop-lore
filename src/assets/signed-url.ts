@@ -21,35 +21,27 @@
  */
 
 import { getLogger, } from "../logger/index";
-import { fromBase64, toBase64, } from "../utils/base64";
 import { DOMAIN_INFO, domainKey, } from "../utils/hkdf";
+import { base64urlDecode, base64urlEncode, } from "./base64url";
 
-/** Base64url encode (RFC 4648 §5, unpadded) — mirrors src/auth/jwt.ts. */
-function base64urlEncode(data: Uint8Array,): string {
-  return toBase64(data,).replaceAll("+", "-",).replaceAll("/", "_",).replace(/=+$/, "",);
-}
-
-/** Base64url decode (tolerates missing padding). */
-function base64urlDecode(str: string,): Uint8Array {
-  const base64 = str.replaceAll("-", "+",).replaceAll("_", "/",);
-  const padded = base64 + "=".repeat((4 - (base64.length % 4)) % 4,);
-  return fromBase64(padded,);
-}
-
-const SIGNED_URL_ACTIONS = ["raw", "download", "thumb", "compressed",] as const;
+const SIGNED_URL_ACTIONS = ["raw", "download", "thumb", "compressed", "matted",] as const;
 /** */
 export type SignedUrlAction = (typeof SIGNED_URL_ACTIONS)[number];
 
 /**
- * @param value
- * @returns string
+ * Type guard for signed-URL actions.
+ * @param value - candidate action string
+ * @returns true when the value is a known signed-URL action
  */
 export function isSignedUrlAction(value: string,): value is SignedUrlAction {
   return (SIGNED_URL_ACTIONS as readonly string[]).includes(value,);
 }
 
 let _log: ReturnType<typeof getLogger> | null = null;
-/** */
+/**
+ * Lazily resolve the module logger (null before logger init).
+ * @returns the cached child logger, or null outside test/logger contexts
+ */
 function getLog() {
   try {
     _log ??= getLogger().child({ module: "assets/signed-url", },);
@@ -61,8 +53,8 @@ function getLog() {
 
 /**
  * Workaround for Bun's Uint8Array generics vs Web Crypto BufferSource.
- * @param arr
- * @returns void
+ * @param arr - source bytes
+ * @returns the same bytes typed as a fixed ArrayBuffer view
  */
 function toBufferSource(arr: Uint8Array,): Uint8Array<ArrayBuffer> {
   return arr as unknown as Uint8Array<ArrayBuffer>;
@@ -76,8 +68,8 @@ function toBufferSource(arr: Uint8Array,): Uint8Array<ArrayBuffer> {
  * same upstream secret is consumed here, by `src/auth/jwt.ts`, and by
  * `src/nsfw/pii-redaction.ts`. HKDF-SHA256 with a domain-specific info
  * keeps the resulting HMAC keys independent.
- * @param secret
- * @returns void
+ * @param secret - raw secret material (HKDF-scoped per asset domain)
+ * @returns the imported HMAC CryptoKey
  */
 async function importSecretKey(secret: string,): Promise<CryptoKey> {
   const subkey = await domainKey(secret, DOMAIN_INFO.ASSETS_SIGNED_URL, 32,);
@@ -92,8 +84,9 @@ async function importSecretKey(secret: string,): Promise<CryptoKey> {
 
 /**
  * Constant-time compare of two byte arrays. Length mismatch short-circuits.
- * @param a
- * @param b
+ * @param a - first operand
+ * @param b - second operand
+ * @returns true when both arrays hold identical bytes
  */
 function timingSafeEqualBytes(a: Uint8Array, b: Uint8Array,): boolean {
   if (a.length !== b.length) { return false; }

@@ -29,7 +29,11 @@ interface LoreTarget {
   fkColumn: "world_id" | "actor_id";
 }
 
-/** Resolve the lore target table and FK column for a given entity kind. */
+/**
+ * Resolve the lore target table and FK column for a given entity kind.
+ * @param kind - entity kind to map
+ * @returns the lore table + FK column, or null for item-less kinds
+ */
 function resolveLoreTarget(kind: EntityKind,): LoreTarget | null {
   switch (kind) {
     case "world":

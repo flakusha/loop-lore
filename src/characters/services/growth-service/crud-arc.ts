@@ -24,6 +24,7 @@ import type { CharacterArcRow, } from "./types";
 /**
  * Map a DB row to the public CharacterArc shape.
  * @param row
+ * @returns the public arc shape
  */
 function rowToArc(row: CharacterArcRow,): CharacterArc {
   return {

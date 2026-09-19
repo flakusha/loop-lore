@@ -35,6 +35,7 @@ export interface LicenseInfo {
  * Fetch the licensing row for an actor (null when unset).
  * @param db
  * @param actorId
+ * @returns the licensing row, or null when unset
  */
 export async function getActorLicensing(
   db: Kysely<DB>,
@@ -52,6 +53,7 @@ export async function getActorLicensing(
 /**
  * Reuse warnings for a licensing row (empty when unencumbered).
  * @param licensing
+ * @returns attribution warnings, empty when unencumbered
  */
 export function licenseWarnings(licensing: LicenseInfo,): string[] {
   const warnings: string[] = [];
@@ -70,6 +72,7 @@ export function licenseWarnings(licensing: LicenseInfo,): string[] {
  * Response headers declaring the exported card's license and any reuse
  * warnings.
  * @param licensing
+ * @returns export response headers declaring the license
  */
 export function licenseHeaders(licensing: LicenseInfo | null,): Record<string, string> {
   if (!licensing) { return {}; }
@@ -86,6 +89,7 @@ export function licenseHeaders(licensing: LicenseInfo | null,): Record<string, s
 /**
  * The `extensions.license` payload embedded into exported character cards.
  * @param licensing
+ * @returns the extensions.license payload for exported cards
  */
 export function licenseExtension(licensing: LicenseInfo,): Record<string, unknown> {
   return {
@@ -103,6 +107,7 @@ export function licenseExtension(licensing: LicenseInfo,): Record<string, unknow
  * payload (CCv2/CCv3 shape). Unparseable payloads are returned unchanged.
  * @param json
  * @param licensing
+ * @returns the payload with the license embedded (unchanged when unparseable/unlicensed)
  */
 export function withLicenseExtension(json: string, licensing: LicenseInfo | null,): string {
   if (!licensing) { return json; }

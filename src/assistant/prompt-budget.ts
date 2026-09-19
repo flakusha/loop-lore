@@ -53,7 +53,10 @@ export async function compactPromptHistory(
  * @param sections
  * @param tokenBudget
  * @param totalTokens
- * @returns void
+ * @param priorityOf - priority lookup by section name (unknown names score
+ *   `?? 0`, fail the `> 0` gate, and stay immune from dropping per
+ *   the prompt-budget.test.ts contract)
+ * @returns the remaining token total after dropping
  */
 export function dropOverBudgetSections(
   sections: PromptSectionReport[],

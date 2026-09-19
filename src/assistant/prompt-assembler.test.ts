@@ -155,6 +155,36 @@ describe("PromptAssembler per-chat prompt override", () => {
     expect(systemMsg,).toBeDefined();
   });
 });
+
+describe("PromptAssembler template override entry", () => {
+  test("assembleWithTemplateOverride resolves an owned LLM row and rejects strangers", async () => {
+    createLogger({ level: "error", },);
+    const { db, sqlite, } = await createTestDb();
+    try {
+      const { createTemplate, } = await import("../generation/template-service");
+      const ownerId = uid();
+      const aId = uid();
+      const cId = uid();
+      await insertUsers(db, "tester-tpl", "Tester", { id: ownerId, } as never,);
+      await insertActors(db, "Alice", { id: aId, user_id: ownerId, system_prompt: "Actor prompt.", } as never,);
+      await insertChats(db, "Tpl chat", ownerId, { id: cId, } as never,);
+      const row = await createTemplate(db, ownerId, {
+        name: "Row",
+        modality: "llm",
+        payload: { sections: [{ identifier: "system", role: "system", content: "", enabled: true, priority: 0, },], },
+      },);
+      const assembler = new PromptAssembler(db,);
+      const params = { actorId: aId, chatId: cId, modelId: "mock", };
+      const owned = await assembler.assembleWithTemplateOverride(params, row.id, ownerId,);
+      expect(owned?.messages[0]?.content,).toContain("Actor prompt.",);
+      const stranger = await assembler.assembleWithTemplateOverride(params, row.id, uid(),);
+      expect(stranger,).toBeNull();
+    } finally {
+      await db.destroy();
+      sqlite.close();
+    }
+  });
+});
 describe("PromptAssembler two-tier custom instructions", () => {
   let db: Kysely<DB>;
   let sqlite: Database;

@@ -108,6 +108,7 @@ function parsePngCard(data: Buffer, warnings: string[],): ParseResult | null {
 /**
  * @param data
  * @param warnings
+ * @returns parsed card, or null when the buffer is not a CHARX bundle
  */
 async function parseCharxCard(data: Buffer, warnings: string[],): Promise<ParseResult | null> {
   try {
@@ -122,9 +123,6 @@ async function parseCharxCard(data: Buffer, warnings: string[],): Promise<ParseR
   }
 }
 
-/**
- * @param text
- */
 function tryParseJson(text: string,): ParseResult | null {
   const parsed = jsonParseOr(text, null,);
   if (!parsed || typeof parsed !== "object") { return null; }
@@ -151,9 +149,6 @@ function tryParseJson(text: string,): ParseResult | null {
   return { character: normalizeJsonFlat(obj,), format: "json-flat", warnings, };
 }
 
-/**
- * @param text
- */
 function tryParseToml(text: string,): ParseResult | null {
   try {
     if (!text.includes("[",) || !text.includes("]",)) { return null; }
@@ -171,9 +166,6 @@ function tryParseToml(text: string,): ParseResult | null {
   }
 }
 
-/**
- * @param text
- */
 function tryParseYaml(text: string,): ParseResult | null {
   try {
     if (!text.includes(":",) || text.includes("{",)) { return null; }
@@ -193,6 +185,7 @@ function tryParseYaml(text: string,): ParseResult | null {
 
 /**
  * @param content
+ * @returns the parsed character card
  */
 export async function parseCharacterFile(content: Buffer,): Promise<ParseResult> {
   return parseCharacterCard(content,);
@@ -200,6 +193,7 @@ export async function parseCharacterFile(content: Buffer,): Promise<ParseResult>
 
 /**
  * @param character
+ * @returns validation error messages, empty when valid
  */
 export function validateCharacter(character: CanonicalCharacter,): string[] {
   const errors: string[] = [];

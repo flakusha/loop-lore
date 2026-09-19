@@ -8,7 +8,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { AvatarService, } from "./avatar-service";
-import { createTestActors, } from "./test-helpers";
+import { createTestActors, createTestWorld, } from "./test-helpers";
 
 describe("AvatarService", () => {
   let db: Kysely<DB>;
@@ -305,6 +305,36 @@ describe("AvatarService", () => {
 
       const config = await avatarService.getAvatarConfig(actorId,);
       expect(config?.selectionRule,).toBe("action_first",);
+    });
+  });
+
+  describe("World Avatar Config", () => {
+    it("returns undefined before authoring, then round-trips overrides", async () => {
+      const { actorId, } = await createTestActors(db, "world-config-actor-001",);
+      const worldId = await createTestWorld(db, "world-config-001",);
+      expect(await avatarService.getWorldAvatarConfig(actorId, worldId,),).toBeUndefined();
+      const configId = await avatarService.upsertWorldAvatarConfig(actorId, worldId, {
+        selectionRuleOverride: "mood_first",
+        weightsOverride: { mood: 0.9, },
+      },);
+      expect(configId.length,).toBeGreaterThan(0,);
+      const read = await avatarService.getWorldAvatarConfig(actorId, worldId,);
+      expect(read?.selectionRuleOverride,).toBe("mood_first",);
+      expect(read?.weightsOverride?.mood,).toBe(0.9,);
+    });
+
+    it("updates the existing row on second upsert", async () => {
+      const { actorId, } = await createTestActors(db, "world-config-actor-002",);
+      const worldId = await createTestWorld(db, "world-config-002",);
+      const first = await avatarService.upsertWorldAvatarConfig(actorId, worldId, {
+        selectionRuleOverride: "emotion_first",
+      },);
+      const second = await avatarService.upsertWorldAvatarConfig(actorId, worldId, {
+        selectionRuleOverride: "action_first",
+      },);
+      expect(second,).toBe(first,);
+      expect((await avatarService.getWorldAvatarConfig(actorId, worldId,))?.selectionRuleOverride,)
+        .toBe("action_first",);
     });
   });
 });

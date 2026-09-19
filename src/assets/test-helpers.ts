@@ -227,6 +227,7 @@ export function makeMinimalWebp(width = 5, height = 6,): Buffer {
  * Load a real image fixture from test-fixtures/images/ directory.
  * Returns null if file not found.
  * @param name
+ * @returns fixture bytes, or null when the fixture is missing
  */
 export function loadFixture(name: string,): Buffer | null {
   try {

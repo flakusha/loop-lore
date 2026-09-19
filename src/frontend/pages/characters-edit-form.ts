@@ -13,7 +13,8 @@ import { showToast, } from "../ui";
 import { escapeHtml, } from "./shared";
 
 /**
- * @param id
+ * @param id - form field element id
+ * @returns the field value, or empty string when missing
  */
 function editField(id: string,): string {
   return document.querySelector<HTMLInputElement | HTMLTextAreaElement>(`#${id}`,)?.value ?? "";

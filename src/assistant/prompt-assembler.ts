@@ -17,7 +17,6 @@ import type { OutputStylePreset, } from "../chat/output-style";
 import {
   buildLengthConfig,
   isValidPreset,
-  type LengthPreset,
   type ResponseLengthConfig,
 } from "../chat/response-length";
 import type { GmConfig, } from "../chat/types/config";
@@ -27,6 +26,7 @@ import { defaultTokenCount, } from "../generation/context-window-config";
 import type { GenerationMessage, } from "../generation/gen-types-options";
 import { getLogger, } from "../logger";
 import { dropOverBudgetSections, reorderPromptMessages, } from "./prompt-budget";
+import { loadUserPromptPreferences, } from "./prompt-user-preferences";
 import { parseJsonOr, } from "./prompt-utils";
 import { PROMPT_SECTIONS, } from "./prompt/registry";
 import type {
@@ -101,7 +101,11 @@ export class PromptAssembler {
   }
 
   /**
-   * @param params
+   * Assemble via an explicit template override (FEAT-065-LLM public entry).
+   *
+   * Unlike `assemble()` (chat column > actor settings auto-resolution),
+   * this path takes the template id directly from the caller.
+   * @param params - prompt params carrying actorId/chatId
    * @param templateId - Template or preset id to assemble from
    * @param userId - Requesting user (row ownership enforced)
    * @returns The assembled prompt, or null when the id does not resolve to
@@ -117,7 +121,11 @@ export class PromptAssembler {
     return assembleWithTemplate(this.db, ctx, templateId, userId,);
   }
 
-  /** */
+  /**
+   * Load actor + chat projections for assembly.
+   * @param params - prompt params carrying actorId/chatId
+   * @returns the assembled actor and chat rows
+   */
   private async loadProjections(params: PromptParams,): Promise<{ actor: AssembleActor; chat: AssembleChat }> {
     const projectionResults = await Promise.allSettled([
       this.db
@@ -167,40 +175,24 @@ export class PromptAssembler {
     };
   }
 
-  /** */
+  /**
+   * Build the assemble context (output style + response length cascade).
+   * @param params - prompt params
+   * @param actor - loaded actor projection
+   * @param chat - loaded chat projection
+   * @returns the assemble context and resolved response-length config
+   */
   private async buildAssembleContext(
     params: PromptParams,
     actor: AssembleActor,
     chat: AssembleChat,
   ): Promise<{ ctx: AssembleContext; resolvedResponseLength: ResponseLengthConfig }> {
     // ── Resolve output style + response length (chat → user → server) ──
-    // ── Resolve output style + response length (chat → user → server) ──
     const gmConfig = parseJsonOr<GmConfig | null>(chat.gm_config, null,);
-    let userOutputStylePreset: OutputStylePreset | null = null;
-    let userResponseLengthPreset: LengthPreset | null = null;
-    let userCustomInstructions: string | null = null;
-    if (params.userId) {
-      const userRow = await this.db
-        .selectFrom("users",)
-        .select("settings",)
-        .where("id", "=", params.userId,)
-        .executeTakeFirst();
-      const userSettings = parseJsonOr<
-        {
-          outputStyle?: { preset?: OutputStylePreset };
-          responseLength?: { preset?: LengthPreset };
-          customInstructions?: string | null;
-        } | null
-      >(userRow?.settings ?? null, null,);
-      userOutputStylePreset = userSettings?.outputStyle?.preset ?? null;
-      userResponseLengthPreset =
-        typeof userSettings?.responseLength?.preset === "string" && isValidPreset(userSettings.responseLength.preset,)
-          ? userSettings.responseLength.preset
-          : null;
-      userCustomInstructions = typeof userSettings?.customInstructions === "string"
-        ? userSettings.customInstructions
-        : null;
-    }
+    const userPrefs = await loadUserPromptPreferences(this.db, params.userId,);
+    const userOutputStylePreset = userPrefs.outputStylePreset;
+    const userResponseLengthPreset = userPrefs.responseLengthPreset;
+    const userCustomInstructions = userPrefs.customInstructions;
     const resolvedOutputStyle = resolveOutputStyle(
       chat.output_style_preset as OutputStylePreset | null,
       gmConfig?.outputStyle ?? null,

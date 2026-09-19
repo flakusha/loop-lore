@@ -20,18 +20,27 @@
           "default": "localhost",
           "description": "Server host"
         },
+        "trustProxy": {
+          "type": "boolean",
+          "default": false,
+          "description": "Honor X-Forwarded-For / X-Real-IP / CF-Connecting-IP for getClientIp. Default false (headers are spoofable). Env: SERVER_TRUST_PROXY=1."
+        },
+        "publicOrigin": {
+          "type": "string",
+          "description": "Public origin (scheme + host) when behind a TLS-terminating proxy. Used for self-referential URLs. Env: SERVER_PUBLIC_ORIGIN."
+        },
         "tls": {
           "type": "object",
           "description": "TLS certificate configuration",
           "properties": {
             "key": {
               "type": "string",
-              "default": "/home/flak/git-ai/loop-lore/tree/feat-toml-schema/loop-lore-data/certs/key.pem",
+              "default": "${DATA_DIR}/certs/key.pem",
               "description": "Path to TLS private key (PEM)"
             },
             "cert": {
               "type": "string",
-              "default": "/home/flak/git-ai/loop-lore/tree/feat-toml-schema/loop-lore-data/certs/cert.pem",
+              "default": "${DATA_DIR}/certs/cert.pem",
               "description": "Path to TLS certificate (PEM)"
             }
           },
@@ -61,7 +70,7 @@
         },
         "sqliteFilename": {
           "type": "string",
-          "default": "/home/flak/git-ai/loop-lore/tree/feat-toml-schema/loop-lore-data/loop-lore.db",
+          "default": "${DATA_DIR}/loop-lore.db",
           "description": "SQLite database file path"
         },
         "url": {
@@ -85,7 +94,7 @@
         },
         "uploadDir": {
           "type": "string",
-          "default": "/home/flak/git-ai/loop-lore/tree/feat-toml-schema/loop-lore-data/uploads",
+          "default": "${DATA_DIR}/uploads",
           "description": "Directory for uploaded assets"
         },
         "maxFileSize": {
@@ -98,6 +107,17 @@
           "type": "boolean",
           "default": true,
           "description": "Compress uploaded assets"
+        },
+        "signedUrlSecret": {
+          "type": "string",
+          "default": "",
+          "description": "HMAC-SHA256 secret for signed asset URLs. Env-only: ASSETS_SIGNED_URL_SECRET. Falls back to auth.jwtSecret."
+        },
+        "signedUrlExpirySeconds": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 900,
+          "description": "Signed-URL lifetime in seconds (default: 900 = 15 min)"
         }
       },
       "required": [
@@ -115,6 +135,11 @@
           "type": "boolean",
           "default": true,
           "description": "Enable rule-based assistant"
+        },
+        "travelPrompts": {
+          "type": "boolean",
+          "default": false,
+          "description": "Bound/linked travel mode: prompt the LLM to narrate travel and suggest moving the chat to another location/chat when the narrative leaves the current one"
         }
       },
       "required": [
@@ -128,12 +153,13 @@
         "level": {
           "type": "string",
           "enum": [
+            "trace",
             "debug",
             "info",
             "warn",
-            "error"
+            "error",
+            "fatal"
           ],
-          "default": "debug",
           "description": "Log level"
         },
         "jsonlPath": {
@@ -142,22 +168,18 @@
         },
         "jsonlMaxBytes": {
           "type": "integer",
-          "default": 104857600,
           "description": "Max JSONL file bytes before rotation"
         },
         "jsonlMaxFiles": {
           "type": "integer",
-          "default": 5,
           "description": "Max rotated files to keep"
         },
         "dbEnabled": {
           "type": "boolean",
-          "default": false,
           "description": "Enable DB log transport"
         },
         "censorEnabled": {
           "type": "boolean",
-          "default": true,
           "description": "PII redaction"
         },
         "censorFields": {
@@ -169,27 +191,22 @@
         },
         "queueMaxSize": {
           "type": "integer",
-          "default": 10000,
           "description": "Max queue entries"
         },
         "maxMessageBytes": {
           "type": "integer",
-          "default": 10240,
           "description": "Max message string bytes"
         },
         "maxMetaBytes": {
           "type": "integer",
-          "default": 102400,
           "description": "Max meta blob bytes"
         },
         "maxMetaDepth": {
           "type": "integer",
-          "default": 5,
           "description": "Max meta recursion depth"
         },
         "maxStackBytes": {
           "type": "integer",
-          "default": 5120,
           "description": "Max error stack bytes"
         }
       },
@@ -204,6 +221,10 @@
           "type": "boolean",
           "default": true,
           "description": "Enable TUI mode"
+        },
+        "sessionToken": {
+          "type": "string",
+          "description": "Bearer token for authenticated chat routes; omit to run anonymous against solo deployments."
         }
       },
       "required": [
@@ -298,12 +319,32 @@
         "adminUsername": {
           "type": "string",
           "default": "",
-          "description": "Bootstrap admin username (multi-user mode). Env: AUTH_ADMIN_USERNAME."
+          "description": "Bootstrap admin username (multi-user mode). Set via config or AUTH_ADMIN_USERNAME env."
         },
         "adminPassword": {
           "type": "string",
           "default": "",
           "description": "Bootstrap admin password (multi-user mode). Env-only preferred: AUTH_ADMIN_PASSWORD. Never commit."
+        },
+        "jwtSecret": {
+          "type": "string",
+          "default": "",
+          "description": "HMAC-SHA256 secret for JWT signing. Env-only: AUTH_JWT_SECRET. Required when auth.required=true."
+        },
+        "csrfSecret": {
+          "type": "string",
+          "default": "",
+          "description": "HMAC secret for Bun.CSRF token issuance + verification. Env-only: AUTH_CSRF_SECRET. Falls back to auth.jwtSecret when unset."
+        },
+        "jwtExpiresIn": {
+          "type": "integer",
+          "default": 86400,
+          "description": "JWT token expiry in seconds (default: 86400 = 24h)"
+        },
+        "legacyOpaqueTokenFallback": {
+          "type": "boolean",
+          "default": false,
+          "description": "Permit sha256(token) lookup when JWT verify fails. Default false. Set AUTH_LEGACY_OPAQUE_TOKEN_FALLBACK=1 only for one-shot legacy migrations."
         }
       },
       "required": [
@@ -466,11 +507,149 @@
           "type": "integer",
           "default": 18,
           "description": "Minimum age for NSFW content"
+        },
+        "defaultNsfwScope": {
+          "type": "string",
+          "enum": [
+            "chat",
+            "user",
+            "world"
+          ],
+          "default": "chat",
+          "description": "Default NSFW scope for new chats"
+        },
+        "consentRequired": {
+          "type": "boolean",
+          "default": true,
+          "description": "Require consent before NSFW encounters"
+        },
+        "auditLogging": {
+          "type": "boolean",
+          "default": true,
+          "description": "Log NSFW gate decisions to audit trail"
+        },
+        "useLlmClassifier": {
+          "type": "boolean",
+          "default": true,
+          "description": "Augment NSFW keyword detection with an LLM content rating classifier"
         }
       },
       "required": [
         "allowNsfw",
         "nsfwMinAge"
+      ]
+    },
+    "observability": {
+      "type": "object",
+      "description": "Observability exposure (liveness/readiness probes + Prometheus metrics). All opt-in.",
+      "properties": {
+        "health": {
+          "type": "object",
+          "description": "Liveness/readiness probe opt-in.",
+          "properties": {
+            "liveness": {
+              "type": "boolean",
+              "default": false,
+              "description": "Enable /health/live liveness probe."
+            },
+            "readiness": {
+              "type": "boolean",
+              "default": false,
+              "description": "Enable /health/ready readiness probe."
+            }
+          },
+          "required": [
+            "liveness",
+            "readiness"
+          ]
+        },
+        "metrics": {
+          "type": "object",
+          "description": "Prometheus scrape opt-in.",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false,
+              "description": "Enable the /metrics Prometheus text-format endpoint."
+            }
+          },
+          "required": [
+            "enabled"
+          ]
+        }
+      },
+      "required": [
+        "health",
+        "metrics"
+      ]
+    },
+    "hooks": {
+      "type": "object",
+      "description": "Content hooks configuration (mood, emotion, NSFW, moderation)",
+      "properties": {
+        "enableMoodHooks": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable mood shift detection"
+        },
+        "enableEmotionHooks": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable emotion change detection"
+        },
+        "enableNsfwHooks": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable NSFW content gating"
+        },
+        "enableModerationHooks": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable moderation flagging"
+        }
+      },
+      "required": [
+        "enableMoodHooks",
+        "enableEmotionHooks",
+        "enableNsfwHooks",
+        "enableModerationHooks"
+      ]
+    },
+    "idempotency": {
+      "type": "object",
+      "description": "Global idempotency middleware for re-fired mutating requests",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable the global idempotency middleware. Env: IDEMPOTENCY_ENABLED=0 to disable."
+        },
+        "backend": {
+          "type": "string",
+          "enum": [
+            "memory",
+            "table"
+          ],
+          "default": "memory",
+          "description": "Cache backend: 'memory' (single-instance) or 'table' (shared across instances via request_results). Env: IDEMPOTENCY_BACKEND."
+        },
+        "ttlMs": {
+          "type": "integer",
+          "minimum": 1000,
+          "default": 86400000,
+          "description": "TTL for cached idempotent responses in ms. Default 24h. Env: IDEMPOTENCY_TTL_MS."
+        },
+        "bypassHeader": {
+          "type": "boolean",
+          "default": true,
+          "description": "Honor X-Idempotency-Bypass: 1 to skip the cache. Env: IDEMPOTENCY_BYPASS_HEADER=0 to disable."
+        }
+      },
+      "required": [
+        "enabled",
+        "backend",
+        "ttlMs",
+        "bypassHeader"
       ]
     },
     "generation": {
@@ -482,99 +661,19 @@
           "properties": {
             "openaiCompatible": {
               "type": "array",
-              "default": [],
               "description": "OpenAI-compatible provider instances",
               "items": {
-                "type": "object",
-                "description": "Provider instance configuration",
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "description": "Unique provider instance name (referenced in registry)"
-                  },
-                  "label": {
-                    "type": "string",
-                    "description": "Human-readable label for UI"
-                  },
-                  "baseUrl": {
-                    "type": "string",
-                    "description": "Base URL (e.g. http://localhost:8080/v1)"
-                  },
-                  "apiKey": {
-                    "type": "string",
-                    "description": "Server-level API key (overridden by user BYO key)"
-                  },
-                  "model": {
-                    "type": "string",
-                    "description": "Default model ID"
-                  },
-                  "timeout": {
-                    "type": "integer",
-                    "default": 30000,
-                    "description": "Connection timeout in ms"
-                  },
-                  "retries": {
-                    "type": "integer",
-                    "default": 3,
-                    "description": "Max retries for transient failures"
-                  },
-                  "allowUserApiKey": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Allow user API key override for this provider"
-                  },
-                  "headers": {
-                    "type": "object",
-                    "additionalProperties": {
-                      "type": "string"
-                    },
-                    "description": "Extra headers sent with every request"
-                  },
-                  "models": {
-                    "type": "object",
-                    "additionalProperties": {
-                      "type": "object",
-                      "description": "Model limits",
-                      "properties": {
-                        "contextLimit": {
-                          "type": "integer",
-                          "description": "Context window size in tokens"
-                        },
-                        "maxOutput": {
-                          "type": "integer",
-                          "description": "Max output tokens"
-                        }
-                      },
-                      "required": [
-                        "contextLimit",
-                        "maxOutput"
-                      ]
-                    },
-                    "description": "Known models (name → limits)"
-                  }
-                },
-                "required": [
-                  "name",
-                  "label",
-                  "baseUrl",
-                  "model",
-                  "timeout",
-                  "retries",
-                  "allowUserApiKey"
-                ]
-              },
-              "x-toml-kind": "array-of-tables"
+                "type": "string"
+              }
             }
           }
         },
         "defaultProvider": {
           "type": "string",
-          "default": "",
           "description": "Default provider name"
         },
         "defaultModels": {
           "type": "object",
-          "default": {},
           "description": "Default model per provider"
         },
         "autoStart": {
@@ -587,7 +686,6 @@
               "properties": {
                 "enabled": {
                   "type": "boolean",
-                  "default": false,
                   "description": "Enable auto-start"
                 },
                 "modelPath": {
@@ -596,7 +694,6 @@
                 },
                 "port": {
                   "type": "integer",
-                  "default": 9011,
                   "description": "llama-server port"
                 },
                 "alias": {
@@ -605,7 +702,6 @@
                 },
                 "ctxSize": {
                   "type": "integer",
-                  "default": 8192,
                   "description": "Context size in tokens"
                 },
                 "threads": {
@@ -720,7 +816,6 @@
               "properties": {
                 "enabled": {
                   "type": "boolean",
-                  "default": false,
                   "description": "Enable auto-start"
                 },
                 "modelType": {
@@ -729,7 +824,6 @@
                     "checkpoint",
                     "diffusion"
                   ],
-                  "default": "checkpoint",
                   "description": "checkpoint = standalone (-m), diffusion = component (--diffusion-model, needs llm)"
                 },
                 "modelPath": {
@@ -738,7 +832,6 @@
                 },
                 "port": {
                   "type": "integer",
-                  "default": 9010,
                   "description": "sd-server port"
                 },
                 "llmPath": {
@@ -869,6 +962,40 @@
               ]
             }
           }
+        },
+        "matting": {
+          "type": "object",
+          "description": "Background-removal (matting) backend for avatar/sprite cut-outs",
+          "properties": {
+            "backend": {
+              "type": "string",
+              "description": "Matting backend: \"none\" disables matting; \"http\" posts bytes to `endpoint`; \"rembg\" talks to a rembg server; \"comfy\" runs the native BiRefNet workflow; \"auto\" picks comfy, then rembg, then http"
+            },
+            "endpoint": {
+              "type": "string",
+              "description": "HTTP endpoint (\"http\": URL accepting image bytes, returning PNG; \"rembg\": server base URL, e.g. http://127.0.0.1:7000)"
+            },
+            "model": {
+              "type": "string",
+              "description": "Matting model (\"rembg\": model name, default isnet-general-use; bria-rmbg/RMBG-* weights are non-commercial; \"comfy\": background_removal weights file, default birefnet.safetensors)"
+            },
+            "apiKey": {
+              "type": "string",
+              "description": "Optional bearer token for the generic \"http\" backend"
+            },
+            "timeoutMs": {
+              "type": "number",
+              "description": "Matting request timeout in ms (default 120000)"
+            },
+            "decontaminate": {
+              "type": "boolean",
+              "description": "rembg only: request edge color decontamination (default true)"
+            },
+            "autoEnqueue": {
+              "type": "boolean",
+              "description": "Auto-enqueue matting after emotion-avatar generation (default true)"
+            }
+          }
         }
       }
     },
@@ -888,6 +1015,47 @@
       },
       "required": [
         "enabled"
+      ]
+    },
+    "encryption": {
+      "type": "object",
+      "description": "Encryption / SMK configuration",
+      "properties": {
+        "serverEncryptionKey": {
+          "type": "string",
+          "description": "256-bit hex key. Missing = encryption disabled (dev mode)."
+        },
+        "required": {
+          "type": "boolean",
+          "default": false,
+          "description": "true = refuse to start without SMK (prod guard)"
+        },
+        "compressThreshold": {
+          "type": "integer",
+          "default": 128,
+          "description": "Min bytes before compressing prior to encrypt"
+        },
+        "compressAlgorithm": {
+          "type": "string",
+          "default": "gzip",
+          "description": "Preferred compression algorithm"
+        },
+        "keyRotationDays": {
+          "type": "integer",
+          "default": 90,
+          "description": "Days before auto-rotating actor keys. 0 = disabled."
+        },
+        "anonymous": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable anonymous chat mode. Actor identities hidden from other participants."
+        }
+      },
+      "required": [
+        "required",
+        "compressThreshold",
+        "compressAlgorithm",
+        "keyRotationDays"
       ]
     },
     "headers": {
@@ -924,7 +1092,7 @@
         },
         "permissionsPolicy": {
           "type": "string",
-          "default": "accelerometer=(), camera=(), geolocation=(), microphone=(), usb=()",
+          "default": "accelerometer=(), camera=(), display-capture=(), geolocation=(), gyroscope=(), microphone=(), usb=()",
           "description": "Permissions-Policy feature delegation"
         },
         "csp": {
@@ -951,8 +1119,8 @@
               },
               "default": [
                 "'self'",
-                "'unsafe-inline'",
-                "'unsafe-eval'"
+                "'unsafe-eval'",
+                "https://cdn.jsdelivr.net"
               ]
             },
             "styleSrc": {
@@ -994,6 +1162,16 @@
                 "'self'",
                 "wss:",
                 "https:"
+              ]
+            },
+            "workerSrc": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "default": [
+                "'self'",
+                "blob:"
               ]
             },
             "objectSrc": {
@@ -1056,7 +1234,7 @@
             "same-origin-allow-popups",
             null
           ],
-          "default": null,
+          "default": "same-origin",
           "description": "COOP; null omits"
         },
         "crossOriginEmbedderPolicy": {
@@ -1066,10 +1244,11 @@
           ],
           "enum": [
             "require-corp",
+            "credentialless",
             null
           ],
-          "default": null,
-          "description": "COEP; self-hosted Alpine/htmx resolved CDN blocker. Still not needed (no wasm/SAB)."
+          "default": "credentialless",
+          "description": "COEP; credentialless keeps no-credential CDN/model loads working while enabling SAB/WASM threads."
         },
         "crossOriginResourcePolicy": {
           "type": [
@@ -1100,8 +1279,7 @@
             "type": "string"
           },
           "default": [
-            "/vendor.js",
-            "/app.js",
+            "/alpine-init.js",
             "/css/app.css"
           ],
           "description": "Link preload hints for HTML documents"
@@ -1146,6 +1324,43 @@
           ],
           "default": null,
           "description": "NEL policy JSON; null omits"
+        },
+        "hsts": {
+          "type": "object",
+          "default": {
+            "enabled": false,
+            "maxAge": 31536000,
+            "includeSubDomains": true,
+            "preload": false
+          },
+          "description": "Strict-Transport-Security policy (RFC 6797). Emitted only on HTTPS requests.",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false,
+              "description": "Master toggle"
+            },
+            "maxAge": {
+              "type": "number",
+              "default": 31536000,
+              "minimum": 0,
+              "description": "max-age in seconds; RFC 6797 recommends >= 31536000 (1 year)"
+            },
+            "includeSubDomains": {
+              "type": "boolean",
+              "default": true
+            },
+            "preload": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          "required": [
+            "enabled",
+            "maxAge",
+            "includeSubDomains",
+            "preload"
+          ]
         }
       },
       "required": [
@@ -1204,6 +1419,838 @@
         "compressAlgorithm",
         "compressThreshold"
       ]
+    },
+    "frontend": {
+      "type": "object",
+      "description": "Frontend rendering mode configuration",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": [
+            "htmx"
+          ],
+          "default": "htmx",
+          "description": "Frontend rendering strategy (htmx + Alpine.js)"
+        }
+      },
+      "required": [
+        "mode"
+      ]
+    },
+    "federation": {
+      "type": "object",
+      "description": "Federation/mesh interconnect opt-in. Disabled by default; an instance must explicitly opt in and list seeds before it advertises or connects.",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable federation/mesh interconnect."
+        },
+        "seeds": {
+          "type": "array",
+          "default": [],
+          "description": "Peer origins to bootstrap discovery from.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "peers": {
+          "type": "array",
+          "default": [],
+          "description": "Per-peer endpoint + trust overrides.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "origin": {
+                "type": "string"
+              },
+              "trust": {
+                "type": "object",
+                "properties": {
+                  "caBundle": {
+                    "type": "string"
+                  },
+                  "spkiPins": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "required": [
+              "origin"
+            ]
+          },
+          "x-toml-kind": "array-of-tables"
+        },
+        "meshPsk": {
+          "type": "string",
+          "default": "",
+          "description": "Mesh content PSK for envelope seal/open. Env-only: MESH_PSK."
+        },
+        "duplication": {
+          "type": "object",
+          "default": {
+            "mode": "trusted",
+            "peers": []
+          },
+          "description": "Duplication policy for pushed content, with optional per-world overrides.",
+          "properties": {
+            "mode": {
+              "type": "string",
+              "enum": [
+                "trusted",
+                "listed",
+                "none"
+              ]
+            },
+            "peers": {
+              "type": "array",
+              "default": [],
+              "items": {
+                "type": "string"
+              }
+            },
+            "worlds": {
+              "type": "object",
+              "default": {},
+              "description": "Per-world overrides keyed by world id.",
+              "additionalProperties": {
+                "type": "object",
+                "properties": {
+                  "mode": {
+                    "type": "string",
+                    "enum": [
+                      "trusted",
+                      "listed",
+                      "none"
+                    ]
+                  },
+                  "peers": {
+                    "type": "array",
+                    "default": [],
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "mode",
+                  "peers"
+                ]
+              }
+            }
+          },
+          "required": [
+            "mode",
+            "peers"
+          ]
+        }
+      },
+      "required": [
+        "enabled",
+        "seeds",
+        "peers",
+        "meshPsk",
+        "duplication"
+      ]
+    },
+    "seeding": {
+      "type": "object",
+      "description": "Database seeding configuration (default users, characters, etc.)",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable seeding on first start"
+        },
+        "users": {
+          "type": "array",
+          "description": "Default users to seed",
+          "items": {
+            "type": "object",
+            "properties": {
+              "handle": {
+                "type": "string",
+                "description": "User handle (login name)"
+              },
+              "role": {
+                "type": "string",
+                "enum": [
+                  "admin",
+                  "user",
+                  "viewer",
+                  "solo"
+                ],
+                "description": "User role"
+              }
+            },
+            "required": [
+              "handle",
+              "role"
+            ]
+          },
+          "x-toml-kind": "array-of-tables"
+        }
+      },
+      "required": [
+        "enabled",
+        "users"
+      ]
+    },
+    "templates": {
+      "type": "object",
+      "description": "Template configuration — LLM prompts, SD profiles, avatar emotions, image-edit workflows, character seeds",
+      "properties": {
+        "llm": {
+          "type": "object",
+          "properties": {
+            "merge": {
+              "type": "string",
+              "enum": [
+                "replace",
+                "extend",
+                "override"
+              ],
+              "default": "extend",
+              "description": "Per-domain merge strategy for user overrides"
+            },
+            "systemPrompts": {
+              "type": "object",
+              "description": "System prompt overrides keyed by canonical name",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            "chatFormats": {
+              "type": "object",
+              "description": "Chat format templates keyed by format id",
+              "additionalProperties": {
+                "type": "object",
+                "properties": {
+                  "system": {
+                    "type": "string"
+                  },
+                  "user": {
+                    "type": "string"
+                  },
+                  "assistant": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "system",
+                  "user",
+                  "assistant"
+                ]
+              }
+            }
+          },
+          "required": [
+            "merge",
+            "systemPrompts",
+            "chatFormats"
+          ]
+        },
+        "sd": {
+          "type": "object",
+          "properties": {
+            "merge": {
+              "type": "string",
+              "enum": [
+                "replace",
+                "extend",
+                "override"
+              ],
+              "default": "extend",
+              "description": "Per-domain merge strategy for user overrides"
+            },
+            "profiles": {
+              "type": "object",
+              "description": "SD profile overrides keyed by profile id",
+              "additionalProperties": {
+                "type": "object"
+              }
+            },
+            "modelMatching": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "pattern": {
+                    "type": "string"
+                  },
+                  "profileId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "pattern",
+                  "profileId"
+                ]
+              },
+              "x-toml-kind": "array-of-tables"
+            }
+          },
+          "required": [
+            "merge",
+            "profiles",
+            "modelMatching"
+          ]
+        },
+        "avatar": {
+          "type": "object",
+          "properties": {
+            "merge": {
+              "type": "string",
+              "enum": [
+                "replace",
+                "extend",
+                "override"
+              ],
+              "default": "extend",
+              "description": "Per-domain merge strategy for user overrides"
+            },
+            "emotions": {
+              "type": "object",
+              "description": "Emotion key -> asset mapping",
+              "additionalProperties": {
+                "type": "object",
+                "properties": {
+                  "asset": {
+                    "type": "string"
+                  },
+                  "intent": {
+                    "type": "string"
+                  },
+                  "prompt": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "asset",
+                  "intent"
+                ]
+              }
+            },
+            "intentPatterns": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "pattern": {
+                    "type": "string"
+                  },
+                  "emotion": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "pattern",
+                  "emotion"
+                ]
+              },
+              "x-toml-kind": "array-of-tables"
+            }
+          },
+          "required": [
+            "merge",
+            "emotions",
+            "intentPatterns"
+          ]
+        },
+        "imageEdit": {
+          "type": "object",
+          "properties": {
+            "merge": {
+              "type": "string",
+              "enum": [
+                "replace",
+                "extend",
+                "override"
+              ],
+              "default": "extend",
+              "description": "Per-domain merge strategy for user overrides"
+            },
+            "workflows": {
+              "type": "object",
+              "description": "Image-edit workflow overrides keyed by workflow id",
+              "additionalProperties": {
+                "type": "object"
+              }
+            }
+          },
+          "required": [
+            "merge",
+            "workflows"
+          ]
+        },
+        "character": {
+          "type": "object",
+          "description": "Character template seeding — defaults loaded from configs/templates/character.yaml",
+          "properties": {
+            "merge": {
+              "type": "string",
+              "enum": [
+                "replace",
+                "extend",
+                "override"
+              ],
+              "default": "extend",
+              "description": "Per-domain merge strategy for user overrides"
+            },
+            "templates": {
+              "type": "array",
+              "description": "Character templates seeded on first start",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Hard ID for deterministic test reseeding"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Character display name"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Character description"
+                  },
+                  "personality": {
+                    "type": "string"
+                  },
+                  "appearance": {
+                    "type": "string",
+                    "description": "General look / body / face — immutable visual base"
+                  },
+                  "scenario": {
+                    "type": "string"
+                  },
+                  "welcome_message": {
+                    "type": "string"
+                  },
+                  "system_prompt": {
+                    "type": "string"
+                  },
+                  "mes_example": {
+                    "type": "string"
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "creator": {
+                    "type": "string"
+                  },
+                  "visibility": {
+                    "type": "string",
+                    "enum": [
+                      "private",
+                      "public"
+                    ]
+                  },
+                  "content_rating": {
+                    "type": "string",
+                    "enum": [
+                      "sfw",
+                      "nsfw_mild",
+                      "nsfw_moderate",
+                      "nsfw_intense",
+                      "nsfw_extreme"
+                    ]
+                  },
+                  "target_roles": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "admin",
+                        "user",
+                        "viewer",
+                        "solo"
+                      ]
+                    }
+                  },
+                  "is_template": {
+                    "type": "boolean"
+                  },
+                  "is_default": {
+                    "type": "boolean"
+                  },
+                  "default_outfit": {
+                    "type": "string",
+                    "description": "Default outfit id used when no context binding fires"
+                  },
+                  "outfits": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "Stable outfit id referenced by loadouts and selection ladder"
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "Human-readable label shown in UI"
+                        },
+                        "descriptor": {
+                          "type": "string",
+                          "description": "Prompt-fragment fed to the avatar generator (identity-anchor + outfit-descriptor + emotion-descriptor)"
+                        },
+                        "tags": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "Free-form tags (formal|armor|sleepwear|swim|...) used by binding rules"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                        "descriptor"
+                      ]
+                    },
+                    "x-toml-kind": "array-of-tables"
+                  },
+                  "loadouts": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "description": "Symbolic name for the loadout rule"
+                        },
+                        "slot": {
+                          "type": "string",
+                          "description": "Inventory slot key (e.g. chest, legs, head)"
+                        },
+                        "item_match": {
+                          "type": "string",
+                          "description": "Substring match against equipped item id/name"
+                        },
+                        "outfit": {
+                          "type": "string",
+                          "description": "Outfit id (from outfits[]) to switch into"
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "slot",
+                        "item_match",
+                        "outfit"
+                      ]
+                    },
+                    "x-toml-kind": "array-of-tables"
+                  }
+                },
+                "required": [
+                  "name",
+                  "description"
+                ]
+              },
+              "x-toml-kind": "array-of-tables"
+            }
+          },
+          "required": [
+            "merge",
+            "templates"
+          ]
+        }
+      },
+      "required": [
+        "llm",
+        "sd",
+        "avatar",
+        "imageEdit",
+        "character"
+      ]
+    },
+    "characters": {
+      "type": "object",
+      "description": "Character template configuration — default characters seeded on app start",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable character template seeding"
+        },
+        "templates": {
+          "type": "array",
+          "description": "Default character templates to seed on first start",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Hard ID for deterministic test reseeding"
+              },
+              "name": {
+                "type": "string",
+                "description": "Character display name"
+              },
+              "description": {
+                "type": "string",
+                "description": "Character description"
+              },
+              "personality": {
+                "type": "string",
+                "description": "Personality traits"
+              },
+              "scenario": {
+                "type": "string",
+                "description": "RP scenario/setting"
+              },
+              "welcome_message": {
+                "type": "string",
+                "description": "Welcome message"
+              },
+              "system_prompt": {
+                "type": "string",
+                "description": "System prompt override"
+              },
+              "mes_example": {
+                "type": "string",
+                "description": "Example dialogue"
+              },
+              "tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Classification tags"
+              },
+              "creator": {
+                "type": "string",
+                "description": "Creator attribution"
+              },
+              "species": {
+                "type": "string",
+                "description": "Identity — race/species trait (persisted as permanent trait)"
+              },
+              "subrace": {
+                "type": "string",
+                "description": "Identity — subrace trait (persisted as permanent trait)"
+              },
+              "gender": {
+                "type": "string",
+                "description": "Identity — gender trait (persisted as permanent trait)"
+              },
+              "age": {
+                "type": [
+                  "string",
+                  "number"
+                ],
+                "description": "Identity — age trait (persisted as permanent trait)"
+              },
+              "homeland": {
+                "type": "string",
+                "description": "Identity — origin/homeland background trait (persisted as permanent trait)"
+              },
+              "culture": {
+                "type": "string",
+                "description": "Identity — culture background trait (persisted as permanent trait)"
+              },
+              "avatar": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "const": "file"
+                      },
+                      "path": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "path"
+                    ]
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "const": "default"
+                      }
+                    },
+                    "required": [
+                      "type"
+                    ]
+                  }
+                ],
+                "description": "Optional avatar for the seeded character"
+              },
+              "visibility": {
+                "type": "string",
+                "enum": [
+                  "private",
+                  "public"
+                ],
+                "default": "public",
+                "description": "Visibility level"
+              },
+              "content_rating": {
+                "type": "string",
+                "enum": [
+                  "sfw",
+                  "nsfw_mild",
+                  "nsfw_moderate",
+                  "nsfw_intense",
+                  "nsfw_extreme"
+                ],
+                "default": "sfw",
+                "description": "Content rating"
+              },
+              "target_roles": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "admin",
+                    "user",
+                    "viewer",
+                    "solo"
+                  ]
+                },
+                "default": [
+                  "user",
+                  "admin"
+                ],
+                "description": "User roles that can see/use this character"
+              },
+              "is_template": {
+                "type": "boolean",
+                "default": false,
+                "description": "Can be used as template for user-created chars"
+              },
+              "is_default": {
+                "type": "boolean",
+                "default": false,
+                "description": "Auto-add to new users' character list"
+              },
+              "default_outfit": {
+                "type": "string",
+                "description": "Default outfit id used when no context binding fires"
+              },
+              "outfits": {
+                "type": "array",
+                "description": "Wardrobe catalog — distinct (outfit_id) entries this character can wear",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Stable outfit id referenced by loadouts and selection ladder"
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "Human-readable label shown in UI"
+                    },
+                    "descriptor": {
+                      "type": "string",
+                      "description": "Prompt-fragment fed to the avatar generator (identity-anchor + outfit-descriptor + emotion-descriptor)"
+                    },
+                    "tags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "Free-form tags (formal|armor|sleepwear|swim|...) used by binding rules"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "name",
+                    "descriptor"
+                  ]
+                },
+                "x-toml-kind": "array-of-tables"
+              },
+              "loadouts": {
+                "type": "array",
+                "description": "Equipped-items → outfit mapping (deferred loadout-bridge phase)",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Symbolic name for the loadout rule"
+                    },
+                    "slot": {
+                      "type": "string",
+                      "description": "Inventory slot key (e.g. \"chest\", \"legs\", \"head\")"
+                    },
+                    "item_match": {
+                      "type": "string",
+                      "description": "Substring match against equipped item id/name"
+                    },
+                    "outfit": {
+                      "type": "string",
+                      "description": "Outfit id (from outfits[]) to switch into"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "slot",
+                    "item_match",
+                    "outfit"
+                  ]
+                },
+                "x-toml-kind": "array-of-tables"
+              }
+            },
+            "required": [
+              "name",
+              "description"
+            ]
+          },
+          "x-toml-kind": "array-of-tables"
+        }
+      },
+      "required": [
+        "enabled",
+        "templates"
+      ]
+    },
+    "cron": {
+      "type": "object",
+      "description": "Internal scheduled tasks (Bun.cron registry)",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Master switch for all scheduled jobs"
+        },
+        "jobs": {
+          "type": "object",
+          "description": "Per-job overrides keyed by job name",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "enabled": {
+                "type": "boolean",
+                "description": "Enable this job"
+              },
+              "schedule": {
+                "type": "string",
+                "description": "Cron expression override"
+              }
+            }
+          }
+        }
+      },
+      "required": [
+        "enabled"
+      ]
     }
   },
   "required": [
@@ -1219,7 +2266,11 @@
     "messages",
     "encryption",
     "headers",
-    "dynamicResponse"
+    "dynamicResponse",
+    "frontend",
+    "seeding",
+    "templates",
+    "characters"
   ],
   "description": "JSON Schema optimized for TOML language servers (Taplo, Even Better TOML, Tombi). Reference from config.toml via $schema key."
 }

@@ -45,6 +45,7 @@ export interface InsertedEntity {
 /**
  * Default outfit for a confirmed character draft.
  * @param data - Validated entity (gates require appearance, optional defaultOutfit)
+ * @returns the outfit string, or null when neither field is set
  */
 function defaultOutfitFor(data: GeneratedEntity,): string | null {
   return data.defaultOutfit ?? data.appearance ?? null;
@@ -53,6 +54,7 @@ function defaultOutfitFor(data: GeneratedEntity,): string | null {
 /**
  * Wardrobe catalog JSON for a confirmed character draft.
  * @param data - Validated entity (gates require appearance, optional defaultOutfit)
+ * @returns the wardrobe JSON, or null when no outfit fields are set
  */
 function outfitsJsonFor(data: GeneratedEntity,): string | null {
   const id = data.defaultOutfit ?? data.appearance;

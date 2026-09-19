@@ -2,20 +2,15 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /** Asset Service — tags (gallery tagging G7): per-viewer `user` tags and shared `global` tags. */
-import type { ExpressionBuilder, ExpressionWrapper, Kysely, SqlBool, } from "kysely";
+import type { Kysely, } from "kysely";
 import { AssetTagScope, AssetTagSource, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { uid, } from "../../utils";
+import { normalizeTag, scopeOwnerPredicate, } from "./tags-query";
+import { deleteAssetTags, tagVocabulary, } from "./tags-vocabulary";
 
-// ── Tag normalization ──────────────────────────────────────
-
-/**
- * Normalize a tag for storage: trim, lowercase, collapse internal whitespace.
- * @param input
- */
-export function normalizeTag(input: string,): string {
-  return input.trim().toLowerCase().replace(/\s+/g, " ",);
-}
+export { deleteAssetTags, normalizeTag, scopeOwnerPredicate, tagVocabulary, };
+export type { UpsertTagContext, };
 
 // ── Public record shape ────────────────────────────────────
 
@@ -29,22 +24,7 @@ export interface AssetTagRecord {
 
 // ── Scope filter helper ────────────────────────────────────
 
-/**
- * Builder for the owner predicate: global rows always match; user rows must
- * match `ownerId`. Callers thread this into list/delete/update chaining.
- */
-function scopeOwnerPredicate(
-  userId: string | null,
-): (eb: ExpressionBuilder<DB, "asset_tags">,) => ExpressionWrapper<DB, "asset_tags", SqlBool> {
-  return (eb,) =>
-    eb.or([
-      eb("scope", "=", AssetTagScope.Global,),
-      eb.and([
-        eb("scope", "=", AssetTagScope.User,),
-        eb("owner_id", "=", userId ?? "",),
-      ],),
-    ],);
-}
+// (moved to ./tags-query.ts; re-exported above for single-module importers)
 
 // ── List ───────────────────────────────────────────────────
 
@@ -54,6 +34,7 @@ function scopeOwnerPredicate(
  * @param database
  * @param assetId
  * @param userId
+ * @returns visible tags ordered by tag
  */
 export async function listAssetTags(
   database: Kysely<DB>,
@@ -78,17 +59,30 @@ export async function listAssetTags(
 
 // ── Add / remove / rename ──────────────────────────────────
 
-interface UpsertTagOptions {
+interface UpsertTagContext {
   database: Kysely<DB>;
   assetId: string;
-  tag: string;
   scope: AssetTagScope;
   ownerId: string | null;
-  source?: AssetTagSource;
 }
 
-/** Insert one tag; no-op (returns existing) when already present in scope. */
-async function insertTag(opts: UpsertTagOptions,): Promise<AssetTagRecord> {
+/**
+ * Insert one tag; no-op (returns existing) when already present in scope.
+ * @param options - scope/tag context (single-argument options object)
+ * @param options.database
+ * @param options.assetId
+ * @param options.scope
+ * @param options.ownerId
+ * @param fields - tag payload (`tag`, optional `source`)
+ * @param fields.tag
+ * @param fields.source
+ * @returns the existing or newly inserted tag record
+ */
+async function insertTag(
+  options: UpsertTagContext,
+  fields: { tag: string; source?: AssetTagSource },
+): Promise<AssetTagRecord> {
+  const opts = { ...options, ...fields, };
   const { database, assetId, tag, scope, ownerId, source, } = opts;
   let existingQuery = database
     .selectFrom("asset_tags",)
@@ -126,7 +120,13 @@ async function insertTag(opts: UpsertTagOptions,): Promise<AssetTagRecord> {
 /**
  * Add a tag to an asset in the given scope; null when the normalized tag is
  * empty. Deduplicates by normalized tag. Caller enforces scope ownership.
- * @param options
+ * @param options - single-argument options object
+ * @param options.database
+ * @param options.assetId
+ * @param options.tag
+ * @param options.scope
+ * @param options.ownerId
+ * @returns the tag record, or null for an empty tag
  */
 export async function addAssetTag(options: {
   database: Kysely<DB>;
@@ -137,13 +137,7 @@ export async function addAssetTag(options: {
 },): Promise<AssetTagRecord | null> {
   const tag = normalizeTag(options.tag,);
   if (tag === "") { return null; }
-  return insertTag({
-    database: options.database,
-    assetId: options.assetId,
-    tag,
-    scope: options.scope,
-    ownerId: options.ownerId,
-  },);
+  return insertTag(options, { tag, },);
 }
 
 /**
@@ -153,6 +147,7 @@ export async function addAssetTag(options: {
  * @param tag
  * @param scope
  * @param ownerId
+ * @returns resolves when the row is deleted
  */
 export async function removeAssetTag(
   database: Kysely<DB>,
@@ -176,7 +171,14 @@ export async function removeAssetTag(
  * Rename a tag within a scope; null when the pair is identical or the new
  * tag is empty. When the target exists the old row is dropped; otherwise
  * the old row's tag is updated in place so its `id` is stable.
- * @param options
+ * @param options - single-argument options object
+ * @param options.database
+ * @param options.assetId
+ * @param options.oldTag
+ * @param options.newTag
+ * @param options.scope
+ * @param options.ownerId
+ * @returns the target tag record, or null when nothing changed
  */
 export async function renameAssetTag(options: {
   database: Kysely<DB>;
@@ -195,54 +197,8 @@ export async function renameAssetTag(options: {
     return null;
   }
 
-  const target = await insertTag({
-    database,
-    assetId,
-    tag: normalizedNew,
-    scope,
-    ownerId,
-  },);
+  const target = await insertTag(options, { tag: normalizedNew, },);
   // Insert target first; then drop the old row unconditionally.
   await removeAssetTag(database, assetId, normalizedOld, scope, ownerId,);
   return target;
-}
-
-// ── Vocabulary (autocomplete) ──────────────────────────────
-
-/**
- * Distinct tag vocabulary visible to a viewer for autocomplete: every global
- * tag plus the viewer's own user-scoped tags. `q` narrows by prefix.
- * @param database
- * @param userId
- * @param q
- */
-export async function tagVocabulary(
-  database: Kysely<DB>,
-  userId: string | null,
-  q?: string,
-): Promise<string[]> {
-  const prefix = q ? normalizeTag(q,) : "";
-  const rows = await database
-    .selectFrom("asset_tags",)
-    .select("tag",)
-    .where(scopeOwnerPredicate(userId,),)
-    .distinct()
-    .orderBy("tag", "asc",)
-    .execute();
-
-  const tags = rows.map((row,) => row.tag);
-  if (prefix === "") {
-    return [...new Set(tags,),];
-  }
-  return [...new Set(tags.filter((tag,) => tag.startsWith(prefix,)),),];
-}
-
-/**
- * GC all tag + dismissal rows for an asset (called from asset delete).
- * @param database
- * @param assetId
- */
-export async function deleteAssetTags(database: Kysely<DB>, assetId: string,): Promise<void> {
-  await database.deleteFrom("asset_tag_dismissals",).where("asset_id", "=", assetId,).execute();
-  await database.deleteFrom("asset_tags",).where("asset_id", "=", assetId,).execute();
 }
