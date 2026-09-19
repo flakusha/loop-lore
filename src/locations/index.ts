@@ -10,3 +10,5 @@ export { TravelRouteService, } from "./routes";
 export type { CreateTravelRouteInput, AddStopInput, } from "./routes";
 export { ActorPositionService, } from "./positions";
 export type { ActorPosition, } from "./positions";
+export { TravelTickEngine, } from "./travel-engine";
+export type { TickOptions, TickSummary, } from "./travel-engine";
