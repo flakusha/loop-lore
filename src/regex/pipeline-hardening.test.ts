@@ -166,7 +166,7 @@ describe("INTENT_PATTERNS — amplification cap", () => {
     // avoid CI flake on shared hosts while still catching a true O(n²)
     // regression (would be 60s+).
     expect(elapsed,).toBeLessThan(15_000,);
-  });
+  }, 15_000,);
 
   test("small inputs still resolve to the expected intent", () => {
     // "create a character" → generate/character
