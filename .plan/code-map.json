@@ -683,6 +683,13 @@
       "source": ".plan/tickets/BUG-assets-serve-servefile-omits-x-content-type-options-nosniff-.md"
     }
   ],
+
+  "src/assets/serve-raw.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-thumbnail-generation-256px-webp-at-upload.md"
+    }
+  ],
   "src/assets/service": [
     {
       "kind": "epic",
