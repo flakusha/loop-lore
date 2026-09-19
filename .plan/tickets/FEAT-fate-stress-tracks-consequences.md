@@ -9,7 +9,7 @@
 **Summary:** FATE Stress Tracks + Consequences
 **Context:** Epic epic-character-spec; tags rpg, fate, harm.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
-**Epic:** epic-character-spec
+**Epic:** epic-resolution-system
 **Tags:** rpg, fate, harm
 
 ## Summary

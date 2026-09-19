@@ -382,3 +382,7 @@ in `epic-assistant-creative-studio-workflows.md` §7.6. The `world-generation` w
 (`TASK-assistant-creative-studio-workflow-world.md`) wraps `/create world` with step
 building, `entity_type_presets.world` validation, and schema/consistency/duplicate
 quality gates.
+
+## Docs-Gap Audit Remainders (2026-09-19)
+
+- [ ] [gap-audit E25] In-app co-authoring presence: live cursors + typing indicators (Yjs CRDT base at :337)

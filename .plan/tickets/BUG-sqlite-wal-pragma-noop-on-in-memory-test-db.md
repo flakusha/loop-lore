@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** Medium
+**Summary:** PRAGMA journal_mode=WAL is a silent no-op on :memory: test DBs and redundant with createSqliteDialect
+**Context:** Test-infra dead code — tests/e2e/helpers/server.ts:184, src/db/index.ts:35
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 
 ## Summary
 

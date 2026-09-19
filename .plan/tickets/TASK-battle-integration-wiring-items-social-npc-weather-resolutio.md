@@ -3,7 +3,7 @@
 
 # TASK: Battle Integration Wiring (items/social/NPC/weather/resolution)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (duplicate, verified 2026-09-19)
 **Priority:** high
 **Effort:** Large
 **Summary:** Battle Integration Wiring (items/social/NPC/weather/resolution)
@@ -15,6 +15,13 @@
 ## Summary
 
 --label
+
+## Resolution
+
+Duplicate of existing plan artifact(s) — verified 2026-09-19 docs-gap reconcile audit (epic-docs-vs-plan-gap-audit-2026-09-19.md):
+
+- epic-battle-integration-gaps.md (exact scope, 7 tasks)
+- backlog/priority-p6.md P6-A
 
 ## Acceptance Criteria
 

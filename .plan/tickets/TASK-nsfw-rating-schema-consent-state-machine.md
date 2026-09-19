@@ -3,7 +3,7 @@
 
 # TASK: NSFW Rating Schema & Consent State Machine
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (already on dev, 2026-09-19)
 **Priority:** high
 **Effort:** Large
 **Summary:** NSFW Rating Schema & Consent State Machine
@@ -15,6 +15,13 @@
 ## Summary
 
 Implement NSFW rating schema (AO/Gallery/None), consent state machine, age gate enforcement, per-world NSFW opt-in per docs/spec/nsfw.md.
+
+## Resolution
+
+Already implemented on dev — verified 2026-09-19 docs-gap reconcile audit (epic-docs-vs-plan-gap-audit-2026-09-19.md):
+
+- epic-nsfw-capabilities.md [x] ContentRating + ConsentState
+- src/generation/auto-gen.ts:412
 
 ## Acceptance Criteria
 

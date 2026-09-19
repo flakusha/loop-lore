@@ -3,7 +3,7 @@
 
 # TASK: Battle Core Round-Loop / Initiative Epic
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (duplicate, verified 2026-09-19)
 **Priority:** high
 **Effort:** XL
 **Summary:** Battle Core Round-Loop / Initiative Epic
@@ -15,6 +15,14 @@
 ## Summary
 
 --label
+
+## Resolution
+
+Duplicate of existing plan artifact(s) — verified 2026-09-19 docs-gap reconcile audit (epic-docs-vs-plan-gap-audit-2026-09-19.md):
+
+- epic-battle-action-systems.md (20 tasks)
+- epic-battle-utilities.md (initiative)
+- src/rpg/combat.ts initiative/action economy
 
 ## Acceptance Criteria
 

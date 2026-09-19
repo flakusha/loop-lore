@@ -3,7 +3,7 @@
 
 # TASK: Template System Unified Architecture
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (duplicate, verified 2026-09-19)
 **Priority:** high
 **Effort:** XL
 **Summary:** Template System Unified Architecture
@@ -15,6 +15,12 @@
 ## Summary
 
 Implement template authoring UI, variable engine unification, shared macro system across templates/commands, template versioning per docs/spec/template-system.md.
+
+## Resolution
+
+Duplicate of existing plan artifact(s) — verified 2026-09-19 docs-gap reconcile audit (epic-docs-vs-plan-gap-audit-2026-09-19.md):
+
+- epic-config-templates.md (variable engine, authoring, macros, versioning §3.6)
 
 ## Acceptance Criteria
 

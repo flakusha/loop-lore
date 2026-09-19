@@ -3,7 +3,7 @@
 
 # TASK: Markdown Preview Before Send
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (duplicate, verified 2026-09-19)
 **Priority:** medium
 **Effort:** Small
 **Summary:** Markdown Preview Before Send
@@ -15,6 +15,12 @@
 ## Summary
 
 --label
+
+## Resolution
+
+Duplicate of existing plan artifact(s) — verified 2026-09-19 docs-gap reconcile audit (epic-docs-vs-plan-gap-audit-2026-09-19.md):
+
+- TASK-chat-composer-markdown-pre-render-preview-before-send.md (open) in epic-frontend-chat-commands.md
 
 ## Acceptance Criteria
 

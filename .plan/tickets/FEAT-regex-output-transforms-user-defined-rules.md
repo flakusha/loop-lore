@@ -3,7 +3,7 @@
 
 # FEAT: Regex Output Transforms (User-defined rules)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (already on dev, 2026-09-19)
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Regex Output Transforms (User-defined rules)
@@ -15,6 +15,13 @@
 ## Summary
 
 --label
+
+## Resolution
+
+Already implemented on dev — verified 2026-09-19 docs-gap reconcile audit (epic-docs-vs-plan-gap-audit-2026-09-19.md):
+
+- src/generation/transforms.ts:13,40 (4-phase split) + transforms.test.ts
+- release-010:81
 
 ## Acceptance Criteria
 

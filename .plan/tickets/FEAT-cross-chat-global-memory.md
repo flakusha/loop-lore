@@ -3,7 +3,7 @@
 
 # FEAT: Cross-chat Global Memory
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (already on dev, 2026-09-19)
 **Priority:** medium
 **Effort:** Large
 **Summary:** Cross-chat Global Memory
@@ -15,6 +15,14 @@
 ## Summary
 
 --label
+
+## Resolution
+
+Already implemented on dev — verified 2026-09-19 docs-gap reconcile audit (epic-docs-vs-plan-gap-audit-2026-09-19.md):
+
+- src/prompt/sections/memories.test.ts:144 (source_chat_id: null)
+- src/db/schema-story.ts:289
+- release-010:58
 
 ## Acceptance Criteria
 

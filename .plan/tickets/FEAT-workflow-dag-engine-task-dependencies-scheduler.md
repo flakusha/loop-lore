@@ -3,7 +3,7 @@
 
 # FEAT: Workflow DAG Engine (Task Dependencies + Scheduler)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (duplicate — remainder extracted, 2026-09-19)
 **Priority:** medium
 **Effort:** Large
 **Summary:** Workflow DAG Engine (Task Dependencies + Scheduler)
@@ -16,6 +16,10 @@
 
 Implement task_dependencies table + scheduler; DAG execution engine.
 Source: docs/meta/assessments/agentic-workspace.md.
+
+## Resolution
+
+Core scope tracked by epic-cron-scheduler.md (Done) + src/cron/. Unplanned remainder extracted 2026-09-19 → E16 task_dependencies DAG engine (new ticket T-A, main agent) (docs-gap reconcile audit).
 
 ## Acceptance Criteria
 

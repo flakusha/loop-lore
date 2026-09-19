@@ -3,7 +3,7 @@
 
 # TASK: Access Model Composition
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (duplicate — remainder extracted, 2026-09-19)
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Access Model Composition
@@ -15,6 +15,10 @@
 ## Summary
 
 Implement resource ownership hierarchy, audience visibility rules, cross-user access check composition per docs/spec/access-model-clarification.md.
+
+## Resolution
+
+Core scope tracked by epic-auth-access.md. Unplanned remainder extracted 2026-09-19 → E1 composed visibility×ownership check (epic-auth-access.md) (docs-gap reconcile audit).
 
 ## Acceptance Criteria
 

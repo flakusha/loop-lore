@@ -3,7 +3,7 @@
 
 # FEAT: Multi-LLM Story Mode Frontend
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (duplicate, verified 2026-09-19)
 **Priority:** medium
 **Effort:** XL
 **Summary:** Multi-LLM Story Mode Frontend
@@ -15,6 +15,13 @@
 ## Summary
 
 --label
+
+## Resolution
+
+Duplicate of existing plan artifact(s) — verified 2026-09-19 docs-gap reconcile audit (epic-docs-vs-plan-gap-audit-2026-09-19.md):
+
+- epic-story-mode-ui.md (covers this ticket's scope)
+- epic-chat-variants-taxonomy.md:35 (llm-only group)
 
 ## Acceptance Criteria
 

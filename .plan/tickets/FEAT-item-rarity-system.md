@@ -3,7 +3,7 @@
 
 # FEAT: Item Rarity System
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (already on dev, 2026-09-19)
 **Priority:** low
 **Effort:** Medium
 **Summary:** Item Rarity System
@@ -16,6 +16,12 @@
 
 Implement common/uncommon/rare/epic/legendary rarity with stat ranges + drop rates.
 Source: docs/meta/reviews/review-topics.md §12.
+
+## Resolution
+
+Already implemented on dev — verified 2026-09-19 docs-gap reconcile audit (epic-docs-vs-plan-gap-audit-2026-09-19.md):
+
+- src/rpg/loot/ rarity-weighted tables + templates (+tests)
 
 ## Acceptance Criteria
 

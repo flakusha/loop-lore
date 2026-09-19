@@ -3,7 +3,7 @@
 
 # TASK: Content Compression (Zstd Streaming)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (already on dev, 2026-09-19)
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Content Compression (Zstd Streaming)
@@ -15,6 +15,13 @@
 ## Summary
 
 Implement Zstd streaming codec wiring, per-route compression toggle, compression ratio telemetry per docs/spec/content-compression.md.
+
+## Resolution
+
+Already implemented on dev — verified 2026-09-19 docs-gap reconcile audit (epic-docs-vs-plan-gap-audit-2026-09-19.md):
+
+- src/content/compress.ts + encode.ts
+- src/transport/compression.ts
 
 ## Acceptance Criteria
 

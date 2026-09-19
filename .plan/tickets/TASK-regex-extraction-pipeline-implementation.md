@@ -3,7 +3,7 @@
 
 # TASK: Regex Extraction Pipeline Implementation
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (already on dev, 2026-09-19)
 **Priority:** medium
 **Effort:** Large
 **Summary:** Regex Extraction Pipeline Implementation
@@ -15,6 +15,12 @@
 ## Summary
 
 Implement regex extraction pipeline per docs/spec/regex-extraction.md. Used for image edits, intents, memory, transitions; no implementation epic exists.
+
+## Resolution
+
+Already implemented on dev — verified 2026-09-19 docs-gap reconcile audit (epic-docs-vs-plan-gap-audit-2026-09-19.md):
+
+- src/regex/ extraction modules + pipeline-hardening.test.ts
 
 ## Acceptance Criteria
 
