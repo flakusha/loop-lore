@@ -3,7 +3,7 @@ import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Kysely, sql, } from "kysely";
 import type { Migration, } from "kysely/migration";
 import { Migrator, } from "kysely/migration";
-import { readdirSync, readFileSync, } from "node:fs";
+import { readdirSync, readFileSync, statSync, } from "node:fs";
 import path from "node:path";
 import { createLogger, } from "../logger";
 import { createSqliteDialect, } from "./index";
@@ -116,6 +116,17 @@ describe("full migration chain", () => {
 
 // ── Per-migration roundtrip tests ────────────────────────────
 
+/**
+ * Only "no such table/column" failures count as the legitimate
+ * ALTER-on-fresh-DB skip. Any other up() failure is a real bug and must
+ * fail the suite instead of silently dropping this migration's
+ * down()/idempotency coverage.
+ * @param error
+ */
+function isExpectedFreshDbError(error: unknown,): boolean {
+  return error instanceof Error && /no such (table|column)/.test(error.message,);
+}
+
 describe("per-migration roundtrip", () => {
   for (const name of MIGRATION_NAMES) {
     describe(name, () => {
@@ -134,14 +145,16 @@ describe("per-migration roundtrip", () => {
         db.close();
       },);
 
-      test("up() succeeds or is ALTER-only (skip if no base tables)", async () => {
+      test("up() succeeds or fails only on missing base tables", async () => {
         try {
           await migration.up(kysely,);
           upSucceeded = true;
           const names = schemaTables(db,);
           expect(names.size,).toBeGreaterThan(0,);
-        } catch {
-          // ALTER TABLE migrations fail on fresh DB without base tables — that's expected
+        } catch (error) {
+          // ALTER TABLE / FK migrations legitimately fail on a fresh DB
+          // without base tables — anything else is a real bug.
+          if (!isExpectedFreshDbError(error,)) { throw error; }
           upSucceeded = false;
         }
       });
@@ -162,8 +175,8 @@ describe("per-migration roundtrip", () => {
         // Second up may throw for ALTER TABLE migrations — that's expected
         try {
           await migration.up(kysely,);
-        } catch {
-          // Expected for ALTER on existing columns
+        } catch (error) {
+          if (!isExpectedFreshDbError(error,)) { throw error; }
         }
         // DB should still have tables
         const names = schemaTables(db,);
@@ -481,5 +494,83 @@ describe("001_init part freeze", () => {
         "unit, so appended parts silently skip on existing databases). Create a new " +
         "top-level NNN_name.ts migration instead.",
     ).toEqual([...FROZEN_PARTS,].sort((a, b,) => a.localeCompare(b,)),);
+  });
+});
+
+// ── schema_version ledger tripwire ─────────────────────────────
+// A duplicate `recordSchemaVersion(db, N, ...)` silently loses a ledger row
+// (version is the PK, INSERT OR IGNORE). This tripwire failed to exist when
+// two migrations both recorded version 33 — the second row vanished without
+// any error.
+
+describe("recordSchemaVersion ledger", () => {
+  // Matches both one-line and multi-line calls; captures the version arg.
+  const CALL = /recordSchemaVersion\(\s*(?:database|db)\s*,\s*(\d+)/g;
+
+  /**
+   * @returns map of repo-relative file → recorded version numbers, across
+   * every non-test .ts file under src/db (migrations/, parts/, backfills).
+   */
+  function collectCalls(): Map<string, number[]> {
+    const found = new Map<string, number[]>();
+    const dbDir = __dirname;
+    const walk = (dir: string,): void => {
+      for (const entry of readdirSync(dir,)) {
+        const full = path.join(dir, entry,);
+        if (statSync(full,).isDirectory()) {
+          walk(full,);
+          continue;
+        }
+        if (!entry.endsWith(".ts",) || entry.endsWith(".test.ts",)) { continue; }
+        const source = readFileSync(full, "utf8",);
+        const versions = [...source.matchAll(CALL,),].map((m,) => Number(m[1],));
+        if (versions.length > 0) { found.set(path.relative(dbDir, full,), versions,); }
+      }
+    };
+    walk(dbDir,);
+    return found;
+  }
+
+  test("every migration file records a unique schema version", () => {
+    const seen = new Map<number, string>();
+    const dupes: string[] = [];
+    for (const [file, versions,] of collectCalls()) {
+      // Uniqueness applies per schema change: a parts/ file and a top-level
+      // migration never record the same number. Backfills (outside
+      // migrations/) re-record EXISTING numbers on purpose (convergence).
+      if (!file.startsWith(`migrations${path.sep}`,)) { continue; }
+      for (const v of versions) {
+        const prev = seen.get(v,);
+        if (prev) { dupes.push(`version ${v}: ${prev} vs ${file}`,); }
+        else { seen.set(v, file,); }
+      }
+    }
+    const nextFree = seen.size > 0 ? Math.max(...seen.keys(),) + 1 : 1;
+    expect(
+      dupes,
+      `duplicate schema_version numbers — record the new change with the next ` +
+        `free version (${nextFree}): ${dupes.join("; ",)}`,
+    ).toEqual([],);
+  });
+
+  test("backfills only re-record versions a migration already records", () => {
+    const migrationVersions = new Set<number>();
+    for (const [file, versions,] of collectCalls()) {
+      if (file.startsWith(`migrations${path.sep}`,)) {
+        for (const v of versions) { migrationVersions.add(v,); }
+      }
+    }
+    // 19 was folded into the 001_init parts tree before recording existed;
+    // only the boot backfill converges it (schema-backfill.ts).
+    const BACKFILL_ONLY = new Set([19,],);
+    for (const [file, versions,] of collectCalls()) {
+      if (file.startsWith(`migrations${path.sep}`,)) { continue; }
+      for (const v of versions) {
+        expect(
+          migrationVersions.has(v,) || BACKFILL_ONLY.has(v,),
+          `${file} records schema_version ${v}, which no migration records`,
+        ).toBe(true,);
+      }
+    }
   });
 });

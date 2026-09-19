@@ -39,17 +39,38 @@ async function markApplied(db: Kysely<DB>, migration: DataMigration,): Promise<v
     .execute();
 }
 
+/** Recognized data-migration file shape: `v<N>_description.ts`. */
+const DATA_MIGRATION_FILE = /^v(\d+)_/;
+
+/**
+ * Numeric-aware ordering for `v<N>_*.ts` data-migration files. Mirrors
+ * `compareMigrationNames` in src/db/migrate.ts: `localeCompare` is
+ * locale-dependent and sorts `v10_` before `v2_`, silently reordering
+ * migrations.
+ * @param a
+ * @param b
+ */
+function compareVersionNames(a: string, b: string,): number {
+  const an = Number(a.match(DATA_MIGRATION_FILE,)?.[1] ?? Number.NaN,);
+  const bn = Number(b.match(DATA_MIGRATION_FILE,)?.[1] ?? Number.NaN,);
+  if (!Number.isNaN(an,) && !Number.isNaN(bn,) && an !== bn) { return an - bn; }
+  return a < b ? -1 : a > b ? 1 : 0;
+}
+
 /**
  * Discover and import data migrations colocated next to this runner.
- * @returns array of `DataMigration` definitions (sorted by filename).
+ * Exported for testing — production callers use {@link runDataMigrations}.
+ * @param baseDir - Directory scanned for `<table>/v<N>_*.ts` migrations.
+ * @returns array of `DataMigration` definitions (sorted by version number).
  */
-async function discoverMigrations(): Promise<DataMigration[]> {
+export async function discoverMigrations(baseDir: string = __dirname,): Promise<DataMigration[]> {
+  const log = getLogger().child({ module: "data-migrations", },);
   const tasks: DataMigration[] = [];
   const { readdirSync, statSync, } = await import("node:fs");
   const path = await import("node:path");
-  const baseDir = __dirname;
 
-  const entries = readdirSync(baseDir,).toSorted((a, b,) => a.localeCompare(b,));
+  // Locale-independent lexicographic ordering for table directories.
+  const entries = readdirSync(baseDir,).toSorted((a, b,) => (a < b ? -1 : a > b ? 1 : 0));
   for (const entry of entries) {
     const dirPath = path.join(baseDir, entry,);
     if (!statSync(dirPath,).isDirectory()) { continue; }
@@ -58,12 +79,15 @@ async function discoverMigrations(): Promise<DataMigration[]> {
     for (const f of readdirSync(dirPath,)) {
       if (f.startsWith("v",) && f.endsWith(".ts",)) { matched.push(f,); }
     }
-    const files = matched.toSorted((a, b,) => a.localeCompare(b,));
+    const files = matched.toSorted(compareVersionNames,);
 
     for (const file of files) {
       const mod = await import(path.join(dirPath, file,));
       if (mod.migration) {
         tasks.push(mod.migration as DataMigration,);
+      } else {
+        // A typo'd export must not vanish silently.
+        log.warn(`Data migration file exports no \`migration\` — skipped: ${path.join(dirPath, file,)}`,);
       }
     }
   }

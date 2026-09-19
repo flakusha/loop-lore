@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { afterEach, describe, expect, test, } from "bun:test";
+import { Database, } from "bun:sqlite";
+import { afterAll, afterEach, beforeAll, describe, expect, test, } from "bun:test";
+import { Kysely, } from "kysely";
 import { asTableName, } from "../hash/record-hash";
 import {
   __peekContentVersionRegistry,
@@ -9,7 +11,9 @@ import {
   computeRowHash,
   getContentEnvelope,
   registerContentVersion,
+  runBatchRefresh,
 } from "./content-version";
+import { createSqliteDialect, } from "./index";
 
 afterEach(() => {
   __resetContentVersionRegistry();
@@ -44,8 +48,10 @@ describe("registerContentVersion", () => {
     expect(() => registerContentVersion("messages", 1, [],)).toThrow(/empty/,);
   });
 
-  test("throws on invalid data_version", () => {
-    expect(() => registerContentVersion("messages", 0, ["a",],)).toThrow(/invalid/,);
+  test("data_version 0 is a valid base (pre-ship); negative/fractional invalid", () => {
+    registerContentVersion("messages", 0, ["a",],);
+    expect(__peekContentVersionRegistry().get("messages",)?.get(0,),).toEqual(["a",],);
+    expect(() => registerContentVersion("messages", -1, ["a",],)).toThrow(/invalid/,);
     expect(() => registerContentVersion("messages", 1.5, ["a",],)).toThrow(/invalid/,);
   });
 });
@@ -112,5 +118,70 @@ describe("computeRowHash", () => {
     const v1 = computeRowHash(asTableName("messages",), { id: "m1", data_version: 1, chat_id: "c1", },);
     const v2 = computeRowHash(asTableName("messages",), { id: "m1", data_version: 2, chat_id: "c1", body: "x", },);
     expect(v1,).not.toBe(v2,);
+  });
+});
+
+describe("runBatchRefresh", () => {
+  let sqlite: Database;
+  let db: Kysely<any>;
+
+  const TABLE = "cv_refresh_rows";
+
+  beforeAll(() => {
+    sqlite = new Database(":memory:",);
+    db = new Kysely({ dialect: createSqliteDialect(sqlite,), },);
+    sqlite.run(
+      `CREATE TABLE ${TABLE} (id TEXT PRIMARY KEY, data_version INTEGER NOT NULL, body TEXT NOT NULL, record_hash TEXT NOT NULL DEFAULT '')`,
+    );
+  },);
+
+  afterAll(async () => {
+    await db.destroy();
+    sqlite.close();
+  },);
+
+  afterEach(() => {
+    __resetContentVersionRegistry();
+    sqlite.run(`DELETE FROM ${TABLE}`,);
+  },);
+  function insertRow(id: string, dataVersion: number, body: string, recordHash: string,): void {
+    sqlite.run(
+      `INSERT INTO ${TABLE} (id, data_version, body, record_hash) VALUES (?, ?, ?, ?)`,
+      [id, dataVersion, body, recordHash,],
+    );
+  }
+
+  test("returns zeros when the table has no registered projection", async () => {
+    expect(await runBatchRefresh(db, TABLE,),).toEqual({ scanned: 0, updated: 0, skipped: 0, },);
+  });
+
+  test("rehashes stale rows once, then is a no-op; skips unknown versions", async () => {
+    registerContentVersion(TABLE, 0, ["body",],);
+    insertRow("r1", 0, "alpha", "stale",);
+    insertRow("r2", 0, "beta", "stale",);
+    // data_version 1 has no registered projection → must be skipped, not hashed.
+    insertRow("r3", 1, "gamma", "",);
+
+    const first = await runBatchRefresh(db, TABLE,);
+    expect(first,).toEqual({ scanned: 3, updated: 2, skipped: 1, },);
+
+    // Second pass: hashes now match → nothing updated.
+    const second = await runBatchRefresh(db, TABLE,);
+    expect(second,).toEqual({ scanned: 3, updated: 0, skipped: 1, },);
+
+    // r3 (unknown projection) must never be written.
+    const r3 = sqlite.query(`SELECT record_hash FROM ${TABLE} WHERE id = 'r3'`,).get() as { record_hash: string };
+    expect(r3.record_hash,).toBe("",);
+  });
+
+  test("dataVersion filter only refreshes rows at that version", async () => {
+    registerContentVersion(TABLE, 0, ["body",],);
+    insertRow("f1", 0, "delta", "stale",);
+    insertRow("f2", 3, "omega", "stale",);
+
+    const result = await runBatchRefresh(db, TABLE, { dataVersion: 0, },);
+    expect(result,).toEqual({ scanned: 1, updated: 1, skipped: 0, },);
+    const f2 = sqlite.query(`SELECT record_hash FROM ${TABLE} WHERE id = 'f2'`,).get() as { record_hash: string };
+    expect(f2.record_hash,).toBe("stale",);
   });
 });
