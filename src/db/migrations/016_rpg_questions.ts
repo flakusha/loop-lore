@@ -45,7 +45,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .columns(["chat_id", "status",],)
     .execute();
 
-  await recordSchemaVersion(database, 36, "rpg chat questions",);
+  await recordSchemaVersion(database, 37, "rpg chat questions",);
 }
 
 /**
