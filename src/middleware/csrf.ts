@@ -47,6 +47,12 @@ export const CSRF_EXEMPT_ROUTES: ReadonlySet<string> = new Set([
   "POST /api/auth/login",
   "POST /api/auth/register",
   "POST /api/demo-login",
+  // Telemetry ingestion rides navigator.sendBeacon, which cannot attach
+  // custom headers — a header+cookie double-submit gate would 403 every
+  // beacon. The route is a write-only, session-bound log sink (no reads,
+  // no user-data mutation), so forged cross-origin events can only spam
+  // logs; the client-side session cap and server size limits bound that.
+  "POST /api/telemetry/event",
 ],);
 
 /** HTTP methods that require CSRF verification when the route is not exempt. */
@@ -227,6 +233,8 @@ export function decideCsrf(
     headers: Headers;
     sessionId: string | null;
     requestId: string;
+    /** Acting user id resolved by the auth middleware (solo fallback sets this even without a session). */
+    userId?: string | null;
   },
 ): CsrfDecision {
   if (!opts.enabled) {
@@ -263,10 +271,16 @@ export function decideCsrf(
       opts.logger?.warn("csrf.header_cookie_mismatch", { method, route: routeKey, },);
       return { ok: false, cookieToIssue: null, };
     }
-    // Bind to the authenticated session when present; otherwise bind to the
-    // pre-auth request id so an unauthenticated attacker can't replay.
-    const binding = args.sessionId ?? `anonymous::${args.requestId}`;
-    const ok = verifyCsrfToken(opts.secret, headerToken, binding,);
+    // Bind to the authenticated session when present. Solo mode has no
+    // session row (authenticate.ts sets sessionId=null) but DOES resolve a
+    // stable acting userId — bind to that, because a per-request
+    // `anonymous::<requestId>` binding can never verify: the token is
+    // minted on one request and presented on another, and the request id
+    // differs. BUG-csrf-solo-mode-binding-per-request-id-403.
+    // Truly anonymous requests (no session, no userId) keep the per-request
+    // binding so a minted token cannot be replayed by another visitor.
+    const verifyBinding = args.sessionId ?? (args.userId ? `solo::${args.userId}` : `anonymous::${args.requestId}`);
+    const ok = verifyCsrfToken(opts.secret, headerToken, verifyBinding,);
     if (!ok) {
       opts.logger?.warn("csrf.verify_failed", { method, route: routeKey, sessionId: args.sessionId, },);
       return { ok: false, cookieToIssue: null, };
@@ -278,12 +292,15 @@ export function decideCsrf(
   // Skip issuance when the client already carries a valid token bound to
   // the current session — avoids re-writing the cookie on every GET and
   // lets the browser reuse the existing one until it expires.
+  // Issuance binding MUST mirror the verification binding above: the token
+  // minted here is verified on a later request, so both paths must resolve
+  // the same stable key (session id → solo userId → per-request id).
   const existingCookie = readCsrfCookie(args.headers.get("cookie",),);
-  const binding = args.sessionId ?? `anonymous::${args.requestId}`;
-  if (existingCookie !== null && verifyCsrfToken(opts.secret, existingCookie, binding,)) {
+  const issueBinding = args.sessionId ?? (args.userId ? `solo::${args.userId}` : `anonymous::${args.requestId}`);
+  if (existingCookie !== null && verifyCsrfToken(opts.secret, existingCookie, issueBinding,)) {
     return { ok: true, cookieToIssue: null, };
   }
-  const token = mintCsrfToken(opts.secret, binding, {},);
+  const token = mintCsrfToken(opts.secret, issueBinding, {},);
   return { ok: true, cookieToIssue: token, };
 }
 
