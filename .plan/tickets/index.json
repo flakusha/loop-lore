@@ -5681,7 +5681,7 @@
     "tags": [],
     "source": ".plan/tickets/FEAT-056.md",
     "git_issue": "455a593",
-    "status": "open"
+    "status": "done"
   },
   "FEAT-059": {
     "hash": "dd8e05d",
@@ -5889,7 +5889,7 @@
     "tags": [],
     "source": ".plan/tickets/FEAT-2026-001.md",
     "git_issue": "e5e2faa",
-    "status": "open"
+    "status": "done"
   },
   "FEAT-2026-002": {
     "hash": "bfd09bc",
@@ -5915,7 +5915,7 @@
     "tags": [],
     "source": ".plan/tickets/FEAT-2026-003.md",
     "git_issue": "47c2780",
-    "status": "open"
+    "status": "done"
   },
   "FEAT-2026-004": {
     "hash": "814a41c",
@@ -5967,7 +5967,7 @@
     "tags": [],
     "source": ".plan/tickets/FEAT-2026-007.md",
     "git_issue": "3a92e1e",
-    "status": "open"
+    "status": "done"
   },
   "FEAT-2026-008": {
     "hash": "8039c98",
@@ -5980,7 +5980,7 @@
     "tags": [],
     "source": ".plan/tickets/FEAT-2026-008.md",
     "git_issue": "8039c98",
-    "status": "open"
+    "status": "done"
   },
   "FEAT-2026-009": {
     "hash": "080ef97",
