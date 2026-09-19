@@ -15,6 +15,10 @@ import { safeFetch, } from "../utils";
 import { mountPreviewAnchorEditor, } from "./asset-preview-anchor";
 import { renderTagsPanel, } from "./asset-preview-tags";
 import { feFetch, } from "./fe-fetch";
+import { previewEscapeState, } from "./preview-escape";
+
+/** Module-singleton Escape/focus state; host document bound per open. */
+const escapeState = previewEscapeState();
 
 interface PreviewAsset {
   id: string;
@@ -152,6 +156,7 @@ export async function openAssetPreview(id: string,): Promise<void> {
     await renderPreviewBody(body, a,);
     await renderTagsPanel(id,);
     modal.classList.add("open",);
+    escapeState.arm(document.activeElement as HTMLElement | null, document,);
   } catch {
     /* ignore — preview is best-effort */
   }
