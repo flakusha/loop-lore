@@ -920,7 +920,11 @@
     "toolResult": "Tool result",
     "invitesTitle": "Chat Invites",
     "loadingInvites": "Loading invites…",
-    "noChatInvites": "No invites yet — create one to share this chat."
+    "noChatInvites": "No invites yet — create one to share this chat.",
+    "tabAudit": "Audit",
+    "auditAll": "All",
+    "auditEmpty": "No audit entries yet",
+    "auditLoadMore": "Load more"
   },
   "participants": {
     "title": "Participants",

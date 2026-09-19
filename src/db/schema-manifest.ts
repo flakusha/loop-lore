@@ -502,6 +502,15 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("memory_audit_log", {
+    id: col("text", { primaryKey: true, },),
+    memory_id: col("text", { notNull: true, },),
+    actor_id: col("text", { notNull: true, },),
+    user_id: col("text",),
+    action: col("text", { notNull: true, },),
+    details: col("text", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("memory_embeddings", {
     memory_id: col("text", { primaryKey: true, },),
     model: col("text", { notNull: true, hasDefault: true, },),
