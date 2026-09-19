@@ -3644,7 +3644,6 @@ export async function insertNsfwUserPreferences(
     ...opts,
   } as any,).execute();
 }
-
 /** Insert a e2e_group_wraps row. */
 export async function insertE2eGroupWraps(
   db: Db,
