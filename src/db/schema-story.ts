@@ -313,3 +313,19 @@ export interface ActorMemories {
   context_window_start: string | null;
   context_window_end: string | null;
 }
+
+// ── rpg_questions ────────────────────────────────────────────
+export interface RpgQuestions {
+  id: Generated<string>;
+  chat_id: string;
+  actor_id: string;
+  type: string;
+  prompt: string;
+  options: string;
+  time_limit: number | null;
+  required_choice: Generated<number>;
+  status: Generated<string>;
+  selected_option_id: string | null;
+  created_at: Generated<string>;
+  answered_at: string | null;
+}

@@ -117,6 +117,7 @@ const DOMAIN_MAP: Record<string, string> = {
   items: "story",
   world_items: "story",
   quest_reward_ledger: "story",
+  rpg_questions: "story",
   world_lore_entries: "story",
   actor_lore_entries: "story",
   actor_memories: "story",

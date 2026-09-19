@@ -1,0 +1,39 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!-- RPG Questions Panel (TASK-029): open multiple-choice questions for the active chat -->
+<div
+  x-init="loadOpenQuestions(); $watch('activeChat', () => loadOpenQuestions())"
+  x-show="rpgQuestions.length > 0"
+  x-cloak
+  class="rpg-questions-panel"
+  data-testid="rpg-questions-panel"
+>
+  <template x-for="question in rpgQuestions" :key="question.id">
+    <div
+      class="rpg-question"
+      style="border: 1px solid var(--border-default); border-radius: var(--radius-md); padding: var(--space-3); margin-bottom: var(--space-2)"
+    >
+      <div style="font-size: 13px; font-weight: 600; margin-bottom: var(--space-2)" x-text="question.prompt"></div>
+      <div style="display: flex; flex-direction: column; gap: var(--space-1)">
+        <template x-for="option in question.options" :key="option.id">
+          <button
+            class="btn btn-secondary rpg-question-option"
+            style="text-align: left"
+            :disabled="rpgQuestionsLoading || _answeringQuestionId === question.id"
+            data-testid="rpg-question-option"
+            @click="answerRpgQuestion(question.id, option.id)"
+            x-text="option.text"
+          >
+          </button>
+        </template>
+      </div>
+      <div
+        x-show="rpgQuestionsError"
+        style="color: var(--danger, #c0392b); font-size: 12px; margin-top: var(--space-2)"
+        x-text="rpgQuestionsError"
+      >
+      </div>
+    </div>
+  </template>
+</div>

@@ -739,6 +739,20 @@ export const SCHEMA = new SchemaManifest()
     messages_re_encrypted: col("integer", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("rpg_questions", {
+    id: col("text", { primaryKey: true, },),
+    chat_id: col("text", { notNull: true, },),
+    actor_id: col("text", { notNull: true, },),
+    type: col("text", { notNull: true, },),
+    prompt: col("text", { notNull: true, },),
+    options: col("text", { notNull: true, },),
+    time_limit: col("integer",),
+    required_choice: col("integer", { notNull: true, hasDefault: true, },),
+    status: col("text", { notNull: true, hasDefault: true, },),
+    selected_option_id: col("text",),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    answered_at: col("text",),
+  },)
   .table("schema_version", {
     version: col("integer", { primaryKey: true, },),
     applied_at: col("text", { notNull: true, hasDefault: true, },),
