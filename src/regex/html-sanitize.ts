@@ -20,12 +20,12 @@
 
 export {
   DANGEROUS_TAGS,
-  JS_URL_ATTR,
   ON_EVENT_DOUBLE,
   ON_EVENT_SINGLE,
   ON_EVENT_UNQUOTED,
   sanitizeHtml,
   stripScriptTags,
+  stripUnsafeUrlAttributes,
 } from "./html-sanitize-core";
 export { createStreamingSanitizer, } from "./html-sanitize-streaming";
 

@@ -33,11 +33,11 @@ import { registry, } from "../../plugins/registry";
 import type { ToolDefinition, ToolExecutionContext, } from "../../plugins/types";
 import {
   DANGEROUS_TAGS,
-  JS_URL_ATTR,
   ON_EVENT_DOUBLE,
   ON_EVENT_SINGLE,
   ON_EVENT_UNQUOTED,
   stripScriptTags,
+  stripUnsafeUrlAttributes,
 } from "../../regex/html-sanitize";
 import { jsonStringifyOr, safeJsonParse, safeJsonStringify, } from "../../utils";
 import type { GenerationMessage, } from "../types";
@@ -56,12 +56,13 @@ export const MAX_TOOL_ROUNDS = 5;
  */
 export function sanitizeToolOutput(content: string,): string {
   if (!content) { return content; }
-  return stripScriptTags(content,)
-    .replace(ON_EVENT_DOUBLE, "",)
-    .replace(ON_EVENT_SINGLE, "",)
-    .replace(ON_EVENT_UNQUOTED, "",)
-    .replace(JS_URL_ATTR, "",)
-    .replace(DANGEROUS_TAGS, "",);
+  return stripUnsafeUrlAttributes(
+    stripScriptTags(content,)
+      .replace(ON_EVENT_DOUBLE, "",)
+      .replace(ON_EVENT_SINGLE, "",)
+      .replace(ON_EVENT_UNQUOTED, "",)
+      .replace(DANGEROUS_TAGS, "",),
+  );
 }
 
 /**
