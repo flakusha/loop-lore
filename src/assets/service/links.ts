@@ -62,24 +62,50 @@ export async function unlinkAsset({
 
 /**
  * Delete a single link of an asset by its identifier (the linked entity's id).
- * Matches both the asset and the link id; never touches another asset's links.
+ * `asset_links` PK is `(asset_id, entity_type, entity_id)`; deleting by
+ * `asset_id` + `entity_id` alone over-deletes when the same `entity_id` is
+ * linked under multiple `entity_type`s (e.g. an asset linked to both
+ * `character:42` and `world:42`). Resolve to one exact row first and
+ * refuse the operation when the match is ambiguous — the caller needs a
+ * path that includes `entity_type` to disambiguate.
  * @param root0
  * @param root0.database
  * @param root0.assetId
  * @param root0.linkId
- * @returns true when a link row was deleted, false when none matched
+ * @returns true when exactly one link row was deleted, false when none matched
+ * @throws when more than one link shares the same `(asset_id, entity_id)` pair
  */
 export async function deleteAssetLink({
   database,
   assetId,
   linkId,
 }: DeleteAssetLinkOpts,): Promise<boolean> {
+  const matches = await database
+    .selectFrom("asset_links",)
+    .select(["entity_type", "entity_id",],)
+    .where("asset_id", "=", assetId,)
+    .where("entity_id", "=", linkId,)
+    .execute();
+  if (matches.length === 0) { return false; }
+  if (matches.length > 1) {
+    throw new Error(
+      `Ambiguous link delete: asset ${assetId} has ${matches.length} links with entity_id='${linkId}' across entity_types [${
+        matches.map((m,) => m.entity_type).join(", ",)
+      }]. Pass entity_type to disambiguate.`,
+      { cause: { matches, }, },
+    );
+  }
+  const only = matches[0];
+  if (!only) {
+    return false;
+  }
   const result = await database
     .deleteFrom("asset_links",)
     .where("asset_id", "=", assetId,)
+    .where("entity_type", "=", only.entity_type,)
     .where("entity_id", "=", linkId,)
     .executeTakeFirst();
-  return Number(result.numDeletedRows,) > 0;
+  return Number(result.numDeletedRows,) === 1;
 }
 
 /**
