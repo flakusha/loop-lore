@@ -184,15 +184,15 @@ describe("ResourceManager", () => {
     ).toThrow(/duplicate/,);
   });
 
-  test("forgetProvider drops queue + limiter", async () => {
+  test("forgetProvider drops queue + limiter; queued awaiters reject", async () => {
     const mgr = new ResourceManager({ defaultMax: 2, },);
-    mgr.submit({
-      id: "queued",
+    const queued1 = mgr.submit({
+      id: "queued1",
       provider: "p",
       priority: PriorityLevel.Normal,
       run: makeExec("q", 30,),
     },);
-    mgr.submit({
+    const queued2 = mgr.submit({
       id: "queued2",
       provider: "p",
       priority: PriorityLevel.Normal,
@@ -200,6 +200,9 @@ describe("ResourceManager", () => {
     },);
     mgr.forgetProvider("p",);
     expect(mgr.inFlight,).toBe(0,);
+    // Queued awaiters must reject — they cannot leak.
+    await expect(queued1.result,).rejects.toThrow(/forgotten/,);
+    await expect(queued2.result,).rejects.toThrow(/forgotten/,);
     // Re-submitting for the same provider gets a fresh limiter.
     const handle = mgr.submit({
       id: "after",
@@ -208,5 +211,36 @@ describe("ResourceManager", () => {
       run: makeExec("after",),
     },);
     expect(await handle.result,).toBe("after",);
+  });
+
+  test("forgetProvider cancels in-flight requests too", async () => {
+    const mgr = new ResourceManager({ defaultMax: 1, },);
+    const handle = mgr.submit({
+      id: "running",
+      provider: "p",
+      priority: PriorityLevel.Normal,
+      run: () => sleep(50,).then(() => "done"),
+    },);
+    // Wait for the limiter to dispatch.
+    await sleep(5,);
+    expect(handle.state,).toBe("running",);
+    mgr.forgetProvider("p",);
+    await expect(handle.result,).rejects.toThrow(/forgotten/,);
+  });
+
+  test("cancel(id) finds in-flight requests, not just queued ones", async () => {
+    const mgr = new ResourceManager({ defaultMax: 1, },);
+    const handle = mgr.submit({
+      id: "in-flight",
+      provider: "p",
+      priority: PriorityLevel.Normal,
+      run: () => sleep(50,).then(() => "done"),
+    },);
+    // Wait for dispatch.
+    await sleep(5,);
+    expect(handle.state,).toBe("running",);
+    expect(mgr.cancel("in-flight", "stop",),).toBe(true,);
+    await expect(handle.result,).rejects.toThrow(/stop/,);
+    expect(mgr.cancel("in-flight",),).toBe(false,);
   });
 });
