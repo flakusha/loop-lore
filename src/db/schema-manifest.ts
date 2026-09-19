@@ -775,6 +775,19 @@ export const SCHEMA = new SchemaManifest()
     status: col("text", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, },),
   },)
+  .table("status_effect", {
+    id: col("text", { primaryKey: true, },),
+    actor_id: col("text", { notNull: true, },),
+    effect_id: col("text", { notNull: true, },),
+    category: col("text", { notNull: true, },),
+    affected_stat: col("text",),
+    magnitude: col("real", { notNull: true, hasDefault: true, },),
+    source: col("text", { notNull: true, },),
+    source_id: col("text",),
+    started_at: col("text", { notNull: true, },),
+    expires_at: col("text",),
+    meta: col("text",),
+  },)
   .table("synthetic_data", {
     id: col("text", { primaryKey: true, },),
     chat_id: col("text",),
