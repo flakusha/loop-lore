@@ -212,4 +212,41 @@ describe("TravelRouteService", () => {
     const pos = await svc.progressToLocation(ship,);
     expect(pos,).toEqual({ stopOrder: 1, stopLocationId: stopB, },);
   });
+
+  test("listRoutes returns routes in a world, ordered by name", async () => {
+    const svc = new TravelRouteService(testDb.db,);
+    const worldId = await makeWorld();
+    await svc.createRoute({ worldId, name: "Bravo", kind: "sea", },);
+    await svc.createRoute({ worldId, name: "Alpha", kind: "road", },);
+    const list = await svc.listRoutes(worldId,);
+    expect(list.map((r,) => r.name),).toEqual(["Alpha", "Bravo",],);
+  });
+
+  test("getRoute scopes by world; null for missing or cross-world", async () => {
+    const svc = new TravelRouteService(testDb.db,);
+    const worldA = await makeWorld();
+    const worldB = await makeWorld();
+    const id = await svc.createRoute({ worldId: worldA, name: "R", kind: "sea", },);
+    expect((await svc.getRoute(worldA, id,))?.name,).toBe("R",);
+    expect(await svc.getRoute(worldB, id,),).toBeUndefined();
+    expect(await svc.getRoute(worldA, "missing",),).toBeUndefined();
+  });
+
+  test("removeStop deletes a stop; listStops reflects the change", async () => {
+    const svc = new TravelRouteService(testDb.db,);
+    const worldId = await makeWorld();
+    const routeId = await svc.createRoute({ worldId, name: "R", kind: "sea", },);
+    const a = await (async () => {
+      const id = randomUUID();
+      testDb.sqlite.run(
+        "INSERT INTO locations (id, world_id, name, description, connections, publication_status, parent_location_id, kind, mobility_mode) VALUES (?, ?, 'sA', '', '[]', 'draft', NULL, 'transit', 'static')",
+        [id, worldId,],
+      );
+      return id;
+    })();
+    const stopId = await svc.addStop({ routeId, locationId: a, stopOrder: 0, },);
+    expect((await svc.listStops(routeId,)).length,).toBe(1,);
+    await svc.removeStop(routeId, stopId,);
+    expect((await svc.listStops(routeId,)).length,).toBe(0,);
+  });
 });
