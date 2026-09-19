@@ -35,7 +35,7 @@
 | 21 | **Mention error silent swallow** (BUG)                  | ✅ Done (bookkeeping 2026-09-03, no code change — already on dev) | `BUG-chat-mention-silent-error-swall.md` — persist/notify failures swallowed. Effort: Small |
 | 22 | **Quiet hours boundary off-by-one** (BUG)               | ✅ Done (bookkeeping 2026-09-03, no code change — already on dev) | `BUG-chat-quiet-hours-boundary.md` — proactive timing edge case. Effort: Trivial |
 | 23 | **Gallery onclick ReferenceError** (BUG)                | ✅ Done (bookkeeping 2026-09-03, no code change — already on dev) | `BUG-gallery-openAssetPreview-context-safety.md` — context safety when not top-level. Effort: Small |
-| 24 | **Gallery uploads sequential** (PERF)                   | 🟡 new                 | `PERF-gallery-uploadChatAssets-sequential.md` — parallelize uploads. Effort: Small |
+| 24 | **Gallery uploads sequential** (PERF)                   | ✅ Done (bookkeeping 2026-09-19) | `PERF-gallery-uploadChatAssets-sequential.md` — already parallel via `Promise.allSettled`; 3 regression tests on dev |
 | —  | IO: import/export (characters/worlds/locations/stories) | ✅ shipped             | char import (PNG/YAML/TOML/JSON/CHARX) ✅; char export (PNG/JSON/YAML/TOML) ✅; world import bundle ✅; world/loc/story export ✅; bulk ZIP export ✅ (code-verified 2026-08-20) |
 | —  | Stop generation (chat/VN)                               | 🟢 shipped             | chat abort/cancel + VN in-scene stop overlay (2026-08-06)                                                                                   |
 | —  | Notifications + center                                  | 🟢 shipped             | SSE + unread badge + center UI + per-type mute (2026-08-06)                                                                                 |
@@ -68,7 +68,7 @@
 ### Chat Product Features cluster (filed 2026-09-11)
 
 > Cross-cutting product feature coverage for the chat surface. 15 tickets span rich-message controls, encryption reliability, GM annotations, context/memory/event propagation, turn/talkativity, moderation, ownership transfer, location transition with party handoff, archive + search filtering, intro-based entity generation, pre-send buffer, RPG rules, settings templates + compat matrix, RPG location uniqueness, RPG chronological/tree nav. Items 14 & 15 (RPG-gated) require `epic-rpg-wiring-phase3` and `TASK-rpg-gate-chat-commands-behind-world-opt-in`.
-> Spec: `../epics/epic-chat-product-features.md`. Status: 🟡 Not Started.
+> Spec: `../epics/epic-chat-product-features.md`. Status: 🟡 In Progress — 3/15 shipped (archive, entry-field, GM annotations partial).
 
 #### P0-P2 visibility (app-critical — promoted to `priority-p0-p2.md`)
 
@@ -81,15 +81,15 @@
 |---|---------|---------|--------|--------------|
 | 1 | Component & Message UX | `TASK-chat-feature-component-buttons.md` | Medium | message actions + asset picker host (`src/components/chat/`, `src/group-chat/mention-parser.ts`) |
 | 2 | Crypto Reliability (extra) | (rotation covered above) | — | `src/crypto/key-rotation/re-encrypt.ts` rollback path; `src/middleware/idempotency.ts` overlap-debounce |
-| 3 | GM Annotations | `TASK-chat-feature-notes-shadow-carriage.md` | Low | `src/chat/proactive/{types,db-helpers}.ts`, `src/chat/service/{carry-history,party-narration}.ts` |
+| 3 | GM Annotations | `TASK-chat-feature-notes-shadow-carriage.md` | 🟡 partial | annotations vertical slice ✅ (note/shadow/quest discriminator, TTL, route layer, `shadow_notes` persistence); carriage channel pending |
 | 4 | Context / Memory / Event Propagation | `TASK-chat-feature-context-memory-events.md` | Medium | `src/chat/{context-window,context-stats,random-events}.ts`, `src/memory/injection/*`, `src/rag/search/orchestrator.ts` |
 | 5 | Turn & Talkativity | `TASK-chat-feature-turn-talkativity-skip.md` | Medium | `src/turning/turn-manager/{selection,participants}.ts`, `src/turning/turn-strategies.ts` |
 | 6 | Moderation | `TASK-chat-feature-moderation.md` | High | `src/chat/moderation.ts`, `src/middleware/nsfw-gate/{access,consent,logging}.ts`, `src/profanity/service.ts` |
 | 7 | Ownership Transfer (extra) | (transfer covered above) | — | `src/chat/ownership.ts`, `src/chat/service/{chats,write}.ts` |
 | 8 | Location Transition & Party Handoff | `TASK-chat-feature-location-transition-transfer.md` | Medium | `src/chat/transitions.ts`, `src/chat/service/{transitions,carry-location,party,party-narration,location-events}.ts` |
-| 9 | Archive / Deletion / Search Filtering | `TASK-chat-feature-archive-deletion-search.md` | Low | `src/chat/service/visibility.ts`, `src/chat/service/crud/`, `src/rag/search/quarantine.ts` |
+| 9 | Archive / Deletion / Search Filtering | `TASK-chat-feature-archive-deletion-search.md` | ✅ Done | archive/unarchive + hard-delete cascade + RAG quarantine + list filter + search priority all shipped on dev |
 | 10 | Intro-Based Generation & Backpropagation | `TASK-chat-feature-introduction-generation-propagation.md` | High | `src/generation/auto-gen/{classify-intent,resolve-known-names}.ts`, `src/chat/hallucination-guard/detect.ts`, `src/memory/extraction.ts` |
-| 11 | Entry Field Pre-Send Buffer | `TASK-chat-feature-entry-field-pre-send.md` | Low | `src/components/chat/`, `src/group-chat/mention-parser.ts`, `src/turning/turn-manager/state.ts` |
+| 11 | Entry Field Pre-Send Buffer | `TASK-chat-feature-entry-field-pre-send.md` | ✅ Done | `composer-pre-send.ts` shipped; ticket marked Done |
 | 12 | RPG Rule System | `TASK-chat-feature-rpg-rule-system.md` | Low | `src/chat/service/party-narration.ts`, `src/generation/prompt-templates/{profiles,templates}.ts` |
 | 13 | Settings Templates & Compat Matrix | `TASK-chat-feature-settings-templates-compat-matrix.md` | Medium | `src/chat/{setup-templates.test.ts,service/templates.ts,service/template-crud.ts,service/template-defaults.ts,service/vn-choices.ts,types/config.ts}` |
 | 14 | RPG Location Uniqueness *(RPG-mode gated)* | `TASK-chat-feature-rpg-location-uniqueness.md` | Low | gated by `TASK-rpg-gate-chat-commands-behind-world-opt-in`; `src/chat/npc-movement/index.ts`, `src/chat/service/party.ts` |
