@@ -35,7 +35,7 @@ export const AUTH_NOISE_ALLOWLIST: readonly RegExp[] = [
  */
 export function trackPageErrors(
   page: Page,
-  options: { allowlist?: RegExp[] } = {},
+  options: { allowlist?: readonly RegExp[] } = {},
 ): { errors: string[]; assert: () => void; detach: () => void } {
   const errors: string[] = [];
   const allowlist = options.allowlist ?? [];
@@ -71,7 +71,7 @@ export function trackPageErrors(
  * Assert no page errors occurred since tracking started. Throws with collected
  * messages otherwise. Call at end of test (after the interesting interaction).
  */
-export async function assertNoPageErrors(page: Page, options: { allowlist?: RegExp[] } = {},): Promise<void> {
+export async function assertNoPageErrors(page: Page, options: { allowlist?: readonly RegExp[] } = {},): Promise<void> {
   const tracker = trackPageErrors(page, options,);
   // Give the event loop a beat so late errors are captured, then assert.
   await page.waitForTimeout(50,);
