@@ -35,7 +35,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .on("status_effect",)
     .columns(["actor_id", "effect_id",],)
     .execute();
-  await recordSchemaVersion(database, 23, "actor status effects",);
+  await recordSchemaVersion(database, 38, "actor status effects",);
 }
 
 /**
