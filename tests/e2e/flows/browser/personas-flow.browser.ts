@@ -108,6 +108,7 @@ describe("Personas flow E2E", () => {
     const errors = trackPageErrors(page,);
     try {
       await gotoPersonas(page,);
+// hint: Logic changed on both sides. Requires understanding intent of each change.
       // Seed a second persona to delete (don't disturb the seeded one so the
       // list-render test still has something to find).
       const deleteId = `b1000002-0000-4000-a000-000000000002`;
