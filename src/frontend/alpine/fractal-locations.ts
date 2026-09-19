@@ -9,6 +9,7 @@
 // and create a new route inline. Read-only on the tree itself — full CRUD on
 // locations lives in the Locations tab.
 
+import { jsonStringifyOr, } from "@/utils/safe-json";
 import { apiFetch, } from "./htmx";
 import { log as rootLog, } from "./logger";
 
@@ -166,7 +167,7 @@ export function buildFractalState(worldId: string,): FractalState {
         const res = await apiFetch(`/api/worlds/${this.worldId}/travel-routes`, {
           method: "POST",
           headers: { "Content-Type": "application/json", Accept: "application/json", },
-          body: JSON.stringify({
+          body: jsonStringifyOr({
             name: this.newRoute.name.trim(),
             kind: this.newRoute.kind,
             loop: this.newRoute.loop,
