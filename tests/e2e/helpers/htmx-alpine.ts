@@ -10,6 +10,22 @@
 
 import type { Page, } from "@playwright/test";
 
+// ── Auth noise allowlist ────────────────────────────────────
+
+/**
+ * Canonical allowlist for browser tests that touch /views/login or
+ * /views/register under auth.required=true. These tests capture benign
+ * pre-auth 401s (session probes, favicon, preload hints) and resource-load
+ * noise during the auth handshake. Filtering them keeps the real assertion
+ * from drowning in auth-handshake console errors.
+ *
+ * Use via `trackPageErrors(page, { allowlist: AUTH_NOISE_ALLOWLIST, })`.
+ */
+export const AUTH_NOISE_ALLOWLIST: readonly RegExp[] = [
+  /401 \(Unauthorized\)/,
+  /Failed to load resource/,
+];
+
 // ── Page error tracking ─────────────────────────────────────
 
 /**

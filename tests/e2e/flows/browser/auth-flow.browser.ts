@@ -10,7 +10,7 @@
 
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { type BrowserTestContext, createBrowserTest, } from "../../helpers/browser-server";
-import { trackPageErrors, } from "../../helpers/htmx-alpine";
+import { AUTH_NOISE_ALLOWLIST, trackPageErrors, } from "../../helpers/htmx-alpine";
 import { seedUsers, } from "../../helpers/seed";
 
 describe("Auth browser E2E", () => {
@@ -33,7 +33,7 @@ describe("Auth browser E2E", () => {
   describe("Login form", () => {
     test("renders username, password, submit", async () => {
       const page = await ctx.openPage();
-      const errors = trackPageErrors(page,);
+      const errors = trackPageErrors(page, { allowlist: AUTH_NOISE_ALLOWLIST, },);
       try {
         await gotoLogin(page,);
         expect(await page.isVisible("[data-testid='username-input']",),).toBe(true,);
@@ -48,7 +48,7 @@ describe("Auth browser E2E", () => {
 
     test("demo login link present", async () => {
       const page = await ctx.openPage();
-      const errors = trackPageErrors(page,);
+      const errors = trackPageErrors(page, { allowlist: AUTH_NOISE_ALLOWLIST, },);
       try {
         await gotoLogin(page,);
         expect(await page.isVisible("[data-testid='demo-login']",),).toBe(true,);
@@ -62,7 +62,7 @@ describe("Auth browser E2E", () => {
 
     test("signup link present", async () => {
       const page = await ctx.openPage();
-      const errors = trackPageErrors(page,);
+      const errors = trackPageErrors(page, { allowlist: AUTH_NOISE_ALLOWLIST, },);
       try {
         await gotoLogin(page,);
         expect(await page.isVisible("[data-testid='signup-link']",),).toBe(true,);
@@ -77,7 +77,7 @@ describe("Auth browser E2E", () => {
   describe("Login validation", () => {
     test("submits login form with htmx", async () => {
       const page = await ctx.openPage();
-      const errors = trackPageErrors(page,);
+      const errors = trackPageErrors(page, { allowlist: AUTH_NOISE_ALLOWLIST, },);
       try {
         await gotoLogin(page,);
         await page.fill("[data-testid='username-input']", "wronguser",);

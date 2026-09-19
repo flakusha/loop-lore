@@ -1496,7 +1496,8 @@ Containerize the loop-lore application and establish deployment strategies for b
 - **Status:** Audit complete; 76 gap tickets created. Worktree: `docs-vs-plan-gap-tickets`.
 - **Priority:** P2
 - **Effort:** XL (audit + ticket creation)
-- **Type:** Unknown
+- **Type:** Audit
+- **Tags:** audit, epics, tickets, docs-gap
 - **File:** `.plan/epics/epic-docs-vs-plan-gap-audit-2026-09-19.md`
 
 ### Epic: Embeddable Backend
