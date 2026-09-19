@@ -2,8 +2,8 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { Kysely, } from "kysely";
-import type { DB, } from "../../../db/schema";
 import { ContentIntensity, } from "../../../db/enums-character/nsfw";
+import type { DB, } from "../../../db/schema";
 import { getLogger, } from "../../../logger";
 import { AROUSAL_CEILING, } from "../../../schemas";
 import { jsonStringifyOr, uid, } from "../../../utils";

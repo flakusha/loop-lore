@@ -4,9 +4,9 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
-import { uid, } from "../utils";
+import { jsonParseOr, jsonStringifyOr, uid, } from "../utils";
+import { type ReproductionCapability, Species, } from "./body-systems/enums";
 import { BodySystemService, } from "./body-systems/service";
-import { Species, type ReproductionCapability, } from "./body-systems/enums";
 import { rollDice, } from "./dice";
 import type { NsfwEncounter, } from "./encounters/service/types";
 
@@ -39,7 +39,9 @@ const CAPABILITY_BY_SPECIES: Record<string, ReproductionCapability> = {
 };
 
 const DEFAULT_CAPABILITY: ReproductionCapability = {
-  canReproduce: false, requiresHeat: false, crossFertile: false,
+  canReproduce: false,
+  requiresHeat: false,
+  crossFertile: false,
 };
 
 /**
@@ -104,8 +106,10 @@ export class ReproductionService {
     const carrierCap = capabilityFor(resolvedCarrier,);
     if (!carrierCap.canReproduce) { return null; }
     const sireCap = capabilityFor(resolvedSire,);
-    if (resolvedCarrier.toLowerCase() !== resolvedSire.toLowerCase()
-      && !(carrierCap.crossFertile && sireCap.crossFertile)) {
+    if (
+      resolvedCarrier.toLowerCase() !== resolvedSire.toLowerCase() &&
+      !(carrierCap.crossFertile && sireCap.crossFertile)
+    ) {
       return null;
     }
     if (carrierCap.requiresHeat && carrierRow.currentPhase !== "heat") { return null; }
@@ -115,10 +119,12 @@ export class ReproductionService {
       .where("actor_id", "=", carrierId,)
       .where("effect_id", "=", "contraceptive",)
       .where("category", "=", "physical",)
-      .where((eb,) => eb.or([
-        eb("expires_at", "is", null,),
-        eb("expires_at", ">", new Date().toISOString(),),
-      ],),)
+      .where((eb,) =>
+        eb.or([
+          eb("expires_at", "is", null,),
+          eb("expires_at", ">", new Date().toISOString(),),
+        ],)
+      )
       .select("id",)
       .executeTakeFirst();
     if (guard) { return null; }
@@ -147,8 +153,14 @@ export class ReproductionService {
         source: "reproduction",
         source_id: encounter.id,
         started_at: now.toISOString(),
+        // eslint-disable-next-line no-restricted-syntax -- epoch-ms arithmetic is allowed; toDate() cannot add durations
         expires_at: new Date(now.getTime() + GESTATION_WEEKS * 7 * 86_400_000,).toISOString(),
-        meta: JSON.stringify({ sire_id: sireId, world_id: encounter.worldId, weeks_elapsed: 0, gestation_weeks: GESTATION_WEEKS, }),
+        meta: jsonStringifyOr({
+          sire_id: sireId,
+          world_id: encounter.worldId,
+          weeks_elapsed: 0,
+          gestation_weeks: GESTATION_WEEKS,
+        },),
       },)
       .execute();
     log.info(`Pregnancy conceived: carrier ${carrierId} (encounter ${encounter.id})`,);
@@ -182,7 +194,7 @@ export class ReproductionService {
           source_id: COMPLICATION_EVENT,
           started_at: new Date().toISOString(),
           expires_at: null,
-          meta: JSON.stringify({ event: COMPLICATION_EVENT, week: next, }),
+          meta: jsonStringifyOr({ event: COMPLICATION_EVENT, week: next, },),
         },)
         .execute();
       log.warn("Reproductive complication emitted", { actor: characterId, week: next, },);
@@ -191,11 +203,11 @@ export class ReproductionService {
       .updateTable("status_effect",)
       .set({
         magnitude: next,
-        meta: JSON.stringify({
+        meta: jsonStringifyOr({
           sire_id: (await this.getPregnancyMeta(characterId,)).sireId,
           weeks_elapsed: next,
           gestation_weeks: status.gestationWeeks,
-        }),
+        },),
       },)
       .where("actor_id", "=", characterId,)
       .where("effect_id", "=", PREGNANCY_EFFECT,)
@@ -266,8 +278,12 @@ export class ReproductionService {
    */
   async getPregnancy(characterId: string,): Promise<PregnancyStatus> {
     const empty: PregnancyStatus = {
-      pregnant: false, effectId: null, weeksElapsed: 0,
-      gestationWeeks: GESTATION_WEEKS, sireId: null, expiresAt: null,
+      pregnant: false,
+      effectId: null,
+      weeksElapsed: 0,
+      gestationWeeks: GESTATION_WEEKS,
+      sireId: null,
+      expiresAt: null,
     };
     const row = await this.db
       .selectFrom("status_effect",)
@@ -291,7 +307,9 @@ export class ReproductionService {
 
   /** Raw meta carrier (sire + week counters) for the active row. */
   private async getPregnancyMeta(characterId: string,): Promise<{
-    sireId: string | null; weeksElapsed: number; gestationWeeks: number;
+    sireId: string | null;
+    weeksElapsed: number;
+    gestationWeeks: number;
   }> {
     const fallback = { sireId: null as string | null, weeksElapsed: 0, gestationWeeks: GESTATION_WEEKS, };
     const row = await this.db
@@ -302,17 +320,15 @@ export class ReproductionService {
       .select("meta",)
       .executeTakeFirst();
     if (!row?.meta) { return fallback; }
-    try {
-      const parsed = JSON.parse(row.meta,) as {
-        sire_id?: unknown; weeks_elapsed?: unknown; gestation_weeks?: unknown;
-      };
-      return {
-        sireId: typeof parsed.sire_id === "string" ? parsed.sire_id : null,
-        weeksElapsed: typeof parsed.weeks_elapsed === "number" ? parsed.weeks_elapsed : 0,
-        gestationWeeks: typeof parsed.gestation_weeks === "number" ? parsed.gestation_weeks : GESTATION_WEEKS,
-      };
-    } catch {
-      return fallback;
-    }
+    const parsed = jsonParseOr(row.meta, {} as {
+      sire_id?: unknown;
+      weeks_elapsed?: unknown;
+      gestation_weeks?: unknown;
+    },);
+    return {
+      sireId: typeof parsed.sire_id === "string" ? parsed.sire_id : null,
+      weeksElapsed: typeof parsed.weeks_elapsed === "number" ? parsed.weeks_elapsed : 0,
+      gestationWeeks: typeof parsed.gestation_weeks === "number" ? parsed.gestation_weeks : GESTATION_WEEKS,
+    };
   }
 }

@@ -4,15 +4,15 @@
 // size-allow: 279
 
 import type { Kysely, } from "kysely";
+import { MoodService, } from "../../../characters/services/mood-service";
 import type {
   ContentIntensity,
   FantasyCategory,
 } from "../../../db/enums";
 import type { DB, } from "../../../db/schema";
 import { getLogger, } from "../../../logger";
-import { MoodService, } from "../../../characters/services/mood-service";
-import { IntimacyService, } from "../../intimacy/service";
 import { jsonStringifyOr, } from "../../../utils";
+import { IntimacyService, } from "../../intimacy/service";
 import { nowAndId, parseJsonField, } from "../../shared/rpg-service-utils";
 import type {
   CreateFantasyOpts,
@@ -226,7 +226,9 @@ async function applyFulfillIntimacy(
       },
     },);
   } catch (cause) {
-    log.warn(`Fantasy intimacy leg skipped for ${target}:`, { error: cause instanceof Error ? cause.message : String(cause), },);
+    log.warn(`Fantasy intimacy leg skipped for ${target}:`, {
+      error: cause instanceof Error ? cause.message : String(cause,),
+    },);
   }
 }
 
@@ -260,7 +262,9 @@ async function applyFulfillMood(
       sourceId: `${fantasy.id}:${fantasy.category}`,
     },);
   } catch (cause) {
-    log.warn(`Fantasy mood leg skipped for ${target}:`, { error: cause instanceof Error ? cause.message : String(cause), },);
+    log.warn(`Fantasy mood leg skipped for ${target}:`, {
+      error: cause instanceof Error ? cause.message : String(cause,),
+    },);
   }
 }
 

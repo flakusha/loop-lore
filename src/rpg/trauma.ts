@@ -5,8 +5,8 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
 import { uid, } from "../utils";
-import { getActiveEffects, } from "./status-effects";
 import type { EncounterOutcome, } from "./encounters/service/types";
+import { getActiveEffects, } from "./status-effects";
 
 /**
  * Trauma / recovery service (TASK-044).
@@ -107,6 +107,7 @@ export class TraumaService {
         source: "trauma",
         source_id: sourceId ?? null,
         started_at: now.toISOString(),
+        // eslint-disable-next-line no-restricted-syntax -- epoch-ms arithmetic is allowed; toDate() cannot add durations
         expires_at: new Date(now.getTime() + RECOVERY_SECONDS[severity] * 1000,).toISOString(),
         meta: null,
       },)
@@ -182,7 +183,7 @@ export class TraumaService {
         effectId: e.effectId,
         magnitude: e.magnitude,
         expiresAt: e.expiresAt,
-      }),),
+      })),
     };
   }
 }

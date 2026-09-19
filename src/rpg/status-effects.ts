@@ -55,6 +55,7 @@ export async function applyStatusEffect(
       source_id: opts.sourceId ?? null,
       started_at: now.toISOString(),
       expires_at: opts.durationSeconds != null
+        // eslint-disable-next-line no-restricted-syntax -- epoch-ms arithmetic is allowed; toDate() cannot add durations
         ? new Date(now.getTime() + opts.durationSeconds * 1000,).toISOString()
         : null,
       meta: opts.meta ? jsonStringifyOr(opts.meta,) : null,
@@ -92,10 +93,12 @@ export async function getActiveEffects(
   let query = db
     .selectFrom("status_effect",)
     .where("actor_id", "=", actorId,)
-    .where((eb,) => eb.or([
-      eb("expires_at", "is", null,),
-      eb("expires_at", ">", now,),
-    ],),);
+    .where((eb,) =>
+      eb.or([
+        eb("expires_at", "is", null,),
+        eb("expires_at", ">", now,),
+      ],)
+    );
   if (filter?.category !== undefined) {
     query = query.where("category", "=", filter.category,);
   }
@@ -113,7 +116,7 @@ export async function getActiveEffects(
     startedAt: row.started_at,
     expiresAt: row.expires_at,
     meta: row.meta,
-  }),);
+  }));
 }
 
 /**
