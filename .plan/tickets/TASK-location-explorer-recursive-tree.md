@@ -50,3 +50,4 @@ settlement, building, room, transit, transport, pocket).
 - `epic-fractal-locations.md`
 - `TASK-locations-fractal-migration.md`
 - `TASK-fractal-locations-api-routes.md`
+- `TASK-location-explorer.md` (✅ done 2026-08-22, basic single-level explorer — this ticket extends it)
