@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** low
 **Effort:** Large
+**Summary:** Auto-translation Layer (Input/Output)
+**Context:** Epic epic-i18n; tags i18n, translation.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-i18n
 **Tags:** i18n, translation
 

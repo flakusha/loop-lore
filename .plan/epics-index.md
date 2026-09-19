@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 289 epics
+**Total:** 290 epics
 
 ## Summary
 
@@ -135,6 +135,7 @@
 | Not Started | Epic: Database Backup & Recovery Infrastructure | medium | Medium | 0 | [epic-database-backup-recovery.md](/.plan/epics/epic-database-backup-recovery.md) |
 | Not Started | Epic: Deployment Infrastructure (Docker & Bare Metal) | medium | Medium | 0 | [epic-deployment-infrastructure.md](/.plan/epics/epic-deployment-infrastructure.md) |
 | ⬜ Not Started | Epic: Desktop App | Low | High | 10 | [epic-desktop-app.md](/.plan/epics/epic-desktop-app.md) |
+| Audit complete; 76 gap tickets created. Worktree: `docs-vs-plan-gap-tickets`. | Epic: Docs-vs-Plan Gap Audit (2026-09-19) | P2 | XL (audit + ticket creation) | 6 | [epic-docs-vs-plan-gap-audit-2026-09-19.md](/.plan/epics/epic-docs-vs-plan-gap-audit-2026-09-19.md) |
 | ⬜ Not Started | Epic: Embeddable Backend | Low | Medium | 7 | [epic-embeddable-backend.md](/.plan/epics/epic-embeddable-backend.md) |
 | ⬜ Not Started | Epic: Entity Generation Workflows | High (MVP scoped, post-Gate C) | Medium | 5 | [epic-entity-generation-workflows.md](/.plan/epics/epic-entity-generation-workflows.md) |
 | Not Started | Epic: Federation, Swarm Sync & Decentralized Comms | medium | Medium | 0 | [epic-federation-swarm-sync.md](/.plan/epics/epic-federation-swarm-sync.md) |
@@ -1488,6 +1489,15 @@ Containerize the loop-lore application and establish deployment strategies for b
 - **Type:** Feature Epic
 - **Tags:** desktop, electron, tauri, tray, auto-update, packaging
 - **File:** `.plan/epics/epic-desktop-app.md`
+
+### Epic: Docs-vs-Plan Gap Audit (2026-09-19)
+
+- **Status:** Audit complete; 76 gap tickets created. Worktree: `docs-vs-plan-gap-tickets`.
+- **Priority:** P2
+- **Effort:** XL (audit + ticket creation)
+- **Type:** Audit
+- **Tags:** audit, epics, tickets, docs-gap
+- **File:** `.plan/epics/epic-docs-vs-plan-gap-audit-2026-09-19.md`
 
 ### Epic: Embeddable Backend
 

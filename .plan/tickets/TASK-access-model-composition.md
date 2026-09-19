@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium
+**Summary:** Access Model Composition
+**Context:** Epic proposed:epic-access-model; tags auth, access.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** proposed:epic-access-model
 **Tags:** auth, access
 

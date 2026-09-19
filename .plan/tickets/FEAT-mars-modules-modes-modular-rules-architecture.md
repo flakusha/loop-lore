@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** XL
+**Summary:** MARS Modules/Modes Modular Rules Architecture
+**Context:** Epic proposed:epic-modular-rules; tags rpg, mars, modular.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** proposed:epic-modular-rules
 **Tags:** rpg, mars, modular
 

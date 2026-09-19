@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Small
+**Summary:** Add eslint-plugin-import (no-cycle, order)
+**Context:** Epic epic-tooling-improvement; tags lint, eslint.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-tooling-improvement
 **Tags:** lint, eslint
 

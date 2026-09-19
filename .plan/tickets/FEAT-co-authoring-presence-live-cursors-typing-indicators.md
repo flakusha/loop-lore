@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** low
 **Effort:** Large
+**Summary:** Co-authoring Presence (live cursors, typing indicators)
+**Context:** Epic proposed:epic-co-authoring; tags multiplayer, collab.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** proposed:epic-co-authoring
 **Tags:** multiplayer, collab
 

@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Large
+**Summary:** Emotion-reactive Portraits (Auto-swap on emotion detect)
+**Context:** Epic epic-emotion-avatar-message-binding; tags emotion, portrait.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-emotion-avatar-message-binding
 **Tags:** emotion, portrait
 

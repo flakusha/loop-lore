@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** low
 **Effort:** XL
+**Summary:** 3D Character/Avatar Rendering
+**Context:** Epic proposed:epic-3d-avatars; tags 3d, avatar.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** proposed:epic-3d-avatars
 **Tags:** 3d, avatar
 

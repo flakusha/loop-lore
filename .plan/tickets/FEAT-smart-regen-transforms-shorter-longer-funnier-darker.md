@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** low
 **Effort:** Medium
+**Summary:** Smart-regen Transforms (shorter/longer/funnier/darker)
+**Context:** Epic proposed:epic-output-control-transforms; tags regen, transform.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** proposed:epic-output-control-transforms
 **Tags:** regen, transform
 

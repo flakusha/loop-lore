@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium
+**Summary:** Regex Output Transforms (User-defined rules)
+**Context:** Epic proposed:epic-output-control-transforms; tags regex, transform.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** proposed:epic-output-control-transforms
 **Tags:** regex, transform
 

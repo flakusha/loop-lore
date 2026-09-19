@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium
+**Summary:** Content Compression (Zstd Streaming)
+**Context:** Epic proposed:epic-content-compression; tags compression, zstd.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** proposed:epic-content-compression
 **Tags:** compression, zstd
 

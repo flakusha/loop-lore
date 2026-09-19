@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Large
+**Summary:** Random Encounter Engine
+**Context:** Epic epic-quests-encounters; tags encounters, backend.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-quests-encounters
 **Tags:** encounters, backend
 

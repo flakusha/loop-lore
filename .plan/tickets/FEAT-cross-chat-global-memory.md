@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Large
+**Summary:** Cross-chat Global Memory
+**Context:** Epic epic-memory-knowledge-systems; tags memory, cross-chat.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-memory-knowledge-systems
 **Tags:** memory, cross-chat
 

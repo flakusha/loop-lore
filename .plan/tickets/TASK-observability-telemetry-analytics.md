@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Large
+**Summary:** Observability, Telemetry & Analytics
+**Context:** Epic epic-analytics-observability; tags observability, telemetry.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-analytics-observability
 **Tags:** observability, telemetry
 

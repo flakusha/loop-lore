@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Large
+**Summary:** Multimodal Input (image/voice -> character reacts)
+**Context:** Epic proposed:epic-multimodal-input; tags multimodal, input.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** proposed:epic-multimodal-input
 **Tags:** multimodal, input
 

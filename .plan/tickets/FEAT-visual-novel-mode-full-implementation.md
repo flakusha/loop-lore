@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** XL
+**Summary:** Visual Novel Mode Full Implementation
+**Context:** Epic epic-visual-novel-mode; tags vn, frontend.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-visual-novel-mode
 **Tags:** vn, frontend
 

@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium
+**Summary:** Asset Attribution Chain
+**Context:** Epic epic-assets-attribution; tags assets, attribution.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-assets-attribution
 **Tags:** assets, attribution
 

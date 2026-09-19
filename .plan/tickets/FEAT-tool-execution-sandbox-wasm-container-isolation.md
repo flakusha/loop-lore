@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** XL
+**Summary:** Tool Execution Sandbox (WASM/Container Isolation)
+**Context:** Epic epic-security-sandboxing; tags sandbox, tools.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-security-sandboxing
 **Tags:** sandbox, tools
 

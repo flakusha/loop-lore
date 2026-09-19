@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Large
+**Summary:** NSFW Cross-Cutting Integration
+**Context:** Epic epic-nsfw-integration-gaps; tags nsfw, integration.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-nsfw-integration-gaps
 **Tags:** nsfw, integration
 

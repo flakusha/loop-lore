@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Large
+**Summary:** Worlds Frontend (list/detail, timeline, location travel UI)
+**Context:** Epic epic-world-management-ui; tags worlds, frontend.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-world-management-ui
 **Tags:** worlds, frontend
 
