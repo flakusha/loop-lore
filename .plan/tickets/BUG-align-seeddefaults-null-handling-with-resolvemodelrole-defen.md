@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved — already on dev (commit 1b967a2ee "fix(admin): model-roles tests, scanAllProviders typing, seedDefaults null guards"); verified 2026-09-19
 **Priority:** Medium
 **Effort:** Medium
 
@@ -18,6 +18,10 @@ src/admin/model-roles.ts:68 defensively checks if (!config?.generation) and degr
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete (defensive guards landed in 1b967a2ee)
+- [x] Tests passing (src/admin/config.test.ts partial-config describe block)
+- [x] Documentation updated (see Resolution below)
+
+## Resolution (verified 2026-09-19)
+
+`seedDefaults` (src/admin/config.ts) now guards every optional section exactly as resolveModelRole does: `config?.auth`, `config?.assets`, `config?.generation?.defaultProvider` (+ optional-chained `defaultModels` lookup). Missing sections degrade gracefully — only non-config defaults seed. Covered by `src/admin/config.test.ts` "seedDefaults with partial config" describe block: empty config, auth-only, assets-only, and generation-only variants all resolve without throwing and seed only the expected keys.
