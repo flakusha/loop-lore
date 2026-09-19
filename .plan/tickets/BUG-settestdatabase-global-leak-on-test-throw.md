@@ -3,7 +3,7 @@
 
 # BUG: setTestDatabase-global-leak-on-test-throw
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (already on dev, 2026-09-20)
 **Priority:** Medium
 **Effort:** Medium
 **Summary:** Module-global testDatabaseOverride leaks when test setup throws before the close()-path cleanup runs
@@ -50,17 +50,30 @@ parallel-safety bug — if anyone adds a test file that runs without
 across files, the leaked override will silently route later tests at the
 real DB.
 
-## Acceptance Criteria
+## Resolution
 
-- [ ] Wrap `createTestDb()` and the migration test helpers in
+Already fixed in dev by `662ddfb14` (fix(db,test): lazy DB singleton + test-override hygiene). Verified 2026-09-20 against current dev (`609e5a45b`):
+
+- `tests/e2e/helpers/server.ts:427-436` — `createTestServer()` `catch` block calls `setTestDatabase(null)` and removes the test upload dir when setup throws mid-way.
+- `tests/e2e/helpers/browser-server.ts:188-197` — `createBrowserTest()` same pattern (`browser?.close()`, `bunServer?.stop()`, `setTestDatabase(null)`, `rmSync`).
+- `src/db/index.ts:75-88` — `setTestDatabase` JSDoc documents the parallel-safety contract (process-global under non-isolated runners; callers MUST clear).
+- `src/db/migrations.test.ts:78-82`, `src/db/migration-roundtrip.test.ts:208-212` — `afterAll` blocks call `setTestDatabase(null)` so a thrown test does not leak the override.
+- `src/db/test-db-helpers.test.ts:23-46` — regression test asserts `setTestDatabase(null)` clears the sentinel path.
+- Note: implementation uses explicit `catch` (rethrows after cleanup) rather than `try/finally` since both helpers also need to free the bun server / browser. Functionally equivalent for the throw-leak guarantee.
+- Cross-references: `BUG-create-test-db-custom-dialect-can-bypass-settestdatabase` resolved in same commit.
+
+No code change required.
+
+
+- [x] Wrap `createTestDb()` and the migration test helpers in
       `try { ... } finally { setTestDatabase(null); }` so cleanup runs
       even when construction throws.
-- [ ] Add a regression test that throws inside `beforeAll` after
+- [x] Add a regression test that throws inside `beforeAll` after
       `createTestDb()` and asserts the module-global override is cleared
       afterward (via a sentinel: the next `getDatabase()` should return
       the singleton, not the previous test DB).
-- [ ] Document the parallel-safety contract on `setTestDatabase` in
+- [x] Document the parallel-safety contract on `setTestDatabase` in
       `src/db/index.ts` (it is process-global under non-isolated runners;
       tests must clear it).
-- [ ] `bun run check` passes.
+- [x] `bun run check` passes.
 

@@ -3,7 +3,7 @@
 
 # BUG: test-run-id-uses-Date-now-collision-risk-under-parallel
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (already on dev, 2026-09-20)
 **Priority:** Medium
 **Effort:** Medium
 **Summary:** e2e testRunId uses Date.now()+Math.random() — collision under parallel workers shares/deletes upload dirs
@@ -62,14 +62,24 @@ tests/e2e/helpers/browser-server.ts:88-91
   mkdirSync(testUploadDir, { recursive: true, },);
 ```
 
-## Acceptance Criteria
+## Resolution
 
-- [ ] Replace `Date.now() + Math.random()` with `crypto.randomUUID()` in
+Already fixed in dev by `662ddfb14` (fix(db,test): lazy DB singleton + test-override hygiene). Verified 2026-09-20 against current dev (`609e5a45b`):
+
+- `tests/e2e/helpers/server.ts:347-348` — `testRunId = \`loop-lore-e2e-${crypto.randomUUID()}\``; comment notes the rationale (per-process, per-call uniqueness, no shared mutable state).
+- `tests/e2e/helpers/browser-server.ts:82-83` — same pattern.
+- `src/db/test-db-helpers.test.ts:48-58` — 1000-iteration regression test asserts all generated `testRunId`s are unique.
+- Cross-references: resolves alongside the other test-override-hygiene tickets in the same commit.
+
+No code change required.
+
+
+- [x] Replace `Date.now() + Math.random()` with `crypto.randomUUID()` in
       both `tests/e2e/helpers/server.ts:353` and
       `tests/e2e/helpers/browser-server.ts:88`.
-- [ ] Add a regression test that runs N=1000 `createTestServer()` calls
+- [x] Add a regression test that runs N=1000 `createTestServer()` calls
       in tight succession and asserts all `testRunId`s are unique.
-- [ ] Confirm no flakiness on `bun run test:e2e` after the change.
-- [ ] Document the parallel-safety contract (per-process, per-call
+- [x] Confirm no flakiness on `bun run test:e2e` after the change.
+- [x] Document the parallel-safety contract (per-process, per-call
       uniqueness, no shared mutable state).
 
