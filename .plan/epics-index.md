@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 290 epics
+**Total:** 291 epics
 
 ## Summary
 
@@ -175,6 +175,7 @@
 | In Progress | FE-BE Harmonization — Epic | High | Small (one check script + gate) | 0 | [epic-fe-be-harmonization.md](/.plan/epics/epic-fe-be-harmonization.md) |
 | 🟢 Complete (core size-strict debt closed; `src/server/start.ts` remains documented follow-on) | File Splitting & God-Module Refactor | High | Very High | 5 | [epic-file-splitting.md](/.plan/epics/epic-file-splitting.md) |
 | ⬜ Not Started | Flexible RPG Patterns | Medium | Medium | 0 | [epic-rpg-patterns.md](/.plan/epics/epic-rpg-patterns.md) |
+| ⬜ Not Started | Fractal Locations — Recursive Containment + Mobile Transports | High | High | 0 | [epic-fractal-locations.md](/.plan/epics/epic-fractal-locations.md) |
 | ⬜ Not Started | Framework SDKs | Medium | High | 8 | [epic-framework-sdks.md](/.plan/epics/epic-framework-sdks.md) |
 | ⬜ Not Started | Fresh.js Alternative Frontend | Medium | High | 8 | [epic-fresh-alternative-frontend.md](/.plan/epics/epic-fresh-alternative-frontend.md) |
 | ⬜ Not Started | Frontend ↔ Backend Integration — Wiring Backend Subsystems to UI | High | High | 9 | [epic-frontend-backend-integration.md](/.plan/epics/epic-frontend-backend-integration.md) |
@@ -1495,8 +1496,7 @@ Containerize the loop-lore application and establish deployment strategies for b
 - **Status:** Audit complete; 76 gap tickets created. Worktree: `docs-vs-plan-gap-tickets`.
 - **Priority:** P2
 - **Effort:** XL (audit + ticket creation)
-- **Type:** Audit
-- **Tags:** audit, epics, tickets, docs-gap
+- **Type:** Unknown
 - **File:** `.plan/epics/epic-docs-vs-plan-gap-audit-2026-09-19.md`
 
 ### Epic: Embeddable Backend
@@ -1887,6 +1887,15 @@ Break down 200+ source files exceeding the 250L soft ceiling (`scripts/check-fil
 - **Type:** epic
 - **Tags:** (none)
 - **File:** `.plan/epics/epic-rpg-patterns.md`
+
+### Fractal Locations — Recursive Containment + Mobile Transports
+
+- **Status:** ⬜ Not Started
+- **Priority:** High
+- **Effort:** High
+- **Type:** Feature Epic
+- **Tags:** locations, hierarchy, transport, travel, world-modeling, recursion
+- **File:** `.plan/epics/epic-fractal-locations.md`
 
 ### Framework SDKs
 
