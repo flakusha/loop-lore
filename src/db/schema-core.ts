@@ -1206,3 +1206,18 @@ export interface MeshDeliveries {
   clock: number;
   received_at: Generated<string>;
 }
+
+// ── status_effect ────────────────────────────────────────────
+export interface StatusEffect {
+  id: Generated<string>;
+  actor_id: string;
+  effect_id: string;
+  category: string;
+  affected_stat: string | null;
+  magnitude: Generated<number>;
+  source: string;
+  source_id: string | null;
+  started_at: string;
+  expires_at: string | null;
+  meta: string | null;
+}

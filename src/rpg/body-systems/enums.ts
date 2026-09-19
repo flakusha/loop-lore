@@ -9,9 +9,35 @@
  */
 
 /**
- * Species sentinel. `species` is an open string field (any species allowed),
- * so only the well-known "human" sentinel is consolidated here.
+ * Well-known species values. `species` remains an open string field (any
+ * custom species allowed) — this consolidation covers the canonical
+ * baseline NSFW game mechanics branch on (TASK-045 species variants).
  */
-export const Species = { Human: "human", } as const;
+export const Species = {
+  Human: "human",
+  Elf: "elf",
+  Dwarf: "dwarf",
+  Orc: "orc",
+  Demon: "demon",
+  Angel: "angel",
+  Beast: "beast",
+  Dragon: "dragon",
+} as const;
 /** */
 export type Species = (typeof Species)[keyof typeof Species];
+
+// ── Reproduction Capability Flags ────────────────────────
+
+/**
+ * Reproduction capability flags for a species (TASK-038/045 baseline).
+ * Species mechanics services derive per-species variants from these
+ * flags instead of re-deriving species logic per consumer.
+ */
+export interface ReproductionCapability {
+  /** The species can reproduce at all. */
+  canReproduce: boolean;
+  /** Reproduction requires an active heat cycle. */
+  requiresHeat: boolean;
+  /** Cross-species fertilization is possible. */
+  crossFertile: boolean;
+}

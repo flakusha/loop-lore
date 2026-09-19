@@ -2731,3 +2731,17 @@ export const MeshDeliveriesSchema = t.Object({
   content_id: t.Optional(t.String(),),
   received_at: t.Optional(t.String(),),
 },);
+
+// ── status_effect ────────────────────────────────────────────
+export const StatusEffectSchema = t.Object({
+  actor_id: t.String(),
+  effect_id: t.String(),
+  category: t.String(),
+  source: t.String(),
+  started_at: t.String(),
+  affected_stat: t.Optional(t.String(),),
+  magnitude: t.Optional(t.Number(),),
+  source_id: t.Optional(t.String(),),
+  expires_at: t.Optional(t.String(),),
+  meta: t.Optional(t.String(),),
+},);
