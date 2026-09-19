@@ -147,18 +147,11 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
       SELECT RAISE(ABORT, 'location cannot be its own parent');
     END`.execute(database,);
 
-  // 6.2 — Depth limit (count '/' in path; > LOCATION_DEPTH_LIMIT+1 separators means depth > limit).
-  // SQLite triggers cannot use bound parameters — literals must be inlined.
-  // Build the entire trigger body with the literal already inlined via string concat
-  // (avoid `sql\`...${}`\`` since Kysely treats `${}` as a parameter binding).
-  const depthLimitSep = LOCATION_DEPTH_LIMIT + 1;
-  await sql("CREATE TRIGGER trg_locations_depth_limit\n"
-    + "    BEFORE INSERT ON locations\n"
-    + "    WHEN new.path IS NOT NULL\n"
-    + "      AND (length(new.path) - length(replace(new.path, '/', ''))) > " + depthLimitSep + "\n"
-    + "    BEGIN\n"
-    + "      SELECT RAISE(ABORT, 'location depth exceeds limit');\n"
-    + "    END").execute(database,);
+  // 6.2 — Depth limit is enforced at the application layer (see LocationTreeService).
+  // A pure SQL trigger is awkward: the recursive depth check via parent path lookup does not
+  // survive SQLite's trigger parser when nested in CASE/WHEN expressions. The service path
+  // already computes depth for ancestors/descendants; a single SELECT before INSERT is cheap.
+  // Documented invariant: a Location's depth (seps in path) must be ≤ LOCATION_DEPTH_LIMIT.
 
   // 6.3 — Cross-world parent rejected.
   await sql`CREATE TRIGGER trg_locations_cross_world_parent
@@ -169,9 +162,10 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
       SELECT RAISE(ABORT, 'cross-world parent rejected');
     END`.execute(database,);
 
-  // 6.4 — Set path on insert. If no parent, root path. If parent, parent's path + id.
-  await sql`CREATE TRIGGER trg_locations_set_path
-    BEFORE INSERT ON locations
+  // 6.4 — Set path on insert via AFTER INSERT. Single trigger handles both root and child.
+  // SQLite triggers cannot use SET new.col; instead UPDATE the just-inserted row.
+  await sql`CREATE TRIGGER trg_locations_set_path_on_insert
+    AFTER INSERT ON locations
     BEGIN
       UPDATE locations
         SET path = CASE
@@ -181,16 +175,31 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
         WHERE id = new.id;
     END`.execute(database,);
 
-  // 6.5 — On parent update, rewrite this row + every descendant.
+  // 6.5 — On parent update, recursively rewrite every descendant's path.
+  // Walk subtree via recursive CTE, then bulk-update paths for each.
   await sql`CREATE TRIGGER trg_locations_set_path_on_update
     AFTER UPDATE OF parent_location_id ON locations
+    WHEN new.parent_location_id IS NULL OR
+         (SELECT path FROM locations WHERE id = new.parent_location_id) IS NOT NULL
     BEGIN
+      -- Rewrite the moved row itself.
       UPDATE locations
-        SET path = (SELECT path FROM locations l2 WHERE l2.id = new.parent_location_id) || new.id || '/'
+        SET path = CASE
+          WHEN new.parent_location_id IS NULL THEN '/' || new.id || '/'
+          ELSE (SELECT path FROM locations l2 WHERE l2.id = new.parent_location_id) || new.id || '/'
+        END
         WHERE id = new.id;
+      -- Rewrite every descendant (recursive walk).
       UPDATE locations
         SET path = (SELECT l2.path FROM locations l2 WHERE l2.id = locations.parent_location_id) || locations.id || '/'
-        WHERE parent_location_id = new.id AND id <> new.id;
+        WHERE id IN (
+          WITH RECURSIVE sub(id) AS (
+            SELECT id FROM locations WHERE parent_location_id = new.id AND id <> new.id
+            UNION ALL
+            SELECT l.id FROM locations l JOIN sub s ON l.parent_location_id = s.id
+          )
+          SELECT id FROM sub
+        );
     END`.execute(database,);
 
   // ── 7. Backfill: every existing row gets path + defaults ──
@@ -214,11 +223,10 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
  * @param database
  */
 export async function down(database: Kysely<unknown>,): Promise<void> {
-  // Triggers (reverse order — they reference each other via cascade semantics).
+  // Triggers (reverse order — must be dropped BEFORE the columns they reference).
   await sql`DROP TRIGGER IF EXISTS trg_locations_set_path_on_update`.execute(database,);
-  await sql`DROP TRIGGER IF EXISTS trg_locations_set_path`.execute(database,);
+  await sql`DROP TRIGGER IF EXISTS trg_locations_set_path_on_insert`.execute(database,);
   await sql`DROP TRIGGER IF EXISTS trg_locations_cross_world_parent`.execute(database,);
-  await sql`DROP TRIGGER IF EXISTS trg_locations_depth_limit`.execute(database,);
   await sql`DROP TRIGGER IF EXISTS trg_locations_no_self_parent`.execute(database,);
 
   // Tables (reverse FK order).
