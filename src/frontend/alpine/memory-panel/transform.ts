@@ -200,8 +200,11 @@ export function formatAuditDate(iso: string,): string {
  */
 export function parseAuditDetails(details: string,): Record<string, unknown> {
   if (!details) { return {}; }
-  const obj = jsonParseOr<Record<string, unknown>>(details, {},);
-  return obj ?? {};
+  const obj = jsonParseOr<unknown>(details, {},);
+  if (obj && typeof obj === "object" && !Array.isArray(obj,)) {
+    return obj as Record<string, unknown>;
+  }
+  return {};
 }
 
 /**
