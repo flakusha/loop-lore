@@ -4,11 +4,11 @@
 import { describe, expect, test, } from "bun:test";
 import {
   DANGEROUS_TAGS,
-  JS_URL_ATTR,
   ON_EVENT_DOUBLE,
   ON_EVENT_SINGLE,
   ON_EVENT_UNQUOTED,
   stripScriptTags,
+  stripUnsafeUrlAttributes,
 } from "./html-sanitize";
 
 // ── Script Tag ────────────────────────────────────────────
@@ -91,21 +91,29 @@ describe("ON_EVENT_UNQUOTED", () => {
   });
 });
 
-describe("JS_URL_ATTR", () => {
+describe("stripUnsafeUrlAttributes", () => {
   test('strips href="javascript:..."', () => {
-    expect('<a href="javascript:alert(1)">link</a>'.replace(JS_URL_ATTR, "",),).toBe("<a >link</a>",);
+    expect(stripUnsafeUrlAttributes('<a href="javascript:alert(1)">link</a>',),).toBe("<a >link</a>",);
   });
 
   test('strips src="javascript:..."', () => {
-    expect('<iframe src="javascript:void(0)">'.replace(JS_URL_ATTR, "",),).toBe("<iframe >",);
+    expect(stripUnsafeUrlAttributes('<iframe src="javascript:void(0)">',),).toBe("<iframe >",);
   });
 
   test("strips href='javascript:...'", () => {
-    expect("<a href='javascript:void(0)'>link</a>".replace(JS_URL_ATTR, "",),).toBe("<a >link</a>",);
+    expect(stripUnsafeUrlAttributes("<a href='javascript:void(0)'>link</a>",),).toBe("<a >link</a>",);
+  });
+
+  test("strips unquoted javascript: values", () => {
+    expect(stripUnsafeUrlAttributes("<a href=javascript:alert(1)>link</a>",),).toBe("<a >link</a>",);
+  });
+
+  test("strips character-reference encoded javascript: values", () => {
+    expect(stripUnsafeUrlAttributes('<a href="&#106;avascript:alert(1)">link</a>',),).toBe("<a >link</a>",);
   });
 
   test("preserves normal href", () => {
-    expect('<a href="https://example.com">link</a>'.replace(JS_URL_ATTR, "",),).toBe(
+    expect(stripUnsafeUrlAttributes('<a href="https://example.com">link</a>',),).toBe(
       '<a href="https://example.com">link</a>',
     );
   });
@@ -140,12 +148,13 @@ describe("DANGEROUS_TAGS", () => {
 describe("full sanitizeHtml pipeline", () => {
   // Replicate the sanitizeHtml logic from stream-render.ts
   function sanitizeHtml(html: string,): string {
-    return stripScriptTags(html,)
-      .replaceAll(ON_EVENT_DOUBLE, "",)
-      .replaceAll(ON_EVENT_SINGLE, "",)
-      .replaceAll(ON_EVENT_UNQUOTED, "",)
-      .replaceAll(JS_URL_ATTR, "",)
-      .replaceAll(DANGEROUS_TAGS, "",);
+    return stripUnsafeUrlAttributes(
+      stripScriptTags(html,)
+        .replaceAll(ON_EVENT_DOUBLE, "",)
+        .replaceAll(ON_EVENT_SINGLE, "",)
+        .replaceAll(ON_EVENT_UNQUOTED, "",)
+        .replaceAll(DANGEROUS_TAGS, "",),
+    );
   }
 
   test("strips script tag", () => {
