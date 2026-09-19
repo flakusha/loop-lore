@@ -3,7 +3,7 @@
 
 # BUG: create-test-db-custom-dialect-can-bypass-setTestDatabase
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (already on dev, 2026-09-20)
 **Priority:** Medium
 **Effort:** Medium
 **Summary:** Migration/roundtrip tests create raw Database handles without setTestDatabase — getDatabase() resolves the real on-disk DB
@@ -56,17 +56,29 @@ silently operates on the real on-disk DB.
 Risk is amplified by `src/db/migrations/README.md`'s append-only policy:
 bugs in this path can corrupt the production DB before any review.
 
-## Acceptance Criteria
+## Resolution
 
-- [ ] Add `setTestDatabase(db)` to `createTestKysely()` in
+Already fixed in dev by `662ddfb14` (fix(db,test): lazy DB singleton + test-override hygiene). Verified 2026-09-20 against current dev (`609e5a45b`):
+
+- `src/db/migrations.test.ts:58-64` — `createTestKysely()` now calls `setTestDatabase(kysely)` so any `getDatabase()` resolution inside a migration callback hits the test DB.
+- `src/db/migration-roundtrip.test.ts:69-75` — `createFreshDb()` (the roundtrip helper's per-test factory) calls `setTestDatabase(db)`.
+- `tests/e2e/helpers/server.ts:194-201` — `createTestDb()` registers the override; `tests/e2e/helpers/browser-server.ts:88` does the same.
+- `src/db/migrations.test.ts:78-82`, `src/db/migration-roundtrip.test.ts:208-212` — `afterAll` blocks call `setTestDatabase(null)`.
+- `src/db/test-db-helpers.test.ts:23-46` — regression tests assert override set/clear sentinel path.
+- Cross-references: `BUG-settestdatabase-global-leak-on-test-throw` resolved in same commit (cleanup on throw).
+
+No code change required.
+
+
+- [x] Add `setTestDatabase(db)` to `createTestKysely()` in
       `src/db/migrations.test.ts` (around line 54) so the test DB is the
       active handle for any code path resolving via `getDatabase()`.
-- [ ] Same for `createTestDb()` in `src/db/migration-roundtrip.test.ts`
+- [x] Same for `createTestDb()` in `src/db/migration-roundtrip.test.ts`
       (around line 65).
-- [ ] Add a `beforeAll`/`afterAll` pair (or equivalent) that calls
+- [x] Add a `beforeAll`/`afterAll` pair (or equivalent) that calls
       `setTestDatabase(null)` to clear the override after each test, even
       if the test throws — preventing leak into sibling files when
       `--isolate` is not strict enough.
-- [ ] Confirm `bun run test:unit` passes with no regression, and that
+- [x] Confirm `bun run test:unit` passes with no regression, and that
       `loop-lore-data/loop-lore.db` is no longer written during test runs
       that don't intend to touch it.

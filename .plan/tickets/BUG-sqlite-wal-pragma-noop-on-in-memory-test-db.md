@@ -3,7 +3,7 @@
 
 # BUG: sqlite-wal-pragma-noop-on-in-memory-test-db
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (already on dev, 2026-09-20)
 **Priority:** Medium
 **Effort:** Medium
 **Summary:** PRAGMA journal_mode=WAL is a silent no-op on :memory: test DBs and redundant with createSqliteDialect
@@ -48,16 +48,26 @@ src/db/index.ts:30-36
 SQLite reference: WAL mode returns SQLITE_OK on `:memory:` but does not
 enable WAL; the journal_mode remains `MEMORY` for in-memory databases.
 
-## Acceptance Criteria
+## Resolution
 
-- [ ] Remove `sqlite.run("PRAGMA journal_mode = WAL",)` from
+Already fixed in dev by `662ddfb14` (fix(db,test): lazy DB singleton + test-override hygiene). Verified 2026-09-20 against current dev (`609e5a45b`):
+
+- `tests/e2e/helpers/server.ts:182-188` — `sqliteInMemory()` no longer runs `PRAGMA journal_mode = WAL`; comment explicitly notes `:memory:` cannot use WAL. FK enforcement + WAL on file-backed paths come from `createSqliteDialect`.
+- `src/db/test-db-helpers.test.ts:60-71` — regression test asserts `:memory:` has `journal_mode = memory`, not `wal`, to lock in the no-op assumption.
+- `src/db/test-db-helpers.test.ts:73-82` — second regression test asserts `createSqliteDialect` still enables FK on `:memory:`.
+- Cross-references: `BUG-sqlite-foreign-keys-pragma-set-twice-redundant` resolved in same commit (same file scope).
+
+No code change required.
+
+
+- [x] Remove `sqlite.run("PRAGMA journal_mode = WAL",)` from
       `tests/e2e/helpers/server.ts:184` — `:memory:` cannot use WAL, and
       `createSqliteDialect` already enforces it on the file-backed path.
-- [ ] Keep `PRAGMA foreign_keys = ON` (or rely solely on `createSqliteDialect`
+- [x] Keep `PRAGMA foreign_keys = ON` (or rely solely on `createSqliteDialect`
       to enforce it; confirm FK enforcement is verified by the in-memory test
       suite).
-- [ ] Add a regression test that asserts the in-memory DB has
+- [x] Add a regression test that asserts the in-memory DB has
       `journal_mode = memory`, not `wal`, to lock in the no-op assumption so
       future refactors don't silently enable a different journal mode on the
       test path.
-- [ ] `bun run check` passes.
+- [x] `bun run check` passes.
