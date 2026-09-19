@@ -11,7 +11,6 @@
  *
  * Top-level (not a `001_init` part): `001_init.ts` is frozen. New top-level
  * migrations are auto-discovered by `getMigrationFiles()` (sorted by name).
-// hint: Cosmetic change on both sides. Pick either version or combine formatting.
  * Numbered 015: dev ships 013_locations_fractal (schema version 34) and
  * 014_asset_thumbnail / 014_avatar_focus (schema version 33), so the
  * original 013 number would collide in prefix and version.
