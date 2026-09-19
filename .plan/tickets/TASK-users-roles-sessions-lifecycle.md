@@ -3,7 +3,7 @@
 
 # TASK: Users, Roles & Sessions Lifecycle
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (duplicate — remainder extracted, 2026-09-19)
 **Priority:** high
 **Effort:** Large
 **Summary:** Users, Roles & Sessions Lifecycle
@@ -15,6 +15,10 @@
 ## Summary
 
 Implement session lifecycle (create/refresh/revoke), role hierarchy (user/admin/owner), 2FA/TOTP mechanics, consent schema per docs/spec/users-sessions.md.
+
+## Resolution
+
+Core scope tracked by src/auth/ + epic-two-factor-auth.md + epic-shared-schemas.md. Unplanned remainder extracted 2026-09-19 → E9 session refresh/revoke lifecycle (epic-auth-access.md) (docs-gap reconcile audit).
 
 ## Acceptance Criteria
 

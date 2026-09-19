@@ -9,7 +9,7 @@
 **Summary:** Frontend tsconfig Strictness Alignment
 **Context:** Epic proposed:epic-frontend-strictness; tags frontend, tsconfig.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
-**Epic:** proposed:epic-frontend-strictness
+**Epic:** epic-tooling-improvement
 **Tags:** frontend, tsconfig
 
 ## Summary

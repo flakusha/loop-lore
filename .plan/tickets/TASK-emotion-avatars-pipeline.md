@@ -3,7 +3,7 @@
 
 # TASK: Emotion Avatars Pipeline
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (duplicate, verified 2026-09-19)
 **Priority:** medium
 **Effort:** Large
 **Summary:** Emotion Avatars Pipeline
@@ -15,6 +15,14 @@
 ## Summary
 
 Implement avatar regeneration control, VN layering alpha extraction, emotion->sprite binding pipeline per docs/spec/emotion-avatars.md.
+
+## Resolution
+
+Duplicate of existing plan artifact(s) — verified 2026-09-19 docs-gap reconcile audit (epic-docs-vs-plan-gap-audit-2026-09-19.md):
+
+- epic-emotion-avatar-message-binding.md (14 tasks, in progress)
+- epic-avatar-regeneration-control.md (covers this ticket's scope)
+- epic-avatar-alpha-vn-layering.md (covers this ticket's scope)
 
 ## Acceptance Criteria
 

@@ -125,3 +125,8 @@ Authorization and access control for the application. Covers user registration, 
 - `feFetch` (`src/frontend/fe-fetch.ts`) handles CSRF + session tokens + 401 redirect — use this as the auth foundation
 - Admin user management (`admin-users.ts`) already has role editing — extend for MFA management
 - This epic blocks multi-user deployment — no safe system without registration, MFA, and access checks
+
+## Docs-Gap Audit Remainders (2026-09-19)
+
+- [ ] [gap-audit E1] Composed access check: message-level audience visibility × authoring ownership hierarchy in one reusable check
+- [ ] [gap-audit E9] Session lifecycle: refresh + revoke flows

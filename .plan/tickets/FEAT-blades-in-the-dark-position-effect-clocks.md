@@ -3,7 +3,7 @@
 
 # FEAT: Blades in the Dark - Position/Effect + Clocks
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (duplicate — remainder extracted, 2026-09-19)
 **Priority:** medium
 **Effort:** Large
 **Summary:** Blades in the Dark - Position/Effect + Clocks
@@ -15,6 +15,10 @@
 ## Summary
 
 Implement FitD d6 pool with Position (controlled/risky/desperate) and Effect (great/standard/limited) resolution, plus progress clocks. Source: docs/spec/rpg-patterns.md + docs/meta/research/rpg-systems-comparison.md.
+
+## Resolution
+
+Core scope tracked by epic-resolution-system.md:19-29; TASK-resolution-system.md:31-33. Unplanned remainder extracted 2026-09-19 → E18 progress clocks detail (epic-resolution-system.md) (docs-gap reconcile audit).
 
 ## Acceptance Criteria
 

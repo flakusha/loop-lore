@@ -3,7 +3,7 @@
 
 # TASK: EventBus + ToolRegistry Core Wiring
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (already on dev, 2026-09-19)
 **Priority:** high
 **Effort:** Large
 **Summary:** EventBus + ToolRegistry Core Wiring
@@ -16,6 +16,13 @@
 
 Wire core EventBus + ToolRegistry so plugin extension points actually fire; src/plugins/events.ts + src/plugins/tools.ts.
 Source: docs/meta/code-practices-improvements/README.md + 08-plugins-hooks-integration.md.
+
+## Resolution
+
+Already implemented on dev — verified 2026-09-19 docs-gap reconcile audit (epic-docs-vs-plan-gap-audit-2026-09-19.md):
+
+- src/plugins/event-bus.ts
+- src/plugins/tool-executor.ts
 
 ## Acceptance Criteria
 

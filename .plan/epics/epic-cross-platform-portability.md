@@ -95,3 +95,7 @@ loop-lore is developed and CI-tested on Linux. This epic removes the Linux-only 
 - `epic-deno-support.md` — Deno/Node runtime abstraction + `deno compile` (T2.3)
 - `epic-precompiled-hot-binaries.md` — native Windows `.dll` / macOS `.dylib` modules (T2.4)
 - `epic-cicd-pipeline.md` — CI pipeline + Windows/macOS runners (T1.6)
+
+## Docs-Gap Audit Remainders (2026-09-19)
+
+- [ ] [gap-audit E5] Browser compatibility matrix (mobile browser targets)

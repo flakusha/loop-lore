@@ -7,6 +7,11 @@
 **Ticket:** `IDEA-memory-knowledge-isolation-and-world-timeline`  
 **Spec pointer:** `docs/spec/memory-system.md` → Future Extensions  
 **Epic:** `epic-memory-knowledge-systems.md`
+**Priority:** Low
+**Effort:** Large
+**Type:** Design
+**Tags:** memory, isolation, timeline
+**Overview:** Isolation domains (character-private / party-shared / world-public / GM-only) + schema sketch + timeline consistency for cross-session memory visibility — design stage, no code; tracked via IDEA-memory-knowledge-isolation-and-world-timeline.
 
 ## Problem
 

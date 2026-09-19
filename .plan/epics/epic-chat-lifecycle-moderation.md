@@ -403,3 +403,7 @@ const MODE_INSTRUCTIONS: Record<ChatMode, string> = {
 - **B6:** `Messages` lacks first-class reaction/grading fields; assets via separate `asset_links`. Swipe hierarchy present. See TASK-test-chat-module, FEAT-message-swipe-replay-branch.
 
 _Source: chat functionality audit (loop-lore), 2026-08-25._
+
+## Docs-Gap Audit Remainders (2026-09-19)
+
+- [ ] [gap-audit E12] /api/moderation/report endpoint, configurable auto-mod rules, mod dashboard tab

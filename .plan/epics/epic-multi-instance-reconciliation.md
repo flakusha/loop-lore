@@ -230,3 +230,7 @@ process.on("SIGTERM", async () => {
 ## Linked Tasks
 
 - TASK-multi-instance-reconciliation.md
+
+## Docs-Gap Audit Remainders (2026-09-19)
+
+- [ ] [gap-audit E26] Personal cross-device sync (phone↔desktop) itemization on top of reconciliation + E2EE ratchet

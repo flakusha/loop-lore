@@ -3,7 +3,7 @@
 
 # FEAT: Worlds Frontend (list/detail, timeline, location travel UI)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (already on dev, 2026-09-19)
 **Priority:** medium
 **Effort:** Large
 **Summary:** Worlds Frontend (list/detail, timeline, location travel UI)
@@ -15,6 +15,14 @@
 ## Summary
 
 --label
+
+## Resolution
+
+Already implemented on dev — verified 2026-09-19 docs-gap reconcile audit (epic-docs-vs-plan-gap-audit-2026-09-19.md):
+
+- src/routes/views/worlds.ts
+- src/routes/worlds/ + fractal-travel-routes.ts
+- src/routes/location-explorer.ts
 
 ## Acceptance Criteria
 

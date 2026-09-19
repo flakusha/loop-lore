@@ -3,7 +3,7 @@
 
 # TASK: EXIF Extraction + Image Hashing
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (duplicate — remainder extracted, 2026-09-19)
 **Priority:** low
 **Effort:** Medium
 **Summary:** EXIF Extraction + Image Hashing
@@ -16,6 +16,10 @@
 
 Implement EXIF metadata extraction + deduplication hashes.
 Source: docs/meta/reviews/review-topics.md §11.
+
+## Resolution
+
+Core scope already tracked/implemented (see artifacts); no unplanned remainder worth tracking — closed without extraction (docs-gap reconcile audit, 2026-09-19).
 
 ## Acceptance Criteria
 

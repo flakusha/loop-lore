@@ -468,3 +468,7 @@ The following memory-related tasks have been migrated to Epic 36 as they are cor
 - TASK-plugin-marketplace.md — community sharing & discovery
 
 **Plugin System Focus:** Plugin infrastructure (hooks, overrides, security, lifecycle) remains in Epic 37. Memory injection via plugins should reference Epic 36 for the core pipeline.
+
+## Docs-Gap Audit Remainders (2026-09-19)
+
+- [ ] [gap-audit E6] Elysia startup-time plugin route registration (replace O(n) dispatchPluginRoute scan, src/plugins/loader.ts:195)

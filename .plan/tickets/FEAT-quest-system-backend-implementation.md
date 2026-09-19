@@ -3,7 +3,7 @@
 
 # FEAT: Quest System Backend Implementation
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (already on dev, 2026-09-19)
 **Priority:** high
 **Effort:** XL
 **Summary:** Quest System Backend Implementation
@@ -16,6 +16,13 @@
 
 Implement src/quests/ service + routes + prompt injection; epic-quests-encounters exists but unstarted.
 Source: docs/meta/reviews/review-topics.md §12.
+
+## Resolution
+
+Already implemented on dev — verified 2026-09-19 docs-gap reconcile audit (epic-docs-vs-plan-gap-audit-2026-09-19.md):
+
+- src/routes/quests/ (handlers, progress, quest, world + tests)
+- src/chat/service/carry-state.ts:7
 
 ## Acceptance Criteria
 

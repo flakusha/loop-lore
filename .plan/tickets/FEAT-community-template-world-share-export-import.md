@@ -3,7 +3,7 @@
 
 # FEAT: Community Template/World/Share Export-Import
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (duplicate, verified 2026-09-19)
 **Priority:** medium
 **Effort:** Large
 **Summary:** Community Template/World/Share Export-Import
@@ -15,6 +15,13 @@
 ## Summary
 
 --label
+
+## Resolution
+
+Duplicate of existing plan artifact(s) — verified 2026-09-19 docs-gap reconcile audit (epic-docs-vs-plan-gap-audit-2026-09-19.md):
+
+- epic-authoring-creation.md (ideas #18)
+- epic-import-export-io.md (covers this ticket's scope)
 
 ## Acceptance Criteria
 

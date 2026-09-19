@@ -9,7 +9,7 @@
 **Summary:** Automated Balance Playtest Bot
 **Context:** Epic proposed:epic-balance-bot; tags testing, balance.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
-**Epic:** proposed:epic-balance-bot
+**Epic:** epic-platform-research
 **Tags:** testing, balance
 
 ## Summary

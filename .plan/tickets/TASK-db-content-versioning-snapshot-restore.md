@@ -3,7 +3,7 @@
 
 # TASK: DB Content Versioning & Snapshot/Restore
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (duplicate, verified 2026-09-19)
 **Priority:** medium
 **Effort:** Large
 **Summary:** DB Content Versioning & Snapshot/Restore
@@ -15,6 +15,13 @@
 ## Summary
 
 Implement schema drift detection, version reconciliation report, DB content versioning snapshot/restore per docs/spec/db-versioning.md.
+
+## Resolution
+
+Duplicate of existing plan artifact(s) — verified 2026-09-19 docs-gap reconcile audit (epic-docs-vs-plan-gap-audit-2026-09-19.md):
+
+- epic-db-content-versioning.md (5 tasks)
+- src/db/content-version.test.ts (covers this ticket's scope)
 
 ## Acceptance Criteria
 

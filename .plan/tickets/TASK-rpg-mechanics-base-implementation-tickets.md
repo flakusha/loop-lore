@@ -3,7 +3,7 @@
 
 # TASK: RPG Mechanics Base Implementation Tickets
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (already on dev, 2026-09-19)
 **Priority:** high
 **Effort:** XL
 **Summary:** RPG Mechanics Base Implementation Tickets
@@ -15,6 +15,12 @@
 ## Summary
 
 --label
+
+## Resolution
+
+Already implemented on dev — verified 2026-09-19 docs-gap reconcile audit (epic-docs-vs-plan-gap-audit-2026-09-19.md):
+
+- src/rpg/{stats,combat,xp,loot}; wired 2026-08-14 (epic-rpg-mechanics.md Phase 1 [x])
 
 ## Acceptance Criteria
 

@@ -3,7 +3,7 @@
 
 # FEAT: Multimodal Input (image/voice -> character reacts)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (duplicate — remainder extracted, 2026-09-19)
 **Priority:** medium
 **Effort:** Large
 **Summary:** Multimodal Input (image/voice -> character reacts)
@@ -15,6 +15,10 @@
 ## Summary
 
 --label
+
+## Resolution
+
+Core scope tracked by src/admin/model-capabilities.ts:82; TASK-voice-notes-playback.md. Unplanned remainder extracted 2026-09-19 → E27 image/voice→character-reacts input flow (epic-platform-research.md) (docs-gap reconcile audit).
 
 ## Acceptance Criteria
 

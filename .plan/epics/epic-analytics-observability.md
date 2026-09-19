@@ -48,3 +48,9 @@ Routes are **mounted and tested** — the "unwired" assessment is stale:
 - Route test: `src/routes/analytics.test.ts`
 
 Open work is feature-level (dashboard UI, memory visualizer), not route wiring.
+
+## Docs-Gap Audit Remainders (2026-09-19)
+
+- [ ] [gap-audit E10] Admin analytics: latency p50/p95/p99 trends, SSE live push, Chart.js widgets
+- [ ] [gap-audit E11] Error monitoring: alert rules CRUD, webhook notifications, error grouping
+- [ ] [gap-audit E13] Engagement: activity streaks, DAU/MAU, achievements dashboard

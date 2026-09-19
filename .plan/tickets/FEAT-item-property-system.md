@@ -3,7 +3,7 @@
 
 # FEAT: Item Property System
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (duplicate, verified 2026-09-19)
 **Priority:** low
 **Effort:** Medium
 **Summary:** Item Property System
@@ -16,6 +16,15 @@
 
 Implement damage, defense, value, weight, effects schema.
 Source: docs/meta/reviews/review-topics.md §12.
+
+## Resolution
+
+Duplicate of existing plan artifact(s) — verified 2026-09-19 docs-gap reconcile audit (epic-docs-vs-plan-gap-audit-2026-09-19.md):
+
+- epic-item-systems-unification.md (covers this ticket's scope)
+- epic-item-system-extensions.md (covers this ticket's scope)
+- epic-items-economy-crafting.md (covers this ticket's scope)
+- src/routes/story-items/ (covers this ticket's scope)
 
 ## Acceptance Criteria
 

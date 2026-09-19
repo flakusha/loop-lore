@@ -3,7 +3,7 @@
 
 # Epic: Docs-vs-Plan Gap Audit (2026-09-19)
 
-**Status:** Audit complete; 76 gap tickets created. Worktree: `docs-vs-plan-gap-tickets`.
+**Status:** Audit complete; 108 gap tickets created (commits `7fb991879` + `0fb5c899d` on dev). Verified + reconciled 2026-09-19 — see ## Verified Results.
 
 **Type:** Audit
 
@@ -11,19 +11,19 @@
 
 **Priority:** P2
 
-**Overview:** Cross-cutting audit of design docs against planning artifacts; enumerated 76 implementation gaps and created one ticket per gap.
+**Overview:** Cross-cutting audit of design docs against planning artifacts; enumerated 108 implementation-gap candidates and created one ticket per gap.
 
 **Effort:** XL (audit + ticket creation)
 
-**Summary:** Cross-cutting audit of `docs/spec/`, `docs/research/`, `docs/ideas/`, `docs/frontend/`, and `docs/meta/` against `.plan/epics/` and `.plan/tickets/`. Identifies 76 high-level concepts that have been specced or referenced but never decomposed into implementation tickets.
+**Summary:** Cross-cutting audit of `docs/spec/`, `docs/research/`, `docs/ideas/`, `docs/frontend/`, and `docs/meta/` against `.plan/epics/` and `.plan/tickets/`. Identified 108 gap candidates believed specced but never decomposed into tickets; strict verification (2026-09-19 reconcile) found 11 genuinely unplanned — see ## Verified Results.
 
 **Context:** Spawned 2026-09-19 to enumerate gaps between design docs and planning artifacts. Each gap was converted into one `giwt ticket` with source-doc citation in the body and `--epic` pointing to the closest existing epic or `proposed:epic-X` for net-new epics.
 
 **Acceptance Criteria:**
 - [x] 4 parallel scout subagents complete (spec/research+ideas/frontend/meta)
-- [x] 76 new tickets created in `docs-vs-plan-gap-tickets` worktree (42 FEAT + 34 TASK)
+- [x] 108 new tickets created (65 FEAT + 43 TASK; commits `7fb991879` + `0fb5c899d` — original epic text undercounted at 76 and named a worktree that was never finalized)
 - [x] `index.json` regenerated via `bun run plan:sync:fix`
-- [ ] Tickets reviewed and prioritized in next worktree pass
+- [x] Tickets verified + reconciled in `docs-gap-reconcile` worktree (2026-09-19)
 
 ---
 
@@ -143,11 +143,30 @@ Consolidation: ideas epics → new `epic-platform-research.md`. Agentic epics �
 
 ## Open Follow-ups
 
-- [ ] Triangulate tickets against each proposed epic; promote or merge
-- [ ] Prioritize the 12 P0/P1 admin+agentic tickets for first worktree pickup
-- [ ] Confirm 28 idea-stage concepts are wanted (YAGNI check per `epic-emergent-narrative-design`)
+- [x] Triangulate tickets against each proposed epic; promote or merge — done 2026-09-19 reconcile: the 11 genuine tickets' `**Epic:**` refs re-pointed at real epics (closed tickets retain historical `proposed:epic-*` metadata, informational only); `epic-platform-research.md` already existed
+- [x] Prioritize the 12 P0/P1 admin+agentic tickets — superseded: those tickets closed as duplicate/partial; remainders live as gap-audit bullets in epic-analytics-observability / epic-actor-autonomy-story-drive
+- [x] Confirm 28 idea-stage concepts are wanted (YAGNI) — resolved by verification: 17 already tracked in real epics, 4 shipped, 4 partial (remainder bullets), 3 genuine kept open
 - [ ] Update `docs/spec/` to mark gap-ticket cross-references
-- [ ] Run `bun run plan:validate` to surface new debt
+- [x] Run `bun run plan:validate` — green after reconcile (2026-09-19)
+
+---
+
+## Verified Results (2026-09-19 Reconcile)
+
+Strict re-verification of all 108 tickets against `.plan/` artifacts (semantic search, ≥3 phrasings per concept) and `src/` implementation state. Four parallel scouts + main-session spot-checks; table-derived counts (scout self-summaries mis-tallied and were discarded).
+
+| Verdict | Count | Disposition |
+|---|---|---|
+| GENUINE (never scoped) | 11 | kept open; `proposed:epic-*` refs re-pointed at real epics |
+| DUPLICATE (existing artifact covers scope) | 42 | closed `✅ Done (duplicate)` + Resolution block citing artifacts |
+| IMPLEMENTED (already shipped in src/) | 24 | closed `✅ Resolved (already on dev)` + Resolution block citing src evidence |
+| PARTIAL (core tracked, remainder unplanned) | 31 | closed `✅ Done (duplicate — remainder extracted)`; 28 remainders extracted (25 as `[gap-audit E#]` bullets into 19 owning epics, 3 as new slim tickets: TASK-workflow-dag-engine-task-dependencies, TASK-human-in-the-loop-tool-approval-gates, TASK-profanity-filter-hot-reload-per-chat-sensitivity); 3 closed without extraction (auth-middleware, exif — covered; rbac-sso — tenant isolation out of scope) |
+
+Genuine never-scoped (11): TASK-character-migration-route, TASK-asset-attribution-chain, TASK-add-eslint-plugin-import-no-cycle-order, TASK-frontend-tsconfig-strictness-alignment, TASK-test-db-dialect-parameterization-postgres-matrix, FEAT-fate-skill-pyramid, FEAT-fate-stress-tracks-consequences, FEAT-forge-engine-energy-pool-sage-action-economy, FEAT-automated-balance-playtest-bot, FEAT-public-story-feed-moderation, FEAT-synthetic-fine-tune-data-export.
+
+Sweep of previously-unaudited dirs (guide/, audit/, architecture/, reference/, i18n/, index/README, giwt-scripts-map) found 3 additional never-scoped items, ticketed in this reconcile: chat auto-title (guide/first-chat), world-vs-location scene-asset precedence (guide/gallery), giwt-migration open items (giwt-scripts-map).
+
+Root causes of the false positives: literal filename-slug matching (missed semantically-named epics like `epic-agency-story-points` ≈ FATE aspects, `epic-mechanics-governance` ≈ MARS modules); trusting stub epic names over `epics-index.md` status columns; never checking `src/` for shipped subsystems.
 
 ---
 
