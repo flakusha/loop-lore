@@ -38,6 +38,7 @@ export type { ChatPinRow, ChatPinsState, } from "./pins-state";
 export type { ChatPromptTemplateState, } from "./prompt-template-state";
 export type { EquipmentSlot, RpgStatBlock, RpgStats, StatusEffect, } from "./rpg";
 export type { ChatRpgState, } from "./rpg-state";
+export type { ChatRpgQuestionsState, RpgQuestionOptionView, RpgQuestionView, } from "./rpg-state";
 export type { ChatSideChannelsState, SideChannel, } from "./side-channels-state";
 export type { ChatWizardState, } from "./wizard-state";
 export type { WorldChannelChat, } from "./world";

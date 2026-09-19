@@ -3734,6 +3734,35 @@ export async function insertE2eSkippedMessageKeys(
   } as any,).execute();
 }
 
+/** Insert a rpg_questions row. */
+export async function insertRpgQuestions(
+  db: Db,
+  chat_id: string,
+  actor_id: string,
+  type: string,
+  prompt: string,
+  options: string,
+  opts?: {
+    id?: string;
+    time_limit?: number | null;
+    required_choice?: number;
+    status?: string;
+    selected_option_id?: string | null;
+    created_at?: string;
+    answered_at?: string | null;
+  },
+): Promise<void> {
+  await db.insertInto("rpg_questions",).values({
+    id: crypto.randomUUID(),
+    chat_id,
+    actor_id,
+    type,
+    prompt,
+    options,
+    ...opts,
+  } as any,).execute();
+}
+
 /** Insert a message_search_tokens row. */
 export async function insertMessageSearchTokens(
   db: Db,

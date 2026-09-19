@@ -9,6 +9,7 @@
  */
 
 export * from "./items.js";
+export * from "./questions.js";
 export * from "./quests.js";
 export * from "./rpg.js";
 export * from "./synthetic.js";
