@@ -11,6 +11,7 @@
  * privacy/provision filtering but before injection filtering.
  */
 import { getLogger, } from "../../../logger";
+import { recordAuditLog, } from "../../../memory/audit";
 import { selectWithinBudget, } from "../../../memory/budget";
 import { semanticRecall, } from "../../../memory/embeddings";
 import {
@@ -154,6 +155,34 @@ export const memorySection: SectionBuilder = {
     const memoryText = injectionResult.selected
       .map((m,) => `- [${m.memoryType}] ${m.content}`)
       .join("\n",);
+
+    // FEAT-075: emit one `inject` audit row per prompt assembly, carrying
+    // the full set of included memory IDs. This centralizes injection
+    // tracking at the single point that decides what was actually injected.
+    const auditByActor = new Map<string, string[]>();
+    const selectedWithActor = injectionResult.selected.filter((m,) => typeof m.actorId === "string",);
+    for (const mem of selectedWithActor) {
+      const list = auditByActor.get(mem.actorId as string,) ?? [];
+      list.push(mem.id,);
+      auditByActor.set(mem.actorId as string, list,);
+    }
+    const auditEntries: Array<{ memoryId: string; actorId: string; userId: string | null; action: "inject"; details: Record<string, unknown> }> = [];
+    for (const [actorId, memoryIds] of auditByActor.entries()) {
+      auditEntries.push({
+        memoryId: memoryIds[0] ?? actorId,
+        actorId,
+        userId: ctx.params.userId ?? null,
+        action: "inject",
+        details: {
+          chatId: ctx.chat.id,
+          memoryIds,
+          actorCount: auditByActor.size,
+        },
+      },);
+    }
+    if (auditEntries.length > 0) {
+      await recordAuditLog(ctx.db, auditEntries,);
+    }
 
     return [{ role: "system", content: wrapSection("memory_context", memoryText,), },];
   },

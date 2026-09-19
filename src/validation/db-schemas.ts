@@ -259,15 +259,6 @@ export const LicenseTypeSchema = t.UnionEnum([
   "proprietary",
   "custom",
 ],);
-export const LocationKindSchema = t.UnionEnum([
-  "region",
-  "settlement",
-  "building",
-  "room",
-  "transit",
-  "transport",
-  "pocket",
-],);
 export const LogLevelSchema = t.UnionEnum(["trace", "debug", "info", "warn", "error", "fatal",],);
 export const LoreEntryStatusSchema = t.UnionEnum(["enabled", "disabled", "archived",],);
 export const LorePositionSchema = t.UnionEnum(["before_char", "after_char", "in_char",],);
@@ -301,7 +292,6 @@ export const MessageVisibilitySchema = t.UnionEnum([
   "auto_hidden",
   "redacted",
 ],);
-export const MobilityModeSchema = t.UnionEnum(["static", "free", "anchored",],);
 export const ModelRoleSchema = t.UnionEnum([
   "main",
   "auxiliary",
@@ -442,8 +432,6 @@ export const RelationshipTypeSchema = t.UnionEnum([
   "neutral",
 ],);
 export const ResponseCompressionSchema = t.UnionEnum(["br", "gzip", "auto",],);
-export const RpgQuestionStatusSchema = t.UnionEnum(["open", "answered", "expired",],);
-export const RpgQuestionTypeSchema = t.UnionEnum(["dialogue", "action", "exploration", "combat", "custom",],);
 export const SdModelTypeSchema = t.UnionEnum(["checkpoint", "diffusion",],);
 export const SeductionSkillCategorySchema = t.UnionEnum([
   "foreplay",
@@ -511,7 +499,6 @@ export const TransportErrorCodeSchema = t.UnionEnum([
   "BACKPRESSURE_TIMEOUT",
   "MAX_FRAME_EXCEEDED",
 ],);
-export const TransportKindSchema = t.UnionEnum(["sea", "road", "air", "custom",],);
 export const TransportProtocolSchema = t.UnionEnum([
   "http/1.1",
   "http/2",
@@ -806,7 +793,6 @@ export const AssetsSchema = t.Object({
   content_hash: t.Optional(t.String(),),
   data_version: t.Optional(t.Number(),),
   record_hash: t.Optional(t.String(),),
-  thumbnail_path: t.Optional(t.String(),),
 },);
 
 // ── asset_transforms ────────────────────────────────────────────
@@ -858,14 +844,6 @@ export const LocationsSchema = t.Object({
   parent_location_id: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
-  kind: t.Optional(LocationKindSchema,),
-  mobility_mode: t.Optional(MobilityModeSchema,),
-  path: t.Optional(t.String(),),
-  coord_x: t.Optional(t.Number(),),
-  coord_y: t.Optional(t.Number(),),
-  coord_z: t.Optional(t.Number(),),
-  current_route_id: t.Optional(t.String(),),
-  travel_progress: t.Optional(t.Number(),),
 },);
 
 // ── world_avatar_config ────────────────────────────────────────────
@@ -1149,8 +1127,6 @@ export const ActorsSchema = t.Object({
   agent_role: t.Optional(t.String(),),
   growth_mode: t.Optional(t.String(),),
   llm_assist_enabled: t.Optional(t.Number(),),
-  avatar_focus_x: t.Optional(t.Number(),),
-  avatar_focus_y: t.Optional(t.Number(),),
 },);
 
 // ── admin_character_overrides ────────────────────────────────────────────
@@ -2350,16 +2326,13 @@ export const BlogTagsSchema = t.Object({
   tag: t.String(),
 },);
 
-// ── character_license_history ────────────────────────────────────────────
-export const CharacterLicenseHistorySchema = t.Object({
+// ── memory_audit_log ────────────────────────────────────────────
+export const MemoryAuditLogSchema = t.Object({
+  memory_id: t.String(),
   actor_id: t.String(),
-  license_type: t.String(),
-  allow_derivatives: t.Number(),
-  allow_commercial: t.Number(),
-  share_alike: t.Number(),
-  changed_by: t.String(),
-  custom_license_text: t.Optional(t.String(),),
-  attribution: t.Optional(t.String(),),
+  action: t.String(),
+  user_id: t.Optional(t.String(),),
+  details: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
 },);
 
@@ -2480,36 +2453,6 @@ export const PromptTemplatesSchema = t.Object({
   payload: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
-},);
-
-// ── travel_routes ────────────────────────────────────────────
-export const TravelRoutesSchema = t.Object({
-  world_id: t.String(),
-  name: t.String(),
-  kind: TransportKindSchema,
-  waypoints: t.Optional(t.String(),),
-  loop: t.Optional(t.Number(),),
-  seconds_per_unit: t.Optional(t.Number(),),
-  created_at: t.Optional(t.String(),),
-},);
-
-// ── travel_route_stops ────────────────────────────────────────────
-export const TravelRouteStopsSchema = t.Object({
-  route_id: t.String(),
-  location_id: t.String(),
-  stop_order: t.Number(),
-  dwell_seconds: t.Optional(t.Number(),),
-  coord_x: t.Optional(t.Number(),),
-  coord_y: t.Optional(t.Number(),),
-  coord_z: t.Optional(t.Number(),),
-},);
-
-// ── actor_locations ────────────────────────────────────────────
-export const ActorLocationsSchema = t.Object({
-  physical_location_id: t.String(),
-  spatial_location_id: t.String(),
-  actor_id: t.Optional(t.String(),),
-  entered_at: t.Optional(t.String(),),
 },);
 
 // ── content_flags ────────────────────────────────────────────
@@ -2662,21 +2605,6 @@ export const MessageSearchTokensSchema = t.Object({
   message_id: t.String(),
   token: t.String(),
   scope: t.String(),
-},);
-
-// ── rpg_questions ────────────────────────────────────────────
-export const RpgQuestionsSchema = t.Object({
-  chat_id: t.String(),
-  actor_id: t.String(),
-  type: t.String(),
-  prompt: t.String(),
-  options: t.String(),
-  time_limit: t.Optional(t.Number(),),
-  required_choice: t.Optional(t.Number(),),
-  status: t.Optional(t.String(),),
-  selected_option_id: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-  answered_at: t.Optional(t.String(),),
 },);
 
 // ── schema_version ────────────────────────────────────────────
