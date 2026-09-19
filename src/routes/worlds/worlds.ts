@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { type ExpressionBuilder, type Kysely, } from "kysely";
+import { assertNoCrossBoundaryWrite, } from "../../characters/world-boundary";
 import {
   DifficultyReroll,
   DifficultyState,
@@ -152,6 +153,14 @@ export async function handleUpdateWorld(
 ) {
   const worldErr = await requireWorldOwner(database, worldId, userId, userRole,);
   if (worldErr) { return worldErr; }
+
+  // TASK-031: character/world boundary. A body carrying character-owned
+  // fields is misdirected (the handler would silently drop them) - reject
+  // it and point the client at the character API instead.
+  const boundary = assertNoCrossBoundaryWrite("world", Object.keys(body,),);
+  if (!boundary.ok) {
+    return jsonError({ message: boundary.error.message, status: HttpStatus.UnprocessableEntity, },);
+  }
 
   const updates: Record<string, unknown> = {};
   if (body.name != null) { updates.name = body.name; }
