@@ -217,8 +217,8 @@ export class LocationNsfwService {
       .where("world_id", "=", worldId,)
       .select("id",)
       .execute();
-    const configs = await this.getConfigs(rows.map((row,) => row.id,),);
-    const byId = new Map(configs.map((config,) => [config.locationId, config,],),);
+    const configs = await this.getConfigs(rows.map((row,) => row.id),);
+    const byId = new Map(configs.map((config,) => [config.locationId, config,]),);
     const available: LocationNsfwConfig[] = [];
     for (const row of rows) {
       const config = byId.get(row.id,) ?? await this.getConfig(row.id,);

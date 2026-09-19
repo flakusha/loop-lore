@@ -495,7 +495,13 @@ describe("IntimacyService", () => {
     const service = new IntimacyService(db,);
 
     // Mood row must exist for logEvent's delta application.
-    await insertCharacterMood(db, "actor-2", "2026-01-01T00:00:00.000Z", "2026-01-01T00:00:00.000Z", "2026-01-01T00:00:00.000Z",);
+    await insertCharacterMood(
+      db,
+      "actor-2",
+      "2026-01-01T00:00:00.000Z",
+      "2026-01-01T00:00:00.000Z",
+      "2026-01-01T00:00:00.000Z",
+    );
 
     const result = await service.applyAction({
       database: db,
@@ -519,7 +525,13 @@ describe("IntimacyService", () => {
     const db = await seedTestDb();
     const service = new IntimacyService(db,);
 
-    await insertCharacterMood(db, "actor-2", "2026-01-01T00:00:00.000Z", "2026-01-01T00:00:00.000Z", "2026-01-01T00:00:00.000Z",);
+    await insertCharacterMood(
+      db,
+      "actor-2",
+      "2026-01-01T00:00:00.000Z",
+      "2026-01-01T00:00:00.000Z",
+      "2026-01-01T00:00:00.000Z",
+    );
 
     // delta 5 stays below the acquaintances threshold (10) — no crossing.
     const result = await service.applyAction({

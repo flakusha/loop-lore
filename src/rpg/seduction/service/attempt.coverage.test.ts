@@ -11,6 +11,7 @@
  */
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
+import { FantasyCategory, } from "../../../db/enums-character/nsfw.js";
 import type { DB, } from "../../../db/schema.js";
 import { createTestDb, } from "../../../test-utils/create-test-db.js";
 import {
@@ -21,10 +22,9 @@ import {
   insertCharacterMood,
   insertCharacterSeductionSkills,
 } from "../../../test-utils/insert-helpers.js";
-import { FantasyCategory, } from "../../../db/enums-character/nsfw.js";
-import type { SeductionResult, } from "./types.js";
 import { uid, } from "../../../utils.js";
 import { attemptSeduction, } from "./attempt.js";
+import type { SeductionResult, } from "./types.js";
 
 let db: Kysely<DB>;
 
@@ -487,7 +487,7 @@ describe("attemptSeduction", () => {
     const total = ledger.reduce((sum, row,) => sum + row.amount, 0,);
     expect(total,).toBeGreaterThanOrEqual(result.xpGained,);
     expect(
-      ledger.some((row,) => row.amount === result.xpGained && (row.description ?? "").startsWith("Seduction success",),),
+      ledger.some((row,) => row.amount === result.xpGained && (row.description ?? "").startsWith("Seduction success",)),
     ).toBe(true,);
 
     // Mood follow-through (TASK-041): one seduction.success event on target.
@@ -498,7 +498,7 @@ describe("attemptSeduction", () => {
       .selectAll()
       .execute();
     expect(
-      events.some((row,) => row.event_type === "seduction.success" && row.source === "seduction",),
+      events.some((row,) => row.event_type === "seduction.success" && row.source === "seduction"),
     ).toBe(true,);
   });
 

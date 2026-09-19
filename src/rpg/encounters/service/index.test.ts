@@ -11,8 +11,8 @@ import {
   insertUsers,
   insertWorlds,
 } from "../../../test-utils/insert-helpers";
-import { LocationNsfwService, } from "../../location-nsfw/service.js";
 import { uid, } from "../../../utils.js";
+import { LocationNsfwService, } from "../../location-nsfw/service.js";
 import { EncounterService, } from "./index";
 
 createLogger({ level: "error", },);
@@ -335,7 +335,7 @@ describe("outcome fan-out (TASK-036/040/041/042/043)", () => {
         .where("actor_id", "=", actor,)
         .selectAll()
         .execute();
-      expect(events.some((row,) => row.event_type === "encounter.completed" && row.source === "encounter",),).toBeTrue();
+      expect(events.some((row,) => row.event_type === "encounter.completed" && row.source === "encounter"),).toBeTrue();
     }
 
     // XP leg: one nsfw_encounter row per participant.
@@ -374,8 +374,8 @@ describe("outcome fan-out (TASK-036/040/041/042/043)", () => {
       .where("actor_id", "=", a,)
       .where("target_actor_id", "=", b,)
       .selectAll()
-      .executeTakeFirst()
-      ?? await db.selectFrom("character_intimacy",)
+      .executeTakeFirst() ??
+      await db.selectFrom("character_intimacy",)
         .where("actor_id", "=", b,)
         .where("target_actor_id", "=", a,)
         .selectAll()
@@ -420,8 +420,8 @@ describe("outcome fan-out (TASK-036/040/041/042/043)", () => {
       .where("actor_id", "=", a,)
       .where("target_actor_id", "=", b,)
       .selectAll()
-      .executeTakeFirst()
-      ?? await db.selectFrom("character_intimacy",)
+      .executeTakeFirst() ??
+      await db.selectFrom("character_intimacy",)
         .where("actor_id", "=", b,)
         .where("target_actor_id", "=", a,)
         .selectAll()

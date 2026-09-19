@@ -49,21 +49,30 @@ describe("shared status-effect store", () => {
     const { db, } = await createTestDb();
     await insertActors(db, "Hero", { id: "actor-hero", },);
     await applyStatusEffect(db, {
-      actorId: "actor-hero", effectId: "trauma_minor", category: "trauma", source: "test",
+      actorId: "actor-hero",
+      effectId: "trauma_minor",
+      category: "trauma",
+      source: "test",
     },);
     await applyStatusEffect(db, {
-      actorId: "actor-hero", effectId: "exhaustion", category: "physical", source: "test",
+      actorId: "actor-hero",
+      effectId: "exhaustion",
+      category: "physical",
+      source: "test",
     },);
     expect((await getActiveEffects(db, "actor-hero", { category: "trauma", },)).length,).toBe(1,);
     expect((await getActiveEffects(db, "actor-hero", { effectId: "exhaustion", },)).length,).toBe(1,);
-    expect((await getActiveEffects(db, "actor-hero", { category: "missing", },)),).toEqual([],);
+    expect(await getActiveEffects(db, "actor-hero", { category: "missing", },),).toEqual([],);
   });
 
   test("sweep never touches expiry-free rows", async () => {
     const { db, } = await createTestDb();
     await insertActors(db, "Hero", { id: "actor-hero", },);
     await applyStatusEffect(db, {
-      actorId: "actor-hero", effectId: "nsfw_reputation", category: "reputation", source: "test",
+      actorId: "actor-hero",
+      effectId: "nsfw_reputation",
+      category: "reputation",
+      source: "test",
     },);
     expect(await sweepExpiredEffects(db,),).toBe(0,);
     expect((await getActiveEffects(db, "actor-hero",)).length,).toBe(1,);

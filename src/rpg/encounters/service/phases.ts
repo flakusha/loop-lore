@@ -2,14 +2,14 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { Kysely, } from "kysely";
+import { MoodService, } from "../../../characters/services/mood-service";
 import type { DB, } from "../../../db/schema";
 import { getLogger, } from "../../../logger";
+import { calculateEncounterReputationChange, } from "../../../nsfw/social-integration";
+import { jsonParseOr, jsonStringifyOr, } from "../../../utils";
 import { IntimacyService, } from "../../intimacy/service";
 import { LocationNsfwService, } from "../../location-nsfw/service";
-import { MoodService, } from "../../../characters/services/mood-service";
-import { calculateEncounterReputationChange, } from "../../../nsfw/social-integration";
 import { logXp, } from "../../service/xp";
-import { jsonStringifyOr, } from "../../../utils";
 import { getEncounter, } from "./crud";
 import type { AdvancePhaseResult, EncounterOutcome, NsfwEncounter, } from "./types";
 
@@ -57,7 +57,8 @@ async function applyOutcomes(
         outcome.effects.intimacyChange > 0 ? "+" : ""
       }${outcome.effects.intimacyChange})`,
     );
-    const intimacyDelta = outcome.effects.intimacyChange + await resolveAtmosphereBonus(db, locations, log, encounter.id,);
+    const intimacyDelta = outcome.effects.intimacyChange +
+      await resolveAtmosphereBonus(db, locations, log, encounter.id,);
     for (const participant of encounter.participants) {
       await applyParticipantLegs(db, { intimacy, mood, log, encounter, outcome, intimacyDelta, participant, },);
     }
@@ -86,12 +87,8 @@ async function findEncounterLocation(
     .select("meta",)
     .executeTakeFirst();
   if (!row?.meta) { return null; }
-  try {
-    const parsed = JSON.parse(row.meta,) as { location_id?: unknown };
-    return typeof parsed.location_id === "string" ? parsed.location_id : null;
-  } catch {
-    return null;
-  }
+  const parsed = jsonParseOr<{ location_id?: unknown }>(row.meta, {},);
+  return typeof parsed.location_id === "string" ? parsed.location_id : null;
 }
 
 /** Logger + service handles threaded into the per-leg helpers. */
@@ -129,7 +126,9 @@ async function resolveAtmosphereBonus(
     if (atmosphere.dangerous >= 70) { return -2; }
     return 0;
   } catch (cause) {
-    log.warn(`Atmosphere consult skipped for ${encounterId}:`, { error: cause instanceof Error ? cause.message : String(cause), },);
+    log.warn(`Atmosphere consult skipped for ${encounterId}:`, {
+      error: cause instanceof Error ? cause.message : String(cause,),
+    },);
     return 0;
   }
 }
@@ -160,7 +159,9 @@ async function applyIntimacyLeg(db: Kysely<DB>, ctx: LegContext,): Promise<void>
       },);
     }
   } catch (cause) {
-    log.warn(`Intimacy fan-out skipped for ${participant}:`, { error: cause instanceof Error ? cause.message : String(cause), },);
+    log.warn(`Intimacy fan-out skipped for ${participant}:`, {
+      error: cause instanceof Error ? cause.message : String(cause,),
+    },);
   }
 }
 
@@ -180,7 +181,9 @@ async function applyMoodLeg(ctx: LegContext,): Promise<void> {
       sourceId: `${encounter.id}:${outcome.type}`,
     },);
   } catch (cause) {
-    log.warn(`Mood fan-out skipped for ${participant}:`, { error: cause instanceof Error ? cause.message : String(cause), },);
+    log.warn(`Mood fan-out skipped for ${participant}:`, {
+      error: cause instanceof Error ? cause.message : String(cause,),
+    },);
   }
 }
 
@@ -201,7 +204,9 @@ async function applyXpLeg(db: Kysely<DB>, ctx: LegContext,): Promise<void> {
       },);
     }
   } catch (cause) {
-    log.warn(`XP fan-out skipped for ${participant}:`, { error: cause instanceof Error ? cause.message : String(cause), },);
+    log.warn(`XP fan-out skipped for ${participant}:`, {
+      error: cause instanceof Error ? cause.message : String(cause,),
+    },);
   }
 }
 
@@ -232,7 +237,7 @@ async function applyMemoryLeg(db: Kysely<DB>, ctx: LegContext,): Promise<void> {
           memory_type: "episodic",
           confidence: 0.8,
           importance: 0.6,
-          keywords: jsonStringifyOr(["encounter", outcome.type, encounter.encounterType,]),
+          keywords: jsonStringifyOr(["encounter", outcome.type, encounter.encounterType,],),
           world_id: encounter.worldId,
           scope: "character",
           privacy: "shared",
@@ -244,7 +249,9 @@ async function applyMemoryLeg(db: Kysely<DB>, ctx: LegContext,): Promise<void> {
         .execute();
     }
   } catch (cause) {
-    log.warn(`Memory fan-out skipped for ${participant}:`, { error: cause instanceof Error ? cause.message : String(cause), },);
+    log.warn(`Memory fan-out skipped for ${participant}:`, {
+      error: cause instanceof Error ? cause.message : String(cause,),
+    },);
   }
 }
 
@@ -268,7 +275,9 @@ async function applyTraumaLeg(db: Kysely<DB>, ctx: LegContext,): Promise<void> {
       encounter.id,
     );
   } catch (cause) {
-    log.warn(`Trauma fan-out skipped for ${participant}:`, { error: cause instanceof Error ? cause.message : String(cause), },);
+    log.warn(`Trauma fan-out skipped for ${participant}:`, {
+      error: cause instanceof Error ? cause.message : String(cause,),
+    },);
   }
 }
 
@@ -291,7 +300,9 @@ async function applyPregnancyLeg(db: Kysely<DB>, ctx: LegContext,): Promise<void
       { id: encounter.id, worldId: encounter.worldId, },
     );
   } catch (cause) {
-    log.warn(`Pregnancy fan-out skipped for ${participant}:`, { error: cause instanceof Error ? cause.message : String(cause), },);
+    log.warn(`Pregnancy fan-out skipped for ${participant}:`, {
+      error: cause instanceof Error ? cause.message : String(cause,),
+    },);
   }
 }
 
@@ -331,7 +342,9 @@ async function applyReputationLeg(
   try {
     const socialContext = encounter.encounterType === "public"
       ? "public"
-      : encounter.encounterType === "group" ? "group" : "private";
+      : encounter.encounterType === "group"
+      ? "group"
+      : "private";
     const success = outcome.type === "satisfaction" || outcome.type === "bonding";
     for (const participant of encounter.participants) {
       const change = calculateEncounterReputationChange(
@@ -355,12 +368,14 @@ async function applyReputationLeg(
           axis: socialContext,
           delta: change.reputationChange,
           reason: change.reason,
-        }),
+        },),
       },);
     }
     log.info(`Reputation recorded for ${encounter.id} (${outcome.type}, ${socialContext})`,);
   } catch (cause) {
-    log.warn(`Reputation fan-out skipped for ${encounter.id}:`, { error: cause instanceof Error ? cause.message : String(cause), },);
+    log.warn(`Reputation fan-out skipped for ${encounter.id}:`, {
+      error: cause instanceof Error ? cause.message : String(cause,),
+    },);
   }
 }
 

@@ -44,8 +44,11 @@ describe("body physical status (TASK-035)", () => {
     await chemistry.applyEffect("actor-tired", "arousal", 3600, 3,);
     const { applyStatusEffect, } = await import("./status-effects");
     await applyStatusEffect(db, {
-      actorId: "actor-tired", effectId: "exhaustion", category: "physical",
-      magnitude: 20, source: "encounter",
+      actorId: "actor-tired",
+      effectId: "exhaustion",
+      category: "physical",
+      magnitude: 20,
+      source: "encounter",
     },);
     const status = await bodies.getPhysicalStatus("actor-tired",);
     expect(status.arousal,).toBe(3,);
@@ -59,8 +62,12 @@ describe("body physical status (TASK-035)", () => {
     const bodies = new BodySystemService(db,);
     const { applyStatusEffect, } = await import("./status-effects");
     await applyStatusEffect(db, {
-      actorId: "actor-fresh", effectId: "exhaustion", category: "physical",
-      magnitude: 40, source: "test", durationSeconds: -1,
+      actorId: "actor-fresh",
+      effectId: "exhaustion",
+      category: "physical",
+      magnitude: 40,
+      source: "test",
+      durationSeconds: -1,
     },);
     const status = await bodies.getPhysicalStatus("actor-fresh",);
     expect(status.exhaustion,).toBe(0,);
@@ -135,7 +142,8 @@ describe("trauma service (TASK-044)", () => {
   test("severity derives from outcome shape, non-consensual escalates", () => {
     expect(severityFromOutcome(satisfaction,),).toBe(0,);
     expect(severityFromOutcome(dissatisfaction,),).toBe(1,);
-    expect(severityFromOutcome({ ...dissatisfaction, effects: { ...dissatisfaction.effects, moodChange: -8, }, },),).toBe(2,);
+    expect(severityFromOutcome({ ...dissatisfaction, effects: { ...dissatisfaction.effects, moodChange: -8, }, },),)
+      .toBe(2,);
     expect(severityFromOutcome(injury,),).toBe(3,);
     expect(severityFromOutcome(injury, true,),).toBe(4,);
     expect(severityFromOutcome(satisfaction, true,),).toBe(1,);
