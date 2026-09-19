@@ -57,7 +57,7 @@ Already fixed in dev by `662ddfb14` (fix(db,test): lazy DB singleton + test-over
 - `tests/e2e/helpers/server.ts:427-436` — `createTestServer()` `catch` block calls `setTestDatabase(null)` and removes the test upload dir when setup throws mid-way.
 - `tests/e2e/helpers/browser-server.ts:188-197` — `createBrowserTest()` same pattern (`browser?.close()`, `bunServer?.stop()`, `setTestDatabase(null)`, `rmSync`).
 - `src/db/index.ts:75-88` — `setTestDatabase` JSDoc documents the parallel-safety contract (process-global under non-isolated runners; callers MUST clear).
-- `src/db/migrations.test.ts:78-82`, `src/db/migration-roundtrip.test.ts:208-212` — `afterAll` blocks call `setTestDatabase(null)` so a thrown test does not leak the override.
+- `src/db/migrations.test.ts:78-82` — `afterAll` block calls `setTestDatabase(null)`. `src/db/migration-roundtrip.test.ts` cleanup is inline per-test (lines 133, 165, 194, 234, 253), so a thrown test does not leak the override.
 - `src/db/test-db-helpers.test.ts:23-46` — regression test asserts `setTestDatabase(null)` clears the sentinel path.
 - Note: implementation uses explicit `catch` (rethrows after cleanup) rather than `try/finally` since both helpers also need to free the bun server / browser. Functionally equivalent for the throw-leak guarantee.
 - Cross-references: `BUG-create-test-db-custom-dialect-can-bypass-settestdatabase` resolved in same commit.

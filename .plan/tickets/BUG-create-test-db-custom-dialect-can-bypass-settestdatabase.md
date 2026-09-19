@@ -63,7 +63,7 @@ Already fixed in dev by `662ddfb14` (fix(db,test): lazy DB singleton + test-over
 - `src/db/migrations.test.ts:58-64` — `createTestKysely()` now calls `setTestDatabase(kysely)` so any `getDatabase()` resolution inside a migration callback hits the test DB.
 - `src/db/migration-roundtrip.test.ts:69-75` — `createFreshDb()` (the roundtrip helper's per-test factory) calls `setTestDatabase(db)`.
 - `tests/e2e/helpers/server.ts:194-201` — `createTestDb()` registers the override; `tests/e2e/helpers/browser-server.ts:88` does the same.
-- `src/db/migrations.test.ts:78-82`, `src/db/migration-roundtrip.test.ts:208-212` — `afterAll` blocks call `setTestDatabase(null)`.
+- `src/db/migrations.test.ts:78-82` — `afterAll` blocks call `setTestDatabase(null)`. `src/db/migration-roundtrip.test.ts` does not have a top-level `afterAll`; each test's `setTestDatabase(null)` cleanup is inline (lines 133, 165, 194, 234, 253).
 - `src/db/test-db-helpers.test.ts:23-46` — regression tests assert override set/clear sentinel path.
 - Cross-references: `BUG-settestdatabase-global-leak-on-test-throw` resolved in same commit (cleanup on throw).
 
