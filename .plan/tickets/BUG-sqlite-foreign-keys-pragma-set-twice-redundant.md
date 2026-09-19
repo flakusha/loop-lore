@@ -51,11 +51,11 @@ out the pragma in the helper, the tests will still appear to "enable FK".
 
 Already fixed in dev by `662ddfb14` (fix(db,test): lazy DB singleton + test-override hygiene). Verified 2026-09-20 against current dev (`609e5a45b`):
 
-- `src/db/migrations.test.ts:51-68` — duplicate `PRAGMA foreign_keys = ON` removed from `createTestKysely()`; JSDoc explicitly notes `createSqliteDialect` is the single enforcement point.
-- `src/db/migration-roundtrip.test.ts:62-68` — same pattern (`createFreshDb()`); JSDoc clarifies FK enforcement comes from `createSqliteDialect`.
+- `src/db/migrations.test.ts:50-67` — JSDoc (50-57) + `createTestKysely()` (58-67); duplicate `PRAGMA foreign_keys = ON` removed; JSDoc explicitly notes `createSqliteDialect` is the single enforcement point.
+- `src/db/migration-roundtrip.test.ts:60-75` — JSDoc (60-68) + `createFreshDb()` (69-75); JSDoc clarifies FK enforcement comes from `createSqliteDialect`.
 - `src/db/index.ts:30-61` — `createSqliteDialect` is the single source of truth: always runs `PRAGMA journal_mode = WAL` + `PRAGMA foreign_keys = ON` on every Database handle that passes through it.
 - `src/db/test-db-helpers.test.ts:73-82` — regression test asserts `createSqliteDialect` enables FK on `:memory:`.
-- `src/db/migrations.test.ts:347-` — existing FK cascade test (delete user → actor → activitypub_actor_key) still passes (verified via `bun test src/db/migrations.test.ts src/db/migration-roundtrip.test.ts` → 70 pass, 0 fail).
+- `src/db/migrations.test.ts:340-390` — `activitypub_actor_keys FK cascades on actor delete` describe block (delete user → actor → activitypub_actor_key chain) still passes (verified via `bun test src/db/migrations.test.ts src/db/migration-roundtrip.test.ts` → 70 pass, 0 fail).
 - Cross-references: `BUG-sqlite-wal-pragma-noop-on-in-memory-test-db` resolved in same commit (same file scope).
 
 No code change required.
