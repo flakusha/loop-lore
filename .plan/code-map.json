@@ -38,6 +38,10 @@
   "src/admin/config.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-dbrt-validation-gaps.md"
     },
     {
@@ -27533,6 +27537,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/output-control-transforms.md"
+    }
+  ],
+  "src/rpg/service/dice-xp-loot.coverage.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-rpg-loot-rollloottable-sets-used-flag-but-never-enforces-one.md"
     }
   ],
   "src/rpg/service/loot-tables.ts": [
