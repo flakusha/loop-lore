@@ -1126,6 +1126,18 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
   },)
+  .table("character_license_history", {
+    id: col("text", { primaryKey: true, },),
+    actor_id: col("text", { notNull: true, },),
+    license_type: col("text", { notNull: true, },),
+    custom_license_text: col("text",),
+    attribution: col("text",),
+    allow_derivatives: col("integer", { notNull: true, },),
+    allow_commercial: col("integer", { notNull: true, },),
+    share_alike: col("integer", { notNull: true, },),
+    changed_by: col("text", { notNull: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("character_licensing", {
     id: col("text", { primaryKey: true, },),
     actor_id: col("text", { notNull: true, },),

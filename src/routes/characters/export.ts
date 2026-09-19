@@ -8,6 +8,12 @@ import { exportToCcV2Json, } from "../../characters/exporters/ccv2";
 import { exportToCcV3Json, } from "../../characters/exporters/ccv3";
 import { exportToToml, } from "../../characters/exporters/toml";
 import { exportToYaml, } from "../../characters/exporters/yaml";
+import {
+  getActorLicensing,
+  licenseExtension,
+  licenseHeaders,
+  withLicenseExtension,
+} from "../../characters/license-enforcement";
 import type { CanonicalCharacter, } from "../../characters/parser";
 import { getMinimalPng, insertCharacterDataIntoPng, } from "../../characters/steganography";
 import { can, } from "../../users/permissions";
@@ -74,6 +80,12 @@ export function exportRoutes(opts: HandlerOpts, prefix = "/api",) {
 
       const safeName = actor.display_name.replaceAll(/[^a-z0-9]/gi, "_",).toLowerCase();
 
+      // License enforcement: declare the license and reuse warnings on every
+      // exported card, and embed the license in structured payloads (TASK-030).
+      const licensing = await getActorLicensing(database, ctx.params.actorId,);
+      const licensingHeaders = licenseHeaders(licensing,);
+      const licenseData = licensing ? { extensions: { license: licenseExtension(licensing,), }, } : {};
+
       // If stored as YAML/TOML with raw source, return the raw source for fidelity
       const sourceFormat = (actor as Record<string, unknown>).data_source_format as string | undefined;
       const rawSource = (actor as Record<string, unknown>).data_raw as string | undefined;
@@ -89,6 +101,7 @@ export function exportRoutes(opts: HandlerOpts, prefix = "/api",) {
           headers: {
             "Content-Type": `${contentType}; charset=utf-8`,
             "Content-Disposition": `attachment; filename="${safeName}.${format}"`,
+            ...licensingHeaders,
           },
         },);
       }
@@ -99,6 +112,7 @@ export function exportRoutes(opts: HandlerOpts, prefix = "/api",) {
             headers: {
               "Content-Type": "text/yaml; charset=utf-8",
               "Content-Disposition": `attachment; filename="${safeName}.yaml"`,
+              ...licensingHeaders,
             },
           },);
         }
@@ -107,6 +121,7 @@ export function exportRoutes(opts: HandlerOpts, prefix = "/api",) {
             headers: {
               "Content-Type": "text/plain; charset=utf-8",
               "Content-Disposition": `attachment; filename="${safeName}.toml"`,
+              ...licensingHeaders,
             },
           },);
         }
@@ -128,12 +143,14 @@ export function exportRoutes(opts: HandlerOpts, prefix = "/api",) {
             character_version: canonical.character_version,
             alternate_greetings: canonical.alternate_greetings,
             tags: canonical.tags,
+            ...licenseData,
           };
           const pngBuf = insertCharacterDataIntoPng(getMinimalPng(), dataObj,);
           return new Response(new Uint8Array(pngBuf,), {
             headers: {
               "Content-Type": "image/png",
               "Content-Disposition": `attachment; filename="${safeName}.png"`,
+              ...licensingHeaders,
             },
           },);
         }
@@ -157,6 +174,7 @@ export function exportRoutes(opts: HandlerOpts, prefix = "/api",) {
               character_version: canonical.character_version,
               alternate_greetings: canonical.alternate_greetings,
               tags: canonical.tags,
+              ...licenseData,
             },
           };
           // Fetch linked assets for the character
@@ -179,24 +197,27 @@ export function exportRoutes(opts: HandlerOpts, prefix = "/api",) {
             headers: {
               "Content-Type": "application/zip",
               "Content-Disposition": `attachment; filename="${safeName}.charx"`,
+              ...licensingHeaders,
             },
           },);
         }
         case "ccv2": {
-          return new Response(exportToCcV2Json(canonical,), {
+          return new Response(withLicenseExtension(exportToCcV2Json(canonical,), licensing,), {
             headers: {
               "Content-Type": "application/json; charset=utf-8",
               "Content-Disposition": `attachment; filename="${safeName}.json"`,
+              ...licensingHeaders,
             },
           },);
         }
         case "ccv3":
         case "json":
         default: {
-          return new Response(exportToCcV3Json(canonical,), {
+          return new Response(withLicenseExtension(exportToCcV3Json(canonical,), licensing,), {
             headers: {
               "Content-Type": "application/json; charset=utf-8",
               "Content-Disposition": `attachment; filename="${safeName}.json"`,
+              ...licensingHeaders,
             },
           },);
         }
