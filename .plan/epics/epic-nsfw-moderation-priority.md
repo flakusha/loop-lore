@@ -94,3 +94,8 @@ _Source: chat functionality audit (loop-lore), 2026-08-25._
 - Consumes capability state from `epic-nsfw-capabilities.md` (rating tier, consent incl. `consent.revoked`, per-chat/user/world toggles) as gating inputs.
 - Moderation verdicts (flags, blocks, bans) may constrain capabilities preferences (e.g., revoke or downgrade NSFW enable).
 - Audit log records gate decisions originating from capabilities gating.
+
+## Docs-Gap Audit Remainders (2026-09-19)
+
+- [ ] [gap-audit E2] Per-attachment rating pipeline thresholds + review triggers
+- [ ] [gap-audit E23] Attachment-specific flagged-content review queue UI (approve/reject workflow)

@@ -3,7 +3,7 @@
 
 # TASK: Story Notes Panel (3 tabs, role access matrix)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (duplicate — remainder extracted, 2026-09-19)
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Story Notes Panel (3 tabs, role access matrix)
@@ -15,6 +15,10 @@
 ## Summary
 
 --label
+
+## Resolution
+
+Core scope tracked by epic-gm-shadow-notes.md (GM notes panel done). Unplanned remainder extracted 2026-09-19 → E8 3-tab structure + role-access matrix (epic-gm-shadow-notes.md) (docs-gap reconcile audit).
 
 ## Acceptance Criteria
 

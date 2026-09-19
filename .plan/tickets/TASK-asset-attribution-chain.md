@@ -9,7 +9,7 @@
 **Summary:** Asset Attribution Chain
 **Context:** Epic epic-assets-attribution; tags assets, attribution.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
-**Epic:** epic-assets-attribution
+**Epic:** epic-asset-platform-capabilities
 **Tags:** assets, attribution
 
 ## Summary

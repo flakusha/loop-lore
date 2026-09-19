@@ -73,3 +73,7 @@ This supersedes the earlier "23 contiguous epochs" (private-function wrapper) dr
 - [ ] Migration-coupled tests rewritten and green; full `bun test src/db/` green.
 - [ ] `bun run check` green.
 - [ ] Worktree finalized via `scripts/worktree/ finalize` (GPG-signed).
+
+## Docs-Gap Audit Remainders (2026-09-19)
+
+- [ ] [gap-audit E4] Document migration authorship conventions: up/down pairing expectations + cross-version compatibility policy

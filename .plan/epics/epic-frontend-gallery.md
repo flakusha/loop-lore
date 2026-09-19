@@ -121,3 +121,7 @@ Remaining polish (Phase 3) only:
 | ------------------------------- | --------------------------------------------------------- |
 | `src/frontend/pages/gallery.ts` | Modify — add pagination support for large collections     |
 | Gallery sidebar                 | Add right-click/long-press context menus on gallery items |
+
+## Docs-Gap Audit Remainders (2026-09-19)
+
+- [ ] [gap-audit E24] Attachment UX: batch upload, inline editing, comparison view

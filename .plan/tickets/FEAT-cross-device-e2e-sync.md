@@ -3,7 +3,7 @@
 
 # FEAT: Cross-device E2E Sync
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (duplicate — remainder extracted, 2026-09-19)
 **Priority:** low
 **Effort:** XL
 **Summary:** Cross-device E2E Sync
@@ -15,6 +15,10 @@
 ## Summary
 
 --label
+
+## Resolution
+
+Core scope tracked by epic-multi-instance-reconciliation.md + epic-federation-swarm-sync.md:78-80. Unplanned remainder extracted 2026-09-19 → E26 phone↔desktop personal device-sync itemization (epic-multi-instance-reconciliation.md) (docs-gap reconcile audit).
 
 ## Acceptance Criteria
 

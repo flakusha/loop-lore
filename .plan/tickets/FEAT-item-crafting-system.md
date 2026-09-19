@@ -3,7 +3,7 @@
 
 # FEAT: Item Crafting System
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (already on dev, 2026-09-19)
 **Priority:** medium
 **Effort:** Large
 **Summary:** Item Crafting System
@@ -16,6 +16,14 @@
 
 Implement recipes, requirements, outcomes for crafting.
 Source: docs/meta/reviews/review-topics.md §12.
+
+## Resolution
+
+Already implemented on dev — verified 2026-09-19 docs-gap reconcile audit (epic-docs-vs-plan-gap-audit-2026-09-19.md):
+
+- src/rpg/crafting/ (recipes, stations, orders + tests)
+- src/routes/crafting/
+- epic-crafting-professions.md
 
 ## Acceptance Criteria
 

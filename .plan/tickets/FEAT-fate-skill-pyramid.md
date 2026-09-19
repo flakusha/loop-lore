@@ -9,7 +9,7 @@
 **Summary:** FATE Skill Pyramid
 **Context:** Epic epic-character-spec; tags rpg, fate, skills.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
-**Epic:** epic-character-spec
+**Epic:** epic-resolution-system
 **Tags:** rpg, fate, skills
 
 ## Summary

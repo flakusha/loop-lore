@@ -3,7 +3,7 @@
 
 # FEAT: Error Monitoring & Alerting
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (duplicate — remainder extracted, 2026-09-19)
 **Priority:** high
 **Effort:** Large
 **Summary:** Error Monitoring & Alerting
@@ -16,6 +16,10 @@
 
 Implement alert rules CRUD, error grouping/dedup, alert notifications (in-app + webhook), latency distribution, resource monitoring (mem/CPU/disk).
 Source: docs/meta/admin-visibility-research.md.
+
+## Resolution
+
+Core scope tracked by epic-analytics-observability.md + src/routes/telemetry.ts. Unplanned remainder extracted 2026-09-19 → E11 alert rules CRUD, webhooks, error grouping (epic-analytics-observability.md) (docs-gap reconcile audit).
 
 ## Acceptance Criteria
 

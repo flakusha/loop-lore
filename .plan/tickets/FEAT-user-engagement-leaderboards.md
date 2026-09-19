@@ -3,7 +3,7 @@
 
 # FEAT: User Engagement & Leaderboards
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (duplicate — remainder extracted, 2026-09-19)
 **Priority:** medium
 **Effort:** Large
 **Summary:** User Engagement & Leaderboards
@@ -16,6 +16,10 @@
 
 Implement user leaderboards (messages/characters/worlds), activity streaks, achievements display, personal usage dashboard, DAU/MAU metrics.
 Source: docs/meta/admin-visibility-research.md.
+
+## Resolution
+
+Core scope tracked by epic-frontend-backend-integration.md:29 + src/routes/analytics.ts. Unplanned remainder extracted 2026-09-19 → E13 streaks, DAU/MAU, achievements dashboard (epic-analytics-observability.md) (docs-gap reconcile audit).
 
 ## Acceptance Criteria
 

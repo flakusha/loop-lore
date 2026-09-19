@@ -3,7 +3,7 @@
 
 # FEAT: Shared Persistent Worlds (multiplayer co-op storytelling)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (duplicate, verified 2026-09-19)
 **Priority:** low
 **Effort:** XL
 **Summary:** Shared Persistent Worlds (multiplayer co-op storytelling)
@@ -15,6 +15,14 @@
 ## Summary
 
 --label
+
+## Resolution
+
+Duplicate of existing plan artifact(s) — verified 2026-09-19 docs-gap reconcile audit (epic-docs-vs-plan-gap-audit-2026-09-19.md):
+
+- epic-federation-swarm-sync.md:33-40,62,78-80
+- epic-multi-instance-reconciliation.md (covers this ticket's scope)
+- epic-worlds-extension.md:337
 
 ## Acceptance Criteria
 

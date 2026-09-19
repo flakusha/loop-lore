@@ -3,7 +3,7 @@
 
 # TASK: Chat Room Sidebar Search + Filter Chips
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (duplicate, verified 2026-09-19)
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Chat Room Sidebar Search + Filter Chips
@@ -15,6 +15,12 @@
 ## Summary
 
 --label
+
+## Resolution
+
+Duplicate of existing plan artifact(s) — verified 2026-09-19 docs-gap reconcile audit (epic-docs-vs-plan-gap-audit-2026-09-19.md):
+
+- epic-chat-product-features.md (TASK-chat-feature-archive-deletion-search, TASK-chat-feature-chat-organization-folders-tags)
 
 ## Acceptance Criteria
 

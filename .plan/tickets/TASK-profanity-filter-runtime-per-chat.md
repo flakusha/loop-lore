@@ -3,7 +3,7 @@
 
 # TASK: Profanity Filter (Runtime, Per-Chat)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (duplicate — remainder extracted, 2026-09-19)
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Profanity Filter (Runtime, Per-Chat)
@@ -15,6 +15,10 @@
 ## Summary
 
 Implement runtime wordlist reload, per-chat sensitivity threshold, audit trail for flagged content per docs/spec/profanity-filter.md.
+
+## Resolution
+
+Core scope tracked by src/profanity/service.ts + config gate. Unplanned remainder extracted 2026-09-19 → E7 profanity hot-reload/per-chat sensitivity/audit trail (new ticket, main agent) (docs-gap reconcile audit).
 
 ## Acceptance Criteria
 
