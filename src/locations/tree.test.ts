@@ -4,8 +4,7 @@
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { randomUUID, } from "node:crypto";
 import { createTestDb, resetTestDb, type TestDb, } from "../test-utils/create-test-db";
-import { insertWorlds, } from "../test-utils/insert-helpers";
-import { insertUsers, } from "../test-utils/insert-helpers";
+import { insertUsers, insertWorlds, } from "../test-utils/insert-helpers";
 import { LocationTreeService, } from "./tree";
 
 let testDb: TestDb;
