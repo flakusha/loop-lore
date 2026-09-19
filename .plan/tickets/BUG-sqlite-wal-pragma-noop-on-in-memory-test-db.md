@@ -8,6 +8,7 @@
 **Effort:** Medium
 
 ## Summary
+
 `tests/e2e/helpers/server.ts:182-187` runs `PRAGMA journal_mode = WAL` on an
 **in-memory** `:memory:` SQLite database. WAL requires a file-backed database;
 SQLite silently accepts the pragma on `:memory:` and returns the existing
@@ -43,6 +44,7 @@ src/db/index.ts:30-36
 
 SQLite reference: WAL mode returns SQLITE_OK on `:memory:` but does not
 enable WAL; the journal_mode remains `MEMORY` for in-memory databases.
+
 ## Acceptance Criteria
 
 - [ ] Remove `sqlite.run("PRAGMA journal_mode = WAL",)` from
