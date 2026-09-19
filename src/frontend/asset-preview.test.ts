@@ -41,6 +41,7 @@ interface FakeEl {
   append(...els: FakeEl[]): void;
   remove(): void;
   click(): void;
+  focus(): void;
   addEventListener(_t: string, _fn: unknown,): void;
   querySelector(sel: string,): FakeEl | null;
 }
@@ -86,6 +87,7 @@ function makeEl(): FakeEl {
       el.parentNode = null;
     },
     click: () => {},
+    focus: () => {},
     addEventListener: () => {},
     querySelector: (sel,) => findEl(children, sel,),
   };
@@ -110,20 +112,38 @@ interface FakeDocument {
   register(el: FakeEl,): FakeEl;
   querySelector(sel: string,): FakeEl | null;
   createElement(tag: string,): FakeEl;
-  addEventListener(_t: string, _fn: unknown,): void;
+  addEventListener(t: string, fn: (e: { key: string },) => void,): void;
+  removeEventListener(t: string, fn: (e: { key: string },) => void,): void;
+  fireKey(key: string,): void;
+  activeElement: FakeEl | null;
 }
 
 function makeDocument(): FakeDocument {
   const byId = new Map<string, FakeEl>();
+  const keyHandlers = new Map<string, Set<(e: { key: string },) => void>>();
   return {
     body: makeEl(),
+    activeElement: null,
     register: (el,) => {
       byId.set(el.id, el,);
       return el;
     },
     querySelector: (sel,) => sel.startsWith("#",) ? byId.get(sel.slice(1,),) ?? null : null,
     createElement: () => makeEl(),
-    addEventListener: () => {},
+    addEventListener: (t, fn,) => {
+      let set = keyHandlers.get(t,);
+      if (!set) {
+        set = new Set();
+        keyHandlers.set(t, set,);
+      }
+      set.add(fn,);
+    },
+    removeEventListener: (t, fn,) => {
+      keyHandlers.get(t,)?.delete(fn,);
+    },
+    fireKey: (key,) => {
+      for (const fn of keyHandlers.get("keydown",) ?? []) { fn({ key, },); }
+    },
   };
 }
 
@@ -300,6 +320,27 @@ describe("openAssetPreview", () => {
     await previewHost.openAssetPreview!("a1",);
     expect(previewHost.__previewAsset?.id,).toBe("a1",); // recorded before bailing
     expect(calls.map((c,) => c.url),).toEqual(["/api/assets/a1",],); // no modal fetch
+  });
+});
+
+describe("previewEscape", () => {
+  test("Escape closes the modal and restores focus; non-Escape keys ignored", async () => {
+    serveAsset(IMAGE,);
+    const trigger = makeEl();
+    const focused: { el: FakeEl | null } = { el: null, };
+    trigger.focus = () => {
+      focused.el = trigger;
+    };
+    (doc as unknown as { activeElement: FakeEl | null }).activeElement = trigger;
+    await previewHost.openAssetPreview!("a1",);
+    const modal = doc.querySelector("#preview-modal",)!;
+    expect(modal.classList.contains("open",),).toBe(true,);
+    doc.fireKey("Enter",);
+    expect(modal.classList.contains("open",),).toBe(true,);
+    expect(focused.el,).toBeNull();
+    doc.fireKey("Escape",);
+    expect(modal.classList.contains("open",),).toBe(false,);
+    expect(focused.el,).toBe(trigger,);
   });
 });
 
