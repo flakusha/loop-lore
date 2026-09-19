@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import type { Config, } from "../../../config/schema";
 import type { Kysely, } from "kysely";
 import type { IntimacyActionType, } from "../../../db/enums";
 import type { DB, } from "../../../db/schema";
+import type { NSFWContentRating, } from "../../../schemas";
 
 // ── Constants ──────────────────────────────────────────────
 
@@ -18,6 +20,26 @@ export const INTIMACY_THRESHOLDS = {
   intimate: 85,
   soulbonded: 100,
 } as const;
+
+// ── NSFW Gate ─────────────────────────────────────────────
+
+/**
+ * Request-scoped context the NSFW capability gate needs. When supplied to
+ * an intimacy mutation, the mutation routes through `assertNsfwCapability`
+ * (rating + consent + intimacy threshold) before touching any state.
+ */
+export interface NsfwGateContext {
+  config: Config;
+  /** Requesting human user (null = anonymous). */
+  userId: string | null;
+  chatId: string;
+  /** Rating of the content about to be produced; defaults to the actor's. */
+  contentRating?: NSFWContentRating;
+  /** Extra rating ceilings folded into the effective limit. */
+  ratingLimits?: NSFWContentRating[];
+  /** Consent-scoped action to assert (default "nsfw_encounter"). */
+  consentAction?: string;
+}
 
 // ── Types ──────────────────────────────────────────────────
 
@@ -75,6 +97,8 @@ export interface ApplyIntimacyActionOpts {
   worldId?: string | null;
   action: IntimacyAction;
   context?: string;
+  /** NSFW capability gate context; enforced when present (TASK-033). */
+  gate?: NsfwGateContext;
 }
 
 /** Result of applying an intimacy action. */
