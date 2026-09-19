@@ -20,9 +20,9 @@
  * after data corruption, (3) read-side queries (ancestors/descendants) that
  * the routes layer previously computed ad-hoc.
  */
-import { randomUUID, } from "node:crypto";
 import type { Kysely, } from "kysely";
 import { sql, } from "kysely";
+import { randomUUID, } from "node:crypto";
 import type { DB, } from "../db";
 import { LOCATION_DEPTH_LIMIT, } from "../db/enums-story/world";
 
@@ -55,7 +55,7 @@ export class LocationTreeService {
   /** Depth (separator count in path) of a given location. */
   static depth(parentPath: string | null,): number {
     if (parentPath === null || parentPath === "") { return 1; }
-    return parentPath.split("/").length - 2; // '/a/' → 1 separator
+    return parentPath.split("/",).length - 2; // '/a/' → 1 separator
   }
 
   /**
@@ -69,11 +69,11 @@ export class LocationTreeService {
         .where("id", "=", input.parentLocationId,)
         .select(["id", "world_id", "path",],)
         .executeTakeFirst();
-      if (!parent) { throw new Error("parent location not found"); }
-      if (parent.world_id !== input.worldId) { throw new Error("cross-world parent rejected"); }
+      if (!parent) { throw new Error("parent location not found",); }
+      if (parent.world_id !== input.worldId) { throw new Error("cross-world parent rejected",); }
       const prospectiveDepth = LocationTreeService.depth(parent.path,) + 1;
       if (prospectiveDepth > LOCATION_DEPTH_LIMIT) {
-        throw new Error(`location depth exceeds limit (${LOCATION_DEPTH_LIMIT})`);
+        throw new Error(`location depth exceeds limit (${LOCATION_DEPTH_LIMIT})`,);
       }
     }
     const newId = randomUUID();
@@ -115,7 +115,7 @@ export class LocationTreeService {
       const newPath = LocationTreeService.computeChildPath(parentPath, row.id,);
       await trx.updateTable("locations",).where("id", "=", row.id,).set({ path: newPath, },).execute();
       return newPath;
-    });
+    },);
   }
 
   /** Walk up — root-most first (highest depth = closest to root), excludes self. */
@@ -171,27 +171,28 @@ export class LocationTreeService {
     const byParent = new Map<string | null, Flat[]>();
     for (const row of all as Flat[]) {
       const key = row.parent_location_id;
-      const bucket = byParent.get(key);
-      if (bucket) { bucket.push(row); } else { byParent.set(key, [row]); }
+      const bucket = byParent.get(key,);
+      if (bucket) { bucket.push(row,); }
+      else { byParent.set(key, [row,],); }
     }
-    const build = (parentId: string | null): Array<LocationTreeNode & { children: LocationTreeNode[] }> => {
-      const kids = byParent.get(parentId) ?? [];
+    const build = (parentId: string | null,): Array<LocationTreeNode & { children: LocationTreeNode[] }> => {
+      const kids = byParent.get(parentId,) ?? [];
       return kids.map((k,) => ({
         id: k.id,
         name: k.name,
         parent_location_id: k.parent_location_id,
         depth: 0,
         path: k.id,
-        children: build(k.id),
-      } as unknown as LocationTreeNode & { children: LocationTreeNode[] }),);
+        children: build(k.id,),
+      } as unknown as LocationTreeNode & { children: LocationTreeNode[] }));
     };
-    return build(null);
+    return build(null,);
   }
 
   /** Move a subtree under a new parent (cross-world rejected; cycle rejected via trigger). */
   async moveSubtree(locationId: string, newParentId: string | null,): Promise<void> {
     if (newParentId === locationId) {
-      throw new Error("location cannot be its own parent");
+      throw new Error("location cannot be its own parent",);
     }
     if (newParentId !== null) {
       // App-layer cross-world check (trigger enforces too; this catches pre-trigger validation paths).
@@ -200,16 +201,16 @@ export class LocationTreeService {
         .where("id", "in", [locationId, newParentId,],)
         .select(["id", "world_id",],)
         .execute();
-      const self = rows.find((r,) => r.id === locationId,);
-      const parent = rows.find((r,) => r.id === newParentId,);
-      if (!self || !parent) { throw new Error("location or parent not found"); }
+      const self = rows.find((r,) => r.id === locationId);
+      const parent = rows.find((r,) => r.id === newParentId);
+      if (!self || !parent) { throw new Error("location or parent not found",); }
       if (self.world_id !== parent.world_id) {
-        throw new Error("cross-world move rejected");
+        throw new Error("cross-world move rejected",);
       }
       if (newParentId !== null) {
         const ancestors = await this.getAncestors(newParentId,);
-        if (ancestors.some((a,) => a.id === locationId,)) {
-          throw new Error("move would create a cycle");
+        if (ancestors.some((a,) => a.id === locationId)) {
+          throw new Error("move would create a cycle",);
         }
       }
     }

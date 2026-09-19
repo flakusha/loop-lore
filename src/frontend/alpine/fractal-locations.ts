@@ -89,7 +89,7 @@ export function buildFractalState(worldId: string,): FractalState {
       const out: Array<{ id: string; label: string; depth: number }> = [];
       const walk = (nodes: TreeNode[], depth: number,) => {
         for (const n of nodes) {
-          out.push({ id: n.id, label: `${"— ".repeat(depth)}${n.name}`, depth, });
+          out.push({ id: n.id, label: `${"— ".repeat(depth,)}${n.name}`, depth, },);
           walk(n.children, depth + 1,);
         }
       };
@@ -109,14 +109,19 @@ export function buildFractalState(worldId: string,): FractalState {
         const res = await apiFetch(`/api/worlds/${this.worldId}/locations/tree`, {
           headers: { Accept: "application/json", },
         },);
-        if (!res.ok) { this.error = true; return; }
+        if (!res.ok) {
+          this.error = true;
+          return;
+        }
         const body = await res.json();
         this.tree = (body?.data ?? []) as TreeNode[];
         this.loadedTree = true;
       } catch (e) {
         log.warn("tree load failed", { error: String(e,), },);
         this.error = true;
-      } finally { this.loadingTree = false; }
+      } finally {
+        this.loadingTree = false;
+      }
     },
 
     async loadRoutes() {
@@ -134,7 +139,9 @@ export function buildFractalState(worldId: string,): FractalState {
         }
       } catch (e) {
         log.warn("routes load failed", { error: String(e,), },);
-      } finally { this.loadingRoutes = false; }
+      } finally {
+        this.loadingRoutes = false;
+      }
     },
 
     async selectRoute(routeId: string,) {
@@ -169,7 +176,9 @@ export function buildFractalState(worldId: string,): FractalState {
         if (!res.ok) { return; }
         this.newRoute = { name: "", kind: "sea", loop: false, secondsPerUnit: 60, };
         await this.loadRoutes();
-      } finally { this.creatingRoute = false; }
+      } finally {
+        this.creatingRoute = false;
+      }
     },
 
     async attachTransport() {
@@ -183,7 +192,9 @@ export function buildFractalState(worldId: string,): FractalState {
         if (!res.ok) { return; }
         this.attachLocationId = "";
         await this.loadRoutes();
-      } finally { this.attaching = false; }
+      } finally {
+        this.attaching = false;
+      }
     },
 
     async detachTransport(locId: string, routeId: string,) {
@@ -196,5 +207,5 @@ export function buildFractalState(worldId: string,): FractalState {
   };
 }
 
-(globalThis as unknown as { fractalLocationsState?: (id: string,) => FractalState }).fractalLocationsState
-  = buildFractalState;
+(globalThis as unknown as { fractalLocationsState?: (id: string,) => FractalState }).fractalLocationsState =
+  buildFractalState;
