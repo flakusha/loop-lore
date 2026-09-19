@@ -174,13 +174,8 @@ export class AssetView {
   setChatId(chatId: string,): void {
     this.chatId = chatId;
     this.currentIndex = 0;
-    void (async () => {
-      try {
-        await this.loadAssets();
-      } catch {
-        /* non-critical */
-      }
-    })();
+    // loadAssets surfaces failures via renderInfo and never rejects.
+    void this.loadAssets();
   }
 
   /**
