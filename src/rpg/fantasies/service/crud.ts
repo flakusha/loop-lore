@@ -226,7 +226,7 @@ async function applyFulfillIntimacy(
       },
     },);
   } catch (cause) {
-    log.warn(`Fantasy intimacy leg skipped for ${target}:`, cause instanceof Error ? cause : undefined,);
+    log.warn(`Fantasy intimacy leg skipped for ${target}:`, { error: cause instanceof Error ? cause.message : String(cause), },);
   }
 }
 
@@ -260,7 +260,7 @@ async function applyFulfillMood(
       sourceId: `${fantasy.id}:${fantasy.category}`,
     },);
   } catch (cause) {
-    log.warn(`Fantasy mood leg skipped for ${target}:`, cause instanceof Error ? cause : undefined,);
+    log.warn(`Fantasy mood leg skipped for ${target}:`, { error: cause instanceof Error ? cause.message : String(cause), },);
   }
 }
 
