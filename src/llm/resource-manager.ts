@@ -28,6 +28,7 @@ import type {
   ScheduledRequest,
   ScheduleHandle,
 } from "./resource-manager-types";
+import { RunningHandles, } from "./running-handles";
 export { PriorityLevel, } from "./resource-manager-types";
 export type {
   Priority,
@@ -50,8 +51,8 @@ export class ResourceManager {
   private readonly drains = new Map<string, Promise<void>>();
   /** Live request ids (queued + running); used for duplicate-id detection. */
   private readonly liveIds = new Set<string>();
-  /** Currently executing handles per provider, for cancel/forgetProvider. */
-  private readonly running = new Map<string, Set<InternalHandle<unknown>>>();
+  /** Dispatched (acquiring or running) handles, for cancel/forgetProvider. */
+  private readonly running = new RunningHandles();
 
   constructor(opts: ResourceManagerOptions = {},) {
     this.defaultMax = opts.defaultMax ?? 4;
@@ -105,16 +106,7 @@ export class ResourceManager {
         }
       }
     }
-    for (const set of this.running.values()) {
-      for (const handle of set) {
-        if (handle.id === id) {
-          if (handle.isCancelled()) { return false; }
-          handle.cancel(reason ?? "cancelled",);
-          return true;
-        }
-      }
-    }
-    return false;
+    return this.running.cancelById(id, reason ?? "cancelled",);
   }
 
   /**
@@ -129,16 +121,11 @@ export class ResourceManager {
         entry.handle.cancel("forgotten provider",);
       }
     }
-    const running = this.running.get(provider,);
-    if (running) {
-      for (const handle of running) {
-        handle.cancel("forgotten provider",);
-      }
-    }
+    this.running.cancelAll(provider, "forgotten provider",);
     this.queues.delete(provider,);
     this.limiters.delete(provider,);
     this.drains.delete(provider,);
-    this.running.delete(provider,);
+    this.running.drop(provider,);
   }
 
   private queueFor(provider: string,): PriorityQueue<QueueEntry> {
@@ -183,18 +170,6 @@ export class ResourceManager {
    * @param provider - provider key
    * @returns void
    */
-  private trackRunning(provider: string, handle: InternalHandle<unknown>,): void {
-    let set = this.running.get(provider,);
-    if (!set) {
-      set = new Set<InternalHandle<unknown>>();
-      this.running.set(provider, set,);
-    }
-    set.add(handle,);
-  }
-
-  private untrackRunning(provider: string, handle: InternalHandle<unknown>,): void {
-    this.running.get(provider,)?.delete(handle,);
-  }
 
   private async drainQueue(provider: string,): Promise<void> {
     const queue = this.queues.get(provider,);
@@ -209,19 +184,21 @@ export class ResourceManager {
       const handle = entry.handle;
       // Track from dispatch (not runOne) so forgetProvider/cancel can reach
       // handles parked on limiter.acquire().
-      this.trackRunning(provider, handle,);
+      this.running.track(provider, handle,);
       const release = await limiter.acquire();
       // Re-check cancellation after acquiring the slot; if it landed
       // during the await, release and try the next entry.
       if (entry.handle.isCancelled()) {
-        this.untrackRunning(provider, handle,);
+        this.running.untrack(provider, handle,);
         release();
         continue;
       }
       queueMicrotask(() => {
         this.runOne(handle, release,)
           .catch(noop,)
-          .finally(() => { this.untrackRunning(provider, handle,); },);
+          .finally(() => {
+            this.running.untrack(provider, handle,);
+          },);
       },);
     }
   }
