@@ -1,0 +1,131 @@
+# Example llama-swap configuration template
+# ------------------------------------------
+# Derived from configs/config.llama-swap.yaml (real machine config).
+# All model IDs and artifact paths are placeholders — replace them with
+# values that exist on your machine before use.
+#
+# Add this modeline for validation in vscode:
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mostlygeek/llama-swap/refs/heads/main/config-schema.json
+#
+# Rotation/offload mechanics (from llama-swap upstream docs):
+# - On-demand swap: a request naming a model starts its server; if another
+#   model's server is running and swap rules forbid coexistence, the old one
+#   is unloaded first. Manual/API unload: POST /api/models/unload[/:model_id].
+# - TTL offload: `ttl` (per model) / `globalTTL` (global) unload idle models
+#   automatically after N seconds; `ttl: 0` = never unload.
+# - `unloadTimeout` bounds graceful shutdown (manual, API, or ttl expiry)
+#   before force-kill; override per model for slow stoppers (docker stop).
+# - Routing engines: default `group` engine (groups with `swap`, `exclusive`,
+#   `persistent`) or the newer `matrix` DSL for fine-grained concurrency.
+# - `hooks.on_startup.preload` loads models at startup (define a group first
+#   if preloading multiple, otherwise they swap each other out).
+
+# --- Global settings -----------------------------------------------------
+logLevel: debug
+logTimeFormat: rfc3339
+logToStdout: "both"
+
+# Port for the automatic ${PORT} macro (incremented per model that uses it)
+startPort: 7180
+
+# Unload any model idle for more than this many seconds (0 = never unload).
+# Per-model `ttl:` overrides this; both default to never-unload upstream.
+globalTTL: 900
+
+# Graceful-shutdown window in seconds before force-kill on unload
+unloadTimeout: 10
+
+# Seconds to wait for a model to become ready (minimum 15)
+healthCheckTimeout: 300
+
+# --- Macros ---------------------------------------------------------------
+macros:
+  default_ctx: 262144
+  models_dir: "${env.HOME}/models"
+  llama-server-default: |
+    -ctk q8_0 -ctv iq4_nl
+    -ctkd q8_0 -ctvd iq4_nl
+    --no-kv-unified
+    -fa on
+    --fit on
+
+# --- Models ---------------------------------------------------------------
+# All model IDs below are placeholders; replace <placeholder> values with
+# your own local GGUF artifacts / HF repos.
+models:
+  "<placeholder-main-model>":
+    cmd: |
+      llama-server --port ${PORT}
+      -hf <placeholder-org>/<placeholder-repo>:<placeholder-quant>
+      --alias '<placeholder-main-model>'
+      --ctx-size ${default_ctx}
+      ${llama-server-default}
+    # Automatically unload after 15 minutes idle (overrides globalTTL)
+    ttl: 900
+    aliases:
+      - "<placeholder-friendly-alias>"
+
+  "<placeholder-secondary-model>":
+    cmd: |
+      llama-server --port ${PORT}
+      --model ${models_dir}/<placeholder-model-file>.gguf
+      --ctx-size ${default_ctx}
+      ${llama-server-default}
+    # Never auto-unload this one; unload via API/UI only
+    ttl: 0
+
+  "<placeholder-background-model>":
+    # unlisted: hidden from /v1/models, still requestable
+    unlisted: true
+    cmd: |
+      llama-server --port ${PORT}
+      --model ${models_dir}/<placeholder-small-model>.gguf
+      --ctx-size 16384
+    ttl: 300
+
+# --- Routing / rotation ---------------------------------------------------
+# Default `group` engine. Loading a member of an exclusive group unloads
+# every other group; members of a swap:true group rotate among themselves.
+routing:
+  router:
+    use: group
+    settings:
+      groups:
+        # Main LLMs rotate: only one of these is resident at a time,
+        # and loading one evicts everything else (default llama-swap behavior)
+        "llm-rotation":
+          swap: true
+          exclusive: true
+          members:
+            - "<placeholder-main-model>"
+            - "<placeholder-secondary-model>"
+
+        # Background helpers coexist with each other and are not evicted
+        # by other groups' loads (persistent). See upstream issue #109
+        # for full group semantics; the `matrix` engine offers a more
+        # expressive concurrency DSL if groups are insufficient.
+        "helpers":
+          swap: false # members run together, no rotation
+          exclusive: false # loading here leaves other groups alone
+          persistent: true # not evicted by other groups' loads
+          members:
+            - "<placeholder-background-model>"
+
+# --- Startup preload ------------------------------------------------------
+hooks:
+  on_startup:
+    # Preload one model at startup. Preloading multiple requires a shared
+    # group with swap:false, otherwise they swap each other out.
+    preload:
+      - "<placeholder-main-model>"
+
+# --- Profiles: runtime model-ID rerouting --------------------------------
+# Switch which model answers an ID via UI or PUT /api/profiles/active.
+profiles:
+  "default":
+    description: "Standard routing"
+    pins: {}
+  "light":
+    description: "Route main IDs to the small background model to save VRAM"
+    pins:
+      "<placeholder-main-model>": "<placeholder-background-model>"
