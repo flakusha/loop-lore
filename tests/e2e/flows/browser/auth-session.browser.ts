@@ -17,7 +17,7 @@
 
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { type BrowserTestContext, createBrowserTest, } from "../../helpers/browser-server";
-import { trackPageErrors, } from "../../helpers/htmx-alpine";
+import { AUTH_NOISE_ALLOWLIST, trackPageErrors, } from "../../helpers/htmx-alpine";
 import { seedUsers, } from "../../helpers/seed";
 describe("Auth session E2E", () => {
   let ctx: BrowserTestContext;
@@ -52,10 +52,7 @@ describe("Auth session E2E", () => {
   describe("Login", () => {
     test("successful login redirects to chat", async () => {
       const page = await ctx.openPage();
-      const errors = trackPageErrors(page, {
-        // Benign pre-auth 401s (favicon, etc.) appear before the form is usable.
-        allowlist: [/401 \(Unauthorized\)/, /Failed to load resource/,],
-      },);
+      const errors = trackPageErrors(page, { allowlist: AUTH_NOISE_ALLOWLIST, },);
       try {
         await gotoLogin(page,);
         await page.fill("[data-testid='username-input']", "e2euser",);
@@ -73,9 +70,7 @@ describe("Auth session E2E", () => {
   describe("Logout", () => {
     test("logout returns to login and protects authed views", async () => {
       const page = await ctx.openPage();
-      const errors = trackPageErrors(page, {
-        allowlist: [/401 \(Unauthorized\)/, /Failed to load resource/,],
-      },);
+      const errors = trackPageErrors(page, { allowlist: AUTH_NOISE_ALLOWLIST, },);
       try {
         await login(page, "e2euser", "password",);
         // Sidebar footer button — click via evaluate to bypass hit-testing.
@@ -95,9 +90,7 @@ describe("Auth session E2E", () => {
   describe("Admin access", () => {
     test("non-admin is redirected away from the admin view", async () => {
       const page = await ctx.openPage();
-      const errors = trackPageErrors(page, {
-        allowlist: [/401 \(Unauthorized\)/, /Failed to load resource/,],
-      },);
+      const errors = trackPageErrors(page, { allowlist: AUTH_NOISE_ALLOWLIST, },);
       try {
         await login(page, "e2euser", "password",);
         await page.goto(`${ctx.url}/views/admin`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
@@ -117,9 +110,7 @@ describe("Auth session E2E", () => {
 
     test("admin can load the admin view", async () => {
       const page = await ctx.openPage();
-      const errors = trackPageErrors(page, {
-        allowlist: [/401 \(Unauthorized\)/, /Failed to load resource/,],
-      },);
+      const errors = trackPageErrors(page, { allowlist: AUTH_NOISE_ALLOWLIST, },);
       try {
         await login(page, "e2eadmin", "adminpass",);
         await page.goto(`${ctx.url}/views/admin`, { waitUntil: "domcontentloaded", timeout: 30_000, },);

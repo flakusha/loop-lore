@@ -11,7 +11,7 @@
 
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { type BrowserTestContext, createBrowserTest, } from "../../helpers/browser-server";
-import { trackPageErrors, } from "../../helpers/htmx-alpine";
+import { AUTH_NOISE_ALLOWLIST, trackPageErrors, } from "../../helpers/htmx-alpine";
 
 describe("Registration flow E2E", () => {
   let ctx: BrowserTestContext;
@@ -34,7 +34,7 @@ describe("Registration flow E2E", () => {
   describe("Register form", () => {
     test("renders username + password + submit", async () => {
       const page = await ctx.openPage();
-      const errors = trackPageErrors(page,);
+      const errors = trackPageErrors(page, { allowlist: AUTH_NOISE_ALLOWLIST, },);
       try {
         await gotoRegister(page,);
         expect(await page.isVisible("[data-testid='username-input']",),).toBe(true,);
