@@ -10,6 +10,7 @@
  */
 
 import { toDate, } from "../../../utils/date";
+import { jsonStringifyOr, } from "../../../utils/safe-json";
 import { jsonParseOr, } from "../json";
 import type { AuditAction, AuditEntry, MemoryEntry, MemoryPanelState, } from "../types";
 
@@ -113,12 +114,12 @@ export function memoriesForTab(panel: MemoryPanelState, tab: MemoryPanelState["a
 /** Raw audit row as returned by GET /api/actors/:id/memories/audit. */
 export interface AuditApiRow {
   id: string;
-  memory_id: string;
-  actor_id: string;
-  user_id: string | null;
-  action: string;
-  details: string;
-  created_at: string;
+  memoryId: string;
+  actorId: string;
+  userId: string | null;
+  action: AuditAction;
+  details: Record<string, unknown>;
+  createdAt: string;
 }
 
 /** Page wrapper returned by the audit endpoint. */
@@ -128,35 +129,51 @@ export interface AuditApiPage {
 }
 
 /** Map a raw API row to the panel AuditEntry shape. */
-export function toAuditEntry(row: AuditApiRow): AuditEntry {
+export function toAuditEntry(row: AuditApiRow,): AuditEntry {
   return {
     id: row.id,
-    memoryId: row.memory_id,
-    actorId: row.actor_id,
-    userId: row.user_id,
-    action: row.action as AuditAction,
-    details: row.details,
-    createdAt: row.created_at,
+    memoryId: row.memoryId,
+    actorId: row.actorId,
+    userId: row.userId,
+    action: row.action,
+    details: jsonStringifyOr(row.details ?? {},),
+    createdAt: row.createdAt,
   };
 }
 
 /** All known audit actions — order matches the audit tab's filter chip row. */
-export const AUDIT_ACTIONS: AuditAction[] = ["create", "modify", "pin", "unpin", "decay", "purge", "inject", "delete"];
+export const AUDIT_ACTIONS: AuditAction[] = ["create", "modify", "pin", "unpin", "decay", "purge", "inject", "delete",];
 
 /**
  * Human-readable label for the audit action badge.
  * @param action
  */
-export function auditActionLabel(action: AuditAction): string {
+export function auditActionLabel(action: AuditAction,): string {
   switch (action) {
-    case "create": { return "Created"; }
-    case "modify": { return "Modified"; }
-    case "pin": { return "Pinned"; }
-    case "unpin": { return "Unpinned"; }
-    case "decay": { return "Decayed"; }
-    case "purge": { return "Purged"; }
-    case "inject": { return "Injected"; }
-    case "delete": { return "Deleted"; }
+    case "create": {
+      return "Created";
+    }
+    case "modify": {
+      return "Modified";
+    }
+    case "pin": {
+      return "Pinned";
+    }
+    case "unpin": {
+      return "Unpinned";
+    }
+    case "decay": {
+      return "Decayed";
+    }
+    case "purge": {
+      return "Purged";
+    }
+    case "inject": {
+      return "Injected";
+    }
+    case "delete": {
+      return "Deleted";
+    }
   }
 }
 
@@ -169,8 +186,11 @@ export function formatAuditDate(iso: string,): string {
   const date = toDate(iso,);
   if (Number.isNaN(date.getTime(),)) { return ""; }
   return date.toLocaleString(undefined, {
-    year: "numeric", month: "short", day: "numeric",
-    hour: "2-digit", minute: "2-digit",
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   },);
 }
 
@@ -191,5 +211,5 @@ export function parseAuditDetails(details: string,): Record<string, unknown> {
  */
 export function auditEntriesForFilter(entries: AuditEntry[], filter: AuditAction | null,): AuditEntry[] {
   if (!filter) { return entries; }
-  return entries.filter((e,) => e.action === filter,);
+  return entries.filter((e,) => e.action === filter);
 }

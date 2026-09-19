@@ -18,12 +18,12 @@
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { sql, } from "kysely";
 import { createLogger, } from "../logger";
-import { insertActorMemories, insertActors, insertChats, insertUsers, } from "../test-utils/insert-helpers";
 import { createTestDb, } from "../test-utils/create-test-db";
+import { insertActorMemories, insertActors, insertChats, insertUsers, } from "../test-utils/insert-helpers";
+import { listAuditLog, recordAuditLog, } from "./audit";
 import {
   extractAndStoreMemories,
 } from "./extraction";
-import { listAuditLog, recordAuditLog, } from "./audit";
 import {
   applyDecay,
   purgeStaleMemories,
@@ -37,19 +37,19 @@ beforeEach(async () => {
   const created = await createTestDb();
   db = created.db;
   sqlite = created.sqlite;
-});
+},);
 
 afterEach(async () => {
   await db.destroy();
   sqlite.close();
-});
+},);
 
 /**
  * @param sqlText
  * @param params
  */
-async function runRaw<T>(sqlText: string, _params: unknown[] = [],): Promise<T[]> {
-  const result = await sql<T>`${sql.raw(sqlText)}`.execute(db,);
+async function runRaw<T,>(sqlText: string, _params: unknown[] = [],): Promise<T[]> {
+  const result = await sql<T>`${sql.raw(sqlText,)}`.execute(db,);
   return result.rows;
 }
 
@@ -63,7 +63,7 @@ describe("memory audit — recordAuditLog", () => {
     await insertActorMemories(db, actorId, "memory B", { id: "mem-b", },);
 
     await recordAuditLog(db, [
-      { memoryId: "mem-a", actorId, action: "pin", userId, details: { reason: "user" }, },
+      { memoryId: "mem-a", actorId, action: "pin", userId, details: { reason: "user", }, },
       { memoryId: "mem-b", actorId, action: "unpin", userId, details: {}, },
     ],);
 
@@ -128,7 +128,10 @@ describe("memory audit — listAuditLog", () => {
     ],);
 
     const before = new Date(Date.now() - 1000,).toISOString();
-    const result = await listAuditLog(db, actorId, { since: before, until: new Date(Date.now() + 1000,).toISOString(), },);
+    const result = await listAuditLog(db, actorId, {
+      since: before,
+      until: new Date(Date.now() + 1000,).toISOString(),
+    },);
     expect(result.entries.length,).toBeGreaterThanOrEqual(1,);
 
     const futureResult = await listAuditLog(db, actorId, { since: new Date(Date.now() + 60_000,).toISOString(), },);
@@ -220,10 +223,22 @@ describe("memory audit — extraction hook (create)", () => {
     // extractAndStoreMemories calls callAux("memory", ...) which depends
     // on an LLM provider. Without one, extraction returns []. We bypass
     // the LLM by calling storeMemories directly (same audit hook path).
-    const { storeMemories, } = await import("./extraction",);
+    const { storeMemories, } = await import("./extraction-store");
     await storeMemories(db, actorId, chatId, [
-      { content: "first fact about the actor", memoryType: "episodic", confidence: 0.9, importance: 5, keywords: ["first",], },
-      { content: "second fact about the actor", memoryType: "semantic", confidence: 0.8, importance: 4, keywords: ["second",], },
+      {
+        content: "first fact about the actor",
+        memoryType: "episodic",
+        confidence: 0.9,
+        importance: 5,
+        keywords: ["first",],
+      },
+      {
+        content: "second fact about the actor",
+        memoryType: "semantic",
+        confidence: 0.8,
+        importance: 4,
+        keywords: ["second",],
+      },
     ], { userId, },);
 
     const rows = await runRaw<{ action: string; details: string }>(
@@ -288,13 +303,18 @@ describe("memory audit — purge hook (decay + purge)", () => {
       pinned: "unpinned",
     },);
 
-    const result = await purgeStaleMemories(db, { staleAfterChats: 1, hardDelete: true, minConfidence: 0.2, minStrength: 0.1, },);
+    const result = await purgeStaleMemories(db, {
+      staleAfterChats: 1,
+      hardDelete: true,
+      minConfidence: 0.2,
+      minStrength: 0.1,
+    },);
     expect(result.deleted,).toBeGreaterThanOrEqual(1,);
 
     const rows = await runRaw<{ action: string }>(
       "SELECT action FROM memory_audit_log",
     );
-    expect(rows.some((r,) => r.action === "purge",),).toBe(true,);
+    expect(rows.some((r,) => r.action === "purge"),).toBe(true,);
   });
 
   test("purgeStaleMemories (soft mark) writes a decay audit row", async () => {
@@ -314,12 +334,17 @@ describe("memory audit — purge hook (decay + purge)", () => {
       pinned: "unpinned",
     },);
 
-    const result = await purgeStaleMemories(db, { staleAfterChats: 1, hardDelete: false, minConfidence: 0.2, minStrength: 0.1, },);
+    const result = await purgeStaleMemories(db, {
+      staleAfterChats: 1,
+      hardDelete: false,
+      minConfidence: 0.2,
+      minStrength: 0.1,
+    },);
     expect(result.stale,).toBeGreaterThanOrEqual(1,);
 
     const rows = await runRaw<{ action: string }>(
       "SELECT action FROM memory_audit_log",
     );
-    expect(rows.some((r,) => r.action === "decay",),).toBe(true,);
+    expect(rows.some((r,) => r.action === "decay"),).toBe(true,);
   });
 });
