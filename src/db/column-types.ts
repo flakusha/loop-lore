@@ -233,5 +233,10 @@ export const COLUMN_TYPE_OVERRIDES: Record<string, Record<string, string>> = {
   },
   "Locations": {
     "publication_status": "PublicationStatus",
+    "kind": "LocationKind",
+    "mobility_mode": "MobilityMode",
+  },
+  "TravelRoutes": {
+    "kind": "TransportKind",
   },
 };

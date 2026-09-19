@@ -106,3 +106,56 @@ export const WorldVisibility = {
 } as const;
 /** */
 export type WorldVisibility = (typeof WorldVisibility)[keyof typeof WorldVisibility];
+
+// ── Fractal Locations (TASK-locations-fractal-migration) ────────────
+/**
+ * LocationKind — fractal hierarchy discriminator.
+ * `region` = continent/country/biome (top level).
+ * `settlement` = city/village/outpost.
+ * `building` = tavern/fortress/inn.
+ * `room` = interior leaf (cabin, bedroom, vault).
+ * `transit` = dock/station/platform (route endpoint).
+ * `transport` = mobile carrier (ship, caravan, airship) that contains rooms.
+ * `pocket` = extradimensional/demiplane (special containment).
+ */
+export const LocationKind = {
+  Region: "region",
+  Settlement: "settlement",
+  Building: "building",
+  Room: "room",
+  Transit: "transit",
+  Transport: "transport",
+  Pocket: "pocket",
+} as const;
+/** */
+export type LocationKind = (typeof LocationKind)[keyof typeof LocationKind];
+
+/**
+ * MobilityMode — does a location move between stops?
+ * `static` = fixed (regions, buildings, rooms).
+ * `free` = moves along a travel route (ships, caravans, airships).
+ * `anchored` = parked/docked (transport currently not en-route).
+ */
+export const MobilityMode = {
+  Static: "static",
+  Free: "free",
+  Anchored: "anchored",
+} as const;
+/** */
+export type MobilityMode = (typeof MobilityMode)[keyof typeof MobilityMode];
+
+/**
+ * TransportKind — flavor for the route a transport follows.
+ * `sea` = oceanic/blue-water routes.
+ * `road` = overland routes (roads, trails).
+ * `air` = aerial routes (airships, flying mounts).
+ * `custom` = world-specific (subterranean, planar, etc.).
+ */
+export const TransportKind = {
+  Sea: "sea",
+  Road: "road",
+  Air: "air",
+  Custom: "custom",
+} as const;
+/** */
+export type TransportKind = (typeof TransportKind)[keyof typeof TransportKind];

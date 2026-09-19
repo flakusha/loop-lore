@@ -43,6 +43,7 @@ import type {
   KeyStatus,
   KeyType,
   LicenseType,
+  LocationKind,
   LoreEntryStatus,
   LorePosition,
   MaterialSlotType,
@@ -53,6 +54,7 @@ import type {
   MessageRole,
   MessageStatus,
   MessageVisibility,
+  MobilityMode,
   ModelRole,
   NarrativeStyle,
   NodeInstanceState,
@@ -87,6 +89,7 @@ import type {
   TemplateModality,
   TraitCategory,
   TransformContext,
+  TransportKind,
   TurnStatus,
   TurnStrategy,
   TurnType,
@@ -584,6 +587,14 @@ export async function insertLocations(
     parent_location_id?: string | null;
     created_at?: string;
     updated_at?: string;
+    kind?: LocationKind;
+    mobility_mode?: MobilityMode;
+    path?: string;
+    coord_x?: number | null;
+    coord_y?: number | null;
+    coord_z?: number | null;
+    current_route_id?: string | null;
+    travel_progress?: number;
   },
 ): Promise<void> {
   await db.insertInto("locations",).values({
@@ -3394,6 +3405,60 @@ export async function insertPromptTemplates(
     id: crypto.randomUUID(),
     owner_id,
     name,
+    ...opts,
+  } as any,).execute();
+}
+
+/** Insert a travel_routes row. */
+export async function insertTravelRoutes(
+  db: Db,
+  world_id: string,
+  name: string,
+  kind: TransportKind,
+  opts?: { id?: string; waypoints?: string; loop?: number; seconds_per_unit?: number; created_at?: string },
+): Promise<void> {
+  await db.insertInto("travel_routes",).values({
+    id: crypto.randomUUID(),
+    world_id,
+    name,
+    kind,
+    ...opts,
+  } as any,).execute();
+}
+
+/** Insert a travel_route_stops row. */
+export async function insertTravelRouteStops(
+  db: Db,
+  route_id: string,
+  location_id: string,
+  stop_order: number,
+  opts?: {
+    id?: string;
+    dwell_seconds?: number;
+    coord_x?: number | null;
+    coord_y?: number | null;
+    coord_z?: number | null;
+  },
+): Promise<void> {
+  await db.insertInto("travel_route_stops",).values({
+    id: crypto.randomUUID(),
+    route_id,
+    location_id,
+    stop_order,
+    ...opts,
+  } as any,).execute();
+}
+
+/** Insert a actor_locations row. */
+export async function insertActorLocations(
+  db: Db,
+  physical_location_id: string,
+  spatial_location_id: string,
+  opts?: { actor_id?: string; entered_at?: string },
+): Promise<void> {
+  await db.insertInto("actor_locations",).values({
+    physical_location_id,
+    spatial_location_id,
     ...opts,
   } as any,).execute();
 }
