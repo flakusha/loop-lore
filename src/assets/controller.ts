@@ -45,12 +45,11 @@ import {
 import { jsonStringifyOr, } from "../utils";
 import { safeFromUint8Array, } from "../utils/safe-buffer";
 import {
-  handleDownload,
   handleServeCompressed,
-  handleServeRaw,
   resolveAsset,
   signedUrlAuth,
 } from "./serve-handlers";
+import { handleDownload, handleServeRaw, } from "./serve-raw";
 import {
   createAsset,
   deleteAsset,
