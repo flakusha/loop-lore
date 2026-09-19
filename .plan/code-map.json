@@ -683,7 +683,6 @@
       "source": ".plan/tickets/BUG-assets-serve-servefile-omits-x-content-type-options-nosniff-.md"
     }
   ],
-
   "src/assets/serve-raw.ts": [
     {
       "kind": "ticket",
@@ -864,7 +863,6 @@
       "source": ".plan/tickets/TASK-gallery-user-tagging-propositions.md"
     }
   ],
-
   "src/assets/service/thumbnail.test.ts": [
     {
       "kind": "ticket",
@@ -4843,6 +4841,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-reconciliation-plan.md"
+    }
+  ],
+  "src/chat-backgrounds": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-fractal-locations.md"
     }
   ],
   "src/chat/auto-rename.test.ts": [
@@ -9120,6 +9124,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-locations-fractal-migration.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-memory-history-search-bind-message-chain-reconstructable-con.md"
     },
     {
@@ -9686,6 +9694,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-locations-fractal-migration.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-memory-history-search-bind-message-chain-reconstructable-con.md"
     }
   ],
@@ -9729,6 +9741,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/schema.md"
+    }
+  ],
+  "src/db/fractal-locations-invariants.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-fractal-locations-invariants-tests.md"
     }
   ],
   "src/db/fts.ts": [
@@ -9878,6 +9896,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-locations-fractal-migration.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-memory-history-search-bind-message-chain-reconstructable-con.md"
     },
     {
@@ -9897,6 +9919,10 @@
   ],
   "src/db/migrations.test.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-fractal-locations.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-migration-activitypub-actor-keys-fk-missing-ondelete-cascade.md"
     },
@@ -9907,6 +9933,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-coverage-gate-true-multi-worker-fanout-investigation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-fractal-locations-invariants-tests.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-locations-fractal-migration.md"
     },
     {
       "kind": "ticket",
@@ -10029,6 +10063,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-redundant-vn-state-stored-in-two-independent-locations.md"
+    }
+  ],
+  "src/db/migrations/013_locations_fractal.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-locations-fractal-migration.md"
     }
   ],
   "src/db/migrations/016_asset_encryption.ts": [
@@ -10301,12 +10341,20 @@
   ],
   "src/db/migrations/README.md": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-fractal-locations.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-fts-encrypt-mismatch.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-message-delete-soft-fails-compliance.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-locations-fractal-migration.md"
     },
     {
       "kind": "ticket",
@@ -10351,6 +10399,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-item-edit-permissions-history.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-locations-fractal-migration.md"
     },
     {
       "kind": "ticket",
@@ -11567,6 +11619,10 @@
       "source": ".plan/tickets/FEAT-040.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-locations-fractal-migration.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/migrations.md"
     }
@@ -11927,6 +11983,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-creative-studio-search-api.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-fractal-locations-api-routes.md"
     },
     {
       "kind": "ticket",
@@ -13526,6 +13586,10 @@
   "src/frontend/alpine/location-explorer.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-location-explorer-recursive-tree.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-location-explorer.md"
     }
   ],
@@ -14025,7 +14089,6 @@
       "source": ".plan/tickets/TASK-world-item-frontend.md"
     }
   ],
-
   "src/frontend/alpine/world-lore-entries.ts": [
     {
       "kind": "ticket",
@@ -23689,6 +23752,10 @@
   "src/routes/location-explorer.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-fractal-locations-api-routes.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-location-editor-structured-ui.md"
     },
     {
@@ -25735,6 +25802,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-fractal-locations-api-routes.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-location-editor-structured-ui.md"
     },
     {
@@ -25838,6 +25909,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-fix-eslint-errors.md"
+    }
+  ],
+  "src/rpg/actor-locations/service.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-actor-position-physical-spatial-split.md"
     }
   ],
   "src/rpg/blog/service.ts": [
@@ -26598,6 +26675,24 @@
       "source": ".plan/tickets/TASK-rpg-chat-questions.md"
     }
   ],
+  "src/rpg/location-tree/invariants.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-fractal-locations-invariants-tests.md"
+    }
+  ],
+  "src/rpg/location-tree/service.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-locations-tree-integrity-service.md"
+    }
+  ],
+  "src/rpg/location-tree/service.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-locations-tree-integrity-service.md"
+    }
+  ],
   "src/rpg/location.ts": [
     {
       "kind": "ticket",
@@ -26886,6 +26981,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TEST-npc-navigation-processMovementTick-untested.md"
+    }
+  ],
+  "src/rpg/npc-navigation/service/movement.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-actor-position-physical-spatial-split.md"
     }
   ],
   "src/rpg/npc-navigation/service/processing.test.ts": [
@@ -27656,6 +27757,36 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-nsfw-trauma-recovery.md"
+    }
+  ],
+  "src/rpg/travel-routes/service.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-travel-routes-schema-and-crud.md"
+    }
+  ],
+  "src/rpg/travel-routes/service.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-travel-routes-schema-and-crud.md"
+    }
+  ],
+  "src/rpg/travel-scheduler/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-travel-scheduler-tick.md"
+    }
+  ],
+  "src/rpg/travel-scheduler/tick.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-travel-scheduler-tick.md"
+    }
+  ],
+  "src/rpg/travel-scheduler/tick.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-travel-scheduler-tick.md"
     }
   ],
   "src/rpg/validation.ts": [
@@ -30650,7 +30781,6 @@
       "source": ".plan/tickets/BUG-frontend-minor-bugs-batch.md"
     }
   ],
-
   "src/views/.../lore-entries.partial.html": [
     {
       "kind": "ticket",

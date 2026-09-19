@@ -13,7 +13,7 @@
 
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { type BrowserTestContext, createBrowserTest, } from "../../helpers/browser-server";
-import { trackPageErrors, } from "../../helpers/htmx-alpine";
+import { AUTH_NOISE_ALLOWLIST, trackPageErrors, } from "../../helpers/htmx-alpine";
 
 const ROUTES = {
   root: "/",
@@ -31,7 +31,7 @@ async function redirectPath(
   expected: string,
 ): Promise<void> {
   const page = await ctx.openPage();
-  const errors = trackPageErrors(page,);
+  const errors = trackPageErrors(page, { allowlist: AUTH_NOISE_ALLOWLIST, },);
   try {
     await page.goto(`${ctx.url}${path}`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
     await page.waitForURL((url,) => url.pathname === expected, { timeout: 30_000, },);
@@ -87,7 +87,7 @@ describe("Redirection E2E — auth required", () => {
 
   test("direct '/views/chat' without login does not show chat content", async () => {
     const page = await ctx.openPage();
-    const errors = trackPageErrors(page,);
+    const errors = trackPageErrors(page, { allowlist: AUTH_NOISE_ALLOWLIST, },);
     try {
       await page.goto(`${ctx.url}${ROUTES.chat}`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
 
