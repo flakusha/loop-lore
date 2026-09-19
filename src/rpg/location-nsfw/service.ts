@@ -13,14 +13,11 @@
  * Location config affects encounter availability and mechanics.
  */
 import type { Kysely, } from "kysely";
-import type { NsfwLocationType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
-import { jsonStringifyOr, } from "../../utils";
-import { nowAndId, parseJsonField, } from "../shared/rpg-service-utils";
+import { LocationNsfwConfigStore, } from "./config-store";
 import type {
   LocationAtmosphere,
   LocationNsfwConfig,
-  LocationRisks,
   UpdateLocationNsfwOpts,
 } from "./types";
 
@@ -35,72 +32,21 @@ export type {
 
 /** */
 export class LocationNsfwService {
+  private readonly store: LocationNsfwConfigStore;
+
   /**
    * @param db
    */
-  constructor(private readonly db: Kysely<DB>,) {}
+  constructor(private readonly db: Kysely<DB>,) {
+    this.store = new LocationNsfwConfigStore(db,);
+  }
 
   /**
    * Get or create NSFW config for a location.
    * @param locationId
    */
   async getConfig(locationId: string,): Promise<LocationNsfwConfig> {
-    const row = await this.db
-      .selectFrom("location_nsfw_config",)
-      .where("location_id", "=", locationId,)
-      .selectAll()
-      .executeTakeFirst();
-
-    if (row) {
-      return this.getRow(row,);
-    }
-
-    // Create default config
-    const { id, now, } = nowAndId();
-
-    const defaultAtmosphere: LocationAtmosphere = {
-      romantic: 50,
-      dangerous: 0,
-      comfortable: 50,
-      exotic: 0,
-      seedy: 0,
-    };
-
-    const defaultRisks: LocationRisks = {
-      discovery: 10,
-      injury: 0,
-      arrest: 0,
-      reputation: 5,
-    };
-
-    await this.db
-      .insertInto("location_nsfw_config",)
-      .values({
-        id,
-        location_id: locationId,
-        location_type: "bedroom",
-        privacy_level: "private",
-        discovery_chance: 10,
-        atmosphere: jsonStringifyOr(defaultAtmosphere,),
-        equipment: "[]",
-        risks: jsonStringifyOr(defaultRisks,),
-        created_at: now,
-        updated_at: now,
-      },)
-      .execute();
-
-    return {
-      id,
-      locationId,
-      locationType: "bedroom",
-      privacyLevel: "private",
-      discoveryChance: 10,
-      atmosphere: defaultAtmosphere,
-      equipment: [],
-      risks: defaultRisks,
-      createdAt: now,
-      updatedAt: now,
-    };
+    return this.store.getConfig(locationId,);
   }
 
   /**
@@ -112,28 +58,7 @@ export class LocationNsfwService {
     locationId: string,
     updates: UpdateLocationNsfwOpts,
   ): Promise<boolean> {
-    const current = await this.getConfig(locationId,);
-    const now = new Date().toISOString();
-    const fields: Record<string, unknown> = { updated_at: now, };
-
-    if (updates.locationType !== undefined) { fields.location_type = updates.locationType; }
-    if (updates.privacyLevel !== undefined) { fields.privacy_level = updates.privacyLevel; }
-    if (updates.discoveryChance !== undefined) { fields.discovery_chance = updates.discoveryChance; }
-    if (updates.atmosphere !== undefined) {
-      fields.atmosphere = jsonStringifyOr({ ...current.atmosphere, ...updates.atmosphere, },);
-    }
-    if (updates.equipment !== undefined) { fields.equipment = jsonStringifyOr(updates.equipment,); }
-    if (updates.risks !== undefined) {
-      fields.risks = jsonStringifyOr({ ...current.risks, ...updates.risks, },);
-    }
-
-    const result = await this.db
-      .updateTable("location_nsfw_config",)
-      .set(fields,)
-      .where("location_id", "=", locationId,)
-      .executeTakeFirst();
-
-    return (result.numUpdatedRows ?? 0n) > 0n;
+    return this.store.updateConfig(locationId, updates,);
   }
 
   /**
@@ -141,15 +66,7 @@ export class LocationNsfwService {
    * @param locationIds
    */
   async getConfigs(locationIds: string[],): Promise<LocationNsfwConfig[]> {
-    if (locationIds.length === 0) { return []; }
-
-    const rows = await this.db
-      .selectFrom("location_nsfw_config",)
-      .where("location_id", "in", locationIds,)
-      .selectAll()
-      .execute();
-
-    return Array.from(rows, (r,) => this.getRow(r,),);
+    return this.store.getConfigs(locationIds,);
   }
 
   /**
@@ -157,12 +74,7 @@ export class LocationNsfwService {
    * @param locationId
    */
   async deleteConfig(locationId: string,): Promise<boolean> {
-    const result = await this.db
-      .deleteFrom("location_nsfw_config",)
-      .where("location_id", "=", locationId,)
-      .executeTakeFirst();
-
-    return (result.numDeletedRows ?? 0n) > 0n;
+    return this.store.deleteConfig(locationId,);
   }
 
   /**
@@ -249,52 +161,5 @@ export class LocationNsfwService {
   async isPrivate(locationId: string,): Promise<boolean> {
     const config = await this.getConfig(locationId,);
     return config.privacyLevel === "private" || config.privacyLevel === "isolated";
-  }
-
-  // ── Private helpers ───────────────────────────────────
-
-  /**
-   * @param row
-   * @param row.id
-   * @param row.location_id
-   * @param row.location_type
-   * @param row.privacy_level
-   * @param row.discovery_chance
-   * @param row.atmosphere
-   * @param row.equipment
-   * @param row.risks
-   * @param row.created_at
-   * @param row.updated_at
-   */
-  private getRow(row: {
-    id: string;
-    location_id: string;
-    location_type: NsfwLocationType;
-    privacy_level: string;
-    discovery_chance: number;
-    atmosphere: string;
-    equipment: string;
-    risks: string;
-    created_at: string;
-    updated_at: string;
-  },): LocationNsfwConfig {
-    return {
-      id: row.id,
-      locationId: row.location_id,
-      locationType: row.location_type,
-      privacyLevel: row.privacy_level,
-      discoveryChance: row.discovery_chance,
-      atmosphere: parseJsonField<LocationAtmosphere>(row.atmosphere, {
-        romantic: 50,
-        dangerous: 0,
-        comfortable: 50,
-        exotic: 0,
-        seedy: 0,
-      },),
-      equipment: parseJsonField<string[]>(row.equipment, [],),
-      risks: parseJsonField<LocationRisks>(row.risks, { discovery: 10, injury: 0, arrest: 0, reputation: 5, },),
-      createdAt: row.created_at,
-      updatedAt: row.updated_at,
-    };
   }
 }
