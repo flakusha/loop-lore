@@ -7,8 +7,19 @@
  * Alpha extraction (background removal) for opaque character images:
  * pluggable provider, async job lifecycle, raw + matted asset pair.
  */
+export {
+  buildMattingWorkflow,
+  createComfyMattingProvider,
+  hasMattingNodes,
+  MATTING_REQUIRED_NODES,
+} from "./comfy-provider";
+export { resolveMattingProvider, } from "./factory";
 export { cancelJob, getJob, listJobs, } from "./job-store";
-export { createHttpMattingProvider, } from "./providers";
+export {
+  createHttpMattingProvider,
+  createRembgMattingProvider,
+  looksLikePng,
+} from "./providers";
 export { MATTING_SOURCE_LABEL, MattingService, type MattingServiceOpts, } from "./service";
 export type {
   MattingError,

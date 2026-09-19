@@ -52,6 +52,38 @@ export interface LocalModelDownloadConfig {
   models?: Record<string, LocalModelDownloadModelConfig>;
 }
 
+/** Matting (background removal) backend selection. */
+export interface MattingConfig {
+  /**
+   * Which backend executes background removal. "none" (default when the
+   * section is absent) disables matting entirely — raw assets stay usable.
+   * "auto" prefers ComfyUI (when an sd provider with apiFamily "comfyui" is
+   * configured), then the rembg HTTP sidecar, then the generic HTTP endpoint.
+   */
+  backend: "none" | "http" | "rembg" | "comfy" | "auto";
+  /**
+   * HTTP endpoint. For "http": a URL accepting POST image bytes and returning
+   * PNG bytes. For "rembg": the rembg server base URL (e.g.
+   * `http://127.0.0.1:7000`); the client appends `/api/remove`.
+   */
+  endpoint?: string;
+  /**
+   * Matting model id. "rembg": model name (default `isnet-general-use`; the
+   * rembg default `bria-rmbg` and `RMBG-*` weights are non-commercial — pin a
+   * permissive model). "comfy": background-removal weights file name (default
+   * `birefnet.safetensors`, MIT).
+   */
+  model?: string;
+  /** Optional bearer token sent by the generic "http" provider. */
+  apiKey?: string;
+  /** Request timeout in ms (default 120000). */
+  timeoutMs?: number;
+  /** rembg only: request color decontamination on soft edges (default true). */
+  decontaminate?: boolean;
+  /** Auto-enqueue matting after emotion-avatar generation (default true). */
+  autoEnqueue?: boolean;
+}
+
 /** */
 export interface GenerationConfig {
   /** Provider configurations */
@@ -82,6 +114,8 @@ export interface GenerationConfig {
   };
   /** Browser-model download policy: admin default plus per-model overrides. */
   localModels?: LocalModelDownloadConfig;
+  /** Background-removal (matting) backend for avatar/sprite cut-outs. */
+  matting?: MattingConfig;
   /** Server-wide defaults for chat-level generation features. */
   chatDefaults?: GenerationChatDefaults;
 }

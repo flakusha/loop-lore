@@ -513,6 +513,18 @@
       "source": ".plan/tickets/TASK-wire-fswatcher-onreload-callback-in-server-startup.md"
     }
   ],
+  "src/assets/alpha-detect.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assets-has-alpha-column-and-store-computation.md"
+    }
+  ],
+  "src/assets/alpha-detect.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assets-has-alpha-column-and-store-computation.md"
+    }
+  ],
   "src/assets/controller.routes.test.ts": [
     {
       "kind": "ticket",
@@ -652,6 +664,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-assets-has-alpha-column-and-store-computation.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-multimodal-asset-reuse.md"
     }
   ],
@@ -747,6 +763,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-background.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-alpha-extraction-matting-job-for-opaque-character-images.md"
     }
   ],
   "src/assets/service/create.test.ts": [
@@ -767,6 +787,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-asset-dedup-toctou-creates-duplicate-rows-and-orphan-files.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assets-has-alpha-column-and-store-computation.md"
     },
     {
       "kind": "ticket",
@@ -793,6 +817,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-db-asset-delete-no-tx-n-1-memory-purge-column-allowlist-play.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-alpha-extraction-matting-job-for-opaque-character-images.md"
     }
   ],
   "src/assets/service/file-system.test.ts": [
@@ -4423,6 +4451,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-background.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-alpha-extraction-matting-job-for-opaque-character-images.md"
     },
     {
       "kind": "spec",
@@ -9388,11 +9420,19 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-assets-has-alpha-column-and-store-computation.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-character-avatar-gallery-binding.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-item-asset-avatar-display-in-inventory-trading-and-provision.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-alpha-extraction-matting-job-for-opaque-character-images.md"
     }
   ],
   "src/db/enums-core.ts": [
@@ -17259,6 +17299,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-local-image-generation-queue.md"
+    }
+  ],
+  "src/generation/matting/service.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-alpha-extraction-matting-job-for-opaque-character-images.md"
     }
   ],
   "src/generation/policy-detector.ts": [

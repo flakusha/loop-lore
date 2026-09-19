@@ -39,6 +39,7 @@ export const SEED_FOCAL_POINT = { x: 0.5, y: 0.35, } as const;
 
 /**
  * @param values
+ * @throws Error when a finite transform value is out of range.
  */
 function assertValidTransform(values: TransformValues,): void {
   for (const [key, value,] of Object.entries(values,)) {
@@ -57,6 +58,7 @@ function assertValidTransform(values: TransformValues,): void {
  * @param assetId
  * @param context
  * @param values
+ * @returns the persisted transform row
  */
 export async function upsertAssetTransform(
   db: Kysely<DB>,
@@ -88,6 +90,7 @@ export async function upsertAssetTransform(
  * @param db
  * @param assetId
  * @param context
+ * @returns the transform row, or undefined when absent
  */
 export async function getAssetTransform(
   db: Kysely<DB>,
@@ -105,6 +108,7 @@ export async function getAssetTransform(
  * @param db
  * @param assetId
  * @param context
+ * @returns the effective transform row, or undefined when none exists
  */
 export async function resolveAssetTransform(
   db: Kysely<DB>,
@@ -121,6 +125,7 @@ export async function resolveAssetTransform(
  * Seed the default-context row for a fresh image when none exists.
  * @param db
  * @param assetId
+ * @returns resolves once the default row exists
  */
 export async function seedBaseTransform(db: Kysely<DB>, assetId: string,): Promise<void> {
   if (await getAssetTransform(db, assetId, TransformContext.Default,)) { return; }

@@ -8,6 +8,7 @@ import { Elysia, } from "elysia";
 import { loraRoutes, } from "../../../src/generation/lora/routes";
 import type { RegisterPluginsOpts, } from "../../app/register-plugins";
 import { assetRoutes, } from "../../assets/controller";
+import { mattingRoutes, } from "../../assets/matting-routes";
 import { generationRoutes, } from "../../generation/controller";
 import { imageEditRoutes, } from "../../image-edit/routes";
 import { personaRoutes, } from "../../personas/controller";
@@ -33,6 +34,7 @@ export function contentSurface(opts: RegisterPluginsOpts,) {
     .use(generationRoutes({ database, config, }, prefix,),)
     .use(loraRoutes({ config, }, prefix,),)
     .use(assetRoutes({ database, config, }, prefix,),)
+    .use(mattingRoutes({ database, config, }, prefix,),)
     .use(assetSearchRoutes(handleOpts, prefix,),)
     .use(assetTagRoutes({ database, }, prefix,),)
     .use(gifSearchRoutes(handleOpts, prefix,),)

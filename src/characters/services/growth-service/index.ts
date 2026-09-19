@@ -56,6 +56,7 @@ export class CharacterGrowthService {
   /**
    * Read the growth_mode + llm_assist_enabled flags for an actor.
    * @param actorId
+   * @returns the growth mode snapshot
    */
   async getGrowthMode(actorId: string,): Promise<GrowthModeSnapshot> {
     return getGrowthMode(this.db, actorId,);
@@ -64,6 +65,7 @@ export class CharacterGrowthService {
   /**
    * Get the current arc for an actor, or null if none has been authored.
    * @param actorId
+   * @returns the current arc, or null when unauthored
    */
   async getArc(actorId: string,): Promise<CharacterArc | null> {
     return getArc(this.db, actorId,);
@@ -74,6 +76,7 @@ export class CharacterGrowthService {
    * row so the audit trail is complete.
    * @param input
    * @param confirmedBy - User id of the actor setting the stage.
+   * @returns the upserted arc
    */
   async upsertArc(input: UpsertArcInput, confirmedBy: string,): Promise<CharacterArc> {
     return upsertArc(this.db, input, confirmedBy,);
@@ -83,6 +86,7 @@ export class CharacterGrowthService {
    * Insert a growth_log row. Enforces static-mode refusal (D4) and
    * returns the persisted row.
    * @param input
+   * @returns the persisted growth-log entry
    */
   async insertGrowthLog(input: InsertGrowthLogInput,): Promise<GrowthLogEntry> {
     return insertGrowthLog(this.db, input,);
@@ -92,6 +96,7 @@ export class CharacterGrowthService {
    * List growth log entries for an actor, most recent first.
    * @param actorId
    * @param opts
+   * @returns growth-log entries, most recent first
    */
   async listGrowthLog(
     actorId: string,
@@ -103,6 +108,7 @@ export class CharacterGrowthService {
   /**
    * Confirm a pending growth_log entry (D6).
    * @param opts
+   * @returns the confirmed entry
    */
   async confirmGrowthEntry(opts: ConfirmGrowthEntryOpts,): Promise<GrowthLogEntry> {
     return confirmGrowthEntry(this.db, opts,);
@@ -111,6 +117,7 @@ export class CharacterGrowthService {
   /**
    * Reject a pending growth_log entry (D6).
    * @param opts
+   * @returns the rejected entry
    */
   async rejectGrowthEntry(opts: RejectGrowthEntryOpts,): Promise<GrowthLogEntry> {
     return rejectGrowthEntry(this.db, opts,);
@@ -119,7 +126,8 @@ export class CharacterGrowthService {
 
 /**
  * Default factory — used by routes and prompt sections.
- * @param db
+ * @param db - database handle
+ * @returns the growth service
  */
 export function characterGrowthService(db: Kysely<DB>,): CharacterGrowthService {
   return new CharacterGrowthService(db,);
