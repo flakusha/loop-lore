@@ -146,5 +146,16 @@ export function defaultJobs(): CronJobDef[] {
         return summary;
       },
     },),
+    defineJob({
+      name: "nsfw.status-sweep",
+      schedule: "*/15 * * * *",
+      enabled: true,
+      run: async ({ database, logger, },) => {
+        const { sweepExpiredEffects, } = await import("../rpg/status-effects");
+        const deleted = await sweepExpiredEffects(database,);
+        logger.info("nsfw status sweep complete", { module: "cron", deleted, },);
+        return { deleted, };
+      },
+    },),
   ];
 }

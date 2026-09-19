@@ -7,13 +7,13 @@ import { type FantasyCategory, type SeductionSkillCategory, } from "../../../db/
 import { ContentIntensity, } from "../../../db/enums-character/nsfw";
 import type { DB, } from "../../../db/schema";
 import { getLogger, } from "../../../logger";
-import { AROUSAL_CEILING, } from "../../../schemas";
 import {
   checkPrerequisites,
   getSeductionPrerequisites,
   type SocialSkillForNSFW,
 } from "../../../nsfw/seduction-prerequisites";
 import { getArousal, modifyArousal, } from "./arousal";
+import { getActiveEffects, } from "../../status-effects";
 import { getDesireProfile, } from "./desire";
 import { awardXp, getActorSkills, } from "./skills";
 import type { SeductionAttemptOpts, SeductionResult, SeductionSkill, } from "./types";
@@ -220,7 +220,7 @@ async function settleAttempt(args: {
       sourceId: `${actorId}:${skillCategory}`,
     },);
   } catch (cause) {
-    log.warn(`Mood follow-through skipped for ${targetId}:`, cause instanceof Error ? cause : undefined,);
+    log.warn(`Mood follow-through skipped for ${targetId}:`, { error: cause instanceof Error ? cause.message : String(cause), },);
   }
 }
 
@@ -297,6 +297,14 @@ export async function attemptSeduction(db: Kysely<DB>, opts: SeductionAttemptOpt
   // of free-text desire lists.
   const fantasies = new FantasyService(db,);
 
+  // ── Pheromone consult (TASK-039) ─────────────────────────────
+  // Consumer-side read of the shared store: chemistry modifiers arrive
+  // as active `physical` status rows, never by querying ChemistryService.
+  const pheromones = await getActiveEffects(db, targetId, { category: "physical", },);
+  const pheromoneDcBonus = pheromones
+    .filter((e,) => e.effectId === "aphrodisiac" || e.effectId.startsWith("pheromone_") || e.effectId === "arousal",)
+    .reduce((total, e,) => total - 5 * e.magnitude, 0,);
+
   // Calculate DC based on target's state
   const targetArousal = await getArousal(db, targetId, worldId,);
   const targetDesire = await getDesireProfile(db, targetId,);
@@ -305,6 +313,7 @@ export async function attemptSeduction(db: Kysely<DB>, opts: SeductionAttemptOpt
   let dc = 50;
   dc -= Math.floor(targetArousal.level * 0.3,); // Arousal makes them easier
   dc -= Math.floor(targetDesire.currentDesire * 0.2,); // Desire makes them easier
+  dc += pheromoneDcBonus; // Pheromones ease (negative bonus)
 
   // Turn-ons reduce DC — matched against the target's fantasy rows by
   // FantasyCategory (approach is tagged by its invoked category).

@@ -20,6 +20,9 @@
 import type { Kysely, } from "kysely";
 import type { HeatPhase, } from "../../../db/enums";
 import type { DB, } from "../../../db/schema";
+import { getModifier, } from "../../stats/modifiers";
+import type { StatBlock, } from "../../stats/types";
+import { getActiveEffects, } from "../../status-effects";
 import { Species, } from "../enums";
 import {
   calculateArousalModifier as calculateArousalModifierDispatch,
@@ -140,14 +143,60 @@ export class BodySystemService {
     return getHeatEffectsDispatch(this.db, actorId,);
   }
 
+  /**
+   * Current physical status (TASK-035): physique profile merged with
+   * live transient state from the shared `status_effect` store.
+   *
+   * Stamina/endurance live as `character_body_profile` base capacity;
+   * transient drain (`exhaustion`, `arousal`, `aphrodisiac`) lives ONLY
+   * in shared status rows — no private stamina field. Encounter
+   * outcomes (TASK-036) write those same rows via the chemistry/trauma
+   * services, so they surface here with no second code path. The CON
+   * modifier arrives from the unified stat path, defaulting to 0 when
+   * no `character_stats` row exists.
+   * @param actorId
+   */
+  async getPhysicalStatus(actorId: string,): Promise<{
+    profile: BodyProfile;
+    arousal: number;
+    exhaustion: number;
+    aphrodisiac: number;
+    effectiveStamina: number;
+    effectiveDuration: number;
+  }> {
+    const profile = await getProfileDispatch(this.db, actorId,);
+    const effects = await getActiveEffects(this.db, actorId, { category: "physical", },);
+    const sum = (id: string,): number => effects
+      .filter((e,) => e.effectId === id,)
+      .reduce((total, e,) => total + e.magnitude, 0,);
+    const arousal = sum("arousal",);
+    const exhaustion = sum("exhaustion",);
+    const aphrodisiac = sum("aphrodisiac",);
+    const effectiveStamina = Math.max(1, profile.stamina - exhaustion,);
+    const stats = await this.db
+      .selectFrom("character_stats",)
+      .select(["str", "dex", "con", "int", "wis", "cha",],)
+      .where("actor_id", "=", actorId,)
+      .executeTakeFirst();
+    const block: StatBlock = stats
+      ? { str: stats.str, dex: stats.dex, con: stats.con, int: stats.int, wis: stats.wis, cha: stats.cha, }
+      : { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10, };
+    const effectiveDuration = calculateEncounterDurationDispatch(
+      { ...profile, stamina: effectiveStamina, },
+      getModifier(block, "con",),
+    );
+    return { profile, arousal, exhaustion, aphrodisiac, effectiveStamina, effectiveDuration, };
+  }
+
   // ── Derived Stats ─────────────────────────────────────
 
   /**
    * Calculate effective encounter duration based on stamina + endurance.
    * @param profile
+   * @param conModifier - CON modifier from the unified stat path (default 0)
    */
-  static calculateEncounterDuration(profile: BodyProfile,): number {
-    return calculateEncounterDurationDispatch(profile,);
+  static calculateEncounterDuration(profile: BodyProfile, conModifier = 0,): number {
+    return calculateEncounterDurationDispatch(profile, conModifier,);
   }
 
   /**
