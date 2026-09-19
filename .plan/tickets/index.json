@@ -6591,6 +6591,20 @@
     "git_issue": "96a6ff6",
     "status": "open"
   },
+
+  "FEAT-BACKGROUND": {
+    "hash": "dfbf20e",
+    "git_issue": "dfbf20e",
+    "extid": "FEAT-BACKGROUND",
+    "type": "FEAT",
+    "title": "Background Removal — Matting Backends + Alpha Serving",
+    "label": "feat",
+    "priority": "high",
+    "epic": "Avatar Alpha Channel + VN Layering",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-background.md",
+    "status": "⬜ Not Started"
+  },
   "FEAT-BATTLE-CORE-IMPLEMENTATION": {
     "hash": "b1fde84",
     "git_issue": "b1fde84",
