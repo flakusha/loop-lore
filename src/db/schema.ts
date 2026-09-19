@@ -173,4 +173,5 @@ export interface DB {
   mesh_reservations: import("./schema-core").MeshReservations;
   mesh_deliveries: import("./schema-core").MeshDeliveries;
   status_effect: import("./schema-core").StatusEffect;
+  memory_audit_log: import("./schema-core").MemoryAuditLog;
 }
