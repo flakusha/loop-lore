@@ -3,7 +3,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
-import { insertActors, } from "../../test-utils/insert-helpers";
+import { insertActors, insertCharacterMood, insertCharacterStats, } from "../../test-utils/insert-helpers";
 import { INTIMACY_THRESHOLDS, IntimacyService, } from "./service";
 
 // Initialize logger for tests (error only to suppress noise)
@@ -407,5 +407,133 @@ describe("IntimacyService", () => {
 
     const affected = await service.decayAll("actor-1", 3,);
     expect(affected,).toBe(2,);
+  });
+
+  // ── CHA/WIS scaling (TASK-033) ─────────────────────────────────
+
+  test("applyAction scales positive delta by actor CHA modifier", async () => {
+    const db = await seedTestDb();
+    const service = new IntimacyService(db,);
+
+    // CHA 18 → +4 modifier (floor((18-10)/2)).
+    await insertCharacterStats(db, "actor-1", 10, 10, 10, { cha: 18, },);
+
+    const result = await service.applyAction({
+      database: db,
+      actorId: "actor-1",
+      targetActorId: "actor-2",
+      action: { id: "a1", name: "Gift", type: "gift", delta: 10, minIntimacy: 0, requiresConsent: false, },
+    },);
+
+    expect(result.applied,).toBe(true,);
+    expect(result.newScore,).toBe(14,);
+    expect(result.actualDelta,).toBe(14,);
+  });
+
+  test("applyAction without a stats row uses neutral (all-10) modifiers", async () => {
+    const db = await seedTestDb();
+    const service = new IntimacyService(db,);
+
+    const result = await service.applyAction({
+      database: db,
+      actorId: "actor-1",
+      targetActorId: "actor-2",
+      action: { id: "a1", name: "Gift", type: "gift", delta: 10, minIntimacy: 0, requiresConsent: false, },
+    },);
+
+    expect(result.applied,).toBe(true,);
+    expect(result.newScore,).toBe(10,);
+  });
+
+  test("applyAction tempers negative delta by actor WIS (never amplifies loss above base)", async () => {
+    const db = await seedTestDb();
+    const service = new IntimacyService(db,);
+
+    // Build score first (no stats row yet → neutral).
+    await service.applyAction({
+      database: db,
+      actorId: "actor-1",
+      targetActorId: "actor-2",
+      action: { id: "a0", name: "Warmup", type: "gift", delta: 20, minIntimacy: 0, requiresConsent: false, },
+    },);
+
+    // WIS 18 → +4, but loss must not exceed the base delta magnitude (-10).
+    await insertCharacterStats(db, "actor-1", 10, 10, 10, { wis: 18, cha: 10, },);
+
+    const result = await service.applyAction({
+      database: db,
+      actorId: "actor-1",
+      targetActorId: "actor-2",
+      action: { id: "a2", name: "Betrayal", type: "physical", delta: -10, minIntimacy: 0, requiresConsent: false, },
+    },);
+
+    expect(result.applied,).toBe(true,);
+    expect(result.newScore,).toBe(10,);
+    expect(result.actualDelta,).toBe(-10,);
+  });
+
+  // ── NSFW capability gate (TASK-033) ──────────────────────────
+
+  test("applyAction without gate context applies (pre-gate behavior preserved)", async () => {
+    const db = await seedTestDb();
+    const service = new IntimacyService(db,);
+
+    const result = await service.applyAction({
+      database: db,
+      actorId: "actor-1",
+      targetActorId: "actor-2",
+      action: { id: "a1", name: "Gift", type: "gift", delta: 10, minIntimacy: 0, requiresConsent: false, },
+    },);
+
+    expect(result.applied,).toBe(true,);
+  });
+
+  // ── Mood follow-through (TASK-041) ───────────────────────────
+
+  test("cross-tier transition logs one source-tagged mood event on the target", async () => {
+    const db = await seedTestDb();
+    const service = new IntimacyService(db,);
+
+    // Mood row must exist for logEvent's delta application.
+    await insertCharacterMood(db, "actor-2", "2026-01-01T00:00:00.000Z", "2026-01-01T00:00:00.000Z", "2026-01-01T00:00:00.000Z",);
+
+    const result = await service.applyAction({
+      database: db,
+      actorId: "actor-1",
+      targetActorId: "actor-2",
+      action: { id: "a1", name: "Help", type: "service", delta: 15, minIntimacy: 0, requiresConsent: false, },
+    },);
+
+    // 0 → 15 crosses the acquaintances threshold (10) exactly once.
+    expect(result.thresholdsReached.length,).toBe(1,);
+    const events = await db.selectFrom("mood_events",)
+      .where("actor_id", "=", "actor-2",)
+      .selectAll()
+      .execute();
+    expect(events.length,).toBe(1,);
+    expect(events[0]!.event_type,).toBe("intimacy.level_changed",);
+    expect(events[0]!.source,).toBe("intimacy",);
+  });
+
+  test("same-tier update logs no mood event", async () => {
+    const db = await seedTestDb();
+    const service = new IntimacyService(db,);
+
+    await insertCharacterMood(db, "actor-2", "2026-01-01T00:00:00.000Z", "2026-01-01T00:00:00.000Z", "2026-01-01T00:00:00.000Z",);
+
+    // delta 5 stays below the acquaintances threshold (10) — no crossing.
+    const result = await service.applyAction({
+      database: db,
+      actorId: "actor-1",
+      targetActorId: "actor-2",
+      action: { id: "a1", name: "Wave", type: "verbal", delta: 5, minIntimacy: 0, requiresConsent: false, },
+    },);
+
+    expect(result.thresholdsReached,).toEqual([],);
+    const events = await db.selectFrom("mood_events",)
+      .where("actor_id", "=", "actor-2",)
+      .selectAll()
+      .execute();
+    expect(events,).toEqual([],);
   });
 });

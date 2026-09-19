@@ -38,4 +38,5 @@ export {
   computeEffectiveRating,
   isRatingAllowed,
   createRatingEnforcement,
+  AROUSAL_CEILING,
 } from "./nsfw-rating";

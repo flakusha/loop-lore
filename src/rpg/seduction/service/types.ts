@@ -5,6 +5,7 @@ import type { Kysely, } from "kysely";
 import type {
   SeductionSkillCategory,
 } from "../../../db/enums";
+import type { ContentIntensity, } from "../../../db/enums-character/nsfw";
 import type { DB, } from "../../../db/schema";
 import type { SeductionPrerequisite, } from "../../../nsfw/seduction-prerequisites";
 import type { ReputationTier, } from "../../../schemas";
@@ -98,6 +99,11 @@ export interface SeductionAttemptOpts {
   approach: string;
   /** Optional world context. */
   worldId?: string | null;
+  /**
+   * Content-intensity tier bounding arousal progression. Arousal deltas
+   * clamp at AROUSAL_CEILING[tier]. Omitted → Moderate.
+   */
+  intensityTier?: ContentIntensity;
   /**
    * Target reputation tier — gates the skill prerequisites. Omitted → the
    * most permissive tier (`devoted`, no prerequisites) so callers that do

@@ -3,7 +3,9 @@
 
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../../db/schema";
+import { ContentIntensity, } from "../../../db/enums-character/nsfw";
 import { getLogger, } from "../../../logger";
+import { AROUSAL_CEILING, } from "../../../schemas";
 import { jsonStringifyOr, uid, } from "../../../utils";
 import { rowToArousal, } from "./helpers";
 import type { ArousalModifier, ArousalState, } from "./types";
@@ -71,6 +73,9 @@ export async function getArousal(
  * @param delta - Arousal change (positive = increase, negative = decrease).
  * @param worldId
  * @param source
+ * @param intensityTier - Content-intensity tier bounding the ceiling
+ *   (defaults to Moderate); deltas clamp at AROUSAL_CEILING[tier]
+ *   (TASK-034).
  * @returns New arousal level.
  */
 export async function modifyArousal(
@@ -79,6 +84,7 @@ export async function modifyArousal(
   delta: number,
   worldId: string | null = null,
   source?: string,
+  intensityTier?: ContentIntensity,
 ): Promise<number> {
   const state = await getArousal(db, actorId, worldId,);
 
@@ -88,7 +94,10 @@ export async function modifyArousal(
     modifiedDelta *= mod.multiplier;
   }
 
-  const newLevel = Math.max(0, Math.min(100, state.level + modifiedDelta,),);
+  // Arousal ceiling (TASK-034): deltas clamp at the tier ceiling after
+  // buildup/decay multipliers, so the check reflects persisted state.
+  const ceiling = AROUSAL_CEILING[intensityTier ?? ContentIntensity.Moderate];
+  const newLevel = Math.max(0, Math.min(ceiling, state.level + modifiedDelta,),);
 
   const now = new Date().toISOString();
   await db
