@@ -10,6 +10,7 @@ import { uid, } from "../../utils";
 import { extractImageMetadata, } from "../metadata";
 import { initialAlphaStatus, } from "./alpha-status";
 import { storeFile, } from "./file-system";
+import { writeThumbnail, } from "./thumbnail";
 import { seedBaseTransform, } from "./transforms";
 import type { AssetRecord, CreateAssetOpts, CreateAssetResult, } from "./types";
 
@@ -47,6 +48,7 @@ export async function createAsset({ database, input, uploadDir, }: CreateAssetOp
       "duration_secs",
       "alpha_status",
       "owner_id",
+      "thumbnail_path",
     ],)
     .where("content_hash", "=", contentHash,)
     .where("owner_id", "=", input.ownerId,)
@@ -72,6 +74,7 @@ export async function createAsset({ database, input, uploadDir, }: CreateAssetOp
         encryption_tier: existing.encryption_tier,
         encrypted_key_id: existing.encrypted_key_id,
         alpha_status: existing.alpha_status,
+        thumbnail_path: existing.thumbnail_path,
       },
       duplicate: true,
     };
@@ -122,6 +125,14 @@ export async function createAsset({ database, input, uploadDir, }: CreateAssetOp
     altText = altText.replaceAll(/<[^>]*>/g, "",).trim().slice(0, 500,);
   }
 
+  // Generate 256px WebP thumbnail for image assets. Best-effort: a sharp
+  // decode/encode failure leaves thumbnail_path null, and the serve path
+  // falls back to the raw bytes (no request breakage).
+  let thumbnailPath: string | null = null;
+  if (input.mimeType.startsWith("image/",)) {
+    thumbnailPath = await writeThumbnail(uploadDir, id, input.buffer,);
+  }
+
   const asset: AssetRecord = {
     id,
     owner_id: input.ownerId,
@@ -140,6 +151,7 @@ export async function createAsset({ database, input, uploadDir, }: CreateAssetOp
     encryption_tier: encryptionTier,
     encrypted_key_id: encryptedKeyId,
     alpha_status: alphaStatus,
+    thumbnail_path: thumbnailPath,
   };
 
   await database
@@ -162,6 +174,7 @@ export async function createAsset({ database, input, uploadDir, }: CreateAssetOp
       encrypted_key_id: asset.encrypted_key_id,
       alpha_status: asset.alpha_status,
       content_hash: contentHash,
+      thumbnail_path: asset.thumbnail_path,
     },)
     .execute();
 

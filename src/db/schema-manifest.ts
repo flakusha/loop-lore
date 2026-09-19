@@ -1426,6 +1426,7 @@ export const SCHEMA = new SchemaManifest()
     content_hash: col("text",),
     data_version: col("integer", { notNull: true, hasDefault: true, },),
     record_hash: col("text", { notNull: true, hasDefault: true, },),
+    thumbnail_path: col("text",),
   },)
   // ── Blog System ──────────────────────────────────────────────
   .table("blog_comments", {
