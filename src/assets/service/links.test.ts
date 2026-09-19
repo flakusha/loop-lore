@@ -207,6 +207,29 @@ describe("deleteAssetLink", () => {
       sqlite.close();
     }
   });
+
+  test("throws (does not over-delete) when the same entity_id appears under multiple entity_types", async () => {
+    const { db, sqlite, } = await createTestDb();
+    try {
+      await seedAsset(db,);
+      // PK is (asset_id, entity_type, entity_id); same entity_id='shared'
+      // linked as both a character and a world on the same asset. The old
+      // implementation dropped both rows when DELETE only filtered by
+      // (asset_id, entity_id); the fix resolves to a single row first and
+      // refuses the operation when ambiguous.
+      await insertAssetLinks(db, ASSET_ID, AssetLinkEntity.Character, "shared",);
+      await insertAssetLinks(db, ASSET_ID, AssetLinkEntity.World, "shared",);
+
+      await expect(
+        deleteAssetLink({ database: db, assetId: ASSET_ID, linkId: "shared", },),
+      ).rejects.toThrow(/Ambiguous link delete/,);
+
+      const links = await getAssetLinks(db, ASSET_ID,);
+      expect(links,).toHaveLength(2,);
+    } finally {
+      sqlite.close();
+    }
+  });
 });
 
 describe("getAssetLinks", () => {

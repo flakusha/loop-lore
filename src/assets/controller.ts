@@ -40,6 +40,7 @@ import {
   notFoundResponse,
   notOwnerResponse,
   requireUserId,
+  conflictResponse,
 } from "../routes/http-utils";
 import { jsonStringifyOr, } from "../utils";
 import { safeFromUint8Array, } from "../utils/safe-buffer";
@@ -71,6 +72,33 @@ import type { TransformValues, } from "./service/transforms";
 import { isSignedUrlAction, resolveSignedUrlSecret, signAssetUrl, } from "./signed-url";
 import { findMattedDerivative, } from "./matting-routes";
 
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 590
+
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 590
+/**
+ * Asset Controller
+ *
+ * Route handlers for asset CRUD operations.
+ * Delegates to asset service for business logic.
+ *
+ *   GET    /api/assets              — list assets (paginated, filterable)
+ *   POST   /api/assets              — upload new asset (multipart)
+ *   GET    /api/assets/:id          — get asset metadata
+ *   GET    /api/assets/:id/raw      — serve original file
+ *   GET    /api/assets/:id/download — download file (attachment)
+ *   GET    /api/assets/:id/thumb    — serve thumbnail
+ *   GET    /api/assets/:id/compressed — serve compressed variant
+ *   POST   /api/assets/:id/signed-url/:action — mint time-limited signed URL
+ *   DELETE /api/assets/:id          — delete asset
+ *   POST   /api/assets/:id/links    — link to entity
+ *   DELETE /api/assets/:id/links/:linkId — unlink from entity
+ *   GET    /api/assets/:id/transform — resolved framing metadata (?context=)
+ *   PUT    /api/assets/:id/transform — upsert framing metadata (owner only)
+ */
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 // size-allow: 590
@@ -380,17 +408,27 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
 
         // :linkId is the linked entity's id; both the asset id and the link
         // id must match. Unknown ids are a 404, never a silent success.
-        const deleted = await deleteAssetLink({
-          database,
-          assetId: ctx.params.id,
-          linkId: ctx.params.linkId,
-        },);
-        if (!deleted) {
-          return notFoundResponse("Link not found",);
+        try {
+          const deleted = await deleteAssetLink({
+            database,
+            assetId: ctx.params.id,
+            linkId: ctx.params.linkId,
+          },);
+          if (!deleted) {
+            return notFoundResponse("Link not found",);
+          }
+          return jsonNoContent();
+        } catch (err) {
+          // deleteAssetLink throws when the (asset_id, entity_id) pair
+          // matches more than one row across entity_types; the route lacks
+          // an entity_type path segment to disambiguate, so refuse with
+          // 409 instead of silently dropping unrelated links.
+          if (err instanceof Error && err.message.startsWith("Ambiguous link delete:",)) {
+            return conflictResponse(err.message,);
+          }
+          throw err;
         }
-        return jsonNoContent();
       },)
-      // ── Share sub-routes ─────────────────────────────
       .post(`${prefix}/assets/:id/share`, async (ctx,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
