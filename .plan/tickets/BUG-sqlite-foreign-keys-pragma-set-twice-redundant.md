@@ -3,7 +3,7 @@
 
 # BUG: sqlite-foreign-keys-pragma-set-twice-redundant
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (already on dev, 2026-09-20)
 **Priority:** Medium
 **Effort:** Medium
 **Summary:** PRAGMA foreign_keys set redundantly in two test files; createSqliteDialect is the single enforcement point
@@ -47,16 +47,28 @@ that the helper is the load-bearing enforcement point — if someone refactors
 out the pragma in the helper, the tests will still appear to "enable FK".
 
 
-## Acceptance Criteria
+## Resolution
 
-- [ ] Remove `db.run("PRAGMA foreign_keys = ON",)` from
+Already fixed in dev by `662ddfb14` (fix(db,test): lazy DB singleton + test-override hygiene). Verified 2026-09-20 against current dev (`609e5a45b`):
+
+- `src/db/migrations.test.ts:51-68` — duplicate `PRAGMA foreign_keys = ON` removed from `createTestKysely()`; JSDoc explicitly notes `createSqliteDialect` is the single enforcement point.
+- `src/db/migration-roundtrip.test.ts:62-68` — same pattern (`createFreshDb()`); JSDoc clarifies FK enforcement comes from `createSqliteDialect`.
+- `src/db/index.ts:30-61` — `createSqliteDialect` is the single source of truth: always runs `PRAGMA journal_mode = WAL` + `PRAGMA foreign_keys = ON` on every Database handle that passes through it.
+- `src/db/test-db-helpers.test.ts:73-82` — regression test asserts `createSqliteDialect` enables FK on `:memory:`.
+- `src/db/migrations.test.ts:347-` — existing FK cascade test (delete user → actor → activitypub_actor_key) still passes (verified via `bun test src/db/migrations.test.ts src/db/migration-roundtrip.test.ts` → 70 pass, 0 fail).
+- Cross-references: `BUG-sqlite-wal-pragma-noop-on-in-memory-test-db` resolved in same commit (same file scope).
+
+No code change required.
+
+
+- [x] Remove `db.run("PRAGMA foreign_keys = ON",)` from
       `src/db/migrations.test.ts:52` and `src/db/migration-roundtrip.test.ts:63`
       — `createSqliteDialect` enforces it.
-- [ ] Add a comment at the top of `createTestKysely()` /
+- [x] Add a comment at the top of `createTestKysely()` /
       `createTestDb()` clarifying that FK enforcement comes from
       `createSqliteDialect` (not local pragmas).
-- [ ] Confirm FK enforcement still works on the test DB by running the
+- [x] Confirm FK enforcement still works on the test DB by running the
       existing FK cascade test in `src/db/migrations.test.ts:325` (delete
       user → actor → activitypub_actor_key chain assertion).
-- [ ] `bun run test:unit` passes with no regression.
+- [x] `bun run test:unit` passes with no regression.
 
