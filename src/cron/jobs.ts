@@ -134,5 +134,17 @@ export function defaultJobs(): CronJobDef[] {
         return { checked: results.length, failed, };
       },
     },),
+    defineJob({
+      name: "locations.tick",
+      schedule: "*/2 * * * *",
+      enabled: true,
+      run: async ({ database, logger, },) => {
+        const { TravelTickEngine, } = await import("../locations/travel-engine");
+        const engine = new TravelTickEngine(database,);
+        const summary = await engine.tick({ elapsedSeconds: 120, },);
+        logger.info("travel tick complete", { module: "cron", ...summary, },);
+        return summary;
+      },
+    },),
   ];
 }
