@@ -1795,6 +1795,13 @@ export const SCHEMA = new SchemaManifest()
     updated_at: col("text", { notNull: true, hasDefault: true, },),
     completed_at: col("text",),
   },)
+  .table("quest_reward_ledger", {
+    id: col("text", { primaryKey: true, },),
+    world_id: col("text", { notNull: true, },),
+    ledger_key: col("text", { notNull: true, },),
+    world_item_ids: col("text", { notNull: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("quests", {
     id: col("text", { primaryKey: true, },),
     world_id: col("text", { notNull: true, },),
