@@ -159,3 +159,10 @@ export const TransportKind = {
 } as const;
 /** */
 export type TransportKind = (typeof TransportKind)[keyof typeof TransportKind];
+
+/**
+ * Fractal location depth limit. A location's depth = number of '/' separators
+ * in its materialized path (root has depth 1, child of root has depth 2, etc.).
+ * Enforced at the application layer in LocationTreeService.insertLocation.
+ */
+export const LOCATION_DEPTH_LIMIT = 12;
