@@ -4,6 +4,7 @@
 import { exportToCcV3Json, } from "../../characters/exporters/ccv3";
 import { exportToPng, } from "../../characters/exporters/png";
 import { exportToYaml, } from "../../characters/exporters/yaml";
+import { withLicenseExtension, } from "../../characters/license-enforcement";
 import type { CanonicalCharacter, } from "../../characters/parser";
 import { jsonParseOr, } from "../../utils";
 import { addChecksum, } from "./helpers";
@@ -40,6 +41,16 @@ export async function exportCharactersToZip(ctx: ExportContext,): Promise<void> 
     .execute();
 
   const charsFolder = ctx.zip.folder("characters",);
+
+  // License enforcement: batch-fetch licensing so every exported card can
+  // embed its license extension (TASK-030).
+  const licensingRows = await ctx.database
+    .selectFrom("character_licensing",)
+    .selectAll()
+    .where("actor_id", "in", characters.map((c,) => c.id),)
+    .execute();
+  const licensingByActor = new Map(licensingRows.map((r,) => [r.actor_id, r,]),);
+
   for (const char of characters) {
     const canonical: CanonicalCharacter = {
       name: char.display_name,
@@ -74,7 +85,8 @@ export async function exportCharactersToZip(ctx: ExportContext,): Promise<void> 
       ext = "png";
       size = pngBuf.length;
     } else {
-      const content = exportToCcV3Json(canonical,);
+      const licensing = licensingByActor.get(char.id,) ?? null;
+      const content = withLicenseExtension(exportToCcV3Json(canonical,), licensing,);
       charsFolder?.file(`${filename}.json`, content,);
       addChecksum(ctx.checksums, `characters/${filename}.json`, content,);
       size = content.length;
