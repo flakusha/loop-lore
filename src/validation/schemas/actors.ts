@@ -55,6 +55,9 @@ export const ActorUpdateBody = t.Object({
   // Constrained JSON object — matches project convention (e.g. character-relations metadata).
   // Rejects top-level arrays/primitives while preserving freeform values.
   settings: t.Optional(t.Record(t.String(), t.Any(),),),
+  /** Avatar crop focus as percentages; clamped to 0-100 server-side (TASK-001). */
+  avatarFocusX: t.Optional(t.Number(),),
+  avatarFocusY: t.Optional(t.Number(),),
   /** Optimistic-concurrency version from the prior GET response. CHAR-1. */
   dataVersion: t.Optional(t.Integer({ minimum: 0, },),),
 },);

@@ -1331,6 +1331,8 @@ export const SCHEMA = new SchemaManifest()
     agent_role: col("text",),
     growth_mode: col("text", { notNull: true, hasDefault: true, },),
     llm_assist_enabled: col("integer", { notNull: true, hasDefault: true, },),
+    avatar_focus_x: col("real", { notNull: true, hasDefault: true, },),
+    avatar_focus_y: col("real", { notNull: true, hasDefault: true, },),
   },)
   .table("characters", {
     id: col("text", { primaryKey: true, },),

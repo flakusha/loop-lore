@@ -88,6 +88,8 @@ async function serveCharacterEditForm(
     ? '<button type="button" class="btn btn-danger" x-on:click="window.clearAvatar()">Remove</button>'
     : "";
   const contentRating = (actor.content_rating as string | null) ?? "sfw";
+  const avatarFocusX = actor.avatar_focus_x ?? 50;
+  const avatarFocusY = actor.avatar_focus_y ?? 50;
 
   const rawNonce = request ? getNonce(request,) : null;
   const cspNonce = rawNonce ?? undefined;
@@ -107,6 +109,9 @@ async function serveCharacterEditForm(
     avatarRemoveBtn,
     characterId,
     contentRating,
+    dataVersion: actor.format_version,
+    avatarFocusX,
+    avatarFocusY,
   }, { cspNonce, },),);
 }
 

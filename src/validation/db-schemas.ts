@@ -1128,6 +1128,8 @@ export const ActorsSchema = t.Object({
   agent_role: t.Optional(t.String(),),
   growth_mode: t.Optional(t.String(),),
   llm_assist_enabled: t.Optional(t.Number(),),
+  avatar_focus_x: t.Optional(t.Number(),),
+  avatar_focus_y: t.Optional(t.Number(),),
 },);
 
 // ── admin_character_overrides ────────────────────────────────────────────
