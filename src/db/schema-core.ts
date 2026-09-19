@@ -34,6 +34,7 @@ import type {
   TemplateDetailLevel,
   TemplateModality,
   TransformContext,
+  TransportKind,
   TurnStrategy,
   UserRole,
   UserStatus,
@@ -1047,6 +1048,38 @@ export interface PromptTemplates {
   payload: Generated<string>;
   created_at: Generated<string>;
   updated_at: Generated<string>;
+}
+
+// ── travel_routes ────────────────────────────────────────────
+export interface TravelRoutes {
+  id: Generated<string>;
+  world_id: string;
+  name: string;
+  kind: TransportKind;
+  waypoints: Generated<string>;
+  loop: Generated<number>;
+  seconds_per_unit: Generated<number>;
+  created_at: Generated<string>;
+}
+
+// ── travel_route_stops ────────────────────────────────────────────
+export interface TravelRouteStops {
+  id: Generated<string>;
+  route_id: string;
+  location_id: string;
+  stop_order: number;
+  dwell_seconds: Generated<number>;
+  coord_x: number | null;
+  coord_y: number | null;
+  coord_z: number | null;
+}
+
+// ── actor_locations ────────────────────────────────────────────
+export interface ActorLocations {
+  actor_id: Generated<string>;
+  physical_location_id: string;
+  spatial_location_id: string;
+  entered_at: Generated<string>;
 }
 
 // ── nsfw_consent_state ────────────────────────────────────────────
