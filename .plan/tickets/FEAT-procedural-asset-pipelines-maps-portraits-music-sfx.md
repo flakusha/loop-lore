@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** low
 **Effort:** XL
+**Summary:** Procedural Asset Pipelines (maps/portraits/music/sfx)
+**Context:** Epic proposed:epic-procedural-assets; tags assets, procedural.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** proposed:epic-procedural-assets
 **Tags:** assets, procedural
 

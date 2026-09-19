@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Large
+**Summary:** Performance Dashboard & SLOs
+**Context:** Epic epic-performance-dashboard-slo; tags performance, slo.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-performance-dashboard-slo
 **Tags:** performance, slo
 

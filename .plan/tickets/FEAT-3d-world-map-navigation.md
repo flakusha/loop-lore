@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** low
 **Effort:** XL
+**Summary:** 3D World-map Navigation
+**Context:** Epic proposed:epic-3d-world-map; tags 3d, world.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** proposed:epic-3d-world-map
 **Tags:** 3d, world
 

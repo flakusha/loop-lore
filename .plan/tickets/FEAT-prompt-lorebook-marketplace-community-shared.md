@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** low
 **Effort:** XL
+**Summary:** Prompt/Lorebook Marketplace (Community-shared)
+**Context:** Epic proposed:epic-marketplace; tags marketplace, community.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** proposed:epic-marketplace
 **Tags:** marketplace, community
 

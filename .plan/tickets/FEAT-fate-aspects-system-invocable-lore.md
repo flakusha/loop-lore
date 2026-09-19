@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Large
+**Summary:** FATE Aspects System (Invocable Lore)
+**Context:** Epic epic-agency-story-points; tags rpg, fate, aspects.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-agency-story-points
 **Tags:** rpg, fate, aspects
 

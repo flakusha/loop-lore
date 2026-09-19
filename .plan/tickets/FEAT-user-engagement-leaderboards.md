@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Large
+**Summary:** User Engagement & Leaderboards
+**Context:** Epic proposed:epic-user-engagement; tags engagement, leaderboards.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** proposed:epic-user-engagement
 **Tags:** engagement, leaderboards
 

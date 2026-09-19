@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium
+**Summary:** Character Interaction Outcomes
+**Context:** Epic epic-social-interaction; tags character, interaction.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-social-interaction
 **Tags:** character, interaction
 

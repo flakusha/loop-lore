@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** Large
+**Summary:** Auth Middleware Implementation
+**Context:** Epic proposed:epic-auth-middleware; tags auth, middleware.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** proposed:epic-auth-middleware
 **Tags:** auth, middleware
 

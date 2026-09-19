@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** XL
+**Summary:** Battle Core Implementation
+**Context:** Epic epic-battle-action-systems; tags battle, combat.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-battle-action-systems
 **Tags:** battle, combat
 

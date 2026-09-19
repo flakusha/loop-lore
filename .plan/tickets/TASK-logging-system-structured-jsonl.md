@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium
+**Summary:** Logging System (Structured JSONL)
+**Context:** Epic epic-logging-telemetry; tags logging, jsonl.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-logging-telemetry
 **Tags:** logging, jsonl
 

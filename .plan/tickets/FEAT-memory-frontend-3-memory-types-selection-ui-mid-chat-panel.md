@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Large
+**Summary:** Memory Frontend (3 memory types, selection UI, mid-chat panel)
+**Context:** Epic epic-memory-knowledge-systems; tags memory, frontend.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-memory-knowledge-systems
 **Tags:** memory, frontend
 
