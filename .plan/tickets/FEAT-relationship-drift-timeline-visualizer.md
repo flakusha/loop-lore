@@ -3,7 +3,7 @@
 
 # FEAT: Relationship-drift Timeline Visualizer
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (duplicate — remainder extracted, 2026-09-19)
 **Priority:** low
 **Effort:** Medium
 **Summary:** Relationship-drift Timeline Visualizer
@@ -15,6 +15,10 @@
 ## Summary
 
 --label
+
+## Resolution
+
+Core scope tracked by epic-relationships.md. Unplanned remainder extracted 2026-09-19 → E28 drift-timeline visualizer UI (epic-relationships.md) (docs-gap reconcile audit).
 
 ## Acceptance Criteria
 

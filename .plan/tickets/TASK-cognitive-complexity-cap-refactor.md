@@ -3,7 +3,7 @@
 
 # TASK: Cognitive Complexity Cap + Refactor
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (duplicate — remainder extracted, 2026-09-19)
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Cognitive Complexity Cap + Refactor
@@ -16,6 +16,10 @@
 
 Add sonarjs/cognitive-complexity cap + split 5 functions over limit.
 Source: docs/meta/code-practices-improvements/README.md + 02.
+
+## Resolution
+
+Core scope tracked by .plan/immediate.md (68-file lint debt). Unplanned remainder extracted 2026-09-19 → E3 explicit cap rule + split plan (epic-tooling-improvement.md) (docs-gap reconcile audit).
 
 ## Acceptance Criteria
 

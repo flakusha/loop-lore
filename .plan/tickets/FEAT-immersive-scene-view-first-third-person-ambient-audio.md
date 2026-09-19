@@ -3,7 +3,7 @@
 
 # FEAT: Immersive Scene View (first/third-person + ambient audio)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (duplicate, verified 2026-09-19)
 **Priority:** low
 **Effort:** XL
 **Summary:** Immersive Scene View (first/third-person + ambient audio)
@@ -15,6 +15,12 @@
 ## Summary
 
 --label
+
+## Resolution
+
+Duplicate of existing plan artifact(s) — verified 2026-09-19 docs-gap reconcile audit (epic-docs-vs-plan-gap-audit-2026-09-19.md):
+
+- epic-3d-generation.md:136-137
 
 ## Acceptance Criteria
 

@@ -48,3 +48,7 @@ Tooling support and improvement — repo worktree management, agent support, IO,
 
 - **Epic Code Quality & Best Practices** — lint/format ownership overlaps; Biome adoption must be reconciled with the ESLint-centric `bun run check` pipeline (see caution above).
 - **Epic Testing & QA** — tooling improvements feed CI gates that QA relies on.
+
+## Docs-Gap Audit Remainders (2026-09-19)
+
+- [ ] [gap-audit E3] Cognitive-complexity explicit cap rule + file-split plan (68-file lint debt tracked in .plan/immediate.md)

@@ -3,7 +3,7 @@
 
 # TASK: Scheduler Implementation (Internal Cron Jobs)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (already on dev, 2026-09-19)
 **Priority:** medium
 **Effort:** Large
 **Summary:** Scheduler Implementation (Internal Cron Jobs)
@@ -15,6 +15,12 @@
 ## Summary
 
 Implement cron job definitions, schedule persistence, timezone-aware retry/backfill, human-readable cron UI per docs/spec/scheduler.md. No implementation epic exists.
+
+## Resolution
+
+Already implemented on dev — verified 2026-09-19 docs-gap reconcile audit (epic-docs-vs-plan-gap-audit-2026-09-19.md):
+
+- src/cron/registry.ts + src/cron/jobs.ts (epic-cron-scheduler.md ✅)
 
 ## Acceptance Criteria
 

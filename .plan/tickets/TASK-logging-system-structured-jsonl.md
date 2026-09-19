@@ -3,7 +3,7 @@
 
 # TASK: Logging System (Structured JSONL)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (already on dev, 2026-09-19)
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Logging System (Structured JSONL)
@@ -15,6 +15,12 @@
 ## Summary
 
 Implement structured log schema, log level config, log rotation/retention, canonical JSONL output per docs/spec/logging.md. epic-logging-telemetry covers telemetry but not log implementation.
+
+## Resolution
+
+Already implemented on dev — verified 2026-09-19 docs-gap reconcile audit (epic-docs-vs-plan-gap-audit-2026-09-19.md):
+
+- src/logger/* (epic-logging-telemetry.md ✅ merged 2026-08-07)
 
 ## Acceptance Criteria
 

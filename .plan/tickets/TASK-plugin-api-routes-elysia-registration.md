@@ -3,7 +3,7 @@
 
 # TASK: Plugin API Routes -> Elysia Registration
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (duplicate — remainder extracted, 2026-09-19)
 **Priority:** high
 **Effort:** Medium
 **Summary:** Plugin API Routes -> Elysia Registration
@@ -16,6 +16,10 @@
 
 Register plugin API routes into Elysia at startup; kill dispatchPluginRoute O(n) scan.
 Source: docs/meta/code-practices-improvements/README.md + 08.
+
+## Resolution
+
+Core scope tracked by epic-plugin-system.md. Unplanned remainder extracted 2026-09-19 → E6 Elysia startup route registration (epic-plugin-system.md) (docs-gap reconcile audit).
 
 ## Acceptance Criteria
 

@@ -3,7 +3,7 @@
 
 # FEAT: Attachment Content Analysis Pipeline
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (duplicate — remainder extracted, 2026-09-19)
 **Priority:** medium
 **Effort:** Large
 **Summary:** Attachment Content Analysis Pipeline
@@ -16,6 +16,10 @@
 
 Auto-caption on upload, configurable per chat/world; image moderation hook for visual NSFW/violence/PII.
 Source: docs/meta/reviews/review-topics.md §11.
+
+## Resolution
+
+Core scope tracked by src/frontend/alpine/chat-actions/media.ts captioning; epic-asset-platform-capabilities.md:148-152. Unplanned remainder extracted 2026-09-19 → E22 visual NSFW/PII upload-analysis hook (epic-asset-platform-capabilities.md) (docs-gap reconcile audit).
 
 ## Acceptance Criteria
 

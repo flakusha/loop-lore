@@ -3,7 +3,7 @@
 
 # TASK: Attachment Moderation Pipeline
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (duplicate — remainder extracted, 2026-09-19)
 **Priority:** high
 **Effort:** Large
 **Summary:** Attachment Moderation Pipeline
@@ -15,6 +15,10 @@
 ## Summary
 
 Implement per-attachment NSFW rating pipeline, automated flag queue, human review trigger thresholds per docs/spec/attachment-moderation.md.
+
+## Resolution
+
+Core scope tracked by epic-nsfw-moderation-priority.md. Unplanned remainder extracted 2026-09-19 → E2 per-attachment rating thresholds (epic-nsfw-moderation-priority.md) (docs-gap reconcile audit).
 
 ## Acceptance Criteria
 

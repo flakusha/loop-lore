@@ -3,7 +3,7 @@
 
 # TASK: DB Reinit & Backup Retention Policy
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (already on dev, 2026-09-19)
 **Priority:** medium
 **Effort:** Medium
 **Summary:** DB Reinit & Backup Retention Policy
@@ -15,6 +15,13 @@
 ## Summary
 
 Implement archive directory rotation policy, PII accumulation guard, rename-failure rollback safety per docs/spec/db-reinit-retention.md.
+
+## Resolution
+
+Already implemented on dev — verified 2026-09-19 docs-gap reconcile audit (epic-docs-vs-plan-gap-audit-2026-09-19.md):
+
+- src/db/reinit-archive.ts (MAX_ARCHIVES=10/MAX_AGE_DAYS=90)
+- docs/spec/db-reinit-retention.md
 
 ## Acceptance Criteria
 

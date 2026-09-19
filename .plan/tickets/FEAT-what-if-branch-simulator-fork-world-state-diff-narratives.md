@@ -3,7 +3,7 @@
 
 # FEAT: What-if Branch Simulator (fork world state, diff narratives)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (duplicate, verified 2026-09-19)
 **Priority:** low
 **Effort:** XL
 **Summary:** What-if Branch Simulator (fork world state, diff narratives)
@@ -15,6 +15,13 @@
 ## Summary
 
 --label
+
+## Resolution
+
+Duplicate of existing plan artifact(s) — verified 2026-09-19 docs-gap reconcile audit (epic-docs-vs-plan-gap-audit-2026-09-19.md):
+
+- epic-authoring-creation.md (ideas #17)
+- epic-conversation-branching.md (covers this ticket's scope)
 
 ## Acceptance Criteria
 

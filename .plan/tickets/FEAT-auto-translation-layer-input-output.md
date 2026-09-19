@@ -3,7 +3,7 @@
 
 # FEAT: Auto-translation Layer (Input/Output)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (duplicate, verified 2026-09-19)
 **Priority:** low
 **Effort:** Large
 **Summary:** Auto-translation Layer (Input/Output)
@@ -15,6 +15,13 @@
 ## Summary
 
 --label
+
+## Resolution
+
+Duplicate of existing plan artifact(s) — verified 2026-09-19 docs-gap reconcile audit (epic-docs-vs-plan-gap-audit-2026-09-19.md):
+
+- epic-i18n.md (covers this ticket's scope)
+- epic-output-control-transforms.md (ideas #7)
 
 ## Acceptance Criteria
 

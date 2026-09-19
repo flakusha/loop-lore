@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** Medium
+**Summary:** Importing @/db eagerly creates loop-lore-data/loop-lore.db on disk during unit tests (2.2MB verified)
+**Context:** Test-infra side effect — src/db/index.ts:73-78 IIFE, tests/setup-globals.ts preload
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 
 ## Summary
 

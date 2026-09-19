@@ -3,7 +3,7 @@
 
 # FEAT: Co-authoring Presence (live cursors, typing indicators)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (duplicate — remainder extracted, 2026-09-19)
 **Priority:** low
 **Effort:** Large
 **Summary:** Co-authoring Presence (live cursors, typing indicators)
@@ -15,6 +15,10 @@
 ## Summary
 
 --label
+
+## Resolution
+
+Core scope tracked by epic-matrix-integration.md:32,58; epic-worlds-extension.md:337. Unplanned remainder extracted 2026-09-19 → E25 in-app co-authoring live-cursor UI (epic-worlds-extension.md) (docs-gap reconcile audit).
 
 ## Acceptance Criteria
 

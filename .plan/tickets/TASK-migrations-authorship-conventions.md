@@ -3,7 +3,7 @@
 
 # TASK: Migrations Authorship Conventions
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (duplicate — remainder extracted, 2026-09-19)
 **Priority:** medium
 **Effort:** Small
 **Summary:** Migrations Authorship Conventions
@@ -15,6 +15,10 @@
 ## Summary
 
 Document and enforce migration authorship conventions: up/down pairing, migration compaction (squash), cross-version compatibility per docs/spec/migrations.md. Implementation epic shared-schemas exists; conventions are missing.
+
+## Resolution
+
+Core scope tracked by epic-db-migration-compaction.md. Unplanned remainder extracted 2026-09-19 → E4 up/down pairing + cross-version convention doc (epic-db-migration-compaction.md) (docs-gap reconcile audit).
 
 ## Acceptance Criteria
 

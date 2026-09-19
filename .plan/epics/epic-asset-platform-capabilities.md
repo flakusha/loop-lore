@@ -191,3 +191,7 @@ renditions row for baked crops, a pHash for sprite dedup, a backlink query for
 - `epic-rag-assets-unified-storage-and-assistant-flows.md` — decomposition + gallery preview view consume B4/B6 surface
 - `src/assistant/prompt-budget.ts` — host for the B6 asset-inclusion policy
 - Platform-research candidate 16 (in-chat edit) — B5 ops + `src/image-edit/` follow-up
+
+## Docs-Gap Audit Remainders (2026-09-19)
+
+- [ ] [gap-audit E22] Visual NSFW/PII upload-analysis hook at attachment ingest

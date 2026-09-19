@@ -9,7 +9,7 @@
 **Summary:** Test DB Dialect Parameterization (Postgres Matrix)
 **Context:** Epic epic-core-testing-frameworks; tags testing, postgres.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
-**Epic:** epic-core-testing-frameworks
+**Epic:** epic-testing-qa
 **Tags:** testing, postgres
 
 ## Summary

@@ -9,7 +9,7 @@
 **Summary:** Synthetic Fine-tune Data Export
 **Context:** Epic proposed:epic-finetune-export; tags finetune, export.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
-**Epic:** proposed:epic-finetune-export
+**Epic:** epic-lora-discovery-application
 **Tags:** finetune, export
 
 ## Summary

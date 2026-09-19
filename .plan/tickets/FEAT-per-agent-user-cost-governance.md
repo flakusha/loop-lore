@@ -3,7 +3,7 @@
 
 # FEAT: Per-Agent/User Cost Governance
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (duplicate — remainder extracted, 2026-09-19)
 **Priority:** medium
 **Effort:** Large
 **Summary:** Per-Agent/User Cost Governance
@@ -16,6 +16,10 @@
 
 Implement per-agent/user token budgets; maxTokens caps; cost tracking dashboards.
 Source: docs/meta/assessments/agentic-workspace.md.
+
+## Resolution
+
+Core scope tracked by epic-analytics-observability.md:17 + epic-actor-autonomy-story-drive.md:39-50. Unplanned remainder extracted 2026-09-19 → E15 per-agent/user budget caps UI (epic-actor-autonomy-story-drive.md) (docs-gap reconcile audit).
 
 ## Acceptance Criteria
 

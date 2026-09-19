@@ -3,7 +3,7 @@
 
 # FEAT: Per-chat Assistant/GM Frontend
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (already on dev, 2026-09-19)
 **Priority:** medium
 **Effort:** Large
 **Summary:** Per-chat Assistant/GM Frontend
@@ -15,6 +15,13 @@
 ## Summary
 
 --label
+
+## Resolution
+
+Already implemented on dev — verified 2026-09-19 docs-gap reconcile audit (epic-docs-vs-plan-gap-audit-2026-09-19.md):
+
+- src/components/chat/gm-story-panel.html
+- src/frontend/alpine/chat-types/gm.ts (assistantRole gm/moderator)
 
 ## Acceptance Criteria
 

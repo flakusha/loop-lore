@@ -82,3 +82,7 @@ interface RelationshipRepair {
 - `epic-character-core-system.md` (character stats, traits)
 - `epic-social-interaction.md` (dialogue, social mechanics)
 - `specs/relationships.md` (full design spec)
+
+## Docs-Gap Audit Remainders (2026-09-19)
+
+- [ ] [gap-audit E28] Relationship drift-timeline visualizer UI

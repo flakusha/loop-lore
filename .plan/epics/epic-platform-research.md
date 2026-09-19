@@ -388,3 +388,7 @@ P6+ architecture note; #34 criteria adopt into existing branching ticket.
 - **Epic RPG Mechanics** — RPG systems (dice, combat, loot, quests) are direct adoption targets.
 - **Epic Battle & Action Systems** — combat, trading, skill-checks adoption tracked here.
 - **Image-Generation / TTS / RAG** — candidates #1/#2/#3 in this epic; **no dedicated epics exist yet** — keep adoption tracked here until split out.
+
+## Docs-Gap Audit Remainders (2026-09-19)
+
+- [ ] [gap-audit E27] Multimodal input flow: image/voice input → character reacts (vision caps shipped, flow unitemized)
