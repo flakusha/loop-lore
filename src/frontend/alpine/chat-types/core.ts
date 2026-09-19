@@ -49,6 +49,10 @@ export interface ChatCoreState
   scrollObserver: IntersectionObserver | null;
   activeChatName: string;
   galleryAssets: GalleryAsset[];
+  /** Current gallery page (chat asset sidebar pagination). */
+  galleryPage: number;
+  /** Total chat-linked assets reported by the assets API. */
+  galleryTotal: number;
   userDisplayName: string;
   userRole: string;
   currentCharacter: {
@@ -191,6 +195,8 @@ export interface ChatCoreState
   setupScrollDetection(): void;
   scrollToBottomSmooth(): void;
   loadGalleryAssets(): Promise<void>;
+  loadMoreGalleryAssets(): Promise<void>;
+  deletePreviewAsset(): Promise<void>;
   uploadChatAssets(event: Event,): Promise<void>;
   loadCharacterInfo(): Promise<void>;
   formatTime(iso: string,): string;

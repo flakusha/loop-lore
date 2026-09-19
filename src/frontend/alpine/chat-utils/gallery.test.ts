@@ -250,3 +250,91 @@ describe("uploadChatAssets", () => {
     expect(ctx.galleryReloads,).toBe(1,);
   });
 });
+
+describe("loadGalleryAssets / loadMoreGalleryAssets / deletePreviewAsset", () => {
+  /** */
+  function makeGalleryCtx() {
+    const ctx: Record<string, unknown> = {
+      activeChat: "chat-1",
+      galleryAssets: [] as { id: string }[],
+      galleryPage: 1,
+      galleryTotal: 0,
+      previewMediaAsset: null as any,
+    };
+    ctx.loadGalleryAssets = (chatUtilsGallery as any).loadGalleryAssets.bind(ctx,);
+    return ctx;
+  }
+
+  const realApiFetch = (globalThis as { apiFetch?: unknown }).apiFetch;
+  const realDeletePreview = (globalThis as { deleteAssetPreview?: unknown }).deleteAssetPreview;
+  afterEach(() => {
+    (globalThis as any).apiFetch = realApiFetch;
+    (globalThis as any).deleteAssetPreview = realDeletePreview;
+  },);
+
+  test("loads first page and records pagination total", async () => {
+    const ctx: any = makeGalleryCtx();
+    (globalThis as any).apiFetch = async () => Response.json({ data: [{ id: "a", },], pagination: { total: 3, }, },);
+    await (chatUtilsGallery as any).loadGalleryAssets.call(ctx,);
+    expect(ctx.galleryAssets,).toEqual([{ id: "a", },],);
+    expect(ctx.galleryPage,).toBe(1,);
+    expect(ctx.galleryTotal,).toBe(3,);
+  });
+
+  test("clears the list when the fetch fails", async () => {
+    const ctx: any = { ...makeGalleryCtx(), galleryAssets: [{ id: "stale", },], galleryTotal: 2, };
+    (globalThis as any).apiFetch = async () => Response.json({ error: "down", }, { status: 500, },);
+    await (chatUtilsGallery as any).loadGalleryAssets.call(ctx,);
+    expect(ctx.galleryAssets,).toEqual([],);
+    expect(ctx.galleryTotal,).toBe(0,);
+  });
+
+  test("does nothing without an active chat", async () => {
+    const ctx: any = { ...makeGalleryCtx(), activeChat: null, };
+    let called = false;
+    (globalThis as any).apiFetch = async () => {
+      called = true;
+      return Response.json({},);
+    };
+    await (chatUtilsGallery as any).loadGalleryAssets.call(ctx,);
+    await (chatUtilsGallery as any).loadMoreGalleryAssets.call(ctx,);
+    expect(called,).toBe(false,);
+  });
+
+  test("appends the next page deduplicated and advances the cursor", async () => {
+    const ctx: any = { ...makeGalleryCtx(), galleryAssets: [{ id: "a", },], galleryTotal: 3, };
+    (globalThis as any).apiFetch = async () =>
+      Response.json({ data: [{ id: "a", }, { id: "b", },], pagination: { total: 3, }, },);
+    await (chatUtilsGallery as any).loadMoreGalleryAssets.call(ctx,);
+    expect(ctx.galleryAssets,).toEqual([{ id: "a", }, { id: "b", },],);
+    expect(ctx.galleryPage,).toBe(2,);
+  });
+
+  test("skips the fetch when everything is already loaded", async () => {
+    const ctx: any = { ...makeGalleryCtx(), galleryAssets: [{ id: "a", },], galleryTotal: 1, };
+    let called = false;
+    (globalThis as any).apiFetch = async () => {
+      called = true;
+      return Response.json({},);
+    };
+    await (chatUtilsGallery as any).loadMoreGalleryAssets.call(ctx,);
+    expect(called,).toBe(false,);
+    expect(ctx.galleryPage,).toBe(1,);
+  });
+
+  test("delete closes the preview and refreshes the sidebar", async () => {
+    const ctx: any = { ...makeGalleryCtx(), previewMediaAsset: { id: "a", }, };
+    (globalThis as any).deleteAssetPreview = async () => true;
+    (globalThis as any).apiFetch = async () => Response.json({ data: [], pagination: { total: 0, }, },);
+    await (chatUtilsGallery as any).deletePreviewAsset.call(ctx,);
+    expect(ctx.previewMediaAsset,).toBeNull();
+    expect(ctx.galleryAssets,).toEqual([],);
+  });
+
+  test("delete keeps the preview open when deletion is declined", async () => {
+    const ctx: any = { ...makeGalleryCtx(), previewMediaAsset: { id: "a", }, };
+    (globalThis as any).deleteAssetPreview = async () => false;
+    await (chatUtilsGallery as any).deletePreviewAsset.call(ctx,);
+    expect(ctx.previewMediaAsset,).toEqual({ id: "a", },);
+  });
+});

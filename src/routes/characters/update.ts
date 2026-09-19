@@ -150,6 +150,8 @@ function buildActorUpdates(
     characterVersion,
     growthMode,
     llmAssistEnabled,
+    avatarFocusX,
+    avatarFocusY,
   } = body;
   if (displayName) { updates.display_name = displayName; }
   if (description) { updates.description = description; }
@@ -170,7 +172,21 @@ function buildActorUpdates(
   if (characterVersion) { updates.character_version = characterVersion; }
   if (growthMode !== undefined) { updates.growth_mode = growthMode; }
   if (llmAssistEnabled !== undefined) { updates.llm_assist_enabled = llmAssistEnabled ? 1 : 0; }
+  if (avatarFocusX !== undefined) { updates.avatar_focus_x = clampFocusPercent(avatarFocusX,); }
+  if (avatarFocusY !== undefined) { updates.avatar_focus_y = clampFocusPercent(avatarFocusY,); }
   return updates;
+}
+
+/**
+ * Clamp an avatar focus percentage to the 0-100 CSS `object-position` range.
+ * Validation rejects non-numbers (422); numeric values outside the range are
+ * clamped rather than rejected so permissive clients still save a sane crop.
+ * @param value
+ */
+function clampFocusPercent(value: unknown,): number {
+  const n = typeof value === "number" ? value : Number(value,);
+  if (!Number.isFinite(n,)) { return 50; }
+  return Math.min(100, Math.max(0, n,),);
 }
 
 /**
