@@ -33,8 +33,7 @@ parent update). Existing rows default to `kind='region'`, `mobility_mode='static
 
 - [ ] New top-level file `src/db/migrations/013_locations_fractal.ts`
       exports `up(db)` and `down(db)`.
-- [ ] `up()` calls `recordSchemaVersion(db, 13, "locations_fractal")` from
-      `src/db/migration-helpers.ts`.
+- [ ] `up()` calls `recordSchemaVersion(db, 34, "locations fractal: kind/mobility/path/coords, transport_routes, actor_locations")` from `src/db/schema-version.ts` (next global schema version after 33 used by `012_asset_thumbnail.ts` / `012_avatar_focus.ts`).
 - [ ] `locations` extended with: `kind`, `mobility_mode`, `path`, `coord_x`,
       `coord_y`, `coord_z`, `current_route_id`, `travel_progress`. All
       `ALTER TABLE` statements use **one column per statement** (SQLite

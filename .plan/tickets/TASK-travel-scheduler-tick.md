@@ -10,7 +10,7 @@
 **Tags:** scheduler, transport, travel, events, cron
 
 **Summary:** Scheduler-driven tick advances travel_progress on every free-mode transport; on crossing a stop, snaps coord_*, fires transport.arrived/departed events; handles loop vs terminal completion.
-**Context:** Existing scheduler pattern (src/scheduler/) drives world ticks. Adding a travel.tick job integrates ship/transport movement without forking the scheduler; per-transport speed defaults to 60s/unit on the route.
+**Context:** Existing scheduler pattern (src/cron/) drives world ticks. Adding a travel.tick job integrates ship/transport movement without forking the scheduler; per-transport speed defaults to 60s/unit on the route.
 **Acceptance Criteria:** See acceptance checklist below.
 
 ## Summary
@@ -23,7 +23,7 @@ When `travel_progress` crosses a `travel_route_stops` boundary:
 - fire `transport.arrived` / `transport.departed` events through the existing
   event bus.
 
-Wired into the existing `src/scheduler/` cron pattern (see
+Wired into the existing `src/cron/` cron pattern (see
 `docs/spec/scheduler.md`). Tick rate: configurable via `world_rules` (default
 = once per real-time minute when the scheduler is on `real_time` mode).
 
