@@ -12,10 +12,12 @@ import type {
   ItemCategory,
   ItemRarity,
   ItemVisibility,
+  LocationKind,
   LoreEntryStatus,
   LorePosition,
   MemoryReviewStatus,
   MemoryType,
+  MobilityMode,
   PinnedState,
   PublicationStatus,
   QuestCategory,
@@ -56,6 +58,14 @@ export interface Locations {
   parent_location_id: string | null;
   created_at: Generated<string>;
   updated_at: Generated<string>;
+  kind: Generated<LocationKind>;
+  mobility_mode: Generated<MobilityMode>;
+  path: Generated<string>;
+  coord_x: number | null;
+  coord_y: number | null;
+  coord_z: number | null;
+  current_route_id: string | null;
+  travel_progress: Generated<number>;
 }
 
 // ── world_items ────────────────────────────────────────────
