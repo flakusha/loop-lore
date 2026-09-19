@@ -14011,6 +14011,13 @@
       "source": ".plan/tickets/TASK-world-item-frontend.md"
     }
   ],
+
+  "src/frontend/alpine/world-lore-entries.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-world-lore-entries-add-alpine-js-ui-for-crud.md"
+    }
+  ],
   "src/frontend/alpine/world-lore.ts": [
     {
       "kind": "ticket",
@@ -25562,6 +25569,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-world-lore-entries-add-alpine-js-ui-for-crud.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-world-lore-entries-ui.md"
     },
     {
@@ -30615,6 +30626,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-frontend-minor-bugs-batch.md"
+    }
+  ],
+
+  "src/views/.../lore-entries.partial.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-world-lore-entries-add-alpine-js-ui-for-crud.md"
     }
   ],
   "src/views/GalleryView.vue": [
