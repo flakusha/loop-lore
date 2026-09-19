@@ -450,6 +450,41 @@ describe("asset links", () => {
     }
   });
 
+  test("DELETE 409s when entity_id is ambiguous across entity_types", async () => {
+    const fx = await seed();
+    try {
+      const app = makeApp(fx.db, fx.ownerId, fx.uploadDir,);
+      // Two links sharing entity_id but different entity_type coexist
+      // because asset_links PK is (asset_id, entity_type, entity_id).
+      // The DELETE route has no entity_type segment, so it cannot pick
+      // one and refuses with 409 instead of silently over-deleting.
+      for (const entityType of ["character", "world",] as const) {
+        const linkRes = await app.handle(
+          jsonRequest(`http://localhost/api/assets/${fx.assetId}/links`, "POST", {
+            entityType,
+            entityId: "shared-id",
+          },),
+        );
+        expect(linkRes.status,).toBe(201,);
+      }
+      const delRes = await app.handle(
+        new Request(`http://localhost/api/assets/${fx.assetId}/links/shared-id`, { method: "DELETE", },),
+      );
+      expect(delRes.status,).toBe(409,);
+      const body = await delRes.json() as { code?: string; error?: string };
+      expect(body.code,).toBe("CONFLICT",);
+      expect(body.error,).toContain("Ambiguous link delete:",);
+
+      // Both links still present — no silent drop.
+      const listRes = await app.handle(
+        new Request(`http://localhost/api/assets/${fx.assetId}/links`,),
+      );
+      expect(((await listRes.json()) as unknown[]).length,).toBe(2,);
+    } finally {
+      await cleanup(fx,);
+    }
+  });
+
   test("404 when a non-owner links", async () => {
     const fx = await seed();
     try {
