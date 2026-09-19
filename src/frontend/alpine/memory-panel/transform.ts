@@ -11,7 +11,7 @@
 
 import { toDate, } from "../../../utils/date";
 import { jsonParseOr, } from "../json";
-import type { MemoryEntry, MemoryPanelState, } from "../types";
+import type { AuditAction, AuditEntry, MemoryEntry, MemoryPanelState, } from "../types";
 
 /**
  * Estimate tokens from content length (~4 chars per token).
@@ -102,5 +102,94 @@ export function memoriesForTab(panel: MemoryPanelState, tab: MemoryPanelState["a
     case "character": {
       return panel.characterMemories;
     }
+    case "audit": {
+      return [];
+    }
   }
+}
+
+// ── Audit transforms (FEAT-075) ─────────────────────────────────
+
+/** Raw audit row as returned by GET /api/actors/:id/memories/audit. */
+export interface AuditApiRow {
+  id: string;
+  memory_id: string;
+  actor_id: string;
+  user_id: string | null;
+  action: string;
+  details: string;
+  created_at: string;
+}
+
+/** Page wrapper returned by the audit endpoint. */
+export interface AuditApiPage {
+  entries: AuditApiRow[];
+  nextCursor?: string | null;
+}
+
+/** Map a raw API row to the panel AuditEntry shape. */
+export function toAuditEntry(row: AuditApiRow): AuditEntry {
+  return {
+    id: row.id,
+    memoryId: row.memory_id,
+    actorId: row.actor_id,
+    userId: row.user_id,
+    action: row.action as AuditAction,
+    details: row.details,
+    createdAt: row.created_at,
+  };
+}
+
+/** All known audit actions — order matches the audit tab's filter chip row. */
+export const AUDIT_ACTIONS: AuditAction[] = ["create", "modify", "pin", "unpin", "decay", "purge", "inject", "delete"];
+
+/**
+ * Human-readable label for the audit action badge.
+ * @param action
+ */
+export function auditActionLabel(action: AuditAction): string {
+  switch (action) {
+    case "create": { return "Created"; }
+    case "modify": { return "Modified"; }
+    case "pin": { return "Pinned"; }
+    case "unpin": { return "Unpinned"; }
+    case "decay": { return "Decayed"; }
+    case "purge": { return "Purged"; }
+    case "inject": { return "Injected"; }
+    case "delete": { return "Deleted"; }
+  }
+}
+
+/**
+ * Format an audit timestamp for the panel meta row (locale date + time).
+ * @param iso
+ * @returns locale date+time string, empty for an invalid timestamp
+ */
+export function formatAuditDate(iso: string,): string {
+  const date = toDate(iso,);
+  if (Number.isNaN(date.getTime(),)) { return ""; }
+  return date.toLocaleString(undefined, {
+    year: "numeric", month: "short", day: "numeric",
+    hour: "2-digit", minute: "2-digit",
+  },);
+}
+
+/**
+ * Parse an audit entry's `details` JSON. Returns `{}` for malformed input.
+ * @param details
+ */
+export function parseAuditDetails(details: string,): Record<string, unknown> {
+  if (!details) { return {}; }
+  const obj = jsonParseOr<Record<string, unknown>>(details, {},);
+  return obj ?? {};
+}
+
+/**
+ * Filter audit entries by the panel's current action filter.
+ * @param entries
+ * @param filter
+ */
+export function auditEntriesForFilter(entries: AuditEntry[], filter: AuditAction | null,): AuditEntry[] {
+  if (!filter) { return entries; }
+  return entries.filter((e,) => e.action === filter,);
 }

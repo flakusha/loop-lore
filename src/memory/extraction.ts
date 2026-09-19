@@ -16,6 +16,7 @@ import type { GenerationMessage, } from "../generation/gen-types-options";
 import { getLogger, } from "../logger";
 import { resolveSystemPrompt, } from "../prompts";
 import { jsonParseOr, jsonStringifyOr, } from "../utils";
+import { recordAuditLog, } from "./audit";
 import { MAX_CHAIN_IDS, } from "./history-search";
 import type { ExtractedMemory, ExtractionOpts, } from "./types";
 
@@ -29,6 +30,8 @@ export interface MemoryProvenance {
   extractionKind?: ExtractionKind;
   /** Review workflow state for the stored rows (defaults to "committed"). */
   reviewStatus?: "pending" | "committed";
+  /** User who triggered the storage (recorded in audit log, not persisted). */
+  userId?: string | null;
 }
 
 /**
@@ -140,6 +143,7 @@ export async function storeMemories(
   const sourceChatIds = provenance.sourceChatIds ?? [chatId,];
   const extractionKind = provenance.extractionKind ?? "single_response";
   let stored = 0;
+  const auditEntries: Array<{ memoryId: string; actorId: string; userId: string | null; action: "create"; details: Record<string, unknown> }> = [];
 
   for (const memory of memories) {
     const existing = await db
@@ -152,10 +156,11 @@ export async function storeMemories(
     if (existing) {
       continue;
     }
+    const id = randomUUID();
     await db
       .insertInto("actor_memories",)
       .values({
-        id: randomUUID(),
+        id,
         actor_id: actorId,
         content: memory.content,
         memory_type: memory.memoryType,
@@ -175,11 +180,27 @@ export async function storeMemories(
       },)
       .execute();
 
+    auditEntries.push({
+      memoryId: id,
+      actorId,
+      userId: provenance.userId ?? null,
+      action: "create",
+      details: {
+        source: extractionKind,
+        memoryType: memory.memoryType,
+        confidence: memory.confidence,
+        importance: memory.importance,
+        sourceChatId: chatId,
+        sourceMessageIds,
+      },
+    },);
+
     stored++;
   }
 
   if (stored > 0) {
     getLog().info("Stored extracted memories", { actorId, chatId, count: stored, },);
+    await recordAuditLog(db, auditEntries,);
   }
 
   return stored;
@@ -231,6 +252,7 @@ export async function extractAndStoreMemories(
         sourceChatIds: opts.sourceChatIds ?? [opts.chatId,],
         extractionKind: opts.extractionKind ?? "single_response",
         reviewStatus: await resolveReviewStatus(db, opts,),
+        userId: opts.userId ?? null,
       },);
     }
   } catch (error) {

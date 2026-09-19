@@ -893,6 +893,17 @@ export interface TradeHistory {
   created_at: string;
 }
 
+// ── memory_audit_log ────────────────────────────────────────────
+export interface MemoryAuditLog {
+  id: Generated<string>;
+  memory_id: string;
+  actor_id: string;
+  user_id: string | null;
+  action: string;
+  details: Generated<string>;
+  created_at: Generated<string>;
+}
+
 // ── memory_embeddings ────────────────────────────────────────────
 export interface MemoryEmbeddings {
   memory_id: Generated<string>;

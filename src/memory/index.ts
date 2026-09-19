@@ -4,8 +4,18 @@
 /**
  * Memory system — public API.
  *
- * Re-exports all memory services: extraction, budget, purge, provision, shareability, injection.
+ * Re-exports all memory services: extraction, budget, purge, provision, shareability, injection, audit.
  */
+export {
+  listAuditLog,
+  recordAuditLog,
+} from "./audit";
+export type {
+  AuditLogEntry,
+  ListAuditLogOpts,
+  MemoryAuditAction,
+  MemoryAuditRow,
+} from "./audit";
 export { estimateTokens, } from "../chat/token-utils";
 export { getMemoriesWithinBudget, selectWithinBudget, } from "./budget";
 export { extractAndStoreMemories, extractMemories, storeMemories, } from "./extraction";
