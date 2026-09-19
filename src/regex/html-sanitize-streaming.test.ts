@@ -5,11 +5,11 @@ import { describe, expect, test, } from "bun:test";
 import {
   createStreamingSanitizer,
   DANGEROUS_TAGS,
-  JS_URL_ATTR,
   ON_EVENT_DOUBLE,
   ON_EVENT_SINGLE,
   ON_EVENT_UNQUOTED,
   stripScriptTags,
+  stripUnsafeUrlAttributes,
 } from "./html-sanitize";
 
 /**
@@ -30,12 +30,13 @@ describe("createStreamingSanitizer", () => {
   // bubble had already shipped the unsanitized payload to the SSE buffer
   // and (via DOMPurify fail-safe or naive replay) into the DOM.
   const perChunkSanitize = (html: string,) =>
-    stripScriptTags(html,)
-      .replaceAll(ON_EVENT_DOUBLE, "",)
-      .replaceAll(ON_EVENT_SINGLE, "",)
-      .replaceAll(ON_EVENT_UNQUOTED, "",)
-      .replaceAll(JS_URL_ATTR, "",)
-      .replaceAll(DANGEROUS_TAGS, "",);
+    stripUnsafeUrlAttributes(
+      stripScriptTags(html,)
+        .replaceAll(ON_EVENT_DOUBLE, "",)
+        .replaceAll(ON_EVENT_SINGLE, "",)
+        .replaceAll(ON_EVENT_UNQUOTED, "",)
+        .replaceAll(DANGEROUS_TAGS, "",),
+    );
 
   test("emits empty for empty input", () => {
     const sanitize = createStreamingSanitizer();
@@ -75,13 +76,14 @@ describe("createStreamingSanitizer", () => {
     expect(emit2,).toBe("<p>safe</p>hello",);
   });
 
-  test("demonstrates the per-chunk bug it replaces", () => {
-    // Contrast: the per-chunk pipeline lets chunk 1's payload through
-    // unsanitized because the closing tag hasn't arrived yet. This
-    // test pins the bug so a regression to the old code path is caught.
+  test("per-chunk pipeline also holds back unclosed script content", () => {
+    // Regression pin: the improved stripScriptTags keeps an unclosed
+    // `<script>` opener and its content out of chunk output even without
+    // the streaming sanitizer's cross-chunk accumulation.
     const chunk1Html = "<p>safe</p><script>alert(1)";
-    expect(perChunkSanitize(chunk1Html,),).toBe("<p>safe</p><script>alert(1)",);
-    expect(perChunkSanitize(chunk1Html,),).toContain("<script",);
+    const out = perChunkSanitize(chunk1Html,);
+    expect(out,).not.toContain("<script",);
+    expect(out,).not.toContain("alert(1)",);
   });
 
   test("handles multiple unclosed tags across chunks", () => {
