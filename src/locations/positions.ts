@@ -25,6 +25,7 @@ export interface ActorPosition {
   physicalLocationId: string;
   spatialLocationId: string;
   enteredAt: string;
+  worldId: string;
 }
 
 export class ActorPositionService {
@@ -73,8 +74,15 @@ export class ActorPositionService {
   async getPosition(actorId: string,): Promise<ActorPosition | null> {
     const row = await this.db
       .selectFrom("actor_locations",)
-      .where("actor_id", "=", actorId,)
-      .select(["actor_id", "physical_location_id", "spatial_location_id", "entered_at",],)
+      .innerJoin("locations", "locations.id", "actor_locations.physical_location_id",)
+      .where("actor_locations.actor_id", "=", actorId,)
+      .select([
+        "actor_locations.actor_id",
+        "actor_locations.physical_location_id",
+        "actor_locations.spatial_location_id",
+        "actor_locations.entered_at",
+        "locations.world_id",
+      ],)
       .executeTakeFirst();
     if (!row) { return null; }
     return {
@@ -82,6 +90,7 @@ export class ActorPositionService {
       physicalLocationId: row.physical_location_id,
       spatialLocationId: row.spatial_location_id,
       enteredAt: row.entered_at,
+      worldId: row.world_id,
     };
   }
 
