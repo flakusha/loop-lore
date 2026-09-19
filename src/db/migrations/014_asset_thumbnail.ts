@@ -16,11 +16,11 @@
  *   • Fresh DBs (never ran `012_asset_thumbnail`) get the column.
  *   • DBs that already applied `012_asset_thumbnail` short-circuit.
  *
- * `recordSchemaVersion(33, ...)` is unconditional — recording the version
- * twice is harmless (idempotent key on `kysely_schema_version`).
+ * `recordSchemaVersion(35, ...)` is unconditional — INSERT OR IGNORE makes
+ * re-recording idempotent on the `schema_version` ledger.
  */
 import type { Kysely, } from "kysely";
-import { recordSchemaVersion, } from "../schema-version";
+import { recordSchemaVersion, removeSchemaVersion, } from "../schema-version";
 
 interface TableInfoRow {
   readonly name: string;
@@ -45,7 +45,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
   }
   await recordSchemaVersion(
     database,
-    33,
+    35,
     "assets.thumbnail_path (256px WebP generated on upload, idempotent re-assert)",
   );
 }
@@ -60,4 +60,5 @@ export async function down(database: Kysely<unknown>,): Promise<void> {
       .dropColumn("thumbnail_path",)
       .execute();
   }
+  await removeSchemaVersion(database, 35,);
 }

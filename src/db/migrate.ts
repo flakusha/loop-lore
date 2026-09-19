@@ -9,6 +9,10 @@ import path from "node:path";
 import { createLogger, getLogger, } from "../logger";
 import { getDatabase, } from "./index";
 
+// Re-exported so boot code (src/server/start.ts) imports both migration
+// phases from one module and stays under the file-size gate.
+export { runDataMigrations, } from "./data-migrations/runner";
+
 /**
  * Migration filename regex — three-digit numeric prefix then `_` then name.
  * Stray files (README.md, dotfiles, helpers) are filtered out so they
@@ -98,8 +102,13 @@ export async function assertMigrationsNotStale<DB,>(
     const { rows, } = await sql<{ name: string }>`select name from kysely_migration`.execute(database,);
     applied = [];
     for (const row of rows) { applied.push(row.name,); }
-  } catch {
+  } catch (error) {
     // Fresh database — the table does not exist until the first migration runs.
+    // Any OTHER failure (locked DB, I/O error, permissions) must not be
+    // mistaken for "nothing applied": that would silently skip this guard.
+    if (!(error instanceof Error) || !error.message.includes("no such table",)) {
+      throw error;
+    }
     applied = [];
   }
 
@@ -153,7 +162,7 @@ export async function runMigrations(database: ReturnType<typeof getDatabase>,): 
   }
   if (error) {
     log.error("Migration failed", error instanceof Error ? error : undefined,);
-    throw new Error("Migration failed — see above",);
+    throw new Error("Migration failed — see above", { cause: error, },);
   }
 
   log.info("Database migrations completed successfully",);

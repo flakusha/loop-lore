@@ -9,7 +9,7 @@
  * NULL (unlimited) so the upgrade is behavior-preserving.
  */
 import type { Kysely, } from "kysely";
-import { recordSchemaVersion, } from "../schema-version";
+import { recordSchemaVersion, removeSchemaVersion, } from "../schema-version";
 
 /**
  * @param database
@@ -27,4 +27,5 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
  */
 export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema.alterTable("mesh_peers",).dropColumn("capacity_bytes",).execute();
+  await removeSchemaVersion(database, 23,);
 }

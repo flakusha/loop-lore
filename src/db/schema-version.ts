@@ -49,3 +49,17 @@ export async function recordSchemaVersion<Schema,>(
   await sql`INSERT OR IGNORE INTO schema_version (version, description)
     VALUES (${version}, ${description})`.execute(database,);
 }
+
+/**
+ * Remove one recorded schema part. Migration `down()` bodies call this so a
+ * rollback keeps the ledger consistent with the schema (no rows claiming
+ * versions that were reverted).
+ * @param database - Writable database handle.
+ * @param version - Parts/ number previously recorded via {@link recordSchemaVersion}.
+ */
+export async function removeSchemaVersion<Schema,>(
+  database: Kysely<Schema>,
+  version: number,
+): Promise<void> {
+  await sql`DELETE FROM schema_version WHERE version = ${version}`.execute(database,);
+}

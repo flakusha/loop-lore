@@ -5,7 +5,7 @@ Schema migrations are top-level `NNN_name.ts` files auto-discovered by
 `down(db)`. `kysely_migration` holds one row per file (`001_init`, …).
 
 `001_init.ts` is **frozen**: it orchestrates the historical `parts/` tree
-(001–016, 018, 019, 021; 017/020 retired) and must gain no new parts —
+(001–016, 018, 019, 020, 022; 017/021 retired) and must gain no new parts —
 Kysely tracks `001_init` as one unit, so appended parts silently skip on
 existing databases (the drift class `runSchemaBackfill` converges at boot).
 New schema changes go in as new top-level `NNN_name.ts` files, which
@@ -35,11 +35,13 @@ migration that alters the schema to the desired state.
 - One `ADD COLUMN` / `DROP COLUMN` per `alterTable` statement — SQLite does
   not support multi-column ALTER TABLE.
 - Use `src/db/migration-helpers.ts` (`boolToEnum`, `batchBoolToEnum`) for
-  boolean → text-enum conversions; helpers are transactional and log
-  non-0/1 values instead of silently coercing them.
+  boolean → text-enum conversions; each conversion runs in one transaction
+  and non-0/1 values are counted, logged, then coerced to the false value
+  (never silently).
 - Data (row-level) migrations live in `src/db/data-migrations/` (runner +
-  types; discovery-based, no registry to edit). No row migrations ship
-  currently — the unshipped v1_to_v2 baselines were folded.
+  types; discovery-based, no registry to edit). They are applied at boot by
+  `src/server/start.ts` after schema migrations and backfill. No row
+  migrations ship currently — the unshipped v1_to_v2 baselines were folded.
 
 ## Regeneration
 
