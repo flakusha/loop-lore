@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import type { Kysely, } from "kysely";
+import { type Kysely, sql, } from "kysely";
+import { getLogger, } from "../logger";
 
 /**
  * Migration helpers — reusable utilities for schema transformations.
@@ -15,6 +16,13 @@ import type { Kysely, } from "kysely";
  *
  * Creates a temp column, copies data, drops the original, and renames.
  * Handles index rebuilds automatically.
+ *
+ * Whole conversion runs in one transaction (SAVEPOINT when already inside
+ * the Migrator's transaction) — a failure mid-way leaves the original
+ * column untouched instead of an orphaned temp column. Values other than
+ * 0/1/null are counted and logged before any DDL, then coerce to
+ * `falseValue` — the log makes that coercion loud, not silent.
+ *
  * @param db - Kysely instance
  * @param table - Table name
  * @param column - Column to convert
@@ -35,42 +43,63 @@ export async function boolToEnum(
     oldIndexName?: string;
   },
 ): Promise<void> {
+  const log = getLogger().child({ module: "migration-helpers", },);
+
+  // Audit non-0/1 values BEFORE any DDL: anything other than 0/1/null would
+  // silently coerce to falseValue below — surface it loudly instead.
+  const weird = await sql<{ c: number }>`
+    SELECT COUNT(*) AS c FROM ${sql.table(table,)}
+    WHERE ${sql.ref(column,)} IS NOT NULL AND ${sql.ref(column,)} NOT IN (0, 1)
+  `.execute(db,);
+  const weirdCount = Number(weird.rows[0]?.c ?? 0,);
+  if (weirdCount > 0) {
+    log.warn(
+      `boolToEnum: ${weirdCount} row(s) in ${table}.${column} are not 0/1 and will coerce to "${falseValue}"`,
+      { table, column, weirdCount, },
+    );
+  }
+
   const tempCol = `${column}_new`;
 
-  // Add temp column with new type
-  await db.schema
-    .alterTable(table,)
-    .addColumn(tempCol, "text", (col,) => col.notNull().defaultTo(falseValue,),)
-    .execute();
-
-  // Copy data: 1 → trueValue, 0/null → falseValue
-  await db
-    .updateTable(table,)
-    .set({ [tempCol]: trueValue, },)
-    .where(column, "=", 1,)
-    .execute();
-
-  // Drop index if it exists (SQLite requires index drop before column drop)
-  if (options?.oldIndexName) {
-    await db.schema.dropIndex(options.oldIndexName,).ifExists().execute();
-  }
-
-  // Drop old column, rename temp
-  await db.schema.alterTable(table,).dropColumn(column,).execute();
-  await db.schema.alterTable(table,).renameColumn(tempCol, column,).execute();
-
-  // Rebuild index if needed
-  if (options?.oldIndexName && options?.indexColumns) {
-    await db.schema
-      .createIndex(options.oldIndexName,)
-      .on(table,)
-      .columns(options.indexColumns,)
+  // Whole conversion in one transaction (SAVEPOINT when nested in the
+  // Migrator's transaction) — atomic on failure.
+  await db.transaction().execute(async (trx,) => {
+    // Add temp column with new type
+    await trx.schema
+      .alterTable(table,)
+      .addColumn(tempCol, "text", (col,) => col.notNull().defaultTo(falseValue,),)
       .execute();
-  }
+
+    // Copy data: 1 → trueValue, 0/null → falseValue
+    await trx
+      .updateTable(table,)
+      .set({ [tempCol]: trueValue, },)
+      .where(column, "=", 1,)
+      .execute();
+
+    // Drop index if it exists (SQLite requires index drop before column drop)
+    if (options?.oldIndexName) {
+      await trx.schema.dropIndex(options.oldIndexName,).ifExists().execute();
+    }
+
+    // Drop old column, rename temp
+    await trx.schema.alterTable(table,).dropColumn(column,).execute();
+    await trx.schema.alterTable(table,).renameColumn(tempCol, column,).execute();
+
+    // Rebuild index if needed
+    if (options?.oldIndexName && options?.indexColumns) {
+      await trx.schema
+        .createIndex(options.oldIndexName,)
+        .on(table,)
+        .columns(options.indexColumns,)
+        .execute();
+    }
+  },);
 }
 
 /**
  * Convert multiple boolean integer columns to text enums in one call.
+ * Each conversion is individually transactional — see {@link boolToEnum}.
  * @param db - Kysely instance
  * @param conversions - Array of conversion specs
  */

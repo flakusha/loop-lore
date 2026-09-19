@@ -15,7 +15,7 @@
  * (no-op at the table level since `gm` is just a free-form text value).
  */
 import type { Kysely, } from "kysely";
-import { recordSchemaVersion, } from "../schema-version";
+import { recordSchemaVersion, removeSchemaVersion, } from "../schema-version";
 
 export async function up(database: Kysely<unknown>,): Promise<void> {
   await recordSchemaVersion(database, 28, "chat participant gm role (AC4 ownership-transfer)",);
@@ -25,10 +25,9 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
  * @param database
  */
 export async function down(database: Kysely<unknown>,): Promise<void> {
-  // The `gm` value is just text — there is no schema object to drop. The
-  // version row, however, is recorded with `INSERT OR IGNORE`, so we cannot
-  // delete the prior version here. Reverse-migrating is a no-op: a newer
-  // migration or manual cleanup would be required to strip rows whose
-  // `role_in_chat = "gm"` survived a downgrade.
-  void database;
+  // The `gm` value is just text — there is no schema object to drop; rows
+  // whose `role_in_chat = "gm"` survived a downgrade are a data concern for
+  // a newer migration or manual cleanup. The ledger row, however, comes off
+  // so a rollback keeps `schema_version` truthful.
+  await removeSchemaVersion(database, 28,);
 }

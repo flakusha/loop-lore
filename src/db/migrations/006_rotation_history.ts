@@ -17,7 +17,7 @@
  */
 import type { Kysely, } from "kysely";
 import { sql, } from "kysely";
-import { recordSchemaVersion, } from "../schema-version";
+import { recordSchemaVersion, removeSchemaVersion, } from "../schema-version";
 
 export async function up(database: Kysely<unknown>,): Promise<void> {
   await database.schema
@@ -48,4 +48,5 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
  */
 export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema.dropTable("rotation_history",).execute();
+  await removeSchemaVersion(database, 27,);
 }

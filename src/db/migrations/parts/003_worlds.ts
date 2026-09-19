@@ -185,7 +185,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("updated_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
     .addColumn("nsfw_override", "text",)
     .addColumn("rpg_enabled", "integer", (col,) => col.notNull().defaultTo(0,),)
-    .addColumn("data_version", "integer", (col,) => col.notNull().defaultTo(1,),)
+    .addColumn("data_version", "integer", (col,) => col.notNull().defaultTo(0,),)
     .addColumn("record_hash", "text", (col,) => col.notNull().defaultTo("",),)
     .execute();
 

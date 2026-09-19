@@ -51,7 +51,7 @@ export function registerContentVersion(
   dataVersion: number,
   columns: readonly string[],
 ): void {
-  if (!Number.isInteger(dataVersion,) || dataVersion < 1) {
+  if (!Number.isInteger(dataVersion,) || dataVersion < 0) {
     throw new Error(`content-version: invalid data_version ${dataVersion}`,);
   }
   if (columns.length === 0) {
@@ -169,7 +169,10 @@ export async function runBatchRefresh(
   for (;;) {
     const rows = (await database
       .selectFrom(tableName,)
-      .select(["id", "data_version", ...projectionColumns(projection,),],)
+      // record_hash must be selected: the per-row skip below compares the
+      // stored hash against the freshly computed one. Omitting it made the
+      // skip dead code and every refresh rewrote every row.
+      .select(["id", "data_version", "record_hash", ...projectionColumns(projection,),],)
       .$if(dataVersion !== undefined, (qb,) => qb.where("data_version", "=", dataVersion,),)
       .orderBy("id",)
       .limit(batchSize,)

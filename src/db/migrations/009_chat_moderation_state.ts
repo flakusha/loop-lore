@@ -23,7 +23,7 @@
  * schema version to 30 (was 29 after 008_memory_source_chain).
  */
 import type { Kysely, } from "kysely";
-import { recordSchemaVersion, } from "../schema-version";
+import { recordSchemaVersion, removeSchemaVersion, } from "../schema-version";
 
 /**
  * @param database
@@ -66,4 +66,5 @@ export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema.dropIndex("idx_chat_participants_muted_until",).execute();
   await database.schema.alterTable("chat_participants",).dropColumn("banned_until",).execute();
   await database.schema.alterTable("chat_participants",).dropColumn("muted_until",).execute();
+  await removeSchemaVersion(database, 30,);
 }
