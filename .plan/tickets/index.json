@@ -1663,6 +1663,19 @@
     "source": ".plan/tickets/BUG-create-entity-confirm-bypasses-world-ownership.md",
     "status": "done"
   },
+  "BUG-CREATE-TEST-DB-CUSTOM-DIALECT-CAN-BYPASS-SETTESTDATABASE": {
+    "hash": "9585ee3",
+    "git_issue": "9585ee3",
+    "extid": "BUG-CREATE-TEST-DB-CUSTOM-DIALECT-CAN-BYPASS-SETTESTDATABASE",
+    "type": "BUG",
+    "title": "create-test-db-custom-dialect-can-bypass-setTestDatabase",
+    "label": "bug",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-create-test-db-custom-dialect-can-bypass-settestdatabase.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-CRYPTO-ACTIVITYPUB-KEY-ROTATION-IS-NON-ATOMIC-INSERT-FAILURE": {
     "hash": "af75120",
     "git_issue": "af75120",
@@ -1934,6 +1947,19 @@
     "source": ".plan/tickets/BUG-e2e-test-infrastructure-fixes.md",
     "status": "done",
     "git_issue": "7e811d7"
+  },
+  "BUG-EAGER-DB-INIT-CREATES-ON-DISK-DB-ON-TEST-IMPORT": {
+    "hash": "c2d325c",
+    "git_issue": "c2d325c",
+    "extid": "BUG-EAGER-DB-INIT-CREATES-ON-DISK-DB-ON-TEST-IMPORT",
+    "type": "BUG",
+    "title": "eager-db-init-creates-on-disk-db-on-test-import",
+    "label": "bug",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-eager-db-init-creates-on-disk-db-on-test-import.md",
+    "status": "⬜ Not Started"
   },
   "BUG-ELYSIA-AUTH-TS-DEAD-SHIM-DUPLICATE-LOGIC": {
     "hash": "d0d5792",
@@ -4076,6 +4102,19 @@
     "source": ".plan/tickets/BUG-services-tradecore-validatelines-lacks-world-id-filter-cross.md",
     "status": "done"
   },
+  "BUG-SETTESTDATABASE-GLOBAL-LEAK-ON-TEST-THROW": {
+    "hash": "f7f8b91",
+    "git_issue": "f7f8b91",
+    "extid": "BUG-SETTESTDATABASE-GLOBAL-LEAK-ON-TEST-THROW",
+    "type": "BUG",
+    "title": "setTestDatabase-global-leak-on-test-throw",
+    "label": "bug",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-settestdatabase-global-leak-on-test-throw.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-SETTINGS-SAVE-OMITS-GMCONFIG-FOR-ONLINE-CHATS": {
     "hash": "e5219e3",
     "git_issue": "e5219e3",
@@ -4166,6 +4205,19 @@
     "git_issue": "1f7ba9e",
     "status": "done"
   },
+  "BUG-SQLITE-FOREIGN-KEYS-PRAGMA-SET-TWICE-REDUNDANT": {
+    "hash": "654ab1a",
+    "git_issue": "654ab1a",
+    "extid": "BUG-SQLITE-FOREIGN-KEYS-PRAGMA-SET-TWICE-REDUNDANT",
+    "type": "BUG",
+    "title": "sqlite-foreign-keys-pragma-set-twice-redundant",
+    "label": "bug",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-sqlite-foreign-keys-pragma-set-twice-redundant.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-SQLITE-PRAGMAS-SKIPPED-WHEN-DIALECT-BUILT-FROM-EXISTING-DATA": {
     "hash": "3e90ae3",
     "extid": "BUG-SQLITE-PRAGMAS-SKIPPED-WHEN-DIALECT-BUILT-FROM-EXISTING-DATA",
@@ -4178,6 +4230,19 @@
     "source": ".plan/tickets/BUG-sqlite-pragmas-skipped-when-dialect-built-from-existing-data.md",
     "git_issue": "3e90ae3",
     "status": "done"
+  },
+  "BUG-SQLITE-WAL-PRAGMA-NOOP-ON-IN-MEMORY-TEST-DB": {
+    "hash": "f55d8ec",
+    "git_issue": "f55d8ec",
+    "extid": "BUG-SQLITE-WAL-PRAGMA-NOOP-ON-IN-MEMORY-TEST-DB",
+    "type": "BUG",
+    "title": "sqlite-wal-pragma-noop-on-in-memory-test-db",
+    "label": "bug",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-sqlite-wal-pragma-noop-on-in-memory-test-db.md",
+    "status": "⬜ Not Started"
   },
   "BUG-SSE-STREAMS-LEAK-STRING-ERROR-INTERNALS-TO-CLIENTS": {
     "hash": "1a3a97a",
@@ -4435,6 +4500,19 @@
     "tags": [],
     "source": ".plan/tickets/BUG-test-assertions-stale-gm-support-message.md",
     "status": "[OK] Resolved"
+  },
+  "BUG-TEST-RUN-ID-USES-DATE-NOW-COLLISION-RISK-UNDER-PARALLEL": {
+    "hash": "f3941cb",
+    "git_issue": "f3941cb",
+    "extid": "BUG-TEST-RUN-ID-USES-DATE-NOW-COLLISION-RISK-UNDER-PARALLEL",
+    "type": "BUG",
+    "title": "test-run-id-uses-Date-now-collision-risk-under-parallel",
+    "label": "bug",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-test-run-id-uses-date-now-collision-risk-under-parallel.md",
+    "status": "⬜ Not Started"
   },
   "BUG-TEST-SUITE-FLAKY-44-ON-DEV-2026-08-22": {
     "hash": "1e5d5dc",
@@ -8419,7 +8497,7 @@
     "tags": [],
     "source": ".plan/tickets/TASK-032.md",
     "git_issue": "f51cf0f",
-    "status": "open"
+    "status": "done"
   },
   "TASK-033": {
     "hash": "760729b",
