@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** low
 **Effort:** Medium
+**Summary:** Model-comparison Dashboard
+**Context:** Epic proposed:epic-model-dashboard; tags models, benchmark.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** proposed:epic-model-dashboard
 **Tags:** models, benchmark
 

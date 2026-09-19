@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** low
 **Effort:** Large
+**Summary:** GURPS Point-Buy Character Creation
+**Context:** Epic epic-character-spec; tags rpg, gurps, point-buy.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-character-spec
 **Tags:** rpg, gurps, point-buy
 

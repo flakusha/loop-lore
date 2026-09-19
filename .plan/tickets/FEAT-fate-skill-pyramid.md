@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** low
 **Effort:** Medium
+**Summary:** FATE Skill Pyramid
+**Context:** Epic epic-character-spec; tags rpg, fate, skills.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-character-spec
 **Tags:** rpg, fate, skills
 

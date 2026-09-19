@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Large
+**Summary:** Mobile-native UX (haptics, swipe, voice, thumb layout)
+**Context:** Epic epic-mobile-app; tags mobile, ux.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-mobile-app
 **Tags:** mobile, ux
 

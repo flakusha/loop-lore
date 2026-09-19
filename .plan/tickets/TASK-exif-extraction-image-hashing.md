@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** low
 **Effort:** Medium
+**Summary:** EXIF Extraction + Image Hashing
+**Context:** Epic proposed:epic-asset-metadata; tags assets, exif.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** proposed:epic-asset-metadata
 **Tags:** assets, exif
 

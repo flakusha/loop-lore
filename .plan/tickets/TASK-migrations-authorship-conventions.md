@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Small
+**Summary:** Migrations Authorship Conventions
+**Context:** Epic epic-shared-schemas; tags db, migrations.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-shared-schemas
 **Tags:** db, migrations
 

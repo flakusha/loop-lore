@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Large
+**Summary:** Blades in the Dark - Position/Effect + Clocks
+**Context:** Epic epic-resolution-system; tags rpg, fitd, clocks.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-resolution-system
 **Tags:** rpg, fitd, clocks
 

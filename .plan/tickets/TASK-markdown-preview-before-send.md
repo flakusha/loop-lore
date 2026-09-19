@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Small
+**Summary:** Markdown Preview Before Send
+**Context:** Epic epic-chat-composer-flows; tags chat, markdown.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-chat-composer-flows
 **Tags:** chat, markdown
 

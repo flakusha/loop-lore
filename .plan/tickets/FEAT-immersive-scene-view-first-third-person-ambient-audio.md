@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** low
 **Effort:** XL
+**Summary:** Immersive Scene View (first/third-person + ambient audio)
+**Context:** Epic proposed:epic-immersive-scene; tags 3d, scene.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** proposed:epic-immersive-scene
 **Tags:** 3d, scene
 

@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** Large
+**Summary:** NSFW Rating Schema & Consent State Machine
+**Context:** Epic epic-nsfw-capabilities; tags nsfw, consent.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-nsfw-capabilities
 **Tags:** nsfw, consent
 

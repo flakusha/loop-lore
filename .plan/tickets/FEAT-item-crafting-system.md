@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Large
+**Summary:** Item Crafting System
+**Context:** Epic epic-crafting-professions; tags items, crafting.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-crafting-professions
 **Tags:** items, crafting
 

@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Large
+**Summary:** DB Content Versioning & Snapshot/Restore
+**Context:** Epic proposed:epic-db-versioning; tags db, versioning.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** proposed:epic-db-versioning
 **Tags:** db, versioning
 

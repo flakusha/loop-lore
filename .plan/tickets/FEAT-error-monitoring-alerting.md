@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** Large
+**Summary:** Error Monitoring & Alerting
+**Context:** Epic proposed:epic-error-alerting; tags alerting, monitoring.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** proposed:epic-error-alerting
 **Tags:** alerting, monitoring
 

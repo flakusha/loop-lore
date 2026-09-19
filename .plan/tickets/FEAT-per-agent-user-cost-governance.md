@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Large
+**Summary:** Per-Agent/User Cost Governance
+**Context:** Epic proposed:epic-cost-governance; tags cost, governance.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** proposed:epic-cost-governance
 **Tags:** cost, governance
 

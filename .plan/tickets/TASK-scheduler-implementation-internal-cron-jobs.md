@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Large
+**Summary:** Scheduler Implementation (Internal Cron Jobs)
+**Context:** Epic proposed:epic-scheduler; tags scheduler, cron.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** proposed:epic-scheduler
 **Tags:** scheduler, cron
 

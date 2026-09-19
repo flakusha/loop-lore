@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** low
 **Effort:** Large
+**Summary:** Plot Autopilot (AI proposes next plot beats)
+**Context:** Epic proposed:epic-plot-autopilot; tags plot, ai.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** proposed:epic-plot-autopilot
 **Tags:** plot, ai
 

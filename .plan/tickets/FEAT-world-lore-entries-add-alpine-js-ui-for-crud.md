@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium
+**Summary:** World Lore Entries: add Alpine.js UI for CRUD
+**Context:** Epic unspecified; tags unspecified.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 
 ## Summary
 

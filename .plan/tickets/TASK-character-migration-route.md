@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium
+**Summary:** Character Migration Route
+**Context:** Epic epic-character-spec; tags character, migration.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-character-spec
 **Tags:** character, migration
 

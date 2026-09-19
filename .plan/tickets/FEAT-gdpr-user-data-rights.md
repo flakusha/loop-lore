@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** Large
+**Summary:** GDPR & User Data Rights
+**Context:** Epic proposed:epic-gdpr-data-rights; tags gdpr, privacy.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** proposed:epic-gdpr-data-rights
 **Tags:** gdpr, privacy
 

@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Large
+**Summary:** Faction System Backend
+**Context:** Epic epic-faction-reputation; tags factions, backend.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-faction-reputation
 **Tags:** factions, backend
 

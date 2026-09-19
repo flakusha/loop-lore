@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** Large
+**Summary:** Lore System Implementation
+**Context:** Epic epic-lore-knowledge; tags lore, memory.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-lore-knowledge
 **Tags:** lore, memory
 

@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Large
+**Summary:** Regex Extraction Pipeline Implementation
+**Context:** Epic proposed:epic-regex-extraction; tags regex, extraction.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** proposed:epic-regex-extraction
 **Tags:** regex, extraction
 

@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium
+**Summary:** DB Reinit & Backup Retention Policy
+**Context:** Epic epic-database-backup-recovery; tags db, backup, retention.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-database-backup-recovery
 **Tags:** db, backup, retention
 

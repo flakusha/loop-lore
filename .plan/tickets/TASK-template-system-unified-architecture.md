@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** XL
+**Summary:** Template System Unified Architecture
+**Context:** Epic epic-config-templates; tags template, prompt.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-config-templates
 **Tags:** template, prompt
 
