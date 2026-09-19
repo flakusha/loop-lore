@@ -66,6 +66,7 @@ export const staticTagPropositionSource: TagPropositionSource = {
  * @param database
  * @param assetId
  * @param userId
+ * @param source - proposition source (defaults to filename/alt_text tokens)
  * @returns Proposed tags not already applied or dismissed.
  */
 export async function proposeTags(
@@ -115,6 +116,7 @@ export async function proposeTags(
  * @param database
  * @param assetId
  * @param tag
+ * @param userId - dismissing viewer
  * @returns Resolves when the dismissal is recorded.
  */
 export async function dismissProposition(

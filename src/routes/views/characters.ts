@@ -10,7 +10,8 @@ import { buildEditFormHtml, } from "./character-edit-form";
 import { escapeHtml, htmlResponse, } from "./layout";
 
 /**
- * @param database
+ * @param database - database handle
+ * @returns the characters grid HTML response
  */
 async function serveCharactersGrid(database: Kysely<DB>,): Promise<Response> {
   const actors = await database
@@ -48,8 +49,10 @@ async function serveCharactersGrid(database: Kysely<DB>,): Promise<Response> {
 }
 
 /**
- * @param characterId
- * @param database
+ * @param characterId - actor id
+ * @param database - database handle
+ * @param request - incoming request (CSP nonce source)
+ * @returns the edit form HTML response
  */
 async function serveCharacterEditForm(
   characterId: string,
@@ -116,8 +119,9 @@ async function serveCharacterEditForm(
 }
 
 /**
- * @param slug
- * @param database
+ * @param slug - chat name search substring
+ * @param database - database handle
+ * @returns the chat list fragment response
  */
 
 async function serveCharacterChatListDb(slug: string, database: Kysely<DB>,): Promise<Response> {

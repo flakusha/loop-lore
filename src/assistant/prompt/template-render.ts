@@ -154,6 +154,7 @@ export async function assembleFromTemplate(
  * identifiers plus any builtin referenced through {{variable}} aliases in
  * static content.
  * @param sections - Enabled template sections
+ * @returns the needed builtin identifiers
  */
 function collectNeededBuiltins(sections: LlmTemplatePayload["sections"],): Set<string> {
   const needed = new Set<string>();
@@ -173,6 +174,7 @@ function collectNeededBuiltins(sections: LlmTemplatePayload["sections"],): Set<s
  * @param content - Raw template content
  * @param scalars - Scalar variable map
  * @param builtin - Built section messages keyed by builder name
+ * @returns the substituted content
  */
 function substituteVars(
   content: string,
@@ -199,6 +201,7 @@ function substituteVars(
  * (when the user impersonates or selected one) feeds {{userName}} /
  * {{userDescription}}; unknown values stay empty strings.
  * @param ctx - Shared assembly context
+ * @returns the scalar variable map (unknown values stay empty strings)
  */
 async function resolveScalarVars(ctx: AssembleContext,): Promise<ScalarVars> {
   const vars: ScalarVars = {

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 280
+// size-allow: 275
 
 /**
  * Character Edit Form — HTML template builder
@@ -14,7 +14,8 @@ import { join, } from "node:path";
 import { escapeHtml, } from "./layout";
 
 /** Stricter escape for values interpolated inside single- or double-quoted attributes
- * @param str
+ * @param str - raw string
+ * @returns attribute-escaped string
  * and JavaScript string literals (e.g. `onclick='...'`). Also encodes `'`. */
 function escapeAttr(str: string,): string {
   return escapeHtml(str,).replaceAll("'", "&#39;",);
@@ -24,7 +25,10 @@ const panelBodyCache = new Map<string, string>();
 
 /** Load a character panel template inner body. The outer mount tag (which
  *  carries its own `x-data`) is stripped — the caller provides the `x-data`
- *  wrapper. Results cached per process. */
+ *  wrapper. Results cached per process.
+ * @param file - panel template filename
+ * @returns the stripped panel body HTML
+ */
 function loadPanelBody(file: string,): string {
   const cached = panelBodyCache.get(file,);
   if (cached !== undefined) { return cached; }
@@ -57,11 +61,6 @@ export interface EditFormValues {
   characterId: string;
   /** 5-tier NSFW content rating (sfw | nsfw_mild | nsfw_moderate | nsfw_intense | nsfw_extreme). */
   contentRating: string;
-  /** Optimistic-concurrency version from the loaded row; echoed back as dataVersion. */
-  dataVersion: number;
-  /** Avatar crop focus percentages (0-100, 50/50 = centered). */
-  avatarFocusX: number;
-  avatarFocusY: number;
 }
 
 /** Collapsible Internal Traits section HTML */
@@ -145,7 +144,10 @@ const PROACTIVE_SECTION = `
  *  Each wrapper binds its own Alpine factory; the outer x-data provides actorId.
  *  Panel bodies are inlined from `src/components/character/` (single source of
  *  truth — the same files served at `/partials/character/*`). Rendered in the
- *  character edit form just before the action footer. */
+ *  character edit form just before the action footer.
+ * @param characterId - actor id interpolated into the panel wrapper
+ * @returns the panels section HTML
+ */
 const PANELS_SECTION = (characterId: string,) => `
         <details class="form-section" data-testid="actor-panels-section" style="margin-top:var(--space-4);border:1px solid var(--border-default);border-radius:var(--radius-md);padding:var(--space-4)">
           <summary style="cursor:pointer;font-weight:600;font-size:var(--text-lg)">Sub-resources</summary>
@@ -181,16 +183,15 @@ const PANELS_SECTION = (characterId: string,) => `
  * the form carries the nonce so it executes under the strict CSP (no
  * `'unsafe-inline'`). When omitted, the script emits without a nonce —
  * acceptable in tests / non-CSP contexts.
- * @param v
+ * @param v - edit form values
  * @param options
  * @param options.cspNonce
+ * @returns the edit form HTML
  */
 export function buildEditFormHtml(v: EditFormValues, options: { cspNonce?: string } = {},): string {
   const nonceAttr = options.cspNonce ? ` nonce="${options.cspNonce}"` : "";
   return `<div style="max-width:720px;margin:0 auto;width:100%">
       <form id="char-edit-form" data-testid="character-edit-form">
-        <input type="hidden" id="char-avatar-id" value="${escapeAttr(v.avatarId,)}" />
-        <input type="hidden" id="char-data-version" value="${v.dataVersion}" />
         <div class="form-group" style="display:flex;align-items:flex-start;gap:var(--space-4)">
           <div style="width:80px;height:80px;border-radius:var(--radius-md);background:var(--bg-tertiary);display:flex;align-items:center;justify-content:center;font-size:36px;flex-shrink:0;overflow:hidden;border:1px solid var(--border-default)">
             <div id="avatar-preview">${v.avatarHtml}</div>
@@ -241,13 +242,6 @@ export function buildEditFormHtml(v: EditFormValues, options: { cspNonce?: strin
           <option value="nsfw_extreme"${v.contentRating === "nsfw_extreme" ? " selected" : ""}>Extreme</option>
         </select>
         <p class="form-hint" style="color:var(--text-secondary)">Maximum explicit content this character may produce. Gated by your account&rsquo;s NSFW preference.</p></div>
-        <div class="form-group"><label class="form-label">Avatar Focus</label>
-          <p class="form-hint" style="color:var(--text-secondary)">Where the avatar is anchored when cropped: 0 = left/top edge, 50 = centered, 100 = right/bottom edge.</p>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4)">
-            <div><label class="form-label" for="edit-avatar-focus-x" style="font-size:var(--text-sm)">Horizontal</label><input type="range" id="edit-avatar-focus-x" min="0" max="100" step="1" value="${v.avatarFocusX}" style="width:100%" x-on:input="window.updateAvatarFocusPreview()" data-testid="avatar-focus-x" /><span id="edit-avatar-focus-x-val" style="font-size:var(--text-xs);color:var(--text-secondary)">${v.avatarFocusX}</span></div>
-            <div><label class="form-label" for="edit-avatar-focus-y" style="font-size:var(--text-sm)">Vertical</label><input type="range" id="edit-avatar-focus-y" min="0" max="100" step="1" value="${v.avatarFocusY}" style="width:100%" x-on:input="window.updateAvatarFocusPreview()" data-testid="avatar-focus-y" /><span id="edit-avatar-focus-y-val" style="font-size:var(--text-xs);color:var(--text-secondary)">${v.avatarFocusY}</span></div>
-          </div>
-        </div>
 ${INTERNAL_TRAITS_SECTION}
 ${PROACTIVE_SECTION}
 ${PANELS_SECTION(v.characterId,)}
@@ -259,7 +253,6 @@ ${PANELS_SECTION(v.characterId,)}
       </form>
       <script${nonceAttr}>
         (async () => {
-          if (typeof globalThis.updateAvatarFocusPreview === 'function') { globalThis.updateAvatarFocusPreview(); }
           if (typeof globalThis.loadInternalTraits === 'function') { await globalThis.loadInternalTraits('${
     escapeAttr(v.characterId,)
   }'); }

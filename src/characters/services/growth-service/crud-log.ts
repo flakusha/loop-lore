@@ -30,7 +30,8 @@ import { AUTHOR_ONLY_EVENT_TYPES, GrowthServiceError, } from "./types";
 
 /**
  * Map a DB row to the public GrowthLogEntry shape.
- * @param row
+ * @param row - growth_log row
+ * @returns the public growth-log entry shape
  */
 function rowToGrowthEntry(row: GrowthLogRow,): GrowthLogEntry {
   return {

@@ -46,8 +46,12 @@ import { chatSearch, } from "./search";
 import { chatWorld, } from "./world";
 
 import { mergeReactiveSource, } from "./merge-reactive";
+import { filterChatList, findActiveChat, } from "./selectors";
 
-/** Build the chat page's reactive Alpine state (registry entry = chatState). */
+/**
+ * Build the chat page's reactive Alpine state (registry entry = chatState).
+ * @returns the Alpine chat state object
+ */
 export function chatState() {
   const state: Record<string, unknown> & ThisType<ChatState & AlpineMagicThis> = {
     // ── Core state ──
@@ -125,7 +129,10 @@ export function chatState() {
       attemptId?: string;
     } | null,
     detailLevel: "Immersion",
-    /** Per-chat thinking visibility: hidden | collapsed | visible */
+    /**
+     * Per-chat thinking visibility: hidden | collapsed | visible
+     * @returns the active chat's thinking visibility, default hidden
+     */
     get thinkingVisibility(): string {
       const chat = this.chats.find((c: { id: string; thinking_visibility?: string },) => c.id === this.activeChat);
       return chat?.thinking_visibility ?? "hidden";
@@ -178,7 +185,7 @@ export function chatState() {
     // ── Chat search / joinable discovery ──
     ...chatSearch,
 
-    // ── Joinable chat discovery / join ──────────────────────────
+    // ── Joinable chat discovery / join state (methods live in chatSearch) ──
     _joinableChats: [] as {
       chatId: string;
       chatName: string;
@@ -187,22 +194,17 @@ export function chatState() {
     }[],
 
     get filteredChats() {
-      const filter = (this._chatFilter || "").toLowerCase();
-      if (!filter) { return this.chats; }
-      const out: typeof this.chats = [];
-      for (const c of this.chats) { if ((c.name || "").toLowerCase().includes(filter,)) { out.push(c,); } }
-      return out;
+      return filterChatList(this.chats, this._chatFilter,);
     },
 
     get currentChat() {
-      return this.chats.find(
-        (c: { id: string; name?: string; thinking_visibility?: string },) => c.id === this.activeChat,
-      ) ?? null;
+      return findActiveChat(this.chats, this.activeChat,);
     },
 
     /**
      * Recent assistant tool calls (newest first, capped at 20) for the
      *  unified GM & Assistant panel's Assistant tab.
+     * @returns the newest-first tool-call list
      */
     get assistantToolCalls(): AssistantToolCall[] {
       return collectAssistantToolCalls(this.messages ?? [],);

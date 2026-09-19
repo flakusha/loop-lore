@@ -37,6 +37,7 @@ export class FederationConsentError extends Error {
  * Raw boolean read of the actor's federation_consent flag.
  * @param database
  * @param actorId
+ * @returns true when the actor opted in to federation
  */
 export async function getFederationConsent(
   database: Kysely<DB>,

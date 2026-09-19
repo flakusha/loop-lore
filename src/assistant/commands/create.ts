@@ -38,13 +38,18 @@ const KIND_LABELS: Record<EntityKind, string> = {
   world: "World",
   item: "Item",
 };
-/** Lazy logger — only resolved when first used (avoids crash when logger not initialized in tests). */
+/**
+ * Lazy logger — only resolved when first used (avoids crash when logger
+ * not initialized in tests).
+ * @returns the create-command child logger
+ */
 const getLog = (): Logger => getLogger().child({ module: "create", },);
 
 /**
  * Pull the active world context (name + description) if a world is scoped.
  * @param db
  * @param worldId
+ * @returns the world row, or undefined for the default/unscoped world
  */
 async function resolveWorldContext(
   db: NonNullable<CommandContext["db"]>,
@@ -70,6 +75,7 @@ async function resolveWorldContext(
  * @param ctx
  * @param complete
  * @param model
+ * @returns the command result (preview action or usage/system message)
  */
 export async function runCreateGeneration(
   args: string[],
