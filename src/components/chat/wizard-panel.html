@@ -22,12 +22,12 @@
         <span x-text="wizardDraft?.label ? t('wizard.previewTitle', { type: wizardDraft.label }) : ''"></span>
       </h3>
       <div class="wizard-step-indicator">
-        <span
-          x-for="s in wizardTotalSteps"
-          :key="s"
-          class="wizard-step-dot"
-          :class="{ active: wizardStep === s, completed: s < wizardStep }"
-        ></span>
+        <template x-for="s in wizardTotalSteps" :key="s">
+          <span
+            class="wizard-step-dot"
+            :class="{ active: wizardStep === s, completed: s < wizardStep }"
+          ></span>
+        </template>
       </div>
       <button
         class="btn btn-ghost btn-sm"
@@ -38,74 +38,76 @@
       </button>
     </div>
 
-    <div class="wizard-panel-body" x-show="wizardDraft">
-      <!-- Quality gate warnings -->
-      <template x-if="wizardDraft?.warnings?.length > 0">
-        <div class="wizard-warnings">
-          <template x-for="warning in wizardDraft?.warnings ?? []" :key="warning">
-            <div class="wizard-warning-item" x-text="'⚠️ ' + warning"></div>
-          </template>
-        </div>
-      </template>
-
-      <!-- Step 1: Edit entity fields -->
-      <div x-show="wizardStep === 1">
-        <h4 class="wizard-step-title">{{{ t("wizard.stepEditFields") }}}</h4>
-        <template x-for="[field, value] in Object.entries(wizardDraft?.fields ?? {})" :key="field">
-          <div class="wizard-field">
-            <label class="wizard-field-label" x-text="field"></label>
-            <textarea
-              class="wizard-field-textarea"
-              :value="value ?? ''"
-              @input="updateWizardField(field, $event.target.value)"
-              rows="2"
-            ></textarea>
+    <template x-if="wizardDraft">
+      <div class="wizard-panel-body">
+        <!-- Quality gate warnings -->
+        <template x-if="wizardDraft?.warnings?.length > 0">
+          <div class="wizard-warnings">
+            <template x-for="warning in wizardDraft?.warnings ?? []" :key="warning">
+              <div class="wizard-warning-item" x-text="'⚠️ ' + warning"></div>
+            </template>
           </div>
         </template>
-      </div>
 
-      <!-- Step 2: Additional options -->
-      <div x-show="wizardStep === 2">
-        <h4 class="wizard-step-title">{{{ t("wizard.stepOptions") }}}</h4>
-        <div class="wizard-field">
-          <label class="wizard-field-label">{{{ t("wizard.worldScope") }}}</label>
-          <input
-            type="text"
-            class="wizard-field-input"
-            :value="wizardDraft?.worldId ?? ''"
-            @input="if (wizardDraft) wizardDraft.worldId = $event.target.value"
-            placeholder="world-id (optional)"
-          />
-        </div>
-        <div class="wizard-field">
-          <label class="wizard-field-label">{{{ t("wizard.visibility") }}}</label>
-          <select
-            class="wizard-field-select"
-            x-model="wizardDraft.visibility"
-          >
-            <option value="private">{{{ t("wizard.private") }}}</option>
-            <option value="public">{{{ t("wizard.public") }}}</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Step 3: Final review -->
-      <div x-show="wizardStep === 3">
-        <h4 class="wizard-step-title">{{{ t("wizard.stepReview") }}}</h4>
-        <div class="wizard-review-summary">
+        <!-- Step 1: Edit entity fields -->
+        <div x-show="wizardStep === 1">
+          <h4 class="wizard-step-title">{{{ t("wizard.stepEditFields") }}}</h4>
           <template x-for="[field, value] in Object.entries(wizardDraft?.fields ?? {})" :key="field">
-            <div class="wizard-review-row">
-              <span class="wizard-review-label" x-text="field + ':'"></span>
-              <span class="wizard-review-value" x-text="value ?? ''"></span>
+            <div class="wizard-field">
+              <label class="wizard-field-label" x-text="field"></label>
+              <textarea
+                class="wizard-field-textarea"
+                :value="value ?? ''"
+                @input="updateWizardField(field, $event.target.value)"
+                rows="2"
+              ></textarea>
             </div>
           </template>
-          <div class="wizard-review-row" x-show="wizardDraft?.worldId">
-            <span class="wizard-review-label">{{{ t("wizard.worldScope") }}}:</span>
-            <span class="wizard-review-value" x-text="wizardDraft?.worldId"></span>
+        </div>
+
+        <!-- Step 2: Additional options -->
+        <div x-show="wizardStep === 2">
+          <h4 class="wizard-step-title">{{{ t("wizard.stepOptions") }}}</h4>
+          <div class="wizard-field">
+            <label class="wizard-field-label">{{{ t("wizard.worldScope") }}}</label>
+            <input
+              type="text"
+              class="wizard-field-input"
+              :value="wizardDraft?.worldId ?? ''"
+              @input="if (wizardDraft) wizardDraft.worldId = $event.target.value"
+              placeholder="world-id (optional)"
+            />
+          </div>
+          <div class="wizard-field">
+            <label class="wizard-field-label">{{{ t("wizard.visibility") }}}</label>
+            <select
+              class="wizard-field-select"
+              x-model="wizardDraft.visibility"
+            >
+              <option value="private">{{{ t("wizard.private") }}}</option>
+              <option value="public">{{{ t("wizard.public") }}}</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Step 3: Final review -->
+        <div x-show="wizardStep === 3">
+          <h4 class="wizard-step-title">{{{ t("wizard.stepReview") }}}</h4>
+          <div class="wizard-review-summary">
+            <template x-for="[field, value] in Object.entries(wizardDraft?.fields ?? {})" :key="field">
+              <div class="wizard-review-row">
+                <span class="wizard-review-label" x-text="field + ':'"></span>
+                <span class="wizard-review-value" x-text="value ?? ''"></span>
+              </div>
+            </template>
+            <div class="wizard-review-row" x-show="wizardDraft?.worldId">
+              <span class="wizard-review-label">{{{ t("wizard.worldScope") }}}:</span>
+              <span class="wizard-review-value" x-text="wizardDraft?.worldId"></span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </template>
 
     <div class="wizard-panel-footer">
       <div class="wizard-footer-left">
