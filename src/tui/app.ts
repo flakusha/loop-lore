@@ -13,9 +13,7 @@ import blessed from "blessed";
 import { loadConfig, } from "../config/load";
 import { createLogger, getLogger, } from "../logger";
 import { AssetView, } from "./asset-view";
-import { ChatWidget, } from "./chat";
-
-const API_BASE = process.env.LOOP_LORE_API_BASE_URL ?? "http://localhost:3000";
+import { API_BASE, ChatWidget, } from "./chat";
 
 /** */
 export class TUIApp {
