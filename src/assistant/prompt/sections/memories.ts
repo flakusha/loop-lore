@@ -160,14 +160,16 @@ export const memorySection: SectionBuilder = {
     // the full set of included memory IDs. This centralizes injection
     // tracking at the single point that decides what was actually injected.
     const auditByActor = new Map<string, string[]>();
-    const selectedWithActor = injectionResult.selected.filter((m,) => typeof m.actorId === "string",);
+    const selectedWithActor = injectionResult.selected.filter((m,) => typeof m.actorId === "string");
     for (const mem of selectedWithActor) {
       const list = auditByActor.get(mem.actorId as string,) ?? [];
       list.push(mem.id,);
       auditByActor.set(mem.actorId as string, list,);
     }
-    const auditEntries: Array<{ memoryId: string; actorId: string; userId: string | null; action: "inject"; details: Record<string, unknown> }> = [];
-    for (const [actorId, memoryIds] of auditByActor.entries()) {
+    const auditEntries: Array<
+      { memoryId: string; actorId: string; userId: string | null; action: "inject"; details: Record<string, unknown> }
+    > = [];
+    for (const [actorId, memoryIds,] of auditByActor.entries()) {
       auditEntries.push({
         memoryId: memoryIds[0] ?? actorId,
         actorId,
