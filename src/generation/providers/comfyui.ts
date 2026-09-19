@@ -1,21 +1,18 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// size-allow: 256
+// size-allow: 270
 
 /**
- * ComfyUI Provider — HTTP/WebSocket client for ComfyUI API.
- *
- * ComfyUI is a node-based workflow editor for diffusion models.
- * This client submits workflow JSON, polls (or watches via WebSocket)
- * for execution progress, and retrieves generated images.
- *
+ * ComfyUI Provider — HTTP/WebSocket client for ComfyUI API. Submits
+ * workflow JSON, polls for execution, and retrieves generated images.
  * Reference: docs/spec/integrations/image-generation.md §ComfyUI
  */
 
 import { jsonStringifyOr, } from "../../utils";
 import { safeFromUint8Array, } from "../../utils/safe-buffer";
 import { validateProviderUrl, } from "../../utils/url-validation";
+import { uploadImageToComfy, } from "./comfyui-upload";
 
 /** */
 export type ComfyUIWorkflow = Record<
@@ -67,7 +64,8 @@ export class ComfyUIClient {
   private pollIntervalMs: number;
 
   /**
-   * @param options
+   * @param options - client options (baseUrl, timeout, poll interval)
+   * @throws when the base URL fails provider validation
    */
   constructor(options: ComfyUIClientOptions,) {
     this.baseUrl = options.baseUrl.replace(/\/+$/, "",);
@@ -110,7 +108,8 @@ export class ComfyUIClient {
    * Poll for execution result by prompt_id.
    *
    * Returns null if not yet complete, throws on failure.
-   * @param promptId
+   * @param promptId - prompt id from submitWorkflow
+   * @returns completion state with images or error
    */
   async pollResult(promptId: string,): Promise<{
     done: boolean;
@@ -192,6 +191,7 @@ export class ComfyUIClient {
 
   /**
    * Discover available nodes and their inputs.
+   * @returns node info keyed by node name
    */
   async getNodeInfo(): Promise<Record<string, ComfyUINodeInfo>> {
     const url = `${this.baseUrl}/object_info`;
@@ -211,6 +211,7 @@ export class ComfyUIClient {
    * @param filename - as returned from pollResult / waitForCompletion
    * @param subfolder - optional subfolder from ComfyUI output
    * @param type - output type ("output" default, "temp")
+   * @returns the image bytes
    */
   async downloadImage(
     filename: string,
@@ -248,5 +249,15 @@ export class ComfyUIClient {
       buffers.push(await this.downloadImage(filename,),);
     }
     return buffers;
+  }
+
+  /**
+   * Upload an input image for LoadImage nodes.
+   * @param buffer - image bytes
+   * @param filename - name the file gets in the ComfyUI input directory
+   * @returns the stored filename (pass to LoadImage's `image` input)
+   */
+  async uploadImage(buffer: Buffer, filename: string,): Promise<string> {
+    return uploadImageToComfy(this.baseUrl, this.timeout, buffer, filename,);
   }
 }

@@ -4,6 +4,7 @@
 import type {
   GenerationConfig,
   GenerationProvidersConfig,
+  MattingConfig,
   ModelRoleAssignment,
 } from "../../schema";
 import { GENERATION_DEFAULTS, } from "./defaults.js";
@@ -18,6 +19,7 @@ export class GenerationSection implements GenerationConfig {
   modelRoles: Record<string, ModelRoleAssignment> = {};
   autoStart: GenerationConfig["autoStart"];
   localModels: GenerationConfig["localModels"];
+  matting: MattingConfig | undefined;
 
   /**
    * @param overrides

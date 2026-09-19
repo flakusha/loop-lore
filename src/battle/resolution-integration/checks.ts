@@ -138,7 +138,10 @@ export function makeConcentrationCheck(
   };
 }
 
-/** Make a death saving throw */
+/**
+ * Make a death saving throw
+ * @returns the roll outcome with narration
+ */
 export function makeDeathSavingThrow(): {
   roll: DiceRoll;
   success: boolean;

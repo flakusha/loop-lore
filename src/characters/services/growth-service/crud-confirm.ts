@@ -23,6 +23,7 @@ import { GrowthServiceError, } from "./types";
 /**
  * Map a DB row to the public GrowthLogEntry shape.
  * @param row
+ * @returns the public growth-log entry shape
  */
 function rowToGrowthEntry(row: GrowthLogRow,): GrowthLogEntry {
   return {
@@ -47,6 +48,7 @@ function rowToGrowthEntry(row: GrowthLogRow,): GrowthLogEntry {
  * Confirm a pending entry — applies its state change to ground truth.
  * @param db
  * @param opts
+ * @returns the confirmed growth-log entry
  */
 export async function confirmGrowthEntry(
   db: Kysely<DB>,
@@ -101,6 +103,7 @@ export async function confirmGrowthEntry(
  * Reject a pending entry — no ground-truth change, just status flip.
  * @param db
  * @param opts
+ * @returns the rejected growth-log entry
  */
 export async function rejectGrowthEntry(
   db: Kysely<DB>,

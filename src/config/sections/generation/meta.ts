@@ -33,5 +33,42 @@ export const generationMeta = {
         sdCpp: sdCppMeta,
       },
     },
+    matting: {
+      type: "object",
+      description: "Background-removal (matting) backend for avatar/sprite cut-outs",
+      properties: {
+        backend: {
+          type: "string",
+          description:
+            'Matting backend: "none" disables matting; "http" posts bytes to `endpoint`; "rembg" talks to a rembg server; "comfy" runs the native BiRefNet workflow; "auto" picks comfy, then rembg, then http',
+        },
+        endpoint: {
+          type: "string",
+          description:
+            'HTTP endpoint ("http": URL accepting image bytes, returning PNG; "rembg": server base URL, e.g. http://127.0.0.1:7000)',
+        },
+        model: {
+          type: "string",
+          description:
+            'Matting model ("rembg": model name, default isnet-general-use; bria-rmbg/RMBG-* weights are non-commercial; "comfy": background_removal weights file, default birefnet.safetensors)',
+        },
+        apiKey: {
+          type: "string",
+          description: 'Optional bearer token for the generic "http" backend',
+        },
+        timeoutMs: {
+          type: "number",
+          description: "Matting request timeout in ms (default 120000)",
+        },
+        decontaminate: {
+          type: "boolean",
+          description: "rembg only: request edge color decontamination (default true)",
+        },
+        autoEnqueue: {
+          type: "boolean",
+          description: "Auto-enqueue matting after emotion-avatar generation (default true)",
+        },
+      },
+    },
   },
 };

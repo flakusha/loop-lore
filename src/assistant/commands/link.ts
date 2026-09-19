@@ -30,6 +30,12 @@ export type ResolveLinkResult =
 /**
  * Validate the asset and link target. Extracted for tests; the command
  * passes the live context, tests pass a test db.
+ * @param db
+ * @param userId - requesting user (must own the asset or chat)
+ * @param chatId - chat the link preview targets
+ * @param assetId
+ * @param messageId - optional message to scope the link
+ * @returns ok preview, or an error result
  */
 export async function resolveLinkPreview(
   db: Kysely<DB>,

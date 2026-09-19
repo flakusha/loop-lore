@@ -1,15 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-/**
- * Prompt template CRUD (FEAT-065).
- *
- * Row lifecycle over the `prompt_templates` table (all modalities), plus
- * payload validation and the list/summary shape. Override resolution lives
- * in `./resolve`; payload rendering lives in `./apply`. LLM section rendering
- * lives in `assistant/prompt/template-render.ts` — it needs the prompt
- * section builders, which live on the assistant side.
- */
+/** Prompt template CRUD (FEAT-065). */
 import type { Kysely, } from "kysely";
 import { LLM_TEMPLATE_PRESETS, } from "../../assistant/prompt/presets";
 import type { TemplateDetailLevel, TemplateModality, } from "../../db/enums";
@@ -36,7 +28,7 @@ export interface CreateTemplateInput {
 /**
  * Validate a modality/detail pair and serialize the payload for storage.
  * @param input - Create/update payload from the API layer
- * @returns JSON payload string, or an error message when invalid.
+ * @returns serialized payload on success, or a validation error message
  */
 export function serializeTemplateInput(
   input: CreateTemplateInput,
@@ -66,6 +58,7 @@ export function serializeTemplateInput(
  * @param db - Kysely database handle
  * @param userId - Owning user
  * @param modality - Optional modality filter (presets only listed for llm)
+ * @returns row summaries plus presets (presets only for llm)
  */
 export async function listTemplates(
   db: Kysely<DB>,
@@ -99,6 +92,7 @@ export async function listTemplates(
  * @param db - Kysely database handle
  * @param id - Template id
  * @param userId - Requesting user (ownership enforced)
+ * @returns the owned row, or null when missing/not owned
  */
 export async function getOwnedTemplate(
   db: Kysely<DB>,
@@ -115,6 +109,7 @@ export async function getOwnedTemplate(
  * @param db - Kysely database handle
  * @param userId - Owning user
  * @param input - Validated creation input
+ * @returns the created row
  */
 export async function createTemplate(
   db: Kysely<DB>,
@@ -147,7 +142,7 @@ export async function createTemplate(
  * @param id - Template id
  * @param userId - Requesting user (ownership enforced)
  * @param patch - Partial update; payload must re-match the modality shape
- * @returns Updated row, or null when not found/owned.
+ * @returns the updated row, or null when not found/owned
  */
 export async function updateTemplate(
   db: Kysely<DB>,
@@ -199,7 +194,12 @@ export async function deleteTemplate(db: Kysely<DB>, id: string, userId: string,
   return (result.numDeletedRows ?? 0n) > 0n;
 }
 
-/** */
+/**
+ * Summarize a template row for list output.
+ * @param row - stored template row
+ * @param userId - requesting user (drives the isOwner flag)
+ * @returns the list summary shape
+ */
 function toSummary(row: PromptTemplateRow, userId: string,): TemplateSummary {
   return {
     id: row.id,

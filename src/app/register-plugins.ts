@@ -10,6 +10,7 @@
 import type { Elysia, } from "elysia";
 import { ageGateRoutes, } from "../age-gate/controller";
 import { assetRoutes, } from "../assets/controller";
+import { mattingRoutes, } from "../assets/matting-routes";
 import type { Config, } from "../config/schema";
 import type { Db, } from "../db";
 import { generationRoutes, } from "../generation/controller";
@@ -214,6 +215,7 @@ export function registerPlugins(app: Elysia<any>, opts: RegisterPluginsOpts,): v
   app.use(nsfwRoutes(handleOpts,),);
   app.use(nsfwModerationRoutes(handleOpts,),);
   app.use(assetRoutes(handleOpts,),);
+  app.use(mattingRoutes({ database: handleOpts.database, config, },),);
   app.use(assetSearchRoutes(handleOpts,),);
   app.use(assetTagRoutes({ database: handleOpts.database, },),);
   app.use(gifSearchRoutes(handleOpts,),);

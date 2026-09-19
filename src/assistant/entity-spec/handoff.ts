@@ -64,6 +64,9 @@ export interface HandoffOptions {
  * Create the restricted creation chat, seed it with the story context, and
  * start (memory + DB) the kind's workflow session in it.
  *
+ * @param db - database handle for chat/message/workflow rows
+ * @param opts - handoff options (kind, seed, source chat, user, workflows)
+ * @returns ok handoff, or a HandoffError code (never throws)
  * @throws never — failures come back as {@link HandoffError}
  */
 export async function handoffToEntityCreationChat(
@@ -123,7 +126,12 @@ export async function handoffToEntityCreationChat(
   return { ok: true, value: { chatId, descriptor, workflow, }, };
 }
 
-/** Render the seeded system message body. */
+/**
+ * Render the seeded system message body.
+ * @param kind - entity kind label
+ * @param seed - raw seed text
+ * @returns the system message body
+ */
 function seedMessage(kind: string, seed: string,): string {
   return [
     `In-place ${kind} generation (story handoff).`,

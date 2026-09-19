@@ -23,7 +23,8 @@ import {
 
 /**
  * Normalize raw LLM JSON into a typed `GeneratedEntity`.
- * @param raw
+ * @param raw - raw JSON object from the LLM completion
+ * @returns the typed entity (missing strings default to empty/undefined)
  */
 export function normalizeEntity(
   raw: Record<string, unknown>,
@@ -48,8 +49,8 @@ export function normalizeEntity(
 
 /**
  * Validate the generated entity against the per-kind schema.
- * @param kind
- * @param entity
+ * @param kind - entity kind selecting the required field set
+ * @param entity - normalized entity under validation
  * @returns ok=false when required fields (name, description) are missing.
  */
 export function validateEntitySchema(
@@ -80,11 +81,12 @@ export function validateEntitySchema(
  * Scoping: characters by `owner_id`; locations/items by `world_id`; worlds by
  * `owner_id`. Matching is case-insensitive on the name column.
  * @param db
- * @param kind
- * @param entity
+ * @param kind - entity kind selecting the scope column
+ * @param entity - normalized entity (name matched case-insensitively)
  * @param scope
  * @param scope.ownerId
  * @param scope.worldId
+ * @returns the duplicate report (found + existing id when matched)
  */
 export async function checkDuplicate(
   db: Kysely<DB>,
@@ -153,11 +155,12 @@ export async function checkDuplicate(
  *
  * Flags when the generated description is empty where the world context is present.
  * This is a best-effort heuristic; it only ever produces warnings, never a reject.
- * @param kind
- * @param entity
+ * @param kind - entity kind (only location/item are world-checked)
+ * @param entity - normalized entity
  * @param worldContext
  * @param worldContext.name
  * @param worldContext.description
+ * @returns the consistency report (warnings only, never a reject)
  */
 export function checkConsistency(
   kind: EntityKind,
@@ -174,8 +177,8 @@ export function checkConsistency(
 /**
  * Run the full quality pipeline.
  * @param db
- * @param kind
- * @param entity
+ * @param kind - entity kind selecting schema and scopes
+ * @param entity - normalized entity under validation
  * @param scope
  * @param scope.ownerId
  * @param scope.worldId

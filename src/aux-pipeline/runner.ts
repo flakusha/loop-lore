@@ -28,7 +28,10 @@ const DEFAULT_TEMPERATURE = 0;
 const DEFAULT_MAX_TOKENS = 100;
 const AUX_TELEMETRY_EVENT = "aux.call";
 
-/** */
+/**
+ * Module logger for the aux pipeline.
+ * @returns the child logger for aux-pipeline
+ */
 function getLog() {
   return getLogger().child({ module: "aux-pipeline", },);
 }
