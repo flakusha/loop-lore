@@ -11,9 +11,10 @@
  * drop's name/type/rarity/metadata.
  */
 import type { Kysely, } from "kysely";
-import { ItemCategory, } from "../../db/enums";
+import { ItemCategory, StackableState, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { ItemsService, } from "../../story/items";
+import { safeJsonParse, safeJsonStringify, uid, } from "../../utils";
 import type { LootDrop, LootResult, } from "./types";
 
 /** Where a loot drop should be persisted. */
@@ -26,6 +27,12 @@ export interface LootDestination {
   locationId?: string;
   /** Default item category for on-the-fly definitions. */
   defaultCategory?: ItemCategory;
+  /**
+   * Idempotency key for this reward batch (unique per world). When set and
+   * already persisted, `persistLoot` resolves the recorded instance ids
+   * without writing anything.
+   */
+  ledgerKey?: string;
 }
 
 /** Map loose loot `type` strings onto canonical `ItemCategory` values. */
@@ -66,8 +73,10 @@ function toCategory(type: string, fallback: ItemCategory,): ItemCategory {
 /**
  * Persist a set of loot drops as world item instances.
  *
- * Mutates `result` in place, filling `result.worldItemIds`, and returns the
- * same result for convenience.
+ * With `dest.ledgerKey` set, persistence is idempotent: a previously
+ * persisted key resolves to the recorded instance ids and nothing is
+ * written. Otherwise all drops are persisted inside a single transaction —
+ * a failure rolls back every partial `world_items` row.
  * @param db
  * @param result
  * @param dest
@@ -77,19 +86,69 @@ export async function persistLoot(
   result: LootResult,
   dest: LootDestination,
 ): Promise<LootResult> {
-  const items = new ItemsService(db,);
   const category = dest.defaultCategory ?? ItemCategory.Other;
-  const worldItemIds: string[] = [];
 
-  for (const drop of result.drops) {
-    worldItemIds.push(await persistDrop(items, drop, dest, category,),);
+  // Reward-ledger dedupe: a persisted key short-circuits to the recorded
+  // instance ids (TASK-049 idempotency contract).
+  if (dest.ledgerKey) {
+    const existing = await db
+      .selectFrom("quest_reward_ledger",)
+      .select("world_item_ids",)
+      .where("world_id", "=", dest.worldId,)
+      .where("ledger_key", "=", dest.ledgerKey,)
+      .executeTakeFirst();
+    if (existing) {
+      const parsed = safeJsonParse<string[]>(existing.world_item_ids,);
+      return { ...result, worldItemIds: parsed.ok ? parsed.value : [], };
+    }
   }
+
+  const worldItemIds = await db.transaction().execute(async (trx,) => {
+    const items = new ItemsService(trx,);
+    const ids: string[] = [];
+    for (const drop of result.drops) {
+      ids.push(...(await persistDrop(items, drop, dest, category,)),);
+    }
+    if (dest.ledgerKey) {
+      const serialized = safeJsonStringify(ids,);
+      await trx
+        .insertInto("quest_reward_ledger",)
+        .values({
+          id: uid(),
+          world_id: dest.worldId,
+          ledger_key: dest.ledgerKey,
+          world_item_ids: serialized.ok ? serialized.value : "[]",
+        },)
+        .execute();
+    }
+    return ids;
+  },);
 
   // Return a fresh object — do not mutate the caller's `result`.
   return { ...result, worldItemIds, };
 }
 
 /**
+ * Split a drop quantity into per-instance quantities bounded by the
+ * definition's `max_stack` (unique items are capped at 1 per instance).
+ * @param quantity
+ * @param maxStack
+ */
+function chunkQuantity(quantity: number, maxStack: number,): number[] {
+  const size = Math.max(1, Math.floor(maxStack,),);
+  const chunks: number[] = [];
+  let remaining = Math.max(1, Math.floor(quantity,),);
+  while (remaining > 0) {
+    const take = Math.min(size, remaining,);
+    chunks.push(take,);
+    remaining -= take;
+  }
+  return chunks;
+}
+
+/**
+ * Persist one loot drop, splitting it across instances per the definition's
+ * stackable/unique semantics. Returns every created `world_items` id.
  * @param items
  * @param drop
  * @param dest
@@ -100,7 +159,7 @@ async function persistDrop(
   drop: LootDrop,
   dest: LootDestination,
   fallbackCategory: ItemCategory,
-): Promise<string> {
+): Promise<string[]> {
   // Resolve (or create) the item definition id.
   let definitionId = drop.itemId;
   if (!definitionId) {
@@ -118,15 +177,32 @@ async function persistDrop(
     },);
   }
 
+  // Reconcile quantity against the definition: stackable items split into
+  // chunks of at most `max_stack`; unique items stay at quantity 1.
+  const definition = await items.getDefinition(definitionId, dest.worldId,);
+  if (!definition) {
+    throw new Error(
+      `persistLoot: item definition ${definitionId} not found in world ${dest.worldId}`,
+    );
+  }
+  const maxStack = definition.stackable === StackableState.Stackable
+    ? (definition.max_stack ?? 1)
+    : 1;
+  const chunks = chunkQuantity(drop.quantity, maxStack,);
+
   // Grant to an NPC or place at a location — a destination is required so
   // drops land somewhere concrete (NPC inventory or a location).
-  if (dest.actorId) {
-    return items.giveToNpc(definitionId, dest.actorId, dest.worldId, drop.quantity,);
+  const ids: string[] = [];
+  for (const quantity of chunks) {
+    if (dest.actorId) {
+      ids.push(await items.giveToNpc(definitionId, dest.actorId, dest.worldId, quantity,),);
+    } else if (dest.locationId) {
+      ids.push(await items.placeInLocation(definitionId, dest.locationId, dest.worldId, quantity,),);
+    } else {
+      throw new Error("persistLoot requires actorId or locationId",);
+    }
   }
-  if (dest.locationId) {
-    return items.placeInLocation(definitionId, dest.locationId, dest.worldId, drop.quantity,);
-  }
-  throw new Error("persistLoot requires actorId or locationId",);
+  return ids;
 }
 
 export { toCategory, };

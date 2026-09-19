@@ -3080,6 +3080,23 @@ export async function insertXpLedger(
   } as any,).execute();
 }
 
+/** Insert a quest_reward_ledger row. */
+export async function insertQuestRewardLedger(
+  db: Db,
+  world_id: string,
+  ledger_key: string,
+  world_item_ids: string,
+  opts?: { id?: string; created_at?: string },
+): Promise<void> {
+  await db.insertInto("quest_reward_ledger",).values({
+    id: crypto.randomUUID(),
+    world_id,
+    ledger_key,
+    world_item_ids,
+    ...opts,
+  } as any,).execute();
+}
+
 /** Insert a blog_comments row. */
 export async function insertBlogComments(
   db: Db,
