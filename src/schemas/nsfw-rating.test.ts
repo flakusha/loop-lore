@@ -6,6 +6,7 @@
  */
 import { describe, expect, test, } from "bun:test";
 import {
+  AROUSAL_CEILING,
   computeEffectiveRating,
   createRatingEnforcement,
   isRatingAllowed,
@@ -13,6 +14,7 @@ import {
   NSFW_RATING_HIERARCHY,
   NSFW_RATING_SEVERITY,
 } from "./nsfw-rating";
+import { ContentIntensity, } from "../db/enums-character/nsfw";
 
 const {
   SFW,
@@ -56,6 +58,39 @@ describe("isRatingAllowed", () => {
   test("content above limit is denied", () => {
     expect(isRatingAllowed(NSFW_EXTREME, NSFW_MODERATE,),).toBe(false);
     expect(isRatingAllowed(NSFW_MILD, SFW,),).toBe(false);
+  });
+});
+
+// ── Arousal Ceiling ──────────────────────────────────────────
+
+describe("AROUSAL_CEILING", () => {
+  test("covers every ContentIntensity tier (exhaustive)", () => {
+    const tiers = Object.values(ContentIntensity,);
+    expect(Object.keys(AROUSAL_CEILING,).sort(),).toEqual([...tiers,].sort(),);
+  });
+
+  test("ceilings are monotone non-decreasing across the tier ladder", () => {
+    const ladder = [
+      ContentIntensity.Vanilla,
+      ContentIntensity.Mild,
+      ContentIntensity.Moderate,
+      ContentIntensity.Intense,
+      ContentIntensity.Extreme,
+    ] as const;
+    for (let i = 1; i < ladder.length; i++) {
+      expect(AROUSAL_CEILING[ladder[i]!],)
+        .toBeGreaterThanOrEqual(AROUSAL_CEILING[ladder[i - 1]!]!,);
+    }
+  });
+
+  test("ceilings stay within the 0–100 arousal scale", () => {
+    for (const ceiling of Object.values(AROUSAL_CEILING,)) {
+      expect(ceiling,).toBeGreaterThanOrEqual(0,);
+      expect(ceiling,).toBeLessThanOrEqual(100,);
+    }
+    // Vanilla caps below the top of the scale — extreme arousal is out of tier.
+    expect(AROUSAL_CEILING[ContentIntensity.Vanilla],).toBeLessThan(100,);
+    expect(AROUSAL_CEILING[ContentIntensity.Extreme],).toBe(100,);
   });
 });
 
