@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🔧 Partial → chunk-boundary leg RESOLVED (p3-bugfix-batch, 2026-09-18); tag/attr audit leg remains open
+**Status:** ✅ ReDoS + chunk-boundary RESOLVED (commits `1a15200b`, `42ffc7643`); tag/attr coverage audit remains open as a separate ticket (deferred 2026-09-18)
 
 ## Handoff (deferred to dedicated worktree)
 
@@ -89,5 +89,13 @@ Fixed in dev by `42ffc7643` (fix(regex): close streaming sanitizer boundary leak
 - Tests: `src/regex/html-sanitize-streaming.edge.test.ts` — two previously leak-pinning edge tests repinned to hold-back behavior; new acceptance tests for cross-boundary openers, bare trailing `<`, `<styl`+`e>`, hidden openers, late closers. `src/regex/html-sanitize.test.ts` ReDoS regression hardened (200k reps + wall-clock bound).
 - Differential property sweep (throwaway, 8 attack strings × every split position, 1061 checks) reported 0 violations.
 
-**Still open:** the tag/attribute coverage audit leg (unquoted `onerror=`, `data:` URLs, `style expression()`) — separate sweep, not part of this fix.
+
+## Verification (2026-09-20, this worktree)
+
+Re-verified against current dev (`609e5a45b`):
+
+- `bun test src/regex/` — 738 pass, 0 fail, 1132 expect() calls across 21 files. ReDoS regression (`'<script'.repeat(40_000)`) and chunk-boundary tests both green.
+- ReDoS + chunk-boundary work landed in commits `1a15200b` (linear scanner) and `42ffc7643` (boundary hold-back + differential sweep).
+
+The open leg (tag/attribute coverage audit) is a separate sweep that was explicitly deferred per user direction 2026-09-18. It does not block the resolved legs; the main attack vectors (`<script>`, `</script>`, chunk-split openers) are closed.
 
