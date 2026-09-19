@@ -2,145 +2,20 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { Kysely, } from "kysely";
-import { MoodService, } from "../../../characters/services/mood-service";
-import { type FantasyCategory, type SeductionSkillCategory, } from "../../../db/enums";
-import { ContentIntensity, } from "../../../db/enums-character/nsfw";
 import type { DB, } from "../../../db/schema";
 import { getLogger, } from "../../../logger";
-import {
-  checkPrerequisites,
-  getSeductionPrerequisites,
-  type SocialSkillForNSFW,
-} from "../../../nsfw/seduction-prerequisites";
+import { checkPrerequisites, getSeductionPrerequisites, } from "../../../nsfw/seduction-prerequisites";
 import { rollDice, } from "../../dice";
 import { FantasyService, } from "../../fantasies/service";
-import { logXp, } from "../../service/xp";
 import { getModifier, } from "../../stats/modifiers";
 import type { StatBlock, } from "../../stats/types";
 import { getActiveEffects, } from "../../status-effects";
-import { getArousal, modifyArousal, } from "./arousal";
+import { getArousal, } from "./arousal";
+import { buildSkillLevels, classifyApproachCategory, SKILL_PRETTY, } from "./classify";
 import { getDesireProfile, } from "./desire";
-import { awardXp, getActorSkills, } from "./skills";
-import type { SeductionAttemptOpts, SeductionResult, SeductionSkill, } from "./types";
-
-/**
- * Bijective map between NSFW social skills and the physical seduction skill
- * categories. When a social skill has no matching physical category (e.g.
- * `intimidation`), it falls back to the actor's CHA-derived proxy.
- */
-const SOCIAL_SKILL_TO_CATEGORY: Record<SocialSkillForNSFW, SeductionSkillCategory | undefined> = {
-  persuasion: "communication",
-  deception: "roleplay",
-  intimidation: "dominance",
-  empathy: "aftercare",
-  charisma: "communication",
-  seduction: "communication",
-};
-
-/** Human-readable labels for prerequisite diagnostics. */
-const SKILL_PRETTY: Record<SocialSkillForNSFW, string> = {
-  persuasion: "Persuasion",
-  deception: "Deception",
-  intimidation: "Intimidation",
-  empathy: "Empathy",
-  charisma: "Charisma",
-  seduction: "Seduction",
-};
-
-/**
- * Resolve the actor's social-skill level map for prerequisite checks.
- *
- * Source order (first hit wins):
- *   1. The actor's CHA stat (`character_stats.cha`) — the canonical proxy
- *      for every social skill when no dedicated skill exists.
- *   2. The matching physical seduction skill level (`character_seduction_skills`),
- *      multiplied by 10 to align with the prerequisite scale (e.g. level 6 →
- *      60, matching a "persuasion: 60" requirement).
- * @param db
- * @param actorId - Seduction actor
- * @param skillCategory - The physical category attempted (for the bonus proxy)
- */
-async function buildSkillLevels(
-  db: Kysely<DB>,
-  actorId: string,
-  skillCategory: SeductionSkillCategory,
-): Promise<Record<SocialSkillForNSFW, number>> {
-  const stats = await db
-    .selectFrom("character_stats",)
-    .select("cha",)
-    .where("actor_id", "=", actorId,)
-    .executeTakeFirst();
-  const chaProxy = stats?.cha ?? 10;
-
-  const skills = await getActorSkills(db, actorId,);
-  const byCategory: Partial<Record<SeductionSkillCategory, SeductionSkill>> = {};
-  for (const skill of skills) {
-    if (byCategory[skill.category] === undefined) {
-      byCategory[skill.category] = skill;
-    }
-  }
-
-  const levelFor = (social: SocialSkillForNSFW,): number => {
-    const category = SOCIAL_SKILL_TO_CATEGORY[social];
-    const skill = category ? byCategory[category] : undefined;
-    if (skill !== undefined) { return skill.level * 10; }
-    return chaProxy;
-  };
-
-  return {
-    persuasion: levelFor("persuasion",),
-    deception: levelFor("deception",),
-    intimidation: levelFor("intimidation",),
-    empathy: levelFor("empathy",),
-    charisma: skillCategory === "communication"
-      ? (byCategory.communication?.level ?? 0) * 10
-      : chaProxy,
-    seduction: skillCategory === "communication"
-      ? (byCategory.communication?.level ?? 0) * 10
-      : chaProxy,
-  };
-}
-
-/**
- * Tag a free-text approach with the FantasyCategory it invokes (TASK-034).
- *
- * The mapping is name-based: each canonical category matches its own token
- * (e.g. "bondage" → Bondage) plus a small alias set for common wording.
- * Unrecognized approaches return undefined — the attempt proceeds without a
- * fantasy-flag DC adjustment rather than guessing.
- * @param approach - Free-text approach description
- * @returns The invoked FantasyCategory, or undefined when unrecognized
- */
-function classifyApproachCategory(approach: string,): FantasyCategory | undefined {
-  const text = approach.toLowerCase();
-  const aliases: Record<FantasyCategory, string[]> = {
-    power_exchange: ["dominan", "submiss", "master", "mistress", "obey",],
-    exhibitionism: ["exhibition", "public", "watch me",],
-    voyeurism: ["voyeur", "watching", "spying",],
-    roleplay: ["roleplay", "role-play", "pretend", "costume",],
-    sensation: ["sensation", "feather", "ice", "wax",],
-    group: ["group", "threesome", "orgy",],
-    taboo: ["taboo", "forbidden",],
-    transformation: ["transform", "tf",],
-    worship: ["worship", "adore", "devot",],
-    pet_play: ["pet play", "petplay", "puppy", "kitten",],
-    breeding: ["breed", "pregnan",],
-    pain_play: ["pain", "spank", "whip", "flog",],
-    bondage: ["bondage", "tie", "bound", "rope", "cuff",],
-    service: ["service", "serve", "massage",],
-    degradation: ["degrad", "humiliat",],
-    praise: ["praise", "compliment", "beautiful",],
-  };
-  for (const [category, tokens,] of Object.entries(aliases,)) {
-    if (
-      text.includes(category.replaceAll("_", " ",),) ||
-      tokens.some((token,) => text.includes(token,))
-    ) {
-      return category as FantasyCategory;
-    }
-  }
-  return undefined;
-}
+import { settleAttempt, } from "./settle";
+import { getActorSkills, } from "./skills";
+import type { SeductionAttemptOpts, SeductionResult, } from "./types";
 
 /** Default ability scores when no character_stats row exists (mods of 0). */
 const DEFAULT_STATS: StatBlock = { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10, };
@@ -166,76 +41,6 @@ async function getActorStatBlock(db: Kysely<DB>, actorId: string,): Promise<Stat
     wis: row.wis,
     cha: row.cha,
   };
-}
-
-/**
- * Settle a resolved attempt: arousal, dual XP, and mood follow-through.
- *
- * Best-effort on the mood event — a missing mood row must not fail the
- * attempt outcome.
- * @param args
- */
-async function settleAttempt(args: {
-  db: Kysely<DB>;
-  log: ReturnType<typeof getLogger>;
-  actorId: string;
-  targetId: string;
-  skillCategory: SeductionSkillCategory;
-  worldId?: string | null;
-  relevantSkill: SeductionSkill | undefined;
-  success: boolean;
-  arousalDelta: number;
-  xpGained: number;
-  /** Content-intensity tier bounding the arousal ceiling (TASK-034). */
-  intensityTier?: ContentIntensity;
-},): Promise<void> {
-  const {
-    db,
-    log,
-    actorId,
-    targetId,
-    skillCategory,
-    worldId,
-    relevantSkill,
-    success,
-    arousalDelta,
-    xpGained,
-    intensityTier,
-  } = args;
-  // Apply arousal change to target (TASK-034): tier ceiling enforced.
-  if (arousalDelta !== 0) {
-    await modifyArousal(db, targetId, arousalDelta, worldId, `seduction:${skillCategory}`, intensityTier,);
-  }
-
-  // Award skill XP (category granularity) + shared-ledger XP (TASK-040).
-  // Record the category skill first, then mirror to the shared ledger.
-  if (relevantSkill) {
-    await awardXp(db, actorId, skillCategory, relevantSkill.name, xpGained,);
-    await logXp({ database: db, }, {
-      actorId,
-      amount: xpGained,
-      source: "nsfw_seduction",
-      description: `Seduction ${success ? "success" : "failure"} (${skillCategory})`,
-      chatId: undefined,
-    },);
-  }
-
-  // Mood follow-through (TASK-041): one source-tagged event on the target.
-  try {
-    const mood = MoodService(db,);
-    await mood.logEvent({
-      actorId: targetId,
-      worldId: worldId ?? undefined,
-      eventType: success ? "seduction.success" : "seduction.failure",
-      happinessDelta: success ? 2 : -1,
-      source: "seduction",
-      sourceId: `${actorId}:${skillCategory}`,
-    },);
-  } catch (cause) {
-    log.warn(`Mood follow-through skipped for ${targetId}:`, {
-      error: cause instanceof Error ? cause.message : String(cause,),
-    },);
-  }
 }
 
 /**

@@ -4,11 +4,21 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
-import { jsonParseOr, jsonStringifyOr, uid, } from "../utils";
+import { jsonStringifyOr, uid, } from "../utils";
 import { type ReproductionCapability, Species, } from "./body-systems/enums";
 import { BodySystemService, } from "./body-systems/service";
 import { rollDice, } from "./dice";
 import type { NsfwEncounter, } from "./encounters/service/types";
+import { birthChild, } from "./reproduction-birth";
+import {
+  GESTATION_WEEKS,
+  getPregnancy as getPregnancyFromStore,
+  getPregnancyMeta as getPregnancyMetaFromStore,
+  PREGNANCY_EFFECT,
+  type PregnancyStatus,
+} from "./reproduction-store";
+
+export type { PregnancyStatus, } from "./reproduction-store";
 
 /**
  * Pregnancy / reproduction service (TASK-038).
@@ -53,18 +63,8 @@ export function capabilityFor(species: string,): ReproductionCapability {
   return CAPABILITY_BY_SPECIES[species.toLowerCase()] ?? DEFAULT_CAPABILITY;
 }
 
-/** Pregnancy record shape (carried in `status_effect` meta). */
-export interface PregnancyStatus {
-  pregnant: boolean;
-  effectId: string | null;
-  weeksElapsed: number;
-  gestationWeeks: number;
-  sireId: string | null;
-  expiresAt: string | null;
-}
+/** Pregnancy record shape (carried in `status_effect` meta) — see reproduction-store. */
 
-const GESTATION_WEEKS = 40;
-const PREGNANCY_EFFECT = "pregnancy";
 const COMPLICATION_EVENT = "disease.reproductive_complication";
 
 /** */
@@ -175,7 +175,7 @@ export class ReproductionService {
    * @param weeks
    */
   async advanceGestation(characterId: string, weeks = 1,): Promise<PregnancyStatus> {
-    const status = await this.getPregnancy(characterId,);
+    const status = await getPregnancyFromStore(this.db, characterId,);
     if (!status.pregnant) { return status; }
     const next = status.weeksElapsed + weeks;
     const log = getLogger().child({ module: "reproduction", },);
@@ -204,7 +204,7 @@ export class ReproductionService {
       .set({
         magnitude: next,
         meta: jsonStringifyOr({
-          sire_id: (await this.getPregnancyMeta(characterId,)).sireId,
+          sire_id: (await getPregnancyMetaFromStore(this.db, characterId,)).sireId,
           weeks_elapsed: next,
           gestation_weeks: status.gestationWeeks,
         },),
@@ -226,49 +226,7 @@ export class ReproductionService {
    * @param childName
    */
   async birth(characterId: string, childName: string,): Promise<string | null> {
-    const status = await this.getPregnancy(characterId,);
-    if (!status.pregnant) { return null; }
-    const meta = await this.getPregnancyMeta(characterId,);
-    const log = getLogger().child({ module: "reproduction", },);
-    const childId = uid();
-    const now = new Date().toISOString();
-    await this.db
-      .insertInto("actors",)
-      .values({
-        id: childId,
-        display_name: childName,
-        created_at: now,
-        updated_at: now,
-      },)
-      .execute();
-    const link = async (from: string, to: string,): Promise<void> => {
-      await this.db
-        .insertInto("character_relationships",)
-        .values({
-          id: uid(),
-          actor_id: from,
-          target_actor_id: to,
-          world_id: null,
-          relationship_type: "family",
-          created_at: now,
-          updated_at: now,
-        },)
-        .execute();
-    };
-    await link(characterId, childId,);
-    await link(childId, characterId,);
-    if (meta.sireId) {
-      await link(meta.sireId, childId,);
-      await link(childId, meta.sireId,);
-    }
-    await this.db
-      .deleteFrom("status_effect",)
-      .where("actor_id", "=", characterId,)
-      .where("effect_id", "=", PREGNANCY_EFFECT,)
-      .where("category", "=", "pregnancy",)
-      .execute();
-    log.info(`Birth: child ${childId} (${childName}) to carrier ${characterId}`,);
-    return childId;
+    return birthChild(this.db, characterId, childName,);
   }
 
   /**
@@ -277,58 +235,6 @@ export class ReproductionService {
    * @param characterId
    */
   async getPregnancy(characterId: string,): Promise<PregnancyStatus> {
-    const empty: PregnancyStatus = {
-      pregnant: false,
-      effectId: null,
-      weeksElapsed: 0,
-      gestationWeeks: GESTATION_WEEKS,
-      sireId: null,
-      expiresAt: null,
-    };
-    const row = await this.db
-      .selectFrom("status_effect",)
-      .where("actor_id", "=", characterId,)
-      .where("effect_id", "=", PREGNANCY_EFFECT,)
-      .where("category", "=", "pregnancy",)
-      .selectAll()
-      .executeTakeFirst();
-    if (!row) { return empty; }
-    if (row.expires_at !== null && row.expires_at <= new Date().toISOString()) { return empty; }
-    const meta = await this.getPregnancyMeta(characterId,);
-    return {
-      pregnant: true,
-      effectId: row.id,
-      weeksElapsed: meta.weeksElapsed,
-      gestationWeeks: meta.gestationWeeks,
-      sireId: meta.sireId,
-      expiresAt: row.expires_at,
-    };
-  }
-
-  /** Raw meta carrier (sire + week counters) for the active row. */
-  private async getPregnancyMeta(characterId: string,): Promise<{
-    sireId: string | null;
-    weeksElapsed: number;
-    gestationWeeks: number;
-  }> {
-    const fallback = { sireId: null as string | null, weeksElapsed: 0, gestationWeeks: GESTATION_WEEKS, };
-    const row = await this.db
-      .selectFrom("status_effect",)
-      .where("actor_id", "=", characterId,)
-      .where("effect_id", "=", PREGNANCY_EFFECT,)
-      .where("category", "=", "pregnancy",)
-      .select("meta",)
-      .executeTakeFirst();
-    if (!row?.meta) { return fallback; }
-    const parsed = jsonParseOr(row.meta, {} as {
-      sire_id?: unknown;
-      weeks_elapsed?: unknown;
-      gestation_weeks?: unknown;
-    },);
-    return {
-      sireId: typeof parsed.sire_id === "string" ? parsed.sire_id : null,
-      weeksElapsed: typeof parsed.weeks_elapsed === "number" ? parsed.weeks_elapsed : 0,
-      gestationWeeks: typeof parsed.gestation_weeks === "number" ? parsed.gestation_weeks : GESTATION_WEEKS,
-    };
+    return getPregnancyFromStore(this.db, characterId,);
   }
 }
