@@ -127,7 +127,7 @@ const NAMED_REF = /&(colon|tab|newline);/gi;
  */
 function normalizeUrlValue(raw: string,): string {
   const quoted = raw.length >= 2 &&
-    ((raw.startsWith('"') && raw.endsWith('"')) || (raw.startsWith("'") && raw.endsWith("'")));
+    ((raw.startsWith('"',) && raw.endsWith('"',)) || (raw.startsWith("'",) && raw.endsWith("'",)));
   const value = (quoted ? raw.slice(1, -1,) : raw)
     .replace(NUMERIC_REF, (_match, hex?: string, dec?: string,) => {
       const code = Number.parseInt(hex ?? dec ?? "", hex === undefined ? 10 : 16,);
@@ -159,8 +159,11 @@ function isUnsafeUrlValue(normalized: string,): boolean {
  * @returns HTML with unsafe URL attributes removed.
  */
 export function stripUnsafeUrlAttributes(html: string,): string {
-  return html.replace(URL_ATTR, (match, prefix: string, _attr: string, value: string,) =>
-    isUnsafeUrlValue(normalizeUrlValue(value,),) ? prefix : match,);
+  return html.replace(
+    URL_ATTR,
+    (match, prefix: string, _attr: string, value: string,) =>
+      isUnsafeUrlValue(normalizeUrlValue(value,),) ? prefix : match,
+  );
 }
 
 /** Match dangerous HTML tags that should be stripped entirely (including
