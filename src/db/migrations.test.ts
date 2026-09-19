@@ -1,13 +1,13 @@
-import { Database, } from "bun:sqlite";
-import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
-import { Kysely, sql, } from "kysely";
-import type { Migration, } from "kysely/migration";
-import { Migrator, } from "kysely/migration";
-import { readdirSync, readFileSync, statSync, } from "node:fs";
 import path from "node:path";
-import { createLogger, } from "../logger";
-import { createSqliteDialect, } from "./index";
+import type { Migration, } from "kysely/migration";
+import { Database, } from "bun:sqlite";
+import { Kysely, sql, } from "kysely";
+import { Migrator, } from "kysely/migration";
+import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { assertMigrationsNotStale, compareMigrationNames, } from "./migrate";
+import { createLogger, } from "../logger";
+import { createSqliteDialect, setTestDatabase, } from "./index";
+import { readdirSync, readFileSync, statSync, } from "node:fs";
 
 // ── Helpers ──────────────────────────────────────────────────
 
@@ -46,12 +46,20 @@ async function loadAllMigrations(): Promise<Record<string, Migration>> {
   return migrations;
 }
 
-/** */
+/**
+ * Create an isolated in-memory Kysely for migration tests.
+ *
+ * FK enforcement comes from `createSqliteDialect` (it always runs
+ * `PRAGMA foreign_keys = ON`) — we don't re-run it locally.
+ * Also registers this DB as the active test override so any
+ * `getDatabase()` call inside a migration callback resolves here,
+ * not at the production DB (BUG-create-test-db-custom-dialect-can-bypass-settestdatabase).
+ */
 function createTestKysely(): { db: Database; kysely: Kysely<unknown> } {
   const db = new Database(":memory:",);
-  db.run("PRAGMA foreign_keys = ON",);
   const dialect = createSqliteDialect(db,);
   const kysely = new Kysely({ dialect, },);
+  setTestDatabase(kysely as unknown as Kysely<import("./schema").DB>,);
   return { db, kysely, };
 }
 
@@ -70,8 +78,8 @@ describe("full migration chain", () => {
   afterAll(async () => {
     await kysely.destroy();
     db.close();
+    setTestDatabase(null,);
   },);
-
   test("all migrations apply in order without error", async () => {
     for (const name of MIGRATION_NAMES) {
       await migrations[name]!.up(kysely,);
@@ -143,6 +151,7 @@ describe("per-migration roundtrip", () => {
       afterAll(async () => {
         await kysely.destroy();
         db.close();
+        setTestDatabase(null,);
       },);
 
       test("up() succeeds or fails only on missing base tables", async () => {
@@ -199,8 +208,8 @@ describe("001_init — full schema", () => {
   afterAll(async () => {
     await kysely.destroy();
     db.close();
+    setTestDatabase(null,);
   },);
-
   const EXPECTED_TABLES = [
     "users",
     "sessions",
@@ -296,12 +305,12 @@ describe("migration consistency flags", () => {
 
     await kysely.destroy();
     db.close();
+    setTestDatabase(null,);
   });
 
   test("full chain up then full chain down leaves clean state", async () => {
     const { db, kysely, } = createTestKysely();
     const allMigrations = await loadAllMigrations();
-
     for (const name of MIGRATION_NAMES) {
       await allMigrations[name]!.up(kysely,);
     }
@@ -322,6 +331,7 @@ describe("migration consistency flags", () => {
 
     await kysely.destroy();
     db.close();
+    setTestDatabase(null,);
   });
 });
 
@@ -377,6 +387,7 @@ describe("activitypub_actor_keys FK cascades on actor delete", () => {
     } finally {
       await kysely.destroy();
       db.close();
+      setTestDatabase(null,);
     }
   });
 });
@@ -399,10 +410,10 @@ describe("migration staleness guard", () => {
     const { error, } = await migrator.migrateToLatest();
     expect(error,).toBeUndefined();
   },);
-
   afterAll(async () => {
     await kysely.destroy();
     db.close();
+    setTestDatabase(null,);
   },);
 
   test("passes when every applied migration still exists", async () => {
@@ -422,12 +433,12 @@ describe("migration staleness guard", () => {
     const { [first]: _dropped, ...filtered } = migrations;
     await expect(assertMigrationsNotStale(kysely, filtered,),).rejects.toThrow(first,);
   });
-
   test("passes on a fresh database without a kysely_migration table", async () => {
     const { db: freshDb, kysely: fresh, } = createTestKysely();
     await expect(assertMigrationsNotStale(fresh, migrations,),).resolves.toBeUndefined();
     await fresh.destroy();
     freshDb.close();
+    setTestDatabase(null,);
   });
 });
 
