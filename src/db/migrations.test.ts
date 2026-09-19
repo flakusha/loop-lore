@@ -1,13 +1,13 @@
-import path from "node:path";
-import type { Migration, } from "kysely/migration";
 import { Database, } from "bun:sqlite";
-import { Kysely, sql, } from "kysely";
-import { Migrator, } from "kysely/migration";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
-import { assertMigrationsNotStale, compareMigrationNames, } from "./migrate";
+import { Kysely, sql, } from "kysely";
+import type { Migration, } from "kysely/migration";
+import { Migrator, } from "kysely/migration";
+import { readdirSync, readFileSync, statSync, } from "node:fs";
+import path from "node:path";
 import { createLogger, } from "../logger";
 import { createSqliteDialect, setTestDatabase, } from "./index";
-import { readdirSync, readFileSync, statSync, } from "node:fs";
+import { assertMigrationsNotStale, compareMigrationNames, } from "./migrate";
 
 // ── Helpers ──────────────────────────────────────────────────
 
