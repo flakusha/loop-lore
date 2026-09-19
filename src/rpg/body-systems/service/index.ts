@@ -166,9 +166,10 @@ export class BodySystemService {
   }> {
     const profile = await getProfileDispatch(this.db, actorId,);
     const effects = await getActiveEffects(this.db, actorId, { category: "physical", },);
-    const sum = (id: string,): number => effects
-      .filter((e,) => e.effectId === id,)
-      .reduce((total, e,) => total + e.magnitude, 0,);
+    const sum = (id: string,): number =>
+      effects
+        .filter((e,) => e.effectId === id)
+        .reduce((total, e,) => total + e.magnitude, 0,);
     const arousal = sum("arousal",);
     const exhaustion = sum("exhaustion",);
     const aphrodisiac = sum("aphrodisiac",);

@@ -19,11 +19,13 @@ async function seedActor(db: Kysely<DB>, id: string, name: string,): Promise<voi
 
 describe("reproduction service (TASK-038)", () => {
   test("capability flags: human baseline reproduces, unknown does not", () => {
-    expect(capabilityFor("human").canReproduce,).toBeTrue();
-    expect(capabilityFor("human").requiresHeat,).toBeFalse();
-    expect(capabilityFor("beast").requiresHeat,).toBeTrue();
+    expect(capabilityFor("human",).canReproduce,).toBeTrue();
+    expect(capabilityFor("human",).requiresHeat,).toBeFalse();
+    expect(capabilityFor("beast",).requiresHeat,).toBeTrue();
     expect(capabilityFor("mystery-slime",),).toEqual({
-      canReproduce: false, requiresHeat: false, crossFertile: false,
+      canReproduce: false,
+      requiresHeat: false,
+      crossFertile: false,
     },);
   });
 
@@ -33,9 +35,15 @@ describe("reproduction service (TASK-038)", () => {
     await seedActor(db, "sire-golem", "GolemSire",);
     const repro = new ReproductionService(db,);
     // Unknown species → non-reproducing → null, no pregnancy row.
-    expect(await repro.rollPregnancy(
-      "carrier-golem", "sire-golem", { id: "enc-1", worldId: null, }, "golem", "golem",
-    ),).toBeNull();
+    expect(
+      await repro.rollPregnancy(
+        "carrier-golem",
+        "sire-golem",
+        { id: "enc-1", worldId: null, },
+        "golem",
+        "golem",
+      ),
+    ).toBeNull();
     expect((await repro.getPregnancy("carrier-golem",)).pregnant,).toBeFalse();
   });
 
@@ -45,9 +53,15 @@ describe("reproduction service (TASK-038)", () => {
     await seedActor(db, "sire-elf", "Elf",);
     const repro = new ReproductionService(db,);
     // Dwarf (crossFertile false) × elf → blocked.
-    expect(await repro.rollPregnancy(
-      "carrier-dwarf", "sire-elf", { id: "enc-2", worldId: null, }, "dwarf", "elf",
-    ),).toBeNull();
+    expect(
+      await repro.rollPregnancy(
+        "carrier-dwarf",
+        "sire-elf",
+        { id: "enc-2", worldId: null, },
+        "dwarf",
+        "elf",
+      ),
+    ).toBeNull();
   });
 
   test("contraceptive guard blocks conception", async () => {
@@ -57,9 +71,15 @@ describe("reproduction service (TASK-038)", () => {
     const { ChemistryService, } = await import("./chemistry");
     await new ChemistryService(db,).applyEffect("carrier-safe", "contraceptive", 86400, 0,);
     const repro = new ReproductionService(db,);
-    expect(await repro.rollPregnancy(
-      "carrier-safe", "sire-safe", { id: "enc-3", worldId: null, }, "human", "human",
-    ),).toBeNull();
+    expect(
+      await repro.rollPregnancy(
+        "carrier-safe",
+        "sire-safe",
+        { id: "enc-3", worldId: null, },
+        "human",
+        "human",
+      ),
+    ).toBeNull();
     expect((await repro.getPregnancy("carrier-safe",)).pregnant,).toBeFalse();
   });
 
@@ -72,7 +92,11 @@ describe("reproduction service (TASK-038)", () => {
     let conceived: string | null = null;
     for (let i = 0; i < 60 && !conceived; i++) {
       conceived = await repro.rollPregnancy(
-        "carrier-mom", "sire-dad", { id: `enc-hot-${i}`, worldId: null, }, "human", "human",
+        "carrier-mom",
+        "sire-dad",
+        { id: `enc-hot-${i}`, worldId: null, },
+        "human",
+        "human",
       );
     }
     expect(conceived,).not.toBeNull();
@@ -87,15 +111,17 @@ describe("reproduction service (TASK-038)", () => {
     expect((await repro.getPregnancy("carrier-mom",)).pregnant,).toBeFalse();
     // Canonical parentage: bidirectional family rows carrier↔child, sire→child.
     const rels = await db.selectFrom("character_relationships",)
-      .where((eb,) => eb.or([
-        eb.and({ actor_id: "carrier-mom", target_actor_id: childId!, }),
-        eb.and({ actor_id: childId!, target_actor_id: "carrier-mom", }),
-        eb.and({ actor_id: "sire-dad", target_actor_id: childId!, }), 
-      ],),)
+      .where((eb,) =>
+        eb.or([
+          eb.and({ actor_id: "carrier-mom", target_actor_id: childId!, },),
+          eb.and({ actor_id: childId!, target_actor_id: "carrier-mom", },),
+          eb.and({ actor_id: "sire-dad", target_actor_id: childId!, },),
+        ],)
+      )
       .selectAll()
       .execute();
     expect(rels.length,).toBe(3,);
-    expect(new Set(rels.map((r,) => r.relationship_type,)),).toEqual(new Set(["family",]),);
+    expect(new Set(rels.map((r,) => r.relationship_type),),).toEqual(new Set(["family",],),);
   });
 
   test("birth without pregnancy returns null", async () => {
