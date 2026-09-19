@@ -24,12 +24,12 @@ import type { DB, } from "../../../db/schema";
 import {
   createFantasy as createFantasyDispatch,
   deleteFantasy as deleteFantasyDispatch,
-  fulfillFantasy as fulfillFantasyDispatch,
   getActorFantasies as getActorFantasiesDispatch,
   getByCategory as getByCategoryDispatch,
   recordExploration as recordExplorationDispatch,
 } from "./crud";
 import { attemptDiscovery as attemptDiscoveryDispatch, } from "./discovery";
+import { fulfillFantasy as fulfillFantasyDispatch, } from "./fulfill";
 import type {
   CreateFantasyOpts,
   DiscoveryResult,
