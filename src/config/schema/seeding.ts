@@ -21,6 +21,8 @@
 // may replace the base users / seedData for a given environment.
 
 import type { UserRole, } from "../../db/enums-core/users";
+import type { ItemCategory, ItemRarity, } from "../../db/enums-story/items";
+import type { QuestCategory, QuestStatus, QuestType, } from "../../db/enums-story/quests";
 
 /** */
 export interface SeedUserConfig {
@@ -71,6 +73,10 @@ export interface SeedWorld {
   visibility?: "private" | "public";
   /** Optional child locations to seed inside the world. */
   locations?: SeedLocation[];
+  /** Optional item definitions to seed inside the world. */
+  items?: SeedItem[];
+  /** Optional quests to seed inside the world. */
+  quests?: SeedQuest[];
 }
 
 /** A seeded chat linking seeded users as participants. */
@@ -81,6 +87,45 @@ export interface SeedChat {
   type?: "direct" | "group";
   /** Optional display name; defaults to joined participant usernames. */
   name?: string;
+  /**
+   * Initial system messages seeded into the chat on creation (in order).
+   * Empty/omitted seeds no messages.
+   */
+  initialMessages?: string[];
+}
+
+/** A seeded item definition, created inside a seeded world. */
+export interface SeedItem {
+  /** Item name (unique not enforced — definitions are templates). */
+  name: string;
+  /** Short description / flavor text. */
+  description?: string;
+  /** Canonical ItemCategory (default "misc"). */
+  category?: ItemCategory;
+  /** Canonical ItemRarity (default "common"). */
+  rarity?: ItemRarity;
+  /** Max stack size for stackable items (default 1 = unique). */
+  maxStack?: number;
+  /** Gold value per unit (default 0). */
+  value?: number;
+  /** Weight per unit (default 0). */
+  weight?: number;
+}
+
+/** A seeded quest, created inside a seeded world. */
+export interface SeedQuest {
+  /** Quest name. */
+  name: string;
+  /** Short description / hook. */
+  description?: string;
+  /** Completion mechanic (default "collection"). */
+  type?: QuestType;
+  /** Narrative category (default "side"). */
+  category?: QuestCategory;
+  /** Initial status (default "active"). */
+  status?: QuestStatus;
+  /** Objective target count (default 1). */
+  target?: number;
 }
 
 /** Seedable content definitions, keyed by entity type. */

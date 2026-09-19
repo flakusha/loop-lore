@@ -9668,6 +9668,10 @@
   "src/db/enums-story/world.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-2026-003.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-memory-history-search-bind-message-chain-reconstructable-con.md"
     }
   ],
@@ -13531,6 +13535,16 @@
       "source": ".plan/tickets/FEAT-075.md"
     }
   ],
+  "src/frontend/alpine/memory-panel/transform.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-056.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-2026-008.md"
+    }
+  ],
   "src/frontend/alpine/mention-autocomplete.ts": [
     {
       "kind": "epic",
@@ -13538,6 +13552,10 @@
     }
   ],
   "src/frontend/alpine/message-archive.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-2026-007.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-message-archive-restore-frontend.md"
@@ -18671,10 +18689,20 @@
       "source": ".plan/epics/epic-output-control-transforms.md"
     }
   ],
+  "src/memory/budget.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-2026-003.md"
+    }
+  ],
   "src/memory/budget.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-context-optimization.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-2026-003.md"
     },
     {
       "kind": "ticket",
@@ -18717,6 +18745,14 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-crafting-professions.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-2026-003.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-2026-008.md"
     },
     {
       "kind": "ticket",
@@ -18854,6 +18890,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-2026-003.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-cron-memory-maintenance-jobs.md"
     },
     {
@@ -18880,6 +18920,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-2026-003.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-carriage-visibility-tiers.md"
     },
     {
@@ -18898,6 +18942,10 @@
     }
   ],
   "src/memory/types.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-2026-003.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-aux-memory-extraction.md"
@@ -22686,6 +22734,10 @@
   "src/routes/chats/archive-routes.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-2026-007.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-chat-archive-unarchive.md"
     }
   ],
@@ -23447,6 +23499,12 @@
       "source": ".plan/epics/epic-review-dev-2026-08-26-security-data-integrity-merges.md"
     }
   ],
+  "src/routes/import-route.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-2026-001.md"
+    }
+  ],
   "src/routes/import.test.ts": [
     {
       "kind": "ticket",
@@ -23483,10 +23541,34 @@
       "source": ".plan/tickets/TASK-url-import-chub.md"
     }
   ],
+  "src/routes/import/actor.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-2026-001.md"
+    }
+  ],
   "src/routes/import/actor.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-char-editor-import-export-ui.md"
+    }
+  ],
+  "src/routes/import/handle.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-2026-001.md"
+    }
+  ],
+  "src/routes/import/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-2026-001.md"
+    }
+  ],
+  "src/routes/import/lorebook.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-2026-001.md"
     }
   ],
   "src/routes/import/lorebook.ts": [
@@ -23609,6 +23691,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-output-control-transforms.md"
+    }
+  ],
+  "src/routes/message-archiving.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-2026-007.md"
     }
   ],
   "src/routes/message-encryption.ts": [
@@ -23853,6 +23941,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-ai-message-utilities.md"
+    }
+  ],
+  "src/routes/messages/archiving.coverage.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-2026-007.md"
+    }
+  ],
+  "src/routes/messages/archiving.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-2026-007.md"
     }
   ],
   "src/routes/messages/command.test.ts": [

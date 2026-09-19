@@ -13,6 +13,7 @@
 
 import type { Kysely, } from "kysely";
 import type { SeedChat, } from "../config/schema";
+import { MessageRole, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import type { Logger, } from "../logger";
 import { uid, } from "../utils";
@@ -98,9 +99,26 @@ export async function seedChats(
         },)
         .execute();
     }
+
+    // Initial system messages (e.g. scene-setting narration), in order.
+    const initialMessages = chat.initialMessages ?? [];
+    for (const content of initialMessages) {
+      await database
+        .insertInto("messages",)
+        .values({
+          id: uid(),
+          chat_id: chatId,
+          actor_id: createdBy,
+          role: MessageRole.System,
+          content,
+        },)
+        .execute();
+    }
+
     await recordSeedAudit(database, "chat", chatId, {
       name,
       participants: chat.participants,
+      initial_messages: initialMessages.length,
     },);
 
     created += 1;

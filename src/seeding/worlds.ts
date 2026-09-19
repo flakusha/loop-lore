@@ -11,7 +11,9 @@
 // creators are skipped with a warning.
 
 import type { Kysely, } from "kysely";
-import type { SeedWorld, } from "../config/schema";
+import type { SeedItem, SeedQuest, SeedWorld, } from "../config/schema";
+import { ItemCategory, ItemRarity, StackableState, } from "../db/enums";
+import { QuestCategory, QuestStatus, QuestType, } from "../db/enums-story/quests";
 import type { DB, } from "../db/schema";
 import type { Logger, } from "../logger";
 import { uid, } from "../utils";
@@ -83,7 +85,76 @@ export async function seedWorlds(
         .execute();
     }
 
+    // Items + quests seed only on first world creation (same idempotency
+    // scope as locations) so re-runs never duplicate definitions.
+    await seedWorldItems(database, worldId, world.items ?? [],);
+    await seedWorldQuests(database, worldId, ownerId, world.quests ?? [],);
+
     log.info(`Seeded world "${world.name}" (creator ${world.creator})`,);
   }
   return created;
+}
+
+/**
+ * Seed item definitions inside a freshly created world.
+ * @param database - Kysely instance
+ * @param worldId - Target world id
+ * @param items - Item definitions from config
+ */
+async function seedWorldItems(
+  database: Kysely<DB>,
+  worldId: string,
+  items: readonly SeedItem[],
+): Promise<void> {
+  for (const item of items) {
+    await database
+      .insertInto("items",)
+      .values({
+        id: uid(),
+        world_id: worldId,
+        name: item.name,
+        description: item.description ?? null,
+        category: item.category ?? ItemCategory.Misc,
+        rarity: item.rarity ?? ItemRarity.Common,
+        stackable: (item.maxStack ?? 1) > 1
+          ? StackableState.Stackable
+          : StackableState.Unique,
+        max_stack: Math.max(1, item.maxStack ?? 1,),
+        properties: "{}",
+        value: item.value ?? 0,
+        weight: item.weight ?? 0,
+      },)
+      .execute();
+  }
+}
+
+/**
+ * Seed quests inside a freshly created world.
+ * @param database - Kysely instance
+ * @param worldId - Target world id
+ * @param ownerId - Creator user id for the quests
+ * @param quests - Quest definitions from config
+ */
+async function seedWorldQuests(
+  database: Kysely<DB>,
+  worldId: string,
+  ownerId: string,
+  quests: readonly SeedQuest[],
+): Promise<void> {
+  for (const quest of quests) {
+    await database
+      .insertInto("quests",)
+      .values({
+        id: uid(),
+        world_id: worldId,
+        creator_id: ownerId,
+        name: quest.name,
+        description: quest.description ?? null,
+        type: quest.type ?? QuestType.Collection,
+        category: quest.category ?? QuestCategory.Side,
+        status: quest.status ?? QuestStatus.Active,
+        target: Math.max(1, quest.target ?? 1,),
+      },)
+      .execute();
+  }
 }
