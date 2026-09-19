@@ -26,6 +26,7 @@ import "./personas";
 import "./admin";
 import "./world-edit";
 import "./location-explorer";
+import "./fractal-locations";
 import "./sidebar";
 import "./shortcuts";
 import "./settings-modal";
