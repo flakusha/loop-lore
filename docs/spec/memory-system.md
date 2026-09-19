@@ -92,3 +92,7 @@ memory:
 - Cross-agent memory sharing
 - Memory visualization tools
 - Knowledge graphs for richer semantic connections
+- Memory knowledge isolation + world timeline consistency — design only, see
+  `.plan/epics/epic-memory-isolation-design.md` (IDEA ticket
+  `IDEA-memory-knowledge-isolation-and-world-timeline`; Low priority /
+  Large effort, no code yet)
