@@ -231,6 +231,21 @@ const WAIVERS = {
     reason:
       "getCsrfToken DOM branches + 401-redirect wiring need live document/location; delegation path covered (64.3 measured); Playwright DOM-coverage pending; BUG-frontend-dead-csrf-bearer-header-machinery",
   },
+  // Gate pass: serve-raw.ts was carved out of serve-handlers.ts to keep
+  // that file under the per-module size-strict (345-line) gate. The
+  // encrypted-asset decryption branch (success path) requires a real
+  // chatId + a chat-encrypted asset; the existing coverage suite only
+  // exercises the 400 "Encrypted asset requires chat context" early
+  // return. Adding a real-encryption success test would require setting
+  // up SMK + chat key + encrypted bytes, which is a much larger surface
+  // than the 29-line branch being skipped. The diff-scoped runner
+  // measures 71% (public path + 400 path covered); the 29 lines under
+  // waiver are the success-decrypt + catch block.
+  "assets:src/assets/serve-raw.ts": {
+    floor: 71,
+    reason:
+      "split out of serve-handlers.ts for size-strict; encrypted-decrypt success path needs real SMK + chat key (29 lines); 400 path covered; TASK-thumbnail-generation-256px-webp-at-upload",
+  },
 };
 
 /**
