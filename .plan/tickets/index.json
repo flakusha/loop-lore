@@ -12367,6 +12367,19 @@
     "source": ".plan/tickets/TASK-backup-restore-reliability-and-self-healing-for-federated-de.md",
     "status": "open"
   },
+  "TASK-BASELINE-SKILLS-SEED-FROM-CHARACTER-TEMPLATE": {
+    "hash": "57f1b7f",
+    "git_issue": "57f1b7f",
+    "extid": "TASK-BASELINE-SKILLS-SEED-FROM-CHARACTER-TEMPLATE",
+    "type": "TASK",
+    "title": "Baseline Skills Seed From Character Template",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-skills",
+    "tags": [],
+    "source": ".plan/tickets/TASK-baseline-skills-seed-from-character-template.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-BATTLE-ACTION-SELECTOR": {
     "hash": "e961126",
     "extid": "TASK-BATTLE-ACTION-SELECTOR",
@@ -15634,6 +15647,19 @@
     "source": ".plan/tickets/TASK-crafting-rare-discovery.md",
     "git_issue": "890506b",
     "status": "open"
+  },
+  "TASK-CRAFTING-RECIPE-CONSTRUCTOR-FRONTEND-EDITOR": {
+    "hash": "5e2dbf2",
+    "git_issue": "5e2dbf2",
+    "extid": "TASK-CRAFTING-RECIPE-CONSTRUCTOR-FRONTEND-EDITOR",
+    "type": "TASK",
+    "title": "Crafting Recipe Constructor Frontend Editor",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-items-economy-crafting",
+    "tags": [],
+    "source": ".plan/tickets/TASK-crafting-recipe-constructor-frontend-editor.md",
+    "status": "⬜ Not Started"
   },
   "TASK-CRAFTING-STATIONS-EXECUTION": {
     "hash": "1fead82",
@@ -20381,6 +20407,19 @@
     "source": ".plan/tickets/TASK-item-config-templates.md",
     "status": "open"
   },
+  "TASK-ITEM-DEFINITION-CRUD-FRONTEND-EDITOR": {
+    "hash": "ce586b6",
+    "git_issue": "ce586b6",
+    "extid": "TASK-ITEM-DEFINITION-CRUD-FRONTEND-EDITOR",
+    "type": "TASK",
+    "title": "Item Definition CRUD Frontend Editor",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-items-economy-crafting",
+    "tags": [],
+    "source": ".plan/tickets/TASK-item-definition-crud-frontend-editor.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-ITEM-DETAILS": {
     "hash": "5ef5c93",
     "extid": "TASK-ITEM-DETAILS",
@@ -20443,6 +20482,19 @@
     "tags": [],
     "source": ".plan/tickets/TASK-item-generation-web-page-direct-describe-preview-confirm-ui-.md",
     "status": "open"
+  },
+  "TASK-ITEM-INVENTORY-VIEW-PAGE": {
+    "hash": "36a3781",
+    "git_issue": "36a3781",
+    "extid": "TASK-ITEM-INVENTORY-VIEW-PAGE",
+    "type": "TASK",
+    "title": "Item Inventory View Page",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-items-economy-crafting",
+    "tags": [],
+    "source": ".plan/tickets/TASK-item-inventory-view-page.md",
+    "status": "⬜ Not Started"
   },
   "TASK-ITEM-PROVISIONING-DASHBOARD": {
     "hash": "pending",
@@ -21015,6 +21067,19 @@
     "epic": "epic-logging-telemetry",
     "tags": [],
     "source": ".plan/tickets/TASK-logging-system-structured-jsonl.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-LOOT-TABLE-CONSTRUCTOR-FRONTEND-EDITOR": {
+    "hash": "7bb5e14",
+    "git_issue": "7bb5e14",
+    "extid": "TASK-LOOT-TABLE-CONSTRUCTOR-FRONTEND-EDITOR",
+    "type": "TASK",
+    "title": "Loot Table Constructor Frontend Editor",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-items-economy-crafting",
+    "tags": [],
+    "source": ".plan/tickets/TASK-loot-table-constructor-frontend-editor.md",
     "status": "⬜ Not Started"
   },
   "TASK-LORA-DISCOVERY-APPLICATION": {
@@ -26400,6 +26465,58 @@
     "source": ".plan/tickets/TASK-rpg-ruleset-enforcement-in-prompts-and-post-generation.md",
     "status": "open"
   },
+  "TASK-RPG-SKILL-COMBOS-AND-SYNERGIES": {
+    "hash": "eabd1d3",
+    "git_issue": "eabd1d3",
+    "extid": "TASK-RPG-SKILL-COMBOS-AND-SYNERGIES",
+    "type": "TASK",
+    "title": "RPG Skill Combos and Synergies",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-skills",
+    "tags": [],
+    "source": ".plan/tickets/TASK-rpg-skill-combos-and-synergies.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-RPG-SKILL-POINTS-ON-LEVEL-UP": {
+    "hash": "954ff50",
+    "git_issue": "954ff50",
+    "extid": "TASK-RPG-SKILL-POINTS-ON-LEVEL-UP",
+    "type": "TASK",
+    "title": "RPG Skill Points On Level Up",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-skills",
+    "tags": [],
+    "source": ".plan/tickets/TASK-rpg-skill-points-on-level-up.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-RPG-SKILL-RESET": {
+    "hash": "8621813",
+    "git_issue": "8621813",
+    "extid": "TASK-RPG-SKILL-RESET",
+    "type": "TASK",
+    "title": "RPG Skill Reset",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-rpg-skill-reset.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-RPG-SKILL-TREE-VISUALIZATION-FRONTEND": {
+    "hash": "f52a155",
+    "git_issue": "f52a155",
+    "extid": "TASK-RPG-SKILL-TREE-VISUALIZATION-FRONTEND",
+    "type": "TASK",
+    "title": "RPG Skill Tree Visualization Frontend",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-skills",
+    "tags": [],
+    "source": ".plan/tickets/TASK-rpg-skill-tree-visualization-frontend.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-RPG-SOCIAL-INTERACTION": {
     "hash": "f21d739",
     "extid": "TASK-RPG-SOCIAL-INTERACTION",
@@ -26969,6 +27086,19 @@
     "source": ".plan/tickets/TASK-skill-check.md",
     "git_issue": "6c3c87a",
     "status": "open"
+  },
+  "TASK-SKILL-CONSTRUCTOR-ON-CHARACTER-EDIT": {
+    "hash": "5c15d0b",
+    "git_issue": "5c15d0b",
+    "extid": "TASK-SKILL-CONSTRUCTOR-ON-CHARACTER-EDIT",
+    "type": "TASK",
+    "title": "Skill Constructor On Character Edit",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-skills",
+    "tags": [],
+    "source": ".plan/tickets/TASK-skill-constructor-on-character-edit.md",
+    "status": "⬜ Not Started"
   },
   "TASK-SKILLS": {
     "hash": "1b54bb3",
