@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** XL
+**Summary:** Advanced Memory Systems Implementation
+**Context:** Epic epic-memory-knowledge-systems; tags memory, context.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-memory-knowledge-systems
 **Tags:** memory, context
 

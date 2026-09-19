@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Large
+**Summary:** Platform Support (Multi-OS / Mobile / Browser matrix)
+**Context:** Epic proposed:epic-platform-support; tags platform, mobile.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** proposed:epic-platform-support
 **Tags:** platform, mobile
 

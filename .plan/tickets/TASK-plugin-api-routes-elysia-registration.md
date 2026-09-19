@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** Medium
+**Summary:** Plugin API Routes -> Elysia Registration
+**Context:** Epic epic-plugin-system; tags plugins, routes.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-plugin-system
 **Tags:** plugins, routes
 

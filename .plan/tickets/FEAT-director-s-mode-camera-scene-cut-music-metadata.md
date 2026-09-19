@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** low
 **Effort:** XL
+**Summary:** Director's Mode (Camera/Scene-cut/Music Metadata)
+**Context:** Epic proposed:epic-directors-mode; tags director, narrative.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** proposed:epic-directors-mode
 **Tags:** director, narrative
 

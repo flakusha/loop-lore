@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** low
 **Effort:** XL
+**Summary:** Shared Persistent Worlds (multiplayer co-op storytelling)
+**Context:** Epic proposed:epic-shared-worlds; tags multiplayer, crdt.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** proposed:epic-shared-worlds
 **Tags:** multiplayer, crdt
 

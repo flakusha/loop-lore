@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** Large
+**Summary:** Queryable Audit Store
+**Context:** Epic proposed:epic-audit-store; tags audit, logging.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** proposed:epic-audit-store
 **Tags:** audit, logging
 

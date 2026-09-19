@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Large
+**Summary:** Inventory Management UI
+**Context:** Epic epic-inventory-ui; tags inventory, ui.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-inventory-ui
 **Tags:** inventory, ui
 

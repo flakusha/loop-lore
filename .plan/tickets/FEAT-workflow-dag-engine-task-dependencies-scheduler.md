@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Large
+**Summary:** Workflow DAG Engine (Task Dependencies + Scheduler)
+**Context:** Epic epic-workflow-engine; tags workflow, dag.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-workflow-engine
 **Tags:** workflow, dag
 

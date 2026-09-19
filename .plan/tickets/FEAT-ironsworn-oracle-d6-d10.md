@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** low
 **Effort:** Large
+**Summary:** Ironsworn Oracle (d6+d10)
+**Context:** Epic epic-resolution-system; tags rpg, ironsworn, oracle.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-resolution-system
 **Tags:** rpg, ironsworn, oracle
 

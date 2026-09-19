@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** Large
+**Summary:** Admin Analytics Dashboard
+**Context:** Epic proposed:epic-admin-analytics; tags admin, analytics.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** proposed:epic-admin-analytics
 **Tags:** admin, analytics
 

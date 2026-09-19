@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium
+**Summary:** Human-in-the-Loop Approval Gates
+**Context:** Epic proposed:epic-approval-gates; tags approval, governance.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** proposed:epic-approval-gates
 **Tags:** approval, governance
 

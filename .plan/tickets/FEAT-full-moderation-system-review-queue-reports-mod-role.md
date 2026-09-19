@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** XL
+**Summary:** Full Moderation System (Review Queue, Reports, Mod Role)
+**Context:** Epic proposed:epic-admin-moderation; tags moderation, admin.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** proposed:epic-admin-moderation
 **Tags:** moderation, admin
 

@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** low
 **Effort:** Small
+**Summary:** Replayability (Session-Seeded Random Tables)
+**Context:** Epic proposed:epic-replayability; tags replay, random.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** proposed:epic-replayability
 **Tags:** replay, random
 

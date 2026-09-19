@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** Large
+**Summary:** Battle Integration Wiring (items/social/NPC/weather/resolution)
+**Context:** Epic epic-battle-integration-gaps; tags battle, integration.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-battle-integration-gaps
 **Tags:** battle, integration
 

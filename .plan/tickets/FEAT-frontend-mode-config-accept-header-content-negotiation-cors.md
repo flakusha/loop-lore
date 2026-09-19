@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Large
+**Summary:** frontend.mode Config + Accept-Header Content Negotiation + CORS
+**Context:** Epic epic-api-first-foundation; tags frontend, config, cors.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-api-first-foundation
 **Tags:** frontend, config, cors
 

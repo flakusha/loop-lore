@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** XL
+**Summary:** Battle Core Round-Loop / Initiative Epic
+**Context:** Epic proposed:epic-battle-core; tags battle, initiative.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** proposed:epic-battle-core
 **Tags:** battle, initiative
 

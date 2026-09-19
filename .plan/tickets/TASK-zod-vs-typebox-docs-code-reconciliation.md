@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Small
+**Summary:** Zod vs TypeBox Docs/Code Reconciliation
+**Context:** Epic epic-shared-schemas; tags docs, zod, typebox.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-shared-schemas
 **Tags:** docs, zod, typebox
 

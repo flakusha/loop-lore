@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** XL
+**Summary:** RPG Mechanics Base Implementation Tickets
+**Context:** Epic epic-rpg-mechanics; tags rpg, core.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-rpg-mechanics
 **Tags:** rpg, core
 

@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** low
 **Effort:** Medium
+**Summary:** Item Rarity System
+**Context:** Epic epic-rarity-extensions; tags items, rarity.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-rarity-extensions
 **Tags:** items, rarity
 

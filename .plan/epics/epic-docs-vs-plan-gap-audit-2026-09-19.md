@@ -5,7 +5,13 @@
 
 **Status:** Audit complete; 76 gap tickets created. Worktree: `docs-vs-plan-gap-tickets`.
 
+**Type:** Audit
+
+**Tags:** audit, epics, tickets, docs-gap
+
 **Priority:** P2
+
+**Overview:** Cross-cutting audit of design docs against planning artifacts; enumerated 76 implementation gaps and created one ticket per gap.
 
 **Effort:** XL (audit + ticket creation)
 

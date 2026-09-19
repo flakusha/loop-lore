@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Large
+**Summary:** Emotion Avatars Pipeline
+**Context:** Epic epic-emotion-avatar-message-binding; tags avatar, emotion.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** epic-emotion-avatar-message-binding
 **Tags:** avatar, emotion
 

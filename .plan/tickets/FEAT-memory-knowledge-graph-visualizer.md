@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** low
 **Effort:** Large
+**Summary:** Memory/Knowledge Graph Visualizer
+**Context:** Epic proposed:epic-knowledge-graph-viz; tags memory, graph.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** proposed:epic-knowledge-graph-viz
 **Tags:** memory, graph
 

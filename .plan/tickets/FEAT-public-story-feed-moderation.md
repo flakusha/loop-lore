@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** low
 **Effort:** Large
+**Summary:** Public Story Feed + Moderation
+**Context:** Epic proposed:epic-public-feed; tags social, feed.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** proposed:epic-public-feed
 **Tags:** social, feed
 

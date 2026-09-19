@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Large
+**Summary:** Attachment Review Queue + Admin UI
+**Context:** Epic proposed:epic-admin-moderation; tags attachments, queue.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** proposed:epic-admin-moderation
 **Tags:** attachments, queue
 

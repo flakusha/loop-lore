@@ -6,6 +6,9 @@
 **Status:** ✅ Done
 **Priority:** low
 **Effort:** Medium
+**Summary:** Thumbnail Generation (256px WebP at upload)
+**Context:** Epic proposed:epic-asset-thumbnail; tags assets, thumbnails.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** proposed:epic-asset-thumbnail
 **Tags:** assets, thumbnails
 

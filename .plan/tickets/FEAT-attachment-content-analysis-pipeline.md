@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Large
+**Summary:** Attachment Content Analysis Pipeline
+**Context:** Epic proposed:epic-attachment-moderation; tags attachments, moderation.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Epic:** proposed:epic-attachment-moderation
 **Tags:** attachments, moderation
 
