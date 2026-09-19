@@ -57,10 +57,6 @@ describe("Registration flow E2E", () => {
       try {
         await gotoRegister(page,);
         const username = `browser_${Date.now()}`;
-        const errUrls: string[] = [];
-        page.on("response", (res,) => {
-          if (res.status() === 401) { errUrls.push(res.url(),); }
-        },);
         await page.fill("[data-testid='username-input']", username,);
         await page.fill("[data-testid='password-input']", "password-123",);
         await page.click("[data-testid='register-submit']",);
@@ -76,12 +72,107 @@ describe("Registration flow E2E", () => {
           .executeTakeFirst();
         expect(row,).not.toBeNull();
         expect(row!.username,).toBe(username,);
-        console.log("AUTH401_URLS", JSON.stringify(errUrls,),);
       } finally {
         errors.assert();
         errors.detach();
         await page.close();
       }
     }, 60_000,);
+
+    test("duplicate username swaps register-error and stays on register", async () => {
+      const page = await ctx.openPage();
+      const errors = trackPageErrors(page, { allowlist: AUTH_NOISE_ALLOWLIST, },);
+      const username = `dup_${Date.now()}`;
+      try {
+        await gotoRegister(page,);
+        await page.fill("[data-testid='username-input']", username,);
+        await page.fill("[data-testid='password-input']", "password-123",);
+        await page.click("[data-testid='register-submit']",);
+        // First submission must succeed and land on the authed view.
+        await page.waitForURL((url,) => url.pathname === "/views/chat", { timeout: 30_000, },);
+      } finally {
+        errors.assert();
+        errors.detach();
+        await page.close();
+      }
+
+      // Second submission from a fresh page.
+      const page2 = await ctx.openPage();
+      const errors2 = trackPageErrors(page2, { allowlist: AUTH_NOISE_ALLOWLIST, },);
+      try {
+        await gotoRegister(page2,);
+        await page2.fill("[data-testid='username-input']", username,);
+        await page2.fill("[data-testid='password-input']", "password-123",);
+        await page2.click("[data-testid='register-submit']",);
+
+        // Wait for the swap to land, then read it: the server swaps the
+        // duplicate-user error into #register-error (htmx requests get
+        // 200 + HTML error envelope).
+        await page2.locator("[data-testid='register-error']:not(:empty)",).waitFor({
+          state: "visible",
+          timeout: 10_000,
+        },);
+        const errHtml = await page2.locator("[data-testid='register-error']",).innerHTML();
+        expect(errHtml.length, "duplicate registration must surface an error message",).toBeGreaterThan(0,);
+        expect(new URL(page2.url(),).pathname, "duplicate registration must not redirect",).toBe("/views/register",);
+
+        // Exactly one user row for the attempted username.
+        const rows = await ctx.db
+          .selectFrom("users",)
+          .select(["username",],)
+          .where("username", "=", username,)
+          .execute();
+        expect(rows.length,).toBe(1,);
+      } finally {
+        errors2.assert();
+        errors2.detach();
+        await page2.close();
+      }
+    }, 60_000,);
   });
+});
+
+describe("Registration closed E2E", () => {
+  let ctx: BrowserTestContext;
+
+  beforeAll(async () => {
+    ctx = await createBrowserTest({ auth: { required: true, registrationOpen: false, }, },);
+  }, 90_000,);
+
+  afterAll(async () => {
+    await ctx?.close();
+  },);
+
+  test("submitting the form surfaces the closed-registration error and creates no user", async () => {
+    const page = await ctx.openPage();
+    const errors = trackPageErrors(page, { allowlist: AUTH_NOISE_ALLOWLIST, },);
+    const username = `closed_${Date.now()}`;
+    try {
+      await page.goto(`${ctx.url}/views/register`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
+      await page.locator("[data-testid='register-submit']",).waitFor({ state: "visible", timeout: 30_000, },);
+      await page.fill("[data-testid='username-input']", username,);
+      await page.fill("[data-testid='password-input']", "password-123",);
+      await page.click("[data-testid='register-submit']",);
+
+      // Wait for the htmx error envelope to swap into #register-error.
+      await page.locator("[data-testid='register-error']:not(:empty)",).waitFor({
+        state: "visible",
+        timeout: 10_000,
+      },);
+      const errHtml = await page.locator("[data-testid='register-error']",).innerHTML();
+      expect(errHtml.length, "closed registration must surface an error message",).toBeGreaterThan(0,);
+      expect(new URL(page.url(),).pathname,).toBe("/views/register",);
+
+      const row = await ctx.db
+        .selectFrom("users",)
+        .select(["username",],)
+        .where("username", "=", username,)
+        .executeTakeFirst();
+      expect(row, "closed registration must not persist a user",).toBeUndefined();
+    } finally {
+      errors.assert();
+      errors.detach();
+      await page.close();
+    }
+  }, 60_000,);
 });

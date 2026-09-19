@@ -10,11 +10,13 @@
  * `trackTelemetry`). This keeps app control-flow logs (sendMessage, loadMessages,
  * module init, chat.open, etc.) out of the telemetry stream.
  *
- * Uses navigator.sendBeacon for fire-and-forget delivery.
- * Falls back to fetch() with keepalive when sendBeacon unavailable.
+ * Uses fetch() with keepalive — the spec'd fire-and-forget equivalent of
+ * sendBeacon that still sends a well-formed JSON body. (sendBeacon + Blob
+ * arrives at the server with an empty/unparseable body in some
+ * environments, 422ing on route validation.)
  */
 import type { LogEntry, Transport, } from "../../../logger/types";
-import { safeFetch, safeJsonStringify, } from "../../../utils";
+import { safeFetch, } from "../../../utils";
 
 const LEVEL_MAP: Record<number, string> = {
   10: "trace",
@@ -68,44 +70,36 @@ export class TelemetryTransport implements Transport {
     }
     this.sent += 1;
 
-    const data: Record<string, unknown> = {
-      ...entry.meta,
-      level: LEVEL_MAP[entry.level] ?? "info",
-    };
-    if (entry.module) { data.module = entry.module; }
-    if (entry.error) { data.error = entry.error; }
+    // The ingest route (TelemetryEventBody) accepts ONLY a closed union of
+    // typed events with server-derived identity — never sessionId/userId/
+    // chatId keys. warn/error entries map onto the `frontend.error` shape
+    // ({message, stackDigest}); curated info events ship their typed shape.
+    // Anything else would 422 and burn the request.
+    const payload = entry.level >= MIN_TELEMETRY_LEVEL
+      ? {
+        type: "frontend.error",
+        data: {
+          message: truncate(eventType, 256,),
+          stackDigest: digest(eventType + "\u0000" + (entry.error ?? ""),),
+        },
+      }
+      : {
+        type: eventType,
+        data: {
+          ...entry.meta,
+          level: LEVEL_MAP[entry.level] ?? "info",
+        },
+      };
 
-    // Flatten chatId (when present in meta) to top-level — the ingestion
-    // route reads ctx.body.chatId, so nesting it inside data silently
-    // drops it from every recorded event.
-    const chatId = typeof data.chatId === "string" ? data.chatId : undefined;
-    if (chatId !== undefined) { delete data.chatId; }
-
-    const payload = {
-      type: eventType,
-      sessionId: entry.sessionId,
-      userId: entry.userId,
-      chatId,
-      data,
-    };
-
-    const body = safeJsonStringify(payload,);
-    if (!body.ok) { return Promise.resolve(); }
-
-    try {
-      const blob = new Blob([body.value,], { type: "application/json", },);
-      navigator.sendBeacon(this.url, blob,);
-    } catch {
-      void safeFetch(this.url, {
-        method: "POST",
-        body: payload,
-        keepalive: true,
-        handle401: false,
-        timeout: 10_000,
-      },).catch(() => {
-        /* fire-and-forget — beacon fallback failure is non-critical */
-      },);
-    }
+    void safeFetch(this.url, {
+      method: "POST",
+      body: payload,
+      keepalive: true,
+      handle401: false,
+      timeout: 10_000,
+    },).catch(() => {
+      /* unreachable defensive catch — safeFetch rejects only on programming error */
+    },);
 
     return Promise.resolve();
   }
@@ -114,4 +108,22 @@ export class TelemetryTransport implements Transport {
   flush(): Promise<void> {
     return Promise.resolve();
   }
+}
+
+/**
+ * @param value
+ * @param max
+ */
+function truncate(value: string, max: number,): string {
+  return value.length <= max ? value : value.slice(0, max,);
+}
+
+/** FNV-1a hex digest, 16 chars — a stable, non-identifying fingerprint. */
+function digest(value: string,): string {
+  let hash = 0x811c9dc5;
+  for (let i = 0; i < value.length; i++) {
+    hash ^= value.charCodeAt(i,);
+    hash = Math.imul(hash, 0x01000193,);
+  }
+  return (hash >>> 0).toString(16,).padStart(8, "0",).repeat(2,);
 }
