@@ -2265,6 +2265,14 @@ export const XpLedgerSchema = t.Object({
   created_at: t.Optional(t.String(),),
 },);
 
+// ── quest_reward_ledger ────────────────────────────────────────────
+export const QuestRewardLedgerSchema = t.Object({
+  world_id: t.String(),
+  ledger_key: t.String(),
+  world_item_ids: t.String(),
+  created_at: t.Optional(t.String(),),
+},);
+
 // ── blog_comments ────────────────────────────────────────────
 export const BlogCommentsSchema = t.Object({
   post_id: t.String(),

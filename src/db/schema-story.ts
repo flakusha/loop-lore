@@ -263,6 +263,15 @@ export interface Quests {
   completed_at: string | null;
 }
 
+// ── quest_reward_ledger ────────────────────────────────────────────
+export interface QuestRewardLedger {
+  id: Generated<string>;
+  world_id: string;
+  ledger_key: string;
+  world_item_ids: string;
+  created_at: Generated<string>;
+}
+
 // ── actor_memories ────────────────────────────────────────────
 export interface ActorMemories {
   id: Generated<string>;
