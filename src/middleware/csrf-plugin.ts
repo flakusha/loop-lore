@@ -67,6 +67,7 @@ export function csrfPlugin(opts: CsrfMiddlewareOptions,): CsrfPlugin {
         route: string | null;
         requestId?: string;
         sessionId?: string | null;
+        userId?: string | null;
         set: { status?: number };
       };
       const decision = decideCsrf(opts, {
@@ -75,6 +76,7 @@ export function csrfPlugin(opts: CsrfMiddlewareOptions,): CsrfPlugin {
         headers: c.request.headers,
         sessionId: c.sessionId ?? null,
         requestId: c.requestId ?? "anon",
+        userId: c.userId ?? null,
       },);
       if (!decision.ok) {
         c.set.status = 403;
@@ -88,6 +90,7 @@ export function csrfPlugin(opts: CsrfMiddlewareOptions,): CsrfPlugin {
         route: string | null;
         requestId?: string;
         sessionId?: string | null;
+        userId?: string | null;
         set: { headers: Record<string, string | string[] | undefined> };
       };
       const decision = decideCsrf(opts, {
@@ -96,6 +99,7 @@ export function csrfPlugin(opts: CsrfMiddlewareOptions,): CsrfPlugin {
         headers: c.request.headers,
         sessionId: c.sessionId ?? null,
         requestId: c.requestId ?? "anon",
+        userId: c.userId ?? null,
       },);
       const cookieHeader = cookieForDecision(decision, opts,);
       if (cookieHeader === null) { return; }
