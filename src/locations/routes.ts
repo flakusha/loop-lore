@@ -194,8 +194,8 @@ export class TravelRouteService {
     worldId: string,
     routeId: string,
   ): Promise<
-    { id: string; name: string; kind: TransportKind; loop: number; seconds_per_unit: number; world_id: string }
-      | undefined
+    | { id: string; name: string; kind: TransportKind; loop: number; seconds_per_unit: number; world_id: string }
+    | undefined
   > {
     const row = await this.db
       .selectFrom("travel_routes",)
