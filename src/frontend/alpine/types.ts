@@ -18,7 +18,15 @@ export type {
   MovementEvent,
   WorldChannelChat,
 } from "./chat-types";
-export type { EquipmentSlot, MemoryEntry, MemoryPanelState, RpgStats, StatusEffect, } from "./chat-types";
+export type {
+  EquipmentSlot,
+  MemoryEntry,
+  MemoryPanelState,
+  RpgQuestionOptionView,
+  RpgQuestionView,
+  RpgStats,
+  StatusEffect,
+} from "./chat-types";
 export type { WorldEditState, } from "./world-types";
 
 /**
