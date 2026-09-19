@@ -68,7 +68,7 @@ Already fixed in dev by `662ddfb14` (fix(db,test): lazy DB singleton + test-over
 
 - `tests/e2e/helpers/server.ts:347-348` — `testRunId = \`loop-lore-e2e-${crypto.randomUUID()}\``; comment notes the rationale (per-process, per-call uniqueness, no shared mutable state).
 - `tests/e2e/helpers/browser-server.ts:82-83` — same pattern.
-- `src/db/test-db-helpers.test.ts:48-58` — 1000-iteration regression test asserts all generated `testRunId`s are unique.
+- `src/db/test-db-helpers.test.ts:49-58` — 1000-iteration regression test asserts all generated `testRunId`s are unique.
 - Cross-references: resolves alongside the other test-override-hygiene tickets in the same commit.
 
 No code change required.

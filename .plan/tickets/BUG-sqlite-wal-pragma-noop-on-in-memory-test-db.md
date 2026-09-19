@@ -54,7 +54,7 @@ Already fixed in dev by `662ddfb14` (fix(db,test): lazy DB singleton + test-over
 
 - `tests/e2e/helpers/server.ts:182-188` — `sqliteInMemory()` no longer runs `PRAGMA journal_mode = WAL`; comment explicitly notes `:memory:` cannot use WAL. FK enforcement + WAL on file-backed paths come from `createSqliteDialect`.
 - `src/db/test-db-helpers.test.ts:60-71` — regression test asserts `:memory:` has `journal_mode = memory`, not `wal`, to lock in the no-op assumption.
-- `src/db/test-db-helpers.test.ts:73-82` — second regression test asserts `createSqliteDialect` still enables FK on `:memory:`.
+- `src/db/test-db-helpers.test.ts:74-82` — second regression test asserts `createSqliteDialect` still enables FK on `:memory:`.
 - Cross-references: `BUG-sqlite-foreign-keys-pragma-set-twice-redundant` resolved in same commit (same file scope).
 
 No code change required.
