@@ -22,7 +22,7 @@ import {
   insertCharacterSeductionSkills,
 } from "../../../test-utils/insert-helpers.js";
 import { FantasyCategory, } from "../../../db/enums-character/nsfw.js";
-import { type SeductionResult, } from "./attempt.js";
+import type { SeductionResult, } from "./types.js";
 import { uid, } from "../../../utils.js";
 import { attemptSeduction, } from "./attempt.js";
 
