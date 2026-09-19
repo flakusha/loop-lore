@@ -6,9 +6,9 @@ import { MoodService, } from "../../../characters/services/mood-service";
 import type { DB, } from "../../../db/schema";
 import { getLogger, } from "../../../logger";
 import { assertNsfwCapability, } from "../../../nsfw/capability-gate";
+import { jsonStringifyOr, } from "../../../utils";
 import { getModifier, } from "../../stats/modifiers";
 import type { StatBlock, } from "../../stats/types";
-import { jsonStringifyOr, } from "../../../utils";
 import { checkThresholds, suggestRelationshipUpgrade, } from "./levels";
 import { getPair, } from "./pairs";
 import type {
@@ -91,7 +91,9 @@ async function logLevelChangeMood(args: {
           sourceId: `${pairId}:${threshold.level}`,
         },);
       } catch (cause) {
-        log.warn(`Mood follow-through skipped for ${feltId}:`, { error: cause instanceof Error ? cause.message : String(cause), },);
+        log.warn(`Mood follow-through skipped for ${feltId}:`, {
+          error: cause instanceof Error ? cause.message : String(cause,),
+        },);
       }
     }
   }
@@ -171,7 +173,9 @@ export async function applyAction(
           opts.gate.chatId ?? undefined,
         );
       } catch (escalation) {
-        log.warn(`Trauma escalation skipped for ${targetActorId ?? actorId}:`, { error: escalation instanceof Error ? escalation.message : String(escalation), },);
+        log.warn(`Trauma escalation skipped for ${targetActorId ?? actorId}:`, {
+          error: escalation instanceof Error ? escalation.message : String(escalation,),
+        },);
       }
       throw cause;
     }
@@ -244,7 +248,16 @@ export async function applyAction(
 
   const upward = newScore > pair.score;
   const feltBy = upward ? [targetActorId,] : [targetActorId, actorId,];
-  await logLevelChangeMood({ db, log, pairId: pair.id, actorId, feltIds: feltBy, upward, worldId, thresholds: thresholdsReached, },);
+  await logLevelChangeMood({
+    db,
+    log,
+    pairId: pair.id,
+    actorId,
+    feltIds: feltBy,
+    upward,
+    worldId,
+    thresholds: thresholdsReached,
+  },);
 
   await persistPairScore({ db, pairId: pair.id, score: newScore, history, unlocked: newUnlocked, },);
 

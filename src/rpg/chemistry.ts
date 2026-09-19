@@ -88,6 +88,7 @@ export class ChemistryService {
         source,
         source_id: null,
         started_at: now.toISOString(),
+        // eslint-disable-next-line no-restricted-syntax -- epoch-ms arithmetic is allowed; toDate() cannot add durations
         expires_at: new Date(
           now.getTime() + (durationSeconds ?? known.defaultDurationSeconds) * 1000,
         ).toISOString(),
@@ -111,7 +112,7 @@ export class ChemistryService {
     effectId: string,
   ): Promise<ChemistryEffectMetadata | null> {
     const rows = await getActiveEffects(this.db, targetActorId, { effectId, },);
-    const row = rows.find((r,) => r.category === "physical",);
+    const row = rows.find((r,) => r.category === "physical");
     if (!row) { return null; }
     return {
       effectId: row.effectId,

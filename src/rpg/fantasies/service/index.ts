@@ -17,10 +17,10 @@
  * a class so its methods stay on the prototype.
  */
 import type { Kysely, } from "kysely";
-import type { FantasyCategory, } from "../../../db/enums";
-import type { DB, } from "../../../db/schema";
 import { MoodService, } from "../../../characters/services/mood-service";
 import type { MoodState, } from "../../../characters/services/mood-service";
+import type { FantasyCategory, } from "../../../db/enums";
+import type { DB, } from "../../../db/schema";
 import {
   createFantasy as createFantasyDispatch,
   deleteFantasy as deleteFantasyDispatch,
