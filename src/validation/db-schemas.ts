@@ -442,6 +442,8 @@ export const RelationshipTypeSchema = t.UnionEnum([
   "neutral",
 ],);
 export const ResponseCompressionSchema = t.UnionEnum(["br", "gzip", "auto",],);
+export const RpgQuestionStatusSchema = t.UnionEnum(["open", "answered", "expired",],);
+export const RpgQuestionTypeSchema = t.UnionEnum(["dialogue", "action", "exploration", "combat", "custom",],);
 export const SdModelTypeSchema = t.UnionEnum(["checkpoint", "diffusion",],);
 export const SeductionSkillCategorySchema = t.UnionEnum([
   "foreplay",
@@ -2653,6 +2655,21 @@ export const E2eSkippedMessageKeysSchema = t.Object({
   chain_index: t.Number(),
   message_key: t.String(),
   created_at: t.Optional(t.String(),),
+},);
+
+// ── rpg_questions ────────────────────────────────────────────
+export const RpgQuestionsSchema = t.Object({
+  chat_id: t.String(),
+  actor_id: t.String(),
+  type: t.String(),
+  prompt: t.String(),
+  options: t.String(),
+  time_limit: t.Optional(t.Number(),),
+  required_choice: t.Optional(t.Number(),),
+  status: t.Optional(t.String(),),
+  selected_option_id: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  answered_at: t.Optional(t.String(),),
 },);
 
 // ── message_search_tokens ────────────────────────────────────────────
