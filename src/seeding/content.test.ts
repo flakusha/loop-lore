@@ -178,6 +178,93 @@ describe("seedConfiguredContent", () => {
     expect(charCount?.n,).toBe(2,);
   });
 
+  test("seeds world items, quests and chat initial messages", async () => {
+    const users = [{ username: "player1", password: "pw1", role: UserRole.Player, },];
+    const seeding: SeedingConfig = {
+      enabled: true,
+      users,
+      seedData: {
+        worlds: [{
+          name: "Item Quest World",
+          creator: "player1",
+          items: [
+            {
+              name: "Iron Sword",
+              description: "Sturdy.",
+              category: "weapon",
+              rarity: "common",
+              value: 10,
+              weight: 3,
+              maxStack: 1,
+            },
+            { name: "Arrow Bundle", category: "weapon", maxStack: 50, },
+          ],
+          quests: [
+            { name: "Find the Relic", description: "Recover it.", type: "discovery", category: "main", target: 3, },
+          ],
+        },],
+        chats: [{
+          participants: ["player1", "player2",],
+          name: "NarratedRoute",
+          initialMessages: ["The road opens before you.", "A crow circles overhead.",],
+        },],
+      },
+    };
+    await seedConfiguredUsers(db, { seeding: { ...seeding, users, }, auth: auth(true,), },);
+    const created = await seedConfiguredContent(db, seeding, true,);
+    expect(created,).toBe(2,);
+
+    const world = await db
+      .selectFrom("worlds",)
+      .select("id",)
+      .where("name", "=", "Item Quest World",)
+      .executeTakeFirst();
+    expect(world,).toBeDefined();
+
+    const items = await db
+      .selectFrom("items",)
+      .select(["name", "category", "rarity", "stackable", "max_stack", "value",],)
+      .where("world_id", "=", world!.id,)
+      .execute();
+    expect(items,).toHaveLength(2,);
+    const sword = items.find((i,) => i.name === "Iron Sword");
+    expect(sword?.category,).toBe("weapon",);
+    expect(sword?.stackable,).toBe("unique",);
+    expect(sword?.value,).toBe(10,);
+    const arrows = items.find((i,) => i.name === "Arrow Bundle");
+    expect(arrows?.stackable,).toBe("stackable",);
+    expect(arrows?.max_stack,).toBe(50,);
+
+    const quests = await db
+      .selectFrom("quests",)
+      .select(["name", "type", "category", "status", "target",],)
+      .where("world_id", "=", world!.id,)
+      .execute();
+    expect(quests,).toHaveLength(1,);
+    expect(quests[0]?.name,).toBe("Find the Relic",);
+    expect(quests[0]?.type,).toBe("discovery",);
+    expect(quests[0]?.status,).toBe("active",);
+    expect(quests[0]?.target,).toBe(3,);
+
+    const chat = await db
+      .selectFrom("chats",)
+      .select("id",)
+      .where("name", "=", "NarratedRoute",)
+      .executeTakeFirst();
+    expect(chat,).toBeDefined();
+    const messages = await db
+      .selectFrom("messages",)
+      .select(["role", "content",],)
+      .where("chat_id", "=", chat!.id,)
+      .orderBy("created_at", "asc",)
+      .execute();
+    expect([...messages.map((m,) => m.content).sort(),],).toEqual([
+      "A crow circles overhead.",
+      "The road opens before you.",
+    ],);
+    expect(messages.every((m,) => m.role === "system"),).toBe(true,);
+  });
+
   test("skips content referencing unknown owners", async () => {
     const seeding: SeedingConfig = {
       enabled: true,
