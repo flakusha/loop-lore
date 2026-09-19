@@ -131,6 +131,44 @@ describeReal("Assets E2E", () => {
     expect(linksRes.data,).toEqual([],);
   });
 
+  test("DELETE /api/assets/:id/links/:linkId returns 409 when entity_id is ambiguous across entity_types", async () => {
+    // Regression for the over-delete bug: when the same entity_id appears
+    // under multiple entity_types on the same asset, the route refuses
+    // with 409 instead of silently dropping the unrelated link row.
+    const file = new File(["ambiguous",], "ambiguous.png", { type: "image/png", },);
+    const formData = new FormData();
+    formData.append("file", file,);
+    const uploadRes = await api.upload<{ id: string }>("/api/assets", formData,);
+    const assetId = uploadRes.data!.id;
+
+    // Two links sharing the same entity_id, different entity_type.
+    // asset_links PK is (asset_id, entity_type, entity_id), so both rows
+    // coexist; the DELETE route has no entity_type segment to pick one.
+    const charLink = await api.post(`/api/assets/${assetId}/links`, {
+      entityType: "character",
+      entityId: "shared-entity-id",
+    },);
+    expect(charLink.ok,).toBe(true,);
+    const worldLink = await api.post(`/api/assets/${assetId}/links`, {
+      entityType: "world",
+      entityId: "shared-entity-id",
+    },);
+    expect(worldLink.ok,).toBe(true,);
+
+    const delRes = await api.del(`/api/assets/${assetId}/links/shared-entity-id`, {
+      entityType: "character",
+      entityId: "shared-entity-id",
+    },);
+    expect(delRes.status,).toBe(409,);
+    expect(delRes.code,).toBe("CONFLICT",);
+
+    // Both links still present (no silent drop).
+    const linksRes = await api.get<Array<{ entity_type: string; entity_id: string }>>(
+      `/api/assets/${assetId}/links`,
+    );
+    expect(linksRes.data,).toHaveLength(2,);
+  });
+
   test("DELETE /api/assets/:id deletes asset", async () => {
     const file = new File(["delete me",], "delete.png", { type: "image/png", },);
     const formData = new FormData();
