@@ -180,9 +180,10 @@ export interface TestServer {
 export type DialectFactory = () => Dialect;
 
 function sqliteInMemory(): Dialect {
+  // No pragmas here — `:memory:` cannot use WAL (returns the existing journal
+  // mode without enabling it, see BUG-sqlite-wal-pragma-noop-on-in-memory-test-db).
+  // FK enforcement + WAL on file-backed paths come from `createSqliteDialect`.
   const sqlite = new Database(":memory:",);
-  sqlite.run("PRAGMA journal_mode = WAL",);
-  sqlite.run("PRAGMA foreign_keys = ON",);
   return createSqliteDialect(sqlite,);
 }
 
@@ -340,82 +341,97 @@ export async function createTestServer(
   registerMock = false,
 ): Promise<TestServer> {
   const db = createTestDb();
-  await runMigrations(db,);
+  // Create temp upload dir under /tmp/ — NEVER in project dir or user home.
+  // Use crypto.randomUUID() so concurrent workers can't collide on
+  // millisecond+Math.random() (BUG-test-run-id-uses-Date-now-collision-risk-under-parallel).
+  // Declared outside try so the close() closure can still reach it.
+  const testRunId = `loop-lore-e2e-${crypto.randomUUID()}`;
+  let bunServer: { stop(): boolean } | null = null;
+  try {
+    await runMigrations(db,);
 
-  // Seed built-in chat setup templates — location creation auto-binds a
-  // public chat to a template (production start.ts does this too).
-  const { seedChatSetupTemplates, } = await import("@/chat/service");
-  await seedChatSetupTemplates(db,);
+    // Seed built-in chat setup templates — location creation auto-binds a
+    // public chat to a template (production start.ts does this too).
+    const { seedChatSetupTemplates, } = await import("@/chat/service");
+    await seedChatSetupTemplates(db,);
 
-  const config = loadTestConfig(overrides,);
+    const config = loadTestConfig(overrides,);
 
-  // Create temp upload dir under /tmp/ — NEVER in project dir or user home
-  const testRunId = `loop-lore-e2e-${Date.now()}-${Math.random().toString(36,).slice(2, 8,)}`;
-  const testUploadDir = resolve("/tmp", testRunId, "uploads",);
-  config.assets.uploadDir = testUploadDir;
-  mkdirSync(testUploadDir, { recursive: true, },);
+    const testUploadDir = resolve("/tmp", testRunId, "uploads",);
+    config.assets.uploadDir = testUploadDir;
+    mkdirSync(testUploadDir, { recursive: true, },);
 
-  // Initialize logger + age gate (singletons)
-  const logger = createLogger({ level: "error", },);
-  setGlobalLogger(logger,);
-  initAgeGate(config.ageGate,);
-  // Reset SMK from any prior unit tests — test config has no encryption key
-  await initSmk(config.encryption,);
+    // Initialize logger + age gate (singletons)
+    const logger = createLogger({ level: "error", },);
+    setGlobalLogger(logger,);
+    initAgeGate(config.ageGate,);
+    // Reset SMK from any prior unit tests — test config has no encryption key
+    await initSmk(config.encryption,);
 
-  // Initialize providers from config (real or mock)
-  let mockProvider: MockLLMProvider | null = null;
-  if (registerMock) {
-    mockProvider = new MockLLMProvider();
-    registerProvider("mock-provider", mockProvider,);
-    // Use the actual instance from registry (may be pre-existing from other tests)
-    mockProvider = getProvider("mock-provider",) as MockLLMProvider ?? mockProvider;
-    // Force mock as the default provider/model. config.yaml may set a real
-    // defaultProvider (e.g. a local llama-swap endpoint); if we only set it
-    // when unset, generation e2e tests hit the real LLM (slow timeouts +
-    // content mismatch). registerMock is used exclusively by generation e2e,
-    // so this never affects other suites.
-    config.generation.defaultProvider = "mock-provider";
-    config.generation.defaultModels["mock-provider"] = "mock-model";
-    // Clear real providers from config so initializeProviders only registers the mock
-    config.generation.providers.openaiCompatible = [];
+    // Initialize providers from config (real or mock)
+    let mockProvider: MockLLMProvider | null = null;
+    if (registerMock) {
+      mockProvider = new MockLLMProvider();
+      registerProvider("mock-provider", mockProvider,);
+      // Use the actual instance from registry (may be pre-existing from other tests)
+      mockProvider = getProvider("mock-provider",) as MockLLMProvider ?? mockProvider;
+      // Force mock as the default provider/model. config.yaml may set a real
+      // defaultProvider (e.g. a local llama-swap endpoint); if we only set it
+      // when unset, generation e2e tests hit the real LLM (slow timeouts +
+      // content mismatch). registerMock is used exclusively by generation e2e,
+      // so this never affects other suites.
+      config.generation.defaultProvider = "mock-provider";
+      config.generation.defaultModels["mock-provider"] = "mock-model";
+      // Clear real providers from config so initializeProviders only registers the mock
+      config.generation.providers.openaiCompatible = [];
+    }
+    initializeProviders(config,);
+
+    const app = createApp({
+      database: db,
+      config,
+      handleNonApiRequest: async () => new Response("Not found", { status: 404, },),
+      handleApiRequest,
+    },);
+
+    // Route through the same production handler so response-header and
+    // dynamic-response policies are exercised by e2e tests.
+    const handler = createRequestHandler(app, config, logger,);
+
+    bunServer = Bun.serve({ port: 0, fetch: handler, },);
+    // Use 127.0.0.1 instead of localhost to avoid lean-ctx proxy interception
+    // Also bypass HTTP_PROXY for test-local fetch calls
+    const url = `http://127.0.0.1:${bunServer.port}`;
+    process.env.NO_PROXY = process.env.NO_PROXY
+      ? `${process.env.NO_PROXY},127.0.0.1,localhost`
+      : "127.0.0.1,localhost";
+    const SEED_DEFAULT_CHAT_ID = "a0000004-0000-4000-a000-000000000000";
+
+    return {
+      url,
+      db,
+      config,
+      mockProvider,
+      context: { chatId: SEED_DEFAULT_CHAT_ID, },
+      close: () => {
+        bunServer?.stop();
+        setTestDatabase(null,);
+        resetSoloUserCache();
+        resetLoginRateLimiter();
+        const testDir = resolve("/tmp", testRunId,);
+        if (existsSync(testDir,)) {
+          rmSync(testDir, { recursive: true, force: true, },);
+        }
+      },
+    };
+  } catch (err) {
+    // Clear the module-global override and any partial upload dir if setup
+    // throws mid-way — prevents leaking into sibling test files under
+    // non-isolated runners (BUG-settestdatabase-global-leak-on-test-throw).
+    bunServer?.stop();
+    setTestDatabase(null,);
+    const testDir = resolve("/tmp", testRunId,);
+    if (existsSync(testDir,)) { rmSync(testDir, { recursive: true, force: true, },); }
+    throw err;
   }
-  initializeProviders(config,);
-
-  const app = createApp({
-    database: db,
-    config,
-    handleNonApiRequest: async () => new Response("Not found", { status: 404, },),
-    handleApiRequest,
-  },);
-
-  // Route through the same production handler so response-header and
-  // dynamic-response policies are exercised by e2e tests.
-  const handler = createRequestHandler(app, config, logger,);
-
-  const bunServer = Bun.serve({ port: 0, fetch: handler, },);
-  // Use 127.0.0.1 instead of localhost to avoid lean-ctx proxy interception
-  // Also bypass HTTP_PROXY for test-local fetch calls
-  const url = `http://127.0.0.1:${bunServer.port}`;
-  process.env.NO_PROXY = process.env.NO_PROXY
-    ? `${process.env.NO_PROXY},127.0.0.1,localhost`
-    : "127.0.0.1,localhost";
-  const SEED_DEFAULT_CHAT_ID = "a0000004-0000-4000-a000-000000000000";
-
-  return {
-    url,
-    db,
-    config,
-    mockProvider,
-    context: { chatId: SEED_DEFAULT_CHAT_ID, },
-    close: () => {
-      bunServer.stop();
-      setTestDatabase(null,);
-      resetSoloUserCache();
-      resetLoginRateLimiter();
-      const testDir = resolve("/tmp", testRunId,);
-      if (existsSync(testDir,)) {
-        rmSync(testDir, { recursive: true, force: true, },);
-      }
-    },
-  };
 }

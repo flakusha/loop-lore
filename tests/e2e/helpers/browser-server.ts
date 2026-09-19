@@ -78,106 +78,121 @@ export async function createBrowserTest(
 ): Promise<BrowserTestContext> {
   const publicDir = ensureFrontendBuild();
 
-  // Create DB + run migrations
-  const db = createTestDb();
-  await runMigrations(db,);
+  // Use crypto.randomUUID() so concurrent workers can't collide on
+  // millisecond+Math.random() (BUG-test-run-id-uses-Date-now-collision-risk-under-parallel).
+  const testRunId = `loop-lore-e2e-${crypto.randomUUID()}`;
+  let bunServer: { stop(): boolean } | null = null;
+  let browser: Browser | null = null;
+  try {
+    // Create DB + run migrations
+    const db = createTestDb();
+    await runMigrations(db,);
 
-  const config = loadTestConfig(overrides,);
+    const config = loadTestConfig(overrides,);
 
-  // Temp upload dir
-  const testRunId = `loop-lore-e2e-${Date.now()}-${Math.random().toString(36,).slice(2, 8,)}`;
-  const testUploadDir = join("/tmp", testRunId, "uploads",);
-  config.assets.uploadDir = testUploadDir;
-  mkdirSync(testUploadDir, { recursive: true, },);
+    // Temp upload dir
+    const testUploadDir = join("/tmp", testRunId, "uploads",);
+    config.assets.uploadDir = testUploadDir;
+    mkdirSync(testUploadDir, { recursive: true, },);
 
-  // Initialize singletons
-  const logger = createLogger({ level: "error", },);
-  setGlobalLogger(logger,);
-  initAgeGate(config.ageGate,);
-  await initSmk(config.encryption,);
-  initializeProviders(config,);
-  await loadAllPlugins(db,);
+    // Initialize singletons
+    const logger = createLogger({ level: "error", },);
+    setGlobalLogger(logger,);
+    initAgeGate(config.ageGate,);
+    await initSmk(config.encryption,);
+    initializeProviders(config,);
+    await loadAllPlugins(db,);
 
-  // Seed solo user + character visible to solo context
-  await seedSolo(db,);
-  resetSoloUserCache();
+    // Seed solo user + character visible to solo context
+    await seedSolo(db,);
+    resetSoloUserCache();
 
-  // Create Elysia app with a non-API handler that serves static files
-  const app = createApp({
-    database: db,
-    config,
-    handleApiRequest,
-    handleNonApiRequest: async (request: Request,): Promise<Response> => {
-      const url = new URL(request.url,);
-      const publicPath = join(publicDir, url.pathname === "/" ? "index.html" : url.pathname,);
-      if (publicPath.startsWith(`${publicDir}/`,) && existsSync(publicPath,)) {
-        const content = readFileSync(publicPath,);
-        const ext = publicPath.split(".",).pop()?.toLowerCase() ?? "";
-        const mime: Record<string, string> = {
-          html: "text/html",
-          css: "text/css",
-          js: "application/javascript",
-          png: "image/png",
-          jpg: "image/jpeg",
-          jpeg: "image/jpeg",
-          svg: "image/svg+xml",
-          ico: "image/x-icon",
-        };
-        return new Response(content, { headers: { "Content-Type": mime[ext] ?? "text/plain", }, },);
-      }
-      return new Response("Not found", { status: 404, },);
-    },
-  },);
+    // Create Elysia app with a non-API handler that serves static files
+    const app = createApp({
+      database: db,
+      config,
+      handleApiRequest,
+      handleNonApiRequest: async (request: Request,): Promise<Response> => {
+        const url = new URL(request.url,);
+        const publicPath = join(publicDir, url.pathname === "/" ? "index.html" : url.pathname,);
+        if (publicPath.startsWith(`${publicDir}/`,) && existsSync(publicPath,)) {
+          const content = readFileSync(publicPath,);
+          const ext = publicPath.split(".",).pop()?.toLowerCase() ?? "";
+          const mime: Record<string, string> = {
+            html: "text/html",
+            css: "text/css",
+            js: "application/javascript",
+            png: "image/png",
+            jpg: "image/jpeg",
+            jpeg: "image/jpeg",
+            svg: "image/svg+xml",
+            ico: "image/x-icon",
+          };
+          return new Response(content, { headers: { "Content-Type": mime[ext] ?? "text/plain", }, },);
+        }
+        return new Response("Not found", { status: 404, },);
+      },
+    },);
 
-  // Start Bun server
-  const bunServer = Bun.serve({
-    port: 0,
-    fetch: (req,) => app.fetch(req,),
-  },);
+    // Start Bun server
+    bunServer = Bun.serve({
+      port: 0,
+      fetch: (req,) => app.fetch(req,),
+    },);
 
-  const url = `http://localhost:${bunServer.port}`;
+    const url = `http://localhost:${bunServer.port}`;
 
-  const browser = await chromium.launch({ headless: true, },);
+    browser = await chromium.launch({ headless: true, },);
 
-  // Create browser context with generous viewport so sidebar nav is visible.
-  // Cast to Browser — BrowserContext also has newPage() and is compatible
-  // at runtime with the BrowserTestContext interface.
-  const browserContext = await browser.newContext({
-    viewport: { width: 1440, height: 900, },
-  },);
+    // Create browser context with generous viewport so sidebar nav is visible.
+    // Cast to Browser — BrowserContext also has newPage() and is compatible
+    // at runtime with the BrowserTestContext interface.
+    const browserContext = await browser.newContext({
+      viewport: { width: 1440, height: 900, },
+    },);
 
-  // Track open pages so a timed-out test can't leak its page into the next test.
-  const openPages = new Set<Page>();
-  browserContext.on("page", (page,) => {
-    openPages.add(page,);
-    page.once("close", () => openPages.delete(page,),);
-  },);
+    // Track open pages so a timed-out test can't leak its page into the next test.
+    const openPages = new Set<Page>();
+    browserContext.on("page", (page,) => {
+      openPages.add(page,);
+      page.once("close", () => openPages.delete(page,),);
+    },);
 
-  return {
-    url,
-    db,
-    config,
-    browser: browserContext as unknown as Browser,
-    openPage: async () => browserContext.newPage(),
-    closeAllPages: async () => {
-      // Close in reverse order (newest first) to avoid detached-frame races.
-      const pages = [...openPages,];
-      pages.reverse();
-      await Promise.allSettled(pages.map(async (page,) => {
-        try {
-          await page.close();
-        } catch { /* already detached */ }
-      },),);
-      openPages.clear();
-    },
-    close: async () => {
-      await browser.close();
-      bunServer.stop();
-      setTestDatabase(null,);
-      resetSoloUserCache();
-      await unloadAllPlugins();
-      const testDir = join("/tmp", testRunId,);
-      if (existsSync(testDir,)) { rmSync(testDir, { recursive: true, force: true, },); }
-    },
-  };
+    return {
+      url,
+      db,
+      config,
+      browser: browserContext as unknown as Browser,
+      openPage: async () => browserContext.newPage(),
+      closeAllPages: async () => {
+        // Close in reverse order (newest first) to avoid detached-frame races.
+        const pages = [...openPages,];
+        pages.reverse();
+        await Promise.allSettled(pages.map(async (page,) => {
+          try {
+            await page.close();
+          } catch { /* already detached */ }
+        },),);
+        openPages.clear();
+      },
+      close: async () => {
+        await browser?.close();
+        bunServer?.stop();
+        setTestDatabase(null,);
+        resetSoloUserCache();
+        await unloadAllPlugins();
+        const testDir = join("/tmp", testRunId,);
+        if (existsSync(testDir,)) { rmSync(testDir, { recursive: true, force: true, },); }
+      },
+    };
+  } catch (err) {
+    // Clear the module-global override and any partial upload dir if setup
+    // throws mid-way (BUG-settestdatabase-global-leak-on-test-throw).
+    await browser?.close();
+    bunServer?.stop();
+    setTestDatabase(null,);
+    const testDir = join("/tmp", testRunId,);
+    if (existsSync(testDir,)) { rmSync(testDir, { recursive: true, force: true, },); }
+    throw err;
+  }
 }
