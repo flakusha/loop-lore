@@ -196,6 +196,61 @@ export class LocationNsfwService {
     return { suitable: true, };
   }
 
+  // ── Encounter-facing API (TASK-043) ───────────────────────
+
+  /**
+   * List world locations whose NSFW config clears a privacy minimum.
+   *
+   * Reads the canonical `locations` rows, then filters via the stored
+   * NSFW config — suitability stays a config read, never a duplicate
+   * housing query. Locations without a row get the bedroom/private
+   * default through `getConfig`, so every canonical location resolves.
+   * @param worldId
+   * @param minPrivacy
+   */
+  async listAvailable(
+    worldId: string,
+    minPrivacy = "semi_private",
+  ): Promise<LocationNsfwConfig[]> {
+    const rows = await this.db
+      .selectFrom("locations",)
+      .where("world_id", "=", worldId,)
+      .select("id",)
+      .execute();
+    const configs = await this.getConfigs(rows.map((row,) => row.id,),);
+    const byId = new Map(configs.map((config,) => [config.locationId, config,],),);
+    const available: LocationNsfwConfig[] = [];
+    for (const row of rows) {
+      const config = byId.get(row.id,) ?? await this.getConfig(row.id,);
+      const check = await this.isSuitableForEncounter(row.id, minPrivacy,);
+      if (check.suitable) { available.push(config,); }
+    }
+    return available;
+  }
+
+  /**
+   * Resolve the stored atmosphere scores for an encounter location.
+   *
+   * Thin alias over `getConfig().atmosphere`: encounter code calls one
+   * entry point, and the weather-subscription adjustment (if any) lands
+   * in exactly one place. No parallel weather cache — a future
+   * `weather.changed` subscriber adjusts the stored config, not a copy.
+   * @param locationId
+   */
+  async resolveAtmosphere(locationId: string,): Promise<LocationAtmosphere> {
+    const config = await this.getConfig(locationId,);
+    return config.atmosphere;
+  }
+
+  /**
+   * Whether a location counts as private (private or isolated tier).
+   * @param locationId
+   */
+  async isPrivate(locationId: string,): Promise<boolean> {
+    const config = await this.getConfig(locationId,);
+    return config.privacyLevel === "private" || config.privacyLevel === "isolated";
+  }
+
   // ── Private helpers ───────────────────────────────────
 
   /**

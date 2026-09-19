@@ -4,7 +4,15 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../../db/schema";
 import { createLogger, } from "../../../logger";
 import { createTestDb, resetTestDb, } from "../../../test-utils/create-test-db";
-import { insertUsers, insertWorlds, } from "../../../test-utils/insert-helpers";
+import {
+  insertActors,
+  insertCharacterMood,
+  insertLocations,
+  insertUsers,
+  insertWorlds,
+} from "../../../test-utils/insert-helpers";
+import { LocationNsfwService, } from "../../location-nsfw/service.js";
+import { uid, } from "../../../utils.js";
 import { EncounterService, } from "./index";
 
 createLogger({ level: "error", },);
@@ -274,5 +282,173 @@ describe("EncounterService", () => {
     expect(await service.getEncounter(encounter.id,),).toBeNull();
     expect(await service.deleteEncounter(encounter.id,),).toBeFalse();
     expect(await service.deleteEncounter("encounter-missing",),).toBeFalse();
+  });
+});
+
+describe("outcome fan-out (TASK-036/040/041/042/043)", () => {
+  const NOW = "2026-01-01T00:00:00.000Z";
+
+  /** Canonical pair of actors with mood rows (fan-out legs need them). */
+  async function seedPair(): Promise<{ a: string; b: string }> {
+    const a = `fan-a-${uid()}`;
+    const b = `fan-b-${uid()}`;
+    await insertActors(db, a, { id: a, },);
+    await insertActors(db, b, { id: b, },);
+    await insertCharacterMood(db, a, NOW, NOW, NOW,);
+    await insertCharacterMood(db, b, NOW, NOW, NOW,);
+    return { a, b, };
+  }
+
+  test("completion fans out to mood, XP ledger, reputation rows, and memory", async () => {
+    const service = new EncounterService(db,);
+    const { a, b, } = await seedPair();
+    const encounter = await service.createEncounter({
+      database: db,
+      worldId: "world-1",
+      encounterType: "romantic",
+      participants: [a, b,],
+      phases: [{
+        name: "Only",
+        duration: 1,
+        actionsAvailable: ["all",],
+        arousalEffects: [],
+        narrativeBeats: [],
+      },],
+      outcomes: [{
+        type: "satisfaction",
+        probability: 1,
+        effects: {
+          intimacyChange: 5,
+          moodChange: 10,
+          satisfactionBonus: 15,
+          memoryCreated: true,
+          reputationChange: 0,
+        },
+      },],
+    },);
+    const result = await service.advancePhase(encounter.id,);
+    expect(result.complete,).toBeTrue();
+
+    // Mood leg: one encounter.completed event per participant.
+    for (const actor of [a, b,]) {
+      const events = await db.selectFrom("mood_events",)
+        .where("actor_id", "=", actor,)
+        .selectAll()
+        .execute();
+      expect(events.some((row,) => row.event_type === "encounter.completed" && row.source === "encounter",),).toBeTrue();
+    }
+
+    // XP leg: one nsfw_encounter row per participant.
+    for (const actor of [a, b,]) {
+      const rows = await db.selectFrom("xp_ledger",)
+        .where("actor_id", "=", actor,)
+        .where("source", "=", "nsfw_encounter",)
+        .selectAll()
+        .execute();
+      expect(rows.length,).toBe(1,);
+      expect(rows[0]!.amount,).toBe(15,);
+    }
+
+    // Reputation leg: one category="reputation" row per participant.
+    for (const actor of [a, b,]) {
+      const rows = await db.selectFrom("status_effect",)
+        .where("actor_id", "=", actor,)
+        .where("category", "=", "reputation",)
+        .selectAll()
+        .execute();
+      expect(rows.length,).toBe(1,);
+      expect(rows[0]!.source,).toBe("nsfw",);
+    }
+
+    // Memory leg: one actor_memories row per participant.
+    for (const actor of [a, b,]) {
+      const rows = await db.selectFrom("actor_memories",)
+        .where("actor_id", "=", actor,)
+        .selectAll()
+        .execute();
+      expect(rows.length,).toBe(1,);
+    }
+
+    // Intimacy leg: the pair row exists with the +5 delta applied.
+    const pair = await db.selectFrom("character_intimacy",)
+      .where("actor_id", "=", a,)
+      .where("target_actor_id", "=", b,)
+      .selectAll()
+      .executeTakeFirst()
+      ?? await db.selectFrom("character_intimacy",)
+        .where("actor_id", "=", b,)
+        .where("target_actor_id", "=", a,)
+        .selectAll()
+        .executeTakeFirst();
+    expect(pair?.score,).toBe(5,);
+  });
+
+  test("romantic venue amplifies the intimacy delta by +2 (TASK-043)", async () => {
+    const service = new EncounterService(db,);
+    const { a, b, } = await seedPair();
+    const venueId = `venue-${a}`;
+    await insertLocations(db, "world-1", "Honeymoon Suite", { id: venueId, },);
+    const locations = new LocationNsfwService(db,);
+    await locations.updateConfig(venueId, { atmosphere: { romantic: 90, }, },);
+    const encounter = await service.createEncounter({
+      database: db,
+      worldId: "world-1",
+      locationId: venueId,
+      encounterType: "romantic",
+      participants: [a, b,],
+      phases: [{
+        name: "Only",
+        duration: 1,
+        actionsAvailable: ["all",],
+        arousalEffects: [],
+        narrativeBeats: [],
+      },],
+      outcomes: [{
+        type: "satisfaction",
+        probability: 1,
+        effects: {
+          intimacyChange: 5,
+          moodChange: 0,
+          satisfactionBonus: 0,
+          memoryCreated: false,
+          reputationChange: 0,
+        },
+      },],
+    },);
+    await service.advancePhase(encounter.id,);
+    const pair = await db.selectFrom("character_intimacy",)
+      .where("actor_id", "=", a,)
+      .where("target_actor_id", "=", b,)
+      .selectAll()
+      .executeTakeFirst()
+      ?? await db.selectFrom("character_intimacy",)
+        .where("actor_id", "=", b,)
+        .where("target_actor_id", "=", a,)
+        .selectAll()
+        .executeTakeFirst();
+    // 5 + 2 romantic bonus = 7.
+    expect(pair?.score,).toBe(7,);
+  });
+
+  test("completion without participants or outcomes writes no fan-out rows", async () => {
+    const service = new EncounterService(db,);
+    const encounter = await service.createEncounter({
+      database: db,
+      encounterType: "tender",
+      participants: [],
+      phases: [{
+        name: "Only",
+        duration: 1,
+        actionsAvailable: ["all",],
+        arousalEffects: [],
+        narrativeBeats: [],
+      },],
+      outcomes: [],
+    },);
+    const result = await service.advancePhase(encounter.id,);
+    expect(result.complete,).toBeTrue();
+    expect(
+      await db.selectFrom("status_effect",).selectAll().execute(),
+    ).toEqual([],);
   });
 });
