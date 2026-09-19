@@ -2610,21 +2610,6 @@ export const NsfwUserPreferencesSchema = t.Object({
   updated_at: t.Optional(t.String(),),
 },);
 
-// ── rpg_questions ────────────────────────────────────────────
-export const RpgQuestionsSchema = t.Object({
-  chat_id: t.String(),
-  actor_id: t.String(),
-  type: t.String(),
-  prompt: t.String(),
-  options: t.String(),
-  time_limit: t.Optional(t.Number(),),
-  required_choice: t.Optional(t.Number(),),
-  status: t.Optional(t.String(),),
-  selected_option_id: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-  answered_at: t.Optional(t.String(),),
-},);
-
 // ── e2e_group_wraps ────────────────────────────────────────────
 export const E2eGroupWrapsSchema = t.Object({
   group_session_id: t.String(),
