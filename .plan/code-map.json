@@ -19051,6 +19051,13 @@
       "source": ".plan/tickets/IDEA-memory-knowledge-isolation-and-world-timeline.md"
     }
   ],
+
+  "src/memory/provision": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-memory-isolation-design.md"
+    }
+  ],
   "src/memory/provision.test.ts": [
     {
       "kind": "ticket",
