@@ -2657,6 +2657,13 @@ export const E2eSkippedMessageKeysSchema = t.Object({
   created_at: t.Optional(t.String(),),
 },);
 
+// ── message_search_tokens ────────────────────────────────────────────
+export const MessageSearchTokensSchema = t.Object({
+  message_id: t.String(),
+  token: t.String(),
+  scope: t.String(),
+},);
+
 // ── rpg_questions ────────────────────────────────────────────
 export const RpgQuestionsSchema = t.Object({
   chat_id: t.String(),
@@ -2670,13 +2677,6 @@ export const RpgQuestionsSchema = t.Object({
   selected_option_id: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
   answered_at: t.Optional(t.String(),),
-},);
-
-// ── message_search_tokens ────────────────────────────────────────────
-export const MessageSearchTokensSchema = t.Object({
-  message_id: t.String(),
-  token: t.String(),
-  scope: t.String(),
 },);
 
 // ── schema_version ────────────────────────────────────────────
