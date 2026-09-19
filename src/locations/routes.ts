@@ -19,7 +19,7 @@
 import { randomUUID, } from "node:crypto";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db";
-import type { MobilityMode, TransportKind, } from "../db/enums-story/world";
+import type { TransportKind, } from "../db/enums-story/world";
 
 export interface CreateTravelRouteInput {
   worldId: string;
@@ -139,7 +139,7 @@ export class TravelRouteService {
   }
 
   /** Detach a transport (clears current_route_id and travel_progress). */
-  async detachTransport(locationId: string,): Promise<void> {
+  async detachTransport(locationId: string, _routeId?: string,): Promise<void> {
     await this.db.updateTable("locations",).where("id", "=", locationId,).set({
       current_route_id: null,
       travel_progress: 0,
@@ -169,5 +169,45 @@ export class TravelRouteService {
     if (stops.length === 0) { return null; }
     const idx = Math.min(Math.floor(loc.travel_progress ?? 0), stops.length - 1,);
     return { stopOrder: stops[idx]!.stop_order, stopLocationId: stops[idx]!.location_id };
+  }
+
+  /** List routes in a world. */
+  async listRoutes(worldId: string,): Promise<Array<{ id: string; name: string; kind: TransportKind; loop: number; seconds_per_unit: number }>> {
+    const rows = await this.db
+      .selectFrom("travel_routes",)
+      .where("world_id", "=", worldId,)
+      .select(["id", "name", "kind", "loop", "seconds_per_unit",],)
+      .orderBy("name", "asc",)
+      .execute();
+    return rows as Array<{ id: string; name: string; kind: TransportKind; loop: number; seconds_per_unit: number }>;
+  }
+
+  /** Get a single route, scoped by world. Returns null if not found or in another world. */
+  async getRoute(worldId: string, routeId: string,): Promise<{ id: string; name: string; kind: TransportKind; loop: number; seconds_per_unit: number; world_id: string } | null> {
+    const row = await this.db
+      .selectFrom("travel_routes",)
+      .where("id", "=", routeId,)
+      .where("world_id", "=", worldId,)
+      .select(["id", "name", "kind", "loop", "seconds_per_unit", "world_id",],)
+      .executeTakeFirst();
+    return row as { id: string; name: string; kind: TransportKind; loop: number; seconds_per_unit: number; world_id: string } | null;
+  }
+
+  /** Remove a stop by id (no-op if missing). */
+  async removeStop(_routeId: string, stopId: string,): Promise<void> {
+    await this.db.deleteFrom("travel_route_stops",).where("id", "=", stopId,).execute();
+  }
+
+  /** List ordered stops for a route. (Same as getStops but renamed for the API surface.) */
+  async listStops(routeId: string,): Promise<Array<{
+    id: string;
+    location_id: string;
+    stop_order: number;
+    dwell_seconds: number;
+    coord_x: number | null;
+    coord_y: number | null;
+    coord_z: number | null;
+  }>> {
+    return this.getStops(routeId,);
   }
 }

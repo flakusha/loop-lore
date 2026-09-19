@@ -152,6 +152,42 @@ export class LocationTreeService {
     return result.rows as LocationTreeNode[];
   }
 
+  /**
+   * Return every location in a world as a flat parent → children tree.
+   * Roots are locations with parent_location_id IS NULL.
+   * Each node carries its immediate children.
+   */
+  async tree(worldId: string,): Promise<Array<LocationTreeNode & { children: LocationTreeNode[] }>> {
+    // Load all locations for the world once, then assemble the tree in memory.
+    // For ≤ a few thousand locations per world this is fine; if a world grows
+    // larger, swap this for a recursive CTE that materializes nodes client-side.
+    const all = await this.db
+      .selectFrom("locations",)
+      .where("world_id", "=", worldId,)
+      .select(["id", "name", "parent_location_id",],)
+      .orderBy("name", "asc",)
+      .execute();
+    type Flat = { id: string; name: string; parent_location_id: string | null };
+    const byParent = new Map<string | null, Flat[]>();
+    for (const row of all as Flat[]) {
+      const key = row.parent_location_id;
+      const bucket = byParent.get(key);
+      if (bucket) { bucket.push(row); } else { byParent.set(key, [row]); }
+    }
+    const build = (parentId: string | null): Array<LocationTreeNode & { children: LocationTreeNode[] }> => {
+      const kids = byParent.get(parentId) ?? [];
+      return kids.map((k,) => ({
+        id: k.id,
+        name: k.name,
+        parent_location_id: k.parent_location_id,
+        depth: 0,
+        path: k.id,
+        children: build(k.id),
+      } as unknown as LocationTreeNode & { children: LocationTreeNode[] }),);
+    };
+    return build(null);
+  }
+
   /** Move a subtree under a new parent (cross-world rejected; cycle rejected via trigger). */
   async moveSubtree(locationId: string, newParentId: string | null,): Promise<void> {
     if (newParentId === locationId) {
