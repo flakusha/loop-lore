@@ -82,20 +82,52 @@ export const chatUtilsGallery: ChatUtilsGallery = {
     };
   },
 
+  /** Delete the previewed asset, then close + refresh the sidebar. */
+  async deletePreviewAsset() {
+    const deleted = await globalThis.deleteAssetPreview?.();
+    if (!deleted) { return; }
+    this.previewMediaAsset = null;
+    await this.loadGalleryAssets();
+  },
+
   async loadGalleryAssets() {
     const activeChat = this.activeChat;
     if (!activeChat) { return; }
     try {
-      const url = `/api/assets?entity_type=chat&entity_id=${activeChat}&pageSize=200`;
+      const url = `/api/assets?entity_type=chat&entity_id=${activeChat}&pageSize=200&page=1`;
       const res = await apiFetch(url,);
       if (res.ok) {
         const data = await res.json();
         this.galleryAssets = data.data || [];
+        this.galleryPage = 1;
+        this.galleryTotal = data.pagination?.total ?? this.galleryAssets.length;
       } else {
         this.galleryAssets = [];
+        this.galleryTotal = 0;
       }
     } catch {
       this.galleryAssets = [];
+      this.galleryTotal = 0;
+    }
+  },
+
+  /** Append the next gallery page; a no-op when everything is loaded. */
+  async loadMoreGalleryAssets() {
+    const activeChat = this.activeChat;
+    if (!activeChat || this.galleryAssets.length >= this.galleryTotal) { return; }
+    const next = this.galleryPage + 1;
+    try {
+      const url = `/api/assets?entity_type=chat&entity_id=${activeChat}&pageSize=200&page=${next}`;
+      const res = await apiFetch(url,);
+      if (!res.ok) { return; }
+      const data = await res.json();
+      const known = new Set(this.galleryAssets.map((a,) => a.id),);
+      const fresh = (data.data || []).filter((a: { id: string },) => !known.has(a.id,));
+      this.galleryAssets = [...this.galleryAssets, ...fresh,];
+      this.galleryPage = next;
+      this.galleryTotal = data.pagination?.total ?? this.galleryTotal;
+    } catch {
+      // keep the already-loaded list on network failure
     }
   },
 

@@ -124,6 +124,9 @@ describe("saveCharacterEdit", () => {
       "edit-example": "<user>hi</user>",
       "edit-post-history": "keep it short",
       "char-avatar-id": "av1",
+      "char-data-version": "7",
+      "edit-avatar-focus-x": "25",
+      "edit-avatar-focus-y": "80",
       "edit-content-rating": "nsfw_moderate",
     },);
     feHandler = () => new Response("{}", { status: 200, },);
@@ -136,6 +139,10 @@ describe("saveCharacterEdit", () => {
     expect(body["appearance"],).toBe("Tall with silver hair",);
     expect(body["defaultOutfit"],).toBe("travel-gear",);
     expect(body["displayName"],).toBe("Aria",);
+    // CHAR-1: the loaded version must ride along with every save.
+    expect(body["dataVersion"],).toBe(7,);
+    expect(body["avatarFocusX"],).toBe(25,);
+    expect(body["avatarFocusY"],).toBe(80,);
     expect(toastCalls,).toEqual([{ type: "success", message: "Character saved", },],);
     expect(assignedUrls,).toEqual(["/views/characters",],);
   });

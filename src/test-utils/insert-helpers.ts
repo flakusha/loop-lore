@@ -1049,6 +1049,8 @@ export async function insertActors(
     agent_role?: string | null;
     growth_mode?: string;
     llm_assist_enabled?: number;
+    avatar_focus_x?: number;
+    avatar_focus_y?: number;
   },
 ): Promise<void> {
   await db.insertInto("actors",).values({

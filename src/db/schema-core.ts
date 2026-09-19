@@ -229,6 +229,8 @@ export interface WorldInvites {
   agent_role: string | null;
   growth_mode: Generated<string>;
   llm_assist_enabled: Generated<number>;
+  avatar_focus_x: Generated<number>;
+  avatar_focus_y: Generated<number>;
 }
 
 
