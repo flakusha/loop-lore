@@ -6307,6 +6307,32 @@
     "source": ".plan/tickets/FEAT-2026-irc-group-chat-integration.md",
     "status": "open"
   },
+  "FEAT-3D-CHARACTER-AVATAR-RENDERING": {
+    "hash": "12d2fe9",
+    "git_issue": "12d2fe9",
+    "extid": "FEAT-3D-CHARACTER-AVATAR-RENDERING",
+    "type": "FEAT",
+    "title": "3D Character/Avatar Rendering",
+    "label": "feat",
+    "priority": "low",
+    "epic": "proposed:epic-3d-avatars",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-3d-character-avatar-rendering.md",
+    "status": "⬜ Not Started"
+  },
+  "FEAT-3D-WORLD-MAP-NAVIGATION": {
+    "hash": "f573499",
+    "git_issue": "f573499",
+    "extid": "FEAT-3D-WORLD-MAP-NAVIGATION",
+    "type": "FEAT",
+    "title": "3D World-map Navigation",
+    "label": "feat",
+    "priority": "low",
+    "epic": "proposed:epic-3d-world-map",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-3d-world-map-navigation.md",
+    "status": "⬜ Not Started"
+  },
   "FEAT-ACHIEVEMENTS": {
     "hash": "pending",
     "extid": "FEAT-ACHIEVEMENTS",
@@ -6330,6 +6356,19 @@
     "tags": [],
     "source": ".plan/tickets/FEAT-activitypub-federation.md",
     "status": "open"
+  },
+  "FEAT-ADMIN-ANALYTICS-DASHBOARD": {
+    "hash": "feb28d5",
+    "git_issue": "feb28d5",
+    "extid": "FEAT-ADMIN-ANALYTICS-DASHBOARD",
+    "type": "FEAT",
+    "title": "Admin Analytics Dashboard",
+    "label": "feat",
+    "priority": "high",
+    "epic": "proposed:epic-admin-analytics",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-admin-analytics-dashboard.md",
+    "status": "⬜ Not Started"
   },
   "FEAT-ASSET-SUPPORT-EXPANSION": {
     "hash": "269aa69",
@@ -6370,6 +6409,58 @@
     "status": "done",
     "git_issue": "a7383c3"
   },
+  "FEAT-ASYNC-NPC-MAIL-NPCS-MESSAGE-USER-WHEN-AWAY": {
+    "hash": "1d77489",
+    "git_issue": "1d77489",
+    "extid": "FEAT-ASYNC-NPC-MAIL-NPCS-MESSAGE-USER-WHEN-AWAY",
+    "type": "FEAT",
+    "title": "Async NPC Mail (NPCs message user when away)",
+    "label": "feat",
+    "priority": "low",
+    "epic": "proposed:epic-npc-mail",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-async-npc-mail-npcs-message-user-when-away.md",
+    "status": "⬜ Not Started"
+  },
+  "FEAT-ATTACHMENT-CONTENT-ANALYSIS-PIPELINE": {
+    "hash": "099a3af",
+    "git_issue": "099a3af",
+    "extid": "FEAT-ATTACHMENT-CONTENT-ANALYSIS-PIPELINE",
+    "type": "FEAT",
+    "title": "Attachment Content Analysis Pipeline",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "proposed:epic-attachment-moderation",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-attachment-content-analysis-pipeline.md",
+    "status": "⬜ Not Started"
+  },
+  "FEAT-ATTACHMENT-FRONTEND-UI": {
+    "hash": "48d96af",
+    "git_issue": "48d96af",
+    "extid": "FEAT-ATTACHMENT-FRONTEND-UI",
+    "type": "FEAT",
+    "title": "Attachment Frontend UI",
+    "label": "feat",
+    "priority": "low",
+    "epic": "epic-frontend-gallery",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-attachment-frontend-ui.md",
+    "status": "⬜ Not Started"
+  },
+  "FEAT-ATTACHMENT-REVIEW-QUEUE-ADMIN-UI": {
+    "hash": "1f96c7f",
+    "git_issue": "1f96c7f",
+    "extid": "FEAT-ATTACHMENT-REVIEW-QUEUE-ADMIN-UI",
+    "type": "FEAT",
+    "title": "Attachment Review Queue + Admin UI",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "proposed:epic-admin-moderation",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-attachment-review-queue-admin-ui.md",
+    "status": "⬜ Not Started"
+  },
   "FEAT-AUDIO-VIDEO-SOUND-GENERATION": {
     "hash": "d78b900",
     "extid": "FEAT-AUDIO-VIDEO-SOUND-GENERATION",
@@ -6383,6 +6474,32 @@
     "git_issue": "d78b900",
     "status": "open"
   },
+  "FEAT-AUTO-TRANSLATION-LAYER-INPUT-OUTPUT": {
+    "hash": "4a48268",
+    "git_issue": "4a48268",
+    "extid": "FEAT-AUTO-TRANSLATION-LAYER-INPUT-OUTPUT",
+    "type": "FEAT",
+    "title": "Auto-translation Layer (Input/Output)",
+    "label": "feat",
+    "priority": "low",
+    "epic": "epic-i18n",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-auto-translation-layer-input-output.md",
+    "status": "⬜ Not Started"
+  },
+  "FEAT-AUTOMATED-BALANCE-PLAYTEST-BOT": {
+    "hash": "86d6b0a",
+    "git_issue": "86d6b0a",
+    "extid": "FEAT-AUTOMATED-BALANCE-PLAYTEST-BOT",
+    "type": "FEAT",
+    "title": "Automated Balance Playtest Bot",
+    "label": "feat",
+    "priority": "low",
+    "epic": "proposed:epic-balance-bot",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-automated-balance-playtest-bot.md",
+    "status": "⬜ Not Started"
+  },
   "FEAT-AVATAR-EXPRESSION-SYSTEM": {
     "hash": "96a6ff6",
     "extid": "FEAT-AVATAR-EXPRESSION-SYSTEM",
@@ -6395,6 +6512,32 @@
     "source": ".plan/tickets/FEAT-avatar-expression-system.md",
     "git_issue": "96a6ff6",
     "status": "open"
+  },
+  "FEAT-BATTLE-CORE-IMPLEMENTATION": {
+    "hash": "b1fde84",
+    "git_issue": "b1fde84",
+    "extid": "FEAT-BATTLE-CORE-IMPLEMENTATION",
+    "type": "FEAT",
+    "title": "Battle Core Implementation",
+    "label": "feat",
+    "priority": "high",
+    "epic": "epic-battle-action-systems",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-battle-core-implementation.md",
+    "status": "⬜ Not Started"
+  },
+  "FEAT-BLADES-IN-THE-DARK-POSITION-EFFECT-CLOCKS": {
+    "hash": "3795cf7",
+    "git_issue": "3795cf7",
+    "extid": "FEAT-BLADES-IN-THE-DARK-POSITION-EFFECT-CLOCKS",
+    "type": "FEAT",
+    "title": "Blades in the Dark - Position/Effect + Clocks",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "epic-resolution-system",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-blades-in-the-dark-position-effect-clocks.md",
+    "status": "⬜ Not Started"
   },
   "FEAT-BLOG-SYSTEM": {
     "hash": "4a18214",
@@ -6538,6 +6681,19 @@
     "git_issue": "c294e0a",
     "status": "done"
   },
+  "FEAT-CO-AUTHORING-PRESENCE-LIVE-CURSORS-TYPING-INDICATORS": {
+    "hash": "8be44ed",
+    "git_issue": "8be44ed",
+    "extid": "FEAT-CO-AUTHORING-PRESENCE-LIVE-CURSORS-TYPING-INDICATORS",
+    "type": "FEAT",
+    "title": "Co-authoring Presence (live cursors, typing indicators)",
+    "label": "feat",
+    "priority": "low",
+    "epic": "proposed:epic-co-authoring",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-co-authoring-presence-live-cursors-typing-indicators.md",
+    "status": "⬜ Not Started"
+  },
   "FEAT-COMFYUI-PLUGIN-WORKFLOW-TEMPLATES": {
     "hash": "989166a",
     "extid": "FEAT-COMFYUI-PLUGIN-WORKFLOW-TEMPLATES",
@@ -6550,6 +6706,19 @@
     "source": ".plan/tickets/FEAT-comfyui-plugin-workflow-templates.md",
     "status": "done",
     "git_issue": "989166a"
+  },
+  "FEAT-COMMUNITY-TEMPLATE-WORLD-SHARE-EXPORT-IMPORT": {
+    "hash": "942f8a8",
+    "git_issue": "942f8a8",
+    "extid": "FEAT-COMMUNITY-TEMPLATE-WORLD-SHARE-EXPORT-IMPORT",
+    "type": "FEAT",
+    "title": "Community Template/World/Share Export-Import",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "epic-import-export-io",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-community-template-world-share-export-import.md",
+    "status": "⬜ Not Started"
   },
   "FEAT-CONFIG-FILE-SEPARATION-DOMAIN-EXTRACTION": {
     "hash": "c3808b2",
@@ -6603,6 +6772,19 @@
     "git_issue": "a872e9b",
     "status": "open"
   },
+  "FEAT-CONVERSATION-ANALYTICS-SENTIMENT-WORD-CLOUDS-BEAT-MAP": {
+    "hash": "eaf545e",
+    "git_issue": "eaf545e",
+    "extid": "FEAT-CONVERSATION-ANALYTICS-SENTIMENT-WORD-CLOUDS-BEAT-MAP",
+    "type": "FEAT",
+    "title": "Conversation Analytics (sentiment, word clouds, beat map)",
+    "label": "feat",
+    "priority": "low",
+    "epic": "proposed:epic-conversation-analytics",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-conversation-analytics-sentiment-word-clouds-beat-map.md",
+    "status": "⬜ Not Started"
+  },
   "FEAT-CREATIVE-PROCESS-COMMIT-GATING": {
     "hash": "720ed41",
     "extid": "FEAT-CREATIVE-PROCESS-COMMIT-GATING",
@@ -6615,6 +6797,32 @@
     "source": ".plan/tickets/FEAT-creative-process-commit-gating.md",
     "git_issue": "720ed41",
     "status": "open"
+  },
+  "FEAT-CROSS-CHAT-GLOBAL-MEMORY": {
+    "hash": "850e713",
+    "git_issue": "850e713",
+    "extid": "FEAT-CROSS-CHAT-GLOBAL-MEMORY",
+    "type": "FEAT",
+    "title": "Cross-chat Global Memory",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "epic-memory-knowledge-systems",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-cross-chat-global-memory.md",
+    "status": "⬜ Not Started"
+  },
+  "FEAT-CROSS-DEVICE-E2E-SYNC": {
+    "hash": "98653ae",
+    "git_issue": "98653ae",
+    "extid": "FEAT-CROSS-DEVICE-E2E-SYNC",
+    "type": "FEAT",
+    "title": "Cross-device E2E Sync",
+    "label": "feat",
+    "priority": "low",
+    "epic": "proposed:epic-cross-device-sync",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-cross-device-e2e-sync.md",
+    "status": "⬜ Not Started"
   },
   "FEAT-DATA-INTEGRITY-ACID-GUARANTEES": {
     "hash": "910b341",
@@ -6629,6 +6837,19 @@
     "git_issue": "910b341",
     "status": "open"
   },
+  "FEAT-DIRECTOR-S-MODE-CAMERA-SCENE-CUT-MUSIC-METADATA": {
+    "hash": "1a0f025",
+    "git_issue": "1a0f025",
+    "extid": "FEAT-DIRECTOR-S-MODE-CAMERA-SCENE-CUT-MUSIC-METADATA",
+    "type": "FEAT",
+    "title": "Director's Mode (Camera/Scene-cut/Music Metadata)",
+    "label": "feat",
+    "priority": "low",
+    "epic": "proposed:epic-directors-mode",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-director-s-mode-camera-scene-cut-music-metadata.md",
+    "status": "⬜ Not Started"
+  },
   "FEAT-E2E-PERFORMANCE-BENCHMARKS": {
     "hash": "2082412",
     "extid": "FEAT-E2E-PERFORMANCE-BENCHMARKS",
@@ -6641,6 +6862,19 @@
     "source": ".plan/tickets/FEAT-e2e-performance-benchmarks.md",
     "git_issue": "2082412",
     "status": "open"
+  },
+  "FEAT-EMOTION-REACTIVE-PORTRAITS-AUTO-SWAP-ON-EMOTION-DETECT": {
+    "hash": "ad9968e",
+    "git_issue": "ad9968e",
+    "extid": "FEAT-EMOTION-REACTIVE-PORTRAITS-AUTO-SWAP-ON-EMOTION-DETECT",
+    "type": "FEAT",
+    "title": "Emotion-reactive Portraits (Auto-swap on emotion detect)",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "epic-emotion-avatar-message-binding",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-emotion-reactive-portraits-auto-swap-on-emotion-detect.md",
+    "status": "⬜ Not Started"
   },
   "FEAT-ENCRYPTED-ENVELOPE-V3-ALWAYS-EMIT-COMPALGO-AND-EXPLICIT-VERS": {
     "hash": "802ab64",
@@ -6668,6 +6902,19 @@
     "status": "done",
     "git_issue": "441a05e"
   },
+  "FEAT-ERROR-MONITORING-ALERTING": {
+    "hash": "919b832",
+    "git_issue": "919b832",
+    "extid": "FEAT-ERROR-MONITORING-ALERTING",
+    "type": "FEAT",
+    "title": "Error Monitoring & Alerting",
+    "label": "feat",
+    "priority": "high",
+    "epic": "proposed:epic-error-alerting",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-error-monitoring-alerting.md",
+    "status": "⬜ Not Started"
+  },
   "FEAT-EXPOSE-FULL-VN-SETTINGS-FROM-SPEC": {
     "hash": "8a1613e",
     "git_issue": "8a1613e",
@@ -6680,6 +6927,58 @@
     "tags": [],
     "source": ".plan/tickets/FEAT-expose-full-vn-settings-from-spec.md",
     "status": "done"
+  },
+  "FEAT-FACTION-SYSTEM-BACKEND": {
+    "hash": "1ce0576",
+    "git_issue": "1ce0576",
+    "extid": "FEAT-FACTION-SYSTEM-BACKEND",
+    "type": "FEAT",
+    "title": "Faction System Backend",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "epic-faction-reputation",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-faction-system-backend.md",
+    "status": "⬜ Not Started"
+  },
+  "FEAT-FATE-ASPECTS-SYSTEM-INVOCABLE-LORE": {
+    "hash": "679da28",
+    "git_issue": "679da28",
+    "extid": "FEAT-FATE-ASPECTS-SYSTEM-INVOCABLE-LORE",
+    "type": "FEAT",
+    "title": "FATE Aspects System (Invocable Lore)",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "epic-agency-story-points",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-fate-aspects-system-invocable-lore.md",
+    "status": "⬜ Not Started"
+  },
+  "FEAT-FATE-SKILL-PYRAMID": {
+    "hash": "195fbfa",
+    "git_issue": "195fbfa",
+    "extid": "FEAT-FATE-SKILL-PYRAMID",
+    "type": "FEAT",
+    "title": "FATE Skill Pyramid",
+    "label": "feat",
+    "priority": "low",
+    "epic": "epic-character-spec",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-fate-skill-pyramid.md",
+    "status": "⬜ Not Started"
+  },
+  "FEAT-FATE-STRESS-TRACKS-CONSEQUENCES": {
+    "hash": "2aa8b07",
+    "git_issue": "2aa8b07",
+    "extid": "FEAT-FATE-STRESS-TRACKS-CONSEQUENCES",
+    "type": "FEAT",
+    "title": "FATE Stress Tracks + Consequences",
+    "label": "feat",
+    "priority": "low",
+    "epic": "epic-character-spec",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-fate-stress-tracks-consequences.md",
+    "status": "⬜ Not Started"
   },
   "FEAT-FEDERATE-BLOG-SYSTEM-VIA-ACTIVITYPUB-LEMMY-MASTODON-REDDIT": {
     "hash": "9c1c458",
@@ -6707,6 +7006,84 @@
     "git_issue": "0154377",
     "status": "open"
   },
+  "FEAT-FORGE-ENGINE-ENERGY-POOL-SAGE-ACTION-ECONOMY": {
+    "hash": "14ac4d0",
+    "git_issue": "14ac4d0",
+    "extid": "FEAT-FORGE-ENGINE-ENERGY-POOL-SAGE-ACTION-ECONOMY",
+    "type": "FEAT",
+    "title": "Forge Engine Energy Pool (SAGE Action Economy)",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "proposed:epic-rpg-action-economy",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-forge-engine-energy-pool-sage-action-economy.md",
+    "status": "⬜ Not Started"
+  },
+  "FEAT-FRONTEND-MODE-CONFIG-ACCEPT-HEADER-CONTENT-NEGOTIATION-CORS": {
+    "hash": "3a98f32",
+    "git_issue": "3a98f32",
+    "extid": "FEAT-FRONTEND-MODE-CONFIG-ACCEPT-HEADER-CONTENT-NEGOTIATION-CORS",
+    "type": "FEAT",
+    "title": "frontend.mode Config + Accept-Header Content Negotiation + CORS",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "epic-api-first-foundation",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-frontend-mode-config-accept-header-content-negotiation-cors.md",
+    "status": "⬜ Not Started"
+  },
+  "FEAT-FULL-MODERATION-SYSTEM-REVIEW-QUEUE-REPORTS-MOD-ROLE": {
+    "hash": "4bde49a",
+    "git_issue": "4bde49a",
+    "extid": "FEAT-FULL-MODERATION-SYSTEM-REVIEW-QUEUE-REPORTS-MOD-ROLE",
+    "type": "FEAT",
+    "title": "Full Moderation System (Review Queue, Reports, Mod Role)",
+    "label": "feat",
+    "priority": "high",
+    "epic": "proposed:epic-admin-moderation",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-full-moderation-system-review-queue-reports-mod-role.md",
+    "status": "⬜ Not Started"
+  },
+  "FEAT-GDPR-USER-DATA-RIGHTS": {
+    "hash": "0b3709e",
+    "git_issue": "0b3709e",
+    "extid": "FEAT-GDPR-USER-DATA-RIGHTS",
+    "type": "FEAT",
+    "title": "GDPR & User Data Rights",
+    "label": "feat",
+    "priority": "high",
+    "epic": "proposed:epic-gdpr-data-rights",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-gdpr-user-data-rights.md",
+    "status": "⬜ Not Started"
+  },
+  "FEAT-GURPS-POINT-BUY-CHARACTER-CREATION": {
+    "hash": "6f9ada1",
+    "git_issue": "6f9ada1",
+    "extid": "FEAT-GURPS-POINT-BUY-CHARACTER-CREATION",
+    "type": "FEAT",
+    "title": "GURPS Point-Buy Character Creation",
+    "label": "feat",
+    "priority": "low",
+    "epic": "epic-character-spec",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-gurps-point-buy-character-creation.md",
+    "status": "⬜ Not Started"
+  },
+  "FEAT-HUMAN-IN-THE-LOOP-APPROVAL-GATES": {
+    "hash": "d6efa35",
+    "git_issue": "d6efa35",
+    "extid": "FEAT-HUMAN-IN-THE-LOOP-APPROVAL-GATES",
+    "type": "FEAT",
+    "title": "Human-in-the-Loop Approval Gates",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "proposed:epic-approval-gates",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-human-in-the-loop-approval-gates.md",
+    "status": "⬜ Not Started"
+  },
   "FEAT-I18N-ACCESSIBILITY-FOUNDATION": {
     "hash": "4004e81",
     "extid": "FEAT-I18N-ACCESSIBILITY-FOUNDATION",
@@ -6719,6 +7096,19 @@
     "source": ".plan/tickets/FEAT-i18n-accessibility-foundation.md",
     "status": "done",
     "git_issue": "4004e81"
+  },
+  "FEAT-IMMERSIVE-SCENE-VIEW-FIRST-THIRD-PERSON-AMBIENT-AUDIO": {
+    "hash": "f38e841",
+    "git_issue": "f38e841",
+    "extid": "FEAT-IMMERSIVE-SCENE-VIEW-FIRST-THIRD-PERSON-AMBIENT-AUDIO",
+    "type": "FEAT",
+    "title": "Immersive Scene View (first/third-person + ambient audio)",
+    "label": "feat",
+    "priority": "low",
+    "epic": "proposed:epic-immersive-scene",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-immersive-scene-view-first-third-person-ambient-audio.md",
+    "status": "⬜ Not Started"
   },
   "FEAT-IN-CHAT-ASSET-PREVIEW-LINKAGE-SIDE-PANEL": {
     "hash": "fef7e3b",
@@ -6746,6 +7136,19 @@
     "source": ".plan/tickets/FEAT-in-story-character-generation-via-assistant-chat-handoff.md",
     "status": "open"
   },
+  "FEAT-INVENTORY-MANAGEMENT-UI": {
+    "hash": "9203dc7",
+    "git_issue": "9203dc7",
+    "extid": "FEAT-INVENTORY-MANAGEMENT-UI",
+    "type": "FEAT",
+    "title": "Inventory Management UI",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "epic-inventory-ui",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-inventory-management-ui.md",
+    "status": "⬜ Not Started"
+  },
   "FEAT-IRC-INTEGRATION-CHANNELS-AS-GROUP-CHAT-PM-AS-CHAT": {
     "hash": "eed7cfa",
     "git_issue": "eed7cfa",
@@ -6758,6 +7161,58 @@
     "tags": [],
     "source": ".plan/tickets/FEAT-irc-integration-channels-as-group-chat-pm-as-chat.md",
     "status": "open"
+  },
+  "FEAT-IRONSWORN-ORACLE-D6-D10": {
+    "hash": "cc53f2d",
+    "git_issue": "cc53f2d",
+    "extid": "FEAT-IRONSWORN-ORACLE-D6-D10",
+    "type": "FEAT",
+    "title": "Ironsworn Oracle (d6+d10)",
+    "label": "feat",
+    "priority": "low",
+    "epic": "epic-resolution-system",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-ironsworn-oracle-d6-d10.md",
+    "status": "⬜ Not Started"
+  },
+  "FEAT-ITEM-CRAFTING-SYSTEM": {
+    "hash": "b29220b",
+    "git_issue": "b29220b",
+    "extid": "FEAT-ITEM-CRAFTING-SYSTEM",
+    "type": "FEAT",
+    "title": "Item Crafting System",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "epic-crafting-professions",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-item-crafting-system.md",
+    "status": "⬜ Not Started"
+  },
+  "FEAT-ITEM-PROPERTY-SYSTEM": {
+    "hash": "29df29a",
+    "git_issue": "29df29a",
+    "extid": "FEAT-ITEM-PROPERTY-SYSTEM",
+    "type": "FEAT",
+    "title": "Item Property System",
+    "label": "feat",
+    "priority": "low",
+    "epic": "epic-items",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-item-property-system.md",
+    "status": "⬜ Not Started"
+  },
+  "FEAT-ITEM-RARITY-SYSTEM": {
+    "hash": "e3ee539",
+    "git_issue": "e3ee539",
+    "extid": "FEAT-ITEM-RARITY-SYSTEM",
+    "type": "FEAT",
+    "title": "Item Rarity System",
+    "label": "feat",
+    "priority": "low",
+    "epic": "epic-rarity-extensions",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-item-rarity-system.md",
+    "status": "⬜ Not Started"
   },
   "FEAT-ITEM-SYSTEM-EXTENSIONS": {
     "hash": "4a1f830",
@@ -6824,6 +7279,45 @@
     "git_issue": "8e34ac4",
     "status": "open"
   },
+  "FEAT-MARS-MODULES-MODES-MODULAR-RULES-ARCHITECTURE": {
+    "hash": "77222a7",
+    "git_issue": "77222a7",
+    "extid": "FEAT-MARS-MODULES-MODES-MODULAR-RULES-ARCHITECTURE",
+    "type": "FEAT",
+    "title": "MARS Modules/Modes Modular Rules Architecture",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "proposed:epic-modular-rules",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-mars-modules-modes-modular-rules-architecture.md",
+    "status": "⬜ Not Started"
+  },
+  "FEAT-MEMORY-FRONTEND-3-MEMORY-TYPES-SELECTION-UI-MID-CHAT-PANEL": {
+    "hash": "12df5e7",
+    "git_issue": "12df5e7",
+    "extid": "FEAT-MEMORY-FRONTEND-3-MEMORY-TYPES-SELECTION-UI-MID-CHAT-PANEL",
+    "type": "FEAT",
+    "title": "Memory Frontend (3 memory types, selection UI, mid-chat panel)",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "epic-memory-knowledge-systems",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-memory-frontend-3-memory-types-selection-ui-mid-chat-panel.md",
+    "status": "⬜ Not Started"
+  },
+  "FEAT-MEMORY-KNOWLEDGE-GRAPH-VISUALIZER": {
+    "hash": "b764f06",
+    "git_issue": "b764f06",
+    "extid": "FEAT-MEMORY-KNOWLEDGE-GRAPH-VISUALIZER",
+    "type": "FEAT",
+    "title": "Memory/Knowledge Graph Visualizer",
+    "label": "feat",
+    "priority": "low",
+    "epic": "proposed:epic-knowledge-graph-viz",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-memory-knowledge-graph-visualizer.md",
+    "status": "⬜ Not Started"
+  },
   "FEAT-MEMORY-SYSTEMS-THREE-TIER": {
     "hash": "17d9889",
     "extid": "FEAT-MEMORY-SYSTEMS-THREE-TIER",
@@ -6862,6 +7356,32 @@
     "source": ".plan/tickets/FEAT-messaging-bridge-extensions.md",
     "status": "open"
   },
+  "FEAT-MOBILE-NATIVE-UX-HAPTICS-SWIPE-VOICE-THUMB-LAYOUT": {
+    "hash": "99bce69",
+    "git_issue": "99bce69",
+    "extid": "FEAT-MOBILE-NATIVE-UX-HAPTICS-SWIPE-VOICE-THUMB-LAYOUT",
+    "type": "FEAT",
+    "title": "Mobile-native UX (haptics, swipe, voice, thumb layout)",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "epic-mobile-app",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-mobile-native-ux-haptics-swipe-voice-thumb-layout.md",
+    "status": "⬜ Not Started"
+  },
+  "FEAT-MODEL-COMPARISON-DASHBOARD": {
+    "hash": "e788b4c",
+    "git_issue": "e788b4c",
+    "extid": "FEAT-MODEL-COMPARISON-DASHBOARD",
+    "type": "FEAT",
+    "title": "Model-comparison Dashboard",
+    "label": "feat",
+    "priority": "low",
+    "epic": "proposed:epic-model-dashboard",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-model-comparison-dashboard.md",
+    "status": "⬜ Not Started"
+  },
   "FEAT-MULTI-INSTANCE-RECONCILIATION": {
     "hash": "e901ee2",
     "extid": "FEAT-MULTI-INSTANCE-RECONCILIATION",
@@ -6874,6 +7394,32 @@
     "source": ".plan/tickets/FEAT-multi-instance-reconciliation.md",
     "git_issue": "e901ee2",
     "status": "open"
+  },
+  "FEAT-MULTI-LLM-STORY-MODE-FRONTEND": {
+    "hash": "cd6d198",
+    "git_issue": "cd6d198",
+    "extid": "FEAT-MULTI-LLM-STORY-MODE-FRONTEND",
+    "type": "FEAT",
+    "title": "Multi-LLM Story Mode Frontend",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "epic-story-mode-ui",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-multi-llm-story-mode-frontend.md",
+    "status": "⬜ Not Started"
+  },
+  "FEAT-MULTIMODAL-INPUT-IMAGE-VOICE-CHARACTER-REACTS": {
+    "hash": "acebfa6",
+    "git_issue": "acebfa6",
+    "extid": "FEAT-MULTIMODAL-INPUT-IMAGE-VOICE-CHARACTER-REACTS",
+    "type": "FEAT",
+    "title": "Multimodal Input (image/voice -> character reacts)",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "proposed:epic-multimodal-input",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-multimodal-input-image-voice-character-reacts.md",
+    "status": "⬜ Not Started"
   },
   "FEAT-NOTIFICATION-EXPANSION": {
     "hash": "883be1e",
@@ -6913,6 +7459,19 @@
     "git_issue": "ba9faf1",
     "status": "open"
   },
+  "FEAT-OFFLINE-FIRST-PWA-ON-DEVICE-INFERENCE": {
+    "hash": "b406910",
+    "git_issue": "b406910",
+    "extid": "FEAT-OFFLINE-FIRST-PWA-ON-DEVICE-INFERENCE",
+    "type": "FEAT",
+    "title": "Offline-first PWA + On-device Inference",
+    "label": "feat",
+    "priority": "low",
+    "epic": "proposed:epic-offline-pwa",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-offline-first-pwa-on-device-inference.md",
+    "status": "⬜ Not Started"
+  },
   "FEAT-ORIGIN-CAPTURE-GENERATION-SEEDING": {
     "hash": "e7cc2b6",
     "extid": "FEAT-ORIGIN-CAPTURE-GENERATION-SEEDING",
@@ -6939,6 +7498,45 @@
     "source": ".plan/tickets/FEAT-output-styling-custom-genres-via-ece.md",
     "status": "open"
   },
+  "FEAT-PER-AGENT-USER-COST-GOVERNANCE": {
+    "hash": "f01ae7e",
+    "git_issue": "f01ae7e",
+    "extid": "FEAT-PER-AGENT-USER-COST-GOVERNANCE",
+    "type": "FEAT",
+    "title": "Per-Agent/User Cost Governance",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "proposed:epic-cost-governance",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-per-agent-user-cost-governance.md",
+    "status": "⬜ Not Started"
+  },
+  "FEAT-PER-CHAT-ASSISTANT-GM-FRONTEND": {
+    "hash": "2202975",
+    "git_issue": "2202975",
+    "extid": "FEAT-PER-CHAT-ASSISTANT-GM-FRONTEND",
+    "type": "FEAT",
+    "title": "Per-chat Assistant/GM Frontend",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "epic-assistant-gm-flows",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-per-chat-assistant-gm-frontend.md",
+    "status": "⬜ Not Started"
+  },
+  "FEAT-PLOT-AUTOPILOT-AI-PROPOSES-NEXT-PLOT-BEATS": {
+    "hash": "0d4da41",
+    "git_issue": "0d4da41",
+    "extid": "FEAT-PLOT-AUTOPILOT-AI-PROPOSES-NEXT-PLOT-BEATS",
+    "type": "FEAT",
+    "title": "Plot Autopilot (AI proposes next plot beats)",
+    "label": "feat",
+    "priority": "low",
+    "epic": "proposed:epic-plot-autopilot",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-plot-autopilot-ai-proposes-next-plot-beats.md",
+    "status": "⬜ Not Started"
+  },
   "FEAT-PLUGIN-SYSTEM-EXTENSIBILITY-DELAYED": {
     "hash": "42d36a1",
     "extid": "FEAT-PLUGIN-SYSTEM-EXTENSIBILITY-DELAYED",
@@ -6952,6 +7550,32 @@
     "git_issue": "42d36a1",
     "status": "open"
   },
+  "FEAT-PROCEDURAL-ASSET-PIPELINES-MAPS-PORTRAITS-MUSIC-SFX": {
+    "hash": "f069a99",
+    "git_issue": "f069a99",
+    "extid": "FEAT-PROCEDURAL-ASSET-PIPELINES-MAPS-PORTRAITS-MUSIC-SFX",
+    "type": "FEAT",
+    "title": "Procedural Asset Pipelines (maps/portraits/music/sfx)",
+    "label": "feat",
+    "priority": "low",
+    "epic": "proposed:epic-procedural-assets",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-procedural-asset-pipelines-maps-portraits-music-sfx.md",
+    "status": "⬜ Not Started"
+  },
+  "FEAT-PROMPT-LOREBOOK-MARKETPLACE-COMMUNITY-SHARED": {
+    "hash": "2b89d6b",
+    "git_issue": "2b89d6b",
+    "extid": "FEAT-PROMPT-LOREBOOK-MARKETPLACE-COMMUNITY-SHARED",
+    "type": "FEAT",
+    "title": "Prompt/Lorebook Marketplace (Community-shared)",
+    "label": "feat",
+    "priority": "low",
+    "epic": "proposed:epic-marketplace",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-prompt-lorebook-marketplace-community-shared.md",
+    "status": "⬜ Not Started"
+  },
   "FEAT-PROVIDER-PLUGIN-ECOSYSTEM": {
     "hash": "478307a",
     "extid": "FEAT-PROVIDER-PLUGIN-ECOSYSTEM",
@@ -6964,6 +7588,45 @@
     "source": ".plan/tickets/FEAT-provider-plugin-ecosystem.md",
     "git_issue": "478307a",
     "status": "done"
+  },
+  "FEAT-PUBLIC-STORY-FEED-MODERATION": {
+    "hash": "ed7b89b",
+    "git_issue": "ed7b89b",
+    "extid": "FEAT-PUBLIC-STORY-FEED-MODERATION",
+    "type": "FEAT",
+    "title": "Public Story Feed + Moderation",
+    "label": "feat",
+    "priority": "low",
+    "epic": "proposed:epic-public-feed",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-public-story-feed-moderation.md",
+    "status": "⬜ Not Started"
+  },
+  "FEAT-QUERYABLE-AUDIT-STORE": {
+    "hash": "a22a242",
+    "git_issue": "a22a242",
+    "extid": "FEAT-QUERYABLE-AUDIT-STORE",
+    "type": "FEAT",
+    "title": "Queryable Audit Store",
+    "label": "feat",
+    "priority": "high",
+    "epic": "proposed:epic-audit-store",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-queryable-audit-store.md",
+    "status": "⬜ Not Started"
+  },
+  "FEAT-QUEST-SYSTEM-BACKEND-IMPLEMENTATION": {
+    "hash": "bcd90de",
+    "git_issue": "bcd90de",
+    "extid": "FEAT-QUEST-SYSTEM-BACKEND-IMPLEMENTATION",
+    "type": "FEAT",
+    "title": "Quest System Backend Implementation",
+    "label": "feat",
+    "priority": "high",
+    "epic": "epic-quests-encounters",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-quest-system-backend-implementation.md",
+    "status": "⬜ Not Started"
   },
   "FEAT-RACE-ORIGIN-LORE-IDENTITY-MEMORY-CONFIG": {
     "hash": "b8ad5f2",
@@ -7002,6 +7665,71 @@
     "tags": [],
     "source": ".plan/tickets/FEAT-radicle-integration.md",
     "status": "open"
+  },
+  "FEAT-RAG-RETRIEVAL-ADAPTER-FOR-GENERATION-PIPELINE": {
+    "hash": "9927039",
+    "git_issue": "9927039",
+    "extid": "FEAT-RAG-RETRIEVAL-ADAPTER-FOR-GENERATION-PIPELINE",
+    "type": "FEAT",
+    "title": "RAG Retrieval Adapter for Generation Pipeline",
+    "label": "feat",
+    "priority": "high",
+    "epic": "proposed:epic-rag-adapter",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-rag-retrieval-adapter-for-generation-pipeline.md",
+    "status": "⬜ Not Started"
+  },
+  "FEAT-RANDOM-ENCOUNTER-ENGINE": {
+    "hash": "d773318",
+    "git_issue": "d773318",
+    "extid": "FEAT-RANDOM-ENCOUNTER-ENGINE",
+    "type": "FEAT",
+    "title": "Random Encounter Engine",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "epic-quests-encounters",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-random-encounter-engine.md",
+    "status": "⬜ Not Started"
+  },
+  "FEAT-RBAC-SSO-TENANT-ISOLATION": {
+    "hash": "ddff839",
+    "git_issue": "ddff839",
+    "extid": "FEAT-RBAC-SSO-TENANT-ISOLATION",
+    "type": "FEAT",
+    "title": "RBAC + SSO + Tenant Isolation",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "proposed:epic-rbac-tenancy",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-rbac-sso-tenant-isolation.md",
+    "status": "⬜ Not Started"
+  },
+  "FEAT-REGEX-OUTPUT-TRANSFORMS-USER-DEFINED-RULES": {
+    "hash": "fa30d42",
+    "git_issue": "fa30d42",
+    "extid": "FEAT-REGEX-OUTPUT-TRANSFORMS-USER-DEFINED-RULES",
+    "type": "FEAT",
+    "title": "Regex Output Transforms (User-defined rules)",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "proposed:epic-output-control-transforms",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-regex-output-transforms-user-defined-rules.md",
+    "status": "⬜ Not Started"
+  },
+  "FEAT-RELATIONSHIP-DRIFT-TIMELINE-VISUALIZER": {
+    "hash": "586a5ff",
+    "git_issue": "586a5ff",
+    "extid": "FEAT-RELATIONSHIP-DRIFT-TIMELINE-VISUALIZER",
+    "type": "FEAT",
+    "title": "Relationship-drift Timeline Visualizer",
+    "label": "feat",
+    "priority": "low",
+    "epic": "epic-relationships",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-relationship-drift-timeline-visualizer.md",
+    "status": "⬜ Not Started"
   },
   "FEAT-RELATIONSHIPS": {
     "hash": "pending",
@@ -7066,6 +7794,19 @@
     "git_issue": "6919b39",
     "status": "open"
   },
+  "FEAT-SHARED-PERSISTENT-WORLDS-MULTIPLAYER-CO-OP-STORYTELLING": {
+    "hash": "857d378",
+    "git_issue": "857d378",
+    "extid": "FEAT-SHARED-PERSISTENT-WORLDS-MULTIPLAYER-CO-OP-STORYTELLING",
+    "type": "FEAT",
+    "title": "Shared Persistent Worlds (multiplayer co-op storytelling)",
+    "label": "feat",
+    "priority": "low",
+    "epic": "proposed:epic-shared-worlds",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-shared-persistent-worlds-multiplayer-co-op-storytelling.md",
+    "status": "⬜ Not Started"
+  },
   "FEAT-SKILLS": {
     "hash": "pending",
     "extid": "FEAT-SKILLS",
@@ -7077,6 +7818,19 @@
     "tags": [],
     "source": ".plan/tickets/FEAT-skills.md",
     "status": "in_progress"
+  },
+  "FEAT-SMART-REGEN-TRANSFORMS-SHORTER-LONGER-FUNNIER-DARKER": {
+    "hash": "fbd9c6e",
+    "git_issue": "fbd9c6e",
+    "extid": "FEAT-SMART-REGEN-TRANSFORMS-SHORTER-LONGER-FUNNIER-DARKER",
+    "type": "FEAT",
+    "title": "Smart-regen Transforms (shorter/longer/funnier/darker)",
+    "label": "feat",
+    "priority": "low",
+    "epic": "proposed:epic-output-control-transforms",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-smart-regen-transforms-shorter-longer-funnier-darker.md",
+    "status": "⬜ Not Started"
   },
   "FEAT-STATIC-FILE-SERVER-HONORS-ACCEPT-ENCODING-Q-VALUES-AND-WILDC": {
     "hash": "fb24118",
@@ -7102,6 +7856,19 @@
     "tags": [],
     "source": ".plan/tickets/FEAT-swarm-mode-reconciliation.md",
     "status": "open"
+  },
+  "FEAT-SYNTHETIC-FINE-TUNE-DATA-EXPORT": {
+    "hash": "8acbfc2",
+    "git_issue": "8acbfc2",
+    "extid": "FEAT-SYNTHETIC-FINE-TUNE-DATA-EXPORT",
+    "type": "FEAT",
+    "title": "Synthetic Fine-tune Data Export",
+    "label": "feat",
+    "priority": "low",
+    "epic": "proposed:epic-finetune-export",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-synthetic-fine-tune-data-export.md",
+    "status": "⬜ Not Started"
   },
   "FEAT-TASK-CLARIFICATION-INJECTION-TEMPLATE-FOR-CHAT-ASSISTANT-GEN": {
     "hash": "7aed28e",
@@ -7154,6 +7921,19 @@
     "source": ".plan/tickets/FEAT-tool-call-bubble-persisted-rows.md",
     "status": "open"
   },
+  "FEAT-TOOL-EXECUTION-SANDBOX-WASM-CONTAINER-ISOLATION": {
+    "hash": "8e8ee4f",
+    "git_issue": "8e8ee4f",
+    "extid": "FEAT-TOOL-EXECUTION-SANDBOX-WASM-CONTAINER-ISOLATION",
+    "type": "FEAT",
+    "title": "Tool Execution Sandbox (WASM/Container Isolation)",
+    "label": "feat",
+    "priority": "high",
+    "epic": "epic-security-sandboxing",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-tool-execution-sandbox-wasm-container-isolation.md",
+    "status": "⬜ Not Started"
+  },
   "FEAT-TRANSPORT-COMPRESSION-WIRE-RECEIVE-SIDE-DECOMPRESSION-WITH-L": {
     "hash": "9606042",
     "git_issue": "9606042",
@@ -7179,6 +7959,58 @@
     "tags": [],
     "source": ".plan/tickets/FEAT-unified-date-representation-util-locale-region-iana-timezone.md",
     "status": "done"
+  },
+  "FEAT-USER-ENGAGEMENT-LEADERBOARDS": {
+    "hash": "c186458",
+    "git_issue": "c186458",
+    "extid": "FEAT-USER-ENGAGEMENT-LEADERBOARDS",
+    "type": "FEAT",
+    "title": "User Engagement & Leaderboards",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "proposed:epic-user-engagement",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-user-engagement-leaderboards.md",
+    "status": "⬜ Not Started"
+  },
+  "FEAT-VISUAL-NOVEL-MODE-FULL-IMPLEMENTATION": {
+    "hash": "4671163",
+    "git_issue": "4671163",
+    "extid": "FEAT-VISUAL-NOVEL-MODE-FULL-IMPLEMENTATION",
+    "type": "FEAT",
+    "title": "Visual Novel Mode Full Implementation",
+    "label": "feat",
+    "priority": "high",
+    "epic": "epic-visual-novel-mode",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-visual-novel-mode-full-implementation.md",
+    "status": "⬜ Not Started"
+  },
+  "FEAT-WHAT-IF-BRANCH-SIMULATOR-FORK-WORLD-STATE-DIFF-NARRATIVES": {
+    "hash": "6aa11b0",
+    "git_issue": "6aa11b0",
+    "extid": "FEAT-WHAT-IF-BRANCH-SIMULATOR-FORK-WORLD-STATE-DIFF-NARRATIVES",
+    "type": "FEAT",
+    "title": "What-if Branch Simulator (fork world state, diff narratives)",
+    "label": "feat",
+    "priority": "low",
+    "epic": "proposed:epic-branch-simulator",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-what-if-branch-simulator-fork-world-state-diff-narratives.md",
+    "status": "⬜ Not Started"
+  },
+  "FEAT-WORKFLOW-DAG-ENGINE-TASK-DEPENDENCIES-SCHEDULER": {
+    "hash": "45b7eec",
+    "git_issue": "45b7eec",
+    "extid": "FEAT-WORKFLOW-DAG-ENGINE-TASK-DEPENDENCIES-SCHEDULER",
+    "type": "FEAT",
+    "title": "Workflow DAG Engine (Task Dependencies + Scheduler)",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "epic-workflow-engine",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-workflow-dag-engine-task-dependencies-scheduler.md",
+    "status": "⬜ Not Started"
   },
   "FEAT-WORKTREE-COMMIT-COMMANDS-LACK-MESSAGE-FILE-INPUT": {
     "hash": "e195260",
@@ -7244,6 +8076,19 @@
     "source": ".plan/tickets/FEAT-worlds-extension.md",
     "git_issue": "60af48a",
     "status": "open"
+  },
+  "FEAT-WORLDS-FRONTEND-LIST-DETAIL-TIMELINE-LOCATION-TRAVEL-UI": {
+    "hash": "3f59325",
+    "git_issue": "3f59325",
+    "extid": "FEAT-WORLDS-FRONTEND-LIST-DETAIL-TIMELINE-LOCATION-TRAVEL-UI",
+    "type": "FEAT",
+    "title": "Worlds Frontend (list/detail, timeline, location travel UI)",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "epic-world-management-ui",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-worlds-frontend-list-detail-timeline-location-travel-ui.md",
+    "status": "⬜ Not Started"
   },
   "FIX-PARALLELIZE-BUN-TEST-INVOCATIONS-ISOLATE-PINS-SUITE-TO-ONE-C": {
     "hash": "9778cc3",
@@ -8428,6 +9273,19 @@
     "source": ".plan/tickets/TASK-3d-vrm-foundation.md",
     "status": "open"
   },
+  "TASK-ACCESS-MODEL-COMPOSITION": {
+    "hash": "2a6ae9b",
+    "git_issue": "2a6ae9b",
+    "extid": "TASK-ACCESS-MODEL-COMPOSITION",
+    "type": "TASK",
+    "title": "Access Model Composition",
+    "label": "task",
+    "priority": "medium",
+    "epic": "proposed:epic-access-model",
+    "tags": [],
+    "source": ".plan/tickets/TASK-access-model-composition.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-ACCESS-PROFILE-GENERATION-FROM-ACTOR-EXPERIENCE": {
     "hash": "c7a9b06",
     "git_issue": "c7a9b06",
@@ -8745,6 +9603,19 @@
     "tags": [],
     "source": ".plan/tickets/TASK-add-e2ealgorithm-and-e2esessionkind-enums-for-e2e-tables.md",
     "status": "open"
+  },
+  "TASK-ADD-ESLINT-PLUGIN-IMPORT-NO-CYCLE-ORDER": {
+    "hash": "c32d61f",
+    "git_issue": "c32d61f",
+    "extid": "TASK-ADD-ESLINT-PLUGIN-IMPORT-NO-CYCLE-ORDER",
+    "type": "TASK",
+    "title": "Add eslint-plugin-import (no-cycle, order)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-tooling-improvement",
+    "tags": [],
+    "source": ".plan/tickets/TASK-add-eslint-plugin-import-no-cycle-order.md",
+    "status": "⬜ Not Started"
   },
   "TASK-ADD-EVENTSOURCE-ENUM-FOR-CHAT-LOCATION-EVENTS-SOURCE": {
     "hash": "e8f2f54",
@@ -9687,6 +10558,19 @@
     "source": ".plan/tickets/TASK-adopt-web-share-api-and-clipboard-api.md",
     "status": "open"
   },
+  "TASK-ADVANCED-MEMORY-SYSTEMS-IMPLEMENTATION": {
+    "hash": "614afa9",
+    "git_issue": "614afa9",
+    "extid": "TASK-ADVANCED-MEMORY-SYSTEMS-IMPLEMENTATION",
+    "type": "TASK",
+    "title": "Advanced Memory Systems Implementation",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-memory-knowledge-systems",
+    "tags": [],
+    "source": ".plan/tickets/TASK-advanced-memory-systems-implementation.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-AGENCY-STORY-POINTS": {
     "hash": "bdb93de",
     "extid": "TASK-AGENCY-STORY-POINTS",
@@ -10092,6 +10976,19 @@
     "git_issue": "2346652",
     "status": "open"
   },
+  "TASK-ASSET-ATTRIBUTION-CHAIN": {
+    "hash": "0098905",
+    "git_issue": "0098905",
+    "extid": "TASK-ASSET-ATTRIBUTION-CHAIN",
+    "type": "TASK",
+    "title": "Asset Attribution Chain",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-assets-attribution",
+    "tags": [],
+    "source": ".plan/tickets/TASK-asset-attribution-chain.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-ASSET-CONTEXT-INCLUSION-BUDGET-POLICY": {
     "hash": "1660366",
     "git_issue": "1660366",
@@ -10311,7 +11208,7 @@
     "epic": "Avatar Alpha Channel + VN Layering",
     "tags": [],
     "source": ".plan/tickets/TASK-assets-has-alpha-column-and-store-computation.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-ASSISTANT-ANALYZE-SLASH-COMMAND-OVER-PROMPT-ANALYSIS-SERVICE": {
     "hash": "5fc96d0",
@@ -10891,6 +11788,19 @@
     "source": ".plan/tickets/TASK-async-store-complete-fail-lifecycle-hooks.md",
     "status": "done"
   },
+  "TASK-ATTACHMENT-MODERATION-PIPELINE": {
+    "hash": "d612f4a",
+    "git_issue": "d612f4a",
+    "extid": "TASK-ATTACHMENT-MODERATION-PIPELINE",
+    "type": "TASK",
+    "title": "Attachment Moderation Pipeline",
+    "label": "task",
+    "priority": "high",
+    "epic": "proposed:epic-attachment-moderation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-attachment-moderation-pipeline.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-AUDIO-PLAYER-COMPONENT": {
     "hash": "966af4f",
     "extid": "TASK-AUDIO-PLAYER-COMPONENT",
@@ -11059,6 +11969,19 @@
     "source": ".plan/tickets/TASK-auth-me-trusts-unverified-jwt-allowing-user-impersonation.md",
     "git_issue": "e16fb61",
     "status": "open"
+  },
+  "TASK-AUTH-MIDDLEWARE-IMPLEMENTATION": {
+    "hash": "92464d1",
+    "git_issue": "92464d1",
+    "extid": "TASK-AUTH-MIDDLEWARE-IMPLEMENTATION",
+    "type": "TASK",
+    "title": "Auth Middleware Implementation",
+    "label": "task",
+    "priority": "high",
+    "epic": "proposed:epic-auth-middleware",
+    "tags": [],
+    "source": ".plan/tickets/TASK-auth-middleware-implementation.md",
+    "status": "⬜ Not Started"
   },
   "TASK-AUTH-POLISH-MIME-SNIFF-VISIBILITY-LAST-SEEN-I18N-COOKIE-REGI": {
     "hash": "843a93c",
@@ -11368,6 +12291,19 @@
     "git_issue": "8d488aa",
     "status": "open"
   },
+  "TASK-BATTLE-CORE-ROUND-LOOP-INITIATIVE-EPIC": {
+    "hash": "e86e839",
+    "git_issue": "e86e839",
+    "extid": "TASK-BATTLE-CORE-ROUND-LOOP-INITIATIVE-EPIC",
+    "type": "TASK",
+    "title": "Battle Core Round-Loop / Initiative Epic",
+    "label": "task",
+    "priority": "high",
+    "epic": "proposed:epic-battle-core",
+    "tags": [],
+    "source": ".plan/tickets/TASK-battle-core-round-loop-initiative-epic.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-BATTLE-ENCOUNTER-TEMPLATE-SYSTEM": {
     "hash": "dfcf39a",
     "extid": "TASK-BATTLE-ENCOUNTER-TEMPLATE-SYSTEM",
@@ -11444,6 +12380,19 @@
     "source": ".plan/tickets/TASK-battle-integration-gaps.md",
     "status": "done",
     "git_issue": "1e62c6a"
+  },
+  "TASK-BATTLE-INTEGRATION-WIRING-ITEMS-SOCIAL-NPC-WEATHER-RESOLUTIO": {
+    "hash": "77ae69b",
+    "git_issue": "77ae69b",
+    "extid": "TASK-BATTLE-INTEGRATION-WIRING-ITEMS-SOCIAL-NPC-WEATHER-RESOLUTIO",
+    "type": "TASK",
+    "title": "Battle Integration Wiring (items/social/NPC/weather/resolution)",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-battle-integration-gaps",
+    "tags": [],
+    "source": ".plan/tickets/TASK-battle-integration-wiring-items-social-npc-weather-resolutio.md",
+    "status": "⬜ Not Started"
   },
   "TASK-BATTLE-ITEM-INTEGRATION": {
     "hash": "00878b7",
@@ -11920,6 +12869,19 @@
     "tags": [],
     "source": ".plan/tickets/TASK-browser-tests-weak-interaction-coverage-in-existing-flows.md",
     "status": "open"
+  },
+  "TASK-BUILD-DEPLOYMENT-PIPELINE": {
+    "hash": "e3c06e3",
+    "git_issue": "e3c06e3",
+    "extid": "TASK-BUILD-DEPLOYMENT-PIPELINE",
+    "type": "TASK",
+    "title": "Build & Deployment Pipeline",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-deployment-infrastructure",
+    "tags": [],
+    "source": ".plan/tickets/TASK-build-deployment-pipeline.md",
+    "status": "⬜ Not Started"
   },
   "TASK-BULK-EXPORT-ZIP": {
     "hash": "c1ad423",
@@ -12585,6 +13547,19 @@
     "source": ".plan/tickets/TASK-character-growth-milestones.md",
     "status": "open"
   },
+  "TASK-CHARACTER-INTERACTION-OUTCOMES": {
+    "hash": "1d67af6",
+    "git_issue": "1d67af6",
+    "extid": "TASK-CHARACTER-INTERACTION-OUTCOMES",
+    "type": "TASK",
+    "title": "Character Interaction Outcomes",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-social-interaction",
+    "tags": [],
+    "source": ".plan/tickets/TASK-character-interaction-outcomes.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-CHARACTER-INTERNAL-TRAITS": {
     "hash": "pending",
     "extid": "TASK-CHARACTER-INTERNAL-TRAITS",
@@ -12646,6 +13621,19 @@
     "source": ".plan/tickets/TASK-character-memory-injection-privacy.md",
     "status": "done",
     "git_issue": "c2ca37b"
+  },
+  "TASK-CHARACTER-MIGRATION-ROUTE": {
+    "hash": "e143ed9",
+    "git_issue": "e143ed9",
+    "extid": "TASK-CHARACTER-MIGRATION-ROUTE",
+    "type": "TASK",
+    "title": "Character Migration Route",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-character-spec",
+    "tags": [],
+    "source": ".plan/tickets/TASK-character-migration-route.md",
+    "status": "⬜ Not Started"
   },
   "TASK-CHARACTER-MOOD-HAPPINESS": {
     "hash": "b19ece5",
@@ -13546,6 +14534,19 @@
     "status": "done",
     "git_issue": "a7fe0d6"
   },
+  "TASK-CHAT-ROOM-SIDEBAR-SEARCH-FILTER-CHIPS": {
+    "hash": "ffe3cb8",
+    "git_issue": "ffe3cb8",
+    "extid": "TASK-CHAT-ROOM-SIDEBAR-SEARCH-FILTER-CHIPS",
+    "type": "TASK",
+    "title": "Chat Room Sidebar Search + Filter Chips",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-chat-product-features",
+    "tags": [],
+    "source": ".plan/tickets/TASK-chat-room-sidebar-search-filter-chips.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-CHAT-ROUTE-EXTRACTION": {
     "hash": "d60edc4",
     "extid": "TASK-CHAT-ROUTE-EXTRACTION",
@@ -13609,6 +14610,19 @@
     "source": ".plan/tickets/TASK-chat-text-effects-overlays.md",
     "git_issue": "6215af1",
     "status": "open"
+  },
+  "TASK-CHAT-TEXT-EFFECTS-OVERLAYS-IMPLEMENTATION": {
+    "hash": "2ac78f8",
+    "git_issue": "2ac78f8",
+    "extid": "TASK-CHAT-TEXT-EFFECTS-OVERLAYS-IMPLEMENTATION",
+    "type": "TASK",
+    "title": "Chat Text Effects & Overlays Implementation",
+    "label": "task",
+    "priority": "medium",
+    "epic": "proposed:epic-chat-effects-overlays",
+    "tags": [],
+    "source": ".plan/tickets/TASK-chat-text-effects-overlays-implementation.md",
+    "status": "⬜ Not Started"
   },
   "TASK-CHAT-TRANSFER-FRONTEND": {
     "hash": "fe6dab4",
@@ -13907,6 +14921,19 @@
     "source": ".plan/tickets/TASK-codemod-fetch-json-utils.md",
     "status": "open"
   },
+  "TASK-COGNITIVE-COMPLEXITY-CAP-REFACTOR": {
+    "hash": "3a093d1",
+    "git_issue": "3a093d1",
+    "extid": "TASK-COGNITIVE-COMPLEXITY-CAP-REFACTOR",
+    "type": "TASK",
+    "title": "Cognitive Complexity Cap + Refactor",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-tooling-improvement",
+    "tags": [],
+    "source": ".plan/tickets/TASK-cognitive-complexity-cap-refactor.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-COMBINED-FILTER-SUPPORT": {
     "hash": "de3f9e0",
     "extid": "TASK-COMBINED-FILTER-SUPPORT",
@@ -14201,6 +15228,19 @@
     "tags": [],
     "source": ".plan/tickets/TASK-consolidate-unsafe-date-buffer-json-usage-into-shared-utils.md",
     "status": "open"
+  },
+  "TASK-CONTENT-COMPRESSION-ZSTD-STREAMING": {
+    "hash": "ed1f959",
+    "git_issue": "ed1f959",
+    "extid": "TASK-CONTENT-COMPRESSION-ZSTD-STREAMING",
+    "type": "TASK",
+    "title": "Content Compression (Zstd Streaming)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "proposed:epic-content-compression",
+    "tags": [],
+    "source": ".plan/tickets/TASK-content-compression-zstd-streaming.md",
+    "status": "⬜ Not Started"
   },
   "TASK-CONTENT-HASH-CONSISTENCY": {
     "hash": "pending",
@@ -15131,6 +16171,19 @@
     "git_issue": "59efcd3",
     "status": "draft"
   },
+  "TASK-DB-CONTENT-VERSIONING-SNAPSHOT-RESTORE": {
+    "hash": "2136bea",
+    "git_issue": "2136bea",
+    "extid": "TASK-DB-CONTENT-VERSIONING-SNAPSHOT-RESTORE",
+    "type": "TASK",
+    "title": "DB Content Versioning & Snapshot/Restore",
+    "label": "task",
+    "priority": "medium",
+    "epic": "proposed:epic-db-versioning",
+    "tags": [],
+    "source": ".plan/tickets/TASK-db-content-versioning-snapshot-restore.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-DB-MIGRATION-EPOCH-SQUASH": {
     "hash": "b2666f6",
     "git_issue": "b2666f6",
@@ -15169,6 +16222,19 @@
     "tags": [],
     "source": ".plan/tickets/TASK-db-reinit-archives-previous-database-instead-of-deleting.md",
     "status": "open"
+  },
+  "TASK-DB-REINIT-BACKUP-RETENTION-POLICY": {
+    "hash": "b3735f3",
+    "git_issue": "b3735f3",
+    "extid": "TASK-DB-REINIT-BACKUP-RETENTION-POLICY",
+    "type": "TASK",
+    "title": "DB Reinit & Backup Retention Policy",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-database-backup-recovery",
+    "tags": [],
+    "source": ".plan/tickets/TASK-db-reinit-backup-retention-policy.md",
+    "status": "⬜ Not Started"
   },
   "TASK-DBRT-VALIDATION-GAPS": {
     "hash": "pending",
@@ -16016,6 +17082,19 @@
     "git_issue": "8925a2d",
     "status": "done"
   },
+  "TASK-EMOTION-AVATARS-PIPELINE": {
+    "hash": "5915113",
+    "git_issue": "5915113",
+    "extid": "TASK-EMOTION-AVATARS-PIPELINE",
+    "type": "TASK",
+    "title": "Emotion Avatars Pipeline",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-emotion-avatar-message-binding",
+    "tags": [],
+    "source": ".plan/tickets/TASK-emotion-avatars-pipeline.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-EMOTION-INTENT-DETECTION": {
     "hash": "888f6ff",
     "extid": "TASK-EMOTION-INTENT-DETECTION",
@@ -16372,6 +17451,32 @@
     "tags": [],
     "source": ".plan/tickets/TASK-evaluate-elysiajs-opentelemetry-versus-custom-telemetry-modu.md",
     "status": "open"
+  },
+  "TASK-EVENTBUS-TOOLREGISTRY-CORE-WIRING": {
+    "hash": "38c5c30",
+    "git_issue": "38c5c30",
+    "extid": "TASK-EVENTBUS-TOOLREGISTRY-CORE-WIRING",
+    "type": "TASK",
+    "title": "EventBus + ToolRegistry Core Wiring",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-plugin-extension-points",
+    "tags": [],
+    "source": ".plan/tickets/TASK-eventbus-toolregistry-core-wiring.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-EXIF-EXTRACTION-IMAGE-HASHING": {
+    "hash": "5e84069",
+    "git_issue": "5e84069",
+    "extid": "TASK-EXIF-EXTRACTION-IMAGE-HASHING",
+    "type": "TASK",
+    "title": "EXIF Extraction + Image Hashing",
+    "label": "task",
+    "priority": "low",
+    "epic": "proposed:epic-asset-metadata",
+    "tags": [],
+    "source": ".plan/tickets/TASK-exif-extraction-image-hashing.md",
+    "status": "⬜ Not Started"
   },
   "TASK-EXPLICIT-APPROVAL-FLOW-FOR-ASSISTANT-MUTATIONS": {
     "hash": "601e5df",
@@ -17555,6 +18660,19 @@
     "tags": [],
     "source": ".plan/tickets/TASK-frontend-tree-shake.md",
     "status": "open"
+  },
+  "TASK-FRONTEND-TSCONFIG-STRICTNESS-ALIGNMENT": {
+    "hash": "fc252b2",
+    "git_issue": "fc252b2",
+    "extid": "TASK-FRONTEND-TSCONFIG-STRICTNESS-ALIGNMENT",
+    "type": "TASK",
+    "title": "Frontend tsconfig Strictness Alignment",
+    "label": "task",
+    "priority": "medium",
+    "epic": "proposed:epic-frontend-strictness",
+    "tags": [],
+    "source": ".plan/tickets/TASK-frontend-tsconfig-strictness-alignment.md",
+    "status": "⬜ Not Started"
   },
   "TASK-FRONTEND-WORLD-LORE-ENTRIES-UI": {
     "hash": "cd636b6",
@@ -19621,6 +20739,19 @@
     "source": ".plan/tickets/TASK-logging-separate-database-research.md",
     "status": "open"
   },
+  "TASK-LOGGING-SYSTEM-STRUCTURED-JSONL": {
+    "hash": "743d069",
+    "git_issue": "743d069",
+    "extid": "TASK-LOGGING-SYSTEM-STRUCTURED-JSONL",
+    "type": "TASK",
+    "title": "Logging System (Structured JSONL)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-logging-telemetry",
+    "tags": [],
+    "source": ".plan/tickets/TASK-logging-system-structured-jsonl.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-LORA-DISCOVERY-APPLICATION": {
     "hash": "b3764b1",
     "extid": "TASK-LORA-DISCOVERY-APPLICATION",
@@ -19698,6 +20829,19 @@
     "source": ".plan/tickets/TASK-lore-persona-traits-placed-as-system-messages-semantic-injec.md",
     "git_issue": "cad5904",
     "status": "open"
+  },
+  "TASK-LORE-SYSTEM-IMPLEMENTATION": {
+    "hash": "a741538",
+    "git_issue": "a741538",
+    "extid": "TASK-LORE-SYSTEM-IMPLEMENTATION",
+    "type": "TASK",
+    "title": "Lore System Implementation",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-lore-knowledge",
+    "tags": [],
+    "source": ".plan/tickets/TASK-lore-system-implementation.md",
+    "status": "⬜ Not Started"
   },
   "TASK-LORE-TIMELINE-REVEAL": {
     "hash": "pending",
@@ -19799,6 +20943,19 @@
     "source": ".plan/tickets/TASK-map-battle-equipment.md",
     "status": "done",
     "git_issue": "f4fdcb7"
+  },
+  "TASK-MARKDOWN-PREVIEW-BEFORE-SEND": {
+    "hash": "7d20abc",
+    "git_issue": "7d20abc",
+    "extid": "TASK-MARKDOWN-PREVIEW-BEFORE-SEND",
+    "type": "TASK",
+    "title": "Markdown Preview Before Send",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-chat-composer-flows",
+    "tags": [],
+    "source": ".plan/tickets/TASK-markdown-preview-before-send.md",
+    "status": "⬜ Not Started"
   },
   "TASK-MATRIX-INTEGRATION": {
     "hash": "1b92bae",
@@ -20107,6 +21264,19 @@
     "source": ".plan/tickets/TASK-message-reactions-in-out-context.md",
     "status": "open"
   },
+  "TASK-MESSAGE-REPLY-THREADING-P1": {
+    "hash": "beaee3f",
+    "git_issue": "beaee3f",
+    "extid": "TASK-MESSAGE-REPLY-THREADING-P1",
+    "type": "TASK",
+    "title": "Message Reply Threading (P1)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-chat-product-features",
+    "tags": [],
+    "source": ".plan/tickets/TASK-message-reply-threading-p1.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-MESSAGE-SEARCH-CANNOT-INDEX-COMPRESSED-OR-ENCRYPTED-CONTENT": {
     "hash": "c0020da",
     "git_issue": "c0020da",
@@ -20341,6 +21511,19 @@
     "tags": [],
     "source": ".plan/tickets/TASK-migration-076-harden-against-malformed-gm-config-json.md",
     "status": "open"
+  },
+  "TASK-MIGRATIONS-AUTHORSHIP-CONVENTIONS": {
+    "hash": "7733da8",
+    "git_issue": "7733da8",
+    "extid": "TASK-MIGRATIONS-AUTHORSHIP-CONVENTIONS",
+    "type": "TASK",
+    "title": "Migrations Authorship Conventions",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-shared-schemas",
+    "tags": [],
+    "source": ".plan/tickets/TASK-migrations-authorship-conventions.md",
+    "status": "⬜ Not Started"
   },
   "TASK-MINI-GAMES-FRAMEWORK": {
     "hash": "pending",
@@ -21232,6 +22415,19 @@
     "source": ".plan/tickets/TASK-nsfw-consent-integration.md",
     "status": "open"
   },
+  "TASK-NSFW-CROSS-CUTTING-INTEGRATION": {
+    "hash": "9ed3508",
+    "git_issue": "9ed3508",
+    "extid": "TASK-NSFW-CROSS-CUTTING-INTEGRATION",
+    "type": "TASK",
+    "title": "NSFW Cross-Cutting Integration",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-nsfw-integration-gaps",
+    "tags": [],
+    "source": ".plan/tickets/TASK-nsfw-cross-cutting-integration.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-NSFW-DISEASE": {
     "hash": "634b539",
     "extid": "TASK-NSFW-DISEASE",
@@ -21544,6 +22740,19 @@
     "source": ".plan/tickets/TASK-nsfw-rating-schema.md",
     "status": "open"
   },
+  "TASK-NSFW-RATING-SCHEMA-CONSENT-STATE-MACHINE": {
+    "hash": "fe9914e",
+    "git_issue": "fe9914e",
+    "extid": "TASK-NSFW-RATING-SCHEMA-CONSENT-STATE-MACHINE",
+    "type": "TASK",
+    "title": "NSFW Rating Schema & Consent State Machine",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-nsfw-capabilities",
+    "tags": [],
+    "source": ".plan/tickets/TASK-nsfw-rating-schema-consent-state-machine.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-NSFW-REPUTATION-CONSEQUENCES": {
     "hash": "pending",
     "extid": "TASK-NSFW-REPUTATION-CONSEQUENCES",
@@ -21712,6 +22921,19 @@
     "source": ".plan/tickets/TASK-observability-telemetry.md",
     "git_issue": "4218340",
     "status": "open"
+  },
+  "TASK-OBSERVABILITY-TELEMETRY-ANALYTICS": {
+    "hash": "72af9a5",
+    "git_issue": "72af9a5",
+    "extid": "TASK-OBSERVABILITY-TELEMETRY-ANALYTICS",
+    "type": "TASK",
+    "title": "Observability, Telemetry & Analytics",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-analytics-observability",
+    "tags": [],
+    "source": ".plan/tickets/TASK-observability-telemetry-analytics.md",
+    "status": "⬜ Not Started"
   },
   "TASK-OCSP-STAPLING-FOR-TLS-CERTIFICATE-STATUS": {
     "hash": "d555260",
@@ -22146,6 +23368,19 @@
     "source": ".plan/tickets/TASK-per-command-valves-like-options-schema.md",
     "status": "open"
   },
+  "TASK-PERFORMANCE-DASHBOARD-SLOS": {
+    "hash": "13632a5",
+    "git_issue": "13632a5",
+    "extid": "TASK-PERFORMANCE-DASHBOARD-SLOS",
+    "type": "TASK",
+    "title": "Performance Dashboard & SLOs",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-performance-dashboard-slo",
+    "tags": [],
+    "source": ".plan/tickets/TASK-performance-dashboard-slos.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-PERSIST-LOOT-DROPS": {
     "hash": "ecec58f",
     "extid": "TASK-PERSIST-LOOT-DROPS",
@@ -22454,6 +23689,19 @@
     "git_issue": "0454cd5",
     "status": "open"
   },
+  "TASK-PLATFORM-SUPPORT-MULTI-OS-MOBILE-BROWSER-MATRIX": {
+    "hash": "39b2e12",
+    "git_issue": "39b2e12",
+    "extid": "TASK-PLATFORM-SUPPORT-MULTI-OS-MOBILE-BROWSER-MATRIX",
+    "type": "TASK",
+    "title": "Platform Support (Multi-OS / Mobile / Browser matrix)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "proposed:epic-platform-support",
+    "tags": [],
+    "source": ".plan/tickets/TASK-platform-support-multi-os-mobile-browser-matrix.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-PLUGIN-ALPINE": {
     "hash": "095eb1e",
     "extid": "TASK-PLUGIN-ALPINE",
@@ -22466,6 +23714,19 @@
     "source": ".plan/tickets/TASK-plugin-alpine.md",
     "git_issue": "095eb1e",
     "status": "open"
+  },
+  "TASK-PLUGIN-API-ROUTES-ELYSIA-REGISTRATION": {
+    "hash": "0a71cf4",
+    "git_issue": "0a71cf4",
+    "extid": "TASK-PLUGIN-API-ROUTES-ELYSIA-REGISTRATION",
+    "type": "TASK",
+    "title": "Plugin API Routes -> Elysia Registration",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-plugin-system",
+    "tags": [],
+    "source": ".plan/tickets/TASK-plugin-api-routes-elysia-registration.md",
+    "status": "⬜ Not Started"
   },
   "TASK-PLUGIN-API-SYSTEM": {
     "hash": "5f69027",
@@ -22722,6 +23983,19 @@
     "tags": [],
     "source": ".plan/tickets/TASK-production-tls-modes-byo-certs-acme-and-proxy-termination.md",
     "status": "open"
+  },
+  "TASK-PROFANITY-FILTER-RUNTIME-PER-CHAT": {
+    "hash": "09af2a0",
+    "git_issue": "09af2a0",
+    "extid": "TASK-PROFANITY-FILTER-RUNTIME-PER-CHAT",
+    "type": "TASK",
+    "title": "Profanity Filter (Runtime, Per-Chat)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-profanity-filter",
+    "tags": [],
+    "source": ".plan/tickets/TASK-profanity-filter-runtime-per-chat.md",
+    "status": "⬜ Not Started"
   },
   "TASK-PROFESSIONS-FRONTEND": {
     "hash": "pending",
@@ -23781,6 +25055,19 @@
     "source": ".plan/tickets/TASK-regen-ui-re-roll-and-regenerate-all-controls.md",
     "status": "open"
   },
+  "TASK-REGEX-EXTRACTION-PIPELINE-IMPLEMENTATION": {
+    "hash": "e18c130",
+    "git_issue": "e18c130",
+    "extid": "TASK-REGEX-EXTRACTION-PIPELINE-IMPLEMENTATION",
+    "type": "TASK",
+    "title": "Regex Extraction Pipeline Implementation",
+    "label": "task",
+    "priority": "medium",
+    "epic": "proposed:epic-regex-extraction",
+    "tags": [],
+    "source": ".plan/tickets/TASK-regex-extraction-pipeline-implementation.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-REGEX-EXTRACTION-TESTS": {
     "hash": "592149a",
     "extid": "TASK-REGEX-EXTRACTION-TESTS",
@@ -24071,6 +25358,19 @@
     "source": ".plan/tickets/TASK-replayability.md",
     "git_issue": "2735bbf",
     "status": "open"
+  },
+  "TASK-REPLAYABILITY-SESSION-SEEDED-RANDOM-TABLES": {
+    "hash": "26b047a",
+    "git_issue": "26b047a",
+    "extid": "TASK-REPLAYABILITY-SESSION-SEEDED-RANDOM-TABLES",
+    "type": "TASK",
+    "title": "Replayability (Session-Seeded Random Tables)",
+    "label": "task",
+    "priority": "low",
+    "epic": "proposed:epic-replayability",
+    "tags": [],
+    "source": ".plan/tickets/TASK-replayability-session-seeded-random-tables.md",
+    "status": "⬜ Not Started"
   },
   "TASK-REPUTATION-SCHEMA": {
     "hash": "pending",
@@ -24680,6 +25980,19 @@
     "status": "done",
     "git_issue": "582fc27"
   },
+  "TASK-RPG-MECHANICS-BASE-IMPLEMENTATION-TICKETS": {
+    "hash": "e4d7788",
+    "git_issue": "e4d7788",
+    "extid": "TASK-RPG-MECHANICS-BASE-IMPLEMENTATION-TICKETS",
+    "type": "TASK",
+    "title": "RPG Mechanics Base Implementation Tickets",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-rpg-mechanics",
+    "tags": [],
+    "source": ".plan/tickets/TASK-rpg-mechanics-base-implementation-tickets.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-RPG-MECHANICS-COMBAT": {
     "hash": "3d96483",
     "extid": "TASK-RPG-MECHANICS-COMBAT",
@@ -25014,6 +26327,19 @@
     "tags": [],
     "source": ".plan/tickets/TASK-scheduled-messages-reminders.md",
     "status": "open"
+  },
+  "TASK-SCHEDULER-IMPLEMENTATION-INTERNAL-CRON-JOBS": {
+    "hash": "3ef0f33",
+    "git_issue": "3ef0f33",
+    "extid": "TASK-SCHEDULER-IMPLEMENTATION-INTERNAL-CRON-JOBS",
+    "type": "TASK",
+    "title": "Scheduler Implementation (Internal Cron Jobs)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "proposed:epic-scheduler",
+    "tags": [],
+    "source": ".plan/tickets/TASK-scheduler-implementation-internal-cron-jobs.md",
+    "status": "⬜ Not Started"
   },
   "TASK-SCHEMA": {
     "hash": "a4f6353",
@@ -25749,6 +27075,19 @@
     "source": ".plan/tickets/TASK-story-mode-runcontenthooks-integration-test.md",
     "status": "open"
   },
+  "TASK-STORY-NOTES-PANEL-3-TABS-ROLE-ACCESS-MATRIX": {
+    "hash": "5b054d5",
+    "git_issue": "5b054d5",
+    "extid": "TASK-STORY-NOTES-PANEL-3-TABS-ROLE-ACCESS-MATRIX",
+    "type": "TASK",
+    "title": "Story Notes Panel (3 tabs, role access matrix)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-gm-shadow-notes",
+    "tags": [],
+    "source": ".plan/tickets/TASK-story-notes-panel-3-tabs-role-access-matrix.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-STORY-POINTS-PROTOTYPE": {
     "hash": "435385e",
     "extid": "TASK-STORY-POINTS-PROTOTYPE",
@@ -25954,6 +27293,19 @@
     "source": ".plan/tickets/TASK-template-based-entity-creation-deterministic-plus-llm-paths.md",
     "status": "open"
   },
+  "TASK-TEMPLATE-SYSTEM-UNIFIED-ARCHITECTURE": {
+    "hash": "e8ee912",
+    "git_issue": "e8ee912",
+    "extid": "TASK-TEMPLATE-SYSTEM-UNIFIED-ARCHITECTURE",
+    "type": "TASK",
+    "title": "Template System Unified Architecture",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-config-templates",
+    "tags": [],
+    "source": ".plan/tickets/TASK-template-system-unified-architecture.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-TEMPLATE-UNIFIED-VARIABLE-ENGINE": {
     "hash": "pending",
     "extid": "TASK-TEMPLATE-UNIFIED-VARIABLE-ENGINE",
@@ -26016,6 +27368,19 @@
     "tags": [],
     "source": ".plan/tickets/TASK-test-contract.md",
     "status": "open"
+  },
+  "TASK-TEST-DB-DIALECT-PARAMETERIZATION-POSTGRES-MATRIX": {
+    "hash": "659eabe",
+    "git_issue": "659eabe",
+    "extid": "TASK-TEST-DB-DIALECT-PARAMETERIZATION-POSTGRES-MATRIX",
+    "type": "TASK",
+    "title": "Test DB Dialect Parameterization (Postgres Matrix)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-core-testing-frameworks",
+    "tags": [],
+    "source": ".plan/tickets/TASK-test-db-dialect-parameterization-postgres-matrix.md",
+    "status": "⬜ Not Started"
   },
   "TASK-TEST-DIALECT-MATRIX": {
     "hash": "pending",
@@ -26190,6 +27555,19 @@
     "source": ".plan/tickets/TASK-thinking-tag-context-prune.md",
     "git_issue": "d02e61f",
     "status": "open"
+  },
+  "TASK-THUMBNAIL-GENERATION-256PX-WEBP-AT-UPLOAD": {
+    "hash": "a362180",
+    "git_issue": "a362180",
+    "extid": "TASK-THUMBNAIL-GENERATION-256PX-WEBP-AT-UPLOAD",
+    "type": "TASK",
+    "title": "Thumbnail Generation (256px WebP at upload)",
+    "label": "task",
+    "priority": "low",
+    "epic": "proposed:epic-asset-thumbnail",
+    "tags": [],
+    "source": ".plan/tickets/TASK-thumbnail-generation-256px-webp-at-upload.md",
+    "status": "⬜ Not Started"
   },
   "TASK-TICKET-EPIC-LINK-BACKFILL": {
     "hash": "c667507",
@@ -26992,6 +28370,19 @@
     "git_issue": "f188860",
     "status": "🟡 Permanently Ongoing"
   },
+  "TASK-USERS-ROLES-SESSIONS-LIFECYCLE": {
+    "hash": "d9fa308",
+    "git_issue": "d9fa308",
+    "extid": "TASK-USERS-ROLES-SESSIONS-LIFECYCLE",
+    "type": "TASK",
+    "title": "Users, Roles & Sessions Lifecycle",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-auth-access",
+    "tags": [],
+    "source": ".plan/tickets/TASK-users-roles-sessions-lifecycle.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-VALIDATE-AND-FIX-FE-BE-DB-GAPS-FOR-CHAT-VN-SETTINGS": {
     "hash": "66c4c3d",
     "git_issue": "66c4c3d",
@@ -27067,7 +28458,7 @@
     "epic": "Avatar Alpha Channel + VN Layering; Aux Enrichment Pipeline",
     "tags": [],
     "source": ".plan/tickets/TASK-vn-alpha-extraction-matting-job-for-opaque-character-images.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-VN-BRANCHING-CHOICES": {
     "hash": "768f67a",
@@ -28060,6 +29451,19 @@
     "source": ".plan/tickets/TASK-xmpp-integration.md",
     "git_issue": "3835d06",
     "status": "open"
+  },
+  "TASK-ZOD-VS-TYPEBOX-DOCS-CODE-RECONCILIATION": {
+    "hash": "b82d422",
+    "git_issue": "b82d422",
+    "extid": "TASK-ZOD-VS-TYPEBOX-DOCS-CODE-RECONCILIATION",
+    "type": "TASK",
+    "title": "Zod vs TypeBox Docs/Code Reconciliation",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-shared-schemas",
+    "tags": [],
+    "source": ".plan/tickets/TASK-zod-vs-typebox-docs-code-reconciliation.md",
+    "status": "⬜ Not Started"
   },
   "TEST-ADMIN-SEEDDEFAULTS-SILENT-DUPLICATE-SKIP-UNTESTED": {
     "hash": "pending",
