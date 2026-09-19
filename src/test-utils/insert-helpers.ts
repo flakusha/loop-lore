@@ -3734,6 +3734,20 @@ export async function insertE2eSkippedMessageKeys(
   } as any,).execute();
 }
 
+/** Insert a message_search_tokens row. */
+export async function insertMessageSearchTokens(
+  db: Db,
+  message_id: string,
+  token: string,
+  scope: string,
+): Promise<void> {
+  await db.insertInto("message_search_tokens",).values({
+    message_id,
+    token,
+    scope,
+  } as any,).execute();
+}
+
 /** Insert a rpg_questions row. */
 export async function insertRpgQuestions(
   db: Db,
@@ -3760,20 +3774,6 @@ export async function insertRpgQuestions(
     prompt,
     options,
     ...opts,
-  } as any,).execute();
-}
-
-/** Insert a message_search_tokens row. */
-export async function insertMessageSearchTokens(
-  db: Db,
-  message_id: string,
-  token: string,
-  scope: string,
-): Promise<void> {
-  await db.insertInto("message_search_tokens",).values({
-    message_id,
-    token,
-    scope,
   } as any,).execute();
 }
 
