@@ -18,7 +18,7 @@
  * migrations are auto-discovered by `getMigrationFiles()` (sorted by name).
  */
 import { type Kysely, } from "kysely";
-import { recordSchemaVersion, } from "../schema-version";
+import { recordSchemaVersion, removeSchemaVersion, } from "../schema-version";
 
 /**
  * @param database
@@ -34,7 +34,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("avatar_focus_y", "real", (col,) => col.notNull().defaultTo(50,),)
     .execute();
 
-  await recordSchemaVersion(database, 33, "actor avatar focus offsets",);
+  await recordSchemaVersion(database, 36, "actor avatar focus offsets",);
 }
 
 /**
@@ -43,4 +43,5 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
 export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema.alterTable("actors",).dropColumn("avatar_focus_y",).execute();
   await database.schema.alterTable("actors",).dropColumn("avatar_focus_x",).execute();
+  await removeSchemaVersion(database, 36,);
 }

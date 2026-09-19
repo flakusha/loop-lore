@@ -18,7 +18,7 @@
  */
 import type { Kysely, } from "kysely";
 import { sql, } from "kysely";
-import { recordSchemaVersion, } from "../schema-version";
+import { recordSchemaVersion, removeSchemaVersion, } from "../schema-version";
 
 /**
  * @param database
@@ -115,4 +115,6 @@ export async function down(database: Kysely<unknown>,): Promise<void> {
     .alterTable("actor_memories",)
     .dropColumn("source_message_ids",)
     .execute();
+
+  await removeSchemaVersion(database, 29,);
 }

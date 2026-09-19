@@ -18,7 +18,7 @@
  * SQLite supports one ADD COLUMN per alterTable statement.
  */
 import { type Kysely, sql, } from "kysely";
-import { recordSchemaVersion, } from "../schema-version";
+import { recordSchemaVersion, removeSchemaVersion, } from "../schema-version";
 
 /**
  * @param database
@@ -82,4 +82,5 @@ export async function down(database: Kysely<unknown>,): Promise<void> {
     .alterTable("worlds",)
     .dropColumn("rpg_dice",)
     .execute();
+  await removeSchemaVersion(database, 25,);
 }

@@ -345,7 +345,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("death_save_failures", "integer", (col,) => col.notNull().defaultTo(0,),)
     .addColumn("xp", "integer", (col,) => col.notNull().defaultTo(0,),)
     .addColumn("xp_to_next", "integer", (col,) => col.notNull().defaultTo(0,),)
-    .addColumn("data_version", "integer", (col,) => col.notNull().defaultTo(1,),)
+    .addColumn("data_version", "integer", (col,) => col.notNull().defaultTo(0,),)
     .addColumn("created_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
     .addColumn("updated_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
     .addColumn("behavior_profile", "text", (col,) => col.defaultTo("companion",),)
@@ -403,7 +403,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("updated_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
     .addColumn("agent_role", "text",)
     .addColumn("federation_consent", "integer", (col,) => col.notNull().defaultTo(0,),)
-    .addColumn("data_version", "integer", (col,) => col.notNull().defaultTo(1,),)
+    .addColumn("data_version", "integer", (col,) => col.notNull().defaultTo(0,),)
     .addColumn("record_hash", "text", (col,) => col.notNull().defaultTo("",),)
     .execute();
 

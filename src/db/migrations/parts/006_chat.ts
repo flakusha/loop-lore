@@ -159,7 +159,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("quick_replies", "text",)
     .addColumn("prompt_override", "text",)
     .addColumn("output_style_preset", "text",)
-    .addColumn("data_version", "integer", (col,) => col.notNull().defaultTo(1,),)
+    .addColumn("data_version", "integer", (col,) => col.notNull().defaultTo(0,),)
     .addColumn("record_hash", "text", (col,) => col.notNull().defaultTo("",),)
     .addColumn("custom_instructions", "text",)
     .addCheckConstraint("ck_chats_type", sql`type IN ('direct', 'group')`,)
@@ -262,7 +262,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("e2e_sender_eph_pub_jwk", "text",)
     .addColumn("e2e_chain_index", "integer",)
     .addColumn("content_plaintext", "text",)
-    .addColumn("data_version", "integer", (col,) => col.notNull().defaultTo(1,),)
+    .addColumn("data_version", "integer", (col,) => col.notNull().defaultTo(0,),)
     .addColumn("record_hash", "text", (col,) => col.notNull().defaultTo("",),)
     .execute();
 

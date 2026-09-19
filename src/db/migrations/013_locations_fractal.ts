@@ -6,8 +6,11 @@
  *
  * Extends the existing `locations` table with kind / mobility_mode / path /
  * coord_* / current_route_id / travel_progress; creates three new tables
- * (travel_routes, travel_route_stops, actor_locations); adds five SQLite
- * triggers for cycle/depth/cross-world/path materialization/path rewrite.
+ * (travel_routes, travel_route_stops, actor_locations); adds four SQLite
+ * triggers (self-parent cycle, cross-world parent, path materialization on
+ * insert, path rewrite on parent update). Depth as well as UPDATE-time
+ * cycle/cross-world checks are enforced by `LocationTreeService` — the
+ * triggers are INSERT-only, so raw SQL UPDATEs bypass them by design.
  *
  * Append-only: every ALTER is one column per statement (SQLite limitation).
  * Existing rows backfill to kind='region', mobility_mode='static',
@@ -15,7 +18,7 @@
  */
 import { type Kysely, sql, } from "kysely";
 import { LocationKind, MobilityMode, } from "../enums-story/world";
-import { recordSchemaVersion, } from "../schema-version";
+import { recordSchemaVersion, removeSchemaVersion, } from "../schema-version";
 
 /** Maximum fractal depth. */
 export const LOCATION_DEPTH_LIMIT = 12;
@@ -128,7 +131,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .column("spatial_location_id",)
     .execute();
 
-  // ── 6. Five triggers ──
+  // ── 6. Triggers (INSERT-time; UPDATE-time checks live in LocationTreeService) ──
 
   // 6.1 — Reject self-parent.
   await sql`CREATE TRIGGER trg_locations_no_self_parent
@@ -241,4 +244,6 @@ export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema.alterTable("locations",).dropColumn("path",).execute();
   await database.schema.alterTable("locations",).dropColumn("mobility_mode",).execute();
   await database.schema.alterTable("locations",).dropColumn("kind",).execute();
+
+  await removeSchemaVersion(database, 34,);
 }
