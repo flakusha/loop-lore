@@ -5,7 +5,7 @@
 <!-- Header: moved to #header-slot by htmx:load handler -->
 {{> chat/chat-header.html }}
 
-<div class="app-layout" x-data="chatState()">
+<div class="app-layout" x-data="chatState()" x-init="init()">
   <!-- Story-mode layout: loads story state (turns/quests/world) + exposes it to all chat components -->
   <div class="story-layout" x-data="storyState()" x-init="init()">
     <main class="main-content">

@@ -10,8 +10,20 @@ export const chatKeys = {
   _chatKey: null as CryptoKey | null,
   _encryptionEnabled: false as boolean,
   _keyId: null as string | null,
+  _activeChatEncryptionLevel: null as string | null,
 
-  async loadChatKey(chatId: string,) {
+  async loadChatKey(chatId: string, encryptionLevel?: string | null,) {
+    // Tier guard: only `standard` chats have a server-derived key. `none`
+    // (plaintext) and `at-rest` (client E2E keys) 404 by design — skip the
+    // fetch so selecting them leaves no console 404 behind.
+    if (encryptionLevel !== undefined && encryptionLevel !== "standard") {
+      this._encryptionEnabled = false;
+      this._chatKey = null;
+      this._keyId = null;
+      globalThis.__chatKey = null;
+      globalThis.__chatKeyId = null;
+      return;
+    }
     try {
       const res = await apiFetch(`/api/chats/${chatId}/encryption-key`,);
       if (!res.ok) {

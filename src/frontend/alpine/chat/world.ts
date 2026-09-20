@@ -91,8 +91,12 @@ export const chatWorld: Partial<ChatState> & ThisType<ChatState> = {
     Alpine.store("ui",).showChatList = false;
     Alpine.store("ui",).showGallery = false;
     Alpine.store("ui",).showCharacterInfo = false;
-    const chat = this.chats.find((c: { id: string; name?: string },) => c.id === chatId);
+    const chat = this.chats.find((c: { id: string; name?: string; encryption_level?: string },) => c.id === chatId);
     this.activeChatName = chat?.name || t("chats.untitledChat",);
+    // Tier for the key fetch: `encryption_level` rides on the list rows
+    // (selectAll), parsed or EMPTY fallback. Unknown/legacy rows gate inside
+    // loadChatKey (fetch attempt → graceful clear on non-OK).
+    this._activeChatEncryptionLevel = chat?.encryption_level ?? null;
     if (g.Alpine) {
       try {
         Alpine.store("chat",).currentChat = chat || null;
@@ -130,7 +134,7 @@ export const chatWorld: Partial<ChatState> & ThisType<ChatState> = {
     // the throw-on-rejection contract of the sequential version).
     const postLoad = await Promise.allSettled([
       this.markChatAsRead(chatId,),
-      this.loadChatKey(chatId,),
+      this.loadChatKey(chatId, this._activeChatEncryptionLevel,),
       this.loadImpersonationState(),
     ],);
     if (postLoad.some((r,) => r.status === "rejected")) { throw new Error("select chat post-load failed",); }
