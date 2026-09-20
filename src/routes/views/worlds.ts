@@ -3,6 +3,7 @@
 
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
+import { requireWorldAccess, } from "../worlds/access";
 import { can, } from "../../users/permissions";
 import { jsonStringifyOr, safeJsonParse, } from "../../utils";
 import { escapeHtml, htmlResponse, } from "./layout";
@@ -70,8 +71,15 @@ async function serveWorldDetailContent(
 ): Promise<Response> {
   const world = await database.selectFrom("worlds",).selectAll().where("id", "=", worldId,).executeTakeFirst();
 
-  // Mirror the API: only the owner (or admin) may view world details.
-  if (!world || (!can(userRole, "admin.world",) && world.owner_id !== userId)) {
+  // Mirror the API: owner, admin, member, or public-visibility may view.
+  // requireWorldAccess hides existence (World not found) from outsiders.
+  if (!world) {
+    return htmlResponse(`<div class="empty-state" style="padding: var(--space-12)">
+      <div class="icon">⚠️</div>
+      <div class="title">World not found</div>
+    </div>`,);
+  }
+  if (await requireWorldAccess(database, worldId, userId, userRole,)) {
     return htmlResponse(`<div class="empty-state" style="padding: var(--space-12)">
       <div class="icon">⚠️</div>
       <div class="title">World not found</div>

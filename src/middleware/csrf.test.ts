@@ -339,6 +339,36 @@ describe("decideCsrf — unsafe methods (verification path)", () => {
     },);
     expect(d.ok,).toBe(false,);
   });
+  test("solo POST (sessionId null + userId set) verifies userId-bound token across requestIds", () => {
+    const token = mintCsrfToken(SECRET, "solo-user-1", {},);
+    const headers = makeHeaders({
+      [CSRF_HEADER]: token,
+      cookie: `${CSRF_COOKIE}=${token}`,
+    },);
+    const d = decideCsrf(opts, {
+      method: "POST",
+      routePattern: "/api/foo",
+      headers,
+      sessionId: null,
+      userId: "solo-user-1",
+      requestId: "req-different",
+    },);
+    expect(d.ok,).toBe(true,);
+  });
+
+  test("solo GET (sessionId null + userId set) mints a userId-bound token", () => {
+    const headers = makeHeaders({},);
+    const d = decideCsrf(opts, {
+      method: "GET",
+      routePattern: "/api/foo",
+      headers,
+      sessionId: null,
+      userId: "solo-user-1",
+      requestId: "req-get-1",
+    },);
+    expect(d.cookieToIssue,).not.toBeNull();
+    expect(verifyCsrfToken(SECRET, d.cookieToIssue as string, "solo-user-1",),).toBe(true,);
+  });
 });
 
 describe("decideCsrf — exempt routes (auth POSTs)", () => {
