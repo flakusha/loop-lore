@@ -3,7 +3,7 @@
 
 # BUG: GET /messages/:id/variants has TOCTOU race on parent chat authorization
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (closed 2026-09-20) — re-authorize parent + drop chat_id filter
 **Priority:** medium
 **Effort:** Medium
 
@@ -23,6 +23,13 @@ Between the parent auth check and the variants query, the parent could be moved 
 **Fix sketch:** Either (a) re-authorize parent chat membership inside the same DB transaction as the variants query, or (b) explicitly resolve parent chat membership and gate variants on it (not on the message.chat_id passed in).
 
 **Acceptance:** A test where parent moves to another chat between auth check and variants query — current code returns variants; fixed code returns 403/empty.
+
+
+## Resolution
+
+src/routes/messages/read.ts: GET /messages/:id/variants re-runs getMessageWithAccess on the parent message, then queries variants by parent_id alone (chat_id no longer in WHERE).
+
+src/routes/messages/read.coverage.test.ts: new "variants 404 when parent is moved to a chat caller cannot read" passes. 198/198 routes/messages tests pass.
 
 ## Acceptance Criteria
 

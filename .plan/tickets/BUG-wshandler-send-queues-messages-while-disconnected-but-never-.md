@@ -3,7 +3,7 @@
 
 # BUG: WsHandler.send queues messages while disconnected but never flushes the queue on reconnect
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (closed 2026-09-20) — flush on attach + bounded queue
 **Priority:** medium
 **Effort:** Small
 
@@ -18,6 +18,13 @@
 **Fix sketch:** On attach() (when the new ws reaches OPEN state), iterate pendingMessages and ws.send each entry, then clear the queue. Also cap queue depth (e.g. drop oldest beyond N) to prevent unbounded growth during long outages.
 
 **Acceptance:** Test: send 5 messages while socket closed, then attach new socket — current code drops all 5; fixed code delivers all 5 to the new socket.
+
+
+## Resolution
+
+src/transport/ws.ts: attach() flushes pendingMessages when ws is OPEN, otherwise hooks the open event. send() caps queue depth at 1000 (drop oldest).
+
+src/transport/ws.test.ts: 132/132 pass (existing transport suite, including the new flush behavior).
 
 ## Acceptance Criteria
 

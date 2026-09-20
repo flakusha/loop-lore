@@ -3,7 +3,7 @@
 
 # BUG: updatePost has no ownership check — any authenticated user can edit any blog post by ID
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (closed 2026-09-20) — author_id ownership check added
 **Priority:** high
 **Effort:** Small
 
@@ -25,6 +25,13 @@ There is no verification that the requesting user's id matches post.author_id. A
 **Fix sketch:** Either add author_id to the WHERE clause (returns 0 rows when caller is not author) or pre-fetch the post and 403/404 before update. Pass caller userId through the call chain (route → service).
 
 **Acceptance:** A test where user A creates a post and user B calls updatePost(post.id, { title: 'hax' }) — current code mutates; fixed code returns undefined / 403.
+
+
+## Resolution
+
+src/rpg/blog/service/posts.ts: updatePost now takes (db, id, input, callerUserId, isAdmin); pre-fetches and returns undefined unless caller owns or is admin.
+
+src/rpg/blog/service/posts.coverage.test.ts + service.test.ts: 6 new tests cover non-author rejection + admin override.
 
 ## Acceptance Criteria
 

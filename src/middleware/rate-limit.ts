@@ -109,7 +109,9 @@ export function createRateLimiter(config: RateLimitConfig,) {
       timestamps.set(key, queue,);
     }
     // Drop timestamps that fell out of the window.
-    while (queue.length > 0 && queue[0]! <= cutoff) { queue.shift(); }
+    // BUG-rate-limit-off-by-one: strict boundary (sliding-window math).
+    // A timestamp at exactly `cutoff` has aged out: now - windowMs == ts.
+    while (queue.length > 0 && queue[0]! < cutoff) { queue.shift(); }
 
     if (queue.length >= config.maxRequests) {
       // Blocked: do NOT add a timestamp. Retry-After = ms until the

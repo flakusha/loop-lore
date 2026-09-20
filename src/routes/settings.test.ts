@@ -181,6 +181,7 @@ describe("PATCH /api/settings", () => {
         body: JSON.stringify({ customInstructions: "x".repeat(5001,), },),
       },),
     );
+    // Handler-level enforcement of the customInstructions cap → 400.
     expect(res.status,).toBe(400,);
   });
 
@@ -193,6 +194,7 @@ describe("PATCH /api/settings", () => {
         body: JSON.stringify({ customInstructions: { nested: true, }, },),
       },),
     );
+    // Handler-level enforcement of the customInstructions type → 400.
     expect(res.status,).toBe(400,);
   });
 
@@ -223,6 +225,77 @@ describe("PATCH /api/settings", () => {
       },),
     );
     expect(res.status,).toBe(401,);
+  });
+
+  // BUG-patch-settings-endpoint-has-no-key-allowlist: PATCH body must be
+  // restricted to the SettingsUpdateAllowedKeys allowlist. Anything else
+  // (e.g. privilege flags like `isAdmin`) is rejected with 400 and the
+  // rejected-keys list — never silently merged into the persisted blob.
+  test("rejects unknown keys with 400 and reports rejected keys", async () => {
+    const app = createSettingsApp(db, TEST_USER_ID,);
+    const res = await app.handle(
+      new Request("http://localhost/api/settings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ theme: "dark", isAdmin: true, isModerator: 1, },),
+      },),
+    );
+    expect(res.status,).toBe(400,);
+    const body = (await res.json()) as {
+      error?: string;
+      code?: string;
+      details?: { rejectedKeys?: string[]; allowedKeys?: string[] };
+    };
+    expect(body.error,).toBeTruthy();
+    expect(body.code,).toBe("BAD_REQUEST",);
+    expect(body.details?.rejectedKeys?.sort(),).toEqual(["isAdmin", "isModerator",],);
+    expect(body.details?.allowedKeys,).toContain("theme",);
+  });
+
+  test("does not persist unknown keys (privilege-flag injection attempt)", async () => {
+    const app = createSettingsApp(db, TEST_USER_ID,);
+    const res = await app.handle(
+      new Request("http://localhost/api/settings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ isAdmin: true, },),
+      },),
+    );
+    expect(res.status,).toBe(400,);
+    // The persisted blob must NOT contain the rejected key — verify by
+    // re-reading settings through GET.
+    const getRes = await app.handle(new Request("http://localhost/api/settings",),);
+    const settings = (await getRes.json()) as Record<string, unknown>;
+    expect(settings.isAdmin,).toBeUndefined();
+  });
+
+  test("accepts a full known-keys payload", async () => {
+    const app = createSettingsApp(db, TEST_USER_ID,);
+    const res = await app.handle(
+      new Request("http://localhost/api/settings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({
+          theme: "light",
+          fontSize: 16,
+          locale: "en",
+          provider: "OpenAI",
+          model: "gpt-4o",
+          temperature: 0.7,
+          maxTokens: 2048,
+          detailLevel: "Detailed",
+          customInstructions: "be concise",
+          auto_rename_enabled: true,
+        },),
+      },),
+    );
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as Record<string, unknown>;
+    expect(body.theme,).toBe("light",);
+    expect(body.fontSize,).toBe(16,);
+    expect(body.locale,).toBe("en",);
+    expect(body.detailLevel,).toBe("Detailed",);
+    expect(body.auto_rename_enabled,).toBe(true,);
   });
 });
 
