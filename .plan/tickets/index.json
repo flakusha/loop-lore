@@ -348,6 +348,32 @@
     "git_issue": "821e0d1",
     "status": "done"
   },
+  "BUG-AUDIT-PANEL-DETAILS-NOT-EXPANDABLE": {
+    "hash": "ea31566",
+    "git_issue": "ea31566",
+    "extid": "BUG-AUDIT-PANEL-DETAILS-NOT-EXPANDABLE",
+    "type": "BUG",
+    "title": "Audit panel details not expandable",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-audit-panel-details-not-expandable.md",
+    "status": "⬜ Not Started"
+  },
+  "BUG-AUDIT-PANEL-RENDERS-ACTION-TEXT-LABELS-INSTEAD-OF-ICONS": {
+    "hash": "d93049b",
+    "git_issue": "d93049b",
+    "extid": "BUG-AUDIT-PANEL-RENDERS-ACTION-TEXT-LABELS-INSTEAD-OF-ICONS",
+    "type": "BUG",
+    "title": "Audit panel renders action text labels instead of icons",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-audit-panel-renders-action-text-labels-instead-of-icons.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-AUTH-RATE-LIMITER-TESTS-SEED-PER-IP-BUCKETS-VIA-GETCLIENTIP-": {
     "hash": "a877274",
     "git_issue": "a877274",
@@ -902,6 +928,32 @@
     "tags": [],
     "source": ".plan/tickets/BUG-bug-sse-stream-render-relies-on-weak-regex-html-sanitizer-re.md",
     "status": "done"
+  },
+  "BUG-BUILDSTYLEPROMPT-NEVER-INJECTED-INTO-LLM-REQUEST": {
+    "hash": "e326144",
+    "git_issue": "e326144",
+    "extid": "BUG-BUILDSTYLEPROMPT-NEVER-INJECTED-INTO-LLM-REQUEST",
+    "type": "BUG",
+    "title": "buildStylePrompt never injected into LLM request",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-buildstyleprompt-never-injected-into-llm-request.md",
+    "status": "⬜ Not Started"
+  },
+  "BUG-BUILDSTYLEPROMPT-RESULT-RETURNED-BUT-NEVER-CONSUMED": {
+    "hash": "ba53e1e",
+    "git_issue": "ba53e1e",
+    "extid": "BUG-BUILDSTYLEPROMPT-RESULT-RETURNED-BUT-NEVER-CONSUMED",
+    "type": "BUG",
+    "title": "buildStylePrompt result returned but never consumed",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-buildstyleprompt-result-returned-but-never-consumed.md",
+    "status": "⬜ Not Started"
   },
   "BUG-CALLAUX-GRACEFUL-FAILURE-THROWS-ON-EMPTY-CONFIG": {
     "hash": "pending",
@@ -1793,6 +1845,19 @@
     "source": ".plan/tickets/BUG-db-reinit-archive-directory-has-no-rotation-pii-accumulates-.md",
     "status": "closed"
   },
+  "BUG-DELETE-AUDIT-ACTION-HAS-NO-UNIT-TEST": {
+    "hash": "6e02c43",
+    "git_issue": "6e02c43",
+    "extid": "BUG-DELETE-AUDIT-ACTION-HAS-NO-UNIT-TEST",
+    "type": "BUG",
+    "title": "delete audit action has no unit test",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-delete-audit-action-has-no-unit-test.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-DELETE-CHAT-GATED-ONLY-AT-PARTICIPANT-LEVEL": {
     "hash": "c80979f",
     "git_issue": "c80979f",
@@ -2373,6 +2438,19 @@
     "source": ".plan/tickets/BUG-frontend-music-embed-fallback-esc-allows-stored-xss-via-attr.md",
     "status": "done"
   },
+  "BUG-FRONTEND-REGENERATEVARIANT-DOES-NOT-PASS-STYLE-TO-API": {
+    "hash": "00d89ff",
+    "git_issue": "00d89ff",
+    "extid": "BUG-FRONTEND-REGENERATEVARIANT-DOES-NOT-PASS-STYLE-TO-API",
+    "type": "BUG",
+    "title": "frontend regenerateVariant does not pass style to API",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-frontend-regeneratevariant-does-not-pass-style-to-api.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-GALLERY-DUPLICATE-SERVEGALLERYGRID": {
     "hash": "pending",
     "extid": "BUG-GALLERY-DUPLICATE-SERVEGALLERYGRID",
@@ -2850,6 +2928,19 @@
     "git_issue": "86a2a1b",
     "status": "done"
   },
+  "BUG-INJECT-AUDIT-ACTION-HAS-NO-UNIT-TEST": {
+    "hash": "5a1c9dc",
+    "git_issue": "5a1c9dc",
+    "extid": "BUG-INJECT-AUDIT-ACTION-HAS-NO-UNIT-TEST",
+    "type": "BUG",
+    "title": "inject audit action has no unit test",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-inject-audit-action-has-no-unit-test.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-INJECTNARRATION-HARDCODES-ACTOR-ID-SYSTEM-FK-DROPS-SPLIT-REU": {
     "hash": "6dc73c8",
     "git_issue": "6dc73c8",
@@ -3071,6 +3162,32 @@
     "git_issue": "fafb5a9",
     "status": "done"
   },
+  "BUG-MEMORY-AUDIT-LOG-ACTION-COLUMN-TYPED-STRING-NOT-UNION": {
+    "hash": "57ed7a8",
+    "git_issue": "57ed7a8",
+    "extid": "BUG-MEMORY-AUDIT-LOG-ACTION-COLUMN-TYPED-STRING-NOT-UNION",
+    "type": "BUG",
+    "title": "memory_audit_log action column typed string not union",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-memory-audit-log-action-column-typed-string-not-union.md",
+    "status": "⬜ Not Started"
+  },
+  "BUG-MEMORY-CREATE-FORM-HARDCODES-EPISODIC-TYPE": {
+    "hash": "25d9c69",
+    "git_issue": "25d9c69",
+    "extid": "BUG-MEMORY-CREATE-FORM-HARDCODES-EPISODIC-TYPE",
+    "type": "BUG",
+    "title": "memory create form hardcodes episodic type",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-memory-create-form-hardcodes-episodic-type.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-MEMORY-DECAY-WRITES-NAN-STRENGTH": {
     "hash": "8b01cbe",
     "git_issue": "8b01cbe",
@@ -3083,6 +3200,19 @@
     "tags": [],
     "source": ".plan/tickets/BUG-memory-decay-writes-nan-strength.md",
     "status": "done"
+  },
+  "BUG-MEMORY-INJECTION-REASON-NOT-DISPLAYED-IN-UI": {
+    "hash": "54be501",
+    "git_issue": "54be501",
+    "extid": "BUG-MEMORY-INJECTION-REASON-NOT-DISPLAYED-IN-UI",
+    "type": "BUG",
+    "title": "memory injection reason not displayed in UI",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-memory-injection-reason-not-displayed-in-ui.md",
+    "status": "⬜ Not Started"
   },
   "BUG-MENTION-PARSER-REGEX-FAILS-ON-MULTI-WORD-NAMES": {
     "hash": "pending",
@@ -3987,6 +4117,19 @@
     "source": ".plan/tickets/BUG-redundant-vn-state-stored-in-two-independent-locations.md",
     "status": "done"
   },
+  "BUG-REGEX-TRANSFORM-RUNS-AT-STORE-TIME-NOT-RENDER-TIME": {
+    "hash": "73a7cc5",
+    "git_issue": "73a7cc5",
+    "extid": "BUG-REGEX-TRANSFORM-RUNS-AT-STORE-TIME-NOT-RENDER-TIME",
+    "type": "BUG",
+    "title": "regex transform runs at store time not render time",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-regex-transform-runs-at-store-time-not-render-time.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-REGISTER-PLUGINS-150-REFERENCES-UNDEFINED-CHATSECTIONSROUTES": {
     "hash": "0b9a09b",
     "extid": "BUG-REGISTER-PLUGINS-150-REFERENCES-UNDEFINED-CHATSECTIONSROUTES",
@@ -4168,6 +4311,19 @@
     "source": ".plan/tickets/BUG-scripts-worktree-ticket-writes-to-cwd-instead-of-worktree-pa.md",
     "status": "done"
   },
+  "BUG-SECTIONBUILDER-INTERFACE-MISSING-INCLUDED-MEMORY-IDS-FIELD": {
+    "hash": "fa147d9",
+    "git_issue": "fa147d9",
+    "extid": "BUG-SECTIONBUILDER-INTERFACE-MISSING-INCLUDED-MEMORY-IDS-FIELD",
+    "type": "BUG",
+    "title": "SectionBuilder interface missing included_memory_ids field",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-sectionbuilder-interface-missing-included-memory-ids-field.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-SECURITY-MERGE-BUILD-BREAK-INSTANCES-TS": {
     "hash": "pending",
     "extid": "BUG-SECURITY-MERGE-BUILD-BREAK-INSTANCES-TS",
@@ -4270,6 +4426,32 @@
     "tags": [],
     "source": ".plan/tickets/BUG-shadow-and-whitenote-crud-open-to-any-chat-participant.md",
     "status": "done"
+  },
+  "BUG-SHADOW-NOTES-MISSING-VISIBILITY-FOR-LLM-INJECTION-CONTROL": {
+    "hash": "11ab631",
+    "git_issue": "11ab631",
+    "extid": "BUG-SHADOW-NOTES-MISSING-VISIBILITY-FOR-LLM-INJECTION-CONTROL",
+    "type": "BUG",
+    "title": "shadow notes missing visibility for LLM injection control",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-shadow-notes-missing-visibility-for-llm-injection-control.md",
+    "status": "⬜ Not Started"
+  },
+  "BUG-SHADOW-NOTES-TABLE-MISSING-TTL-VISIBILITY-AUTHOR-TYPE-COLUMN": {
+    "hash": "dbb4a29",
+    "git_issue": "dbb4a29",
+    "extid": "BUG-SHADOW-NOTES-TABLE-MISSING-TTL-VISIBILITY-AUTHOR-TYPE-COLUMN",
+    "type": "BUG",
+    "title": "shadow_notes table missing TTL/visibility/author_type columns",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-shadow-notes-table-missing-ttl-visibility-author-type-column.md",
+    "status": "⬜ Not Started"
   },
   "BUG-SIGNAL-BRIDGE-ACTIVATION-TRIGGER-UNDEFINED": {
     "hash": "3ba1095",
@@ -5762,7 +5944,7 @@
     "status": "open"
   },
   "FEAT-042": {
-    "hash": "f3a5535",
+    "hash": "4538afb",
     "extid": "FEAT-042",
     "type": "FEAT",
     "title": "# FEAT-042: Content versioning framework",
@@ -7018,6 +7200,19 @@
     "git_issue": "a872e9b",
     "status": "open"
   },
+  "FEAT-CONTENT-DECOMPRESSION-STAGE-IN-GENERATION-PIPELINE": {
+    "hash": "461b88e",
+    "git_issue": "461b88e",
+    "extid": "FEAT-CONTENT-DECOMPRESSION-STAGE-IN-GENERATION-PIPELINE",
+    "type": "FEAT",
+    "title": "content decompression stage in generation pipeline",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-content-decompression-stage-in-generation-pipeline.md",
+    "status": "⬜ Not Started"
+  },
   "FEAT-CONVERSATION-ANALYTICS-SENTIMENT-WORD-CLOUDS-BEAT-MAP": {
     "hash": "eaf545e",
     "git_issue": "eaf545e",
@@ -7082,6 +7277,19 @@
     "source": ".plan/tickets/FEAT-data-integrity-acid-guarantees.md",
     "git_issue": "910b341",
     "status": "open"
+  },
+  "FEAT-DECAY-TIMELINE-VISUALIZATION-FOR-MEMORY-LIFECYCLE": {
+    "hash": "be5ecc3",
+    "git_issue": "be5ecc3",
+    "extid": "FEAT-DECAY-TIMELINE-VISUALIZATION-FOR-MEMORY-LIFECYCLE",
+    "type": "FEAT",
+    "title": "decay timeline visualization for memory lifecycle",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-decay-timeline-visualization-for-memory-lifecycle.md",
+    "status": "⬜ Not Started"
   },
   "FEAT-DIRECTOR-S-MODE-CAMERA-SCENE-CUT-MUSIC-METADATA": {
     "hash": "1a0f025",
@@ -7861,6 +8069,19 @@
     "source": ".plan/tickets/FEAT-queryable-audit-store.md",
     "status": "⬜ Not Started"
   },
+  "FEAT-QUEST-LOG-UI-EXTENDED-TO-FULL-SPEC-QUEST-BROWSER": {
+    "hash": "83b6db1",
+    "git_issue": "83b6db1",
+    "extid": "FEAT-QUEST-LOG-UI-EXTENDED-TO-FULL-SPEC-QUEST-BROWSER",
+    "type": "FEAT",
+    "title": "quest log UI extended to full spec quest browser",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-quest-log-ui-extended-to-full-spec-quest-browser.md",
+    "status": "⬜ Not Started"
+  },
   "FEAT-QUEST-SYSTEM-BACKEND-IMPLEMENTATION": {
     "hash": "bcd90de",
     "git_issue": "bcd90de",
@@ -8065,6 +8286,19 @@
     "source": ".plan/tickets/FEAT-skills.md",
     "status": "in_progress"
   },
+  "FEAT-SMART-REGEN-DECISION-GATE-IN-MAIN-PIPELINE": {
+    "hash": "c2e2eec",
+    "git_issue": "c2e2eec",
+    "extid": "FEAT-SMART-REGEN-DECISION-GATE-IN-MAIN-PIPELINE",
+    "type": "FEAT",
+    "title": "smart-regen decision gate in main pipeline",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-smart-regen-decision-gate-in-main-pipeline.md",
+    "status": "⬜ Not Started"
+  },
   "FEAT-SMART-REGEN-TRANSFORMS-SHORTER-LONGER-FUNNIER-DARKER": {
     "hash": "fbd9c6e",
     "git_issue": "fbd9c6e",
@@ -8090,6 +8324,32 @@
     "tags": [],
     "source": ".plan/tickets/FEAT-static-file-server-honors-accept-encoding-q-values-and-wildc.md",
     "status": "open"
+  },
+  "FEAT-STORY-POINTS-ACTOR-PROPERTIES-STORYPOINTS-AGENCY-SLASH-COMMA": {
+    "hash": "1a8347c",
+    "git_issue": "1a8347c",
+    "extid": "FEAT-STORY-POINTS-ACTOR-PROPERTIES-STORYPOINTS-AGENCY-SLASH-COMMA",
+    "type": "FEAT",
+    "title": "story points (actor.properties.storyPoints) + /agency slash command + integration-registry",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-story-points-actor-properties-storypoints-agency-slash-comma.md",
+    "status": "⬜ Not Started"
+  },
+  "FEAT-STYLE-PICKER-UI-FOR-SMART-REGEN": {
+    "hash": "85f8faa",
+    "git_issue": "85f8faa",
+    "extid": "FEAT-STYLE-PICKER-UI-FOR-SMART-REGEN",
+    "type": "FEAT",
+    "title": "style picker UI for smart-regen",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-style-picker-ui-for-smart-regen.md",
+    "status": "⬜ Not Started"
   },
   "FEAT-SWARM-MODE-RECONCILIATION": {
     "hash": "pending",
@@ -8154,6 +8414,19 @@
     "source": ".plan/tickets/FEAT-time-scale.md",
     "status": "in_progress"
   },
+  "FEAT-TOOL-AGENT-OUTPUT-PARSING-DISTINCT-FROM-NARRATIVE": {
+    "hash": "af76aaa",
+    "git_issue": "af76aaa",
+    "extid": "FEAT-TOOL-AGENT-OUTPUT-PARSING-DISTINCT-FROM-NARRATIVE",
+    "type": "FEAT",
+    "title": "tool/agent output parsing distinct from narrative",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-tool-agent-output-parsing-distinct-from-narrative.md",
+    "status": "⬜ Not Started"
+  },
   "FEAT-TOOL-CALL-BUBBLE-PERSISTED-ROWS": {
     "hash": "46d22ff",
     "git_issue": "46d22ff",
@@ -8206,6 +8479,19 @@
     "source": ".plan/tickets/FEAT-unified-date-representation-util-locale-region-iana-timezone.md",
     "status": "done"
   },
+  "FEAT-USER-DEFINED-REGEX-RULES-STORAGE-CRUD-ROUTE-UI": {
+    "hash": "0408fcf",
+    "git_issue": "0408fcf",
+    "extid": "FEAT-USER-DEFINED-REGEX-RULES-STORAGE-CRUD-ROUTE-UI",
+    "type": "FEAT",
+    "title": "user-defined regex rules storage + CRUD route + UI",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-user-defined-regex-rules-storage-crud-route-ui.md",
+    "status": "⬜ Not Started"
+  },
   "FEAT-USER-ENGAGEMENT-LEADERBOARDS": {
     "hash": "c186458",
     "git_issue": "c186458",
@@ -8217,6 +8503,19 @@
     "epic": "proposed:epic-user-engagement",
     "tags": [],
     "source": ".plan/tickets/FEAT-user-engagement-leaderboards.md",
+    "status": "⬜ Not Started"
+  },
+  "FEAT-VISUAL-KNOWLEDGE-GRAPH-FOR-MEMORY": {
+    "hash": "8d64d6b",
+    "git_issue": "8d64d6b",
+    "extid": "FEAT-VISUAL-KNOWLEDGE-GRAPH-FOR-MEMORY",
+    "type": "FEAT",
+    "title": "visual knowledge graph for memory",
+    "label": "feat",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-visual-knowledge-graph-for-memory.md",
     "status": "⬜ Not Started"
   },
   "FEAT-VISUAL-NOVEL-MODE-FULL-IMPLEMENTATION": {
@@ -17608,6 +17907,19 @@
     "status": "done",
     "git_issue": "d5f7337"
   },
+  "TASK-END-TO-END-REGEX-PIPELINE-INTEGRATION-TEST": {
+    "hash": "a2ec333",
+    "git_issue": "a2ec333",
+    "extid": "TASK-END-TO-END-REGEX-PIPELINE-INTEGRATION-TEST",
+    "type": "TASK",
+    "title": "end-to-end regex pipeline integration test",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-end-to-end-regex-pipeline-integration-test.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-ENEMIES-MONSTERS": {
     "hash": "03308ae",
     "extid": "TASK-ENEMIES-MONSTERS",
@@ -23600,6 +23912,19 @@
     "source": ".plan/tickets/TASK-output-control-transforms.md",
     "git_issue": "cd237ca",
     "status": "open"
+  },
+  "TASK-OUTPUT-CONTROL-TRANSFORMS-MD-SILENT-ON-UI-AND-VALID-REGEN-ST": {
+    "hash": "e52da68",
+    "git_issue": "e52da68",
+    "extid": "TASK-OUTPUT-CONTROL-TRANSFORMS-MD-SILENT-ON-UI-AND-VALID-REGEN-ST",
+    "type": "TASK",
+    "title": "output-control-transforms.md silent on UI and VALID_REGEN_STYLES",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-output-control-transforms-md-silent-on-ui-and-valid-regen-st.md",
+    "status": "⬜ Not Started"
   },
   "TASK-OWNERSHIP-ACCESS-CONTROL-REFACTOR": {
     "hash": "071d766",
