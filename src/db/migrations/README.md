@@ -2,23 +2,14 @@
 
 Schema migrations are top-level `NNN_name.ts` files auto-discovered by
 `getMigrationFiles()` in `src/db/migrate.ts`; each exports `up(db)` and
-`down(db)`. `kysely_migration` holds one row per file (`001_init`, …).
-
-`001_init.ts` is **frozen**: it orchestrates the historical `parts/` tree
-(001–016, 018, 019, 020, 022; 017/021 retired) and must gain no new parts —
-Kysely tracks `001_init` as one unit, so appended parts silently skip on
-existing databases (the drift class `runSchemaBackfill` converges at boot).
-New schema changes go in as new top-level `NNN_name.ts` files, which
-Kysely applies exactly once per database. A test in
-`src/db/migrations.test.ts` ("001_init part freeze") fails if a part is
-added to `001_init.ts`.
+`down(db)`. `kysely_migration` holds one row per applied migration.
 
 ## Append-Only Policy
 
-**Applied migrations are append-only.** Once a migration ships, never:
+Applied migrations are append-only. Once a migration ships, never:
 
 - delete it
-- rename it (the filename is the identity)
+- rename it (the filename is the identity stored in `kysely_migration`)
 - renumber it (inserts/suffixes are fine; renumbering orphans the old rows)
 - rewrite it to change what a committed database already ran
 
@@ -30,18 +21,26 @@ and fails fast with the list of missing migrations plus recovery options
 To change schema behavior for an existing migration, add a new forward
 migration that alters the schema to the desired state.
 
+## Two Paths for New Schema Changes
+
+There are only two ways to land a schema change:
+
+1. **Append a new top-level migration** — `src/db/migrations/NNN_name.ts`,
+   exporting `up(db)` and `down(db)`. Auto-discovered by
+   `getMigrationFiles()` — no wiring step. This is the default.
+
+2. **Extend the current HEAD migration** — when the latest migration is not
+   yet shipped (no DB has run it), append changes to its `up`/`down`. This
+   avoids polluting `kysely_migration` with multiple rows for the same
+   logical change.
+
+There is no third path. There is no `parts/` subdirectory, no folding into a
+frozen base migration, and no append-only-via-extend for shipped files.
+
 ## Structure Rules
 
 - One `ADD COLUMN` / `DROP COLUMN` per `alterTable` statement — SQLite does
   not support multi-column ALTER TABLE.
-- Use `src/db/migration-helpers.ts` (`boolToEnum`, `batchBoolToEnum`) for
-  boolean → text-enum conversions; each conversion runs in one transaction
-  and non-0/1 values are counted, logged, then coerced to the false value
-  (never silently).
-- Data (row-level) migrations live in `src/db/data-migrations/` (runner +
-  types; discovery-based, no registry to edit). They are applied at boot by
-  `src/server/start.ts` after schema migrations and backfill. No row
-  migrations ship currently — the unshipped v1_to_v2 baselines were folded.
 
 ## Regeneration
 
@@ -57,12 +56,9 @@ bun run schemas:check
 
 When a ticket requires schema changes:
 
-1. **Ask the user first**: new top-level migration (`NNN_*.ts`) vs. fold into
-   an existing unshipped file. Never append a part to `001_init.ts` (frozen —
-   the tripwire test fails) and never extend a shipped migration.
-2. Create `src/db/migrations/NNN_description.ts`, export `up`/`down`, and
-   call `recordSchemaVersion(db, NNN, "label")` from `up()`. It is
-   auto-discovered by `getMigrationFiles()` — no wiring step.
+1. Pick the path: append a new `NNN_*.ts` migration (default) or extend the
+   current HEAD migration (only if not yet shipped).
+2. Create `src/db/migrations/NNN_description.ts`, export `up`/`down`.
 3. Run the regeneration chain: `bun run db:sync-types && bun run db:sync-manifest`
    then `bun run schemas:check`.
 4. Verify the migration chain + roundtrip:

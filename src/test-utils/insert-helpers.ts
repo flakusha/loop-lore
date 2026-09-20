@@ -536,18 +536,6 @@ export async function insertAssetTransforms(
   } as any,).execute();
 }
 
-/** Insert a mesh_inbound_keys row. */
-export async function insertMeshInboundKeys(
-  db: Db,
-  encrypted_key: string,
-  opts?: { peer_origin?: string; previous_encrypted_key?: string | null; created_at?: string; updated_at?: string },
-): Promise<void> {
-  await db.insertInto("mesh_inbound_keys",).values({
-    encrypted_key,
-    ...opts,
-  } as any,).execute();
-}
-
 /** Insert a location_states row. */
 export async function insertLocationStates(
   db: Db,
@@ -1092,38 +1080,6 @@ export async function insertAdminCharacterOverrides(
     admin_id,
     action,
     created_at,
-    ...opts,
-  } as any,).execute();
-}
-
-/** Insert a asset_tags row. */
-export async function insertAssetTags(
-  db: Db,
-  asset_id: string,
-  tag: string,
-  opts?: { id?: string; scope?: string; owner_id?: string | null; source?: string; created_at?: string },
-): Promise<void> {
-  await db.insertInto("asset_tags",).values({
-    id: crypto.randomUUID(),
-    asset_id,
-    tag,
-    ...opts,
-  } as any,).execute();
-}
-
-/** Insert a asset_tag_dismissals row. */
-export async function insertAssetTagDismissals(
-  db: Db,
-  asset_id: string,
-  tag: string,
-  user_id: string,
-  opts?: { id?: string; created_at?: string },
-): Promise<void> {
-  await db.insertInto("asset_tag_dismissals",).values({
-    id: crypto.randomUUID(),
-    asset_id,
-    tag,
-    user_id,
     ...opts,
   } as any,).execute();
 }
@@ -2333,29 +2289,6 @@ export async function insertVnChoices(
   } as any,).execute();
 }
 
-/** Insert a rotation_history row. */
-export async function insertRotationHistory(
-  db: Db,
-  chat_id: string,
-  reason: string,
-  new_key_id: string,
-  opts?: {
-    id?: string;
-    actor_id?: string | null;
-    old_key_id?: string | null;
-    messages_re_encrypted?: number;
-    created_at?: string;
-  },
-): Promise<void> {
-  await db.insertInto("rotation_history",).values({
-    id: crypto.randomUUID(),
-    chat_id,
-    reason,
-    new_key_id,
-    ...opts,
-  } as any,).execute();
-}
-
 /** Insert a personas row. */
 export async function insertPersonas(
   db: Db,
@@ -3094,23 +3027,6 @@ export async function insertXpLedger(
   } as any,).execute();
 }
 
-/** Insert a quest_reward_ledger row. */
-export async function insertQuestRewardLedger(
-  db: Db,
-  world_id: string,
-  ledger_key: string,
-  world_item_ids: string,
-  opts?: { id?: string; created_at?: string },
-): Promise<void> {
-  await db.insertInto("quest_reward_ledger",).values({
-    id: crypto.randomUUID(),
-    world_id,
-    ledger_key,
-    world_item_ids,
-    ...opts,
-  } as any,).execute();
-}
-
 /** Insert a blog_comments row. */
 export async function insertBlogComments(
   db: Db,
@@ -3199,29 +3115,6 @@ export async function insertBlogTags(db: Db, post_id: string, tag: string, opts?
     id: crypto.randomUUID(),
     post_id,
     tag,
-    ...opts,
-  } as any,).execute();
-}
-
-/** Insert a character_license_history row. */
-export async function insertCharacterLicenseHistory(
-  db: Db,
-  actor_id: string,
-  license_type: string,
-  allow_derivatives: number,
-  allow_commercial: number,
-  share_alike: number,
-  changed_by: string,
-  opts?: { id?: string; custom_license_text?: string | null; attribution?: string | null; created_at?: string },
-): Promise<void> {
-  await db.insertInto("character_license_history",).values({
-    id: crypto.randomUUID(),
-    actor_id,
-    license_type,
-    allow_derivatives,
-    allow_commercial,
-    share_alike,
-    changed_by,
     ...opts,
   } as any,).execute();
 }
@@ -3405,60 +3298,6 @@ export async function insertPromptTemplates(
     id: crypto.randomUUID(),
     owner_id,
     name,
-    ...opts,
-  } as any,).execute();
-}
-
-/** Insert a travel_routes row. */
-export async function insertTravelRoutes(
-  db: Db,
-  world_id: string,
-  name: string,
-  kind: TransportKind,
-  opts?: { id?: string; waypoints?: string; loop?: number; seconds_per_unit?: number; created_at?: string },
-): Promise<void> {
-  await db.insertInto("travel_routes",).values({
-    id: crypto.randomUUID(),
-    world_id,
-    name,
-    kind,
-    ...opts,
-  } as any,).execute();
-}
-
-/** Insert a travel_route_stops row. */
-export async function insertTravelRouteStops(
-  db: Db,
-  route_id: string,
-  location_id: string,
-  stop_order: number,
-  opts?: {
-    id?: string;
-    dwell_seconds?: number;
-    coord_x?: number | null;
-    coord_y?: number | null;
-    coord_z?: number | null;
-  },
-): Promise<void> {
-  await db.insertInto("travel_route_stops",).values({
-    id: crypto.randomUUID(),
-    route_id,
-    location_id,
-    stop_order,
-    ...opts,
-  } as any,).execute();
-}
-
-/** Insert a actor_locations row. */
-export async function insertActorLocations(
-  db: Db,
-  physical_location_id: string,
-  spatial_location_id: string,
-  opts?: { actor_id?: string; entered_at?: string },
-): Promise<void> {
-  await db.insertInto("actor_locations",).values({
-    physical_location_id,
-    spatial_location_id,
     ...opts,
   } as any,).execute();
 }
@@ -3748,62 +3587,6 @@ export async function insertMessageSearchTokens(
   } as any,).execute();
 }
 
-/** Insert a rpg_questions row. */
-export async function insertRpgQuestions(
-  db: Db,
-  chat_id: string,
-  actor_id: string,
-  type: string,
-  prompt: string,
-  options: string,
-  opts?: {
-    id?: string;
-    time_limit?: number | null;
-    required_choice?: number;
-    status?: string;
-    selected_option_id?: string | null;
-    created_at?: string;
-    answered_at?: string | null;
-  },
-): Promise<void> {
-  await db.insertInto("rpg_questions",).values({
-    id: crypto.randomUUID(),
-    chat_id,
-    actor_id,
-    type,
-    prompt,
-    options,
-    ...opts,
-  } as any,).execute();
-}
-
-/** Insert a memory_audit_log row. */
-export async function insertMemoryAuditLog(
-  db: Db,
-  memory_id: string,
-  actor_id: string,
-  action: string,
-  opts?: { id?: string; user_id?: string | null; details?: string; created_at?: string },
-): Promise<void> {
-  await db.insertInto("memory_audit_log",).values({
-    id: crypto.randomUUID(),
-    memory_id,
-    actor_id,
-    action,
-    ...opts,
-  } as any,).execute();
-}
-
-/** Insert a schema_version row. */
-export async function insertSchemaVersion(
-  db: Db,
-  opts?: { version?: number; applied_at?: string; description?: string | null },
-): Promise<void> {
-  await db.insertInto("schema_version",).values({
-    ...opts,
-  } as any,).execute();
-}
-
 /** Insert a workflow_sessions row. */
 export async function insertWorkflowSessions(
   db: Db,
@@ -3877,6 +3660,213 @@ export async function insertMeshDeliveries(
     origin,
     content_hash,
     clock,
+    ...opts,
+  } as any,).execute();
+}
+
+/** Insert a mesh_inbound_keys row. */
+export async function insertMeshInboundKeys(
+  db: Db,
+  encrypted_key: string,
+  opts?: { peer_origin?: string; previous_encrypted_key?: string | null; created_at?: string; updated_at?: string },
+): Promise<void> {
+  await db.insertInto("mesh_inbound_keys",).values({
+    encrypted_key,
+    ...opts,
+  } as any,).execute();
+}
+
+/** Insert a asset_tags row. */
+export async function insertAssetTags(
+  db: Db,
+  asset_id: string,
+  tag: string,
+  opts?: { id?: string; scope?: string; owner_id?: string | null; source?: string; created_at?: string },
+): Promise<void> {
+  await db.insertInto("asset_tags",).values({
+    id: crypto.randomUUID(),
+    asset_id,
+    tag,
+    ...opts,
+  } as any,).execute();
+}
+
+/** Insert a asset_tag_dismissals row. */
+export async function insertAssetTagDismissals(
+  db: Db,
+  asset_id: string,
+  tag: string,
+  user_id: string,
+  opts?: { id?: string; created_at?: string },
+): Promise<void> {
+  await db.insertInto("asset_tag_dismissals",).values({
+    id: crypto.randomUUID(),
+    asset_id,
+    tag,
+    user_id,
+    ...opts,
+  } as any,).execute();
+}
+
+/** Insert a rotation_history row. */
+export async function insertRotationHistory(
+  db: Db,
+  chat_id: string,
+  reason: string,
+  new_key_id: string,
+  opts?: {
+    id?: string;
+    actor_id?: string | null;
+    old_key_id?: string | null;
+    messages_re_encrypted?: number;
+    created_at?: string;
+  },
+): Promise<void> {
+  await db.insertInto("rotation_history",).values({
+    id: crypto.randomUUID(),
+    chat_id,
+    reason,
+    new_key_id,
+    ...opts,
+  } as any,).execute();
+}
+
+/** Insert a quest_reward_ledger row. */
+export async function insertQuestRewardLedger(
+  db: Db,
+  world_id: string,
+  ledger_key: string,
+  world_item_ids: string,
+  opts?: { id?: string; created_at?: string },
+): Promise<void> {
+  await db.insertInto("quest_reward_ledger",).values({
+    id: crypto.randomUUID(),
+    world_id,
+    ledger_key,
+    world_item_ids,
+    ...opts,
+  } as any,).execute();
+}
+
+/** Insert a character_license_history row. */
+export async function insertCharacterLicenseHistory(
+  db: Db,
+  actor_id: string,
+  license_type: string,
+  allow_derivatives: number,
+  allow_commercial: number,
+  share_alike: number,
+  changed_by: string,
+  opts?: { id?: string; custom_license_text?: string | null; attribution?: string | null; created_at?: string },
+): Promise<void> {
+  await db.insertInto("character_license_history",).values({
+    id: crypto.randomUUID(),
+    actor_id,
+    license_type,
+    allow_derivatives,
+    allow_commercial,
+    share_alike,
+    changed_by,
+    ...opts,
+  } as any,).execute();
+}
+
+/** Insert a travel_routes row. */
+export async function insertTravelRoutes(
+  db: Db,
+  world_id: string,
+  name: string,
+  kind: TransportKind,
+  opts?: { id?: string; waypoints?: string; loop?: number; seconds_per_unit?: number; created_at?: string },
+): Promise<void> {
+  await db.insertInto("travel_routes",).values({
+    id: crypto.randomUUID(),
+    world_id,
+    name,
+    kind,
+    ...opts,
+  } as any,).execute();
+}
+
+/** Insert a travel_route_stops row. */
+export async function insertTravelRouteStops(
+  db: Db,
+  route_id: string,
+  location_id: string,
+  stop_order: number,
+  opts?: {
+    id?: string;
+    dwell_seconds?: number;
+    coord_x?: number | null;
+    coord_y?: number | null;
+    coord_z?: number | null;
+  },
+): Promise<void> {
+  await db.insertInto("travel_route_stops",).values({
+    id: crypto.randomUUID(),
+    route_id,
+    location_id,
+    stop_order,
+    ...opts,
+  } as any,).execute();
+}
+
+/** Insert a actor_locations row. */
+export async function insertActorLocations(
+  db: Db,
+  physical_location_id: string,
+  spatial_location_id: string,
+  opts?: { actor_id?: string; entered_at?: string },
+): Promise<void> {
+  await db.insertInto("actor_locations",).values({
+    physical_location_id,
+    spatial_location_id,
+    ...opts,
+  } as any,).execute();
+}
+
+/** Insert a rpg_questions row. */
+export async function insertRpgQuestions(
+  db: Db,
+  chat_id: string,
+  actor_id: string,
+  type: string,
+  prompt: string,
+  options: string,
+  opts?: {
+    id?: string;
+    time_limit?: number | null;
+    required_choice?: number;
+    status?: string;
+    selected_option_id?: string | null;
+    created_at?: string;
+    answered_at?: string | null;
+  },
+): Promise<void> {
+  await db.insertInto("rpg_questions",).values({
+    id: crypto.randomUUID(),
+    chat_id,
+    actor_id,
+    type,
+    prompt,
+    options,
+    ...opts,
+  } as any,).execute();
+}
+
+/** Insert a memory_audit_log row. */
+export async function insertMemoryAuditLog(
+  db: Db,
+  memory_id: string,
+  actor_id: string,
+  action: string,
+  opts?: { id?: string; user_id?: string | null; details?: string; created_at?: string },
+): Promise<void> {
+  await db.insertInto("memory_audit_log",).values({
+    id: crypto.randomUUID(),
+    memory_id,
+    actor_id,
+    action,
     ...opts,
   } as any,).execute();
 }

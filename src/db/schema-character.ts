@@ -333,20 +333,6 @@ export interface MoodEvents {
   created_at: string;
 }
 
-// ── character_license_history ────────────────────────────────────────────
-export interface CharacterLicenseHistory {
-  id: Generated<string>;
-  actor_id: string;
-  license_type: string;
-  custom_license_text: string | null;
-  attribution: string | null;
-  allow_derivatives: number;
-  allow_commercial: number;
-  share_alike: number;
-  changed_by: string;
-  created_at: Generated<string>;
-}
-
 // ── location_nsfw_config ────────────────────────────────────────────
 export interface LocationNsfwConfig {
   id: Generated<string>;
@@ -376,4 +362,18 @@ export interface NsfwEncounters {
   status: Generated<NsfwEncounterStatus>;
   created_at: string;
   updated_at: string;
+}
+
+// ── character_license_history ────────────────────────────────────────────
+export interface CharacterLicenseHistory {
+  id: Generated<string>;
+  actor_id: string;
+  license_type: string;
+  custom_license_text: string | null;
+  attribution: string | null;
+  allow_derivatives: number;
+  allow_commercial: number;
+  share_alike: number;
+  changed_by: string;
+  created_at: Generated<string>;
 }

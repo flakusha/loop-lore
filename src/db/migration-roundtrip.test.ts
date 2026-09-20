@@ -24,7 +24,7 @@ import { compareMigrationNames, } from "./migrate";
 
 const MIGRATION_FILENAME = /^(\d{3})_(.+)\.ts$/;
 
-/** List migration file names, excluding the parts/ subfolder. */
+/** List migration file names, top-level only (no parts/ subdirectory). */
 function getMigrationNames(): string[] {
   const dir = path.join(__dirname, "migrations",);
   return readdirSync(dir,)
