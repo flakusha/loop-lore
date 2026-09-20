@@ -20,3 +20,6 @@ Route species deaths into the economy/crafting loot table and into the RPG XP aw
 - Award `xpReward` to the killer via existing `awardXp` service.
 - Skip loot when admin force-cull (admin endpoint sets `audited: true` flag).
 - Tests: monster kill rolls loot table; XP awarded; force-cull does NOT roll loot.
+
+
+git issue: feb527a

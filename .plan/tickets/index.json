@@ -2554,6 +2554,19 @@
     "git_issue": "f52b255",
     "status": "done"
   },
+  "BUG-GIWT-TICKET-EXTID-DOUBLE-PREFIX-ON-DUPLICATE-TYPE-SLUG": {
+    "hash": "ce8f49c",
+    "git_issue": "ce8f49c",
+    "extid": "BUG-GIWT-TICKET-EXTID-DOUBLE-PREFIX-ON-DUPLICATE-TYPE-SLUG",
+    "type": "BUG",
+    "title": "giwt-ticket-extid-double-prefix-on-duplicate-type-slug",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-giwt-ticket-extid-double-prefix-on-duplicate-type-slug.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-GM-CONFIG-CORRUPTED-BY-STRING-SPREAD-IN-BUILDCHATUPDATES-MER": {
     "hash": "499e87c",
     "git_issue": "499e87c",
@@ -13154,7 +13167,8 @@
       "gm"
     ],
     "source": ".plan/tickets/TASK-bestiary-admin-gm-force-spawn-and-cull.md",
-    "status": "⬜ Not Started"
+    "status": "⬜ Not Started",
+    "git_issue": "bad551e"
   },
   "TASK-BESTIARY-CATALOG-SCHEMA-AND-MIGRATION": {
     "hash": "pending",
@@ -13170,7 +13184,8 @@
       "repopulation"
     ],
     "source": ".plan/tickets/TASK-bestiary-catalog-schema-and-migration.md",
-    "status": "⬜ Not Started"
+    "status": "⬜ Not Started",
+    "git_issue": "6711aa2"
   },
   "TASK-BESTIARY-CRUD-ROUTES-ADMIN-GM": {
     "hash": "pending",
@@ -13185,7 +13200,8 @@
       "crud"
     ],
     "source": ".plan/tickets/TASK-bestiary-crud-routes-admin-gm.md",
-    "status": "⬜ Not Started"
+    "status": "⬜ Not Started",
+    "git_issue": "f9bb7e7"
   },
   "TASK-BESTIARY-ECOLOGY-PRESSURE-MODEL": {
     "hash": "pending",
@@ -13201,7 +13217,8 @@
       "predator-prey"
     ],
     "source": ".plan/tickets/TASK-bestiary-ecology-pressure-model.md",
-    "status": "⬜ Not Started"
+    "status": "⬜ Not Started",
+    "git_issue": "e28fb41"
   },
   "TASK-BESTIARY-LOOT-AND-XP-INTEGRATION": {
     "hash": "pending",
@@ -13217,7 +13234,8 @@
       "xp"
     ],
     "source": ".plan/tickets/TASK-bestiary-loot-and-xp-integration.md",
-    "status": "⬜ Not Started"
+    "status": "⬜ Not Started",
+    "git_issue": "feb527a"
   },
   "TASK-BESTIARY-QUEST-BINDINGS-INTEGRATION": {
     "hash": "pending",
@@ -13232,7 +13250,8 @@
       "quests"
     ],
     "source": ".plan/tickets/TASK-bestiary-quest-bindings-integration.md",
-    "status": "⬜ Not Started"
+    "status": "⬜ Not Started",
+    "git_issue": "a959101"
   },
   "TASK-BESTIARY-TIME-BASED-REPOPULATION-ENGINE": {
     "hash": "pending",
@@ -13248,7 +13267,8 @@
       "tick"
     ],
     "source": ".plan/tickets/TASK-bestiary-time-based-repopulation-engine.md",
-    "status": "⬜ Not Started"
+    "status": "⬜ Not Started",
+    "git_issue": "8ff87a5"
   },
   "TASK-BESTIARY-UI-COMPENDIUM-AND-PER-LOCATION-POPULATION": {
     "hash": "pending",
@@ -13263,7 +13283,8 @@
       "ui"
     ],
     "source": ".plan/tickets/TASK-bestiary-ui-compendium-and-per-location-population.md",
-    "status": "⬜ Not Started"
+    "status": "⬜ Not Started",
+    "git_issue": "b56f43c"
   },
   "TASK-BKP-001-SQLITE-AUTOMATED-BACKUP": {
     "hash": "pending",
@@ -14394,7 +14415,8 @@
     "epic": "epic-character-core-system",
     "tags": [],
     "source": ".plan/tickets/TASK-character-stat-allocation-frontend-modal-and-edit-integration.md",
-    "status": "⬜ Not Started"
+    "status": "⬜ Not Started",
+    "git_issue": "d87d9f0"
   },
   "TASK-CHARACTER-STAT-ALLOCATION-INTEGRATION-TESTS-E2E": {
     "hash": "725afaa",
@@ -27554,6 +27576,19 @@
     "tags": [],
     "source": ".plan/tickets/TASK-single-source-of-truth-for-config-schema-mirrors.md",
     "status": "done"
+  },
+  "TASK-SIZE-ALLOW-WAIVERS-CHARACTERS-UPDATE-TS-AND-CHAT-BOOTSTRAP-T": {
+    "hash": "af6cafb",
+    "git_issue": "af6cafb",
+    "extid": "TASK-SIZE-ALLOW-WAIVERS-CHARACTERS-UPDATE-TS-AND-CHAT-BOOTSTRAP-T",
+    "type": "TASK",
+    "title": "Size allow waivers: characters/update.ts and chat/bootstrap.ts",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-size-allow-waivers-characters-update-ts-and-chat-bootstrap-t.md",
+    "status": "⬜ Not Started"
   },
   "TASK-SIZE-STRICT-DEBT": {
     "hash": "eb3ed64f",
