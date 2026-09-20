@@ -9,16 +9,19 @@
 
 ## Summary
 
-**Summary:** POST character-licensing at src/routes/character-licensing.ts:147 upserts a license_history row for any actor (user, npc, character). Only characters should have a license audit trail; logging rows for user/npc actors pollutes the audit.
+**Severity (revised 2026-09-20):** LOW-MEDIUM
 
-**Where:** src/routes/character-licensing.ts:147
+**Where:** src/routes/character-licensing.ts:155 (POST handler)
 
-**Defect:** No guard that actor.actor_type === "character" before license_history insert. Side effect: a user requesting a license for their own user-actor row creates a spurious license_history entry that other audit reports must filter out.
+**Defect:** POST /actors/:actorId/licensing calls `checkActorOwnership` which only verifies actor.owner_id === caller.userId (or caller is admin). It does NOT verify actor.actor_type === 'character'. Any actor the caller owns (user-actor, npc-actor, character-actor) can be the target of a licensing upsert, which writes a row to `character_licensing` and `recordLicenseHistory`. The handler is mounted at a generic /actors/:actorId path, so the URL does not signal character-only semantics.
 
-**Fix sketch:** Add guard: if (actor.actor_type !== "character") return 400 with reason "licenses are only issued to character actors".
+**Impact:** non-character actors accumulate licensing rows. The exact downstream consequences depend on what consumes license_history — if those reports filter by actor_type === 'character', the rows are inert; if not, they pollute reports.
 
-**Acceptance:** A test where caller submits a license upsert for a user-actor — current code writes license_history; fixed code returns 400.
+**Fix sketch:** After checkActorOwnership, fetch the actor row's actor_type; if !== 'character' return 400 "licenses are only issued to character actors".
 
+## Resolution
+
+Verified 2026-09-20 against dev ada2dd920 via src/routes/actor-auth.ts:checkActorOwnership (no actor_type guard) and src/routes/character-licensing.ts:155 (no second guard). Bug is real; impact is conditional.
 ## Acceptance Criteria
 
 - [ ] Implementation complete
