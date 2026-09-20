@@ -153,7 +153,7 @@ describe("Chat compression-encryption-decryption flow (UI)", () => {
       expect(row!.content,).toMatch(/^\{"enc":/,);
       expect(row!.content,).toMatch(/"algo":/,);
       expect(row!.content,).toMatch(/"comp":/,);
-      expect(row!.content,).toMatch(/"keyId":/,);
+      expect(row!.content,).toMatch(/"key_id":/,);
 
       // API also returns plaintext (server-side decrypt).
       const list = await page.evaluate(async (chatId,) => {
