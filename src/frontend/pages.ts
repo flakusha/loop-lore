@@ -13,3 +13,6 @@ import "./pages/worlds-io";
 import "./pages/new-chat";
 import "./pages/quests";
 import "./pages/blog";
+// world-detail.html uses x-data="worldTimelineBar('...')"; register the
+// factory on globalThis so Alpine can resolve it from the pages bundle.
+import "./pages/world-timeline-bar";
