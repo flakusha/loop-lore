@@ -76,6 +76,11 @@ export function general(): Partial<SettingsState> & ThisType<SettingsState> {
             if (settings[key]) { (this as unknown as Record<string, unknown>)[key] = settings[key]; }
           }
           if (typeof settings.temperature === "number") { this.temperature = settings.temperature; }
+          // Boolean chat flags: only trust real booleans so a missing key
+          // keeps the localStorage/default value.
+          if (typeof settings.enterToSend === "boolean") { this.enterToSend = settings.enterToSend; }
+          if (typeof settings.autoScroll === "boolean") { this.autoScroll = settings.autoScroll; }
+          if (typeof settings.inlinePreview === "boolean") { this.inlinePreview = settings.inlinePreview; }
         }
       } catch (error) {
         log.warn("loadSettings failed", { error: String(error,), },);

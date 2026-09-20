@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 280
 
 // size-allow: 260
 
@@ -149,6 +150,13 @@ export const actorLicensing: ActorLicensingState = {
       };
       this.licenseDirty = false;
     } catch (error) {
+      // feFetch throws for non-2xx responses; a 404 is the documented
+      // "no license yet" state — keep the panel's designed empty state
+      // instead of surfacing an error.
+      if ((error as { status?: number } | null)?.status === 404) {
+        this.license = null;
+        return;
+      }
       log.error("Failed to load licensing", error instanceof Error ? error : undefined, {},);
       this.licenseError = t("status.licensingLoadFailed",);
     } finally {

@@ -124,13 +124,11 @@ describe("Quests flow E2E", () => {
     const errors = trackPageErrors(page,);
     try {
       await gotoQuests(page, WORLD_ID,);
-      // Seeded quest with name + description is visible.
       await page.getByText(QUEST_NAME,).first().waitFor({ state: "visible", timeout: 20_000, },);
-      await page.getByText("Find the ancient relic",).first().waitFor({ state: "attached", timeout: 20_000, },);
-
-      // The page init script (quests.ts) computes a progress text — the seed
-      // has progress=0/target=1 so the rendered text reflects the progress.
-      // Any console errors raised by the init script trip errors.assert().
+      // The view renders "Progress: <progress>/<target>" per quest card;
+      // the seeded quest is 0/1. (The seedAll narrative text never appears
+      // here: seedSolo doesn't insert SEED.quest and it lives in SEED.world.)
+      await page.getByText("Progress: 0/1",).first().waitFor({ state: "visible", timeout: 20_000, },);
     } finally {
       errors.assert();
       errors.detach();
@@ -145,11 +143,12 @@ describe("Quests flow E2E", () => {
       await gotoQuests(page, WORLD_ID,);
       await page.getByText(QUEST_NAME,).first().waitFor({ state: "visible", timeout: 20_000, },);
 
-      // Drive a progress increment via the API the UI calls under the hood.
       const updated = await page.evaluate(async (id,) => {
+        // CSRF double-submit: echo the csrf_token cookie like feFetch does.
+        const csrf = /(?:^|;\s*)csrf_token=([^;]+)/.exec(document.cookie,)?.[1] ?? "";
         const res = await fetch(`/api/quests/${id}/progress`, {
           method: "POST",
-          headers: { "Content-Type": "application/json", },
+          headers: { "Content-Type": "application/json", "X-CSRF-Token": csrf, },
           body: JSON.stringify({ delta: 1, },),
         },);
         return res.status;

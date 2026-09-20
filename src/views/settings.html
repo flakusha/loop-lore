@@ -3,7 +3,15 @@
 
 <!-- Settings Page -->
 <div class="app-layout" x-data="settingsPage()" x-init="init()">
-  <header id="header-slot" class="main-header" data-page="settings" data-testid="settings-header">
+  <!--
+    No id="header-slot": this header is server-rendered inside the
+    settingsPage() x-data tree and its action buttons bind settingsPage
+    state (saving/loaded/saveGeneral). Marking it as a header slot would
+    make normalizeHeaderSlot() hoist it out of #app-root, detaching it
+    from that scope and breaking any Alpine branch created later inside
+    it (BUG-bug-header-slot-hoist-breaks-alpine-scope).
+  -->
+  <header class="main-header" data-page="settings" data-testid="settings-header">
     <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger" aria-label="Toggle sidebar">
       ☰
     </button>
