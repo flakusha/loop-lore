@@ -9,15 +9,28 @@
 
 ## Summary
 
-**Summary:** PUT /messages/:id/variant at src/routes/messages/read.ts:196 looks up variants[variantIndex] but never bounds-checks. When index is out of range, selected is undefined and the request falls through to a 200 success response with the unchanged message, silently masking a client bug.
+**Status:** ❌ Rejected — code already enforces the guard (strict-review finding 2026-09-20)
 
-**Where:** src/routes/messages/read.ts:196
+**Where:** src/routes/messages/read.ts:222-228
 
-**Defect:** No `if (!selected) return badRequestResponse(...)` between the lookup and the success path. A client passing variantIndex: -1 or 999 gets a successful 200 with no mutation and no error to signal the mistake.
+**Defect:** None. The handler does check the OOB case:
 
-**Fix sketch:** After variant lookup, add explicit check: if (!selected) return badRequestResponse("variantIndex out of range").
+```
+const selected = variants[body.variantIndex];
+if (!selected) {
+  return jsonError({
+    message: ctx.t?.("messages.invalidVariantIndex",) ?? "Invalid variant index",
+    status: HttpStatus.BadRequest,
+  },);
+}
+return jsonResponse(selected,);
+```
 
-**Acceptance:** A test with variantIndex = -1 (or = variants.length) — current code returns 200; fixed code returns 400 BAD_REQUEST.
+OOB variantIndex already returns 400 BAD_REQUEST. The original ticket claim was based on a stale scout report that did not verify line 222-228. Closing.
+
+## Resolution
+
+Verified 2026-09-20 against dev ada2dd920 (src/routes/messages/read.ts:222-228). The handler already returns `HttpStatus.BadRequest` when `variants[body.variantIndex]` is undefined. No code change required.
 
 ## Acceptance Criteria
 
