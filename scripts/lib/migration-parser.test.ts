@@ -32,22 +32,21 @@ describe("parseColumns", () => {
 });
 
 describe("listMigrationFiles", () => {
-  test("returns numbered migrations plus parts", () => {
+  test("returns the single collapsed init migration", () => {
     const dir = resolve(import.meta.dir, "../../src/db/migrations",);
     const files = listMigrationFiles(dir,);
-    expect(files.length,).toBeGreaterThan(7,);
-    expect(files.some((f,) => f.endsWith("001_init.ts",) && !f.includes("parts",)),).toBe(true,);
-    expect(files.some((f,) => f.includes(`${"parts"}/`,)),).toBe(true,);
+    expect(files.length,).toBe(1,);
+    expect(files[0],).toMatch(/001_init\.ts$/,);
   });
 });
 
 describe("parseMigration", () => {
-  test("parses a core part into creates", () => {
-    const file = resolve(import.meta.dir, "../../src/db/migrations/parts/001_core.ts",);
+  test("parses the collapsed init into creates", () => {
+    const file = resolve(import.meta.dir, "../../src/db/migrations/001_init.ts",);
     const { creates, } = parseMigration(file,);
-    expect(creates.size,).toBeGreaterThan(0,);
+    expect(creates.size,).toBeGreaterThan(100,);
     const users = creates.get("users",);
-    expect(users?.createdBy,).toBe("001_core.ts",);
+    expect(users?.createdBy,).toBe("001_init.ts",);
     expect(users?.columns.id?.primaryKey,).toBe(true,);
   });
 });
