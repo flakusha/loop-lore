@@ -10056,6 +10056,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-settestdatabase-global-leak-on-test-throw.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-sqlite-foreign-keys-pragma-set-twice-redundant.md"
     },
     {
@@ -10101,6 +10105,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-migration-ordering-ambiguous-via-localecompare-duplicate-num.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-settestdatabase-global-leak-on-test-throw.md"
     },
     {
       "kind": "ticket",
@@ -12009,6 +12017,32 @@
     {
       "kind": "spec",
       "source": "docs/spec/testing.md"
+    }
+  ],
+  "src/db/test-db-helpers.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-create-test-db-custom-dialect-can-bypass-settestdatabase.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-eager-db-init-creates-on-disk-db-on-test-import.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-settestdatabase-global-leak-on-test-throw.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-sqlite-foreign-keys-pragma-set-twice-redundant.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-sqlite-wal-pragma-noop-on-in-memory-test-db.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-test-run-id-uses-date-now-collision-risk-under-parallel.md"
     }
   ],
   "src/db/upsert-helpers.ts": [
@@ -25373,14 +25407,12 @@
       "source": ".plan/tickets/TASK-wire-replayability-routes.md"
     }
   ],
-
   "src/routes/rpg/skills-progression.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-rpg-skill-tree-visualization-frontend.md"
     }
   ],
-
   "src/routes/rpg/skills.test.ts": [
     {
       "kind": "ticket",
@@ -25429,7 +25461,6 @@
       "source": ".plan/tickets/TASK-wire-world-location-traits-routes.md"
     }
   ],
-
   "src/routes/rpg/xp-loot-tables.ts": [
     {
       "kind": "ticket",
@@ -25582,7 +25613,6 @@
       "source": ".plan/tickets/TASK-item-generation.md"
     }
   ],
-
   "src/routes/story-items/handlers.coverage.test.ts": [
     {
       "kind": "ticket",
@@ -26471,7 +26501,6 @@
       "source": "docs/spec/crafting-professions.md"
     }
   ],
-
   "src/rpg/crafting/process.test.ts": [
     {
       "kind": "ticket",
@@ -31654,42 +31683,36 @@
       "source": ".plan/tickets/TASK-char-growth-frontend.md"
     }
   ],
-
   "src/views/partials/crafting-recipe-editor.html": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-crafting-recipe-constructor-frontend-editor.md"
     }
   ],
-
   "src/views/partials/inventory-viewer.html": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-item-inventory-view-page.md"
     }
   ],
-
   "src/views/partials/item-definition-editor.html": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-item-definition-crud-frontend-editor.md"
     }
   ],
-
   "src/views/partials/loot-table-editor.html": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-loot-table-constructor-frontend-editor.md"
     }
   ],
-
   "src/views/partials/skill-editor.html": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-skill-constructor-on-character-edit.md"
     }
   ],
-
   "src/views/partials/skill-tree-viewer.html": [
     {
       "kind": "ticket",
