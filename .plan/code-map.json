@@ -6907,7 +6907,6 @@
       "source": ".plan/tickets/TASK-gm-whitenotes.md"
     }
   ],
-
   "src/components/chat/gm-quests-panel.html": [
     {
       "kind": "ticket",
@@ -6950,7 +6949,6 @@
       "source": ".plan/tickets/TASK-chat-location-frontend.md"
     }
   ],
-
   "src/components/chat/memory-panel.html": [
     {
       "kind": "ticket",
@@ -10555,6 +10553,12 @@
       "source": ".plan/epics/epic-content-hashing-distributed-integrity.md"
     }
   ],
+  "src/db/migrations/NNN_name.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/migrations.md"
+    }
+  ],
   "src/db/migrations/README": [
     {
       "kind": "ticket",
@@ -10577,6 +10581,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-create-test-db-custom-dialect-can-bypass-settestdatabase.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-044.md"
     },
     {
       "kind": "ticket",
@@ -10795,12 +10803,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-context-preference-per-scope.md"
-    }
-  ],
-  "src/db/migrations/parts/NNN_name.ts": [
-    {
-      "kind": "spec",
-      "source": "docs/spec/migrations.md"
     }
   ],
   "src/db/migrations/parts/NNN_search_infra.ts": [
@@ -11875,10 +11877,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-locations-fractal-migration.md"
-    },
-    {
-      "kind": "spec",
-      "source": "docs/spec/migrations.md"
     }
   ],
   "src/db/schema-weather.ts": [
@@ -13381,7 +13379,6 @@
       "source": ".plan/epics/epic-db-cold-storage-high-perf.md"
     }
   ],
-
   "src/frontend/alpine/chat-variants.ts": [
     {
       "kind": "ticket",
@@ -16894,7 +16891,6 @@
       "source": ".plan/tickets/BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san.md"
     }
   ],
-
   "src/generation/auto-generation.ts": [
     {
       "kind": "ticket",
@@ -19155,7 +19151,6 @@
       "source": ".plan/epics/epic-output-control-transforms.md"
     }
   ],
-
   "src/memory/audit.test.ts": [
     {
       "kind": "ticket",

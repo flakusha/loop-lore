@@ -1,64 +1,21 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// size-allow: 282
-
 /**
  * Character Licensing Routes
  *
  * API endpoints for managing character licensing,
  * including CC0 public domain and custom licenses.
+ * Row composer + audit recorder live in `./character-licensing-helpers`.
  */
 import { Elysia, t, } from "elysia";
-import { type Kysely, } from "kysely";
-import type { LicenseType, } from "../db/enums";
-import type { DB, } from "../db/schema";
 import { ActorIdParams, ErrorResponse, LicensingBody, SuccessResponse, } from "../validation/schemas";
 import { checkActorOwnership, type HandlerOpts, } from "./actor-auth";
+import {
+  composeLicenseRow,
+  recordLicenseHistory,
+} from "./character-licensing-helpers";
 import { HttpStatus, jsonCreated, jsonError, jsonResponse, requireUserId, } from "./http-utils";
-
-/**
- * Convert boolean to 0/1 integer, with fallback for undefined.
- * @param value
- * @param fallback
- */
-function booleanToInt(value: boolean | undefined, fallback: number,): number {
-  return value === undefined ? fallback : (value ? 1 : 0);
-}
-
-/** Effective licensing values recorded in the audit history. */
-interface LicenseHistoryRow {
-  license_type: string;
-  custom_license_text: string | null;
-  attribution: string | null;
-  allow_derivatives: number;
-  allow_commercial: number;
-  share_alike: number;
-}
-
-/**
- * Record a licensing change in the audit history (TASK-030).
- * @param database
- * @param actorId
- * @param row
- * @param changedBy
- */
-async function recordLicenseHistory(
-  database: Kysely<DB>,
-  actorId: string,
-  row: LicenseHistoryRow,
-  changedBy: string,
-): Promise<void> {
-  await database
-    .insertInto("character_license_history",)
-    .values({
-      id: crypto.randomUUID(),
-      actor_id: actorId,
-      ...row,
-      changed_by: changedBy,
-    },)
-    .execute();
-}
 
 /**
  * @param opts
@@ -181,15 +138,17 @@ export function characterLicensingRoutes(opts: HandlerOpts, prefix = "/api",) {
         .where("actor_id", "=", actorId,)
         .executeTakeFirst();
 
+      const body = {
+        license_type,
+        custom_license_text,
+        attribution,
+        allow_derivatives,
+        allow_commercial,
+        share_alike,
+      };
+
       if (existing) {
-        const effective: LicenseHistoryRow & { license_type: LicenseType } = {
-          license_type: license_type ?? existing.license_type,
-          custom_license_text: custom_license_text ?? existing.custom_license_text,
-          attribution: attribution ?? existing.attribution,
-          allow_derivatives: booleanToInt(allow_derivatives, existing.allow_derivatives,),
-          allow_commercial: booleanToInt(allow_commercial, existing.allow_commercial,),
-          share_alike: booleanToInt(share_alike, existing.share_alike,),
-        };
+        const effective = composeLicenseRow(existing, body,);
         await database
           .updateTable("character_licensing",)
           .set({
@@ -203,14 +162,7 @@ export function characterLicensingRoutes(opts: HandlerOpts, prefix = "/api",) {
       }
 
       const id = crypto.randomUUID();
-      const created: LicenseHistoryRow & { license_type: LicenseType } = {
-        license_type: license_type ?? "proprietary",
-        custom_license_text: custom_license_text ?? null,
-        attribution: attribution ?? null,
-        allow_derivatives: booleanToInt(allow_derivatives, 1,),
-        allow_commercial: booleanToInt(allow_commercial, 0,),
-        share_alike: booleanToInt(share_alike, 0,),
-      };
+      const created = composeLicenseRow(undefined, body,);
       await database
         .insertInto("character_licensing",)
         .values({
