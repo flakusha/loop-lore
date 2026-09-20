@@ -27483,18 +27483,6 @@
     "source": ".plan/tickets/TASK-split-server-ts.md",
     "status": "open"
   },
-  "TASK-SPLIT-SERVER.TS": {
-    "hash": "pending",
-    "extid": "TASK-SPLIT-SERVER.TS",
-    "type": "TASK",
-    "title": "Split `src/server.ts` (640L)",
-    "label": "task",
-    "priority": "Medium",
-    "epic": "epic-code-quality",
-    "tags": [],
-    "source": ".plan/tickets/TASK-split-server.ts.md",
-    "status": "⬜ Not Started"
-  },
   "TASK-SPLIT-UTILS-GOD-MODULE": {
     "hash": "9b66cb4",
     "extid": "TASK-SPLIT-UTILS-GOD-MODULE",
