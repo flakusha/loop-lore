@@ -340,7 +340,7 @@ describe("decideCsrf — unsafe methods (verification path)", () => {
     expect(d.ok,).toBe(false,);
   });
   test("solo POST (sessionId null + userId set) verifies userId-bound token across requestIds", () => {
-    const token = mintCsrfToken(SECRET, "solo-user-1", {},);
+    const token = mintCsrfToken(SECRET, "solo::solo-user-1", {},);
     const headers = makeHeaders({
       [CSRF_HEADER]: token,
       cookie: `${CSRF_COOKIE}=${token}`,
@@ -367,7 +367,7 @@ describe("decideCsrf — unsafe methods (verification path)", () => {
       requestId: "req-get-1",
     },);
     expect(d.cookieToIssue,).not.toBeNull();
-    expect(verifyCsrfToken(SECRET, d.cookieToIssue as string, "solo-user-1",),).toBe(true,);
+    expect(verifyCsrfToken(SECRET, d.cookieToIssue as string, "solo::solo-user-1",),).toBe(true,);
   });
 });
 
