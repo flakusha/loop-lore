@@ -3,7 +3,7 @@
 
 # BUG: PATCH settings endpoint has no key allowlist - {...currentSettings, ...body} silently accepts arbitrary keys
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (closed 2026-09-20) — closed allowlist enforced
 **Priority:** medium
 **Effort:** Small
 
@@ -25,6 +25,32 @@ Any property the client sends is accepted. No Zod schema with strict key list. N
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [ ] Documentation updated (no separate docs entry — allowlist is documented inline in `SettingsUpdateAllowedKeys` JSDoc)
+
+
+## Resolution
+
+Closed by adding a closed allowlist (`SettingsUpdateAllowedKeys` in
+`src/validation/schemas/settings.ts`) and a route-layer check that rejects
+unknown body keys with `400 BAD_REQUEST` and a `details.rejectedKeys` list.
+
+TypeBox with `additionalProperties: false` strips unknown keys silently rather
+than rejecting them (documented in `telemetry.test.ts`); the route layer must
+do its own key check, so the PATCH body schema stays a free-form record and
+the allowlist is enforced explicitly in `handleUpdateSettings` before the
+spread onto currentSettings.
+
+Acceptance test:
+```ts
+PATCH /api/settings  body={ theme: "dark", isAdmin: true, isModerator: 1 }
+→ 400 { error: "Unknown settings keys are not allowed",
+       code: "BAD_REQUEST",
+       details: { rejectedKeys: ["isAdmin","isModerator"], allowedKeys: [...] } }
+```
+
+Files touched:
+- `src/validation/schemas/settings.ts` — `SettingsUpdateAllowedKeys` + `SettingsUpdateBody`
+- `src/routes/settings.ts` — runtime allowlist check + body schema docs
+- `src/routes/settings.test.ts` — 3 new tests + 2 existing tests annotated

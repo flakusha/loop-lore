@@ -66,6 +66,31 @@ export class WsHandler extends TransportBase<WsOptions> {
    */
   attach(ws: WebSocket,): void {
     this.ws = ws;
+    // BUG-wshandler-queue: drain messages that were buffered while the
+    // previous socket was disconnected. The new ws may not be OPEN yet
+    // (still in CONNECTING) — wait for open before flushing. Cap the queue
+    // depth inside send() to prevent unbounded growth during long outages.
+    if (ws.readyState === WebSocket.OPEN) {
+      this.flushPending();
+    } else {
+      ws.addEventListener("open", () => this.flushPending(), { once: true, },);
+    }
+  }
+
+  /** Drain pendingMessages into the current socket and clear the queue. */
+  private flushPending(): void {
+    if (!this.ws) { return; }
+    const queue = this.pendingMessages;
+    this.pendingMessages = [];
+    for (const data of queue) {
+      try {
+        this.ws.send(typeof data === "string" ? data : (data as unknown as Parameters<WebSocket["send"]>[0]),);
+      } catch (err) {
+        // Re-buffer on send failure so a transient error doesn't drop the message.
+        this.pendingMessages.unshift(...queue.slice(queue.indexOf(data,),),);
+        throw err;
+      }
+    }
   }
 
   /**
@@ -76,10 +101,16 @@ export class WsHandler extends TransportBase<WsOptions> {
 
     if (this.ws?.readyState === WebSocket.OPEN) {
       this.ws.send(typeof data === "string" ? data : (data as unknown as Parameters<WebSocket["send"]>[0]),);
-    } else {
-      this.pendingMessages.push(data,);
+      return Promise.resolve();
     }
 
+    // BUG-wshandler-queue: cap queue depth (drop oldest beyond N=1000)
+    // so a long outage cannot grow pendingMessages without bound.
+    const MAX_PENDING = 1000;
+    if (this.pendingMessages.length >= MAX_PENDING) {
+      this.pendingMessages.shift();
+    }
+    this.pendingMessages.push(data,);
     return Promise.resolve();
   }
 

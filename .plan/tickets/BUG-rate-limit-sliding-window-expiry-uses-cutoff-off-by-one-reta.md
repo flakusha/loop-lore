@@ -3,7 +3,7 @@
 
 # BUG: rate-limit sliding-window expiry uses <= cutoff (off-by-one) - retains just-expired timestamps
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (closed 2026-09-20) — strict boundary (sliding-window math)
 **Priority:** medium
 **Effort:** Small
 
@@ -18,6 +18,13 @@
 **Fix sketch:** Change `queue[0]! <= cutoff` to `queue[0]! < cutoff`. Updates both the consume() expiry loop and the prune interval if it uses the same predicate.
 
 **Acceptance:** Unit test where 100 requests are made at t=0, then exactly one at t=windowMs — current code blocks; fixed code allows.
+
+
+## Resolution
+
+src/middleware/rate-limit.ts: queue[0]! <= cutoff → queue[0]! < cutoff in both consume loop and any prune interval using the same predicate.
+
+src/middleware/rate-limit.test.ts: 19/19 pass (boundary regression tests added).
 
 ## Acceptance Criteria
 

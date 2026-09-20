@@ -167,7 +167,10 @@ export class ResponseHeaderPolicy {
    * @param root0.response
    */
   private classify({ request, response, }: ApplyOptions,): RouteKind {
-    const contentType = response.headers.get("content-type",) ?? "";
+    // BUG-classify-response-header: case-insensitive per RFC 9110 §6.1.
+    // Headers preserve case verbatim; lowercase once before comparison so
+    // uppercase "TEXT/HTML" still routes to "html" and keeps document headers.
+    const contentType = (response.headers.get("content-type",) ?? "").toLowerCase();
     if (contentType.startsWith("text/html",)) { return "html"; }
     if (contentType.includes("text/event-stream",)) { return "sse"; }
     if (request && new URL(request.url,).pathname.startsWith("/api/",)) { return "api"; }
