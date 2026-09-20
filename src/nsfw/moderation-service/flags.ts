@@ -30,7 +30,7 @@ export interface FlagContentArgs {
  */
 export async function flagContent({ thisL, params, }: FlagContentArgs,): Promise<ContentFlag> {
   // BUG-flagcontent-toctou: race-free dedup via partial UNIQUE INDEX.
-  // Migration 023 adds content_flags_open_unique(content_type, content_id)
+  // Migration 018 adds content_flags_open_unique(content_type, content_id)
   // WHERE status IN ('pending','under_review'). Two concurrent inserts with
   // the same content fail the second with UNIQUE violation; the pre-insert
   // SELECT is gone so no window exists where both callers pass.

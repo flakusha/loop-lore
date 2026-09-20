@@ -9262,6 +9262,10 @@
   "src/db/content-version.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-042.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-db-content-versioning-snapshot-restore.md"
     },
     {
@@ -9273,6 +9277,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-content-hashing-distributed-integrity.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-042.md"
     },
     {
       "kind": "ticket",
@@ -10572,6 +10580,10 @@
     }
   ],
   "src/db/migrations/parts/001_core.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-042.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-context-preference-per-scope.md"
@@ -19875,6 +19887,12 @@
       "source": "docs/spec/auth-middleware.md"
     }
   ],
+  "src/middleware/rate-limit.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-rate-limit-sliding-window-expiry-uses-cutoff-off-by-one-reta.md"
+    }
+  ],
   "src/middleware/rate-limit.ts": [
     {
       "kind": "epic",
@@ -19899,6 +19917,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-export-bundle-no-access-log.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-rate-limit-sliding-window-expiry-uses-cutoff-off-by-one-reta.md"
     },
     {
       "kind": "ticket",
@@ -19974,6 +19996,10 @@
   "src/middleware/response-headers.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-classify-in-response-header-policy-uses-case-sensitive-conte.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-hsts-header-missing-from-response-policy.md"
     },
     {
@@ -19985,6 +20011,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-architecture.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-classify-in-response-header-policy-uses-case-sensitive-conte.md"
     },
     {
       "kind": "ticket",
@@ -20283,6 +20313,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-message-seen-state.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-flagcontent-has-toctou-race-on-duplicate-flag-check-select-t.md"
     },
     {
       "kind": "ticket",
@@ -22028,6 +22062,10 @@
   "src/routes/actor-auth.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-character-licensing-upsert-records-license-history-for-any-a.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-unify-401-guard-helpers.md"
     }
   ],
@@ -22733,6 +22771,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-character-internal-traits-idor-cross-user-read-write-delete.md"
+    }
+  ],
+  "src/routes/character-licensing.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-character-licensing-upsert-records-license-history-for-any-a.md"
     }
   ],
   "src/routes/character-mood.ts": [
@@ -24619,6 +24663,12 @@
       "source": ".plan/tickets/TASK-workflow-strip-group-chat-mention-prefix-before-trigger-matc.md"
     }
   ],
+  "src/routes/messages/read.coverage.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-get-messages-id-variants-has-toctou-race-on-parent-chat-auth.md"
+    }
+  ],
   "src/routes/messages/read.ts": [
     {
       "kind": "epic",
@@ -24627,6 +24677,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-key-history-loss-join-leave.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-get-messages-id-variants-has-toctou-race-on-parent-chat-auth.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-put-messages-id-variant-silently-returns-200-with-no-variant.md"
     },
     {
       "kind": "ticket",
@@ -25529,7 +25587,21 @@
       "source": ".plan/epics/epic-multi-session.md"
     }
   ],
+  "src/routes/settings.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-patch-settings-endpoint-has-no-key-allowlist-currentsettings.md"
+    }
+  ],
   "src/routes/settings.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-handleexportall-leaks-group-chat-participants-messages-expor.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-patch-settings-endpoint-has-no-key-allowlist-currentsettings.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-format-version-migration.md"
@@ -26343,6 +26415,32 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-fix-eslint-errors.md"
+    }
+  ],
+  "src/rpg/blog/service/comments.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-moderatecomment-has-no-authorization-any-caller-can-change-a.md"
+    }
+  ],
+  "src/rpg/blog/service/posts.coverage.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-deletepost-has-no-ownership-check-any-authenticated-user-can.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-updatepost-has-no-ownership-check-any-authenticated-user-can.md"
+    }
+  ],
+  "src/rpg/blog/service/posts.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-deletepost-has-no-ownership-check-any-authenticated-user-can.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-updatepost-has-no-ownership-check-any-authenticated-user-can.md"
     }
   ],
   "src/rpg/body-systems/service/types.ts": [
@@ -30395,6 +30493,12 @@
       "source": ".plan/epics/epic-game-frontend-scenes.md"
     }
   ],
+  "src/transport/ws.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-wshandler-send-queues-messages-while-disconnected-but-never-.md"
+    }
+  ],
   "src/transport/ws.ts": [
     {
       "kind": "epic",
@@ -30411,6 +30515,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-transport-expansion.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-wshandler-send-queues-messages-while-disconnected-but-never-.md"
     },
     {
       "kind": "ticket",
@@ -31249,6 +31357,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-admin-audit-selectAll-schema-mismatch-empty.md"
+    }
+  ],
+  "src/validation/schemas/settings.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-patch-settings-endpoint-has-no-key-allowlist-currentsettings.md"
     }
   ],
   "src/validation/schemas/story.ts": [
