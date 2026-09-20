@@ -3,7 +3,7 @@
 
 # BUG: character-licensing upsert records license_history for any actor_type including non-character actors
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (closed 2026-09-20) — actor_type guard added after checkActorOwnership
 **Priority:** medium
 **Effort:** Small
 

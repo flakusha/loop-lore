@@ -179,12 +179,23 @@ export async function listPosts(
  * @param db
  * @param id
  * @param input
+ * @param callerUserId authenticated user id performing the mutation
+ * @param isAdmin       whether the caller may act on any author's post
  */
 export async function updatePost(
   db: Kysely<any>,
   id: string,
   input: UpdateBlogPostInput,
+  callerUserId: string,
+  isAdmin = false,
 ): Promise<BlogPostWithTags | undefined> {
+  const owner = await db
+    .selectFrom("blog_posts",)
+    .select("author_id",)
+    .where("id", "=", id,)
+    .executeTakeFirst();
+  if (!owner || (owner.author_id !== callerUserId && !isAdmin)) { return undefined; }
+
   const updates: Record<string, unknown> = {
     updated_at: new Date().toISOString(),
   };
@@ -203,13 +214,11 @@ export async function updatePost(
     updates.metadata = jsonStringifyOr(input.metadata,);
   }
 
-  const result = await db
+  await db
     .updateTable("blog_posts",)
     .set(updates,)
     .where("id", "=", id,)
-    .executeTakeFirst();
-
-  if (Number(result?.numUpdatedRows ?? 0,) === 0) { return undefined; }
+    .execute();
 
   if (input.tags !== undefined) {
     await clearTags(db, id,);
@@ -224,8 +233,22 @@ export async function updatePost(
 /**
  * @param db
  * @param id
+ * @param callerUserId authenticated user id performing the mutation
+ * @param isAdmin       whether the caller may delete any author's post
  */
-export async function deletePost(db: Kysely<any>, id: string,): Promise<boolean> {
+export async function deletePost(
+  db: Kysely<any>,
+  id: string,
+  callerUserId: string,
+  isAdmin = false,
+): Promise<boolean> {
+  const owner = await db
+    .selectFrom("blog_posts",)
+    .select("author_id",)
+    .where("id", "=", id,)
+    .executeTakeFirst();
+  if (!owner || (owner.author_id !== callerUserId && !isAdmin)) { return false; }
+
   const result = await db
     .deleteFrom("blog_posts",)
     .where("id", "=", id,)

@@ -159,6 +159,21 @@ export function characterLicensingRoutes(opts: HandlerOpts, prefix = "/api",) {
         },);
       }
 
+      // BUG-character-licensing-upsert: licenses are character-only. Reject any
+      // non-character actor even if the caller owns it, otherwise licensing rows
+      // pollute reports that don't filter by actor_type.
+      const actorRow = await database
+        .selectFrom("actors",)
+        .select("actor_type",)
+        .where("id", "=", actorId,)
+        .executeTakeFirst();
+      if (!actorRow || actorRow.actor_type !== "character") {
+        return jsonError({
+          message: "Licenses are only issued to character actors",
+          status: HttpStatus.BadRequest,
+        },);
+      }
+
       // Upsert
       const existing = await database
         .selectFrom("character_licensing",)

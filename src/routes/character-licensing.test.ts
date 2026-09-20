@@ -46,8 +46,16 @@ describe("character-licensing routes", () => {
     ({ db, sqlite, } = await createTestDb());
     await insertUsers(db, "owner", "Owner", { id: "owner" as never, },);
     await insertUsers(db, "member", "Member", { id: "member" as never, },);
-    await insertActors(db, "Owner Actor", { id: OWNER_ACTOR as never, owner_id: "owner", },);
-    await insertActors(db, "Member Actor", { id: MEMBER_ACTOR as never, owner_id: "member", },);
+    await insertActors(db, "Owner Actor", {
+      id: OWNER_ACTOR as never,
+      owner_id: "owner",
+      actor_type: "character" as never,
+    },);
+    await insertActors(db, "Member Actor", {
+      id: MEMBER_ACTOR as never,
+      owner_id: "member",
+      actor_type: "character" as never,
+    },);
   },);
 
   afterAll(() => sqlite.close());
@@ -268,5 +276,29 @@ describe("character-licensing routes", () => {
     const types = history.map((h,) => h.license_type);
     expect(types,).toContain("custom",);
     expect(types,).toContain("proprietary",);
+  });
+
+  test("POST rejects non-character actors with 400 (BUG-character-licensing)", async () => {
+    // Seed a user-actor owned by 'owner' (default actor_type is 'user').
+    const userActorId = "00000000-0000-4000-8000-000000000003";
+    await insertActors(db, "User-Actor", { id: userActorId as never, owner_id: "owner", },);
+    const res = await makeApp(db, "owner", "user",).handle(
+      new Request(`http://localhost/api/actors/${userActorId}/licensing`, {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ license_type: "cc0", },),
+      },),
+    );
+    expect(res.status,).toBe(400,);
+    const body = await res.json() as LicensingBody;
+    expect(body.error ?? "",).toContain("character",);
+
+    // No row should have been written.
+    const row = await db
+      .selectFrom("character_licensing",)
+      .select("id",)
+      .where("actor_id", "=", userActorId,)
+      .executeTakeFirst();
+    expect(row,).toBeUndefined();
   });
 });

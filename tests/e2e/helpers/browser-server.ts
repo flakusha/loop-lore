@@ -81,7 +81,8 @@ export async function createBrowserTest(
   // Use crypto.randomUUID() so concurrent workers can't collide on
   // millisecond+Math.random() (BUG-test-run-id-uses-Date-now-collision-risk-under-parallel).
   const testRunId = `loop-lore-e2e-${crypto.randomUUID()}`;
-  let bunServer: { stop(): boolean } | null = null;
+  // TS-22/23/24: Bun.Server has `port: number` and `stop(): Promise<void>`.
+  let bunServer: Bun.Server<undefined> | null = null;
   let browser: Browser | null = null;
   try {
     // Create DB + run migrations
@@ -177,7 +178,7 @@ export async function createBrowserTest(
       },
       close: async () => {
         await browser?.close();
-        bunServer?.stop();
+        void bunServer?.stop();
         setTestDatabase(null,);
         resetSoloUserCache();
         await unloadAllPlugins();
@@ -189,7 +190,7 @@ export async function createBrowserTest(
     // Clear the module-global override and any partial upload dir if setup
     // throws mid-way (BUG-settestdatabase-global-leak-on-test-throw).
     await browser?.close();
-    bunServer?.stop();
+    void bunServer?.stop();
     setTestDatabase(null,);
     const testDir = join("/tmp", testRunId,);
     if (existsSync(testDir,)) { rmSync(testDir, { recursive: true, force: true, },); }
