@@ -70,7 +70,7 @@ async function insertFlagRow(params: {
     id: params.id,
     reporter_id: params.reporterId,
     content_type: params.contentType ?? "message",
-    content_id: params.contentId ?? "msg-1",
+    content_id: params.contentId ?? crypto.randomUUID(),
     chat_id: null,
     world_id: null,
     flag_reason: params.reason ?? "test",

@@ -30,7 +30,8 @@ async function loginAsAdmin(ctx: BrowserTestContext,) {
     await page.click("[data-testid='login-submit']",);
     // Wait for the login POST response — proves the session cookie was set.
     await page.waitForResponse(
-      (res,) => res.url().includes("/api/auth/login",) && res.request().method() === "POST",
+      (res: import("playwright").Response,) =>
+        res.url().includes("/api/auth/login",) && res.request().method() === "POST",
       { timeout: 30_000, },
     );
     await page.goto(`${ctx.url}/views/admin`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
@@ -137,7 +138,7 @@ describe("Admin dashboard panels — populated", () => {
     try {
       await page.goto(`${ctx.url}/views/admin`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
       // adminViewGuard 302s non-admins to "/" which redirects to /views/chat.
-      await page.waitForURL((url,) => url.pathname !== "/views/admin", { timeout: 30_000, },);
+      await page.waitForURL((url: URL,) => url.pathname !== "/views/admin", { timeout: 30_000, },);
       const path = new URL(page.url(),).pathname;
       expect(path,).not.toBe("/views/admin",);
     } finally {
@@ -147,30 +148,3 @@ describe("Admin dashboard panels — populated", () => {
     }
   }, 90_000,);
 });
-
-test("non-admin cannot load the admin view", async () => {
-  const page = await ctx.openPage();
-  // Login as the seeded non-admin user.
-  await page.goto(`${ctx.url}/views/login`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
-  await page.waitForSelector("[data-testid='login-submit']", { timeout: 10_000, },);
-  await page.fill("[data-testid='username-input']", SEED.user.username,);
-  await page.fill("[data-testid='password-input']", SEED.user.password,);
-  await page.click("[data-testid='login-submit']",);
-  await page.waitForResponse(
-    (res,) => res.url().includes("/api/auth/login",) && res.request().method() === "POST",
-    { timeout: 30_000, },
-  );
-  // Now start tracking — all subsequent nav errors are captured.
-  const errors = trackPageErrors(page, { allowlist: [/401 \(Unauthorized\)/, /Failed to load resource/,], },);
-  try {
-    await page.goto(`${ctx.url}/views/admin`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
-    // adminViewGuard 302s non-admins to "/" which redirects to /views/chat.
-    await page.waitForURL((url,) => url.pathname !== "/views/admin", { timeout: 30_000, },);
-    const path = new URL(page.url(),).pathname;
-    expect(path,).not.toBe("/views/admin",);
-  } finally {
-    errors.assert();
-    errors.detach();
-    await page.close();
-  }
-}, 90_000,);

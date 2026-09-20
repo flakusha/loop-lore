@@ -103,25 +103,30 @@ export class BlogService extends BlogFollowsService {
   }
 
   /**
-   * Update a post.
+   * Update a post. The caller must be the author or an admin.
    * @param id
    * @param input
+   * @param callerUserId
+   * @param isAdmin
    */
   async updatePost(
     id: string,
     input: UpdateBlogPostInput,
+    callerUserId: string,
+    isAdmin = false,
   ): Promise<BlogPostRow | undefined> {
-    return updatePostDispatch(this.db, id, input,);
+    return updatePostDispatch(this.db, id, input, callerUserId, isAdmin,);
   }
 
   /**
-   * Delete a post.
+   * Delete a post. The caller must be the author or an admin.
    * @param id
+   * @param callerUserId
+   * @param isAdmin
    */
-  async deletePost(id: string,): Promise<boolean> {
-    return deletePostDispatch(this.db, id,);
+  async deletePost(id: string, callerUserId: string, isAdmin = false,): Promise<boolean> {
+    return deletePostDispatch(this.db, id, callerUserId, isAdmin,);
   }
-
   /**
    * Increment a post's view count.
    * @param id

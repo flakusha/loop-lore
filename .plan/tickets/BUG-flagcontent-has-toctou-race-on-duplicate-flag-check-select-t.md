@@ -3,7 +3,7 @@
 
 # BUG: flagContent has TOCTOU race on duplicate flag check - SELECT then INSERT allows concurrent duplicates
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (closed 2026-09-20) — partial UNIQUE INDEX closes the race
 **Priority:** medium
 **Effort:** Medium
 

@@ -346,7 +346,8 @@ export async function createTestServer(
   // millisecond+Math.random() (BUG-test-run-id-uses-Date-now-collision-risk-under-parallel).
   // Declared outside try so the close() closure can still reach it.
   const testRunId = `loop-lore-e2e-${crypto.randomUUID()}`;
-  let bunServer: { stop(): boolean } | null = null;
+  // TS-25/26/27: Bun.Server has `port: number` and `stop(): Promise<void>`.
+  let bunServer: Bun.Server<undefined> | null = null;
   try {
     await runMigrations(db,);
 
@@ -414,7 +415,7 @@ export async function createTestServer(
       mockProvider,
       context: { chatId: SEED_DEFAULT_CHAT_ID, },
       close: () => {
-        bunServer?.stop();
+        void bunServer?.stop();
         setTestDatabase(null,);
         resetSoloUserCache();
         resetLoginRateLimiter();
@@ -428,7 +429,7 @@ export async function createTestServer(
     // Clear the module-global override and any partial upload dir if setup
     // throws mid-way — prevents leaking into sibling test files under
     // non-isolated runners (BUG-settestdatabase-global-leak-on-test-throw).
-    bunServer?.stop();
+    void bunServer?.stop();
     setTestDatabase(null,);
     const testDir = resolve("/tmp", testRunId,);
     if (existsSync(testDir,)) { rmSync(testDir, { recursive: true, force: true, },); }

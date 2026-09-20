@@ -38,6 +38,10 @@ import {
   down as downMeshSharing,
   up as upMeshSharing,
 } from "./parts/022_mesh_sharing";
+import {
+  down as downContentFlagsUniquePending,
+  up as upContentFlagsUniquePending,
+} from "./parts/023_content_flags_unique_pending";
 
 /**
  * @param database
@@ -63,12 +67,14 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
   await upTradeRequestedMaterials(database,);
   await upWorkflowSessions(database,);
   await upMeshSharing(database,);
+  await upContentFlagsUniquePending(database,);
 }
 
 /**
  * @param database
  */
 export async function down(database: Kysely<unknown>,): Promise<void> {
+  await downContentFlagsUniquePending(database,);
   await downMeshSharing(database,);
   await downWorkflowSessions(database,);
   await downTradeRequestedMaterials(database,);
