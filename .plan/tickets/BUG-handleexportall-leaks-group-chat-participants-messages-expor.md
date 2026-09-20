@@ -9,15 +9,21 @@
 
 ## Summary
 
-**Summary:** handleExportAll() in src/routes/settings.ts:88 selects all chats where created_by = caller then exports ALL messages in those chats. In group chats, this leaks other participants messages.
+**Severity (revised 2026-09-20):** MEDIUM (not HIGH — messages are not actually exported; see Resolution)
 
-**Where:** src/routes/settings.ts:88
+**Where:** src/routes/settings.ts:81-118
 
-**Defect:** A user calling export-all on their account will receive private messages they never saw in group chats they created. The query selects chats by created_by but the message query joins on chat_id without filtering by author = caller. Result: cross-participant message body exposure.
+**Defect:** handleExportAll() selects all chats where created_by = caller (no participant-membership filter). The current ZIP contains settings.json + characters.json + chats.json + assets.json. It does NOT include message bodies, so the original "leaks private messages" claim is wrong. However:
 
-**Fix sketch:** Either (a) restrict export to chats the caller is sole participant, or (b) when exporting group chats, restrict messages to rows where author_id = caller. Also scope chats to participant membership on the user side.
+1. chats.json dumps full chat rows including chat metadata that other group participants can see (chat title, settings, member list).
+2. For any group chat the caller created, they get all of it regardless of whether they still participate — there is no `left_at`/membership filter.
+3. If message export is later added (per-user export-all feature work), the same created_by-only filter pattern would re-introduce a real leak.
 
-**Acceptance:** A test where user A creates a 3-person group, user B writes a message, user A exports all - current code includes Bs message; fixed code excludes it.
+**Fix sketch:** Restrict `chats` query to chats where caller is a current participant (join chat_participants), not just created_by. Document the constraint near the function.
+
+## Resolution
+
+Verified 2026-09-20 against dev ada2dd920. Original ticket claim overstated: handleExportAll does not export messages today. Revised scope: chat metadata leak via created_by-only filter, plus preventive guard for future message export.
 
 ## Acceptance Criteria
 
