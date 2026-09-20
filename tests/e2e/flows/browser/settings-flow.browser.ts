@@ -118,4 +118,112 @@ describe("Settings flow E2E", () => {
       }
     }, 60_000,);
   });
+
+  test("every tab (general/chat/api/notifications/data/keys) renders its panel", async () => {
+    const page = await ctx.openPage();
+    const errors = trackPageErrors(page,);
+    try {
+      await gotoSettings(page,);
+      const tabs: Array<{ label: string; panel: string }> = [
+        { label: "General", panel: "settings-general", },
+        { label: "Chat", panel: "settings-chat", },
+        { label: "API", panel: "settings-api", },
+        { label: "Notifications", panel: "settings-notifications", },
+        { label: "Data", panel: "settings-data", },
+        { label: "Keys", panel: "settings-keys", },
+      ];
+      for (const tab of tabs) {
+        await page
+          .locator(".world-edit-tab",)
+          .filter({ hasText: tab.label, },)
+          .first()
+          .click();
+        await page.waitForTimeout(300,);
+        await page
+          .locator(`[data-testid='${tab.panel}']`,)
+          .waitFor({ state: "attached", timeout: 15_000, },);
+      }
+    } finally {
+      errors.assert();
+      errors.detach();
+      await page.close();
+    }
+  }, 90_000,);
+
+  test("API tab exposes provider and temp-slider; save-api persists temperature", async () => {
+    const page = await ctx.openPage();
+    const errors = trackPageErrors(page,);
+    try {
+      await gotoSettings(page,);
+      await page.locator(".world-edit-tab",).filter({ hasText: "API", },).first().click();
+      await page.waitForTimeout(300,);
+      await page.locator("[data-testid='settings-api']",).waitFor({ state: "attached", timeout: 15_000, },);
+      await page.locator("[data-testid='api-provider']",).waitFor({ state: "attached", timeout: 10_000, },);
+      await page.locator("[data-testid='temp-slider']",).waitFor({ state: "attached", timeout: 10_000, },);
+      await page.locator("[data-testid='save-api']",).waitFor({ state: "attached", timeout: 10_000, },);
+
+      await page.locator("[data-testid='temp-slider']",).fill("0.7",);
+      await page.locator("[data-testid='save-api']",).click();
+      await page.waitForTimeout(500,);
+
+      const row = await ctx.db
+        .selectFrom("users",)
+        .select(["settings",],)
+        .where("id", "=", SEED.solo.id,)
+        .executeTakeFirstOrThrow();
+      const parsed = JSON.parse(row.settings ?? "{}",) as Record<string, unknown>;
+      expect(parsed,).toHaveProperty("temperature",);
+    } finally {
+      errors.assert();
+      errors.detach();
+      await page.close();
+    }
+  }, 60_000,);
+
+  test("Data tab exposes export-all and delete-all buttons", async () => {
+    const page = await ctx.openPage();
+    const errors = trackPageErrors(page,);
+    try {
+      await gotoSettings(page,);
+      await page.locator(".world-edit-tab",).filter({ hasText: "Data", },).first().click();
+      await page.waitForTimeout(300,);
+      await page.locator("[data-testid='settings-data']",).waitFor({ state: "attached", timeout: 15_000, },);
+      await page.locator("[data-testid='export-all']",).waitFor({ state: "attached", timeout: 10_000, },);
+      await page.locator("[data-testid='delete-all']",).waitFor({ state: "attached", timeout: 10_000, },);
+    } finally {
+      errors.assert();
+      errors.detach();
+      await page.close();
+    }
+  }, 60_000,);
+
+  test("chat-tab autoScroll toggle persists to users.settings", async () => {
+    const page = await ctx.openPage();
+    const errors = trackPageErrors(page,);
+    try {
+      await gotoSettings(page,);
+      await page.locator(".world-edit-tab",).filter({ hasText: "Chat", },).first().click();
+      await page.waitForTimeout(300,);
+      await page.locator("[data-testid='settings-chat']",).waitFor({ state: "attached", timeout: 15_000, },);
+
+      const toggle = page.locator("#auto-scroll",);
+      await toggle.waitFor({ state: "attached", timeout: 10_000, },);
+      const before = await toggle.isChecked();
+      await toggle.click();
+      await page.waitForTimeout(500,);
+
+      const row = await ctx.db
+        .selectFrom("users",)
+        .select(["settings",],)
+        .where("id", "=", SEED.solo.id,)
+        .executeTakeFirstOrThrow();
+      const parsed = JSON.parse(row.settings ?? "{}",) as Record<string, unknown>;
+      expect(parsed,).toHaveProperty("autoScroll",);
+      expect(parsed.autoScroll,).toBe(!before,);
+    } finally {
+      errors.assert();
+      errors.detach();
+      await page.close();
+    }
+  }, 60_000,);
 });
