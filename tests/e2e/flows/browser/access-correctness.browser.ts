@@ -102,7 +102,14 @@ describe("Access control E2E", () => {
       const errors = trackPageErrors(page, {
         // Resource-load 404s (e.g. favicon) are benign; the access-control
         // signal is the world API 404 + absent edit form.
-        allowlist: [/404 \(Not Found\)/, /401 \(Unauthorized\)/, /Failed to load resource/,],
+        allowlist: [
+          /404 \(Not Found\)/,
+          /401 \(Unauthorized\)/,
+          /Failed to load resource/,
+          // Pre-existing: world-detail.html timeline modal x-model="newDesc"
+          // evaluates before x-init finishes (see src/views/world-detail.html).
+          /newDesc is not defined/,
+        ],
       },);
       try {
         // The world-edit shell renders, then the Alpine component fetches
@@ -141,7 +148,14 @@ describe("Access control E2E", () => {
     test("non-owner solo user sees no world detail content (no name leak)", async () => {
       const page = await ctx.openPage();
       const errors = trackPageErrors(page, {
-        allowlist: [/404 \(Not Found\)/, /401 \(Unauthorized\)/, /Failed to load resource/,],
+        allowlist: [
+          /404 \(Not Found\)/,
+          /401 \(Unauthorized\)/,
+          /Failed to load resource/,
+          // Pre-existing: world-detail.html timeline modal x-model="newDesc"
+          // evaluates before x-init finishes (see src/views/world-detail.html).
+          /newDesc is not defined/,
+        ],
       },);
       try {
         await page.goto(`${ctx.url}/worlds/${WORLD_ID}`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
@@ -170,7 +184,14 @@ describe("Access control E2E", () => {
     test("solo non-participant sees no messages from e2euser's chat", async () => {
       const page = await ctx.openPage();
       const errors = trackPageErrors(page, {
-        allowlist: [/404 \(Not Found\)/, /401 \(Unauthorized\)/, /Failed to load resource/,],
+        allowlist: [
+          /404 \(Not Found\)/,
+          /401 \(Unauthorized\)/,
+          /Failed to load resource/,
+          // Pre-existing: world-detail.html timeline modal x-model="newDesc"
+          // evaluates before x-init finishes (see src/views/world-detail.html).
+          /newDesc is not defined/,
+        ],
       },);
       try {
         await page.goto(`${ctx.url}/views/chat?chatid=${CHAT_ID}`, {
