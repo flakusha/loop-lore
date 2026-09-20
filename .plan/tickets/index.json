@@ -5762,7 +5762,7 @@
     "status": "open"
   },
   "FEAT-042": {
-    "hash": "4538afb",
+    "hash": "f3a5535",
     "extid": "FEAT-042",
     "type": "FEAT",
     "title": "# FEAT-042: Content versioning framework",
@@ -5772,7 +5772,7 @@
     "tags": [],
     "source": ".plan/tickets/FEAT-042.md",
     "git_issue": "4538afb",
-    "status": "open"
+    "status": "done"
   },
   "FEAT-043": {
     "hash": "f77863b",
