@@ -45,9 +45,10 @@ describe("Settings flow E2E", () => {
 
         const displayName = `Browser-User-${Date.now()}`;
         await page.fill("#displayName", displayName,);
-        // Wait for the PUT /api/users/me response to complete before DB check.
+        // The frontend persists through the versioned API (persistSettings
+        // calls /api/v1/users/me); wait for that request, then check the DB.
         const saveRes = page.waitForResponse(
-          (res,) => res.url().includes("/api/users/me",) && res.request().method() === "PUT",
+          (res,) => res.url().includes("/api/v1/users/me",) && res.request().method() === "PUT",
           { timeout: 30_000, },
         );
         await page.click("[data-testid='save-general']",);
@@ -75,9 +76,9 @@ describe("Settings flow E2E", () => {
         await gotoSettings(page,);
 
         const theme = "dracula";
-        // Wait for the PATCH /api/users/me/settings response to complete.
+        // Wait for the versioned PATCH /api/v1/users/me/settings response.
         const settingsRes = page.waitForResponse(
-          (res,) => res.url().includes("/api/users/me/settings",) && res.request().method() === "PATCH",
+          (res,) => res.url().includes("/api/v1/users/me/settings",) && res.request().method() === "PATCH",
           { timeout: 30_000, },
         );
         await page.selectOption("[data-testid='theme-select']", theme,);
@@ -131,6 +132,7 @@ describe("Settings flow E2E", () => {
         { label: "Notifications", panel: "settings-notifications", },
         { label: "Data", panel: "settings-data", },
         { label: "Keys", panel: "settings-keys", },
+        { label: "Models", panel: "settings-models", },
       ];
       for (const tab of tabs) {
         await page
@@ -209,7 +211,9 @@ describe("Settings flow E2E", () => {
       const toggle = page.locator("#auto-scroll",);
       await toggle.waitFor({ state: "attached", timeout: 10_000, },);
       const before = await toggle.isChecked();
-      await toggle.click();
+      // The checkbox is visually hidden (.toggle input { display: none })
+      // behind a styled slider — click its label, as a user would.
+      await page.locator("label.toggle:has(#auto-scroll)",).click();
       await page.waitForTimeout(500,);
 
       const row = await ctx.db

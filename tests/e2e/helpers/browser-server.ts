@@ -54,50 +54,50 @@ export interface BrowserTestContext {
 // changes (BUG-browser-harness-stale-frontend-build). Size+mtime inputs keep
 // the check cheap while staying exact across rebases and worktree reuse.
 function hashFrontendSources(root: string,): string {
-  const hash = new Bun.CryptoHasher("sha256");
-  const inputs = ["src/frontend", "src/views", "src/public"];
+  const hash = new Bun.CryptoHasher("sha256",);
+  const inputs = ["src/frontend", "src/views", "src/public",];
   for (const rel of inputs) {
-    const dir = join(root, rel);
-    if (!existsSync(dir)) { continue; }
-    const files = [...new Bun.Glob("**/*").scanSync({ cwd: dir, dot: false })].sort();
+    const dir = join(root, rel,);
+    if (!existsSync(dir,)) { continue; }
+    const files = [...new Bun.Glob("**/*",).scanSync({ cwd: dir, dot: false, },),].sort();
     for (const entry of files) {
-      const file = join(dir, entry);
-      if (!existsSync(file)) { continue; }
-      const stat = Bun.file(file);
-      hash.update(rel);
-      hash.update(entry);
-      hash.update(String(stat.size));
-      hash.update(String(stat.lastModified));
+      const file = join(dir, entry,);
+      if (!existsSync(file,)) { continue; }
+      const stat = Bun.file(file,);
+      hash.update(rel,);
+      hash.update(entry,);
+      hash.update(String(stat.size,),);
+      hash.update(String(stat.lastModified,),);
     }
   }
-  return hash.digest("hex");
+  return hash.digest("hex",);
 }
 
 function ensureFrontendBuild(): string {
   const root = join(import.meta.dir, "..", "..", "..",);
-  const distPublic = join(root, "dist", "public");
-  const jsPath = join(distPublic, "app.js");
-  const hashPath = join(distPublic, ".build-hash");
-  const expectedHash = hashFrontendSources(root);
+  const distPublic = join(root, "dist", "public",);
+  const jsPath = join(distPublic, "app.js",);
+  const hashPath = join(distPublic, ".build-hash",);
+  const expectedHash = hashFrontendSources(root,);
   if (
-    existsSync(jsPath) &&
-    existsSync(hashPath) &&
-    readFileSync(hashPath, "utf8") === expectedHash
+    existsSync(jsPath,) &&
+    existsSync(hashPath,) &&
+    readFileSync(hashPath, "utf8",) === expectedHash
   ) { return distPublic; }
 
-  const result = spawnSync("bun", ["run", "build:frontend"], {
-    stdio: ["ignore", "pipe", "pipe"],
+  const result = spawnSync("bun", ["run", "build:frontend",], {
+    stdio: ["ignore", "pipe", "pipe",],
     cwd: root,
-  });
+  },);
   if (result.status !== 0) {
-    throw new Error(`Frontend build failed: ${result.stderr?.toString()}`);
+    throw new Error(`Frontend build failed: ${result.stderr?.toString()}`,);
   }
 
-  const srcViews = join(root, "src", "views");
-  const srcPublic = join(root, "src", "public");
-  if (existsSync(srcViews)) { cpSync(srcViews, distPublic, { recursive: true, force: true }); }
-  if (existsSync(srcPublic)) { cpSync(srcPublic, distPublic, { recursive: true, force: true }); }
-  writeFileSync(hashPath, expectedHash);
+  const srcViews = join(root, "src", "views",);
+  const srcPublic = join(root, "src", "public",);
+  if (existsSync(srcViews,)) { cpSync(srcViews, distPublic, { recursive: true, force: true, },); }
+  if (existsSync(srcPublic,)) { cpSync(srcPublic, distPublic, { recursive: true, force: true, },); }
+  writeFileSync(hashPath, expectedHash,);
 
   return distPublic;
 }

@@ -234,11 +234,18 @@ describe("quest routes", () => {
     expect(body.progress,).toBe(0,);
   });
 
-  test("POST quest progress rejects an empty body (422)", async () => {
+  test("POST quest progress rejects a non-positive delta (422)", async () => {
+    const res = await makeApp(db, "owner", "user",).handle(
+      postJson(`http://localhost/api/quests/${QUEST_ID}/progress`, { delta: 0, },),
+    );
+    expect(res.status,).toBe(422,);
+  });
+
+  test("POST quest progress defaults delta to 1 on an empty body", async () => {
     const res = await makeApp(db, "owner", "user",).handle(
       postJson(`http://localhost/api/quests/${QUEST_ID}/progress`, {},),
     );
-    expect(res.status,).toBe(422,);
+    expect(res.status,).toBe(200,);
   });
 
   test("GET quest progress returns 404 for unknown quests", async () => {

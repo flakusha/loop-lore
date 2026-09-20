@@ -119,19 +119,31 @@ async function handleCreateSuccess(
   gmGuided: boolean,
 ): Promise<void> {
   const d = await res.json();
+  // Attach persona/impersonation BEFORE navigating: a fire-and-forget PUT is
+  // cancelled by the redirect's navigation, leaving the new chat without the
+  // selected persona. Best-effort — an attach failure must not block opening
+  // the chat.
   if (personaId) {
-    feFetch(`/api/v1/chats/${d.id}/persona`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json", },
-      body: jsonBody({ personaId, },),
-    },);
+    try {
+      await feFetch(`/api/v1/chats/${d.id}/persona`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: jsonBody({ personaId, },),
+      },);
+    } catch {
+      /* persona attach is best-effort; still open the chat */
+    }
   }
   if (impersonateId) {
-    feFetch(`/api/v1/chats/${d.id}/impersonate`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json", },
-      body: jsonBody({ impersonateActorId: impersonateId, },),
-    },);
+    try {
+      await feFetch(`/api/v1/chats/${d.id}/impersonate`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: jsonBody({ impersonateActorId: impersonateId, },),
+      },);
+    } catch {
+      /* impersonation attach is best-effort; still open the chat */
+    }
   }
   location.assign(`/views/chat?chatid=${encodeURIComponent(d.id,)}${gmGuided ? "&openSettings=1" : ""}`,);
 }

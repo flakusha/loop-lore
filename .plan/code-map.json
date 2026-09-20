@@ -13501,6 +13501,13 @@
       "source": ".plan/tickets/BUG-alpine-init-hydration.md"
     }
   ],
+
+  "src/frontend/alpine/chat/lifecycle.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-browser-chatflow-upload-deferred.md"
+    }
+  ],
   "src/frontend/alpine/chat/music-embed.test.ts": [
     {
       "kind": "ticket",

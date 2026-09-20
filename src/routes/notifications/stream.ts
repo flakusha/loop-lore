@@ -14,7 +14,11 @@ import { NotificationService, } from "../../notifications/service";
 import { safeJsonStringify, } from "../../utils";
 
 export const POLL_INTERVAL_MS = 5000;
-export const KEEPALIVE_MS = 15_000;
+// Bun.serve's default idleTimeout kills a connection after 10s without
+// traffic (same window as the activity stream's keepalive); 15s left an
+// idle gap long enough for the stream to be severed between pings.
+// BUG-bug-notification-stream-killed-by-idle-timeout.
+export const KEEPALIVE_MS = 8_000;
 
 /** Snapshot of the unread state surfaced over SSE. */
 export interface NotificationSnapshot {

@@ -251,6 +251,10 @@
         .notification-bell__dismiss { background: none; border: none; color: var(--fg-muted, #999); cursor: pointer; font-size: 1rem; }
         .notification-bell__empty { padding: 1rem; color: var(--fg-muted, #999); text-align: center; }
         [x-cloak] { display: none !important; }
+        /* Reserve the fixed bell's corner: without this, right-aligned header
+           actions (e.g. characters "'+ New") render underneath the bell and
+           can never be clicked (BUG-notification-bell-covers-header-actions). */
+        .main-header .actions { padding-right: 3.4rem; }
       </style>
       <button type="button" class="notification-bell__btn" :aria-expanded="open.toString()" @click="toggle()" aria-label="Notifications">
         <span class="notification-bell__icon">🔔</span>
