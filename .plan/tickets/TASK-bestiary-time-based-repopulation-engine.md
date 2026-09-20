@@ -29,3 +29,6 @@ Bestiary entries declare a repopulation rule (mode, interval, cap, probability p
 - Modes: `circadian` (game-hour-of-day), `seasonal` (game-day-of-year), `harvest-regrowth`, `manual`, `ecology` (driven by ecology engine).
 - Called from world-tick service with optional bypass flag (admin force-spawn does NOT use this path).
 - Tested with frozen time: 100 ticks advance, cap respected, no race vs simultaneous force-cull (transactional update).
+
+
+git issue: 8ff87a5

@@ -30,3 +30,6 @@ Once the schema is in place, admins need to author species, set repopulation rul
 - `POST /api/admin/bestiary/:speciesId/force-spawn` and `POST /api/admin/bestiary/:speciesId/force-cull` consume admin endpoints from this epic.
 - Validation via existing Elysia t (`src/validation/schemas.ts`) extended with `BestiaryCategory`, `BestiaryBehaviour`, `RepopulationRule`.
 - 401/403/422 tests. Idempotent force-spawn (cap respected).
+
+
+git issue: f9bb7e7
