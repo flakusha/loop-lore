@@ -10200,10 +10200,6 @@
     },
     {
       "kind": "spec",
-      "source": "docs/spec/db-versioning.md"
-    },
-    {
-      "kind": "spec",
       "source": "docs/spec/messages.md"
     },
     {

@@ -762,11 +762,6 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true, hasDefault: true, },),
     answered_at: col("text",),
   },)
-  .table("schema_version", {
-    version: col("integer", { primaryKey: true, },),
-    applied_at: col("text", { notNull: true, hasDefault: true, },),
-    description: col("text",),
-  },)
   .table("seed_audit", {
     id: col("text", { primaryKey: true, },),
     seed_type: col("text", { notNull: true, },),

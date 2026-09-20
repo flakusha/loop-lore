@@ -21,13 +21,11 @@ Status: Planned (EPIC-2026-33). Partially implemented — migration 018 added `d
 
 ### Migrations
 
-~22 migration files exist (`src/db/migrations/001_init.ts` orchestrator + `parts/` sub-modules; `008` through `022_mesh_sharing.ts` as separate forward migrations). `017` is intentionally skipped (see `020_workflow_sessions.ts` comment).
+34 flat top-level migrations exist under `src/db/migrations/`. The chain started from v0 — there is no `parts/` orchestrator and no `schema_version` table. Each migration is auto-discovered by filename via `getMigrationFiles()`.
 
 **Numbering gaps:**
 
-- `001_init.ts` — initial schema (orchestrates `parts/001_init/` sub-modules)
-- `002` through `007` — domain-specific parts in `parts/` subdirectory (`002_assets.ts`, `003_worlds.ts`, `004_actors.ts`, `005_characters.ts`, `006_chat.ts`, `007_personas.ts`)
-- `008` through `022` — sequential; `017` is intentionally skipped
+- `001_init.ts` through `035_memory_source_chain.ts` — flat sequential migrations. Each migration owns one concern (identity, assets, worlds, actors, characters, chat, personas, story, items-management, RPG systems, blog, memory, generation, moderation, e2e, FTS, workflows, mesh, etc.).
 
 ### data_version Columns (Migration 018)
 
@@ -55,11 +53,11 @@ CREATE TABLE data_migrations (
 | Gap                          | Issue                                                                    | Priority |
 | ---------------------------- | ------------------------------------------------------------------------ | -------- |
 | **Migration numbering**      | 002-007 don't exist; confusing for developers                            | P1       |
-| **No schema_version table**  | Can't query current DB version from app code                             | P1       |
+| ~~No schema_version table~~  | Resolved: dropped (DB v0 — kysely_migration is the sole ledger)         | —       |
 | **No data migration runner** | `data_migrations` table exists but no framework runs transforms          | P1       |
 | **No migration tests**       | Can't validate migrations against known schemas                          | P2       |
 | **No rollback support**      | Kysely Migrator supports `migrateDown()` but not wired                   | P2       |
-| **parts/ organization**      | 001_init uses `parts/` sub-modules; unclear convention for future splits | P2       |
+| ~~parts/ organization~~      | Resolved: flat top-level migrations only | —       |
 | **No migration docs**        | No documentation of what each migration does or why                      | P2       |
 
 ---

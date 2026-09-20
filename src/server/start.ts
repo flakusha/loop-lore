@@ -11,7 +11,6 @@ import { getScheduler, } from "../cron";
 import { initAnonymousMode, initSmk, } from "../crypto";
 import { getDatabase, } from "../db/index";
 import { runDataMigrations, runMigrations, } from "../db/migrate";
-import { runSchemaBackfill, } from "../db/schema-backfill";
 import { seedDefaultActors, } from "../db/seed";
 import { createApp, } from "../elysia-app";
 import { initializeProviders, } from "../generation";
@@ -107,7 +106,6 @@ export async function start() {
   const handleRequest = createRequestHandler(app, config, logger, database,);
 
   await runMigrations(database,); // ensure DB schema ready before serving
-  await runSchemaBackfill(database,);
   await runDataMigrations(database,); // row-level, after schema is final, before seeding
   await seedDefaultActors(database, config,);
   const effectiveSeeding = applyEnvironmentOverrides(config.seeding,);

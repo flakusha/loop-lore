@@ -272,38 +272,13 @@ Concurrent runs in the same worktree each get a unique `RUN_ID`; both per-run
 files survive, and the canonical `check-report.json` reflects the last writer.
 No torn writes — atomic temp + rename on every step.
 
-### DB schema migrations — parts/ layout & workflow
+### DB schema migrations
 
-`up(db)`/`down(db)`, orchestrated by `001_init.ts` (runs `up()` in part order,
-`down()` in reverse). `src/db/migrate.ts` runs them via Kysely's `Migrator`
-with an `assertMigrationsNotStale` guard that fails fast on deleted/renamed/
-renumbered migrations. The migration chain is covered by
-`src/db/migrations.test.ts` and `src/db/migration-roundtrip.test.ts`
-(up→down→up consistency).
+Top-level `NNN_name.ts` files under `src/db/migrations/`, each exporting `up(db)` and `down(db)`. Auto-discovered by `getMigrationFiles()` in `src/db/migrate.ts` via filename. The migration chain is covered by `src/db/migrations.test.ts` and `src/db/migration-roundtrip.test.ts` (up→down→up consistency).
 
-**Append-only policy** — applied migrations are never deleted, renamed, or
-renumbered (the filename is the identity stored in `kysely_migration`). To
-change schema behavior, add a **new forward migration** that alters the schema
-to the desired state. Full policy: `src/db/migrations/README.md`.
+**Append-only policy** — applied migrations are never deleted, renamed, or renumbered (the filename is the identity stored in `kysely_migration`). To change schema behavior, add a **new forward migration** that alters the schema to the desired state. Full policy: `src/db/migrations/README.md`.
 
-**Before implementing any migration change, request the user's DB migration
-strategy — append (new `parts/NNN_*.ts`) vs. fold (extend an existing part)** —
-and proceed only after the decision. This is a mandatory pre-implementation
-step; extend a shipped part only when the new state hasn't been released.
-
-All downstream schema artifacts are **auto-generated** from migrations and must
-be regenerated on any migration add/edit. The `check` gate (`schemas:check`)
-fails red until they are:
-
-```bash
-# Regenerate after a migration change:
-bun run db:sync-types && bun run db:sync-manifest
-# Verify the gate is green:
-bun run schemas:check
-# Verify the migration chain + roundtrip:
-bun test src/db/migrations.test.ts src/db/migration-roundtrip.test.ts
-```
-
+**Two paths for new schema changes:** (1) append a new top-level `NNN_*.ts` migration (default); (2) extend the current HEAD migration if it is not yet shipped. There is no `parts/` subdirectory, no folding into a frozen base migration.
 Generated (never hand-edit): `src/db/schema-*.ts`, `src/db/schema.ts`,
 `src/db/schema-manifest.ts`, `src/test-utils/insert-helpers.ts`,
 `src/validation/db-schemas.ts`. e2e provisioning and unit tests build the
