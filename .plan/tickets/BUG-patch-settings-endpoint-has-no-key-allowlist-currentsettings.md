@@ -3,6 +3,9 @@
 
 # BUG: PATCH settings endpoint has no key allowlist - {...currentSettings, ...body} silently accepts arbitrary keys
 
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 **Status:** ✅ Done (closed 2026-09-20) — closed allowlist enforced
 **Priority:** medium
 **Effort:** Small
@@ -13,10 +16,14 @@
 
 **Where:** src/routes/settings.ts:158
 
-**Defect:** 
+**Defect:**
+
 ```
+
 {...currentSettings, ...body}
+
 ```
+
 Any property the client sends is accepted. No Zod schema with strict key list. No reject-unknown-keys middleware.
 
 **Fix sketch:** Define a settings-update Zod schema with .strict() (rejects unknown keys). Validate body through it before merge. Return 400 with a list of rejected keys.
@@ -28,7 +35,6 @@ Any property the client sends is accepted. No Zod schema with strict key list. N
 - [x] Implementation complete
 - [x] Tests passing
 - [ ] Documentation updated (no separate docs entry — allowlist is documented inline in `SettingsUpdateAllowedKeys` JSDoc)
-
 
 ## Resolution
 
@@ -43,11 +49,14 @@ the allowlist is enforced explicitly in `handleUpdateSettings` before the
 spread onto currentSettings.
 
 Acceptance test:
+
 ```ts
 PATCH /api/settings  body={ theme: "dark", isAdmin: true, isModerator: 1 }
+
 → 400 { error: "Unknown settings keys are not allowed",
        code: "BAD_REQUEST",
        details: { rejectedKeys: ["isAdmin","isModerator"], allowedKeys: [...] } }
+
 ```
 
 Files touched:

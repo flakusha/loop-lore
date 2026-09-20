@@ -3,6 +3,10 @@
 
 # BUG: frontend regenerateVariant does not pass style to API
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium
