@@ -15,7 +15,7 @@
  */
 import type { Kysely, } from "kysely";
 import { sql, } from "kysely";
-import { recordSchemaVersion, } from "../../schema-version";
+import { recordSchemaVersion, removeSchemaVersion, } from "../schema-version";
 
 /**
  * @param database
@@ -26,7 +26,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     ON content_flags (content_type, content_id)
     WHERE status IN ('pending', 'under_review')
   `.execute(database,);
-  await recordSchemaVersion(database, 23, "content_flags partial unique for open flag dedup",);
+  await recordSchemaVersion(database, 40, "content_flags partial unique for open flag dedup",);
 }
 
 /**
@@ -34,4 +34,5 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
  */
 export async function down(database: Kysely<unknown>,): Promise<void> {
   await sql`DROP INDEX IF EXISTS content_flags_open_unique`.execute(database,);
+  await removeSchemaVersion(database, 40,);
 }
