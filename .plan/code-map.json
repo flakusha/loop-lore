@@ -6563,6 +6563,12 @@
       "source": ".plan/tickets/TASK-optique-cli-tooling-integration.md"
     }
   ],
+  "src/commands/ticket.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-giwt-ticket-extid-double-prefix-on-duplicate-type-slug.md"
+    }
+  ],
   "src/components/3d/ViewModeSwitcher.vue": [
     {
       "kind": "ticket",
@@ -13479,6 +13485,12 @@
       "source": "docs/frontend/chat/visual-novel-mode.md"
     }
   ],
+  "src/frontend/alpine/chat/bootstrap.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-size-allow-waivers-characters-update-ts-and-chat-bootstrap-t.md"
+    }
+  ],
   "src/frontend/alpine/chat/index.ts": [
     {
       "kind": "ticket",
@@ -18963,7 +18975,6 @@
       "source": "docs/spec/locations.md"
     }
   ],
-
   "src/locations/routes.ts": [
     {
       "kind": "ticket",
@@ -23036,6 +23047,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-nsfw-rating-enforcement.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-size-allow-waivers-characters-update-ts-and-chat-bootstrap-t.md"
     }
   ],
   "src/routes/chat-branches.ts": [
@@ -30346,6 +30361,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-script-migration.md"
+    }
+  ],
+  "src/tickets/sync-ticket.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-giwt-ticket-extid-double-prefix-on-duplicate-type-slug.md"
     }
   ],
   "src/trade/index.ts": [

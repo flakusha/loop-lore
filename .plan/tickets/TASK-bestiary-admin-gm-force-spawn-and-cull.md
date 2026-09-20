@@ -30,3 +30,6 @@ GMs need to spawn a specific species at a location to enable a quest, or cull an
 - 404 if species/location missing; 403 if not admin; 422 on negative or excessive counts.
 - Audit table populated (`bestiary_admin_log(species_id, location_id, action, count_delta, reason, actor_user_id, created_at)`).
 - Smoke-tested in dev-server with logged-in GM.
+
+
+git issue: bad551e
