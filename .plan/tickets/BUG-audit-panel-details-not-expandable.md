@@ -7,7 +7,7 @@
 **Priority:** medium
 **Effort:** Medium
 
-## Summary
+**Summary:**
 
 **Where**: src/components/chat/memory-panel.html:261
 
@@ -17,7 +17,11 @@
 
 **Source**: FEAT-075 gap audit (.tmp/audit/SYNTHESIS.md)
 
-## Acceptance Criteria
+**Context:**
+
+Audit panel (FEAT-075) renders the details JSON field as a single flat text span. Long JSON entries are unreadable.
+
+**Acceptance Criteria:**
 
 - [ ] Implementation complete
 - [ ] Tests passing

@@ -7,7 +7,7 @@
 **Priority:** medium
 **Effort:** Medium
 
-## Summary
+**Summary:**
 
 **Where**: src/components/chat/memory-panel.html:258
 
@@ -17,7 +17,11 @@
 
 **Source**: FEAT-075 gap audit (.tmp/audit/SYNTHESIS.md)
 
-## Acceptance Criteria
+**Context:**
+
+Audit panel (FEAT-075) renders audit-log action labels as plain text. Spec acceptance criterion requires action icons (emoji) for at-a-glance recognition.
+
+**Acceptance Criteria:**
 
 - [ ] Implementation complete
 - [ ] Tests passing
