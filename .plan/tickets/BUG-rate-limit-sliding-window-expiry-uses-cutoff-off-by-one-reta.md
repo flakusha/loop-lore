@@ -3,6 +3,9 @@
 
 # BUG: rate-limit sliding-window expiry uses <= cutoff (off-by-one) - retains just-expired timestamps
 
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 **Status:** ✅ Done (closed 2026-09-20) — strict boundary (sliding-window math)
 **Priority:** medium
 **Effort:** Small

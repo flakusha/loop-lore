@@ -3,6 +3,10 @@
 
 # BUG: character-licensing upsert records license_history for any actor_type including non-character actors
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 **Status:** ✅ Done (closed 2026-09-20) — actor_type guard added after checkActorOwnership
 **Priority:** medium
 **Effort:** Small
@@ -22,6 +26,7 @@
 ## Resolution
 
 Verified 2026-09-20 against dev ada2dd920 via src/routes/actor-auth.ts:checkActorOwnership (no actor_type guard) and src/routes/character-licensing.ts:155 (no second guard). Bug is real; impact is conditional.
+
 ## Acceptance Criteria
 
 - [ ] Implementation complete
