@@ -175,7 +175,7 @@ g.toggleMessageSearch = function() {
     const data = Alpine.$data(el,);
     const fn = data.toggleMessageSearch as (() => void) | undefined;
     if (typeof fn === "function") {
-      fn();
+      fn.call(data,);
     }
   }
 };

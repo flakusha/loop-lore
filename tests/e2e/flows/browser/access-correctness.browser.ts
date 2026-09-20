@@ -4,17 +4,19 @@
 /**
  * Browser E2E: Access Control & Visibility
  *
- * Verifies that a solo (demo) user — who is NOT the owner/participant — is
- * denied access to another user's (e2euser's) private resources through the
- * UI, and that no data leaks into the DOM:
+ * Verifies that a non-owner, non-admin user is denied access to another
+ * user's private resources through the UI, and that no data leaks into
+ * the DOM:
  *   A. World ownership: the world edit form (`.world-edit-tabs`) must not
- *      render for a world the solo user doesn't own, and the world detail
+ *      render for a world the user doesn't own, and the world detail
  *      page must not leak the world name.
- *   B. Chat access: a chat owned by e2euser (solo is not a participant) must
- *      not surface any message content in the solo chat UI.
+ *   B. Chat access: a chat owned by e2euser (e2e2user is not a participant)
+ *      must not surface any message content in the e2e2user chat UI.
  *
- * Runs in default solo mode (auth NOT required). seedUsers() creates the
- * e2euser owner; createBrowserTest() seeds the solo 'demo' user.
+ * Runs with auth.required=true and real logins: solo/demo mode grants the
+ * solo role a wildcard permission bypass, so denial assertions are
+ * meaningless there. seedUsers() creates e2euser (owner); the outsider
+ * e2e2user is inserted below and logs in through the UI for a real cookie.
  */
 import { ChatMode, ChatType, WorldVisibility, } from "@/db/enums";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
@@ -22,22 +24,71 @@ import { type BrowserTestContext, createBrowserTest, } from "../../helpers/brows
 import { trackPageErrors, } from "../../helpers/htmx-alpine";
 import { SEED, seedUsers, } from "../../helpers/seed";
 
-// Distinct resources owned by SEED.user.id (e2euser) that the solo user must NOT see.
+// Distinct resources owned by SEED.user.id (e2euser) that the outsider must NOT see.
 const WORLD_ID = "b0000001-0000-4000-a000-000000000000";
 const WORLD_NAME = "E2E Private World (e2euser)";
 const CHAT_ID = "b0000002-0000-4000-a000-000000000000";
 const CHAT_NAME = "E2E Private Chat (e2euser)";
 const MSG_ID = "b0000003-0000-4000-a000-000000000000";
 const MSG_SECRET = "E2E_PRIVATE_CHAT_SECRET1";
+// Outsider: plain non-admin user. Same bcrypt(cost 4) hash as seedUsers'
+// PASSWORD_HASH ("password") — that const is module-private, so mirrored here.
+const OUTSIDER_ID = "b0000004-0000-4000-a000-000000000000";
+const OUTSIDER_USERNAME = "e2eoutsider";
+const OUTSIDER_PASSWORD = "password";
+const OUTSIDER_HASH = "$2b$04$anSd/tkwm/jhqfjGUZOdkurfsavDtfDeUM7dwdc/MQY.4upTC8ikG";
 
 describe("Access control E2E", () => {
   let ctx: BrowserTestContext;
 
-  beforeAll(async () => {
-    ctx = await createBrowserTest();
-    await seedUsers(ctx.db,);
+  // Log in through the UI on the given page (auth-session.browser.ts
+  // convention): proves the session cookie was set via the login POST
+  // response. Cookie is browser-scoped so later pages in this ctx share it.
+  async function loginAsOutsider(page: Awaited<ReturnType<BrowserTestContext["browser"]["newPage"]>>,) {
+    await page.goto(`${ctx.url}/views/login`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
+    await page.locator("[data-testid='login-submit']",).waitFor({ state: "visible", timeout: 30_000, },);
+    await page.fill("[data-testid='username-input']", OUTSIDER_USERNAME,);
+    await page.fill("[data-testid='password-input']", OUTSIDER_PASSWORD,);
+    await page.click("[data-testid='login-submit']",);
+    await page.waitForResponse(
+      (res,) => res.url().includes("/api/auth/login",) && res.request().method() === "POST",
+      { timeout: 30_000, },
+    );
+  }
 
-    // A private world owned by e2euser (the solo 'demo' user is not the owner).
+  beforeAll(async () => {
+    ctx = await createBrowserTest({ auth: { required: true, }, },);
+    await seedUsers(ctx.db,);
+    // Outsider: plain non-admin user + actor (login works through the UI).
+    await ctx.db
+      .insertInto("users",)
+      .values({
+        id: OUTSIDER_ID,
+        username: OUTSIDER_USERNAME,
+        display_name: "E2E Outsider",
+        password_hash: OUTSIDER_HASH,
+        role: "user",
+        status: "active",
+        settings: "{}",
+      },)
+      .onConflict((oc,) => oc.column("id",).doNothing())
+      .execute();
+    await ctx.db
+      .insertInto("actors",)
+      .values({
+        id: OUTSIDER_ID,
+        actor_type: "user",
+        display_name: "E2E Outsider",
+        user_id: OUTSIDER_ID,
+        owner_id: OUTSIDER_ID,
+        agent_type: "none",
+        settings: "{}",
+        import_spec: "raw",
+      },)
+      .onConflict((oc,) => oc.column("id",).doNothing())
+      .execute();
+
+    // A private world owned by e2euser (the outsider is not the owner).
     await ctx.db
       .insertInto("worlds",)
       .values({
@@ -95,10 +146,11 @@ describe("Access control E2E", () => {
     await ctx?.close();
   },);
 
-  // ── A. World ownership (solo user is not the owner) ────────────────
+  // ── A. World ownership (outsider is not the owner) ───────────────────
   describe("World ownership", () => {
-    test("non-owner solo user cannot load the world edit form", async () => {
+    test("non-owner outsider cannot load the world edit form", async () => {
       const page = await ctx.openPage();
+      await loginAsOutsider(page,);
       const errors = trackPageErrors(page, {
         // Resource-load 404s (e.g. favicon) are benign; the access-control
         // signal is the world API 404 + absent edit form.
@@ -120,7 +172,7 @@ describe("Access control E2E", () => {
         );
         await page.goto(`${ctx.url}/worlds/${WORLD_ID}/edit`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
         const res = await worldApi;
-        // requireWorldAccess: not owner, not admin (solo is "solo"), not public,
+        // requireWorldAccess: not owner, not admin (outsider is "user"), not public,
         // not a member → 404.
         expect(res.status(),).toBe(404,);
 
@@ -145,8 +197,9 @@ describe("Access control E2E", () => {
       }
     }, 60_000,);
 
-    test("non-owner solo user sees no world detail content (no name leak)", async () => {
+    test("non-owner outsider sees no world detail content (no name leak)", async () => {
       const page = await ctx.openPage();
+      await loginAsOutsider(page,);
       const errors = trackPageErrors(page, {
         allowlist: [
           /404 \(Not Found\)/,
@@ -169,7 +222,7 @@ describe("Access control E2E", () => {
           { timeout: 15_000, },
         );
         const bodyText = await page.evaluate(() => document.body.textContent || "");
-        // serveWorldDetailContent allows owner/admin only; solo is denied → no name leak.
+        // serveWorldDetailContent allows owner/admin only; outsider (non-admin) denied → no name leak.
         expect(bodyText,).not.toContain(WORLD_NAME,);
       } finally {
         errors.assert();
@@ -179,10 +232,11 @@ describe("Access control E2E", () => {
     }, 60_000,);
   });
 
-  // ── B. Chat access (solo user is not a participant) ────────────────
+  // ── B. Chat access (outsider is not a participant) ────────────────
   describe("Chat access", () => {
-    test("solo non-participant sees no messages from e2euser's chat", async () => {
+    test("outsider non-participant sees no messages from e2euser's chat", async () => {
       const page = await ctx.openPage();
+      await loginAsOutsider(page,);
       const errors = trackPageErrors(page, {
         allowlist: [
           /404 \(Not Found\)/,

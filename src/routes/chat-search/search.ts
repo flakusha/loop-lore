@@ -59,8 +59,8 @@ export function searchRoutes(opts: HandlerOpts, prefix = "/api",) {
           if (q) {
             qb = qb.where((eb,) =>
               eb.or([
-                eb("chats.name", "ilike", `%${q}%`,),
-                eb("actors.display_name", "ilike", `%${q}%`,),
+                eb("chats.name", "like", `%${q}%`,),
+                eb("actors.display_name", "like", `%${q}%`,),
               ],)
             );
           }
@@ -107,8 +107,8 @@ export function searchRoutes(opts: HandlerOpts, prefix = "/api",) {
           if (q) {
             countQb = countQb.where((eb,) =>
               eb.or([
-                eb("chats.name", "ilike", `%${q}%`,),
-                eb("actors.display_name", "ilike", `%${q}%`,),
+                eb("chats.name", "like", `%${q}%`,),
+                eb("actors.display_name", "like", `%${q}%`,),
               ],)
             );
           }

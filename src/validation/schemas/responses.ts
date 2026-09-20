@@ -118,6 +118,7 @@ export const ChatRow = Type.Object({
   isPinned: Type.Optional(Type.Number(),),
   type: Type.Optional(Type.String(),),
   mode: Type.Optional(Type.String(),),
+  encryption_level: Type.Optional(Type.String(),),
 },);
 export const ChatListResponse = PaginatedEnvelope(ChatRow,);
 /**

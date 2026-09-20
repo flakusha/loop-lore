@@ -19,7 +19,7 @@ g.toggleGroupPause = async function() {
     const data = Alpine.$data(el,);
     const fn = data.toggleGroupPause as (() => Promise<void>) | undefined;
     if (typeof fn === "function") {
-      await fn();
+      await fn.call(data,);
     }
   }
 };
