@@ -12,21 +12,22 @@
  *  - submitting the form creates a chat that lands in /views/chat with the
  *    new chat selected
  *
- * Pre-logs in via seeded data (demo/solo mode).
+ * Logs in as the seeded `e2euser` before navigating (auth.required=true).
  */
 
+import type { Page, } from "@playwright/test";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { type BrowserTestContext, createBrowserTest, } from "../../helpers/browser-server";
 import { AUTH_NOISE_ALLOWLIST, trackPageErrors, } from "../../helpers/htmx-alpine";
 import { SEED, seedUsers, } from "../../helpers/seed";
 
-type TestPage = Awaited<ReturnType<BrowserTestContext["browser"]["newPage"]>>;
+type TestPage = Page;
 
 describe("New chat advanced fields E2E", () => {
   let ctx: BrowserTestContext;
 
   beforeAll(async () => {
-    ctx = await createBrowserTest({ auth: { required: true } });
+    ctx = await createBrowserTest({ auth: { required: true, }, },);
     await seedUsers(ctx.db,);
   }, 90_000,);
 
@@ -47,13 +48,13 @@ describe("New chat advanced fields E2E", () => {
     await page.goto(`${ctx.url}/views/new-chat`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
     await page.locator("[data-testid='new-chat-header']",).waitFor({ state: "attached", timeout: 30_000, },);
     await page.locator("[data-testid='create-chat-form']",).waitFor({ state: "attached", timeout: 30_000, },);
-    await page.waitForTimeout(300,);
   }
 
   test("renders the chat-type, chat-mode, template, persona, world selects", async () => {
     const page = await ctx.openPage();
     const errors = trackPageErrors(page, { allowlist: AUTH_NOISE_ALLOWLIST, },);
     try {
+      await login(page,);
       await gotoNewChat(page,);
       await page.locator("[data-testid='chat-name-input']",).waitFor({ state: "attached", timeout: 10_000, },);
       await page.locator("[data-testid='chat-type-select']",).waitFor({ state: "attached", timeout: 10_000, },);
@@ -81,13 +82,14 @@ describe("New chat advanced fields E2E", () => {
         .insertInto("personas",)
         .values({
           id: personaId,
-          user_id: SEED.solo.id,
+          user_id: SEED.user.id,
           name: "Advanced Persona",
           description: "persona for advanced fields test",
           title: "Tester",
         },)
         .execute();
 
+      await login(page,);
       await gotoNewChat(page,);
 
       const personaSelect = page.locator("[data-testid='persona-select']",);
@@ -95,7 +97,7 @@ describe("New chat advanced fields E2E", () => {
         (id,) => {
           const sel = document.querySelector("#persona-select",) as HTMLSelectElement | null;
           if (!sel) { return false; }
-          return Array.from(sel.options,).some((o,) => o.value === id,);
+          return Array.from(sel.options,).some((o,) => o.value === id);
         },
         personaId,
         { timeout: 10_000, },
@@ -120,19 +122,19 @@ describe("New chat advanced fields E2E", () => {
 
       const row = await ctx.db
         .selectFrom("chats",)
-        .select(["id", "name", "mode", "created_by"],)
+        .select(["id", "name", "mode", "created_by",],)
         .where("id", "=", createdId!,)
         .executeTakeFirst();
       expect(row,).not.toBeNull();
       expect(row!.name,).toBe(name,);
       expect(row!.mode,).toBe("story",);
-      expect(row!.created_by,).toBe(SEED.solo.id,);
+      expect(row!.created_by,).toBe(SEED.user.id,);
 
       const link = await ctx.db
         .selectFrom("chat_participants",)
-        .select(["persona_id"],)
+        .select(["persona_id",],)
         .where("chat_id", "=", createdId!,)
-        .where("actor_id", "=", SEED.solo.id,)
+        .where("actor_id", "=", SEED.user.id,)
         .executeTakeFirst();
       expect(link?.persona_id, "persona should be linked to participant",).toBe(personaId,);
 

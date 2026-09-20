@@ -10,6 +10,7 @@ import "./pages/characters";
 import "./pages/gallery";
 import "./pages/worlds";
 import "./pages/worlds-io";
+import "./pages/world-timeline-bar";
 import "./pages/new-chat";
 import "./pages/quests";
 import "./pages/blog";

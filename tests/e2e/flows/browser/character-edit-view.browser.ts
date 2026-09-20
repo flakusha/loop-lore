@@ -41,24 +41,41 @@ describe("Character edit view E2E", () => {
         personality: "Helpful test personality",
         appearance: "Nondescript E2E test appearance",
         default_outfit: "everyday",
-        outfits: JSON.stringify([{ id: "everyday", name: "Everyday", descriptor: "Simple everyday clothes" }]),
+        outfits: JSON.stringify([{ id: "everyday", name: "Everyday", descriptor: "Simple everyday clothes", },],),
       },)
-      .onConflict((oc,) => oc.column("id",).doNothing(),)
+      .onConflict((oc,) => oc.column("id",).doNothing())
+      .execute();
+    // Seed a licensing record: the edit form's licensing panel fetches
+    // /api/actors/:id/licensing, whose designed 404 ("no license yet") still
+    // logs a browser console resource error. Characters configured for
+    // publishing carry a license row; mirror that realistic state here.
+    const licNow = new Date().toISOString();
+    await ctx.db
+      .insertInto("character_licensing",)
+      .values({
+        id: "b3000000-0000-4000-a000-000000000000",
+        actor_id: SEED.character.id,
+        license_type: "cc0",
+        created_at: licNow,
+        updated_at: licNow,
+      },)
+      .onConflict((oc,) => oc.column("id",).doNothing())
       .execute();
     // Seed permanent traits (the schema stores these in a side table, not on
     // the actor row). Idempotent on re-runs.
-    for (const t of [{ id: "kind", label: "Kind" }, { id: "curious", label: "Curious" }]) {
+    for (const t of [{ id: "kind", label: "Kind", }, { id: "curious", label: "Curious", },]) {
       await ctx.db
         .insertInto("character_permanent_traits",)
         .values({
-          id: `b1000000-0000-4000-a000-${t.id.padStart(12, "0")}`,
+          id: `b1000000-0000-4000-a000-${t.id.padStart(12, "0",)}`,
           actor_id: SEED.character.id,
           trait_category: "personality",
           trait_name: t.label,
           trait_value: t.label,
+          created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         },)
-        .onConflict((oc,) => oc.column("id",).doNothing(),)
+        .onConflict((oc,) => oc.column("id",).doNothing())
         .execute();
     }
   }, 90_000,);
@@ -76,7 +93,11 @@ describe("Character edit view E2E", () => {
       .locator("[data-testid='character-edit-header']",)
       .waitFor({ state: "attached", timeout: 30_000, },);
     await page.locator("#character-edit-form",).waitFor({ state: "attached", timeout: 30_000, },);
-    await page.waitForTimeout(500,);
+    // Web-first: wait for the htmx-loaded form's last section to mount
+    // instead of a fixed sleep.
+    await page
+      .locator("[data-testid='actor-panels-section']",)
+      .waitFor({ state: "attached", timeout: 30_000, },);
   }
 
   test("renders header and htmx-loaded edit form for the seeded character", async () => {

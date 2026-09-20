@@ -166,18 +166,18 @@ describe("Creation flows E2E", () => {
         // swallowing the click if the model never saw the fill event.
         // The Locations tab lives inside `worldEditState()` (no nested
         // x-data), so target the page root.
-        await page.evaluate((name) => {
-          const root = document.querySelector("[x-data='worldEditState()']");
+        await page.evaluate((name,) => {
+          const root = document.querySelector("[x-data='worldEditState()']",);
           const stack = (root as unknown as { _x_dataStack?: Array<Record<string, unknown>> } | null)?._x_dataStack;
-          if (!stack?.[0]) { throw new Error("worldEditState not mounted"); }
+          if (!stack?.[0]) { throw new Error("worldEditState not mounted",); }
           stack[0].newLocName = name;
           (stack[0].addLocation as () => Promise<void>)();
-        }, locName);
+        }, locName,);
 
         // Wait for the rendered list to include the new location — that's
         // the natural completion signal (addLocation -> loadLocations
         // re-renders the x-for list).
-        await page.locator(".location-name",).filter({ hasText: locName, }).waitFor({ timeout: 30_000, },);
+        await page.locator(".location-name",).filter({ hasText: locName, },).waitFor({ timeout: 30_000, },);
 
         const row = await ctx.db
           .selectFrom("locations",)

@@ -30,21 +30,21 @@
   <div class="licensing-summary" x-show="!licenseLoading && license && !licenseDirty" data-testid="licensing-summary">
     <div>
       <span class="form-label">License Type</span>
-      <span x-text="describeLicense(license.license_type)" data-testid="licensing-type"></span>
+      <span x-text="license ? describeLicense(license.license_type) : ''" data-testid="licensing-type"></span>
     </div>
-    <div x-show="license.attribution">
+    <div x-show="license?.attribution">
       <span class="form-label">Attribution</span>
-      <span x-text="license.attribution"></span>
+      <span x-text="license?.attribution"></span>
     </div>
     <div class="licensing-flags">
-      <span class="licensing-flag" :data-allowed="license.allow_derivatives === 1">
-        Derivatives: <span x-text="license.allow_derivatives === 1 ? 'Allowed' : 'Not allowed'"></span>
+      <span class="licensing-flag" :data-allowed="license?.allow_derivatives === 1">
+        Derivatives: <span x-text="license?.allow_derivatives === 1 ? 'Allowed' : 'Not allowed'"></span>
       </span>
-      <span class="licensing-flag" :data-allowed="license.allow_commercial === 1">
-        Commercial: <span x-text="license.allow_commercial === 1 ? 'Allowed' : 'Not allowed'"></span>
+      <span class="licensing-flag" :data-allowed="license?.allow_commercial === 1">
+        Commercial: <span x-text="license?.allow_commercial === 1 ? 'Allowed' : 'Not allowed'"></span>
       </span>
-      <span class="licensing-flag" :data-allowed="license.share_alike === 1">
-        Share-alike: <span x-text="license.share_alike === 1 ? 'Required' : 'Not required'"></span>
+      <span class="licensing-flag" :data-allowed="license?.share_alike === 1">
+        Share-alike: <span x-text="license?.share_alike === 1 ? 'Required' : 'Not required'"></span>
       </span>
     </div>
     <button type="button" class="btn btn-secondary btn-sm" @click="licenseDirty = true">Edit</button>

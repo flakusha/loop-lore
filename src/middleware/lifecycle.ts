@@ -64,6 +64,14 @@ async function capture(response: Response,): Promise<CapturedResponse> {
   response.headers.forEach((value, name,) => {
     if (!HEADER_BLOCKLIST.has(name.toLowerCase(),)) { headers[name] = value; }
   },);
+  // Streaming responses (SSE) never end: awaiting their body here would hang
+  // this afterHandle hook, which Elysia awaits before transmitting the
+  // response — the client would never receive a single byte and the server
+  // would kill the idle socket. Capture metadata only.
+  // BUG-bug-lifecycle-capture-hangs-on-sse-streams.
+  if (response.headers.get("content-type",)?.includes("text/event-stream",)) {
+    return { status: response.status, headers, body: "[streaming]", };
+  }
   // Clone before reading so the original body stream reaches the client.
   const body = await response.clone().text();
   return { status: response.status, headers, body, };

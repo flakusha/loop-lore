@@ -268,3 +268,7 @@ export function actorSystemsFactory(actorId: string,): ActorSystemsState {
 }
 
 (globalThis as Record<string, unknown>).actorSystemsFactory = actorSystemsFactory;
+// systems-panel.html iterates this constant in an x-for expression; Alpine
+// resolves bare identifiers through globalThis, and the IIFE-wrapped bundle
+// keeps module scopes private.
+(globalThis as Record<string, unknown>).EXPORT_SECTIONS = EXPORT_SECTIONS;

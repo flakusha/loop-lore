@@ -14,7 +14,11 @@ import { trackPageErrors, } from "../../helpers/htmx-alpine";
 import { SEED, seedUsers, } from "../../helpers/seed";
 async function loginAsAdmin(ctx: BrowserTestContext,) {
   const page = await ctx.openPage();
-  const errors = trackPageErrors(page,);
+  const errors = trackPageErrors(page, {
+    // The /views/login shell polls auth APIs anonymously before the login
+    // POST lands — benign 401 noise (register-flow convention).
+    allowlist: [/401 \(Unauthorized\)/, /Failed to load resource/,],
+  },);
   try {
     await page.goto(`${ctx.url}/views/login`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
     await page.waitForSelector("[data-testid='login-submit']", { timeout: 10_000, },);

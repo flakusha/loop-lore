@@ -22,7 +22,7 @@ describe("Admin guard E2E", () => {
   let ctx: BrowserTestContext;
 
   beforeAll(async () => {
-    ctx = await createBrowserTest({ auth: { required: true } });
+    ctx = await createBrowserTest({ auth: { required: true, }, },);
     await seedUsers(ctx.db,);
   }, 90_000,);
 
@@ -42,7 +42,7 @@ describe("Admin guard E2E", () => {
   test("admin loads /views/admin and /views/nsfw-moderation", async () => {
     const page = await ctx.openPage();
     await login(page, SEED.admin.username, SEED.admin.password,);
-    const errors = trackPageErrors(page, { allowlist: AUTH_NOISE_ALLOWLIST },);
+    const errors = trackPageErrors(page, { allowlist: AUTH_NOISE_ALLOWLIST, },);
     try {
       await page.goto(`${ctx.url}/views/admin`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
       await page.locator("[data-testid='admin-header']",).waitFor({ state: "attached", timeout: 30_000, },);
@@ -64,7 +64,7 @@ describe("Admin guard E2E", () => {
   test("non-admin is redirected away from /views/admin (302 -> /)", async () => {
     const page = await ctx.openPage();
     await login(page, SEED.user.username, SEED.user.password,);
-    const errors = trackPageErrors(page, { allowlist: AUTH_NOISE_ALLOWLIST },);
+    const errors = trackPageErrors(page, { allowlist: AUTH_NOISE_ALLOWLIST, },);
     try {
       await page.goto(`${ctx.url}/views/admin`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
       // adminViewGuard 302s to "/" which redirects to /views/chat.

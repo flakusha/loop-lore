@@ -260,3 +260,7 @@ export function actorTraitsFactory(actorId: string,): ActorTraitsState {
 }
 
 (globalThis as Record<string, unknown>).actorTraitsFactory = actorTraitsFactory;
+// traits-panel.html iterates this constant in x-for expressions; Alpine
+// resolves bare identifiers through globalThis, and the IIFE-wrapped bundle
+// keeps module scopes private.
+(globalThis as Record<string, unknown>).TRAIT_CATEGORIES = TRAIT_CATEGORIES;

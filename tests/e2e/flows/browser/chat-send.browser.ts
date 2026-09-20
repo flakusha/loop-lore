@@ -36,7 +36,8 @@ async function selectChatViaAlpine(
   await page.evaluate((chatId,) => {
     const el = document.querySelector("[x-data='chatState()']",);
     // Alpine's per-element reactive data stack; the mounted component API.
-    const stack = (el as unknown as { _x_dataStack?: Array<{ selectChat: (id: string,) => Promise<void> }> })._x_dataStack;
+    const stack =
+      (el as unknown as { _x_dataStack?: Array<{ selectChat: (id: string,) => Promise<void> }> })._x_dataStack;
     const data = stack?.[0];
     if (!data) { throw new Error("chatState not mounted",); }
     return data.selectChat(chatId,);

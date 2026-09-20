@@ -13,7 +13,15 @@ export function chat(): Partial<SettingsState> & ThisType<SettingsState> {
       localStorage.setItem("chat-inline-preview", this.inlinePreview ? "1" : "0",);
       localStorage.setItem("chat-detail-level", this.detailLevel,);
       setLocalInferenceOptIn(this.localInferenceOptIn,);
-      await this.persistSettings({ detailLevel: this.detailLevel, },);
+      // Persist the chat flags server-side too — the local copies only
+      // reflect this browser; users.settings is the cross-device source of
+      // truth (BUG-bug-chat-settings-toggles-not-persisted).
+      await this.persistSettings({
+        enterToSend: this.enterToSend,
+        autoScroll: this.autoScroll,
+        inlinePreview: this.inlinePreview,
+        detailLevel: this.detailLevel,
+      },);
     },
   };
 }
