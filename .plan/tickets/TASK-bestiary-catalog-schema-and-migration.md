@@ -32,3 +32,6 @@ Existing world-npcs tracking treats NPCs and monsters as a flat actor list. The 
 - Generated types + Kysely tables regenerated via `bun run db:sync-types`; `schemas:check` green.
 - Roundtrip: insert/select/delete with FK cascade asserts one-to-one vs many-to-one.
 - Reuse existing `assertMigrationsNotStale` guard.
+
+
+git issue: 6711aa2
