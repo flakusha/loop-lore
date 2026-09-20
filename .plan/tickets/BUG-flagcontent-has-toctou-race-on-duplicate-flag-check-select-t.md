@@ -3,6 +3,10 @@
 
 # BUG: flagContent has TOCTOU race on duplicate flag check - SELECT then INSERT allows concurrent duplicates
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 **Status:** ✅ Done (closed 2026-09-20) — partial UNIQUE INDEX closes the race
 **Priority:** medium
 **Effort:** Medium
@@ -22,6 +26,7 @@ No DB unique constraint exists on `content_flags` for (content_type, content_id,
 ## Resolution
 
 Verified 2026-09-20 against dev ada2dd920. The race is real (SELECT at line 41-50, INSERT at line 70 are not transactional). Severity MEDIUM: bypass requires concurrent timing; impact is duplicate `content_flags` rows that downstream queries dedupe in-memory.
+
 ## Acceptance Criteria
 
 - [ ] Implementation complete

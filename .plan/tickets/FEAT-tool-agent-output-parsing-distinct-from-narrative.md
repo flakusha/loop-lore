@@ -3,6 +3,10 @@
 
 # FEAT: tool/agent output parsing distinct from narrative
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium

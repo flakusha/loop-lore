@@ -3,6 +3,9 @@
 
 # BUG: moderateComment has no authorization — any caller can change any comment's status (IDOR/moderation bypass)
 
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** Small
@@ -14,12 +17,17 @@
 **Where:** src/rpg/blog/service/comments.ts:148-160
 
 **Defect:** The UPDATE runs unconditionally:
+
 ```
+
 db.updateTable("blog_comments")
+
   .set({ status, })
   .where("id", "=", id)
   .executeTakeFirst();
+
 ```
+
 There is no check that the caller is the post's author, the comment's author, an admin, or has any moderator role. Attack: hide any user's comment, un-hide removed spam, or soft-delete content to suppress it.
 
 **Fix sketch:** Resolve comment → post → author; verify caller is comment author OR post author OR has moderator/admin role before update. Return false on auth failure.
