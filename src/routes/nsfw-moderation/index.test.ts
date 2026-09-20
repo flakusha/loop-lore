@@ -48,13 +48,29 @@ describe("nsfwModerationRoutes barrel", () => {
     expect(paths.some((p,) => p.includes("/api/nsfw/moderation/appeals",)),).toBe(true,);
   });
 
-  test("preferences lookup for a user with no prefs returns 404 through the barrel", async () => {
+  test("preferences lookup for a user with no prefs returns lazy defaults (no phantom row)", async () => {
     const res = await makeApp("u1",).handle(
       new Request("http://localhost/api/nsfw/moderation/preferences/u1",),
     );
-    expect(res.status,).toBe(404,);
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as { data: { userId: string; nsfwEnabled: boolean } };
+    expect(body.data.userId,).toBe("u1",);
+    expect(body.data.nsfwEnabled,).toBe(true,);
     const rows = await db.selectFrom("nsfw_user_preferences",).select("id",).execute();
     expect(rows,).toEqual([],);
+  });
+
+  test("preferences PUT persists nsfwEnabled for the user", async () => {
+    const res = await makeApp("u1",).handle(
+      new Request("http://localhost/api/nsfw/moderation/preferences/u1", {
+        method: "PUT",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ nsfwEnabled: false, },),
+      },),
+    );
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as { data: { nsfwEnabled: boolean } };
+    expect(body.data.nsfwEnabled,).toBe(false,);
   });
 
   test("preferences lookup with non-UUID id returns 4xx", async () => {
