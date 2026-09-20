@@ -3,6 +3,9 @@
 
 # BUG: WsHandler.send queues messages while disconnected but never flushes the queue on reconnect
 
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 **Status:** ✅ Done (closed 2026-09-20) — flush on attach + bounded queue
 **Priority:** medium
 **Effort:** Small

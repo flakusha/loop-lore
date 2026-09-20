@@ -3,6 +3,10 @@
 
 # BUG: shadow notes missing visibility for LLM injection control
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium

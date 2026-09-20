@@ -3,6 +3,10 @@
 
 # TASK: output-control-transforms.md silent on UI and VALID_REGEN_STYLES
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium

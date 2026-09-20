@@ -3,6 +3,10 @@
 
 # BUG: buildStylePrompt never injected into LLM request
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium

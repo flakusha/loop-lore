@@ -3,6 +3,10 @@
 
 # BUG: PUT /messages/:id/variant silently returns 200 with no variant on out-of-bounds variantIndex
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Small

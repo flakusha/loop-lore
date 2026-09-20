@@ -3,6 +3,10 @@
 
 # BUG: handleExportAll leaks group-chat participants messages - exports all messages in chats created_by caller, ignoring participant membership
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 **Status:** ✅ Done (closed 2026-09-20) — INNER JOIN chat_participants
 **Priority:** high
 **Effort:** Medium
