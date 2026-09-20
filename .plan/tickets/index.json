@@ -1045,6 +1045,19 @@
     "source": ".plan/tickets/BUG-character-internal-traits-idor-cross-user-read-write-delete.md",
     "status": "done"
   },
+  "BUG-CHARACTER-LICENSING-UPSERT-RECORDS-LICENSE-HISTORY-FOR-ANY-A": {
+    "hash": "78b71a3",
+    "git_issue": "78b71a3",
+    "extid": "BUG-CHARACTER-LICENSING-UPSERT-RECORDS-LICENSE-HISTORY-FOR-ANY-A",
+    "type": "BUG",
+    "title": "character-licensing upsert records license_history for any actor_type including non-character actors",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-character-licensing-upsert-records-license-history-for-any-a.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-CHARACTERS-CREATION-WIZARD-WIZARDID-UNUSED": {
     "hash": "pending",
     "extid": "BUG-CHARACTERS-CREATION-WIZARD-WIZARDID-UNUSED",
@@ -1494,6 +1507,19 @@
     "source": ".plan/tickets/BUG-check-parallel-gpg-preflight-crashes-on-undefined-m.md",
     "status": "done"
   },
+  "BUG-CLASSIFY-IN-RESPONSE-HEADER-POLICY-USES-CASE-SENSITIVE-CONTE": {
+    "hash": "878986d",
+    "git_issue": "878986d",
+    "extid": "BUG-CLASSIFY-IN-RESPONSE-HEADER-POLICY-USES-CASE-SENSITIVE-CONTE",
+    "type": "BUG",
+    "title": "classify() in response-header policy uses case-sensitive content-type matching - can strip document security headers",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-classify-in-response-header-policy-uses-case-sensitive-conte.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-CLASSIFY-INTENT-CONFIDENCE-UNBOUNDED": {
     "hash": "pending",
     "extid": "BUG-CLASSIFY-INTENT-CONFIDENCE-UNBOUNDED",
@@ -1779,6 +1805,19 @@
     "tags": [],
     "source": ".plan/tickets/BUG-delete-chat-gated-only-at-participant-level.md",
     "status": "done"
+  },
+  "BUG-DELETEPOST-HAS-NO-OWNERSHIP-CHECK-ANY-AUTHENTICATED-USER-CAN": {
+    "hash": "f96551f",
+    "git_issue": "f96551f",
+    "extid": "BUG-DELETEPOST-HAS-NO-OWNERSHIP-CHECK-ANY-AUTHENTICATED-USER-CAN",
+    "type": "BUG",
+    "title": "deletePost has no ownership check — any authenticated user can hard-delete any blog post by ID",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-deletepost-has-no-ownership-check-any-authenticated-user-can.md",
+    "status": "⬜ Not Started"
   },
   "BUG-DEMO-LOGIN-E2E-FAILS-IN-FULL-SUITE-ORDER-DUE-TO-UNRESET-PER-": {
     "hash": "89f26c8",
@@ -2269,6 +2308,19 @@
     "source": ".plan/tickets/BUG-fix-worktree-assert-gpg-unlocked-on-every-signing-path-surfa.md",
     "status": "done"
   },
+  "BUG-FLAGCONTENT-HAS-TOCTOU-RACE-ON-DUPLICATE-FLAG-CHECK-SELECT-T": {
+    "hash": "f8b529b",
+    "git_issue": "f8b529b",
+    "extid": "BUG-FLAGCONTENT-HAS-TOCTOU-RACE-ON-DUPLICATE-FLAG-CHECK-SELECT-T",
+    "type": "BUG",
+    "title": "flagContent has TOCTOU race on duplicate flag check - SELECT then INSERT allows concurrent duplicates",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-flagcontent-has-toctou-race-on-duplicate-flag-check-select-t.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-FRONTEND-CHAT-SEEN-STATE-BROKEN-NULL-ACTORID-DEAD-POPOVER-PO": {
     "hash": "6914009",
     "git_issue": "6914009",
@@ -2384,6 +2436,19 @@
     "tags": [],
     "source": ".plan/tickets/BUG-generation-control-plane-routes-lack-authorization.md",
     "status": "done"
+  },
+  "BUG-GET-MESSAGES-ID-VARIANTS-HAS-TOCTOU-RACE-ON-PARENT-CHAT-AUTH": {
+    "hash": "c1778a0",
+    "git_issue": "c1778a0",
+    "extid": "BUG-GET-MESSAGES-ID-VARIANTS-HAS-TOCTOU-RACE-ON-PARENT-CHAT-AUTH",
+    "type": "BUG",
+    "title": "GET /messages/:id/variants has TOCTOU race on parent chat authorization",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-get-messages-id-variants-has-toctou-race-on-parent-chat-auth.md",
+    "status": "⬜ Not Started"
   },
   "BUG-GETCLIENTIP-IS-UNTESTABLE-WITHOUT-A-LIVE-BUN-SERVER-IP-SOURC": {
     "hash": "8d307ae",
@@ -2617,6 +2682,19 @@
     "source": ".plan/tickets/BUG-hallucination-guard-known-params-ignored.md",
     "git_issue": "103e372",
     "status": "done"
+  },
+  "BUG-HANDLEEXPORTALL-LEAKS-GROUP-CHAT-PARTICIPANTS-MESSAGES-EXPOR": {
+    "hash": "26de8c1",
+    "git_issue": "26de8c1",
+    "extid": "BUG-HANDLEEXPORTALL-LEAKS-GROUP-CHAT-PARTICIPANTS-MESSAGES-EXPOR",
+    "type": "BUG",
+    "title": "handleExportAll leaks group-chat participants messages - exports all messages in chats created_by caller, ignoring participant membership",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-handleexportall-leaks-group-chat-participants-messages-expor.md",
+    "status": "⬜ Not Started"
   },
   "BUG-HASHREPORTERID-USES-HARDCODED-DEFAULT-SECRET-IN-PRODUCTION-B": {
     "hash": "df90721",
@@ -3196,6 +3274,19 @@
     "source": ".plan/tickets/BUG-modelsuitability-finetunereadiness-never-parse-b-suffixed-si.md",
     "status": "done"
   },
+  "BUG-MODERATECOMMENT-HAS-NO-AUTHORIZATION-ANY-CALLER-CAN-CHANGE-A": {
+    "hash": "43d19a7",
+    "git_issue": "43d19a7",
+    "extid": "BUG-MODERATECOMMENT-HAS-NO-AUTHORIZATION-ANY-CALLER-CAN-CHANGE-A",
+    "type": "BUG",
+    "title": "moderateComment has no authorization — any caller can change any comment's status (IDOR/moderation bypass)",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-moderatecomment-has-no-authorization-any-caller-can-change-a.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-MUSIC-LINKS-POST-BODY-CHATID-IS-REQUIRED-BUT-IGNORED-DEAD-SC": {
     "hash": "63e7492",
     "git_issue": "63e7492",
@@ -3597,6 +3688,19 @@
     "source": ".plan/tickets/BUG-parseacceptlanguage-ignores-quality-values-returns-header-or.md",
     "status": "done"
   },
+  "BUG-PATCH-SETTINGS-ENDPOINT-HAS-NO-KEY-ALLOWLIST-CURRENTSETTINGS": {
+    "hash": "a67b170",
+    "git_issue": "a67b170",
+    "extid": "BUG-PATCH-SETTINGS-ENDPOINT-HAS-NO-KEY-ALLOWLIST-CURRENTSETTINGS",
+    "type": "BUG",
+    "title": "PATCH settings endpoint has no key allowlist - {...currentSettings, ...body} silently accepts arbitrary keys",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-patch-settings-endpoint-has-no-key-allowlist-currentsettings.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-PERSONA-UPDATE-ON-CROSS-USER-ID-RETURNS-200-OK-INSTEAD-OF-40": {
     "hash": "0454612",
     "git_issue": "0454612",
@@ -3770,6 +3874,32 @@
     "tags": [],
     "source": ".plan/tickets/BUG-promptoverride-schema-has-no-maxlength-token-bomb-storage-ve.md",
     "status": "done"
+  },
+  "BUG-PUT-MESSAGES-ID-VARIANT-SILENTLY-RETURNS-200-WITH-NO-VARIANT": {
+    "hash": "a96e5f5",
+    "git_issue": "a96e5f5",
+    "extid": "BUG-PUT-MESSAGES-ID-VARIANT-SILENTLY-RETURNS-200-WITH-NO-VARIANT",
+    "type": "BUG",
+    "title": "PUT /messages/:id/variant silently returns 200 with no variant on out-of-bounds variantIndex",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-put-messages-id-variant-silently-returns-200-with-no-variant.md",
+    "status": "⬜ Not Started"
+  },
+  "BUG-RATE-LIMIT-SLIDING-WINDOW-EXPIRY-USES-CUTOFF-OFF-BY-ONE-RETA": {
+    "hash": "70472f7",
+    "git_issue": "70472f7",
+    "extid": "BUG-RATE-LIMIT-SLIDING-WINDOW-EXPIRY-USES-CUTOFF-OFF-BY-ONE-RETA",
+    "type": "BUG",
+    "title": "rate-limit sliding-window expiry uses <= cutoff (off-by-one) - retains just-expired timestamps",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-rate-limit-sliding-window-expiry-uses-cutoff-off-by-one-reta.md",
+    "status": "⬜ Not Started"
   },
   "BUG-RATE-LIMITER-COLLAPSES-TO-GLOBAL-BUCKET-GETCLIENTIP-RETURNS-": {
     "hash": "ab71933",
@@ -4684,6 +4814,19 @@
     "source": ".plan/tickets/BUG-untrusted-new-date-parse-without-invalid-date-guard.md",
     "status": "done"
   },
+  "BUG-UPDATEPOST-HAS-NO-OWNERSHIP-CHECK-ANY-AUTHENTICATED-USER-CAN": {
+    "hash": "ce8a49c",
+    "git_issue": "ce8a49c",
+    "extid": "BUG-UPDATEPOST-HAS-NO-OWNERSHIP-CHECK-ANY-AUTHENTICATED-USER-CAN",
+    "type": "BUG",
+    "title": "updatePost has no ownership check — any authenticated user can edit any blog post by ID",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-updatepost-has-no-ownership-check-any-authenticated-user-can.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-USE-MULTIPLE-L-FLAGS-INSTEAD-POTENTIAL-DX-IMPROVEMENT": {
     "hash": "0cd09d6",
     "git_issue": "0cd09d6",
@@ -4929,6 +5072,19 @@
     "tags": [],
     "source": ".plan/tickets/BUG-world-timelines-unauthenticated-read-and-create.md",
     "status": "done"
+  },
+  "BUG-WSHANDLER-SEND-QUEUES-MESSAGES-WHILE-DISCONNECTED-BUT-NEVER-": {
+    "hash": "cdbf7e8",
+    "git_issue": "cdbf7e8",
+    "extid": "BUG-WSHANDLER-SEND-QUEUES-MESSAGES-WHILE-DISCONNECTED-BUT-NEVER-",
+    "type": "BUG",
+    "title": "WsHandler.send queues messages while disconnected but never flushes the queue on reconnect",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-wshandler-send-queues-messages-while-disconnected-but-never-.md",
+    "status": "⬜ Not Started"
   },
   "BUG-XSS-FAIL-OPEN-WHEN-DOMPURIFY-MISSING": {
     "hash": "7664314",
@@ -27326,6 +27482,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-split-server-ts.md",
     "status": "open"
+  },
+  "TASK-SPLIT-SERVER.TS": {
+    "hash": "pending",
+    "extid": "TASK-SPLIT-SERVER.TS",
+    "type": "TASK",
+    "title": "Split `src/server.ts` (640L)",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-code-quality",
+    "tags": [],
+    "source": ".plan/tickets/TASK-split-server.ts.md",
+    "status": "⬜ Not Started"
   },
   "TASK-SPLIT-UTILS-GOD-MODULE": {
     "hash": "9b66cb4",
