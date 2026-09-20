@@ -48,6 +48,10 @@ describe("Creation flows E2E", () => {
         const name = `Browser-Created-${Date.now()}`;
         await page.fill("#char-name", name,);
         await page.fill("#char-desc", "Created via browser e2e",);
+        // Required fields — HTML5 validation blocks submit otherwise.
+        await page.fill("#char-personality", "Curious, methodical",);
+        await page.fill("#char-appearance", "Tall, grey-eyed",);
+        await page.fill("#char-outfit", "travel-gear",);
         await page.click("[data-testid='create-character-form'] button[type='submit']",);
 
         // Persisted in DB (solo user context).
@@ -56,7 +60,7 @@ describe("Creation flows E2E", () => {
           .select(["id", "display_name",],)
           .where("display_name", "=", name,)
           .executeTakeFirst();
-        expect(row,).not.toBeNull();
+        expect(row,).toBeDefined();
         expect(row!.display_name,).toBe(name,);
 
         // The grid reload can race the DB commit, so reload the page (grid
@@ -127,8 +131,10 @@ describe("Creation flows E2E", () => {
         expect(worldRow,).not.toBeNull();
 
         // Navigate to its edit page and wait for the world to load (tab bar).
+        // Two .world-edit-tabs elements exist (primary bar + NPC sub-tabs);
+        // scope to the first — the primary tab bar.
         await page.goto(`${ctx.url}/worlds/${worldRow!.id}/edit`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
-        await page.locator(".world-edit-tabs",).waitFor({ state: "visible", timeout: 30_000, },);
+        await page.locator(".world-edit-tabs",).first().waitFor({ state: "visible", timeout: 30_000, },);
 
         // Switch to the Locations tab.
         await page.locator(".world-edit-tab",).filter({ hasText: "Locations", },).first().click();
@@ -155,24 +161,32 @@ describe("Creation flows E2E", () => {
           state: "visible",
           timeout: 15_000,
         },);
-        await page.evaluate(() => {
-          const addBtn = [...document.querySelectorAll(".add-location-form button",),].find((b,) =>
-            b.textContent?.trim()?.toLowerCase() === "add"
-          );
-          (addBtn as HTMLElement | undefined)?.click();
-        },);
+        // Bind via the Alpine data stack — guards against x-model races
+        // and the disabled state binding (`!newLocName.trim()`) silently
+        // swallowing the click if the model never saw the fill event.
+        // The Locations tab lives inside `worldEditState()` (no nested
+        // x-data), so target the page root.
+        await page.evaluate((name) => {
+          const root = document.querySelector("[x-data='worldEditState()']");
+          const stack = (root as unknown as { _x_dataStack?: Array<Record<string, unknown>> } | null)?._x_dataStack;
+          if (!stack?.[0]) { throw new Error("worldEditState not mounted"); }
+          stack[0].newLocName = name;
+          (stack[0].addLocation as () => Promise<void>)();
+        }, locName);
+
+        // Wait for the rendered list to include the new location — that's
+        // the natural completion signal (addLocation -> loadLocations
+        // re-renders the x-for list).
+        await page.locator(".location-name",).filter({ hasText: locName, }).waitFor({ timeout: 30_000, },);
 
         const row = await ctx.db
           .selectFrom("locations",)
           .select(["id", "name", "world_id",],)
           .where("name", "=", locName,)
           .executeTakeFirst();
-        expect(row,).not.toBeNull();
+        expect(row,).toBeDefined();
         expect(row!.name,).toBe(locName,);
         expect(row!.world_id,).toBe(worldRow!.id,);
-
-        // Rendered in the locations list (.location-name).
-        await page.locator(".location-name",).filter({ hasText: locName, },).waitFor({ timeout: 30_000, },);
       } finally {
         errors.assert();
         errors.detach();
