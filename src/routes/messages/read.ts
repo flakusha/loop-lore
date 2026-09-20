@@ -160,12 +160,33 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
         );
         if (isServiceError(msgResult,)) { return serviceErrorToResponse(msgResult,); }
         const message = msgResult;
+        const parentId = message.parent_id as string | null;
 
+        // BUG-get-messages-id-variants-toctou: re-authorize the parent's
+        // CURRENT chat_id. Between the initial auth above and this lookup
+        // the parent may have been moved to a chat the caller cannot read;
+        // gating variants on the stale chat_id leaked the variant body.
+        if (parentId) {
+          const recheck = await getMessageWithAccess(
+            database,
+            parentId,
+            userId,
+            ctx.userRole as string | null,
+          );
+          if (isServiceError(recheck,)) {
+            return serviceErrorToResponse(recheck,);
+          }
+        }
+
+        if (!parentId) { return jsonResponse([],); }
+
+        // Variants are identified by parent_id alone — they live alongside
+        // their parent, so chat_id filtering is redundant once the parent
+        // itself has been re-authorized above.
         const variants = await database
           .selectFrom("messages",)
           .selectAll()
-          .where("parent_id", "=", message.parent_id as string,)
-          .where("chat_id", "=", message.chat_id as string,)
+          .where("parent_id", "=", parentId,)
           .orderBy("swipe_index", "asc",)
           .orderBy("created_at", "asc",)
           .execute();
