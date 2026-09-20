@@ -97,6 +97,7 @@ Multi-writer peer sync. Model shared RPG state as CRDTs (prefer `cr-sqlite` to s
 - `epic-anonymity-decentralization.md` (Radicle phase, mesh transport).
 - `epic-multi-instance-reconciliation.md` (Epic 26 — leader-based reconciliation, store schema).
 - `epic-social-hub.md` (social graph that federated actors attach to).
+- `epic-crypto.md` (EncryptionProvider seam; ActivityPub actor signing keys + rotation, HTTP-signature verification, encrypted at-rest storage of private signing material).
 
 ## Integration Points
 
