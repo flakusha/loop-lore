@@ -3,6 +3,9 @@
 
 # BUG: updatePost has no ownership check — any authenticated user can edit any blog post by ID
 
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 **Status:** ✅ Done (closed 2026-09-20) — author_id ownership check added
 **Priority:** high
 **Effort:** Small
@@ -14,18 +17,22 @@
 **Where:** src/rpg/blog/service/posts.ts:183-218
 
 **Defect:** The UPDATE statement is:
+
 ```
+
 db.updateTable("blog_posts")
+
   .set(updates)
   .where("id", "=", id)
   .executeTakeFirst();
+
 ```
+
 There is no verification that the requesting user's id matches post.author_id. Any caller with a valid session can rewrite any blog post (title, body, visibility, status, metadata).
 
 **Fix sketch:** Either add author_id to the WHERE clause (returns 0 rows when caller is not author) or pre-fetch the post and 403/404 before update. Pass caller userId through the call chain (route → service).
 
 **Acceptance:** A test where user A creates a post and user B calls updatePost(post.id, { title: 'hax' }) — current code mutates; fixed code returns undefined / 403.
-
 
 ## Resolution
 

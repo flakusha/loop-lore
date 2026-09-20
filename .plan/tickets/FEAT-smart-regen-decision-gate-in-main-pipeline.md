@@ -3,6 +3,10 @@
 
 # FEAT: smart-regen decision gate in main pipeline
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium

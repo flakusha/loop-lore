@@ -3,6 +3,10 @@
 
 # BUG: shadow_notes table missing TTL/visibility/author_type columns
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium
