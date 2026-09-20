@@ -210,6 +210,13 @@
     // Docs site mermaid render gate. Built dist served by an in-process
     // Bun.serve; not imported anywhere; Playwright discovers by glob.
     // Same class as the .browser.ts entries above.
-    "tests/e2e/flows/browser/docs-mermaid.browser.ts"
+    "tests/e2e/flows/browser/docs-mermaid.browser.ts",
+    // Additional view-expansion coverage (TASK-e2e-view-expansion). Same class
+    // as the .browser.ts entries above: Playwright discovers by glob, knip
+    // cannot trace a shell glob as an import edge.
+    "tests/e2e/flows/browser/admin-nonadmin-guard.browser.ts",
+    "tests/e2e/flows/browser/character-edit-view.browser.ts",
+    "tests/e2e/flows/browser/chat-list-view.browser.ts",
+    "tests/e2e/flows/browser/new-chat-advanced-fields.browser.ts"
   ]
 }
