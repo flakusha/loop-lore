@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 292 epics
+**Total:** 293 epics
 
 ## Summary
 
@@ -34,6 +34,7 @@
 | ✅ Complete | Epic: Config File Separation | High | High | 0 | [epic-config-file-separation.md](/.plan/epics/epic-config-file-separation.md) |
 | ✅ Complete | Epic: Internationalization (i18n) | High | Large | 1 | [epic-i18n.md](/.plan/epics/epic-i18n.md) |
 | ✅ Complete | TASK: Data Integrity Phase 1 — Config Guards & Backend Selection | High | Low | 0 | [epic-data-integrity-phase1.md](/.plan/epics/epic-data-integrity-phase1.md) |
+| ⬜ Not Started | 2D Sprite World | High | Very High total (split across sub-epics below) | 0 | [epic-2d-sprite-world.md](/.plan/epics/epic-2d-sprite-world.md) |
 | ⬜ Not Started | 3D Asset Generation (Future) | Low | Very High | 25 | [epic-3d-generation.md](/.plan/epics/epic-3d-generation.md) |
 | 🟡 In Progress | Accessibility & Input Systems | P0 — Critical | High | 2 | [epic-accessibility-input.md](/.plan/epics/epic-accessibility-input.md) |
 | Not Started | Actor Autonomy & Story Auto-Drive | High | Large | 8 | [epic-actor-autonomy-story-drive.md](/.plan/epics/epic-actor-autonomy-story-drive.md) |
@@ -530,6 +531,15 @@ Full internationalization of loop-lore UI. Infrastructure complete (custom i18n 
 - **Type:** Feature Epic
 - **Tags:** data, integrity, acid, backend, config, deployment
 - **File:** `.plan/epics/epic-data-integrity-phase1.md`
+
+### 2D Sprite World
+
+- **Status:** ⬜ Not Started
+- **Priority:** High
+- **Effort:** Very High total (split across sub-epics below)
+- **Type:** Feature Epic
+- **Tags:** (none)
+- **File:** `.plan/epics/epic-2d-sprite-world.md`
 
 ### 3D Asset Generation (Future)
 

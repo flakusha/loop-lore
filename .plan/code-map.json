@@ -5390,6 +5390,10 @@
   "src/chat/random-events.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-2d-sprite-world.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-chat-lifecycle-moderation.md"
     },
     {
