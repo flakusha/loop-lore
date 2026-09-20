@@ -2532,6 +2532,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-sectionbuilder-interface-missing-included-memory-ids-field.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-char-growth-prompt.md"
     },
     {
@@ -6903,6 +6907,13 @@
       "source": ".plan/tickets/TASK-gm-whitenotes.md"
     }
   ],
+
+  "src/components/chat/gm-quests-panel.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-quest-log-ui-extended-to-full-spec-quest-browser.md"
+    }
+  ],
   "src/components/chat/gm-story-panel.html": [
     {
       "kind": "ticket",
@@ -6939,6 +6950,17 @@
       "source": ".plan/tickets/TASK-chat-location-frontend.md"
     }
   ],
+
+  "src/components/chat/memory-panel.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-audit-panel-details-not-expandable.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-audit-panel-renders-action-text-labels-instead-of-icons.md"
+    }
+  ],
   "src/components/chat/mention-dropdown.html": [
     {
       "kind": "epic",
@@ -6963,6 +6985,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-emotion-reactive-portraits-auto-swap-on-emotion-detect.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-style-picker-ui-for-smart-regen.md"
     },
     {
       "kind": "ticket",
@@ -7762,6 +7788,10 @@
   "src/config/schema/generation.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-user-defined-regex-rules-storage-crud-route-ui.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-generation-rate-limiting-and-concurrency-limits.md"
     }
   ],
@@ -8262,6 +8292,10 @@
     }
   ],
   "src/content/compress.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-content-decompression-stage-in-generation-pipeline.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-adopt-bun-gzipsync-for-compression-standardization.md"
@@ -11242,6 +11276,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-memory-audit-log-action-column-typed-string-not-union.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-personas-converttocharacter-drops-title-temperature-max-toke.md"
     },
     {
@@ -11519,6 +11557,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-create-test-db-custom-dialect-can-bypass-settestdatabase.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-shadow-notes-missing-visibility-for-llm-injection-control.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-shadow-notes-table-missing-ttl-visibility-author-type-column.md"
     },
     {
       "kind": "ticket",
@@ -13339,6 +13385,17 @@
       "source": ".plan/epics/epic-db-cold-storage-high-perf.md"
     }
   ],
+
+  "src/frontend/alpine/chat-variants.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-buildstyleprompt-result-returned-but-never-consumed.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-frontend-regeneratevariant-does-not-pass-style-to-api.md"
+    }
+  ],
   "src/frontend/alpine/chat.ts": [
     {
       "kind": "epic",
@@ -13855,6 +13912,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-fe-be-harmony-checker-blind-to-elysia-app-direct-routes-fact.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-memory-create-form-hardcodes-episodic-type.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-memory-injection-reason-not-displayed-in-ui.md"
     },
     {
       "kind": "ticket",
@@ -16762,6 +16827,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-regex-transform-runs-at-store-time-not-render-time.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-stale-audit-claim-aux-emotion-mood-task-tables.md"
     },
     {
@@ -16827,6 +16896,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san.md"
+    }
+  ],
+
+  "src/generation/auto-generation.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-regex-transform-runs-at-store-time-not-render-time.md"
     }
   ],
   "src/generation/cancellation-actions.test.ts": [
@@ -17188,6 +17264,10 @@
     }
   ],
   "src/generation/generation-routes/regenerate.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-buildstyleprompt-result-returned-but-never-consumed.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-smart-regen-style-not-threaded-through.md"
@@ -17962,7 +18042,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-buildstyleprompt-never-injected-into-llm-request.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-smart-regen-style-not-threaded-through.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-smart-regen-decision-gate-in-main-pipeline.md"
     },
     {
       "kind": "ticket",
@@ -19069,6 +19157,13 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-output-control-transforms.md"
+    }
+  ],
+
+  "src/memory/audit.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-inject-audit-action-has-no-unit-test.md"
     }
   ],
   "src/memory/budget.test.ts": [
@@ -22120,6 +22215,10 @@
     }
   ],
   "src/routes/actor-memories.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-delete-audit-action-has-no-unit-test.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-fe-be-harmony-checker-blind-to-elysia-app-direct-routes-fact.md"
