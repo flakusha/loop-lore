@@ -72,9 +72,11 @@ describe("Personas flow E2E", () => {
       // store-bound x-show reactivity is a separate UI-contract concern.)
       await gotoPersonas(page,);
       const created = await page.evaluate(async (name,) => {
+        // CSRF double-submit: echo the csrf_token cookie like feFetch does.
+        const csrf = /(?:^|;\s*)csrf_token=([^;]+)/.exec(document.cookie,)?.[1] ?? "";
         const res = await fetch("/api/personas", {
           method: "POST",
-          headers: { "Content-Type": "application/json", },
+          headers: { "Content-Type": "application/json", "X-CSRF-Token": csrf, },
           body: JSON.stringify({ name, description: "created via api", title: "T", },),
         },);
         return res.status;
@@ -108,8 +110,6 @@ describe("Personas flow E2E", () => {
     const errors = trackPageErrors(page,);
     try {
       await gotoPersonas(page,);
-      // Seed a second persona to delete (don't disturb the seeded one so the
-      // list-render test still has something to find).
       const deleteId = `b1000002-0000-4000-a000-000000000002`;
       const deleteName = `E2E Delete Persona ${Date.now()}`;
       await ctx.db
@@ -124,20 +124,22 @@ describe("Personas flow E2E", () => {
         .execute();
 
       const deleted = await page.evaluate(async (id,) => {
-        const res = await fetch(`/api/personas/${id}`, { method: "DELETE", },);
+        // CSRF double-submit: echo the csrf_token cookie like feFetch does.
+        const csrf = /(?:^|;\s*)csrf_token=([^;]+)/.exec(document.cookie,)?.[1] ?? "";
+        const res = await fetch(`/api/personas/${id}`, {
+          method: "DELETE",
+          headers: { "X-CSRF-Token": csrf, },
+        },);
         return res.status;
       }, deleteId,);
       expect(deleted,).toBe(204,);
 
-      // Removed from DB.
       const row = await ctx.db
         .selectFrom("personas",)
         .select(["id",],)
         .where("id", "=", deleteId,)
         .executeTakeFirst();
       expect(row,).toBeUndefined();
-
-      // No longer listed by the API.
       const listed = await page.evaluate(async (name,) => {
         const res = await fetch("/api/personas", { headers: { Accept: "application/json", }, },);
         if (!res.ok) { return true; }

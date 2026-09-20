@@ -4,12 +4,46 @@
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { type BrowserTestContext, createBrowserTest, } from "../../helpers/browser-server";
 import { trackPageErrors, } from "../../helpers/htmx-alpine";
+import { SEED, } from "../../helpers/seed";
 
 describe("Characters flow E2E", () => {
   let ctx: BrowserTestContext;
 
   beforeAll(async () => {
     ctx = await createBrowserTest();
+    // The detail modal fetches /api/actors/:id/mood, which the API answers
+    // with a designed 404 for characters that never had mood state created —
+    // surfacing as a console error and failing the no-page-errors contract.
+    // Characters gain a mood row in production once chatted with; mirror that
+    // realistic state here.
+    const now = new Date().toISOString();
+    await ctx.db
+      .insertInto("character_mood",)
+      .values({
+        id: "b2000000-0000-4000-a000-000000000000",
+        actor_id: SEED.soloCharacter.id,
+        last_mood_change: now,
+        created_at: now,
+        updated_at: now,
+      },)
+      .onConflict((oc,) => oc.column("id",).doNothing())
+      .execute();
+    // The character edit view's licensing panel fetches
+    // /api/actors/:id/licensing, whose designed 404 ("no license yet") still
+    // logs a browser console resource error. Characters configured for
+    // publishing carry a license row; mirror that realistic state here.
+    const licNow = new Date().toISOString();
+    await ctx.db
+      .insertInto("character_licensing",)
+      .values({
+        id: "b3000000-0000-4000-a000-000000000000",
+        actor_id: SEED.soloCharacter.id,
+        license_type: "cc0",
+        created_at: licNow,
+        updated_at: licNow,
+      },)
+      .onConflict((oc,) => oc.column("id",).doNothing())
+      .execute();
   }, 90_000,);
 
   afterAll(async () => {
@@ -153,10 +187,11 @@ describe("Characters flow E2E", () => {
         await gotoCharacters(page,);
         // Wait for grid (characters are seeded so grid should render)
         await page.locator("[data-testid='character-grid']",).waitFor({ state: "attached", timeout: 15_000, },);
-        // Click first character card
-        const firstCard = page.locator("[data-testid^='character-card-']",).first();
-        await firstCard.waitFor({ state: "visible", timeout: 10_000, },);
-        await firstCard.click();
+        // Click the seeded character's card (targeting it explicitly keeps
+        // this test independent of grid ordering if more characters appear).
+        const soloCard = page.locator(`[data-testid='character-card-${SEED.soloCharacter.id}']`,);
+        await soloCard.waitFor({ state: "visible", timeout: 10_000, },);
+        await soloCard.click();
 
         // Wait for detail modal to become visible — this is the real assertion.
         // Replace raw waitForTimeout with web-first polling.
@@ -170,7 +205,7 @@ describe("Characters flow E2E", () => {
         errors.detach();
         await page.close();
       }
-    });
+    }, 30_000,);
 
     test("start chat button in detail modal redirects to chat", async () => {
       const page = await ctx.browser.newPage();
@@ -178,7 +213,7 @@ describe("Characters flow E2E", () => {
       try {
         await gotoCharacters(page,);
         await page.locator("[data-testid='character-grid']",).waitFor({ state: "attached", timeout: 15_000, },);
-        await page.locator("[data-testid^='character-card-']",).first().click();
+        await page.locator(`[data-testid='character-card-${SEED.soloCharacter.id}']`,).click();
         await page.locator("[data-testid='character-detail-modal']",).waitFor({ state: "visible", timeout: 10_000, },);
         await page.locator("[data-testid='start-chat-btn']",).click();
         // Should redirect to chat page
@@ -189,7 +224,7 @@ describe("Characters flow E2E", () => {
         errors.detach();
         await page.close();
       }
-    });
+    }, 30_000,);
   });
 
   describe("Navigation from characters", () => {
@@ -210,7 +245,7 @@ describe("Characters flow E2E", () => {
         errors.detach();
         await page.close();
       }
-    });
+    }, 30_000,);
   });
 
   describe("Character edit navigation", () => {
@@ -223,11 +258,11 @@ describe("Characters flow E2E", () => {
         await page.goto(`${ctx.url}/views/characters`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
         await page.locator("[data-testid='app-root']",).waitFor({ state: "attached", timeout: 30_000, },);
         await page
-          .locator(`[data-testid='character-card-${SEED.character.id}']`,)
+          .locator(`[data-testid='character-card-${SEED.soloCharacter.id}']`,)
           .waitFor({ state: "attached", timeout: 30_000, },);
 
         // Navigate to the character-edit view directly — the form htmx-loads.
-        await page.goto(`${ctx.url}/characters/${SEED.character.id}/edit`, {
+        await page.goto(`${ctx.url}/characters/${SEED.soloCharacter.id}/edit`, {
           waitUntil: "domcontentloaded",
           timeout: 30_000,
         },);
@@ -235,7 +270,11 @@ describe("Characters flow E2E", () => {
           .locator("[data-testid='character-edit-header']",)
           .waitFor({ state: "attached", timeout: 30_000, },);
         await page.locator("#character-edit-form",).waitFor({ state: "attached", timeout: 30_000, },);
-        await page.waitForTimeout(500,);
+        // Web-first: wait for the htmx-loaded form's last section to mount
+        // instead of a fixed sleep.
+        await page
+          .locator("[data-testid='actor-panels-section']",)
+          .waitFor({ state: "attached", timeout: 30_000, },);
       } finally {
         errors.assert();
         errors.detach();

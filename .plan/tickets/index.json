@@ -13514,6 +13514,24 @@
     "git_issue": "3c7394e",
     "status": "[OK] Documented in `docs/meta/workflow.md` (Branch tiers section)"
   },
+  "TASK-BROWSER-CHATFLOW-UPLOAD-DEFERRED": {
+    "hash": "pending",
+    "extid": "TASK-BROWSER-CHATFLOW-UPLOAD-DEFERRED",
+    "type": "TASK",
+    "title": "# TASK-browser-chatflow-upload-deferred: chatState init never reaches loadChats in bundled chat page",
+    "label": "task",
+    "priority": "P2",
+    "epic": "epic-testing-qa",
+    "tags": [
+      "testing",
+      "e2e",
+      "browser",
+      "alpine",
+      "bundling"
+    ],
+    "source": ".plan/tickets/TASK-browser-chatflow-upload-deferred.md",
+    "status": "open"
+  },
   "TASK-BROWSER-CONSOLE-ASSERT": {
     "hash": "2108e81",
     "extid": "TASK-BROWSER-CONSOLE-ASSERT",

@@ -88,6 +88,12 @@ export async function feFetch(
     if (result.status === 401) {
       throw new Error("Unauthorized",);
     }
+    // Attach the HTTP status so callers can distinguish expected states
+    // (e.g. a designed 404 = "not created yet") from real failures in their
+    // catch blocks — the Response is never surfaced for non-2xx bodies.
+    if (result.error instanceof Error) {
+      (result.error as Error & { status?: number }).status = result.status;
+    }
     throw result.error;
   }
 

@@ -28,12 +28,15 @@ export const roleState: Partial<ModelsState> & ThisType<ModelsState> = {
           return { role, provider: found?.provider ?? "", model: found?.model ?? "", };
         },);
         this.roleTuning = {};
-        for (const [role, override,] of Object.entries(this.overrides,)) {
-          const temp = override.temperature;
-          const maxTk = override.maxTokens;
+        // Every role row rendered from modelRoleList gets a tuning entry
+        // (empty string = inherit) so each x-model binds a valid assignment
+        // target — `roleTuning[r.role]?.temperature` would compile to an
+        // optional-chain assignment and throw a SyntaxError.
+        for (const { role, } of this.modelRoleList) {
+          const override = this.overrides[role];
           this.roleTuning[role] = {
-            temperature: temp == null ? "" : String(temp,),
-            maxTokens: maxTk == null ? "" : String(maxTk,),
+            temperature: override?.temperature == null ? "" : String(override.temperature,),
+            maxTokens: override?.maxTokens == null ? "" : String(override.maxTokens,),
           };
         }
       }

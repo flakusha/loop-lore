@@ -139,6 +139,11 @@ export async function upsertQuestProgress(
   completed: boolean,
   sourceMessageId?: string,
 ): Promise<void> {
+  // No chat context (e.g. "Advance Progress" from the quests page): the
+  // world-level quest row was already updated; quest_progress rows are the
+  // per-chat log, and chat_id is NOT NULL — nothing to upsert.
+  if (!chatId) { return; }
+
   const existing = await db
     .selectFrom("quest_progress",)
     .select("id",)
