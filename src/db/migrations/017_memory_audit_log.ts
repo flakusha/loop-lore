@@ -44,7 +44,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .columns(["actor_id", "created_at",],)
     .execute();
 
-  await recordSchemaVersion(database, 38, "memory audit log (FEAT-075)",);
+  await recordSchemaVersion(database, 39, "memory audit log (FEAT-075)",);
 }
 
 /**
