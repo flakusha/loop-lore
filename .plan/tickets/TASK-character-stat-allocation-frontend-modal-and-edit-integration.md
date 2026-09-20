@@ -22,3 +22,5 @@ The backend gates character creation behind stat allocation, but authors still n
 
 Modal `src/frontend/modals/stat-allocation.html` (htmx partial + Alpine `x-data`) reached from `src/views/characters/*.html`. Triggered when the active world's `requires_stats` is true. UI: live point-budget header = `stat_point_budget - sum(stats)`; six STR/DEX/CON/INT/WIS/CHA sliders bounded to `stat_min`/`stat_max` (8–15 default) with +/- nudges and numeric input snapping to range; computed ability modifier shown beside each. Trait picker: multi-select of catalog entries exposed via new `GET /api/rpg/trait-catalog?worldId=…` (sibling route), grouped by scope (universal vs world-scoped) with one-line descriptions. Save calls `PUT /api/actors/:actorId/stat-allocation`; 422 surfaces per-field errors inline. On character create/edit, when world requires stats and no allocation exists, the form blocks submit and routes to the modal first. State preserved across modal re-opens. Alpine-only, no new deps.
 
+
+git issue: d87d9f0

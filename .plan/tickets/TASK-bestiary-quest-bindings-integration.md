@@ -29,3 +29,6 @@ Existing quest code references characters/locations as targets. The world-RPG ep
 - Quest objective completion: `LocationPopulation.count` falls below threshold (kills) or rises above threshold (cultivation).
 - `TASK-quests-encounters` integration: when bestiary reputation event fires, emit quest-update side-effect.
 - Tests: create species, attach as quest target, complete quest via count change.
+
+
+git issue: a959101

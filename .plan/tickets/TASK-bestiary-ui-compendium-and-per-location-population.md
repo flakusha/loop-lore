@@ -30,3 +30,6 @@ The admin needs to inspect the catalog (filtered by category and location tag) a
 - Per-location population panel on `locations/:locationId` admin page: tabular list of species + count, last-spawn/death tick, generation, ecology pressure.
 - Use htmx for partial updates (count edit, force-spawn toast). No new client framework.
 - Verified in browser via dev-server smoke.
+
+
+git issue: b56f43c

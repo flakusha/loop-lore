@@ -30,3 +30,6 @@ Ecology balance is separate from raw repopulation: predators lag when prey are s
 - Pressure feeds into the repopulation engine as a multiplier on `probabilityPerTick`.
 - Pure function over DB rows; tested with snapshot data.
 - Threshold-based ecology events (imbalance > 0.8) emit cross-faction events consumed by `epic-faction-reputation` politics ticket.
+
+
+git issue: e28fb41
