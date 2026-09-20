@@ -16026,6 +16026,18 @@
     "source": ".plan/tickets/TASK-coverage-waiver-generate-route-non-stream-ts-below-80-floor.md",
     "status": "open"
   },
+  "TASK-COVERAGE-WAIVER-LOCATIONS-AT-78-UNDER-CHECK-GATE": {
+    "hash": "pending",
+    "extid": "TASK-COVERAGE-WAIVER-LOCATIONS-AT-78-UNDER-CHECK-GATE",
+    "type": "TASK",
+    "title": "# TASK-coverage-waiver-locations-at-78-under-check-gate",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-coverage-waiver-locations-at-78-under-check-gate.md",
+    "status": "undefined"
+  },
   "TASK-COVERAGE-WAIVER-STREAM-TO-CLIENT-TS-AT-75-3-UNDER-CHECK-GATE": {
     "hash": "131f630",
     "git_issue": "131f630",
