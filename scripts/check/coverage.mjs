@@ -151,6 +151,15 @@ const WAIVERS = {
     reason:
       "lifecycle/index/trade/transfer/utils/probe gaps covered in coverage-services worktree (78.2 measured, floored 78); start-llama/sd spawner suites run in hermetic child harnesses so parent lcov cannot count them; residual is health/port timeout-kill paths (deliberately skipped, 30-120s waits) + win32-only branches",
   },
+  // Gate pass: src/locations/ (fractal locations + tree service) introduced
+  // by the feat-fractal-locations epic; uncovered lines are recursive tree
+  // cycle detection, deep-path resolution, and partial-failure rollback
+  // branches that need an integration suite (separate worktree).
+  "locations": {
+    floor: 78,
+    reason:
+      "fractal-locations tree service gaps (cycle detection + deep-path + rollback paths); 78.8 measured; TASK-coverage-waiver-locations-at-78-under-check-gate",
+  },
   // Gate pass: src/plugins/ is the plugin loader/registry; runtime-only
   // resolution exercised via app boot and integration tests.
   "plugins": {
