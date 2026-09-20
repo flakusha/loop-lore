@@ -35,3 +35,6 @@ Already implemented on dev. Verified 2026-09-20 against dev HEAD `416578e63`:
 - Cross-reference: `TASK-db-content-versioning-snapshot-restore.md` is already ✅ Resolved.
 
 No code change required.
+
+
+git issue: 4538afb
