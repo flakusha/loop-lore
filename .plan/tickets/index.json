@@ -6736,6 +6736,123 @@
     "source": ".plan/tickets/FEAT-2026-irc-group-chat-integration.md",
     "status": "open"
   },
+  "FEAT-2D-WORLD-BOARDING-FLOORS-VIA-FRACTAL-TREE-TRANSPORTS-PARALLA": {
+    "hash": "065f89d",
+    "git_issue": "065f89d",
+    "extid": "FEAT-2D-WORLD-BOARDING-FLOORS-VIA-FRACTAL-TREE-TRANSPORTS-PARALLA",
+    "type": "FEAT",
+    "title": "2D world: boarding + floors via fractal tree (transports, parallax)",
+    "label": "feat",
+    "priority": "low",
+    "epic": "epic-2d-sprite-world",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-2d-world-boarding-floors-via-fractal-tree-transports-paralla.md",
+    "status": "⬜ Not Started"
+  },
+  "FEAT-2D-WORLD-CLICK-TO-MOVE-PREDICTION-RECONCILE-PROXIMITY-TO-CHA": {
+    "hash": "8ac0e7f",
+    "git_issue": "8ac0e7f",
+    "extid": "FEAT-2D-WORLD-CLICK-TO-MOVE-PREDICTION-RECONCILE-PROXIMITY-TO-CHA",
+    "type": "FEAT",
+    "title": "2D world: click-to-move + prediction/reconcile + proximity-to-chat",
+    "label": "feat",
+    "priority": "high",
+    "epic": "epic-2d-sprite-world",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-2d-world-click-to-move-prediction-reconcile-proximity-to-cha.md",
+    "status": "⬜ Not Started"
+  },
+  "FEAT-2D-WORLD-NPC-SIMULATION-TIERS-T0-T3-TS-TICK-EVENT-DRIVEN-SNA": {
+    "hash": "e2b8754",
+    "git_issue": "e2b8754",
+    "extid": "FEAT-2D-WORLD-NPC-SIMULATION-TIERS-T0-T3-TS-TICK-EVENT-DRIVEN-SNA",
+    "type": "FEAT",
+    "title": "2D world: NPC simulation tiers T0-T3 (TS tick, event-driven snapshots)",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "epic-2d-sprite-world",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-2d-world-npc-simulation-tiers-t0-t3-ts-tick-event-driven-sna.md",
+    "status": "⬜ Not Started"
+  },
+  "FEAT-2D-WORLD-PIXEL-ART-SPRITE-PIPELINE-STYLE-PACKS-EMOTION-STATU": {
+    "hash": "f895e6e",
+    "git_issue": "f895e6e",
+    "extid": "FEAT-2D-WORLD-PIXEL-ART-SPRITE-PIPELINE-STYLE-PACKS-EMOTION-STATU",
+    "type": "FEAT",
+    "title": "2D world: pixel-art sprite pipeline (style packs, emotion+status overlays)",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "epic-2d-sprite-world",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-2d-world-pixel-art-sprite-pipeline-style-packs-emotion-statu.md",
+    "status": "⬜ Not Started"
+  },
+  "FEAT-2D-WORLD-POSITION-AWARE-ENCOUNTERS-VIA-ZONE-AS-CONTEXT": {
+    "hash": "61edf86",
+    "git_issue": "61edf86",
+    "extid": "FEAT-2D-WORLD-POSITION-AWARE-ENCOUNTERS-VIA-ZONE-AS-CONTEXT",
+    "type": "FEAT",
+    "title": "2D world: position-aware encounters via zone-as-context",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "epic-2d-sprite-world",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-2d-world-position-aware-encounters-via-zone-as-context.md",
+    "status": "⬜ Not Started"
+  },
+  "FEAT-2D-WORLD-SEEDED-PROCGEN-STUB-THEN-POPULATE-LOCATION-SYNC": {
+    "hash": "ed3b3f5",
+    "git_issue": "ed3b3f5",
+    "extid": "FEAT-2D-WORLD-SEEDED-PROCGEN-STUB-THEN-POPULATE-LOCATION-SYNC",
+    "type": "FEAT",
+    "title": "2D world: seeded procgen + stub-then-populate location sync",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "epic-2d-sprite-world",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-2d-world-seeded-procgen-stub-then-populate-location-sync.md",
+    "status": "⬜ Not Started"
+  },
+  "FEAT-2D-WORLD-SHARED-BATTLE-ENTRANCE-RULE-TABLE-CHAT-SPRITE": {
+    "hash": "8efca18",
+    "git_issue": "8efca18",
+    "extid": "FEAT-2D-WORLD-SHARED-BATTLE-ENTRANCE-RULE-TABLE-CHAT-SPRITE",
+    "type": "FEAT",
+    "title": "2D world: shared battle entrance rule table (chat + sprite)",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "epic-2d-sprite-world",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-2d-world-shared-battle-entrance-rule-table-chat-sprite.md",
+    "status": "⬜ Not Started"
+  },
+  "FEAT-2D-WORLD-SPATIAL-LAYER-MIGRATION-WORLD-MAPS-MAP-ZONES-SPAWN-": {
+    "hash": "204ec0b",
+    "git_issue": "204ec0b",
+    "extid": "FEAT-2D-WORLD-SPATIAL-LAYER-MIGRATION-WORLD-MAPS-MAP-ZONES-SPAWN-",
+    "type": "FEAT",
+    "title": "2D world: spatial layer migration (world_maps, map_zones, spawn_points, actor_snapshots + space LocationKinds)",
+    "label": "feat",
+    "priority": "high",
+    "epic": "epic-2d-sprite-world",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-2d-world-spatial-layer-migration-world-maps-map-zones-spawn-.md",
+    "status": "⬜ Not Started"
+  },
+  "FEAT-2D-WORLD-VIEW-ONLY-CANVAS-MAP-CUSTOM-CANVAS-ZONES-SPRITES-AT": {
+    "hash": "bee1ba1",
+    "git_issue": "bee1ba1",
+    "extid": "FEAT-2D-WORLD-VIEW-ONLY-CANVAS-MAP-CUSTOM-CANVAS-ZONES-SPRITES-AT",
+    "type": "FEAT",
+    "title": "2D world: view-only canvas map (custom canvas, zones + sprites at snapshot positions)",
+    "label": "feat",
+    "priority": "high",
+    "epic": "epic-2d-sprite-world",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-2d-world-view-only-canvas-map-custom-canvas-zones-sprites-at.md",
+    "status": "⬜ Not Started"
+  },
   "FEAT-3D-CHARACTER-AVATAR-RENDERING": {
     "hash": "12d2fe9",
     "git_issue": "12d2fe9",
@@ -13154,7 +13271,7 @@
     "status": "open"
   },
   "TASK-BESTIARY-ADMIN-GM-FORCE-SPAWN-AND-CULL": {
-    "hash": "pending",
+    "hash": "bad551e",
     "extid": "TASK-BESTIARY-ADMIN-GM-FORCE-SPAWN-AND-CULL",
     "type": "TASK",
     "title": "Bestiary Bestiary Admin GM Force Spawn And Cull",
@@ -13171,7 +13288,7 @@
     "git_issue": "bad551e"
   },
   "TASK-BESTIARY-CATALOG-SCHEMA-AND-MIGRATION": {
-    "hash": "pending",
+    "hash": "6711aa2",
     "extid": "TASK-BESTIARY-CATALOG-SCHEMA-AND-MIGRATION",
     "type": "TASK",
     "title": "Bestiary Bestiary Catalog Schema And Migration",
@@ -13188,7 +13305,7 @@
     "git_issue": "6711aa2"
   },
   "TASK-BESTIARY-CRUD-ROUTES-ADMIN-GM": {
-    "hash": "pending",
+    "hash": "f9bb7e7",
     "extid": "TASK-BESTIARY-CRUD-ROUTES-ADMIN-GM",
     "type": "TASK",
     "title": "Bestiary Bestiary CRUD Routes Admin GM",
@@ -13204,7 +13321,7 @@
     "git_issue": "f9bb7e7"
   },
   "TASK-BESTIARY-ECOLOGY-PRESSURE-MODEL": {
-    "hash": "pending",
+    "hash": "e28fb41",
     "extid": "TASK-BESTIARY-ECOLOGY-PRESSURE-MODEL",
     "type": "TASK",
     "title": "Bestiary Bestiary Ecology Pressure Model",
@@ -13221,7 +13338,7 @@
     "git_issue": "e28fb41"
   },
   "TASK-BESTIARY-LOOT-AND-XP-INTEGRATION": {
-    "hash": "pending",
+    "hash": "feb527a",
     "extid": "TASK-BESTIARY-LOOT-AND-XP-INTEGRATION",
     "type": "TASK",
     "title": "Bestiary Bestiary Loot And XP Integration",
@@ -13238,7 +13355,7 @@
     "git_issue": "feb527a"
   },
   "TASK-BESTIARY-QUEST-BINDINGS-INTEGRATION": {
-    "hash": "pending",
+    "hash": "a959101",
     "extid": "TASK-BESTIARY-QUEST-BINDINGS-INTEGRATION",
     "type": "TASK",
     "title": "Bestiary Bestiary Quest Bindings Integration",
@@ -13254,7 +13371,7 @@
     "git_issue": "a959101"
   },
   "TASK-BESTIARY-TIME-BASED-REPOPULATION-ENGINE": {
-    "hash": "pending",
+    "hash": "8ff87a5",
     "extid": "TASK-BESTIARY-TIME-BASED-REPOPULATION-ENGINE",
     "type": "TASK",
     "title": "Bestiary Bestiary Time Based Repopulation Engine",
@@ -13271,7 +13388,7 @@
     "git_issue": "8ff87a5"
   },
   "TASK-BESTIARY-UI-COMPENDIUM-AND-PER-LOCATION-POPULATION": {
-    "hash": "pending",
+    "hash": "b56f43c",
     "extid": "TASK-BESTIARY-UI-COMPENDIUM-AND-PER-LOCATION-POPULATION",
     "type": "TASK",
     "title": "Bestiary Bestiary UI Compendium And Per Location Population",
@@ -14406,7 +14523,7 @@
     "status": "⬜ Not Started"
   },
   "TASK-CHARACTER-STAT-ALLOCATION-FRONTEND-MODAL-AND-EDIT-INTEGRATION": {
-    "hash": "pending",
+    "hash": "d87d9f0",
     "extid": "TASK-CHARACTER-STAT-ALLOCATION-FRONTEND-MODAL-AND-EDIT-INTEGRATION",
     "type": "TASK",
     "title": "Character Stat Allocation Frontend Modal And Edit Integration",
