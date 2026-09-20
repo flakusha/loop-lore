@@ -164,6 +164,46 @@ describe("createRateLimiter", () => {
     expect(limiter.check("k",),).toBe(true,);
   });
 
+  // ── Boundary regression (BUG-rate-limit-sliding-window-expiry) ───────────
+
+  test("sliding-window: cutoff is strict < so boundary-aged timestamps drop on the first ms past the window", () => {
+    // BUG-rate-limit-sliding-window-expiry-uses-cutoff-off-by-one.
+    // Regression for the off-by-one predicate. The spec defines a request
+    // at time t as expired when now - windowMs > t (strict >), i.e. t is
+    // dropped iff t < cutoff. Pre-fix used <= which kept a boundary-stamp
+    // alive for one extra slot. This test locks the predicate to strict <.
+    const windowMs = 1000;
+    const limiter = makeLimiter(windowMs, 1,);
+
+    // Stamp at t=0.
+    expect(limiter.consume("k", 0,).allowed,).toBe(true,);
+    // At exactly t=windowMs: cutoff=0, queue[0]=0; 0 < 0 is false → no drop
+    // → budget still full → 2nd request blocked. (Pre-fix used <= so 0<=0
+    // would drop, freeing the slot — this assertion distinguishes < from <=.)
+    expect(limiter.consume("k", windowMs,).allowed,).toBe(false,);
+    // At t=windowMs+1: cutoff=1, queue[0]=0; 0 < 1 is true → drop → allowed.
+    expect(limiter.consume("k", windowMs + 1,).allowed,).toBe(true,);
+  });
+
+  test("sliding-window: full budget at t=0 admits one more exactly at t=windowMs+1, not at t=windowMs", () => {
+    // The ticket's acceptance scenario at full scale: 100 requests at t=0,
+    // then the 101st. Under strict <, the boundary stamp ages out at the
+    // first ms past the window, not at the boundary itself.
+    const windowMs = 60_000;
+    const limiter = makeLimiter(windowMs, 100,);
+
+    // Stamp the full budget at t=0. consume() records each timestamp.
+    for (let i = 0; i < 100; i++) {
+      expect(limiter.consume("ip", 0,).allowed,).toBe(true,);
+    }
+    // Within the window the 101st is still blocked at any t in [0, windowMs).
+    expect(limiter.consume("ip", 0,).allowed,).toBe(false,);
+    // Exactly at the boundary: still blocked (cutoff=0 keeps the t=0 stamps).
+    expect(limiter.consume("ip", windowMs,).allowed,).toBe(false,);
+    // One ms past the boundary: every t=0 stamp ages out → 101st allowed.
+    expect(limiter.consume("ip", windowMs + 1,).allowed,).toBe(true,);
+  });
+
   // ── consume() / headers (BUG-429-omit-headers) ───────────────────────────
 
   test("consume() returns allowed=true with remaining budget on success", () => {
