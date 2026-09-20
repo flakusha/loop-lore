@@ -43,6 +43,13 @@ async function tryLocalImprove(text: string, level: string,): Promise<LocalInfer
 }
 
 export const promptImproveActions: Partial<ChatState> & ThisType<ChatState> = {
+  // Reactive defaults — input-area.html binds `:disabled="!activeChat ||
+  // _improving"`; without an initial value the binding throws
+  // "_improving is not defined" as soon as a chat is selected (the
+  // `!activeChat` short-circuit hides it while no chat is open).
+  _improving: false,
+  _promptImproveBackup: undefined,
+
   /**
    * Improve the current draft through the shared prompt-improvement service.
    * Keeps the previous draft in `_promptImproveBackup` for one-click undo.

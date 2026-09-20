@@ -29,7 +29,7 @@ import { handleApiRequest, } from "@/server";
 import { type Browser, chromium, type Page, } from "@playwright/test";
 import type { Kysely, } from "kysely";
 import { spawnSync, } from "node:child_process";
-import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, } from "node:fs";
+import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync, } from "node:fs";
 import { join, } from "node:path";
 import { seedSolo, } from "./seed";
 import { createTestDb, loadTestConfig, runMigrations, } from "./server";
@@ -50,23 +50,54 @@ export interface BrowserTestContext {
 
 // ── Build frontend JS/CSS first ──────────────────────────────
 
-function ensureFrontendBuild(): string {
-  const distPublic = join(import.meta.dir, "..", "..", "..", "dist", "public",);
-  const jsPath = join(distPublic, "app.js",);
-  if (existsSync(jsPath,)) { return distPublic; }
+// Source-tree fingerprint: rebuild dist/public whenever any frontend input
+// changes (BUG-browser-harness-stale-frontend-build). Size+mtime inputs keep
+// the check cheap while staying exact across rebases and worktree reuse.
+function hashFrontendSources(root: string,): string {
+  const hash = new Bun.CryptoHasher("sha256");
+  const inputs = ["src/frontend", "src/views", "src/public"];
+  for (const rel of inputs) {
+    const dir = join(root, rel);
+    if (!existsSync(dir)) { continue; }
+    const files = [...new Bun.Glob("**/*").scanSync({ cwd: dir, dot: false })].sort();
+    for (const entry of files) {
+      const file = join(dir, entry);
+      if (!existsSync(file)) { continue; }
+      const stat = Bun.file(file);
+      hash.update(rel);
+      hash.update(entry);
+      hash.update(String(stat.size));
+      hash.update(String(stat.lastModified));
+    }
+  }
+  return hash.digest("hex");
+}
 
-  const result = spawnSync("bun", ["run", "build:frontend",], {
-    stdio: ["ignore", "pipe", "pipe",],
-    cwd: join(import.meta.dir, "..", "..", "..",),
-  },);
+function ensureFrontendBuild(): string {
+  const root = join(import.meta.dir, "..", "..", "..",);
+  const distPublic = join(root, "dist", "public");
+  const jsPath = join(distPublic, "app.js");
+  const hashPath = join(distPublic, ".build-hash");
+  const expectedHash = hashFrontendSources(root);
+  if (
+    existsSync(jsPath) &&
+    existsSync(hashPath) &&
+    readFileSync(hashPath, "utf8") === expectedHash
+  ) { return distPublic; }
+
+  const result = spawnSync("bun", ["run", "build:frontend"], {
+    stdio: ["ignore", "pipe", "pipe"],
+    cwd: root,
+  });
   if (result.status !== 0) {
-    throw new Error(`Frontend build failed: ${result.stderr?.toString()}`,);
+    throw new Error(`Frontend build failed: ${result.stderr?.toString()}`);
   }
 
-  const srcViews = join(import.meta.dir, "..", "..", "..", "src", "views",);
-  const srcPublic = join(import.meta.dir, "..", "..", "..", "src", "public",);
-  if (existsSync(srcViews,)) { cpSync(srcViews, distPublic, { recursive: true, force: true, },); }
-  if (existsSync(srcPublic,)) { cpSync(srcPublic, distPublic, { recursive: true, force: true, },); }
+  const srcViews = join(root, "src", "views");
+  const srcPublic = join(root, "src", "public");
+  if (existsSync(srcViews)) { cpSync(srcViews, distPublic, { recursive: true, force: true }); }
+  if (existsSync(srcPublic)) { cpSync(srcPublic, distPublic, { recursive: true, force: true }); }
+  writeFileSync(hashPath, expectedHash);
 
   return distPublic;
 }
@@ -103,6 +134,13 @@ export async function createBrowserTest(
     await initSmk(config.encryption,);
     initializeProviders(config,);
     await loadAllPlugins(db,);
+
+    // Seed chat setup templates (server.start.ts:117 calls this in
+    // production; without it, /api/worlds/:wid/locations returns 400
+    // "Chat setup template not found" because resolveLocationTemplate
+    // defaults to id="template-world").
+    const { seedChatSetupTemplates, } = await import("@/chat/service");
+    await seedChatSetupTemplates(db,);
 
     // Seed solo user + character visible to solo context
     await seedSolo(db,);
