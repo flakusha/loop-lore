@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 320
-
+// size-allow: 324
 import type { DraftStore, } from "../chat-drafts";
 import type { AlpineMagicThis, GalleryAsset, QuickReplyButton, } from "../types";
 import type * as filterState from "./filter-state";
