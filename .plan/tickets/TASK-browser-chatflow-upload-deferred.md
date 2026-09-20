@@ -4,8 +4,11 @@
 # TASK-browser-chatflow-upload-deferred: chatState init never reaches loadChats in bundled chat page
 
 **Summary:** chat-flow upload-linkage browser test deferred; underlying product defect needs a bundle-level fix.
+**Context:** chat-flow upload test fails identically on dev and the views worktree; deferring the test rather than fixing the bundle defect here.
+**Acceptance Criteria:** one canonical bundle owns chatState init; init reaches loadChats; deferred test un-skipped and green.
 **Status:** open
 **Priority:** P2
+**Effort:** Medium
 **Type:** Bug
 **Tags:** testing, e2e, browser, alpine, bundling
 **Epic:** epic-testing-qa
