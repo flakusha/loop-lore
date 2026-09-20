@@ -181,25 +181,13 @@ export function parseColumns(block: string,): Record<string, ColumnDef> {
 }
 
 /**
- * List migration files (numbered `NNN_*.ts` plus `parts/*.ts`) sorted by basename.
+ * List top-level migration files (numbered `NNN_*.ts`) sorted by basename.
  * Shared file-enumeration for both DB codegen entry points.
  * @param migrationsDir absolute path to src/db/migrations
  */
 export function listMigrationFiles(migrationsDir: string,): string[] {
-  const files = readdirSync(migrationsDir,)
+  return readdirSync(migrationsDir,)
     .filter((f,) => f.endsWith(".ts",) && /^\d{3}_/.test(f,))
-    .sort();
-
-  let partFiles: string[] = [];
-  try {
-    partFiles = readdirSync(join(migrationsDir, "parts",),)
-      .filter((f,) => f.endsWith(".ts",))
-      .sort();
-  } catch { /* no parts dir */ }
-
-  const partsDir = join(migrationsDir, "parts",);
-  return [
-    ...files.map((f,) => join(migrationsDir, f,)),
-    ...partFiles.map((f,) => join(partsDir, f,)),
-  ].sort((a, b,) => a.split("/",).pop()!.localeCompare(b.split("/",).pop()!,));
+    .sort()
+    .map((f,) => join(migrationsDir, f,));
 }
