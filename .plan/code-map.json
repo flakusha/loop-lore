@@ -18963,6 +18963,13 @@
       "source": "docs/spec/locations.md"
     }
   ],
+
+  "src/locations/routes.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-coverage-waiver-locations-at-78-under-check-gate.md"
+    }
+  ],
   "src/locations/storage.ts": [
     {
       "kind": "spec",
