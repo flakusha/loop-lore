@@ -167,6 +167,44 @@ export function parseToolResultMeta(metadataJson: string | null | undefined,): T
 }
 
 /**
+ * Resolve plaintext content + attachments + tool fields for a message row.
+ * Fail-closed: decryption errors collapse to a placeholder so the list endpoint
+ * never throws per-row. Mirrors the inline enrichment in `read.ts`.
+ * @param database
+ * @param row
+ */
+export async function enrichMessageForList(
+  database: Kysely<DB>,
+  row: {
+    content: string;
+    content_type?: string;
+    metadata?: string | null;
+    content_encoding: string;
+    key_id: string | null;
+    chat_id: string;
+    attachments?: string | null;
+    tool_calls?: string | null;
+  },
+): Promise<Record<string, unknown>> {
+  const attachments = await enrichAttachments(database, row.attachments ?? null,);
+  const toolCalls = parseToolCalls(row.tool_calls ?? null,);
+  const toolMeta = row.content_type === "tool_result" ? parseToolResultMeta(row.metadata ?? null,) : null;
+  const toolFields = { tool_name: toolMeta?.toolName ?? null, tool_error: toolMeta?.toolError ?? false, };
+  try {
+    const content = await resolveMessageContent(database, row,);
+    return { ...row, content, attachments, tool_calls: toolCalls, ...toolFields, };
+  } catch {
+    return {
+      ...row,
+      content: "[Encrypted — unable to decrypt]",
+      attachments,
+      tool_calls: toolCalls,
+      ...toolFields,
+    };
+  }
+}
+
+/**
  * Resolve the plaintext content of a stored message.
  *
  * Handles three cases that prior call sites diverged on:
