@@ -30,6 +30,7 @@ export interface ChatCoreState
     isPinned?: boolean | number;
     type?: string;
     mode?: string;
+    encryption_level?: string;
     turn_strategy?: string;
     story_state?: string;
     gm_config?: string;
@@ -175,6 +176,8 @@ export interface ChatCoreState
   _chatKey: CryptoKey | null;
   _encryptionEnabled: boolean;
   _keyId: string | null;
+  /** Tier of the active chat (from the list row); gates the key fetch. */
+  _activeChatEncryptionLevel: string | null;
   init(): void;
   destroy(): void;
   loadUserInfo(): Promise<void>;
@@ -182,6 +185,7 @@ export interface ChatCoreState
   /** Internal selectChat body — split out for the reentrancy guard. */
   _selectChatInner(chatId: string,): Promise<void>;
   selectChat(chatId: string,): Promise<void>;
+  loadChatKey(chatId: string, encryptionLevel?: string | null,): Promise<void>;
   loadMessages(): Promise<void>;
   loadOlderMessages(): Promise<void>;
   setupInfiniteScroll(): void;
@@ -292,7 +296,7 @@ export interface ChatCoreState
   batchArchive(): Promise<void>;
   batchDelete(): Promise<void>;
   batchExport(): Promise<void>;
-  loadChatKey(chatId: string,): Promise<void>;
+  loadChatKey(chatId: string, encryptionLevel?: string | null,): Promise<void>;
   checkGenerationStatus(chatId: string,): Promise<void>;
   registerPanelHandlers(): void;
   unregisterPanelHandlers(): void;

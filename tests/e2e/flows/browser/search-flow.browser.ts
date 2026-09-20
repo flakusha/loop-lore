@@ -188,7 +188,10 @@ describe("Search & filtering E2E", () => {
             chat_id: SEED.soloChat.id,
             actor_id: SEED.solo.id,
             role: "user",
+            // FTS indexes content_plaintext (trigger on AFTER INSERT), not
+            // content — mirror the POST path (storedPlaintext) here.
             content: `${needle} alpha`,
+            content_plaintext: `${needle} alpha`,
             content_format: "markdown",
             content_type: "text",
             content_encoding: "identity",
@@ -201,6 +204,7 @@ describe("Search & filtering E2E", () => {
             actor_id: SEED.solo.id,
             role: "user",
             content: distractor,
+            content_plaintext: distractor,
             content_format: "markdown",
             content_type: "text",
             content_encoding: "identity",
