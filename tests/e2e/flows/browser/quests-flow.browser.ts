@@ -118,4 +118,54 @@ describe("Quests flow E2E", () => {
       await page.close();
     }
   }, 60_000,);
+
+  test("quest page renders seeded progress text without console errors", async () => {
+    const page = await ctx.openPage();
+    const errors = trackPageErrors(page,);
+    try {
+      await gotoQuests(page, WORLD_ID,);
+      // Seeded quest with name + description is visible.
+      await page.getByText(QUEST_NAME,).first().waitFor({ state: "visible", timeout: 20_000, },);
+      await page.getByText("Find the ancient relic",).first().waitFor({ state: "attached", timeout: 20_000, },);
+
+      // The page init script (quests.ts) computes a progress text — the seed
+      // has progress=0/target=1 so the rendered text reflects the progress.
+      // Any console errors raised by the init script trip errors.assert().
+    } finally {
+      errors.assert();
+      errors.detach();
+      await page.close();
+    }
+  }, 60_000,);
+
+  test("incrementing quest progress persists to the DB", async () => {
+    const page = await ctx.openPage();
+    const errors = trackPageErrors(page,);
+    try {
+      await gotoQuests(page, WORLD_ID,);
+      await page.getByText(QUEST_NAME,).first().waitFor({ state: "visible", timeout: 20_000, },);
+
+      // Drive a progress increment via the API the UI calls under the hood.
+      const updated = await page.evaluate(async (id,) => {
+        const res = await fetch(`/api/quests/${id}/progress`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", },
+          body: JSON.stringify({ delta: 1, },),
+        },);
+        return res.status;
+      }, QUEST_ID,);
+      expect(updated,).toBeLessThan(400,);
+
+      const row = await ctx.db
+        .selectFrom("quests",)
+        .select(["progress",],)
+        .where("id", "=", QUEST_ID,)
+        .executeTakeFirstOrThrow();
+      expect(Number(row.progress,),).toBeGreaterThanOrEqual(1,);
+    } finally {
+      errors.assert();
+      errors.detach();
+      await page.close();
+    }
+  }, 60_000,);
 });

@@ -3202,22 +3202,7 @@ export async function insertBlogTags(db: Db, post_id: string, tag: string, opts?
     ...opts,
   } as any,).execute();
 }
-/** Insert a memory_audit_log row. */
-export async function insertMemoryAuditLog(
-  db: Db,
-  memory_id: string,
-  actor_id: string,
-  action: string,
-  opts?: { id?: string; user_id?: string | null; details?: string; created_at?: string },
-): Promise<void> {
-  await db.insertInto("memory_audit_log",).values({
-    id: crypto.randomUUID(),
-    memory_id,
-    actor_id,
-    action,
-    ...opts,
-  } as any,).execute();
-}
+
 /** Insert a character_license_history row. */
 export async function insertCharacterLicenseHistory(
   db: Db,
@@ -3240,6 +3225,7 @@ export async function insertCharacterLicenseHistory(
     ...opts,
   } as any,).execute();
 }
+
 /** Insert a actor_memories row. */
 export async function insertActorMemories(
   db: Db,
@@ -3790,6 +3776,24 @@ export async function insertRpgQuestions(
     ...opts,
   } as any,).execute();
 }
+
+/** Insert a memory_audit_log row. */
+export async function insertMemoryAuditLog(
+  db: Db,
+  memory_id: string,
+  actor_id: string,
+  action: string,
+  opts?: { id?: string; user_id?: string | null; details?: string; created_at?: string },
+): Promise<void> {
+  await db.insertInto("memory_audit_log",).values({
+    id: crypto.randomUUID(),
+    memory_id,
+    actor_id,
+    action,
+    ...opts,
+  } as any,).execute();
+}
+
 /** Insert a schema_version row. */
 export async function insertSchemaVersion(
   db: Db,
