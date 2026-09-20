@@ -11,7 +11,6 @@
 import { beforeEach, describe, expect, it, } from "bun:test";
 import type { Kysely, } from "kysely";
 import type { MemoryType, } from "../db/enums";
-import * as sourceChain from "../db/migrations/008_memory_source_chain";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
@@ -281,7 +280,9 @@ describe("history-search", () => {
     expect(result.selected.map((m,) => m.id),).toContain(memRow.id,);
   });
 
-  it("008 backfill maps legacy single id to a one-element array", async () => {
+  it("source_message_ids defaults to a one-element JSON array for legacy rows", async () => {
+    // Migration 008 collapsed into 001_init: source_message_ids was always present.
+    // This test pins the contract that legacy single-ID rows serialize as a one-element array.
     await db
       .insertInto("actor_memories",)
       .values({
@@ -292,17 +293,14 @@ describe("history-search", () => {
         confidence: 0.9,
         importance: 1,
         keywords: "[]",
-        source_chat_id: "chat-hs",
-        source_message_id: "msg-1",
+        source_chat_ids: '["chat-hs"]',
+        source_message_ids: '["msg-1"]',
         scope: "character",
         privacy: "shared",
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       },)
       .execute();
-    const legacy = db as unknown as Kysely<unknown>;
-    await sourceChain.down(legacy,);
-    await sourceChain.up(legacy,);
     const row = await db
       .selectFrom("actor_memories",)
       .select("source_message_ids",)

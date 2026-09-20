@@ -11,6 +11,10 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 
 - **Assistant tooling (D3/P2-C)** — `/rewrite` and `/translate` (`/tl`) commands with style/language parsing, expanded command palette entries, multi-step creation wizard (edit → options → review), command button toolbar with GM-role filtering, ownership indicator badge on user-authored messages.
 
+### Changed
+
+- **DB v0 collapse** — replaced 23 forward migrations + 20 `parts/` sub-modules with a single atomic `001_init.ts` (~4 600 lines, all 154 tables + indexes + triggers). Dropped `parts/` orchestration, the `parts/`-vs-append strategy policy, the `schema_version` ledger, and the boot-time `schema-backfill` step. Regenerated `schema.ts`, `schema-*.ts`, `schema-manifest.ts`, `insert-helpers.ts`, `db-schemas.ts`. AGENTS.md updated: append-only policy retained, but with only two valid paths (new top-level `NNN_*.ts` or extend current HEAD if not yet shipped).
+
 ## [0.1.0] - 2026-08-15
 
 First release. Clean-room reimplementation of SillyTavern-style RPG chat.

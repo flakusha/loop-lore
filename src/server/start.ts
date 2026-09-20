@@ -21,7 +21,6 @@ import { join, } from "node:path";
 import { loadAllPlugins, unloadAllPlugins, } from "../plugins";
 import { loadConfig, } from "../config/load";
 import { runDataMigrations, runMigrations, } from "../db/migrate";
-import { runSchemaBackfill, } from "../db/schema-backfill";
 import { seedDefaultActors, } from "../db/seed";
 import { serve, } from "bun";
 /**
@@ -105,7 +104,6 @@ export async function start() {
   const handleRequest = createRequestHandler(app, config, logger, database,);
 
   await runMigrations(database,); // ensure DB schema ready before serving
-  await runSchemaBackfill(database,);
   await runDataMigrations(database,); // row-level, after schema is final, before seeding
   await seedDefaultActors(database, config,);
   const effectiveSeeding = applyEnvironmentOverrides(config.seeding,);
