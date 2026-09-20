@@ -278,7 +278,7 @@ Top-level `NNN_name.ts` files under `src/db/migrations/`, each exporting `up(db)
 
 **Append-only policy** — applied migrations are never deleted, renamed, or renumbered (the filename is the identity stored in `kysely_migration`). To change schema behavior, add a **new forward migration** that alters the schema to the desired state. Full policy: `src/db/migrations/README.md`.
 
-**Two paths for new schema changes:** (1) append a new top-level `NNN_*.ts` migration (default); (2) extend the current HEAD migration if it is not yet shipped. There is no `parts/` subdirectory, no folding into a frozen base migration.
+**Two paths for new schema changes:** (1) append a new top-level `NNN_*.ts` migration (default — numbering is sequential from `001_init`, so the next file is `002_*`; old pre-collapse numbers are dead, do not skip ahead); (2) extend the current HEAD migration if it is not yet shipped. There is no `parts/` subdirectory, no folding into a frozen base migration.
 Generated (never hand-edit): `src/db/schema-*.ts`, `src/db/schema.ts`,
 `src/db/schema-manifest.ts`, `src/test-utils/insert-helpers.ts`,
 `src/validation/db-schemas.ts`. e2e provisioning and unit tests build the
