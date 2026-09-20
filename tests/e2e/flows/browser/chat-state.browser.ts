@@ -6,8 +6,8 @@
  *
  * Pins the chatState() component and ui-store shapes so additions and typos
  * fail loudly. Reads component-local state at runtime (post-init, pre-chat)
- * and asserts declared defaults from src/frontend/alpine/chat.ts and
- * src/frontend/stores/ui-store.ts.
+ * and asserts declared defaults from src/frontend/alpine/chat/bootstrap.ts
+ * and src/frontend/stores/ui-store.ts.
  */
 
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
@@ -32,22 +32,26 @@ describe("Alpine state contract E2E", () => {
 
   test("chatState() exposes the declared defaults before a chat is selected", async () => {
     const page = await ctx.openPage();
-    const errors = trackPageErrors(page,);
+    // /api/telemetry/event returns 403 for solo (not an admin) — benign
+    // telemetry noise. The console message text is just the generic
+    // "Failed to load resource ... 403" without the URL, so allowlist on that.
+    const errors = trackPageErrors(page, { allowlist: [/Failed to load resource.*403/,], },);
     try {
       await page.goto(`${ctx.url}/views/chat`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
       await waitForAlpineReady(page,);
 
+      // The contract is the declared initial shape (bootstrap.ts lines 51-274),
+      // not the post-load state — loadChats() is async and races the read.
       const state = await getAlpineData<Record<string, unknown>>(page, "[x-data='chatState()']",);
 
-      // Core flags (src/frontend/alpine/chat.ts).
+      // Core flags.
       expect(state.isGenerating,).toBe(false,);
       expect(state.isContinuing,).toBe(false,);
       expect(state.activeChat,).toBeNull();
       // messages is empty until a chat is selected.
       expect(state.messages,).toEqual([],);
-      // chats is auto-loaded on init (solo user's seeded chat appears).
+      // chats starts as [] per the source; loadChats() populates it async.
       expect(Array.isArray(state.chats,),).toBe(true,);
-      expect((state.chats as unknown[]).length,).toBeGreaterThan(0,);
       expect(state.loadingMessages,).toBe(false,);
       expect(state.loadingError,).toBeNull();
       expect(state.hasMoreMessages,).toBe(true,);
@@ -57,9 +61,14 @@ describe("Alpine state contract E2E", () => {
       expect(state.impersonationActive,).toBe(false,);
       expect(state.currentCharacter,).toBeNull();
 
-      // groupMessages getter must be a live getter (it recomputes), exposed
+      // groupedMessages getter must be a live getter (it recomputes), exposed
       // as an array that reflects messages.
       expect(Array.isArray(state.groupedMessages,),).toBe(true,);
+
+      // chat-keys module state (src/frontend/alpine/chat-keys.ts).
+      expect(state._chatKey,).toBeNull();
+      expect(state._encryptionEnabled,).toBe(false,);
+      expect(state._keyId,).toBeNull();
     } finally {
       errors.assert();
       errors.detach();
@@ -93,6 +102,15 @@ describe("Alpine state contract E2E", () => {
       expect(ui.showPersonaForm,).toBe(false,);
       expect(ui.hasActiveChat,).toBe(false,);
       expect(ui.showGmPanel,).toBe(false,);
+      expect(ui.showParticipants,).toBe(false,);
+      expect(ui.showGmGuidance,).toBe(false,);
+      expect(ui.showQuestLog,).toBe(false,);
+      expect(ui.showSideChannels,).toBe(false,);
+      expect(ui.gmAssistantTab,).toBe("shadow",);
+      expect(Array.isArray(ui.sideChannels,),).toBe(true,);
+      expect(ui.newSideChannelName,).toBe("",);
+      expect(ui.activePersona,).toBeNull();
+      expect(ui.userRole,).toBe("member",);
     } finally {
       errors.assert();
       errors.detach();
