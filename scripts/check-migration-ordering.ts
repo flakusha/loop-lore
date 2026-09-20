@@ -7,7 +7,7 @@
  *   1. Every migration file at the loader scope matches `NNN_name.ts`
  *      (3-digit numeric prefix). Stray .ts (README siblings, helpers,
  *      tests) get flagged.
- *   2. Numeric prefixes are unique within the LOADER SCOPE
+ *   2. Numeric prefixes are unique within the loader scope
  *      (src/db/migrations/) — the directory migrate.ts's readdirSync
  *      actually scans. Duplicate prefixes there were the original
  *      ticket's failure mode (041a_/041b_ etc. ordered alphabetically
@@ -15,13 +15,8 @@
  *   3. Names sort numerically by prefix, then alphabetically — the same
  *      rule src/db/migrate.ts:compareMigrationNames enforces at runtime.
  *
- * The src/db/migrations/parts/ subdirectory is loaded transitively via
- * 001_init.ts imports (NOT by migrate.ts readdirSync), so its prefixes
- * intentionally overlap with root (e.g. parts/001_core is composed into
- * 001_init). Renaming parts/* would orphan every applied
- * kysely_migration row, which the project's append-only migration policy
- * forbids. Parts collisions are therefore checked only as a soft warning
- * that future work could change.
+ * Post-collapse (DB v0), migrations/ holds a single 001_init.ts plus any
+ * future NNN_*.ts appends; no parts/ subdirectory exists.
  *
  * BUG-migration-ordering-ambiguous-via-localecompare-duplicate-num.
  *
@@ -37,7 +32,6 @@ import { fileURLToPath, } from "node:url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url,),);
 const ROOT = path.resolve(__dirname, "..",);
 const MIGRATIONS_ROOT = path.join(ROOT, "src/db/migrations",);
-const PARTS_ROOT = path.join(MIGRATIONS_ROOT, "parts",);
 
 const FILENAME = /^(\d{3})_(.+)\.ts$/;
 
@@ -49,11 +43,6 @@ interface FileRow {
 
 const LOADER_SCOPE: ReadonlyArray<{ abs: string; relDir: string }> = [
   { abs: MIGRATIONS_ROOT, relDir: "src/db/migrations", },
-];
-// Parts: same shape but tracked separately — overlaps with root are
-// expected, so a parts-only collision is reported but does not fail the gate.
-const PARTS_SCOPE: ReadonlyArray<{ abs: string; relDir: string }> = [
-  { abs: PARTS_ROOT, relDir: "src/db/migrations/parts", },
 ];
 
 interface ScopeReport {
@@ -82,7 +71,6 @@ const scanScope = (scope: ReadonlyArray<{ abs: string; relDir: string }>,): Scop
 };
 
 const loaderReport = scanScope(LOADER_SCOPE,);
-const partsReport = scanScope(PARTS_SCOPE,);
 
 let failed = false;
 const fail = (msg: string,): void => {
@@ -92,20 +80,16 @@ const fail = (msg: string,): void => {
 const ok = (msg: string,): void => {
   console.log(`  ok ${msg}`,);
 };
-const warn = (msg: string,): void => {
-  console.warn(`  ! ${msg}`,);
-};
-
 console.log("Migration ordering gate",);
 console.log(
-  `  loader scope: ${loaderReport.collected.length} files, parts scope: ${partsReport.collected.length} files`,
+  `  loader scope: ${loaderReport.collected.length} files`,
 );
 
-if (loaderReport.stray.length === 0 && partsReport.stray.length === 0) {
-  ok("no stray .ts files in src/db/migrations{,/parts}",);
+if (loaderReport.stray.length === 0) {
+  ok("no stray .ts files in src/db/migrations",);
 } else {
   fail(`stray .ts files (would be filtered at runtime — remove or rename):`,);
-  for (const s of [...loaderReport.stray, ...partsReport.stray,]) { console.error(`      ${s}`,); }
+  for (const s of loaderReport.stray) { console.error(`      ${s}`,); }
 }
 
 const groupByPrefix = (rows: readonly FileRow[],): Record<string, FileRow[]> => {
@@ -131,16 +115,6 @@ if (loaderCollisions.length === 0) {
     console.error(`      prefix ${prefix}:`,);
     for (const f of files) { console.error(`        - ${path.join(f.relDir, f.name,)}`,); }
   }
-}
-
-const partsCollisions = Object.entries(groupByPrefix(partsReport.collected,),)
-  .filter(([, files,],) => files.length > 1);
-if (partsCollisions.length === 0) {
-  ok(`parts scope: unique prefixes (${partsReport.collected.length} files)`,);
-} else {
-  warn(
-    `parts scope: ${partsCollisions.length} prefix overlaps with loader scope (expected for 001_init orchestration; flag for review only)`,
-  );
 }
 
 const numericSort = (a: FileRow, b: FileRow,): number => {
