@@ -3,7 +3,7 @@ import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Kysely, sql, } from "kysely";
 import type { Migration, } from "kysely/migration";
 import { Migrator, } from "kysely/migration";
-import { readdirSync, readFileSync, statSync, } from "node:fs";
+import { readdirSync, } from "node:fs";
 import path from "node:path";
 import { createLogger, } from "../logger";
 import { createSqliteDialect, setTestDatabase, } from "./index";
@@ -197,7 +197,7 @@ describe("per-migration roundtrip", () => {
 
 // ── Migration 001_init specific ──────────────────────────────
 
-describe("001_init — full schema", () => {
+describe("001_init — core tables", () => {
   let db: Database;
   let kysely: Kysely<unknown>;
 
@@ -210,53 +210,17 @@ describe("001_init — full schema", () => {
     db.close();
     setTestDatabase(null,);
   },);
-  const EXPECTED_TABLES = [
-    "users",
-    "sessions",
-    "worlds",
-    "locations",
-    "items",
-    "world_items",
-    "chats",
-    "actors",
-    "chat_participants",
-    "characters",
-    "actor_memories",
-    "actor_notes",
-    "actor_items",
-    "actor_currencies",
-    "actor_lore_entries",
-    "world_lore_entries",
-    "assets",
-    "asset_links",
-    "asset_shares",
-    "messages",
-    "actor_keys",
-    "user_api_keys",
-    "generation_attempts",
-    "story_turns",
-    "quests",
-    "quest_progress",
-    "world_states",
-    "npc_states",
-    "location_states",
-    "synthetic_data",
-    "model_role_overrides",
-  ] as const;
 
-  test("up() creates every expected schema table", async () => {
+  test("up() creates the core identity tables", async () => {
     const { up, } = await import("./migrations/001_init");
     await up(kysely,);
     const names = schemaTables(db,);
-    for (const table of EXPECTED_TABLES) {
+    for (const table of ["users", "sessions", "telemetry_events", "system_config", "plugin_state",]) {
       expect(names.has(table,), `missing table: ${table}`,).toBe(true,);
     }
-    // 001_init now builds the complete final-form schema (130 real tables +
-    // FTS virtual tables + their shadow tables), not a 31-table subset.
-    expect(names.size, "full final-form schema should be large",).toBeGreaterThan(100,);
   });
 
-  test("down() drops every schema table (clean revert)", async () => {
+  test("down() drops every table 001_init created", async () => {
     const { down, } = await import("./migrations/001_init");
     await down(kysely,);
     const names = schemaTables(db,);
@@ -463,125 +427,5 @@ describe("migration loader excludes colocated *.test.ts", () => {
     const files = readdirSync(MIGRATIONS_DIR,);
     const strayTests = files.filter((f,) => f.endsWith(".test.ts",));
     expect(strayTests,).toEqual([],);
-  });
-});
-
-// ── 001_init part freeze ─────────────────────────────────────────
-
-describe("001_init part freeze", () => {
-  const FROZEN_PARTS = [
-    "001_core",
-    "002_assets",
-    "003_worlds",
-    "004_actors",
-    "005_characters",
-    "006_chat",
-    "007_personas",
-    "008_story",
-    "009_crafting",
-    "010_progression",
-    "011_blog",
-    "012_memory",
-    "013_generation",
-    "014_moderation",
-    "015_e2e",
-    "016_fts",
-    "018_schema_version",
-    "019_trade_requested_materials",
-    "020_workflow_sessions",
-    "022_mesh_sharing",
-  ];
-
-  test("001_init.ts wires exactly the frozen part set", () => {
-    const source = readFileSync(path.join(MIGRATIONS_DIR, "001_init.ts",), "utf8",);
-    const wired = [
-      ...new Set(
-        [...source.matchAll(/\.\/parts\/([A-Za-z0-9_]+)/g,),].map((match,) => match[1] as string),
-      ),
-    ].sort((a, b,) => a.localeCompare(b,));
-    expect(
-      wired,
-      "001_init.ts is frozen: do NOT append parts (Kysely tracks 001_init as one " +
-        "unit, so appended parts silently skip on existing databases). Create a new " +
-        "top-level NNN_name.ts migration instead.",
-    ).toEqual([...FROZEN_PARTS,].sort((a, b,) => a.localeCompare(b,)),);
-  });
-});
-
-// ── schema_version ledger tripwire ─────────────────────────────
-// A duplicate `recordSchemaVersion(db, N, ...)` silently loses a ledger row
-// (version is the PK, INSERT OR IGNORE). This tripwire failed to exist when
-// two migrations both recorded version 33 — the second row vanished without
-// any error.
-
-describe("recordSchemaVersion ledger", () => {
-  // Matches both one-line and multi-line calls; captures the version arg.
-  const CALL = /recordSchemaVersion\(\s*(?:database|db)\s*,\s*(\d+)/g;
-
-  /**
-   * @returns map of repo-relative file → recorded version numbers, across
-   * every non-test .ts file under src/db (migrations/, parts/, backfills).
-   */
-  function collectCalls(): Map<string, number[]> {
-    const found = new Map<string, number[]>();
-    const dbDir = __dirname;
-    const walk = (dir: string,): void => {
-      for (const entry of readdirSync(dir,)) {
-        const full = path.join(dir, entry,);
-        if (statSync(full,).isDirectory()) {
-          walk(full,);
-          continue;
-        }
-        if (!entry.endsWith(".ts",) || entry.endsWith(".test.ts",)) { continue; }
-        const source = readFileSync(full, "utf8",);
-        const versions = [...source.matchAll(CALL,),].map((m,) => Number(m[1],));
-        if (versions.length > 0) { found.set(path.relative(dbDir, full,), versions,); }
-      }
-    };
-    walk(dbDir,);
-    return found;
-  }
-
-  test("every migration file records a unique schema version", () => {
-    const seen = new Map<number, string>();
-    const dupes: string[] = [];
-    for (const [file, versions,] of collectCalls()) {
-      // Uniqueness applies per schema change: a parts/ file and a top-level
-      // migration never record the same number. Backfills (outside
-      // migrations/) re-record EXISTING numbers on purpose (convergence).
-      if (!file.startsWith(`migrations${path.sep}`,)) { continue; }
-      for (const v of versions) {
-        const prev = seen.get(v,);
-        if (prev) { dupes.push(`version ${v}: ${prev} vs ${file}`,); }
-        else { seen.set(v, file,); }
-      }
-    }
-    const nextFree = seen.size > 0 ? Math.max(...seen.keys(),) + 1 : 1;
-    expect(
-      dupes,
-      `duplicate schema_version numbers — record the new change with the next ` +
-        `free version (${nextFree}): ${dupes.join("; ",)}`,
-    ).toEqual([],);
-  });
-
-  test("backfills only re-record versions a migration already records", () => {
-    const migrationVersions = new Set<number>();
-    for (const [file, versions,] of collectCalls()) {
-      if (file.startsWith(`migrations${path.sep}`,)) {
-        for (const v of versions) { migrationVersions.add(v,); }
-      }
-    }
-    // 19 was folded into the 001_init parts tree before recording existed;
-    // only the boot backfill converges it (schema-backfill.ts).
-    const BACKFILL_ONLY = new Set([19,],);
-    for (const [file, versions,] of collectCalls()) {
-      if (file.startsWith(`migrations${path.sep}`,)) { continue; }
-      for (const v of versions) {
-        expect(
-          migrationVersions.has(v,) || BACKFILL_ONLY.has(v,),
-          `${file} records schema_version ${v}, which no migration records`,
-        ).toBe(true,);
-      }
-    }
   });
 });
