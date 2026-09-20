@@ -162,6 +162,14 @@ export function idempotent(config: IdempotencyConfig = {},): IdempotencyBeforeHa
       const userId = args.userId ?? null;
       const meta = { method, route, userId, };
       const key = makeKey(method, route, args.requestId, userId,);
+      // Streaming responses (SSE) never end: cloning + reading their body
+      // would pin the tee buffer and hold the slot forever. Streams are not
+      // replayable — release the slot without caching.
+      // BUG-bug-idempotency-record-response-hangs-on-sse-streams.
+      if (args.response.headers.get("content-type",)?.includes("text/event-stream",)) {
+        backend.release(key, meta,);
+        return;
+      }
       // Clone before reading the body so the original response (sent to the
       // client) is not consumed. `.text()` locks the stream.
       //

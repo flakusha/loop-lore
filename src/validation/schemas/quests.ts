@@ -16,9 +16,13 @@ export const QuestUpdateBody = t.Object({
   status: t.Optional(t.String(),),
 },);
 
+// Handler (src/routes/quests/handlers.ts handleProgress) and the quests view
+// (advanceQuest) both speak `delta` (+ optional chatId / sourceMessageId);
+// nothing sends or reads the old `progress` body field.
 export const QuestProgressBody = t.Object({
-  progress: t.Number({ minimum: 0, },),
-  status: t.Optional(t.String(),),
+  delta: t.Optional(t.Number({ minimum: 1, },),),
+  chatId: t.Optional(t.String(),),
+  sourceMessageId: t.Optional(t.String(),),
 },);
 
 export const QuestResponse = t.Object({
