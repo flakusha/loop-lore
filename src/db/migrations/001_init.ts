@@ -12,6 +12,13 @@
  *   1. Append a new top-level NNN_*.ts migration (default).
  *   2. Extend the current HEAD migration only if it has not yet shipped.
  * No parts/, no folding into a frozen base migration.
+ *
+ * TODO: split into one focused NNN_*.ts file per domain (core/auth,
+ * worlds/actors, chat, rpg, memory, generation, moderation, mesh, ...)
+ * once the schema stabilizes. Single file is deliberate for now (atomic
+ * review, no cross-file ordering hazards). New appends start at 002_*
+ * (sequential — old 002-023 numbers died with the collapse, do not skip
+ * to 024/030).
  */
 import { type Kysely, sql, } from "kysely";
 import * as enums from "../enums";
