@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-import { LocationTreeService, } from "./tree";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
+import { randomUUID, } from "node:crypto";
 import { createTestDb, resetTestDb, type TestDb, } from "../test-utils/create-test-db";
 import { insertUsers, insertWorlds, } from "../test-utils/insert-helpers";
-import { randomUUID, } from "node:crypto";
+import { LocationTreeService, } from "./tree";
 
 let testDb: TestDb;
 
