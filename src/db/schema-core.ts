@@ -230,15 +230,6 @@ export interface AssetTransforms {
   updated_at: Generated<string>;
 }
 
-// ── mesh_inbound_keys ────────────────────────────────────────────
-export interface MeshInboundKeys {
-  peer_origin: Generated<string>;
-  encrypted_key: string;
-  previous_encrypted_key: string | null;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
-}
-
 // ── world_invites ────────────────────────────────────────────
 export interface WorldInvites {
   id: Generated<string>;
@@ -843,18 +834,6 @@ export interface VnChoices {
   created_at: string;
 }
 
-// ── rotation_history ────────────────────────────────────────────
-export interface RotationHistory {
-  id: Generated<string>;
-  chat_id: string;
-  actor_id: string | null;
-  reason: string;
-  old_key_id: string | null;
-  new_key_id: string;
-  messages_re_encrypted: Generated<number>;
-  created_at: Generated<string>;
-}
-
 // ── personas ────────────────────────────────────────────
 export interface Personas {
   id: Generated<string>;
@@ -1050,38 +1029,6 @@ export interface PromptTemplates {
   updated_at: Generated<string>;
 }
 
-// ── travel_routes ────────────────────────────────────────────
-export interface TravelRoutes {
-  id: Generated<string>;
-  world_id: string;
-  name: string;
-  kind: TransportKind;
-  waypoints: Generated<string>;
-  loop: Generated<number>;
-  seconds_per_unit: Generated<number>;
-  created_at: Generated<string>;
-}
-
-// ── travel_route_stops ────────────────────────────────────────────
-export interface TravelRouteStops {
-  id: Generated<string>;
-  route_id: string;
-  location_id: string;
-  stop_order: number;
-  dwell_seconds: Generated<number>;
-  coord_x: number | null;
-  coord_y: number | null;
-  coord_z: number | null;
-}
-
-// ── actor_locations ────────────────────────────────────────────
-export interface ActorLocations {
-  actor_id: Generated<string>;
-  physical_location_id: string;
-  spatial_location_id: string;
-  entered_at: Generated<string>;
-}
-
 // ── nsfw_consent_state ────────────────────────────────────────────
 export interface NsfwConsentState {
   id: Generated<string>;
@@ -1152,24 +1099,6 @@ export interface MessageSearchTokens {
   scope: string;
 }
 
-// ── memory_audit_log ────────────────────────────────────────────
-export interface MemoryAuditLog {
-  id: Generated<string>;
-  memory_id: string;
-  actor_id: string;
-  user_id: string | null;
-  action: string;
-  details: Generated<string>;
-  created_at: Generated<string>;
-}
-
-// ── schema_version ────────────────────────────────────────────
-export interface SchemaVersion {
-  version: Generated<number>;
-  applied_at: Generated<string>;
-  description: string | null;
-}
-
 // ── workflow_sessions ────────────────────────────────────────────
 export interface WorkflowSessions {
   chat_id: Generated<string>;
@@ -1216,6 +1145,70 @@ export interface MeshDeliveries {
   content_hash: string;
   clock: number;
   received_at: Generated<string>;
+}
+
+// ── mesh_inbound_keys ────────────────────────────────────────────
+export interface MeshInboundKeys {
+  peer_origin: Generated<string>;
+  encrypted_key: string;
+  previous_encrypted_key: string | null;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── rotation_history ────────────────────────────────────────────
+export interface RotationHistory {
+  id: Generated<string>;
+  chat_id: string;
+  actor_id: string | null;
+  reason: string;
+  old_key_id: string | null;
+  new_key_id: string;
+  messages_re_encrypted: Generated<number>;
+  created_at: Generated<string>;
+}
+
+// ── travel_routes ────────────────────────────────────────────
+export interface TravelRoutes {
+  id: Generated<string>;
+  world_id: string;
+  name: string;
+  kind: TransportKind;
+  waypoints: Generated<string>;
+  loop: Generated<number>;
+  seconds_per_unit: Generated<number>;
+  created_at: Generated<string>;
+}
+
+// ── travel_route_stops ────────────────────────────────────────────
+export interface TravelRouteStops {
+  id: Generated<string>;
+  route_id: string;
+  location_id: string;
+  stop_order: number;
+  dwell_seconds: Generated<number>;
+  coord_x: number | null;
+  coord_y: number | null;
+  coord_z: number | null;
+}
+
+// ── actor_locations ────────────────────────────────────────────
+export interface ActorLocations {
+  actor_id: Generated<string>;
+  physical_location_id: string;
+  spatial_location_id: string;
+  entered_at: Generated<string>;
+}
+
+// ── memory_audit_log ────────────────────────────────────────────
+export interface MemoryAuditLog {
+  id: Generated<string>;
+  memory_id: string;
+  actor_id: string;
+  user_id: string | null;
+  action: string;
+  details: Generated<string>;
+  created_at: Generated<string>;
 }
 
 // ── status_effect ────────────────────────────────────────────

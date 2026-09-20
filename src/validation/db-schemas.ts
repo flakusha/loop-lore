@@ -824,15 +824,6 @@ export const AssetTransformsSchema = t.Object({
   updated_at: t.Optional(t.String(),),
 },);
 
-// ── mesh_inbound_keys ────────────────────────────────────────────
-export const MeshInboundKeysSchema = t.Object({
-  encrypted_key: t.String(),
-  peer_origin: t.Optional(t.String(),),
-  previous_encrypted_key: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-  updated_at: t.Optional(t.String(),),
-},);
-
 // ── location_states ────────────────────────────────────────────
 export const LocationStatesSchema = t.Object({
   location_id: t.String(),
@@ -1163,24 +1154,6 @@ export const AdminCharacterOverridesSchema = t.Object({
   license_override: t.Optional(LicenseTypeSchema,),
   reason: t.Optional(t.String(),),
   expires_at: t.Optional(t.String(),),
-},);
-
-// ── asset_tags ────────────────────────────────────────────
-export const AssetTagsSchema = t.Object({
-  asset_id: t.String(),
-  tag: t.String(),
-  scope: t.Optional(t.String(),),
-  owner_id: t.Optional(t.String(),),
-  source: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-},);
-
-// ── asset_tag_dismissals ────────────────────────────────────────────
-export const AssetTagDismissalsSchema = t.Object({
-  asset_id: t.String(),
-  tag: t.String(),
-  user_id: t.String(),
-  created_at: t.Optional(t.String(),),
 },);
 
 // ── character_arc ────────────────────────────────────────────
@@ -1872,17 +1845,6 @@ export const VnChoicesSchema = t.Object({
   selected_at: t.Optional(t.String(),),
 },);
 
-// ── rotation_history ────────────────────────────────────────────
-export const RotationHistorySchema = t.Object({
-  chat_id: t.String(),
-  reason: t.String(),
-  new_key_id: t.String(),
-  actor_id: t.Optional(t.String(),),
-  old_key_id: t.Optional(t.String(),),
-  messages_re_encrypted: t.Optional(t.Number(),),
-  created_at: t.Optional(t.String(),),
-},);
-
 // ── personas ────────────────────────────────────────────
 export const PersonasSchema = t.Object({
   user_id: t.String(),
@@ -2289,14 +2251,6 @@ export const XpLedgerSchema = t.Object({
   created_at: t.Optional(t.String(),),
 },);
 
-// ── quest_reward_ledger ────────────────────────────────────────────
-export const QuestRewardLedgerSchema = t.Object({
-  world_id: t.String(),
-  ledger_key: t.String(),
-  world_item_ids: t.String(),
-  created_at: t.Optional(t.String(),),
-},);
-
 // ── blog_comments ────────────────────────────────────────────
 export const BlogCommentsSchema = t.Object({
   post_id: t.String(),
@@ -2348,19 +2302,6 @@ export const BlogRagSourcesSchema = t.Object({
 export const BlogTagsSchema = t.Object({
   post_id: t.String(),
   tag: t.String(),
-},);
-
-// ── character_license_history ────────────────────────────────────────────
-export const CharacterLicenseHistorySchema = t.Object({
-  actor_id: t.String(),
-  license_type: t.String(),
-  allow_derivatives: t.Number(),
-  allow_commercial: t.Number(),
-  share_alike: t.Number(),
-  changed_by: t.String(),
-  custom_license_text: t.Optional(t.String(),),
-  attribution: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
 },);
 
 // ── actor_memories ────────────────────────────────────────────
@@ -2480,36 +2421,6 @@ export const PromptTemplatesSchema = t.Object({
   payload: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
-},);
-
-// ── travel_routes ────────────────────────────────────────────
-export const TravelRoutesSchema = t.Object({
-  world_id: t.String(),
-  name: t.String(),
-  kind: TransportKindSchema,
-  waypoints: t.Optional(t.String(),),
-  loop: t.Optional(t.Number(),),
-  seconds_per_unit: t.Optional(t.Number(),),
-  created_at: t.Optional(t.String(),),
-},);
-
-// ── travel_route_stops ────────────────────────────────────────────
-export const TravelRouteStopsSchema = t.Object({
-  route_id: t.String(),
-  location_id: t.String(),
-  stop_order: t.Number(),
-  dwell_seconds: t.Optional(t.Number(),),
-  coord_x: t.Optional(t.Number(),),
-  coord_y: t.Optional(t.Number(),),
-  coord_z: t.Optional(t.Number(),),
-},);
-
-// ── actor_locations ────────────────────────────────────────────
-export const ActorLocationsSchema = t.Object({
-  physical_location_id: t.String(),
-  spatial_location_id: t.String(),
-  actor_id: t.Optional(t.String(),),
-  entered_at: t.Optional(t.String(),),
 },);
 
 // ── content_flags ────────────────────────────────────────────
@@ -2664,38 +2575,6 @@ export const MessageSearchTokensSchema = t.Object({
   scope: t.String(),
 },);
 
-// ── rpg_questions ────────────────────────────────────────────
-export const RpgQuestionsSchema = t.Object({
-  chat_id: t.String(),
-  actor_id: t.String(),
-  type: t.String(),
-  prompt: t.String(),
-  options: t.String(),
-  time_limit: t.Optional(t.Number(),),
-  required_choice: t.Optional(t.Number(),),
-  status: t.Optional(t.String(),),
-  selected_option_id: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-  answered_at: t.Optional(t.String(),),
-},);
-
-// ── memory_audit_log ────────────────────────────────────────────
-export const MemoryAuditLogSchema = t.Object({
-  memory_id: t.String(),
-  actor_id: t.String(),
-  action: t.String(),
-  user_id: t.Optional(t.String(),),
-  details: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-},);
-
-// ── schema_version ────────────────────────────────────────────
-export const SchemaVersionSchema = t.Object({
-  version: t.Optional(t.Number(),),
-  applied_at: t.Optional(t.String(),),
-  description: t.Optional(t.String(),),
-},);
-
 // ── workflow_sessions ────────────────────────────────────────────
 export const WorkflowSessionsSchema = t.Object({
   workflow_id: t.String(),
@@ -2740,6 +2619,120 @@ export const MeshDeliveriesSchema = t.Object({
   clock: t.Number(),
   content_id: t.Optional(t.String(),),
   received_at: t.Optional(t.String(),),
+},);
+
+// ── mesh_inbound_keys ────────────────────────────────────────────
+export const MeshInboundKeysSchema = t.Object({
+  encrypted_key: t.String(),
+  peer_origin: t.Optional(t.String(),),
+  previous_encrypted_key: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── asset_tags ────────────────────────────────────────────
+export const AssetTagsSchema = t.Object({
+  asset_id: t.String(),
+  tag: t.String(),
+  scope: t.Optional(t.String(),),
+  owner_id: t.Optional(t.String(),),
+  source: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── asset_tag_dismissals ────────────────────────────────────────────
+export const AssetTagDismissalsSchema = t.Object({
+  asset_id: t.String(),
+  tag: t.String(),
+  user_id: t.String(),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── rotation_history ────────────────────────────────────────────
+export const RotationHistorySchema = t.Object({
+  chat_id: t.String(),
+  reason: t.String(),
+  new_key_id: t.String(),
+  actor_id: t.Optional(t.String(),),
+  old_key_id: t.Optional(t.String(),),
+  messages_re_encrypted: t.Optional(t.Number(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── quest_reward_ledger ────────────────────────────────────────────
+export const QuestRewardLedgerSchema = t.Object({
+  world_id: t.String(),
+  ledger_key: t.String(),
+  world_item_ids: t.String(),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── character_license_history ────────────────────────────────────────────
+export const CharacterLicenseHistorySchema = t.Object({
+  actor_id: t.String(),
+  license_type: t.String(),
+  allow_derivatives: t.Number(),
+  allow_commercial: t.Number(),
+  share_alike: t.Number(),
+  changed_by: t.String(),
+  custom_license_text: t.Optional(t.String(),),
+  attribution: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── travel_routes ────────────────────────────────────────────
+export const TravelRoutesSchema = t.Object({
+  world_id: t.String(),
+  name: t.String(),
+  kind: TransportKindSchema,
+  waypoints: t.Optional(t.String(),),
+  loop: t.Optional(t.Number(),),
+  seconds_per_unit: t.Optional(t.Number(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── travel_route_stops ────────────────────────────────────────────
+export const TravelRouteStopsSchema = t.Object({
+  route_id: t.String(),
+  location_id: t.String(),
+  stop_order: t.Number(),
+  dwell_seconds: t.Optional(t.Number(),),
+  coord_x: t.Optional(t.Number(),),
+  coord_y: t.Optional(t.Number(),),
+  coord_z: t.Optional(t.Number(),),
+},);
+
+// ── actor_locations ────────────────────────────────────────────
+export const ActorLocationsSchema = t.Object({
+  physical_location_id: t.String(),
+  spatial_location_id: t.String(),
+  actor_id: t.Optional(t.String(),),
+  entered_at: t.Optional(t.String(),),
+},);
+
+// ── rpg_questions ────────────────────────────────────────────
+export const RpgQuestionsSchema = t.Object({
+  chat_id: t.String(),
+  actor_id: t.String(),
+  type: t.String(),
+  prompt: t.String(),
+  options: t.String(),
+  time_limit: t.Optional(t.Number(),),
+  required_choice: t.Optional(t.Number(),),
+  status: t.Optional(t.String(),),
+  selected_option_id: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  answered_at: t.Optional(t.String(),),
+},);
+
+// ── memory_audit_log ────────────────────────────────────────────
+export const MemoryAuditLogSchema = t.Object({
+  memory_id: t.String(),
+  actor_id: t.String(),
+  action: t.String(),
+  user_id: t.Optional(t.String(),),
+  details: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
 },);
 
 // ── status_effect ────────────────────────────────────────────
