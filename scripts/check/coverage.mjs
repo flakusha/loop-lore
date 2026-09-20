@@ -160,6 +160,11 @@ const WAIVERS = {
     reason:
       "fractal-locations tree service gaps (cycle detection + deep-path + rollback paths); 78.8 measured; TASK-coverage-waiver-locations-at-78-under-check-gate",
   },
+  "locations:src/locations/routes.ts": {
+    floor: 65,
+    reason:
+      "route registration + fractal-locations CRUD paths exercised by e2e (browser-server.ts), not unit; 65 measured under diff-base; TASK-coverage-waiver-locations-at-78-under-check-gate",
+  },
   // Gate pass: src/plugins/ is the plugin loader/registry; runtime-only
   // resolution exercised via app boot and integration tests.
   "plugins": {
