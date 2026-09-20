@@ -14,6 +14,7 @@ import {
 import { HttpStatus, jsonError, jsonPaginated, jsonResponse, requireUserId, } from "../http-utils";
 import {
   enrichAttachments,
+  enrichMessageForList,
   isServiceError,
   parseToolCalls,
   parseToolResultMeta,
@@ -51,40 +52,9 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
           parentId: query.parentId,
         },);
 
-        const enrichPromises: Promise<Record<string, unknown>>[] = [];
-        for (const m of messages) {
-          enrichPromises.push(
-            (async (): Promise<Record<string, unknown>> => {
-              const row = m as Readonly<{
-                content: string;
-                content_type?: string;
-                metadata?: string | null;
-                content_encoding: string;
-                key_id: string | null;
-                chat_id: string;
-                attachments?: string | null;
-                tool_calls?: string | null;
-              }>;
-              const attachments = await enrichAttachments(database, row.attachments ?? null,);
-              const toolCalls = parseToolCalls(row.tool_calls ?? null,);
-              const toolMeta = row.content_type === "tool_result" ? parseToolResultMeta(row.metadata ?? null,) : null;
-              const toolFields = { tool_name: toolMeta?.toolName ?? null, tool_error: toolMeta?.toolError ?? false, };
-              try {
-                const content = await resolveMessageContent(database, row,);
-                return { ...m, content, attachments, tool_calls: toolCalls, ...toolFields, };
-              } catch {
-                return {
-                  ...m,
-                  content: "[Encrypted — unable to decrypt]",
-                  attachments,
-                  tool_calls: toolCalls,
-                  ...toolFields,
-                };
-              }
-            })(),
-          );
-        }
-        const enrichResults = await Promise.allSettled(enrichPromises,);
+        const enrichResults = await Promise.allSettled(
+          messages.map((m,) => enrichMessageForList(database, m as never,)),
+        );
         const enriched: Record<string, unknown>[] = [];
         for (const r of enrichResults) {
           if (r.status === "fulfilled") { enriched.push(r.value,); }
