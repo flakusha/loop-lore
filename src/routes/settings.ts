@@ -18,7 +18,7 @@ import type { Kysely, } from "kysely";
 import { ActorType, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { jsonParseOr, safeJsonStringify, } from "../utils";
-import { ErrorResponse, } from "../validation/schemas";
+import { ErrorResponse, SettingsUpdateAllowedKeys, } from "../validation/schemas";
 import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "./http-utils";
 
 /**
@@ -45,6 +45,28 @@ async function handleUpdateSettings(
   userId: string,
   body: Record<string, unknown>,
 ): Promise<Response> {
+  // Closed allowlist (BUG-patch-settings-endpoint-has-no-key-allowlist):
+  // TypeBox strips unknown keys when the body schema has
+  // `additionalProperties: false`, so the route layer must also reject
+  // keys outside the allowlist explicitly to surface them as 400 with a
+  // list of rejected keys. Without this, PATCH bodies could inject keys
+  // like `isAdmin` that would never match any schema field but would still
+  // be merged into the persisted blob.
+  const rejectedKeys = Object.keys(body,).filter(
+    (key,) => !(SettingsUpdateAllowedKeys as readonly string[]).includes(key,),
+  );
+  if (rejectedKeys.length > 0) {
+    return Response.json(
+      {
+        error: "Unknown settings keys are not allowed",
+        code: "BAD_REQUEST",
+        details: { rejectedKeys, allowedKeys: [...SettingsUpdateAllowedKeys,], },
+        meta: { api_version: "1", },
+      },
+      { status: HttpStatus.BadRequest, },
+    );
+  }
+
   // The account tier of the two-tier custom instructions (task
   // TASK-two-tier-custom-instructions): the settings blob is otherwise
   // free-form, so validate this key explicitly — string ≤ 5000 chars, or
@@ -162,6 +184,12 @@ export function settingsRoutes({ database, }: { database: Kysely<DB> }, prefix =
         return handleUpdateSettings(database, userId, body,);
       },
       {
+        // Free-form record at the body level so the handler can see every
+        // key the client sent. The schema enforces per-key shape and the
+        // type of known values; TypeBox's `additionalProperties: false`
+        // would strip unknown keys before the handler runs, which would
+        // silently swallow a `isAdmin` injection attempt. The route-layer
+        // check rejects unknown keys with 400 instead.
         body: t.Record(t.String(), t.Unknown(),),
         response: {
           200: t.Any(),

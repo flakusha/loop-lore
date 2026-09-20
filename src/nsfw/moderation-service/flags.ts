@@ -29,16 +29,11 @@ export interface FlagContentArgs {
  * @param root0.params
  */
 export async function flagContent({ thisL, params, }: FlagContentArgs,): Promise<ContentFlag> {
-  const existing = await thisL.db.selectFrom("content_flags",).selectAll().where(
-    "content_type",
-    "=",
-    params.contentType,
-  ).where(
-    "content_id",
-    "=",
-    params.contentId,
-  ).where("status", "in", ["pending", "under_review",],).executeTakeFirst();
-  if (existing) { throw new Error("Content already flagged for review.",); }
+  // BUG-flagcontent-toctou: race-free dedup via partial UNIQUE INDEX.
+  // Migration 023 adds content_flags_open_unique(content_type, content_id)
+  // WHERE status IN ('pending','under_review'). Two concurrent inserts with
+  // the same content fail the second with UNIQUE violation; the pre-insert
+  // SELECT is gone so no window exists where both callers pass.
   checkDescriptionLength(params.description,);
   const dismissedCount = await thisL.db.selectFrom("content_flags",).where("reporter_id", "=", params.reporterId,)
     .where("status", "=", "dismissed",).select(({ fn, },) => fn.count<number>("id",).as("count",)).executeTakeFirst();
@@ -48,18 +43,25 @@ export async function flagContent({ thisL, params, }: FlagContentArgs,): Promise
 
   const id = crypto.randomUUID();
   const now = new Date().toISOString();
-  await thisL.db.insertInto("content_flags",).values({
-    id,
-    reporter_id: params.reporterId,
-    content_type: params.contentType,
-    content_id: params.contentId,
-    chat_id: params.chatId ?? null,
-    world_id: params.worldId ?? null,
-    flag_reason: params.flagReason,
-    description: params.description ?? null,
-    status: "pending",
-    created_at: now,
-  },).execute();
+  try {
+    await thisL.db.insertInto("content_flags",).values({
+      id,
+      reporter_id: params.reporterId,
+      content_type: params.contentType,
+      content_id: params.contentId,
+      chat_id: params.chatId ?? null,
+      world_id: params.worldId ?? null,
+      flag_reason: params.flagReason,
+      description: params.description ?? null,
+      status: "pending",
+      created_at: now,
+    },).execute();
+  } catch (err) {
+    if (isUniqueViolation(err,)) {
+      throw new Error("Content already flagged for review.",);
+    }
+    throw err;
+  }
 
   thisL.log.info("Content flagged", { id, reporterId: params.reporterId, },);
   return {
@@ -77,6 +79,15 @@ export async function flagContent({ thisL, params, }: FlagContentArgs,): Promise
     resolvedAt: null,
     createdAt: now,
   };
+}
+
+/**
+ * Detect SQLite UNIQUE constraint violation (race-loser path for flagContent).
+ * @param err
+ */
+function isUniqueViolation(err: unknown,): boolean {
+  const msg = err instanceof Error ? err.message : String(err,);
+  return /UNIQUE constraint failed/i.test(msg,) || /constraint failed/i.test(msg,);
 }
 
 /** */

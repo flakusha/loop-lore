@@ -106,24 +106,26 @@ export function blogPostRoutes(opts: HandlerOpts, prefix = "/api",) {
       if (typeof userId !== "string") { return userId; }
       const { userRole, } = extractAuth(ctx,);
       const t = ctx.t as TranslatorFn | undefined;
+      const isAdmin = can(userRole, "admin.settings",);
 
-      const post = await svc.getPost(ctx.params.id,);
-      if (!post) {
+      const updated = await svc.updatePost(
+        ctx.params.id,
+        {
+          title: ctx.body.title,
+          body: ctx.body.body,
+          visibility: ctx.body.visibility,
+          status: ctx.body.status,
+          category: ctx.body.category,
+          tags: ctx.body.tags,
+          metadata: ctx.body.metadata,
+        },
+        userId,
+        isAdmin,
+      );
+
+      if (!updated) {
         return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
-      if (!can(userRole, "admin.settings",) && post.author_id !== userId) {
-        return jsonError({ message: "errors.forbidden", status: HttpStatus.Forbidden, t, },);
-      }
-
-      const updated = await svc.updatePost(ctx.params.id, {
-        title: ctx.body.title,
-        body: ctx.body.body,
-        visibility: ctx.body.visibility,
-        status: ctx.body.status,
-        category: ctx.body.category,
-        tags: ctx.body.tags,
-        metadata: ctx.body.metadata,
-      },);
 
       return jsonResponse({ success: true, post: updated, },);
     }, {
@@ -132,6 +134,7 @@ export function blogPostRoutes(opts: HandlerOpts, prefix = "/api",) {
       response: {
         200: SuccessResponse,
         401: ErrorResponse,
+        403: ErrorResponse,
         404: ErrorResponse,
       },
       detail: {
@@ -145,21 +148,18 @@ export function blogPostRoutes(opts: HandlerOpts, prefix = "/api",) {
       if (typeof userId !== "string") { return userId; }
       const { userRole, } = extractAuth(ctx,);
       const t = ctx.t as TranslatorFn | undefined;
+      const isAdmin = can(userRole, "admin.settings",);
 
-      const post = await svc.getPost(ctx.params.id,);
-      if (!post) {
+      const ok = await svc.deletePost(ctx.params.id, userId, isAdmin,);
+      if (!ok) {
         return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
-      if (!can(userRole, "admin.settings",) && post.author_id !== userId) {
-        return jsonError({ message: "errors.forbidden", status: HttpStatus.Forbidden, t, },);
-      }
-
-      await svc.deletePost(ctx.params.id,);
       return jsonResponse({ success: true, },);
     }, {
       response: {
         200: SuccessResponse,
         401: ErrorResponse,
+        403: ErrorResponse,
         404: ErrorResponse,
       },
       detail: {

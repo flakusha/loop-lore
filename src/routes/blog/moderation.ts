@@ -59,8 +59,11 @@ export function blogModerationRoutes(opts: HandlerOpts, prefix = "/api",) {
       },
     },)
     .patch(`${prefix}/blog/posts/:id/moderate`, async (ctx: any,) => {
-      const { userRole, } = extractAuth(ctx,);
+      const { userRole, userId, } = extractAuth(ctx,);
       const t = ctx.t as TranslatorFn | undefined;
+      if (!userId) {
+        return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },);
+      }
       if (!can(userRole, "admin.settings",)) {
         return jsonError({ message: "errors.forbidden", status: HttpStatus.Forbidden, t, },);
       }
@@ -76,9 +79,12 @@ export function blogModerationRoutes(opts: HandlerOpts, prefix = "/api",) {
         },);
       }
 
-      const updated = await svc.updatePost(ctx.params.id, {
-        status: status,
-      },);
+      const updated = await svc.updatePost(
+        ctx.params.id,
+        { status: status, },
+        userId,
+        true,
+      );
       if (!updated) {
         return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }

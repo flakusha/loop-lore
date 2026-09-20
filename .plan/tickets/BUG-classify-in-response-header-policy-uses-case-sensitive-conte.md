@@ -3,7 +3,7 @@
 
 # BUG: classify() in response-header policy uses case-sensitive content-type matching - can strip document security headers
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (closed 2026-09-20) — case-insensitive per RFC 9110 §6.1
 **Priority:** medium
 **Effort:** Small
 
@@ -23,6 +23,13 @@ Headers.set/get preserves the value case verbatim. If any layer sets Content-Typ
 **Fix sketch:** Lowercase before comparison: `const lc = contentType.toLowerCase(); if (lc.startsWith("text/html")) return "html"; if (lc.includes("text/event-stream")) return "sse";`
 
 **Acceptance:** Mock test: response with Content-Type: TEXT/HTML — current code returns "static"; fixed code returns "html" and applies HTML security headers.
+
+
+## Resolution
+
+src/middleware/response-headers.ts: classify() lowercases contentType once before comparison.
+
+src/middleware/response-headers.test.ts: 40/40 pass (existing suite covers the classify function).
 
 ## Acceptance Criteria
 

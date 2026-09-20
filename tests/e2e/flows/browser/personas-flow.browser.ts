@@ -120,7 +120,6 @@ describe("Personas flow E2E", () => {
           name: deleteName,
           description: "to be deleted",
           title: "T",
-          attributes: "{}",
         },)
         .execute();
 

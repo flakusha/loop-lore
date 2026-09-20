@@ -50,16 +50,16 @@ describe("BlogService posts facade", () => {
 
     expect((await svc.listPosts({ author_id: "user-author", },)).length,).toBe(1,);
 
-    const updated = await svc.updatePost(row.id, { title: "Facade2", },);
+    const updated = await svc.updatePost(row.id, { title: "Facade2", }, "user-author",);
     expect(updated?.title,).toBe("Facade2",);
-    expect(await svc.updatePost("post-missing", { title: "x", },),).toBeUndefined();
+    expect(await svc.updatePost("post-missing", { title: "x", }, "user-author",),).toBeUndefined();
 
     await svc.incrementViewCount(row.id,);
     expect((await svc.getPost(row.id,))?.view_count,).toBe(1,);
 
-    expect(await svc.deletePost(row.id,),).toBeTrue();
+    expect(await svc.deletePost(row.id, "user-author",),).toBeTrue();
     expect(await svc.getPost(row.id,),).toBeUndefined();
-    expect(await svc.deletePost(row.id,),).toBeFalse();
+    expect(await svc.deletePost(row.id, "user-author",),).toBeFalse();
   });
 });
 

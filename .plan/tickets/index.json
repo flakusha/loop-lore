@@ -1056,7 +1056,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-character-licensing-upsert-records-license-history-for-any-a.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-CHARACTERS-CREATION-WIZARD-WIZARDID-UNUSED": {
     "hash": "pending",
@@ -1518,7 +1518,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-classify-in-response-header-policy-uses-case-sensitive-conte.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-CLASSIFY-INTENT-CONFIDENCE-UNBOUNDED": {
     "hash": "pending",
@@ -1817,7 +1817,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-deletepost-has-no-ownership-check-any-authenticated-user-can.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-DEMO-LOGIN-E2E-FAILS-IN-FULL-SUITE-ORDER-DUE-TO-UNRESET-PER-": {
     "hash": "89f26c8",
@@ -2319,7 +2319,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-flagcontent-has-toctou-race-on-duplicate-flag-check-select-t.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-FRONTEND-CHAT-SEEN-STATE-BROKEN-NULL-ACTORID-DEAD-POPOVER-PO": {
     "hash": "6914009",
@@ -2448,7 +2448,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-get-messages-id-variants-has-toctou-race-on-parent-chat-auth.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-GETCLIENTIP-IS-UNTESTABLE-WITHOUT-A-LIVE-BUN-SERVER-IP-SOURC": {
     "hash": "8d307ae",
@@ -2694,7 +2694,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-handleexportall-leaks-group-chat-participants-messages-expor.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-HASHREPORTERID-USES-HARDCODED-DEFAULT-SECRET-IN-PRODUCTION-B": {
     "hash": "df90721",
@@ -3699,7 +3699,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-patch-settings-endpoint-has-no-key-allowlist-currentsettings.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-PERSONA-UPDATE-ON-CROSS-USER-ID-RETURNS-200-OK-INSTEAD-OF-40": {
     "hash": "0454612",
@@ -3886,7 +3886,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-put-messages-id-variant-silently-returns-200-with-no-variant.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-RATE-LIMIT-SLIDING-WINDOW-EXPIRY-USES-CUTOFF-OFF-BY-ONE-RETA": {
     "hash": "70472f7",
@@ -3899,7 +3899,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-rate-limit-sliding-window-expiry-uses-cutoff-off-by-one-reta.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-RATE-LIMITER-COLLAPSES-TO-GLOBAL-BUCKET-GETCLIENTIP-RETURNS-": {
     "hash": "ab71933",
@@ -4825,7 +4825,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-updatepost-has-no-ownership-check-any-authenticated-user-can.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-USE-MULTIPLE-L-FLAGS-INSTEAD-POTENTIAL-DX-IMPROVEMENT": {
     "hash": "0cd09d6",
@@ -5084,7 +5084,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-wshandler-send-queues-messages-while-disconnected-but-never-.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-XSS-FAIL-OPEN-WHEN-DOMPURIFY-MISSING": {
     "hash": "7664314",

@@ -201,7 +201,7 @@ describe("updatePost", () => {
       category: "essay",
       metadata: { mood: "bright", },
       tags: ["fresh",],
-    },);
+    }, "user-author",);
     expect(updated?.title,).toBe("New",);
     expect(updated?.body,).toBe("new body",);
     expect(updated?.category,).toBe("essay",);
@@ -215,7 +215,7 @@ describe("updatePost", () => {
       title: "Draft",
       body: "b",
     },);
-    const updated = await updatePost(db, row.id, { status: BlogPostStatus.Published, },);
+    const updated = await updatePost(db, row.id, { status: BlogPostStatus.Published, }, "user-author",);
     expect(updated?.status,).toBe(BlogPostStatus.Published,);
     expect(updated?.published_at,).not.toBeNull();
   });
@@ -227,12 +227,35 @@ describe("updatePost", () => {
       body: "b",
       tags: ["x",],
     },);
-    const updated = await updatePost(db, row.id, { tags: [], },);
+    const updated = await updatePost(db, row.id, { tags: [], }, "user-author",);
     expect(updated?.tags,).toEqual([],);
   });
 
   test("returns undefined for unknown ids", async () => {
-    expect(await updatePost(db, "nope", { title: "x", },),).toBeUndefined();
+    expect(await updatePost(db, "nope", { title: "x", }, "user-author",),).toBeUndefined();
+  });
+
+  test("non-author cannot update another user's post (returns undefined)", async () => {
+    const row = await createPost(db, {
+      author_id: "user-author",
+      title: "Mine",
+      body: "b",
+    },);
+    const updated = await updatePost(db, row.id, { title: "Hax", }, "user-other",);
+    expect(updated,).toBeUndefined();
+    // post must remain unchanged
+    const fresh = await getPost(db, row.id,);
+    expect(fresh?.title,).toBe("Mine",);
+  });
+
+  test("admin (isAdmin=true) can update another user's post", async () => {
+    const row = await createPost(db, {
+      author_id: "user-author",
+      title: "Original",
+      body: "b",
+    },);
+    const updated = await updatePost(db, row.id, { title: "AdminEdit", }, "user-admin", true,);
+    expect(updated?.title,).toBe("AdminEdit",);
   });
 });
 
@@ -243,12 +266,33 @@ describe("deletePost", () => {
       title: "Gone",
       body: "b",
     },);
-    expect(await deletePost(db, row.id,),).toBeTrue();
+    expect(await deletePost(db, row.id, "user-author",),).toBeTrue();
     expect(await getPost(db, row.id,),).toBeUndefined();
   });
 
   test("returns false for unknown ids", async () => {
-    expect(await deletePost(db, "nope",),).toBeFalse();
+    expect(await deletePost(db, "nope", "user-author",),).toBeFalse();
+  });
+
+  test("non-author cannot delete another user's post (returns false)", async () => {
+    const row = await createPost(db, {
+      author_id: "user-author",
+      title: "Keep",
+      body: "b",
+    },);
+    expect(await deletePost(db, row.id, "user-other",),).toBeFalse();
+    // post must still exist
+    expect((await getPost(db, row.id,))?.id,).toBe(row.id,);
+  });
+
+  test("admin (isAdmin=true) can delete another user's post", async () => {
+    const row = await createPost(db, {
+      author_id: "user-author",
+      title: "Moderated",
+      body: "b",
+    },);
+    expect(await deletePost(db, row.id, "user-admin", true,),).toBeTrue();
+    expect(await getPost(db, row.id,),).toBeUndefined();
   });
 });
 
@@ -276,10 +320,32 @@ describe("BlogService post dispatch", () => {
     },);
     expect((await svc.getPost(row.id,))?.title,).toBe("Svc",);
     expect((await svc.listPosts({ author_id: "user-author", },)).length,).toBe(1,);
-    expect((await svc.updatePost(row.id, { title: "Svc2", },))?.title,).toBe("Svc2",);
+    expect((await svc.updatePost(row.id, { title: "Svc2", }, "user-author",))?.title,).toBe("Svc2",);
     await svc.incrementViewCount(row.id,);
     expect((await svc.getPost(row.id,))?.view_count,).toBe(1,);
-    expect(await svc.deletePost(row.id,),).toBeTrue();
+    expect(await svc.deletePost(row.id, "user-author",),).toBeTrue();
     expect(await svc.getPost(row.id,),).toBeUndefined();
+  });
+
+  test("BlogService.updatePost rejects non-author non-admin", async () => {
+    const svc = new BlogService(db,);
+    const row = await svc.createPost({
+      author_id: "user-author",
+      title: "Owned",
+      body: "b",
+    },);
+    expect(await svc.updatePost(row.id, { title: "Hax", }, "user-other",),).toBeUndefined();
+    expect((await svc.getPost(row.id,))?.title,).toBe("Owned",);
+  });
+
+  test("BlogService.deletePost rejects non-author non-admin", async () => {
+    const svc = new BlogService(db,);
+    const row = await svc.createPost({
+      author_id: "user-author",
+      title: "Safe",
+      body: "b",
+    },);
+    expect(await svc.deletePost(row.id, "user-other",),).toBeFalse();
+    expect((await svc.getPost(row.id,))?.id,).toBe(row.id,);
   });
 });
