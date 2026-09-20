@@ -84,7 +84,9 @@ export const chatLifecycle: Partial<ChatState> & ThisType<ChatState> = {
     // _seenPopoverX / _seenPopoverY / _seenPopoverViewers on dispatch).
     // BUG-alpine-init-hydration: previously uncalled, leaving those fields
     // undefined and triggering ReferenceError when templates read them.
-    this.initSeenPopover();
+    // The seen submodule is merged via `inline-state` defaults but its
+    // method isn't spread into the chatState factory, so guard the call.
+    (this as { initSeenPopover?: () => void }).initSeenPopover?.();
     this.restoreChatFilters();
     await this.loadChats();
     this.loadWorldChannels();
