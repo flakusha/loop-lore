@@ -333,7 +333,9 @@ describe("rename wiring", () => {
     const post = calls.find((c,) => c.url === "/api/v1/assets/a1/tags/rename" && c.opts.method === "POST")!;
     expect(post,).toBeDefined();
     expect(JSON.parse(String(post.opts.body,),),).toEqual({ oldTag: "chip", newTag: "renamed", scope: "user", },);
-    expect(calls.filter((c,) => c.url === "/api/v1/assets/a1/tags" && !c.opts.method).length,).toBeGreaterThanOrEqual(2,);
+    expect(calls.filter((c,) => c.url === "/api/v1/assets/a1/tags" && !c.opts.method).length,).toBeGreaterThanOrEqual(
+      2,
+    );
   });
 
   test("unchanged or empty rename does not submit", async () => {

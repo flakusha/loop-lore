@@ -250,7 +250,9 @@ describe("actorTraits.remove", () => {
     ctx._trActorId = "actor-1";
     ctx.startEdit(sampleTrait(),);
     await ctx.remove("brave",);
-    expect(calls.some((c,) => c.opts.method === "DELETE" && c.url === "/api/v1/actors/actor-1/traits/brave"),).toBe(true,);
+    expect(calls.some((c,) => c.opts.method === "DELETE" && c.url === "/api/v1/actors/actor-1/traits/brave"),).toBe(
+      true,
+    );
     expect(ctx.draft.editingName,).toBeNull();
   });
 
