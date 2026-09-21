@@ -59,7 +59,7 @@ function routeResponses(opts?: {
     }
     if (url.startsWith("/api/v1/admin/providers/",)) {
       if (opts?.rejectProviderModels) { throw new Error("offline",); }
-      const name = url.split("/",)[4];
+      const name = url.split("/",)[5];
       return opts?.providerModelsStatus
         ? new Response("", { status: opts.providerModelsStatus, },)
         : Response.json(opts?.providerModels?.[name ?? ""] ?? { models: [`models-${name}`,], },);
