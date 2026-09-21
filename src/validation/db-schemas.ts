@@ -459,6 +459,7 @@ export const SeductionSkillCategorySchema = t.UnionEnum([
   "aftercare",
   "communication",
 ],);
+export const ShadowNoteAuthorTypeSchema = t.UnionEnum(["user", "gm", "system", "extracted",],);
 export const ShadowNoteStatusSchema = t.UnionEnum(["hidden", "revealed",],);
 export const ShadowNoteTypeSchema = t.UnionEnum([
   "foreshadowing",
@@ -1937,6 +1938,8 @@ export const ShadowNotesSchema = t.Object({
   created_at: t.String(),
   status: t.Optional(ShadowNoteStatusSchema,),
   visibility: t.Optional(ShadowNoteVisibilitySchema,),
+  expires_at: t.Optional(t.String(),),
+  author_type: t.Optional(ShadowNoteAuthorTypeSchema,),
 },);
 
 // ── whitenotes ────────────────────────────────────────────

@@ -779,6 +779,8 @@ export const SCHEMA = new SchemaManifest()
     status: col("text", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, },),
     visibility: col("text", { notNull: true, hasDefault: true, },),
+    expires_at: col("text",),
+    author_type: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("status_effect", {
     id: col("text", { primaryKey: true, },),
