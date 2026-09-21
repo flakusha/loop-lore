@@ -149,7 +149,9 @@ describe("Gallery flow E2E", () => {
         expect(download, "download should be initiated",).not.toBeNull();
         if (download) {
           const dlUrl = new URL(download.url(),);
-          expect(dlUrl.pathname, "download should target the download endpoint",).toBe(`/api/v1/assets/${id}/download`,);
+          expect(dlUrl.pathname, "download should target the download endpoint",).toBe(
+            `/api/v1/assets/${id}/download`,
+          );
           expect(dlUrl.searchParams.has("sig",), "download should carry sig",).toBe(true,);
           expect(dlUrl.searchParams.has("expires",), "download should carry expires",).toBe(true,);
         }
