@@ -3186,7 +3186,7 @@
     "epic": "epic-lore-knowledge",
     "tags": [],
     "source": ".plan/tickets/BUG-lore-decay-gate-is-dead-code-at-runtime-passesconfidencefloo.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-LORE-LIFECYCLE-FIELDS-HAVE-NO-PRODUCERS-LAST-VERIFIED-SOURCE": {
     "hash": "2a18258",
@@ -3199,7 +3199,7 @@
     "epic": "epic-lore-knowledge",
     "tags": [],
     "source": ".plan/tickets/BUG-lore-lifecycle-fields-have-no-producers-last-verified-source.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-LORE-LOAD-TS-DB-EB-USE-INSTEAD-OF-KYSELY-EXPRESSIONBUILDER": {
     "hash": "c1e45bb",
@@ -3212,7 +3212,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-lore-load-ts-db-eb-use-instead-of-kysely-expressionbuilder.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-LORE-LOAD-TS-USES-ANY-FOR-DB-EB-INSTEAD-OF-KYSELY-EXPRESSION": {
     "hash": "789183c",
@@ -3225,7 +3225,7 @@
     "epic": "epic-lore-knowledge",
     "tags": [],
     "source": ".plan/tickets/BUG-lore-load-ts-uses-any-for-db-eb-instead-of-kysely-expression.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-MEMORY-AUDIT-LOG-ACTION-COLUMN-TYPED-STRING-NOT-UNION": {
     "hash": "57ed7a8",

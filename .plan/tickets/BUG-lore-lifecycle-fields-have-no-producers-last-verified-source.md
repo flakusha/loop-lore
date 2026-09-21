@@ -3,10 +3,13 @@
 
 # BUG: lore lifecycle fields have no producers (last_verified, source_count, distortion_level)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Closed (resolved in `0da9d9b0` — `fix(assistant): wire last_verified producer + drop dead decay gate`)
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-lore-knowledge
+**Summary:** `world_lore_entries.last_verified` had no producer; columns from migration `005_world_lore_lifecycle` were schema-only. Wired minimal prompt-side producer: `loreSection.build` now writes `last_verified = now` alongside `last_activated = now` in the same UPDATE.
+**Context:** Without a producer, the decay gate (sibling ticket) cannot advance `last_verified` and `confidence` is stuck at the static value. The minimal producer answers "when was this entry last shown to the model", which is the honest semantic for `last_verified`.
+**Acceptance Criteria:** `lore.ts` UPDATE writes `last_verified` + `last_activated` together for `world_lore_entries` rows; regression test `writes last_verified on included world-lore rows (minimal producer)` passes; `bun run check --diff-base dev` green.
 
 ## Summary
 
