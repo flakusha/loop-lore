@@ -37,6 +37,7 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
     tokensUsed: 0,
     showCreateForm: false,
     newMemoryContent: "",
+    newMemoryType: "episodic",
     busy: false,
     error: null,
     editingMemoryId: null,
@@ -138,7 +139,8 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
         headers: { "Content-Type": "application/json", },
         body: jsonBody({
           content: this.memoryPanel.newMemoryContent.trim(),
-          memoryType: "episodic",
+          memoryType: this.memoryPanel.newMemoryType,
+          extractionKind: "manual",
           confidence: 1,
           importance: 5,
           keywords: [],
@@ -152,6 +154,7 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
       const newMemory = toMemoryEntry(created, tab,);
       this.getCurrentMemoryList().unshift(newMemory,);
       this.memoryPanel.newMemoryContent = "";
+      this.memoryPanel.newMemoryType = "episodic";
       this.memoryPanel.showCreateForm = false;
       this._updateTokenCount();
     } catch {

@@ -24,6 +24,8 @@ export interface MemoryEntry {
   tokenCount?: number;
   /** Memory scope — which panel tab owns it (character/assistant/world). */
   scope?: "character" | "assistant" | "world";
+  /** How the memory was formed (manual | single_response | burst | compaction | carry_forward). */
+  extractionKind?: string;
 }
 
 /** Audit actions recorded in `memory_audit_log.action`. */
@@ -65,6 +67,8 @@ export interface MemoryPanelState {
   tokensUsed: number;
   showCreateForm: boolean;
   newMemoryContent: string;
+  /** Selected memory type for the create form (BUG-memory-create-form-hardcodes-episodic-type). */
+  newMemoryType: MemoryEntry["type"];
   /** Memory currently being edited inline (null = none). */
   editingMemoryId: string | null;
   /** Draft content for the memory being edited. */
