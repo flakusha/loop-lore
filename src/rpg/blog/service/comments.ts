@@ -4,6 +4,7 @@
 import type { Kysely, } from "kysely";
 import { notifyBlogComment, } from "../../../notifications/service";
 import { uid, } from "../../../utils.js";
+import { can, } from "../../../users/permissions";
 import type {
   BlogCommentRow,
   BlogCommentStatus,
@@ -141,15 +142,48 @@ export async function getComment(
 }
 
 /**
+ * Caller context for blog moderation. Authorization gate lives at the
+ * service layer so any future caller (route, RPC, console script) cannot
+ * silently bypass it.
+ */
+export interface ModerateCaller {
+  /** User id of the actor attempting the moderation. */
+  userId: string;
+  /** Role string (admin, moderator, user, ...). */
+  role: string | null;
+}
+
+/**
  * @param db
  * @param id
  * @param status
+ * @param caller
  */
 export async function moderateComment(
   db: Kysely<any>,
   id: string,
   status: BlogCommentStatus,
+  caller: ModerateCaller,
 ): Promise<boolean> {
+  // Resolve the comment + post author so a non-moderator caller (post owner
+  // or comment author) may moderate their own content.
+  const comment = await db
+    .selectFrom("blog_comments",)
+    .innerJoin("blog_posts", "blog_posts.id", "blog_comments.post_id",)
+    .select([
+      "blog_comments.id as id",
+      "blog_comments.author_id as comment_author_id",
+      "blog_posts.author_id as post_author_id",
+    ],)
+    .where("blog_comments.id", "=", id,)
+    .executeTakeFirst();
+  if (!comment) { return false; }
+
+  const isModerator = can(caller.role, "moderation.action",);
+  const isPostAuthor = comment.post_author_id === caller.userId;
+  const isCommentAuthor = comment.comment_author_id === caller.userId;
+  if (!isModerator && !isPostAuthor && !isCommentAuthor) { return false; }
+
   const result = await db
     .updateTable("blog_comments",)
     .set({ status, },)

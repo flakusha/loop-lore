@@ -39,7 +39,10 @@ export function blogModerationRoutes(opts: HandlerOpts, prefix = "/api",) {
         },);
       }
 
-      const ok = await svc.moderateComment(ctx.params.id, status,);
+      const ok = await svc.moderateComment(ctx.params.id, status, {
+        userId: extractAuth(ctx,).userId as string,
+        role: userRole,
+      },);
       if (!ok) {
         return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
