@@ -84,6 +84,22 @@ function validateInventory(
       if (mode === "strict") { errors.push(entry,); }
       else { warnings.push(entry,); }
     }
+    const validRarities = new Set(["common", "uncommon", "rare", "epic", "legendary",],);
+    if (it.rarity !== undefined && (typeof it.rarity !== "string" || !validRarities.has(it.rarity,))) {
+      errors.push({
+        field: `extensions.inventory[${i}].rarity`,
+        code: "INVALID_VALUE",
+        message: `Inventory item rarity must be one of: ${[...validRarities,].join(", ",)}`,
+        value: it.rarity,
+      },);
+    }
+    if (it.weight !== undefined && (typeof it.weight !== "number" || it.weight < 0)) {
+      const code = "INVALID_VALUE";
+      const message = `Inventory item weight ${mode === "strict" ? "must" : "should"} be a non-negative number`;
+      const entry = { field: `extensions.inventory[${i}].weight`, code, message, value: it.weight, };
+      if (mode === "strict") { errors.push(entry,); }
+      else { warnings.push(entry,); }
+    }
   }
 }
 
@@ -100,7 +116,20 @@ function validateRelationships(
   warnings: ValidationWarning[],
   mode: ValidationMode,
 ): void {
-  const validTypes = ["friend", "rival", "ally", "enemy", "family", "mentor", "student", "neutral",];
+  const validTypes = [
+    "friend",
+    "rival",
+    "ally",
+    "enemy",
+    "family",
+    "mentor",
+    "student",
+    "neutral",
+    "lover",
+    "debt",
+    "grudge",
+  ];
+  const validTargetTypes = new Set(["character", "faction", "place", "object",],);
   for (const [i, rel,] of relationships.entries()) {
     if (!rel || typeof rel !== "object") {
       errors.push({
@@ -126,6 +155,14 @@ function validateRelationships(
       const entry = { field: `extensions.relationships[${i}].strength`, code, message, value: r.strength, };
       if (mode === "strict") { errors.push(entry,); }
       else { warnings.push(entry,); }
+    }
+    if (r.target_type !== undefined && !validTargetTypes.has(r.target_type as string,)) {
+      errors.push({
+        field: `extensions.relationships[${i}].target_type`,
+        code: "INVALID_VALUE",
+        message: `Relationship target_type must be one of: ${[...validTargetTypes,].join(", ",)}`,
+        value: r.target_type,
+      },);
     }
   }
 }
