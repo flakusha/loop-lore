@@ -89,6 +89,16 @@
           x-bind:placeholder="t('chats.enterMemory')"
           x-model="memoryPanel.newMemoryContent"
         ></textarea>
+        <select
+          class="form-input"
+          style="font-size: 13px; margin-bottom: var(--space-2); width: 100%"
+          x-model="memoryPanel.newMemoryType"
+          aria-label="Memory type"
+        >
+          <option value="episodic">Episodic (events)</option>
+          <option value="semantic">Semantic (facts)</option>
+          <option value="procedural">Procedural (skills)</option>
+        </select>
         <div style="display: flex; gap: var(--space-2)">
           <button class="btn btn-secondary btn-xs" @click="memoryPanel.showCreateForm = false">
             {{{t("common.cancel")}}}
@@ -258,7 +268,12 @@
               <span style="font-weight: 600" x-text="entry.action"></span>
               <span style="color: var(--text-secondary)" x-text="entry.createdAt"></span>
             </div>
-            <div style="color: var(--text-secondary); font-size: 11px; word-break: break-all" x-text="entry.details">
+            <div x-show="entry.action === 'inject'" style="color: var(--text-secondary); font-size: 11px">
+              <template x-if="entry.action === 'inject'">
+                <span x-text="'Injected into prompt: ' + ((JSON.parse(entry.details || '{}').memoryIds || []).length) + ' memory(ies) across ' + (JSON.parse(entry.details || '{}').actorCount || 0) + ' actor(s)'"></span>
+              </template>
+            </div>
+            <div x-show="entry.action !== 'inject'" style="color: var(--text-secondary); font-size: 11px; word-break: break-all" x-text="entry.details">
             </div>
           </div>
         </template>
