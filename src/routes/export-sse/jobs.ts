@@ -3,6 +3,7 @@
 
 import JSZip from "jszip";
 import type { Kysely, } from "kysely";
+import { loadConfig, } from "../../config/load";
 import type { DB, } from "../../db/schema";
 import { safeJsonStringify, } from "../../utils";
 import {
@@ -139,6 +140,10 @@ async function processExport(
       chatIds,
       counts,
       onItem,
+      // BUG-regex-transform-runs-at-store-time-not-render-time: pass the
+      // loaded config so per-message transforms match the user-visible
+      // pipeline at export time.
+      config: loadConfig(),
     };
 
     // Export characters
