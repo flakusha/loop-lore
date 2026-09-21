@@ -12,11 +12,12 @@ import { jsonBody, } from "./json";
 import { memoryPanelActions, } from "./memory-panel-actions";
 import { memoryPanelAudit, } from "./memory-panel/audit";
 import {
+  injectAuditKinds,
   memoriesForTab,
   type MemoryApiRow,
   toMemoryEntry,
 } from "./memory-panel/transform";
-import type { ChatState, MemoryEntry, } from "./types";
+import type { AuditEntry, ChatState, MemoryEntry, } from "./types";
 
 export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
   ...memoryPanelActions,
@@ -121,6 +122,10 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
 
   getCurrentMemoryList(): MemoryEntry[] {
     return memoriesForTab(this.memoryPanel, this.memoryPanel.activeTab,);
+  },
+
+  getInjectAuditKinds(entry: AuditEntry,): string[] {
+    return injectAuditKinds(entry, this.memoryPanel,);
   },
 
   searchMemories() {

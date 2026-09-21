@@ -34,6 +34,7 @@ export interface ChatMemoryState {
   _updateTokenCount(): void;
   auditActions: AuditAction[];
   getFilteredAudit(): AuditEntry[];
+  getInjectAuditKinds(entry: AuditEntry,): string[];
   _auditUrl(cursor: string | null, action: AuditAction | null,): string | null;
   loadAudit(action?: AuditAction | null,): Promise<void>;
   loadMoreAudit(): Promise<void>;
