@@ -37,6 +37,8 @@ export interface MemoryApiRow {
   review_status?: string;
   created_at: string;
   source_message_ids?: string | string[];
+  /** How the memory was formed; surfaced in panel for audit traceability. */
+  extraction_kind?: string;
 }
 
 /**
@@ -71,6 +73,7 @@ export function toMemoryEntry(row: MemoryApiRow, scopeFallback: MemoryEntry["sco
     scope: (row.scope as MemoryEntry["scope"]) ?? scopeFallback,
     sourceChatId: row.source_chat_id ?? undefined,
     sourceMessageId: sourceIds[0] ?? undefined,
+    extractionKind: row.extraction_kind,
   };
 }
 
