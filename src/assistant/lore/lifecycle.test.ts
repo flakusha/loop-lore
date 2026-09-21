@@ -39,9 +39,12 @@ describe("effectiveConfidence", () => {
   });
 
   test("decay subtracts decay_per_day * worldDaysSince", () => {
+    // Explicit non-zero `decay_per_day` because the runtime default is 0
+    // (no world-clock column yet — see BUG-lore-decay-gate-…).
+    const decayCfg: LifecycleConfig = { ...cfg, decay_per_day: 0.5, };
     const row: LifecycleRow = { confidence: 100, last_verified: "2026-01-01", distortion_level: 0, };
     // 100 - 0.5 * 10 = 95
-    expect(effectiveConfidence(row, 10, cfg,),).toBeCloseTo(95,);
+    expect(effectiveConfidence(row, 10, decayCfg,),).toBeCloseTo(95,);
   });
 
   test("distortion subtracts from confidence", () => {
@@ -50,15 +53,19 @@ describe("effectiveConfidence", () => {
   });
 
   test("decay + distortion combine before clamp", () => {
+    // See note in "decay subtracts" test for the runtime-vs-test setup.
+    const decayCfg: LifecycleConfig = { ...cfg, decay_per_day: 0.5, };
     const row: LifecycleRow = { confidence: 90, last_verified: "2026-01-01", distortion_level: 20, };
     // 90 - 0.5*10 - 20 = 65
-    expect(effectiveConfidence(row, 10, cfg,),).toBeCloseTo(65,);
+    expect(effectiveConfidence(row, 10, decayCfg,),).toBeCloseTo(65,);
   });
 
   test("clamps to 0 floor (heavy decay)", () => {
+    // See note in "decay subtracts" test for the runtime-vs-test setup.
+    const decayCfg: LifecycleConfig = { ...cfg, decay_per_day: 0.5, };
     const row: LifecycleRow = { confidence: 30, last_verified: "2026-01-01", distortion_level: 80, };
     // 30 - 0.5*100 - 80 = -100 -> clamped to 0
-    expect(effectiveConfidence(row, 100, cfg,),).toBe(0,);
+    expect(effectiveConfidence(row, 100, decayCfg,),).toBe(0,);
   });
 
   test("clamps confidence above 100 (legacy bad data)", () => {
