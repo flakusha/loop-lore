@@ -42,3 +42,17 @@ Follow-up (out of scope here, separate ticket):
 - `TASK-world-lore-lifecycle-confidence-decay-distortion` (merged `190a6ea9b`)
 - `BUG-lore-lifecycle-fields-have-no-producers-last-verified-source` (sibling)
 
+## Resolution
+
+Resolved in commit `0da9d9b0` on branch `lore-lifecycle-followup`. The hardcoded
+`0` in `passesConfidenceFloor` was replaced with a `worldDaysSince` parameter
+plumbed through `loreSection.build` (via `lifecycle.ts`'s `applyActivationTracking`,
+the single source of truth for the producer side). When `worldDaysSince == 0`
+the gate falls back to the legacy exempt behavior, preserving behavior for
+existing worlds with no clock configured.
+
+The follow-ups about where world-clock lives remain open as separate work — this
+ticket's scope was strictly "drop the hardcoded 0 + add a regression test for
+the temporal path". The regression test (`decay + distortion combine before
+clamp`) was added to `lifecycle.test.ts`.
+

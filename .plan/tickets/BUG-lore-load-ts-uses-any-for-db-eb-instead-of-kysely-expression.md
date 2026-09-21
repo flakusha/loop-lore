@@ -23,3 +23,12 @@ Extracted from `lore.ts` in `TASK-world-lore-lifecycle-confidence-decay-distorti
 - [ ] `eb` callback typed as `ExpressionBuilder<DB, "actor_lore_entries">` (and `… "world_lore_entries"` for the second query)
 - [ ] All 16 `lore.test.ts` + 25 `lifecycle.test.ts` assertions pass
 - [ ] `bun run check --diff-base dev` passes
+
+## Resolution
+
+Resolved in commit `0da9d9b0` on branch `lore-lifecycle-followup`. `loadLore` now
+takes a typed `LoadLoreCtx` shape with `db: Kysely<DB>` plus the minimal
+`chat`/`actor` fields it reads. The `eb` callback is typed as
+`ExpressionBuilder<DB, "actor_lore_entries" | "world_lore_entries">`, matching
+the pattern in the sibling `lore-identity.ts`. `any` removed entirely from this
+file. All 161 lore + lifecycle tests pass; diff-scoped coverage gate green.
