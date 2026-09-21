@@ -44,7 +44,7 @@ Given a tree where message A is the root, B is its child, and B has children D a
 
 ## Delete Flow (UI)
 
-1. User clicks the remove action on a message (see [messages.md](./messages.md#message-tooling))
+1. User clicks the remove action on a message (see [message-actions.md](./message-actions.md))
 2. Confirmation dialog appears (see [components.md](../components.md#confirmation-dialog)):
    - Title: "Delete message?"
    - Body: "This message and [N] follow-on messages will be archived. They can be recovered by an admin."
@@ -75,3 +75,7 @@ Archiving instead of hard-deleting:
 - Preserves the LLM context chain for debugging (nerd mode error reporting references dialog history)
 - Enables undo by chat master/admin
 - Avoids data loss from accidental clicks (the confirmation dialog is the guard, but archive is the safety-net)
+
+## Related Epics
+
+- `.plan/epics/epic-archival-workflow.md` — ⬜ Not Started; archive state machine, cascade rules, restore/purge endpoints.

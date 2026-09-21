@@ -251,3 +251,8 @@ Persisted on the chat as `gm_config.storyMode` + `gm_config.gmGuidance`.
 | `src/components/chat/chat-settings-modal.html` | Turn strategy + pause checkbox                    |
 | `src/db/migrations/009_group_chat.ts`          | Schema additions                                  |
 ```
+
+## Related Epics
+
+- `.plan/epics/epic-group-chat.md` — 🟡 Partial; feature epic for mentions, turn orchestration, pause/resume.
+- `.plan/epics/epic-world-chat-channels-invites.md` — turn-order/talkativity reconciliation (gaps G1–G6).

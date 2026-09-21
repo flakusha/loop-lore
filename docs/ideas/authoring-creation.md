@@ -28,7 +28,7 @@ Builder-layer ideas. Inspiration: loop-lore's own creation pipelines.
 - **Inspiration**: roadmap branching
 - **What**: Fork world state, run alternate timelines, diff the resulting narratives;
   optionally merge a branch back.
-- **Fits**: message tree (`docs/frontend/chat/messages.md`) + `WorldActorState`.
+- **Fits**: message tree (`docs/frontend/chat/overview.md`) + `WorldActorState`.
 - **Effort**: High
 - **Depends on**: conversation branching, world-state snapshots
 

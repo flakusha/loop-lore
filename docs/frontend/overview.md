@@ -188,7 +188,8 @@ retry suggestion. On network failure, show "Connection lost" toast.
 | [routing.md](./routing.md)                               | URL structure, navigation patterns, htmx history                                                          |
 | [chat/overview.md](./chat/overview.md)                   | Chat types, data model, message tree, chat master, world/location                                         |
 | [chat/layout.md](./chat/layout.md)                       | Hamburger sidebar, centered configurable width, left/right panels, responsive                             |
-| [chat/messages.md](./chat/messages.md)                   | Markdown render, message bubbles, book-like image layout, detail levels, tooling, swipe, thinking display |
+| [chat/message-bubbles.md](./chat/message-bubbles.md)     | Markdown render, message bubbles, book-like image layout, detail levels, swipe, thinking display          |
+| [chat/message-actions.md](./chat/message-actions.md)     | Message toolbars, button sets, keyboard shortcuts, reply threading, reactions                             |
 | [chat/generation.md](./chat/generation.md)               | Typing indicator, streaming, generation status, 3-tier error handling, thinking logging                   |
 | [chat/archiving.md](./chat/archiving.md)                 | Cascade deletion, restore, purge                                                                          |
 | [chat/input.md](./chat/input.md)                         | Text input, media attach, LLM selector, message improvement, image generation                             |

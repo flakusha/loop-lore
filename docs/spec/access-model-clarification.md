@@ -5,72 +5,22 @@
 
 # Access Model Clarifications
 
-## Gallery Access
+Status: Mixed — signed asset URLs and chat-scope moderation implemented; permission matrix, moderator program, command whitelist, and shared-link tiers not found in code.
 
-### Current
+## Implemented
 
-- Raw endpoint with Bearer auth
+- Signed asset URLs (was "Proposed" — now real): `src/assets/signed-url.ts` — HMAC-SHA256 over `action:assetId:expiresAt`, constant-time verify, default 900s expiry (not the proposed 1h); actions raw/download/thumb/compressed/matted; tests in `signed-url.test.ts`.
+- Asset serving with auth — `src/assets/serve-handlers.ts`, `serve-raw.ts`, `controller.ts`.
+- Encrypted-content primitives — `src/crypto/`: actor keys, chat keys, at-rest encryption, asset encryption, double-ratchet E2E (tier/inheritance semantics as written remain design).
+- Moderation surfaces — `POST /api/chats/:id/moderate` (ban/kick/mute/flag) in `src/routes/chats/moderation.ts`; NSFW moderation service with flag queue, resolution, mod actions, audit log (`src/nsfw/moderation-service/`); admin permissions gate exists (`src/users/permissions.ts`, e.g. `admin.settings`).
 
-### Proposed
+## Not implemented / aspirational
 
-- Signed URLs with expiration (1 hour default)
-- `GET /api/assets/:id/download?token=xxxx`
-- Token generated per-request, reusable within expiration window
-- If download fails first time, redownload can be retried
+- Chat permission matrix (Master/GM/Member/Observer, incl. an `observer` role) — no matching role code found.
+- Site-wide Moderator/Admin role split with `/moderate` endpoints — only chat-scope + NSFW moderation exist.
+- World command whitelist (`allowed_commands`, GM override, solo-mode bypass) — no code.
+- Shared-link tiers (public token / standard auth / private key-escrow links) — no share-token surface found.
 
-## Chat Access
+## Epics
 
-### Ownership Model
-
-- Chat creator = master
-- Participants have roles: member, gm, observer
-- Private chats: members only
-- Public chats: anonymous access allowed
-
-### Permission Matrix
-
-| Action    | Master | GM | Member | Observer | Anonymous   |
-| --------- | ------ | -- | ------ | -------- | ----------- |
-| Read      | ✓      | ✓  | ✓      | ✓        | public only |
-| Write     | ✓      | ✓  | ✓      | ✗        | ✗           |
-| Invite    | ✓      | ✓  | ✗      | ✗        | ✗           |
-| GM Config | ✓      | ✓  | ✗      | ✗        | ✗           |
-
-## Encrypted Content Access
-
-### Private Tier
-
-- Only chat participants with valid keys
-- Key derivation: Argon2id(password) -> actor key -> chat key
-- Assets inherit chat's encryption tier
-
-### Shared Links
-
-- Public tier chats: accessible via share token
-- Standard tier: requires auth
-- Private tier: share token includes encrypted key for recipient
-
-## Admin/Moderator Functions
-
-### Moderator Role
-
-- Can view flagged content
-- Can resolve reports
-- Cannot modify system config
-- Access via `/moderate` endpoints
-
-### Admin Role
-
-- Full access to all sections
-- User management
-- System configuration
-- Content review
-- Access via `/admin` endpoints
-
-## World Rules for Commands
-
-Commands can be whitelisted/blacklisted per world:
-
-- World config: `allowed_commands: ["dice", "stats", ...]`
-- GM can override individual command access
-- Solo mode bypasses all restrictions
+- None dedicated. Nearest owning surfaces: `.plan/epics/epic-asset-platform-capabilities.md` (asset access + share hardening), `.plan/epics/epic-chat-privacy.md` (chat access/visibility).
