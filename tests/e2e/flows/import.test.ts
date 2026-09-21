@@ -47,7 +47,7 @@ describe("Import E2E", () => {
     const form = new FormData();
     form.append("file", file,);
 
-    const res = await api.upload<{ id: string }>("/api/actors/import", form,);
+    const res = await api.upload<{ id: string }>("/api/v1/actors/import", form,);
     expect(res.ok,).toBe(true,);
     expect(res.data!.id,).toBeTruthy();
 
@@ -72,7 +72,7 @@ describe("Import E2E", () => {
     const form = new FormData();
     form.append("file", file,);
 
-    const res = await api.upload<{ id: string }>("/api/actors/import", form,);
+    const res = await api.upload<{ id: string }>("/api/v1/actors/import", form,);
     expect(res.ok,).toBe(true,);
     expect(res.data!.id,).toBeTruthy();
 
@@ -95,7 +95,7 @@ describe("Import E2E", () => {
     const form = new FormData();
     form.append("file", file,);
 
-    const res = await api.upload<{ id: string }>("/api/actors/import", form,);
+    const res = await api.upload<{ id: string }>("/api/v1/actors/import", form,);
     expect(res.ok,).toBe(true,);
 
     const getRes = await api.get<{ display_name: string }>(`/api/actors/${res.data!.id}`,);
@@ -111,7 +111,7 @@ describe("Import E2E", () => {
     const form = new FormData();
     form.append("file", file,);
 
-    const res = await api.upload<{ id: string }>("/api/actors/import", form,);
+    const res = await api.upload<{ id: string }>("/api/v1/actors/import", form,);
     expect(res.ok,).toBe(true,);
 
     const getRes = await api.get<{ display_name: string }>(`/api/actors/${res.data!.id}`,);
@@ -123,7 +123,7 @@ describe("Import E2E", () => {
     const form = new FormData();
     form.append("file", file,);
 
-    const res = await api.upload("/api/actors/import", form,);
+    const res = await api.upload("/api/v1/actors/import", form,);
     expect(res.ok,).toBe(false,);
     expect(res.status,).toBe(400,);
     expect(res.error,).toContain("Unable to detect character card format",);
@@ -133,7 +133,7 @@ describe("Import E2E", () => {
     const form = new FormData();
     form.append("notfile", "value",);
 
-    const res = await api.upload("/api/actors/import", form,);
+    const res = await api.upload("/api/v1/actors/import", form,);
     expect(res.ok,).toBe(false,);
     expect(res.status,).toBe(400,);
     expect(res.error,).toContain("file field is required",);
@@ -144,7 +144,7 @@ describe("Import E2E", () => {
     const form = new FormData();
     form.append("file", file,);
 
-    const res = await api.upload("/api/actors/import", form,);
+    const res = await api.upload("/api/v1/actors/import", form,);
     expect(res.ok,).toBe(false,);
     expect(res.status,).toBe(400,);
   });
@@ -162,7 +162,7 @@ describe("Import E2E", () => {
     const form = new FormData();
     form.append("file", file,);
 
-    const res = await api.upload("/api/actors/import", form,);
+    const res = await api.upload("/api/v1/actors/import", form,);
     expect(res.ok,).toBe(false,);
     expect(res.status,).toBe(422,);
     expect(res.error,).toContain("Name is required",);

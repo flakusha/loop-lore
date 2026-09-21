@@ -37,13 +37,13 @@ describe("Characters E2E", () => {
     server.close();
   },);
   test("GET /api/actors returns list", async () => {
-    const res = await api.get<{ data: Array<{ id: string; display_name: string }> }>("/api/actors",);
+    const res = await api.get<{ data: Array<{ id: string; display_name: string }> }>("/api/v1/actors",);
     expect(res.ok,).toBe(true,);
     expect(Array.isArray(res.data!.data,),).toBe(true,);
   });
 
   test("POST /api/actors creates a character", async () => {
-    const res = await api.post<{ id: string }>("/api/actors", {
+    const res = await api.post<{ id: string }>("/api/v1/actors", {
       displayName: "New Character",
       actorType: "character",
       description: "A test character",
@@ -53,7 +53,7 @@ describe("Characters E2E", () => {
   });
 
   test("POST /api/actors requires displayName", async () => {
-    const res = await api.post("/api/actors", { actorType: "character", },);
+    const res = await api.post("/api/v1/actors", { actorType: "character", },);
     expect(res.ok,).toBe(false,);
     expect(res.status,).toBe(422,);
     expect(res.code,).toBeTruthy(); // TEST.2 error envelope
@@ -89,7 +89,7 @@ describe("Characters E2E", () => {
 
   test("DELETE /api/actors/:id deletes actor", async () => {
     // Create then delete
-    const createRes = await api.post<{ id: string }>("/api/actors", {
+    const createRes = await api.post<{ id: string }>("/api/v1/actors", {
       displayName: "To Delete",
     },);
     const actorId = createRes.data!.id;

@@ -37,6 +37,7 @@ function configWith(health: HealthOverrides = {},): Config {
       readiness: health.readiness ?? false,
     },
     metrics: { enabled: false, },
+    telemetry: { piiSecret: "", },
   };
   return { observability, } as Config;
 }

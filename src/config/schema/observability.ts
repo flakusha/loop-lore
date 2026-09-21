@@ -18,7 +18,14 @@ export interface ObservabilityMetricsConfig {
 }
 
 /** */
+export interface ObservabilityTelemetryConfig {
+  /** HMAC secret for admin-telemetry PII pseudonymization. Env-only: TELEMETRY_PII_SECRET. Required in production. */
+  piiSecret?: string;
+}
+
+/** */
 export interface ObservabilityConfig {
   health: ObservabilityHealthConfig;
   metrics: ObservabilityMetricsConfig;
+  telemetry: ObservabilityTelemetryConfig;
 }

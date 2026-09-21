@@ -24,6 +24,7 @@
  * The 500-char body cap on user-facing notifications is enforced inline in
  * `audit.ts` (per ticket), not here.
  */
+import { resolveNsfwPiiSecret, } from "../config/load/pii-safety";
 import { DOMAIN_INFO, domainKey, } from "../utils/hkdf";
 import { jsonStringifyOr, } from "../utils/safe-json";
 
@@ -57,29 +58,30 @@ export function isNsfwGateReason(value: unknown,): value is NsfwGateReason {
 }
 
 /**
- * Server-side HMAC secret. Read from env; falls back to a build-time
- * default ONLY when running in a non-production environment. Production
- * MUST set `NSFW_PII_SECRET` — a startup failure surfaces the misconfig
- * rather than silently using a publicly-known key for PII pseudonymization.
+ * Server-side HMAC secret, resolved lazily on first use — never at import.
+ * Route modules load before `loadConfig()` merges `configs/env.yaml`, so an
+ * import-time read would miss file-provided values and crash production
+ * boots that are actually configured. Merged Config wins, raw
+ * `NSFW_PII_SECRET` env is the fallback, dev gets a documented fallback,
+ * everything else throws with an actionable message.
+ * @param configured Value from the merged Config (`nsfw.piiSecret`).
  */
-function resolveNsfwPiiSecret(): string {
-  const envSecret = process.env["NSFW_PII_SECRET"];
-  if (envSecret) { return envSecret; }
-  const env = process.env["NODE_ENV"] ?? "";
-  // Test + development allow the legacy dev fallback so the existing suite
-  // (which never sets the env) keeps working. Production / staging / any
-  // non-dev environment refuses to boot.
-  if (env === "test" || env === "development" || env === "dev") {
-    return "nsfw-pii-dev-secret-do-not-use-in-prod";
-  }
-  throw new Error(
-    "NSFW_PII_SECRET is required. Set it to a random string of at least " +
-      `${MIN_NSFW_PII_SECRET_LENGTH} characters in production. ` +
-      "Generate with `openssl rand -base64 48`.",
-  );
+function effectiveSecret(configured?: string,): string {
+  return resolveNsfwPiiSecret({ piiSecret: configured, },);
 }
-const MIN_NSFW_PII_SECRET_LENGTH = 32;
-const NSFW_PII_SECRET = resolveNsfwPiiSecret();
+let cachedSecret: string | null = null;
+/** Resolve (and memoize) the secret; test hook below busts the cache. */
+function secret(configured?: string,): string {
+  if (configured) { return effectiveSecret(configured,); }
+  cachedSecret ??= effectiveSecret();
+  return cachedSecret;
+}
+/** Bust the memoized secret + key. Test-only; called when env flips mid-process. */
+export function resetNsfwPiiSecretCache(): void {
+  cachedSecret = null;
+  hmacKeyPromise = null;
+  keySecret = null;
+}
 
 /**
  * Workaround for Bun's Uint8Array generics vs Web Crypto BufferSource.
@@ -101,10 +103,15 @@ function toBufferSource(arr: Uint8Array,): Uint8Array<ArrayBuffer> {
  * deployments.
  */
 let hmacKeyPromise: Promise<CryptoKey> | null = null;
-/** */
-async function getHmacKey(): Promise<CryptoKey> {
-  if (!hmacKeyPromise) {
-    const subkey = await domainKey(NSFW_PII_SECRET, DOMAIN_INFO.NSFW_PII, 32,);
+let keySecret: string | null = null;
+/**
+ * @param configured Value from the merged Config (`nsfw.piiSecret`).
+ */
+async function getHmacKey(configured?: string,): Promise<CryptoKey> {
+  const current = secret(configured,);
+  if (!hmacKeyPromise || keySecret !== current) {
+    const subkey = await domainKey(current, DOMAIN_INFO.NSFW_PII, 32,);
+    keySecret = current;
     hmacKeyPromise = crypto.subtle.importKey(
       "raw",
       toBufferSource(subkey,),
@@ -127,8 +134,8 @@ export const NSFW_METADATA_MAX_BYTES = 1024;
  * after the first call.
  * @param value
  */
-export async function hashId(value: string,): Promise<string> {
-  const key = await getHmacKey();
+export async function hashId(value: string, configured?: string,): Promise<string> {
+  const key = await getHmacKey(configured,);
   const signature = await crypto.subtle.sign(
     "HMAC",
     key,

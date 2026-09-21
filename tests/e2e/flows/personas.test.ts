@@ -45,14 +45,14 @@ describe("Personas E2E", () => {
 
   test("GET /api/personas returns 401 when unauthenticated", async () => {
     const anon = createClient(server.url,);
-    const res = await anon.get("/api/personas",);
+    const res = await anon.get("/api/v1/personas",);
     expect(res.status,).toBe(401,);
     expect(res.code,).toBeTruthy();
   });
 
   test("POST /api/personas creates a persona for the caller", async () => {
     const name = `p-${Date.now().toString(36,)}`;
-    const res = await userApi.post("/api/personas", {
+    const res = await userApi.post("/api/v1/personas", {
       name,
       description: "e2e-spec persona",
     },);
@@ -62,14 +62,14 @@ describe("Personas E2E", () => {
 
   test("GET /api/personas lists the caller's personas (created one is present)", async () => {
     const stamp = Date.now().toString(36,);
-    const created = await userApi.post("/api/personas", {
+    const created = await userApi.post("/api/v1/personas", {
       name: `p-list-${stamp}`,
     },);
     expect(created.ok,).toBe(true,);
     const personaId = (created.data as { id: string } | null | undefined)?.id;
     expect(typeof personaId,).toBe("string",);
 
-    const list = await userApi.get("/api/personas",);
+    const list = await userApi.get("/api/v1/personas",);
     expect(list.status,).toBe(200,);
     const items = (list.data ?? []) as Array<{ id: string }>;
     expect(Array.isArray(items,),).toBe(true,);
@@ -81,7 +81,7 @@ describe("Personas E2E", () => {
 
   test("PATCH /api/personas/:id updates an owned persona", async () => {
     const stamp = Date.now().toString(36,);
-    const created = await userApi.post("/api/personas", {
+    const created = await userApi.post("/api/v1/personas", {
       name: `p-patch-${stamp}`,
     },);
     expect(created.ok,).toBe(true,);
@@ -98,7 +98,7 @@ describe("Personas E2E", () => {
 
   test("DELETE /api/personas/:id removes an owned persona", async () => {
     const stamp = Date.now().toString(36,);
-    const created = await userApi.post("/api/personas", {
+    const created = await userApi.post("/api/v1/personas", {
       name: `p-del-${stamp}`,
     },);
     expect(created.ok,).toBe(true,);
@@ -112,14 +112,14 @@ describe("Personas E2E", () => {
   });
 
   test("POST /api/personas with missing name returns 400 + BAD_REQUEST", async () => {
-    const res = await userApi.post("/api/personas", { description: "no name", },);
+    const res = await userApi.post("/api/v1/personas", { description: "no name", },);
     expect(res.status,).toBe(400,);
     expect(res.code,).toBe("BAD_REQUEST",);
   });
 
   test("admin can convert an owned persona to a character", async () => {
     const stamp = Date.now().toString(36,);
-    const created = await adminApi.post("/api/personas", {
+    const created = await adminApi.post("/api/v1/personas", {
       name: `p-conv-${stamp}`,
     },);
     expect(created.ok,).toBe(true,);

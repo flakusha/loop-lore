@@ -28,7 +28,7 @@ export async function logGateDecision(
       action,
       reason,
       metadata,
-    },);
+    }, context.nsfwConfig?.piiSecret,);
   } catch (error) {
     getLogger().warn("nsfw-hook: logNsfwEvent failed", { error: String(error,), },);
   }
