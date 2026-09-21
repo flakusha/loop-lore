@@ -147,3 +147,8 @@ Per-chat assistant config:
   orchestrates.
 - [multi-llm-story.md](./multi-llm-story.md) — full multi-LLM story + GM orchestration spec.
 - [overview.md](./overview.md) — chat types and chat-master permissions.
+
+## Related Epics
+
+- `.plan/epics/epic-assistant-gm-flows.md` — 🟡 In Progress; GM panel, `gmConfig.assistantRole`, GM-guided story creation.
+- `.plan/epics/epic-use-case-agentic-workspace.md` — ⬜ Not Started; agentic assistant runtime (Agent role).
