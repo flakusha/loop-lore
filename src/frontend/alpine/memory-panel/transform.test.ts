@@ -8,9 +8,13 @@ import {
   auditActionLabel,
   auditEntriesForFilter,
   formatAuditDate,
+  formatMemoryDate,
   injectAuditKinds,
+  memoriesForTab,
   parseAuditDetails,
+  parseMemoryKeywords,
   toAuditEntry,
+  toMemoryEntry,
 } from "./transform";
 
 describe("audit transform", () => {
@@ -220,5 +224,119 @@ function mkEntry(action: AuditEntry["action"],): AuditEntry {
     action,
     details: "{}",
     createdAt: "2026-09-19T12:00:00.000Z",
+  };
+}
+
+describe("memory transform", () => {
+  test("parseMemoryKeywords parses a JSON string array", () => {
+    expect(parseMemoryKeywords('["a","b"]',),).toEqual(["a", "b"],);
+  });
+
+  test("parseMemoryKeywords returns [] for an empty string", () => {
+    expect(parseMemoryKeywords("",),).toEqual([],);
+  });
+
+  test("parseMemoryKeywords returns [] for invalid JSON", () => {
+    expect(parseMemoryKeywords("not-json",),).toEqual([],);
+  });
+
+  test("parseMemoryKeywords passes through an array input", () => {
+    expect(parseMemoryKeywords(["x", "y"],),).toEqual(["x", "y"],);
+    expect(parseMemoryKeywords(undefined as unknown as string[],),).toEqual([],);
+  });
+
+  test("toMemoryEntry maps fields and surfaces extractionKind", () => {
+    const entry = toMemoryEntry({
+      id: "m1",
+      content: "hello",
+      memory_type: "semantic",
+      confidence: 0.9,
+      importance: 0.1,
+      keywords: "[\"foo\"]",
+      pinned: 1,
+      review_status: "approved",
+      created_at: "2026-09-19T12:00:00.000Z",
+      scope: "character",
+      source_chat_id: "c1",
+      source_message_ids: '["msg-1","msg-2"]',
+      extraction_kind: "compaction",
+    }, "assistant",);
+    expect(entry.id,).toBe("m1",);
+    expect(entry.extractionKind,).toBe("compaction",);
+    expect(entry.sourceMessageId,).toBe("msg-1",);
+    expect(entry.pinned,).toBe(true,);
+    expect(entry.scope,).toBe("character",);
+  });
+
+  test("toMemoryEntry falls back to scopeFallback when scope is missing", () => {
+    const entry = toMemoryEntry({
+      id: "m1",
+      content: "x",
+      memory_type: "episodic",
+      confidence: 0.5,
+      importance: 0.5,
+      keywords: [],
+      pinned: 0,
+      review_status: "pending",
+      created_at: "2026-09-19",
+      source_message_ids: [],
+    }, "world",);
+    expect(entry.scope,).toBe("world",);
+  });
+
+  test("formatMemoryDate returns empty string for invalid timestamps", () => {
+    expect(formatMemoryDate("not-a-date",),).toBe("",);
+  });
+
+  test("formatMemoryDate renders a locale date for valid ISO", () => {
+    const out = formatMemoryDate("2026-09-19T12:00:00.000Z",);
+    expect(out,).toBeTruthy();
+    expect(out.length,).toBeGreaterThan(0,);
+  });
+
+  test("memoriesForTab returns the right slice for each tab", () => {
+    const panel: MemoryPanelState = {
+      activeTab: "audit",
+      characterMemories: [makeMemory("c1", "character",),],
+      assistantMemories: [makeMemory("a1", "assistant",),],
+      worldMemories: [makeMemory("w1", "world",),],
+      auditEntries: [],
+      auditCursor: null,
+      auditHasMore: false,
+      auditLoading: false,
+      auditError: null,
+      auditActionFilter: null,
+      loading: false,
+      error: null,
+      searchQuery: "",
+      newMemoryContent: "",
+      newMemoryType: "episodic",
+      showCreateForm: false,
+      editingMemoryId: null,
+      editMemoryContent: "",
+      tokensUsed: 0,
+      tokenBudget: 0,
+      busy: false,
+    };
+    expect(memoriesForTab(panel, "character",)[0]?.id,).toBe("c1",);
+    expect(memoriesForTab(panel, "assistant",)[0]?.id,).toBe("a1",);
+    expect(memoriesForTab(panel, "world",)[0]?.id,).toBe("w1",);
+    expect(memoriesForTab(panel, "audit",),).toEqual([],);
+  });
+});
+
+function makeMemory(id: string, _scope: string,): MemoryEntry {
+  return {
+    id,
+    content: "x",
+    type: "episodic",
+    confidence: 0.5,
+    importance: 0.5,
+    keywords: [],
+    pinned: false,
+    reviewStatus: "pending",
+    createdAt: "2026-09-19",
+    scope: _scope as MemoryEntry["scope"],
+    extractionKind: undefined,
   };
 }
