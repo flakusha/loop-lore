@@ -105,11 +105,12 @@ export async function handleRegenerate(
   }
 
   // No messageId → cancel-only path (regenerateResponse). The `style`
-  // hint is echoed so callers can confirm what was requested; downstream
-  // prompt injection reads it from the variant row's idempotency_key
-  // (see regenerateMessageVariant in chat/service/write.ts), so we do
-  // NOT also return a derived stylePrompt string — it was dead in the
-  // response payload (BUG-buildstyleprompt-result-returned-but-never-consumed).
+  // hint is echoed so callers can confirm what was requested. NOTE: no
+  // `stylePrompt` is included — `buildStylePrompt` was removed because
+  // no caller injected the result into the LLM prompt. The style lives
+  // on the pending variant row's `idempotency_key` (see
+  // regenerateMessageVariant in chat/service/write.ts) for a future
+  // ticket to wire into the prompt-assembly path.
   return jsonResponse({
     ok: true,
     chatId,
