@@ -2,12 +2,13 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { describe, expect, test, } from "bun:test";
-import type { AuditEntry, } from "../types";
+import type { AuditEntry, MemoryEntry, MemoryPanelState, } from "../types";
 import {
   AUDIT_ACTIONS,
   auditActionLabel,
   auditEntriesForFilter,
   formatAuditDate,
+  injectAuditKinds,
   parseAuditDetails,
   toAuditEntry,
 } from "./transform";
@@ -116,6 +117,95 @@ describe("audit transform", () => {
   test("auditEntriesForFilter returns empty for unmatched filter", () => {
     const entries: AuditEntry[] = [mkEntry("create",), mkEntry("pin",),];
     expect(auditEntriesForFilter(entries, "purge",),).toEqual([],);
+  });
+});
+
+describe("injectAuditKinds", () => {
+  function mkPanel(): MemoryPanelState {
+    return {
+      activeTab: "audit",
+      characterMemories: [],
+      assistantMemories: [],
+      worldMemories: [],
+      auditEntries: [],
+      auditCursor: null,
+      auditHasMore: false,
+      auditLoading: false,
+      auditError: null,
+      auditActionFilter: null,
+      loading: false,
+      error: null,
+      searchQuery: "",
+      newMemoryContent: "",
+      newMemoryType: "episodic",
+      showCreateForm: false,
+      editingMemoryId: null,
+      editMemoryContent: "",
+      tokensUsed: 0,
+    };
+  }
+  function mem(id: string, extractionKind: MemoryEntry["extractionKind"],): MemoryEntry {
+    return {
+      id,
+      content: "x",
+      type: "episodic",
+      confidence: 1,
+      importance: 1,
+      keywords: [],
+      createdAt: "2026-09-19T12:00:00.000Z",
+      scope: "character",
+      extractionKind,
+    };
+  }
+  function injectEntry(memoryIds: string[],): AuditEntry {
+    return {
+      id: "audit-1",
+      memoryId: "m",
+      actorId: "a",
+      userId: null,
+      action: "inject",
+      details: JSON.stringify({ memoryIds, actorCount: 1, },),
+      createdAt: "2026-09-19T12:00:00.000Z",
+    };
+  }
+
+  test("returns [] for non-inject actions", () => {
+    const panel = mkPanel();
+    panel.characterMemories = [mem("m1", "manual",),];
+    expect(injectAuditKinds(mkEntry("create",), panel,),).toEqual([],);
+  });
+
+  test("returns [] when the audit payload has no memoryIds", () => {
+    const panel = mkPanel();
+    expect(injectAuditKinds(injectEntry([],), panel,),).toEqual([],);
+  });
+
+  test("returns [] when no referenced memories are loaded", () => {
+    const panel = mkPanel();
+    expect(injectAuditKinds(injectEntry(["missing-1", "missing-2"],), panel,),).toEqual([],);
+  });
+
+  test("returns distinct extraction kinds for the injected memories", () => {
+    const panel = mkPanel();
+    panel.characterMemories = [
+      mem("m1", "manual",),
+      mem("m2", "single_response",),
+      mem("m3", "manual",),
+    ];
+    expect(injectAuditKinds(injectEntry(["m1", "m2", "m3"],), panel,)).toEqual(["manual", "single_response",],);
+  });
+
+  test("looks up memories across every tab (character/assistant/world)", () => {
+    const panel = mkPanel();
+    panel.assistantMemories = [mem("a1", "burst",),];
+    panel.worldMemories = [mem("w1", "compaction",),];
+    expect(injectAuditKinds(injectEntry(["a1", "w1"],), panel,)).toEqual(["burst", "compaction",],);
+  });
+
+  test("skips memories without an extractionKind set", () => {
+    const panel = mkPanel();
+    panel.characterMemories = [mem("m1", undefined,), mem("m2", "carry_forward",),];
+    expect(injectAuditKinds(injectEntry(["m1", "m2"],), panel,)).toEqual(["carry_forward",],);
   });
 });
 
