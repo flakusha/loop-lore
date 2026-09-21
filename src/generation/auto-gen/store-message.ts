@@ -20,7 +20,6 @@ import {
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
 import { uid, } from "../../utils";
-import { applyRegexTransforms, } from "../transforms";
 import type { GenDeps, } from "./deps";
 
 /** */
@@ -53,8 +52,20 @@ export interface StoreMessageResult {
 
 /**
  * Store the generated assistant message.
+ *
+ * BUG-regex-transform-runs-at-store-time-not-render-time: regex output
+ * transforms used to run here, baking edits into the persisted content.
+ * They now run at render time (see resolveMessageContent in
+ * src/routes/messages/helpers.ts) so the original LLM output stays
+ * intact and can be re-transformed if config changes mid-flight. The
+ * `transformed` flag is preserved on the result so call sites (the
+ * post-store finalize hook) can still observe whether a render-time
+ * transform would mutate the displayed text — by definition it now
+ * always will when transforms are configured, but the flag stays
+ * `false` here because we did no work in the store path.
+ *
  * @param opts
- * @returns The new message ID and whether regex transforms were applied.
+ * @returns The new message ID and the (legacy) transformed flag.
  */
 export async function storeMessage(opts: StoreMessageOpts,): Promise<StoreMessageResult> {
   const {
@@ -71,21 +82,10 @@ export async function storeMessage(opts: StoreMessageOpts,): Promise<StoreMessag
     thinking,
   } = opts;
 
-  // ── Regex Output Transforms ──────────────────────────────────
-  const log = getLogger().child({ module: "auto-gen", },);
-  let storedText = content;
-  const regexTransforms = config.generation.regexTransforms;
-  let transformed = false;
-  if (regexTransforms && regexTransforms.length > 0) {
-    const transformResult = applyRegexTransforms(storedText, regexTransforms,);
-    if (transformResult.applied.length > 0) {
-      transformed = true;
-      storedText = transformResult.text;
-      log.debug("regex transforms applied", {
-        transforms: Array.from(transformResult.applied, (t,) => ({ name: t.name, matches: t.matches, }),),
-      },);
-    }
-  }
+  // BUG-regex-transform-runs-at-store-time-not-render-time: transforms
+  // moved to render-time (resolveMessageContent). Stored text is the raw
+  // LLM output.
+  const storedText = content;
 
   // ── Encryption ────────────────────────────────────────────────
   const smk = d.getSmk() ?? undefined;
@@ -178,5 +178,5 @@ export async function storeMessage(opts: StoreMessageOpts,): Promise<StoreMessag
     return { swipeIndex: resolvedSwipeIndex, };
   },);
 
-  return { messageId, transformed, };
+  return { messageId, transformed: false, };
 }
