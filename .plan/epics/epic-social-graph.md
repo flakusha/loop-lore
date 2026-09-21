@@ -87,7 +87,7 @@ src/social-graph/
 
 - `epic-blog-system.md` — visibility tier consumption point.
 - `epic-group-chat.md` / `src/group-chat/` — member management, turn selection for joined players.
-- `epic-characters.md` / `src/characters/` — avoid-list subject; in-place NPC generation for indirect join.
+- `epic-character-core-system.md` / `src/characters/` — avoid-list subject; in-place NPC generation for indirect join.
 - `epic-auth-access.md` — user identity that graph edges attach to.
 - `epic-instance-federation.md` — remote handle → local node resolution for federated friends/blocks.
 
