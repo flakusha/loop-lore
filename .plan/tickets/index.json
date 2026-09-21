@@ -8519,6 +8519,19 @@
     "status": "done",
     "git_issue": "7aed28e"
   },
+  "FEAT-TEMPORARY-EPHEMERAL-CHATS": {
+    "hash": "339b201",
+    "extid": "FEAT-TEMPORARY-EPHEMERAL-CHATS",
+    "type": "FEAT",
+    "title": "Temporary / ephemeral chats",
+    "label": "feat",
+    "priority": "Medium | **Effort:** M",
+    "epic": "epic-chat-privacy.md",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-temporary-ephemeral-chats.md",
+    "status": "Not Started",
+    "git_issue": "339b201"
+  },
   "FEAT-TESTING-INFRASTRUCTURE": {
     "hash": "b206a6a",
     "extid": "FEAT-TESTING-INFRASTRUCTURE",
@@ -8634,6 +8647,19 @@
     "tags": [],
     "source": ".plan/tickets/FEAT-user-engagement-leaderboards.md",
     "status": "⬜ Not Started"
+  },
+  "FEAT-USER-THEMING-SYSTEM": {
+    "hash": "a3b0368",
+    "extid": "FEAT-USER-THEMING-SYSTEM",
+    "type": "FEAT",
+    "title": "User theming system (custom themes, import/export, live switching)",
+    "label": "feat",
+    "priority": "Medium | **Effort:** M",
+    "epic": "epic-frontend-settings.md",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-user-theming-system.md",
+    "status": "Not Started",
+    "git_issue": "a3b0368"
   },
   "FEAT-VISUAL-KNOWLEDGE-GRAPH-FOR-MEMORY": {
     "hash": "8d64d6b",
@@ -10621,6 +10647,19 @@
     "tags": [],
     "source": ".plan/tickets/TASK-admin-revisions-diff-revert.md",
     "status": "open"
+  },
+  "TASK-ADMIN-SYSTEM-ANNOUNCEMENTS": {
+    "hash": "1bcce1f",
+    "extid": "TASK-ADMIN-SYSTEM-ANNOUNCEMENTS",
+    "type": "TASK",
+    "title": "Admin system announcements (instance-wide banners)",
+    "label": "task",
+    "priority": "Low | **Effort:** S",
+    "epic": "epic-frontend-admin.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-admin-system-announcements.md",
+    "status": "Not Started",
+    "git_issue": "1bcce1f"
   },
   "TASK-ADMIN-SYSTEM-CONFIG-CLASS-DRIVEN-TYPED-BINDING-FROM-SECTION-": {
     "hash": "5d6b103",
@@ -15801,6 +15840,19 @@
     "source": ".plan/tickets/TASK-composer-draft-persistence.md",
     "status": "open"
   },
+  "TASK-COMPOSER-MESSAGE-QUEUE-WHILE-GENERATING": {
+    "hash": "686631c",
+    "extid": "TASK-COMPOSER-MESSAGE-QUEUE-WHILE-GENERATING",
+    "type": "TASK",
+    "title": "Composer message queue while generation is in flight",
+    "label": "task",
+    "priority": "Medium | **Effort:** S",
+    "epic": "epic-chat-composer-flows.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-composer-message-queue-while-generating.md",
+    "status": "Not Started",
+    "git_issue": "686631c"
+  },
   "TASK-CONFIG-BACKWARD-COMPAT": {
     "hash": "8e16152",
     "extid": "TASK-CONFIG-BACKWARD-COMPAT",
@@ -19793,6 +19845,19 @@
     "tags": [],
     "source": ".plan/tickets/TASK-generation-job-status-tracking.md",
     "status": "open"
+  },
+  "TASK-GENERATION-LOGIT-BIAS-LOGPROBS": {
+    "hash": "34d4b88",
+    "extid": "TASK-GENERATION-LOGIT-BIAS-LOGPROBS",
+    "type": "TASK",
+    "title": "Text-generation logit bias + logprobs inspection",
+    "label": "task",
+    "priority": "Low | **Effort:** S",
+    "epic": "epic-provider-plugin-ecosystem.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-generation-logit-bias-logprobs.md",
+    "status": "Not Started",
+    "git_issue": "34d4b88"
   },
   "TASK-GENERATION-MAXTOKENS-AND-PROMPT-ARRAY-UNVALIDATED-COST-DOS": {
     "hash": "3457e6b",
@@ -25076,6 +25141,19 @@
     "tags": [],
     "source": ".plan/tickets/TASK-prompt-character-extensions-section.md",
     "status": "open"
+  },
+  "TASK-PROMPT-DRY-RUN-INSPECTION": {
+    "hash": "81c71d2",
+    "extid": "TASK-PROMPT-DRY-RUN-INSPECTION",
+    "type": "TASK",
+    "title": "Prompt dry-run inspection (itemized prompt viewer)",
+    "label": "task",
+    "priority": "Medium | **Effort:** S–M",
+    "epic": "epic-chat-context-optimization.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-prompt-dry-run-inspection.md",
+    "status": "Not Started",
+    "git_issue": "81c71d2"
   },
   "TASK-PROMPT-FEATURE-FLAGS-CONDITIONAL-INJECTION": {
     "hash": "pending",

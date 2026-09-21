@@ -113,6 +113,23 @@ Upstream `pewdiepie-archdaemon/odysseus` added: Codex/Claude external-agent inte
 
 New candidates 19–22 in the table above; ticket map: external-agent integration → plugin epic (+ composes with `TASK-workspace-mcp-bridge`); hwfit → `epic-byok-local-models`; manage-tool parity → assistant epics.
 
+## Reference-platform full-surface audit (2026-09-21) — SillyTavern / Odysseus / OpenWebUI
+
+Local checkouts (`../silly-tavern`, `../odysseus`, `../open-webui`) mapped end-to-end by three read-only scouts (every feature claim file-cited) and cross-referenced against this epic's candidate tables (#1–36), `docs/ideas/`, the 293-epic catalog, ~2400 tickets, and `src/`. Method: ≥3 synonym phrasings per concept before any GAP verdict; implemented features excluded (prior 2026-09-19 reconcile lesson). Full verdict tables: `.tmp/refs-gap-audit/{baseline,verdicts}.md` (scratchpad, not committed).
+
+Genuine never-scoped gaps filed:
+
+| Feature | Source evidence | Ticket | Epic |
+|---|---|---|---|
+| Temporary/ephemeral chats (admin-enforceable) | OpenWebUI `/temporary`, docs chat-features | FEAT-temporary-ephemeral-chats.md | chat-privacy |
+| User theming (custom themes, import/export, live switch) | ST `themes.js`+ThemeGenerator; Odysseus `theme.js` | FEAT-user-theming-system.md | frontend-settings |
+| Text-gen logit bias + logprobs | ST `logit-bias.js`/`logprobs.js`; src providers: 0 hits | TASK-generation-logit-bias-logprobs.md | provider-plugin-ecosystem |
+| Prompt dry-run inspection (itemized prompt viewer) | ST `itemized-prompts.js` + `/pm-render` | TASK-prompt-dry-run-inspection.md | chat-context-optimization |
+| Composer message queue during generation | OpenWebUI message queue; Neta queued followups | TASK-composer-message-queue-while-generating.md | chat-composer-flows |
+| Admin system announcements | OpenWebUI `Banners.svelte`/`Events.svelte` | TASK-admin-system-announcements.md | frontend-admin |
+
+Confirmed-covered highlights (do not re-file): deep research (TASK-rag-search-providers `src/rag/search/research.ts`), STT (STTProvider + E27), thinking blocks (message-bubbles P1), webhooks (E11 + RAG webhook receiver + parity-eval), share links (TASK-chat-feature-share-links), chat backgrounds (shipped), sampler params (src/generation/providers/*). Reported partials (no ticket): per-message manual hide toggle (purpose-column adjacent), chat folders-as-workspaces (worlds substitute), conversation overview map, teacher-escalation takeover pattern, nits (bulk edit, moving UI, settings search).
+
 ## Open Questions
 
 1. Build vs. buy: which features are worth first-class implementation vs. plugin-extension surface only? (Ties to plugin epic + epic 25 deployment packaging for external engines like ComfyUI/SD.)
