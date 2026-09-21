@@ -26,7 +26,10 @@
 export interface LifecycleConfig {
   /** Drop entries whose effective confidence is strictly less than this. 0..100. Default 25. */
   min_confidence: number;
-  /** Confidence points lost per world-day since `last_verified`. Default 0.5. */
+  /**
+ * Confidence points lost per world-day since `last_verified`. **Default 0**
+ * because no world-clock column exists yet (see BUG-lore-decay-gate-…).
+ */
   decay_per_day: number;
   /** distortion_level >= this marks the entry as "disputed". 0..100. Default 80. */
   distortion_cap: number;
@@ -35,7 +38,7 @@ export interface LifecycleConfig {
 /** Defaults used when `worlds.rules.lifecycle_config` is absent. */
 export const DEFAULT_LIFECYCLE_CONFIG: LifecycleConfig = Object.freeze({
   min_confidence: 25,
-  decay_per_day: 0.5,
+  decay_per_day: 0,
   distortion_cap: 80,
 },);
 
