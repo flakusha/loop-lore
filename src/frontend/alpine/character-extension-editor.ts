@@ -14,10 +14,11 @@
 // Ponytail note: the editor holds the canonical draft and serializes to
 // the existing `PUT /api/actors/:actorId` `settings` payload rather than
 // adding per-field endpoints. One save, one round-trip.
+import type { BundleCharacterRequirements, } from "../../plugins";
+import { safeJsonParse, safeJsonStringify, } from "../../utils/safe-json";
 import { apiFetch, } from "./htmx";
 import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";
-import type { BundleCharacterRequirements, } from "../../plugins";
 
 const log = rootLog.child({ module: "character-extension-editor", },);
 
@@ -86,7 +87,8 @@ const emptyPayload = (): CharacterExtensionsPayload => ({});
 export function serializeExtensions(
   draft: CharacterExtensionsPayload,
 ): string {
-  return JSON.stringify(draft,);
+  const result = safeJsonStringify(draft,);
+  return result.ok ? result.value : "{}";
 }
 
 /**
@@ -102,10 +104,13 @@ export function checkBundle(
   const reqs = requirements?.required ?? [];
   for (const key of reqs) {
     const v = draft[key];
-    if (v === undefined) { missing.push(`required: ${key}`); continue; }
+    if (v === undefined) {
+      missing.push(`required: ${key}`,);
+      continue;
+    }
     const min = requirements?.minLength?.[key];
-    if (typeof min === "number" && Array.isArray(v) && v.length < min) {
-      missing.push(`minLength: ${key} < ${min}`);
+    if (typeof min === "number" && Array.isArray(v,) && v.length < min) {
+      missing.push(`minLength: ${key} < ${min}`,);
     }
   }
   return { valid: missing.length === 0, missing, };
@@ -123,7 +128,7 @@ const seed: CharacterExtensionEditorState = {
   message: "",
   validation: { valid: true, missing: [], },
 
-  setActorId(actorId) {
+  setActorId(actorId,) {
     if (this._cxActorId === actorId) { return; }
     this._cxActorId = actorId;
     this.current = emptyPayload();
@@ -134,7 +139,7 @@ const seed: CharacterExtensionEditorState = {
     this.validation = { valid: true, missing: [], };
   },
 
-  setBundleRequirements(reqs) {
+  setBundleRequirements(reqs,) {
     this._cxRequirements = reqs;
     this.validation = checkBundle(this.draft, reqs,);
   },
@@ -156,7 +161,7 @@ const seed: CharacterExtensionEditorState = {
       const raw = body.data?.settings ?? "{}";
       const parsed = safeParse(raw,);
       this.current = parsed;
-      this.draft = structuredClone(parsed) as CharacterExtensionsPayload;
+      this.draft = structuredClone(parsed,) as CharacterExtensionsPayload;
       this.bundleId = typeof parsed.plugin_bundle === "string" ? parsed.plugin_bundle : "";
       this.validation = checkBundle(this.draft, this._cxRequirements,);
     } catch (e) {
@@ -189,7 +194,7 @@ const seed: CharacterExtensionEditorState = {
     const report = checkBundle(this.draft, this._cxRequirements,);
     this.validation = report;
     if (!report.valid) {
-      this.error = `Bundle requirements unmet: ${report.missing.join(", ")}`;
+      this.error = `Bundle requirements unmet: ${report.missing.join(", ",)}`;
       return;
     }
     this.saving = true;
@@ -220,9 +225,9 @@ const seed: CharacterExtensionEditorState = {
 function safeParse(raw: string,): CharacterExtensionsPayload {
   if (!raw) { return emptyPayload(); }
   try {
-    const parsed = JSON.parse(raw,);
-    if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
-      return parsed as CharacterExtensionsPayload;
+    const result = safeJsonParse<CharacterExtensionsPayload>(raw,);
+    if (result.ok && result.value && typeof result.value === "object" && !Array.isArray(result.value,)) {
+      return result.value;
     }
   } catch { /* fallthrough */ }
   return emptyPayload();
