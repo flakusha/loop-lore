@@ -61,13 +61,13 @@ describe("NSFW E2E", () => {
     // first and rejects unsafe methods with 403 csrf_verification_failed.
     // This is the correct order — a forged session can't reach the role gate.
     const anon = createClient(server.url,);
-    const res = await anon.post("/api/nsfw/moderation/block", blockBody(SEED.user.id,),);
+    const res = await anon.post("/api/v1/nsfw/moderation/block", blockBody(SEED.user.id,),);
     expect(res.status,).toBe(403,);
     expect(res.error ?? "",).toContain("csrf",);
   });
   test("POST /api/nsfw/moderation/block returns 403 for regular user", async () => {
     const res = await userApi.post(
-      "/api/nsfw/moderation/block",
+      "/api/v1/nsfw/moderation/block",
       blockBody(SEED.admin.id,),
     );
     expect(res.status,).toBe(403,);
@@ -76,7 +76,7 @@ describe("NSFW E2E", () => {
 
   test("POST /api/nsfw/moderation/ban returns 403 for regular user", async () => {
     const res = await userApi.post(
-      "/api/nsfw/moderation/ban",
+      "/api/v1/nsfw/moderation/ban",
       blockBody(SEED.admin.id,),
     );
     expect(res.status,).toBe(403,);
@@ -87,7 +87,7 @@ describe("NSFW E2E", () => {
     const targetId = "a0000099-0000-4000-a000-000000000000";
 
     const block = await adminApi.post(
-      "/api/nsfw/moderation/block",
+      "/api/v1/nsfw/moderation/block",
       blockBody(targetId,),
     );
     expect(block.ok,).toBe(true,);
@@ -95,7 +95,7 @@ describe("NSFW E2E", () => {
 
     // unblockBody takes only targetUserId
     const unblock = await adminApi.post(
-      "/api/nsfw/moderation/unblock",
+      "/api/v1/nsfw/moderation/unblock",
       { targetUserId: targetId, },
     );
     expect(unblock.ok,).toBe(true,);
@@ -106,21 +106,21 @@ describe("NSFW E2E", () => {
 
     // shadow route uses modBody — requires reason
     const shadow = await adminApi.post(
-      "/api/nsfw/moderation/shadow",
+      "/api/v1/nsfw/moderation/shadow",
       blockBody(targetId,),
     );
     expect(shadow.ok,).toBe(true,);
 
     // unshadow route also uses modBody — requires reason
     const unshadow = await adminApi.post(
-      "/api/nsfw/moderation/unshadow",
+      "/api/v1/nsfw/moderation/unshadow",
       blockBody(targetId,),
     );
     expect(unshadow.ok,).toBe(true,);
   });
 
   test("GET /api/nsfw/moderation/flags (list) is reachable for admin", async () => {
-    const res = await adminApi.get("/api/nsfw/moderation/flags",);
+    const res = await adminApi.get("/api/v1/nsfw/moderation/flags",);
     expect(res.status,).toBe(200,);
     expect(res.data,).toBeTruthy();
   });
@@ -128,7 +128,7 @@ describe("NSFW E2E", () => {
   test("POST /api/nsfw/moderation/block with missing targetUserId returns 422", async () => {
     // modBody schema requires targetUserId; Elysia schema validation → 422.
     const res = await adminApi.post(
-      "/api/nsfw/moderation/block",
+      "/api/v1/nsfw/moderation/block",
       { reason: "no target", },
     );
     expect(res.status,).toBe(422,);
@@ -137,7 +137,7 @@ describe("NSFW E2E", () => {
 
   test("POST /api/nsfw/moderation/block with missing reason returns 422", async () => {
     const res = await adminApi.post(
-      "/api/nsfw/moderation/block",
+      "/api/v1/nsfw/moderation/block",
       { targetUserId: SEED.user.id, },
     );
     expect(res.status,).toBe(422,);

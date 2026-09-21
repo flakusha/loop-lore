@@ -104,7 +104,7 @@ describe("New chat advanced fields E2E", () => {
       );
 
       const createRes = page.waitForResponse(
-        (res,) => res.url().includes("/api/chats",) && res.request().method() === "POST",
+        (res,) => res.url().includes("/api/v1/chats",) && res.request().method() === "POST",
         { timeout: 15_000, },
       );
 

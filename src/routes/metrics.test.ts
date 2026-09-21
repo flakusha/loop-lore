@@ -17,6 +17,7 @@ function configWith(metricsEnabled: boolean,): Config {
   const observability: ObservabilityConfig = {
     health: { liveness: false, readiness: false, },
     metrics: { enabled: metricsEnabled, },
+    telemetry: { piiSecret: "", },
   };
   return { observability, } as Config;
 }

@@ -15,6 +15,10 @@ export interface NsfwConfig {
   consentRequired: boolean;
   /** Whether to log NSFW gate decisions to audit trail. Default true. */
   auditLogging: boolean;
+  /** HMAC secret for NSFW PII pseudonymization (gate audit + moderation reporter hash). Env-only: NSFW_PII_SECRET. Required in production. */
+  piiSecret?: string;
+  /** HMAC secret for moderation reporter-hash projection. Env-only: NSFW_FLAG_REPORTER_HASH_SECRET. Falls back to nsfw.piiSecret when unset. */
+  reporterHashSecret?: string;
   /**
    * When true, the NSFW gate augments keyword detection with an LLM content
    * rating classifier (config-driven via `resolveSystemPrompt(templates, "nsfw")`).

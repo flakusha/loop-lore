@@ -54,10 +54,13 @@
   "NSFW_DEFAULTNSFWSCOPE": "nsfw.defaultNsfwScope",
   "NSFW_CONSENTREQUIRED": "nsfw.consentRequired",
   "NSFW_AUDITLOGGING": "nsfw.auditLogging",
+  "NSFW_PIISECRET": "nsfw.piiSecret",
+  "NSFW_REPORTERHASHSECRET": "nsfw.reporterHashSecret",
   "NSFW_USELLMCLASSIFIER": "nsfw.useLlmClassifier",
   "OBSERVABILITY_HEALTH_LIVENESS": "observability.health.liveness",
   "OBSERVABILITY_HEALTH_READINESS": "observability.health.readiness",
   "OBSERVABILITY_METRICS_ENABLED": "observability.metrics.enabled",
+  "OBSERVABILITY_TELEMETRY_PIISECRET": "observability.telemetry.piiSecret",
   "HOOKS_ENABLEMOODHOOKS": "hooks.enableMoodHooks",
   "HOOKS_ENABLEEMOTIONHOOKS": "hooks.enableEmotionHooks",
   "HOOKS_ENABLENSFWHOOKS": "hooks.enableNsfwHooks",
@@ -185,5 +188,9 @@
   "TESTING_LLAMA_MODEL": "testing.llamaModel",
   "TESTING_SD_MODEL": "testing.sdModel",
   "TESTING_LLAMA_PORT": "testing.llamaPort",
-  "TESTING_SD_PORT": "testing.sdPort"
+  "TESTING_SD_PORT": "testing.sdPort",
+  "NSFW_PII_SECRET": "nsfw.piiSecret",
+  "NSFW_FLAG_REPORTER_HASH_SECRET": "nsfw.reporterHashSecret",
+  "NSFW_MODERATION_HMAC_SECRET": "nsfw.reporterHashSecret",
+  "TELEMETRY_PII_SECRET": "observability.telemetry.piiSecret"
 }

@@ -6,6 +6,7 @@
  * queue/description limits. Pulled out of `flags.ts` so the actions
  * (flag/queue/resolve) live in a leaner module.
  */
+import { resolveReporterHashSecret as resolveSharedReporterHashSecret, } from "../../config/load/pii-safety";
 import type { ContentFlag, } from "./types";
 
 /**
@@ -91,21 +92,27 @@ export interface ResolvedFlagView {
 const FLAG_QUEUE_LIMIT_CAP = 100;
 const FLAG_DESCRIPTION_MAX = 1000;
 
-/** Resolve the reporter-hash HMAC secret, production-gated. */
-export function resolveReporterHashSecret(): string {
-  const envSecret = process.env["NSFW_FLAG_REPORTER_HASH_SECRET"] ??
-    process.env["NSFW_MODERATION_HMAC_SECRET"];
-  if (envSecret) { return envSecret; }
-  const env = process.env["NODE_ENV"] ?? "";
-  if (env === "test" || env === "development" || env === "dev") {
-    return "loop-lore-nsfw-default-do-not-use-in-prod";
-  }
-  throw new Error(
-    "NSFW_FLAG_REPORTER_HASH_SECRET is required in production. Set it to a random string.",
-  );
+/**
+ * Resolve the reporter-hash HMAC secret, production-gated. Lazy: merged
+ * Config wins, raw envs are the fallback, dev gets a documented fallback.
+ * Prefers an explicit per-call config (route `opts.config.nsfw`) so values
+ * from `configs/env.yaml` are honored; falls back to env-only otherwise.
+ * @param configured Value from the merged Config (`nsfw.piiSecret` / `nsfw.reporterHashSecret`).
+ */
+export function resolveReporterHashSecret(configured?: { piiSecret?: string; reporterHashSecret?: string },): string {
+  return resolveSharedReporterHashSecret(configured,);
 }
-
-const REPORTER_HASH_SECRET = resolveReporterHashSecret();
+let cachedReporterSecret: string | null = null;
+/** Resolve (and memoize) the secret; test hook below busts the cache. */
+function reporterSecret(configured?: { piiSecret?: string; reporterHashSecret?: string },): string {
+  if (configured) { return resolveSharedReporterHashSecret(configured,); }
+  cachedReporterSecret ??= resolveSharedReporterHashSecret();
+  return cachedReporterSecret;
+}
+/** Bust the memoized reporter secret. Test-only; called when env flips mid-process. */
+export function resetReporterHashSecretCache(): void {
+  cachedReporterSecret = null;
+}
 
 /**
  * Stable, opaque hash of a reporter id. Allows admins to correlate repeat
@@ -117,8 +124,11 @@ const REPORTER_HASH_SECRET = resolveReporterHashSecret();
  * @param reporterId - Raw reporter id (UUID).
  * @returns 32-char hex digest prefixed with "rh_".
  */
-export function hashReporterId(reporterId: string,): string {
-  const hasher = new Bun.CryptoHasher("sha256", REPORTER_HASH_SECRET,);
+export function hashReporterId(
+  reporterId: string,
+  configured?: { piiSecret?: string; reporterHashSecret?: string },
+): string {
+  const hasher = new Bun.CryptoHasher("sha256", reporterSecret(configured,),);
   hasher.update(reporterId,);
   return `rh_${hasher.digest("hex",).slice(0, 32,)}`;
 }
@@ -127,7 +137,10 @@ export function hashReporterId(reporterId: string,): string {
  * Project a ContentFlag to the queue-view shape (no reporter PII).
  * @param row
  */
-export function toQueueView(row: ContentFlag,): FlagQueueView {
+export function toQueueView(
+  row: ContentFlag,
+  configured?: { piiSecret?: string; reporterHashSecret?: string },
+): FlagQueueView {
   return {
     id: row.id,
     contentType: row.contentType,
@@ -136,7 +149,7 @@ export function toQueueView(row: ContentFlag,): FlagQueueView {
     resolution: row.resolution,
     resolvedBy: row.resolvedBy,
     resolvedAt: row.resolvedAt,
-    reporterHash: hashReporterId(row.reporterId,),
+    reporterHash: hashReporterId(row.reporterId, configured,),
     createdAt: row.createdAt,
   };
 }

@@ -36,6 +36,19 @@ export const observability = {
       },
       required: ["enabled",],
     },
+    telemetry: {
+      type: "object",
+      description: "Admin telemetry PII pseudonymization.",
+      properties: {
+        piiSecret: {
+          type: "string",
+          default: "",
+          description:
+            "HMAC secret for admin-telemetry PII hashing. Env-only: TELEMETRY_PII_SECRET. Required in production.",
+        },
+      },
+      required: [],
+    },
   },
-  required: ["health", "metrics",],
+  required: ["health", "metrics", "telemetry",],
 };

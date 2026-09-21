@@ -31,7 +31,7 @@ describe("Age Gate E2E", () => {
     await api.loginAs(SEED.user.username, SEED.user.password,);
 
     // Try to create a chat — should be blocked by age gate
-    const res = await api.post<{ id: string }>("/api/chats", {
+    const res = await api.post<{ id: string }>("/api/v1/chats", {
       name: "Test Chat",
       type: "direct",
       mode: "direct",
@@ -48,7 +48,7 @@ describe("Age Gate E2E", () => {
     expect(acceptRes.ok,).toBe(true,);
 
     // Now chat creation should succeed
-    const res2 = await api.post<{ id: string }>("/api/chats", {
+    const res2 = await api.post<{ id: string }>("/api/v1/chats", {
       name: "Test Chat",
       type: "direct",
       mode: "direct",

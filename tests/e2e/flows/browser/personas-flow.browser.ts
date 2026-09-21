@@ -74,7 +74,7 @@ describe("Personas flow E2E", () => {
       const created = await page.evaluate(async (name,) => {
         // CSRF double-submit: echo the csrf_token cookie like feFetch does.
         const csrf = /(?:^|;\s*)csrf_token=([^;]+)/.exec(document.cookie,)?.[1] ?? "";
-        const res = await fetch("/api/personas", {
+        const res = await fetch("/api/v1/personas", {
           method: "POST",
           headers: { "Content-Type": "application/json", "X-CSRF-Token": csrf, },
           body: JSON.stringify({ name, description: "created via api", title: "T", },),
@@ -92,7 +92,7 @@ describe("Personas flow E2E", () => {
       expect(row?.user_id,).toBe(SEED.solo.id,);
       // API lists it for the solo user.
       const listed = await page.evaluate(async (name,) => {
-        const res = await fetch("/api/personas", { headers: { Accept: "application/json", }, },);
+        const res = await fetch("/api/v1/personas", { headers: { Accept: "application/json", }, },);
         if (!res.ok) { return false; }
         const data = await res.json() as Array<{ name: string }>;
         return data.some((p,) => p.name === name);
@@ -141,7 +141,7 @@ describe("Personas flow E2E", () => {
         .executeTakeFirst();
       expect(row,).toBeUndefined();
       const listed = await page.evaluate(async (name,) => {
-        const res = await fetch("/api/personas", { headers: { Accept: "application/json", }, },);
+        const res = await fetch("/api/v1/personas", { headers: { Accept: "application/json", }, },);
         if (!res.ok) { return true; }
         const data = (await res.json()) as Array<{ name: string }>;
         return !data.some((p,) => p.name === name);

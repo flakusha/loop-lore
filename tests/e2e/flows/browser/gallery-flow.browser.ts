@@ -44,7 +44,7 @@ describe("Gallery flow E2E", () => {
     // so failures surface their real status instead of a silent DB timeout.
     const uploadRes = page.waitForResponse((res,) => {
       const url = new URL(res.url(),);
-      return res.request().method() === "POST" && url.pathname === "/api/assets";
+      return res.request().method() === "POST" && url.pathname === "/api/v1/assets";
     }, { timeout: 15_000, },);
     await page.click("[data-testid='upload-button']",);
     await page.locator("[data-testid='upload-form']",).waitFor({ state: "visible", timeout: 15_000, },);

@@ -19,16 +19,16 @@ describe("Users E2E", () => {
   },);
 
   test("GET /api/users/me returns current user", async () => {
-    const res = await api.get<{ id: string; username: string; role: string }>("/api/users/me",);
+    const res = await api.get<{ id: string; username: string; role: string }>("/api/v1/users/me",);
     expect(res.ok,).toBe(true,);
     expect(res.data!.username,).toBe(SEED.user.username,);
   });
 
   test("PUT /api/users/me updates display_name", async () => {
-    const res = await api.put("/api/users/me", { displayName: "Updated Display", },);
+    const res = await api.put("/api/v1/users/me", { displayName: "Updated Display", },);
     expect(res.ok,).toBe(true,);
 
-    const getRes = await api.get<{ display_name: string }>("/api/users/me",);
+    const getRes = await api.get<{ display_name: string }>("/api/v1/users/me",);
     expect(getRes.data!.display_name,).toBe("Updated Display",);
   });
 

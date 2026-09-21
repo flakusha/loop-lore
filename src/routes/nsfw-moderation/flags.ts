@@ -26,6 +26,7 @@ import type { HandlerOpts, } from "./types";
  */
 export function flagsRoutes(opts: HandlerOpts, prefix = "/api",) {
   const svc = new NsfwModerationService(opts.database,);
+  const configured = opts.config?.nsfw;
 
   return (
     new Elysia({ name: "nsfw-moderation-flags", },)
@@ -44,7 +45,7 @@ export function flagsRoutes(opts: HandlerOpts, prefix = "/api",) {
             description,
           },);
           // Return a redacted view (reporter hash, no chatId/worldId/contentId/description).
-          const view = toQueueView(flag,);
+          const view = toQueueView(flag, configured,);
           return jsonResponse({
             ...SuccessResponse,
             data: { id: view.id, status: view.status, reporterHash: view.reporterHash, },
@@ -62,7 +63,7 @@ export function flagsRoutes(opts: HandlerOpts, prefix = "/api",) {
           const offset = Number(ctx.query.offset ?? 0,);
           const result = await svc.getFlagQueue({ status, limit, offset, },);
           // Strip reporter PII and contextual ids — only the redacted view is exposed.
-          const flags = result.flags.map((f,) => toQueueView(f,));
+          const flags = result.flags.map((f,) => toQueueView(f, configured,));
           return jsonResponse({ ...SuccessResponse, data: { flags, total: result.total, }, },);
         } catch (error: unknown) {
           return jsonError(error instanceof Error ? error.message : String(error,), 500,);

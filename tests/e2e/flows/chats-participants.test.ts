@@ -29,7 +29,7 @@ describe("Chat Participants E2E", () => {
   });
 
   test("POST /api/chats/:id/participants adds a participant", async () => {
-    const actorRes = await api.post<{ id: string }>("/api/actors", {
+    const actorRes = await api.post<{ id: string }>("/api/v1/actors", {
       displayName: "Participant Actor",
       actorType: "character",
     },);
@@ -90,7 +90,7 @@ describe("Chat Participants E2E", () => {
 
   test("GET /api/chats/:id/side excludes migrated (template) children", async () => {
     // Side-channel creation for a non-group (direct) chat still lists cleanly.
-    const direct = await api.post<{ id: string }>("/api/chats", { name: "Direct for Side", },);
+    const direct = await api.post<{ id: string }>("/api/v1/chats", { name: "Direct for Side", },);
     const directId = direct.data!.id;
 
     const listRes = await api.get<{ sideChannels: unknown[] }>(`/api/chats/${directId}/side`,);
@@ -100,7 +100,7 @@ describe("Chat Participants E2E", () => {
 
   test("GET /api/chats/:id/turn-order returns a snapshot for a group chat", async () => {
     // Create a group chat and add the seeded AI character as a participant.
-    const group = await api.post<{ id: string }>("/api/chats", {
+    const group = await api.post<{ id: string }>("/api/v1/chats", {
       name: "Turn Order Group",
       type: "group",
       mode: "group",
@@ -131,7 +131,7 @@ describe("Chat Participants E2E", () => {
   });
 
   test("GET /api/chats/:id/turn-order returns null for a direct chat", async () => {
-    const direct = await api.post<{ id: string }>("/api/chats", { name: "Direct Turn", },);
+    const direct = await api.post<{ id: string }>("/api/v1/chats", { name: "Direct Turn", },);
     const directId = direct.data!.id;
     const res = await api.get<{ turnOrder: unknown }>(`/api/chats/${directId}/turn-order`,);
     expect(res.ok,).toBe(true,);
