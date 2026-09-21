@@ -399,6 +399,17 @@ P6+ architecture note; #34 criteria adopt into existing branching ticket.
 | #35 | TASK-platform-health-discovery-cost-display.md | addendum (cost-visible UX) |
 | #36 | TASK-text-to-visual-novel-importer.md | new |
 
+
+## Third Sweep Refresh (2026-09-21) — AI RPG + RAG platforms
+
+Refresh of the stale-by-a-month inspiration corpus: two citation-carrying web-research sweeps re-examined the previously reviewed RPG/narrative/companion platforms (DreamRunner, Neta, Character.AI, Nomi, Kindroid, Talkie, AI Dungeon, Inworld, Convai, AI-GM tools) plus RAG/knowledge/memory platforms (Open WebUI, RAGFlow, AnythingLLM, Onyx, LibreChat, Mem0, Zep, Letta), and four new entrants (TableForge, wilds.ai, The Endlessness, DungeonsDeep). Full feature extraction + verdicts: `docs/ideas/emergent-platform-landscape-2026c.md`.
+
+Outcome: 19 of 20 new capability candidates already covered by existing epics/tickets (several verbatim — the LibreChat compaction turn and HITL gates are cited by existing tickets); refinements recorded in the sweep doc (citation deep-links, retrieval hit highlighting, consent-gated re-embedding UX, memory-API attribution headers) to fold into owning epics when started. **One genuine gap filed:**
+
+| Candidate | Source | Ticket | Action |
+|---|---|---|---|
+| E17 Post-episode character chat (microdrama → live chat handoff) | Character.AI (c.ai) Series (Jul 2026) | IDEA-microdrama-post-episode-chat-handoff.md | new (product-direction call required) |
+
 ## Related Epics
 
 - **Epic World & Locations** — world style / style-specific asset & NPC generation are adoption candidates tracked here.

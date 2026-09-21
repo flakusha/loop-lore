@@ -59,6 +59,11 @@ matrix: `.plan/tickets/TASK-cross-tool-data-portability-review.md`.
 > **[emergent-platform-landscape-2026.md](./emergent-platform-landscape-2026.md)** —
 > Bucket A/B/C feature lists + loop-lore gap synthesis (E1–E8) mapped to existing epics.
 > Feed it into `../.plan/epics/epic-platform-research.md` and `../.plan/backlog/priority.md`.
+>
+> **Refresh sweeps:** [emergent-platform-landscape-2026b.md](./emergent-platform-landscape-2026b.md)
+> (2026-08-31, VN/world-builder studios, E9–E16) and
+> [emergent-platform-landscape-2026c.md](./emergent-platform-landscape-2026c.md)
+> (2026-09-21, RPG + RAG refresh, E17).
 
 ## Themes
 
