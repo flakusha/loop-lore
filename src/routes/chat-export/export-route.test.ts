@@ -39,7 +39,7 @@ beforeEach(async () => {
 },);
 
 async function seedChatWithMessage(content: string,): Promise<string> {
-  await insertUsers(database, "u-owner", "Owner", { id: "u-owner" } as never,);
+  await insertUsers(database, "u-owner", "Owner", { id: "u-owner", } as never,);
   await insertActors(database, "u-owner", {
     id: "u-owner",
     user_id: "u-owner",
@@ -60,9 +60,9 @@ async function seedChatWithMessage(content: string,): Promise<string> {
   return "chat-1";
 }
 
-function makeApp(config: { generation?: { regexTransforms?: { pattern: string; replacement: string }[] } },) {
+function makeApp(config: { generation?: { regexTransforms?: { name?: string; pattern: string; replacement: string; enabled?: boolean }[] } },) {
   const app = new Elysia({ name: "test-export", },);
-  app.derive(() => ({ userId: "u-owner", userRole: null, }),);
+  app.derive(() => ({ userId: "u-owner", userRole: null, }));
   return app.use(exportChatRoute({ database, config: config as never, }, "/api",),);
 }
 
