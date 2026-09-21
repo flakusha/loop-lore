@@ -111,7 +111,19 @@ export const loreSection: SectionBuilder = {
     // ties keep stable insertion order (position asc from the query).
     relevantEntries.sort((a, b,) => b.priority - a.priority);
 
-    // Update last_activated for entries that were included
+    // Update activation timestamps for entries that were included.
+    //
+    // Two tables own lore rows: `actor_lore_entries` (per-character) and
+    // `world_lore_entries` (per-world, lifecycle-aware). Each gets its
+    // own timestamp columns, so the writes are split per row.
+    //   - actor_lore_entries: `last_activated` (cooldown tracking only).
+    //   - world_lore_entries: `last_activated` + `last_verified`
+    //     (BUG-lore-lifecycle-fields-have-no-producers-… minimal producer:
+    //     every world row seen in a prompt is now marked verified, which
+    //     is the precondition for any future temporal-decay plumbing).
+    //
+    // Errors are swallowed: cooldown / verification tracking are
+    // non-critical and must never fail prompt assembly.
     const now = new Date().toISOString();
     for (const entry of relevantEntries) {
       if (entry.cooldown_seconds <= 0) { continue; }
@@ -126,11 +138,11 @@ export const loreSection: SectionBuilder = {
       if (Number(actorResult.numUpdatedRows,) === 0) {
         void ctx.db
           .updateTable("world_lore_entries",)
-          .set({ last_activated: now, },)
+          .set({ last_activated: now, last_verified: now, },)
           .where("id", "=", entry.id,)
           .execute()
           .catch(() => {
-            // Ignore errors - cooldown tracking is non-critical
+            // Ignore errors - cooldown / verification tracking is non-critical
           },);
       }
     }
