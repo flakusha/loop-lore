@@ -269,7 +269,6 @@ const WAIVERS = {
     reason:
       "new module; secret-resolution exercised via pii-redaction.ts integration tests; production-config path not reachable in isolated check-gate runner",
   },
-
 };
 
 /**
