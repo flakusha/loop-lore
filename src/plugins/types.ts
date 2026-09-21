@@ -25,6 +25,21 @@ export interface LoadedPlugin {
   directory: string;
 }
 
+/**
+ * Bundle-declared requirements for the canonical character shape.
+ *
+ * A plugin that bundles characters (e.g. fantasy-rpg) can declare which
+ * `CharacterExtensions` keys are required for any character opting into
+ * its bundle. The validator in `bundles.ts` enforces presence (not
+ * non-emptiness) so authors can still ship drafts.
+ */
+export interface BundleCharacterRequirements {
+  /** Top-level keys in `CharacterExtensions` that must be present. */
+  required?: string[];
+  /** Minimum array length for the listed keys (e.g. inventory ≥ 1). */
+  minLength?: Record<string, number>;
+}
+
 /** Plugin manifest — the exported `plugin` value */
 export interface PluginManifest {
   name: string;
@@ -42,6 +57,8 @@ export interface PluginManifest {
   eventHandlers?: EventHandlerDefinition[];
   migrations?: MigrationDefinition[];
   configSchema?: PluginConfigSchema;
+  /** Per-bundle character extension requirements keyed by bundle id. */
+  characterRequirements?: Record<string, BundleCharacterRequirements>;
 }
 
 /** Context passed to onLoad */
