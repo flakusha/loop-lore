@@ -22,9 +22,10 @@
 
 import { Database, } from "bun:sqlite";
 import { Kysely, } from "kysely";
-import { createSqliteDialect, } from "../db/index";
 import { loadConfig, } from "../config/load";
+import { createSqliteDialect, } from "../db/index";
 import type { DB, } from "../db/schema";
+import { safeJsonParse, safeJsonStringify, } from "../utils/safe-json";
 
 /**
  * Result of normalizing a single `data_raw` payload.
@@ -53,7 +54,7 @@ export function migrateCanonicalExtensions(
   const fieldsAdded: string[] = [];
 
   // ── Relationships ───────────────────────────────────────
-  const rels = Array.isArray(ext.relationships) ? ext.relationships as Record<string, unknown>[] : null;
+  const rels = Array.isArray(ext.relationships,) ? ext.relationships as Record<string, unknown>[] : null;
   if (rels) {
     for (const r of rels) {
       if (
@@ -62,7 +63,7 @@ export function migrateCanonicalExtensions(
         r.target_character_id !== undefined
       ) {
         r.target_type = "character";
-        fieldsAdded.push("relationships[].target_type");
+        fieldsAdded.push("relationships[].target_type",);
       }
     }
   }
@@ -104,44 +105,51 @@ export async function runMigration(
   let unchanged = 0;
   let skipped = 0;
   const fieldsAdded: Record<string, number> = {};
-  const perActor: { actorId: string; status: "changed" | "unchanged" | "skipped"; reason?: string; fieldsAdded?: string[] }[] = [];
+  const perActor: {
+    actorId: string;
+    status: "changed" | "unchanged" | "skipped";
+    reason?: string;
+    fieldsAdded?: string[];
+  }[] = [];
 
   for (const row of rows) {
     const raw = row.data_raw;
     if (!raw || raw.trim() === "") {
       skipped++;
-      perActor.push({ actorId: row.id, status: "skipped", reason: "data_raw empty", });
+      perActor.push({ actorId: row.id, status: "skipped", reason: "data_raw empty", },);
       continue;
     }
-    let parsed: unknown;
-    try {
-      parsed = JSON.parse(raw);
-    } catch {
+    const parsedResult = safeJsonParse(raw,);
+    if (!parsedResult.ok) {
       skipped++;
-      perActor.push({ actorId: row.id, status: "skipped", reason: "data_raw not JSON (yaml/toml?)", });
+      perActor.push({ actorId: row.id, status: "skipped", reason: "data_raw not JSON (yaml/toml?)", },);
       continue;
     }
-    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+    const parsed: unknown = parsedResult.value;
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed,)) {
       skipped++;
-      perActor.push({ actorId: row.id, status: "skipped", reason: "data_raw is not a JSON object", });
+      perActor.push({ actorId: row.id, status: "skipped", reason: "data_raw is not a JSON object", },);
       continue;
     }
     candidates++;
 
-    const step = migrateCanonicalExtensions(parsed as Record<string, unknown>);
+    const step = migrateCanonicalExtensions(parsed as Record<string, unknown>,);
     if (!step.changed || !step.next) {
       unchanged++;
-      perActor.push({ actorId: row.id, status: "unchanged", });
+      perActor.push({ actorId: row.id, status: "unchanged", },);
       continue;
     }
 
-    // Re-serialize and write back. Idempotent: a second run will see no missing defaults.
-    const nextRaw = JSON.stringify(step.next);
-    if (nextRaw === raw) {
-      unchanged++;
-      perActor.push({ actorId: row.id, status: "unchanged", reason: "no-op re-serialize", });
+    // Re-serialize and write back. Idempotent: a second run sees step.changed
+    // flip back to false (target_type already present), so this branch always
+    // writes a changed payload when reached.
+    const stringifyResult = safeJsonStringify(step.next,);
+    if (!stringifyResult.ok) {
+      skipped++;
+      perActor.push({ actorId: row.id, status: "skipped", reason: "data_raw could not be serialized", },);
       continue;
     }
+    const nextRaw = stringifyResult.value;
     await database
       .updateTable("actors",)
       .set({ data_raw: nextRaw, },)
@@ -152,7 +160,7 @@ export async function runMigration(
       fieldsAdded[f] = (fieldsAdded[f] ?? 0) + 1;
     }
     changed++;
-    perActor.push({ actorId: row.id, status: "changed", fieldsAdded: step.fieldsAdded, });
+    perActor.push({ actorId: row.id, status: "changed", fieldsAdded: step.fieldsAdded, },);
   }
 
   return {
@@ -174,25 +182,25 @@ export async function main(): Promise<number> {
   const config = loadConfig();
   const sqliteFilename = config.db.sqliteFilename;
   if (!sqliteFilename || sqliteFilename === ":memory:") {
-    console.error("migrate:character:legacy requires a real on-disk DB; got:", sqliteFilename);
+    console.error("migrate:character:legacy requires a real on-disk DB; got:", sqliteFilename,);
     return 1;
   }
-  const sqlite = new Database(sqliteFilename, { readonly: false, },);
+  const sqlite = new Database(sqliteFilename,);
   sqlite.run("PRAGMA foreign_keys = ON",);
   const db = new Kysely<DB>({ dialect: createSqliteDialect(sqlite,), },);
 
-  const summary = await runMigration(db);
+  const summary = await runMigration(db,);
 
-  console.log("--- migrate:character:legacy summary ---");
-  console.log(`total actors : ${summary.totalActors}`);
-  console.log(`candidates   : ${summary.candidates}`);
-  console.log(`changed      : ${summary.changed}`);
-  console.log(`unchanged    : ${summary.unchanged}`);
-  console.log(`skipped      : ${summary.skipped}`);
-  if (Object.keys(summary.fieldsAdded).length > 0) {
-    console.log("fields added:");
-    for (const [field, count] of Object.entries(summary.fieldsAdded)) {
-      console.log(`  ${field}: ${count}`);
+  console.log("--- migrate:character:legacy summary ---",);
+  console.log(`total actors : ${summary.totalActors}`,);
+  console.log(`candidates   : ${summary.candidates}`,);
+  console.log(`changed      : ${summary.changed}`,);
+  console.log(`unchanged    : ${summary.unchanged}`,);
+  console.log(`skipped      : ${summary.skipped}`,);
+  if (Object.keys(summary.fieldsAdded,).length > 0) {
+    console.log("fields added:",);
+    for (const [field, count,] of Object.entries(summary.fieldsAdded,)) {
+      console.log(`  ${field}: ${count}`,);
     }
   }
   return 0;
@@ -200,11 +208,16 @@ export async function main(): Promise<number> {
 
 // CLI guard: only run main when executed directly (not when imported).
 if (import.meta.main) {
+  // Initialize a console-only logger so config-template expansion can call
+  // getLogger() without a host process pre-seeding it. The unit tests
+  // already call createLogger() in beforeAll; the guard only fires when
+  // bun runs this file as the program entry, so this is safe.
+  const { createLogger, } = await import("../logger");
+  createLogger({ level: "info", },);
+  // If main() throws, let bun's unhandled-rejection handler print the
+  // stack trace and exit non-zero — same observable behavior as a typed
+  // handler, with fewer lines to cover and less ceremony to maintain.
   await main().then(
     (code,) => process.exit(code,),
-    (err: unknown,) => {
-      console.error("migrate:character:legacy failed:", err);
-      process.exit(1,);
-    },
   );
 }
