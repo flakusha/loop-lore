@@ -142,6 +142,8 @@ describe("injectAuditKinds", () => {
       editingMemoryId: null,
       editMemoryContent: "",
       tokensUsed: 0,
+      tokenBudget: 0,
+      busy: false,
     };
   }
   function mem(id: string, extractionKind: MemoryEntry["extractionKind"],): MemoryEntry {
@@ -182,7 +184,7 @@ describe("injectAuditKinds", () => {
 
   test("returns [] when no referenced memories are loaded", () => {
     const panel = mkPanel();
-    expect(injectAuditKinds(injectEntry(["missing-1", "missing-2"],), panel,),).toEqual([],);
+    expect(injectAuditKinds(injectEntry(["missing-1", "missing-2",],), panel,),).toEqual([],);
   });
 
   test("returns distinct extraction kinds for the injected memories", () => {
@@ -192,20 +194,20 @@ describe("injectAuditKinds", () => {
       mem("m2", "single_response",),
       mem("m3", "manual",),
     ];
-    expect(injectAuditKinds(injectEntry(["m1", "m2", "m3"],), panel,)).toEqual(["manual", "single_response",],);
+    expect(injectAuditKinds(injectEntry(["m1", "m2", "m3",],), panel,),).toEqual(["manual", "single_response",],);
   });
 
   test("looks up memories across every tab (character/assistant/world)", () => {
     const panel = mkPanel();
     panel.assistantMemories = [mem("a1", "burst",),];
     panel.worldMemories = [mem("w1", "compaction",),];
-    expect(injectAuditKinds(injectEntry(["a1", "w1"],), panel,)).toEqual(["burst", "compaction",],);
+    expect(injectAuditKinds(injectEntry(["a1", "w1",],), panel,),).toEqual(["burst", "compaction",],);
   });
 
   test("skips memories without an extractionKind set", () => {
     const panel = mkPanel();
     panel.characterMemories = [mem("m1", undefined,), mem("m2", "carry_forward",),];
-    expect(injectAuditKinds(injectEntry(["m1", "m2"],), panel,)).toEqual(["carry_forward",],);
+    expect(injectAuditKinds(injectEntry(["m1", "m2",],), panel,),).toEqual(["carry_forward",],);
   });
 });
 
