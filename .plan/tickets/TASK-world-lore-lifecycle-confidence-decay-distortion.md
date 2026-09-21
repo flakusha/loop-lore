@@ -3,12 +3,13 @@
 
 # TASK: World Lore Lifecycle (confidence/decay/distortion)
 
+**Summary:** World Lore Lifecycle (confidence/decay/distortion)
+**Context:** Source: docs/research/world-spec-extension-2026-09-21.md; tags lore, worlds. Epic: epic-lore-knowledge.
+**Acceptance Criteria:** See `## Acceptance Criteria` heading below — 5 migrations + lifecycle helper module + prompt section wiring + spec docs.
+
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium
-**Acceptance Criteria:** See ## Acceptance Criteria below.
-**Summary:** World Lore Lifecycle (confidence/decay/distortion)
-**Context:** Source: docs/research/world-spec-extension-2026-09-21.md; tags lore, worlds.
 **Epic:** epic-lore-knowledge
 **Tags:** lore, worlds
 
