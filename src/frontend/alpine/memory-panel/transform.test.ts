@@ -229,7 +229,7 @@ function mkEntry(action: AuditEntry["action"],): AuditEntry {
 
 describe("memory transform", () => {
   test("parseMemoryKeywords parses a JSON string array", () => {
-    expect(parseMemoryKeywords('["a","b"]',),).toEqual(["a", "b"],);
+    expect(parseMemoryKeywords('["a","b"]',),).toEqual(["a", "b",],);
   });
 
   test("parseMemoryKeywords returns [] for an empty string", () => {
@@ -241,7 +241,7 @@ describe("memory transform", () => {
   });
 
   test("parseMemoryKeywords passes through an array input", () => {
-    expect(parseMemoryKeywords(["x", "y"],),).toEqual(["x", "y"],);
+    expect(parseMemoryKeywords(["x", "y",],),).toEqual(["x", "y",],);
     expect(parseMemoryKeywords(undefined as unknown as string[],),).toEqual([],);
   });
 
@@ -252,8 +252,8 @@ describe("memory transform", () => {
       memory_type: "semantic",
       confidence: 0.9,
       importance: 0.1,
-      keywords: "[\"foo\"]",
-      pinned: 1,
+      keywords: '["foo"]',
+      pinned: true,
       review_status: "approved",
       created_at: "2026-09-19T12:00:00.000Z",
       scope: "character",
@@ -276,7 +276,7 @@ describe("memory transform", () => {
       confidence: 0.5,
       importance: 0.5,
       keywords: [],
-      pinned: 0,
+      pinned: false,
       review_status: "pending",
       created_at: "2026-09-19",
       source_message_ids: [],
