@@ -11522,6 +11522,18 @@
     "source": ".plan/tickets/TASK-ai-message-utilities.md",
     "status": "open"
   },
+  "TASK-ALIGNMENT-SPEECH-SOCIAL-CONTEXT": {
+    "hash": "pending",
+    "extid": "TASK-ALIGNMENT-SPEECH-SOCIAL-CONTEXT",
+    "type": "TASK",
+    "title": "Alignment dialogue gating + context-aware speech formality",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-alignment-speech-social-context.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-ALPHA-AWARE-GENERATION-REQUESTS-AND-FORMAT-PICK": {
     "hash": "e1a63dc",
     "git_issue": "e1a63dc",
@@ -15879,6 +15891,18 @@
     "status": "Not Started",
     "git_issue": "686631c"
   },
+  "TASK-CONDITION-DRIVEN-NPC-BEHAVIOR": {
+    "hash": "pending",
+    "extid": "TASK-CONDITION-DRIVEN-NPC-BEHAVIOR",
+    "type": "TASK",
+    "title": "Condition-driven NPC behavior (frightened flee, poisoned sluggishness)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-condition-driven-npc-behavior.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-CONFIG-BACKWARD-COMPAT": {
     "hash": "8e16152",
     "extid": "TASK-CONFIG-BACKWARD-COMPAT",
@@ -18269,6 +18293,18 @@
     "git_issue": "8faacee",
     "status": "open"
   },
+  "TASK-EQUIPMENT-MARKET-DEMAND-FEEDBACK": {
+    "hash": "pending",
+    "extid": "TASK-EQUIPMENT-MARKET-DEMAND-FEEDBACK",
+    "type": "TASK",
+    "title": "Equipment/inventory ↔ market demand feedback loop",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-equipment-market-demand-feedback.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-EQUIPMENT-SLOTS": {
     "hash": "ab845fc",
     "extid": "TASK-EQUIPMENT-SLOTS",
@@ -18569,6 +18605,18 @@
       "npcs"
     ],
     "source": ".plan/tickets/TASK-faction-leaders-and-cadre-generation.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-FACTION-MEMBERSHIP-RELATIONSHIP-PROPAGATION": {
+    "hash": "pending",
+    "extid": "TASK-FACTION-MEMBERSHIP-RELATIONSHIP-PROPAGATION",
+    "type": "TASK",
+    "title": "Faction membership → relationships and standing propagation",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-faction-membership-relationship-propagation.md",
     "status": "⬜ Not Started"
   },
   "TASK-FACTION-POLITICS-COUPS-AND-EXPANSION-ENGINE": {
@@ -21361,6 +21409,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-keyphrase-recall.md",
     "status": "open"
+  },
+  "TASK-LANGUAGE-GATED-LORE-VISIBILITY": {
+    "hash": "pending",
+    "extid": "TASK-LANGUAGE-GATED-LORE-VISIBILITY",
+    "type": "TASK",
+    "title": "Language-gated lore visibility",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-language-gated-lore-visibility.md",
+    "status": "⬜ Not Started"
   },
   "TASK-LICENSE-COMPLIANCE-GATE": {
     "hash": "pending",
@@ -27777,6 +27837,18 @@
     "source": ".plan/tickets/TASK-shadow-visibility-debug-assistant.md",
     "status": "open"
   },
+  "TASK-SHARED-CHARACTER-DOMAIN-MODELS": {
+    "hash": "pending",
+    "extid": "TASK-SHARED-CHARACTER-DOMAIN-MODELS",
+    "type": "TASK",
+    "title": "Shared character domain models for world systems",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-shared-character-domain-models.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-SHARED-MACRO-ENGINE-FOR-TEMPLATES-AND-COMMANDS": {
     "hash": "43e22b4",
     "git_issue": "43e22b4",
@@ -27867,6 +27939,18 @@
     "source": ".plan/tickets/TASK-size-strict-debt.md",
     "status": "open"
   },
+  "TASK-SKILL-BIOME-HAZARD-COUNTERMEASURES": {
+    "hash": "pending",
+    "extid": "TASK-SKILL-BIOME-HAZARD-COUNTERMEASURES",
+    "type": "TASK",
+    "title": "Biome hazards with skill-based countermeasures",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-skill-biome-hazard-countermeasures.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-SKILL-CHECK": {
     "hash": "6c3c87a",
     "extid": "TASK-SKILL-CHECK",
@@ -27879,6 +27963,18 @@
     "source": ".plan/tickets/TASK-skill-check.md",
     "git_issue": "6c3c87a",
     "status": "open"
+  },
+  "TASK-SKILL-CHECK-SLASH-COMMANDS": {
+    "hash": "pending",
+    "extid": "TASK-SKILL-CHECK-SLASH-COMMANDS",
+    "type": "TASK",
+    "title": "Skill-check slash commands (/pick_pocket, /disarm, /climb, /swim, /trap_check)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-skill-check-slash-commands.md",
+    "status": "⬜ Not Started"
   },
   "TASK-SKILL-CONSTRUCTOR-ON-CHARACTER-EDIT": {
     "hash": "5c15d0b",
@@ -30033,6 +30129,18 @@
     "source": ".plan/tickets/TASK-wardrobe-tests-ladder-precedence-scoped-regen.md",
     "status": "open"
   },
+  "TASK-WEATHER-CONDITIONS-VITALS-BRIDGE": {
+    "hash": "pending",
+    "extid": "TASK-WEATHER-CONDITIONS-VITALS-BRIDGE",
+    "type": "TASK",
+    "title": "Weather → conditions, vitals drain, equipment protection bridge",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-weather-conditions-vitals-bridge.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-WEATHER-ENVIRONMENT": {
     "hash": "pending",
     "extid": "TASK-WEATHER-ENVIRONMENT",
@@ -30663,6 +30771,18 @@
     "source": ".plan/tickets/TASK-world-state-management.md",
     "git_issue": "a612c78",
     "status": "open"
+  },
+  "TASK-WORLD-STATE-MOTIVATION-CONTEXT": {
+    "hash": "pending",
+    "extid": "TASK-WORLD-STATE-MOTIVATION-CONTEXT",
+    "type": "TASK",
+    "title": "World state machine as motivation/goal context modifier",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-world-state-motivation-context.md",
+    "status": "⬜ Not Started"
   },
   "TASK-WORLD-TEMPLATE-FULL-MODEL-COVERAGE": {
     "hash": "pending",
