@@ -18,10 +18,9 @@ import {
   isServiceError,
   parseToolCalls,
   parseToolResultMeta,
-  resolveMessageContent,
-  resolveMessageContentForRender,
   serviceErrorToResponse,
 } from "./helpers";
+import { resolveMessageContentForRender, } from "./render-message-content";
 import type { HandlerOpts, } from "./types";
 
 /**

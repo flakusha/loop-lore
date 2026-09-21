@@ -32,7 +32,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
   // append-only (no recreate-table on a populated DB).
   // Build the IN list as a raw SQL fragment; values are static literals
   // from a compile-time array, so no injection risk.
-  const inList = ALLOWED_ACTIONS.map((a,) => `'${a.replace(/'/g, "''")}'`,).join(", ",);
+  const inList = ALLOWED_ACTIONS.map((a,) => `'${a.replace(/'/g, "''",)}'`).join(", ",);
   await sql.raw(`
       CREATE TRIGGER IF NOT EXISTS memory_audit_log_action_check
       BEFORE INSERT ON memory_audit_log
@@ -41,7 +41,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
       BEGIN
         SELECT RAISE(ABORT, 'memory_audit_log.action not in allowed enum');
       END;
-    `).execute(database,);
+    `,).execute(database,);
 }
 
 export async function down(database: Kysely<unknown>,): Promise<void> {
