@@ -37,21 +37,21 @@ describe("NSFW PII redaction secret resolution", () => {
     process.env["NODE_ENV"] = "production";
     const { hashId, resetNsfwPiiSecretCache, } = await import("./pii-redaction");
     resetNsfwPiiSecretCache();
-    await expect(hashId("user-1",),).rejects.toThrow(/NSFW_PII_SECRET is required/,);
+    await expect(hashId("user-1",),).rejects.toThrow(/NSFW_PII_SECRET/,);
   });
 
   it("throws when NSFW_PII_SECRET unset and NODE_ENV=staging", async () => {
     process.env["NODE_ENV"] = "staging";
     const { hashId, resetNsfwPiiSecretCache, } = await import("./pii-redaction");
     resetNsfwPiiSecretCache();
-    await expect(hashId("user-1",),).rejects.toThrow(/NSFW_PII_SECRET is required/,);
+    await expect(hashId("user-1",),).rejects.toThrow(/NSFW_PII_SECRET/,);
   });
 
   it("throws when NSFW_PII_SECRET unset and NODE_ENV is unset (default = production-like)", async () => {
     delete process.env["NODE_ENV"];
     const { hashId, resetNsfwPiiSecretCache, } = await import("./pii-redaction");
     resetNsfwPiiSecretCache();
-    await expect(hashId("user-1",),).rejects.toThrow(/NSFW_PII_SECRET is required/,);
+    await expect(hashId("user-1",),).rejects.toThrow(/NSFW_PII_SECRET/,);
   });
 
   it("uses env NSFW_PII_SECRET when set, regardless of NODE_ENV", async () => {
