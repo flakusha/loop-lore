@@ -30980,7 +30980,7 @@
     "resolved_by": "2ac5cf29"
   },
   "TASK-WORLD-LORE-LIFECYCLE-CONFIDENCE-DECAY-DISTORTION": {
-    "hash": "9a60fc2",
+    "hash": "e6986ec",
     "extid": "TASK-WORLD-LORE-LIFECYCLE-CONFIDENCE-DECAY-DISTORTION",
     "type": "TASK",
     "title": "TASK: World Lore Lifecycle (confidence/decay/distortion)",
