@@ -3,10 +3,13 @@
 
 # BUG: lore-load.ts uses any for db + eb instead of Kysely+ExpressionBuilder
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Closed (resolved in `0da9d9b0` — `fix(assistant): wire last_verified producer + drop dead decay gate`)
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-lore-knowledge
+**Summary:** `lore-load.ts` declared `ctx.db: any` and `(eb: any,)` in the WHERE callback. Violates `banned-patterns.md` (`any` prohibited) and `route-ctx-typing` skill.
+**Context:** Extracted from `lore.ts` in `TASK-world-lore-lifecycle-confidence-decay-distortion`; sibling `lore-identity.ts` uses `Kysely<DB>` + `ExpressionBuilder<DB, …>`. The minimal ctx shape was a short cut during the size-strict split.
+**Acceptance Criteria:** `lore-load.ts` contains no `any` keyword; `loadLore` accepts a typed `LoadLoreCtx`; `eb` callback typed as `ExpressionBuilder<DB, "actor_lore_entries" | "world_lore_entries">`; all tests pass.
 
 ## Summary
 

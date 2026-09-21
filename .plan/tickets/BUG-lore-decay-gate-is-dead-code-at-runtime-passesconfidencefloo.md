@@ -3,10 +3,13 @@
 
 # BUG: lore decay gate is dead code at runtime (passesConfidenceFloor hardcodes worldDaysSince=0)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Closed (resolved in `0da9d9b0` — `fix(assistant): wire last_verified producer + drop dead decay gate`)
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-lore-knowledge
+**Summary:** Decay gate ran every render with hardcoded `worldDaysSince=0`, making `decay_per_day` knob a silent no-op in production. Replaced with a real parameter (when `0`, falls back to legacy exempt behavior).
+**Context:** `passesConfidenceFloor` (lore-lifecycle-gate.ts) passed `0` to `effectiveConfidence`; the `last_verified=NULL` exemption in `lifecycle.ts` short-circuits decay for `elapsed <= 0`. Sibling ticket `BUG-lore-lifecycle-fields-have-no-producers-last-verified-source` wires the prompt-side producer.
+**Acceptance Criteria:** `passesConfidenceFloor` no longer hardcodes `0`; `lifecycle.ts` plumbs `worldDaysSince` from the section builder; `lifecycle.test.ts` adds a regression test for the decay + distortion combine path; `bun run check --diff-base dev` green.
 
 ## Summary
 
