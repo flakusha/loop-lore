@@ -68,7 +68,7 @@ Prevents the common SillyTavern bug where switching chats mid-generation appends
 If the LLM exposes its thinking/reasoning process:
 
 - **Immersion**: hidden entirely. Thinking may happen server-side but the user never sees it.
-- **Basic**: a "💭" indicator on the placeholder. Once the response completes, the thinking is optionally available as a collapsed section on the final message (see [messages.md](./messages.md#thinking-process-display)).
+- **Basic**: a "💭" indicator on the placeholder. Once the response completes, the thinking is optionally available as a collapsed section on the final message (see [message-bubbles.md](./message-bubbles.md#thinking-process-display)).
 - **Detailed**: a live-updating thinking log in the placeholder's expandable strip. Shows the thinking text as it's generated. After completion, the thinking remains available on the final message.
 
 For multi-step generation (e.g., think → generate text → generate image → caption image):

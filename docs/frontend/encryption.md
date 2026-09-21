@@ -324,3 +324,8 @@ KEY_ROTATION_DAYS=90            # Auto-rotate primary keys
 COMPRESS_THRESHOLD=128          # Min bytes before compressing
 COMPRESS_ALGORITHM=gzip         # gzip | brotli | zstd
 ```
+
+## Related Epics
+
+- `.plan/epics/epic-frontend-encryption.md` — 🟨 Partial; frontend encryption UI (this doc is its UX specification).
+- `.plan/epics/epic-encryption-workflow.md` — server-side crypto pipeline (`src/crypto/*`).

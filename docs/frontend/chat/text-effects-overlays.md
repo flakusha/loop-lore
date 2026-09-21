@@ -3,6 +3,12 @@
 
 # Chat: Text Effects & Overlays
 
+> **Status:** Design target — aspirational for regular chat messages. The chat-effects
+> module (`src/frontend/effects/`) does not exist; the only shipped effect is the
+> Visual-Novel typewriter (`src/frontend/vn/typewriter.ts`), which applies inside VN
+> scenes, not normal chat. Owned by the Text Effects & Overlays task in
+> `.plan/epics/epic-immersion-presentation.md` (⬜ Not Started).
+
 Visual enhancements for chat messages: text styling effects, overlay
 components (status bars, condition icons, location badges), and message
 decoration options. Adds atmosphere and information density without
@@ -339,5 +345,5 @@ many effects are enabled simultaneously (mitigated by `maxEffectsPerMessage`).
 - `TASK-text-effects-overlays.md` — implementation task
 - `TASK-emotion-intent-detection.md` — emotion detection for effects
 - `TASK-3d-view-modes.md` — 3D panel overlay positioning
-- `epic-immersion-presentation.md` — related immersion features
+- `.plan/epics/epic-immersion-presentation.md` — ⬜ Not Started; owns the Text Effects & Overlays task (`src/frontend/effects/`)
 - `docs/frontend/chat/visual-novel-mode.md` — VN mode uses some effects

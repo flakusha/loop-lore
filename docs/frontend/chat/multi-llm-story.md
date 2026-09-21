@@ -459,3 +459,8 @@ A human GM dashboard showing:
 | **Story export**                | Novel-format export, timeline visualization |
 | **Voice/TTS integration**       | Narrated story playback                     |
 | **Visual storyboards**          | AI-generated scene illustrations            |
+
+## Related Epics
+
+- `.plan/epics/epic-story-mode-ui.md` — 🟡 In Progress; GM notes panel done, quest log / turn order / world controls pending.
+- `.plan/epics/epic-assistant-gm-flows.md` — 🟡 In Progress; GM-guided story creation flows.

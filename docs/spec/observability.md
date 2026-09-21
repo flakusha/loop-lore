@@ -1,48 +1,27 @@
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
-# Observability, Telemetry & Analytics Specification
+> High-level notes — may drift from implementation. Authoritative source is `src/` and AGENTS.md.
 
-> Promoted 2026-09-18 — merged from `observability-telemetry.md` + `analytics-observability.md` stubs.
-> Authoritative source is `src/` and AGENTS.md.
+# Observability, Telemetry & Analytics
 
-## Overview
+Status: Partially implemented — telemetry service, structured logging, and admin analytics shipped; metrics endpoint, OTEL, and privileged-admin audit not built.
 
-Unified observability surface covering runtime telemetry, structured analytics, log forwarding, and audit trails. Implementation in `src/telemetry/` (service) and `src/logger/` (structured logging).
+## Implemented
 
-## Scope
+- Telemetry — `src/telemetry/` (service / cleanup / config): events recorded into `telemetry_events` (table created in `src/db/migrations/001_init.ts`; the previously cited `parts/016_telemetry_events.ts` path does not exist). Emitters: generation lifecycle (`generation.completed|failed|truncated` in `src/generation/`), aux-pipeline calls.
+- Structured logging — `src/logger/`: async queue (`queue.ts`), multi-target transports (`src/logger/transports/`), PII redaction (`censors/`), formatters, levels, limits.
+- Admin analytics — `src/routes/analytics.ts` + `src/routes/admin/aux-telemetry.ts` query `telemetry_events` for generation/aux stats.
 
-- **Telemetry service:** `src/telemetry/service.ts` collects events to `telemetry_events` table (migration 016).
-- **Structured logging:** `src/logger/` provides structured JSONL output with transports (file, console, database).
-- **Audit:** `src/admin/audit.ts` tracks privileged operations.
-- **Metrics:** Prometheus-style metrics endpoint opt-in (planned, see `.plan/epics/epic-prometheus-metrics.md`).
+## Not implemented / aspirational
 
-## Technical Design
+- Prometheus `/metrics` exposition — no dedicated epic (`epic-prometheus-metrics.md` does not exist); tracked as a task in `.plan/epics/epic-performance-dashboard-slo.md`.
+- OpenTelemetry — planned via plugin; no OTEL SDK bundled.
+- Privileged-operation audit — the old citation `src/admin/audit.ts` does NOT exist; audit surfaces today are memory audit (`src/memory/audit.ts` → `memory_audit_log`) and NSFW moderation audit (`src/nsfw/moderation-service/audit.ts` → `moderation_actions`).
+- Observability dashboard — see `.plan/epics/epic-performance-dashboard-slo.md` (Not Started).
 
-- **Telemetry service:** `src/telemetry/service.ts` exposes `record()`, `query()`, `aggregate()`. Events persisted to DB.
-- **Logger:** `src/logger/queue.ts` async queue, `src/logger/transports/` multi-target, `src/logger/censors/` PII redaction.
-- **OpenTelemetry:** planned via plugin (no OTEL SDK bundled).
-- **Audit logging:** admin actions logged via `src/admin/audit.ts` middleware.
+## Epics
 
-## Integration Points
+- `.plan/epics/epic-observability-telemetry.md` · `.plan/epics/epic-analytics-observability.md` · `.plan/epics/epic-logging.md` · `.plan/epics/epic-api-telemetry.md` · `.plan/epics/epic-performance-dashboard-slo.md`
 
-- `src/telemetry/service.ts` — telemetry collector
-- `src/logger/` — structured logging
-- `src/admin/audit.ts` — privileged op audit
-- `src/middleware/` — request logging
-- `src/db/migrations/parts/016_telemetry_events.ts` — telemetry schema
-
-## Related Epics
-
-- `.plan/epics/epic-observability-telemetry.md`
-- `.plan/epics/epic-analytics-observability.md`
-- `.plan/epics/epic-logging.md`
-- `.plan/epics/epic-performance-dashboard-slo.md`
-
-## Provenance
-
-This document was merged 2026-09-18 from:
-- `docs/spec/observability-telemetry.md` (stub, 753B)
-- `docs/spec/analytics-observability.md` (stub, 753B)
-
-The original stubs referenced `.plan/epics/epic-observability-telemetry.md` and `.plan/epics/epic-analytics-observability.md` respectively; both source files were deleted after this merge.
+Provenance: merged 2026-09-18 from the `docs/spec/observability-telemetry.md` + `analytics-observability.md` doc stubs (those doc files were deleted; the epics above remain).

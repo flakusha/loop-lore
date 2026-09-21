@@ -7,7 +7,7 @@
 
 ## Overview
 
-NPC navigation moves NPCs through `src/world/` locations over time. Implementation in `src/rpg/npc-navigation/service/` provides pathfinding between connected `location_states`.
+NPC navigation moves NPCs between connected `location_states` locations over time. Implementation in `src/rpg/npc-navigation/` provides the pathfinding service.
 
 ## Scope
 
@@ -27,7 +27,7 @@ NPC navigation moves NPCs through `src/world/` locations over time. Implementati
 ## Integration Points
 
 - `src/rpg/npc-navigation/service/` — pathfinding
-- `src/world/` — location graph
+- `src/db/schema-story.ts` — `location_states` graph + `npc_states` position
 - `src/cron/jobs.ts` — tick scheduler
 - `src/rpg/encounters/service/` — encounter-on-arrival
 
