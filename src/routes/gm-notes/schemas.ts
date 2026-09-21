@@ -18,7 +18,16 @@ export const ShadowNoteBody = t.Object({
     "narrative_hook",
   ],),
   content: t.String({ minLength: 1, },),
-},);
+  // Optional TTL — when set, the note is filtered out of LLM injection
+  // once `expiresAt` is in the past, and purged by a background sweep.
+  expiresAt: OptionalNullableString,
+  // Optional author_type — defaults to "user" at the DB layer for legacy
+  // callers. "extracted" is reserved for the extraction pipeline writes
+  // to `shadow_notes` (see chat/proactive/annotations.ts).
+  authorType: t.Optional(
+    t.UnionEnum(["user", "gm", "system", "extracted",],),
+  ),
+});
 
 export const WhiteneoteBody = t.Object({
   type: t.UnionEnum([

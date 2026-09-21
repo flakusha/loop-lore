@@ -77,3 +77,22 @@ export const ShadowNoteVisibility = {
 export type ShadowNoteVisibility = (typeof ShadowNoteVisibility)[
   keyof typeof ShadowNoteVisibility
 ];
+
+// ── Shadow Note Author Type ───────────────────────────────
+// Who wrote the note. Drives audit-traceability and the LLM-injection
+// gate: notes authored by `user` or `gm` should be treated as trusted
+// narrative intent, while `system` and `extracted` notes may need a
+// different trust level when deciding what to surface to the player.
+// - `user`: written by the player via the GM panel.
+// - `gm`: written by a human GM.
+// - `system`: written by the platform (e.g. automated consequences).
+// - `extracted`: derived from chat content by the extraction pipeline.
+export const ShadowNoteAuthorType = {
+  User: "user",
+  Gm: "gm",
+  System: "system",
+  Extracted: "extracted",
+} as const;
+export type ShadowNoteAuthorType = (typeof ShadowNoteAuthorType)[
+  keyof typeof ShadowNoteAuthorType
+];

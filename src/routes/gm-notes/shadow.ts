@@ -163,6 +163,11 @@ export function shadowRoutes(opts: HandlerOpts, prefix = "/api",) {
               content: body.content,
               status: "hidden",
               created_at: now,
+              // author_type is optional in the body; the DB column defaults
+              // to "user" for legacy callers. We forward the explicit value
+              // when present so GM-panel callers can tag gm/system notes.
+              author_type: (body.authorType ?? "user") as never,
+              expires_at: body.expiresAt ?? null,
             },)
             .execute();
 
