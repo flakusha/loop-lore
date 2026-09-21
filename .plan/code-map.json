@@ -1596,6 +1596,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-action-applicability-gate.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-capability-disclosure.md"
     },
     {
@@ -17308,6 +17312,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-action-applicability-gate.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-moderation.md"
     },
     {
@@ -18279,6 +18287,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-group-chat-talkativity-not-surfaced-in-prompt.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-action-applicability-gate.md"
     },
     {
       "kind": "ticket",
@@ -24348,6 +24360,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-action-applicability-gate.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-interaction-service-foundation.md"
     },
     {
@@ -27837,6 +27853,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-nsfw-seduction-desire.md"
+    }
+  ],
+
+  "src/rpg/service/battles": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-action-applicability-gate.md"
     }
   ],
   "src/rpg/service/character-stats.ts": [
