@@ -16,7 +16,7 @@ export let _anonymousModeEnabled = false;
  */
 export async function initAnonymousModeCheck(): Promise<void> {
   try {
-    const res = await apiFetch("/api/encryption/status", { headers: { Accept: "application/json", }, },);
+    const res = await apiFetch("/api/v1/encryption/status", { headers: { Accept: "application/json", }, },);
     if (res.ok) {
       const data = await res.json();
       _anonymousModeEnabled = data.anonymousMode ?? false;

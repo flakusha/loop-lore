@@ -22,7 +22,7 @@ export const moodStateAvatars: Partial<ChatState> & ThisType<ChatState> = {
         : null;
       if (!npc?.actor_id) { return; }
 
-      const avatarsRes = await apiFetch(`/api/actors/${npc.actor_id}/avatars`,);
+      const avatarsRes = await apiFetch(`/api/v1/actors/${npc.actor_id}/avatars`,);
       if (avatarsRes.ok) {
         const avatars = await avatarsRes.json();
         const emotionAvatars: { emotion: string; avatarId: string; assetId: string }[] = [];
@@ -69,7 +69,7 @@ export const moodStateAvatars: Partial<ChatState> & ThisType<ChatState> = {
       this._emotionGenRunning = true;
       this._emotionGenStatus = t("status.startingGeneration",);
       try {
-        const genRes = await apiFetch(`/api/actors/${npc.actor_id}/emotion-avatars`, {
+        const genRes = await apiFetch(`/api/v1/actors/${npc.actor_id}/emotion-avatars`, {
           method: "POST",
           headers: { "Content-Type": "application/json", },
           body: jsonBody({ baseAvatarId, },),
@@ -104,7 +104,7 @@ export const moodStateAvatars: Partial<ChatState> & ThisType<ChatState> = {
     while (Date.now() < deadline) {
       await new Promise((resolve,) => setTimeout(resolve, 2000,));
       try {
-        const res = await apiFetch(`/api/actors/${actorId}/emotion-avatars/jobs/${jobId}`,);
+        const res = await apiFetch(`/api/v1/actors/${actorId}/emotion-avatars/jobs/${jobId}`,);
         if (!res.ok) { continue; }
         const job = await res.json();
         const status = job.status as string;

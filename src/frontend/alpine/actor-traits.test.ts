@@ -183,7 +183,7 @@ describe("actorTraits.save (create)", () => {
     ctx.draft.value = "true";
     await ctx.save();
     const postCall = calls.find((c,) => c.opts.method === "POST");
-    expect(postCall?.url,).toBe("/api/actors/actor-1/traits",);
+    expect(postCall?.url,).toBe("/api/v1/actors/actor-1/traits",);
     expect(JSON.parse(String(postCall?.opts.body ?? "{}",),),).toMatchObject({
       trait_category: "personality",
       trait_name: "loyal",
@@ -219,7 +219,7 @@ describe("actorTraits.save (update)", () => {
     ctx.draft.value = "false";
     await ctx.save();
     const putCall = calls.find((c,) => c.opts.method === "PUT");
-    expect(putCall?.url,).toBe("/api/actors/actor-1/traits/brave",);
+    expect(putCall?.url,).toBe("/api/v1/actors/actor-1/traits/brave",);
   });
 });
 
@@ -250,7 +250,7 @@ describe("actorTraits.remove", () => {
     ctx._trActorId = "actor-1";
     ctx.startEdit(sampleTrait(),);
     await ctx.remove("brave",);
-    expect(calls.some((c,) => c.opts.method === "DELETE" && c.url === "/api/actors/actor-1/traits/brave"),).toBe(true,);
+    expect(calls.some((c,) => c.opts.method === "DELETE" && c.url === "/api/v1/actors/actor-1/traits/brave"),).toBe(true,);
     expect(ctx.draft.editingName,).toBeNull();
   });
 

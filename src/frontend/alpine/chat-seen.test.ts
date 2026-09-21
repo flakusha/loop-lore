@@ -78,7 +78,7 @@ describe("chatSeenMethods.loadMessageSeen", () => {
     },);
     handler = async () => Response.json(viewers,);
     await chatSeenMethods.loadMessageSeen!.call(ctx, "m1",);
-    expect(calls[0]!.url,).toBe("/api/messages/m1/seen",);
+    expect(calls[0]!.url,).toBe("/api/v1/messages/m1/seen",);
     expect(ctx.messages[0]!.seenState,).toEqual(viewers,);
   });
 
@@ -111,7 +111,7 @@ describe("chatSeenMethods.loadAllSeen", () => {
       ],
     },);
     await chatSeenMethods.loadAllSeen!.call(ctx,);
-    expect(calls.map((c,) => c.url).sort(),).toEqual(["/api/messages/m1/seen", "/api/messages/m2/seen",],);
+    expect(calls.map((c,) => c.url).sort(),).toEqual(["/api/v1/messages/m1/seen", "/api/v1/messages/m2/seen",],);
   });
 
   test("skips when there is no chat or no messages", async () => {
@@ -133,7 +133,7 @@ describe("chatSeenMethods.markSeen", () => {
     handler = async (_url, opts,) => opts?.method === "POST" ? Response.json({},) : Response.json(viewers,);
     await chatSeenMethods.markSeen!.call(ctx, "m1", "seen",);
     const post = calls.find((c,) => c.opts.method === "POST")!;
-    expect(post.url,).toBe("/api/messages/m1/seen",);
+    expect(post.url,).toBe("/api/v1/messages/m1/seen",);
     expect(JSON.parse(String(post.opts.body,),),).toEqual({ state: "seen", },);
     expect(ctx.messages[0]!.seenState,).toEqual(viewers,);
   });

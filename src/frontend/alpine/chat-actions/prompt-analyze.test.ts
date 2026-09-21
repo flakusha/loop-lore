@@ -107,7 +107,7 @@ describe("analyzePrompt server path", () => {
     const ctx = buildCtx("  where to?  ",);
     await analyze(ctx,);
     expect(calls.length,).toBe(1,);
-    expect(calls[0]?.url,).toBe("/api/generation/prompt",);
+    expect(calls[0]?.url,).toBe("/api/v1/generation/prompt",);
     expect(JSON.parse(calls[0]?.body ?? "{}",),).toMatchObject({
       mode: "analyze",
       text: "where to?",

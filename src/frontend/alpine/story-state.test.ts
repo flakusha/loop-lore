@@ -93,7 +93,7 @@ describe("storyState", () => {
       await s._loadChat();
       expect(s.isStoryMode,).toBe(true,);
       // Second fetch: world name.
-      expect(fetchCalls[1]?.url,).toBe("/api/worlds/world-1",);
+      expect(fetchCalls[1]?.url,).toBe("/api/v1/worlds/world-1",);
     });
 
     test("detects story mode from gm_config.storyMode", async () => {
@@ -262,7 +262,7 @@ describe("storyState", () => {
       mockFetch(200, { ok: true, },);
       await s.togglePause();
       expect(s.running,).toBe(false,);
-      expect(fetchCalls[0]?.url,).toBe("/api/chats/chat-1/story/pause",);
+      expect(fetchCalls[0]?.url,).toBe("/api/v1/chats/chat-1/story/pause",);
     });
 
     test("togglePause notifies instead of toggling on failure", async () => {
@@ -292,7 +292,7 @@ describe("storyState", () => {
         }, { status: 200, },);
       };
       await s.createQuest("Side quest",);
-      expect(fetchCalls[0]?.url,).toBe("/api/worlds/world-1/quests",);
+      expect(fetchCalls[0]?.url,).toBe("/api/v1/worlds/world-1/quests",);
       expect(fetchCalls[0]?.opts.method,).toBe("POST",);
       expect(JSON.parse(fetchCalls[0]?.opts.body as string,),).toEqual({ name: "Side quest", type: "composite", },);
       expect(s.quests[0]?.id,).toBe("q-new",);
@@ -312,7 +312,7 @@ describe("storyState", () => {
       s.quests = [{ id: "q1", name: "A", type: "composite", status: "active", progress: 10, },];
       mockFetch(200, { ok: true, },);
       await s.deleteQuest("q1",);
-      expect(fetchCalls[0]?.url,).toBe("/api/quests/q1",);
+      expect(fetchCalls[0]?.url,).toBe("/api/v1/quests/q1",);
       expect(fetchCalls[0]?.opts.method,).toBe("DELETE",);
       expect(s.quests,).toEqual([],);
     });

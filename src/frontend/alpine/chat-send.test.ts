@@ -137,7 +137,7 @@ describe("chatSendMethods.sendMessage — success paths", () => {
     await chatSendMethods.sendMessage!.call(ctx as never,);
     const body = postBody();
     expect(body.content,).toBe("hello",);
-    expect(calls[0]!.url,).toBe("/api/chats/chat-1/messages",);
+    expect(calls[0]!.url,).toBe("/api/v1/chats/chat-1/messages",);
     expect(calls[0]!.opts.method,).toBe("POST",);
     expect(ctx.$refs.messageInput.value,).toBe("",);
     expect(ctx.messages,).toHaveLength(1,);

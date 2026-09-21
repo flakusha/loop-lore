@@ -44,7 +44,7 @@ export interface ActorKeyMeta {
       this.loading = true;
       this.error = null;
       try {
-        const res = await apiFetch("/api/keys", { headers: { Accept: "application/json", }, },);
+        const res = await apiFetch("/api/v1/keys", { headers: { Accept: "application/json", }, },);
         if (!res.ok) {
           throw new Error(t("crypto.keyLoadFailed",),);
         }
@@ -63,7 +63,7 @@ export interface ActorKeyMeta {
       this.loading = true;
       this.error = null;
       try {
-        const res = await apiFetch("/api/keys", {
+        const res = await apiFetch("/api/v1/keys", {
           method: "POST",
           headers: { "Content-Type": "application/json", },
           body: jsonBody({ name: this.newKeyName.trim(), },),
@@ -86,7 +86,7 @@ export interface ActorKeyMeta {
       this.loading = true;
       this.error = null;
       try {
-        const res = await apiFetch("/api/keys/rotate", {
+        const res = await apiFetch("/api/v1/keys/rotate", {
           method: "POST",
           headers: { "Content-Type": "application/json", },
         },);
@@ -114,7 +114,7 @@ export interface ActorKeyMeta {
       this.loading = true;
       this.error = null;
       try {
-        const res = await apiFetch(`/api/keys/${this.revokeKeyId}`, {
+        const res = await apiFetch(`/api/v1/keys/${this.revokeKeyId}`, {
           method: "DELETE",
         },);
         if (!res.ok) {

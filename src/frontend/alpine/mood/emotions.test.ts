@@ -44,7 +44,7 @@ describe("moodStateEmotions.loadEmotions", () => {
   test("joins active emotions with definitions", async () => {
     const ctx = buildCtx("actor-1",);
     handler = async (url,) =>
-      url === "/api/actors/actor-1/emotions"
+      url === "/api/v1/actors/actor-1/emotions"
         ? Response.json([
           { emotion_id: "joy", intensity: 0.9, },
           { emotion_id: "calm", intensity: 0.1, },
@@ -55,7 +55,7 @@ describe("moodStateEmotions.loadEmotions", () => {
           { id: "calm", display_name: "Calm", },
         ],);
     await moodStateEmotions.loadEmotions!.call(ctx as never,);
-    expect(calls,).toEqual(["/api/actors/actor-1/emotions", "/api/emotions",],);
+    expect(calls,).toEqual(["/api/v1/actors/actor-1/emotions", "/api/v1/emotions",],);
     expect(ctx._activeEmotions,).toEqual([
       { def: { id: "joy", icon: "😊", display_name: "Joy", }, intensity: 0.9, },
       // Missing icon falls back to null.
@@ -67,7 +67,7 @@ describe("moodStateEmotions.loadEmotions", () => {
   test("accepts envelope responses and defaults missing intensity", async () => {
     const ctx = buildCtx("actor-1",);
     handler = async (url,) =>
-      url === "/api/actors/actor-1/emotions"
+      url === "/api/v1/actors/actor-1/emotions"
         ? Response.json({ data: [{ emotion_id: "joy", },], },)
         : Response.json({ data: [{ id: "joy", display_name: "Joy", icon: null, },], },);
     await moodStateEmotions.loadEmotions!.call(ctx as never,);
@@ -80,7 +80,7 @@ describe("moodStateEmotions.loadEmotions", () => {
     const ctx = buildCtx("actor-1",);
     ctx._activeEmotions = [{ def: { id: "old", icon: null, display_name: "Old", }, intensity: 1, },];
     handler = async (url,) =>
-      url === "/api/actors/actor-1/emotions"
+      url === "/api/v1/actors/actor-1/emotions"
         ? new Response("", { status: 500, },)
         : Response.json([],);
     await moodStateEmotions.loadEmotions!.call(ctx as never,);

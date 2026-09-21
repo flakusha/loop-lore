@@ -22,7 +22,7 @@ export const chatVariants: Partial<ChatState> & ThisType<ChatState> = {
     this._variantsLoading = true;
     this._variants = [];
     try {
-      const res = await apiFetch(`/api/messages/${messageId}/variants`,);
+      const res = await apiFetch(`/api/v1/messages/${messageId}/variants`,);
       if (res.ok) {
         const data = await res.json() as { id: string; content: string }[];
         this._variants = Array.isArray(data,) ? data : [];
@@ -53,7 +53,7 @@ export const chatVariants: Partial<ChatState> & ThisType<ChatState> = {
   async selectVariantByIndex(messageId: string, index: number,) {
     log.info("selectVariantByIndex", { messageId, index, },);
     try {
-      const res = await apiFetch(`/api/messages/${messageId}/variant`, {
+      const res = await apiFetch(`/api/v1/messages/${messageId}/variant`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ variantIndex: index, },),
@@ -83,7 +83,7 @@ export const chatVariants: Partial<ChatState> & ThisType<ChatState> = {
       return;
     }
     try {
-      const response = await apiFetch("/api/generation/regenerate", {
+      const response = await apiFetch("/api/v1/generation/regenerate", {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ chatId: this.activeChat, },),
@@ -102,7 +102,7 @@ export const chatVariants: Partial<ChatState> & ThisType<ChatState> = {
     if (!this.activeChat) { return; }
     this.isGenerating = true;
     try {
-      const res = await apiFetch("/api/generation/regenerate", {
+      const res = await apiFetch("/api/v1/generation/regenerate", {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ chatId: this.activeChat, messageId, },),
@@ -135,7 +135,7 @@ export const chatVariants: Partial<ChatState> & ThisType<ChatState> = {
     const msgEl = document.querySelector<HTMLElement>(`[data-message-id="${CSS.escape(messageId,)}"]`,);
     const actorId = msgEl?.dataset.actorId ?? "unknown";
     try {
-      const response = await apiFetch("/api/generation/continue", {
+      const response = await apiFetch("/api/v1/generation/continue", {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ messageId, chatId: this.activeChat, actorId, },),
@@ -165,7 +165,7 @@ export const chatVariants: Partial<ChatState> & ThisType<ChatState> = {
       return;
     }
     try {
-      const response = await apiFetch("/api/generation/retry", {
+      const response = await apiFetch("/api/v1/generation/retry", {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ chatId: this.activeChat, attemptId, step, },),

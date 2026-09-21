@@ -44,7 +44,7 @@ describe("personaActions.loadPersonas", () => {
     const ctx = personaCtx();
     await personaActions.loadPersonas!.call(ctx,);
     expect(ctx._personas,).toEqual([{ id: "p1", },],);
-    expect(fetchCalls[0]!.url,).toBe("/api/personas",);
+    expect(fetchCalls[0]!.url,).toBe("/api/v1/personas",);
   });
 
   test("ignores non-ok responses", async () => {

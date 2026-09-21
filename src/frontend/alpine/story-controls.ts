@@ -5,9 +5,9 @@
  * Story Controls — client for story-orchestration endpoints.
  *
  * Spec-conformant actions per docs/frontend/chat/multi-llm-story.md:
- *   POST /api/chats/:id/story/pause|resume|step
- *   POST /api/chats/:id/gm/escalate
- *   POST /api/chats/:id/story/narration  (inject narration)
+ *   POST /api/v1/chats/:id/story/pause|resume|step
+ *   POST /api/v1/chats/:id/gm/escalate
+ *   POST /api/v1/chats/:id/story/narration  (inject narration)
  *
  * The story-engine backend (LLM role wiring workstream) owns these routes.
  * Until they land, every call resolves to a graceful `{ ok: false }` so the UI
@@ -53,7 +53,7 @@ export async function storyControl(
   if (inFlight.has(action,)) { return { ok: false, message: "story control busy", }; }
   inFlight.add(action,);
   try {
-    const res = await apiFetch(`/api/chats/${chatId}/story/${action}`, {
+    const res = await apiFetch(`/api/v1/chats/${chatId}/story/${action}`, {
       method: "POST",
       headers: { "Content-Type": "application/json", },
       body: body === undefined ? undefined : jsonBody(body,),

@@ -66,9 +66,9 @@ describe("resolveSpriteUrl", () => {
       avatarAssetId: "base-1",
       emotionVariants: { happy: "happy-9", },
     };
-    expect(resolveSpriteUrl(entry, "happy",),).toBe("/api/assets/happy-9/thumb",);
-    expect(resolveSpriteUrl(entry, "sad",),).toBe("/api/assets/base-1/thumb",);
-    expect(resolveSpriteUrl(entry,),).toBe("/api/assets/base-1/thumb",);
+    expect(resolveSpriteUrl(entry, "happy",),).toBe("/api/v1/assets/happy-9/thumb",);
+    expect(resolveSpriteUrl(entry, "sad",),).toBe("/api/v1/assets/base-1/thumb",);
+    expect(resolveSpriteUrl(entry,),).toBe("/api/v1/assets/base-1/thumb",);
   });
 
   test("yields undefined when no sprite is registered", () => {
@@ -82,8 +82,8 @@ describe("resolveSpriteUrl", () => {
       avatarAssetId: "base-1",
       emotionVariants: { Happy: "happy-9", },
     };
-    expect(resolveSpriteUrl(entry, "happy",),).toBe("/api/assets/happy-9/thumb",);
-    expect(resolveSpriteUrl(entry, "HAPPY",),).toBe("/api/assets/happy-9/thumb",);
+    expect(resolveSpriteUrl(entry, "happy",),).toBe("/api/v1/assets/happy-9/thumb",);
+    expect(resolveSpriteUrl(entry, "HAPPY",),).toBe("/api/v1/assets/happy-9/thumb",);
   });
 });
 

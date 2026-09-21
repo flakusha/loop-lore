@@ -111,7 +111,7 @@ export function memoriesForTab(panel: MemoryPanelState, tab: MemoryPanelState["a
 
 // ── Audit transforms (FEAT-075) ─────────────────────────────────
 
-/** Raw audit row as returned by GET /api/actors/:id/memories/audit. */
+/** Raw audit row as returned by GET /api/v1/actors/:id/memories/audit. */
 export interface AuditApiRow {
   id: string;
   memoryId: string;

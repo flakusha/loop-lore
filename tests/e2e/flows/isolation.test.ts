@@ -59,7 +59,7 @@ describe("Cross-Tenant Isolation E2E", () => {
     expect(createRes.ok,).toBe(true,);
     expect(createRes.data?.id,).toBeTruthy();
 
-    const getRes = await userB.get(`/api/chats/${createRes.data!.id}`,);
+    const getRes = await userB.get(`/api/v1/chats/${createRes.data!.id}`,);
     expect(getRes.ok,).toBe(false,);
     expect([403, 404,],).toContain(getRes.status,);
   });
@@ -72,12 +72,12 @@ describe("Cross-Tenant Isolation E2E", () => {
     },);
     expect(createRes.ok,).toBe(true,);
 
-    const getRes = await userA.get(`/api/chats/${createRes.data!.id}`,);
+    const getRes = await userA.get(`/api/v1/chats/${createRes.data!.id}`,);
     expect(getRes.ok,).toBe(true,);
   });
 
   test("User B cannot access user A's character", async () => {
-    const getRes = await userB.get(`/api/actors/${SEED.character.id}`,);
+    const getRes = await userB.get(`/api/v1/actors/${SEED.character.id}`,);
     expect(getRes.ok,).toBe(false,);
     expect([403, 404,],).toContain(getRes.status,);
   });
@@ -91,11 +91,11 @@ describe("Cross-Tenant Isolation E2E", () => {
     expect(createRes.ok,).toBe(true,);
     const chatId = createRes.data!.id;
 
-    const deleteRes = await userB.del(`/api/chats/${chatId}`,);
+    const deleteRes = await userB.del(`/api/v1/chats/${chatId}`,);
     expect(deleteRes.ok,).toBe(false,);
     expect([403, 404,],).toContain(deleteRes.status,);
 
-    const getRes = await userA.get(`/api/chats/${chatId}`,);
+    const getRes = await userA.get(`/api/v1/chats/${chatId}`,);
     expect(getRes.ok,).toBe(true,);
   });
 

@@ -4,7 +4,7 @@
 // src/frontend/alpine/notifications.ts
 //
 // In-app chat notifications. A single NotificationsManager opens an SSE
-// stream (`/api/activity/stream`) AND polls `/api/chats/activity`. Both
+// stream (`/api/v1/activity/stream`) AND polls `/api/v1/chats/activity`. Both
 // read the same server source, so they revalidate each other: a dropped
 // SSE connection is repaired by the next poll, a missed poll is covered
 // by the next SSE event. Unseen counts drive sidebar/chat-list badges
@@ -116,7 +116,7 @@ export class NotificationsManager {
   private openStream(): void {
     if (typeof EventSource === "undefined") { return; }
     try {
-      this.es = new EventSource("/api/activity/stream",);
+      this.es = new EventSource("/api/v1/activity/stream",);
       this.es.addEventListener("activity", (ev,) => {
         const data = parseOr(ActivitySnapshot, jsonParseOr(ev.data, null,), { chats: {}, },);
         this.applySnapshot(data.chats,);
@@ -132,7 +132,7 @@ export class NotificationsManager {
   /** */
   private async poll(): Promise<void> {
     try {
-      const res = await apiFetch("/api/chats/activity",);
+      const res = await apiFetch("/api/v1/chats/activity",);
       if (!res.ok) { return; }
       const data = parseOr(ActivitySnapshot, await res.json(), { chats: {}, },);
       this.applySnapshot(data.chats,);

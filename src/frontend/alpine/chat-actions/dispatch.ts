@@ -65,7 +65,7 @@ const actionHandlers: Record<string, ActionHandler> = {
   "generate-image": async (ctx, payload, chatId,) => {
     await dispatchGenerationAction(
       ctx,
-      "/api/generation/image",
+      "/api/v1/generation/image",
       { prompt: (payload?.prompt as string) ?? "", chatId, },
       "Image generation",
       chatId,
@@ -80,7 +80,7 @@ const actionHandlers: Record<string, ActionHandler> = {
     }
     await dispatchGenerationAction(
       ctx,
-      "/api/generation/caption",
+      "/api/v1/generation/caption",
       { chatId, assetIds, },
       "Captioning",
       chatId,
@@ -99,7 +99,7 @@ const actionHandlers: Record<string, ActionHandler> = {
     const target = entityType === "message" ? `message ${entityId}` : "this chat";
     if (!confirm(`Attach "${filename}" to ${target}?`,)) { return; }
     try {
-      const res = await apiFetch(`/api/assets/${assetId}/links`, {
+      const res = await apiFetch(`/api/v1/assets/${assetId}/links`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ entityType, entityId, },),

@@ -57,7 +57,7 @@ async function populateModal(modal: HTMLElement, char: Record<string, unknown>, 
     (char.system_prompt || "No system prompt") as string;
   const avatarId = char.avatar_asset_id as string | undefined;
   modal.querySelector("[data-field='avatar']",)!.innerHTML = avatarId
-    ? `<img src="/api/assets/${
+    ? `<img src="/api/v1/assets/${
       escapeHtml(avatarId,)
     }/thumb" style="width:100%;height:100%;object-fit:cover" alt="Avatar" />`
     : "<span>👤</span>";
@@ -94,7 +94,7 @@ async function loadCharacterGallery(modal: HTMLElement, id: string,): Promise<vo
   const container = modal.querySelector<HTMLElement>("[data-field='gallery']",);
   if (!container) { return; }
   try {
-    const resp = await feFetch(`/api/actors/${id}/avatars`,);
+    const resp = await feFetch(`/api/v1/actors/${id}/avatars`,);
     if (!resp.ok) {
       container.innerHTML = "<div data-field='gallery-empty'>Failed to load gallery.</div>";
       return;
@@ -109,7 +109,7 @@ async function loadCharacterGallery(modal: HTMLElement, id: string,): Promise<vo
       (av,) =>
         `<div class="avatar-gallery-item" style="display:flex;flex-direction:column;align-items:center;gap:var(--space-1)">
       <div style="width:56px;height:56px;border-radius:var(--radius-sm);overflow:hidden;background:var(--bg-tertiary);border:1px solid var(--border-default)">
-        <img src="/api/assets/${escapeHtml(av.assetId,)}/thumb" alt="${
+        <img src="/api/v1/assets/${escapeHtml(av.assetId,)}/thumb" alt="${
           escapeHtml(av.label || "avatar",)
         }" style="width:100%;height:100%;object-fit:cover" />
       </div>
@@ -134,7 +134,7 @@ export async function unlinkCharacterAsset(btn: HTMLElement,) {
   const modal = btn.closest("#character-detail-modal",) as HTMLElement | null;
   if (!actorId || !assetId || !modal) { return; }
   try {
-    const res = await feFetch(`/api/actors/${actorId}/assets/${assetId}`, {
+    const res = await feFetch(`/api/v1/actors/${actorId}/assets/${assetId}`, {
       method: "DELETE",
     },);
     if (res.ok) {
@@ -155,7 +155,7 @@ export async function selectCharacterCard(id: string,) {
     return;
   }
 
-  const resp = await feFetch(`/api/actors/${id}`,);
+  const resp = await feFetch(`/api/v1/actors/${id}`,);
   if (!resp.ok) {
     log.error("Failed to fetch actor", undefined, { status: resp.status, id, },);
     showToast("error", "Failed to load character",);
@@ -177,7 +177,7 @@ export async function startChatFromChar(btn: HTMLElement,) {
     return;
   }
   try {
-    const res = await feFetch("/api/chats", {
+    const res = await feFetch("/api/v1/chats", {
       method: "POST",
       headers: { "Content-Type": "application/json", },
       body: jsonBody({ name: "Chat", type: "direct", mode: "direct", participantIds: [id,], },),
@@ -202,7 +202,7 @@ export async function deleteCharacter(btn: HTMLElement,) {
   const id = btn.dataset.id;
   if (!id || !confirm("Delete this character?",)) { return; }
   try {
-    const res = await feFetch(`/api/actors/${id}`, {
+    const res = await feFetch(`/api/v1/actors/${id}`, {
       method: "DELETE",
     },);
     if (res.ok) {
@@ -241,8 +241,8 @@ export function exportCharacter(btn: HTMLElement,) {
     return;
   }
 
-  // Trigger download - backend uses /api/actors/:actorId/export
-  globalThis.location.assign(`/api/actors/${characterId}/export?format=${format}`,);
+  // Trigger download - backend uses /api/v1/actors/:actorId/export
+  globalThis.location.assign(`/api/v1/actors/${characterId}/export?format=${format}`,);
   closeModal(btn,);
 }
 

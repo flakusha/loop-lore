@@ -100,7 +100,7 @@ describe("improvePrompt local-first", () => {
   test("opted-out spellcheck goes to the server", async () => {
     const ctx = buildCtx("hello   world",);
     await improve(ctx, "spellcheck",);
-    expect(fetchCalls,).toEqual(["/api/generation/prompt",],);
+    expect(fetchCalls,).toEqual(["/api/v1/generation/prompt",],);
     expect(ctx.$refs.messageInput.value,).toBe("server-polished",);
   });
 
@@ -108,7 +108,7 @@ describe("improvePrompt local-first", () => {
     store.set(LOCAL_INFERENCE_OPTIN_KEY, "1",);
     const ctx = buildCtx("hello world",);
     await improve(ctx, "creative",);
-    expect(fetchCalls,).toEqual(["/api/generation/prompt",],);
+    expect(fetchCalls,).toEqual(["/api/v1/generation/prompt",],);
     expect(ctx.$refs.messageInput.value,).toBe("server-polished",);
   });
 
@@ -116,7 +116,7 @@ describe("improvePrompt local-first", () => {
     store.set(LOCAL_INFERENCE_OPTIN_KEY, "1",);
     const ctx = buildCtx("hello world",);
     await improve(ctx,);
-    expect(fetchCalls,).toEqual(["/api/generation/prompt",],);
+    expect(fetchCalls,).toEqual(["/api/v1/generation/prompt",],);
   });
 });
 describe("improvePrompt guards + server errors", () => {

@@ -105,7 +105,7 @@ describe("memoryPanel.loadMemories", () => {
     expect(c.memoryPanel!.assistantMemories[0]!.id,).toBe("m2",);
     expect(c.memoryPanel!.worldMemories,).toHaveLength(1,);
     expect(c.memoryPanel!.worldMemories[0]!.id,).toBe("m3",);
-    expect(fetchCalls[0]!.url,).toBe("/api/actors/char-1/memories",);
+    expect(fetchCalls[0]!.url,).toBe("/api/v1/actors/char-1/memories",);
   });
 
   test("resets all three tabs when no character actor resolves", async () => {
@@ -173,7 +173,7 @@ describe("memoryPanel.saveEditMemory", () => {
       },
     },);
     await c.saveEditMemory!();
-    expect(fetchCalls[0]!.url,).toBe("/api/actors/char-1/memories/m1",);
+    expect(fetchCalls[0]!.url,).toBe("/api/v1/actors/char-1/memories/m1",);
     expect(fetchCalls[0]!.opts?.method,).toBe("PUT",);
     expect(JSON.parse(fetchCalls[0]!.opts?.body as string,),).toEqual({ content: "updated content", },);
     expect(c.memoryPanel!.characterMemories[0]!.content,).toBe("updated content",);
@@ -307,7 +307,7 @@ describe("memoryPanel.toggleMemoryInChat", () => {
     },);
     await c.toggleMemoryInChat!(c.memoryPanel!.characterMemories[0]!,);
     const del = fetchCalls.find((f,) => f.opts?.method === "DELETE");
-    expect(del?.url,).toBe("/api/actors/char-1/memories/copy-1",);
+    expect(del?.url,).toBe("/api/v1/actors/char-1/memories/copy-1",);
   });
 });
 
@@ -321,7 +321,7 @@ describe("memoryPanel review actions", () => {
       },
     },);
     await c.approveMemory!("m1",);
-    expect(fetchCalls[0]!.url,).toBe("/api/actors/char-1/memories/m1",);
+    expect(fetchCalls[0]!.url,).toBe("/api/v1/actors/char-1/memories/m1",);
     expect(fetchCalls[0]!.opts?.method,).toBe("PUT",);
     expect(JSON.parse(fetchCalls[0]!.opts?.body as string,),).toEqual({ reviewStatus: "committed", },);
     expect(fetchCalls.some((f,) => f.url.endsWith("/memories",)),).toBe(true,);
@@ -427,7 +427,7 @@ describe("memoryPanel.deleteMemory", () => {
     mockFetch(200, {},);
     const c = deleteCtx();
     await c.deleteMemory!("m1",);
-    expect(fetchCalls[0]!.url,).toBe("/api/actors/char-1/memories/m1",);
+    expect(fetchCalls[0]!.url,).toBe("/api/v1/actors/char-1/memories/m1",);
     expect(fetchCalls[0]!.opts?.method,).toBe("DELETE",);
     expect(c.memoryPanel!.characterMemories,).toEqual([],);
     expect(c.memoryPanel!.tokensUsed,).toBe(0,);
@@ -485,7 +485,7 @@ describe("memoryPanel.toggleMemoryPin", () => {
     mockFetch(200, {},);
     const c = pinCtx();
     await c.toggleMemoryPin!("m1",);
-    expect(fetchCalls[0]!.url,).toBe("/api/actors/char-1/memories/m1",);
+    expect(fetchCalls[0]!.url,).toBe("/api/v1/actors/char-1/memories/m1",);
     expect(fetchCalls[0]!.opts?.method,).toBe("PUT",);
     expect(JSON.parse(fetchCalls[0]!.opts?.body as string,),).toEqual({ pinned: true, },);
     expect(c.memoryPanel!.characterMemories[0]!.pinned,).toBe(true,);

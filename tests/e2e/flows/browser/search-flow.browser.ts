@@ -60,11 +60,11 @@ describe("Search & filtering E2E", () => {
       const page = await ctx.openPage();
       const errors = trackPageErrors(page, {
         // Seed assets reference synthetic storage files that don't exist, so
-        // their /api/assets/:id/thumb requests 404. This is test-data noise,
+        // their /api/v1/assets/:id/thumb requests 404. This is test-data noise,
         // not an app regression.
         allowlist: [
           /\bFailed to load resource: the server responded with a status of 404 \(Not Found\)/,
-          // /api/telemetry/event returns 403 for solo (not an admin) — benign.
+          // /api/v1/telemetry/event returns 403 for solo (not an admin) — benign.
           /Failed to load resource.*403/,
         ],
       },);
@@ -219,7 +219,7 @@ describe("Search & filtering E2E", () => {
       await ctx?.close();
     },);
 
-    test("FTS5 /api/messages/search scopes results to the active chat", async () => {
+    test("FTS5 /api/v1/messages/search scopes results to the active chat", async () => {
       const page = await ctx.openPage();
       const errors = trackPageErrors(page, {
         allowlist: [/Failed to load resource.*403/, /Failed to load resource.*404/,],

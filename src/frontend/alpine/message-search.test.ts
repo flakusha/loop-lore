@@ -71,7 +71,7 @@ describe("messageSearch.runMessageSearch", () => {
     mockFetch(200, { results: [{ messageId: "m1", }, { messageId: "m2", },], total: 2, },);
     const ctx = searchCtx({ _msgSearchQuery: "hello", },);
     await messageSearch.runMessageSearch!.call(ctx,);
-    expect(fetchCalls[0]!.url,).toContain("/api/messages/search?chatId=chat-1&q=hello&limit=50",);
+    expect(fetchCalls[0]!.url,).toContain("/api/v1/messages/search?chatId=chat-1&q=hello&limit=50",);
     expect(ctx._msgSearchMatches,).toEqual(["m1", "m2",],);
     expect(ctx._msgSearchTotal,).toBe(2,);
     expect(ctx._msgSearchIndex,).toBe(0,);

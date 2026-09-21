@@ -66,7 +66,7 @@ describe("media.generateImageFromMessage", () => {
     const ctx = buildCtx({ messages: [{ id: "m1", content: "x".repeat(600,), },], },);
     handler = async () => Response.json({ ok: true, },);
     await media.generateImageFromMessage!.call(ctx as never, "m1",);
-    expect(calls[0]!.url,).toBe("/api/generation/image",);
+    expect(calls[0]!.url,).toBe("/api/v1/generation/image",);
     expect(calls[0]!.opts.method,).toBe("POST",);
     const body = JSON.parse(String(calls[0]!.opts.body,),) as { prompt: string; chatId: string; messageId: string };
     expect(body.prompt,).toHaveLength(500,);
@@ -135,7 +135,7 @@ describe("media.captionMessage", () => {
     },);
     handler = async () => Response.json({ ok: true, },);
     await media.captionMessage!.call(ctx as never, "m1",);
-    expect(calls[0]!.url,).toBe("/api/generation/caption",);
+    expect(calls[0]!.url,).toBe("/api/v1/generation/caption",);
     const body = JSON.parse(String(calls[0]!.opts.body,),) as { assetIds: string[]; chatId: string };
     expect(body.assetIds,).toEqual(["img-1", "img-2",],);
     expect(body.chatId,).toBe("chat-1",);

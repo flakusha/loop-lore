@@ -15,7 +15,7 @@ export const chatWorld: Partial<ChatState> & ThisType<ChatState> = {
     if (this._worldsLoading) { return; }
     this._worldsLoading = true;
     try {
-      const res = await apiFetch("/api/worlds?pageSize=50",);
+      const res = await apiFetch("/api/v1/worlds?pageSize=50",);
       if (!res.ok) { return; }
       const body = await res.json();
       const rows = (body.data || []) as { id: string; name: string; kind?: string }[];
@@ -42,7 +42,7 @@ export const chatWorld: Partial<ChatState> & ThisType<ChatState> = {
    */
   async loadWorldChats(worldId: string,) {
     try {
-      const res = await apiFetch(`/api/worlds/${worldId}/chats`,);
+      const res = await apiFetch(`/api/v1/worlds/${worldId}/chats`,);
       if (!res.ok) { return; }
       const body = await res.json();
       this._worldChats = { ...this._worldChats, [worldId]: body.data || [], };

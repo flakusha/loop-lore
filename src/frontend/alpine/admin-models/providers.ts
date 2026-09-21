@@ -15,7 +15,7 @@ export const providerState: Partial<ModelsState> & ThisType<ModelsState> = {
   async loadModels() {
     this.loadingModels = true;
     try {
-      const res = await apiFetch("/api/admin/providers", { headers: { Accept: "application/json", }, },);
+      const res = await apiFetch("/api/v1/admin/providers", { headers: { Accept: "application/json", }, },);
       if (res.ok) {
         const data = await res.json();
         this.providers = data.providers || [];
@@ -29,7 +29,7 @@ export const providerState: Partial<ModelsState> & ThisType<ModelsState> = {
   },
   async loadProviderModels(name: string,) {
     try {
-      const res = await apiFetch(`/api/admin/providers/${name}/models`, {
+      const res = await apiFetch(`/api/v1/admin/providers/${name}/models`, {
         headers: { Accept: "application/json", },
       },);
       if (res.ok) {
@@ -81,7 +81,7 @@ export const providerState: Partial<ModelsState> & ThisType<ModelsState> = {
   async rescanProviders() {
     this.scanning = true;
     try {
-      const res = await apiFetch("/api/admin/providers/rescan", { method: "POST", },);
+      const res = await apiFetch("/api/v1/admin/providers/rescan", { method: "POST", },);
       if (res.ok) {
         const data = await res.json();
         const providers = (data.providers ?? []) as ProviderInfo[];

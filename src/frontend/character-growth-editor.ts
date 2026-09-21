@@ -5,11 +5,11 @@
  * Character Growth Editor — Alpine.js component.
  *
  * Provides the client-side wiring for the author/GM growth editor:
- * - growth_mode radio toggle (PUT /api/actors/:actorId)
+ * - growth_mode radio toggle (PUT /api/v1/actors/:actorId)
  * - llm_assist_enabled checkbox
- * - Arc stage editor (PATCH /api/character-growth/arc)
+ * - Arc stage editor (PATCH /api/v1/character-growth/arc)
  * - Confirm/reject pending growth entries
- *   (POST /api/character-growth/growth-log/:entryId/confirm|reject)
+ *   (POST /api/v1/character-growth/growth-log/:entryId/confirm|reject)
  *
  * See .plan/epics/epic-character-growth.md (Frontend / UI section).
  *
@@ -73,7 +73,7 @@ export function characterGrowthEditor(opts: CharacterGrowthEditorOptions,): Char
 
     async saveMode() {
       try {
-        await feFetch(`/api/actors/${encodeURIComponent(this.actorId,)}`, {
+        await feFetch(`/api/v1/actors/${encodeURIComponent(this.actorId,)}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json", },
           body: jsonBody({
@@ -91,7 +91,7 @@ export function characterGrowthEditor(opts: CharacterGrowthEditorOptions,): Char
     async saveArc() {
       try {
         const res = await feFetch(
-          `/api/character-growth/arc?actorId=${encodeURIComponent(this.actorId,)}`,
+          `/api/v1/character-growth/arc?actorId=${encodeURIComponent(this.actorId,)}`,
           {
             method: "PATCH",
             headers: { "Content-Type": "application/json", },
@@ -112,7 +112,7 @@ export function characterGrowthEditor(opts: CharacterGrowthEditorOptions,): Char
     async confirmEntry(entryId: string,) {
       try {
         await feFetch(
-          `/api/character-growth/growth-log/${encodeURIComponent(entryId,)}/confirm?actorId=${
+          `/api/v1/character-growth/growth-log/${encodeURIComponent(entryId,)}/confirm?actorId=${
             encodeURIComponent(this.actorId,)
           }`,
           { method: "POST", },
@@ -128,7 +128,7 @@ export function characterGrowthEditor(opts: CharacterGrowthEditorOptions,): Char
     async rejectEntry(entryId: string,) {
       try {
         await feFetch(
-          `/api/character-growth/growth-log/${encodeURIComponent(entryId,)}/reject?actorId=${
+          `/api/v1/character-growth/growth-log/${encodeURIComponent(entryId,)}/reject?actorId=${
             encodeURIComponent(this.actorId,)
           }`,
           { method: "POST", },

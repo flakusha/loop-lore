@@ -4,9 +4,9 @@
 /**
  * RPG Questions Component (TASK-029)
  *
- * Loads a chat's open questions from `/api/chats/:chatId/questions` and
+ * Loads a chat's open questions from `/api/v1/chats/:chatId/questions` and
  * renders them as clickable option buttons (see chat/rpg-questions.html).
- * Answering posts to `/api/questions/:id/answer`, then refreshes the list.
+ * Answering posts to `/api/v1/questions/:id/answer`, then refreshes the list.
  */
 
 import { apiFetch, } from "./htmx.js";
@@ -29,7 +29,7 @@ export const rpgQuestions: Partial<ChatState> & ThisType<ChatState> = {
     this.rpgQuestionsLoading = true;
     this.rpgQuestionsError = null;
     try {
-      const res = await apiFetch(`/api/chats/${activeChat}/questions`,);
+      const res = await apiFetch(`/api/v1/chats/${activeChat}/questions`,);
       if (!res.ok) {
         this.rpgQuestions = [];
         return;
@@ -63,7 +63,7 @@ export const rpgQuestions: Partial<ChatState> & ThisType<ChatState> = {
     this._answeringQuestionId = questionId;
     this.rpgQuestionsError = null;
     try {
-      const res = await apiFetch(`/api/questions/${questionId}/answer`, {
+      const res = await apiFetch(`/api/v1/questions/${questionId}/answer`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ optionId, },),

@@ -24,7 +24,7 @@ export const adminChats = {
   async loadChats() {
     this.loadingChats = true;
     try {
-      let url = `/api/admin/chats?page=${this.chatPage}&pageSize=${(this as any).pageSize}`;
+      let url = `/api/v1/admin/chats?page=${this.chatPage}&pageSize=${(this as any).pageSize}`;
       if (this.chatSearch) { url += `&q=${encodeURIComponent(this.chatSearch,)}`; }
       if (this.chatTypeFilter) { url += `&type=${this.chatTypeFilter}`; }
       const res = await apiFetch(url, { headers: { Accept: "application/json", }, },);
@@ -49,7 +49,7 @@ export const adminChats = {
   async deleteChat(chatId: string,) {
     if (this.confirmDeleteChat !== chatId) { return; }
     try {
-      const res = await apiFetch(`/api/admin/chats/${chatId}`, { method: "DELETE", },);
+      const res = await apiFetch(`/api/v1/admin/chats/${chatId}`, { method: "DELETE", },);
       if (res.ok) {
         showToast("success", t("toasts.chatDeleted",),);
         this.confirmDeleteChat = "";

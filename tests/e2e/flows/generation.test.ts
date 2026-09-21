@@ -2,12 +2,12 @@
  * E2E: Generation Flows
  *
  * Tests LLM generation endpoints via mock provider:
- *   POST /api/generation/generate (non-stream + stream + error paths)
- *   POST /api/generation/cancel
- *   GET  /api/generation/status/:chatId
- *   GET  /api/generation/active
- *   POST /api/generation/retry
- *   POST /api/generation/regenerate
+ *   POST /api/v1/generation/generate (non-stream + stream + error paths)
+ *   POST /api/v1/generation/cancel
+ *   GET  /api/v1/generation/status/:chatId
+ *   GET  /api/v1/generation/active
+ *   POST /api/v1/generation/retry
+ *   POST /api/v1/generation/regenerate
  *
  * Uses MockLLMProvider registered at server startup.
  * Requires seeded user + chat + actor + message.
@@ -44,7 +44,7 @@ describe("Generation E2E", () => {
   },);
   // ── Generate (non-streaming) ─────────────────────────────
 
-  test("POST /api/generation/generate returns generated content", async () => {
+  test("POST /api/v1/generation/generate returns generated content", async () => {
     const res = await api.post<{
       ok: boolean;
       content: string;
@@ -69,7 +69,7 @@ describe("Generation E2E", () => {
     expect(res.data!.tokenUsage.totalTokens,).toBe(30,);
   });
 
-  test("POST /api/generation/generate stores message in DB", async () => {
+  test("POST /api/v1/generation/generate stores message in DB", async () => {
     const res = await api.post<{ messageId: string; content: string }>(
       "/api/v1/generation/generate",
       {
@@ -85,9 +85,9 @@ describe("Generation E2E", () => {
     expect(res.ok,).toBe(true,);
     const msgId = res.data!.messageId;
 
-    // Verify via GET /api/messages/:id
+    // Verify via GET /api/v1/messages/:id
     const getRes = await api.get<{ content: string; role: string; provider: string }>(
-      `/api/messages/${msgId}`,
+      `/api/v1/messages/${msgId}`,
     );
     expect(getRes.ok,).toBe(true,);
     expect(getRes.data!.role,).toBe("assistant",);
@@ -95,7 +95,7 @@ describe("Generation E2E", () => {
     expect(getRes.data!.provider,).toBe("mock-provider",);
   });
 
-  test("POST /api/generation/generate validates required fields", async () => {
+  test("POST /api/v1/generation/generate validates required fields", async () => {
     const res = await api.post("/api/v1/generation/generate", {
       chatId: SEED.chat.id,
       // Missing parentMessageId, actorId, idempotencyKey
@@ -105,7 +105,7 @@ describe("Generation E2E", () => {
     expect(res.code,).toBeTruthy(); // TEST.2 error envelope
   });
 
-  test("POST /api/generation/generate bad provider returns 422", async () => {
+  test("POST /api/v1/generation/generate bad provider returns 422", async () => {
     const res = await api.post("/api/v1/generation/generate", {
       chatId: SEED.chat.id,
       parentMessageId: SEED.message.id,
@@ -118,7 +118,7 @@ describe("Generation E2E", () => {
     expect(res.code,).toBeTruthy(); // TEST.2 error envelope
   });
 
-  test("POST /api/generation/generate uses prompt assembler when no explicit prompt", async () => {
+  test("POST /api/v1/generation/generate uses prompt assembler when no explicit prompt", async () => {
     // When no `prompt` field provided, PromptAssembler builds from chat history
     const res = await api.post<{ ok: boolean; content: string }>(
       "/api/v1/generation/generate",
@@ -139,8 +139,8 @@ describe("Generation E2E", () => {
 
   // ── Generate (streaming) ────────────────────────────────
 
-  test("POST /api/generation/generate returns SSE stream", async () => {
-    const res = await fetch(`${server.url}/api/generation/generate`, {
+  test("POST /api/v1/generation/generate returns SSE stream", async () => {
+    const res = await fetch(`${server.url}/api/v1/generation/generate`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -165,10 +165,10 @@ describe("Generation E2E", () => {
     expect(text,).toContain('"type":"done"',);
   });
 
-  test("POST /api/generation/generate stream stores response", async () => {
+  test("POST /api/v1/generation/generate stream stores response", async () => {
     const idempotencyKey = `e2e-stream-store-${Date.now()}`;
 
-    const res = await fetch(`${server.url}/api/generation/generate`, {
+    const res = await fetch(`${server.url}/api/v1/generation/generate`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -193,16 +193,16 @@ describe("Generation E2E", () => {
 
     if (doneMatch) {
       const msgId = doneMatch[1];
-      const getRes = await api.get<{ content: string }>(`/api/messages/${msgId}`,);
+      const getRes = await api.get<{ content: string }>(`/api/v1/messages/${msgId}`,);
       expect(getRes.ok,).toBe(true,);
       expect(getRes.data!.content,).toBe("Mock streamed response",);
     }
   });
 
-  test("POST /api/generation/generate stream returns SSE error on provider failure", async () => {
+  test("POST /api/v1/generation/generate stream returns SSE error on provider failure", async () => {
     server.mockProvider!.streamError = true;
 
-    const res = await fetch(`${server.url}/api/generation/generate`, {
+    const res = await fetch(`${server.url}/api/v1/generation/generate`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -230,7 +230,7 @@ describe("Generation E2E", () => {
 
   // ── Cancel ──────────────────────────────────────────────
 
-  test("POST /api/generation/cancel returns 404 when no active generation", async () => {
+  test("POST /api/v1/generation/cancel returns 404 when no active generation", async () => {
     const res = await api.post("/api/v1/generation/cancel", {
       chatId: SEED.chat.id,
     },);
@@ -238,7 +238,7 @@ describe("Generation E2E", () => {
     expect(res.code,).toBeTruthy(); // TEST.2 error envelope
   });
 
-  test("POST /api/generation/cancel returns 403 for a foreign chat", async () => {
+  test("POST /api/v1/generation/cancel returns 403 for a foreign chat", async () => {
     const res = await api.post("/api/v1/generation/cancel", {
       chatId: "00000000-0000-4000-a000-000000000099",
     },);
@@ -246,7 +246,7 @@ describe("Generation E2E", () => {
     expect(res.code,).toBeTruthy(); // TEST.2 error envelope
   });
 
-  test("POST /api/generation/cancel validates input", async () => {
+  test("POST /api/v1/generation/cancel validates input", async () => {
     const res = await api.post("/api/v1/generation/cancel", {},);
     expect(res.status,).toBe(400,);
     expect(res.error,).toContain("chatId",);
@@ -255,9 +255,9 @@ describe("Generation E2E", () => {
 
   // ── Status ──────────────────────────────────────────────
 
-  test("GET /api/generation/status/:chatId returns inactive for idle chat", async () => {
+  test("GET /api/v1/generation/status/:chatId returns inactive for idle chat", async () => {
     const res = await api.get<{ isActive: boolean; attemptId: string | null }>(
-      `/api/generation/status/${SEED.chat.id}`,
+      `/api/v1/generation/status/${SEED.chat.id}`,
     );
     expect(res.ok,).toBe(true,);
     expect(res.data!.isActive,).toBe(false,);
@@ -266,7 +266,7 @@ describe("Generation E2E", () => {
 
   // ── Active list ─────────────────────────────────────────
 
-  test("GET /api/generation/active is admin-gated", async () => {
+  test("GET /api/v1/generation/active is admin-gated", async () => {
     const res = await api.get("/api/v1/generation/active",);
     expect(res.status,).toBe(403,);
     expect(res.code,).toBeTruthy(); // TEST.2 error envelope
@@ -274,13 +274,13 @@ describe("Generation E2E", () => {
 
   // ── Retry ───────────────────────────────────────────────
 
-  test("POST /api/generation/retry returns 400 when chatId missing", async () => {
+  test("POST /api/v1/generation/retry returns 400 when chatId missing", async () => {
     const res = await api.post("/api/v1/generation/retry", {},);
     expect(res.status,).toBe(400,);
     expect(res.code,).toBeTruthy(); // TEST.2 error envelope
   });
 
-  test("POST /api/generation/retry returns ok with defaults", async () => {
+  test("POST /api/v1/generation/retry returns ok with defaults", async () => {
     const res = await api.post<{
       ok: boolean;
       chatId: string;
@@ -299,13 +299,13 @@ describe("Generation E2E", () => {
 
   // ── Regenerate ──────────────────────────────────────────
 
-  test("POST /api/generation/regenerate returns 400 when chatId missing", async () => {
+  test("POST /api/v1/generation/regenerate returns 400 when chatId missing", async () => {
     const res = await api.post("/api/v1/generation/regenerate", {},);
     expect(res.status,).toBe(400,);
     expect(res.code,).toBeTruthy(); // TEST.2 error envelope
   });
 
-  test("POST /api/generation/regenerate returns ok", async () => {
+  test("POST /api/v1/generation/regenerate returns ok", async () => {
     const res = await api.post<{ ok: boolean; chatId: string; ready: boolean }>(
       "/api/v1/generation/regenerate",
       { chatId: SEED.chat.id, },

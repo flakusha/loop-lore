@@ -13,7 +13,7 @@ const log = rootLog.child({ module: "chat-settings-ownership", },);
  *
  * Mixed into `chatSettings` so they run with full `ChatState` context.
  *
- * Backend contract: POST /api/chats/:id/transfer-ownership with
+ * Backend contract: POST /api/v1/chats/:id/transfer-ownership with
  *   { newOwnerId: string, confirm: true, reason?: string }
  *
  * Returns 200 on success with `{ ok, previousOwnerId, newOwnerId, autoInvited }`.
@@ -69,7 +69,7 @@ export const ownershipActions: Partial<ChatState> & ThisType<ChatState> = {
 
     try {
       const res = await apiFetch(
-        `/api/chats/${this.activeChat}/transfer-ownership`,
+        `/api/v1/chats/${this.activeChat}/transfer-ownership`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json", },

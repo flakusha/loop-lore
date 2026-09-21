@@ -168,7 +168,7 @@ globalThis.filterBar = function() {
       if (el.closest<HTMLElement>("[data-show-tag-filter]",)?.dataset.showTagFilter !== "true") { return; }
       void (async () => {
         try {
-          const res = await feFetch("/api/tag-autocomplete",);
+          const res = await feFetch("/api/v1/tag-autocomplete",);
           if (!res.ok) { return; }
           const { tags, } = (await res.json()) as { tags: string[] };
           (this as unknown as { tagOptions: string[] }).tagOptions = tags;

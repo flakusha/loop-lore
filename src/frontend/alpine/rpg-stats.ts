@@ -4,7 +4,7 @@
 /**
  * RPG Stats Panel Component
  *
- * Loads real stats from `/api/rpg/stats/:actorId`.
+ * Loads real stats from `/api/v1/rpg/stats/:actorId`.
  * Falls back to defaults if no stats exist yet.
  */
 
@@ -39,7 +39,7 @@ export const rpgStats: Partial<ChatState> & ThisType<ChatState> = {
       }
 
       // Fetch RPG stats for this actor
-      const statsRes = await apiFetch(`/api/rpg/stats/${actorId}`,);
+      const statsRes = await apiFetch(`/api/v1/rpg/stats/${actorId}`,);
       if (statsRes.ok) {
         const data = await statsRes.json();
         this.rpgStats = {

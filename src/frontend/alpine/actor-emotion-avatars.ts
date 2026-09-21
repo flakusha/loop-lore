@@ -4,10 +4,10 @@
 
 // ── Character-scoped emotion avatar batch generation panel.
 // Drives:
-//   GET    /api/actors/:actorId/emotion-avatars/jobs
-//   POST   /api/actors/:actorId/emotion-avatars
-//   GET    /api/actors/:actorId/emotion-avatars/jobs/:jobId
-//   POST   /api/actors/:actorId/emotion-avatars/jobs/:jobId/cancel
+//   GET    /api/v1/actors/:actorId/emotion-avatars/jobs
+//   POST   /api/v1/actors/:actorId/emotion-avatars
+//   GET    /api/v1/actors/:actorId/emotion-avatars/jobs/:jobId
+//   POST   /api/v1/actors/:actorId/emotion-avatars/jobs/:jobId/cancel
 // Pairs with `src/components/character/emotion-avatars-panel.html`.
 import { apiFetch, } from "./htmx";
 import { t, } from "./i18n";
@@ -114,7 +114,7 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
     this.jobsLoading = true;
     this.jobsError = "";
     try {
-      const res = await apiFetch(`/api/actors/${actorId}/emotion-avatars/jobs`, {},);
+      const res = await apiFetch(`/api/v1/actors/${actorId}/emotion-avatars/jobs`, {},);
       if (!res.ok) {
         this.jobsError = t("status.emotionAvatarsLoadFailed",);
         return;
@@ -146,7 +146,7 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
     this.error = "";
     this.message = "";
     try {
-      const res = await apiFetch(`/api/actors/${actorId}/emotion-avatars`, {
+      const res = await apiFetch(`/api/v1/actors/${actorId}/emotion-avatars`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({
@@ -183,7 +183,7 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
     this.error = "";
     try {
       const res = await apiFetch(
-        `/api/actors/${actorId}/emotion-avatars/jobs/${jobId}/cancel`,
+        `/api/v1/actors/${actorId}/emotion-avatars/jobs/${jobId}/cancel`,
         { method: "POST", },
       );
       if (!res.ok) {
@@ -210,7 +210,7 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
     if (!actorId || !jobId) { return; }
     try {
       const res = await apiFetch(
-        `/api/actors/${actorId}/emotion-avatars/jobs/${jobId}`,
+        `/api/v1/actors/${actorId}/emotion-avatars/jobs/${jobId}`,
         {},
       );
       if (!res.ok) { return; }

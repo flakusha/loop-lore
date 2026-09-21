@@ -39,13 +39,13 @@ describe("API Keys E2E", () => {
     server.close();
   },);
 
-  test("GET /api/user-api-keys returns empty list initially", async () => {
+  test("GET /api/v1/user-api-keys returns empty list initially", async () => {
     const res = await api.get<Array<{ provider_name: string }>>("/api/v1/user-api-keys",);
     expect(res.ok,).toBe(true,);
     expect(Array.isArray(res.data,),).toBe(true,);
   });
 
-  test("POST /api/user-api-keys stores a key (response has provider not provider_name)", async () => {
+  test("POST /api/v1/user-api-keys stores a key (response has provider not provider_name)", async () => {
     const res = await api.post<{ id: string; provider: string }>("/api/v1/user-api-keys", {
       name: "test-provider",
       provider: "test-provider",
@@ -55,19 +55,19 @@ describe("API Keys E2E", () => {
     expect(res.data!.provider,).toBe("test-provider",);
   });
 
-  test("POST /api/user-api-keys requires name", async () => {
+  test("POST /api/v1/user-api-keys requires name", async () => {
     const res = await api.post("/api/v1/user-api-keys", { api_key: "sk-test", provider: "test-provider", },);
     expect(res.ok,).toBe(false,);
     expect(res.status,).toBe(422,);
   });
 
-  test("POST /api/user-api-keys requires api_key", async () => {
+  test("POST /api/v1/user-api-keys requires api_key", async () => {
     const res = await api.post("/api/v1/user-api-keys", { name: "test-provider", provider: "test-provider", },);
     expect(res.ok,).toBe(false,);
     expect(res.status,).toBe(422,);
   });
 
-  test("POST /api/user-api-keys rejects unknown provider", async () => {
+  test("POST /api/v1/user-api-keys rejects unknown provider", async () => {
     const res = await api.post("/api/v1/user-api-keys", {
       name: "nonexistent",
       provider: "nonexistent",
@@ -77,7 +77,7 @@ describe("API Keys E2E", () => {
     expect(res.status,).toBe(400,);
   });
 
-  test("GET /api/user-api-keys returns stored key metadata", async () => {
+  test("GET /api/v1/user-api-keys returns stored key metadata", async () => {
     const res = await api.get<Array<{ provider_name: string; created_at: string }>>(
       "/api/v1/user-api-keys",
     );
@@ -89,7 +89,7 @@ describe("API Keys E2E", () => {
     }
   });
 
-  test("POST /api/user-api-keys updates existing key (upsert)", async () => {
+  test("POST /api/v1/user-api-keys updates existing key (upsert)", async () => {
     const res = await api.post("/api/v1/user-api-keys", {
       name: "test-provider",
       provider: "test-provider",
@@ -98,7 +98,7 @@ describe("API Keys E2E", () => {
     expect(res.ok,).toBe(true,);
   });
 
-  test("DELETE /api/user-api-keys/:provider deletes key", async () => {
+  test("DELETE /api/v1/user-api-keys/:provider deletes key", async () => {
     const delRes = await api.del("/api/v1/user-api-keys/test-provider",);
     expect(delRes.ok,).toBe(true,);
 

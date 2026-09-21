@@ -78,7 +78,7 @@ describe("openAssetPreview", () => {
     },);
     expect(c.previewMediaAsset,).not.toBeNull();
     expect(c.previewMediaAsset.id,).toBe("asset-1",);
-    expect(c.previewMediaAsset.url,).toBe("/api/assets/asset-1/raw",);
+    expect(c.previewMediaAsset.url,).toBe("/api/v1/assets/asset-1/raw",);
     expect(c.previewMediaAsset.caption,).toBe("hero.png",);
   });
 
@@ -171,7 +171,7 @@ describe("uploadChatAssets", () => {
   },);
   /** */
   function uploadCalls() {
-    return calls.filter((c,) => c.url === "/api/assets" && (c.opts as { method?: string }).method === "POST");
+    return calls.filter((c,) => c.url === "/api/v1/assets" && (c.opts as { method?: string }).method === "POST");
   }
   /** */
   function linkCalls() {
@@ -182,7 +182,7 @@ describe("uploadChatAssets", () => {
     const { ctx, toasts, } = makeUploadCtx();
     let n = 0;
     installApiFetch((url,) => {
-      if (url === "/api/assets") {
+      if (url === "/api/v1/assets") {
         n += 1;
         return Response.json({ id: `asset-${n}`, }, { status: 200, },);
       }
@@ -205,7 +205,7 @@ describe("uploadChatAssets", () => {
     const { ctx, toasts, } = makeUploadCtx();
     let n = 0;
     installApiFetch((url, opts,) => {
-      if (url === "/api/assets") {
+      if (url === "/api/v1/assets") {
         if (fileNameOf(opts,) === "b.png") {
           return Response.json({ error: "boom", }, { status: 500, },);
         }
@@ -229,7 +229,7 @@ describe("uploadChatAssets", () => {
     const resolvers: Array<() => void> = [];
     let n = 0;
     installApiFetch((url,) => {
-      if (url === "/api/assets") {
+      if (url === "/api/v1/assets") {
         n += 1;
         const id = `asset-${n}`;
         return new Promise<Response>((resolve,) => {

@@ -22,7 +22,7 @@ export const messageTools: Partial<ChatState> & ThisType<ChatState> = {
     const targetChatId = prompt(t("chats.forwardTargetPrompt",),)?.trim() ?? "";
     if (!targetChatId) { return; }
     try {
-      const res = await apiFetch(`/api/chats/${sourceChat}/messages/${msgId}/forward`, {
+      const res = await apiFetch(`/api/v1/chats/${sourceChat}/messages/${msgId}/forward`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ targetChatId, },),
@@ -56,7 +56,7 @@ export const messageTools: Partial<ChatState> & ThisType<ChatState> = {
       return;
     }
     try {
-      const res = await apiFetch(`/api/chats/${this.activeChat}/messages/${msgId}/ai-action`, {
+      const res = await apiFetch(`/api/v1/chats/${this.activeChat}/messages/${msgId}/ai-action`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ action, },),

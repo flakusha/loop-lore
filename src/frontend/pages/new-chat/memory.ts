@@ -13,7 +13,7 @@ import type { NewChatCtx, } from "./state";
  */
 export async function loadMemoriesForActor(ctx: NewChatCtx, actorId: string,): Promise<void> {
   try {
-    const res = await feFetch(`/api/actors/${actorId}/memories`,);
+    const res = await feFetch(`/api/v1/actors/${actorId}/memories`,);
     if (!res.ok) { return; }
     const data = await res.json() as {
       items: Array<{
@@ -142,7 +142,7 @@ export function bindMemoryHandlers(ctx: NewChatCtx,): void {
     const actorId = ctx.selected[0]?.id;
     if (!content || !actorId || !addInput) { return; }
     try {
-      const res = await feFetch(`/api/actors/${actorId}/memories`, {
+      const res = await feFetch(`/api/v1/actors/${actorId}/memories`, {
         method: "POST",
         body: jsonBody({ content, memoryType: "episodic", confidence: 1, importance: 5, keywords: [], },),
       },);

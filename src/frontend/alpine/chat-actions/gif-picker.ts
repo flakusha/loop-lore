@@ -5,9 +5,9 @@
  * Composer GIF picker — search a configured GIF provider and insert the
  * pick as a composer attachment.
  *
- * Search runs through the backend proxy (GET /api/gifs/search) so the
+ * Search runs through the backend proxy (GET /api/v1/gifs/search) so the
  * provider key never reaches the browser. Insert reuses the asset-upload
- * path from handleAttach (POST /api/assets multipart + pendingAssets),
+ * path from handleAttach (POST /api/v1/assets multipart + pendingAssets),
  * so the GIF ships with the next sendMessage like any other attachment.
  *
  * Owner wiring (not this file): merge `gifPicker` into `chatActions` in
@@ -61,7 +61,7 @@ export const gifPicker: Partial<GifPickerState> & ThisType<GifCtx> = {
     this._gifLoading = true;
     try {
       const res = await apiFetch(
-        `/api/gifs/search?q=${encodeURIComponent(query,)}&limit=${GIF_SEARCH_LIMIT}`,
+        `/api/v1/gifs/search?q=${encodeURIComponent(query,)}&limit=${GIF_SEARCH_LIMIT}`,
       );
       if (!res.ok) {
         const message = res.status === 501
@@ -135,7 +135,7 @@ export const gifPicker: Partial<GifPickerState> & ThisType<GifCtx> = {
       const formData = new FormData();
       formData.append("file", new File([blob,], filename, { type: "image/gif", },),);
       formData.append("alt_text", result.title || filename,);
-      const res = await apiFetch("/api/assets", { method: "POST", body: formData, },);
+      const res = await apiFetch("/api/v1/assets", { method: "POST", body: formData, },);
       if (!res.ok) {
         const err = await res.json().catch(() => null) as { error?: string } | null;
         this.$dispatch?.("show-toast", {

@@ -4,9 +4,9 @@
 
 // ── Export progress panel.
 // Drives:
-//   POST  /api/export/progress (SSE-streamed)
-//   GET   /api/export/status/:jobId (polled status snapshot)
-//   GET   /api/export/download/:jobId (final download)
+//   POST  /api/v1/export/progress (SSE-streamed)
+//   GET   /api/v1/export/status/:jobId (polled status snapshot)
+//   GET   /api/v1/export/download/:jobId (final download)
 // Pairs with `src/components/export/export-progress-panel.html`.
 import { apiFetch, } from "./htmx";
 import { t, } from "./i18n";
@@ -18,7 +18,7 @@ export type JobStatus = "queued" | "processing" | "completed" | "failed";
 
 const log = rootLog.child({ module: "export-progress", },);
 
-/** Progress snapshot returned by `/api/export/status/:jobId`. */
+/** Progress snapshot returned by `/api/v1/export/status/:jobId`. */
 export interface JobStatusSnapshot {
   id: string;
   status: JobStatus;
@@ -68,7 +68,7 @@ export interface ExportProgressState {
   _sse: EventSource | null;
   /** Internal: poll timer fallback. */
   _pollTimer: ReturnType<typeof setInterval> | null;
-  /** Kick off the export job (POST /api/export/progress). */
+  /** Kick off the export job (POST /api/v1/export/progress). */
   startExport(): Promise<void>;
   /** Apply a single SSE event to local state. */
   applyEvent(event: ExportSseEvent,): void;
@@ -141,7 +141,7 @@ export const exportProgress: ExportProgressState = {
     if (event.message) { this.message = event.message; }
     if (event.completedAt) { this.completedAt = event.completedAt; }
     if (this.status === "completed" && this.jobId) {
-      this.downloadUrl = `/api/export/download/${this.jobId}`;
+      this.downloadUrl = `/api/v1/export/download/${this.jobId}`;
       if (!this.completedAt) { this.completedAt = new Date().toISOString(); }
     }
     if (this.isTerminal()) { this.stopTracking(); }
@@ -156,7 +156,7 @@ export const exportProgress: ExportProgressState = {
     this.currentStep = snapshot.currentStep;
     if (snapshot.completedAt) { this.completedAt = snapshot.completedAt; }
     if (snapshot.status === "completed") {
-      this.downloadUrl = `/api/export/download/${snapshot.id}`;
+      this.downloadUrl = `/api/v1/export/download/${snapshot.id}`;
     }
     if (snapshot.status === "failed" && snapshot.error) {
       this.error = snapshot.error;
@@ -171,7 +171,7 @@ export const exportProgress: ExportProgressState = {
     this.error = "";
     this.message = "";
     try {
-      const res = await apiFetch("/api/export/progress", { method: "POST", stream: true, },);
+      const res = await apiFetch("/api/v1/export/progress", { method: "POST", stream: true, },);
       if (!res.ok || !res.body) {
         this.error = t("status.exportStartFailed",);
         return;
@@ -232,7 +232,7 @@ export const exportProgress: ExportProgressState = {
         return;
       }
       try {
-        const res = await apiFetch(`/api/export/status/${this.jobId}`, {},);
+        const res = await apiFetch(`/api/v1/export/status/${this.jobId}`, {},);
         if (!res.ok) { return; }
         const snapshot = (await res.json()) as JobStatusSnapshot;
         const terminal = this.applySnapshot(snapshot,);

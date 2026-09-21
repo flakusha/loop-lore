@@ -32,7 +32,7 @@ describe("createMoodPanelState", () => {
     const state = createMoodPanelState();
     handler = async () => Response.json({ happiness: 90, currentMood: "ecstatic", },);
     await state.loadMood("a1",);
-    expect(calls[0]!.url,).toBe("/api/actors/a1/mood",);
+    expect(calls[0]!.url,).toBe("/api/v1/actors/a1/mood",);
     expect(state.mood,).toEqual({ happiness: 90, currentMood: "ecstatic", } as never,);
   });
 
@@ -51,7 +51,7 @@ describe("createMoodPanelState", () => {
   test("loadEmotions and loadEmotionDefs populate their lists", async () => {
     const state = createMoodPanelState();
     handler = async (url,) =>
-      url === "/api/actors/a1/emotions"
+      url === "/api/v1/actors/a1/emotions"
         ? Response.json([{ emotion_id: "joy", intensity: 1, },],)
         : Response.json([{ id: "joy", display_name: "Joy", icon: null, },],);
     await state.loadEmotions("a1",);

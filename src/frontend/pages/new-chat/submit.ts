@@ -27,7 +27,7 @@ export function bindSubmitHandler(ctx: NewChatCtx,): void {
 
     try {
       const payload = collectNewChatPayload(ctx, name,);
-      const res = await feFetch("/api/chats", {
+      const res = await feFetch("/api/v1/chats", {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody(payload,),

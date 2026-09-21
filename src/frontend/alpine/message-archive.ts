@@ -15,7 +15,7 @@ export const messageArchive: Partial<ChatState> & ThisType<ChatState> = {
   async archiveMessage(messageId: string,) {
     if (!this.activeChat) { return; }
     try {
-      const res = await apiFetch(`/api/messages/${messageId}/archive`, {
+      const res = await apiFetch(`/api/v1/messages/${messageId}/archive`, {
         method: "POST",
       },);
       if (res.ok) {
@@ -39,7 +39,7 @@ export const messageArchive: Partial<ChatState> & ThisType<ChatState> = {
   async restoreMessage(messageId: string,) {
     if (!this.activeChat) { return; }
     try {
-      const res = await apiFetch(`/api/messages/${messageId}/restore`, {
+      const res = await apiFetch(`/api/v1/messages/${messageId}/restore`, {
         method: "POST",
       },);
       if (res.ok) {

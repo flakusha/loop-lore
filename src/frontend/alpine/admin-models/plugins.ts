@@ -12,7 +12,7 @@ export const pluginState: Partial<ModelsState> & ThisType<ModelsState> = {
   async loadPlugins() {
     this.loadingPlugins = true;
     try {
-      const res = await apiFetch("/api/plugins", { headers: { Accept: "application/json", }, },);
+      const res = await apiFetch("/api/v1/plugins", { headers: { Accept: "application/json", }, },);
       if (res.ok) { this.pluginList = await res.json(); }
     } catch {
       log.warn("Network error loading plugins",);
@@ -23,7 +23,7 @@ export const pluginState: Partial<ModelsState> & ThisType<ModelsState> = {
   async togglePlugin(name: string, enable: boolean,) {
     const action = enable ? "enable" : "disable";
     try {
-      const res = await apiFetch(`/api/plugins/${name}/${action}`, { method: "POST", },);
+      const res = await apiFetch(`/api/v1/plugins/${name}/${action}`, { method: "POST", },);
       if (res.ok) {
         showToast("success", t(enable ? "toasts.pluginEnabled" : "toasts.pluginDisabled",),);
         await this.loadPlugins();
