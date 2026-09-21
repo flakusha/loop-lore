@@ -34,8 +34,14 @@ export interface LifecycleRowSlice {
 
 /**
  * Decide whether `entry` survives the configured `min_confidence` floor.
- * With defaults (min_confidence=25) and legacy `confidence=100,
- * distortion_level=0` rows, this is a no-op for worlds that have not opted in.
+ * With defaults (`min_confidence = 25`, `decay_per_day = 0`,
+ * `distortion_cap = 80`) and legacy `confidence = 100, distortion_level = 0`
+ * rows, this is a no-op for worlds that have not opted in.
+ *
+ * **Runtime invariant:** `worldDaysSince` is pinned to `0` because the
+ * `worlds` table has no world-clock column. Temporal decay is therefore a
+ * no-op. To re-enable decay, plumb a real days-since value through
+ * `loadLore` and pass it down here.
  * @param entry
  * @param cfg
  * @returns True when the row's effective confidence is at or above `cfg.min_confidence`.
@@ -50,7 +56,7 @@ export function passesConfidenceFloor(
       last_verified: entry.last_verified ?? LIFECYCLE_DEFAULTS.last_verified,
       distortion_level: entry.distortion_level ?? LIFECYCLE_DEFAULTS.distortion_level,
     },
-    0,
+    /* worldDaysSince: number */ 0,
     cfg,
   );
   return confidence >= cfg.min_confidence;

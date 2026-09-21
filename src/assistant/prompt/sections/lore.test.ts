@@ -662,4 +662,43 @@ describe("loreSection — lifecycle confidence/decay/distortion gating", () => {
       sqlite.close();
     }
   });
+
+  test("writes last_verified on included world-lore rows (minimal producer)", async () => {
+    createLoggerSafe();
+    const { db, sqlite, } = await createTestDb();
+    try {
+      const { worldId, actorId, } = await setupWorld(db, "{}",);
+      // cooldown_seconds >= 1 gates the activation-tracking write;
+      // with 0 the section skips the update path entirely.
+      await insertWorldLoreEntries(db, worldId, "Verified in prompt.", {
+        enabled,
+        constant: constantOne,
+        position: beforeChar,
+        cooldown_seconds: 60,
+        priority: 100,
+      },);
+
+      const beforeRender = await db
+        .selectFrom("world_lore_entries",)
+        .select(["last_verified", "last_activated",],)
+        .where("world_id", "=", worldId,)
+        .executeTakeFirstOrThrow();
+      expect(beforeRender.last_verified,).toBeNull();
+      expect(beforeRender.last_activated,).toBeNull();
+
+      await loreSection.build(ctxFor(db, worldId, actorId,),);
+
+      const afterRender = await db
+        .selectFrom("world_lore_entries",)
+        .select(["last_verified", "last_activated",],)
+        .where("world_id", "=", worldId,)
+        .executeTakeFirstOrThrow();
+      // Both timestamps are set together by the producer path.
+      expect(afterRender.last_activated,).not.toBeNull();
+      expect(afterRender.last_verified,).not.toBeNull();
+      expect(afterRender.last_verified,).toBe(afterRender.last_activated,);
+    } finally {
+      sqlite.close();
+    }
+  });
 });
