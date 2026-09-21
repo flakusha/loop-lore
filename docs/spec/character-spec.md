@@ -83,6 +83,10 @@ field and the `extensions` map. The `description` is a flat string for
 compatibility, but `extensions` allows structured, multi-level data:
 
 ```typescript
+// RPG-aware extensions shape: `inventory` and `relationships` are the unified
+// InventoryItem/CharacterRelationship shapes (see below) — legacy V1 fields
+// coexist with rich fields (rarity/target_type/etc.). The full additive field
+// catalogue lives in src/characters/spec/character.ts.
 interface CharacterExtensions {
   /** Genre-specific stat blocks (optional, plugin-defined) */
   stats?: Record<string, number>;
@@ -99,18 +103,27 @@ interface CharacterExtensions {
 interface InventoryItem {
   id: string;
   name: string;
-  type: string;
+  type: string | InventoryItemType; // freeform V1 or structured enum
   description: string;
   quantity: number;
   equipped: boolean;
+  rarity?: ItemRarity;        // optional RPG metadata
+  weight?: number;
+  value?: number;
+  properties?: Record<string, unknown>;
+  stackable?: boolean;
   metadata?: Record<string, unknown>;
 }
 
 interface CharacterRelationship {
-  target_character_id: string;
-  type: "friend" | "rival" | "ally" | "enemy" | "family" | "mentor" | "student" | "neutral";
+  target_type?: RelationshipTargetType; // "character" | "faction" | "place" | "object"
+  target_character_id?: string;         // legacy V1 field
+  target_id?: string;                   // rich alternative for non-character targets
+  target_name?: string;                 // rich field
+  type: CharacterRelationshipType;       // 11 values incl. lover/debt/grudge
   strength: number; // 0-100
-  notes: string;
+  notes?: string;    // legacy V1 field
+  history?: string;  // rich field
 }
 
 interface WorldModifier {
