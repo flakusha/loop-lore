@@ -136,7 +136,7 @@ export async function createBrowserTest(
     await loadAllPlugins(db,);
 
     // Seed chat setup templates (server.start.ts:117 calls this in
-    // production; without it, /api/worlds/:wid/locations returns 400
+    // production; without it, /api/v1/worlds/:wid/locations returns 400
     // "Chat setup template not found" because resolveLocationTemplate
     // defaults to id="template-world").
     const { seedChatSetupTemplates, } = await import("@/chat/service");

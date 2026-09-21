@@ -34,7 +34,7 @@ export async function fetchChatDetail(chatId: string,): Promise<StoryChatDetail 
  */
 export async function fetchWorldName(worldId: string,): Promise<string | null> {
   try {
-    const res = await apiFetch(`/api/worlds/${worldId}`,);
+    const res = await apiFetch(`/api/v1/worlds/${worldId}`,);
     if (!res.ok) { return null; }
     const world = await res.json() as { name?: string };
     return world.name ?? null;
@@ -49,7 +49,7 @@ export async function fetchWorldName(worldId: string,): Promise<string | null> {
  * @param chatId
  */
 export async function fetchStoryTurns(chatId: string,): Promise<StoryTurnRow[]> {
-  const res = await apiFetch(`/api/chats/${chatId}/story-turns?pageSize=50`,);
+  const res = await apiFetch(`/api/v1/chats/${chatId}/story-turns?pageSize=50`,);
   if (!res.ok) { return []; }
   const data = await res.json() as { data?: StoryTurnRow[] };
   return data.data ?? [];
@@ -60,7 +60,7 @@ export async function fetchStoryTurns(chatId: string,): Promise<StoryTurnRow[]> 
  * @param worldId
  */
 export async function fetchQuests(worldId: string,): Promise<StoryQuest[]> {
-  const res = await apiFetch(`/api/worlds/${worldId}/quests?pageSize=100`,);
+  const res = await apiFetch(`/api/v1/worlds/${worldId}/quests?pageSize=100`,);
   if (!res.ok) { return []; }
   const data = await res.json() as { data?: StoryQuest[] };
   return data.data ?? [];
@@ -80,7 +80,7 @@ export interface LocationState {
  */
 export async function fetchLocationState(locationId: string,): Promise<LocationState | null> {
   try {
-    const res = await apiFetch(`/api/locations/${locationId}/state`,);
+    const res = await apiFetch(`/api/v1/locations/${locationId}/state`,);
     if (!res.ok) { return null; }
     const row = await res.json() as Record<string, unknown>;
     const state = (row.state as Record<string, unknown>) ?? row;
@@ -106,7 +106,7 @@ export async function fetchNpcsAt(
   locationId: string,
 ): Promise<{ actorId: string; displayName: string }[] | null> {
   try {
-    const res = await apiFetch(`/api/worlds/${worldId}/npcs-at/${locationId}`,);
+    const res = await apiFetch(`/api/v1/worlds/${worldId}/npcs-at/${locationId}`,);
     if (!res.ok) { return null; }
     return await res.json() as { actorId: string; displayName: string }[];
   } catch (error) {

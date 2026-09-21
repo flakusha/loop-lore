@@ -31,7 +31,7 @@ export const chatEditing: Partial<ChatState> & ThisType<ChatState> = {
     log.info("saveEdit", { messageId: msgId, },);
     if (!this.activeChat || !this.editContent.trim()) { return; }
     try {
-      const res = await apiFetch(`/api/messages/${msgId}`, {
+      const res = await apiFetch(`/api/v1/messages/${msgId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ content: this.editContent.trim(), },),
@@ -59,7 +59,7 @@ export const chatEditing: Partial<ChatState> & ThisType<ChatState> = {
     if (!confirm(t("modals.deleteMessage",),)) { return; }
     event.stopImmediatePropagation();
     try {
-      const res = await apiFetch(`/api/messages/${msgId}`, { method: "DELETE", },);
+      const res = await apiFetch(`/api/v1/messages/${msgId}`, { method: "DELETE", },);
       if (res.ok) {
         const msgs = this.messages;
         const filtered: typeof msgs = [];
@@ -106,7 +106,7 @@ export const chatEditing: Partial<ChatState> & ThisType<ChatState> = {
       formData.append("alt_text", file.name,);
 
       try {
-        const res = await apiFetch("/api/assets", { method: "POST", body: formData, },);
+        const res = await apiFetch("/api/v1/assets", { method: "POST", body: formData, },);
         if (res.ok) {
           const asset = await res.json();
           this.pendingAssets = [...this.pendingAssets, { assetId: asset.id, filename: file.name, },];

@@ -10,7 +10,7 @@
  * Pins the contract:
  *   - openOwnershipTransferModal: opens modal, resets fields, no-op without activeChat
  *   - closeOwnershipTransferModal: clears state
- *   - submitOwnershipTransfer: POSTs `/api/chats/:id/transfer-ownership`; on
+ *   - submitOwnershipTransfer: POSTs `/api/v1/chats/:id/transfer-ownership`; on
  *     success: closes modal + reloads participants; on error: surfaces message
  *   - canTransferOwnership: predicate
  */
@@ -101,7 +101,7 @@ describe("ownershipActions.submitOwnershipTransfer", () => {
     expect(ctx._ownershipSubmitting,).toBe(false,);
   });
 
-  test("POSTs to /api/chats/:id/transfer-ownership and refreshes participants on success", async () => {
+  test("POSTs to /api/v1/chats/:id/transfer-ownership and refreshes participants on success", async () => {
     mockFetch(200, {
       ok: true,
       previousOwnerId: "old-owner",
@@ -121,7 +121,7 @@ describe("ownershipActions.submitOwnershipTransfer", () => {
 
     expect(fetchCalls,).toHaveLength(1,);
     const call = fetchCalls[0]!;
-    expect(call.url,).toBe("/api/chats/chat-1/transfer-ownership",);
+    expect(call.url,).toBe("/api/v1/chats/chat-1/transfer-ownership",);
     expect(call.opts.method,).toBe("POST",);
     expect(JSON.parse(call.opts.body as string,),).toEqual({
       newOwnerId: "new-owner",

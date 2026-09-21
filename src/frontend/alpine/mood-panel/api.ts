@@ -11,7 +11,7 @@ import type { EmotionDefinition, EmotionLogEntry, MoodState, } from "./types";
  */
 export async function fetchMood(actorId: string,): Promise<MoodState | null> {
   try {
-    const res = await apiFetch(`/api/actors/${actorId}/mood`,);
+    const res = await apiFetch(`/api/v1/actors/${actorId}/mood`,);
     if (res.ok) { return await res.json(); }
     return null;
   } catch {
@@ -24,7 +24,7 @@ export async function fetchMood(actorId: string,): Promise<MoodState | null> {
  */
 export async function fetchEmotions(actorId: string,): Promise<EmotionLogEntry[]> {
   try {
-    const res = await apiFetch(`/api/actors/${actorId}/emotions`,);
+    const res = await apiFetch(`/api/v1/actors/${actorId}/emotions`,);
     if (res.ok) { return await res.json(); }
     return [];
   } catch {
@@ -35,7 +35,7 @@ export async function fetchEmotions(actorId: string,): Promise<EmotionLogEntry[]
 /** */
 export async function fetchEmotionDefs(): Promise<EmotionDefinition[]> {
   try {
-    const res = await apiFetch("/api/emotions",);
+    const res = await apiFetch("/api/v1/emotions",);
     if (res.ok) { return await res.json(); }
     return [];
   } catch {
@@ -54,7 +54,7 @@ export async function applyHappinessDelta(
   worldId?: string,
 ): Promise<number | null> {
   try {
-    const res = await apiFetch(`/api/actors/${actorId}/mood/delta`, {
+    const res = await apiFetch(`/api/v1/actors/${actorId}/mood/delta`, {
       method: "POST",
       headers: { "Content-Type": "application/json", },
       body: jsonBody({ delta, worldId, },),

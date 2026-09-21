@@ -65,7 +65,7 @@ export const chatLocation: Partial<ChatState> & ThisType<ChatState> = {
         this._locations = [];
         return;
       }
-      const res = await apiFetch(`/api/worlds/${worldId}/location-explorer`,);
+      const res = await apiFetch(`/api/v1/worlds/${worldId}/location-explorer`,);
       if (res.ok) {
         const body = await res.json();
         const data = (body?.data ?? {}) as { locations?: ChatLocationRow[] };
@@ -161,14 +161,14 @@ export const chatLocation: Partial<ChatState> & ThisType<ChatState> = {
   },
 
   /**
-   * Transfer the chat to a location (POST /api/chats/:id/transfer).
+   * Transfer the chat to a location (POST /api/v1/chats/:id/transfer).
    * Participant-gated server-side; validates the location is in the chat's world.
    */
   async transferChatLocation() {
     if (!this.activeChat || !this._selectedLocationId || this._locationBusy) { return; }
     this._locationBusy = true;
     try {
-      const res = await apiFetch(`/api/chats/${this.activeChat}/transfer`, {
+      const res = await apiFetch(`/api/v1/chats/${this.activeChat}/transfer`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ locationId: this._selectedLocationId, },),
@@ -201,7 +201,7 @@ export const chatLocation: Partial<ChatState> & ThisType<ChatState> = {
     }
     try {
       const res = await apiFetch(
-        `/api/chats/joinable?location=${encodeURIComponent(this._selectedLocationId,)}`,
+        `/api/v1/chats/joinable?location=${encodeURIComponent(this._selectedLocationId,)}`,
       );
       if (!res.ok) {
         this._locationJoinableChats = [];

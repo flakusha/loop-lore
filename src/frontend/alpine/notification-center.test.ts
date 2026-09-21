@@ -117,7 +117,7 @@ describe("notificationCenter fetch", () => {
     await s.refresh();
     expect(s.items,).toHaveLength(1,);
     expect(s.loaded,).toBe(true,);
-    expect(calls[0]!.url,).toBe("/api/notifications",);
+    expect(calls[0]!.url,).toBe("/api/v1/notifications",);
   });
 
   test("refresh ignores non-ok responses", async () => {
@@ -143,7 +143,7 @@ describe("notificationCenter fetch", () => {
     s.items = [it,];
     await s.onOpen(it,);
     expect(it.read,).toBe(1,);
-    expect(calls[0]!.url,).toBe("/api/notifications/n1",);
+    expect(calls[0]!.url,).toBe("/api/v1/notifications/n1",);
     expect(calls[0]!.opts.method,).toBe("PATCH",);
   });
 
@@ -180,7 +180,7 @@ describe("notificationCenter fetch", () => {
     s.items = [item({ id: "a", read: 0, },),];
     await s.markRead("a",);
     expect(s.items[0]!.read,).toBe(1,);
-    expect(calls[0]!.url,).toBe("/api/notifications/a",);
+    expect(calls[0]!.url,).toBe("/api/v1/notifications/a",);
   });
 
   test("markRead ignores unknown ids", async () => {
@@ -188,7 +188,7 @@ describe("notificationCenter fetch", () => {
     const s = fresh();
     s.items = [];
     await s.markRead("missing",);
-    expect(calls[0]!.url,).toBe("/api/notifications/missing",);
+    expect(calls[0]!.url,).toBe("/api/v1/notifications/missing",);
   });
 
   test("markAllRead flips every row", async () => {
@@ -197,7 +197,7 @@ describe("notificationCenter fetch", () => {
     s.items = [item({ id: "a", read: 0, },), item({ id: "b", read: 0, },),];
     await s.markAllRead();
     expect(s.items.every((n,) => n.read === 1),).toBe(true,);
-    expect(calls[0]!.url,).toBe("/api/notifications/read-all",);
+    expect(calls[0]!.url,).toBe("/api/v1/notifications/read-all",);
   });
 
   test("loadPrefs stores the enabled map", async () => {
@@ -222,7 +222,7 @@ describe("notificationCenter fetch", () => {
     await s.toggleType("mention",);
     expect(s.prefs.mention,).toBe(false,);
     expect(s.saving,).toBe(false,);
-    const put = calls.find((c,) => c.url === "/api/notifications/preferences" && c.opts.method === "PATCH");
+    const put = calls.find((c,) => c.url === "/api/v1/notifications/preferences" && c.opts.method === "PATCH");
     expect(put,).toBeDefined();
     expect(JSON.parse(put!.opts.body as string,),).toEqual({ enabled: { mention: false, }, },);
   });

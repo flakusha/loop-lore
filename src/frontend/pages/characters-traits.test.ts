@@ -275,7 +275,7 @@ describe("loadInternalTraits", () => {
 
     await page.loadInternalTraits("a1",);
 
-    expect(urls,).toEqual(["/api/character-internal-traits?actorId=a1",],);
+    expect(urls,).toEqual(["/api/v1/character-internal-traits?actorId=a1",],);
     expect(doc.querySelector("#moral-lawful",)?.value,).toBe("-0.5",);
     expect(doc.querySelector("#moral-lawful-val",)?.textContent,).toBe("-0.5",);
     expect(doc.querySelector("#auto-solo-val",)?.textContent,).toBe("0.5",); // default when omitted
@@ -324,7 +324,7 @@ describe("saveInternalTraits", () => {
     await page.saveInternalTraits("a1",);
 
     expect(calls.length,).toBe(1,);
-    expect(calls[0]!.url,).toBe("/api/character-internal-traits?actorId=a1",);
+    expect(calls[0]!.url,).toBe("/api/v1/character-internal-traits?actorId=a1",);
     expect(calls[0]!.init.method,).toBe("PUT",);
     const payload = JSON.parse(String(calls[0]!.init.body,),) as {
       aspirations: { goal: string; progress: number }[];

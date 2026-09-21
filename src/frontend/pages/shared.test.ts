@@ -325,7 +325,7 @@ describe("filterBar", () => {
   test("init fetches the vocabulary only when the tag facet is enabled", async () => {
     feHandler = (
       url,
-    ) => (url === "/api/tag-autocomplete" ? jsonResponse({ tags: ["cozy", "dark",], },) : jsonResponse({},));
+    ) => (url === "/api/v1/tag-autocomplete" ? jsonResponse({ tags: ["cozy", "dark",], },) : jsonResponse({},));
     const enabled = await newState({ showTagFilter: "true", },);
     await flushMicrotasks();
     expect(enabled.tagOptions,).toEqual(["cozy", "dark",],);
@@ -333,7 +333,7 @@ describe("filterBar", () => {
     calls = [];
     const disabled = await newState({},);
     await flushMicrotasks();
-    expect(calls.some((c,) => c.url === "/api/tag-autocomplete"),).toBe(false,);
+    expect(calls.some((c,) => c.url === "/api/v1/tag-autocomplete"),).toBe(false,);
     expect(disabled.tagOptions,).toEqual([],);
   });
 

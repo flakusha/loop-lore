@@ -4,7 +4,7 @@
 /**
  * Memory Panel Component
  *
- * Wires the memory panel UI to the backend CRUD API at /api/actors/:id/memories.
+ * Wires the memory panel UI to the backend CRUD API at /api/v1/actors/:id/memories.
  * Loads character memories from the active chat's actor participants.
  */
 
@@ -70,7 +70,7 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
         return;
       }
 
-      const res = await apiFetch(`/api/actors/${actorId}/memories`,);
+      const res = await apiFetch(`/api/v1/actors/${actorId}/memories`,);
       if (!res.ok) { return; }
       const data = await res.json() as { items?: MemoryApiRow[] };
 
@@ -133,7 +133,7 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
     if (!actorId) { return; }
 
     try {
-      const res = await apiFetch(`/api/actors/${actorId}/memories`, {
+      const res = await apiFetch(`/api/v1/actors/${actorId}/memories`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({
@@ -164,7 +164,7 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
     if (!actorId) { return; }
 
     try {
-      await apiFetch(`/api/actors/${actorId}/memories/${memoryId}`, {
+      await apiFetch(`/api/v1/actors/${actorId}/memories/${memoryId}`, {
         method: "DELETE",
       },);
     } catch {
@@ -189,7 +189,7 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
     mem.pinned = !mem.pinned;
 
     try {
-      await apiFetch(`/api/actors/${actorId}/memories/${memoryId}`, {
+      await apiFetch(`/api/v1/actors/${actorId}/memories/${memoryId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ pinned: mem.pinned, },),

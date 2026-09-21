@@ -45,7 +45,7 @@ export const chatUtilsInteraction: ChatUtilsInteraction = {
     }
     this._flagBusy = true;
     try {
-      const res = await apiFetch("/api/nsfw/moderation/flags", {
+      const res = await apiFetch("/api/v1/nsfw/moderation/flags", {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({

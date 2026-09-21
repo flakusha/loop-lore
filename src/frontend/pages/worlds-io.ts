@@ -7,7 +7,7 @@ import { eventTarget, } from "../dom";
 import { feFetch, } from "../fe-fetch";
 import { showToast, } from "../ui";
 
-// Import a WorldBundle (.world.json) — POST the parsed JSON to /api/import/world
+// Import a WorldBundle (.world.json) — POST the parsed JSON to /api/v1/import/world
 globalThis.importWorld = async function(event: Event,) {
   event.preventDefault();
   const form = eventTarget<HTMLFormElement>(event,);
@@ -28,7 +28,7 @@ globalThis.importWorld = async function(event: Event,) {
     return;
   }
   try {
-    const res = await feFetch("/api/import/world", {
+    const res = await feFetch("/api/v1/import/world", {
       method: "POST",
       headers: { "Content-Type": "application/json", },
       body: jsonBody(bundle as Record<string, unknown>,),
@@ -53,7 +53,7 @@ globalThis.importWorld = async function(event: Event,) {
   }
 };
 
-// Export a world as a .world.json bundle — backend GET /api/worlds/:id/export
+// Export a world as a .world.json bundle — backend GET /api/v1/worlds/:id/export
 globalThis.exportWorld = function(worldId: string,) {
-  globalThis.location.assign(`/api/worlds/${encodeURIComponent(worldId,)}/export`,);
+  globalThis.location.assign(`/api/v1/worlds/${encodeURIComponent(worldId,)}/export`,);
 };

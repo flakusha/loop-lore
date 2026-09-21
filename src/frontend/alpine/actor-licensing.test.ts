@@ -161,7 +161,7 @@ describe("actorLicensing.save", () => {
     ctx.licenseForm.allow_commercial = true;
     ctx.licenseDirty = true;
     await ctx.save();
-    expect(calls.some((c,) => c.opts.method === "POST" && c.url === "/api/actors/actor-1/licensing"),).toBe(true,);
+    expect(calls.some((c,) => c.opts.method === "POST" && c.url === "/api/v1/actors/actor-1/licensing"),).toBe(true,);
     expect(ctx.licenseDirty,).toBe(false,);
   });
 
@@ -203,7 +203,7 @@ describe("actorLicensing.remove", () => {
       updated_at: "",
     };
     await ctx.remove();
-    expect(calls.some((c,) => c.opts.method === "DELETE" && c.url === "/api/actors/actor-1/licensing"),).toBe(true,);
+    expect(calls.some((c,) => c.opts.method === "DELETE" && c.url === "/api/v1/actors/actor-1/licensing"),).toBe(true,);
     expect(ctx.license,).toBeNull();
     expect(ctx.licenseDirty,).toBe(false,);
   });

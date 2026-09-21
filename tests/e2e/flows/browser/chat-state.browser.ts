@@ -32,7 +32,7 @@ describe("Alpine state contract E2E", () => {
 
   test("chatState() exposes the declared defaults before a chat is selected", async () => {
     const page = await ctx.openPage();
-    // /api/telemetry/event returns 403 for solo (not an admin) — benign
+    // /api/v1/telemetry/event returns 403 for solo (not an admin) — benign
     // telemetry noise. The console message text is just the generic
     // "Failed to load resource ... 403" without the URL, so allowlist on that.
     const errors = trackPageErrors(page, { allowlist: [/Failed to load resource.*403/,], },);

@@ -14,7 +14,7 @@ export interface SpriteAnchor {
   y: number;
 }
 
-/** Snake-case transform row as served by GET /api/assets/:id/transform. */
+/** Snake-case transform row as served by GET /api/v1/assets/:id/transform. */
 export interface SpriteTransformRow {
   focal_point_x?: number | null;
   focal_point_y?: number | null;
@@ -71,7 +71,7 @@ export function isAssetIdRef(ref: string | undefined,): ref is string {
  * @returns Transform row, or null when missing or unreachable.
  */
 async function fetchTransformRow(assetId: string,): Promise<SpriteTransformRow | null> {
-  const res = await globalThis.fetch(`/api/assets/${assetId}/transform?context=sprite`,);
+  const res = await globalThis.fetch(`/api/v1/assets/${assetId}/transform?context=sprite`,);
   if (!res.ok) { return null; }
   return (await res.json()) as SpriteTransformRow;
 }

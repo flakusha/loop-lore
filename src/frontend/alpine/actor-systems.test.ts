@@ -96,7 +96,7 @@ describe("actorSystems.exportAsBlob", () => {
     ctx._sysActorId = "actor-1";
     const blob = await ctx.exportAsBlob();
     expect(blob,).not.toBeNull();
-    expect(calls.some((c,) => c.opts.method === "POST" && c.url === "/api/actors/actor-1/systems/export"),).toBe(true,);
+    expect(calls.some((c,) => c.opts.method === "POST" && c.url === "/api/v1/actors/actor-1/systems/export"),).toBe(true,);
   });
 
   test("returns null on non-200", async () => {
@@ -181,7 +181,7 @@ describe("actorSystems.importFromPayload", () => {
     ctx._sysActorId = "actor-1";
     ctx.importPreview = '{"version":1,"data":{}}';
     await ctx.importFromPayload();
-    expect(calls.some((c,) => c.opts.method === "POST" && c.url === "/api/actors/actor-1/systems/import"),).toBe(true,);
+    expect(calls.some((c,) => c.opts.method === "POST" && c.url === "/api/v1/actors/actor-1/systems/import"),).toBe(true,);
     expect(ctx.importResult?.success,).toBe(true,);
     expect(ctx.message,).toBeTruthy();
   });
@@ -230,7 +230,7 @@ describe("actorSystems.importFromUrl", () => {
     ctx.importUrl = "https://example.com/x.json";
     ctx.worldId = "world-1";
     await ctx.importFromUrl();
-    expect(calls.some((c,) => c.opts.method === "POST" && c.url === "/api/actors/actor-1/systems/import/url"),).toBe(
+    expect(calls.some((c,) => c.opts.method === "POST" && c.url === "/api/v1/actors/actor-1/systems/import/url"),).toBe(
       true,
     );
     expect(ctx.importResult?.success,).toBe(true,);

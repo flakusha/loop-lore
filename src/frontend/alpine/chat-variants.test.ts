@@ -83,7 +83,7 @@ describe("chatVariants.openVariants", () => {
     const ctx = buildCtx();
     handler = async () => Response.json([{ id: "v1", content: "A", }, { id: "v2", content: "B", },],);
     await chatVariants.openVariants!.call(ctx as never, "m1",);
-    expect(calls[0]?.url,).toBe("/api/messages/m1/variants",);
+    expect(calls[0]?.url,).toBe("/api/v1/messages/m1/variants",);
     expect(ctx._variantsOpen,).toBe(true,);
     expect(ctx._variantsFor,).toBe("m1",);
     expect(ctx._variants,).toHaveLength(2,);
@@ -106,7 +106,7 @@ describe("chatVariants.selectVariantByIndex", () => {
     Object.assign(ctx, chatVariants,);
     handler = async () => Response.json({ id: "v2", content: "B", },);
     await chatVariants.selectVariantByIndex!.call(ctx as never, "m1", 1,);
-    expect(calls[0]?.url,).toBe("/api/messages/m1/variant",);
+    expect(calls[0]?.url,).toBe("/api/v1/messages/m1/variant",);
     expect(calls[0]?.opts.method,).toBe("PUT",);
     expect(JSON.parse(calls[0]?.opts.body as string,),).toEqual({ variantIndex: 1, },);
     expect(ctx.messages[0]?.content,).toBe("B",);
@@ -187,7 +187,7 @@ describe("chatVariants.regenerateResponse", () => {
     const ctx = buildCtx();
     handler = async () => Response.json({ ready: true, },);
     await chatVariants.regenerateResponse!.call(ctx as never,);
-    expect(calls[0]?.url,).toBe("/api/generation/regenerate",);
+    expect(calls[0]?.url,).toBe("/api/v1/generation/regenerate",);
     expect(JSON.parse(calls[0]?.opts.body as string,),).toEqual({ chatId: "c1", },);
     expect(ctx.toasts,).toEqual([{ type: "info", message: "Regenerating response...", },],);
   });

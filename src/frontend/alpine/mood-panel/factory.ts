@@ -21,7 +21,7 @@ export function createMoodPanelState(): MoodPanelState {
 
     async loadMood(actorId: string,) {
       try {
-        const res = await apiFetch(`/api/actors/${actorId}/mood`,);
+        const res = await apiFetch(`/api/v1/actors/${actorId}/mood`,);
         if (res.ok) { this.mood = await res.json(); }
       } catch {
         log.error("Failed to load mood", undefined, { actorId, },);
@@ -30,7 +30,7 @@ export function createMoodPanelState(): MoodPanelState {
 
     async loadEmotions(actorId: string,) {
       try {
-        const res = await apiFetch(`/api/actors/${actorId}/emotions`,);
+        const res = await apiFetch(`/api/v1/actors/${actorId}/emotions`,);
         if (res.ok) { this.emotions = await res.json(); }
       } catch {
         log.error("Failed to load emotions", undefined, { actorId, },);
@@ -39,7 +39,7 @@ export function createMoodPanelState(): MoodPanelState {
 
     async loadEmotionDefs() {
       try {
-        const res = await apiFetch("/api/emotions",);
+        const res = await apiFetch("/api/v1/emotions",);
         if (res.ok) { this.emotionDefs = await res.json(); }
       } catch {
         log.error("Failed to load emotion definitions",);
@@ -48,7 +48,7 @@ export function createMoodPanelState(): MoodPanelState {
 
     async applyHappinessDelta(actorId: string, delta: number,) {
       try {
-        const res = await apiFetch(`/api/actors/${actorId}/mood/delta`, {
+        const res = await apiFetch(`/api/v1/actors/${actorId}/mood/delta`, {
           method: "POST",
           headers: { "Content-Type": "application/json", },
           body: jsonBody({ delta, },),

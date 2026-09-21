@@ -5,7 +5,7 @@
  * Chat prompt-improvement actions — composer "improve my prompt" integration.
  *
  * Methods merged into the chatActions surface (see chat-actions/index.ts) so
- * `this` resolves to the full ChatState. Calls POST /api/generation/prompt
+ * `this` resolves to the full ChatState. Calls POST /api/v1/generation/prompt
  * (the unified prompt-improvement service) and swaps the composer draft.
  */
 import { t, } from "../i18n";
@@ -83,7 +83,7 @@ export const promptImproveActions: Partial<ChatState> & ThisType<ChatState> = {
         return;
       }
       const res = await apiFetch(
-        "/api/generation/prompt",
+        "/api/v1/generation/prompt",
         {
           method: "POST",
           headers: { "Content-Type": "application/json", },

@@ -181,7 +181,7 @@ describe("actorEmotionAvatars.startGeneration", () => {
     const ok = await ctx.startGeneration();
     expect(ok,).toBe(true,);
     const postCall = calls.find((c,) => c.opts.method === "POST");
-    expect(postCall?.url,).toBe("/api/actors/actor-1/emotion-avatars",);
+    expect(postCall?.url,).toBe("/api/v1/actors/actor-1/emotion-avatars",);
     expect(JSON.parse(String(postCall?.opts.body ?? "{}",),),).toMatchObject({
       baseAvatarId: "av-1",
       emotions: ["happy", "sad",],

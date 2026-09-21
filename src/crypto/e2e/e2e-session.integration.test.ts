@@ -212,7 +212,7 @@ function bindStubFetch(): void {
   const registry = buildPubKeyRegistry();
   const stub = mock(async (input: RequestInfo | URL,) => {
     const url = typeof input === "string" ? input : input.toString();
-    const match = url.match(/\/api\/actors\/([^/]+)\/e2e-public-key$/,);
+    const match = url.match(/\/api\/v1\/actors\/([^/]+)\/e2e-public-key$/,);
     if (!match) { throw new Error(`Unexpected fetch in test: ${url}`,); }
     const targetId = match[1];
     const jwk = targetId ? registry[targetId] : undefined;

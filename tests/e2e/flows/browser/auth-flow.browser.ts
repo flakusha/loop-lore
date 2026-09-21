@@ -52,7 +52,7 @@ describe("Auth browser E2E", () => {
       try {
         await gotoLogin(page,);
         expect(await page.isVisible("[data-testid='demo-login']",),).toBe(true,);
-        expect(await page.locator("[data-testid='demo-login']",).getAttribute("hx-post",),).toBe("/api/demo-login",);
+        expect(await page.locator("[data-testid='demo-login']",).getAttribute("hx-post",),).toBe("/api/v1/demo-login",);
       } finally {
         errors.assert();
         errors.detach();

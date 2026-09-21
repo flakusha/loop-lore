@@ -49,7 +49,7 @@ describe("chatSearch.searchChats", () => {
     mockFetch(200, [{ chatId: "c1", chatName: "General", characterName: "Aria", characterAvatar: null, },],);
     const ctx = searchCtx();
     await chatSearch.searchChats!.call(ctx, "gen",);
-    expect(fetchCalls[0]!.url,).toBe("/api/chats/search?q=gen",);
+    expect(fetchCalls[0]!.url,).toBe("/api/v1/chats/search?q=gen",);
     expect(ctx._searchResults,).toEqual([
       { chatId: "c1", chatName: "General", characterName: "Aria", characterAvatar: null, },
     ],);
@@ -136,7 +136,7 @@ describe("chatSearch.joinChat", () => {
       },
     },);
     await chatSearch.joinChat!.call(ctx, "c1",);
-    expect(fetchCalls[0]!.url,).toBe("/api/chats/c1/join",);
+    expect(fetchCalls[0]!.url,).toBe("/api/v1/chats/c1/join",);
     expect(toasts[0]?.type,).toBe("error",);
     expect(ctx.loadChats as ReturnType<typeof mock>,).not.toHaveBeenCalled();
   });

@@ -53,8 +53,8 @@ export async function renderTagsPanel(assetId: string,): Promise<void> {
   const panel = document.querySelector<HTMLElement>("[data-field='tags-panel']",);
   if (!panel) { return; }
 
-  const tagsRes = await feFetch(`/api/assets/${assetId}/tags`,).catch(() => null);
-  const propRes = await feFetch(`/api/assets/${assetId}/tag-propositions`,).catch(() => null);
+  const tagsRes = await feFetch(`/api/v1/assets/${assetId}/tags`,).catch(() => null);
+  const propRes = await feFetch(`/api/v1/assets/${assetId}/tag-propositions`,).catch(() => null);
 
   const tags: PreviewTag[] = tagsRes?.ok
     ? ((await tagsRes.json()).tags as PreviewTag[] | undefined) ?? []
@@ -176,7 +176,7 @@ async function renderAutocomplete(query: string, container: HTMLElement,): Promi
     return;
   }
   try {
-    const res = await feFetch(`/api/tag-autocomplete?q=${encodeURIComponent(q,)}`,);
+    const res = await feFetch(`/api/v1/tag-autocomplete?q=${encodeURIComponent(q,)}`,);
     if (!res.ok) { return; }
     const { tags, } = (await res.json()) as { tags: string[] };
     container.innerHTML = tags
@@ -207,7 +207,7 @@ async function renderAutocomplete(query: string, container: HTMLElement,): Promi
 async function submitTag(assetId: string, tag: string, scope: "user" | "global",): Promise<void> {
   const { showToast, } = await import("./ui");
   try {
-    const res = await feFetch(`/api/assets/${assetId}/tags`, {
+    const res = await feFetch(`/api/v1/assets/${assetId}/tags`, {
       method: "POST",
       headers: { "Content-Type": "application/json", },
       body: jsonStringifyOr({ tag, scope, },),
@@ -227,7 +227,7 @@ async function submitTag(assetId: string, tag: string, scope: "user" | "global",
 async function removeTag(assetId: string, tag: string, scope: "user" | "global",): Promise<void> {
   const { showToast, } = await import("./ui");
   try {
-    const res = await feFetch(`/api/assets/${assetId}/tags`, {
+    const res = await feFetch(`/api/v1/assets/${assetId}/tags`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json", },
       body: jsonStringifyOr({ tag, scope, },),
@@ -249,7 +249,7 @@ async function removeTag(assetId: string, tag: string, scope: "user" | "global",
 async function renameTag(assetId: string, oldTag: string, newTag: string,): Promise<void> {
   const { showToast, } = await import("./ui");
   try {
-    const res = await feFetch(`/api/assets/${assetId}/tags/rename`, {
+    const res = await feFetch(`/api/v1/assets/${assetId}/tags/rename`, {
       method: "POST",
       headers: { "Content-Type": "application/json", },
       body: jsonStringifyOr({ oldTag, newTag, scope: "user", },),
@@ -268,7 +268,7 @@ async function renameTag(assetId: string, oldTag: string, newTag: string,): Prom
 async function dismissTag(assetId: string, tag: string,): Promise<void> {
   const { showToast, } = await import("./ui");
   try {
-    const res = await feFetch(`/api/assets/${assetId}/tag-propositions`, {
+    const res = await feFetch(`/api/v1/assets/${assetId}/tag-propositions`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json", },
       body: jsonStringifyOr({ tag, },),

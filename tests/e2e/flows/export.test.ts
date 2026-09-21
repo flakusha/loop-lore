@@ -28,9 +28,9 @@ describe("Export E2E", () => {
     server.close();
   },);
 
-  describe("GET /api/chats/:id/export", () => {
+  describe("GET /api/v1/chats/:id/export", () => {
     test("returns JSON export with Content-Disposition attachment", async () => {
-      const res = await fetch(`${server.url}/api/chats/${SEED.chat.id}/export?format=json`, {
+      const res = await fetch(`${server.url}/api/v1/chats/${SEED.chat.id}/export?format=json`, {
         headers: { Cookie: `ll_token=${api.token}`, },
         redirect: "manual",
       },);
@@ -44,7 +44,7 @@ describe("Export E2E", () => {
     });
 
     test("returns Markdown export with Content-Disposition attachment", async () => {
-      const res = await fetch(`${server.url}/api/chats/${SEED.chat.id}/export?format=md`, {
+      const res = await fetch(`${server.url}/api/v1/chats/${SEED.chat.id}/export?format=md`, {
         headers: { Cookie: `ll_token=${api.token}`, },
         redirect: "manual",
       },);
@@ -57,7 +57,7 @@ describe("Export E2E", () => {
     });
 
     test("returns 404 for non-existent chat", async () => {
-      const res = await fetch(`${server.url}/api/chats/ffffffff-ffff-4000-a000-deadbeefcafe/export?format=json`, {
+      const res = await fetch(`${server.url}/api/v1/chats/ffffffff-ffff-4000-a000-deadbeefcafe/export?format=json`, {
         headers: { Cookie: `ll_token=${api.token}`, },
         redirect: "manual",
       },);
@@ -65,9 +65,9 @@ describe("Export E2E", () => {
     });
   });
 
-  describe("GET /api/settings/export", () => {
+  describe("GET /api/v1/settings/export", () => {
     test("returns ZIP with Content-Disposition attachment", async () => {
-      const res = await fetch(`${server.url}/api/settings/export`, {
+      const res = await fetch(`${server.url}/api/v1/settings/export`, {
         headers: { Cookie: `ll_token=${api.token}`, },
         redirect: "manual",
       },);
@@ -83,7 +83,7 @@ describe("Export E2E", () => {
     });
   });
 
-  describe("GET /api/assets/:id/download", () => {
+  describe("GET /api/v1/assets/:id/download", () => {
     let assetId: string;
 
     beforeAll(async () => {
@@ -112,7 +112,7 @@ describe("Export E2E", () => {
 
     test("returns file as download attachment", async () => {
       // Need the actual upload dir from config
-      const res = await fetch(`${server.url}/api/assets/${assetId}/download`, {
+      const res = await fetch(`${server.url}/api/v1/assets/${assetId}/download`, {
         headers: { Cookie: `ll_token=${api.token}`, },
         redirect: "manual",
       },);
@@ -123,7 +123,7 @@ describe("Export E2E", () => {
     });
 
     test("returns 404 for non-existent asset", async () => {
-      const res = await fetch(`${server.url}/api/assets/ffffffff-ffff-4000-a000-deadbeefcafe/download`, {
+      const res = await fetch(`${server.url}/api/v1/assets/ffffffff-ffff-4000-a000-deadbeefcafe/download`, {
         headers: { Cookie: `ll_token=${api.token}`, },
         redirect: "manual",
       },);

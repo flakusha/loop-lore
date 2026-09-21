@@ -64,7 +64,7 @@ describe("commandPalette._loadCommandList", () => {
       },);
     await commandPalette.init!();
     expect(calls,).toHaveLength(1,);
-    expect(calls[0]!.url,).toBe("/api/commands",);
+    expect(calls[0]!.url,).toBe("/api/v1/commands",);
     expect(commandPalette._commandList!.map((c,) => [c.name, c.descriptionKey,]),).toEqual([
       ["roll", "commands.roll",],
       ["insult", "commands.insult",],

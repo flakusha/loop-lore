@@ -44,7 +44,7 @@ globalThis.questsPage = function() {
         // Verify the world exists before rendering — a stale/deleted id
         // in the URL must not force a blank quests page.
         try {
-          const wRes = await feFetch(`/api/worlds/${this.worldId}`, {
+          const wRes = await feFetch(`/api/v1/worlds/${this.worldId}`, {
             headers: { Accept: "application/json", },
           },);
           if (!wRes.ok) {
@@ -63,7 +63,7 @@ globalThis.questsPage = function() {
 
     async loadWorlds() {
       try {
-        const res = await feFetch("/api/worlds?pageSize=100", { headers: { Accept: "application/json", }, },);
+        const res = await feFetch("/api/v1/worlds?pageSize=100", { headers: { Accept: "application/json", }, },);
         if (res.ok) {
           const data = await res.json();
           this.worldOptions = data.data || [];
@@ -82,7 +82,7 @@ globalThis.questsPage = function() {
       this.loading = true;
       try {
         const res = await feFetch(
-          `/api/worlds/${this.worldId}/quests?page=${this.page}&pageSize=${this.pageSize}`,
+          `/api/v1/worlds/${this.worldId}/quests?page=${this.page}&pageSize=${this.pageSize}`,
           { headers: { Accept: "application/json", }, },
         );
         if (res.ok) {
@@ -91,7 +91,7 @@ globalThis.questsPage = function() {
           this.total = data.total || 0;
         }
         if (!this.worldName) {
-          const wRes = await feFetch(`/api/worlds/${this.worldId}`, {
+          const wRes = await feFetch(`/api/v1/worlds/${this.worldId}`, {
             headers: { Accept: "application/json", },
           },);
           if (wRes.ok) {
@@ -121,7 +121,7 @@ globalThis.questsPage = function() {
           category: this.createCategory,
           priority: Number(this.createPriority,) || 5,
         };
-        const res = await feFetch(`/api/worlds/${this.worldId}/quests`, {
+        const res = await feFetch(`/api/v1/worlds/${this.worldId}/quests`, {
           method: "POST",
           headers: { "Content-Type": "application/json", },
           body: jsonBody(body,),
@@ -143,7 +143,7 @@ globalThis.questsPage = function() {
     async deleteQuest(questId: string,) {
       if (this.confirmDeleteQuest !== questId) { return; }
       try {
-        const res = await feFetch(`/api/quests/${questId}`, { method: "DELETE", },);
+        const res = await feFetch(`/api/v1/quests/${questId}`, { method: "DELETE", },);
         if (res.ok) {
           showToast("success", "Quest deleted",);
           this.confirmDeleteQuest = "";
@@ -188,7 +188,7 @@ globalThis.questsPage = function() {
 
     async saveQuest(questId: string,) {
       try {
-        const res = await feFetch(`/api/quests/${questId}`, {
+        const res = await feFetch(`/api/v1/quests/${questId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json", },
           body: jsonBody({
@@ -211,7 +211,7 @@ globalThis.questsPage = function() {
 
     async advanceQuest(questId: string,) {
       try {
-        const res = await feFetch(`/api/quests/${questId}/progress`, {
+        const res = await feFetch(`/api/v1/quests/${questId}/progress`, {
           method: "POST",
           headers: { "Content-Type": "application/json", },
           body: jsonBody({ delta: Number(this.advanceDelta,) || 1, },),

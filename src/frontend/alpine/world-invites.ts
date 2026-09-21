@@ -9,7 +9,7 @@ import type { WorldEditState, } from "./world-types";
 const log = rootLog.child({ module: "world-invites", },);
 
 /**
- * One world invite row returned by GET /api/worlds/:worldId/invites.
+ * One world invite row returned by GET /api/v1/worlds/:worldId/invites.
  * Mirrors the backend `WorldInviteRow` in src/chat/world-invites.ts.
  */
 export interface WorldInviteRow {
@@ -34,7 +34,7 @@ export const worldInvites: Partial<WorldEditState> & ThisType<WorldEditState> = 
     if (!this.worldId) { return; }
     this.loadingInvites = true;
     try {
-      const res = await apiFetch(`/api/worlds/${this.worldId}/invites`,);
+      const res = await apiFetch(`/api/v1/worlds/${this.worldId}/invites`,);
       if (res.ok) {
         const body = await res.json();
         const rows = (body.data || []) as WorldInviteRow[];
@@ -56,7 +56,7 @@ export const worldInvites: Partial<WorldEditState> & ThisType<WorldEditState> = 
       return;
     }
     try {
-      const res = await apiFetch(`/api/worlds/${this.worldId}/invites`, {
+      const res = await apiFetch(`/api/v1/worlds/${this.worldId}/invites`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ maxUses, },),
@@ -92,7 +92,7 @@ export const worldInvites: Partial<WorldEditState> & ThisType<WorldEditState> = 
     if (!invite) { return; }
     if (!confirm(t("worlds.revokeInviteConfirm", { code: invite.code, },),)) { return; }
     try {
-      const res = await apiFetch(`/api/worlds/${this.worldId}/invites/${inviteId}`, {
+      const res = await apiFetch(`/api/v1/worlds/${this.worldId}/invites/${inviteId}`, {
         method: "DELETE",
       },);
       if (res.ok) {

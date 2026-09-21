@@ -20,7 +20,7 @@ export const capabilitiesState: Partial<ModelsState> & ThisType<ModelsState> = {
       if (this.capabilityFilter) { params.set("provider", this.capabilityFilter,); }
       const qs = params.toString();
       const suffix = qs ? `?${qs}` : "";
-      const url = `/api/admin/model-capabilities${suffix}`;
+      const url = `/api/v1/admin/model-capabilities${suffix}`;
       const res = await apiFetch(url, { headers: { Accept: "application/json", }, },);
       if (res.ok) {
         const data = await res.json();
@@ -36,7 +36,7 @@ export const capabilitiesState: Partial<ModelsState> & ThisType<ModelsState> = {
   async saveCapabilityOverride(providerId: string, modelId: string, fields: Record<string, unknown>,) {
     try {
       const res = await apiFetch(
-        `/api/admin/model-capabilities/${encodeURIComponent(providerId,)}/${encodeURIComponent(modelId,)}`,
+        `/api/v1/admin/model-capabilities/${encodeURIComponent(providerId,)}/${encodeURIComponent(modelId,)}`,
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json", Accept: "application/json", },
@@ -57,7 +57,7 @@ export const capabilitiesState: Partial<ModelsState> & ThisType<ModelsState> = {
   async clearCapabilityOverride(providerId: string, modelId: string,) {
     try {
       const res = await apiFetch(
-        `/api/admin/model-capabilities/${encodeURIComponent(providerId,)}/${encodeURIComponent(modelId,)}`,
+        `/api/v1/admin/model-capabilities/${encodeURIComponent(providerId,)}/${encodeURIComponent(modelId,)}`,
         { method: "DELETE", headers: { Accept: "application/json", }, },
       );
       if (res.ok) {

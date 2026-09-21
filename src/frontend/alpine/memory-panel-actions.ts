@@ -39,7 +39,7 @@ export const memoryPanelActions: Partial<ChatState> & ThisType<ChatState> = {
     this.memoryPanel.busy = true;
     this.memoryPanel.error = null;
     try {
-      await apiFetch(`/api/actors/${actorId}/memories/${id}`, {
+      await apiFetch(`/api/v1/actors/${actorId}/memories/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ reviewStatus: status, },),
@@ -97,16 +97,16 @@ export const memoryPanelActions: Partial<ChatState> & ThisType<ChatState> = {
     try {
       if (this._isInChat(mem,) && mem.sourceChatId === chatId) {
         // Remove this chat's copy.
-        await apiFetch(`/api/actors/${actorId}/memories/${mem.id}`, { method: "DELETE", },);
+        await apiFetch(`/api/v1/actors/${actorId}/memories/${mem.id}`, { method: "DELETE", },);
       } else if (this._isInChat(mem,)) {
         // Legacy full carry: exclude this memory by carrying all others.
-        await apiFetch(`/api/actors/${actorId}/memories/carry-except`, {
+        await apiFetch(`/api/v1/actors/${actorId}/memories/carry-except`, {
           method: "POST",
           headers: { "Content-Type": "application/json", },
           body: jsonBody({ chatId, excludeId: mem.id, },),
         },);
       } else {
-        await apiFetch(`/api/actors/${actorId}/memories/${mem.id}/carry`, {
+        await apiFetch(`/api/v1/actors/${actorId}/memories/${mem.id}/carry`, {
           method: "POST",
           headers: { "Content-Type": "application/json", },
           body: jsonBody({ chatId, },),
@@ -132,7 +132,7 @@ export const memoryPanelActions: Partial<ChatState> & ThisType<ChatState> = {
     if (!actorId) { return; }
 
     try {
-      const res = await apiFetch(`/api/actors/${actorId}/memories/${memoryId}`, {
+      const res = await apiFetch(`/api/v1/actors/${actorId}/memories/${memoryId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ content, },),
@@ -165,7 +165,7 @@ export const memoryPanelActions: Partial<ChatState> & ThisType<ChatState> = {
     }
 
     try {
-      const res = await apiFetch(`/api/actors/${actorId}/memories`, {
+      const res = await apiFetch(`/api/v1/actors/${actorId}/memories`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({

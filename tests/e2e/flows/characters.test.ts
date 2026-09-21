@@ -36,13 +36,13 @@ describe("Characters E2E", () => {
   afterAll(() => {
     server.close();
   },);
-  test("GET /api/actors returns list", async () => {
+  test("GET /api/v1/actors returns list", async () => {
     const res = await api.get<{ data: Array<{ id: string; display_name: string }> }>("/api/v1/actors",);
     expect(res.ok,).toBe(true,);
     expect(Array.isArray(res.data!.data,),).toBe(true,);
   });
 
-  test("POST /api/actors creates a character", async () => {
+  test("POST /api/v1/actors creates a character", async () => {
     const res = await api.post<{ id: string }>("/api/v1/actors", {
       displayName: "New Character",
       actorType: "character",
@@ -52,64 +52,64 @@ describe("Characters E2E", () => {
     expect(res.data!.id,).toBeTruthy();
   });
 
-  test("POST /api/actors requires displayName", async () => {
+  test("POST /api/v1/actors requires displayName", async () => {
     const res = await api.post("/api/v1/actors", { actorType: "character", },);
     expect(res.ok,).toBe(false,);
     expect(res.status,).toBe(422,);
     expect(res.code,).toBeTruthy(); // TEST.2 error envelope
   });
 
-  test("GET /api/actors/:id returns single actor", async () => {
+  test("GET /api/v1/actors/:id returns single actor", async () => {
     const res = await api.get<{ id: string; display_name: string }>(
-      `/api/actors/${SEED.character.id}`,
+      `/api/v1/actors/${SEED.character.id}`,
     );
     expect(res.ok,).toBe(true,);
     expect(res.data!.display_name,).toBe(SEED.character.name,);
   });
 
-  test("GET /api/actors/:id/card exports V2 character card", async () => {
+  test("GET /api/v1/actors/:id/card exports V2 character card", async () => {
     const res = await api.get<{ spec: string; data: { name: string } }>(
-      `/api/actors/${SEED.character.id}/card`,
+      `/api/v1/actors/${SEED.character.id}/card`,
     );
     expect(res.ok,).toBe(true,);
     expect(res.data!.spec,).toBe("chara_card_v2",);
     expect(res.data!.data.name,).toBe(SEED.character.name,);
   });
 
-  test("PUT /api/actors/:id updates actor", async () => {
-    const res = await api.put(`/api/actors/${SEED.character.id}`, {
+  test("PUT /api/v1/actors/:id updates actor", async () => {
+    const res = await api.put(`/api/v1/actors/${SEED.character.id}`, {
       displayName: "Updated Character Name",
       dataVersion: 0,
     },);
     expect(res.ok,).toBe(true,);
 
-    const getRes = await api.get<{ display_name: string }>(`/api/actors/${SEED.character.id}`,);
+    const getRes = await api.get<{ display_name: string }>(`/api/v1/actors/${SEED.character.id}`,);
     expect(getRes.data!.display_name,).toBe("Updated Character Name",);
   });
 
-  test("DELETE /api/actors/:id deletes actor", async () => {
+  test("DELETE /api/v1/actors/:id deletes actor", async () => {
     // Create then delete
     const createRes = await api.post<{ id: string }>("/api/v1/actors", {
       displayName: "To Delete",
     },);
     const actorId = createRes.data!.id;
 
-    const deleteRes = await api.del(`/api/actors/${actorId}`,);
+    const deleteRes = await api.del(`/api/v1/actors/${actorId}`,);
     expect(deleteRes.ok,).toBe(true,);
 
-    const getRes = await api.get(`/api/actors/${actorId}`,);
+    const getRes = await api.get(`/api/v1/actors/${actorId}`,);
     expect(getRes.status,).toBe(404,);
     expect(getRes.code,).toBeTruthy(); // TEST.2 error envelope
   });
 
   test("cross-tenant isolation: User B cannot access User A's character", async () => {
-    const resA = await api.get<{ id: string }>(`/api/actors/${SEED.character.id}`,);
+    const resA = await api.get<{ id: string }>(`/api/v1/actors/${SEED.character.id}`,);
     expect(resA.ok,).toBe(true,);
     expect(resA.data!.id,).toBe(SEED.character.id,);
 
     const apiB = createClient(server.url,);
     await apiB.loginAs("e2eother", "password",);
-    const resB = await apiB.get(`/api/actors/${SEED.character.id}`,);
+    const resB = await apiB.get(`/api/v1/actors/${SEED.character.id}`,);
     expect(resB.ok,).toBe(false,);
     expect(resB.status,).toBe(404,);
     expect(resB.code,).toBeTruthy();

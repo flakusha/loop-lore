@@ -26,7 +26,7 @@ export const editing = {
     try {
       const { detail, mode, value, } = this.editingTemplate;
       const res = await (globalThis as any).apiFetch(
-        `/api/admin/templates/${this.selectedProfile.id}`,
+        `/api/v1/admin/templates/${this.selectedProfile.id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json", },
@@ -63,7 +63,7 @@ export const editing = {
     try {
       const d = this.selectedProfile.defaults;
       const res = await (globalThis as any).apiFetch(
-        `/api/admin/templates/${this.selectedProfile.id}/defaults`,
+        `/api/v1/admin/templates/${this.selectedProfile.id}/defaults`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json", },

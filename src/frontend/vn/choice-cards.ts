@@ -188,7 +188,7 @@ export async function selectChoice(choiceId: string,): Promise<SelectChoiceResul
     const splitBranches = extractSplitBranches(returned.consequences,);
     if (splitBranches) {
       try {
-        const splitRes = await feFetch(`/api/chats/${chatId}/split`, {
+        const splitRes = await feFetch(`/api/v1/chats/${chatId}/split`, {
           method: "POST",
           headers: { "Content-Type": "application/json", },
           body: jsonBody({ branches: splitBranches, },),
@@ -202,7 +202,7 @@ export async function selectChoice(choiceId: string,): Promise<SelectChoiceResul
     const reunionSource = extractReunionSource(returned.consequences,);
     if (reunionSource) {
       try {
-        const reuniteRes = await feFetch(`/api/chats/${chatId}/reunite`, {
+        const reuniteRes = await feFetch(`/api/v1/chats/${chatId}/reunite`, {
           method: "POST",
           headers: { "Content-Type": "application/json", },
           body: jsonBody({ secondaryChatId: reunionSource, },),

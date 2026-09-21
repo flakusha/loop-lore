@@ -87,7 +87,7 @@ describe("gifPicker.searchGifs", () => {
     const ctx = buildCtx({ _gifQuery: "cats", _gifActiveIndex: 2, },);
     handler = async () => Response.json({ data: [gif("a",), gif("b",),], },);
     await gifPicker.searchGifs!.call(ctx as never,);
-    expect(calls[0]!.url,).toBe("/api/gifs/search?q=cats&limit=12",);
+    expect(calls[0]!.url,).toBe("/api/v1/gifs/search?q=cats&limit=12",);
     expect(ctx._gifResults.map((r,) => r.id),).toEqual(["a", "b",],);
     expect(ctx._gifActiveIndex,).toBe(0,);
     expect(ctx._gifLoading,).toBe(false,);
@@ -149,7 +149,7 @@ describe("gifPicker keyboard navigation", () => {
   test("enter inserts the highlighted result as a pending asset", async () => {
     const ctx = buildCtx({ _gifOpen: true, _gifResults: [gif("a",), gif("b",),], _gifActiveIndex: 1, },);
     fetchHandler = async () => new Response(new Uint8Array([1, 2, 3,],),);
-    handler = async (url,) => url === "/api/assets" ? Response.json({ id: "asset-9", },) : Response.json({},);
+    handler = async (url,) => url === "/api/v1/assets" ? Response.json({ id: "asset-9", },) : Response.json({},);
     gifPicker.handleGifKey!.call(ctx as never, keyEvent("Enter",),);
     await Bun.sleep(10,);
     expect(ctx.pendingAssets,).toEqual([{ assetId: "asset-9", filename: "b.gif", },],);

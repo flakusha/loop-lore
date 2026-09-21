@@ -146,7 +146,7 @@ describe("Quests flow E2E", () => {
       const updated = await page.evaluate(async (id,) => {
         // CSRF double-submit: echo the csrf_token cookie like feFetch does.
         const csrf = /(?:^|;\s*)csrf_token=([^;]+)/.exec(document.cookie,)?.[1] ?? "";
-        const res = await fetch(`/api/quests/${id}/progress`, {
+        const res = await fetch(`/api/v1/quests/${id}/progress`, {
           method: "POST",
           headers: { "Content-Type": "application/json", "X-CSRF-Token": csrf, },
           body: JSON.stringify({ delta: 1, },),

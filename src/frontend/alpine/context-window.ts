@@ -130,7 +130,7 @@ interface ContextWindowState {
       this.chatId = chatId;
       this.loading = true;
       try {
-        const res = await apiFetch(`/api/chats/${chatId}/context`, {
+        const res = await apiFetch(`/api/v1/chats/${chatId}/context`, {
           headers: { Accept: "application/json", },
         },);
         if (res.ok) {

@@ -11,7 +11,7 @@ describe("Characters flow E2E", () => {
 
   beforeAll(async () => {
     ctx = await createBrowserTest();
-    // The detail modal fetches /api/actors/:id/mood, which the API answers
+    // The detail modal fetches /api/v1/actors/:id/mood, which the API answers
     // with a designed 404 for characters that never had mood state created —
     // surfacing as a console error and failing the no-page-errors contract.
     // Characters gain a mood row in production once chatted with; mirror that
@@ -29,7 +29,7 @@ describe("Characters flow E2E", () => {
       .onConflict((oc,) => oc.column("id",).doNothing())
       .execute();
     // The character edit view's licensing panel fetches
-    // /api/actors/:id/licensing, whose designed 404 ("no license yet") still
+    // /api/v1/actors/:id/licensing, whose designed 404 ("no license yet") still
     // logs a browser console resource error. Characters configured for
     // publishing carry a license row; mirror that realistic state here.
     const licNow = new Date().toISOString();

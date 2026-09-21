@@ -64,7 +64,7 @@ afterEach(() => {
 
 describe("dispatchCommandAction", () => {
   describe("generate-image", () => {
-    test("fires POST to /api/generation/image with prompt + chatId", async () => {
+    test("fires POST to /api/v1/generation/image with prompt + chatId", async () => {
       mockFetch(200,);
       const ctx = buildCtx();
       await chatActions.dispatchCommandAction!.call(
@@ -75,7 +75,7 @@ describe("dispatchCommandAction", () => {
       );
 
       expect(fetchCalls.length,).toBe(1,);
-      expect(fetchCalls[0]?.url,).toBe("/api/generation/image",);
+      expect(fetchCalls[0]?.url,).toBe("/api/v1/generation/image",);
       expect(fetchCalls[0]?.opts.method,).toBe("POST",);
       const body = JSON.parse(fetchCalls[0]?.opts.body as string,);
       expect(body,).toEqual({ prompt: "a cat", chatId: "chat-1", },);
@@ -165,7 +165,7 @@ describe("dispatchCommandAction", () => {
   });
 
   describe("generate-caption", () => {
-    test("fires POST to /api/generation/caption with assetIds + chatId", async () => {
+    test("fires POST to /api/v1/generation/caption with assetIds + chatId", async () => {
       mockFetch(200,);
       const ctx = buildCtx();
       await chatActions.dispatchCommandAction!.call(
@@ -176,7 +176,7 @@ describe("dispatchCommandAction", () => {
       );
 
       expect(fetchCalls.length,).toBe(1,);
-      expect(fetchCalls[0]?.url,).toBe("/api/generation/caption",);
+      expect(fetchCalls[0]?.url,).toBe("/api/v1/generation/caption",);
       const body = JSON.parse(fetchCalls[0]?.opts.body as string,);
       expect(body,).toEqual({ chatId: "chat-1", assetIds: ["a1", "a2",], },);
     });
@@ -264,7 +264,7 @@ describe("dispatchCommandAction", () => {
   });
 
   describe("create-quest", () => {
-    test("fetches chat world_id then fires POST to /api/worlds/:wid/quests", async () => {
+    test("fetches chat world_id then fires POST to /api/v1/worlds/:wid/quests", async () => {
       let callCount = 0;
       fetchHandler = (url, _opts,) => {
         callCount++;
@@ -283,7 +283,7 @@ describe("dispatchCommandAction", () => {
 
       expect(callCount,).toBe(2,);
       expect(fetchCalls[0]?.url,).toBe("/api/v1/chats/chat-1",);
-      expect(fetchCalls[1]?.url,).toBe("/api/worlds/world-42/quests",);
+      expect(fetchCalls[1]?.url,).toBe("/api/v1/worlds/world-42/quests",);
       expect(fetchCalls[1]?.opts.method,).toBe("POST",);
       const body = JSON.parse(fetchCalls[1]?.opts.body as string,);
       expect(body,).toEqual({ chatId: "chat-1", description: "defeat the dragon", },);
@@ -406,7 +406,7 @@ describe("dispatchCommandAction", () => {
 // ── handleCommandInput ───────────────────────────────────────
 
 describe("handleCommandInput", () => {
-  // _commandList is hydrated at runtime from GET /api/commands; tests need a
+  // _commandList is hydrated at runtime from GET /api/v1/commands; tests need a
   // populated list to exercise the filter logic.
   type CommandEntry = { name: string; descriptionKey: string; description: string };
   const seededCommandList: CommandEntry[] = [
@@ -508,7 +508,7 @@ describe("dispatchCommandAction link-asset", () => {
     (globalThis as { confirm?: (message?: string,) => boolean }).confirm = () => value;
   }
 
-  test("confirmed link POSTs to /api/assets/:id/links and toasts success", async () => {
+  test("confirmed link POSTs to /api/v1/assets/:id/links and toasts success", async () => {
     confirmWith(true,);
     mockFetch(201, { id: "a1", },);
     const ctx = buildCtx();
@@ -519,7 +519,7 @@ describe("dispatchCommandAction link-asset", () => {
       "chat-1",
     );
     expect(fetchCalls.length,).toBe(1,);
-    expect(fetchCalls[0]?.url,).toBe("/api/assets/a1/links",);
+    expect(fetchCalls[0]?.url,).toBe("/api/v1/assets/a1/links",);
     expect(fetchCalls[0]?.opts.method,).toBe("POST",);
     const body = JSON.parse(fetchCalls[0]?.opts.body as string,);
     expect(body,).toEqual({ entityType: "chat", entityId: "chat-1", },);

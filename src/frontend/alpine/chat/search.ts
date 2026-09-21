@@ -15,7 +15,7 @@ export const chatSearch: Partial<ChatState> & ThisType<ChatState> = {
       return;
     }
     try {
-      const res = await apiFetch(`/api/chats/search?q=${encodeURIComponent(query,)}`,);
+      const res = await apiFetch(`/api/v1/chats/search?q=${encodeURIComponent(query,)}`,);
       if (!res.ok) {
         this._searchResults = [];
         return;
@@ -40,7 +40,7 @@ export const chatSearch: Partial<ChatState> & ThisType<ChatState> = {
 
   async loadJoinableChats() {
     try {
-      const res = await apiFetch("/api/chats/joinable",);
+      const res = await apiFetch("/api/v1/chats/joinable",);
       if (!res.ok) { return; }
       const body = await res.json();
       const data = Array.isArray(body,)
@@ -66,7 +66,7 @@ export const chatSearch: Partial<ChatState> & ThisType<ChatState> = {
 
   async joinChat(chatId: string,) {
     try {
-      const res = await apiFetch(`/api/chats/${chatId}/join`, { method: "POST", },);
+      const res = await apiFetch(`/api/v1/chats/${chatId}/join`, { method: "POST", },);
       if (!res.ok) {
         this.$dispatch?.("show-toast", { type: "error", message: t("toasts.couldNotJoinChat",), },);
         return;

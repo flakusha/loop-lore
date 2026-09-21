@@ -83,7 +83,7 @@ export async function dispatchQuestAction(ctx: DispatchCtx, description: string,
     return;
   }
   try {
-    // Fetch chat to get world_id (backend requires /api/worlds/:worldId/quests)
+    // Fetch chat to get world_id (backend requires /api/v1/worlds/:worldId/quests)
     const chatRes = await apiFetch(`/api/v1/chats/${chatId}`,);
     if (!chatRes.ok) {
       ctx.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedLoadChatForQuest",), },);
@@ -98,7 +98,7 @@ export async function dispatchQuestAction(ctx: DispatchCtx, description: string,
       },);
       return;
     }
-    const res = await apiFetch(`/api/worlds/${worldId}/quests`, {
+    const res = await apiFetch(`/api/v1/worlds/${worldId}/quests`, {
       method: "POST",
       headers: { "Content-Type": "application/json", },
       body: jsonBody({ chatId, description, },),

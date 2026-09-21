@@ -256,7 +256,7 @@ describe("Navigation E2E", () => {
         await goto(page, "/views/login",);
         await page.locator("[data-testid='demo-login']",).waitFor({ state: "attached", timeout: 10_000, },);
         const hxPost = await page.locator("[data-testid='demo-login']",).getAttribute("hx-post",);
-        expect(hxPost,).toBe("/api/demo-login",);
+        expect(hxPost,).toBe("/api/v1/demo-login",);
       } finally {
         errors.assert();
         errors.detach();

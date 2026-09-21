@@ -102,14 +102,14 @@ describe("Encryption Workflow", () => {
       // Send a message
       const msgContent = "This is a secret message 🔐";
       const sendRes = await api.post<{ id: string; content: string }>(
-        `/api/chats/${chatId}/messages`,
+        `/api/v1/chats/${chatId}/messages`,
         { content: msgContent, role: "user", },
       );
       expect(sendRes.ok,).toBe(true,);
 
       // Retrieve messages
       const listRes = await api.get<{ data: Array<{ id: string; content: string }> }>(
-        `/api/chats/${chatId}/messages`,
+        `/api/v1/chats/${chatId}/messages`,
       );
       expect(listRes.ok,).toBe(true,);
       expect(listRes.data!.data.length,).toBeGreaterThanOrEqual(1,);
@@ -137,14 +137,14 @@ describe("Encryption Workflow", () => {
       // Send a message
       const msgContent = "This is public plaintext";
       const sendRes = await api.post<{ id: string }>(
-        `/api/chats/${chatId}/messages`,
+        `/api/v1/chats/${chatId}/messages`,
         { content: msgContent, role: "user", },
       );
       expect(sendRes.ok,).toBe(true,);
 
       // Retrieve and verify plaintext
       const listRes = await api.get<{ data: Array<{ content: string }> }>(
-        `/api/chats/${chatId}/messages`,
+        `/api/v1/chats/${chatId}/messages`,
       );
       expect(listRes.ok,).toBe(true,);
       expect(listRes.data!.data[0]!.content,).toBe(msgContent,);
@@ -174,7 +174,7 @@ describe("Encryption Workflow", () => {
 
       // Get chat key
       const keyRes = await api.get<{ keyId: string; rawKey: string }>(
-        `/api/chats/${chatId}/encryption-key`,
+        `/api/v1/chats/${chatId}/encryption-key`,
       );
       expect(keyRes.ok,).toBe(true,);
       expect(keyRes.data!.keyId,).toBeTruthy();
@@ -200,13 +200,13 @@ describe("Encryption Workflow", () => {
 
       const unicodeContent = "日本語テスト 🌍 Привет мир Zażółć gęślą jaźń";
       const sendRes = await api.post<{ id: string }>(
-        `/api/chats/${chatId}/messages`,
+        `/api/v1/chats/${chatId}/messages`,
         { content: unicodeContent, role: "user", },
       );
       expect(sendRes.ok,).toBe(true,);
 
       const listRes = await api.get<{ data: Array<{ content: string }> }>(
-        `/api/chats/${chatId}/messages`,
+        `/api/v1/chats/${chatId}/messages`,
       );
       expect(listRes.ok,).toBe(true,);
       expect(listRes.data!.data[0]!.content,).toBe(unicodeContent,);
@@ -232,13 +232,13 @@ describe("Encryption Workflow", () => {
       const longContent = "The quick brown fox jumps over the lazy dog. ".repeat(99,) +
         "The quick brown fox jumps over the lazy dog.";
       const sendRes = await api.post<{ id: string }>(
-        `/api/chats/${chatId}/messages`,
+        `/api/v1/chats/${chatId}/messages`,
         { content: longContent, role: "user", },
       );
       expect(sendRes.ok,).toBe(true,);
 
       const listRes = await api.get<{ data: Array<{ content: string }> }>(
-        `/api/chats/${chatId}/messages`,
+        `/api/v1/chats/${chatId}/messages`,
       );
       expect(listRes.ok,).toBe(true,);
       expect(listRes.data!.data[0]!.content,).toBe(longContent,);

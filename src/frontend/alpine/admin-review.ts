@@ -41,10 +41,10 @@ export const adminReview = {
     this.loadingReview = true;
     try {
       const [queueRes, statsRes,] = await Promise.allSettled([
-        apiFetch(`/api/nsfw/moderation/flags?status=${this.reviewStatus}&limit=50`, {
+        apiFetch(`/api/v1/nsfw/moderation/flags?status=${this.reviewStatus}&limit=50`, {
           headers: { Accept: "application/json", },
         },),
-        apiFetch("/api/admin/review/stats", { headers: { Accept: "application/json", }, },),
+        apiFetch("/api/v1/admin/review/stats", { headers: { Accept: "application/json", }, },),
       ],);
       if (queueRes.status === "fulfilled" && queueRes.value.ok) {
         const d = await queueRes.value.json();
@@ -63,7 +63,7 @@ export const adminReview = {
 
   async resolveFlag(flagId: string, status: "resolved" | "dismissed" | "confirmed",) {
     try {
-      const res = await apiFetch(`/api/nsfw/moderation/flags/${flagId}`, {
+      const res = await apiFetch(`/api/v1/nsfw/moderation/flags/${flagId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({
