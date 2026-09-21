@@ -3,8 +3,8 @@
 
 import type { Kysely, } from "kysely";
 import { notifyBlogComment, } from "../../../notifications/service";
-import { uid, } from "../../../utils.js";
 import { can, } from "../../../users/permissions";
+import { uid, } from "../../../utils.js";
 import type {
   BlogCommentRow,
   BlogCommentStatus,

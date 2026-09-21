@@ -270,10 +270,16 @@
             </div>
             <div x-show="entry.action === 'inject'" style="color: var(--text-secondary); font-size: 11px">
               <template x-if="entry.action === 'inject'">
-                <span x-text="'Injected into prompt: ' + ((JSON.parse(entry.details || '{}').memoryIds || []).length) + ' memory(ies) across ' + (JSON.parse(entry.details || '{}').actorCount || 0) + ' actor(s)'"></span>
+                <span
+                  x-text="'Injected into prompt: ' + ((JSON.parse(entry.details || '{}').memoryIds || []).length) + ' memory(ies) across ' + (JSON.parse(entry.details || '{}').actorCount || 0) + ' actor(s)'"
+                ></span>
               </template>
             </div>
-            <div x-show="entry.action !== 'inject'" style="color: var(--text-secondary); font-size: 11px; word-break: break-all" x-text="entry.details">
+            <div
+              x-show="entry.action !== 'inject'"
+              style="color: var(--text-secondary); font-size: 11px; word-break: break-all"
+              x-text="entry.details"
+            >
             </div>
           </div>
         </template>
