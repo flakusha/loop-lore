@@ -115,7 +115,8 @@ Multi-writer peer sync. Model shared RPG state as CRDTs (prefer `cr-sqlite` to s
 
 | System | What It Consumes | How Used |
 | --- | --- | --- |
-| (none yet) | — | Consumes the above; no dependents registered yet |
+| Social Graph (`epic-social-graph.md`) | Internal friend/block/avoid graph | Federated actors resolve into graph nodes for friends, blocks, invitations |
+| Instance Federation (`epic-instance-federation.md`) | Instance switching, `@user@instance` handles, cross-sync | Consumes ActivityPub adapter + swarm CRDT seams as its transport/merge layer |
 
 ### Shared Data Contracts
 
@@ -155,6 +156,8 @@ Multi-writer peer sync. Model shared RPG state as CRDTs (prefer `cr-sqlite` to s
 - `epic-multi-instance-reconciliation.md` (Epic 26 — leader-based reconciliation — already planned)
 - `epic-social-hub.md` (social graph for federated actors)
 - `epic-transport-layer-expansion.md` (HTTP/2/3, WebSocket, WebTransport — swarm transport)
+- `epic-social-graph.md` (internal social graph — friend/block/avoid edges that federated actors attach to; filed 2026-09-21)
+- `epic-instance-federation.md` (user-facing instance switching, `@user@instance` handles, world/location cross-sync; filed 2026-09-21 — consumes this epic's adapter + swarm seams)
 
 ## Scope Boundary
 
