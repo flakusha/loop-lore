@@ -1910,6 +1910,10 @@
   "src/assistant/lore/lifecycle.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-lore-decay-gate-is-dead-code-at-runtime-passesconfidencefloo.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-world-lore-lifecycle-confidence-decay-distortion.md"
     }
   ],
@@ -2357,6 +2361,20 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-redos-lore-activation-builds-regexp-from-author-controlled-k.md"
+    }
+  ],
+
+  "src/assistant/prompt/sections/lore-lifecycle-gate.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-lore-decay-gate-is-dead-code-at-runtime-passesconfidencefloo.md"
+    }
+  ],
+
+  "src/assistant/prompt/sections/lore-load.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-lore-load-ts-uses-any-for-db-eb-instead-of-kysely-expression.md"
     }
   ],
   "src/assistant/prompt/sections/lore.test.ts": [
