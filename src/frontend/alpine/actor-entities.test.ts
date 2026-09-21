@@ -45,7 +45,11 @@ afterEach(() => {
 describe("actorEntitiesFactory", () => {
   test("returns a state bound to the kind + actor", async () => {
     handler = async (url: string,) => {
-      if (url === "/api/v1/actors/actor-1/notes") { return Response.json({ data: [{ id: "n1", title: "Note A", },], },); }
+      if (url === "/api/v1/actors/actor-1/notes") {
+        return Response.json({
+          data: [{ id: "n1", title: "Note A", },],
+        },);
+      }
       return Response.json({ data: [], },);
     };
     const state = actorEntitiesFactory("actor-1", "notes",);
@@ -193,7 +197,9 @@ describe("actorEntitiesState.create / save / remove", () => {
     const state = baseState();
     state._entActorId = "actor-1";
     await state.remove("row-1",);
-    expect(calls.some((c,) => c.opts.method === "DELETE" && c.url === "/api/v1/actors/actor-1/notes/row-1"),).toBe(true,);
+    expect(calls.some((c,) => c.opts.method === "DELETE" && c.url === "/api/v1/actors/actor-1/notes/row-1"),).toBe(
+      true,
+    );
   });
 
   test("remove no-ops without actor id", async () => {
