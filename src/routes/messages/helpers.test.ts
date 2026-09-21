@@ -2,7 +2,8 @@ import { describe, expect, test, } from "bun:test";
 import { ContentEncoding, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
-import { parseToolCalls, parseToolResultMeta, resolveMessageContentForRender, } from "./helpers";
+import { parseToolCalls, parseToolResultMeta, } from "./helpers";
+import { resolveMessageContentForRender, } from "./render-message-content";
 
 describe("parseToolCalls", () => {
   test("returns null for null/undefined/empty input", () => {
@@ -89,7 +90,7 @@ describe("resolveMessageContentForRender (BUG-regex-transform-runs-at-store-time
         { content: "hello   world", content_encoding: ContentEncoding.Identity, key_id: null, chat_id: "c1", },
         [],
       );
-      expect(result,).toBe("hello   world");
+      expect(result,).toBe("hello   world",);
     } finally {
       sqlite.close();
     }
@@ -103,7 +104,7 @@ describe("resolveMessageContentForRender (BUG-regex-transform-runs-at-store-time
         { content: "hello   world", content_encoding: ContentEncoding.Identity, key_id: null, chat_id: "c1", },
         [{ name: "collapse spaces", pattern: "\\s+", replacement: " ", enabled: true, },],
       );
-      expect(result,).toBe("hello world");
+      expect(result,).toBe("hello world",);
     } finally {
       sqlite.close();
     }
@@ -125,9 +126,9 @@ describe("resolveMessageContentForRender (BUG-regex-transform-runs-at-store-time
         stored,
         [{ name: "upper-to-Y", pattern: "[A-Z]+", replacement: "Y", enabled: true, },],
       );
-      expect(lowerToX,).toBe("AA X CC");
-      expect(upperToY,).toBe("Y bb Y");
-      expect(stored.content,).toBe("AA bb CC");
+      expect(lowerToX,).toBe("AA X CC",);
+      expect(upperToY,).toBe("Y bb Y",);
+      expect(stored.content,).toBe("AA bb CC",);
     } finally {
       sqlite.close();
     }

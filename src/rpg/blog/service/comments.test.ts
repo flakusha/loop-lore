@@ -141,8 +141,8 @@ describe("blog comments", () => {
       author_id: "user-author",
       body: "Flagged",
     },);
-    expect(await moderateComment(db, gone.id, "deleted", { userId: "user-author", role: "user", }),).toBeTrue();
-    expect(await moderateComment(db, flagged.id, "hidden", { userId: "user-author", role: "user", }),).toBeTrue();
+    expect(await moderateComment(db, gone.id, "deleted", { userId: "user-author", role: "user", },),).toBeTrue();
+    expect(await moderateComment(db, flagged.id, "hidden", { userId: "user-author", role: "user", },),).toBeTrue();
     const rows = await listComments(db, "post-1",);
     expect(rows.map((c,) => c.body),).toEqual(["Flagged",],);
   });
@@ -155,12 +155,13 @@ describe("blog comments", () => {
     },);
     expect((await getComment(db, comment.id,))?.body,).toBe("Hello",);
     expect(await getComment(db, "comment-missing",),).toBeUndefined();
-    await moderateComment(db, comment.id, "deleted", { userId: "user-author", role: "user", });
+    await moderateComment(db, comment.id, "deleted", { userId: "user-author", role: "user", },);
     expect(await getComment(db, comment.id,),).toBeUndefined();
   });
 
   test("moderateComment on a missing comment returns false", async () => {
-    expect(await moderateComment(db, "comment-missing", "hidden", { userId: "user-author", role: "user" },),).toBeFalse();
+    expect(await moderateComment(db, "comment-missing", "hidden", { userId: "user-author", role: "user", },),)
+      .toBeFalse();
   });
 
   test("moderateComment rejects a caller who is neither author nor moderator (IDOR guard)", async () => {
@@ -227,7 +228,7 @@ describe("blog comments", () => {
       author_id: "user-author",
       body: "Doomed",
     },);
-    await moderateComment(db, comment.id, "deleted", { userId: "user-author", role: "user", });
+    await moderateComment(db, comment.id, "deleted", { userId: "user-author", role: "user", },);
     expect(await listCommentsThreaded(db, "post-1",),).toEqual([],);
   });
 });

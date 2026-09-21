@@ -402,7 +402,7 @@ describe("memory audit — delete and inject actions (FEAT-075 coverage)", () =>
     );
     expect(rows,).toHaveLength(1,);
     expect(rows[0]?.action,).toBe("inject",);
-    const details = JSON.parse(rows[0]?.details ?? "{}") as {
+    const details = JSON.parse(rows[0]?.details ?? "{}",) as {
       memoryIds: string[];
     };
     expect(details.memoryIds,).toEqual(["mem-inj-1", "mem-inj-2",],);
@@ -422,8 +422,10 @@ describe("memory audit — DB CHECK guard (FEAT-075 schema enforcement)", () => 
 
     await expect(
       sql`INSERT INTO memory_audit_log (id, memory_id, actor_id, user_id, action, details)
-            VALUES (${crypto.randomUUID()}, ${"mem-bad"}, ${actorId}, ${userId}, ${"bogus_action"}, ${sql.val(JSON.stringify({}),)})
+            VALUES (${crypto.randomUUID()}, ${"mem-bad"}, ${actorId}, ${userId}, ${"bogus_action"}, ${
+        sql.val(JSON.stringify({},),)
+      })
           `.execute(db,),
-    ).rejects.toThrow(/not in allowed enum/);
+    ).rejects.toThrow(/not in allowed enum/,);
   });
 });
