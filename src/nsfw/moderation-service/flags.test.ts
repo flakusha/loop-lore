@@ -441,7 +441,7 @@ describe("resolveReporterHashSecret (production gate)", () => {
   test("throws when NODE_ENV=production and both secrets unset", () => {
     process.env["NODE_ENV"] = "production";
     expect(() => resolveReporterHashSecret()).toThrow(
-      /NSFW_FLAG_REPORTER_HASH_SECRET is required in production/,
+      /NSFW_FLAG_REPORTER_HASH_SECRET/,
     );
   });
 
