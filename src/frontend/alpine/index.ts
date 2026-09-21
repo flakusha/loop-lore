@@ -10,6 +10,7 @@ import "./actor-entities";
 import "./actor-licensing";
 import "./actor-systems";
 import "./actor-traits";
+import "./character-extension-editor";
 import "./admin";
 import "./app";
 import "./blog";
