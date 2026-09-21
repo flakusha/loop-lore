@@ -30965,5 +30965,18 @@
     "source": ".plan/tickets/WIRE-nsfw-audit-page-missing-inline-authz.md",
     "status": "done",
     "resolved_by": "2ac5cf29"
+  },
+  "IDEA-MICRODRAMA-POST-EPISODE-CHAT-HANDOFF": {
+    "hash": "387a34f",
+    "git_issue": "387a34f",
+    "extid": "IDEA-MICRODRAMA-POST-EPISODE-CHAT-HANDOFF",
+    "type": "IDEA",
+    "title": "Post-episode character chat handoff (microdrama pattern)",
+    "label": "idea",
+    "priority": "Low",
+    "epic": "epic-platform-research.md",
+    "tags": [],
+    "source": ".plan/tickets/IDEA-microdrama-post-episode-chat-handoff.md",
+    "status": "Not Started"
   }
 }
