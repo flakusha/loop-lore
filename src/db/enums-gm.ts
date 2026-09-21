@@ -64,3 +64,16 @@ const shadowNoteStatusDef: StateDef<ShadowNoteStatus> = {
   terminal: ["revealed",],
 };
 export const shadowNoteStatusMachine = createMachine(shadowNoteStatusDef,);
+
+// ── Shadow Note Visibility ────────────────────────────────
+// Independent of `status` (player reveal); visibility gates LLM injection.
+// - `user_visible`: note is read into the player-visible chat surface; the
+//   LLM may still see it, but the user can read it too.
+// - `hidden`: note is GM/assistant only; the LLM sees it, the user does not.
+export const ShadowNoteVisibility = {
+  UserVisible: "user_visible",
+  Hidden: "hidden",
+} as const;
+export type ShadowNoteVisibility = (typeof ShadowNoteVisibility)[
+  keyof typeof ShadowNoteVisibility
+];

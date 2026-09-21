@@ -8,6 +8,7 @@ import type { Generated, } from "kysely";
 import type {
   ShadowNoteStatus,
   ShadowNoteType,
+  ShadowNoteVisibility,
   WhiteneoteScope,
   WhiteneoteType,
 } from "./enums";
@@ -20,6 +21,7 @@ export interface ShadowNotes {
   content: string;
   status: Generated<ShadowNoteStatus>;
   created_at: string;
+  visibility: Generated<ShadowNoteVisibility>;
 }
 
 // ── whitenotes ────────────────────────────────────────────

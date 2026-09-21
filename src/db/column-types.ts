@@ -191,6 +191,7 @@ export const COLUMN_TYPE_OVERRIDES: Record<string, Record<string, string>> = {
   "ShadowNotes": {
     "status": "ShadowNoteStatus",
     "type": "ShadowNoteType",
+    "visibility": "ShadowNoteVisibility",
   },
   "StoryTurns": {
     "status": "TurnStatus",

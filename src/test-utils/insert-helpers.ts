@@ -80,6 +80,7 @@ import type {
   SeductionSkillCategory,
   ShadowNoteStatus,
   ShadowNoteType,
+  ShadowNoteVisibility,
   SkillLockState,
   StackableState,
   StorageBackend,
@@ -2438,7 +2439,7 @@ export async function insertShadowNotes(
   type: ShadowNoteType,
   content: string,
   created_at: string,
-  opts?: { id?: string; status?: ShadowNoteStatus },
+  opts?: { id?: string; status?: ShadowNoteStatus; visibility?: ShadowNoteVisibility },
 ): Promise<void> {
   await db.insertInto("shadow_notes",).values({
     id: crypto.randomUUID(),

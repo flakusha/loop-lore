@@ -468,6 +468,7 @@ export const ShadowNoteTypeSchema = t.UnionEnum([
   "world_secret",
   "narrative_hook",
 ],);
+export const ShadowNoteVisibilitySchema = t.UnionEnum(["user_visible", "hidden",],);
 export const SizeCategorySchema = t.UnionEnum(["petite", "small", "average", "large", "massive",],);
 export const SkillLockStateSchema = t.UnionEnum(["locked", "unlocked",],);
 export const StackableStateSchema = t.UnionEnum(["unique", "stackable",],);
@@ -1935,6 +1936,7 @@ export const ShadowNotesSchema = t.Object({
   content: t.String(),
   created_at: t.String(),
   status: t.Optional(ShadowNoteStatusSchema,),
+  visibility: t.Optional(ShadowNoteVisibilitySchema,),
 },);
 
 // ── whitenotes ────────────────────────────────────────────
