@@ -184,11 +184,13 @@ export class BlogService extends BlogFollowsService {
    * Moderate a comment.
    * @param id
    * @param status
+   * @param caller
    */
   async moderateComment(
     id: string,
     status: BlogCommentStatus,
+    caller: { userId: string; role: string | null },
   ): Promise<boolean> {
-    return moderateCommentDispatch(this.db, id, status,);
+    return moderateCommentDispatch(this.db, id, status, caller,);
   }
 }
