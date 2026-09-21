@@ -40,3 +40,16 @@ Out of scope (separate tickets if pursued):
 - `BUG-lore-decay-gate-is-dead-code-…` (sibling)
 - `005_world_lore_lifecycle` migration
 
+## Resolution
+
+Resolved in commit `0da9d9b0` on branch `lore-lifecycle-followup`. The minimal
+prompt-side producer was wired in `lore.ts` `applyActivationTracking`: every
+included `world_lore_entries` row now has `last_verified = now` set in the same
+UPDATE as `last_activated`. The regression test (`writes last_verified on
+included world-lore rows (minimal producer)`) confirms both timestamps move
+together.
+
+The remaining producers (`source_count`, `distortion_level`, `disputed`) stay
+deferred — they require an LLM verifier pass / corroboration engine /
+admin UI surface, none of which are in scope for this batch.
+
