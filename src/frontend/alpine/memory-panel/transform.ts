@@ -219,3 +219,29 @@ export function auditEntriesForFilter(entries: AuditEntry[], filter: AuditAction
   if (!filter) { return entries; }
   return entries.filter((e,) => e.action === filter);
 }
+
+/**
+ * Resolve the distinct extraction kinds present in an `inject` audit
+ * entry by looking each `memoryId` up across the loaded memory tabs.
+ * Returns an empty array for non-inject actions, when the audit
+ * payload has no `memoryIds`, or when the referenced memories have
+ * not been loaded yet (the audit tab is paginated independently).
+ * @param entry
+ * @param panel
+ */
+export function injectAuditKinds(entry: AuditEntry, panel: MemoryPanelState,): string[] {
+  if (entry.action !== "inject") { return []; }
+  const details = parseAuditDetails(entry.details,);
+  const ids = Array.isArray(details.memoryIds,) ? (details.memoryIds as unknown[]).filter((id,): id is string => typeof id === "string",) : [];
+  if (ids.length === 0) { return []; }
+  const byId = new Map<string, MemoryEntry,>();
+  for (const list of [panel.characterMemories, panel.assistantMemories, panel.worldMemories,]) {
+    for (const m of list) { byId.set(m.id, m,); }
+  }
+  const seen = new Set<string,>();
+  for (const id of ids) {
+    const mem = byId.get(id,);
+    if (mem?.extractionKind) { seen.add(mem.extractionKind,); }
+  }
+  return [...seen,];
+}
