@@ -3,16 +3,27 @@
 
 // src/characters/spec/character.ts — Character-related types
 
+import type { CharacterAsset, } from "./character-asset";
 import type {
-  CharacterRelationshipType,
-  ContentRating,
-  ImportFormat,
-  MigrationStatus,
-  ReviewState,
-  StorageFormat,
-  WorldModifierType,
-} from "./enums";
+  AbilityScore,
+  AbilitySource,
+  AppearanceDetails,
+  Condition,
+  EquipmentSlot,
+  InventoryItemType,
+  ItemRarity,
+  Motivation,
+  PersonalityTrait,
+  RelationshipTargetType,
+  Skill,
+  SpeechPatterns,
+  Tag,
+  TagCategory,
+  Vital,
+} from "./character-richer-fields";
+import type { CharacterRelationshipType, ContentRating, WorldModifierType, } from "./enums";
 import type { GrowthMode, } from "./growth";
+import type { LorebookData, } from "./lorebook";
 
 // ── Feature Flags ───────────────────────────────────
 /** */
@@ -121,125 +132,28 @@ export interface LocalizedFields {
   alternate_greetings?: Record<string, string[]>;
   creator_notes?: Record<string, string>;
 }
-
-// ── Richer Optional Fields (RPG / Emergent Behavior) ───
-//
-// Backward-compatible optional fields for richer RPG mechanics and emergent
-// behavior modeling. All fields are optional; existing characters validate
-// unchanged. Plugin bundles may gate which fields apply. This is NOT a spec
-// version bump — purely additive. The `_rich` suffix disambiguates richer
-// alternatives to the legacy shapes (`InventoryItemRich`, `CharacterRelationshipRich`).
-// See docs/spec/character-spec.md for the full type catalogue and migration notes.
-
-/** Provenance of an ability score's current value (base | level | equipment | condition). */
-export type AbilitySource = "base" | "level" | "equipment" | "condition";
-
-/** Single ability score: STR/DEX/CON/INT/WIS/CHA or any system-defined ability. */
-export interface AbilityScore {
-  name: string;
-  value: number;
-  modifier?: number;
-  source?: AbilitySource;
-}
-
-/** A single trainable skill bound to an ability (or system-defined). */
-export interface Skill {
-  id: string;
-  name: string;
-  value: number;
-  ability?: string;
-  proficiencies: number;
-  sources: { type: string; id: string }[];
-}
-
-/** An equipped item bound to a slot (weapon | armor | ring | amulet | ...). */
-export interface EquipmentSlot {
-  slot: string;
-  item_id?: string;
-  item_name?: string;
-  properties?: Record<string, unknown>;
-}
-
-/** Health / energy / sanity pool (hp | mp | stamina | sanity | ...). */
-export interface Vital {
-  name: string;
-  max: number;
-  current: number;
-  regenerate?: number;
-  properties?: Record<string, unknown>;
-}
-
-/** Structured motivation / behavioral dimension. */
-export interface Motivation {
-  type: "goal" | "fear" | "trait" | "bond" | "flaw" | "habit" | "catchphrase";
-  text: string;
-  strength?: number;
-  context?: string;
-}
-
-/** Target type for a relationship entry (character | faction | place | object). */
-export type RelationshipTargetType = "character" | "faction" | "place" | "object";
-
-/** Structured personality trait (machine-readable parallel to the freeform `personality` field). */
-export interface PersonalityTrait {
-  trait: string;
-  value: number;
-  context?: string;
-}
-
-/** Structured appearance dimensions (parallel to the freeform `appearance` field). */
-export interface AppearanceDetails {
-  height?: string;
-  build?: string;
-  hair?: string;
-  eyes?: string;
-  skin?: string;
-  distinguishing?: string;
-}
-
-/** Tag category for filterable classification. */
-export type TagCategory = "personality" | "species" | "role" | "theme" | "content" | "custom";
-
-/** Structured tag (category + value), parallel to the freeform `tags` field. */
-export interface Tag {
-  category: TagCategory;
-  value: string;
-}
-
-/** Inventory item type (richer than the legacy freeform `InventoryItem.type`). */
-export type InventoryItemType =
-  | "weapon"
-  | "armor"
-  | "consumable"
-  | "tool"
-  | "key"
-  | "quest"
-  | "material";
-
-/** Item rarity ladder. */
-export type ItemRarity = "common" | "uncommon" | "rare" | "epic" | "legendary";
-
-/** Voice and speech style hints for the LLM. */
-export interface SpeechPatterns {
-  formal?: string;
-  informal?: string;
-  slang?: string;
-  catchphrases?: string[];
-  dialect?: string;
-  quirks?: string[];
-}
-
-/** Runtime status effect. */
-export interface Condition {
-  id: string;
-  name: string;
-  description?: string;
-  source?: string;
-  duration?: { type: string; value: number };
-  effects?: Record<string, unknown>;
-}
-
-// ── Character Extensions ─────────────────────────────
+// Richer Optional Fields, Lorebook, and CharacterAsset shapes are imported
+// at the top of this file. Re-export them below for back-compat so
+// `import { AbilityScore, LorebookData, CharacterAsset, ... } from "./character"` keeps working.
+export type {
+  AbilityScore,
+  AbilitySource,
+  AppearanceDetails,
+  Condition,
+  EquipmentSlot,
+  InventoryItemType,
+  ItemRarity,
+  Motivation,
+  PersonalityTrait,
+  RelationshipTargetType,
+  Skill,
+  SpeechPatterns,
+  Tag,
+  TagCategory,
+  Vital,
+};
+export type { CharacterAsset, } from "./character-asset";
+export type { LorebookData, LorebookEntry, } from "./lorebook";
 /** */
 export interface CharacterExtensions {
   stats?: Record<string, number>;
@@ -307,75 +221,7 @@ export interface CanonicalCharacter {
   extensions?: CharacterExtensions;
 }
 
-// ── Character with Metadata ──────────────────────────
-/** */
-export interface CharacterRecord extends CanonicalCharacter {
-  id: string;
-  owner_id: string;
-  user_id: string | null;
-  actor_type: string;
-  display_name: string;
-  visibility: string;
-  content_rating: ContentRating;
-  review_state: ReviewState;
-  storage_format: StorageFormat;
-  data_source_format: StorageFormat;
-  data_json: string;
-  data_yaml: string | null;
-  data_toml: string | null;
-  import_format: ImportFormat | null;
-  import_source: string | null;
-  migration_status: MigrationStatus;
-  migration_from_version: string | null;
-  migration_to_version: string;
-  allowed_age: number | null;
-  created_at: string;
-  updated_at: string;
-}
-
-// ── Lorebook ──────────────────────────────────
-/** */
-export interface LorebookData {
-  name?: string;
-  description?: string;
-  scan_depth?: number;
-  token_budget?: number;
-  recursive_scanning?: boolean;
-  entries: LorebookEntry[];
-}
-
-/** */
-export interface LorebookEntry {
-  keys: string[];
-  content: string;
-  enabled: boolean;
-  insertion_order: number;
-  case_sensitive: boolean;
-  name: string;
-  priority: number;
-  id: number;
-  comment?: string;
-  selective: boolean;
-  constant: boolean;
-  position: "before_char" | "after_char";
-  use_regex?: boolean;
-  /** Activation condition override (ticket FEAT-055). */
-  key_type?: "keyword" | "regex";
-  /** AND/OR activation groups: each inner array is AND, the outer array is OR. */
-  key_groups?: string[][];
-  /** How many recent user messages to scan for activation (default 1, max 10). */
-  scan_depth?: number;
-  /** Stochastic activation probability 0..1 for ambient lore. */
-  activation_chance?: number;
-  extensions?: Record<string, unknown>;
-}
-
-// ── Character Asset ───────────────────────────
-/** */
-export interface CharacterAsset {
-  type: string;
-  name: string;
-  uri: string;
-  ext: string;
-  data?: Buffer; // For CHARX imports
-}
+// CharacterRecord lives in `./character-record.ts`; re-exported here.
+export type { CharacterRecord, } from "./character-record";
+// The import block above makes these names available inside this file; the
+// re-exports keep `import { LorebookData, LorebookEntry, CharacterAsset } from "./character"` working.
