@@ -86,9 +86,9 @@ describe("BlogService comments facade", () => {
     expect(tree.length,).toBe(1,);
     expect(tree[0]?.children,).toEqual([],);
 
-    expect(await svc.moderateComment(comment.id, "hidden",),).toBeTrue();
+    expect(await svc.moderateComment(comment.id, "hidden", { userId: "user-author", role: "user" },),).toBeTrue();
     expect((await svc.getComment(comment.id,))?.status,).toBe("hidden",);
-    expect(await svc.moderateComment("comment-missing", "hidden",),).toBeFalse();
+    expect(await svc.moderateComment("comment-missing", "hidden", { userId: "user-author", role: "user" },),).toBeFalse();
   });
 
   test("threaded nests a reply", async () => {
