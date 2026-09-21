@@ -195,7 +195,7 @@ describe("Chat Invite & Join E2E", () => {
   });
 
   test("invalid code is rejected (404)", async () => {
-    const res = await joiner.post("/api/invites/NOPE1234/join", {},);
+    const res = await joiner.post("/api/v1/invites/NOPE1234/join", {},);
     expect(res.ok,).toBe(false,);
     expect(res.status,).toBe(404,);
   });

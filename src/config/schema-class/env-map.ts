@@ -167,6 +167,10 @@ export const envMap = (): EnvMap => {
   map.TESTING_LLAMA_PORT = "testing.llamaPort";
   map.TESTING_SD_PORT = "testing.sdPort";
   map.CRON_ENABLED = "cron.enabled";
+  map.NSFW_PII_SECRET = "nsfw.piiSecret";
+  map.NSFW_FLAG_REPORTER_HASH_SECRET = "nsfw.reporterHashSecret";
+  map.NSFW_MODERATION_HMAC_SECRET = "nsfw.reporterHashSecret";
+  map.TELEMETRY_PII_SECRET = "observability.telemetry.piiSecret";
 
   return map;
 };

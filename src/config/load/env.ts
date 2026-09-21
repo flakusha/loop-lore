@@ -24,6 +24,44 @@ export function applyEnvironmentOverrides(config: Config, environmentMap: Record
   return result as unknown as Config;
 }
 
+/** True when `path` resolves to a defined value (e.g. an explicit nested key in the same file). */
+function hasPath(obj: Record<string, unknown>, path: string,): boolean {
+  let current: unknown = obj;
+  for (const part of path.split(".",)) {
+    if (typeof current !== "object" || current === null) { return false; }
+    current = (current as Record<string, unknown>)[part];
+  }
+  return current !== undefined;
+}
+
+/**
+ * Lift flat ENV_MAP-style keys (e.g. `TELEMETRY_PII_SECRET`) from a parsed
+ * env-file object to their nested config paths (e.g.
+ * `observability.telemetry.piiSecret`). An explicit nested key in the same
+ * file wins; the flat key is removed either way. Raw process.env still wins
+ * over everything via applyEnvironmentOverrides.
+ * @param parsed Parsed env-file content (mutated in place). May be null.
+ * @param environmentMap ENV_VAR -> dot.path mapping.
+ * @returns Record
+ */
+export function liftFlatEnvKeys(
+  parsed: Record<string, unknown> | null,
+  environmentMap: Record<string, string>,
+): Record<string, unknown> {
+  if (parsed === null || typeof parsed !== "object") { return parsed ?? {}; }
+  for (const [environmentVariable, configPath,] of Object.entries(environmentMap,)) {
+    const flatValue = parsed[environmentVariable];
+    if (flatValue === undefined || typeof flatValue === "object") { continue; }
+    if (hasPath(parsed, configPath,)) {
+      delete parsed[environmentVariable];
+      continue;
+    }
+    setByPath(parsed, configPath, flatValue,);
+    delete parsed[environmentVariable];
+  }
+  return parsed;
+}
+
 /**
  * Create a default provider instance from LLM_PROVIDER_* env vars
  * @param config

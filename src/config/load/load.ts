@@ -12,9 +12,10 @@ import { runTemplateExpansion, } from "../template-expansion";
 import { loadTemplateConfig, } from "../templates-loader";
 import { DEFAULT_CONFIG_FILES, ENV_MAP, LOCAL_CONFIG_FILES, } from "./constants";
 import { loadDomainConfigs, } from "./domain";
-import { applyEnvironmentOverrides, applyProviderEnvVars, } from "./env";
+import { applyEnvironmentOverrides, applyProviderEnvVars, liftFlatEnvKeys, } from "./env";
 import { findConfigFile, firstExisting, } from "./fs";
-import { deepMerge, parseFileContent, } from "./parse";
+import { deepMerge, normalizeConfig, parseFileContent, } from "./parse";
+import { validatePiiSafety, } from "./pii-safety";
 import { validateAuthSafety, validateDatabaseSafety, } from "./safety";
 
 /**
@@ -106,7 +107,12 @@ export function loadConfig(cwd?: string,): Config {
     try {
       const content = readFileSync(envConfigPath, "utf8",);
       const parsed = parseFileContent(content, ext,);
-      config = deepMerge(config as unknown as Record<string, unknown>, parsed,) as unknown as Config;
+      // Flat ENV_MAP-style keys (TELEMETRY_PII_SECRET, ...) hoist to their
+      // nested config paths; explicit nested keys in the same file win.
+      config = deepMerge(
+        config as unknown as Record<string, unknown>,
+        normalizeConfig(liftFlatEnvKeys(parsed, ENV_MAP,),),
+      ) as unknown as Config;
     } catch (error) {
       throw new Error(`Failed to parse ${envConfigPath}: ${(error as Error).message}`, {
         cause: error,
@@ -134,5 +140,6 @@ export function loadConfig(cwd?: string,): Config {
   validateConfig(config,);
   validateDatabaseSafety(config,);
   validateAuthSafety(config,);
+  validatePiiSafety(config,);
   return config;
 }

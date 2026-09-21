@@ -51,7 +51,7 @@ describe("Encryption Workflow", () => {
         return;
       }
       const res = await api.get<{ keys: Array<{ id: string; name: string; status: string }> }>(
-        "/api/keys",
+        "/api/v1/keys",
       );
       expect(res.ok,).toBe(true,);
       expect(Array.isArray(res.data!.keys,),).toBe(true,);
@@ -63,7 +63,7 @@ describe("Encryption Workflow", () => {
         return;
       }
       const res = await api.post<{ id: string; name: string; status: string }>(
-        "/api/keys",
+        "/api/v1/keys",
         { name: "test-key-e2e", },
       );
       expect(res.ok,).toBe(true,);
@@ -77,7 +77,7 @@ describe("Encryption Workflow", () => {
         console.log("Skipping: encryption not enabled",);
         return;
       }
-      const res = await api.post("/api/keys", { name: "", },);
+      const res = await api.post("/api/v1/keys", { name: "", },);
       expect(res.ok,).toBe(false,);
     });
   });
@@ -88,7 +88,7 @@ describe("Encryption Workflow", () => {
     test("sends and retrieves encrypted message", async () => {
       // Create a chat with standard encryption
       const chatRes = await api.post<{ id: string }>(
-        "/api/chats",
+        "/api/v1/chats",
         {
           name: "encrypted-chat-e2e",
           type: "direct",
@@ -123,7 +123,7 @@ describe("Encryption Workflow", () => {
     test("none tier stores plaintext", async () => {
       // Create a chat with no encryption
       const chatRes = await api.post<{ id: string }>(
-        "/api/chats",
+        "/api/v1/chats",
         {
           name: "public-chat-e2e",
           type: "direct",
@@ -161,7 +161,7 @@ describe("Encryption Workflow", () => {
       }
       // Use the chat we created earlier
       const chatRes = await api.post<{ id: string }>(
-        "/api/chats",
+        "/api/v1/chats",
         {
           name: "key-chat-e2e",
           type: "direct",
@@ -187,7 +187,7 @@ describe("Encryption Workflow", () => {
   describe("unicode encryption", () => {
     test("handles unicode content correctly", async () => {
       const chatRes = await api.post<{ id: string }>(
-        "/api/chats",
+        "/api/v1/chats",
         {
           name: "unicode-chat-e2e",
           type: "direct",
@@ -214,7 +214,7 @@ describe("Encryption Workflow", () => {
 
     test("handles long content correctly", async () => {
       const chatRes = await api.post<{ id: string }>(
-        "/api/chats",
+        "/api/v1/chats",
         {
           name: "long-chat-e2e",
           type: "direct",

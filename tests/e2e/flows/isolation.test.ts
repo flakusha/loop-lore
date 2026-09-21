@@ -51,7 +51,7 @@ describe("Cross-Tenant Isolation E2E", () => {
   },);
 
   test("User A creates chat — User B gets 403/404", async () => {
-    const createRes = await userA.post<{ id: string }>("/api/chats", {
+    const createRes = await userA.post<{ id: string }>("/api/v1/chats", {
       name: "Isolation Chat",
       type: "direct",
       mode: "direct",
@@ -65,7 +65,7 @@ describe("Cross-Tenant Isolation E2E", () => {
   });
 
   test("User A still accesses own chat after B rejected", async () => {
-    const createRes = await userA.post<{ id: string }>("/api/chats", {
+    const createRes = await userA.post<{ id: string }>("/api/v1/chats", {
       name: "Own Chat",
       type: "direct",
       mode: "direct",
@@ -83,7 +83,7 @@ describe("Cross-Tenant Isolation E2E", () => {
   });
 
   test("User B cannot delete user A's chat", async () => {
-    const createRes = await userA.post<{ id: string }>("/api/chats", {
+    const createRes = await userA.post<{ id: string }>("/api/v1/chats", {
       name: "Delete Target",
       type: "direct",
       mode: "direct",
@@ -100,14 +100,14 @@ describe("Cross-Tenant Isolation E2E", () => {
   });
 
   test("User B cannot list user A's chats", async () => {
-    const createRes = await userA.post<{ id: string }>("/api/chats", {
+    const createRes = await userA.post<{ id: string }>("/api/v1/chats", {
       name: "Hidden Chat",
       type: "direct",
       mode: "direct",
     },);
     expect(createRes.ok,).toBe(true,);
 
-    const listRes = await userB.get<{ data: Array<{ id: string }> }>("/api/chats",);
+    const listRes = await userB.get<{ data: Array<{ id: string }> }>("/api/v1/chats",);
     expect(listRes.ok,).toBe(true,);
     const ids = listRes.data!.data.map((c: { id: string },) => c.id);
     expect(ids,).not.toContain(createRes.data!.id,);

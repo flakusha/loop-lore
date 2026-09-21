@@ -12,6 +12,7 @@ import {
   validateConfig,
   validateDatabaseSafety,
 } from "./load";
+import { normalizeConfig, } from "./load/parse";
 import type { Config, } from "./schema";
 import { createConfigSchema, } from "./schema-class";
 
@@ -443,6 +444,75 @@ configPath = "~/models/llama-swap.yaml"
       expect(config.generation.autoStart,).toBeDefined();
       expect(config.generation.autoStart?.llamaSwap?.enabled,).toBe(true,);
       expect(config.generation.autoStart?.llamaSwap?.configPath,).toBe("~/models/llama-swap.yaml",);
+    } finally {
+      cleanup();
+    }
+  });
+
+  test("env.yaml flat ENV_MAP keys hoist to nested config paths", () => {
+    setupConfigFiles({
+      "env.yaml": `
+TELEMETRY_PII_SECRET: telemetry-flat-secret-from-env-file
+server:
+  port: 8484
+`,
+    },);
+    try {
+      const config = loadConfig(tmpDir,);
+      expect(config.observability.telemetry.piiSecret,).toBe("telemetry-flat-secret-from-env-file",);
+      expect(config.server.port,).toBe(8484,);
+    } finally {
+      cleanup();
+    }
+  });
+
+  test("env.yaml explicit nested key wins over flat ENV_MAP key", () => {
+    setupConfigFiles({
+      "env.yaml": `
+TELEMETRY_PII_SECRET: flat-value
+observability:
+  telemetry:
+    piiSecret: nested-value
+`,
+    },);
+    try {
+      const config = loadConfig(tmpDir,);
+      expect(config.observability.telemetry.piiSecret,).toBe("nested-value",);
+    } finally {
+      cleanup();
+    }
+  });
+
+  test("normalizeConfig strips empty-string and null scalars", () => {
+    const input: Record<string, unknown> = {
+      server: { host: "", port: null, tls: false, },
+      db: { type: "sqlite", filename: "", },
+      _unused: null,
+    };
+    const result = normalizeConfig(input,) as Record<string, unknown>;
+    expect(result.server as Record<string, unknown>,).not.toHaveProperty("host",);
+    expect(result.server as Record<string, unknown>,).not.toHaveProperty("port",);
+    expect((result.server as Record<string, unknown>).tls,).toBe(false,);
+    expect((result.db as Record<string, unknown>).type,).toBe("sqlite",);
+    expect(result.db as Record<string, unknown>,).not.toHaveProperty("filename",);
+    expect(result,).not.toHaveProperty("_unused",);
+  });
+
+  test("loadConfig normalizeConfig applies to env.yaml only, not main config files", () => {
+    try {
+      // Empty host in main config file is NOT normalized (config normalization
+      // applies only to env.yaml / env-var layer, not to user config files).
+      setupConfigFiles({
+        "config.yaml": `
+server:
+  host: ""
+db:
+  type: sqlite
+`,
+      },);
+      const config = loadConfig(tmpDir,);
+      // host stays empty (normalization is env-layer only)
+      expect(config.server.host,).toBe("",);
     } finally {
       cleanup();
     }

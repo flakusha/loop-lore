@@ -138,7 +138,7 @@ describeReal("Real-Server Generation E2E", () => {
       );
 
       const res = await api.post<{ ok: boolean; content: string; messageId: string }>(
-        "/api/generation/generate",
+        "/api/v1/generation/generate",
         {
           chatId: SEED.chat.id,
           parentMessageId: SEED.message.id,
@@ -164,7 +164,7 @@ describeReal("Real-Server Generation E2E", () => {
       if (!llamaInstance) { return; }
 
       const res = await api.post<{ content: string; tokenUsage: { completionTokens: number } }>(
-        "/api/generation/generate",
+        "/api/v1/generation/generate",
         {
           chatId: SEED.chat.id,
           parentMessageId: SEED.message.id,
