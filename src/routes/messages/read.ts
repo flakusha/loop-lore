@@ -19,6 +19,7 @@ import {
   parseToolCalls,
   parseToolResultMeta,
   resolveMessageContent,
+  resolveMessageContentForRender,
   serviceErrorToResponse,
 } from "./helpers";
 import type { HandlerOpts, } from "./types";
@@ -28,7 +29,12 @@ import type { HandlerOpts, } from "./types";
  * @param prefix
  */
 export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
-  const { database, } = opts;
+  const { database, config, } = opts;
+  // BUG-regex-transform-runs-at-store-time-not-render-time: transforms
+  // run on every render. Pulled out of opts.config once so the list
+  // endpoints share the same array reference and avoid per-call array
+  // re-traversal. `config.generation` is optional in test stubs.
+  const regexTransforms = config.generation?.regexTransforms ?? [];
 
   return new Elysia({ name: "messages-read", },)
     .get(
@@ -100,7 +106,8 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
           : null;
         let content: string;
         try {
-          content = await resolveMessageContent(database, message as any,);
+          // BUG-regex-transform-runs-at-store-time-not-render-time: render-time transforms.
+          content = await resolveMessageContentForRender(database, message as any, regexTransforms,);
         } catch {
           content = "[Encrypted — unable to decrypt]";
         }
@@ -166,7 +173,8 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
           variantPromises.push(
             (async (): Promise<Record<string, unknown>> => {
               try {
-                const c = await resolveMessageContent(database, v,);
+                // BUG-regex-transform-runs-at-store-time-not-render-time: render-time transforms.
+                const c = await resolveMessageContentForRender(database, v, regexTransforms,);
                 return { ...v, content: c, };
               } catch {
                 return { ...v, content: "[Encrypted — unable to decrypt]", };
