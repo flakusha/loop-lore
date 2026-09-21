@@ -1978,6 +1978,11 @@ export const SCHEMA = new SchemaManifest()
     key_groups: col("text",),
     scan_depth: col("integer",),
     activation_chance: col("real",),
+    confidence: col("real", { notNull: true, hasDefault: true, },),
+    last_verified: col("text",),
+    source_count: col("integer", { notNull: true, hasDefault: true, },),
+    distortion_level: col("real", { notNull: true, hasDefault: true, },),
+    disputed: col("integer", { notNull: true, hasDefault: true, },),
   },)
   .table("world_members", {
     world_id: col("text", { notNull: true, },),
@@ -2038,6 +2043,7 @@ export const SCHEMA = new SchemaManifest()
     rpg_xp: col("integer", { notNull: true, hasDefault: true, },),
     rpg_loot: col("integer", { notNull: true, hasDefault: true, },),
     rpg_quests: col("integer", { notNull: true, hasDefault: true, },),
+    rules: col("text", { notNull: true, hasDefault: true, },),
   },)
   // ── Generation & Prompts ──────────────────────────────────────────────
   .table("model_capabilities", {

@@ -16,135 +16,49 @@
  * entry for ambient world-building. Entries with active cooldowns are excluded
  * until the cooldown expires. Entries with an audience scope
  * (race/profession/location) are filtered by the speaking actor's identity.
+ *
+ * Lifecycle gate (TASK-world-lore-lifecycle-confidence-decay-distortion):
+ * each world's `worlds.rules.lifecycle_config` may set a `min_confidence`
+ * floor; rows whose `effectiveConfidence` (decay + distortion adjusted) drop
+ * below the floor are dropped. Rows whose `distortion_level` crosses the
+ * `distortion_cap` are wrapped in `<disputed>` so downstream consumers can
+ * surface them with reduced trust. Defaults are identity for worlds that
+ * have not opted in (`min_confidence = 25`, decay 0.5/day, cap 80).
+ *
  * Included entries are ordered by `priority` (high first) then insertion order.
  */
-import { toDate, } from "../../../utils/date";
 import { isLoreVisibleTo, parseLoreScope, } from "../../lore/audience";
 import type { ActorIdentity, } from "../../lore/audience";
 import { wrapSection, } from "../../xml-utils";
 import { recentConversation, } from "../keywords";
 import type { SectionBuilder, } from "../types";
 import {
-  type ActivationEntry,
   clampScanDepth,
+  isCooldownExpired,
   matchesSelectiveKeys,
   MAX_SCAN_DEPTH,
   passesActivationChance,
 } from "./lore-activation";
-import { resolveActorIdentity, } from "./lore-identity";
-
-/** Row shape returned by the lore queries (used by relevance + audience filtering). */
-interface LoreRow extends ActivationEntry {
-  content: string;
-  position: unknown;
-  constant: number | boolean;
-  selective: number | boolean;
-  cooldown_seconds: number;
-  last_activated: string | null;
-  id: string;
-  audience_scope: string | null;
-  priority: number;
-}
-
-/**
- * Check if a lore entry's cooldown has expired.
- * @param lastActivated
- * @param cooldownSeconds
- * @returns void
- */
-function isCooldownExpired(
-  lastActivated: string | null,
-  cooldownSeconds: number,
-): boolean {
-  if (cooldownSeconds <= 0) { return true; }
-  if (!lastActivated) { return true; }
-  const lastActivatedMs = toDate(lastActivated,).getTime();
-  const cooldownMs = cooldownSeconds * 1000;
-  return Date.now() - lastActivatedMs >= cooldownMs;
-}
+import { isLoreDisputed, passesConfidenceFloor, } from "./lore-lifecycle-gate";
+import { loadLore, } from "./lore-load";
+import type { LoreRow, } from "./lore-types";
 
 export const loreSection: SectionBuilder = {
   name: "lore",
   enabled: (ctx,) => ctx.params.includeLore !== false,
   build: async (ctx,) => {
-    const { actor, chat, params, } = ctx;
-    const locationId = chat.current_location_id ?? null;
-
-    const loreResults = await Promise.allSettled([
-      ctx.db
-        .selectFrom("actor_lore_entries",)
-        .select([
-          "content",
-          "keys",
-          "position",
-          "constant",
-          "selective",
-          "cooldown_seconds",
-          "last_activated",
-          "id",
-          "audience_scope",
-          "key_type",
-          "key_groups",
-          "scan_depth",
-          "activation_chance",
-          "priority",
-        ],)
-        .where("actor_id", "=", actor.id,)
-        .where("enabled", "=", "enabled",)
-        .where((eb,) =>
-          chat.world_id
-            ? eb.or([
-              eb("world_id", "is", null,),
-              eb("world_id", "=", chat.world_id,),
-            ],)
-            : eb("world_id", "is", null,)
-        )
-        .orderBy("position", "asc",)
-        .execute(),
-      chat.world_id
-        ? ctx.db
-          .selectFrom("world_lore_entries",)
-          .select([
-            "content",
-            "keys",
-            "position",
-            "constant",
-            "selective",
-            "cooldown_seconds",
-            "last_activated",
-            "id",
-            "audience_scope",
-            "key_type",
-            "key_groups",
-            "scan_depth",
-            "activation_chance",
-            "priority",
-          ],)
-          .where("world_id", "=", chat.world_id,)
-          .where("enabled", "=", "enabled",)
-          .orderBy("position", "asc",)
-          .execute()
-        : Promise.resolve([] as LoreRow[],),
-      resolveActorIdentity(ctx.db, actor.id, chat.world_id,),
-    ],);
-    const actorLoreResult = loreResults[0];
-    const worldLoreResult = loreResults[1];
-    const identityResult = loreResults[2];
-    if (actorLoreResult.status === "rejected") { throw actorLoreResult.reason; }
-    if (worldLoreResult.status === "rejected") { throw worldLoreResult.reason; }
-    if (identityResult.status === "rejected") { throw identityResult.reason; }
-    const actorLore = actorLoreResult.value;
-    const worldLore = worldLoreResult.value;
-    const identity = identityResult.value;
-
-    const identityWithLocation: ActorIdentity = { ...identity, locationId, };
-
-    const allEntries: LoreRow[] = [...actorLore, ...worldLore,];
+    const { chat, params, } = ctx;
+    const loaded = await loadLore(ctx,);
+    const identityWithLocation: ActorIdentity = {
+      ...loaded.actorIdentity,
+      locationId: chat.current_location_id ?? null,
+    };
 
     // Compile the conversation scan window once. When selective keys are given
     // explicitly (e.g. from the UI), activate against those instead of the DB.
     // Otherwise scan up to the deepest scan_depth among entries that need a scan
     // (capped), deriving per-entry word/text slices from `recentMessages`.
+    const allEntries: LoreRow[] = loaded.entries;
     const needsScan = allEntries.some(
       (e,) => !params.selectiveKeys && e.selective && !e.constant,
     );
@@ -168,6 +82,8 @@ export const loreSection: SectionBuilder = {
       if (!isLoreVisibleTo({ audienceScope: parseLoreScope(entry.audience_scope,), }, identityWithLocation,)) {
         return false;
       }
+      // Lifecycle confidence floor (TASK-world-lore-lifecycle-confidence-decay-distortion).
+      if (!passesConfidenceFloor(entry, loaded.lifecycleConfig,)) { return false; }
       // Check cooldown second
       if (!isCooldownExpired(entry.last_activated, entry.cooldown_seconds,)) {
         return false;
@@ -219,8 +135,25 @@ export const loreSection: SectionBuilder = {
       }
     }
 
-    const loreText = Array.from(relevantEntries, (e,) => e.content,).join("\n\n",);
-
+    // Disputed entries (distortion_level >= cfg.distortion_cap OR `disputed`
+    // column flagged) are wrapped in `<disputed>` so downstream consumers can
+    // surface them with reduced trust. Non-disputed entries stay plain.
+    const parts: string[] = [];
+    const undisputedList: string[] = [];
+    const disputedList: string[] = [];
+    for (const entry of relevantEntries) {
+      if (isLoreDisputed(entry, loaded.lifecycleConfig,)) { disputedList.push(entry.content,); }
+      else { undisputedList.push(entry.content,); }
+    }
+    if (undisputedList.length > 0) { parts.push(undisputedList.join("\n\n",),); }
+    if (disputedList.length > 0) {
+      // Disputed entries are tagged with a bracket sentinel that survives
+      // XML escaping (the outer `wrapSection("lore", …)` would mangle `<…>`
+      // and `>…<`); `[disputed]` is plain text to the escape pass.
+      const lines = disputedList.flatMap((c,) => [`[disputed] ${c}`,]);
+      parts.push(lines.join("\n\n",),);
+    }
+    const loreText = parts.join("\n\n",);
     return loreText ? [{ role: "system", content: wrapSection("lore", loreText,), },] : [];
   },
 };
