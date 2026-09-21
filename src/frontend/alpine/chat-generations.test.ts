@@ -299,7 +299,7 @@ describe("connectGenerationSSE", () => {
     chatGenerations.connectGenerationSSE!.call(asState(host,), "chat-1",);
     expect(host.isGenerating,).toBe(true,);
     const es = FakeEventSource.instances[0]!;
-    expect(es.url,).toBe("/api/generation/stream/chat-1",);
+    expect(es.url,).toBe("/api/v1/generation/stream/chat-1",);
     es.emit("stream-update", "hello",);
     expect(host._streamContent,).toBe("hello",);
     expect(host.activeAttemptId,).toBe("chat-1",);

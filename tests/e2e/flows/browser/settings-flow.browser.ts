@@ -5,8 +5,8 @@
  * Browser E2E: Settings Flow
  *
  * Verifies settings changes through the /views/settings UI actually PERSIST:
- *  - displayName → PUT /api/users/me → users.display_name
- *  - theme → PATCH /api/users/me/settings → users.settings JSON + localStorage
+ *  - displayName → PUT /api/v1/users/me → users.display_name
+ *  - theme → PATCH /api/v1/users/me/settings → users.settings JSON + localStorage
  *  - keys tab renders the encryption-key management surface
  * @pillar api-keys
  */
@@ -54,7 +54,7 @@ describe("Settings flow E2E", () => {
         await page.click("[data-testid='save-general']",);
         await saveRes;
 
-        // PUT /api/users/me sets users.display_name for the solo user.
+        // PUT /api/v1/users/me sets users.display_name for the solo user.
         const row = await ctx.db
           .selectFrom("users",)
           .select(["display_name",],)
@@ -120,7 +120,7 @@ describe("Settings flow E2E", () => {
     }, 60_000,);
   });
 
-  test("every tab (general/chat/api/notifications/data/keys) renders its panel", async () => {
+  test("every tab (general/chat/api/v1/notifications/data/keys) renders its panel", async () => {
     const page = await ctx.openPage();
     const errors = trackPageErrors(page,);
     try {

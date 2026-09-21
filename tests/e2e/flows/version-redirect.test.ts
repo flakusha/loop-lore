@@ -21,8 +21,8 @@ describe("API versioning redirects", () => {
     server.close();
   },);
 
-  test("GET /api/chats is served (legacy route still registered)", async () => {
-    const res = await fetch(`${server.url}/api/chats`, { redirect: "manual", },);
+  test("GET /api/v1/chats is served (legacy route still registered)", async () => {
+    const res = await fetch(`${server.url}/api/v1/chats`, { redirect: "manual", },);
     expect(res.status,).toBe(200,);
   });
 
@@ -32,7 +32,7 @@ describe("API versioning redirects", () => {
   });
 
   test("unversioned unknown /api/{resource} → 308 with single v1 prefix", async () => {
-    const res = await fetch(`${server.url}/api/no-such-endpoint-xyz`, {
+    const res = await fetch(`${server.url}/api/v1/no-such-endpoint-xyz`, {
       method: "GET",
       redirect: "manual",
     },);
@@ -51,7 +51,7 @@ describe("API versioning redirects", () => {
   });
 
   test("unversioned /api/{resource} redirect terminates at the v1 path", async () => {
-    const first = await fetch(`${server.url}/api/no-such-endpoint-xyz`, {
+    const first = await fetch(`${server.url}/api/v1/no-such-endpoint-xyz`, {
       method: "GET",
       redirect: "manual",
     },);

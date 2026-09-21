@@ -343,7 +343,7 @@ describe("chatSectionsNav.bulkAssignToSection", () => {
       },
     },);
     await (chatSectionsNav as any).bulkAssignToSection.call(ctx, "s1",);
-    expect(fetchCalls.at(-1,)?.url,).toBe("/api/chats/chat-1/sections/s1/assign-all",);
+    expect(fetchCalls.at(-1,)?.url,).toBe("/api/v1/chats/chat-1/sections/s1/assign-all",);
     expect(loaded,).toBe(2,);
   });
 
@@ -365,7 +365,7 @@ describe("chatSectionsNav.insertNarrative", () => {
       },
     },);
     await (chatSectionsNav as any).insertNarrative.call(ctx, "s1", "The party rides north.",);
-    expect(fetchCalls.at(-1,)?.url,).toBe("/api/chats/chat-1/sections/s1/narrative",);
+    expect(fetchCalls.at(-1,)?.url,).toBe("/api/v1/chats/chat-1/sections/s1/narrative",);
     expect(loaded,).toBe(1,);
   });
 

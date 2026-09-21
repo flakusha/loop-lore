@@ -29,7 +29,7 @@ export function makeAttachment(
     order: 0,
     caption,
     label: caption,
-    url: `/api/assets/${assetId}`,
+    url: `/api/v1/assets/${assetId}`,
     filename: `${assetId}.png`,
     mimeType: "image/png",
     type: "image",

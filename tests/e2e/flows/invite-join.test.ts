@@ -5,7 +5,7 @@
  *   - Owner creates an invite (code) for a chat
  *   - Non-owner cannot create/list/revoke invites (404)
  *   - A second user joins the chat by redeeming the code
- *   - Joining grants access to the chat (GET /api/chats/:id)
+ *   - Joining grants access to the chat (GET /api/v1/chats/:id)
  *   - Expired / revoked / used-up / invalid codes are rejected
  *   - Cross-tenant isolation: a user cannot join a chat they weren't invited to
  *
@@ -138,7 +138,7 @@ describe("Chat Invite & Join E2E", () => {
 
   test("owner creates an invite for the chat", async () => {
     const res = await owner.post<{ id: string; code: string; chatId: string; uses: number; status: string }>(
-      `/api/chats/${SEED.chat.id}/invites`,
+      `/api/v1/chats/${SEED.chat.id}/invites`,
       {},
     );
     expect(res.ok,).toBe(true,);
@@ -152,19 +152,19 @@ describe("Chat Invite & Join E2E", () => {
   });
 
   test("non-owner cannot create an invite (404)", async () => {
-    const res = await joiner.post(`/api/chats/${SEED.chat.id}/invites`, {},);
+    const res = await joiner.post(`/api/v1/chats/${SEED.chat.id}/invites`, {},);
     expect(res.ok,).toBe(false,);
     expect(res.status,).toBe(404,);
   });
 
   test("non-owner cannot list invites (404)", async () => {
-    const res = await joiner.get(`/api/chats/${SEED.chat.id}/invites`,);
+    const res = await joiner.get(`/api/v1/chats/${SEED.chat.id}/invites`,);
     expect(res.ok,).toBe(false,);
     expect(res.status,).toBe(404,);
   });
 
   test("owner lists the invites", async () => {
-    const res = await owner.get<{ data: Array<{ code: string }> }>(`/api/chats/${SEED.chat.id}/invites`,);
+    const res = await owner.get<{ data: Array<{ code: string }> }>(`/api/v1/chats/${SEED.chat.id}/invites`,);
     expect(res.ok,).toBe(true,);
     expect(Array.isArray(res.data!.data,),).toBe(true,);
     expect(res.data!.data.length,).toBeGreaterThanOrEqual(1,);
@@ -173,21 +173,21 @@ describe("Chat Invite & Join E2E", () => {
   test("joiner redeems the code and gains access to the chat", async () => {
     const code = inviteCode;
     const joinRes = await joiner.post<{ chatId: string; alreadyMember: boolean }>(
-      `/api/invites/${code}/join`,
+      `/api/v1/invites/${code}/join`,
       {},
     );
     expect(joinRes.ok,).toBe(true,);
     expect(joinRes.data!.chatId,).toBe(SEED.chat.id,);
 
     // Joiner can now access the chat.
-    const chatRes = await joiner.get(`/api/chats/${SEED.chat.id}`,);
+    const chatRes = await joiner.get(`/api/v1/chats/${SEED.chat.id}`,);
     expect(chatRes.ok,).toBe(true,);
   });
 
   test("re-joining as an already-member is idempotent", async () => {
     const code = inviteCode;
     const joinRes = await joiner.post<{ chatId: string; alreadyMember: boolean }>(
-      `/api/invites/${code}/join`,
+      `/api/v1/invites/${code}/join`,
       {},
     );
     expect(joinRes.ok,).toBe(true,);
@@ -202,33 +202,33 @@ describe("Chat Invite & Join E2E", () => {
 
   test("revoked invite is rejected (404)", async () => {
     // Create a fresh invite and revoke it.
-    const created = await owner.post<{ id: string; code: string }>(`/api/chats/${SEED.chat.id}/invites`, {},);
+    const created = await owner.post<{ id: string; code: string }>(`/api/v1/chats/${SEED.chat.id}/invites`, {},);
     expect(created.ok,).toBe(true,);
     const inviteId = created.data!.id;
     const code = created.data!.code;
 
-    const revokeRes = await owner.del(`/api/chats/${SEED.chat.id}/invites/${inviteId}`,);
+    const revokeRes = await owner.del(`/api/v1/chats/${SEED.chat.id}/invites/${inviteId}`,);
     expect(revokeRes.ok,).toBe(true,);
 
-    const joinRes = await joiner.post(`/api/invites/${code}/join`, {},);
+    const joinRes = await joiner.post(`/api/v1/invites/${code}/join`, {},);
     expect(joinRes.ok,).toBe(false,);
     expect(joinRes.status,).toBe(404,);
   });
 
   test("used-up invite is rejected (410)", async () => {
     const created = await owner.post<{ id: string; code: string }>(
-      `/api/chats/${SEED.chat.id}/invites`,
+      `/api/v1/chats/${SEED.chat.id}/invites`,
       { maxUses: 1, },
     );
     expect(created.ok,).toBe(true,);
     const code = created.data!.code;
 
     // First join consumes the single use.
-    const first = await outsider.post(`/api/invites/${code}/join`, {},);
+    const first = await outsider.post(`/api/v1/invites/${code}/join`, {},);
     expect(first.ok,).toBe(true,);
 
     // A different user cannot join — capacity exhausted.
-    const second = await joiner2.post(`/api/invites/${code}/join`, {},);
+    const second = await joiner2.post(`/api/v1/invites/${code}/join`, {},);
     expect(second.ok,).toBe(false,);
     expect(second.status,).toBe(410,);
   });
@@ -236,13 +236,13 @@ describe("Chat Invite & Join E2E", () => {
   test("expired invite is rejected (410)", async () => {
     const past = new Date(Date.now() - 1000,).toISOString();
     const created = await owner.post<{ id: string; code: string }>(
-      `/api/chats/${SEED.chat.id}/invites`,
+      `/api/v1/chats/${SEED.chat.id}/invites`,
       { expiresAt: past, },
     );
     expect(created.ok,).toBe(true,);
     const code = created.data!.code;
 
-    const joinRes = await outsider.post(`/api/invites/${code}/join`, {},);
+    const joinRes = await outsider.post(`/api/v1/invites/${code}/join`, {},);
     expect(joinRes.ok,).toBe(false,);
     expect(joinRes.status,).toBe(410,);
   });

@@ -66,7 +66,7 @@ describe("worldInvites.loadInvites", () => {
     expect(c.invites,).toHaveLength(1,);
     expect(c.invitesLoaded,).toBe(true,);
     expect(c.loadingInvites,).toBe(false,);
-    expect(fetchCalls[0]!.url,).toBe("/api/worlds/w1/invites",);
+    expect(fetchCalls[0]!.url,).toBe("/api/v1/worlds/w1/invites",);
   });
 
   test("keeps stale rows on failure", async () => {
@@ -229,7 +229,7 @@ describe("worldInvites.revokeInvite", () => {
     mockFetch(200, {},);
     const c = ctx({ invites: [{ id: "i1", code: "A", }, { id: "i2", code: "B", },] as never, },);
     await c.revokeInvite("i1",);
-    expect(fetchCalls[0]!.url,).toBe("/api/worlds/w1/invites/i1",);
+    expect(fetchCalls[0]!.url,).toBe("/api/v1/worlds/w1/invites/i1",);
     expect(c.invites.map((r,) => r.id),).toEqual(["i2",],);
     expect(toasts[0]?.type,).toBe("success",);
   });

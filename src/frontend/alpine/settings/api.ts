@@ -30,7 +30,7 @@ export function api(): Partial<SettingsState> & ThisType<SettingsState> {
 
     async testConnection() {
       try {
-        const res = await apiFetch("/api/generation/test-connection", { method: "POST", },);
+        const res = await apiFetch("/api/v1/generation/test-connection", { method: "POST", },);
         if (res.ok) {
           log.info("Connection test succeeded",);
         } else {
@@ -56,7 +56,7 @@ export function api(): Partial<SettingsState> & ThisType<SettingsState> {
         if (payload.locale) {
           localStorage.setItem("locale", payload.locale as string,);
           // Use new i18n API endpoint for locale
-          await apiFetch("/api/i18n/locale", {
+          await apiFetch("/api/v1/i18n/locale", {
             method: "PATCH",
             headers: { "Content-Type": "application/json", Accept: "application/json", },
             body: jsonBody({ locale: payload.locale, },),

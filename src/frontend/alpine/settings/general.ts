@@ -33,7 +33,7 @@ export function general(): Partial<SettingsState> & ThisType<SettingsState> {
 
     async loadLocales() {
       try {
-        const res = await apiFetch("/api/i18n/locales", { headers: { Accept: "application/json", }, },);
+        const res = await apiFetch("/api/v1/i18n/locales", { headers: { Accept: "application/json", }, },);
         if (res.ok) {
           const data = await res.json();
           this.locales = data.locales as LocaleInfoArray;
@@ -58,7 +58,7 @@ export function general(): Partial<SettingsState> & ThisType<SettingsState> {
 
     async loadSettings() {
       try {
-        const res = await apiFetch("/api/settings", { headers: { Accept: "application/json", }, },);
+        const res = await apiFetch("/api/v1/settings", { headers: { Accept: "application/json", }, },);
         if (res.ok) {
           const settings = await res.json();
           const fields = [
@@ -93,7 +93,7 @@ export function general(): Partial<SettingsState> & ThisType<SettingsState> {
       const userId = (globalThis as any).__USER_ID as string | undefined;
       if (!userId) { return; }
       try {
-        const res = await apiFetch(`/api/nsfw/moderation/preferences/${encodeURIComponent(userId,)}`, {
+        const res = await apiFetch(`/api/v1/nsfw/moderation/preferences/${encodeURIComponent(userId,)}`, {
           headers: { Accept: "application/json", },
         },);
         if (res.ok) {
@@ -132,7 +132,7 @@ export function general(): Partial<SettingsState> & ThisType<SettingsState> {
 
     async loadProviders() {
       try {
-        const res = await apiFetch("/api/providers", { headers: { Accept: "application/json", }, },);
+        const res = await apiFetch("/api/v1/providers", { headers: { Accept: "application/json", }, },);
         if (res.ok) {
           const data = await res.json();
           const providers = data.providers || [];
@@ -171,7 +171,7 @@ export function general(): Partial<SettingsState> & ThisType<SettingsState> {
 
     async exportAllData() {
       try {
-        const res = await apiFetch("/api/settings/export",);
+        const res = await apiFetch("/api/v1/settings/export",);
         if (!res.ok) {
           showToast("error", t("toasts.exportFailed",),);
           return;

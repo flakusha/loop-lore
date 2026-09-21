@@ -19,7 +19,7 @@
  */
 import { apiFetch, } from "./htmx";
 
-/** One downloadable model file as served by GET /api/local-inference/manifest. */
+/** One downloadable model file as served by GET /api/v1/local-inference/manifest. */
 export interface CatalogModelFile {
   name: string;
   url: string;
@@ -27,7 +27,7 @@ export interface CatalogModelFile {
   sha256?: string;
 }
 
-/** Catalog entry as served by GET /api/local-inference/manifest. */
+/** Catalog entry as served by GET /api/v1/local-inference/manifest. */
 export interface CatalogModel {
   id: string;
   label: string;
@@ -50,7 +50,7 @@ export interface LocalInferenceCapability {
 export async function fetchCatalog(
   fetchImpl: (url: string,) => Promise<Response> = apiFetch,
 ): Promise<CatalogModel[]> {
-  const res = await fetchImpl("/api/local-inference/manifest",);
+  const res = await fetchImpl("/api/v1/local-inference/manifest",);
   if (!res.ok) { throw new Error(`Manifest request failed (${res.status})`,); }
   const payload: unknown = await res.json();
   if (payload && typeof payload === "object" && "models" in payload) {
@@ -74,7 +74,7 @@ export async function fetchCapability(
   fetchImpl: (url: string,) => Promise<Response> = apiFetch,
 ): Promise<LocalInferenceCapability> {
   try {
-    const res = await fetchImpl("/api/local-inference/capability",);
+    const res = await fetchImpl("/api/v1/local-inference/capability",);
     if (!res.ok) { return { downloadsAllowed: true, }; }
     const payload: unknown = await res.json();
     if (payload && typeof payload === "object" && "downloadsAllowed" in payload) {

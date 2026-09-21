@@ -107,7 +107,7 @@ export function buildFractalState(worldId: string,): FractalState {
       this.loadingTree = true;
       this.error = false;
       try {
-        const res = await apiFetch(`/api/worlds/${this.worldId}/locations/tree`, {
+        const res = await apiFetch(`/api/v1/worlds/${this.worldId}/locations/tree`, {
           headers: { Accept: "application/json", },
         },);
         if (!res.ok) {
@@ -128,7 +128,7 @@ export function buildFractalState(worldId: string,): FractalState {
     async loadRoutes() {
       this.loadingRoutes = true;
       try {
-        const res = await apiFetch(`/api/worlds/${this.worldId}/travel-routes`, {
+        const res = await apiFetch(`/api/v1/worlds/${this.worldId}/travel-routes`, {
           headers: { Accept: "application/json", },
         },);
         if (!res.ok) { return; }
@@ -149,7 +149,7 @@ export function buildFractalState(worldId: string,): FractalState {
       this.selectedRouteId = routeId;
       this.routeDetail = null;
       try {
-        const res = await apiFetch(`/api/worlds/${this.worldId}/travel-routes/${routeId}`, {
+        const res = await apiFetch(`/api/v1/worlds/${this.worldId}/travel-routes/${routeId}`, {
           headers: { Accept: "application/json", },
         },);
         if (!res.ok) { return; }
@@ -165,7 +165,7 @@ export function buildFractalState(worldId: string,): FractalState {
       this.creatingRoute = true;
       try {
         // hint: Logic changed on both sides. Requires understanding intent of each change.
-        const res = await apiFetch(`/api/worlds/${this.worldId}/travel-routes`, {
+        const res = await apiFetch(`/api/v1/worlds/${this.worldId}/travel-routes`, {
           method: "POST",
           headers: { "Content-Type": "application/json", Accept: "application/json", },
           body: jsonStringifyOr({
@@ -188,7 +188,7 @@ export function buildFractalState(worldId: string,): FractalState {
       this.attaching = true;
       try {
         const res = await apiFetch(
-          `/api/worlds/${this.worldId}/travel-routes/${this.attachRouteId}/attach/${this.attachLocationId}`,
+          `/api/v1/worlds/${this.worldId}/travel-routes/${this.attachRouteId}/attach/${this.attachLocationId}`,
           { method: "POST", headers: { Accept: "application/json", }, },
         );
         if (!res.ok) { return; }
@@ -201,7 +201,7 @@ export function buildFractalState(worldId: string,): FractalState {
 
     async detachTransport(locId: string, routeId: string,) {
       const res = await apiFetch(
-        `/api/worlds/${this.worldId}/travel-routes/${routeId}/attach/${locId}`,
+        `/api/v1/worlds/${this.worldId}/travel-routes/${routeId}/attach/${locId}`,
         { method: "DELETE", headers: { Accept: "application/json", }, },
       );
       if (res.ok) { await this.loadRoutes(); }

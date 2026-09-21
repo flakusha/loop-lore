@@ -85,7 +85,7 @@ describe("worldItems.loadItems", () => {
       weight: 3,
     },);
     expect(c.itemsLoaded,).toBe(true,);
-    expect(fetchCalls[0]!.url,).toBe("/api/worlds/w1/items",);
+    expect(fetchCalls[0]!.url,).toBe("/api/v1/worlds/w1/items",);
   });
 
   test("sets itemsLoaded only on success", async () => {
@@ -102,7 +102,7 @@ describe("worldItems.addItem", () => {
     mockFetch(201, { id: "item-2", },);
     const c = ctx({ newItemName: "  Potion  ", newItemCategory: "consumable", newItemRarity: "common", },);
     await c.addItem();
-    expect(fetchCalls[0]!.url,).toBe("/api/worlds/w1/items",);
+    expect(fetchCalls[0]!.url,).toBe("/api/v1/worlds/w1/items",);
     expect(fetchCalls[0]!.opts?.method,).toBe("POST",);
     expect(JSON.parse(fetchCalls[0]!.opts?.body as string,),).toMatchObject({
       name: "Potion",
@@ -110,7 +110,7 @@ describe("worldItems.addItem", () => {
       rarity: "common",
     },);
     expect(c.newItemName,).toBe("",);
-    expect(JSON.stringify(fetchCalls.map((f,) => f.url),),).toContain("/api/worlds/w1/items",);
+    expect(JSON.stringify(fetchCalls.map((f,) => f.url),),).toContain("/api/v1/worlds/w1/items",);
   });
 
   test("ignores empty name", async () => {
@@ -133,7 +133,7 @@ describe("worldItems.saveItem", () => {
       editItemWeight: "2",
     },);
     await c.saveItem("item-1",);
-    expect(fetchCalls[0]!.url,).toBe("/api/worlds/w1/items/item-1",);
+    expect(fetchCalls[0]!.url,).toBe("/api/v1/worlds/w1/items/item-1",);
     expect(fetchCalls[0]!.opts?.method,).toBe("PUT",);
     expect(JSON.parse(fetchCalls[0]!.opts?.body as string,),).toMatchObject({
       name: "Iron Sword X",
@@ -167,7 +167,7 @@ describe("worldItems.deleteItem", () => {
     mockFetch(200, {},);
     const c = ctx({ items: [{ ...(sampleItems.data[0] as (typeof sampleItems.data)[0]), },], },);
     await c.deleteItem("item-1",);
-    expect(fetchCalls[0]!.url,).toBe("/api/worlds/w1/items/item-1",);
+    expect(fetchCalls[0]!.url,).toBe("/api/v1/worlds/w1/items/item-1",);
     expect(fetchCalls[0]!.opts?.method,).toBe("DELETE",);
   });
 });
@@ -183,7 +183,7 @@ describe("worldItems.loadInstances", () => {
     expect(c.instances,).toHaveLength(2,);
     expect(c.instances[0],).toMatchObject({ id: "inst-1", location_id: "loc-1", quantity: 3, },);
     expect(c.instances[1]!.location_id,).toBeNull();
-    expect(fetchCalls[0]!.url,).toBe("/api/worlds/w1/items/item-1/instances",);
+    expect(fetchCalls[0]!.url,).toBe("/api/v1/worlds/w1/items/item-1/instances",);
     expect(c.instancesLoaded,).toBe(true,);
   });
 
@@ -205,7 +205,7 @@ describe("worldItems.placeInstance", () => {
       locations: [{ id: "loc-1", name: "Darkwood", description: null, parent_location_id: null, },],
     },);
     await c.placeInstance("item-1",);
-    expect(fetchCalls[0]!.url,).toBe("/api/worlds/w1/item-instances",);
+    expect(fetchCalls[0]!.url,).toBe("/api/v1/worlds/w1/item-instances",);
     expect(fetchCalls[0]!.opts?.method,).toBe("POST",);
     expect(JSON.parse(fetchCalls[0]!.opts?.body as string,),).toMatchObject({
       itemId: "item-1",
@@ -221,8 +221,8 @@ describe("worldItems.destroyInstance", () => {
     mockFetch(200, {},);
     const c = ctx({ expandedItem: "item-1", },);
     await c.destroyInstance("inst-1",);
-    expect(fetchCalls[0]!.url,).toBe("/api/worlds/w1/item-instances/inst-1",);
+    expect(fetchCalls[0]!.url,).toBe("/api/v1/worlds/w1/item-instances/inst-1",);
     expect(fetchCalls[0]!.opts?.method,).toBe("DELETE",);
-    expect(fetchCalls.map((f,) => f.url),).toContain("/api/worlds/w1/items/item-1/instances",);
+    expect(fetchCalls.map((f,) => f.url),).toContain("/api/v1/worlds/w1/items/item-1/instances",);
   });
 });

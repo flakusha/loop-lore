@@ -52,7 +52,7 @@ globalThis.notificationsBell = function(): NotificationBellState {
 
     async refresh() {
       try {
-        const res = await apiFetch("/api/notifications?unread=true",);
+        const res = await apiFetch("/api/v1/notifications?unread=true",);
         if (!res.ok) { return; }
         const data = parseOr(NotificationsRefresh, await res.json(), { items: [], },);
         this.items = data.items;
@@ -66,7 +66,7 @@ globalThis.notificationsBell = function(): NotificationBellState {
 
     connect() {
       if (bellStream) { return; }
-      bellStream = new EventSource("/api/notifications/stream",);
+      bellStream = new EventSource("/api/v1/notifications/stream",);
       bellStream.addEventListener("notifications", (ev: MessageEvent,) => {
         const data = parseOr(NotificationsEvent, jsonParseOr(ev.data, null,), {
           unreadCount: 0,
@@ -98,7 +98,7 @@ globalThis.notificationsBell = function(): NotificationBellState {
     },
 
     async markRead(id: string,) {
-      await apiFetch(`/api/notifications/${id}`, {
+      await apiFetch(`/api/v1/notifications/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ read: true, },),
@@ -110,13 +110,13 @@ globalThis.notificationsBell = function(): NotificationBellState {
     },
 
     async markAllRead() {
-      await apiFetch("/api/notifications/read-all", { method: "PATCH", },);
+      await apiFetch("/api/v1/notifications/read-all", { method: "PATCH", },);
       this.items = Array.from(this.items, (i,) => ({ ...i, read: 1, }),);
       this.unreadCount = 0;
     },
 
     async dismiss(id: string,) {
-      await apiFetch(`/api/notifications/${id}`, { method: "DELETE", },);
+      await apiFetch(`/api/v1/notifications/${id}`, { method: "DELETE", },);
       const filteredItems: typeof this.items = [];
       for (const i of this.items) { if (i.id !== id) { filteredItems.push(i,); } }
       this.items = filteredItems;
@@ -146,7 +146,7 @@ globalThis.notificationPrefs = function(): NotificationPrefsState {
 
     async refresh() {
       try {
-        const res = await apiFetch("/api/notifications/preferences",);
+        const res = await apiFetch("/api/v1/notifications/preferences",);
         if (!res.ok) { return; }
         const data = (await res.json()) as {
           enabled: Record<string, boolean>;
@@ -180,7 +180,7 @@ globalThis.notificationPrefs = function(): NotificationPrefsState {
     async save() {
       this.saving = true;
       try {
-        await apiFetch("/api/notifications/preferences", {
+        await apiFetch("/api/v1/notifications/preferences", {
           method: "PATCH",
           headers: { "Content-Type": "application/json", },
           body: jsonBody({ enabled: this.enabled, mutedWorlds: this.mutedWorlds, },),

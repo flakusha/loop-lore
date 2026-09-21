@@ -41,7 +41,7 @@ export const chatBackgrounds: Partial<ChatState> & ThisType<ChatState> = {
   async loadBackground() {
     if (!this.activeChat) { return; }
     try {
-      const res = await apiFetch(`/api/chats/${this.activeChat}/background`,);
+      const res = await apiFetch(`/api/v1/chats/${this.activeChat}/background`,);
       if (!res.ok) { return; }
       const body = await res.json();
       this._background = (body.data as ChatBackgroundRow | null) ?? null;
@@ -54,7 +54,7 @@ export const chatBackgrounds: Partial<ChatState> & ThisType<ChatState> = {
     if (!this.activeChat) { return; }
     this._backgroundsLoading = true;
     try {
-      const res = await apiFetch("/api/backgrounds",);
+      const res = await apiFetch("/api/v1/backgrounds",);
       if (res.ok) {
         // Load the chat's assignment as well so a stale cached background is
         // refreshed (important after a location change auto-sync).
@@ -71,7 +71,7 @@ export const chatBackgrounds: Partial<ChatState> & ThisType<ChatState> = {
   async setBackground(backgroundId: string,) {
     if (!this.activeChat) { return; }
     try {
-      const res = await apiFetch(`/api/chats/${this.activeChat}/background`, {
+      const res = await apiFetch(`/api/v1/chats/${this.activeChat}/background`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ backgroundId, },),
@@ -88,7 +88,7 @@ export const chatBackgrounds: Partial<ChatState> & ThisType<ChatState> = {
   async removeBackground() {
     if (!this.activeChat) { return; }
     try {
-      const res = await apiFetch(`/api/chats/${this.activeChat}/background`, { method: "DELETE", },);
+      const res = await apiFetch(`/api/v1/chats/${this.activeChat}/background`, { method: "DELETE", },);
       if (res.ok) { this._background = null; }
     } catch (error) {
       log.warn("removeBackground failed", { error: String(error,), },);

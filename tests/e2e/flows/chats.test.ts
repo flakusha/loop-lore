@@ -34,7 +34,7 @@ describe("Chats E2E", () => {
   afterAll(() => {
     server.close();
   },);
-  test("GET /api/chats returns empty list when no chats", async () => {
+  test("GET /api/v1/chats returns empty list when no chats", async () => {
     await api.login();
     const res = await api.get<{ data: [] }>("/api/v1/chats",);
     expect(res.ok,).toBe(true,);
@@ -42,7 +42,7 @@ describe("Chats E2E", () => {
     expect(Array.isArray(res.data!.data,),).toBe(true,);
   });
 
-  test("POST /api/chats creates a new chat", async () => {
+  test("POST /api/v1/chats creates a new chat", async () => {
     await api.login();
     const res = await api.post<{ id: string }>("/api/v1/chats", {
       name: "Created Chat",
@@ -53,7 +53,7 @@ describe("Chats E2E", () => {
     expect(res.data!.id,).toBeTruthy();
   });
 
-  test("GET /api/chats returns created chat in list", async () => {
+  test("GET /api/v1/chats returns created chat in list", async () => {
     await api.login();
     const res = await api.get<{ data: Array<{ id: string; name: string }> }>("/api/v1/chats",);
     expect(res.ok,).toBe(true,);
@@ -62,7 +62,7 @@ describe("Chats E2E", () => {
     expect(chats.some((c,) => c.name === "Created Chat"),).toBe(true,);
   });
 
-  test("POST /api/chats requires name", async () => {
+  test("POST /api/v1/chats requires name", async () => {
     await api.login();
     const res = await api.post("/api/v1/chats", { type: "direct", },);
     expect(res.ok,).toBe(false,);
@@ -70,7 +70,7 @@ describe("Chats E2E", () => {
     expect(res.code,).toBeTruthy(); // TEST.2 error envelope
   });
 
-  test("GET /api/chats/:id returns single chat", async () => {
+  test("GET /api/v1/chats/:id returns single chat", async () => {
     await api.login();
     // Create a chat first
     const createRes = await api.post<{ id: string }>("/api/v1/chats", {
@@ -81,13 +81,13 @@ describe("Chats E2E", () => {
     expect(createRes.ok,).toBe(true,);
     const chatId = createRes.data!.id;
 
-    const res = await api.get(`/api/chats/${chatId}`,);
+    const res = await api.get(`/api/v1/chats/${chatId}`,);
     expect(res.ok,).toBe(true,);
     const chat = res.data as Record<string, unknown>;
     expect(chat.name,).toBe("Single Chat",);
   });
 
-  test("PUT /api/chats/:id updates chat name", async () => {
+  test("PUT /api/v1/chats/:id updates chat name", async () => {
     await api.login();
     const createRes = await api.post<{ id: string }>("/api/v1/chats", {
       name: "Old Name",
@@ -95,14 +95,14 @@ describe("Chats E2E", () => {
     },);
     const chatId = createRes.data!.id;
 
-    const updateRes = await api.put(`/api/chats/${chatId}`, { name: "Updated Name", },);
+    const updateRes = await api.put(`/api/v1/chats/${chatId}`, { name: "Updated Name", },);
     expect(updateRes.ok,).toBe(true,);
 
-    const getRes = await api.get<Record<string, unknown>>(`/api/chats/${chatId}`,);
+    const getRes = await api.get<Record<string, unknown>>(`/api/v1/chats/${chatId}`,);
     expect(getRes.data!.name,).toBe("Updated Name",);
   });
 
-  test("DELETE /api/chats/:id deletes chat", async () => {
+  test("DELETE /api/v1/chats/:id deletes chat", async () => {
     await api.login();
     const createRes = await api.post<{ id: string }>("/api/v1/chats", {
       name: "To Delete",
@@ -110,10 +110,10 @@ describe("Chats E2E", () => {
     },);
     const chatId = createRes.data!.id;
 
-    const deleteRes = await api.del(`/api/chats/${chatId}`,);
+    const deleteRes = await api.del(`/api/v1/chats/${chatId}`,);
     expect(deleteRes.ok,).toBe(true,);
 
-    const getRes = await api.get(`/api/chats/${chatId}`,);
+    const getRes = await api.get(`/api/v1/chats/${chatId}`,);
     expect(getRes.status,).toBe(404,);
     expect(getRes.code,).toBeTruthy(); // TEST.2 error envelope
   });
@@ -123,7 +123,7 @@ describe("Chats E2E", () => {
     await seedChat(server.db,);
     await api.loginAs(SEED.user.username, SEED.user.password,);
 
-    const res = await api.get<Record<string, unknown>>(`/api/chats/${SEED.chat.id}`,);
+    const res = await api.get<Record<string, unknown>>(`/api/v1/chats/${SEED.chat.id}`,);
     expect(res.ok,).toBe(true,);
     expect(res.data!.name,).toBe(SEED.chat.name,);
   });
@@ -134,12 +134,12 @@ describe("Chats E2E", () => {
 
     // Log in as User A and verify access
     await api.loginAs(SEED.user.username, SEED.user.password,);
-    const ownRes = await api.get(`/api/chats/${SEED.chat.id}`,);
+    const ownRes = await api.get(`/api/v1/chats/${SEED.chat.id}`,);
     expect(ownRes.ok,).toBe(true,);
 
     // Log in as User B (e2eother) and try to access User A's chat
     await api.loginAs("e2eother", "password",);
-    const otherRes = await api.get(`/api/chats/${SEED.chat.id}`,);
+    const otherRes = await api.get(`/api/v1/chats/${SEED.chat.id}`,);
     expect(otherRes.ok,).toBe(false,);
     expect(otherRes.status,).toBe(404,);
   });

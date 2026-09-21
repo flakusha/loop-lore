@@ -5,7 +5,7 @@
  * Chat prompt-analysis actions — composer "analyze my prompt" integration.
  *
  * Methods merged into the chatActions surface (see chat-actions/index.ts) so
- * `this` resolves to the full ChatState. Calls POST /api/generation/prompt
+ * `this` resolves to the full ChatState. Calls POST /api/v1/generation/prompt
  * with mode `analyze` (served by src/generation/prompt-route.ts — no route
  * registration needed) and renders the intent/clarity/suggestions profile
  * into display-only state. The composer draft is never modified.
@@ -76,7 +76,7 @@ export const promptAnalyzeActions: Partial<AnalyzeCtx> & ThisType<AnalyzeCtx> = 
         return;
       }
       const res = await apiFetch(
-        "/api/generation/prompt",
+        "/api/v1/generation/prompt",
         {
           method: "POST",
           headers: { "Content-Type": "application/json", },

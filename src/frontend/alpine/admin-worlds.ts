@@ -23,7 +23,7 @@ export const adminWorlds = {
   async loadWorlds() {
     this.loadingWorlds = true;
     try {
-      let url = `/api/admin/worlds?page=${this.worldPage}&pageSize=${(this as any).pageSize}`;
+      let url = `/api/v1/admin/worlds?page=${this.worldPage}&pageSize=${(this as any).pageSize}`;
       if (this.worldSearch) { url += `&q=${encodeURIComponent(this.worldSearch,)}`; }
       const res = await apiFetch(url, { headers: { Accept: "application/json", }, },);
       if (res.ok) {
@@ -47,7 +47,7 @@ export const adminWorlds = {
   async deleteWorld(worldId: string,) {
     if (this.confirmDeleteWorld !== worldId) { return; }
     try {
-      const res = await apiFetch(`/api/admin/worlds/${worldId}`, { method: "DELETE", },);
+      const res = await apiFetch(`/api/v1/admin/worlds/${worldId}`, { method: "DELETE", },);
       if (res.ok) {
         showToast("success", t("toasts.worldDeleted",),);
         this.confirmDeleteWorld = "";

@@ -134,7 +134,7 @@ const log = rootLog.child({ module: "story-state", },);
       const worldId = this._worldId;
       if (!worldId || !name.trim()) { return; }
       try {
-        const res = await apiFetch(`/api/worlds/${worldId}/quests`, {
+        const res = await apiFetch(`/api/v1/worlds/${worldId}/quests`, {
           method: "POST",
           headers: { "Content-Type": "application/json", },
           body: jsonBody({ name: name.trim(), type: "composite", },),
@@ -153,7 +153,7 @@ const log = rootLog.child({ module: "story-state", },);
 
     async deleteQuest(questId: string,): Promise<void> {
       try {
-        const res = await apiFetch(`/api/quests/${questId}`, { method: "DELETE", },);
+        const res = await apiFetch(`/api/v1/quests/${questId}`, { method: "DELETE", },);
         if (res.ok) {
           const { quests, } = this;
           for (let i = quests.length - 1; i >= 0; i--) {

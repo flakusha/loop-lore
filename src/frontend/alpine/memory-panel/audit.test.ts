@@ -68,8 +68,8 @@ afterEach(() => {
 describe("memoryPanelAudit", () => {
   test("_auditUrl builds the endpoint with limit and filters", () => {
     const s = makeState();
-    expect(s._auditUrl(null, null,),).toBe("/api/actors/actor-1/memories/audit?limit=25",);
-    expect(s._auditUrl("c1", "pin",),).toBe("/api/actors/actor-1/memories/audit?cursor=c1&action=pin&limit=25",);
+    expect(s._auditUrl(null, null,),).toBe("/api/v1/actors/actor-1/memories/audit?limit=25",);
+    expect(s._auditUrl("c1", "pin",),).toBe("/api/v1/actors/actor-1/memories/audit?cursor=c1&action=pin&limit=25",);
   });
 
   test("_auditUrl returns null when no actor is resolvable", () => {

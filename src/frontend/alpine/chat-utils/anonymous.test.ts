@@ -59,7 +59,7 @@ describe("anonymous mode flag", () => {
       return Response.json({ anonymousMode: false, },);
     };
     await initAnonymousModeCheck();
-    expect(seenUrl,).toBe("/api/encryption/status",);
+    expect(seenUrl,).toBe("/api/v1/encryption/status",);
     expect(seenAccept,).toBe("application/json",);
   });
 });

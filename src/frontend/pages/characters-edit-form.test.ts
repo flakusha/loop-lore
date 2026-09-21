@@ -134,7 +134,7 @@ describe("saveCharacterEdit", () => {
     await page.saveCharacterEdit("actor-aria",);
 
     expect(fetchCalls.length,).toBe(1,);
-    expect(fetchCalls[0]!.url,).toBe("/api/actors/actor-aria",);
+    expect(fetchCalls[0]!.url,).toBe("/api/v1/actors/actor-aria",);
     const body = JSON.parse(fetchCalls[0]!.opts!.body as string,) as Record<string, unknown>;
     expect(body["appearance"],).toBe("Tall with silver hair",);
     expect(body["defaultOutfit"],).toBe("travel-gear",);
@@ -188,7 +188,7 @@ describe("uploadAvatar / clearAvatar", () => {
     await import("./characters-edit-form");
     seedForm({ "char-avatar-id": "", },);
     feHandler = (url,) => {
-      expect(url,).toBe("/api/assets",);
+      expect(url,).toBe("/api/v1/assets",);
       return new Response(JSON.stringify({ id: "av2<script>", },), { status: 200, },);
     };
     const file = new File(["x",], "avatar.png", { type: "image/png", },);

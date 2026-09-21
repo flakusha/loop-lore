@@ -85,12 +85,12 @@ describe("exportProgress.applyEvent", () => {
     ctx.applyEvent({
       type: "completed",
       jobId: "j1",
-      downloadUrl: "/api/export/download/j1",
+      downloadUrl: "/api/v1/export/download/j1",
       totalItems: 10,
       completedAt: "2026-01-01T00:01:00Z",
     },);
     expect(ctx.status,).toBe("completed",);
-    expect(ctx.downloadUrl,).toBe("/api/export/download/j1",);
+    expect(ctx.downloadUrl,).toBe("/api/v1/export/download/j1",);
     expect(ctx.completedAt,).toBe("2026-01-01T00:01:00Z",);
     expect(closed,).toBe(true,);
     expect(ctx._sse,).toBeNull();
@@ -141,7 +141,7 @@ describe("exportProgress.applySnapshot", () => {
       completedAt: "2026-01-01T00:01:00Z",
     },);
     expect(terminal,).toBe(true,);
-    expect(ctx.downloadUrl,).toBe("/api/export/download/j1",);
+    expect(ctx.downloadUrl,).toBe("/api/v1/export/download/j1",);
   });
 
   test("captures error on failed", () => {
@@ -247,13 +247,13 @@ describe("exportProgress.startExport (SSE stream)", () => {
       sseBody([
         `data: {"type":"job_created","jobId":"j1","status":"queued"}\n\n`,
         `data: {"type":"progress","jobId":"j1","progress":5,"total":10,"percentage":50}\n\n`,
-        `data: {"type":"completed","jobId":"j1","downloadUrl":"/api/export/download/j1","totalItems":10}\n\n`,
+        `data: {"type":"completed","jobId":"j1","downloadUrl":"/api/v1/export/download/j1","totalItems":10}\n\n`,
       ],);
     const ctx = baseCtx();
     await ctx.startExport();
     expect(ctx.jobId,).toBe("j1",);
     expect(ctx.status,).toBe("completed",);
-    expect(ctx.downloadUrl,).toBe("/api/export/download/j1",);
+    expect(ctx.downloadUrl,).toBe("/api/v1/export/download/j1",);
   });
 
   test("falls back to polling when stream ends without terminal event", async () => {

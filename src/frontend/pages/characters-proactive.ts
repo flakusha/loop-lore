@@ -31,7 +31,7 @@ export function initProactive(fetchFn: typeof feFetch,) {
     return;
   }
   try {
-    const res = await _feFetch(`/api/proactive-messaging/config?chatId=${chatId}&actorId=${actorId}`,);
+    const res = await _feFetch(`/api/v1/proactive-messaging/config?chatId=${chatId}&actorId=${actorId}`,);
     if (res.ok) {
       const data = await res.json();
       const freq = document.querySelector<HTMLSelectElement>("#proactive-frequency",);
@@ -60,7 +60,7 @@ export function initProactive(fetchFn: typeof feFetch,) {
 
   const status = document.querySelector<HTMLElement>("#proactive-status",);
   try {
-    const res = await _feFetch(`/api/proactive-messaging/config?chatId=${chatId}&actorId=${actorId}`, {
+    const res = await _feFetch(`/api/v1/proactive-messaging/config?chatId=${chatId}&actorId=${actorId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json", },
       body: jsonBody({

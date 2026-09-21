@@ -111,7 +111,7 @@ describe("chatMessages", () => {
 
     test("POSTs the emoji then reloads reactions for the message", async () => {
       fetchHandler = (url, opts,) => {
-        if (url === "/api/messages/msg-1/reactions" && opts?.method === "POST") {
+        if (url === "/api/v1/messages/msg-1/reactions" && opts?.method === "POST") {
           return Response.json({ toggled: true, emoji: "👍", },);
         }
         return Response.json([{ emoji: "👍", count: 1, userReacted: true, },], { status: 200, },);
@@ -125,7 +125,7 @@ describe("chatMessages", () => {
       await chatMessages.toggleReaction!.call(state, "msg-1", "👍",);
 
       const post = fetchCalls.find((c,) => c.opts?.method === "POST");
-      expect(post?.url,).toBe("/api/messages/msg-1/reactions",);
+      expect(post?.url,).toBe("/api/v1/messages/msg-1/reactions",);
       const rawBody = post?.opts?.body;
       const bodyStr = typeof rawBody === "string" ? rawBody : "";
       const body = JSON.parse(bodyStr,) as { emoji: string };
@@ -163,7 +163,7 @@ describe("chatMessages", () => {
       await chatMessages.loadMessageReactions!.call(state, "msg-2",);
 
       expect(fetchCalls,).toHaveLength(1,);
-      expect(fetchCalls[0]!.url,).toBe("/api/messages/msg-2/reactions",);
+      expect(fetchCalls[0]!.url,).toBe("/api/v1/messages/msg-2/reactions",);
       expect(state.messages[1]!.reactions,).toEqual([{ emoji: "❤️", count: 2, userReacted: false, },],);
     });
 
@@ -267,7 +267,7 @@ describe("chatMessages coverage", () => {
       // Scroll restoration: scrollTop set to (newScrollHeight - prevScrollHeight).
       expect(state.$refs.messageList!.scrollTop,).toBeGreaterThan(0,);
       // Pagination URL uses next page.
-      expect(fetchCalls[0]?.url,).toBe("/api/chats/chat-1/messages?page=2&pageSize=50",);
+      expect(fetchCalls[0]?.url,).toBe("/api/v1/chats/chat-1/messages?page=2&pageSize=50",);
     });
 
     test("no-ops when loadingOlder is already true", async () => {

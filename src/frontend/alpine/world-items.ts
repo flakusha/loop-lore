@@ -5,7 +5,7 @@
  * World Items mixin — item creation + item settings for a world's edit page.
  *
  * Mirrors the `worldLocations` mixin. Item definitions CRUD against
- * /api/worlds/:worldId/items (world-level, owner/admin gated server-side).
+ * /api/v1/worlds/:worldId/items (world-level, owner/admin gated server-side).
  */
 import { t, } from "./i18n";
 import { jsonBody, } from "./json";
@@ -48,7 +48,7 @@ export const worldItems: Partial<WorldEditState> & ThisType<WorldEditState> = {
     this.loadingItems = true;
     this.itemsLoaded = false;
     try {
-      const res = await apiFetch(`/api/worlds/${this.worldId}/items`, {
+      const res = await apiFetch(`/api/v1/worlds/${this.worldId}/items`, {
         headers: { Accept: "application/json", },
       },);
       if (res.ok) {
@@ -76,7 +76,7 @@ export const worldItems: Partial<WorldEditState> & ThisType<WorldEditState> = {
   async addItem() {
     if (!this.newItemName.trim()) { return; }
     try {
-      const res = await apiFetch(`/api/worlds/${this.worldId}/items`, {
+      const res = await apiFetch(`/api/v1/worlds/${this.worldId}/items`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({
@@ -125,7 +125,7 @@ export const worldItems: Partial<WorldEditState> & ThisType<WorldEditState> = {
 
   async saveItem(itemId: string,) {
     try {
-      const res = await apiFetch(`/api/worlds/${this.worldId}/items/${itemId}`, {
+      const res = await apiFetch(`/api/v1/worlds/${this.worldId}/items/${itemId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({
@@ -155,7 +155,7 @@ export const worldItems: Partial<WorldEditState> & ThisType<WorldEditState> = {
       return;
     }
     try {
-      const res = await apiFetch(`/api/worlds/${this.worldId}/items/${itemId}`, { method: "DELETE", },);
+      const res = await apiFetch(`/api/v1/worlds/${this.worldId}/items/${itemId}`, { method: "DELETE", },);
       if (res.ok) { await this.loadItems(); }
       else {
         showToast("error", t("toasts.failedDeleteItem",),);
@@ -169,7 +169,7 @@ export const worldItems: Partial<WorldEditState> & ThisType<WorldEditState> = {
     this.loadingInstances = true;
     this.instancesLoaded = false;
     try {
-      const res = await apiFetch(`/api/worlds/${this.worldId}/items/${itemId}/instances`, {
+      const res = await apiFetch(`/api/v1/worlds/${this.worldId}/items/${itemId}/instances`, {
         headers: { Accept: "application/json", },
       },);
       if (res.ok) {
@@ -208,7 +208,7 @@ export const worldItems: Partial<WorldEditState> & ThisType<WorldEditState> = {
     };
     if (this.placeLocationId) { body.locationId = this.placeLocationId; }
     try {
-      const res = await apiFetch(`/api/worlds/${this.worldId}/item-instances`, {
+      const res = await apiFetch(`/api/v1/worlds/${this.worldId}/item-instances`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody(body,),
@@ -230,7 +230,7 @@ export const worldItems: Partial<WorldEditState> & ThisType<WorldEditState> = {
   async destroyInstance(instanceId: string,) {
     if (!confirm(t("worlds.destroyInstanceConfirm",),)) { return; }
     try {
-      const res = await apiFetch(`/api/worlds/${this.worldId}/item-instances/${instanceId}`, {
+      const res = await apiFetch(`/api/v1/worlds/${this.worldId}/item-instances/${instanceId}`, {
         method: "DELETE",
       },);
       if (res.ok) { await this.loadInstances(this.expandedItem,); }

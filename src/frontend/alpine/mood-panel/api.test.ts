@@ -27,7 +27,7 @@ describe("fetchMood", () => {
   test("returns parsed mood on ok", async () => {
     handler = async () => Response.json({ happiness: 77, currentMood: "happy", },);
     await expect(fetchMood("a1",),).resolves.toEqual({ happiness: 77, currentMood: "happy", } as never,);
-    expect(calls[0]!.url,).toBe("/api/actors/a1/mood",);
+    expect(calls[0]!.url,).toBe("/api/v1/actors/a1/mood",);
   });
 
   test("returns null on non-ok status", async () => {
@@ -47,7 +47,7 @@ describe("fetchEmotions", () => {
   test("returns parsed entries on ok", async () => {
     handler = async () => Response.json([{ emotion_id: "e1", intensity: 0.9, },],);
     await expect(fetchEmotions("a2",),).resolves.toEqual([{ emotion_id: "e1", intensity: 0.9, },] as never,);
-    expect(calls[0]!.url,).toBe("/api/actors/a2/emotions",);
+    expect(calls[0]!.url,).toBe("/api/v1/actors/a2/emotions",);
   });
 
   test("returns empty array on non-ok and on rejection", async () => {
@@ -64,7 +64,7 @@ describe("fetchEmotionDefs", () => {
   test("returns parsed definitions on ok", async () => {
     handler = async () => Response.json([{ id: "joy", display_name: "Joy", icon: "i", },],);
     await expect(fetchEmotionDefs(),).resolves.toEqual([{ id: "joy", display_name: "Joy", icon: "i", },] as never,);
-    expect(calls[0]!.url,).toBe("/api/emotions",);
+    expect(calls[0]!.url,).toBe("/api/v1/emotions",);
   });
 
   test("returns empty array on non-ok and on rejection", async () => {
@@ -81,7 +81,7 @@ describe("applyHappinessDelta", () => {
   test("POSTs delta and worldId and returns the new happiness", async () => {
     handler = async () => Response.json(72,);
     await expect(applyHappinessDelta("a3", 5, "w1",),).resolves.toBe(72,);
-    expect(calls[0]!.url,).toBe("/api/actors/a3/mood/delta",);
+    expect(calls[0]!.url,).toBe("/api/v1/actors/a3/mood/delta",);
     expect(calls[0]!.opts.method,).toBe("POST",);
     expect(JSON.parse(String(calls[0]!.opts.body,),),).toEqual({ delta: 5, worldId: "w1", },);
   });

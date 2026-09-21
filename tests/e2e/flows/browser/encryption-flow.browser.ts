@@ -62,7 +62,7 @@ describe("Chat compression-encryption-decryption flow (UI)", () => {
 
   test("selecting a chat loads the chat key into window.__chatKey", async () => {
     const page = await ctx.openPage();
-    // /api/telemetry/event is 403 for solo — benign infrastructure noise.
+    // /api/v1/telemetry/event is 403 for solo — benign infrastructure noise.
     const errors = trackPageErrors(page, { allowlist: [/Failed to load resource.*403/,], },);
     try {
       await page.goto(`${ctx.url}/views/chat`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
@@ -157,7 +157,7 @@ describe("Chat compression-encryption-decryption flow (UI)", () => {
 
       // API also returns plaintext (server-side decrypt).
       const list = await page.evaluate(async (chatId,) => {
-        const r = await fetch(`/api/chats/${chatId}/messages`, { credentials: "include", },);
+        const r = await fetch(`/api/v1/chats/${chatId}/messages`, { credentials: "include", },);
         return { status: r.status, body: await r.text(), };
       }, SEED.soloChat.id,);
       expect(list.status,).toBe(200,);
@@ -238,7 +238,7 @@ describe("Encrypted message — wrong-key fallback (API)", () => {
         .execute();
 
       // Single-message endpoint applies resolveMessageContent → placeholder.
-      const single = await fetch(`${ctx.url}/api/messages/${msgId}`, {
+      const single = await fetch(`${ctx.url}/api/v1/messages/${msgId}`, {
         credentials: "include",
       },);
       expect(single.status,).toBe(200,);
@@ -246,11 +246,11 @@ describe("Encrypted message — wrong-key fallback (API)", () => {
       expect(singleBody,).toContain("[Encrypted \u2014 unable to decrypt]",);
       expect(singleBody,).not.toContain(bogusPayload,);
 
-      // Both /api/messages/:id (single) and /api/chats/:id/messages (list)
+      // Both /api/v1/messages/:id (single) and /api/v1/chats/:id/messages (list)
       // apply resolveMessageContent — both substitute the placeholder when the
       // stored payload's key_id has no matching chat_keys row. Pin the list
       // endpoint here too so the contract is observable from either surface.
-      const list = await fetch(`${ctx.url}/api/chats/${SEED.soloChat.id}/messages`, {
+      const list = await fetch(`${ctx.url}/api/v1/chats/${SEED.soloChat.id}/messages`, {
         credentials: "include",
       },);
       expect(list.status,).toBe(200,);

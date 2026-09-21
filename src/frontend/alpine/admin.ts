@@ -152,8 +152,8 @@ import { apiFetch, } from "./htmx";
         if (this.overviewActivityFilter) { params.set("q", this.overviewActivityFilter,); }
         if (this.overviewActivityType) { params.set("event_type", this.overviewActivityType,); }
         const [statsRes, auditRes,] = await Promise.allSettled([
-          apiFetch("/api/admin/stats", { headers: { Accept: "application/json", }, },),
-          apiFetch(`/api/admin/audit?${params.toString()}`, { headers: { Accept: "application/json", }, },),
+          apiFetch("/api/v1/admin/stats", { headers: { Accept: "application/json", }, },),
+          apiFetch(`/api/v1/admin/audit?${params.toString()}`, { headers: { Accept: "application/json", }, },),
         ],);
         if (statsRes.status !== "fulfilled" || auditRes.status !== "fulfilled") {
           throw new Error("admin overview load failed",);

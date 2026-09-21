@@ -3,7 +3,7 @@
 // size-allow: 285
 
 // ── Actor entity CRUD panel state.
-// Generic plugin for `/api/actors/:actorId/{notes,items,lore-entries}` plus
+// Generic plugin for `/api/v1/actors/:actorId/{notes,items,lore-entries}` plus
 // per-kind UI shaping. One factory instance per panel; the kind is bound at
 // construction.
 import { apiFetch, } from "./htmx";
@@ -160,7 +160,7 @@ export const stateFromKind = (kind: EntityKind,): ActorEntitiesState => ({
     if (!actorId) { return; }
     this.rowsLoading = true;
     try {
-      const url = `/api/actors/${actorId}/${this._entKind}`;
+      const url = `/api/v1/actors/${actorId}/${this._entKind}`;
       const res = await apiFetch(url,);
       if (!res.ok) {
         this.rowsError = t("status.entitiesLoadFailed",);
@@ -191,7 +191,7 @@ export const stateFromKind = (kind: EntityKind,): ActorEntitiesState => ({
           payload[f.key] = this.form[f.key];
         }
       }
-      const res = await apiFetch(`/api/actors/${actorId}/${this._entKind}`, {
+      const res = await apiFetch(`/api/v1/actors/${actorId}/${this._entKind}`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody(payload,),
@@ -229,7 +229,7 @@ export const stateFromKind = (kind: EntityKind,): ActorEntitiesState => ({
           payload[f.key] = this.form[f.key];
         }
       }
-      const res = await apiFetch(`/api/actors/${actorId}/${this._entKind}/${editingId}`, {
+      const res = await apiFetch(`/api/v1/actors/${actorId}/${this._entKind}/${editingId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
         body: jsonBody(payload,),
@@ -253,7 +253,7 @@ export const stateFromKind = (kind: EntityKind,): ActorEntitiesState => ({
     if (!actorId || this.busy) { return; }
     this.busy = true;
     try {
-      const res = await apiFetch(`/api/actors/${actorId}/${this._entKind}/${id}`, { method: "DELETE", },);
+      const res = await apiFetch(`/api/v1/actors/${actorId}/${this._entKind}/${id}`, { method: "DELETE", },);
       if (!res.ok) { return; }
       await this.load();
     } catch (error) {

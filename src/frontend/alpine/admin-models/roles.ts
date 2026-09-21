@@ -16,7 +16,7 @@ export const roleState: Partial<ModelsState> & ThisType<ModelsState> = {
 
   async loadModelRoles() {
     try {
-      const res = await apiFetch("/api/admin/model-roles", { headers: { Accept: "application/json", }, },);
+      const res = await apiFetch("/api/v1/admin/model-roles", { headers: { Accept: "application/json", }, },);
       if (res.ok) {
         const data: ModelRolesResponse = await res.json();
         this.overrides = data.overrides || {};
@@ -58,7 +58,7 @@ export const roleState: Partial<ModelsState> & ThisType<ModelsState> = {
       body.temperature = tuning.temperature === "" ? null : Number(tuning.temperature,);
       body.maxTokens = tuning.maxTokens === "" ? null : Number(tuning.maxTokens,);
 
-      const res = await apiFetch(`/api/admin/model-roles/${role}`, {
+      const res = await apiFetch(`/api/v1/admin/model-roles/${role}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
         body: jsonBody(body,),
@@ -76,7 +76,7 @@ export const roleState: Partial<ModelsState> & ThisType<ModelsState> = {
   },
   async clearModelRole(role: string,) {
     try {
-      const res = await apiFetch(`/api/admin/model-roles/${role}`, { method: "DELETE", },);
+      const res = await apiFetch(`/api/v1/admin/model-roles/${role}`, { method: "DELETE", },);
       if (res.ok) {
         showToast("success", t("toasts.roleClearedFor", { role, },),);
         await this.loadModelRoles();

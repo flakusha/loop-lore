@@ -118,7 +118,7 @@
           >
             <img
               class="avatar"
-              :src="`/api/assets/${avatarForMessage(msg) || currentCharacter?.avatar_asset_id}/thumb`"
+              :src="`/api/v1/assets/${avatarForMessage(msg) || currentCharacter?.avatar_asset_id}/thumb`"
               :alt="displayName(msg)"
               data-testid="message-avatar"
             />
@@ -720,7 +720,7 @@
       </template>
     </div>
   </div>
-  <!-- Variants browser: swipe siblings via GET /api/messages/:id/variants -->
+  <!-- Variants browser: swipe siblings via GET /api/v1/messages/:id/variants -->
   <div
     class="modal-overlay"
     x-show="_variantsOpen"

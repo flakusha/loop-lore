@@ -4,9 +4,9 @@
 
 // ── Character systems export/import panel.
 // Drives:
-//   GET  /api/actors/:actorId/systems/export
-//   POST /api/actors/:actorId/systems/import
-//   POST /api/actors/:actorId/systems/import/url
+//   GET  /api/v1/actors/:actorId/systems/export
+//   POST /api/v1/actors/:actorId/systems/import
+//   POST /api/v1/actors/:actorId/systems/import/url
 // Pairs with `src/components/character/systems-panel.html`.
 import { apiFetch, } from "./htmx";
 import { t, } from "./i18n";
@@ -126,7 +126,7 @@ export const actorSystems: ActorSystemsState = {
     const actorId = this._sysActorId;
     if (!actorId) { return null; }
     try {
-      const res = await apiFetch(`/api/actors/${actorId}/systems/export`, {
+      const res = await apiFetch(`/api/v1/actors/${actorId}/systems/export`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody(this.buildExportBody(),),
@@ -186,7 +186,7 @@ export const actorSystems: ActorSystemsState = {
     this.error = "";
     this.message = "";
     try {
-      const res = await apiFetch(`/api/actors/${actorId}/systems/import`, {
+      const res = await apiFetch(`/api/v1/actors/${actorId}/systems/import`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody(payload as Record<string, unknown>,),
@@ -220,7 +220,7 @@ export const actorSystems: ActorSystemsState = {
     this.error = "";
     this.message = "";
     try {
-      const res = await apiFetch(`/api/actors/${actorId}/systems/import/url`, {
+      const res = await apiFetch(`/api/v1/actors/${actorId}/systems/import/url`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ url, worldId: this.worldId || null, },),

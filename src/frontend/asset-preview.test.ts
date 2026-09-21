@@ -178,9 +178,9 @@ function jsonResponse(body: unknown, status = 200,): Response {
 /** Stub the API the way the server would: asset json + signed URLs + DELETE. */
 function serveAsset(asset: Record<string, unknown>,): void {
   feHandler = (url, init,) => {
-    if (url === `/api/assets/${asset.id as string}` && !init.method) { return jsonResponse(asset,); }
-    if (url === `/api/assets/${asset.id as string}` && init.method === "DELETE") { return jsonResponse({},); }
-    if (url.startsWith(`/api/assets/${asset.id as string}/signed-url/`,)) {
+    if (url === `/api/v1/assets/${asset.id as string}` && !init.method) { return jsonResponse(asset,); }
+    if (url === `/api/v1/assets/${asset.id as string}` && init.method === "DELETE") { return jsonResponse({},); }
+    if (url.startsWith(`/api/v1/assets/${asset.id as string}/signed-url/`,)) {
       return jsonResponse({ url: `/signed${url.split("signed-url",)[1]}`, },);
     }
     return jsonResponse({}, 404,);
@@ -246,7 +246,7 @@ describe("openAssetPreview", () => {
     expect(typeof previewHost.deleteAssetPreview,).toBe("function",);
     serveAsset(IMAGE,);
     await previewHost.openAssetPreview!("a1",);
-    expect(calls.map((c,) => c.url),).toEqual(["/api/assets/a1", "/api/assets/a1/signed-url/raw",],);
+    expect(calls.map((c,) => c.url),).toEqual(["/api/v1/assets/a1", "/api/v1/assets/a1/signed-url/raw",],);
     const modal = doc.querySelector("#preview-modal",)!;
     expect(modal.classList.contains("open",),).toBe(true,);
     expect(modal.querySelector("[data-field='filename']",)!.textContent,).toBe("cat.png",);
@@ -259,13 +259,13 @@ describe("openAssetPreview", () => {
 
   test("falls back to the relative raw URL when signing fails, escaping metadata", async () => {
     feHandler = (url, init,) => {
-      if (url === "/api/assets/a1" && !init.method) { return jsonResponse({ ...IMAGE, filename: `&<>"'x`, },); }
+      if (url === "/api/v1/assets/a1" && !init.method) { return jsonResponse({ ...IMAGE, filename: `&<>"'x`, },); }
       return jsonResponse({ url: 123, },); // non-string url → null → relative fallback
     };
     await previewHost.openAssetPreview!("a1",);
     const body = doc.querySelector("#preview-modal",)!.querySelector("[data-field='preview-body']",)!;
     expect(body.innerHTML,).toBe(
-      `<img src="/api/assets/a1/raw" alt="&amp;&lt;&gt;&quot;&#39;x" style="width:100%;display:block" />`,
+      `<img src="/api/v1/assets/a1/raw" alt="&amp;&lt;&gt;&quot;&#39;x" style="width:100%;display:block" />`,
     );
   });
 
@@ -279,7 +279,7 @@ describe("openAssetPreview", () => {
       ] as const
     ) {
       feHandler = (url,) =>
-        url === "/api/assets/a1" ? jsonResponse({ ...IMAGE, asset_type: assetType, },) : jsonResponse({}, 404,);
+        url === "/api/v1/assets/a1" ? jsonResponse({ ...IMAGE, asset_type: assetType, },) : jsonResponse({}, 404,);
       await previewHost.openAssetPreview!("a1",);
       const modal = doc.querySelector("#preview-modal",)!;
       expect(modal.querySelector("[data-field='preview-body']",)!.innerHTML.startsWith(prefix,),).toBe(true,);
@@ -292,7 +292,7 @@ describe("openAssetPreview", () => {
     const sizeEl = () => doc.querySelector("#preview-modal",)!.querySelector("[data-field='size']",)!.textContent;
     for (const [bytes, want,] of [[0, "0 B",], [512, "512 B",], [3_145_728, "3.0 MB",],] as const) {
       feHandler = (url,) =>
-        url === "/api/assets/a1" ? jsonResponse({ ...IMAGE, size_bytes: bytes, },) : jsonResponse({}, 404,);
+        url === "/api/v1/assets/a1" ? jsonResponse({ ...IMAGE, size_bytes: bytes, },) : jsonResponse({}, 404,);
       await previewHost.openAssetPreview!("a1",);
       expect(sizeEl(),).toBe(want,);
     }
@@ -319,7 +319,7 @@ describe("openAssetPreview", () => {
     calls = [];
     await previewHost.openAssetPreview!("a1",);
     expect(previewHost.__previewAsset?.id,).toBe("a1",); // recorded before bailing
-    expect(calls.map((c,) => c.url),).toEqual(["/api/assets/a1",],); // no modal fetch
+    expect(calls.map((c,) => c.url),).toEqual(["/api/v1/assets/a1",],); // no modal fetch
   });
 });
 
@@ -377,7 +377,7 @@ describe("downloadAsset", () => {
     feHandler = (url,) => url.endsWith("/signed-url/download",) ? jsonResponse({}, 500,) : jsonResponse({}, 404,);
     await previewHost.downloadAsset!(); // fallback path; name defaults to "asset"
     expect(anchors[1]!.download,).toBe("asset",);
-    expect(anchors[1]!.href,).toBe("/api/assets/a2/download",);
+    expect(anchors[1]!.href,).toBe("/api/v1/assets/a2/download",);
     previewHost.__previewAsset = { id: "a3", filename: "x.bin", };
     doc.body.append = () => {
       throw new Error("no dom",); // download failure → module catch → toast

@@ -36,17 +36,17 @@ describe("Messages E2E", () => {
   afterAll(() => {
     server.close();
   },);
-  test("GET /api/chats/:id/messages returns messages", async () => {
+  test("GET /api/v1/chats/:id/messages returns messages", async () => {
     const res = await api.get<{ data: Array<{ id: string; content: string }> }>(
-      `/api/chats/${SEED.chat.id}/messages`,
+      `/api/v1/chats/${SEED.chat.id}/messages`,
     );
     expect(res.ok,).toBe(true,);
     expect(Array.isArray(res.data!.data,),).toBe(true,);
     expect(res.data!.data.length,).toBeGreaterThanOrEqual(1,);
   });
 
-  test("POST /api/chats/:id/messages creates a new message", async () => {
-    const res = await api.post<{ id: string }>(`/api/chats/${SEED.chat.id}/messages`, {
+  test("POST /api/v1/chats/:id/messages creates a new message", async () => {
+    const res = await api.post<{ id: string }>(`/api/v1/chats/${SEED.chat.id}/messages`, {
       content: "New E2E message",
       role: "user",
     },);
@@ -54,49 +54,49 @@ describe("Messages E2E", () => {
     expect(res.data!.id,).toBeTruthy();
   });
 
-  test("POST /api/chats/:id/messages requires content", async () => {
-    const res = await api.post(`/api/chats/${SEED.chat.id}/messages`, { role: "user", },);
+  test("POST /api/v1/chats/:id/messages requires content", async () => {
+    const res = await api.post(`/api/v1/chats/${SEED.chat.id}/messages`, { role: "user", },);
     expect(res.ok,).toBe(false,);
     expect(res.status,).toBe(422,);
   });
 
-  test("GET /api/messages/:id returns single message", async () => {
-    const res = await api.get<{ id: string; content: string }>(`/api/messages/${SEED.message.id}`,);
+  test("GET /api/v1/messages/:id returns single message", async () => {
+    const res = await api.get<{ id: string; content: string }>(`/api/v1/messages/${SEED.message.id}`,);
     expect(res.ok,).toBe(true,);
     expect(res.data!.content,).toBe(SEED.message.content,);
   });
 
-  test("DELETE /api/messages/:id soft-deletes message", async () => {
+  test("DELETE /api/v1/messages/:id soft-deletes message", async () => {
     // Create a message first
-    const createRes = await api.post<{ id: string }>(`/api/chats/${SEED.chat.id}/messages`, {
+    const createRes = await api.post<{ id: string }>(`/api/v1/chats/${SEED.chat.id}/messages`, {
       content: "Message to delete",
       role: "user",
     },);
     const msgId = createRes.data!.id;
 
-    const deleteRes = await api.del(`/api/messages/${msgId}`,);
+    const deleteRes = await api.del(`/api/v1/messages/${msgId}`,);
     expect(deleteRes.ok,).toBe(true,);
 
     // GET should still return it (soft-delete)
-    const getRes = await api.get<{ visibility: string }>(`/api/messages/${msgId}`,);
+    const getRes = await api.get<{ visibility: string }>(`/api/v1/messages/${msgId}`,);
     expect(getRes.ok,).toBe(true,);
     expect(getRes.data!.visibility,).toBe("hidden_by_user",);
   });
 
-  test("GET /api/messages/:id returns 404 for non-existent", async () => {
+  test("GET /api/v1/messages/:id returns 404 for non-existent", async () => {
     const res = await api.get("/api/v1/messages/00000000-0000-0000-0000-000000000000",);
     expect(res.status,).toBe(404,);
     expect(res.code,).toBeTruthy(); // TEST.2 error envelope
   });
 
   test("cross-tenant isolation: User B cannot access User A's message", async () => {
-    const resA = await api.get<{ id: string }>(`/api/messages/${SEED.message.id}`,);
+    const resA = await api.get<{ id: string }>(`/api/v1/messages/${SEED.message.id}`,);
     expect(resA.ok,).toBe(true,);
     expect(resA.data!.id,).toBe(SEED.message.id,);
 
     const apiB = createClient(server.url,);
     await apiB.loginAs("e2eother", "password",);
-    const resB = await apiB.get(`/api/messages/${SEED.message.id}`,);
+    const resB = await apiB.get(`/api/v1/messages/${SEED.message.id}`,);
     expect(resB.ok,).toBe(false,);
     expect(resB.status,).toBe(404,);
     expect(resB.code,).toBeTruthy();

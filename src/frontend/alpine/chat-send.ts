@@ -3,7 +3,7 @@
 
 /**
  * Chat message send logic — optimistic temp message, client-side encryption,
- * attachment payload, and the POST to /api/chats/:id/messages.
+ * attachment payload, and the POST to /api/v1/chats/:id/messages.
  *
  * Extracted from chat-messages.ts; methods are merged into the chatMessages
  * object at call time, so `this` still resolves to the full ChatState.
@@ -115,7 +115,7 @@ export const chatSendMethods: Partial<ChatState> & ThisType<ChatState> = {
     this.isGenerating = true;
     try {
       const res = await apiFetch(
-        `/api/chats/${this.activeChat}/messages`,
+        `/api/v1/chats/${this.activeChat}/messages`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json", },

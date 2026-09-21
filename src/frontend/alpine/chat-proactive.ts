@@ -53,7 +53,7 @@ export const chatProactive: Partial<ChatState> & ThisType<ChatState> = {
     if (Date.now() - this._proactiveLastSendAt < MIN_BETWEEN_SENDS_MS) { return; }
 
     try {
-      const configsRes = await apiFetch(`/api/proactive-messaging/configs?chatId=${chatId}`,);
+      const configsRes = await apiFetch(`/api/v1/proactive-messaging/configs?chatId=${chatId}`,);
       // The user may have switched chats while the fetch was in flight — a
       // tick must never fire against an abandoned chat.
       if (this.activeChat !== chatId) { return; }
@@ -63,7 +63,7 @@ export const chatProactive: Partial<ChatState> & ThisType<ChatState> = {
       for (const cfg of configs) {
         if (!cfg.enabled) { continue; }
         const checkRes = await apiFetch(
-          `/api/proactive-messaging/check?chatId=${chatId}&actorId=${cfg.actorId}`,
+          `/api/v1/proactive-messaging/check?chatId=${chatId}&actorId=${cfg.actorId}`,
         );
         if (this.activeChat !== chatId) { return; }
         if (!checkRes.ok) { continue; }
@@ -73,7 +73,7 @@ export const chatProactive: Partial<ChatState> & ThisType<ChatState> = {
         this._proactiveInFlight = true;
         try {
           const sendRes = await apiFetch(
-            `/api/proactive-messaging/send?chatId=${chatId}&actorId=${cfg.actorId}`,
+            `/api/v1/proactive-messaging/send?chatId=${chatId}&actorId=${cfg.actorId}`,
             { method: "POST", },
           );
           if (sendRes.ok || sendRes.status === 409) {

@@ -8,7 +8,7 @@
 // channel's category), and invite codes redeem into world membership. The
 // module owns no fetch for grouping; it reads `_worldChats` already loaded by
 // `loadWorldChannels()` on ChatState. `joinWorldByCode()` is the only fetch,
-// hitting POST /api/world-invites/:code/join.
+// hitting POST /api/v1/world-invites/:code/join.
 import type { WorldChannelChat, } from "./chat-types";
 import { t, } from "./i18n";
 import type { ChatState, } from "./types";
@@ -41,7 +41,7 @@ export const worldChannels: Partial<ChatState> & ThisType<ChatState> = {
       return;
     }
     try {
-      const res = await apiFetch(`/api/world-invites/${encodeURIComponent(code,)}/join`, {
+      const res = await apiFetch(`/api/v1/world-invites/${encodeURIComponent(code,)}/join`, {
         method: "POST",
       },);
       if (!res.ok) {

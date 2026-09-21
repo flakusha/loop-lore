@@ -32,7 +32,7 @@ export const adminSystem = {
   confirmDeleteConfig: "",
 
   // ── Restart-required keys (TASK-restart-required-indicator) ──
-  // Static set populated from GET /api/admin/config-schema. Per-row `requires_restart`
+  // Static set populated from GET /api/v1/admin/config-schema. Per-row `requires_restart`
   // is the authoritative signal on each row; this set is used for the global banner.
   requiresRestartKeys: {} as Record<string, true>,
   dismissedRestartKeys: {} as Record<string, true>,
@@ -67,7 +67,7 @@ export const adminSystem = {
   async loadSystemConfig() {
     this.loadingSystemConfig = true;
     try {
-      const res = await apiFetch("/api/admin/system-config", { headers: { Accept: "application/json", }, },);
+      const res = await apiFetch("/api/v1/admin/system-config", { headers: { Accept: "application/json", }, },);
       if (res.ok) { this.systemConfig = await res.json(); }
     } catch {
       log.warn("Network error loading system config",);
@@ -79,7 +79,7 @@ export const adminSystem = {
     const value = this.sysConfigDirty[key];
     if (value === undefined) { return; }
     try {
-      const res = await apiFetch("/api/admin/system-config", {
+      const res = await apiFetch("/api/v1/admin/system-config", {
         method: "PATCH",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ key, value, },),
@@ -99,7 +99,7 @@ export const adminSystem = {
   async deleteSystemConfig(key: string,) {
     if (this.confirmDeleteConfig !== key) { return; }
     try {
-      const res = await apiFetch(`/api/admin/system-config/${key}`, { method: "DELETE", },);
+      const res = await apiFetch(`/api/v1/admin/system-config/${key}`, { method: "DELETE", },);
       if (res.ok) {
         showToast("success", t("toasts.configDeleted",),);
         this.confirmDeleteConfig = "";
@@ -114,7 +114,7 @@ export const adminSystem = {
   },
   async exportSystemConfig(format: "yaml" | "toml",) {
     try {
-      const res = await apiFetch(`/api/admin/system-config/export?format=${format}`, {
+      const res = await apiFetch(`/api/v1/admin/system-config/export?format=${format}`, {
         headers: { Accept: format === "toml" ? "application/toml" : "application/yaml", },
       },);
       if (!res.ok) {
@@ -141,9 +141,9 @@ export const adminSystem = {
     this.loadingAnalytics = true;
     try {
       const [summaryRes, dailyRes, errorsRes,] = await Promise.allSettled([
-        apiFetch("/api/telemetry/analytics/summary", { headers: { Accept: "application/json", }, },),
-        apiFetch("/api/telemetry/analytics/daily?limit=30", { headers: { Accept: "application/json", }, },),
-        apiFetch("/api/telemetry/analytics/errors", { headers: { Accept: "application/json", }, },),
+        apiFetch("/api/v1/telemetry/analytics/summary", { headers: { Accept: "application/json", }, },),
+        apiFetch("/api/v1/telemetry/analytics/daily?limit=30", { headers: { Accept: "application/json", }, },),
+        apiFetch("/api/v1/telemetry/analytics/errors", { headers: { Accept: "application/json", }, },),
       ],);
       if (summaryRes.status !== "fulfilled" || dailyRes.status !== "fulfilled" || errorsRes.status !== "fulfilled") {
         throw new Error("analytics load failed",);
@@ -161,7 +161,7 @@ export const adminSystem = {
     if (this.purgingAnalytics) { return; }
     this.purgingAnalytics = true;
     try {
-      const res = await apiFetch("/api/telemetry/analytics/purge?days=90", { method: "DELETE", },);
+      const res = await apiFetch("/api/v1/telemetry/analytics/purge?days=90", { method: "DELETE", },);
       if (res.ok) {
         showToast("success", t("toasts.telemetryPurged",),);
         await this.loadAnalytics();
@@ -182,9 +182,9 @@ export const adminSystem = {
 
   async runDangerAction(action: "purge" | "reset" | "factory",) {
     const confirmMap = {
-      purge: { string: "PURGE", url: "/api/admin/audit/purge", },
-      reset: { string: "RESET", url: "/api/admin/settings/reset", },
-      factory: { string: "DELETE ALL", url: "/api/admin/factory-reset", },
+      purge: { string: "PURGE", url: "/api/v1/admin/audit/purge", },
+      reset: { string: "RESET", url: "/api/v1/admin/settings/reset", },
+      factory: { string: "DELETE ALL", url: "/api/v1/admin/factory-reset", },
     } as const;
     const cfg = confirmMap[action];
     if (this.dangerConfirm[action] !== cfg.string) { return; }

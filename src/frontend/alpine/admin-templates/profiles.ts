@@ -36,7 +36,7 @@ export const profiles = {
   async loadTemplates() {
     this.loadingTemplates = true;
     try {
-      const res = await apiFetch("/api/admin/templates", {
+      const res = await apiFetch("/api/v1/admin/templates", {
         headers: { Accept: "application/json", },
       },);
       if (res.ok) {
@@ -62,7 +62,7 @@ export const profiles = {
 
   async selectProfile(id: string,) {
     try {
-      const res = await apiFetch(`/api/admin/templates/${id}`, {
+      const res = await apiFetch(`/api/v1/admin/templates/${id}`, {
         headers: { Accept: "application/json", },
       },);
       if (res.ok) {
@@ -82,7 +82,7 @@ export const profiles = {
 
   async deleteProfile(id: string,) {
     try {
-      const res = await (globalThis as any).apiFetch(`/api/admin/templates/${id}`, {
+      const res = await (globalThis as any).apiFetch(`/api/v1/admin/templates/${id}`, {
         method: "DELETE",
       },);
       if (res.ok) {
@@ -108,7 +108,7 @@ export const profiles = {
         const trimmed = s.trim();
         if (trimmed) { families.push(trimmed,); }
       }
-      const res = await (globalThis as any).apiFetch("/api/admin/templates", {
+      const res = await (globalThis as any).apiFetch("/api/v1/admin/templates", {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({

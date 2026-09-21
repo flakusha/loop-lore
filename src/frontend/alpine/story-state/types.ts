@@ -20,7 +20,7 @@ export interface StoryParticipant {
   order: number;
 }
 
-/** Quest row as exposed by GET /api/worlds/:worldId/quests. */
+/** Quest row as exposed by GET /api/v1/worlds/:worldId/quests. */
 export interface StoryQuest {
   id: string;
   name: string;
@@ -52,7 +52,7 @@ export interface QuestBanner {
   progress: number;
 }
 
-/** Turn row from GET /api/chats/:id/story-turns (subset we consume). */
+/** Turn row from GET /api/v1/chats/:id/story-turns (subset we consume). */
 export interface StoryTurnRow {
   id: string;
   turn_number: number;

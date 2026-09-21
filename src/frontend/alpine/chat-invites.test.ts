@@ -73,7 +73,7 @@ describe("chatInvites", () => {
       mockFetch(200, { data: [{ id: "i1", code: "ABC", },], },);
       const ctx = buildCtx();
       await chatInvites.loadChatInvites!.call(ctx,);
-      expect(fetchCalls[0]!.url,).toBe("/api/chats/chat-1/invites",);
+      expect(fetchCalls[0]!.url,).toBe("/api/v1/chats/chat-1/invites",);
       expect(ctx._chatInvites,).toHaveLength(1,);
       expect(ctx._chatInvitesLoaded,).toBe(true,);
       expect(ctx._chatInvitesLoading,).toBe(false,);
@@ -97,7 +97,7 @@ describe("chatInvites", () => {
       ctx._newChatInviteMaxUses = "5";
       ctx._showChatInviteForm = true;
       await chatInvites.createChatInvite!.call(ctx,);
-      expect(fetchCalls[0]!.url,).toBe("/api/chats/chat-1/invites",);
+      expect(fetchCalls[0]!.url,).toBe("/api/v1/chats/chat-1/invites",);
       expect(ctx._chatInvites[0]?.code,).toBe("XYZ",);
       expect(ctx._newChatInviteMaxUses,).toBe("",);
       expect(ctx._showChatInviteForm,).toBe(false,);
@@ -112,7 +112,7 @@ describe("chatInvites", () => {
       const ctx = buildCtx({ toasts, },);
       ctx._chatInvites = [{ id: "i1", code: "ABC", },] as ChatState["_chatInvites"];
       await chatInvites.revokeChatInvite!.call(ctx, "i1",);
-      expect(fetchCalls[0]!.url,).toBe("/api/chats/chat-1/invites/i1",);
+      expect(fetchCalls[0]!.url,).toBe("/api/v1/chats/chat-1/invites/i1",);
       expect(ctx._chatInvites,).toEqual([],);
       expect(toasts,).toEqual([{ type: "success", message: "Invite revoked", },],);
     });
@@ -144,7 +144,7 @@ describe("chatInvites", () => {
       },);
       ctx._chatJoinCode = "ABCDEF12";
       await chatInvites.joinChatByCode!.call(ctx,);
-      expect(fetchCalls[0]!.url,).toBe("/api/invites/ABCDEF12/join",);
+      expect(fetchCalls[0]!.url,).toBe("/api/v1/invites/ABCDEF12/join",);
       expect(ctx._chatJoinCode,).toBe("",);
       expect(loaded,).toBe(1,);
       expect(selected.value,).toBe("c9",);

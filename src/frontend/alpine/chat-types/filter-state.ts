@@ -5,7 +5,7 @@
 export interface ChatCoreFilterState {
   _chatFilter: string;
   readonly filteredChats: { id: string; name?: string }[];
-  // Chat-list filters (chat-filters.ts) — server-side query params for /api/chats.
+  // Chat-list filters (chat-filters.ts) — server-side query params for /api/v1/chats.
   _chatType: "all" | "direct" | "group";
   _chatStatus: "all" | "active" | "archived";
   _chatSort: "recent" | "name" | "unread" | "pinned-first";

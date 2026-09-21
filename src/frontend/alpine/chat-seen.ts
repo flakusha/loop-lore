@@ -12,7 +12,7 @@ import type { ChatState, Message, } from "./types";
 export const chatSeenMethods: Partial<ChatState> & ThisType<ChatState> = {
   async loadMessageSeen(msgId: string,) {
     try {
-      const res = await apiFetch(`/api/messages/${msgId}/seen`,);
+      const res = await apiFetch(`/api/v1/messages/${msgId}/seen`,);
       if (res.ok) {
         const viewers = await res.json();
         const msg = this.messages.find((m,) => m.id === msgId);
@@ -37,7 +37,7 @@ export const chatSeenMethods: Partial<ChatState> & ThisType<ChatState> = {
       // Sending actorId from the client is no longer needed and would be
       // a spoofable trust-boundary inversion — see
       // BUG-chat-seen-currentActorId-never-assigned.
-      const res = await apiFetch(`/api/messages/${msgId}/seen`, {
+      const res = await apiFetch(`/api/v1/messages/${msgId}/seen`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ state, },),

@@ -9,7 +9,7 @@
  * grid (the existing suites only assert the modal lazy-loads).
  *
  * Also verifies the C6 signed-URL download flow: the preview download button
- * must request a signed URL (POST /api/assets/:id/signed-url/:action) and
+ * must request a signed URL (POST /api/v1/assets/:id/signed-url/:action) and
  * then fetch the media through that signed URL (sig+expires) rather than the
  * raw authenticated endpoint.
  */
@@ -132,7 +132,7 @@ describe("Gallery flow E2E", () => {
         // through the signed download endpoint (carrying sig+expires) — never
         // a bare authenticated /download hit.
         expect(
-          requests.some((u,) => u.includes(`/api/assets/${id}/signed-url/download`,)),
+          requests.some((u,) => u.includes(`/api/v1/assets/${id}/signed-url/download`,)),
           "download should request a signed URL",
         ).toBe(true,);
 
@@ -149,7 +149,7 @@ describe("Gallery flow E2E", () => {
         expect(download, "download should be initiated",).not.toBeNull();
         if (download) {
           const dlUrl = new URL(download.url(),);
-          expect(dlUrl.pathname, "download should target the download endpoint",).toBe(`/api/assets/${id}/download`,);
+          expect(dlUrl.pathname, "download should target the download endpoint",).toBe(`/api/v1/assets/${id}/download`,);
           expect(dlUrl.searchParams.has("sig",), "download should carry sig",).toBe(true,);
           expect(dlUrl.searchParams.has("expires",), "download should carry expires",).toBe(true,);
         }
@@ -157,7 +157,7 @@ describe("Gallery flow E2E", () => {
         // Assert the bare authenticated endpoint was never hit.
         const bareGet = requests.some((u,) => {
           const url = new URL(u,);
-          return url.pathname === `/api/assets/${id}/download` && !url.searchParams.has("sig",);
+          return url.pathname === `/api/v1/assets/${id}/download` && !url.searchParams.has("sig",);
         },);
         expect(bareGet, "download should never hit the bare authenticated endpoint",).toBe(false,);
       } finally {

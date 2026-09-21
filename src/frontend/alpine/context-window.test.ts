@@ -140,7 +140,7 @@ describe("contextWindow.load", () => {
     expect(s.sections,).toHaveLength(1,);
     expect(s.suggestions,).toHaveLength(1,);
     expect(s.loading,).toBe(false,);
-    expect(fetchCalls[0]!.url,).toBe("/api/chats/chat-1/context",);
+    expect(fetchCalls[0]!.url,).toBe("/api/v1/chats/chat-1/context",);
   });
 
   test("falls back between status and threshold", async () => {
@@ -192,7 +192,7 @@ describe("contextWindow.refresh", () => {
     const s = fresh();
     s.chatId = "chat-9";
     await s.refresh();
-    expect(fetchCalls[0]!.url,).toBe("/api/chats/chat-9/context",);
+    expect(fetchCalls[0]!.url,).toBe("/api/v1/chats/chat-9/context",);
     expect(s.currentTokens,).toBe(7,);
   });
 

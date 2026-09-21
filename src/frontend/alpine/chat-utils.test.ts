@@ -115,13 +115,13 @@ describe("chatUtils", () => {
       const calls: Array<{ url: string; method?: string }> = [];
       globalThis.apiFetch = async (url: string, opts?: RequestInit,) => {
         calls.push({ url, method: opts?.method, },);
-        if (url === "/api/assets" && opts?.method === "POST") {
+        if (url === "/api/v1/assets" && opts?.method === "POST") {
           return Response.json({ id: "a1", }, { status: 201, },);
         }
-        if (url === "/api/assets/a1/links" && opts?.method === "POST") {
+        if (url === "/api/v1/assets/a1/links" && opts?.method === "POST") {
           return Response.json({ id: "a1", }, { status: 201, },);
         }
-        if (url.startsWith("/api/assets?entity_type=chat",)) {
+        if (url.startsWith("/api/v1/assets?entity_type=chat",)) {
           return Response.json({ data: [{ id: "a1", },], }, { status: 200, },);
         }
         return Response.json({ error: "not found", }, { status: 404, },);
@@ -132,7 +132,7 @@ describe("chatUtils", () => {
         galleryAssets: [],
         loadGalleryAssets: async function(this: GalleryState,) {
           const res = await globalThis.apiFetch(
-            `/api/assets?entity_type=chat&entity_id=${this.activeChat}&pageSize=200`,
+            `/api/v1/assets?entity_type=chat&entity_id=${this.activeChat}&pageSize=200`,
           );
           const data = await res.json();
           this.galleryAssets = data.data || [];
@@ -145,8 +145,8 @@ describe("chatUtils", () => {
       await chatUtils.uploadChatAssets!.call(self, fileInput("img.png",),);
 
       expect(calls.filter((c,) => c.method === "POST").length,).toBe(2,);
-      expect(calls[0]?.url,).toBe("/api/assets",);
-      expect(calls[1]?.url,).toBe("/api/assets/a1/links",);
+      expect(calls[0]?.url,).toBe("/api/v1/assets",);
+      expect(calls[1]?.url,).toBe("/api/v1/assets/a1/links",);
       expect(state.galleryAssets,).toEqual([{ id: "a1", },],);
     });
 
@@ -169,7 +169,7 @@ describe("chatUtils", () => {
 
       const posts = calls.filter((c,) => c.method === "POST");
       expect(posts.length,).toBe(1,);
-      expect(posts[0]?.url,).toBe("/api/assets",);
+      expect(posts[0]?.url,).toBe("/api/v1/assets",);
     });
   });
 });

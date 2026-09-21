@@ -41,7 +41,7 @@ describe("model-catalog", () => {
       seen.push(url,);
       return jsonResponse({ models: [ENTRY,], },);
     },);
-    expect(seen,).toEqual(["/api/local-inference/manifest",],);
+    expect(seen,).toEqual(["/api/v1/local-inference/manifest",],);
     expect(models,).toEqual([ENTRY,],);
   });
 

@@ -34,7 +34,7 @@ export const moodStateLoading: Partial<ChatState> & ThisType<ChatState> = {
       } catch { /* keep null */ }
 
       const worldQuery = this._activeChatWorldId ? `?worldId=${this._activeChatWorldId}` : "";
-      const moodRes = await apiFetch(`/api/actors/${npc.actor_id}/mood${worldQuery}`,);
+      const moodRes = await apiFetch(`/api/v1/actors/${npc.actor_id}/mood${worldQuery}`,);
       if (moodRes.ok) {
         const mood = await moodRes.json();
         this._mood = {
@@ -75,7 +75,7 @@ export const moodStateLoading: Partial<ChatState> & ThisType<ChatState> = {
         : null;
       if (!npc?.actor_id) { return; }
 
-      await apiFetch(`/api/actors/${npc.actor_id}/mood`, {
+      await apiFetch(`/api/v1/actors/${npc.actor_id}/mood`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({
@@ -104,7 +104,7 @@ export const moodStateLoading: Partial<ChatState> & ThisType<ChatState> = {
         : null;
       if (!npc?.actor_id) { return; }
 
-      const moodRes = await apiFetch(`/api/actors/${npc.actor_id}/mood/delta`, {
+      const moodRes = await apiFetch(`/api/v1/actors/${npc.actor_id}/mood/delta`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({
