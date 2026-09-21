@@ -940,7 +940,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-buildstyleprompt-never-injected-into-llm-request.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-BUILDSTYLEPROMPT-RESULT-RETURNED-BUT-NEVER-CONSUMED": {
     "hash": "ba53e1e",
@@ -953,7 +953,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-buildstyleprompt-result-returned-but-never-consumed.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-CALLAUX-GRACEFUL-FAILURE-THROWS-ON-EMPTY-CONFIG": {
     "hash": "pending",
@@ -1856,7 +1856,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-delete-audit-action-has-no-unit-test.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-DELETE-CHAT-GATED-ONLY-AT-PARTICIPANT-LEVEL": {
     "hash": "c80979f",
@@ -2449,7 +2449,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-frontend-regeneratevariant-does-not-pass-style-to-api.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-GALLERY-DUPLICATE-SERVEGALLERYGRID": {
     "hash": "pending",
@@ -2952,7 +2952,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-inject-audit-action-has-no-unit-test.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-INJECTNARRATION-HARDCODES-ACTOR-ID-SYSTEM-FK-DROPS-SPLIT-REU": {
     "hash": "6dc73c8",
@@ -3186,7 +3186,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-memory-audit-log-action-column-typed-string-not-union.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-MEMORY-CREATE-FORM-HARDCODES-EPISODIC-TYPE": {
     "hash": "25d9c69",
@@ -3199,7 +3199,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-memory-create-form-hardcodes-episodic-type.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-MEMORY-DECAY-WRITES-NAN-STRENGTH": {
     "hash": "8b01cbe",
@@ -3225,7 +3225,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-memory-injection-reason-not-displayed-in-ui.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-MENTION-PARSER-REGEX-FAILS-ON-MULTI-WORD-NAMES": {
     "hash": "pending",
@@ -3428,7 +3428,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-moderatecomment-has-no-authorization-any-caller-can-change-a.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-MUSIC-LINKS-POST-BODY-CHATID-IS-REQUIRED-BUT-IGNORED-DEAD-SC": {
     "hash": "63e7492",
@@ -4141,7 +4141,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-regex-transform-runs-at-store-time-not-render-time.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-REGISTER-PLUGINS-150-REFERENCES-UNDEFINED-CHATSECTIONSROUTES": {
     "hash": "0b9a09b",
@@ -4335,7 +4335,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-sectionbuilder-interface-missing-included-memory-ids-field.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-SECURITY-MERGE-BUILD-BREAK-INSTANCES-TS": {
     "hash": "pending",
@@ -4451,7 +4451,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-shadow-notes-missing-visibility-for-llm-injection-control.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-SHADOW-NOTES-TABLE-MISSING-TTL-VISIBILITY-AUTHOR-TYPE-COLUMN": {
     "hash": "dbb4a29",
@@ -4464,7 +4464,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-shadow-notes-table-missing-ttl-visibility-author-type-column.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-SIGNAL-BRIDGE-ACTIVATION-TRIGGER-UNDEFINED": {
     "hash": "3ba1095",
@@ -8816,6 +8816,19 @@
     "tags": [],
     "source": ".plan/tickets/FIX-parallelize-bun-test-invocations-isolate-pins-suite-to-one-c.md",
     "status": "done"
+  },
+  "IDEA-MICRODRAMA-POST-EPISODE-CHAT-HANDOFF": {
+    "hash": "387a34f",
+    "git_issue": "387a34f",
+    "extid": "IDEA-MICRODRAMA-POST-EPISODE-CHAT-HANDOFF",
+    "type": "IDEA",
+    "title": "Post-episode character chat handoff (microdrama pattern)",
+    "label": "idea",
+    "priority": "Low",
+    "epic": "epic-platform-research.md",
+    "tags": [],
+    "source": ".plan/tickets/IDEA-microdrama-post-episode-chat-handoff.md",
+    "status": "Not Started"
   },
   "IMPROVE-IMPERSONATE-EXPLICIT-ELSE-BRANCH": {
     "hash": "pending",
@@ -30965,18 +30978,5 @@
     "source": ".plan/tickets/WIRE-nsfw-audit-page-missing-inline-authz.md",
     "status": "done",
     "resolved_by": "2ac5cf29"
-  },
-  "IDEA-MICRODRAMA-POST-EPISODE-CHAT-HANDOFF": {
-    "hash": "387a34f",
-    "git_issue": "387a34f",
-    "extid": "IDEA-MICRODRAMA-POST-EPISODE-CHAT-HANDOFF",
-    "type": "IDEA",
-    "title": "Post-episode character chat handoff (microdrama pattern)",
-    "label": "idea",
-    "priority": "Low",
-    "epic": "epic-platform-research.md",
-    "tags": [],
-    "source": ".plan/tickets/IDEA-microdrama-post-episode-chat-handoff.md",
-    "status": "Not Started"
   }
 }

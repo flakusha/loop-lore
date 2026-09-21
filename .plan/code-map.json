@@ -2384,6 +2384,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-sectionbuilder-interface-missing-included-memory-ids-field.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/FEAT-075.md"
     },
     {
@@ -10207,6 +10211,14 @@
       "source": ".plan/epics/epic-db-migration-compaction.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-memory-audit-log-action-column-typed-string-not-union.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-shadow-notes-table-missing-ttl-visibility-author-type-column.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/actors.md"
     },
@@ -17290,7 +17302,15 @@
   "src/generation/generation-routes/regenerate.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-buildstyleprompt-never-injected-into-llm-request.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-buildstyleprompt-result-returned-but-never-consumed.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-frontend-regeneratevariant-does-not-pass-style-to-api.md"
     },
     {
       "kind": "ticket",
@@ -19202,7 +19222,17 @@
   "src/memory/audit.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-delete-audit-action-has-no-unit-test.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-inject-audit-action-has-no-unit-test.md"
+    }
+  ],
+  "src/memory/audit.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-memory-audit-log-action-column-typed-string-not-union.md"
     }
   ],
   "src/memory/budget.test.ts": [
