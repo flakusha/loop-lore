@@ -78,6 +78,7 @@ import type {
   QuestType,
   RelationshipType,
   SeductionSkillCategory,
+  ShadowNoteAuthorType,
   ShadowNoteStatus,
   ShadowNoteType,
   ShadowNoteVisibility,
@@ -2439,7 +2440,13 @@ export async function insertShadowNotes(
   type: ShadowNoteType,
   content: string,
   created_at: string,
-  opts?: { id?: string; status?: ShadowNoteStatus; visibility?: ShadowNoteVisibility },
+  opts?: {
+    id?: string;
+    status?: ShadowNoteStatus;
+    visibility?: ShadowNoteVisibility;
+    expires_at?: string | null;
+    author_type?: ShadowNoteAuthorType;
+  },
 ): Promise<void> {
   await db.insertInto("shadow_notes",).values({
     id: crypto.randomUUID(),
