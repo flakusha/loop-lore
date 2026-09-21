@@ -5,196 +5,32 @@
 
 # Testing Strategy
 
-Unit tests, integration tests, E2E. Bun test runner, Jest-compatible API.
+Bun test runner (Jest-compatible `expect`, `bun:test` mocks), colocated tests `src/feature/feature.test.ts` plus `tests/e2e/`. Roughly a quarter of `src/` files have tests.
 
-## Test Framework
+Commands: `bun run check` (full gate suite, heavy gates serialized after light ones), `bun run test:unit`, `bun run test:coverage` (unit + e2e, lcov), `bun run test:e2e:browser`.
 
-- **Runner**: Bun's built-in test runner
-- **Assertions**: `expect` API
-- **Mocking**: `bun:test`
-- **Coverage**: `bun test --coverage`
+Finalize path (`giwt finalize <branch>`): 1) `bun run check --diff-base <merge-base>` — gates scoped to the branch diff, enforcing the per-module line-coverage floor (80%); 2) `bun run test:unit` — behavioral, no coverage instrumentation. `test:e2e`/`test:e2e:browser` are CI-only jobs (`.github/workflows/ci.yml`). Selective bypass: `--skip-gates '<names>'`; `CHECK_INCLUDE_HEAVY_DB_TESTS=1` enables the full migration test suite. Lightweight presets: `check:fast` (~15 s, skips coverage/plan-validate/format/md-lint/knip), `check:default` (~30 s), `check` (~72 s). Authoritative skip-list: `DEFAULT_TEST_SKIP_PATTERNS` in `scripts/check-parallel.mjs`.
 
-## Test Structure
+## Coverage goals & known gaps (directional, not pinned metrics)
 
-Colocated with source: `src/feature/feature.test.ts`. ~165 source files under `src/`, ~42 with tests (~25% file coverage).
+- Targets: core logic ≥90%, config/validation ≥80%, edge cases ≥70%, integration ≥60%.
+- Well-covered: age-gate, steganography, config, content, crypto, db, generation core, logger, middleware, http-utils, story/game-master, transport, utils.
+- Pure-logic quick wins without tests: `src/utils/{get-type,safe-json}.ts`, `src/profanity/service.ts`, `src/db/state.ts`, `src/middleware/{admin-gate,rate-limit}.ts`, `src/transport/{errors,compression}.ts`, `src/story/quality-evaluator.ts` (505 L), `src/story/turn-strategies.ts`, story events extraction, `src/assistant/service.ts`, `src/content/hash-injection.ts`, `src/routes/router.ts`, `src/plugins/registry.ts`, `src/config/constants.ts`.
+- Needs DB/provider mocks: cancellation actions/tracker, image-gen + generation routes, assets/personas services+controllers, turn-manager, quest-engine, world-state, story events, `src/middleware/auth/`.
+- Hard to unit test (frontend WebCrypto/CompressionStreams, TUI, bootstrap) → covered by browser E2E smoke tests.
 
-## Commands
+## E2E suite
 
-```bash
-bun run check          # full gate suite (heavy gates serialized after the light ones)
-bun run test:unit      # unit tests only
-bun run test:coverage  # unit + e2e with lcov output
-bun run test:e2e:browser
-```
+- ~20 flow files with isolated `TestServer` + `ApiClient`; 7 browser files (Playwright); mock LLM/image providers with `failOnCall`/`streamError`; deterministic UUID seeds.
+- Known critical gaps: no cross-tenant isolation tests, error envelope never asserted, no cancel-during-generation, no idempotency verification, browser auth/chat flows untested, no pagination tests, no RPG coverage, no message tree/variant tests.
+- Structural issues: browser E2E solo-user ID mismatch (server auto-creates random solo user vs seeded IDs) and shared `cachedSoloUser` singleton causing parallel-suite instability — fix: seed solo user / per-request session.
 
+## Schema validation
 
-### Default finalize path (`giwt finalize`)
+API responses validated against Elysia TypeBox (`t`) schemas in `src/validation/`. **Zod caveat:** a `src/schemas/` Zod layer does not exist; the Zod/OpenAPI/Schemathesis contract-testing pipeline is aspirational (`docs/meta/code-practices-improvements/06-schemas-and-openapi.md`). OpenAPI is served at `/api/docs` via `elysia-swagger`.
 
-`giwt finalize <branch>` runs the gates in this order (see
-`scripts/worktree/commands/finalize.ts`):
+## Epics
 
-1. **Step 2** — `bun run check --diff-base <merge-base>` (full gate
-   suite scoped to the branch's diff). Heavy gates are serialized after
-   the lights; the per-module coverage floor (80%) is enforced here.
-2. **Step 3** — `bun run test:unit` (behavioral, no coverage
-   instrumentation). Runs all unit tests with `--parallel=${TEST_JOBS:-4}
-   --isolate` (see `package.json:66`).
-
-`test:e2e` and `test:e2e:browser` are **not** part of the finalize
-chain — they run in CI as separate jobs (see `.github/workflows/ci.yml`)
-where flake budgets are acceptable. Finalize is for fast, sound gating
-on the critical path; CI catches integration regressions.
-
-Bypass gates selectively:
-
-```bash
-giwt finalize <branch> --skip-gates 'coverage - per-module line %,lint - oxlint (corrected)'  # example
-CHECK_INCLUDE_HEAVY_DB_TESTS=1 giwt finalize <branch>            # full migration test coverage
-```
-
-### Lightweight check presets
-
-Three named `package.json` scripts (added 2026-09-18) hit different cost
-points without editing the gate list. All accept the same `--diff-base` /
-`--gates` / `--skip-gates` CLI args as `check:parallel` if you need to
-adjust further.
-
-| Preset | Wallclock | Skipped gates | Use |
-|---|---:|---|---|
-| `bun run check:fast` | ~15 s | coverage + plan-validate + format + md-lint + knip | pre-commit / inner loop |
-| `bun run check:default` | ~30 s | same 5 as `check:fast` | local pre-finalize |
-| `bun run check` | ~72 s | none | finalize / pre-PR |
-
-`check:full` still does `build:frontend && check` for release builds.
-Measured on `dev` HEAD 2026-09-18; tune `--jobs N` to your host. The
-audit document lives at `.tmp/heavy-gate-audit-2026-09-18.md` until next
-purge.
-
-### Heavy-test opt-in (coverage gate)
-
-`scripts/check-parallel.mjs` skips `src/db/migrations.test.ts` and
-`src/db/migration-roundtrip.test.ts` by default in the coverage gate's path
-list — a latency decision dating from when these files were slow in the
-gate context. Both files are per-test in-memory SQLite and run in ~0.5s
-each today. They had also been red: `016_fts.ts` `down()` dropped
-`memories_fts` without dropping the `actor_memories_fts_ad/ai/au` triggers,
-so any full rollback failed (fixed 2026-09-18; both suites green, 49/49 in
-~1.2s with the opt-in below).
-
-Opt in to the full suite (when you actually want migration coverage):
-
-```bash
-CHECK_INCLUDE_HEAVY_DB_TESTS=1 bun run check       # empty skip list
-CHECK_TEST_KEEP_REGEX='migrations' bun run check   # drop one pattern
-```
-
-The authoritative reference is the comment block above
-`DEFAULT_TEST_SKIP_PATTERNS` in `scripts/check-parallel.mjs`.
-
-## Coverage Goals
-
-- Core business logic (DB schema, gen pipeline, content): ≥90%
-- Config/validation: ≥80%
-- Edge cases/error handling: ≥70%
-- Integration (routes, services): ≥60%
-
-## Test Categories
-
-### Unit Tests
-
-Individual functions in isolation. Examples: config loading, encode/decode, continuation logic.
-
-### Integration Tests
-
-Multi-component, often with test DB. Examples: DB schema/constraints, age gate service.
-
-### Schema Validation in Tests
-
-API responses validated against Elysia TypeBox (`t`) schemas in
-`src/validation/schemas.ts`. Route groups define request/response shapes there;
-tests import schemas and validate responses — zero production overhead.
-
-#### Contract Testing Pipeline (aspirational)
-
-> Note: a `src/schemas/` Zod layer does not exist; the Zod/OpenAPI pipeline below
-> is aspirational (see `docs/meta/code-practices-improvements/06-schemas-and-openapi.md`).
-> The current stack is Elysia `t` (TypeBox) in `src/validation/schemas.ts`.
-
-1. TypeBox schemas as single source of truth
-2. `elysia-swagger` / OpenAPI 3.x served at `/api/docs`
-3. **Schemathesis** — property-based fuzzing of OpenAPI spec in CI
-
-### Manual Testing
-
-TUI rendering, browser UI (htmx/Alpine.js), file uploads, real-time streaming.
-
-## Current Coverage Analysis
-
-### Covered Modules
-
-`age-gate`, `characters/steganography`, `config`, `content`, `crypto` (full), `db`, `generation` (core + routes), `logger` (all), `middleware` (response/headers), `routes/http-utils`, `story/game-master`, `transport`, `utils`.
-
-### Files Without Tests — Quick Win (pure logic, ~17 files)
-
-`src/utils/get-type.ts`, `src/utils/safe-json.ts`, `src/profanity/service.ts`, `src/db/state.ts`, `src/middleware/admin-gate.ts`, `src/middleware/rate-limit.ts`, `src/transport/errors.ts`, `src/transport/compression.ts`, `src/story/quality-evaluator.ts`, `src/story/turn-strategies.ts`, `src/story/events/extraction.ts`, `src/assistant/service.ts`, `src/content/hash-injection.ts`, `src/routes/router.ts`, `src/plugins/registry.ts`, `src/config/constants.ts`
-
-### Key Files Needing DB/Provider Mocks
-
-`cancellation-actions.ts`, `cancellation-tracker.ts`, `image-gen-route.ts`, `generation-routes.ts`, `assets/service.ts`, `assets/controller.ts`, `personas/service.ts`, `personas/controller.ts`, `turn-manager.ts`, `quest-engine.ts`, `world-state.ts`, `story/events/` (validation + application), `src/middleware/auth/`, `assistant/prompt-assembler.ts`
-
-### Hard to Unit Test
-
-Frontend (WebCrypto, CompressionStreams), TUI (blessed), build scripts, server bootstrap. Covered by browser E2E smoke tests.
-
-### Priority Gaps
-
-- `quality-evaluator.ts` (505 lines, pure logic, 0 tests)
-- `quest-engine.ts` (497 lines)
-- `cancellation-actions.ts` (325 lines)
-- `cancellation-tracker.ts` (379 lines)
-- `turn-manager.ts` (243 lines)
-- All story events (extraction + validation + application: ~521 lines)
-
-## E2E Test Suite
-
-### Structure
-
-- 20 files under `tests/e2e/flows/`, each creates isolated `TestServer` + `ApiClient`
-- 7 browser files under `tests/e2e/flows/browser/` (Playwright via `chromium.launch()`)
-- 8 helper files, 2 mock providers (LLM, image)
-
-### What Works
-
-- Clean helper factoring (server, client, seed, browser-server)
-- Deterministic UUIDs (`a0000001`–`a0000008`)
-- 17 gen tests covering streaming, mock failures, SSE parsing, boundary sizes
-- Mock provider pattern with `failOnCall`/`streamError` + `beforeEach` reset
-- SSE streaming test parsing event-stream format
-- World nested resources CRUD
-
-### Critical Gaps
-
-- **No cross-tenant isolation** — User B accessing User A's resources never tested
-- **Error envelope never asserted** — zero tests check `{ code, message }` shape
-- **No cancel-during-generation test**
-- **No idempotency test** (`idempotencyKey` sent but never verified)
-- **Browser auth flow**: no login redirect, no demo login, no logout
-- **Browser chat flow**: no message send tested
-- **Missing message tree/variant tests** (parent/child reply chains, swipes)
-- **No pagination tests** on any list endpoint
-- **No RPG mechanics coverage** (quests, combat, dice, skills, XP, loot)
-- **Story turn creation not tested**
-- World cascade delete not tested
-- Browser test timeouts: magic numbers (`5000`, `8000`, `10000`)
-
-### Solo/Seed User ID Mismatch
-
-Browser E2E seeds deterministic IDs but server runs in solo mode (`auth.required = false`), auto-creating a random solo user. Seeded data invisible. Fix: seed solo user with `SEED.user.id` and `UserRole.Solo`, or stub `getOrCreateSoloUserForAuth`.
-
-### Parallel Suite Instability
-
-7 browser test files sharing `cachedSoloUser` singleton via module cache. Teardown of one file corrupts another's session. Fix: make `cachedSoloUser` per-request.
-
-## Verdict
-
-Solid foundational coverage (84% function coverage). Core domains well-tested. Gaps in error handling, config validation edge cases, integration layers. Typical for active development.
+- `.plan/epics/epic-core-testing-frameworks.md`
+- `.plan/epics/epic-testing-qa.md`
+- `.plan/epics/epic-e2e-integration-testing.md`

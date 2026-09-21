@@ -3,34 +3,22 @@
 
 # Achievements & Badges Specification
 
-> Promoted 2026-09-18 from STUB. Authoritative source is `src/` and AGENTS.md.
+> **Status:** Largely implemented — DB tables, service, and routes all exist; cross-actor aggregation and badge UI are aspirational. Authoritative source is `src/` and AGENTS.md.
 
-## Overview
+## Implemented
 
-Achievements are narrative / mechanical milestones awarded through the RPG progression layer. Implementation lives in `src/rpg/achievements/` with `service/` providing the award / query API.
+- Tables: `achievements` and `player_achievements` (`src/db/migrations/001_init.ts` ~L2765/L2844). An earlier revision of this spec claiming "no first-class DB table — achievements ride on actor `properties.achievements` JSON" was false.
+- Service: `src/rpg/achievements/service/` — `AchievementsService` with definition CRUD (`createAchievement`, `getAchievement`, `listAchievements`, `updateAchievement`, `deleteAchievement`) and player progress (`getPlayerAchievements`, `getPlayerAchievement`, `isUnlocked`, `updateProgress`, `claimRewards`, `getPlayerStats`).
+- Routes: `/api/rpg/achievements` definition CRUD + `.../player/...` progress and rewards (`src/routes/rpg/achievements.ts`, `src/routes/rpg/achievements-player.ts`, mounted in `src/routes/rpg/index.ts`).
+- Types: `AchievementCategory`, `AchievementTier`, unlock conditions (`src/rpg/achievements/service/types.ts`).
+- Note: `.plan/epics/epic-achievements.md` status line ("UNWIRED — routes pending") is stale — routes are mounted under `/api/rpg`.
 
-## Scope
+## Not implemented / aspirational
 
-- Achievements are awarded on RPG events (level-up, quest complete, crafting milestone, NPC trust threshold).
-- Surfaced via actor profile and chat header as cosmetic badges.
-- No first-class DB table — achievements ride on actor `properties.achievements` JSON column.
+- Cross-actor aggregation (leaderboards, shared achievements) and badge display surfaces (actor profile / chat header cosmetics).
 
-<!-- GAP: dedicated `achievements` table for cross-actor aggregation (leaderboards, shared achievements) is aspirational. -->
-
-## Technical Design
-
-- **Service:** `src/rpg/achievements/service/` exposes `award()`, `listForActor()`, `listEarned()`.
-- **Triggering:** RPG event hooks in `src/rpg/xp/sources.ts`, `src/rpg/crafting/process.ts`, `src/rpg/service/character-stats.ts`.
-- **Format:** structured `{ id, name, description, awardedAt }` records on actor.
-
-## Integration Points
-
-- `src/rpg/achievements/service/` — award / query API
-- `src/rpg/xp/sources.ts` — XP-driven awards
-- `src/rpg/crafting/process.ts` — crafting-milestone awards
-- `src/characters/mood.ts` — mood-driven achievement hints
-
-## Related Epics
+## Epics
 
 - `.plan/epics/epic-achievements.md`
+- `.plan/epics/epic-rpg-content-systems.md`
 - `.plan/epics/epic-rpg-progression.md`

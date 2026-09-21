@@ -3,9 +3,15 @@
 
 # Chat Templates & Configuration Lifecycle
 
-**Status:** Design (research complete)
+**Status:** Design (research complete) — backend largely implemented
 **Owner:** chat setup templates
 **Related:** `.plan/epics/epic-config-templates.md`, `.plan/tickets/IDEA-chat-setup-templates.md`
+
+> **Implementation status:** Implemented — `chat_setup_templates` schema
+> (`src/db/schema-core.ts`), CRUD + seeded presets (`src/chat/service/template-*.ts`),
+> and template binding on chat creation, migration, side-channel exclusion, and world
+> default chats (`src/routes/chats.ts`, `src/routes/chats/side-channels.ts`,
+> `src/routes/worlds.ts`). UI coverage per this doc may lag — see the epic for scope.
 
 ## Overview
 
