@@ -192,7 +192,7 @@ describe("Worlds flow E2E", () => {
       const sourceId = await createWorldViaApi("Source Export World",);
 
       const client = createClient(ctx.url,);
-      const dlRes = await fetch(`${ctx.url}/api/worlds/${sourceId}/export`, {
+      const dlRes = await fetch(`${ctx.url}/api/v1/worlds/${sourceId}/export`, {
         headers: { Cookie: `ll_token=${client.token ?? ""}`, },
       },);
       expect(dlRes.status,).toBe(200,);
@@ -244,7 +244,7 @@ describe("Worlds flow E2E", () => {
         const exportBtn = page.locator("[data-testid='export-world']",);
         await exportBtn.waitFor({ state: "visible", timeout: 10_000, },);
 
-        // exportWorld() does location.assign(GET /api/worlds/:id/export). With
+        // exportWorld() does location.assign(GET /api/v1/worlds/:id/export). With
         // Content-Disposition: attachment the browser fires a download carrying
         // the world's .world.json bundle. Asserting the REAL world id + name
         // (not a placeholder) proves the substitution fix.

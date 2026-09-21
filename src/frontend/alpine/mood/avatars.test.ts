@@ -72,12 +72,12 @@ function routeResponses(opts?: {
         ? new Response("", { status: opts.participantsStatus, },)
         : Response.json(opts?.participants ?? npcParticipants,);
     }
-    if (url === "/api/actors/actor-9/avatars") {
+    if (url === "/api/v1/actors/actor-9/avatars") {
       return opts?.avatarsStatus
         ? new Response("", { status: opts.avatarsStatus, },)
         : Response.json(opts?.avatars ?? avatarRows,);
     }
-    if (url === "/api/actors/actor-9/emotion-avatars") {
+    if (url === "/api/v1/actors/actor-9/emotion-avatars") {
       return opts?.generation ?? Response.json({ jobId: null, },);
     }
     return new Response("", { status: 404, },);

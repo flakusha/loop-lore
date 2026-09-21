@@ -27,7 +27,7 @@ export function healthPanelMethods() {
     healthAutoRefresh: false,
     healthRefreshInterval: null as ReturnType<typeof setInterval> | null,
     expandHealthProvider: "",
-    // ── AUX generation telemetry (GET /api/admin/telemetry/aux) ──
+    // ── AUX generation telemetry (GET /api/v1/admin/telemetry/aux) ──
     auxAggregates: [] as {
       task: string;
       totalCalls: number;
@@ -68,7 +68,7 @@ export function healthPanelMethods() {
           // Enrich with model details per provider
           for (const p of providers) {
             try {
-              const modelsRes = await apiFetch(`/api/admin/providers/${p.name}/models`, {
+              const modelsRes = await apiFetch(`/api/v1/admin/providers/${p.name}/models`, {
                 headers: { Accept: "application/json", },
               },);
               if (modelsRes.ok) {
@@ -92,7 +92,7 @@ export function healthPanelMethods() {
       this.loadingHealth = true;
       try {
         // Trigger a full rescan first
-        await apiFetch("/api/admin/providers/rescan", { method: "POST", },);
+        await apiFetch("/api/v1/admin/providers/rescan", { method: "POST", },);
         // Then load fresh health data
         await this.loadHealth();
         showToast("success", "Health data refreshed",);
@@ -105,7 +105,7 @@ export function healthPanelMethods() {
     async loadAuxTelemetry() {
       this.loadingAuxTelemetry = true;
       try {
-        const res = await apiFetch("/api/admin/telemetry/aux?limit=50", {
+        const res = await apiFetch("/api/v1/admin/telemetry/aux?limit=50", {
           headers: { Accept: "application/json", },
         },);
         if (res.ok) {
@@ -136,7 +136,7 @@ export function healthPanelMethods() {
     async loadNsfwConfig() {
       this.loadingNsfw = true;
       try {
-        const res = await apiFetch("/api/admin/nsfw", { headers: { Accept: "application/json", }, },);
+        const res = await apiFetch("/api/v1/admin/nsfw", { headers: { Accept: "application/json", }, },);
         if (res.ok) {
           this.nsfwConfig = await res.json();
         }
@@ -149,7 +149,7 @@ export function healthPanelMethods() {
 
     async saveNsfwConfig() {
       try {
-        const res = await apiFetch("/api/admin/nsfw", {
+        const res = await apiFetch("/api/v1/admin/nsfw", {
           method: "PUT",
           headers: { "Content-Type": "application/json", },
           body: jsonBody(this.nsfwConfig,),

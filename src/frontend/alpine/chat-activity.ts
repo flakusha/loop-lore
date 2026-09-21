@@ -5,7 +5,7 @@
 //
 // SSE + polling is handled by NotificationsManager (notifications.ts).
 // This module delegates to it for unseen counts and mark-read,
-// avoiding a duplicate EventSource to /api/activity/stream.
+// avoiding a duplicate EventSource to /api/v1/activity/stream.
 import { jsonBody, } from "./json";
 import type { ChatState, } from "./types";
 

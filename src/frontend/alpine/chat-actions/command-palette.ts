@@ -4,7 +4,7 @@
 /**
  * Command palette Alpine.js state slice.
  *
- * Hydrates its command list from `GET /api/commands` on init (single source
+ * Hydrates its command list from `GET /api/v1/commands` on init (single source
  * of truth — the assistant command registry). Falls back to an empty list
  * when the request fails so the UI degrades gracefully.
  * (WIRE-assistant-command-palette-stale-static-list: prior implementation
@@ -32,7 +32,7 @@ export const commandPalette: Partial<ChatState> & ThisType<ChatState> = {
 
   async _loadCommandList(): Promise<void> {
     try {
-      const res = await apiFetch("/api/commands",);
+      const res = await apiFetch("/api/v1/commands",);
       if (!res.ok) {
         log.warn("command list fetch failed", { status: res.status, },);
         return;

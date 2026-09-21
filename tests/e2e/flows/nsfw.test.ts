@@ -56,7 +56,7 @@ describe("NSFW E2E", () => {
     reason: "e2e-spec block",
   });
 
-  test("POST /api/nsfw/moderation/block is gated before reaching the moderation role check", async () => {
+  test("POST /api/v1/nsfw/moderation/block is gated before reaching the moderation role check", async () => {
     // Without an established session, the global CSRF beforeHandle fires
     // first and rejects unsafe methods with 403 csrf_verification_failed.
     // This is the correct order — a forged session can't reach the role gate.
@@ -65,7 +65,7 @@ describe("NSFW E2E", () => {
     expect(res.status,).toBe(403,);
     expect(res.error ?? "",).toContain("csrf",);
   });
-  test("POST /api/nsfw/moderation/block returns 403 for regular user", async () => {
+  test("POST /api/v1/nsfw/moderation/block returns 403 for regular user", async () => {
     const res = await userApi.post(
       "/api/v1/nsfw/moderation/block",
       blockBody(SEED.admin.id,),
@@ -74,7 +74,7 @@ describe("NSFW E2E", () => {
     expect(res.code,).toBeTruthy();
   });
 
-  test("POST /api/nsfw/moderation/ban returns 403 for regular user", async () => {
+  test("POST /api/v1/nsfw/moderation/ban returns 403 for regular user", async () => {
     const res = await userApi.post(
       "/api/v1/nsfw/moderation/ban",
       blockBody(SEED.admin.id,),
@@ -119,13 +119,13 @@ describe("NSFW E2E", () => {
     expect(unshadow.ok,).toBe(true,);
   });
 
-  test("GET /api/nsfw/moderation/flags (list) is reachable for admin", async () => {
+  test("GET /api/v1/nsfw/moderation/flags (list) is reachable for admin", async () => {
     const res = await adminApi.get("/api/v1/nsfw/moderation/flags",);
     expect(res.status,).toBe(200,);
     expect(res.data,).toBeTruthy();
   });
 
-  test("POST /api/nsfw/moderation/block with missing targetUserId returns 422", async () => {
+  test("POST /api/v1/nsfw/moderation/block with missing targetUserId returns 422", async () => {
     // modBody schema requires targetUserId; Elysia schema validation → 422.
     const res = await adminApi.post(
       "/api/v1/nsfw/moderation/block",
@@ -135,7 +135,7 @@ describe("NSFW E2E", () => {
     expect(res.code,).toBeTruthy();
   });
 
-  test("POST /api/nsfw/moderation/block with missing reason returns 422", async () => {
+  test("POST /api/v1/nsfw/moderation/block with missing reason returns 422", async () => {
     const res = await adminApi.post(
       "/api/v1/nsfw/moderation/block",
       { targetUserId: SEED.user.id, },

@@ -46,7 +46,7 @@ describe("Character edit view E2E", () => {
       .onConflict((oc,) => oc.column("id",).doNothing())
       .execute();
     // Seed a licensing record: the edit form's licensing panel fetches
-    // /api/actors/:id/licensing, whose designed 404 ("no license yet") still
+    // /api/v1/actors/:id/licensing, whose designed 404 ("no license yet") still
     // logs a browser console resource error. Characters configured for
     // publishing carry a license row; mirror that realistic state here.
     const licNow = new Date().toISOString();

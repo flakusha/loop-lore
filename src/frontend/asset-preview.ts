@@ -92,7 +92,7 @@ async function ensurePreviewModal(): Promise<HTMLElement | null> {
  */
 async function requestSignedUrl(assetId: string, action: string,): Promise<string | null> {
   try {
-    const res = await feFetch(`/api/assets/${assetId}/signed-url/${action}`, { method: "POST", },);
+    const res = await feFetch(`/api/v1/assets/${assetId}/signed-url/${action}`, { method: "POST", },);
     if (!res.ok) { return null; }
     const data = await res.json();
     return typeof data?.url === "string" ? `${location.origin}${data.url}` : null;
@@ -109,7 +109,7 @@ async function renderPreviewBody(
   body: HTMLElement,
   a: PreviewAsset,
 ): Promise<void> {
-  let mediaSrc = `/api/assets/${a.id}/raw`;
+  let mediaSrc = `/api/v1/assets/${a.id}/raw`;
   if (a.asset_type && ["image", "audio", "video",].includes(a.asset_type,)) {
     mediaSrc = (await requestSignedUrl(a.id, "raw",)) ?? mediaSrc;
   }
@@ -143,7 +143,7 @@ async function renderPreviewBody(
 
 export async function openAssetPreview(id: string,): Promise<void> {
   try {
-    const res = await feFetch(`/api/assets/${id}`,);
+    const res = await feFetch(`/api/v1/assets/${id}`,);
     if (!res.ok) { return; }
     const a = (await res.json()) as PreviewAsset;
     globalThis.__previewAsset = a;
@@ -166,7 +166,7 @@ export async function copyAssetUrl(): Promise<void> {
   const a = globalThis.__previewAsset;
   if (!a?.id) { return; }
   try {
-    const url = (await requestSignedUrl(a.id, "raw",)) ?? `${location.origin}/api/assets/${a.id}/raw`;
+    const url = (await requestSignedUrl(a.id, "raw",)) ?? `${location.origin}/api/v1/assets/${a.id}/raw`;
     await navigator.clipboard.writeText(url,);
     const { showToast, } = await import("./ui");
     showToast("success", "URL copied",);
@@ -182,7 +182,7 @@ export async function downloadAsset(): Promise<void> {
   try {
     // Prefer a signed `download` URL (server forces Content-Disposition:
     // attachment). Falls back to the direct endpoint for existing sessions.
-    const url = (await requestSignedUrl(a.id, "download",)) ?? `/api/assets/${a.id}/download`;
+    const url = (await requestSignedUrl(a.id, "download",)) ?? `/api/v1/assets/${a.id}/download`;
     const el = document.createElement("a",);
     el.href = url;
     el.download = a.filename || "asset";
@@ -203,7 +203,7 @@ export async function deleteAssetPreview(): Promise<boolean> {
   if (!a?.id || !confirm("Delete this asset?",)) { return false; }
   const { showToast, } = await import("./ui");
   try {
-    const res = await feFetch(`/api/assets/${a.id}`, { method: "DELETE", },);
+    const res = await feFetch(`/api/v1/assets/${a.id}`, { method: "DELETE", },);
     if (res.ok) {
       document.querySelector("#preview-modal",)?.classList.remove("open",);
       globalThis.__previewAsset = null;

@@ -69,7 +69,7 @@ describe("messageTools.forwardMessage", () => {
     } finally {
       (globalThis as Record<string, unknown>).prompt = orig;
     }
-    expect(calls[0]?.url,).toBe("/api/chats/chat-1/messages/m1/forward",);
+    expect(calls[0]?.url,).toBe("/api/v1/chats/chat-1/messages/m1/forward",);
     expect(calls[0]?.opts.method,).toBe("POST",);
     expect(JSON.parse(calls[0]?.opts.body as string,),).toEqual({ targetChatId: "chat-2", },);
     expect(ctx.toasts[0]?.type,).toBe("success",);
@@ -101,7 +101,7 @@ describe("messageTools.runMessageAiAction", () => {
     const ctx = buildCtx();
     handler = async () => Response.json({ action: "summarize", result: "Key points", },);
     await messageTools.runMessageAiAction!.call(ctx as never, "m1", "summarize",);
-    expect(calls[0]?.url,).toBe("/api/chats/chat-1/messages/m1/ai-action",);
+    expect(calls[0]?.url,).toBe("/api/v1/chats/chat-1/messages/m1/ai-action",);
     expect(JSON.parse(calls[0]?.opts.body as string,),).toEqual({ action: "summarize", },);
     expect(ctx.toasts[0],).toMatchObject({ type: "info", message: "Key points", },);
   });

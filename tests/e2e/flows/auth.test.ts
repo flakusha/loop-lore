@@ -30,8 +30,8 @@ describe("Auth E2E", () => {
     expect(res.code,).toBeTruthy(); // TEST.2 error envelope
   });
 
-  test("POST /api/demo-login creates session and returns cookie", async () => {
-    const res = await api.post("/api/demo-login",);
+  test("POST /api/v1/demo-login creates session and returns cookie", async () => {
+    const res = await api.post("/api/v1/demo-login",);
     expect(res.ok,).toBe(true,);
     expect(api.token,).toBeTruthy();
   });

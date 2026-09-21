@@ -8,7 +8,7 @@
  *  - chat-type, chat-mode, chat-template, persona-select, chat-world,
  *    chat-turn-strategy, chat-visibility, chat-visual-novel selects render
  *  - selecting a persona affects the create payload (verified via the form
- *    submit handler collecting the value and POSTing /api/chats)
+ *    submit handler collecting the value and POSTing /api/v1/chats)
  *  - submitting the form creates a chat that lands in /views/chat with the
  *    new chat selected
  *

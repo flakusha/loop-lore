@@ -4,7 +4,7 @@
 /**
  * E2E: Message Edge-Cases
  *
- * Drives /api/chats/:id/messages + /api/messages/:id with adversarial
+ * Drives /api/v1/chats/:id/messages + /api/v1/messages/:id with adversarial
  * payloads to pin what those routes validate today. Acts as a regression
  * net for future hardening.
  */
@@ -32,14 +32,14 @@ describe("Message edge-cases E2E", () => {
   // ── Validation: required fields ──────────────────────────────
 
   test("POST message with no body returns 4xx, not 5xx", async () => {
-    const res = await api.post(`/api/chats/${SEED.chat.id}/messages`, {},);
+    const res = await api.post(`/api/v1/chats/${SEED.chat.id}/messages`, {},);
     expect(res.ok,).toBe(false,);
     expect(res.status,).toBeGreaterThanOrEqual(400,);
     expect(res.status,).toBeLessThan(500,);
   });
 
   test("POST message with empty content string is rejected (4xx)", async () => {
-    const res = await api.post(`/api/chats/${SEED.chat.id}/messages`, {
+    const res = await api.post(`/api/v1/chats/${SEED.chat.id}/messages`, {
       content: "",
       role: "user",
     },);
@@ -50,7 +50,7 @@ describe("Message edge-cases E2E", () => {
   test("POST message with whitespace-only content is rejected (400)", async () => {
     // BUG-message-whitespace-only-accepted fixed: route now trims and
     // rejects whitespace-only payloads before any side effect.
-    const res = await api.post(`/api/chats/${SEED.chat.id}/messages`, {
+    const res = await api.post(`/api/v1/chats/${SEED.chat.id}/messages`, {
       content: "   \n\t  ",
       role: "user",
     },);
@@ -63,7 +63,7 @@ describe("Message edge-cases E2E", () => {
     // the trimmed content (not rejected wholesale, not stored with the
     // surrounding whitespace). We confirm via 201 + an id; content shape
     // is verified by the message-read coverage tests elsewhere.
-    const res = await api.post(`/api/chats/${SEED.chat.id}/messages`, {
+    const res = await api.post(`/api/v1/chats/${SEED.chat.id}/messages`, {
       content: "   hello world\n\n",
       role: "user",
     },);
@@ -73,7 +73,7 @@ describe("Message edge-cases E2E", () => {
     expect(typeof created.id,).toBe("string",);
   });
   test("POST message with unknown role is rejected (4xx)", async () => {
-    const res = await api.post(`/api/chats/${SEED.chat.id}/messages`, {
+    const res = await api.post(`/api/v1/chats/${SEED.chat.id}/messages`, {
       content: "hi",
       role: "moderator-impersonator",
     },);
@@ -83,7 +83,7 @@ describe("Message edge-cases E2E", () => {
   });
 
   test("POST message with non-string content is rejected (4xx)", async () => {
-    const res = await api.post(`/api/chats/${SEED.chat.id}/messages`, {
+    const res = await api.post(`/api/v1/chats/${SEED.chat.id}/messages`, {
       content: { "$gt": "", },
       role: "user",
     },);
@@ -96,7 +96,7 @@ describe("Message edge-cases E2E", () => {
 
   test("POST message with 1MB content is bounded (no 5xx, no OOM)", async () => {
     const huge = "x".repeat(1_000_000,);
-    const res = await api.post(`/api/chats/${SEED.chat.id}/messages`, {
+    const res = await api.post(`/api/v1/chats/${SEED.chat.id}/messages`, {
       content: huge,
       role: "user",
     },);
@@ -107,13 +107,13 @@ describe("Message edge-cases E2E", () => {
 
   test("POST message with full unicode + emoji round-trips byte-for-byte", async () => {
     const sent = `日本語 🌌 \u{1F600}\u{1F4A9} кир тест`;
-    const res = await api.post<{ id: string }>(`/api/chats/${SEED.chat.id}/messages`, {
+    const res = await api.post<{ id: string }>(`/api/v1/chats/${SEED.chat.id}/messages`, {
       content: sent,
       role: "user",
     },);
     expect(res.ok,).toBe(true,);
 
-    const list = await api.get<{ data: Array<{ content: string }> }>(`/api/chats/${SEED.chat.id}/messages`,);
+    const list = await api.get<{ data: Array<{ content: string }> }>(`/api/v1/chats/${SEED.chat.id}/messages`,);
     expect(list.ok,).toBe(true,);
     const found = list.data!.data.find((m,) => m.content === sent);
     expect(found,).toBeTruthy();
@@ -121,7 +121,7 @@ describe("Message edge-cases E2E", () => {
 
   test("POST message with ANSI escape codes is accepted, not 5xx", async () => {
     const text = "line1\u0007line2\u001B[31mred\u001B[0mline3";
-    const res = await api.post(`/api/chats/${SEED.chat.id}/messages`, {
+    const res = await api.post(`/api/v1/chats/${SEED.chat.id}/messages`, {
       content: text,
       role: "user",
     },);
@@ -131,7 +131,7 @@ describe("Message edge-cases E2E", () => {
   // ── SQL injection probe ──────────────────────────────────────
 
   test("POST message with SQL DROP statement does not crash server", async () => {
-    const res = await api.post(`/api/chats/${SEED.chat.id}/messages`, {
+    const res = await api.post(`/api/v1/chats/${SEED.chat.id}/messages`, {
       content: "'; DROP TABLE messages; --",
       role: "user",
     },);
@@ -162,7 +162,7 @@ describe("Message edge-cases E2E", () => {
       .execute();
     const apiB = createClient(server.url,);
     await apiB.loginAs("edgeOther", "password",);
-    const res = await apiB.post(`/api/chats/${SEED.chat.id}/messages`, {
+    const res = await apiB.post(`/api/v1/chats/${SEED.chat.id}/messages`, {
       content: "I should not post here",
       role: "user",
     },);
@@ -172,19 +172,19 @@ describe("Message edge-cases E2E", () => {
   test("Other user cannot read messages in SEED.chat", async () => {
     const apiB = createClient(server.url,);
     await apiB.loginAs("edgeOther", "password",);
-    const res = await apiB.get(`/api/chats/${SEED.chat.id}/messages`,);
+    const res = await apiB.get(`/api/v1/chats/${SEED.chat.id}/messages`,);
     expect([403, 404,],).toContain(res.status,);
   });
 
   // ── GET edge cases ───────────────────────────────────────────
 
-  test("GET /api/messages/:id with non-UUID returns 4xx, not 5xx", async () => {
+  test("GET /api/v1/messages/:id with non-UUID returns 4xx, not 5xx", async () => {
     const res = await api.get("/api/v1/messages/not-a-uuid",);
     expect(res.status,).toBeGreaterThanOrEqual(400,);
     expect(res.status,).toBeLessThan(500,);
   });
 
-  test("GET /api/messages/:id with UUID-like non-existent returns 404", async () => {
+  test("GET /api/v1/messages/:id with UUID-like non-existent returns 404", async () => {
     const res = await api.get("/api/v1/messages/00000000-0000-0000-0000-000000000000",);
     expect(res.status,).toBe(404,);
   });
@@ -192,29 +192,29 @@ describe("Message edge-cases E2E", () => {
   // ── Soft-delete sanity ───────────────────────────────────────
 
   test("Deleting then re-fetching a message shows it as hidden, not 5xx", async () => {
-    const createRes = await api.post<{ id: string }>(`/api/chats/${SEED.chat.id}/messages`, {
+    const createRes = await api.post<{ id: string }>(`/api/v1/chats/${SEED.chat.id}/messages`, {
       content: "to-delete",
       role: "user",
     },);
     const msgId = createRes.data!.id;
 
-    const delRes = await api.del(`/api/messages/${msgId}`,);
+    const delRes = await api.del(`/api/v1/messages/${msgId}`,);
     expect(delRes.ok,).toBe(true,);
 
-    const getRes = await api.get<{ visibility: string }>(`/api/messages/${msgId}`,);
+    const getRes = await api.get<{ visibility: string }>(`/api/v1/messages/${msgId}`,);
     expect(getRes.ok,).toBe(true,);
     expect(getRes.data!.visibility,).toBe("hidden_by_user",);
   });
 
   test("Deleting an already-deleted message is idempotent or 4xx (not 5xx)", async () => {
-    const createRes = await api.post<{ id: string }>(`/api/chats/${SEED.chat.id}/messages`, {
+    const createRes = await api.post<{ id: string }>(`/api/v1/chats/${SEED.chat.id}/messages`, {
       content: "double-delete",
       role: "user",
     },);
     const msgId = createRes.data!.id;
 
-    await api.del(`/api/messages/${msgId}`,);
-    const res = await api.del(`/api/messages/${msgId}`,);
+    await api.del(`/api/v1/messages/${msgId}`,);
+    const res = await api.del(`/api/v1/messages/${msgId}`,);
     expect(res.status,).toBeLessThan(500,);
   });
 
@@ -222,13 +222,13 @@ describe("Message edge-cases E2E", () => {
 
   test("Raw HTML/script content is preserved verbatim in the DB row", async () => {
     const xss = `<script>alert('xss-${Date.now()}');</script>`;
-    const res = await api.post(`/api/chats/${SEED.chat.id}/messages`, {
+    const res = await api.post(`/api/v1/chats/${SEED.chat.id}/messages`, {
       content: xss,
       role: "user",
     },);
     expect(res.ok,).toBe(true,);
 
-    const list = await api.get<{ data: Array<{ content: string }> }>(`/api/chats/${SEED.chat.id}/messages`,);
+    const list = await api.get<{ data: Array<{ content: string }> }>(`/api/v1/chats/${SEED.chat.id}/messages`,);
     expect(list.ok,).toBe(true,);
     const found = list.data!.data.find((m,) => m.content === xss);
     expect(found,).toBeTruthy();

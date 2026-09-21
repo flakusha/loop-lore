@@ -150,7 +150,7 @@ function createAttachments(
     const item = document.createElement("div",);
     item.className = "vn-attachment-item";
     const thumb = document.createElement("img",);
-    thumb.src = a.thumbUrl ?? `/api/assets/${a.assetId}/thumb`;
+    thumb.src = a.thumbUrl ?? `/api/v1/assets/${a.assetId}/thumb`;
     thumb.alt = a.caption || a.filename || "Attachment";
     thumb.loading = "lazy";
     thumb.className = "vn-attachment-thumb";

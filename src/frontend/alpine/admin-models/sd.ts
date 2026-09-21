@@ -46,7 +46,7 @@ export const sdState: Partial<ModelsState> & ThisType<ModelsState> = {
 
   async loadSdStatus() {
     try {
-      const res = await apiFetch("/api/admin/sd-status", { headers: { Accept: "application/json", }, },);
+      const res = await apiFetch("/api/v1/admin/sd-status", { headers: { Accept: "application/json", }, },);
       if (res.ok) {
         const data = await res.json();
         this.sdStatus = data.status;
@@ -60,7 +60,7 @@ export const sdState: Partial<ModelsState> & ThisType<ModelsState> = {
 
   async loadSdConfig() {
     try {
-      const res = await apiFetch("/api/admin/system-config", { headers: { Accept: "application/json", }, },);
+      const res = await apiFetch("/api/v1/admin/system-config", { headers: { Accept: "application/json", }, },);
       if (res.ok) {
         const entries = await res.json();
         for (const e of entries) {
@@ -84,7 +84,7 @@ export const sdState: Partial<ModelsState> & ThisType<ModelsState> = {
         { key: "comfyui_url", value: this.comfyuiConfig.url, },
       ];
       for (const entry of entries) {
-        await apiFetch("/api/admin/system-config", {
+        await apiFetch("/api/v1/admin/system-config", {
           method: "PATCH",
           headers: { "Content-Type": "application/json", },
           body: jsonBody(entry,),

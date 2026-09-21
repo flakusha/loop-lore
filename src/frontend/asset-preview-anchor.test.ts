@@ -97,7 +97,7 @@ describe("mountPreviewAnchorEditor", () => {
     await flush();
     img.dispatch("click", { clientX: 110, clientY: 70, },);
     await flush();
-    const put = calls.find((c,) => c.url.includes("/api/assets/a7/transform",) && c.opts.method === "PUT");
+    const put = calls.find((c,) => c.url.includes("/api/v1/assets/a7/transform",) && c.opts.method === "PUT");
     expect(put,).toBeDefined();
     expect(JSON.parse(put!.opts.body as string,),).toEqual({ context: "sprite", focalPointX: 0.5, focalPointY: 0.5, },);
   });

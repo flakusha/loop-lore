@@ -33,7 +33,7 @@ export function mountPreviewAnchorEditor(body: HTMLElement, assetId: string,): v
   anchorCleanup = mountAnchorEditor(img, assetId, {
     load: async (id,) => {
       try {
-        const res = await feFetch(`/api/assets/${id}/transform?context=sprite`,);
+        const res = await feFetch(`/api/v1/assets/${id}/transform?context=sprite`,);
         if (!res.ok) { return null; }
         return anchorFromTransform(await res.json(),);
       } catch {
@@ -42,7 +42,7 @@ export function mountPreviewAnchorEditor(body: HTMLElement, assetId: string,): v
     },
     save: async (id, point,) => {
       try {
-        const res = await feFetch(`/api/assets/${id}/transform`, {
+        const res = await feFetch(`/api/v1/assets/${id}/transform`, {
           method: "PUT",
           headers: { "Content-Type": "application/json", },
           body: jsonBody({ context: "sprite", focalPointX: point.x, focalPointY: point.y, },),

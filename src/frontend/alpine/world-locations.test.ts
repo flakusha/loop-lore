@@ -61,7 +61,7 @@ describe("worldLocations.loadLocations", () => {
     expect((c.locations[0] as unknown as { connections: unknown[] }).connections,).toEqual(["l2",],);
     expect(c.locationsLoaded,).toBe(true,);
     expect(c.loadingLocations,).toBe(false,);
-    expect(fetchCalls[0]!.url,).toBe("/api/worlds/w1/locations",);
+    expect(fetchCalls[0]!.url,).toBe("/api/v1/worlds/w1/locations",);
   });
 
   test("defaults missing connections to empty list", async () => {
@@ -99,7 +99,7 @@ describe("worldLocations.addLocation", () => {
     mockFetch(201, { id: "l2", },);
     const c = ctx({ newLocName: "Tavern", newLocDesc: "cozy", newLocParentId: "l1", newLocConnections: ["l1",], },);
     await c.addLocation();
-    expect(fetchCalls[0]!.url,).toBe("/api/worlds/w1/locations",);
+    expect(fetchCalls[0]!.url,).toBe("/api/v1/worlds/w1/locations",);
     expect(JSON.parse(fetchCalls[0]!.opts?.body as string,),).toMatchObject({
       name: "Tavern",
       parentLocationId: "l1",
@@ -161,7 +161,7 @@ describe("worldLocations.saveLocation", () => {
       editLocDesc: "  ",
     },);
     await c.saveLocation("l1",);
-    expect(fetchCalls[0]!.url,).toBe("/api/worlds/w1/locations/l1",);
+    expect(fetchCalls[0]!.url,).toBe("/api/v1/worlds/w1/locations/l1",);
     expect(JSON.parse(fetchCalls[0]!.opts?.body as string,),).toEqual({
       name: "New Town",
       description: null,
@@ -188,7 +188,7 @@ describe("worldLocations.deleteLocation", () => {
     mockFetch(200, { data: [], },);
     const c = ctx();
     await c.deleteLocation("l1",);
-    expect(fetchCalls[0]!.url,).toBe("/api/worlds/w1/locations/l1",);
+    expect(fetchCalls[0]!.url,).toBe("/api/v1/worlds/w1/locations/l1",);
     expect(fetchCalls[0]!.opts?.method,).toBe("DELETE",);
   });
 

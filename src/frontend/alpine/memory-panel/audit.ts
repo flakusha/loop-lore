@@ -5,7 +5,7 @@
  * Memory panel — audit tab state and actions (FEAT-075).
  *
  * Loaded lazily when the audit tab opens; supports cursor pagination and
- * per-action filtering against GET /api/actors/:actorId/memories/audit.
+ * per-action filtering against GET /api/v1/actors/:actorId/memories/audit.
  */
 import type { AuditAction, ChatState, } from "../types";
 import {
@@ -39,7 +39,7 @@ export const memoryPanelAudit: Partial<ChatState> & ThisType<ChatState> = {
     if (action) { params.set("action", action,); }
     params.set("limit", "25",);
     const qs = params.toString();
-    return `/api/actors/${actorId}/memories/audit${qs ? `?${qs}` : ""}`;
+    return `/api/v1/actors/${actorId}/memories/audit${qs ? `?${qs}` : ""}`;
   },
 
   /**

@@ -43,7 +43,7 @@ export const chatSections: Partial<ChatState> & ThisType<ChatState> = {
     if (!this.activeChat) { return; }
     this._sectionsLoading = true;
     try {
-      const res = await apiFetch(`/api/chats/${this.activeChat}/sections`,);
+      const res = await apiFetch(`/api/v1/chats/${this.activeChat}/sections`,);
       if (!res.ok) { return; }
       const body = await res.json();
       this._sections = (body.data as ChatSectionRow[]) || [];
@@ -60,7 +60,7 @@ export const chatSections: Partial<ChatState> & ThisType<ChatState> = {
   async createSection() {
     if (!this.activeChat || !this._newSectionLabel.trim()) { return; }
     try {
-      const res = await apiFetch(`/api/chats/${this.activeChat}/sections`, {
+      const res = await apiFetch(`/api/v1/chats/${this.activeChat}/sections`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ label: this._newSectionLabel.trim(), description: this._newSectionDesc || null, },),
@@ -78,7 +78,7 @@ export const chatSections: Partial<ChatState> & ThisType<ChatState> = {
   async deleteSection(sectionId: string,) {
     if (!this.activeChat) { return; }
     try {
-      const res = await apiFetch(`/api/chats/${this.activeChat}/sections/${sectionId}`, { method: "DELETE", },);
+      const res = await apiFetch(`/api/v1/chats/${this.activeChat}/sections/${sectionId}`, { method: "DELETE", },);
       if (res.ok) {
         if (this._activeSectionId === sectionId) { this._activeSectionId = null; }
         await this.loadSections();
@@ -98,7 +98,7 @@ export const chatSections: Partial<ChatState> & ThisType<ChatState> = {
     reordered[idx] = reordered[target]!;
     reordered[target] = tmp;
     try {
-      const res = await apiFetch(`/api/chats/${this.activeChat}/sections/reorder`, {
+      const res = await apiFetch(`/api/v1/chats/${this.activeChat}/sections/reorder`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ sectionIds: Array.from(reordered, (s,) => s.id,), },),
@@ -174,7 +174,7 @@ export const chatSections: Partial<ChatState> & ThisType<ChatState> = {
   async assignMessageToSection(messageId: string, sectionId: string | null,) {
     if (!this.activeChat) { return; }
     try {
-      await apiFetch(`/api/chats/${this.activeChat}/messages/${messageId}/section`, {
+      await apiFetch(`/api/v1/chats/${this.activeChat}/messages/${messageId}/section`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ sectionId, },),

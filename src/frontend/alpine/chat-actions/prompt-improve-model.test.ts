@@ -162,7 +162,7 @@ describe("improvePrompt model-backed branch", () => {
     store.set(LOCAL_INFERENCE_OPTIN_KEY, "1",);
     const ctx = buildCtx("hello world",);
     await drive(improve(ctx, "wording",), ctx, "hello world",);
-    expect(fetchCalls,).toEqual(["/api/generation/prompt",],);
+    expect(fetchCalls,).toEqual(["/api/v1/generation/prompt",],);
     expect(ctx.$refs.messageInput.value,).toBe("server-polished",);
   });
 
@@ -172,7 +172,7 @@ describe("improvePrompt model-backed branch", () => {
     generatedText = "   ";
     const ctx = buildCtx("hello world",);
     await drive(improve(ctx, "wording",), ctx, "hello world",);
-    expect(fetchCalls,).toEqual(["/api/generation/prompt",],);
+    expect(fetchCalls,).toEqual(["/api/v1/generation/prompt",],);
     expect(ctx.$refs.messageInput.value,).toBe("server-polished",);
   });
 });

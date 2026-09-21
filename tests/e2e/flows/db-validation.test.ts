@@ -111,7 +111,7 @@ describe("DB Insertion Validation E2E", () => {
     },);
     expect(chatRes.ok,).toBe(true,);
 
-    const msgRes = await api.post<{ id: string }>(`/api/chats/${chatRes.data!.id}/messages`, {
+    const msgRes = await api.post<{ id: string }>(`/api/v1/chats/${chatRes.data!.id}/messages`, {
       content,
       role: "user",
     },);

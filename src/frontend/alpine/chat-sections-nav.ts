@@ -146,7 +146,7 @@ export const chatSectionsNav: Partial<ChatState> & ThisType<ChatState> = {
     if (!this.activeChat) { return; }
     try {
       const res = await apiFetch(
-        `/api/chats/${this.activeChat}/sections/${sectionId}/assign-all`,
+        `/api/v1/chats/${this.activeChat}/sections/${sectionId}/assign-all`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json", },
@@ -172,7 +172,7 @@ export const chatSectionsNav: Partial<ChatState> & ThisType<ChatState> = {
     if (!this.activeChat || !text.trim()) { return; }
     try {
       const res = await apiFetch(
-        `/api/chats/${this.activeChat}/sections/${sectionId}/narrative`,
+        `/api/v1/chats/${this.activeChat}/sections/${sectionId}/narrative`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json", },

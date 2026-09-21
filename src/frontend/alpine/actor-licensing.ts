@@ -5,7 +5,7 @@
 // size-allow: 260
 
 // ── Character licensing panel.
-// Drives `/api/actors/:actorId/licensing` (GET / POST / DELETE). Pairs with
+// Drives `/api/v1/actors/:actorId/licensing` (GET / POST / DELETE). Pairs with
 // `src/components/character/licensing-panel.html`.
 import { LicenseType, } from "../../db/enums-character/content";
 import { apiFetch, } from "./htmx";
@@ -129,7 +129,7 @@ export const actorLicensing: ActorLicensingState = {
     if (!actorId) { return; }
     this.licenseLoading = true;
     try {
-      const res = await apiFetch(`/api/actors/${actorId}/licensing`,);
+      const res = await apiFetch(`/api/v1/actors/${actorId}/licensing`,);
       if (res.status === 404) {
         this.license = null;
         return;
@@ -168,7 +168,7 @@ export const actorLicensing: ActorLicensingState = {
     const actorId = this._licActorId;
     if (!actorId) { return; }
     try {
-      const res = await apiFetch(`/api/actors/${actorId}/licensing/history`,);
+      const res = await apiFetch(`/api/v1/actors/${actorId}/licensing/history`,);
       if (!res.ok) {
         this.licenseHistory = [];
         return;
@@ -198,7 +198,7 @@ export const actorLicensing: ActorLicensingState = {
         allow_commercial: this.licenseForm.allow_commercial,
         share_alike: this.licenseForm.share_alike,
       };
-      const res = await apiFetch(`/api/actors/${actorId}/licensing`, {
+      const res = await apiFetch(`/api/v1/actors/${actorId}/licensing`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody(body,),
@@ -226,7 +226,7 @@ export const actorLicensing: ActorLicensingState = {
     if (!actorId || this.licenseSaving) { return; }
     this.licenseSaving = true;
     try {
-      const res = await apiFetch(`/api/actors/${actorId}/licensing`, { method: "DELETE", },);
+      const res = await apiFetch(`/api/v1/actors/${actorId}/licensing`, { method: "DELETE", },);
       if (!res.ok) {
         this.licenseError = t("status.licensingDeleteFailed",);
         return;

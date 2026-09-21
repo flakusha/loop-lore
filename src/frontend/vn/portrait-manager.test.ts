@@ -71,7 +71,7 @@ describe("getPortraitUrl", () => {
   });
 
   test("full urls pass through, bare asset ids get the thumb route", () => {
-    expect(getPortraitUrl("abc-123",),).toBe("/api/assets/abc-123/thumb",);
+    expect(getPortraitUrl("abc-123",),).toBe("/api/v1/assets/abc-123/thumb",);
     expect(getPortraitUrl("https://cdn.test/p.png",),).toBe("https://cdn.test/p.png",);
     expect(getPortraitUrl("http://cdn.test/p.png",),).toBe("http://cdn.test/p.png",);
     expect(getPortraitUrl("/static/p.png",),).toBe("/static/p.png",);

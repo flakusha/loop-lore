@@ -79,7 +79,7 @@ function routeResponses(opts?: {
         ? new Response("", { status: opts.chatStatus, },)
         : Response.json(opts?.chat ?? { world_id: "w1", },);
     }
-    if (url.startsWith("/api/actors/actor-9/mood",)) {
+    if (url.startsWith("/api/v1/actors/actor-9/mood",)) {
       return opts?.moodStatus
         ? new Response("", { status: opts.moodStatus, },)
         : Response.json(opts?.mood ?? { happiness: 72, },);
@@ -137,7 +137,7 @@ describe("moodStateLoading.loadMood", () => {
     },);
     routeResponses({ mood: { happiness: 72, }, },);
     await moodStateLoading.loadMood!.call(ctx,);
-    expect(calls.some((c,) => c.url === "/api/actors/actor-9/mood?worldId=w1"),).toBe(true,);
+    expect(calls.some((c,) => c.url === "/api/v1/actors/actor-9/mood?worldId=w1"),).toBe(true,);
     expect(ctx._activeChatWorldId,).toBe("w1",);
     expect(ctx._mood,).toEqual({
       happiness: 72,
@@ -212,7 +212,7 @@ describe("moodStateLoading.updateMoodHappiness", () => {
     routeResponses({},);
     await moodStateLoading.updateMoodHappiness!.call(ctx, 66,);
     const put = calls.find((c,) => c.opts.method === "PUT")!;
-    expect(put.url,).toBe("/api/actors/actor-9/mood",);
+    expect(put.url,).toBe("/api/v1/actors/actor-9/mood",);
     expect(JSON.parse(String(put.opts.body,),),).toEqual({ happiness: 66, worldId: undefined, },);
     expect(ctx._mood!.happiness,).toBe(66,);
     expect(ctx._mood!.currentMood,).toBe("happy",);
@@ -241,7 +241,7 @@ describe("moodStateLoading.applyMoodDelta", () => {
     routeResponses({ mood: { happiness: 35, current_mood: "neutral", }, },);
     await moodStateLoading.applyMoodDelta!.call(ctx, 5,);
     const post = calls.find((c,) => c.opts.method === "POST")!;
-    expect(post.url,).toBe("/api/actors/actor-9/mood/delta",);
+    expect(post.url,).toBe("/api/v1/actors/actor-9/mood/delta",);
     expect(JSON.parse(String(post.opts.body,),),).toEqual({ delta: 5, worldId: undefined, },);
     expect(ctx._mood!.happiness,).toBe(35,);
     expect(ctx._mood!.currentMood,).toBe("neutral",);

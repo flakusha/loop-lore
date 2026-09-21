@@ -32,13 +32,13 @@ describe("Worlds E2E", () => {
     server.close();
   },);
 
-  test("GET /api/worlds returns empty list initially", async () => {
+  test("GET /api/v1/worlds returns empty list initially", async () => {
     const res = await api.get<{ data: [] }>("/api/v1/worlds",);
     expect(res.ok,).toBe(true,);
     expect(Array.isArray(res.data!.data,),).toBe(true,);
   });
 
-  test("POST /api/worlds creates a world", async () => {
+  test("POST /api/v1/worlds creates a world", async () => {
     const res = await api.post<{ id: string }>("/api/v1/worlds", {
       name: "Test World",
       description: "A world for E2E testing",
@@ -48,29 +48,29 @@ describe("Worlds E2E", () => {
     createdWorldId = res.data!.id;
   });
 
-  test("GET /api/worlds returns created world in list", async () => {
+  test("GET /api/v1/worlds returns created world in list", async () => {
     const res = await api.get<{ data: Array<{ id: string; name: string }> }>("/api/v1/worlds",);
     expect(res.ok,).toBe(true,);
     const worlds = res.data!.data;
     expect(worlds.some((w,) => w.name === "Test World"),).toBe(true,);
   });
 
-  test("GET /api/worlds/:id returns single world", async () => {
-    const res = await api.get<{ name: string }>(`/api/worlds/${createdWorldId}`,);
+  test("GET /api/v1/worlds/:id returns single world", async () => {
+    const res = await api.get<{ name: string }>(`/api/v1/worlds/${createdWorldId}`,);
     expect(res.ok,).toBe(true,);
     expect(res.data!.name,).toBe("Test World",);
   });
 
-  test("PUT /api/worlds/:id updates world", async () => {
-    const res = await api.put(`/api/worlds/${createdWorldId}`, { name: "Updated World", },);
+  test("PUT /api/v1/worlds/:id updates world", async () => {
+    const res = await api.put(`/api/v1/worlds/${createdWorldId}`, { name: "Updated World", },);
     expect(res.ok,).toBe(true,);
 
-    const getRes = await api.get<{ name: string }>(`/api/worlds/${createdWorldId}`,);
+    const getRes = await api.get<{ name: string }>(`/api/v1/worlds/${createdWorldId}`,);
     expect(getRes.data!.name,).toBe("Updated World",);
   });
 
-  test("POST /api/worlds/:id/locations creates location", async () => {
-    const res = await api.post<{ id: string }>(`/api/worlds/${createdWorldId}/locations`, {
+  test("POST /api/v1/worlds/:id/locations creates location", async () => {
+    const res = await api.post<{ id: string }>(`/api/v1/worlds/${createdWorldId}/locations`, {
       name: "Test Location",
       description: "A test location",
     },);
@@ -79,49 +79,49 @@ describe("Worlds E2E", () => {
     createdLocationId = res.data!.id;
   });
 
-  test("GET /api/worlds/:id/locations lists locations", async () => {
+  test("GET /api/v1/worlds/:id/locations lists locations", async () => {
     const res = await api.get<{ data: Array<{ id: string; name: string }> }>(
-      `/api/worlds/${createdWorldId}/locations`,
+      `/api/v1/worlds/${createdWorldId}/locations`,
     );
     expect(res.ok,).toBe(true,);
     expect(Array.isArray(res.data!.data,),).toBe(true,);
     expect(res.data!.data.some((l,) => l.name === "Test Location"),).toBe(true,);
   });
 
-  test("GET /api/worlds/:id/locations/:locId returns single location", async () => {
+  test("GET /api/v1/worlds/:id/locations/:locId returns single location", async () => {
     const res = await api.get<{ name: string }>(
-      `/api/worlds/${createdWorldId}/locations/${createdLocationId}`,
+      `/api/v1/worlds/${createdWorldId}/locations/${createdLocationId}`,
     );
     expect(res.ok,).toBe(true,);
     expect(res.data!.name,).toBe("Test Location",);
   });
 
-  test("PUT /api/worlds/:id/locations/:locId updates location", async () => {
-    const res = await api.put(`/api/worlds/${createdWorldId}/locations/${createdLocationId}`, {
+  test("PUT /api/v1/worlds/:id/locations/:locId updates location", async () => {
+    const res = await api.put(`/api/v1/worlds/${createdWorldId}/locations/${createdLocationId}`, {
       name: "Updated Location",
     },);
     expect(res.ok,).toBe(true,);
 
     const getRes = await api.get<{ name: string }>(
-      `/api/worlds/${createdWorldId}/locations/${createdLocationId}`,
+      `/api/v1/worlds/${createdWorldId}/locations/${createdLocationId}`,
     );
     expect(getRes.data!.name,).toBe("Updated Location",);
   });
 
-  test("DELETE /api/worlds/:id/locations/:locId deletes location", async () => {
-    const res = await api.del(`/api/worlds/${createdWorldId}/locations/${createdLocationId}`,);
+  test("DELETE /api/v1/worlds/:id/locations/:locId deletes location", async () => {
+    const res = await api.del(`/api/v1/worlds/${createdWorldId}/locations/${createdLocationId}`,);
     expect(res.ok,).toBe(true,);
 
-    const getRes = await api.get(`/api/worlds/${createdWorldId}/locations/${createdLocationId}`,);
+    const getRes = await api.get(`/api/v1/worlds/${createdWorldId}/locations/${createdLocationId}`,);
     expect(getRes.status,).toBe(404,);
     expect(getRes.code,).toBeTruthy(); // TEST.2 error envelope
   });
 
-  test("DELETE /api/worlds/:id deletes world", async () => {
-    const res = await api.del(`/api/worlds/${createdWorldId}`,);
+  test("DELETE /api/v1/worlds/:id deletes world", async () => {
+    const res = await api.del(`/api/v1/worlds/${createdWorldId}`,);
     expect(res.ok,).toBe(true,);
 
-    const getRes = await api.get(`/api/worlds/${createdWorldId}`,);
+    const getRes = await api.get(`/api/v1/worlds/${createdWorldId}`,);
     expect(getRes.status,).toBe(404,);
     expect(getRes.code,).toBeTruthy(); // TEST.2 error envelope
   });
@@ -129,13 +129,13 @@ describe("Worlds E2E", () => {
   test("cross-tenant isolation: User B cannot access User A's world", async () => {
     await seedWorld(server.db,);
 
-    const resA = await api.get<{ id: string }>(`/api/worlds/${SEED.world.id}`,);
+    const resA = await api.get<{ id: string }>(`/api/v1/worlds/${SEED.world.id}`,);
     expect(resA.ok,).toBe(true,);
     expect(resA.data!.id,).toBe(SEED.world.id,);
 
     const apiB = createClient(server.url,);
     await apiB.loginAs("e2eother", "password",);
-    const resB = await apiB.get(`/api/worlds/${SEED.world.id}`,);
+    const resB = await apiB.get(`/api/v1/worlds/${SEED.world.id}`,);
     expect(resB.ok,).toBe(false,);
     expect(resB.status,).toBe(404,);
     expect(resB.code,).toBeTruthy();

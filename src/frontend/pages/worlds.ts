@@ -43,7 +43,7 @@ globalThis.createWorld = async function(event: Event,) {
   },);
   pageLog.debug("createWorld", { data, },);
   try {
-    const res = await feFetch("/api/worlds", {
+    const res = await feFetch("/api/v1/worlds", {
       method: "POST",
       headers: { "Content-Type": "application/json", },
       body: jsonBody(data,),
@@ -126,7 +126,7 @@ globalThis.worldDetail = function(initial: {
 
     async saveLocation(locId: string,) {
       try {
-        const res = await feFetch(`/api/worlds/${this.worldId}/locations/${locId}`, {
+        const res = await feFetch(`/api/v1/worlds/${this.worldId}/locations/${locId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json", },
           body: jsonBody({
@@ -154,7 +154,7 @@ globalThis.worldDetail = function(initial: {
     async createLocation() {
       if (!this.newLocationName.trim()) { return; }
       try {
-        const res = await feFetch(`/api/worlds/${this.worldId}/locations`, {
+        const res = await feFetch(`/api/v1/worlds/${this.worldId}/locations`, {
           method: "POST",
           headers: { "Content-Type": "application/json", },
           body: jsonBody({
@@ -186,7 +186,7 @@ globalThis.worldDetail = function(initial: {
 
     async deleteLocation(locId: string,) {
       try {
-        const res = await feFetch(`/api/worlds/${this.worldId}/locations/${locId}`, { method: "DELETE", },);
+        const res = await feFetch(`/api/v1/worlds/${this.worldId}/locations/${locId}`, { method: "DELETE", },);
         if (res.ok) {
           const remaining: LocationData[] = [];
           for (const l of this.locations) {
@@ -205,7 +205,7 @@ globalThis.worldDetail = function(initial: {
 
     async initializeStates() {
       try {
-        const res = await feFetch(`/api/worlds/${this.worldId}/initialize-states`, { method: "POST", },);
+        const res = await feFetch(`/api/v1/worlds/${this.worldId}/initialize-states`, { method: "POST", },);
         if (res.ok) {
           const data = await res.json();
           showToast(

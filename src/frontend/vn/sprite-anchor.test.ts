@@ -69,7 +69,7 @@ describe("isAssetIdRef", () => {
   test("accepts plain ids, rejects URLs and empties", () => {
     expect(isAssetIdRef("asset-1",),).toBe(true,);
     expect(isAssetIdRef("http://x/y.png",),).toBe(false,);
-    expect(isAssetIdRef("/api/assets/a1/thumb",),).toBe(false,);
+    expect(isAssetIdRef("/api/v1/assets/a1/thumb",),).toBe(false,);
     expect(isAssetIdRef(undefined,),).toBe(false,);
     expect(isAssetIdRef("",),).toBe(false,);
   });

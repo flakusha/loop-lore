@@ -59,7 +59,7 @@ globalThis.notificationCenter = function(): NotificationCenterState {
 
     async refresh() {
       try {
-        const res = await apiFetch("/api/notifications",);
+        const res = await apiFetch("/api/v1/notifications",);
         if (!res.ok) { return; }
         const data = jsonParseOr<{ items: NotificationCenterItem[] }>(await res.text(), { items: [], },);
         this.items = data.items ?? [];
@@ -92,7 +92,7 @@ globalThis.notificationCenter = function(): NotificationCenterState {
       if (!item.read) {
         item.read = 1;
         try {
-          await apiFetch(`/api/notifications/${item.id}`, {
+          await apiFetch(`/api/v1/notifications/${item.id}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json", },
             body: jsonBody({ read: true, },),
@@ -110,7 +110,7 @@ globalThis.notificationCenter = function(): NotificationCenterState {
      */
     async markRead(id: string,) {
       try {
-        await apiFetch(`/api/notifications/${id}`, {
+        await apiFetch(`/api/v1/notifications/${id}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json", },
           body: jsonBody({ read: true, },),
@@ -124,7 +124,7 @@ globalThis.notificationCenter = function(): NotificationCenterState {
 
     async markAllRead() {
       try {
-        await apiFetch("/api/notifications/read-all", { method: "PATCH", },);
+        await apiFetch("/api/v1/notifications/read-all", { method: "PATCH", },);
       } catch {
         /* ignore */
       }
@@ -133,7 +133,7 @@ globalThis.notificationCenter = function(): NotificationCenterState {
 
     async loadPrefs() {
       try {
-        const res = await apiFetch("/api/notifications/preferences",);
+        const res = await apiFetch("/api/v1/notifications/preferences",);
         if (!res.ok) { return; }
         const data = jsonParseOr<{ enabled: Record<string, boolean> }>(await res.text(), { enabled: {}, },);
         this.prefs = data.enabled ?? {};
@@ -154,7 +154,7 @@ globalThis.notificationCenter = function(): NotificationCenterState {
     async savePrefs() {
       this.saving = true;
       try {
-        await apiFetch("/api/notifications/preferences", {
+        await apiFetch("/api/v1/notifications/preferences", {
           method: "PATCH",
           headers: { "Content-Type": "application/json", },
           body: jsonBody({ enabled: this.prefs, },),

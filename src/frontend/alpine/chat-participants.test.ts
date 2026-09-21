@@ -128,13 +128,13 @@ describe("chatParticipants", () => {
       expect(fetchCalls,).toEqual([],);
     });
 
-    test("GETs /api/actors for group chats", async () => {
+    test("GETs /api/v1/actors for group chats", async () => {
       mockFetch(200, [
         { id: "a3", display_name: "Carol", actor_type: "character", },
       ],);
       const state = buildCtx();
       await chatParticipants.loadAvailableActors!.call(state,);
-      expect(fetchCalls[0]?.url,).toBe("/api/actors",);
+      expect(fetchCalls[0]?.url,).toBe("/api/v1/actors",);
       expect(state._availableActors.length,).toBe(1,);
     });
   });

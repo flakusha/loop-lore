@@ -23,7 +23,7 @@ export const adminAudit = {
   async loadAudit() {
     this.loadingAudit = true;
     try {
-      let url = `/api/admin/audit?page=${this.auditPage}&pageSize=${(this as any).pageSize}`;
+      let url = `/api/v1/admin/audit?page=${this.auditPage}&pageSize=${(this as any).pageSize}`;
       if (this.auditEventType) { url += `&event_type=${this.auditEventType}`; }
       if (this.auditEntityType) { url += `&entity_type=${this.auditEntityType}`; }
       if (this.auditSearch) { url += `&q=${encodeURIComponent(this.auditSearch,)}`; }

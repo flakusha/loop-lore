@@ -32,7 +32,7 @@ describe("Import E2E", () => {
     server.close();
   },);
 
-  test("POST /api/actors/import imports JSON actor", async () => {
+  test("POST /api/v1/actors/import imports JSON actor", async () => {
     const file = makeJsonBlob(
       {
         name: "Imported JSON",
@@ -52,12 +52,12 @@ describe("Import E2E", () => {
     expect(res.data!.id,).toBeTruthy();
 
     // Verify actor exists
-    const getRes = await api.get<{ display_name: string }>(`/api/actors/${res.data!.id}`,);
+    const getRes = await api.get<{ display_name: string }>(`/api/v1/actors/${res.data!.id}`,);
     expect(getRes.ok,).toBe(true,);
     expect(getRes.data!.display_name,).toBe("Imported JSON",);
   });
 
-  test("POST /api/actors/import imports YAML actor", async () => {
+  test("POST /api/v1/actors/import imports YAML actor", async () => {
     const file = makeYamlBlob(
       {
         name: "Imported YAML",
@@ -76,11 +76,11 @@ describe("Import E2E", () => {
     expect(res.ok,).toBe(true,);
     expect(res.data!.id,).toBeTruthy();
 
-    const getRes = await api.get<{ display_name: string }>(`/api/actors/${res.data!.id}`,);
+    const getRes = await api.get<{ display_name: string }>(`/api/v1/actors/${res.data!.id}`,);
     expect(getRes.data!.display_name,).toBe("Imported YAML",);
   });
 
-  test("POST /api/actors/import imports YML extension", async () => {
+  test("POST /api/v1/actors/import imports YML extension", async () => {
     const file = makeYamlBlob(
       {
         name: "Imported YML",
@@ -98,11 +98,11 @@ describe("Import E2E", () => {
     const res = await api.upload<{ id: string }>("/api/v1/actors/import", form,);
     expect(res.ok,).toBe(true,);
 
-    const getRes = await api.get<{ display_name: string }>(`/api/actors/${res.data!.id}`,);
+    const getRes = await api.get<{ display_name: string }>(`/api/v1/actors/${res.data!.id}`,);
     expect(getRes.data!.display_name,).toBe("Imported YML",);
   });
 
-  test("POST /api/actors/import imports TOML actor", async () => {
+  test("POST /api/v1/actors/import imports TOML actor", async () => {
     const toml =
       '[character]\nname = "Imported TOML"\ndescription = "via multipart"\npersonality = "Bold and curious"\n' +
       'appearance = "Tall figure with sharp features"\ndefault_outfit = "travel-gear"\n' +
@@ -114,11 +114,11 @@ describe("Import E2E", () => {
     const res = await api.upload<{ id: string }>("/api/v1/actors/import", form,);
     expect(res.ok,).toBe(true,);
 
-    const getRes = await api.get<{ display_name: string }>(`/api/actors/${res.data!.id}`,);
+    const getRes = await api.get<{ display_name: string }>(`/api/v1/actors/${res.data!.id}`,);
     expect(getRes.data!.display_name,).toBe("Imported TOML",);
   });
 
-  test("POST /api/actors/import rejects unsupported extension", async () => {
+  test("POST /api/v1/actors/import rejects unsupported extension", async () => {
     const file = new File(["hello",], "test.txt", { type: "text/plain", },);
     const form = new FormData();
     form.append("file", file,);
@@ -129,7 +129,7 @@ describe("Import E2E", () => {
     expect(res.error,).toContain("Unable to detect character card format",);
   });
 
-  test("POST /api/actors/import rejects missing file field", async () => {
+  test("POST /api/v1/actors/import rejects missing file field", async () => {
     const form = new FormData();
     form.append("notfile", "value",);
 
@@ -139,7 +139,7 @@ describe("Import E2E", () => {
     expect(res.error,).toContain("file field is required",);
   });
 
-  test("POST /api/actors/import rejects invalid JSON", async () => {
+  test("POST /api/v1/actors/import rejects invalid JSON", async () => {
     const file = new File(["{not json}",], "bad.json", { type: "application/json", },);
     const form = new FormData();
     form.append("file", file,);
@@ -149,7 +149,7 @@ describe("Import E2E", () => {
     expect(res.status,).toBe(400,);
   });
 
-  test("POST /api/actors/import rejects actor without name", async () => {
+  test("POST /api/v1/actors/import rejects actor without name", async () => {
     const file = makeJsonBlob(
       {
         description: "nameless",

@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * TelemetryTransport — sends curated log entries to POST /api/telemetry/event.
+ * TelemetryTransport — sends curated log entries to POST /api/v1/telemetry/event.
  *
  * Not a full log passthrough. warn/error entries ship automatically (genuine
  * failure signals); info/debug entries ship only when the event name is an
@@ -47,7 +47,7 @@ export class TelemetryTransport implements Transport {
   /**
    * @param url
    */
-  constructor(url = "/api/telemetry/event",) {
+  constructor(url = "/api/v1/telemetry/event",) {
     this.url = url;
   }
 

@@ -41,7 +41,7 @@ describe("Chat Full Functionality", () => {
       const formData = new FormData();
       formData.append("file", new Blob(["hello world",],), "test.txt",);
 
-      const uploadRes = await api.upload<{ id: string }>("/api/assets", formData,);
+      const uploadRes = await api.upload<{ id: string }>("/api/v1/assets", formData,);
       expect(uploadRes.ok,).toBe(true,);
       expect(uploadRes.status,).toBe(201,);
       expect(uploadRes.data!.id,).toBeTruthy();
@@ -49,7 +49,7 @@ describe("Chat Full Functionality", () => {
       const assetId = uploadRes.data!.id;
 
       // Link to chat
-      const linkRes = await api.post(`/api/assets/${assetId}/links`, {
+      const linkRes = await api.post(`/api/v1/assets/${assetId}/links`, {
         entityType: "chat",
         entityId: SEED.chat.id,
         label: "test-attachment",
@@ -58,7 +58,7 @@ describe("Chat Full Functionality", () => {
 
       // List chat assets via entity filter
       const assetsRes = await api.get<{ data: Array<{ id: string }> }>(
-        `/api/assets?entity_type=chat&entity_id=${SEED.chat.id}`,
+        `/api/v1/assets?entity_type=chat&entity_id=${SEED.chat.id}`,
       );
       expect(assetsRes.ok,).toBe(true,);
       expect(assetsRes.data!.data.length,).toBeGreaterThanOrEqual(1,);
@@ -86,7 +86,7 @@ describe("Chat Full Functionality", () => {
     test("regenerates assistant response via generation endpoint", async () => {
       // Get initial messages
       const msgsBefore = await api.get<{ data: Array<{ id: string; role: string; content: string }> }>(
-        `/api/chats/${SEED.chat.id}/messages`,
+        `/api/v1/chats/${SEED.chat.id}/messages`,
       );
 
       // Regenerate — replaces last assistant message
@@ -100,7 +100,7 @@ describe("Chat Full Functionality", () => {
 
       // Messages list should still be valid
       const msgsAfter = await api.get<{ data: Array<{ id: string; role: string }> }>(
-        `/api/chats/${SEED.chat.id}/messages`,
+        `/api/v1/chats/${SEED.chat.id}/messages`,
       );
       expect(msgsAfter.ok,).toBe(true,);
       expect(msgsAfter.data!.data.length,).toBeGreaterThanOrEqual(msgsBefore.data!.data.length,);
@@ -127,7 +127,7 @@ describe("Chat Full Functionality", () => {
     test("create message with assistant auto-reply and check variants", async () => {
       // Create a user message — assistant auto-reply is enabled by default
       const msgRes = await api.post<{ id: string; assistantMessage?: { id: string; content: string } }>(
-        `/api/chats/${SEED.chat.id}/messages`,
+        `/api/v1/chats/${SEED.chat.id}/messages`,
         { content: "Hello from swipe test", },
       );
       expect(msgRes.ok,).toBe(true,);
@@ -140,7 +140,7 @@ describe("Chat Full Functionality", () => {
       if (msgRes.data!.assistantMessage) {
         const assistantId = msgRes.data!.assistantMessage.id;
         const variantsRes = await api.get<Array<{ id: string; content: string }>>(
-          `/api/messages/${assistantId}/variants`,
+          `/api/v1/messages/${assistantId}/variants`,
         );
         expect(variantsRes.ok,).toBe(true,);
         expect(variantsRes.status,).toBe(200,);

@@ -56,7 +56,7 @@ export function getPortraitUrl(assetId?: string | null,): string | undefined {
   // If it's already a full URL, return as-is
   if (assetId.startsWith("http",) || assetId.startsWith("/",)) { return assetId; }
   // Otherwise, assume it's an asset ID
-  return `/api/assets/${assetId}/thumb`;
+  return `/api/v1/assets/${assetId}/thumb`;
 }
 
 /**

@@ -165,9 +165,9 @@ describe("Access control E2E", () => {
       },);
       try {
         // The world-edit shell renders, then the Alpine component fetches
-        // /api/worlds/:id, which is access-gated (requireWorldAccess).
+        // /api/v1/worlds/:id, which is access-gated (requireWorldAccess).
         const worldApi = page.waitForResponse(
-          (res,) => res.url().includes(`/api/worlds/${WORLD_ID}`,) && res.request().method() === "GET",
+          (res,) => res.url().includes(`/api/v1/worlds/${WORLD_ID}`,) && res.request().method() === "GET",
           { timeout: 30_000, },
         );
         await page.goto(`${ctx.url}/worlds/${WORLD_ID}/edit`, { waitUntil: "domcontentloaded", timeout: 30_000, },);

@@ -151,7 +151,7 @@ const safeParseList = (raw: string,): string[] => {
       this.loading = true;
       this.error = false;
       try {
-        const res = await apiFetch(`/api/worlds/${this.worldId}/location-explorer`, {
+        const res = await apiFetch(`/api/v1/worlds/${this.worldId}/location-explorer`, {
           headers: { Accept: "application/json", },
         },);
         if (!res.ok) {
@@ -182,7 +182,7 @@ const safeParseList = (raw: string,): string[] => {
         return;
       }
       try {
-        const res = await apiFetch(`/api/worlds/${this.worldId}/locations/${locId}/details`, {
+        const res = await apiFetch(`/api/v1/worlds/${this.worldId}/locations/${locId}/details`, {
           headers: { Accept: "application/json", },
         },);
         if (!res.ok) { return; }

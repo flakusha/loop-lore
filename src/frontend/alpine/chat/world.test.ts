@@ -141,7 +141,7 @@ describe("chatWorld.loadWorldChannels", () => {
   test("keeps only chat-kind worlds and loads their channels", async () => {
     const loaded: string[] = [];
     handler = async (url,) => {
-      if (url === "/api/worlds?pageSize=50") {
+      if (url === "/api/v1/worlds?pageSize=50") {
         return Response.json({
           data: [
             { id: "w1", name: "Chat World", kind: "chat", },
@@ -156,7 +156,7 @@ describe("chatWorld.loadWorldChannels", () => {
     const ctx = worldCtx();
     await chatWorld.loadWorldChannels!.call(ctx,);
     expect(ctx._worlds,).toEqual([{ id: "w1", name: "Chat World", },],);
-    expect(loaded,).toEqual(["/api/worlds/w1/chats",],);
+    expect(loaded,).toEqual(["/api/v1/worlds/w1/chats",],);
     expect(ctx._worldsLoading,).toBe(false,);
   });
 
@@ -184,7 +184,7 @@ describe("chatWorld.loadWorldChats", () => {
     const ctx = worldCtx();
     await chatWorld.loadWorldChats!.call(ctx, "w1",);
     expect((ctx._worldChats as Record<string, unknown[]>)["w1"],).toHaveLength(1,);
-    expect(fetchCalls[0]!.url,).toBe("/api/worlds/w1/chats",);
+    expect(fetchCalls[0]!.url,).toBe("/api/v1/worlds/w1/chats",);
   });
 
   test("keeps previous rows on non-ok responses", async () => {

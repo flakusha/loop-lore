@@ -13,7 +13,7 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
   const ctx: NewChatCtx = createCtx();
 
   try {
-    const res = await feFetch("/api/actors?pageSize=200",);
+    const res = await feFetch("/api/v1/actors?pageSize=200",);
     const data = await res.json();
     ctx.actors = data.data || [];
   } catch {
@@ -22,7 +22,7 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
 
   // ── Chat setup templates: load + pre-fill key mechanics ─────
   try {
-    const res = await feFetch("/api/chat-setup-templates",);
+    const res = await feFetch("/api/v1/chat-setup-templates",);
     if (res.ok) {
       ctx.templates = (await res.json()) as typeof ctx.templates;
     }
@@ -33,7 +33,7 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
   // ── Worlds: load for the world picker (fine-tune override) ─────
   let worlds: { id: string; name: string }[] = [];
   try {
-    const res = await feFetch("/api/worlds?pageSize=100",);
+    const res = await feFetch("/api/v1/worlds?pageSize=100",);
     if (res.ok) {
       const body = await res.json() as { data?: { id: string; name: string }[] };
       if (Array.isArray(body.data,)) { worlds = body.data; }
@@ -123,7 +123,7 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
   }
 
   try {
-    const res = await feFetch("/api/personas",);
+    const res = await feFetch("/api/v1/personas",);
     const personas = await res.json();
     const personaSelect = $<HTMLSelectElement>("#persona-select",);
     if (personaSelect && Array.isArray(personas,)) {

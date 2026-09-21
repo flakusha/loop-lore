@@ -159,7 +159,7 @@ describe("selectChoice effects", () => {
     const result = await selectChoice("c1",);
     expect(result?.splitTriggered,).toBe(true,);
     expect(feCalls.length,).toBe(1,);
-    expect(feCalls[0]!.url,).toBe("/api/chats/chat-1/split",);
+    expect(feCalls[0]!.url,).toBe("/api/v1/chats/chat-1/split",);
     expect(feCalls[0]!.opts.method,).toBe("POST",);
     expect(JSON.parse(String(feCalls[0]!.opts.body,),),).toEqual({ branches, },);
   });
@@ -230,7 +230,7 @@ describe("selectChoice effects", () => {
       },);
     const result = await selectChoice("c1",);
     expect(result?.reunionTriggered,).toBe(true,);
-    expect(feCalls[0]!.url,).toBe("/api/chats/chat-1/reunite",);
+    expect(feCalls[0]!.url,).toBe("/api/v1/chats/chat-1/reunite",);
     expect(JSON.parse(String(feCalls[0]!.opts.body,),),).toEqual({ secondaryChatId: "chat-2", },);
     feHandler = () => {
       throw new Error("boom",);

@@ -19,54 +19,54 @@ describe("Chat Participants E2E", () => {
     server.close();
   },);
 
-  test("GET /api/chats/:id/participants lists participants (returns array)", async () => {
+  test("GET /api/v1/chats/:id/participants lists participants (returns array)", async () => {
     const res = await api.get<Array<{ actor_id: string; role_in_chat: string }>>(
-      `/api/chats/${SEED.chat.id}/participants`,
+      `/api/v1/chats/${SEED.chat.id}/participants`,
     );
     expect(res.ok,).toBe(true,);
     expect(Array.isArray(res.data,),).toBe(true,);
     expect(res.data!.some((p,) => p.actor_id === SEED.user.id),).toBe(true,);
   });
 
-  test("POST /api/chats/:id/participants adds a participant", async () => {
+  test("POST /api/v1/chats/:id/participants adds a participant", async () => {
     const actorRes = await api.post<{ id: string }>("/api/v1/actors", {
       displayName: "Participant Actor",
       actorType: "character",
     },);
     participantActorId = actorRes.data!.id;
 
-    const res = await api.post(`/api/chats/${SEED.chat.id}/participants`, {
+    const res = await api.post(`/api/v1/chats/${SEED.chat.id}/participants`, {
       actorId: participantActorId,
       roleInChat: "member",
     },);
     expect(res.ok,).toBe(true,);
 
     const listRes = await api.get<Array<{ actor_id: string }>>(
-      `/api/chats/${SEED.chat.id}/participants`,
+      `/api/v1/chats/${SEED.chat.id}/participants`,
     );
     expect(listRes.data!.some((p,) => p.actor_id === participantActorId),).toBe(true,);
   });
 
-  test("POST /api/chats/:id/participants requires actorId", async () => {
-    const res = await api.post(`/api/chats/${SEED.chat.id}/participants`, {
+  test("POST /api/v1/chats/:id/participants requires actorId", async () => {
+    const res = await api.post(`/api/v1/chats/${SEED.chat.id}/participants`, {
       roleInChat: "member",
     },);
     expect(res.ok,).toBe(false,);
     expect(res.status,).toBe(422,);
   });
 
-  test("DELETE /api/chats/:id/participants/:actorId removes participant", async () => {
-    const res = await api.del(`/api/chats/${SEED.chat.id}/participants/${participantActorId}`,);
+  test("DELETE /api/v1/chats/:id/participants/:actorId removes participant", async () => {
+    const res = await api.del(`/api/v1/chats/${SEED.chat.id}/participants/${participantActorId}`,);
     expect(res.ok,).toBe(true,);
 
     const listRes = await api.get<Array<{ actor_id: string }>>(
-      `/api/chats/${SEED.chat.id}/participants`,
+      `/api/v1/chats/${SEED.chat.id}/participants`,
     );
     expect(listRes.data!.some((p,) => p.actor_id === participantActorId),).toBe(false,);
   });
 
-  test("POST /api/chats/:id/side creates a side-channel linked to the group", async () => {
-    const createRes = await api.post<{ id: string }>(`/api/chats/${SEED.chat.id}/side`, {
+  test("POST /api/v1/chats/:id/side creates a side-channel linked to the group", async () => {
+    const createRes = await api.post<{ id: string }>(`/api/v1/chats/${SEED.chat.id}/side`, {
       name: "OOC Channel",
     },);
     expect(createRes.ok,).toBe(true,);
@@ -74,7 +74,7 @@ describe("Chat Participants E2E", () => {
 
     // List side-channels returns the created child.
     const listRes = await api.get<{ sideChannels: Array<{ id: string; name: string }> }>(
-      `/api/chats/${SEED.chat.id}/side`,
+      `/api/v1/chats/${SEED.chat.id}/side`,
     );
     expect(listRes.ok,).toBe(true,);
     expect(listRes.data!.sideChannels.some((s,) => s.id === sideId),).toBe(true,);
@@ -82,23 +82,23 @@ describe("Chat Participants E2E", () => {
 
     // The side-channel is a real chat owned by the user.
     const chatRes = await api.get<{ parent_chat_id: string | null; name: string }>(
-      `/api/chats/${sideId}`,
+      `/api/v1/chats/${sideId}`,
     );
     expect(chatRes.ok,).toBe(true,);
     expect(chatRes.data!.parent_chat_id,).toBe(SEED.chat.id,);
   });
 
-  test("GET /api/chats/:id/side excludes migrated (template) children", async () => {
+  test("GET /api/v1/chats/:id/side excludes migrated (template) children", async () => {
     // Side-channel creation for a non-group (direct) chat still lists cleanly.
     const direct = await api.post<{ id: string }>("/api/v1/chats", { name: "Direct for Side", },);
     const directId = direct.data!.id;
 
-    const listRes = await api.get<{ sideChannels: unknown[] }>(`/api/chats/${directId}/side`,);
+    const listRes = await api.get<{ sideChannels: unknown[] }>(`/api/v1/chats/${directId}/side`,);
     expect(listRes.ok,).toBe(true,);
     expect(Array.isArray(listRes.data!.sideChannels,),).toBe(true,);
   });
 
-  test("GET /api/chats/:id/turn-order returns a snapshot for a group chat", async () => {
+  test("GET /api/v1/chats/:id/turn-order returns a snapshot for a group chat", async () => {
     // Create a group chat and add the seeded AI character as a participant.
     const group = await api.post<{ id: string }>("/api/v1/chats", {
       name: "Turn Order Group",
@@ -106,7 +106,7 @@ describe("Chat Participants E2E", () => {
       mode: "group",
     },);
     const groupId = group.data!.id;
-    await api.post(`/api/chats/${groupId}/participants`, {
+    await api.post(`/api/v1/chats/${groupId}/participants`, {
       actorId: SEED.character.id,
       roleInChat: "member",
     },);
@@ -118,7 +118,7 @@ describe("Chat Participants E2E", () => {
         nextActorId: string | null;
         order: Array<{ actor_id: string; display_name: string }>;
       } | null;
-    }>(`/api/chats/${groupId}/turn-order`,);
+    }>(`/api/v1/chats/${groupId}/turn-order`,);
     expect(res.ok,).toBe(true,);
     // The group has an AI participant → a turn order is computed.
     expect(res.data!.turnOrder,).not.toBeNull();
@@ -130,10 +130,10 @@ describe("Chat Participants E2E", () => {
     expect(res.data!.turnOrder!.order[0]?.actor_id,).toBeDefined();
   });
 
-  test("GET /api/chats/:id/turn-order returns null for a direct chat", async () => {
+  test("GET /api/v1/chats/:id/turn-order returns null for a direct chat", async () => {
     const direct = await api.post<{ id: string }>("/api/v1/chats", { name: "Direct Turn", },);
     const directId = direct.data!.id;
-    const res = await api.get<{ turnOrder: unknown }>(`/api/chats/${directId}/turn-order`,);
+    const res = await api.get<{ turnOrder: unknown }>(`/api/v1/chats/${directId}/turn-order`,);
     expect(res.ok,).toBe(true,);
     expect(res.data!.turnOrder,).toBeNull();
   });

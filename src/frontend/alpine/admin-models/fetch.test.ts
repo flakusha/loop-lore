@@ -50,7 +50,7 @@ describe("capabilitiesState fetch", () => {
     await capabilitiesState.loadModelCapabilities!.call(ctx,);
     expect(ctx.modelCapabilities,).toHaveLength(1,);
     expect(ctx.loadingCapabilities,).toBe(false,);
-    expect(calls[0]!.url,).toBe("/api/admin/model-capabilities",);
+    expect(calls[0]!.url,).toBe("/api/v1/admin/model-capabilities",);
   });
 
   test("loadModelCapabilities appends provider filter and keeps stale data on error", async () => {
@@ -62,7 +62,7 @@ describe("capabilitiesState fetch", () => {
       capabilityFilter: "p1",
     };
     await capabilitiesState.loadModelCapabilities!.call(ctx,);
-    expect(calls[0]!.url,).toBe("/api/admin/model-capabilities?provider=p1",);
+    expect(calls[0]!.url,).toBe("/api/v1/admin/model-capabilities?provider=p1",);
     expect(ctx.modelCapabilities,).toEqual([],);
     // A network error keeps whatever rows are already present (stale data).
     const stale = {
@@ -84,7 +84,7 @@ describe("capabilitiesState fetch", () => {
     let n = 0;
     handler = async (url,) => {
       n++;
-      if (url.includes("/api/admin/model-capabilities/p/m",) && n === 1) {
+      if (url.includes("/api/v1/admin/model-capabilities/p/m",) && n === 1) {
         return Response.json({ ok: true, }, { status: 200, },);
       }
       return Response.json({ capabilities: [], }, { status: 200, },);
@@ -110,7 +110,7 @@ describe("capabilitiesState fetch", () => {
 describe("providerState fetch", () => {
   test("loadModels fans out per provider", async () => {
     handler = async (url,) => {
-      if (url === "/api/admin/providers") {
+      if (url === "/api/v1/admin/providers") {
         return Response.json({ providers: [{ name: "p1", }, { name: "p2", },], },);
       }
       return Response.json({ models: [{ id: `${url}-m`, },], },);
@@ -133,7 +133,7 @@ describe("providerState fetch", () => {
 
   test("rescanProviders merges status and rescans models", async () => {
     handler = async (url,) => {
-      if (url === "/api/admin/providers/rescan") {
+      if (url === "/api/v1/admin/providers/rescan") {
         return Response.json({ providers: [{ name: "p1", status: "up", modelCount: 3, },], },);
       }
       return Response.json({ models: [], },);
@@ -190,7 +190,7 @@ describe("roleState fetch", () => {
       loadModelRoles: async () => {},
     };
     await roleState.saveModelRole!.call(ctx, "chat",);
-    expect(calls[0]!.url,).toBe("/api/admin/model-roles/chat",);
+    expect(calls[0]!.url,).toBe("/api/v1/admin/model-roles/chat",);
     expect(JSON.parse(calls[0]!.opts.body as string,),).toMatchObject({
       provider: "p1",
       model: "m1",
@@ -233,7 +233,7 @@ describe("pluginState fetch", () => {
       },
     };
     await pluginState.togglePlugin!.call(ctx, "pl", true,);
-    expect(calls[0]!.url,).toBe("/api/plugins/pl/enable",);
+    expect(calls[0]!.url,).toBe("/api/v1/plugins/pl/enable",);
     expect(reloaded,).toBe(1,);
   });
 

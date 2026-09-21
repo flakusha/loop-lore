@@ -29,7 +29,7 @@ export interface MemoryEntry {
 /** Audit actions recorded in `memory_audit_log.action`. */
 export type AuditAction = "create" | "pin" | "unpin" | "modify" | "decay" | "purge" | "inject" | "delete";
 
-/** One row as returned by GET /api/actors/:id/memories/audit. */
+/** One row as returned by GET /api/v1/actors/:id/memories/audit. */
 export interface AuditEntry {
   id: string;
   memoryId: string;

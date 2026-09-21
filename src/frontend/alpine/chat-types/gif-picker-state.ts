@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-/** One provider result as returned by GET /api/gifs/search. */
+/** One provider result as returned by GET /api/v1/gifs/search. */
 export interface GifResult {
   id: string;
   title: string;

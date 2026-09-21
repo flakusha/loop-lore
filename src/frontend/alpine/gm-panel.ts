@@ -69,7 +69,7 @@ export interface EntitySuggestion {
 
     async loadShadowNotes(chatId: string,) {
       try {
-        const res = await apiFetch(`/api/chats/${chatId}/shadow-notes`, {},);
+        const res = await apiFetch(`/api/v1/chats/${chatId}/shadow-notes`, {},);
         if (res.ok) {
           const data = await res.json() as { items?: ShadowNote[] };
           this.shadowNotes = data.items ?? [];
@@ -81,7 +81,7 @@ export interface EntitySuggestion {
 
     async loadWhitenotes(chatId: string,) {
       try {
-        const res = await apiFetch(`/api/chats/${chatId}/whitenotes`, {},);
+        const res = await apiFetch(`/api/v1/chats/${chatId}/whitenotes`, {},);
         if (res.ok) {
           const data = await res.json() as { items?: Whiteneote[] };
           this.whitenotes = data.items ?? [];
@@ -97,7 +97,7 @@ export interface EntitySuggestion {
       if (!chatId) { return; }
 
       try {
-        const res = await apiFetch(`/api/chats/${chatId}/shadow-notes`, {
+        const res = await apiFetch(`/api/v1/chats/${chatId}/shadow-notes`, {
           method: "POST",
           headers: { "Content-Type": "application/json", },
           body: jsonBody({
@@ -120,7 +120,7 @@ export interface EntitySuggestion {
       if (!chatId) { return; }
 
       try {
-        const res = await apiFetch(`/api/chats/${chatId}/whitenotes`, {
+        const res = await apiFetch(`/api/v1/chats/${chatId}/whitenotes`, {
           method: "POST",
           headers: { "Content-Type": "application/json", },
           body: jsonBody({
@@ -144,7 +144,7 @@ export interface EntitySuggestion {
       if (!chatId) { return; }
 
       try {
-        const res = await apiFetch(`/api/chats/${chatId}/shadow-notes/${noteId}/reveal`, {
+        const res = await apiFetch(`/api/v1/chats/${chatId}/shadow-notes/${noteId}/reveal`, {
           method: "POST",
         },);
         if (res.ok) {
@@ -160,7 +160,7 @@ export interface EntitySuggestion {
       if (!chatId) { return; }
 
       try {
-        const res = await apiFetch(`/api/chats/${chatId}/shadow-notes/${noteId}`, {
+        const res = await apiFetch(`/api/v1/chats/${chatId}/shadow-notes/${noteId}`, {
           method: "DELETE",
         },);
         if (res.ok) {
@@ -176,7 +176,7 @@ export interface EntitySuggestion {
       if (!chatId) { return; }
 
       try {
-        const res = await apiFetch(`/api/chats/${chatId}/whitenotes/${noteId}`, {
+        const res = await apiFetch(`/api/v1/chats/${chatId}/whitenotes/${noteId}`, {
           method: "DELETE",
         },);
         if (res.ok) {
@@ -193,7 +193,7 @@ export interface EntitySuggestion {
       if (!chatId || !this.entitySeed.trim()) { return; }
       this.entityMessage = "";
       try {
-        const res = await apiFetch(`/api/chats/${chatId}/generate-entity`, {
+        const res = await apiFetch(`/api/v1/chats/${chatId}/generate-entity`, {
           method: "POST",
           headers: { "Content-Type": "application/json", },
           body: jsonBody({
@@ -226,7 +226,7 @@ export interface EntitySuggestion {
       const chatId = (this as any).activeChat;
       if (!chatId) { return; }
       try {
-        const res = await apiFetch(`/api/chats/${chatId}/entity-suggestions`, {},);
+        const res = await apiFetch(`/api/v1/chats/${chatId}/entity-suggestions`, {},);
         if (res.ok) {
           const data = await res.json() as { items?: EntitySuggestion[] };
           this.entitySuggestions = data.items ?? [];

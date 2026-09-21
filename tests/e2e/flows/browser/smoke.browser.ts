@@ -308,7 +308,7 @@ describe("Smoke E2E", () => {
         await gotoView(page, "/views/login",);
         await page.locator("[data-testid='demo-login']",).waitFor({ state: "attached", timeout: 15_000, },);
         const link = page.locator("[data-testid='demo-login']",);
-        expect(await link.getAttribute("hx-post",),).toBe("/api/demo-login",);
+        expect(await link.getAttribute("hx-post",),).toBe("/api/v1/demo-login",);
       } finally {
         errors.assert();
         errors.detach();

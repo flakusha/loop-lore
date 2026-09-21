@@ -104,7 +104,7 @@ describe("worldChannels", () => {
     test("redeems the code, clears the input, and refreshes the tree", async () => {
       const g = globalThis as unknown as Record<string, unknown>;
       g.apiFetch = mock(async (url: string,) => {
-        expect(url,).toBe("/api/world-invites/ABCDEF12/join",);
+        expect(url,).toBe("/api/v1/world-invites/ABCDEF12/join",);
         return Response.json({ worldId: "w1", alreadyMember: false, }, { status: 200, },);
       },);
       const ctx = toastCtx({ worldJoinCode: "ABCDEF12", },);

@@ -25,7 +25,7 @@ export const chatKeys = {
       return;
     }
     try {
-      const res = await apiFetch(`/api/chats/${chatId}/encryption-key`,);
+      const res = await apiFetch(`/api/v1/chats/${chatId}/encryption-key`,);
       if (!res.ok) {
         this._encryptionEnabled = false;
         this._chatKey = null;

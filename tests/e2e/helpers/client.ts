@@ -190,7 +190,7 @@ export function createClient(baseUrl: string,) {
       // demo-login failures).
       const { resetDemoLoginRateLimiter, } = await import("@/routes/auth");
       resetDemoLoginRateLimiter();
-      const res = await this.post("/api/demo-login",);
+      const res = await this.post("/api/v1/demo-login",);
       if (res.ok) {
         await bootstrapCsrf();
       }

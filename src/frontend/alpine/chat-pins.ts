@@ -24,7 +24,7 @@ export const chatPins: Partial<ChatState> & ThisType<ChatState> = {
     if (!this.activeChat) { return; }
     this._pinsLoading = true;
     try {
-      const res = await apiFetch(`/api/chats/${this.activeChat}/pins`,);
+      const res = await apiFetch(`/api/v1/chats/${this.activeChat}/pins`,);
       if (res.ok) {
         const body = await res.json();
         this._pins = (body.data as ChatPinRow[]) ?? [];
@@ -38,7 +38,7 @@ export const chatPins: Partial<ChatState> & ThisType<ChatState> = {
   async pinMessage(messageId: string,) {
     if (!this.activeChat) { return; }
     try {
-      const res = await apiFetch(`/api/chats/${this.activeChat}/pins`, {
+      const res = await apiFetch(`/api/v1/chats/${this.activeChat}/pins`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         // eslint-disable-next-line no-restricted-syntax
@@ -53,7 +53,7 @@ export const chatPins: Partial<ChatState> & ThisType<ChatState> = {
   async unpinMessage(pinId: string,) {
     if (!this.activeChat) { return; }
     try {
-      const res = await apiFetch(`/api/chats/${this.activeChat}/pins/${pinId}`, {
+      const res = await apiFetch(`/api/v1/chats/${this.activeChat}/pins/${pinId}`, {
         method: "DELETE",
       },);
       if (res.ok) { await this.loadPins(); }

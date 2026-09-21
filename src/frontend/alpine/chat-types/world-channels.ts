@@ -17,13 +17,13 @@ export interface ChatWorldChannelsState {
   _joinableChats: { chatId: string; chatName: string; participantCount: number; lastActiveAt: string | null }[];
   loadJoinableChats(): Promise<void>;
   joinChat(chatId: string,): Promise<void>;
-  /** Chat invite rows for the active chat (GET /api/chats/:id/invites { data }). */
+  /** Chat invite rows for the active chat (GET /api/v1/chats/:id/invites { data }). */
   _chatInvites: ChatInviteRow[];
   _chatInvitesLoading: boolean;
   _chatInvitesLoaded: boolean;
   _newChatInviteMaxUses: string;
   _showChatInviteForm: boolean;
-  /** Redeem-code input in the sidebar (POST /api/invites/:code/join). */
+  /** Redeem-code input in the sidebar (POST /api/v1/invites/:code/join). */
   _chatJoinCode: string;
   loadChatInvites(): Promise<void>;
   createChatInvite(): Promise<void>;

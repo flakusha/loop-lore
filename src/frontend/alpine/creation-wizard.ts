@@ -85,7 +85,7 @@ export const creationWizard: Partial<ChatState> & ThisType<ChatState> = {
     if (!chatId) { return; }
 
     try {
-      const res = await apiFetch(`/api/chats/${chatId}/create-entity`, {
+      const res = await apiFetch(`/api/v1/chats/${chatId}/create-entity`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({

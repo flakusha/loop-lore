@@ -55,7 +55,7 @@ test("startExport streams the SSE body and disarms the fetch timeout", async () 
   let captured: RequestInit | undefined;
   const stream = openSse([
     `data: {"type":"job_created","jobId":"j1","status":"queued"}\n\n`,
-    `data: {"type":"completed","jobId":"j1","downloadUrl":"/api/export/download/j1"}\n\n`,
+    `data: {"type":"completed","jobId":"j1","downloadUrl":"/api/v1/export/download/j1"}\n\n`,
   ],);
   globalThis.fetch = (async (_input: unknown, init?: RequestInit,) => {
     captured = init;
@@ -70,7 +70,7 @@ test("startExport streams the SSE body and disarms the fetch timeout", async () 
   // body was read incrementally (reader cancelled on the terminal frame),
   // not buffered via response.text().
   expect(ctx.status,).toBe("completed",);
-  expect(ctx.downloadUrl,).toBe("/api/export/download/j1",);
+  expect(ctx.downloadUrl,).toBe("/api/v1/export/download/j1",);
   expect(ctx.error,).toBe("",);
   // Stream mode must not arm the 30s timeout: a bare signal (undefined)
   // means no AbortController chain from safeFetch.

@@ -56,7 +56,7 @@ describe("createRequestHandler policy wiring", () => {
     const handler = createRequestHandler(app, config, logger,);
 
     const res = await handler(
-      new Request("http://localhost/api/chats", { headers: { "accept-encoding": "br", }, },),
+      new Request("http://localhost/api/v1/chats", { headers: { "accept-encoding": "br", }, },),
     );
     expect(res.headers.get("content-encoding",),).toBe("br",);
     expect(res.headers.get("vary",),).toContain("Accept-Encoding",);
