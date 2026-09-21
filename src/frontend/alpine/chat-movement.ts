@@ -14,7 +14,7 @@ export const chatMovement: ChatMovement = {
     if (!this.activeChat) { return; }
     this.loadingMovementEvents = true;
     try {
-      const res = await apiFetch(`/api/npc-movement/recent/${this.activeChat}?limit=20`,);
+      const res = await apiFetch(`/api/v1/npc-movement/recent/${this.activeChat}?limit=20`,);
       if (res.ok) {
         this.movementEvents = await res.json();
       }

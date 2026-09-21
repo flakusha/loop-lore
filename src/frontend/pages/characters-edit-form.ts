@@ -71,7 +71,7 @@ globalThis.saveCharacterEdit = async function(characterId: string,) {
     dataVersion: editNumberField("char-data-version",),
   },);
   try {
-    const res = await feFetch(`/api/actors/${characterId}`, {
+    const res = await feFetch(`/api/v1/actors/${characterId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json", },
       body,
@@ -111,7 +111,7 @@ globalThis.uploadAvatar = async function(input: HTMLInputElement,) {
   formData.append("file", file,);
   formData.append("alt_text", file.name,);
   try {
-    const res = await feFetch("/api/assets", { method: "POST", body: formData, },);
+    const res = await feFetch("/api/v1/assets", { method: "POST", body: formData, },);
     if (!res.ok) {
       showToast("error", "Avatar upload failed",);
       return;
@@ -121,7 +121,7 @@ globalThis.uploadAvatar = async function(input: HTMLInputElement,) {
     if (hidden) { hidden.value = asset.id; }
     const preview = document.querySelector("#avatar-preview",);
     if (preview) {
-      preview.innerHTML = `<img src="/api/assets/${
+      preview.innerHTML = `<img src="/api/v1/assets/${
         escapeHtml(asset.id,)
       }/thumb" style="width:100%;height:100%;object-fit:cover" alt="Avatar" />`;
     }

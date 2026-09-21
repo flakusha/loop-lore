@@ -42,7 +42,7 @@ describe("Age Gate E2E", () => {
     expect(res.code,).toBeTruthy(); // TEST.2 error envelope
 
     // Accept age gate
-    const acceptRes = await api.post("/api/age-gate/accept", {
+    const acceptRes = await api.post("/api/v1/age-gate/accept", {
       birthDate: "2000-01-01",
     },);
     expect(acceptRes.ok,).toBe(true,);

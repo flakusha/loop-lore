@@ -29,7 +29,7 @@ export const adminUsers = {
     this.loadingUsers = true;
     try {
       const self = this as any;
-      let url = `/api/admin/users?page=${self.userPage}&pageSize=${self.pageSize}`;
+      let url = `/api/v1/admin/users?page=${self.userPage}&pageSize=${self.pageSize}`;
       if (self.userSearch) { url += `&q=${encodeURIComponent(self.userSearch,)}`; }
       if (self.userRoleFilter) { url += `&role=${self.userRoleFilter}`; }
       if (self.userStatusFilter) { url += `&status=${self.userStatusFilter}`; }
@@ -63,7 +63,7 @@ export const adminUsers = {
   async saveRole() {
     if (!this.editRoleUserId) { return; }
     try {
-      const res = await apiFetch(`/api/admin/users/${this.editRoleUserId}/role`, {
+      const res = await apiFetch(`/api/v1/admin/users/${this.editRoleUserId}/role`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ role: this.editRoleValue, },),
@@ -83,7 +83,7 @@ export const adminUsers = {
   async deleteUser(userId: string,) {
     if (this.confirmDeleteUser !== userId) { return; }
     try {
-      const res = await apiFetch(`/api/admin/users/${userId}`, { method: "DELETE", },);
+      const res = await apiFetch(`/api/v1/admin/users/${userId}`, { method: "DELETE", },);
       if (res.ok) {
         showToast("success", t("toasts.userDeleted",),);
         this.confirmDeleteUser = "";

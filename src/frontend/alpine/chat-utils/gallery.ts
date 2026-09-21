@@ -56,7 +56,7 @@ export const chatUtilsGallery: ChatUtilsGallery = {
     },
   ) {
     if (!asset?.id) { return; }
-    const url = `/api/assets/${asset.id}/raw`;
+    const url = `/api/v1/assets/${asset.id}/raw`;
     this.previewMediaAsset = {
       id: asset.id,
       filename: asset.filename || asset.name || t("gallery.assetFallback",),
@@ -94,7 +94,7 @@ export const chatUtilsGallery: ChatUtilsGallery = {
     const activeChat = this.activeChat;
     if (!activeChat) { return; }
     try {
-      const url = `/api/assets?entity_type=chat&entity_id=${activeChat}&pageSize=200&page=1`;
+      const url = `/api/v1/assets?entity_type=chat&entity_id=${activeChat}&pageSize=200&page=1`;
       const res = await apiFetch(url,);
       if (res.ok) {
         const data = await res.json();
@@ -117,7 +117,7 @@ export const chatUtilsGallery: ChatUtilsGallery = {
     if (!activeChat || this.galleryAssets.length >= this.galleryTotal) { return; }
     const next = this.galleryPage + 1;
     try {
-      const url = `/api/assets?entity_type=chat&entity_id=${activeChat}&pageSize=200&page=${next}`;
+      const url = `/api/v1/assets?entity_type=chat&entity_id=${activeChat}&pageSize=200&page=${next}`;
       const res = await apiFetch(url,);
       if (!res.ok) { return; }
       const data = await res.json();
@@ -155,7 +155,7 @@ export const chatUtilsGallery: ChatUtilsGallery = {
         formData.append("file", file,);
         formData.append("alt_text", file.name,);
         try {
-          const res = await apiFetch("/api/assets", { method: "POST", body: formData, },);
+          const res = await apiFetch("/api/v1/assets", { method: "POST", body: formData, },);
           let assetId: string | null = null;
           if (res.ok) {
             const asset = await res.json();
@@ -168,7 +168,7 @@ export const chatUtilsGallery: ChatUtilsGallery = {
             },);
           }
           if (assetId) {
-            const linkRes = await apiFetch(`/api/assets/${assetId}/links`, {
+            const linkRes = await apiFetch(`/api/v1/assets/${assetId}/links`, {
               method: "POST",
               headers: { "Content-Type": "application/json", },
               body: jsonBody({ entityType: "chat", entityId: activeChat, label: "scene", },),
@@ -206,7 +206,7 @@ export const chatUtilsGallery: ChatUtilsGallery = {
       if (res.ok) {
         const chat = await res.json();
         if (chat.character_id) {
-          const charRes = await apiFetch(`/api/actors/${chat.character_id}`,);
+          const charRes = await apiFetch(`/api/v1/actors/${chat.character_id}`,);
           if (charRes.ok) {
             this.currentCharacter = await charRes.json();
           }

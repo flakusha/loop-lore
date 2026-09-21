@@ -33,7 +33,7 @@ export const blogStore: BlogState = {
     this._blogLoading = true;
     this._blogError = "";
     try {
-      const res = await apiFetch("/api/blog/posts",);
+      const res = await apiFetch("/api/v1/blog/posts",);
       if (!res.ok) { throw new Error(t("errors.loadFailed",),); }
       const data: unknown = await res.json();
       this._blogPosts = Array.isArray(data,) ? (data as BlogPost[]) : ((data as { posts?: BlogPost[] }).posts ?? []);
@@ -67,7 +67,7 @@ export const blogStore: BlogState = {
     this._blogLoading = true;
     this._blogError = "";
     try {
-      const res = await apiFetch(`/api/blog/posts/${id}`,);
+      const res = await apiFetch(`/api/v1/blog/posts/${id}`,);
       if (!res.ok) { throw new Error(t("errors.notFound",),); }
       const data: unknown = await res.json();
       this._blogPost = Array.isArray(data,) ? null : ((data as { post?: BlogPost }).post ?? (data as BlogPost));
@@ -82,7 +82,7 @@ export const blogStore: BlogState = {
     this._blogLoading = true;
     this._blogError = "";
     try {
-      const res = await apiFetch("/api/blog/posts", {
+      const res = await apiFetch("/api/v1/blog/posts", {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody(input,),
@@ -104,7 +104,7 @@ export const blogStore: BlogState = {
   async createComment(postId: string, body: string, parent_comment_id?: string,) {
     this._blogError = "";
     try {
-      const res = await apiFetch(`/api/blog/posts/${postId}/comments`, {
+      const res = await apiFetch(`/api/v1/blog/posts/${postId}/comments`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ body, parent_comment_id, },),
@@ -120,7 +120,7 @@ export const blogStore: BlogState = {
 
   async listComments(postId: string,) {
     try {
-      const res = await apiFetch(`/api/blog/posts/${postId}/comments`,);
+      const res = await apiFetch(`/api/v1/blog/posts/${postId}/comments`,);
       if (!res.ok) { throw new Error(t("errors.loadFailed",),); }
       const data: unknown = await res.json();
       this._blogComments = Array.isArray(data,)
@@ -134,7 +134,7 @@ export const blogStore: BlogState = {
   async followAuthor(authorId: string,) {
     this._blogError = "";
     try {
-      const res = await apiFetch(`/api/blog/follow/${authorId}`, { method: "POST", },);
+      const res = await apiFetch(`/api/v1/blog/follow/${authorId}`, { method: "POST", },);
       if (!res.ok) { throw new Error(t("errors.createFailed",),); }
       this._blogFollowStatus[authorId] = true;
       this.$dispatch("blog-follow-changed", { authorId, following: true, },);
@@ -146,7 +146,7 @@ export const blogStore: BlogState = {
   async unfollowAuthor(authorId: string,) {
     this._blogError = "";
     try {
-      const res = await apiFetch(`/api/blog/follow/${authorId}`, { method: "DELETE", },);
+      const res = await apiFetch(`/api/v1/blog/follow/${authorId}`, { method: "DELETE", },);
       if (!res.ok) { throw new Error(t("errors.createFailed",),); }
       this._blogFollowStatus[authorId] = false;
       this.$dispatch("blog-follow-changed", { authorId, following: false, },);
@@ -157,7 +157,7 @@ export const blogStore: BlogState = {
 
   async getFollowStatus(authorId: string,) {
     try {
-      const res = await apiFetch(`/api/blog/follow/${authorId}/status`,);
+      const res = await apiFetch(`/api/v1/blog/follow/${authorId}/status`,);
       if (!res.ok) { return this._blogFollowStatus[authorId] ?? false; }
       const data = await res.json() as { following?: boolean };
       const following = data.following ?? false;
@@ -170,7 +170,7 @@ export const blogStore: BlogState = {
 
   async loadSources(postId: string,) {
     try {
-      const res = await apiFetch(`/api/blog/posts/${postId}/sources`,);
+      const res = await apiFetch(`/api/v1/blog/posts/${postId}/sources`,);
       if (!res.ok) { throw new Error(t("errors.loadFailed",),); }
       const data = await res.json() as { sources?: BlogSource[] };
       this._blogSources = data.sources ?? [];

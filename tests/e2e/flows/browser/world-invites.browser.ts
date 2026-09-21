@@ -83,7 +83,7 @@ describe("World invites E2E", () => {
     const match = page.url().match(/\/worlds\/([a-f0-9-]+)\/edit/,);
     if (!match) { throw new Error(`Could not parse world id from URL: ${page.url()}`,); }
 
-    // The editor body (incl. tab bar) only renders after /api/worlds/:id loads.
+    // The editor body (incl. tab bar) only renders after /api/v1/worlds/:id loads.
     await page.locator(".world-edit-tab",).filter({ hasText: "Invites", },).waitFor({
       state: "attached",
       timeout: 30_000,

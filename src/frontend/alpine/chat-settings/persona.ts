@@ -12,7 +12,7 @@ import type { ChatState, } from "../types";
 export const personaActions: Partial<ChatState> & ThisType<ChatState> = {
   async loadPersonas() {
     try {
-      const res = await apiFetch("/api/personas",);
+      const res = await apiFetch("/api/v1/personas",);
       if (res.ok) { this._personas = await res.json(); }
     } catch {
       /* ignore */

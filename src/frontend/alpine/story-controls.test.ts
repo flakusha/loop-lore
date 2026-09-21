@@ -39,7 +39,7 @@ describe("storyControl", () => {
       const result = await storyControl("chat-1", action,);
       expect(result.ok,).toBe(true,);
       expect(fetchCalls.length,).toBe(1,);
-      expect(fetchCalls[0]?.url,).toBe(`/api/chats/chat-1/story/${action}`,);
+      expect(fetchCalls[0]?.url,).toBe(`/api/v1/chats/chat-1/story/${action}`,);
       expect(fetchCalls[0]?.opts.method,).toBe("POST",);
     });
   }
@@ -47,7 +47,7 @@ describe("storyControl", () => {
   test("includes an optional JSON body", async () => {
     mockFetch(200, { ok: true, },);
     await storyControl("chat-1", "narration", { text: "The door creaks.", },);
-    expect(fetchCalls[0]?.url,).toBe("/api/chats/chat-1/story/narration",);
+    expect(fetchCalls[0]?.url,).toBe("/api/v1/chats/chat-1/story/narration",);
     expect(JSON.parse(fetchCalls[0]?.opts.body as string,),).toEqual({ text: "The door creaks.", },);
   });
 

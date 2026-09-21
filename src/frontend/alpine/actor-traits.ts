@@ -4,10 +4,10 @@
 
 // ── Character permanent traits panel.
 // Drives:
-//   GET    /api/actors/:actorId/traits
-//   POST   /api/actors/:actorId/traits
-//   PUT    /api/actors/:actorId/traits/:traitName
-//   DELETE /api/actors/:actorId/traits/:traitName
+//   GET    /api/v1/actors/:actorId/traits
+//   POST   /api/v1/actors/:actorId/traits
+//   PUT    /api/v1/actors/:actorId/traits/:traitName
+//   DELETE /api/v1/actors/:actorId/traits/:traitName
 // Pairs with `src/components/character/traits-panel.html`.
 import { apiFetch, } from "./htmx";
 import { t, } from "./i18n";
@@ -125,7 +125,7 @@ export const actorTraits: ActorTraitsState = {
     this.traitsLoading = true;
     this.traitsError = "";
     try {
-      const res = await apiFetch(`/api/actors/${actorId}/traits`, {},);
+      const res = await apiFetch(`/api/v1/actors/${actorId}/traits`, {},);
       if (!res.ok) {
         this.traitsError = t("status.traitsLoadFailed",);
         return;
@@ -185,8 +185,8 @@ export const actorTraits: ActorTraitsState = {
     try {
       const isEdit = this.draft.editingName !== null;
       const url = isEdit
-        ? `/api/actors/${actorId}/traits/${encodeURIComponent(this.draft.editingName!,)}`
-        : `/api/actors/${actorId}/traits`;
+        ? `/api/v1/actors/${actorId}/traits/${encodeURIComponent(this.draft.editingName!,)}`
+        : `/api/v1/actors/${actorId}/traits`;
       const method = isEdit ? "PUT" : "POST";
       const res = await apiFetch(url, {
         method,
@@ -218,7 +218,7 @@ export const actorTraits: ActorTraitsState = {
     this.error = "";
     try {
       const res = await apiFetch(
-        `/api/actors/${actorId}/traits/${encodeURIComponent(traitName,)}`,
+        `/api/v1/actors/${actorId}/traits/${encodeURIComponent(traitName,)}`,
         { method: "DELETE", },
       );
       if (!res.ok && res.status !== 404) {

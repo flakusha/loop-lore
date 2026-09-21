@@ -167,12 +167,12 @@ describe("chatLocation", () => {
   });
 
   describe("transferChatLocation", () => {
-    test("POSTs to /api/chats/:id/transfer and updates location", async () => {
+    test("POSTs to /api/v1/chats/:id/transfer and updates location", async () => {
       mockFetch(200, { ok: true, locationId: "loc-2", },);
       const { state, } = buildCtx({ _selectedLocationId: "loc-2", },);
       await chatLocation.transferChatLocation!.call(state,);
       expect(fetchCalls.length,).toBe(1,);
-      expect(fetchCalls[0]?.url,).toBe("/api/chats/chat-1/transfer",);
+      expect(fetchCalls[0]?.url,).toBe("/api/v1/chats/chat-1/transfer",);
       expect(fetchCalls[0]?.opts.method,).toBe("POST",);
       expect(JSON.parse(fetchCalls[0]?.opts.body as string,),).toEqual({ locationId: "loc-2", },);
       expect(state._chatCurrentLocationId,).toBe("loc-2",);
@@ -188,7 +188,7 @@ describe("chatLocation", () => {
       },);
       const { state, } = buildCtx({ _selectedLocationId: "loc-2", },);
       await chatLocation.loadLocationJoinable!.call(state,);
-      expect(fetchCalls[0]?.url,).toBe("/api/chats/joinable?location=loc-2",);
+      expect(fetchCalls[0]?.url,).toBe("/api/v1/chats/joinable?location=loc-2",);
       expect(state._locationJoinableChats,).toEqual([
         { chatId: "c1", chatName: "Adventurers", participantCount: 3, lastActiveAt: "2026-01-01", },
       ],);

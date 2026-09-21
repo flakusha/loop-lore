@@ -94,7 +94,7 @@ describe("renderCurrentScene structure", () => {
     const portrait = sceneEl.querySelector(".vn-portrait",)!;
     expect(portrait.className,).toContain("vn-portrait-left",);
     expect(portrait.querySelector(".vn-portrait-name",)!.textContent,).toBe("Mira",);
-    expect(portrait.querySelector(".vn-portrait-img",)!.src,).toBe("/api/assets/av1/thumb",);
+    expect(portrait.querySelector(".vn-portrait-img",)!.src,).toBe("/api/v1/assets/av1/thumb",);
 
     expect(sceneEl.querySelector(".vn-speaker",)!.textContent,).toBe("Mira",);
     expect(sceneEl.querySelector(".vn-text",)!.textContent,).toBe("Well met.",);
@@ -159,7 +159,7 @@ describe("renderCurrentScene structure", () => {
     expect(items,).toHaveLength(2,);
     expect(items[0]!.querySelector(".vn-attachment-thumb",)!.src,).toBe("thumbs/a1.png",);
     expect(items[0]!.querySelector(".vn-attachment-caption",)!.textContent,).toBe("Map",);
-    expect(items[1]!.querySelector(".vn-attachment-thumb",)!.src,).toBe("/api/assets/a2/thumb",);
+    expect(items[1]!.querySelector(".vn-attachment-thumb",)!.src,).toBe("/api/v1/assets/a2/thumb",);
     expect(items[1]!.querySelector(".vn-attachment-caption",)!.textContent,).toBe("notes.txt",);
 
     const bare = install([baseScene({},),], 0,);

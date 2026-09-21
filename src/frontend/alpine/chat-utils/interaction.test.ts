@@ -113,7 +113,7 @@ describe("chatUtilsInteraction flag dialog", () => {
     },);
     await chatUtilsInteraction.submitFlag!.call(ctx as never,);
     expect(calls,).toHaveLength(1,);
-    expect(calls[0]!.url,).toBe("/api/nsfw/moderation/flags",);
+    expect(calls[0]!.url,).toBe("/api/v1/nsfw/moderation/flags",);
     expect(calls[0]!.opts.method,).toBe("POST",);
     expect(JSON.parse(String(calls[0]!.opts.body,),),).toEqual({
       contentType: "message",

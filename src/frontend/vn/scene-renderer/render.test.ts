@@ -182,7 +182,7 @@ describe("preloadCurrentAndUpcoming", () => {
     await preloadCurrentAndUpcoming();
     // Window is current + next 2 scenes; scene 4 (bg3) is outside it.
     expect(FakeImage.created.map((img,) => img.src).sort(),).toEqual(
-      ["/api/assets/av0/thumb", "bg0.png", "bg1.png", "bg2.png",].sort(),
+      ["/api/v1/assets/av0/thumb", "bg0.png", "bg1.png", "bg2.png",].sort(),
     );
     expect(t.shown,).toBe(1,);
     expect(t.calls,).toEqual([[4, 4,],],);
@@ -219,7 +219,7 @@ describe("preloadCurrentAndUpcoming", () => {
       },),],);
 
       await preloadCurrentAndUpcoming();
-      expect(FakeImage.created.map((img,) => img.src),).toContain("/api/assets/happy-9/thumb",);
+      expect(FakeImage.created.map((img,) => img.src),).toContain("/api/v1/assets/happy-9/thumb",);
     } finally {
       state.roster = null;
     }

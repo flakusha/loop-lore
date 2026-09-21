@@ -26,7 +26,7 @@ export const media: Partial<ChatState> & ThisType<ChatState> = {
       return;
     }
     try {
-      const res = await apiFetch("/api/generation/image", {
+      const res = await apiFetch("/api/v1/generation/image", {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ chatId: this.activeChat, messageId: msgId, prompt, },),
@@ -62,7 +62,7 @@ export const media: Partial<ChatState> & ThisType<ChatState> = {
       return;
     }
     try {
-      const res = await apiFetch("/api/generation/caption", {
+      const res = await apiFetch("/api/v1/generation/caption", {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({

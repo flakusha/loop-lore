@@ -40,7 +40,7 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
     this.currentPage = 1;
     this.hasMoreMessages = true;
     try {
-      const res = await apiFetch(`/api/chats/${chatId}/messages?page=1&pageSize=50`,);
+      const res = await apiFetch(`/api/v1/chats/${chatId}/messages?page=1&pageSize=50`,);
       const page = parseOr(MessageListResponse, await res.json(), EMPTY_MESSAGE_PAGE,);
       if (this.activeChat !== chatId) { return; }
       // Wire rows are validated by MessageListResponse; nullable columns decode
@@ -84,7 +84,7 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
     const el = this.$refs.messageList;
     const prevScrollHeight = el?.scrollHeight ?? 0;
     try {
-      const res = await apiFetch(`/api/chats/${chatId}/messages?page=${nextPage}&pageSize=50`,);
+      const res = await apiFetch(`/api/v1/chats/${chatId}/messages?page=${nextPage}&pageSize=50`,);
       const page = parseOr(MessageListResponse, await res.json(), EMPTY_MESSAGE_PAGE,);
       // Stale-response guard: the user switched chats while this fetch was in flight.
       if (this.activeChat !== chatId) { return; }
@@ -165,7 +165,7 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
   async toggleReaction(msgId: string, emoji: string,) {
     if (!this.activeChat) { return; }
     try {
-      const res = await apiFetch(`/api/messages/${msgId}/reactions`, {
+      const res = await apiFetch(`/api/v1/messages/${msgId}/reactions`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ emoji, },),
@@ -179,7 +179,7 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
   },
   async loadMessageReactions(msgId: string,) {
     try {
-      const res = await apiFetch(`/api/messages/${msgId}/reactions`,);
+      const res = await apiFetch(`/api/v1/messages/${msgId}/reactions`,);
       if (res.ok) {
         const reactions = await res.json();
         const msg = this.messages.find((m,) => m.id === msgId);

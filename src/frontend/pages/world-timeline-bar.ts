@@ -53,7 +53,7 @@ function worldTimelineBarImpl(
 
     async loadTimelines() {
       try {
-        const res = await feFetch(`/api/worlds/${this.worldId}/timelines`,);
+        const res = await feFetch(`/api/v1/worlds/${this.worldId}/timelines`,);
         if (res.ok) {
           const data = (await res.json()) as { data: WorldTimeline[] };
           this.timelines = data.data ?? [];
@@ -80,7 +80,7 @@ function worldTimelineBarImpl(
     async createTimeline() {
       if (!this.newName.trim()) { return; }
       try {
-        const res = await feFetch(`/api/worlds/${this.worldId}/timelines`, {
+        const res = await feFetch(`/api/v1/worlds/${this.worldId}/timelines`, {
           method: "POST",
           /* eslint-disable no-restricted-syntax */
           body: JSON.stringify({

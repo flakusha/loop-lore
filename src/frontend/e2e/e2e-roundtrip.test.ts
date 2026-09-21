@@ -26,7 +26,7 @@ const originalFetch = globalThis.fetch;
 
 const stubbedFetch = mock(async (input: RequestInfo | URL,) => {
   const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
-  const match = url.match(/\/api\/actors\/([^/]+)\/e2e-public-key/,);
+  const match = url.match(/\/api\/v1\/actors\/([^/]+)\/e2e-public-key/,);
   if (!match) {
     return new Response("not found", { status: 404, },);
   }

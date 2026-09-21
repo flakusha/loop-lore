@@ -19,8 +19,8 @@ export const moodStateEmotions: Partial<ChatState> & ThisType<ChatState> = {
     this._activeEmotionsLoading = true;
     try {
       const [activeRes, defsRes,] = await Promise.allSettled([
-        apiFetch(`/api/actors/${actorId}/emotions`,),
-        apiFetch(`/api/emotions`,),
+        apiFetch(`/api/v1/actors/${actorId}/emotions`,),
+        apiFetch(`/api/v1/emotions`,),
       ],);
       if (activeRes.status !== "fulfilled" || defsRes.status !== "fulfilled") {
         throw new Error("emotion load failed",);

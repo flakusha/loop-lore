@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * ServerTransport — POSTs log entries to /api/frontend/logs.
+ * ServerTransport — POSTs log entries to /api/v1/frontend/logs.
  *
  * Batches entries on a 5s interval. Browser auth rides the HttpOnly
  * `ll_token` cookie (same-origin, automatic); the route is public and the
@@ -41,7 +41,7 @@ export class ServerTransport implements Transport {
 
     try {
       const csrf = getCsrfToken();
-      await safeFetch("/api/frontend/logs", {
+      await safeFetch("/api/v1/frontend/logs", {
         method: "POST",
         body: { entries: batch, },
         auth: { csrfToken: csrf || undefined, },

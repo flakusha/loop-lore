@@ -195,7 +195,7 @@ function hydrateSliders(entries: Array<[string, string | number | boolean,]>, up
 
 (globalThis as Record<string, unknown>).loadInternalTraits = async function(actorId: string,) {
   try {
-    const res = await _feFetch(`/api/character-internal-traits?actorId=${actorId}`,);
+    const res = await _feFetch(`/api/v1/character-internal-traits?actorId=${actorId}`,);
     if (!res.ok) { return; }
     const data = await res.json();
     if (data.aspirations) {
@@ -284,7 +284,7 @@ function buildTraitsPayload() {
 (globalThis as Record<string, unknown>).saveInternalTraits = async function(actorId: string,) {
   const status = document.querySelector<HTMLElement>("#traits-status",);
   try {
-    const res = await _feFetch(`/api/character-internal-traits?actorId=${actorId}`, {
+    const res = await _feFetch(`/api/v1/character-internal-traits?actorId=${actorId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json", },
       body: jsonBody(buildTraitsPayload(),),

@@ -18,13 +18,13 @@ describe("Users E2E", () => {
     server.close();
   },);
 
-  test("GET /api/users/me returns current user", async () => {
+  test("GET /api/v1/users/me returns current user", async () => {
     const res = await api.get<{ id: string; username: string; role: string }>("/api/v1/users/me",);
     expect(res.ok,).toBe(true,);
     expect(res.data!.username,).toBe(SEED.user.username,);
   });
 
-  test("PUT /api/users/me updates display_name", async () => {
+  test("PUT /api/v1/users/me updates display_name", async () => {
     const res = await api.put("/api/v1/users/me", { displayName: "Updated Display", },);
     expect(res.ok,).toBe(true,);
 
@@ -32,22 +32,22 @@ describe("Users E2E", () => {
     expect(getRes.data!.display_name,).toBe("Updated Display",);
   });
 
-  test("PUT /api/users/:id/settings updates settings (returns settings object)", async () => {
-    const res = await api.put<Record<string, unknown>>(`/api/users/${SEED.user.id}/settings`, {
+  test("PUT /api/v1/users/:id/settings updates settings (returns settings object)", async () => {
+    const res = await api.put<Record<string, unknown>>(`/api/v1/users/${SEED.user.id}/settings`, {
       theme: "dark",
     },);
     expect(res.ok,).toBe(true,);
     expect(res.data!.theme,).toBe("dark",);
   });
 
-  test("GET /api/users/:id returns 403 for non-admin", async () => {
-    const res = await api.get(`/api/users/${SEED.user.id}`,);
+  test("GET /api/v1/users/:id returns 403 for non-admin", async () => {
+    const res = await api.get(`/api/v1/users/${SEED.user.id}`,);
     expect(res.status,).toBe(403,);
     expect(res.code,).toBeTruthy(); // TEST.2 error envelope
   });
 
-  test("DELETE /api/users/:id returns 403 for non-admin", async () => {
-    const res = await api.del(`/api/users/${SEED.user.id}`,);
+  test("DELETE /api/v1/users/:id returns 403 for non-admin", async () => {
+    const res = await api.del(`/api/v1/users/${SEED.user.id}`,);
     expect(res.status,).toBe(403,);
     expect(res.code,).toBeTruthy(); // TEST.2 error envelope
   });

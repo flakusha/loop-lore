@@ -9,7 +9,7 @@ import { feFetch, } from "./fe-fetch";
 
 document.addEventListener("DOMContentLoaded", async () => {
   try {
-    const res = await feFetch("/api/worlds?pageSize=200",);
+    const res = await feFetch("/api/v1/worlds?pageSize=200",);
     if (!res.ok) { return; }
     const body = await res.json();
     const worlds = body.data ?? [];

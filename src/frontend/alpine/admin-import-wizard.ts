@@ -171,7 +171,7 @@ export function adminImportWizard(this: ImportWizardHost,) {
         const content = this.importWizard.format === "yaml"
           ? this.stringifySimpleYaml(this.importWizard.preview,)
           : this.stringifySimpleToml(this.importWizard.preview,);
-        const res = await apiFetch("/api/admin/system-config/import", {
+        const res = await apiFetch("/api/v1/admin/system-config/import", {
           method: "POST",
           headers: { "Content-Type": "application/json", },
           body: jsonBody({ format: this.importWizard.format, content, },),

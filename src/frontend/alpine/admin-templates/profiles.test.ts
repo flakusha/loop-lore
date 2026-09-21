@@ -60,7 +60,7 @@ describe("adminTemplates.profiles.loadTemplates", () => {
   test("loads and stores the parsed list", async () => {
     handler = async () => Response.json(listPayload,);
     await profiles.loadTemplates();
-    expect(calls[0]!.url,).toBe("/api/admin/templates",);
+    expect(calls[0]!.url,).toBe("/api/v1/admin/templates",);
     expect(profiles.templateProfiles,).toEqual([],);
     expect(profiles.defaultProfileId,).toBe("flux",);
     expect(profiles.builtinCount,).toBe(3,);
@@ -93,7 +93,7 @@ describe("adminTemplates.profiles.selectProfile / clearSelection", () => {
   test("stores the fetched profile detail", async () => {
     handler = async () => Response.json({ id: "p1", name: "Profile One", templates: {}, },);
     await profiles.selectProfile("p1",);
-    expect(calls[0]!.url,).toBe("/api/admin/templates/p1",);
+    expect(calls[0]!.url,).toBe("/api/v1/admin/templates/p1",);
     expect(profiles.selectedProfile,).toEqual({ id: "p1", name: "Profile One", templates: {}, } as never,);
   });
 
@@ -121,9 +121,9 @@ describe("adminTemplates.profiles.deleteProfile", () => {
     handler = async (_url, opts,) => opts?.method === "DELETE" ? Response.json({},) : Response.json(listPayload,);
     await profiles.deleteProfile("p9",);
     const del = calls.find((c,) => c.opts.method === "DELETE")!;
-    expect(del.url,).toBe("/api/admin/templates/p9",);
+    expect(del.url,).toBe("/api/v1/admin/templates/p9",);
     expect(toasts[0]!.type,).toBe("success",);
-    expect(calls.some((c,) => c.url === "/api/admin/templates"),).toBe(true,);
+    expect(calls.some((c,) => c.url === "/api/v1/admin/templates"),).toBe(true,);
   });
 
   test("surfaces the server error on failure", async () => {
@@ -164,7 +164,7 @@ describe("adminTemplates.profiles.createProfile", () => {
     profiles.showCreateModal = true;
     await profiles.createProfile();
     const post = calls.find((c,) => c.opts.method === "POST")!;
-    expect(post.url,).toBe("/api/admin/templates",);
+    expect(post.url,).toBe("/api/v1/admin/templates",);
     expect(JSON.parse(String(post.opts.body,),),).toEqual({
       id: "mine",
       name: "Mine",
@@ -175,7 +175,7 @@ describe("adminTemplates.profiles.createProfile", () => {
     expect(toasts[0]!.type,).toBe("success",);
     expect(profiles.showCreateModal,).toBe(false,);
     expect(profiles.newProfile,).toEqual({ id: "", name: "", families: "", promptFormat: "tags", maxTokenHint: 150, },);
-    expect(calls.some((c,) => c.url === "/api/admin/templates" && !c.opts.method),).toBe(true,);
+    expect(calls.some((c,) => c.url === "/api/v1/admin/templates" && !c.opts.method),).toBe(true,);
   });
 
   test("surfaces the server error on rejection", async () => {

@@ -194,14 +194,14 @@ function jsonResponse(body: unknown, status = 200,): Response {
 
 function serveTags(tags: unknown[], propositions: unknown[],): void {
   feHandler = (url, init,) => {
-    if (url === "/api/assets/a1" && !init.method) { return jsonResponse(ASSET,); }
-    if (url === "/api/assets/a1/tags" && !init.method) { return jsonResponse({ tags, },); }
-    if (url === "/api/assets/a1/tag-propositions" && !init.method) { return jsonResponse({ propositions, },); }
-    if (url === "/api/assets/a1/tags" && init.method === "POST") { return jsonResponse({},); }
-    if (url === "/api/assets/a1/tags" && init.method === "DELETE") { return jsonResponse({},); }
-    if (url === "/api/assets/a1/tags/rename" && init.method === "POST") { return jsonResponse({},); }
-    if (url === "/api/assets/a1/tag-propositions" && init.method === "DELETE") { return jsonResponse({},); }
-    if (url.startsWith("/api/tag-autocomplete",)) { return jsonResponse({ tags: ["cellar", "tavern",], },); }
+    if (url === "/api/v1/assets/a1" && !init.method) { return jsonResponse(ASSET,); }
+    if (url === "/api/v1/assets/a1/tags" && !init.method) { return jsonResponse({ tags, },); }
+    if (url === "/api/v1/assets/a1/tag-propositions" && !init.method) { return jsonResponse({ propositions, },); }
+    if (url === "/api/v1/assets/a1/tags" && init.method === "POST") { return jsonResponse({},); }
+    if (url === "/api/v1/assets/a1/tags" && init.method === "DELETE") { return jsonResponse({},); }
+    if (url === "/api/v1/assets/a1/tags/rename" && init.method === "POST") { return jsonResponse({},); }
+    if (url === "/api/v1/assets/a1/tag-propositions" && init.method === "DELETE") { return jsonResponse({},); }
+    if (url.startsWith("/api/v1/tag-autocomplete",)) { return jsonResponse({ tags: ["cellar", "tavern",], },); }
     return jsonResponse({}, 404,);
   };
 }
@@ -253,7 +253,7 @@ describe("renderTagsPanel", () => {
     tagDom.globalEl.checked = false;
     await tagDom.form.dispatch("submit",);
     await flushMicrotasks();
-    const post = calls.find((c,) => c.url === "/api/assets/a1/tags" && c.opts.method === "POST")!;
+    const post = calls.find((c,) => c.url === "/api/v1/assets/a1/tags" && c.opts.method === "POST")!;
     expect(post,).toBeDefined();
     expect(JSON.parse(String(post.opts.body,),),).toEqual({ tag: "newtag", scope: "user", },);
   });
@@ -265,7 +265,7 @@ describe("renderTagsPanel", () => {
     tagDom.globalEl.checked = true;
     await tagDom.form.dispatch("submit",);
     await flushMicrotasks();
-    const post = calls.find((c,) => c.url === "/api/assets/a1/tags" && c.opts.method === "POST")!;
+    const post = calls.find((c,) => c.url === "/api/v1/assets/a1/tags" && c.opts.method === "POST")!;
     expect(post,).toBeDefined();
     expect(JSON.parse(String(post.opts.body,),),).toEqual({ tag: "shared", scope: "global", },);
   });
@@ -287,7 +287,7 @@ describe("remove / dismiss wiring", () => {
     await previewHost.openAssetPreview!("a1",);
     await tagDom.removeBtn.dispatch("click",);
     await flushMicrotasks();
-    const del = calls.find((c,) => c.url === "/api/assets/a1/tags" && c.opts.method === "DELETE")!;
+    const del = calls.find((c,) => c.url === "/api/v1/assets/a1/tags" && c.opts.method === "DELETE")!;
     expect(del,).toBeDefined();
     expect(JSON.parse(String(del.opts.body,),),).toEqual({ tag: "chip", scope: "user", },);
   });
@@ -297,7 +297,7 @@ describe("remove / dismiss wiring", () => {
     await previewHost.openAssetPreview!("a1",);
     await tagDom.dismissBtn.dispatch("click",);
     await flushMicrotasks();
-    const del = calls.find((c,) => c.url === "/api/assets/a1/tag-propositions" && c.opts.method === "DELETE")!;
+    const del = calls.find((c,) => c.url === "/api/v1/assets/a1/tag-propositions" && c.opts.method === "DELETE")!;
     expect(del,).toBeDefined();
     expect(JSON.parse(String(del.opts.body,),),).toEqual({ tag: "prop", },);
   });
@@ -330,10 +330,10 @@ describe("rename wiring", () => {
     await tagDom.renameForm.dispatch("submit",);
     await flushMicrotasks();
 
-    const post = calls.find((c,) => c.url === "/api/assets/a1/tags/rename" && c.opts.method === "POST")!;
+    const post = calls.find((c,) => c.url === "/api/v1/assets/a1/tags/rename" && c.opts.method === "POST")!;
     expect(post,).toBeDefined();
     expect(JSON.parse(String(post.opts.body,),),).toEqual({ oldTag: "chip", newTag: "renamed", scope: "user", },);
-    expect(calls.filter((c,) => c.url === "/api/assets/a1/tags" && !c.opts.method).length,).toBeGreaterThanOrEqual(2,);
+    expect(calls.filter((c,) => c.url === "/api/v1/assets/a1/tags" && !c.opts.method).length,).toBeGreaterThanOrEqual(2,);
   });
 
   test("unchanged or empty rename does not submit", async () => {
@@ -356,13 +356,13 @@ describe("rename wiring", () => {
   test("failed rename shows toast and does not re-render", async () => {
     serveTags([{ id: "t1", tag: "chip", scope: "user", source: "manual", },], [],);
     await previewHost.openAssetPreview!("a1",);
-    const getsBefore = calls.filter((c,) => c.url === "/api/assets/a1/tags" && !c.opts.method).length;
+    const getsBefore = calls.filter((c,) => c.url === "/api/v1/assets/a1/tags" && !c.opts.method).length;
 
     feHandler = (url, init,) => {
-      if (url === "/api/assets/a1/tags/rename" && init.method === "POST") {
+      if (url === "/api/v1/assets/a1/tags/rename" && init.method === "POST") {
         return new Response("{}", { status: 500, },);
       }
-      if (url === "/api/assets/a1/tags" && !init.method) {
+      if (url === "/api/v1/assets/a1/tags" && !init.method) {
         return jsonResponse({ tags: [{ id: "t1", tag: "chip", scope: "user", source: "manual", },], },);
       }
       return jsonResponse({}, 404,);
@@ -374,7 +374,7 @@ describe("rename wiring", () => {
     await tagDom.renameForm.dispatch("submit",);
     await flushMicrotasks();
 
-    expect(calls.filter((c,) => c.url === "/api/assets/a1/tags" && !c.opts.method).length,).toBe(getsBefore,);
+    expect(calls.filter((c,) => c.url === "/api/v1/assets/a1/tags" && !c.opts.method).length,).toBe(getsBefore,);
   });
 });
 
@@ -390,7 +390,7 @@ describe("renderAutocomplete", () => {
       vi.advanceTimersByTime(150,);
       await flushMicrotasks();
       await flushMicrotasks();
-      expect(calls.some((c,) => c.url.startsWith("/api/tag-autocomplete?q=t",)),).toBe(true,);
+      expect(calls.some((c,) => c.url.startsWith("/api/v1/tag-autocomplete?q=t",)),).toBe(true,);
       expect(tagDom.ac.innerHTML,).toContain('data-autocomplete-tag="tavern"',);
       expect(tagDom.ac.style.display,).toBe("flex",);
     } finally {

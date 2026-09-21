@@ -40,7 +40,7 @@ globalThis.personasPage = function() {
 
     async loadPersonaModels() {
       try {
-        const res = await apiFetch("/api/providers", { headers: { Accept: "application/json", }, },);
+        const res = await apiFetch("/api/v1/providers", { headers: { Accept: "application/json", }, },);
         if (!res.ok) { return; }
         const data = await res.json();
         const models: string[] = [];
@@ -57,7 +57,7 @@ globalThis.personasPage = function() {
 
     async _collectModelsForProvider(providerName: string, models: string[],) {
       try {
-        const modelsRes = await apiFetch(`/api/admin/providers/${providerName}/models`, {
+        const modelsRes = await apiFetch(`/api/v1/admin/providers/${providerName}/models`, {
           headers: { Accept: "application/json", },
         },);
         if (!modelsRes.ok) { return; }
@@ -74,7 +74,7 @@ globalThis.personasPage = function() {
     async loadPersonas() {
       this.loading = true;
       try {
-        const res = await apiFetch("/api/personas", { headers: { Accept: "application/json", }, },);
+        const res = await apiFetch("/api/v1/personas", { headers: { Accept: "application/json", }, },);
         if (res.ok) {
           const data = await res.json();
           this.personas = Array.isArray(data,) ? data : [];
@@ -122,7 +122,7 @@ globalThis.personasPage = function() {
       this.saving = true;
 
       try {
-        const url = active ? `/api/personas/${active.id}` : "/api/personas";
+        const url = active ? `/api/v1/personas/${active.id}` : "/api/v1/personas";
         const method = active ? "PATCH" : "POST";
         const body: Record<string, unknown> = { name, };
         if (this.formTitle) { body.title = this.formTitle; }
@@ -160,7 +160,7 @@ globalThis.personasPage = function() {
     async deletePersona(id: string,) {
       if (!confirm("Delete this persona?",)) { return; }
       try {
-        const res = await apiFetch(`/api/personas/${id}`, { method: "DELETE", },);
+        const res = await apiFetch(`/api/v1/personas/${id}`, { method: "DELETE", },);
         if (res.ok) {
           const out: PersonaItem[] = [];
           for (const p of this.personas) { if (p.id !== id) { out.push(p,); } }

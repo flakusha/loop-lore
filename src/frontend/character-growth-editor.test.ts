@@ -40,7 +40,7 @@ describe("characterGrowthEditor URL shapes", () => {
     await c.saveArc();
     expect(calls.length,).toBe(1,);
     const [call,] = calls;
-    expect(call!.url,).toBe("/api/character-growth/arc?actorId=a1",);
+    expect(call!.url,).toBe("/api/v1/character-growth/arc?actorId=a1",);
     expect(call!.opts.method,).toBe("PATCH",);
     expect(c.message,).toBe("Arc saved.",);
   });
@@ -49,10 +49,10 @@ describe("characterGrowthEditor URL shapes", () => {
     calls = [];
     const c = editor();
     await c.confirmEntry("e1",);
-    expect(calls[0]!.url,).toBe("/api/character-growth/growth-log/e1/confirm?actorId=a1",);
+    expect(calls[0]!.url,).toBe("/api/v1/character-growth/growth-log/e1/confirm?actorId=a1",);
     expect(c.entries[0]!.status,).toBe("applied",);
     await c.rejectEntry("e1",);
-    expect(calls[1]!.url,).toBe("/api/character-growth/growth-log/e1/reject?actorId=a1",);
+    expect(calls[1]!.url,).toBe("/api/v1/character-growth/growth-log/e1/reject?actorId=a1",);
     expect(c.entries[0]!.status,).toBe("rejected",);
   });
 

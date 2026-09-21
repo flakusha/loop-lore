@@ -26,7 +26,7 @@ function apiBase(): string {
  * @param actorId
  */
 export async function fetchRecipientPublicKey(actorId: string,): Promise<JsonWebKey | null> {
-  const url = `${apiBase()}/api/actors/${encodeURIComponent(actorId,)}/e2e-public-key`;
+  const url = `${apiBase()}/api/v1/actors/${encodeURIComponent(actorId,)}/e2e-public-key`;
   const result = await safeFetch<{ publicKeyJwk?: JsonWebKey }>(url, {
     credentials: "include",
     handle401: false,

@@ -146,7 +146,7 @@ describe("personasPage.loadPersonas", () => {
 describe("personasPage.loadPersonaModels", () => {
   test("collects models from healthy providers only", async () => {
     handler = async (url,) => {
-      if (url === "/api/providers") {
+      if (url === "/api/v1/providers") {
         return Response.json({
           providers: [
             { name: "good", status: "healthy", },
@@ -154,7 +154,7 @@ describe("personasPage.loadPersonaModels", () => {
           ],
         },);
       }
-      if (url === "/api/admin/providers/good/models") {
+      if (url === "/api/v1/admin/providers/good/models") {
         return Response.json({ models: [{ id: "m1", }, { id: "m2", },], },);
       }
       return Response.json({ models: [{ id: "should-not-appear", },], },);
@@ -167,7 +167,7 @@ describe("personasPage.loadPersonaModels", () => {
 
   test("dedupes models across providers", async () => {
     handler = async (url,) => {
-      if (url === "/api/providers") {
+      if (url === "/api/v1/providers") {
         return Response.json({ providers: [{ name: "a", status: "healthy", }, { name: "b", status: "healthy", },], },);
       }
       return Response.json({ models: [{ id: "same", },], },);
@@ -186,7 +186,7 @@ describe("personasPage.loadPersonaModels", () => {
 
   test("skips providers whose model fetch fails", async () => {
     handler = async (url,) => {
-      if (url === "/api/providers") {
+      if (url === "/api/v1/providers") {
         return Response.json({ providers: [{ name: "flaky", status: "healthy", },], },);
       }
       throw new Error("offline",);
@@ -291,7 +291,7 @@ describe("personasPage.savePersona", () => {
       reloaded++;
     };
     await s.savePersona();
-    expect(calls[0]!.url,).toBe("/api/personas",);
+    expect(calls[0]!.url,).toBe("/api/v1/personas",);
     expect(calls[0]!.opts.method,).toBe("POST",);
     expect(JSON.parse(calls[0]!.opts.body as string,),).toMatchObject({ name: "New", title: "T", model: "m1", },);
     expect(s.formName,).toBe("",);
@@ -316,7 +316,7 @@ describe("personasPage.savePersona", () => {
       s.formIsDefault = true;
       s.loadPersonas = async () => {};
       await s.savePersona();
-      expect(calls[0]!.url,).toBe("/api/personas/p1",);
+      expect(calls[0]!.url,).toBe("/api/v1/personas/p1",);
       expect(calls[0]!.opts.method,).toBe("PATCH",);
       expect(JSON.parse(calls[0]!.opts.body as string,),).toMatchObject({ name: "Renamed", isDefault: true, },);
       expect(ui.showPersonaForm,).toBe(false,);
@@ -354,7 +354,7 @@ describe("personasPage.deletePersona", () => {
       s.personas = [persona({ id: "p1", name: "Aria", },), persona({ id: "p2", name: "Bob", },),];
       s.search = "";
       await (s as unknown as { deletePersona(id: string,): Promise<void> }).deletePersona("p1",);
-      expect(calls[0]!.url,).toBe("/api/personas/p1",);
+      expect(calls[0]!.url,).toBe("/api/v1/personas/p1",);
       expect(s.personas.map((p,) => p.id),).toEqual(["p2",],);
       expect(s.filtered.map((p,) => p.id),).toEqual(["p2",],);
     } finally {

@@ -19,7 +19,7 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
       this._generationEventSource.close();
     }
     this.isGenerating = true;
-    const url = `/api/generation/stream/${chatId}`;
+    const url = `/api/v1/generation/stream/${chatId}`;
     const es = new EventSource(url,);
     this._generationEventSource = es;
     // Stale-stream guard: handlers close over the chat this stream belongs to
@@ -88,7 +88,7 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
   async checkGenerationStatus(chatId: string,) {
     log.debug("checkGenerationStatus", { chatId, },);
     try {
-      const response = await apiFetch(`/api/generation/status/${chatId}`,);
+      const response = await apiFetch(`/api/v1/generation/status/${chatId}`,);
       const data = await response.json();
       const hadActiveAttempt = !!this.activeAttemptId;
 
@@ -150,7 +150,7 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
       return;
     }
     try {
-      const response = await apiFetch("/api/generation/cancel", {
+      const response = await apiFetch("/api/v1/generation/cancel", {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({

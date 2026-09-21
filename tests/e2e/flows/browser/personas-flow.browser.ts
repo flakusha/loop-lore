@@ -126,7 +126,7 @@ describe("Personas flow E2E", () => {
       const deleted = await page.evaluate(async (id,) => {
         // CSRF double-submit: echo the csrf_token cookie like feFetch does.
         const csrf = /(?:^|;\s*)csrf_token=([^;]+)/.exec(document.cookie,)?.[1] ?? "";
-        const res = await fetch(`/api/personas/${id}`, {
+        const res = await fetch(`/api/v1/personas/${id}`, {
           method: "DELETE",
           headers: { "X-CSRF-Token": csrf, },
         },);

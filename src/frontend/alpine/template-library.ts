@@ -4,9 +4,9 @@
 /**
  * Prompt Template Library browser (FEAT-065) — settings modal "Templates" tab.
  *
- * Lists the user's templates (plus LLM presets) from GET /api/templates, with
+ * Lists the user's templates (plus LLM presets) from GET /api/v1/templates, with
  * create / edit / delete, JSON payload preview, and pack import/export via
- * POST /api/templates/import and GET /api/templates/export.
+ * POST /api/v1/templates/import and GET /api/v1/templates/export.
  */
 import { jsonBody, safeJsonParse, safeJsonStringify, } from "./json";
 
@@ -40,7 +40,7 @@ interface TemplateDetail extends TemplateSummary {
       this.error = "";
       try {
         const q = this.modality ? `?modality=${encodeURIComponent(this.modality,)}` : "";
-        const res = await apiFetch(`/api/templates${q}`,);
+        const res = await apiFetch(`/api/v1/templates${q}`,);
         if (res.ok) {
           const body = await res.json();
           this.templates = body.templates ?? [];
@@ -61,7 +61,7 @@ interface TemplateDetail extends TemplateSummary {
 
     async startEdit(id: string,) {
       try {
-        const res = await apiFetch(`/api/templates/${encodeURIComponent(id,)}`,);
+        const res = await apiFetch(`/api/v1/templates/${encodeURIComponent(id,)}`,);
         if (!res.ok) {
           this.error = "Failed to load template";
           return;
@@ -110,12 +110,12 @@ interface TemplateDetail extends TemplateSummary {
           payload,
         };
         const res = this.editingId
-          ? await apiFetch(`/api/templates/${encodeURIComponent(this.editingId,)}`, {
+          ? await apiFetch(`/api/v1/templates/${encodeURIComponent(this.editingId,)}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json", },
             body: jsonBody(input,),
           },)
-          : await apiFetch("/api/templates", {
+          : await apiFetch("/api/v1/templates", {
             method: "POST",
             headers: { "Content-Type": "application/json", },
             body: jsonBody(input,),
@@ -136,7 +136,7 @@ interface TemplateDetail extends TemplateSummary {
     async remove(id: string,) {
       if (!confirm("Delete this template?",)) { return; }
       try {
-        await apiFetch(`/api/templates/${encodeURIComponent(id,)}`, { method: "DELETE", },);
+        await apiFetch(`/api/v1/templates/${encodeURIComponent(id,)}`, { method: "DELETE", },);
         await this.load();
       } catch {
         this.error = "Delete failed";
@@ -145,7 +145,7 @@ interface TemplateDetail extends TemplateSummary {
 
     async exportPack() {
       try {
-        const res = await apiFetch("/api/templates/export",);
+        const res = await apiFetch("/api/v1/templates/export",);
         if (!res.ok) {
           this.error = "Export failed";
           return;
@@ -176,7 +176,7 @@ interface TemplateDetail extends TemplateSummary {
           return;
         }
         const pack = packResult.value;
-        const res = await apiFetch("/api/templates/import", {
+        const res = await apiFetch("/api/v1/templates/import", {
           method: "POST",
           headers: { "Content-Type": "application/json", },
           body: jsonBody(pack,),

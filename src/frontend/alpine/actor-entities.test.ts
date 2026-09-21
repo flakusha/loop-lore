@@ -45,7 +45,7 @@ afterEach(() => {
 describe("actorEntitiesFactory", () => {
   test("returns a state bound to the kind + actor", async () => {
     handler = async (url: string,) => {
-      if (url === "/api/actors/actor-1/notes") { return Response.json({ data: [{ id: "n1", title: "Note A", },], },); }
+      if (url === "/api/v1/actors/actor-1/notes") { return Response.json({ data: [{ id: "n1", title: "Note A", },], },); }
       return Response.json({ data: [], },);
     };
     const state = actorEntitiesFactory("actor-1", "notes",);
@@ -143,7 +143,7 @@ describe("actorEntitiesState.create / save / remove", () => {
     state.form.content = "World";
     state._entActorId = "actor-1";
     await state.create();
-    expect(calls.some((c,) => c.opts.method === "POST" && c.url === "/api/actors/actor-1/notes"),).toBe(true,);
+    expect(calls.some((c,) => c.opts.method === "POST" && c.url === "/api/v1/actors/actor-1/notes"),).toBe(true,);
     expect(state.form.title,).toBe("",);
     expect(state.editingId,).toBeNull();
   });
@@ -176,7 +176,7 @@ describe("actorEntitiesState.create / save / remove", () => {
     state.form.title = "edited";
     state.form.content = "body";
     await state.save();
-    expect(calls.some((c,) => c.opts.method === "PUT" && c.url === "/api/actors/actor-1/notes/row-1"),).toBe(true,);
+    expect(calls.some((c,) => c.opts.method === "PUT" && c.url === "/api/v1/actors/actor-1/notes/row-1"),).toBe(true,);
   });
 
   test("save no-ops without editingId", async () => {
@@ -193,7 +193,7 @@ describe("actorEntitiesState.create / save / remove", () => {
     const state = baseState();
     state._entActorId = "actor-1";
     await state.remove("row-1",);
-    expect(calls.some((c,) => c.opts.method === "DELETE" && c.url === "/api/actors/actor-1/notes/row-1"),).toBe(true,);
+    expect(calls.some((c,) => c.opts.method === "DELETE" && c.url === "/api/v1/actors/actor-1/notes/row-1"),).toBe(true,);
   });
 
   test("remove no-ops without actor id", async () => {

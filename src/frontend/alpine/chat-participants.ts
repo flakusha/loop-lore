@@ -77,7 +77,7 @@ export const chatParticipants: Partial<ChatParticipantsState> & ThisType<ChatSta
   async loadAvailableActors() {
     if (!this.activeChat || !this.isGroupChat) { return; }
     try {
-      const res = await apiFetch("/api/actors",);
+      const res = await apiFetch("/api/v1/actors",);
       if (!res.ok) { return; }
       const actors = (await res.json()) as { id: string; display_name: string; actor_type: string }[];
       this._availableActors = actors;

@@ -17,7 +17,7 @@ export function restartBanner(): Partial<SettingsState> & ThisType<SettingsState
 
     async loadPendingRestart() {
       try {
-        const res = await apiFetch("/api/admin/system-config", {
+        const res = await apiFetch("/api/v1/admin/system-config", {
           headers: { Accept: "application/json", },
         },);
         if (!res.ok) { return; }

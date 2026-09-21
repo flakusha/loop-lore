@@ -4,8 +4,8 @@
 // ── Chat invites: create/copy/revoke per-chat invite codes + redeem ──
 //
 // Mirrors world-invites.ts (world-scoped) for the chat-scoped endpoints in
-// src/routes/invites.ts: POST/GET /api/chats/:id/invites,
-// DELETE /api/chats/:id/invites/:inviteId, POST /api/invites/:code/join.
+// src/routes/invites.ts: POST/GET /api/v1/chats/:id/invites,
+// DELETE /api/v1/chats/:id/invites/:inviteId, POST /api/v1/invites/:code/join.
 // Owner-gated server-side (isChatOwner); 404 on non-owned chats.
 import type { ChatInviteRow, } from "./chat-types/world-channels";
 import { apiFetch, } from "./htmx";
@@ -24,7 +24,7 @@ export const chatInvites: Partial<ChatState> & ThisType<ChatState> = {
     if (!this.activeChat) { return; }
     this._chatInvitesLoading = true;
     try {
-      const res = await apiFetch(`/api/chats/${this.activeChat}/invites`,);
+      const res = await apiFetch(`/api/v1/chats/${this.activeChat}/invites`,);
       if (!res.ok) { return; }
       const body = await res.json() as { data?: ChatInviteRow[] };
       this._chatInvites = body.data ?? [];
@@ -43,7 +43,7 @@ export const chatInvites: Partial<ChatState> & ThisType<ChatState> = {
       return;
     }
     try {
-      const res = await apiFetch(`/api/chats/${this.activeChat}/invites`, {
+      const res = await apiFetch(`/api/v1/chats/${this.activeChat}/invites`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ maxUses, },),
@@ -80,7 +80,7 @@ export const chatInvites: Partial<ChatState> & ThisType<ChatState> = {
     if (!invite) { return; }
     if (!confirm(t("worlds.revokeInviteConfirm", { code: invite.code, },),)) { return; }
     try {
-      const res = await apiFetch(`/api/chats/${this.activeChat}/invites/${inviteId}`, {
+      const res = await apiFetch(`/api/v1/chats/${this.activeChat}/invites/${inviteId}`, {
         method: "DELETE",
       },);
       if (res.ok || res.status === 204) {
@@ -102,7 +102,7 @@ export const chatInvites: Partial<ChatState> & ThisType<ChatState> = {
       return;
     }
     try {
-      const res = await apiFetch(`/api/invites/${encodeURIComponent(code,)}/join`, {
+      const res = await apiFetch(`/api/v1/invites/${encodeURIComponent(code,)}/join`, {
         method: "POST",
       },);
       if (!res.ok) {
