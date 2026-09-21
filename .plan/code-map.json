@@ -5025,6 +5025,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-context-memory-events.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-prompt-dry-run-inspection.md"
     }
   ],
   "src/chat/context-window.test.ts": [
@@ -12355,6 +12359,12 @@
       "source": "docs/spec/quests-encounters.md"
     }
   ],
+  "src/endpoints/themes.js": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-user-theming-system.md"
+    }
+  ],
   "src/factions/politics.ts": [
     {
       "kind": "ticket",
@@ -13501,7 +13511,6 @@
       "source": ".plan/tickets/BUG-alpine-init-hydration.md"
     }
   ],
-
   "src/frontend/alpine/chat/lifecycle.ts": [
     {
       "kind": "ticket",
@@ -17912,6 +17921,10 @@
       "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-generation-logit-bias-logprobs.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/integrations/llm-serving.md"
     }
@@ -18936,6 +18949,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-inference-browser-wllama-gguf.md"
+    }
+  ],
+  "src/lib/components/admin/Settings/Interface/Banners.svelte": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-admin-system-announcements.md"
     }
   ],
   "src/llm/queue.ts": [
@@ -21821,6 +21840,10 @@
     }
   ],
   "src/rag/search/research.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-platform-research.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-rag-search-providers.md"
