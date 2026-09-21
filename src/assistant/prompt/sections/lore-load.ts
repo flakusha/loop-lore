@@ -10,12 +10,12 @@
  * Resolves: TASK-world-lore-lifecycle-confidence-decay-distortion,
  *           BUG-lore-load-ts-uses-any-for-db-eb-instead-of-kysely-expression.
  */
+import { safeJsonParse, } from "@/utils/safe-json";
 import type { ExpressionBuilder, Kysely, } from "kysely";
 import type { DB, } from "../../../db/schema";
-import { safeJsonParse, } from "@/utils/safe-json";
 import { resolveLifecycleConfig, } from "../../lore/lifecycle";
-import { resolveActorIdentity, } from "./lore-identity";
 import type { AssembleContext, } from "../types";
+import { resolveActorIdentity, } from "./lore-identity";
 import type { LoreRow, } from "./lore-types";
 
 /** Resolved bundle handed to the lore section's relevance + wrap pipeline. */

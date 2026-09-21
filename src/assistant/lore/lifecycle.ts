@@ -27,9 +27,9 @@ export interface LifecycleConfig {
   /** Drop entries whose effective confidence is strictly less than this. 0..100. Default 25. */
   min_confidence: number;
   /**
- * Confidence points lost per world-day since `last_verified`. **Default 0**
- * because no world-clock column exists yet (see BUG-lore-decay-gate-…).
- */
+   * Confidence points lost per world-day since `last_verified`. **Default 0**
+   * because no world-clock column exists yet (see BUG-lore-decay-gate-…).
+   */
   decay_per_day: number;
   /** distortion_level >= this marks the entry as "disputed". 0..100. Default 80. */
   distortion_cap: number;
