@@ -5048,6 +5048,19 @@
     "closed_at": "2026-08-22",
     "source": ".plan/tickets/BUG-users-persona-handlers-horizontal-priv-esc.md"
   },
+  "BUG-V1-CSRF-EXEMPT-SET-MISSING-API-V1-PREFIXES-FOR-SESSION-MINT-": {
+    "hash": "b7a2c92",
+    "git_issue": "b7a2c92",
+    "extid": "BUG-V1-CSRF-EXEMPT-SET-MISSING-API-V1-PREFIXES-FOR-SESSION-MINT-",
+    "type": "BUG",
+    "title": "v1 CSRF exempt set missing /api/v1 prefixes for session-mint routes",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-v1-csrf-exempt-set-missing-api-v1-prefixes-for-session-mint-.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-V1-ROUTE-CHAIN-EXCEEDS-TS-INSTANTIATION-DEPTH": {
     "hash": "a67a52d",
     "git_issue": "a67a52d",
@@ -19531,6 +19544,19 @@
     "status": "open",
     "git_issue": "e764684"
   },
+  "TASK-FRONTEND-SURFACES-FOR-RICHER-CHARACTER-EXTENSIONS": {
+    "hash": "0513095",
+    "git_issue": "0513095",
+    "extid": "TASK-FRONTEND-SURFACES-FOR-RICHER-CHARACTER-EXTENSIONS",
+    "type": "TASK",
+    "title": "Frontend surfaces for richer character extensions",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-frontend-surfaces-for-richer-character-extensions.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-FRONTEND-TOUCH-GESTURES": {
     "hash": "915842dc",
     "extid": "TASK-FRONTEND-TOUCH-GESTURES",
@@ -22556,6 +22582,19 @@
     "tags": [],
     "source": ".plan/tickets/TASK-migration-076-harden-against-malformed-gm-config-json.md",
     "status": "open"
+  },
+  "TASK-MIGRATION-TOOLING-FOR-LEGACY-TO-RICH-CHARACTER-DATA": {
+    "hash": "3412760",
+    "git_issue": "3412760",
+    "extid": "TASK-MIGRATION-TOOLING-FOR-LEGACY-TO-RICH-CHARACTER-DATA",
+    "type": "TASK",
+    "title": "Migration tooling for legacy-to-rich character data",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-migration-tooling-for-legacy-to-rich-character-data.md",
+    "status": "⬜ Not Started"
   },
   "TASK-MIGRATIONS-AUTHORSHIP-CONVENTIONS": {
     "hash": "7733da8",
@@ -30160,6 +30199,19 @@
     "git_issue": "d1ad853",
     "status": "done"
   },
+  "TASK-WIRE-PLUGIN-BUNDLES-TO-RICHER-CHARACTER-EXTENSIONS": {
+    "hash": "ee80b4c",
+    "git_issue": "ee80b4c",
+    "extid": "TASK-WIRE-PLUGIN-BUNDLES-TO-RICHER-CHARACTER-EXTENSIONS",
+    "type": "TASK",
+    "title": "Wire plugin bundles to richer character extensions",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-wire-plugin-bundles-to-richer-character-extensions.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-WIRE-QUESTS-ROUTES": {
     "hash": "3307132",
     "extid": "TASK-WIRE-QUESTS-ROUTES",
@@ -30504,6 +30556,22 @@
     "tags": [],
     "source": ".plan/tickets/TASK-world-lore-entries-frontend.md",
     "git_issue": "527db0b",
+    "status": "open"
+  },
+  "TASK-WORLD-LORE-LIFECYCLE-CONFIDENCE-DECAY-DISTORTION": {
+    "hash": "e6986ec",
+    "extid": "TASK-WORLD-LORE-LIFECYCLE-CONFIDENCE-DECAY-DISTORTION",
+    "type": "TASK",
+    "title": "TASK: World Lore Lifecycle (confidence/decay/distortion)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-lore-knowledge",
+    "tags": [
+      "lore",
+      "worlds"
+    ],
+    "source": ".plan/tickets/TASK-world-lore-lifecycle-confidence-decay-distortion.md",
+    "git_issue": "e6986ec",
     "status": "open"
   },
   "TASK-WORLD-REQUIRES-STATS-FLAG-AND-POINT-BUDGET-CONFIG": {
@@ -30978,21 +31046,5 @@
     "source": ".plan/tickets/WIRE-nsfw-audit-page-missing-inline-authz.md",
     "status": "done",
     "resolved_by": "2ac5cf29"
-  },
-  "TASK-WORLD-LORE-LIFECYCLE-CONFIDENCE-DECAY-DISTORTION": {
-    "hash": "e6986ec",
-    "extid": "TASK-WORLD-LORE-LIFECYCLE-CONFIDENCE-DECAY-DISTORTION",
-    "type": "TASK",
-    "title": "TASK: World Lore Lifecycle (confidence/decay/distortion)",
-    "label": "task",
-    "priority": "medium",
-    "epic": "epic-lore-knowledge",
-    "tags": [
-      "lore",
-      "worlds"
-    ],
-    "source": ".plan/tickets/TASK-world-lore-lifecycle-confidence-decay-distortion.md",
-    "git_issue": "e6986ec",
-    "status": "open"
   }
 }
