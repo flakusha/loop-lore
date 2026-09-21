@@ -7,7 +7,7 @@ import { CancelReason, CancelSource, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { forbiddenResponse, jsonError, jsonResponse, requireUserId, } from "../../routes/http-utils";
 import { cancelGenerationByChat, } from "../cancellation-manager";
-import { buildStylePrompt, isValidRegenStyle, type RegenStyle, } from "../smart-regen";
+import { isValidRegenStyle, type RegenStyle, } from "../smart-regen";
 
 // ── Route: Regenerate (validator) ─────────────────────────
 
@@ -104,15 +104,17 @@ export async function handleRegenerate(
     },);
   }
 
-  // No messageId → cancel-only path (regenerateResponse).
-  const stylePrompt = style ? buildStylePrompt(style,) : null;
-
+  // No messageId → cancel-only path (regenerateResponse). The `style`
+  // hint is echoed so callers can confirm what was requested; downstream
+  // prompt injection reads it from the variant row's idempotency_key
+  // (see regenerateMessageVariant in chat/service/write.ts), so we do
+  // NOT also return a derived stylePrompt string — it was dead in the
+  // response payload (BUG-buildstyleprompt-result-returned-but-never-consumed).
   return jsonResponse({
     ok: true,
     chatId,
     cancelled: wasActive,
     ready: true,
     style: style ?? null,
-    stylePrompt: stylePrompt || null,
   },);
 }
