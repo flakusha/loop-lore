@@ -111,6 +111,7 @@
     "version:predict": "bun run src/scripts/version-bump.ts",
     "version:bump": "bun run src/scripts/version-bump.ts --bump",
     "version:sync": "bun run src/scripts/version-bump.ts --sync",
+    "migrate:character:legacy": "bun run src/scripts/migrate-character-legacy.ts",
     "commit:lint": "bun run src/scripts/commit-check.ts --all",
     "commit:check": "bun run src/scripts/commit-check.ts --staged",
     "bench": "bun run scripts/run-benchmarks.ts",
