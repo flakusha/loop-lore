@@ -29,7 +29,7 @@ import {
   notFoundResponse as notFound,
   requireUserId,
 } from "../http-utils";
-import { resolveMessageContent, } from "../messages/helpers";
+import { resolveMessageContentForRender, } from "../messages/render-message-content";
 import {
   buildFtsQuery,
   extraWhere,
@@ -50,7 +50,11 @@ export type { HandlerOpts, } from "./types";
  * @param prefix
  */
 export function messageSearchRoutes(opts: HandlerOpts, prefix = "/api",) {
-  const { database, } = opts;
+  const { database, config, } = opts;
+  // BUG-regex-transform-runs-at-store-time-not-render-time: search snippets
+  // should mirror the user-visible pipeline so a stored transform applies
+  // consistently here too.
+  const regexTransforms = config?.generation.regexTransforms ?? [];
 
   return (
     new Elysia({ name: "message-search", },)
@@ -174,12 +178,12 @@ export function messageSearchRoutes(opts: HandlerOpts, prefix = "/api",) {
               Array.from(rows, async (row,) => {
                 let resolved: string;
                 try {
-                  resolved = await resolveMessageContent(database, {
+                  resolved = await resolveMessageContentForRender(database, {
                     content: row.content,
                     content_encoding: row.contentEncoding,
                     key_id: row.keyId,
                     chat_id: row.chatId,
-                  },);
+                  }, regexTransforms,);
                 } catch {
                   resolved = "[Encrypted — unable to decrypt]";
                 }
