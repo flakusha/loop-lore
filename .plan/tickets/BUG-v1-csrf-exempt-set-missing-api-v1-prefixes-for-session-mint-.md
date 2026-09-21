@@ -3,8 +3,8 @@
 
 # BUG: v1 CSRF exempt set missing /api/v1 prefixes for session-mint routes
 
-**Summary:** `CSRF_EXEMPT_ROUTES` (src/middleware/csrf.ts:23) lists v0-only paths; the v1 migration duplicated every route under /api/v1, so /api/v1/auth/login, /api/v1/auth/register, /api/v1/demo-login, /api/v1/telemetry/event are CSRF-gated. Tests/helpers migrated to /api/v1/* already fail with csrf_verification_failed (cascades into 13 e2e failures).
-**Context:** v0 to v1 endpoint migration (src/routes/v1/base-surface.ts:48, src/routes/v1/index.ts) duplicated authPublicRoutes. Tests moved to /api/v1/*; demo-login was not added to the exempt set under its v1 prefix. **Do NOT** exempt /api/v1/auth/logout (v0 logout is deliberately not exempt per BUG-logout-route-exempt-from-csrf-verification-logoff-csrf).
+**Summary:** `CSRF_EXEMPT_ROUTES` (src/middleware/csrf.ts:23) lists v0-only paths; the v1 migration duplicated every route under /api/v1, so /api/v1/auth/login, /api/v1/auth/register, /api/v1/demo-login, /api/v1/telemetry/event are CSRF-gated. Tests/helpers migrated to `/api/v1/...` already fail with csrf_verification_failed (cascades into 13 e2e failures).
+**Context:** v0 to v1 endpoint migration (src/routes/v1/base-surface.ts:48, src/routes/v1/index.ts) duplicated authPublicRoutes. Tests moved to `/api/v1/...`; demo-login was not added to the exempt set under its v1 prefix. **Do NOT** exempt /api/v1/auth/logout (v0 logout is deliberately not exempt per BUG-logout-route-exempt-from-csrf-verification-logoff-csrf).
 **Acceptance Criteria:** Add /api/v1/auth/login, /api/v1/auth/register, /api/v1/demo-login, /api/v1/telemetry/event to `CSRF_EXEMPT_ROUTES`; e2e tests in tests/e2e/helpers/client.ts:193 + tests/e2e/flows/auth.test.ts:34 stop failing at demo-login with 403 csrf_verification_failed; cascade failures in assets/auth/chat-full.assets/versioning redirects are gone.
 
 **Status:** ⬜ Not Started
@@ -31,7 +31,7 @@ never matches `/api/demo-login`, so the v1 session-mint route is
 CSRF-gated. An unauthenticated client cannot satisfy the double-submit
 gate (no `sessionId` to verify against), so it returns 403.
 
-Tests/helpers already migrated to `/api/v1/*` (`tests/e2e/helpers/client.ts:193`,
+Tests/helpers already migrated to `/api/v1/...` (`tests/e2e/helpers/client.ts:193`,
 `tests/e2e/flows/auth.test.ts:34`) — they fail at `demo-login` with
 `csrf_verification_failed` and every downstream call loses the session,
 cascading into 13 e2e failures (assets, auth, chat-full.assets,
