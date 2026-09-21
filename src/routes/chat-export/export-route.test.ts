@@ -60,7 +60,11 @@ async function seedChatWithMessage(content: string,): Promise<string> {
   return "chat-1";
 }
 
-function makeApp(config: { generation?: { regexTransforms?: { name?: string; pattern: string; replacement: string; enabled?: boolean }[] } },) {
+function makeApp(
+  config: {
+    generation?: { regexTransforms?: { name?: string; pattern: string; replacement: string; enabled?: boolean }[] };
+  },
+) {
   const app = new Elysia({ name: "test-export", },);
   app.derive(() => ({ userId: "u-owner", userRole: null, }));
   return app.use(exportChatRoute({ database, config: config as never, }, "/api",),);
