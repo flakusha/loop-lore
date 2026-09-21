@@ -51,7 +51,7 @@ describe("Generation E2E", () => {
       messageId: string;
       attemptId: string;
       tokenUsage: { totalTokens: number };
-    }>("/api/generation/generate", {
+    }>("/api/v1/generation/generate", {
       chatId: SEED.chat.id,
       parentMessageId: SEED.message.id,
       actorId: SEED.character.id,
@@ -71,7 +71,7 @@ describe("Generation E2E", () => {
 
   test("POST /api/generation/generate stores message in DB", async () => {
     const res = await api.post<{ messageId: string; content: string }>(
-      "/api/generation/generate",
+      "/api/v1/generation/generate",
       {
         chatId: SEED.chat.id,
         parentMessageId: SEED.message.id,
@@ -96,7 +96,7 @@ describe("Generation E2E", () => {
   });
 
   test("POST /api/generation/generate validates required fields", async () => {
-    const res = await api.post("/api/generation/generate", {
+    const res = await api.post("/api/v1/generation/generate", {
       chatId: SEED.chat.id,
       // Missing parentMessageId, actorId, idempotencyKey
     },);
@@ -106,7 +106,7 @@ describe("Generation E2E", () => {
   });
 
   test("POST /api/generation/generate bad provider returns 422", async () => {
-    const res = await api.post("/api/generation/generate", {
+    const res = await api.post("/api/v1/generation/generate", {
       chatId: SEED.chat.id,
       parentMessageId: SEED.message.id,
       actorId: SEED.character.id,
@@ -121,7 +121,7 @@ describe("Generation E2E", () => {
   test("POST /api/generation/generate uses prompt assembler when no explicit prompt", async () => {
     // When no `prompt` field provided, PromptAssembler builds from chat history
     const res = await api.post<{ ok: boolean; content: string }>(
-      "/api/generation/generate",
+      "/api/v1/generation/generate",
       {
         chatId: SEED.chat.id,
         parentMessageId: SEED.message.id,
@@ -231,7 +231,7 @@ describe("Generation E2E", () => {
   // ── Cancel ──────────────────────────────────────────────
 
   test("POST /api/generation/cancel returns 404 when no active generation", async () => {
-    const res = await api.post("/api/generation/cancel", {
+    const res = await api.post("/api/v1/generation/cancel", {
       chatId: SEED.chat.id,
     },);
     expect(res.status,).toBe(404,);
@@ -239,7 +239,7 @@ describe("Generation E2E", () => {
   });
 
   test("POST /api/generation/cancel returns 403 for a foreign chat", async () => {
-    const res = await api.post("/api/generation/cancel", {
+    const res = await api.post("/api/v1/generation/cancel", {
       chatId: "00000000-0000-4000-a000-000000000099",
     },);
     expect(res.status,).toBe(403,);
@@ -247,7 +247,7 @@ describe("Generation E2E", () => {
   });
 
   test("POST /api/generation/cancel validates input", async () => {
-    const res = await api.post("/api/generation/cancel", {},);
+    const res = await api.post("/api/v1/generation/cancel", {},);
     expect(res.status,).toBe(400,);
     expect(res.error,).toContain("chatId",);
     expect(res.code,).toBeTruthy(); // TEST.2 error envelope
@@ -267,7 +267,7 @@ describe("Generation E2E", () => {
   // ── Active list ─────────────────────────────────────────
 
   test("GET /api/generation/active is admin-gated", async () => {
-    const res = await api.get("/api/generation/active",);
+    const res = await api.get("/api/v1/generation/active",);
     expect(res.status,).toBe(403,);
     expect(res.code,).toBeTruthy(); // TEST.2 error envelope
   });
@@ -275,7 +275,7 @@ describe("Generation E2E", () => {
   // ── Retry ───────────────────────────────────────────────
 
   test("POST /api/generation/retry returns 400 when chatId missing", async () => {
-    const res = await api.post("/api/generation/retry", {},);
+    const res = await api.post("/api/v1/generation/retry", {},);
     expect(res.status,).toBe(400,);
     expect(res.code,).toBeTruthy(); // TEST.2 error envelope
   });
@@ -287,7 +287,7 @@ describe("Generation E2E", () => {
       cancelled: boolean;
       resumeFromStep: number;
       totalSteps: number;
-    }>("/api/generation/retry", { chatId: SEED.chat.id, },);
+    }>("/api/v1/generation/retry", { chatId: SEED.chat.id, },);
 
     expect(res.ok,).toBe(true,);
     expect(res.data!.ok,).toBe(true,);
@@ -300,14 +300,14 @@ describe("Generation E2E", () => {
   // ── Regenerate ──────────────────────────────────────────
 
   test("POST /api/generation/regenerate returns 400 when chatId missing", async () => {
-    const res = await api.post("/api/generation/regenerate", {},);
+    const res = await api.post("/api/v1/generation/regenerate", {},);
     expect(res.status,).toBe(400,);
     expect(res.code,).toBeTruthy(); // TEST.2 error envelope
   });
 
   test("POST /api/generation/regenerate returns ok", async () => {
     const res = await api.post<{ ok: boolean; chatId: string; ready: boolean }>(
-      "/api/generation/regenerate",
+      "/api/v1/generation/regenerate",
       { chatId: SEED.chat.id, },
     );
 
@@ -322,7 +322,7 @@ describe("Generation E2E", () => {
   test("generate returns 500 on mock provider failure", async () => {
     server.mockProvider!.failOnCall = true;
 
-    const res = await api.post("/api/generation/generate", {
+    const res = await api.post("/api/v1/generation/generate", {
       chatId: SEED.chat.id,
       parentMessageId: SEED.message.id,
       actorId: SEED.character.id,
@@ -340,7 +340,7 @@ describe("Generation E2E", () => {
   test("generate handles very long prompt without crash", async () => {
     const longContent = "x".repeat(100_000,); // 100 KB
 
-    const res = await api.post("/api/generation/generate", {
+    const res = await api.post("/api/v1/generation/generate", {
       chatId: SEED.chat.id,
       parentMessageId: SEED.message.id,
       actorId: SEED.character.id,
@@ -363,7 +363,7 @@ describe("Generation E2E", () => {
 
   test("generate with small prompt + maxTokens passes through", async () => {
     const res = await api.post<{ content: string; tokenUsage: { totalTokens: number } }>(
-      "/api/generation/generate",
+      "/api/v1/generation/generate",
       {
         chatId: SEED.chat.id,
         parentMessageId: SEED.message.id,

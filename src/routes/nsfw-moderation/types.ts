@@ -10,4 +10,5 @@ import type { DB, } from "../../db/schema";
 /** */
 export interface HandlerOpts {
   database: Kysely<DB>;
+  config?: { nsfw?: { piiSecret?: string; reporterHashSecret?: string } };
 }

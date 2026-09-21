@@ -14,7 +14,7 @@ describe("World Lore Entries E2E", () => {
     await seedUsers(server.db,);
     await api.loginAs(SEED.user.username, SEED.user.password,);
 
-    const worldRes = await api.post<{ id: string }>("/api/worlds", {
+    const worldRes = await api.post<{ id: string }>("/api/v1/worlds", {
       name: "Lore Test World",
     },);
     worldId = worldRes.data!.id;

@@ -48,7 +48,7 @@ describe("Settings flow E2E", () => {
         // The frontend persists through the versioned API (persistSettings
         // calls /api/v1/users/me); wait for that request, then check the DB.
         const saveRes = page.waitForResponse(
-          (res,) => res.url().includes("/api/v1/users/me",) && res.request().method() === "PUT",
+          (res,) => res.url().includes("/api/v1/v1/users/me",) && res.request().method() === "PUT",
           { timeout: 30_000, },
         );
         await page.click("[data-testid='save-general']",);
@@ -78,7 +78,7 @@ describe("Settings flow E2E", () => {
         const theme = "dracula";
         // Wait for the versioned PATCH /api/v1/users/me/settings response.
         const settingsRes = page.waitForResponse(
-          (res,) => res.url().includes("/api/v1/users/me/settings",) && res.request().method() === "PATCH",
+          (res,) => res.url().includes("/api/v1/v1/users/me/settings",) && res.request().method() === "PATCH",
           { timeout: 30_000, },
         );
         await page.selectOption("[data-testid='theme-select']", theme,);

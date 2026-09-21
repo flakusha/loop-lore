@@ -12,4 +12,7 @@ export const OBSERVABILITY_DEFAULTS = {
   metrics: {
     enabled: false,
   },
+  telemetry: {
+    piiSecret: "",
+  },
 } satisfies ObservabilityConfig;
