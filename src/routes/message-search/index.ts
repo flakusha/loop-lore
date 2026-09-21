@@ -1,17 +1,12 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// src/routes/message-search/
-//
-// Full-text message search across one chat or all the user's chats, backed by
-// the `messages_fts` FTS5 virtual table (see src/db/migrations/034_message_search_fts.ts).
-//
-// Filters compose with AND: chatId (scope), q (FTS5 MATCH), role, hasAttachment,
-// dateFrom/dateTo, plus limit/offset pagination. Results include a match snippet
-// (with <mark> spans when q is given), a bm25 relevance score, and pagination info.
-//
-// Barrel facade — registration point/name (`message-search`) preserved so the
-// `elysia-app.ts` wiring is unchanged.
+// src/routes/message-search/ — Full-text message search across one chat or all
+// the user's chats, backed by the `messages_fts` FTS5 virtual table (see
+// src/db/migrations/034_message_search_fts.ts). Filters compose with AND:
+// chatId, q, role, hasAttachment, dateFrom/dateTo, plus limit/offset pagination.
+// Results include a match snippet (<mark>-wrapped), bm25 relevance score, and
+// pagination info. Barrel facade — registration point/name preserved.
 import { Elysia, } from "elysia";
 import type { QueryResult, } from "kysely";
 import { sql, } from "kysely";
@@ -54,7 +49,7 @@ export function messageSearchRoutes(opts: HandlerOpts, prefix = "/api",) {
   // BUG-regex-transform-runs-at-store-time-not-render-time: search snippets
   // should mirror the user-visible pipeline so a stored transform applies
   // consistently here too.
-  const regexTransforms = config?.generation.regexTransforms ?? [];
+  const regexTransforms = config?.generation?.regexTransforms ?? [];
 
   return (
     new Elysia({ name: "message-search", },)

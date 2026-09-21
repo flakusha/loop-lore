@@ -27,7 +27,7 @@ export const ShadowNoteBody = t.Object({
   authorType: t.Optional(
     t.UnionEnum(["user", "gm", "system", "extracted",],),
   ),
-});
+},);
 
 export const WhiteneoteBody = t.Object({
   type: t.UnionEnum([
