@@ -13,33 +13,27 @@
   consume `serializeExtensions(draft)` and add field-level subforms
   later without breaking the round-trip.
 -->
-<section class="extension-editor-panel"
-         data-testid="character-extension-editor">
+<section class="extension-editor-panel" data-testid="character-extension-editor">
   <header class="extension-editor-header">
     <h3>Rich Extension Fields</h3>
     <p class="extension-editor-help">
-      Edit the canonical character's rich extension fields as a JSON document.
-      Bundle requirements are enforced on save.
+      Edit the canonical character's rich extension fields as a JSON document. Bundle requirements are enforced on save.
     </p>
   </header>
 
-  <p class="extension-editor-error"
-     x-show="error"
-     x-text="error"
-     data-testid="extension-editor-error"></p>
-  <p class="extension-editor-message"
-     x-show="message"
-     x-text="message"
-     data-testid="extension-editor-message"></p>
+  <p class="extension-editor-error" x-show="error" x-text="error" data-testid="extension-editor-error"></p>
+  <p class="extension-editor-message" x-show="message" x-text="message" data-testid="extension-editor-message"></p>
 
   <div class="form-group">
     <label class="form-label" for="ext-bundle-id">Plugin Bundle</label>
-    <input class="form-input"
-           type="text"
-           id="ext-bundle-id"
-           x-model="bundleId"
-           placeholder="fantasy-rpg"
-           data-testid="extension-editor-bundle" />
+    <input
+      class="form-input"
+      type="text"
+      id="ext-bundle-id"
+      x-model="bundleId"
+      placeholder="fantasy-rpg"
+      data-testid="extension-editor-bundle"
+    />
     <p class="form-hint">
       Switching bundles re-runs validation against the new bundle's required fields.
     </p>
@@ -47,37 +41,41 @@
 
   <div class="form-group">
     <label class="form-label" for="ext-payload">Extension Payload (JSON)</label>
-    <textarea class="form-input form-textarea"
-              id="ext-payload"
-              rows="14"
-              x-model="JSON.stringify(draft, null, 2)"
-              data-testid="extension-editor-payload"></textarea>
+    <textarea
+      class="form-input form-textarea"
+      id="ext-payload"
+      rows="14"
+      x-model="JSON.stringify(draft, null, 2)"
+      data-testid="extension-editor-payload"
+    ></textarea>
     <p class="form-hint">
       On every edit, JSON is parsed back into the draft. Invalid JSON leaves the draft unchanged.
     </p>
   </div>
 
-  <ul class="extension-editor-validation"
-      x-show="validation.missing.length"
-      data-testid="extension-editor-validation">
+  <ul class="extension-editor-validation" x-show="validation.missing.length" data-testid="extension-editor-validation">
     <template x-for="msg in validation.missing" :key="msg">
       <li x-text="msg"></li>
     </template>
   </ul>
 
   <div class="extension-editor-actions">
-    <button type="button"
-            class="btn btn-secondary"
-            @click="reset()"
-            :disabled="saving"
-            data-testid="extension-editor-reset">
+    <button
+      type="button"
+      class="btn btn-secondary"
+      @click="reset()"
+      :disabled="saving"
+      data-testid="extension-editor-reset"
+    >
       Revert
     </button>
-    <button type="button"
-            class="btn btn-primary"
-            @click="save()"
-            :disabled="saving"
-            data-testid="extension-editor-save">
+    <button
+      type="button"
+      class="btn btn-primary"
+      @click="save()"
+      :disabled="saving"
+      data-testid="extension-editor-save"
+    >
       <span x-text="saving ? 'Saving…' : 'Save Extensions'"></span>
     </button>
   </div>
