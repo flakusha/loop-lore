@@ -6,6 +6,7 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Summary:** World Lore Lifecycle (confidence/decay/distortion)
 **Context:** Source: docs/research/world-spec-extension-2026-09-21.md; tags lore, worlds.
 **Epic:** epic-lore-knowledge
