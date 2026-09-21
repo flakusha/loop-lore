@@ -17847,6 +17847,18 @@
     "source": ".plan/tickets/TASK-e2ee-receiver-wiring.md",
     "status": "open"
   },
+  "TASK-ECONOMY-CRAFTING-SLASH-INTERACTIONS": {
+    "hash": "pending",
+    "extid": "TASK-ECONOMY-CRAFTING-SLASH-INTERACTIONS",
+    "type": "TASK",
+    "title": "Crafting & economy slash interactions (/craft /barter /evaluate /trade /repair /appraise)",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-crafting-professions",
+    "tags": [],
+    "source": ".plan/tickets/TASK-economy-crafting-slash-interactions.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-ECONOMY-PLAYER-SHOPS": {
     "hash": "dcc5aaf",
     "extid": "TASK-ECONOMY-PLAYER-SHOPS",
@@ -18702,6 +18714,30 @@
     "tags": [],
     "source": ".plan/tickets/TASK-fail-safe-execution-work-safety.md",
     "status": "open"
+  },
+  "TASK-FAST-ACTION-PROMPT-PIPELINE": {
+    "hash": "pending",
+    "extid": "TASK-FAST-ACTION-PROMPT-PIPELINE",
+    "type": "TASK",
+    "title": "Fast-action command-to-prompt pipeline (/say /action /speak-think)",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-frontend-chat-commands",
+    "tags": [],
+    "source": ".plan/tickets/TASK-fast-action-prompt-pipeline.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-FAST-ACTION-UTILITY-CATALOG": {
+    "hash": "pending",
+    "extid": "TASK-FAST-ACTION-UTILITY-CATALOG",
+    "type": "TASK",
+    "title": "Fast-action utility & flow-control catalog (/pass /story /draft /see /lore /more-actions …)",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-frontend-chat-commands",
+    "tags": [],
+    "source": ".plan/tickets/TASK-fast-action-utility-catalog.md",
+    "status": "⬜ Not Started"
   },
   "TASK-FE-BE-TRIAGE-VERIFY-OR-FIX-REMAINING-HARMONY-FINDINGS-PERSON": {
     "hash": "57ecea9",
@@ -21033,6 +21069,30 @@
     "source": ".plan/tickets/TASK-integration-infrastructure.md",
     "git_issue": "3c7d8c0",
     "status": "open"
+  },
+  "TASK-INTELLECT-GROWTH-INTERACTIONS": {
+    "hash": "pending",
+    "extid": "TASK-INTELLECT-GROWTH-INTERACTIONS",
+    "type": "TASK",
+    "title": "Intellectual & skill-growth interactions (/study /meditate /practice /translate)",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-character-growth",
+    "tags": [],
+    "source": ".plan/tickets/TASK-intellect-growth-interactions.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-INTERACTION-SERVICE-FOUNDATION": {
+    "hash": "pending",
+    "extid": "TASK-INTERACTION-SERVICE-FOUNDATION",
+    "type": "TASK",
+    "title": "InteractionService foundation (heavy-action engine)",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-rpg-mechanics",
+    "tags": [],
+    "source": ".plan/tickets/TASK-interaction-service-foundation.md",
+    "status": "⬜ Not Started"
   },
   "TASK-INTERNAL-EXTERNAL-FLAGGING": {
     "hash": "532218b",
@@ -28113,6 +28173,18 @@
     "source": ".plan/tickets/TASK-social-interaction.md",
     "status": "open"
   },
+  "TASK-SOCIAL-SLASH-INTERACTIONS": {
+    "hash": "pending",
+    "extid": "TASK-SOCIAL-SLASH-INTERACTIONS",
+    "type": "TASK",
+    "title": "Social & influence slash interactions (/persuade /intimidate /lie /charm /brag /insult /toast …)",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-social-interaction",
+    "tags": [],
+    "source": ".plan/tickets/TASK-social-slash-interactions.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-SOLO-USER-COLD-START-RACE-CACHES-PHANTOM-UID": {
     "hash": "bee01ca",
     "extid": "TASK-SOLO-USER-COLD-START-RACE-CACHES-PHANTOM-UID",
@@ -28293,6 +28365,18 @@
     "source": ".plan/tickets/TASK-stealth-crime.md",
     "status": "open"
   },
+  "TASK-STEALTH-SLASH-INTERACTIONS": {
+    "hash": "pending",
+    "extid": "TASK-STEALTH-SLASH-INTERACTIONS",
+    "type": "TASK",
+    "title": "Stealth & risk slash interactions (/pickpocket /hide /blend /mimic /stalk /ambush /blend-in)",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-stealth-crime",
+    "tags": [],
+    "source": ".plan/tickets/TASK-stealth-slash-interactions.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-STOP-AND-RESPOND-INTERRUPT-SEMANTICS": {
     "hash": "6cc04ad",
     "git_issue": "6cc04ad",
@@ -28472,6 +28556,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-summarize-format-tldr-bullets-detailed-gradation.md",
     "status": "done"
+  },
+  "TASK-SURVIVAL-EXPLORATION-INTERACTIONS": {
+    "hash": "pending",
+    "extid": "TASK-SURVIVAL-EXPLORATION-INTERACTIONS",
+    "type": "TASK",
+    "title": "Exploration, scavenging & survival interactions (/loot /search /forage /hunt /track /shelter …)",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-rpg-mechanics",
+    "tags": [],
+    "source": ".plan/tickets/TASK-survival-exploration-interactions.md",
+    "status": "⬜ Not Started"
   },
   "TASK-SVG-UPLOAD-LEADS-TO-STORED-XSS": {
     "hash": "962618b",
