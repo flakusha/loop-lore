@@ -116,6 +116,11 @@ export async function createAnnotation(
         content: annotation.body,
         status: ShadowNoteStatus.Hidden,
         created_at: annotation.createdAt,
+        // Extraction-pipeline writes are tagged as "extracted" so the
+        // GM panel + audit row can distinguish platform-derived notes
+        // from human-authored ones. TTL flows through too.
+        author_type: "extracted" as never,
+        expires_at: annotation.ttlUntil,
       },)
       .execute();
     return annotation;

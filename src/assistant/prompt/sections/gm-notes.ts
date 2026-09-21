@@ -75,6 +75,10 @@ export interface ShadowSteeringNote {
  * (TASK-gm-shadow-note-steering-into-workflow-dispatch-prompts) so both
  * read the same hidden-note set. Callers MUST enforce the GM-role gate
  * themselves — this fetch does not check roles.
+ *
+ * Filters out expired notes (where `expires_at <= now`). The DB still
+ * holds them until the purge sweep runs; this just keeps stale notes
+ * out of the LLM prompt.
  * @param db
  * @param chatId
  * @returns void
@@ -83,11 +87,18 @@ export async function fetchUnrevealedShadowNotes(
   db: Kysely<DB>,
   chatId: string,
 ): Promise<ShadowSteeringNote[]> {
+  const now = new Date().toISOString();
   const rows = await db
     .selectFrom("shadow_notes",)
     .select(["type", "content",],)
     .where("chat_id", "=", chatId,)
     .where("status", "=", "hidden",)
+    .where((eb,) =>
+      eb.or([
+        eb("expires_at", "is", null,),
+        eb("expires_at", ">", now,),
+      ],)
+    )
     .orderBy("created_at", "asc",)
     .limit(MAX_SHADOW_NOTES,)
     .execute();

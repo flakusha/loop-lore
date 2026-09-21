@@ -6,6 +6,7 @@
  */
 import type { Generated, } from "kysely";
 import type {
+  ShadowNoteAuthorType,
   ShadowNoteStatus,
   ShadowNoteType,
   ShadowNoteVisibility,
@@ -22,6 +23,8 @@ export interface ShadowNotes {
   status: Generated<ShadowNoteStatus>;
   created_at: string;
   visibility: Generated<ShadowNoteVisibility>;
+  expires_at: string | null;
+  author_type: Generated<ShadowNoteAuthorType>;
 }
 
 // ── whitenotes ────────────────────────────────────────────
