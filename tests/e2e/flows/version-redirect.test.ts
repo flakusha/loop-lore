@@ -4,7 +4,7 @@
  * Regression coverage for the /api/v1/ migration:
  *  - unversioned /api/{resource} → 308 → /api/v1/{resource} (single prefix)
  *  - already-versioned /api/v1/{resource} is NEVER redirected (double-prefix
- *    loop guard: /api/v1/x → /api/v1/v1/x → 404)
+ *    loop guard: /api/v1/x → /api/v1/x → 404)
  *  - barrel-served v1 routes answer directly
  */
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
@@ -45,7 +45,7 @@ describe("API versioning redirects", () => {
       method: "GET",
       redirect: "manual",
     },);
-    // Must not 308 → /api/v1/v1/... — falls through to legacy dispatch → 404
+    // Must not 308 → /api/v1/... — falls through to legacy dispatch → 404
     expect(res.status,).not.toBe(308,);
     expect(res.status,).toBe(404,);
   });
@@ -61,7 +61,7 @@ describe("API versioning redirects", () => {
       method: "GET",
       redirect: "manual",
     },);
-    // Second hop must not redirect again (previously: /api/v1/v1/... → 404 loop)
+    // Second hop must not redirect again (previously: /api/v1/... → 404 loop)
     expect(second.status,).not.toBe(308,);
     expect(second.headers.get("location",),).toBeNull();
   });

@@ -264,7 +264,7 @@ describe("Chat gallery upload linkage", () => {
       const uploadRes = page.waitForResponse(
         (res,) => {
           const url = new URL(res.url(),);
-          return res.request().method() === "POST" && url.pathname === "/api/assets";
+          return res.request().method() === "POST" && url.pathname === "/api/v1/assets";
         },
         { timeout: 15_000, },
       );

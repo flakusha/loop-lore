@@ -91,7 +91,7 @@ describe("Chat Full Functionality", () => {
 
       // Regenerate — replaces last assistant message
       const regenRes = await api.post<{ ok: boolean; chatId: string; ready: boolean }>(
-        "/api/generation/regenerate",
+        "/api/v1/generation/regenerate",
         { chatId: SEED.chat.id, },
       );
       expect(regenRes.ok,).toBe(true,);

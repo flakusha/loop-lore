@@ -179,13 +179,13 @@ describe("Message edge-cases E2E", () => {
   // ── GET edge cases ───────────────────────────────────────────
 
   test("GET /api/messages/:id with non-UUID returns 4xx, not 5xx", async () => {
-    const res = await api.get("/api/messages/not-a-uuid",);
+    const res = await api.get("/api/v1/messages/not-a-uuid",);
     expect(res.status,).toBeGreaterThanOrEqual(400,);
     expect(res.status,).toBeLessThan(500,);
   });
 
   test("GET /api/messages/:id with UUID-like non-existent returns 404", async () => {
-    const res = await api.get("/api/messages/00000000-0000-0000-0000-000000000000",);
+    const res = await api.get("/api/v1/messages/00000000-0000-0000-0000-000000000000",);
     expect(res.status,).toBe(404,);
   });
 

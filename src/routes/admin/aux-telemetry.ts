@@ -21,6 +21,7 @@
  *   - `?aggregate_only=true` returns just rollups, no per-row events.
  */
 import { Elysia, t, } from "elysia";
+import { resolveTelemetryPiiSecret as resolveSharedTelemetryPiiSecret, } from "../../config/load/pii-safety";
 import { can, } from "../../users/permissions";
 import { jsonParseOr, } from "../../utils";
 import { parseExpiryMs, } from "../../utils/date";
@@ -60,30 +61,38 @@ const DEFAULT_SINCE_MS = 24 * 60 * 60 * 1000;
 const MAX_SINCE_MS = 7 * 24 * 60 * 60 * 1000;
 
 /**
- * Server-side HMAC secret for telemetry PII hashing. Read from env; falls
- * back to a build-time default ONLY when running in a non-production
- * environment. Production MUST set `TELEMETRY_PII_SECRET`.
+ * Server-side HMAC secret for telemetry PII hashing, resolved lazily on
+ * first use — never at import. Route modules load before `loadConfig()`
+ * merges `configs/env.yaml`, so an import-time read would miss
+ * file-provided values and crash production boots that are configured.
+ * Merged Config wins, raw `TELEMETRY_PII_SECRET` env is the fallback.
+ * @param configured Value from the merged Config (`observability.telemetry.piiSecret`).
  */
-function resolveTelemetryPiiSecret(): string {
-  const envSecret = process.env["TELEMETRY_PII_SECRET"];
-  if (envSecret) { return envSecret; }
-  const env = process.env["NODE_ENV"] ?? "";
-  if (env === "test" || env === "development" || env === "dev") {
-    return "telemetry-pii-dev-secret-do-not-use-in-prod";
-  }
-  throw new Error(
-    "TELEMETRY_PII_SECRET is required in production. " +
-      "Set it to a random string of at least 32 characters. " +
-      "Generate with `openssl rand -base64 48`.",
-  );
+function effectiveSecret(configured?: string,): string {
+  return resolveSharedTelemetryPiiSecret({ piiSecret: configured, },);
 }
-const TELEMETRY_PII_SECRET = resolveTelemetryPiiSecret();
+let cachedSecret: string | null = null;
+/** Resolve (and memoize) the secret; test hook below busts the cache. */
+function secret(configured?: string,): string {
+  if (configured) { return effectiveSecret(configured,); }
+  cachedSecret ??= effectiveSecret();
+  return cachedSecret;
+}
+/** Bust the memoized secret + key. Test-only; called when env flips mid-process. */
+export function resetTelemetryPiiSecretCache(): void {
+  cachedSecret = null;
+  hmacKeyPromise = null;
+  keySecret = null;
+}
 
 let hmacKeyPromise: Promise<CryptoKey> | null = null;
+let keySecret: string | null = null;
 /** */
-async function getHmacKey(): Promise<CryptoKey> {
-  if (!hmacKeyPromise) {
-    const subkey = await domainKey(TELEMETRY_PII_SECRET, DOMAIN_INFO.TELEMETRY_PII, 32,);
+async function getHmacKey(configured?: string,): Promise<CryptoKey> {
+  const current = secret(configured,);
+  if (!hmacKeyPromise || keySecret !== current) {
+    const subkey = await domainKey(current, DOMAIN_INFO.TELEMETRY_PII, 32,);
+    keySecret = current;
     hmacKeyPromise = crypto.subtle.importKey(
       "raw",
       subkey as unknown as Uint8Array<ArrayBuffer>,
@@ -98,8 +107,8 @@ async function getHmacKey(): Promise<CryptoKey> {
 /**
  * @param value
  */
-async function hashId(value: string,): Promise<string> {
-  const key = await getHmacKey();
+async function hashId(value: string, configured?: string,): Promise<string> {
+  const key = await getHmacKey(configured,);
   const sig = await crypto.subtle.sign(
     "HMAC",
     key,
@@ -117,6 +126,7 @@ async function hashId(value: string,): Promise<string> {
  */
 export function auxTelemetryRoutes(opts: AdminRouteOpts, prefix = "/api",) {
   const db = opts.database;
+  const telemetrySecret = opts.config?.observability?.telemetry?.piiSecret;
 
   return new Elysia({ name: "admin-aux-telemetry", },)
     .get(`${prefix}/admin/telemetry/aux`, async (ctx: any,) => {
@@ -186,10 +196,10 @@ export function auxTelemetryRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       const chatHashMap = new Map<string, string>();
       await Promise.allSettled([
         ...[...userIds,].map(async (id,) => {
-          userHashMap.set(id, await hashId(id,),);
+          userHashMap.set(id, await hashId(id, telemetrySecret,),);
         },),
         ...[...chatIds,].map(async (id,) => {
-          chatHashMap.set(id, await hashId(id,),);
+          chatHashMap.set(id, await hashId(id, telemetrySecret,),);
         },),
       ],);
 

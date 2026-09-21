@@ -17,7 +17,7 @@ describe("Story E2E", () => {
     await seedAll(server.db,);
     await api.loginAs(SEED.user.username, SEED.user.password,);
 
-    const worldRes = await api.post<{ id: string }>("/api/worlds", { name: "Story Test World", },);
+    const worldRes = await api.post<{ id: string }>("/api/v1/worlds", { name: "Story Test World", },);
     worldId = worldRes.data!.id;
 
     const locRes = await api.post<{ id: string }>(`/api/worlds/${worldId}/locations`, {

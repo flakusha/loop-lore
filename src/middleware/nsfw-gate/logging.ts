@@ -53,6 +53,7 @@ export interface LogNsfwEventInput {
 export async function logNsfwEvent(
   database: Kysely<DB>,
   event: LogNsfwEventInput,
+  configured?: string,
 ): Promise<void> {
   if (!isNsfwGateReason(event.reason,)) {
     throw new Error(
@@ -61,9 +62,9 @@ export async function logNsfwEvent(
   }
 
   // Hash identifiers before persisting; the raw values never touch the row.
-  const userHash = event.userId ? await hashId(event.userId,) : null;
-  const actorHash = event.actorId ? await hashId(event.actorId,) : null;
-  const chatHash = event.chatId ? await hashId(event.chatId,) : null;
+  const userHash = event.userId ? await hashId(event.userId, configured,) : null;
+  const actorHash = event.actorId ? await hashId(event.actorId, configured,) : null;
+  const chatHash = event.chatId ? await hashId(event.chatId, configured,) : null;
 
   const entityType = actorHash ? "actor" : (chatHash ? "chat" : null);
   const entityId = actorHash || chatHash || null;

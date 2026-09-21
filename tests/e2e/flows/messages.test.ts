@@ -84,7 +84,7 @@ describe("Messages E2E", () => {
   });
 
   test("GET /api/messages/:id returns 404 for non-existent", async () => {
-    const res = await api.get("/api/messages/00000000-0000-0000-0000-000000000000",);
+    const res = await api.get("/api/v1/messages/00000000-0000-0000-0000-000000000000",);
     expect(res.status,).toBe(404,);
     expect(res.code,).toBeTruthy(); // TEST.2 error envelope
   });

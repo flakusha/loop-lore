@@ -33,7 +33,7 @@ describe("Worlds flow E2E", () => {
 
   async function createWorldViaApi(name: string,): Promise<string> {
     const client = createClient(ctx.url,);
-    const res = await client.post<{ id: string }>("/api/worlds", { name, description: `E2E: ${name}`, },);
+    const res = await client.post<{ id: string }>("/api/v1/worlds", { name, description: `E2E: ${name}`, },);
     return res.data!.id;
   }
 

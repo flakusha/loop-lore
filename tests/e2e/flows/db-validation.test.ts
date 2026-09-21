@@ -29,7 +29,7 @@ describe("DB Insertion Validation E2E", () => {
   // ── Timestamps ────────────────────────────────────────────────
 
   test("created_at uses ISO format, not Date.now()", async () => {
-    const res = await api.post<{ id: string; created_at: string }>("/api/worlds", { name: "Timestamp Test", },);
+    const res = await api.post<{ id: string; created_at: string }>("/api/v1/worlds", { name: "Timestamp Test", },);
     expect(res.ok,).toBe(true,);
 
     const row = await server.db
@@ -49,7 +49,7 @@ describe("DB Insertion Validation E2E", () => {
 
   test("chat name has no backtick artifacts", async () => {
     const name = "Normal Chat Name";
-    const res = await api.post<{ id: string }>("/api/chats", { name, type: "direct", mode: "direct", },);
+    const res = await api.post<{ id: string }>("/api/v1/chats", { name, type: "direct", mode: "direct", },);
     expect(res.ok,).toBe(true,);
 
     const row = await server.db
@@ -64,7 +64,7 @@ describe("DB Insertion Validation E2E", () => {
 
   test("actor display_name has no backtick artifacts", async () => {
     const name = "Test Character";
-    const res = await api.post<{ id: string }>("/api/actors", {
+    const res = await api.post<{ id: string }>("/api/v1/actors", {
       displayName: name,
       actorType: "character",
       agentType: "ai",
@@ -85,7 +85,7 @@ describe("DB Insertion Validation E2E", () => {
 
   test("world description stores literal strings, not escaped", async () => {
     const desc = 'A world with "quotes" and \\backslash';
-    const res = await api.post<{ id: string }>("/api/worlds", { name: "Escape Test", description: desc, },);
+    const res = await api.post<{ id: string }>("/api/v1/worlds", { name: "Escape Test", description: desc, },);
     expect(res.ok,).toBe(true,);
 
     const row = await server.db
@@ -104,7 +104,7 @@ describe("DB Insertion Validation E2E", () => {
   test("message content stores literal strings", async () => {
     const content = "She said \"hello\" and he replied 'ok'";
     // First create a chat
-    const chatRes = await api.post<{ id: string }>("/api/chats", {
+    const chatRes = await api.post<{ id: string }>("/api/v1/chats", {
       name: "Msg Test",
       type: "direct",
       mode: "direct",
@@ -130,7 +130,7 @@ describe("DB Insertion Validation E2E", () => {
   // ── Date Format Correctness ───────────────────────────────────
 
   test("timestamps are parseable ISO dates", async () => {
-    const res = await api.post<{ id: string }>("/api/worlds", { name: "ISO Test", },);
+    const res = await api.post<{ id: string }>("/api/v1/worlds", { name: "ISO Test", },);
     expect(res.ok,).toBe(true,);
 
     const row = await server.db
@@ -154,7 +154,7 @@ describe("DB Insertion Validation E2E", () => {
   // ── Empty / Null Handling ─────────────────────────────────────
 
   test("nullable fields store null, not empty string", async () => {
-    const res = await api.post<{ id: string }>("/api/actors", {
+    const res = await api.post<{ id: string }>("/api/v1/actors", {
       displayName: "Null Test",
       actorType: "character",
       agentType: "ai",
@@ -177,7 +177,7 @@ describe("DB Insertion Validation E2E", () => {
 
   test("world name preserves unicode characters", async () => {
     const name = "Кириллица & 日本語 🎲";
-    const res = await api.post<{ id: string }>("/api/worlds", { name, },);
+    const res = await api.post<{ id: string }>("/api/v1/worlds", { name, },);
     expect(res.ok,).toBe(true,);
 
     const row = await server.db

@@ -33,13 +33,13 @@ describe("Worlds E2E", () => {
   },);
 
   test("GET /api/worlds returns empty list initially", async () => {
-    const res = await api.get<{ data: [] }>("/api/worlds",);
+    const res = await api.get<{ data: [] }>("/api/v1/worlds",);
     expect(res.ok,).toBe(true,);
     expect(Array.isArray(res.data!.data,),).toBe(true,);
   });
 
   test("POST /api/worlds creates a world", async () => {
-    const res = await api.post<{ id: string }>("/api/worlds", {
+    const res = await api.post<{ id: string }>("/api/v1/worlds", {
       name: "Test World",
       description: "A world for E2E testing",
     },);
@@ -49,7 +49,7 @@ describe("Worlds E2E", () => {
   });
 
   test("GET /api/worlds returns created world in list", async () => {
-    const res = await api.get<{ data: Array<{ id: string; name: string }> }>("/api/worlds",);
+    const res = await api.get<{ data: Array<{ id: string; name: string }> }>("/api/v1/worlds",);
     expect(res.ok,).toBe(true,);
     const worlds = res.data!.data;
     expect(worlds.some((w,) => w.name === "Test World"),).toBe(true,);
