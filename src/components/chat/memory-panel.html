@@ -191,11 +191,9 @@
                   <span x-text="mem.type"></span>
                   <span x-text="'conf: ' + Math.round(mem.confidence * 100) + '%'"></span>
                   <span x-text="'tokens: ' + (mem.tokenCount || 0)"></span>
-                  <!-- BUG-memory-injection-reason-not-displayed-in-ui:
-                       surface how this memory was formed so the user can
-                       audit whether it landed in the prompt via auto-extract
-                       or was written by hand. `mem.extractionKind` is set in
-                       transform.ts; missing/undefined rows are hidden. -->
+                  <!--
+                    BUG-memory-injection-reason-not-displayed-in-ui: surface mem.extractionKind (manual/single_response/burst/compaction/carry_forward) so the user can audit prompt-context origin.
+                  -->
                   <span x-show="mem.extractionKind" x-text="mem.extractionKind"></span>
                   <span x-text="formatMemoryDate(mem.createdAt)"></span>
                   <button
@@ -280,12 +278,9 @@
                   <span
                     x-text="'Injected into prompt: ' + ((JSON.parse(entry.details || '{}').memoryIds || []).length) + ' memory(ies) across ' + (JSON.parse(entry.details || '{}').actorCount || 0) + ' actor(s)'"
                   ></span>
-                  <!-- BUG-memory-injection-reason-not-displayed-in-ui:
-                       list the distinct extraction kinds (manual | single_response |
-                       burst | compaction | carry_forward) backing this injection so
-                       the user can audit whether prompt context came from manual
-                       notes vs auto-extract. Hidden when the kind cannot be resolved
-                       (audit paged separately from memories). -->
+                  <!--
+                    BUG-memory-injection-reason-not-displayed-in-ui: list distinct extraction kinds backing this injection so the user can audit prompt-context origin.
+                  -->
                   <span
                     x-show="getInjectAuditKinds(entry).length > 0"
                     x-text="' sources: ' + getInjectAuditKinds(entry).join(', ')"

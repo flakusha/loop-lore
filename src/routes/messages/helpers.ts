@@ -62,22 +62,14 @@ export function isServiceError(
   return "code" in value && typeof (value as ServiceError).code === "string";
 }
 
-/**
- * Resolve asset metadata for a message's stored attachment JSON payload.
- * @param database
- * @param attachmentsJson
- */
+/** Resolve asset metadata for a message's stored attachment JSON payload. */
 export async function enrichAttachments(
   database: Kysely<DB>,
   attachmentsJson: string | null,
 ): Promise<object | null> {
   if (!attachmentsJson) { return null; }
-  const parsed = safeJsonParse<{
-    assetId: string;
-    order: number;
-    caption: string;
-    label: string;
-  }[]>(attachmentsJson,);
+  type AttachmentRow = { assetId: string; order: number; caption: string; label: string };
+  const parsed = safeJsonParse<AttachmentRow[]>(attachmentsJson,);
   if (!parsed.ok) { return null; }
   const attachData = parsed.value;
   if (!Array.isArray(attachData,) || attachData.length === 0) { return null; }
@@ -125,11 +117,7 @@ export async function enrichAttachments(
 }
 
 /** A function call persisted on an assistant message (mirrors GenerationToolCall). */
-export interface ToolCallRecord {
-  id: string;
-  type: "function";
-  function: { name: string; arguments: string };
-}
+export type ToolCallRecord = { id: string; type: "function"; function: { name: string; arguments: string } };
 
 /**
  * Parse a message's stored `tool_calls` JSON payload into a typed array (null when empty/invalid).
@@ -145,10 +133,7 @@ export function parseToolCalls(toolCallsJson: string | null | undefined,): ToolC
 }
 
 /** Bubble fields flattened from a `tool_result` row's `metadata` JSON. */
-export interface ToolResultMeta {
-  toolName: string | null;
-  toolError: boolean;
-}
+export type ToolResultMeta = { toolName: string | null; toolError: boolean };
 
 /**
  * Parse a `tool_result` row's `metadata` JSON into bubble fields (fail-closed
