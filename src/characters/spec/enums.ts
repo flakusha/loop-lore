@@ -109,6 +109,10 @@ export const CharacterRelationshipType = {
   Mentor: "mentor",
   Student: "student",
   Neutral: "neutral",
+  // Richer alternatives
+  Lover: "lover",
+  Debt: "debt",
+  Grudge: "grudge",
 } as const;
 /** */
 export type CharacterRelationshipType = (typeof CharacterRelationshipType)[keyof typeof CharacterRelationshipType];
