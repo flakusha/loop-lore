@@ -123,4 +123,19 @@ describe("views/character-edit-form", () => {
     expect(html,).toContain("x-data=\"{ actorId: 'evil&#39;); alert(1); (&#39;' }\"",);
     expect(html,).not.toContain("x-data=\"{ actorId: 'evil'); alert(1); (' }\"",);
   });
+
+  test("includes rich-extension-editor section bound to factory", () => {
+    const html = buildEditFormHtml(BASE,);
+    expect(html,).toContain("character-extension-editor-section",);
+    expect(html,).toContain("characterExtensionEditorFactory('actor-aria', undefined,)",);
+    // Panel body is inlined (not an empty mount point).
+    expect(html,).toContain("extension-editor-payload",);
+    expect(html,).toContain("extension-editor-save",);
+  });
+
+  test("escapes characterId inside rich-extension-editor section", () => {
+    const html = buildEditFormHtml({ ...BASE, characterId: "evil'); alert(1); ('", },);
+    expect(html,).toContain("characterExtensionEditorFactory('evil&#39;); alert(1); (&#39;', undefined,)",);
+    expect(html,).not.toContain("characterExtensionEditorFactory('evil'); alert(1); ('', undefined,)",);
+  });
 });

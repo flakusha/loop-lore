@@ -45,6 +45,34 @@ function loadPanelBody(file: string,): string {
   panelBodyCache.set(file, body,);
   return body;
 }
+
+/**
+ * Collapsible Rich Extension Fields section. Drives the
+ * `characterExtensionEditorFactory` Alpine plugin and serializes the
+ * canonical draft to a single `PUT /api/actors/:actorId` round-trip.
+ * Bundle requirements travel in via the factory's second argument; the
+ * server-side renderer doesn't statically know which bundle a character
+ * opts into, so the factory starts with `undefined` requirements and
+ * the FE lazy-binds via `setBundleRequirements(...)` after the load.
+ *
+ * @param characterId - actor id interpolated into the panel wrapper
+ * @param loadBody - panel template loader (filename → inner body HTML)
+ * @param escapeAttr - attribute escaper for the actor id
+ * @returns the rich-extension-editor section HTML
+ */
+export function extensionEditorSection(
+  characterId: string,
+  loadBody: (file: string,) => string,
+  escapeAttr: (str: string,) => string,
+): string {
+  return `        <details class="form-section" data-testid="character-extension-editor-section" open style="margin-top:var(--space-6);border:1px solid var(--border-default);border-radius:var(--radius-md);padding:var(--space-4)">
+          <summary style="cursor:pointer;font-weight:600;font-size:var(--text-lg)">Rich Extension Fields</summary>
+          <p class="form-hint" style="color:var(--text-secondary);margin:var(--space-2) 0 var(--space-4)">Bundle-driven fields: ability scores, inventory, vitals, equipment, motivations, relationships, appearance details, and more. Saved to the character's <code>settings</code> blob via PUT.</p>
+          <div x-data="characterExtensionEditorFactory('${escapeAttr(characterId,)}', undefined,)">
+            <section>${loadBody("extension-editor-panel.html",)}</section>
+          </div>
+        </details>`;
+}
 /** Input values for the edit form */
 export interface EditFormValues {
   name: string;
@@ -216,6 +244,7 @@ ${avatarFocusSection(v,)}
           <option value="nsfw_extreme"${v.contentRating === "nsfw_extreme" ? " selected" : ""}>Extreme</option>
         </select>
         <p class="form-hint" style="color:var(--text-secondary)">Maximum explicit content this character may produce. Gated by your account&rsquo;s NSFW preference.</p></div>
+${extensionEditorSection(v.characterId, loadPanelBody, escapeAttr,)}
 ${INTERNAL_TRAITS_SECTION}
 ${PROACTIVE_SECTION}
 ${panelsSection(v.characterId, loadPanelBody, escapeAttr,)}
