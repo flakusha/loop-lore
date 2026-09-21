@@ -97,15 +97,19 @@ export const chatVariants: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
-  async regenerateVariant(messageId: string,) {
-    log.info("regenerateVariant", { messageId, },);
+  async regenerateVariant(messageId: string, style?: string | null,) {
+    log.info("regenerateVariant", { messageId, style, },);
     if (!this.activeChat) { return; }
     this.isGenerating = true;
     try {
+      const body: Record<string, unknown> = { chatId: this.activeChat, messageId, };
+      // Forward the style hint to the backend so the downstream prompt
+      // assembly can pick the matching instruction set (BUG-frontend-regeneratevariant-does-not-pass-style-to-api).
+      if (style) { body.style = style; }
       const res = await apiFetch("/api/v1/generation/regenerate", {
         method: "POST",
         headers: { "Content-Type": "application/json", },
-        body: jsonBody({ chatId: this.activeChat, messageId, },),
+        body: jsonBody(body,),
       },);
       if (res.ok) {
         await this.loadMessages();
