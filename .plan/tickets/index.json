@@ -10052,6 +10052,18 @@
     "git_issue": "5270026",
     "status": "open"
   },
+  "TASK-ACTION-APPLICABILITY-GATE": {
+    "hash": "pending",
+    "extid": "TASK-ACTION-APPLICABILITY-GATE",
+    "type": "TASK",
+    "title": "Action applicability gate — context-aware command gating (solo/group chat)",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-immersion-consistency-gate",
+    "tags": [],
+    "source": ".plan/tickets/TASK-action-applicability-gate.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-ACTION-KARMA-DISPLAY-AND-TIER-WIRING": {
     "hash": "2706bdb",
     "git_issue": "2706bdb",
