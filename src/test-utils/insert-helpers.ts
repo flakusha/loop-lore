@@ -690,6 +690,11 @@ export async function insertWorldLoreEntries(
     key_groups?: string | null;
     scan_depth?: number | null;
     activation_chance?: number | null;
+    confidence?: number;
+    last_verified?: string | null;
+    source_count?: number;
+    distortion_level?: number;
+    disputed?: number;
   },
 ): Promise<void> {
   await db.insertInto("world_lore_entries",).values({
@@ -824,6 +829,7 @@ export async function insertWorlds(
     rpg_xp?: number;
     rpg_loot?: number;
     rpg_quests?: number;
+    rules?: string;
   },
 ): Promise<void> {
   await db.insertInto("worlds",).values({
