@@ -1863,6 +1863,18 @@
       "source": "docs/spec/lore.md"
     }
   ],
+  "src/assistant/lore/lifecycle.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-world-lore-lifecycle-confidence-decay-distortion.md"
+    }
+  ],
+  "src/assistant/lore/lifecycle.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-world-lore-lifecycle-confidence-decay-distortion.md"
+    }
+  ],
   "src/assistant/memory/injection.ts": [
     {
       "kind": "epic",
@@ -2313,6 +2325,12 @@
       "source": ".plan/tickets/TASK-redos-lore-activation-builds-regexp-from-author-controlled-k.md"
     }
   ],
+  "src/assistant/prompt/sections/lore.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-world-lore-lifecycle-confidence-decay-distortion.md"
+    }
+  ],
   "src/assistant/prompt/sections/lore.ts": [
     {
       "kind": "epic",
@@ -2361,6 +2379,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-lore-persona-traits-placed-as-system-messages-semantic-injec.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-world-lore-lifecycle-confidence-decay-distortion.md"
     },
     {
       "kind": "spec",
@@ -4725,6 +4747,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-character-internal-traits.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-surfaces-for-richer-character-extensions.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-migration-tooling-for-legacy-to-rich-character-data.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-wire-plugin-bundles-to-richer-character-extensions.md"
     }
   ],
   "src/characters/spec/growth.ts": [
@@ -11144,6 +11178,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-migration-tooling-for-legacy-to-rich-character-data.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-prompt-mood-full-section.md"
     },
     {
@@ -14101,6 +14139,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-npc-management-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-surfaces-for-richer-character-extensions.md"
     },
     {
       "kind": "ticket",
@@ -19693,6 +19735,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-v1-csrf-exempt-set-missing-api-v1-prefixes-for-session-mint-.md"
     },
     {
       "kind": "ticket",
@@ -26053,10 +26099,20 @@
       "source": ".plan/tickets/BUG-battle-equipment-loot-no-auth-guard.md"
     }
   ],
+  "src/routes/v1/base-surface.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-v1-csrf-exempt-set-missing-api-v1-prefixes-for-session-mint-.md"
+    }
+  ],
   "src/routes/v1/index.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-api-versioning.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-v1-csrf-exempt-set-missing-api-v1-prefixes-for-session-mint-.md"
     },
     {
       "kind": "ticket",
@@ -28807,6 +28863,18 @@
       "source": "docs/spec/platform-support.md"
     }
   ],
+  "src/scripts/migrate-character-legacy.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-migration-tooling-for-legacy-to-rich-character-data.md"
+    }
+  ],
+  "src/scripts/migrate-character-legacy.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-migration-tooling-for-legacy-to-rich-character-data.md"
+    }
+  ],
   "src/scripts/version-bump.ts": [
     {
       "kind": "epic",
@@ -29801,6 +29869,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-origin-capture-generation-seeding.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-world-lore-lifecycle-confidence-decay-distortion.md"
     },
     {
       "kind": "spec",
