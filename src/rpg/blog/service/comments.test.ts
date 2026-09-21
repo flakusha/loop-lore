@@ -141,8 +141,8 @@ describe("blog comments", () => {
       author_id: "user-author",
       body: "Flagged",
     },);
-    expect(await moderateComment(db, gone.id, "deleted",),).toBeTrue();
-    expect(await moderateComment(db, flagged.id, "hidden",),).toBeTrue();
+    expect(await moderateComment(db, gone.id, "deleted", { userId: "user-author", role: "user", }),).toBeTrue();
+    expect(await moderateComment(db, flagged.id, "hidden", { userId: "user-author", role: "user", }),).toBeTrue();
     const rows = await listComments(db, "post-1",);
     expect(rows.map((c,) => c.body),).toEqual(["Flagged",],);
   });
@@ -155,12 +155,43 @@ describe("blog comments", () => {
     },);
     expect((await getComment(db, comment.id,))?.body,).toBe("Hello",);
     expect(await getComment(db, "comment-missing",),).toBeUndefined();
-    await moderateComment(db, comment.id, "deleted",);
+    await moderateComment(db, comment.id, "deleted", { userId: "user-author", role: "user", });
     expect(await getComment(db, comment.id,),).toBeUndefined();
   });
 
   test("moderateComment on a missing comment returns false", async () => {
-    expect(await moderateComment(db, "comment-missing", "hidden",),).toBeFalse();
+    expect(await moderateComment(db, "comment-missing", "hidden", { userId: "user-author", role: "user" },),).toBeFalse();
+  });
+
+  test("moderateComment rejects a caller who is neither author nor moderator (IDOR guard)", async () => {
+    await insertUsers(db, "Stranger", "Stranger", { id: "user-stranger", },);
+    const comment = await createComment(db, {
+      post_id: "post-1",
+      author_id: "user-author",
+      body: "Locked",
+    },);
+    // Stranger is neither post author, comment author, nor a moderator.
+    const ok = await moderateComment(db, comment.id, "deleted", {
+      userId: "user-stranger",
+      role: "user",
+    },);
+    expect(ok,).toBeFalse();
+    expect((await getComment(db, comment.id,))?.status,).toBe("visible",);
+  });
+
+  test("moderateComment allows a moderator to act on any comment", async () => {
+    await insertUsers(db, "Mod", "Mod", { id: "user-mod", },);
+    const comment = await createComment(db, {
+      post_id: "post-1",
+      author_id: "user-author",
+      body: "Off-topic",
+    },);
+    const ok = await moderateComment(db, comment.id, "hidden", {
+      userId: "user-mod",
+      role: "moderator",
+    },);
+    expect(ok,).toBeTrue();
+    expect((await getComment(db, comment.id,))?.status,).toBe("hidden",);
   });
 
   test("listCommentsThreaded nests replies under parents", async () => {
@@ -196,7 +227,7 @@ describe("blog comments", () => {
       author_id: "user-author",
       body: "Doomed",
     },);
-    await moderateComment(db, comment.id, "deleted",);
+    await moderateComment(db, comment.id, "deleted", { userId: "user-author", role: "user", });
     expect(await listCommentsThreaded(db, "post-1",),).toEqual([],);
   });
 });
