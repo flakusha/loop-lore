@@ -1608,6 +1608,14 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-fast-action-prompt-pipeline.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-interaction-service-foundation.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/WIRE-assistant-command-palette-stale-static-list.md"
     }
   ],
@@ -1649,6 +1657,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-commands-extension.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-fast-action-utility-catalog.md"
     }
   ],
   "src/assistant/commands/summarize.ts": [
@@ -1671,6 +1683,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-assistant-improve-translate-rewrite-never-call-llm.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-intellect-growth-interactions.md"
     },
     {
       "kind": "ticket",
@@ -24332,6 +24348,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-interaction-service-foundation.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-workflow-runner-start-preview-step-confirm-dispatch-step-ui.md"
     },
     {
@@ -26579,6 +26599,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-stealth-crime.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-stealth-slash-interactions.md"
     }
   ],
   "src/rpg/crime/underworld.ts": [
