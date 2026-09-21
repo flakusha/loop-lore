@@ -3175,6 +3175,58 @@
     "git_issue": "fafb5a9",
     "status": "done"
   },
+  "BUG-LORE-DECAY-GATE-IS-DEAD-CODE-AT-RUNTIME-PASSESCONFIDENCEFLOO": {
+    "hash": "ba28931",
+    "git_issue": "ba28931",
+    "extid": "BUG-LORE-DECAY-GATE-IS-DEAD-CODE-AT-RUNTIME-PASSESCONFIDENCEFLOO",
+    "type": "BUG",
+    "title": "lore decay gate is dead code at runtime (passesConfidenceFloor hardcodes worldDaysSince=0)",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-lore-knowledge",
+    "tags": [],
+    "source": ".plan/tickets/BUG-lore-decay-gate-is-dead-code-at-runtime-passesconfidencefloo.md",
+    "status": "⬜ Not Started"
+  },
+  "BUG-LORE-LIFECYCLE-FIELDS-HAVE-NO-PRODUCERS-LAST-VERIFIED-SOURCE": {
+    "hash": "2a18258",
+    "git_issue": "2a18258",
+    "extid": "BUG-LORE-LIFECYCLE-FIELDS-HAVE-NO-PRODUCERS-LAST-VERIFIED-SOURCE",
+    "type": "BUG",
+    "title": "lore lifecycle fields have no producers (last_verified, source_count, distortion_level)",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-lore-knowledge",
+    "tags": [],
+    "source": ".plan/tickets/BUG-lore-lifecycle-fields-have-no-producers-last-verified-source.md",
+    "status": "⬜ Not Started"
+  },
+  "BUG-LORE-LOAD-TS-DB-EB-USE-INSTEAD-OF-KYSELY-EXPRESSIONBUILDER": {
+    "hash": "c1e45bb",
+    "git_issue": "c1e45bb",
+    "extid": "BUG-LORE-LOAD-TS-DB-EB-USE-INSTEAD-OF-KYSELY-EXPRESSIONBUILDER",
+    "type": "BUG",
+    "title": "lore-load.ts: db + eb use  instead of Kysely + ExpressionBuilder",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-lore-load-ts-db-eb-use-instead-of-kysely-expressionbuilder.md",
+    "status": "⬜ Not Started"
+  },
+  "BUG-LORE-LOAD-TS-USES-ANY-FOR-DB-EB-INSTEAD-OF-KYSELY-EXPRESSION": {
+    "hash": "789183c",
+    "git_issue": "789183c",
+    "extid": "BUG-LORE-LOAD-TS-USES-ANY-FOR-DB-EB-INSTEAD-OF-KYSELY-EXPRESSION",
+    "type": "BUG",
+    "title": "lore-load.ts uses any for db + eb instead of Kysely+ExpressionBuilder",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-lore-knowledge",
+    "tags": [],
+    "source": ".plan/tickets/BUG-lore-load-ts-uses-any-for-db-eb-instead-of-kysely-expression.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-MEMORY-AUDIT-LOG-ACTION-COLUMN-TYPED-STRING-NOT-UNION": {
     "hash": "57ed7a8",
     "git_issue": "57ed7a8",

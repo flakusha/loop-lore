@@ -7,11 +7,15 @@
  * single round of `Promise.allSettled`; downstream code consumes the typed
  * `LoadedLore` bundle.
  *
- * Resolves: TASK-world-lore-lifecycle-confidence-decay-distortion
+ * Resolves: TASK-world-lore-lifecycle-confidence-decay-distortion,
+ *           BUG-lore-load-ts-uses-any-for-db-eb-instead-of-kysely-expression.
  */
+import type { ExpressionBuilder, Kysely, } from "kysely";
+import type { DB, } from "../../../db/schema";
 import { safeJsonParse, } from "@/utils/safe-json";
 import { resolveLifecycleConfig, } from "../../lore/lifecycle";
 import { resolveActorIdentity, } from "./lore-identity";
+import type { AssembleContext, } from "../types";
 import type { LoreRow, } from "./lore-types";
 
 /** Resolved bundle handed to the lore section's relevance + wrap pipeline. */
@@ -22,57 +26,64 @@ export interface LoadedLore {
 }
 
 /**
- * Issue the three SELECTs (actor lore + world lore + worlds.rules) and the
+ * Typed SELECT over `actor_lore_entries` for one actor, optionally
+ * restricting rows to a world scope. The eb callback uses
+ * `ExpressionBuilder<DB, "actor_lore_entries">` so the where-clause
+ * expressions are checked against the table's column set.
+ */
+function actorLoreQuery(
+  db: Kysely<DB>,
+  actorId: string,
+  worldId: string | null,
+) {
+  return db
+    .selectFrom("actor_lore_entries",)
+    .select([
+      "content",
+      "keys",
+      "position",
+      "constant",
+      "selective",
+      "cooldown_seconds",
+      "last_activated",
+      "id",
+      "audience_scope",
+      "key_type",
+      "key_groups",
+      "scan_depth",
+      "activation_chance",
+      "priority",
+    ],)
+    .where("actor_id", "=", actorId,)
+    .where("enabled", "=", "enabled",)
+    .where((eb: ExpressionBuilder<DB, "actor_lore_entries">,) =>
+      worldId
+        ? eb.or([
+          eb("world_id", "is", null,),
+          eb("world_id", "=", worldId,),
+        ],)
+        : eb("world_id", "is", null,)
+    )
+    .orderBy("position", "asc",)
+    .execute();
+}
+
+/**
+ * Issue the actor-lore + world-lore + worlds.rules SELECTs and the
  * identity resolver in parallel; throw on the first rejection.
- * @param ctx Assemble context with db, chat, actor handles.
- * @param ctx.db Kysely db handle.
- * @param ctx.chat Chat row; `world_id` scopes the world lore query.
- * @param ctx.chat.id Chat identifier used to load the recent-conversation scan.
- * @param ctx.chat.world_id Optional world id; null skips the world lore query.
- * @param ctx.chat.current_location_id Optional current location (unused here, surfaced for type compatibility).
- * @param ctx.actor Actor row; only `id` is consulted.
- * @param ctx.actor.id Actor identifier used for the actor lore + identity queries.
+ *
+ * @param ctx Standard {@link AssembleContext} — same shape every other
+ *   lore section consumes. Using the typed ctx (instead of an ad-hoc
+ *   `db: any`) surfaces column typos at compile time and matches the
+ *   convention enforced by the `route-ctx-typing` skill.
  * @returns The {@link LoadedLore} bundle consumed by `loreSection`.
  */
 export async function loadLore(
-  ctx: {
-    db: any;
-    chat: { id: string; world_id?: string | null; current_location_id?: string | null };
-    actor: { id: string };
-  },
+  ctx: Pick<AssembleContext, "db" | "chat" | "actor">,
 ): Promise<LoadedLore> {
   const chat = ctx.chat;
   const results = await Promise.allSettled([
-    ctx.db
-      .selectFrom("actor_lore_entries",)
-      .select([
-        "content",
-        "keys",
-        "position",
-        "constant",
-        "selective",
-        "cooldown_seconds",
-        "last_activated",
-        "id",
-        "audience_scope",
-        "key_type",
-        "key_groups",
-        "scan_depth",
-        "activation_chance",
-        "priority",
-      ],)
-      .where("actor_id", "=", ctx.actor.id,)
-      .where("enabled", "=", "enabled",)
-      .where((eb: any,) =>
-        chat.world_id
-          ? eb.or([
-            eb("world_id", "is", null,),
-            eb("world_id", "=", chat.world_id,),
-          ],)
-          : eb("world_id", "is", null,)
-      )
-      .orderBy("position", "asc",)
-      .execute(),
+    actorLoreQuery(ctx.db, ctx.actor.id, chat.world_id ?? null,),
     chat.world_id
       ? ctx.db
         .selectFrom("world_lore_entries",)
