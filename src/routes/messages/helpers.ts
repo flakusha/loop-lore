@@ -3,6 +3,7 @@
 
 import type { Kysely, } from "kysely";
 import type { ServiceError, } from "../../chat/service";
+import type { RegexTransform, } from "../../config/schema";
 import { decodeContent, } from "../../content/decode";
 import {
   decryptAtRest,
@@ -13,6 +14,7 @@ import type { DB, } from "../../db/schema";
 import { getLogger, type Logger, } from "../../logger";
 import { safeJsonParse, } from "../../utils";
 import { ErrorCode, HttpStatus, jsonError, } from "../http-utils";
+import { resolveMessageContentForRender, } from "./render-message-content";
 
 /** Logger bound to the messages module namespace. */
 export function log(): Logger {
@@ -172,6 +174,10 @@ export function parseToolResultMeta(metadataJson: string | null | undefined,): T
  * never throws per-row. Mirrors the inline enrichment in `read.ts`.
  * @param database
  * @param row
+ * @param transforms - regex output transforms applied after decryption.
+ *   Defaults to [] so test stubs that lack a config stay trivial.
+ *   Production callers pass `config.generation.regexTransforms` to keep
+ *   list/single-message rendering consistent.
  */
 export async function enrichMessageForList(
   database: Kysely<DB>,
@@ -185,13 +191,17 @@ export async function enrichMessageForList(
     attachments?: string | null;
     tool_calls?: string | null;
   },
+  transforms: ReadonlyArray<RegexTransform> = [],
 ): Promise<Record<string, unknown>> {
   const attachments = await enrichAttachments(database, row.attachments ?? null,);
   const toolCalls = parseToolCalls(row.tool_calls ?? null,);
   const toolMeta = row.content_type === "tool_result" ? parseToolResultMeta(row.metadata ?? null,) : null;
   const toolFields = { tool_name: toolMeta?.toolName ?? null, tool_error: toolMeta?.toolError ?? false, };
   try {
-    const content = await resolveMessageContent(database, row,);
+    // BUG-regex-transform-runs-at-store-time-not-render-time: list endpoint
+    // shares the render-time transform path with the single-message route
+    // so a config change takes effect on the next list fetch too.
+    const content = await resolveMessageContentForRender(database, row, transforms,);
     return { ...row, content, attachments, tool_calls: toolCalls, ...toolFields, };
   } catch {
     return {

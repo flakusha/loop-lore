@@ -37,7 +37,8 @@ interface HandlerOpts {
  */
 export function exportRoutes({ database, }: HandlerOpts, prefix = "/api",): Elysia {
   return new Elysia({ name: "export", },).post(`${prefix}/export`, async (ctx: any,) => {
-    const { auth: authConfig, } = loadConfig();
+    const fullConfig = loadConfig();
+    const { auth: authConfig, } = fullConfig;
     const userId = await resolveUserIdFromRequest(ctx.request, database, "solo", authConfig,);
     if (!userId) {
       return jsonError({
@@ -69,6 +70,10 @@ export function exportRoutes({ database, }: HandlerOpts, prefix = "/api",): Elys
       format,
       chatIds,
       counts,
+      // BUG-regex-transform-runs-at-store-time-not-render-time: pass the
+      // loaded config so per-message transforms match the user-visible
+      // pipeline at export time.
+      config: fullConfig,
     };
 
     // Export characters
