@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ ReDoS + chunk-boundary RESOLVED (commits `1a15200b`, `42ffc7643`); tag/attr coverage audit remains open as a separate ticket (deferred 2026-09-18)
+**Status:** ✅ Resolved (ReDoS + chunk-boundary on dev, 2026-09-21; tag/attr coverage audit deferred 2026-09-18)
 
 ## Handoff (deferred to dedicated worktree)
 
