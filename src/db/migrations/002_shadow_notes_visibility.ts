@@ -26,7 +26,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn(
       "visibility",
       "text",
-      (col,) => col.notNull().defaultTo("user_visible"),
+      (col,) => col.notNull().defaultTo("user_visible",),
     )
     .execute();
 

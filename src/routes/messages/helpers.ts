@@ -11,7 +11,6 @@ import {
 import type { ContentEncoding, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { getLogger, type Logger, } from "../../logger";
-import { applyRegexTransforms, } from "../../generation/transforms";
 import { safeJsonParse, } from "../../utils";
 import { ErrorCode, HttpStatus, jsonError, } from "../http-utils";
 
@@ -245,34 +244,4 @@ export async function resolveMessageContent(
     storedContent: message.content,
     encryptionLevel,
   },);
-}
-
-/**
- * Render-time variant of resolveMessageContent.
- *
- * BUG-regex-transform-runs-at-store-time-not-render-time: applies the
- * configured regex output transforms after decryption/decompression so
- * the stored ciphertext/plaintext stays intact and a config change
- * takes effect on the next render. Pass `transforms = []` (or omit) to
- * skip — the message list endpoint uses this so user-visible content
- * always reflects the current config.
- *
- * @param database
- * @param message
- * @param transforms - regex transforms from `config.generation.regexTransforms`
- */
-export async function resolveMessageContentForRender(
-  database: Kysely<DB>,
-  message: {
-    content: string;
-    content_encoding: string;
-    key_id: string | null;
-    chat_id: string;
-  },
-  transforms: ReadonlyArray<import("../../config/schema").RegexTransform> = [],
-): Promise<string> {
-  const plaintext = await resolveMessageContent(database, message,);
-  if (transforms.length === 0) { return plaintext; }
-  const result = applyRegexTransforms(plaintext, transforms as import("../../config/schema").RegexTransform[],);
-  return result.text;
 }

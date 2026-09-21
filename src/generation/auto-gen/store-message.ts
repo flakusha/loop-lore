@@ -18,7 +18,6 @@ import {
   MessageVisibility,
 } from "../../db/enums";
 import type { DB, } from "../../db/schema";
-import { getLogger, } from "../../logger";
 import { uid, } from "../../utils";
 import type { GenDeps, } from "./deps";
 
