@@ -58,7 +58,7 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
         },);
 
         const enrichResults = await Promise.allSettled(
-          messages.map((m,) => enrichMessageForList(database, m as never,)),
+          messages.map((m,) => enrichMessageForList(database, m as never, regexTransforms,)),
         );
         const enriched: Record<string, unknown>[] = [];
         for (const r of enrichResults) {

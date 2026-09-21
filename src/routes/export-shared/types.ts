@@ -3,6 +3,7 @@
 
 import type JSZip from "jszip";
 import type { Kysely, Selectable, } from "kysely";
+import type { Config, } from "../../config/schema";
 import type {
   DB,
   Locations,
@@ -39,6 +40,10 @@ export interface ExportContext {
   counts: Record<string, number>;
   /** Optional per-item sink (SSE progress + asset manifest). */
   onItem?: (item: ExportItem,) => void;
+  /** Optional config — present when the export pipeline runs through the
+   *  registered handlers; absent in unit-test stubs that build an
+   *  `ExportContext` by hand. When absent, transforms are skipped. */
+  config?: Config;
 }
 
 /** */

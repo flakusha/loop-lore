@@ -2,7 +2,7 @@ import { describe, expect, test, } from "bun:test";
 import { ContentEncoding, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
-import { parseToolCalls, parseToolResultMeta, } from "./helpers";
+import { enrichMessageForList, parseToolCalls, parseToolResultMeta, } from "./helpers";
 import { resolveMessageContentForRender, } from "./render-message-content";
 
 describe("parseToolCalls", () => {
@@ -129,6 +129,88 @@ describe("resolveMessageContentForRender (BUG-regex-transform-runs-at-store-time
       expect(lowerToX,).toBe("AA X CC",);
       expect(upperToY,).toBe("Y bb Y",);
       expect(stored.content,).toBe("AA bb CC",);
+    } finally {
+      sqlite.close();
+    }
+  });
+});
+
+describe("enrichMessageForList (BUG-regex-transform-runs-at-store-time-not-render-time)", () => {
+  test("passes transforms through so the list endpoint mirrors the single-message route", async () => {
+    const { db, sqlite, } = await createTestDb();
+    try {
+      const result = await enrichMessageForList(
+        db as unknown as import("kysely").Kysely<DB>,
+        {
+          content: "hello   world",
+          content_encoding: ContentEncoding.Identity,
+          key_id: null,
+          chat_id: "c1",
+        },
+        [{ name: "collapse spaces", pattern: "\\s+", replacement: " ", enabled: true, },],
+      );
+      expect(result["content"],).toBe("hello world",);
+    } finally {
+      sqlite.close();
+    }
+  });
+
+  test("no transforms configured → raw plaintext passthrough", async () => {
+    const { db, sqlite, } = await createTestDb();
+    try {
+      const result = await enrichMessageForList(
+        db as unknown as import("kysely").Kysely<DB>,
+        {
+          content: "hello   world",
+          content_encoding: ContentEncoding.Identity,
+          key_id: null,
+          chat_id: "c1",
+        },
+        [],
+      );
+      expect(result["content"],).toBe("hello   world",);
+    } finally {
+      sqlite.close();
+    }
+  });
+
+  test("decryption failure surfaces the placeholder even with transforms configured", async () => {
+    const { db, sqlite, } = await createTestDb();
+    try {
+      // content_encoding = gzip with no actual payload → decodeContent fails.
+      const result = await enrichMessageForList(
+        db as unknown as import("kysely").Kysely<DB>,
+        {
+          content: "not-valid-base64-or-gzip",
+          content_encoding: ContentEncoding.Gzip,
+          key_id: null,
+          chat_id: "c1",
+        },
+        [{ name: "noop", pattern: "x", replacement: "y", enabled: true, },],
+      );
+      expect(result["content"],).toBe("[Encrypted — unable to decrypt]",);
+    } finally {
+      sqlite.close();
+    }
+  });
+
+  test("transforms are applied to successfully-resolved plaintext content", async () => {
+    // Regression guard: an earlier shape of the helper skipped the render
+    // transform layer (only ran decrypt/decompress). With the fix, even a
+    // raw identity-encoded row goes through applyRegexTransforms.
+    const { db, sqlite, } = await createTestDb();
+    try {
+      const result = await enrichMessageForList(
+        db as unknown as import("kysely").Kysely<DB>,
+        {
+          content: "hello world",
+          content_encoding: ContentEncoding.Identity,
+          key_id: null,
+          chat_id: "c1",
+        },
+        [{ name: "upper", pattern: "world", replacement: "WORLD", enabled: true, },],
+      );
+      expect(result["content"],).toBe("hello WORLD",);
     } finally {
       sqlite.close();
     }

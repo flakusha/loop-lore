@@ -7,16 +7,17 @@ import { MessageRole, MessageStatus, MessageVisibility, } from "../../db/enums";
 import { notFound, } from "../../validation/middleware";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
 import { requireUserId, } from "../http-utils";
-import { resolveMessageContent, } from "../messages/helpers";
+import { resolveMessageContentForRender, } from "../messages/render-message-content";
 import { formatHtml, formatJson, formatMarkdown, formatPlainText, } from "./format";
 import type { HandlerOpts, MessageData, } from "./types";
 
 /**
  * @param root0
  * @param root0.database
+ * @param root0.config
  * @param prefix
  */
-export function exportChatRoute({ database, }: HandlerOpts, prefix = "/api",) {
+export function exportChatRoute({ database, config, }: HandlerOpts, prefix = "/api",) {
   return new Elysia().get(
     `${prefix}/chats/:id/export`,
     async (ctx: any,) => {
@@ -65,11 +66,15 @@ export function exportChatRoute({ database, }: HandlerOpts, prefix = "/api",) {
       // Resolve message bodies to plaintext via the shared helper so exports
       // carry decoded text — never raw ciphertext (data leak) nor base64 gzip
       // (which would be opaque to importers and silently inflate file sizes).
+      // BUG-regex-transform-runs-at-store-time-not-render-time: mirror the
+      // render-time transform pipeline so an exported file matches what
+      // the user sees in the UI for the current config.
+      const regexTransforms = config?.generation.regexTransforms ?? [];
       const messages: MessageData[] = [];
       for (const row of rows) {
         let content: string;
         try {
-          content = await resolveMessageContent(database, row,);
+          content = await resolveMessageContentForRender(database, row, regexTransforms,);
         } catch {
           content = "[Encrypted — unable to decrypt]";
         }
