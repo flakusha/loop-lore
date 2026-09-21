@@ -1,11 +1,11 @@
 import { describe, expect, test, } from "bun:test";
+import type { BundleCharacterRequirements, } from "../../plugins";
 import {
   characterExtensionEditorFactory,
+  type CharacterExtensionsPayload,
   checkBundle,
   serializeExtensions,
-  type CharacterExtensionsPayload,
 } from "./character-extension-editor";
-import type { BundleCharacterRequirements, } from "../../plugins";
 
 // Inline fantasy-rpg requirements literal — the source-of-truth constant
 // lives in the bundle worktree (FEAT-2 follow-through). Kept in lockstep
@@ -26,7 +26,7 @@ type FetchResponder = (call: FetchCall,) => Promise<Response>;
 let calls: FetchCall[] = [];
 let responder: FetchResponder = () => Promise.resolve(new Response("{}", { status: 200, },),);
 
-const makeFetcher = (): ((url: string, init?: RequestInit,) => Promise<Response>) => {
+const makeFetcher = (): (url: string, init?: RequestInit,) => Promise<Response> => {
   return (url: string, init?: RequestInit,) => {
     const method = init?.method ?? "GET";
     calls.push({ url, method, init, },);
@@ -45,7 +45,7 @@ const settingsResponse = (settings: Record<string, unknown>,): Promise<Response>
 
 const awaitLoad = async (state: { loading: boolean },): Promise<void> => {
   for (let i = 0; i < 50 && state.loading; i++) {
-    await new Promise((r,) => setTimeout(r, 5,),);
+    await new Promise((r,) => setTimeout(r, 5,));
   }
 };
 
@@ -59,16 +59,18 @@ describe("serializeExtensions", () => {
       plugin_bundle: "fantasy-rpg",
     };
     expect(JSON.parse(serializeExtensions(payload,),),).toEqual(payload,);
-  },);
+  });
 
   test("empty draft serializes as '{}'", () => {
     expect(serializeExtensions({},),).toBe("{}",);
-  },);
+  });
 
   test("preserves unknown keys (forward-compat passthrough)", () => {
-    const parsed = JSON.parse(serializeExtensions({ plugin_bundle: "fantasy-rpg", legacy_key: "legacy_value", },),) as Record<string, unknown>;
+    const parsed = JSON.parse(
+      serializeExtensions({ plugin_bundle: "fantasy-rpg", legacy_key: "legacy_value", },),
+    ) as Record<string, unknown>;
     expect(parsed.legacy_key,).toBe("legacy_value",);
-  },);
+  });
 });
 
 describe("checkBundle", () => {
@@ -78,9 +80,9 @@ describe("checkBundle", () => {
       inventory: [{ id: "x", name: "x", type: "weapon", description: "y", quantity: 1, equipped: false, },],
     };
     const report = checkBundle(draft, FANTASY_RPG_REQUIREMENTS,);
-    expect(report.valid).toBe(true);
+    expect(report.valid,).toBe(true,);
     expect(report.missing,).toEqual([],);
-  },);
+  });
 
   test("missing abilities → 'required: abilities'", () => {
     const draft: CharacterExtensionsPayload = {
@@ -89,7 +91,7 @@ describe("checkBundle", () => {
     const report = checkBundle(draft, FANTASY_RPG_REQUIREMENTS,);
     expect(report.valid,).toBe(false,);
     expect(report.missing,).toContain("required: abilities",);
-  },);
+  });
 
   test("empty inventory → 'minLength: inventory < 1'", () => {
     const draft: CharacterExtensionsPayload = {
@@ -99,11 +101,11 @@ describe("checkBundle", () => {
     const report = checkBundle(draft, FANTASY_RPG_REQUIREMENTS,);
     expect(report.valid,).toBe(false,);
     expect(report.missing,).toContain("minLength: inventory < 1",);
-  },);
+  });
 
   test("undefined requirements → always valid", () => {
     expect(checkBundle({}, undefined,).valid,).toBe(true,);
-  },);
+  });
 });
 
 // ── Factory behavior ──────────────────────────────────────────
@@ -117,7 +119,7 @@ describe("characterExtensionEditorFactory", () => {
     expect(typeof (globalThis as Record<string, unknown>).characterExtensionEditorFactory,).toBe("function",);
     expect(state._cxActorId,).toBe("actor-aria",);
     expect(state.draft,).toEqual({},);
-  },);
+  });
 
   test("load() fetches settings, hydrates draft, runs validation", async () => {
     calls = [];
@@ -133,11 +135,11 @@ describe("characterExtensionEditorFactory", () => {
     await awaitLoad(state,);
 
     expect(state.loading,).toBe(false,);
-    expect(calls.some((c,) => c.url === "/api/actors/actor-aria" && c.method === "GET",),).toBe(true,);
+    expect(calls.some((c,) => c.url === "/api/actors/actor-aria" && c.method === "GET"),).toBe(true,);
     expect(state.bundleId,).toBe("fantasy-rpg",);
     expect(state.draft.abilities,).toEqual({ strength: 12, },);
     expect(state.validation.valid,).toBe(true,);
-  },);
+  });
 
   test("save() PUTs serialized extensions when validation passes", async () => {
     calls = [];
@@ -157,7 +159,7 @@ describe("characterExtensionEditorFactory", () => {
     state.bundleId = "fantasy-rpg";
     await state.save();
 
-    const put = calls.find((c,) => c.method === "PUT" && c.url === "/api/actors/actor-aria",);
+    const put = calls.find((c,) => c.method === "PUT" && c.url === "/api/actors/actor-aria");
     expect(put,).toBeDefined();
     const body = JSON.parse(put!.init!.body as string,) as { settings: string };
     const parsed = JSON.parse(body.settings,) as CharacterExtensionsPayload;
@@ -165,7 +167,7 @@ describe("characterExtensionEditorFactory", () => {
     expect(parsed.inventory,).toHaveLength(1,);
     expect(state.message,).toBe("Saved",);
     expect(state.error,).toBe("",);
-  },);
+  });
 
   test("save() aborts when validation fails (no PUT)", async () => {
     calls = [];
@@ -178,10 +180,10 @@ describe("characterExtensionEditorFactory", () => {
     state.draft = {};
     await state.save();
 
-    expect(calls.some((c,) => c.method === "PUT",),).toBe(false,);
+    expect(calls.some((c,) => c.method === "PUT"),).toBe(false,);
     expect(state.error,).toContain("Bundle requirements unmet",);
     expect(state.validation.valid,).toBe(false,);
-  },);
+  });
 
   test("reset() restores draft from current (last-fetched)", async () => {
     calls = [];
@@ -198,7 +200,7 @@ describe("characterExtensionEditorFactory", () => {
     state.draft.abilities = { strength: 99, };
     state.reset();
     expect(state.draft.abilities,).toEqual({ strength: 9, },);
-  },);
+  });
 
   test("load() surfaces a non-OK status as error", async () => {
     calls = [];
@@ -209,7 +211,7 @@ describe("characterExtensionEditorFactory", () => {
     await awaitLoad(state,);
 
     expect(state.error,).toContain("Load failed",);
-  },);
+  });
 
   test("save() surfaces a non-OK status as error", async () => {
     calls = [];
@@ -224,5 +226,5 @@ describe("characterExtensionEditorFactory", () => {
     state.draft = { abilities: {}, inventory: [], };
     await state.save();
     expect(state.error,).toContain("Save failed",);
-  },);
+  });
 });
