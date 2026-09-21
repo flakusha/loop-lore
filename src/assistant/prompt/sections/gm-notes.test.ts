@@ -211,4 +211,37 @@ describe("fetchUnrevealedShadowNotes + formatShadowSteering", () => {
     expect(block,).toContain("shadow_notes",);
     expect(formatShadowSteering([],),).toBe("",);
   });
+
+  test("expired notes are filtered out of LLM injection (BUG-shadow-notes-table-missing-ttl)", async () => {
+    const { db, } = await createTestDb();
+    await insertUsers(db, "user1", "User 1", { id: "user-1", } as any,);
+    await insertWorlds(db, "user-1", "Test World", { id: "world-1", } as any,);
+    await insertChats(db, "Test Chat", "user-1", { id: "chat-1", world_id: "world-1", } as any,);
+    await insertShadowNotes(
+      db,
+      "chat-1",
+      ShadowNoteType.WorldSecret,
+      "Fresh.",
+      "2026-08-01T00:00:00Z",
+      { expires_at: "2099-01-01T00:00:00Z", } as any,
+    );
+    await insertShadowNotes(
+      db,
+      "chat-1",
+      ShadowNoteType.WorldSecret,
+      "Stale.",
+      "2026-08-01T00:00:00Z",
+      { expires_at: "2020-01-01T00:00:00Z", } as any,
+    );
+    await insertShadowNotes(
+      db,
+      "chat-1",
+      ShadowNoteType.WorldSecret,
+      "No TTL.",
+      "2026-08-01T00:00:00Z",
+    );
+
+    const notes = await fetchUnrevealedShadowNotes(db, "chat-1",);
+    expect(notes.map((n,) => n.content,),).toEqual(["Fresh.", "No TTL.",],);
+  });
 });
