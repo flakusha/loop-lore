@@ -17,6 +17,7 @@
  * entry for ambient world-building. Invalid regex patterns are treated as
  * no-match so prompt assembly never crashes on bad author input.
  */
+import { parseExpiryMs, } from "../../../utils/date";
 import { compileSafeRegExp, } from "../../../utils/safe-regexp";
 import { parseKeyGroups, parseKeywords, } from "../keywords";
 
@@ -104,4 +105,22 @@ export function passesActivationChance(chance: number | null,): boolean {
   if (chance == null) { return true; }
   const clamped = Math.min(1, Math.max(0, chance,),);
   return Math.random() < clamped;
+}
+
+/**
+ * Check if a lore entry's cooldown has expired (no last_activated timestamp
+ * or cooldown_seconds <= 0 means "always eligible").
+ * @param lastActivated
+ * @param cooldownSeconds
+ * @returns True when the cooldown has elapsed (or never applied).
+ */
+export function isCooldownExpired(
+  lastActivated: string | null,
+  cooldownSeconds: number,
+): boolean {
+  if (cooldownSeconds <= 0) { return true; }
+  const lastActivatedMs = parseExpiryMs(lastActivated,);
+  if (lastActivatedMs === null) { return true; }
+  const cooldownMs = cooldownSeconds * 1000;
+  return Date.now() - lastActivatedMs >= cooldownMs;
 }

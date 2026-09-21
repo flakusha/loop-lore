@@ -109,6 +109,11 @@ export interface WorldLoreEntries {
   key_groups: string | null;
   scan_depth: number | null;
   activation_chance: number | null;
+  confidence: Generated<number>;
+  last_verified: string | null;
+  source_count: Generated<number>;
+  distortion_level: Generated<number>;
+  disputed: Generated<number>;
 }
 
 // ── world_states ────────────────────────────────────────────
@@ -149,6 +154,7 @@ export interface Worlds {
   rpg_xp: Generated<number>;
   rpg_loot: Generated<number>;
   rpg_quests: Generated<number>;
+  rules: Generated<string>;
 }
 
 // ── actor_lore_entries ────────────────────────────────────────────

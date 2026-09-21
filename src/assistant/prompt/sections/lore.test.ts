@@ -509,3 +509,157 @@ function createLoggerSafe(): void {
     // Already initialized — ignore.
   }
 }
+
+/**
+ * Lifecycle gating tests (TASK-world-lore-lifecycle-confidence-decay-distortion).
+ *
+ * Drives the live `loreSection.build` path with `worlds.rules` set so the
+ * `lifecycle_config` block is read. Three observable behaviors:
+ *   - low-confidence rows are DROPPED from the prompt;
+ *   - rows whose `distortion_level >= cap` are WRAPPED in `<disputed>`;
+ *   - the legacy default `confidence=100, distortion=0` row is identity
+ *     (kept, plain, not disputed) — preserves existing behavior.
+ */
+describe("loreSection — lifecycle confidence/decay/distortion gating", () => {
+  const enabled = LoreEntryStatus.Enabled;
+  const constantOne = 1;
+  const beforeChar = LorePosition.BeforeChar;
+  const noCooldown = 0;
+  const CHAT_ID = "lore-lifecycle-chat";
+
+  /**
+   * @param db
+   * @param rules
+   */
+  async function setupWorld(
+    db: Kysely<DB>,
+    rules: string,
+  ): Promise<{ worldId: string; actorId: string }> {
+    await insertUsers(db, "gm", "GM",);
+    const user = await db.selectFrom("users",).select(["id",],).limit(1,).executeTakeFirstOrThrow();
+    await insertActors(db, "Hero",);
+    const actor = await db.selectFrom("actors",).select(["id",],).limit(1,).executeTakeFirstOrThrow();
+    const actorId = actor.id;
+    await insertWorlds(db, user.id, "Lifecycle World", { rules, },);
+    const world = await db.selectFrom("worlds",).select(["id",],).limit(1,).executeTakeFirstOrThrow();
+    const worldId = world.id;
+    await insertChats(db, "Lifecycle Chat", user.id, { id: CHAT_ID as never, world_id: worldId, },);
+    return { worldId, actorId, };
+  }
+
+  /**
+   * @param db
+   * @param worldId
+   * @param actorId
+   */
+  function ctxFor(db: Kysely<DB>, worldId: string, actorId: string,): AssembleContext {
+    return {
+      db,
+      actor: {
+        id: actorId,
+        display_name: "Hero",
+        system_prompt: null,
+        description: null,
+        personality: null,
+        scenario: null,
+        post_history_instructions: null,
+        mes_example: null,
+        agent_role: null,
+      },
+      chat: { id: CHAT_ID, mode: "story", world_id: worldId, current_location_id: null, },
+      params: { actorId, chatId: CHAT_ID, modelId: "test-model", selectiveKeys: [], },
+      isStory: true,
+      tokenBudget: 4000,
+    };
+  }
+
+  test("drops entries below the configured confidence floor", async () => {
+    createLoggerSafe();
+    const { db, sqlite, } = await createTestDb();
+    try {
+      const rules = JSON.stringify({
+        lifecycle_config: { min_confidence: 80, decay_per_day: 0, distortion_cap: 100, },
+      },);
+      const { worldId, actorId, } = await setupWorld(db, rules,);
+
+      await insertWorldLoreEntries(db, worldId, "Keep me.", {
+        enabled,
+        constant: constantOne,
+        position: beforeChar,
+        cooldown_seconds: noCooldown,
+        priority: 100,
+      },);
+      await insertWorldLoreEntries(db, worldId, "Drop me.", {
+        enabled,
+        constant: constantOne,
+        position: beforeChar,
+        cooldown_seconds: noCooldown,
+        priority: 50,
+        confidence: 20,
+      },);
+
+      const text = (await loreSection.build(ctxFor(db, worldId, actorId,),))
+        .map((m,) => m.content).join("\n",);
+      expect(text,).toContain("Keep me.",);
+      expect(text,).not.toContain("Drop me.",);
+    } finally {
+      sqlite.close();
+    }
+  });
+
+  test("wraps entries that cross the distortion_cap in <disputed>", async () => {
+    createLoggerSafe();
+    const { db, sqlite, } = await createTestDb();
+    try {
+      const rules = JSON.stringify({
+        lifecycle_config: { min_confidence: 0, decay_per_day: 0, distortion_cap: 50, },
+      },);
+      const { worldId, actorId, } = await setupWorld(db, rules,);
+
+      await insertWorldLoreEntries(db, worldId, "Plain lore.", {
+        enabled,
+        constant: constantOne,
+        position: beforeChar,
+        cooldown_seconds: noCooldown,
+        priority: 100,
+      },);
+      await insertWorldLoreEntries(db, worldId, "Heavily distorted lore.", {
+        enabled,
+        constant: constantOne,
+        position: beforeChar,
+        cooldown_seconds: noCooldown,
+        priority: 50,
+        distortion_level: 90,
+      },);
+
+      const text = (await loreSection.build(ctxFor(db, worldId, actorId,),))
+        .map((m,) => m.content).join("\n",);
+      expect(text,).toContain("Plain lore.",);
+      expect(text,).toContain("[disputed] Heavily distorted lore.",);
+      expect(text,).not.toContain("[disputed] Plain lore.",);
+    } finally {
+      sqlite.close();
+    }
+  });
+
+  test("legacy default rows (confidence=100, distortion=0) are identity for unconfigured worlds", async () => {
+    createLoggerSafe();
+    const { db, sqlite, } = await createTestDb();
+    try {
+      const { worldId, actorId, } = await setupWorld(db, "{}",);
+      await insertWorldLoreEntries(db, worldId, "Legacy default lore.", {
+        enabled,
+        constant: constantOne,
+        position: beforeChar,
+        cooldown_seconds: noCooldown,
+        priority: 100,
+      },);
+      const text = (await loreSection.build(ctxFor(db, worldId, actorId,),))
+        .map((m,) => m.content).join("\n",);
+      expect(text,).toContain("Legacy default lore.",);
+      expect(text,).not.toContain("<disputed>",);
+    } finally {
+      sqlite.close();
+    }
+  });
+});

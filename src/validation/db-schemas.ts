@@ -922,6 +922,11 @@ export const WorldLoreEntriesSchema = t.Object({
   key_groups: t.Optional(t.String(),),
   scan_depth: t.Optional(t.Number(),),
   activation_chance: t.Optional(t.Number(),),
+  confidence: t.Optional(t.Number(),),
+  last_verified: t.Optional(t.String(),),
+  source_count: t.Optional(t.Number(),),
+  distortion_level: t.Optional(t.Number(),),
+  disputed: t.Optional(t.Number(),),
 },);
 
 // ── world_members ────────────────────────────────────────────
@@ -1002,6 +1007,7 @@ export const WorldsSchema = t.Object({
   rpg_xp: t.Optional(t.Number(),),
   rpg_loot: t.Optional(t.Number(),),
   rpg_quests: t.Optional(t.Number(),),
+  rules: t.Optional(t.String(),),
 },);
 
 // ── activitypub_actor_keys ────────────────────────────────────────────
