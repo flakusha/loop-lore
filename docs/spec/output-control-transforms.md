@@ -32,4 +32,6 @@ Output control and transforms operate on raw LLM outputs before they reach the u
 ## Related Epics
 
 - `.plan/epics/epic-output-control-transforms.md`
-- `.plan/epics/epic-regex-extraction.md`
+
+Regex extraction has no dedicated epic — its home is this spec and
+`docs/spec/regex-extraction.md`.

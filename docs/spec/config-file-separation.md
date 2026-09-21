@@ -1,87 +1,23 @@
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
-# Config File Separation Specification
-
-> **Status:** Implemented — domain config files active
 > High-level notes — may drift from implementation. Authoritative source is `src/` and AGENTS.md.
 
-## Overview
+# Config File Separation Specification
 
-Specification for Config File Separation. See `.plan/epics/epic-config-file-separation.md` for epic details.
+Status: Implemented — domain config files active. Epic: `.plan/epics/epic-config-file-separation.md` (authoritative for details).
 
-## Scope
+## Implemented
 
-Split the monolithic `config.toml` / `config.yaml` into domain-specific config files in `configs/` folder, each with its own JSON schema.
+- Monolithic `config.toml`/`config.yaml` split into per-domain files in `configs/` named `config.<domain>.toml`: server (`[server]`, `[server.tls]`), database (`[db]`), assets, logging, tui, docs, auth (`[auth]`, `[ageGate]`), transport, messages, nsfw, generation, byokey (`[byoKey]`), encryption, headers.
+- Loading order (lowest → highest): `config.default.*` (committed) → `config.*` (monolithic, backward compatible) → domain files `configs/config.<domain>.toml` → `config.local.*` (gitignored) → `env.*` → environment variables.
+- Each domain has a JSON schema in `schemas/` (`config.<domain>.schema.json`).
+- Source: `loadDomainConfigs()` in `src/config/load.ts`; schema generator `src/config/generate-domain-schemas.ts`; tests `src/config/domain-configs.test.ts`.
 
-## Technical Design
+## Notes
 
-### Domain Config Files
+- Domain configs override the monolithic file; local config and env vars still override them.
 
-Domain config files are stored in `configs/` directory with naming pattern `config.<domain>.toml`:
+## Epics
 
-| Domain     | File                     | Config Paths               |
-| ---------- | ------------------------ | -------------------------- |
-| server     | `config.server.toml`     | `[server]`, `[server.tls]` |
-| database   | `config.database.toml`   | `[db]`                     |
-| assets     | `config.assets.toml`     | `[assets]`                 |
-| logging    | `config.logging.toml`    | `[logging]`                |
-| tui        | `config.tui.toml`        | `[tui]`                    |
-| docs       | `config.docs.toml`       | `[docs]`                   |
-| auth       | `config.auth.toml`       | `[auth]`, `[ageGate]`      |
-| transport  | `config.transport.toml`  | `[transport]`              |
-| messages   | `config.messages.toml`   | `[messages]`               |
-| nsfw       | `config.nsfw.toml`       | `[nsfw]`                   |
-| generation | `config.generation.toml` | `[generation]`             |
-| byokey     | `config.byokey.toml`     | `[byoKey]`                 |
-| encryption | `config.encryption.toml` | `[encryption]`             |
-| headers    | `config.headers.toml`    | `[headers]`                |
-
-### Config Loading Order
-
-1. `config.default.*` — team-shared defaults (committed to git)
-2. `config.*` — main config file (monolithic, backward compatible)
-3. **Domain config files** — `configs/config.<domain>.toml` (new)
-4. `config.local.*` — per-developer overrides (gitignored)
-5. `env.*` — environment-specific overrides
-6. Environment variables — highest priority
-
-### JSON Schemas
-
-Each domain has its own JSON schema in `schemas/`:
-
-- `schemas/config.server.schema.json`
-- `schemas/config.database.schema.json`
-- `schemas/config.assets.schema.json`
-- `schemas/config.logging.schema.json`
-- `schemas/config.tui.schema.json`
-- `schemas/config.docs.schema.json`
-- `schemas/config.auth.schema.json`
-- `schemas/config.transport.schema.json`
-- `schemas/config.messages.schema.json`
-- `schemas/config.nsfw.schema.json`
-- `schemas/config.generation.schema.json`
-- `schemas/config.byokey.schema.json`
-- `schemas/config.encryption.schema.json`
-- `schemas/config.headers.schema.json`
-
-### Implementation
-
-**Source files:**
-
-- `src/config/load.ts` — `loadDomainConfigs()` function
-- `src/config/generate-domain-schemas.ts` — schema generation script
-
-**Tests:**
-
-- `src/config/domain-configs.test.ts` — domain config loading tests
-
-## Integration Points
-
-- Backward compatible with monolithic `config.toml` / `config.yaml`
-- Domain configs override main config but can be overridden by local config
-- Environment variables still highest priority
-
-## Related Epics
-
-- `.plan/epics/epic-config-file-separation.md`
+- `.plan/epics/epic-config-file-separation.md` (Complete)

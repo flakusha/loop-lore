@@ -3,36 +3,25 @@
 
 # Enemies & Monsters Systems Specification
 
-> Promoted 2026-09-18 from STUB. Authoritative source is `src/` and AGENTS.md.
+> **Status:** Partially implemented — combat primitives, battle NPC AI, NPC state, and loot exist in `src/`; the monster catalog / ecology epic is Not Started. Authoritative source is `src/` and AGENTS.md.
 
-## Overview
+## Implemented
 
-Enemies and monsters are RPG combatants configured per-encounter. Implementation lives in `src/battle/` for combat mechanics and `src/rpg/service/battles/` for encounter orchestration. NPC state is in `src/story/npc-states.ts` (mapped via `world_states.npc_states`).
+- Combat mechanics: `src/rpg/combat/` (actions, attacks, conditions, damage, initiative, saves).
+- Battle/encounter orchestration: `src/rpg/service/battles/` (actions, persistence, types) + `battles` table (`src/db/migrations/001_init.ts` ~L2782).
+- NPC state: `npc_states` table (`src/db/schema-story.ts`; created in `src/db/migrations/001_init.ts` ~L2368) — health, mental_state, location_id, schedule. Managed via `src/story/world-state/` and `src/story/events/application/` handlers. (An earlier revision cited a nonexistent `src/story/npc-states.ts`.)
+- NPC AI: movement/pathfinding in `src/rpg/npc-navigation/service/` (`/api/rpg/npc-navigation/*`); battle decisions in `src/battle/npc-integration/` (`/api/battle/npc/{decision,memory,surrender}`).
+- Loot: `src/rpg/loot/` (generation → `world_items`, tables, templates, weights).
+- Dice: `src/rpg/service/dice-roll.ts` canonical roller; `src/rpg/dice/` notation parsing.
+- World opt-in: `src/rpg/service/world-gate.ts` (`worlds.rpg_enabled`).
+- Quest-driven encounters: `src/story/quest-engine/` (see `docs/spec/quests-encounters.md`).
 
-## Scope
+## Not implemented / aspirational
 
-- **Combat:** `src/rpg/combat/` provides actions / attacks / conditions / damage / initiative / saves.
-- **Encounters:** `src/rpg/encounters/service/` orchestrates per-encounter enemy spawn, AI behavior, loot.
-- **NPC AI:** `src/rpg/npc-navigation/service/` handles pathing + decision logic.
-- **Loot:** `src/rpg/loot/` (generation, persist, templates, table, weights) drops items on enemy defeat.
+- Monster catalog (behaviour profiles, base stats, per-location bindings), time-based repopulation, and ecology balance (predator/prey, territorial repulsion).
 
-## Technical Design
+## Epics
 
-- **Data model:** NPCs persisted via `npc_states` table; per-encounter state is ephemeral.
-- **Combat resolution:** `src/rpg/service/dice-roll.ts` is the canonical dice engine; `src/rpg/dice/` provides notation parsing + roll execution.
-- **Difficulty:** `src/rpg/service/world-gate.ts` gates encounters by world-level opt-in.
-- **AI:** enemy AI uses `src/rpg/npc-navigation/service/` pathing with simple state machine.
-
-## Integration Points
-
-- `src/rpg/combat/` — combat mechanics
-- `src/rpg/service/battles/` — encounter orchestration
-- `src/rpg/loot/` — loot generation / persistence
-- `src/rpg/npc-navigation/service/` — NPC AI pathing
-- `src/story/quest-engine/` — quest-driven encounters
-
-## Related Epics
-
-- `.plan/epics/epic-enemies-monsters.md`
+- `.plan/epics/epic-enemies-monsters.md` (Not Started)
 - `.plan/epics/epic-battle-action-systems.md`
 - `.plan/epics/epic-rpg-core-wiring.md`

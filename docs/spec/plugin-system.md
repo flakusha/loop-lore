@@ -7,62 +7,24 @@
 
 Status: Post-MVP (v0.2+). Plugin skeleton (`src/plugins/`) loads core/community/local plugins but has NO management API, NO sandbox, NO examples.
 
-## Plugin Types
+## Implemented
 
-| Type      | Location             | Verification       |
-| --------- | -------------------- | ------------------ |
-| Core      | `plugins/core/`      | Bundled, read-only |
-| Community | `plugins/community/` | Signature required |
-| Local     | `plugins/local/`     | No verification    |
+- Plugin types: core (`plugins/core/`, bundled read-only), community (`plugins/community/`, signature required), local (`plugins/local/`, no verification).
+- Plugin manifest: `plugin.ts`/`.js` exporting the `Plugin` interface; `PluginContext` provided on `onLoad()`.
+- Naming: plugins kebab-case, tools snake_case, agent roles kebab-case, events dot-separated (`chat.message.created`).
 
-## Extension Points
+## Extension points (design)
 
-- **Tools** — AI-executable functions (web search, code exec, etc.)
-- **Agent Roles** — Pre-configured agent templates with capabilities
-- **API Routes** — Custom REST endpoints
-- **UI Components** — WebUI/TUI integration
-- **Event Handlers** — System event subscriptions
-- **Migrations** — DB schema changes
+- Tools (AI-executable functions), agent roles, API routes, UI components, event handlers, DB migrations.
 
-## Plugin Manifest
+## Not implemented / aspirational
 
-`plugin.ts` (or `.js`) exporting `Plugin` interface:
+- Registry API: `GET /api/plugins`, `POST /api/plugins/install`, `DELETE /api/plugins/:name`, enable/disable, manifest/config get/put.
+- Security model: sandboxing (Firecracker/WASM), network/file allowlists, per-execution resource limits, declared-permission grants, signed community publishers.
+- Standard tool categories.
 
-### PluginContext
+## Epics
 
-Provided on `onLoad()`:
-
-## Key Types
-
-## Loading Lifecycle
-
-## Registry API (future)
-
-```
-GET    /api/plugins                  # List installed
-POST   /api/plugins/install          # Install from registry
-DELETE /api/plugins/:name            # Uninstall
-POST   /api/plugins/:name/enable
-POST   /api/plugins/:name/disable
-GET    /api/plugins/:name/manifest
-GET    /api/plugins/:name/config
-PUT    /api/plugins/:name/config
-```
-
-## Security
-
-- Sandboxing: untrusted code in isolated containers (Firecracker/WASM)
-- Network/file access via configurable allowlists
-- Resource limits per execution
-- Permission model: plugins declare required permissions, user grants
-- Community plugins signed by trusted publishers
-- Local plugins bypass signature (user trust)
-
-## Standard Tool Categories
-
-## Naming
-
-- Plugins: kebab-case
-- Tools: snake_case
-- Agent roles: kebab-case
-- Events: dot-separated (`chat.message.created`)
+- `.plan/epics/epic-plugin-system.md`
+- `.plan/epics/epic-plugin-extension-points.md`
+- `.plan/epics/epic-plugin-management-ui.md`

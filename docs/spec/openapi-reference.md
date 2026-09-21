@@ -32,5 +32,7 @@ OpenAPI reference is generated from the live Elysia app at `src/elysia-app.ts` v
 
 ## Related Epics
 
-- `.plan/epics/epic-openapi-reference.md`
-- `.plan/epics/epic-api-openapi.md`
+- `.plan/epics/epic-openapi-reference.md` — ✅ Complete; owns the implemented generation
+  pipeline described above.
+- `.plan/epics/epic-api-openapi.md` — ⬜ Not Started API-governance slice (spec linting,
+  breaking-change diff, versioning, changelog); broader than this spec, not its home.

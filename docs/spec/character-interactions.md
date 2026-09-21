@@ -3,7 +3,10 @@
 
 # Character Interactions Specification
 
-**Status:** Final
+**Status:** Design target — aspirational. The tier modifiers, social checks, and
+interaction rules below have no implementation in `src/rpg/` or `src/characters/`
+(relationship data exists via `src/characters/services/relationships-service/`, but no
+dialogue-tier modifiers or charisma-based checks are applied anywhere).
 **Authoritative source:** `src/` and `AGENTS.md`
 
 ## Overview
@@ -37,8 +40,8 @@ Defines how characters interact with each other in chat, including relationship-
 
 ## Related Epics
 
-- `epic-social-interaction.md`
-- `epic-character-core-system.md`
+- `.plan/epics/epic-social-interaction.md`
+- `.plan/epics/epic-character-core-system.md`
 
 ## Related Tickets
 

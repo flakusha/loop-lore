@@ -228,7 +228,7 @@ Detailed UX specifications for the htmx + Alpine.js web UI.
 | ---------------------------------------------------------------------------- | ----------------------------------------------- |
 | [`frontend/chat/overview.md`](./frontend/chat/overview.md)                   | Chat types, data model, message tree            |
 | [`frontend/chat/layout.md`](./frontend/chat/layout.md)                       | Sidebar, centered width, responsive             |
-| [`frontend/chat/messages.md`](./frontend/chat/messages.md)                   | Message bubbles, markdown, media, detail levels |
+| [`frontend/chat/message-bubbles.md`](./frontend/chat/message-bubbles.md)     | Bubble styling, markdown, media, detail levels  |
 | [`frontend/chat/message-actions.md`](./frontend/chat/message-actions.md)     | Toolbars, shortcuts, threading, reactions       |
 | [`frontend/chat/generation.md`](./frontend/chat/generation.md)               | Streaming, error handling, retries              |
 | [`frontend/chat/archiving.md`](./frontend/chat/archiving.md)                 | Cascade deletion, restore, purge                |
