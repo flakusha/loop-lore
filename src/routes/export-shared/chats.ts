@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { resolveMessageContent, } from "../messages/helpers";
+import { resolveMessageContentForRender, } from "../messages/render-message-content";
 import { addChecksum, prettyJson, } from "./helpers";
 import type { ExportContext, } from "./types";
 
@@ -44,6 +44,10 @@ export async function exportChatsToZip(ctx: ExportContext,): Promise<void> {
     // Resolve message bodies to plaintext via the shared helper so the ZIP
     // export carries decoded text — never raw ciphertext (data leak) nor
     // base64 gzip (which would be opaque to importers).
+    // BUG-regex-transform-runs-at-store-time-not-render-time: mirror the
+    // render-time transform pipeline so an exported ZIP matches what
+    // the user sees in the UI for the current config.
+    const regexTransforms = ctx.config?.generation.regexTransforms ?? [];
     const messages: {
       id: string;
       role: string;
@@ -54,7 +58,7 @@ export async function exportChatsToZip(ctx: ExportContext,): Promise<void> {
     for (const row of rows) {
       let content: string;
       try {
-        content = await resolveMessageContent(ctx.database, row,);
+        content = await resolveMessageContentForRender(ctx.database, row, regexTransforms,);
       } catch {
         content = "[Encrypted — unable to decrypt]";
       }
