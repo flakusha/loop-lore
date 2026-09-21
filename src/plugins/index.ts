@@ -13,6 +13,12 @@ export {
   type MountPointLocation,
 } from "./mount-points";
 export { mergePluginConfig } from "./config-merge";
+export {
+  validateCharacterForBundle,
+  getRequirementsForBundle,
+  FANTASY_RPG_REQUIREMENTS,
+  type BundleValidationOutcome,
+} from "./bundles";
 export type {
   PluginManifest,
   PluginContext,
@@ -28,4 +34,5 @@ export type {
   EventHandlerDefinition,
   MigrationDefinition,
   PluginConfigSchema,
+  BundleCharacterRequirements,
 } from "./types";
