@@ -1849,6 +1849,10 @@
   ],
   "src/assistant/lore/audience.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-world-integration.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-character-spec-inclusion-race-origin-culture.md"
     },
@@ -1869,8 +1873,24 @@
       "source": ".plan/tickets/FEAT-seed-default-characters-identity.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-language-gated-lore-visibility.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/lore.md"
+    }
+  ],
+  "src/assistant/lore/lifecycle.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-world-lore-lifecycle-confidence-decay-distortion.md"
+    }
+  ],
+  "src/assistant/lore/lifecycle.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-world-lore-lifecycle-confidence-decay-distortion.md"
     }
   ],
   "src/assistant/memory/injection.ts": [
@@ -2319,6 +2339,12 @@
       "source": ".plan/tickets/TASK-redos-lore-activation-builds-regexp-from-author-controlled-k.md"
     }
   ],
+  "src/assistant/prompt/sections/lore.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-world-lore-lifecycle-confidence-decay-distortion.md"
+    }
+  ],
   "src/assistant/prompt/sections/lore.ts": [
     {
       "kind": "epic",
@@ -2369,6 +2395,10 @@
       "source": ".plan/tickets/TASK-lore-persona-traits-placed-as-system-messages-semantic-injec.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-world-lore-lifecycle-confidence-decay-distortion.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/lore.md"
     }
@@ -2387,6 +2417,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-ollama-outage-hard-fails-all-generations.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-sectionbuilder-interface-missing-included-memory-ids-field.md"
     },
     {
       "kind": "ticket",
@@ -4517,6 +4551,12 @@
       "source": ".plan/tickets/TASK-memory-trust-modifier-wiring.md"
     }
   ],
+  "src/characters/services/relationships-service/types.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-shared-character-domain-models.md"
+    }
+  ],
   "src/characters/services/relationships-service/write.ts": [
     {
       "kind": "epic",
@@ -4597,8 +4637,16 @@
       "source": ".plan/epics/epic-character-internal-traits.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-world-integration.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-066.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-alignment-speech-social-context.md"
     },
     {
       "kind": "ticket",
@@ -4607,6 +4655,26 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-character-internal-traits.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-surfaces-for-richer-character-extensions.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-migration-tooling-for-legacy-to-rich-character-data.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-shared-character-domain-models.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-skill-check-slash-commands.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-wire-plugin-bundles-to-richer-character-extensions.md"
     },
     {
       "kind": "spec",
@@ -9289,6 +9357,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-045.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-language-gated-lore-visibility.md"
     }
   ],
   "src/db/enums-character/nsfw.ts": [
@@ -10043,6 +10115,14 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-db-migration-compaction.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-memory-audit-log-action-column-typed-string-not-union.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-shadow-notes-table-missing-ttl-visibility-author-type-column.md"
     },
     {
       "kind": "spec",
@@ -10979,6 +11059,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-emotion-intent-detection.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-migration-tooling-for-legacy-to-rich-character-data.md"
     },
     {
       "kind": "ticket",
@@ -13887,6 +13971,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-npc-management-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-surfaces-for-richer-character-extensions.md"
     },
     {
       "kind": "ticket",
@@ -17076,7 +17164,15 @@
   "src/generation/generation-routes/regenerate.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-buildstyleprompt-never-injected-into-llm-request.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-buildstyleprompt-result-returned-but-never-consumed.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-frontend-regeneratevariant-does-not-pass-style-to-api.md"
     },
     {
       "kind": "ticket",
@@ -18874,10 +18970,18 @@
   "src/memory/audit.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-delete-audit-action-has-no-unit-test.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-inject-audit-action-has-no-unit-test.md"
     }
   ],
   "src/memory/audit.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-memory-audit-log-action-column-typed-string-not-union.md"
+    },
     {
       "kind": "spec",
       "source": "docs/spec/observability.md"
@@ -19341,6 +19445,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-v1-csrf-exempt-set-missing-api-v1-prefixes-for-session-mint-.md"
     },
     {
       "kind": "ticket",
@@ -25633,10 +25741,20 @@
       "source": ".plan/tickets/BUG-battle-equipment-loot-no-auth-guard.md"
     }
   ],
+  "src/routes/v1/base-surface.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-v1-csrf-exempt-set-missing-api-v1-prefixes-for-session-mint-.md"
+    }
+  ],
   "src/routes/v1/index.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-api-versioning.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-v1-csrf-exempt-set-missing-api-v1-prefixes-for-session-mint-.md"
     },
     {
       "kind": "ticket",
@@ -26295,6 +26413,20 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-rpg-mechanics.md"
+    }
+  ],
+  "src/rpg/combat/conditions.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-condition-driven-npc-behavior.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-shared-character-domain-models.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-weather-conditions-vitals-bridge.md"
     }
   ],
   "src/rpg/combat/damage.ts": [
@@ -27685,12 +27817,20 @@
   ],
   "src/rpg/service/character-stats.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-world-integration.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-rpg-skill-combos-and-synergies.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-rpg-skill-points-on-level-up.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-weather-conditions-vitals-bridge.md"
     },
     {
       "kind": "spec",
@@ -27823,6 +27963,20 @@
       "source": ".plan/tickets/FEAT-skills.md"
     }
   ],
+  "src/rpg/skills/service": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-world-integration.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-skill-biome-hazard-countermeasures.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-skill-check-slash-commands.md"
+    }
+  ],
   "src/rpg/skills/service.test.ts": [
     {
       "kind": "ticket",
@@ -27889,6 +28043,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-skills-professions-config.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-shared-character-domain-models.md"
     }
   ],
   "src/rpg/social/barter.ts": [
@@ -27937,6 +28095,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-045.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-language-gated-lore-visibility.md"
     }
   ],
   "src/rpg/species-nsfw/compatibility.ts": [
@@ -28423,6 +28585,18 @@
     {
       "kind": "spec",
       "source": "docs/spec/platform-support.md"
+    }
+  ],
+  "src/scripts/migrate-character-legacy.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-migration-tooling-for-legacy-to-rich-character-data.md"
+    }
+  ],
+  "src/scripts/migrate-character-legacy.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-migration-tooling-for-legacy-to-rich-character-data.md"
     }
   ],
   "src/scripts/version-bump.ts": [
@@ -29050,6 +29224,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-equipment-market-demand-feedback.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-odysseus-manage-tool-parity-evaluation.md"
     },
     {
@@ -29367,6 +29545,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-origin-capture-generation-seeding.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-world-lore-lifecycle-confidence-decay-distortion.md"
     },
     {
       "kind": "spec",
@@ -29740,7 +29922,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-alignment-speech-social-context.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-timeline-steering-close-roll-race-and-empty-timelineid-gap.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-world-state-motivation-context.md"
     },
     {
       "kind": "spec",
