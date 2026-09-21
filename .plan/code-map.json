@@ -1839,6 +1839,10 @@
   ],
   "src/assistant/lore/audience.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-world-integration.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-character-spec-inclusion-race-origin-culture.md"
     },
@@ -1857,6 +1861,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-seed-default-characters-identity.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-language-gated-lore-visibility.md"
     },
     {
       "kind": "spec",
@@ -4649,6 +4657,12 @@
       "source": ".plan/tickets/TASK-memory-trust-modifier-wiring.md"
     }
   ],
+  "src/characters/services/relationships-service/types.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-shared-character-domain-models.md"
+    }
+  ],
   "src/characters/services/relationships-service/write.ts": [
     {
       "kind": "epic",
@@ -4737,8 +4751,16 @@
       "source": ".plan/epics/epic-character-internal-traits.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-world-integration.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-066.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-alignment-speech-social-context.md"
     },
     {
       "kind": "ticket",
@@ -4755,6 +4777,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-migration-tooling-for-legacy-to-rich-character-data.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-shared-character-domain-models.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-skill-check-slash-commands.md"
     },
     {
       "kind": "ticket",
@@ -9473,6 +9503,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-045.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-language-gated-lore-visibility.md"
     }
   ],
   "src/db/enums-character/nsfw.ts": [
@@ -26775,6 +26809,20 @@
       "source": ".plan/tickets/TASK-rpg-mechanics.md"
     }
   ],
+  "src/rpg/combat/conditions.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-condition-driven-npc-behavior.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-shared-character-domain-models.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-weather-conditions-vitals-bridge.md"
+    }
+  ],
   "src/rpg/combat/damage.ts": [
     {
       "kind": "ticket",
@@ -28145,12 +28193,20 @@
   ],
   "src/rpg/service/character-stats.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-world-integration.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-rpg-skill-combos-and-synergies.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-rpg-skill-points-on-level-up.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-weather-conditions-vitals-bridge.md"
     },
     {
       "kind": "spec",
@@ -28275,6 +28331,20 @@
       "source": ".plan/tickets/FEAT-skills.md"
     }
   ],
+  "src/rpg/skills/service": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-world-integration.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-skill-biome-hazard-countermeasures.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-skill-check-slash-commands.md"
+    }
+  ],
   "src/rpg/skills/service.test.ts": [
     {
       "kind": "ticket",
@@ -28341,6 +28411,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-skills-professions-config.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-shared-character-domain-models.md"
     }
   ],
   "src/rpg/social/barter.ts": [
@@ -28389,6 +28463,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-045.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-language-gated-lore-visibility.md"
     }
   ],
   "src/rpg/species-nsfw/compatibility.ts": [
@@ -29508,6 +29586,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-equipment-market-demand-feedback.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-odysseus-manage-tool-parity-evaluation.md"
     },
     {
@@ -30246,7 +30328,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-alignment-speech-social-context.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-timeline-steering-close-roll-race-and-empty-timelineid-gap.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-world-state-motivation-context.md"
     },
     {
       "kind": "spec",

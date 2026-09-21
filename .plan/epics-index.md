@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 295 epics
+**Total:** 296 epics
 
 ## Summary
 
@@ -70,6 +70,7 @@
 | ⬜ Not Started | BYOK API Keys (Bring Your Own Key) | High | Large | 10 | [epic-byok-api-keys.md](/.plan/epics/epic-byok-api-keys.md) |
 | ⬜ Not Started | BYOK Local Models (Bring Your Own Model) | High | Large | 16 | [epic-byok-local-models.md](/.plan/epics/epic-byok-local-models.md) |
 | 🟡 In Progress — proxy-termination slice landed (57dc551de); work items below open | Certificate & TLS Management | High | Large | 6 | [epic-certificate-and-tls-management.md](/.plan/epics/epic-certificate-and-tls-management.md) |
+| Not Started | Character ↔ World Integration (Shared Domain Models) | High | Large (composite) | 14 | [epic-character-world-integration.md](/.plan/epics/epic-character-world-integration.md) |
 | 🟡 Partial — character core services (traits, mood, relationships, avatars, licensing) + API/IO routes + tests complete; RPG stat system + template system in progress | Character Core System | High | High | 3 | [epic-character-core-system.md](/.plan/epics/epic-character-core-system.md) |
 | 🟡 Draft | Character Growth & Arc Progression | High | High | 0 | [epic-character-growth.md](/.plan/epics/epic-character-growth.md) |
 | 🟡 Draft — extended with behavioral dimensions (D7–D9: coping, approach, autonomy) | Character Internal Traits, Aspirations & Moral Disposition | High | Medium | 0 | [epic-character-internal-traits.md](/.plan/epics/epic-character-internal-traits.md) |
@@ -877,6 +878,15 @@ A blog subsystem supporting both **LLM-authored** and **human-authored** posts.
 - **Type:** Task
 - **Tags:** tls, https, certificates, acme, federation, security, transport
 - **File:** `.plan/epics/epic-certificate-and-tls-management.md`
+
+### Character ↔ World Integration (Shared Domain Models)
+
+- **Status:** Not Started
+- **Priority:** High
+- **Effort:** Large (composite)
+- **Type:** Feature Epic
+- **Tags:** character, world, integration, shared-models, rpg, emergence
+- **File:** `.plan/epics/epic-character-world-integration.md`
 
 ### Character Core System
 
