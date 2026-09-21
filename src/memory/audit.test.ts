@@ -348,3 +348,82 @@ describe("memory audit — purge hook (decay + purge)", () => {
     expect(rows.some((r,) => r.action === "decay"),).toBe(true,);
   });
 });
+
+describe("memory audit — delete and inject actions (FEAT-075 coverage)", () => {
+  test("recordAuditLog persists a `delete` row when a memory is removed", async () => {
+    // BUG-delete-audit-action-has-no-unit-test
+    const userId = crypto.randomUUID();
+    const actorId = crypto.randomUUID();
+    await insertUsers(db, "test-user", "Test User", { id: userId, },);
+    await insertActors(db, "test-actor", { id: actorId, user_id: userId, },);
+    await insertActorMemories(db, actorId, "to be deleted", { id: "mem-del", },);
+
+    await recordAuditLog(db, [{
+      memoryId: "mem-del",
+      actorId,
+      userId,
+      action: "delete",
+      details: { method: "DELETE", path: "/api/v1/actors/x/memories/mem-del", },
+    },],);
+
+    const rows = await runRaw<{ action: string; memory_id: string }>(
+      "SELECT action, memory_id FROM memory_audit_log WHERE memory_id = 'mem-del'",
+    );
+    expect(rows,).toHaveLength(1,);
+    expect(rows[0]?.action,).toBe("delete",);
+  });
+
+  test("recordAuditLog persists an `inject` row when memories enter a prompt", async () => {
+    // BUG-inject-audit-action-has-no-unit-test
+    const userId = crypto.randomUUID();
+    const actorId = crypto.randomUUID();
+    await insertUsers(db, "test-user", "Test User", { id: userId, },);
+    await insertActors(db, "test-actor", { id: actorId, user_id: userId, },);
+    await insertActorMemories(db, actorId, "first injected", { id: "mem-inj-1", },);
+    await insertActorMemories(db, actorId, "second injected", { id: "mem-inj-2", },);
+
+    // memorySection.build emits one inject row per actor carrying the full
+    // set of included IDs in `details.memoryIds`. The unit test asserts
+    // the audit payload is what a downstream audit list endpoint would see.
+    await recordAuditLog(db, [{
+      memoryId: "mem-inj-1",
+      actorId,
+      userId,
+      action: "inject",
+      details: {
+        chatId: "chat-1",
+        memoryIds: ["mem-inj-1", "mem-inj-2",],
+        actorCount: 1,
+      },
+    },],);
+
+    const rows = await runRaw<{ action: string; details: string }>(
+      "SELECT action, details FROM memory_audit_log WHERE action = 'inject'",
+    );
+    expect(rows,).toHaveLength(1,);
+    expect(rows[0]?.action,).toBe("inject",);
+    const details = JSON.parse(rows[0]?.details ?? "{}") as {
+      memoryIds: string[];
+    };
+    expect(details.memoryIds,).toEqual(["mem-inj-1", "mem-inj-2",],);
+  });
+});
+
+describe("memory audit — DB CHECK guard (FEAT-075 schema enforcement)", () => {
+  test("inserting an unknown action value is rejected by the DB trigger", async () => {
+    // BUG-memory-audit-log-action-column-typed-string-not-union
+    // The service layer's union type guards TypeScript callers, but a raw
+    // SQL insert with a typo must still fail at the schema level.
+    const userId = crypto.randomUUID();
+    const actorId = crypto.randomUUID();
+    await insertUsers(db, "test-user", "Test User", { id: userId, },);
+    await insertActors(db, "test-actor", { id: actorId, user_id: userId, },);
+    await insertActorMemories(db, actorId, "seed", { id: "mem-bad", },);
+
+    await expect(
+      sql`INSERT INTO memory_audit_log (id, memory_id, actor_id, user_id, action, details)
+            VALUES (${crypto.randomUUID()}, ${"mem-bad"}, ${actorId}, ${userId}, ${"bogus_action"}, ${sql.val(JSON.stringify({}),)})
+          `.execute(db,),
+    ).rejects.toThrow(/not in allowed enum/);
+  });
+});
