@@ -226,6 +226,15 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       thinking: llm.thinking,
     },);
     log.debug("message stored", { messageId: stored.messageId, contentLength: llm.content.length, requestId, },);
+    // BUG-regex-transform-runs-at-store-time-not-render-time: the store
+    // path no longer applies transforms (they run at render-time in
+    // routes/messages/read.ts). `stored.transformed` is therefore always
+    // false here; record it explicitly so the flag has a consumer and
+    // log consumers can detect a regression where a future caller
+    // reintroduces store-time transforms.
+    if (stored.transformed) {
+      log.warn("unexpected store-time transform applied", { messageId: stored.messageId, requestId, },);
+    }
 
     await applyPostStoreEffects({
       d,
