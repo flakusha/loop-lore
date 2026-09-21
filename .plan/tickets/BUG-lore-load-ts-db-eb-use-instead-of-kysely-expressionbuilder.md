@@ -68,3 +68,10 @@ CHECK_REPORT_JSCPD=/home/flak/git-ai/loop-lore/tree/lore-lifecycle-followup/.tmp
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Resolution
+
+**Duplicate of `BUG-lore-load-ts-uses-any-for-db-eb-instead-of-kysely-expression`**.
+The ticket body captured here was malformed (HTML-stripped title, summary with
+backticks, trailing check-report banner accidentally inlined). Same fix landed
+in `0da9d9b0`. Closing without a separate commit.
