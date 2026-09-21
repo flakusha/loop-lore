@@ -7,7 +7,7 @@
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)
 
-**Status:** ⬜ Not Started
+**Status:** ❌ Rejected (already on dev, 2026-09-21)
 **Priority:** medium
 **Effort:** Small
 
