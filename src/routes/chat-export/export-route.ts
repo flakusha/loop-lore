@@ -69,7 +69,7 @@ export function exportChatRoute({ database, config, }: HandlerOpts, prefix = "/a
       // BUG-regex-transform-runs-at-store-time-not-render-time: mirror the
       // render-time transform pipeline so an exported file matches what
       // the user sees in the UI for the current config.
-      const regexTransforms = config?.generation.regexTransforms ?? [];
+      const regexTransforms = config?.generation?.regexTransforms ?? [];
       const messages: MessageData[] = [];
       for (const row of rows) {
         let content: string;

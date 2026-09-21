@@ -232,13 +232,15 @@ export function auditEntriesForFilter(entries: AuditEntry[], filter: AuditAction
 export function injectAuditKinds(entry: AuditEntry, panel: MemoryPanelState,): string[] {
   if (entry.action !== "inject") { return []; }
   const details = parseAuditDetails(entry.details,);
-  const ids = Array.isArray(details.memoryIds,) ? (details.memoryIds as unknown[]).filter((id,): id is string => typeof id === "string",) : [];
+  const ids = Array.isArray(details.memoryIds,)
+    ? (details.memoryIds as unknown[]).filter((id,): id is string => typeof id === "string")
+    : [];
   if (ids.length === 0) { return []; }
-  const byId = new Map<string, MemoryEntry,>();
+  const byId = new Map<string, MemoryEntry>();
   for (const list of [panel.characterMemories, panel.assistantMemories, panel.worldMemories,]) {
     for (const m of list) { byId.set(m.id, m,); }
   }
-  const seen = new Set<string,>();
+  const seen = new Set<string>();
   for (const id of ids) {
     const mem = byId.get(id,);
     if (mem?.extractionKind) { seen.add(mem.extractionKind,); }

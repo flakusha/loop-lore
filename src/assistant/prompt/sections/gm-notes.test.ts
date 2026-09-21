@@ -242,6 +242,6 @@ describe("fetchUnrevealedShadowNotes + formatShadowSteering", () => {
     );
 
     const notes = await fetchUnrevealedShadowNotes(db, "chat-1",);
-    expect(notes.map((n,) => n.content,),).toEqual(["Fresh.", "No TTL.",],);
+    expect(notes.map((n,) => n.content),).toEqual(["Fresh.", "No TTL.",],);
   });
 });
