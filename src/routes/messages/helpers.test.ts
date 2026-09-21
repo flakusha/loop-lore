@@ -1,5 +1,8 @@
 import { describe, expect, test, } from "bun:test";
-import { parseToolCalls, parseToolResultMeta, } from "./helpers";
+import { ContentEncoding, } from "../../db/enums";
+import type { DB, } from "../../db/schema";
+import { createTestDb, } from "../../test-utils/create-test-db";
+import { parseToolCalls, parseToolResultMeta, resolveMessageContentForRender, } from "./helpers";
 
 describe("parseToolCalls", () => {
   test("returns null for null/undefined/empty input", () => {
@@ -74,5 +77,59 @@ describe("parseToolResultMeta", () => {
   test("truthy non-true tool_error stays false", () => {
     expect(parseToolResultMeta(JSON.stringify({ tool_name: "t", tool_error: 1, },),).toolError,).toBe(false,);
     expect(parseToolResultMeta(JSON.stringify({ tool_name: "t", tool_error: "true", },),).toolError,).toBe(false,);
+  });
+});
+
+describe("resolveMessageContentForRender (BUG-regex-transform-runs-at-store-time-not-render-time)", () => {
+  test("returns plaintext untouched when no transforms are configured", async () => {
+    const { db, sqlite, } = await createTestDb();
+    try {
+      const result = await resolveMessageContentForRender(
+        db as unknown as import("kysely").Kysely<DB>,
+        { content: "hello   world", content_encoding: ContentEncoding.Identity, key_id: null, chat_id: "c1", },
+        [],
+      );
+      expect(result,).toBe("hello   world");
+    } finally {
+      sqlite.close();
+    }
+  });
+
+  test("applies transforms at render time on identity-encoded content", async () => {
+    const { db, sqlite, } = await createTestDb();
+    try {
+      const result = await resolveMessageContentForRender(
+        db as unknown as import("kysely").Kysely<DB>,
+        { content: "hello   world", content_encoding: ContentEncoding.Identity, key_id: null, chat_id: "c1", },
+        [{ name: "collapse spaces", pattern: "\\s+", replacement: " ", enabled: true, },],
+      );
+      expect(result,).toBe("hello world");
+    } finally {
+      sqlite.close();
+    }
+  });
+
+  test("does not mutate the stored content (transforms are render-only)", async () => {
+    // The original message shape still carries the raw text. A future
+    // call with a different transform set would re-render correctly.
+    const stored = { content: "AA bb CC", content_encoding: ContentEncoding.Identity, key_id: null, chat_id: "c1", };
+    const { db, sqlite, } = await createTestDb();
+    try {
+      const lowerToX = await resolveMessageContentForRender(
+        db as unknown as import("kysely").Kysely<DB>,
+        stored,
+        [{ name: "lower-to-X", pattern: "[a-z]+", replacement: "X", enabled: true, },],
+      );
+      const upperToY = await resolveMessageContentForRender(
+        db as unknown as import("kysely").Kysely<DB>,
+        stored,
+        [{ name: "upper-to-Y", pattern: "[A-Z]+", replacement: "Y", enabled: true, },],
+      );
+      expect(lowerToX,).toBe("AA X CC");
+      expect(upperToY,).toBe("Y bb Y");
+      expect(stored.content,).toBe("AA bb CC");
+    } finally {
+      sqlite.close();
+    }
   });
 });
