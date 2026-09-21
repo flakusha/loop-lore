@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 293 epics
+**Total:** 295 epics
 
 ## Summary
 
@@ -21,12 +21,14 @@
 | 📝 Draft | Epic: Conversation Branching | Medium | Medium | 3 | [epic-conversation-branching.md](/.plan/epics/epic-conversation-branching.md) |
 | 📝 Draft | Epic: DB as Cold Storage for Extreme-Performance API-Heavy Workloads | Low (speculative — "far-fetched" scenario, only justified by measured need) | Large | 0 | [epic-db-cold-storage-high-perf.md](/.plan/epics/epic-db-cold-storage-high-perf.md) |
 | 📝 Draft | Epic: DB Content Versioning & Migrations Reconciliation | High | Medium | 5 | [epic-db-content-versioning.md](/.plan/epics/epic-db-content-versioning.md) |
+| 📝 Draft | Epic: Instance Federation — Identity, Switching & Cross-Sync | Medium | High | 0 | [epic-instance-federation.md](/.plan/epics/epic-instance-federation.md) |
 | 📝 Draft | Epic: Inventory | High | High | 4 | [epic-inventory.md](/.plan/epics/epic-inventory.md) |
 | 📝 Draft | Epic: Items | High | High | 4 | [epic-items.md](/.plan/epics/epic-items.md) |
 | 📝 Draft | Epic: Locations | High | High | 4 | [epic-locations.md](/.plan/epics/epic-locations.md) |
 | 📝 Draft | Epic: NPCs | High | High | 4 | [epic-npcs.md](/.plan/epics/epic-npcs.md) |
 | 📝 Draft | Epic: Plugin Extension Points | Medium | Medium | 4 | [epic-plugin-extension-points.md](/.plan/epics/epic-plugin-extension-points.md) |
 | 📝 Draft | Epic: Relationships | High | High | 1 | [epic-relationships.md](/.plan/epics/epic-relationships.md) |
+| 📝 Draft | Epic: Social Graph | High | High | 0 | [epic-social-graph.md](/.plan/epics/epic-social-graph.md) |
 | 📝 Draft | Epic: Time Scale | High | Medium | 8 | [epic-time-scale.md](/.plan/epics/epic-time-scale.md) |
 | 📝 Draft | Player State Machine — Cross-System Design | Medium | Medium | 0 | [epic-player-state-machine.md](/.plan/epics/epic-player-state-machine.md) |
 | 📝 Draft | Resource Provision | High | Large | 12 | [epic-resource-provision.md](/.plan/epics/epic-resource-provision.md) |
@@ -397,6 +399,17 @@ Enable draft/alternative flows via tree-structured message history. Allows users
 
 Track DB schema version, content format versions, fix migration gaps. Ensures the database schema and content formats are versioned and migrations are documented and tested.
 
+### Epic: Instance Federation — Identity, Switching & Cross-Sync
+
+- **Status:** 📝 Draft
+- **Priority:** Medium
+- **Effort:** High
+- **Type:** Feature Epic
+- **Tags:** federation, instances, identity, handles, cross-sync, multi-instance
+- **File:** `.plan/epics/epic-instance-federation.md`
+
+User-to-instance federation: switch the active instance context (worlds, chats, characters) and join a remote instance as a first-class participant; Lemmy-style `@user@instance` handle extension carrying origin-server information; and future cross-sync of shared worlds and location state between multiple servers (also usable for business processing across branches in multiple countries).
+
 ### Epic: Inventory
 
 - **Status:** 📝 Draft
@@ -462,6 +475,17 @@ Wire up registered-but-unwired plugin extension points. The plugin system has ty
 - **File:** `.plan/epics/epic-relationships.md`
 
 Character relationship system — romance, friendship, rivalry, loyalty, trust, and social bonding mechanics. Covers relationship states, progression, decay, jealousy, commitment, and social dynamics between characters and the player.
+
+### Epic: Social Graph
+
+- **Status:** 📝 Draft
+- **Priority:** High
+- **Effort:** High
+- **Type:** Feature Epic
+- **Tags:** social, friends, favorites, blocking, avoid, discovery, group-chat, blog
+- **File:** `.plan/epics/epic-social-graph.md`
+
+User-facing social graph for loop-lore: friends, favorites (people and characters), discovery, chat entry points, and safety controls (block/ignore, avoid-characters). This is distinct from `epic-social-hub.md` (external platform adapters) — this epic owns the *internal* graph between loop-lore users and characters, and the rules by which the graph gates chats, RPG joins, and blog visibility.
 
 ### Epic: Time Scale
 
