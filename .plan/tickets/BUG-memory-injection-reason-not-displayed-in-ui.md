@@ -7,7 +7,7 @@
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (already on dev, 2026-09-21)
 **Priority:** medium
 **Effort:** Medium
 
@@ -20,6 +20,16 @@
 **Fix**: Surface extractionKind/injection reason in the memory panel entry and in the audit row.
 
 **Source**: FEAT-025 gap audit (.tmp/audit/SYNTHESIS.md)
+
+## Resolution
+
+Already fixed on dev by `07bf3c5d1` (`fix(memory): drop dead stylePrompt; surface extractionKind in UI`) and `540e6427c` (`feat(memory-ui): create form type selector + injection reason`).
+Verified 2026-09-21 against dev HEAD `b85385c85`:
+
+- `src/frontend/alpine/memory-panel.ts` — MemoryEntry surfaces `extractionKind` (injection reason) on the panel and audit row.
+- Cross-references: `BUG-memory-create-form-hardcodes-episodic-type` is also ✅ Resolved (same commit cluster).
+
+No code change required.
 
 ## Acceptance Criteria
 
