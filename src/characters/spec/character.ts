@@ -26,6 +26,13 @@ import type { GrowthMode, } from "./growth";
 import type { LorebookData, } from "./lorebook";
 
 // ── Feature Flags ───────────────────────────────────
+
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// src/characters/spec/character.ts — Character-related types
+// size-allow: 400
+// Consolidated spec catalogue (was 4 sibling files; inlined to single export surface).
+// ── Feature Flags ───────────────────────────────────
 /** */
 export interface CharacterFeatureFlags {
   rpg_mechanics?: boolean;
