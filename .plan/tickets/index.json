@@ -30978,5 +30978,21 @@
     "source": ".plan/tickets/WIRE-nsfw-audit-page-missing-inline-authz.md",
     "status": "done",
     "resolved_by": "2ac5cf29"
+  },
+  "TASK-WORLD-LORE-LIFECYCLE-CONFIDENCE-DECAY-DISTORTION": {
+    "hash": "9a60fc2",
+    "extid": "TASK-WORLD-LORE-LIFECYCLE-CONFIDENCE-DECAY-DISTORTION",
+    "type": "TASK",
+    "title": "TASK: World Lore Lifecycle (confidence/decay/distortion)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-lore-knowledge",
+    "tags": [
+      "lore",
+      "worlds"
+    ],
+    "source": ".plan/tickets/TASK-world-lore-lifecycle-confidence-decay-distortion.md",
+    "git_issue": "e6986ec",
+    "status": "open"
   }
 }
