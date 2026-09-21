@@ -252,6 +252,6 @@ export function characterExtensionEditorFactory(
   return state;
 }
 
-(globalThis as Record<string, unknown>,).characterExtensionEditorFactory = characterExtensionEditorFactory;
-(globalThis as Record<string, unknown>,).serializeExtensions = serializeExtensions;
-(globalThis as Record<string, unknown>,).checkBundle = checkBundle;
+(globalThis as Record<string, unknown>).characterExtensionEditorFactory = characterExtensionEditorFactory;
+(globalThis as Record<string, unknown>).serializeExtensions = serializeExtensions;
+(globalThis as Record<string, unknown>).checkBundle = checkBundle;
