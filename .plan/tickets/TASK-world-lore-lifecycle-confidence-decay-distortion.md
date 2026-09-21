@@ -13,6 +13,8 @@
 **Epic:** epic-lore-knowledge
 **Tags:** lore, worlds
 
+**Acceptance Criteria:** See ## Acceptance Criteria below (5 migrations + lifecycle helper + prompt wiring + spec docs).
+
 ## Summary
 
 `world_lore_entries` has no concept of source reliability or temporal decay. A rumour promoted at world-day 0 is injected with the same weight as a fact verified at world-day 1000. `promoteEventToLore` (`src/story/events/promote-lore.ts`) writes to the same table. Need lifecycle metadata so `loreSection` can drop low-confidence lore and tag high-distortion entries.
