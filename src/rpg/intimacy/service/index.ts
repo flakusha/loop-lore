@@ -82,6 +82,37 @@ export class IntimacyService {
   }
 
   /**
+   * TASK-033 named signature: apply an interaction and return the post-delta
+   * intimacy level (a score on the `IntimacyLevel` enum).
+   *
+   * Routes through {@link applyAction} so the NSFW capability gate, CHA/WIS
+   * stat modifiers, and threshold events fire identically. Bypassing the gate
+   * is impossible from this surface — the gate is enforced inside the
+   * dispatcher when `opts.gate` is supplied.
+   * @param actor - Initiating actor id.
+   * @param target - Target actor id.
+   * @param action - The intimacy action descriptor.
+   * @param worldId - Optional world scope (null = cross-world).
+   * @returns Post-delta intimacy score.
+   * @throws {CapabilityBlockedError} when the NSFW gate denies the action.
+   */
+  async applyInteraction(
+    actor: string,
+    target: string,
+    action: ApplyIntimacyActionOpts["action"],
+    worldId?: string | null,
+  ): Promise<number> {
+    const result = await this.applyAction({
+      database: this.db,
+      actorId: actor,
+      targetActorId: target,
+      worldId: worldId ?? null,
+      action,
+    },);
+    return result.newScore;
+  }
+
+  /**
    * Get all intimacy pairs for an actor (optionally in a world).
    * @param actorId
    * @param worldId
