@@ -39,4 +39,6 @@ export interface ChatMemoryState {
   loadAudit(action?: AuditAction | null,): Promise<void>;
   loadMoreAudit(): Promise<void>;
   setAuditActionFilter(action: AuditAction | null,): Promise<void>;
+  _auditActionIcon(action: AuditAction,): string;
+  _auditActionLabel(action: AuditAction,): string;
 }
