@@ -48,6 +48,7 @@ Containerize the loop-lore application and establish deployment strategies for b
    - Cost analysis for P3-P5 instance tiers
    - Performance benchmarks for LLM inference (token latency, throughput)
    - Recommendation report with pros/cons for each provider
+   - Delivered as: `docs/infrastructure/evaluate-hostings.md` (primary), `docs/infrastructure/hosting-comparison.md` (qualitative), `docs/infrastructure/gpu-requirements.md` (sizing matrix), `docs/infrastructure/benchmark-results.csv` (raw data). Recommendation: RunPod primary, Lambda Labs secondary, Hetzner budget.
 
 4. **TASK-004**: CI/CD pipeline
    - Automated Docker build and deployment to serving infrastructure

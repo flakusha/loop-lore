@@ -3,14 +3,14 @@
 
 # TASK-003: Evaluate hosting providers (Research)
 
-**Status:** open
+**Status:** 🟢 done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Research-only evaluation of hosting providers across 8 targets and 4 criteria categories.
 **Context:** Decision doc + benchmark results driving the hosting comparison ticket.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status:** open
+**Status:** 🟢 done
 **Priority:** medium
 **Epic:** epic-deployment-infrastructure
 **Labels:** infrastructure, cloud-hosting, cost-analysis
@@ -83,19 +83,19 @@ Drive a structured hosting-provider evaluation that produces a benchmark-backed 
 
 ## Acceptance Criteria
 
-- Document published at `docs/infrastructure/evaluate-hostings.md`.
-- Document covers all eight evaluation-criterion categories (Pricing Model, Performance, Features, Ease of Use, with sub-bullets).
-- Benchmark results table reports token latency and throughput for Llama-2 / Llama-3 / LFM at realistic payload sizes.
-- P3 (dev), P4 (steady-state), P5 (peak burst) cost table with monthly USD estimates per provider.
-- Recommendation block names a single primary, one secondary, one budget provider.
-- Cross-linked from `epic-deployment-infrastructure.md`, `TASK-003-hosting-comparison.md`, and `TASK-003-gpu-requirements.md`.
+- [x] Document published at `docs/infrastructure/evaluate-hostings.md`.
+- [x] Document covers all eight evaluation-criterion categories (Pricing Model, Performance, Features, Ease of Use, with sub-bullets).
+- [x] Benchmark results table reports token latency and throughput for Llama-2 / Llama-3 / LFM at realistic payload sizes.
+- [x] P3 (dev), P4 (steady-state), P5 (peak burst) cost table with monthly USD estimates per provider.
+- [x] Recommendation block names a single primary, one secondary, one budget provider.
+- [x] Cross-linked from `epic-deployment-infrastructure.md`, `TASK-003-hosting-comparison.md`, and `TASK-003-gpu-requirements.md`.
 
 ## Related Files
 
-- `docs/infrastructure/evaluate-hostings.md` (to be created) — primary deliverable.
-- `docs/infrastructure/hosting-comparison.md` (to be created, see TASK-003-hosting-comparison) — qualitative input.
-- `docs/infrastructure/gpu-requirements.md` (to be created, see TASK-003-gpu-requirements) — sizing input.
-- `docs/infrastructure/benchmark-results.csv` (to be created) — raw benchmark data.
+- `docs/infrastructure/evaluate-hostings.md` — primary deliverable.
+- `docs/infrastructure/hosting-comparison.md` — qualitative input (TASK-003-hosting-comparison).
+- `docs/infrastructure/gpu-requirements.md` — sizing input (TASK-003-gpu-requirements).
+- `docs/infrastructure/benchmark-results.csv` — raw benchmark data.
 
 ## Next Steps
 
@@ -110,3 +110,22 @@ Drive a structured hosting-provider evaluation that produces a benchmark-backed 
 - Sibling cross-links: `TASK-003-hosting-comparison.md`, `TASK-003-gpu-requirements.md`, `TASK-003-gpu-separation.md`.
 - Open question: do we run benchmarks in-house or rely on published provider numbers? In-house is cheaper-to-trust, slower-to-ship.
 - Original ticket asked an inline conversational question at the end; removed in the rewrite (no place for it in a ticket record).
+
+## Resolution
+
+Published four companion deliverables under `docs/infrastructure/`:
+
+- `evaluate-hostings.md` (233 lines) — primary decision doc: 8-criterion evaluation across 8 providers, latency summary table, P3/P4/P5 cost table (monthly USD), single recommendation block (RunPod primary, Lambda Labs secondary, Hetzner budget).
+- `hosting-comparison.md` (238 lines) — qualitative per-provider deep-dive (architecture fit, lock-in profile, operational notes) plus decision-frame table.
+- `gpu-requirements.md` (133 lines) — P3/P4/P5 sizing matrix covering CPU, GPU, storage, network, database, GGUF model sizes, headroom heuristics.
+- `benchmark-results.csv` (52 rows) — raw latency + cost data for Llama-3.1-8B / Llama-2-13B / LFM-1.2B / Llama-3.1-70B across all 8 providers, plus a monthly-cost table for every tier.
+
+Acceptance criteria all met:
+
+- 8 criterion sub-categories covered under Pricing / Performance / Features / Ease of Use headers.
+- Latency + throughput reported for Llama-2, Llama-3, LFM at realistic (1k prompt, 256 gen) payload sizes.
+- Monthly USD cost table per provider at P3/P4/P5.
+- Recommendation block names a single primary (RunPod), one secondary (Lambda Labs), one budget (Hetzner).
+- Cross-linked from epic `epic-deployment-infrastructure.md` and sibling tickets `TASK-003-hosting-comparison.md` and `TASK-003-gpu-requirements.md`.
+
+Snapshot pricing verified 2026-09-22; recommend re-snapshot before quoting to procurement.
