@@ -21,6 +21,7 @@ export const CSRF_COOKIE_MAX_AGE_SECS = 86_400; // 24h, mirrors Bun.CSRF default
  * is deliberately NOT exempt — see BUG-logout-route-exempt-from-csrf-verification-logoff-csrf.
  */
 export const CSRF_EXEMPT_ROUTES: ReadonlySet<string> = new Set([
+  // v0
   "POST /api/auth/login",
   "POST /api/auth/register",
   "POST /api/demo-login",
@@ -30,6 +31,12 @@ export const CSRF_EXEMPT_ROUTES: ReadonlySet<string> = new Set([
   // no user-data mutation), so forged cross-origin events can only spam
   // logs; the client-side session cap and server size limits bound that.
   "POST /api/telemetry/event",
+  // v1
+  "POST /api/v1/auth/login",
+  "POST /api/v1/auth/register",
+  "POST /api/v1/demo-login",
+  // (same rationale as v0, above)
+  "POST /api/v1/telemetry/event",
 ],);
 
 /** HTTP methods that require CSRF verification when the route is not exempt. */

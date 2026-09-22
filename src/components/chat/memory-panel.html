@@ -269,7 +269,9 @@
             data-testid="memory-audit-row"
           >
             <div style="display: flex; justify-content: space-between; gap: var(--space-2); margin-bottom: var(--space-1)">
-              <span style="font-weight: 600" x-text="entry.action"></span>
+              <span style="font-weight: 600"><span x-text="_auditActionIcon(entry.action)"></span> <span
+                  x-text="_auditActionLabel(entry.action)"
+                ></span></span>
               <span style="color: var(--text-secondary)" x-text="entry.createdAt"></span>
             </div>
             <div x-show="entry.action === 'inject'" style="color: var(--text-secondary); font-size: 11px">
