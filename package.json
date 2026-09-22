@@ -20,6 +20,7 @@
     "update:native:check": "cargo update --manifest-path native/loop-lore-native/Cargo.toml --dry-run",
     "db:migrate": "bun run src/db/migrate.ts",
     "db:reinit": "bun run src/db/reinit.ts",
+    "seed:users": "bun run scripts/seed-users.ts",
     "db:sync-types": "bun run scripts/generate-db-types.ts",
     "db:sync-manifest": "bun run scripts/generate-schema-manifest.ts",
     "openapi": "NODE_ENV=development bun run scripts/generate-openapi.ts",
