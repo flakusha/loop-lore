@@ -445,6 +445,67 @@ describe("decideCsrf — exempt routes (auth POSTs)", () => {
     },);
     expect(d.ok,).toBe(true,);
   });
+
+  test("POST /api/v1/auth/login skips verification (v1 exempt)", () => {
+    const headers = makeHeaders({},);
+    const d = decideCsrf(opts, {
+      method: "POST",
+      routePattern: "/api/v1/auth/login",
+      headers,
+      sessionId: null,
+      requestId: "req-v1-login-1",
+    },);
+    expect(d.ok,).toBe(true,);
+    expect(d.cookieToIssue,).not.toBeNull();
+  });
+
+  test("POST /api/v1/auth/register skips verification (v1 exempt)", () => {
+    const headers = makeHeaders({},);
+    const d = decideCsrf(opts, {
+      method: "POST",
+      routePattern: "/api/v1/auth/register",
+      headers,
+      sessionId: null,
+      requestId: "req-v1-reg-1",
+    },);
+    expect(d.ok,).toBe(true,);
+  });
+
+  test("POST /api/v1/demo-login skips verification (v1 exempt)", () => {
+    const headers = makeHeaders({},);
+    const d = decideCsrf(opts, {
+      method: "POST",
+      routePattern: "/api/v1/demo-login",
+      headers,
+      sessionId: null,
+      requestId: "req-v1-demo-1",
+    },);
+    expect(d.ok,).toBe(true,);
+  });
+
+  test("POST /api/v1/telemetry/event skips verification (v1 exempt)", () => {
+    const headers = makeHeaders({},);
+    const d = decideCsrf(opts, {
+      method: "POST",
+      routePattern: "/api/v1/telemetry/event",
+      headers,
+      sessionId: "user-telemetry",
+      requestId: "req-v1-telemetry-1",
+    },);
+    expect(d.ok,).toBe(true,);
+  });
+
+  test("POST /api/v1/auth/logout REQUIRES CSRF (v1 logout not exempt)", () => {
+    const headers = makeHeaders({},);
+    const d = decideCsrf(opts, {
+      method: "POST",
+      routePattern: "/api/v1/auth/logout",
+      headers,
+      sessionId: "user-v1-logout",
+      requestId: "req-v1-logout-1",
+    },);
+    expect(d.ok,).toBe(false,);
+  });
 });
 
 describe("decideCsrf — method matrix", () => {
