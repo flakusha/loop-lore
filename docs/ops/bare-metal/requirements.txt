@@ -1,0 +1,67 @@
+# Pinned system / runtime packages for bare-metal deployment on Ubuntu 22.04 LTS.
+# Format: <package> <version-pin-or-ubuntu-suite>
+#
+# Install with:
+#   sudo apt -y install $(awk '{print $1}' docs/ops/bare-metal/requirements.txt)
+#
+# Versions reflect the snapshot validated 2026-09-22 (jammy / Ubuntu 22.04 LTS).
+# Update by hand and re-test on a fresh VM; do not float.
+
+# --- Build toolchain ---
+build-essential                 12.9ubuntu3
+pkg-config                      0.29.2-1ubuntu3
+ca-certificates                 20230311ubuntu0.22.04.1
+
+# --- Core runtime dependencies ---
+curl                            7.81.0-1ubuntu1.20
+git                             1:2.34.1-1ubuntu1.15
+jq                              1.6-2.1ubuntu3
+unzip                           6.0-26ubuntu3.2
+
+# --- Bun runtime (installed separately via bun.sh installer, pinned in CI) ---
+# Bun 1.1.x is the validated line; pin via CI variable BUN_VERSION=1.1.34
+
+# --- Storage / NVMe ---
+mdadm                           4.2-0ubuntu1
+nvme-cli                        1.16-3ubuntu1
+smartmontools                   7.2-1
+zfsutils-linux                  2.1.5-1ubuntu6~22.04.4
+
+# --- Database client + server support (when not on Docker) ---
+postgresql-client-14            14.13-0ubuntu0.22.04.1
+postgresql-14                   14.13-0ubuntu0.22.04.1
+postgresql-contrib              14.13-0ubuntu0.22.04.1
+
+# --- Web server / TLS edge ---
+caddy                           2.7.6-1  # if using apt; otherwise pinned via download
+nginx                           1.18.0-6ubuntu14.7
+certbot                         2.9.0-1
+python3-certbot-nginx           2.9.0-1
+
+# --- Firewall / SSH hardening ---
+ufw                             0.36.2-1
+fail2ban                        0.11.2-6
+openssh-server                  1:8.9p1-3ubuntu0.13
+
+# --- Monitoring ---
+prometheus-node-exporter        1.3.1-1ubuntu0.1
+
+# --- Misc / loop-lore conveniences ---
+lm-sensors                      1:3.6.0-7ubuntu1
+chrony                          4.2-2ubuntu3
+unattended-upgrades             2.8.1ubuntu1
+libssl-dev                      3.0.2-0ubuntu1.19
+libcurl4-openssl-dev            7.81.0-1ubuntu1.20
+
+# --- GPU stack (optional, install only on GPU nodes) ---
+# nvidia-driver-555             555.42.06-0ubuntu0.22.04.1
+# cuda-toolkit-12-6             12.6.3-1
+# libcudnn8                    8.9.7.29-1+cuda12.6
+
+# --- Backup prerequisites ---
+rsync                           3.1.3-8ubuntu0.9
+borgbackup                      1.2.4-2
+
+# --- Container tooling (optional, when containerd is in play) ---
+# containerd.io                 1.7.18-1
+# runc                          1.1.12-0ubuntu1~22.04.1

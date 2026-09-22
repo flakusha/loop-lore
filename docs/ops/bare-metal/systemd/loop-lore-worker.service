@@ -1,0 +1,31 @@
+[Unit]
+Description=Loop-Lore background worker
+After=loop-lore.service
+Wants=loop-lore.service
+
+[Service]
+Type=simple
+User=loop-lore
+Group=loop-lore
+WorkingDirectory=/opt/loop-lore
+EnvironmentFile=-/etc/loop-lore/secrets.env
+ExecStart=/opt/loop-lore/scripts/run-worker.sh
+Restart=on-failure
+RestartSec=5s
+StartLimitIntervalSec=300
+StartLimitBurst=5
+
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/data/loop-lore /var/log/loop-lore
+MemoryMax=2G
+TasksMax=2048
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=loop-lore-worker
+
+[Install]
+WantedBy=multi-user.target

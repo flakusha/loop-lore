@@ -1,0 +1,46 @@
+[Unit]
+Description=Loop-Lore (Bun + Elysia) app
+Documentation=https://loop-lore.example.org/docs/spec/build-deploy.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=loop-lore
+Group=loop-lore
+WorkingDirectory=/opt/loop-lore
+EnvironmentFile=-/etc/loop-lore/secrets.env
+ExecStart=/opt/loop-lore/scripts/run-app.sh
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=on-failure
+RestartSec=5s
+StartLimitIntervalSec=300
+StartLimitBurst=5
+
+# Hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/data/loop-lore /var/log/loop-lore
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+RestrictNamespaces=true
+RestrictRealtime=true
+SystemCallArchitectures=native
+LockPersonality=true
+
+# Resource limits
+LimitNOFILE=65536
+MemoryMax=4G
+TasksMax=4096
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=loop-lore
+
+[Install]
+WantedBy=multi-user.target
