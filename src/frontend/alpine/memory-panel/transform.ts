@@ -147,37 +147,34 @@ export function toAuditEntry(row: AuditApiRow,): AuditEntry {
 /** All known audit actions — order matches the audit tab's filter chip row. */
 export const AUDIT_ACTIONS: AuditAction[] = ["create", "modify", "pin", "unpin", "decay", "purge", "inject", "delete",];
 
-/**
- * Human-readable label for the audit action badge.
- * @param action
- */
+export const AUDIT_ACTION_LABELS: Record<AuditAction, string> = {
+  create: "Created",
+  modify: "Modified",
+  pin: "Pinned",
+  unpin: "Unpinned",
+  decay: "Decayed",
+  purge: "Purged",
+  inject: "Injected",
+  delete: "Deleted",
+};
+
+export const AUDIT_ACTION_ICONS: Record<AuditAction, string> = {
+  create: "\u271A",
+  modify: "\u270F\uFE0F",
+  pin: "\uD83C\uDCCC",
+  unpin: "\uD83D\uDEAB",
+  decay: "\u23F3",
+  purge: "\uD83D\uDDD1",
+  inject: "\uD83D\uDC89",
+  delete: "\uD83D\uDDD1",
+};
+
 export function auditActionLabel(action: AuditAction,): string {
-  switch (action) {
-    case "create": {
-      return "Created";
-    }
-    case "modify": {
-      return "Modified";
-    }
-    case "pin": {
-      return "Pinned";
-    }
-    case "unpin": {
-      return "Unpinned";
-    }
-    case "decay": {
-      return "Decayed";
-    }
-    case "purge": {
-      return "Purged";
-    }
-    case "inject": {
-      return "Injected";
-    }
-    case "delete": {
-      return "Deleted";
-    }
-  }
+  return AUDIT_ACTION_LABELS[action];
+}
+
+export function auditActionIcon(action: AuditAction,): string {
+  return AUDIT_ACTION_ICONS[action];
 }
 
 /**

@@ -10,6 +10,8 @@
 import type { AuditAction, ChatState, } from "../types";
 import {
   AUDIT_ACTIONS,
+  auditActionIcon,
+  auditActionLabel,
   type AuditApiRow,
   auditEntriesForFilter,
   toAuditEntry,
@@ -107,5 +109,15 @@ export const memoryPanelAudit: Partial<ChatState> & ThisType<ChatState> = {
   async setAuditActionFilter(action: AuditAction | null,) {
     if (this.memoryPanel.auditActionFilter === action) { return; }
     await this.loadAudit(action,);
+  },
+
+  /** Resolve the icon/emoji for an audit action badge. */
+  _auditActionIcon(action: AuditAction,): string {
+    return auditActionIcon(action,);
+  },
+
+  /** Resolve the human-readable label for an audit action badge. */
+  _auditActionLabel(action: AuditAction,): string {
+    return auditActionLabel(action,);
   },
 };
