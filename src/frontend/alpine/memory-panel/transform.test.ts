@@ -5,6 +5,7 @@ import { describe, expect, test, } from "bun:test";
 import type { AuditEntry, MemoryEntry, MemoryPanelState, } from "../types";
 import {
   AUDIT_ACTIONS,
+  auditActionIcon,
   auditActionLabel,
   auditEntriesForFilter,
   formatAuditDate,
@@ -72,6 +73,14 @@ describe("audit transform", () => {
       const label = auditActionLabel(action,);
       expect(typeof label,).toBe("string",);
       expect(label.length,).toBeGreaterThan(0,);
+    }
+  });
+
+  test("auditActionIcon returns a non-empty string for every action", () => {
+    for (const action of AUDIT_ACTIONS) {
+      const icon = auditActionIcon(action,);
+      expect(typeof icon,).toBe("string",);
+      expect(icon.length,).toBeGreaterThan(0,);
     }
   });
 
