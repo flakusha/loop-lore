@@ -1,0 +1,11 @@
+[Unit]
+Description=Daily off-box ZFS snapshot push
+Requires=backup-zfs-send.service
+
+[Timer]
+OnCalendar=*-*-* 03:00:00
+Persistent=true
+AccuracySec=300s
+
+[Install]
+WantedBy=timers.target

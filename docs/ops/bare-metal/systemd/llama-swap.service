@@ -1,0 +1,30 @@
+[Unit]
+Description=llama-swap GPU model multiplexer
+Documentation=https://github.com/mostlygeek/llama-swap
+After=network-online.target nvidia-persistenced.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=llama
+Group=llama
+WorkingDirectory=/data/models
+EnvironmentFile=-/etc/loop-lore/llama-swap.env
+ExecStart=/usr/local/bin/llama-swap --config /etc/llama-swap/config.yaml --listen :8081
+Restart=on-failure
+RestartSec=5s
+
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/data/models /var/log/loop-lore
+MemoryMax=64G
+TasksMax=2048
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=llama-swap
+
+[Install]
+WantedBy=multi-user.target

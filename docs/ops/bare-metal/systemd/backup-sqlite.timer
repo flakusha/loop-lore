@@ -1,0 +1,11 @@
+[Unit]
+Description=Hourly SQLite logical backup
+Requires=backup-sqlite.service
+
+[Timer]
+OnCalendar=*-*-* *:15:00
+Persistent=true
+AccuracySec=30s
+
+[Install]
+WantedBy=timers.target
