@@ -4,6 +4,7 @@
 import { Elysia, t, } from "elysia";
 import type { UserRole, } from "../../db/enums-core/users";
 import { can, } from "../../users/permissions";
+import { safeJsonStringify, uid, } from "../../utils";
 import {
   ADMIN_ROLES,
   AdminRoleUpdateBody,
@@ -180,7 +181,36 @@ export function usersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             return badRequestResponse(`role must be one of: ${ADMIN_ROLES.join(", ",)}`,);
           }
 
+          // Capture the prior role for the audit row (TASK-032).
+          const prior = await db.selectFrom("users",).select("role",).where("id", "=", id,).executeTakeFirst();
           await db.updateTable("users",).set({ role, },).where("id", "=", id,).execute();
+
+          // Audit event (event_type = "user.role_changed") so the admin
+          // history shows who promoted/demoted whom. Errors here are
+          // non-fatal — the role change has already committed.
+          try {
+            const meta = safeJsonStringify({ from: prior?.role ?? null, to: role, },);
+            await db
+              .insertInto("log_entries",)
+              .values({
+                id: uid(),
+                level: 30, // INFO/WARN-equivalent
+                timestamp: Date.now() / 1000,
+                time: new Date().toISOString(),
+                message: `Role changed: user ${id} ${prior?.role ?? "unknown"} → ${role}`,
+                module: "admin-users",
+                user_id: userId,
+                event_type: "user.role_changed",
+                entity_type: "user",
+                entity_id: id,
+                action: "role_change",
+                meta: meta.ok ? meta.value : "{}",
+              },)
+              .execute();
+          } catch {
+            // Audit write failure must not roll back the role change.
+          }
+
           return jsonResponse({ ok: true, },);
         },
         {
