@@ -105,9 +105,11 @@ Publish GPU sizing recommendations for loop-lore at `docs/infrastructure/gpu-req
 
 ## Related Files
 
-- `docs/infrastructure/gpu-requirements.md` (to be created) — primary deliverable.
-- `docs/infrastructure/gpu-pricing-snapshot.md` (to be created) — dated pricing snapshot for the matrix.
-- `docs/ops/bare-metal-deploy.md` (to be created, see TASK-002) — reuses the sizing floors.
+- `docs/infrastructure/gpu-requirements.md` — primary deliverable (companion to TASK-003-evaluate-hostings).
+- `docs/infrastructure/evaluate-hostings.md` — companion research (TASK-003-evaluate-hostings).
+- `docs/infrastructure/hosting-comparison.md` — qualitative input (TASK-003-hosting-comparison).
+- `docs/infrastructure/gpu-pricing-snapshot.md` — dated pricing snapshot for the matrix.
+- `docs/ops/bare-metal-deploy.md` (see TASK-002) — reuses the sizing floors.
 
 ## References
 
