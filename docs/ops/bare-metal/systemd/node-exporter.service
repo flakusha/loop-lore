@@ -1,0 +1,26 @@
+[Unit]
+Description=Node exporter (Prometheus)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=prometheus
+Group=prometheus
+ExecStart=/usr/bin/prometheus-node-exporter \
+  --web.listen-address=127.0.0.1:9100 \
+  --collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)
+Restart=on-failure
+RestartSec=5s
+
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=node-exporter
+
+[Install]
+WantedBy=multi-user.target
