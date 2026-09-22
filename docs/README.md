@@ -254,6 +254,19 @@ Detailed UX specifications for the htmx + Alpine.js web UI.
 
 ---
 
+## Operations (`ops/`)
+
+Operator runbooks for on-prem / dedicated-server deployment. Pair with `spec/build-deploy.md` (containerized path).
+
+| Document                                                               | Topics                                                                  |
+| ---------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| [`ops/bare-metal-deploy.md`](./ops/bare-metal-deploy.md)               | Hardware inventory, install, systemd, NVMe/RAID, GPU/CUDA, networking   |
+| [`ops/bare-metal/network.md`](./ops/bare-metal/network.md)             | Firewall, TLS, port allocation, ACME, federation                        |
+| [`ops/bare-metal/requirements.txt`](./ops/bare-metal/requirements.txt) | Pinned Ubuntu 22.04 LTS system/runtime packages                         |
+| [`ops/bare-metal/systemd/`](./ops/bare-metal/systemd/)                 | Service unit files for app, worker, llama-swap, exporters, backup timers |
+
+---
+
 ## Reference (`reference/`)
 
 | Document                                 | Topics             |

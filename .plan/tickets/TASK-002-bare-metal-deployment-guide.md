@@ -3,7 +3,7 @@
 
 # TASK-002: Bare metal deployment guide
 
-**Status:** pending
+**Status:** 🟢 done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Runbook at docs/ops/bare-metal-deploy.md — hardware, install, systemd, NVMe/RAID, GPU, networking, monitoring, backup.
@@ -29,15 +29,15 @@ Document deployment procedures for on-premises or dedicated server environments.
 
 ## Tasks
 
-- [ ] Inventory hardware requirements (CPU, RAM, storage, GPU)
-- [ ] Create step-by-step installation guide
-- [ ] Configuration for systemd services
-- [ ] Storage setup (NVMe optimization, RAID, backups)
-- [::-::] GPU setup for LLM inference (CUDA drivers, libraries)
-- [ ] Network configuration (port forwarding, firewall)
-- [::-::] Monitoring and alerting setup
-- [ ] Backup strategy for persistent data
-- [ ] Documentation in Markdown format
+- [x] Inventory hardware requirements (CPU, RAM, storage, GPU)
+- [x] Create step-by-step installation guide
+- [x] Configuration for systemd services
+- [x] Storage setup (NVMe optimization, RAID, backups)
+- [x] GPU setup for LLM inference (CUDA drivers, libraries)
+- [x] Network configuration (port forwarding, firewall)
+- [x] Monitoring and alerting setup
+- [x] Backup strategy for persistent data
+- [x] Documentation in Markdown format
 
 ## Acceptance Criteria
 
@@ -50,12 +50,35 @@ Document deployment procedures for on-premises or dedicated server environments.
 
 ## Related Files
 
-- `docs/ops/bare-metal-deploy.md` (to be created) — the runbook
-- `docs/ops/bare-metal/systemd/` (to be created) — service unit files
-- `docs/ops/bare-metal/requirements.txt` (to be created) — pinned system/runtime dependencies
-- `docs/ops/bare-metal/network.md` (to be created) — firewall, port-forwarding, TLS notes
+- `docs/ops/bare-metal-deploy.md` — the runbook
+- `docs/ops/bare-metal/systemd/` — service unit files
+- `docs/ops/bare-metal/requirements.txt` — pinned system/runtime dependencies
+- `docs/ops/bare-metal/network.md` — firewall, port-forwarding, TLS notes
 
 ## Notes
 
 - Consider documenting both bare metal and cloud VM deployment
 - GPU compute section should include driver installation steps
+
+## Resolution
+
+Published the runbook at `docs/ops/bare-metal-deploy.md` (Ubuntu 22.04 LTS) with companion files:
+
+- `docs/ops/bare-metal/network.md` — port allocation, ufw rules, Caddy/nginx TLS configs, ACME, federation
+- `docs/ops/bare-metal/requirements.txt` — pinned apt packages with versions (jammy 2026-09-22 snapshot)
+- `docs/ops/bare-metal/systemd/` — ten unit files: `loop-lore.service`, `loop-lore-worker.service`, `llama-swap.service`, `llama-cpp-server@.service`, `pg-exporter.service`, `node-exporter.service`, `backup-sqlite.service` + `.timer`, `backup-zfs-send.service` + `.timer`
+
+Covers all checklist items and acceptance criteria:
+
+- Hardware inventory by P3/P4/P5 tier
+- Step-by-step Ubuntu 22.04 install + kernel/sysctl hardening
+- systemd service templates with hardening (`NoNewPrivileges`, `ProtectSystem=strict`, etc.)
+- NVMe + mdadm RAID-1 + ZFS mirror alternative
+- GPU/CUDA driver selection, toolkit install, llama.cpp + llama-swap install, smoke verification
+- Networking via companion `network.md` (Caddy/nginx + ACME + ufw)
+- Monitoring with prometheus-node-exporter + pg-exporter + alerting thresholds
+- Backup strategy: hourly logical + daily ZFS send + quarterly restore drill
+
+Cross-linked from `docs/README.md` (new `Operations (ops/)` section).
+
+Related tickets: `epic-deployment-infrastructure.md`, `TASK-001` (Docker), `TASK-003-evaluate-hostings.md`.
