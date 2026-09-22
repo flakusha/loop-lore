@@ -1,0 +1,33 @@
+[Unit]
+Description=llama.cpp server (instance %i)
+Documentation=https://github.com/ggerganov/llama.cpp
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=llama
+Group=llama
+WorkingDirectory=/data/models
+ExecStart=/usr/local/bin/llama-cpp-server \
+  --model /data/models/%i.gguf \
+  --port 0 \
+  --ctx-size 4096 \
+  --n-gpu-layers 99 \
+  --host 127.0.0.1
+Restart=on-failure
+RestartSec=5s
+
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/data/models /var/log/loop-lore
+MemoryMax=48G
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=llama-cpp-%i
+
+[Install]
+WantedBy=multi-user.target

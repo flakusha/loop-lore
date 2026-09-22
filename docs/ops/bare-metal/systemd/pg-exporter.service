@@ -1,0 +1,25 @@
+[Unit]
+Description=Postgres Prometheus exporter
+After=postgresql.service
+Wants=postgresql.service
+
+[Service]
+Type=simple
+User=prometheus
+Group=prometheus
+Environment=DATA_SOURCE_NAME=postgresql://loop_lore_exporter:__PG_EXPORTER_PASSWORD__@127.0.0.1:5432/postgres?sslmode=disable
+ExecStart=/usr/bin/pg-exporter --web.listen-address=127.0.0.1:9187
+Restart=on-failure
+RestartSec=5s
+
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=pg-exporter
+
+[Install]
+WantedBy=multi-user.target
