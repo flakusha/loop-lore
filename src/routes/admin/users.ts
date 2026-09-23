@@ -3,6 +3,7 @@
 
 import { Elysia, t, } from "elysia";
 import type { UserRole, } from "../../db/enums-core/users";
+import { getLogger, } from "../../logger";
 import { can, } from "../../users/permissions";
 import { safeJsonStringify, uid, } from "../../utils";
 import {
@@ -209,6 +210,7 @@ export function usersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               .execute();
           } catch {
             // Audit write failure must not roll back the role change.
+            getLogger().child({ module: "admin-users", },).warn(`Role-change audit write failed for user ${id}`,);
           }
 
           return jsonResponse({ ok: true, },);
