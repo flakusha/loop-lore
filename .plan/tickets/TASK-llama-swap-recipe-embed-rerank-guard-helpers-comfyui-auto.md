@@ -3,7 +3,7 @@
 
 # TASK: llama-swap recipe: embed + rerank + guard helpers + comfyui_auto
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** medium
 **Effort:** Small
 
@@ -16,3 +16,7 @@ Extend configs/config.llama-swap.example.yaml with the full helper set from the 
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Resolution
+
+Landed in `configs/config.llama-swap.example.yaml` + `docs/spec/integrations/llm-serving.md` (Helper Models section). Deviation from original scope: the `classifier-support` branch was removed before its laya entries landed, so they were recreated here from re-verified upstream sources — repo ids are `fr0stbit3/laya-gguf` + `fr0stbit3/laya-multilingual-gguf` (lowercase, `:Q8_0` verified present in both repos). The GGUFs carry the ModernBERT backbone only — the decision head stays external (`laya-head.safetensors` via `laya_head.py`, token ids over `/embedding`), so Laya is not yet a drop-in classifier; the recipe comments and docs state this explicitly. YAML validated by parse (js-yaml).
