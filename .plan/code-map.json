@@ -13804,6 +13804,10 @@
   "src/frontend/alpine/i18n.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-010.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-i18n-alpine-client.md"
     },
     {
@@ -15966,6 +15970,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-010.md"
     },
     {
       "kind": "ticket",
@@ -18468,6 +18476,13 @@
       "source": ".plan/tickets/TASK-server-side-i18n-middleware.md"
     }
   ],
+
+  "src/i18n/__tests__/translator.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-010-plurals.md"
+    }
+  ],
   "src/i18n/locale-loader.ts": [
     {
       "kind": "ticket",
@@ -18478,6 +18493,24 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/WIRE-frontend-keyboard-help-overlay.md"
+    }
+  ],
+
+  "src/i18n/translator.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-010-plurals.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-010.md"
+    }
+  ],
+
+  "src/i18n/types.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-010-plurals.md"
     }
   ],
   "src/image-edit": [
@@ -19692,6 +19725,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-parseacceptlanguage-ignores-quality-values-returns-header-or.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-010.md"
     },
     {
       "kind": "ticket",
