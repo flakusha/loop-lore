@@ -3,15 +3,14 @@
 
 # Template System — Unified Architecture Spec
 
-**Status:** 🟡 Partial — LLM + image template foundations shipped (registry + per-modality `{{var}}` substitution, config-file builtins); DB-backed unified registry + video/audio scaffolds deferred (bookkeeping 2026-09-19)
+**Status:** 🟡 In Progress — LLM + image template foundations shipped (spec reconciled with code 2026-09-13); DB-backed user templates + unified registry future
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Unified prompt template system across LLM/Image/Video/Audio modalities — shared `TemplateRegistry` interface, DB-backed user templates, per-modality registries, model→template auto-matching.
-**Context:** (none captured)
+**Context:** Reconciliation pass 2026-09-23 — collapsed two duplicate `Status:` lines, kept the longer narrative (bookkeeping 2026-09-19) in the single header; sibling TASK tickets cross-linked below.
 **Acceptance Criteria:** LLM and image modality registries + per-modality `{{var}}` substitution shipped; DB-backed unified `prompt_templates` + `template_variables` tables, `/api/templates/:modality` routes, video/audio scaffolds future.
 
 
-**Status**: 🟡 In Progress — LLM + image template foundations shipped (spec reconciled with code 2026-09-13); DB-backed user templates + unified registry future
 **Owner**: FEAT-065 (Prompt Library)
 **Scope**: LLM, Image, Video, Audio generation templates
 
