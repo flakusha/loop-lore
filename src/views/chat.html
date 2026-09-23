@@ -6,7 +6,7 @@
 {{> chat/chat-header.html }}
 
 <!-- TASK-025: overlay stack lives ABOVE .chat-container so banners / toasts / -->
-<!-- tickers are position:fixed and never shift the chat scroll position.    -->
+<!-- tickers are position:fixed and never shift the chat scroll position. -->
 {{> overlay-stack.html }}
 
 <div class="app-layout" x-data="chatState()" x-init="init()">

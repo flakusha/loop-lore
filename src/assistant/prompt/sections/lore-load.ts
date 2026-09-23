@@ -30,6 +30,10 @@ export interface LoadedLore {
  * restricting rows to a world scope. The eb callback uses
  * `ExpressionBuilder<DB, "actor_lore_entries">` so the where-clause
  * expressions are checked against the table's column set.
+ * @param db
+ * @param actorId
+ * @param worldId
+ * @returns All enabled lore rows for the actor, world-scoped when given.
  */
 function actorLoreQuery(
   db: Kysely<DB>,
