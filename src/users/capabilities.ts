@@ -18,7 +18,7 @@ import { type Permission, } from "./permissions";
 /** A single human-readable capability description. */
 export interface RoleCapability {
   /** Permission string from `src/users/permissions.ts`, a namespace wildcard
- *   ("chat.*"), or "*" for full access. */
+   *   ("chat.*"), or "*" for full access. */
   permission: Permission | "*" | "chat.*" | "character.*" | "world.*" | "moderation.*";
   /** Plain-language capability label (UI / docs). */
   label: string;
@@ -93,7 +93,11 @@ export const ROLE_CAPABILITIES: Record<UserRole, readonly RoleCapability[]> = {
     { permission: "character.edit_own", label: "Edit own characters", description: "Edit own character cards.", },
     { permission: "world.create", label: "Author worlds", description: "Create world lorebooks.", },
     { permission: "world.edit_own", label: "Edit own worlds", description: "Edit own world lorebooks.", },
-    { permission: "export.own", label: "Export own content", description: "Download own characters / worlds as shareable cards.", },
+    {
+      permission: "export.own",
+      label: "Export own content",
+      description: "Download own characters / worlds as shareable cards.",
+    },
   ],
   player: [
     { permission: "chat.create", label: "Create chats", description: "Open new chats.", },
@@ -102,7 +106,11 @@ export const ROLE_CAPABILITIES: Record<UserRole, readonly RoleCapability[]> = {
     { permission: "character.edit_own", label: "Edit own characters", description: "Edit own character cards.", },
     { permission: "world.create", label: "Author worlds", description: "Create world lorebooks.", },
     { permission: "world.edit_own", label: "Edit own worlds", description: "Edit own world lorebooks.", },
-    { permission: "export.own", label: "Export own content", description: "Download own characters / worlds as shareable cards.", },
+    {
+      permission: "export.own",
+      label: "Export own content",
+      description: "Download own characters / worlds as shareable cards.",
+    },
   ],
   viewer: [
     { permission: "chat.join", label: "Join chats", description: "Spectate / participate in chats.", },
@@ -114,11 +122,19 @@ export const ROLE_CAPABILITIES: Record<UserRole, readonly RoleCapability[]> = {
     { permission: "chat.create", label: "Create chats", description: "Open chats as an automated actor.", },
   ],
   tester: [
-    { permission: "*", label: "Full system access", description: "All permissions, including ownership bypass for testing.", },
+    {
+      permission: "*",
+      label: "Full system access",
+      description: "All permissions, including ownership bypass for testing.",
+    },
   ],
   custom: [],
   solo: [
-    { permission: "*", label: "Full system access", description: "Single-user mode grants all permissions, including ownership bypass.", },
+    {
+      permission: "*",
+      label: "Full system access",
+      description: "Single-user mode grants all permissions, including ownership bypass.",
+    },
   ],
 };
 
