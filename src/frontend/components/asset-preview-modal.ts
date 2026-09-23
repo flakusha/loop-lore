@@ -30,7 +30,7 @@ export interface PreviewAssetLike {
 export interface AssetPreviewModalState {
   isOpen: boolean;
   asset: PreviewAssetLike | null;
-  open(asset: PreviewAssetLike, trigger?: HTMLElement | null): void;
+  open(asset: PreviewAssetLike, trigger?: HTMLElement | null,): void;
   close(): void;
   formatSize(bytes: number,): string;
 }
@@ -46,9 +46,9 @@ let savedOverflow: string | null = null;
 function formatSize(bytes: number,): string {
   if (bytes == null) { return ""; }
   if (bytes < 1024) { return `${bytes} B`; }
-  if (bytes < 1024 * 1024) { return `${(bytes / 1024).toFixed(1)} KB`; }
-  if (bytes < 1024 * 1024 * 1024) { return `${(bytes / 1024 / 1024).toFixed(1)} MB`; }
-  return `${(bytes / 1024 / 1024 / 1024).toFixed(2)} GB`;
+  if (bytes < 1024 * 1024) { return `${(bytes / 1024).toFixed(1,)} KB`; }
+  if (bytes < 1024 * 1024 * 1024) { return `${(bytes / 1024 / 1024).toFixed(1,)} MB`; }
+  return `${(bytes / 1024 / 1024 / 1024).toFixed(2,)} GB`;
 }
 
 /**
@@ -132,26 +132,29 @@ export async function openAssetPreviewById(id: string,): Promise<void> {
     // feFetch THROWS on non-OK (and on network failures) — surface
     // those as a toast instead of leaking an unhandled rejection
     // from the tile's click handler.
-    const res = await feFetch(`/api/v1/assets/${id}`);
+    const res = await feFetch(`/api/v1/assets/${id}`,);
     asset = (await res.json()) as PreviewAssetLike;
   } catch {
     showToast("error", t("gallery.previewFailed",),);
     return;
   }
   asset.url = `/api/v1/assets/${id}/raw`;
-  const modal = document.querySelector<HTMLElement>("#asset-preview-modal");
+  const modal = document.querySelector<HTMLElement>("#asset-preview-modal",);
   if (modal && typeof Alpine !== "undefined") {
-    const state = Alpine.$data(modal) as AssetPreviewModalState | undefined;
-    state?.open(asset, trigger);
+    const state = Alpine.$data(modal,) as unknown as AssetPreviewModalState | undefined;
+    state?.open(asset, trigger,);
   }
 }
 
+type AssetPreviewModalFactory = typeof assetPreviewModal;
+type OpenAssetPreviewById = typeof openAssetPreviewById;
 declare global {
   // eslint-disable-next-line no-var
-  var assetPreviewModal: typeof assetPreviewModal;
+  var assetPreviewModal: AssetPreviewModalFactory;
   // eslint-disable-next-line no-var
-  var openAssetPreviewById: typeof openAssetPreviewById;
+  var openAssetPreviewById: OpenAssetPreviewById;
 }
 
 (globalThis as unknown as { assetPreviewModal: typeof assetPreviewModal }).assetPreviewModal = assetPreviewModal;
-(globalThis as unknown as { openAssetPreviewById: typeof openAssetPreviewById }).openAssetPreviewById = openAssetPreviewById;
+(globalThis as unknown as { openAssetPreviewById: typeof openAssetPreviewById }).openAssetPreviewById =
+  openAssetPreviewById;

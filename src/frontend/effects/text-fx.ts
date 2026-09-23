@@ -113,7 +113,7 @@ function runTypewriter(el: HTMLElement, opts: FxOptions,): () => void {
     // Write the prefix in one assignment: `textContent +=` reads the
     // DOM string back on every character (O(n²) over a full reveal).
     el.textContent = text.slice(0, index,);
-    timer = setTimeout(() => {
+    timer = window.setTimeout(() => {
       timer = null;
       raf = requestAnimationFrame(revealNext,);
     }, speed,);
@@ -123,8 +123,14 @@ function runTypewriter(el: HTMLElement, opts: FxOptions,): () => void {
   raf = requestAnimationFrame(revealNext,);
 
   return () => {
-    if (raf !== null) { cancelAnimationFrame(raf,); raf = null; }
-    if (timer !== null) { clearTimeout(timer,); timer = null; }
+    if (raf !== null) {
+      cancelAnimationFrame(raf,);
+      raf = null;
+    }
+    if (timer !== null) {
+      clearTimeout(timer,);
+      timer = null;
+    }
     if (!ended) {
       ended = true;
       activeRuns--;
