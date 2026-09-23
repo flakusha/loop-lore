@@ -12592,6 +12592,19 @@
     "source": ".plan/tickets/TASK-assistant-secret-lore-access-guard.md",
     "status": "open"
   },
+  "TASK-ASSISTANT-SLASH-COMMAND-TYPED-TOKEN-AUTOCOMPLETE": {
+    "hash": "5e2285f",
+    "git_issue": "5e2285f",
+    "extid": "TASK-ASSISTANT-SLASH-COMMAND-TYPED-TOKEN-AUTOCOMPLETE",
+    "type": "TASK",
+    "title": "Assistant slash-command typed-token autocomplete",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-assistant-generation-extensions",
+    "tags": [],
+    "source": ".plan/tickets/TASK-assistant-slash-command-typed-token-autocomplete.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-ASSISTANT-THIRD-PARTY-API-INTEGRATION": {
     "hash": "pending",
     "extid": "TASK-ASSISTANT-THIRD-PARTY-API-INTEGRATION",
@@ -21672,19 +21685,6 @@
     "source": ".plan/tickets/TASK-llama-cpp-support-for-classifier-models-gguf-encoder-serving.md",
     "status": "⬜ Not Started"
   },
-  "TASK-LLAMA-SWAP-NATIVE-SUPPORT-CPU-RESIDENT-CLASSIFIER-MODEL-RECI": {
-    "hash": "36d390b",
-    "git_issue": "36d390b",
-    "extid": "TASK-LLAMA-SWAP-NATIVE-SUPPORT-CPU-RESIDENT-CLASSIFIER-MODEL-RECI",
-    "type": "TASK",
-    "title": "llama-swap native support: CPU-resident classifier model recipe",
-    "label": "task",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/TASK-llama-swap-native-support-cpu-resident-classifier-model-reci.md",
-    "status": "⬜ Not Started"
-  },
   "TASK-LLAMA-SWAP-COMFYUI-ENDPOINT-SUPPORT-COMFYUI-AUTO-WORKAROUNDS": {
     "hash": "f3f8134",
     "git_issue": "f3f8134",
@@ -21697,6 +21697,19 @@
     "tags": [],
     "source": ".plan/tickets/TASK-llama-swap-comfyui-endpoint-support-comfyui-auto-workarounds.md",
     "status": "done"
+  },
+  "TASK-LLAMA-SWAP-NATIVE-SUPPORT-CPU-RESIDENT-CLASSIFIER-MODEL-RECI": {
+    "hash": "36d390b",
+    "git_issue": "36d390b",
+    "extid": "TASK-LLAMA-SWAP-NATIVE-SUPPORT-CPU-RESIDENT-CLASSIFIER-MODEL-RECI",
+    "type": "TASK",
+    "title": "llama-swap native support: CPU-resident classifier model recipe",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-llama-swap-native-support-cpu-resident-classifier-model-reci.md",
+    "status": "⬜ Not Started"
   },
   "TASK-LLAMA-SWAP-RECIPE-EMBED-RERANK-GUARD-HELPERS-COMFYUI-AUTO": {
     "hash": "f2fe764",
