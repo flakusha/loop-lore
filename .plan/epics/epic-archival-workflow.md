@@ -112,5 +112,5 @@ DELETE /api/chats/:id/purge    → 204
 
 - `TASK-archival-workflow.md` — implementation tasks
 - `BUG-archive-retention-hardcoded-30-days-should-be-configurable-9` — purge cutoff at src/routes/messages/archiving.ts:94 hardcodes 30 days; spec calls for configurable 90-day default sourced from admin config (issue `0b135d4`).
-- `FEAT-chat-archive-gc-job-daily-sweep-of-expired-archives` — daily GC sweep of chats where is_pinned='archived' and updated_at older than archive_retention_days; hard-deletes via hardDeleteChat, writes audit event, registers on cron registry @ 0 3 * * * (issue `69e23ba`).
+- `FEAT-chat-archive-gc-job-daily-sweep-of-expired-archives` — daily GC sweep of chats where is_pinned='archived' and updated_at older than archive_retention_days; hard-deletes via hardDeleteChat, writes audit event, registers on cron registry @ 0 3 ** * (issue `69e23ba`).
 - `FEAT-chat-archive-retention-config-archive-retention-days-admin-s` — admin-config key `archive_retention_days` (default 90 days); wires purge handler to read from `system_config` instead of hardcoded literal at `src/routes/messages/archiving.ts:94` (issue `ce84227`).

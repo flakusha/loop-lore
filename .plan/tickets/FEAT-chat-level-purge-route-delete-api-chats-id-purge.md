@@ -14,15 +14,19 @@
 ## Summary
 
 ## What
+
 Chat-level purge route is missing. Spec calls for DELETE /api/chats/:id/purge.
 
 ## Why
+
 hardDeleteChat exists at src/chat/service/visibility.ts:64-74 but has no HTTP route. archiveRoutes at src/routes/chats/archive-routes.ts:23-65 only exposes /archive and /unarchive — there is no DELETE handler that calls hardDeleteChat, so admins cannot trigger a hard purge via the HTTP API.
 
 ## Scope
+
 Extend archiveRoutes in src/routes/chats/archive-routes.ts with a DELETE handler that calls hardDeleteChat for the given chat id. Reuse existing auth/ownership gates (admin-only or settings-access per archive/unarchive precedent).
 
 ## Acceptance Criteria
+
 - DELETE /api/chats/:id/purge returns 204 on success.
 - Cascades asset_links (existing hardDeleteChat semantics).
 - Admin-only or settings-access authorization (consistent with archive/unarchive).
