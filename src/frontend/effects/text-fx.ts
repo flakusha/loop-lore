@@ -70,7 +70,7 @@ export function applyFx(
   const cls = FX_CLASSES[name];
   if (!cls) {
     // Unknown fx name — nothing to apply or clean up.
-    return () => { /* no-op */ };
+    return () => {/* no-op */};
   }
 
   // Remove any prior fx-* class so a re-application re-triggers the
