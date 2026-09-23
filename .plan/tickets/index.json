@@ -5915,7 +5915,7 @@
     "tags": [],
     "source": ".plan/tickets/EPIC-FRONTEND-BACKEND-INTEGRATION.md",
     "git_issue": "bd5eaa3",
-    "status": "open"
+    "status": "done"
   },
   "EPIC-HOUSING": {
     "hash": "5c7f4bb",
@@ -5928,7 +5928,7 @@
     "tags": [],
     "source": ".plan/tickets/EPIC-HOUSING.md",
     "git_issue": "5c7f4bb",
-    "status": "open"
+    "status": "done"
   },
   "FEAT-035": {
     "hash": "0fe7f31",
