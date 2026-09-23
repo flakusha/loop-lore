@@ -1,3 +1,6 @@
+# TEMPLATE — provisioning required before installing.
+# The repo ships no off-box push implementation; provision your own zfs
+# send/recv script and point ExecStart at it (current path is a placeholder).
 [Unit]
 Description=Loop-Lore off-box ZFS snapshot push
 After=network-online.target
