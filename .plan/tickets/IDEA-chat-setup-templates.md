@@ -3,11 +3,11 @@
 
 # IDEA: Chat Setup Templates (Validated ChatCreateBody Presets)
 
-**Status:** 🟡 Partial — `chat_setup_templates` table + `/api/chat-setup-templates` routes already shipped; remaining UI/form fields + immutable-bound policy decomposed into concrete tasks (TASK-fix-chat-setup-templates-visual-novel P1, TASK-frontend-chat-setup-templates-edit-delete P2). Proposal marked satisfied-as-decomposed (bookkeeping 2026-09-19)
+**Status:** 🟡 Satisfied-as-decomposed (bookkeeping 2026-09-19; cross-links re-verified 2026-09-23)
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Turn chat creation presets into data, not code — `ChatSetupTemplate` = validated `ChatCreateBody` preset, selectable on `new-chat.html`. Decomposed into `chat_setup_templates` table + routes + UI binding tasks.
-**Context:** (none captured)
+**Context:** Proposal satisfied via decomposition — backend table + routes shipped; remaining UI/form fields + immutable-bound policy tracked in TASK-fix-chat-setup-templates-visual-novel (P1) and TASK-frontend-chat-setup-templates-edit-delete (P2). Verified 2026-09-23 that both decomposed tickets exist.
 **Acceptance Criteria:** Backend table + routes ✅ shipped; PUT/DELETE wiring + UI binding open (see decomposed TASK tickets).
 
 
@@ -18,6 +18,9 @@
 **Epic**: epic-story-mode-ui
 **Related**: BUG-chat-settings-modal-invalid-mode, .plan/epics/epic-chat-lifecycle-moderation.md,
 .plan/epics/epic-config-templates.md, FEAT-chat-template-config-lifecycle
+**Decomposed into** (verified 2026-09-23):
+- TASK-fix-chat-setup-templates-visual-novel-remove-or-type-as-chat (P1)
+- TASK-frontend-chat-setup-templates-edit-delete (P2)
 
 ## Description
 
