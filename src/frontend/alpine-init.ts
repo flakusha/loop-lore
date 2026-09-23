@@ -32,6 +32,8 @@ import "./asset-preview";
 // ── 10a. TASK-001: centered asset preview modal + avatar centerer ──
 import "./components/asset-preview-modal";
 import "./components/avatar-centerer";
+// ── 10b. TASK-023: 3D view mode switcher (orbit/first-person/cinematic) ──
+import "./scene/view-mode";
 import { toDate, } from "../utils/date";
 
 // ── 2. Expose on globalThis ─────────────────────────────────────
