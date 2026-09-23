@@ -35,6 +35,7 @@ Implemented on dev by b5b90969f (worktree task-029-question-gameplay, finalized 
 - `src/rpg/questions/validation.ts`, `service.ts` — per-input-kind answer validation, effectsApplied reporting, system messages for quest/item events
 - `src/components/chat/rpg-questions.html`, `src/frontend/alpine/rpg-questions.ts` — text/number inputs honoring min/max, inline Retry preserving pending answers
 - Git issue 9592d11 closed; duplicate open issue c712140 closed as duplicate
+
 ## Acceptance Criteria
 
 - GM can emit a structured question (choice, free-text, numeric) inline in chat
