@@ -41,7 +41,7 @@ export interface ViewModeState {
 
 const SESSION_KEY = "loop-lore:view-mode";
 const DEFAULT_MODE: ViewMode = "orbit";
-const SCENE_ID_ATTR = "data-scene-id";
+export const SCENE_ID_ATTR = "data-scene-id";
 /** The scene container mirrors data-mode for the CSS camera (vn.css). */
 const SCENE_CONTAINER_SELECTOR = "#vn-container";
 const MODE_ATTR = "data-mode";
@@ -106,10 +106,12 @@ function detachSceneWatcher(): void {
 }
 
 /**
- * Watch the scene container for `data-scene-id` changes. When the
- * scene identity changes (new chat, scene swap) reset the camera
- * mode to "orbit" — every other mode is a layout choice tied to a
- * specific camera position that no longer applies.
+ * Watch the scene container for `data-scene-id` changes (written by
+ * `syncSceneId` in alpine/chat-settings/vn.ts). Only a swap BETWEEN
+ * scenes resets the camera to "orbit" — the initial attach (null →
+ * id) is skipped so a restored or deep-linked camera survives the
+ * first scene render. Teardown (id → null) resets, since the old
+ * scene's camera position no longer applies.
  */
 function attachSceneWatcher(state: ViewModeState,): void {
   if (typeof MutationObserver === "undefined") { return; }
@@ -119,10 +121,10 @@ function attachSceneWatcher(state: ViewModeState,): void {
   let lastId = target.getAttribute(SCENE_ID_ATTR,);
   sceneWatcher = new MutationObserver(() => {
     const id = target.getAttribute(SCENE_ID_ATTR,);
-    if (id !== lastId) {
-      lastId = id;
-      state.reset();
-    }
+    if (id === lastId) { return; }
+    const hadScene = lastId !== null;
+    lastId = id;
+    if (hadScene) { state.reset(); }
   },);
   sceneWatcher.observe(target, { attributes: true, attributeFilter: [SCENE_ID_ATTR,], },);
 }
