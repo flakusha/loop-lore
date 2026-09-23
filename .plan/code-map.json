@@ -3955,6 +3955,13 @@
       "source": "docs/spec/io-formats.md"
     }
   ],
+
+  "src/characters/export.coverage.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-030.md"
+    }
+  ],
   "src/characters/exporters.test.ts": [
     {
       "kind": "ticket",
@@ -4059,7 +4066,18 @@
       "source": ".plan/epics/epic-character-spec.md"
     }
   ],
+
+  "src/characters/license-enforcement.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-030.md"
+    }
+  ],
   "src/characters/license-enforcement.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-030.md"
+    },
     {
       "kind": "spec",
       "source": "docs/spec/licensing.md"
@@ -6700,6 +6718,10 @@
   "src/components/character/licensing-panel.html": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-030.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-actor-licensing-frontend.md"
     }
   ],
@@ -7051,6 +7073,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-story-mode-ui.md"
+    }
+  ],
+
+  "src/components/chat/rpg-questions.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-029.md"
     }
   ],
   "src/components/chat/story-view.html": [
@@ -9421,6 +9450,20 @@
       "source": ".plan/tickets/TASK-language-gated-lore-visibility.md"
     }
   ],
+
+  "src/db/enums-character/content.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-030.md"
+    }
+  ],
+
+  "src/db/enums-character/nsfw": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-033.md"
+    }
+  ],
   "src/db/enums-character/nsfw.ts": [
     {
       "kind": "epic",
@@ -9757,6 +9800,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-world-template-chat-lifecycle.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-032.md"
     },
     {
       "kind": "spec",
@@ -10279,6 +10326,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-format-version-migration.md"
+    }
+  ],
+
+  "src/db/migrations/007_rpg_question_answer_kinds.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-029.md"
     }
   ],
   "src/db/migrations/008_chat_features.ts": [
@@ -11564,6 +11618,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-030.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-apply-jsdoc-across-src-to-satisfy-jsdoc-require-param-return.md"
     },
     {
@@ -12718,6 +12776,10 @@
   "src/frontend/alpine/actor-licensing.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-030.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-actor-licensing-frontend.md"
     }
   ],
@@ -12845,6 +12907,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-frontend-admin.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-032.md"
     },
     {
       "kind": "ticket",
@@ -14153,6 +14219,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-browser-side-storage-request-hash-reconciliation.md"
+    }
+  ],
+
+  "src/frontend/alpine/rpg-questions.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-029.md"
     }
   ],
   "src/frontend/alpine/rpg-stats.ts": [
@@ -20169,6 +20242,20 @@
       "source": ".plan/epics/epic-chat-composer-flows.md"
     }
   ],
+
+  "src/nsfw/capability-gate.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-033.md"
+    }
+  ],
+
+  "src/nsfw/capability-gate.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-033.md"
+    }
+  ],
   "src/nsfw/consent.ts": [
     {
       "kind": "spec",
@@ -22375,10 +22462,21 @@
       "source": ".plan/tickets/TASK-duplicate-admin-templates-route-registration-with-differing-.md"
     }
   ],
+
+  "src/routes/admin/users.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-032.md"
+    }
+  ],
   "src/routes/admin/users.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-frontend-admin.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-032.md"
     }
   ],
   "src/routes/admin/worlds.ts": [
@@ -22775,10 +22873,21 @@
       "source": "docs/spec/licensing.md"
     }
   ],
+
+  "src/routes/character-licensing.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-030.md"
+    }
+  ],
   "src/routes/character-licensing.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-character-licensing-upsert-records-license-history-for-any-a.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-030.md"
     }
   ],
   "src/routes/character-mood.ts": [
@@ -27131,10 +27240,49 @@
       "source": ".plan/tickets/TASK-nsfw-intimacy-system.md"
     }
   ],
+
+  "src/rpg/intimacy/service": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-033.md"
+    }
+  ],
+
+  "src/rpg/intimacy/service.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-033.md"
+    }
+  ],
   "src/rpg/intimacy/service/actions.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-033.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-rpg-xp-intimacy-read-modify-write-lost-updates-under-concurr.md"
+    }
+  ],
+
+  "src/rpg/intimacy/service/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-033.md"
+    }
+  ],
+
+  "src/rpg/intimacy/service/levels.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-033.md"
+    }
+  ],
+
+  "src/rpg/intimacy/service/persist.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-033.md"
     }
   ],
   "src/rpg/intimacy/thresholds.ts": [
@@ -27701,6 +27849,20 @@
       "source": ".plan/tickets/TASK-rpg-chat-questions.md"
     }
   ],
+
+  "src/rpg/questions/effects.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-029.md"
+    }
+  ],
+
+  "src/rpg/questions/validation.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-029.md"
+    }
+  ],
   "src/rpg/quests": [
     {
       "kind": "epic",
@@ -27715,6 +27877,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-029.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-033.md"
     }
   ],
   "src/rpg/quests/index.ts": [
@@ -30881,6 +31047,13 @@
       "source": ".plan/tickets/TASK-032.md"
     }
   ],
+
+  "src/users/capabilities.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-032.md"
+    }
+  ],
   "src/users/index.ts": [
     {
       "kind": "ticket",
@@ -30898,6 +31071,10 @@
     }
   ],
   "src/users/permissions.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-032.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-moderator-permission-gating-for-read-only-review-surface.md"
@@ -30924,6 +31101,10 @@
     }
   ],
   "src/users/roles.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-032.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-reconcile-ts-import-extensions-user-seeding-session.md"
@@ -31450,6 +31631,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-032.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-admin-content-review-queue.md"
     },
     {
@@ -31499,6 +31684,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-character-export-broken-export-modal-missing-data-character-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-030.md"
     }
   ],
   "src/views/character-editor.html": [
