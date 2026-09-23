@@ -1,0 +1,56 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!--
+  Overlay Stack (TASK-025)
+  ------------------------
+  Three managed slots — banner (top, role="status"), toast
+  (#toast-container, aria-live="polite"), ticker (bottom,
+  aria-live="off") — each with a stable z-index so they cannot
+  collide with modals. Banner / ticker read from the Alpine
+  `ui` store (write via $store.ui.banner = '...'). Toasts use
+  the existing window.showToast() helper.
+
+  Composition: render ABOVE .chat-container (so overlays do not
+  shift scroll position) and OUTSIDE any overflow:hidden
+  parent. Banner + ticker live in `position: fixed` so they
+  never push the document body.
+-->
+<div class="overlay-stack" data-testid="overlay-stack">
+  <div
+    class="overlay-banner"
+    role="status"
+    aria-live="polite"
+    x-show="$store.ui.banner"
+    data-testid="overlay-banner"
+    style="position: fixed; top: 0; left: 0; right: 0; z-index: var(--z-banner, 60); padding: var(--space-3) var(--space-4); background: var(--bg-secondary); border-bottom: 1px solid var(--border-default); display: flex; align-items: center; gap: var(--space-2)"
+  >
+    <span x-text="$store.ui.banner"></span>
+    <button
+      type="button"
+      class="btn-icon"
+      @click="$store.ui.banner = ''"
+      aria-label="Dismiss banner"
+      data-testid="overlay-banner-close"
+    >&times;</button>
+  </div>
+
+  <div
+    id="toast-container"
+    class="toast-container"
+    role="status"
+    aria-live="polite"
+    data-testid="overlay-toast"
+  >
+  </div>
+
+  <div
+    class="overlay-ticker"
+    aria-live="off"
+    x-show="$store.ui.ticker"
+    data-testid="overlay-ticker"
+    style="position: fixed; bottom: 0; left: 0; right: 0; z-index: var(--z-ticker, 40); padding: var(--space-1) var(--space-4); background: var(--bg-tertiary); border-top: 1px solid var(--border-default); font-size: 12px; color: var(--text-secondary); overflow: hidden; white-space: nowrap; text-overflow: ellipsis"
+  >
+    <span x-text="$store.ui.ticker"></span>
+  </div>
+</div>
