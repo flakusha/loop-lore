@@ -29,12 +29,12 @@ export interface RoleCapability {
  * Capability matrix for the four core seeded roles (TASK-032 acceptance).
  *
  * `admin` gets `*`; `moderator` gets the moderation + chat moderation set;
- * `contributor` gets full content authoring; `guest` gets the read-only
+ * `creator` gets full content authoring; `guest` gets the read-only
  * public surface. The matrix is a documentation layer — actual enforcement
  * lives in `permissions.ts#DEFAULT_PERMISSIONS` and the middleware that
  * calls `can(role, permission)`.
  */
-export const ROLE_CAPABILITIES: Record<"admin" | "moderator" | "contributor" | "guest", readonly RoleCapability[]> = {
+export const ROLE_CAPABILITIES: Record<"admin" | "moderator" | "creator" | "guest", readonly RoleCapability[]> = {
   admin: [
     {
       permission: "*",
@@ -63,7 +63,7 @@ export const ROLE_CAPABILITIES: Record<"admin" | "moderator" | "contributor" | "
     },
     { permission: "world.view", label: "View worlds", description: "Read any world lorebook.", },
   ],
-  contributor: [
+  creator: [
     { permission: "character.*", label: "Author characters", description: "Create, edit, and delete own characters.", },
     { permission: "world.*", label: "Author worlds", description: "Create, edit, and delete own worlds.", },
     { permission: "chat.*", label: "Run chats", description: "Open chats, send messages, manage chat participants.", },
@@ -92,7 +92,7 @@ export const ROLE_CAPABILITIES: Record<"admin" | "moderator" | "contributor" | "
  * order `ALL_ROLES` surfaces them. The seeded `id` matches the one in
  * `scripts/seed-users.ts`.
  */
-export const SEEDED_ROLE_NAMES = ["admin", "moderator", "contributor", "guest",] as const satisfies readonly UserRole[];
+export const SEEDED_ROLE_NAMES = ["admin", "moderator", "creator", "guest",] as const satisfies readonly UserRole[];
 
 /**
  * Capabilities for a given role, or an empty list for unrecognised roles.
@@ -101,7 +101,7 @@ export const SEEDED_ROLE_NAMES = ["admin", "moderator", "contributor", "guest",]
 export function capabilitiesForRole(role: UserRole | string,): readonly RoleCapability[] {
   if (role === UserRole.Admin) { return ROLE_CAPABILITIES.admin; }
   if (role === UserRole.Moderator) { return ROLE_CAPABILITIES.moderator; }
-  if (role === UserRole.Creator) { return ROLE_CAPABILITIES.contributor; }
+  if (role === UserRole.Creator) { return ROLE_CAPABILITIES.creator; }
   if (role === UserRole.Guest) { return ROLE_CAPABILITIES.guest; }
   return [];
 }
