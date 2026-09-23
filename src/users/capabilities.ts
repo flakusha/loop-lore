@@ -17,8 +17,9 @@ import { type Permission, } from "./permissions";
 
 /** A single human-readable capability description. */
 export interface RoleCapability {
-  /** Permission string from `src/users/permissions.ts` (or "*" for full access). */
-  permission: Permission | "*";
+  /** Permission string from `src/users/permissions.ts`, a namespace wildcard
+ *   ("chat.*"), or "*" for full access. */
+  permission: Permission | "*" | "chat.*" | "character.*" | "world.*" | "moderation.*";
   /** Plain-language capability label (UI / docs). */
   label: string;
   /** Short description of what the capability grants. */
@@ -26,15 +27,17 @@ export interface RoleCapability {
 }
 
 /**
- * Capability matrix for the four core seeded roles (TASK-032 acceptance).
+ * Capability matrix across all UserRole values, mirroring
+ * permissions.ts#DEFAULT_PERMISSIONS (TASK-032 acceptance).
  *
- * `admin` gets `*`; `moderator` gets the moderation + chat moderation set;
- * `creator` gets full content authoring; `guest` gets the read-only
- * public surface. The matrix is a documentation layer — actual enforcement
+ * `admin`/`tester`/`solo` get `*`; `moderator` gets the moderation + chat
+ * moderation set; `creator` gets full content authoring; `user`/`player`
+ * get the authoring set; `viewer`/`guest` get the read-only public
+ * surface; `custom` starts empty. The matrix is a documentation layer — actual enforcement
  * lives in `permissions.ts#DEFAULT_PERMISSIONS` and the middleware that
  * calls `can(role, permission)`.
  */
-export const ROLE_CAPABILITIES: Record<"admin" | "moderator" | "creator" | "guest", readonly RoleCapability[]> = {
+export const ROLE_CAPABILITIES: Record<UserRole, readonly RoleCapability[]> = {
   admin: [
     {
       permission: "*",
@@ -82,6 +85,40 @@ export const ROLE_CAPABILITIES: Record<"admin" | "moderator" | "creator" | "gues
     { permission: "chat.join", label: "Join public chats", description: "Spectate / participate in public rooms.", },
     { permission: "character.view", label: "View public characters", description: "Read public character cards.", },
     { permission: "world.view", label: "View public worlds", description: "Read public world lorebooks.", },
+  ],
+  user: [
+    { permission: "chat.create", label: "Create chats", description: "Open new chats.", },
+    { permission: "chat.join", label: "Join chats", description: "Participate in chats.", },
+    { permission: "character.create", label: "Author characters", description: "Create character cards.", },
+    { permission: "character.edit_own", label: "Edit own characters", description: "Edit own character cards.", },
+    { permission: "world.create", label: "Author worlds", description: "Create world lorebooks.", },
+    { permission: "world.edit_own", label: "Edit own worlds", description: "Edit own world lorebooks.", },
+    { permission: "export.own", label: "Export own content", description: "Download own characters / worlds as shareable cards.", },
+  ],
+  player: [
+    { permission: "chat.create", label: "Create chats", description: "Open new chats.", },
+    { permission: "chat.join", label: "Join chats", description: "Participate in chats.", },
+    { permission: "character.create", label: "Author characters", description: "Create character cards.", },
+    { permission: "character.edit_own", label: "Edit own characters", description: "Edit own character cards.", },
+    { permission: "world.create", label: "Author worlds", description: "Create world lorebooks.", },
+    { permission: "world.edit_own", label: "Edit own worlds", description: "Edit own world lorebooks.", },
+    { permission: "export.own", label: "Export own content", description: "Download own characters / worlds as shareable cards.", },
+  ],
+  viewer: [
+    { permission: "chat.join", label: "Join chats", description: "Spectate / participate in chats.", },
+    { permission: "character.view", label: "View characters", description: "Read character cards.", },
+    { permission: "world.view", label: "View worlds", description: "Read world lorebooks.", },
+  ],
+  bot: [
+    { permission: "chat.join", label: "Join chats", description: "Participate in chats as an automated actor.", },
+    { permission: "chat.create", label: "Create chats", description: "Open chats as an automated actor.", },
+  ],
+  tester: [
+    { permission: "*", label: "Full system access", description: "All permissions, including ownership bypass for testing.", },
+  ],
+  custom: [],
+  solo: [
+    { permission: "*", label: "Full system access", description: "Single-user mode grants all permissions, including ownership bypass.", },
   ],
 };
 
