@@ -66,7 +66,7 @@ Published the runbook at `docs/ops/bare-metal-deploy.md` (Ubuntu 22.04 LTS) with
 
 - `docs/ops/bare-metal/network.md` — port allocation, ufw rules, Caddy/nginx TLS configs, ACME, federation
 - `docs/ops/bare-metal/requirements.txt` — pinned apt packages with versions (jammy 2026-09-22 snapshot)
-- `docs/ops/bare-metal/systemd/` — ten unit files: `loop-lore.service`, `loop-lore-worker.service`, `llama-swap.service`, `llama-cpp-server@.service`, `pg-exporter.service`, `node-exporter.service`, `backup-sqlite.service` + `.timer`, `backup-zfs-send.service` + `.timer`
+- `docs/ops/bare-metal/systemd/` — ten unit files: `loop-lore.service`, `loop-lore-worker.service`, `llama-swap.service`, `llama-server@.service`, `pg-exporter.service`, `node-exporter.service`, `backup-sqlite.service` + `.timer`, `backup-zfs-send.service` + `.timer`
 
 Covers all checklist items and acceptance criteria:
 

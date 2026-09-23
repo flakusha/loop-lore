@@ -9,7 +9,7 @@ Type=simple
 User=llama
 Group=llama
 WorkingDirectory=/data/models
-ExecStart=/usr/local/bin/llama-cpp-server \
+ExecStart=/usr/local/bin/llama-server \
   --model /data/models/%i.gguf \
   --port 0 \
   --ctx-size 4096 \
@@ -27,7 +27,7 @@ MemoryMax=48G
 
 StandardOutput=journal
 StandardError=journal
-SyslogIdentifier=llama-cpp-%i
+SyslogIdentifier=llama-server-%i
 
 [Install]
 WantedBy=multi-user.target
