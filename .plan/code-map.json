@@ -1160,6 +1160,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/EPIC-2026-23.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-command-execution-intent-detection.md"
     },
     {
@@ -1354,6 +1358,14 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/EPIC-2026-22.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/EPIC-2026-23.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-rpg-gate-chat-commands-behind-world-opt-in.md"
     },
     {
@@ -1422,6 +1434,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/EPIC-2026-23.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-creative-studio-workflows.md"
     },
     {
@@ -1479,6 +1495,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-assistant-improve-translate-rewrite-never-call-llm.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/EPIC-2026-23.md"
     },
     {
       "kind": "ticket",
@@ -1557,6 +1577,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-assistant-generation-extensions.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/EPIC-2026-23.md"
     }
   ],
   "src/assistant/commands/rag.test.ts": [
@@ -1600,6 +1624,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/EPIC-2026-23.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-action-applicability-gate.md"
     },
     {
@@ -1609,6 +1637,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-entity-access-adapter.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-slash-command-typed-token-autocomplete.md"
     },
     {
       "kind": "ticket",
@@ -1643,6 +1675,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-assistant-improve-translate-rewrite-never-call-llm.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/EPIC-2026-23.md"
     }
   ],
   "src/assistant/commands/rpg-gate.test.ts": [
@@ -1691,6 +1727,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-assistant-improve-translate-rewrite-never-call-llm.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/EPIC-2026-23.md"
     },
     {
       "kind": "ticket",
@@ -6966,6 +7006,10 @@
     }
   ],
   "src/components/chat/input-area.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-slash-command-typed-token-autocomplete.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-prompt-improve-composer-ui.md"
@@ -13123,6 +13167,14 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-frontend-components.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/EPIC-2026-23.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-slash-command-typed-token-autocomplete.md"
     }
   ],
   "src/frontend/alpine/chat-location.ts": [
@@ -13143,6 +13195,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-out-of-order-fetch-race-in-loadmessages.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/EPIC-2026-24.md"
     },
     {
       "kind": "ticket",
@@ -13229,6 +13285,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-attachment-frontend-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-slash-command-typed-token-autocomplete.md"
     }
   ],
   "src/frontend/alpine/chat-settings.ts": [
@@ -14331,6 +14391,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-skills-frontend.md"
+    }
+  ],
+  "src/frontend/alpine/slash-autocomplete.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-slash-command-typed-token-autocomplete.md"
     }
   ],
   "src/frontend/alpine/store-schema.ts": [
@@ -20331,6 +20397,22 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-composer-flows.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/EPIC-2026-21.md"
+    }
+  ],
+  "src/notifications/service/triggers.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/EPIC-2026-21.md"
+    }
+  ],
+  "src/notifications/service/types.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/EPIC-2026-21.md"
     }
   ],
   "src/nsfw/capability-gate.test.ts": [
@@ -24159,10 +24241,20 @@
       "source": "docs/spec/error-envelope.md"
     }
   ],
+  "src/routes/http-utils/parse.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/EPIC-2026-24.md"
+    }
+  ],
   "src/routes/http-utils/responses.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-review-dev-2026-08-26-security-data-integrity-merges.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/EPIC-2026-24.md"
     }
   ],
   "src/routes/http-utils/status.ts": [
@@ -25197,6 +25289,12 @@
       "source": ".plan/epics/epic-world-chat-channels-invites.md"
     }
   ],
+  "src/routes/notifications/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/EPIC-2026-21.md"
+    }
+  ],
   "src/routes/notifications/stream.test.ts": [
     {
       "kind": "ticket",
@@ -25211,6 +25309,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-sse-streams-leak-string-error-internals-to-clients.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/EPIC-2026-21.md"
     }
   ],
   "src/routes/npc-movement.ts": [
@@ -27957,6 +28059,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-rpg-content-systems.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/EPIC-2026-23.md"
     },
     {
       "kind": "ticket",
@@ -31485,6 +31591,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-e2e-test-infrastructure-fixes.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/EPIC-2026-24.md"
     },
     {
       "kind": "ticket",
