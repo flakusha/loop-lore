@@ -9,14 +9,7 @@
 
 ## Summary
 
-Serve encoder classifiers (ModernBERT/DeBERTa/MiniLM fine-tunes, bge-reranker, Laya GGUF if available) via llama-server alongside existing LLM serving.
-
-Grounded state:
-- LlamaCppAutoStartConfig (src/config/schema/auto-start.ts) + llamaCppMeta (src/config/sections/generation/llama.ts) already type single-model spawn; multi-model rotation goes through llama-swap proxy.
-- llm-serving.md documents extended llama.cpp fields wired end-to-end (reasoning_budget, grammar, response_format); classifier serving needs OpenAI-compatible chat/completions on encoder BERT backbones — verify which llama-server build serves ModernBERT-class GGUFs (embeddings endpoint vs chat).
-- Open questions: GGUF availability for each candidate (Laya ships safetensors — needs conversion or Python sidecar); CPU thread/cgroup sizing for 200-400M encoders next to a GPU LLM.
-
-Scope: per-candidate serving verdict (native llama-server / conversion needed / sidecar), minimal config delta, latency check vs 2s AUX timeout.
+Scope: Laya verdict RESOLVED — two serving stories, pick one per deployment (not both): (1) llama.cpp: fr0stbit3/laya-gguf + fr0stbit3/laya-multilingual-gguf (`-hf repo:Q8_0`, `--embeddings --pooling none`, loads as `modern-bert`); backbone hidden states only — decision head (`laya-head.safetensors`, `load_head`) runs outside llama.cpp per that repo's quickstart.py; prefer F16/Q8_0. (2) ggmlc full-model: mys/laya-GGUF + mys/laya-multilingual-GGUF + mys/laya-typed-decisions-GGUF with the `laya` CLI (`laya serve file.gguf` → POST /api/decide; `daemon` = JSON-RPC) — backbone+head in one binary, FAILS in llama-server. Still open: ModernBERT/DeBERTa/MiniLM/bge-reranker GGUF verdicts, CPU sizing next to GPU LLM, latency vs 2s AUX timeout.
 
 ## Acceptance Criteria
 

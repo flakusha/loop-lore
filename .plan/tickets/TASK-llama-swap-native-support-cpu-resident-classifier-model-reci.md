@@ -16,7 +16,7 @@ Grounded state:
 - Auto-start schema (src/config/schema/auto-start.ts) only spawns the proxy (configPath) — models live in external llama-swap YAML, so NO code change needed for serving; this is config + docs work.
 - Jev-analogue: remote integration pattern = openaiCompatible provider instance (src/generation/providers/registry.ts initializeProviders) pointed at remote endpoint; same seam serves a remote classifier.
 
-Scope: extend config.llama-swap.example.yaml with a classifier entry (CPU-only llama-server cmd: --n-gpu-layers 0, small ctx 4-16k, ttl:0, member of persistent helpers group), document VRAM reasoning (421M encoder ~1GB, stays resident while 7B+ LLMs rotate), note preload-all cost vs lazy. Verify: proxy serves classifier + LLM concurrently, TTL does not evict classifier.
+Scope: DONE in configs/config.llama-swap.example.yaml — `laya-english` + `laya-multilingual` entries (fr0stbit3 GGUFs via `-hf`, `--embeddings --pooling none`, `-c/-ub/-b 2048`, `ttl: 0`, `unlisted: true`, members of the persistent `helpers` group). CPU is llama.cpp's default — no `-ngl` flag needed (earlier draft wrongly used `--n-gpu-layers 0`). Decision head is NOT in the GGUF (`laya-head.safetensors` + `laya_head.py` run outside llama.cpp). Remaining: verify proxy serves classifier + LLM concurrently (TTL must not evict).
 
 ## Acceptance Criteria
 
