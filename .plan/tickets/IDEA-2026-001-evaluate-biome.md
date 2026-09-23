@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 💡 Deferred
+**Status:** ✅ Decision documented (research published 2026-09-23)
 **Priority:** medium
 **Labels:** idea, tooling
 
@@ -26,10 +26,16 @@ Biome (Rust) could replace Prettier (~25x faster) and cover ~60-70% of non-type-
 
 ## Scope
 
-- [ ] Evaluate Biome formatter compatibility with dprint config
-- [ ] Identify ESLint rules Biome can replace
-- [ ] Benchmark format + lint time savings
-- [ ] Decision: adopt, complement, or skip
+- [x] Publish research doc: `docs/research/biome-evaluation.md` (2026-09-23)
+- [x] Document current tooling landscape vs. Biome capability matrix
+- [x] Recommend path: pilot (Complement) — Biome for `src/` formatting only
+- [ ] Adopt, complement, or skip — **decision deferred** until a benchmark of `bun run check` is captured
+
+## References
+
+- `docs/research/biome-evaluation.md` — full evaluation
+- `.plan/tickets/TASK-dev-tooling-updates.md` — version-bump ticket
+- `.plan/tickets/TASK-codemod-fetch-json-safe-utils.md` — codemod effort noting Biome unused for `src/`
 
 ## Source
 
