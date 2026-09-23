@@ -68,7 +68,10 @@ export function applyFx(
   opts: FxOptions = {},
 ): () => void {
   const cls = FX_CLASSES[name];
-  if (!cls) { return () => {}; }
+  if (!cls) {
+    // Unknown fx name — nothing to apply or clean up.
+    return () => { /* no-op */ };
+  }
 
   // Remove any prior fx-* class so a re-application re-triggers the
   // keyframe (the browser caches animation state otherwise).
