@@ -4,15 +4,21 @@
 /**
  * scripts/seed-users.ts — provisioning script for demo user accounts.
  *
- * TASK-032: bootstraps one account per role (admin / moderator / contributor /
- * guest) with deterministic credentials. Run via `bun run seed:users`.
+ * TASK-032: bootstraps one account per role (admin / moderator / contributor
+ * [creator role] / guest) with deterministic credentials. Run via `bun run seed:users`.
  *
  * Idempotent: re-runs upsert via `ON CONFLICT DO NOTHING` on the username key.
  */
 
-import type { Kysely, } from "kysely";
+import { Database, } from "bun:sqlite";
+import { Kysely, } from "kysely";
+import path from "node:path";
+import { DATA_DIR, } from "../src/config/constants";
 import { ActorType, AgentType, UserRole, UserStatus, } from "../src/db/enums";
+import { createSqliteDialect, getDatabase, } from "../src/db/index";
+import { runMigrations, } from "../src/db/migrate";
 import type { DB, } from "../src/db/schema";
+import { createLogger, getLogger, } from "../src/logger";
 
 /** bcrypt(cost 4) hash of "password". Deterministic across seeds. */
 const PASSWORD_HASH = "$2b$04$anSd/tkwm/jhqfjGUZOdkurfsavDtfDeUM7dwdc/MQY.4upTC8ikG";
@@ -72,19 +78,33 @@ export async function seedUsers(db: Kysely<DB>,): Promise<void> {
     .onConflict((oc,) => oc.column("username",).doNothing())
     .execute();
 
+  // Resolve actual user ids by username: if the username already existed
+  // with a different id, the actor row must reference THAT id or the
+  // actors.user_id foreign key fails.
+  const seeded = await db
+    .selectFrom("users",)
+    .select(["id", "username",],)
+    .where("username", "in", SEED_USERS.map((u,) => u.username,),)
+    .execute();
+  const idByUsername = new Map(seeded.map((r,) => [r.username, r.id,],));
+
   await db
     .insertInto("actors",)
     .values(
-      SEED_USERS.map((u,) => ({
-        id: u.id,
-        actor_type: ActorType.User,
-        display_name: u.display_name,
-        user_id: u.id,
-        owner_id: u.id,
-        agent_type: AgentType.None,
-        settings: "{}",
-        import_spec: "raw",
-      })),
+      SEED_USERS.flatMap((u,) => {
+        const userId = idByUsername.get(u.username,);
+        if (userId === undefined) { return []; }
+        return [{
+          id: u.id,
+          actor_type: ActorType.User,
+          display_name: u.display_name,
+          user_id: userId,
+          owner_id: userId,
+          agent_type: AgentType.None,
+          settings: "{}",
+          import_spec: "raw",
+        }];
+      },),
     )
     .onConflict((oc,) => oc.column("id",).doNothing())
     .execute();
@@ -92,12 +112,23 @@ export async function seedUsers(db: Kysely<DB>,): Promise<void> {
 
 /** Module guard — only run when invoked directly. */
 if (import.meta.url === `file://${process.argv[1]}`) {
-  const { createTestDb, } = await import("../src/test-utils/create-test-db");
-  const db = await createTestDb();
+  createLogger();
+  const log = getLogger().child({ module: "seed-users", },);
+  // Persist to the real configured database — createTestDb() is an
+  // in-memory database that is destroyed on exit, seeding nothing.
+  const dbPath = process.env.LOOP_LORE_DB_PATH ?? path.resolve(DATA_DIR, "loop-lore.db",);
+  // Release the eager module-level connection so the file lock moves to us.
+  await getDatabase().destroy();
+  const sqlite = new Database(dbPath,);
+  sqlite.run("PRAGMA journal_mode = WAL",);
+  sqlite.run("PRAGMA foreign_keys = ON",);
+  const db = new Kysely<DB>({ dialect: createSqliteDialect(sqlite,), },);
   try {
+    await runMigrations(db,);
     await seedUsers(db,);
-    console.log("Users seeded.",);
+    log.info(`Seeded ${SEED_USERS.length} demo accounts into ${dbPath}`,);
   } finally {
     await db.destroy();
+    sqlite.close();
   }
 }

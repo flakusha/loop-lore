@@ -12,7 +12,7 @@
  */
 
 export { IntimacyLevel, } from "../db/enums-character/nsfw";
-export { IntimacyService, } from "./intimacy";
+export { IntimacyService, } from "./intimacy/service";
 export {
   INTIMACY_THRESHOLDS,
 } from "./intimacy/service";

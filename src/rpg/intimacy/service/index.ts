@@ -82,19 +82,18 @@ export class IntimacyService {
   }
 
   /**
-   * TASK-033 named signature: apply an interaction and return the post-delta
-   * intimacy level (a score on the `IntimacyLevel` enum).
+   * TASK-033 named signature: apply an interaction and return the raw
+   * post-delta intimacy score (IntimacyLevel thresholds apply downstream).
    *
-   * Routes through {@link applyAction} so the NSFW capability gate, CHA/WIS
-   * stat modifiers, and threshold events fire identically. Bypassing the gate
-   * is impossible from this surface — the gate is enforced inside the
-   * dispatcher when `opts.gate` is supplied.
+   * Routes through {@link applyAction} so CHA/WIS stat modifiers and
+   * threshold events fire identically. The NSFW capability gate is
+   * enforced by the dispatcher only when the caller supplies `opts.gate`;
+   * this wrapper does not supply one.
    * @param actor - Initiating actor id.
    * @param target - Target actor id.
    * @param action - The intimacy action descriptor.
    * @param worldId - Optional world scope (null = cross-world).
    * @returns Post-delta intimacy score.
-   * @throws {CapabilityBlockedError} when the NSFW gate denies the action.
    */
   async applyInteraction(
     actor: string,
