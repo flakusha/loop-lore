@@ -84,9 +84,9 @@ export async function seedUsers(db: Kysely<DB>,): Promise<void> {
   const seeded = await db
     .selectFrom("users",)
     .select(["id", "username",],)
-    .where("username", "in", SEED_USERS.map((u,) => u.username,),)
+    .where("username", "in", SEED_USERS.map((u,) => u.username),)
     .execute();
-  const idByUsername = new Map(seeded.map((r,) => [r.username, r.id,],));
+  const idByUsername = new Map(seeded.map((r,) => [r.username, r.id,]),);
 
   await db
     .insertInto("actors",)
@@ -103,7 +103,7 @@ export async function seedUsers(db: Kysely<DB>,): Promise<void> {
           agent_type: AgentType.None,
           settings: "{}",
           import_spec: "raw",
-        }];
+        },];
       },),
     )
     .onConflict((oc,) => oc.column("id",).doNothing())
