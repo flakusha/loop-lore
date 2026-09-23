@@ -102,6 +102,17 @@
     "star": "Favorit",
     "unstar": "Favorit entfernen",
     "cancelGeneration": "Generierung abbrechen",
+    "viewMode": "3D-Ansichtsmodus",
+    "viewModeLabel": {
+      "orbit": "Orbit",
+      "firstPerson": "Egoperspektive",
+      "cinematic": "Kinematisch"
+    },
+    "viewModeTitle": {
+      "orbit": "Orbitkamera",
+      "firstPerson": "Kamera in Egoperspektive",
+      "cinematic": "Kinematische Kamera"
+    },
     "copyCode": "Code kopieren",
     "viewOriginal": "Original anzeigen",
     "translated": "Übersetzt",
@@ -571,7 +582,8 @@
     "copyUrl": "Copy URL",
     "labelOptional": "Label (optional)",
     "orClickToBrowse": "or click to browse",
-    "assetFallback": "Mediendatei"
+    "assetFallback": "Mediendatei",
+    "previewFailed": "Vorschau der Mediendatei konnte nicht geladen werden"
   },
   "blog": {
     "title": "Blog",
@@ -622,6 +634,7 @@
   },
   "accessibility": {
     "skipToContent": "Zum Inhalt springen",
+    "dismissBanner": "Banner ausblenden",
     "mainContent": "Hauptinhalt",
     "navigation": "Navigation",
     "search": "Suche",

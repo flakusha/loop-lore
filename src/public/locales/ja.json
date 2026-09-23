@@ -102,6 +102,17 @@
     "star": "スター",
     "unstar": "スター解除",
     "cancelGeneration": "生成をキャンセル",
+    "viewMode": "3Dビューのモード",
+    "viewModeLabel": {
+      "orbit": "オービット",
+      "firstPerson": "一人称",
+      "cinematic": "シネマティック"
+    },
+    "viewModeTitle": {
+      "orbit": "オービットカメラ",
+      "firstPerson": "一人称カメラ",
+      "cinematic": "シネマティックカメラ"
+    },
     "copyCode": "コードをコピー",
     "viewOriginal": "原文を表示",
     "translated": "翻訳済み",
@@ -571,7 +582,8 @@
     "copyUrl": "Copy URL",
     "labelOptional": "Label (optional)",
     "orClickToBrowse": "or click to browse",
-    "assetFallback": "アセット"
+    "assetFallback": "アセット",
+    "previewFailed": "アセットのプレビューを読み込めませんでした"
   },
   "blog": {
     "title": "ブログ",
@@ -622,6 +634,7 @@
   },
   "accessibility": {
     "skipToContent": "コンテンツへスキップ",
+    "dismissBanner": "バナーを閉じる",
     "mainContent": "メインコンテンツ",
     "navigation": "ナビゲーション",
     "search": "検索",

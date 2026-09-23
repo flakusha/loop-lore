@@ -103,6 +103,17 @@
     "star": "Star",
     "unstar": "Unstar",
     "cancelGeneration": "Cancel Generation",
+    "viewMode": "3D view mode",
+    "viewModeLabel": {
+      "orbit": "Orbit",
+      "firstPerson": "First-person",
+      "cinematic": "Cinematic"
+    },
+    "viewModeTitle": {
+      "orbit": "Orbit camera",
+      "firstPerson": "First-person camera",
+      "cinematic": "Cinematic camera"
+    },
     "copyCode": "Copy Code",
     "viewOriginal": "View Original",
     "translated": "Translated",
@@ -584,7 +595,8 @@
     "deleteSelected": "Delete Selected",
     "downloadSelected": "Download Selected",
     "preview": "Preview",
-    "assetFallback": "Asset"
+    "assetFallback": "Asset",
+    "previewFailed": "Failed to load asset preview"
   },
   "blog": {
     "title": "Blog",
@@ -635,6 +647,7 @@
   },
   "accessibility": {
     "skipToContent": "Skip to content",
+    "dismissBanner": "Dismiss banner",
     "mainContent": "Main content",
     "navigation": "Navigation",
     "search": "Search",
