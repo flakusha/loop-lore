@@ -5111,7 +5111,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-v1-csrf-exempt-set-missing-api-v1-prefixes-for-session-mint-.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-V1-ROUTE-CHAIN-EXCEEDS-TS-INSTANTIATION-DEPTH": {
     "hash": "a67a52d",
