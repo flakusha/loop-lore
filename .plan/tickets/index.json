@@ -5851,7 +5851,7 @@
     "tags": [],
     "source": ".plan/tickets/EPIC-2026-21.md",
     "git_issue": "c4b708e",
-    "status": "open"
+    "status": "done"
   },
   "EPIC-2026-22": {
     "hash": "fedd80c",
@@ -5864,7 +5864,7 @@
     "tags": [],
     "source": ".plan/tickets/EPIC-2026-22.md",
     "git_issue": "fedd80c",
-    "status": "open"
+    "status": "done"
   },
   "EPIC-2026-23": {
     "hash": "8c07e16",
@@ -5890,7 +5890,7 @@
     "tags": [],
     "source": ".plan/tickets/EPIC-2026-24.md",
     "git_issue": "96970f5",
-    "status": "open"
+    "status": "done"
   },
   "EPIC-FEDERATION-SWARM-SYNC": {
     "hash": "pending",
