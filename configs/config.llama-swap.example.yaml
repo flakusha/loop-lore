@@ -83,6 +83,51 @@ models:
       --ctx-size 16384
     ttl: 300
 
+  "qwen3-embed-0.6B":
+    # unlisted: hidden from /v1/models, still requestable
+    unlisted: true
+    cmd: |
+      llama-server --port ${PORT}
+      -hf Qwen/Qwen3-Embedding-0.6B-GGUF:Q8_0
+      --alias 'qwen3-embed-0.6B'
+      --embedding --pooling last
+      --ctx-size 32768
+      -ub 8192
+    ttl: 0
+
+  "bge-reranker-v2-m3":
+    # unlisted: hidden from /v1/models, still requestable
+    unlisted: true
+    cmd: |
+      llama-server --port ${PORT}
+      -hf gpustack/bge-reranker-v2-m3-GGUF:Q4_K_M
+      --alias 'bge-reranker-v2-m3'
+      --reranking
+      --ctx-size 8192
+    ttl: 0
+
+  "llama-guard-3-1b":
+    # unlisted: hidden from /v1/models, still requestable
+    unlisted: true
+    cmd: |
+      llama-server --port ${PORT}
+      -hf QuantFactory/Llama-Guard-3-1B-GGUF:Q4_K_M
+      --alias 'llama-guard-3-1b'
+      --ctx-size 8192
+    ttl: 0
+
+  "comfyui_auto":
+    # Fixed id consumed by upstream /comfyui compatibility endpoint;
+    # do NOT rename (proxy routes /comfyui + /comfyui/{path} here).
+    # compatibility.ignoreWebsockets keeps /ws out of swap/TTL accounting.
+    cmd: |
+      python ${models_dir}/../comfyui/main.py --port ${PORT}
+    ttl: 0
+    compatibility:
+      ignoreWebsockets: true
+    # ComfyUI has no /health; /system_stats is the lightweight ready probe.
+    checkEndpoint: /system_stats
+
   "laya-english":
     # Shortest llama.cpp path: backbone-only GGUF served with --embeddings.
     # fr0stbit3/laya-gguf (Apache-2.0): laya-F16.gguf 791MB / Q8_0 421MB /
@@ -145,6 +190,10 @@ routing:
           persistent: true # not evicted by other groups' loads
           members:
             - "<placeholder-background-model>"
+            - "qwen3-embed-0.6B"
+            - "bge-reranker-v2-m3"
+            - "llama-guard-3-1b"
+            - "comfyui_auto"
             - "laya-english"
             - "laya-multilingual"
 
