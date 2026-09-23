@@ -30,9 +30,9 @@ Conversation analytics and observability dashboard. Covers per-chat cost trackin
 
 ## Acceptance Criteria
 
-- [ ] Per-chat cost + quality dashboard functional
-- [ ] Model comparison A/B testing works
-- [ ] Memory visualizer displays knowledge graph
+- [x] Per-chat cost + quality dashboard functional — FEA-2026-056 (src/routes/analytics.ts:34 chat stats, :81 overview; src/routes/analytics.test.ts)
+- [x] Model comparison A/B testing works — FEA-2026-057 (src/routes/model-comparisons.ts:42 POST, :133 leaderboard, :177 list; src/routes/model-comparisons.test.ts)
+- [ ] Memory visualizer displays knowledge graph — FEA-2026-058 (gap-audit 2026-09-23; tracked by FEAT-MEMORY-VISUALIZER-KNOWLEDGE-GRAPH-OVER-ASSET-LINKS)
 
 ## Dependencies
 
@@ -53,4 +53,8 @@ Open work is feature-level (dashboard UI, memory visualizer), not route wiring.
 
 - [ ] [gap-audit E10] Admin analytics: latency p50/p95/p99 trends, SSE live push, Chart.js widgets
 - [ ] [gap-audit E11] Error monitoring: alert rules CRUD, webhook notifications, error grouping
+  - Ticket: `FEAT-error-monitoring-alert-rules-crud-webhook-notifications-erro` (issue e21ff70)
+- [ ] [gap-audit E14] Memory visualizer: knowledge graph over `asset_links` (FEA-2026-058)
+  - Ticket: `FEAT-memory-visualizer-knowledge-graph-over-asset-links` (issue 2ce5c57)
 - [ ] [gap-audit E13] Engagement: activity streaks, DAU/MAU, achievements dashboard
+  - Ticket: `FEAT-engagement-activity-streaks-dau-mau-achievements-dashboard` (issue 93bff55)
