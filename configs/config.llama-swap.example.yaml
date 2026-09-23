@@ -83,6 +83,21 @@ models:
       --ctx-size 16384
     ttl: 300
 
+  "<placeholder-classifier-model>":
+    # CPU-resident encoder classifier (Laya/Jev-class, ModernBERT/MiniLM fine-tune,
+    # bge-reranker). Stays resident while LLMs rotate: member of the persistent
+    # `helpers` group below, ttl:0 = never auto-unload. ~1GB for a 400M encoder.
+    # NOTE: Laya ships safetensors — needs GGUF conversion or a Python sidecar;
+    # this entry assumes a GGUF artifact exists at the path below.
+    unlisted: true
+    cmd: |
+      llama-server --port ${PORT}
+      --model ${models_dir}/<placeholder-classifier-model-file>.gguf
+      --alias '<placeholder-classifier-model>'
+      --ctx-size 4096
+      --n-gpu-layers 0
+    ttl: 0
+
 # --- Routing / rotation ---------------------------------------------------
 # Default `group` engine. Loading a member of an exclusive group unloads
 # every other group; members of a swap:true group rotate among themselves.
@@ -110,6 +125,7 @@ routing:
           persistent: true # not evicted by other groups' loads
           members:
             - "<placeholder-background-model>"
+            - "<placeholder-classifier-model>"
 
 # --- Startup preload ------------------------------------------------------
 hooks:
