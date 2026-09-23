@@ -46,7 +46,9 @@
         @click="close()"
         x-bind:aria-label="t('common.close')"
         data-testid="asset-preview-close"
-      >&times;</button>
+      >
+        &times;
+      </button>
     </div>
     <div class="modal-body asset-preview-body" style="padding: 0">
       <div class="asset-preview-stage">
@@ -117,14 +119,18 @@
           x-show="asset?.id"
           x-on:click="window.copyAssetUrl && window.copyAssetUrl()"
           x-bind:title="t('gallery.copyUrl')"
-        >📋 <span x-text="t('gallery.copyUrl')"></span></button>
+        >
+          📋 <span x-text="t('gallery.copyUrl')"></span>
+        </button>
         <button
           class="btn btn-ghost"
           type="button"
           x-show="asset?.id"
           x-on:click="window.downloadAsset && window.downloadAsset()"
           x-bind:title="t('common.download')"
-        >⬇ <span x-text="t('common.download')"></span></button>
+        >
+          ⬇ <span x-text="t('common.download')"></span>
+        </button>
         <button
           class="btn btn-danger"
           type="button"
@@ -132,7 +138,9 @@
           x-on:click="window.deleteAssetPreview && window.deleteAssetPreview()"
           x-bind:title="t('common.delete')"
           data-testid="asset-preview-delete"
-        >🗑 <span x-text="t('common.delete')"></span></button>
+        >
+          🗑 <span x-text="t('common.delete')"></span>
+        </button>
       </div>
     </div>
   </div>
