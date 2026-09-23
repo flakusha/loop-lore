@@ -4,6 +4,12 @@
 /**
  * Moderation classifier tests — LLM severity verdict mapping and the
  * ModerationHook escalation wiring (escalate / llm-only / fail-open / flag-off).
+ *
+ * Resource contract: fully in-memory and parallel-safe — every test builds its
+ * own HookContext and AUX mock (never shared across tests); no files, ports,
+ * sockets, or DB; the only global touched is the process logger, configured
+ * identically to the rest of the suite. Passes alone, in any order, and
+ * alongside hooks.test.ts.
  */
 import { beforeAll, describe, expect, mock, test, } from "bun:test";
 import type { Kysely, } from "kysely";
@@ -62,8 +68,8 @@ function auxReply(severity: string,): AuxCallResult {
  * @param impl
  */
 /** callAux double with bun's mock handle surfaced for call assertions. */
-type AuxMockArgs = [AuxTaskName, Config, Kysely<DB>, GenerationMessage[], (AuxCallOptions | undefined)?];
-type AuxMock = typeof callAux & { mock: { calls: AuxMockArgs[]; }, };
+type AuxMockArgs = [AuxTaskName, Config, Kysely<DB>, GenerationMessage[], (AuxCallOptions | undefined)?,];
+type AuxMock = typeof callAux & { mock: { calls: AuxMockArgs[] } };
 
 function makeAux(impl: () => Promise<AuxCallResult | null>,): AuxMock {
   return mock(
@@ -83,7 +89,7 @@ function makeAux(impl: () => Promise<AuxCallResult | null>,): AuxMock {
 function makeHook(aux: typeof callAux,): ModerationHook {
   return new ModerationHook({
     callAux: aux,
-    auditRecorder: () => ({ recordAction: async () => ({}) }),
+    auditRecorder: () => ({ recordAction: async () => ({}), }),
   },);
 }
 
@@ -95,7 +101,7 @@ describe("detectModerationWithLlm", () => {
   },);
 
   test("maps severe verdict and passes the AUX contract", async () => {
-    const aux = makeAux(async () => auxReply("severe",),);
+    const aux = makeAux(async () => auxReply("severe",));
     const verdict = await detectModerationWithLlm("some hostile message", makeCtx(), aux,);
     expect(verdict,).toBe("severe",);
     expect(aux.mock.calls,).toHaveLength(1,);
@@ -108,21 +114,21 @@ describe("detectModerationWithLlm", () => {
   });
 
   test("truncates user content to 500 chars", async () => {
-    const aux = makeAux(async () => auxReply("moderate",),);
+    const aux = makeAux(async () => auxReply("moderate",));
     const verdict = await detectModerationWithLlm("x".repeat(600,), makeCtx(), aux,);
     expect(verdict,).toBe("moderate",);
     expect(aux.mock.calls[0]![3]![1]!.content,).toHaveLength(500,);
   });
 
   test("clean and unknown severities map to null", async () => {
-    const clean = await detectModerationWithLlm("x", makeCtx(), makeAux(async () => auxReply("clean",),),);
-    const unknown = await detectModerationWithLlm("x", makeCtx(), makeAux(async () => auxReply("bogus",),),);
+    const clean = await detectModerationWithLlm("x", makeCtx(), makeAux(async () => auxReply("clean",)),);
+    const unknown = await detectModerationWithLlm("x", makeCtx(), makeAux(async () => auxReply("bogus",)),);
     expect(clean,).toBeNull();
     expect(unknown,).toBeNull();
   });
 
   test("null AUX response maps to null", async () => {
-    const verdict = await detectModerationWithLlm("x", makeCtx(), makeAux(async () => null,),);
+    const verdict = await detectModerationWithLlm("x", makeCtx(), makeAux(async () => null),);
     expect(verdict,).toBeNull();
   });
 
@@ -135,7 +141,7 @@ describe("detectModerationWithLlm", () => {
   });
 
   test("systemPrompts.moderation override wins over the default", async () => {
-    const aux = makeAux(async () => auxReply("severe",),);
+    const aux = makeAux(async () => auxReply("severe",));
     const ctx = makeCtx({
       config: {
         hooks: { enableModerationLlmClassifier: true, },
@@ -155,7 +161,7 @@ describe("ModerationHook LLM escalation", () => {
   },);
 
   test("moderate keyword is escalated to severe and suppressed", async () => {
-    const aux = makeAux(async () => auxReply("severe",),);
+    const aux = makeAux(async () => auxReply("severe",));
     const result = await makeHook(aux,).execute("That was a rude and offensive insult.", makeCtx(),);
     expect(result.handled,).toBe(true,);
     expect(result.suppressContent,).toBe(true,);
@@ -166,7 +172,7 @@ describe("ModerationHook LLM escalation", () => {
   });
 
   test("clean keyword content is flagged llm-only when the LLM says severe", async () => {
-    const aux = makeAux(async () => auxReply("severe",),);
+    const aux = makeAux(async () => auxReply("severe",));
     const result = await makeHook(aux,).execute("Have a wonderful day full of kindness!", makeCtx(),);
     expect(result.handled,).toBe(true,);
     expect(result.suppressContent,).toBe(true,);
@@ -187,7 +193,7 @@ describe("ModerationHook LLM escalation", () => {
   });
 
   test("flag disabled → no AUX call, keyword verdict stands", async () => {
-    const aux = makeAux(async () => auxReply("severe",),);
+    const aux = makeAux(async () => auxReply("severe",));
     const ctx = makeCtx({
       config: {
         hooks: { enableModerationLlmClassifier: false, },

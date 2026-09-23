@@ -27,7 +27,12 @@ import { callAux, } from "../../aux-pipeline";
 import { type DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
 import { NsfwModerationService, } from "../../nsfw/moderation-service";
-import { MODERATE_KEYWORDS, SEVERE_KEYWORDS, detectModerationWithLlm, type ModerationSeverity, } from "./moderation-classifier";
+import {
+  detectModerationWithLlm,
+  MODERATE_KEYWORDS,
+  type ModerationSeverity,
+  SEVERE_KEYWORDS,
+} from "./moderation-classifier";
 import type { HookContext, HookEventType, HookHandler, HookResult, } from "./types";
 
 /** */
