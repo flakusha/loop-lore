@@ -3,14 +3,14 @@
 
 # TASK-025: Text effects and overlays
 
-**Status:** open
+**Status:** done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Reusable text-effects primitives (shake, glow, typewriter, fade) plus overlay stack.
 **Context:** Pure presentation layer; composes on existing surfaces without altering backend schema.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: open
+**Status**: done
 **Priority**: medium
 **Effort:** Medium
 **Labels**: text-effects, overlay, ui, immersion
@@ -28,11 +28,11 @@ Pure presentation layer. Effects compose on existing message and HUD surfaces wi
 
 ## Acceptance Criteria
 
-- Effects library exposes shake, glow, typewriter, and fade via a single `<TextFx>` component
-- Overlay stack supports concurrent banner, toast, and ticker without z-index collisions
-- `prefers-reduced-motion` disables non-essential motion; essential UI feedback remains
-- Effects are testable via Playwright assertions on computed styles and aria-live regions
-- No regression in chat scroll position when overlays appear
+- [x] Effects library exposes shake, glow, typewriter, and fade via a single `<TextFx>` component
+- [x] Overlay stack supports concurrent banner, toast, and ticker without z-index collisions
+- [x] `prefers-reduced-motion` disables non-essential motion; essential UI feedback remains
+- [x] Effects are testable via Playwright assertions on computed styles and aria-live regions
+- [x] No regression in chat scroll position when overlays appear
 
 ## Related Files
 

@@ -34,12 +34,18 @@ import "./components/asset-preview-modal";
 import "./components/avatar-centerer";
 // ── 10b. TASK-023: 3D view mode switcher (orbit/first-person/cinematic) ──
 import "./scene/view-mode";
+// ── 10c. TASK-025: text effects (shake / glow / typewriter / fade) ──
+import { applyFx, isFxActive, prefersReducedMotion, } from "./effects/text-fx";
 import { toDate, } from "../utils/date";
 
 // ── 2. Expose on globalThis ─────────────────────────────────────
 const g = globalThis as Record<string, unknown>;
 g.htmx = htmx;
 g.Alpine = Alpine;
+// TASK-025: text effects reachable as window.applyFx / window.isFxActive.
+g.applyFx = applyFx;
+g.isFxActive = isFxActive;
+g.prefersReducedMotion = prefersReducedMotion;
 
 // ── 3. Alpine plugins ───────────────────────────────────────────
 Alpine.plugin(morph,);
