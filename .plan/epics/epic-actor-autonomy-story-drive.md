@@ -96,3 +96,18 @@ controls, and the governor stacks actor-level budgets on top — the layers do n
 ## Docs-Gap Audit Remainders (2026-09-19)
 
 - [ ] [gap-audit E15] Per-agent/user budget caps UI + cost dashboards
+
+## Linked Tickets (Concrete Implementation)
+
+| Work Item | Ticket | On-disk | Status |
+| --------- | ------ | ------- | ------ |
+| Story auto-drive scheduler | `TASK-story-auto-drive-scheduler.md` | **missing** | **TBD — needs filing** |
+| NPC navigation tick driver | `TASK-world-simulation-npc-navigation-tick-driver.md` | **missing** | **TBD — needs filing** |
+| Autonomy config surface | `TASK-autonomy-config-surface.md` | **missing** | **TBD — needs filing** |
+| Per-agent/user budget caps UI (gap-audit E15) | `TASK-autonomy-rate-governor.md` (proposed) | **missing** | **TBD — needs filing** |
+
+**Gap (2026-09-23):** All 4 concrete tickets referenced by this epic are missing on disk. The epic's Work Items list is the canonical spec, but no implementation has been filed. Either:
+1. File all 4 tickets under existing epic, each as a fine-grained ticket breaking out a discrete unit of work.
+2. Add a single umbrella ticket that mirrors this epic and add fine-grained subtasks under it.
+
+(Recommended) Option 1: file 4 separate tickets matching the Work Items list.
