@@ -3,14 +3,14 @@
 
 # TASK-001: Asset Preview Modal & Avatar Centering UI
 
-**Status:** open
+**Status:** done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Modal-based asset preview with a centered avatar viewport.
 **Context:** Frontend (Vue/Alpine) extension to the asset gallery; centered modal portal with keyboard dismiss and focus restore.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: open
+**Status**: done
 **Priority:** medium
 **Effort:** Medium
 **Labels**: frontend, gallery, avatar, ui
@@ -31,11 +31,11 @@ OUT: backend asset metadata, thumbnail generation, role/permission gating.
 
 ## Acceptance Criteria
 
-- Modal opens on gallery tile click and overlays the current view without layout shift
-- Avatar is centered both horizontally and vertically across viewport sizes from 360px to 1920px wide
-- ESC and backdrop click dismiss; focus is restored to the triggering element on close
-- Preview shows metadata strip (name, tags, source) sourced from existing asset payload
-- No regression in existing gallery keyboard navigation
+- [x] Modal opens on gallery tile click and overlays the current view without layout shift
+- [x] Avatar is centered both horizontally and vertically across viewport sizes from 360px to 1920px wide
+- [x] ESC and backdrop click dismiss; focus is restored to the triggering element on close
+- [x] Preview shows metadata strip (name, tags, source) sourced from existing asset payload
+- [x] No regression in existing gallery keyboard navigation
 
 ## Related Files
 
