@@ -5,6 +5,7 @@ import type { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
+import { VALID_ROLES, } from "../../admin/model-roles";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
@@ -116,6 +117,7 @@ describeReal("admin model-roles routes", () => {
       const app = makeApp(db, "admin", mockConfig,);
       const res = await app.handle(new Request("http://localhost/api/admin/model-roles",),);
       const body = await res.json() as OverrideBody;
+      expect(body.roles,).toHaveLength(VALID_ROLES.length,);
       const main = body.roles!.find(r => r.role === "main");
       expect(main!.provider,).toBe("fake-provider",);
       expect(main!.source,).toBe("db",);
