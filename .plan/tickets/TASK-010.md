@@ -3,7 +3,7 @@
 
 # TASK-010: E2E tests for i18n system
 
-**Status:** 🟡 Partial — locale-switch + missing-key e2e shipped (`tests/e2e/flows/browser/i18n-locale.browser.ts` 2026-09-23); plural AC blocked on `Intl.PluralRules` infra, decomposed to TASK-010-plurals
+**Status:** 🟡 Partial — locale-switch + missing-key e2e shipped (`tests/e2e/flows/browser/i18n-locale.browser.ts` 2026-09-23; missing-key test asserts SHIPPED behavior: raw key, no client-side fallback chain); plural AC blocked on `Intl.PluralRules` infra, decomposed to TASK-010-plurals
 **Priority:** medium
 **Effort:** Medium
 **Summary:** E2E coverage for the i18n runtime — locale switch, fallback, plurals, interpolation.
@@ -29,7 +29,7 @@ Unit tests already cover the i18n module APIs; this ticket adds browser-level co
 ## Acceptance Criteria
 
 - Switching locale updates visible strings in chat, persona selector, and gallery without reload
-- Missing-key fallback renders the configured fallback locale string, never the raw key
+- DESIRED, NOT MET client-side: missing-key fallback to the configured fallback locale. Shipped frontend translators return the RAW key for missing keys (src/frontend/ui.ts `t`; src/frontend/alpine/i18n.ts `__` → `fallback ?? key`); a fallback chain exists only server-side (src/middleware/i18n.ts `createI18nContext`). A client-side fallback chain is future work — the shipped e2e asserts the actual raw-key behavior
 - Plural forms resolve correctly for `zero`/`one`/`other` for at least English and one plural-rich locale
 - Interpolation placeholders (`{{name}}`) substitute runtime values and are escaped against XSS
 - Test suite runs in CI and gates merges to the i18n epic
