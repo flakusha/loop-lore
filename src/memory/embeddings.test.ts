@@ -126,7 +126,8 @@ afterAll(() => {
 
 afterEach(() => {
   for (const [key, value,] of Object.entries(ORIGINAL_ENV,)) {
-    if (value === undefined) { delete process.env[key]; } else { process.env[key] = value; }
+    if (value === undefined) { delete process.env[key]; }
+    else { process.env[key] = value; }
   }
 },);
 
@@ -173,8 +174,8 @@ describe("embedText", () => {
     // Normalised exactly like the Ollama path.
     expect(vec[0],).toBeCloseTo(0.6, 5,);
     expect(vec[1],).toBeCloseTo(0.8, 5,);
-    expect(lastOpenAIBody?.model,).toBe("text-embedder-under-test");
-    expect(lastOpenAIBody?.input,).toBe("openai me");
+    expect(lastOpenAIBody?.model,).toBe("text-embedder-under-test",);
+    expect(lastOpenAIBody?.input,).toBe("openai me",);
     expect(lastEmbedBody,).toBeUndefined(); // ollama route not touched
   });
 
@@ -197,7 +198,7 @@ describe("embedText", () => {
 
     await embedText("model override",);
 
-    expect(lastEmbedBody?.model,).toBe("custom-embedder");
+    expect(lastEmbedBody?.model,).toBe("custom-embedder",);
   });
 });
 
@@ -445,20 +446,20 @@ describe("semanticRecall", () => {
     await seedRerankMemory("rerank-1", "blue text",);
     await seedRerankMemory("rerank-2", "red text",);
     await seedRerankMemory("rerank-3", "green text",);
-    nextRerank = { results: [{ index: 1, relevance_score: 0.99, }, { index: 0, relevance_score: 0.42, },] };
+    nextRerank = { results: [{ index: 1, relevance_score: 0.99, }, { index: 0, relevance_score: 0.42, },], };
     rerankHits = 0;
 
     const matches = await semanticRecall(db, ["rerank-1", "rerank-2", "rerank-3",], "rerank me", 2, 0.3,);
 
     expect(rerankHits,).toBe(1,);
-    expect(lastRerankBody?.model,).toBe("bge-reranker-under-test");
-    expect(lastRerankBody?.query,).toBe("rerank me");
+    expect(lastRerankBody?.model,).toBe("bge-reranker-under-test",);
+    expect(lastRerankBody?.query,).toBe("rerank me",);
     // Documents arrive in cosine order; rerank-3 (0.0) is filtered by minScore
     // before the shortlist, so only the two surviving matches are reranked.
     expect(lastRerankBody?.documents,).toEqual(["blue text", "red text",],);
     expect(lastRerankBody?.top_n,).toBe(2,);
     // Rerank order wins and carries rerank scores, not cosine scores.
-    expect(matches.map((m,) => m.memoryId,),).toEqual(["rerank-2", "rerank-1",],);
+    expect(matches.map((m,) => m.memoryId),).toEqual(["rerank-2", "rerank-1",],);
     expect(matches[0]?.score,).toBeCloseTo(0.99, 5,);
     expect(matches[1]?.score,).toBeCloseTo(0.42, 5,);
   });
@@ -472,7 +473,7 @@ describe("semanticRecall", () => {
     const matches = await semanticRecall(db, ["rerank-1", "rerank-2", "rerank-3",], "fail open", 2, 0.3,);
 
     expect(rerankHits,).toBe(1,);
-    expect(matches.map((m,) => m.memoryId,),).toEqual(["rerank-1", "rerank-2",],);
+    expect(matches.map((m,) => m.memoryId),).toEqual(["rerank-1", "rerank-2",],);
     expect(matches[0]?.score,).toBeCloseTo(1, 4,);
     expect(matches[1]?.score,).toBeCloseTo(0.6, 4,);
   });
@@ -482,13 +483,13 @@ describe("semanticRecall", () => {
     nextEmbeddings = [[0.6, 0.8,],];
     // Stored vector without an actor_memories row.
     await storeEmbedding(db, "rerank-ghost", new Float32Array([1, 0,],), "m",);
-    nextRerank = { results: [{ index: 0, relevance_score: 1, },] };
+    nextRerank = { results: [{ index: 0, relevance_score: 1, },], };
     rerankHits = 0;
 
     const matches = await semanticRecall(db, ["rerank-ghost", "rerank-1",], "ghost", 2, 0.3,);
 
     expect(rerankHits,).toBe(0,);
-    expect(matches.map((m,) => m.memoryId,),).toEqual(["rerank-1", "rerank-ghost",],);
+    expect(matches.map((m,) => m.memoryId),).toEqual(["rerank-1", "rerank-ghost",],);
     expect(matches[0]?.score,).toBeCloseTo(1, 4,);
   });
 
@@ -500,7 +501,7 @@ describe("semanticRecall", () => {
     const matches = await semanticRecall(db, ["rerank-1", "rerank-2", "rerank-3",], "disabled", 2, 0.3,);
 
     expect(rerankHits,).toBe(0,);
-    expect(matches.map((m,) => m.memoryId,),).toEqual(["rerank-1", "rerank-2",],);
+    expect(matches.map((m,) => m.memoryId),).toEqual(["rerank-1", "rerank-2",],);
     expect(matches[0]?.score,).toBeCloseTo(1, 4,);
   });
 });

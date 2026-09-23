@@ -3,6 +3,10 @@
 
 # TASK: RAG embedding + rerank model survey (Qwen3, nomic, bge)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 **Status:** ✅ Done
 **Priority:** medium
 **Effort:** Medium
