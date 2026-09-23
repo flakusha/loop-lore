@@ -6,7 +6,7 @@
  * through {@link resolveSystemPrompt}.
  *
  * Custom purposes remain legal: configs may define `systemPrompts.<custom>`
- * under any key name and consumers may resolve them, but the twelve purposes
+ * under any key name and consumers may resolve them, but the purposes
  * below are first-class and type-checked.
  *
  * Legacy purposes (chat/summarize/imagePrompt/ooc) are retained for backward
@@ -30,6 +30,7 @@ export const PROMPT_PURPOSES = [
   "intent",
   "memory", // aux classifiers
   "gmTool", // aux classifier
+  "moderation", // aux classifier
 ] as const;
 
 /** Union of the known, typed prompt purposes. */

@@ -9,4 +9,5 @@ export const HOOKS_DEFAULTS = {
   enableEmotionHooks: true,
   enableNsfwHooks: true,
   enableModerationHooks: true,
+  enableModerationLlmClassifier: true,
 } satisfies HooksConfig;

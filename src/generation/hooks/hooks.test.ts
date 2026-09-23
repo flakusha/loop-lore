@@ -25,7 +25,7 @@ function makeContext(overrides?: Partial<HookContext>,): HookContext {
     actorId: "actor-1",
     userId: "user-1",
     content: "Hello world",
-    config: {} as any,
+    config: { hooks: { enableModerationLlmClassifier: false, }, } as any,
     nsfwConfig: {
       allowNsfw: true,
       nsfwMinAge: 18,

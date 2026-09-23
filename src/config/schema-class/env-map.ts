@@ -154,6 +154,7 @@ export const envMap = (): EnvMap => {
   map.ENABLE_EMOTION_HOOKS = "hooks.enableEmotionHooks";
   map.ENABLE_NSFW_HOOKS = "hooks.enableNsfwHooks";
   map.ENABLE_MODERATION_HOOKS = "hooks.enableModerationHooks";
+  map.MODERATION_LLM_CLASSIFIER = "hooks.enableModerationLlmClassifier";
   map.LLM_DEFAULT_PROVIDER = "generation.defaultProvider";
   map.BYO_KEY_ENABLED = "byoKey.enabled";
   map.BYO_KEY_ENCRYPTION_KEY = "byoKey.encryptionKey";
