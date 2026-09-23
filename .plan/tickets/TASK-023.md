@@ -45,4 +45,17 @@ Scope is frontend view controllers and camera state management. Backend scene pa
 - See epic-3d-generation for upstream asset/skeleton contracts
 - Coordinate with BUG-avatar-select tickets for fallback rendering when 3D asset is missing
 
+## Resolution
+
+Shipped as Alpine (no Vue files): `src/components/3d/view-mode-switcher.html`
++ `src/frontend/scene/view-mode.ts` (`viewMode()` x-data factory, included in
+`chat.html` inside `#vn-container`). Review fix applied: the mode was previously
+mirrored only onto the switcher buttons with no consumer — `view-mode.ts` now
+writes `data-mode` onto the real scene container (`#vn-container`) on
+set/reset/restore, and `vn.css` consumes it as the camera (first-person zoom
+offset, cinematic slow pan, eased 350ms stage transition, all guarded by
+`prefers-reduced-motion`; orbit = untouched default). Labels/aria are i18n'd
+via `chat.viewMode` / `chat.viewModeLabel.*` / `chat.viewModeTitle.*` in all
+10 locale files.
+
 Git issue: `149948e`

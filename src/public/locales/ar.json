@@ -102,6 +102,17 @@
     "star": "مفضل",
     "unstar": "إزالة من المفضلة",
     "cancelGeneration": "إلغاء التوليد",
+    "viewMode": "وضع العرض ثلاثي الأبعاد",
+    "viewModeLabel": {
+      "orbit": "مدار",
+      "firstPerson": "المنظور الأول",
+      "cinematic": "سينمائي"
+    },
+    "viewModeTitle": {
+      "orbit": "كاميرا مدارية",
+      "firstPerson": "كاميرا المنظور الأول",
+      "cinematic": "كاميرا سينمائية"
+    },
     "copyCode": "نسخ الكود",
     "viewOriginal": "عرض الأصلي",
     "translated": "مترجم",
@@ -571,7 +582,8 @@
     "copyUrl": "Copy URL",
     "labelOptional": "Label (optional)",
     "orClickToBrowse": "or click to browse",
-    "assetFallback": "ملف"
+    "assetFallback": "ملف",
+    "previewFailed": "فشل تحميل معاينة الملف"
   },
   "blog": {
     "title": "مدونة",
@@ -622,6 +634,7 @@
   },
   "accessibility": {
     "skipToContent": "تخطي إلى المحتوى",
+    "dismissBanner": "تجاهل الشريط",
     "mainContent": "المحتوى الرئيسي",
     "navigation": "التنقل",
     "search": "بحث",

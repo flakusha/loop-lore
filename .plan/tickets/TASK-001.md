@@ -49,4 +49,17 @@ OUT: backend asset metadata, thumbnail generation, role/permission gating.
 - Sibling of BUG-avatar-select-* tickets — leverage same fallback chain
 - See epic-asset-platform-capabilities for thumbnail sizing constraints
 
+## Resolution
+
+Shipped as Alpine (no Vue files): `src/components/asset-preview-modal.html`
+partial + `src/frontend/components/asset-preview-modal.ts` data factory, wired
+into `gallery.html` (gallery/search grids call `window.openAssetPreviewById`).
+Review fixes applied: fetch failures now catch `feFetch` throws and surface a
+toast (`gallery.previewFailed`, all locales) instead of an unhandled rejection;
+ESC handled once via `@keydown.escape.window` (the duplicate document keydown
+`bind()` listener was removed); the Alpine state is now reached through
+`Alpine.$data` instead of the private `_x_dataStack`. The standalone
+`avatar-centerer.html` partial was deleted as unreferenced — its markup was
+already inlined in the modal and the `avatarCenterer()` factory remains.
+
 Git issue: `732d54b`
