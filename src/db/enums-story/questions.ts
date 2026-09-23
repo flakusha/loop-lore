@@ -29,6 +29,15 @@ export const RpgQuestionStatus = {
 /** */
 export type RpgQuestionStatus = (typeof RpgQuestionStatus)[keyof typeof RpgQuestionStatus];
 
+/** How the player answers a question: pick an option, type text, or enter a number. */
+export const RpgQuestionInputKind = {
+  Choice: "choice",
+  FreeText: "free_text",
+  Numeric: "numeric",
+} as const;
+/** */
+export type RpgQuestionInputKind = (typeof RpgQuestionInputKind)[keyof typeof RpgQuestionInputKind];
+
 // ── State Machine ──────────────────────────────────────────
 
 const rpgQuestionStatusDef: StateDef<RpgQuestionStatus> = {
