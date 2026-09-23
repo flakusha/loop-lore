@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Large
+**Summary:** Dedicated classifier models (Laya/Jev-class) as a complement to the generative AUX pipeline — classifier ModelRole value, routing with generative fallback, fine-tune-vs-Jev decision per label set.
+**Context:** Classifier-shaped AUX tasks (NSFW, intent, transitions, injection-check) currently route through generative LLMs via callAux; grounded state and Laya/Jev facts in ## Summary below.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 
 ## Summary
 
