@@ -117,7 +117,8 @@ Rules:
  * Default moderation severity-verdict prompt — toxicity/hate classification
  * for the moderation hook's LLM escalation path (moderation-classifier.ts).
  */
-export const MODERATION_PROMPT = `You are a content moderation classifier. Analyze the message and reply with ONLY a JSON object:
+export const MODERATION_PROMPT =
+  `You are a content moderation classifier. Analyze the message and reply with ONLY a JSON object:
 {
   "severity": "severe" | "moderate" | "clean",
   "categories": ["hate" | "harassment" | "threat" | "self-harm" | "other"],

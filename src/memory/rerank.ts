@@ -7,6 +7,10 @@
  * cosine similarity — callers fail open to the cosine ordering on any error.
  */
 
+import type { Kysely, } from "kysely";
+import type { DB, } from "../db";
+import { safeFetch, } from "../utils/safe-fetch";
+
 /** One rerank result: input document position + model relevance score. */
 export interface RerankHit {
   index: number;
@@ -41,21 +45,21 @@ export async function rerankViaLlamaCpp(
   if (docs.length === 0) { return []; }
   const model = opts.model ?? process.env.RERANK_MODEL;
   if (!model) { throw new Error("RERANK_MODEL is not set; rerank is disabled.",); }
-  const baseUrl = opts.baseUrl ?? process.env.RERANK_BASE_URL
-    ?? process.env.EMBEDDINGS_BASE_URL ?? process.env.OLLAMA_BASE_URL
-    ?? "http://localhost:11434";
-  const response = await fetch(`${baseUrl}/rerank`, {
-    method: "POST",
-    headers: { "content-type": "application/json", },
-    body: JSON.stringify({ model, query, documents: docs, top_n: opts.topN, },),
-    signal: AbortSignal.timeout(opts.timeoutMs ?? 2000,),
-  },);
-  if (!response.ok) {
-    throw new Error(`Rerank endpoint returned HTTP ${response.status}.`,);
+  const baseUrl = opts.baseUrl ?? process.env.RERANK_BASE_URL ??
+    process.env.EMBEDDINGS_BASE_URL ?? process.env.OLLAMA_BASE_URL ??
+    "http://localhost:11434";
+  const result = await safeFetch<{ results?: { index?: unknown; relevance_score?: unknown }[] }>(
+    `${baseUrl}/rerank`,
+    {
+      method: "POST",
+      body: { model, query, documents: docs, top_n: opts.topN, },
+      timeout: opts.timeoutMs ?? 2000,
+    },
+  );
+  if (!result.ok) {
+    throw new Error(`Rerank endpoint request failed: ${result.error.message}`,);
   }
-  const payload = await response.json() as {
-    results?: { index?: unknown; relevance_score?: unknown }[];
-  };
+  const payload = result.data;
   if (!Array.isArray(payload.results,)) {
     throw new Error("Rerank response is missing a results array.",);
   }
@@ -67,6 +71,27 @@ export async function rerankViaLlamaCpp(
     if (typeof score !== "number") {
       throw new Error("Rerank result entry is missing relevance_score.",);
     }
-    return { index, score };
+    return { index, score, };
+  },);
+}
+
+/**
+ * Fetch actor_memories content for the given ids, preserving order.
+ * @param db
+ * @param ids
+ * @throws If any id has no row (rerank callers fail open).
+ */
+export async function fetchMemoryTexts(db: Kysely<DB>, ids: string[],): Promise<string[]> {
+  const rows = await db
+    .selectFrom("actor_memories",)
+    .select(["id", "content",],)
+    .where("id", "in", ids,)
+    .execute();
+  const byId = new Map<string, string>();
+  for (const row of rows) { byId.set(row.id, row.content,); }
+  return ids.map((id,) => {
+    const content = byId.get(id,);
+    if (content === undefined) { throw new Error(`actor_memories has no row for ${id}.`,); }
+    return content;
   },);
 }

@@ -3,6 +3,10 @@
 
 # TASK: llama-swap /comfyui endpoint support (comfyui_auto + workarounds)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 **Status:** ✅ Done
 **Priority:** medium
 **Effort:** Small
