@@ -1,0 +1,39 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!--
+  3D View Mode Switcher (TASK-023)
+  --------------------------------
+  Three buttons bound to the viewMode() Alpine data factory
+  (src/frontend/scene/view-mode.ts). The active mode is mirrored
+  to ?viewMode= in the URL and to sessionStorage so deep-links
+  restore the same camera and a page refresh keeps the chosen mode.
+
+  The actual camera transform is owned by the scene renderer; this
+  switcher only flips a data-mode attribute and the URL. The scene
+  container picks up [data-mode] via CSS and applies the appropriate
+  transform transition (eased, prefers-reduced-motion aware).
+-->
+<div
+  class="view-mode-switcher"
+  x-data="viewMode()"
+  x-init="restore()"
+  role="group"
+  aria-label="3D view mode"
+  data-testid="view-mode-switcher"
+>
+  <template x-for="m in available" :key="m">
+    <button
+      type="button"
+      class="btn btn-sm btn-ghost view-mode-btn"
+      :class="{ 'view-mode-active': m === mode }"
+      :aria-pressed="m === mode ? 'true' : 'false'"
+      :data-mode="m"
+      @click="set(m)"
+      :data-testid="'view-mode-' + m"
+      :title="m === 'orbit' ? 'Orbit camera' : (m === 'first-person' ? 'First-person camera' : 'Cinematic camera')"
+    >
+      <span x-text="m === 'orbit' ? 'Orbit' : (m === 'first-person' ? 'First-person' : 'Cinematic')"></span>
+    </button>
+  </template>
+</div>
