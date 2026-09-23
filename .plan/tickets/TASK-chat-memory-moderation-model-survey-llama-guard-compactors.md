@@ -3,7 +3,7 @@
 
 # TASK: Chat-memory + moderation model survey (Llama-Guard, compactors)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** medium
 **Effort:** Medium
 
@@ -16,3 +16,7 @@ Adopt small models for chat memory + moderation domains. Grounded state: src/mem
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Resolution
+
+Moderation-hook LLM verdict wired alongside the keyword path via a new AUX task `moderation` (`MODERATION_PROMPT` JSON verdict: severe/moderate/clean + categories, 2s AUX timeout, temperature 0, fail-open). Escalation: keyword-moderate → LLM severe upgrades (suppress + `llmEscalated`); keyword-clean → LLM-only flagging (`llmOnly`); keyword-severe skips the LLM. Config: `hooks.enableModerationLlmClassifier` default true (`HOOKS_DEFAULTS`, env `MODERATION_LLM_CLASSIFIER`); the hook checks `=== true` so config-less contexts (`chat/moderation.ts applyFlag`) stay keyword-only. Model pick: the AUX JSON classifier is model-agnostic — any small instruct model on the auxiliary role works today; Llama-Guard speaks its own policy format (native-format adapter = follow-up) and Laya needs its external decision head, both covered by recipe entries + `docs/spec/integrations/llm-serving.md`. Qwen3-Embedding for compaction-window overflow rides the embed wiring in the RAG ticket.

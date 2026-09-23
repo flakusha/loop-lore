@@ -3,7 +3,7 @@
 
 # TASK: RAG embedding + rerank model survey (Qwen3, nomic, bge)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** medium
 **Effort:** Medium
 
@@ -16,3 +16,7 @@ Research + adopt embedding/rerank GGUFs for chat memory RAG. Grounded state: src
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Resolution
+
+Wired in `src/memory/`: embedding model configurable via `OLLAMA_EMBED_MODEL` (single `resolveEmbedModel()` source; hardcoded nomic literals gone), new `EMBEDDINGS_API=openai` transport posting to `/v1/embeddings` (llama-server serves OpenAI-style embeddings/rerank, NOT Ollama `/api/embed` — that gap was the blocker for llama-swap helpers), and a rerank stage in `semanticRecall` gated by `RERANK_MODEL` (`/rerank`, top-K×4 shortlist, fail-open to cosine order on any failure). Env table in `docs/spec/integrations/llm-serving.md`. Latency/recall characterization against a live llama-swap instance is operator work — unit level is fake-server verified (33 tests).

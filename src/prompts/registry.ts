@@ -19,6 +19,7 @@ import {
   GM_TOOL_DETECTION_PROMPT,
   INTENT_CLASSIFIER_PROMPT,
   MEMORY_EXTRACTION_PROMPT,
+  MODERATION_PROMPT,
   NSFW_POLICY_LEVELS_PROMPT,
   NSFW_POLICY_PROMPT,
   TRANSITION_CLASSIFIER_PROMPT,
@@ -89,6 +90,8 @@ export const LLM_PROMPT_DEFAULTS: Record<string, string> = {
   memory: MEMORY_EXTRACTION_PROMPT,
   /** Aux: GM tool request detection */
   gmTool: GM_TOOL_DETECTION_PROMPT,
+  /** Aux: moderation severity verdict */
+  moderation: MODERATION_PROMPT,
 };
 
 /**

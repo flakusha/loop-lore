@@ -106,6 +106,32 @@ Features: multi-model hot-swap, API key auth, `GET /v1/models` returns all confi
 
 Config: external llama-swap YAML (no `ai-scripts/` directory exists in this repo). Benefits over direct llama-server: no restart for model swap, auth, loading state UI, model list, debugging.
 
+### Helper Models (recipe: `configs/config.llama-swap.example.yaml`)
+
+Persistent `helpers` group (`swap: false`, never evicted by other groups' loads). `unlisted` ids stay requestable but are hidden from `/v1/models`.
+
+| Id | Purpose | llama-server flags |
+| -- | ------- | ------------------ |
+| `qwen3-embed-0.6B` | Embeddings (32k ctx) | `--embedding --pooling last -ub 8192` |
+| `bge-reranker-v2-m3` | Reranking | `--reranking` |
+| `llama-guard-3-1b` | Safety classification (chat completions; speaks its own policy format, not JSON) | — |
+| `laya-en` / `laya-multi` | Classifier backbones — decision head is external (`laya_head.py`, token ids over `/embedding`) | `--embeddings --pooling none` |
+| `comfyui_auto` | Fixed id for the upstream `/comfyui` passthrough | non-llama.cpp cmd |
+
+llama-server serves `/v1/embeddings` and `/v1/rerank` (OpenAI-style) — it does not implement Ollama's `/api/embed`. Memory embeddings therefore have a transport switch (`src/memory/embeddings.ts`):
+
+| Env | Default | Purpose |
+| --- | ------- | ------- |
+| `EMBEDDINGS_API` | `ollama` | `openai` targets `/v1/embeddings` (llama-swap / llama.cpp) |
+| `EMBEDDINGS_BASE_URL` | `OLLAMA_BASE_URL` else `http://localhost:11434` | Embeddings endpoint base |
+| `OLLAMA_EMBED_MODEL` | `nomic-embed-text` | Embedding model id |
+| `RERANK_MODEL` | unset (off) | When set, `semanticRecall` reranks the cosine candidates via `/rerank`; any failure falls back to cosine order |
+| `RERANK_BASE_URL` | `EMBEDDINGS_BASE_URL` | Rerank endpoint base |
+
+### ComfyUI via the `/comfyui` Passthrough
+
+Upstream llama-swap binds the fixed `comfyui_auto` model id to `/comfyui` + `/comfyui/{path}`; `compatibility.ignoreWebsockets: true` keeps `/ws` out of swap/TTL accounting. `ComfyUIClient` (`src/generation/providers/comfyui.ts`) only uses plain HTTP paths (`/prompt`, `/history/{id}`, `/view`, `/upload`, `/object_info`), so pointing the ComfyUI provider `baseUrl` at `http://<swap-host>:<port>/comfyui` routes image generation through the proxy with no code change. Browser `/ws` consumers are the only traffic that never wakes the model.
+
 ## vLLM Integration (Future)
 
 High-throughput GPU serving with PagedAttention, continuous batching, tensor parallelism.

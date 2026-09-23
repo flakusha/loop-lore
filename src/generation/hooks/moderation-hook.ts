@@ -23,13 +23,15 @@
  */
 
 import { type Kysely, } from "kysely";
+import { callAux, } from "../../aux-pipeline";
 import { type DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
 import { NsfwModerationService, } from "../../nsfw/moderation-service";
+import { MODERATE_KEYWORDS, SEVERE_KEYWORDS, detectModerationWithLlm, type ModerationSeverity, } from "./moderation-classifier";
 import type { HookContext, HookEventType, HookHandler, HookResult, } from "./types";
 
 /** */
-export type ModerationSeverity = "severe" | "moderate";
+export type { ModerationSeverity, };
 
 /** */
 export interface ModerationMatch {
@@ -43,6 +45,10 @@ export interface ModerationFlags {
   severity: ModerationSeverity;
   score: number;
   matched: ModerationMatch[];
+  /** Set when the LLM classifier created the flags (keyword scan found nothing). */
+  llmOnly?: boolean;
+  /** Set when the LLM classifier escalated a keyword "moderate" to "severe". */
+  llmEscalated?: boolean;
 }
 
 /** */
@@ -61,45 +67,9 @@ export interface ModerationAuditRecorder {
 export interface ModerationHookDeps {
   /** Audit recorder factory; injectable for tests. Defaults to `NsfwModerationService` bound to `context.db`. */
   auditRecorder?: (db: Kysely<DB>,) => ModerationAuditRecorder;
+  /** LLM verdict runner; injectable for tests. Defaults to the AUX pipeline. */
+  callAux: typeof callAux;
 }
-
-/**
- * Exact word tokens — matched as whole words, case-insensitive. Common
- * morphological variants are listed explicitly because tokenized matching never
- * matches a substring (e.g. "violent" ≠ "violence", "harassment" ≠ "harass").
- */
-const SEVERE_KEYWORDS: readonly { term: string; weight: number }[] = [
-  { term: "hate", weight: 3, },
-  { term: "hateful", weight: 3, },
-  { term: "hatred", weight: 3, },
-  { term: "violence", weight: 3, },
-  { term: "violent", weight: 3, },
-  { term: "violently", weight: 3, },
-  { term: "threat", weight: 3, },
-  { term: "threaten", weight: 3, },
-  { term: "threatened", weight: 3, },
-  { term: "threatening", weight: 3, },
-  { term: "abuse", weight: 3, },
-  { term: "abused", weight: 3, },
-  { term: "abusive", weight: 3, },
-  { term: "harass", weight: 3, },
-  { term: "harassed", weight: 3, },
-  { term: "harassment", weight: 3, },
-  { term: "harassing", weight: 3, },
-];
-
-const MODERATE_KEYWORDS: readonly { term: string; weight: number }[] = [
-  { term: "insult", weight: 2, },
-  { term: "insulted", weight: 2, },
-  { term: "insulting", weight: 2, },
-  { term: "offensive", weight: 2, },
-  { term: "offensively", weight: 2, },
-  { term: "rude", weight: 2, },
-  { term: "rudely", weight: 2, },
-  { term: "rudeness", weight: 2, },
-  { term: "disrespect", weight: 2, },
-  { term: "disrespectful", weight: 2, },
-];
 
 /** */
 export class ModerationHook implements HookHandler {
@@ -109,11 +79,14 @@ export class ModerationHook implements HookHandler {
   private readonly auditRecorderFactory: (db: Kysely<DB>,) => ModerationAuditRecorder;
   private recorder: ModerationAuditRecorder | null = null;
 
+  private readonly callAuxFn: typeof callAux;
+
   /**
    * @param deps
    */
   constructor(deps?: Partial<ModerationHookDeps>,) {
     this.auditRecorderFactory = deps?.auditRecorder ?? ((db,) => new NsfwModerationService(db,));
+    this.callAuxFn = deps?.callAux ?? callAux;
   }
 
   /**
@@ -135,7 +108,24 @@ export class ModerationHook implements HookHandler {
     const log = getLogger();
     log.debug("moderation-hook: scanning content for flags", { contentLength: content.length, },);
 
-    const flags = this.detectModerationFlags(content,);
+    // Optional LLM severity verdict: fires only when the keyword scan found
+    // nothing (LLM-only flagging) or found only "moderate" (escalation). A
+    // keyword "severe" already suppresses — no tokens spent. Any classifier
+    // failure keeps the keyword verdict (fail-open).
+    // Explicit === true: real configs get HOOKS_DEFAULTS-merged true (default on);
+    // degenerate contexts built without config (e.g. chat/moderation.ts applyFlag)
+    // stay keyword-only instead of firing an AUX call.
+    const llmEnabled = context.config.hooks?.enableModerationLlmClassifier === true;
+    let flags = this.detectModerationFlags(content,);
+    if (llmEnabled && (!flags || flags.severity === "moderate")) {
+      const llm = await detectModerationWithLlm(content, context, this.callAuxFn,);
+      if (!flags && llm) {
+        flags = { severity: llm, score: 0, matched: [], llmOnly: true, };
+      } else if (flags && llm === "severe" && flags.severity === "moderate") {
+        flags.severity = "severe";
+        flags.llmEscalated = true;
+      }
+    }
     if (!flags) {
       return {
         handled: false,
@@ -148,6 +138,7 @@ export class ModerationHook implements HookHandler {
     await this.recordAudit(context, flags, suppress,);
 
     const matched = Array.from(flags.matched, (m,) => m.term,).join(", ",);
+    const llmNote = flags.llmEscalated ? " [llm-escalated]" : "";
     log.warn("moderation-hook: content flagged", {
       severity: flags.severity,
       score: flags.score,
@@ -165,11 +156,13 @@ export class ModerationHook implements HookHandler {
         matched: Array.from(flags.matched, (m,) => ({ term: m.term, count: m.count, }),),
         // Backward-compatible severity list (severe/moderate), kept for existing consumers.
         flags: [flags.severity,],
+        llmEscalated: flags.llmEscalated ?? false,
+        llmOnly: flags.llmOnly ?? false,
         actorId: context.actorId,
         chatId: context.chatId,
       },
       suppressContent: suppress,
-      reason: `Content flagged for moderation (${flags.severity}, score ${flags.score}): ${matched}`,
+      reason: `Content flagged for moderation (${flags.severity}, score ${flags.score})${llmNote}: ${matched}`,
     };
   }
 

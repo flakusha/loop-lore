@@ -114,6 +114,24 @@ Rules:
 - Return only the JSON object, no commentary`;
 
 /**
+ * Default moderation severity-verdict prompt — toxicity/hate classification
+ * for the moderation hook's LLM escalation path (moderation-classifier.ts).
+ */
+export const MODERATION_PROMPT = `You are a content moderation classifier. Analyze the message and reply with ONLY a JSON object:
+{
+  "severity": "severe" | "moderate" | "clean",
+  "categories": ["hate" | "harassment" | "threat" | "self-harm" | "other"],
+  "confidence": 0.0-1.0
+}
+
+Rules:
+- "severe" = hate speech, threats, targeted harassment
+- "moderate" = insults or hostile language short of severe
+- "clean" = no policy-violating content
+- categories lists every matching category, or [] when clean
+- Return only the JSON object, no commentary`;
+
+/**
  * Default NSFW policy system message — the SFW/NSFW level taxonomy injected
  * into a chat's generation system prompt so the model writes within the
  * allowed rating. Distinct from {@link NSFW_POLICY_PROMPT} (a classifier):

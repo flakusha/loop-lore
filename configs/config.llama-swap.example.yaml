@@ -116,6 +116,33 @@ models:
       --ctx-size 8192
     ttl: 0
 
+  "laya-en":
+    # unlisted: hidden from /v1/models, still requestable
+    unlisted: true
+    # ModernBERT classifier BACKBONE ONLY - the decision head is external
+    # (laya-head.safetensors via laya_head.py; feed token ids to /embedding).
+    cmd: |
+      llama-server --port ${PORT}
+      -hf fr0stbit3/laya-gguf:Q8_0
+      --alias 'laya-en'
+      --embeddings --pooling none
+      --ctx-size 2048
+      -ub 2048
+    ttl: 0
+
+  "laya-multi":
+    # unlisted: hidden from /v1/models, still requestable
+    unlisted: true
+    # Multilingual backbone - same external-head caveat as laya-en.
+    cmd: |
+      llama-server --port ${PORT}
+      -hf fr0stbit3/laya-multilingual-gguf:Q8_0
+      --alias 'laya-multi'
+      --embeddings --pooling none
+      --ctx-size 2048
+      -ub 2048
+    ttl: 0
+
   "comfyui_auto":
     # Fixed id consumed by upstream /comfyui compatibility endpoint;
     # do NOT rename (proxy routes /comfyui + /comfyui/{path} here).
@@ -193,6 +220,8 @@ routing:
             - "qwen3-embed-0.6B"
             - "bge-reranker-v2-m3"
             - "llama-guard-3-1b"
+            - "laya-en"
+            - "laya-multi"
             - "comfyui_auto"
             - "laya-english"
             - "laya-multilingual"
