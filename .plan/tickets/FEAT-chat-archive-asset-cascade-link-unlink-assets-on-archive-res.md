@@ -14,15 +14,19 @@
 ## Summary
 
 ## What
+
 Asset cascade is missing on the archive/restore path. The chat archive endpoints (POST /api/chats/:id/archive and POST /api/chats/:id/unarchive) do not touch the asset_links join rows, so archived chats continue to expose assets through the join table even though the chat is logically retired.
 
 ## Why
+
 deleteChat at src/chat/service/crud/delete.ts:44-47 cascades asset_links when a chat is hard-deleted (it removes the asset_links rows pointing at that chat). The archive path in src/chat/service/visibility.ts (archiveChat/unarchiveChat, ~lines 64-74) flips only the chat's archived_at timestamp; it never touches asset_links. The spec for the archival workflow calls for soft-link/unlink behavior on archive/restore, distinct from the hard-delete cascade.
 
 ## Scope
+
 Extend archiveChat/unarchiveChat in src/chat/service/visibility.ts to soft-link/unlink asset_links via an archived_at column on the join rows. New migration adds asset_links.archived_at nullable timestamp + index. archiveChat sets archived_at = now() for the chat's asset_links; unarchiveChat clears archived_at = null. Hard purge remains the hard-delete path that removes the rows outright. Touch archiveRoutes in src/routes/chats/archive-routes.ts only if the response shape changes; otherwise no controller edit.
 
 ## Acceptance Criteria
+
 - Archiving a chat soft-isolates its assets: asset_links rows for that chat have archived_at set and are excluded from default asset listings.
 - Restoring a chat re-links the assets: archived_at is cleared on the corresponding asset_links rows and assets reappear in default listings.
 - Hard purge (existing hardDeleteChat path) hard-deletes the asset_links rows outright, regardless of archived_at.
