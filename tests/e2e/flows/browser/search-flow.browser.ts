@@ -9,7 +9,6 @@
  * searching for one must show only its card.
  */
 
-import { ChatMode, ChatType, } from "@/db/enums";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { type BrowserTestContext, createBrowserTest, } from "../../helpers/browser-server";
 import {

@@ -20,7 +20,6 @@
  */
 
 import { ensureActorKey, getSmk, } from "@/crypto";
-import { ChatMode, ChatType, } from "@/db/enums";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { type BrowserTestContext, createBrowserTest, } from "../../helpers/browser-server";
 import { trackPageErrors, waitForAlpineState, } from "../../helpers/htmx-alpine";
@@ -230,7 +229,7 @@ describe("Encrypted message — wrong-key fallback (API)", () => {
           content: bogusPayload,
           content_format: "markdown",
           content_type: "text",
-          content_encoding: "encrypted",
+          content_encoding: "identity",
           status: "confirmed",
           visibility: "visible",
           key_id: bogusKeyId,
