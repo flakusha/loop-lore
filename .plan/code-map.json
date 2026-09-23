@@ -3955,7 +3955,6 @@
       "source": "docs/spec/io-formats.md"
     }
   ],
-
   "src/characters/export.coverage.test.ts": [
     {
       "kind": "ticket",
@@ -4066,7 +4065,6 @@
       "source": ".plan/epics/epic-character-spec.md"
     }
   ],
-
   "src/characters/license-enforcement.test.ts": [
     {
       "kind": "ticket",
@@ -5269,6 +5267,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-lifecycle-moderation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-memory-moderation-model-survey-llama-guard-compactors.md"
     },
     {
       "kind": "ticket",
@@ -6589,7 +6591,6 @@
       "source": ".plan/tickets/TASK-023.md"
     }
   ],
-
   "src/components/3d/view-mode-switcher.html": [
     {
       "kind": "ticket",
@@ -6626,7 +6627,6 @@
       "source": ".plan/tickets/TASK-analytics-frontend-dashboard.md"
     }
   ],
-
   "src/components/asset-preview-modal.html": [
     {
       "kind": "ticket",
@@ -7089,7 +7089,6 @@
       "source": ".plan/tickets/TASK-frontend-story-mode-ui.md"
     }
   ],
-
   "src/components/chat/rpg-questions.html": [
     {
       "kind": "ticket",
@@ -7220,7 +7219,6 @@
       "source": ".plan/tickets/TASK-nsfw-frontend-integration.md"
     }
   ],
-
   "src/components/overlay-stack.html": [
     {
       "kind": "ticket",
@@ -9471,14 +9469,12 @@
       "source": ".plan/tickets/TASK-language-gated-lore-visibility.md"
     }
   ],
-
   "src/db/enums-character/content.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-030.md"
     }
   ],
-
   "src/db/enums-character/nsfw": [
     {
       "kind": "ticket",
@@ -10349,7 +10345,6 @@
       "source": ".plan/tickets/TASK-format-version-migration.md"
     }
   ],
-
   "src/db/migrations/007_rpg_question_answer_kinds.ts": [
     {
       "kind": "ticket",
@@ -14246,7 +14241,6 @@
       "source": ".plan/tickets/TASK-middleware-browser-side-storage-request-hash-reconciliation.md"
     }
   ],
-
   "src/frontend/alpine/rpg-questions.ts": [
     {
       "kind": "ticket",
@@ -14945,7 +14939,6 @@
       "source": ".plan/tickets/TASK-asset-3d-models.md"
     }
   ],
-
   "src/frontend/components/asset-preview-modal.ts": [
     {
       "kind": "ticket",
@@ -15194,7 +15187,6 @@
       "source": "docs/frontend/chat/text-effects-overlays.md"
     }
   ],
-
   "src/frontend/effects/text-fx.ts": [
     {
       "kind": "ticket",
@@ -15811,7 +15803,6 @@
       "source": ".plan/tickets/TASK-rpg-chat-questions.md"
     }
   ],
-
   "src/frontend/scene/view-mode.ts": [
     {
       "kind": "ticket",
@@ -17499,6 +17490,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-memory-moderation-model-survey-llama-guard-compactors.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-mood-shift-delta-tuning-word-boundary.md"
     }
   ],
@@ -17922,6 +17917,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-comfyui-plugin.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-llama-swap-comfyui-endpoint-support-comfyui-auto-workarounds.md"
     }
   ],
   "src/generation/providers/comfyui.ts": [
@@ -17975,7 +17974,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-llama-swap-comfyui-endpoint-support-comfyui-auto-workarounds.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-multimodal-asset-reuse.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/integrations/llm-serving.md"
     }
   ],
   "src/generation/providers/edge-tts.ts": [
@@ -18518,7 +18525,6 @@
       "source": ".plan/tickets/TASK-server-side-i18n-middleware.md"
     }
   ],
-
   "src/i18n/__tests__/translator.test.ts": [
     {
       "kind": "ticket",
@@ -18537,7 +18543,6 @@
       "source": ".plan/tickets/WIRE-frontend-keyboard-help-overlay.md"
     }
   ],
-
   "src/i18n/translator.ts": [
     {
       "kind": "ticket",
@@ -18548,7 +18553,6 @@
       "source": ".plan/tickets/TASK-010.md"
     }
   ],
-
   "src/i18n/types.ts": [
     {
       "kind": "ticket",
@@ -19266,6 +19270,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-rag-embedding-rerank-model-survey-qwen3-nomic-bge.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-search-service-unified.md"
     },
     {
@@ -19307,6 +19315,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-introduction-generation-propagation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-memory-moderation-model-survey-llama-guard-compactors.md"
     },
     {
       "kind": "ticket",
@@ -20321,14 +20333,12 @@
       "source": ".plan/epics/epic-chat-composer-flows.md"
     }
   ],
-
   "src/nsfw/capability-gate.test.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-033.md"
     }
   ],
-
   "src/nsfw/capability-gate.ts": [
     {
       "kind": "ticket",
@@ -22545,7 +22555,6 @@
       "source": ".plan/tickets/TASK-duplicate-admin-templates-route-registration-with-differing-.md"
     }
   ],
-
   "src/routes/admin/users.test.ts": [
     {
       "kind": "ticket",
@@ -22956,7 +22965,6 @@
       "source": "docs/spec/licensing.md"
     }
   ],
-
   "src/routes/character-licensing.test.ts": [
     {
       "kind": "ticket",
@@ -27323,14 +27331,12 @@
       "source": ".plan/tickets/TASK-nsfw-intimacy-system.md"
     }
   ],
-
   "src/rpg/intimacy/service": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-033.md"
     }
   ],
-
   "src/rpg/intimacy/service.test.ts": [
     {
       "kind": "ticket",
@@ -27347,21 +27353,18 @@
       "source": ".plan/tickets/TASK-rpg-xp-intimacy-read-modify-write-lost-updates-under-concurr.md"
     }
   ],
-
   "src/rpg/intimacy/service/index.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-033.md"
     }
   ],
-
   "src/rpg/intimacy/service/levels.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-033.md"
     }
   ],
-
   "src/rpg/intimacy/service/persist.ts": [
     {
       "kind": "ticket",
@@ -27932,14 +27935,12 @@
       "source": ".plan/tickets/TASK-rpg-chat-questions.md"
     }
   ],
-
   "src/rpg/questions/effects.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-029.md"
     }
   ],
-
   "src/rpg/questions/validation.ts": [
     {
       "kind": "ticket",
@@ -31130,7 +31131,6 @@
       "source": ".plan/tickets/TASK-032.md"
     }
   ],
-
   "src/users/capabilities.ts": [
     {
       "kind": "ticket",
