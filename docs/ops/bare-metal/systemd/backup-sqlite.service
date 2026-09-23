@@ -1,3 +1,7 @@
+# TEMPLATE — provisioning required before installing.
+# Targets the repo-shipped script scripts/backup-sqlite.ts (bun), configured via
+# env: BACKUP_DIR, DB_PATH, RETENTION_DAYS, GPG_RECIPIENT. bun must be on the
+# systemd PATH or substituted with its absolute path below.
 [Unit]
 Description=Loop-Lore SQLite logical backup
 After=loop-lore.service
@@ -8,7 +12,7 @@ Type=oneshot
 User=loop-lore
 Group=loop-lore
 WorkingDirectory=/opt/loop-lore
-ExecStart=/opt/loop-lore/scripts/backup/sqlite-snapshot.sh
+ExecStart=/usr/bin/env bun run /opt/loop-lore/scripts/backup-sqlite.ts
 Nice=10
 IOSchedulingClass=best-effort
 IOSchedulingPriority=7

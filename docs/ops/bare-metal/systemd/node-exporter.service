@@ -7,8 +7,10 @@ Wants=network-online.target
 Type=simple
 User=prometheus
 Group=prometheus
+# Substitute __PRIVATE_VLAN_IP__ with this host's private-VLAN address so
+# remote scrapers can reach the exporter (see network.md exposure table).
 ExecStart=/usr/bin/prometheus-node-exporter \
-  --web.listen-address=127.0.0.1:9100 \
+  --web.listen-address=__PRIVATE_VLAN_IP__:9100 \
   --collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)
 Restart=on-failure
 RestartSec=5s

@@ -1,3 +1,6 @@
+# TEMPLATE — provisioning required before installing.
+# The repo ships no scripts/run-worker.sh and defines no worker entry point;
+# point ExecStart at a real worker entry before use.
 [Unit]
 Description=Loop-Lore background worker
 After=loop-lore.service
