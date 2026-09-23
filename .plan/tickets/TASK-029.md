@@ -3,14 +3,14 @@
 
 # TASK-029: RPG Chat with Question-Based Gameplay
 
-**Status:** open
+**Status:** ✅ Resolved (on dev, 2026-09-23)
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Question-driven RPG chat mode — GM emits structured inline questions, answers drive quest/inventory state.
 **Context:** Question UI + answer orchestration; backend quest/inventory hooks already exist.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: open
+**Status**: closed
 **Priority**: medium
 **Effort**: Medium
 **Labels**: rpg, chat, gameplay, quests
@@ -26,6 +26,15 @@ Implement question-driven RPG chat: the GM (LLM or scripted) prompts the player 
 
 See epic-rpg-content-systems.md "RPG Chat (Question-Based Gameplay)" section for full design. Backend hooks (quest advancement, item grants) already exist; this ticket delivers the chat UX and question/answer orchestration. IN: question prompt UI, answer validation, quest state transitions. OUT: GM authoring tools, world building, lore authoring.
 
+## Resolution
+
+Implemented on dev by b5b90969f (worktree task-029-question-gameplay, finalized 2026-09-23):
+
+- `src/db/migrations/007_rpg_question_answer_kinds.ts` — `input_kind` (choice/free_text/numeric), `answer_value`, `min_value`/`max_value`, `effect` columns
+- `src/rpg/questions/effects.ts` — answer-driven quest progression (`upsertQuestProgress`) + item grants (`world_items`)
+- `src/rpg/questions/validation.ts`, `service.ts` — per-input-kind answer validation, effectsApplied reporting, system messages for quest/item events
+- `src/components/chat/rpg-questions.html`, `src/frontend/alpine/rpg-questions.ts` — text/number inputs honoring min/max, inline Retry preserving pending answers
+- Git issue 9592d11 closed; duplicate open issue c712140 closed as duplicate
 ## Acceptance Criteria
 
 - GM can emit a structured question (choice, free-text, numeric) inline in chat
