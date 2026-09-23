@@ -11,8 +11,10 @@
     - Backdrop click closes the modal.
     - Body scroll is locked while the modal is open so layout does
       not shift under the user's hand.
-    - The avatar stage is centered via avatar-centerer.html so the
-      preview is visually pinned regardless of viewport width
+    - The avatar stage is centered via the avatarCenterer() factory
+      (inlined below; the standalone avatar-centerer.html partial was
+      removed as unreferenced) so the preview is visually pinned
+      regardless of viewport width
       (360px -> 1920px).
     - Metadata strip (filename, mime, tags, source) reads from the
       existing asset payload via data-field hooks.
@@ -25,7 +27,6 @@
   id="asset-preview-modal"
   class="modal-overlay asset-preview-overlay"
   x-data="assetPreviewModal()"
-  x-init="bind()"
   x-show="isOpen"
   x-cloak
   :class="{ open: isOpen }"

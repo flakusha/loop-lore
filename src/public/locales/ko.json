@@ -102,6 +102,17 @@
     "star": "즐겨찾기",
     "unstar": "즐겨찾기 해제",
     "cancelGeneration": "생성 취소",
+    "viewMode": "3D 보기 모드",
+    "viewModeLabel": {
+      "orbit": "궤도",
+      "firstPerson": "1인칭",
+      "cinematic": "시네마틱"
+    },
+    "viewModeTitle": {
+      "orbit": "궤도 카메라",
+      "firstPerson": "1인칭 카메라",
+      "cinematic": "시네마틱 카메라"
+    },
     "copyCode": "코드 복사",
     "viewOriginal": "원본 보기",
     "translated": "번역됨",
@@ -571,7 +582,8 @@
     "copyUrl": "Copy URL",
     "labelOptional": "Label (optional)",
     "orClickToBrowse": "or click to browse",
-    "assetFallback": "리소스"
+    "assetFallback": "리소스",
+    "previewFailed": "리소스 미리보기를 불러오지 못했습니다"
   },
   "blog": {
     "title": "블로그",
@@ -622,6 +634,7 @@
   },
   "accessibility": {
     "skipToContent": "콘텐츠로 건너뛰기",
+    "dismissBanner": "배너 닫기",
     "mainContent": "주요 콘텐츠",
     "navigation": "탐색",
     "search": "검색",
