@@ -67,17 +67,20 @@ DELETE /api/chats/:id/purge    → 204
 
 ## Tasks
 
-- [ ] Archive state column (`archived_at` timestamp on chats/messages)
-- [ ] Archive endpoint — soft-delete with cascade
-- [ ] Restore endpoint — reverse archival
-- [ ] Purge endpoint — permanent deletion with cascade
-- [ ] Retention policy config (admin settings)
-- [ ] GC job — daily sweep of expired archives
-- [ ] Archived chats view (`/views/archived`)
-- [ ] Archive button in chat menu (three dots)
-- [ ] Confirmation dialogs (archive, purge)
-- [ ] Asset cascade logic (link/unlink on archive/restore/purge)
-- [ ] Notification on purge (participants)
+- [x] Archive state column — messages.archived_at shipped at src/db/migrations/001_init.ts:1874 (chats reuse is_pinned=PinnedState.Archived as the soft state)
+- [x] Archive endpoint — POST /api/chats/:id/archive (src/routes/chats/archive-routes.ts → src/chat/service/crud/archive.ts)
+- [x] Restore endpoint — POST /api/chats/:id/unarchive (same files)
+- [ ] Purge endpoint — gap-audit 2026-09-23 (hardDeleteChat exists at src/chat/service/visibility.ts:64-74 with no HTTP route)
+- [ ] FEAT-chat-level-purge-route-delete-api-chats-id-purge (issue ff4f4d8) — DELETE /api/chats/:id/purge calling hardDeleteChat, admin-only, cascades asset_links
+- [ ] Retention policy config — gap-audit 2026-09-23 (log_retention_days at admin/config.ts:144 is audit-log scope; need archive_retention_days)
+- [ ] GC job — gap-audit 2026-09-23 (src/gc/ directory does not exist)
+- [x] Archived chats view — filter at src/routes/chats/list.ts, Alpine chat-filters, chat-list-panel.html
+- [x] Archive button in chat menu — message-list.html:538-541
+- [x] Confirmation dialogs — src/components/chat/archive-confirm.html (message-level); chat-level dialog gap-audit 2026-09-23
+- [ ] Asset cascade logic — gap-audit 2026-09-23 (archive.ts never touches asset_links; deleteChat does)
+- [ ] FEAT-chat-archive-asset-cascade-link-unlink-assets-on-archive-res (issue a77301c) — soft-link/unlink asset_links via archived_at join-column on archive/restore; hard purge hard-deletes
+- [ ] Notification on purge — gap-audit 2026-09-23 (archive.ts has no NotificationService call)
+- [x] FEAT-chat-archive-purge-notifications-emit-on-archive-restore-pur (issue 39d451a) — emit chat.archived/chat.restored/chat.purged via NotificationService on archive/restore/purge
 
 ## Files
 
@@ -89,14 +92,14 @@ DELETE /api/chats/:id/purge    → 204
 
 ## Acceptance Criteria
 
-- [ ] Archive sets `archived_at` on chat + messages
-- [ ] Restore clears `archived_at` and rebuilds indexes
-- [ ] Purge permanently deletes with asset cascade
-- [ ] Retention policy configurable
-- [ ] GC cleans expired archives daily
-- [ ] Archived view shows restorable chats
-- [ ] Confirmation dialogs for destructive actions
-- [ ] Tests passing
+- [x] Archive sets `archived_at` on chat + messages — chat uses is_pinned=PinnedState.Archived (chats/archive-routes.ts); messages use messages.archived_at (routes/messages/archiving.ts:42)
+- [x] Restore clears archived state — chat flips is_pinned back to unpinned (archive.ts:73-90); messages clear messages.archived_at (archiving.ts:54)
+- [ ] Purge permanently deletes with asset cascade — gap-audit 2026-09-23 (hardDeleteChat cascades but no HTTP route)
+- [ ] Retention policy configurable — gap-audit 2026-09-23 (log_retention_days scope mismatch; archiving.ts:94 hardcodes 30 days; spec is 90)
+- [ ] GC cleans expired archives daily — gap-audit 2026-09-23 (src/gc/ missing)
+- [x] Archived view shows restorable chats — list.ts:129-133; chat-filters.ts archived tab
+- [x] Confirmation dialogs for destructive actions — message-level (archive-confirm.html); chat-level dialog gap-audit 2026-09-23
+- [x] Tests passing — src/chat/service/crud/archive.test.ts, src/routes/messages/archiving.coverage.test.ts
 
 ## Related Epics
 
@@ -108,3 +111,6 @@ DELETE /api/chats/:id/purge    → 204
 ## Tickets
 
 - `TASK-archival-workflow.md` — implementation tasks
+- `BUG-archive-retention-hardcoded-30-days-should-be-configurable-9` — purge cutoff at src/routes/messages/archiving.ts:94 hardcodes 30 days; spec calls for configurable 90-day default sourced from admin config (issue `0b135d4`).
+- `FEAT-chat-archive-gc-job-daily-sweep-of-expired-archives` — daily GC sweep of chats where is_pinned='archived' and updated_at older than archive_retention_days; hard-deletes via hardDeleteChat, writes audit event, registers on cron registry @ 0 3 * * * (issue `69e23ba`).
+- `FEAT-chat-archive-retention-config-archive-retention-days-admin-s` — admin-config key `archive_retention_days` (default 90 days); wires purge handler to read from `system_config` instead of hardcoded literal at `src/routes/messages/archiving.ts:94` (issue `ce84227`).
