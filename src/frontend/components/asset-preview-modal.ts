@@ -32,11 +32,11 @@ export interface AssetPreviewModalState {
   asset: PreviewAssetLike | null;
   open(asset: PreviewAssetLike, trigger?: HTMLElement | null): void;
   close(): void;
-  bind(): void;
   formatSize(bytes: number,): string;
 }
 
-let installedKeyHandler: ((e: KeyboardEvent) => void) | null = null;
+// ESC dismissal lives in the partial (@keydown.escape.window) — a
+// single declarative handler instead of a parallel document listener.
 let restoreFocus: HTMLElement | null = null;
 let savedOverflow: string | null = null;
 
@@ -105,15 +105,6 @@ export function assetPreviewModal(): AssetPreviewModalState {
     isOpen: false,
     asset: null,
     formatSize,
-    bind() {
-      if (installedKeyHandler) { return; }
-      installedKeyHandler = (e: KeyboardEvent,) => {
-        if (e.key === "Escape" && state.isOpen) {
-          closeImpl(state,);
-        }
-      };
-      document.addEventListener("keydown", installedKeyHandler,);
-    },
     open(asset: PreviewAssetLike, trigger?: HTMLElement | null,) {
       openImpl(this, asset, trigger,);
     },
@@ -136,13 +127,23 @@ export async function openAssetPreviewById(id: string,): Promise<void> {
   // explicitly rejects. We fetch the asset payload ourselves, set
   // the preview URL to /raw, and hand it to the Alpine modal state.
   const trigger = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-  const res = await feFetch(`/api/v1/assets/${id}`);
-  if (!res.ok) { return; }
-  const asset = (await res.json()) as PreviewAssetLike;
+  let asset: PreviewAssetLike;
+  try {
+    // feFetch THROWS on non-OK (and on network failures) — surface
+    // those as a toast instead of leaking an unhandled rejection
+    // from the tile's click handler.
+    const res = await feFetch(`/api/v1/assets/${id}`);
+    asset = (await res.json()) as PreviewAssetLike;
+  } catch {
+    showToast("error", t("gallery.previewFailed",),);
+    return;
+  }
   asset.url = `/api/v1/assets/${id}/raw`;
   const modal = document.querySelector<HTMLElement>("#asset-preview-modal");
-  const state = (modal as unknown as { _x_dataStack?: Array<AssetPreviewModalState> })?._x_dataStack?.[0];
-  state?.open(asset, trigger);
+  if (modal && typeof Alpine !== "undefined") {
+    const state = Alpine.$data(modal) as AssetPreviewModalState | undefined;
+    state?.open(asset, trigger);
+  }
 }
 
 declare global {

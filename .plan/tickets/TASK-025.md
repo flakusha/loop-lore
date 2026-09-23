@@ -46,4 +46,20 @@ Pure presentation layer. Effects compose on existing message and HUD surfaces wi
 - Coordinate with accessibility epic for reduced-motion semantics
 - Avoid JS animation libraries where CSS keyframes suffice
 
+## Resolution
+
+Shipped as (no Vue `<TextFx>` component): the `fx-shake` / `fx-glow` /
+`fx-fade` keyframes + classes live in `src/public/css/app.css` (with a
+`prefers-reduced-motion` guard that also stills the typewriter caret), and
+`window.applyFx` / `window.isFxActive` / `window.prefersReducedMotion` are
+exposed by `src/frontend/effects/text-fx.ts` (bundled via `alpine-init.ts`).
+The typewriter reveal keeps a per-call lifecycle (concurrent effects no longer
+cancel each other; `stop()` reveals the full text) and writes each prefix in a
+single `textContent` assignment instead of `+=`. The `text-fx.html` partial
+was deleted: it was included nowhere, used a shadow-DOM `<slot>` that cannot
+work in Alpine partials, and built the class inline (bypassing the TS module).
+The overlay stack ships as `src/components/overlay-stack.html`, included in
+`chat.html`; banner dismiss is i18n'd via `accessibility.dismissBanner` in all
+10 locale files.
+
 Git issue: `b983dc4`

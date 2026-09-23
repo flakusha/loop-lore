@@ -962,3 +962,40 @@
     transform: none;
   }
 }
+
+/* ── View mode camera (TASK-023) ─────────────────────────────
+   view-mode.ts mirrors the switcher state onto #vn-container as
+   data-mode; the stage transform IS the camera. orbit (the
+   default, no attribute) leaves the stage untouched. */
+.vn-stage {
+  transition: transform 350ms ease-in-out;
+}
+
+/* First-person: camera at viewer height — sprites read as closer. */
+.vn-container[data-mode="first-person"] .vn-stage {
+  transform: scale(1.12) translateY(4%);
+}
+
+/* Cinematic: slow scripted pan between frames. */
+.vn-container[data-mode="cinematic"] .vn-stage {
+  animation: vn-cinematic-pan 24s ease-in-out infinite alternate;
+}
+
+@keyframes vn-cinematic-pan {
+  from {
+    transform: scale(1.06) translateX(-2%);
+  }
+  to {
+    transform: scale(1.14) translateX(2%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vn-stage {
+    transition: none;
+  }
+
+  .vn-container[data-mode="cinematic"] .vn-stage {
+    animation: none;
+  }
+}

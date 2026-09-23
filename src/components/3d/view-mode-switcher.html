@@ -19,7 +19,7 @@
   x-data="viewMode()"
   x-init="restore()"
   role="group"
-  aria-label="3D view mode"
+  :aria-label="t('chat.viewMode')"
   data-testid="view-mode-switcher"
 >
   <template x-for="m in available" :key="m">
@@ -28,12 +28,11 @@
       class="btn btn-sm btn-ghost view-mode-btn"
       :class="{ 'view-mode-active': m === mode }"
       :aria-pressed="m === mode ? 'true' : 'false'"
-      :data-mode="m"
       @click="set(m)"
       :data-testid="'view-mode-' + m"
-      :title="m === 'orbit' ? 'Orbit camera' : (m === 'first-person' ? 'First-person camera' : 'Cinematic camera')"
+      :title="t('chat.viewModeTitle.' + m)"
     >
-      <span x-text="m === 'orbit' ? 'Orbit' : (m === 'first-person' ? 'First-person' : 'Cinematic')"></span>
+      <span x-text="t('chat.viewModeLabel.' + m)"></span>
     </button>
   </template>
 </div>

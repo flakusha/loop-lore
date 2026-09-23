@@ -15,7 +15,8 @@
  *
  * Easing: the actual transform happens via CSS transitions on the
  * scene container (`transition: transform 350ms ease-in-out`). The
- * switcher only flips data-mode; it does NOT animate in JS, so a
+ * module mirrors data-mode onto the scene container; it does NOT
+ * animate in JS, so a
  * prefers-reduced-motion user gets the same end state with no
  * intermediate motion (CSS transitions are still active but easy
  * to disable via the global media-query rule).
@@ -41,6 +42,16 @@ export interface ViewModeState {
 const SESSION_KEY = "loop-lore:view-mode";
 const DEFAULT_MODE: ViewMode = "orbit";
 const SCENE_ID_ATTR = "data-scene-id";
+/** The scene container mirrors data-mode for the CSS camera (vn.css). */
+const SCENE_CONTAINER_SELECTOR = "#vn-container";
+const MODE_ATTR = "data-mode";
+
+/** Mirror the active camera mode onto the scene container. */
+function syncSceneContainer(mode: ViewMode,): void {
+  document
+    .querySelector<HTMLElement>(SCENE_CONTAINER_SELECTOR,)
+    ?.setAttribute(MODE_ATTR, mode,);
+}
 
 function isValidMode(s: string | null): s is ViewMode {
   return s !== null && (VALID_MODES as readonly string[]).includes(s,);
@@ -101,7 +112,7 @@ function detachSceneWatcher(): void {
 function attachSceneWatcher(state: ViewModeState,): void {
   if (typeof MutationObserver === "undefined") { return; }
   detachSceneWatcher();
-  const target = document.querySelector<HTMLElement>("#vn-container",);
+  const target = document.querySelector<HTMLElement>(SCENE_CONTAINER_SELECTOR,);
   if (!target) { return; }
   let lastId = target.getAttribute(SCENE_ID_ATTR,);
   sceneWatcher = new MutationObserver(() => {
@@ -122,11 +133,13 @@ export function viewMode(): ViewModeState {
       if (!isValidMode(mode,)) { return; }
       this.mode = mode;
       writeSession(mode,);
+      syncSceneContainer(mode,);
       this.syncUrl();
     },
     reset() {
       this.mode = DEFAULT_MODE;
       writeSession(DEFAULT_MODE,);
+      syncSceneContainer(DEFAULT_MODE,);
       this.syncUrl();
     },
     syncUrl() {
@@ -140,6 +153,7 @@ export function viewMode(): ViewModeState {
       const next: ViewMode = fromUrl ?? fromSession ?? DEFAULT_MODE;
       this.mode = next;
       writeSession(next,);
+      syncSceneContainer(next,);
       this.syncUrl();
       attachSceneWatcher(this,);
     },

@@ -5,8 +5,8 @@
  * Text Effects (TASK-025)
  *
  * Pure-DOM helper that drives the shake / glow / typewriter / fade
- * effects exposed by src/components/text-fx.html. CSS owns the
- * keyframe animations; this module owns the lifecycle and the
+ * effects. CSS owns the keyframe animations (the fx-* classes live in
+ * src/public/css/app.css); this module owns the lifecycle and the
  * reduced-motion detector that mirrors the existing
  * src/frontend/vn/typewriter.ts pattern.
  *
@@ -14,7 +14,8 @@
  * non-typewriter effects just toggle a CSS class; the typewriter
  * variant drives requestAnimationFrame / setTimeout itself and is
  * the one piece that NEEDS to live in JS (CSS cannot reveal text
- * char-by-char).
+ * char-by-char). Each call is an independent run: concurrent effects
+ * never cancel each other — call the returned stop() to end one.
  */
 
 export type FxName = "shake" | "glow" | "typewriter" | "fade";
@@ -26,6 +27,11 @@ export interface FxOptions {
   text?: string;
 }
 
+/** Handle returned by requestAnimationFrame under the DOM lib. */
+type RafHandle = number;
+/** Handle returned by setTimeout under the DOM lib. */
+type TimerHandle = number;
+
 const FX_CLASSES: Record<FxName, string> = {
   shake: "fx-shake",
   glow: "fx-glow",
@@ -33,8 +39,8 @@ const FX_CLASSES: Record<FxName, string> = {
   fade: "fx-fade",
 };
 
-let activeRaf: ReturnType<typeof requestAnimationFrame> | null = null;
-let activeTimeout: ReturnType<typeof setTimeout> | null = null;
+/** Count of in-flight typewriter runs (decorative effects are synchronous). */
+let activeRuns = 0;
 
 /**
  * Mirrors the helper used by src/frontend/vn/typewriter.ts so the
@@ -46,11 +52,6 @@ export function prefersReducedMotion(): boolean {
   } catch {
     return false;
   }
-}
-
-function cancelActive(): void {
-  if (activeRaf !== null) { cancelAnimationFrame(activeRaf,); activeRaf = null; }
-  if (activeTimeout !== null) { clearTimeout(activeTimeout,); activeTimeout = null; }
 }
 
 /**
@@ -66,7 +67,6 @@ export function applyFx(
   name: FxName,
   opts: FxOptions = {},
 ): () => void {
-  cancelActive();
   const cls = FX_CLASSES[name];
   if (!cls) { return () => {}; }
 
@@ -88,36 +88,49 @@ function runTypewriter(el: HTMLElement, opts: FxOptions,): () => void {
   const text = opts.text ?? el.textContent ?? "";
   const speed = Math.max(1, opts.speed ?? 30,);
   el.classList.add(FX_CLASSES.typewriter,);
-  el.textContent = "";
 
+  // Reduced motion skips straight to the END state — the text is
+  // never blanked (no flash of missing content) and nothing is
+  // scheduled, so no run is registered.
   if (prefersReducedMotion()) {
-    el.textContent = text;
     return () => el.classList.remove(FX_CLASSES.typewriter,);
   }
 
   let index = 0;
-  let cancelled = false;
+  let raf: RafHandle | null = null;
+  let timer: TimerHandle | null = null;
+  let ended = false;
 
   const revealNext = (): void => {
-    if (cancelled) { return; }
+    if (ended) { return; }
     if (index >= text.length) {
-      activeRaf = null;
-      activeTimeout = null;
+      raf = null;
+      ended = true;
+      activeRuns--;
       return;
     }
-    el.textContent += text[index]!;
     index++;
-    activeTimeout = setTimeout(() => {
-      activeRaf = requestAnimationFrame(revealNext,);
+    // Write the prefix in one assignment: `textContent +=` reads the
+    // DOM string back on every character (O(n²) over a full reveal).
+    el.textContent = text.slice(0, index,);
+    timer = setTimeout(() => {
+      timer = null;
+      raf = requestAnimationFrame(revealNext,);
     }, speed,);
   };
 
-  activeRaf = requestAnimationFrame(revealNext,);
+  activeRuns++;
+  raf = requestAnimationFrame(revealNext,);
 
   return () => {
-    cancelled = true;
-    cancelActive();
+    if (raf !== null) { cancelAnimationFrame(raf,); raf = null; }
+    if (timer !== null) { clearTimeout(timer,); timer = null; }
+    if (!ended) {
+      ended = true;
+      activeRuns--;
+    }
     el.classList.remove(FX_CLASSES.typewriter,);
+    // Stopping reveals the full text — the skip-to-end contract.
     el.textContent = text;
   };
 }
@@ -126,5 +139,5 @@ function runTypewriter(el: HTMLElement, opts: FxOptions,): () => void {
  * True while any fx-driven animation is in flight.
  */
 export function isFxActive(): boolean {
-  return activeRaf !== null || activeTimeout !== null;
+  return activeRuns > 0;
 }
