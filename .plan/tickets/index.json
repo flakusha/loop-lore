@@ -5422,7 +5422,7 @@
     "tags": [],
     "source": ".plan/tickets/EPIC-030.md",
     "git_issue": "6ed8545",
-    "status": "open"
+    "status": "done"
   },
   "EPIC-031": {
     "hash": "136d857",
@@ -5435,7 +5435,7 @@
     "tags": [],
     "source": ".plan/tickets/EPIC-031.md",
     "git_issue": "136d857",
-    "status": "open"
+    "status": "done"
   },
   "EPIC-032": {
     "hash": "baa672b",
@@ -5448,7 +5448,7 @@
     "tags": [],
     "source": ".plan/tickets/EPIC-032.md",
     "git_issue": "baa672b",
-    "status": "open"
+    "status": "done"
   },
   "EPIC-033": {
     "hash": "e8b0c6b",
@@ -5461,7 +5461,7 @@
     "tags": [],
     "source": ".plan/tickets/EPIC-033.md",
     "git_issue": "e8b0c6b",
-    "status": "open"
+    "status": "done"
   },
   "EPIC-034": {
     "hash": "30a1b4b",
@@ -5474,7 +5474,7 @@
     "tags": [],
     "source": ".plan/tickets/EPIC-034.md",
     "git_issue": "30a1b4b",
-    "status": "open"
+    "status": "done"
   },
   "EPIC-035": {
     "hash": "e03faaf",
@@ -5487,7 +5487,7 @@
     "tags": [],
     "source": ".plan/tickets/EPIC-035.md",
     "git_issue": "e03faaf",
-    "status": "open"
+    "status": "done"
   },
   "EPIC-036": {
     "hash": "328843b",
@@ -5500,7 +5500,7 @@
     "tags": [],
     "source": ".plan/tickets/EPIC-036.md",
     "git_issue": "328843b",
-    "status": "open"
+    "status": "done"
   },
   "EPIC-037": {
     "hash": "9009940",
@@ -5513,7 +5513,7 @@
     "tags": [],
     "source": ".plan/tickets/EPIC-037.md",
     "git_issue": "9009940",
-    "status": "open"
+    "status": "done"
   },
   "EPIC-038": {
     "hash": "fd70c95",
@@ -5526,7 +5526,7 @@
     "tags": [],
     "source": ".plan/tickets/EPIC-038.md",
     "git_issue": "fd70c95",
-    "status": "open"
+    "status": "done"
   },
   "EPIC-039": {
     "hash": "2b7280b",
@@ -5539,7 +5539,7 @@
     "tags": [],
     "source": ".plan/tickets/EPIC-039.md",
     "git_issue": "2b7280b",
-    "status": "open"
+    "status": "done"
   },
   "EPIC-040": {
     "hash": "8104527",
@@ -5552,7 +5552,7 @@
     "tags": [],
     "source": ".plan/tickets/EPIC-040.md",
     "git_issue": "8104527",
-    "status": "open"
+    "status": "done"
   },
   "EPIC-041": {
     "hash": "697652f",
@@ -5565,7 +5565,7 @@
     "tags": [],
     "source": ".plan/tickets/EPIC-041.md",
     "git_issue": "697652f",
-    "status": "open"
+    "status": "done"
   },
   "EPIC-042": {
     "hash": "3fe9de8",
@@ -5578,7 +5578,7 @@
     "tags": [],
     "source": ".plan/tickets/EPIC-042.md",
     "git_issue": "3fe9de8",
-    "status": "open"
+    "status": "done"
   },
   "EPIC-043": {
     "hash": "a8b30aa",
@@ -5591,7 +5591,7 @@
     "tags": [],
     "source": ".plan/tickets/EPIC-043.md",
     "git_issue": "a8b30aa",
-    "status": "open"
+    "status": "done"
   },
   "EPIC-044": {
     "hash": "772d0e5",
@@ -5604,7 +5604,7 @@
     "tags": [],
     "source": ".plan/tickets/EPIC-044.md",
     "git_issue": "772d0e5",
-    "status": "open"
+    "status": "done"
   },
   "EPIC-045": {
     "hash": "7cbf607",
@@ -5617,7 +5617,7 @@
     "tags": [],
     "source": ".plan/tickets/EPIC-045.md",
     "git_issue": "7cbf607",
-    "status": "open"
+    "status": "done"
   },
   "EPIC-046": {
     "hash": "a759102",
@@ -5630,7 +5630,7 @@
     "tags": [],
     "source": ".plan/tickets/EPIC-046.md",
     "git_issue": "a759102",
-    "status": "open"
+    "status": "done"
   },
   "EPIC-047": {
     "hash": "001b22d",
@@ -5643,7 +5643,7 @@
     "tags": [],
     "source": ".plan/tickets/EPIC-047.md",
     "git_issue": "001b22d",
-    "status": "open"
+    "status": "done"
   },
   "EPIC-048": {
     "hash": "a2ce521",
@@ -5656,7 +5656,7 @@
     "tags": [],
     "source": ".plan/tickets/EPIC-048.md",
     "git_issue": "a2ce521",
-    "status": "open"
+    "status": "done"
   },
   "EPIC-049": {
     "hash": "392ea44",
@@ -5669,7 +5669,7 @@
     "tags": [],
     "source": ".plan/tickets/EPIC-049.md",
     "git_issue": "392ea44",
-    "status": "open"
+    "status": "done"
   },
   "EPIC-050": {
     "hash": "391f972",
@@ -5682,7 +5682,7 @@
     "tags": [],
     "source": ".plan/tickets/EPIC-050.md",
     "git_issue": "391f972",
-    "status": "open"
+    "status": "done"
   },
   "EPIC-051": {
     "hash": "1d347cd",
@@ -5695,7 +5695,7 @@
     "tags": [],
     "source": ".plan/tickets/EPIC-051.md",
     "git_issue": "1d347cd",
-    "status": "open"
+    "status": "done"
   },
   "EPIC-052": {
     "hash": "0aa1e33",
@@ -5708,7 +5708,7 @@
     "tags": [],
     "source": ".plan/tickets/EPIC-052.md",
     "git_issue": "0aa1e33",
-    "status": "open"
+    "status": "done"
   },
   "EPIC-053": {
     "hash": "ee67dd2",
@@ -5721,7 +5721,7 @@
     "tags": [],
     "source": ".plan/tickets/EPIC-053.md",
     "git_issue": "ee67dd2",
-    "status": "open"
+    "status": "done"
   },
   "EPIC-054": {
     "hash": "2bf50dd",
@@ -5734,7 +5734,7 @@
     "tags": [],
     "source": ".plan/tickets/EPIC-054.md",
     "git_issue": "2bf50dd",
-    "status": "open"
+    "status": "done"
   },
   "EPIC-055": {
     "hash": "29d4e8c",
@@ -5747,7 +5747,7 @@
     "tags": [],
     "source": ".plan/tickets/EPIC-055.md",
     "git_issue": "29d4e8c",
-    "status": "open"
+    "status": "done"
   },
   "EPIC-056": {
     "hash": "6c84baa",
@@ -5760,7 +5760,7 @@
     "tags": [],
     "source": ".plan/tickets/EPIC-056.md",
     "git_issue": "6c84baa",
-    "status": "open"
+    "status": "done"
   },
   "EPIC-057": {
     "hash": "8b193c8",
@@ -5773,7 +5773,7 @@
     "tags": [],
     "source": ".plan/tickets/EPIC-057.md",
     "git_issue": "8b193c8",
-    "status": "open"
+    "status": "done"
   },
   "EPIC-058": {
     "hash": "c1fd428",
@@ -5786,7 +5786,7 @@
     "tags": [],
     "source": ".plan/tickets/EPIC-058.md",
     "git_issue": "c1fd428",
-    "status": "open"
+    "status": "done"
   },
   "EPIC-2026-11": {
     "hash": "e78120b",
@@ -5799,7 +5799,7 @@
     "tags": [],
     "source": ".plan/tickets/EPIC-2026-11.md",
     "git_issue": "e78120b",
-    "status": "open"
+    "status": "done"
   },
   "EPIC-2026-14": {
     "hash": "6945660",
@@ -5812,7 +5812,7 @@
     "tags": [],
     "source": ".plan/tickets/EPIC-2026-14.md",
     "git_issue": "6945660",
-    "status": "open"
+    "status": "done"
   },
   "EPIC-2026-15": {
     "hash": "cf1e173",
@@ -5825,7 +5825,7 @@
     "tags": [],
     "source": ".plan/tickets/EPIC-2026-15.md",
     "git_issue": "cf1e173",
-    "status": "open"
+    "status": "done"
   },
   "EPIC-2026-17": {
     "hash": "78d601d",
@@ -5838,7 +5838,7 @@
     "tags": [],
     "source": ".plan/tickets/EPIC-2026-17.md",
     "git_issue": "78d601d",
-    "status": "open"
+    "status": "done"
   },
   "EPIC-2026-21": {
     "hash": "c4b708e",
