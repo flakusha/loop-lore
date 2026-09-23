@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium
+**Summary:** Decide and document the llama.cpp/GGUF serving path for classifier models; Laya verdict resolved — two serving stories, pick one per deployment.
+**Context:** Backbone-only GGUF via llama-server `--embeddings` (decision head out of band) vs full-model ggmlc `laya` CLI; details in ## Summary below.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 
 ## Summary
 
