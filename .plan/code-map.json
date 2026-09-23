@@ -92,6 +92,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-classifier-model-support-complementary-to-aux-pipeline-laya-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-add-model-roles-test-ts-for-src-admin-model-roles-ts.md"
     },
     {
@@ -1767,6 +1771,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-tool-injection-guard.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-classifier-model-survey-message-intent-memory-ranking-emotio.md"
     }
   ],
   "src/assistant/guard/judge.test.ts": [
@@ -2363,14 +2371,12 @@
       "source": ".plan/tickets/TASK-redos-lore-activation-builds-regexp-from-author-controlled-k.md"
     }
   ],
-
   "src/assistant/prompt/sections/lore-lifecycle-gate.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-lore-decay-gate-is-dead-code-at-runtime-passesconfidencefloo.md"
     }
   ],
-
   "src/assistant/prompt/sections/lore-load.ts": [
     {
       "kind": "ticket",
@@ -3271,6 +3277,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-emotion-mood-hook-stale-llm-javadoc.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-classifier-model-support-complementary-to-aux-pipeline-laya-.md"
     },
     {
       "kind": "ticket",
@@ -6318,6 +6328,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-classifier-model-support-complementary-to-aux-pipeline-laya-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-party-aux-transition.md"
     },
     {
@@ -7759,6 +7773,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-adopt-bun-csrf-for-csrf-protection.md"
+    }
+  ],
+  "src/config/schema/auto-start.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-llama-swap-native-support-cpu-resident-classifier-model-reci.md"
     }
   ],
   "src/config/schema/characters.ts": [
@@ -9661,6 +9681,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-private-tier-no-true-e2e.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-classifier-model-support-complementary-to-aux-pipeline-laya-.md"
     },
     {
       "kind": "ticket",
@@ -13821,6 +13845,12 @@
       "source": ".plan/tickets/TASK-wllama-gguf-inference-engine-browser.md"
     }
   ],
+  "src/frontend/alpine/local-engine.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-typescript-support-for-classifier-inference-transformers-js-.md"
+    }
+  ],
   "src/frontend/alpine/location-explorer.test.ts": [
     {
       "kind": "ticket",
@@ -16510,7 +16540,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-classifier-model-support-complementary-to-aux-pipeline-laya-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-introduction-generation-propagation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-classifier-model-survey-message-intent-memory-ranking-emotio.md"
     }
   ],
   "src/generation/auto-gen/content-hooks-nsfw-gate.test.ts": [
@@ -17367,6 +17405,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-aux-pipeline-prompt-reexport-asymmetry.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-classifier-model-support-complementary-to-aux-pipeline-laya-.md"
     }
   ],
   "src/generation/hooks/nsfw-hook.ts": [
@@ -17905,6 +17947,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-emotions-avatar-edit-model.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-llama-swap-native-support-cpu-resident-classifier-model-reci.md"
     },
     {
       "kind": "ticket",
@@ -19054,6 +19100,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-classifier-model-survey-message-intent-memory-ranking-emotio.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-context-injection-dedup.md"
     },
     {
@@ -19062,6 +19112,10 @@
     }
   ],
   "src/memory/embeddings.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-classifier-model-survey-message-intent-memory-ranking-emotio.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-search-service-unified.md"
@@ -19105,6 +19159,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-introduction-generation-propagation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-classifier-model-survey-message-intent-memory-ranking-emotio.md"
     },
     {
       "kind": "ticket",
@@ -19197,6 +19255,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-crafting-professions.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-classifier-model-survey-message-intent-memory-ranking-emotio.md"
     },
     {
       "kind": "ticket",
@@ -24339,6 +24401,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-ai-message-utilities.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-classifier-model-survey-message-intent-memory-ranking-emotio.md"
     }
   ],
   "src/routes/messages/archiving.coverage.test.ts": [
@@ -27873,7 +27939,6 @@
       "source": ".plan/tickets/TASK-nsfw-seduction-desire.md"
     }
   ],
-
   "src/rpg/service/battles": [
     {
       "kind": "ticket",
@@ -31098,6 +31163,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-server-edge-error-handling-gaps-in-routes-layer.md"
+    }
+  ],
+  "src/validation/prompt-injection.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-classifier-model-support-complementary-to-aux-pipeline-laya-.md"
     }
   ],
   "src/validation/schemas": [
