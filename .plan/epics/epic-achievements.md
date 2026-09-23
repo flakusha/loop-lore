@@ -179,8 +179,17 @@ interface SocialSharing {
 
 ## Tickets
 
-- `TASK-achievements.md` — implementation tasks
-- `TASK-wire-achievements-routes.md` — wire AchievementsService under `/api/rpg/achievements`
+- `TASK-achievements.md` — implementation tasks (open)
+- `TASK-wire-achievements-routes.md` — wire AchievementsService under `/api/rpg/achievements` (✅ Done 2026-08-14, `51a7bc01`)
+
+## Linked Tickets Status (2026-09-23)
+
+| Ticket | On-disk | Status | Notes |
+| ------ | ------- | ------ | ----- |
+| `TASK-achievements.md` | yes | open | Single-line stub; needs fine-grained breakdown (one ticket per Acceptance Criterion line: model with categories/tiers, unlock-condition engine, progress tracking, reward grant, secret reveal, notifications). |
+| `TASK-wire-achievements-routes.md` | yes | ✅ done | Wired under `/api/rpg/achievements` (`src/routes/rpg/achievements.ts` + schemas + tests). Closes this epic's only externally-wired gap. |
+
+**Outstanding work (2026-09-23):** Service is wired but `TASK-achievements.md` is still a 1-line stub — the 7-line Acceptance Criteria in this epic has no concrete ticket breakdown. Either expand `TASK-achievements.md` into 7 fine-grained tickets (recommended) or close it with a single bulk-ticket resolving all 7 criteria at once.
 
 ## Wiring & Resolution Plan (2026-08-08 audit)
 
