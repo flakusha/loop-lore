@@ -71,6 +71,20 @@ describe("ComfyUIClient", () => {
       );
     });
 
+    test("supports a base URL with a path prefix (llama-swap /comfyui proxy)", async () => {
+      await withMockFetch(
+        async (url,) => {
+          expect(url,).toBe("http://localhost:8080/comfyui/prompt",);
+          return jsonResponse({ prompt_id: "proxy-1", },);
+        },
+        async () => {
+          const client = new ComfyUIClient({ baseUrl: "http://localhost:8080/comfyui", },);
+          const result = await client.submitWorkflow(workflow,);
+          expect(result.prompt_id,).toBe("proxy-1",);
+        },
+      );
+    });
+
     test("throws with the error body on non-ok responses", async () => {
       await withMockFetch(
         async () => jsonResponse({ error: "bad workflow", }, 500,),

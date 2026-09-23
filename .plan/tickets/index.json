@@ -15400,6 +15400,19 @@
     "git_issue": "ac5edaa",
     "status": "done"
   },
+  "TASK-CHAT-MEMORY-MODERATION-MODEL-SURVEY-LLAMA-GUARD-COMPACTORS": {
+    "hash": "658bc3f",
+    "git_issue": "658bc3f",
+    "extid": "TASK-CHAT-MEMORY-MODERATION-MODEL-SURVEY-LLAMA-GUARD-COMPACTORS",
+    "type": "TASK",
+    "title": "Chat-memory + moderation model survey (Llama-Guard, compactors)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-chat-memory-moderation-model-survey-llama-guard-compactors.md",
+    "status": "done"
+  },
   "TASK-CHAT-MESSAGE-SEARCH": {
     "hash": "0c42ae1",
     "extid": "TASK-CHAT-MESSAGE-SEARCH",
@@ -21672,6 +21685,32 @@
     "source": ".plan/tickets/TASK-llama-swap-native-support-cpu-resident-classifier-model-reci.md",
     "status": "⬜ Not Started"
   },
+  "TASK-LLAMA-SWAP-COMFYUI-ENDPOINT-SUPPORT-COMFYUI-AUTO-WORKAROUNDS": {
+    "hash": "f3f8134",
+    "git_issue": "f3f8134",
+    "extid": "TASK-LLAMA-SWAP-COMFYUI-ENDPOINT-SUPPORT-COMFYUI-AUTO-WORKAROUNDS",
+    "type": "TASK",
+    "title": "llama-swap /comfyui endpoint support (comfyui_auto + workarounds)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-llama-swap-comfyui-endpoint-support-comfyui-auto-workarounds.md",
+    "status": "done"
+  },
+  "TASK-LLAMA-SWAP-RECIPE-EMBED-RERANK-GUARD-HELPERS-COMFYUI-AUTO": {
+    "hash": "f2fe764",
+    "git_issue": "f2fe764",
+    "extid": "TASK-LLAMA-SWAP-RECIPE-EMBED-RERANK-GUARD-HELPERS-COMFYUI-AUTO",
+    "type": "TASK",
+    "title": "llama-swap recipe: embed + rerank + guard helpers + comfyui_auto",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-llama-swap-recipe-embed-rerank-guard-helpers-comfyui-auto.md",
+    "status": "done"
+  },
   "TASK-LLM-ENHANCE-LORE-STYLE-GROUNDING": {
     "hash": "8d002b8",
     "git_issue": "8d002b8",
@@ -25853,6 +25892,19 @@
     "tags": [],
     "source": ".plan/tickets/TASK-rag-email-source.md",
     "status": "open"
+  },
+  "TASK-RAG-EMBEDDING-RERANK-MODEL-SURVEY-QWEN3-NOMIC-BGE": {
+    "hash": "6d69754",
+    "git_issue": "6d69754",
+    "extid": "TASK-RAG-EMBEDDING-RERANK-MODEL-SURVEY-QWEN3-NOMIC-BGE",
+    "type": "TASK",
+    "title": "RAG embedding + rerank model survey (Qwen3, nomic, bge)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-rag-embedding-rerank-model-survey-qwen3-nomic-bge.md",
+    "status": "done"
   },
   "TASK-RAG-FEED-SOURCES": {
     "hash": "pending",

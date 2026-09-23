@@ -3,7 +3,7 @@
 
 # TASK: llama-swap /comfyui endpoint support (comfyui_auto + workarounds)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** medium
 **Effort:** Small
 
@@ -16,3 +16,7 @@ Adopt upstream llama-swap /comfyui compatibility endpoint (merged PR #1002, issu
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Resolution
+
+`comfyui_auto` recipe entry uses `compatibility.ignoreWebsockets: true` + `checkEndpoint: /system_stats` (upstream schema keys verified against `internal/config` + `internal/server/comfyui.go` — the field group is `compatibility`, not `workarounds`). Per-endpoint routing decision: route all of prompt/history/view/upload/object_info through the proxy — `ComfyUIClient` never touches `/ws`, so `ignoreWebsockets` fully covers today's client. Adoption doc in `docs/spec/integrations/llm-serving.md` (ComfyUI via the `/comfyui` Passthrough). Regression test pins the pathed baseUrl (`http://host:port/comfyui/prompt`) in `src/generation/providers/comfyui.test.ts`.
