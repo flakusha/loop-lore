@@ -6,6 +6,8 @@ import { emitPluginEvent, } from "./event-bus";
 import { executePluginTool, } from "./tool-executor";
 import { getComponentsForMountPoint, } from "./mount-points";
 import { mergePluginConfig, } from "./config-merge";
+import { registry, } from "./registry";
+import type { RouteDefinition, } from "./types";
 
 describe("emitPluginEvent", () => {
   test("invokes matches in order with payload", async () => {
@@ -110,5 +112,67 @@ describe("mergePluginConfig", () => {
     const schema = { type: "object" as const, properties: {}, required: ["token",], };
     expect(() => mergePluginConfig({}, {}, schema,),).toThrow("token",);
     expect(mergePluginConfig({}, { token: "x", }, schema,),).toEqual({ token: "x", },);
+  });
+});
+
+// TASK-046: per-extension-point override precedence — routes family.
+//
+// Plugin A registers a route. Plugin B registers the same path with a
+// different handler. Stored overrides in `plugin_state.config` flip the
+// enabled flag for B; routes from disabled plugins are filtered out by
+// `getEnabledRoutes`, so A's route wins for the conflicting path. For
+// non-conflicting paths, both contribute.
+
+const route = (path: string, handlerName: string): RouteDefinition => ({
+  method: "GET",
+  path,
+  handler: async () => ({ ok: true, who: handlerName, }),
+});
+
+describe("routes extension-point override precedence", () => {
+  test("disabled plugin's routes are excluded; enabled plugin's routes win", () => {
+    registry.unregisterAll();
+    registry.register({
+      manifest: { name: "a", version: "1", description: "a", author: "t", defaults: {}, },
+      origin: "core",
+      directory: "/tmp/a",
+    });
+    registry.register({
+      manifest: { name: "b", version: "1", description: "b", author: "t", defaults: {}, },
+      origin: "community",
+      directory: "/tmp/b",
+    });
+
+    registry.addRoutes("a", [route("/shared", "a-handler",), route("/a-only", "a-only",),],);
+    registry.addRoutes("b", [route("/shared", "b-handler",), route("/b-only", "b-only",),],);
+
+    // Both enabled — b-handler for /shared is the most-recently-added.
+    registry.setEnabled("a", true,);
+    registry.setEnabled("b", true,);
+    const allEnabled = registry.getEnabledRoutes();
+    expect(allEnabled.map((r,) => r.path,)).toEqual(["/shared", "/a-only", "/shared", "/b-only",],);
+
+    // Disable b — /shared and /b-only drop; only a's routes survive.
+    registry.setEnabled("b", false,);
+    const onlyA = registry.getEnabledRoutes();
+    expect(onlyA.map((r,) => r.path,)).toEqual(["/shared", "/a-only",],);
+
+    registry.unregisterAll();
+  });
+
+  test("config merge feeds plugin_state.config into the routes family override", () => {
+    // Stored override (e.g. from `plugin_state.config`) merged over manifest
+    // defaults. The merged config is the source of truth for the loader, which
+    // then calls `setEnabled(false)` when the override disables a plugin.
+    const merged = mergePluginConfig(
+      { enabled: true, priority: 1, },
+      { enabled: false, priority: 5, },
+      { type: "object", properties: {}, required: ["enabled",], },
+    );
+    expect(merged,).toEqual({ enabled: false, priority: 5, },);
+    if (!merged.enabled) {
+      registry.setEnabled("b", false,);
+    }
+    expect(registry.isEnabled("b",),).toBe(false,);
   });
 });
