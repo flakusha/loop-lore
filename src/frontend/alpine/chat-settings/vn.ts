@@ -9,6 +9,7 @@
  * 250L file-size guard.
  */
 
+import { SCENE_ID_ATTR, } from "../../scene/view-mode";
 import { destroyVnRenderer, initVnRenderer, type VnMessage, } from "../../vn";
 import { jsonParseOr, } from "../json";
 import type { GmConfig, Message, } from "../types";
@@ -28,6 +29,26 @@ export function toVnMessage(m: Message,): VnMessage {
     thinking: m.thinking,
     attachments: m.attachments as VnMessage["attachments"],
   };
+}
+
+/**
+ * Mirror the active chat's identity onto the VN container as
+ * `data-scene-id`. view-mode.ts's watcher resets the camera to orbit
+ * on scene swaps; clearing the attribute on teardown keeps a later
+ * re-entry a fresh scene attach.
+ * @param container
+ * @param chatId
+ */
+export function syncSceneId(
+  container: HTMLElement | null,
+  chatId: string | undefined,
+): void {
+  if (!container) { return; }
+  if (chatId) {
+    container.setAttribute(SCENE_ID_ATTR, chatId,);
+  } else {
+    container.removeAttribute(SCENE_ID_ATTR,);
+  }
 }
 
 /**
@@ -53,6 +74,7 @@ export function syncVnRenderer(
 
   if (!enabled || !container) {
     destroyVnRenderer();
+    syncSceneId(container, undefined,);
     container?.replaceChildren();
     return;
   }
@@ -62,5 +84,6 @@ export function syncVnRenderer(
     destroyVnRenderer();
     return;
   }
+  syncSceneId(container, chatId,);
   initVnRenderer(container, vnMessages, config as Record<string, unknown>, chatId,);
 }
