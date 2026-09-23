@@ -3589,9 +3589,7 @@ html {
     text-shadow: none;
   }
   50% {
-    text-shadow:
-      0 0 6px var(--accent-primary, #7c6cf6),
-      0 0 14px var(--accent-primary, #7c6cf6);
+    text-shadow: 0 0 6px var(--accent-primary, #7c6cf6), 0 0 14px var(--accent-primary, #7c6cf6);
   }
 }
 
