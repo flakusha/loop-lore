@@ -13,4 +13,6 @@ export interface HooksConfig {
   enableNsfwHooks: boolean;
   /** Enable moderation flagging hooks. Default true. */
   enableModerationHooks: boolean;
+  /** When true (default), moderation hook escalates/flags via the AUX LLM moderation classifier. Default true. */
+  enableModerationLlmClassifier?: boolean;
 }

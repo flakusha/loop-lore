@@ -15,6 +15,7 @@ export type AuxTaskName =
   | "intent"
   | "memory"
   | "nsfw"
+  | "moderation"
   | "gm-tool"
   | "prompt-improve"
   | "prompt-analysis"

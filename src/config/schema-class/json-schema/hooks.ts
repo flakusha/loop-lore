@@ -10,6 +10,7 @@ export const hooks = {
     enableEmotionHooks: { type: "boolean", default: true, description: "Enable emotion change detection", },
     enableNsfwHooks: { type: "boolean", default: true, description: "Enable NSFW content gating", },
     enableModerationHooks: { type: "boolean", default: true, description: "Enable moderation flagging", },
+    enableModerationLlmClassifier: { type: "boolean", default: true, description: "LLM moderation verdict alongside keyword scan", },
   },
   required: ["enableMoodHooks", "enableEmotionHooks", "enableNsfwHooks", "enableModerationHooks",],
 };
