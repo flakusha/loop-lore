@@ -23,7 +23,7 @@ Should loop-lore **adopt Biome** (Rust-based formatter + linter) as a replacemen
 | **Formatting** | dprint     | TS / JSON / Markdown / markup (markup_fmt) / shfmt via exec plugin | `dprint.json` plugins: `typescript-0.96.1`, `json-0.23.0`, `markdown-0.22.1`, `markup_fmt-0.27.3`, `pretty_yaml-0.6.0`, `toml-0.7.0`, `exec-0.7.3` (shfmt). |
 | **Markdown formatter** | Biome | `docs/**/*.md` only (lint + format)         | `biome.json`: `files.include = ["docs/**/*.md"]`. `formatter.indentWidth=2`, `lineWidth=100`. `linter.rules.correctness.noUnusedImports`, `style.useConst`, `style.noNonNullAssertion=off`. |
 | **Lint (broad)** | oxlint  | Most of the rule surface (fast)                  | `oxlint.config.ts` in repo root. |
-| **Lint (narrow)** | ESLint  | `import/*` cycle detection, custom AST selectors (JSON.parse/stringify, Promise.all), `jsdoc/*`, Markdown lint | `eslint.config.mjs` lines 8-12: "ESLint is kept minimal. oxlint handles most rules. ESLint kept ONLY for: import/* (cycle detection, ordering, mutable exports), Custom AST selectors (JSON.parse/stringify, Promise.all), jsdoc/* (JSDoc tag validation + public-export coverage)." |
+| **Lint (narrow)** | ESLint  | `import/*` cycle detection, custom AST selectors (JSON.parse/stringify, Promise.all), `jsdoc/*`, Markdown lint | `eslint.config.mjs` lines 8-12: "ESLint is kept minimal. oxlint handles most rules. ESLint kept ONLY for: `import/*` (cycle detection, ordering, mutable exports), Custom AST selectors (JSON.parse/stringify, Promise.all), `jsdoc/*` (JSDoc tag validation + public-export coverage)." |
 | **Type-aware lint** | typescript-eslint | Project-aware diagnostics, `no-floating-promises`, etc. | `eslint.config.mjs` imports `typescript-eslint` plugin and registers it. |
 
 The current stack is **dprint (format) + oxlint (lint, fast) + ESLint (lint, narrow) + Biome (docs markdown, vestigial)**.
@@ -145,7 +145,7 @@ In practice, swapping anything into Biome is a wash against the current stack: w
 
 - `dprint` for TS / JSON / Markdown / HTML / YAML / TOML / shell.
 - `oxlint` for the broad fast-lint layer.
-- `ESLint` (minimal) for type-aware + import/* + custom AST selectors + jsdoc/*.
+- `ESLint` (minimal) for type-aware + `import/*` + custom AST selectors + `jsdoc/*`.
 - `Biome` scoped to `docs/**/*.md` (current `biome.json` is fine as-is).
 
 ### 6.4 What would flip this decision
