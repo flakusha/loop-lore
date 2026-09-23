@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Browser E2E: i18n locale switching + missing-key fallback
+ * Browser E2E: i18n locale switching + missing-key behavior
  *
  * Covers TASK-010 acceptance criteria except the plural rule (Intl.PluralRules
  * infra is not present in src/i18n/translator.ts; tracked as the deferred
@@ -11,18 +11,32 @@
  * What we verify here:
  *  1. The locale selector on /views/settings updates visible strings on the
  *     page WITHOUT a full reload (`src/frontend/ui.ts:251-254` swaps
- *     `globalThis.__localeStrings` and Alpine re-renders bound nodes).
- *  2. When a translation key is missing from the active locale catalog, the
- *     configured fallback locale's string renders — never the raw key.
+ *     `globalThis.__localeStrings` and Alpine re-renders bound nodes), and
+ *     the page translator resolves a known key to its distinct Spanish
+ *     string.
+ *  2. A translation key missing from the active catalog renders the RAW key:
+ *     the shipped frontend translator has NO fallback-locale chain
+ *     (src/frontend/ui.ts `t` returns the key; src/frontend/alpine/i18n.ts
+ *     returns `fallback ?? key`). The fallback chain exists only server-side
+ *     (src/middleware/i18n.ts `createI18nContext`); a client-side chain is
+ *     noted as desired-but-unbuilt in .plan/tickets/TASK-010.md.
  *
  * @pillar i18n
  */
 
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { type BrowserTestContext, createBrowserTest, } from "../../helpers/browser-server";
+import { trackPageErrors, } from "../../helpers/htmx-alpine";
 
 const SETTINGS_URL_FRAGMENT = "/views/settings";
 const LOCALE_SELECT = '[data-testid="locale-select"]';
+
+/** src/public/locales/en.json → common.edit */
+const ENGLISH_EDIT_LABEL = "Edit";
+/** src/public/locales/es.json → common.edit — distinct from the English string */
+const SPANISH_EDIT_LABEL = "Editar";
+/** A key that exists in no locale catalog — probes the missing-key path. */
+const MISSING_KEY = "test.nonexistent.key";
 
 describe("i18n E2E", () => {
   let ctx: BrowserTestContext;
@@ -37,124 +51,108 @@ describe("i18n E2E", () => {
 
   test("locale selector switches active language without page reload", async () => {
     const page = await ctx.openPage();
-    await page.goto(ctx.url + SETTINGS_URL_FRAGMENT,);
-    await page.waitForSelector(LOCALE_SELECT, { timeout: 30_000, },);
+    const errors = trackPageErrors(page,);
+    try {
+      await page.goto(ctx.url + SETTINGS_URL_FRAGMENT,);
+      await page.waitForSelector(LOCALE_SELECT, { timeout: 30_000, },);
 
-    // Active language starts at English (server default).
-    const initialLang = await page.evaluate(
-      () => (document.documentElement.lang || ""),
-    );
-    expect(initialLang.startsWith("en",),).toBe(true,);
+      // Active language starts at English (server default).
+      const initialLang = await page.evaluate(
+        () => (document.documentElement.lang || ""),
+      );
+      expect(initialLang.startsWith("en",),).toBe(true,);
 
-    // Capture the navigation entry count BEFORE switching locale — proves we
-    // didn't trigger a full page reload (Playwright navigations add to this
-    // list; in-place locale swaps do not).
-    const navCountBefore = await page.evaluate(
-      () => performance.getEntriesByType("navigation",).length,
-    );
+      // The shipped translator resolves the known key to its English string
+      // before the switch — the baseline the Spanish assertion contrasts with.
+      const initialEditLabel = await page.evaluate(() => {
+        const g = globalThis as unknown as { t?: (key: string,) => string };
+        return g.t?.("common.edit",) ?? null;
+      },);
+      expect(initialEditLabel,).toBe(ENGLISH_EDIT_LABEL,);
 
-    await page.selectOption(LOCALE_SELECT, "es",);
-    // Wait for Alpine to re-render the bound `lang` attribute.
-    await page.waitForFunction(
-      () => document.documentElement.lang.startsWith("es",),
-      undefined,
-      { timeout: 10_000, },
-    );
+      // Capture the navigation entry count BEFORE switching locale — proves we
+      // didn't trigger a full page reload (Playwright navigations add to this
+      // list; in-place locale swaps do not).
+      const navCountBefore = await page.evaluate(
+        () => performance.getEntriesByType("navigation",).length,
+      );
 
-    const navCountAfter = await page.evaluate(
-      () => performance.getEntriesByType("navigation",).length,
-    );
-    expect(navCountAfter,).toBe(navCountBefore,);
+      await page.selectOption(LOCALE_SELECT, "es",);
+      // Wait for the SHIPPED translator (ui.ts `t`, assigned to globalThis by
+      // the layout bundle) to resolve `common.edit` to the Spanish string.
+      // `saveLocale` flips <html lang> synchronously BEFORE the async catalog
+      // fetch lands, so lang alone proves nothing about the swap.
+      await page.waitForFunction(
+        (expected: string,) => {
+          const g = globalThis as unknown as { t?: (key: string,) => string };
+          return (g.t?.("common.edit",) ?? null) === expected;
+        },
+        SPANISH_EDIT_LABEL,
+        { timeout: 10_000, },
+      );
 
-    // Global `__localeStrings` is now the Spanish catalog.
-    const spanishLoaded = await page.evaluate(() => {
-      const g = globalThis as unknown as { __localeStrings?: Record<string, unknown> };
-      const map = g.__localeStrings ?? {};
-      return typeof map === "object" && map !== null && Object.keys(map,).length > 0;
-    },);
-    expect(spanishLoaded,).toBe(true,);
+      const navCountAfter = await page.evaluate(
+        () => performance.getEntriesByType("navigation",).length,
+      );
+      expect(navCountAfter,).toBe(navCountBefore,);
 
-    await page.close();
+      // English strings are pre-injected at layout render time
+      // (src/routes/views/layout.ts wrapWithLayout), so a non-empty catalog
+      // would prove nothing about the switch — assert the DISTINCT Spanish
+      // value instead.
+      const editLabel = await page.evaluate(() => {
+        const g = globalThis as unknown as { t?: (key: string,) => string };
+        return g.t?.("common.edit",) ?? null;
+      },);
+      expect(editLabel,).toBe(SPANISH_EDIT_LABEL,);
+    } finally {
+      errors.assert();
+      errors.detach();
+      await page.close();
+    }
   }, 60_000,);
 
-  test("missing key renders fallback locale string, not the raw key", async () => {
-    // Direct exercise of the createTranslator fallback chain. We use the
-    // browser runtime because the helper pulls translations from the same
-    // /api/locales/:id endpoint the UI does, keeping the contract honest.
+  test("missing key renders the raw key (no client-side fallback chain)", async () => {
     const page = await ctx.openPage();
-    await page.goto(ctx.url + SETTINGS_URL_FRAGMENT,);
-    await page.waitForSelector(LOCALE_SELECT, { timeout: 30_000, },);
+    const errors = trackPageErrors(page,);
+    try {
+      await page.goto(ctx.url + SETTINGS_URL_FRAGMENT,);
+      await page.waitForSelector(LOCALE_SELECT, { timeout: 30_000, },);
 
-    // Pull both catalogs through the runtime and build a translator pair
-    // (Spanish primary, English fallback) — same shape as src/i18n/translator.ts.
-    const result = await page.evaluate(async () => {
-      const fetchCatalog = async (locale: string,): Promise<Record<string, unknown>> => {
-        const r = await fetch(`/api/locales/${locale}`,);
-        if (!r.ok) { return {}; }
-        return (await r.json()) as Record<string, unknown>;
-      };
+      // Switch to Spanish so the active catalog is the Spanish one.
+      await page.selectOption(LOCALE_SELECT, "es",);
+      await page.waitForFunction(
+        (expected: string,) => {
+          const g = globalThis as unknown as { t?: (key: string,) => string };
+          return (g.t?.("common.edit",) ?? null) === expected;
+        },
+        SPANISH_EDIT_LABEL,
+        { timeout: 10_000, },
+      );
 
-      const flatten = (
-        map: Record<string, unknown>,
-        prefix = "",
-        out: Map<string, string> = new Map(),
-      ): Map<string, string> => {
-        for (const [k, v,] of Object.entries(map,)) {
-          const key = prefix ? `${prefix}.${k}` : k;
-          if (v && typeof v === "object" && !Array.isArray(v,)) {
-            flatten(v as Record<string, unknown>, key, out,);
-          } else if (typeof v === "string") {
-            out.set(key, v,);
-          }
-        }
-        return out;
-      };
+      // Drive the REAL entry point — the ui.ts `t` the page's inline handlers
+      // and Alpine bindings resolve through. No in-test reimplementation of
+      // flatten/resolve/interpolate.
+      const resolved = await page.evaluate((missingKey: string,) => {
+        const g = globalThis as unknown as { t?: (key: string,) => string };
+        return {
+          known: g.t?.("common.edit",) ?? null,
+          missing: g.t?.(missingKey,) ?? null,
+        };
+      }, MISSING_KEY,);
 
-      const esFlat = flatten(await fetchCatalog("es",),);
-      const enFlat = flatten(await fetchCatalog("en",),);
-
-      const resolve = (translations: Map<string, string>, key: string,): string | undefined => translations.get(key,);
-      const interpolate = (template: string, params: Record<string, string>,): string =>
-        template.replaceAll(/\{(\w+)\}/g, (m, p,) => params[p] ?? m,);
-
-      const t = (key: string, params?: Record<string, string>,): string => {
-        let v = resolve(esFlat, key,);
-        if (v === undefined) { v = resolve(enFlat, key,); }
-        const out = v ?? key;
-        return params ? interpolate(out, params,) : out;
-      };
-
-      // Pick a key we know exists in English but intentionally NOT in Spanish
-      // by choosing something obscure. We probe a few candidates and pick the
-      // first that produces a non-empty fallback string.
-      const candidates = [
-        "settings.encryptionKeys",
-        "settings.exportAll",
-        "settings.deleteAll",
-        "settings.notificationPrefs",
-        "settings.modelFileUrlPlaceholder",
-      ];
-
-      const picks: { key: string; es: string | undefined; en: string | undefined; resolved: string }[] = [];
-      for (const key of candidates) {
-        const es = resolve(esFlat, key,);
-        const en = resolve(enFlat, key,);
-        picks.push({ key, es, en, resolved: t(key,), },);
-      }
-      return picks;
-    },);
-
-    // At least one key resolved via the English fallback — that proves the
-    // fallback chain returned the English text and not the raw `key` literal.
-    const usedFallback = result.some((f,) => f.es === undefined && f.en !== undefined && f.resolved === f.en);
-    expect(usedFallback,).toBe(true,);
-
-    // None of the resolved strings may equal their raw key — that would
-    // indicate the missing-key path returned the key instead of the
-    // fallback string.
-    const leaked = result.filter((f,) => f.resolved === f.key);
-    expect(leaked,).toEqual([],);
-
-    await page.close();
+      // A key present in the catalog resolves to its Spanish string.
+      expect(resolved.known,).toBe(SPANISH_EDIT_LABEL,);
+      // A key absent from the catalog renders the RAW key — the shipped
+      // frontend has no fallback-locale chain (src/frontend/ui.ts `t` returns
+      // the key; src/frontend/alpine/i18n.ts returns `fallback ?? key`). The
+      // fallback chain exists only server-side
+      // (src/middleware/i18n.ts createI18nContext).
+      expect(resolved.missing,).toBe(MISSING_KEY,);
+    } finally {
+      errors.assert();
+      errors.detach();
+      await page.close();
+    }
   }, 60_000,);
 });

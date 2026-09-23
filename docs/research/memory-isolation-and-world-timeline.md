@@ -14,7 +14,8 @@
 Loop-lore's three-tier memory system (`FEAT-memory-systems-three-tier.md`) already
 wires episodic/semantic/procedural memories into LLM context. The
 `shareability.ts` module evaluates *whether a memory should leak between
-characters* via `evaluateShareability` / `shouldInjectMemory`.
+characters* via `evaluateShareability`, and the injection decision runs
+through `shouldInjectMemory` (`src/memory/injection/decide.ts`).
 
 What is missing is a **per-viewer audit + world-timeline anchor** for that
 isolation. Two concrete gaps:
@@ -40,18 +41,18 @@ dark-elves know, humans don't) holds per-message").
 
 | File / Symbol                                  | Status     | Notes |
 |-----------------------------------------------|------------|-------|
-| `src/memory/types.ts` `MemoryType`            | ✅ shipped | episodic/semantic/procedural + shareability flags |
-| `src/memory/provision.ts` `provisionMemory`   | ✅ shipped  | single-character scope by default |
-| `src/memory/injection.ts` `injectMemories`    | ✅ shipped  | **missing explicit `viewerId` arg in group-chat paths** |
+| `src/db/enums-story/world.ts` `MemoryType`    | ✅ shipped | episodic/semantic/procedural + shareability flags |
+| `src/memory/provision.ts` `provisionMemories` | ✅ shipped  | single-character scope by default |
+| `src/chat/context-window.ts` `injectMemories` | ✅ shipped  | **missing explicit `viewerId` arg in group-chat paths** (injection decision: `src/memory/injection/decide.ts` `shouldInjectMemory`) |
 | `src/memory/shareability.ts` `evaluateShareability` | ✅ shipped | pure function, expects viewer ctx — caller discipline enforced (no compile-time guarantee) |
 | `src/memory/extraction.ts`                    | ✅ shipped  | reads from message context |
 | `src/memory/purge.ts`                         | ✅ shipped  | per-character TTL |
 | `src/memory/budget.ts`                        | ✅ shipped  | token budget per tier |
-| `src/world/timeline.ts`                       | 🟡 partial | world event log; not linked from memories |
-| `src/world/locations/`                          | 🟡 partial | location state machine; reference for memory scope |
+| `src/story/timeline/world-timeline.ts`        | 🟡 partial | world event log; not linked from memories |
+| `src/locations/`                                | 🟡 partial | location state machine; reference for memory scope |
 
 **Audit conclusion:** the *primitives* exist (`shareability.ts`,
-`world/timeline.ts`). The *wiring contract* is fragile because the
+`story/timeline/world-timeline.ts`). The *wiring contract* is fragile because the
 shareability check is enforced by caller discipline, not by an injected
 viewer-id parameter. Five TASKs are listed below to make the contract
 explicit.
@@ -88,11 +89,11 @@ most.
 ### TASK-MEM-03: Link memories to world-timeline events
 
 **Goal:** add a `world_event_id` foreign key from memory rows to
-`src/world/timeline.ts` entries.
+`src/story/timeline/world-timeline.ts` entries.
 
 - Migration: nullable column on memory table; back-fill from heuristics for
   recent memories.
-- `provisionMemory` accepts an optional `worldEventId`; system callers wire
+- `provisionMemories` accepts an optional `worldEventId`; system callers wire
   it from chat-event listeners.
 - A timeline rewind (see `TASK-world-time-sync-wait-and-chat-branch-merge.md`)
   invalidates all memories linked to events that no longer happened.
@@ -163,10 +164,11 @@ the rejected memories shown for transparency.
 
 ## 5. References
 
-- `src/memory/shareability.ts` — `evaluateShareability` / `shouldInjectMemory`
-- `src/memory/injection.ts` — `injectMemories`
-- `src/world/timeline.ts` — world event log
-- `src/world/locations/` — location state
+- `src/memory/shareability.ts` — `evaluateShareability`
+- `src/memory/injection/decide.ts` — `shouldInjectMemory`
+- `src/chat/context-window.ts` — `injectMemories`
+- `src/story/timeline/world-timeline.ts` — world event log
+- `src/locations/` — location state
 - `.plan/tickets/FEAT-memory-systems-three-tier.md` — parent epic
 - `.plan/tickets/TASK-world-time-sync-wait-and-chat-branch-merge.md` —
   timeline rewind use case
