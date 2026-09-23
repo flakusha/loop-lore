@@ -61,29 +61,30 @@ beforeEach(() => {
 
 afterAll(() => {
   for (const [key, value,] of Object.entries(ORIGINAL_ENV,)) {
-    if (value === undefined) { delete process.env[key]; } else { process.env[key] = value; }
+    if (value === undefined) { delete process.env[key]; }
+    else { process.env[key] = value; }
   }
   void server.stop(true,);
 },);
 
 describe("rerankViaLlamaCpp", () => {
   test("posts model/query/documents/top_n and maps results to ordered hits", async () => {
-    nextRerank = { results: [{ index: 2, relevance_score: 0.9, }, { index: 0, relevance_score: 0.4, },] };
+    nextRerank = { results: [{ index: 2, relevance_score: 0.9, }, { index: 0, relevance_score: 0.4, },], };
     rawBody = undefined;
     lastBody = undefined as typeof lastBody;
 
     const hits = await rerankViaLlamaCpp("who wrote it", ["a", "b", "c",], { topN: 2, },);
 
     expect(hits,).toEqual([{ index: 2, score: 0.9, }, { index: 0, score: 0.4, },],);
-    expect(lastBody?.model,).toBe("bge-reranker-under-test"); // RERANK_MODEL default
-    expect(lastBody?.query,).toBe("who wrote it");
+    expect(lastBody?.model,).toBe("bge-reranker-under-test",); // RERANK_MODEL default
+    expect(lastBody?.query,).toBe("who wrote it",);
     expect(lastBody?.documents,).toEqual(["a", "b", "c",],);
     expect(lastBody?.top_n,).toBe(2,);
   });
 
   test("explicit baseUrl and model win over the env chain", async () => {
     process.env.RERANK_BASE_URL = "http://127.0.0.1:1"; // dead port — would fail if used
-    nextRerank = { results: [{ index: 0, relevance_score: 1, },] };
+    nextRerank = { results: [{ index: 0, relevance_score: 1, },], };
 
     const hits = await rerankViaLlamaCpp("q", ["a",], {
       topN: 1,
@@ -92,7 +93,7 @@ describe("rerankViaLlamaCpp", () => {
     },);
 
     expect(hits,).toEqual([{ index: 0, score: 1, },],);
-    expect(lastBody?.model,).toBe("custom-reranker");
+    expect(lastBody?.model,).toBe("custom-reranker",);
   });
 
   test("empty document list returns [] without a request", async () => {
@@ -105,28 +106,28 @@ describe("rerankViaLlamaCpp", () => {
   test("throws when RERANK_MODEL is unset and no model option is given", async () => {
     delete process.env.RERANK_MODEL;
 
-    expect(rerankViaLlamaCpp("q", ["a",], { topN: 1, },),).rejects.toThrow("RERANK_MODEL");
+    expect(rerankViaLlamaCpp("q", ["a",], { topN: 1, },),).rejects.toThrow("RERANK_MODEL",);
   });
 
   test("throws on non-OK responses", async () => {
-    expect(rerankViaLlamaCpp("q", ["a",], { topN: 1, },),).rejects.toThrow("HTTP 500");
+    expect(rerankViaLlamaCpp("q", ["a",], { topN: 1, },),).rejects.toThrow("HTTP 500",);
   });
 
   test("throws on a malformed response body", async () => {
-    rawBody = { nope: true };
+    rawBody = { nope: true, };
 
-    expect(rerankViaLlamaCpp("q", ["a",], { topN: 1, },),).rejects.toThrow("results");
+    expect(rerankViaLlamaCpp("q", ["a",], { topN: 1, },),).rejects.toThrow("results",);
   });
 
   test("throws when a result index is out of range", async () => {
-    rawBody = { results: [{ index: 9, relevance_score: 0.5, },] };
+    rawBody = { results: [{ index: 9, relevance_score: 0.5, },], };
 
-    expect(rerankViaLlamaCpp("q", ["a",], { topN: 1, },),).rejects.toThrow("index");
+    expect(rerankViaLlamaCpp("q", ["a",], { topN: 1, },),).rejects.toThrow("index",);
   });
 
   test("throws when a result entry lacks relevance_score", async () => {
-    rawBody = { results: [{ index: 0, },] };
+    rawBody = { results: [{ index: 0, },], };
 
-    expect(rerankViaLlamaCpp("q", ["a",], { topN: 1, },),).rejects.toThrow("relevance_score");
+    expect(rerankViaLlamaCpp("q", ["a",], { topN: 1, },),).rejects.toThrow("relevance_score",);
   });
 });
