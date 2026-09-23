@@ -19,7 +19,7 @@
  */
 
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
-import { type BrowserTestContext, createBrowserTest, } from "../helpers/browser-server";
+import { type BrowserTestContext, createBrowserTest, } from "../../helpers/browser-server";
 
 const SETTINGS_URL_FRAGMENT = "/views/settings";
 const LOCALE_SELECT = '[data-testid="locale-select"]';
