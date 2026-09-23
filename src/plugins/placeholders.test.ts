@@ -128,19 +128,19 @@ describe("mergePluginConfig", () => {
 const route = (path: string, handlerName: string): RouteDefinition => ({
   method: "GET",
   path,
-  handler: async () => ({ ok: true, who: handlerName, }),
+  handler: async () => new Response(handlerName),
 });
 
 describe("routes extension-point override precedence", () => {
   test("disabled plugin's routes are excluded; enabled plugin's routes win", () => {
     registry.unregisterAll();
     registry.register({
-      manifest: { name: "a", version: "1", description: "a", author: "t", defaults: {}, },
+      manifest: { name: "a", version: "1", description: "a", author: "t", },
       origin: "core",
       directory: "/tmp/a",
     });
     registry.register({
-      manifest: { name: "b", version: "1", description: "b", author: "t", defaults: {}, },
+      manifest: { name: "b", version: "1", description: "b", author: "t", },
       origin: "community",
       directory: "/tmp/b",
     });
