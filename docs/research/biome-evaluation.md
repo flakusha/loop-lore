@@ -35,7 +35,7 @@ The current stack is **dprint (format) + oxlint (lint, fast) + ESLint (lint, nar
 - Formats `*.ts`, `*.tsx`, `*.js`, `*.mjs`, `*.json`, `*.md`, `*.html`, `*.css`, `*.yaml`, `*.toml`, `*.sh`.
 - Markdown rules in dprint: `lineWidth: 120`, `textWrap: "maintain"`.
 - Has `shfmt` exec plugin for shell.
-- Comment in `dprint.json` excludes `**/docs/**` and `**/plugins`.
+- The `excludes` array in `dprint.json` excludes `**/docs/**` and `**/plugins`.
 
 ### 3.2 What Biome would do
 

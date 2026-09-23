@@ -154,7 +154,7 @@ Given the nature of Loop-Lore (RPG chat application with LLM inference):
 - `docs/infrastructure/hosting-comparison.md` — primary deliverable.
 - `docs/infrastructure/evaluate-hostings.md` — companion research (TASK-003-evaluate-hostings).
 - `docs/infrastructure/gpu-requirements.md` (see TASK-003-gpu-requirements) — pricing inputs reused here.
-- `docs/infrastructure/gpu-separation.md` (see TASK-003-gpu-separation) — service-boundary diagram references these tiers.
+- `docs/infrastructure/gpu-separation.md` (to be created; see TASK-003-gpu-separation) — service-boundary diagram references these tiers.
 - `docs/infrastructure/benchmark-results.csv` — raw latency + cost data.
 
 ## Next Steps

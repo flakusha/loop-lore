@@ -4,7 +4,9 @@
 # Install with:
 #   sudo apt -y install $(awk '{print $1}' docs/ops/bare-metal/requirements.txt)
 #
-# Versions reflect the snapshot validated 2026-09-22 (jammy / Ubuntu 22.04 LTS).
+# Versions reflect the snapshot validated 2026-09-22 (jammy / Ubuntu 22.04 LTS),
+# except lines annotated below: those come from upstream repos and are NOT
+# archive-validated (the archive does not ship them at those versions).
 # Update by hand and re-test on a fresh VM; do not float.
 
 # --- Build toolchain ---
@@ -33,10 +35,10 @@ postgresql-14                   14.13-0ubuntu0.22.04.1
 postgresql-contrib              14.13-0ubuntu0.22.04.1
 
 # --- Web server / TLS edge ---
-caddy                           2.7.6-1  # if using apt; otherwise pinned via download
+caddy                           2.7.6-1  # not in the Ubuntu archive — from the official upstream Caddy apt repo (or a pinned download); not archive-validated
 nginx                           1.18.0-6ubuntu14.7
-certbot                         2.9.0-1
-python3-certbot-nginx           2.9.0-1
+certbot                         2.9.0-1  # not in jammy archive (jammy ships 1.21.x); from ppa:certbot/certbot or snap — not archive-validated
+python3-certbot-nginx           2.9.0-1  # same upstream source as certbot — not in jammy archive
 
 # --- Firewall / SSH hardening ---
 ufw                             0.36.2-1

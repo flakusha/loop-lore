@@ -139,7 +139,7 @@ SERVER_PUBLIC_ORIGIN=https://<domain>
 ## 5. Federation / Cross-Node
 
 - **federation peers** (when `FEDERATION_ENABLED=true`): SPKI pin per peer (see `docs/spec/crypto.md`). Don't disable pinning.
-- **Tor hidden service** (optional, when `ANONYMITY_MODE=tor`): hidden service key lives in `/var/lib/tor/loop-lore/`. The OnionAddress is the canonical user-facing URL in that mode. See `epic-anonymity-decentralization.md`.
+- **Tor hidden service** (proposed, **not implemented** — no `ANONYMITY_MODE` setting exists in the app yet; see `epic-anonymity-decentralization.md`): when it ships, the hidden service key is expected to live in `/var/lib/tor/loop-lore/`, with the OnionAddress as the canonical user-facing URL in that mode.
 - **internal node-to-node traffic** should ride the private VLAN. Bind Postgres / Redis / llama-swap only to the private interface or `127.0.0.1`.
 
 ---
@@ -178,7 +178,7 @@ curl -sI https://<domain> | grep -iE 'strict-transport|content-type-options|fram
 nmap -sT -p 22,80,443 <public-ip>
 
 # App health through TLS
-curl -fsS https://<domain>/healthz
+curl -fsS https://<domain>/api/health
 ```
 
 All four should pass before declaring the network tier ready. See §10 of `bare-metal-deploy.md` for the full checklist.
