@@ -83,19 +83,39 @@ models:
       --ctx-size 16384
     ttl: 300
 
-  "<placeholder-classifier-model>":
-    # CPU-resident encoder classifier (Laya/Jev-class, ModernBERT/MiniLM fine-tune,
-    # bge-reranker). Stays resident while LLMs rotate: member of the persistent
-    # `helpers` group below, ttl:0 = never auto-unload. ~1GB for a 400M encoder.
-    # NOTE: Laya ships safetensors — needs GGUF conversion or a Python sidecar;
-    # this entry assumes a GGUF artifact exists at the path below.
+  "laya-english":
+    # Shortest llama.cpp path: backbone-only GGUF served with --embeddings.
+    # fr0stbit3/laya-gguf (Apache-2.0): laya-F16.gguf 791MB / Q8_0 421MB /
+    # Q6_K 344MB / Q4_K_M 272MB, via `-hf fr0stbit3/laya-gguf:<quant>`.
+    # Loads in llama.cpp as `modern-bert` — `--embeddings --pooling none`;
+    # batch flags `-ub/-b` must cover the longest input. The decision head is
+    # NOT in the GGUF: sibling `laya-head.safetensors` + `laya_head.py`
+    # (load_head) run outside llama.cpp (see that repo's quickstart.py).
+    # Prefer F16 or Q8_0 (Q4_K_M drifts ~0.02-0.03 prob on one sample).
+    # CPU-only: omit -ngl entirely (llama.cpp default is CPU).
     unlisted: true
     cmd: |
       llama-server --port ${PORT}
-      --model ${models_dir}/<placeholder-classifier-model-file>.gguf
-      --alias '<placeholder-classifier-model>'
-      --ctx-size 4096
-      --n-gpu-layers 0
+      -hf fr0stbit3/laya-gguf:Q8_0
+      --alias 'laya-english'
+      --embeddings --pooling none
+      -c 2048 -ub 2048 -b 2048
+    ttl: 0
+
+  "laya-multilingual":
+    # Same pattern for 100+ languages (mmBERT-base, ctx 1024):
+    # fr0stbit3/laya-multilingual-gguf. Route non-Latin script here, else english.
+    # Full-model alternative (backbone+head, one binary, NOT llama.cpp):
+    # mys/laya-GGUF + mys/laya-multilingual-GGUF are ggmlc builds run with the
+    # `laya` CLI (`laya serve file.gguf --port 8080` → POST /api/decide). They
+    # FAIL in llama-server; pick one serving story per deployment.
+    unlisted: true
+    cmd: |
+      llama-server --port ${PORT}
+      -hf fr0stbit3/laya-multilingual-gguf:Q8_0
+      --alias 'laya-multilingual'
+      --embeddings --pooling none
+      -c 2048 -ub 2048 -b 2048
     ttl: 0
 
 # --- Routing / rotation ---------------------------------------------------
@@ -125,7 +145,8 @@ routing:
           persistent: true # not evicted by other groups' loads
           members:
             - "<placeholder-background-model>"
-            - "<placeholder-classifier-model>"
+            - "laya-english"
+            - "laya-multilingual"
 
 # --- Startup preload ------------------------------------------------------
 hooks:
