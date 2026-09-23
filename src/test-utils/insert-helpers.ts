@@ -3855,6 +3855,11 @@ export async function insertRpgQuestions(
     selected_option_id?: string | null;
     created_at?: string;
     answered_at?: string | null;
+    input_kind?: string;
+    answer_value?: string | null;
+    min_value?: number | null;
+    max_value?: number | null;
+    effect?: string;
   },
 ): Promise<void> {
   await db.insertInto("rpg_questions",).values({

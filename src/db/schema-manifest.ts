@@ -761,6 +761,11 @@ export const SCHEMA = new SchemaManifest()
     selected_option_id: col("text",),
     created_at: col("text", { notNull: true, hasDefault: true, },),
     answered_at: col("text",),
+    input_kind: col("text", { notNull: true, hasDefault: true, },),
+    answer_value: col("text",),
+    min_value: col("integer",),
+    max_value: col("integer",),
+    effect: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("seed_audit", {
     id: col("text", { primaryKey: true, },),

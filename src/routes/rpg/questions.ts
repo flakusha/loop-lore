@@ -19,6 +19,7 @@ import {
   answerQuestion,
   createQuestion,
   getOpenQuestions,
+  type QuestionEffect,
   QuestionError,
 } from "../../rpg/questions";
 import { can, } from "../../users/permissions";
@@ -110,6 +111,10 @@ export function questionsRoutes({ database, }: HandlerOpts, prefix = "/api",): E
           type: RpgQuestionType;
           prompt: string;
           options: { id: string; text: string }[];
+          inputKind?: "choice" | "free_text" | "numeric";
+          minValue?: number | null;
+          maxValue?: number | null;
+          effect?: QuestionEffect;
           timeLimit?: number | null;
           requiredChoice?: number;
         };
@@ -122,6 +127,10 @@ export function questionsRoutes({ database, }: HandlerOpts, prefix = "/api",): E
           type: body.type,
           prompt: body.prompt,
           options: body.options,
+          inputKind: body.inputKind,
+          minValue: body.minValue ?? null,
+          maxValue: body.maxValue ?? null,
+          effect: body.effect,
           timeLimit: body.timeLimit ?? null,
           requiredChoice: body.requiredChoice ?? 1,
         },);
@@ -134,7 +143,8 @@ export function questionsRoutes({ database, }: HandlerOpts, prefix = "/api",): E
       body: createQuestionBody,
       detail: {
         summary: "Create an RPG question",
-        description: "Attach a multiple-choice question to a chat.",
+        description:
+          "Attach a question to a chat: multiple choice (default), free text, or numeric with optional bounds and answer effects.",
         tags: ["RPG", "Questions",],
       },
     },)
@@ -165,9 +175,17 @@ export function questionsRoutes({ database, }: HandlerOpts, prefix = "/api",): E
         if (!answeredBy) {
           return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
         }
-        const { optionId, } = ctx.body as { optionId: string };
-        const question = await answerQuestion(database, ctx.params.id as string, optionId, answeredBy,);
-        return jsonResponse(question,);
+        const { optionId, value, } = ctx.body as {
+          optionId?: string;
+          value?: string | number;
+        };
+        const answered = await answerQuestion(
+          database,
+          ctx.params.id as string,
+          { optionId, value, },
+          answeredBy,
+        );
+        return jsonResponse(answered,);
       } catch (error) {
         return questionErrorResponse(error, "Failed to answer question",);
       }
@@ -176,7 +194,8 @@ export function questionsRoutes({ database, }: HandlerOpts, prefix = "/api",): E
       body: answerQuestionBody,
       detail: {
         summary: "Answer an RPG question",
-        description: "Record the selected option and append a system message to the chat.",
+        description:
+          "Record the answer (choice option or free text/numeric value), apply the question's effects, and append a system message to the chat. Returns the answered question plus `effectsApplied`.",
         tags: ["RPG", "Questions",],
       },
     },);
