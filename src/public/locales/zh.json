@@ -102,6 +102,17 @@
     "star": "收藏",
     "unstar": "取消收藏",
     "cancelGeneration": "取消生成",
+    "viewMode": "3D 视图模式",
+    "viewModeLabel": {
+      "orbit": "轨道",
+      "firstPerson": "第一人称",
+      "cinematic": "电影感"
+    },
+    "viewModeTitle": {
+      "orbit": "轨道相机",
+      "firstPerson": "第一人称相机",
+      "cinematic": "电影相机"
+    },
     "copyCode": "复制代码",
     "viewOriginal": "查看原文",
     "translated": "已翻译",
@@ -571,7 +582,8 @@
     "copyUrl": "Copy URL",
     "labelOptional": "Label (optional)",
     "orClickToBrowse": "or click to browse",
-    "assetFallback": "资源"
+    "assetFallback": "资源",
+    "previewFailed": "资源预览加载失败"
   },
   "blog": {
     "title": "博客",
@@ -622,6 +634,7 @@
   },
   "accessibility": {
     "skipToContent": "跳转到内容",
+    "dismissBanner": "关闭横幅",
     "mainContent": "主要内容",
     "navigation": "导航",
     "search": "搜索",

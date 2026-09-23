@@ -102,6 +102,17 @@
     "star": "Избранное",
     "unstar": "Убрать из избранного",
     "cancelGeneration": "Отменить генерацию",
+    "viewMode": "Режим 3D-просмотра",
+    "viewModeLabel": {
+      "orbit": "Орбита",
+      "firstPerson": "От первого лица",
+      "cinematic": "Кинематографический"
+    },
+    "viewModeTitle": {
+      "orbit": "Орбитальная камера",
+      "firstPerson": "Камера от первого лица",
+      "cinematic": "Кинематографическая камера"
+    },
     "copyCode": "Копировать код",
     "viewOriginal": "Показать оригинал",
     "translated": "Переведено",
@@ -571,7 +582,8 @@
     "copyUrl": "Copy URL",
     "labelOptional": "Label (optional)",
     "orClickToBrowse": "or click to browse",
-    "assetFallback": "Ресурс"
+    "assetFallback": "Ресурс",
+    "previewFailed": "Не удалось загрузить предпросмотр ресурса"
   },
   "blog": {
     "title": "Блог",
@@ -622,6 +634,7 @@
   },
   "accessibility": {
     "skipToContent": "Перейти к содержимому",
+    "dismissBanner": "Закрыть баннер",
     "mainContent": "Основное содержимое",
     "navigation": "Навигация",
     "search": "Поиск",
