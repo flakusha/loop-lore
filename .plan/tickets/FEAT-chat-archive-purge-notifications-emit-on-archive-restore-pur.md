@@ -14,12 +14,15 @@
 ## Summary
 
 ## What
+
 The chat archive/restore/purge flows in `src/chat/service/crud/archive.ts` perform state changes but never notify participants. Users discover archived or purged chats only by reloading the chat list — there is no in-app notification, no email, no SSE event. The spec calls for notifying participants on purge at minimum, and on archive/restore for parity.
 
 ## Why
+
 Audit of 2026-09-23 against `epic-archival-workflow` found that `archiveChat`, `unarchiveChat`, and `hardDeleteChat` (the latter defined at `src/chat/service/visibility.ts:64-74`, but its dispatch from the archive module also lacks notifications) mutate state and return without emitting any event. A `NotificationService` already exists at `src/notifications/` with participant-fanout and unsubscribe primitives; the archive flow simply does not call it. Spec section 4.3 (participant notifications on lifecycle events) is unimplemented.
 
 ## Scope
+
 - Touch `src/chat/service/crud/archive.ts` — inject `NotificationService` into the service container, then call it from `archiveChat`, `unarchiveChat`, and from the purge dispatcher with three event types: `chat.archived`, `chat.restored`, `chat.purged`.
 - Reuse the existing `NotificationService` API at `src/notifications/` — do not add a new transport; do not add SSE wiring unless the existing service already exposes it (it should).
 - Honor user notification preferences: if a participant has unsubscribed from `chat.lifecycle` (or whatever key the service uses), skip silently.
@@ -29,6 +32,7 @@ Audit of 2026-09-23 against `epic-archival-workflow` found that `archiveChat`, `
 - Do NOT add new dependencies; do NOT introduce a queue or background worker — synchronous fan-out via the existing service is fine for current scale.
 
 ## Acceptance Criteria
+
 - `archiveChat` emits `chat.archived` for every participant except the actor; `unarchiveChat` emits `chat.restored`; purge emits `chat.purged`.
 - Recipients see the notification in the in-app notification list immediately (synchronous write, no polling).
 - Notifications persist to the same store the rest of the app uses (verify by reading the notification row after the action).
