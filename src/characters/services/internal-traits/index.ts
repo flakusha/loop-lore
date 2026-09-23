@@ -104,6 +104,7 @@ export class CharacterInternalTraitsService {
   /**
    * Get internal traits for an actor.
    * @param actorId
+   * @returns The actor's internal traits, or null when none exist.
    */
   async get(actorId: string,): Promise<CharacterInternalTraits | null> {
     const row = await this.db
@@ -119,6 +120,7 @@ export class CharacterInternalTraitsService {
    * Create or update internal traits for an actor.
    * @param actorId
    * @param input
+   * @returns The persisted internal-traits row.
    */
   async upsert(actorId: string, input: CharacterInternalTraitsInput,): Promise<CharacterInternalTraits> {
     const existing = await this.get(actorId,);
