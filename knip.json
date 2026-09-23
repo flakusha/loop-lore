@@ -217,6 +217,7 @@
     "tests/e2e/flows/browser/admin-nonadmin-guard.browser.ts",
     "tests/e2e/flows/browser/character-edit-view.browser.ts",
     "tests/e2e/flows/browser/chat-list-view.browser.ts",
-    "tests/e2e/flows/browser/new-chat-advanced-fields.browser.ts"
+    "tests/e2e/flows/browser/new-chat-advanced-fields.browser.ts",
+    "tests/e2e/flows/browser/i18n-locale.browser.ts",
   ]
 }
