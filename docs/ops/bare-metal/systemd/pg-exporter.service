@@ -8,7 +8,10 @@ Type=simple
 User=prometheus
 Group=prometheus
 Environment=DATA_SOURCE_NAME=postgresql://loop_lore_exporter:__PG_EXPORTER_PASSWORD__@127.0.0.1:5432/postgres?sslmode=disable
-ExecStart=/usr/bin/pg-exporter --web.listen-address=127.0.0.1:9187
+# postgres_exporter is the Prometheus-community binary (no /usr/bin/pg-exporter
+# exists). Substitute __PRIVATE_VLAN_IP__ with this host's private-VLAN address
+# so remote scrapers can reach the exporter (see network.md).
+ExecStart=/usr/bin/postgres_exporter --web.listen-address=__PRIVATE_VLAN_IP__:9187
 Restart=on-failure
 RestartSec=5s
 

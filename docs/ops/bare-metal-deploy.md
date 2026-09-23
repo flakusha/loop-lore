@@ -218,9 +218,13 @@ sudo zfs create -o mountpoint=/data -o atime=off -o recordsize=128K -o compressi
 Off-box push (minimum bar):
 
 ```bash
+# Pick ONE scheduler: this cron file OR the backup-*.timer units in §7 — both
+# fire the hourly DB snapshot at :15; never enable both.
 # /etc/cron.d/loop-lore-backup
-15 * * * * deploy /opt/loop-lore/scripts/backup/sqlite-snapshot.sh
-0 3 * * *  deploy /opt/loop-lore/scripts/backup/zfs-send-offsite.sh
+# DB snapshot: repo-shipped scripts/backup-sqlite.ts (bun must be on cron's PATH).
+15 * * * * deploy /usr/bin/env bun run /opt/loop-lore/scripts/backup-sqlite.ts
+# Off-box push: no script ships with the repo — provision your own and adjust.
+0 3 * * *  deploy /opt/loop-lore/scripts/backup/zfs-send-offsite.sh  # placeholder; provisioning required
 ```
 
 Verify restore quarterly (see §10.4). Backups you've never restored are wishful thinking.
@@ -270,8 +274,14 @@ echo 'export PATH=/usr/local/cuda-12.6/bin:$PATH' | sudo tee /etc/profile.d/cuda
 ### 5.3 llama.cpp / llama-swap install
 
 ```bash
-sudo apt -y install libcurl4-openssl-dev pkg-config
-cargo install llama-cpp-server  # or pull a release tarball
+sudo apt -y install build-essential cmake libcurl4-openssl-dev pkg-config
+# llama.cpp is a C++ project built with cmake (there is no cargo crate named
+# llama-cpp-server); alternatively pull prebuilt release binaries from
+# https://github.com/ggml-org/llama.cpp/releases
+git clone https://github.com/ggml-org/llama.cpp /opt/src/llama.cpp
+cmake -S /opt/src/llama.cpp -B /opt/src/llama.cpp/build -DGGML_CUDA=ON
+cmake --build /opt/src/llama.cpp/build -j
+sudo cp /opt/src/llama.cpp/build/bin/llama-server /usr/local/bin/
 # llama-swap binary
 curl -fsSL https://github.com/mostlygeek/llama-swap/releases/latest/download/llama-swap-linux-amd64 \
   -o /usr/local/bin/llama-swap && sudo chmod +x /usr/local/bin/llama-swap
@@ -281,7 +291,7 @@ curl -fsSL https://github.com/mostlygeek/llama-swap/releases/latest/download/lla
 
 ```bash
 # Smoke: load a 7B GGUF and request 32 tokens.
-llama-cpp-server -m /data/models/llama-3.1-8b-instruct.Q4_K_M.gguf \
+llama-server -m /data/models/llama-3.1-8b-instruct.Q4_K_M.gguf \
   --port 8081 --ctx-size 4096 --n-gpu-layers 99
 curl -s http://127.0.0.1:8081/v1/models | jq
 curl -s http://127.0.0.1:8081/v1/chat/completions \
@@ -293,7 +303,7 @@ First-token latency under 200 ms and sustained >=40 tok/s on RTX 4090 for an 8B 
 
 ### 5.5 Process supervision
 
-`llama-cpp-server` and `llama-swap` are managed by their own systemd units (see `docs/ops/bare-metal/systemd/`). loop-lore talks to `llama-swap` over a local Unix socket / loopback port; it never exposes GPU services on the LAN.
+`llama-server` and `llama-swap` are managed by their own systemd units (see `docs/ops/bare-metal/systemd/`). loop-lore talks to `llama-swap` over a local Unix socket / loopback port; it never exposes GPU services on the LAN.
 
 ---
 
@@ -320,11 +330,18 @@ Companion files (under `docs/ops/bare-metal/systemd/`):
 | `loop-lore.service`                  | Main Bun app - single-user or primary app node     |
 | `loop-lore-worker.service`           | Optional worker for background jobs                |
 | `llama-swap.service`                 | GPU swap multiplexer (one per GPU host)            |
-| `llama-cpp-server@.service`          | Templated unit; one instance per model             |
+| `llama-server@.service`              | Templated unit; one instance per model             |
 | `pg-exporter.service`                | Prometheus exporter for Postgres                   |
 | `node-exporter.service`              | Existing prometheus-node-exporter, hardened        |
 | `backup-sqlite.service` + `.timer`   | Hourly logical DB snapshot                         |
 | `backup-zfs-send.service` + `.timer` | Daily off-box snapshot                             |
+
+> These units are provisioning **templates**, not turn-key: `loop-lore.service`
+> and `loop-lore-worker.service` reference ExecStart wrappers
+> (`scripts/run-app.sh`, `scripts/run-worker.sh`) that the repo does not ship —
+> point them at real start commands (see each unit's header) before installing.
+> The backup units target the repo's `scripts/backup-sqlite.ts` (via bun) and a
+> provision-your-own off-box push.
 
 ### 7.1 Install pattern
 
@@ -350,7 +367,7 @@ sudo systemctl enable --now loop-lore llama-swap backup-sqlite.timer backup-zfs-
 
 - `prometheus-node-exporter` - host metrics (CPU, RAM, disk, network).
 - `pg-exporter` (Postgres) - DB metrics.
-- loop-lore's own `/metrics` route (when `METRICS_ENABLED=true`) - request latency, queue depth, generation backlog.
+- loop-lore's own `/metrics` route (when `OBSERVABILITY_METRICS_ENABLED=true`) - request latency, queue depth, generation backlog.
 
 ### 8.2 What to alert on
 
@@ -398,7 +415,7 @@ Quarterly:
 
 1. Restore last snapshot into a throwaway VM.
 2. Start `loop-lore.service` pointed at the restored DB.
-3. Hit `/healthz` and `/api/health`.
+3. Hit `/api/health`.
 4. Open a fixture chat session end-to-end.
 
 If it fails: open a ticket, fix the backup script before continuing the cycle.
@@ -420,7 +437,7 @@ DB passwords, ACME account keys, BYOK provider tokens live in `/etc/loop-lore/se
 ### 10.2 App
 
 - [ ] `systemctl status loop-lore` reports `active (running)`.
-- [ ] `curl -fsS http://127.0.0.1:3000/healthz` returns `200`.
+- [ ] `curl -fsS http://127.0.0.1:3000/api/health` returns `200`.
 - [ ] `bun --version` matches `requirements.txt`.
 
 ### 10.3 GPU (if enabled)

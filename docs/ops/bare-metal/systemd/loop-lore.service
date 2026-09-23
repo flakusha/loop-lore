@@ -1,3 +1,6 @@
+# TEMPLATE — provisioning required before installing.
+# The repo ships no scripts/run-app.sh; point ExecStart at a start wrapper you
+# provision (the repo's start entry is `bun run src/server/index.ts`).
 [Unit]
 Description=Loop-Lore (Bun + Elysia) app
 Documentation=https://loop-lore.example.org/docs/spec/build-deploy.md
