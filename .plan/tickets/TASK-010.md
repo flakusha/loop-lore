@@ -3,7 +3,7 @@
 
 # TASK-010: E2E tests for i18n system
 
-**Status:** open
+**Status:** 🟡 Partial — locale-switch + missing-key e2e shipped (`tests/e2e/i18n/i18n-locale.browser.ts` 2026-09-23); plural AC blocked on `Intl.PluralRules` infra, decomposed to TASK-010-plurals
 **Priority:** medium
 **Effort:** Medium
 **Summary:** E2E coverage for the i18n runtime — locale switch, fallback, plurals, interpolation.
@@ -16,7 +16,7 @@
 **Labels**: i18n, e2e, testing
 **Assignee**:
 **Epic**: epic-frontend-internationalization
-**Related**:
+**Related**: TASK-010-plurals (decomposed — plural AC deferred; `src/i18n/translator.ts` lacks `Intl.PluralRules` infra)
 
 ## Summary
 
