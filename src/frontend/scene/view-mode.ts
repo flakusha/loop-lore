@@ -53,8 +53,8 @@ function syncSceneContainer(mode: ViewMode,): void {
     ?.setAttribute(MODE_ATTR, mode,);
 }
 
-function isValidMode(s: string | null): s is ViewMode {
-  return s !== null && (VALID_MODES as readonly string[]).includes(s,);
+function isValidMode(s: string | null | undefined,): s is ViewMode {
+  return s !== null && s !== undefined && (VALID_MODES as readonly string[]).includes(s,);
 }
 
 function safeStorage(): Storage | null {
@@ -67,20 +67,22 @@ function safeStorage(): Storage | null {
 
 function readSession(): ViewMode | null {
   const v = safeStorage()?.getItem(SESSION_KEY,);
-  return isValidMode(v) ? v : null;
+  return isValidMode(v,) ? v : null;
 }
 
 function writeSession(mode: ViewMode,): void {
   const s = safeStorage();
   if (!s) { return; }
-  try { s.setItem(SESSION_KEY, mode,); } catch { /* quota or private mode */ }
+  try {
+    s.setItem(SESSION_KEY, mode,);
+  } catch { /* quota or private mode */ }
 }
 
 function readUrl(): ViewMode | null {
   try {
     const p = new URLSearchParams(globalThis.location.search,);
     const v = p.get("viewMode",);
-    return isValidMode(v) ? v : null;
+    return isValidMode(v,) ? v : null;
   } catch {
     return null;
   }
@@ -129,7 +131,7 @@ export function viewMode(): ViewModeState {
   const state: ViewModeState = {
     mode: DEFAULT_MODE,
     available: [...VALID_MODES,],
-    set(mode) {
+    set(mode,) {
       if (!isValidMode(mode,)) { return; }
       this.mode = mode;
       writeSession(mode,);
@@ -161,9 +163,10 @@ export function viewMode(): ViewModeState {
   return state;
 }
 
+type ViewModeFactory = typeof viewMode;
 declare global {
   // eslint-disable-next-line no-var
-  var viewMode: typeof viewMode;
+  var viewMode: ViewModeFactory;
 }
 
 (globalThis as unknown as { viewMode: typeof viewMode }).viewMode = viewMode;

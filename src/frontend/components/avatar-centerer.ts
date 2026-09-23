@@ -28,8 +28,8 @@ const SAFE_PAD_PX = 12;
  * @param vh - current viewport height in CSS pixels
  */
 function buildCenterStyle(vw: number, vh: number,): string {
-  const padX = Math.min(SAFE_PAD_PX, Math.max(0, (vw - 360) / 4,));
-  const padY = Math.min(SAFE_PAD_PX, Math.max(0, (vh - 480) / 6,));
+  const padX = Math.min(SAFE_PAD_PX, Math.max(0, (vw - 360) / 4,),);
+  const padY = Math.min(SAFE_PAD_PX, Math.max(0, (vh - 480) / 6,),);
   // The centerer positions itself absolutely inside its parent.
   // translate(-50%, -50%) lines the slot center up with parent center.
   return [
@@ -58,10 +58,11 @@ export function avatarCenterer(host?: { innerWidth: number; innerHeight: number 
   };
 }
 
+type AvatarCentererFactory = typeof avatarCenterer;
 declare global {
   // Ambient registration consumed by Alpine x-data="avatarCenterer()".
   // eslint-disable-next-line no-var
-  var avatarCenterer: typeof avatarCenterer;
+  var avatarCenterer: AvatarCentererFactory;
 }
 
 (globalThis as unknown as { avatarCenterer: typeof avatarCenterer }).avatarCenterer = avatarCenterer;

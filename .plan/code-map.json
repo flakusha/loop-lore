@@ -6589,6 +6589,13 @@
       "source": ".plan/tickets/TASK-023.md"
     }
   ],
+
+  "src/components/3d/view-mode-switcher.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-023.md"
+    }
+  ],
   "src/components/AssetPreviewModal.vue": [
     {
       "kind": "ticket",
@@ -6617,6 +6624,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-analytics-frontend-dashboard.md"
+    }
+  ],
+
+  "src/components/asset-preview-modal.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-001.md"
     }
   ],
   "src/components/audio-player.html": [
@@ -7204,6 +7218,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-nsfw-frontend-integration.md"
+    }
+  ],
+
+  "src/components/overlay-stack.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-025.md"
     }
   ],
   "src/components/personality-editor.html": [
@@ -14924,6 +14945,13 @@
       "source": ".plan/tickets/TASK-asset-3d-models.md"
     }
   ],
+
+  "src/frontend/components/asset-preview-modal.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-001.md"
+    }
+  ],
   "src/frontend/components/context-window-bar.html": [
     {
       "kind": "ticket",
@@ -15164,6 +15192,13 @@
     {
       "kind": "frontend",
       "source": "docs/frontend/chat/text-effects-overlays.md"
+    }
+  ],
+
+  "src/frontend/effects/text-fx.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-025.md"
     }
   ],
   "src/frontend/fe-fetch.ts": [
@@ -15774,6 +15809,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-rpg-chat-questions.md"
+    }
+  ],
+
+  "src/frontend/scene/view-mode.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-023.md"
     }
   ],
   "src/frontend/section-manager.ts": [
@@ -21231,6 +21273,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-undefined-css-custom-properties-break-rendering.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-025.md"
     },
     {
       "kind": "ticket",
