@@ -4,7 +4,7 @@
 /**
  * Model Role Resolution
  *
- * Resolves model role assignments (main, captioning, moderation)
+ * Resolves model role assignments (main, auxiliary, captioning, classifier)
  * with fallback: DB overrides → config defaults → server defaults.
  *
  * Error-handling strategy (deliberate, do not "unify"): reads degrade to

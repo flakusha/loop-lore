@@ -7304,6 +7304,19 @@
     "git_issue": "c294e0a",
     "status": "done"
   },
+  "FEAT-CLASSIFIER-MODEL-SUPPORT-COMPLEMENTARY-TO-AUX-PIPELINE-LAYA-": {
+    "hash": "e9e2e32",
+    "git_issue": "e9e2e32",
+    "extid": "FEAT-CLASSIFIER-MODEL-SUPPORT-COMPLEMENTARY-TO-AUX-PIPELINE-LAYA-",
+    "type": "FEAT",
+    "title": "Classifier model support complementary to AUX pipeline (Laya/Jev)",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-classifier-model-support-complementary-to-aux-pipeline-laya-.md",
+    "status": "⬜ Not Started"
+  },
   "FEAT-CO-AUTHORING-PRESENCE-LIVE-CURSORS-TYPING-INDICATORS": {
     "hash": "8be44ed",
     "git_issue": "8be44ed",
@@ -15738,6 +15751,19 @@
     "git_issue": "0636c4e",
     "status": "open"
   },
+  "TASK-CLASSIFIER-MODEL-SURVEY-MESSAGE-INTENT-MEMORY-RANKING-EMOTIO": {
+    "hash": "e5be98c",
+    "git_issue": "e5be98c",
+    "extid": "TASK-CLASSIFIER-MODEL-SURVEY-MESSAGE-INTENT-MEMORY-RANKING-EMOTIO",
+    "type": "TASK",
+    "title": "Classifier model survey: message/intent, memory ranking, emotion, toxicity",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-classifier-model-survey-message-intent-memory-ranking-emotio.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-CLEAN-TRANSFER-ORPHANS": {
     "hash": "307552d",
     "extid": "TASK-CLEAN-TRANSFER-ORPHANS",
@@ -21607,6 +21633,32 @@
     "tags": [],
     "source": ".plan/tickets/TASK-living-world-persistence.md",
     "status": "open"
+  },
+  "TASK-LLAMA-CPP-SUPPORT-FOR-CLASSIFIER-MODELS-GGUF-ENCODER-SERVING": {
+    "hash": "d503159",
+    "git_issue": "d503159",
+    "extid": "TASK-LLAMA-CPP-SUPPORT-FOR-CLASSIFIER-MODELS-GGUF-ENCODER-SERVING",
+    "type": "TASK",
+    "title": "llama.cpp support for classifier models (GGUF encoder serving)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-llama-cpp-support-for-classifier-models-gguf-encoder-serving.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-LLAMA-SWAP-NATIVE-SUPPORT-CPU-RESIDENT-CLASSIFIER-MODEL-RECI": {
+    "hash": "36d390b",
+    "git_issue": "36d390b",
+    "extid": "TASK-LLAMA-SWAP-NATIVE-SUPPORT-CPU-RESIDENT-CLASSIFIER-MODEL-RECI",
+    "type": "TASK",
+    "title": "llama-swap native support: CPU-resident classifier model recipe",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-llama-swap-native-support-cpu-resident-classifier-model-reci.md",
+    "status": "⬜ Not Started"
   },
   "TASK-LLM-ENHANCE-LORE-STYLE-GROUNDING": {
     "hash": "8d002b8",
@@ -29695,6 +29747,19 @@
     "source": ".plan/tickets/TASK-typescript-mjs-reconciliation.md",
     "git_issue": "728c3ff",
     "status": "open"
+  },
+  "TASK-TYPESCRIPT-SUPPORT-FOR-CLASSIFIER-INFERENCE-TRANSFORMERS-JS-": {
+    "hash": "e5223f5",
+    "git_issue": "e5223f5",
+    "extid": "TASK-TYPESCRIPT-SUPPORT-FOR-CLASSIFIER-INFERENCE-TRANSFORMERS-JS-",
+    "type": "TASK",
+    "title": "TypeScript support for classifier inference (transformers.js / ONNX in-browser + server)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-typescript-support-for-classifier-inference-transformers-js-.md",
+    "status": "⬜ Not Started"
   },
   "TASK-UNIFIED-HOLD-SEMANTICS-PER-CHAT-PAUSE-GATES-PRIMARY-GENERATE": {
     "hash": "2da6399",
