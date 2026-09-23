@@ -14,6 +14,7 @@
 ## Summary
 
 ## What
+
 The chat-message archive purge cutoff is hardcoded to 30 days at src/routes/messages/archiving.ts:94:
 
 ```ts
@@ -23,11 +24,13 @@ const cutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
 The 30-day window is a magic number baked into the purge handler, not sourced from admin configuration. There is no way for operators to tune retention without editing code and redeploying.
 
 ## Why
+
 - gap-audit (2026-09-23) for epic-archival-workflow flagged the hardcoded literal as a bug-shape gap: the spec calls for a **configurable 90-day default**, not a 30-day hardcode.
 - src/admin/config.ts already exposes related retention knobs (e.g. log_retention_days) — the chat archive retention should follow the same admin-config pattern, not diverge with a literal in a route file.
 - Hardcoded retention values are an audit risk: changing the retention policy requires a code change rather than a config update, and the drift between the literal (30) and the spec (90) shows the code is already out of sync.
 
 ## Scope
+
 **Touch:**
 - src/routes/messages/archiving.ts — replace the 30-day literal at line 94 with a read from admin config; default to **90 days** when the config key is missing or unset.
 - src/admin/config.ts — add (or extend) an admin setting such as `archive_retention_days` with a documented default of 90, alongside the existing `log_retention_days`.
@@ -40,6 +43,7 @@ The 30-day window is a magic number baked into the purge handler, not sourced fr
 - Schema migrations — config keys live in the existing admin config table; no DDL change required.
 
 ## Acceptance Criteria
+
 1. The literal `30 * 24 * 60 * 60 * 1000` no longer appears at src/routes/messages/archiving.ts:94; the cutoff is computed from a config read.
 2. When the `archive_retention_days` config key is unset, the purge cutoff equals `now - 90 * 24 * 60 * 60 * 1000` (the documented default).
 3. Setting `archive_retention_days` to a different value (e.g. 7, 180) causes the purge cutoff to use that value instead — verified by a unit test.
