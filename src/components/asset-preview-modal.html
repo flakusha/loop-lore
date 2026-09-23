@@ -1,0 +1,138 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!--
+  Asset Preview Modal (TASK-001)
+  ------------------------------
+  Centred modal portal for asset preview. Wraps the existing
+  #preview-modal payload (mount lazy by /partials/gallery/preview-modal)
+  with a focus-managed overlay so:
+    - ESC closes the modal and returns focus to the tile that opened it.
+    - Backdrop click closes the modal.
+    - Body scroll is locked while the modal is open so layout does
+      not shift under the user's hand.
+    - The avatar stage is centered via avatar-centerer.html so the
+      preview is visually pinned regardless of viewport width
+      (360px -> 1920px).
+    - Metadata strip (filename, mime, tags, source) reads from the
+      existing asset payload via data-field hooks.
+
+  Wiring: include this partial near #modal-container in the host view,
+  or import it from gallery.html and chat.html. The data() factory
+  lives in src/frontend/components/asset-preview-modal.ts.
+-->
+<div
+  id="asset-preview-modal"
+  class="modal-overlay asset-preview-overlay"
+  x-data="assetPreviewModal()"
+  x-init="bind()"
+  x-show="isOpen"
+  x-cloak
+  :class="{ open: isOpen }"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="asset-preview-title"
+  @keydown.escape.window="close()"
+  @click.self="close()"
+  data-testid="asset-preview-modal"
+>
+  <div class="modal asset-preview-modal" style="max-width: min(800px, 92vw); max-height: 92vh">
+    <div class="modal-header">
+      <span class="title" id="asset-preview-title" x-text="asset?.filename || asset?.name || ''"></span>
+      <button
+        class="btn-icon"
+        type="button"
+        @click="close()"
+        x-bind:aria-label="t('common.close')"
+        data-testid="asset-preview-close"
+      >&times;</button>
+    </div>
+    <div class="modal-body asset-preview-body" style="padding: 0">
+      <div class="asset-preview-stage">
+        <template x-if="asset">
+          <div
+            class="avatar-centerer"
+            x-data="avatarCenterer()"
+            x-init="recompute()"
+            @resize.window.debounce.50ms="recompute()"
+            :style="centerStyle"
+            data-testid="asset-preview-stage"
+          >
+            <template x-if="asset.asset_type === 'image' || asset.type === 'image'">
+              <img
+                :src="asset.url || (asset.id ? '/api/v1/assets/' + asset.id + '/raw' : '')"
+                :alt="asset.alt_text || asset.filename || asset.name || ''"
+                style="max-width: 100%; max-height: 70vh; display: block; margin: 0 auto"
+              />
+            </template>
+            <template x-if="asset.asset_type === 'audio' || asset.type === 'audio'">
+              <audio controls style="width: 100%; padding: var(--space-6)">
+                <source :src="asset.url || (asset.id ? '/api/v1/assets/' + asset.id + '/raw' : '')" />
+              </audio>
+            </template>
+            <template x-if="asset.asset_type === 'video' || asset.type === 'video'">
+              <video controls style="max-width: 100%; max-height: 70vh; display: block; margin: 0 auto">
+                <source :src="asset.url || (asset.id ? '/api/v1/assets/' + asset.id + '/raw' : '')" />
+              </video>
+            </template>
+          </div>
+        </template>
+      </div>
+    </div>
+    <!-- Metadata strip: name, mime, tags, source from existing payload. -->
+    <div class="asset-preview-meta" data-testid="asset-preview-meta">
+      <template x-if="asset">
+        <div style="display: flex; gap: var(--space-2); flex-wrap: wrap; align-items: center; padding: var(--space-3) var(--space-4)">
+          <span class="tag" x-text="asset.filename || asset.name"></span>
+          <template x-if="asset.mime_type">
+            <span class="tag" x-text="asset.mime_type"></span>
+          </template>
+          <template x-if="asset.size_bytes != null">
+            <span class="tag" x-text="formatSize(asset.size_bytes)"></span>
+          </template>
+          <template x-if="asset.width && asset.height">
+            <span class="tag" x-text="asset.width + ' × ' + asset.height"></span>
+          </template>
+          <template x-if="asset.visibility">
+            <span class="tag" x-text="asset.visibility" style="text-transform: capitalize"></span>
+          </template>
+          <template x-if="asset.source">
+            <span class="tag" x-text="'src: ' + asset.source"></span>
+          </template>
+          <template x-if="asset.tags && asset.tags.length">
+            <template x-for="tag in asset.tags" :key="tag">
+              <span class="tag" x-text="tag"></span>
+            </template>
+          </template>
+        </div>
+      </template>
+    </div>
+    <div class="modal-footer" style="justify-content: space-between">
+      <div></div>
+      <div style="display: flex; gap: var(--space-2)">
+        <button
+          class="btn btn-ghost"
+          type="button"
+          x-show="asset?.id"
+          x-on:click="window.copyAssetUrl && window.copyAssetUrl()"
+          x-bind:title="t('gallery.copyUrl')"
+        >📋 <span x-text="t('gallery.copyUrl')"></span></button>
+        <button
+          class="btn btn-ghost"
+          type="button"
+          x-show="asset?.id"
+          x-on:click="window.downloadAsset && window.downloadAsset()"
+          x-bind:title="t('common.download')"
+        >⬇ <span x-text="t('common.download')"></span></button>
+        <button
+          class="btn btn-danger"
+          type="button"
+          x-show="asset?.id"
+          x-on:click="window.deleteAssetPreview && window.deleteAssetPreview()"
+          x-bind:title="t('common.delete')"
+          data-testid="asset-preview-delete"
+        >🗑 <span x-text="t('common.delete')"></span></button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -29,6 +29,9 @@ import "./ui";
 
 // ── 10. Asset preview global (openAssetPreview for embedded gallery grids) ──
 import "./asset-preview";
+// ── 10a. TASK-001: centered asset preview modal + avatar centerer ──
+import "./components/asset-preview-modal";
+import "./components/avatar-centerer";
 import { toDate, } from "../utils/date";
 
 // ── 2. Expose on globalThis ─────────────────────────────────────
