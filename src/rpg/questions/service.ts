@@ -11,12 +11,25 @@
  */
 
 import type { InsertObject, Kysely, Selectable, } from "kysely";
-import { RpgQuestionStatus, type RpgQuestionType, } from "../../db/enums-story";
+import {
+  RpgQuestionInputKind,
+  RpgQuestionStatus,
+  type RpgQuestionType,
+} from "../../db/enums-story";
 import type { DB, } from "../../db/schema";
 import { safeJsonStringify, uid, } from "../../utils";
 import { getRpgLog, parseJsonField, } from "../shared/rpg-service-utils";
-import type { CreateQuestionInput, RpgQuestion, RpgQuestionOption, } from "./types";
+import { applyQuestionEffects, } from "./effects";
+import type {
+  AnswerQuestionPayload,
+  AnswerQuestionResult,
+  CreateQuestionInput,
+  QuestionEffect,
+  RpgQuestion,
+  RpgQuestionOption,
+} from "./types";
 import { QuestionError, } from "./types";
+import { assertValidEffect, resolveAnswer, } from "./validation";
 
 /** */
 function getLog() {
@@ -36,6 +49,11 @@ function rowToQuestion(row: Selectable<DB["rpg_questions"]>,): RpgQuestion {
     type: row.type as RpgQuestionType,
     prompt: row.prompt,
     options: parseJsonField<RpgQuestionOption[]>(row.options, [],),
+    inputKind: row.input_kind as RpgQuestionInputKind,
+    answerValue: row.answer_value,
+    minValue: row.min_value,
+    maxValue: row.max_value,
+    effect: parseJsonField<QuestionEffect>(row.effect, {},),
     timeLimit: row.time_limit,
     requiredChoice: row.required_choice,
     status: row.status as unknown as RpgQuestionStatus,
@@ -47,9 +65,11 @@ function rowToQuestion(row: Selectable<DB["rpg_questions"]>,): RpgQuestion {
 
 /**
  * Validate create input: prompt and options must be well-formed with unique
- * non-empty option ids.
+ * non-empty option ids; numeric bounds must not be inverted and the effect
+ * payload must match its documented shape.
  * @param input
- * @throws {QuestionError} `invalid_input` when prompt/options are malformed.
+ * @throws {QuestionError} `invalid_input` when prompt/options/bounds/effect
+ *   are malformed.
  */
 function assertValidInput(input: CreateQuestionInput,): void {
   if (!input.prompt.trim()) {
@@ -68,6 +88,17 @@ function assertValidInput(input: CreateQuestionInput,): void {
     }
     ids.add(option.id,);
   }
+
+  const inputKind = input.inputKind ?? RpgQuestionInputKind.Choice;
+  if (
+    inputKind === RpgQuestionInputKind.Numeric &&
+    input.minValue !== null && input.minValue !== undefined &&
+    input.maxValue !== null && input.maxValue !== undefined &&
+    input.minValue > input.maxValue
+  ) {
+    throw new QuestionError("Numeric minValue must not exceed maxValue", "invalid_input",);
+  }
+  assertValidEffect(input.effect ?? {},);
 }
 
 /**
@@ -88,6 +119,10 @@ export async function createQuestion(
   if (!serialized.ok) {
     throw new QuestionError("Question options must be serializable", "invalid_input",);
   }
+  const effectJson = safeJsonStringify(input.effect ?? {},);
+  if (!effectJson.ok) {
+    throw new QuestionError("Question effect must be serializable", "invalid_input",);
+  }
   const row: InsertObject<DB, "rpg_questions"> = {
     id,
     chat_id: input.chatId,
@@ -95,6 +130,10 @@ export async function createQuestion(
     type: input.type,
     prompt: input.prompt,
     options: serialized.value,
+    input_kind: input.inputKind ?? RpgQuestionInputKind.Choice,
+    min_value: input.minValue ?? null,
+    max_value: input.maxValue ?? null,
+    effect: effectJson.value,
     time_limit: input.timeLimit ?? null,
     required_choice: input.requiredChoice ?? 1,
   };
@@ -128,23 +167,29 @@ export async function getOpenQuestions(
 /**
  * Answer an open question.
  *
- * Marks the question `answered`, records the selected option, and appends a
- * `system` message (`Answer recorded: <option text>`) to the chat.
+ * Validates the payload against the question's `input_kind` (choice:
+ * `optionId` must match an option; free_text: non-empty string of at most
+ * 2000 characters; numeric: finite number within the stored
+ * `min_value`/`max_value` bounds), marks the question `answered`, applies the
+ * question's `effect` best-effort, and appends a `system` message describing
+ * the answer and any applied effects to the chat.
  * @param db - Database handle.
  * @param questionId - Question to answer.
- * @param optionId - Chosen option; must be one of the question's options.
- * @param answeredBy - Actor id of the answering participant (message author).
- * @returns The updated question.
+ * @param answer - `optionId` for choice questions, `value` for free_text/numeric.
+ * @param answeredBy - Actor id of the answering participant (message author, item grantee).
+ * @returns The answered question plus the labels of applied effects.
  * @throws {QuestionError} `not_found` when the question does not exist,
- *   `not_open` when it is already answered or expired, `invalid_option`
- *   when the option id is not one of the question's options.
+ *   `not_open` when it is already answered or expired, `invalid_input` when
+ *   the payload shape is wrong, `invalid_option` when the option id does not
+ *   match the question's options, `invalid_value` when a numeric value is
+ *   not parseable or outside the configured bounds.
  */
 export async function answerQuestion(
   db: Kysely<DB>,
   questionId: string,
-  optionId: string,
+  answer: AnswerQuestionPayload,
   answeredBy: string,
-): Promise<RpgQuestion> {
+): Promise<AnswerQuestionResult> {
   const row = await db.selectFrom("rpg_questions",).selectAll()
     .where("id", "=", questionId,)
     .executeTakeFirst();
@@ -156,39 +201,49 @@ export async function answerQuestion(
   }
 
   const options = parseJsonField<RpgQuestionOption[]>(row.options, [],);
-  const option = options.find((o,) => o.id === optionId);
-  if (!option) {
-    throw new QuestionError(`Invalid option for question ${questionId}: ${optionId}`, "invalid_option",);
-  }
+  const resolved = resolveAnswer(row, options, answer, questionId,);
 
   const answeredAt = new Date().toISOString();
   await db.updateTable("rpg_questions",)
     .set({
       status: RpgQuestionStatus.Answered,
-      selected_option_id: optionId,
+      selected_option_id: resolved.selectedOptionId,
+      answer_value: resolved.answerValue,
       answered_at: answeredAt,
     },)
     .where("id", "=", questionId,)
     .execute();
 
+  const effect = parseJsonField<QuestionEffect>(row.effect, {},);
+  const { effectsApplied, messageParts, } = await applyQuestionEffects(
+    db,
+    row.chat_id,
+    answeredBy,
+    effect,
+  );
+
+  const content = ["Answer recorded: " + resolved.display, ...messageParts,].join(" — ",);
   await db.insertInto("messages",).values({
     id: uid(),
     chat_id: row.chat_id,
     actor_id: answeredBy,
     role: "system",
-    content: `Answer recorded: ${option.text}`,
+    content,
   },).execute();
 
   getLog().info("Question answered", {
     id: questionId,
     chatId: row.chat_id,
-    optionId,
+    inputKind: row.input_kind,
+    effectsApplied,
   },);
 
   return {
     ...rowToQuestion(row,),
     status: RpgQuestionStatus.Answered,
-    selectedOptionId: optionId,
+    selectedOptionId: resolved.selectedOptionId,
+    answerValue: resolved.answerValue,
     answeredAt,
+    effectsApplied,
   };
 }

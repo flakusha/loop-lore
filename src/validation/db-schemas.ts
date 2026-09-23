@@ -442,6 +442,7 @@ export const RelationshipTypeSchema = t.UnionEnum([
   "neutral",
 ],);
 export const ResponseCompressionSchema = t.UnionEnum(["br", "gzip", "auto",],);
+export const RpgQuestionInputKindSchema = t.UnionEnum(["choice", "free_text", "numeric",],);
 export const RpgQuestionStatusSchema = t.UnionEnum(["open", "answered", "expired",],);
 export const RpgQuestionTypeSchema = t.UnionEnum(["dialogue", "action", "exploration", "combat", "custom",],);
 export const SdModelTypeSchema = t.UnionEnum(["checkpoint", "diffusion",],);
@@ -2734,6 +2735,11 @@ export const RpgQuestionsSchema = t.Object({
   selected_option_id: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
   answered_at: t.Optional(t.String(),),
+  input_kind: t.Optional(t.String(),),
+  answer_value: t.Optional(t.String(),),
+  min_value: t.Optional(t.Number(),),
+  max_value: t.Optional(t.Number(),),
+  effect: t.Optional(t.String(),),
 },);
 
 // ── memory_audit_log ────────────────────────────────────────────

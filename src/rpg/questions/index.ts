@@ -5,9 +5,24 @@
  * RPG chat questions — public surface.
  */
 
+export { type AppliedEffects, applyQuestionEffects, } from "./effects";
 export {
   answerQuestion,
   createQuestion,
   getOpenQuestions,
 } from "./service";
-export { type CreateQuestionInput, QuestionError, type RpgQuestion, type RpgQuestionOption, } from "./types";
+export {
+  type AnswerQuestionPayload,
+  type AnswerQuestionResult,
+  type CreateQuestionInput,
+  type QuestionEffect,
+  QuestionError,
+  type QuestionQuestEffect,
+  type RpgQuestion,
+  type RpgQuestionOption,
+} from "./types";
+export {
+  assertValidEffect,
+  resolveAnswer,
+  type ResolvedAnswer,
+} from "./validation";
