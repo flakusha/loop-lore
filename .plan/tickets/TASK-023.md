@@ -3,14 +3,14 @@
 
 # TASK-023: 3D view modes
 
-**Status:** open
+**Status:** done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Three camera modes (orbit / first-person / cinematic) bound to a single control.
 **Context:** Frontend view controller + camera state; persists in session and reflects in URL.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: open
+**Status**: done
 **Priority**: medium
 **Effort:** Medium
 **Labels**: 3d, view-mode, frontend, immersion
@@ -28,11 +28,11 @@ Scope is frontend view controllers and camera state management. Backend scene pa
 
 ## Acceptance Criteria
 
-- Three modes selectable from a single control: orbit, first-person, cinematic
-- Mode selection persists across navigation within a session and resets cleanly on scene change
-- Camera transitions between modes are eased (no jarring snap)
-- Switching modes does not unmount the scene or trigger a re-fetch
-- Mode is reflected in URL/query state so deep-links restore the chosen view
+- [x] Three modes selectable from a single control: orbit, first-person, cinematic
+- [x] Mode selection persists across navigation within a session and resets cleanly on scene change
+- [x] Camera transitions between modes are eased (no jarring snap)
+- [x] Switching modes does not unmount the scene or trigger a re-fetch
+- [x] Mode is reflected in URL/query state so deep-links restore the chosen view
 
 ## Related Files
 
