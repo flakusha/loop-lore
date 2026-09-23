@@ -59,3 +59,9 @@ via `chat.viewMode` / `chat.viewModeLabel.*` / `chat.viewModeTitle.*` in all
 10 locale files.
 
 Git issue: `149948e`
+
+Follow-up (2026-09-23): wired the missing `data-scene-id` writer — `syncVnRenderer`
+now mirrors the active chat id onto `#vn-container` (`syncSceneId` in
+`alpine/chat-settings/vn.ts`), and the view-mode watcher resets to orbit only on
+scene swaps (initial attach preserves a restored/deep-linked camera). Tests:
+`view-mode.test.ts`, `vn-scene-id.test.ts`.
