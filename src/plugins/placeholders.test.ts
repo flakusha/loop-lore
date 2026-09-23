@@ -118,10 +118,12 @@ describe("mergePluginConfig", () => {
 // TASK-046: per-extension-point override precedence — routes family.
 //
 // Plugin A registers a route. Plugin B registers the same path with a
-// different handler. Stored overrides in `plugin_state.config` flip the
-// enabled flag for B; routes from disabled plugins are filtered out by
-// `getEnabledRoutes`, so A's route wins for the conflicting path. For
-// non-conflicting paths, both contribute.
+// different handler. A plugin disabled via its persisted plugin_state row is
+// flipped off by the loader (loader.ts loadAllPlugins → registry.setEnabled);
+// routes from disabled plugins are filtered out by `getEnabledRoutes`, so
+// A's route wins for the conflicting path. For non-conflicting paths, both
+// contribute. The plugin_state → setEnabled leg is covered in loader.test.ts
+// ("applies persisted states ...").
 
 const route = (path: string, handlerName: string): RouteDefinition => ({
   method: "GET",
@@ -158,21 +160,5 @@ describe("routes extension-point override precedence", () => {
     expect(onlyA.map((r,) => r.path,)).toEqual(["/shared", "/a-only",],);
 
     registry.unregisterAll();
-  });
-
-  test("config merge feeds plugin_state.config into the routes family override", () => {
-    // Stored override (e.g. from `plugin_state.config`) merged over manifest
-    // defaults. The merged config is the source of truth for the loader, which
-    // then calls `setEnabled(false)` when the override disables a plugin.
-    const merged = mergePluginConfig(
-      { enabled: true, priority: 1, },
-      { enabled: false, priority: 5, },
-      { type: "object", properties: {}, required: ["enabled",], },
-    );
-    expect(merged,).toEqual({ enabled: false, priority: 5, },);
-    if (!merged.enabled) {
-      registry.setEnabled("b", false,);
-    }
-    expect(registry.isEnabled("b",),).toBe(false,);
   });
 });
