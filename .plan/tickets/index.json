@@ -9083,6 +9083,18 @@
     "git_issue": "9dd6fbf",
     "status": "open"
   },
+  "TASK-010-PLURALS": {
+    "hash": "pending",
+    "extid": "TASK-010-PLURALS",
+    "type": "TASK",
+    "title": "# TASK-010-plurals: i18n Plural Rules (Intl.PluralRules integration)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-010-plurals.md",
+    "status": "open"
+  },
   "TASK-023": {
     "hash": "149948e",
     "extid": "TASK-023",
