@@ -81,6 +81,7 @@ export const ModelRole = {
   Moderation: "moderation",
   Embeddings: "embeddings",
   Summarization: "summarization",
+  Classifier: "classifier",
 } as const;
 /** */
 export type ModelRole = (typeof ModelRole)[keyof typeof ModelRole];
