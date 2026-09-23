@@ -51,6 +51,17 @@ export function syncSceneId(
   }
 }
 
+/** Renderer bridge for syncVnRenderer — injectable for tests. */
+export interface VnRendererBridge {
+  init(
+    container: HTMLElement,
+    messages: VnMessage[],
+    config: Record<string, unknown>,
+    chatId: string | undefined,
+  ): void;
+  destroy(): void;
+}
+
 /**
  * (Re)render the active chat as a VN scene when VN mode is enabled, or tear the
  * renderer down when it is disabled. Reads the persisted gm_config so the
@@ -59,12 +70,14 @@ export function syncSceneId(
  * @param gmConfig
  * @param vnEnabled
  * @param chatId
+ * @param renderer Renderer bridge; defaults to the real scene renderer.
  */
 export function syncVnRenderer(
   messages: Message[],
   gmConfig: string | null | undefined,
   vnEnabled: boolean,
   chatId: string | undefined,
+  renderer: VnRendererBridge = { init: initVnRenderer, destroy: destroyVnRenderer, },
 ): void {
   const config = gmConfig ? jsonParseOr<GmConfig>(gmConfig, {},) : {};
   const enabled = config.renderingOverride != null
@@ -73,7 +86,7 @@ export function syncVnRenderer(
   const container = document.querySelector<HTMLElement>("#vn-container",);
 
   if (!enabled || !container) {
-    destroyVnRenderer();
+    renderer.destroy();
     syncSceneId(container, undefined,);
     container?.replaceChildren();
     return;
@@ -81,9 +94,9 @@ export function syncVnRenderer(
 
   const vnMessages = Array.from(messages, (m,) => toVnMessage(m,),);
   if (vnMessages.length === 0) {
-    destroyVnRenderer();
+    renderer.destroy();
     return;
   }
   syncSceneId(container, chatId,);
-  initVnRenderer(container, vnMessages, config as Record<string, unknown>, chatId,);
+  renderer.init(container, vnMessages, config as Record<string, unknown>, chatId,);
 }
