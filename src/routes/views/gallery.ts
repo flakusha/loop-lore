@@ -219,7 +219,7 @@ function renderCards(
     const size = formatSize(a.size_bytes,);
     const tags = escapeHtml((tagMap.get(a.id,) ?? []).join(",",),);
     cards.push(
-      `<div class="asset-card" data-tags="${tags}" x-on:click="window.openAssetPreview('${a.id}')" data-testid="asset-card-${a.id}">
+      `<div class="asset-card" data-tags="${tags}" tabindex="0" role="button" x-on:click="window.openAssetPreviewById('${a.id}')" x-on:keydown.enter.prevent="window.openAssetPreviewById('${a.id}')" x-on:keydown.space.prevent="window.openAssetPreviewById('${a.id}')" data-testid="asset-card-${a.id}">
       <div class="thumb">${thumbForAsset(a,)}</div>
       <div class="details">
         <span class="name">${filename}</span>
