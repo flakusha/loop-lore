@@ -41,11 +41,17 @@ Defines the override layer for the plugin system: stored plugin configuration an
 
 - `src/plugins/config-merge.ts` *(existing)* — `mergePluginConfig` deep-merge + required-key enforcement.
 - `src/plugins/types.ts` *(existing)* — `PluginConfigSchema.required` and manifest defaults.
-- `src/plugins/registry.ts` *(speculative)* — override-aware register/add* paths.
-- `src/plugins/loader.ts` *(speculative)* — apply persisted overrides during `loadAllPlugins`.
+- `src/plugins/registry.ts` *(existing — verified 2026-09-23)* — override-aware `addRoutes`/`addTools`/etc. + `setEnabled` + `getEnabledRoutes`.
+- `src/plugins/loader.ts` *(existing — verified 2026-09-23)* — `loadAllPlugins` applies persisted `plugin_state.status === "active"` via `registry.setEnabled`.
+
+## Test Coverage
+
+- `src/plugins/placeholders.test.ts` (existing — extended 2026-09-23) now includes the **routes extension-point family** override-precedence tests:
+  - "disabled plugin's routes are excluded; enabled plugin's routes win" — uses `registry.addRoutes`, `registry.setEnabled`, `registry.getEnabledRoutes` to assert that disabling a plugin removes its routes from the dispatch list.
+  - "config merge feeds plugin_state.config into the routes family override" — verifies the `mergePluginConfig` flow (stored overrides win over manifest defaults) into `setEnabled`.
 
 ## Notes
 
-- Speculative file paths are marked; verify against current `src/plugins/` before implementation.
+- All four "Related Files" entries are existing — speculative markers removed 2026-09-23 after verifying against `src/plugins/`.
 - Sibling epic `epic-plugin-system.md` owns the full override engine (method/class/behavior chains); this ticket scopes the extension-points layer.
 - Per-extension-point override ordering (priority, last-wins, first-wins) is still TBD — defer until extension-points epic lands.
