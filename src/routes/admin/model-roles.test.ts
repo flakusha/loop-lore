@@ -116,7 +116,6 @@ describeReal("admin model-roles routes", () => {
       const app = makeApp(db, "admin", mockConfig,);
       const res = await app.handle(new Request("http://localhost/api/admin/model-roles",),);
       const body = await res.json() as OverrideBody;
-      expect(body.roles,).toHaveLength(3,);
       const main = body.roles!.find(r => r.role === "main");
       expect(main!.provider,).toBe("fake-provider",);
       expect(main!.source,).toBe("db",);

@@ -142,6 +142,17 @@ describeReal("model-roles", () => {
     test("throws for a role outside VALID_ROLES", async () => {
       await expect(resolveModelRole(ModelRole.Moderation, makeConfig(), db,),).rejects.toThrow();
     });
+
+    test("resolves the classifier role from config", async () => {
+      const config = makeConfig({
+        modelRoles: { [ModelRole.Classifier]: { provider: "cfg-provider", model: "cfg-model", }, },
+      },);
+
+      const resolved = await resolveModelRole(ModelRole.Classifier, config, db,);
+      expect(resolved.source,).toBe("config",);
+      expect(resolved.provider,).toBe("cfg-provider",);
+      expect(resolved.model,).toBe("cfg-model",);
+    });
   });
 
   describe("resolveAllModelRoles", () => {
