@@ -58,4 +58,8 @@ export const uiStoreDefinition: Record<string, unknown> = {
 
   // ── Active entity refs ───────────────────────────────
   activePersona: null,
+
+  // ── TASK-025 overlay stack (banner + ticker text) ──
+  banner: "",
+  ticker: "",
 };
