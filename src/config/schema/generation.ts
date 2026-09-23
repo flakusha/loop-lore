@@ -104,6 +104,8 @@ export interface GenerationConfig {
     auxiliary?: ModelRoleAssignment;
     /** Vision/LM model for captioning */
     captioning?: ModelRoleAssignment;
+    /** Dedicated encoder classifier (Laya/Jev-class); falls back to auxiliary when unset */
+    classifier?: ModelRoleAssignment;
   };
   /** Regex transforms applied to LLM output before display */
   regexTransforms?: RegexTransform[];
