@@ -35,8 +35,8 @@ import "./components/avatar-centerer";
 // ── 10b. TASK-023: 3D view mode switcher (orbit/first-person/cinematic) ──
 import "./scene/view-mode";
 // ── 10c. TASK-025: text effects (shake / glow / typewriter / fade) ──
-import { applyFx, isFxActive, prefersReducedMotion, } from "./effects/text-fx";
 import { toDate, } from "../utils/date";
+import { applyFx, isFxActive, prefersReducedMotion, } from "./effects/text-fx";
 
 // ── 2. Expose on globalThis ─────────────────────────────────────
 const g = globalThis as Record<string, unknown>;
