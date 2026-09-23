@@ -2,9 +2,9 @@
   "meta": {
     "schemaVersion": 1,
     "generatedAt": "2026-08-21T11:32:47.067Z",
-    "pillarCount": 15,
-    "scenarioCount": 26,
-    "testCount": 26
+    "pillarCount": 16,
+    "scenarioCount": 27,
+    "testCount": 27
   },
   "pillars": [
     {
@@ -155,6 +155,17 @@
           "id": "world-invites",
           "tests": [
             "tests/e2e/flows/browser/world-invites.browser.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "i18n",
+      "scenarios": [
+        {
+          "id": "i18n-locale",
+          "tests": [
+            "tests/e2e/flows/browser/i18n-locale.browser.ts"
           ]
         }
       ]
