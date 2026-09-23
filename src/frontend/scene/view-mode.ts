@@ -1,0 +1,155 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
+/**
+ * 3D View Mode Switcher (TASK-023).
+ *
+ * Three camera modes for the scene renderer:
+ *   - orbit:        free orbit around the scene origin
+ *   - first-person: camera at viewer height, WASD-style movement
+ *   - cinematic:    scripted pans between preset camera frames
+ *
+ * Persistence:
+ *   - sessionStorage under "loop-lore:view-mode"
+ *   - URL ?viewMode= query parameter (deep-linkable)
+ *
+ * Easing: the actual transform happens via CSS transitions on the
+ * scene container (`transition: transform 350ms ease-in-out`). The
+ * switcher only flips data-mode; it does NOT animate in JS, so a
+ * prefers-reduced-motion user gets the same end state with no
+ * intermediate motion (CSS transitions are still active but easy
+ * to disable via the global media-query rule).
+ *
+ * Scene reset: when the user navigates to a new chat / scene, the
+ * scene container's `data-scene-id` attribute changes; the watcher
+ * below clears the mode back to "orbit" so the new scene starts
+ * with a known camera.
+ */
+
+const VALID_MODES = ["orbit", "first-person", "cinematic",] as const;
+export type ViewMode = typeof VALID_MODES[number];
+
+export interface ViewModeState {
+  mode: ViewMode;
+  available: ViewMode[];
+  set(mode: ViewMode,): void;
+  reset(): void;
+  syncUrl(): void;
+  restore(): void;
+}
+
+const SESSION_KEY = "loop-lore:view-mode";
+const DEFAULT_MODE: ViewMode = "orbit";
+const SCENE_ID_ATTR = "data-scene-id";
+
+function isValidMode(s: string | null): s is ViewMode {
+  return s !== null && (VALID_MODES as readonly string[]).includes(s,);
+}
+
+function safeStorage(): Storage | null {
+  try {
+    return globalThis.sessionStorage;
+  } catch {
+    return null;
+  }
+}
+
+function readSession(): ViewMode | null {
+  const v = safeStorage()?.getItem(SESSION_KEY,);
+  return isValidMode(v) ? v : null;
+}
+
+function writeSession(mode: ViewMode,): void {
+  const s = safeStorage();
+  if (!s) { return; }
+  try { s.setItem(SESSION_KEY, mode,); } catch { /* quota or private mode */ }
+}
+
+function readUrl(): ViewMode | null {
+  try {
+    const p = new URLSearchParams(globalThis.location.search,);
+    const v = p.get("viewMode",);
+    return isValidMode(v) ? v : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeUrl(mode: ViewMode,): void {
+  try {
+    const url = new URL(globalThis.location.href,);
+    url.searchParams.set("viewMode", mode,);
+    globalThis.history.replaceState(null, "", url.toString(),);
+  } catch {
+    /* SSR or sandboxed frame — leave the URL alone */
+  }
+}
+
+let sceneWatcher: MutationObserver | null = null;
+
+function detachSceneWatcher(): void {
+  sceneWatcher?.disconnect();
+  sceneWatcher = null;
+}
+
+/**
+ * Watch the scene container for `data-scene-id` changes. When the
+ * scene identity changes (new chat, scene swap) reset the camera
+ * mode to "orbit" — every other mode is a layout choice tied to a
+ * specific camera position that no longer applies.
+ */
+function attachSceneWatcher(state: ViewModeState,): void {
+  if (typeof MutationObserver === "undefined") { return; }
+  detachSceneWatcher();
+  const target = document.querySelector<HTMLElement>("#vn-container",);
+  if (!target) { return; }
+  let lastId = target.getAttribute(SCENE_ID_ATTR,);
+  sceneWatcher = new MutationObserver(() => {
+    const id = target.getAttribute(SCENE_ID_ATTR,);
+    if (id !== lastId) {
+      lastId = id;
+      state.reset();
+    }
+  },);
+  sceneWatcher.observe(target, { attributes: true, attributeFilter: [SCENE_ID_ATTR,], },);
+}
+
+export function viewMode(): ViewModeState {
+  const state: ViewModeState = {
+    mode: DEFAULT_MODE,
+    available: [...VALID_MODES,],
+    set(mode) {
+      if (!isValidMode(mode,)) { return; }
+      this.mode = mode;
+      writeSession(mode,);
+      this.syncUrl();
+    },
+    reset() {
+      this.mode = DEFAULT_MODE;
+      writeSession(DEFAULT_MODE,);
+      this.syncUrl();
+    },
+    syncUrl() {
+      writeUrl(this.mode,);
+    },
+    restore() {
+      // URL wins over sessionStorage wins over DEFAULT — the URL is
+      // the most explicit user signal (e.g. a shared deep link).
+      const fromUrl = readUrl();
+      const fromSession = readSession();
+      const next: ViewMode = fromUrl ?? fromSession ?? DEFAULT_MODE;
+      this.mode = next;
+      writeSession(next,);
+      this.syncUrl();
+      attachSceneWatcher(this,);
+    },
+  };
+  return state;
+}
+
+declare global {
+  // eslint-disable-next-line no-var
+  var viewMode: typeof viewMode;
+}
+
+(globalThis as unknown as { viewMode: typeof viewMode }).viewMode = viewMode;
