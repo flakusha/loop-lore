@@ -334,4 +334,9 @@ export interface RpgQuestions {
   selected_option_id: string | null;
   created_at: Generated<string>;
   answered_at: string | null;
+  input_kind: Generated<string>;
+  answer_value: string | null;
+  min_value: number | null;
+  max_value: number | null;
+  effect: Generated<string>;
 }
