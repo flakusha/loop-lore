@@ -1,7 +1,9 @@
 <!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
-<!-- RPG Questions Panel (TASK-029): open multiple-choice questions for the active chat -->
+<!--
+  RPG Questions Panel (TASK-029): open questions for the active chat (choice buttons, or text/number input for free_text/numeric)
+-->
 <div
   x-init="loadOpenQuestions(); $watch('activeChat', () => loadOpenQuestions())"
   x-show="rpgQuestions.length > 0"
@@ -15,24 +17,65 @@
       style="border: 1px solid var(--border-default); border-radius: var(--radius-md); padding: var(--space-3); margin-bottom: var(--space-2)"
     >
       <div style="font-size: 13px; font-weight: 600; margin-bottom: var(--space-2)" x-text="question.prompt"></div>
-      <div style="display: flex; flex-direction: column; gap: var(--space-1)">
-        <template x-for="option in question.options" :key="option.id">
-          <button
-            class="btn btn-secondary rpg-question-option"
-            style="text-align: left"
+      <template x-if="question.inputKind === 'choice'">
+        <div style="display: flex; flex-direction: column; gap: var(--space-1)">
+          <template x-for="option in question.options" :key="option.id">
+            <button
+              class="btn btn-secondary rpg-question-option"
+              style="text-align: left"
+              :disabled="rpgQuestionsLoading || _answeringQuestionId === question.id"
+              data-testid="rpg-question-option"
+              @click="answerChoice(question.id, option.id)"
+              x-text="option.text"
+            >
+            </button>
+          </template>
+        </div>
+      </template>
+      <template x-if="question.inputKind === 'free_text' || question.inputKind === 'numeric'">
+        <form
+          x-data="{ value: '' }"
+          style="display: flex; gap: var(--space-1); margin-top: var(--space-1)"
+          @submit.prevent="answerValue(question.id, question.inputKind === 'numeric' ? Number(value) : value)"
+        >
+          <input
+            class="form-input rpg-question-input"
+            style="flex: 1"
+            :type="question.inputKind === 'numeric' ? 'number' : 'text'"
+            :min="question.minValue ?? null"
+            :max="question.maxValue ?? null"
             :disabled="rpgQuestionsLoading || _answeringQuestionId === question.id"
-            data-testid="rpg-question-option"
-            @click="answerRpgQuestion(question.id, option.id)"
-            x-text="option.text"
+            x-model="value"
+            data-testid="rpg-question-input"
+          />
+          <button
+            class="btn btn-primary btn-xs rpg-question-submit"
+            type="submit"
+            :disabled="rpgQuestionsLoading || _answeringQuestionId === question.id || !value.trim()"
+            data-testid="rpg-question-submit"
           >
+            Answer
           </button>
-        </template>
-      </div>
+        </form>
+      </template>
       <div
         x-show="rpgQuestionsError"
-        style="color: var(--danger, #c0392b); font-size: 12px; margin-top: var(--space-2)"
-        x-text="rpgQuestionsError"
+        style="display: flex; align-items: center; gap: var(--space-2); margin-top: var(--space-2)"
       >
+        <span
+          style="color: var(--danger, #c0392b); font-size: 12px"
+          x-text="rpgQuestionsError"
+        >
+        </span>
+        <button
+          class="btn btn-secondary btn-xs rpg-question-retry"
+          x-show="_pendingAnswer && _pendingAnswer.questionId === question.id"
+          :disabled="rpgQuestionsLoading || _answeringQuestionId === question.id"
+          @click="retryAnswer()"
+          data-testid="rpg-question-retry"
+        >
+          Retry
+        </button>
       </div>
     </div>
   </template>
