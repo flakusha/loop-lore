@@ -279,3 +279,15 @@ flowchart TD
 - **All UI Epics** — Accessibility applies to all user-facing features
 - **Epic Frontend Components** — Shared component accessibility
 - **Epic Mobile Support** — Mobile-specific features
+
+## Linked Tickets (Concrete Implementation)
+
+| Phase | Ticket | Status |
+| ----- | ------ | ------ |
+| 1 — Core a11y (shipped 2026-07-31) | (folded into `src/frontend/alpine/focus.ts`) | shipped |
+| 2 — Touch gestures | `TASK-touch-gestures.md` (Phase 2 stub removed 2026-08-14) | **TBD — needs filing** |
+| 2 — Mobile responsive breakpoints | `TASK-responsive-design.md` | open |
+| 3 — Keyboard shortcuts | `TASK-keyboard-navigation.md` | open |
+| 4 — Screen reader optimizations | `TASK-screen-reader-support.md` | open (in progress) |
+
+**Gap (2026-09-23):** `TASK-touch-gestures.md` is the only ticket referenced by this epic that does not yet have a `.plan/tickets/*.md` file. Either file it (recommended — touch interactions are a discrete unit of work) or remove the touch gesture reference from this epic until mobile support is prioritized.
