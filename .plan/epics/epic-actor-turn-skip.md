@@ -112,3 +112,17 @@ name (`pass` / `skip turn`) in UI, API, and code to avoid semantic collision.
 | ----- | --------- | ------- |
 | `gate.verdict` | subscribes | offer skip on hard-block |
 | `turn.skipped` | emits | cascade advance, ambient beat |
+
+## Linked Tickets (Concrete Implementation)
+
+| Work Item | Ticket | On-disk | Status |
+| --------- | ------ | ------- | ------ |
+| turn_skip event + persistence | `TASK-turn-skip-event.md` | **missing** | **TBD — needs filing** |
+| GM absence contract | `TASK-turn-skip-gm-absence-contract.md` | yes | open |
+| Cascade integration | `TASK-turn-skip-cascade.md` | **missing** | **TBD — needs filing** |
+| Gate interlock | `TASK-turn-skip-gate-interlock.md` | yes | open |
+| UI — 'Skip turn' composer | `TASK-turn-skip-composer-ui.md` | yes | open |
+
+**Gap (2026-09-23):** 2 of 5 referenced tickets are missing on disk: `TASK-turn-skip-event.md` and `TASK-turn-skip-cascade.md`. The event/persistence layer and cascade integration are foundational — both must land before gate-interlock and composer UI can ship. Either:
+1. File the 2 missing tickets as concrete fine-grained tasks (recommended).
+2. Bulk-close this epic with the 3 existing tickets as sufficient scope.

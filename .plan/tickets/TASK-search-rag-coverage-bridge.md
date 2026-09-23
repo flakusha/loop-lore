@@ -109,3 +109,27 @@ This ticket **does not** introduce a new epic. The recommendation is to extend t
 - Reads: all 6 new tickets in this worktree
 - Writes: `.plan/backlog/recommendation-search-rag-capabilities-no-new-epic.md`
 - Enables: consistent execution order across the worktree batches
+
+
+## Resolution (2026-09-23)
+
+Planning deliverable shipped. Verified against disk (2026-09-23):
+
+| Referenced ticket | On-disk path | Status |
+| ----------------- | ------------ | ------ |
+| TASK-search-service-unified.md | exists | open |
+| TASK-gallery-fuzzy-search-pagination.md | exists | open |
+| TASK-assistant-tool-injection-guard.md | exists | open |
+| TASK-assistant-capability-disclosure.md | exists | open |
+| TASK-admin-assistant-tooling-allowlist.md | exists | open |
+| TASK-rag-search-robots-quota.md | exists | open |
+
+All 6 tickets filed under existing epics as recommended. The "no new epic" decision (2026-09-07) is implemented.
+
+Acceptance check against ticket's own Acceptance Criteria:
+- [x] Recommendation recorded: see Status (✅ Done).
+- [ ] Shared types live in `src/types/search.ts`: NOT YET — `src/types/search.ts` is added when `TASK-search-service-unified` lands. Still open.
+- [ ] Migration order documented in `001_init.ts`: NOT YET — added as part of the migrations when each ticket lands. Still open.
+- [ ] Order-of-execution reflected in `.plan/backlog/priority.md`: NOT YET — pending.
+
+**Status verdict (2026-09-23):** Planning deliverable = DONE. Implementation tickets = open, work continues under each. This ticket closes; downstream tickets carry the rest.
