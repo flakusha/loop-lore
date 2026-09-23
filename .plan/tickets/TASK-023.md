@@ -48,7 +48,7 @@ Scope is frontend view controllers and camera state management. Backend scene pa
 ## Resolution
 
 Shipped as Alpine (no Vue files): `src/components/3d/view-mode-switcher.html`
-+ `src/frontend/scene/view-mode.ts` (`viewMode()` x-data factory, included in
+and `src/frontend/scene/view-mode.ts` (`viewMode()` x-data factory, included in
 `chat.html` inside `#vn-container`). Review fix applied: the mode was previously
 mirrored only onto the switcher buttons with no consumer — `view-mode.ts` now
 writes `data-mode` onto the real scene container (`#vn-container`) on
