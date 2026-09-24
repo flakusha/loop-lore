@@ -20,7 +20,7 @@
  * deterministic.
  */
 
-import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
+import { afterEach, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
@@ -32,11 +32,19 @@ import {
 } from "../build/identity";
 import { APP_NAME, APP_VERSION, } from "../config/constants";
 import type { Config, } from "../config/schema";
+import { createLogger, } from "../logger";
 import { buildIdRoutes, } from "../routes/build-id";
 import { federationRoutes, } from "../routes/federation";
 import { createTestDb, } from "../test-utils/create-test-db";
 
+// requirePermission calls getLogger() on denial — initialize the global
+// logger once so audit-log entries emitted by permission denials don't throw.
+// Logger level: error suppresses the audit info line from test output.
 let tempDir = "";
+
+beforeAll(() => {
+  createLogger({ level: "error", pretty: false, },);
+},);
 
 beforeEach(() => {
   tempDir = mkdtempSync(join(tmpdir(), "loop-lore-build-id-test-",),);
