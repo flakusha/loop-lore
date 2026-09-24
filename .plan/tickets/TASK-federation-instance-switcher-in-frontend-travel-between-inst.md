@@ -6,14 +6,11 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Large
+**Summary:** Frontend instance switcher (top-bar control + Alpine store + htmx partial scoping) so a user can "travel" to a federated instance and operate on it as a first-class participant, then return home without losing local session identity. Backend actor-mapping + handle resolution lives in `epic-instance-federation.md`. See `docs/spec/federation-instance-switcher.md` for the full implementation spec.
+**Context:** `epic-instance-federation.md` describes instance switching + `@user@instance` handles at the design level but no ticket scopes the frontend surface. `IDEA-federation-admin-ui-for-follows-blocklists-key-rotation` is admin-only; per-instance session issuance lives in `epic-auth-access.md`.
+**Acceptance Criteria:** Top-bar picker with Home + known instances + Add modal; switching updates `active_origin` cookie + DB column; per-instance sessions stored separately; worlds/chats/characters scoped by active origin with "via `<remote>`" badge; E2E covers switch → render → return-home; `bun run check` green.
 **Epic:** epic-instance-federation
 **Tags:** federation, frontend, instance-switcher
-
-## Summary
-
-Add a frontend instance switcher so an authenticated user can "travel" to a federated instance and operate on it as a first-class participant — picking from configured peers, opening that instance as the active context, and returning to the home instance without losing local session identity. Mirrors the Lemmy/Mastodon account-switcher pattern. Backend actor-mapping + handle resolution is owned by `epic-instance-federation.md`; this ticket owns the UI + the active-context state.
-
-**Implementation spec:** [`docs/spec/federation-instance-switcher.md`](../../docs/spec/federation-instance-switcher.md) — active-origin session model, Alpine store, top-bar UI, migration state machine, htmx partial scoping, test plan.
 
 ## Summary
 
@@ -60,9 +57,3 @@ Add a frontend instance switcher so an authenticated user can "travel" to a fede
 - Backend actor-mapping table (separate ticket — `src/federation/actor-map.ts` design stage).
 - Admin defederation UI (`IDEA-federation-admin-ui-for-follows-blocklists-key-rotation`).
 - Cross-instance asset / lore sharing (separate `epic-instance-federation.md` §"Cross-Sync" ticket).
-
-## Acceptance Criteria
-
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
