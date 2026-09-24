@@ -86,4 +86,4 @@ The test exercises **both halves in one run** with real DB rows.
 **Reconciliation (2026-09-02)**: Bound to epic Emotion Avatar Message Binding acceptance list.
 
 
-git issue: 42a2cc7
+git issue: 3da357e

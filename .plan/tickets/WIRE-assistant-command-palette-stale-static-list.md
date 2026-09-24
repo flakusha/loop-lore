@@ -40,4 +40,4 @@ New server-side commands added via `src/assistant/commands/registry.ts` are miss
 - [ ] Adding a new server command shows up in the palette without FE rebuild
 
 
-git issue: 46eef97
+git issue: 2a0aa56

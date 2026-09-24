@@ -3,9 +3,12 @@
 
 # EPIC-RESEARCH-MATH-LEDGER — Event-sourced projections
 
-Status: **Draft**
-
-## Goal
+**Status:** 📝 Draft
+**Priority:** medium
+**Effort:** Large (event table + projection rebuild + tests)
+**Type:** Architecture → Implementation
+**Tags:** rpg, math, ledger, event-sourcing, projection, audit
+**Overview:** Split state-change JSON columns on `interaction_logs` into proper event tables and add rebuildable projections for `character_relationships`, `character_stats`, and `inventory`.
 
 Split state-change JSON columns on `interaction_logs` into proper
 event tables and add rebuildable projections for `character_relationships`,
@@ -44,3 +47,6 @@ A canonical rebuildable projection is the fix.
 
 - Migrating historical JSON blobs into structured events (separate
   ticket; data back-fill is a one-shot migration task).
+
+
+git issue: 16e69f5

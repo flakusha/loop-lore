@@ -3,9 +3,12 @@
 
 # EPIC-RESEARCH-MATH-AI-BRIDGE — LLM ↔ math contract
 
-Status: **Draft**
-
-## Goal
+**Status:** 📝 Draft
+**Priority:** medium
+**Effort:** Medium (typed contract + prompt section + regression tests)
+**Type:** Architecture → Implementation
+**Tags:** rpg, math, llm, contract, dice-result, ai-bridge, prompt
+**Overview:** Make the LLM a faithful narrator of resolved interactions, not the arbiter of outcomes. Ship a typed `DiceResult` / `InteractionResult` contract the prompt section consumes verbatim.
 
 Make the LLM a faithful narrator of resolved interactions, not the
 arbiter of outcomes. Ship a typed `DiceResult` / `InteractionResult`
@@ -38,3 +41,6 @@ prompt does not enforce it.
 ## Out of scope
 
 - LLM fine-tuning to enforce compliance (a downstream concern).
+
+
+git issue: 5a0b25a

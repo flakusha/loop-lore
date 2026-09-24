@@ -3,9 +3,12 @@
 
 # EPIC-RESEARCH-MATH-ECONOMY — Action & resource economy
 
-Status: **Draft**
-
-## Goal
+**Status:** 📝 Draft
+**Priority:** medium
+**Effort:** Medium (turn budget table + Bennies table + dispatch enforcement)
+**Type:** Research → Implementation
+**Tags:** rpg, math, economy, action-economy, bennies, dispatch
+**Overview:** Introduce an action economy: per-actor turn budget (major/minor/reaction) plus a Bennies-like meta-currency for rerolls. Make the LLM a principled refuser of repeat commands.
 
 Introduce an action economy: per-actor turn budget (major/minor/reaction)
 plus a Bennies-like meta-currency for rerolls. Make the LLM a principled
@@ -38,3 +41,6 @@ economy is the system-level answer.
 
 - Per-scene / per-encounter refresh policy tuning — config-driven, but
   the default is "per turn" for the MVP.
+
+
+git issue: 9c3661f

@@ -56,4 +56,4 @@ Likely landed via a prior reconcile sweep or scout-batch follow-up; the ticket n
 **Verification**: `bun test src/chat/service/participants.test.ts` → 7 pass / 0 fail. No regression.
 
 
-git issue: c3e7755
+git issue: 7cbfdcf
