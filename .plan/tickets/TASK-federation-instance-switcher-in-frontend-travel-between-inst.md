@@ -13,6 +13,8 @@
 
 Add a frontend instance switcher so an authenticated user can "travel" to a federated instance and operate on it as a first-class participant — picking from configured peers, opening that instance as the active context, and returning to the home instance without losing local session identity. Mirrors the Lemmy/Mastodon account-switcher pattern. Backend actor-mapping + handle resolution is owned by `epic-instance-federation.md`; this ticket owns the UI + the active-context state.
 
+**Implementation spec:** [`docs/spec/federation-instance-switcher.md`](../../docs/spec/federation-instance-switcher.md) — active-origin session model, Alpine store, top-bar UI, migration state machine, htmx partial scoping, test plan.
+
 ## Summary
 
 `epic-instance-federation.md` describes the user-facing axis of federation — switching the active instance context, joining a remote instance, `@user@instance` handles — but no ticket scopes the frontend surface. Operators and users currently have no UI way to "visit" a federated instance: the only path is opening a new browser tab and signing in separately. This ticket adds the switcher as a first-class account-menu entry.
