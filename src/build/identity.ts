@@ -24,8 +24,24 @@ import type { Dirent, } from "node:fs";
 import { existsSync, readFileSync, statSync, } from "node:fs";
 import { readdir, } from "node:fs/promises";
 import path from "node:path";
+import { fileURLToPath, } from "node:url";
 import { APP_NAME, APP_VERSION, } from "../config/constants";
 import { safeJsonStringify, } from "../utils";
+
+/**
+ * Project root resolved from this module's URL. Used as the default for
+ * `computeBuildIdentity` so the hash is stable regardless of the working
+ * directory the server was launched from. Walked up two levels from this
+ * file (`src/build/identity.ts` → repo root).
+ */
+const PROJECT_ROOT_FROM_META = (() => {
+  try {
+    const here = fileURLToPath(import.meta.url,);
+    return path.resolve(path.dirname(here,), "..", "..",);
+  } catch {
+    return null;
+  }
+})();
 
 /**
  * Build manifest surfaced for diagnostics + the verify script. Order-stable
@@ -234,15 +250,18 @@ const memo = new Map<string, BuildIdentity>();
  * for the lifetime of the process. Tests call `__resetBuildIdentityForTests`
  * to clear it.
  *
- * @param options - `projectRoot` defaults to `process.cwd()`; `force` bypasses cache.
- * @param options.projectRoot - project root to hash under (defaults to cwd)
+ * @param options - `projectRoot` defaults to the module's resolved project
+ *   root (so the hash is stable regardless of cwd); `force` bypasses cache.
+ * @param options.projectRoot - project root to hash under
  * @param options.force - bypass the memoization cache
  * @returns full BuildIdentity breakdown for the projectRoot
  */
 export async function computeBuildIdentity(
   options: { projectRoot?: string; force?: boolean } = {},
 ): Promise<BuildIdentity> {
-  const projectRoot = path.resolve(options.projectRoot ?? process.cwd(),);
+  const projectRoot = path.resolve(
+    options.projectRoot ?? PROJECT_ROOT_FROM_META ?? process.cwd(),
+  );
   const cached = memo.get(projectRoot,);
   if (cached && !options.force) { return cached; }
 
