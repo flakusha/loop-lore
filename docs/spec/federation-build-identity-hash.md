@@ -283,6 +283,7 @@ main();
 ```
 
 The package.json script:
+
 ```json
 {
   "scripts": {
@@ -369,6 +370,7 @@ No body schemas needed (GET-only). The `BuildIdentity` TypeScript type is the co
 ## 8. Logging
 
 Compute once at process start; log the short hash + git head:
+
 ```ts
 log.event({ event: "build_identity.computed", buildHashShort: id.buildHashShort, gitHead: id.gitHead, build_profile: id.manifest.build_profile });
 ```
@@ -378,6 +380,7 @@ log.event({ event: "build_identity.computed", buildHashShort: id.buildHashShort,
 ## 9. Test Plan
 
 ### Unit (`src/build-identity/build-identity.test.ts`)
+
 - `computeDepsHash` deterministic — same files -> same hash; edit `bun.lock` -> hash changes; add a stray file to the bundle -> hash changes.
 - `computeManifestHash` deterministic when `SOURCE_DATE_EPOCH` is set; varies with `Bun.version`.
 - `getBuildIdentity` produces a hash matching the manual composition: take `v1` + gitHead + sourceTreeHash + depsHash + manifestHash, concat with `\n`, sha256, compare.
@@ -386,15 +389,18 @@ log.event({ event: "build_identity.computed", buildHashShort: id.buildHashShort,
 - `buildHashShort` is the first 16 hex chars of `buildHash` after the `sha256:` prefix.
 
 ### Endpoint (`src/routes/build-id.test.ts`)
+
 - `GET /.well-known/loop-lore/build-id` returns `{ buildHash, buildHashShort, gitHead, builtAt }`.
 - `GET /api/admin/build-id` requires admin role; non-admin returns 403.
 - Admin endpoint returns full breakdown including `sourceTreeHash`, `depsHash`, `manifestHash`.
 
 ### CLI (`scripts/build-verify.test.ts`)
+
 - `bun run build:verify` prints valid JSON with all required fields.
 - `bun run build:verify --expected=<hash>` exits 0 on match, non-zero on mismatch with clear error.
 
 ### Integration
+
 - Spin up two instances with the same source checkout + same `bun.lock`. Their `/api/admin/build-id` responses have identical `buildHash`.
 - Spin up two instances where one has a `bun.lock` edit. Their `buildHash` differs.
 - E2E: the federation probe (separate ticket) reads the build hash from a peer's `/.well-known/loop-lore/build-id` and verifies it against the operator-pinned value.
