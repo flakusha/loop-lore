@@ -13,6 +13,8 @@
 
 Add admin-side primitives that allow an operator to federate with a peer (promote pending → trusted) or defederate (trusted → suspended, or hard-delete). Defederation must revoke transport trust, evict the peer from the gossip + coordinator tables, and emit a structured audit log entry. The companion frontend lives in `IDEA-federation-admin-ui-for-follows-blocklists-key-rotation`; this ticket owns the backend state machine and the audit log.
 
+**Implementation spec:** [`docs/spec/federation-defederation-admin.md`](../../docs/spec/federation-defederation-admin.md) — full schema, state machine, endpoints, side-effect contract, test plan.
+
 ## Summary
 
 Federation peers today transition only via gossip discovery + the TLS trust map (`TASK-federation-tls-peer-trust-custom-ca-pinning-and-optional-mtl`). There is no admin operator action to *defederate* a misbehaving peer — the only available lever is removing it from the config seeds, which is silent and leaves stale rows in `peer_registry`. This ticket adds explicit `federate` / `defederate` admin operations with audit logging.
