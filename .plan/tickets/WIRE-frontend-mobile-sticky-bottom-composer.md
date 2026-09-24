@@ -157,4 +157,4 @@ In `src/components/chat/chat.html` or the Alpine chat component template, includ
 - `src/public/css/app.css:2337` — existing mobile breakpoint
 
 
-git issue: bb24509
+git issue: 5aea351

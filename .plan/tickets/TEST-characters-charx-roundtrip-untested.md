@@ -46,4 +46,4 @@ it("round-trips: extractCharx(createCharx(data)) → data", () => {
 - [ ] Field loss detected by test
 
 
-git issue: 10c2e30
+git issue: 0246856

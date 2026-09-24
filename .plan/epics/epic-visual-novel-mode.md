@@ -150,3 +150,6 @@ interface VNConsequence {
 - TASK-vn-qa-mode.md
 - TASK-vn-template-actions.md
 - TASK-vn-scene-template-system.md
+
+
+git issue: 96d6032

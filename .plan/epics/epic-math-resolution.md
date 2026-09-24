@@ -3,9 +3,12 @@
 
 # EPIC-RESEARCH-MATH-RESOLUTION — Math models behind roll resolution
 
-Status: **Draft**
-
-## Goal
+**Status:** 📝 Draft
+**Priority:** medium
+**Effort:** Large (multiple sub-tickets, see Sub-systems)
+**Type:** Research → Implementation
+**Tags:** rpg, math, dice, resolution, position, effect
+**Overview:** Extend `src/rpg/interaction` to support multiple mathematical models of interaction resolution (d20, dice pool, 2d6, structured modifier rows) and add Position/Effect axes (à la Blades in the Dark). Keep the same ledger persistence and prompt surface; dispatch by `roll_kind`.
 
 Extend `src/rpg/interaction` to support multiple mathematical models of
 interaction resolution (d20, dice pool, 2d6, structured modifier rows)
@@ -48,3 +51,6 @@ narrative envelope without requiring a new resolver.
 
 - Exploding dice (Savage Worlds) — research verdict: not recommended.
 - Foundry AST — separate epic (`EPIC-RESEARCH-MATH-AST`).
+
+
+git issue: 500eabc
