@@ -18,6 +18,7 @@ import { examplesSection, } from "./sections/examples";
 import { gmNotesSection, } from "./sections/gm-notes";
 import { groupParticipantsSection, } from "./sections/group-participants";
 import { groupTalkativitySection, } from "./sections/group-talkativity";
+import { interactionContextSection, } from "./sections/interaction-context";
 import { internalTraitsSection, } from "./sections/internal-traits";
 import { loreSection, } from "./sections/lore";
 import { memorySection, } from "./sections/memories";
@@ -56,6 +57,7 @@ export const PROMPT_SECTIONS: SectionBuilder[] = [
   gmNotesSection,
   dynamicContextSection,
   recentEventsSection,
+  interactionContextSection,
   examplesSection,
   chatHistorySection,
   // postHistorySection is rendered as `role: "user"` (not "system"), so it

@@ -130,6 +130,10 @@ export const COLUMN_TYPE_OVERRIDES: Record<string, Record<string, string>> = {
     "cancel_source": "CancelSource",
     "status": "GenerationStatus",
   },
+  "InteractionLogs": {
+    "category": "InteractionCategory",
+    "outcome": "InteractionOutcome",
+  },
   "Items": {
     "category": "ItemCategory",
     "rarity": "ItemRarity",

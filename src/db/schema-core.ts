@@ -14,6 +14,8 @@ import type {
   ChatType,
   ContentEncoding,
   EquipState,
+  InteractionCategory,
+  InteractionOutcome,
   InviteStatus,
   ItemCategory,
   KeyStatus,
@@ -1224,4 +1226,32 @@ export interface StatusEffect {
   started_at: string;
   expires_at: string | null;
   meta: string | null;
+}
+
+// ── interaction_logs ────────────────────────────────────────────
+export interface InteractionLogs {
+  id: Generated<string>;
+  chat_id: string;
+  world_id: string | null;
+  actor_id: string;
+  target_actor_id: string | null;
+  location_id: string | null;
+  command: string;
+  category: InteractionCategory;
+  skill: string;
+  difficulty: number;
+  roll_sides: number | null;
+  roll_count: number | null;
+  roll_modifier: number | null;
+  roll_mode: string | null;
+  roll_values: string | null;
+  roll_raw_total: number | null;
+  roll_total: number | null;
+  roll_margin: number | null;
+  outcome: InteractionOutcome;
+  action_points: Generated<number>;
+  modifiers: Generated<string>;
+  result: Generated<string>;
+  state_changes: Generated<string>;
+  created_at: Generated<string>;
 }

@@ -3,6 +3,7 @@
 
 import type { Kysely, } from "kysely";
 import { parseCommand, } from "../../assistant/command-parser";
+import "../../assistant/commands/index";
 import type {
   CommandContext,
   CommandResult,
