@@ -6,18 +6,17 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium
+**Summary:** Add admin-side primitives that allow an operator to federate with a peer (promote pending → trusted) or defederate (trusted → suspended, or hard-delete). The state machine and audit log are in scope; the frontend UI lives in `IDEA-federation-admin-ui-for-follows-blocklists-key-rotation`. See `docs/spec/federation-defederation-admin.md` for the full implementation spec.
+**Context:** Today there is no admin operator action to defederate a misbehaving peer — the only lever is removing it from config seeds, which is silent and leaves stale rows in `peer_registry`. The companion transport ticket `TASK-federation-tls-peer-trust-custom-ca-pinning-and-optional-mtl` is open; `src/federation/coordinator.ts` already defines `PEER_STATES` but no endpoint transitions between them.
+**Acceptance Criteria:** Admin `federate`/`defederate` endpoints behind admin authz; state transitions audited in `peer_state_transitions` with actor + reason + timestamp; defederate evicts the peer from the in-memory peer table, marks delivery queue dead-letter, and is idempotent; `bun run check` green.
 **Epic:** epic-federation-swarm-sync
 **Tags:** federation, defederation, admin
 
 ## Summary
 
-Add admin-side primitives that allow an operator to federate with a peer (promote pending → trusted) or defederate (trusted → suspended, or hard-delete). Defederation must revoke transport trust, evict the peer from the gossip + coordinator tables, and emit a structured audit log entry. The companion frontend lives in `IDEA-federation-admin-ui-for-follows-blocklists-key-rotation`; this ticket owns the backend state machine and the audit log.
+Federation peers today transition only via gossip discovery + the TLS trust map (`TASK-federation-tls-peer-trust-custom-ca-pinning-and-optional-mtl`). There is no admin operator action to *defederate* a misbehaving peer — the only available lever is removing it from the config seeds, which is silent and leaves stale rows in `peer_registry`. This ticket adds explicit `federate` / `defederate` admin operations with audit logging.
 
 **Implementation spec:** [`docs/spec/federation-defederation-admin.md`](../../docs/spec/federation-defederation-admin.md) — full schema, state machine, endpoints, side-effect contract, test plan.
-
-## Summary
-
-Federation peers today transition only via gossip discovery + the TLS trust map (`TASK-federation-tls-peer-trust-custom-ca-pinning-and-optional-mtl`). There is no admin operator action to *defederate* a misbehaving peer — the only available lever is removing it from the config seeds, which is silent and leaves stale rows in `peer_registry`. This ticket adds explicit `federate` / `defederate` admin operations with audit logging.
 
 ## Context
 
@@ -57,9 +56,3 @@ Federation peers today transition only via gossip discovery + the TLS trust map 
 - Frontend UI (covered by `IDEA-federation-admin-ui-for-follows-blocklists-key-rotation`).
 - Cross-instance fan-out announcements of defederation (follow-up ticket; this ticket only logs locally).
 - Bulk defederation by reason/pattern (single-origin only here).
-
-## Acceptance Criteria
-
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
