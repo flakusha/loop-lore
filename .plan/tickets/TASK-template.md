@@ -14,7 +14,7 @@ Filename = `TYPE-<kebab-case-title>.md` (created by
 
 ## TYPE: <Title>
 
-**Status:** ⬜ Not Started
+**Status:** open
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** (optional, e.g. epic-plugin-system)

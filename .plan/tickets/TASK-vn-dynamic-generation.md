@@ -10,7 +10,7 @@
 
 
 **Priority:** Medium
-**Status:** 🟡 Partial Complete — Story generation ✅, Image generation deferred, Q&A routes not in this ticket
+**Status:** done
 **Epic:** epic-visual-novel-mode
 **Tags:** visual-novel, dynamic-image, story-generation, image-gen, llm
 

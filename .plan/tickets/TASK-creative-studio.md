@@ -3,7 +3,7 @@
 
 # TASK-2026-046a: Creative Studio Core Features
 
-**Status:** Not Started
+**Status:** open
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

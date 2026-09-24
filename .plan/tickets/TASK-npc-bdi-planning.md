@@ -11,7 +11,7 @@
 **Epic:** epic-agency-story-points, NPC/Actor System
 **Priority:** Medium (P6+ deferred)
 **Effort:** High
-**Status:** Not Started
+**Status:** open
 **Created:** 2026-08-14
 **Platform Candidate:** E1 (Agentic NPC autonomy — Inworld AI, generative-agents)
 **Research Source:** Stanford generative-agents (2023), BDI architecture patterns

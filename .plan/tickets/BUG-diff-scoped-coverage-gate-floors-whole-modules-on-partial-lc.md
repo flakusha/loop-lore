@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** [OK] Done - fixed on dev (5f145f7d0, verified in-tree 2026-09-16)
+**Status:** done
 **Priority:** Medium
 **Effort:** Medium
 

@@ -3,7 +3,7 @@
 
 # TASK-file-split-routes: Split oversized route modules (views/messages/auto-gen/admin)
 
-**Status:** Not Started
+**Status:** open
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

@@ -11,7 +11,7 @@
 **Epic:** RPG Mechanics & Extensible Game Systems
 **Priority:** Medium
 **Effort:** High
-**Status:** Not Started
+**Status:** open
 **Source:** `.tmp/loop-lore-ideas.md` — Character Multi Personality
 
 ## Summary

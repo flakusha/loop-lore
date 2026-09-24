@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟨 Partial (routes done, UI pending)
+**Status:** done
 **Priority:** High
 **Effort:** Med
 **Epic:** epic-crypto

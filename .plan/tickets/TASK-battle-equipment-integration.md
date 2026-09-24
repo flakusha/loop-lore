@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Partial (IS7 closed 2026-08-18)
+**Status:** done
 **Priority:** medium
 **Labels:** battle, equipment, durability
 **Assignee**:

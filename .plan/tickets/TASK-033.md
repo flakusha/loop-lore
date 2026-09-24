@@ -3,7 +3,7 @@
 
 # TASK-033: NSFW Intimacy System
 
-**Status:** 🟡 Partially Shipped — barrel + applyInteraction wrapper in commit 619e297; intimacy service pre-existing
+**Status:** open
 **Priority:** high
 **Effort:** Large
 **Summary:** Intimacy progression layered on the canonical IntimacyLevel enum, gated by NSFW rating + consent.

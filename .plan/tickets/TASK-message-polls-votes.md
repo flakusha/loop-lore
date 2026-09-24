@@ -3,7 +3,7 @@
 
 # TASK: Message polls / votes
 
-**Status:** Not Started
+**Status:** open
 **Summary:** (none captured)
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)

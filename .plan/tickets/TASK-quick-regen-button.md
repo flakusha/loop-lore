@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ⬜ Not Started
+**Status:** open
 **Priority:** Low
 **Effort:** Low
 **Epic:** Epic 51 (Output Control & Transforms)

@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 In Progress — `/image` command dispatch done, generation adapter pending (2026-08-01)
+**Status:** done
 **Priority:** Medium
 **Effort:** High
 **Epic:** epic-assistant-generation-extensions

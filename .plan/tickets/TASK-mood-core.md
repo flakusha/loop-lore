@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 In Progress (services + routes done, needs validation)
+**Status:** done
 **Priority:** Medium
 **Effort:** Medium
 **Type:** TASK

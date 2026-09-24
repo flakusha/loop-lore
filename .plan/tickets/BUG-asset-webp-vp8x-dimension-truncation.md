@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Closed — already resolved in dev (verified 2026-09-18)
+**Status:** [OK] Already resolved in dev — no code change needed
 
 ## Verification
 

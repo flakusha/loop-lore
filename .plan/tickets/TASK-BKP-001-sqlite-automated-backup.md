@@ -3,7 +3,7 @@
 
 # TASK-BKP-001: SQLite Automated Backup System
 
-**Status:** Not Started
+**Status:** open
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

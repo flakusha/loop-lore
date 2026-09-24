@@ -3,7 +3,7 @@
 
 # Ticket: E2E Invite/Flow Validation
 
-**Status:** Not Started
+**Status:** open
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -35,3 +35,6 @@ invitation-system
 ## Files to Create
 
 - tests/e2e/flows/invite-join.test.ts
+
+
+git issue: 90e4b81

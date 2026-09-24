@@ -7,7 +7,7 @@
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)
 
-**Status:** ❌ Rejected (audit found no defect; closing)
+**Status:** done
 **Priority:** medium
 **Effort:** Medium
 

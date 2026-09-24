@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** [OK] Done (worktree fix-generation-error-handling-gaps)
+**Status:** done
 **Priority:** medium
 **Effort:** Medium
 

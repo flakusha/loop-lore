@@ -11,7 +11,7 @@
 **Epic:** NPC/Actor System, Economy & Trading
 **Priority:** Medium
 **Effort:** High
-**Status:** Not Started
+**Status:** open
 **Created:** 2026-07-28
 **Cross-Mechanics Gap:** G14 (NPC/Actor ↔ Supporting System)
 

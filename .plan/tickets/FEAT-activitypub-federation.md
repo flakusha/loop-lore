@@ -3,7 +3,7 @@
 
 # FEAT-activitypub-federation: ActivityPub / Lemmy / threadiverse federation
 
-**Status:** Not Started
+**Status:** open
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

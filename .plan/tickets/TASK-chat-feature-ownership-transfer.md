@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🚧 In Progress (5/6 ACs proven by tests; moderator/GM reconciliation has no implementation — the spec `gm` role has not landed)
+**Status:** open
 **Priority:** High
 **Effort:** Medium
 **Epic:** epic-chat-product-features

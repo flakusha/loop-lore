@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ⬜ Not Started
+**Status:** open
 **Priority:** Medium
 **Effort:** Medium
 **Related:** .plan/backlog/open-untriaged.md (advisory orphans)

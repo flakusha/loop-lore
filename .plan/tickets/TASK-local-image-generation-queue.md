@@ -10,7 +10,7 @@
 
 
 **Epic:** epic-llm-queue.md (see also epic-generation-flow-control.md)
-**Status:** Not Started
+**Status:** open
 **Priority:** Medium
 
 ## Problem

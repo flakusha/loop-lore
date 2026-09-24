@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 Partial — frontend VN renderer foundation complete (6 files in src/frontend/vn/), choice/branching UI + chat.html wiring pending
+**Status:** done
 **Priority:** medium
 **Effort:** Medium-High (frontend rendering)
 **Epic:** epic-immersion-presentation

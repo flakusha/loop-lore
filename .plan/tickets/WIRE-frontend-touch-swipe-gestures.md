@@ -164,3 +164,6 @@ swipeGesturesEnabled: false,
 - `src/frontend/touch.ts` — existing `onSwipe`, `onTap`, `onLongPress`
 - `src/frontend/alpine/shortcuts.ts` — `isKeyboardNavEnabled()`
 - `src/frontend/stores/ui-store.ts` — `swipeGesturesEnabled`
+
+
+git issue: 2cbb645

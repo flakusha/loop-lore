@@ -112,3 +112,6 @@ htmx swaps re-initialize Alpine directives automatically — no JS changes neede
 - `src/frontend/alpine/focus.ts` — existing `trapFocus` and `handleEscapeKey`
 - `src/frontend/alpine/focus.test.ts` — existing tests
 - `src/frontend/alpine/chat-panels.ts:71-140` — existing `_keydownHandler` Escape chain
+
+
+git issue: 92534ae

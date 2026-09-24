@@ -3,7 +3,7 @@
 
 # TASK: Shared Consent Schema
 
-**Status:** done
+**Status:** open
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

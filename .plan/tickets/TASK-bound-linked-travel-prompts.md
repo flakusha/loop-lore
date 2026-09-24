@@ -3,7 +3,7 @@
 
 # TASK: Bound/Linked Travel Prompts (User + LLM Migration Suggestion)
 
-**Status:** Not Started
+**Status:** open
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

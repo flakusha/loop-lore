@@ -10,7 +10,7 @@
 
 
 **Priority:** Medium
-**Status:** ⬜ Not Started
+**Status:** open
 **Epic:** epic-social-interaction
 **Tags:** guild, organization, social, roles, permissions
 

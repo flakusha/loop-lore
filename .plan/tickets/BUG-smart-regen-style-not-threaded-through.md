@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** [OK] Resolved
+**Status:** open
 **Severity:** medium
 **Priority:** medium
 **Effort:** small

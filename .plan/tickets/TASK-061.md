@@ -3,7 +3,7 @@
 
 # TASK-061: Transport doc — consumer/interconnection map
 
-**Status:** Not Started
+**Status:** open
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

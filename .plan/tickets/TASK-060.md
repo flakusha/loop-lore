@@ -3,7 +3,7 @@
 
 # TASK-060: Transport doc — negotiation + upgrade
 
-**Status:** Not Started
+**Status:** open
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

@@ -3,7 +3,7 @@
 
 # TASK: Test Telemetry Module
 
-**Status:** Not Started
+**Status:** open
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

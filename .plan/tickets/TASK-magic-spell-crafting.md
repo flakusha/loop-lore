@@ -10,7 +10,7 @@
 
 
 **Priority:** Medium
-**Status:** ⬜ Not Started
+**Status:** open
 **Epic:** epic-magic-spell-systems
 **Tags:** magic, spell-crafting, discovery, enchanting, research
 

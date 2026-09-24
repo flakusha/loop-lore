@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** [OK] Resolved (worktree fix-idempotency-user-scope)
+**Status:** done
 
 **Priority:** high
 
