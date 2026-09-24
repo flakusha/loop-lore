@@ -1,8 +1,9 @@
 /**
  * Tests for smart-regen style validation (src/generation/smart-regen.ts).
- * Pure module — no I/O. The previous `buildStylePrompt` helper was
- * removed because no caller injected the result into the LLM prompt; see
- * the module header for the rationale.
+ * Pure module — no I/O. `buildStylePrompt` (removed 2026-09 when no caller
+ * consumed it) is back as the payload-side helper: the regenerate route
+ * drives the variant generation and appends `buildStylePrompt(style)` to
+ * the system message via `appendStylePrompt`.
  */
 import { describe, expect, test, } from "bun:test";
 import { isValidRegenStyle, VALID_REGEN_STYLES, } from "./smart-regen";

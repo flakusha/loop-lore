@@ -13,7 +13,7 @@ import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertUsers, } from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
-import { loadNotificationSnapshot, NotificationStreamer, } from "./stream";
+import { loadNotificationSnapshot, loadNotificationSnapshotStrict, NotificationStreamer, } from "./stream";
 /**
  * Decode an SSE-encoded chunk into a list of {event,data} frames.
  * @param chunk
@@ -108,5 +108,30 @@ describe("NotificationStreamer", () => {
     const snap = await loadNotificationSnapshot(broken, user,);
     expect(snap.count,).toBe(0,);
     expect(snap.recent,).toEqual([],);
+  });
+
+  test("loadNotificationSnapshotStrict rejects when a query fails", async () => {
+    const broken = {} as Kysely<DB>;
+    expect(loadNotificationSnapshotStrict(broken, user,),).rejects.toBeDefined();
+  });
+
+  test("emits stream-error when the initial snapshot load throws (BUG-notification-stream-error-unreachable)", async () => {
+    // A db handle without the schema tables fails both snapshot queries; the
+    // strict initial loader rethrows the rejection so the start-path catch
+    // fires and surfaces a stream-error event to the client. On the pre-fix
+    // code (inline allSettled that swallowed everything) this event was dead
+    // code and the first frame was a plain "notifications" snapshot instead.
+    const broken = {} as Kysely<DB>;
+    const streamer = new NotificationStreamer(broken, user, 60_000,);
+    const res = streamer.open();
+    const frames = await readFramesUntil(res, 1,);
+    expect(frames[0]?.event,).toBe("stream-error",);
+    const payload = JSON.parse(frames[0]?.data ?? "{}",) as {
+      message?: string;
+      correlationId?: string;
+    };
+    expect(payload.message,).toBe("stream error, retry",);
+    expect(typeof payload.correlationId,).toBe("string",);
+    expect(payload.correlationId,).not.toBe("",);
   });
 });

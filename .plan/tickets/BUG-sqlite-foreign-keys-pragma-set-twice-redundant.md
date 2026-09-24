@@ -3,7 +3,7 @@
 
 # BUG: sqlite-foreign-keys-pragma-set-twice-redundant
 
-**Status:** ✅ Resolved (already on dev, 2026-09-20)
+**Status:** done
 **Priority:** Medium
 **Effort:** Medium
 **Summary:** PRAGMA foreign_keys set redundantly in two test files; createSqliteDialect is the single enforcement point

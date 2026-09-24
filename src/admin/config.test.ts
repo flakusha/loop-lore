@@ -133,7 +133,7 @@ describe("seedDefaults", () => {
     await expect(seedDefaults(db, cfg,),).resolves.toBeUndefined();
   });
 
-  test("all 11 default keys present after seedDefaults", async () => {
+  test("all default keys present after seedDefaults", async () => {
     const cfg = {
       auth: {
         registrationOpen: true,
@@ -155,6 +155,7 @@ describe("seedDefaults", () => {
       "max_sessions_per_user",
       "max_upload_size_bytes",
       "log_retention_days",
+      "archive_retention_days",
       "default_provider",
       "default_model",
       "auto_moderation",
@@ -191,6 +192,8 @@ describe("seedDefaults", () => {
     expect(maxUpload?.value,).toBe("10485760",);
     const logRetention = await getConfig(db, "log_retention_days",);
     expect(logRetention?.value,).toBe("90",);
+    const archiveRetention = await getConfig(db, "archive_retention_days",);
+    expect(archiveRetention?.value,).toBe("90",);
     const defaultProvider = await getConfig(db, "default_provider",);
     expect(defaultProvider?.value,).toBe("openai",);
     const defaultModel = await getConfig(db, "default_model",);
@@ -228,6 +231,7 @@ describe("seedDefaults", () => {
       for (
         const k of [
           "log_retention_days",
+          "archive_retention_days",
           "auto_moderation",
           "profanity_filter",
           "spam_detection",

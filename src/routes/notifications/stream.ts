@@ -29,7 +29,8 @@ export interface NotificationSnapshot {
 /**
  * Load the unread snapshot with allSettled semantics: each query resolves
  * independently so one failing query degrades to its empty default instead
- * of throwing. Never rejects for query failures.
+ * of throwing. Never rejects for query failures. Used by `tick`, where a
+ * transient failure must silently skip the beat and keep the stream alive.
  * @param database
  * @param userId
  */
@@ -46,6 +47,32 @@ export async function loadNotificationSnapshot(
     count: countRes.status === "fulfilled" ? countRes.value : 0,
     recent: recentRes.status === "fulfilled" ? recentRes.value : [],
   };
+}
+
+/**
+ * Strict variant for the initial snapshot: query failures REJECT with the
+ * first rejection reason instead of degrading, so the start callback can
+ * surface a `stream-error` to the client (BUG-notification-stream-error-
+ * unreachable — the client must be able to tell "empty inbox" from "snapshot
+ * unavailable"). Avoids `Promise.all` (banned for unhandled-rejection risk)
+ * by inspecting the allSettled results explicitly.
+ * @param database
+ * @param userId
+ * @returns the snapshot when every query succeeded
+ * @throws the first failed query's rejection reason
+ */
+export async function loadNotificationSnapshotStrict(
+  database: Kysely<DB>,
+  userId: string,
+): Promise<NotificationSnapshot> {
+  const service = new NotificationService(database,);
+  const [countRes, recentRes,] = await Promise.allSettled([
+    service.getUnreadCount(userId,),
+    service.list(userId, false,),
+  ],);
+  if (countRes.status === "rejected") { throw countRes.reason; }
+  if (recentRes.status === "rejected") { throw recentRes.reason; }
+  return { count: countRes.value, recent: recentRes.value, };
 }
 
 /** */
@@ -80,6 +107,8 @@ export class NotificationStreamer {
     const tick = async (controller: ReadableStreamDefaultController,): Promise<void> => {
       // loadNotificationSnapshot never rejects for query failures (allSettled
       // → empty defaults), so only transport-level throws land in catch.
+      // Transient DB errors deliberately skip the beat silently — the client
+      // already holds a valid (if stale) snapshot.
       try {
         const { count, recent, } = await loadNotificationSnapshot(this.database, this.userId,);
         const snap = `${count}:${recent[0]?.id ?? ""}`;
@@ -95,7 +124,10 @@ export class NotificationStreamer {
     const stream = new ReadableStream({
       start: async (controller,) => {
         try {
-          const { count, recent, } = await loadNotificationSnapshot(this.database, this.userId,);
+          // Strict loader: a failed INITIAL snapshot is surfaced to the
+          // client (stream-error below) instead of masquerading as an empty
+          // inbox — BUG-notification-stream-error-unreachable.
+          const { count, recent, } = await loadNotificationSnapshotStrict(this.database, this.userId,);
           lastSnapshot = `${count}:${recent[0]?.id ?? ""}`;
           send(controller, "notifications", { unreadCount: count, items: recent.slice(0, 10,), },);
         } catch (error) {

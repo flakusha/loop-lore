@@ -9,6 +9,7 @@
  * step modules (build-prompt / stream-to-client / non-stream).
  */
 
+import type { RegenStyle, } from "../smart-regen";
 import type { GenerationMessage, GenerationOptions, } from "../types";
 
 /** */
@@ -37,6 +38,16 @@ export interface GenerateRequest {
   stream?: boolean;
   /** Idempotency key for dedup */
   idempotencyKey: string;
+  /**
+   * Fill this existing pending row with the result instead of inserting a new
+   * message (smart-regen variant path; implies non-streaming delivery).
+   */
+  targetMessageId?: string;
+  /**
+   * Validated smart-regen style — its instruction is appended to the system
+   * message of the LLM payload (unknown values are ignored).
+   */
+  regenStyle?: RegenStyle;
   /** Repetition detection config */
   repetitionDetection: GenerationOptions["repetitionDetection"];
   /** Policy detection config */

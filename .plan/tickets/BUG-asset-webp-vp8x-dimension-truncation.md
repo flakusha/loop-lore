@@ -8,11 +8,20 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** [OK] Already resolved in dev — no code change needed
+**Status:** done
 
 ## Verification
 
 Re-checked `src/assets/metadata.ts:212-217` — VP8X parse uses `readUint24LE(buf, offset + 12/15,) + 1` with no `0x3FFF` mask. `readUint24LE` returns full 24-bit LE value (metadata.ts:51-53). No truncation. Ticket claim superseded by prior fix.
+
+Update 2026-09-24 (bug-batch-2026-09-24b): the parked boundary regression is
+now in — `metadata.test.ts` top-level describe "WebP VP8X canvas dimensions
+beyond the 14-bit range" (30000×30000 and 16385×16385). Mutation-checked:
+re-introducing a `& 0x3FFF` mask fails both tests (30000 reads as 13616,
+exactly the ticket's example; 16385 reads as 1). The earlier "bun's test
+discovery silently drops tests added to mid-file describe blocks" note was a
+worktree/checkout mismatch, not a bun limitation — both top-level appends
+and mid-describe inserts are discovered in this environment.
 
 **Priority:** medium
 

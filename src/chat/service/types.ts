@@ -165,4 +165,8 @@ export type RegenerateVariantResult =
     swipeIndex: number;
     /** Style propagated to the variant row's idempotency_key (null = plain regen). */
     style: string | null;
+    /** Fork position of the variant (null when the target was a root message). */
+    parentId: string | null;
+    /** Actor owning the variant row — the generation actorId. */
+    actorId: string;
   };

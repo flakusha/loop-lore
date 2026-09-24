@@ -82,6 +82,12 @@ Accessible from the right panel or the More menu in the chat header. Shows:
   - Admin users can edit, add, delete world memories
   - World memories are canonical — they override character and assistant memories in case of conflict
 
+- **Tab 4: Audit log** — trail of memory operations for the chat's character actor
+  - Each row: action icon + label (create ✚, modify ✏️, pin 📌, unpin 🚫, decay ⏳, purge 🧹, inject 💉, delete 🗑) plus timestamp
+  - Filter chips per action and cursor pagination ("Load more")
+  - The details JSON renders as a flat one-liner; click the row to expand it as formatted JSON (click again to collapse)
+  - `inject` rows instead summarize which memories were injected and their extraction sources
+
 ---
 
 ## Memory Limits & Auto-Purge

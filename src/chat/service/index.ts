@@ -83,7 +83,7 @@ export {
   getMessageWithAccess,
   listMessages,
 } from "./read";
-export { regenerateMessageVariant, } from "./write";
+export { regenerateMessageVariant, regenIdempotencyKey, } from "./write";
 
 // ── Message visibility ────────────────────────────────────────
 export { hardDeleteChat, updateMessageVisibility, } from "./visibility";

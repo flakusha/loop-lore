@@ -10,7 +10,7 @@
  */
 
 import { Database, } from "bun:sqlite";
-import { describe, expect, test, } from "bun:test";
+import { afterEach, describe, expect, test, } from "bun:test";
 import { Kysely, } from "kysely";
 import type { Migration, } from "kysely/migration";
 import { Migrator, } from "kysely/migration";
@@ -105,6 +105,13 @@ try {
 }
 
 describe("migration roundtrip", () => {
+  // Tests below set the override in-body; clear it even when a test throws
+  // mid-way, so it cannot leak into sibling files sharing this process
+  // (BUG-settestdatabase-global-leak-on-test-throw).
+  afterEach(() => {
+    setTestDatabase(null,);
+  },);
+
   test(`found ${migrationNames.length} migration files`, () => {
     expect(migrationNames.length,).toBeGreaterThan(0,);
   });
@@ -130,7 +137,6 @@ describe("migration roundtrip", () => {
 
     await db.destroy();
     sqlite.close();
-    setTestDatabase(null,);
   });
 
   test("migrateDown rolls back all migrations to empty DB", async () => {
@@ -162,7 +168,6 @@ describe("migration roundtrip", () => {
 
     await db.destroy();
     sqlite.close();
-    setTestDatabase(null,);
   });
 
   test("re-migrating after full roundtrip produces identical schema", async () => {
@@ -191,7 +196,6 @@ describe("migration roundtrip", () => {
 
     await db.destroy();
     sqlite.close();
-    setTestDatabase(null,);
   });
 
   test("each migration up adds its expected tables and down removes them", async () => {
@@ -231,7 +235,6 @@ describe("migration roundtrip", () => {
 
     await db.destroy();
     sqlite.close();
-    setTestDatabase(null,);
   });
 
   test("every migrated table has at least one column", async () => {
@@ -250,6 +253,5 @@ describe("migration roundtrip", () => {
 
     await db.destroy();
     sqlite.close();
-    setTestDatabase(null,);
   });
 });
