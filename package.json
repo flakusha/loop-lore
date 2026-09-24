@@ -12,6 +12,7 @@
     "build:frontend": "bun run scripts/build-frontend.mjs",
     "build:server": "bun build src/server/index.ts --outdir ./dist --target bun",
     "build:native": "bun run scripts/build-native.ts",
+    "build:verify": "bun run scripts/build-verify.ts",
     "lint:native": "cargo clippy --manifest-path native/loop-lore-native/Cargo.toml --all-targets -- -D warnings",
     "test:native": "cargo test --manifest-path native/loop-lore-native/Cargo.toml",
     "format:native": "cargo fmt --manifest-path native/loop-lore-native/Cargo.toml",
