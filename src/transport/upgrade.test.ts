@@ -98,6 +98,56 @@ describe("upgradeConnection", () => {
     await newHandler.close();
   });
 
+  test("keeps factory-native metadata of the new protocol alongside carried-over state", async () => {
+    // The old test only asserted carried-over keys — it masked a handoff that
+    // could drop the NEW handler's factory metadata. Both must coexist
+    // (BUG-upgrade-connection-metadata-state-lost).
+    const conn1 = await http1Handler.connect();
+    Object.assign(conn1.metadata, { customKey: "customValue", sessionId: "sess-123", },);
+
+    const newHandler = await upgradeConnection({
+      current: http1Handler,
+      targetProtocol: TransportProtocol.Http2,
+      config: {
+        protocol: TransportProtocol.Http2,
+        port: 3000,
+      },
+    },);
+
+    const conn2 = await newHandler.connect();
+    // Factory-native HTTP/2 metadata survives the handoff.
+    expect(conn2.metadata.multiplexing,).toBe(true,);
+    expect(conn2.metadata.serverPush,).toBe(true,);
+    expect(conn2.metadata.maxConcurrentStreams,).toBe(100,);
+    // Carried-over old-protocol + custom state survives too.
+    expect(conn2.metadata.keepAlive,).toBe(true,);
+    expect(conn2.metadata.customKey,).toBe("customValue",);
+    expect(conn2.metadata.sessionId,).toBe("sess-123",);
+    expect(conn2.metadata.upgradedFrom,).toBe(TransportProtocol.Http1_1,);
+    await newHandler.close();
+  });
+
+  test("keeps websocket factory metadata while carrying http/1.1 state", async () => {
+    const conn1 = await http1Handler.connect();
+    Object.assign(conn1.metadata, { sessionId: "sess-ws", },);
+
+    const newHandler = await upgradeConnection({
+      current: http1Handler,
+      targetProtocol: TransportProtocol.WebSocket,
+      config: {
+        protocol: TransportProtocol.WebSocket,
+        port: 3000,
+      },
+    },);
+
+    const conn2 = await newHandler.connect();
+    expect(conn2.metadata.pingPong,).toBe(true,);
+    expect(conn2.metadata.pingInterval,).toBe(30_000,);
+    expect(conn2.metadata.sessionId,).toBe("sess-ws",);
+    expect(conn2.metadata.upgradedFrom,).toBe(TransportProtocol.Http1_1,);
+    await newHandler.close();
+  });
+
   test("closes old handler after upgrade", async () => {
     await upgradeConnection({
       current: http1Handler,
@@ -165,6 +215,32 @@ describe("upgradeConnection", () => {
     } catch (error) {
       expect(error,).toBeInstanceOf(TransportError,);
       expect((error as TransportError).code,).toBe(TransportErrorCode.UpgradeFailed,);
+    }
+  });
+
+  test("wraps factory error when target protocol is allowed by path map but unimplemented (tls)", async () => {
+    // The path map allows Tls → Tls, but createProtocol rejects Tls. The
+    // factory-failure wrap (upgrade.ts create/catch branch) must surface as
+    // UpgradeFailed with the underlying ProtocolUnsupported cause.
+    const tlsCurrent = {
+      connect: async () => ({
+        protocol: TransportProtocol.Tls,
+        metadata: {},
+      }),
+      close: async () => {},
+    } as unknown as ProtocolHandler;
+
+    try {
+      await upgradeConnection({
+        current: tlsCurrent,
+        targetProtocol: TransportProtocol.Tls,
+        config: { protocol: TransportProtocol.Tls, port: 3000, },
+      },);
+      expect.unreachable();
+    } catch (error) {
+      expect(error,).toBeInstanceOf(TransportError,);
+      expect((error as TransportError).code,).toBe(TransportErrorCode.UpgradeFailed,);
+      expect((error as TransportError).message,).toContain("failed to create handler",);
     }
   });
 });

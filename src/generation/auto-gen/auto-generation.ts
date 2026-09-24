@@ -17,6 +17,7 @@ import { CancelReason, CancelSource, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
 import { callLlm, } from "./call-llm";
+import { combineTrackingAbortSignal, } from "./cascade-pause-watcher";
 import { checkNsfwEligibility, runContentHooks, } from "./content-hooks";
 import { checkAndPruneContext, } from "./context-pruning";
 import { createDefaultDeps, type GenDeps, } from "./deps";
@@ -55,6 +56,8 @@ export interface AutoGenOpts {
   requestId?: string;
   /** Async request-result store — when set, emits progress/fail updates. */
   asyncStore?: AsyncStore;
+  /** Caller-supplied abort signal, combined with the per-attempt signal (see cascade-pause-watcher). */
+  abortSignal?: AbortSignal;
 }
 
 /**
@@ -171,7 +174,8 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       isGroupChat: chat?.type === "group",
       systemPromptOverride,
     },);
-    const { resolved, prompt, tracking, } = prepared;
+    const { resolved, prompt, } = prepared;
+    const tracking = combineTrackingAbortSignal({ tracking: prepared.tracking, abortSignal: opts.abortSignal, },);
     if (parentMessageId && tracking) { attemptId = tracking.attemptId; }
 
     const actorName = characterName;

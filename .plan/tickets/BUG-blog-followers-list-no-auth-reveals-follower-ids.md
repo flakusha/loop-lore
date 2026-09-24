@@ -3,12 +3,16 @@ hash: pending
 
 git issue: 5ccf305
 
+**Summary:** `GET /api/blog/authors/:authorId/followers` is fully unauthenticated and leaks the complete follower-id list for any author.
+**Context:** `src/routes/blog/follows.ts` (followers handler); `src/rpg/blog/service/follows.ts` (`getFollowers`).
+**Acceptance Criteria:** route requires auth (401 unauthenticated); only the author themselves or an admin may list followers (403 otherwise); response schema declares 401/403; route-level tests cover the branches.
+
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
 # BUG: Blog followers list has no authentication (unauthenticated enumeration)
 
-**Status:** Open
+**Status:** done
 **Priority:** High
 **Effort:** Small
 
@@ -19,6 +23,7 @@ git issue: 5ccf305
 ## Defect Detail
 
 **Route handler** (`src/routes/blog/follows.ts:75`):
+
 ```typescript
 .get(`${prefix}/blog/authors/:authorId/followers`, async (ctx: any,) => {
   const followers = await svc.getFollowers(ctx.params.authorId,);
@@ -31,6 +36,7 @@ git issue: 5ccf305
 ```
 
 **Service layer** (`src/rpg/blog/service/follows.ts:52`):
+
 ```typescript
 export async function getFollowers(
   db: Kysely<any>,

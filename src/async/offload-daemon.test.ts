@@ -11,6 +11,7 @@
  *   3. unlink spill files of long-expired rows.
  */
 
+import type { Database, } from "bun:sqlite";
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import { existsSync, mkdirSync, rmSync, writeFileSync, } from "node:fs";
@@ -100,7 +101,7 @@ describe("spill() disk round-trip", () => {
 
 describe("OffloadDaemon.runOnce — phase 1: offload ripe rows", () => {
   let db: Kysely<DB>;
-  let sqlite: { close(): void };
+  let sqlite: Database;
   let filePaths: string[];
 
   beforeEach(async () => {
@@ -296,6 +297,52 @@ describe("OffloadDaemon.runOnce — phase 1: offload ripe rows", () => {
     expect(bad?.offload_path,).toBeNull();
     daemon.stop();
   });
+
+  test("unlinks the spilled file when the DB update fails (BUG-runoffloadpass-phase1-spill-and-db-update-not-atomic)", async () => {
+    await seedRequest(db, {
+      id: "tx-fail",
+      status: "complete",
+      completedAt: minutesAgo(10,),
+      responseBody: "q".repeat(64,),
+    },);
+    await seedRequest(db, {
+      id: "tx-ok",
+      status: "complete",
+      completedAt: minutesAgo(10,),
+      responseBody: "r".repeat(64,),
+    },);
+    // Abort the phase-1 UPDATE for one row: the transaction must roll
+    // back AND the freshly spilled file must be unlinked — otherwise the
+    // row keeps its inline body while an orphan file lingers on disk.
+    sqlite.run(
+      `CREATE TRIGGER fail_offload_update BEFORE UPDATE ON request_results
+       WHEN NEW.id = 'tx-fail' BEGIN SELECT RAISE(ABORT, 'boom'); END`,
+    );
+
+    const daemon = startOffloadDaemon(db, {}, { minAgeMs: 0, maxInlineBytes: 10, },);
+    const result = await daemon.runOnce();
+
+    // The failed row was skipped; the healthy row was still offloaded.
+    expect(result.offloaded,).toBe(1,);
+    expect(offloadExists("tx-fail",),).toBe(false,);
+    const failedRow = await db
+      .selectFrom("request_results",)
+      .select(["response_body", "offload_path", "offloaded_at",],)
+      .where("id", "=", "tx-fail",)
+      .executeTakeFirst();
+    expect(failedRow?.response_body,).toBe("q".repeat(64,),);
+    expect(failedRow?.offload_path,).toBeNull();
+    expect(failedRow?.offloaded_at,).toBeNull();
+
+    const okRow = await db
+      .selectFrom("request_results",)
+      .select("offload_path",)
+      .where("id", "=", "tx-ok",)
+      .executeTakeFirst();
+    expect(okRow?.offload_path,).toBeTypeOf("string",);
+    if (okRow?.offload_path) { filePaths.push(okRow.offload_path,); }
+    daemon.stop();
+  });
 });
 describe("OffloadDaemon.runOnce — phase 2: TTL expiry", () => {
   let db: Kysely<DB>;
@@ -368,7 +415,7 @@ describe("OffloadDaemon.runOnce — phase 2: TTL expiry", () => {
 
 describe("OffloadDaemon.runOnce — phase 3: expired spill cleanup", () => {
   let db: Kysely<DB>;
-  let sqlite: { close(): void };
+  let sqlite: Database;
   let filePaths: string[];
 
   beforeEach(async () => {
@@ -456,6 +503,42 @@ describe("OffloadDaemon.runOnce — phase 3: expired spill cleanup", () => {
       .executeTakeFirst();
     expect(row?.offload_path,).toBeNull();
     daemon.stop();
+  });
+
+  test("keeps the file and DB path consistent when the path-nulling UPDATE fails (BUG-runoffloadpass-phase3-unlink-and-db-update-not-atomic)", async () => {
+    const keptFile = path.join(OFFLOAD_DIR, "cleanup-tx-fail.json.gz",);
+    writeFileSync(keptFile, "pretend-gzip",);
+    filePaths.push(keptFile,);
+
+    await seedRequest(db, {
+      id: "expired-tx-fail",
+      status: "expired",
+      completedAt: minutesAgo(60,),
+      offloadPath: keptFile,
+    },);
+    // Abort the phase-3 UPDATE: the transaction rolls back, so the row
+    // must KEEP its offload_path and the file must survive — deleting
+    // the file first (the old ordering) would leave the DB pointing at
+    // a deleted file.
+    sqlite.run(
+      `CREATE TRIGGER fail_cleanup_update BEFORE UPDATE ON request_results
+       WHEN NEW.id = 'expired-tx-fail' BEGIN SELECT RAISE(ABORT, 'boom'); END`,
+    );
+
+    const daemon = startOffloadDaemon(db, {}, { ttlMs: 60 * 1000, minAgeMs: 0, },);
+    try {
+      await expect(daemon.runOnce(),).rejects.toThrow();
+    } finally {
+      daemon.stop();
+    }
+
+    expect(existsSync(keptFile,),).toBe(true,);
+    const failedRow = await db
+      .selectFrom("request_results",)
+      .select("offload_path",)
+      .where("id", "=", "expired-tx-fail",)
+      .executeTakeFirst();
+    expect(failedRow?.offload_path,).toBe(keptFile,);
   });
 });
 

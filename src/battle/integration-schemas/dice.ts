@@ -15,6 +15,8 @@ export interface DiceRoll {
   count: number;
   /** Individual results */
   results: number[];
+  /** Index into `results` of the die that was kept — advantage/disadvantage rerolls append a second set and may keep a later index */
+  keptIdx: number;
   /** Total after modifiers */
   total: number;
   /** Whether this was a critical success */
@@ -124,6 +126,7 @@ export function rollDice(
     type,
     count,
     results,
+    keptIdx,
     total: Math.max(0, total,),
     criticalSuccess,
     criticalFailure,

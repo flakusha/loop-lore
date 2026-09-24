@@ -3,12 +3,16 @@ hash: pending
 
 git issue: 680817d
 
+**Summary:** `GET /api/blog/posts/:id` has no auth and `getPost()` performs a raw lookup — any caller knowing an id reads private/draft posts (IDOR).
+**Context:** `src/routes/blog/posts.ts` (GET :id handler); `src/rpg/blog/service/posts.ts` (`getPost`).
+**Acceptance Criteria:** route requires auth (401 unauthenticated); public+published readable by any authed user; non-public posts return 404 unless caller is author or admin; route-level tests cover all branches.
+
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
 # BUG: Blog post GET bypasses visibility policy (IDOR)
 
-**Status:** Open
+**Status:** done
 **Priority:** High
 **Effort:** Small
 
@@ -19,6 +23,7 @@ git issue: 680817d
 ## Defect Detail
 
 **Route handler** (`src/routes/blog/posts.ts:60`):
+
 ```typescript
 .get(`${prefix}/blog/posts/:id`, async (ctx: any,) => {
   const t = ctx.t as TranslatorFn | undefined;
@@ -29,6 +34,7 @@ git issue: 680817d
 ```
 
 **Service layer** (`src/rpg/blog/service/posts.ts:79`):
+
 ```typescript
 export async function getPost(db: Kysely<any>, id: string,): Promise<BlogPostWithTags | undefined> {
   const row = (await db
