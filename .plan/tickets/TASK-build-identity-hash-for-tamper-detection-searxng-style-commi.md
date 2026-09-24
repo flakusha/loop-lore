@@ -6,14 +6,11 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium
+**Summary:** Compound build identity hash (SHA-256 over git HEAD + source-tree hash + lockfile + build manifest), exposed at `/.well-known/loop-lore/build-id` and in the `instance-state` payload. Mirrors the searxng commit-pin approach. See `docs/spec/federation-build-identity-hash.md` for the full implementation spec.
+**Context:** `TASK-instance-state-advertisement-endpoint` advertises software name + version, but the version string is editable at build time — a malicious instance can ship `loop-lore 1.2.3` while running patched code. `epic-content-hashing-distributed-integrity.md` covers row-level hashes, NOT source/binary identity.
+**Acceptance Criteria:** Deterministic hash across identical builds; public + admin endpoints; CLI `bun run build:verify` reproduces the hash; optional Sigstore attestation; tests cover deterministic hash, git-missing fallback, lockfile-edit hash change; `bun run check` green.
 **Epic:** epic-federation-swarm-sync
 **Tags:** federation, tamper-detection, build-hash, integrity
-
-## Summary
-
-Add a compound "build identity hash" — a SHA-256 fingerprint over the running server’s code (git HEAD, source-tree hash, lockfile hash, build manifest) — exposed via the instance-state endpoint and a public `/.well-known/loop-lore/build-id` document. Lets a peer verify that another instance is running unmodified upstream code before federating. Mirrors the searxng commit-pin approach: anyone can recompute the hash from a clean checkout + lockfile + env, and compare.
-
-**Implementation spec:** [`docs/spec/federation-build-identity-hash.md`](../../docs/spec/federation-build-identity-hash.md) — hash composition, endpoint shapes, CI integration, CLI verify script, test plan.
 
 ## Summary
 
@@ -61,9 +58,3 @@ Add a compound "build identity hash" — a SHA-256 fingerprint over the running 
 - Row-level content hashes (`epic-content-hashing-distributed-integrity.md`).
 - Signed builds / reproducible-build attestation (Sigstore, in-toto) — follow-up once this lands.
 - Verifying a peer’s hash from a third-party attestation service (separate ticket; this ticket is "self-report + recompute").
-
-## Acceptance Criteria
-
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated

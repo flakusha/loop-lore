@@ -6,14 +6,11 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Large
+**Summary:** Zero-trust cross-instance verification: each instance probes its federated peers over the federation transport with a signed challenge and verifies (1) build hash matches a pinned value, (2) NodeInfo is internally consistent, (3) peer trusts are bounded (no transitive trust), (4) defederation audit log is fresh. Auto-defederate on 3 consecutive failures. See `docs/spec/federation-peer-audit-probe.md` for the full implementation spec.
+**Context:** `TASK-federation-tls-peer-trust-custom-ca-pinning-and-optional-mtl` secures transport; `TASK-build-identity-hash-for-tamper-detection-searxng-style-commi` proves what code is running; neither verifies *runtime* behavior — the gap closed by this ticket.
+**Acceptance Criteria:** `/_attest` handler on each peer; `probePeer(origin)` returns typed `PeerAuditReport`; 7-step probe (build hash, NodeInfo consistency, trust boundedness, audit log freshness, SVID expiry, signature, timeout); 6h scheduled job per trusted peer; auto-suspend on `failure_threshold` (default 3) consecutive failures; manual admin probe endpoint; 30-day `peer_audit_runs` retention; `bun run check` green.
 **Epic:** epic-federation-swarm-sync
 **Tags:** federation, audit, zero-trust, peer-verification
-
-## Summary
-
-Add a zero-trust cross-audit capability: when two instances federate, each one probes the other over the federation transport with a signed challenge, and the probe verifies (1) build hash matches an upstream-pinned value, (2) NodeInfo payload is internally consistent, (3) peer trusts are bounded (no transitive trust inheritance), (4) recent peer-state-transition audit log exists. Probe results feed the existing peer table verdict and can auto-defederate on repeated failures. Strictly opt-in per peer; disabled by default.
-
-**Implementation spec:** [`docs/spec/federation-peer-audit-probe.md`](../../docs/spec/federation-peer-audit-probe.md) — threat model, probe protocol, AUM chain, auto-suspend integration, peer-side `/_attest` endpoint, test plan.
 
 ## Summary
 
@@ -64,9 +61,3 @@ Add a zero-trust cross-audit capability: when two instances federate, each one p
 - Third-party attestation services (Sigstore, transparency log) — separate ticket.
 - Cross-instance content auditing (audit-the-Actor, not the instance) — separate ticket.
 - Auto-pinning new peers at first handshake (operator must explicitly add hashes to `peerPins`).
-
-## Acceptance Criteria
-
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
