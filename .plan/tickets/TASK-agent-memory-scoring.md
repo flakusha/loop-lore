@@ -11,7 +11,7 @@
 **Epic:** epic-memory-knowledge-systems, epic-character-core-system
 **Priority:** Medium (P6+ deferred)
 **Effort:** High
-**Status:** Not Started
+**Status:** open
 **Created:** 2026-08-14
 **Platform Candidate:** E2 (Agent memory scoring — generative-agents, RisuAI HypaMemory, Kindroid)
 **Research Source:** Stanford generative-agents memory architecture, RisuAI HypaMemory/SuperMemory

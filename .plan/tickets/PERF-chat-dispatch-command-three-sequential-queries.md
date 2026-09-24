@@ -52,3 +52,6 @@ Wrap in `Promise.all([...])`.
 Note that `Promise.allSettled` was chosen over the ticket's suggested `Promise.all`. Per-ticket acceptance "three queries issued in parallel" still holds — the wrapper shape differs by ESLint policy.
 
 **Verification**: `bun test src/assistant/commands/workflow-dispatch.test.ts src/assistant/commands/battle.integration.test.ts` → 18 pass / 0 fail. Dispatch path regression-free.
+
+
+git issue: 445acde

@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** [OK] Resolved (worktree fix-review-bugs-round2; supersedes fix-account-tier-custom-instructions-preamble)
+**Status:** done
 
 **Priority:** medium
 

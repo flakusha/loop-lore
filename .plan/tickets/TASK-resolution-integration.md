@@ -11,7 +11,7 @@
 **Epic:** RPG Mechanics, Battle & Action Systems, Social Interaction, Magic & Spell Systems
 **Priority:** Medium
 **Effort:** Medium
-**Status:** Not Started
+**Status:** open
 **Created:** 2026-07-28
 **Cross-Mechanics Gap:** G5 (Resolution ↔ All combat/social/magic)
 

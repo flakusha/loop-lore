@@ -11,7 +11,7 @@
 
 # TASK: Dynamic Avatars — Dota 2 Style Animated Mugshots
 
-**Status:** ⬜ Not Started
+**Status:** open
 **Priority:** Low
 **Effort:** High
 **Epic:** epic-character-core-system

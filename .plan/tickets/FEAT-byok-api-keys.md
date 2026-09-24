@@ -3,7 +3,7 @@
 
 # FEAT-byok-api-keys: BYOK API Keys
 
-**Status:** Not Started
+**Status:** open
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** [OK] Done - fixed in batch (tsconfig.scripts.json + typecheck-scripts gate, 2026-09-16)
+**Status:** open
 **Priority:** high
 **Effort:** Medium
 

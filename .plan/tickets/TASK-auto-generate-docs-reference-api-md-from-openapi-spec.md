@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ⬜ Not Started
+**Status:** open
 **Epic:** epic-openapi-reference
 **Priority:** Medium
 **Effort:** Medium

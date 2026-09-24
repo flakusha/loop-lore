@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ⬜ Not Started
+**Status:** open
 **Priority:** Medium
 **Effort:** Low
 **Related:** epic-chat-lifecycle-moderation.md, epic-nsfw-game-mechanics.md, epic-age-gate (age-gate/)

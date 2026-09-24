@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ⬜ Not Started — split into 5 child tickets
+**Status:** open
 **Priority:** Low
 **Effort:** High
 **Epic:** Epic 26 (Avatar & Expression), Epic 28 (Asset Support)

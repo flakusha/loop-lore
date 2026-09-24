@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** [OK] Resolved (dev, 2026-08-30, fix(hooks) 563904ab4)
+**Status:** done
 **Priority:** P3
 **Effort:** Small
 **Epic:** epic-character-core-system

@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ⬜ Not Started
+**Status:** open
 **Priority:** Low (P6+, far-fetched but on-theme)
 **Effort:** Very High (security-sensitive; many sub-tickets)
 **Type:** Implementation Task (child of epic)

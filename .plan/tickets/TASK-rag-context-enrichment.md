@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ⬜ Not Started — umbrella; work split into 6 child tickets
+**Status:** open
 **Priority:** Medium
 **Effort:** High
 **Epic:** epic-rag-document-processing.md

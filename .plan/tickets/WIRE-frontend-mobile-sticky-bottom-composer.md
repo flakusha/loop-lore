@@ -155,3 +155,6 @@ In `src/components/chat/chat.html` or the Alpine chat component template, includ
 - `src/components/chat/input-area.html` — existing desktop composer
 - `src/public/css/app.css:24` — existing `100dvh` pattern
 - `src/public/css/app.css:2337` — existing mobile breakpoint
+
+
+git issue: bb24509

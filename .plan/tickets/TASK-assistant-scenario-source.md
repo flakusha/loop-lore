@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ⬜ Not Started
+**Status:** open
 **Priority:** Medium
 **Effort:** Large
 **Epic:** epic-assistant-generation-extensions (Phase 4), epic-blog-system

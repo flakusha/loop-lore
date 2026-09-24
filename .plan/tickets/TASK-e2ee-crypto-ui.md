@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ⬜ Not Started — **blocked on `TASK-encryption-architecture-clarification.md`**
+**Status:** open
 **Priority:** Low
 **Effort:** Medium
 **Type:** TASK

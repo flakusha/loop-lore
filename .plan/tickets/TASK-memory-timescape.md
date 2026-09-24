@@ -11,7 +11,7 @@
 **Epic:** `epic-memory-knowledge-systems.md` (FEA-2026-058)
 **Priority:** Medium
 **Effort:** Medium
-**Status:** Not Started
+**Status:** open
 
 **Summary:**
 Convert memory timestamps to game-time, add timeline-specific memory recall, and implement time-based decay per game-day.

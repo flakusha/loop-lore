@@ -11,7 +11,7 @@
 **Epic:** RPG Mechanics & Extensible Game Systems
 **Priority:** High
 **Effort:** Large
-**Status:** Not Started
+**Status:** open
 
 ## Summary
 

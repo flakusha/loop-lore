@@ -11,7 +11,7 @@
 **Epic:** epic-character-core-system
 **Priority:** Medium
 **Effort:** High
-**Status:** Not Started
+**Status:** open
 **Created:** 2026-08-14
 **Platform Candidate:** E1 (Agentic NPC autonomy — personality maturation)
 **Research Source:** Character progression patterns, RPG skill systems, narrative milestone frameworks

@@ -154,3 +154,6 @@ export function sidebar() {
 - `src/frontend/alpine/focus.ts` — existing `trapFocus`
 - `src/public/css/app.css:2337` — existing mobile breakpoint
 - `src/public/css/app.css:24` — existing `100dvh` pattern
+
+
+git issue: 2b2a36e

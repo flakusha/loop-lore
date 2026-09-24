@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ⬜ Not Started
+**Status:** open
 **Priority:** P1 — High
 **Effort:** Small
 **Epic:** epic-item-systems-unification

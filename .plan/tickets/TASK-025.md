@@ -3,7 +3,7 @@
 
 # TASK-025: Text effects and overlays
 
-**Status:** done
+**Status:** open
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Reusable text-effects primitives (shake, glow, typewriter, fade) plus overlay stack.

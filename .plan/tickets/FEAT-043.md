@@ -3,7 +3,7 @@
 
 # FEAT-043: Migration testing
 
-**Status:** Done (2026-09-20 — verified post-collapse: `bun test src/db/` 194/194 pass incl. `migrations.test.ts`, `migration-roundtrip.test.ts`, `schema-sync.test.ts`; full-chain up then down leaves zero tables)
+**Status:** open
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

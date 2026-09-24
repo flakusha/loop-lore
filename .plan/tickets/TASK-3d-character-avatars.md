@@ -11,7 +11,7 @@
 
 # TASK: 3D Character Avatars
 
-**Status:** ⬜ Not Started
+**Status:** open
 **Priority:** Low
 **Effort:** High
 **Related:** TASK-emotions-avatar-edit-model

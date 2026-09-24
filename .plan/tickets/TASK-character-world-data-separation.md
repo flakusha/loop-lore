@@ -11,7 +11,7 @@
 **Epic:** Character Core System
 **Priority:** High
 **Effort:** Very High
-**Status:** In Progress (services + routes done, needs validation)
+**Status:** done
 
 ## Summary
 

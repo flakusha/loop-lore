@@ -3,7 +3,7 @@
 
 # TASK-071: Info Bubbles (help tooltips in config menus)
 
-**Status:** Not Started
+**Status:** open
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

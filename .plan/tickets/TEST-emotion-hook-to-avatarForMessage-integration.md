@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ⬜ Not Started
+**Status:** open
 **Priority:** P2
 **Epic:** epic-emotion-avatar-message-binding
 **Labels:** test, integration, emotion-avatar, end-to-end
@@ -84,3 +84,6 @@ The test exercises **both halves in one run** with real DB rows.
 ## Notes
 
 **Reconciliation (2026-09-02)**: Bound to epic Emotion Avatar Message Binding acceptance list.
+
+
+git issue: 42a2cc7

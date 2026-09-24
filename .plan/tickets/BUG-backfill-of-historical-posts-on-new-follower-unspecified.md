@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** [OK] Done - closed per user approval, no implementation required (2026-09-16)
+**Status:** open
 **Priority:** low
 **Effort:** Medium
 

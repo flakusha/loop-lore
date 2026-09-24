@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟨 In Progress (scoped suite green; rebase onto dev + merge pending GPG unlock)
+**Status:** open
 **Priority:** High
 **Effort:** High
 **Epic:** epic-chat-product-features

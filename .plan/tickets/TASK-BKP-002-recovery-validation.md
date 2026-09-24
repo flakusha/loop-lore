@@ -3,7 +3,7 @@
 
 # TASK-BKP-002: Recovery Validation Framework
 
-**Status:** Not Started
+**Status:** open
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

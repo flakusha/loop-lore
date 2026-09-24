@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ⬜ Not Started
+**Status:** open
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-certificate-and-tls-management.md

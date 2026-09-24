@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 Partial (openai-compatible complete; native providers deferred)
+**Status:** done
 **Priority:** medium
 **Effort:** Large
 **Epic:** epic-provider-plugin-ecosystem

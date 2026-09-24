@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** [OK] Resolved (worktree fix-hsts-response-policy)
+**Status:** done
 
 **Priority:** low
 

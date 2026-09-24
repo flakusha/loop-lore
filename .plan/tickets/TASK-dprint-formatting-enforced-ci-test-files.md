@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ⬜ Not Started
+**Status:** open
 **Priority:** low
 **Effort:** Small
 **Epic:** review-dev-2026-08-26-late-merges
