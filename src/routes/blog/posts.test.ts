@@ -284,3 +284,70 @@ describe("DELETE /api/blog/posts/:id", () => {
     expect(res.status,).toBe(404,);
   });
 });
+
+describe("GET /api/blog/posts list gating (BUG-blog-comments-post-accepts-non-public-posts)", () => {
+  test("ignores ?visibility=/?status= widening for other authors' posts", async () => {
+    const pub = await seedPost("public", "published",);
+    const priv = await seedPost("private", "published",);
+    const draft = await seedPost("public", "draft",);
+
+    // Before the gate, ?visibility=private listed the author's private post.
+    const byVisibility = await makeApp(READER, "user",).handle(
+      new Request(`http://localhost/api/blog/posts?author_id=${AUTHOR}&visibility=private`,),
+    );
+    expect(byVisibility.status,).toBe(200,);
+    const visBody = await byVisibility.json() as { posts?: { id: string }[] };
+    const visIds = Array.from(visBody.posts ?? [], (p,) => p.id,);
+    expect(visIds,).toContain(pub,);
+    expect(visIds,).not.toContain(priv,);
+
+    // ?status=draft must not list other authors' drafts either.
+    const byStatus = await makeApp(READER, "user",).handle(
+      new Request(`http://localhost/api/blog/posts?author_id=${AUTHOR}&status=draft`,),
+    );
+    const statusBody = await byStatus.json() as { posts?: { id: string }[] };
+    const statusIds = Array.from(statusBody.posts ?? [], (p,) => p.id,);
+    expect(statusIds,).toContain(pub,);
+    expect(statusIds,).not.toContain(draft,);
+    expect(statusIds,).not.toContain(priv,);
+  });
+
+  test("author_id=self keeps full filter power over the caller's own posts", async () => {
+    const priv = await seedPost("private", "published",);
+    const res = await makeApp(AUTHOR, "user",).handle(
+      new Request(`http://localhost/api/blog/posts?author_id=${AUTHOR}&visibility=private`,),
+    );
+    expect(res.status,).toBe(200,);
+    const body = await res.json() as { posts?: { id: string }[] };
+    expect(Array.from(body.posts ?? [], (p,) => p.id,),).toEqual([priv,],);
+  });
+
+  test("admin callers keep full filter power", async () => {
+    const priv = await seedPost("private", "published",);
+    const res = await makeApp(READER, "admin",).handle(
+      new Request("http://localhost/api/blog/posts?visibility=private",),
+    );
+    expect(res.status,).toBe(200,);
+    const body = await res.json() as { posts?: { id: string }[] };
+    expect(Array.from(body.posts ?? [], (p,) => p.id,),).toEqual([priv,],);
+  });
+
+  test("visibility=followers returns the follower feed and hides it from non-followers", async () => {
+    const feedPost = await seedPost("followers", "published",);
+    const svc = new BlogService(db,);
+    await svc.follow(READER, AUTHOR,);
+
+    const feed = await makeApp(READER, "user",).handle(
+      new Request("http://localhost/api/blog/posts?visibility=followers",),
+    );
+    expect(feed.status,).toBe(200,);
+    const feedBody = await feed.json() as { posts?: { id: string }[] };
+    expect(Array.from(feedBody.posts ?? [], (p,) => p.id,),).toContain(feedPost,);
+
+    const stranger = await makeApp(AUTHOR, "user",).handle(
+      new Request("http://localhost/api/blog/posts?visibility=followers",),
+    );
+    const strangerBody = await stranger.json() as { posts?: { id: string }[] };
+    expect(Array.from(strangerBody.posts ?? [], (p,) => p.id,),).not.toContain(feedPost,);
+  });
+});

@@ -7,10 +7,14 @@
  * variant is still pending.
  */
 import type { Database, } from "bun:sqlite";
-import { describe, expect, test, } from "bun:test";
+import { afterAll, beforeEach, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import { listMessages, } from "../chat/service";
+import type { Config, } from "../config/schema";
+import { configSchema, } from "../config/schema-class";
+import { setTestDatabase, } from "../db/index";
 import type { DB, } from "../db/schema";
+import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
 import {
   insertActors,
@@ -19,6 +23,16 @@ import {
   insertUsers,
 } from "../test-utils/insert-helpers";
 import { handleRegenerate, } from "./generation-routes";
+import { getProvider, registerProvider, unregisterProvider, } from "./providers/registry";
+import type {
+  GenerateRequest as ProviderRequest,
+  GenerateResponse,
+  LLMProvider,
+  ModelInfo,
+  ProviderCapabilities,
+  StreamHandler,
+} from "./providers/types";
+import { VALID_REGEN_STYLES, } from "./smart-regen";
 
 const USER_ID = "u-owner";
 const OTHER_ID = "u-other";
@@ -314,5 +328,218 @@ describe("handleRegenerate style threading (BUG-smart-regen-style-not-threaded-t
     const secondData = (await second.json()) as { variantMessageId: string; replayed: boolean };
     expect(secondData.replayed,).toBe(true,);
     expect(secondData.variantMessageId,).toBe(firstData.variantMessageId,);
+  });
+});
+
+// ── Variant generation drive (style → LLM payload) ────────────
+
+const PROVIDER_NAME = "regen-capture-provider";
+const FUNNIER_PROMPT = VALID_REGEN_STYLES.funnier ?? "";
+
+/**
+ * Provider double that records every complete() request so tests can assert
+ * on the actual LLM payload (system message), plus an optional fail switch.
+ */
+class CapturingProvider implements LLMProvider {
+  readonly capabilities: ProviderCapabilities = {
+    type: "openai-compatible",
+    label: "Regen Capture Mock",
+    text: true,
+    image: false,
+    embeddings: false,
+    streaming: false,
+    tools: false,
+    thinking: false,
+  };
+  failOnCall = false;
+  readonly requests: ProviderRequest[] = [];
+
+  /**
+   * @param req
+   */
+  async complete(req: ProviderRequest,): Promise<GenerateResponse> {
+    this.requests.push(req,);
+    if (this.failOnCall) { throw new Error("Mock provider failure",); }
+    return {
+      content: "Styled mock response",
+      finishReason: "stop",
+      usage: { promptTokens: 10, completionTokens: 20, totalTokens: 30, },
+    };
+  }
+
+  /**
+   * Variant fill is forced non-streaming; stream() must never be reached.
+   */
+  async stream(_req: ProviderRequest, _handler: StreamHandler,): Promise<GenerateResponse> {
+    throw new Error("stream not expected for variant fill",);
+  }
+
+  /** @returns ok probe. */
+  healthCheck(): Promise<{ status: "ok" }> {
+    return Promise.resolve({ status: "ok" as const, },);
+  }
+
+  /** @returns single mock model. */
+  listModels(): Promise<ModelInfo[]> {
+    return Promise.resolve([{ id: "mock-model", },],);
+  }
+}
+
+/**
+ * Deterministic config wiring the capturing provider as generation default
+ * (schema defaults for everything else — mirrors generate-route.test.ts).
+ */
+function makeGenConfig(): Config {
+  return {
+    ...configSchema.defaults,
+    generation: {
+      providers: {
+        openaiCompatible: [],
+        anthropic: undefined,
+        ollamaNative: undefined,
+        sd: undefined,
+      },
+      defaultProvider: PROVIDER_NAME,
+      defaultModels: { [PROVIDER_NAME]: "mock-model", },
+    },
+  };
+}
+
+describe("handleRegenerate drives the variant LLM call (BUG-smart-regen-style-not-threaded-through)", () => {
+  let provider: CapturingProvider;
+
+  beforeEach(() => {
+    createLogger({ level: "error", },);
+    // Re-register a FRESH capture each test — the provider registry is
+    // process-global and would otherwise keep the first instance (and its
+    // recorded requests / failOnCall flag) alive across tests.
+    if (getProvider(PROVIDER_NAME,) !== undefined) {
+      unregisterProvider(PROVIDER_NAME,);
+    }
+    provider = new CapturingProvider();
+    registerProvider(PROVIDER_NAME, provider,);
+  },);
+
+  afterAll(() => {
+    if (getProvider(PROVIDER_NAME,) !== undefined) {
+      unregisterProvider(PROVIDER_NAME,);
+    }
+    setTestDatabase(null,);
+  },);
+
+  test("style instruction reaches the LLM payload and fills the pending variant", async () => {
+    const { db, } = await seed();
+    setTestDatabase(db,);
+
+    const res = await handleRegenerate(
+      { chatId: CHAT_ID, messageId: ORIGINAL_ID, style: "funnier", },
+      db,
+      { userId: USER_ID, userRole: "user", },
+      makeGenConfig(),
+    );
+    expect(res.status,).toBe(200,);
+    const data = await res.json() as {
+      ok: boolean;
+      replayed: boolean;
+      variantMessageId: string;
+      style: string | null;
+    };
+    expect(data.ok,).toBe(true,);
+    expect(data.replayed,).toBe(false,);
+    expect(data.style,).toBe("funnier",);
+
+    // The LLM call itself carried the style instruction on the system message.
+    expect(provider.requests,).toHaveLength(1,);
+    const system = provider.requests[0]?.messages.find((m,) => m.role === "system");
+    expect(system?.content,).toContain(FUNNIER_PROMPT,);
+
+    // The pending variant row was filled in place (no extra sibling inserted).
+    const variant = await db
+      .selectFrom("messages",)
+      .selectAll()
+      .where("id", "=", data.variantMessageId,)
+      .executeTakeFirst();
+    expect(variant?.status,).toBe("confirmed",);
+    expect(variant?.content,).toBe("Styled mock response",);
+    expect(variant?.idempotency_key,).toBe(`regen:variant:${PARENT_ID}:funnier`,);
+    expect(variant?.swipe_index,).toBe(2,);
+
+    // Original variant untouched.
+    const original = await db
+      .selectFrom("messages",)
+      .selectAll()
+      .where("id", "=", ORIGINAL_ID,)
+      .executeTakeFirst();
+    expect(original?.status,).toBe("confirmed",);
+    expect(original?.content,).toBe("Response A",);
+  });
+
+  test("plain regen (no style) sends no style instruction but still fills the variant", async () => {
+    const { db, } = await seed();
+    setTestDatabase(db,);
+
+    const res = await handleRegenerate(
+      { chatId: CHAT_ID, messageId: ORIGINAL_ID, },
+      db,
+      { userId: USER_ID, userRole: "user", },
+      makeGenConfig(),
+    );
+    expect(res.status,).toBe(200,);
+    const data = await res.json() as { variantMessageId: string; style: string | null };
+    expect(data.style,).toBeNull();
+
+    expect(provider.requests,).toHaveLength(1,);
+    const system = provider.requests[0]?.messages.find((m,) => m.role === "system");
+    for (const instruction of Object.values(VALID_REGEN_STYLES,)) {
+      expect(system?.content,).not.toContain(instruction,);
+    }
+
+    const variant = await db
+      .selectFrom("messages",)
+      .selectAll()
+      .where("id", "=", data.variantMessageId,)
+      .executeTakeFirst();
+    expect(variant?.status,).toBe("confirmed",);
+    expect(variant?.content,).toBe("Styled mock response",);
+    expect(variant?.idempotency_key,).toBe(`regen:variant:${PARENT_ID}:plain`,);
+  });
+
+  test("unknown style returns 400 with usage", async () => {
+    const { db, } = await seed();
+
+    const res = await handleRegenerate(
+      { chatId: CHAT_ID, messageId: ORIGINAL_ID, style: "louder", },
+      db,
+      { userId: USER_ID, userRole: "user", },
+    );
+    expect(res.status,).toBe(400,);
+    const data = await res.json() as { error: string };
+    expect(data.error,).toContain("Invalid style",);
+    expect(data.error,).toContain("funnier",);
+  });
+
+  test("provider failure degrades to the 200 contract and leaves the variant pending", async () => {
+    const { db, } = await seed();
+    setTestDatabase(db,);
+    provider.failOnCall = true;
+
+    const res = await handleRegenerate(
+      { chatId: CHAT_ID, messageId: ORIGINAL_ID, style: "darker", },
+      db,
+      { userId: USER_ID, userRole: "user", },
+      makeGenConfig(),
+    );
+    expect(res.status,).toBe(200,);
+    const data = await res.json() as { ok: boolean; variantMessageId: string; replayed: boolean };
+    expect(data.ok,).toBe(true,);
+    expect(data.replayed,).toBe(false,);
+
+    const variant = await db
+      .selectFrom("messages",)
+      .selectAll()
+      .where("id", "=", data.variantMessageId,)
+      .executeTakeFirst();
+    expect(variant?.status,).toBe("sending",);
+    expect(variant?.content,).toBe("Response A",);
   });
 });

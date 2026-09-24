@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// size-allow: 279
-
 /**
  * Generation Route — POST /api/generation/generate — handler orchestrator.
  *
@@ -10,14 +8,14 @@
  * request → dispatch to non-streaming (JSON) or streaming (SSE).
  *
  * Extracted from generate-route.ts (pure refactor, no behavior change).
+ * Request validation + chat-access authorization live in ./validate.ts.
  */
 
 import type { Kysely, } from "kysely";
-import { checkChatAccess, } from "../../chat/service";
 import { loadConfig, } from "../../config/load";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
-import { forbiddenResponse, jsonError, requireUserId, } from "../../routes/http-utils";
+import { jsonError, } from "../../routes/http-utils";
 import { parseAssistantTuning, resolveAssistantMaxTokens, resolveAssistantTemperature, } from "../assistant-tuning";
 import { hasInFlightGeneration, IdempotencyKeyConflictError, startGenerationTracking, } from "../cancellation-manager";
 import {
@@ -25,12 +23,14 @@ import {
   resolveProvider,
 } from "../providers/registry";
 import type { ResolvedProvider, } from "../providers/registry";
+import { appendStylePrompt, buildStylePrompt, } from "../smart-regen";
 import type { GenerationMessage, GenerationOptions, } from "../types";
 import { buildPrompt, } from "./build-prompt";
 import { runNonStreaming, } from "./non-stream";
 import { buildProviderRequest, } from "./provider-request";
 import { streamToClient, } from "./stream-to-client";
 import type { GenerateRequest, } from "./types";
+import { validateGenerateRequest, } from "./validate";
 /**
  * POST /api/generation/generate
  *
@@ -63,40 +63,8 @@ export async function handleGenerate({
   const cfg = _config ?? loadConfig();
   const input = body as GenerateRequest;
 
-  // ── Validate required fields ───────────────────────────
-  // NOTE: `body as GenerateRequest` cast is unchecked for nested objects.
-  // Sub-objects (repetitionDetection, policyDetection, responseLimit) are
-  // consumed downstream — invalid values may cause runtime errors.
-
-  if (!input.chatId || typeof input.chatId !== "string") {
-    return jsonError({ message: "chatId is required", status: 400, },);
-  }
-  if (!input.parentMessageId || typeof input.parentMessageId !== "string") {
-    return jsonError({ message: "parentMessageId is required", status: 400, },);
-  }
-  if (!input.actorId || typeof input.actorId !== "string") {
-    return jsonError({ message: "actorId is required", status: 400, },);
-  }
-  if (!input.idempotencyKey || typeof input.idempotencyKey !== "string") {
-    return jsonError({ message: "idempotencyKey is required", status: 400, },);
-  }
-
-  // ── Authorization: chat access ─────────────────────────
-  // Cross-user write guard: only admin, creator, or a participant of
-  // `chatId` may trigger generation (BUG-generation-control-plane-routes-lack-authorization).
-  const authUserId = requireUserId({ userId, },);
-  if (typeof authUserId !== "string") { return authUserId; }
-  const access = await checkChatAccess(database, input.chatId, authUserId, userRole,);
-  if (!access.ok) { return forbiddenResponse(); }
-  if (input.prompt !== undefined && !Array.isArray(input.prompt,)) {
-    return jsonError({ message: "prompt must be an array", status: 400, },);
-  }
-  if (input.provider !== undefined && typeof input.provider !== "string") {
-    return jsonError({ message: "provider must be a string", status: 400, },);
-  }
-  if (input.modelId !== undefined && typeof input.modelId !== "string") {
-    return jsonError({ message: "modelId must be a string", status: 400, },);
-  }
+  const rejected = await validateGenerateRequest({ input, database, userId, userRole, },);
+  if (rejected !== null) { return rejected; }
 
   // ── Resolve provider + model ──────────────────────────
 
@@ -150,6 +118,16 @@ export async function handleGenerate({
     return jsonError({ message: `Prompt assembly failed: ${(error as Error).message}`, status: 422, },);
   }
 
+  // Smart-regen style steering (BUG-smart-regen-style-not-threaded-through):
+  // the validated style instruction is appended to the system message so the
+  // LLM payload carries it — the standalone `systemPrompt` string is only
+  // tracking metadata and never reaches the provider.
+  const stylePrompt = buildStylePrompt(input.regenStyle ?? null,);
+  if (stylePrompt !== null) {
+    messages = appendStylePrompt(messages, stylePrompt,);
+    systemPrompt = systemPrompt === undefined ? stylePrompt : `${systemPrompt}\n\n${stylePrompt}`;
+  }
+
   // Resolution chain: explicit request → chat setting → config default → provider capability
   let resolvedStream = input.stream;
   if (resolvedStream === undefined) {
@@ -166,6 +144,9 @@ export async function handleGenerate({
       (chatStreaming == null && configDefault === true) ||
       (chatStreaming == null && configDefault == null && providerCapable);
   }
+  // Variant fill (smart-regen) must complete before the HTTP response so the
+  // pending row is updated in place — SSE delivery cannot do that.
+  if (input.targetMessageId !== undefined) { resolvedStream = false; }
 
   // Sampling params: explicit request → per-chat gm_config.assistantTuning →
   // provider default. The extra chat read is skipped when both are explicit.

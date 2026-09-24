@@ -61,6 +61,8 @@ export interface MemoryPanelState {
   auditLoading: boolean;
   /** Audit-tab-specific error message (null = none). */
   auditError: string | null;
+  /** Ids of audit entries whose details block is expanded. */
+  auditExpandedIds: string[];
   searchQuery: string;
   loading: boolean;
   tokenBudget: number;

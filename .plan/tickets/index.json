@@ -295,7 +295,7 @@
     "epic": "epic-assets-media-pipeline",
     "tags": [],
     "source": ".plan/tickets/BUG-asset-webp-vp8x-dimension-truncation.md",
-    "status": "[OK] Already resolved in dev — no code change needed",
+    "status": "done",
     "git_issue": "6338dea"
   },
   "BUG-ASSETS-DELETE-ASSETS-ID-LINKS-LINKID-IGNORES-LINKID-PATH-PAR": {
@@ -321,7 +321,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-assets-delete-fk-constraint-fails.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "53f08d3"
   },
   "BUG-ASSETS-SERVE-SERVEFILE-OMITS-X-CONTENT-TYPE-OPTIONS-NOSNIFF-": {
@@ -374,7 +374,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-audit-panel-details-not-expandable.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-AUDIT-PANEL-RENDERS-ACTION-TEXT-LABELS-INSTEAD-OF-ICONS": {
     "hash": "d93049b",
@@ -387,7 +387,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-audit-panel-renders-action-text-labels-instead-of-icons.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-AUTH-RATE-LIMITER-TESTS-SEED-PER-IP-BUCKETS-VIA-GETCLIENTIP-": {
     "hash": "a877274",
@@ -530,7 +530,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-backfill-of-historical-posts-on-new-follower-unspecified.md",
-    "status": "not-yet-implemented"
+    "status": "done"
   },
   "BUG-BASE64-TOBASE64-COERCES-UNDEFINED-TO-0-VIA-BYTES-I-0": {
     "hash": "d0d3739",
@@ -660,7 +660,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-blog-comments-post-accepts-non-public-posts-existence-oracle.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-BLOG-FOLLOWERS-LIST-NO-AUTH-REVEALS-FOLLOWER-IDS": {
     "hash": "pending",
@@ -1829,7 +1829,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-create-test-db-custom-dialect-can-bypass-settestdatabase.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-CRITICAL-HIT-ROLLS-IGNORE-ADVANTAGE": {
     "hash": "pending",
@@ -2153,7 +2153,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-eager-db-init-creates-on-disk-db-on-test-import.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-ELYSIA-AUTH-TS-DEAD-SHIM-DUPLICATE-LOGIC": {
     "hash": "d0d5792",
@@ -3723,7 +3723,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-notification-stream-error-unreachable.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "8c994a7"
   },
   "BUG-NPC-NAVIGATION-ROUTES-ALL-STUBBED": {
@@ -4643,7 +4643,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-settestdatabase-global-leak-on-test-throw.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-SETTINGS-SAVE-OMITS-GMCONFIG-FOR-ONLINE-CHATS": {
     "hash": "e5219e3",
@@ -4773,7 +4773,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-sqlite-foreign-keys-pragma-set-twice-redundant.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-SQLITE-PRAGMAS-SKIPPED-WHEN-DIALECT-BUILT-FROM-EXISTING-DATA": {
     "hash": "3e90ae3",
@@ -4799,7 +4799,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-sqlite-wal-pragma-noop-on-in-memory-test-db.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-SSE-STREAMS-LEAK-STRING-ERROR-INTERNALS-TO-CLIENTS": {
     "hash": "1a3a97a",
@@ -5058,7 +5058,7 @@
     "epic": "epic-chat-lifecycle-moderation",
     "tags": [],
     "source": ".plan/tickets/BUG-test-assertions-stale-gm-support-message.md",
-    "status": "[OK] Resolved",
+    "status": "done",
     "git_issue": "f4ea054"
   },
   "BUG-TEST-RUN-ID-USES-DATE-NOW-COLLISION-RISK-UNDER-PARALLEL": {
@@ -5072,7 +5072,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-test-run-id-uses-date-now-collision-risk-under-parallel.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-TEST-SUITE-FLAKY-44-ON-DEV-2026-08-22": {
     "hash": "1e5d5dc",
@@ -5165,7 +5165,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-tui-app-getlogger-throws-when-running-standalone.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "5dab681"
   },
   "BUG-TUI-APP-NEVER-THREADS-SESSIONTOKEN-INTO-CHATWIDGET": {
@@ -5178,7 +5178,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-tui-app-never-threads-sessiontoken-into-chatwidget.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "18797fe"
   },
   "BUG-TURN-STATE-BLIND-READ-MODIFY-WRITE-LOST-UPDATES-ON-CONCURREN": {
@@ -5218,7 +5218,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-typecheck-scripts-worktree-referenceerror-class-bugs-ship-gr.md",
-    "status": "open"
+    "status": "done"
   },
   "BUG-UNDEFINED-CSS-CUSTOM-PROPERTIES-BREAK-RENDERING": {
     "hash": "6c5ec87",

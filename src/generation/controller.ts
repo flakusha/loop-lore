@@ -113,7 +113,7 @@ export function generationRoutes(
     return handleRegenerate(readBody(ctx,), database, {
       userId: auth.userId ?? null,
       userRole: auth.userRole ?? null,
-    },);
+    }, config,);
   },);
 
   app.post(`${prefix}/generation/image`, async (ctx,) => {

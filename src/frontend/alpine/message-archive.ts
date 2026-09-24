@@ -55,7 +55,7 @@ export const messageArchive: Partial<ChatState> & ThisType<ChatState> = {
 
   async purgeArchivedMessages() {
     if (!this.activeChat) { return; }
-    if (!confirm("Permanently delete archived messages older than 30 days?",)) { return; }
+    if (!confirm("Permanently delete archived messages older than the retention window?",)) { return; }
     try {
       const res = await apiFetch(`/api/v1/chats/${this.activeChat}/messages/purge`, { method: "POST", },);
       if (res.ok) {

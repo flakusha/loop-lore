@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** open
+**Status:** done
 **Priority:** medium
 **Effort:** small
 
@@ -47,3 +47,4 @@ Acceptance criteria:
 - [x] Verified: outgoing `/api/chats/:id/messages` requests carry `Authorization: Bearer <token>` when token is set (covered by `src/tui/chat/api.ts` consuming `host.sessionToken` — token plumbing now reaches it via `app.ts` → `ChatWidget` → `host`).
 - [x] Verified: requests without token omit the header (anonymous mode still works against solo deployments).
 - Workaround for now: in solo mode, server ignores missing token → TUI works for development; broken for remote/multi-user.
+- Re-verified 2026-09-24 against `bug-batch-2026-09-24b` HEAD `376be137e` — full chain present: `TuiConfig.sessionToken` (`src/config/schema/tui.ts:9`), `tuiMeta.properties.sessionToken` (`src/config/sections/tui.ts:33-36`), `tui` section registered in defaults/schema-class/json-schema/env-map/hot-reload, `loadConfig` deep-merges raw TOML so `[tui] sessionToken` survives (`src/config/load/load.ts:45,60,79`), constructor threading (`src/tui/app.ts:31-37,56-63`), `ChatWidget` `""`→`undefined` normalization (`src/tui/chat/index.ts:47`), `auth:` consumption (`src/tui/chat/api.ts:32,77`), and the 3-case contract test (`src/tui/chat/index.test.ts:111-126`). No code change required in this batch.

@@ -4,6 +4,7 @@
 import { Elysia, t, } from "elysia";
 import type { TranslatorFn, } from "../../i18n/types";
 import { BlogService, } from "../../rpg/blog/service.js";
+import { can, } from "../../users/permissions";
 import {
   BlogCommentCreateBody,
   BlogCommentResponse,
@@ -13,7 +14,8 @@ import {
   SuccessResponse,
 } from "../../validation/schemas";
 import { type HandlerOpts, } from "../actor-auth.js";
-import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils.js";
+import { extractAuth, HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils.js";
+import { isReadablePost, } from "./post-read-policy.js";
 
 /**
  * @param opts
@@ -27,10 +29,18 @@ export function blogCommentRoutes(opts: HandlerOpts, prefix = "/api",) {
     .post(`${prefix}/blog/posts/:id/comments`, async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
+      const { userRole, } = extractAuth(ctx,);
       const t = ctx.t as TranslatorFn | undefined;
 
       const post = await svc.getPost(ctx.params.id,);
-      if (!post) {
+      // Same row-level read policy as GET /api/blog/posts/:id
+      // (BUG-blog-comments-post-accepts-non-public-posts): the 404 must be
+      // indistinguishable from a missing post so non-public posts are
+      // neither commentable nor enumerable.
+      if (
+        post === undefined ||
+        !isReadablePost(post, userId, can(userRole, "admin.settings",),)
+      ) {
         return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
 
@@ -57,6 +67,18 @@ export function blogCommentRoutes(opts: HandlerOpts, prefix = "/api",) {
       },
     },)
     .get(`${prefix}/blog/posts/:id/comments`, async (ctx: any,) => {
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
+      const { userRole, } = extractAuth(ctx,);
+      // Same post-level read policy as the rest of the blog surface: the
+      // comment thread must not reveal a non-public post's existence.
+      const post = await svc.getPost(ctx.params.id,);
+      if (
+        post === undefined ||
+        !isReadablePost(post, userId, can(userRole, "admin.settings",),)
+      ) {
+        return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, },);
+      }
       const comments = await svc.listCommentsThreaded(ctx.params.id, {
         limit: ctx.query.limit ? Number(ctx.query.limit,) : undefined,
         offset: ctx.query.offset ? Number(ctx.query.offset,) : undefined,
@@ -74,6 +96,18 @@ export function blogCommentRoutes(opts: HandlerOpts, prefix = "/api",) {
       },
     },)
     .get(`${prefix}/blog/posts/:id/comments/:commentId`, async (ctx: any,) => {
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
+      const { userRole, } = extractAuth(ctx,);
+      // Gate on the parent post first (same read policy) so a comment id
+      // cannot be used to probe a non-public post's existence.
+      const post = await svc.getPost(ctx.params.id,);
+      if (
+        post === undefined ||
+        !isReadablePost(post, userId, can(userRole, "admin.settings",),)
+      ) {
+        return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, },);
+      }
       const comment = await svc.getComment(ctx.params.commentId,);
       if (!comment) {
         return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, },);
