@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** [OK] Resolved
+**Status:** done
 **Priority:** high
 **Effort:** Trivial
 **Epic:** epic-chat-lifecycle-moderation

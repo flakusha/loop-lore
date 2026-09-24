@@ -37,6 +37,9 @@ export {
   REQUIRES_RESTART_KEYS,
   SECRET_KEY_PATTERN,
 } from "./config-keys";
+
+/** Default chat-archive purge retention in days (`archive_retention_days`). */
+export const ARCHIVE_RETENTION_DAYS_DEFAULT = 90;
 /**
  * Return all system config entries ordered by key.
  * @param db - Database instance.
@@ -141,7 +144,14 @@ export async function seedDefaults(db: Kysely<DB>, config: Config,): Promise<voi
     },);
   }
 
-  defaults.push({ key: "log_retention_days", value: "90", description: "Audit log retention in days", },);
+  defaults.push(
+    { key: "log_retention_days", value: "90", description: "Audit log retention in days", },
+    {
+      key: "archive_retention_days",
+      value: String(ARCHIVE_RETENTION_DAYS_DEFAULT,),
+      description: "Chat archive purge retention in days",
+    },
+  );
 
   if (config?.generation?.defaultProvider) {
     defaults.push(

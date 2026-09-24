@@ -17,6 +17,10 @@ import {
 } from "../../validation/schemas";
 import { type HandlerOpts, } from "../actor-auth.js";
 import { extractAuth, HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils.js";
+import { isReadablePost, } from "./post-read-policy.js";
+
+/** Filter shape accepted by BlogService.listPosts. */
+type ListFilters = Parameters<InstanceType<typeof BlogService>["listPosts"]>[0];
 
 /**
  * @param opts
@@ -69,14 +73,9 @@ export function blogPostRoutes(opts: HandlerOpts, prefix = "/api",) {
         return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
       // Row-level read policy (BUG-blog-post-get-bypasses-visibility-policy):
-      // a post is readable only when it is public AND published, when the
-      // caller is its author, or when the caller is an admin. Denied rows
-      // answer 404 (not 403) so post existence is not leaked.
-      const readable = (post.visibility === BlogPostVisibility.Public &&
-        post.status === BlogPostStatus.Published) ||
-        post.author_id === userId ||
-        can(userRole, "admin.settings",);
-      if (!readable) {
+      // see isReadablePost — denied rows answer 404 (not 403) so post
+      // existence is not leaked.
+      if (!isReadablePost(post, userId, can(userRole, "admin.settings",),)) {
         return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
       await svc.incrementViewCount(post.id,);
@@ -96,17 +95,62 @@ export function blogPostRoutes(opts: HandlerOpts, prefix = "/api",) {
     .get(`${prefix}/blog/posts`, async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
+      const { userRole, } = extractAuth(ctx,);
       const query = ctx.query as Record<string, string>;
-      const posts = await svc.listPosts({
-        author_id: query.author_id,
-        visibility: query.visibility as any,
-        status: query.status as any,
-        category: query.category,
-        world_id: query.world_id,
-        limit: query.limit ? Number(query.limit,) : undefined,
-        offset: query.offset ? Number(query.offset,) : undefined,
-        userId: typeof userId === "string" ? userId : undefined,
-      },);
+      const limit = query.limit ? Number(query.limit,) : undefined;
+      const offset = query.offset ? Number(query.offset,) : undefined;
+      // List policy (BUG-blog-comments-post-accepts-non-public-posts —
+      // client-controlled ?visibility=/?status= passthrough): non-admin
+      // callers may never widen the result set past the row-level read
+      // policy. Branches:
+      // - admin: full filter power;
+      // - visibility=followers: the follower feed (followers-only posts of
+      //   followed authors; userId scopes the author set);
+      // - author_id=self: the author's own management view (any status);
+      // - otherwise: public browse — public+published only.
+      let filters: ListFilters;
+      if (can(userRole, "admin.settings",)) {
+        filters = {
+          author_id: query.author_id,
+          visibility: query.visibility as BlogPostVisibility | undefined,
+          status: query.status as BlogPostStatus | undefined,
+          category: query.category,
+          world_id: query.world_id,
+          limit,
+          offset,
+          userId,
+        };
+      } else if (query.visibility === BlogPostVisibility.Followers) {
+        filters = {
+          visibility: BlogPostVisibility.Followers,
+          userId,
+          category: query.category,
+          world_id: query.world_id,
+          limit,
+          offset,
+        };
+      } else if (query.author_id === userId) {
+        filters = {
+          author_id: userId,
+          visibility: query.visibility as BlogPostVisibility | undefined,
+          status: query.status as BlogPostStatus | undefined,
+          category: query.category,
+          world_id: query.world_id,
+          limit,
+          offset,
+        };
+      } else {
+        filters = {
+          author_id: query.author_id,
+          visibility: BlogPostVisibility.Public,
+          status: BlogPostStatus.Published,
+          category: query.category,
+          world_id: query.world_id,
+          limit,
+          offset,
+        };
+      }
+      const posts = await svc.listPosts(filters,);
       return jsonResponse({ success: true, posts, count: posts.length, },);
     }, {
       response: {

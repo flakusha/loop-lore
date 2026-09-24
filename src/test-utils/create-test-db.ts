@@ -26,8 +26,9 @@ export interface TestDb {
  * @returns `{ db, sqlite }` pair; `sqlite` is exposed for PRAGMA-level introspection tests.
  */
 export async function createTestDb(): Promise<TestDb> {
+  // No local pragmas — `createSqliteDialect` is the single enforcement point
+  // for `PRAGMA foreign_keys = ON` (BUG-sqlite-foreign-keys-pragma-set-twice-redundant).
   const sqlite = new Database(":memory:",);
-  sqlite.run("PRAGMA foreign_keys = ON",);
   const dialect = createSqliteDialect(sqlite,);
   const db = new Kysely<DB>({ dialect, },);
 

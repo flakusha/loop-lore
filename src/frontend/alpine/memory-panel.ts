@@ -32,6 +32,7 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
     auditActionFilter: null,
     auditLoading: false,
     auditError: null,
+    auditExpandedIds: [],
     searchQuery: "",
     loading: false,
     tokenBudget: 1024,

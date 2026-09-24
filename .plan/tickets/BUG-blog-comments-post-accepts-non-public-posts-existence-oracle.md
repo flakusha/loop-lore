@@ -3,7 +3,7 @@
 
 # BUG: Blog comments POST accepts non-public posts (existence oracle via getPost raw lookup)
 
-**Status:** ⬜ Not Started
+**Status:** done
 **Priority:** high
 **Effort:** Medium
 

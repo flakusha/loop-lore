@@ -3,7 +3,7 @@
 
 # BUG: eager-db-init-creates-on-disk-db-on-test-import
 
-**Status:** ✅ Resolved (already on dev, 2026-09-20)
+**Status:** done
 **Priority:** Medium
 **Effort:** Medium
 **Summary:** Importing @/db eagerly creates loop-lore-data/loop-lore.db on disk during unit tests (2.2MB verified)
