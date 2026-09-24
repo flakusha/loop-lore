@@ -7647,6 +7647,12 @@
       "source": ".plan/tickets/TASK-wire-fswatcher-onreload-callback-in-server-startup.md"
     }
   ],
+  "src/config/index.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/federation-trust-mechanism.md"
+    }
+  ],
   "src/config/load.test.ts": [
     {
       "kind": "epic",
@@ -8223,6 +8229,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-encryption-auto-key-rotation.md"
+    }
+  ],
+  "src/config/sections/federation.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/federation-trust-mechanism.md"
     }
   ],
   "src/config/sections/headers.ts": [
@@ -12695,6 +12707,12 @@
       "source": "docs/spec/federation-defederation-admin.md"
     }
   ],
+  "src/federation/delivery.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/federation-trust-mechanism.md"
+    }
+  ],
   "src/federation/gossip.test.ts": [
     {
       "kind": "ticket",
@@ -12712,6 +12730,10 @@
     },
     {
       "kind": "spec",
+      "source": "docs/spec/federation-trust-mechanism.md"
+    },
+    {
+      "kind": "spec",
       "source": "docs/spec/headless-alternative-frontends.md"
     }
   ],
@@ -12719,6 +12741,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-federation-tls-peer-trust-custom-ca-pinning-and-optional-mtl.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/federation-trust-mechanism.md"
     }
   ],
   "src/federation/peer-keys.ts": [
@@ -12743,6 +12769,12 @@
       "source": "docs/spec/headless-alternative-frontends.md"
     }
   ],
+  "src/federation/spki-pin.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/federation-trust-mechanism.md"
+    }
+  ],
   "src/federation/switcher/migration.ts": [
     {
       "kind": "spec",
@@ -12753,6 +12785,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/federation-instance-switcher.md"
+    }
+  ],
+  "src/federation/trust-map.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/federation-trust-mechanism.md"
     }
   ],
   "src/frontend": [
@@ -32647,6 +32685,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-032.md"
+    }
+  ],
+  "src/views/admin/_nav.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-federation-admin-ui-for-follows-blocklists-key-rotation.md"
     }
   ],
   "src/views/blog.html": [
