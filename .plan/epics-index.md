@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 296 epics
+**Total:** 300 epics
 
 ## Summary
 
@@ -120,6 +120,10 @@
 | Draft — description pending (formerly in `chore-docs-reconcile`, worktree merged 2026-08-14)\ | Epic 26: Multi-Instance Reconciliation — Implementation Plan | medium | Medium | 1 | [epic-multi-instance-reconciliation.md](/.plan/epics/epic-multi-instance-reconciliation.md) |
 | Draft — description pending (formerly in `chore-docs-reconcile`, worktree merged 2026-08-14)\ | Epic 27: Data Integrity & ACID Guarantees — Implementation Plan | medium | Medium | 0 | [epic-data-integrity-acid.md](/.plan/epics/epic-data-integrity-acid.md) |
 | 🟡 In Progress (crafting DB layer + memory injection + chat infrastructure merged; Professions/Stations/Quality services + UI pending) | EPIC-036: Crafting, Memory & Chat Systems | High | Very High | 0 | [epic-crafting-professions.md](/.plan/epics/epic-crafting-professions.md) |
+| Unknown | EPIC-RESEARCH-MATH-AI-BRIDGE — LLM ↔ math contract | Unknown | Unknown | 0 | [epic-math-ai-bridge.md](/.plan/epics/epic-math-ai-bridge.md) |
+| Unknown | EPIC-RESEARCH-MATH-ECONOMY — Action & resource economy | Unknown | Unknown | 0 | [epic-math-economy.md](/.plan/epics/epic-math-economy.md) |
+| Unknown | EPIC-RESEARCH-MATH-LEDGER — Event-sourced projections | Unknown | Unknown | 0 | [epic-math-ledger.md](/.plan/epics/epic-math-ledger.md) |
+| Unknown | EPIC-RESEARCH-MATH-RESOLUTION — Math models behind roll resolution | Unknown | Unknown | 0 | [epic-math-resolution.md](/.plan/epics/epic-math-resolution.md) |
 | 🟡 Code+tests+schema done (migration 035); UNWIRED — routes pending | Epic: Achievements | Medium | Medium | 13 | [epic-achievements.md](/.plan/epics/epic-achievements.md) |
 | ⬜ Not Started | Epic: Ambient, Music & Sound Effects | Medium | High | 14 | [epic-ambient-music-sfx.md](/.plan/epics/epic-ambient-music-sfx.md) |
 | Draft | Epic: AO NSFW Game Mechanics | High | Very High | 0 | [epic-nsfw-game-mechanics.md](/.plan/epics/epic-nsfw-game-mechanics.md) |
@@ -1350,6 +1354,38 @@ Long-horizon vision from the "Far Fetched" ideas bucket: position loop-lore as a
 - **File:** `.plan/epics/epic-crafting-professions.md`
 
 Multi-system epic combining:
+
+### EPIC-RESEARCH-MATH-AI-BRIDGE — LLM ↔ math contract
+
+- **Status:** Unknown
+- **Priority:** Unknown
+- **Effort:** Unknown
+- **Type:** Unknown
+- **File:** `.plan/epics/epic-math-ai-bridge.md`
+
+### EPIC-RESEARCH-MATH-ECONOMY — Action & resource economy
+
+- **Status:** Unknown
+- **Priority:** Unknown
+- **Effort:** Unknown
+- **Type:** Unknown
+- **File:** `.plan/epics/epic-math-economy.md`
+
+### EPIC-RESEARCH-MATH-LEDGER — Event-sourced projections
+
+- **Status:** Unknown
+- **Priority:** Unknown
+- **Effort:** Unknown
+- **Type:** Unknown
+- **File:** `.plan/epics/epic-math-ledger.md`
+
+### EPIC-RESEARCH-MATH-RESOLUTION — Math models behind roll resolution
+
+- **Status:** Unknown
+- **Priority:** Unknown
+- **Effort:** Unknown
+- **Type:** Unknown
+- **File:** `.plan/epics/epic-math-resolution.md`
 
 ### Epic: Achievements
 
@@ -3142,3 +3178,4 @@ Extends the World & Locations foundation (see `epic-world-locations.md`, which
 ## Backlog
 
 Full backlog with prioritized tasks: [.plan/backlog/](/.plan/backlog/)
+
