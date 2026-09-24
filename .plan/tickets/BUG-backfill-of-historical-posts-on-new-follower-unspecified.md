@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** open
+**Status:** done
 **Priority:** low
 **Effort:** Medium
 
@@ -18,9 +18,9 @@ FEAT-activitypub-federation does not specify paginated outbox backfill when a wo
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [ ] Runtime backfill implemented (lands with `FEAT-activitypub-federation` — no outbox exists yet)
+- [x] Documentation updated
+- [x] Tests passing (no runtime surface to test; existing suites unaffected)
 
 ## Assessment (2026-09-16, fix-batch-20260916 - closed, no implementation)
 
@@ -31,3 +31,18 @@ nodeinfo/capabilities stub; the only AP surface is signing keys
 route, or pagination anywhere in `src/`. Per user approval 2026-09-16:
 closed with no implementation. Reopen when an outbox ships, or fold into
 FEAT-activitypub-federation as an acceptance criterion.
+
+## Verification (2026-09-24)
+
+Re-verified the assessment against current `src/`: still no outbox table,
+route, or pagination — `blog_follows` is a local user→author edge, not a
+federated actor. Took the ticket's own "fold into FEAT" path:
+
+- `FEAT-activitypub-federation.md` AC now specifies the backfill explicitly:
+  newest-first Mastodon/Lemmy-style `OrderedCollection` pages over a recent
+  history window, capped by count and age.
+- `matrix-federation-decisions.md` C9 (Backfill policy) records the decision
+  as decided with the same bounds.
+
+Runtime behavior remains owned by `FEAT-activitypub-federation`; reopen this
+ticket only if that ticket ships without the backfill AC.

@@ -3,7 +3,7 @@
 
 # BUG: sqlite-wal-pragma-noop-on-in-memory-test-db
 
-**Status:** ✅ Resolved (already on dev, 2026-09-20)
+**Status:** done
 **Priority:** Medium
 **Effort:** Medium
 **Summary:** PRAGMA journal_mode=WAL is a silent no-op on :memory: test DBs and redundant with createSqliteDialect

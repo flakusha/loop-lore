@@ -7635,6 +7635,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-tui-app-getlogger-throws-when-running-standalone.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-tui-app-never-threads-sessiontoken-into-chatwidget.md"
     }
   ],
   "src/config/load/parse.ts": [
@@ -13451,6 +13455,13 @@
       "source": ".plan/tickets/TASK-gm-guided-story-creation.md"
     }
   ],
+
+  "src/frontend/alpine/chat-types/memory.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-audit-panel-details-not-expandable.md"
+    }
+  ],
   "src/frontend/alpine/chat-types/npc-state.ts": [
     {
       "kind": "epic",
@@ -14076,6 +14087,10 @@
   "src/frontend/alpine/memory-panel.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-audit-panel-details-not-expandable.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-fe-be-harmony-checker-blind-to-elysia-app-direct-routes-fact.md"
     },
     {
@@ -14103,7 +14118,40 @@
       "source": "docs/spec/memory-system.md"
     }
   ],
+
+  "src/frontend/alpine/memory-panel/audit.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-audit-panel-details-not-expandable.md"
+    }
+  ],
+
+  "src/frontend/alpine/memory-panel/audit.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-audit-panel-details-not-expandable.md"
+    }
+  ],
+
+  "src/frontend/alpine/memory-panel/transform.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-audit-panel-details-not-expandable.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-audit-panel-renders-action-text-labels-instead-of-icons.md"
+    }
+  ],
   "src/frontend/alpine/memory-panel/transform.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-audit-panel-details-not-expandable.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-audit-panel-renders-action-text-labels-instead-of-icons.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-056.md"

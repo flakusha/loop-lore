@@ -24,6 +24,7 @@ function makeState(overrides: Partial<ChatState["memoryPanel"]> = {},): ChatStat
       auditError: null as string | null,
       auditCursor: null as string | null,
       auditHasMore: false,
+      auditExpandedIds: [] as string[],
       ...overrides,
     },
   } as unknown as ChatState;
@@ -178,5 +179,37 @@ describe("memoryPanelAudit", () => {
     } finally {
       restore();
     }
+  });
+
+  test("toggleAuditExpanded expands and collapses an entry", () => {
+    const s = makeState();
+    expect(s.isAuditExpanded("r1",),).toBe(false,);
+    s.toggleAuditExpanded("r1",);
+    expect(s.isAuditExpanded("r1",),).toBe(true,);
+    expect(s.memoryPanel.auditExpandedIds,).toEqual(["r1",],);
+    s.toggleAuditExpanded("r1",);
+    expect(s.isAuditExpanded("r1",),).toBe(false,);
+    expect(s.memoryPanel.auditExpandedIds,).toEqual([],);
+  });
+
+  test("expanded state is tracked per entry", () => {
+    const s = makeState();
+    s.toggleAuditExpanded("r1",);
+    s.toggleAuditExpanded("r2",);
+    expect(s.isAuditExpanded("r1",),).toBe(true,);
+    expect(s.isAuditExpanded("r2",),).toBe(true,);
+    expect(s.isAuditExpanded("r3",),).toBe(false,);
+    s.toggleAuditExpanded("r1",);
+    expect(s.memoryPanel.auditExpandedIds,).toEqual(["r2",],);
+  });
+
+  test("_auditDetailsExpandable and _formatAuditDetails expose the transform", () => {
+    const s = makeState();
+    const entry = {
+      ...row("r1",),
+      details: JSON.stringify({ memoryIds: ["m1",], actorCount: 2, },),
+    } as unknown as ChatState["memoryPanel"]["auditEntries"][number];
+    expect(s._auditDetailsExpandable(entry,),).toBe(true,);
+    expect(s._formatAuditDetails(entry,),).toBe('{\n  "memoryIds": [\n    "m1"\n  ],\n  "actorCount": 2\n}',);
   });
 });

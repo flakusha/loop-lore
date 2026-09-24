@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** open
+**Status:** done
 **Priority:** medium
 **Effort:** small
 
@@ -27,9 +27,9 @@ Verified with `bun -e "import { getLogger } from './src/logger'; getLogger()"` �
 
 ## Acceptance Criteria
 
-- [ ] Logger initialized before any code path can call `getLogger()`. Add `createLogger({ level: "warn" })` at module top of `src/tui/app.ts` (above `const app = new TUIApp()`).
-- [ ] Pressing F5 against an unreachable backend no longer crashes the TUI process; the failure is surfaced as a status-bar message.
-- [ ] No regression: TUI startup, screen layout, asset toggle, message send/load all behave as before when logger is initialized.
+- [x] Logger initialized before any code path can call `getLogger()`. Add `createLogger({ level: "warn" })` at module top of `src/tui/app.ts` (above `const app = new TUIApp()`).
+- [x] Pressing F5 against an unreachable backend no longer crashes the TUI process; the failure is surfaced as a status-bar message.
+- [x] No regression: TUI startup, screen layout, asset toggle, message send/load all behave as before when logger is initialized.
 
 ## Notes
 
@@ -41,3 +41,4 @@ Verified with `bun -e "import { getLogger } from './src/logger'; getLogger()"` �
 - `src/tui/app.ts:14,137-141` — `createLogger({ level: "warn" })` added at module top, above `const app = new TUIApp()` (the ticket's own prescribed fix).
 - Empirical proof (2026-09-15): `.tmp` script reproducing the startup shape — without `createLogger`, the constructor's `loadConfig()` throws from `runTemplateExpansion` (`getLogger()` is called unconditionally at `src/config/template-expansion/run.ts:37` via `src/config/load/load.ts:125`) and the catch block's `getLogger().warn` rethrows → process exit 1; with `createLogger` first, config loads and the run exits clean.
 - Landing via `tui-logger-init` (same session as the sessiontoken batch) — the sessiontoken diff's `loadConfig()` call in the constructor had converted this latent F5-path crash into an unconditional startup crash; this fix resolves both.
+- Re-verified 2026-09-24 against `bug-batch-2026-09-24b` HEAD `376be137e`: `createLogger({ level: "warn", },)` present at `src/tui/app.ts:139` (module top, above `const app = new TUIApp()` at 141); the F5 catch block at `src/tui/app.ts:93-98` logs via `getLogger().child(...)` and surfaces `"load failed"` in the status bar without rethrowing. No code change required in this batch.

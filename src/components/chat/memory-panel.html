@@ -291,10 +291,27 @@
               </template>
             </div>
             <div
-              x-show="entry.action !== 'inject'"
-              style="color: var(--text-secondary); font-size: 11px; word-break: break-all"
-              x-text="entry.details"
+              x-show="entry.action !== 'inject' && _auditDetailsExpandable(entry)"
+              style="color: var(--text-secondary); font-size: 11px"
             >
+              <div
+                style="display: flex; gap: var(--space-1); cursor: pointer; user-select: none; word-break: break-all"
+                data-testid="memory-audit-details-toggle"
+                @click="toggleAuditExpanded(entry.id)"
+              >
+                <span x-text="isAuditExpanded(entry.id) ? '▾' : '▸'"></span>
+                <span
+                  x-show="!isAuditExpanded(entry.id)"
+                  style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis"
+                  x-text="entry.details"
+                ></span>
+              </div>
+              <pre
+                x-show="isAuditExpanded(entry.id)"
+                style="margin: var(--space-1) 0 0; white-space: pre-wrap; word-break: break-all"
+                data-testid="memory-audit-details-json"
+                x-text="_formatAuditDetails(entry)"
+              ></pre>
             </div>
           </div>
         </template>

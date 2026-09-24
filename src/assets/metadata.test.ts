@@ -220,3 +220,48 @@ describe("extractImageMetadata", () => {
     });
   });
 });
+
+/**
+ * Regression guard for RFC 9649 VP8X canvas dimensions: width/height are
+ * 24-bit little-endian (canvas-1) fields at chunk offsets +12/+15. A 14-bit
+ * mask on those fields silently truncates any canvas dimension >= 16385px
+ * (e.g. 30000 & 0x3FFF reads as 13616), corrupting aspect-ratio and
+ * thumbnail sizing downstream. Kept as a top-level describe — bun's test
+ * discovery drops tests appended mid-file in some environments.
+ */
+describe("WebP VP8X canvas dimensions beyond the 14-bit range", () => {
+  /**
+   * @param canvasW
+   * @param canvasH
+   * @returns minimal VP8X WebP buffer with the given canvas size
+   */
+  function vp8xBuffer(canvasW: number, canvasH: number,): Uint8Array {
+    const uint24le = (v: number,): Uint8Array => new Uint8Array([v & 0xFF, (v >> 8) & 0xFF, (v >> 16) & 0xFF,],);
+    return new Uint8Array([
+      ...new Uint8Array([0x52, 0x49, 0x46, 0x46,],), // "RIFF"
+      ...new Uint8Array([0x16, 0x00, 0x00, 0x00,],), // RIFF size = 30 - 8
+      ...new Uint8Array([0x57, 0x45, 0x42, 0x50,],), // "WEBP"
+      ...new Uint8Array([0x56, 0x50, 0x38, 0x58,],), // "VP8X"
+      ...new Uint8Array([0x0A, 0x00, 0x00, 0x00,],), // chunk size = 10
+      0x00, // flags
+      0x00,
+      0x00,
+      0x00, // reserved
+      ...uint24le(canvasW - 1,),
+      ...uint24le(canvasH - 1,),
+    ],);
+  }
+
+  test("preserves full 24-bit canvas dimensions (30000x30000)", () => {
+    const result = extractImageMetadata(vp8xBuffer(30000, 30000,),);
+    expect(result.format,).toBe("webp",);
+    expect(result.width,).toBe(30000,);
+    expect(result.height,).toBe(30000,);
+  });
+
+  test("preserves dimensions just past the 14-bit boundary (16385x16385)", () => {
+    const result = extractImageMetadata(vp8xBuffer(16385, 16385,),);
+    expect(result.width,).toBe(16385,);
+    expect(result.height,).toBe(16385,);
+  });
+});
