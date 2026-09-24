@@ -11,7 +11,7 @@
 **Epic:** Battle & Action Systems, Weather & Environment
 **Priority:** Medium
 **Effort:** High
-**Status:** Not Started
+**Status:** open
 **Created:** 2026-07-28
 **Cross-Mechanics Gap:** G4 (Battle ↔ Weather/Terrain)
 

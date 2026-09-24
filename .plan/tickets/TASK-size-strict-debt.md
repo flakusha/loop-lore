@@ -3,7 +3,7 @@
 
 # TASK-size-strict-debt: Close size-strict debt and promote size guard to CI gate
 
-**Status:** Not Started
+**Status:** open
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

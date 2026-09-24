@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ⬜ Not Started
+**Status:** done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-crafting-professions

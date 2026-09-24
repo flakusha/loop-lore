@@ -3,7 +3,7 @@
 
 # TASK-001: Dockerize the application
 
-**Status:** 🟡 In Progress — Dockerfile + compose wiring landed; docker-build ACs pending verification (no docker on dev host)
+**Status:** open
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

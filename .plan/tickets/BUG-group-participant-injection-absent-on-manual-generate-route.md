@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done (worktree fix-group-participant-injection; production code landed, tests WIP)
+**Status:** done
 **Priority:** medium
 **Effort:** Medium
 

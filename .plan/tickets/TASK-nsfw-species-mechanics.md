@@ -11,7 +11,7 @@
 **Epic:** AO NSFW Game Mechanics
 **Priority:** Low
 **Effort:** Very High
-**Status:** Not Started
+**Status:** open
 
 ## Summary
 

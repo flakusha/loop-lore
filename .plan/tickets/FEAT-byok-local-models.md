@@ -3,7 +3,7 @@
 
 # FEAT-byok-local-models: BYOK Local Models
 
-**Status:** Not Started
+**Status:** open
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ⬜ Not Started
+**Status:** open
 **Priority:** Medium (deferred — not required until schema evolution)
 **Effort:** Medium
 **Epic:** Data Integrity (Phase 3)

@@ -3,7 +3,7 @@
 
 # TASK: Mini-Games Framework + Tier 1
 
-**Status:** Not Started
+**Status:** open
 **Summary:** (none captured)
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)

@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ⬜ Not Started
+**Status:** open
 **Priority:** P3
 **Epic:** epic-character-core-system / epic-emotion-avatar-message-binding
 **Labels:** emotion, admin, crud, definitions

@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ⬜ Not Started
+**Status:** open
 **Priority:** high
 
 **Tags:** moderation, admin, permissions, nsfw, rbac

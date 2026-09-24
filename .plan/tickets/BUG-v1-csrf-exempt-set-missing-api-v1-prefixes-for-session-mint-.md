@@ -7,7 +7,7 @@
 **Context:** v0 to v1 endpoint migration (src/routes/v1/base-surface.ts:48, src/routes/v1/index.ts) duplicated authPublicRoutes. Tests moved to `/api/v1/...`; demo-login was not added to the exempt set under its v1 prefix. **Do NOT** exempt /api/v1/auth/logout (v0 logout is deliberately not exempt per BUG-logout-route-exempt-from-csrf-verification-logoff-csrf).
 **Acceptance Criteria:** Add /api/v1/auth/login, /api/v1/auth/register, /api/v1/demo-login, /api/v1/telemetry/event to `CSRF_EXEMPT_ROUTES`; e2e tests in tests/e2e/helpers/client.ts:193 + tests/e2e/flows/auth.test.ts:34 stop failing at demo-login with 403 csrf_verification_failed; cascade failures in assets/auth/chat-full.assets/versioning redirects are gone.
 
-**Status:** ⬜ Not Started
+**Status:** done
 **Priority:** high
 **Effort:** Medium
 **Labels:** security

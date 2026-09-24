@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 Partial (commit 85657ffb on dev, 2026-08-26; status never transitions to complete/failed)
+**Status:** done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-middleware-request-lifecycle

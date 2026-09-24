@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ⬜ Not Started
+**Status:** open
 **Priority:** Low
 **Effort:** Med
 **Related:** TASK-3d-character-avatars, TASK-emotions-avatar-edit-model

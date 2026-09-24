@@ -3,7 +3,7 @@
 
 # TASK-031: Character vs World Data Separation
 
-**Status:** open
+**Status:** done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Type-level boundary between character-owned and world-owned fields; APIs reject cross-boundary writes.

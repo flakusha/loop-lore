@@ -7,7 +7,7 @@
 **Context:** Source: docs/research/world-spec-extension-2026-09-21.md; tags lore, worlds. Epic: epic-lore-knowledge.
 **Acceptance Criteria:** See `## Acceptance Criteria` heading below — 5 migrations + lifecycle helper module + prompt section wiring + spec docs.
 
-**Status:** ⬜ Not Started
+**Status:** open
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-lore-knowledge

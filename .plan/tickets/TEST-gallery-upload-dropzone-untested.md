@@ -44,3 +44,6 @@ function isAllowedType(file: File) {
 
 - [ ] `initDropZone` tested with mock DOM
 - [ ] Non-image/audio/video files rejected with user-visible error
+
+
+git issue: ff40e65

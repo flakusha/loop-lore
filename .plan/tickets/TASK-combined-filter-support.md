@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ⬜ Not Started
+**Status:** open
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-chat-lifecycle-moderation

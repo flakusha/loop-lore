@@ -3,7 +3,7 @@
 
 # TASK-066: ComfyUI GGUF model loading workflow
 
-**Status:** Not Started
+**Status:** open
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

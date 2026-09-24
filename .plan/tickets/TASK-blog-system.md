@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 Partial (core CRUD + comments + follows + moderation built; threading + visibility done)
+**Status:** done
 **Priority:** Medium
 **Effort:** High
 **Epic:** epic-blog-system

@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ⬜ Not Started
+**Status:** open
 **Priority:** High
 **Effort:** Low
 **Related:** epic-resolution-system.md, epic-rpg-mechanics.md, epic-battle-action-systems.md

@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** [OK] Resolved (class now binds getOrCreateOwn via arrow-field dispatcher; regression test in preferences.test.ts verifies the binding; bun test src/nsfw/ — 60 pass / 0 fail)
+**Status:** done
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-nsfw-moderation-priority

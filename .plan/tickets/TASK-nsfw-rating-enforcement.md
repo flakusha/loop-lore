@@ -3,7 +3,7 @@
 
 # TASK: Nsfw Rating Enforcement
 
-**Status:** done
+**Status:** open
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

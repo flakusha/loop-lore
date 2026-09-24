@@ -10,7 +10,7 @@
 
 
 **Priority:** Medium
-**Status:** ⬜ Not Started
+**Status:** open
 **Epic:** epic-exploration-discovery
 **Tags:** exploration, expedition, team, collaboration, mapping
 

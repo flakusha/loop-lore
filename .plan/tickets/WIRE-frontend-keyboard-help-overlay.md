@@ -194,3 +194,6 @@ kbd {
 - `src/frontend/alpine/focus.ts` — existing `FocusPortal`, `trapFocus`
 - `src/frontend/alpine/shortcuts.ts` — keymap registry + `keynav:toggle-help` event
 - `src/frontend/alpine/i18n.ts` — existing `$t()` magic
+
+
+git issue: bdc214c

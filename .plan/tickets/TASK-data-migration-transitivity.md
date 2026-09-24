@@ -11,7 +11,7 @@
 **Epic:** Data Integrity & ACID Guarantees
 **Priority:** Medium
 **Effort:** Medium
-**Status:** Not Started
+**Status:** open
 **Source:** `.tmp/loop-lore-ideas.md` line 134 — data transitivity flags/states
 
 ## Summary

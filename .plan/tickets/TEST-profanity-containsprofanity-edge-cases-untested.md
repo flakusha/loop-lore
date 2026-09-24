@@ -42,3 +42,6 @@ describe("containsProfanity", () => {
 
 - [ ] All edge cases covered
 - [ ] No regression in existing `filter` tests
+
+
+git issue: 9494328

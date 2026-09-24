@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** open
 **Priority:** P6+ (Deferred)
 **Effort:** High
 **Created:** 2026-08-14

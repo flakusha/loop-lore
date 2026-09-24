@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done (2026-09-11 — already parallel via `Promise.allSettled`; 3 regression tests in `gallery.test.ts` prove parallel dispatch + per-file error isolation)
+**Status:** open
 **Priority:** medium
 **Priority Tier:** P3
 **Effort:** Small
@@ -39,3 +39,6 @@ If server or DB has writeconcurrency concerns, add a concurrency limit via `p-li
 
 - [ ] All uploads in parallel
 - [ ] Error in one file does not cancel others
+
+
+git issue: 52a0adf

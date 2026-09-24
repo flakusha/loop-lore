@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ⬜ Not Started
+**Status:** open
 **Priority:** high
 **Effort:** High
 **Epic:** epic-assistant-gm-flows

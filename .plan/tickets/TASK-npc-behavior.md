@@ -11,7 +11,7 @@
 **Epic:** NPC/Actor System, NPC Navigation
 **Priority:** High
 **Effort:** Medium
-**Status:** Not Started
+**Status:** open
 **Created:** 2026-07-28
 **Cross-Mechanics Gap:** G12 (NPC/Actor ↔ Supporting System)
 

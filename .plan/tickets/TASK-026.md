@@ -10,7 +10,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** [OK] Done
+**Status:** done
 **Priority**: medium
 **Labels**:
 **Assignee**:

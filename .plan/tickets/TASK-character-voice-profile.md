@@ -11,7 +11,7 @@
 **Epic:** epic-character-internal-traits (D10)
 **Priority:** Medium
 **Effort:** Medium
-**Status:** Not Started
+**Status:** open
 **Created:** 2026-08-14
 **Platform Candidate:** E5 (Voice calls/live avatars — Kindroid, Nomi, Convai)
 **Research Source:** Voice modeling patterns, character voice consistency in LLM roleplay

@@ -12,7 +12,7 @@
 
 # TASK: 3D Model Support
 
-**Status:** Not Started
+**Status:** open
 **Priority:** Low
 **Epic:** epic-items
 **Tags:** asset, 3d, rpg

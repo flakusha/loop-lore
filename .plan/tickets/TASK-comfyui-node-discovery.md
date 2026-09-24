@@ -10,7 +10,7 @@
 
 
 **Priority:** Medium
-**Status:** ⬜ Not Started
+**Status:** done
 **Epic:** epic-comfyui-plugin
 
 ## Description

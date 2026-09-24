@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 In Progress
+**Status:** open
 **Priority:** Medium
 **Epic:** epic-terminal-ui
 

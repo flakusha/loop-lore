@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** [OK] Resolved (worktree fix-csrf-hardening-batch → commit c9ca8edd)
+**Status:** done
 **Priority:** medium
 **Effort:** Small
 
