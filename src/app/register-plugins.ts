@@ -37,6 +37,7 @@ import { assetTagRoutes, } from "../routes/asset-tags";
 import { authProtectedRoutes, authPublicRoutes, } from "../routes/auth";
 import { battleRoutes, } from "../routes/battle";
 import { blogRoutes, } from "../routes/blog";
+import { buildIdRoutes, } from "../routes/build-id";
 import { characterAvailabilityRoutes, } from "../routes/character-availability";
 import { characterAvatarsRoutes, } from "../routes/character-avatars";
 import { characterEmotionAvatarsRoutes, } from "../routes/character-emotion-avatars";
@@ -134,6 +135,7 @@ export function registerPlugins(app: Elysia<any>, opts: RegisterPluginsOpts,): v
   app.use(livenessRoutes({ database: handleOpts.database, config, },),);
   app.use(metricsRoutes({ config, },),);
   app.use(federationRoutes({ config, database, },),);
+  app.use(buildIdRoutes(),);
   app.use(i18nRoutes(handleOpts,),);
   app.use(telemetryRoutes(handleOpts,),);
   app.use(frontendLogsRoutes(),);
