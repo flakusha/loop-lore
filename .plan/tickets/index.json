@@ -19878,6 +19878,24 @@
     "source": ".plan/tickets/TASK-build-deployment-pipeline.md",
     "status": "⬜ Not Started"
   },
+  "TASK-BUILD-IDENTITY-HASH-FOR-TAMPER-DETECTION-SEARXNG-STYLE-COMMI": {
+    "hash": "9e5fbf8",
+    "git_issue": "9e5fbf8",
+    "extid": "TASK-BUILD-IDENTITY-HASH-FOR-TAMPER-DETECTION-SEARXNG-STYLE-COMMI",
+    "type": "TASK",
+    "title": "Build identity hash for tamper detection (searxng-style commit-pin)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-federation-swarm-sync",
+    "tags": [
+      "federation",
+      "tamper-detection",
+      "build-hash",
+      "integrity"
+    ],
+    "source": ".plan/tickets/TASK-build-identity-hash-for-tamper-detection-searxng-style-commi.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-BULK-EXPORT-ZIP": {
     "hash": "c1ad423",
     "extid": "TASK-BULK-EXPORT-ZIP",
@@ -25131,6 +25149,23 @@
     "source": ".plan/tickets/TASK-federation-content-clearance-gate-per-chat-consent-before-me.md",
     "status": "open"
   },
+  "TASK-FEDERATION-DEFEDERATION-ADMIN-OPERATIONS-PEER-STATE-BLOCK-AL": {
+    "hash": "a17053b",
+    "git_issue": "a17053b",
+    "extid": "TASK-FEDERATION-DEFEDERATION-ADMIN-OPERATIONS-PEER-STATE-BLOCK-AL",
+    "type": "TASK",
+    "title": "Federation defederation admin operations (peer state + block/allow)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-federation-swarm-sync",
+    "tags": [
+      "federation",
+      "defederation",
+      "admin"
+    ],
+    "source": ".plan/tickets/TASK-federation-defederation-admin-operations-peer-state-block-al.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-FEDERATION-DEK-RE-WRAP-PROTOCOL-SERVER-TO-SERVER-KEY-EXPORT": {
     "hash": "035958e",
     "git_issue": "035958e",
@@ -25144,6 +25179,23 @@
     "source": ".plan/tickets/TASK-federation-dek-re-wrap-protocol-server-to-server-key-export.md",
     "status": "open"
   },
+  "TASK-FEDERATION-INSTANCE-SWITCHER-IN-FRONTEND-TRAVEL-BETWEEN-INST": {
+    "hash": "f5048e7",
+    "git_issue": "f5048e7",
+    "extid": "TASK-FEDERATION-INSTANCE-SWITCHER-IN-FRONTEND-TRAVEL-BETWEEN-INST",
+    "type": "TASK",
+    "title": "Federation instance switcher in frontend (travel between instances)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-instance-federation",
+    "tags": [
+      "federation",
+      "frontend",
+      "instance-switcher"
+    ],
+    "source": ".plan/tickets/TASK-federation-instance-switcher-in-frontend-travel-between-inst.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-FEDERATION-INTERCONNECT-PEER-CONFIG": {
     "hash": "6bf6ddc",
     "extid": "TASK-FEDERATION-INTERCONNECT-PEER-CONFIG",
@@ -25156,6 +25208,24 @@
     "source": ".plan/tickets/TASK-federation-interconnect-peer-config.md",
     "git_issue": "6bf6ddc",
     "status": "done"
+  },
+  "TASK-FEDERATION-PEER-AUDIT-PROBE-ZERO-TRUST-CROSS-INSTANCE-VERIFI": {
+    "hash": "cde58c3",
+    "git_issue": "cde58c3",
+    "extid": "TASK-FEDERATION-PEER-AUDIT-PROBE-ZERO-TRUST-CROSS-INSTANCE-VERIFI",
+    "type": "TASK",
+    "title": "Federation peer audit probe (zero-trust cross-instance verification)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-federation-swarm-sync",
+    "tags": [
+      "federation",
+      "audit",
+      "zero-trust",
+      "peer-verification"
+    ],
+    "source": ".plan/tickets/TASK-federation-peer-audit-probe-zero-trust-cross-instance-verifi.md",
+    "status": "⬜ Not Started"
   },
   "TASK-FEDERATION-TLS-PEER-TRUST-CUSTOM-CA-PINNING-AND-OPTIONAL-MTL": {
     "hash": "99c122b",
