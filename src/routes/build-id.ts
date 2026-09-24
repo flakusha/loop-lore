@@ -22,18 +22,11 @@
 
 import { Elysia, } from "elysia";
 import { computeBuildIdentity, } from "../build/identity";
-import { can, } from "../users/permissions";
-import {
-  ErrorCode,
-  extractAuth,
-  HttpStatus,
-  jsonError,
-  jsonResponse,
-  requireUserId,
-} from "./http-utils";
+import { requirePermission, } from "../middleware/permissions";
+import { jsonResponse, } from "./http-utils";
 
 export interface BuildIdRouteOpts {
-  /** Override the project root used for hashing. Defaults to process.cwd(). */
+  /** Override the project root used for hashing. Defaults to the module's resolved project root. */
   projectRoot?: string;
 }
 
@@ -57,36 +50,33 @@ export function buildIdRoutes(opts: BuildIdRouteOpts = {},): Elysia {
     },
   },);
 
-  app.get("/api/admin/build-id", async (ctx: any,) => {
-    const userId = requireUserId(ctx,);
-    if (typeof userId !== "string") { return userId; }
-    const { userRole, } = extractAuth(ctx,);
-    if (!can(userRole, "admin.system",)) {
-      return jsonError({
-        message: "Admin access required",
-        status: HttpStatus.Forbidden,
-        code: ErrorCode.Forbidden,
+  // Admin endpoint — gated via requirePermission so denials emit a security
+  // audit log entry (userId, handle, requestId, permission, method, path).
+  const adminGuard = requirePermission("admin.system",);
+  return app.guard(
+    { beforeHandle: adminGuard, },
+    (sub,) => {
+      sub.get("/api/admin/build-id", async () => {
+        const id = await computeBuildIdentity({ projectRoot: opts.projectRoot, },);
+        return jsonResponse({
+          buildHash: id.buildHash,
+          buildHashShort: id.buildHashShort,
+          gitHead: id.gitHead,
+          sourceTreeHash: id.sourceTreeHash,
+          lockfileHash: id.lockfileHash,
+          manifestHash: id.manifestHash,
+          builtAt: id.builtAt,
+          manifest: id.manifest,
+        },);
+      }, {
+        detail: {
+          summary: "Build identity (admin)",
+          description: "Full build-identity breakdown including source-tree hash and manifest. " +
+            "Gated on admin.system capability.",
+          tags: ["Federation", "BuildId", "Admin",],
+        },
       },);
-    }
-    const id = await computeBuildIdentity({ projectRoot: opts.projectRoot, },);
-    return jsonResponse({
-      buildHash: id.buildHash,
-      buildHashShort: id.buildHashShort,
-      gitHead: id.gitHead,
-      sourceTreeHash: id.sourceTreeHash,
-      lockfileHash: id.lockfileHash,
-      manifestHash: id.manifestHash,
-      builtAt: id.builtAt,
-      manifest: id.manifest,
-    },);
-  }, {
-    detail: {
-      summary: "Build identity (admin)",
-      description: "Full build-identity breakdown including source-tree hash and manifest. " +
-        "Gated on admin.system capability.",
-      tags: ["Federation", "BuildId", "Admin",],
+      return sub;
     },
-  },);
-
-  return app;
+  );
 }
