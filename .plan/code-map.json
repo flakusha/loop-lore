@@ -12119,6 +12119,12 @@
       "source": "docs/spec/migrations.md"
     }
   ],
+  "src/db/schema/access-grants.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-tool-access-grants.md"
+    }
+  ],
   "src/db/schema/nsfw-encounter.ts": [
     {
       "kind": "ticket",
@@ -13412,6 +13418,26 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-cancel-generation-wiring.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-retry-from-point.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-sse-reconnect-replay.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-structured-toolcall-renderer.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-thinking-block-render.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-creative-studio-workflow-gallery-batch.md"
     }
   ],
@@ -13435,6 +13461,18 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-npc-management-ui.md"
+    }
+  ],
+  "src/frontend/alpine/chat-types/tool-call-render.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-structured-toolcall-renderer.md"
+    }
+  ],
+  "src/frontend/alpine/chat-types/valves-render.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-tool-valves-panel.md"
     }
   ],
   "src/frontend/alpine/chat-utils/gallery.test.ts": [
@@ -17275,6 +17313,10 @@
       "source": ".plan/tickets/BUG-group-participant-injection-absent-on-manual-generate-route.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-tool-valves-panel.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/integrations/llm-serving.md"
     }
@@ -17289,6 +17331,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-stream-cancel-leaves-attempt-stuck-processing-forever-no-cle.md"
+    }
+  ],
+  "src/generation/generate-route/gatePluginToolsByRole": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-tool-access-grants.md"
     }
   ],
   "src/generation/generate-route/group-participants.test.ts": [
@@ -17370,6 +17418,14 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-structured-toolcall-renderer.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-thinking-block-render.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-memory-history-search-bind-message-chain-reconstructable-con.md"
     }
   ],
@@ -17407,6 +17463,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-tool-call-result-no-frontend-rendering.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-mcp-client-skeleton.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-tool-access-grants.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-tool-stream-interleaving.md"
     }
   ],
   "src/generation/generate-route/types.ts": [
@@ -17431,6 +17499,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-generation-control-plane-routes-lack-authorization.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-cancel-generation-wiring.md"
     }
   ],
   "src/generation/generation-routes/regenerate.test.ts": [
@@ -17461,18 +17533,38 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-generation-control-plane-routes-lack-authorization.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-retry-from-point.md"
     }
   ],
   "src/generation/generation-routes/status.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-generation-control-plane-routes-lack-authorization.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-sse-reconnect-replay.md"
     }
   ],
   "src/generation/generation-routes/stream.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-generation-control-plane-routes-lack-authorization.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-sse-reconnect-replay.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-stream-event-type-registry.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-tool-stream-interleaving.md"
     }
   ],
   "src/generation/generation-routes/test-connection.ts": [
@@ -17685,6 +17777,16 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-comfyui-plugin.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-comfyui-websocket-progress.md"
+    }
+  ],
+  "src/generation/image-engine/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-comfyui-websocket-progress.md"
     }
   ],
   "src/generation/image-gen-route.ts": [
@@ -18295,10 +18397,52 @@
       "source": "docs/spec/integrations/llm-serving.md"
     }
   ],
+  "src/generation/stream-buffer.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-stream-event-type-registry.md"
+    }
+  ],
   "src/generation/stream-buffer.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-architecture.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-comfyui-websocket-progress.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-retry-from-point.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-sse-reconnect-replay.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-stream-event-type-registry.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-structured-toolcall-renderer.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-thinking-block-render.md"
+    }
+  ],
+  "src/generation/stream-buffer.ts.replay": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-sse-reconnect-replay.md"
+    }
+  ],
+  "src/generation/stream-events.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-stream-event-type-registry.md"
     }
   ],
   "src/generation/template-service.ts": [
@@ -19099,6 +19243,50 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-admin-system-announcements.md"
+    }
+  ],
+  "src/lib/components/chat/Chat.svelte": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-cancel-generation-wiring.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-retry-from-point.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-sse-reconnect-replay.md"
+    }
+  ],
+  "src/lib/components/chat/Controls/Valves.svelte": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-tool-valves-panel.md"
+    }
+  ],
+  "src/lib/components/chat/Messages/ResponseMessage.svelte": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-structured-toolcall-renderer.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-thinking-block-render.md"
+    }
+  ],
+  "src/lib/components/chat/Messages/structuredOutput.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-sse-reconnect-replay.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-structured-toolcall-renderer.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-thinking-block-render.md"
     }
   ],
   "src/llm/queue.ts": [
@@ -20801,6 +20989,18 @@
       "source": ".plan/tickets/TASK-char-editor-import-export-ui.md"
     }
   ],
+  "src/partials/chat/tool-call-block.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-structured-toolcall-renderer.md"
+    }
+  ],
+  "src/partials/chat/valves-controls.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-tool-valves-panel.md"
+    }
+  ],
   "src/partials/gallery/preview-modal.html": [
     {
       "kind": "ticket",
@@ -21067,6 +21267,12 @@
       "source": ".plan/tickets/TASK-plugin-management-api.md"
     }
   ],
+  "src/plugins/mcp/client.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-mcp-client-skeleton.md"
+    }
+  ],
   "src/plugins/mount-points.ts": [
     {
       "kind": "ticket",
@@ -21117,6 +21323,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-047.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-mcp-client-skeleton.md"
     },
     {
       "kind": "ticket",
@@ -26177,6 +26387,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-3d-generation.md"
+    }
+  ],
+  "src/routes/tools/valves.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-tool-valves-panel.md"
     }
   ],
   "src/routes/trade.test.ts": [
@@ -32069,6 +32285,22 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-047.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-cancel-generation-wiring.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-structured-toolcall-renderer.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-thinking-block-render.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-tool-valves-panel.md"
     },
     {
       "kind": "ticket",
