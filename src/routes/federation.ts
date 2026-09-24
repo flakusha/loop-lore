@@ -16,6 +16,7 @@
  * No secrets, user identifiers, counts, or internal topology are exposed.
  */
 import { Elysia, } from "elysia";
+import { computeBuildIdentity, } from "../build/identity";
 import { APP_NAME, APP_VERSION, } from "../config/constants";
 import type { Config, } from "../config/schema";
 import { getGossipOrigins, } from "../federation/gossip";
@@ -99,7 +100,8 @@ export function federationRoutes(opts: MeshRouteOpts,): Elysia {
 
   app.get(
     "/api/instance-state",
-    () => {
+    async () => {
+      const identity = await computeBuildIdentity();
       return jsonResponse({
         instanceId: instanceId(config,),
         software: {
@@ -111,13 +113,14 @@ export function federationRoutes(opts: MeshRouteOpts,): Elysia {
         uptime: Math.floor(process.uptime(),),
         state: coarseState(),
         peers: getGossipOrigins(),
+        buildHash: identity.buildHashShort,
         version: 1,
       },);
     },
     {
       detail: {
         summary: "Instance state advertisement",
-        description: "Peer-bootstrap payload: identity, version, protocols, uptime, state. No secrets.",
+        description: "Peer-bootstrap payload: identity, version, protocols, uptime, state, buildHash. No secrets.",
         tags: ["Federation",],
       },
     },
