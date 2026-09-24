@@ -44,6 +44,14 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-archive-retention-hardcoded-30-days-should-be-configurable-9.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-chat-archive-retention-config-archive-retention-days-admin-s.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-restart-required-indicator-on-system-config-changes.md"
     },
     {
@@ -3848,6 +3856,13 @@
       "source": ".plan/epics/epic-blog-system.md"
     }
   ],
+
+  "src/build-identity/build-identity.test.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/federation-build-identity-hash.md"
+    }
+  ],
   "src/build/compress.ts": [
     {
       "kind": "epic",
@@ -5832,14 +5847,34 @@
   ],
   "src/chat/service/crud/archive.test.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-archival-workflow.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-test-assertions-stale-gm-support-message.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-archival-workflow.md"
     }
   ],
   "src/chat/service/crud/archive.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-archival-workflow.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-reunite-secondary-chat-narrates-archived-but-is-never-a.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-chat-archive-purge-notifications-emit-on-archive-restore-pur.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-archival-workflow.md"
     }
   ],
   "src/chat/service/crud/create.ts": [
@@ -5883,6 +5918,10 @@
     }
   ],
   "src/chat/service/crud/delete.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-chat-archive-asset-cascade-link-unlink-assets-on-archive-res.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-bookkeeping-chat-bugfix-batch-1-scope-discovery.md"
@@ -6267,11 +6306,31 @@
   "src/chat/service/visibility.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-archival-workflow.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-chat-composer-flows.md"
     },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-product-features.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-chat-archive-asset-cascade-link-unlink-assets-on-archive-res.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-chat-archive-purge-notifications-emit-on-archive-restore-pur.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-chat-level-purge-route-delete-api-chats-id-purge.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-archival-workflow.md"
     },
     {
       "kind": "ticket",
@@ -6858,6 +6917,17 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-029.md"
+    }
+  ],
+
+  "src/components/chat/archive-confirm.html": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-archival-workflow.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-archival-workflow.md"
     }
   ],
   "src/components/chat/character-info-panel.html": [
@@ -10309,6 +10379,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-archival-workflow.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-db-migration-compaction.md"
     },
     {
@@ -10318,6 +10392,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-shadow-notes-table-missing-ttl-visibility-author-type-column.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-memory-visualizer-knowledge-graph-over-asset-links.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-archival-workflow.md"
     },
     {
       "kind": "spec",
@@ -10687,6 +10769,13 @@
       "source": ".plan/tickets/FEAT-chat-template-config-lifecycle.md"
     }
   ],
+
+  "src/db/migrations/0XX_defederation_blocks.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/federation-defederation-admin.md"
+    }
+  ],
   "src/db/migrations/0XX_image_templates.ts": [
     {
       "kind": "ticket",
@@ -10707,6 +10796,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-065-sub-llm.md"
+    }
+  ],
+
+  "src/db/migrations/0XX_user_federation_accounts.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/federation-instance-switcher.md"
     }
   ],
   "src/db/migrations/0XX_video_templates.ts": [
@@ -11573,6 +11669,13 @@
       "source": ".plan/epics/epic-stealth-crime.md"
     }
   ],
+
+  "src/db/schema-defederation.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/federation-defederation-admin.md"
+    }
+  ],
   "src/db/schema-disease.ts": [
     {
       "kind": "epic",
@@ -12362,6 +12465,14 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-engagement-activity-streaks-dau-mau-achievements-dashboard.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-memory-visualizer-knowledge-graph-over-asset-links.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-admin-assistant-tooling-allowlist.md"
     },
     {
@@ -12489,6 +12600,27 @@
       "source": "docs/spec/testing.md"
     }
   ],
+
+  "src/federation/actor-map.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-federation-instance-switcher-in-frontend-travel-between-inst.md"
+    }
+  ],
+
+  "src/federation/audit.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-federation-peer-audit-probe-zero-trust-cross-instance-verifi.md"
+    }
+  ],
+
+  "src/federation/audit/audit.test.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/federation-peer-audit-probe.md"
+    }
+  ],
   "src/federation/clock.ts": [
     {
       "kind": "ticket",
@@ -12498,7 +12630,25 @@
   "src/federation/coordinator.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-federation-defederation-admin-operations-peer-state-block-al.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-mesh-coordinator-server-knowledge-db.md"
+    }
+  ],
+
+  "src/federation/defederation/defederation.integration.test.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/federation-defederation-admin.md"
+    }
+  ],
+
+  "src/federation/defederation/defederation.test.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/federation-defederation-admin.md"
     }
   ],
   "src/federation/gossip.test.ts": [
@@ -12511,6 +12661,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-mesh-peer-discovery-gossip.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/federation-defederation-admin.md"
     },
     {
       "kind": "spec",
@@ -12529,6 +12683,13 @@
       "source": ".plan/tickets/TASK-mesh-coordinator-server-knowledge-db.md"
     }
   ],
+
+  "src/federation/peer-table.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-federation-peer-audit-probe-zero-trust-cross-instance-verifi.md"
+    }
+  ],
   "src/federation/sharing.ts": [
     {
       "kind": "ticket",
@@ -12537,6 +12698,20 @@
     {
       "kind": "spec",
       "source": "docs/spec/headless-alternative-frontends.md"
+    }
+  ],
+
+  "src/federation/switcher/migration.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/federation-instance-switcher.md"
+    }
+  ],
+
+  "src/federation/switcher/switcher.test.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/federation-instance-switcher.md"
     }
   ],
   "src/frontend": [
@@ -13710,6 +13885,13 @@
       "source": ".plan/tickets/WIRE-impersonate-command-palette-no-actionpayload-dispatch.md"
     }
   ],
+
+  "src/frontend/alpine/command-palette.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/federation-instance-switcher.md"
+    }
+  ],
   "src/frontend/alpine/context-window.ts": [
     {
       "kind": "epic",
@@ -13984,6 +14166,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/WIRE-frontend-keyboard-navigation-global-keymap.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/federation-instance-switcher.md"
     }
   ],
   "src/frontend/alpine/info-bubble.test.ts": [
@@ -14513,6 +14699,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-refactor-schema-validate-alpine-store-fields-at-init.md"
+    }
+  ],
+
+  "src/frontend/alpine/stores/federation.test.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/federation-instance-switcher.md"
     }
   ],
   "src/frontend/alpine/stores/ui-store.ts": [
@@ -16581,6 +16774,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-world-dashboard.md"
+    }
+  ],
+
+  "src/gc/archive-expiration.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-chat-archive-gc-job-daily-sweep-of-expired-archives.md"
     }
   ],
   "src/generation": [
@@ -22975,16 +23175,36 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-analytics-observability.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-analytics-observability.md"
     }
   ],
   "src/routes/analytics.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-analytics-observability.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-admin-analytics-dashboard.md"
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-engagement-activity-streaks-dau-mau-achievements-dashboard.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-memory-visualizer-knowledge-graph-over-asset-links.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/FEAT-user-engagement-leaderboards.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-analytics-observability.md"
     },
     {
       "kind": "spec",
@@ -23253,6 +23473,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-blog-post-get-bypasses-visibility-policy.md"
+    }
+  ],
+
+  "src/routes/build-id.test.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/federation-build-identity-hash.md"
     }
   ],
   "src/routes/character-availability.ts": [
@@ -23811,8 +24038,24 @@
   ],
   "src/routes/chats/archive-routes.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-archival-workflow.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-2026-007.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-chat-archive-asset-cascade-link-unlink-assets-on-archive-res.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-chat-level-purge-route-delete-api-chats-id-purge.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-archival-workflow.md"
     },
     {
       "kind": "ticket",
@@ -23881,6 +24124,17 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-per-chat-auto-translation-layer.md"
+    }
+  ],
+
+  "src/routes/chats/list.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-archival-workflow.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-archival-workflow.md"
     }
   ],
   "src/routes/chats/location.ts": [
@@ -24367,6 +24621,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-backfill-of-historical-posts-on-new-follower-unspecified.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-build-identity-hash-for-tamper-detection-searxng-style-commi.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/federation-build-identity-hash.md"
     }
   ],
   "src/routes/gallery-search.test.ts": [
@@ -24775,6 +25037,13 @@
       "source": ".plan/tickets/FEAT-prompt-lorebook-marketplace-community-shared.md"
     }
   ],
+
+  "src/routes/memory/knowledge-graph.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-memory-visualizer-knowledge-graph-over-asset-links.md"
+    }
+  ],
   "src/routes/message-archiving.test.ts": [
     {
       "kind": "ticket",
@@ -25027,14 +25296,38 @@
   ],
   "src/routes/messages/archiving.coverage.test.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-archival-workflow.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-2026-007.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-archival-workflow.md"
     }
   ],
   "src/routes/messages/archiving.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-archival-workflow.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-archive-retention-hardcoded-30-days-should-be-configurable-9.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-2026-007.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-chat-archive-retention-config-archive-retention-days-admin-s.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-archival-workflow.md"
     }
   ],
   "src/routes/messages/command.test.ts": [
@@ -25530,7 +25823,15 @@
   "src/routes/model-comparisons.test.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-analytics-observability.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-continuous-improvement.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-analytics-observability.md"
     },
     {
       "kind": "ticket",
@@ -25540,11 +25841,19 @@
   "src/routes/model-comparisons.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-analytics-observability.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-continuous-improvement.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-model-comparisons-analytics-leaks-all-users-rows-missing-use.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-analytics-observability.md"
     },
     {
       "kind": "ticket",
@@ -25996,6 +26305,10 @@
   "src/routes/rpg/achievements.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-achievements.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-rpg-wiring-phase3.md"
     },
     {
@@ -26410,6 +26723,14 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-admin-analytics-latency-p50-p95-p99-trends-sse-live-push-cha.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-engagement-activity-streaks-dau-mau-achievements-dashboard.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/FEAT-error-monitoring-alerting.md"
     },
     {
@@ -26507,6 +26828,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-v1-csrf-exempt-set-missing-api-v1-prefixes-for-session-mint-.md"
+    }
+  ],
+
+  "src/routes/v1/content-surface.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-analytics-observability.md"
     }
   ],
   "src/routes/v1/index.ts": [
@@ -29936,6 +30264,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-build-identity-hash-for-tamper-detection-searxng-style-commi.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-cron-migrate-existing-timers.md"
     },
     {
@@ -30869,6 +31201,13 @@
       "source": ".plan/tickets/TASK-cron-registry-core.md"
     }
   ],
+
+  "src/telemetry/percentiles.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-admin-analytics-latency-p50-p95-p99-trends-sse-live-push-cha.md"
+    }
+  ],
   "src/telemetry/service.ts": [
     {
       "kind": "ticket",
@@ -30877,6 +31216,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-telemetry-stores-raw-client-body-real-user-chat-session-ids.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-admin-analytics-latency-p50-p95-p99-trends-sse-live-push-cha.md"
     }
   ],
   "src/telemetry/telemetry.test.ts": [
@@ -32625,6 +32968,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-rpg-skill-tree-visualization-frontend.md"
+    }
+  ],
+
+  "src/views/partials/top-bar.html": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/federation-instance-switcher.md"
     }
   ],
   "src/views/partials/worlds/item-provisioning-panel.html": [
