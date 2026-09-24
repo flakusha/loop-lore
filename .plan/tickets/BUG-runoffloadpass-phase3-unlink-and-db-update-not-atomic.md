@@ -1,7 +1,10 @@
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 # BUG: runOffloadPass phase 3 — unlinkSync and DB UPDATE not in same transaction
-**Status:** Open
+
+**Priority:** High
+**Effort:** Small
+**Status:** done
 **Severity:** high
 **Files:** src/async/offload.ts:124-133
 
@@ -11,3 +14,7 @@ Fix: UPDATE SET offload_path=null first, then unlinkSync in a finally inside the
 
 
 git issue: 4ec65e6
+
+**Summary:** phase 3 of `runOffloadPass` unlinks the file before nulling `offload_path` — a crash between leaves the DB pointing at a deleted file.
+**Context:** `src/async/offload.ts` phase 3 (`unlinkSync(file)` then UPDATE SET `offload_path = null`).
+**Acceptance Criteria:** DB path is nulled first (transactionally) and the file is unlinked only after the update commits; a failed update leaves row and file consistent; regression test forces the failure path.

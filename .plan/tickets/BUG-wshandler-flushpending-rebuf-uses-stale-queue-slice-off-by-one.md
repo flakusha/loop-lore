@@ -32,6 +32,7 @@ The result: on a transient send failure, the handler duplicates the failed messa
 ## Defect Summary
 
 `src/transport/ws.ts:90`:
+
 ```ts
 this.pendingMessages.unshift(...queue.slice(queue.indexOf(data),),);
 ```

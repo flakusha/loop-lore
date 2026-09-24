@@ -636,6 +636,19 @@
     "source": ".plan/tickets/BUG-blog-comments-lack-threading-parent-comment-id-blocking-lemm.md",
     "status": "done"
   },
+  "BUG-BLOG-COMMENTS-POST-ACCEPTS-NON-PUBLIC-POSTS-EXISTENCE-ORACLE": {
+    "hash": "b98f1bb",
+    "git_issue": "b98f1bb",
+    "extid": "BUG-BLOG-COMMENTS-POST-ACCEPTS-NON-PUBLIC-POSTS-EXISTENCE-ORACLE",
+    "type": "BUG",
+    "title": "Blog comments POST accepts non-public posts (existence oracle via getPost raw lookup)",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-blog-comments-post-accepts-non-public-posts-existence-oracle.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-BLOG-FOLLOWERS-LIST-NO-AUTH-REVEALS-FOLLOWER-IDS": {
     "hash": "5ccf305",
     "git_issue": "5ccf305",
@@ -647,7 +660,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-blog-followers-list-no-auth-reveals-follower-ids.md",
-    "status": "open"
+    "status": "done"
   },
   "BUG-BLOG-POST-GET-BYPASSES-VISIBILITY-POLICY": {
     "hash": "680817d",
@@ -660,7 +673,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-blog-post-get-bypasses-visibility-policy.md",
-    "status": "open"
+    "status": "done"
   },
   "BUG-BROWSER-ZSTD-DECOMPRESS-USES-FIXED-16X-OUTPUT-CAPACITY-HIGH-": {
     "hash": "881f7d7",
@@ -1051,7 +1064,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-cascade-mid-cascade-pause-ignores-abort.md",
-    "status": "[OK] Open"
+    "status": "done"
   },
   "BUG-CHARACTER-CREATE-SILENTLY-DROPS-PERSONALITY-SCENARIO-WELCOME": {
     "hash": "8bc0659",
@@ -1819,7 +1832,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-critical-hit-rolls-ignore-advantage.md",
-    "status": "[OK] Open"
+    "status": "done"
   },
   "BUG-CRYPTO-ACTIVITYPUB-KEY-ROTATION-IS-NON-ATOMIC-INSERT-FAILURE": {
     "hash": "af75120",
@@ -2612,7 +2625,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-getauditlog-performedby-exposed-to-moderators.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "b0e78c5"
   },
   "BUG-GETCLIENTIP-IS-UNTESTABLE-WITHOUT-A-LIVE-BUN-SERVER-IP-SOURC": {
     "hash": "8d307ae",
@@ -2650,7 +2664,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-geteffectivensfw-phantom-users-enabled.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "8f7a2ea"
   },
   "BUG-GIWT-TICKET-EXTID-DOUBLE-PREFIX-ON-DUPLICATE-TYPE-SLUG": {
     "hash": "ce8f49c",
@@ -3637,7 +3652,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-negotiate-compression-selects-none-on-unsupported-algorithm-when-server-has-capabilities.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "996cae7"
   },
   "BUG-NEW-CHAT-VN-TOGGLE-SENDS-VISUALNOVEL-BUT-BACKEND-READS-RENDE": {
     "hash": "7ca468e",
@@ -4481,7 +4497,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-runoffloadpass-phase1-spill-and-db-update-not-atomic.md",
-    "status": "open"
+    "status": "done"
   },
   "BUG-RUNOFFLOADPASS-PHASE3-UNLINK-AND-DB-UPDATE-NOT-ATOMIC": {
     "hash": "4ec65e6",
@@ -4494,7 +4510,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-runoffloadpass-phase3-unlink-and-db-update-not-atomic.md",
-    "status": "open"
+    "status": "done"
   },
   "BUG-RUNOFFLOADPASS-PHASE3-UNLINK-RACES-WITH-PHASE1-RESPILL": {
     "hash": "pending",
@@ -4506,7 +4522,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-runoffloadpass-phase3-unlink-races-with-phase1-respill.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "e2b0501"
   },
   "BUG-SAFEDECOMPRESS-PRE-CHECK-REJECTS-COMPRESSED-PAYLOADS-OVER-10": {
     "hash": "343f641",
@@ -5250,7 +5267,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-upgrade-connection-metadata-state-lost.md",
-    "status": "open"
+    "status": "done"
   },
   "BUG-USE-MULTIPLE-L-FLAGS-INSTEAD-POTENTIAL-DX-IMPROVEMENT": {
     "hash": "0cd09d6",
@@ -5523,7 +5540,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-wshandler-flushpending-rebuf-uses-stale-queue-slice-off-by-one.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "e8d02e4"
   },
   "BUG-WSHANDLER-SEND-QUEUES-MESSAGES-WHILE-DISCONNECTED-BUT-NEVER-": {
     "hash": "cdbf7e8",
@@ -6141,7 +6159,7 @@
     "status": "in_progress"
   },
   "EPIC-ACHIEVEMENTS": {
-    "hash": "pending",
+    "hash": "f2f2e08",
     "extid": "EPIC-ACHIEVEMENTS",
     "type": "EPIC",
     "title": "Achievements",
@@ -6156,7 +6174,8 @@
       "rewards"
     ],
     "source": ".plan/tickets/epic-achievements.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "f2f2e08"
   },
   "EPIC-ACTOR-AUTONOMY-STORY-DRIVE": {
     "hash": "93e0928",
@@ -7199,7 +7218,7 @@
     "status": "draft"
   },
   "EPIC-CHAT-LIFECYCLE-MODERATION": {
-    "hash": "pending",
+    "hash": "5156f22",
     "extid": "EPIC-CHAT-LIFECYCLE-MODERATION",
     "type": "EPIC",
     "title": "Chat Lifecycle, Transitions & Moderation",
@@ -7216,7 +7235,8 @@
       "context"
     ],
     "source": ".plan/tickets/epic-chat-lifecycle-moderation.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "5156f22"
   },
   "EPIC-CHAT-PRIVACY": {
     "hash": "231ef2f",
@@ -7474,7 +7494,7 @@
     "status": "draft"
   },
   "EPIC-CONFIG-FILE-SEPARATION": {
-    "hash": "pending",
+    "hash": "287626f",
     "extid": "EPIC-CONFIG-FILE-SEPARATION",
     "type": "EPIC",
     "title": "Config File Separation",
@@ -7489,7 +7509,8 @@
       "extensibility"
     ],
     "source": ".plan/tickets/epic-config-file-separation.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "287626f"
   },
   "EPIC-CONFIG-TEMPLATES": {
     "hash": "8466dce",
@@ -7675,7 +7696,7 @@
     "status": "in_progress"
   },
   "EPIC-CRON-SCHEDULER": {
-    "hash": "pending",
+    "hash": "401ec2d",
     "extid": "EPIC-CRON-SCHEDULER",
     "type": "EPIC",
     "title": "Cron Scheduler (Internal Scheduled Tasks)",
@@ -7690,7 +7711,8 @@
       "bun"
     ],
     "source": ".plan/tickets/epic-cron-scheduler.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "401ec2d"
   },
   "EPIC-CROSS-LAYER-RECONCILIATION": {
     "hash": "4e6ee3d",
@@ -7768,7 +7790,7 @@
     "status": "draft"
   },
   "EPIC-DATA-INTEGRITY-PHASE1": {
-    "hash": "pending",
+    "hash": "730129b",
     "extid": "EPIC-DATA-INTEGRITY-PHASE1",
     "type": "TASK",
     "title": "Data Integrity Phase 1 — Config Guards & Backend Selection",
@@ -7784,7 +7806,8 @@
       "deployment"
     ],
     "source": ".plan/tickets/epic-data-integrity-phase1.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "730129b"
   },
   "EPIC-DATABASE-BACKUP-RECOVERY": {
     "hash": "801eba6",
@@ -7967,7 +7990,7 @@
     "status": "⬜ Not Started"
   },
   "EPIC-DISTRIBUTED-COMPUTE-SHARING": {
-    "hash": "pending",
+    "hash": "9ce4cd9",
     "extid": "EPIC-DISTRIBUTED-COMPUTE-SHARING",
     "type": "EPIC",
     "title": "Distributed Computing & Sharing (Contributor Compute Network)",
@@ -7986,7 +8009,8 @@
       "community"
     ],
     "source": ".plan/tickets/epic-distributed-compute-sharing.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "9ce4cd9"
   },
   "EPIC-DOCS-RECONCILIATION": {
     "hash": "979316e",
@@ -8009,7 +8033,7 @@
     "status": "in_progress"
   },
   "EPIC-DOCS-VS-PLAN-GAP-AUDIT-2026-09-19": {
-    "hash": "pending",
+    "hash": "192be77",
     "extid": "EPIC-DOCS-VS-PLAN-GAP-AUDIT-2026-09-19",
     "type": "EPIC",
     "title": "Docs-vs-Plan Gap Audit (2026-09-19)",
@@ -8023,10 +8047,11 @@
       "docs-gap"
     ],
     "source": ".plan/tickets/epic-docs-vs-plan-gap-audit-2026-09-19.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "192be77"
   },
   "EPIC-E2E-INTEGRATION-TESTING": {
-    "hash": "pending",
+    "hash": "0ca71f1",
     "extid": "EPIC-E2E-INTEGRATION-TESTING",
     "type": "EPIC",
     "title": "E2E & Integration Testing Reliability",
@@ -8044,7 +8069,8 @@
       "reliability"
     ],
     "source": ".plan/tickets/epic-e2e-integration-testing.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "0ca71f1"
   },
   "EPIC-ECONOMY-TRADING": {
     "hash": "6db042a",
@@ -8297,7 +8323,7 @@
     "git_issue": "74d8f33"
   },
   "EPIC-FILE-SPLITTING": {
-    "hash": "pending",
+    "hash": "e52555d",
     "extid": "EPIC-FILE-SPLITTING",
     "type": "EPIC",
     "title": "File Splitting & God-Module Refactor",
@@ -8315,7 +8341,8 @@
       "size-strict"
     ],
     "source": ".plan/tickets/epic-file-splitting.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "e52555d"
   },
   "EPIC-FRACTAL-LOCATIONS": {
     "hash": "fedf6e9",
@@ -8380,7 +8407,7 @@
     "status": "⬜ Not Started"
   },
   "EPIC-FRONTEND-ADMIN": {
-    "hash": "pending",
+    "hash": "1f79672",
     "extid": "EPIC-FRONTEND-ADMIN",
     "type": "EPIC",
     "title": "Admin Panel & Dashboard",
@@ -8391,7 +8418,8 @@
       "(none)"
     ],
     "source": ".plan/tickets/epic-frontend-admin.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "1f79672"
   },
   "EPIC-FRONTEND-AGE-GATE": {
     "hash": "c38ad66",
@@ -8516,7 +8544,7 @@
     "status": "in_progress"
   },
   "EPIC-FRONTEND-GALLERY": {
-    "hash": "pending",
+    "hash": "4e4298b",
     "extid": "EPIC-FRONTEND-GALLERY",
     "type": "EPIC",
     "title": "Frontend Gallery & Media Viewer",
@@ -8531,7 +8559,8 @@
       "frontend"
     ],
     "source": ".plan/tickets/epic-frontend-gallery.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "4e4298b"
   },
   "EPIC-FRONTEND-HEADERS-MANAGEMENT": {
     "hash": "caf4692",
@@ -8549,7 +8578,7 @@
     "status": "⬜ Not Started"
   },
   "EPIC-FRONTEND-HTML-DEDUP-HTMX-REUSE": {
-    "hash": "pending",
+    "hash": "895a3e6",
     "extid": "EPIC-FRONTEND-HTML-DEDUP-HTMX-REUSE",
     "type": "EPIC",
     "title": "Frontend HTML Deduplication & HTMX AJAX Reuse",
@@ -8567,7 +8596,8 @@
       "views"
     ],
     "source": ".plan/tickets/epic-frontend-html-dedup-htmx-reuse.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "895a3e6"
   },
   "EPIC-FRONTEND-INTERNATIONALIZATION": {
     "hash": "57428d6",
@@ -8876,7 +8906,7 @@
     "status": "⬜ Not Started"
   },
   "EPIC-I18N": {
-    "hash": "pending",
+    "hash": "c1bb124",
     "extid": "EPIC-I18N",
     "type": "EPIC",
     "title": "Internationalization (i18n)",
@@ -8891,7 +8921,8 @@
       "ux"
     ],
     "source": ".plan/tickets/epic-i18n.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "c1bb124"
   },
   "EPIC-IM-INTEGRATIONS": {
     "hash": "9c5b456",
@@ -8979,7 +9010,7 @@
     "status": "⬜ Not Started"
   },
   "EPIC-IMPORT-EXPORT-IO": {
-    "hash": "pending",
+    "hash": "6066fbb",
     "extid": "EPIC-IMPORT-EXPORT-IO",
     "type": "EPIC",
     "title": "# Epic 14: Import/Export & Data Portability",
@@ -8994,7 +9025,8 @@
       "io-formats"
     ],
     "source": ".plan/tickets/epic-import-export-io.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "6066fbb"
   },
   "EPIC-INSTANCE-FEDERATION": {
     "hash": "da62aed",
@@ -9529,7 +9561,7 @@
     "status": "⬜ Not Started"
   },
   "EPIC-MIDDLEWARE-REQUEST-LIFECYCLE": {
-    "hash": "pending",
+    "hash": "696e348",
     "extid": "EPIC-MIDDLEWARE-REQUEST-LIFECYCLE",
     "type": "EPIC",
     "title": "Middleware — Request Lifecycle, Idempotency & Async Results",
@@ -9540,7 +9572,8 @@
       "(none)"
     ],
     "source": ".plan/tickets/epic-middleware-request-lifecycle.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "696e348"
   },
   "EPIC-MINI-GAMES": {
     "hash": "3146b76",
@@ -9803,7 +9836,7 @@
     "status": "🟦 Research"
   },
   "EPIC-NPC-MANAGEMENT-UI": {
-    "hash": "pending",
+    "hash": "26f4694",
     "extid": "EPIC-NPC-MANAGEMENT-UI",
     "type": "EPIC",
     "title": "NPC & Social UI",
@@ -9818,10 +9851,11 @@
       "frontend"
     ],
     "source": ".plan/tickets/epic-npc-management-ui.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "26f4694"
   },
   "EPIC-NPC-NAVIGATION": {
-    "hash": "pending",
+    "hash": "6bc8f5c",
     "extid": "EPIC-NPC-NAVIGATION",
     "type": "EPIC",
     "title": "NPC Navigation",
@@ -9836,7 +9870,8 @@
       "movement"
     ],
     "source": ".plan/tickets/epic-npc-navigation.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "6bc8f5c"
   },
   "EPIC-NPCS": {
     "hash": "d8a5fa9",
@@ -9971,7 +10006,7 @@
     "status": "Not Started"
   },
   "EPIC-OPENAPI-REFERENCE": {
-    "hash": "pending",
+    "hash": "2e86802",
     "extid": "EPIC-OPENAPI-REFERENCE",
     "type": "EPIC",
     "title": "OpenAPI-Driven API Reference",
@@ -9988,7 +10023,8 @@
       "elysia"
     ],
     "source": ".plan/tickets/epic-openapi-reference.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "2e86802"
   },
   "EPIC-OUTPUT-CONTROL-TRANSFORMS": {
     "hash": "b9c974f",
@@ -10530,7 +10566,7 @@
     "status": "in_progress"
   },
   "EPIC-REPLAYABILITY": {
-    "hash": "pending",
+    "hash": "4aa052b",
     "extid": "EPIC-REPLAYABILITY",
     "type": "EPIC",
     "title": "Replayability",
@@ -10545,7 +10581,8 @@
       "endings"
     ],
     "source": ".plan/tickets/epic-replayability.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "4aa052b"
   },
   "EPIC-RESOLUTION-SYSTEM": {
     "hash": "f10f117",
@@ -10858,7 +10895,7 @@
     "status": "⬜ Not Started"
   },
   "EPIC-SHARED-SCHEMAS": {
-    "hash": "pending",
+    "hash": "4b235e5",
     "extid": "EPIC-SHARED-SCHEMAS",
     "type": "EPIC",
     "title": "Shared Schemas — Reputation, Consent, NSFW Content Rating",
@@ -10874,10 +10911,11 @@
       "cross-system"
     ],
     "source": ".plan/tickets/epic-shared-schemas.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "4b235e5"
   },
   "EPIC-SKILLS": {
-    "hash": "pending",
+    "hash": "32d4d78",
     "extid": "EPIC-SKILLS",
     "type": "EPIC",
     "title": "Skills",
@@ -10892,7 +10930,8 @@
       "specialization"
     ],
     "source": ".plan/tickets/epic-skills.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "32d4d78"
   },
   "EPIC-SKILLS-PROFESSIONS-CONFIG": {
     "hash": "81411ea",
@@ -11244,7 +11283,7 @@
     "status": "Not Started"
   },
   "EPIC-UNIFIED-SPEC-FRAMEWORK": {
-    "hash": "pending",
+    "hash": "b92f923",
     "extid": "EPIC-UNIFIED-SPEC-FRAMEWORK",
     "type": "EPIC",
     "title": "Unified Spec Framework for `.plan/`",
@@ -11264,7 +11303,8 @@
       "backlog-md"
     ],
     "source": ".plan/tickets/epic-unified-spec-framework.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "b92f923"
   },
   "EPIC-USE-CASE-AGENTIC-WORKSPACE": {
     "hash": "1090d3a",
@@ -11332,7 +11372,7 @@
       "chat-mode"
     ],
     "source": ".plan/tickets/epic-visual-novel-mode.md",
-    "status": "in_progress"
+    "status": "done"
   },
   "EPIC-WARDROBE-AVATAR-VARIANTS": {
     "hash": "2cf55b8",
@@ -11395,7 +11435,7 @@
     "status": "in_progress"
   },
   "EPIC-WORLD-CHAT-CHANNELS-INVITES": {
-    "hash": "pending",
+    "hash": "83cc19e",
     "extid": "EPIC-WORLD-CHAT-CHANNELS-INVITES",
     "type": "EPIC",
     "title": "World Chat Channels & Invite-Driven Membership",
@@ -11411,7 +11451,8 @@
       "access-control"
     ],
     "source": ".plan/tickets/epic-world-chat-channels-invites.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "83cc19e"
   },
   "EPIC-WORLD-DIPLOMACY-KARMA": {
     "hash": "02616d2",
