@@ -46,4 +46,4 @@ function isAllowedType(file: File) {
 - [ ] Non-image/audio/video files rejected with user-visible error
 
 
-git issue: ff40e65
+git issue: 4c8dfbf

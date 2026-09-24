@@ -44,4 +44,4 @@ describe("containsProfanity", () => {
 - [ ] No regression in existing `filter` tests
 
 
-git issue: 9494328
+git issue: fcf02b5

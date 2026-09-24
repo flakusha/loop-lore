@@ -166,4 +166,4 @@ swipeGesturesEnabled: false,
 - `src/frontend/stores/ui-store.ts` — `swipeGesturesEnabled`
 
 
-git issue: 2cbb645
+git issue: 72a611e

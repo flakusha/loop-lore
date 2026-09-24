@@ -3045,6 +3045,13 @@
       "source": ".plan/tickets/BUG-table-backend-request-id-collision-overwrites-foreign-row.md"
     }
   ],
+
+  "src/async/offload-daemon.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-OFFLOADING.md"
+    }
+  ],
   "src/async/offload.test.ts": [
     {
       "kind": "ticket",
@@ -8644,6 +8651,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-OFFLOADING.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-scheduler-implementation-internal-cron-jobs.md"
     },
     {
@@ -13287,6 +13298,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-plugin-management-api.md"
+    }
+  ],
+
+  "src/frontend/alpine/admin/admin-tasks.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-MANAGEMENT-INTEGRATION.md"
     }
   ],
   "src/frontend/alpine/analytics.ts": [
@@ -28175,6 +28193,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-math-structured-llm-dice-result.md"
+    }
+  ],
+
+  "src/rpg/interaction/formula/ast.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-math-roll-formula-ast.md"
     }
   ],
   "src/rpg/interaction/position-effect.ts": [

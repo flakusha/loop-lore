@@ -17,6 +17,10 @@
 | 📝 Draft | Assistant Entity Access & Manipulation | High | High | 10 | [epic-assistant-entity-access.md](/.plan/epics/epic-assistant-entity-access.md) |
 | 📝 Draft | Character & NPC Lore Access | High | High | 17 | [epic-character-npc-lore-access.md](/.plan/epics/epic-character-npc-lore-access.md) |
 | 📝 Draft | Cross-Layer Reconciliation | High | Large (permanently ongoing) | 12 | [epic-cross-layer-reconciliation.md](/.plan/epics/epic-cross-layer-reconciliation.md) |
+| 📝 Draft | EPIC-RESEARCH-MATH-AI-BRIDGE — LLM ↔ math contract | medium | Medium (typed contract + prompt section + regression tests) | 0 | [epic-math-ai-bridge.md](/.plan/epics/epic-math-ai-bridge.md) |
+| 📝 Draft | EPIC-RESEARCH-MATH-ECONOMY — Action & resource economy | medium | Medium (turn budget table + Bennies table + dispatch enforcement) | 0 | [epic-math-economy.md](/.plan/epics/epic-math-economy.md) |
+| 📝 Draft | EPIC-RESEARCH-MATH-LEDGER — Event-sourced projections | medium | Large (event table + projection rebuild + tests) | 0 | [epic-math-ledger.md](/.plan/epics/epic-math-ledger.md) |
+| 📝 Draft | EPIC-RESEARCH-MATH-RESOLUTION — Math models behind roll resolution | medium | Large (multiple sub-tickets, see Sub-systems) | 0 | [epic-math-resolution.md](/.plan/epics/epic-math-resolution.md) |
 | 📝 Draft | Epic: Analytics & Observability | High | Medium | 5 | [epic-analytics-observability.md](/.plan/epics/epic-analytics-observability.md) |
 | 📝 Draft | Epic: Conversation Branching | Medium | Medium | 3 | [epic-conversation-branching.md](/.plan/epics/epic-conversation-branching.md) |
 | 📝 Draft | Epic: DB as Cold Storage for Extreme-Performance API-Heavy Workloads | Low (speculative — "far-fetched" scenario, only justified by measured need) | Large | 0 | [epic-db-cold-storage-high-perf.md](/.plan/epics/epic-db-cold-storage-high-perf.md) |
@@ -120,10 +124,6 @@
 | Draft — description pending (formerly in `chore-docs-reconcile`, worktree merged 2026-08-14)\ | Epic 26: Multi-Instance Reconciliation — Implementation Plan | medium | Medium | 1 | [epic-multi-instance-reconciliation.md](/.plan/epics/epic-multi-instance-reconciliation.md) |
 | Draft — description pending (formerly in `chore-docs-reconcile`, worktree merged 2026-08-14)\ | Epic 27: Data Integrity & ACID Guarantees — Implementation Plan | medium | Medium | 0 | [epic-data-integrity-acid.md](/.plan/epics/epic-data-integrity-acid.md) |
 | 🟡 In Progress (crafting DB layer + memory injection + chat infrastructure merged; Professions/Stations/Quality services + UI pending) | EPIC-036: Crafting, Memory & Chat Systems | High | Very High | 0 | [epic-crafting-professions.md](/.plan/epics/epic-crafting-professions.md) |
-| Unknown | EPIC-RESEARCH-MATH-AI-BRIDGE — LLM ↔ math contract | Unknown | Unknown | 0 | [epic-math-ai-bridge.md](/.plan/epics/epic-math-ai-bridge.md) |
-| Unknown | EPIC-RESEARCH-MATH-ECONOMY — Action & resource economy | Unknown | Unknown | 0 | [epic-math-economy.md](/.plan/epics/epic-math-economy.md) |
-| Unknown | EPIC-RESEARCH-MATH-LEDGER — Event-sourced projections | Unknown | Unknown | 0 | [epic-math-ledger.md](/.plan/epics/epic-math-ledger.md) |
-| Unknown | EPIC-RESEARCH-MATH-RESOLUTION — Math models behind roll resolution | Unknown | Unknown | 0 | [epic-math-resolution.md](/.plan/epics/epic-math-resolution.md) |
 | 🟡 Code+tests+schema done (migration 035); UNWIRED — routes pending | Epic: Achievements | Medium | Medium | 13 | [epic-achievements.md](/.plan/epics/epic-achievements.md) |
 | ⬜ Not Started | Epic: Ambient, Music & Sound Effects | Medium | High | 14 | [epic-ambient-music-sfx.md](/.plan/epics/epic-ambient-music-sfx.md) |
 | Draft | Epic: AO NSFW Game Mechanics | High | Very High | 0 | [epic-nsfw-game-mechanics.md](/.plan/epics/epic-nsfw-game-mechanics.md) |
@@ -361,6 +361,42 @@
 - **Type:** Quality / Chore Epic
 - **Tags:** reconciliation, cross-check, fe-be-db, docs, specs, drift, warnings
 - **File:** `.plan/epics/epic-cross-layer-reconciliation.md`
+
+### EPIC-RESEARCH-MATH-AI-BRIDGE — LLM ↔ math contract
+
+- **Status:** 📝 Draft
+- **Priority:** medium
+- **Effort:** Medium (typed contract + prompt section + regression tests)
+- **Type:** Architecture → Implementation
+- **Tags:** rpg, math, llm, contract, dice-result, ai-bridge, prompt
+- **File:** `.plan/epics/epic-math-ai-bridge.md`
+
+### EPIC-RESEARCH-MATH-ECONOMY — Action & resource economy
+
+- **Status:** 📝 Draft
+- **Priority:** medium
+- **Effort:** Medium (turn budget table + Bennies table + dispatch enforcement)
+- **Type:** Research → Implementation
+- **Tags:** rpg, math, economy, action-economy, bennies, dispatch
+- **File:** `.plan/epics/epic-math-economy.md`
+
+### EPIC-RESEARCH-MATH-LEDGER — Event-sourced projections
+
+- **Status:** 📝 Draft
+- **Priority:** medium
+- **Effort:** Large (event table + projection rebuild + tests)
+- **Type:** Architecture → Implementation
+- **Tags:** rpg, math, ledger, event-sourcing, projection, audit
+- **File:** `.plan/epics/epic-math-ledger.md`
+
+### EPIC-RESEARCH-MATH-RESOLUTION — Math models behind roll resolution
+
+- **Status:** 📝 Draft
+- **Priority:** medium
+- **Effort:** Large (multiple sub-tickets, see Sub-systems)
+- **Type:** Research → Implementation
+- **Tags:** rpg, math, dice, resolution, position, effect
+- **File:** `.plan/epics/epic-math-resolution.md`
 
 ### Epic: Analytics & Observability
 
@@ -1354,38 +1390,6 @@ Long-horizon vision from the "Far Fetched" ideas bucket: position loop-lore as a
 - **File:** `.plan/epics/epic-crafting-professions.md`
 
 Multi-system epic combining:
-
-### EPIC-RESEARCH-MATH-AI-BRIDGE — LLM ↔ math contract
-
-- **Status:** Unknown
-- **Priority:** Unknown
-- **Effort:** Unknown
-- **Type:** Unknown
-- **File:** `.plan/epics/epic-math-ai-bridge.md`
-
-### EPIC-RESEARCH-MATH-ECONOMY — Action & resource economy
-
-- **Status:** Unknown
-- **Priority:** Unknown
-- **Effort:** Unknown
-- **Type:** Unknown
-- **File:** `.plan/epics/epic-math-economy.md`
-
-### EPIC-RESEARCH-MATH-LEDGER — Event-sourced projections
-
-- **Status:** Unknown
-- **Priority:** Unknown
-- **Effort:** Unknown
-- **Type:** Unknown
-- **File:** `.plan/epics/epic-math-ledger.md`
-
-### EPIC-RESEARCH-MATH-RESOLUTION — Math models behind roll resolution
-
-- **Status:** Unknown
-- **Priority:** Unknown
-- **Effort:** Unknown
-- **Type:** Unknown
-- **File:** `.plan/epics/epic-math-resolution.md`
 
 ### Epic: Achievements
 

@@ -43,4 +43,4 @@ Add `tests/e2e/flows/auth.flows.ts`:
 - [ ] Fails if JWT expires or solo-user misconfigured
 
 
-git issue: 265748f
+git issue: a2ccc74

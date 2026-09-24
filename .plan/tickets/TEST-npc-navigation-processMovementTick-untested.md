@@ -41,4 +41,4 @@ Add:
 - [ ] `getMovementState` tested for missing NPC → 404
 
 
-git issue: e91c6c0
+git issue: 832fd7c
