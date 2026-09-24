@@ -221,6 +221,21 @@ export const GenerationStatusSchema = t.UnionEnum([
 ],);
 export const HeatPhaseSchema = t.UnionEnum(["normal", "pre_heat", "heat", "post_heat",],);
 export const ImageApiFamilySchema = t.UnionEnum(["openai", "sdapi", "sdcpp", "comfyui",],);
+export const InteractionCategorySchema = t.UnionEnum([
+  "survival",
+  "social",
+  "economy",
+  "stealth",
+  "intellect",
+  "combat",
+],);
+export const InteractionOutcomeSchema = t.UnionEnum([
+  "success",
+  "failure",
+  "critical_success",
+  "critical_failure",
+  "blocked",
+],);
 export const IntimacyActionTypeSchema = t.UnionEnum(["verbal", "physical", "gift", "service", "intimate",],);
 export const InviteStatusSchema = t.UnionEnum(["active", "revoked", "expired", "exhausted",],);
 export const ItemCategorySchema = t.UnionEnum([
@@ -2765,4 +2780,31 @@ export const StatusEffectSchema = t.Object({
   source_id: t.Optional(t.String(),),
   expires_at: t.Optional(t.String(),),
   meta: t.Optional(t.String(),),
+},);
+
+// ── interaction_logs ────────────────────────────────────────────
+export const InteractionLogsSchema = t.Object({
+  chat_id: t.String(),
+  actor_id: t.String(),
+  command: t.String(),
+  category: InteractionCategorySchema,
+  skill: t.String(),
+  difficulty: t.Number(),
+  outcome: InteractionOutcomeSchema,
+  world_id: t.Optional(t.String(),),
+  target_actor_id: t.Optional(t.String(),),
+  location_id: t.Optional(t.String(),),
+  roll_sides: t.Optional(t.Number(),),
+  roll_count: t.Optional(t.Number(),),
+  roll_modifier: t.Optional(t.Number(),),
+  roll_mode: t.Optional(t.String(),),
+  roll_values: t.Optional(t.String(),),
+  roll_raw_total: t.Optional(t.Number(),),
+  roll_total: t.Optional(t.Number(),),
+  roll_margin: t.Optional(t.Number(),),
+  action_points: t.Optional(t.Number(),),
+  modifiers: t.Optional(t.String(),),
+  result: t.Optional(t.String(),),
+  state_changes: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
 },);
