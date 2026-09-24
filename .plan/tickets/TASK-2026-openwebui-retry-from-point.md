@@ -5,19 +5,25 @@
 
 **Status:** ⬜ Not Started
 **Priority:** low
+**Effort:** Medium
 **Labels:** frontend, generation, retry
+**Summary:** Add a structured retry path: on generation failure the UI shows a "Retry" button. `retryFromPoint(attemptId, step)` (existing stub at `src/frontend/alpine/chat-types/core.ts:261`) calls a new server endpoint `POST /api/generation/retry` that replays any buffered content from `StreamBuffer` for the failed attempt and then resumes the generation. The SSE stream prepends already-confirmed content so the user does not see duplicates.
 
-## Summary
-
-Add a structured retry path: on generation failure the UI shows a "Retry" button. `retryFromPoint(attemptId, step)` (existing stub at `src/frontend/alpine/chat-types/core.ts:261`) calls a new server endpoint `POST /api/generation/retry` that replays any buffered content from `StreamBuffer` for the failed attempt and then resumes the generation. The SSE stream prepends already-confirmed content so the user does not see duplicates.
-
-## Context
-
-Loop-lore's frontend already exposes an unused `retryFromPoint` stub at `src/frontend/alpine/chat-types/core.ts:261`. The server-side `StreamBuffer` (`src/generation/stream-buffer.ts`) already records each step's confirmed output, so the resume path is mostly wiring. The missing piece is a `POST /api/generation/retry` endpoint that accepts `{ chatId, attemptId, fromStepIndex }`, replays buffered events up to that step, then asks the LLM driver to continue.
+**Context:** Loop-lore's frontend already exposes an unused `retryFromPoint` stub at `src/frontend/alpine/chat-types/core.ts:261`. The server-side `StreamBuffer` (`src/generation/stream-buffer.ts`) already records each step's confirmed output, so the resume path is mostly wiring. The missing piece is a `POST /api/generation/retry` endpoint that accepts `{ chatId, attemptId, fromStepIndex }`, replays buffered events up to that step, then asks the LLM driver to continue.
 
 Open-webui implements a similar retry/resume in `open-webui/src/lib/components/chat/Chat.svelte`'s retry path. Loop-lore mirrors the contract in its htmx + Alpine stack.
 
-## Description
+**Acceptance Criteria:**
+
+- [ ] `retryFromPoint(attemptId, step)` at `src/frontend/alpine/chat-types/core.ts:261` POSTs to `/api/generation/retry` with `{ chatId, attemptId, fromStepIndex }`.
+- [ ] New server file `src/generation/generation-routes/retry.ts` exposes `POST /api/generation/retry`, owner-scoped, returning `200` with a stream handle.
+- [ ] The endpoint replays buffered events from `StreamBuffer.replay` from `fromStepIndex` forward, then calls the existing LLM driver to continue generation past that step.
+- [ ] The frontend closes any existing `EventSource` and opens a new one via `connectGenerationSSE` before the retry completes; `isGenerating` flips back to `true`.
+- [ ] The chat error path (when `event: stream-error` is received) renders a "Retry" button under the failed message bubble, calling `retryFromPoint` with the captured `attemptId` + last confirmed step index.
+- [ ] No duplicate DOM rows appear during the replay (idempotent insertion keyed by sequence, same path used by reconnect).
+- [ ] Retry is allowed at most 3 times per attempt (server-enforced) and surfaces a clear error past the cap.
+
+**Description:**
 
 Replace the stub at `src/frontend/alpine/chat-types/core.ts:261`:
 
@@ -48,7 +54,7 @@ router.post('/api/generation/retry', async ({ body }) => {
 
 The retry is owner-scoped (the existing auth middleware applies). On the wire, the user sees a brief replay of already-confirmed text, then the new tokens stream in. The chat view treats both as identical SSE events, so no UI change beyond enabling the button is required.
 
-## Acceptance Criteria
+**Acceptance Criteria:**
 
 - [ ] `retryFromPoint(attemptId, step)` at `src/frontend/alpine/chat-types/core.ts:261` POSTs to `/api/generation/retry` with `{ chatId, attemptId, fromStepIndex }`.
 - [ ] New server file `src/generation/generation-routes/retry.ts` exposes `POST /api/generation/retry`, owner-scoped, returning `200` with a stream handle.
@@ -58,17 +64,20 @@ The retry is owner-scoped (the existing auth middleware applies). On the wire, t
 - [ ] No duplicate DOM rows appear during the replay (idempotent insertion keyed by sequence, same path used by reconnect).
 - [ ] Retry is allowed at most 3 times per attempt (server-enforced) and surfaces a clear error past the cap.
 
-## Notes
+**Notes:**
 
 - This stays inside the existing Alpine + htmx stack; no Svelte migration.
 - The chat error path bubble is the existing failed-message element; the new Retry button is an Alpine toggle, not a new view.
 - The 3-retry cap is a server-side guard to prevent loops; keep this simple and enforce in `retry.ts`, not client-side only.
 - `attemptId` is the existing generation-attempt identifier; reuse what `src/generation/` already emits in `event: stream-meta`.
 
-## References
+**References:**
 
 - loop-lore `src/frontend/alpine/chat-types/core.ts:261` — existing `retryFromPoint` stub to replace
 - loop-lore `src/generation/generation-routes/` — new `retry.ts` for `POST /api/generation/retry`
 - loop-lore `src/generation/stream-buffer.ts` — `replay({ chatId, attemptId, fromStepIndex })` returns the buffered events
 - loop-lore `src/frontend/alpine/chat-types/core.ts` — `connectGenerationSSE` for the SSE reopen step
 - open-webui `src/lib/components/chat/Chat.svelte` — retry/resume handlers pattern
+
+
+git issue: 94bd68a
