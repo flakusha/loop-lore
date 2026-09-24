@@ -13,6 +13,8 @@
 
 Add a zero-trust cross-audit capability: when two instances federate, each one probes the other over the federation transport with a signed challenge, and the probe verifies (1) build hash matches an upstream-pinned value, (2) NodeInfo payload is internally consistent, (3) peer trusts are bounded (no transitive trust inheritance), (4) recent peer-state-transition audit log exists. Probe results feed the existing peer table verdict and can auto-defederate on repeated failures. Strictly opt-in per peer; disabled by default.
 
+**Implementation spec:** [`docs/spec/federation-peer-audit-probe.md`](../../docs/spec/federation-peer-audit-probe.md) — threat model, probe protocol, AUM chain, auto-suspend integration, peer-side `/_attest` endpoint, test plan.
+
 ## Summary
 
 `TASK-federation-tls-peer-trust-custom-ca-pinning-and-optional-mtl` secures the transport; `TASK-build-identity-hash-for-tamper-detection-searxng-style-commi` proves what code is running. Neither answers the runtime question: *“is this peer behaving correctly RIGHT NOW?”* — that is, has the peer been compromised mid-session, is it publishing inconsistent state, is it silently downgrading trust for downstream peers, etc. This ticket adds the audit probe that closes the gap.
