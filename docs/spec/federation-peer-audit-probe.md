@@ -57,6 +57,7 @@ Signature: keyId="<instance-http-sig-key>",algorithm="rsa-sha256",...
 ```
 
 Response:
+
 ```json
 {
   "spiffe_id": "spiffe://instance.example/instance/abc123",
@@ -201,6 +202,7 @@ export async function runAuditPass(opts: ProbeScheduleConfig): Promise<PassSumma
 ```
 
 The cron entry:
+
 ```ts
 // src/cron/federation-audit.ts
 cron.schedule(`every ${opts.interval_hours}h`, () => runAuditPass(opts));
@@ -421,6 +423,7 @@ log.event({ event: "federation.audit.retention_cleanup", rows_deleted });
 ## 13. Test Plan
 
 ### Unit (`src/federation/audit/audit.test.ts`)
+
 - `probePeer` against a mocked peer server that returns valid `/nodeinfo/2.1`, `/api/instance-state`, `/_attest` with signed JWT — verdict `ok`.
 - Build hash mismatch (peer reports `abc`, pin is `def`) — verdict `untrusted_build`.
 - SVID expiry past — verdict `attest_expired`.
@@ -433,12 +436,14 @@ log.event({ event: "federation.audit.retention_cleanup", rows_deleted });
 - AUM chain: append, verify chain hash, reject on tampered payload.
 
 ### Integration
+
 - Spin up two real loop-lore instances (A and B), configure A's `peerPins[B] = [<B's buildHash>]`, `enabled = true`.
 - Run `runAuditPass` from A — verdict `ok`.
 - Modify B's `bun.lock` (or override the buildHash env var), restart B, run probe from A — verdict `untrusted_build`.
 - Force 3 consecutive failures (e.g., revoke B's HTTP-signature key between probes), assert A auto-suspends B and writes a defederation audit log entry.
 
 ### E2E (`tests/e2e/federation-audit.test.ts`)
+
 - As admin: `POST /api/admin/federation/peers/B/audit` — returns full `PeerAuditReport`.
 - `GET /api/admin/federation/peers/B/audit/history?limit=10` — returns the last 10 runs in DESC order.
 - Auto-suspend path: configure 3 consecutive failures via a flag, run pass, assert B is suspended in `peer_registry` and the defederation audit log entry exists with `actor_id = "system:federation-audit"`.

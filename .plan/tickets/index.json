@@ -231,7 +231,7 @@
     "epic": "epic-archival-workflow",
     "tags": [],
     "source": ".plan/tickets/BUG-archive-retention-hardcoded-30-days-should-be-configurable-9.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-ASSET-LINK-SHARE-HANDLERS-AND-GALLERY-GRID-PARAM-LACK-VALIDA": {
     "hash": "64464bf",
@@ -672,7 +672,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-blog-followers-list-no-auth-reveals-follower-ids.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "5ccf305"
   },
   "BUG-BLOG-POST-GET-BYPASSES-VISIBILITY-POLICY": {
     "hash": "pending",
@@ -684,7 +685,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-blog-post-get-bypasses-visibility-policy.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "680817d"
   },
   "BUG-BROWSER-ZSTD-DECOMPRESS-USES-FIXED-16X-OUTPUT-CAPACITY-HIGH-": {
     "hash": "881f7d7",
@@ -1074,7 +1076,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-cascade-mid-cascade-pause-ignores-abort.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "753feef"
   },
   "BUG-CHARACTER-CREATE-SILENTLY-DROPS-PERSONALITY-SCENARIO-WELCOME": {
     "hash": "8bc0659",
@@ -1841,7 +1844,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-critical-hit-rolls-ignore-advantage.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "9098dc3"
   },
   "BUG-CRYPTO-ACTIVITYPUB-KEY-ROTATION-IS-NON-ATOMIC-INSERT-FAILURE": {
     "hash": "af75120",
@@ -2634,7 +2638,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-getauditlog-performedby-exposed-to-moderators.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "b0e78c5"
   },
   "BUG-GETCLIENTIP-IS-UNTESTABLE-WITHOUT-A-LIVE-BUN-SERVER-IP-SOURC": {
     "hash": "8d307ae",
@@ -2672,7 +2677,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-geteffectivensfw-phantom-users-enabled.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "8f7a2ea"
   },
   "BUG-GIWT-TICKET-EXTID-DOUBLE-PREFIX-ON-DUPLICATE-TYPE-SLUG": {
     "hash": "ce8f49c",
@@ -3659,7 +3665,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-negotiate-compression-selects-none-on-unsupported-algorithm-when-server-has-capabilities.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "996cae7"
   },
   "BUG-NEW-CHAT-VN-TOGGLE-SENDS-VISUALNOVEL-BUT-BACKEND-READS-RENDE": {
     "hash": "7ca468e",
@@ -4502,7 +4509,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-runoffloadpass-phase1-spill-and-db-update-not-atomic.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "91f85bc"
   },
   "BUG-RUNOFFLOADPASS-PHASE3-UNLINK-AND-DB-UPDATE-NOT-ATOMIC": {
     "hash": "pending",
@@ -4514,7 +4522,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-runoffloadpass-phase3-unlink-and-db-update-not-atomic.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "4ec65e6"
   },
   "BUG-RUNOFFLOADPASS-PHASE3-UNLINK-RACES-WITH-PHASE1-RESPILL": {
     "hash": "pending",
@@ -4526,7 +4535,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-runoffloadpass-phase3-unlink-races-with-phase1-respill.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "e2b0501"
   },
   "BUG-SAFEDECOMPRESS-PRE-CHECK-REJECTS-COMPRESSED-PAYLOADS-OVER-10": {
     "hash": "343f641",
@@ -5269,7 +5279,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-upgrade-connection-metadata-state-lost.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "c92bfc9"
   },
   "BUG-USE-MULTIPLE-L-FLAGS-INSTEAD-POTENTIAL-DX-IMPROVEMENT": {
     "hash": "0cd09d6",
@@ -5542,7 +5553,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-wshandler-flushpending-rebuf-uses-stale-queue-slice-off-by-one.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "e8d02e4"
   },
   "BUG-WSHANDLER-SEND-QUEUES-MESSAGES-WHILE-DISCONNECTED-BUT-NEVER-": {
     "hash": "cdbf7e8",
