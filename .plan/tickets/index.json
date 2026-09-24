@@ -9401,6 +9401,87 @@
     "status": "⬜ Not Started",
     "git_issue": "5611f9f"
   },
+  "EPIC-MATH-AI-BRIDGE": {
+    "hash": "5a0b25a",
+    "extid": "EPIC-MATH-AI-BRIDGE",
+    "type": "EPIC",
+    "title": "# EPIC-RESEARCH-MATH-AI-BRIDGE — LLM ↔ math contract",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "rpg",
+      "math",
+      "llm",
+      "contract",
+      "dice-result",
+      "ai-bridge",
+      "prompt"
+    ],
+    "source": ".plan/epics/epic-math-ai-bridge.md",
+    "status": "draft",
+    "git_issue": "5a0b25a"
+  },
+  "EPIC-MATH-ECONOMY": {
+    "hash": "9c3661f",
+    "extid": "EPIC-MATH-ECONOMY",
+    "type": "EPIC",
+    "title": "# EPIC-RESEARCH-MATH-ECONOMY — Action & resource economy",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "rpg",
+      "math",
+      "economy",
+      "action-economy",
+      "bennies",
+      "dispatch"
+    ],
+    "source": ".plan/epics/epic-math-economy.md",
+    "status": "draft",
+    "git_issue": "9c3661f"
+  },
+  "EPIC-MATH-LEDGER": {
+    "hash": "16e69f5",
+    "extid": "EPIC-MATH-LEDGER",
+    "type": "EPIC",
+    "title": "# EPIC-RESEARCH-MATH-LEDGER — Event-sourced projections",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "rpg",
+      "math",
+      "ledger",
+      "event-sourcing",
+      "projection",
+      "audit"
+    ],
+    "source": ".plan/epics/epic-math-ledger.md",
+    "status": "draft",
+    "git_issue": "16e69f5"
+  },
+  "EPIC-MATH-RESOLUTION": {
+    "hash": "500eabc",
+    "extid": "EPIC-MATH-RESOLUTION",
+    "type": "EPIC",
+    "title": "# EPIC-RESEARCH-MATH-RESOLUTION — Math models behind roll resolution",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "rpg",
+      "math",
+      "dice",
+      "resolution",
+      "position",
+      "effect"
+    ],
+    "source": ".plan/epics/epic-math-resolution.md",
+    "status": "draft",
+    "git_issue": "500eabc"
+  },
   "EPIC-MATRIX-INTEGRATION": {
     "hash": "282b877",
     "extid": "EPIC-MATRIX-INTEGRATION",
@@ -11369,7 +11450,7 @@
     "git_issue": "a68a46c"
   },
   "EPIC-VISUAL-NOVEL-MODE": {
-    "hash": "pending",
+    "hash": "96d6032",
     "extid": "EPIC-VISUAL-NOVEL-MODE",
     "type": "EPIC",
     "title": "Visual Novel Mode — Dynamic Generation & Q&A Mode",
@@ -11383,8 +11464,9 @@
       "qa-mode",
       "chat-mode"
     ],
-    "source": ".plan/tickets/epic-visual-novel-mode.md",
-    "status": "in_progress"
+    "source": ".plan/epics/epic-visual-novel-mode.md",
+    "status": "in_progress",
+    "git_issue": "96d6032"
   },
   "EPIC-WARDROBE-AVATAR-VARIANTS": {
     "hash": "2cf55b8",
@@ -14738,7 +14820,7 @@
     "status": "Not Started"
   },
   "IMPROVE-IMPERSONATE-EXPLICIT-ELSE-BRANCH": {
-    "hash": "pending",
+    "hash": "7cbfdcf",
     "extid": "IMPROVE-IMPERSONATE-EXPLICIT-ELSE-BRANCH",
     "type": "IMPROVE",
     "title": "updateImpersonation missing explicit else branch for clarity",
@@ -14747,10 +14829,11 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/IMPROVE-impersonate-explicit-else-branch.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "7cbfdcf"
   },
   "PERF-CHAT-DISPATCH-COMMAND-THREE-SEQUENTIAL-QUERIES": {
-    "hash": "pending",
+    "hash": "d9c73e5",
     "extid": "PERF-CHAT-DISPATCH-COMMAND-THREE-SEQUENTIAL-QUERIES",
     "type": "PERF",
     "title": "dispatchCommand runs 3 sequential DB queries (command.ts:47-60)",
@@ -14759,10 +14842,11 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/PERF-chat-dispatch-command-three-sequential-queries.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "d9c73e5"
   },
   "PERF-GALLERY-UPLOADCHATASSETS-SEQUENTIAL": {
-    "hash": "pending",
+    "hash": "32ab8c3",
     "extid": "PERF-GALLERY-UPLOADCHATASSETS-SEQUENTIAL",
     "type": "PERF",
     "title": "gallery uploadChatAssets runs uploads sequentially",
@@ -14771,7 +14855,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/PERF-gallery-uploadChatAssets-sequential.md",
-    "status": "open"
+    "status": "open",
+    "git_issue": "32ab8c3"
   },
   "TASK-001": {
     "hash": "732d54b",
@@ -28681,6 +28766,26 @@
     "status": "open",
     "git_issue": "5489070"
   },
+  "TASK-MANAGEMENT-INTEGRATION": {
+    "hash": "eda503b",
+    "extid": "TASK-MANAGEMENT-INTEGRATION",
+    "type": "TASK",
+    "title": "Task management integration (giwt ↔ loop-lore CLI/UI)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-task-management-integration",
+    "tags": [
+      "cli",
+      "admin",
+      "tasks",
+      "giwt",
+      "integration",
+      "ticket"
+    ],
+    "source": ".plan/tickets/TASK-MANAGEMENT-INTEGRATION.md",
+    "status": "⬜ Not Started",
+    "git_issue": "eda503b"
+  },
   "TASK-MAP-BATTLE-EQUIPMENT": {
     "hash": "f4fdcb7",
     "extid": "TASK-MAP-BATTLE-EQUIPMENT",
@@ -28706,6 +28811,125 @@
     "tags": [],
     "source": ".plan/tickets/TASK-markdown-preview-before-send.md",
     "status": "⬜ Not Started"
+  },
+  "TASK-MATH-ADVANTAGE-CANCEL-RULE": {
+    "hash": "0820515",
+    "extid": "TASK-MATH-ADVANTAGE-CANCEL-RULE",
+    "type": "TASK",
+    "title": "# TASK-math-advantage-cancel-rule — Enforce 5e-style advantage cancel",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-math-resolution",
+    "tags": [
+      "rpg",
+      "math",
+      "dice",
+      "advantage",
+      "modifier",
+      "resolution"
+    ],
+    "source": ".plan/tickets/TASK-math-advantage-cancel-rule.md",
+    "status": "⬜ Not Started",
+    "git_issue": "0820515"
+  },
+  "TASK-MATH-MODIFIER-SOURCE-TABLE": {
+    "hash": "9f4e3ab",
+    "extid": "TASK-MATH-MODIFIER-SOURCE-TABLE",
+    "type": "TASK",
+    "title": "# TASK-math-modifier-source-table — Normalize modifier breakdown",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-math-resolution",
+    "tags": [
+      "rpg",
+      "math",
+      "modifier",
+      "schema",
+      "analytics"
+    ],
+    "source": ".plan/tickets/TASK-math-modifier-source-table.md",
+    "status": "⬜ Not Started",
+    "git_issue": "9f4e3ab"
+  },
+  "TASK-MATH-POSITION-EFFECT-COLUMNS": {
+    "hash": "501822a",
+    "extid": "TASK-MATH-POSITION-EFFECT-COLUMNS",
+    "type": "TASK",
+    "title": "# TASK-math-position-effect-columns — Position/Effect on interaction logs",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-math-resolution",
+    "tags": [
+      "rpg",
+      "math",
+      "position",
+      "effect",
+      "narrative",
+      "schema"
+    ],
+    "source": ".plan/tickets/TASK-math-position-effect-columns.md",
+    "status": "⬜ Not Started",
+    "git_issue": "501822a"
+  },
+  "TASK-MATH-RESOLVER-PBTA-2D6": {
+    "hash": "4268a9d",
+    "extid": "TASK-MATH-RESOLVER-PBTA-2D6",
+    "type": "TASK",
+    "title": "# TASK-math-resolver-pbta-2d6 — 2d6 + stat resolution",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-math-resolution",
+    "tags": [
+      "rpg",
+      "math",
+      "dice",
+      "2d6",
+      "pbta",
+      "resolution"
+    ],
+    "source": ".plan/tickets/TASK-math-resolver-pbta-2d6.md",
+    "status": "⬜ Not Started",
+    "git_issue": "4268a9d"
+  },
+  "TASK-MATH-ROLL-FORMULA-AST": {
+    "hash": "92cb969",
+    "extid": "TASK-MATH-ROLL-FORMULA-AST",
+    "type": "TASK",
+    "title": "# TASK-math-roll-formula-ast — Generic formula AST for roll composition",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-math-resolution",
+    "tags": [
+      "rpg",
+      "math",
+      "formula",
+      "ast",
+      "dice",
+      "resolution"
+    ],
+    "source": ".plan/tickets/TASK-math-roll-formula-ast.md",
+    "status": "⬜ Not Started",
+    "git_issue": "92cb969"
+  },
+  "TASK-MATH-STRUCTURED-LLM-DICE-RESULT": {
+    "hash": "587f716",
+    "extid": "TASK-MATH-STRUCTURED-LLM-DICE-RESULT",
+    "type": "TASK",
+    "title": "# TASK-math-structured-llm-dice-result — Typed DiceResult contract",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-math-ai-bridge",
+    "tags": [
+      "rpg",
+      "math",
+      "llm",
+      "contract",
+      "dice-result",
+      "ai-bridge"
+    ],
+    "source": ".plan/tickets/TASK-math-structured-llm-dice-result.md",
+    "status": "⬜ Not Started",
+    "git_issue": "587f716"
   },
   "TASK-MATRIX-INTEGRATION": {
     "hash": "1b92bae",
@@ -30815,6 +31039,26 @@
     "source": ".plan/tickets/TASK-odysseus-style-external-agent-integration-surface.md",
     "status": "open"
   },
+  "TASK-OFFLOADING": {
+    "hash": "d904378",
+    "extid": "TASK-OFFLOADING",
+    "type": "TASK",
+    "title": "API task offloading (background worker dispatch)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-api-task-offloading",
+    "tags": [
+      "api",
+      "jobs",
+      "offloading",
+      "background",
+      "async",
+      "queue"
+    ],
+    "source": ".plan/tickets/TASK-OFFLOADING.md",
+    "status": "⬜ Not Started",
+    "git_issue": "d904378"
+  },
   "TASK-OLLAMA-NATIVE-PROVIDER": {
     "hash": "0c26954",
     "extid": "TASK-OLLAMA-NATIVE-PROVIDER",
@@ -31330,6 +31574,50 @@
     "tags": [],
     "source": ".plan/tickets/TASK-plan-format-migration-bold-keyword-sections-spdx-orphan-ref-.md",
     "status": "open"
+  },
+  "TASK-PLAN-INDEX-ORPHAN-PHANTOM-CLEANUP": {
+    "hash": "d398180",
+    "extid": "TASK-PLAN-INDEX-ORPHAN-PHANTOM-CLEANUP",
+    "type": "TASK",
+    "title": "plan index — prune 297 pre-existing phantom entries",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-task-management-integration",
+    "tags": [
+      "planning",
+      "giwt",
+      "tooling",
+      "index",
+      "cleanup",
+      "debt",
+      "audit"
+    ],
+    "source": ".plan/tickets/TASK-plan-index-orphan-phantom-cleanup.md",
+    "status": "⬜ Not Started",
+    "git_issue": "d398180"
+  },
+  "TASK-PLAN-INDEX-TAGGING-BINDING-RECONCILIATION": {
+    "hash": "158caaa",
+    "extid": "TASK-PLAN-INDEX-TAGGING-BINDING-RECONCILIATION",
+    "type": "TASK",
+    "title": "plan index — bidirectional tagging/binding + reconciliation reporting",
+    "label": "task",
+    "priority": "medium",
+    "epic": "`, `**Related:**`) live only in the `.md` frontmatter — the index doesn't know which tickets belong to which epic beyond `epic: \"epic-foo\"` (and only some tickets have that field). Future features (`/find-work`, admin panel filtering, agent routing by tag) need a queryable, parseable source of truth. The validator already accepts the inline format (`**Tags:** rpg, math, dice, …`), so the spec is parseable; the missing piece is round-tripping to the index.",
+    "tags": [
+      "` lines) but are **not** propagated to the index. Bindings (`**Epic:**`",
+      "`**Related:**`) live only in the `.md` frontmatter — the index doesn't know which tickets belong to which epic beyond `epic: \"epic-foo\"` (and only some tickets have that field). Future features (`/find-work`",
+      "admin panel filtering",
+      "agent routing by tag) need a queryable",
+      "parseable source of truth. The validator already accepts the inline format (`**Tags:** rpg",
+      "math",
+      "dice",
+      "…`)",
+      "so the spec is parseable; the missing piece is round-tripping to the index."
+    ],
+    "source": ".plan/tickets/TASK-plan-index-tagging-binding-reconciliation.md",
+    "status": "⬜ Not Started",
+    "git_issue": "158caaa"
   },
   "TASK-PLAN-LINT-TS-DEBT": {
     "hash": "cbb3073",
@@ -36010,16 +36298,23 @@
     "status": "open"
   },
   "TASK-TOUCH-GESTURES": {
-    "hash": "pending",
+    "hash": "d3a16bf",
     "extid": "TASK-TOUCH-GESTURES",
     "type": "TASK",
-    "title": "Touch Gestures",
+    "title": "Touch gestures (mobile interaction surface)",
     "label": "task",
-    "priority": "P2 — Medium",
+    "priority": "low",
     "epic": "epic-accessibility-input",
-    "tags": [],
+    "tags": [
+      "mobile",
+      "touch",
+      "accessibility",
+      "frontend",
+      "gestures"
+    ],
     "source": ".plan/tickets/TASK-touch-gestures.md",
-    "status": "open"
+    "status": "open",
+    "git_issue": "d3a16bf"
   },
   "TASK-TRACK-VOYAGE-INSPIRATION": {
     "hash": "db5c4e7",
@@ -37819,7 +38114,7 @@
     "status": "⬜ Not Started"
   },
   "TEST-ADMIN-SEEDDEFAULTS-SILENT-DUPLICATE-SKIP-UNTESTED": {
-    "hash": "pending",
+    "hash": "e08077b",
     "extid": "TEST-ADMIN-SEEDDEFAULTS-SILENT-DUPLICATE-SKIP-UNTESTED",
     "type": "TEST",
     "title": "admin seedDefaults idempotency and silent-dup handling untested",
@@ -37828,10 +38123,11 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TEST-admin-seeddefaults-silent-duplicate-skip-untested.md",
-    "status": "open"
+    "status": "open",
+    "git_issue": "e08077b"
   },
   "TEST-AVATAR-SELECTION-FALLBACK-EMPTY-COVERAGE": {
-    "hash": "pending",
+    "hash": "7996e6a",
     "extid": "TEST-AVATAR-SELECTION-FALLBACK-EMPTY-COVERAGE",
     "type": "TEST",
     "title": "Cover selectAvatar scoring paths + empty-actor fallback",
@@ -37840,10 +38136,11 @@
     "epic": "epic-character-core-system",
     "tags": [],
     "source": ".plan/tickets/TEST-avatar-selection-fallback-empty-coverage.md",
-    "status": "open"
+    "status": "open",
+    "git_issue": "7996e6a"
   },
   "TEST-CHARACTERS-CHARX-ROUNDTRIP-UNTESTED": {
-    "hash": "pending",
+    "hash": "0246856",
     "extid": "TEST-CHARACTERS-CHARX-ROUNDTRIP-UNTESTED",
     "type": "TEST",
     "title": "characters charx round-trip extract→create untested",
@@ -37852,10 +38149,11 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TEST-characters-charx-roundtrip-untested.md",
-    "status": "open"
+    "status": "open",
+    "git_issue": "0246856"
   },
   "TEST-E2E-AUTH-FLOWS-MISSING": {
-    "hash": "pending",
+    "hash": "a2ccc74",
     "extid": "TEST-E2E-AUTH-FLOWS-MISSING",
     "type": "TEST",
     "title": "no e2e spec covers auth flows (login/logout/token expiry)",
@@ -37864,10 +38162,11 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TEST-e2e-auth-flows-missing.md",
-    "status": "open"
+    "status": "open",
+    "git_issue": "a2ccc74"
   },
   "TEST-E2E-NSFW-MODERATION-ROUTES-MISSING": {
-    "hash": "pending",
+    "hash": "9a0c243",
     "extid": "TEST-E2E-NSFW-MODERATION-ROUTES-MISSING",
     "type": "TEST",
     "title": "no e2e spec covers nsfw moderation admin routes",
@@ -37876,10 +38175,11 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TEST-e2e-nsfw-moderation-routes-missing.md",
-    "status": "open"
+    "status": "open",
+    "git_issue": "9a0c243"
   },
   "TEST-E2E-USERS-PERSONAS-ROUTES-MISSING": {
-    "hash": "pending",
+    "hash": "f24a65c",
     "extid": "TEST-E2E-USERS-PERSONAS-ROUTES-MISSING",
     "type": "TEST",
     "title": "no e2e spec covers /api/users/\\* or /api/personas/\\* routes",
@@ -37888,10 +38188,11 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TEST-e2e-users-personas-routes-missing.md",
-    "status": "open"
+    "status": "open",
+    "git_issue": "f24a65c"
   },
   "TEST-EMOTION-HOOK-TO-AVATARFORMESSAGE-INTEGRATION": {
-    "hash": "pending",
+    "hash": "3da357e",
     "extid": "TEST-EMOTION-HOOK-TO-AVATARFORMESSAGE-INTEGRATION",
     "type": "TEST",
     "title": "End-to-end emotion-hook → messages.emotion → avatarForMessage",
@@ -37900,10 +38201,11 @@
     "epic": "epic-emotion-avatar-message-binding",
     "tags": [],
     "source": ".plan/tickets/TEST-emotion-hook-to-avatarForMessage-integration.md",
-    "status": "open"
+    "status": "open",
+    "git_issue": "3da357e"
   },
   "TEST-GALLERY-FRONTEND-UTILS-UNTESTED": {
-    "hash": "pending",
+    "hash": "2c5c667",
     "extid": "TEST-GALLERY-FRONTEND-UTILS-UNTESTED",
     "type": "TEST",
     "title": "gallery frontend chat-utils has zero unit tests",
@@ -37912,10 +38214,11 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TEST-gallery-frontend-utils-untested.md",
-    "status": "open"
+    "status": "open",
+    "git_issue": "2c5c667"
   },
   "TEST-GALLERY-UPLOAD-DROPZONE-UNTESTED": {
-    "hash": "pending",
+    "hash": "4c8dfbf",
     "extid": "TEST-GALLERY-UPLOAD-DROPZONE-UNTESTED",
     "type": "TEST",
     "title": "gallery-upload initDropZone has no tests; file validation absent",
@@ -37924,10 +38227,11 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TEST-gallery-upload-dropzone-untested.md",
-    "status": "open"
+    "status": "open",
+    "git_issue": "4c8dfbf"
   },
   "TEST-INVITE-JOIN-E2E": {
-    "hash": "pending",
+    "hash": "ef4573b",
     "extid": "TEST-INVITE-JOIN-E2E",
     "type": "TEST",
     "title": "# Ticket: E2E Invite/Flow Validation",
@@ -37936,10 +38240,11 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TEST-invite-join-e2e.md",
-    "status": "open"
+    "status": "open",
+    "git_issue": "ef4573b"
   },
   "TEST-NPC-NAVIGATION-PROCESSMOVEMENTTICK-UNTESTED": {
-    "hash": "pending",
+    "hash": "832fd7c",
     "extid": "TEST-NPC-NAVIGATION-PROCESSMOVEMENTTICK-UNTESTED",
     "type": "TEST",
     "title": "NpcNavigationService.processMovementTick has zero unit tests",
@@ -37948,10 +38253,11 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TEST-npc-navigation-processMovementTick-untested.md",
-    "status": "open"
+    "status": "open",
+    "git_issue": "832fd7c"
   },
   "TEST-NSFW-GETFLAGQUEUE-STATUS-FILTER-UNTESTED": {
-    "hash": "pending",
+    "hash": "84c191d",
     "extid": "TEST-NSFW-GETFLAGQUEUE-STATUS-FILTER-UNTESTED",
     "type": "TEST",
     "title": "nsfw getFlagQueue status filter has zero test coverage",
@@ -37960,10 +38266,11 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TEST-nsfw-getflagqueue-status-filter-untested.md",
-    "status": "open"
+    "status": "open",
+    "git_issue": "84c191d"
   },
   "TEST-PROFANITY-CONTAINSPROFANITY-EDGE-CASES-UNTESTED": {
-    "hash": "pending",
+    "hash": "fcf02b5",
     "extid": "TEST-PROFANITY-CONTAINSPROFANITY-EDGE-CASES-UNTESTED",
     "type": "TEST",
     "title": "profanity containsProfanity edge cases untested",
@@ -37972,10 +38279,11 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TEST-profanity-containsprofanity-edge-cases-untested.md",
-    "status": "open"
+    "status": "open",
+    "git_issue": "fcf02b5"
   },
   "WIRE-ASSISTANT-COMMAND-PALETTE-STALE-STATIC-LIST": {
-    "hash": "pending",
+    "hash": "2a0aa56",
     "extid": "WIRE-ASSISTANT-COMMAND-PALETTE-STALE-STATIC-LIST",
     "type": "WIRE",
     "title": "command-palette FE list hardcoded (drift from BE registry)",
@@ -37984,23 +38292,25 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/WIRE-assistant-command-palette-stale-static-list.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "2a0aa56"
   },
   "WIRE-CHARACTERS-CREATE-AVATAR-LINKING-MISSING": {
-    "hash": "pending",
+    "hash": "9a4631b",
     "extid": "WIRE-CHARACTERS-CREATE-AVATAR-LINKING-MISSING",
     "type": "WIRE",
     "title": "character creation missing avatar asset linking",
     "label": "wire",
-    "priority": "high",
+    "priority": "medium",
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/WIRE-characters-create-avatar-linking-missing.md",
     "status": "done",
-    "resolved_by": "2ac5cf29"
+    "resolved_by": "2ac5cf29",
+    "git_issue": "9a4631b"
   },
   "WIRE-EXTRAS-IMPERSONATEACTORID-SCHEMA-VALIDATION": {
-    "hash": "pending",
+    "hash": "88f65a2",
     "extid": "WIRE-EXTRAS-IMPERSONATEACTORID-SCHEMA-VALIDATION",
     "type": "WIRE",
     "title": "verify ChatImpersonateBody schema includes impersonateActorId",
@@ -38009,10 +38319,11 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/WIRE-extras-impersonateactorid-schema-validation.md",
-    "status": "open"
+    "status": "open",
+    "git_issue": "88f65a2"
   },
   "WIRE-FRONTEND-KEYBOARD-HELP-OVERLAY": {
-    "hash": "pending",
+    "hash": "837bc93",
     "extid": "WIRE-FRONTEND-KEYBOARD-HELP-OVERLAY",
     "type": "WIRE",
     "title": "Frontend Keyboard Navigation Help Overlay (`?`)",
@@ -38021,10 +38332,11 @@
     "epic": "`epic-frontend-keynav-mobile`",
     "tags": [],
     "source": ".plan/tickets/WIRE-frontend-keyboard-help-overlay.md",
-    "status": "draft"
+    "status": "draft",
+    "git_issue": "837bc93"
   },
   "WIRE-FRONTEND-KEYBOARD-MODAL-FOCUS-TRAP": {
-    "hash": "pending",
+    "hash": "4702993",
     "extid": "WIRE-FRONTEND-KEYBOARD-MODAL-FOCUS-TRAP",
     "type": "WIRE",
     "title": "Frontend Modal Focus Trap Directive + Alpine x-trap",
@@ -38033,10 +38345,11 @@
     "epic": "`epic-frontend-keynav-mobile`",
     "tags": [],
     "source": ".plan/tickets/WIRE-frontend-keyboard-modal-focus-trap.md",
-    "status": "draft"
+    "status": "draft",
+    "git_issue": "4702993"
   },
   "WIRE-FRONTEND-KEYBOARD-NAVIGATION-GLOBAL-KEYMAP": {
-    "hash": "pending",
+    "hash": "19340df",
     "extid": "WIRE-FRONTEND-KEYBOARD-NAVIGATION-GLOBAL-KEYMAP",
     "type": "WIRE",
     "title": "Frontend Global Keyboard Navigation Keymap (Opt-In)",
@@ -38045,10 +38358,11 @@
     "epic": "`epic-frontend-keynav-mobile`",
     "tags": [],
     "source": ".plan/tickets/WIRE-frontend-keyboard-navigation-global-keymap.md",
-    "status": "draft"
+    "status": "draft",
+    "git_issue": "19340df"
   },
   "WIRE-FRONTEND-MOBILE-OFF-CANVAS-DRAWER": {
-    "hash": "pending",
+    "hash": "4a32f53",
     "extid": "WIRE-FRONTEND-MOBILE-OFF-CANVAS-DRAWER",
     "type": "WIRE",
     "title": "Frontend Mobile Off-Canvas Drawer — Opt-In Guard + Improvements",
@@ -38057,10 +38371,11 @@
     "epic": "`epic-frontend-keynav-mobile`",
     "tags": [],
     "source": ".plan/tickets/WIRE-frontend-mobile-off-canvas-drawer.md",
-    "status": "draft"
+    "status": "draft",
+    "git_issue": "4a32f53"
   },
   "WIRE-FRONTEND-MOBILE-STICKY-BOTTOM-COMPOSER": {
-    "hash": "pending",
+    "hash": "5aea351",
     "extid": "WIRE-FRONTEND-MOBILE-STICKY-BOTTOM-COMPOSER",
     "type": "WIRE",
     "title": "Frontend Mobile Sticky Bottom Composer Bar",
@@ -38069,10 +38384,11 @@
     "epic": "`epic-frontend-keynav-mobile`",
     "tags": [],
     "source": ".plan/tickets/WIRE-frontend-mobile-sticky-bottom-composer.md",
-    "status": "draft"
+    "status": "draft",
+    "git_issue": "5aea351"
   },
   "WIRE-FRONTEND-TOUCH-SWIPE-GESTURES": {
-    "hash": "pending",
+    "hash": "72a611e",
     "extid": "WIRE-FRONTEND-TOUCH-SWIPE-GESTURES",
     "type": "WIRE",
     "title": "Frontend Touch Gestures — Swipe Navigation + Pull-to-Refresh (Opt-In)",
@@ -38081,32 +38397,35 @@
     "epic": "`epic-frontend-keynav-mobile`",
     "tags": [],
     "source": ".plan/tickets/WIRE-frontend-touch-swipe-gestures.md",
-    "status": "draft"
+    "status": "draft",
+    "git_issue": "72a611e"
   },
   "WIRE-IMPERSONATE-COMMAND-PALETTE-NO-ACTIONPAYLOAD-DISPATCH": {
-    "hash": "pending",
+    "hash": "b9eb7aa",
     "extid": "WIRE-IMPERSONATE-COMMAND-PALETTE-NO-ACTIONPAYLOAD-DISPATCH",
     "type": "WIRE",
     "title": "impersonate command-palette FE has no actionPayload dispatch",
     "label": "wire",
-    "priority": "high",
+    "priority": "medium",
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/WIRE-impersonate-command-palette-no-actionpayload-dispatch.md",
     "status": "done",
-    "resolved_by": "2ac5cf29"
+    "resolved_by": "2ac5cf29",
+    "git_issue": "b9eb7aa"
   },
   "WIRE-NSFW-AUDIT-PAGE-MISSING-INLINE-AUTHZ": {
-    "hash": "pending",
+    "hash": "3874455",
     "extid": "WIRE-NSFW-AUDIT-PAGE-MISSING-INLINE-AUTHZ",
     "type": "WIRE",
     "title": "nsfw-audit view route has no inline authz guard",
     "label": "wire",
-    "priority": "high",
+    "priority": "medium",
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/WIRE-nsfw-audit-page-missing-inline-authz.md",
     "status": "done",
-    "resolved_by": "2ac5cf29"
+    "resolved_by": "2ac5cf29",
+    "git_issue": "3874455"
   }
 }
