@@ -41,4 +41,8 @@ export interface ChatMemoryState {
   setAuditActionFilter(action: AuditAction | null,): Promise<void>;
   _auditActionIcon(action: AuditAction,): string;
   _auditActionLabel(action: AuditAction,): string;
+  isAuditExpanded(id: string,): boolean;
+  toggleAuditExpanded(id: string,): void;
+  _auditDetailsExpandable(entry: AuditEntry,): boolean;
+  _formatAuditDetails(entry: AuditEntry,): string;
 }

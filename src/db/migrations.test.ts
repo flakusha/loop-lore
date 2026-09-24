@@ -1,5 +1,5 @@
 import { Database, } from "bun:sqlite";
-import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
+import { afterAll, afterEach, beforeAll, describe, expect, test, } from "bun:test";
 import { Kysely, sql, } from "kysely";
 import type { Migration, } from "kysely/migration";
 import { Migrator, } from "kysely/migration";
@@ -71,8 +71,11 @@ describe("full migration chain", () => {
   let migrations: Record<string, Migration>;
 
   beforeAll(async () => {
-    ({ db, kysely, } = createTestKysely());
+    // Load migrations before registering the override — a failed import must
+    // not leave a live test override behind
+    // (BUG-settestdatabase-global-leak-on-test-throw).
     migrations = await loadAllMigrations();
+    ({ db, kysely, } = createTestKysely());
   },);
 
   afterAll(async () => {
@@ -144,8 +147,11 @@ describe("per-migration roundtrip", () => {
       let upSucceeded = false;
 
       beforeAll(async () => {
-        ({ db, kysely, } = createTestKysely());
+        // Load before registering the override — a failed import must not
+        // leave a live test override behind
+        // (BUG-settestdatabase-global-leak-on-test-throw).
         migration = await loadMigration(name,);
+        ({ db, kysely, } = createTestKysely());
       },);
 
       afterAll(async () => {
@@ -233,6 +239,12 @@ describe("001_init — core tables", () => {
 describe("migration consistency flags", () => {
   let migrations: Record<string, Migration>;
 
+  // The last two tests set the override in-body; clear it even when a test
+  // throws mid-way (BUG-settestdatabase-global-leak-on-test-throw).
+  afterEach(() => {
+    setTestDatabase(null,);
+  },);
+
   beforeAll(async () => {
     migrations = await loadAllMigrations();
   },);
@@ -269,7 +281,6 @@ describe("migration consistency flags", () => {
 
     await kysely.destroy();
     db.close();
-    setTestDatabase(null,);
   });
 
   test("full chain up then full chain down leaves clean state", async () => {
@@ -295,7 +306,6 @@ describe("migration consistency flags", () => {
 
     await kysely.destroy();
     db.close();
-    setTestDatabase(null,);
   });
 });
 
@@ -365,8 +375,11 @@ describe("migration staleness guard", () => {
 
   beforeAll(async () => {
     createLogger({ level: "error", },);
-    ({ db, kysely, } = createTestKysely());
+    // Load before registering the override — a failed import must not leave
+    // a live test override behind
+    // (BUG-settestdatabase-global-leak-on-test-throw).
     migrations = await loadAllMigrations();
+    ({ db, kysely, } = createTestKysely());
     const migrator = new Migrator({
       db: kysely,
       provider: { getMigrations: async () => migrations, },
@@ -399,10 +412,16 @@ describe("migration staleness guard", () => {
   });
   test("passes on a fresh database without a kysely_migration table", async () => {
     const { db: freshDb, kysely: fresh, } = createTestKysely();
-    await expect(assertMigrationsNotStale(fresh, migrations,),).resolves.toBeUndefined();
-    await fresh.destroy();
-    freshDb.close();
-    setTestDatabase(null,);
+    try {
+      await expect(assertMigrationsNotStale(fresh, migrations,),).resolves.toBeUndefined();
+    } finally {
+      // Cleanup must run even when the assertion throws — otherwise the
+      // override leaks into sibling files
+      // (BUG-settestdatabase-global-leak-on-test-throw).
+      await fresh.destroy();
+      freshDb.close();
+      setTestDatabase(null,);
+    }
   });
 });
 

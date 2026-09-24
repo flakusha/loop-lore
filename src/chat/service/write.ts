@@ -20,6 +20,21 @@ import type {
 const REGEN_IDEMPOTENCY_PREFIX = "regen:variant:";
 
 /**
+ * Idempotency key for a regen variant row: distinct per parent and style, so
+ * a same-style repeat replays the pending variant while a style change forks
+ * a fresh one. Exported because the regenerate route reuses the key as the
+ * generation attempt's idempotencyKey when it drives the variant's LLM call.
+ * @param parentId
+ * @param style
+ */
+export function regenIdempotencyKey(
+  parentId: string | null,
+  style: string | null | undefined,
+): string {
+  return `${REGEN_IDEMPOTENCY_PREFIX}${parentId}:${style ?? "plain"}`;
+}
+
+/**
  * Regenerate a message as a NEW SIBLING VARIANT rather than mutating it.
  *
  * Creates a fresh `messages` row sharing the same `parent_id` as the target,
@@ -74,7 +89,7 @@ export async function regenerateMessageVariant(
   // content. Style null and each named style get distinct keys, so a
   // follow-up request with a different style is NOT replayed — it gets a
   // fresh sibling variant.
-  const regenKey = `${REGEN_IDEMPOTENCY_PREFIX}${parentId}:${style ?? "plain"}`;
+  const regenKey = regenIdempotencyKey(parentId, style,);
 
   // Idempotency: a pending regen variant for this parent + style is reused.
   const pending = parentId
@@ -95,6 +110,8 @@ export async function regenerateMessageVariant(
       variantMessageId: pending.id,
       swipeIndex: pending.swipe_index ?? 0,
       style: style ?? null,
+      parentId,
+      actorId: message.actor_id,
     };
   }
 
@@ -133,5 +150,13 @@ export async function regenerateMessageVariant(
     },)
     .execute();
 
-  return { ok: true, replayed: false, variantMessageId, swipeIndex, style: style ?? null, };
+  return {
+    ok: true,
+    replayed: false,
+    variantMessageId,
+    swipeIndex,
+    style: style ?? null,
+    parentId,
+    actorId: message.actor_id,
+  };
 }

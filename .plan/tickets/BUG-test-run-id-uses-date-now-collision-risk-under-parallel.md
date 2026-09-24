@@ -3,7 +3,7 @@
 
 # BUG: test-run-id-uses-Date-now-collision-risk-under-parallel
 
-**Status:** ✅ Resolved (already on dev, 2026-09-20)
+**Status:** done
 **Priority:** Medium
 **Effort:** Medium
 **Summary:** e2e testRunId uses Date.now()+Math.random() — collision under parallel workers shares/deletes upload dirs

@@ -7,6 +7,7 @@
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
+import { deleteConfig, setConfig, } from "../../admin/config";
 import type { Config, } from "../../config/schema";
 import { MessageRole, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
@@ -169,14 +170,25 @@ describe("archivingRoutes coverage", () => {
     expect(denied.status,).toBe(404,);
   });
 
-  test("purge removes only archived messages older than 30 days", async () => {
+  test("purge removes only archived messages older than the 90-day default", async () => {
     const app = makeApp(db, owner, "user",);
-    const oldId = uid();
+    const expiredId = uid();
+    const midId = uid();
     const freshId = uid();
-    await insertMessages(db, chatId, owner, MessageRole.User, "old", { id: oldId, } as never,);
+    await insertMessages(db, chatId, owner, MessageRole.User, "expired", { id: expiredId, } as never,);
+    await insertMessages(db, chatId, owner, MessageRole.User, "mid", { id: midId, } as never,);
     await insertMessages(db, chatId, owner, MessageRole.User, "fresh", { id: freshId, } as never,);
-    const oldIso = new Date(Date.now() - 31 * 24 * 60 * 60 * 1000,).toISOString();
-    await db.updateTable("messages",).set({ archived_at: oldIso, },).where("id", "=", oldId,).execute();
+    const day = 24 * 60 * 60 * 1000;
+    await db
+      .updateTable("messages",)
+      .set({ archived_at: new Date(Date.now() - 91 * day,).toISOString(), },)
+      .where("id", "=", expiredId,)
+      .execute();
+    await db
+      .updateTable("messages",)
+      .set({ archived_at: new Date(Date.now() - 31 * day,).toISOString(), },)
+      .where("id", "=", midId,)
+      .execute();
     await db
       .updateTable("messages",)
       .set({ archived_at: new Date().toISOString(), },)
@@ -192,10 +204,71 @@ describe("archivingRoutes coverage", () => {
     // numDeletedRows counts FK-cascade/FTS side effects, so it exceeds the
     // message count — the invariant is "at least the eligible row went".
     expect(parsed.purged,).toBeGreaterThanOrEqual(1,);
-    const gone = await db.selectFrom("messages",).select("id",).where("id", "=", oldId,).executeTakeFirst();
+    const gone = await db.selectFrom("messages",).select("id",).where("id", "=", expiredId,).executeTakeFirst();
     expect(gone,).toBeUndefined();
+    // 31 days is inside the unset-config default window of 90 days.
+    const mid = await db.selectFrom("messages",).select("id",).where("id", "=", midId,).executeTakeFirst();
+    expect(mid?.id,).toBe(midId,);
     const kept = await db.selectFrom("messages",).select("id",).where("id", "=", freshId,).executeTakeFirst();
     expect(kept?.id,).toBe(freshId,);
+  });
+
+  test("purge honors a stubbed archive_retention_days config value", async () => {
+    await setConfig(db, "archive_retention_days", "7",);
+    try {
+      const app = makeApp(db, owner, "user",);
+      const expiredId = uid();
+      const freshId = uid();
+      await insertMessages(db, chatId, owner, MessageRole.User, "old", { id: expiredId, } as never,);
+      await insertMessages(db, chatId, owner, MessageRole.User, "recent", { id: freshId, } as never,);
+      const day = 24 * 60 * 60 * 1000;
+      await db
+        .updateTable("messages",)
+        .set({ archived_at: new Date(Date.now() - 8 * day,).toISOString(), },)
+        .where("id", "=", expiredId,)
+        .execute();
+      await db
+        .updateTable("messages",)
+        .set({ archived_at: new Date(Date.now() - 3 * day,).toISOString(), },)
+        .where("id", "=", freshId,)
+        .execute();
+
+      const res = await app.handle(
+        new Request(`http://localhost/api/chats/${chatId}/messages/purge`, { method: "POST", },),
+      );
+      expect(res.status,).toBe(200,);
+      const gone = await db.selectFrom("messages",).select("id",).where("id", "=", expiredId,).executeTakeFirst();
+      expect(gone,).toBeUndefined();
+      const kept = await db.selectFrom("messages",).select("id",).where("id", "=", freshId,).executeTakeFirst();
+      expect(kept?.id,).toBe(freshId,);
+    } finally {
+      await deleteConfig(db, "archive_retention_days",);
+    }
+  });
+
+  test("purge falls back to the 90-day default on invalid config values", async () => {
+    const app = makeApp(db, owner, "user",);
+    const midId = uid();
+    await insertMessages(db, chatId, owner, MessageRole.User, "mid", { id: midId, } as never,);
+    await db
+      .updateTable("messages",)
+      .set({ archived_at: new Date(Date.now() - 31 * 24 * 60 * 60 * 1000,).toISOString(), },)
+      .where("id", "=", midId,)
+      .execute();
+    try {
+      // Zero/negative or non-numeric values must not widen the window.
+      for (const invalid of ["0", "garbage",]) {
+        await setConfig(db, "archive_retention_days", invalid,);
+        const res = await app.handle(
+          new Request(`http://localhost/api/chats/${chatId}/messages/purge`, { method: "POST", },),
+        );
+        expect(res.status,).toBe(200,);
+        const kept = await db.selectFrom("messages",).select("id",).where("id", "=", midId,).executeTakeFirst();
+        expect(kept?.id,).toBe(midId,);
+      }
+    } finally {
+      await deleteConfig(db, "archive_retention_days",);
+    }
   });
 
   test("purge returns zero when nothing is eligible", async () => {

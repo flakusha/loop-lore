@@ -34,6 +34,8 @@ interface StoreMessageOpts {
   modelId: string;
   provider: string;
   continuationNumber?: number;
+  /** Existing pending row (smart-regen variant) to fill in place. */
+  targetMessageId?: string;
 }
 
 /**
@@ -46,6 +48,7 @@ interface StoreMessageOpts {
  * @param root0.modelId
  * @param root0.provider
  * @param root0.continuationNumber
+ * @param root0.targetMessageId
  */
 async function storeGeneratedMessage({
   database,
@@ -56,6 +59,7 @@ async function storeGeneratedMessage({
   modelId,
   provider,
   continuationNumber,
+  targetMessageId,
 }: StoreMessageOpts,): Promise<string> {
   const messageId = randomUUID();
   const status = result.cancelled ? MessageStatus.Partial : MessageStatus.Confirmed;
@@ -73,6 +77,28 @@ async function storeGeneratedMessage({
   if (result.toolCalls && result.toolCalls.length > 0) {
     const r = safeJsonStringify(result.toolCalls,);
     toolCallsJson = r.ok ? r.value : null;
+  }
+
+  // Smart-regen variant fill: update the pending placeholder row in place
+  // (it already carries role/visibility/swipe_index) instead of inserting
+  // yet another sibling row.
+  if (targetMessageId !== undefined) {
+    await database
+      .updateTable("messages",)
+      .set({
+        content: storedContent,
+        key_id: storedKeyId,
+        model_id: modelId,
+        provider,
+        token_count_prompt: result.tokenUsage.promptTokens,
+        token_count_completion: result.tokenUsage.completionTokens,
+        token_count_total: result.tokenUsage.totalTokens,
+        status,
+        tool_calls: toolCallsJson,
+      },)
+      .where("id", "=", targetMessageId,)
+      .execute();
+    return targetMessageId;
   }
 
   await database
@@ -156,6 +182,7 @@ export function buildGenerationResult(
  * @param opts.modelId
  * @param opts.provider
  * @param opts.continuationNumber
+ * @param opts.targetMessageId
  */
 export async function storeGenerationResult(opts: {
   db: Kysely<DB>;
@@ -167,6 +194,7 @@ export async function storeGenerationResult(opts: {
   modelId: string;
   provider: string;
   continuationNumber?: number;
+  targetMessageId?: string;
 },): Promise<string> {
   const messageId = await storeGeneratedMessage({
     database: opts.db,
@@ -177,6 +205,7 @@ export async function storeGenerationResult(opts: {
     modelId: opts.modelId,
     provider: opts.provider,
     continuationNumber: opts.continuationNumber,
+    targetMessageId: opts.targetMessageId,
   },);
 
   await completeGeneration({ attemptId: opts.attemptId, result: opts.result, db: opts.db, },);

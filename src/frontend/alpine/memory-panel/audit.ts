@@ -7,13 +7,15 @@
  * Loaded lazily when the audit tab opens; supports cursor pagination and
  * per-action filtering against GET /api/v1/actors/:actorId/memories/audit.
  */
-import type { AuditAction, ChatState, } from "../types";
+import type { AuditAction, AuditEntry, ChatState, } from "../types";
 import {
   AUDIT_ACTIONS,
   auditActionIcon,
   auditActionLabel,
   type AuditApiRow,
+  auditDetailsExpandable,
   auditEntriesForFilter,
+  formatAuditDetails,
   toAuditEntry,
 } from "./transform";
 
@@ -119,5 +121,43 @@ export const memoryPanelAudit: Partial<ChatState> & ThisType<ChatState> = {
   /** Resolve the human-readable label for an audit action badge. */
   _auditActionLabel(action: AuditAction,): string {
     return auditActionLabel(action,);
+  },
+
+  /**
+   * True when the entry's details block is expanded.
+   * @param id - audit entry id
+   */
+  isAuditExpanded(id: string,): boolean {
+    return this.memoryPanel.auditExpandedIds.includes(id,);
+  },
+
+  /**
+   * Toggle the expanded/collapsed state of an entry's details block.
+   * @param id - audit entry id
+   */
+  toggleAuditExpanded(id: string,): void {
+    const ids = this.memoryPanel.auditExpandedIds;
+    const i = ids.indexOf(id,);
+    if (i === -1) {
+      ids.push(id,);
+    } else {
+      ids.splice(i, 1,);
+    }
+  },
+
+  /**
+   * True when the entry has details worth expanding.
+   * @param entry
+   */
+  _auditDetailsExpandable(entry: AuditEntry,): boolean {
+    return auditDetailsExpandable(entry,);
+  },
+
+  /**
+   * Formatted (pretty-printed) details JSON for the expanded block.
+   * @param entry
+   */
+  _formatAuditDetails(entry: AuditEntry,): string {
+    return formatAuditDetails(entry.details,);
   },
 };

@@ -148,6 +148,7 @@ export async function runNonStreaming({
       actorId: input.actorId,
       modelId,
       provider: providerName,
+      targetMessageId: input.targetMessageId,
     },);
     // Tool results are persisted inline by executeToolCalls when ctx.db is
     // present (BUG-tool-call-result-no-frontend-rendering); no follow-up batch

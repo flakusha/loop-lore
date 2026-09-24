@@ -7,8 +7,10 @@ import {
   AUDIT_ACTIONS,
   auditActionIcon,
   auditActionLabel,
+  auditDetailsExpandable,
   auditEntriesForFilter,
   formatAuditDate,
+  formatAuditDetails,
   formatMemoryDate,
   injectAuditKinds,
   memoriesForTab,
@@ -84,6 +86,30 @@ describe("audit transform", () => {
     }
   });
 
+  test("auditActionIcon maps each action to a distinct icon", () => {
+    const icons = AUDIT_ACTIONS.map((action,) => auditActionIcon(action,));
+    expect(new Set(icons,).size,).toBe(AUDIT_ACTIONS.length,);
+  });
+
+  test("auditDetailsExpandable is true only for non-empty details", () => {
+    expect(auditDetailsExpandable({ ...mkEntry("create",), details: '{"a":1}', },),).toBe(true,);
+    expect(auditDetailsExpandable({ ...mkEntry("create",), details: "", },),).toBe(false,);
+    expect(auditDetailsExpandable({ ...mkEntry("create",), details: "   ", },),).toBe(false,);
+  });
+
+  test("formatAuditDetails pretty-prints valid JSON", () => {
+    expect(formatAuditDetails('{"a":1,"b":[2,3]}',),).toBe('{\n  "a": 1,\n  "b": [\n    2,\n    3\n  ]\n}',);
+  });
+
+  test("formatAuditDetails falls back to the raw text for malformed JSON", () => {
+    expect(formatAuditDetails("not-json",),).toBe("not-json",);
+  });
+
+  test("formatAuditDetails returns an empty string for empty input", () => {
+    expect(formatAuditDetails("",),).toBe("",);
+    expect(formatAuditDetails("   ",),).toBe("",);
+  });
+
   test("formatAuditDate returns empty string for invalid input", () => {
     expect(formatAuditDate("not-a-date",),).toBe("",);
     expect(formatAuditDate("",),).toBe("",);
@@ -145,6 +171,7 @@ describe("injectAuditKinds", () => {
       auditHasMore: false,
       auditLoading: false,
       auditError: null,
+      auditExpandedIds: [],
       auditActionFilter: null,
       loading: false,
       error: null,
@@ -314,6 +341,7 @@ describe("memory transform", () => {
       auditHasMore: false,
       auditLoading: false,
       auditError: null,
+      auditExpandedIds: [],
       auditActionFilter: null,
       loading: false,
       error: null,

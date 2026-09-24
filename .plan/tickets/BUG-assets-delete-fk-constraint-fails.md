@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** open
+**Status:** done
 **Priority:** medium
 **Effort:** Small
 
@@ -104,6 +104,20 @@ Follow-up dedup candidate found during review: `src/assets/controller/routes.ts`
 and `src/assets/controller/handlers.ts` are a dead duplicate of the live inline
 routes in `src/assets/controller.ts` (imported only by each other and
 `handlers.test.ts`) — no runtime shadowing since only one copy registers.
+
+Re-verified 2026-09-24 (bug-batch-2026-09-24b): the transactional fix above is
+present in this worktree's `src/assets/service/delete.ts`. FK audit: every
+inbound FK on `assets.id` is accounted for — `asset_links`/`asset_transforms`/
+`asset_shares` deleted and `actors`/`characters`/`personas.avatar_asset_id`
+cleared in-transaction; `asset_tags`/`asset_tag_dismissals` via
+`deleteAssetTags`; `character_avatars` (CASCADE) and `chat_backgrounds.asset_id`
+(SET NULL) left to SQLite; no table references `asset_links`. New service
+regression test ("removes every FK-dependent row: links, transforms, shares,
+avatar back-refs") fails on the pre-fix ordering with the ticket's exact
+`SQLiteError: FOREIGN KEY constraint failed` at the assets delete, and asserts
+the link rows are gone. Route-level 204 on delete + 404 for unknown id covered
+by `controller.routes.test.ts` ("owner deletes; second delete 404s"). Scoped
+suites: 54 pass, 0 fail across metadata/delete/controller route tests.
 
 ## Related
 

@@ -3,7 +3,7 @@
 
 # BUG: create-test-db-custom-dialect-can-bypass-setTestDatabase
 
-**Status:** ✅ Resolved (already on dev, 2026-09-20)
+**Status:** done
 **Priority:** Medium
 **Effort:** Medium
 **Summary:** Migration/roundtrip tests create raw Database handles without setTestDatabase — getDatabase() resolves the real on-disk DB

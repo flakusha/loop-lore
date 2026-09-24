@@ -62,7 +62,8 @@ Companion to `epic-federation-swarm-sync.md` (sections *Gaps & Open Questions*, 
 
 - **Options:** full · none · since-last-seen
 - **Recommendation:** paginated outbox backfill mirroring Mastodon/Lemmy; cap by count and age.
-- **Status:** open · **Linked:** `BUG-backfill-of-historical-posts-on-new-follower-unspecified`
+- **Decision:** paginated outbox backfill — newest-first `OrderedCollection` pages over a recent history window, capped by count and age. Recorded as the backfill acceptance criterion in `FEAT-activitypub-federation`; runtime behavior lands with that ticket (no outbox exists yet).
+- **Status:** decided (2026-09-24) · **Linked:** `BUG-backfill-of-historical-posts-on-new-follower-unspecified`
 
 ### C10 — Leader + swarm arbitration
 

@@ -7,12 +7,12 @@
  * Pure helpers shared by the memory panel component: API-row → MemoryEntry
  * mapping, keyword parsing and tab-scoped memory selection. Kept out of
  * `memory-panel.ts` so the component stays under the 250L file-size guard.
+ * Audit-tab transforms live in ./transform-audit.ts and are re-exported below.
  */
 
 import { toDate, } from "../../../utils/date";
-import { jsonStringifyOr, } from "../../../utils/safe-json";
 import { jsonParseOr, } from "../json";
-import type { AuditAction, AuditEntry, MemoryEntry, MemoryPanelState, } from "../types";
+import type { MemoryEntry, MemoryPanelState, } from "../types";
 
 /**
  * Estimate tokens from content length (~4 chars per token).
@@ -112,135 +112,20 @@ export function memoriesForTab(panel: MemoryPanelState, tab: MemoryPanelState["a
   }
 }
 
-// ── Audit transforms (FEAT-075) ─────────────────────────────────
-
-/** Raw audit row as returned by GET /api/v1/actors/:id/memories/audit. */
-export interface AuditApiRow {
-  id: string;
-  memoryId: string;
-  actorId: string;
-  userId: string | null;
-  action: AuditAction;
-  details: Record<string, unknown>;
-  createdAt: string;
-}
-
-/** Page wrapper returned by the audit endpoint. */
-export interface AuditApiPage {
-  entries: AuditApiRow[];
-  nextCursor?: string | null;
-}
-
-/** Map a raw API row to the panel AuditEntry shape. */
-export function toAuditEntry(row: AuditApiRow,): AuditEntry {
-  return {
-    id: row.id,
-    memoryId: row.memoryId,
-    actorId: row.actorId,
-    userId: row.userId,
-    action: row.action,
-    details: jsonStringifyOr(row.details ?? {},),
-    createdAt: row.createdAt,
-  };
-}
-
-/** All known audit actions — order matches the audit tab's filter chip row. */
-export const AUDIT_ACTIONS: AuditAction[] = ["create", "modify", "pin", "unpin", "decay", "purge", "inject", "delete",];
-
-export const AUDIT_ACTION_LABELS: Record<AuditAction, string> = {
-  create: "Created",
-  modify: "Modified",
-  pin: "Pinned",
-  unpin: "Unpinned",
-  decay: "Decayed",
-  purge: "Purged",
-  inject: "Injected",
-  delete: "Deleted",
-};
-
-export const AUDIT_ACTION_ICONS: Record<AuditAction, string> = {
-  create: "\u271A",
-  modify: "\u270F\uFE0F",
-  pin: "\uD83C\uDCCC",
-  unpin: "\uD83D\uDEAB",
-  decay: "\u23F3",
-  purge: "\uD83D\uDDD1",
-  inject: "\uD83D\uDC89",
-  delete: "\uD83D\uDDD1",
-};
-
-export function auditActionLabel(action: AuditAction,): string {
-  return AUDIT_ACTION_LABELS[action];
-}
-
-export function auditActionIcon(action: AuditAction,): string {
-  return AUDIT_ACTION_ICONS[action];
-}
-
-/**
- * Format an audit timestamp for the panel meta row (locale date + time).
- * @param iso
- * @returns locale date+time string, empty for an invalid timestamp
- */
-export function formatAuditDate(iso: string,): string {
-  const date = toDate(iso,);
-  if (Number.isNaN(date.getTime(),)) { return ""; }
-  return date.toLocaleString(undefined, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  },);
-}
-
-/**
- * Parse an audit entry's `details` JSON. Returns `{}` for malformed input.
- * @param details
- */
-export function parseAuditDetails(details: string,): Record<string, unknown> {
-  if (!details) { return {}; }
-  const obj = jsonParseOr<unknown>(details, {},);
-  if (obj && typeof obj === "object" && !Array.isArray(obj,)) {
-    return obj as Record<string, unknown>;
-  }
-  return {};
-}
-
-/**
- * Filter audit entries by the panel's current action filter.
- * @param entries
- * @param filter
- */
-export function auditEntriesForFilter(entries: AuditEntry[], filter: AuditAction | null,): AuditEntry[] {
-  if (!filter) { return entries; }
-  return entries.filter((e,) => e.action === filter);
-}
-
-/**
- * Resolve the distinct extraction kinds present in an `inject` audit
- * entry by looking each `memoryId` up across the loaded memory tabs.
- * Returns an empty array for non-inject actions, when the audit
- * payload has no `memoryIds`, or when the referenced memories have
- * not been loaded yet (the audit tab is paginated independently).
- * @param entry
- * @param panel
- */
-export function injectAuditKinds(entry: AuditEntry, panel: MemoryPanelState,): string[] {
-  if (entry.action !== "inject") { return []; }
-  const details = parseAuditDetails(entry.details,);
-  const ids = Array.isArray(details.memoryIds,)
-    ? (details.memoryIds as unknown[]).filter((id,): id is string => typeof id === "string")
-    : [];
-  if (ids.length === 0) { return []; }
-  const byId = new Map<string, MemoryEntry>();
-  for (const list of [panel.characterMemories, panel.assistantMemories, panel.worldMemories,]) {
-    for (const m of list) { byId.set(m.id, m,); }
-  }
-  const seen = new Set<string>();
-  for (const id of ids) {
-    const mem = byId.get(id,);
-    if (mem?.extractionKind) { seen.add(mem.extractionKind,); }
-  }
-  return [...seen,];
-}
+// Audit-tab transforms (FEAT-075) — implemented in ./transform-audit.ts;
+// re-exported here so the panel keeps a single import surface.
+export {
+  AUDIT_ACTION_ICONS,
+  AUDIT_ACTION_LABELS,
+  AUDIT_ACTIONS,
+  auditActionIcon,
+  auditActionLabel,
+  auditDetailsExpandable,
+  auditEntriesForFilter,
+  formatAuditDate,
+  formatAuditDetails,
+  injectAuditKinds,
+  parseAuditDetails,
+  toAuditEntry,
+} from "./transform-audit";
+export type { AuditApiPage, AuditApiRow, } from "./transform-audit";
