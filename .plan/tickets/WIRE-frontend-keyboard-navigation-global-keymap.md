@@ -180,4 +180,4 @@ export interface FrontendConfig {
 - `WIRE-frontend-keyboard-help-overlay.md` — help overlay component
 
 
-git issue: cb2b7cd
+git issue: 19340df

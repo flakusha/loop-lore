@@ -45,4 +45,4 @@ it("getMediaStyle returns correct CSS object", async () => { ... });
 - [ ] Mock Alpine/HMX globals correctly
 
 
-git issue: 12890ed
+git issue: 2c5c667

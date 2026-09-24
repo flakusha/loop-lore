@@ -54,4 +54,4 @@ Note that `Promise.allSettled` was chosen over the ticket's suggested `Promise.a
 **Verification**: `bun test src/assistant/commands/workflow-dispatch.test.ts src/assistant/commands/battle.integration.test.ts` → 18 pass / 0 fail. Dispatch path regression-free.
 
 
-git issue: 445acde
+git issue: d9c73e5

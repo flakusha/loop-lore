@@ -37,4 +37,4 @@ invitation-system
 - tests/e2e/flows/invite-join.test.ts
 
 
-git issue: 90e4b81
+git issue: ef4573b

@@ -196,4 +196,4 @@ kbd {
 - `src/frontend/alpine/i18n.ts` — existing `$t()` magic
 
 
-git issue: bdc214c
+git issue: 837bc93

@@ -114,4 +114,4 @@ htmx swaps re-initialize Alpine directives automatically — no JS changes neede
 - `src/frontend/alpine/chat-panels.ts:71-140` — existing `_keydownHandler` Escape chain
 
 
-git issue: 92534ae
+git issue: 4702993

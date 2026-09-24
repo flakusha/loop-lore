@@ -156,4 +156,4 @@ export function sidebar() {
 - `src/public/css/app.css:24` — existing `100dvh` pattern
 
 
-git issue: 2b2a36e
+git issue: 4a32f53
