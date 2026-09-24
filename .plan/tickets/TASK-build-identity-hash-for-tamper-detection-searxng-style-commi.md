@@ -13,6 +13,8 @@
 
 Add a compound "build identity hash" — a SHA-256 fingerprint over the running server’s code (git HEAD, source-tree hash, lockfile hash, build manifest) — exposed via the instance-state endpoint and a public `/.well-known/loop-lore/build-id` document. Lets a peer verify that another instance is running unmodified upstream code before federating. Mirrors the searxng commit-pin approach: anyone can recompute the hash from a clean checkout + lockfile + env, and compare.
 
+**Implementation spec:** [`docs/spec/federation-build-identity-hash.md`](../../docs/spec/federation-build-identity-hash.md) — hash composition, endpoint shapes, CI integration, CLI verify script, test plan.
+
 ## Summary
 
 `TASK-instance-state-advertisement-endpoint` advertises software name + version, but the version string is a semver that can be edited at build time. There is no way for a peer to verify the *exact bytes* behind that version. A malicious instance can ship `loop-lore 1.2.3` while running patched code; today, peers cannot tell. This ticket closes that gap with a reproducible build hash.
