@@ -173,4 +173,5 @@ export interface DB {
   rpg_questions: import("./schema-story").RpgQuestions;
   memory_audit_log: import("./schema-core").MemoryAuditLog;
   status_effect: import("./schema-core").StatusEffect;
+  interaction_logs: import("./schema-core").InteractionLogs;
 }

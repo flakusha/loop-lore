@@ -195,6 +195,7 @@ export const PRIORITY = {
   memories: 3,
   dynamicContext: 0,
   recentEvents: 0,
+  interactionContext: 0,
   postHistory: 4,
   examples: 5,
   nsfwPolicy: 0,
