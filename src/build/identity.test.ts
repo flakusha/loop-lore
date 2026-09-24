@@ -43,7 +43,7 @@ import { createTestDb, } from "../test-utils/create-test-db";
 let tempDir = "";
 
 beforeAll(() => {
-  createLogger({ level: "error", pretty: false, },);
+  createLogger({ level: "error", },);
 },);
 
 beforeEach(() => {
