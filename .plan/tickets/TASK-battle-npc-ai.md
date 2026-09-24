@@ -11,7 +11,7 @@
 **Epic:** Battle & Action Systems, NPC Navigation
 **Priority:** Medium
 **Effort:** High
-**Status:** Not Started
+**Status:** open
 **Created:** 2026-07-28
 **Cross-Mechanics Gap:** G3 (Battle ↔ NPC/Actor)
 

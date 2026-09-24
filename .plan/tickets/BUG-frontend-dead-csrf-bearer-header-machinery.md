@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** [OK] Done - full closure (dead Bearer removed, cookie-only browser story, 2026-09-16)
+**Status:** done
 **Priority:** medium
 **Effort:** Medium
 

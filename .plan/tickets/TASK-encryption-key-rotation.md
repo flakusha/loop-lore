@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟨 Partial — manual done; auto built but broken (see BUG-key-rotation-noop-orphans-history)
+**Status:** done
 **Priority:** Medium
 **Effort:** Med
 **Epic:** epic-crypto

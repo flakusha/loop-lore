@@ -304,3 +304,6 @@ Med — significant frontend rendering work but no schema changes needed. VN mod
 - `TASK-vn-branching-choices.md` — branching choices with relationship impact
 - `TASK-vn-dynamic-generation.md` — dynamic image/story generation
 - `TASK-vn-qa-mode.md` — Q&A mode for VN
+
+
+git issue: 99bd8ae

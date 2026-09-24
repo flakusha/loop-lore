@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 Partial (commit 85657ffb + 3f83ae89 on dev, 2026-08-26; only track() called, complete/fail never)
+**Status:** done
 **Priority:** medium
 **Effort:** Large
 **Epic:** epic-middleware-request-lifecycle

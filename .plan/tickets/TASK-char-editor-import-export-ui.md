@@ -3,7 +3,7 @@
 
 # TASK-char-editor-import-export-ui
 
-**Status:** Not Started
+**Status:** open
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

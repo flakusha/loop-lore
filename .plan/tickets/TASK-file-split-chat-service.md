@@ -3,7 +3,7 @@
 
 # TASK-file-split-chat-service: Split `src/chat/service.ts` (1830L)
 
-**Status:** Not Started
+**Status:** open
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

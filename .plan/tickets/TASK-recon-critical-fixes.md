@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 In Progress (1.6 auto-rename done; rest open)
+**Status:** done
 **Priority:** High
 **Effort:** Medium
 **Type:** TASK

@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ⏳ In Progress (partial — 227 of 2647 files done)
+**Status:** done
 **Priority:** medium
 **Effort:** Large (2-3 batches)
 

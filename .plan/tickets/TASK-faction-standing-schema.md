@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ⬜ Not Started
+**Status:** open
 **Priority:** Medium
 **Effort:** Medium
 **Related:** epic-faction-reputation.md, epic-worlds-extension.md, epic-social-interaction.md

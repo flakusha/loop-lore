@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ⬜ Not Started
+**Status:** open
 **Priority:** Low
 **Effort:** Small
 **Related:** TASK-plan-phantom-src-citation-guard.md

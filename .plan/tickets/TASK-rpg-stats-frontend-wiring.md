@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ⬜ Not Started
+**Status:** open
 **Priority:** P0
 **Effort:** Medium
 **Epic:** epic-frontend-backend-integration

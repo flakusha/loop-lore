@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ⬜ Not Started
+**Status:** open
 **Priority:** Medium
 **Effort:** High
 **Epic:** epic-exploration-discovery

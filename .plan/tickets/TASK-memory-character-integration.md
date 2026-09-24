@@ -11,7 +11,7 @@
 **Epic:** `epic-memory-knowledge-systems.md` (FEA-2026-057)
 **Priority:** Medium
 **Effort:** Medium
-**Status:** Not Started
+**Status:** open
 
 **Summary:**
 Integrate memory emotion-impact with character systems: mood, coping, relationships, and prompt assembly.

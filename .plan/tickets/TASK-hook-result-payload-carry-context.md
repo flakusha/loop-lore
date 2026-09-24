@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ⬜ Not Started
+**Status:** open
 **Priority:** P3
 **Effort:** Small
 **Epic:** epic-character-core-system

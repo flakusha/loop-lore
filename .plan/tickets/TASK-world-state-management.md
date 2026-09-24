@@ -11,7 +11,7 @@
 **Epic:** World & Locations
 **Priority:** High
 **Effort:** Large
-**Status:** Not Started
+**Status:** open
 
 ## Summary
 

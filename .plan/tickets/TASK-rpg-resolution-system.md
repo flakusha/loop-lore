@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 In Progress (split into implementing tickets — see below)
+**Status:** done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-resolution-system

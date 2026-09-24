@@ -3,7 +3,7 @@
 
 # TASK-PLAN-NSFW-RATING-UI: NSFW 5-tier character rating enforcement
 
-**Status:** Not Started
+**Status:** open
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

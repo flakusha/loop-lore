@@ -3,7 +3,7 @@
 
 # WIRE: impersonate command-palette FE has no actionPayload dispatch
 
-**Status:** Not Started
+**Status:** done
 **Priority:** medium
 **Summary:** (none captured)
 **Context:** (none captured)
@@ -38,3 +38,5 @@ And add `impersonate(cmd)` method to the chat Alpine store that calls the BE imp
 ## Resolution
 
 Fixed in commit `2ac5cf29` (fix(wire): 3 P2-Reconcile tickets): the same commit also wrapped /views/nsfw-moderation in `requirePermission('admin.system')` guard, added the impersonate dispatch in `command-buttons.runCommand`, and added the linkAsset() call in `src/routes/characters/create.ts` after actor insert.
+
+git issue: fa2f0e3

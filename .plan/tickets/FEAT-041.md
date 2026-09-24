@@ -3,7 +3,7 @@
 
 # FEAT-041: Migration reconciliation
 
-**Status:** Done (2026-09-20 — superseded by DB v0 collapse: 23 forward migrations + 20 parts/ sub-modules squashed into single `001_init.ts` (03bb19c91); no reconciliation needed, single migration is the reconciled state)
+**Status:** open
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

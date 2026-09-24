@@ -178,3 +178,6 @@ export interface FrontendConfig {
 
 - `src/frontend/alpine/focus.ts` — existing `handleEscapeKey`
 - `WIRE-frontend-keyboard-help-overlay.md` — help overlay component
+
+
+git issue: cb2b7cd

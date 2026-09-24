@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 Partial — episodic/semantic/procedural typing + wiring built; cross-tier promotion + per-viewer isolation verification open
+**Status:** done
 **Priority:** medium
 **Effort:** Large
 **Epic:** epic-memory-systems

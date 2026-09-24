@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 In Progress — gossip loop wired (federation-mesh-core)
+**Status:** done
 **Priority:** medium
 **Effort:** Large
 **Epic:** epic-federation-swarm-sync.md

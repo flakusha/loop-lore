@@ -11,7 +11,7 @@
 **Epic:** epic-character-internal-traits
 **Priority:** High (P6-D — character/agentic core, matrix G27/G36 dep)
 **Effort:** Medium
-**Status:** Not Started
+**Status:** open
 **Created:** 2026-08-15
 **Related:** G27 (BDI Planning ↔ Internal Traits), G36 (Character Growth ↔ Internal Traits)
 

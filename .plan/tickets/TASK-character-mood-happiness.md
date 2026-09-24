@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 In Progress (services + routes done) — umbrella; work split into 3 child tickets
+**Status:** done
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** Character Core System

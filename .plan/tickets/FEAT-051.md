@@ -3,7 +3,7 @@
 
 # FEAT-051: Plugin config merge
 
-**Status:** Not Started
+**Status:** open
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

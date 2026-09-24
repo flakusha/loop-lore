@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 In Progress — notes panel done, world/NPC/event/scene controls pending (2026-08-01)
+**Status:** done
 **Priority:** P1 — High
 **Effort:** Medium
 **Type:** Feature Task

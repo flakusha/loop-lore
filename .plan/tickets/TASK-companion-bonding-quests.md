@@ -10,7 +10,7 @@
 
 
 **Priority:** Medium
-**Status:** ⬜ Not Started
+**Status:** open
 **Epic:** epic-companion-pet-mount
 **Tags:** companion, bonding, quests, legacy, pet-battle
 

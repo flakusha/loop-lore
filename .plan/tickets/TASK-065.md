@@ -3,7 +3,7 @@
 
 # TASK-065: LORA discovery and addition logic
 
-**Status:** Not Started
+**Status:** open
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

@@ -10,7 +10,7 @@
 
 
 **Epic:** epic-testing-qa.md (see also epic-prompt-improvement.md)
-**Status:** Not Started
+**Status:** open
 **Priority:** High
 
 ## Problem

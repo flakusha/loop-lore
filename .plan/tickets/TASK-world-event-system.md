@@ -10,7 +10,7 @@
 
 
 **Priority:** Medium
-**Status:** ⬜ Not Started
+**Status:** open
 **Epic:** epic-world-locations
 **Tags:** world, events, timeline, dynamic, narrative
 

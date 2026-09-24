@@ -44,3 +44,6 @@ it("round-trips: extractCharx(createCharx(data)) → data", () => {
 
 - [ ] Round-trip test passes
 - [ ] Field loss detected by test
+
+
+git issue: 10c2e30

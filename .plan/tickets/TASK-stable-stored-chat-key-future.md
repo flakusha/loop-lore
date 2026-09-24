@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ⬜ Not Started
+**Status:** open
 **Priority:** High (escalated — see BUG-chat-key-history-loss-join-leave)
 **Effort:** Medium
 **Epic:** epic-encryption-foundation

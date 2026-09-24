@@ -7,7 +7,7 @@
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)
 
-**Status:** ✅ Done (closed 2026-09-20) — partial UNIQUE INDEX closes the race
+**Status:** done
 **Priority:** medium
 **Effort:** Medium
 

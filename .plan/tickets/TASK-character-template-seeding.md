@@ -3,7 +3,7 @@
 
 # TASK-2026-046: Character Template Seeding
 
-**Status:** Not Started
+**Status:** open
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

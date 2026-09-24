@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 Partial — visibility field + `buildPromptSection(includeHidden)` shipped (`44e22069`); `toPublicCard()` redaction + role-based API access + frontend view tiers pending
+**Status:** open
 **Priority:** high
 **Effort:** Medium
 

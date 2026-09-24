@@ -3,7 +3,7 @@
 
 # TASK-003: Evaluate hosting providers (Research)
 
-**Status:** 🟢 done
+**Status:** open
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Research-only evaluation of hosting providers across 8 targets and 4 criteria categories.
