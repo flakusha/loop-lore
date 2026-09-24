@@ -1,7 +1,10 @@
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 # BUG: runOffloadPass phase 1 — spill() and DB UPDATE not in same transaction
-**Status:** Open
+
+**Priority:** High
+**Effort:** Small
+**Status:** done
 **Severity:** high
 **Files:** src/async/offload.ts:91-101
 
@@ -11,3 +14,7 @@ Fix: wrap spill + UPDATE in a single Kysely transaction; on rollback unlink the 
 
 
 git issue: 91f85bc
+
+**Summary:** phase 1 of `runOffloadPass` writes the spill file and updates the row in separate steps — a crash between them orphans the file.
+**Context:** `src/async/offload.ts` phase 1 (`spill()` then bare UPDATE setting `offloaded_at`/`offload_path`/`response_body = null`).
+**Acceptance Criteria:** spill + UPDATE run in one transaction; UPDATE failure rolls back and unlinks the spilled file; deterministic re-spill path still self-heals crash windows; regression test forces the rollback path.

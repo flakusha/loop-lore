@@ -13,7 +13,7 @@ git issue: c92bfc9
 
 # BUG: upgrade.ts metadata state lost — Object.assign mutates newConnection.metadata in-place, erasing fresh factory metadata
 
-**Status:** open
+**Status:** done
 **Priority:** High
 **Effort:** Low
 
@@ -28,6 +28,7 @@ The test at `src/transport/upgrade.test.ts:80-99` masks the bug: it adds custom 
 ## Defect Summary
 
 `src/transport/upgrade.ts:87`:
+
 ```ts
 Object.assign(newConnection.metadata, state, { upgradedFrom: currentConnection.protocol },);
 ```
@@ -37,6 +38,7 @@ Object.assign(newConnection.metadata, state, { upgradedFrom: currentConnection.p
 ## Fix Outline
 
 Replace the in-place mutation with a new object spread, then replace `newConnection.metadata` on the connection returned by `connect()` before it is returned to the caller:
+
 ```ts
 const newConnection = await newHandler.connect();
 newConnection.metadata = { ...newConnection.metadata, ...state, upgradedFrom: currentConnection.protocol };

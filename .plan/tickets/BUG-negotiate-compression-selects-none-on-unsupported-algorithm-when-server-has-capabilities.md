@@ -45,6 +45,7 @@ In `withCompression.connect()`, the metadata will contain `compression: algorith
 ## Fix Outline
 
 Reverse the iteration: iterate over `serverCaps.compression` (server preference order) and check whether each appears in `acceptEncoding` (client accepted):
+
 ```ts
 for (const candidate of serverCaps.compression) {
   if (acceptEncoding.includes(candidate,)) {

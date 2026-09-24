@@ -88,13 +88,30 @@ export async function runOffloadPass(
   for (const row of ripe) {
     if (row.response_body === null) { continue; }
     if (row.response_body.length <= maxInlineBytes) { continue; }
+    const body = row.response_body;
     try {
-      const spillPath = await spill(row.id, row.response_body,);
-      await database
-        .updateTable("request_results",)
-        .set({ offloaded_at: new Date(now,).toISOString(), offload_path: spillPath, response_body: null, },)
-        .where("id", "=", row.id,)
-        .execute();
+      await database.transaction().execute(async (trx,) => {
+        // Spill and UPDATE share one transaction
+        // (BUG-runoffloadpass-phase1-spill-and-db-update-not-atomic).
+        // bun:sqlite is synchronous and spill() only performs sync I/O,
+        // so awaiting it inside the transaction adds no hazard. When the
+        // UPDATE fails the rollback keeps the row's inline body — unlink
+        // the spilled file so disk and DB stay consistent; the next pass
+        // re-spills to the same deterministic path.
+        const spillPath = await spill(row.id, body,);
+        try {
+          await trx
+            .updateTable("request_results",)
+            .set({ offloaded_at: new Date(now,).toISOString(), offload_path: spillPath, response_body: null, },)
+            .where("id", "=", row.id,)
+            .execute();
+        } catch (error) {
+          try {
+            unlinkSync(spillPath,);
+          } catch { /* already gone */ }
+          throw error;
+        }
+      },);
       offloaded++;
     } catch (error) {
       log.error("offload spill failed", undefined, { id: row.id, error: String(error,), },);
@@ -123,14 +140,24 @@ export async function runOffloadPass(
     .execute();
   for (const row of expiredOld) {
     if (row.offload_path === null) { continue; }
+    const filePath = row.offload_path;
+    // Null the DB path transactionally BEFORE unlinking
+    // (BUG-runoffloadpass-phase3-unlink-and-db-update-not-atomic): a
+    // failed UPDATE rolls back and leaves the row pointing at the
+    // still-present file, so consistency survives the rollback. The
+    // unlink runs only after the UPDATE commits — a crash in between
+    // leaves an orphan file that nothing references, never a DB path
+    // pointing at a deleted file.
+    await database.transaction().execute(async (trx,) => {
+      await trx
+        .updateTable("request_results",)
+        .set({ offload_path: null, },)
+        .where("id", "=", row.id,)
+        .execute();
+    },);
     try {
-      unlinkSync(row.offload_path,);
+      unlinkSync(filePath,);
     } catch { /* already gone */ }
-    await database
-      .updateTable("request_results",)
-      .set({ offload_path: null, },)
-      .where("id", "=", row.id,)
-      .execute();
   }
   return { offloaded, expired, };
 }
