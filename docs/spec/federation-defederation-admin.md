@@ -30,6 +30,7 @@
 ## 1. Database Schema
 
 ### `defederation_blocks` — current state
+
 ```sql
 CREATE TABLE defederation_blocks (
   id              TEXT PRIMARY KEY,            -- ULID
@@ -50,6 +51,7 @@ CREATE INDEX defederation_blocks_severity_idx ON defederation_blocks(severity);
 ```
 
 ### `defederation_audit_log` — append-only
+
 ```sql
 CREATE TABLE defederation_audit_log (
   id           TEXT PRIMARY KEY,                 -- ULID
@@ -72,6 +74,7 @@ CREATE INDEX defederation_audit_log_actor_created_idx
 ```
 
 ### `user_instance_blocks` — per-user opt-out
+
 ```sql
 CREATE TABLE user_instance_blocks (
   user_id     TEXT NOT NULL,
@@ -83,6 +86,7 @@ CREATE TABLE user_instance_blocks (
 ```
 
 ### Kysely types — colocate in `src/db/schema-defederation.ts`
+
 ```ts
 export type Severity = "noop" | "silence" | "suspend";
 export type DefederationAction = "create" | "update" | "delete" | "escalate" | "de_escalate";
@@ -147,17 +151,22 @@ stateDiagram-v2
 ## 3. API Endpoints (admin-authz guarded)
 
 ### `GET /api/admin/defederation`
+
 List blocks, paginated via Link header (consistent with rest of admin API).
+
 ```ts
 query: { severity?: Severity; reject_media?: 'true'; reject_reports?: 'true'; limit?: number; cursor?: string }
 response: { data: DefederationBlock[]; next_cursor: string | null }
 ```
 
 ### `GET /api/admin/defederation/:id`
+
 Single block detail including the full audit history inline.
 
 ### `POST /api/admin/defederation`
+
 Create a block.
+
 ```ts
 body: {
   domain: string;            // canonicalized server-side
@@ -174,26 +183,34 @@ errors: 409 if domain already blocked (return existing block)
 ```
 
 ### `PUT /api/admin/defederation/:id`
+
 Update an existing block. Body shape mirrors POST without `domain`. Action in audit log is `update` if booleans/severity change but stay at same level, `escalate` if severity increases, `de_escalate` if it decreases.
 
 ### `DELETE /api/admin/defederation/:id`
+
 Lift the block. `?hard=true` removes the row entirely (irreversible — audit log entry remains). Default is a soft delete via `severity='noop'`.
 
 ### `GET /api/admin/defederation/audit`
+
 Paginated audit log.
+
 ```ts
 query: { domain?: string; actor_id?: string; action?: DefederationAction; since?: ISO; until?: ISO; limit?: number; cursor?: string }
 response: { data: DefederationAuditLogEntry[]; next_cursor: string | null }
 ```
 
 ### `POST /api/admin/defederation/users/:user_id/blocks` (per-user)
+
 Block a domain for a single user (Lemmy parity).
+
 ```ts
 body: { domain: string; reason?: string }
 ```
 
 ### `GET /api/admin/defederation/export`
+
 CSV export in Mastodon format:
+
 ```csv
 domain,digest,severity,reject_media,reject_reports,public_comment,private_comment,obfuscate
 example.com,sha256:abcd...,suspend,false,true,"CSAM distribution",,false
@@ -201,7 +218,9 @@ spam.xyz,sha256:1234...,noop,true,false,"Bulk DM spam",,false
 ```
 
 ### `POST /api/admin/defederation/import`
+
 Mastodon-format CSV import. Default behavior: **dry-run**, returns preview; `?commit=true` applies.
+
 ```ts
 response: 200 {
   preview: Array<{ domain: string; will_create: boolean; will_update: boolean; current_severity: Severity | null }>;
@@ -324,6 +343,7 @@ These run **only** when severity actually transitions to `suspend` (or when `har
 ## 7. Validation
 
 ### Elysia `t` schemas (TypeBox)
+
 ```ts
 // src/validation/schemas/defederation.ts
 import { t } from "elysia";
@@ -371,6 +391,7 @@ export const DefederationBlockResponseSchema = t.Object({
 ## 8. Logging
 
 Use the structured logger (`src/logger/`). Events:
+
 ```ts
 log.event({ event: "federation.defederate.create", actor_id, domain, severity, reject_media, reject_reports, obfuscate });
 log.event({ event: "federation.defederate.update", actor_id, block_id, domain, prev_state, next_state, escalate });
@@ -386,6 +407,7 @@ log.event({ event: "federation.defederate.import", actor_id, rows_created, rows_
 ## 9. Test Plan
 
 ### Unit (`src/federation/defederation/defederation.test.ts`)
+
 - `createBlock` happy path + 409 on duplicate domain (returns existing).
 - `updateBlock` severity escalation emits `action='escalate'`; de-escalation emits `action='de_escalate'`.
 - `defederate` first call moves trusted -> suspended; second call returns `already_suspended: true` with HTTP 200.
@@ -401,9 +423,11 @@ log.event({ event: "federation.defederate.import", actor_id, rows_created, rows_
 - Per-user block: `blockUserInstance` then `listUserInstanceBlocks` returns the row; `unblockUserInstance` removes it.
 
 ### Integration (`src/federation/defederation/defederation.integration.test.ts`)
+
 - Spin up a fake peer (mocked HTTP server that returns `/nodeinfo/2.1`), put it in `peer_registry` as trusted, defederate it, assert subsequent gossip fetch returns 403/connection-refused because the in-memory PeerTable evicted it.
 
 ### E2E (`tests/e2e/admin-defederation.test.ts`)
+
 - As admin: POST `/api/admin/defederation` with severity=suspend. Then GET `/api/admin/defederation/audit` shows the transition with `actor_id` = the test admin. Then DELETE `?hard=true` removes the row; the audit entry persists with `action='delete'`.
 - Non-admin caller receives 403.
 

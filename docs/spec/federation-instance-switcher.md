@@ -186,7 +186,9 @@ Keyboard shortcut: `g i` opens the picker. The existing command palette (`src/fr
 ## 4. Backend Endpoints
 
 ### `GET /api/federation/state`
+
 Returns the current Session's `federationState` for Alpine hydration.
+
 ```ts
 response: {
   primary_origin: string;
@@ -197,7 +199,9 @@ response: {
 ```
 
 ### `POST /api/federation/switch`
+
 Sets the active origin. Issues a new per-instance session token if needed (via the existing `epic-auth-access.md` seam) and sets the `federation.active_origin` cookie + DB column.
+
 ```ts
 body: { origin: string }
 response: { active_origin: string; switched_at: Date }
@@ -205,7 +209,9 @@ errors: 401 if not authenticated; 404 if origin not in user's accounts
 ```
 
 ### `POST /api/federation/probe`
+
 Probes an origin for reachability and returns its NodeInfo.
+
 ```ts
 body: { origin: string }
 response: {
@@ -217,26 +223,33 @@ response: {
 ```
 
 ### `POST /api/federation/accounts`
+
 Persist a new account after OAuth flow returns. (Backend of the Add-instance modal.)
+
 ```ts
 body: { origin: string; token: string; username: string }
 response: 201 { account: FederationAccount }
 ```
 
 ### `DELETE /api/federation/accounts/:origin`
+
 Remove an account from the user's session. Cannot remove the primary origin.
 
 ### `POST /api/federation/migrate`
+
 Initiate a Migration activity (Mastodon-style `Move` + `alsoKnownAs`). Server-side state machine: ANCHORED -> TRANSIT -> REDIRECT_OLD on the old instance.
+
 ```ts
 body: { old_origin: string; new_origin: string; also_known_as: string }
 response: { migration_id: string; status: "in_progress" }
 ```
 
 ### `GET /partials/federation/instance-dropdown`
+
 htmx partial: returns the dropdown HTML for htmx swap.
 
 ### `GET /partials/main?active_origin=...`
+
 htmx partial for the main content area, scoped to the active origin.
 
 ---
@@ -278,6 +291,7 @@ CREATE INDEX user_federation_migrations_user_idx ON user_federation_migrations(u
 ```
 
 Add to `users` table:
+
 ```sql
 ALTER TABLE users ADD COLUMN active_origin TEXT;   -- server-side mirror of the Alpine store
 ```
@@ -355,6 +369,7 @@ This state machine lives in `src/federation/switcher/migration.ts` and is wired 
 ## 9. Validation
 
 ### Elysia `t` schemas
+
 ```ts
 // src/validation/schemas/federation-switcher.ts
 import { t } from "elysia";
@@ -393,6 +408,7 @@ log.event({ event: "federation.switcher.migrate_complete", user_id, migration_id
 ## 11. Test Plan
 
 ### Unit (`src/federation/switcher/switcher.test.ts`)
+
 - `getFederationState` returns the user's primary + accounts.
 - `switchActive` updates the active_origin and issues a new per-instance session if needed.
 - `addAccount` rejects when the probe fails.
@@ -400,12 +416,14 @@ log.event({ event: "federation.switcher.migrate_complete", user_id, migration_id
 - Migration state machine: ANCHORED -> TRANSIT -> REDIRECT_OLD transitions; timeout returns to ANCHORED with error flag.
 
 ### Alpine store (`src/frontend/alpine/stores/federation.test.ts`)
+
 - `isHome` getter returns true when active == primary.
 - `activeLabel` returns "Home" for home, "user@origin" for remote.
 - `switchTo` POSTs to `/api/federation/switch`; on success sets cookie + dispatches `federation:switched` event.
 - `addInstance` probes first, then redirects.
 
 ### E2E (`tests/e2e/federation-switcher.test.ts`)
+
 - Sign in as test user (primary instance A).
 - Open the picker, "Add instance" with a mock B instance URL, complete OAuth.
 - Switch to B; assert the top-bar label changes to `user@B`, the worlds list shows the "via B" badge, the cookie `federation.active_origin=B` is set.
