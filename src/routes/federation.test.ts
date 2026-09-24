@@ -132,6 +132,9 @@ describe("federationRoutes — instance-state", () => {
     expect(Array.isArray(body.protocols,),).toBe(true,);
     expect(typeof body.uptime,).toBe("number",);
     expect(["ok", "degraded",].includes(body.state as string,),).toBe(true,);
+    // buildHash is included as a truncated fingerprint (16 hex chars).
+    expect(typeof body.buildHash,).toBe("string",);
+    expect((body.buildHash as string).length,).toBe(16,);
   });
 
   test("/api/instance-state does not leak secrets or user identifiers", async () => {

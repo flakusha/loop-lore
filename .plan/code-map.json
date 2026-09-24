@@ -496,6 +496,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-build-identity-hash-for-tamper-detection-searxng-style-commi.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-crafting-stations-execution.md"
     },
     {
@@ -1513,8 +1517,11 @@
       "source": ".plan/tickets/TASK-assistant-tool-injection-guard.md"
     }
   ],
-
   "src/assistant/commands/interaction.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-math-ai-bridge.md"
+    },
     {
       "kind": "spec",
       "source": "docs/spec/character-interactions.md"
@@ -2402,6 +2409,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-world-chat-channels-invites.md"
+    }
+  ],
+  "src/assistant/prompt/sections/interaction-context.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-math-ai-bridge.md"
     }
   ],
   "src/assistant/prompt/sections/internal-traits.ts": [
@@ -3856,7 +3869,6 @@
       "source": ".plan/epics/epic-blog-system.md"
     }
   ],
-
   "src/build-identity/build-identity.test.ts": [
     {
       "kind": "spec",
@@ -3887,6 +3899,18 @@
     {
       "kind": "spec",
       "source": "docs/spec/content-compression.md"
+    }
+  ],
+  "src/build/identity.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-build-identity-hash-for-tamper-detection-searxng-style-commi.md"
+    }
+  ],
+  "src/build/identity.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-build-identity-hash-for-tamper-detection-searxng-style-commi.md"
     }
   ],
   "src/character/characterLicense.ts": [
@@ -6919,7 +6943,6 @@
       "source": ".plan/tickets/TASK-029.md"
     }
   ],
-
   "src/components/chat/archive-confirm.html": [
     {
       "kind": "epic",
@@ -10512,7 +10535,6 @@
       "source": ".plan/epics/epic-impersonation.md"
     }
   ],
-
   "src/db/migrations/008_game_interactions.ts": [
     {
       "kind": "spec",
@@ -10531,6 +10553,12 @@
       "source": ".plan/tickets/BUG-nsfw-moderation-delete-destroys-audit-log.md"
     }
   ],
+  "src/db/migrations/009_math_resolution.sql": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-math-resolution.md"
+    }
+  ],
   "src/db/migrations/009_reactions_pins.ts": [
     {
       "kind": "epic",
@@ -10539,6 +10567,30 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-message-seen-state-schema.md"
+    }
+  ],
+  "src/db/migrations/010_inventory_change_events.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-math-ledger.md"
+    }
+  ],
+  "src/db/migrations/010_relationship_change_events.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-math-ledger.md"
+    }
+  ],
+  "src/db/migrations/011_bennies.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-math-economy.md"
+    }
+  ],
+  "src/db/migrations/011_turn_budget.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-math-economy.md"
     }
   ],
   "src/db/migrations/012_features.ts": [
@@ -10769,7 +10821,6 @@
       "source": ".plan/tickets/FEAT-chat-template-config-lifecycle.md"
     }
   ],
-
   "src/db/migrations/0XX_defederation_blocks.ts": [
     {
       "kind": "spec",
@@ -10798,7 +10849,6 @@
       "source": ".plan/tickets/FEAT-065-sub-llm.md"
     }
   ],
-
   "src/db/migrations/0XX_user_federation_accounts.ts": [
     {
       "kind": "spec",
@@ -11669,7 +11719,6 @@
       "source": ".plan/epics/epic-stealth-crime.md"
     }
   ],
-
   "src/db/schema-defederation.ts": [
     {
       "kind": "spec",
@@ -12600,21 +12649,18 @@
       "source": "docs/spec/testing.md"
     }
   ],
-
   "src/federation/actor-map.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-federation-instance-switcher-in-frontend-travel-between-inst.md"
     }
   ],
-
   "src/federation/audit.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-federation-peer-audit-probe-zero-trust-cross-instance-verifi.md"
     }
   ],
-
   "src/federation/audit/audit.test.ts": [
     {
       "kind": "spec",
@@ -12637,14 +12683,12 @@
       "source": ".plan/tickets/TASK-mesh-coordinator-server-knowledge-db.md"
     }
   ],
-
   "src/federation/defederation/defederation.integration.test.ts": [
     {
       "kind": "spec",
       "source": "docs/spec/federation-defederation-admin.md"
     }
   ],
-
   "src/federation/defederation/defederation.test.ts": [
     {
       "kind": "spec",
@@ -12683,7 +12727,6 @@
       "source": ".plan/tickets/TASK-mesh-coordinator-server-knowledge-db.md"
     }
   ],
-
   "src/federation/peer-table.ts": [
     {
       "kind": "ticket",
@@ -12700,14 +12743,12 @@
       "source": "docs/spec/headless-alternative-frontends.md"
     }
   ],
-
   "src/federation/switcher/migration.ts": [
     {
       "kind": "spec",
       "source": "docs/spec/federation-instance-switcher.md"
     }
   ],
-
   "src/federation/switcher/switcher.test.ts": [
     {
       "kind": "spec",
@@ -13644,7 +13685,6 @@
       "source": ".plan/tickets/TASK-gm-guided-story-creation.md"
     }
   ],
-
   "src/frontend/alpine/chat-types/memory.ts": [
     {
       "kind": "ticket",
@@ -13885,7 +13925,6 @@
       "source": ".plan/tickets/WIRE-impersonate-command-palette-no-actionpayload-dispatch.md"
     }
   ],
-
   "src/frontend/alpine/command-palette.ts": [
     {
       "kind": "spec",
@@ -14318,21 +14357,18 @@
       "source": "docs/spec/memory-system.md"
     }
   ],
-
   "src/frontend/alpine/memory-panel/audit.test.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-audit-panel-details-not-expandable.md"
     }
   ],
-
   "src/frontend/alpine/memory-panel/audit.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-audit-panel-details-not-expandable.md"
     }
   ],
-
   "src/frontend/alpine/memory-panel/transform.test.ts": [
     {
       "kind": "ticket",
@@ -14701,7 +14737,6 @@
       "source": ".plan/tickets/TASK-refactor-schema-validate-alpine-store-fields-at-init.md"
     }
   ],
-
   "src/frontend/alpine/stores/federation.test.ts": [
     {
       "kind": "spec",
@@ -16776,7 +16811,6 @@
       "source": ".plan/tickets/TASK-world-dashboard.md"
     }
   ],
-
   "src/gc/archive-expiration.ts": [
     {
       "kind": "ticket",
@@ -23475,11 +23509,16 @@
       "source": ".plan/tickets/BUG-blog-post-get-bypasses-visibility-policy.md"
     }
   ],
-
   "src/routes/build-id.test.ts": [
     {
       "kind": "spec",
       "source": "docs/spec/federation-build-identity-hash.md"
+    }
+  ],
+  "src/routes/build-id.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-build-identity-hash-for-tamper-detection-searxng-style-commi.md"
     }
   ],
   "src/routes/character-availability.ts": [
@@ -24126,7 +24165,6 @@
       "source": ".plan/tickets/TASK-per-chat-auto-translation-layer.md"
     }
   ],
-
   "src/routes/chats/list.ts": [
     {
       "kind": "epic",
@@ -24617,6 +24655,12 @@
       "source": ".plan/tickets/TASK-mesh-encrypted-content-sharing-reservation-duplication.md"
     }
   ],
+  "src/routes/federation.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-build-identity-hash-for-tamper-detection-searxng-style-commi.md"
+    }
+  ],
   "src/routes/federation.ts": [
     {
       "kind": "ticket",
@@ -25037,7 +25081,6 @@
       "source": ".plan/tickets/FEAT-prompt-lorebook-marketplace-community-shared.md"
     }
   ],
-
   "src/routes/memory/knowledge-graph.ts": [
     {
       "kind": "ticket",
@@ -26830,7 +26873,6 @@
       "source": ".plan/tickets/BUG-v1-csrf-exempt-set-missing-api-v1-prefixes-for-session-mint-.md"
     }
   ],
-
   "src/routes/v1/content-surface.ts": [
     {
       "kind": "ticket",
@@ -28079,6 +28121,34 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
+    }
+  ],
+  "src/rpg/interaction": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-math-resolution.md"
+    }
+  ],
+  "src/rpg/interaction/contract/dice-result.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-math-ai-bridge.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-math-structured-llm-dice-result.md"
+    }
+  ],
+  "src/rpg/interaction/position-effect.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-math-resolution.md"
+    }
+  ],
+  "src/rpg/interaction/resolver.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-math-resolution.md"
     }
   ],
   "src/rpg/intimacy.ts": [
@@ -30463,6 +30533,18 @@
       "source": ".plan/tickets/TASK-data-migration-transitivity.md"
     }
   ],
+  "src/services/projections/inventory.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-math-ledger.md"
+    }
+  ],
+  "src/services/projections/relationships.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-math-ledger.md"
+    }
+  ],
   "src/services/server-external-manager.ts": [
     {
       "kind": "spec",
@@ -31201,7 +31283,6 @@
       "source": ".plan/tickets/TASK-cron-registry-core.md"
     }
   ],
-
   "src/telemetry/percentiles.ts": [
     {
       "kind": "ticket",
@@ -32970,7 +33051,6 @@
       "source": ".plan/tickets/TASK-rpg-skill-tree-visualization-frontend.md"
     }
   ],
-
   "src/views/partials/top-bar.html": [
     {
       "kind": "spec",
