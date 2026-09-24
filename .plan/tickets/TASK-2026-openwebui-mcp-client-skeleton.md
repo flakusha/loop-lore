@@ -73,6 +73,7 @@ if (tool.apiFamily === "mcp") {
 
 ## Acceptance Criteria
 
+- [ ] **Prerequisite**: `@modelcontextprotocol/sdk` is added to `package.json` `dependencies` and `bun install` is clean. (Verified missing as of writing — this is a blocking dep.) Once added, file a one-line dependency note in this ticket's References.
 - [ ] `src/plugins/mcp/client.ts` exists with `connect`, `listTools`, `callTool`, `disconnect` methods.
 - [ ] `AsyncExitStack` is used; `disconnect()` calls `exitStack.close()` (LIFO order preserved).
 - [ ] `src/plugins/registry.ts` exports `mcpServers: Map<string, MCPClient>`.

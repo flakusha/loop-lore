@@ -33,7 +33,7 @@ New partial — `src/partials/chat/tool-call-block.html`:
 </div>
 ```
 
-The Alpine component (`src/frontend/alpine/chat-types/tool-call-render.ts`) keeps a single `toolCalls` store keyed by sequence number. When `_streamToolCalls` in `src/frontend/alpine/chat-types/core.ts:23` receives an `event: tool_call`, it sets `toolCalls[seq] = { tool, arguments, status: 'pending' }`. Subsequent updates (status transitions, then `event: tool_result`) flip the same key, so Alpine x-data mutates in place — no re-render, no full stream reswap.
+The Alpine component (`src/frontend/alpine/chat-types/tool-call-render.ts`) keeps a single `toolCalls` store keyed by sequence number. The actual server payload (see `src/generation/generate-route/stream-to-client.ts:147`) is `{ type: "tool_call", toolCall: { id: string, function: { name: string, arguments: string } } }` -- no `status` field. The component derives status from event sequence: `pending` on `tool_call` arrival, `running` on the next `tool_call` re-emit for the same id (idempotent dedupe), `done` on `tool_result`, `error` on cancel. The Alpine `toolCallRender(seq)` factory reads `toolCalls[seq]` and exposes `tool = tc.function.name`, `arguments = tc.function.arguments`, `status = derivedState`. Subsequent updates flip the same key, so Alpine x-data mutates in place -- no re-render, no full stream reswap.
 
 The SSE sequence handlers already exist server-side (`src/generation/generate-route/stream-to-client.ts:146–154`); the replay path is already plumbed through `src/generation/stream-buffer.ts`. New code is purely frontend + a thin partial.
 
