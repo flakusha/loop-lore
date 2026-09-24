@@ -3,7 +3,7 @@
 
 # TASK: Plan Validate Debt Cleanup
 
-**Status:** ✅ Resolved (already on dev, 2026-09-18)
+**Status:** open
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

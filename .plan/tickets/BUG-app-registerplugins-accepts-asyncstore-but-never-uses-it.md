@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** [OK] Resolved (worktree fix-register-plugins-asyncstore)
+**Status:** done
 
 **Priority:** low
 

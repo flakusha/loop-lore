@@ -11,7 +11,7 @@
 **Epic:** `epic-memory-knowledge-systems.md` (FEA-2026-056)
 **Priority:** Medium
 **Effort:** Medium
-**Status:** Not Started
+**Status:** open
 
 **Summary:**
 Add structured emotion-impact fields to episodic memories that drive character behavior. Replaces the single `emotional_valence` scalar with a structured `MemoryEmotionImpact` type.

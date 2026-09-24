@@ -10,7 +10,7 @@
 
 
 **Priority:** Medium
-**Status:** 🟡 Partial — basic generator wired into generation pipeline; encounter tables + event chains pending
+**Status:** open
 **Epic:** epic-world-event-system
 **Tags:** random, encounter, event, generation, ambient, dynamic
 

@@ -3,7 +3,7 @@
 
 # FEAT: World-Template Chat Lifecycle (Location → Public Chat, Template Selection, Feature List, Config Templates)
 
-**Status:** Not Started
+**Status:** open
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

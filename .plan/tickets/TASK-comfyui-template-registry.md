@@ -10,7 +10,7 @@
 
 
 **Priority:** High
-**Status:** ⬜ Not Started
+**Status:** done
 **Epic:** epic-comfyui-plugin
 **Depends on:** existing ComfyUI client (`src/generation/providers/comfyui.ts`)
 

@@ -3,7 +3,7 @@
 
 # TASK-2026-049: Item System Extensions - Usable/Collectable/Consumable
 
-**Status:** Not Started
+**Status:** open
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

@@ -3,7 +3,7 @@
 
 # TASK-PLAN-MEMORY-SELECTION-UI: Memory selection UI (pinning, mid-chat)
 
-**Status:** Not Started
+**Status:** open
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

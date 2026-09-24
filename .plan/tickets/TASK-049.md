@@ -3,7 +3,7 @@
 
 # TASK-049: Quest Reward / Item Ledger (Items-Domain Slice)
 
-**Status:** open
+**Status:** done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Quest reward ledger — persist LootDrop[] as world_items; reconcile stackable vs unique.

@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 Partial — frontend filter component shipped (`alpine/chat-filters.ts`, sidebar chips → query params, localStorage persistence + restore on load, active-filter chips + clear-all, tests in `chat-filters.test.ts`) + server-side type/archived/sort filters on `GET /api/v1/chats` (`routes/chats/list.ts`); extended filters world / min-messages / max-messages / updated-since shipped (2026-08-16, BE `routes/chats/list.ts` + FE `chat-list-panel.html`); `sort` query schema moved from t.UnionEnum to t.Enum (Elysia 1.4 forces an absent t.UnionEnum query param to its first member — would have broken the unfiltered default); tags filter pending (no tags table in schema)
+**Status:** open
 **Priority:** Medium
 **Effort:** Med
 **Epic:** Epic 24 (Filtering & Pagination), Epic 36 (Chat Lifecycle)

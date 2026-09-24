@@ -10,7 +10,7 @@
 
 
 **Priority:** Medium
-**Status:** ⬜ Not Started
+**Status:** open
 **Epic:** epic-multi-session
 **Tags:** multi-session, continuity, replay, persistence
 

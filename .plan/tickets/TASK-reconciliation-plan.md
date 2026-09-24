@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 In Progress — analysis complete; execution split into 4 child tickets
+**Status:** done
 **Priority:** High
 **Effort:** Large
 **Epic:** epic-logic-reconciliation

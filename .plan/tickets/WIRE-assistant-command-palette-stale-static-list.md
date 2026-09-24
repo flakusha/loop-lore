@@ -38,3 +38,6 @@ New server-side commands added via `src/assistant/commands/registry.ts` are miss
 - [ ] `/api/commands` endpoint exists
 - [ ] FE list hydrates from endpoint on init
 - [ ] Adding a new server command shows up in the palette without FE rebuild
+
+
+git issue: 46eef97

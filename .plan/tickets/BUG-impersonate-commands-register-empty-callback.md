@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** not-a-bug
+**Status:** done
 **Priority:** high
 **Priority Tier:** P2
 **Effort:** Small

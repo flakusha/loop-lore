@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🔶 Partial (2026-09-10) — storage half done: `asset_transforms` table + `TransformContext` enum + upsert/get/resolve service + focal seed (0.5, 0.35) on image create; editor UI, detection prefill, and compositor wiring deferred
+**Status:** done
 **Priority:** medium
 **Epic:** Avatar Alpha Channel + VN Layering; Asset Transform Metadata
 **Effort:** Medium

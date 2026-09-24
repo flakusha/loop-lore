@@ -10,7 +10,7 @@
 
 
 **Epic:** epic-creative-studio.md (MVP Tier 1)
-**Status:** ⬜ Not Started
+**Status:** open
 **Effort:** Low
 **Depends On:** TASK-creative-studio-note-modal, TASK-creative-studio-world-modal, TASK-creative-studio-item-modal
 

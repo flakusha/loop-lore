@@ -3,7 +3,7 @@
 
 # TASK-023: 3D view modes
 
-**Status:** done
+**Status:** open
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Three camera modes (orbit / first-person / cinematic) bound to a single control.

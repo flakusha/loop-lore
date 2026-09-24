@@ -3,7 +3,7 @@
 
 # TASK-010: E2E tests for i18n system
 
-**Status:** 🟡 Partial — locale-switch + missing-key e2e shipped (`tests/e2e/flows/browser/i18n-locale.browser.ts` 2026-09-23; missing-key test asserts SHIPPED behavior: raw key, no client-side fallback chain); plural AC blocked on `Intl.PluralRules` infra, decomposed to TASK-010-plurals
+**Status:** open
 **Priority:** medium
 **Effort:** Medium
 **Summary:** E2E coverage for the i18n runtime — locale switch, fallback, plurals, interpolation.

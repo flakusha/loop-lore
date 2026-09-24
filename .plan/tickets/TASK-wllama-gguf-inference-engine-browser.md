@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ⬜ Not Started
+**Status:** open
 **Priority:** high
 **Effort:** Medium
 **Labels:** byok, local-models, wasm, inference, llama, browser

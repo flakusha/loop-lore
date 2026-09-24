@@ -3,7 +3,7 @@
 
 # TASK-068: Transport doc — HTTP/3 / QUIC section
 
-**Status:** Not Started
+**Status:** open
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

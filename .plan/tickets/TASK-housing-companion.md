@@ -11,7 +11,7 @@
 **Epic:** epic-housing
 **Priority:** Medium
 **Effort:** Medium
-**Status:** ⬜ Not Started
+**Status:** open
 **Created:** 2026-07-28
 **Cross-Mechanics Gap:** G10 (Housing ↔ Companion)
 

@@ -11,7 +11,7 @@
 **Epic:** Character Core System
 **Priority:** Medium
 **Effort:** High
-**Status:** In Progress (services + routes done, needs validation)
+**Status:** done
 **Supersedes:** TASK-emotions-avatar-edit-model.md
 
 ## Summary

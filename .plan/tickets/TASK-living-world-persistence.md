@@ -11,7 +11,7 @@
 **Epic:** epic-world-locations, epic-character-core-system
 **Priority:** Medium (P6+ deferred)
 **Effort:** High
-**Status:** Not Started
+**Status:** open
 **Created:** 2026-08-14
 **Platform Candidate:** E3 (Living-world persistence — AI Town, Nomi, AI Dungeon)
 **Research Source:** AI Town/Conductor (a16z), Nomi shared worlds, AI Dungeon continuity

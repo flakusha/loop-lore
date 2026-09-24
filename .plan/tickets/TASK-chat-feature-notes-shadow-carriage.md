@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 In Progress — annotations vertical slice shipped (note/shadow/quest discriminator, TTL, `shadow_notes` persistence, route layer); carriage channel pending
+**Status:** open
 **Priority:** Low
 **Effort:** Medium
 **Epic:** epic-chat-product-features

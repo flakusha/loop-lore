@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 In Progress
+**Status:** open
 **Priority:** high
 **Effort:** Medium
 

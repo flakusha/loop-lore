@@ -11,7 +11,7 @@
 **Epic:** Character Core System
 **Priority:** High
 **Effort:** Medium
-**Status:** In Progress (schema done, needs routes)
+**Status:** done
 
 ## Summary
 

@@ -11,7 +11,7 @@
 **Epic:** NSFW Game Mechanics, Disease & Poison Systems
 **Priority:** Medium
 **Effort:** Medium
-**Status:** Not Started
+**Status:** open
 **Created:** 2026-07-28
 **Cross-Mechanics Gap:** G9 (NSFW ↔ Disease)
 

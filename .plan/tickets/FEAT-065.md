@@ -8,7 +8,7 @@ related: [FEAT-065-IMG, FEAT-065-AUD, FEAT-065-VID, FEAT-065-LLM, FEAT-055]
 ---
 
 
-**Status:** Not Started
+**Status:** open
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

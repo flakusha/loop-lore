@@ -39,3 +39,6 @@ Add:
 - [ ] `processMovementTick` tested with mock DB
 - [ ] `setMovementPattern` tested with valid/invalid patterns
 - [ ] `getMovementState` tested for missing NPC → 404
+
+
+git issue: e91c6c0

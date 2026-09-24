@@ -10,7 +10,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done — fixed in batch (loadNotificationSnapshot extracted, 4 tests green, 2026-09-16)
+**Status:** open
 
 ## Problem
 

@@ -54,3 +54,6 @@ if (conflict) {
 Likely landed via a prior reconcile sweep or scout-batch follow-up; the ticket never propagated to its tracked resolution state. No code change required.
 
 **Verification**: `bun test src/chat/service/participants.test.ts` → 7 pass / 0 fail. No regression.
+
+
+git issue: c3e7755

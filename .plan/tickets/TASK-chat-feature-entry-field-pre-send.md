@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done
+**Status:** open
 **Priority:** Low
 **Effort:** Low
 **Epic:** epic-chat-product-features

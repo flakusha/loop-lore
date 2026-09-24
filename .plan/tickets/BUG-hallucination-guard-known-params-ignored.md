@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** [OK] Resolved (dev, prior to 2026-09-13)
+**Status:** done
 **Severity:** medium
 **Priority:** medium
 **Effort:** small

@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ⬜ Not Started
+**Status:** open
 **Priority:** Low
 **Effort:** Low–Med
 **Epic:** epic-assistant-generation-extensions

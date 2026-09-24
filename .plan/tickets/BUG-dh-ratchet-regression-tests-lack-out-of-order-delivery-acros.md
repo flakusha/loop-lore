@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** [OK] Fixed (fix-review-bugs-round2, `f32d0a45`)
+**Status:** done
 **Priority:** medium
 **Effort:** Medium
 
