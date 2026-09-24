@@ -52,6 +52,33 @@ describe("dice", () => {
     }
   });
 
+  test("keptIdx exposes which die advantage/disadvantage kept", () => {
+    const originalRandom = Math.random;
+    let call = 0;
+    try {
+      // First roll 7, advantage reroll 15 → the higher reroll is kept (index 1).
+      Math.random = () => (call++ === 0 ? 0.3 : 0.7);
+      const adv = rollDice("d20", 1, [{ source: "a", value: 0, type: "advantage", },],);
+      expect(adv.results,).toEqual([7, 15,],);
+      expect(adv.keptIdx,).toBe(1,);
+
+      // First roll 15, disadvantage reroll 7 → the lower reroll is kept (index 1).
+      call = 0;
+      Math.random = () => (call++ === 0 ? 0.7 : 0.3);
+      const dis = rollDice("d20", 1, [{ source: "d", value: 0, type: "disadvantage", },],);
+      expect(dis.results,).toEqual([15, 7,],);
+      expect(dis.keptIdx,).toBe(1,);
+
+      // Straight roll: single die, keptIdx 0.
+      Math.random = () => 0.42;
+      const straight = rollDice("d20", 1,);
+      expect(straight.results,).toHaveLength(1,);
+      expect(straight.keptIdx,).toBe(0,);
+    } finally {
+      Math.random = originalRandom;
+    }
+  });
+
   test("rollDice detects critical success on d20", () => {
     // Run several rolls to test critical logic
     const results: any[] = [];

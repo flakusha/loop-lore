@@ -2,7 +2,9 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, } from "elysia";
+import type { TranslatorFn, } from "../../i18n/types";
 import { BlogService, } from "../../rpg/blog/service.js";
+import { can, } from "../../users/permissions";
 import {
   BlogPostResponse,
   ErrorResponse,
@@ -10,7 +12,7 @@ import {
   SuccessResponse,
 } from "../../validation/schemas";
 import { type HandlerOpts, } from "../actor-auth.js";
-import { jsonResponse, requireUserId, } from "../http-utils.js";
+import { extractAuth, HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils.js";
 
 /**
  * @param opts
@@ -73,15 +75,29 @@ export function blogFollowRoutes(opts: HandlerOpts, prefix = "/api",) {
       },
     },)
     .get(`${prefix}/blog/authors/:authorId/followers`, async (ctx: any,) => {
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
+      const { userRole, } = extractAuth(ctx,);
+      const t = ctx.t as TranslatorFn | undefined;
+
+      // The follower list is private data: only the author themselves
+      // (or an admin) may enumerate it.
+      // BUG-blog-followers-list-no-auth-reveals-follower-ids
+      if (userId !== ctx.params.authorId && !can(userRole, "admin.settings",)) {
+        return jsonError({ message: "errors.forbidden", status: HttpStatus.Forbidden, t, },);
+      }
+
       const followers = await svc.getFollowers(ctx.params.authorId,);
       return jsonResponse({ success: true, followers, count: followers.length, },);
     }, {
       response: {
         200: ListResponse(BlogPostResponse,),
+        401: ErrorResponse,
+        403: ErrorResponse,
       },
       detail: {
         summary: "List author followers",
-        description: "List all followers of a blog author.",
+        description: "List all followers of a blog author. Only the author or an admin may view this.",
         tags: ["Blog", "Follows",],
       },
     },);

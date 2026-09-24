@@ -3,7 +3,7 @@
 
 # BUG: cascade abort signal is not threaded through — in-flight LLM call runs to completion after pause toggle
 
-**Status:** [OK] Open
+**Status:** done
 **Severity:** high
 **Priority:** high
 **Effort:** medium
@@ -53,3 +53,7 @@ it("aborts in-flight generation when pause is toggled mid-cascade", async () => 
 
 
 git issue: 753feef
+
+**Summary:** `triggerGroupCascade` fires `triggerAutoGeneration` with no abort signal, so pausing mid-cascade lets the in-flight LLM call run to completion.
+**Context:** `src/generation/auto-gen/group-cascade.ts`; `src/generation/auto-gen/auto-generation.ts`; abort signal available from `src/generation/cancellation-tracker/lifecycle.ts`.
+**Acceptance Criteria:** pause toggled mid-flight aborts the in-flight provider call; cascade stops at the aborted depth; no extra depth is billed after abort; existing cascade tests unaffected.

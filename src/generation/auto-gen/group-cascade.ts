@@ -8,7 +8,7 @@ import { extractMentionedActorIds, } from "../../group-chat/mention-parser";
 import { selectNextGroupActor, } from "../../group-chat/turn-selector";
 import { getLogger, } from "../../logger";
 import type { Logger, } from "../../logger/types";
-import { jsonParseOr, } from "../../utils";
+import { storyStateIsPaused, watchChatPause, } from "./cascade-pause-watcher";
 import { createDefaultDeps, type GenDeps, } from "./deps";
 import { filterPassedActors, } from "./pass-filter";
 
@@ -28,6 +28,8 @@ export interface GroupCascadeOpts {
   depth: number;
   /** Injectable dependencies — omit for production (uses real implementations). */
   deps?: Partial<GenDeps>;
+  /** Pause-watcher poll interval (ms) while a cascade depth is in flight. Default 1000. */
+  pausePollMs?: number;
 }
 
 /**
@@ -134,12 +136,9 @@ export async function triggerGroupCascade(opts: GroupCascadeOpts,): Promise<void
   }
 
   // Check if paused
-  if (chat.story_state) {
-    const state = jsonParseOr<{ isPaused?: boolean }>(chat.story_state, {},);
-    if (state.isPaused) {
-      log.debug("Chat paused, cascade stopped",);
-      return;
-    }
+  if (storyStateIsPaused(chat.story_state,)) {
+    log.debug("Chat paused, cascade stopped",);
+    return;
   }
 
   // Get all AI participants
@@ -199,6 +198,11 @@ export async function triggerGroupCascade(opts: GroupCascadeOpts,): Promise<void
     maxTurns,
   },);
 
+  // Cascade-scoped pause watcher: while this depth's LLM call is in flight,
+  // poll the pause flag and abort the cascade signal so the provider call
+  // unwinds mid-flight instead of billing to completion
+  // (BUG-cascade-mid-cascade-pause-ignores-abort).
+  const pause = watchChatPause({ database, chatId, pollMs: opts.pausePollMs ?? 1_000, },);
   try {
     const { triggerAutoGeneration, } = await import("./auto-generation");
     await triggerAutoGeneration({
@@ -211,9 +215,20 @@ export async function triggerGroupCascade(opts: GroupCascadeOpts,): Promise<void
       _cascadeDepth: depth + 1,
       _cascadeActorId: nextActorId,
       deps: opts.deps,
+      abortSignal: pause.controller.signal,
     },);
   } catch (error) {
     log.error("Cascade generation failed", error as Error, { chatId, depth: depth + 1, },);
+  } finally {
+    pause.stop();
+  }
+
+  // The cascade signal fired mid-flight (pause toggled while the LLM call
+  // ran): stop here instead of billing another depth. The DB re-check below
+  // remains as defense-in-depth for the non-abort pause window.
+  if (pause.controller.signal.aborted) {
+    log.info("Cascade: abort signal fired mid-flight; next depth skipped", { chatId, depth: depth + 1, },);
+    return;
   }
 
   // Re-check pause flag AFTER the in-flight LLM completes. The user may
@@ -225,11 +240,8 @@ export async function triggerGroupCascade(opts: GroupCascadeOpts,): Promise<void
     .select("story_state",)
     .where("id", "=", chatId,)
     .executeTakeFirst();
-  if (postChat?.story_state) {
-    const postState = jsonParseOr<{ isPaused?: boolean }>(postChat.story_state, {},);
-    if (postState.isPaused) {
-      log.info("Cascade: pause toggled mid-flight; next depth skipped", { chatId, depth: depth + 1, },);
-      return;
-    }
+  if (storyStateIsPaused(postChat?.story_state,)) {
+    log.info("Cascade: pause toggled mid-flight; next depth skipped", { chatId, depth: depth + 1, },);
+    return;
   }
 }

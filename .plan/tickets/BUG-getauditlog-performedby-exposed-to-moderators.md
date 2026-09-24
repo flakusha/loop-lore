@@ -4,9 +4,11 @@ hash: d4e7f91
 git issue: b0e78c5
 
 
-**Summary:** (none captured)
-**Context:** (none captured)
-**Acceptance Criteria:** (none captured)
+**Summary:** `getAuditLog` returns raw `ModAction[]` including `performedBy` (moderator identity) to every caller with `moderation.review`; no redaction layer exists.
+**Context:** `src/routes/nsfw-moderation/audit.ts:29`; `src/nsfw/moderation-service/audit.ts:162-191` (`mapAction` projects full `ModAction`); `src/nsfw/moderation-service/types.ts:32-47`.
+**Acceptance Criteria:** none — DOWNGRADED to design discussion (2026-09-24): inter-moderator transparency is an intentional, test-pinned design choice; the user-self-export exposure is speculative until a GDPR user-self route exists on this surface. Reclassify as IDEA/design-RFC if redaction is wanted.
+**Priority:** n/a (design)
+**Effort:** n/a (design)
 
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->

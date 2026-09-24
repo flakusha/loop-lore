@@ -33,7 +33,11 @@ export function makeAttackRoll(
   ],);
 
   const hit = roll.criticalSuccess || (!roll.criticalFailure && roll.total >= targetAC);
-  const criticalHit = roll.criticalSuccess || (roll.results[0] ?? 0) >= criticalThreshold;
+  // The natural-roll threshold must consult the KEPT die: under
+  // advantage/disadvantage `results[0]` may be the discarded original
+  // (BUG-critical-hit-rolls-ignore-advantage).
+  const naturalRoll = roll.results[roll.keptIdx] ?? 0;
+  const criticalHit = roll.criticalSuccess || naturalRoll >= criticalThreshold;
   const criticalMiss = roll.criticalFailure;
 
   let narration: string;

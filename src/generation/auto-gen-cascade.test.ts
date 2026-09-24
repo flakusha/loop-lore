@@ -856,4 +856,84 @@ describe("triggerGroupCascade edge cases", () => {
     // Fail-closed would silently drop Bob and stop the cascade.
     expect(mockStartGenerationTracking,).toHaveBeenCalledTimes(1,);
   });
+
+  // 9. Mid-cascade pause aborts the in-flight LLM call
+  test("mid-flight pause aborts the in-flight LLM call and stops the cascade", async () => {
+    const chatId = await createGroupChat(db, userId, { maxTurns: 5, autoAdvance: 1, },);
+    const alice = await createAiActor(db, "Alice",);
+    const bob = await createAiActor(db, "Bob",);
+    await addParticipant(db, chatId, alice,);
+    await addParticipant(db, chatId, bob,);
+    await insertMessage(db, chatId, alice, "hello everyone",);
+
+    // Controllable provider: records the request signal, then blocks until
+    // that signal aborts — mirroring a real in-flight fetch that rejects on
+    // cancellation (BUG-cascade-mid-cascade-pause-ignores-abort).
+    const seen: { entered: number; signal: AbortSignal | undefined } = {
+      entered: 0,
+      signal: undefined,
+    };
+    let onFirstEntry: () => void = () => {};
+    const firstEntry = new Promise<void>((resolve,) => {
+      onFirstEntry = resolve;
+    },);
+    const deps = createMockDeps();
+    deps.callWithFailover = (async (_providers: unknown[], req: { signal?: AbortSignal },) => {
+      seen.entered += 1;
+      seen.signal = req.signal;
+      onFirstEntry();
+      const signal = req.signal;
+      if (signal?.aborted) {
+        const err = new Error(String(signal.reason,),);
+        err.name = "AbortError";
+        throw err;
+      }
+      await new Promise<never>((_resolve, reject,) => {
+        signal?.addEventListener("abort", () => {
+          const err = new Error(String(signal.reason,),);
+          err.name = "AbortError";
+          reject(err,);
+        }, { once: true, },);
+      },);
+    }) as unknown as GenDeps["callWithFailover"];
+
+    const cascadeDone = triggerGroupCascade({
+      database: db,
+      config: makeConfig(),
+      chatId,
+      userId,
+      aiContent: "hello everyone",
+      previousActorId: alice,
+      depth: 0,
+      deps,
+      pausePollMs: 10,
+    },);
+
+    // Wait until the in-flight LLM call has started and holds the signal.
+    await firstEntry;
+    expect(seen.signal,).toBeDefined();
+
+    // The user toggles pause while the LLM call is in flight.
+    await db
+      .updateTable("chats",)
+      .set({ story_state: JSON.stringify({ isPaused: true, },), },)
+      .where("id", "=", chatId,)
+      .execute();
+
+    // The pause watcher must abort the (combined) request signal, which
+    // unwinds the provider call and the whole cascade.
+    await cascadeDone;
+
+    expect(seen.signal?.aborted,).toBe(true,);
+    // No further depth was scheduled after the abort.
+    expect(seen.entered,).toBe(1,);
+
+    // The aborted generation stored nothing — only the seeded message remains.
+    const messages = await db
+      .selectFrom("messages",)
+      .select("id",)
+      .where("chat_id", "=", chatId,)
+      .execute();
+    expect(messages,).toHaveLength(1,);
+  });
 });
