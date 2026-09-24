@@ -4,9 +4,11 @@ hash: 8f3a1c2
 git issue: 8f7a2ea
 
 
-**Summary:** (none captured)
-**Context:** (none captured)
-**Acceptance Criteria:** (none captured)
+**Summary:** `getEffectiveNsfw` returns `enabled: true` for users with no `nsfw_user_preferences` row (phantom users) via the `prefs?.nsfwEnabled ?? true` fallback.
+**Context:** `src/nsfw/moderation-service/overrides.ts:31,57` — `getPreferences` returning `null` becomes `{}`, so `nsfwEnabled` is undefined and the `?? true` fallback fires.
+**Acceptance Criteria:** none — REJECTED by strict review (2026-09-24): the `?? true` fallback is deliberate and documented in source (schema default `nsfw_enabled=1` sync); `?? false` re-introduces the regression cited in the code comment. No defect.
+**Priority:** n/a (rejected)
+**Effort:** n/a (rejected)
 
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->

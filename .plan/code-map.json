@@ -889,12 +889,6 @@
       "source": ".plan/tickets/TASK-item-asset-avatar-display-in-inventory-trading-and-provision.md"
     }
   ],
-  "src/assets/service/persist-generated.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-generation-asset-persistence-contract.md"
-    }
-  ],
   "src/assets/service/read.ts": [
     {
       "kind": "ticket",
@@ -3044,6 +3038,18 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-runoffloadpass-phase1-spill-and-db-update-not-atomic.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-runoffloadpass-phase3-unlink-and-db-update-not-atomic.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-runoffloadpass-phase3-unlink-races-with-phase1-respill.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-adopt-bun-gzipsync-for-compression-standardization.md"
     },
     {
@@ -3533,6 +3539,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-battle-dice-critical-success-failure-checks-discarded-die-un.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-critical-hit-rolls-ignore-advantage.md"
     }
   ],
   "src/battle/items-integration.ts": [
@@ -3611,6 +3621,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-battle-attacks-calculatedamage-doubles-flat-dice-notation-bo.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-critical-hit-rolls-ignore-advantage.md"
     }
   ],
   "src/battle/resolution-integration/checks.ts": [
@@ -10720,10 +10734,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/FEAT-044.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-locations-fractal-migration.md"
     },
     {
@@ -16670,6 +16680,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-cascade-mid-cascade-pause-ignores-abort.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-prompt-override-bypass-on-reply.md"
     },
     {
@@ -16804,6 +16818,10 @@
     }
   ],
   "src/generation/auto-gen/group-cascade.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-cascade-mid-cascade-pause-ignores-abort.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-group-cascade-consecutive-turn-guard.md"
@@ -17091,6 +17109,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-cancellation-lifecycle-db-failure-permanently-marks-chat-gen.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-cascade-mid-cascade-pause-ignores-abort.md"
     },
     {
       "kind": "ticket",
@@ -20496,6 +20518,10 @@
   "src/nsfw/moderation-service/audit.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-getauditlog-performedby-exposed-to-moderators.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-export-bundle-no-access-log.md"
     },
     {
@@ -20596,6 +20622,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-geteffectivensfw-phantom-users-enabled.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-gate-fail-open-db-error-and-missing-prefs-default-to-al.md"
     }
   ],
@@ -20609,6 +20639,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-preferences-admin-read-materializes-row.md"
+    }
+  ],
+  "src/nsfw/moderation-service/types.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-getauditlog-performedby-exposed-to-moderators.md"
     }
   ],
   "src/nsfw/pii-redaction.ts": [
@@ -22927,6 +22963,24 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-blog-system.md"
+    }
+  ],
+  "src/routes/blog/comments.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-blog-comments-post-accepts-non-public-posts-existence-oracle.md"
+    }
+  ],
+  "src/routes/blog/follows.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-blog-followers-list-no-auth-reveals-follower-ids.md"
+    }
+  ],
+  "src/routes/blog/posts.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-blog-post-get-bypasses-visibility-policy.md"
     }
   ],
   "src/routes/character-availability.ts": [
@@ -25356,6 +25410,10 @@
   "src/routes/nsfw-moderation/audit.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-getauditlog-performedby-exposed-to-moderators.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-export-bundle-no-access-log.md"
     },
     {
@@ -25414,6 +25472,10 @@
     }
   ],
   "src/routes/nsfw-moderation/shared.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-getauditlog-performedby-exposed-to-moderators.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-export-bundle-no-access-log.md"
@@ -26717,6 +26779,12 @@
       "source": ".plan/tickets/BUG-moderatecomment-has-no-authorization-any-caller-can-change-a.md"
     }
   ],
+  "src/rpg/blog/service/follows.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-blog-followers-list-no-auth-reveals-follower-ids.md"
+    }
+  ],
   "src/rpg/blog/service/posts.coverage.test.ts": [
     {
       "kind": "ticket",
@@ -26728,6 +26796,10 @@
     }
   ],
   "src/rpg/blog/service/posts.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-blog-post-get-bypasses-visibility-policy.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-deletepost-has-no-ownership-check-any-authenticated-user-can.md"
@@ -30808,6 +30880,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-negotiate-compression-selects-none-on-unsupported-algorithm-when-server-has-capabilities.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-transport-negotiation-parsers-do-not-exclude-q-0-or-validate.md"
     },
     {
@@ -30857,10 +30933,20 @@
       "source": "docs/spec/headless-alternative-frontends.md"
     }
   ],
+  "src/transport/upgrade.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-upgrade-connection-metadata-state-lost.md"
+    }
+  ],
   "src/transport/upgrade.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-transport-expansion.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-upgrade-connection-metadata-state-lost.md"
     },
     {
       "kind": "ticket",
@@ -30907,6 +30993,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-transport-expansion.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-wshandler-flushpending-rebuf-uses-stale-queue-slice-off-by-one.md"
     },
     {
       "kind": "ticket",

@@ -3,7 +3,7 @@
 
 # BUG: criticalHit in makeAttackRoll ignores the kept die under advantage/disadvantage
 
-**Status:** [OK] Open
+**Status:** done
 **Severity:** medium
 **Priority:** medium
 **Effort:** small
@@ -54,3 +54,7 @@ it("criticalHit uses the kept die under advantage (rerolling 1 into 20)", () => 
 
 
 git issue: 9098dc3
+
+**Summary:** `makeAttackRoll` computes `criticalHit` from `roll.results[0]`, which under advantage/disadvantage may be the discarded die instead of the kept one.
+**Context:** `src/battle/resolution-integration/attacks.ts` (`makeAttackRoll`); kept-die index lives in `src/battle/integration-schemas/dice.ts` (`rollDice` → `keptIdx`).
+**Acceptance Criteria:** natural-roll threshold consults `results[keptIdx]`; advantage discarding low / keeping high still crits; disadvantage discarding high / keeping low does not crit; regression tests cover both directions.

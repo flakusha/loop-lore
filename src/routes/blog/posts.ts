@@ -4,6 +4,7 @@
 import { Elysia, t, } from "elysia";
 import type { TranslatorFn, } from "../../i18n/types";
 import { BlogService, } from "../../rpg/blog/service.js";
+import { BlogPostStatus, BlogPostVisibility, } from "../../rpg/blog/service/types";
 import { can, } from "../../users/permissions";
 import {
   BlogPostCreateBody,
@@ -58,9 +59,24 @@ export function blogPostRoutes(opts: HandlerOpts, prefix = "/api",) {
       },
     },)
     .get(`${prefix}/blog/posts/:id`, async (ctx: any,) => {
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
+      const { userRole, } = extractAuth(ctx,);
       const t = ctx.t as TranslatorFn | undefined;
+
       const post = await svc.getPost(ctx.params.id,);
-      if (!post) {
+      if (post === undefined) {
+        return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
+      }
+      // Row-level read policy (BUG-blog-post-get-bypasses-visibility-policy):
+      // a post is readable only when it is public AND published, when the
+      // caller is its author, or when the caller is an admin. Denied rows
+      // answer 404 (not 403) so post existence is not leaked.
+      const readable = (post.visibility === BlogPostVisibility.Public &&
+        post.status === BlogPostStatus.Published) ||
+        post.author_id === userId ||
+        can(userRole, "admin.settings",);
+      if (!readable) {
         return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
       await svc.incrementViewCount(post.id,);
@@ -68,6 +84,7 @@ export function blogPostRoutes(opts: HandlerOpts, prefix = "/api",) {
     }, {
       response: {
         200: SuccessResponse,
+        401: ErrorResponse,
         404: ErrorResponse,
       },
       detail: {

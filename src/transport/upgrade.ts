@@ -83,8 +83,15 @@ export async function upgradeConnection({
   // ── Transfer state ──────────────────────────────────────
   try {
     const newConnection = await newHandler.connect();
-    // Merge old state into new connection metadata
-    Object.assign(newConnection.metadata, state, { upgradedFrom: currentConnection.protocol, },);
+    // Merge old state over the new connection's factory metadata in a fresh
+    // object: the new protocol's native keys (h2 multiplexing, ws pingPong…)
+    // stay visible, carried-over session state overlays them, and upgradedFrom
+    // marks the origin protocol (BUG-upgrade-connection-metadata-state-lost).
+    newConnection.metadata = {
+      ...newConnection.metadata,
+      ...state,
+      upgradedFrom: currentConnection.protocol,
+    };
   } catch (error) {
     // Fallback: try to keep the old handler alive
     try {
