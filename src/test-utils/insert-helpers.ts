@@ -36,6 +36,8 @@ import type {
   FantasyCategory,
   GatheringNodeType,
   GenerationStatus,
+  InteractionCategory,
+  InteractionOutcome,
   InviteStatus,
   ItemCategory,
   ItemRarity,
@@ -3914,6 +3916,49 @@ export async function insertStatusEffect(
     category,
     source,
     started_at,
+    ...opts,
+  } as any,).execute();
+}
+
+/** Insert a interaction_logs row. */
+export async function insertInteractionLogs(
+  db: Db,
+  chat_id: string,
+  actor_id: string,
+  command: string,
+  category: InteractionCategory,
+  skill: string,
+  difficulty: number,
+  outcome: InteractionOutcome,
+  opts?: {
+    id?: string;
+    world_id?: string | null;
+    target_actor_id?: string | null;
+    location_id?: string | null;
+    roll_sides?: number | null;
+    roll_count?: number | null;
+    roll_modifier?: number | null;
+    roll_mode?: string | null;
+    roll_values?: string | null;
+    roll_raw_total?: number | null;
+    roll_total?: number | null;
+    roll_margin?: number | null;
+    action_points?: number;
+    modifiers?: string;
+    result?: string;
+    state_changes?: string;
+    created_at?: string;
+  },
+): Promise<void> {
+  await db.insertInto("interaction_logs",).values({
+    id: crypto.randomUUID(),
+    chat_id,
+    actor_id,
+    command,
+    category,
+    skill,
+    difficulty,
+    outcome,
     ...opts,
   } as any,).execute();
 }

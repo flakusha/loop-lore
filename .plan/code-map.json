@@ -1505,6 +1505,13 @@
       "source": ".plan/tickets/TASK-assistant-tool-injection-guard.md"
     }
   ],
+
+  "src/assistant/commands/interaction.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/character-interactions.md"
+    }
+  ],
   "src/assistant/commands/items.test.ts": [
     {
       "kind": "ticket",
@@ -10421,6 +10428,13 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-impersonation.md"
+    }
+  ],
+
+  "src/db/migrations/008_game_interactions.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/schema.md"
     }
   ],
   "src/db/migrations/008_memory_source_chain.ts": [
