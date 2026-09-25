@@ -11,6 +11,7 @@
 
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
+import { CompositeValidator, createMachine, type StateDef, } from "../../db/state";
 
 /** */
 export interface WorldGateResult {
@@ -74,6 +75,37 @@ export const RpgMechanic = {
 /** One RPG mechanic by name (see `RpgMechanic`). */
 export type RpgMechanic = (typeof RpgMechanic)[keyof typeof RpgMechanic];
 
+// ── Master × mechanic composite (004 parity invariant) ────
+/** Flag axis value shared by the master and per-mechanic columns. */
+export const RpgFlagState = {
+  Off: "off",
+  On: "on",
+} as const;
+/** */
+export type RpgFlagState = (typeof RpgFlagState)[keyof typeof RpgFlagState];
+
+const rpgFlagAxisDef: StateDef<RpgFlagState> = {
+  values: ["off", "on",] as const,
+  initial: "off",
+  transitions: {
+    off: ["on",],
+    on: ["off",],
+  },
+  terminal: [],
+};
+
+/**
+ * `rpg_enabled` × one mechanic flag. Write paths
+ * (`routes/worlds/world-rpg-flags.ts`) keep master = OR(mechanics); reads
+ * assert the pair so a drifted `off:on` row (mechanic armed while the
+ * world has RPG off) fails loud instead of gating on an orphaned flag.
+ */
+export const rpgMasterMechanics = new CompositeValidator(
+  createMachine(rpgFlagAxisDef,),
+  createMachine(rpgFlagAxisDef,),
+  ["off:off", "on:on", "on:off",] as const,
+);
+
 /**
  * Read the per-mechanic RPG flags for a world.
  * @param database
@@ -86,11 +118,11 @@ export async function getMechanicsConfig(
 ): Promise<MechanicsConfig | null> {
   const world = await database
     .selectFrom("worlds",)
-    .select(["rpg_dice", "rpg_checks", "rpg_combat", "rpg_xp", "rpg_loot", "rpg_quests",],)
+    .select(["rpg_enabled", "rpg_dice", "rpg_checks", "rpg_combat", "rpg_xp", "rpg_loot", "rpg_quests",],)
     .where("id", "=", worldId,)
     .executeTakeFirst();
   if (!world) { return null; }
-  return {
+  const config: MechanicsConfig = {
     dice: Boolean(world.rpg_dice,),
     checks: Boolean(world.rpg_checks,),
     combat: Boolean(world.rpg_combat,),
@@ -98,6 +130,13 @@ export async function getMechanicsConfig(
     loot: Boolean(world.rpg_loot,),
     quests: Boolean(world.rpg_quests,),
   };
+  // Master = OR(mechanics): a mechanic armed while `rpg_enabled` is off
+  // is drift; fail loud instead of silently gating on it.
+  const master = world.rpg_enabled ? RpgFlagState.On : RpgFlagState.Off;
+  for (const mechanic of Object.keys(config,) as RpgMechanic[]) {
+    rpgMasterMechanics.assertValid(master, config[mechanic] ? RpgFlagState.On : RpgFlagState.Off,);
+  }
+  return config;
 }
 
 /**

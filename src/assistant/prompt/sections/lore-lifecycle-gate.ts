@@ -13,7 +13,7 @@
  *
  * Resolves: TASK-world-lore-lifecycle-confidence-decay-distortion
  */
-import { effectiveConfidence, isDisputed, type LifecycleConfig, } from "../../lore/lifecycle";
+import { DisputedState, effectiveConfidence, type LifecycleConfig, resolveDisputedState, } from "../../lore/lifecycle";
 
 /** Default values applied when a row lacks lifecycle fields (actor lore). */
 export const LIFECYCLE_DEFAULTS = {
@@ -73,13 +73,13 @@ export function isLoreDisputed(
   entry: LifecycleRowSlice,
   cfg: LifecycleConfig,
 ): boolean {
-  if ((entry.disputed ?? LIFECYCLE_DEFAULTS.disputed) === 1) { return true; }
-  return isDisputed(
+  return resolveDisputedState(
     {
       confidence: entry.confidence ?? LIFECYCLE_DEFAULTS.confidence,
       last_verified: entry.last_verified ?? LIFECYCLE_DEFAULTS.last_verified,
       distortion_level: entry.distortion_level ?? LIFECYCLE_DEFAULTS.distortion_level,
+      disputed: entry.disputed ?? LIFECYCLE_DEFAULTS.disputed,
     },
     cfg,
-  );
+  ) === DisputedState.Disputed;
 }

@@ -110,4 +110,16 @@ describe("world-gate mechanics config", () => {
     const denial = await checkCommandMechanic(db, worldId, RpgMechanic.Dice,);
     expect(denial,).toStartWith("**RPG not enabled:**",);
   });
+
+  test("drifted off:on row fails loud at the read boundary", async () => {
+    const worldId = crypto.randomUUID();
+    await db.insertInto("worlds",).values({
+      id: worldId,
+      name: "Drift",
+      owner_id: userId,
+      rpg_enabled: 0,
+      rpg_dice: 1,
+    },).execute();
+    await expect(getMechanicsConfig(db, worldId,),).rejects.toThrow("Invalid composite state: off:on",);
+  });
 });

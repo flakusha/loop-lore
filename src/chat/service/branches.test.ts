@@ -193,4 +193,52 @@ describe("chat branches (FEAT-045)", () => {
     if ("code" in result) { throw new Error(`Unexpected error: ${result.code} ${result.message}`,); }
     expect(result.branch.chatId,).toBe(chatId,);
   });
+
+  test("display invariant: fork demotes the previous active row", async () => {
+    const invChatId = randomUUID();
+    await insertChats(tdb.db, "Invariant Chat", ownerId, { id: invChatId, type: "direct", mode: "direct", } as never,);
+    await insertChatParticipants(tdb.db, invChatId, ownerId, { role_in_chat: ChatParticipantRole.Owner, } as never,);
+    const msgA = await insertMessages(tdb.db, invChatId, ownerId, MessageRole.User, "a",);
+    const msgB = await insertMessages(
+      tdb.db,
+      invChatId,
+      ownerId,
+      MessageRole.User,
+      "b",
+      { parent_id: msgA, } as never,
+    );
+
+    const first = await forkBranch(tdb.db, { chatId: invChatId, messageId: msgA, actorId: ownerId, },);
+    if ("code" in first) { throw new Error("expected ok",); }
+    const second = await forkBranch(tdb.db, { chatId: invChatId, messageId: msgB, actorId: ownerId, },);
+    if ("code" in second) { throw new Error("expected ok",); }
+
+    const actives = await tdb.db
+      .selectFrom("chat_branches",)
+      .select("id",)
+      .where("chat_id", "=", invChatId,)
+      .where("is_active", "=", 1,)
+      .execute();
+    expect(actives.map((r,) => r.id),).toEqual([second.branch.id,],);
+  });
+
+  test("display invariant: switch syncs per-row flags with active_branch_id", async () => {
+    const branches = await listBranches(tdb.db, chatId, ownerId,);
+    if ("code" in branches) { throw new Error("expected ok",); }
+    const target = branches.branches[0]!;
+    const result = await switchActiveBranch(tdb.db, {
+      chatId,
+      branchId: target.id,
+      actorId: ownerId,
+    },);
+    expect("code" in result,).toBe(false,);
+
+    const actives = await tdb.db
+      .selectFrom("chat_branches",)
+      .select("id",)
+      .where("chat_id", "=", chatId,)
+      .where("is_active", "=", 1,)
+      .execute();
+    expect(actives.map((r,) => r.id),).toEqual([target.id,],);
+  });
 });

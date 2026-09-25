@@ -90,4 +90,10 @@ export function applyRpgUpdates(body: Record<string, unknown>, updates: Record<s
   if (loot != null) { updates.rpg_loot = loot; }
   const quests = toRpgFlag(body.rpgQuests,);
   if (quests != null) { updates.rpg_quests = quests; }
+  // Master = OR(mechanics) parity (rpgMasterMechanics in world-gate.ts):
+  // a bare per-mechanic opt-in on a world whose master was not addressed
+  // arms the master so stored state never drifts to off:on. An explicit
+  // rpgEnabled in the body always wins.
+  const anyMechanicOn = [dice, checks, combat, xp, loot, quests,].some((v,) => v === 1);
+  if (rpgEnabled == null && anyMechanicOn) { updates.rpg_enabled = 1; }
 }
