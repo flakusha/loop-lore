@@ -30,7 +30,7 @@ export const REACTION_KINDS: readonly ReactionKind[] = Object.values(REACTION_KI
  */
 export interface ResolvedPersonality {
   resolved: Record<string, string>;
-  layers?: { permanent?: Record<string, string>; world?: Record<string, string>; location?: Record<string, string>; };
+  layers?: { permanent?: Record<string, string>; world?: Record<string, string>; location?: Record<string, string> };
 }
 
 export interface ReactionDecision {
