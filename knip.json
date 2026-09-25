@@ -83,7 +83,6 @@
     // surface (no consumer yet). Tracked: TASK-knip-dead-code.
     "plugins/**/types.ts",
 
-
     // Native benchmarks
     // Standalone bench entrypoints (run directly, never imported) --
     // same class as scripts/worktree leftovers above.
@@ -135,7 +134,6 @@
     // Chat-state contract fixture: type-pinned test helper imported by tests
     // but not by production code (tests/ only, not in knip entry graph)
     "tests/e2e/fixtures/chat-state-contract.ts",
-
 
     "tests/e2e/flows/browser/admin-dashboard-populated.browser.ts",
     "tests/e2e/flows/browser/auth-flow.browser.ts",
