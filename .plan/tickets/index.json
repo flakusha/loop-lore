@@ -23103,6 +23103,19 @@
     "status": "open",
     "git_issue": "b54e923"
   },
+  "TASK-COVERAGE-WAIVER-FRONTEND-ALPINE-SHORTCUTS-TS-AT-36-UNDER-CHE": {
+    "hash": "9e452e5",
+    "git_issue": "9e452e5",
+    "extid": "TASK-COVERAGE-WAIVER-FRONTEND-ALPINE-SHORTCUTS-TS-AT-36-UNDER-CHE",
+    "type": "TASK",
+    "title": "Coverage waiver: frontend/alpine/shortcuts.ts at 36% under check gate",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-COVERAGE-WAIVER-FRONTEND-FE-FETCH-HTMX-STREAM-SIGNATURE": {
     "hash": "28a18b2",
     "extid": "TASK-COVERAGE-WAIVER-FRONTEND-FE-FETCH-HTMX-STREAM-SIGNATURE",
