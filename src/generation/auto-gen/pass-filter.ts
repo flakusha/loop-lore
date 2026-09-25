@@ -9,6 +9,7 @@
  * (BUG-group-chat-silence-pass-not-implemented).
  */
 import { type Kysely, sql, } from "kysely";
+import { MessageContentType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { detectPassToken, } from "../../group-chat/mention-parser";
 import type { Logger, } from "../../logger/types";
@@ -54,7 +55,7 @@ export async function filterPassedActors(opts: PassFilterOpts,): Promise<PassFil
   // by insertion order.
   const recentPassRows = await database
     .selectFrom("messages as m",)
-    .select(["m.actor_id", "m.content_plaintext", "m.content", "m.key_id",],)
+    .select(["m.actor_id", "m.content_type", "m.content_plaintext", "m.content", "m.key_id",],)
     .where("m.chat_id", "=", chatId,)
     // Only AI participants can be opted out; bounding the outer scan also
     // keeps the correlated lookup proportional to participants, not chat size.
@@ -77,6 +78,12 @@ export async function filterPassedActors(opts: PassFilterOpts,): Promise<PassFil
     .execute();
   const passedActorIds = new Set<string>();
   for (const row of recentPassRows) {
+    // First-class turn_skip events opt out without decrypting — the event
+    // IS the absence record; content is a machine line, never prompt input.
+    if (row.content_type === MessageContentType.TurnSkip) {
+      passedActorIds.add(row.actor_id,);
+      continue;
+    }
     const plaintext = row.content_plaintext ?? await decryptCascadeRow(row,);
     if (detectPassToken(plaintext,)) { passedActorIds.add(row.actor_id,); }
   }

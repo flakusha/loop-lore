@@ -24,6 +24,8 @@ export const MessageContentType = {
   Continuation: "continuation",
   MusicLink: "music_link",
   ToolResult: "tool_result",
+  /** First-class turn-skip event (TASK-turn-skip-event-and-persistence). */
+  TurnSkip: "turn_skip",
 } as const;
 /** */
 export type MessageContentType = (typeof MessageContentType)[keyof typeof MessageContentType];
