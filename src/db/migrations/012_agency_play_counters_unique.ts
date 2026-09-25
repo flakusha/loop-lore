@@ -14,7 +14,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
   await database.schema
     .createIndex("uq_agency_play_counters_chat_dim_hour",)
     .on("agency_play_counters",)
-    .columns(["chat_id", "dimension", "hour_bucket"],)
+    .columns(["chat_id", "dimension", "hour_bucket",],)
     .unique()
     .execute();
 }

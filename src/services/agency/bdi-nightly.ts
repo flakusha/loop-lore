@@ -21,14 +21,18 @@ import { applyReflectionCheckpoint, } from "./bdi-reflection";
 
 // Lazy logger init — module body must not throw if the global logger
 // has not been initialized yet (e.g. direct module import in tests).
-try { getLogger(); } catch { createLogger({ level: "error", },); }
+try {
+  getLogger();
+} catch {
+  createLogger({ level: "error", },);
+}
 const log = getLogger().child({ module: "agency/bdi-nightly", },);
 
 /** Cost-aware plan generator. Caller injects (default: deterministic stub). */
 export type PlanRecomputeFn = (actorId: string, worldId: string | undefined, today: string,) => Promise<{
   summary: string;
   priority: string;
-  activities: Array<{ description: string; score: number; }>;
+  activities: Array<{ description: string; score: number }>;
 }>;
 
 /** Cost governor decision. Returns true if the actor may proceed tonight. */
@@ -70,7 +74,10 @@ export async function runNightlyReflectionCycle(
 
   for (const actorId of target) {
     const allowed = await opts.budgetApprove(actorId,);
-    if (!allowed) { summary.skippedBudget += 1; continue; }
+    if (!allowed) {
+      summary.skippedBudget += 1;
+      continue;
+    }
 
     const prevPlan = await db
       .selectFrom("actor_daily_plans",)
@@ -106,7 +113,7 @@ async function insertPlan(
   actorId: string,
   worldId: string | null,
   today: string,
-  next: { summary: string; priority: string; activities: Array<{ description: string; score: number; }>; },
+  next: { summary: string; priority: string; activities: Array<{ description: string; score: number }> },
 ): Promise<void> {
   const planId = await newId(db,);
   await db
@@ -152,7 +159,9 @@ async function actorWorldId(db: Kysely<DB>, actorId: string,): Promise<string | 
 
 function todayIso(): string {
   const d = new Date();
-  return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0",)}-${String(d.getUTCDate()).padStart(2, "0",)}`;
+  return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1,).padStart(2, "0",)}-${
+    String(d.getUTCDate(),).padStart(2, "0",)
+  }`;
 }
 
 /**
@@ -168,7 +177,7 @@ export async function recordChatTurn(
   actorId: string,
   partnerActorId: string,
   now: Date = new Date(),
-): Promise<{ allowed: boolean; reason?: string; cooldownRemainingMs?: number; }> {
+): Promise<{ allowed: boolean; reason?: string; cooldownRemainingMs?: number }> {
   const existing = await db
     .selectFrom("actor_chat_buffers",)
     .selectAll()
