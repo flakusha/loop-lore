@@ -7,14 +7,16 @@
  * POST /api/v1/image-edit/run        — Execute a workflow template
  * GET  /api/v1/image-edit/templates  — List available templates
  * GET  /api/v1/image-edit/nodes      — Discover installed nodes
- * GET  /api/image-edit/capabilities — List backend capabilities
- * GET  /api/image-edit/health     — Health check backends
+ * GET  /api/v1/image-edit/capabilities — List backend capabilities
+ * GET  /api/v1/image-edit/health        — Health check backends
  * @module image-edit-routes
  */
 
-import { forbiddenResponse, HttpStatus, jsonError, jsonResponse, parseBody, } from "../routes/http-utils";
+import { HttpStatus, jsonError, jsonResponse, parseBody, } from "../routes/http-utils";
 import { ComfyUIEditProvider, } from "./providers/comfyui-provider";
 import { SDServerEditProvider, } from "./providers/sd-server-provider";
+import { authorizeRunLinkage, } from "./run-authz";
+import type { HandleRunAuth, } from "./run-authz";
 import { registerBuiltinTemplates, registerConfigWorkflows, templateRegistry, } from "./template-registry";
 import type {
   ImageEditBackend,
@@ -25,9 +27,7 @@ import type {
 
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
-import { checkChatAccess, } from "../chat/service";
 import { loadConfig, } from "../config/load";
-import { getDatabase, } from "../db";
 import type { DB, } from "../db/schema";
 
 // ── Provider instances ───────────────────────────────────────
@@ -65,39 +65,12 @@ function getProvider(backend: ImageEditBackend,): ImageEditProvider {
  * @param opts.userRole
  * @returns JSON envelope with results, or 401/403/4xx on gate failure.
  */
-export async function handleRun(
-  request: Request,
-  opts?: { database?: Kysely<DB>; userId?: string; userRole?: string | null },
-): Promise<Response> {
-  const { database, userId, userRole, } = opts ?? {};
-
-  // Authorization parity with handleImageGeneration: unauthenticated callers
-  // get 401; chat/message linkage is scoped to chats the caller may access
-  // (otherwise generated assets land on a foreign chat — IDOR write).
-  if (!userId) {
-    return Response.json({ error: "Authentication required", status: 401, }, { status: 401, },);
-  }
-
+export async function handleRun(request: Request, opts?: HandleRunAuth,): Promise<Response> {
   const body = await parseBody<ImageEditRequest>(request,);
   if (body instanceof Response) { return body; }
 
-  const db = database ?? getDatabase();
-
-  if (body.chatId) {
-    const access = await checkChatAccess(db, body.chatId, userId, userRole,);
-    if (!access.ok) { return forbiddenResponse(); }
-  }
-
-  if (body.messageId) {
-    const message = await db
-      .selectFrom("messages",)
-      .select("chat_id",)
-      .where("id", "=", body.messageId,)
-      .executeTakeFirst();
-    if (!message) { return forbiddenResponse(); }
-    const access = await checkChatAccess(db, message.chat_id, userId, userRole,);
-    if (!access.ok) { return forbiddenResponse(); }
-  }
+  const gate = await authorizeRunLinkage(body, opts ?? {},);
+  if (gate) { return gate; }
 
   if (!body.template_id) {
     return jsonError({ message: "Missing required field: template_id", status: HttpStatus.BadRequest, },);
