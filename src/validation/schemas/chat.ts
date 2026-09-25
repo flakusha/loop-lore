@@ -162,6 +162,12 @@ export const ChatRenameBody = t.Object({
   name_source: t.Optional(t.String(),),
 },);
 
+/** Turn-skip event body (TASK-turn-skip-event-and-persistence). */
+export const TurnSkipBody = t.Object({
+  mode: t.Union([t.Literal("hold",), t.Literal("advance",),],),
+  reason: t.Optional(t.String({ maxLength: 280, },),),
+},);
+
 export const ChatAutoTranslateBody = t.Object({
   targetLang: t.Optional(t.String(),),
 },);
