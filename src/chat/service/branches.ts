@@ -11,6 +11,7 @@
 import { type Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { checkChatAccess, } from "./access";
+import { nextAutoName, walkMessagePath, } from "./branch-helpers";
 import type { ServiceError, } from "./types";
 
 /** One branch as returned to the caller. */
@@ -59,44 +60,6 @@ export interface ChatBranchWithMeta extends ChatBranchRecord {
 export type ListBranchesResult =
   | { ok: true; branches: ChatBranchWithMeta[] }
   | ServiceError;
-
-/**
- * Walk `messages.parent_id` from `tipId` up to the root, returning
- * root-to-tip message ids. Bounded by `maxDepth` to defend against
- * pathological/cyclic trees.
- */
-async function walkMessagePath(
-  db: Kysely<DB>,
-  chatId: string,
-  tipId: string,
-  maxDepth = 1000,
-): Promise<string[]> {
-  const path: string[] = [];
-  let current: string | null = tipId;
-  let depth = 0;
-  while (current !== null && depth < maxDepth) {
-    const row = await db
-      .selectFrom("messages",)
-      .select(["id", "parent_id", "chat_id",],)
-      .where("id", "=", current,)
-      .executeTakeFirst();
-    if (!row || row.chat_id !== chatId) { break; }
-    path.push(row.id,);
-    current = row.parent_id;
-    depth += 1;
-  }
-  return path.reverse();
-}
-
-/** Next auto-name: "Branch N" where N is the existing count + 1. */
-async function nextAutoName(db: Kysely<DB>, chatId: string,): Promise<string> {
-  const row = await db
-    .selectFrom("chat_branches",)
-    .select((eb,) => eb.fn.count<number>("id",).as("n",))
-    .where("chat_id", "=", chatId,)
-    .executeTakeFirst();
-  return `Branch ${Number(row?.n ?? 0,) + 1}`;
-}
 
 /**
  * Create a branch rooted at `messageId`. Returns the branch record and

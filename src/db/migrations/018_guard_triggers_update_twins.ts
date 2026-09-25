@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * 017_guard_triggers_update_twins
+ * 018_guard_triggers_update_twins
  *
  * The guard triggers in 003 (memory_audit_log.action enum) and 005
  * (world_lore_entries confidence/distortion ranges) are BEFORE INSERT only —

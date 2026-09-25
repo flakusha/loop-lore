@@ -1,18 +1,22 @@
-<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
-<!-- SPDX-FileCopyrightText: 2026 giwt Contributors -->
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
 # TASK: Gate worlds RPG 7-col flags through master-mechanics validator
 
-**Status:** ⬜ Not Started
+**Status:** open
 **Priority:** medium
-**Effort:** Medium
+**Effort:** Small (composite validator + call-site wiring + unit test)
+**Summary:** `worlds` `rpg_enabled` + `rpg_dice`/`rpg_checks`/`rpg_combat`/`rpg_xp`/`rpg_loot`/`rpg_quests` drift via raw `Boolean()` casts (`src/rpg/service/world-gate.ts:41,94-99`). Add a `CompositeValidator` with master=`OR(mechanics)` semantics; call `assertValid` in the `checkMechanicEnabled`/`getMechanicsConfig` paths. Unit test. No column changes.
+**Context:** DB schema-gate audit (2026-09-25, db-migration-fixes session). Individual mechanic flags can be true while the master gate is false (or vice versa) with no validation; the composite makes the invariant executable.
 
-## Summary
+**Acceptance Criteria:**
+- [ ] `CompositeValidator` enforces master=`OR(mechanics)` across the 7 columns.
+- [ ] `checkMechanicEnabled` + `getMechanicsConfig` call `assertValid` before reading flags.
+- [ ] Unit test covers master-only, mechanic-without-master (invalid), and all-off states.
+- [ ] `bun run check` green.
 
-worlds rpg_enabled + rpg_dice/checks/combat/xp/loot/quests drift via raw Boolean() casts (src/rpg/service/world-gate.ts:41,94-99). Add CompositeValidator master=OR(mechanics), call assertValid in checkMechanicEnabled/getMechanicsConfig paths, unit test. No column changes.
+**Tags:** db, rpg, validator, world-gate
+**Related:** src/rpg/service/world-gate.ts
 
-## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+git issue: 9678610
