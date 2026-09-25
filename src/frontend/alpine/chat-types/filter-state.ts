@@ -55,4 +55,26 @@ export interface ChatCoreFilterState {
   moveMentionSelection(delta: 1 | -1,): void;
   handleComposerKeydown(event: KeyboardEvent,): void;
   handleComposerEnter(): void;
+  // Slash-command typed-token autocomplete (slash-autocomplete.ts).
+  // Mirrors the @mention block above; reads `_commandList` populated by
+  // command-palette.ts so the candidate set is always registry-driven.
+  _slashQuery: string;
+  _slashCandidates: {
+    name: string;
+    description: string;
+    descriptionKey: string;
+  }[];
+  _showSlashPopover: boolean;
+  _slashActiveIndex: number;
+  handleSlashInput(event: Event,): void;
+  selectSlashCandidate(candidate: {
+    name: string;
+    description: string;
+    descriptionKey: string;
+  },): void;
+  hideSlashPopover(): void;
+  acceptSlashAtIndex(index: number,): boolean;
+  moveSlashSelection(delta: 1 | -1,): void;
+  handleSlashKeydown(event: KeyboardEvent,): void;
+  handleSlashEnter(): boolean;
 }
