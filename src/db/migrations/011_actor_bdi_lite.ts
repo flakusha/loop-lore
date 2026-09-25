@@ -28,14 +28,14 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("world_id", "text",)
     .addColumn("plan_date", "text", (col,) => col.notNull(),)
     .addColumn("summary", "text", (col,) => col.notNull(),)
-    .addColumn("priority", "text", (col,) => col.notNull().defaultTo("normal"),)
+    .addColumn("priority", "text", (col,) => col.notNull().defaultTo("normal",),)
     .addColumn("created_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
     .execute();
 
   await database.schema
     .createIndex("idx_actor_daily_plans_actor_date",)
     .on("actor_daily_plans",)
-    .columns(["actor_id", "plan_date"],)
+    .columns(["actor_id", "plan_date",],)
     .execute();
 
   await database.schema
@@ -70,7 +70,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
   await database.schema
     .createIndex("uq_actor_chat_buffers_pair",)
     .on("actor_chat_buffers",)
-    .columns(["actor_id", "partner_actor_id"],)
+    .columns(["actor_id", "partner_actor_id",],)
     .unique()
     .execute();
 

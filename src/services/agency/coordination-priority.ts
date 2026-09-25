@@ -30,7 +30,7 @@ export interface QueueResult {
   reason?: string;
 }
 
-const queuedActions: Array<{ sceneId: string; action: { actorId: string; payload: unknown; }; enqueuedAt: number; }> = [];
+const queuedActions: Array<{ sceneId: string; action: { actorId: string; payload: unknown }; enqueuedAt: number }> = [];
 
 /**
  * Mark a player intent as pending for `sceneId`. Call when a user message
@@ -41,7 +41,10 @@ const queuedActions: Array<{ sceneId: string; action: { actorId: string; payload
  */
 export function markPlayerIntentPending(sceneId: string, actorId: string,): void {
   let bucket = sceneIntents.get(sceneId,);
-  if (!bucket) { bucket = new Map(); sceneIntents.set(sceneId, bucket,); }
+  if (!bucket) {
+    bucket = new Map();
+    sceneIntents.set(sceneId, bucket,);
+  }
   if (!bucket.has(actorId,)) { bucket.set(actorId, { actorId, inFlight: true, },); }
 }
 
@@ -77,7 +80,7 @@ export function hasPlayerIntent(sceneId: string,): boolean {
  */
 export function enqueueIfNoPlayerIntent(
   sceneId: string,
-  action: { actorId: string; payload: unknown; },
+  action: { actorId: string; payload: unknown },
 ): QueueResult {
   if (hasPlayerIntent(sceneId,)) {
     queuedActions.push({ sceneId, action, enqueuedAt: Date.now(), },);
@@ -91,8 +94,8 @@ export function enqueueIfNoPlayerIntent(
  * the next tick after a player intent clears.
  * @param sceneId
  */
-export function drainQueuedActions(sceneId: string,): Array<{ actorId: string; payload: unknown; }> {
-  const out: Array<{ actorId: string; payload: unknown; }> = [];
+export function drainQueuedActions(sceneId: string,): Array<{ actorId: string; payload: unknown }> {
+  const out: Array<{ actorId: string; payload: unknown }> = [];
   for (let i = 0; i < queuedActions.length; i++) {
     if (queuedActions[i]!.sceneId === sceneId) {
       out.push(queuedActions[i]!.action,);

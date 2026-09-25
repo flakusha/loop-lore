@@ -29,13 +29,13 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
   await database.schema
     .createIndex("idx_agency_play_counters_chat_hour",)
     .on("agency_play_counters",)
-    .columns(["chat_id", "hour_bucket"],)
+    .columns(["chat_id", "hour_bucket",],)
     .execute();
 
   await database.schema
     .createIndex("idx_agency_play_counters_dimension_hour",)
     .on("agency_play_counters",)
-    .columns(["dimension", "hour_bucket"],)
+    .columns(["dimension", "hour_bucket",],)
     .execute();
 
   await database.schema
@@ -52,7 +52,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
   await database.schema
     .createIndex("uq_agency_dimension_counters_world_dim_day",)
     .on("agency_dimension_counters",)
-    .columns(["world_id", "dimension", "day"],)
+    .columns(["world_id", "dimension", "day",],)
     .unique()
     .execute();
 }

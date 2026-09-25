@@ -8,12 +8,12 @@
  * (009, 010, 011) are part of the migration chain.
  */
 
-import type { Database } from "bun:sqlite";
-import type { Kysely } from "kysely";
-import { createTestDb } from "../../../test-utils/create-test-db";
-import type { DB } from "../../../db";
+import type { Database, } from "bun:sqlite";
+import type { Kysely, } from "kysely";
+import type { DB, } from "../../../db";
+import { createTestDb, } from "../../../test-utils/create-test-db";
 
-export async function createInMemoryDb(): Promise<{ db: Kysely<DB>; raw: Database; }> {
-  const { db, sqlite } = await createTestDb();
-  return { db, raw: sqlite };
+export async function createInMemoryDb(): Promise<{ db: Kysely<DB>; raw: Database }> {
+  const { db, sqlite, } = await createTestDb();
+  return { db, raw: sqlite, };
 }

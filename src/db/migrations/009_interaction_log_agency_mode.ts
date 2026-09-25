@@ -15,7 +15,7 @@ import { type Kysely, } from "kysely";
 export async function up(database: Kysely<unknown>,): Promise<void> {
   await database.schema
     .alterTable("interaction_logs",)
-    .addColumn("agency_mode", "text", (col,) => col.notNull().defaultTo("free"),)
+    .addColumn("agency_mode", "text", (col,) => col.notNull().defaultTo("free",),)
     .execute();
 }
 
