@@ -1250,6 +1250,10 @@
   "src/assistant/commands/battle.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-2d-world-review-reconcile-shared-battle-entrance-table-with-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-rpg-gate-chat-commands-behind-world-opt-in.md"
     }
   ],
@@ -5613,6 +5617,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-random-events-no-character-binding.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2d-world-review-shared-seeded-rng-util-for-deterministic-pro.md"
     },
     {
       "kind": "ticket",
@@ -12980,6 +12988,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-2d-world-review-reconcile-shared-battle-entrance-table-with-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-admin-assistant-tooling-allowlist.md"
     },
     {
@@ -16994,6 +17006,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-2d-world-review-canvas-click-to-vn-choice-card-payload-contr.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-ask-type-fast-menu.md"
     },
     {
@@ -20171,6 +20187,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-coverage-waiver-locations-at-78-under-check-gate.md"
+    }
+  ],
+
+  "src/locations/tree.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-locations-tree-ts-header-names-nonexistent-triggers.md"
     }
   ],
   "src/logger": [
@@ -23415,6 +23438,10 @@
       "source": ".plan/tickets/BUG-sse-streams-leak-string-error-internals-to-clients.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2d-world-review-world-scoped-snapshot-and-event-sse-feed.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/multi-instance-reconciliation.md"
     }
@@ -24541,6 +24568,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-002.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2d-world-review-proximity-query-for-nearby-actors-into-group.md"
     }
   ],
   "src/routes/chat-search/search.test.ts": [
@@ -24929,6 +24960,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-vn-choices-idor-guard-non-compiling.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2d-world-review-canvas-click-to-vn-choice-card-payload-contr.md"
     },
     {
       "kind": "ticket",
@@ -32993,6 +33028,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-input-hardening-batch.md"
+    }
+  ],
+
+  "src/utils/seeded-rng.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-2d-world-review-shared-seeded-rng-util-for-deterministic-pro.md"
     }
   ],
   "src/utils/structured-output.ts": [
