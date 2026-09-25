@@ -4,15 +4,15 @@
 /**
  * Image Edit API Routes — ComfyUI + sd-server unified endpoints
  *
- * POST /api/image-edit/run        — Execute a workflow template
- * GET  /api/image-edit/templates  — List available templates
- * GET  /api/image-edit/nodes      — Discover installed nodes
+ * POST /api/v1/image-edit/run        — Execute a workflow template
+ * GET  /api/v1/image-edit/templates  — List available templates
+ * GET  /api/v1/image-edit/nodes      — Discover installed nodes
  * GET  /api/image-edit/capabilities — List backend capabilities
  * GET  /api/image-edit/health     — Health check backends
  * @module image-edit-routes
  */
 
-import { HttpStatus, jsonError, jsonResponse, parseBody, } from "../routes/http-utils";
+import { forbiddenResponse, HttpStatus, jsonError, jsonResponse, parseBody, } from "../routes/http-utils";
 import { ComfyUIEditProvider, } from "./providers/comfyui-provider";
 import { SDServerEditProvider, } from "./providers/sd-server-provider";
 import { registerBuiltinTemplates, registerConfigWorkflows, templateRegistry, } from "./template-registry";
@@ -25,7 +25,9 @@ import type {
 
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
+import { checkChatAccess, } from "../chat/service";
 import { loadConfig, } from "../config/load";
+import { getDatabase, } from "../db";
 import type { DB, } from "../db/schema";
 
 // ── Provider instances ───────────────────────────────────────
@@ -53,14 +55,49 @@ function getProvider(backend: ImageEditBackend,): ImageEditProvider {
 // ── Route Handlers ───────────────────────────────────────────
 
 /**
- * POST /api/image-edit/run — Execute a workflow template
+ * POST /api/v1/image-edit/run — Execute a workflow template
  *
  * Body: { template_id, backend, params, chatId?, messageId? }
  * @param request
+ * @param opts
+ * @param opts.database
+ * @param opts.userId
+ * @param opts.userRole
+ * @returns JSON envelope with results, or 401/403/4xx on gate failure.
  */
-export async function handleRun(request: Request,): Promise<Response> {
+export async function handleRun(
+  request: Request,
+  opts?: { database?: Kysely<DB>; userId?: string; userRole?: string | null },
+): Promise<Response> {
+  const { database, userId, userRole, } = opts ?? {};
+
+  // Authorization parity with handleImageGeneration: unauthenticated callers
+  // get 401; chat/message linkage is scoped to chats the caller may access
+  // (otherwise generated assets land on a foreign chat — IDOR write).
+  if (!userId) {
+    return Response.json({ error: "Authentication required", status: 401, }, { status: 401, },);
+  }
+
   const body = await parseBody<ImageEditRequest>(request,);
   if (body instanceof Response) { return body; }
+
+  const db = database ?? getDatabase();
+
+  if (body.chatId) {
+    const access = await checkChatAccess(db, body.chatId, userId, userRole,);
+    if (!access.ok) { return forbiddenResponse(); }
+  }
+
+  if (body.messageId) {
+    const message = await db
+      .selectFrom("messages",)
+      .select("chat_id",)
+      .where("id", "=", body.messageId,)
+      .executeTakeFirst();
+    if (!message) { return forbiddenResponse(); }
+    const access = await checkChatAccess(db, message.chat_id, userId, userRole,);
+    if (!access.ok) { return forbiddenResponse(); }
+  }
 
   if (!body.template_id) {
     return jsonError({ message: "Missing required field: template_id", status: HttpStatus.BadRequest, },);
@@ -105,7 +142,7 @@ export async function handleRun(request: Request,): Promise<Response> {
 }
 
 /**
- * GET /api/image-edit/templates — List available templates
+ * GET /api/v1/image-edit/templates — List available templates
  *
  * Query params:
  *   backend  — filter by backend (comfyui | sd-server)
@@ -134,7 +171,7 @@ export function handleTemplates(request: Request,): Response {
 }
 
 /**
- * GET /api/image-edit/nodes — Discover installed ComfyUI nodes
+ * GET /api/v1/image-edit/nodes — Discover installed ComfyUI nodes
  */
 export async function handleNodes(): Promise<Response> {
   try {
@@ -147,7 +184,7 @@ export async function handleNodes(): Promise<Response> {
 }
 
 /**
- * GET /api/image-edit/capabilities — List backend capabilities
+ * GET /api/v1/image-edit/capabilities — List backend capabilities
  */
 export async function handleCapabilities(): Promise<Response> {
   const capabilities: Record<string, { healthy: boolean; features: string[] }> = {};
@@ -174,7 +211,7 @@ export async function handleCapabilities(): Promise<Response> {
 }
 
 /**
- * GET /api/image-edit/health — Quick health check for all backends
+ * GET /api/v1/image-edit/health — Quick health check for all backends
  */
 export async function handleHealth(): Promise<Response> {
   const [comfyuiHealthy, sdServerHealthy,] = await Promise.allSettled([
@@ -193,10 +230,10 @@ export async function handleHealth(): Promise<Response> {
  *
  * Registers built-in + config-driven workflow templates on first mount, then
  * exposes the unified ComfyUI / sd-server image-edit endpoints.
- * @param _opts
- * @param _opts.database
+ * @param opts
+ * @param opts.database
  */
-export function imageEditRoutes(_opts: { database: Kysely<DB> }, prefix = "/api",) {
+export function imageEditRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
   registerBuiltinTemplates();
 
   try {
@@ -213,5 +250,12 @@ export function imageEditRoutes(_opts: { database: Kysely<DB> }, prefix = "/api"
     .get(`${prefix}/image-edit/nodes`, () => handleNodes(),)
     .get(`${prefix}/image-edit/capabilities`, () => handleCapabilities(),)
     .get(`${prefix}/image-edit/health`, () => handleHealth(),)
-    .post(`${prefix}/image-edit/run`, async ({ request, },) => handleRun(request,),);
+    .post(`${prefix}/image-edit/run`, async (ctx,) => {
+      const auth = ctx as unknown as { userId?: string | null; userRole?: string | null };
+      return handleRun(ctx.request, {
+        database: opts.database,
+        userId: auth.userId ?? undefined,
+        userRole: auth.userRole ?? null,
+      },);
+    },);
 }
