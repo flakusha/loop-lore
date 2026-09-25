@@ -1236,7 +1236,7 @@
                       </div>
                       <p x-text="result.response || result.error" style="white-space: pre-wrap; font-size: 12px"></p>
                       <div style="display: flex; gap: 4px; align-items: center">
-                        <select class="form-input" x-model="comparisonRatings[result.model.name].rating">
+                        <select class="form-input" x-model="comparisonRatings['overall'].rating">
                           <option value="">Rating</option><template x-for="n in [1,2,3,4,5]" :key="n"><option
                               :value="n"
                               x-text="n"
@@ -1244,7 +1244,7 @@
                             </option></template>
                         </select><input
                           class="form-input"
-                          x-model="comparisonRatings[result.model.name].notes"
+                          x-model="comparisonRatings['overall'].notes"
                           placeholder="Notes"
                         /><button class="btn btn-secondary btn-xs" @click="rateComparison(index)">Save</button>
                       </div>
