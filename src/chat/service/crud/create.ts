@@ -3,9 +3,10 @@
 
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../../db/schema";
+import { emitPluginEvent, } from "../../../plugins/event-bus";
+import { registry, } from "../../../plugins/registry";
 import { jsonStringifyOr, } from "../../../utils";
 import type { CreateChatParams, } from "../types";
-
 /**
  * Create a new chat with owner and optional participants.
  * @param database
@@ -109,6 +110,15 @@ export async function createChat(
         .execute();
     }
   }
+
+  // FEAT-048: fan chat.created out to registered plugin event handlers.
+  // Errors are isolated per-handler by the EventBus dispatcher; we do not
+  // await failures so plugin bugs cannot block chat creation.
+  await emitPluginEvent(
+    registry.getAllEventHandlers(),
+    "chat.created",
+    { chatId: newChatId, createdBy: params.createdBy, name: params.name, type: params.type ?? "direct", },
+  );
 
   return newChatId;
 }
