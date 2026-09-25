@@ -6,7 +6,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** 📝 Draft
+**Status:** 🚧 Core landed (2026-09-25) — CRUD services + routes + card import/export on dev; versioning superseded by data-migrations runner; 2 of 4 bucket tickets closed, 2 open pending AC verification
 **Priority:** High
 **Effort:** High
 **Type:** Foundation Epic
@@ -82,12 +82,12 @@ The `actors` table is the unified participant model — every entity that sends 
 
 ## Acceptance Criteria
 
-- [ ] Actor CRUD with all character card fields
-- [ ] Data version bump-on-write working
-- [ ] Memories, notes, lore, items as separate tables
-- [ ] SillyTavern V1/V2 import functional
+- [x] Actor CRUD with all character card fields
+- [x] Data version bump-on-write working (superseded: generic `data-migrations` runner + per-row `format_version`; concrete ladders authored when a real shape change lands)
+- [x] Memories, notes, lore, items as separate tables
+- [x] SillyTavern V1/V2 import functional
 - [ ] Lore injection respects token budget
-- [ ] Tests passing
+- [x] Tests passing
 
 ## Related Epics
 
@@ -98,12 +98,12 @@ The `actors` table is the unified participant model — every entity that sends 
 
 ## Tickets
 
-| Work Item | Ticket | Git Issue |
-| --------- | ------ | --------- |
-| Data versioning (version table 0-4, backfill) | `TASK-actors-data-versioning.md` | 9164e41 |
-| Child tables CRUD (memories/notes/lore/items) | `TASK-actors-child-tables-crud.md` | c62dfff |
-| API routes (actors + child tables) | `TASK-actors-api-routes.md` | f86deef |
-| SillyTavern V1/V2 import/export | `TASK-actors-import-export.md` | 9fd4c89 |
+| Work Item | Ticket | Git Issue | State (2026-09-25) |
+| --------- | ------ | --------- | ------------------ |
+| Data versioning (version table 0-4, backfill) | `TASK-actors-data-versioning.md` | 9164e41 | closed — superseded by the generic `src/db/data-migrations/` runner + per-row `format_version`; no v0–v4 ladder ever existed to backfill |
+| Child tables CRUD (memories/notes/lore/items) | `TASK-actors-child-tables-crud.md` | c62dfff | services landed on dev (`src/actors/`); ticket open pending AC verification (promote/demote, cron sweep, token-budget lore match, item transfer) |
+| API routes (actors + child tables) | `TASK-actors-api-routes.md` | f86deef | routes landed on dev (`src/routes/actor-*.ts` via `entity-routes` factory); ticket open pending AC verification (lore-match budget cap, atomic transfer) |
+| SillyTavern V1/V2 import/export | `TASK-actors-import-export.md` | 9fd4c89 | closed — implemented (CHARX/PNG/JSON import, CCv2/CCv3 export, `/api/actors/:id/card`, round-trip + 400 tests) |
 
 4-bucket grouping per the 2026-09-23 recommendation (option 2); each bucket carries self-contained acceptance tests and tracks the existing source layout (schema-core / schema-story / import / routes). The former `TASK-actors.md` 1-line stub is superseded by these four.
 
