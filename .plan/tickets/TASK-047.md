@@ -3,14 +3,14 @@
 
 # TASK-047: Plugin API System
 
-**Status:** open
+**Status:** done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Public plugin API surface — tool executor, event bus, UI component mount points.
 **Context:** Stabilizes the plugin↔core contract via existing API surfaces.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: open
+**Status**: done
 **Priority**: medium
 **Labels**: plugins, rpg, api
 **Epic**: epic-plugin-extension-points
@@ -49,3 +49,7 @@ Defines the API surface plugins consume to interact with extension points: route
 - Speculative items are marked; verify against current `src/plugins/` before implementation.
 - REST/WebSocket/CLI gateway surfaces are deferred to `epic-plugin-system.md`.
 - API versioning scheme and per-plugin rate limits are TBD — coordinate with `TASK-046` (override) and `TASK-048` (security/sandboxing) before designing.
+
+## Resolution
+
+Implemented and verified in `56213eba2` (`feat(plugins): enforce origin capabilities and enabled filtering`). The plugin registry, route/tool/UI registration, execution error handling, and extension-point contracts are covered by plugin tests. Broader REST/WebSocket/CLI gateway surfaces remain under `epic-plugin-system.md`.

@@ -3,14 +3,14 @@
 
 # TASK-048: Plugin Security & Sandboxing
 
-**Status:** open
+**Status:** done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Plugin permission boundaries and resource quotas.
 **Context:** Extension-points layer; deeper sandbox deferred to epic-plugin-system.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: open
+**Status**: done
 **Priority**: medium
 **Labels**: plugins, security
 **Epic**: epic-plugin-extension-points
@@ -49,3 +49,7 @@ Locks down the plugin extension-points surface so untrusted plugin code cannot e
 - Speculative items are marked; verify against current `src/plugins/` before implementation.
 - Full sandbox (`vm`, WASM), resource limits, and audit log live under `epic-plugin-system.md` — defer here.
 - Cross-plugin interference prevention currently relies on registration-order semantics in `PluginRegistry`; explicit isolation is not yet implemented.
+
+## Resolution
+
+Implemented and verified in `56213eba2` (`feat(plugins): enforce origin capabilities and enabled filtering`) and `75a02bcc7` (`feat(plugins): wire chat.* events through EventBus`). Origin capability checks, enabled-plugin filtering, timeout/error folding, and per-handler event isolation are covered. Full VM/WASM isolation and resource quotas remain under `epic-plugin-system.md`.
