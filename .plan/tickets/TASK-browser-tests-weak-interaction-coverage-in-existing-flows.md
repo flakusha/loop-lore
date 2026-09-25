@@ -11,6 +11,7 @@
 **Status:** open
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-testing-qa
 
 ## Summary
 
