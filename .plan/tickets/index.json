@@ -22354,6 +22354,121 @@
     "git_issue": "de3f9e0",
     "status": "open"
   },
+  "TASK-COMFYUI-FIRST-CLASS-CLIENT-ID-WEBSOCKET-PROGRESS-IN-COMFYUIC": {
+    "hash": "fc20566",
+    "git_issue": "fc20566",
+    "extid": "TASK-COMFYUI-FIRST-CLASS-CLIENT-ID-WEBSOCKET-PROGRESS-IN-COMFYUIC",
+    "type": "TASK",
+    "title": "ComfyUI first-class: client_id + WebSocket progress in ComfyUIClient",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-comfyui-plugin",
+    "tags": [
+      "comfyui",
+      "websocket"
+    ],
+    "source": ".plan/tickets/TASK-comfyui-first-class-client-id-websocket-progress-in-comfyuic.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-COMFYUI-FIRST-CLASS-IMAGE-GENERATION-QUEUE-HONORS-COMFYUI-BA": {
+    "hash": "1c29c3c",
+    "git_issue": "1c29c3c",
+    "extid": "TASK-COMFYUI-FIRST-CLASS-IMAGE-GENERATION-QUEUE-HONORS-COMFYUI-BA",
+    "type": "TASK",
+    "title": "ComfyUI first-class: image generation queue honors ComfyUI backend",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-generation-flow-control",
+    "tags": [
+      "comfyui",
+      "queue"
+    ],
+    "source": ".plan/tickets/TASK-comfyui-first-class-image-generation-queue-honors-comfyui-ba.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-COMFYUI-FIRST-CLASS-LLAMA-SWAP-RECIPE-STANDALONE-VS-PROXY-MA": {
+    "hash": "33122ec",
+    "git_issue": "33122ec",
+    "extid": "TASK-COMFYUI-FIRST-CLASS-LLAMA-SWAP-RECIPE-STANDALONE-VS-PROXY-MA",
+    "type": "TASK",
+    "title": "ComfyUI first-class: llama-swap recipe standalone-vs-proxy matrix + docs",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-comfyui-plugin",
+    "tags": [
+      "comfyui",
+      "llama-swap",
+      "docs"
+    ],
+    "source": ".plan/tickets/TASK-comfyui-first-class-llama-swap-recipe-standalone-vs-proxy-ma.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-COMFYUI-FIRST-CLASS-MOUNT-IMAGE-EDIT-ROUTES-VERIFY-ASSET-PER": {
+    "hash": "a6afe33",
+    "git_issue": "a6afe33",
+    "extid": "TASK-COMFYUI-FIRST-CLASS-MOUNT-IMAGE-EDIT-ROUTES-VERIFY-ASSET-PER",
+    "type": "TASK",
+    "title": "ComfyUI first-class: mount image-edit routes + verify asset persistence",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-comfyui-plugin",
+    "tags": [
+      "comfyui",
+      "routes"
+    ],
+    "source": ".plan/tickets/TASK-comfyui-first-class-mount-image-edit-routes-verify-asset-per.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-COMFYUI-FIRST-CLASS-SPRITE-PIPELINE-AVATAR-MATTING-WORKFLOWS": {
+    "hash": "ffe5ba4",
+    "git_issue": "ffe5ba4",
+    "extid": "TASK-COMFYUI-FIRST-CLASS-SPRITE-PIPELINE-AVATAR-MATTING-WORKFLOWS",
+    "type": "TASK",
+    "title": "ComfyUI first-class: sprite-pipeline + avatar-matting workflows as in-place templates",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-2d-sprite-world",
+    "tags": [
+      "comfyui",
+      "sprites",
+      "workflows"
+    ],
+    "source": ".plan/tickets/TASK-comfyui-first-class-sprite-pipeline-avatar-matting-workflows.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-COMFYUI-FIRST-CLASS-STANDALONE-AUTO-START-CONFIG-LIFECYCLE": {
+    "hash": "5bd5c7e",
+    "git_issue": "5bd5c7e",
+    "extid": "TASK-COMFYUI-FIRST-CLASS-STANDALONE-AUTO-START-CONFIG-LIFECYCLE",
+    "type": "TASK",
+    "title": "ComfyUI first-class: standalone auto-start config + lifecycle",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-comfyui-plugin",
+    "tags": [
+      "comfyui",
+      "config",
+      "autostart"
+    ],
+    "source": ".plan/tickets/TASK-comfyui-first-class-standalone-auto-start-config-lifecycle.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-COMFYUI-FIRST-CLASS-UN-DEFER-VN-DYNAMIC-IMAGE-GENERATION-ONT": {
+    "hash": "008910d",
+    "git_issue": "008910d",
+    "extid": "TASK-COMFYUI-FIRST-CLASS-UN-DEFER-VN-DYNAMIC-IMAGE-GENERATION-ONT",
+    "type": "TASK",
+    "title": "ComfyUI first-class: un-defer VN dynamic image generation onto ComfyUI",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-visual-novel-mode",
+    "tags": [
+      "comfyui",
+      "vn"
+    ],
+    "source": ".plan/tickets/TASK-comfyui-first-class-un-defer-vn-dynamic-image-generation-ont.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-COMFYUI-NODE-DISCOVERY": {
     "hash": "e2c1866",
     "extid": "TASK-COMFYUI-NODE-DISCOVERY",

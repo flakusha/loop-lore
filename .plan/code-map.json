@@ -4604,6 +4604,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-first-class-sprite-pipeline-avatar-matting-workflows.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-vn-alpha-extraction-matting-job-for-opaque-character-images.md"
     },
     {
@@ -8012,6 +8016,10 @@
   "src/config/schema/auto-start.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-first-class-standalone-auto-start-config-lifecycle.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-llama-swap-native-support-cpu-resident-classifier-model-reci.md"
     }
   ],
@@ -8041,6 +8049,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-user-defined-regex-rules-storage-crud-route-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-first-class-sprite-pipeline-avatar-matting-workflows.md"
     },
     {
       "kind": "ticket",
@@ -8079,6 +8091,13 @@
     {
       "kind": "spec",
       "source": "docs/spec/integrations/llm-serving.md"
+    }
+  ],
+
+  "src/config/schema/sd-provider.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-first-class-un-defer-vn-dynamic-image-generation-ont.md"
     }
   ],
   "src/config/schema/sections/server.ts": [
@@ -18161,6 +18180,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-2026-openwebui-comfyui-websocket-progress.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-first-class-client-id-websocket-progress-in-comfyuic.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-first-class-mount-image-edit-routes-verify-asset-per.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-first-class-un-defer-vn-dynamic-image-generation-ont.md"
     }
   ],
   "src/generation/image-engine/index.ts": [
@@ -18338,6 +18369,10 @@
     }
   ],
   "src/generation/matting/job-store.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-first-class-image-generation-queue-honors-comfyui-ba.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-local-image-generation-queue.md"
@@ -18537,6 +18572,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-background.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-first-class-client-id-websocket-progress-in-comfyuic.md"
     },
     {
       "kind": "ticket",
@@ -19197,6 +19236,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-comfyui-plugin.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-first-class-mount-image-edit-routes-verify-asset-per.md"
     }
   ],
   "src/image-edit/routes.ts": [
@@ -19207,6 +19250,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-creative-studio-workflow-gallery-edit.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-first-class-mount-image-edit-routes-verify-asset-per.md"
     }
   ],
   "src/image-edit/template-registry.test.ts": [
@@ -23231,6 +23278,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-frontend-admin.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-first-class-standalone-auto-start-config-lifecycle.md"
     }
   ],
   "src/routes/admin/search-providers.ts": [
@@ -30367,6 +30418,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-cron-scheduler.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-first-class-standalone-auto-start-config-lifecycle.md"
     }
   ],
   "src/server/start.ts": [
@@ -30693,6 +30748,13 @@
       "source": ".plan/tickets/TASK-swarm-supervisor.md"
     }
   ],
+
+  "src/services/server-external-manager/start-comfy.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-first-class-standalone-auto-start-config-lifecycle.md"
+    }
+  ],
   "src/services/server-external-manager/start-llama.ts": [
     {
       "kind": "epic",
@@ -30711,6 +30773,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-configs-path-resolution.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-first-class-standalone-auto-start-config-lifecycle.md"
     }
   ],
   "src/services/trade-core": [

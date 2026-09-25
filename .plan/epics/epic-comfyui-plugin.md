@@ -6,7 +6,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** 🟡 Partial — ComfyUI integration shipped across **two** surfaces (generation image-engine + image-edit template system). Builtin TS templates, node discovery (`/object_info`), config-driven workflows, and `/api/image-edit/*` routes exist. **Blocking gaps:** image-edit routes are NOT mounted; `ComfyUIEditProvider.execute` emits dangling asset links (never downloads/stores the image); `submitWorkflow` omits `client_id` (no WebSocket progress, ambiguous multi-client scoping). GGUF model loading + FLUX.1 Kontext / Qwen Edit templates pending.
+**Status:** 🟡 Partial — ComfyUI integration shipped across **two** surfaces (generation image-engine + image-edit template system). Builtin TS templates, node discovery (`/object_info`), config-driven workflows, and `/api/image-edit/*` routes exist. **Blocking gaps:** image-edit routes are NOT mounted; `submitWorkflow` omits `client_id` (no WebSocket progress, ambiguous multi-client scoping). (Corrected 2026-09-25: `ComfyUIEditProvider.execute` DOES download + `createAsset`/`linkAsset` — the old 'dangling links' entry was stale; re-verify + pin via regression test.) GGUF model loading + FLUX.1 Kontext / Qwen Edit templates pending. **First-class program (branch `comfyui-first-class`):** standalone auto-start + `client_id`/WS + route mount + VN un-defer + sprite/matting templates + recipe matrix + queue scoping — see Linked Tasks.
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic
@@ -110,7 +110,7 @@ First-hand testing on RX 7900 XT (20GB VRAM):
 | On-disk templates   | `configs/workflows/{txt2img,img2img}.json`         | ✅ Built | `{{placeholder}}` substitution                                  |
 | Image gen route     | `src/generation/image-gen-route.ts`               | ✅ Built | sd-server + ComfyUI (`workflow` param), persists via `createAsset` |
 | Provider registry   | `src/generation/providers/registry.ts`            | ✅ Built | failover, circuit breaker                                      |
-| Image-edit provider | `src/image-edit/providers/comfyui-provider.ts`    | ⚠️ Bug  | `execute` emits dangling asset links (never stores image)       |
+| Image-edit provider | `src/image-edit/providers/comfyui-provider.ts`    | ✅ Persists | `execute` downloads + `createAsset`/`linkAsset` (verified 2026-09-25; old 'dangling' entry was stale — pin via regression test) |
 | Image-edit routes   | `src/image-edit/routes.ts`                         | ⚠️ Unmounted | handlers defined, NOT registered in server/Elysia app        |
 | Builtin TS templates| `src/image-edit/templates/builtin/*`              | ✅ Built | txt2img/img2img/inpaint/upscale/controlnet + LoRA helpers      |
 | Node discovery      | `src/image-edit/providers/comfyui-provider.ts`    | ✅ Built | `/object_info` → `getInstalledNodes`/`listCapabilities`         |
@@ -203,9 +203,8 @@ node-targeted edits.
 
 - [ ] **Mount** `src/image-edit/routes.ts` handlers in the server/Elysia app
       (currently zero mounts).
-- [ ] **Fix** `ComfyUIEditProvider.execute` to download images
-      (`client.downloadImage`) and persist via `createAsset`/`linkAsset`
-      (mirror Path A) instead of emitting dangling `/api/assets/{uid}/raw` links.
+- [ ] **Verify** `ComfyUIEditProvider.execute` persistence (VERIFIED 2026-09-25 it already
+      downloads + `createAsset`/`linkAsset`; pin via execute-then-fetch regression test).
 - [ ] Add optional `client_id` to `ComfyUIClient.submitWorkflow` body
       (prereq for `/ws` progress + multi-client scoping).
 
@@ -291,6 +290,17 @@ node-targeted edits.
 9. **Plugin dir:** Original epic proposed `src/plugins/comfyui/`; work landed in `src/image-edit/` + `src/generation/image-engine/`. Reconcile — create the plugin shim or retire the proposal?
 
 ## Linked Tasks
-
 - TASK-comfyui-node-discovery.md
 - TASK-comfyui-template-registry.md
+
+## First-Class Program (branch `comfyui-first-class`, 2026-09-25)
+
+Standalone + proxy modes (llama-swap `comfyui_auto` passthrough landed; standalone spawner new). Sequence: standalone auto-start → `client_id`/WS → route mount + persist pin → VN un-defer + sprite/matting templates (parallel-safe) → recipe matrix/docs → queue scoping.
+
+- TASK-comfyui-first-class-standalone-auto-start-config-lifecycle.md — `ComfyUIAutoStartConfig` + `start-comfy.ts` spawner (`system_stats` probe) + admin status; defines standalone-vs-proxy baseUrl contract (epic-comfyui-plugin)
+- TASK-comfyui-first-class-client-id-websocket-progress-in-comfyuic.md — `client_id` body + `subscribeProgress` sentinel/fallback; `generateComfyUI` passes `client_id` always (epic-comfyui-plugin; unblocks TASK-2026-openwebui-comfyui-websocket-progress)
+- TASK-comfyui-first-class-mount-image-edit-routes-verify-asset-per.md — mount `/api/image-edit/*`, execute-then-fetch roundtrip pins anti-dangling invariant (epic-comfyui-plugin Phase 0)
+- TASK-comfyui-first-class-un-defer-vn-dynamic-image-generation-ont.md — VN story image step → `generateComfyUI` via `pickSdProvider`, (scene_hash, emotion) cache, backend-down fallback (epic-visual-novel-mode)
+- TASK-comfyui-first-class-sprite-pipeline-avatar-matting-workflows.md — `sprite-sheet` / `sprite-variant` / `matting-cutout` JSON, in-place Path A, zero client/engine change (epic-2d-sprite-world)
+- TASK-comfyui-first-class-llama-swap-recipe-standalone-vs-proxy-ma.md — recipe mode matrix + promote image-generation.md ComfyUI from 'Future' (epic-comfyui-plugin, docs)
+- TASK-comfyui-first-class-image-generation-queue-honors-comfyui-ba.md — concurrency 1 per baseUrl, `/interrupt` cancel, WS queue events (epic-generation-flow-control; depends on base queue + client_id/WS)
