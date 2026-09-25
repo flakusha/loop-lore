@@ -4,7 +4,7 @@
 /**
  * Slash-command typed-token autocomplete.
  *
- * Mirrors the @mention autocomplete pattern (chat-group.ts:77-150) for
+ * Mirrors the @mention autocomplete pattern (chat-group.ts:77-149) for
  * `/`-prefixed assistant commands. Triggered when the composer caret sits
  * at the end of a `/`-prefixed token (start of line or after whitespace,
  * optional trailing whitespace). The candidate list comes from the same
