@@ -6,7 +6,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** 🟡 Partial — ComfyUI integration shipped across **two** surfaces (generation image-engine + image-edit template system). Builtin TS templates, node discovery (`/object_info`), config-driven workflows, and `/api/image-edit/*` routes exist. **Blocking gaps:** image-edit routes are NOT mounted; `submitWorkflow` omits `client_id` (no WebSocket progress, ambiguous multi-client scoping). (Corrected 2026-09-25: `ComfyUIEditProvider.execute` DOES download + `createAsset`/`linkAsset` — the old 'dangling links' entry was stale; re-verify + pin via regression test.) GGUF model loading + FLUX.1 Kontext / Qwen Edit templates pending. **First-class program (branch `comfyui-first-class`):** standalone auto-start + `client_id`/WS + route mount + VN un-defer + sprite/matting templates + recipe matrix + queue scoping — see Linked Tasks.
+**Status:** 🟡 Partial — ComfyUI integration shipped across **two** surfaces (generation image-engine + image-edit template system). Builtin TS templates, node discovery (`/object_info`), config-driven workflows, and `/api/v1/image-edit/*` routes (mounted via v1 content barrel) exist. **Blocking gaps:** `handleRun` has no auth (IDOR write open); `submitWorkflow` omits `client_id` (no WebSocket progress, ambiguous multi-client scoping). (Corrected 2026-09-25: `ComfyUIEditProvider.execute` DOES download + `createAsset`/`linkAsset` — the old 'dangling links' entry was stale; re-verify + pin via regression test.) GGUF model loading + FLUX.1 Kontext / Qwen Edit templates pending. **First-class program (branch `comfyui-first-class`):** standalone auto-start + `client_id`/WS + route authz + VN un-defer + sprite/matting templates + recipe matrix + queue scoping — see Linked Tasks.
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic
@@ -48,7 +48,7 @@ custom API call?
     code change** — this is the canonical "in-place" path.
   - **Path B (UX):** add a TS `WorkflowTemplate` (`build(params) =>
     ComfyUIWorkflow`) under `src/image-edit/templates/builtin/`, register it in
-    `templateRegistry`; it renders as a parameter form via `/api/image-edit/*`.
+  `templateRegistry`; it renders as a parameter form via `/api/v1/image-edit/*`.
 - The only justified change to the API call itself is **additive**: an optional
   `client_id` in the `/prompt` body (enables `/ws` progress and scopes
   executions across clients). Still in-place.
@@ -78,12 +78,14 @@ custom API call?
   `templateRegistry` + `builtinTemplates` (txt2img, img2img, inpaint, upscale,
   controlnet) as TS `WorkflowTemplate`s; `buildLoraNodes`/`parseLoraString`
   helpers; node discovery via `/object_info`.
-- Routes `src/image-edit/routes.ts` (`/api/image-edit/run|templates|nodes|
-  capabilities|health`) are **defined but NOT mounted** in the server/Elysia app
-  (verified: zero imports/mounts outside `src/image-edit/`).
-- **BLOCKING:** `ComfyUIEditProvider.execute` builds `ImageEditResult`s with
-  `/api/assets/{uid}/raw` URLs where `uid()` is a fresh id that is **never
-  downloaded or inserted as an asset** → the links are dangling/non-functional.
+- Routes `src/image-edit/routes.ts` (`run|templates|nodes|
+  capabilities|health`, served at `/api/v1/image-edit/*` via the v1 content barrel,
+  `content-surface.ts:44`) are mounted. **Open: `handleRun` has no auth** (bare
+  `Request`, no caller — IDOR write via foreign `chatId`; fix to
+  `handleImageGeneration` parity).
+- ~~`ComfyUIEditProvider.execute` builds `ImageEditResult`s with~~ (CORRECTED 2026-09-25:
+  `execute` DOES download + `createAsset`/`linkAsset`, `comfyui-provider.ts:153-197`;
+  the old 'dangling `/api/assets/{uid}/raw`' entry was stale — pin via regression test).
   (Path A does this correctly via `runWorkflow` + `createAsset`.)
 
 ## Practical Testing Results (2026-07-28)
@@ -169,13 +171,13 @@ export default {
 ### Executable Template Flow
 
 ```
-User selects template → fills params → frontend sends POST /api/comfyui/run
+User selects template → fills params → frontend sends POST /api/v1/image-edit/run
 → backend builds workflow JSON from template + params
 → submits via ComfyUI provider → polls → returns generated images
 ```
 
-> Reality check: the route today is `POST /api/image-edit/run` (Path B) and
-> `POST …/image-gen` with a `workflow` name (Path A). The `/api/comfyui/run`
+> Reality check: the route today is `POST /api/v1/image-edit/run` (Path B) and
+> `POST /api/v1/generation/image` with a `workflow` name (Path A). The `/api/comfyui/run`
 > path in the original design was never created.
 
 ## Templates Applicable for Our Usecases
@@ -199,12 +201,11 @@ node-targeted edits.
 
 ## Tasks
 
-### Phase 0: Unblock Path B (must-fix before any template work on Path B)
+### Phase 0: Path B authz + pins (CORRECTED 2026-09-25 — routes ARE mounted at `/api/v1/image-edit/*` via `content-surface.ts:44`)
 
-- [ ] **Mount** `src/image-edit/routes.ts` handlers in the server/Elysia app
-      (currently zero mounts).
-- [ ] **Verify** `ComfyUIEditProvider.execute` persistence (VERIFIED 2026-09-25 it already
-      downloads + `createAsset`/`linkAsset`; pin via execute-then-fetch regression test).
+- [ ] **Authz** `handleRun` (`routes.ts:61`, bare `Request`, no caller): require `userId` + `checkChatAccess` on `chatId` — `handleImageGeneration` parity (IDOR write open today).
+- [ ] **Fix** stale `/api/image-edit/*` doc comments in `src/image-edit/routes.ts` → `/api/v1/*` (served prefix).
+- [ ] **Verify** `ComfyUIEditProvider.execute` persistence (VERIFIED 2026-09-25 it already downloads + `createAsset`/`linkAsset`; pin via execute-then-fetch regression test).
 - [ ] Add optional `client_id` to `ComfyUIClient.submitWorkflow` body
       (prereq for `/ws` progress + multi-client scoping).
 
@@ -215,8 +216,7 @@ node-targeted edits.
 - [x] Builtin templates: txt2img, img2img, inpaint, upscale, controlnet
 - [x] LoRA builders (`buildLoraNodes`, `parseLoraString`)
 - [x] Node discovery via `/object_info`
-- [ ] `POST /api/image-edit/run` route mounted + error handling (mounting missing)
-- [ ] Unit tests for template builder + workflow construction
+- [ ] `POST /api/v1/image-edit/run` error-shape + regression coverage (authz per Phase 0)
 
 ### Phase 2: Text-Guided Editing Templates (High Priority) — in-place JSON
 
@@ -235,8 +235,7 @@ node-targeted edits.
 
 - [x] ComfyUI node discovery via `/object_info`
 - [x] Auto-filter templates by installed nodes
-- [ ] `GET /api/image-edit/nodes` route **mounted**
-- [ ] Workflow gallery UI (`src/views/comfyui-gallery.html`)
+- [ ] `GET /api/v1/image-edit/nodes` discovery passthrough coverage (mounted; verify)
 - [ ] Template editor UI (parameter form generation)
 - [ ] **WebSocket** progress streaming (`/ws`) using `client_id`
 - [ ] Workflow history + output gallery
@@ -299,7 +298,7 @@ Standalone + proxy modes (llama-swap `comfyui_auto` passthrough landed; standalo
 
 - TASK-comfyui-first-class-standalone-auto-start-config-lifecycle.md — `ComfyUIAutoStartConfig` + `start-comfy.ts` spawner (`system_stats` probe) + admin status; defines standalone-vs-proxy baseUrl contract (epic-comfyui-plugin)
 - TASK-comfyui-first-class-client-id-websocket-progress-in-comfyuic.md — `client_id` body + `subscribeProgress` sentinel/fallback; `generateComfyUI` passes `client_id` always (epic-comfyui-plugin; unblocks TASK-2026-openwebui-comfyui-websocket-progress)
-- TASK-comfyui-first-class-mount-image-edit-routes-verify-asset-per.md — mount `/api/image-edit/*`, execute-then-fetch roundtrip pins anti-dangling invariant (epic-comfyui-plugin Phase 0)
+- TASK-comfyui-first-class-mount-image-edit-routes-verify-asset-per.md — `handleRun` authz to `handleImageGeneration` parity + stale `/api/*` doc comments → `/api/v1/*` + execute-then-fetch roundtrip pins anti-dangling invariant (epic-comfyui-plugin Phase 0)
 - TASK-comfyui-first-class-un-defer-vn-dynamic-image-generation-ont.md — VN story image step → `generateComfyUI` via `pickSdProvider`, (scene_hash, emotion) cache, backend-down fallback (epic-visual-novel-mode)
 - TASK-comfyui-first-class-sprite-pipeline-avatar-matting-workflows.md — `sprite-sheet` / `sprite-variant` / `matting-cutout` JSON, in-place Path A, zero client/engine change (epic-2d-sprite-world)
 - TASK-comfyui-first-class-llama-swap-recipe-standalone-vs-proxy-ma.md — recipe mode matrix + promote image-generation.md ComfyUI from 'Future' (epic-comfyui-plugin, docs)

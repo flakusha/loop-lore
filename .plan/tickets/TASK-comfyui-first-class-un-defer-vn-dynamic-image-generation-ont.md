@@ -17,7 +17,7 @@
 
 ## Implementation
 
-1. `src/routes/vn-generate/` image step: after story/choice gen, resolve provider via `pickSdProvider(cfg, 'generate')`; if `apiFamily === 'comfyui'`, call `generateComfyUI` with scene prompt (location/scene description + style) → persist via existing asset path → set `backgroundUrl`. Non-comfyui providers: keep current behavior (no regression).
+1. `src/routes/vn-generate/story.ts` (`generateStoryDescription` returns text-only `StoryGenerationResult` today — there is NO image step): add opt-in image step after text gen. Resolve provider via `pickSdProvider(cfg, 'generate')`; if `apiFamily === 'comfyui'`, call `generateComfyUI` with scene prompt (`locationId` + story text + `style`) → persist via existing asset path → return `backgroundUrl` alongside content (extend result type; frontend `vn-container` keeps current background until the field is present — no blank-stage regression). Non-comfyui providers: text-only as today.
 2. Portrait variants: character data + `emotion` key → per-emotion workflow run → feeds `sprite-stage.ts` `emotionVariants` map. Cache key `(scene_hash, emotion)` in assets — never regenerate a cached variant.
 3. Pre-generation hook: on scene transition trigger, enqueue background + roster portraits ahead of render (best-effort, failures fall back to stored background).
 4. Backend-down fallback: serve last stored background/portrait, surface degraded indicator (never blank stage).
