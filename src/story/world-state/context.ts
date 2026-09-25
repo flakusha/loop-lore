@@ -117,7 +117,7 @@ export async function buildContext(
   const npcRows = npcActorIds.length === 0
     ? []
     : await state.db.selectFrom("npc_states",).selectAll().where("actor_id", "in", npcActorIds,).execute();
-  const inventoryByActor = await items.getNpcInventoryBatch(npcActorIds,);
+  const inventoryByActor = await items.getNpcInventoryBatch(npcActorIds, world.id,);
   const npcRowById = new Map(npcRows.map((r,) => [r.actor_id, r,]),);
 
   for (const p of participantRows) {

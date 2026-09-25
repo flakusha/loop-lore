@@ -724,6 +724,10 @@ export async function insertWorldItems(
     respawnable?: number;
     created_at?: string;
     updated_at?: string;
+    properties?: string;
+    max_durability?: number | null;
+    current_durability?: number | null;
+    is_active?: number;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
