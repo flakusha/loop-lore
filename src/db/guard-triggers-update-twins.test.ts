@@ -33,7 +33,7 @@ describe("017 guard-trigger UPDATE twins", () => {
       await db.destroy();
       sqlite.close();
     }
-  },);
+  });
 
   test("UPDATE world_lore_entries distortion_level outside 0..100 aborts", async () => {
     const { db, sqlite, } = await createTestDb();
@@ -49,13 +49,19 @@ describe("017 guard-trigger UPDATE twins", () => {
       await db.destroy();
       sqlite.close();
     }
-  },);
+  });
 
   test("UPDATE memory_audit_log action outside enum aborts", async () => {
     const { db, sqlite, } = await createTestDb();
     try {
       const userId = await insertUsers(db, `guard-u-${crypto.randomUUID()}`, "Guard",);
-      const auditId = await insertMemoryAuditLog(db, `mem-${crypto.randomUUID()}`, `actor-${crypto.randomUUID()}`, "create", { user_id: userId, },);
+      const auditId = await insertMemoryAuditLog(
+        db,
+        `mem-${crypto.randomUUID()}`,
+        `actor-${crypto.randomUUID()}`,
+        "create",
+        { user_id: userId, },
+      );
       await expect(
         db.updateTable("memory_audit_log",).set({ action: "bogus", },).where("id", "=", auditId,).execute(),
       ).rejects.toThrow(/not in allowed enum/,);
@@ -65,18 +71,18 @@ describe("017 guard-trigger UPDATE twins", () => {
       await db.destroy();
       sqlite.close();
     }
-  },);
+  });
 
-  test("017 down() drops the UPDATE twins, up() restores them", async () => {
+  test("018 down() drops the UPDATE twins, up() restores them", async () => {
     const { db, sqlite, } = await createTestDb();
     try {
       const userId = await insertUsers(db, `guard-u-${crypto.randomUUID()}`, "Guard",);
       const worldId = await insertWorlds(db, userId, "Guard World",);
       const loreId = await insertWorldLoreEntries(db, worldId, "lore",);
-      const m017 = await import("./migrations/017_guard_triggers_update_twins");
-      await m017.down(db as never,);
+      const m018 = await import("./migrations/018_guard_triggers_update_twins");
+      await m018.down(db as never,);
       await db.updateTable("world_lore_entries",).set({ confidence: 999, },).where("id", "=", loreId,).execute();
-      await m017.up(db as never,);
+      await m018.up(db as never,);
       await expect(
         db.updateTable("world_lore_entries",).set({ confidence: 999, },).where("id", "=", loreId,).execute(),
       ).rejects.toThrow(/confidence must be 0\.\.100/,);
@@ -84,5 +90,5 @@ describe("017 guard-trigger UPDATE twins", () => {
       await db.destroy();
       sqlite.close();
     }
-  },);
-},);
+  });
+});
