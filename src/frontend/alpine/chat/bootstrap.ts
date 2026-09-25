@@ -6,6 +6,7 @@ import { chatActions, } from "../chat-actions";
 import { gifPicker, } from "../chat-actions/gif-picker";
 import { promptAnalyzeActions, } from "../chat-actions/prompt-analyze";
 import { promptImproveActions, } from "../chat-actions/prompt-improve";
+import { turnSkipActions, } from "../chat-actions/turn-skip";
 import { chatActivity, } from "../chat-activity";
 import { chatBackgrounds, } from "../chat-backgrounds";
 import { chatBattle, } from "../chat-battle";
@@ -81,6 +82,7 @@ export function chatState() {
     ...promptImproveActions,
     ...promptAnalyzeActions,
     ...gifPicker,
+    ...turnSkipActions,
     ...chatMusicEmbed,
     ...chatPins,
     ...messageArchive,

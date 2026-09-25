@@ -1351,6 +1351,13 @@
     "attachFailed": "Could not attach {filename}.",
     "attached": "Attached {filename} — it will send with your next message."
   },
+  "turnSkip": {
+    "skipped": "Turn skipped — the beat holds.",
+    "skippedAdvance": "Turn skipped — next beat cued.",
+    "refused": "Skip refused — the current beat can't be skipped right now.",
+    "rateLimited": "Too many skips — try again in a minute.",
+    "failed": "Could not skip the turn."
+  },
   "commands": {
     "help": "Show available commands",
     "roll": "Roll dice (e.g., /roll 2d6+3)",
