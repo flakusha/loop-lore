@@ -52,8 +52,9 @@
     // Native fallback: subpath import "@noble/hashes/blake3.js" (src/native/
     // fallback/blake3.ts) not traced by knip; also used by benchmarks.
     "@noble/hashes",
-    // CLI parsing migration (@optique): accessed via src/cli/parser.ts, which
-    // is entry-unreachable (see ignore[] below). Same class as @noble/hashes.
+    // CLI parsing migration (@optique): accessed via src/cli/parser.ts
+    // (no longer ignored — reachable via src/build/compress.ts etc.).
+    // Same class as @noble/hashes.
     "@optique/core",
     "@optique/run",
     // Mermaid docs stack: resolved via docs/.vitepress/{config.mts,theme/index.ts}
@@ -184,5 +185,3 @@
     "tests/e2e/flows/browser/i18n-locale.browser.ts",
   ]
 }
-
-
