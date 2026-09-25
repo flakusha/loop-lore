@@ -10,6 +10,10 @@
 **Source:** `docs/research/interaction-systems-agency.md` section 4
 **Related:** `src/regex/intent.ts` (keyword router - to be superseded), `src/services/actor-items.ts`, `src/routes/actor-items/`, `epic-aux-enrichment-pipeline.md`, `src/characters/services/character-systems/`
 
+**Tags:** research, agency, affordance, parser, action
+
+**Overview:**
+
 ## Summary
 
 Turn free-form user text into a typed `Action { verb, target, instrument, context }` payload, then resolve whether the action is **afforded** by the actor's capabilities x the item's properties x the current context state. Replace the current keyword-routing intent layer (`src/regex/intent.ts` + `src/assistant/intent.ts`) with a two-stage parser:
@@ -39,3 +43,6 @@ Then evaluate `(actor_caps, item_props, context_state) -> AffordanceResult { all
 - VLM-based scene understanding (text-first loop-lore).
 - LLM fine-tuning for verb resolution (constrained-schema fallback is sufficient; revisit when telemetry shows a gap).
 - Multimodal item manipulation (item visuals are descriptive, not pixel-precise).
+
+
+git issue: 60aa5a5

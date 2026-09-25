@@ -9,9 +9,13 @@
 **Parent epic:** `epic-research-agency-affordance.md`
 **Related:** `TASK-affordance-action-parser` (upstream), `src/services/actor-items.ts` (`ActorItemsService.equip/unequip/transfer`), `src/validation/schemas/actors.ts`, prior-batch `TASK-math-modifier-source-table` (related normalisation work)
 
+**Summary:**
+
 ## Goal
 
 Given a typed Action from `TASK-affordance-action-parser`, evaluate whether it is **afforded** for the actor in the current context. Return `{ allowed: boolean, reason: string }` so unsupported actions are explained, not silently dropped.
+
+**Context:**
 
 ## Why
 
@@ -19,7 +23,7 @@ Given a typed Action from `TASK-affordance-action-parser`, evaluate whether it i
 - HOI-CL compositional learning: zero-shot generalisation validates the cross-product math for novel items.
 - Existing `ActorItemsService` denies silently on slot-conflict / encumbrance / requirement failures - users get no actionable feedback.
 
-## Acceptance Criteria
+**Acceptance Criteria:**
 
 - [ ] `AffordanceResult { allowed: boolean, reason: string, missing?: string[] }` typed contract.
 - [ ] Lookup table seeded with the canonical item categories (`weapon`, `armor`, `accessory`, `consumable`, `key`, `quest`) x verb matrix.
@@ -31,3 +35,6 @@ Given a typed Action from `TASK-affordance-action-parser`, evaluate whether it i
 
 - Per-character-custom affordance tables (defer).
 - LLM-driven affordance reasoning (defer; deterministic table covers 100% of current use cases).
+
+
+git issue: 9c23bd8

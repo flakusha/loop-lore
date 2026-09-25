@@ -10,6 +10,10 @@
 **Source:** `docs/research/interaction-systems-agency.md` section 2
 **Related:** `epic-actor-autonomy-story-drive.md` (scheduler/governance host), `epic-agency-story-points.md` (BDI types drafted), `epic-character-internal-traits.md` (autonomy/coping/approach axes), `src/characters/services/personality-service/`
 
+**Tags:** research, agency, affordance, parser, action
+
+**Overview:**
+
 ## Summary
 
 Specify and prototype the NPC **decision-making stack** that `epic-actor-autonomy-story-drive.md` invokes but does not define. Per decision surface:
@@ -54,3 +58,6 @@ GOAP is **explicitly out of scope** (over-engineered for chat-RPG; see research 
 - GOAP tactical planners (research verdict: not recommended for loop-lore).
 - AI director tension/arc scoring (`epic-assistant-gm-flows.md` host).
 - Per-player-custom AI personalities (separate epic if requested).
+
+
+git issue: d5b9924
