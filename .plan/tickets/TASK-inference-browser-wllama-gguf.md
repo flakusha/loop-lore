@@ -10,7 +10,7 @@
 
 
 **Status:** ✅ Finished (2026-09-10)
-git issue: 85fca038d
+Refs: TBD (orphan from pre-sync)
 **Priority:** high
 **Tags:** ["inference", "gguf", "wllama", "browser", "llama.cpp"]
 
