@@ -3,7 +3,7 @@
 
 # TASK-002: Bare metal deployment guide
 
-**Status:** open
+**Status:** done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Runbook at docs/ops/bare-metal-deploy.md — hardware, install, systemd, NVMe/RAID, GPU, networking, monitoring, backup.
