@@ -1990,6 +1990,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-019-enforce-state-machine-validators-at-write.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-gate-world-lore-lifecycle-confidence-distortion-disputed-tri.md"
     },
     {
@@ -3249,6 +3253,12 @@
       "source": ".plan/tickets/BUG-getclientip-trusts-spoofable-proxy-headers-unconditionally.md"
     }
   ],
+  "src/auth/signup.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-019-users-encryption-secret.md"
+    }
+  ],
   "src/auto-gen.ts": [
     {
       "kind": "ticket",
@@ -4194,6 +4204,10 @@
     }
   ],
   "src/characters/license-enforcement.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-019-enforce-state-machine-validators-at-write.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-030.md"
@@ -5844,6 +5858,10 @@
   "src/chat/service/branches.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-019-enforce-state-machine-validators-at-write.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-gate-branches-display-invariant-item-instance-state.md"
     }
   ],
@@ -6119,6 +6137,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-file-splitting.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-019-enforce-state-machine-validators-at-write.md"
     }
   ],
   "src/chat/service/ownership.test.ts": [
@@ -9519,6 +9541,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-encryption-key-rotation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-encrypted-search-minimal-first-slice.md"
     }
   ],
   "src/crypto/pipeline-algorithm.test.ts": [
@@ -9553,6 +9579,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-encrypted-envelope-v3-always-emit-compalgo-and-explicit-vers.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-019-users-encryption-secret.md"
     },
     {
       "kind": "ticket",
@@ -9700,6 +9730,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-019-content-versioning-heavy-tables.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-db-content-versioning-snapshot-restore.md"
     },
     {
@@ -9715,6 +9749,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-042.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-019-content-versioning-heavy-tables.md"
     },
     {
       "kind": "ticket",
@@ -10132,6 +10170,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-019-enforce-state-machine-validators-at-write.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-adopt-state-machine-framework-in-runtime-status-writes.md"
     },
     {
@@ -10530,6 +10572,22 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-019-audit-columns.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-019-content-versioning-heavy-tables.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-019-hot-path-indexes.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-019-users-encryption-secret.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-coverage-gate-true-multi-worker-fanout-investigation.md"
     },
     {
@@ -10575,6 +10633,22 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-sqlite-foreign-keys-pragma-set-twice-redundant.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-019-audit-columns.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-019-content-versioning-heavy-tables.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-019-hot-path-indexes.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-019-users-encryption-secret.md"
     },
     {
       "kind": "ticket",
@@ -10625,6 +10699,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-memory-visualizer-knowledge-graph-over-asset-links.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-019-audit-columns.md"
     },
     {
       "kind": "ticket",
@@ -10835,6 +10913,52 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-fe-be-db-record-content-hashing.md"
+    }
+  ],
+  "src/db/migrations/016_item_instance_state.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-019-hot-path-indexes.md"
+    }
+  ],
+  "src/db/migrations/017_asset_links_archived_at.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-019-hot-path-indexes.md"
+    }
+  ],
+  "src/db/migrations/018_guard_triggers_update_twins.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-019-content-versioning-heavy-tables.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-019-hot-path-indexes.md"
+    }
+  ],
+  "src/db/migrations/019_audit_columns_for_underdocumented_tables.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-019-audit-columns.md"
+    }
+  ],
+  "src/db/migrations/019_content_versioning_on_heavy_tables.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-019-content-versioning-heavy-tables.md"
+    }
+  ],
+  "src/db/migrations/019_hot_path_indexes.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-019-hot-path-indexes.md"
+    }
+  ],
+  "src/db/migrations/019_users_encryption_secret.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-019-users-encryption-secret.md"
     }
   ],
   "src/db/migrations/023_notifications.ts": [
@@ -11113,6 +11237,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-create-test-db-custom-dialect-can-bypass-settestdatabase.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-019-hot-path-indexes.md"
     },
     {
       "kind": "ticket",
@@ -12578,6 +12706,10 @@
   "src/db/state.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-019-enforce-state-machine-validators-at-write.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-add-compositevalidator-for-boolean-enum-state-combinations.md"
     },
     {
@@ -12623,6 +12755,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-refactor-typed-kysely-upsert-by-unique-key-helpers.md"
+    }
+  ],
+  "src/db/validators/enforce.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-019-enforce-state-machine-validators-at-write.md"
     }
   ],
   "src/db/world-scope.ts": [
@@ -19167,6 +19305,12 @@
       "source": ".plan/tickets/TASK-inference-browser-wllama-gguf.md"
     }
   ],
+  "src/gm/shadow-notes.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-019-enforce-state-machine-validators-at-write.md"
+    }
+  ],
   "src/group-chat": [
     {
       "kind": "epic",
@@ -24163,6 +24307,12 @@
       "source": ".plan/tickets/WIRE-nsfw-audit-page-missing-inline-authz.md"
     }
   ],
+  "src/routes/characters/license.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-019-enforce-state-machine-validators-at-write.md"
+    }
+  ],
   "src/routes/characters/update.ts": [
     {
       "kind": "epic",
@@ -25826,6 +25976,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-019-enforce-state-machine-validators-at-write.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-fe-be-db-record-content-hashing.md"
     },
     {
@@ -26079,6 +26233,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-per-chat-auto-translation-layer.md"
+    }
+  ],
+  "src/routes/messages/rewrite.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-019-enforce-state-machine-validators-at-write.md"
     }
   ],
   "src/routes/messages/swipe-race-insert.test.ts": [
@@ -30207,6 +30367,12 @@
       "source": ".plan/epics/epic-script-migration.md"
     }
   ],
+  "src/scripts/backfill-users-encryption-secret.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-019-users-encryption-secret.md"
+    }
+  ],
   "src/scripts/commit-check.ts": [
     {
       "kind": "epic",
@@ -30302,6 +30468,14 @@
   "src/search/encrypted-tokens.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-019-users-encryption-secret.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-encrypted-search-minimal-first-slice.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-search-service-unified.md"
     }
   ],
@@ -30366,6 +30540,14 @@
     }
   ],
   "src/search/providers/messages.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-019-users-encryption-secret.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-encrypted-search-minimal-first-slice.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-search-service-unified.md"
@@ -30436,6 +30618,14 @@
     }
   ],
   "src/search/token-store.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-019-users-encryption-secret.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-encrypted-search-minimal-first-slice.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-search-service-unified.md"
@@ -31418,6 +31608,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-019-enforce-state-machine-validators-at-write.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-049.md"
     },
     {
@@ -31453,6 +31647,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/npcs.md"
+    }
+  ],
+  "src/story/items/placement.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-019-enforce-state-machine-validators-at-write.md"
     }
   ],
   "src/story/items/types.ts": [
