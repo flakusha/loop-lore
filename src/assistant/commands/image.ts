@@ -17,17 +17,7 @@
 import { loadConfig, } from "../../config/load";
 import { type CommandResult, registerCommand, } from "./registry";
 
-/** Test escape: flip availability without re-importing the module. */
-let imageAvailableOverride: boolean | null = null;
-
-/** Toggle availability for tests. Pass `null` to restore auto-detection. */
-export function _setImageAvailabilityForTest(available: boolean | null,): void {
-  imageAvailableOverride = available;
-  registerCommand("image", imageCommandHandler, { available: available ?? resolveImageCommandAvailability(), },);
-}
-
 function resolveImageCommandAvailability(): boolean {
-  if (imageAvailableOverride !== null) { return imageAvailableOverride; }
   try {
     return (loadConfig().generation.providers.sd?.length ?? 0) > 0;
   } catch {
