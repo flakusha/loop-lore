@@ -12518,6 +12518,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-e2e-version-redirect-test-fetches-v1-paths-but-expects-308.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-elysia-auth-ts-dead-shim-duplicate-logic.md"
     },
     {
