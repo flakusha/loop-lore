@@ -211,29 +211,32 @@ export function createApp(deps: AppDeps,): Elysia {
   // parse: "none" so Elysia's body inference (which other sub-plugins force
   // across the composed app) does not consume the multipart stream before
   // handleUpload calls request.formData().
-  app.post(
-    "/api/assets",
-    async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        const { unauthorizedResponse, } = await import("./routes/http-utils");
-        return unauthorizedResponse();
-      }
-      if (!config.assets.enabled) {
-        const { notFoundResponse, } = await import("./routes/http-utils");
-        return notFoundResponse("Asset system is disabled",);
-      }
-      const { handleUpload, } = await import("./assets/controller");
-      return handleUpload({
-        request: ctx.request,
-        userId,
-        database,
-        uploadDir: config.assets.uploadDir,
-        maxFileSize: config.assets.maxFileSize,
-      },);
-    },
-    { parse: "none", },
-  );
+  //
+  // Both /api/assets (legacy unversioned) and /api/v1/assets (current
+  // versioned path used by tests + frontend) share the same handler:
+  // BUG-assets-e2e-upload-returns-null-data was caused by only the legacy
+  // path being registered, so v1 POSTs fell through the catch-all → 404.
+  const uploadAsset = async (ctx: any,) => {
+    const userId = ctx.userId as string | null;
+    if (!userId) {
+      const { unauthorizedResponse, } = await import("./routes/http-utils");
+      return unauthorizedResponse();
+    }
+    if (!config.assets.enabled) {
+      const { notFoundResponse, } = await import("./routes/http-utils");
+      return notFoundResponse("Asset system is disabled",);
+    }
+    const { handleUpload, } = await import("./assets/controller");
+    return handleUpload({
+      request: ctx.request,
+      userId,
+      database,
+      uploadDir: config.assets.uploadDir,
+      maxFileSize: config.assets.maxFileSize,
+    },);
+  };
+  app.post("/api/assets", uploadAsset, { parse: "none", },);
+  app.post("/api/v1/assets", uploadAsset, { parse: "none", },);
 
   // ── Convenience redirects ─────────────────────────────────────
   // Authenticated users land on the chat; everyone else on the login screen.
