@@ -188,7 +188,10 @@ export async function getMessagesForBranch(
   db: Kysely<DB>,
   chatId: string,
   branchId: string,
+  actorId: string,
 ): Promise<string[]> {
+  const access = await checkChatAccess(db, chatId, actorId, null,);
+  if (!access.ok) { return []; }
   const branch = await db
     .selectFrom("chat_branches",)
     .select(["chat_id", "parent_message_id",],)

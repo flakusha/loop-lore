@@ -11,6 +11,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
+import { insertChats, insertUsers, } from "../test-utils/insert-helpers";
 import { analyticsRoutes, } from "./analytics";
 
 /**
@@ -31,6 +32,13 @@ describe("analyticsRoutes", () => {
   beforeAll(async () => {
     createLogger({ level: "error", },);
     ({ db, } = await createTestDb());
+    await insertUsers(db, userId, "Analytics User", { id: userId, } as never,);
+    await db.insertInto("chats",).values({
+      id: chatId,
+      created_by: userId,
+      name: "Analytics chat",
+      created_at: new Date().toISOString(),
+    },).execute();
   },);
 
   afterAll(async () => {
@@ -53,15 +61,10 @@ describe("analyticsRoutes", () => {
 
   // ── Empty state ──────────────────────────────────────────────
 
-  test("GET /api/analytics/chat/:chatId returns zeros for empty chat", async () => {
-    const app = createApp(db, userId,);
-    const res = await app.handle(new Request(`http://localhost/api/analytics/chat/empty-chat`,),);
-    expect(res.status,).toBe(200,);
-    const body = (await res.json()) as Record<string, number>;
-    expect(body.totalGenerations,).toBe(0,);
-    expect(body.totalTokens,).toBe(0,);
-    expect(body.avgLatencyMs,).toBe(0,);
-    expect(body.costEstimate,).toBe(0,);
+  test("GET /api/analytics/chat/:chatId returns 404 when the user cannot access the chat", async () => {
+    const app = createApp(db, "other-user",);
+    const res = await app.handle(new Request(`http://localhost/api/analytics/chat/${chatId}`,),);
+    expect(res.status,).toBe(404,);
   });
 
   test("GET /api/analytics/overview returns zeros when no events", async () => {
@@ -165,6 +168,7 @@ describe("analyticsRoutes", () => {
     const inWindowAt = Date.now();
     const outOfWindowAt = Date.now() - 7 * 86_400_000;
     const otherChatId = "date-range-chat";
+    await insertChats(db, "Date range chat", userId, { id: otherChatId, },);
     await db
       .insertInto("telemetry_events",)
       .values([

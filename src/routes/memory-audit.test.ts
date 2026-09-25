@@ -76,10 +76,9 @@ describe("memoryAuditRoutes", () => {
     expect(body.entries[0],).toHaveProperty("memoryId",);
   });
 
-  test("returns empty entries for an actor with no audit rows", async () => {
+  test("returns 404 for an actor the user does not own", async () => {
     const foreign = await getAudit(db, "nonexistent-actor",);
-    expect(foreign.status,).toBe(200,);
-    expect(foreign.body.entries,).toEqual([],);
+    expect(foreign.status,).toBe(404,);
   });
 
   test("filters by action", async () => {
