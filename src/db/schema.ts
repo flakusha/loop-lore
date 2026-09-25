@@ -180,4 +180,6 @@ export interface DB {
   actor_planned_activities: import("./schema-core").ActorPlannedActivities;
   actor_chat_buffers: import("./schema-core").ActorChatBuffers;
   actor_plan_revisions: import("./schema-core").ActorPlanRevisions;
+  chat_branches: import("./schema-core").ChatBranches;
+  model_comparison_runs: import("./schema-core").ModelComparisonRuns;
 }

@@ -1195,6 +1195,70 @@
                   </div>
                 </template>
               </div>
+              <div style="margin-top: var(--space-6); padding-top: var(--space-6); border-top: 1px solid var(--border-default, #e9ecef)">
+                <h3 style="font-size: 16px; font-weight: 600; margin: 0 0 var(--space-3)">Model Comparison</h3>
+                <textarea
+                  class="form-input"
+                  x-model="comparisonPrompt"
+                  placeholder="Prompt to compare…"
+                  rows="3"
+                  style="width: 100%; margin-bottom: var(--space-3)"
+                ></textarea>
+                <template x-for="(model, index) in comparisonModels" :key="index">
+                  <div style="display: grid; grid-template-columns: 1fr 1fr 100px 100px 100px auto; gap: var(--space-2); margin-bottom: var(--space-2)">
+                    <input class="form-input" x-model="model.provider" placeholder="Provider" />
+                    <input class="form-input" x-model="model.model" placeholder="Model" />
+                    <input class="form-input" x-model="model.temperature" type="number" step="0.1" placeholder="temp" />
+                    <input class="form-input" x-model="model.topP" type="number" step="0.1" placeholder="top_p" />
+                    <input class="form-input" x-model="model.maxTokens" type="number" placeholder="max tokens" />
+                    <button class="btn btn-secondary btn-xs" @click="removeComparisonModel(index)">×</button>
+                  </div>
+                </template>
+                <div style="display: flex; gap: var(--space-2); margin-bottom: var(--space-4)">
+                  <button class="btn btn-secondary btn-xs" @click="addComparisonModel()">Add model</button>
+                  <button
+                    class="btn btn-primary btn-xs"
+                    @click="runComparison()"
+                    :disabled="loadingComparisons || !comparisonPrompt"
+                  >
+                    Compare
+                  </button>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--space-3)">
+                  <template
+                    x-for="(result, index) in comparisonResults"
+                    :key="result.model.name + index"
+                  ><div style="padding: var(--space-3); border: 1px solid var(--border-default, #e9ecef); border-radius: 6px">
+                      <strong x-text="result.model.provider + ' / ' + result.model.name"></strong><div
+                        style="font-size: 11px; color: var(--text-secondary)"
+                        x-text="result.latencyMs + 'ms · ' + result.tokenCount + ' tokens · $' + result.cost"
+                      >
+                      </div>
+                      <p x-text="result.response || result.error" style="white-space: pre-wrap; font-size: 12px"></p>
+                      <div style="display: flex; gap: 4px; align-items: center">
+                        <select class="form-input" x-model="comparisonRatings[result.model.name].rating">
+                          <option value="">Rating</option><template x-for="n in [1,2,3,4,5]" :key="n"><option
+                              :value="n"
+                              x-text="n"
+                            >
+                            </option></template>
+                        </select><input
+                          class="form-input"
+                          x-model="comparisonRatings[result.model.name].notes"
+                          placeholder="Notes"
+                        /><button class="btn btn-secondary btn-xs" @click="rateComparison(index)">Save</button>
+                      </div>
+                    </div></template>
+                </div>
+                <div x-show="comparisonHistory.length" style="margin-top: var(--space-5)">
+                  <h4 style="font-size: 13px">Recent comparisons</h4><template
+                    x-for="run in comparisonHistory"
+                    :key="run.id"
+                  ><div style="font-size: 12px; padding: 4px 0">
+                      <span x-text="run.createdAt"></span> — <span x-text="run.prompt.slice(0, 80)"></span>
+                    </div></template>
+                </div>
+              </div>
             </div>
           </div>
         </template>
@@ -1565,6 +1629,46 @@
                 <div class="admin-stat-label">Active Users</div>
               </div>
             </div>
+            <h3 style="font-size: 14px; font-weight: 600; margin-bottom: var(--space-3)">Conversation Analytics</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: var(--space-4); margin-bottom: var(--space-6)">
+              <div class="admin-stat-card">
+                <div class="admin-stat-value" x-text="conversationOverview.totalMessages">0</div>
+                <div class="admin-stat-label">Messages</div>
+              </div>
+              <div class="admin-stat-card">
+                <div class="admin-stat-value" x-text="conversationOverview.totalTokens">0</div>
+                <div class="admin-stat-label">Tokens</div>
+              </div>
+              <div class="admin-stat-card">
+                <div class="admin-stat-value" x-text="conversationOverview.averageSessionLength.toFixed(1)">0</div>
+                <div class="admin-stat-label">Avg Session Messages</div>
+              </div>
+              <div class="admin-stat-card">
+                <div class="admin-stat-value" x-text="conversationOverview.avgLatencyMs.toFixed(0)">0</div>
+                <div class="admin-stat-label">Avg Latency (ms)</div>
+              </div>
+            </div>
+            <template x-if="conversationOverview.topChats.length > 0"><div style="margin-bottom: var(--space-6)">
+                <h3 style="font-size: 14px; font-weight: 600; margin-bottom: var(--space-3)">
+                  Top Conversations by Tokens
+                </h3>
+                <table class="admin-table">
+                  <thead>
+                    <tr>
+                      <th>Chat</th>
+                      <th>Messages</th>
+                      <th>Tokens</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <template x-for="chat in conversationOverview.topChats" :key="chat.id"><tr>
+                        <td x-text="chat.name"></td>
+                        <td x-text="chat.totalMessages"></td>
+                        <td x-text="chat.totalTokens"></td>
+                      </tr></template>
+                  </tbody>
+                </table>
+              </div></template>
             <h3 style="font-size: 14px; font-weight: 600; margin-bottom: var(--space-3)">Daily Events</h3>
             <div
               x-show="dailyStats.length === 0"

@@ -1642,6 +1642,14 @@ export const SCHEMA = new SchemaManifest()
     priority: col("integer", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("chat_branches", {
+    id: col("text", { primaryKey: true, },),
+    chat_id: col("text", { notNull: true, },),
+    parent_message_id: col("text", { notNull: true, },),
+    name: col("text", { notNull: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    is_active: col("integer", { notNull: true, hasDefault: true, },),
+  },)
   .table("chat_invites", {
     id: col("text", { primaryKey: true, },),
     chat_id: col("text", { notNull: true, },),
@@ -1766,6 +1774,7 @@ export const SCHEMA = new SchemaManifest()
     record_hash: col("text", { notNull: true, hasDefault: true, },),
     custom_instructions: col("text",),
     prompt_template_id: col("text",),
+    active_branch_id: col("text",),
   },)
   .table("messages", {
     id: col("text", { primaryKey: true, },),
@@ -2149,6 +2158,15 @@ export const SCHEMA = new SchemaManifest()
     last_seen: col("text", { notNull: true, },),
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
+  },)
+  .table("model_comparison_runs", {
+    id: col("text", { primaryKey: true, },),
+    user_id: col("text", { notNull: true, },),
+    prompt: col("text", { notNull: true, },),
+    results: col("text", { notNull: true, },),
+    ratings: col("text", { notNull: true, hasDefault: true, },),
+    metadata: col("text", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, },),
   },)
   .table("model_comparisons", {
     id: col("text", { primaryKey: true, },),
