@@ -3,7 +3,7 @@
 
 # TASK: Actors — Data Versioning (version table + backfill)
 
-**Status:** ⬜ Not Started
+**Status:** done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-actors
