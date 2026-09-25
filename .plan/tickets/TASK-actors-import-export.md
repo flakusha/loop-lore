@@ -3,8 +3,13 @@
 
 # TASK: Actors — SillyTavern Import + V2 Export
 
+**Status:** ⬜ Not Started
+**Priority:** medium
 **Effort:** Medium
 **Epic:** epic-actors
+**Summary:** SillyTavern character-card V1/V2 parser, inverse V2 export, and `/api/actors/import` + `/api/actors/:id/export` routes. Cards round-trip: V2 import → export reproduces the same JSON shape (modulo internal-only fields).
+**Context:** gap-audit 2026-09-25 of `epic-actors` found no SillyTavern V1/V2 parser. V2 wraps V1 fields plus `extensions` JSON; map V2 onto internal columns and preserve unmapped fields in `settings` JSON column.
+**Acceptance Criteria:** V1 parser handles legacy fields (`name`, `description`, `personality`, `scenario`, `first_mes`, `mes_example`); V2 parser extracts `data` + `extensions`, maps known extensions to typed columns, preserves unknown extensions in `settings.extensions`; export produces a card loadable by SillyTavern (round-trip verified); import + export are lossless for documented V2 schema; malformed inputs return 400 with structured error (not 500); `bun run check` green.
 
 ## Summary
 
@@ -37,3 +42,6 @@ SillyTavern character-card V1/V2 parser, the inverse V2 export path, and the `/a
 
 - Companion tickets (this epic): `TASK-actors-data-versioning.md`, `TASK-actors-child-tables-crud.md`, `TASK-actors-api-routes.md`.
 - Related: `docs/spec/actors.md` (authoritative spec), `epic-character-core-system.md`.
+
+
+git issue: 9fd4c89
