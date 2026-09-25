@@ -15,7 +15,7 @@ import { Elysia, t, } from "elysia";
 import type { Db, } from "../db";
 import { listAuditLog, type MemoryAuditAction, } from "../memory/audit";
 import { checkOwnership, entityPaths, } from "./entity-routes/context";
-import { jsonResponse, } from "./http-utils";
+import { jsonError, jsonResponse, requireUserId, } from "./http-utils";
 
 /**
  * Compile-time allowlist of audit actions. Mirrors `MemoryAuditAction` in
@@ -55,9 +55,10 @@ export function memoryAuditRoutes(opts: { database: Db }, prefix = "/api",): Ely
   return new Elysia({ name: "memory-audit", },)
     .get(`${withIdPath}/audit`, async (ctx,) => {
       const parentId = (ctx.params as Record<string, string | undefined>)[parentParam];
-      const userId = (ctx as unknown as { userId: string | null }).userId;
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
       const userRole = (ctx as unknown as { userRole: string | null }).userRole;
-      if (!parentId) { return jsonResponse({ entries: [], },); }
+      if (!parentId) { return jsonError("Memory not found", 404,); }
 
       const ownershipOk = await checkOwnership(
         opts.database,
@@ -78,7 +79,7 @@ export function memoryAuditRoutes(opts: { database: Db }, prefix = "/api",): Ely
         userId,
         userRole,
       );
-      if (!ownershipOk) { return jsonResponse({ entries: [], },); }
+      if (!ownershipOk) { return jsonError("Memory not found", 404,); }
 
       const query = ctx.query as {
         action?: string;

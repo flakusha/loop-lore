@@ -144,7 +144,7 @@ describe("chat branches (FEAT-045)", () => {
     const midBranch = branches.branches.find((b,) => b.parentMessageId === midId);
     expect(midBranch,).toBeDefined();
     if (!midBranch) { return; }
-    const path = await getMessagesForBranch(tdb.db, chatId, midBranch.id,);
+    const path = await getMessagesForBranch(tdb.db, chatId, midBranch.id, ownerId,);
     expect(path,).toEqual([rootId, midId,],);
   });
 
