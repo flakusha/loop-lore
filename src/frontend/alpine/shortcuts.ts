@@ -101,13 +101,25 @@ export function registerKeynavHandler(action: string, handler: () => void,): () 
  * Run all registered handlers for an action (in registration order). Does
  * NOT dispatch the CustomEvent — call {@link dispatchKeynavAction} separately
  * if you need Alpine listeners to fire too.
+ *
+ * Handler exceptions are caught and logged so a single bad handler does not
+ * prevent subsequent handlers in the chain from running. Re-entrant calls
+ * (a handler that registers or unregisters during dispatch) are safe: Set
+ * iteration reflects mid-iteration mutations, so newly-added handlers for
+ * the same action will be called in this dispatch.
  * @param action - The action identifier from the keymap
  */
 export function dispatchKeynavActionToHandlers(action: string,): void {
   const set = keynavHandlers.get(action,);
   if (!set) { return; }
   for (const handler of set) {
-    handler();
+    try {
+      handler();
+    } catch (err) {
+      // ponytail: console.error until the project's logger is wired into
+      // shortcuts.ts (no logger import here to keep this module leaf-level).
+      console.error(`[keynav] handler for "${action}" threw:`, err,);
+    }
   }
 }
 

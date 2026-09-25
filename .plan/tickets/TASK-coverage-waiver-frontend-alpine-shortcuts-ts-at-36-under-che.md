@@ -16,9 +16,12 @@
 
 ## What
 
-src/frontend/alpine/shortcuts.ts is at 36.36% line coverage in diff-files
-mode. The gate's frontend:src/frontend/alpine/shortcuts.ts floor must be
-set to ≤36 to land changes to this module until a DOM harness is available.
+src/frontend/alpine/shortcuts.ts is at 36.36% line coverage under diff-files
+mode (the gate that runs on finalize). Project-wide coverage is ~23.5%
+(higher denominator — more lines loaded by full suite, same export-only
+hit count). The gate's frontend:src/frontend/alpine/shortcuts.ts floor must
+be set to ≤36 (diff-files) — currently waived at 30 with margin for future
+additions — to land changes to this module until a DOM harness is available.
 
 ## Why
 
