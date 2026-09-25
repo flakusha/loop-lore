@@ -3,7 +3,7 @@
 
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { Database, } from "bun:sqlite";
-import { Kysely, SqliteDialect, } from "kysely";
+import { Kysely, } from "kysely";
 import type { DB, } from "../../db";
 import { applyReflectionCheckpoint, } from "./bdi-reflection";
 import { createInMemoryDb, } from "./__helpers/in-mem-db";
@@ -12,7 +12,7 @@ let db: Kysely<DB>;
 let raw: Database;
 
 beforeEach(async () => {
-  ({ db, raw, } = await createInMemoryDb(),);
+  ({ db, raw } = await createInMemoryDb());
   raw.exec("INSERT INTO actor_daily_plans(id, actor_id, plan_date, summary, priority, created_at) VALUES ('plan1', 'actor1', '2026-09-25', 'baseline plan', 'normal', datetime('now'));",);
 },);
 
