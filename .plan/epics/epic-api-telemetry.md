@@ -91,6 +91,23 @@ try {
 - Parent hub: **API Governance** (`epic-api-governance.md`) — owns the shared layout, the `/api/metrics` endpoint, and governance REST surface.
 - Siblings: requires `epic-api-validation-guardrails.md` to land first; mutually independent with `epic-api-rate-limiting.md` and `epic-api-task-offloading.md` afterwards.
 
+## Existing Groundwork (verified 2026-09-25)
+
+- `src/routes/metrics.ts` — `GET /metrics` Prometheus text exposition, opt-in via `config.observability.metrics.enabled` (process gauges only; no secrets). Tests in `metrics.test.ts`.
+- `src/config/schema*/observability.ts` — observability config section: liveness/readiness probes + metrics opt-in (`2e34de8`).
+- Liveness/readiness endpoints (`7c8cf4b`).
+- Remaining epic scope: HTTP metrics collector (per-route latency/error/throughput — the current endpoint exposes process gauges only), distributed tracing (evaluation open in `TASK-evaluate-elysia-opentelemetry*`), monitoring dashboard.
+
+## Linked Tickets
+
+| Ticket | Status | Scope |
+| ------ | ------ | ----- |
+| `TASK-rate-limiting-telemetry.md` | open | Governance umbrella for rate limiting + telemetry (issue `2e40125`) |
+| `TASK-prometheus-metrics-endpoint-opt-in.md` | done | `/metrics` Prometheus endpoint (issue `8f695c2`) |
+| `TASK-observability-config-section.md` | done | Observability config section (issue `2e34de8`) |
+| `FEAT-liveness-readiness-endpoints-opt-in-config.md` | done | Liveness/readiness probes (issue `7c8cf4b`) |
+| `TASK-observability-telemetry-analytics.md` | open | Broader observability/analytics surface (epic-analytics-observability) |
+
 ## Files
 
 - `src/api-governance/telemetry/collector.ts` — Telemetry collector

@@ -1930,6 +1930,24 @@
     "source": ".plan/tickets/BUG-date-parse-results-unchecked-for-nan-10-sites.md",
     "status": "done"
   },
+  "BUG-DB-GUARD-TRIGGERS-BYPASSED-ON-UPDATE-003-005": {
+    "hash": "f4e295c",
+    "git_issue": "f4e295c",
+    "extid": "BUG-DB-GUARD-TRIGGERS-BYPASSED-ON-UPDATE-003-005",
+    "type": "BUG",
+    "title": "DB guard triggers bypassed on UPDATE (003, 005)",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [
+      "db",
+      "triggers",
+      "migrations",
+      "guards"
+    ],
+    "source": ".plan/tickets/BUG-db-guard-triggers-bypassed-on-update-003-005.md",
+    "status": "open"
+  },
   "BUG-DB-REINIT-ARCHIVE-DESTROYS-PREVIOUS-DB-ON-RENAME-FAILURE": {
     "hash": "376cd61",
     "git_issue": "376cd61",
@@ -13125,7 +13143,7 @@
     "epic": "epic-archival-workflow",
     "tags": [],
     "source": ".plan/tickets/FEAT-chat-archive-asset-cascade-link-unlink-assets-on-archive-res.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-CHAT-ARCHIVE-GC-JOB-DAILY-SWEEP-OF-EXPIRED-ARCHIVES": {
     "hash": "69e23ba",
@@ -13138,7 +13156,7 @@
     "epic": "epic-archival-workflow",
     "tags": [],
     "source": ".plan/tickets/FEAT-chat-archive-gc-job-daily-sweep-of-expired-archives.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-CHAT-ARCHIVE-PURGE-NOTIFICATIONS-EMIT-ON-ARCHIVE-RESTORE-PUR": {
     "hash": "39d451a",
@@ -13151,7 +13169,7 @@
     "epic": "epic-archival-workflow",
     "tags": [],
     "source": ".plan/tickets/FEAT-chat-archive-purge-notifications-emit-on-archive-restore-pur.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-CHAT-ARCHIVE-RETENTION-CONFIG-ARCHIVE-RETENTION-DAYS-ADMIN-S": {
     "hash": "ce84227",
@@ -13164,7 +13182,7 @@
     "epic": "epic-archival-workflow",
     "tags": [],
     "source": ".plan/tickets/FEAT-chat-archive-retention-config-archive-retention-days-admin-s.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-CHAT-LEVEL-PURGE-ROUTE-DELETE-API-CHATS-ID-PURGE": {
     "hash": "ff4f4d8",
@@ -13177,7 +13195,7 @@
     "epic": "epic-archival-workflow",
     "tags": [],
     "source": ".plan/tickets/FEAT-chat-level-purge-route-delete-api-chats-id-purge.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-CHAT-LIFECYCLE-MODERATION": {
     "hash": "d33a823",
@@ -22406,6 +22424,139 @@
     "git_issue": "de3f9e0",
     "status": "open"
   },
+  "TASK-COMFYUI-FIRST-CLASS-CLIENT-ID-WEBSOCKET-PROGRESS-IN-COMFYUIC": {
+    "hash": "fc20566",
+    "git_issue": "fc20566",
+    "extid": "TASK-COMFYUI-FIRST-CLASS-CLIENT-ID-WEBSOCKET-PROGRESS-IN-COMFYUIC",
+    "type": "TASK",
+    "title": "ComfyUI first-class: client_id + WebSocket progress in ComfyUIClient",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-comfyui-plugin",
+    "tags": [
+      "comfyui",
+      "websocket",
+      "client-id",
+      "progress",
+      "generation"
+    ],
+    "source": ".plan/tickets/TASK-comfyui-first-class-client-id-websocket-progress-in-comfyuic.md",
+    "status": "open"
+  },
+  "TASK-COMFYUI-FIRST-CLASS-IMAGE-GENERATION-QUEUE-HONORS-COMFYUI-BA": {
+    "hash": "1c29c3c",
+    "git_issue": "1c29c3c",
+    "extid": "TASK-COMFYUI-FIRST-CLASS-IMAGE-GENERATION-QUEUE-HONORS-COMFYUI-BA",
+    "type": "TASK",
+    "title": "ComfyUI first-class: image generation queue honors ComfyUI backend",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-comfyui-plugin",
+    "tags": [
+      "comfyui",
+      "queue",
+      "concurrency",
+      "interrupt",
+      "websocket",
+      "generation-flow-control"
+    ],
+    "source": ".plan/tickets/TASK-comfyui-first-class-image-generation-queue-honors-comfyui-ba.md",
+    "status": "open"
+  },
+  "TASK-COMFYUI-FIRST-CLASS-LLAMA-SWAP-RECIPE-STANDALONE-VS-PROXY-MA": {
+    "hash": "33122ec",
+    "git_issue": "33122ec",
+    "extid": "TASK-COMFYUI-FIRST-CLASS-LLAMA-SWAP-RECIPE-STANDALONE-VS-PROXY-MA",
+    "type": "TASK",
+    "title": "ComfyUI first-class: llama-swap recipe standalone-vs-proxy matrix + docs",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-comfyui-plugin",
+    "tags": [
+      "comfyui",
+      "llama-swap",
+      "docs",
+      "recipe-matrix"
+    ],
+    "source": ".plan/tickets/TASK-comfyui-first-class-llama-swap-recipe-standalone-vs-proxy-ma.md",
+    "status": "open"
+  },
+  "TASK-COMFYUI-FIRST-CLASS-MOUNT-IMAGE-EDIT-ROUTES-VERIFY-ASSET-PER": {
+    "hash": "a6afe33",
+    "git_issue": "a6afe33",
+    "extid": "TASK-COMFYUI-FIRST-CLASS-MOUNT-IMAGE-EDIT-ROUTES-VERIFY-ASSET-PER",
+    "type": "TASK",
+    "title": "ComfyUI first-class: mount image-edit routes + verify asset persistence",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-comfyui-plugin",
+    "tags": [
+      "comfyui",
+      "image-edit",
+      "routes",
+      "authz",
+      "asset-persistence"
+    ],
+    "source": ".plan/tickets/TASK-comfyui-first-class-mount-image-edit-routes-verify-asset-per.md",
+    "status": "open"
+  },
+  "TASK-COMFYUI-FIRST-CLASS-SPRITE-PIPELINE-AVATAR-MATTING-WORKFLOWS": {
+    "hash": "ffe5ba4",
+    "git_issue": "ffe5ba4",
+    "extid": "TASK-COMFYUI-FIRST-CLASS-SPRITE-PIPELINE-AVATAR-MATTING-WORKFLOWS",
+    "type": "TASK",
+    "title": "ComfyUI first-class: sprite-pipeline + avatar-matting workflows as in-place templates",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-comfyui-plugin",
+    "tags": [
+      "comfyui",
+      "sprite-pipeline",
+      "avatar-matting",
+      "workflow-templates",
+      "2d-sprite-world"
+    ],
+    "source": ".plan/tickets/TASK-comfyui-first-class-sprite-pipeline-avatar-matting-workflows.md",
+    "status": "open"
+  },
+  "TASK-COMFYUI-FIRST-CLASS-STANDALONE-AUTO-START-CONFIG-LIFECYCLE": {
+    "hash": "5bd5c7e",
+    "git_issue": "5bd5c7e",
+    "extid": "TASK-COMFYUI-FIRST-CLASS-STANDALONE-AUTO-START-CONFIG-LIFECYCLE",
+    "type": "TASK",
+    "title": "ComfyUI first-class: standalone auto-start config + lifecycle",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-comfyui-plugin",
+    "tags": [
+      "comfyui",
+      "standalone",
+      "auto-start",
+      "lifecycle",
+      "spawner"
+    ],
+    "source": ".plan/tickets/TASK-comfyui-first-class-standalone-auto-start-config-lifecycle.md",
+    "status": "open"
+  },
+  "TASK-COMFYUI-FIRST-CLASS-UN-DEFER-VN-DYNAMIC-IMAGE-GENERATION-ONT": {
+    "hash": "008910d",
+    "git_issue": "008910d",
+    "extid": "TASK-COMFYUI-FIRST-CLASS-UN-DEFER-VN-DYNAMIC-IMAGE-GENERATION-ONT",
+    "type": "TASK",
+    "title": "ComfyUI first-class: un-defer VN dynamic image generation onto ComfyUI",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-comfyui-plugin",
+    "tags": [
+      "comfyui",
+      "vn",
+      "visual-novel",
+      "image-generation",
+      "provider-ladder"
+    ],
+    "source": ".plan/tickets/TASK-comfyui-first-class-un-defer-vn-dynamic-image-generation-ont.md",
+    "status": "open"
+  },
   "TASK-COMFYUI-NODE-DISCOVERY": {
     "hash": "e2c1866",
     "extid": "TASK-COMFYUI-NODE-DISCOVERY",
@@ -23990,6 +24141,24 @@
     "tags": [],
     "source": ".plan/tickets/TASK-defined-but-not-enforced-debt-unused-schemas-and-dead-valida.md",
     "git_issue": "06df3a3",
+    "status": "open"
+  },
+  "TASK-DELETE-DEAD-MIGRATION-HELPERS-TS-BOOLTOENUM": {
+    "hash": "e80c2cf",
+    "git_issue": "e80c2cf",
+    "extid": "TASK-DELETE-DEAD-MIGRATION-HELPERS-TS-BOOLTOENUM",
+    "type": "TASK",
+    "title": "Delete dead migration-helpers.ts boolToEnum",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "db",
+      "dead-code",
+      "migrations",
+      "cleanup"
+    ],
+    "source": ".plan/tickets/TASK-delete-dead-migration-helpers-ts-booltoenum.md",
     "status": "open"
   },
   "TASK-DELETECHAT-RUNS-9-SEQUENTIAL-DELETES-WITHOUT-TRANSACTION-ORP": {
@@ -26649,6 +26818,95 @@
     "status": "open",
     "git_issue": "9033801"
   },
+  "TASK-GATE-BRANCHES-DISPLAY-INVARIANT-ITEM-INSTANCE-STATE": {
+    "hash": "c9a117d",
+    "git_issue": "c9a117d",
+    "extid": "TASK-GATE-BRANCHES-DISPLAY-INVARIANT-ITEM-INSTANCE-STATE",
+    "type": "TASK",
+    "title": "Gate branches display invariant + item instance state",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "db",
+      "chat-branches",
+      "world-items",
+      "invariants"
+    ],
+    "source": ".plan/tickets/TASK-gate-branches-display-invariant-item-instance-state.md",
+    "status": "open"
+  },
+  "TASK-GATE-LICENSING-TRIPLE-VIA-LICENSERIGHTSVALIDATOR": {
+    "hash": "0d1de6e",
+    "git_issue": "0d1de6e",
+    "extid": "TASK-GATE-LICENSING-TRIPLE-VIA-LICENSERIGHTSVALIDATOR",
+    "type": "TASK",
+    "title": "Gate licensing triple via licenseRightsValidator",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [
+      "db",
+      "licensing",
+      "validator"
+    ],
+    "source": ".plan/tickets/TASK-gate-licensing-triple-via-licenserightsvalidator.md",
+    "status": "open"
+  },
+  "TASK-GATE-SHADOW-NOTES-STATUS-X-VISIBILITY-COMPOSITE": {
+    "hash": "dea8a70",
+    "git_issue": "dea8a70",
+    "extid": "TASK-GATE-SHADOW-NOTES-STATUS-X-VISIBILITY-COMPOSITE",
+    "type": "TASK",
+    "title": "Gate shadow_notes status-x-visibility composite",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "db",
+      "shadow-notes",
+      "validator",
+      "composite"
+    ],
+    "source": ".plan/tickets/TASK-gate-shadow-notes-status-x-visibility-composite.md",
+    "status": "open"
+  },
+  "TASK-GATE-WORLD-LORE-LIFECYCLE-CONFIDENCE-DISTORTION-DISPUTED-TRI": {
+    "hash": "f85b585",
+    "git_issue": "f85b585",
+    "extid": "TASK-GATE-WORLD-LORE-LIFECYCLE-CONFIDENCE-DISTORTION-DISPUTED-TRI",
+    "type": "TASK",
+    "title": "Gate world_lore lifecycle confidence-distortion-disputed triple",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "db",
+      "world-lore",
+      "validator",
+      "state-machine"
+    ],
+    "source": ".plan/tickets/TASK-gate-world-lore-lifecycle-confidence-distortion-disputed-tri.md",
+    "status": "open"
+  },
+  "TASK-GATE-WORLDS-RPG-7-COL-FLAGS-THROUGH-MASTER-MECHANICS-VALIDAT": {
+    "hash": "9678610",
+    "git_issue": "9678610",
+    "extid": "TASK-GATE-WORLDS-RPG-7-COL-FLAGS-THROUGH-MASTER-MECHANICS-VALIDAT",
+    "type": "TASK",
+    "title": "Gate worlds RPG 7-col flags through master-mechanics validator",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "db",
+      "rpg",
+      "validator",
+      "world-gate"
+    ],
+    "source": ".plan/tickets/TASK-gate-worlds-rpg-7-col-flags-through-master-mechanics-validat.md",
+    "status": "open"
+  },
   "TASK-GEMINI-PROVIDER": {
     "hash": "3dd33f6",
     "extid": "TASK-GEMINI-PROVIDER",
@@ -27509,6 +27767,61 @@
     "tags": [],
     "source": ".plan/tickets/TASK-im-abstraction-layer.md",
     "git_issue": "37b4eab",
+    "status": "open"
+  },
+  "TASK-IMAGE-BACKENDS-X-ACCESS-AUTHZ-PARITY-AUDIT-ACROSS-IMAGE-SURF": {
+    "hash": "3e20b22",
+    "git_issue": "3e20b22",
+    "extid": "TASK-IMAGE-BACKENDS-X-ACCESS-AUTHZ-PARITY-AUDIT-ACROSS-IMAGE-SURF",
+    "type": "TASK",
+    "title": "Image backends x access: authz parity audit across image surfaces",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [
+      "image-backends",
+      "authz",
+      "audit",
+      "security"
+    ],
+    "source": ".plan/tickets/TASK-image-backends-x-access-authz-parity-audit-across-image-surf.md",
+    "status": "open"
+  },
+  "TASK-IMAGE-BACKENDS-X-ASSISTANT-IMAGE-COMMAND-BACKEND-ROUTING-FAI": {
+    "hash": "d04e7b0",
+    "git_issue": "d04e7b0",
+    "extid": "TASK-IMAGE-BACKENDS-X-ASSISTANT-IMAGE-COMMAND-BACKEND-ROUTING-FAI",
+    "type": "TASK",
+    "title": "Image backends x assistant: /image command backend routing + failure UX validation",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "image-backends",
+      "assistant",
+      "routing",
+      "ux"
+    ],
+    "source": ".plan/tickets/TASK-image-backends-x-assistant-image-command-backend-routing-fai.md",
+    "status": "open"
+  },
+  "TASK-IMAGE-BACKENDS-X-GALLERY-PROVENANCE-FILTER-BACKEND-ATTRIBUTI": {
+    "hash": "8a8abbd",
+    "git_issue": "8a8abbd",
+    "extid": "TASK-IMAGE-BACKENDS-X-GALLERY-PROVENANCE-FILTER-BACKEND-ATTRIBUTI",
+    "type": "TASK",
+    "title": "Image backends x gallery: provenance filter + backend attribution validation",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "image-backends",
+      "gallery",
+      "provenance",
+      "attribution",
+      "visibility"
+    ],
+    "source": ".plan/tickets/TASK-image-backends-x-gallery-provenance-filter-backend-attributi.md",
     "status": "open"
   },
   "TASK-IMMERSION-PRESENTATION": {
@@ -35690,19 +36003,6 @@
     "status": "open",
     "git_issue": "7ebc1b9"
   },
-  "TASK-STORY-AUTO-DRIVE-SCHEDULER-WORLD-TICK-AND-ACTOR-TURNS": {
-    "hash": "3a224b3",
-    "git_issue": "3a224b3",
-    "extid": "TASK-STORY-AUTO-DRIVE-SCHEDULER-WORLD-TICK-AND-ACTOR-TURNS",
-    "type": "TASK",
-    "title": "Story auto-drive scheduler world tick and actor turns",
-    "label": "task",
-    "priority": "high",
-    "epic": "epic-actor-autonomy-story-drive.md",
-    "tags": [],
-    "source": ".plan/tickets/TASK-story-auto-drive-scheduler-world-tick-and-actor-turns.md",
-    "status": "open"
-  },
   "TASK-STORY-GM-GENERATION-NEVER-NSFW-GATED-CONTENT-SAFETY-BYPASS": {
     "hash": "f0683a8",
     "extid": "TASK-STORY-GM-GENERATION-NEVER-NSFW-GATED-CONTENT-SAFETY-BYPASS",
@@ -36870,19 +37170,6 @@
     "status": "open",
     "git_issue": "ff44a6e"
   },
-  "TASK-TURN-SKIP-CASCADE-INTEGRATION": {
-    "hash": "c44f6c1",
-    "extid": "TASK-TURN-SKIP-CASCADE-INTEGRATION",
-    "type": "TASK",
-    "title": "Turn skip cascade integration",
-    "label": "task",
-    "priority": "medium",
-    "epic": "epic-actor-turn-skip",
-    "tags": [],
-    "source": ".plan/tickets/TASK-turn-skip-cascade-integration.md",
-    "status": "open",
-    "git_issue": "c44f6c1"
-  },
   "TASK-TURN-SKIP-COMPOSER-UI": {
     "hash": "da36071",
     "extid": "TASK-TURN-SKIP-COMPOSER-UI",
@@ -36908,19 +37195,6 @@
     "source": ".plan/tickets/TASK-turn-skip-event.md",
     "status": "open",
     "git_issue": "906dfec"
-  },
-  "TASK-TURN-SKIP-EVENT-AND-PERSISTENCE": {
-    "hash": "1e5e60b",
-    "extid": "TASK-TURN-SKIP-EVENT-AND-PERSISTENCE",
-    "type": "TASK",
-    "title": "Turn skip event and persistence",
-    "label": "task",
-    "priority": "medium",
-    "epic": "epic-actor-turn-skip",
-    "tags": [],
-    "source": ".plan/tickets/TASK-turn-skip-event-and-persistence.md",
-    "status": "open",
-    "git_issue": "1e5e60b"
   },
   "TASK-TURN-SKIP-GATE-INTERLOCK": {
     "hash": "f8aba03",
