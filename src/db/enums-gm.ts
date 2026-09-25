@@ -9,7 +9,7 @@
 
 // ── Shadow Note Types ──────────────────────────────────────
 // ── State Machine ──────────────────────────────────────────
-import { createMachine, type StateDef, } from "./state";
+import { CompositeValidator, createMachine, type StateDef, } from "./state";
 
 export const ShadowNoteType = {
   Foreshadowing: "foreshadowing",
@@ -77,6 +77,28 @@ export const ShadowNoteVisibility = {
 export type ShadowNoteVisibility = (typeof ShadowNoteVisibility)[
   keyof typeof ShadowNoteVisibility
 ];
+
+const shadowNoteVisibilityDef: StateDef<ShadowNoteVisibility> = {
+  values: ["user_visible", "hidden",] as const,
+  initial: "user_visible",
+  transitions: {
+    user_visible: ["hidden",],
+    hidden: ["user_visible",],
+  },
+  terminal: [],
+};
+export const shadowNoteVisibilityMachine = createMachine(shadowNoteVisibilityDef,);
+
+/**
+ * status × visibility. A `revealed` note must sit on the user-visible
+ * surface; `revealed:hidden` is leak/drift (the player was told but the
+ * note was pulled from their reading surface).
+ */
+export const shadowNotesStatusVisibility = new CompositeValidator(
+  shadowNoteStatusMachine,
+  shadowNoteVisibilityMachine,
+  ["hidden:user_visible", "hidden:hidden", "revealed:user_visible",] as const,
+);
 
 // ── Shadow Note Author Type ───────────────────────────────
 // Who wrote the note. Drives audit-traceability and the LLM-injection

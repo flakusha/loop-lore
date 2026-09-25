@@ -10,6 +10,7 @@ import * as enums from "./enums";
 
 // ── State machine behavior ──────────────────────────────────
 
+import { shadowNotesStatusVisibility, } from "./enums-gm";
 import { questProgressStatusMachine, questProgressValidator, questStatusMachine, } from "./enums-story/quests";
 import { turnStatusMachine, } from "./enums-story/turns";
 
@@ -149,6 +150,18 @@ describe("questProgressValidator", () => {
   test("rejects mismatched pairs", () => {
     expect(questProgressValidator.isValid("active", "completed",),).toBe(false,);
     expect(questProgressValidator.isValid("failed", "active",),).toBe(false,);
+  });
+});
+
+describe("shadowNotesStatusVisibility", () => {
+  test("accepts the legal status x visibility pairs", () => {
+    expect(shadowNotesStatusVisibility.isValid("hidden", "user_visible",),).toBe(true,);
+    expect(shadowNotesStatusVisibility.isValid("hidden", "hidden",),).toBe(true,);
+    expect(shadowNotesStatusVisibility.isValid("revealed", "user_visible",),).toBe(true,);
+  });
+
+  test("rejects revealed:hidden (leak drift)", () => {
+    expect(shadowNotesStatusVisibility.isValid("revealed", "hidden",),).toBe(false,);
   });
 });
 

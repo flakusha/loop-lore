@@ -16,10 +16,14 @@
 import { describe, expect, test, } from "bun:test";
 import {
   DEFAULT_LIFECYCLE_CONFIG,
+  DisputedState,
+  disputedStateMachine,
   effectiveConfidence,
   isDisputed,
   type LifecycleConfig,
   type LifecycleRow,
+  loreDisputedInvariant,
+  resolveDisputedState,
   resolveLifecycleConfig,
 } from "./lifecycle";
 
@@ -175,5 +179,57 @@ describe("resolveLifecycleConfig", () => {
 describe("DEFAULT_LIFECYCLE_CONFIG", () => {
   test("is frozen (defensive)", () => {
     expect(Object.isFrozen(DEFAULT_LIFECYCLE_CONFIG,),).toBe(true,);
+  });
+});
+
+describe("disputedStateMachine", () => {
+  test("undisputed -> disputed is the only transition; disputed is terminal", () => {
+    expect(disputedStateMachine.canTransition("undisputed", "disputed",),).toBe(true,);
+    expect(disputedStateMachine.canTransition("disputed", "undisputed",),).toBe(false,);
+    expect(disputedStateMachine.isTerminal("disputed",),).toBe(true,);
+  });
+});
+
+describe("loreDisputedInvariant", () => {
+  test("accepts the legal distortion x flag pairs", () => {
+    expect(loreDisputedInvariant.isValid("below_cap", "clear",),).toBe(true,);
+    expect(loreDisputedInvariant.isValid("below_cap", "flagged",),).toBe(true,);
+    expect(loreDisputedInvariant.isValid("at_cap", "flagged",),).toBe(true,);
+  });
+
+  test("rejects the legacy drift pair at_cap:clear", () => {
+    expect(loreDisputedInvariant.isValid("at_cap", "clear",),).toBe(false,);
+  });
+});
+
+describe("resolveDisputedState", () => {
+  const base = { confidence: 100, last_verified: null, };
+
+  test("below cap + clear flag -> undisputed", () => {
+    expect(resolveDisputedState({ ...base, distortion_level: 10, disputed: 0, }, cfg,),).toBe(
+      DisputedState.Undisputed,
+    );
+  });
+
+  test("manual flag disputes without distortion", () => {
+    expect(resolveDisputedState({ ...base, distortion_level: 0, disputed: 1, }, cfg,),).toBe(
+      DisputedState.Disputed,
+    );
+  });
+
+  test("distortion at cap disputes without flag (legacy heal)", () => {
+    expect(resolveDisputedState({ ...base, distortion_level: 80, disputed: 0, }, cfg,),).toBe(
+      DisputedState.Disputed,
+    );
+  });
+
+  test("custom cap honored", () => {
+    const custom: LifecycleConfig = { ...DEFAULT_LIFECYCLE_CONFIG, distortion_cap: 25, };
+    expect(resolveDisputedState({ ...base, distortion_level: 24, disputed: 0, }, custom,),).toBe(
+      DisputedState.Undisputed,
+    );
+    expect(resolveDisputedState({ ...base, distortion_level: 25, disputed: 0, }, custom,),).toBe(
+      DisputedState.Disputed,
+    );
   });
 });

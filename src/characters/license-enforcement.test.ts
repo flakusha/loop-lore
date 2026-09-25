@@ -6,7 +6,13 @@
  */
 import { describe, expect, test, } from "bun:test";
 import type { LicenseInfo, } from "./license-enforcement";
-import { licenseHeaders, licenseWarnings, withLicenseExtension, } from "./license-enforcement";
+import {
+  licenseHeaders,
+  licenseRightsValid,
+  licenseWarnings,
+  shareAlikeDerivatives,
+  withLicenseExtension,
+} from "./license-enforcement";
 
 /** Build a licensing row with overridable fields. */
 function licensingRow(overrides: Partial<LicenseInfo> = {},): LicenseInfo {
@@ -65,5 +71,58 @@ describe("withLicenseExtension", () => {
     const card = JSON.stringify({ spec: "chara_card_v3", data: { name: "Aldric", }, },);
     expect(withLicenseExtension(card, null,),).toBe(card,);
     expect(withLicenseExtension("not-json{{{", licensingRow({},),),).toBe("not-json{{{",);
+  });
+});
+
+describe("shareAlikeDerivatives", () => {
+  test("accepts share-alike only with derivatives allowed", () => {
+    expect(shareAlikeDerivatives.isValid("allowed", "yes",),).toBe(true,);
+    expect(shareAlikeDerivatives.isValid("allowed", "no",),).toBe(true,);
+    expect(shareAlikeDerivatives.isValid("forbidden", "no",),).toBe(true,);
+  });
+
+  test("rejects forbidden:yes drift", () => {
+    expect(shareAlikeDerivatives.isValid("forbidden", "yes",),).toBe(false,);
+  });
+});
+
+describe("licenseRightsValid", () => {
+  test("accepts canonical triples per license type", () => {
+    expect(licenseRightsValid({ license_type: "cc0", allow_derivatives: 1, allow_commercial: 1, share_alike: 0, },),)
+      .toBe(true,);
+    expect(
+      licenseRightsValid({ license_type: "cc_by_sa", allow_derivatives: 1, allow_commercial: 1, share_alike: 1, },),
+    ).toBe(true,);
+    expect(
+      licenseRightsValid({ license_type: "cc_by_nc_sa", allow_derivatives: 1, allow_commercial: 0, share_alike: 1, },),
+    ).toBe(true,);
+    expect(
+      licenseRightsValid({ license_type: "proprietary", allow_derivatives: 0, allow_commercial: 0, share_alike: 0, },),
+    ).toBe(true,);
+  });
+
+  test("rejects drifted triples", () => {
+    expect(
+      licenseRightsValid({ license_type: "cc_by_nc", allow_derivatives: 1, allow_commercial: 1, share_alike: 0, },),
+    ).toBe(false,);
+    expect(
+      licenseRightsValid({ license_type: "proprietary", allow_derivatives: 1, allow_commercial: 0, share_alike: 0, },),
+    ).toBe(false,);
+    expect(
+      licenseRightsValid({ license_type: "cc_by_sa", allow_derivatives: 1, allow_commercial: 1, share_alike: 0, },),
+    ).toBe(false,);
+  });
+
+  test("custom rows are exempt; unknown types fail closed", () => {
+    expect(licenseRightsValid({ license_type: "custom", allow_derivatives: 0, allow_commercial: 0, share_alike: 1, },),)
+      .toBe(true,);
+    expect(
+      licenseRightsValid({
+        license_type: "totally-unknown",
+        allow_derivatives: 1,
+        allow_commercial: 1,
+        share_alike: 0,
+      },),
+    ).toBe(false,);
   });
 });
