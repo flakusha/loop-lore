@@ -21,6 +21,16 @@ export interface PreSendValidation {
 }
 
 /**
+ * Gate reasons the turn-skip control can resolve. `no_active_chat` is
+ * excluded: a skip needs an active chat, so there is nothing to escape into.
+ */
+export const HARD_GATE_REASONS: Partial<Record<SendBlockedReason, true>> = {
+  chat_paused: true,
+  not_your_turn: true,
+  no_actor_selected: true,
+};
+
+/**
  * Inputs for the send gate. All fields are read off the existing ChatState
  * reactive surface — no async lookups.
  *
@@ -109,6 +119,8 @@ export interface ComposerPreSendState {
   _draftTtlMs: number;
   _sendBlockedReason: SendBlockedReason | null;
   _sendBlockedHint: string;
+  /** True while a hard gate blocks send — the skip control lights up. */
+  _turnSkipSuggested: boolean;
   restoreDraft(chatId: string,): string | null;
   persistDraft(chatId: string, text: string,): void;
   isSendBlocked(inputs: SendGateInputs,): SendBlockedReason | null;

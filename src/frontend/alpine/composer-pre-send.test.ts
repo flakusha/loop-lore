@@ -327,6 +327,7 @@ describe("isSendBlocked side-effects", () => {
       isSendBlocked: ReturnType<typeof createComposerPreSend>["isSendBlocked"];
       _sendBlockedReason: string | null;
       _sendBlockedHint: string;
+      _turnSkipSuggested: boolean;
     };
     const reason = host.isSendBlocked({
       activeChat: null,
@@ -341,6 +342,8 @@ describe("isSendBlocked side-effects", () => {
     expect(reason,).toBe("no_active_chat",);
     expect(host._sendBlockedReason,).toBe("no_active_chat",);
     expect(host._sendBlockedHint.length,).toBeGreaterThan(0,);
+    // no_active_chat is not a hard gate — there is no chat to skip in.
+    expect(host._turnSkipSuggested,).toBe(false,);
 
     host.isSendBlocked({
       activeChat: "chat-1",
@@ -354,6 +357,49 @@ describe("isSendBlocked side-effects", () => {
     },);
     expect(host._sendBlockedReason,).toBeNull();
     expect(host._sendBlockedHint,).toBe("",);
+    expect(host._turnSkipSuggested,).toBe(false,);
+  });
+
+  test("suggests the skip control only for hard gates", () => {
+    const host = attachValidateDraft(createComposerPreSend({ storage: makeStorage(), },),) as {
+      isSendBlocked: ReturnType<typeof createComposerPreSend>["isSendBlocked"];
+      _turnSkipSuggested: boolean;
+    };
+    host.isSendBlocked({
+      activeChat: "chat-1",
+      isPaused: true,
+      currentActorId: "actor-1",
+      impersonatingActorId: null,
+      turnStrategy: null,
+      turnOrder: [],
+      currentActorIdForTurn: null,
+      userActorId: "actor-1",
+    },);
+    expect(host._turnSkipSuggested,).toBe(true,);
+
+    host.isSendBlocked({
+      activeChat: "chat-1",
+      isPaused: false,
+      currentActorId: "actor-1",
+      impersonatingActorId: null,
+      turnStrategy: "round_robin",
+      turnOrder: ["actor-1", "actor-2",],
+      currentActorIdForTurn: "actor-2",
+      userActorId: "actor-1",
+    },);
+    expect(host._turnSkipSuggested,).toBe(true,);
+
+    host.isSendBlocked({
+      activeChat: "chat-1",
+      isPaused: false,
+      currentActorId: "actor-1",
+      impersonatingActorId: null,
+      turnStrategy: "round_robin",
+      turnOrder: ["actor-1", "actor-2",],
+      currentActorIdForTurn: "actor-1",
+      userActorId: "actor-1",
+    },);
+    expect(host._turnSkipSuggested,).toBe(false,);
   });
 });
 
