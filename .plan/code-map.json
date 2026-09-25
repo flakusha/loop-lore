@@ -6021,6 +6021,13 @@
       "source": ".plan/tickets/TASK-deletechat-runs-9-sequential-deletes-without-transaction-orp.md"
     }
   ],
+
+  "src/chat/service/crud/gm-guidance.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gm-guided-story-creation.md"
+    }
+  ],
   "src/chat/service/crud/update.test.ts": [
     {
       "kind": "ticket",
@@ -6915,7 +6922,7 @@
       "source": ".plan/tickets/TASK-actor-availability-frontend.md"
     }
   ],
-  "src/components/character/emotion-avatars-panel.html": [
+  "src/components/chat/emotion-avatars-panel.html": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-actor-emotion-avatars-frontend.md"
@@ -6931,6 +6938,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-equipment-stat-preview.md"
+    }
+  ],
+
+  "src/components/character/extension-editor-panel.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-surfaces-for-richer-character-extensions.md"
     }
   ],
   "src/components/character/items-panel.html": [
@@ -7009,6 +7023,13 @@
       "source": ".plan/tickets/TASK-029.md"
     }
   ],
+
+  "src/components/chat/_gm-guidance-body.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gm-guided-story-creation.md"
+    }
+  ],
   "src/components/chat/archive-confirm.html": [
     {
       "kind": "epic",
@@ -7017,6 +7038,20 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-archival-workflow.md"
+    }
+  ],
+
+  "src/components/chat/assistant-panel.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-per-chat-assistant-gm-frontend.md"
+    }
+  ],
+
+  "src/components/chat/background-panel.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-backgrounds-location-sync.md"
     }
   ],
   "src/components/chat/character-info-panel.html": [
@@ -7117,6 +7152,13 @@
       "source": ".plan/tickets/TASK-chat-context-preference-per-scope.md"
     }
   ],
+
+  "src/components/chat/emotion-avatars-panel.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-actor-emotion-avatars-frontend.md"
+    }
+  ],
   "src/components/chat/gallery-sidebar.html": [
     {
       "kind": "epic",
@@ -7133,6 +7175,17 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-gallery-fuzzy-search-pagination.md"
+    }
+  ],
+
+  "src/components/chat/gm-guidance-panel.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-per-chat-assistant-gm-frontend.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gm-guided-story-creation.md"
     }
   ],
   "src/components/chat/gm-panel.html": [
@@ -7215,6 +7268,13 @@
       "source": ".plan/tickets/TASK-chat-location-frontend.md"
     }
   ],
+
+  "src/components/chat/media-preview-modal.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-in-chat-asset-preview-linkage-side-panel.md"
+    }
+  ],
   "src/components/chat/memory-panel.html": [
     {
       "kind": "ticket",
@@ -7264,6 +7324,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-external-music-linking.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-emotion-avatar-message-binding.md"
     },
     {
@@ -7295,6 +7359,20 @@
       "source": ".plan/tickets/WIRE-frontend-mobile-sticky-bottom-composer.md"
     }
   ],
+
+  "src/components/chat/mood-panel.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-alpha-aware-render-binding-and-mood-panel.md"
+    }
+  ],
+
+  "src/components/chat/participant-mgmt.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-variant-character-group.md"
+    }
+  ],
   "src/components/chat/pins-panel.html": [
     {
       "kind": "ticket",
@@ -7313,10 +7391,24 @@
       "source": ".plan/tickets/TASK-frontend-story-mode-ui.md"
     }
   ],
+
+  "src/components/chat/rename-chat-modal.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-chat-rename-and-migrate.md"
+    }
+  ],
   "src/components/chat/rpg-questions.html": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-029.md"
+    }
+  ],
+
+  "src/components/chat/sections-panel.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-flow-section-navigation.md"
     }
   ],
   "src/components/chat/story-view.html": [
@@ -7393,6 +7485,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-housing-frontend.md"
+    }
+  ],
+
+  "src/components/key-management.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-encryption-key-management-ui.md"
     }
   ],
   "src/components/license-selector.html": [
@@ -13513,6 +13612,13 @@
       "source": ".plan/tickets/TASK-dedupe-sse-activity-stream.md"
     }
   ],
+
+  "src/frontend/alpine/chat-backgrounds.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-backgrounds-location-sync.md"
+    }
+  ],
   "src/frontend/alpine/chat-branches.ts": [
     {
       "kind": "ticket",
@@ -13707,10 +13813,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-epic11-admin-settings-reconciliation.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-gm-guided-story-creation.md"
     },
     {
       "kind": "ticket",
@@ -13974,10 +14076,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-gm-guided-story-creation.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-rigged-model-buffer-render.md"
     },
     {
@@ -14029,6 +14127,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-xss-in-music-embed-fallback-rendering.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-external-music-linking.md"
     }
   ],
   "src/frontend/alpine/chat/render.ts": [
@@ -14207,6 +14309,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-story-mode-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gm-guided-story-creation.md"
     }
   ],
   "src/frontend/alpine/gm-panel.ts": [
@@ -15040,10 +15146,6 @@
     }
   ],
   "src/frontend/alpine/world.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-world-management-ui.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-world-alpine.md"
@@ -16167,7 +16269,18 @@
       "source": ".plan/tickets/TASK-chat-context-preference-per-scope.md"
     }
   ],
+
+  "src/frontend/pages/worlds-io.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-world-management-ui.md"
+    }
+  ],
   "src/frontend/pages/worlds.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-world-management-ui.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-world-template-chat-lifecycle.md"
@@ -16887,15 +17000,11 @@
   ],
   "src/frontend/world/location-details.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-world-management-ui.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-location-details.md"
     }
   ],
-  "src/frontend/world/location-explorer.ts": [
+  "src/frontend/pages/worlds-io.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-world-management-ui.md"
@@ -16903,19 +17012,11 @@
   ],
   "src/frontend/world/time-weather.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-world-management-ui.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-time-weather.md"
     }
   ],
   "src/frontend/world/travel-interface.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-world-management-ui.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-travel-interface.md"
@@ -16940,10 +17041,6 @@
     }
   ],
   "src/frontend/world/world-dashboard.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-world-management-ui.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-world-dashboard.md"
@@ -21493,10 +21590,24 @@
       "source": ".plan/tickets/TASK-admin-assistant-tooling-allowlist.md"
     }
   ],
+
+  "src/partials/worlds/create-modal.html": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-world-management-ui.md"
+    }
+  ],
   "src/partials/worlds/edit-modal.html": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-htmx-partials-403-after-csrf-hardening-configrequest-omits-x.md"
+    }
+  ],
+
+  "src/partials/worlds/import-modal.html": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-world-management-ui.md"
     }
   ],
   "src/partials/worlds/item-create-modal.html": [
@@ -27170,10 +27281,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-actor-emotion-avatars-frontend.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-actor-licensing-frontend.md"
     },
     {
@@ -27199,6 +27306,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-nsfw-rating-enforcement.md"
+    }
+  ],
+
+  "src/routes/views/character-panels-section.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-actor-emotion-avatars-frontend.md"
     }
   ],
   "src/routes/views/characters.ts": [
@@ -31077,6 +31191,13 @@
       "source": "docs/frontend/chat/prompt-creation.md"
     }
   ],
+
+  "src/story/game-master/decisions.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gm-guided-story-creation.md"
+    }
+  ],
   "src/story/game-master/execute.ts": [
     {
       "kind": "ticket",
@@ -33469,6 +33590,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-world-item-frontend.md"
+    }
+  ],
+
+  "src/views/worlds.html": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-world-management-ui.md"
     }
   ],
   "src/world/anomaly.ts": [

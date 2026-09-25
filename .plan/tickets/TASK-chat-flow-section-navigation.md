@@ -159,3 +159,8 @@ Med — UI complexity, responsive design, group chat edge cases. Data model from
 
 **Blocked by:** TASK-chat-sectioning-multi-location (schema design)
 **Enables:** TASK-chat-backgrounds-location-sync (section-aware backgrounds)
+
+
+## Current implementation
+
+- `src/components/chat/sections-panel.html` — story-map section navigation panel.

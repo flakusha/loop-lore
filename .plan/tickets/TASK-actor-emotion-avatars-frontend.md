@@ -19,11 +19,11 @@
 Merged to dev in `991f6f050` (`feat(frontend): mount actor panels, export progress; drop orphan`):
 
 - `src/frontend/alpine/actor-emotion-avatars.ts` — job list / batch trigger / progress / emotion-selector state plugin.
-- `src/components/character/emotion-avatars-panel.html` — panel body mounted inline in `src/routes/views/character-edit-form.ts`.
+- `src/components/chat/emotion-avatars-panel.html` — panel body mounted inline in `src/routes/views/character-panels-section.ts`.
 
 ## Summary
 
-Create frontend UI for emotion avatar batch generation. Backend routes exist at `/api/actors/:actorId/emotion-avatars/*` but no frontend UI exists.
+Create frontend UI for emotion avatar batch generation. The shipped panel exposes the backend jobs, batch trigger, progress, and emotion selector.
 
 ## Backend Routes (already exist)
 
@@ -35,18 +35,18 @@ Create frontend UI for emotion avatar batch generation. Backend routes exist at 
 | `/api/emotions/prompt-modifier/:emotion`           | GET    | Get emotion prompt modifier  |
 | `/api/emotions/types`                              | GET    | List available emotion types |
 
-## Files to Create
+## Shipped Files
 
-- `src/frontend/alpine/actor-emotion-avatars.ts` — Emotion avatars component
-- `src/components/character/emotion-avatars-panel.html` — Emotion avatars panel template
+- `src/frontend/alpine/actor-emotion-avatars.ts` — emotion-avatar jobs, progress, and selector state
+- `src/components/chat/emotion-avatars-panel.html` — mounted emotion-avatar panel
 
 ## Acceptance Criteria
 
-- [ ] Emotion avatar list for character
-- [ ] Batch generation trigger
-- [ ] Job progress display
-- [ ] Emotion type selector
-- [ ] Loading and error states
+- [x] Emotion avatar list for character
+- [x] Batch generation trigger
+- [x] Job progress display
+- [x] Emotion type selector
+- [x] Loading and error states
 
 ## Related
 
@@ -58,3 +58,9 @@ Create frontend UI for emotion avatar batch generation. Backend routes exist at 
 ## Notes
 
 **Reconciliation (2026-09-02)**: Absorbed the panel sibling (merged frontend ticket scoped to binding-epic render tasks per matrix reconciliation; grid group-by-outfit deferred to wardrobe epic).
+
+
+## Current implementation
+
+- `src/frontend/alpine/actor-emotion-avatars.ts` — job list, batch trigger, progress, and emotion selector state.
+- `src/components/chat/emotion-avatars-panel.html` — mounted emotion-avatar panel.
