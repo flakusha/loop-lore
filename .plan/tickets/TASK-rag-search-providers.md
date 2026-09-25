@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** done
+**Status:** open
+**Implementation:** Partial — fallback/error/quarantine primitives exist, but concrete provider integrations remain open.
 **Priority:** High
 **Effort:** High
 **Epic:** epic-rag-document-processing.md

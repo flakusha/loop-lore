@@ -297,6 +297,7 @@ function scanBe(): BeRoute[] {
       }
       literalBeRoutes(src, rel, (s,) => resolveRouteConsts(s, consts,), out,);
       expandEntityFactories(src, rel, out,);
+      expandMemoryCarryPlugin(src, rel, consts, out,);
     }
   }
   return out;
@@ -318,6 +319,22 @@ function expandEntityFactories(src: string, rel: string, out: BeRoute[],): void 
   ];
   for (const [method, p,] of crud) {
     out.push({ method, path: norm(p,), raw: p, file: rel, line, bodySchema: null, querySchema: null, },);
+  }
+}
+
+/** Expand the memory-carry plugin's two dynamic paths. */
+function expandMemoryCarryPlugin(
+  src: string,
+  rel: string,
+  consts: Map<string, string>,
+  out: BeRoute[],
+): void {
+  if (!src.includes("memoryCarryPlugin",)) { return; }
+  const withIdPath = consts.get("withIdPath",);
+  const basePath = consts.get("basePath",);
+  if (!withIdPath || !basePath) { return; }
+  for (const p of [`${withIdPath}/carry`, `${basePath}/carry-except`,]) {
+    out.push({ method: "POST", path: norm(p,), raw: p, file: rel, line: 0, bodySchema: null, querySchema: null, },);
   }
 }
 

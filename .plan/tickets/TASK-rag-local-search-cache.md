@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** done
+**Status:** open
+**Implementation:** Not started — no `src/rag/search/local/` implementation is present.
 **Priority:** High
 **Effort:** Medium
 **Epic:** epic-rag-document-processing.md

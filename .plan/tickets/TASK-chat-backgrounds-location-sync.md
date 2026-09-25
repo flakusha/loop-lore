@@ -182,3 +182,9 @@ Med–High — multiple rendering modes, performance concerns, location system i
 - Visual novels: location-based scene backgrounds
 - Discord: custom chat themes (static only)
 - Genshin Impact: dynamic weather/time backgrounds
+
+
+## Current implementation
+
+- `src/components/chat/background-panel.html` — chat background selection and location-sync UI.
+- `src/frontend/alpine/chat-backgrounds.ts` — background state and API wiring.
