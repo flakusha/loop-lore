@@ -81,8 +81,10 @@ export function comparisonsExportRoutes(
 
       const message = await database
         .selectFrom("messages",)
-        .select(["id", "content", "role",],)
-        .where("id", "=", row.message_id,)
+        .innerJoin("chats", "chats.id", "messages.chat_id",)
+        .select(["messages.id", "messages.content", "messages.role",],)
+        .where("messages.id", "=", row.message_id,)
+        .where("chats.created_by", "=", userId,)
         .executeTakeFirst();
 
       const prompt = message?.content ?? "";
