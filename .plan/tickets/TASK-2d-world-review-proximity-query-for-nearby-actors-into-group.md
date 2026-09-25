@@ -8,6 +8,7 @@
 **Effort:** Medium
 
 ## Summary
+
 FEAT-2d-world-click-to-move acceptance requires proximity opening group chat with co-travelers. Joinable routes (src/routes/chat-search/joinable.ts) already filter by exact `world` + `location` (`chats.current_location_id`) — verified. The gap is finer-grained proximity: actors in zone/radius via map_zones + actor_snapshots/actor_locations (exact-location match is insufficient once sprites move continuously within/between zones). Add radius/zone proximity lookup returning nearby actors + their group chats for one-tap join. Small slice; reuses fractal coords (coord_x/y/z verified in 001_init).
 
 ## Acceptance Criteria
