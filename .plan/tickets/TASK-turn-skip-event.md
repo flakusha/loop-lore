@@ -3,7 +3,7 @@
 
 # TASK: turn_skip Event + Persistence
 
-**Status:** open
+**Status:** done
 **Priority:** high
 **Effort:** Medium (event schema + API route + persistence + context-assembly rendering)
 **Summary:** The `turn_skip` event — schema, persistence layer, API route for posting skips, and context-assembly rendering so the rest of the system (group-chat slot release, solo beat budget, gate interlock, composer UI) sees a consistent event stream.

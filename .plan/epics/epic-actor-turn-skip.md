@@ -6,7 +6,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
+**Status:** ✅ Core shipped (2026-09-25) — event, route, cascade filter, composer UI, gate interlock on dev; slot release + beat budget open in `TASK-turn-skip-cascade`
 **Priority:** Medium
 **Effort:** Small–Medium
 **Type:** Feature Epic
@@ -33,8 +33,8 @@ name (`pass` / `skip turn`) in UI, API, and code to avoid semantic collision.
   `src/group-chat/mention-parser.ts` detects the trailing `[PASS]` token;
   consecutive-turn guard + `turnOrder` cycling live in
   `src/turning/turn-strategies.ts`.
-- Still missing: first-class `turn_skip` event, hold/advance modes, solo-chat path,
-  absence rendering, UI control, gate interlock.
+- Landed (2026-09-25): first-class `turn_skip` event (messages row, content_type=turn_skip), hold/advance modes, POST `/api/v1/chats/:id/turn-skip`, cascade opt-out filter, composer control, gate interlock.
+- Still missing: group slot release when all actors pass, solo beat-budget bookkeeping (`TASK-turn-skip-cascade`).
 - `Continue` exists with different semantics (partial-output resume).
 - A user with nothing to do today either writes filler action (immersion risk — the
   exact pressure epic-immersion-consistency-gate defends against), stalls the scene,
@@ -61,13 +61,13 @@ name (`pass` / `skip turn`) in UI, API, and code to avoid semantic collision.
 
 ## Work Items
 
-- [ ] **turn_skip event + persistence** — schema, API route, context-assembly rendering. → TASK-turn-skip-event
+- [x] **turn_skip event + persistence** — schema, API route, context-assembly rendering. → TASK-turn-skip-event (closed: landed 2026-09-25)
 - [ ] **GM absence contract** — prompt + acceptance rules for hold/advance handling.
 - [ ] **Cascade integration** — build on `filterPassedActors` (promote the `[PASS]`
   convention to the `turn_skip` event) rather than greenfield; slot release in group
-  chat; budgeted beat in solo. → TASK-turn-skip-cascade
-- [ ] **Gate interlock** — refusal-notice offers skip; refused-beat cannot also be skipped. → TASK-turn-skip-gate-interlock
-- [ ] **UI** — 'Skip turn' composer control with hold/advance choice.
+  chat; budgeted beat in solo. → TASK-turn-skip-cascade (filter promotion landed; slot release + beat budget open)
+- [x] **Gate interlock** — refusal-notice offers skip; refused-beat cannot also be skipped. → TASK-turn-skip-gate-interlock (closed: landed 2026-09-25)
+- [x] **UI** — 'Skip turn' composer control with hold/advance choice. (landed 2026-09-25)
 
 ## Non-Goals
 
@@ -117,10 +117,10 @@ name (`pass` / `skip turn`) in UI, API, and code to avoid semantic collision.
 
 | Work Item | Ticket | On-disk | Status |
 | --------- | ------ | ------- | ------ |
-| turn_skip event + persistence | `TASK-turn-skip-event.md` | yes | open |
+| turn_skip event + persistence | `TASK-turn-skip-event.md` | yes | closed (landed 2026-09-25) |
 | GM absence contract | `TASK-turn-skip-gm-absence-contract.md` | yes | open |
-| Cascade integration | `TASK-turn-skip-cascade.md` | yes | open |
-| Gate interlock | `TASK-turn-skip-gate-interlock.md` | yes | open |
-| UI — 'Skip turn' composer | `TASK-turn-skip-composer-ui.md` | yes | open |
+| Cascade integration | `TASK-turn-skip-cascade.md` | yes | open (filter promotion landed; slot release + beat budget remain) |
+| Gate interlock | `TASK-turn-skip-gate-interlock.md` | yes | closed (landed 2026-09-25) |
+| UI — 'Skip turn' composer | `TASK-turn-skip-composer-ui.md` | yes | closed (landed 2026-09-25) |
 
 All 5 referenced tickets are filed on disk (verified 2026-09-25). The 2026-09-23 gap-audit was stale — this table supersedes it. The parallel duplicate-name tickets from the prior rename cycle (the event-and-persistence and cascade-integration variants; git issues 1e5e60b, c44f6c1) were consolidated into the canonical tickets above on 2026-09-25 — thin copies deleted, duplicate issues closed.
