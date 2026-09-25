@@ -50,3 +50,6 @@ export {
   handleRun,
   handleTemplates,
 } from "./routes";
+
+export { authorizeRunLinkage, } from "./run-authz";
+export type { HandleRunAuth, } from "./run-authz";

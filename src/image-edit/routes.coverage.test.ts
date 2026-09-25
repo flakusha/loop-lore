@@ -18,6 +18,7 @@ import type { Kysely, } from "kysely";
 import { setTestDatabase, } from "../db";
 import { MessageRole, } from "../db/enums";
 import type { DB, } from "../db/schema";
+import { createTestDb, } from "../test-utils/create-test-db";
 import {
   insertActors,
   insertChatParticipants,
@@ -25,7 +26,6 @@ import {
   insertMessages,
   insertUsers,
 } from "../test-utils/insert-helpers";
-import { createTestDb, } from "../test-utils/create-test-db";
 import { uid, } from "../utils";
 import { handleRun, handleTemplates, imageEditRoutes, } from "./routes";
 import { templateRegistry, } from "./template-registry";
