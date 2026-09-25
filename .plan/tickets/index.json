@@ -2727,7 +2727,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-giwt-ticket-extid-double-prefix-on-duplicate-type-slug.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-GM-CONFIG-CORRUPTED-BY-STRING-SPREAD-IN-BUILDCHATUPDATES-MER": {
     "hash": "499e87c",
@@ -4518,7 +4518,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-rpg-loot-rollloottable-sets-used-flag-but-never-enforces-one.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-RPG-ROUTE-AUTHZ-GAPS-XP-AWARD-LEDGER-WORLD-TRAIT-IDOR-WORLD-": {
     "hash": "82e8395",
@@ -12228,7 +12228,7 @@
     "tags": [],
     "source": ".plan/tickets/FEAT-075.md",
     "git_issue": "a3ca8cb",
-    "status": "open"
+    "status": "done"
   },
   "FEAT-2026-001": {
     "hash": "e5e2faa",

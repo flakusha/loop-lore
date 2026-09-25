@@ -3,7 +3,7 @@
 
 # BUG: giwt-ticket-extid-double-prefix-on-duplicate-type-slug
 
-**Status:** ⬜ Not Started
+**Status:** done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Extid derived from `giwt ticket` title doubles the prefix when the title contains the type-name twice.

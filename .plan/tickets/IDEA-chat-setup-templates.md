@@ -11,7 +11,7 @@
 **Acceptance Criteria:** Backend table + routes ✅ shipped; PUT/DELETE wiring + UI binding open (see decomposed TASK tickets).
 
 
-**Status**: open
+**Status**: satisfied-as-decomposed
 **Priority**: medium
 **Labels**: chat, templates, chat-setup, architecture
 **Assignee**:
