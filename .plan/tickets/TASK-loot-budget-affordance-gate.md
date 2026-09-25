@@ -3,7 +3,7 @@
 
 # TASK-loot-budget-affordance-gate: Encounter loot reconciled against affordance lookup + rarity band
 
-**Status:** Draft
+**Status:** 🟡 Partial (commit 625e36bd — `feat(agency): ship action-parser + affordance + scorer + budget-gate`; `enforceLootBudget(dropTable, encounterBudget, party)` pure-function landed in `src/services/loot/budget-gate.ts` + 11/11 tests green; pending wiring into `src/battle/` resolution path)
 **Priority:** P2 (within EPIC-RESEARCH-AGENCY-AFFORDANCE)
 **Effort:** 1-2 days
 **Parent epic:** `epic-research-agency-affordance.md`
