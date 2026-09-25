@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// size-allow: 272
-
 /**
  * Items Service — Instance Dispatchers
  *
@@ -11,118 +9,11 @@
 import type { Transaction, } from "kysely";
 import { ItemVisibility, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
-import { safeJsonStringify, uid, } from "../../utils";
+import { uid, } from "../../utils";
 import type { ItemState, TransferResult, } from "./types";
 
-/**
- * Place item instance in a location
- * @param state
- * @param itemId
- * @param locationId
- * @param worldId
- * @param quantity
- * @param hidden
- * @param respawnable
- * @param spawnCondition
- */
-export async function placeInLocation(
-  state: ItemState,
-  itemId: string,
-  locationId: string,
-  worldId: string,
-  quantity = 1,
-  hidden = false,
-  respawnable = false,
-  spawnCondition?: Record<string, unknown>,
-): Promise<string> {
-  const id = uid();
-  await state.db
-    .insertInto("world_items",)
-    .values({
-      id,
-      world_id: worldId,
-      item_id: itemId,
-      location_id: locationId,
-      quantity,
-      visibility: hidden ? ItemVisibility.Hidden : ItemVisibility.Visible,
-      respawnable: respawnable ? 1 : 0,
-      spawn_condition: spawnCondition
-        ? (() => {
-          const r = safeJsonStringify(spawnCondition,);
-          return r.ok ? r.value : null;
-        })()
-        : null,
-    },)
-    .execute();
-  return id;
-}
-
-/**
- * Give item instance to an NPC
- * @param state
- * @param itemId
- * @param actorId
- * @param worldId
- * @param quantity
- */
-export async function giveToNpc(
-  state: ItemState,
-  itemId: string,
-  actorId: string,
-  worldId: string,
-  quantity = 1,
-): Promise<string> {
-  const id = uid();
-  await state.db
-    .insertInto("world_items",)
-    .values({
-      id,
-      world_id: worldId,
-      item_id: itemId,
-      owner_actor_id: actorId,
-      quantity,
-      location_id: null,
-      visibility: ItemVisibility.Visible,
-      respawnable: 0,
-      spawn_condition: null,
-    },)
-    .execute();
-  return id;
-}
-
-/**
- * Get items at a location
- * @param state
- * @param locationId
- * @param includeHidden
- */
-export async function getAtLocation(state: ItemState, locationId: string, includeHidden = false,) {
-  let query = state.db
-    .selectFrom("world_items",)
-    .innerJoin("items", "items.id", "world_items.item_id",)
-    .select([
-      "world_items.id as world_item_id",
-      "world_items.item_id",
-      "world_items.quantity",
-      "world_items.visibility",
-      "world_items.location_id",
-      "world_items.owner_actor_id",
-      "items.name",
-      "items.description",
-      "items.category",
-      "items.rarity",
-      "items.properties",
-      "items.value",
-      "items.weight",
-    ],)
-    .where("world_items.location_id", "=", locationId,);
-
-  if (!includeHidden) {
-    query = query.where("world_items.visibility", "=", "visible",);
-  }
-
-  return query.execute();
-}
+export { applyDrift, decrementDurability, getUniqueItem, } from "./instance-state";
+export { getAtLocation, giveToNpc, placeInLocation, } from "./placement";
 
 export { getNpcInventory, getNpcInventoryBatch, } from "./npc-inventory";
 
@@ -146,33 +37,40 @@ export async function transfer(
   trx?: Transaction<DB>,
 ): Promise<TransferResult> {
   const db = trx ?? state.db;
-
   const source = await db
     .selectFrom("world_items",)
     .selectAll()
     .where("id", "=", worldItemId,)
     .where("world_id", "=", worldId,)
     .executeTakeFirst();
-
-  if (!source) {
+  if (!source || !Number.isInteger(quantity,) || quantity <= 0 || (toLocationId && toActorId)) {
     return { success: false, fromRemaining: 0, toQuantity: 0, transferred: 0, };
   }
-
+  const definition = await db
+    .selectFrom("items",)
+    .select("id",)
+    .where("id", "=", source.item_id,)
+    .where("world_id", "=", worldId,)
+    .executeTakeFirst();
+  if (!definition) { return { success: false, fromRemaining: source.quantity, toQuantity: 0, transferred: 0, }; }
+  if (toLocationId) {
+    const location = await db
+      .selectFrom("locations",)
+      .select("id",)
+      .where("id", "=", toLocationId,)
+      .where("world_id", "=", worldId,)
+      .executeTakeFirst();
+    if (!location) { return { success: false, fromRemaining: source.quantity, toQuantity: 0, transferred: 0, }; }
+  }
   const actualTransfer = Math.min(quantity, source.quantity,);
   const remaining = source.quantity - actualTransfer;
-
   if (remaining <= 0) {
-    await db
-      .deleteFrom("world_items",)
-      .where("id", "=", worldItemId,)
-      .execute();
+    await db.deleteFrom("world_items",).where("id", "=", worldItemId,).where("world_id", "=", worldId,).execute();
   } else {
     await db
       .updateTable("world_items",)
       .set({ quantity: remaining, },)
       .where("id", "=", worldItemId,)
-      // Match the delete path: scope the partial-quantity update to the
-      // world so a stale id can never mutate a foreign world's row.
       .where("world_id", "=", worldId,)
       .execute();
   }
@@ -183,20 +81,15 @@ export async function transfer(
       .selectAll()
       .where("item_id", "=", source.item_id,)
       .where("world_id", "=", worldId,);
-
-    if (toLocationId) {
-      query = query.where("location_id", "=", toLocationId,);
-    } else if (toActorId) {
-      query = query.where("owner_actor_id", "=", toActorId,);
-    }
-
+    if (toLocationId) { query = query.where("location_id", "=", toLocationId,); }
+    if (toActorId) { query = query.where("owner_actor_id", "=", toActorId,); }
     const existing = await query.executeTakeFirst();
-
     if (existing) {
       await db
         .updateTable("world_items",)
         .set({ quantity: existing.quantity + actualTransfer, },)
         .where("id", "=", existing.id,)
+        .where("world_id", "=", worldId,)
         .execute();
     } else {
       await db
@@ -211,17 +104,15 @@ export async function transfer(
           visibility: ItemVisibility.Visible,
           respawnable: 0,
           spawn_condition: null,
+          properties: source.properties,
+          max_durability: source.max_durability,
+          current_durability: source.current_durability,
+          is_active: source.is_active,
         },)
         .execute();
     }
   }
-
-  return {
-    success: true,
-    fromRemaining: remaining,
-    toQuantity: actualTransfer,
-    transferred: actualTransfer,
-  };
+  return { success: true, fromRemaining: remaining, toQuantity: actualTransfer, transferred: actualTransfer, };
 }
 
 /**

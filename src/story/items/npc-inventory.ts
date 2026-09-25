@@ -17,7 +17,7 @@ import type { ItemInstance, ItemState, } from "./types";
  * @param state
  * @param actorId
  */
-export async function getNpcInventory(state: ItemState, actorId: string,): Promise<ItemInstance[]> {
+export async function getNpcInventory(state: ItemState, actorId: string, worldId: string,): Promise<ItemInstance[]> {
   const rows = await state.db
     .selectFrom("world_items",)
     .innerJoin("items", "items.id", "world_items.item_id",)
@@ -26,15 +26,22 @@ export async function getNpcInventory(state: ItemState, actorId: string,): Promi
       "world_items.item_id",
       "world_items.quantity",
       "world_items.visibility",
+      "world_items.world_id",
+      "world_items.properties",
+      "world_items.current_durability",
+      "world_items.max_durability",
+      "world_items.is_active",
       "items.name",
       "items.description",
       "items.category",
       "items.rarity",
-      "items.properties",
+      "items.properties as definition_properties",
       "items.value",
       "items.weight",
     ],)
     .where("world_items.owner_actor_id", "=", actorId,)
+    .where("world_items.world_id", "=", worldId,)
+    .where("items.world_id", "=", worldId,)
     .execute();
   return Array.from(rows, (row,) => ({
     worldItemId: row.world_item_id,
@@ -44,7 +51,11 @@ export async function getNpcInventory(state: ItemState, actorId: string,): Promi
     category: row.category,
     rarity: row.rarity,
     quantity: row.quantity,
-    properties: jsonParseOr(row.properties, {},),
+    properties: { ...jsonParseOr(row.definition_properties, {},), ...jsonParseOr(row.properties, {},), },
+    worldId: row.world_id,
+    isActive: row.is_active === 1,
+    currentDurability: row.current_durability,
+    maxDurability: row.max_durability,
     value: row.value,
     weight: row.weight,
     visibility: row.visibility,
@@ -61,6 +72,7 @@ export async function getNpcInventory(state: ItemState, actorId: string,): Promi
 export async function getNpcInventoryBatch(
   state: ItemState,
   actorIds: string[],
+  worldId: string,
 ): Promise<Map<string, ItemInstance[]>> {
   if (actorIds.length === 0) {
     return new Map();
@@ -74,15 +86,22 @@ export async function getNpcInventoryBatch(
       "world_items.item_id",
       "world_items.quantity",
       "world_items.visibility",
+      "world_items.world_id",
+      "world_items.properties",
+      "world_items.current_durability",
+      "world_items.max_durability",
+      "world_items.is_active",
       "items.name",
       "items.description",
       "items.category",
       "items.rarity",
-      "items.properties",
+      "items.properties as definition_properties",
       "items.value",
       "items.weight",
     ],)
     .where("world_items.owner_actor_id", "in", actorIds,)
+    .where("world_items.world_id", "=", worldId,)
+    .where("items.world_id", "=", worldId,)
     .execute();
   const byActor = new Map<string, ItemInstance[]>();
   for (const row of rows) {
@@ -99,7 +118,11 @@ export async function getNpcInventoryBatch(
       category: row.category,
       rarity: row.rarity,
       quantity: row.quantity,
-      properties: jsonParseOr(row.properties, {},),
+      properties: { ...jsonParseOr(row.definition_properties, {},), ...jsonParseOr(row.properties, {},), },
+      worldId: row.world_id,
+      isActive: row.is_active === 1,
+      currentDurability: row.current_durability,
+      maxDurability: row.max_durability,
       value: row.value,
       weight: row.weight,
       visibility: row.visibility,

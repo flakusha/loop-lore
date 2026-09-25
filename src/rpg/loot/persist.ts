@@ -11,7 +11,7 @@
  * drop's name/type/rarity/metadata.
  */
 import type { Kysely, } from "kysely";
-import { ItemCategory, StackableState, } from "../../db/enums";
+import { ItemCategory, ItemRarity, StackableState, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { ItemsService, } from "../../story/items";
 import { safeJsonParse, safeJsonStringify, uid, } from "../../utils";
@@ -188,6 +188,13 @@ async function persistDrop(
   const maxStack = definition.stackable === StackableState.Stackable
     ? (definition.max_stack ?? 1)
     : 1;
+  if (
+    definition.stackable === StackableState.Unique &&
+    (definition.rarity === ItemRarity.Unique || definition.rarity === ItemRarity.Artifact)
+  ) {
+    const existing = await items.getUniqueItem(definitionId, dest.worldId,);
+    if (existing) { return [existing.id,]; }
+  }
   const chunks = chunkQuantity(drop.quantity, maxStack,);
 
   // Grant to an NPC or place at a location — a destination is required so
