@@ -125,7 +125,7 @@ describe("checkBundle", () => {
 
 describe("characterExtensionEditorFactory", () => {
   test("factory registers globally and seeds empty state", async () => {
-    const { calls, fetcher, } = makeFetcher();
+    const { fetcher, } = makeFetcher();
     const state = characterExtensionEditorFactory("actor-aria", FANTASY_RPG_REQUIREMENTS, fetcher,);
     await awaitLoad(state,);
     expect(typeof (globalThis as Record<string, unknown>).characterExtensionEditorFactory,).toBe("function",);
@@ -195,7 +195,7 @@ describe("characterExtensionEditorFactory", () => {
   });
 
   test("reset() restores draft from current (last-fetched)", async () => {
-    const { calls, fetcher, setResponder, } = makeFetcher();
+    const { fetcher, setResponder, } = makeFetcher();
     const seed: CharacterExtensionsPayload = {
       abilities: { strength: 9, },
       inventory: [{ id: "x", name: "x", type: "weapon", description: "y", quantity: 1, equipped: false, },],
@@ -211,7 +211,7 @@ describe("characterExtensionEditorFactory", () => {
   });
 
   test("load() surfaces a non-OK status as error", async () => {
-    const { calls, fetcher, setResponder, } = makeFetcher();
+    const { fetcher, setResponder, } = makeFetcher();
     setResponder(() => Promise.resolve(new Response("nope", { status: 500, },),));
 
     const state = characterExtensionEditorFactory("actor-aria", undefined, fetcher,);
@@ -221,7 +221,7 @@ describe("characterExtensionEditorFactory", () => {
   });
 
   test("save() surfaces a non-OK status as error", async () => {
-    const { calls, fetcher, setResponder, } = makeFetcher();
+    const { fetcher, setResponder, } = makeFetcher();
     setResponder((call,) => {
       if (call.method === "GET") { return settingsResponse({},); }
       return Promise.resolve(new Response("conflict", { status: 409, },),);
