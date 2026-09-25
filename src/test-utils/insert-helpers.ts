@@ -9,8 +9,6 @@
  */
 import type { Kysely, } from "kysely";
 import type {
-  AchievementCategory,
-  AchievementTier,
   ActorType,
   AdminOverrideAction,
   AgencyMode,
@@ -3133,8 +3131,8 @@ export async function insertAchievements(
   db: Db,
   name: string,
   description: string,
-  category: AchievementCategory,
-  tier: AchievementTier,
+  category: string,
+  tier: string,
   opts?: {
     id?: string;
     icon?: string | null;
