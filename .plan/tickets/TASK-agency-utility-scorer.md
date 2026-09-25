@@ -3,7 +3,7 @@
 
 # TASK-agency-utility-scorer: Wire personality traits as utility weights for NPC reaction step
 
-**Status:** Draft
+**Status:** ✅ Done (commit 625e36bd — `feat(agency): ship action-parser + affordance + scorer + budget-gate`; PersonalityModifierResolver wired as the reaction utility scorer; 22/22 utility-scorer tests green)
 **Priority:** P0 (within EPIC-RESEARCH-AGENCY-DECISION)
 **Effort:** 2 days
 **Parent epic:** `epic-research-agency-decision.md`

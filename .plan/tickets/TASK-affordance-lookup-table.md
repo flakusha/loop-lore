@@ -3,7 +3,7 @@
 
 # TASK-affordance-lookup-table: `(actor_caps, item_props, context_state) -> AffordanceResult`
 
-**Status:** Draft
+**Status:** ✅ Done (commit 625e36bd — `feat(agency): ship action-parser + affordance + scorer + budget-gate`; 6×16 matrix + novel-item fallback wired into ActorItemsService.equip; 35/35 affordance tests green)
 **Priority:** P0 (within EPIC-RESEARCH-AGENCY-AFFORDANCE)
 **Effort:** 1-2 days
 **Parent epic:** `epic-research-agency-affordance.md`
