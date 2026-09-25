@@ -142,14 +142,14 @@ describe("ItemsService.getNpcInventoryBatch", () => {
     await insertWorldItems(db, worldId, itemB, { owner_actor_id: actorB, quantity: 1, } as never,);
 
     const svc = new ItemsService(db,);
-    const byActor = await svc.getNpcInventoryBatch([actorA, actorB,],);
+    const byActor = await svc.getNpcInventoryBatch([actorA, actorB,], worldId,);
 
     expect(byActor.get(actorA,),).toHaveLength(1,);
     expect(byActor.get(actorA,)?.[0]?.quantity,).toBe(3,);
     expect(byActor.get(actorB,),).toHaveLength(1,);
     expect(byActor.get(actorB,)?.[0]?.quantity,).toBe(1,);
     // Empty list short-circuits — no query, empty map.
-    expect((await svc.getNpcInventoryBatch([],)).size,).toBe(0,);
+    expect((await svc.getNpcInventoryBatch([], worldId,)).size,).toBe(0,);
   });
 
   test("matches getNpcInventory per-actor result", async () => {
@@ -161,8 +161,8 @@ describe("ItemsService.getNpcInventoryBatch", () => {
     await insertItems(db, worldId, "Iron Sword", "weapon", { id: item, } as never,);
     await insertWorldItems(db, worldId, item, { owner_actor_id: actor, quantity: 2, } as never,);
     const svc = new ItemsService(db,);
-    const single = await svc.getNpcInventory(actor,);
-    const batch = (await svc.getNpcInventoryBatch([actor,],)).get(actor,);
+    const single = await svc.getNpcInventory(actor, worldId,);
+    const batch = (await svc.getNpcInventoryBatch([actor,], worldId,)).get(actor,);
     expect(batch,).toEqual(single,);
   });
 });
@@ -212,5 +212,111 @@ describe("ItemsService.destroy", () => {
     // Attempt to destroy an item from a world the user does not own.
     const ok = await svc.destroy(wId, worldId,);
     expect(ok,).toBe(false,);
+  });
+});
+
+describe("ItemsService world state and item evolution", () => {
+  test("rejects a definition from another world", async () => {
+    const otherWorldId = uid();
+    const otherUserId = uid();
+    const otherItemId = uid();
+    await insertUsers(db, `user-${otherUserId}`, "Other", { id: otherUserId, } as never,);
+    await insertWorlds(db, otherUserId, "Other", { id: otherWorldId, } as never,);
+    await insertItems(db, otherWorldId, "Foreign", "weapon", { id: otherItemId, } as never,);
+    const svc = new ItemsService(db,);
+    expect(await svc.getDefinition(otherItemId, worldId,),).toBeNull();
+    await expect(svc.placeInLocation(otherItemId, locationA, worldId,),).rejects.toThrow();
+  });
+
+  test("durability reaches zero and marks the instance broken", async () => {
+    const svc = new ItemsService(db,);
+    const defId = await svc.createDefinition({
+      worldId,
+      name: "Durable",
+      description: "",
+      category: "weapon",
+      rarity: "common",
+      stackable: false,
+      maxStack: 1,
+      properties: {},
+      value: 0,
+      weight: 1,
+    },);
+    const worldItemId = await svc.placeInLocation(defId, locationA, worldId, 1, false, false, undefined, {
+      current: 3,
+      max: 3,
+    },);
+    const result = await svc.decrementDurability(worldItemId, worldId, 3,);
+    expect(result,).toEqual({ remaining: 0, broken: true, },);
+    const row = await db.selectFrom("world_items",).select(["current_durability", "is_active",],).where(
+      "id",
+      "=",
+      worldItemId,
+    ).executeTakeFirst();
+    expect(row?.current_durability,).toBe(0,);
+    expect(row?.is_active,).toBe(0,);
+  });
+
+  test("rejects malformed item effects", async () => {
+    const svc = new ItemsService(db,);
+    await expect(svc.createDefinition({
+      worldId,
+      name: "Broken Effect",
+      description: "",
+      category: "weapon",
+      rarity: "common",
+      stackable: false,
+      maxStack: 1,
+      properties: { effects: [{ kind: "stat_delta", stat: "damage", amount: "high", },], },
+      value: 0,
+      weight: 1,
+    },),).rejects.toThrow("properties.effects",);
+  });
+
+  test("caps common drift and preserves it across transfer", async () => {
+    const svc = new ItemsService(db,);
+    const defId = await svc.createDefinition({
+      worldId,
+      name: "Drifting",
+      description: "",
+      category: "weapon",
+      rarity: "common",
+      stackable: false,
+      maxStack: 1,
+      properties: {},
+      value: 0,
+      weight: 1,
+    },);
+    const worldItemId = await svc.placeInLocation(defId, locationA, worldId,);
+    await svc.applyDrift(worldItemId, worldId, { stat: "damage", amount: 0.04, },);
+    const drift = await svc.applyDrift(worldItemId, worldId, { stat: "damage", amount: 0.04, },);
+    expect(drift?.statMultipliers.damage,).toBe(0.05,);
+    await svc.transfer(worldItemId, worldId, 1, locationB,);
+    const moved = await db.selectFrom("world_items",).select("properties",).where("world_id", "=", worldId,).where(
+      "location_id",
+      "=",
+      locationB,
+    ).where("item_id", "=", defId,).executeTakeFirst();
+    expect(moved?.properties,).toContain('"damage":0.05',);
+  });
+
+  test("rejects a duplicate unique item only within its world", async () => {
+    const svc = new ItemsService(db,);
+    const defId = await svc.createDefinition({
+      worldId,
+      name: "Scepter",
+      description: "",
+      category: "artifact",
+      rarity: "unique",
+      stackable: false,
+      maxStack: 1,
+      properties: {},
+      value: 0,
+      weight: 1,
+    },);
+    await svc.placeInLocation(defId, locationA, worldId,);
+    await expect(svc.placeInLocation(defId, locationB, worldId,),).rejects.toThrow();
+    expect((await svc.getUniqueItem(defId, worldId,))?.item_id,).toBe(defId,);
+    expect(await svc.getUniqueItem(uid(), worldId,),).toBeNull();
   });
 });

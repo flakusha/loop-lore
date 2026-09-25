@@ -921,6 +921,10 @@ export const WorldItemsSchema = t.Object({
   respawnable: t.Optional(t.Number(),),
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
+  properties: t.Optional(t.String(),),
+  max_durability: t.Optional(t.Number(),),
+  current_durability: t.Optional(t.Number(),),
+  is_active: t.Optional(t.Number(),),
 },);
 
 // ── world_lore_entries ────────────────────────────────────────────
