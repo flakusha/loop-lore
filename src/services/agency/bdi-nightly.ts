@@ -18,6 +18,7 @@ import { type Kysely, sql, } from "kysely";
 import type { DB, } from "../../db";
 import { createLogger, getLogger, } from "../../logger";
 import { applyReflectionCheckpoint, } from "./bdi-reflection";
+import { toDate, } from "../../utils/date";
 
 // Lazy logger init — module body must not throw if the global logger
 // has not been initialized yet (e.g. direct module import in tests).
@@ -201,7 +202,7 @@ export async function recordChatTurn(
     return { allowed: true, };
   }
 
-  const last = new Date(existing.last_chat_at,).getTime();
+  const last = toDate(existing.last_chat_at,).getTime();
   const elapsedMin = (now.getTime() - last) / 60_000;
   if (elapsedMin < existing.cooldown_minutes) {
     return {
