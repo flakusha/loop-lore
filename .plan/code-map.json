@@ -28514,6 +28514,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-054.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-loot-table-constructor-frontend-editor.md"
     }
   ],
@@ -31081,6 +31085,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-028.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-054.md"
     }
   ],
   "src/story/items/instances.ts": [
