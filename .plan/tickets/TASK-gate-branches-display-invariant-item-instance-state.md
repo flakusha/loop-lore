@@ -1,22 +1,18 @@
-<!-- SPDX-License-Identifier: Apache-2.0 -->
-<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 giwt Contributors -->
 
 # TASK: Gate branches display invariant + item instance state
 
-**Status:** open
+**Status:** ⬜ Not Started
 **Priority:** medium
-**Effort:** Small (two guards + tests)
-**Summary:** `chat_branches.is_active` × `chats.active_branch_id` (migration `014`): the displayed branch must be the active one — enforce in `src/chat/service/branches.ts`. `world_items` instance (migration `016:19-27`: stackable/category × durability-NULL × is_active): add `ItemInstanceState` guard + test. No column changes.
-**Context:** DB schema-gate audit (2026-09-25, db-migration-fixes session). Both invariants live only in migration comments today; runtime can violate them silently.
+**Effort:** Medium
 
-**Acceptance Criteria:**
-- [ ] Branch display path rejects/repairs a mismatch between displayed branch and `active_branch_id`.
-- [ ] `ItemInstanceState` guard validates stackable/category/durability/is_active combination for item instances.
-- [ ] Unit tests cover both guards including violation cases.
-- [ ] `bun run check` green.
+## Summary
 
-**Tags:** db, chat-branches, world-items, invariants
-**Related:** src/chat/service/branches.ts, src/db migration 014, src/db migration 016
+chat_branches.is_active x chats.active_branch_id (014): displayed branch must be active, enforce in chat/service/branches.ts. world_items instance (016:19-27 stackable/category x durability-NULL x is_active): ItemInstanceState guard + test. No column changes.
 
+## Acceptance Criteria
 
-git issue: c9a117d
+- [ ] Implementation complete
+- [ ] Tests passing
+- [ ] Documentation updated
