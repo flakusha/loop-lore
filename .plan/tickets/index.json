@@ -324,6 +324,24 @@
     "status": "done",
     "git_issue": "53f08d3"
   },
+  "BUG-ASSETS-E2E-UPLOAD-RETURNS-NULL-DATA-7-OF-8-TESTS-FAIL-IN-TES": {
+    "hash": "9dee1e2",
+    "git_issue": "9dee1e2",
+    "extid": "BUG-ASSETS-E2E-UPLOAD-RETURNS-NULL-DATA-7-OF-8-TESTS-FAIL-IN-TES",
+    "type": "BUG",
+    "title": "assets e2e upload returns null data — 7 of 8 tests fail in tests/e2e/flows/assets.test.ts",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [
+      "assets",
+      "e2e",
+      "coverage-gate"
+    ],
+    "source": ".plan/tickets/BUG-assets-e2e-upload-returns-null-data-7-of-8-tests-fail-in-tes.md",
+    "status": "done",
+    "resolved_by": "fix-assets-v1-upload-route"
+  },
   "BUG-ASSETS-SERVE-SERVEFILE-OMITS-X-CONTENT-TYPE-OPTIONS-NOSNIFF-": {
     "hash": "0403ca3",
     "git_issue": "0403ca3",
@@ -4757,7 +4775,8 @@
     "tags": [],
     "source": ".plan/tickets/BUG-smart-regen-style-not-threaded-through.md",
     "git_issue": "0c43869",
-    "status": "open"
+    "status": "done",
+    "resolved_by": "7a21eb9aa"
   },
   "BUG-SQLITE-FK-PRAGMA-NO-OP-IN-MIGRATION-047-REBUILD": {
     "hash": "1f7ba9e",

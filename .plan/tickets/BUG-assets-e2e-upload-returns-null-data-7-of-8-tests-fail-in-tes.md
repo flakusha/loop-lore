@@ -3,7 +3,7 @@
 
 # BUG: assets e2e upload returns null data — 7 of 8 tests fail in tests/e2e/flows/assets.test.ts
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (resolved in fix-assets-v1-upload-route branch — `POST /api/v1/assets` registered alongside legacy `/api/assets` so the v1 path is no longer caught by the wildcard fallback)
 **Priority:** high
 **Effort:** Medium
 **Tags:** assets, e2e, coverage-gate
