@@ -2164,6 +2164,24 @@
     "status": "done",
     "git_issue": "7e811d7"
   },
+  "BUG-E2E-VERSION-REDIRECT-TEST-FETCHES-V1-PATHS-BUT-EXPECTS-308": {
+    "hash": "1ab0a82",
+    "extid": "BUG-E2E-VERSION-REDIRECT-TEST-FETCHES-V1-PATHS-BUT-EXPECTS-308",
+    "type": "BUG",
+    "title": "e2e version-redirect.test.ts fetches /api/v1/* paths but expects 308 redirect",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "e2e",
+      "tests",
+      "api-versioning",
+      "coverage-gate"
+    ],
+    "source": ".plan/tickets/BUG-e2e-version-redirect-test-fetches-v1-paths-but-expects-308.md",
+    "status": "done",
+    "git_issue": "1ab0a82"
+  },
   "BUG-EAGER-DB-INIT-CREATES-ON-DISK-DB-ON-TEST-IMPORT": {
     "hash": "c2d325c",
     "git_issue": "c2d325c",
