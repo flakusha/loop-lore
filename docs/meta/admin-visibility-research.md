@@ -476,7 +476,7 @@ Compliance-focused epic for data export, deletion, and privacy controls.
 
 All new tables should be added via Kysely migrations in `src/db/migrations/`. Follow existing patterns:
 
-- Use `migration-helpers.ts` for common operations
+- Keep schema migrations additive: new tables via `CREATE TABLE`, new columns via `ADD COLUMN ... NOT NULL DEFAULT`, guards via `BEFORE INSERT` + `BEFORE UPDATE` trigger twins (see `017_guard_triggers_update_twins.ts`)
 - Add enums to appropriate `enums-*.ts` file
 - Update `schema.ts` with new table types
 
