@@ -67,5 +67,8 @@ export async function validateGenerateRequest({
   if (input.modelId !== undefined && typeof input.modelId !== "string") {
     return jsonError({ message: "modelId must be a string", status: 400, },);
   }
+  if (input.format !== undefined && typeof input.format !== "string") {
+    return jsonError({ message: "format must be a string", status: 400, },);
+  }
   return null;
 }
