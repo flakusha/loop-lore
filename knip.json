@@ -15,7 +15,6 @@
     "scripts/lib/colors.ts"
   ],
   "project": [
-    "src/**/*.ts",
     "scripts/**/*.ts",
     "scripts/**/*.mjs",
     "tests/**/*.ts",
@@ -29,7 +28,6 @@
     // or dynamic imports knip can't follow (elysia app def, frontend bundle,
     // blessed TUI, htmx extensions, asset pipeline).
     "blessed-contrib",
-    "elysia",
     "htmx-ext-alpine-morph",
     "htmx-ext-sse",
     "jszip",
@@ -45,7 +43,6 @@
     "@markuplint/mustache-parser", // referenced by .markuplintrc.json (config), not imported in code
     "markuplint", // CLI binary invoked by pre-commit hook, not imported
     "@elysia/openapi",
-    "@sinclair/typebox", // frontend bundle + validation schemas; frontend entries not in knip's entry list
     "@types/clean-css",
     "@types/dompurify",
     "@types/html-minifier-terser",
@@ -73,8 +70,6 @@
   ],
   "ignoreBinaries": [
     "abort", // worktree CLI subcommand literal in finalize-signal-safety.test.ts spawnSync; knip mistakes it for a binary
-    "sha256sum", // CI checksum step
-    "wait", // shell helper
     "scancode", // license compliance gate (scripts/check-licenses.ts)
     "fossa", // license compliance gate (scripts/check-licenses.ts)
     "tail", // changelog gate (scripts/check-changelog.ts git-tag query)
@@ -87,10 +82,6 @@
     // surface (no consumer yet). Tracked: TASK-knip-dead-code.
     "plugins/**/types.ts",
 
-    // Live CLI referenced via shell/docs (not import-reachable)
-    // gpg-unlock.mjs is invoked by agent-commit.ts and documented in
-    // .agents/skills/worktree-merge/SKILL.md.
-    "scripts/gpg-unlock.mjs",
 
     // Native benchmarks
     // Standalone bench entrypoints (run directly, never imported) --
@@ -108,17 +99,6 @@
     // via manifest (knip can't trace dynamic plugin registration).
     "plugins/core/dice-roller/routes.ts",
     //
-    // Intra-file usage knip can't trace:
-    // - isProtected: called at line 34 within agent-commit.ts; knip only tracks
-    //   inter-file imports, not intra-file calls.
-    // - acquireFinalizeLock: called within finalize.ts (same file); the only
-    //   other consumer is the spawn-run child-process fixture
-    //   (finalize-lock-fixture.ts, ignored below), whose import edge knip
-    //   drops with the file.
-    "scripts/worktree/commands/agent-commit.ts",
-    "scripts/worktree/commands/finalize.ts",
-    "scripts/lib/src-refs.ts",
-    //
     // Test helpers barrel re-exports used via seedAll; knip can't trace
     // that the individual seeder functions are called by seedAll().
     // Tests only import seedAll, seedUsers, seedChat.
@@ -132,9 +112,6 @@
     // route dispatcher. createTestServer IS used by all e2e tests; knip can't
     "tests/e2e/helpers/server.ts",
 
-    // Schema check scripts: standalone CLI tools, not entry-reachable
-    // (consumed via bun run scripts/..., not import)
-    "scripts/check-db-schemas.ts",
     // FE-BE harmonization gate: standalone CLI invoked via check-parallel.mjs
     // shell string, not import-reachable — same class as check-db-schemas.ts.
     "scripts/check-fe-be-harmonization.ts",
@@ -158,21 +135,7 @@
     // but not by production code (tests/ only, not in knip entry graph)
     "tests/e2e/fixtures/chat-state-contract.ts",
 
-    // CLI parsing migration (@optique): src/cli/parser.ts is the shared
-    // wrapper reached only via four standalone scripts below. The scripts
-    // are invoked via `bun run src/scripts/...` and `bun run
-    // src/config/migrate-config.ts`, not import-reachable from any entry.
-    "src/cli/parser.ts",
-    "src/scripts/version-bump.ts",
-    "src/scripts/commit-check.ts",
-    "src/config/migrate-config.ts",
-    "src/build/compress.ts",
 
-    // CLI parsing migration (@optique): package accessed via src/cli/parser.ts
-    // (added above as an ignored file). Without this the deps are flagged
-    // because the consumer file is excluded from the entry trace.
-    "@optique/core",
-    "@optique/run",
     "tests/e2e/flows/browser/admin-dashboard-populated.browser.ts",
     "tests/e2e/flows/browser/auth-flow.browser.ts",
     "tests/e2e/flows/browser/auth-session.browser.ts",
@@ -221,3 +184,5 @@
     "tests/e2e/flows/browser/i18n-locale.browser.ts",
   ]
 }
+
+
