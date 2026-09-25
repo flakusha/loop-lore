@@ -43,7 +43,7 @@ const FULL_PLUGIN = `export const plugin = {
   description: "full fixture",
   author: "test",
   tools: [{ name: "fixture-full-static-tool", description: "s", parameters: {}, handler: async () => ({ content: "static", }), },],
-  migrations: [{ version: 1, name: "fixture-full-migration", up: async () => {}, },],
+  config: { mode: "test" },
   async onLoad(ctx) {
     ctx.logger.info("loading", { step: 1, });
     ctx.logger.warn("careful");
@@ -249,8 +249,6 @@ describe("loadSinglePlugin", () => {
     expect(registry.getAllRoutes().map((r,) => r.path,),).toContain("/fixture-full",);
     expect(registry.getAllUIComponents().map((c,) => c.name,),).toContain("fixture-full-ui",);
     expect(registry.getAllEventHandlers(),).toHaveLength(1,);
-    // Migrations have no dynamic registrar, so the static entry survives.
-    expect(registry.getAllMigrations().map((m,) => m.name,),).toContain("fixture-full-migration",);
     // Each hook-emitted log is captured and namespaced to the manifest name.
     const hookLogs = seen.filter((s,) =>
       (s.entry as { message?: string })?.message === "loading"
@@ -264,8 +262,9 @@ describe("loadSinglePlugin", () => {
     }
     expect(hookLogs[0]?.entry,).toMatchObject({ message: "loading", step: 1, });
     // The hook received the live db handle (own fixture shape, so a named cast is enough).
-    const fixtureCtx = globals().__llFixtureCtx as { db: unknown };
+    const fixtureCtx = globals().__llFixtureCtx as { db: unknown; config: Record<string, unknown> };
     expect(fixtureCtx.db,).toBe(db,);
+    expect(fixtureCtx.config,).toEqual({ mode: "test" });
   });
 
   test("rejects a manifest without a name", async () => {

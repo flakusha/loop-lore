@@ -18,6 +18,15 @@ import type { DB } from "../db/schema";
 /** Categories of plugin provenance */
 export type PluginOrigin = "core" | "community" | "local";
 
+/** Extension points a plugin origin may register. */
+export type PluginCapability =
+  | "routes"
+  | "tools"
+  | "agentRoles"
+  | "uiComponents"
+  | "eventHandlers"
+  | "migrations";
+
 /** A loaded plugin instance */
 export interface LoadedPlugin {
   manifest: PluginManifest;
@@ -57,6 +66,7 @@ export interface PluginManifest {
   eventHandlers?: EventHandlerDefinition[];
   migrations?: MigrationDefinition[];
   configSchema?: PluginConfigSchema;
+  config?: Record<string, unknown>;
   /** Per-bundle character extension requirements keyed by bundle id. */
   characterRequirements?: Record<string, BundleCharacterRequirements>;
 }
@@ -64,6 +74,7 @@ export interface PluginManifest {
 /** Context passed to onLoad */
 export interface PluginContext {
   db: Kysely<DB>;
+  config: Record<string, unknown>;
   logger: PluginLogger;
   registerTool(tool: ToolDefinition): void;
   registerAgentRole(role: AgentRoleDefinition): void;
@@ -95,7 +106,7 @@ export interface ToolDefinition {
   handler: (
     params: Record<string, unknown>,
     ctx?: ToolExecutionContext,
-  ) => Promise<ToolResult>;
+  ) => Promise<ToolResult> | ToolResult;
   permissions?: string[];
   timeoutMs?: number;
   sandboxed?: boolean;

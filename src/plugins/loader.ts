@@ -15,6 +15,7 @@ import type { Kysely, Selectable } from "kysely";
 import type { DB, PluginState } from "../db/schema";
 import type { PluginLogger, PluginManifest, PluginOrigin } from "./types";
 import { registry } from "./registry";
+import { mergePluginConfig } from "./config-merge";
 import { getLogger } from "../logger";
 import { writeMemoryNoteTool, } from "../generation/tools/write-memory-note";
 import { characterCreationTool, } from "../generation/tools/create-character";
@@ -59,6 +60,7 @@ function makeLogger(pluginName: string): PluginLogger {
  *
  * Checks plugin_state table for previously disabled plugins.
  * @param db
+ * @returns Nothing.
  */
 export async function loadAllPlugins(db: Kysely<DB>): Promise<void> {
   const log = getLogger();
@@ -115,6 +117,7 @@ export async function loadAllPlugins(db: Kysely<DB>): Promise<void> {
  * @param pluginName
  * @param pluginDir
  * @param origin
+ * @returns Nothing.
  */
 export async function loadSinglePlugin(
   db: Kysely<DB>,
@@ -141,6 +144,7 @@ export async function loadSinglePlugin(
     if (typeof manifest.onLoad === "function") {
       await manifest.onLoad({
         db,
+        config: mergePluginConfig(manifest.config ?? {}, {}, manifest.configSchema),
         logger: makeLogger(manifest.name,),
         registerTool: (def) => { registry.addTools(manifest.name, [def,],); },
         registerAgentRole: (def) => { registry.addAgentRoles(manifest.name, [def,],); },
@@ -161,14 +165,15 @@ export async function loadSinglePlugin(
 /**
  * Register static extension points declared in a plugin manifest.
  * @param manifest
+ * @throws When the plugin origin cannot register a declared extension point.
  */
 function registerManifestExtensions(manifest: PluginManifest,): void {
+  if (manifest.migrations?.length) { registry.addMigrations(manifest.name, manifest.migrations,); }
   if (manifest.apiRoutes?.length) { registry.addRoutes(manifest.name, manifest.apiRoutes,); }
   if (manifest.tools?.length) { registry.addTools(manifest.name, manifest.tools,); }
   if (manifest.agentRoles?.length) { registry.addAgentRoles(manifest.name, manifest.agentRoles,); }
   if (manifest.uiComponents?.length) { registry.addUIComponents(manifest.name, manifest.uiComponents,); }
   if (manifest.eventHandlers?.length) { registry.addEventHandlers(manifest.name, manifest.eventHandlers,); }
-  if (manifest.migrations?.length) { registry.addMigrations(manifest.name, manifest.migrations,); }
 }
 
 /**

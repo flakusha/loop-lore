@@ -73,6 +73,14 @@ describe("executePluginTool", () => {
     expect(res.content,).toContain("bad input",);
   });
 
+  test("synchronous handler throw becomes isError result", async () => {
+    const res = await executePluginTool(
+      tool({ handler: () => { throw new Error("sync input"); }, },),
+      {},
+    );
+    expect(res).toEqual({ content: JSON.stringify({ error: "sync input" }), isError: true, });
+  });
+
   test("timeout becomes isError result", async () => {
     const res = await executePluginTool(
       tool({
@@ -81,8 +89,10 @@ describe("executePluginTool", () => {
       },),
       {},
     );
-    expect(res.isError,).toBe(true,);
-    expect(res.content,).toContain("timed out",);
+    expect(res).toEqual({
+      content: JSON.stringify({ error: 'Tool "demo" timed out after 5ms', }),
+      isError: true,
+    });
   });
 });
 
