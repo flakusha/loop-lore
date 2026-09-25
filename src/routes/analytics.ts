@@ -25,6 +25,17 @@ interface HandleOpts {
 const COST_PER_1K_TOKENS = 0.002;
 
 /**
+ * Parse an ISO-8601 timestamp string into a Unix epoch milliseconds number.
+ * Returns null for missing or unparseable values so callers can fall back to
+ * unbounded queries without catching.
+ */
+function parseIsoMs(value: string | undefined,): number | null {
+  if (!value) { return null; }
+  const t = Date.parse(value,);
+  return Number.isFinite(t,) ? t : null;
+}
+
+/**
  * @param root0
  * @param root0.database
  * @param prefix
@@ -45,11 +56,24 @@ export function analyticsRoutes({ database, }: HandleOpts, prefix = "/api",): El
       }
 
       const { chatId, } = ctx.params;
+      const { from, to, } = (ctx.query ?? {}) as { from?: string; to?: string };
 
-      const stats = await database
+      const fromMs = parseIsoMs(from,);
+      const toMs = parseIsoMs(to,);
+      // created_at is stored as an ISO-8601 string; ISO strings compare
+      // lexicographically in the same order as the underlying instant, so we
+      // pass canonical ISO strings straight through instead of numbers.
+      const fromIso = fromMs !== null ? new Date(fromMs,).toISOString() : null;
+      const toIso = toMs !== null ? new Date(toMs,).toISOString() : null;
+
+      let scoped = database
         .selectFrom("telemetry_events",)
         .where("chat_id", "=", chatId,)
-        .where("event_type", "=", "generation.completed",)
+        .where("event_type", "=", "generation.completed",);
+      if (fromIso !== null) { scoped = scoped.where("created_at", ">=", fromIso,); }
+      if (toIso !== null) { scoped = scoped.where("created_at", "<", toIso,); }
+
+      const stats = await scoped
         .select([
           sql<number>`count(*)`.as("totalGenerations",),
           sql<number>`coalesce(sum(CAST(json_extract(event_data, '$.totalTokens') AS INTEGER)), 0)`.as("totalTokens",),
@@ -65,6 +89,8 @@ export function analyticsRoutes({ database, }: HandleOpts, prefix = "/api",): El
         totalTokens,
         avgLatencyMs: stats?.avgLatencyMs ?? 0,
         costEstimate,
+        from: from ?? null,
+        to: to ?? null,
       },);
     }, {
       response: {

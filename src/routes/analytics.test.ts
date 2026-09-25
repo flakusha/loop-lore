@@ -157,4 +157,59 @@ describe("analyticsRoutes", () => {
     const res = await app.handle(new Request("http://localhost/api/analytics/overview",),);
     expect(res.headers.get("content-type",),).toStartWith("application/json",);
   });
+
+  // ── Date range filter (FEAT-059) ─────────────────────────────────
+
+  test("GET /api/analytics/chat/:chatId?from&to narrows by created_at", async () => {
+    // Insert a fresh in-window event, plus an old out-of-window event.
+    const inWindowAt = Date.now();
+    const outOfWindowAt = Date.now() - 7 * 86_400_000;
+    const otherChatId = "date-range-chat";
+    await db
+      .insertInto("telemetry_events",)
+      .values([
+        {
+          id: crypto.randomUUID(),
+          event_type: "generation.completed",
+          chat_id: otherChatId,
+          user_id: userId,
+          event_data: JSON.stringify({ totalTokens: 100, latencyMs: 500, },),
+          source: "server",
+          created_at: new Date(inWindowAt,).toISOString(),
+        },
+        {
+          id: crypto.randomUUID(),
+          event_type: "generation.completed",
+          chat_id: otherChatId,
+          user_id: userId,
+          event_data: JSON.stringify({ totalTokens: 999, latencyMs: 9999, },),
+          source: "server",
+          created_at: new Date(outOfWindowAt,).toISOString(),
+        },
+      ],)
+      .execute();
+
+    const app = createApp(db, userId,);
+    const fromIso = new Date(inWindowAt - 60_000,).toISOString();
+    const toIso = new Date(inWindowAt + 60_000,).toISOString();
+    const url = `http://localhost/api/analytics/chat/${otherChatId}?from=${encodeURIComponent(fromIso,)}&to=${encodeURIComponent(toIso,)}`;
+    const res = await app.handle(new Request(url,),);
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as { totalGenerations: number; totalTokens: number; from: string; to: string };
+    expect(body.totalGenerations,).toBe(1,);
+    expect(body.totalTokens,).toBe(100,);
+    expect(body.from,).toBe(fromIso,);
+    expect(body.to,).toBe(toIso,);
+  },);
+
+  test("GET /api/analytics/chat/:chatId?from=garbage ignores unparseable from", async () => {
+    const app = createApp(db, userId,);
+    const url = `http://localhost/api/analytics/chat/${chatId}?from=not-a-date`;
+    const res = await app.handle(new Request(url,),);
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as { totalGenerations: number };
+    // The seeded earlier tests inserted at least one row for chatId; just
+    // assert the query did not 500 on bad input.
+    expect(typeof body.totalGenerations,).toBe("number",);
+  },);
 });
