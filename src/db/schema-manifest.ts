@@ -169,6 +169,25 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("agency_dimension_counters", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    world_id: col("text",),
+    dimension: col("text", { notNull: true, },),
+    day: col("text", { notNull: true, },),
+    total: col("integer", { notNull: true, hasDefault: true, },),
+    meaningful: col("integer", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
+  .table("agency_play_counters", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    world_id: col("text",),
+    chat_id: col("text",),
+    dimension: col("text", { notNull: true, },),
+    actor_id: col("text",),
+    count: col("integer", { notNull: true, hasDefault: true, },),
+    hour_bucket: col("text", { notNull: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("battles", {
     id: col("text", { primaryKey: true, hasDefault: true, },),
     chat_id: col("text", { notNull: true, },),
@@ -486,6 +505,7 @@ export const SCHEMA = new SchemaManifest()
     result: col("text", { notNull: true, hasDefault: true, },),
     state_changes: col("text", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
+    agency_mode: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("log_entries", {
     id: col("text", { primaryKey: true, },),
@@ -953,6 +973,15 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true, hasDefault: true, },),
   },)
   // ── Core: Actor Systems ──────────────────────────────────────────────
+  .table("actor_chat_buffers", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    actor_id: col("text", { notNull: true, },),
+    partner_actor_id: col("text", { notNull: true, },),
+    last_chat_at: col("text", { notNull: true, hasDefault: true, },),
+    consecutive_count: col("integer", { notNull: true, hasDefault: true, },),
+    cooldown_minutes: col("integer", { notNull: true, hasDefault: true, },),
+    max_consecutive_chats: col("integer", { notNull: true, hasDefault: true, },),
+  },)
   .table("actor_currencies", {
     id: col("text", { primaryKey: true, },),
     actor_id: col("text", { notNull: true, },),
@@ -961,6 +990,15 @@ export const SCHEMA = new SchemaManifest()
     balance: col("integer", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
+  .table("actor_daily_plans", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    actor_id: col("text", { notNull: true, },),
+    world_id: col("text",),
+    plan_date: col("text", { notNull: true, },),
+    summary: col("text", { notNull: true, },),
+    priority: col("text", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("actor_e2e_pubkeys", {
     id: col("text", { primaryKey: true, },),
@@ -1073,6 +1111,23 @@ export const SCHEMA = new SchemaManifest()
     sort_order: col("integer", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
+  .table("actor_plan_revisions", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    plan_id: col("text", { notNull: true, },),
+    revision_kind: col("text", { notNull: true, },),
+    before_priority: col("text", { notNull: true, },),
+    after_priority: col("text", { notNull: true, },),
+    reason: col("text", { notNull: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
+  .table("actor_planned_activities", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    plan_id: col("text", { notNull: true, },),
+    description: col("text", { notNull: true, },),
+    score: col("integer", { notNull: true, hasDefault: true, },),
+    completed: col("integer", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("character_arc", {
     id: col("text", { primaryKey: true, },),
