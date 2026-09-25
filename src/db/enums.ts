@@ -42,4 +42,5 @@ export * from "./enums-generation";
 export * from "./enums-gm";
 export * from "./enums-interaction";
 export * from "./enums-story";
+export * from "./enums-agency";
 export * from "./state";

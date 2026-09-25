@@ -174,4 +174,10 @@ export interface DB {
   memory_audit_log: import("./schema-core").MemoryAuditLog;
   status_effect: import("./schema-core").StatusEffect;
   interaction_logs: import("./schema-core").InteractionLogs;
+  agency_play_counters: import("./schema-core").AgencyPlayCounters;
+  agency_dimension_counters: import("./schema-core").AgencyDimensionCounters;
+  actor_daily_plans: import("./schema-core").ActorDailyPlans;
+  actor_planned_activities: import("./schema-core").ActorPlannedActivities;
+  actor_chat_buffers: import("./schema-core").ActorChatBuffers;
+  actor_plan_revisions: import("./schema-core").ActorPlanRevisions;
 }
