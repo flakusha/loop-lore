@@ -50,15 +50,7 @@ export interface ListLoreOpts extends ActorListOpts {
   enabled?: LoreEntryStatus;
 }
 
-/**
- * List an actor's lore entries (sort order, then insertion order).
- * @param database - Database handle
- * @param actorId - Actor to list lore entries for
- * @param userId - Authenticated requester id
- * @param userRole - Requester role
- * @param opts - Paging plus an optional enabled-state filter
- * @returns Paginated lore entries or an error
- */
+/** List an actor's lore entries (sort order, then insertion order). */
 export async function listActorLoreEntries(
   database: Kysely<DB>,
   actorId: string,
@@ -96,15 +88,7 @@ export async function listActorLoreEntries(
   return { ok: true, items, total: Number(countResult?.total ?? 0,), page, pageSize, };
 }
 
-/**
- * Create a lore entry for an actor.
- * @param database - Database handle
- * @param actorId - Owning actor
- * @param userId - Authenticated requester id
- * @param userRole - Requester role
- * @param input - Lore fields; `content` is required
- * @returns The created row or an error
- */
+/** Create a lore entry for an actor. `content` is required. */
 export async function createActorLoreEntry(
   database: Kysely<DB>,
   actorId: string,
@@ -154,16 +138,7 @@ export async function createActorLoreEntry(
   return { ok: true, entity, };
 }
 
-/**
- * Update a lore entry in place. The entry must belong to the given actor.
- * @param database - Database handle
- * @param actorId - Owning actor
- * @param loreId - Lore entry to update
- * @param userId - Authenticated requester id
- * @param userRole - Requester role
- * @param patch - Fields to change; omitted fields are untouched
- * @returns The updated row or an error
- */
+/** Update a lore entry in place; the entry must belong to the given actor. */
 export async function updateActorLoreEntry(
   database: Kysely<DB>,
   actorId: string,
@@ -222,15 +197,7 @@ export async function updateActorLoreEntry(
   return { ok: true, entity, };
 }
 
-/**
- * Delete a lore entry. The entry must belong to the given actor.
- * @param database - Database handle
- * @param actorId - Owning actor
- * @param loreId - Lore entry to delete
- * @param userId - Authenticated requester id
- * @param userRole - Requester role
- * @returns The deleted id or an error
- */
+/** Delete a lore entry; the entry must belong to the given actor. */
 export async function deleteActorLoreEntry(
   database: Kysely<DB>,
   actorId: string,
