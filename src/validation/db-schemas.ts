@@ -13,6 +13,15 @@ export const ActorTypeSchema = t.UnionEnum(["user", "character", "narrator", "sy
 export const ActorVisibilitySchema = t.UnionEnum(["private", "public",],);
 export const AdminOverrideActionSchema = t.UnionEnum(["ban", "approve", "restrict", "restore",],);
 export const AgeGateModeSchema = t.UnionEnum(["none", "self-declaration", "verification",],);
+export const AgencyDimensionSchema = t.UnionEnum([
+  "spatial",
+  "temporal",
+  "manipulation",
+  "social",
+  "narrative",
+  "ludic",
+],);
+export const AgencyModeSchema = t.UnionEnum(["free", "forced", "blocked", "skipped",],);
 export const AgentTypeSchema = t.UnionEnum(["none", "ai", "narrator", "npc",],);
 export const ArousalLevelSchema = t.UnionEnum([
   "calm",
@@ -2806,5 +2815,66 @@ export const InteractionLogsSchema = t.Object({
   modifiers: t.Optional(t.String(),),
   result: t.Optional(t.String(),),
   state_changes: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  agency_mode: t.Optional(AgencyModeSchema,),
+},);
+
+// ── agency_play_counters ────────────────────────────────────────────
+export const AgencyPlayCountersSchema = t.Object({
+  dimension: t.String(),
+  hour_bucket: t.String(),
+  world_id: t.Optional(t.String(),),
+  chat_id: t.Optional(t.String(),),
+  actor_id: t.Optional(t.String(),),
+  count: t.Optional(t.Number(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── agency_dimension_counters ────────────────────────────────────────────
+export const AgencyDimensionCountersSchema = t.Object({
+  dimension: t.String(),
+  day: t.String(),
+  world_id: t.Optional(t.String(),),
+  total: t.Optional(t.Number(),),
+  meaningful: t.Optional(t.Number(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── actor_daily_plans ────────────────────────────────────────────
+export const ActorDailyPlansSchema = t.Object({
+  actor_id: t.String(),
+  plan_date: t.String(),
+  summary: t.String(),
+  world_id: t.Optional(t.String(),),
+  priority: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── actor_planned_activities ────────────────────────────────────────────
+export const ActorPlannedActivitiesSchema = t.Object({
+  plan_id: t.String(),
+  description: t.String(),
+  score: t.Optional(t.Number(),),
+  completed: t.Optional(t.Number(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── actor_chat_buffers ────────────────────────────────────────────
+export const ActorChatBuffersSchema = t.Object({
+  actor_id: t.String(),
+  partner_actor_id: t.String(),
+  last_chat_at: t.Optional(t.String(),),
+  consecutive_count: t.Optional(t.Number(),),
+  cooldown_minutes: t.Optional(t.Number(),),
+  max_consecutive_chats: t.Optional(t.Number(),),
+},);
+
+// ── actor_plan_revisions ────────────────────────────────────────────
+export const ActorPlanRevisionsSchema = t.Object({
+  plan_id: t.String(),
+  revision_kind: t.String(),
+  before_priority: t.String(),
+  after_priority: t.String(),
+  reason: t.String(),
   created_at: t.Optional(t.String(),),
 },);
