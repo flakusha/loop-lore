@@ -6021,7 +6021,6 @@
       "source": ".plan/tickets/TASK-deletechat-runs-9-sequential-deletes-without-transaction-orp.md"
     }
   ],
-
   "src/chat/service/crud/gm-guidance.ts": [
     {
       "kind": "ticket",
@@ -6922,12 +6921,6 @@
       "source": ".plan/tickets/TASK-actor-availability-frontend.md"
     }
   ],
-  "src/components/chat/emotion-avatars-panel.html": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-actor-emotion-avatars-frontend.md"
-    }
-  ],
   "src/components/character/entities-panel.html": [
     {
       "kind": "ticket",
@@ -6940,7 +6933,6 @@
       "source": ".plan/tickets/TASK-equipment-stat-preview.md"
     }
   ],
-
   "src/components/character/extension-editor-panel.html": [
     {
       "kind": "ticket",
@@ -7023,7 +7015,6 @@
       "source": ".plan/tickets/TASK-029.md"
     }
   ],
-
   "src/components/chat/_gm-guidance-body.html": [
     {
       "kind": "ticket",
@@ -7040,14 +7031,12 @@
       "source": ".plan/tickets/TASK-archival-workflow.md"
     }
   ],
-
   "src/components/chat/assistant-panel.html": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-per-chat-assistant-gm-frontend.md"
     }
   ],
-
   "src/components/chat/background-panel.html": [
     {
       "kind": "ticket",
@@ -7152,7 +7141,6 @@
       "source": ".plan/tickets/TASK-chat-context-preference-per-scope.md"
     }
   ],
-
   "src/components/chat/emotion-avatars-panel.html": [
     {
       "kind": "ticket",
@@ -7177,7 +7165,6 @@
       "source": ".plan/tickets/TASK-gallery-fuzzy-search-pagination.md"
     }
   ],
-
   "src/components/chat/gm-guidance-panel.html": [
     {
       "kind": "ticket",
@@ -7268,7 +7255,6 @@
       "source": ".plan/tickets/TASK-chat-location-frontend.md"
     }
   ],
-
   "src/components/chat/media-preview-modal.html": [
     {
       "kind": "ticket",
@@ -7359,14 +7345,12 @@
       "source": ".plan/tickets/WIRE-frontend-mobile-sticky-bottom-composer.md"
     }
   ],
-
   "src/components/chat/mood-panel.html": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-alpha-aware-render-binding-and-mood-panel.md"
     }
   ],
-
   "src/components/chat/participant-mgmt.html": [
     {
       "kind": "ticket",
@@ -7391,7 +7375,6 @@
       "source": ".plan/tickets/TASK-frontend-story-mode-ui.md"
     }
   ],
-
   "src/components/chat/rename-chat-modal.html": [
     {
       "kind": "ticket",
@@ -7404,7 +7387,6 @@
       "source": ".plan/tickets/TASK-029.md"
     }
   ],
-
   "src/components/chat/sections-panel.html": [
     {
       "kind": "ticket",
@@ -7487,7 +7469,6 @@
       "source": ".plan/tickets/TASK-housing-frontend.md"
     }
   ],
-
   "src/components/key-management.html": [
     {
       "kind": "ticket",
@@ -13612,7 +13593,6 @@
       "source": ".plan/tickets/TASK-dedupe-sse-activity-stream.md"
     }
   ],
-
   "src/frontend/alpine/chat-backgrounds.ts": [
     {
       "kind": "ticket",
@@ -16269,7 +16249,6 @@
       "source": ".plan/tickets/TASK-chat-context-preference-per-scope.md"
     }
   ],
-
   "src/frontend/pages/worlds-io.ts": [
     {
       "kind": "epic",
@@ -17002,12 +16981,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-location-details.md"
-    }
-  ],
-  "src/frontend/pages/worlds-io.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-world-management-ui.md"
     }
   ],
   "src/frontend/world/time-weather.ts": [
@@ -21590,7 +21563,6 @@
       "source": ".plan/tickets/TASK-admin-assistant-tooling-allowlist.md"
     }
   ],
-
   "src/partials/worlds/create-modal.html": [
     {
       "kind": "epic",
@@ -21603,7 +21575,6 @@
       "source": ".plan/tickets/BUG-htmx-partials-403-after-csrf-hardening-configrequest-omits-x.md"
     }
   ],
-
   "src/partials/worlds/import-modal.html": [
     {
       "kind": "epic",
@@ -27308,7 +27279,6 @@
       "source": ".plan/tickets/TASK-nsfw-rating-enforcement.md"
     }
   ],
-
   "src/routes/views/character-panels-section.ts": [
     {
       "kind": "ticket",
@@ -31191,7 +31161,6 @@
       "source": "docs/frontend/chat/prompt-creation.md"
     }
   ],
-
   "src/story/game-master/decisions.ts": [
     {
       "kind": "ticket",
@@ -33592,7 +33561,6 @@
       "source": ".plan/tickets/TASK-world-item-frontend.md"
     }
   ],
-
   "src/views/worlds.html": [
     {
       "kind": "epic",
