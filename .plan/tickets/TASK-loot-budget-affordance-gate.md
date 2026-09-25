@@ -9,9 +9,13 @@
 **Parent epic:** `epic-research-agency-affordance.md`
 **Related:** `TASK-affordance-lookup-table` (upstream dependency), prior-batch `TASK-math-position-effect-columns` (encounter budget side), `src/services/actor-items.ts`, `src/characters/spec/enums.ts` (rarity), `epic-battle-action-systems.md`
 
+**Summary:**
+
 ## Goal
 
 When an encounter resolves, generated loot passes a **budget gate**: `drop_budget <= sum(rarity x quantity for items dropped)` (5e Sane Magical Prices × rechner-hub level bands) AND `loot_pickups x affordance_matrix <= party_capabilities` (uses `TASK-affordance-lookup-table`).
+
+**Context:**
 
 ## Why
 
@@ -19,7 +23,7 @@ When an encounter resolves, generated loot passes a **budget gate**: `drop_budge
 - Affordance gate prevents the LLM from dropping a `legendary` at L1 (party cannot use it) or a `magic_weapon` for a non-weapon-class party member.
 - Combines the prior math batch (encounter budget side) with this batch's affordance work (item side) into a single enforcement point.
 
-## Acceptance Criteria
+**Acceptance Criteria:**
 
 - [ ] Pure function: `enforceLootBudget(drop_table, encounter_budget, party_capabilities) -> { allowed: LootRow[], dropped: LootRow[], reason: string }`.
 - [ ] Rarity band matrix seeded: Common L1+, Uncommon L5+, Rare L9+, Very Rare L13+, Legendary L17+.
@@ -32,3 +36,6 @@ When an encounter resolves, generated loot passes a **budget gate**: `drop_budge
 - Player-driven loot negotiation (separate epic; `epic-battle-action-systems` may own).
 - Cross-genre economy scaling (5e baseline; Pathfinder/PbtA differ).
 - Dynamic pricing per world (config-driven for now; tune later).
+
+
+git issue: 5a3f199

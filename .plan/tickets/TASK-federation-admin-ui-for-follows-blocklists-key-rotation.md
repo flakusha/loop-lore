@@ -24,7 +24,7 @@ There is no admin UI today for federation peer management. The backend now expos
 - `epic-federation-swarm-sync.md` and `epic-mesh-federation-content-sharing.md` both require operator runtime controls that don't exist as UI.
 - The backend defederation ticket (`TASK-federation-defederation-admin-operations-peer-state-block-al`) provides the `/api/admin/federation/peers/:origin/federate`, `/defederate`, and `/audit` endpoints.
 - `TASK-federation-tls-peer-trust-custom-ca-pinning-and-optional-mtl` exposes the trust store; the UI must let operators edit the CA bundle / SPKI pin per peer.
-- Actor key rotation uses `TASK-crypto-activitypub-key-rotation-is-non-atomic-insert-failure` (BUG pending); the UI needs a "rotate key" button that POSTs to the rotation endpoint and re-publishes the public-key document.
+- Actor key rotation uses `BUG-crypto-activitypub-key-rotation-is-non-atomic-insert-failure` (BUG pending); the UI needs a "rotate key" button that POSTs to the rotation endpoint and re-publishes the public-key document.
 - Existing `/admin` shell already uses Alpine.js + htmx (see `src/views/admin/*`); federation panel slots in under `/admin/federation`.
 
 ## Direction
@@ -57,7 +57,7 @@ There is no admin UI today for federation peer management. The backend now expos
 - `TASK-federation-defederation-admin-operations-peer-state-block-al` — admin endpoints + audit table.
 - `TASK-federation-tls-peer-trust-custom-ca-pinning-and-optional-mtl` — trust-store edit surface.
 - `TASK-federation-interconnect-peer-config` — config section shape.
-- `TASK-crypto-activitypub-key-rotation-is-non-atomic-insert-failure` (BUG) — must be fixed before the "Rotate actor key" button ships.
+- `BUG-crypto-activitypub-key-rotation-is-non-atomic-insert-failure` (BUG) — must be fixed before the "Rotate actor key" button ships.
 - `src/views/admin/*` (existing Alpine + htmx admin shell).
 - `src/views/admin/_nav.html` (admin nav — register the new section).
 
@@ -66,4 +66,7 @@ There is no admin UI today for federation peer management. The backend now expos
 - Backend state machine (covered by the defederation ticket).
 - Trust-store semantics (covered by the TLS peer-trust ticket).
 - ActivityPub inbox moderation UI (separate ticket — `WIRE-federation-inbox-moderation`).
-- Cross-instance fan-out announcements of defederation (separate ticket — covered by `TASK-federation-cross-instance-defederation-announce`).
+- Cross-instance fan-out announcements of defederation (separate ticket — pending filing, see `epic-federation-swarm-sync` Work Items).
+
+
+git issue: 2ba3e95

@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 300 epics
+**Total:** 303 epics
 
 ## Summary
 
@@ -124,6 +124,9 @@
 | Draft — description pending (formerly in `chore-docs-reconcile`, worktree merged 2026-08-14)\ | Epic 26: Multi-Instance Reconciliation — Implementation Plan | medium | Medium | 1 | [epic-multi-instance-reconciliation.md](/.plan/epics/epic-multi-instance-reconciliation.md) |
 | Draft — description pending (formerly in `chore-docs-reconcile`, worktree merged 2026-08-14)\ | Epic 27: Data Integrity & ACID Guarantees — Implementation Plan | medium | Medium | 0 | [epic-data-integrity-acid.md](/.plan/epics/epic-data-integrity-acid.md) |
 | 🟡 In Progress (crafting DB layer + memory injection + chat infrastructure merged; Professions/Stations/Quality services + UI pending) | EPIC-036: Crafting, Memory & Chat Systems | High | Very High | 0 | [epic-crafting-professions.md](/.plan/epics/epic-crafting-professions.md) |
+| Draft | EPIC-RESEARCH-AGENCY-AFFORDANCE: Verb x Target x Context Affordance Layer | High | Medium | 6 | [epic-research-agency-affordance.md](/.plan/epics/epic-research-agency-affordance.md) |
+| Draft | EPIC-RESEARCH-AGENCY-DECISION: NPC Decision-Making Stack | High | Large | 5 | [epic-research-agency-decision.md](/.plan/epics/epic-research-agency-decision.md) |
+| Draft | EPIC-RESEARCH-AGENCY-QUALITY: Player Agency Quality Telemetry & Coordination | Medium | Medium | 4 | [epic-research-agency-quality.md](/.plan/epics/epic-research-agency-quality.md) |
 | 🟡 Code+tests+schema done (migration 035); UNWIRED — routes pending | Epic: Achievements | Medium | Medium | 13 | [epic-achievements.md](/.plan/epics/epic-achievements.md) |
 | ⬜ Not Started | Epic: Ambient, Music & Sound Effects | Medium | High | 14 | [epic-ambient-music-sfx.md](/.plan/epics/epic-ambient-music-sfx.md) |
 | Draft | Epic: AO NSFW Game Mechanics | High | Very High | 0 | [epic-nsfw-game-mechanics.md](/.plan/epics/epic-nsfw-game-mechanics.md) |
@@ -1390,6 +1393,33 @@ Long-horizon vision from the "Far Fetched" ideas bucket: position loop-lore as a
 - **File:** `.plan/epics/epic-crafting-professions.md`
 
 Multi-system epic combining:
+
+### EPIC-RESEARCH-AGENCY-AFFORDANCE: Verb x Target x Context Affordance Layer
+
+- **Status:** Draft
+- **Priority:** High
+- **Effort:** Medium
+- **Type:** Research epic (drives implementation tickets)
+- **Tags:** research, agency, affordance, parser, action
+- **File:** `.plan/epics/epic-research-agency-affordance.md`
+
+### EPIC-RESEARCH-AGENCY-DECISION: NPC Decision-Making Stack
+
+- **Status:** Draft
+- **Priority:** High
+- **Effort:** Large
+- **Type:** Research epic (drives implementation tickets)
+- **Tags:** research, agency, affordance, parser, action
+- **File:** `.plan/epics/epic-research-agency-decision.md`
+
+### EPIC-RESEARCH-AGENCY-QUALITY: Player Agency Quality Telemetry & Coordination
+
+- **Status:** Draft
+- **Priority:** Medium
+- **Effort:** Medium
+- **Type:** Research epic (drives implementation tickets)
+- **Tags:** research, agency, affordance, parser, action
+- **File:** `.plan/epics/epic-research-agency-quality.md`
 
 ### Epic: Achievements
 
