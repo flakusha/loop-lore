@@ -4495,6 +4495,54 @@
       "source": ".plan/tickets/TASK-scenario-system-authoring.md"
     }
   ],
+  "src/characters/service/actor-": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-actors-api-routes.md"
+    }
+  ],
+  "src/characters/service/actor-items.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-actors-child-tables-crud.md"
+    }
+  ],
+  "src/characters/service/actor-lore.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-actors-child-tables-crud.md"
+    }
+  ],
+  "src/characters/service/actor-memories.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-actors-child-tables-crud.md"
+    }
+  ],
+  "src/characters/service/actor-notes.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-actors-child-tables-crud.md"
+    }
+  ],
+  "src/characters/service/actor-version.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-actors-data-versioning.md"
+    }
+  ],
+  "src/characters/service/memory-lifecycle.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-actors-child-tables-crud.md"
+    }
+  ],
+  "src/characters/service/world-lore.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-actors-child-tables-crud.md"
+    }
+  ],
   "src/characters/services/avatar-service.test.ts": [
     {
       "kind": "ticket",
@@ -8097,7 +8145,6 @@
       "source": "docs/spec/integrations/llm-serving.md"
     }
   ],
-
   "src/config/schema/sd-provider.ts": [
     {
       "kind": "ticket",
@@ -11641,6 +11688,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-actors-data-versioning.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-asymmetric-key-pairs-followup.md"
     },
     {
@@ -12700,6 +12751,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-user-theming-system.md"
+    }
+  ],
+  "src/export/sillytavern-v2.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-actors-import-export.md"
     }
   ],
   "src/factions/politics.ts": [
@@ -19272,6 +19329,24 @@
       "source": ".plan/tickets/FEAT-background.md"
     }
   ],
+  "src/import/__tests__/roundtrip.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-actors-import-export.md"
+    }
+  ],
+  "src/import/sillytavern-v1.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-actors-import-export.md"
+    }
+  ],
+  "src/import/sillytavern-v2.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-actors-import-export.md"
+    }
+  ],
   "src/index.ts": [
     {
       "kind": "ticket",
@@ -23031,6 +23106,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-actors-api-routes.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-ask-type-fast-menu.md"
     },
     {
@@ -23052,6 +23131,12 @@
       "source": ".plan/tickets/BUG-fe-be-harmony-checker-blind-to-elysia-app-direct-routes-fact.md"
     }
   ],
+  "src/routes/actor-lore.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-actors-api-routes.md"
+    }
+  ],
   "src/routes/actor-memories.ts": [
     {
       "kind": "ticket",
@@ -23063,6 +23148,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-actors-api-routes.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-memory-history-search-bind-message-chain-reconstructable-con.md"
     }
   ],
@@ -23070,6 +23159,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-fe-be-harmony-checker-blind-to-elysia-app-direct-routes-fact.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-actors-api-routes.md"
     },
     {
       "kind": "spec",
@@ -23088,10 +23181,26 @@
       "source": ".plan/tickets/TASK-world-item-instance-npc.md"
     }
   ],
+  "src/routes/actors-export.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-actors-import-export.md"
+    }
+  ],
+  "src/routes/actors-import.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-actors-import-export.md"
+    }
+  ],
   "src/routes/actors.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-actors.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-actors-api-routes.md"
     }
   ],
   "src/routes/admin-nsfw.test.ts": [
@@ -27254,7 +27363,6 @@
       "source": ".plan/tickets/TASK-vn-qa-mode.md"
     }
   ],
-
   "src/routes/vn-generate/story.ts": [
     {
       "kind": "ticket",
@@ -27313,6 +27421,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/lore.md"
+    }
+  ],
+  "src/routes/world-lore.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-actors-api-routes.md"
     }
   ],
   "src/routes/world-timelines.ts": [
@@ -30755,7 +30869,6 @@
       "source": ".plan/tickets/TASK-swarm-supervisor.md"
     }
   ],
-
   "src/services/server-external-manager/start-comfy.ts": [
     {
       "kind": "ticket",
@@ -31550,6 +31663,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-character-world-setup.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-actors-child-tables-crud.md"
     },
     {
       "kind": "ticket",
@@ -32618,6 +32735,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/IDEA-chat-setup-templates.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-actors-api-routes.md"
     },
     {
       "kind": "ticket",
