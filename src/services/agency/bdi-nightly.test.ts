@@ -12,7 +12,7 @@ let db: Kysely<DB>;
 let raw: Database;
 
 beforeEach(async () => {
-  ({ db, raw, } = await createInMemoryDb(),);
+  ({ db, raw } = await createInMemoryDb());
 },);
 
 afterEach(() => { raw.close(); },);
