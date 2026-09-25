@@ -18,7 +18,7 @@ let db: Kysely<DB>;
 let raw: Database;
 
 beforeEach(async () => {
-  ({ db, raw, } = await createInMemoryDb(),);
+  ({ db, raw } = await createInMemoryDb());
   // Seed a user (FK parent of chats.created_by), chat, actor, and log row.
   // insertUsers returns void, so we provide an explicit id and reuse it
   // for the chat.created_by FK.

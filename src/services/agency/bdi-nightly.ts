@@ -193,12 +193,12 @@ export async function recordChatTurn(
   }
 
   const last = new Date(existing.last_chat_at,).getTime();
-  const elapsedMin = (now.getTime() - last,) / 60_000;
+  const elapsedMin = (now.getTime() - last) / 60_000;
   if (elapsedMin < existing.cooldown_minutes) {
     return {
       allowed: false,
       reason: "cooldown_active",
-      cooldownRemainingMs: (existing.cooldown_minutes - elapsedMin,) * 60_000,
+      cooldownRemainingMs: (existing.cooldown_minutes - elapsedMin) * 60_000,
     };
   }
   if (existing.consecutive_count >= existing.max_consecutive_chats && elapsedMin < existing.cooldown_minutes * 2) {

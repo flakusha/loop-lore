@@ -785,8 +785,7 @@ export async function insertWorldLoreEntries(
 
 /** Insert a world_members row. */
 export async function insertWorldMembers(db: Db, world_id: string, actor_id: string,): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
+  const id = crypto.randomUUID();
   await db.insertInto("world_members",).values({
     world_id,
     actor_id,
@@ -4008,8 +4007,7 @@ export async function insertMessageSearchTokens(
   token: string,
   scope: string,
 ): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
+  const id = crypto.randomUUID();
   await db.insertInto("message_search_tokens",).values({
     message_id,
     token,
