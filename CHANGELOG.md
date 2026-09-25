@@ -9,6 +9,7 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 
 ### Added
 
+- **Chat archival workflow** — `archive_retention_days` admin setting (default 90) with admin route, daily GC sweep (`src/gc/archive-expiration.ts`) registered on cron `0 3 * * *`, asset-cascade via new `asset_links.archived_at` column + migration `017_asset_links_archived_at.ts`, purge route `DELETE /api/chats/:id/purge`, archived-chats filter in list/get queries, soft-link/unlink asset helpers, and `chat.archived` / `chat.unarchived` / `chat.purged` plugin events.
 - **Assistant tooling (D3/P2-C)** — `/rewrite` and `/translate` (`/tl`) commands with style/language parsing, expanded command palette entries, multi-step creation wizard (edit → options → review), command button toolbar with GM-role filtering, ownership indicator badge on user-authored messages.
 - **Shared interaction ledger** — dice-backed game interactions now persist roll math, ability and relationship modifiers, successful/failed/blocked outcomes, and state changes in `interaction_logs`; social reference commands update canonical character relationships and feed recent-interaction prompt context.
 

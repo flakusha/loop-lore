@@ -2,21 +2,24 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, } from "elysia";
-import { archiveChat, unarchiveChat, } from "../../chat/service";
+import { archiveChat, hardDeleteChat, unarchiveChat, } from "../../chat/service";
 import { ChatIdParams, } from "../../validation/schemas";
 import {
   HttpStatus,
   jsonError,
+  jsonNoContent,
   jsonResponse,
   requireUserId,
 } from "../http-utils";
 import type { HandlerOpts, } from "./types";
 
 /**
- * Mount /api/chats/:id/archive and /api/chats/:id/unarchive on a parent
- * Elysia app. Both archive and unarchive reuse checkChatSettingsAccess
- * inside the service layer; the route is responsible only for translating
- * the discriminated result into HTTP semantics.
+ * Mount /api/chats/:id/archive, /api/chats/:id/unarchive, and
+ * /api/chats/:id/purge on a parent Elysia app. Archive / unarchive reuse
+ * checkChatSettingsAccess inside the service layer; purge delegates to
+ * hardDeleteChat which enforces the same settings-access guard before
+ * cascading. The route layer is responsible only for translating the
+ * discriminated result into HTTP semantics.
  * @param opts
  * @param prefix
  */
@@ -59,6 +62,25 @@ export function archiveRoutes(opts: HandlerOpts, prefix = "/api",) {
             return jsonError(result.message, status, result.code as never,);
           }
           return jsonResponse({ ok: true, chatId: result.chatId, },);
+        },
+        { params: ChatIdParams, },
+      )
+      .delete(
+        `${prefix}/chats/:id/purge`,
+        async (ctx: any,) => {
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") { return userId; }
+          const userRole = ctx.userRole as string | null;
+          const id = (ctx.params as { id: string }).id;
+
+          const result = await hardDeleteChat(database, id, userId, userRole,);
+          if ("code" in result) {
+            const status = result.code === "not_found"
+              ? HttpStatus.NotFound
+              : HttpStatus.Forbidden;
+            return jsonError(result.message, status, result.code as never,);
+          }
+          return jsonNoContent();
         },
         { params: ChatIdParams, },
       )

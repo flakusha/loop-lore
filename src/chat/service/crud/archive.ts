@@ -17,11 +17,70 @@
  */
 import type { Kysely, } from "kysely";
 import { PinnedState, } from "../../../db/enums";
+import { NotificationType, } from "../../../db/enums-core";
 import type { DB, } from "../../../db/schema";
+import { getLogger, } from "../../../logger";
+import { NotificationService, } from "../../../notifications/service/service";
 import { emitPluginEvent, } from "../../../plugins/event-bus";
 import { registry, } from "../../../plugins/registry";
 import { checkChatSettingsAccess, } from "../access";
 import type { ServiceError, } from "../types";
+
+/** Lifecycle notification kinds emitted from this module. The repo has
+ * no dedicated chat-lifecycle enum (migrations are out of scope), so the
+ * payload rides on `NotificationType.System` with a `data.kind` tag. */
+type LifecycleKind = "chat_archived" | "chat_restored" | "chat_purged";
+
+/**
+ * Fan a chat-lifecycle event out to every chat participant except the
+ * actor. NotificationService.create() already honours the user's
+ * `notifications.chat.lifecycle` opt-out (silently skips when System is
+ * disabled), so this helper only filters the actor.
+ * @param database
+ * @param chatId
+ * @param actorId
+ * @param kind
+ */
+async function notifyLifecycle(
+  database: Kysely<DB>,
+  chatId: string,
+  actorId: string,
+  kind: LifecycleKind,
+): Promise<void> {
+  try {
+    const rows = await database
+      .selectFrom("chat_participants",)
+      .select("actor_id",)
+      .where("chat_id", "=", chatId,)
+      .execute();
+    const svc = new NotificationService(database,);
+    const titleMap: Record<LifecycleKind, string> = {
+      chat_archived: "Chat archived",
+      chat_restored: "Chat restored",
+      chat_purged: "Chat permanently deleted",
+    };
+    for (const row of rows) {
+      if (row.actor_id === actorId) { continue; }
+      await svc.create({
+        userId: row.actor_id,
+        type: NotificationType.System,
+        title: titleMap[kind],
+        link: `/chat/${chatId}`,
+        data: { kind, chatId, actorId, },
+      },);
+    }
+  } catch (error: unknown) {
+    // Notifications are observational — a failure here must not roll back
+    // the archive / unarchive / purge call.
+    getLogger()
+      .child({ module: "chat-archive", },)
+      .warn("lifecycle notification fan-out failed", {
+        chatId,
+        kind,
+        error: error instanceof Error ? error.message : String(error,),
+      },);
+  }
+}
 
 /** */
 export type ArchiveChatResult = { ok: true; chatId: string } | ServiceError;
@@ -50,15 +109,30 @@ export async function archiveChat(
 
   // Only flip when the row is not already archived — keeps the trigger
   // minimal and avoids a redundant write.
+  const archiveTimestamp = new Date().toISOString();
   await database
     .updateTable("chats",)
-    .set({ is_pinned: PinnedState.Archived, updated_at: new Date().toISOString(), },)
+    .set({ is_pinned: PinnedState.Archived, updated_at: archiveTimestamp, },)
     .where("id", "=", chatId,)
     .where("is_pinned", "!=", PinnedState.Archived,)
     .execute();
 
+  // FEAT-chat-archive-asset-cascade: soft-link linked asset_links rows so
+  // views can hide archived assets without losing the row. Hard purge still
+  // removes them via deleteChat's cascade.
+  await database
+    .updateTable("asset_links",)
+    .set({ archived_at: archiveTimestamp, },)
+    .where("entity_type", "=", "chat",)
+    .where("entity_id", "=", chatId,)
+    .where("archived_at", "is", null,)
+    .execute();
+
   // FEAT-048: notify plugins of soft-archive.
   await emitPluginEvent(registry.getAllEventHandlers(), "chat.archived", { chatId, requesterId, },);
+
+  // FEAT-chat-archive-purge-notifications: fan out to chat participants.
+  await notifyLifecycle(database, chatId, requesterId, "chat_archived",);
 
   return { ok: true, chatId, };
 }
@@ -91,8 +165,20 @@ export async function unarchiveChat(
     .where("is_pinned", "=", PinnedState.Archived,)
     .execute();
 
+  // FEAT-chat-archive-asset-cascade: clear the soft-link stamp so linked
+  // assets become visible again.
+  await database
+    .updateTable("asset_links",)
+    .set({ archived_at: null, },)
+    .where("entity_type", "=", "chat",)
+    .where("entity_id", "=", chatId,)
+    .execute();
+
   // FEAT-048: notify plugins of unarchive.
   await emitPluginEvent(registry.getAllEventHandlers(), "chat.unarchived", { chatId, requesterId, },);
+
+  // FEAT-chat-archive-purge-notifications: fan out to chat participants.
+  await notifyLifecycle(database, chatId, requesterId, "chat_restored",);
 
   return { ok: true, chatId, };
 }
