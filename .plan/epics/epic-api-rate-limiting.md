@@ -101,6 +101,22 @@ app.use("*", (c, next,) => {
 - Parent hub: **API Governance** (`epic-api-governance.md`) — owns the shared layout, the `/api/rate-limit/status` endpoint, and governance REST surface.
 - Siblings: requires `epic-api-validation-guardrails.md` to land first; mutually independent with `epic-api-telemetry.md` and `epic-api-task-offloading.md` afterwards.
 
+## Existing Groundwork (verified 2026-09-25)
+
+- `src/middleware/rate-limit.ts` — in-memory sliding-window limiter (`createRateLimiter`, timestamp queues, `X-RateLimit-*` + `Retry-After` headers); off-by-one expiry regression fixed (`70472f7`); per-connection IP sourcing landed (`5353f07`); login-limiter singletons in use.
+- Remaining epic scope: token-bucket burst layer, pluggable store abstraction (Redis remains a high-throughput option; in-memory is the zero-dependency default), `/api/rate-limit/status` surface, tiered policy config, dashboard.
+
+## Linked Tickets
+
+| Ticket | Status | Scope |
+| ------ | ------ | ----- |
+| `TASK-rate-limiting-telemetry.md` | open | Governance umbrella for rate limiting + telemetry (issue `2e40125`) |
+| `TASK-rate-limit-coverage-expansion.md` | open | Extend limiter coverage to more routes (issue `4eb8964`) |
+| `TASK-register-username-race-and-rate-limiter-multi-instance-gap.md` | open | Multi-instance limiter gap (issue `76d9ab4`) |
+| `BUG-rate-limiter-collapses-to-global-bucket-getclientip-returns-` | done | Global-bucket regression (issue `ab71933`) |
+| `BUG-rate-limit-sliding-window-expiry-uses-cutoff-off-by-one-reta` | done | Sliding-window boundary fix (issue `70472f7`) |
+| `TASK-implement-per-connection-ip-sourcing-for-auth-rate-limiters` | done | Per-connection IP sourcing (issue `5353f07`) |
+
 ## Files
 
 - `src/api-governance/rate-limiting/limiter.ts` — Rate limiter

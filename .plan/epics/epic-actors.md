@@ -98,18 +98,12 @@ The `actors` table is the unified participant model — every entity that sends 
 
 ## Tickets
 
-- `TASK-actors.md` — implementation tasks
+| Work Item | Ticket | Git Issue |
+| --------- | ------ | --------- |
+| Data versioning (version table 0-4, backfill) | `TASK-actors-data-versioning.md` | 9164e41 |
+| Child tables CRUD (memories/notes/lore/items) | `TASK-actors-child-tables-crud.md` | c62dfff |
+| API routes (actors + child tables) | `TASK-actors-api-routes.md` | f86deef |
+| SillyTavern V1/V2 import/export | `TASK-actors-import-export.md` | 9fd4c89 |
 
-## Linked Tickets Status (2026-09-23)
-
-| Ticket | On-disk | Status | Notes |
-| ------ | ------- | ------ | ----- |
-| `TASK-actors.md` | yes | open | Single-line stub pointing at this epic; 11 spec-level `- [ ]` items in this epic's Tasks list have no concrete ticket breakdown. |
-
-**Outstanding work (2026-09-23):** The epic's Tasks list contains 11 discrete units of work (data versioning, actor table extensions, memories/notes/lore/items CRUD, SillyTavern V1/V2 import, export, API routes for actors and child tables). `TASK-actors.md` is a 1-line stub that does not break any of them down. Either:
-1. Expand `TASK-actors.md` into 11 fine-grained tickets (one per spec task line). Largest scope of any epic in this batch.
-2. Group them into 4 buckets (data versioning, child tables CRUD, import/export, API routes) → 4 tickets.
-3. Leave as-is and accept the 1-line stub; implementation team owns the breakdown.
-
-(Recommended) Option 2: 4 buckets, each with a self-contained acceptance test, tracks existing source layout (schema-core / schema-story / import / routes).
+4-bucket grouping per the 2026-09-23 recommendation (option 2); each bucket carries self-contained acceptance tests and tracks the existing source layout (schema-core / schema-story / import / routes). The former `TASK-actors.md` 1-line stub is superseded by these four.
 

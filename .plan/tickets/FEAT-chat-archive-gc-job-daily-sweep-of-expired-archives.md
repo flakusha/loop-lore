@@ -3,7 +3,7 @@
 
 # FEAT: Chat archive GC job — daily sweep of expired archives
 
-**Status:** ⬜ Not Started
+**Status:** done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-archival-workflow

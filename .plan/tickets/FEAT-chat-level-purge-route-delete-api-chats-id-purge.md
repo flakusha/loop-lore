@@ -3,7 +3,7 @@
 
 # FEAT: Chat-level purge route — DELETE /api/chats/:id/purge
 
-**Status:** ⬜ Not Started
+**Status:** done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-archival-workflow

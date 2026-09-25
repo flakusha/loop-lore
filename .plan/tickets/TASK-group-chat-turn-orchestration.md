@@ -12,7 +12,7 @@
 **Priority:** High
 **Effort:** Medium
 **Epic:** epic-group-chat
-**Related:** BUG-group-chat-talkativity-not-surfaced-in-prompt, BUG-group-chat-silence-pass-not-implemented, TASK-turn-send-gate, TASK-vn-choice-opt-in, TASK-narration-levels, TASK-turn-skip-event-and-persistence, TASK-turn-skip-gm-absence-contract, TASK-turn-skip-cascade-integration, TASK-turn-skip-gate-interlock, TASK-turn-skip-composer-ui
+**Related:** BUG-group-chat-talkativity-not-surfaced-in-prompt, BUG-group-chat-silence-pass-not-implemented, TASK-turn-send-gate, TASK-vn-choice-opt-in, TASK-narration-levels, TASK-turn-skip-event, TASK-turn-skip-gm-absence-contract, TASK-turn-skip-cascade, TASK-turn-skip-gate-interlock, TASK-turn-skip-composer-ui
 **git issue:** 6af81fc
 
 ## Summary
@@ -40,7 +40,7 @@ Remaining open scope (talkativity wiring, verbosity design) stays in Acceptance 
 - TASK-turn-send-gate — send gating on the turn flow
 - TASK-vn-choice-opt-in — choice opt-in intersecting turn flow
 - TASK-narration-levels — narration and verbosity design
-- TASK-turn-skip-event-and-persistence, TASK-turn-skip-gm-absence-contract, TASK-turn-skip-cascade-integration, TASK-turn-skip-gate-interlock, TASK-turn-skip-composer-ui — turn-skip siblings
+- TASK-turn-skip-event, TASK-turn-skip-gm-absence-contract, TASK-turn-skip-cascade, TASK-turn-skip-gate-interlock, TASK-turn-skip-composer-ui — turn-skip siblings
 
 ## Acceptance Criteria
 
