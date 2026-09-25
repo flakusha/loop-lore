@@ -10680,6 +10680,7 @@
   },
   "EPIC-RESEARCH-AGENCY-AFFORDANCE": {
     "hash": "60aa5a5",
+    "git_issue": "60aa5a5",
     "extid": "EPIC-RESEARCH-AGENCY-AFFORDANCE",
     "type": "EPIC",
     "title": "# EPIC-RESEARCH-AGENCY-AFFORDANCE: Verb x Target x Context Affordance Layer",
@@ -10687,12 +10688,12 @@
     "priority": "High",
     "epic": "",
     "tags": [],
-    "source": ".plan/epics/epic-research-agency-affordance.md",
-    "status": "draft",
-    "git_issue": "60aa5a5"
+    "source": ".plan/tickets/epic-research-agency-affordance.md",
+    "status": "draft"
   },
   "EPIC-RESEARCH-AGENCY-DECISION": {
     "hash": "d5b9924",
+    "git_issue": "d5b9924",
     "extid": "EPIC-RESEARCH-AGENCY-DECISION",
     "type": "EPIC",
     "title": "# EPIC-RESEARCH-AGENCY-DECISION: NPC Decision-Making Stack",
@@ -10700,12 +10701,12 @@
     "priority": "High",
     "epic": "",
     "tags": [],
-    "source": ".plan/epics/epic-research-agency-decision.md",
-    "status": "draft",
-    "git_issue": "d5b9924"
+    "source": ".plan/tickets/epic-research-agency-decision.md",
+    "status": "draft"
   },
   "EPIC-RESEARCH-AGENCY-QUALITY": {
     "hash": "1b8fbb0",
+    "git_issue": "1b8fbb0",
     "extid": "EPIC-RESEARCH-AGENCY-QUALITY",
     "type": "EPIC",
     "title": "# EPIC-RESEARCH-AGENCY-QUALITY: Player Agency Quality Telemetry & Coordination",
@@ -10713,9 +10714,8 @@
     "priority": "Medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/epics/epic-research-agency-quality.md",
-    "status": "draft",
-    "git_issue": "1b8fbb0"
+    "source": ".plan/tickets/epic-research-agency-quality.md",
+    "status": "draft"
   },
   "EPIC-RESOLUTION-SYSTEM": {
     "hash": "f10f117",
@@ -17558,6 +17558,7 @@
   },
   "TASK-AFFORDANCE-ACTION-PARSER": {
     "hash": "85f1b0a",
+    "git_issue": "85f1b0a",
     "extid": "TASK-AFFORDANCE-ACTION-PARSER",
     "type": "TASK",
     "title": "# TASK-affordance-action-parser: Two-stage parser (regex + constrained-LLM) for free-form chat -> typed Action",
@@ -17566,11 +17567,11 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-affordance-action-parser.md",
-    "status": "draft",
-    "git_issue": "85f1b0a"
+    "status": "draft"
   },
   "TASK-AFFORDANCE-LOOKUP-TABLE": {
     "hash": "9c23bd8",
+    "git_issue": "9c23bd8",
     "extid": "TASK-AFFORDANCE-LOOKUP-TABLE",
     "type": "TASK",
     "title": "# TASK-affordance-lookup-table: `(actor_caps, item_props, context_state) -> AffordanceResult`",
@@ -17579,11 +17580,11 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-affordance-lookup-table.md",
-    "status": "draft",
-    "git_issue": "9c23bd8"
+    "status": "draft"
   },
   "TASK-AGENCY-BDI-REFLECTION-CYCLE": {
     "hash": "cf7879a",
+    "git_issue": "cf7879a",
     "extid": "TASK-AGENCY-BDI-REFLECTION-CYCLE",
     "type": "TASK",
     "title": "# TASK-agency-bdi-reflection-cycle: BDI-lite nightly job + reflection checkpoints",
@@ -17592,11 +17593,11 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-agency-bdi-reflection-cycle.md",
-    "status": "draft",
-    "git_issue": "cf7879a"
+    "status": "draft"
   },
   "TASK-AGENCY-COORDINATION-PRIORITY": {
     "hash": "31b4d5d",
+    "git_issue": "31b4d5d",
     "extid": "TASK-AGENCY-COORDINATION-PRIORITY",
     "type": "TASK",
     "title": "# TASK-agency-coordination-priority: Autonomy scheduler defers on pending player intent",
@@ -17605,11 +17606,11 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-agency-coordination-priority.md",
-    "status": "draft",
-    "git_issue": "31b4d5d"
+    "status": "draft"
   },
   "TASK-AGENCY-QUALITY-METRICS": {
     "hash": "8e96514",
+    "git_issue": "8e96514",
     "extid": "TASK-AGENCY-QUALITY-METRICS",
     "type": "TASK",
     "title": "# TASK-agency-quality-metrics: agency_mode column + Murray/agency-play dimension counters",
@@ -17618,8 +17619,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-agency-quality-metrics.md",
-    "status": "draft",
-    "git_issue": "8e96514"
+    "status": "draft"
   },
   "TASK-AGENCY-STORY-POINTS": {
     "hash": "bdb93de",
@@ -17636,6 +17636,7 @@
   },
   "TASK-AGENCY-UTILITY-SCORER": {
     "hash": "3aef0c6",
+    "git_issue": "3aef0c6",
     "extid": "TASK-AGENCY-UTILITY-SCORER",
     "type": "TASK",
     "title": "# TASK-agency-utility-scorer: Wire personality traits as utility weights for NPC reaction step",
@@ -17644,8 +17645,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-agency-utility-scorer.md",
-    "status": "draft",
-    "git_issue": "3aef0c6"
+    "status": "draft"
   },
   "TASK-AGENT-MEMORY-SCORING": {
     "hash": "522d9a8",
@@ -19202,22 +19202,14 @@
     "git_issue": "4feae20"
   },
   "TASK-AUTONOMY-CONFIG-SURFACE": {
-    "hash": "d08a0f2",
+    "hash": "pending",
     "extid": "TASK-AUTONOMY-CONFIG-SURFACE",
     "type": "TASK",
     "title": "Autonomy Config Surface",
     "label": "task",
-    "priority": "high",
+    "priority": "P2 — Medium",
     "epic": "epic-actor-autonomy-story-drive",
-    "tags": [
-      "autonomy",
-      "config",
-      "presets",
-      "chat-settings",
-      "world-settings",
-      "ui",
-      "layering"
-    ],
+    "tags": [],
     "source": ".plan/tickets/TASK-autonomy-config-surface.md",
     "status": "open",
     "git_issue": "d08a0f2"
@@ -19236,22 +19228,14 @@
     "status": "open"
   },
   "TASK-AUTONOMY-RATE-GOVERNOR": {
-    "hash": "44dc2a8",
+    "hash": "pending",
     "extid": "TASK-AUTONOMY-RATE-GOVERNOR",
     "type": "TASK",
     "title": "Autonomy Rate Governor (per-agent/user budget caps)",
     "label": "task",
-    "priority": "high",
+    "priority": "P1 — High",
     "epic": "epic-actor-autonomy-story-drive",
-    "tags": [
-      "autonomy",
-      "rate-limiting",
-      "budget",
-      "governor",
-      "telemetry",
-      "per-agent",
-      "per-user"
-    ],
+    "tags": [],
     "source": ".plan/tickets/TASK-autonomy-rate-governor.md",
     "status": "open",
     "git_issue": "44dc2a8"
@@ -25370,6 +25354,7 @@
   },
   "TASK-FEDERATION-ADMIN-UI-FOR-FOLLOWS-BLOCKLISTS-KEY-ROTATION": {
     "hash": "2ba3e95",
+    "git_issue": "2ba3e95",
     "extid": "TASK-FEDERATION-ADMIN-UI-FOR-FOLLOWS-BLOCKLISTS-KEY-ROTATION",
     "type": "TASK",
     "title": "Federation admin UI for follows, blocklists, defederation, key rotation",
@@ -25386,8 +25371,7 @@
       "key-rotation"
     ],
     "source": ".plan/tickets/TASK-federation-admin-ui-for-follows-blocklists-key-rotation.md",
-    "status": "⬜ Not Started",
-    "git_issue": "2ba3e95"
+    "status": "⬜ Not Started"
   },
   "TASK-FEDERATION-CONTENT-CLEARANCE-GATE-PER-CHAT-CONSENT-BEFORE-ME": {
     "hash": "41f4f83",
@@ -28729,6 +28713,7 @@
   },
   "TASK-LOOT-BUDGET-AFFORDANCE-GATE": {
     "hash": "5a3f199",
+    "git_issue": "5a3f199",
     "extid": "TASK-LOOT-BUDGET-AFFORDANCE-GATE",
     "type": "TASK",
     "title": "# TASK-loot-budget-affordance-gate: Encounter loot reconciled against affordance lookup + rarity band",
@@ -28737,8 +28722,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-loot-budget-affordance-gate.md",
-    "status": "draft",
-    "git_issue": "5a3f199"
+    "status": "draft"
   },
   "TASK-LOOT-TABLE-CONSTRUCTOR-FRONTEND-EDITOR": {
     "hash": "7bb5e14",
@@ -35593,22 +35577,14 @@
     "status": "in_progress"
   },
   "TASK-STORY-AUTO-DRIVE-SCHEDULER": {
-    "hash": "7ebc1b9",
+    "hash": "pending",
     "extid": "TASK-STORY-AUTO-DRIVE-SCHEDULER",
     "type": "TASK",
     "title": "Story Auto-Drive Scheduler",
     "label": "task",
-    "priority": "high",
+    "priority": "P1 — High",
     "epic": "epic-actor-autonomy-story-drive",
-    "tags": [
-      "autonomy",
-      "scheduler",
-      "world-tick",
-      "dispatch",
-      "persistence",
-      "bdi",
-      "gm-beats"
-    ],
+    "tags": [],
     "source": ".plan/tickets/TASK-story-auto-drive-scheduler.md",
     "status": "open",
     "git_issue": "7ebc1b9"
@@ -36781,22 +36757,14 @@
     "git_issue": "ebedd22"
   },
   "TASK-TURN-SKIP-CASCADE": {
-    "hash": "ff44a6e",
+    "hash": "pending",
     "extid": "TASK-TURN-SKIP-CASCADE",
     "type": "TASK",
     "title": "turn_skip Cascade Integration",
     "label": "task",
-    "priority": "high",
+    "priority": "P1 — High",
     "epic": "epic-actor-turn-skip",
-    "tags": [
-      "turn-skip",
-      "cascade",
-      "slot-release",
-      "beat-budget",
-      "group-chat",
-      "solo-chat",
-      "filterPassedActors"
-    ],
+    "tags": [],
     "source": ".plan/tickets/TASK-turn-skip-cascade.md",
     "status": "open",
     "git_issue": "ff44a6e"
@@ -36828,22 +36796,14 @@
     "git_issue": "da36071"
   },
   "TASK-TURN-SKIP-EVENT": {
-    "hash": "906dfec",
+    "hash": "pending",
     "extid": "TASK-TURN-SKIP-EVENT",
     "type": "TASK",
     "title": "turn_skip Event + Persistence",
     "label": "task",
-    "priority": "high",
+    "priority": "P1 — High",
     "epic": "epic-actor-turn-skip",
-    "tags": [
-      "turn-skip",
-      "event",
-      "persistence",
-      "context-assembly",
-      "api",
-      "schema",
-      "cascade"
-    ],
+    "tags": [],
     "source": ".plan/tickets/TASK-turn-skip-event.md",
     "status": "open",
     "git_issue": "906dfec"
