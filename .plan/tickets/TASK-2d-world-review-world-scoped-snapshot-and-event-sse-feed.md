@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** Medium
+**Summary:** World-scoped snapshots endpoint + WorldEventType SSE feed.
+**Context:** epic-2d-sprite-world; activity-stream is per-user, no world scope.
+**Acceptance Criteria:** GET snapshots + events/stream per world.
 
 ## Summary
 
