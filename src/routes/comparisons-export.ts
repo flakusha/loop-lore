@@ -59,7 +59,10 @@ export function comparisonsExportRoutes(
         if (format === "markdown") {
           return new Response(renderRunMarkdown(report,), {
             status: 200,
-            headers: { "content-type": "text/markdown; charset=utf-8", },
+            headers: {
+              "content-type": "text/markdown; charset=utf-8",
+              "content-disposition": `attachment; filename="comparison-${id}.md"`,
+            },
           },);
         }
         return jsonResponse(report,);
