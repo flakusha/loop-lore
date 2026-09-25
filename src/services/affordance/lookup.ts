@@ -11,8 +11,8 @@
  * @module services/affordance/lookup
  */
 
-import { type Category, CATEGORIES, } from "./categories";
 import { type Verb, VERB_VALUES, } from "../../regex/action-parser";
+import { CATEGORIES, type Category, } from "./categories";
 export type { Verb, };
 
 /** Capabilities the actor has (race class, conditions, etc.). */
@@ -69,43 +69,43 @@ function deny(reason: string, ...missing: string[]): AffordanceResult {
  * guard function. Default allow for unmapped pairs (defensive coverage).
  * ponytail: full cross-product is checked at test time; this is the source of truth.
  */
-type Guard = (caps: ActorCaps, item: ItemProps, ctx: ContextState) => AffordanceResult;
+type Guard = (caps: ActorCaps, item: ItemProps, ctx: ContextState,) => AffordanceResult;
 
 const MATRIX: Record<Category, Partial<Record<Verb, Guard>>> = {
   weapon: {
-    equip: (caps, item,) => caps.canEquipWeapon && item.isEquippable ? ALLOW : deny("cannot equip weapon"),
-    unequip: (caps,) => caps.isAlive ? ALLOW : deny("not alive"),
-    attack: (caps, _item, ctx,) => ctx.hasLineOfEffect && caps.isAlive ? ALLOW : deny("no line of effect"),
-    defend: (caps,) => caps.isAlive ? ALLOW : deny("not alive"),
-    drop: (_caps, item,) => item.isDroppable ? ALLOW : deny("item is not droppable"),
-    give: (_caps, item,) => item.isGiveable ? ALLOW : deny("item is not giveable"),
+    equip: (caps, item,) => caps.canEquipWeapon && item.isEquippable ? ALLOW : deny("cannot equip weapon",),
+    unequip: (caps,) => caps.isAlive ? ALLOW : deny("not alive",),
+    attack: (caps, _item, ctx,) => ctx.hasLineOfEffect && caps.isAlive ? ALLOW : deny("no line of effect",),
+    defend: (caps,) => caps.isAlive ? ALLOW : deny("not alive",),
+    drop: (_caps, item,) => item.isDroppable ? ALLOW : deny("item is not droppable",),
+    give: (_caps, item,) => item.isGiveable ? ALLOW : deny("item is not giveable",),
     examine: () => ALLOW,
   },
   armor: {
-    equip: (caps, item,) => caps.canEquipArmor && item.isEquippable ? ALLOW : deny("cannot equip armor"),
-    unequip: (caps,) => caps.isAlive ? ALLOW : deny("not alive"),
+    equip: (caps, item,) => caps.canEquipArmor && item.isEquippable ? ALLOW : deny("cannot equip armor",),
+    unequip: (caps,) => caps.isAlive ? ALLOW : deny("not alive",),
     examine: () => ALLOW,
-    drop: (_caps, item,) => item.isDroppable ? ALLOW : deny("item is not droppable"),
+    drop: (_caps, item,) => item.isDroppable ? ALLOW : deny("item is not droppable",),
   },
   consumable: {
-    use: (caps, item,) => caps.canUseConsumables && item.isConsumable ? ALLOW : deny("cannot use consumables"),
-    give: (_caps, item,) => item.isGiveable ? ALLOW : deny("item is not giveable"),
-    drop: (_caps, item,) => item.isDroppable ? ALLOW : deny("item is not droppable"),
+    use: (caps, item,) => caps.canUseConsumables && item.isConsumable ? ALLOW : deny("cannot use consumables",),
+    give: (_caps, item,) => item.isGiveable ? ALLOW : deny("item is not giveable",),
+    drop: (_caps, item,) => item.isDroppable ? ALLOW : deny("item is not droppable",),
     examine: () => ALLOW,
   },
   key: {
     examine: () => ALLOW,
-    drop: (_caps, item,) => item.isDroppable ? ALLOW : deny("key items are not droppable"),
-    use: (_caps, item, ctx,) => item.isLockable && ctx.hasLineOfEffect ? ALLOW : deny("no lockable target in range"),
+    drop: (_caps, item,) => item.isDroppable ? ALLOW : deny("key items are not droppable",),
+    use: (_caps, item, ctx,) => item.isLockable && ctx.hasLineOfEffect ? ALLOW : deny("no lockable target in range",),
   },
   quest: {
     examine: () => ALLOW,
-    read: (caps, item,) => caps.canRead && item.isReadable ? ALLOW : deny("cannot read or not readable"),
+    read: (caps, item,) => caps.canRead && item.isReadable ? ALLOW : deny("cannot read or not readable",),
   },
   tool: {
-    use: (caps,) => caps.canUseConsumables ? ALLOW : deny("cannot use tools"),
-    equip: (_caps, item,) => item.isEquippable ? ALLOW : deny("tool is not equippable"),
-    unequip: (caps,) => caps.isAlive ? ALLOW : deny("not alive"),
+    use: (caps,) => caps.canUseConsumables ? ALLOW : deny("cannot use tools",),
+    equip: (_caps, item,) => item.isEquippable ? ALLOW : deny("tool is not equippable",),
+    unequip: (caps,) => caps.isAlive ? ALLOW : deny("not alive",),
     examine: () => ALLOW,
   },
 };
