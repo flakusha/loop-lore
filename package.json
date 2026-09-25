@@ -133,7 +133,7 @@
     "blessed": "^0.1.81",
     "blessed-contrib": "^4.11.0",
     "clean-css": "^5.3.3",
-    "dompurify": "^3.4.15",
+    "dompurify": "^3.4.16",
     "elysia": "^1.4.30",
     "giwt": "github:flakusha/giwt",
     "htmx-ext-alpine-morph": "^2.0.2",
