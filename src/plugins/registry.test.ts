@@ -60,6 +60,22 @@ describe("Plugin Registry", () => {
     });
   });
 
+  describe("origin capabilities", () => {
+    test("rejects registration without plugin provenance", () => {
+      expect(() => registry.addTools("unknown", [])).toThrow("unregistered plugin");
+    });
+
+    test("rejects community migrations while allowing local migrations", () => {
+      const migration = { version: 1, name: "test", up: async () => {} };
+      registry.register(makePlugin("community", "community"));
+      expect(() => registry.addMigrations("community", [migration])).toThrow("cannot register migrations");
+
+      registry.register(makePlugin("local", "local"));
+      registry.addMigrations("local", [migration]);
+      expect(registry.getAllMigrations()).toEqual([migration]);
+    });
+  });
+
   describe("routes", () => {
     test("addRoutes and getAllRoutes", () => {
       const route: RouteDefinition = {
@@ -170,6 +186,27 @@ describe("Plugin Registry", () => {
       expect(registry.isEnabled("p1")).toBe(true);
     });
 
+    test("re-registering preserves disabled state", () => {
+      registry.register(makePlugin("p1", "local"));
+      registry.setEnabled("p1", false);
+      registry.register(makePlugin("p1", "local"));
+
+      expect(registry.isEnabled("p1")).toBe(false);
+    });
+
+    test("disabled plugin tools and event handlers are omitted", () => {
+      registry.register(makePlugin("p1", "local"));
+      registry.addTools("p1", [
+        { name: "tool", description: "", parameters: {}, handler: async () => ({ content: "ok" }) },
+      ]);
+      registry.addEventHandlers("p1", [{ event: "test", handler: async () => {} }]);
+
+      registry.setEnabled("p1", false);
+
+      expect(registry.getAllTools()).toEqual([]);
+      expect(registry.getAllEventHandlers()).toEqual([]);
+    });
+
     test("listPluginStates returns all states", () => {
       registry.register(makePlugin("p1"));
       registry.register(makePlugin("p2"));
@@ -195,7 +232,7 @@ describe("Plugin Registry", () => {
   describe("migrations", () => {
     test("addMigrations and getAllMigrations", () => {
       const migration = { version: 1, name: "test", up: async () => {} };
-      registry.register(makePlugin("p1"));
+      registry.register(makePlugin("p1", "local"));
       registry.addMigrations("p1", [migration]);
 
       expect(registry.getAllMigrations()).toEqual([migration]);
