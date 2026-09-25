@@ -163,5 +163,46 @@ describe("shortcuts.ts", () => {
       expect(a,).toBe(0,);
       expect(b,).toBe(1,);
     });
+
+    it("a handler that throws does not prevent subsequent handlers from running", () => {
+      // Suppress the expected console.error from the catch block so test output stays clean.
+      const origError = console.error;
+      console.error = () => {};
+      try {
+        const order: string[] = [];
+        registerKeynavHandler("goto-chatlist", () => order.push("a",),);
+        registerKeynavHandler("goto-chatlist", () => {
+          throw new Error("boom",);
+        },);
+        registerKeynavHandler("goto-chatlist", () => order.push("c",),);
+        // Should not throw out of dispatch.
+        expect(() => dispatchKeynavActionToHandlers("goto-chatlist",)).not.toThrow();
+        // Handlers after the throwing one must still fire.
+        expect(order,).toEqual(["a", "c",],);
+      } finally {
+        console.error = origError;
+      }
+    });
+
+    it("re-entrant registration during dispatch fires in the same dispatch", () => {
+      let spawned = 0;
+      registerKeynavHandler("goto-chatlist", () => {
+        spawned += 1;
+        // Handler re-registers itself mid-iteration.
+        if (spawned === 1) {
+          registerKeynavHandler("goto-chatlist", () => {
+            spawned += 10;
+          },);
+        }
+      },);
+      dispatchKeynavActionToHandlers("goto-chatlist",);
+      expect(spawned,).toBe(11,);
+    });
   });
+
+  // The global keydown listener (document.addEventListener) cannot be
+  // exercised from bun:test — KeyboardEvent is not provided by bun's DOM
+  // (document exists but lacks event constructors). End-to-end coverage
+  // for the listener → handler wiring requires Playwright (or a jsdom-based
+  // runner). See TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che.
 });
