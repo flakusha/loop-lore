@@ -16582,7 +16582,7 @@
     "epic": "epic-actors",
     "tags": [],
     "source": ".plan/tickets/TASK-actors-data-versioning.md",
-    "status": "undefined"
+    "status": "done"
   },
   "TASK-ACTORS-IMPORT-EXPORT": {
     "hash": "9fd4c89",
@@ -16595,7 +16595,7 @@
     "epic": "epic-actors",
     "tags": [],
     "source": ".plan/tickets/TASK-actors-import-export.md",
-    "status": "undefined"
+    "status": "done"
   },
   "TASK-ADAPTIVE-AUDIO": {
     "hash": "39f84ea",
@@ -37348,7 +37348,7 @@
     "epic": "epic-actor-turn-skip",
     "tags": [],
     "source": ".plan/tickets/TASK-turn-skip-composer-ui.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "da36071"
   },
   "TASK-TURN-SKIP-EVENT": {
@@ -37374,7 +37374,7 @@
     "epic": "epic-actor-turn-skip",
     "tags": [],
     "source": ".plan/tickets/TASK-turn-skip-gate-interlock.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "f8aba03"
   },
   "TASK-TURN-SKIP-GM-ABSENCE-CONTRACT": {
