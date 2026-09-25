@@ -3,14 +3,14 @@
 
 # TASK-050: World ↔ Inventory Binding (Items-Domain Slice)
 
-**Status:** open
+**Status:** done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Items-scoped world binding — world_items scoped to world_id; cross-world IDOR prevention.
 **Context:** Items-slice of world engine; full world engine lives in epic-world-locations.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: open
+**Status**: done
 **Priority**: medium
 **Labels**: items, rpg, world, inventory
 **Epic**: epic-items
@@ -48,3 +48,7 @@
 - Cross-link `epic-world-locations.md` and `TASK-world-state-management.md` for the full world engine.
 - IDOR guard contract is already enforced in `getDefinition`; verify the same guarantee on `transfer`/`destroy` paths.
 - Multi-world transfers (move from world A to world B) are out of scope — items are world-scoped, not portable.
+
+## Resolution
+
+Implemented and verified in `e2ad08255` (`feat(items): add world-scoped instance evolution`) with regression coverage in `92dbcce83` (`test(items): cover hidden location filtering`). Item definitions, placement, transfer, destruction, NPC inventory, and loot persistence enforce world scope and ownership boundaries.
