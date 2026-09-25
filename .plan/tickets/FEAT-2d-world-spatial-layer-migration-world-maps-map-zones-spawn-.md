@@ -8,7 +8,7 @@
 **Effort:** Large
 **Epic:** epic-2d-sprite-world
 **Summary:** Forward migration adding world_maps, map_zones, spawn_points, actor_snapshots tables and space LocationKinds.
-**Context:** Epic epic-2d-sprite-world, spatial-layer slice; grounding in migration 013_locations_fractal (coord_x/y/z, actor_locations, path tree).
+**Context:** Epic epic-2d-sprite-world, spatial-layer slice; grounding in 001_init fractal tables (coord_x/y/z, actor_locations, path tree).
 **Acceptance Criteria:** Migration roundtrip green; db:sync-types + manifest regenerated; schemas:check green.
 
 ## Summary
