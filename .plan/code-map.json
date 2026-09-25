@@ -1889,6 +1889,13 @@
       "source": ".plan/tickets/TASK-assistant-tool-injection-guard.md"
     }
   ],
+
+  "src/assistant/image-provider.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/EPIC-2026-23.md"
+    }
+  ],
   "src/assistant/intent-detection.ts": [
     {
       "kind": "epic",
@@ -7258,6 +7265,10 @@
     }
   ],
   "src/components/chat/input-area.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/EPIC-2026-23.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-slash-command-typed-token-autocomplete.md"
@@ -14356,6 +14367,10 @@
   "src/frontend/alpine/chat/bootstrap.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/EPIC-2026-23.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-size-allow-waivers-characters-update-ts-and-chat-bootstrap-t.md"
     }
   ],
@@ -15231,6 +15246,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-slash-command-typed-token-autocomplete.md"
+    }
+  ],
+
+  "src/frontend/alpine/slash-autocomplete.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/EPIC-2026-23.md"
     }
   ],
   "src/frontend/alpine/store-schema.ts": [
@@ -18599,6 +18621,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-generation-control-plane-routes-lack-authorization.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/EPIC-2026-23.md"
     },
     {
       "kind": "ticket",
