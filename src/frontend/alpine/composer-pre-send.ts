@@ -29,6 +29,7 @@ import {
   type ComposerPreSendDeps,
   type ComposerPreSendState,
   computeSendBlocked,
+  HARD_GATE_REASONS,
   type PreSendValidation,
   type SendBlockedReason,
   sendBlockedReasonText,
@@ -66,6 +67,7 @@ export function createComposerPreSend(deps: ComposerPreSendDeps = {},): Composer
     _draftTtlMs: DRAFT_TTL_MS,
     _sendBlockedReason: null,
     _sendBlockedHint: "",
+    _turnSkipSuggested: false,
     _showComposerPreview: false,
     _streamResponses: readStreamPreference(storage, null,),
     restoreDraft(chatId: string,): string | null {
@@ -113,6 +115,9 @@ export function createComposerPreSend(deps: ComposerPreSendDeps = {},): Composer
       const reason = computeSendBlocked(inputs,);
       (this as ComposerPreSendState)._sendBlockedReason = reason;
       (this as ComposerPreSendState)._sendBlockedHint = reason === null ? "" : sendBlockedReasonText(reason,);
+      // Escape-hatch affordance: hard gates point the composer at the
+      // skip control (epic-actor-turn-skip AC).
+      (this as ComposerPreSendState)._turnSkipSuggested = reason !== null && HARD_GATE_REASONS[reason] === true;
       return reason;
     },
     validateDraft(text, participants, pendingAssetIds,) {
