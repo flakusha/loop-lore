@@ -3,7 +3,7 @@
 
 # FEAT: Admin Analytics Dashboard
 
-**Status:** ✅ Done (duplicate — remainder extracted, 2026-09-19)
+**Status:** done
 **Priority:** high
 **Effort:** Large
 **Summary:** Admin Analytics Dashboard
