@@ -8,7 +8,7 @@
 //   POST   /api/v1/actors/:actorId/emotion-avatars
 //   GET    /api/v1/actors/:actorId/emotion-avatars/jobs/:jobId
 //   POST   /api/v1/actors/:actorId/emotion-avatars/jobs/:jobId/cancel
-// Pairs with `src/components/character/emotion-avatars-panel.html`.
+// Pairs with `src/components/chat/emotion-avatars-panel.html`.
 import { apiFetch, } from "./htmx";
 import { t, } from "./i18n";
 import { jsonBody, } from "./json";

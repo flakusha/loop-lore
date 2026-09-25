@@ -70,3 +70,10 @@ Med — UI complexity, re-auth flow, destructive action safeguards.
 ## Linked Epics
 
 - `epic-crypto.md`
+
+
+## Current implementation
+
+- `src/frontend/alpine/key-management.ts` — Alpine key-management state and API calls.
+- `src/components/key-management.html` — standalone template; the live settings tab is currently inline in `src/views/settings.html`.
+- `src/views/settings.html` — mounted keys tab.

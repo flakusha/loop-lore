@@ -23,14 +23,27 @@ const FANTASY_RPG_REQUIREMENTS: BundleCharacterRequirements = {
 type FetchCall = { url: string; init?: RequestInit; method: string };
 type FetchResponder = (call: FetchCall,) => Promise<Response>;
 
-let calls: FetchCall[] = [];
-let responder: FetchResponder = () => Promise.resolve(new Response("{}", { status: 200, },),);
+type FetchHarness = {
+  calls: FetchCall[];
+  fetcher: (url: string, init?: RequestInit,) => Promise<Response>;
+  setResponder: (responder: FetchResponder,) => void;
+};
 
-const makeFetcher = (): (url: string, init?: RequestInit,) => Promise<Response> => {
-  return (url: string, init?: RequestInit,) => {
-    const method = init?.method ?? "GET";
-    calls.push({ url, method, init, },);
-    return responder({ url, method, init, },);
+const makeFetcher = (
+  initialResponder: FetchResponder = () => Promise.resolve(new Response("{}", { status: 200, },),),
+): FetchHarness => {
+  const calls: FetchCall[] = [];
+  let responder = initialResponder;
+  return {
+    calls,
+    fetcher: (url: string, init?: RequestInit,) => {
+      const method = init?.method ?? "GET";
+      calls.push({ url, method, init, },);
+      return responder({ url, method, init, },);
+    },
+    setResponder: (next: FetchResponder,) => {
+      responder = next;
+    },
   };
 };
 
@@ -112,8 +125,7 @@ describe("checkBundle", () => {
 
 describe("characterExtensionEditorFactory", () => {
   test("factory registers globally and seeds empty state", async () => {
-    calls = [];
-    const fetcher = makeFetcher();
+    const { calls, fetcher, } = makeFetcher();
     const state = characterExtensionEditorFactory("actor-aria", FANTASY_RPG_REQUIREMENTS, fetcher,);
     await awaitLoad(state,);
     expect(typeof (globalThis as Record<string, unknown>).characterExtensionEditorFactory,).toBe("function",);
@@ -122,14 +134,13 @@ describe("characterExtensionEditorFactory", () => {
   });
 
   test("load() fetches settings, hydrates draft, runs validation", async () => {
-    calls = [];
+    const { calls, fetcher, setResponder, } = makeFetcher();
     const seed: CharacterExtensionsPayload = {
       plugin_bundle: "fantasy-rpg",
       abilities: { strength: 12, },
       inventory: [{ id: "x", name: "x", type: "weapon", description: "y", quantity: 1, equipped: false, },],
     };
-    const fetcher = makeFetcher();
-    responder = () => settingsResponse(seed,);
+    setResponder(() => settingsResponse(seed,));
 
     const state = characterExtensionEditorFactory("actor-aria", FANTASY_RPG_REQUIREMENTS, fetcher,);
     await awaitLoad(state,);
@@ -142,12 +153,11 @@ describe("characterExtensionEditorFactory", () => {
   });
 
   test("save() PUTs serialized extensions when validation passes", async () => {
-    calls = [];
-    const fetcher = makeFetcher();
-    responder = (call,) => {
+    const { calls, fetcher, setResponder, } = makeFetcher();
+    setResponder((call,) => {
       if (call.method === "GET") { return settingsResponse({},); }
       return Promise.resolve(new Response("{}", { status: 200, },),);
-    };
+    },);
 
     const state = characterExtensionEditorFactory("actor-aria", FANTASY_RPG_REQUIREMENTS, fetcher,);
     await awaitLoad(state,);
@@ -170,9 +180,8 @@ describe("characterExtensionEditorFactory", () => {
   });
 
   test("save() aborts when validation fails (no PUT)", async () => {
-    calls = [];
-    const fetcher = makeFetcher();
-    responder = () => settingsResponse({},);
+    const { calls, fetcher, setResponder, } = makeFetcher();
+    setResponder(() => settingsResponse({},));
 
     const state = characterExtensionEditorFactory("actor-aria", FANTASY_RPG_REQUIREMENTS, fetcher,);
     await awaitLoad(state,);
@@ -186,13 +195,12 @@ describe("characterExtensionEditorFactory", () => {
   });
 
   test("reset() restores draft from current (last-fetched)", async () => {
-    calls = [];
+    const { calls, fetcher, setResponder, } = makeFetcher();
     const seed: CharacterExtensionsPayload = {
       abilities: { strength: 9, },
       inventory: [{ id: "x", name: "x", type: "weapon", description: "y", quantity: 1, equipped: false, },],
     };
-    const fetcher = makeFetcher();
-    responder = () => settingsResponse(seed,);
+    setResponder(() => settingsResponse(seed,));
 
     const state = characterExtensionEditorFactory("actor-aria", undefined, fetcher,);
     await awaitLoad(state,);
@@ -203,9 +211,8 @@ describe("characterExtensionEditorFactory", () => {
   });
 
   test("load() surfaces a non-OK status as error", async () => {
-    calls = [];
-    const fetcher = makeFetcher();
-    responder = () => Promise.resolve(new Response("nope", { status: 500, },),);
+    const { calls, fetcher, setResponder, } = makeFetcher();
+    setResponder(() => Promise.resolve(new Response("nope", { status: 500, },),));
 
     const state = characterExtensionEditorFactory("actor-aria", undefined, fetcher,);
     await awaitLoad(state,);
@@ -214,12 +221,11 @@ describe("characterExtensionEditorFactory", () => {
   });
 
   test("save() surfaces a non-OK status as error", async () => {
-    calls = [];
-    const fetcher = makeFetcher();
-    responder = (call,) => {
+    const { calls, fetcher, setResponder, } = makeFetcher();
+    setResponder((call,) => {
       if (call.method === "GET") { return settingsResponse({},); }
       return Promise.resolve(new Response("conflict", { status: 409, },),);
-    };
+    },);
 
     const state = characterExtensionEditorFactory("actor-aria", undefined, fetcher,);
     await awaitLoad(state,);

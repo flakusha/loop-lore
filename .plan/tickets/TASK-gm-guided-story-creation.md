@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done (2026-08-14) — UI + persistence (`feature/gm-guided-story-ui`) + orchestrator consumption (`4b0dd146` threads `gmGuidance` into `GameMasterService`; tested in `game-master.test.ts`)
+**Status:** done
 **Priority:** High
 **Effort:** High
 **Epic:** epic-assistant-gm-flows
@@ -130,27 +130,29 @@ export interface GroupChatParticipant {
 - **docs/frontend/chat/assistant.md** — Assistant as GM; the user-GM variant complements the assistant-GM variant
 - **docs/spec/assistant-commands.md** — Assistant commands; `/guide` is a new command prefix
 
-## Tasks
+## Implementation status
 
-- [ ] Extend `GmConfig` type with story-mode fields in `chat-types.ts`
-- [ ] Extend participant types to include `"gm"` role in `chat-types.ts`
-- [ ] Add `/guide` command button to `command-buttons.ts`
-- [ ] Add GM guidance panel to `chat-settings.ts`
-- [ ] Wire GM turn-order control into group chat flow in `chat.ts`
-- [ ] Document GM-guided story variant in `group-chat.md` spec
-- [ ] Write TypeScript integration tests
+- [x] `GmConfig` and participant types include story-mode and GM roles.
+- [x] GM command buttons and the guidance panel expose `/guide` and `/scene` actions.
+- [x] Guidance persists through `PUT /api/v1/chats/:id/gm-guidance`.
+- [x] `GameMasterService` consumes `gmGuidance`, including `turnPriority`.
+- [x] GM UI and state logic have TypeScript tests.
 
-## Files to Create/Modify
+## Current files
 
-| File                                     | Action                                  |
-| ---------------------------------------- | --------------------------------------- |
-| `src/frontend/alpine/chat-types.ts`      | Extend `GmConfig` and participant types |
-| `src/frontend/alpine/command-buttons.ts` | Add `/guide` button and handler         |
-| `src/frontend/alpine/chat-settings.ts`   | Add GM guidance panel component         |
-| `src/frontend/alpine/chat.ts`            | Wire GM turn-order control              |
-| `docs/frontend/chat/group-chat.md`       | Document GM-guided story variant        |
+| File | Role |
+| --- | --- |
+| `src/frontend/alpine/chat-types/gm.ts` | `GmConfig`, `GmGuidance`, and `GmParticipant` types |
+| `src/frontend/alpine/command-buttons.ts` | GM `guide` and `scene` command buttons |
+| `src/frontend/alpine/gm-guidance.ts` | Alpine state and persistence calls |
+| `src/components/chat/_gm-guidance-body.html` | Shared guidance form body |
+| `src/components/chat/gm-guidance-panel.html` | Wrapper mounted by the GM panel |
+| `src/chat/service/crud/gm-guidance.ts` | Runtime guidance update service |
+| `src/story/game-master/decisions.ts` | Guidance and turn-priority consumption |
+| `docs/frontend/chat/group-chat.md` | GM-guided story documentation |
 
 ## Risk
+
 
 Medium — GM-guided story creation changes the chat UX in group-chat mode. The existing group-chat infrastructure (participants, turn order, message tree) provides a solid foundation, but the GM-control-as-participant model needs careful UX design to avoid confusion between "user-GM" and "assistant-GM" roles.
 

@@ -150,3 +150,9 @@ if services change their embed format.
 - **User-controlled**: Links can be removed by users at any time
 - **Service-dependent**: Embed availability depends on external service uptime
 - **No autoplay**: Always requires user interaction to play (browser policy)
+
+
+## Current implementation
+
+- `src/components/chat/message-list.html` — mounted `music_link` message rendering.
+- `src/frontend/alpine/chat/music-embed.ts` — embed URL sanitization and player rendering.

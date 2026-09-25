@@ -25,6 +25,12 @@ Already implemented on dev — verified 2026-09-19 docs-gap reconcile audit (epi
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+
+## Current implementation
+
+- `src/components/chat/assistant-panel.html` — assistant command palette and tool-call history.
+- `src/components/chat/gm-guidance-panel.html` — shared GM guidance wrapper.

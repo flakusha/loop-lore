@@ -21,6 +21,13 @@ const ROOT = path.resolve(import.meta.dir, "..",);
 const SRC = path.join(ROOT, "src",);
 const TICKETS = path.join(ROOT, ".plan", "tickets",);
 const EPICS = path.join(ROOT, ".plan", "epics",);
+const CODE_MAP = path.join(ROOT, ".plan", "code-map.json",);
+const FRONTEND_DIRS = ["src/frontend", "src/components", "src/views", "src/partials",];
+const GENERIC_FRONTEND_FILES = new Set([
+  "src/components/empty-state.html",
+  "src/components/header.html",
+  "src/components/load-more.html",
+],);
 
 // epic slug -> { dirs: paths under src to check, kw: grep keywords in src }
 const MAP: Record<string, { dirs: string[]; kw: string[] }> = {
@@ -62,6 +69,30 @@ function walk(dir: string,): string[] {
 }
 const allSrc = walk(SRC,);
 
+function unplannedFrontendFiles(): string[] {
+  if (!existsSync(CODE_MAP,)) { return []; }
+  const codeMap: Record<string, unknown> = JSON.parse(readFileSync(CODE_MAP, "utf8",),);
+  const ownerKeys = Object.keys(codeMap,);
+  const files: string[] = [];
+  for (const dir of FRONTEND_DIRS) { files.push(...walk(path.join(ROOT, dir,),),); }
+  const unplanned: string[] = [];
+  for (const file of files) {
+    const relative = path.relative(ROOT, file,);
+    const parts = relative.split(".",);
+    const ext = parts[parts.length - 1];
+    const owned = ownerKeys.some((owner,) => relative === owner || relative.startsWith(`${owner}/`,));
+    if (
+      (ext === "ts" || ext === "html") &&
+      !parts.includes("test",) &&
+      !GENERIC_FRONTEND_FILES.has(relative,) &&
+      !owned
+    ) {
+      unplanned.push(relative,);
+    }
+  }
+  return unplanned.sort();
+}
+
 function statusOf(epic: string,): string {
   const f = path.join(EPICS, `${epic}.md`,);
   if (!existsSync(f,)) { return "NO-EPIC-FILE"; }
@@ -90,6 +121,7 @@ function ticketCount(epic: string,): number {
 console.log("=== Epic coverage check (advisory) ===",);
 const stale: string[] = [];
 const gaps: string[] = [];
+const unplanned = unplannedFrontendFiles();
 for (const [epic, cfg,] of Object.entries(MAP,)) {
   const status = statusOf(epic,);
   const dirsPresent = cfg.dirs.filter((d,) => existsSync(path.join(SRC, d,),)).length;
@@ -110,6 +142,12 @@ if (gaps.length) {
   console.log(`\n- GENUINE GAPS (no code, no ticket) - ${gaps.length}:`,);
   for (const g of gaps) { console.log(`  - ${g}`,); }
 }
-if (!stale.length && !gaps.length) { console.log("OK: No stale or un-signified frontend epics detected.",); }
+if (unplanned.length) {
+  console.log(`\nwarn: UNPLANNED FRONTEND FILES (no exact .plan/code-map.json owner) - ${unplanned.length}:`,);
+  for (const file of unplanned) { console.log(`  - ${file}`,); }
+}
+if (!stale.length && !gaps.length && !unplanned.length) {
+  console.log("OK: No stale or un-signified frontend epics detected.",);
+}
 console.log("\nAdvisory only - not blocking.",);
 process.exit(0,);
