@@ -19,6 +19,26 @@ export const PlayerAchievementStatus = {
 /** */
 export type PlayerAchievementStatus = (typeof PlayerAchievementStatus)[keyof typeof PlayerAchievementStatus];
 
+export const AchievementCategory = {
+  Combat: "combat",
+  Social: "social",
+  Exploration: "exploration",
+  Crafting: "crafting",
+  Story: "story",
+  Meta: "meta",
+} as const;
+/** */
+export type AchievementCategory = (typeof AchievementCategory)[keyof typeof AchievementCategory];
+
+export const AchievementTier = {
+  Bronze: "bronze",
+  Silver: "silver",
+  Gold: "gold",
+  Platinum: "platinum",
+} as const;
+/** */
+export type AchievementTier = (typeof AchievementTier)[keyof typeof AchievementTier];
+
 // ── Playthroughs ──────────────────────────────────────────
 export const PlaythroughStatus = {
   Active: "active",
