@@ -1,22 +1,18 @@
-<!-- SPDX-License-Identifier: Apache-2.0 -->
-<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 giwt Contributors -->
 
 # TASK: Gate shadow_notes status-x-visibility composite
 
-**Status:** open
+**Status:** ⬜ Not Started
 **Priority:** medium
-**Effort:** Small (composite validator + unit test)
-**Summary:** `shadow_notes` `status` (player reveal) × `visibility` (LLM gate, migration `002`) need a `CompositeValidator` mirroring `messagesStatusVisibility` (`src/db/enums-core/messages.ts:88`). `author_type` stays an orthogonal plain enum. Unit test. No column changes.
-**Context:** DB schema-gate audit (2026-09-25, db-migration-fixes session). The two columns interact (reveal state × LLM visibility) but are validated independently today; the composite mirrors the established messages pattern.
+**Effort:** Medium
 
-**Acceptance Criteria:**
-- [ ] Composite validator for status × visibility mirroring `messagesStatusVisibility` structure.
-- [ ] `author_type` remains plain enum (not folded into the composite).
-- [ ] Unit test covers valid/invalid combinations.
-- [ ] `bun run check` green.
+## Summary
 
-**Tags:** db, shadow-notes, validator, composite
-**Related:** src/db/enums-core/messages.ts, src/db migration 002
+shadow_notes status (player reveal) x visibility (LLM gate, 002) need CompositeValidator mirroring messagesStatusVisibility (src/db/enums-core/messages.ts:88). author_type stays orthogonal plain enum. Unit test. No column changes.
 
+## Acceptance Criteria
 
-git issue: dea8a70
+- [ ] Implementation complete
+- [ ] Tests passing
+- [ ] Documentation updated
