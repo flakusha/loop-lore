@@ -319,4 +319,15 @@ describe("ItemsService world state and item evolution", () => {
     expect((await svc.getUniqueItem(defId, worldId,))?.item_id,).toBe(defId,);
     expect(await svc.getUniqueItem(uid(), worldId,),).toBeNull();
   });
+
+  test("filters hidden items at a location unless requested", async () => {
+    const svc = new ItemsService(db,);
+    const visibleId = await svc.placeInLocation(itemId, locationB, worldId, 1, false,);
+    const hiddenId = await svc.placeInLocation(itemId, locationB, worldId, 1, true,);
+    const visible = await svc.getAtLocation(locationB, worldId,);
+    expect(visible.some((row,) => row.world_item_id === visibleId),).toBe(true,);
+    expect(visible.some((row,) => row.world_item_id === hiddenId),).toBe(false,);
+    const all = await svc.getAtLocation(locationB, worldId, true,);
+    expect(all.some((row,) => row.world_item_id === hiddenId),).toBe(true,);
+  });
 });
