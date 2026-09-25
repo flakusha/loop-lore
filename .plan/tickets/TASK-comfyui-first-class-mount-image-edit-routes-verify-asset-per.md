@@ -1,7 +1,7 @@
 <!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
 <!-- SPDX-FileCopyrightText: 2026 giwt Contributors -->
 
-# TASK: ComfyUI first-class: mount image-edit routes + verify asset persistence
+# TASK: ComfyUI first-class: image-edit route authz + asset persistence pin
 
 **Status:** ⬜ Not Started
 **Priority:** high
@@ -9,23 +9,21 @@
 **Epic:** epic-comfyui-plugin
 **Tags:** comfyui, routes
 
-**Summary:** Mount `/api/image-edit/*` in the Elysia app and pin the execute-then-fetch persistence invariant with a roundtrip regression test.
+**Summary:** `handleRun` takes a bare `Request` with no auth (IDOR write via foreign `chatId`); fix to `handleImageGeneration` parity, correct stale `/api/*` doc comments to `/api/v1/*`, pin persistence with roundtrip + 401/403 tests.
 
-**Context:**
-
-Two surfaces, two states (verified this session). Path A (production, `src/generation/image-engine/comfyui.ts` → `runWorkflow` → `downloadImage` → `createAsset`/`linkAsset`) persists correctly — this is the live emotion-avatar path. Path B (`src/image-edit/`): routes defined in `src/image-edit/routes.ts` (`/api/image-edit/run|templates|nodes|capabilities|health`) but zero imports/mounts outside `src/image-edit/` — dead surface. Good news on the epic's 'dangling links' gap: `ComfyUIEditProvider.execute` (src/image-edit/providers/comfyui-provider.ts:153-197) DOES download + `createAsset` + `linkAsset` (chat/message) and returns real `/api/assets/{id}/raw` URLs — the epic text is stale, this task re-verifies and pins it.
+**Context:** CORRECTION 2026-09-25: Path B IS mounted at `/api/v1/image-edit/*` via the v1 content barrel (`content-surface.ts:44`), consumed by the Elysia app (`elysia-app.ts:206`). The earlier 'zero mounts' claim was wrong (grep excluded the importer). Real Path B gaps: (a) `handleRun` (`routes.ts:61`) takes a bare `Request` with NO `userId`/`checkChatAccess` — compare `handleImageGeneration` (`image-gen-route.ts:55-70`, 401 + chat ownership gate); any caller can attach generated assets to a foreign chat via `chatId`/`messageId` (IDOR write). (b) Doc comments say `/api/image-edit/*`, served prefix is `/api/v1/*` — stale. `ComfyUIEditProvider.execute` (`comfyui-provider.ts:153-197`) DOES download + `createAsset`/`linkAsset` — persistence holds, pin it.
 
 ## Implementation
 
-1. Mount `src/image-edit/routes.ts` in the Elysia app next to sibling route mounts; authz consistent with `/api/generation/*` (same caller shape — verify against image-gen-route guards, don't invent new policy).
-2. Regression test: `execute()` → `GET /api/assets/{id}/raw` returns the bytes (pins the anti-dangling invariant; closes the stale epic gap entry).
-3. Route smoke tests: `templates` lists builtinRegistry, `nodes` proxies `/object_info` discovery, `health` reflects backend reachability.
-4. Update `epic-comfyui-plugin.md` status block: strike the dangling-links gap, record routes mounted.
+1. Authz `handleRun` like `handleImageGeneration`: require `userId` (401 otherwise), `checkChatAccess` when `chatId` present (same `forbiddenResponse`), `getOwnedTemplate`-style scoping if templates gain owners. Thread the caller through `imageEditRoutes` factory (currently `_opts: { database }` — needs `userId`/`userRole` like the generation controller at `controller.ts:121`).
+2. Fix stale doc comments: `/api/image-edit/*` → `/api/v1/image-edit/*` (served prefix via content-surface barrel).
+3. Regression tests: (a) execute-then-fetch roundtrip pins persistence; (b) unauthenticated `run` → 401; (c) cross-chat `chatId` → 403 (IDOR write closed).
+4. Update `epic-comfyui-plugin.md`: record routes mounted (they are), replace mount gap with authz gap.
 
 **Acceptance Criteria:**
 
-- [ ] `/api/image-edit/*` reachable with sibling-consistent authz
+- [ ] `POST /api/v1/image-edit/run` requires auth; foreign chatId rejected (IDOR write closed)
 - [ ] execute-then-fetch roundtrip test green (no dangling links)
-- [ ] Route smoke tests green
-- [ ] Epic status block updated
+- [ ] Route smoke tests green (`templates` lists registry, `nodes` proxies `/object_info`, `health` reflects backend)
+- [ ] Doc comments say `/api/v1/image-edit/*`
 - [ ] Documentation updated

@@ -1453,6 +1453,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-third-party-api-integration.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-image-backends-x-assistant-image-command-backend-routing-fai.md"
     }
   ],
   "src/assistant/commands/impersonate.ts": [
@@ -16059,6 +16063,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-image-backends-x-gallery-provenance-filter-backend-attributi.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-search-service-unified.md"
     },
     {
@@ -18187,10 +18195,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-comfyui-first-class-mount-image-edit-routes-verify-asset-per.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-comfyui-first-class-un-defer-vn-dynamic-image-generation-ont.md"
     }
   ],
@@ -19236,10 +19240,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-comfyui-plugin.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-comfyui-first-class-mount-image-edit-routes-verify-asset-per.md"
     }
   ],
   "src/image-edit/routes.ts": [
@@ -19250,10 +19250,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-creative-studio-workflow-gallery-edit.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-comfyui-first-class-mount-image-edit-routes-verify-asset-per.md"
     }
   ],
   "src/image-edit/template-registry.test.ts": [
@@ -27168,6 +27164,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-gallery-editor-structured-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-image-backends-x-gallery-provenance-filter-backend-attributi.md"
     }
   ],
   "src/routes/views/layout.ts": [
@@ -27252,6 +27252,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-vn-qa-mode.md"
+    }
+  ],
+
+  "src/routes/vn-generate/story.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-first-class-un-defer-vn-dynamic-image-generation-ont.md"
     }
   ],
   "src/routes/vn-questions.ts": [
