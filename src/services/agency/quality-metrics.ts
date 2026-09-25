@@ -17,7 +17,11 @@ import { createLogger, getLogger, } from "../../logger";
 
 // Lazy logger init — module body must not throw if the global logger
 // has not been initialized yet (e.g. direct module import in tests).
-try { getLogger(); } catch { createLogger({ level: "error", },); }
+try {
+  getLogger();
+} catch {
+  createLogger({ level: "error", },);
+}
 const log = getLogger().child({ module: "agency/quality-metrics", },);
 
 /**
@@ -64,7 +68,9 @@ export async function incrementDimensionCounter(
   // hourly counter — atomic upsert via UNIQUE(chat_id, dimension, hour_bucket).
   await sql`
     INSERT INTO agency_play_counters (id, world_id, chat_id, dimension, actor_id, count, hour_bucket, created_at)
-    VALUES (lower(hex(randomblob(16))), ${params.worldId ?? null}, ${params.chatId}, ${params.dimension}, ${params.actorId ?? null}, 1, ${hourBucket}, datetime('now'))
+    VALUES (lower(hex(randomblob(16))), ${params.worldId ?? null}, ${params.chatId}, ${params.dimension}, ${
+    params.actorId ?? null
+  }, 1, ${hourBucket}, datetime('now'))
     ON CONFLICT (chat_id, dimension, hour_bucket)
     DO UPDATE SET count = count + 1
   `.execute(db,);
@@ -94,7 +100,9 @@ export async function queryAgencyMetrics(
   db: Kysely<DB>,
   worldId: string,
   since: string,
-): Promise<{ total: number; meaningful: number; byDimension: Record<AgencyDimension, { total: number; meaningful: number; }>; }> {
+): Promise<
+  { total: number; meaningful: number; byDimension: Record<AgencyDimension, { total: number; meaningful: number }> }
+> {
   const rows = await db
     .selectFrom("agency_dimension_counters",)
     .selectAll()
@@ -102,7 +110,7 @@ export async function queryAgencyMetrics(
     .where("day", ">=", since,)
     .execute();
 
-  const byDimension = {} as Record<AgencyDimension, { total: number; meaningful: number; }>;
+  const byDimension = {} as Record<AgencyDimension, { total: number; meaningful: number }>;
   for (const dim of Object.values(AgencyDimension,)) { byDimension[dim] = { total: 0, meaningful: 0, }; }
   let total = 0;
   let meaningful = 0;
@@ -119,6 +127,7 @@ export async function queryAgencyMetrics(
 
 function currentHourBucket(): string {
   const d = new Date();
-  return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0",)}-${String(d.getUTCDate()).padStart(2, "0",)}T${String(d.getUTCHours()).padStart(2, "0",)}`;
+  return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1,).padStart(2, "0",)}-${
+    String(d.getUTCDate(),).padStart(2, "0",)
+  }T${String(d.getUTCHours(),).padStart(2, "0",)}`;
 }
-
