@@ -18,6 +18,8 @@
 import type { Kysely, } from "kysely";
 import { PinnedState, } from "../../../db/enums";
 import type { DB, } from "../../../db/schema";
+import { emitPluginEvent, } from "../../../plugins/event-bus";
+import { registry, } from "../../../plugins/registry";
 import { checkChatSettingsAccess, } from "../access";
 import type { ServiceError, } from "../types";
 
@@ -55,6 +57,9 @@ export async function archiveChat(
     .where("is_pinned", "!=", PinnedState.Archived,)
     .execute();
 
+  // FEAT-048: notify plugins of soft-archive.
+  await emitPluginEvent(registry.getAllEventHandlers(), "chat.archived", { chatId, requesterId, },);
+
   return { ok: true, chatId, };
 }
 
@@ -85,6 +90,9 @@ export async function unarchiveChat(
     .where("id", "=", chatId,)
     .where("is_pinned", "=", PinnedState.Archived,)
     .execute();
+
+  // FEAT-048: notify plugins of unarchive.
+  await emitPluginEvent(registry.getAllEventHandlers(), "chat.unarchived", { chatId, requesterId, },);
 
   return { ok: true, chatId, };
 }
