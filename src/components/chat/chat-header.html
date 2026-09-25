@@ -76,6 +76,16 @@
     </button>
     <button
       class="btn-icon"
+      title="Music"
+      aria-label="Music"
+      @click="toggleMusicLinksPanel()"
+      x-show="$store.ui.hasActiveChat"
+      data-testid="toggle-music-links-panel"
+    >
+      🎵
+    </button>
+    <button
+      class="btn-icon"
       title="Background"
       aria-label="Background"
       @click="$store.ui.showBackgroundPanel = !$store.ui.showBackgroundPanel"
