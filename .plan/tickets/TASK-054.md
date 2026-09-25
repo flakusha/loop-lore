@@ -3,14 +3,14 @@
 
 # TASK-054: Unique Item Tracking
 
-**Status:** open
+**Status:** done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Per-world uniqueness tracking; at most one instance of a unique-def item per world.
 **Context:** Cross-world uniqueness not enforced (consistent with TASK-050).
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: open
+**Status**: done
 **Priority**: medium
 **Labels**: items, rpg, unique
 **Epic**: epic-items
@@ -48,3 +48,7 @@ Tracks world-unique items (one-of-a-kind artifacts, quest items, legendary weapo
 - Speculative items are marked; verify against current `src/story/items/` before implementation.
 - Quest items already use `ItemCategory.QuestItem`; this ticket layers uniqueness on top.
 - "Hand-off" semantics when a unique item is destroyed: should the game allow a re-drop? Default **no**; revisit if balance demands it.
+
+## Resolution
+
+Implemented and verified in `e2ad08255` (`feat(items): add world-scoped instance evolution`). Unique definitions are guarded per world during placement, with `UniqueItemAlreadyExistsError` exposing the existing instance and loot persistence covered by item instance tests.

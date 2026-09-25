@@ -15409,11 +15409,11 @@
     "title": "# TASK-047: Plugin API System",
     "label": "task",
     "priority": "medium",
-    "epic": "",
+    "epic": "epic-plugin-extension-points",
     "tags": [],
     "source": ".plan/tickets/TASK-047.md",
     "git_issue": "378e7a2",
-    "status": "open"
+    "status": "done"
   },
   "TASK-048": {
     "hash": "674885a",
@@ -15422,11 +15422,11 @@
     "title": "# TASK-048: Plugin Security & Sandboxing",
     "label": "task",
     "priority": "medium",
-    "epic": "",
+    "epic": "epic-plugin-extension-points",
     "tags": [],
     "source": ".plan/tickets/TASK-048.md",
     "git_issue": "674885a",
-    "status": "open"
+    "status": "done"
   },
   "TASK-049": {
     "hash": "21dee92",
@@ -15445,14 +15445,14 @@
     "hash": "c7bb900",
     "extid": "TASK-050",
     "type": "TASK",
-    "title": "# TASK-050: World State Management",
+    "title": "# TASK-050: World ↔ Inventory Binding (Items-Domain Slice)",
     "label": "task",
     "priority": "medium",
-    "epic": "",
+    "epic": "epic-items",
     "tags": [],
     "source": ".plan/tickets/TASK-050.md",
     "git_issue": "c7bb900",
-    "status": "open"
+    "status": "done"
   },
   "TASK-051": {
     "hash": "1038e9a",
@@ -15500,11 +15500,11 @@
     "title": "# TASK-054: Unique Item Tracking",
     "label": "task",
     "priority": "medium",
-    "epic": "",
+    "epic": "epic-items",
     "tags": [],
     "source": ".plan/tickets/TASK-054.md",
     "git_issue": "49cd4b3",
-    "status": "open"
+    "status": "done"
   },
   "TASK-055": {
     "hash": "c598f22",
