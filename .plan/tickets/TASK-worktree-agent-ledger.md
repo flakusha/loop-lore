@@ -46,3 +46,6 @@ Refs: TBD (orphan from pre-sync)
 ## Resolution
 
 Landed on dev `2026-09-10`. Ledger + gripe tests pass.
+
+
+git issue: 986f246

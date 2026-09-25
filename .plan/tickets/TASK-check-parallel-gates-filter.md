@@ -43,3 +43,6 @@ New CLI flags for `check-parallel.mjs` to filter which gates run — `--gates <c
 ## Resolution
 
 Landed on dev `2026-09-10`. All 5 gate-filter tests pass; `bun run check` green (21/21).
+
+
+git issue: fb12904

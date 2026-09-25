@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** done
+**Status:** open
 **Priority:** High
 **Effort:** High
 **Epic:** epic-rag-document-processing.md
@@ -227,4 +227,4 @@ curl http://localhost:3000/api/rag/search/providers
 ```
 
 
-git issue: dc8ba02
+git issue: 61f766a
