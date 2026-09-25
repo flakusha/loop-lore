@@ -33090,7 +33090,7 @@
     "tags": [],
     "source": ".plan/tickets/TASK-rag-local-search-cache.md",
     "git_issue": "609433b",
-    "status": "open"
+    "status": "done"
   },
   "TASK-RAG-PIPELINE-CONTEXT": {
     "hash": "378b3b1",
@@ -33142,7 +33142,7 @@
     "tags": [],
     "source": ".plan/tickets/TASK-rag-search-providers.md",
     "git_issue": "61f766a",
-    "status": "open"
+    "status": "done"
   },
   "TASK-RAG-SEARCH-ROBOTS-QUOTA": {
     "hash": "1e0b830",
