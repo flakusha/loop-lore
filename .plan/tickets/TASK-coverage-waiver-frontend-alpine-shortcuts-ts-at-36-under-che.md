@@ -1,7 +1,12 @@
-<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
-<!-- SPDX-FileCopyrightText: 2026 giwt Contributors -->
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
 # TASK: Coverage waiver: frontend/alpine/shortcuts.ts at 36% under check gate
+
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 
 **Status:** ⬜ Not Started
 **Priority:** medium
@@ -38,7 +43,7 @@ structurally unpassable for any change to shortcuts.ts.
 
 - src/frontend/alpine/shortcuts.ts
 - scripts/check/coverage.mjs (WAIVERS map)
-- .plan/tickets/TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che.md (this ticket)
+- .plan/tickets/TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che.md (self)
 
 ## Learned
 
