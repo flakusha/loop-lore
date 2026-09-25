@@ -8,13 +8,14 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** open
+**Status:** done
 **Severity:** medium
 **Priority:** medium
 **Effort:** small
 **Type:** BUG
 **Epic:** epic-output-control-transforms
 **Files:** src/generation/generation-routes/regenerate.ts; src/chat/service/write.ts (regenerateMessageVariant); src/chat/service/types.ts (RegenerateVariantParams)
+**Resolved in:** 7a21eb9aa "fix(regen): thread style through variant-write path via idempotency…" (merged on dev; subsequent touch-up in a0b875ad1)
 
 ## Issue
 
