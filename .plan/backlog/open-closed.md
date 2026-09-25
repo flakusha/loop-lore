@@ -47,6 +47,9 @@
 - **Multi-instance reconciliation spec** — expanded `docs/spec/multi-instance-reconciliation.md` (2026-08-07).
 - **`.plan/` root cleanup + backlog consolidation** — two-file backlog (`open.md` +
   `priority.md`) established (2026-08-07/08).
+- **Knowledge Systems (2026-08-01)** — lore audience scoping + per-viewer memory injection:
+  - `src/assistant/lore/audience.ts` — pure `isLoreVisibleTo()` / `parseLoreScope()`, `ActorIdentity`, `LoreSubject` taxonomy (world/location/profession/race/faction/item); `loreSection` identity + pre-filter; spec `docs/spec/lore.md` reconciled
+  - `memorySection` per-viewer memory injection — each participant provisioned against the speaker as viewer; combined 1024-token budget, per-actor cap (shipped 2026-08-01)
 
 ## Security & access — closed on dev (verified 2026-08-07 + 2026-08-12)
 
