@@ -1,8 +1,16 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { describe, expect, it, } from "bun:test";
-import { DEFAULT_KEYMAP, dispatchKeynavAction, getKeymap, isKeyboardNavEnabled, } from "./shortcuts";
+import { afterEach, describe, expect, it, } from "bun:test";
+import {
+  __resetKeynavHandlersForTests,
+  DEFAULT_KEYMAP,
+  dispatchKeynavAction,
+  dispatchKeynavActionToHandlers,
+  getKeymap,
+  isKeyboardNavEnabled,
+  registerKeynavHandler,
+} from "./shortcuts";
 
 describe("shortcuts.ts", () => {
   describe("DEFAULT_KEYMAP", () => {
@@ -88,4 +96,72 @@ describe("shortcuts.ts", () => {
       });
     });
   }
+
+  describe("registerKeynavHandler / dispatchKeynavActionToHandlers", () => {
+    afterEach(() => {
+      __resetKeynavHandlersForTests();
+    },);
+
+    it("registered handler is invoked when its action is dispatched", () => {
+      let calls = 0;
+      registerKeynavHandler("goto-chatlist", () => {
+        calls += 1;
+      },);
+      dispatchKeynavActionToHandlers("goto-chatlist",);
+      expect(calls,).toBe(1,);
+    });
+
+    it("returns an unsubscribe function that detaches the handler", () => {
+      let calls = 0;
+      const handler = () => {
+        calls += 1;
+      };
+      const unsub = registerKeynavHandler("goto-chatlist", handler,);
+      dispatchKeynavActionToHandlers("goto-chatlist",);
+      unsub();
+      dispatchKeynavActionToHandlers("goto-chatlist",);
+      expect(calls,).toBe(1,);
+    });
+
+    it("multiple handlers on the same action all fire (registration order)", () => {
+      const order: string[] = [];
+      registerKeynavHandler("goto-chatlist", () => order.push("a",),);
+      registerKeynavHandler("goto-chatlist", () => order.push("b",),);
+      dispatchKeynavActionToHandlers("goto-chatlist",);
+      expect(order,).toEqual(["a", "b",],);
+    });
+
+    it("dispatching an action with no handlers is a no-op", () => {
+      expect(() => dispatchKeynavActionToHandlers("does-not-exist",)).not.toThrow();
+    });
+
+    it("handlers for other actions are not invoked", () => {
+      let chatlistCalls = 0;
+      let homeCalls = 0;
+      registerKeynavHandler("goto-chatlist", () => {
+        chatlistCalls += 1;
+      },);
+      registerKeynavHandler("goto-home", () => {
+        homeCalls += 1;
+      },);
+      dispatchKeynavActionToHandlers("goto-chatlist",);
+      expect(chatlistCalls,).toBe(1,);
+      expect(homeCalls,).toBe(0,);
+    });
+
+    it("last-registered unsubscribe removes only that handler", () => {
+      let a = 0;
+      let b = 0;
+      const unsubA = registerKeynavHandler("goto-chatlist", () => {
+        a += 1;
+      },);
+      registerKeynavHandler("goto-chatlist", () => {
+        b += 1;
+      },);
+      unsubA();
+      dispatchKeynavActionToHandlers("goto-chatlist",);
+      expect(a,).toBe(0,);
+      expect(b,).toBe(1,);
+    });
+  });
 });
