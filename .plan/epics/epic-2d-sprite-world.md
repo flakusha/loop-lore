@@ -64,7 +64,7 @@ per world; locations are zones on it. Renders on custom `<canvas>` in Alpine
 - Multiplayer interaction (EVE-style presence).
 - Canvas perf — continuous vs discrete sim with dynamic reconciliation.
 
-## Spatial Data Model (grounded in 013 fractal migration)
+## Spatial Data Model (grounded in 001_init fractal tables)
 
 Already exists — reuse, don't reinvent:
 
@@ -140,6 +140,14 @@ Presence = actor_locations + group-chat membership for co-travelers; joinable/le
 3. Sprite pipeline parallel-safe with 2.
 4. Simulation, battle reconcile, procgen after movement lands.
 5. Boarding/levels, RAG spike last.
+
+## Review 2026-09-25 (canvas epic audit)
+
+Verified against dev: coord_x/y/z + actor_locations + travel_routes + path/depth-12 triggers all live in `001_init.ts` (not a 013 migration — heading corrected above). `ActorPositionService` (src/locations/positions.ts), `TravelTickEngine` (src/locations/travel-engine.ts, cron 1/min), `LocationTreeService` (src/locations/tree.ts), `WorldEventType` enum, `npc_states`, pure `src/chat/random-events.ts`, `npc-movement` REST route, avatar emotion/mood/outfit tags (avatar-service/types.ts), joinable group-chat routes — all confirmed present. No `<canvas>` in src/views or src/frontend; zero canvas code exists today.
+
+Gaps filed (worktree 2d-world-canvas-review): seeded-RNG util (random-events.ts uses Math.random x2, no mulberry/splitmix anywhere); world-scoped snapshot+event SSE feed (activity-stream is per-user unseen-counts, no world scope); zone-rect editor (world-management-ui covers CRUD, not rects); proximity nearby-actor query (joinable has no spatial filter); canvas-click to VN choice-card payload contract (bridges game-frontend-scenes InteractiveScene contract); battle-entrance reconcile audit against current chat initiation path.
+
+Tickets: TASK-2d-world-review-zone-rect-editor-for-map-zones-authoring, TASK-2d-world-review-shared-seeded-rng-util-for-deterministic-pro, TASK-2d-world-review-world-scoped-snapshot-and-event-sse-feed, TASK-2d-world-review-proximity-query-for-nearby-actors-into-group, TASK-2d-world-review-canvas-click-to-vn-choice-card-payload-contr, TASK-2d-world-review-reconcile-shared-battle-entrance-table-with-.
 
 ## Open Questions
 
