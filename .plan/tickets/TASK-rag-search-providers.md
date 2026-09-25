@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** open
+**Status:** done
 **Implementation:** Partial — fallback/error/quarantine primitives exist, but concrete provider integrations remain open.
 **Priority:** High
 **Effort:** High

@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** open
+**Status:** done
 **Implementation:** Not started — no `src/rag/search/local/` implementation is present.
 **Priority:** High
 **Effort:** Medium

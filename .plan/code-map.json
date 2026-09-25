@@ -5841,7 +5841,6 @@
       "source": ".plan/tickets/BUG-hsts-header-missing-from-response-policy.md"
     }
   ],
-
   "src/chat/service/branches.ts": [
     {
       "kind": "ticket",
@@ -7946,7 +7945,6 @@
       "source": ".plan/tickets/TASK-optique-cli-tooling-integration.md"
     }
   ],
-
   "src/config/schema": [
     {
       "kind": "epic",
@@ -10695,7 +10693,6 @@
       "source": ".plan/tickets/BUG-group-chat-talkativity-not-surfaced-in-prompt.md"
     }
   ],
-
   "src/db/migrations/003_memory_audit_log_action_check": [
     {
       "kind": "ticket",
@@ -10728,7 +10725,6 @@
       "source": ".plan/tickets/TASK-logging-separate-database-research.md"
     }
   ],
-
   "src/db/migrations/005_world_lore_lifecycle": [
     {
       "kind": "ticket",
@@ -26181,7 +26177,6 @@
       "source": ".plan/tickets/BUG-encrypted-payload-sniffing-misclassifies-user-json-as-pre-en.md"
     }
   ],
-
   "src/routes/metrics.ts": [
     {
       "kind": "epic",

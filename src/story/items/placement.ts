@@ -106,16 +106,13 @@ export async function placeInLocation(
   const durabilityState = durabilityValues(definition, durability,);
   const isActive = durabilityState.current === 0 ? 0 : 1;
   if (!isItemInstanceStateConsistent(definition, durabilityState, isActive,)) {
-    throw new Error(
-      `world_items instance violates the 016 invariant: ${
-        JSON.stringify({
-          category: definition.category,
-          stackable: definition.stackable,
-          ...durabilityState,
-          isActive,
-        },)
-      }`,
-    );
+    const detail = safeJsonStringify({
+      category: definition.category,
+      stackable: definition.stackable,
+      ...durabilityState,
+      isActive,
+    },);
+    throw new Error(`world_items instance violates the 016 invariant: ${detail.ok ? detail.value : "{}"}`,);
   }
   await state.db
     .insertInto("world_items",)
@@ -152,16 +149,13 @@ export async function giveToNpc(
   const durabilityState = durabilityValues(definition, durability,);
   const isActive = durabilityState.current === 0 ? 0 : 1;
   if (!isItemInstanceStateConsistent(definition, durabilityState, isActive,)) {
-    throw new Error(
-      `world_items instance violates the 016 invariant: ${
-        JSON.stringify({
-          category: definition.category,
-          stackable: definition.stackable,
-          ...durabilityState,
-          isActive,
-        },)
-      }`,
-    );
+    const detail = safeJsonStringify({
+      category: definition.category,
+      stackable: definition.stackable,
+      ...durabilityState,
+      isActive,
+    },);
+    throw new Error(`world_items instance violates the 016 invariant: ${detail.ok ? detail.value : "{}"}`,);
   }
   await state.db
     .insertInto("world_items",)
