@@ -296,10 +296,10 @@ node-targeted edits.
 
 Standalone + proxy modes (llama-swap `comfyui_auto` passthrough landed; standalone spawner new). Sequence: standalone auto-start → `client_id`/WS → route mount + persist pin → VN un-defer + sprite/matting templates (parallel-safe) → recipe matrix/docs → queue scoping.
 
-- TASK-comfyui-first-class-standalone-auto-start-config-lifecycle.md — `ComfyUIAutoStartConfig` + `start-comfy.ts` spawner (`system_stats` probe) + admin status; defines standalone-vs-proxy baseUrl contract (epic-comfyui-plugin)
-- TASK-comfyui-first-class-client-id-websocket-progress-in-comfyuic.md — `client_id` body + `subscribeProgress` sentinel/fallback; `generateComfyUI` passes `client_id` always (epic-comfyui-plugin; unblocks TASK-2026-openwebui-comfyui-websocket-progress)
-- TASK-comfyui-first-class-mount-image-edit-routes-verify-asset-per.md — `handleRun` authz to `handleImageGeneration` parity + stale `/api/*` doc comments → `/api/v1/*` + execute-then-fetch roundtrip pins anti-dangling invariant (epic-comfyui-plugin Phase 0)
-- TASK-comfyui-first-class-un-defer-vn-dynamic-image-generation-ont.md — VN story image step → `generateComfyUI` via `pickSdProvider`, (scene_hash, emotion) cache, backend-down fallback (epic-visual-novel-mode)
-- TASK-comfyui-first-class-sprite-pipeline-avatar-matting-workflows.md — `sprite-sheet` / `sprite-variant` / `matting-cutout` JSON, in-place Path A, zero client/engine change (epic-2d-sprite-world)
-- TASK-comfyui-first-class-llama-swap-recipe-standalone-vs-proxy-ma.md — recipe mode matrix + promote image-generation.md ComfyUI from 'Future' (epic-comfyui-plugin, docs)
-- TASK-comfyui-first-class-image-generation-queue-honors-comfyui-ba.md — concurrency 1 per baseUrl, `/interrupt` cancel, WS queue events (epic-generation-flow-control; depends on base queue + client_id/WS)
+- ComfyUI standalone auto-start config + lifecycle — `ComfyUIAutoStartConfig` + `start-comfy.ts` spawner (`system_stats` probe) + admin status; defines standalone-vs-proxy baseUrl contract (git issue 5bd5c7e)
+- ComfyUI client_id + WebSocket progress — `client_id` body + `subscribeProgress` sentinel/fallback; `generateComfyUI` passes `client_id` always (git issue fc20566; unblocks TASK-2026-openwebui-comfyui-websocket-progress)
+- ComfyUI image-edit route mount + asset-persistence verify — `handleRun` authz to `handleImageGeneration` parity + stale `/api/*` doc comments → `/api/v1/*` + execute-then-fetch roundtrip pins anti-dangling invariant (git issue a6afe33; epic-comfyui-plugin Phase 0)
+- ComfyUI un-defer of VN dynamic image generation — VN story image step → `generateComfyUI` via `pickSdProvider`, (scene_hash, emotion) cache, backend-down fallback (git issue 008910d; epic-visual-novel-mode)
+- ComfyUI sprite-pipeline + avatar-matting workflows — `sprite-sheet` / `sprite-variant` / `matting-cutout` JSON, in-place Path A, zero client/engine change (git issue ffe5ba4; epic-2d-sprite-world)
+- ComfyUI llama-swap recipe matrix (standalone vs proxy) — recipe mode matrix + promote image-generation.md ComfyUI from 'Future' (git issue 33122ec; epic-comfyui-plugin, docs)
+- ComfyUI image-generation queue honors ComfyUI backend — concurrency 1 per baseUrl, `/interrupt` cancel, WS queue events (git issue 1c29c3c; epic-generation-flow-control; depends on base queue + client_id/WS)
