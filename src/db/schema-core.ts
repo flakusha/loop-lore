@@ -680,6 +680,7 @@ export interface Chats {
   record_hash: Generated<string>;
   custom_instructions: string | null;
   prompt_template_id: string | null;
+  active_branch_id: string | null;
 }
 
 // ── chat_random_events ────────────────────────────────────────────
@@ -1322,4 +1323,25 @@ export interface ActorPlanRevisions {
   after_priority: string;
   reason: string;
   created_at: Generated<string>;
+}
+
+// ── chat_branches ────────────────────────────────────────────
+export interface ChatBranches {
+  id: Generated<string>;
+  chat_id: string;
+  parent_message_id: string;
+  name: string;
+  created_at: Generated<string>;
+  is_active: Generated<number>;
+}
+
+// ── model_comparison_runs ────────────────────────────────────────────
+export interface ModelComparisonRuns {
+  id: Generated<string>;
+  user_id: string;
+  prompt: string;
+  results: string;
+  ratings: Generated<string>;
+  metadata: Generated<string>;
+  created_at: string;
 }

@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { capabilitiesState, } from "./capabilities";
+import { comparisonState, } from "./comparison";
 import { fineTuneState, } from "./fine-tune";
 import { pluginState, } from "./plugins";
 import { providerState, } from "./providers";
@@ -24,4 +25,5 @@ export const adminModels = {
   ...sdState,
   ...capabilitiesState,
   ...fineTuneState,
+  ...comparisonState,
 } as unknown as ModelsState;
