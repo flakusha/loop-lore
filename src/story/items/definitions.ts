@@ -9,6 +9,7 @@
 import { StackableState, } from "../../db/enums";
 import type { ItemCategory, } from "../../db/enums";
 import { safeJsonStringify, uid, } from "../../utils";
+import { parseItemEffects, } from "./effects";
 import type { ItemDefinition, ItemState, } from "./types";
 
 /**
@@ -17,6 +18,7 @@ import type { ItemDefinition, ItemState, } from "./types";
  * @param def
  */
 export async function createDefinition(state: ItemState, def: ItemDefinition,): Promise<string> {
+  parseItemEffects(def.properties.effects,);
   const id = uid();
   await state.db
     .insertInto("items",)
@@ -48,8 +50,8 @@ export async function createDefinition(state: ItemState, def: ItemDefinition,): 
  * @param worldId
  */
 export async function getDefinition(state: ItemState, itemId: string, worldId: string,) {
-  return state.db.selectFrom("items",).selectAll().where("id", "=", itemId,).where("world_id", "=", worldId,)
-    .executeTakeFirst();
+  return (await state.db.selectFrom("items",).selectAll().where("id", "=", itemId,).where("world_id", "=", worldId,)
+    .executeTakeFirst()) ?? null;
 }
 
 /**

@@ -81,6 +81,10 @@ export interface WorldItems {
   respawnable: Generated<number>;
   created_at: Generated<string>;
   updated_at: Generated<string>;
+  properties: Generated<string>;
+  max_durability: number | null;
+  current_durability: number | null;
+  is_active: Generated<number>;
 }
 
 // ── world_lore_entries ────────────────────────────────────────────
