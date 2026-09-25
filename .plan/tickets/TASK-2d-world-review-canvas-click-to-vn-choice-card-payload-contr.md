@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium
+**Summary:** Shared canvas-click to VN choice/StoryEvent payload contract.
+**Context:** epic-2d-sprite-world + game-frontend-scenes InteractiveScene.
+**Acceptance Criteria:** Contract + validation schemas; no renderer work.
 
 ## Summary
 

@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** Medium
+**Summary:** Zone-rect editor for map_zones authoring in world-management UI.
+**Context:** epic-2d-sprite-world; epic-world-management-ui covers CRUD, not rects.
+**Acceptance Criteria:** Rects editable; reuses view-only canvas component.
 
 ## Summary
 
