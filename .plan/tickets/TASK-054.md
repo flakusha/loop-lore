@@ -51,4 +51,4 @@ Tracks world-unique items (one-of-a-kind artifacts, quest items, legendary weapo
 
 ## Resolution
 
-Implemented and verified in `e2ad08255` (`feat(items): add world-scoped instance evolution`). Unique definitions are guarded per world during placement, with `UniqueItemAlreadyExistsError` exposing the existing instance and loot persistence covered by item instance tests.
+Implemented and verified in `e2ad08255` (`feat(items): add world-scoped instance evolution`). Unique definitions are guarded per world during placement, with `UniqueItemAlreadyExistsError` exposing the existing instance. Item placement and cross-world transfer are covered by `src/story/items/instances.test.ts`; loot persistence is covered by `src/rpg/loot/persist.test.ts`.
