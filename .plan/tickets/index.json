@@ -27574,6 +27574,57 @@
     "git_issue": "37b4eab",
     "status": "open"
   },
+  "TASK-IMAGE-BACKENDS-X-ACCESS-AUTHZ-PARITY-AUDIT-ACROSS-IMAGE-SURF": {
+    "hash": "3e20b22",
+    "git_issue": "3e20b22",
+    "extid": "TASK-IMAGE-BACKENDS-X-ACCESS-AUTHZ-PARITY-AUDIT-ACROSS-IMAGE-SURF",
+    "type": "TASK",
+    "title": "Image backends x access: authz parity audit across image surfaces",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-comfyui-plugin",
+    "tags": [
+      "access",
+      "authz",
+      "audit"
+    ],
+    "source": ".plan/tickets/TASK-image-backends-x-access-authz-parity-audit-across-image-surf.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-IMAGE-BACKENDS-X-ASSISTANT-IMAGE-COMMAND-BACKEND-ROUTING-FAI": {
+    "hash": "d04e7b0",
+    "git_issue": "d04e7b0",
+    "extid": "TASK-IMAGE-BACKENDS-X-ASSISTANT-IMAGE-COMMAND-BACKEND-ROUTING-FAI",
+    "type": "TASK",
+    "title": "Image backends x assistant: /image command backend routing + failure UX validation",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-comfyui-plugin",
+    "tags": [
+      "assistant",
+      "routing",
+      "ux"
+    ],
+    "source": ".plan/tickets/TASK-image-backends-x-assistant-image-command-backend-routing-fai.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-IMAGE-BACKENDS-X-GALLERY-PROVENANCE-FILTER-BACKEND-ATTRIBUTI": {
+    "hash": "8a8abbd",
+    "git_issue": "8a8abbd",
+    "extid": "TASK-IMAGE-BACKENDS-X-GALLERY-PROVENANCE-FILTER-BACKEND-ATTRIBUTI",
+    "type": "TASK",
+    "title": "Image backends x gallery: provenance filter + backend attribution validation",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-comfyui-plugin",
+    "tags": [
+      "gallery",
+      "provenance",
+      "access"
+    ],
+    "source": ".plan/tickets/TASK-image-backends-x-gallery-provenance-filter-backend-attributi.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-IMMERSION-PRESENTATION": {
     "hash": "d7e1109",
     "extid": "TASK-IMMERSION-PRESENTATION",
