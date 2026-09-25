@@ -75,6 +75,16 @@
       x-cloak
       data-testid="battle-panel"
     ></div>
+    <!-- Gate escape hatch: a hard send gate points at the skip control (epic-actor-turn-skip) -->
+    <div class="turn-skip-hint" x-show="_turnSkipSuggested && !_turnSkipOpen" data-testid="turn-skip-hint">
+      <span x-text="_sendBlockedHint"></span>
+      <button
+        type="button"
+        class="turn-skip-hint-action"
+        @click.prevent="suggestTurnSkip()"
+        data-testid="turn-skip-hint-action"
+      >Skip your turn instead →</button>
+    </div>
     <div class="input-row" style="position: relative">
       <!-- Slash command palette -->
       <div
@@ -244,6 +254,31 @@
               />
             </template>
           </div>
+        </div>
+      </template>
+      <!-- Turn skip: hold / advance the beat (epic-actor-turn-skip) -->
+      <button
+        type="button"
+        class="btn btn-ghost"
+        title="Skip turn"
+        :disabled="!activeChat || _skipping"
+        @click.prevent="toggleTurnSkip()"
+        data-testid="turn-skip-button"
+      >⏭</button>
+      <template x-if="_turnSkipOpen">
+        <div class="turn-skip-menu" @click.outside="closeTurnSkip()" data-testid="turn-skip-menu">
+          <button
+            type="button"
+            class="turn-skip-option"
+            @click.prevent="skipTurn('hold')"
+            data-testid="turn-skip-hold"
+          >Hold — pass this beat</button>
+          <button
+            type="button"
+            class="turn-skip-option"
+            @click.prevent="skipTurn('advance')"
+            data-testid="turn-skip-advance"
+          >Advance — skip and cue the next beat</button>
         </div>
       </template>
       <button
