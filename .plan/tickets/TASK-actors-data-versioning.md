@@ -3,8 +3,13 @@
 
 # TASK: Actors — Data Versioning (version table + backfill)
 
+**Status:** ⬜ Not Started
+**Priority:** medium
 **Effort:** Medium
 **Epic:** epic-actors
+**Summary:** Data versioning for the `actors` table — version table (v0–v4), bump-on-write migration contract, backfill script that promotes pre-existing rows to v4, and the migration-on-write runtime hook.
+**Context:** gap-audit 2026-09-25 of `epic-actors` found a 1-line stub `TASK-actors.md` with no Acceptance Criteria. The spec calls for `version` tracking so v0 reads return v4-shaped objects transparently.
+**Acceptance Criteria:** Migration adds `version INTEGER NOT NULL DEFAULT 4` (reversible); backfill script promotes existing rows to v4 idempotently in a single transaction; `readActorAtVersion` returns a v4-shaped object for any input version; `writeActor` bumps the version column on memory/lorebook/item writes (never decrements); existing actor tests still pass; `bun run check` green.
 
 ## Summary
 
@@ -42,3 +47,6 @@ Backward-compatibility contract: never remove columns, never repurpose, default 
 
 - Companion tickets (this epic): `TASK-actors-child-tables-crud.md`, `TASK-actors-api-routes.md`, `TASK-actors-import-export.md`.
 - Supersedes the 1-line stub `TASK-actors.md` (renamed/expanded by gap-audit 2026-09-25).
+
+
+git issue: 9164e41

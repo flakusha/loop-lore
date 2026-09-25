@@ -3,8 +3,13 @@
 
 # TASK: Actors — API Routes (actor + child-table REST surface)
 
+**Status:** ⬜ Not Started
+**Priority:** medium
 **Effort:** Medium
 **Epic:** epic-actors
+**Summary:** REST routes for actor CRUD + every child-table operation: `actors`, `actor_memories`, `actor_notes`, `actor_lore_entries`, `actor_items`, `world_lore_entries`. Each route is auth-gated and validated through the existing Elysia `t` schema layer.
+**Context:** gap-audit 2026-09-25 of `epic-actors` found `src/routes/actors.ts` is a placeholder; runtime services exist but are not wired to HTTP. Reuse existing middleware unchanged.
+**Acceptance Criteria:** All routes return 2xx on success, 401/403 on auth failure, 400 on validation rejection, 404 on missing row; lore match endpoint caps response to caller-specified token budget (default 500); item transfer is atomic (single transaction, no orphans on partial failure); no regression to existing route-table mounting; `bun run check` green.
 
 ## Summary
 
@@ -37,3 +42,6 @@ The spec calls for an actor CRUD API plus per-child-table routes. Today `src/rou
 
 - Companion tickets (this epic): `TASK-actors-data-versioning.md`, `TASK-actors-child-tables-crud.md`, `TASK-actors-import-export.md`.
 - Related: `src/routes/` mounting index, `src/validation/schemas.ts` schema conventions.
+
+
+git issue: f86deef

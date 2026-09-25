@@ -3,8 +3,13 @@
 
 # TASK: Actors — Child Tables CRUD (memories / notes / lore / items)
 
+**Status:** ⬜ Not Started
+**Priority:** medium
 **Effort:** Medium
 **Epic:** epic-actors
+**Summary:** CRUD + lifecycle hooks for the actor child tables (`actor_memories`, `actor_notes`, `actor_lore_entries`, `actor_items`) plus world-scoped `world_lore_entries`. Each gets a service module, typed contract, lifecycle hooks (memory after-response + cron-sweep), and tests.
+**Context:** gap-audit 2026-09-25 of `epic-actors` found a 1-line stub `TASK-actors.md` with no Acceptance Criteria. Runtime services need typed CRUD + memory promotion/demotion + lore keyword matching to support `TASK-actors-api-routes`.
+**Acceptance Criteria:** All five child tables have a service module exporting create/read/update/delete + actor-scoped queries; memory `promote`/`demote` updates `confidence` + `importance` and `expires_at`; cron sweep uses the existing scheduler (integration test asserts deletion of seeded-expired memory); lore match returns entries ordered by priority capped to caller-specified token budget; item transfer preserves `created_at` and bumps owning actor's version; existing actor tests still pass; `bun run check` green.
 
 ## Summary
 
@@ -39,3 +44,6 @@ The `actors` table holds the unified participant model; child tables attach subo
 
 - Companion tickets (this epic): `TASK-actors-data-versioning.md`, `TASK-actors-api-routes.md`, `TASK-actors-import-export.md`.
 - Related: `epic-character-core-system.md` (character spec authoring), `epic-gm-shadow-notes.md` (notes extension).
+
+
+git issue: c62dfff
