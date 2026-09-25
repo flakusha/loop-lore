@@ -1889,13 +1889,6 @@
       "source": ".plan/tickets/TASK-assistant-tool-injection-guard.md"
     }
   ],
-
-  "src/assistant/image-provider.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/EPIC-2026-23.md"
-    }
-  ],
   "src/assistant/intent-detection.ts": [
     {
       "kind": "epic",
@@ -15248,7 +15241,6 @@
       "source": ".plan/tickets/TASK-assistant-slash-command-typed-token-autocomplete.md"
     }
   ],
-
   "src/frontend/alpine/slash-autocomplete.ts": [
     {
       "kind": "ticket",
@@ -18621,10 +18613,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-generation-control-plane-routes-lack-authorization.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/EPIC-2026-23.md"
     },
     {
       "kind": "ticket",
