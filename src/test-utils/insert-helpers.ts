@@ -2238,6 +2238,7 @@ export async function insertChats(
     record_hash?: string;
     custom_instructions?: string | null;
     prompt_template_id?: string | null;
+    active_branch_id?: string | null;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
@@ -4555,6 +4556,48 @@ export async function insertActorPlanRevisions(
     before_priority,
     after_priority,
     reason,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a chat_branches row. */
+export async function insertChatBranches(
+  db: Db,
+  chat_id: string,
+  parent_message_id: string,
+  name: string,
+  opts?: { id?: string; created_at?: string; is_active?: number },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("chat_branches",).values({
+    id,
+    chat_id,
+    parent_message_id,
+    name,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a model_comparison_runs row. */
+export async function insertModelComparisonRuns(
+  db: Db,
+  user_id: string,
+  prompt: string,
+  results: string,
+  created_at: string,
+  opts?: { id?: string; ratings?: string; metadata?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("model_comparison_runs",).values({
+    id,
+    user_id,
+    prompt,
+    results,
+    created_at,
     ...restOpts,
   } as any,).execute();
   return id;

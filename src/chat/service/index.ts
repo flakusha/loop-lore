@@ -77,6 +77,21 @@ export {
   type SplitPartyResult,
 } from "./split";
 
+// ── Branching (FEAT-045 — conversation branches) ────────────────
+export {
+  type ChatBranchRecord,
+  type ChatBranchWithMeta,
+  forkBranch,
+  type ForkBranchParams,
+  type ForkBranchResult,
+  getMessagesForBranch,
+  listBranches,
+  type ListBranchesResult,
+  switchActiveBranch,
+  type SwitchActiveBranchParams,
+  type SwitchActiveBranchResult,
+} from "./branches";
+
 // ── Messages ──────────────────────────────────────────────────
 export {
   getMessageVariants,
