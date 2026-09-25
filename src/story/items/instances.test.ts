@@ -21,6 +21,7 @@ import {
 } from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
 import { ItemsService, } from "./index";
+import { isItemInstanceStateConsistent, placeInLocation, } from "./placement";
 
 let db: Kysely<DB>;
 let worldId: string;
@@ -363,5 +364,42 @@ describe("ItemsService world state and item evolution", () => {
     expect(visible.some((row,) => row.world_item_id === hiddenId),).toBe(false,);
     const all = await svc.getAtLocation(locationB, worldId, true,);
     expect(all.some((row,) => row.world_item_id === hiddenId),).toBe(true,);
+  });
+});
+
+describe("016 instance-state invariant", () => {
+  test("guard accepts conforming shapes and rejects drift", () => {
+    const consumable = { category: "consumable" as const, stackable: "unique" as const, };
+    expect(isItemInstanceStateConsistent(consumable, { current: null, max: null, }, 1,),).toBe(true,);
+    expect(isItemInstanceStateConsistent(consumable, { current: 5, max: 5, }, 1,),).toBe(false,);
+
+    const weapon = { category: "weapon" as const, stackable: "unique" as const, };
+    expect(isItemInstanceStateConsistent(weapon, { current: 5, max: 10, }, 1,),).toBe(true,);
+    expect(isItemInstanceStateConsistent(weapon, { current: 0, max: 10, }, 0,),).toBe(true,);
+    expect(isItemInstanceStateConsistent(weapon, { current: 11, max: 10, }, 1,),).toBe(false,);
+    expect(isItemInstanceStateConsistent(weapon, { current: null, max: null, }, 1,),).toBe(false,);
+  });
+
+  test("stackable placements carry NULL durability and stay active", async () => {
+    const item = uid();
+    await insertItems(db, worldId, "Arrows", "misc", { id: item, stackable: "stackable", } as never,);
+    const id = await placeInLocation({ db, }, item, locationA, worldId, 3,);
+    const row = await db.selectFrom("world_items",).selectAll().where("id", "=", id,).executeTakeFirst();
+    expect(row?.current_durability,).toBeNull();
+    expect(row?.max_durability,).toBeNull();
+    expect(row?.is_active,).toBe(1,);
+  });
+
+  test("durable placements track wear and active mirrors current", async () => {
+    const item = uid();
+    await insertItems(db, worldId, "Glass Sword", "weapon", { id: item, } as never,);
+    const id = await placeInLocation({ db, }, item, locationA, worldId, 1, false, false, undefined, {
+      current: 0,
+      max: 5,
+    },);
+    const row = await db.selectFrom("world_items",).selectAll().where("id", "=", id,).executeTakeFirst();
+    expect(row?.current_durability,).toBe(0,);
+    expect(row?.max_durability,).toBe(5,);
+    expect(row?.is_active,).toBe(0,);
   });
 });

@@ -34,7 +34,7 @@ describe("interaction commands", () => {
     const worldId = "world-interaction";
     await insertUsers(db, userId, "Interaction User", { id: userId, },);
     await insertActors(db, "Interaction User", { id: userId, actor_type: "user", user_id: userId, owner_id: userId, },);
-    await insertWorlds(db, userId, "Interaction World", { id: worldId, rpg_checks: 1, },);
+    await insertWorlds(db, userId, "Interaction World", { id: worldId, rpg_enabled: 1, rpg_checks: 1, },);
     await insertActors(db, "Target", { id: targetActorId, },);
     await insertChats(db, "Interaction Chat", userId, { id: chatId, world_id: worldId, },);
 
