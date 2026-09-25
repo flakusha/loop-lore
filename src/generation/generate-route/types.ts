@@ -48,6 +48,12 @@ export interface GenerateRequest {
    * message of the LLM payload (unknown values are ignored).
    */
   regenStyle?: RegenStyle;
+  /**
+   * Chat-format key — looked up in `templates.llm.chatFormats`. When set the
+   * LLM payload messages are wrapped per the matching template before being
+   * sent to the provider.
+   */
+  format?: string;
   /** Repetition detection config */
   repetitionDetection: GenerationOptions["repetitionDetection"];
   /** Policy detection config */
