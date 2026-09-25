@@ -6,6 +6,8 @@
  */
 import type { Generated, } from "kysely";
 import type {
+  AchievementCategory,
+  AchievementTier,
   ActorType,
   AgencyMode,
   AgentType,
@@ -860,8 +862,8 @@ export interface Achievements {
   id: Generated<string>;
   name: string;
   description: string;
-  category: string;
-  tier: string;
+  category: AchievementCategory;
+  tier: AchievementTier;
   icon: string | null;
   is_secret: Generated<number>;
   is_hidden: Generated<number>;

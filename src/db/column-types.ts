@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 280
 
 /**
  * Column Type Overrides
@@ -37,6 +38,10 @@ export const COLUMN_TYPE_OVERRIDES: Record<string, Record<string, string>> = {
   "Actors": {
     "actor_type": "ActorType",
     "agent_type": "AgentType",
+  },
+  "Achievements": {
+    "category": "AchievementCategory",
+    "tier": "AchievementTier",
   },
   "AdminCharacterOverrides": {
     "action": "AdminOverrideAction",
