@@ -11877,7 +11877,7 @@
     "tags": [],
     "source": ".plan/tickets/FEAT-041.md",
     "git_issue": "312e315",
-    "status": "open"
+    "status": "done"
   },
   "FEAT-042": {
     "hash": "4538afb",
@@ -11903,7 +11903,7 @@
     "tags": [],
     "source": ".plan/tickets/FEAT-043.md",
     "git_issue": "f77863b",
-    "status": "open"
+    "status": "done"
   },
   "FEAT-044": {
     "hash": "f458e3d",
@@ -11916,7 +11916,7 @@
     "tags": [],
     "source": ".plan/tickets/FEAT-044.md",
     "git_issue": "f458e3d",
-    "status": "open"
+    "status": "done"
   },
   "FEAT-045": {
     "hash": "751f446",
@@ -12098,7 +12098,7 @@
     "tags": [],
     "source": ".plan/tickets/FEAT-065.md",
     "git_issue": "3b6041a",
-    "status": "open"
+    "status": "done"
   },
   "FEAT-065-PROMPT-LIBRARY-EXPANDED": {
     "hash": "a966aa0",
@@ -12829,8 +12829,8 @@
     "git_issue": "b8aeee6"
   },
   "FEAT-ADMIN-ANALYTICS-DASHBOARD": {
-    "hash": "feb28d5",
-    "git_issue": "feb28d5",
+    "hash": "b3ae312",
+    "git_issue": "b3ae312",
     "extid": "FEAT-ADMIN-ANALYTICS-DASHBOARD",
     "type": "FEAT",
     "title": "Admin Analytics Dashboard",
@@ -12839,7 +12839,7 @@
     "epic": "proposed:epic-admin-analytics",
     "tags": [],
     "source": ".plan/tickets/FEAT-admin-analytics-dashboard.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-ADMIN-ANALYTICS-LATENCY-P50-P95-P99-TRENDS-SSE-LIVE-PUSH-CHA": {
     "hash": "6dd5c2b",
@@ -13229,7 +13229,7 @@
     "tags": [],
     "source": ".plan/tickets/FEAT-chat-template-config-lifecycle.md",
     "git_issue": "77c026e",
-    "status": "open"
+    "status": "done"
   },
   "FEAT-CHAT-TRANSFER-LOCATION-CHANGE": {
     "hash": "c294e0a",
@@ -14996,7 +14996,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-003-evaluate-hostings.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "d89149c"
   },
   "TASK-003-GPU-REQUIREMENTS": {
@@ -15101,7 +15101,7 @@
     "tags": [],
     "source": ".plan/tickets/TASK-023.md",
     "git_issue": "149948e",
-    "status": "open"
+    "status": "done"
   },
   "TASK-024": {
     "hash": "70f8e8d",
@@ -15127,7 +15127,7 @@
     "tags": [],
     "source": ".plan/tickets/TASK-025.md",
     "git_issue": "b983dc4",
-    "status": "open"
+    "status": "done"
   },
   "TASK-026": {
     "hash": "4da10d6",
@@ -22320,7 +22320,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-codemod-fetch-json-utils.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "b6bb576"
   },
   "TASK-COGNITIVE-COMPLEXITY-CAP-REFACTOR": {
@@ -22606,7 +22606,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-consent-schema.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "acb8c2f"
   },
   "TASK-CONSOLIDATE-CHAT-IM-ADAPTER-ABSTRACTION-ABOVE-PROTOCOLHANDLE": {
@@ -30959,7 +30959,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-nsfw-rating-enforcement.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "a45876b"
   },
   "TASK-NSFW-RATING-SCHEMA": {
@@ -30972,7 +30972,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-nsfw-rating-schema.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "8bf3e65"
   },
   "TASK-NSFW-RATING-SCHEMA-CONSENT-STATE-MACHINE": {
@@ -32902,7 +32902,7 @@
     "git_issue": "0427f8f"
   },
   "TASK-RAG-LOCAL-SEARCH-CACHE": {
-    "hash": "a7e766b",
+    "hash": "609433b",
     "extid": "TASK-RAG-LOCAL-SEARCH-CACHE",
     "type": "TASK",
     "title": "Local Search Providers & Caches",
@@ -32911,8 +32911,8 @@
     "epic": "epic-rag-document-processing.md",
     "tags": [],
     "source": ".plan/tickets/TASK-rag-local-search-cache.md",
-    "git_issue": "a7e766b",
-    "status": "open"
+    "git_issue": "609433b",
+    "status": "done"
   },
   "TASK-RAG-PIPELINE-CONTEXT": {
     "hash": "378b3b1",
@@ -32954,7 +32954,7 @@
     "status": "open"
   },
   "TASK-RAG-SEARCH-PROVIDERS": {
-    "hash": "dc8ba02",
+    "hash": "61f766a",
     "extid": "TASK-RAG-SEARCH-PROVIDERS",
     "type": "TASK",
     "title": "RAG Search Providers Integration",
@@ -32963,8 +32963,8 @@
     "epic": "epic-rag-document-processing.md",
     "tags": [],
     "source": ".plan/tickets/TASK-rag-search-providers.md",
-    "git_issue": "dc8ba02",
-    "status": "open"
+    "git_issue": "61f766a",
+    "status": "done"
   },
   "TASK-RAG-SEARCH-ROBOTS-QUOTA": {
     "hash": "1e0b830",
@@ -33790,7 +33790,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-reputation-schema.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "828ae63"
   },
   "TASK-RESEARCH-CHARACTER-SYSTEMS-LANDSCAPE": {
@@ -34869,7 +34869,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-schema-migration.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "9d31bc9"
   },
   "TASK-SCHEMA-RPG-INVESTIGATION": {
@@ -34895,7 +34895,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-schema-validation.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "efc46d1"
   },
   "TASK-SCREEN-READER-SUPPORT": {
@@ -35194,7 +35194,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-size-strict-debt.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "cb776c9"
   },
   "TASK-SKILL-BIOME-HAZARD-COUNTERMEASURES": {
