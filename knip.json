@@ -164,7 +164,6 @@
     // the 22 sibling .browser.ts entries above.
     "tests/e2e/flows/browser/admin-dashboard-empty.browser.ts",
     "tests/e2e/flows/browser/encryption-flow.browser.ts",
-    "tests/e2e/flows/browser/search-flow.browser.ts",
     // Interaction-coverage suite. Executed by the shell glob in
     // package.json `test:e2e:browser` and .github/workflows/ci.yml
     // (test-browser job) — knip cannot trace a shell glob as an import edge.
