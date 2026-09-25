@@ -119,7 +119,7 @@ const WAIVERS = {
   "frontend:src/frontend/alpine/shortcuts.ts": {
     floor: 30,
     reason:
-      "DOM-bound global keydown listener (document.addEventListener) is unreachable from bun:test without a DOM; export surface (DEFAULT_KEYMAP, getKeymap, isKeyboardNavEnabled, dispatchKeynavAction, registerKeynavHandler, dispatchKeynavActionToHandlers) is fully unit-tested (12 tests); 36 measured; TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
+      "DOM-bound global keydown listener (document.addEventListener) is unreachable from bun:test without a DOM (bun provides document but no KeyboardEvent constructor — verified empirically); export surface (DEFAULT_KEYMAP, getKeymap, isKeyboardNavEnabled, dispatchKeynavAction, registerKeynavHandler, dispatchKeynavActionToHandlers) is fully unit-tested (14 tests); 36 measured under diff-files (~23.5 project-wide); TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
   },
   "frontend:src/frontend/fe-fetch.ts": {
     floor: 60,
