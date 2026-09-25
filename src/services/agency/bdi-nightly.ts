@@ -17,8 +17,8 @@
 import { type Kysely, sql, } from "kysely";
 import type { DB, } from "../../db";
 import { createLogger, getLogger, } from "../../logger";
-import { applyReflectionCheckpoint, } from "./bdi-reflection";
 import { toDate, } from "../../utils/date";
+import { applyReflectionCheckpoint, } from "./bdi-reflection";
 
 // Lazy logger init — module body must not throw if the global logger
 // has not been initialized yet (e.g. direct module import in tests).

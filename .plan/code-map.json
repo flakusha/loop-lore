@@ -30637,6 +30637,12 @@
       "source": ".plan/tickets/TASK-item-edit-permissions-history.md"
     }
   ],
+  "src/services/loot/budget-gate.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-loot-budget-affordance-gate.md"
+    }
+  ],
   "src/services/migration-tracker.ts": [
     {
       "kind": "ticket",

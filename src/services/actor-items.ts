@@ -130,7 +130,14 @@ export class ActorItemsService {
    * @param itemId
    * @param opts - Optional affordance context (TASK-affordance-lookup-table).
    */
-  async equip(actorId: string, itemId: string, opts?: { actorCaps?: import("./affordance/lookup").ActorCaps; context?: import("./affordance/lookup").ContextState; },): Promise<EquipResult> {
+  async equip(
+    actorId: string,
+    itemId: string,
+    opts?: {
+      actorCaps?: import("./affordance/lookup").ActorCaps;
+      context?: import("./affordance/lookup").ContextState;
+    },
+  ): Promise<EquipResult> {
     const item = await this.getItem(actorId, itemId,);
     if (!item) { return { ok: false, reason: "Item not found", }; }
 
@@ -141,21 +148,9 @@ export class ActorItemsService {
     // `reason` into the denial when the actor lacks a capability or
     // the context disallows the action.
     if (opts?.actorCaps && opts?.context) {
-      const { evaluate, } = await import("./affordance/lookup",);
-      const { CATEGORIES, } = await import("./affordance/categories",);
-      const affordanceCategory = CATEGORIES.find((c,) => {
-        const slotMap: Record<string, string> = { weapon: "weapon", armor: "armor", };
-        return slotMap[slot] === c;
-      },);
-      if (affordanceCategory) {
-        const result = evaluate(opts.actorCaps, {
-          id: itemId,
-          category: affordanceCategory,
-          isContainer: false, isLockable: false, isOpen: false, isReadable: false,
-          isEquippable: true, isConsumable: false, isTakeable: true, isDroppable: true, isGiveable: true,
-        }, opts.context, "equip",);
-        if (!result.allowed) { return { ok: false, itemId, reason: `affordance: ${result.reason}`, }; }
-      }
+      const { checkEquipAffordance, } = await import("./actor-items/affordance");
+      const denial = await checkEquipAffordance(itemId, slot, opts.actorCaps, opts.context,);
+      if (denial) { return { ok: false, itemId, reason: `affordance: ${denial}`, }; }
     }
 
     // Reject a second item in the same slot (allow multiple accessories
