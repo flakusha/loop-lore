@@ -65,14 +65,14 @@ describe("dispatch respects enabled state", () => {
     expect(
       await dispatchPluginRoute(new Request("http://localhost/x",)),
     ).toBeNull();
-    expect(registry.getAllRoutes(),).toHaveLength(1,);
+    expect(registry.getAllRoutes(),).toHaveLength(0,);
     expect(registry.getEnabledRoutes(),).toEqual([],);
   });
 
-  test("unknown plugin names count as disabled", async () => {
-    registry.addRoutes("ghost", [
+  test("rejects routes without registered plugin provenance", async () => {
+    expect(() => registry.addRoutes("ghost", [
       { method: "GET", path: "/g", handler: async () => new Response("g",), },
-    ],);
+    ],)).toThrow("unregistered plugin");
     expect(
       await dispatchPluginRoute(new Request("http://localhost/g",)),
     ).toBeNull();
