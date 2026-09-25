@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** low
 **Effort:** Medium
+**Summary:** Fix tree.ts header naming nonexistent triggers.
+**Context:** 001_init creates 4 triggers; depth/cycle enforced app-layer.
+**Acceptance Criteria:** Header describes the real enforcement split.
 
 ## Summary
 

@@ -6,6 +6,9 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium
+**Summary:** Reconcile shared battle-entrance table with chat initiation path.
+**Context:** battleRoutes + /battle start; current gates are mechanic-only.
+**Acceptance Criteria:** Ordering spec; deterministic gates run first.
 
 ## Summary
 
