@@ -38,7 +38,7 @@ structurally unpassable for any change to shortcuts.ts.
 
 - src/frontend/alpine/shortcuts.ts
 - scripts/check/coverage.mjs (WAIVERS map)
-- .plan/tickets/TASK-coverage-waiver-frontend-shortcuts-ts-at-36-under-check-gate.md
+- .plan/tickets/TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che.md (this ticket)
 
 ## Learned
 
