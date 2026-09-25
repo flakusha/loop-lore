@@ -23413,6 +23413,12 @@
       "source": "docs/frontend/chat/search-and-filter.md"
     }
   ],
+  "src/routes/actor-": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-actors.md"
+    }
+  ],
   "src/routes/actor-access.ts": [
     {
       "kind": "ticket",

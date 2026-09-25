@@ -936,7 +936,7 @@ Total tickets: **2848** — untagged: **2460** — unbound to epic: **1427**
 | yaml | 4 | 0 | 2 | 0 | 1 | 0 | 1 |
 | yaml-frontmatter | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| (untagged) | 2460 | 852 | 58 | 1269 | 39 | 0 | 242 |
+| (untagged) | 2460 | 856 | 58 | 1267 | 39 | 0 | 240 |
 
 ## By epic × status
 
@@ -998,8 +998,8 @@ Total tickets: **2848** — untagged: **2460** — unbound to epic: **1427**
 | epic-achievements | 5 | 1 | 1 | 3 | 0 | 0 | 0 |
 | epic-actor-autonomy-story-drive | 7 | 0 | 0 | 3 | 0 | 0 | 4 |
 | epic-actor-autonomy-story-drive.md | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
-| epic-actor-turn-skip | 5 | 0 | 0 | 5 | 0 | 0 | 0 |
-| epic-actors | 5 | 0 | 0 | 1 | 0 | 0 | 4 |
+| epic-actor-turn-skip | 5 | 2 | 0 | 3 | 0 | 0 | 0 |
+| epic-actors | 5 | 2 | 0 | 1 | 0 | 0 | 2 |
 | epic-agency-story-points | 3 | 0 | 0 | 2 | 0 | 0 | 1 |
 | epic-agency-story-points, NPC/Actor System | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-ambient-music-sfx | 1 | 0 | 0 | 1 | 0 | 0 | 0 |

@@ -12,7 +12,6 @@
 
 | Status | Title | Priority | Effort | Tasks | File |
 | ------ | ----- | -------- | ------ | ----- | ---- |
-| 📝 Draft | Actors & Entity System | High | High | 17 | [epic-actors.md](/.plan/epics/epic-actors.md) |
 | 📝 Draft | Assistant Entity Access & Manipulation | High | High | 10 | [epic-assistant-entity-access.md](/.plan/epics/epic-assistant-entity-access.md) |
 | 📝 Draft | Character & NPC Lore Access | High | High | 17 | [epic-character-npc-lore-access.md](/.plan/epics/epic-character-npc-lore-access.md) |
 | 📝 Draft | Cross-Layer Reconciliation | High | Large (permanently ongoing) | 12 | [epic-cross-layer-reconciliation.md](/.plan/epics/epic-cross-layer-reconciliation.md) |
@@ -43,7 +42,8 @@
 | ⬜ Not Started | 3D Asset Generation (Future) | Low | Very High | 25 | [epic-3d-generation.md](/.plan/epics/epic-3d-generation.md) |
 | 🟡 In Progress | Accessibility & Input Systems | P0 — Critical | High | 2 | [epic-accessibility-input.md](/.plan/epics/epic-accessibility-input.md) |
 | Not Started | Actor Autonomy & Story Auto-Drive | High | Large | 8 | [epic-actor-autonomy-story-drive.md](/.plan/epics/epic-actor-autonomy-story-drive.md) |
-| Not Started | Actor Turn Skip ('Continue' Without Breaking the Story) | Medium | Small–Medium | 9 | [epic-actor-turn-skip.md](/.plan/epics/epic-actor-turn-skip.md) |
+| ✅ Core shipped (2026-09-25) — event, route, cascade filter, composer UI, gate interlock on dev; slot release + beat budget open in `TASK-turn-skip-cascade` | Actor Turn Skip ('Continue' Without Breaking the Story) | Medium | Small–Medium | 6 | [epic-actor-turn-skip.md](/.plan/epics/epic-actor-turn-skip.md) |
+| 🚧 Core landed (2026-09-25) — CRUD services + routes + card import/export on dev; versioning superseded by data-migrations runner; 2 of 4 bucket tickets closed, 2 open pending AC verification | Actors & Entity System | High | High | 12 | [epic-actors.md](/.plan/epics/epic-actors.md) |
 | 🟢 Near-complete — 12 tabs + user Flag button/dialog shipped; remaining gap: Revision History | Admin Panel & Dashboard | Medium | Medium | 0 | [epic-frontend-admin.md](/.plan/epics/epic-frontend-admin.md) |
 | ⬜ Not Started | Age Gate & Content Warnings | Medium | Medium | 0 | [epic-frontend-age-gate.md](/.plan/epics/epic-frontend-age-gate.md) |
 | Not Started | Anonymity & Decentralization — Epic | medium | Medium | 27 | [epic-anonymity-decentralization.md](/.plan/epics/epic-anonymity-decentralization.md) |
@@ -319,15 +319,6 @@
 ---
 
 ## Epics
-
-### Actors & Entity System
-
-- **Status:** 📝 Draft
-- **Priority:** High
-- **Effort:** High
-- **Type:** Foundation Epic
-- **Tags:** actors, characters, entities, participants, data-model, import
-- **File:** `.plan/epics/epic-actors.md`
 
 ### Assistant Entity Access & Manipulation
 
@@ -631,12 +622,21 @@ Long-horizon vision for 3D asset generation and rendering. This epic covers:
 
 ### Actor Turn Skip ('Continue' Without Breaking the Story)
 
-- **Status:** Not Started
+- **Status:** ✅ Core shipped (2026-09-25) — event, route, cascade filter, composer UI, gate interlock on dev; slot release + beat budget open in `TASK-turn-skip-cascade`
 - **Priority:** Medium
 - **Effort:** Small–Medium
 - **Type:** Feature Epic
 - **Tags:** turn-skip, pass, continue, cadence, gm, group-chat
 - **File:** `.plan/epics/epic-actor-turn-skip.md`
+
+### Actors & Entity System
+
+- **Status:** 🚧 Core landed (2026-09-25) — CRUD services + routes + card import/export on dev; versioning superseded by data-migrations runner; 2 of 4 bucket tickets closed, 2 open pending AC verification
+- **Priority:** High
+- **Effort:** High
+- **Type:** Foundation Epic
+- **Tags:** actors, characters, entities, participants, data-model, import
+- **File:** `.plan/epics/epic-actors.md`
 
 ### Admin Panel & Dashboard
 
