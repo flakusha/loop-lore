@@ -1709,6 +1709,7 @@ export const ChatsSchema = t.Object({
   record_hash: t.Optional(t.String(),),
   custom_instructions: t.Optional(t.String(),),
   prompt_template_id: t.Optional(t.String(),),
+  active_branch_id: t.Optional(t.String(),),
 },);
 
 // ── chat_random_events ────────────────────────────────────────────
@@ -2877,4 +2878,23 @@ export const ActorPlanRevisionsSchema = t.Object({
   after_priority: t.String(),
   reason: t.String(),
   created_at: t.Optional(t.String(),),
+},);
+
+// ── chat_branches ────────────────────────────────────────────
+export const ChatBranchesSchema = t.Object({
+  chat_id: t.String(),
+  parent_message_id: t.String(),
+  name: t.String(),
+  created_at: t.Optional(t.String(),),
+  is_active: t.Optional(t.Number(),),
+},);
+
+// ── model_comparison_runs ────────────────────────────────────────────
+export const ModelComparisonRunsSchema = t.Object({
+  user_id: t.String(),
+  prompt: t.String(),
+  results: t.String(),
+  created_at: t.String(),
+  ratings: t.Optional(t.String(),),
+  metadata: t.Optional(t.String(),),
 },);

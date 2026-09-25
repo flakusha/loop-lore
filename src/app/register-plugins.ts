@@ -54,6 +54,7 @@ import { chatSearchRoutes, } from "../routes/chat-search";
 import { chatSectionsRoutes, } from "../routes/chat-sections";
 import { chatsRoutes, } from "../routes/chats";
 import { commandsRoutes, } from "../routes/commands";
+import { comparisonsExportRoutes, } from "../routes/comparisons-export";
 import { craftingRecipeRoutes, } from "../routes/crafting";
 import { craftingAttemptRoutes, } from "../routes/crafting/attempt";
 import { craftingOrderRoutes, } from "../routes/crafting/orders";
@@ -61,6 +62,7 @@ import { craftingStationRoutes, } from "../routes/crafting/stations";
 import { exportRoutes, } from "../routes/export";
 import { exportSseRoutes, } from "../routes/export-sse";
 import { federationRoutes, } from "../routes/federation";
+import { generationCompareRoutes, } from "../routes/generation/compare";
 import { gifSearchRoutes, } from "../routes/gifs/search";
 import { gmNotesRoutes, } from "../routes/gm-notes";
 import { healthRoutes, } from "../routes/health";
@@ -215,7 +217,8 @@ export function registerPlugins(app: Elysia<any>, opts: RegisterPluginsOpts,): v
   // ── Analytics ────────────────────────────────────────────────────────────
   app.use(analyticsRoutes({ database: handleOpts.database, },),);
   app.use(modelComparisonsRoutes({ database: handleOpts.database, },),);
-
+  app.use(comparisonsExportRoutes({ database: handleOpts.database, },),);
+  app.use(generationCompareRoutes({ config, database: handleOpts.database, },),);
   // ── Battle integration ───────────────────────────────────────────────────
   app.use(battleRoutes(handleOpts,),);
 

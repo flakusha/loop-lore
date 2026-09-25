@@ -3,6 +3,7 @@ import { safeJsonParse, } from "../../utils";
 import { annotationRoutes, } from "./annotations";
 import { autoTranslateRoutes, } from "./auto-translate";
 import { batchRoutes, } from "./batch";
+import { chatBranchRoutes, } from "./branches";
 import { createRoutes, } from "./create";
 import { entitySuggestionRoutes, } from "./entity-suggestions";
 import { extrasRoutes, } from "./extras";
@@ -49,6 +50,7 @@ export function chatsRoutes(opts: HandlerOpts, prefix = "/api",) {
       .use(sideChannelRoutes(opts, prefix,),)
       .use(turnOrderRoutes(opts, prefix,),)
       .use(partySplitRoutes(opts, prefix,),)
+      .use(chatBranchRoutes(opts, prefix,),)
       .use(vnChoiceRoutes(opts, prefix,),)
       .use(extrasRoutes(opts, prefix,),)
       .use(generateEntityRoutes(opts, prefix,),)

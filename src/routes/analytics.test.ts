@@ -192,7 +192,9 @@ describe("analyticsRoutes", () => {
     const app = createApp(db, userId,);
     const fromIso = new Date(inWindowAt - 60_000,).toISOString();
     const toIso = new Date(inWindowAt + 60_000,).toISOString();
-    const url = `http://localhost/api/analytics/chat/${otherChatId}?from=${encodeURIComponent(fromIso,)}&to=${encodeURIComponent(toIso,)}`;
+    const url = `http://localhost/api/analytics/chat/${otherChatId}?from=${encodeURIComponent(fromIso,)}&to=${
+      encodeURIComponent(toIso,)
+    }`;
     const res = await app.handle(new Request(url,),);
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { totalGenerations: number; totalTokens: number; from: string; to: string };
@@ -200,7 +202,7 @@ describe("analyticsRoutes", () => {
     expect(body.totalTokens,).toBe(100,);
     expect(body.from,).toBe(fromIso,);
     expect(body.to,).toBe(toIso,);
-  },);
+  });
 
   test("GET /api/analytics/chat/:chatId?from=garbage ignores unparseable from", async () => {
     const app = createApp(db, userId,);
@@ -211,5 +213,5 @@ describe("analyticsRoutes", () => {
     // The seeded earlier tests inserted at least one row for chatId; just
     // assert the query did not 500 on bad input.
     expect(typeof body.totalGenerations,).toBe("number",);
-  },);
+  });
 });

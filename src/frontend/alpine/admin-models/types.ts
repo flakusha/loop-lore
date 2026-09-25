@@ -127,4 +127,9 @@ export interface ModelsState {
   trainingDispatchWired: boolean;
   fineTuneCandidates(): FineTuneCandidate[];
   fineTuneReadiness(c: FineTuneCandidate,): string;
+  loadComparisonHistory(): Promise<void>;
+  runComparison(): Promise<void>;
+  addComparisonModel(): void;
+  removeComparisonModel(index: number,): void;
+  rateComparison(resultIndex: number,): Promise<void>;
 }
