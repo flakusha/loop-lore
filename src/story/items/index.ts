@@ -20,18 +20,38 @@ import {
   listDefinitions as listDefinitionsDispatch,
 } from "./definitions";
 import {
+  applyDrift as applyDriftDispatch,
+  decrementDurability as decrementDurabilityDispatch,
   destroy as destroyDispatch,
   getAtLocation as getAtLocationDispatch,
   getNpcInventory as getNpcInventoryDispatch,
   getNpcInventoryBatch as getNpcInventoryBatchDispatch,
+  getUniqueItem as getUniqueItemDispatch,
   giveToNpc as giveToNpcDispatch,
   placeInLocation as placeInLocationDispatch,
   transfer as transferDispatch,
 } from "./instances";
-import type { ItemDefinition, ItemInstance, ItemState, TransferResult, } from "./types";
+import type {
+  DurabilityOverride,
+  DurabilityResult,
+  ItemDefinition,
+  ItemDrift,
+  ItemDriftEvent,
+  ItemInstance,
+  ItemState,
+  TransferResult,
+} from "./types";
+
+export { InvalidItemEffectsError, } from "./effects";
+export type { ItemEffect, } from "./effects";
+export { ItemWorldMismatchError, UniqueItemAlreadyExistsError, } from "./types";
 
 export type {
+  DurabilityOverride,
+  DurabilityResult,
   ItemDefinition,
+  ItemDrift,
+  ItemDriftEvent,
   ItemInstance,
   ItemState,
   TransferResult,
@@ -100,6 +120,7 @@ export class ItemsService {
     hidden = false,
     respawnable = false,
     spawnCondition?: Record<string, unknown>,
+    durability?: DurabilityOverride,
   ): Promise<string> {
     return placeInLocationDispatch(
       this.state,
@@ -110,6 +131,7 @@ export class ItemsService {
       hidden,
       respawnable,
       spawnCondition,
+      durability,
     );
   }
 
@@ -120,8 +142,14 @@ export class ItemsService {
    * @param worldId
    * @param quantity
    */
-  async giveToNpc(itemId: string, actorId: string, worldId: string, quantity = 1,): Promise<string> {
-    return giveToNpcDispatch(this.state, itemId, actorId, worldId, quantity,);
+  async giveToNpc(
+    itemId: string,
+    actorId: string,
+    worldId: string,
+    quantity = 1,
+    durability?: DurabilityOverride,
+  ): Promise<string> {
+    return giveToNpcDispatch(this.state, itemId, actorId, worldId, quantity, durability,);
   }
 
   /**
@@ -129,16 +157,16 @@ export class ItemsService {
    * @param locationId
    * @param includeHidden
    */
-  async getAtLocation(locationId: string, includeHidden = false,) {
-    return getAtLocationDispatch(this.state, locationId, includeHidden,);
+  async getAtLocation(locationId: string, worldId: string, includeHidden = false,) {
+    return getAtLocationDispatch(this.state, locationId, worldId, includeHidden,);
   }
 
   /**
    * Get items carried by an NPC
    * @param actorId
    */
-  async getNpcInventory(actorId: string,) {
-    return getNpcInventoryDispatch(this.state, actorId,);
+  async getNpcInventory(actorId: string, worldId: string,) {
+    return getNpcInventoryDispatch(this.state, actorId, worldId,);
   }
 
   /**
@@ -146,8 +174,30 @@ export class ItemsService {
    * Returns actorId -> inventory. BUG-n-1-queries-in-story-world-state-context-per-participant.
    * @param actorIds
    */
-  async getNpcInventoryBatch(actorIds: string[],): Promise<Map<string, ItemInstance[]>> {
-    return getNpcInventoryBatchDispatch(this.state, actorIds,);
+  async getNpcInventoryBatch(actorIds: string[], worldId: string,): Promise<Map<string, ItemInstance[]>> {
+    return getNpcInventoryBatchDispatch(this.state, actorIds, worldId,);
+  }
+
+  async decrementDurability(
+    worldItemId: string,
+    worldId: string,
+    amount: number,
+    trx?: Transaction<DB>,
+  ): Promise<DurabilityResult> {
+    return decrementDurabilityDispatch(this.state, worldItemId, worldId, amount, trx,);
+  }
+
+  async applyDrift(
+    worldItemId: string,
+    worldId: string,
+    event: ItemDriftEvent,
+    trx?: Transaction<DB>,
+  ): Promise<ItemDrift | null> {
+    return applyDriftDispatch(this.state, worldItemId, worldId, event, trx,);
+  }
+
+  async getUniqueItem(itemId: string, worldId: string,) {
+    return getUniqueItemDispatch(this.state, itemId, worldId,);
   }
 
   /**

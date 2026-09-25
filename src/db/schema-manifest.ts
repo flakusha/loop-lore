@@ -2047,6 +2047,10 @@ export const SCHEMA = new SchemaManifest()
     respawnable: col("integer", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
+    properties: col("text", { notNull: true, hasDefault: true, },),
+    max_durability: col("integer",),
+    current_durability: col("integer",),
+    is_active: col("integer", { notNull: true, hasDefault: true, },),
   },)
   .table("world_lore_entries", {
     id: col("text", { primaryKey: true, },),
