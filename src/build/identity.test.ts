@@ -227,16 +227,23 @@ function federationConfig(): Config {
 }
 
 describe("federationRoutes — instance-state carries buildHash", () => {
-  test("/api/instance-state includes truncated buildHash (16 hex chars)", async () => {
-    const db = (await createTestDb()).db;
-    const app = federationRoutes({ config: federationConfig(), database: db, },);
-    const res = await app.handle(new Request("http://localhost/api/instance-state",),);
-    expect(res.status,).toBe(200,);
-    const body = (await res.json()) as Record<string, unknown>;
-    expect(typeof body.buildHash,).toBe("string",);
-    expect(body.buildHash,).toMatch(/^[0-9a-f]{16}$/,);
-    // sanity: a fresh compute against the same default cwd returns the same short hash
-    const id: BuildIdentity = await computeBuildIdentity({ force: true, },);
-    expect(body.buildHash,).toBe(id.buildHashShort,);
-  });
+  // 15000ms: hashing the real repo on the first compute (~10s) exceeds the
+  // bun:test default 5000ms timeout. Memoization is reset in afterEach
+  // (per-test isolation), so this test pays the cold-cache cost every run.
+  test(
+    "/api/instance-state includes truncated buildHash (16 hex chars)",
+    async () => {
+      const db = (await createTestDb()).db;
+      const app = federationRoutes({ config: federationConfig(), database: db, },);
+      const res = await app.handle(new Request("http://localhost/api/instance-state",),);
+      expect(res.status,).toBe(200,);
+      const body = (await res.json()) as Record<string, unknown>;
+      expect(typeof body.buildHash,).toBe("string",);
+      expect(body.buildHash,).toMatch(/^[0-9a-f]{16}$/,);
+      // sanity: a fresh compute against the same default cwd returns the same short hash
+      const id: BuildIdentity = await computeBuildIdentity({ force: true, },);
+      expect(body.buildHash,).toBe(id.buildHashShort,);
+    },
+    15000,
+  );
 });
