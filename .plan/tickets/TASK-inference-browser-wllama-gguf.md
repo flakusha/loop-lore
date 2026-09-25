@@ -52,3 +52,6 @@ Refs: TBD (orphan from pre-sync)
 ## Resolution
 
 Landed on dev `2026-09-10`. All frontend alpine inference tests pass.
+
+
+git issue: a3fe774
