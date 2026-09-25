@@ -8731,6 +8731,22 @@
       "source": ".plan/tickets/TASK-content-compression-zstd-streaming.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-db-add-created-at-updated-at-metadata-to-actor-and-character.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-db-add-created-at-updated-at-metadata-to-chat-domain-tables.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-db-add-created-at-updated-at-metadata-to-infra-and-admin-tab.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-db-add-created-at-updated-at-metadata-to-world-domain-tables.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/content-compression.md"
     },
@@ -8888,6 +8904,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-db-add-created-at-updated-at-metadata-to-actor-and-character.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-encryption-access-management.md"
     },
     {
@@ -8978,6 +8998,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-db-add-created-at-updated-at-metadata-to-infra-and-admin-tab.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-encryption-asset-encryption-update.md"
     },
     {
@@ -9025,6 +9049,22 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-standard-tier-at-rest-encryption-silently-stores-plaintext-w.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-db-add-created-at-updated-at-metadata-to-actor-and-character.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-db-add-created-at-updated-at-metadata-to-chat-domain-tables.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-db-add-created-at-updated-at-metadata-to-infra-and-admin-tab.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-db-add-created-at-updated-at-metadata-to-world-domain-tables.md"
     },
     {
       "kind": "ticket",
@@ -9129,6 +9169,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-crypto-hardening-minors-algo-field-decorative-pbkdf2-hot-pat.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-db-add-created-at-updated-at-metadata-to-actor-and-character.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-db-add-created-at-updated-at-metadata-to-chat-domain-tables.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-db-add-created-at-updated-at-metadata-to-world-domain-tables.md"
     },
     {
       "kind": "ticket",
@@ -9594,6 +9646,22 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-db-add-created-at-updated-at-metadata-to-actor-and-character.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-db-add-created-at-updated-at-metadata-to-chat-domain-tables.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-db-add-created-at-updated-at-metadata-to-infra-and-admin-tab.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-db-add-created-at-updated-at-metadata-to-world-domain-tables.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-encryption-asset-encryption.md"
     },
     {
@@ -9629,6 +9697,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-private-tier-no-true-e2e.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-db-add-created-at-updated-at-metadata-to-chat-domain-tables.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-db-add-created-at-updated-at-metadata-to-world-domain-tables.md"
     },
     {
       "kind": "ticket",
