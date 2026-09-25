@@ -27,6 +27,17 @@ export function defaultJobs(): CronJobDef[] {
       },
     },),
     defineJob({
+      name: "chat.archive-expiration",
+      schedule: "0 3 * * *",
+      enabled: true,
+      run: async ({ database, logger, },) => {
+        const { runArchiveExpirationGc, } = await import("../gc/archive-expiration");
+        const summary = await runArchiveExpirationGc(database, { logger, },);
+        logger.info("archive gc complete", { module: "cron", ...summary, },);
+        return summary;
+      },
+    },),
+    defineJob({
       name: "async.offload",
       schedule: "*/5 * * * *",
       enabled: true,

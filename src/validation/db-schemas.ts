@@ -803,6 +803,7 @@ export const AssetLinksSchema = t.Object({
   label: t.Optional(t.String(),),
   sort_order: t.Optional(t.Number(),),
   created_at: t.Optional(t.String(),),
+  archived_at: t.Optional(t.String(),),
 },);
 
 // ── asset_shares ────────────────────────────────────────────
