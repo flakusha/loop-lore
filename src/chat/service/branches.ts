@@ -123,16 +123,26 @@ export async function forkBranch(
 
   const name = params.name?.trim() || (await nextAutoName(db, chatId,));
   const branchId = crypto.randomUUID();
-  await db
-    .insertInto("chat_branches",)
-    .values({
-      id: branchId,
-      chat_id: chatId,
-      parent_message_id: messageId,
-      name,
-      is_active: 1,
-    },)
-    .execute();
+  // Display invariant: at most one active branch row per chat. Forking
+  // moves the display to the new branch, demoting the previous active row.
+  await db.transaction().execute(async (tx,) => {
+    await tx
+      .updateTable("chat_branches",)
+      .set({ is_active: 0, },)
+      .where("chat_id", "=", chatId,)
+      .where("is_active", "=", 1,)
+      .execute();
+    await tx
+      .insertInto("chat_branches",)
+      .values({
+        id: branchId,
+        chat_id: chatId,
+        parent_message_id: messageId,
+        name,
+        is_active: 1,
+      },)
+      .execute();
+  },);
 
   const path = await walkMessagePath(db, chatId, messageId,);
   return {
@@ -171,11 +181,26 @@ export async function switchActiveBranch(
     return { code: "not_found", message: "Branch not found in chat", };
   }
 
-  await db
-    .updateTable("chats",)
-    .set({ active_branch_id: branchId, },)
-    .where("id", "=", chatId,)
-    .execute();
+  // Keep per-row flags in lockstep with chats.active_branch_id so the
+  // display invariant (exactly one active branch row per chat) holds.
+  await db.transaction().execute(async (tx,) => {
+    await tx
+      .updateTable("chats",)
+      .set({ active_branch_id: branchId, },)
+      .where("id", "=", chatId,)
+      .execute();
+    await tx
+      .updateTable("chat_branches",)
+      .set({ is_active: 0, },)
+      .where("chat_id", "=", chatId,)
+      .where("is_active", "=", 1,)
+      .execute();
+    await tx
+      .updateTable("chat_branches",)
+      .set({ is_active: 1, },)
+      .where("id", "=", branchId,)
+      .execute();
+  },);
 
   return { ok: true, chatId, activeBranchId: branchId, };
 }

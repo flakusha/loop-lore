@@ -22,6 +22,8 @@
  * in: `effectiveConfidence === row.confidence`, `disputed === false`.
  */
 
+import { CompositeValidator, createMachine, type StateDef, } from "../../db/state";
+
 /** Lifecycle knobs a world can set under `worlds.rules.lifecycle_config`. */
 export interface LifecycleConfig {
   /** Drop entries whose effective confidence is strictly less than this. 0..100. Default 25. */
@@ -107,7 +109,7 @@ export function effectiveConfidence(
  * @returns True when the row's distortion has crossed `cfg.distortion_cap`.
  */
 export function isDisputed(row: LifecycleRow, cfg: LifecycleConfig,): boolean {
-  return clamp(row.distortion_level, 0, 100,) >= cfg.distortion_cap;
+  return resolveDisputedState(row, cfg,) === DisputedState.Disputed;
 }
 
 /**
@@ -134,4 +136,97 @@ export function resolveLifecycleConfig(
       ? clamp(raw.distortion_cap, 0, 100,)
       : DEFAULT_LIFECYCLE_CONFIG.distortion_cap,
   };
+}
+
+// ── Disputed state machine + distortion × flag composite ──
+
+/** Prompt-side disputed axis: undisputed renders plain, disputed is wrapped. */
+export const DisputedState = {
+  Undisputed: "undisputed",
+  Disputed: "disputed",
+} as const;
+/** */
+export type DisputedState = (typeof DisputedState)[keyof typeof DisputedState];
+
+const disputedStateDef: StateDef<DisputedState> = {
+  values: ["undisputed", "disputed",] as const,
+  initial: "undisputed",
+  transitions: {
+    undisputed: ["disputed",],
+    disputed: [],
+  },
+  terminal: ["disputed",],
+};
+export const disputedStateMachine = createMachine(disputedStateDef,);
+
+/** Distortion axis: has `distortion_level` crossed the configured cap? */
+export const DistortionBucket = {
+  BelowCap: "below_cap",
+  AtCap: "at_cap",
+} as const;
+/** */
+export type DistortionBucket = (typeof DistortionBucket)[keyof typeof DistortionBucket];
+
+const distortionBucketDef: StateDef<DistortionBucket> = {
+  values: ["below_cap", "at_cap",] as const,
+  initial: "below_cap",
+  transitions: {
+    below_cap: ["at_cap",],
+    at_cap: [],
+  },
+  terminal: ["at_cap",],
+};
+export const distortionBucketMachine = createMachine(distortionBucketDef,);
+
+/** Manual-flag axis (`world_lore_entries.disputed`). */
+export const DisputedFlag = {
+  Clear: "clear",
+  Flagged: "flagged",
+} as const;
+/** */
+export type DisputedFlag = (typeof DisputedFlag)[keyof typeof DisputedFlag];
+
+const disputedFlagDef: StateDef<DisputedFlag> = {
+  values: ["clear", "flagged",] as const,
+  initial: "clear",
+  transitions: {
+    clear: ["flagged",],
+    flagged: ["clear",],
+  },
+  terminal: [],
+};
+export const disputedFlagMachine = createMachine(disputedFlagDef,);
+
+/**
+ * Legal (distortion × manual-flag) pairs at the DB boundary. `at_cap:clear`
+ * is the legacy-drift pair — distortion crossed the cap before the
+ * `disputed` column existed — and `resolveDisputedState` heals it to
+ * `disputed` via the distortion check instead of throwing.
+ */
+export const loreDisputedInvariant = new CompositeValidator(
+  distortionBucketMachine,
+  disputedFlagMachine,
+  ["below_cap:clear", "below_cap:flagged", "at_cap:flagged",] as const,
+);
+
+/** Row slice carrying the optional manual disputed flag. */
+export type DisputedRow = LifecycleRow & { disputed?: number };
+
+/**
+ * Resolve the disputed axis for a lore row: the manual flag OR a
+ * distortion crossing marks the row disputed (wrapped in `<disputed>`
+ * downstream). Single source behind `isDisputed`.
+ * @param row
+ * @param cfg
+ * @returns The disputed state of the row.
+ */
+export function resolveDisputedState(row: DisputedRow, cfg: LifecycleConfig,): DisputedState {
+  const bucket = clamp(row.distortion_level, 0, 100,) >= cfg.distortion_cap
+    ? DistortionBucket.AtCap
+    : DistortionBucket.BelowCap;
+  const flag = row.disputed === 1 ? DisputedFlag.Flagged : DisputedFlag.Clear;
+  if (!loreDisputedInvariant.isValid(bucket, flag,)) { return DisputedState.Disputed; }
+  return bucket === DistortionBucket.AtCap || flag === DisputedFlag.Flagged
+    ? DisputedState.Disputed
+    : DisputedState.Undisputed;
 }

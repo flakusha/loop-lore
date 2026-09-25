@@ -51,6 +51,27 @@ function encodeProperties(properties: Record<string, unknown>,): string {
 }
 
 /**
+ * 016 invariant: stackable/consumable instances carry NULL durability
+ * and stay active; durable instances carry 0 ≤ current ≤ max with
+ * `is_active` mirroring `current > 0`.
+ */
+export function isItemInstanceStateConsistent(
+  definition: { category: ItemCategory; stackable: StackableState },
+  durabilityState: { current: number | null; max: number | null },
+  isActive: number,
+): boolean {
+  const durable = definition.stackable !== StackableState.Stackable &&
+    definition.category !== ItemCategory.Consumable;
+  if (!durable) {
+    return durabilityState.current === null && durabilityState.max === null && isActive === 1;
+  }
+  const { current, max, } = durabilityState;
+  if (current === null || max === null) { return false; }
+  if (current < 0 || current > max) { return false; }
+  return isActive === (current === 0 ? 0 : 1);
+}
+
+/**
  * Place item instance in a location
  * @param state
  * @param itemId
@@ -83,6 +104,19 @@ export async function placeInLocation(
   await requireUniqueSlot(state, itemId, worldId,);
   const id = uid();
   const durabilityState = durabilityValues(definition, durability,);
+  const isActive = durabilityState.current === 0 ? 0 : 1;
+  if (!isItemInstanceStateConsistent(definition, durabilityState, isActive,)) {
+    throw new Error(
+      `world_items instance violates the 016 invariant: ${
+        JSON.stringify({
+          category: definition.category,
+          stackable: definition.stackable,
+          ...durabilityState,
+          isActive,
+        },)
+      }`,
+    );
+  }
   await state.db
     .insertInto("world_items",)
     .values({
@@ -97,7 +131,7 @@ export async function placeInLocation(
       properties: "{}",
       max_durability: durabilityState.max,
       current_durability: durabilityState.current,
-      is_active: durabilityState.current === 0 ? 0 : 1,
+      is_active: isActive,
     },)
     .execute();
   return id;
@@ -116,6 +150,19 @@ export async function giveToNpc(
   await requireUniqueSlot(state, itemId, worldId,);
   const id = uid();
   const durabilityState = durabilityValues(definition, durability,);
+  const isActive = durabilityState.current === 0 ? 0 : 1;
+  if (!isItemInstanceStateConsistent(definition, durabilityState, isActive,)) {
+    throw new Error(
+      `world_items instance violates the 016 invariant: ${
+        JSON.stringify({
+          category: definition.category,
+          stackable: definition.stackable,
+          ...durabilityState,
+          isActive,
+        },)
+      }`,
+    );
+  }
   await state.db
     .insertInto("world_items",)
     .values({
@@ -131,7 +178,7 @@ export async function giveToNpc(
       properties: "{}",
       max_durability: durabilityState.max,
       current_durability: durabilityState.current,
-      is_active: durabilityState.current === 0 ? 0 : 1,
+      is_active: isActive,
     },)
     .execute();
   return id;

@@ -10,7 +10,9 @@
  * no attribution set.
  */
 import type { Kysely, } from "kysely";
+import { LicenseType, } from "../db/enums";
 import type { DB, } from "../db/schema";
+import { CompositeValidator, createMachine, type StateDef, } from "../db/state";
 import { safeJsonParse, safeJsonStringify, } from "../utils";
 
 /** License types that require attribution on reuse. */
@@ -20,6 +22,97 @@ const ATTRIBUTION_REQUIRED: ReadonlySet<string> = new Set([
   "cc_by_nc",
   "cc_by_nc_sa",
 ],);
+
+// License triple invariant (license_type x rights flags)
+
+/** Derivatives axis: may others build on the work? */
+export const DerivativesState = {
+  Allowed: "allowed",
+  Forbidden: "forbidden",
+} as const;
+/** */
+export type DerivativesState = (typeof DerivativesState)[keyof typeof DerivativesState];
+
+const derivativesStateDef: StateDef<DerivativesState> = {
+  values: ["allowed", "forbidden",] as const,
+  initial: "allowed",
+  transitions: {
+    allowed: ["forbidden",],
+    forbidden: ["allowed",],
+  },
+  terminal: [],
+};
+
+/** Share-alike axis: must derivatives carry the same license? */
+export const ShareAlikeState = {
+  No: "no",
+  Yes: "yes",
+} as const;
+/** */
+export type ShareAlikeState = (typeof ShareAlikeState)[keyof typeof ShareAlikeState];
+
+const shareAlikeStateDef: StateDef<ShareAlikeState> = {
+  values: ["no", "yes",] as const,
+  initial: "no",
+  transitions: {
+    no: ["yes",],
+    yes: ["no",],
+  },
+  terminal: [],
+};
+
+/**
+ * Structural rule: share-alike is only meaningful when derivatives are
+ * allowed; forbidden:yes is license drift.
+ */
+export const shareAlikeDerivatives = new CompositeValidator(
+  createMachine(derivativesStateDef,),
+  createMachine(shareAlikeStateDef,),
+  ["allowed:no", "allowed:yes", "forbidden:no",] as const,
+);
+
+/** Canonical (derivatives, commercial, share-alike) per license type; custom rows are governed by their free text. */
+export const CANONICAL_LICENSE_RIGHTS: Record<
+  LicenseType,
+  { derivatives: 0 | 1; commercial: 0 | 1; shareAlike: 0 | 1 } | null
+> = {
+  cc0: { derivatives: 1, commercial: 1, shareAlike: 0, },
+  cc_by: { derivatives: 1, commercial: 1, shareAlike: 0, },
+  cc_by_sa: { derivatives: 1, commercial: 1, shareAlike: 1, },
+  cc_by_nc: { derivatives: 1, commercial: 0, shareAlike: 0, },
+  cc_by_nc_sa: { derivatives: 1, commercial: 0, shareAlike: 1, },
+  proprietary: { derivatives: 0, commercial: 0, shareAlike: 0, },
+  custom: null,
+};
+
+/** Licensing row slice carrying the declared type and the three rights flags. */
+export interface LicenseRightsRow {
+  license_type: string;
+  allow_derivatives: number;
+  allow_commercial: number;
+  share_alike: number;
+}
+
+/**
+ * True when the stored rights triple matches the declared license type
+ * (and obeys the share-alike x derivatives structural rule). Custom
+ * rows are exempt - their free text governs.
+ * @param licensing
+ * @returns True when the triple is consistent with the license type.
+ */
+export function licenseRightsValid(licensing: LicenseRightsRow,): boolean {
+  const canonical = CANONICAL_LICENSE_RIGHTS[licensing.license_type as LicenseType];
+  if (canonical === undefined) { return false; }
+  if (canonical === null) { return true; }
+  const derivatives = licensing.allow_derivatives === 1
+    ? DerivativesState.Allowed
+    : DerivativesState.Forbidden;
+  const shareAlike = licensing.share_alike === 1 ? ShareAlikeState.Yes : ShareAlikeState.No;
+  if (!shareAlikeDerivatives.isValid(derivatives, shareAlike,)) { return false; }
+  return licensing.allow_derivatives === canonical.derivatives &&
+    licensing.allow_commercial === canonical.commercial &&
+    licensing.share_alike === canonical.shareAlike;
+}
 
 /** Plain (non-Generated) view of a licensing row at export boundaries. */
 export interface LicenseInfo {
