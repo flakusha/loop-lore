@@ -243,7 +243,6 @@ export const TranslationMapSchema: TSchema = Type.Recursive(
  */
 export type TranslationMapSchema = Static<typeof TranslationMapSchema>;
 
-// ── Admin list rows ─────────────────────────────────────────────────────
-// Admin response schemas live in `./responses-admin` to keep this module
-// under the 250-line ceiling.
+// Sub-modules re-exported to keep this file under the 250-line ceiling.
 export * from "./responses-admin";
+export * from "./responses-interaction";
