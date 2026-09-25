@@ -3,7 +3,7 @@
 
 # FEAT: Chat archive retention config — archive_retention_days admin setting
 
-**Status:** ⬜ Not Started
+**Status:** done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-archival-workflow

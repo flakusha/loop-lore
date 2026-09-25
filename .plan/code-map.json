@@ -1453,6 +1453,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-third-party-api-integration.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-image-backends-x-assistant-image-command-backend-routing-fai.md"
     }
   ],
   "src/assistant/commands/impersonate.ts": [
@@ -1983,6 +1987,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-lore-decay-gate-is-dead-code-at-runtime-passesconfidencefloo.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gate-world-lore-lifecycle-confidence-distortion-disputed-tri.md"
     },
     {
       "kind": "ticket",
@@ -5833,6 +5841,13 @@
       "source": ".plan/tickets/BUG-hsts-header-missing-from-response-policy.md"
     }
   ],
+
+  "src/chat/service/branches.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gate-branches-display-invariant-item-instance-state.md"
+    }
+  ],
   "src/chat/service/carry-": [
     {
       "kind": "ticket",
@@ -6400,10 +6415,6 @@
     }
   ],
   "src/chat/service/visibility.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-archival-workflow.md"
-    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-composer-flows.md"
@@ -7935,6 +7946,13 @@
       "source": ".plan/tickets/TASK-optique-cli-tooling-integration.md"
     }
   ],
+
+  "src/config/schema": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-api-telemetry.md"
+    }
+  ],
   "src/config/schema-class.ts": [
     {
       "kind": "ticket",
@@ -8766,6 +8784,10 @@
     }
   ],
   "src/cron/jobs.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-archival-workflow.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-scheduler-implementation-internal-cron-jobs.md"
@@ -9637,6 +9659,22 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-group-chat-silence-pass-not-implemented.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gate-branches-display-invariant-item-instance-state.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gate-licensing-triple-via-licenserightsvalidator.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gate-shadow-notes-status-x-visibility-composite.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gate-world-lore-lifecycle-confidence-distortion-disputed-tri.md"
     }
   ],
   "src/db/column-types.ts": [
@@ -10099,6 +10137,10 @@
       "source": ".plan/tickets/TASK-adopt-state-machine-framework-in-runtime-status-writes.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gate-shadow-notes-status-x-visibility-composite.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/messages.md"
     },
@@ -10465,6 +10507,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-cleanup-banned-types-console-logging-magic-strings.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-dead-migration-helpers-ts-booltoenum.md"
     }
   ],
   "src/db/migration-roundtrip.test.ts": [
@@ -10649,6 +10695,13 @@
       "source": ".plan/tickets/BUG-group-chat-talkativity-not-surfaced-in-prompt.md"
     }
   ],
+
+  "src/db/migrations/003_memory_audit_log_action_check": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-db-guard-triggers-bypassed-on-update-003-005.md"
+    }
+  ],
   "src/db/migrations/004_world_mechanics.ts": [
     {
       "kind": "ticket",
@@ -10673,6 +10726,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-logging-separate-database-research.md"
+    }
+  ],
+
+  "src/db/migrations/005_world_lore_lifecycle": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-db-guard-triggers-bypassed-on-update-003-005.md"
     }
   ],
   "src/db/migrations/006_data_version_columns.ts": [
@@ -11057,6 +11117,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-create-test-db-custom-dialect-can-bypass-settestdatabase.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-dead-migration-helpers-ts-booltoenum.md"
     },
     {
       "kind": "ticket",
@@ -13551,6 +13615,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-advertised-sfx-music-video-commands-are-stubs.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-image-backends-x-assistant-image-command-backend-routing-fai.md"
     }
   ],
   "src/frontend/alpine/chat-actions/gif-picker.test.ts": [
@@ -16180,6 +16248,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-image-backends-x-gallery-provenance-filter-backend-attributi.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-search-service-unified.md"
     },
     {
@@ -17020,6 +17092,10 @@
     }
   ],
   "src/gc/archive-expiration.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-archival-workflow.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-chat-archive-gc-job-daily-sweep-of-expired-archives.md"
@@ -18329,6 +18405,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-emotions-avatar-edit-model.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-image-backends-x-access-authz-parity-audit-across-image-surf.md"
     },
     {
       "kind": "ticket",
@@ -20896,6 +20976,10 @@
     }
   ],
   "src/middleware/rate-limit.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-api-rate-limiting.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-architecture.md"
@@ -26097,6 +26181,13 @@
       "source": ".plan/tickets/BUG-encrypted-payload-sniffing-misclassifies-user-json-as-pre-en.md"
     }
   ],
+
+  "src/routes/metrics.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-api-telemetry.md"
+    }
+  ],
   "src/routes/middleware/deprecation-headers.ts": [
     {
       "kind": "ticket",
@@ -27311,6 +27402,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-gallery-editor-structured-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-image-backends-x-access-authz-parity-audit-across-image-surf.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-image-backends-x-gallery-provenance-filter-backend-attributi.md"
     }
   ],
   "src/routes/views/layout.ts": [
@@ -29421,6 +29520,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-mechanics-governance.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gate-worlds-rpg-7-col-flags-through-master-mechanics-validat.md"
     },
     {
       "kind": "ticket",

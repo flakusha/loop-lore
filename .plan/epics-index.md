@@ -12,8 +12,7 @@
 
 | Status | Title | Priority | Effort | Tasks | File |
 | ------ | ----- | -------- | ------ | ----- | ---- |
-| 📝 Draft | Actors & Entity System | High | High | 18 | [epic-actors.md](/.plan/epics/epic-actors.md) |
-| 📝 Draft | Archival Workflow | Medium | Medium | 10 | [epic-archival-workflow.md](/.plan/epics/epic-archival-workflow.md) |
+| 📝 Draft | Actors & Entity System | High | High | 17 | [epic-actors.md](/.plan/epics/epic-actors.md) |
 | 📝 Draft | Assistant Entity Access & Manipulation | High | High | 10 | [epic-assistant-entity-access.md](/.plan/epics/epic-assistant-entity-access.md) |
 | 📝 Draft | Character & NPC Lore Access | High | High | 17 | [epic-character-npc-lore-access.md](/.plan/epics/epic-character-npc-lore-access.md) |
 | 📝 Draft | Cross-Layer Reconciliation | High | Large (permanently ongoing) | 12 | [epic-cross-layer-reconciliation.md](/.plan/epics/epic-cross-layer-reconciliation.md) |
@@ -55,6 +54,7 @@
 | ⬜ Not Started | API-First Foundation | Medium | Medium | 8 | [epic-api-first-foundation.md](/.plan/epics/epic-api-first-foundation.md) |
 | ⬜ Not Started | API/Library Distribution Mode | High | High | 25 | [epic-api-library-distribution.md](/.plan/epics/epic-api-library-distribution.md) |
 | ⬜ Not Started | Architecture Overview | High | Medium | 0 | [epic-architecture.md](/.plan/epics/epic-architecture.md) |
+| 🚧 Implementation Landed (2026-09-25) — chat-level confirm dialog open | Archival Workflow | Medium | Medium | 0 | [epic-archival-workflow.md](/.plan/epics/epic-archival-workflow.md) |
 | 🔴 Not Started | Asset Platform Capabilities (Messenger/Social Patterns) | Medium | Large (batch-decomposable; each batch ships standalone value) | 8 | [epic-asset-platform-capabilities.md](/.plan/epics/epic-asset-platform-capabilities.md) |
 | 🔴 Not Started | Asset Transform Editing + Metadata | Medium | Medium | 8 | [epic-asset-transform-metadata.md](/.plan/epics/epic-asset-transform-metadata.md) |
 | ⬜ Not Started | Assistant Generation Extensions (SD, Intent, Scenario Source) | Medium | High | 16 | [epic-assistant-generation-extensions.md](/.plan/epics/epic-assistant-generation-extensions.md) |
@@ -328,15 +328,6 @@
 - **Type:** Foundation Epic
 - **Tags:** actors, characters, entities, participants, data-model, import
 - **File:** `.plan/epics/epic-actors.md`
-
-### Archival Workflow
-
-- **Status:** 📝 Draft
-- **Priority:** Medium
-- **Effort:** Medium
-- **Type:** Feature Epic
-- **Tags:** archival, soft-delete, retention, purge, data-lifecycle
-- **File:** `.plan/epics/epic-archival-workflow.md`
 
 ### Assistant Entity Access & Manipulation
 
@@ -740,6 +731,15 @@ OpenAPI specification, request validation, rate limiting, telemetry, and resourc
 - **Type:** Architecture Epic
 - **Tags:** architecture, system-design, deployment, infrastructure
 - **File:** `.plan/epics/epic-architecture.md`
+
+### Archival Workflow
+
+- **Status:** 🚧 Implementation Landed (2026-09-25) — chat-level confirm dialog open
+- **Priority:** Medium
+- **Effort:** Medium
+- **Type:** Feature Epic
+- **Tags:** archival, soft-delete, retention, purge, data-lifecycle
+- **File:** `.plan/epics/epic-archival-workflow.md`
 
 ### Asset Platform Capabilities (Messenger/Social Patterns)
 
