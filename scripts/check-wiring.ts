@@ -11,9 +11,10 @@
  * Checks:
  *  1. Route factories: every `*Routes` factory exported from a top-level
  *     route module (`src/routes/<name>.ts` or `src/routes/<name>/index.ts`)
- *     is mounted in `src/app/register-plugins.ts` (or `src/elysia-app.ts`).
+ *     is mounted in `src/app/register-plugins.ts`, `src/elysia-app.ts`, or
+ *     one of the v1 surface files under `src/routes/v1/*.ts`.
  *     Excludes helper/barrel modules that are not themselves mount points
- *     (http-utils, entity-routes, v1, views, export-shared, actor-auth,
+ *     (http-utils, entity-routes, views, export-shared, actor-auth,
  *     and any `*.test.ts`).
  *  2. Service wiring: every rpg service module (`src/rpg/<domain>/service`)
  *     has at least one importer outside its own directory. Flags
@@ -36,9 +37,19 @@ const ROOT = import.meta.dir + "/..";
 const errors: string[] = [];
 
 // ── Collect mount-point source text ────────────────────────────────
+// Every Elysia `.use(<factory>(` site is treated as a mount point. The
+// primary mount points are register-plugins.ts (top-level v0 surface)
+// and elysia-app.ts (multipart upload + the catch-all redirect). The
+// v1 barrel under src/routes/v1/*.ts composes the versioned routes —
+// they are mounted there, not in register-plugins.ts.
 const registerPlugins = await Bun.file(ROOT + "/src/app/register-plugins.ts",).text();
 const elysiaApp = await Bun.file(ROOT + "/src/elysia-app.ts",).text();
-const mountSource = registerPlugins + "\n" + elysiaApp;
+const v1SurfaceSources: string[] = [];
+for await (const file of new Glob("src/routes/v1/*.ts",).scan({ cwd: ROOT, },)) {
+  if (file.includes(".test.",)) { continue; }
+  v1SurfaceSources.push(await Bun.file(ROOT + "/" + file,).text(),);
+}
+const mountSource = [registerPlugins, elysiaApp, ...v1SurfaceSources,].join("\n",);
 
 // ── 1. Route factories mounted ─────────────────────────────────────
 // Top-level route modules: a file `src/routes/<name>.ts` OR a directory
