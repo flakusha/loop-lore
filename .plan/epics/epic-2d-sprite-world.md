@@ -141,13 +141,22 @@ Presence = actor_locations + group-chat membership for co-travelers; joinable/le
 4. Simulation, battle reconcile, procgen after movement lands.
 5. Boarding/levels, RAG spike last.
 
-## Review 2026-09-25 (canvas epic audit)
+## Review 2026-09-25 (canvas epic audit, corrected under strict review)
 
-Verified against dev: coord_x/y/z + actor_locations + travel_routes + path/depth-12 triggers all live in `001_init.ts` (not a 013 migration — heading corrected above). `ActorPositionService` (src/locations/positions.ts), `TravelTickEngine` (src/locations/travel-engine.ts, cron 1/min), `LocationTreeService` (src/locations/tree.ts), `WorldEventType` enum, `npc_states`, pure `src/chat/random-events.ts`, `npc-movement` REST route, avatar emotion/mood/outfit tags (avatar-service/types.ts), joinable group-chat routes — all confirmed present. No `<canvas>` in src/views or src/frontend; zero canvas code exists today.
+Verified against dev (`001_init.ts`, `src/locations/`, routes):
+- Coords + `actor_locations` + `travel_routes`/`travel_route_stops` (with per-stop coord_x/y/z) + materialized `path` — all live in `001_init.ts` (not a 013 migration — heading corrected above).
+- `connections` is validated on write (`validateConnections`, fail-on-junk) and resolved for display (`location-explorer.ts`), but nothing *enforces* adjacency on movement: `getLocationConnections` (npc-navigation/pathfinding.ts) ignores the graph (up-to-5 same-world placeholder). Settled decision 1 ("connections validate adjacency") and the procgen "adjacency gate" are aspirational; filed as gap (see tickets).
+- Triggers present: `trg_locations_no_self_parent`, `trg_locations_cross_world_parent`, `trg_locations_set_path_on_insert/update` — 4 only. Depth-12 is **app-layer** (`LocationTreeService`, `LOCATION_DEPTH_LIMIT`), not a trigger; cycle rejection is app-layer (`tree.ts` move check). Note: `tree.ts` header comments name `trg_locations_no_cycle` / `trg_locations_depth_limit` triggers that do not exist — filed as doc bug (see tickets).
+- `ActorPositionService` (`positions.ts`, incl. `deriveForTransport`), `TravelTickEngine` (cron `locations.tick`, every **2 min** — not 1/min), `LocationTreeService`, `WorldEventType` (8 members incl. `combat_event`), `npc_states` — all confirmed present.
+- `npc-movement` REST (`src/routes/npc-movement/`) is **chat-scoped movement indicators** (messageId + from/to location IDs + pattern string), not spatial x/y — weak precedent for realtime positions; corrected characterization.
+- Pure `src/chat/random-events.ts` confirmed (imports only pool + types + `uid`), but uses `Math.random` x2 — no seeded RNG anywhere in `src/` (no mulberry/splitmix/xorshift/LCG).
+- Avatar `AvatarSelectionContext` tags confirmed: emotion/mood/action/location/time/outfit; `StatusEffect` in battle index confirmed.
+- Joinable routes already filter by exact `world` + `location` (`current_location_id`) — gap is radius/zone proximity, not filtering per se (proximity ticket corrected).
+- Chat battle initiation (`/battle start`) applies only the mechanic-enabled gate + roster check — no standing/karma/resource/range gates (battle ticket corrected).
+- No `<canvas>`/`getContext`/`OffscreenCanvas` anywhere in `src/`; zero canvas code exists today.
+- `activity-stream` is per-user unseen-counts, no world scope — snapshot/event feed gap stands.
 
-Gaps filed (worktree 2d-world-canvas-review): seeded-RNG util (random-events.ts uses Math.random x2, no mulberry/splitmix anywhere); world-scoped snapshot+event SSE feed (activity-stream is per-user unseen-counts, no world scope); zone-rect editor (world-management-ui covers CRUD, not rects); proximity nearby-actor query (joinable has no spatial filter); canvas-click to VN choice-card payload contract (bridges game-frontend-scenes InteractiveScene contract); battle-entrance reconcile audit against current chat initiation path.
-
-Tickets: TASK-2d-world-review-zone-rect-editor-for-map-zones-authoring, TASK-2d-world-review-shared-seeded-rng-util-for-deterministic-pro, TASK-2d-world-review-world-scoped-snapshot-and-event-sse-feed, TASK-2d-world-review-proximity-query-for-nearby-actors-into-group, TASK-2d-world-review-canvas-click-to-vn-choice-card-payload-contr, TASK-2d-world-review-reconcile-shared-battle-entrance-table-with-.
+Tickets: TASK-2d-world-review-zone-rect-editor-for-map-zones-authoring, TASK-2d-world-review-shared-seeded-rng-util-for-deterministic-pro, TASK-2d-world-review-world-scoped-snapshot-and-event-sse-feed, TASK-2d-world-review-proximity-query-for-nearby-actors-into-group, TASK-2d-world-review-canvas-click-to-vn-choice-card-payload-contr, TASK-2d-world-review-reconcile-shared-battle-entrance-table-with-, TASK-2d-world-review-zone-adjacency-validation-missing, BUG-locations-tree-header-names-nonexistent-triggers.
 
 ## Open Questions
 
