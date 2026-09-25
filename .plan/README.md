@@ -14,7 +14,7 @@ Spec-driven planning system. Specs live in `.plan/`, active tracking via `git is
 | `backlog/`            | **Status queue (index + 8 tier files, split 2026-08-15)**                                     | 10    |
 | `backlog/priority.md` | Priority index — file map + status header + milestone gates                                   | 1     |
 | `backlog/open.md`     | Open index — file map + status header + next actions                                          | 1     |
-| `epics-index.md`      | Epic registry index (generated)                                                               | 1     |
+| `epics-index.md`      | Epic registry index (generated; `giwt plan gen-docs`); replaces the retired `.plan/epics.md` snapshot | 1     |
 
 ## Backlog Categories (`backlog/`)
 
@@ -22,6 +22,12 @@ The former monolithic `immediate.md` / `backlog.md` / `open-items.md` were split
 small single-purpose files, then re-consolidated (2026-08-08) into **two** backlog files
 to cut duplication, then **re-split by priority/phasing (2026-08-15)** into index + tier
 files. Indexes (`priority.md`, `open.md`) hold file maps + status; tier files hold detail.
+
+> **Retired (2026-09-25)**: `.plan/immediate.md` (P0–P6 decision queue + per-tier status
+> duplicates; merged into `priority-p{0-p2,p3-p5,p6}-*.md` + `priority-release-010.md`)
+> and `.plan/epics.md` (2026-07-28 stale snapshot of 122 epics; replaced by
+> `epics-index.md` regenerated via `giwt plan gen-docs`). Priority + complexity now live
+> in actual tickets; cross-connections live in `matrix-*.md`.
 
 | File                 | Holds                                                                                 | Reads-when                      |
 | -------------------- | ------------------------------------------------------------------------------------- | ------------------------------- |

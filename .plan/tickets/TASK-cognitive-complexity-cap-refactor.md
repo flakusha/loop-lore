@@ -19,7 +19,7 @@ Source: docs/meta/code-practices-improvements/README.md + 02.
 
 ## Resolution
 
-Core scope tracked by .plan/immediate.md (68-file lint debt). Unplanned remainder extracted 2026-09-19 → E3 explicit cap rule + split plan (epic-tooling-improvement.md) (docs-gap reconcile audit).
+Core scope formerly tracked by .plan/immediate.md (68-file lint debt; that file retired 2026-09-25). Unplanned remainder extracted 2026-09-19 → E3 explicit cap rule + split plan (epic-tooling-improvement.md) (docs-gap reconcile audit). Current home: `epic-tooling-improvement.md` § Docs-Gap Audit Remainders + `TASK-PLAN-LINT-TS-DEBT.md`.
 
 ## Acceptance Criteria
 
