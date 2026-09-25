@@ -16462,6 +16462,127 @@
     "git_issue": "9c68d3b",
     "status": "open"
   },
+  "TASK-ACTORS-API-ROUTES": {
+    "hash": "pending",
+    "extid": "TASK-ACTORS-API-ROUTES",
+    "type": "TASK",
+    "title": "Actors — API Routes (actor + child-table REST surface)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-actors",
+    "tags": [],
+    "source": ".plan/tickets/TASK-actors-api-routes.md",
+    "status": "undefined"
+  },
+  "TASK-ACTORS-API-ROUTES-ACTOR-CHILD-TABLE-REST-SURFACE": {
+    "hash": "0e2caae",
+    "git_issue": "0e2caae",
+    "extid": "TASK-ACTORS-API-ROUTES-ACTOR-CHILD-TABLE-REST-SURFACE",
+    "type": "TASK",
+    "title": "Actors — API Routes (actor + child-table REST surface)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-actors",
+    "tags": [
+      "actors",
+      "api",
+      "rest",
+      "elysia"
+    ],
+    "source": ".plan/tickets/TASK-actors-api-routes-actor-child-table-rest-surface.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-ACTORS-CHILD-TABLES-CRUD": {
+    "hash": "pending",
+    "extid": "TASK-ACTORS-CHILD-TABLES-CRUD",
+    "type": "TASK",
+    "title": "Actors — Child Tables CRUD (memories / notes / lore / items)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-actors",
+    "tags": [],
+    "source": ".plan/tickets/TASK-actors-child-tables-crud.md",
+    "status": "undefined"
+  },
+  "TASK-ACTORS-CHILD-TABLES-CRUD-MEMORIES-NOTES-LORE-ITEMS": {
+    "hash": "634d7bd",
+    "git_issue": "634d7bd",
+    "extid": "TASK-ACTORS-CHILD-TABLES-CRUD-MEMORIES-NOTES-LORE-ITEMS",
+    "type": "TASK",
+    "title": "Actors — Child Tables CRUD (memories / notes / lore / items)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-actors",
+    "tags": [
+      "actors",
+      "crud",
+      "memories",
+      "notes",
+      "lore",
+      "items"
+    ],
+    "source": ".plan/tickets/TASK-actors-child-tables-crud-memories-notes-lore-items.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-ACTORS-DATA-VERSIONING": {
+    "hash": "pending",
+    "extid": "TASK-ACTORS-DATA-VERSIONING",
+    "type": "TASK",
+    "title": "Actors — Data Versioning (version table + backfill)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-actors",
+    "tags": [],
+    "source": ".plan/tickets/TASK-actors-data-versioning.md",
+    "status": "undefined"
+  },
+  "TASK-ACTORS-DATA-VERSIONING-VERSION-TABLE-BACKFILL": {
+    "hash": "dbc9f99",
+    "git_issue": "dbc9f99",
+    "extid": "TASK-ACTORS-DATA-VERSIONING-VERSION-TABLE-BACKFILL",
+    "type": "TASK",
+    "title": "Actors — Data Versioning (version table + backfill)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-actors",
+    "tags": [
+      "actors",
+      "data-versioning",
+      "migration"
+    ],
+    "source": ".plan/tickets/TASK-actors-data-versioning-version-table-backfill.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-ACTORS-IMPORT-EXPORT": {
+    "hash": "pending",
+    "extid": "TASK-ACTORS-IMPORT-EXPORT",
+    "type": "TASK",
+    "title": "Actors — SillyTavern Import + V2 Export",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-actors",
+    "tags": [],
+    "source": ".plan/tickets/TASK-actors-import-export.md",
+    "status": "undefined"
+  },
+  "TASK-ACTORS-SILLYTAVERN-IMPORT-V2-EXPORT": {
+    "hash": "f963111",
+    "git_issue": "f963111",
+    "extid": "TASK-ACTORS-SILLYTAVERN-IMPORT-V2-EXPORT",
+    "type": "TASK",
+    "title": "Actors — SillyTavern Import + V2 Export",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-actors",
+    "tags": [
+      "actors",
+      "import",
+      "export",
+      "sillytavern"
+    ],
+    "source": ".plan/tickets/TASK-actors-sillytavern-import-v2-export.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-ADAPTIVE-AUDIO": {
     "hash": "39f84ea",
     "extid": "TASK-ADAPTIVE-AUDIO",
