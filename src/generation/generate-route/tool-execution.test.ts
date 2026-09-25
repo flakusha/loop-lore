@@ -37,6 +37,14 @@ const toolExecPristine = await (async () => {
 })();
 const describeReal = toolExecPristine ? describe : describe.skip;
 
+beforeEach(() => {
+  registry.register({
+    manifest: { name: "test-plugin", version: "1.0.0", description: "", author: "t", },
+    origin: "local",
+    directory: "/tmp/test-plugin",
+  },);
+},);
+
 describeReal("executeToolCalls context forwarding", () => {
   const ctx = { db: {} as never, actorId: "actor-1", chatId: "chat-1", };
 

@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// size-allow: 280
-
 /**
  * Plugin Registry — Stores all plugin registrations for consumers
  *
@@ -12,9 +10,12 @@
  * @module plugin-registry
  */
 
+import { assertPluginCanRegister } from "./registry-policy";
+import { RegistryStore } from "./registry-store";
 import type {
   LoadedPlugin,
   PluginOrigin,
+  PluginCapability,
   RouteDefinition,
   ToolDefinition,
   AgentRoleDefinition,
@@ -23,82 +24,94 @@ import type {
   MigrationDefinition,
 } from "./types";
 
-/**
- *
- */
+export { PLUGIN_ORIGIN_CAPABILITIES } from "./registry-policy";
+
 class PluginRegistry {
   private plugins = new Map<string, LoadedPlugin>();
-  private routes = new Map<string, RouteDefinition[]>();
-  private tools = new Map<string, ToolDefinition[]>();
-  private agentRoles = new Map<string, AgentRoleDefinition[]>();
-  private uiComponents = new Map<string, UIComponentDefinition[]>();
-  private eventHandlers = new Map<string, EventHandlerDefinition[]>();
-  private migrations = new Map<string, MigrationDefinition[]>();
-  private enabledMap = new Map<string, boolean>();
+  private store = new RegistryStore();
 
   // ── Registration ──────────────────────────────────────────
 
-  /**
-   *
-   * @param plugin
-   */
   register(plugin: LoadedPlugin): void {
-    this.plugins.set(plugin.manifest.name, plugin);
-    this.enabledMap.set(plugin.manifest.name, true);
+    const name = plugin.manifest.name;
+    this.plugins.set(name, plugin);
+    this.store.enable(name);
+  }
+
+  private assertCanRegister(pluginName: string, capability: PluginCapability): void {
+    assertPluginCanRegister(this.plugins, pluginName, capability);
   }
 
   /**
-   *
-   * @param pluginName
-   * @param defs
+   * Register plugin routes.
+   * @param pluginName - Plugin owning the routes.
+   * @param defs - Route definitions.
+   * @throws When the plugin is unknown or cannot register routes.
+   * @returns Nothing.
    */
   addRoutes(pluginName: string, defs: RouteDefinition[]): void {
-    this.routes.set(pluginName, defs);
+    this.assertCanRegister(pluginName, "routes");
+    this.store.setRoutes(pluginName, defs);
   }
 
   /**
-   *
-   * @param pluginName
-   * @param defs
+   * Register plugin tools.
+   * @param pluginName - Plugin owning the tools.
+   * @param defs - Tool definitions.
+   * @throws When the plugin is unknown or cannot register tools.
+   * @returns Nothing.
    */
   addTools(pluginName: string, defs: ToolDefinition[]): void {
-    this.tools.set(pluginName, defs);
+    this.assertCanRegister(pluginName, "tools");
+    this.store.setTools(pluginName, defs);
   }
 
   /**
-   *
-   * @param pluginName
-   * @param defs
+   * Register plugin agent roles.
+   * @param pluginName - Plugin owning the roles.
+   * @param defs - Agent role definitions.
+   * @throws When the plugin is unknown or cannot register agent roles.
+   * @returns Nothing.
    */
   addAgentRoles(pluginName: string, defs: AgentRoleDefinition[]): void {
-    this.agentRoles.set(pluginName, defs);
+    this.assertCanRegister(pluginName, "agentRoles");
+    this.store.setAgentRoles(pluginName, defs);
   }
 
   /**
-   *
-   * @param pluginName
-   * @param defs
+   * Register plugin UI components.
+   * @param pluginName - Plugin owning the components.
+   * @param defs - UI component definitions.
+   * @throws When the plugin is unknown or cannot register UI components.
+   * @returns Nothing.
    */
   addUIComponents(pluginName: string, defs: UIComponentDefinition[]): void {
-    this.uiComponents.set(pluginName, defs);
+    this.assertCanRegister(pluginName, "uiComponents");
+    this.store.setUIComponents(pluginName, defs);
   }
 
   /**
-   *
-   * @param pluginName
-   * @param defs
+   * Register plugin event handlers.
+   * @param pluginName - Plugin owning the handlers.
+   * @param defs - Event handler definitions.
+   * @throws When the plugin is unknown or cannot register event handlers.
+   * @returns Nothing.
    */
   addEventHandlers(pluginName: string, defs: EventHandlerDefinition[]): void {
-    this.eventHandlers.set(pluginName, defs);
+    this.assertCanRegister(pluginName, "eventHandlers");
+    this.store.setEventHandlers(pluginName, defs);
   }
 
   /**
-   *
-   * @param pluginName
-   * @param defs
+   * Register plugin migrations.
+   * @param pluginName - Plugin owning the migrations.
+   * @param defs - Migration definitions.
+   * @throws When the plugin is unknown or cannot register migrations.
+   * @returns Nothing.
    */
   addMigrations(pluginName: string, defs: MigrationDefinition[]): void {
-    this.migrations.set(pluginName, defs);
+    this.assertCanRegister(pluginName, "migrations");
+    this.store.setMigrations(pluginName, defs);
   }
 
   // ── Accessors ─────────────────────────────────────────────
@@ -106,6 +119,7 @@ class PluginRegistry {
   /**
    *
    * @param name
+   * @returns The loaded plugin, if found.
    */
   getPlugin(name: string): LoadedPlugin | undefined {
     return this.plugins.get(name);
@@ -113,6 +127,7 @@ class PluginRegistry {
 
   /**
    *
+   * @returns All loaded plugins.
    */
   listPlugins(): LoadedPlugin[] {
     return [...this.plugins.values()];
@@ -121,147 +136,106 @@ class PluginRegistry {
   /**
    *
    * @param origin
+   * @returns Plugins matching the origin.
    */
   getPluginsByOrigin(origin: PluginOrigin): LoadedPlugin[] {
     const out: LoadedPlugin[] = [];
-    for (const p of this.plugins.values()) {
-      if (p.origin === origin) { out.push(p); }
+    for (const plugin of this.plugins.values()) {
+      if (plugin.origin === origin) { out.push(plugin); }
     }
     return out;
   }
 
   /**
-   *
+   * Get routes from enabled plugins in registration order.
+   * @returns Enabled route definitions.
    */
   getAllRoutes(): RouteDefinition[] {
-    const out: RouteDefinition[] = [];
-    for (const defs of this.routes.values()) {
-      for (const r of defs) { out.push(r); }
-    }
-    return out;
+    return this.store.getAllRoutes();
   }
 
   /**
-   * Routes of enabled plugins only. Powers per-request dispatch so
-   * disabling a plugin stops its routes. Unknown (never-registered)
-   * plugin names count as disabled.
+   * Get routes from enabled plugins in registration order.
+   * @returns Enabled route definitions.
    */
   getEnabledRoutes(): RouteDefinition[] {
-    const out: RouteDefinition[] = [];
-    for (const [name, defs] of this.routes.entries()) {
-      if (!this.isEnabled(name,)) { continue; }
-      for (const r of defs) { out.push(r); }
-    }
-    return out;
+    return this.getAllRoutes();
   }
 
   /**
-   *
-   * @param pluginName
+   * Get raw routes for a plugin, including disabled registrations.
+   * @param pluginName - Plugin whose routes to return.
+   * @returns Registered route definitions.
    */
   getPluginRoutes(pluginName: string): RouteDefinition[] {
-    return this.routes.get(pluginName) ?? [];
+    return this.store.getPluginRoutes(pluginName);
   }
 
   /**
-   *
+   * Get tools from enabled plugins in registration order.
+   * @returns Enabled tool definitions.
    */
   getAllTools(): ToolDefinition[] {
-    const out: ToolDefinition[] = [];
-    for (const defs of this.tools.values()) {
-      for (const t of defs) { out.push(t); }
-    }
-    return out;
+    return this.store.getAllTools();
   }
 
   /**
-   *
+   * Get agent roles from enabled plugins in registration order.
+   * @returns Enabled agent role definitions.
    */
   getAllAgentRoles(): AgentRoleDefinition[] {
-    const out: AgentRoleDefinition[] = [];
-    for (const defs of this.agentRoles.values()) {
-      for (const r of defs) { out.push(r); }
-    }
-    return out;
+    return this.store.getAllAgentRoles();
   }
 
   /**
-   * Look up a single agent role by its id across all plugins.
-   * @param id
+   * Look up an enabled plugin agent role by id.
+   * @param id - Agent role id.
+   * @returns The enabled role, if found.
    */
   getAgentRole(id: string): AgentRoleDefinition | undefined {
-    return this.getAllAgentRoles().find((r,) => r.id === id,);
+    return this.getAllAgentRoles().find((role) => role.id === id);
   }
 
   /**
-   *
+   * Get UI components from enabled plugins in registration order.
+   * @returns Enabled UI component definitions.
    */
   getAllUIComponents(): UIComponentDefinition[] {
-    const out: UIComponentDefinition[] = [];
-    for (const defs of this.uiComponents.values()) {
-      for (const c of defs) { out.push(c); }
-    }
-    return out;
+    return this.store.getAllUIComponents();
   }
 
   /**
-   *
+   * Get event handlers from enabled plugins in registration order.
+   * @returns Enabled event handler definitions.
    */
   getAllEventHandlers(): EventHandlerDefinition[] {
-    const out: EventHandlerDefinition[] = [];
-    for (const defs of this.eventHandlers.values()) {
-      for (const h of defs) { out.push(h); }
-    }
-    return out;
+    return this.store.getAllEventHandlers();
   }
 
   /**
-   *
+   * Get migrations from enabled plugins in registration order.
+   * @returns Enabled migration definitions.
    */
   getAllMigrations(): MigrationDefinition[] {
-    const out: MigrationDefinition[] = [];
-    for (const defs of this.migrations.values()) {
-      for (const m of defs) { out.push(m); }
-    }
-    return out;
+    return this.store.getAllMigrations();
   }
 
   // ── Lifecycle ─────────────────────────────────────────────
 
-  /**
-   *
-   */
   unregisterAll(): void {
     this.plugins.clear();
-    this.routes.clear();
-    this.tools.clear();
-    this.agentRoles.clear();
-    this.uiComponents.clear();
-    this.eventHandlers.clear();
-    this.migrations.clear();
-    this.enabledMap.clear();
+    this.store.clear();
   }
 
-  /**
-   *
-   * @param name
-   */
+  /** @returns Whether the plugin is enabled. */
   isEnabled(name: string): boolean {
-    return this.enabledMap.get(name) ?? false;
+    return this.store.isEnabled(name);
   }
 
-  /**
-   *
-   * @param name
-   * @param enabled
-   */
   setEnabled(name: string, enabled: boolean): void {
-    this.enabledMap.set(name, enabled);
+    this.store.setEnabled(name, enabled);
   }
 
-  /**
-   *
-   */
   listPluginStates(): { name: string; enabled: boolean }[] {
     return Array.from(this.plugins.keys(), (name) => ({
       name,
