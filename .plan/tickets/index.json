@@ -15108,6 +15108,71 @@
     "status": "open",
     "git_issue": "fc3b325"
   },
+  "TASK-019-AUDIT-COLUMNS": {
+    "hash": "pending",
+    "extid": "TASK-019-AUDIT-COLUMNS",
+    "type": "TASK",
+    "title": "Audit columns — `created_at` / `updated_at` for underdocumented tables",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-019-audit-columns.md",
+    "status": "open"
+  },
+  "TASK-019-CONTENT-VERSIONING-HEAVY-TABLES": {
+    "hash": "pending",
+    "extid": "TASK-019-CONTENT-VERSIONING-HEAVY-TABLES",
+    "type": "TASK",
+    "title": "Content versioning for heavy-text tables — extend `data_version`/`record_hash`",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-019-content-versioning-heavy-tables.md",
+    "status": "open"
+  },
+  "TASK-019-ENFORCE-STATE-MACHINE-VALIDATORS-AT-WRITE": {
+    "hash": "pending",
+    "extid": "TASK-019-ENFORCE-STATE-MACHINE-VALIDATORS-AT-WRITE",
+    "type": "TASK",
+    "title": "Enforce state-machine + composite validators at write time",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "db",
+      "state-machine",
+      "validators",
+      "runtime"
+    ],
+    "source": ".plan/tickets/TASK-019-enforce-state-machine-validators-at-write.md",
+    "status": "open"
+  },
+  "TASK-019-HOT-PATH-INDEXES": {
+    "hash": "pending",
+    "extid": "TASK-019-HOT-PATH-INDEXES",
+    "type": "TASK",
+    "title": "Hot-path index sweep — append-only migration 019",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-019-hot-path-indexes.md",
+    "status": "open"
+  },
+  "TASK-019-USERS-ENCRYPTION-SECRET": {
+    "hash": "pending",
+    "extid": "TASK-019-USERS-ENCRYPTION-SECRET",
+    "type": "TASK",
+    "title": "`users.encryption_secret` — per-user HMAC key for token-indexed search",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-019-users-encryption-secret.md",
+    "status": "open"
+  },
   "TASK-023": {
     "hash": "149948e",
     "extid": "TASK-023",
@@ -24900,6 +24965,18 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-encrypted-lore-search-tokens.md",
+    "status": "open"
+  },
+  "TASK-ENCRYPTED-SEARCH-MINIMAL-FIRST-SLICE": {
+    "hash": "pending",
+    "extid": "TASK-ENCRYPTED-SEARCH-MINIMAL-FIRST-SLICE",
+    "type": "TASK",
+    "title": "Encrypted-search minimal first slice — wire + backfill for pilot chat",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-encrypted-search-minimal-first-slice.md",
     "status": "open"
   },
   "TASK-ENCRYPTION-ACCESS-MANAGEMENT": {
