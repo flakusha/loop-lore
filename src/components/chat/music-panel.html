@@ -1,0 +1,130 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!-- Chat Music Links Panel (sidebar — list / add / delete music links) -->
+<div
+  class="panel-backdrop"
+  x-show="$store.ui.showMusicLinksPanel"
+  @click="$store.ui.showMusicLinksPanel = false"
+  x-cloak
+>
+</div>
+<aside
+  class="right-panel"
+  :style="{ display: $store?.ui?.showMusicLinksPanel ? 'flex' : 'none' }"
+  x-cloak
+  data-testid="music-panel"
+>
+  <button class="btn-icon" @click="$store.ui.showMusicLinksPanel = false" x-bind:title="t('common.close')">
+    &times;
+  </button>
+  <div class="panel-content">
+    <div class="nav-section-title">Music</div>
+
+    <div x-show="_musicLinksLoading" style="color: var(--text-secondary); font-size: 12px">
+      Loading…
+    </div>
+    <div x-show="!_musicLinksLoading && _musicLinks.length === 0" style="color: var(--text-secondary); font-size: 12px">
+      No music links yet. Paste a Spotify, YouTube Music, SoundCloud, Apple Music, or Bandcamp URL below.
+    </div>
+
+    <template x-for="link in _musicLinks" :key="link.id">
+      <div
+        class="pin-item"
+        style="padding: var(--space-2); border-bottom: 1px solid var(--border-subtle)"
+        data-testid="music-link-item"
+      >
+        <div style="display: flex; align-items: flex-start; gap: var(--space-2)">
+          <template x-if="link.thumbnailUrl">
+            <img
+              :src="link.thumbnailUrl"
+              alt=""
+              style="width: 48px; height: 48px; object-fit: cover; border-radius: 4px; flex-shrink: 0"
+            />
+          </template>
+          <div style="flex: 1; min-width: 0">
+            <div
+              style="font-size: 13px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap"
+              x-text="link.title"
+            >
+            </div>
+            <div
+              style="font-size: 11px; color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap"
+              x-text="link.artist"
+            >
+            </div>
+            <div
+              style="font-size: 10px; color: var(--text-secondary); text-transform: capitalize"
+              x-text="link.service.replace('_', ' ')"
+            >
+            </div>
+          </div>
+          <button
+            class="btn-icon btn-xs"
+            @click.stop="confirmDeleteMusicLink(link.id)"
+            title="Remove"
+            aria-label="Remove music link"
+          >
+            &times;
+          </button>
+        </div>
+      </div>
+    </template>
+
+    <!-- Add music link form -->
+    <div style="margin-top: var(--space-3); border-top: 1px solid var(--border-default, #e9ecef); padding-top: var(--space-3)">
+      <div class="form-label">Add music link</div>
+      <form @submit.prevent="addMusicLink()">
+        <input
+          class="form-input"
+          style="margin-bottom: var(--space-2)"
+          x-model="_musicLinkUrl"
+          placeholder="https://spotify.com/track/…"
+          type="url"
+          required
+          data-testid="music-link-url"
+        />
+        <div
+          x-show="_musicLinkError"
+          style="font-size: 12px; color: #dc2626; margin-bottom: var(--space-2)"
+          x-text="_musicLinkError"
+        >
+        </div>
+        <button
+          type="submit"
+          class="btn btn-primary btn-xs"
+          :disabled="!_musicLinkUrl || _musicLinkSaving"
+          data-testid="music-link-add"
+        >
+          <span x-show="!_musicLinkSaving">Add</span>
+          <span x-show="_musicLinkSaving">Adding…</span>
+        </button>
+      </form>
+    </div>
+
+    <!-- Delete confirm -->
+    <div
+      x-show="_musicLinksConfirmDelete"
+      style="margin-top: var(--space-3); background: var(--bg-secondary, #f8f9fa); border-radius: 6px; padding: var(--space-3)"
+      data-testid="music-link-confirm"
+    >
+      <div style="font-size: 13px; margin-bottom: var(--space-2)">Remove this link?</div>
+      <div style="display: flex; gap: var(--space-2)">
+        <button
+          class="btn btn-danger btn-xs"
+          @click="deleteMusicLink(_musicLinksConfirmDelete)"
+          data-testid="music-link-confirm-yes"
+        >
+          Remove
+        </button>
+        <button
+          class="btn btn-secondary btn-xs"
+          @click="_musicLinksConfirmDelete = null"
+          data-testid="music-link-confirm-no"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</aside>
