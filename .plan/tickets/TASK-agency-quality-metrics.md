@@ -9,9 +9,13 @@
 **Parent epic:** `epic-research-agency-quality.md`
 **Related:** `epic-actor-turn-skip.md` (`TurnSkip {actor, beat, mode}` contract - **coordinate, do not duplicate**), `src/db/schema-moderation.ts` (`interaction_logs`), `epic-analytics-observability.md`
 
+**Summary:**
+
 ## Goal
 
 Make player agency **measurable**. Add `agency_mode` column to `interaction_log` and per-dimension counters (Murray x agency-play x DiGRA) so designers can tune consequential asymmetry, not just count options.
+
+**Context:**
 
 ## Why
 
@@ -20,7 +24,7 @@ Make player agency **measurable**. Add `agency_mode` column to `interaction_log`
 - DiGRA (2025): forced-choice scenes need explicit metadata to be honest about agency.
 - `epic-actor-turn-skip.md` already proposes `TurnSkip.mode: hold|advance` - coordinate, do not duplicate.
 
-## Acceptance Criteria
+**Acceptance Criteria:**
 
 - [ ] Migration: `interaction_logs.agency_mode` text-enum, default `'free'`; existing rows backfilled to `'free'`.
 - [ ] Skip path writes `agency_mode = 'skipped'` (via `TurnSkip` integration).
@@ -34,3 +38,6 @@ Make player agency **measurable**. Add `agency_mode` column to `interaction_log`
 - Player-facing agency score UI.
 - Free-form "agency sentiment" NLP over chat text.
 - Replacing `TurnSkip` (coordinate via shared contract).
+
+
+git issue: 8e96514

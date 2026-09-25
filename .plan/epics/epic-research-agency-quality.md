@@ -10,6 +10,10 @@
 **Source:** `docs/research/interaction-systems-agency.md` section 3
 **Related:** `epic-agency-story-points.md`, `epic-actor-autonomy-story-drive.md`, `epic-actor-turn-skip.md` (`TurnSkip` contract), `epic-analytics-observability.md`, `src/db/schema-moderation.ts` (`interaction_logs`)
 
+**Tags:** research, agency, affordance, parser, action
+
+**Overview:**
+
 ## Summary
 
 Make player agency **measurable** so designers can tune consequential asymmetry, not just count options. Three pieces:
@@ -35,3 +39,6 @@ Make player agency **measurable** so designers can tune consequential asymmetry,
 - Player-facing agency score UI (admin-only first; surface to players only after designers validate the metric).
 - Free-form "agency sentiment" NLP over chat text (per-message Murray evaluation is over-budget; counters are sufficient).
 - Replacing `TurnSkip` from `epic-actor-turn-skip.md` (coordinate via shared contract, not parallel implementation).
+
+
+git issue: 1b8fbb0

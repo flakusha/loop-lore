@@ -9,9 +9,13 @@
 **Parent epic:** `epic-research-agency-decision.md`
 **Related:** `epic-character-internal-traits.md` (D7 coping, D8 approach, D9 autonomy), `src/characters/services/personality-service/`, `src/characters/services/character-systems/`, `epic-agency-story-points.md` (ReactionDecision type), `epic-actor-autonomy-story-drive.md` (reaction dispatch)
 
+**Summary:**
+
 ## Goal
 
 Make `PersonalityModifierResolver` (or equivalent) compute a utility score for each candidate reaction (`chat | wait | do_other | flee | attack | ignore`) so the autonomy scheduler can pick the highest-scoring reaction deterministically.
+
+**Context:**
 
 ## Why
 
@@ -19,7 +23,7 @@ Make `PersonalityModifierResolver` (or equivalent) compute a utility score for e
 - The Sims: continuous needs x discrete actions, weighted sum.
 - Loop-lore already has the personality axes (D7/D8/D9) - they are the weights; no schema work.
 
-## Acceptance Criteria
+**Acceptance Criteria:**
 
 - [ ] `scoreReaction(actor, candidates, context) -> ReactionDecision` returns the highest-utility option with a numeric score and a human-readable reason string.
 - [ ] Unit tests cover all 6 reaction modes with at least 3 personality profiles per mode (autonomous-bold, cautious, neutral baseline).
@@ -31,3 +35,6 @@ Make `PersonalityModifierResolver` (or equivalent) compute a utility score for e
 - Full GOAP-style plan composition.
 - LLM-driven reaction commentary (defer to a followup if designers want narrativised reasoning).
 - New personality axes.
+
+
+git issue: 3aef0c6
