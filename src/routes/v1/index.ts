@@ -28,6 +28,7 @@ import { adminSurface, } from "./admin-surface";
 import { baseSurface, } from "./base-surface";
 import { chatsSurface, } from "./chats-surface";
 import { contentSurface, } from "./content-surface";
+import { governanceEndpoints, governanceGuard, } from "./governance";
 
 /**
  * Create v1 versioned routes.
@@ -49,9 +50,14 @@ export function v1Routes(opts: RegisterPluginsOpts,) {
       },),
     )
     .use(versionResolver(),)
+    // Synthetic burst client: the e2e harness fires hundreds of requests per
+    // user in milliseconds — per-user windows would 429 every flow. Same
+    // opt-out shape as deprecationAfterHandle above.
+    .use(governanceGuard({ enabled: () => process.env.E2E_SAFEGUARD !== "1", },),)
     .use(baseSurface(opts,),)
     .use(chatsSurface(opts,),)
     .use(actorsSurface(opts,),)
     .use(contentSurface(opts,),)
-    .use(adminSurface(opts,),);
+    .use(adminSurface(opts,),)
+    .use(governanceEndpoints(),);
 }
