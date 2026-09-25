@@ -24,6 +24,22 @@ export {
   SLASH_COMMAND,
 } from "./intent";
 
+// ── Action parser (typed verb×target; supersedes keyword-only routing) ──
+export {
+  actionToLegacyIntent,
+  parseAction,
+  parseActionStage1,
+  type Action,
+  type AgencyMode,
+  type ParseContext,
+  type ParserStage,
+  type Stage2LLMFn,
+  type TargetRef,
+  type Verb,
+  VERB,
+  VERB_VALUES,
+} from "./action-parser";
+
 export {
   ENTITY_PATTERN,
   EPISODIC_ACTION,
