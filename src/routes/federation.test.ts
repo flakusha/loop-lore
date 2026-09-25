@@ -119,30 +119,43 @@ describe("federationRoutes — NodeInfo 2.1", () => {
 });
 
 describe("federationRoutes — instance-state", () => {
-  test("/api/instance-state returns versioned instance-state", async () => {
-    const app = await appFor(FED_ENABLED,);
-    const res = await app.handle(new Request("http://localhost/api/instance-state",),);
-    expect(res.status,).toBe(200,);
-    const body = (await res.json()) as Record<string, unknown>;
-    expect(body.version,).toBe(1,);
-    expect(typeof body.instanceId,).toBe("string",);
-    const software = body.software as { name: string; version: string };
-    expect(software.name,).toBe(APP_NAME,);
-    expect(software.version,).toBe(APP_VERSION,);
-    expect(Array.isArray(body.protocols,),).toBe(true,);
-    expect(typeof body.uptime,).toBe("number",);
-    expect(["ok", "degraded",].includes(body.state as string,),).toBe(true,);
-    // buildHash is included as a truncated fingerprint (16 hex chars).
-    expect(typeof body.buildHash,).toBe("string",);
-    expect((body.buildHash as string).length,).toBe(16,);
-  });
+  // 15000ms: hashing the real repo on the first compute (~10s) exceeds the
+  // bun:test default 5000ms timeout. Subsequent tests in this describe hit
+  // the per-process memo and complete in <100ms; only the first needs the bump.
+  test(
+    "/api/instance-state returns versioned instance-state",
+    async () => {
+      const app = await appFor(FED_ENABLED,);
+      const res = await app.handle(new Request("http://localhost/api/instance-state",),);
+      expect(res.status,).toBe(200,);
+      const body = (await res.json()) as Record<string, unknown>;
+      expect(body.version,).toBe(1,);
+      expect(typeof body.instanceId,).toBe("string",);
+      const software = body.software as { name: string; version: string };
+      expect(software.name,).toBe(APP_NAME,);
+      expect(software.version,).toBe(APP_VERSION,);
+      expect(Array.isArray(body.protocols,),).toBe(true,);
+      expect(typeof body.uptime,).toBe("number",);
+      expect(["ok", "degraded",].includes(body.state as string,),).toBe(true,);
+      // buildHash is included as a truncated fingerprint (16 hex chars).
+      expect(typeof body.buildHash,).toBe("string",);
+      expect((body.buildHash as string).length,).toBe(16,);
+    },
+    15000,
+  );
 
-  test("/api/instance-state does not leak secrets or user identifiers", async () => {
-    const app = await appFor(FED_ENABLED,);
-    const res = await app.handle(new Request("http://localhost/api/instance-state",),);
-    const body = await res.text();
-    expect(body,).not.toMatch(/apiKey|password|secret|token|userId|sessionId/i,);
-  });
+  // Defensive bump: hits the same handler; runs after the warmed memo path
+  // (sub-second) but shares the test suite timeout budget.
+  test(
+    "/api/instance-state does not leak secrets or user identifiers",
+    async () => {
+      const app = await appFor(FED_ENABLED,);
+      const res = await app.handle(new Request("http://localhost/api/instance-state",),);
+      const body = await res.text();
+      expect(body,).not.toMatch(/apiKey|password|secret|token|userId|sessionId/i,);
+    },
+    15000,
+  );
 });
 
 describe("federationRoutes — edge cases", () => {
