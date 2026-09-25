@@ -72,6 +72,52 @@ export function dispatchKeynavAction(action: string,): void {
   window.dispatchEvent(new CustomEvent("keynav:action", { detail: { action, }, bubbles: true, },),);
 }
 
+/** Registered direct handlers for keynav actions (per-page Alpine init). */
+const keynavHandlers = new Map<string, Set<() => void>>();
+
+/**
+ * Register a handler that fires when a keynav action is dispatched. Multiple
+ * handlers per action are allowed; each is invoked in registration order.
+ * Returns an unsubscribe function.
+ * @param action - The action identifier from the keymap (e.g. "goto-chatlist")
+ * @param handler - Side-effect to run when the action fires
+ */
+export function registerKeynavHandler(action: string, handler: () => void,): () => void {
+  let set = keynavHandlers.get(action,);
+  if (!set) {
+    set = new Set();
+    keynavHandlers.set(action, set,);
+  }
+  set.add(handler,);
+  return () => {
+    set?.delete(handler,);
+    if (set && set.size === 0) {
+      keynavHandlers.delete(action,);
+    }
+  };
+}
+
+/**
+ * Run all registered handlers for an action (in registration order). Does
+ * NOT dispatch the CustomEvent — call {@link dispatchKeynavAction} separately
+ * if you need Alpine listeners to fire too.
+ * @param action - The action identifier from the keymap
+ */
+export function dispatchKeynavActionToHandlers(action: string,): void {
+  const set = keynavHandlers.get(action,);
+  if (!set) { return; }
+  for (const handler of set) {
+    handler();
+  }
+}
+
+/**
+ * Test-only: clear all registered handlers. Not exported in the public API.
+ */
+export function __resetKeynavHandlersForTests(): void {
+  keynavHandlers.clear();
+}
+
 /** Pending "g"-prefixed sequence awaiting its second key. */
 let pendingG = false;
 
@@ -134,6 +180,7 @@ document.addEventListener("keydown", (e: KeyboardEvent,) => {
     const entry = DEFAULT_KEYMAP.find((k,) => k.combo === sequence);
     if (entry) {
       e.preventDefault();
+      dispatchKeynavActionToHandlers(entry.action,);
       dispatchKeynavAction(entry.action,);
     }
     return;
@@ -147,6 +194,7 @@ document.addEventListener("keydown", (e: KeyboardEvent,) => {
   const single = DEFAULT_KEYMAP.find((k,) => k.combo === e.key);
   if (single) {
     e.preventDefault();
+    dispatchKeynavActionToHandlers(single.action,);
     dispatchKeynavAction(single.action,);
   }
 },);
