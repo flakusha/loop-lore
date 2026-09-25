@@ -9,6 +9,15 @@
  */
 import { t, } from "elysia";
 
+export const AchievementCategorySchema = t.UnionEnum([
+  "combat",
+  "social",
+  "exploration",
+  "crafting",
+  "story",
+  "meta",
+],);
+export const AchievementTierSchema = t.UnionEnum(["bronze", "silver", "gold", "platinum",],);
 export const ActorTypeSchema = t.UnionEnum(["user", "character", "narrator", "system",],);
 export const ActorVisibilitySchema = t.UnionEnum(["private", "public",],);
 export const AdminOverrideActionSchema = t.UnionEnum(["ban", "approve", "restrict", "restore",],);
@@ -2167,8 +2176,8 @@ export const RecipeDiscoveriesSchema = t.Object({
 export const AchievementsSchema = t.Object({
   name: t.String(),
   description: t.String(),
-  category: t.String(),
-  tier: t.String(),
+  category: AchievementCategorySchema,
+  tier: AchievementTierSchema,
   icon: t.Optional(t.String(),),
   is_secret: t.Optional(t.Number(),),
   is_hidden: t.Optional(t.Number(),),
