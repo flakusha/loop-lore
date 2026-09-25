@@ -49,15 +49,7 @@ export interface ListMemoriesOpts extends ActorListOpts {
   memoryType?: MemoryType;
 }
 
-/**
- * List an actor's memories, most important first (matches the route order).
- * @param database - Database handle
- * @param actorId - Actor to list memories for
- * @param userId - Authenticated requester id
- * @param userRole - Requester role
- * @param opts - Paging plus an optional memory-type filter
- * @returns Paginated memories or an error
- */
+/** List an actor's memories, most important first (matches the route order). */
 export async function listActorMemories(
   database: Kysely<DB>,
   actorId: string,
@@ -95,15 +87,7 @@ export async function listActorMemories(
   return { ok: true, items, total: Number(countResult?.total ?? 0,), page, pageSize, };
 }
 
-/**
- * Create a memory for an actor.
- * @param database - Database handle
- * @param actorId - Owning actor
- * @param userId - Authenticated requester id
- * @param userRole - Requester role
- * @param input - Memory fields; `content` is required
- * @returns The created row or an error
- */
+/** Create a memory for an actor. `content` is required. */
 export async function createActorMemory(
   database: Kysely<DB>,
   actorId: string,
@@ -151,16 +135,7 @@ export async function createActorMemory(
   return { ok: true, entity, };
 }
 
-/**
- * Update a memory in place. The memory must belong to the given actor.
- * @param database - Database handle
- * @param actorId - Owning actor
- * @param memoryId - Memory to update
- * @param userId - Authenticated requester id
- * @param userRole - Requester role
- * @param patch - Fields to change; omitted fields are untouched
- * @returns The updated row or an error
- */
+/** Update a memory in place; the memory must belong to the given actor. */
 export async function updateActorMemory(
   database: Kysely<DB>,
   actorId: string,
@@ -219,15 +194,7 @@ export async function updateActorMemory(
   return { ok: true, entity, };
 }
 
-/**
- * Delete a memory. The memory must belong to the given actor.
- * @param database - Database handle
- * @param actorId - Owning actor
- * @param memoryId - Memory to delete
- * @param userId - Authenticated requester id
- * @param userRole - Requester role
- * @returns The deleted id or an error
- */
+/** Delete a memory; the memory must belong to the given actor. */
 export async function deleteActorMemory(
   database: Kysely<DB>,
   actorId: string,
