@@ -5,8 +5,11 @@
  * Turn-skip event persistence tests (TASK-turn-skip-event-and-persistence).
  *
  * A skip is a first-class system message with content_type=turn_skip; dedup
- * rides the messages.idempotency_key unique index (minute bucket) and the
- * latest-turn_skip replay guard.
+ * rides the latest-turn_skip replay guard (same actor + chat, latest row
+ * with content_type=turn_skip returns `deduped: true`). The unique-index
+ * retry path was removed — messages.idempotency_key is a plain index, so
+ * concurrent retries within the minute bucket are not deduplicated by the
+ * schema; the latest-message guard only catches sequential retries.
  */
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
