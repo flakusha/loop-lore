@@ -29,7 +29,7 @@ export function _setImageAvailabilityForTest(available: boolean | null,): void {
 function resolveImageCommandAvailability(): boolean {
   if (imageAvailableOverride !== null) { return imageAvailableOverride; }
   try {
-    return (loadConfig().providers.sd?.length ?? 0) > 0;
+    return (loadConfig().generation.providers.sd?.length ?? 0) > 0;
   } catch {
     return false;
   }
