@@ -7,6 +7,7 @@
  */
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
+import { ItemVisibility, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
@@ -212,6 +213,39 @@ describe("ItemsService.destroy", () => {
     // Attempt to destroy an item from a world the user does not own.
     const ok = await svc.destroy(wId, worldId,);
     expect(ok,).toBe(false,);
+  });
+});
+
+describe("ItemsService.getAtLocation", () => {
+  test("filters hidden rows by default and includes them when requested", async () => {
+    const testLoc = uid();
+    const visibleItem = uid();
+    const hiddenItem = uid();
+    await insertLocations(db, worldId, "GetAtLoc", { id: testLoc, } as never,);
+    await insertItems(db, worldId, "Torch", "consumable", { id: visibleItem, } as never,);
+    await insertItems(db, worldId, "Secret Scroll", "consumable", { id: hiddenItem, } as never,);
+    await insertWorldItems(db, worldId, visibleItem, {
+      id: uid(),
+      location_id: testLoc,
+      quantity: 2,
+      visibility: ItemVisibility.Visible,
+    } as never,);
+    await insertWorldItems(db, worldId, hiddenItem, {
+      id: uid(),
+      location_id: testLoc,
+      quantity: 1,
+      visibility: ItemVisibility.Hidden,
+    } as never,);
+
+    const svc = new ItemsService(db,);
+    const visibleResults = await svc.getAtLocation(testLoc, worldId,);
+    expect(visibleResults,).toHaveLength(1,);
+    expect(visibleResults[0]?.quantity,).toBe(2,);
+    expect(visibleResults[0]?.visibility,).toBe("visible",);
+
+    const allResults = await svc.getAtLocation(testLoc, worldId, true,);
+    expect(allResults,).toHaveLength(2,);
+    expect(allResults.find(result => result.visibility === "hidden")?.quantity,).toBe(1,);
   });
 });
 
