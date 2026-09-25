@@ -1913,8 +1913,16 @@
       "source": ".plan/epics/epic-emotion-avatar-message-binding.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-research-agency-affordance.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-detectAvatarChangeIntent-runs-on-user-message-wrong-direction.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-affordance-action-parser.md"
     },
     {
       "kind": "ticket",
@@ -3045,7 +3053,6 @@
       "source": ".plan/tickets/BUG-table-backend-request-id-collision-overwrites-foreign-row.md"
     }
   ],
-
   "src/async/offload-daemon.ts": [
     {
       "kind": "ticket",
@@ -4857,6 +4864,10 @@
     }
   ],
   "src/characters/spec/enums.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-loot-budget-affordance-gate.md"
+    },
     {
       "kind": "spec",
       "source": "docs/spec/character-migration.md"
@@ -11968,6 +11979,16 @@
       "source": ".plan/tickets/TASK-data-migration-transitivity.md"
     }
   ],
+  "src/db/schema-moderation.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-research-agency-quality.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-agency-quality-metrics.md"
+    }
+  ],
   "src/db/schema-mood.ts": [
     {
       "kind": "ticket",
@@ -13300,7 +13321,6 @@
       "source": ".plan/tickets/TASK-plugin-management-api.md"
     }
   ],
-
   "src/frontend/alpine/admin/admin-tasks.ts": [
     {
       "kind": "ticket",
@@ -17251,6 +17271,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-actor-turn-skip.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-agency-coordination-priority.md"
     }
   ],
   "src/generation/auto-gen/post-store-types.ts": [
@@ -22778,7 +22802,15 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-research-agency-affordance.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-workflow-engine.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-affordance-action-parser.md"
     },
     {
       "kind": "ticket",
@@ -28195,7 +28227,6 @@
       "source": ".plan/tickets/TASK-math-structured-llm-dice-result.md"
     }
   ],
-
   "src/rpg/interaction/formula/ast.ts": [
     {
       "kind": "ticket",
@@ -30548,8 +30579,24 @@
   ],
   "src/services/actor-items.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-research-agency-affordance.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-actor-item-service.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-affordance-action-parser.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-affordance-lookup-table.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-loot-budget-affordance-gate.md"
     },
     {
       "kind": "ticket",
@@ -31504,6 +31551,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-script-migration.md"
+    }
+  ],
+  "src/tickets/sync-index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-plan-index-orphan-phantom-cleanup.md"
     }
   ],
   "src/tickets/sync-ticket.ts": [
@@ -32531,6 +32584,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-affordance-lookup-table.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-nsfw-rating-enforcement.md"
     }
   ],
@@ -32614,6 +32671,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-admin-audit-selectAll-schema-mismatch-empty.md"
+    }
+  ],
+  "src/validation/schemas/responses.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-affordance-action-parser.md"
     }
   ],
   "src/validation/schemas/settings.ts": [

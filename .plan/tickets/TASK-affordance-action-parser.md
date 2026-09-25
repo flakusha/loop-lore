@@ -9,9 +9,13 @@
 **Parent epic:** `epic-research-agency-affordance.md`
 **Related:** `src/regex/intent.ts` (keyword router - **superseded by this ticket**), `src/assistant/intent.ts` (avatar intent detection - must not regress), `src/services/actor-items.ts`, `src/validation/schemas/responses.ts`
 
+**Summary:**
+
 ## Goal
 
 Replace the keyword-only intent router (`src/regex/intent.ts` returns one of `generate | tool_exec | api_call | chat`) with a **two-stage parser** that emits a typed Action `{ verb: Verb, target?: TargetRef, instrument?: TargetRef, agency_mode: free|forced|blocked|skipped }`.
+
+**Context:**
 
 ## Why
 
@@ -19,7 +23,7 @@ Replace the keyword-only intent router (`src/regex/intent.ts` returns one of `ge
 - Two-stage pattern: deterministic fast-path for ~85% of inputs, constrained LLM fallback for novel inputs. Stage 1 is auditable; Stage 2 is novel-input-safe (Gibson/Norman affordance theory; OpenHOI 2025).
 - Common contract (Rhasspy post-STT JSON): `{intent, slots, confidence}` is the canonical dispatch shape.
 
-## Acceptance Criteria
+**Acceptance Criteria:**
 
 - [ ] Closed verb enum covers: `use, equip, unequip, drop, give, take, open, close, read, examine, attack, defend, talk, move, hide, search`. Extensible via config.
 - [ ] Stage-1 parser: regex/keyword path; latency < 1ms p95 for inputs < 1 KB.
@@ -32,3 +36,6 @@ Replace the keyword-only intent router (`src/regex/intent.ts` returns one of `ge
 - Affordance evaluation (separate ticket: `TASK-affordance-lookup-table`).
 - Lorebook state-aware triggers.
 - Multimodal input.
+
+
+git issue: 85f1b0a
