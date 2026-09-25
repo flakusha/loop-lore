@@ -20,6 +20,7 @@ import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { resolveProvider, } from "../../generation/providers/registry";
 import { uid, } from "../../utils";
+import { safeJsonStringify, } from "../../utils/safe-json";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
 import { jsonResponse, requireUserId, } from "../http-utils";
 
@@ -102,13 +103,15 @@ export function generationCompareRoutes(
 
       const id = uid();
       const createdAt = new Date().toISOString();
+      const resultsJson = safeJsonStringify(out,);
+      const metadataJson = safeJsonStringify({ sweep: isSweep, modelCount: body.models.length, },);
       await database.insertInto("model_comparison_runs",).values({
         id,
         user_id: userId,
         prompt: body.prompt,
-        results: JSON.stringify(out,),
+        results: resultsJson.ok ? resultsJson.value : "[]",
         ratings: "{}",
-        metadata: JSON.stringify({ sweep: isSweep, modelCount: body.models.length, },),
+        metadata: metadataJson.ok ? metadataJson.value : "{}",
         created_at: createdAt,
       },).execute();
       return jsonResponse({ id, createdAt, results: out, sweep: isSweep, },);
