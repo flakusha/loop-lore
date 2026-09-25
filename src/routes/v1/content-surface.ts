@@ -18,6 +18,8 @@ import { analyticsRoutes, } from "../analytics";
 import { assetSearchRoutes, } from "../asset-search";
 import { assetTagRoutes, } from "../asset-tags";
 import { blogRoutes, } from "../blog";
+import { comparisonsExportRoutes, } from "../comparisons-export";
+import { generationCompareRoutes, } from "../generation/compare";
 import { gifSearchRoutes, } from "../gifs/search";
 import { modelComparisonsRoutes, } from "../model-comparisons";
 import { notificationsRoutes, } from "../notifications";
@@ -49,5 +51,7 @@ export function contentSurface(opts: RegisterPluginsOpts,) {
     .use(proactiveMessagingRoutes(handleOpts, prefix,),)
     .use(blogRoutes({ database, }, prefix,),)
     .use(analyticsRoutes({ database, }, prefix,),)
-    .use(modelComparisonsRoutes({ database, }, prefix,),);
+    .use(modelComparisonsRoutes({ database, }, prefix,),)
+    .use(comparisonsExportRoutes({ database, }, prefix,),)
+    .use(generationCompareRoutes({ config, database, }, prefix,),);
 }
