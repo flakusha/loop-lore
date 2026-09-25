@@ -3,7 +3,7 @@
 
 # FEAT: Chat archive purge notifications — emit on archive/restore/purge
 
-**Status:** ⬜ Not Started
+**Status:** done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-archival-workflow

@@ -23,5 +23,18 @@
 **Tags:** autonomy, scheduler, world-tick, dispatch, persistence, bdi, gm-beats
 **Related:** TASK-autonomy-rate-governor, TASK-autonomy-config-surface, epic-actor-autonomy-story-drive.md:70
 
+## Design Notes (merged from the prior world-tick-and-actor-turns ticket variant)
+
+Current state: `NpcNavigationService` (src/rpg/npc-navigation/) is tick-based but nothing drives ticks. `GameMasterService` generates only on user turns; `GameMasterConfig.type` llm/human/hybrid + actorModels per-actor routing exist. BDI planning/reaction tickets (epic-agency-story-points) are the decision layer — accommodate when they land, do not wait.
+
+Direction:
+1. Tick source pluggable: real-time (background interval), accelerated (N game-hours per real minute), manual (advance-world affordance); per world/chat. UI never blocks on the loop.
+2. Due-actor selection each tick: BDI plan due, pending reaction, movement tick due, GM narrative beat due (LLM GM = governed actor consuming the same budget).
+3. Dispatch through the existing generation pipeline (story-mode/auto-gen path, group-cascade turn guards reused); results + episodic memory writes.
+4. Human-in-loop: pause/resume/step-one-action at any moment; user messages always pre-empt autonomous turns.
+5. Persistence: simulation state (tick cursor, actor queues, pending reactions) survives restart; crash recovery resumes without double-dispatch.
+6. v1 autonomy vocabulary: move (navigation ticks), ambient action (BDI plan or simple idle), initiate/react chat, GM beat. Exploration = movement + location-event reactions.
+7. Governor integration: due actor without budget is skipped and rescheduled, not dropped.
+
 
 git issue: 7ebc1b9

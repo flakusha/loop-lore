@@ -123,4 +123,4 @@ name (`pass` / `skip turn`) in UI, API, and code to avoid semantic collision.
 | Gate interlock | `TASK-turn-skip-gate-interlock.md` | yes | open |
 | UI — 'Skip turn' composer | `TASK-turn-skip-composer-ui.md` | yes | open |
 
-All 5 referenced tickets are filed on disk (verified 2026-09-25). The 2026-09-23 gap-audit was stale — this table supersedes it. The event and cascade work items have parallel duplicate-name tickets from a prior rename cycle (`TASK-turn-skip-event-and-persistence.md`, `TASK-turn-skip-cascade-integration.md`); consolidation deferred to the implementing worktree.
+All 5 referenced tickets are filed on disk (verified 2026-09-25). The 2026-09-23 gap-audit was stale — this table supersedes it. The parallel duplicate-name tickets from the prior rename cycle (the event-and-persistence and cascade-integration variants; git issues 1e5e60b, c44f6c1) were consolidated into the canonical tickets above on 2026-09-25 — thin copies deleted, duplicate issues closed.

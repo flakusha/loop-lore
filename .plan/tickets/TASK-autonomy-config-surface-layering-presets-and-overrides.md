@@ -15,7 +15,7 @@
 
 ## Summary
 
-Configuration layering and UX affordances for autonomy pacing: world default, chat override, per-actor override; pacing presets; gated unlimited stress preset. Epic: epic-actor-autonomy-story-drive.md. Consumed by TASK-autonomy-rate-governor-for-llm-actors and TASK-story-auto-drive-scheduler-world-tick-and-actor-turns.
+Configuration layering and UX affordances for autonomy pacing: world default, chat override, per-actor override; pacing presets; gated unlimited stress preset. Epic: epic-actor-autonomy-story-drive.md. Consumed by TASK-autonomy-rate-governor-for-llm-actors and TASK-story-auto-drive-scheduler.
 
 ## Direction
 
