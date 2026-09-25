@@ -34,3 +34,8 @@ Wire the explicit chat rename (`POST /api/chats/:id/rename`) and chat migrate
 - [ ] Confirm prompt for migrate (irreversible from user's POV)
 - [ ] Optimistic update on success; revert on error
 - [ ] `bun run check` green
+
+
+## Current implementation
+
+- `src/components/chat/rename-chat-modal.html` — rename modal surface; migrate action is not implemented.

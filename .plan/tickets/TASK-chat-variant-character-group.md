@@ -59,3 +59,8 @@ Auxiliary columns on `chats`:
 - `epic-narration-actor-separation`
 - `epic-visual-novel-mode` — VN rendering
 - Sibling variants: `TASK-chat-variant-character`, `TASK-chat-variant-llm-only-group-gm`
+
+
+## Current implementation
+
+- `src/components/chat/participant-mgmt.html` — group participant management surface.

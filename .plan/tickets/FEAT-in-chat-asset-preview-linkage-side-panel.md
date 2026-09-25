@@ -31,3 +31,8 @@ Item 7 (priority-release-010 row 7; P3 #12 / P5). Gallery assets viewable/linkab
 - Worktree: `tree/in-chat-asset-preview-panel` (branch `in-chat-asset-preview-panel`, based on `dev` @ `59b69851`)
 - All acceptance criteria met; ticket closed 2026-08-21 in this worktree.
 - Baseline `bun run check`: pre-existing (not run here — ticket already verified shipped on dev; worktree used only to record close-out).
+
+
+## Current implementation
+
+- `src/components/chat/media-preview-modal.html` — in-chat media preview modal.

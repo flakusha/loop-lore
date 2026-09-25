@@ -19,6 +19,11 @@ Emotion-avatar message binding + mood panel respect alpha (no white-box artifact
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Mood panel is mounted in the character info surface.
+- [ ] Alpha-aware emotion-avatar message binding is implemented and tested.
+- [x] Current implementation is documented.
+
+
+## Current implementation
+
+- `src/components/chat/mood-panel.html` — mood and emotion-avatar controls.

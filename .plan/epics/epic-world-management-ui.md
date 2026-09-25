@@ -152,17 +152,17 @@ Complete world and location management interface, including world CRUD, location
 | TASK-location-details.md  | P0       | ⬜ Not Started |
 | TASK-world-alpine.md      | P0       | ⬜ Not Started |
 
-## Files to Create
+## Current files
 
-- `src/frontend/world/world-dashboard.ts` — Main world page
-- `src/frontend/world/location-explorer.ts` — Location browser
-- `src/frontend/world/travel-interface.ts` — Travel UI
-- `src/frontend/world/time-weather.ts` — Time/weather widget
-- `src/frontend/world/location-details.ts` — Location details
-- `src/frontend/alpine/world.ts` — Alpine.js world logic
+- `src/frontend/pages/worlds.ts` — world page actions.
+- `src/frontend/pages/worlds-io.ts` — world import actions.
+- `src/partials/worlds/create-modal.html` — world creation form.
+- `src/partials/worlds/import-modal.html` — world bundle import form.
+- `src/views/worlds.html` — world page and modal triggers.
 
 ## Related Epics
 
 - **Epic World & Locations** — Backend world system
 - **Epic Travel & Time** — Backend travel mechanics
 - **Epic Weather & Environment** — Backend weather system
+
