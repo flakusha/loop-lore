@@ -10,6 +10,8 @@
 import type { Kysely, } from "kysely";
 import { MessageStatus, MessageVisibility, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import { emitPluginEvent, } from "../../plugins/event-bus";
+import { registry, } from "../../plugins/registry";
 import { can, } from "../../users/permissions";
 import type {
   RegenerateVariantParams,
@@ -149,6 +151,19 @@ export async function regenerateMessageVariant(
       idempotency_key: regenKey,
     },)
     .execute();
+  // FEAT-048: notify plugin event handlers that a sibling variant was created.
+  await emitPluginEvent(
+    registry.getAllEventHandlers(),
+    "message.variant.created",
+    {
+      chatId,
+      parentId,
+      variantMessageId,
+      swipeIndex,
+      actorId: message.actor_id,
+      style: style ?? null,
+    },
+  );
 
   return {
     ok: true,

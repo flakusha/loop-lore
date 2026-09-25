@@ -3,7 +3,8 @@
 
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../../db/schema";
-
+import { emitPluginEvent, } from "../../../plugins/event-bus";
+import { registry, } from "../../../plugins/registry";
 /**
  * Delete a chat and all its related data (cascade).
  *
@@ -51,4 +52,8 @@ export async function deleteChat(database: Kysely<DB>, chatId: string,): Promise
         trx.deleteFrom("chats",).where("id", "=", chatId,).execute()
     );
   },);
+
+  // FEAT-048: emit chat.deleted after the cascade completes so plugins see
+  // the canonical post-delete state. Per-handler errors do not affect outcome.
+  await emitPluginEvent(registry.getAllEventHandlers(), "chat.deleted", { chatId, },);
 }
