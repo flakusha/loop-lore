@@ -289,6 +289,7 @@ node-targeted edits.
 9. **Plugin dir:** Original epic proposed `src/plugins/comfyui/`; work landed in `src/image-edit/` + `src/generation/image-engine/`. Reconcile — create the plugin shim or retire the proposal?
 
 ## Linked Tasks
+
 - TASK-comfyui-node-discovery.md
 - TASK-comfyui-template-registry.md
 
