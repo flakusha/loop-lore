@@ -3,7 +3,7 @@
 
 # BUG: rpg loot: rollLootTable sets 'used' flag but never enforces one-shot use
 
-**Status:** ✅ Resolved — already on dev (commit f7e65f4ff "resolve 11 source-audit BUGs (batch 2)"); verified 2026-09-19
+**Status:** done
 **Priority:** low
 **Effort:** Medium
 **Summary:** (see ## Summary)
