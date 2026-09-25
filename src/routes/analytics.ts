@@ -9,7 +9,7 @@ import { checkChatAccess, } from "../chat/service/access";
 import type { DB, } from "../db/schema";
 import { parseExpiryMs, toDate, } from "../utils/date";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
-import { jsonResponse, requireUserId, } from "./http-utils";
+import { jsonError, jsonResponse, requireUserId, } from "./http-utils";
 interface HandleOpts {
   database: Kysely<DB>;
 }
@@ -18,19 +18,6 @@ const COST_PER_1K_TOKENS = 0.002;
 
 function parseIsoMs(value: string | undefined,): number | null {
   return parseExpiryMs(value,);
-}
-
-function emptyChatMetrics() {
-  return {
-    totalMessages: 0,
-    messageCounts: { user: 0, assistant: 0, system: 0, },
-    totalTokens: 0,
-    avgMessageLength: 0,
-    activeTimeSpanMs: 0,
-    totalGenerations: 0,
-    avgLatencyMs: 0,
-    costEstimate: 0,
-  };
 }
 
 /**
@@ -48,12 +35,7 @@ export function analyticsRoutes({ database, }: HandleOpts, prefix = "/api",): El
       const access = await checkChatAccess(database, chatId, userId, null,);
       const canReadChat = access.ok;
       if (!canReadChat) {
-        const chatExists = await database
-          .selectFrom("chats",)
-          .select("id",)
-          .where("id", "=", chatId,)
-          .executeTakeFirst();
-        if (chatExists !== undefined) { return jsonResponse(emptyChatMetrics(),); }
+        return jsonError("Chat not found", 404,);
       }
 
       const { from, to, } = (ctx.query ?? {}) as { from?: string; to?: string };
