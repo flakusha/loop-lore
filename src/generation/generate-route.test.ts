@@ -361,6 +361,42 @@ describeReal("handleGenerate — non-streaming (complete)", () => {
     expect((data.tokenUsage as Record<string, number>).totalTokens,).toBe(30,);
   });
 
+  test("applies the selected chat format before provider dispatch", async () => {
+    const chatId = await seedChat(testDb,);
+    const actorId = await seedActor(testDb,);
+    const msgId = await seedMessage(testDb, chatId, actorId,);
+    let dispatchedContent: string | undefined;
+    const provider = getProvider("mock-provider",) as MockLLMProvider;
+    const originalComplete = provider.complete;
+    provider.complete = async (req,) => {
+      dispatchedContent = req.messages[0]?.content;
+      return originalComplete.call(provider, req,);
+    };
+
+    const config = makeConfig();
+    config.templates.llm.chatFormats.chatml = {
+      system: "<|im_start|>system\n${content}<|im_end|>",
+      user: "<|im_start|>user\n${content}<|im_end|>",
+      assistant: "<|im_start|>assistant\n${content}<|im_end|>",
+    };
+    const body = makeRequest({
+      chatId,
+      actorId,
+      parentMessageId: msgId,
+      prompt: [{ role: "user" as const, content: "Test prompt", },],
+      format: "chatml",
+      stream: false,
+    },);
+
+    try {
+      const res = await handleGenerate({ body, database: testDb, config, userId: "user-1", },);
+      expect(res.status,).toBe(200,);
+      expect(dispatchedContent,).toBe("<|im_start|>user\nTest prompt<|im_end|>",);
+    } finally {
+      provider.complete = originalComplete;
+    }
+  });
+
   test("stores message in DB on success", async () => {
     const chatId = await seedChat(testDb,);
     const actorId = await seedActor(testDb,);

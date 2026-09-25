@@ -18,6 +18,7 @@ import type { DB, } from "../../db/schema";
 import { jsonError, } from "../../routes/http-utils";
 import { parseAssistantTuning, resolveAssistantMaxTokens, resolveAssistantTemperature, } from "../assistant-tuning";
 import { hasInFlightGeneration, IdempotencyKeyConflictError, startGenerationTracking, } from "../cancellation-manager";
+import { applyChatFormat, } from "../generate-format";
 import {
   buildFailoverList,
   resolveProvider,
@@ -127,7 +128,8 @@ export async function handleGenerate({
     messages = appendStylePrompt(messages, stylePrompt,);
     systemPrompt = systemPrompt === undefined ? stylePrompt : `${systemPrompt}\n\n${stylePrompt}`;
   }
-
+  const chatFormat = cfg.templates?.llm?.chatFormats?.[input.format ?? ""];
+  if (chatFormat !== undefined) { messages = applyChatFormat(messages, chatFormat,); }
   // Resolution chain: explicit request → chat setting → config default → provider capability
   let resolvedStream = input.stream;
   if (resolvedStream === undefined) {
