@@ -210,12 +210,11 @@ export function createApp(deps: AppDeps,): Elysia {
   // ── Multipart upload route — registered directly on the parent app with
   // parse: "none" so Elysia's body inference (which other sub-plugins force
   // across the composed app) does not consume the multipart stream before
-  // handleUpload calls request.formData().
-  //
-  // Both /api/assets (legacy unversioned) and /api/v1/assets (current
-  // versioned path used by tests + frontend) share the same handler:
-  // BUG-assets-e2e-upload-returns-null-data was caused by only the legacy
-  // path being registered, so v1 POSTs fell through the catch-all → 404.
+  // handleUpload calls request.formData(). Mounted at /api/v1/assets only;
+  // the legacy unversioned /api/assets path is dropped — callers hitting it
+  // get a 308 to /api/v1/assets from the catch-all below (RFC 7538 preserves
+  // method + body). The other assets CRUD endpoints (GET/DELETE/links/...)
+  // are served only under /api/v1/assets/* via the v1 barrel.
   const uploadAsset = async (ctx: any,) => {
     const userId = ctx.userId as string | null;
     if (!userId) {
@@ -235,7 +234,6 @@ export function createApp(deps: AppDeps,): Elysia {
       maxFileSize: config.assets.maxFileSize,
     },);
   };
-  app.post("/api/assets", uploadAsset, { parse: "none", },);
   app.post("/api/v1/assets", uploadAsset, { parse: "none", },);
 
   // ── Convenience redirects ─────────────────────────────────────
