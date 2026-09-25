@@ -15,6 +15,7 @@
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
+import { jsonParseOr, safeJsonStringify, } from "../utils/safe-json";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { jsonError, jsonResponse, requireUserId, } from "./http-utils";
 
@@ -50,9 +51,9 @@ export function comparisonsExportRoutes(
         const report = {
           id: run.id,
           prompt: run.prompt,
-          results: JSON.parse(run.results,) as unknown,
-          ratings: JSON.parse(run.ratings,) as unknown,
-          metadata: JSON.parse(run.metadata,) as unknown,
+          results: jsonParseOr(run.results, [],),
+          ratings: jsonParseOr(run.ratings, {},),
+          metadata: jsonParseOr(run.metadata, {},),
           createdAt: run.created_at,
         };
         if (format === "markdown") {
@@ -177,7 +178,10 @@ function renderRunMarkdown(report: RunReport,): string {
       "",
     );
   }
-  lines.push("## Ratings", "", "```json", JSON.stringify(report.ratings, null, 2,), "```", "",);
+  const ratingsJson = safeJsonStringify(report.ratings, 2,);
+  const metadataJson = safeJsonStringify(report.metadata, 2,);
+  lines.push("## Ratings", "", "```json", ratingsJson.ok ? ratingsJson.value : "{}", "```", "",);
+  lines.push("## Metadata", "", "```json", metadataJson.ok ? metadataJson.value : "{}", "```", "",);
   return lines.join("\n",);
 }
 

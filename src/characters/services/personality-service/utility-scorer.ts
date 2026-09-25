@@ -48,9 +48,8 @@ const BASELINES: Record<ReactionKind, number> = {
 
 /**
  * Derive a `TraitWeights` vector from a resolved personality snapshot.
- * Looks up "D7_coping"/"D8_approach"/"D9_autonomy" if present; falls
- * back to `personality_traits`/`core_values` heuristics; otherwise
- * returns a neutral baseline.
+ * @param personality - Resolved personality snapshot.
+ * @returns Weighted reaction tendencies.
  */
 function deriveWeights(personality: ResolvedPersonality,): TraitWeights {
   const r = personality.resolved;
@@ -132,12 +131,10 @@ function scoreOne(kind: ReactionKind, w: TraitWeights, ctx: ReactionContext,): n
 
 /**
  * Public entry point. Pure function — no DB, no LLM.
- *
- * Returns the highest-scoring reaction with its rationale. If `candidates`
- * is empty, defaults to `wait` (safe fallback).
- *
- * ponytail: weighted-sum (utility AI), not GOAP. Aligns with the prior
- * research verdict — keep this simple until telemetry proves it insufficient.
+ * @param personality - Resolved personality snapshot.
+ * @param candidates - Allowed reaction kinds.
+ * @param ctx - Current reaction context.
+ * @returns The highest-scoring reaction with its rationale.
  */
 export function scoreReaction(
   personality: ResolvedPersonality,

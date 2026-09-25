@@ -20,6 +20,7 @@ import {
 } from "../test-utils/insert-helpers";
 import { uid, } from "../utils";
 import { modelComparisonsRoutes, } from "./model-comparisons";
+import { modelComparisonsAnalyticsRoutes, } from "./model-comparisons-analytics";
 
 /**
  * @param db
@@ -28,7 +29,8 @@ import { modelComparisonsRoutes, } from "./model-comparisons";
 function createApp(db: Kysely<DB>, userId: string | null,): Elysia {
   return new Elysia({ name: "test-model-comparisons", },)
     .derive(() => ({ userId, }))
-    .use(modelComparisonsRoutes({ database: db, },),) as unknown as Elysia;
+    .use(modelComparisonsRoutes({ database: db, },),)
+    .use(modelComparisonsAnalyticsRoutes({ database: db, },),) as unknown as Elysia;
 }
 
 describe("modelComparisonsRoutes", () => {

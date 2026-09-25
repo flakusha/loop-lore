@@ -79,6 +79,7 @@ import { messageSeenRoutes, } from "../routes/message-seen";
 import { messagesRoutes, } from "../routes/messages";
 import { metricsRoutes, } from "../routes/metrics";
 import { modelComparisonsRoutes, } from "../routes/model-comparisons";
+import { modelComparisonsAnalyticsRoutes, } from "../routes/model-comparisons-analytics";
 import { musicLinksRoutes, } from "../routes/music-links";
 import { notificationsRoutes, } from "../routes/notifications";
 import { npcMovementRoutes, } from "../routes/npc-movement";
@@ -217,6 +218,7 @@ export function registerPlugins(app: Elysia<any>, opts: RegisterPluginsOpts,): v
   // ── Analytics ────────────────────────────────────────────────────────────
   app.use(analyticsRoutes({ database: handleOpts.database, },),);
   app.use(modelComparisonsRoutes({ database: handleOpts.database, },),);
+  app.use(modelComparisonsAnalyticsRoutes({ database: handleOpts.database, },),);
   app.use(comparisonsExportRoutes({ database: handleOpts.database, },),);
   app.use(generationCompareRoutes({ config, database: handleOpts.database, },),);
   // ── Battle integration ───────────────────────────────────────────────────

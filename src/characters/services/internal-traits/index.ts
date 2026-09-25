@@ -182,7 +182,8 @@ export class CharacterInternalTraitsService {
 
   /**
    * Delete internal traits for an actor.
-   * @param actorId
+   * @param actorId - The actor whose traits should be deleted.
+   * @returns True when a row was deleted.
    */
   async delete(actorId: string,): Promise<boolean> {
     const result = await this.db
@@ -200,6 +201,7 @@ export class CharacterInternalTraitsService {
    * Always includes hidden-state directives for the LLM to track internally.
    * @param actorId - The character's actor ID
    * @param includeHidden - If true, include ALL traits regardless of visibility (for GM/system use)
+   * @returns The prompt section, or null when the actor has no traits.
    */
   async buildPromptSection(actorId: string, includeHidden = false,): Promise<string | null> {
     const traits = await this.get(actorId,);
