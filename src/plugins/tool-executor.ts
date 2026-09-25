@@ -37,18 +37,19 @@ export async function executePluginTool(
 ): Promise<ToolResult> {
   const timeoutMs = tool.timeoutMs ?? DEFAULT_TOOL_TIMEOUT_MS;
   try {
+    const handler = Promise.resolve(tool.handler(params, ctx));
     return await new Promise<ToolResult>((resolve, reject) => {
       const timer = setTimeout(() => {
         reject(new Error(`Tool "${tool.name}" timed out after ${timeoutMs}ms`));
       }, timeoutMs);
-      tool.handler(params, ctx).then(
+      handler.then(
         (result) => { clearTimeout(timer); resolve(result); },
-        reject,
+        (error: unknown) => { clearTimeout(timer); reject(error); },
       );
     });
   } catch (error) {
     return {
-      content: jsonStringifyOr({ error: (error as Error).message, }),
+      content: jsonStringifyOr({ error: error instanceof Error ? error.message : String(error), }),
       isError: true,
     };
   }
