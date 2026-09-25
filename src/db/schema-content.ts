@@ -21,6 +21,7 @@ export interface AssetLinks {
   label: string | null;
   sort_order: Generated<number>;
   created_at: Generated<string>;
+  archived_at: string | null;
 }
 
 // ── asset_shares ────────────────────────────────────────────

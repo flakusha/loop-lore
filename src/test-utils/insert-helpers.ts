@@ -496,7 +496,7 @@ export async function insertAssetLinks(
   asset_id: string,
   entity_type: AssetLinkEntity,
   entity_id: string,
-  opts?: { label?: string | null; sort_order?: number; created_at?: string },
+  opts?: { label?: string | null; sort_order?: number; created_at?: string; archived_at?: string | null },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
   const id = providedId ?? crypto.randomUUID();

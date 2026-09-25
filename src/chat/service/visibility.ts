@@ -13,7 +13,10 @@
  */
 import type { Kysely, } from "kysely";
 import type { MessageVisibility, } from "../../db/enums";
+import { NotificationType, } from "../../db/enums-core";
 import type { DB, } from "../../db/schema";
+import { getLogger, } from "../../logger";
+import { NotificationService, } from "../../notifications/service/service";
 import { checkChatSettingsAccess, } from "./access";
 import { deleteChat, } from "./crud/delete";
 import type { ServiceError, } from "./types";
@@ -69,6 +72,37 @@ export async function hardDeleteChat(
 ): Promise<HardDeleteChatResult> {
   const access = await checkChatSettingsAccess(database, chatId, requesterId, userRole,);
   if (!access.ok) { return access.error; }
+
+  // Capture participants BEFORE the cascade deletes chat_participants rows.
+  // FEAT-chat-archive-purge-notifications uses this list to fan out a
+  // chat.purged notification to everyone except the actor.
+  const recipients = await database
+    .selectFrom("chat_participants",)
+    .select("actor_id",)
+    .where("chat_id", "=", chatId,)
+    .execute();
+
   await deleteChat(database, chatId,);
+
+  try {
+    const svc = new NotificationService(database,);
+    for (const row of recipients) {
+      if (row.actor_id === requesterId) { continue; }
+      await svc.create({
+        userId: row.actor_id,
+        type: NotificationType.System,
+        title: "Chat permanently deleted",
+        data: { kind: "chat_purged", chatId, actorId: requesterId, },
+      },);
+    }
+  } catch (error: unknown) {
+    getLogger()
+      .child({ module: "chat-visibility", },)
+      .warn("purge notification fan-out failed", {
+        chatId,
+        error: error instanceof Error ? error.message : String(error,),
+      },);
+  }
+
   return { ok: true, chatId, };
 }

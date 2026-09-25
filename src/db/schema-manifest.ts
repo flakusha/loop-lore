@@ -1516,6 +1516,7 @@ export const SCHEMA = new SchemaManifest()
     label: col("text",),
     sort_order: col("integer", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
+    archived_at: col("text",),
   },)
   .table("asset_shares", {
     id: col("text", { primaryKey: true, },),

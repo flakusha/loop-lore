@@ -26,6 +26,7 @@ describe("cron default jobs", () => {
     const jobs = defaultJobs();
     expect(jobs.map((j,) => j.name),).toEqual([
       "telemetry.retention",
+      "chat.archive-expiration",
       "async.offload",
       "crypto.key-rotation-check",
       "memory.decay",
