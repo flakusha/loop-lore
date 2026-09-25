@@ -117,12 +117,10 @@ name (`pass` / `skip turn`) in UI, API, and code to avoid semantic collision.
 
 | Work Item | Ticket | On-disk | Status |
 | --------- | ------ | ------- | ------ |
-| turn_skip event + persistence | `TASK-turn-skip-event.md` | **missing** | **TBD — needs filing** |
+| turn_skip event + persistence | `TASK-turn-skip-event.md` | yes | open |
 | GM absence contract | `TASK-turn-skip-gm-absence-contract.md` | yes | open |
-| Cascade integration | `TASK-turn-skip-cascade.md` | **missing** | **TBD — needs filing** |
+| Cascade integration | `TASK-turn-skip-cascade.md` | yes | open |
 | Gate interlock | `TASK-turn-skip-gate-interlock.md` | yes | open |
 | UI — 'Skip turn' composer | `TASK-turn-skip-composer-ui.md` | yes | open |
 
-**Gap (2026-09-23):** 2 of 5 referenced tickets are missing on disk: `TASK-turn-skip-event.md` and `TASK-turn-skip-cascade.md`. The event/persistence layer and cascade integration are foundational — both must land before gate-interlock and composer UI can ship. Either:
-1. File the 2 missing tickets as concrete fine-grained tasks (recommended).
-2. Bulk-close this epic with the 3 existing tickets as sufficient scope.
+All 5 referenced tickets are filed on disk (verified 2026-09-25). The 2026-09-23 gap-audit was stale — this table supersedes it. The event and cascade work items have parallel duplicate-name tickets from a prior rename cycle (`TASK-turn-skip-event-and-persistence.md`, `TASK-turn-skip-cascade-integration.md`); consolidation deferred to the implementing worktree.
