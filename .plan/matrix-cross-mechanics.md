@@ -13,7 +13,7 @@
 > - **G6 NSFW↔Housing**, **G7 NSFW↔Weather**, **G8 NSFW↔Social** (seduction/reputation prerequisite) — blocked on their P6+ peers; do NOT gate 0.1.0. NSFW's standalone runtime config + live enforcement is already shipped (P0/P1).
 > - **G9 NSFW↔Disease** (reproductive health) — P6+, not 0.1.0.
 >
-> **What does block P3–P5 (0.1.0 cross-integrations, outside this RPG matrix)** — these are tracked in `backlog.md` P4/P5 and `immediate.md` P4/P5:
+> **What does block P3–P5 (0.1.0 cross-integrations, outside this RPG matrix)** — these are tracked in `backlog/priority-p3-p5.md` P4/P5 (formerly `immediate.md` P4/P5; retired 2026-09-25 — content migrated into the priority tier files):
 >
 > - NSFW × chat (opt-in + sfw/nsfw capability toggles at chat/generation boundary)
 > - gallery/assets × chat (in-chat asset preview + linkage side panel, P4/P5)
