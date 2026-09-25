@@ -29,7 +29,7 @@ import {
 } from "../http-utils";
 import type { HandlerOpts, } from "./types";
 
-const ChatIdParams = { params: t.Object({ chatId: t.String(), },), } as const;
+const ChatIdParams = { params: t.Object({ id: t.String(), },), } as const;
 
 const forkBody = t.Object({
   messageId: t.String(),
@@ -52,21 +52,21 @@ function statusFor(code: string,): (typeof HttpStatus)[keyof typeof HttpStatus] 
 export function chatBranchRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
   return new Elysia({ name: "chats-branches", },)
-    .post(`${prefix}/chats/:chatId/fork`, handleFork(database,), { params: ChatIdParams.params, body: forkBody, },)
+    .post(`${prefix}/chats/:id/fork`, handleFork(database,), { params: ChatIdParams.params, body: forkBody, },)
     .patch(
-      `${prefix}/chats/:chatId/active-branch`,
+      `${prefix}/chats/:id/active-branch`,
       handleSwitch(database,),
       { params: ChatIdParams.params, body: switchBody, },
     )
-    .get(`${prefix}/chats/:chatId/branches`, handleList(database,), { params: ChatIdParams.params, },);
+    .get(`${prefix}/chats/:id/branches`, handleList(database,), { params: ChatIdParams.params, },);
 }
 
-/** POST /chats/:chatId/fork */
+/** POST /chats/:id/fork */
 function handleFork(database: Kysely<DB>,) {
   return async (ctx: any,) => {
     const userId = requireUserId(ctx,);
     if (typeof userId !== "string") { return userId; }
-    const { chatId, } = ctx.params;
+    const { id: chatId, } = ctx.params as { id: string };
     const body = ctx.body as { messageId: string; name?: string };
 
     const result = await forkBranch(database, {
@@ -82,12 +82,12 @@ function handleFork(database: Kysely<DB>,) {
   };
 }
 
-/** PATCH /chats/:chatId/active-branch */
+/** PATCH /chats/:id/active-branch */
 function handleSwitch(database: Kysely<DB>,) {
   return async (ctx: any,) => {
     const userId = requireUserId(ctx,);
     if (typeof userId !== "string") { return userId; }
-    const { chatId, } = ctx.params;
+    const { id: chatId, } = ctx.params as { id: string };
     const body = ctx.body as { branchId: string };
 
     const result = await switchActiveBranch(database, {
@@ -102,12 +102,12 @@ function handleSwitch(database: Kysely<DB>,) {
   };
 }
 
-/** GET /chats/:chatId/branches */
+/** GET /chats/:id/branches */
 function handleList(database: Kysely<DB>,) {
   return async (ctx: any,) => {
     const userId = requireUserId(ctx,);
     if (typeof userId !== "string") { return userId; }
-    const { chatId, } = ctx.params;
+    const { id: chatId, } = ctx.params as { id: string };
 
     const result = await listBranches(database, chatId, userId,);
     if ("code" in result) {
