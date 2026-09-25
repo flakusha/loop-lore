@@ -13,7 +13,6 @@ interface ComparisonModel {
 }
 interface ComparisonResult {
   id?: string;
-  ratingKey: string;
   model: { provider: string; name: string };
   response: string;
   latencyMs: number;
@@ -83,10 +82,9 @@ export const comparisonState: ComparisonState = {
       },);
       if (!res.ok) { return; }
       const data = await res.json() as { id: string; results: ComparisonResult[] };
-      this.comparisonResults = data.results.map((result, index,) => ({
+      this.comparisonResults = data.results.map((result,) => ({
         ...result,
         id: data.id,
-        ratingKey: String(index,),
       }));
       this.comparisonRatings = {};
       await this.loadComparisonHistory();
@@ -100,7 +98,7 @@ export const comparisonState: ComparisonState = {
   },
   async rateComparison(resultIndex: number,) {
     const result = this.comparisonResults[resultIndex];
-    const rating = this.comparisonRatings[result?.ratingKey ?? ""];
+    const rating = this.comparisonRatings["overall"];
     if (!result?.id || !rating) { return; }
     await apiFetch(`/api/v1/comparisons/${result.id}/rating`, {
       method: "POST",

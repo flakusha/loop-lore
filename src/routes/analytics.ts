@@ -7,9 +7,9 @@ import type { Kysely, } from "kysely";
 import { sql, } from "kysely";
 import { checkChatAccess, } from "../chat/service/access";
 import type { DB, } from "../db/schema";
-import { jsonResponse, requireUserId, } from "../routes/http-utils";
+import { parseExpiryMs, toDate, } from "../utils/date";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
-
+import { jsonResponse, requireUserId, } from "./http-utils";
 interface HandleOpts {
   database: Kysely<DB>;
 }
@@ -17,9 +17,7 @@ interface HandleOpts {
 const COST_PER_1K_TOKENS = 0.002;
 
 function parseIsoMs(value: string | undefined,): number | null {
-  if (!value) { return null; }
-  const parsed = Date.parse(value,);
-  return Number.isFinite(parsed,) ? parsed : null;
+  return parseExpiryMs(value,);
 }
 
 function emptyChatMetrics() {
@@ -61,8 +59,8 @@ export function analyticsRoutes({ database, }: HandleOpts, prefix = "/api",): El
       const { from, to, } = (ctx.query ?? {}) as { from?: string; to?: string };
       const fromMs = parseIsoMs(from,);
       const toMs = parseIsoMs(to,);
-      const fromIso = fromMs === null ? null : new Date(fromMs,).toISOString();
-      const toIso = toMs === null ? null : new Date(toMs,).toISOString();
+      const fromIso = fromMs === null ? null : toDate(fromMs,).toISOString();
+      const toIso = toMs === null ? null : toDate(toMs,).toISOString();
 
       let messages = database
         .selectFrom("messages",)

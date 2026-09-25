@@ -22,6 +22,7 @@ import { comparisonsExportRoutes, } from "../comparisons-export";
 import { generationCompareRoutes, } from "../generation/compare";
 import { gifSearchRoutes, } from "../gifs/search";
 import { modelComparisonsRoutes, } from "../model-comparisons";
+import { modelComparisonsAnalyticsRoutes, } from "../model-comparisons-analytics";
 import { notificationsRoutes, } from "../notifications";
 import { nsfwRoutes, } from "../nsfw";
 import { nsfwModerationRoutes, } from "../nsfw-moderation";
@@ -52,6 +53,7 @@ export function contentSurface(opts: RegisterPluginsOpts,) {
     .use(blogRoutes({ database, }, prefix,),)
     .use(analyticsRoutes({ database, }, prefix,),)
     .use(modelComparisonsRoutes({ database, }, prefix,),)
+    .use(modelComparisonsAnalyticsRoutes({ database, }, prefix,),)
     .use(comparisonsExportRoutes({ database, }, prefix,),)
     .use(generationCompareRoutes({ config, database, }, prefix,),);
 }
