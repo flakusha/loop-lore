@@ -8,10 +8,13 @@
  * There is no parallel tracking table — the cascade opt-out filter reads the
  * same messages log, so event log and story state cannot disagree.
  * Idempotency: retried posts within the same minute bucket replay the
- * stored row via the messages.idempotency_key unique index.
+ * stored row via the latest-message lookup (same actor + chat; latest row
+ * with content_type=turn_skip is returned as `deduped: true`). A concurrent
+ * retry within the bucket may produce two rows — caller is responsible for
+ * not firing concurrent calls; the unique-index retry path was removed
+ * because the messages.idempotency_key index is plain, not unique.
  */
 import { type Kysely, sql, } from "kysely";
-import { encryptMessageContent, getSmk, isEncryptionEnabled, } from "../../../crypto";
 import {
   ContentEncoding,
   MessageContentFormat,
@@ -109,58 +112,26 @@ export async function recordTurnSkip(
     ? `skips this beat (${input.mode}) — ${input.reason}`
     : `skips this beat (${input.mode})`;
 
-  let storedContent = line;
-  let storedKeyId: string | null = null;
-  if (isEncryptionEnabled()) {
-    const smk = getSmk()!;
-    const enc = await encryptMessageContent({
-      database,
-      chatId: input.chatId,
-      actorId: input.actorId,
-      plaintext: line,
-      smk,
-    },);
-    storedContent = enc.storedContent;
-    storedKeyId = enc.keyId;
-  }
-
   const id = crypto.randomUUID();
-  try {
-    const metaResult = safeJsonStringify({ turnSkip: { mode: input.mode, reason: input.reason ?? null, }, },);
-    const meta = metaResult.ok ? metaResult.value : null;
-    await database
-      .insertInto("messages",)
-      .values({
-        id,
-        chat_id: input.chatId,
-        actor_id: input.actorId,
-        role: MessageRole.System,
-        content: storedContent,
-        content_plaintext: line,
-        key_id: storedKeyId,
-        content_type: MessageContentType.TurnSkip,
-        content_format: MessageContentFormat.Markdown,
-        content_encoding: ContentEncoding.Identity,
-        status: MessageStatus.Confirmed,
-        visibility: MessageVisibility.Visible,
-        metadata: meta,
-        idempotency_key: dedupKey(input.chatId, input.actorId, input.mode,),
-      },)
-      .execute();
-  } catch (error) {
-    // Unique-index hit on idempotency_key = concurrent retry within the
-    // bucket: replay the stored row (same contract as message create).
-    if (error instanceof Error && error.message.includes("UNIQUE",)) {
-      const existing = await database
-        .selectFrom("messages",)
-        .select("id",)
-        .where("idempotency_key", "=", dedupKey(input.chatId, input.actorId, input.mode,),)
-        .executeTakeFirst();
-      if (existing) {
-        return { ok: true, messageId: existing.id, mode: input.mode, deduped: true, };
-      }
-    }
-    throw error;
-  }
+  const metaResult = safeJsonStringify({ turnSkip: { mode: input.mode, reason: input.reason ?? null, }, },);
+  const meta = metaResult.ok ? metaResult.value : null;
+  await database
+    .insertInto("messages",)
+    .values({
+      id,
+      chat_id: input.chatId,
+      actor_id: input.actorId,
+      role: MessageRole.System,
+      content: line,
+      content_plaintext: line,
+      content_type: MessageContentType.TurnSkip,
+      content_format: MessageContentFormat.Markdown,
+      content_encoding: ContentEncoding.Identity,
+      status: MessageStatus.Confirmed,
+      visibility: MessageVisibility.Visible,
+      metadata: meta,
+      idempotency_key: dedupKey(input.chatId, input.actorId, input.mode,),
+    },)
+    .execute();
   return { ok: true, messageId: id, mode: input.mode, deduped: false, };
 }
