@@ -10,7 +10,7 @@
 
 
 **Status:** ✅ Finished (2026-09-10)
-git issue: ccf8edf24
+Refs: TBD (orphan from pre-sync)
 **Priority:** medium
 **Tags:** ["check", "cli", "worktree"]
 

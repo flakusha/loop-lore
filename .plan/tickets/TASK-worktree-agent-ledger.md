@@ -10,7 +10,7 @@
 
 
 **Status:** ✅ Finished (2026-09-10)
-git issue: 23aec201d
+Refs: TBD (orphan from pre-sync)
 **Priority:** medium
 **Tags:** ["worktree", "ledger", "agent"]
 
