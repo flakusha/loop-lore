@@ -25,12 +25,6 @@ export const CSRF_EXEMPT_ROUTES: ReadonlySet<string> = new Set([
   "POST /api/auth/login",
   "POST /api/auth/register",
   "POST /api/demo-login",
-  // Telemetry ingestion rides navigator.sendBeacon, which cannot attach
-  // custom headers — a header+cookie double-submit gate would 403 every
-  // beacon. The route is a write-only, session-bound log sink (no reads,
-  // no user-data mutation), so forged cross-origin events can only spam
-  // logs; the client-side session cap and server size limits bound that.
-  "POST /api/telemetry/event",
   // v1
   "POST /api/v1/auth/login",
   "POST /api/v1/auth/register",
