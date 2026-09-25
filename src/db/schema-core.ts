@@ -7,6 +7,7 @@
 import type { Generated, } from "kysely";
 import type {
   ActorType,
+  AgencyMode,
   AgentType,
   CharacterState,
   ChatMode,
@@ -1253,5 +1254,72 @@ export interface InteractionLogs {
   modifiers: Generated<string>;
   result: Generated<string>;
   state_changes: Generated<string>;
+  created_at: Generated<string>;
+  agency_mode: Generated<AgencyMode>;
+}
+
+// ── agency_play_counters ────────────────────────────────────────────
+export interface AgencyPlayCounters {
+  id: Generated<string>;
+  world_id: string | null;
+  chat_id: string | null;
+  dimension: string;
+  actor_id: string | null;
+  count: Generated<number>;
+  hour_bucket: string;
+  created_at: Generated<string>;
+}
+
+// ── agency_dimension_counters ────────────────────────────────────────────
+export interface AgencyDimensionCounters {
+  id: Generated<string>;
+  world_id: string | null;
+  dimension: string;
+  day: string;
+  total: Generated<number>;
+  meaningful: Generated<number>;
+  created_at: Generated<string>;
+}
+
+// ── actor_daily_plans ────────────────────────────────────────────
+export interface ActorDailyPlans {
+  id: Generated<string>;
+  actor_id: string;
+  world_id: string | null;
+  plan_date: string;
+  summary: string;
+  priority: Generated<string>;
+  created_at: Generated<string>;
+}
+
+// ── actor_planned_activities ────────────────────────────────────────────
+export interface ActorPlannedActivities {
+  id: Generated<string>;
+  plan_id: string;
+  description: string;
+  score: Generated<number>;
+  completed: Generated<number>;
+  created_at: Generated<string>;
+}
+
+// ── actor_chat_buffers ────────────────────────────────────────────
+export interface ActorChatBuffers {
+  id: Generated<string>;
+  actor_id: string;
+  partner_actor_id: string;
+  last_chat_at: Generated<string>;
+  consecutive_count: Generated<number>;
+  cooldown_minutes: Generated<number>;
+  max_consecutive_chats: Generated<number>;
+}
+
+// ── actor_plan_revisions ────────────────────────────────────────────
+export interface ActorPlanRevisions {
+  id: Generated<string>;
+  plan_id: string;
+  revision_kind: string;
+  before_priority: string;
+  after_priority: string;
+  reason: string;
   created_at: Generated<string>;
 }

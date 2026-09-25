@@ -133,6 +133,7 @@ export const COLUMN_TYPE_OVERRIDES: Record<string, Record<string, string>> = {
   "InteractionLogs": {
     "category": "InteractionCategory",
     "outcome": "InteractionOutcome",
+    "agency_mode": "AgencyMode",
   },
   "Items": {
     "category": "ItemCategory",
