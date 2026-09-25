@@ -26,6 +26,7 @@ import {
 import { archiveRoutes, } from "./archive-routes";
 import { gmGuidanceRoutes, } from "./gm-guidance";
 import { promptTemplateRoutes, } from "./prompt-template";
+import { turnSkipRoutes, } from "./turn-skip-routes";
 import type { HandlerOpts, } from "./types";
 
 /**
@@ -207,5 +208,6 @@ export function manageRoutes(opts: HandlerOpts, prefix = "/api",) {
       .use(gmGuidanceRoutes(opts, prefix,),)
       .use(promptTemplateRoutes(opts, prefix,),)
       .use(archiveRoutes(opts, prefix,),)
+      .use(turnSkipRoutes(opts, prefix,),)
   );
 }

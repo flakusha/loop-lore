@@ -1,0 +1,166 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
+/**
+ * Turn-skip event persistence (TASK-turn-skip-event-and-persistence).
+ *
+ * A skip is a first-class chat message: role=system, content_type=turn_skip.
+ * There is no parallel tracking table — the cascade opt-out filter reads the
+ * same messages log, so event log and story state cannot disagree.
+ * Idempotency: retried posts within the same minute bucket replay the
+ * stored row via the messages.idempotency_key unique index.
+ */
+import { type Kysely, sql, } from "kysely";
+import { encryptMessageContent, getSmk, isEncryptionEnabled, } from "../../../crypto";
+import {
+  ContentEncoding,
+  MessageContentFormat,
+  MessageContentType,
+  MessageRole,
+  MessageStatus,
+  MessageVisibility,
+} from "../../../db/enums";
+import type { DB, } from "../../../db/schema";
+import { safeJsonStringify, } from "../../../utils/safe-json";
+import { checkChatAccess, } from "../access";
+
+/** Skip mode: hold keeps the beat as-is; advance cues the next beat. */
+export type TurnSkipMode = "hold" | "advance";
+
+/** */
+export interface RecordTurnSkipInput {
+  chatId: string;
+  /** Actor sitting the beat out (must be a chat participant). */
+  actorId: string;
+  mode: TurnSkipMode;
+  reason?: string | null;
+  userId: string;
+  userRole: string | null;
+}
+
+/** */
+export type RecordTurnSkipResult =
+  | { ok: true; messageId: string; mode: TurnSkipMode; deduped: boolean }
+  | { ok: false; code: "not_found" | "forbidden" | "refused_beat"; message: string };
+
+/** One-minute retry window: same actor + chat + mode replays the first row. */
+const DEDUP_BUCKET_MS = 60_000;
+
+/** */
+function dedupKey(chatId: string, actorId: string, mode: TurnSkipMode,): string {
+  const bucket = Math.floor(Date.now() / DEDUP_BUCKET_MS,);
+  return `turn_skip:${chatId}:${actorId}:${mode}:${bucket}`;
+}
+
+/**
+ * Record a turn-skip event for an actor in a chat.
+ *
+ * Access mirrors message reads (`checkChatAccess`); the target actor must be
+ * a chat participant. Interlock: an actor whose latest message is a
+ * soft-refused beat (status=rejected) cannot also skip it (the refusal
+ * consumed the beat); a hard send-gate block saves no row, so skip stays
+ * available as the escape hatch.
+ * @param database
+ * @param input
+ */
+export async function recordTurnSkip(
+  database: Kysely<DB>,
+  input: RecordTurnSkipInput,
+): Promise<RecordTurnSkipResult> {
+  const access = await checkChatAccess(database, input.chatId, input.userId, input.userRole,);
+  if (!access.ok) {
+    return { ok: false, code: access.error.code as "not_found" | "forbidden", message: access.error.message, };
+  }
+
+  const participant = await database
+    .selectFrom("chat_participants",)
+    .select("actor_id",)
+    .where("chat_id", "=", input.chatId,)
+    .where("actor_id", "=", input.actorId,)
+    .executeTakeFirst();
+  if (!participant) {
+    return { ok: false, code: "not_found", message: "Actor is not a participant of this chat", };
+  }
+
+  // Latest message by this actor in the chat (insertion order via rowid).
+  const latest = await database
+    .selectFrom("messages",)
+    .select(["id", "status", "content_type", "idempotency_key",],)
+    .where("chat_id", "=", input.chatId,)
+    .where("actor_id", "=", input.actorId,)
+    .orderBy(sql`rowid`, "desc",)
+    .limit(1,)
+    .executeTakeFirst();
+  if (latest) {
+    if (latest.content_type === MessageContentType.TurnSkip) {
+      // Already sitting out — replay instead of stacking a second event.
+      return { ok: true, messageId: latest.id, mode: input.mode, deduped: true, };
+    }
+    if (latest.status === MessageStatus.Rejected) {
+      return {
+        ok: false,
+        code: "refused_beat",
+        message: "Latest beat was refused by the consistency gate; skipping the same beat is not allowed",
+      };
+    }
+  }
+
+  const line = input.reason
+    ? `skips this beat (${input.mode}) — ${input.reason}`
+    : `skips this beat (${input.mode})`;
+
+  let storedContent = line;
+  let storedKeyId: string | null = null;
+  if (isEncryptionEnabled()) {
+    const smk = getSmk()!;
+    const enc = await encryptMessageContent({
+      database,
+      chatId: input.chatId,
+      actorId: input.actorId,
+      plaintext: line,
+      smk,
+    },);
+    storedContent = enc.storedContent;
+    storedKeyId = enc.keyId;
+  }
+
+  const id = crypto.randomUUID();
+  try {
+    const metaResult = safeJsonStringify({ turnSkip: { mode: input.mode, reason: input.reason ?? null, }, },);
+    const meta = metaResult.ok ? metaResult.value : null;
+    await database
+      .insertInto("messages",)
+      .values({
+        id,
+        chat_id: input.chatId,
+        actor_id: input.actorId,
+        role: MessageRole.System,
+        content: storedContent,
+        content_plaintext: line,
+        key_id: storedKeyId,
+        content_type: MessageContentType.TurnSkip,
+        content_format: MessageContentFormat.Markdown,
+        content_encoding: ContentEncoding.Identity,
+        status: MessageStatus.Confirmed,
+        visibility: MessageVisibility.Visible,
+        metadata: meta,
+        idempotency_key: dedupKey(input.chatId, input.actorId, input.mode,),
+      },)
+      .execute();
+  } catch (error) {
+    // Unique-index hit on idempotency_key = concurrent retry within the
+    // bucket: replay the stored row (same contract as message create).
+    if (error instanceof Error && error.message.includes("UNIQUE",)) {
+      const existing = await database
+        .selectFrom("messages",)
+        .select("id",)
+        .where("idempotency_key", "=", dedupKey(input.chatId, input.actorId, input.mode,),)
+        .executeTakeFirst();
+      if (existing) {
+        return { ok: true, messageId: existing.id, mode: input.mode, deduped: true, };
+      }
+    }
+    throw error;
+  }
+  return { ok: true, messageId: id, mode: input.mode, deduped: false, };
+}

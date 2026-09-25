@@ -316,6 +316,7 @@ export const MessageContentTypeSchema = t.UnionEnum([
   "continuation",
   "music_link",
   "tool_result",
+  "turn_skip",
 ],);
 export const MessageRoleSchema = t.UnionEnum(["user", "assistant", "character", "system",],);
 export const MessageSeenStateSchema = t.UnionEnum(["unseen", "processing", "seen",],);
