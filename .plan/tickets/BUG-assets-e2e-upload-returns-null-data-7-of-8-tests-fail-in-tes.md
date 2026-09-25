@@ -8,11 +8,11 @@
 **Effort:** Medium
 **Tags:** assets, e2e, coverage-gate
 
-## Summary
-
-**What:** All 8 e2e tests in `tests/e2e/flows/assets.test.ts` fail with `TypeError: null is not an object (evaluating '(await api.upload("/api/v1/assets", formData)).data.id')`. The `POST /api/v1/assets` upload endpoint returns a non-2xx response, so `res.ok === false` and `res.data === null`. 1 of 8 tests passes (the GET list when empty).
+**Summary:** All 8 e2e tests in `tests/e2e/flows/assets.test.ts` fail with `TypeError: null is not an object (evaluating '(await api.upload("/api/v1/assets", formData)).data.id')`. The `POST /api/v1/assets` upload endpoint returns a non-2xx response, so `res.ok === false` and `res.data === null`. 1 of 8 tests passes (the GET list when empty).
 
 **Repro:** `E2E_SAFEGUARD=1 bun test tests/e2e/flows/assets.test.ts` → 1 pass / 7 fail in 467ms. Pre-existing on dev (1b36a9388). Reproduces identically on `interaction-agency-quality` worktree.
+
+**Context:**
 
 **Failures (all cascade from the same upload failure):**
 * `POST /api/v1/assets uploads a file` — `expect(res.ok).toBe(true)` received `false`
@@ -36,6 +36,7 @@
 * No regression in the 1 currently-passing test.
 
 **Reproducer (full):**
+
 ```bash
 cd /home/flak/git-ai/loop-lore
 E2E_SAFEGUARD=1 bun test tests/e2e/flows/assets.test.ts
@@ -44,6 +45,6 @@ E2E_SAFEGUARD=1 bun test tests/e2e/flows/assets.test.ts
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+* [ ] Implementation complete
+* [ ] Tests passing
+* [ ] Documentation updated

@@ -15,8 +15,8 @@
  * @module services/loot/budget-gate
  */
 
-import { evaluate, type ActorCaps, type ContextState, type ItemProps, } from "../affordance/lookup";
 import { type ItemRarity, } from "../../db/enums";
+import { type ActorCaps, type ContextState, evaluate, type ItemProps, } from "../affordance/lookup";
 
 /** Reference to a party member (loot eligibility uses their capabilities). */
 export interface PartyMember {
@@ -65,7 +65,7 @@ export interface LootGateResult {
  * maps Very Rare → Epic, Legendary → Legendary; the rare-downshift path
  * walks Common → Artifact. Tune at admin time.
  */
-const RARITY_BANDS: Array<{ rarity: ItemRarity; minLevel: number; }> = [
+const RARITY_BANDS: Array<{ rarity: ItemRarity; minLevel: number }> = [
   { rarity: "common", minLevel: 1, },
   { rarity: "uncommon", minLevel: 5, },
   { rarity: "rare", minLevel: 9, },
@@ -84,7 +84,7 @@ const RARITY_ORDER: ItemRarity[] = ["common", "uncommon", "rare", "epic", "legen
  * @param partyLevel
  */
 function isRarityAllowed(rarity: ItemRarity, partyLevel: number,): boolean {
-  const band = RARITY_BANDS.find((b,) => b.rarity === rarity,);
+  const band = RARITY_BANDS.find((b,) => b.rarity === rarity);
   return !band || partyLevel >= band.minLevel;
 }
 
@@ -132,7 +132,7 @@ export function enforceLootBudget(
   party: PartyCapabilities,
 ): LootGateResult {
   // 1. Budget filter — sort by cost descending, take until cap exceeded.
-  const sorted = [...dropTable,].sort((a, b,) => b.unitCost * b.quantity - a.unitCost * a.quantity,);
+  const sorted = [...dropTable,].sort((a, b,) => b.unitCost * b.quantity - a.unitCost * a.quantity);
   let budget = 0;
   const inBudget: LootRow[] = [];
   for (const row of sorted) {
@@ -148,7 +148,10 @@ export function enforceLootBudget(
   for (const row of inBudget) {
     if (!isRarityAllowed(row.rarity, party.averageLevel,)) {
       const shifted = rareDownshift(row.rarity, party.averageLevel,);
-      if (!shifted) { dropped.push(row,); continue; }
+      if (!shifted) {
+        dropped.push(row,);
+        continue;
+      }
       allowed.push({ ...row, rarity: shifted, },);
       continue;
     }
@@ -158,7 +161,10 @@ export function enforceLootBudget(
       const result = evaluate(m.caps, props, party.world, row.category === "weapon" ? "equip" : "use",);
       return result.allowed;
     },);
-    if (!anyMemberCanUse) { dropped.push(row,); continue; }
+    if (!anyMemberCanUse) {
+      dropped.push(row,);
+      continue;
+    }
 
     allowed.push(row,);
   }

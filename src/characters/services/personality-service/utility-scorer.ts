@@ -16,9 +16,9 @@
  */
 
 import {
+  REACTION_KIND,
   type ReactionContext,
   type ReactionDecision,
-  REACTION_KIND,
   type ReactionKind,
   type ResolvedPersonality,
 } from "./utility-scorer-types";
@@ -107,12 +107,24 @@ function scoreOne(kind: ReactionKind, w: TraitWeights, ctx: ReactionContext,): n
   const base = BASELINES[kind];
   let score = base;
   switch (kind) {
-    case REACTION_KIND.Chat: score += w.social * 0.7 + w.agreeable * 0.4; break;
-    case REACTION_KIND.Wait: score += w.cautious * 0.5; break;
-    case REACTION_KIND.DoOther: score += w.solitary * 0.4 + w.cautious * 0.2; break;
-    case REACTION_KIND.Flee: score += w.cautious * 0.9 - w.bold * 0.6; break;
-    case REACTION_KIND.Attack: score += w.bold * 0.7 + w.antagonistic * 0.5; break;
-    case REACTION_KIND.Ignore: score += w.solitary * 0.5 - w.social * 0.4; break;
+    case REACTION_KIND.Chat:
+      score += w.social * 0.7 + w.agreeable * 0.4;
+      break;
+    case REACTION_KIND.Wait:
+      score += w.cautious * 0.5;
+      break;
+    case REACTION_KIND.DoOther:
+      score += w.solitary * 0.4 + w.cautious * 0.2;
+      break;
+    case REACTION_KIND.Flee:
+      score += w.cautious * 0.9 - w.bold * 0.6;
+      break;
+    case REACTION_KIND.Attack:
+      score += w.bold * 0.7 + w.antagonistic * 0.5;
+      break;
+    case REACTION_KIND.Ignore:
+      score += w.solitary * 0.5 - w.social * 0.4;
+      break;
   }
   score += contextBoost(kind, ctx,);
   return score;
@@ -147,10 +159,18 @@ export function scoreReaction(
 
 function rationaleFor(kind: ReactionKind, w: TraitWeights, ctx: ReactionContext,): string {
   const bits: string[] = [];
-  if (w.bold > 0 && (kind === REACTION_KIND.Attack || kind === REACTION_KIND.DoOther)) { bits.push("bold personality",); }
-  if (w.cautious > 0 && (kind === REACTION_KIND.Wait || kind === REACTION_KIND.Flee)) { bits.push("cautious personality",); }
+  if (w.bold > 0 && (kind === REACTION_KIND.Attack || kind === REACTION_KIND.DoOther)) {
+    bits.push(
+      "bold personality",
+    );
+  }
+  if (w.cautious > 0 && (kind === REACTION_KIND.Wait || kind === REACTION_KIND.Flee)) {
+    bits.push("cautious personality",);
+  }
   if (w.social > 0 && kind === REACTION_KIND.Chat) { bits.push("social disposition",); }
-  if (w.solitary > 0 && (kind === REACTION_KIND.DoOther || kind === REACTION_KIND.Ignore)) { bits.push("solitary disposition",); }
+  if (w.solitary > 0 && (kind === REACTION_KIND.DoOther || kind === REACTION_KIND.Ignore)) {
+    bits.push("solitary disposition",);
+  }
   if (ctx.inDanger) { bits.push("in danger",); }
   if (ctx.isHostile) { bits.push("hostile context",); }
   if (bits.length === 0) { bits.push("baseline preference",); }
