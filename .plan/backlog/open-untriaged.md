@@ -129,3 +129,95 @@ Two new epics with 27 tickets filed together on 2026-09-11 awaiting triage. Tick
 4. RPG opt-in gating before new mechanics.
 5. Item-gen discoverability + workflow batches per P2-C/D capacity.
 6. Human triage: 2FA/channel provisioning scheduling, A9 tag + push.
+
+---
+
+## 2026-09-25 epic linkage review
+
+This review covers the open/in-progress entries in the current advisory queue, not
+completed historical tickets. The queue is intentionally not bulk-linked: a
+missing `Epic` field is a bookkeeping defect only when the ticket has one clear
+owner; cross-cutting and blocked work should keep its dependency visible.
+
+### High-confidence attachments applied
+
+| Git issue | Ticket | Epic | Basis |
+| --- | --- | --- | --- |
+| `1bedeb1` | `TASK-assistant-lorebook-tools` | `epic-assistant-entity-access` | Assistant read/write operations on world and actor lore; the ticket names the same feature area. |
+| `30d0e69` | `TASK-browser-test-fixture-no-mock-llm-provider-stale-frontend-bui` | `epic-testing-qa` | Browser fixture mock registration and frontend-build reuse are QA infrastructure. |
+| `adff874` | `TASK-browser-tests-weak-interaction-coverage-in-existing-flows` | `epic-testing-qa` | Browser interaction coverage and state-transition assertions are in the testing epic's documented scope. |
+| `c622d40` | `TASK-capability-disclosure-lore-ceiling` | `epic-lore-knowledge` | The ticket explicitly binds lore disclosure tiers to the lore knowledge system. |
+| `eafe79f` | `TASK-regex-pipeline-hardening-sweep-input-caps-lastindex-hazards-` | `epic-code-quality` | Shared regex performance/state hazards are code-quality hardening; security follow-up remains explicit in the ticket. |
+
+### Source already declares an epic; index advisory remains
+
+These files already carry an `**Epic:**` field, so they need index-regeneration
+follow-up rather than another editorial change:
+
+- `78c179f` and `55f201f` → `epic-testing-qa`
+- `0d771c9`, `0f840fd`, and `b95bbff` → `epic-entity-generation-workflows`
+- `219124a` → `epic-conversation-branching`
+- `be72331` and `b4789c2` → `epic-testing-qa`
+
+The current `plan:sync:fix` pass updates status links but does not backfill these
+body-level fields into `tickets/index.json`; do not hand-edit the generated index.
+
+### Existing epic homes; no new epic needed
+
+- The RPG opt-in cluster (`e98ab7f`, `f2b98e3`, `f26f456`, `6629f0d`,
+  `d5506a5`, `c29e560`, `a8442ec`, `83e9718`, `4c37f99`, `baf7d71`,
+  `1dd08b9`) belongs under existing `epic-mechanics-governance.md`, with the
+  parent `epic-rpg-mechanics.md`; do not create `epic-rpg-mechanics-governance.md`.
+- Workflow/GM routing (`7637627`, `83622b7`, `f4fd21e`, `becc58b`, `30803ca`)
+  belongs to existing `epic-workflow-engine.md` plus `epic-assistant-gm-flows.md`.
+  The workflow engine already owns runner/session persistence; GM handoff and
+  shadow-note steering stay with the assistant/GM epic.
+- The mesh/federation interconnect entries already have explicit homes:
+  `epic-federation-swarm-sync.md` for fediverse/swarm plumbing,
+  `epic-mesh-federation-content-sharing.md` for encrypted sharing/quota, and
+  `epic-certificate-and-tls-management.md` for peer TLS pinning. No duplicate
+  epic is justified.
+- `81b59cf` is a member of `epic-federation-swarm-sync.md`, but the epic marks
+  G17 blocked by G15 (flat blog comments). Leave it unlinked until G15 closes;
+  this is a dependency hold, not an epic gap.
+
+### Hold or close
+
+- `e12566a` — reproduce before linking; the backlog says the table backend is
+  now the default, so close if the defect no longer exists.
+- `dd6158e` — close the placeholder-scope ticket; it is not an initiative.
+- `c667507` — keep unlinked as one-off bookkeeping, then close after the
+  backfill/index cleanup is complete.
+
+### Remaining legacy unbound sweep
+
+The remaining unbound history spans old completed work and live items whose
+index metadata is stale. Do not apply a keyword-only bulk link. Triage by domain:
+
+- auth/security → `epic-auth-access`, `epic-security-sandboxing`, `epic-crypto`,
+  `epic-api-validation-guardrails`;
+- chat/assistant/workflow → `epic-chat-product-features`,
+  `epic-chat-context-optimization`, `epic-assistant-gm-flows`,
+  `epic-assistant-entity-access`, `epic-workflow-engine`;
+- RPG → `epic-rpg-mechanics`, `epic-mechanics-governance`,
+  `epic-rpg-progression`, `epic-battle-action-systems`;
+- frontend/QA → `epic-frontend-component-architecture`,
+  `epic-frontend-backend-integration`, `epic-frontend-admin`,
+  `epic-testing-qa`;
+- media/assets → `epic-assets-media-pipeline`, `epic-frontend-gallery`,
+  `epic-video-generation`, `epic-ambient-music-sfx`;
+- RAG/providers → `epic-rag-document-processing`, `epic-rag-ingestion`,
+  `epic-rag-retrieval`, `epic-rag-context-sources`,
+  `epic-provider-plugin-ecosystem`;
+- plan/tooling → `epic-code-quality`, `epic-testing-qa`,
+  `epic-unified-spec-framework`.
+
+### Next triage order
+
+1. Close or reproduce `e12566a` and `dd6158e`; do not attach them speculatively.
+2. Regenerate/verify the index from ticket metadata without overwriting its
+   generated shape.
+3. Sweep the remaining unbound open items by domain, attaching only where the
+   ticket scope names one existing epic.
+4. Create a new epic only when a cluster has repeated tickets, one owner, and no
+   existing epic boundary; the current review found no such missing initiative.
