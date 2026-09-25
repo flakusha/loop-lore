@@ -911,7 +911,7 @@ Total tickets: **2827** — untagged: **2447** — unbound to epic: **1404**
 | yaml | 4 | 0 | 2 | 0 | 1 | 0 | 1 |
 | yaml-frontmatter | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| (untagged) | 2447 | 844 | 59 | 1269 | 39 | 0 | 236 |
+| (untagged) | 2447 | 846 | 59 | 1267 | 39 | 0 | 236 |
 
 ## By epic × status
 
@@ -1226,7 +1226,7 @@ Total tickets: **2827** — untagged: **2447** — unbound to epic: **1404**
 | epic-rag-assets-unified-storage-and-assistant-flows.md (recommended as bridge) + epic-rag-document-processing.md (core) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-rag-context-sources.md (extends `TASK-rag-search-providers.md`, `TASK-rag-search-robots-quota.md`) | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | epic-rag-context-sources.md (extends `TASK-rag-search-providers.md`) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| epic-rag-document-processing.md | 15 | 0 | 1 | 14 | 0 | 0 | 0 |
+| epic-rag-document-processing.md | 15 | 2 | 1 | 12 | 0 | 0 | 0 |
 | epic-rag-ui.md | 5 | 0 | 0 | 5 | 0 | 0 | 0 |
 | epic-rarity-extensions | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | epic-relationships | 3 | 0 | 1 | 1 | 0 | 0 | 1 |
