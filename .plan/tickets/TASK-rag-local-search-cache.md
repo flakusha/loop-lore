@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** done
+**Status:** open
 **Priority:** High
 **Effort:** Medium
 **Epic:** epic-rag-document-processing.md
@@ -246,4 +246,4 @@ curl -X POST http://localhost:3000/api/rag/search \
 ```
 
 
-git issue: a7e766b
+git issue: 609433b

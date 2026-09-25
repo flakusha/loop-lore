@@ -22195,16 +22195,21 @@
     "git_issue": "a813daa"
   },
   "TASK-CHECK-PARALLEL-GATES-FILTER": {
-    "hash": "pending",
+    "hash": "fb12904",
     "extid": "TASK-CHECK-PARALLEL-GATES-FILTER",
     "type": "TASK",
     "title": "feat(check): --gates/--skip-gates filter on parallel runner",
     "label": "task",
     "priority": "medium",
     "epic": "",
-    "tags": [],
+    "tags": [
+      "[\"check\"",
+      "\"cli\"",
+      "\"worktree\"]"
+    ],
     "source": ".plan/tickets/TASK-check-parallel-gates-filter.md",
-    "status": "✅ Finished (2026-09-10)"
+    "status": "✅ Finished (2026-09-10)",
+    "git_issue": "fb12904"
   },
   "TASK-CI-CD": {
     "hash": "0636c4e",
@@ -27668,16 +27673,23 @@
     "git_issue": "e34a49e"
   },
   "TASK-INFERENCE-BROWSER-WLLAMA-GGUF": {
-    "hash": "pending",
+    "hash": "a3fe774",
     "extid": "TASK-INFERENCE-BROWSER-WLLAMA-GGUF",
     "type": "TASK",
     "title": "feat(inference): browser wllama GGUF inference infrastructure",
     "label": "task",
     "priority": "high",
     "epic": "",
-    "tags": [],
+    "tags": [
+      "[\"inference\"",
+      "\"gguf\"",
+      "\"wllama\"",
+      "\"browser\"",
+      "\"llama.cpp\"]"
+    ],
     "source": ".plan/tickets/TASK-inference-browser-wllama-gguf.md",
-    "status": "✅ Finished (2026-09-10)"
+    "status": "✅ Finished (2026-09-10)",
+    "git_issue": "a3fe774"
   },
   "TASK-INFO-BUBBLES": {
     "hash": "219b3f1",
@@ -32912,7 +32924,7 @@
     "tags": [],
     "source": ".plan/tickets/TASK-rag-local-search-cache.md",
     "git_issue": "609433b",
-    "status": "done"
+    "status": "open"
   },
   "TASK-RAG-PIPELINE-CONTEXT": {
     "hash": "378b3b1",
@@ -32964,7 +32976,7 @@
     "tags": [],
     "source": ".plan/tickets/TASK-rag-search-providers.md",
     "git_issue": "61f766a",
-    "status": "done"
+    "status": "open"
   },
   "TASK-RAG-SEARCH-ROBOTS-QUOTA": {
     "hash": "1e0b830",
@@ -37964,16 +37976,21 @@
     "status": "open"
   },
   "TASK-WORKTREE-AGENT-LEDGER": {
-    "hash": "pending",
+    "hash": "986f246",
     "extid": "TASK-WORKTREE-AGENT-LEDGER",
     "type": "TASK",
     "title": "feat(worktree): agent ledger and finalize failure reporting",
     "label": "task",
     "priority": "medium",
     "epic": "",
-    "tags": [],
+    "tags": [
+      "[\"worktree\"",
+      "\"ledger\"",
+      "\"agent\"]"
+    ],
     "source": ".plan/tickets/TASK-worktree-agent-ledger.md",
-    "status": "✅ Finished (2026-09-10)"
+    "status": "✅ Finished (2026-09-10)",
+    "git_issue": "986f246"
   },
   "TASK-WORLD-ALPINE": {
     "hash": "3e0c7b6",
