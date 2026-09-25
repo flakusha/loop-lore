@@ -17,6 +17,7 @@ export type {
 } from "./messages";
 export type { ChatMoodState, } from "./mood-state";
 export type { ChatMovementState, MovementEvent, } from "./movement-state";
+export type { ChatMusicLinksState, MusicLinkRow, } from "./music-links-state";
 export type {
   NpcData,
   NpcDisposition,
