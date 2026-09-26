@@ -23,21 +23,6 @@
       "source": ".plan/tickets/TASK-dedup-top-jscpd-clone-clusters.md"
     }
   ],
-
-  "src/actors/autonomy.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-matrix-cross-mech-g18-agentic-npc-autonomy.md"
-    }
-  ],
-
-  "src/actors/goals.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-matrix-cross-mech-g18-agentic-npc-autonomy.md"
-    }
-  ],
-
   "src/actors/actor-memories.ts": [
     {
       "kind": "ticket",
@@ -46,6 +31,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-npc-social-memory.md"
+    }
+  ],
+  "src/actors/autonomy.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-matrix-cross-mech-g18-agentic-npc-autonomy.md"
+    }
+  ],
+  "src/actors/goals.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-matrix-cross-mech-g18-agentic-npc-autonomy.md"
     }
   ],
   "src/admin/audit.ts": [
@@ -504,21 +501,18 @@
       "source": ".plan/epics/epic-api-validation-guardrails.md"
     }
   ],
-
   "src/api/error-codes.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-error-envelope.md"
     }
   ],
-
   "src/api/error-handler.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-error-envelope.md"
     }
   ],
-
   "src/api/errors.ts": [
     {
       "kind": "epic",
@@ -1707,7 +1701,6 @@
       "source": ".plan/tickets/TASK-guided-regen-action-menu-on-assistant-messages.md"
     }
   ],
-
   "src/assistant/commands/registry.test.ts": [
     {
       "kind": "ticket",
@@ -1996,7 +1989,6 @@
       "source": ".plan/epics/epic-creative-studio.md"
     }
   ],
-
   "src/assistant/intent.test.ts": [
     {
       "kind": "ticket",
@@ -3381,7 +3373,6 @@
       "source": ".plan/tickets/TASK-reconciliation-plan.md"
     }
   ],
-
   "src/auth/channels/matrix-approval.ts": [
     {
       "kind": "ticket",
@@ -3790,7 +3781,6 @@
       "source": ".plan/tickets/TASK-battle-template-actions.md"
     }
   ],
-
   "src/battle/ai/enemy-decision.ts": [
     {
       "kind": "ticket",
@@ -5029,7 +5019,6 @@
       "source": ".plan/tickets/BUG-characters-resolvecharactertraits-silently-drops-world-layer.md"
     }
   ],
-
   "src/characters/services/personality-service/utility-scorer.ts": [
     {
       "kind": "ticket",
@@ -5568,7 +5557,6 @@
       "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
     }
   ],
-
   "src/chat/export/formats.ts": [
     {
       "kind": "ticket",
@@ -6331,7 +6319,6 @@
       "source": ".plan/tickets/TASK-gm-guided-story-creation.md"
     }
   ],
-
   "src/chat/service/crud/turn-skip.ts": [
     {
       "kind": "ticket",
@@ -8166,7 +8153,6 @@
       "source": "docs/spec/federation-trust-mechanism.md"
     }
   ],
-
   "src/config/license.ts": [
     {
       "kind": "epic",
@@ -8967,7 +8953,6 @@
       "source": ".plan/tickets/TASK-user-seeding-role-expansion.md"
     }
   ],
-
   "src/config/template-expansion/discovery.ts": [
     {
       "kind": "ticket",
@@ -9652,7 +9637,6 @@
       "source": ".plan/tickets/TASK-e2ee-receiver-wiring.md"
     }
   ],
-
   "src/crypto/e2e/double-ratchet.ts": [
     {
       "kind": "ticket",
@@ -10177,7 +10161,6 @@
       "source": ".plan/tickets/TASK-gate-world-lore-lifecycle-confidence-distortion-disputed-tri.md"
     }
   ],
-
   "src/db/__tests__/schema-roundtrip.test.ts": [
     {
       "kind": "epic",
@@ -15972,7 +15955,6 @@
       "source": ".plan/tickets/TASK-world-alpine.md"
     }
   ],
-
   "src/frontend/api/fetch-client.ts": [
     {
       "kind": "epic",
@@ -19913,7 +19895,6 @@
       "source": ".plan/tickets/TASK-2026-openwebui-stream-event-type-registry.md"
     }
   ],
-
   "src/generation/streaming": [
     {
       "kind": "ticket",
@@ -20502,7 +20483,6 @@
       "source": ".plan/tickets/TASK-integration-infrastructure.md"
     }
   ],
-
   "src/integrations/capabilities.ts": [
     {
       "kind": "ticket",
@@ -20765,7 +20745,6 @@
       "source": ".plan/tickets/TASK-local-instance-integrity-holistic.md"
     }
   ],
-
   "src/io/__tests__/codec-roundtrip.test.ts": [
     {
       "kind": "epic",
@@ -21048,7 +21027,6 @@
       "source": "docs/spec/logging.md"
     }
   ],
-
   "src/logging/redact-list.ts": [
     {
       "kind": "epic",
@@ -21113,7 +21091,6 @@
       "source": ".plan/tickets/TASK-memory-history-search-bind-message-chain-reconstructable-con.md"
     }
   ],
-
   "src/memory/dynamic-writes.test.ts": [
     {
       "kind": "ticket",
@@ -21350,14 +21327,12 @@
       "source": "docs/frontend/chat/memories.md"
     }
   ],
-
   "src/memory/score.test.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-matrix-cross-mech-g19-agent-memory-scoring.md"
     }
   ],
-
   "src/memory/score.ts": [
     {
       "kind": "ticket",
@@ -21664,7 +21639,6 @@
       "source": ".plan/tickets/TASK-server-side-i18n-middleware.md"
     }
   ],
-
   "src/middleware/idempotency": [
     {
       "kind": "ticket",
@@ -21811,7 +21785,6 @@
       "source": ".plan/tickets/TASK-middleware-idempotency-wire-into-elysia.md"
     }
   ],
-
   "src/middleware/license-gate.ts": [
     {
       "kind": "epic",
@@ -22784,7 +22757,6 @@
       "source": ".plan/tickets/TASK-persona-setdefault-getdefault-unwired-delete-or-wire.md"
     }
   ],
-
   "src/planning/service.ts": [
     {
       "kind": "epic",
@@ -24067,7 +24039,6 @@
       "source": ".plan/tickets/TASK-regex-extraction-tests.md"
     }
   ],
-
   "src/regex/intent": [
     {
       "kind": "ticket",
@@ -24172,7 +24143,6 @@
       "source": ".plan/tickets/TASK-template-unified-variable-engine.md"
     }
   ],
-
   "src/regex/safe-exec.ts": [
     {
       "kind": "ticket",
@@ -28505,7 +28475,6 @@
       "source": "docs/frontend/chat/search-and-filter.md"
     }
   ],
-
   "src/routes/views/blog.test.ts": [
     {
       "kind": "ticket",
@@ -32156,7 +32125,6 @@
       "source": ".plan/tickets/TASK-npc-planning-loop.md"
     }
   ],
-
   "src/services/agency/bdi-reflection.ts": [
     {
       "kind": "ticket",
@@ -33151,7 +33119,6 @@
       "source": ".plan/tickets/BUG-giwt-ticket-extid-double-prefix-on-duplicate-type-slug.md"
     }
   ],
-
   "src/tools/registry.ts": [
     {
       "kind": "ticket",
@@ -33266,7 +33233,6 @@
       "source": ".plan/tickets/TASK-transport-layer-expansion.md"
     }
   ],
-
   "src/transport/interrupt.test.ts": [
     {
       "kind": "ticket",
@@ -34043,7 +34009,6 @@
       "source": "docs/spec/migrations.md"
     }
   ],
-
   "src/validation/error-envelope.ts": [
     {
       "kind": "epic",
