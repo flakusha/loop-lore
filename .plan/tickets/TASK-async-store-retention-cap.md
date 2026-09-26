@@ -8,6 +8,10 @@
 **Effort:** Medium
 **Type:** Task
 
+**Summary:** detailed in the [Summary](#summary) section below.
+**Context:** detailed in the body sections below (current state / repro / root cause).
+**Acceptance Criteria:** detailed in the [Acceptance Criteria](#acceptance-criteria) section below.
+
 ## Summary
 
 The runtime async-store spill directory (`OFFLOAD_DIR` = `.tmp/async-store/`, exported from `src/async/spill.ts:12`) has **no delete path** — only a write path (`spill()`, `src/async/spill.ts:24-33`). Phase 3 of `runOffloadPass` (`src/async/offload.ts`) unlinks a file when its parent `request_results` row transitions to `expired`, but that depends on the eviction sweep actually firing and on rows making it to the `expired` state; nothing reaps orphans, fixtures, or rows that linger past TTL. Result: the directory grows monotonically across runs.

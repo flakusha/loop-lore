@@ -8,6 +8,10 @@
 **Effort:** Small
 **Type:** Task
 
+**Summary:** detailed in the [Summary](#summary) section below.
+**Context:** detailed in the body sections below (current state / repro / root cause).
+**Acceptance Criteria:** detailed in the [Acceptance Criteria](#acceptance-criteria) section below.
+
 ## Summary
 
 `.tmp/` carries **99 MB across 1177 files** (scratchpad §1, baseline measured 2026-09-26 in the parent checkout). The single-largest waste is 47 orphan `*.lcov.info.*.tmp` files totalling **49.1 MB** (P-01); the oldest artifact in `.tmp/async-store/` is **16 days** old (P-03); **16 analysis `.md` documents have zero inbound references from `.plan/`, `docs/`, or `src/`** (P-05) and are invisible to the discovery-by-`grep .plan/` workflow; and stale logs keep steering conclusions (P-13 — `.tmp/test-run2.log` reports 255 Elysia route-collision errors that `src/routes/messages/forward.ts:53` proves are fixed). This ticket adds (1) a **read-only advisory `.tmp` janitor** wired into `runNonBlockingChecks` so the four metrics are visible alongside every other gate, and (2) a `<!-- verified-at: <sha> -->` header convention for `.tmp` markdown analysis docs plus a small `scripts/check-staleness.ts` that warns when the recorded sha is behind HEAD by > 100 commits. **No deletion in this ticket** — deletion is G-3 in giwt (separate concern, opt-in).

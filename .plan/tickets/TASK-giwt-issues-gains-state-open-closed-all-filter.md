@@ -7,6 +7,10 @@
 **Priority:** low
 **Effort:** Small
 
+**Summary:** detailed in the [Summary](#summary) section below.
+**Context:** detailed in the body sections below (current state / repro / root cause).
+**Acceptance Criteria:** detailed in the [Acceptance Criteria](#acceptance-criteria) section below.
+
 ## Summary
 
 <!-- SPDX-License-Identifier: LGPL-3.0-or-later -->

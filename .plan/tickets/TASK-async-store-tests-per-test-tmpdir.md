@@ -8,6 +8,10 @@
 **Effort:** Medium
 **Type:** Task
 
+**Summary:** detailed in the [Summary](#summary) section below.
+**Context:** detailed in the body sections below (current state / repro / root cause).
+**Acceptance Criteria:** detailed in the [Acceptance Criteria](#acceptance-criteria) section below.
+
 ## Summary
 
 Broader fix for the same root cause as `BUG-test-async-store-offload-dir-fixed-path-race.md`: `src/async/spill.ts:12` defines `OFFLOAD_DIR = path.resolve(".tmp", "async-store")` — a fixed, repo-relative path shared by the running app, every test file, and every concurrent test process. Ticket 1 adds an immediate guard; this ticket migrates every `src/async/*test*.ts` file to a unique `OFFLOAD_DIR` per test file under `/tmp/loop-lore-test-<uuid>/` with per-test cleanup (preferable) or `beforeAll`/`afterAll` per-file cleanup (acceptable when per-test ids are already unique, as in `src/async/spill.test.ts`), and adds a runner-level assertion that no async-store test points at `<repo>/.tmp/async-store`.
