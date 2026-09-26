@@ -187,7 +187,14 @@ export function validateImageEditConfig(raw: Record<string, unknown>,): void {
   }
 }
 
-export { validateCharacterConfig, validateWorkflowConfig, } from "./validation-domains";
+export {
+  validateCharacterConfig,
+  validateWorkflowConfig,
+} from "./validation-domains";
+export {
+  validateEntityTypeConfig,
+  validateEntityTypePresets,
+} from "./validation-entity-types";
 
 // ── Unknown-Purpose Typo Detection ───────────────────────────
 

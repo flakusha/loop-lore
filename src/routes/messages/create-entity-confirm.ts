@@ -29,6 +29,7 @@ import type { HandlerOpts, } from "./types";
 /** Kinds the confirm endpoint is willing to persist. */
 const ALLOWED_KINDS: Record<string, true> = {
   character: true,
+  npc: true,
   location: true,
   world: true,
   item: true,

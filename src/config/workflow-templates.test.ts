@@ -5,12 +5,17 @@
 // validation, multi-file discovery, and loader wiring.
 
 import { describe, expect, test, } from "bun:test";
-import { mkdirSync, rmSync, writeFileSync, } from "node:fs";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
+import { tmpdir, } from "node:os";
 import path from "node:path";
 import type { WorkflowTemplateConfig, } from "./sections/templates";
 import { findWorkflowFiles, } from "./templates-loader/discovery";
 import { loadTemplateConfig, mergeWorkflowConfig, } from "./templates-loader/index";
-import { validateWorkflowConfig, } from "./templates-loader/validation";
+import {
+  validateEntityTypeConfig,
+  validateEntityTypePresets,
+  validateWorkflowConfig,
+} from "./templates-loader/validation";
 
 const BASE: WorkflowTemplateConfig = {
   merge: "extend",
@@ -33,6 +38,7 @@ const BASE: WorkflowTemplateConfig = {
       },
     },
   },
+  entityTypes: {},
 };
 
 describe("mergeWorkflowConfig", () => {
@@ -131,6 +137,123 @@ describe("findWorkflowFiles + loadTemplateConfig", () => {
       expect(found.length,).toBe(1,);
       const config = loadTemplateConfig(dir,);
       expect(config.workflows.workflows["test-extra"]?.name,).toBe("Extra",);
+    } finally {
+      rmSync(scratchRoot, { recursive: true, force: true, },);
+    }
+  });
+});
+
+describe("entityTypes domain", () => {
+  const PRESET = {
+    workflowId: "entity-npc",
+    requiredSteps: ["name",],
+    qualityGates: ["schema", "duplicate",] as ("schema" | "duplicate")[],
+    dispatchTarget: "npc",
+  };
+
+  test("accepts both the wrapped and bare-map shapes", () => {
+    expect(() => validateEntityTypeConfig({ entityTypes: { npc: PRESET, }, },)).not.toThrow();
+    expect(() => validateEntityTypeConfig({ npc: PRESET, },)).not.toThrow();
+  });
+
+  test("rejects a gate name outside the supported set", () => {
+    expect(() => validateEntityTypeConfig({ npc: { ...PRESET, qualityGates: ["vibes",], }, },)).toThrow(
+      "qualityGates entries must be one of",
+    );
+  });
+
+  test("rejects a preset whose workflowId is not loaded", () => {
+    expect(() => validateEntityTypePresets({ merge: "extend", workflows: {}, entityTypes: { npc: PRESET, }, },))
+      .toThrow("does not match any loaded workflow",);
+  });
+
+  test("rejects a requiredStep that is not a step of the workflow", () => {
+    expect(() =>
+      validateEntityTypePresets({
+        merge: "extend",
+        workflows: {
+          "entity-npc": {
+            id: "entity-npc",
+            name: "NPC",
+            steps: [{ id: "description", name: "D", type: "text", formatTemplate: "D: {value}", },],
+            dispatch: { backend: "b", target: "t", payloadTemplate: {}, },
+          },
+        },
+        entityTypes: { npc: PRESET, },
+      },)
+    ).toThrow("which is not a step of workflow",);
+  });
+
+  test("rejects a requiredStep the workflow marks optional", () => {
+    expect(() =>
+      validateEntityTypePresets({
+        merge: "extend",
+        workflows: {
+          "entity-npc": {
+            id: "entity-npc",
+            name: "NPC",
+            steps: [
+              { id: "name", name: "N", type: "text", formatTemplate: "N: {value}", required: false, },
+            ],
+            dispatch: { backend: "b", target: "t", payloadTemplate: {}, },
+          },
+        },
+        entityTypes: { npc: PRESET, },
+      },)
+    ).toThrow("marks it required: false",);
+  });
+});
+
+describe("loadTemplateConfig routes entityTypes out of the workflow domain", () => {
+  test("a preset file does not become a workflow and cross-validates", () => {
+    const scratchRoot = mkdtempSync(path.join(tmpdir(), "workflow-entity-types-",),);
+    const workflowsDir = path.join(scratchRoot, "configs", "templates", "workflows",);
+    mkdirSync(workflowsDir, { recursive: true, },);
+    writeFileSync(
+      path.join(workflowsDir, "entity.yaml",),
+      [
+        "merge: extend",
+        "entityTypes:",
+        "  npc:",
+        "    workflowId: entity-npc",
+        "    requiredSteps: [name]",
+        "    qualityGates: [schema]",
+        "    dispatchTarget: npc",
+        "workflows:",
+        "  entity-npc:",
+        "    id: entity-npc",
+        "    name: NPC",
+        "    intent:",
+        "      type: generate",
+        "      target: npc",
+        "    entityType: npc",
+        "    steps:",
+        "      - id: name",
+        "        name: Name",
+        "        type: text",
+        "        formatTemplate: 'Name: {value}'",
+        "      - id: rumour",
+        "        name: Rumour",
+        "        type: text",
+        "        required: false",
+        "        formatTemplate: 'Rumour: {value}'",
+        "    dispatch:",
+        "      backend: assistant-create",
+        "      target: /create npc",
+        "      payloadTemplate: {}",
+        "",
+      ].join("\n",),
+    );
+    try {
+      const config = loadTemplateConfig(scratchRoot,);
+      // entityTypes must not leak into the workflow table as a workflow id.
+      expect(config.workflows.workflows["entityTypes"],).toBeUndefined();
+      expect(Object.keys(config.workflows.workflows,),).toEqual(["entity-npc",],);
+      expect(config.workflows.entityTypes["npc"]?.dispatchTarget,).toBe("npc",);
+      const wf = config.workflows.workflows["entity-npc"]!;
+      expect(wf.intent,).toEqual({ type: "generate", target: "npc", },);
+      expect(wf.entityType,).toBe("npc",);
+      expect(wf.dispatch.target,).toBe("/create npc",);
     } finally {
       rmSync(scratchRoot, { recursive: true, force: true, },);
     }

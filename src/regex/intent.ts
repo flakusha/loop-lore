@@ -54,6 +54,27 @@ export const INTENT_PATTERNS: readonly {
   },
   {
     intent: "generate",
+    target: "npc",
+    confidence: 0.9,
+    requires_approval: true,
+    patterns: [/create.*npc/i, /generate.*npc/i, /new npc/i, /make.*npc/i, /non.?player character/i,],
+  },
+  {
+    intent: "generate",
+    target: "species",
+    confidence: 0.9,
+    requires_approval: true,
+    patterns: [
+      /create.*species/i,
+      /generate.*species/i,
+      /new species/i,
+      /make.*species/i,
+      /design.*species/i,
+      /bestiary/i,
+    ],
+  },
+  {
+    intent: "generate",
     target: "image",
     confidence: 0.85,
     requires_approval: true,

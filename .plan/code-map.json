@@ -2913,6 +2913,10 @@
   ],
   "src/assistant/workflow-routing.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-creative-studio-workflows.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-gm-chat-assistant-gm-handoff-via-intent-to-workflow-routing.md"
     },
@@ -8549,6 +8553,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-config-schema-defaults-leak-absolute-paths.md"
+    }
+  ],
+  "src/config/sections/templates-workflow.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-creative-studio-workflows.md"
     }
   ],
   "src/config/sections/templates.ts": [
@@ -20189,7 +20199,6 @@
       "source": ".plan/tickets/TASK-coverage-waiver-locations-at-78-under-check-gate.md"
     }
   ],
-
   "src/locations/tree.ts": [
     {
       "kind": "ticket",
@@ -33030,7 +33039,6 @@
       "source": ".plan/tickets/TASK-input-hardening-batch.md"
     }
   ],
-
   "src/utils/seeded-rng.ts": [
     {
       "kind": "ticket",

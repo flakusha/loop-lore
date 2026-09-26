@@ -142,6 +142,19 @@ describe("/image", () => {
     expect(result.systemMessage,).toContain("Usage: /image <prompt>",);
   });
 
+  it("returns a usage hint for whitespace-only args", () => {
+    const result = mustGet("image",)([" ", "\t",], baseCtx(),) as CommandResult;
+    expect(result.handled,).toBe(true,);
+    expect(result.action,).toBeUndefined();
+    expect(result.systemMessage,).toContain("Usage: /image <prompt>",);
+  });
+
+  it("joins args and trims leading or trailing whitespace", () => {
+    const result = mustGet("image",)(["  a", "medieval  ", "castle",], baseCtx(),) as CommandResult;
+    expect(result.action,).toBe("generate-image",);
+    expect(result.actionPayload,).toEqual({ prompt: "a medieval   castle", },);
+  });
+
   it("joins args into the generation prompt", () => {
     const result = mustGet("image",)(["a", "medieval", "castle",], baseCtx(),) as CommandResult;
     expect(result.action,).toBe("generate-image",);
