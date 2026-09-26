@@ -16,12 +16,11 @@
  * affects this file's view of the barrel.
  */
 import type { Database, } from "bun:sqlite";
-import { afterEach, beforeEach, expect, mock, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, mock, test, } from "bun:test";
 import { Kysely, } from "kysely";
 import type { DB, } from "../../../db";
 import { createInMemoryDb, } from "../../../services/agency/__helpers/in-mem-db";
 import { insertAchievements, insertPlayerAchievements, } from "../../../test-utils/insert-helpers";
-import { describeOrSkip, ISOLATED, } from "../../../test-utils/isolate-only";
 import {
   claimRewards,
   getPlayerStats,
@@ -35,10 +34,7 @@ import type { AchievementReward, } from "./types";
 const earnMock = mock(async (..._args: unknown[]) => ({ ok: true, }));
 const earnModule = { earnStoryPoints: earnMock, };
 
-// Gated: mock.module is process-global (BUG 9c8bea1).
-if (ISOLATED) {
-  mock.module("../../../services/agency/story-points", () => earnModule,);
-}
+mock.module("../../../services/agency/story-points", () => earnModule,);
 
 beforeEach(() => {
   earnMock.mockReset();
@@ -102,7 +98,7 @@ async function makeUnlocked(achievementId: string, playerId: string,): Promise<v
   },);
 }
 
-describeOrSkip("applySingleAchievementReward — story_points branch", () => {
+describe("applySingleAchievementReward — story_points branch", () => {
   test("credits story_points and returns true", async () => {
     await setup();
     const result = await applySingleAchievementReward(
@@ -163,9 +159,9 @@ describeOrSkip("applySingleAchievementReward — story_points branch", () => {
     expect(result,).toBe(false,);
     expect(earnMock,).toHaveBeenCalledTimes(1,);
   });
-},);
+});
 
-describeOrSkip("applySingleAchievementReward — unsupported reward types", () => {
+describe("applySingleAchievementReward — unsupported reward types", () => {
   test.each(["experience", "item", "currency", "title", "cosmetic", "unlock",] as const,)(
     "returns false for reward type %s without calling earnStoryPoints",
     async (type,) => {
@@ -178,9 +174,9 @@ describeOrSkip("applySingleAchievementReward — unsupported reward types", () =
       expect(earnMock,).not.toHaveBeenCalled();
     },
   );
-},);
+});
 
-describeOrSkip("claimRewards — story_points reward dispatch", () => {
+describe("claimRewards — story_points reward dispatch", () => {
   test("awards story_points and marks the player achievement claimed", async () => {
     await setup();
 
@@ -270,9 +266,9 @@ describeOrSkip("claimRewards — story_points reward dispatch", () => {
     );
     expect(earnMock,).not.toHaveBeenCalled();
   });
-},);
+});
 
-describeOrSkip("updateProgress — validation and lifecycle branches", () => {
+describe("updateProgress — validation and lifecycle branches", () => {
   test("throws when the achievement definition is missing", async () => {
     await setup();
     await makeUser("update-no-ach",);
@@ -309,9 +305,9 @@ describeOrSkip("updateProgress — validation and lifecycle branches", () => {
     expect(rAfter.unlocked,).toBe(false,);
     expect(rAfter.rewards,).toEqual([],);
   });
-},);
+});
 
-describeOrSkip("getPlayerStats", () => {
+describe("getPlayerStats", () => {
   test("aggregates unlocked counts per category and tier", async () => {
     await setup();
 
@@ -359,4 +355,4 @@ describeOrSkip("getPlayerStats", () => {
     expect(stats.byTier.bronze,).toBe(1,);
     expect(stats.byTier.silver,).toBe(1,);
   });
-},);
+});

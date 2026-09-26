@@ -13,35 +13,31 @@
  * Requires `--isolate` so `mock.module` rebinds `./nsfw-user-flag` before
  * `../create` loads.
  */
-import { afterAll, beforeAll, expect, mock, test, } from "bun:test";
+import { afterAll, beforeAll, describe, expect, mock, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../../db/schema";
 import { createLogger, } from "../../../logger";
 import { createTestDb, } from "../../../test-utils/create-test-db";
 import { insertChats, insertUsers, } from "../../../test-utils/insert-helpers";
-import { describeOrSkip, ISOLATED, } from "../../../test-utils/isolate-only";
 import { uid, } from "../../../utils";
 
 const flagCalls: Array<{ userId: string; chatId: string; content: string }> = [];
-// Gated: mock.module is process-global (BUG 9c8bea1).
-if (ISOLATED) {
-  mock.module("../../../nsfw/moderation-service", () => {
-    return {
-      NsfwModerationService: class {
-        async recordAction() {/* noop */}
-      },
-    };
-  },);
-  mock.module("../nsfw-user-flag", () => {
-    return {
-      flagNsfwUserMessage: async (_database: unknown, userId: string, chatId: string, content: string,) => {
-        flagCalls.push({ userId, chatId, content, },);
-        throw new Error("flagNsfwUserMessage must not run before the access check",);
-      },
-    };
-  },);
-}
+mock.module("../../../nsfw/moderation-service", () => {
+  return {
+    NsfwModerationService: class {
+      async recordAction() {/* noop */}
+    },
+  };
+},);
+mock.module("../nsfw-user-flag", () => {
+  return {
+    flagNsfwUserMessage: async (_database: unknown, userId: string, chatId: string, content: string,) => {
+      flagCalls.push({ userId, chatId, content, },);
+      throw new Error("flagNsfwUserMessage must not run before the access check",);
+    },
+  };
+},);
 
 // Dynamic import (after this file's mock.module calls above) + pristine
 // probe: without --isolate, an earlier file's incomplete mock of a module
@@ -54,6 +50,7 @@ const createModule: unknown = await import("../create").catch(() => null);
 const createPristine = !!createModule &&
   typeof (createModule as Record<string, unknown>).createRoutes === "function";
 const { createRoutes, } = (createPristine ? createModule : {}) as typeof import("../create");
+const describeReal = createPristine ? describe : describe.skip;
 
 const BASE = "http://localhost";
 
@@ -71,7 +68,7 @@ function makeApp(db: Kysely<DB>, userId: string,): Elysia {
   ) as unknown as Elysia;
 }
 
-describeOrSkip("nsfw flag ordering vs chat access (BUG-nsfw-flag-side-effect)", () => {
+describeReal("nsfw flag ordering vs chat access (BUG-nsfw-flag-side-effect)", () => {
   let db: Kysely<DB>;
   let sqlite: TestDb["sqlite"];
   let ownerId: string;

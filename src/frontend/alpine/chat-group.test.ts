@@ -2,8 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import "./i18n.test-helper";
-import { expect, mock, test, } from "bun:test";
-import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
+import { describe, expect, mock, test, } from "bun:test";
 import { commandPalette, } from "./chat-actions/command-palette";
 import { chatGroup, } from "./chat-group";
 
@@ -84,7 +83,7 @@ function keyEvent(
   return { event, prevented: () => stopped, };
 }
 
-describeOrSkip("chatGroup mentions", () => {
+describe("chatGroup mentions", () => {
   test("matches multi-byte display names", () => {
     const ta = makeTextarea("hi @田",);
     const ctx = buildCtx(participants, ta,);
@@ -151,9 +150,9 @@ describeOrSkip("chatGroup mentions", () => {
     expect(ctx._showMentionAutocomplete,).toBe(false,);
     expect(ta.value,).toBe("hello @zzz",);
   });
-},);
+});
 
-describeOrSkip("chatGroup.handleComposerKeydown command palette", () => {
+describe("chatGroup.handleComposerKeydown command palette", () => {
   const entries = [
     { name: "roll", descriptionKey: "k1", description: "d1", },
     { name: "roster", descriptionKey: "k2", description: "d2", },
@@ -205,20 +204,17 @@ describeOrSkip("chatGroup.handleComposerKeydown command palette", () => {
     expect(ta.value,).toBe("/ro",);
     expect(ctx._showCommandPalette,).toBe(true,);
   });
-},);
+});
 
 // ── Group pause state ──
 let pauseHandler: ((url: string,) => Response) | null = null;
 // Hoisted: chat-group binds the stubbed apiFetch for the pause tests below.
-// Gated: mock.module is process-global (BUG 9c8bea1).
-if (ISOLATED) {
-  mock.module("./htmx", () => ({
-    apiFetch: async (url: string,) => {
-      if (pauseHandler) { return pauseHandler(url,); }
-      return new Response("{}", { status: 200, },);
-    },
-  }),);
-}
+mock.module("./htmx", () => ({
+  apiFetch: async (url: string,) => {
+    if (pauseHandler) { return pauseHandler(url,); }
+    return new Response("{}", { status: 200, },);
+  },
+}),);
 
 interface PauseCtx {
   currentChat: { type?: string; story_state?: string } | null;
@@ -242,7 +238,7 @@ function pauseCtx(chat: PauseCtx["currentChat"],): PauseCtx & { toasts: unknown[
   };
 }
 
-describeOrSkip("isChatPaused", () => {
+describe("isChatPaused", () => {
   test("false without story_state or flag", () => {
     const ctx = pauseCtx({ type: "group", },);
     expect(chatGroup.isChatPaused!.call(ctx as never, ctx.currentChat,),).toBe(false,);
@@ -255,9 +251,9 @@ describeOrSkip("isChatPaused", () => {
     expect(chatGroup.isChatPaused!.call(ctx as never, { story_state: '{"isPaused":1}', },),).toBe(false,);
     expect(chatGroup.isChatPaused!.call(ctx as never, { story_state: "not-json", },),).toBe(false,);
   });
-},);
+});
 
-describeOrSkip("toggleGroupPause", () => {
+describe("toggleGroupPause", () => {
   test("ignores non-group or missing chat", async () => {
     pauseHandler = () => new Response("{}", { status: 200, },);
     const solo = pauseCtx({ type: "solo", story_state: "{}", },);
@@ -293,9 +289,9 @@ describeOrSkip("toggleGroupPause", () => {
     expect(offline.toasts.length,).toBe(1,);
     pauseHandler = null;
   });
-},);
+});
 
-describeOrSkip("chatGroup.handleComposerEnter", () => {
+describe("chatGroup.handleComposerEnter", () => {
   test("Enter accepts the open mention instead of sending", () => {
     const ta = makeTextarea("hello @al",);
     const ctx = buildCtx(participants, ta,);
@@ -375,4 +371,4 @@ describeOrSkip("chatGroup.handleComposerEnter", () => {
     // i18n.test-helper loads the real en.json catalog; t("toasts.failedSend") resolves to "Failed to send".
     expect(toasts,).toEqual([{ type: "error", message: "Failed to send", },],);
   });
-},);
+});

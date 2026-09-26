@@ -2,24 +2,20 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import "../i18n.test-helper";
-import { afterEach, expect, mock, test, } from "bun:test";
-import { describeOrSkip, ISOLATED, } from "../../../test-utils/isolate-only";
+import { afterEach, describe, expect, mock, test, } from "bun:test";
 import { chatSearch, } from "./search";
 
 // ── Mock apiFetch (chat/search imports ../htmx; keep the real i18n) ──
 let fetchCalls: { url: string; opts: RequestInit }[] = [];
 let fetchHandler: ((url: string, opts: RequestInit,) => Response) | null = null;
 
-// Gated: mock.module is process-global (BUG 9c8bea1).
-if (ISOLATED) {
-  mock.module("../htmx", () => ({
-    apiFetch: async (url: string, opts?: RequestInit,) => {
-      fetchCalls.push({ url, opts: opts ?? {}, },);
-      if (!fetchHandler) { return new Response("{}", { status: 200, },); }
-      return fetchHandler(url, opts ?? {},);
-    },
-  }),);
-}
+mock.module("../htmx", () => ({
+  apiFetch: async (url: string, opts?: RequestInit,) => {
+    fetchCalls.push({ url, opts: opts ?? {}, },);
+    if (!fetchHandler) { return new Response("{}", { status: 200, },); }
+    return fetchHandler(url, opts ?? {},);
+  },
+}),);
 
 function mockFetch(status: number, body: unknown = {},): void {
   fetchHandler = () => Response.json(body, { status, },);
@@ -41,7 +37,7 @@ function searchCtx(overrides: Record<string, unknown> = {},): Record<string, unk
   };
 }
 
-describeOrSkip("chatSearch.searchChats", () => {
+describe("chatSearch.searchChats", () => {
   test("clears results on a blank query without fetching", async () => {
     const ctx = searchCtx();
     await chatSearch.searchChats!.call(ctx, "   ",);
@@ -90,9 +86,9 @@ describeOrSkip("chatSearch.searchChats", () => {
     await chatSearch.searchChats!.call(ctx, "酒場",);
     expect(fetchCalls[0]!.url,).toContain(encodeURIComponent("酒場",),);
   });
-},);
+});
 
-describeOrSkip("chatSearch.loadJoinableChats", () => {
+describe("chatSearch.loadJoinableChats", () => {
   test("keeps existing rows on non-ok responses", async () => {
     mockFetch(500, {},);
     const ctx = searchCtx({ _joinableChats: [{ chatId: "keep", },], },);
@@ -128,9 +124,9 @@ describeOrSkip("chatSearch.loadJoinableChats", () => {
     await chatSearch.loadJoinableChats!.call(ctx,);
     expect(ctx._joinableChats,).toEqual([],);
   });
-},);
+});
 
-describeOrSkip("chatSearch.joinChat", () => {
+describe("chatSearch.joinChat", () => {
   test("toasts an error when the join fails", async () => {
     mockFetch(403, { error: "no", },);
     const toasts: { type: string; message: string }[] = [];
@@ -183,4 +179,4 @@ describeOrSkip("chatSearch.joinChat", () => {
     await chatSearch.joinChat!.call(ctx, "c4",);
     expect(toasts[toasts.length - 1]?.type,).toBe("error",);
   });
-},);
+});

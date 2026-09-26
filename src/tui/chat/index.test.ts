@@ -19,8 +19,7 @@
  * imported after the stub registers, so the typed static imports above are
  * intentional blanks and the real symbol arrives through the dynamic seam.
  */
-import { afterAll, beforeAll, expect, it, mock, } from "bun:test";
-import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
+import { afterAll, beforeAll, describe, expect, it, mock, } from "bun:test";
 import type { ChatWidget, } from "./index";
 import type { ChatWidgetOptions, } from "./types";
 
@@ -85,17 +84,14 @@ const blessedStub = {
   layout: () => makeWidget(),
 };
 
-// Gated: mock.module is process-global (BUG 9c8bea1).
-let ChatWidgetCtor: typeof ChatWidget;
-if (ISOLATED) {
-  mock.module("blessed", () => blessedStub,);
+mock.module("blessed", () => blessedStub,);
 
-  const blessedDefaultExport: Record<string, unknown> = {
-    default: blessedStub,
-    ...blessedStub,
-  };
-  mock.module("blessed", () => blessedDefaultExport,);
-}
+let ChatWidgetCtor: typeof ChatWidget;
+const blessedDefaultExport: Record<string, unknown> = {
+  default: blessedStub,
+  ...blessedStub,
+};
+mock.module("blessed", () => blessedDefaultExport,);
 beforeAll(async () => {
   // Dynamic import required: bun's mock.module replaces the resolution table
   // only for modules imported after the stub registers; the static type-only
@@ -112,7 +108,7 @@ function buildWidget(opts: ChatWidgetOptions = {},): ChatWidget {
   return new ChatWidgetCtor({ ...screenBase, append: () => {}, focused: null, } as never, opts,);
 }
 
-describeOrSkip("ChatWidget — sessionToken threading", () => {
+describe("ChatWidget — sessionToken threading", () => {
   it("forwards an explicit sessionToken onto the instance", () => {
     const chat = buildWidget({ sessionToken: "abc123", },);
     expect(chat.sessionToken,).toBe("abc123",);
@@ -127,4 +123,4 @@ describeOrSkip("ChatWidget — sessionToken threading", () => {
     const chat = buildWidget({ sessionToken: "", },);
     expect(chat.sessionToken,).toBeUndefined();
   });
-},);
+});

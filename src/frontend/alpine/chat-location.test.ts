@@ -1,5 +1,4 @@
 import { afterEach, describe, expect, mock, test, } from "bun:test";
-import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { chatLocation, } from "./chat-location";
 import type { ChatState, } from "./types";
 
@@ -17,16 +16,13 @@ const windowEvents: Event[] = [];
 let fetchCalls: { url: string; opts: RequestInit }[] = [];
 let fetchHandler: ((url: string, opts: RequestInit,) => Response) | null = null;
 
-// Gated: mock.module is process-global (BUG 9c8bea1).
-if (ISOLATED) {
-  mock.module("./htmx", () => ({
-    apiFetch: async (url: string, opts?: RequestInit,) => {
-      fetchCalls.push({ url, opts: opts ?? {}, },);
-      if (!fetchHandler) { return new Response("{}", { status: 200, },); }
-      return fetchHandler(url, opts ?? {},);
-    },
-  }),);
-}
+mock.module("./htmx", () => ({
+  apiFetch: async (url: string, opts?: RequestInit,) => {
+    fetchCalls.push({ url, opts: opts ?? {}, },);
+    if (!fetchHandler) { return new Response("{}", { status: 200, },); }
+    return fetchHandler(url, opts ?? {},);
+  },
+}),);
 
 /**
  * @param status
@@ -113,7 +109,7 @@ afterEach(() => {
   windowEvents.length = 0;
 },);
 
-describeOrSkip("chatLocation", () => {
+describe("chatLocation", () => {
   describe("changeChatLocation", () => {
     test("no-ops without a selected location", async () => {
       const { state, } = buildCtx({ _selectedLocationId: "", },);
@@ -216,4 +212,4 @@ describeOrSkip("chatLocation", () => {
       expect(state.loadLocationJoinable,).toHaveBeenCalled();
     });
   });
-},);
+});

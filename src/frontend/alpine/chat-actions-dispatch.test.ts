@@ -1,22 +1,18 @@
 import "./i18n.test-helper";
 import { afterEach, describe, expect, mock, test, } from "bun:test";
-import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { chatActions, } from "./chat-actions";
 
 // ── Mock apiFetch (must override the real one set by htmx.ts at import) ──
 let fetchCalls: { url: string; opts: RequestInit }[] = [];
 let fetchHandler: ((url: string, opts: RequestInit,) => Response) | null = null;
 
-// Gated: mock.module is process-global (BUG 9c8bea1).
-if (ISOLATED) {
-  mock.module("./htmx", () => ({
-    apiFetch: async (url: string, opts?: RequestInit,) => {
-      fetchCalls.push({ url, opts: opts ?? {}, },);
-      if (!fetchHandler) { return new Response("{}", { status: 200, },); }
-      return fetchHandler(url, opts ?? {},);
-    },
-  }),);
-}
+mock.module("./htmx", () => ({
+  apiFetch: async (url: string, opts?: RequestInit,) => {
+    fetchCalls.push({ url, opts: opts ?? {}, },);
+    if (!fetchHandler) { return new Response("{}", { status: 200, },); }
+    return fetchHandler(url, opts ?? {},);
+  },
+}),);
 
 /**
  * @param status
@@ -66,7 +62,7 @@ afterEach(() => {
 
 // ── dispatchCommandAction ────────────────────────────────────
 
-describeOrSkip("dispatchCommandAction", () => {
+describe("dispatchCommandAction", () => {
   describe("generate-image", () => {
     test("fires POST to /api/v1/generation/image with prompt + chatId", async () => {
       mockFetch(200,);
@@ -405,11 +401,11 @@ describeOrSkip("dispatchCommandAction", () => {
       expect(ctx.toasts,).toEqual([{ type: "warning", message: "Unknown action: do-something-else", },],);
     });
   });
-},);
+});
 
 // ── handleCommandInput ───────────────────────────────────────
 
-describeOrSkip("handleCommandInput", () => {
+describe("handleCommandInput", () => {
   // _commandList is hydrated at runtime from GET /api/v1/commands; tests need a
   // populated list to exercise the filter logic.
   type CommandEntry = { name: string; descriptionKey: string; description: string };
@@ -469,11 +465,11 @@ describeOrSkip("handleCommandInput", () => {
     expect(state._showCommandPalette,).toBe(true,);
     expect(state._filteredCommands.length,).toBe(seededCommandList.length,);
   });
-},);
+});
 
 // ── selectCommand ────────────────────────────────────────────
 
-describeOrSkip("selectCommand", () => {
+describe("selectCommand", () => {
   test("sets input value to /name and hides palette", () => {
     const inputEl = { value: "", focus() {}, };
     const state = {
@@ -500,9 +496,9 @@ describeOrSkip("selectCommand", () => {
     expect(() => chatActions.selectCommand!.call(state as any, "image",)).not.toThrow();
     expect(state._showCommandPalette,).toBe(false,);
   });
-},);
+});
 
-describeOrSkip("dispatchCommandAction link-asset", () => {
+describe("dispatchCommandAction link-asset", () => {
   const priorConfirm = (globalThis as { confirm?: (message?: string,) => boolean }).confirm;
   afterEach(() => {
     (globalThis as { confirm?: (message?: string,) => boolean }).confirm = priorConfirm;
@@ -563,9 +559,9 @@ describeOrSkip("dispatchCommandAction link-asset", () => {
     );
     expect(ctx.toasts,).toEqual([{ type: "error", message: "Failed to link castle.png", },],);
   });
-},);
+});
 
-describeOrSkip("dispatchCommandAction impersonate", () => {
+describe("dispatchCommandAction impersonate", () => {
   test("impersonate-toggle off PUTs null and clears flags", async () => {
     mockFetch(200, {},);
     const ctx = buildCtx() as any;
@@ -635,4 +631,4 @@ describeOrSkip("dispatchCommandAction impersonate", () => {
     await chatActions.dispatchCommandAction!.call(ctx as any, "review-entity", { id: "e1", }, "chat-1",);
     expect(fetchCalls.length,).toBe(0,);
   });
-},);
+});

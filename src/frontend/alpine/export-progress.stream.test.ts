@@ -21,7 +21,6 @@
 // startExport passed to the request layer; we assert `signal === undefined`
 // to prove the 30s timeout is NOT armed in stream mode.
 import { afterEach, expect, mock, test, } from "bun:test";
-import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { exportProgressFactory, } from "./export-progress";
 
 type ApiFetchMock = (url: string, opts?: RequestInit,) => Promise<Response>;
@@ -31,14 +30,15 @@ let handler: ApiFetchMock = async () => new Response(null, { status: 404, },);
 // the ./htmx module cache via mock.module. Bun looks up cached modules at
 // call-time, so the mock takes effect for startExport's apiFetch call even
 // though the static import resolved before mock.module ran.
-// Gated: mock.module is process-global (BUG 9c8bea1).
-if (ISOLATED) {
-  mock.module("./htmx", () => ({
-    apiFetch: ((url: string, opts?: RequestInit,) => {
-      return handler(url, opts,);
-    }) satisfies ApiFetchMock,
-  }),);
-}
+mock.module("./htmx", () => ({
+  apiFetch: ((url: string, opts?: RequestInit,) => {
+    return handler(url, opts,);
+  }) satisfies ApiFetchMock,
+}),);
+
+afterEach(() => {
+  handler = async () => new Response(null, { status: 404, },);
+},);
 
 /** A live SSE Response that never closes until the caller cancels it. */
 function openSse(frames: string[],): { response: Response; closed: boolean } {
@@ -63,37 +63,31 @@ function openSse(frames: string[],): { response: Response; closed: boolean } {
   };
 }
 
-describeOrSkip("export-progress SSE streaming", () => {
-  afterEach(() => {
-    handler = async () => new Response(null, { status: 404, },);
-  },);
+test("startExport streams the SSE body and disarms the fetch timeout", async () => {
+  let captured: RequestInit | undefined;
+  const stream = openSse([
+    `data: {"type":"job_created","jobId":"j1","status":"queued"}\n\n`,
+    `data: {"type":"completed","jobId":"j1","downloadUrl":"/api/v1/export/download/j1"}\n\n`,
+  ],);
+  handler = async (_url: string, init?: RequestInit,) => {
+    captured = init;
+    return stream.response;
+  };
 
-  test("startExport streams the SSE body and disarms the fetch timeout", async () => {
-    let captured: RequestInit | undefined;
-    const stream = openSse([
-      `data: {"type":"job_created","jobId":"j1","status":"queued"}\n\n`,
-      `data: {"type":"completed","jobId":"j1","downloadUrl":"/api/v1/export/download/j1"}\n\n`,
-    ],);
-    handler = async (_url: string, init?: RequestInit,) => {
-      captured = init;
-      return stream.response;
-    };
+  const ctx = exportProgressFactory();
 
-    const ctx = exportProgressFactory();
+  await ctx.startExport();
 
-    await ctx.startExport();
-
-    // The stream never closes on its own, yet startExport returned: proves the
-    // body was read incrementally (reader cancelled on the terminal frame),
-    // not buffered via response.text().
-    expect(ctx.status,).toBe("completed",);
-    expect(ctx.downloadUrl,).toBe("/api/v1/export/download/j1",);
-    expect(ctx.error,).toBe("",);
-    // Stream mode must not arm the 30s timeout: a bare signal (undefined)
-    // means no AbortController chain from safeFetch.
-    expect(captured?.signal,).toBeUndefined();
-    // The SSE contract: startExport must request a streaming response.
-    expect((captured as { stream?: unknown } | undefined)?.stream,).toBe(true,);
-    expect(stream.closed,).toBe(true,);
-  });
-},);
+  // The stream never closes on its own, yet startExport returned: proves the
+  // body was read incrementally (reader cancelled on the terminal frame),
+  // not buffered via response.text().
+  expect(ctx.status,).toBe("completed",);
+  expect(ctx.downloadUrl,).toBe("/api/v1/export/download/j1",);
+  expect(ctx.error,).toBe("",);
+  // Stream mode must not arm the 30s timeout: a bare signal (undefined)
+  // means no AbortController chain from safeFetch.
+  expect(captured?.signal,).toBeUndefined();
+  // The SSE contract: startExport must request a streaming response.
+  expect((captured as { stream?: unknown } | undefined)?.stream,).toBe(true,);
+  expect(stream.closed,).toBe(true,);
+});

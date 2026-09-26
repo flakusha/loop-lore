@@ -8,23 +8,19 @@
  * FE-BE harmonization gate stays green: the backend reads actorId from
  * query validation on all three write endpoints.
  */
-import { expect, mock, test, } from "bun:test";
-import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
+import { describe, expect, mock, test, } from "bun:test";
 
 import { characterGrowthEditor, } from "./character-growth-editor";
 
 let calls: { url: string; opts: RequestInit }[] = [];
 let ok = true;
-// Gated: mock.module is process-global (BUG 9c8bea1).
-if (ISOLATED) {
-  mock.module("./fe-fetch", () => ({
-    feFetch: async (url: string, opts: RequestInit = {},) => {
-      calls.push({ url, opts, },);
-      return new Response("{}", { status: ok ? 200 : 500, },);
-    },
-    getCsrfToken: () => "",
-  }),);
-}
+mock.module("./fe-fetch", () => ({
+  feFetch: async (url: string, opts: RequestInit = {},) => {
+    calls.push({ url, opts, },);
+    return new Response("{}", { status: ok ? 200 : 500, },);
+  },
+  getCsrfToken: () => "",
+}),);
 
 function editor() {
   return characterGrowthEditor({
@@ -37,7 +33,7 @@ function editor() {
   },);
 }
 
-describeOrSkip("characterGrowthEditor URL shapes", () => {
+describe("characterGrowthEditor URL shapes", () => {
   test("saveArc PATCHes query actorId", async () => {
     calls = [];
     const c = editor();
@@ -68,4 +64,4 @@ describeOrSkip("characterGrowthEditor URL shapes", () => {
     expect(c.message,).toBe("Failed to save arc.",);
     ok = true;
   });
-},);
+});

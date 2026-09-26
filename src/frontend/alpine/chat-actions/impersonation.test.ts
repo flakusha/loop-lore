@@ -1,5 +1,4 @@
-import { afterEach, expect, mock, test, } from "bun:test";
-import { describeOrSkip, ISOLATED, } from "../../../test-utils/isolate-only";
+import { afterEach, describe, expect, mock, test, } from "bun:test";
 import { impersonation, } from "./impersonation";
 
 import type { ApiFetchMock, Toast, } from "../../tests/test-types";
@@ -8,15 +7,12 @@ import type { ApiFetchMock, Toast, } from "../../tests/test-types";
 let calls: { url: string; opts: RequestInit }[] = [];
 let handler: ApiFetchMock = async () => Response.json({},);
 
-// Gated: mock.module is process-global (BUG 9c8bea1).
-if (ISOLATED) {
-  mock.module("../htmx", () => ({
-    apiFetch: (async (url: string, opts?: RequestInit,) => {
-      calls.push({ url, opts: opts ?? {}, },);
-      return handler(url, opts,);
-    }) satisfies ApiFetchMock,
-  }),);
-}
+mock.module("../htmx", () => ({
+  apiFetch: (async (url: string, opts?: RequestInit,) => {
+    calls.push({ url, opts: opts ?? {}, },);
+    return handler(url, opts,);
+  }) satisfies ApiFetchMock,
+}),);
 
 interface ImpersonationCtx {
   activeChat: string | null;
@@ -54,7 +50,7 @@ afterEach(() => {
   handler = async () => Response.json({},);
 },);
 
-describeOrSkip("impersonation.toggleImpersonate", () => {
+describe("impersonation.toggleImpersonate", () => {
   test("warns when there is no chat or character", async () => {
     const ctx = buildCtx({ activeChat: null, currentCharacter: null, },);
     await impersonation.toggleImpersonate!.call(ctx as never,);
@@ -121,9 +117,9 @@ describeOrSkip("impersonation.toggleImpersonate", () => {
     expect(ctx.impersonationActive,).toBe(false,);
     expect(ctx.toasts[0]!.type,).toBe("error",);
   });
-},);
+});
 
-describeOrSkip("impersonation.impersonate", () => {
+describe("impersonation.impersonate", () => {
   test("delegates to toggleImpersonate regardless of command", async () => {
     const ctx = buildCtx();
     let toggles = 0;
@@ -134,9 +130,9 @@ describeOrSkip("impersonation.impersonate", () => {
     await impersonation.impersonate!.call(ctx as never, "impersonate",);
     expect(toggles,).toBe(2,);
   });
-},);
+});
 
-describeOrSkip("impersonation.loadImpersonationState", () => {
+describe("impersonation.loadImpersonationState", () => {
   test("does nothing without an active chat", async () => {
     const ctx = buildCtx({ activeChat: null, },);
     await impersonation.loadImpersonationState!.call(ctx as never,);
@@ -216,4 +212,4 @@ describeOrSkip("impersonation.loadImpersonationState", () => {
     await impersonation.loadImpersonationState!.call(ctx as never,);
     expect(ctx.impersonationActive,).toBe(false,);
   });
-},);
+});

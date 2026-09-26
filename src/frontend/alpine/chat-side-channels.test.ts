@@ -1,6 +1,5 @@
 import "./i18n.test-helper";
 import { afterEach, describe, expect, mock, test, } from "bun:test";
-import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { chatSideChannels, } from "./chat-side-channels";
 import type { ChatState, } from "./types";
 
@@ -12,16 +11,13 @@ import type { ChatState, } from "./types";
 let fetchCalls: { url: string; args: RequestInit }[] = [];
 let fetchHandler: ((url: string, opts: RequestInit,) => Response) | null = null;
 
-// Gated: mock.module is process-global (BUG 9c8bea1).
-if (ISOLATED) {
-  mock.module("./htmx", () => ({
-    apiFetch: async (url: string, opts?: RequestInit,) => {
-      fetchCalls.push({ url, args: opts ?? {}, },);
-      if (!fetchHandler) { return new Response("{}", { status: 200, },); }
-      return fetchHandler(url, opts ?? {},);
-    },
-  }),);
-}
+mock.module("./htmx", () => ({
+  apiFetch: async (url: string, opts?: RequestInit,) => {
+    fetchCalls.push({ url, args: opts ?? {}, },);
+    if (!fetchHandler) { return new Response("{}", { status: 200, },); }
+    return fetchHandler(url, opts ?? {},);
+  },
+}),);
 
 /**
  * @param status
@@ -86,7 +82,7 @@ afterEach(() => {
   fetchHandler = null;
 },);
 
-describeOrSkip("chatSideChannels", () => {
+describe("chatSideChannels", () => {
   describe("loadSideChannels", () => {
     test("fetches and stores side-channels into $store.ui", async () => {
       mockFetch(200, {
@@ -145,4 +141,4 @@ describeOrSkip("chatSideChannels", () => {
       expect(selectChat,).toHaveBeenCalledWith("s1",);
     });
   });
-},);
+});
