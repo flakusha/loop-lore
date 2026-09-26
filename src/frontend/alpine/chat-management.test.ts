@@ -2,24 +2,20 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import "./i18n.test-helper";
-import { afterEach, beforeEach, expect, mock, test, } from "bun:test";
-import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
+import { afterEach, beforeEach, describe, expect, mock, test, } from "bun:test";
 import { chatManagement, } from "./chat-management";
 
 // ── Mock apiFetch (chat-management imports ./htmx; keep the real i18n) ──
 let fetchCalls: { url: string; opts: RequestInit }[] = [];
 let fetchHandler: ((url: string, opts: RequestInit,) => Response) | null = null;
 
-// Gated: mock.module is process-global (BUG 9c8bea1).
-if (ISOLATED) {
-  mock.module("./htmx", () => ({
-    apiFetch: async (url: string, opts?: RequestInit,) => {
-      fetchCalls.push({ url, opts: opts ?? {}, },);
-      if (!fetchHandler) { return new Response("{}", { status: 200, },); }
-      return fetchHandler(url, opts ?? {},);
-    },
-  }),);
-}
+mock.module("./htmx", () => ({
+  apiFetch: async (url: string, opts?: RequestInit,) => {
+    fetchCalls.push({ url, opts: opts ?? {}, },);
+    if (!fetchHandler) { return new Response("{}", { status: 200, },); }
+    return fetchHandler(url, opts ?? {},);
+  },
+}),);
 
 function mockFetch(status: number, body: unknown = {},): void {
   fetchHandler = () => Response.json(body, { status, },);
@@ -71,7 +67,7 @@ const chatRow = (id: string, name = "Chat", isPinned: number | boolean = 0,): Re
   isPinned,
 });
 
-describeOrSkip("chatManagement.toggleChatSelection", () => {
+describe("chatManagement.toggleChatSelection", () => {
   test("adds and removes ids", () => {
     const ctx = mgmtCtx({ selectedChats: [], },);
     chatManagement.toggleChatSelection!.call(ctx, "c1",);
@@ -87,9 +83,9 @@ describeOrSkip("chatManagement.toggleChatSelection", () => {
     chatManagement.toggleChatSelection!.call(ctx, "chat-酒場-1",);
     expect(ctx.selectedChats,).toEqual(["chat-酒場-1",],);
   });
-},);
+});
 
-describeOrSkip("chatManagement.toggleChatPin", () => {
+describe("chatManagement.toggleChatPin", () => {
   test("ignores unknown chats without fetching", async () => {
     const ctx = mgmtCtx({ chats: [], },);
     await chatManagement.toggleChatPin!.call(ctx, "missing",);
@@ -123,9 +119,9 @@ describeOrSkip("chatManagement.toggleChatPin", () => {
     expect(chats[0]!.isPinned,).toBe(0,);
     expect((ctx.toasts as { type: string }[])[0]?.type,).toBe("error",);
   });
-},);
+});
 
-describeOrSkip("chatManagement.openRenameModal", () => {
+describe("chatManagement.openRenameModal", () => {
   test("seeds the modal from the chat name", () => {
     const ctx = mgmtCtx({ chats: [chatRow("c1", "General",),], },);
     chatManagement.openRenameModal!.call(ctx, "c1",);
@@ -152,9 +148,9 @@ describeOrSkip("chatManagement.openRenameModal", () => {
     await chatManagement.renameChat!.call(ctx, "c9",);
     expect(opened,).toEqual(["c9",],);
   });
-},);
+});
 
-describeOrSkip("chatManagement.confirmRenameChat", () => {
+describe("chatManagement.confirmRenameChat", () => {
   test("hides the modal for blank names without fetching", async () => {
     uiStore.showRenameModal = true;
     const ctx = mgmtCtx({ chats: [chatRow("c1", "Old",),], _renameChatId: "c1", _renameChatName: "   ", },);
@@ -201,9 +197,9 @@ describeOrSkip("chatManagement.confirmRenameChat", () => {
       message: "taken",
     },);
   });
-},);
+});
 
-describeOrSkip("chatManagement.batchArchive", () => {
+describe("chatManagement.batchArchive", () => {
   test("returns early with no selection", async () => {
     const ctx = mgmtCtx({ selectedChats: [], },);
     await chatManagement.batchArchive!.call(ctx,);
@@ -229,9 +225,9 @@ describeOrSkip("chatManagement.batchArchive", () => {
     expect(ctx.chats as unknown[],).toHaveLength(1,);
     expect((ctx.toasts as { type: string }[])[0]?.type,).toBe("error",);
   });
-},);
+});
 
-describeOrSkip("chatManagement.batchDelete", () => {
+describe("chatManagement.batchDelete", () => {
   test("returns early with no selection", async () => {
     const ctx = mgmtCtx({ selectedChats: [], },);
     await chatManagement.batchDelete!.call(ctx,);
@@ -281,9 +277,9 @@ describeOrSkip("chatManagement.batchDelete", () => {
     await chatManagement.batchDelete!.call(ctx,);
     expect((ctx.toasts as { type: string }[])[0]?.type,).toBe("error",);
   });
-},);
+});
 
-describeOrSkip("chatManagement.batchExport", () => {
+describe("chatManagement.batchExport", () => {
   test("returns early with no selection", async () => {
     const ctx = mgmtCtx({ selectedChats: [], },);
     await chatManagement.batchExport!.call(ctx,);
@@ -305,9 +301,9 @@ describeOrSkip("chatManagement.batchExport", () => {
     await chatManagement.batchExport!.call(ctx,);
     expect((ctx.toasts as { type: string }[])[0]?.type,).toBe("error",);
   });
-},);
+});
 
-describeOrSkip("chatManagement.deleteChat", () => {
+describe("chatManagement.deleteChat", () => {
   const delEvent = () => {
     let stopped = 0;
     let blurred = 0;
@@ -382,4 +378,4 @@ describeOrSkip("chatManagement.deleteChat", () => {
     await chatManagement.deleteChat!.call(ctx, "c1", event,);
     expect((ctx.toasts as { type: string }[])[0]?.type,).toBe("error",);
   });
-},);
+});

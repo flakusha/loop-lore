@@ -1,24 +1,20 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { afterEach, expect, mock, test, } from "bun:test";
-import { describeOrSkip, ISOLATED, } from "../../../test-utils/isolate-only";
+import { afterEach, describe, expect, mock, test, } from "bun:test";
 import { personaActions, } from "./persona";
 
 // ── Mock apiFetch (chat-settings/persona imports ../htmx) ──
 let fetchCalls: { url: string; opts: RequestInit }[] = [];
 let fetchHandler: ((url: string, opts: RequestInit,) => Response) | null = null;
 
-// Gated: mock.module is process-global (BUG 9c8bea1).
-if (ISOLATED) {
-  mock.module("../htmx", () => ({
-    apiFetch: async (url: string, opts?: RequestInit,) => {
-      fetchCalls.push({ url, opts: opts ?? {}, },);
-      if (!fetchHandler) { return new Response("{}", { status: 200, },); }
-      return fetchHandler(url, opts ?? {},);
-    },
-  }),);
-}
+mock.module("../htmx", () => ({
+  apiFetch: async (url: string, opts?: RequestInit,) => {
+    fetchCalls.push({ url, opts: opts ?? {}, },);
+    if (!fetchHandler) { return new Response("{}", { status: 200, },); }
+    return fetchHandler(url, opts ?? {},);
+  },
+}),);
 
 function mockFetch(status: number, body: unknown = {},): void {
   fetchHandler = () => Response.json(body, { status, },);
@@ -42,7 +38,7 @@ function personaCtx(overrides: Record<string, unknown> = {},): Record<string, un
   };
 }
 
-describeOrSkip("personaActions.loadPersonas", () => {
+describe("personaActions.loadPersonas", () => {
   test("stores personas on success", async () => {
     mockFetch(200, [{ id: "p1", },],);
     const ctx = personaCtx();
@@ -65,9 +61,9 @@ describeOrSkip("personaActions.loadPersonas", () => {
     const ctx = personaCtx();
     await expect(personaActions.loadPersonas!.call(ctx,),).resolves.toBeUndefined();
   });
-},);
+});
 
-describeOrSkip("personaActions.setPersona", () => {
+describe("personaActions.setPersona", () => {
   test("returns early without an active chat", async () => {
     const ctx = personaCtx({ activeChat: null, },);
     await personaActions.setPersona!.call(ctx,);
@@ -96,9 +92,9 @@ describeOrSkip("personaActions.setPersona", () => {
     const ctx = personaCtx();
     await expect(personaActions.setPersona!.call(ctx,),).resolves.toBeUndefined();
   });
-},);
+});
 
-describeOrSkip("personaActions.toggleImpersonation", () => {
+describe("personaActions.toggleImpersonation", () => {
   test("returns early without an active chat", async () => {
     const ctx = personaCtx({ activeChat: null, },);
     await personaActions.toggleImpersonation!.call(ctx,);
@@ -125,9 +121,9 @@ describeOrSkip("personaActions.toggleImpersonation", () => {
     await personaActions.toggleImpersonation!.call(ctx,);
     expect(JSON.parse(fetchCalls[0]!.opts.body as string,),).toEqual({ impersonateActorId: null, },);
   });
-},);
+});
 
-describeOrSkip("personaActions.loadImpersonationState", () => {
+describe("personaActions.loadImpersonationState", () => {
   test("returns early without an active chat", async () => {
     const ctx = personaCtx({ activeChat: null, },);
     await personaActions.loadImpersonationState!.call(ctx,);
@@ -201,4 +197,4 @@ describeOrSkip("personaActions.loadImpersonationState", () => {
     await personaActions.loadImpersonationState!.call(ctx,);
     expect(ctx._impersonationLoaded,).toBe(true,);
   });
-},);
+});

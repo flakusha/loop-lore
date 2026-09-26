@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { afterEach, expect, mock, test, } from "bun:test";
-import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
+import { afterEach, describe, expect, mock, test, } from "bun:test";
 import {
   actorEntitiesFactory,
   type ActorEntitiesState,
@@ -15,15 +14,12 @@ type ApiFetchMock = (url: string, opts?: RequestInit,) => Promise<Response>;
 let calls: { url: string; opts: RequestInit }[] = [];
 let handler: ApiFetchMock = async () => Response.json({ data: [], },);
 
-// Gated: mock.module is process-global (BUG 9c8bea1).
-if (ISOLATED) {
-  mock.module("./htmx", () => ({
-    apiFetch: ((url: string, opts?: RequestInit,) => {
-      calls.push({ url, opts: opts ?? {}, },);
-      return handler(url, opts,);
-    }) satisfies ApiFetchMock,
-  }),);
-}
+mock.module("./htmx", () => ({
+  apiFetch: ((url: string, opts?: RequestInit,) => {
+    calls.push({ url, opts: opts ?? {}, },);
+    return handler(url, opts,);
+  }) satisfies ApiFetchMock,
+}),);
 /** Drive the microtask queue through several cycles so async `load()` chains
  * resolve before assertions run. */
 const flush = async (): Promise<void> => {
@@ -46,7 +42,7 @@ afterEach(() => {
   handler = async () => Response.json({ data: [], },);
 },);
 
-describeOrSkip("actorEntitiesFactory", () => {
+describe("actorEntitiesFactory", () => {
   test("returns a state bound to the kind + actor", async () => {
     handler = async (url: string,) => {
       if (url === "/api/v1/actors/actor-1/notes") {
@@ -76,9 +72,9 @@ describeOrSkip("actorEntitiesFactory", () => {
     expect(lore.config().titleField,).toBe("title",);
     expect(lore.config().fields.length,).toBe(2,);
   });
-},);
+});
 
-describeOrSkip("actorEntitiesState.filteredRows", () => {
+describe("actorEntitiesState.filteredRows", () => {
   test("returns all rows when search is empty", () => {
     const state = baseState();
     state.rows = [{ id: "1", title: "A", }, { id: "2", title: "B", },];
@@ -98,9 +94,9 @@ describeOrSkip("actorEntitiesState.filteredRows", () => {
     state.search = "shield";
     expect(state.filteredRows().map((r,) => r.id),).toEqual(["2",],);
   });
-},);
+});
 
-describeOrSkip("actorEntitiesState.load", () => {
+describe("actorEntitiesState.load", () => {
   test("no-op without actor id", async () => {
     await flush();
     calls.length = 0;
@@ -137,9 +133,9 @@ describeOrSkip("actorEntitiesState.load", () => {
     await state.load();
     expect(state.rows,).toEqual([],);
   });
-},);
+});
 
-describeOrSkip("actorEntitiesState.create / save / remove", () => {
+describe("actorEntitiesState.create / save / remove", () => {
   test("create POSTs payload and reloads", async () => {
     handler = async (_url: string, opts?: RequestInit,) => {
       if (opts?.method === "POST") { return Response.json({ id: "new", }, { status: 201, },); }
@@ -248,9 +244,9 @@ describeOrSkip("actorEntitiesState.create / save / remove", () => {
     const postCall = calls.find((c,) => c.opts.method === "POST");
     expect(postCall?.opts.body,).toContain('"quantity":3',);
   });
-},);
+});
 
-describeOrSkip("actorEntitiesState form helpers", () => {
+describe("actorEntitiesState form helpers", () => {
   test("resetForm clears fields and editingId", () => {
     const state = baseState();
     state.form.title = "X";
@@ -282,4 +278,4 @@ describeOrSkip("actorEntitiesState form helpers", () => {
     state.cancelEdit();
     expect(state.form.title,).toBe("",);
   });
-},);
+});

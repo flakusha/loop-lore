@@ -1,5 +1,4 @@
 import { afterEach, describe, expect, mock, test, } from "bun:test";
-import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import "./story-state";
 import type { StoryStateComponent, } from "./story-state";
 
@@ -7,16 +6,13 @@ import type { StoryStateComponent, } from "./story-state";
 let fetchCalls: { url: string; opts: RequestInit }[] = [];
 let fetchHandler: ((url: string, opts: RequestInit,) => Response) | null = null;
 
-// Gated: mock.module is process-global (BUG 9c8bea1).
-if (ISOLATED) {
-  mock.module("./htmx", () => ({
-    apiFetch: async (url: string, opts?: RequestInit,) => {
-      fetchCalls.push({ url, opts: opts ?? {}, },);
-      if (!fetchHandler) { return new Response("{}", { status: 200, },); }
-      return fetchHandler(url, opts ?? {},);
-    },
-  }),);
-}
+mock.module("./htmx", () => ({
+  apiFetch: async (url: string, opts?: RequestInit,) => {
+    fetchCalls.push({ url, opts: opts ?? {}, },);
+    if (!fetchHandler) { return new Response("{}", { status: 200, },); }
+    return fetchHandler(url, opts ?? {},);
+  },
+}),);
 
 /**
  * @param status
@@ -37,7 +33,7 @@ afterEach(() => {
   (globalThis as { Alpine?: unknown }).Alpine = undefined;
 },);
 
-describeOrSkip("storyState", () => {
+describe("storyState", () => {
   describe("derived state", () => {
     test("qualityClass tiers: good ≥70, mid ≥40, low below", () => {
       const s = makeState();
@@ -385,4 +381,4 @@ describeOrSkip("storyState", () => {
       expect(s.loading,).toBe(false,);
     });
   });
-},);
+});

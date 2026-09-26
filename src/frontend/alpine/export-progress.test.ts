@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { afterEach, expect, mock, test, } from "bun:test";
-import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
+import { afterEach, describe, expect, mock, test, } from "bun:test";
 import {
   exportProgress,
   exportProgressFactory,
@@ -14,15 +13,12 @@ type ApiFetchMock = (url: string, opts?: RequestInit,) => Promise<Response>;
 let calls: { url: string; opts: RequestInit }[] = [];
 let handler: ApiFetchMock = async () => Response.json({}, { status: 404, },);
 
-// Gated: mock.module is process-global (BUG 9c8bea1).
-if (ISOLATED) {
-  mock.module("./htmx", () => ({
-    apiFetch: ((url: string, opts?: RequestInit,) => {
-      calls.push({ url, opts: opts ?? {}, },);
-      return handler(url, opts,);
-    }) satisfies ApiFetchMock,
-  }),);
-}
+mock.module("./htmx", () => ({
+  apiFetch: ((url: string, opts?: RequestInit,) => {
+    calls.push({ url, opts: opts ?? {}, },);
+    return handler(url, opts,);
+  }) satisfies ApiFetchMock,
+}),);
 
 const baseCtx = (): ExportProgressState => {
   const state = Object.create(exportProgress,) as ExportProgressState;
@@ -47,7 +43,7 @@ afterEach(() => {
   handler = async () => Response.json({}, { status: 404, },);
 },);
 
-describeOrSkip("exportProgress.isTerminal", () => {
+describe("exportProgress.isTerminal", () => {
   test("false for queued/processing", () => {
     const ctx = baseCtx();
     ctx.status = "queued";
@@ -63,9 +59,9 @@ describeOrSkip("exportProgress.isTerminal", () => {
     ctx.status = "failed";
     expect(ctx.isTerminal(),).toBe(true,);
   });
-},);
+});
 
-describeOrSkip("exportProgress.applyEvent", () => {
+describe("exportProgress.applyEvent", () => {
   test("applies a progress event", () => {
     const ctx = baseCtx();
     ctx.applyEvent({ type: "progress", jobId: "j1", progress: 5, total: 10, percentage: 50, currentStep: "chats", },);
@@ -114,9 +110,9 @@ describeOrSkip("exportProgress.applyEvent", () => {
     ctx.applyEvent({ type: "error", error: "boom", },);
     expect(ctx.error,).toBe("boom",);
   });
-},);
+});
 
-describeOrSkip("exportProgress.applySnapshot", () => {
+describe("exportProgress.applySnapshot", () => {
   test("applies snapshot fields + computes percentage fallback", () => {
     const ctx = baseCtx();
     const terminal = ctx.applySnapshot({
@@ -162,9 +158,9 @@ describeOrSkip("exportProgress.applySnapshot", () => {
     },);
     expect(ctx.error,).toBe("boom",);
   });
-},);
+});
 
-describeOrSkip("exportProgress.startExport", () => {
+describe("exportProgress.startExport", () => {
   test("no-op when busy", async () => {
     const ctx = baseCtx();
     ctx.busy = true;
@@ -178,9 +174,9 @@ describeOrSkip("exportProgress.startExport", () => {
     await ctx.startExport();
     expect(ctx.error,).toBeTruthy();
   });
-},);
+});
 
-describeOrSkip("exportProgress.startPolling / stopTracking", () => {
+describe("exportProgress.startPolling / stopTracking", () => {
   test("startPolling is no-op without jobId", () => {
     const ctx = baseCtx();
     ctx.startPolling();
@@ -202,9 +198,9 @@ describeOrSkip("exportProgress.startPolling / stopTracking", () => {
     ctx.stopTracking();
     expect(ctx._pollTimer,).toBeNull();
   });
-},);
+});
 
-describeOrSkip("exportProgress.reset", () => {
+describe("exportProgress.reset", () => {
   test("clears all state", () => {
     const ctx = baseCtx();
     ctx.jobId = "j1";
@@ -230,7 +226,7 @@ describeOrSkip("exportProgress.reset", () => {
     expect(ctx.completedAt,).toBe("",);
     expect(ctx.downloadUrl,).toBe("",);
   });
-},);
+});
 
 const sseBody = (blocks: string[],) =>
   new Response(
@@ -245,7 +241,7 @@ const sseBody = (blocks: string[],) =>
     { status: 200, headers: { "Content-Type": "text/event-stream", }, },
   );
 
-describeOrSkip("exportProgress.startExport (SSE stream)", () => {
+describe("exportProgress.startExport (SSE stream)", () => {
   test("consumes SSE blocks and reaches completed state", async () => {
     handler = async () =>
       sseBody([
@@ -271,9 +267,9 @@ describeOrSkip("exportProgress.startExport (SSE stream)", () => {
     expect(ctx._pollTimer,).not.toBeNull();
     ctx.stopTracking();
   });
-},);
+});
 
-describeOrSkip("exportProgress.startPolling tick", () => {
+describe("exportProgress.startPolling tick", () => {
   test("applies a completed snapshot and stops the timer", async () => {
     handler = async () =>
       Response.json({
@@ -292,9 +288,9 @@ describeOrSkip("exportProgress.startPolling tick", () => {
     expect(ctx.status,).toBe("completed",);
     expect(ctx._pollTimer,).toBeNull();
   });
-},);
+});
 
-describeOrSkip("exportProgress._sse teardown", () => {
+describe("exportProgress._sse teardown", () => {
   test("applyEvent completion closes the SSE handle", () => {
     const ctx = baseCtx();
     let closed = false;
@@ -308,9 +304,9 @@ describeOrSkip("exportProgress._sse teardown", () => {
     expect(closed,).toBe(true,);
     expect(ctx._sse,).toBeNull();
   });
-},);
+});
 
-describeOrSkip("exportProgressFactory", () => {
+describe("exportProgressFactory", () => {
   test("returns a fresh state", () => {
     const a = exportProgressFactory();
     const b = exportProgressFactory();
@@ -318,4 +314,4 @@ describeOrSkip("exportProgressFactory", () => {
     expect(a.jobId,).toBe("",);
     expect(b.jobId,).toBe("",);
   });
-},);
+});
