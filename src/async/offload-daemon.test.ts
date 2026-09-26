@@ -23,6 +23,7 @@ import {
   type OffloadDaemon,
   offloadDiskBytes,
   offloadExists,
+  pruneOrphanSpills,
   readOffloadedBody,
   spill,
   startOffloadDaemon,
@@ -614,9 +615,67 @@ describe("OffloadDaemon.runOnce — reentrancy", () => {
       // bail out with zero work instead of double-processing.
       const inFlight = daemon.runOnce();
       const overlapping = await daemon.runOnce();
-      expect(overlapping,).toEqual({ offloaded: 0, expired: 0, },);
-      expect(await inFlight,).toEqual({ offloaded: 0, expired: 0, },);
+      expect(overlapping,).toEqual({ offloaded: 0, expired: 0, pruned: 0, },);
+      expect(await inFlight,).toEqual({ offloaded: 0, expired: 0, pruned: 0, },);
       daemon.stop();
+    } finally {
+      await ctx.db.destroy();
+      ctx.sqlite.close();
+    }
+  });
+});
+
+describe("pruneOrphanSpills — retention cap for unreferenced spill files", () => {
+  const sweepDir = path.resolve(".tmp", "async-store-orphan-test",);
+  const TTL_MS = 60 * 60 * 1000;
+
+  beforeEach(() => {
+    if (existsSync(sweepDir,)) { rmSync(sweepDir, { recursive: true, force: true, },); }
+    mkdirSync(sweepDir, { recursive: true, },);
+  },);
+
+  afterEach(() => {
+    if (existsSync(sweepDir,)) { rmSync(sweepDir, { recursive: true, force: true, },); }
+  },);
+
+  test("deletes stale unreferenced files; keeps referenced and fresh files", async () => {
+    const { utimesSync, } = await import("node:fs");
+    const ctx = await createTestDb();
+    try {
+      const oldTs = new Date(Date.now() - 4 * TTL_MS,);
+      const stale = path.join(sweepDir, "orphan.json.gz",);
+      const referenced = path.join(sweepDir, "referenced.json.gz",);
+      const fresh = path.join(sweepDir, "fresh.json.gz",);
+      for (const p of [stale, referenced, fresh,]) { writeFileSync(p, "x",); }
+      utimesSync(stale, oldTs, oldTs,);
+      utimesSync(referenced, oldTs, oldTs,);
+      await seedRequest(ctx.db, {
+        id: "keep-1",
+        status: "complete",
+        completedAt: minutesAgo(1,),
+        offloadPath: referenced,
+      },);
+
+      const pruned = await pruneOrphanSpills(ctx.db, { ttlMs: TTL_MS, dir: sweepDir, },);
+
+      expect(pruned,).toBe(1,);
+      expect(existsSync(stale,),).toBe(false,);
+      expect(existsSync(referenced,),).toBe(true,);
+      expect(existsSync(fresh,),).toBe(true,);
+    } finally {
+      await ctx.db.destroy();
+      ctx.sqlite.close();
+    }
+  });
+
+  test("returns 0 when the spill directory does not exist", async () => {
+    const ctx = await createTestDb();
+    try {
+      const pruned = await pruneOrphanSpills(ctx.db, {
+        ttlMs: TTL_MS,
+        dir: path.join(sweepDir, "missing",),
+      },);
+      expect(pruned,).toBe(0,);
     } finally {
       await ctx.db.destroy();
       ctx.sqlite.close();

@@ -16,6 +16,8 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 ### Changed
 
 - **DB v0 collapse** — replaced 23 forward migrations + 20 `parts/` sub-modules with a single atomic `001_init.ts` (~4 600 lines, all 154 tables + indexes + triggers). Dropped `parts/` orchestration, the `parts/`-vs-append strategy policy, the `schema_version` ledger, and the boot-time `schema-backfill` step. Regenerated `schema.ts`, `schema-*.ts`, `schema-manifest.ts`, `insert-helpers.ts`, `db-schemas.ts`. AGENTS.md updated: append-only policy retained, but with only two valid paths (new top-level `NNN_*.ts` or extend current HEAD if not yet shipped).
+- **jscpd ratchet gate** — the advisory "N clones" warning became a blocking `jscpd ratchet` check: the clone count is compared against a committed baseline (`scripts/check/jscpd-baseline.json`) and growth fails the gate; `--update` lowers the baseline only. Replaces the warn-only block in the check runner's non-blocking section.
+- **Async-store spill retention** — the offload pass now sweeps spill files older than 2× TTL that no `request_results.offload_path` references (orphans from DB resets/aborted runs previously accumulated forever); `runOffloadPass`/`runOnce` return an added `pruned` count.
 
 ## [0.1.0] - 2026-08-15
 

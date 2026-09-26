@@ -2,7 +2,8 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { Kysely, } from "kysely";
-import { mkdirSync, unlinkSync, } from "node:fs";
+import { mkdirSync, readdirSync, statSync, unlinkSync, } from "node:fs";
+import path from "node:path";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
 import { OFFLOAD_DIR, spill, } from "./spill";
@@ -57,18 +58,84 @@ function getMaxInlineBytes(override: number | undefined, fallback: AsyncStoreCon
 }
 
 /**
+ * Retention cap for spill files nothing references any more. Phase 3 of
+ * `runOffloadPass` only deletes spills it can map back to an `expired` row;
+ * files orphaned by DB resets, deleted rows, or aborted runs would otherwise
+ * grow unbounded (observed: 279 never-pruned `.json.gz` files in a dev
+ * checkout). This sweep removes any `*.json.gz` older than 2× TTL that no
+ * `request_results.offload_path` references. Files still referenced by any
+ * row — regardless of row status — are always kept.
+ * @param database - Kysely handle
+ * @param opts - ttlMs sets the 2× age cutoff; `now`/`dir` are test seams.
+ * @returns number of orphaned spill files removed.
+ */
+export async function pruneOrphanSpills(
+  database: Kysely<DB>,
+  opts: { ttlMs: number; now?: number; dir?: string },
+): Promise<number> {
+  const log = getLogger().child({ module: "async-offload", },);
+  const dir = opts.dir ?? OFFLOAD_DIR;
+  const cutoffMs = (opts.now ?? Date.now()) - 2 * opts.ttlMs;
+  let names: string[];
+  try {
+    names = readdirSync(dir,);
+  } catch {
+    return 0; // no spill dir yet — nothing to sweep
+  }
+  const candidates: string[] = [];
+  for (const name of names) {
+    if (!name.endsWith(".json.gz",)) { continue; }
+    const filePath = path.join(dir, name,);
+    let mtimeMs: number;
+    try {
+      mtimeMs = statSync(filePath,).mtimeMs;
+    } catch {
+      /* raced with another writer/sweeper */ continue;
+    }
+    if (mtimeMs <= cutoffMs) { candidates.push(filePath,); }
+  }
+  if (candidates.length === 0) { return 0; }
+  // Chunked IN query (SQLite host-parameter limit) — anything referenced by
+  // any row survives, so a chunking race can only over-retain, never delete.
+  const referenced = new Set<string>();
+  const CHUNK = 500;
+  for (let i = 0; i < candidates.length; i += CHUNK) {
+    const rows = await database
+      .selectFrom("request_results",)
+      .select("offload_path",)
+      .where("offload_path", "in", candidates.slice(i, i + CHUNK,),)
+      .execute();
+    for (const row of rows) {
+      if (row.offload_path !== null) { referenced.add(row.offload_path,); }
+    }
+  }
+  let pruned = 0;
+  for (const filePath of candidates) {
+    if (referenced.has(filePath,)) { continue; }
+    try {
+      unlinkSync(filePath,);
+      pruned++;
+    } catch { /* raced with another writer — keep going */ }
+  }
+  if (pruned > 0) {
+    log.info("pruned orphaned spill files", { pruned, scanned: candidates.length, },);
+  }
+  return pruned;
+}
+
+/**
  * Run one offload scan: spill oversized completed bodies to disk, then mark
- * rows past TTL as expired. Scheduling belongs to the caller (daemon timer
- * or the cron registry's `async.offload` job); this unit stays directly
- * testable.
+ * rows past TTL as expired, then sweep unreferenced spill files past the
+ * retention cap. Scheduling belongs to the caller (daemon timer or the cron
+ * registry's `async.offload` job); this unit stays directly testable.
  * @param database - Kysely handle
  * @param opts - min-age, TTL, max-inline thresholds
- * @returns counts `{ offloaded, expired }` for this pass.
+ * @returns counts `{ offloaded, expired, pruned }` for this pass.
  */
 export async function runOffloadPass(
   database: Kysely<DB>,
   opts: OffloadPassOpts,
-): Promise<{ offloaded: number; expired: number }> {
+): Promise<{ offloaded: number; expired: number; pruned: number }> {
   const log = getLogger().child({ module: "async-offload", },);
   const { minAgeMs, ttlMs, maxInlineBytes, } = opts;
   let offloaded = 0;
@@ -159,7 +226,8 @@ export async function runOffloadPass(
       unlinkSync(filePath,);
     } catch { /* already gone */ }
   }
-  return { offloaded, expired, };
+  const pruned = await pruneOrphanSpills(database, { ttlMs, now, },);
+  return { offloaded, expired, pruned, };
 }
 
 /**
@@ -190,10 +258,10 @@ export function startOffloadDaemon(
 
   /**
    * Run a single offload pass (re-entrancy guarded; returns zeros if already running).
-   * @returns counts `{ offloaded, expired }` for this pass.
+   * @returns counts `{ offloaded, expired, pruned }` for this pass.
    */
-  async function runOnce(): Promise<{ offloaded: number; expired: number }> {
-    if (running) { return { offloaded: 0, expired: 0, }; }
+  async function runOnce(): Promise<{ offloaded: number; expired: number; pruned: number }> {
+    if (running) { return { offloaded: 0, expired: 0, pruned: 0, }; }
     running = true;
     try {
       return await runOffloadPass(database, { minAgeMs, ttlMs, maxInlineBytes, },);
@@ -231,6 +299,6 @@ export function startOffloadDaemon(
 export interface OffloadDaemon {
   start(): void;
   stop(): void;
-  runOnce(): Promise<{ offloaded: number; expired: number }>;
+  runOnce(): Promise<{ offloaded: number; expired: number; pruned: number }>;
   readonly state: DaState;
 }
