@@ -14145,6 +14145,13 @@
       "source": ".plan/tickets/TASK-visual-novel-mode.md"
     }
   ],
+
+  "src/frontend/alpine/chat-state.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-repair-chat-normal-startup-remove-test-bypass.md"
+    }
+  ],
   "src/frontend/alpine/chat-transfer.ts": [
     {
       "kind": "ticket",
@@ -26989,6 +26996,10 @@
       "source": ".plan/tickets/TASK-chat-message-search.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-retire-stale-integration-testing-tools.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/testing.md"
     }
@@ -27731,6 +27742,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-server-side-i18n-middleware.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-template-preflight-production-resolver-gate.md"
     }
   ],
   "src/routes/views/nsfw-audit.ts": [
