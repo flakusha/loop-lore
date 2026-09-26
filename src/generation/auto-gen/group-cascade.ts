@@ -8,6 +8,7 @@ import { extractMentionedActorIds, } from "../../group-chat/mention-parser";
 import { selectNextGroupActor, } from "../../group-chat/turn-selector";
 import { getLogger, } from "../../logger";
 import type { Logger, } from "../../logger/types";
+import { isTelemetryEnabled, record as recordTelemetryEvent, } from "../../telemetry/service";
 import { storyStateIsPaused, watchChatPause, } from "./cascade-pause-watcher";
 import { createDefaultDeps, type GenDeps, } from "./deps";
 import { filterPassedActors, } from "./pass-filter";
@@ -165,6 +166,19 @@ export async function triggerGroupCascade(opts: GroupCascadeOpts,): Promise<void
   },);
   if (aiParticipants.length === 0) {
     log.info("Cascade: all AI participants opted out via [PASS]; stopping", { chatId, },);
+    // Slot release telemetry (TASK-turn-skip-cascade): the cascade cannot
+    // find an eligible next actor because every AI participant sat out
+    // their most recent beat via [PASS] or a turn_skip event. There is no
+    // fallback actor in this branch — the chat awaits the user (or an
+    // explicit advance) before another reply can be produced.
+    if (isTelemetryEnabled()) {
+      void recordTelemetryEvent(database, {
+        eventType: "cascade.slot.released",
+        chatId,
+        userId,
+        data: { source: "all_passed", depth, },
+      },);
+    }
     return;
   }
 
