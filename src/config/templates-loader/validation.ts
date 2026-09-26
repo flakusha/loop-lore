@@ -3,7 +3,11 @@
 
 import { PROMPT_PURPOSES, } from "../../prompts/purposes";
 import { jsonStringifyOr, } from "../../utils";
-import type { ChatFormatTemplate, MergeStrategy, } from "../sections/templates";
+import {
+  type ChatFormatTemplate,
+  type MergeStrategy,
+} from "../sections/templates";
+import { validateEntityTemplatePosition, } from "./entity-position";
 
 // ── Validation ────────────────────────────────────────────────
 
@@ -14,19 +18,19 @@ const LEGAL_MERGE_STRATEGIES: readonly MergeStrategy[] = [
 ];
 
 /**
- * Runtime-validate a raw template config (from YAML/TOML) before merging,
- * so malformed files fail fast with an actionable error instead of silently
- * casting into a half-shaped config. Currently scoped to the `llm` domain.
- * @param raw - Parsed top-level object from the template file
- * @returns The llm sub-object, or null when the file is a different domain
- * @throws When the file declares `merge` legally but `systemPrompts` /
- *   `chatFormats` shapes are malformed
+ * Runtime-validate a raw template config before merging — malformed files
+ * fail fast instead of silently casting into a half-shaped config.
+ * @throws When `merge` is legal but `systemPrompts`/`chatFormats` are malformed
  */
 export function validateLlmConfig(
   raw: Record<string, unknown>,
 ): Record<string, unknown> | null {
   const llm = raw;
-  if (!("systemPrompts" in llm) && !("chatFormats" in llm) && !("merge" in llm)) {
+  if (
+    !("systemPrompts" in llm) && !("chatFormats" in llm) &&
+    !("entityGeneration" in llm) && !("entityTemplatePosition" in llm) &&
+    !("merge" in llm)
+  ) {
     return null;
   }
 
@@ -41,6 +45,7 @@ export function validateLlmConfig(
     );
   }
 
+  validateEntityTemplatePosition(llm,);
   validateSystemPrompts(llm.systemPrompts,);
   validateChatFormats(llm.chatFormats,);
 

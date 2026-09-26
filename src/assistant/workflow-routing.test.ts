@@ -70,6 +70,22 @@ describe("matchWorkflowIntent", () => {
     expect(matchWorkflowIntent("what is the weather like", [NPC, ITEM,],),).toBeUndefined();
   });
 
+  test("prose containing intent nouns does not start a workflow", () => {
+    const CHAR = makeEntityWorkflow("entity-character", "character", "character",);
+    const LOC = makeEntityWorkflow("entity-location", "location", "location",);
+    expect(matchWorkflowIntent("we make our way toward the character", [CHAR, NPC, ITEM,],),).toBeUndefined();
+    expect(matchWorkflowIntent("the world map location of X", [LOC,],),).toBeUndefined();
+    expect(matchWorkflowIntent("make camp before the npc wakes", [NPC, ITEM,],),).toBeUndefined();
+  });
+
+  test("imperative generation openers still route", () => {
+    const CHAR = makeEntityWorkflow("entity-character", "character", "character",);
+    expect(matchWorkflowIntent("make me a character named Y", [CHAR, NPC, ITEM,],),).toBe(CHAR,);
+    expect(matchWorkflowIntent("Please generate a new npc", [NPC, ITEM,],),).toBe(NPC,);
+    // Leading whitespace is tolerated — the anchor trims before testing.
+    expect(matchWorkflowIntent("  create a shiny item", [NPC, ITEM,],),).toBe(ITEM,);
+  });
+
   test("non-generate intents never match by keyword", () => {
     const TOOL: AssistantWorkflowConfig = {
       ...ITEM,

@@ -42,15 +42,15 @@ export class GovernanceRateLimiter {
   /** Read-only view for the status endpoint — consumes nothing. */
   peek(key: string, policy: RatePolicy,): { policy: string; limit: number; remaining: number } {
     const nowMs = this.now();
-    const fresh = this.store.loadWindow(key,).filter((t,) => t > nowMs - policy.windowMs);
+    const fresh = this.store.loadWindow(key, nowMs,).filter((t,) => t > nowMs - policy.windowMs);
     return { policy: policy.name, limit: policy.max, remaining: Math.max(0, policy.max - fresh.length,), };
   }
 
   /** */
   consume(key: string, policy: RatePolicy, cost = 1,): RateLimitVerdict {
     const nowMs = this.now();
-    const win = slidingWindow(nowMs, this.store.loadWindow(key,), policy.windowMs, policy.max,);
-    this.store.saveWindow(key, win.kept,);
+    const win = slidingWindow(nowMs, this.store.loadWindow(key, nowMs,), policy.windowMs, policy.max,);
+    this.store.saveWindow(key, win.kept, policy.windowMs, nowMs,);
     if (!win.allowed) {
       return {
         allowed: false,
@@ -66,7 +66,7 @@ export class GovernanceRateLimiter {
       const existing = this.store.loadBucket(key,);
       const state: TokenBucketState = existing ?? { tokens: policy.burst, lastRefillMs: nowMs, };
       const bucket = tokenBucket(nowMs, state, policy.burst, refillPerSec, cost,);
-      this.store.saveBucket(key, bucket.state,);
+      this.store.saveBucket(key, bucket.state, policy.windowMs, nowMs,);
       if (!bucket.allowed) {
         return {
           allowed: false,

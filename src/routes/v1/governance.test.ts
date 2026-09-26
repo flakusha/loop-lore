@@ -8,6 +8,7 @@
 import { afterEach, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import { governanceRateLimiter, } from "../../api-governance/rate-limiting/instance";
+import { metrics, } from "../../api-governance/telemetry/collector";
 import { governanceEndpoints, governanceGuard, } from "./governance";
 
 function makeApp(userId: string | undefined, userRole: string | null = "user",) {
@@ -49,6 +50,42 @@ describe("governanceGuard rate limiting", () => {
       const res = await app.handle(new Request("http://localhost/api/v1/auth/ping",),);
       expect(res.status,).toBe(200,);
     }
+  });
+
+  test("throttled request carries standard RateLimit headers (BUG-governance-429-responses-missing-ratelimit-retry-after-heade)", async () => {
+    const app = makeApp("user-gov-headers",);
+    let throttled: Response | undefined;
+    for (let i = 0; i < 11; i++) {
+      throttled = await app.handle(new Request("http://localhost/api/v1/auth/ping",),);
+    }
+    expect(throttled?.status,).toBe(429,);
+    const limit = throttled?.headers.get("ratelimit-limit",);
+    const remaining = throttled?.headers.get("ratelimit-remaining",);
+    const reset = throttled?.headers.get("ratelimit-reset",);
+    const retryAfter = throttled?.headers.get("retry-after",);
+    expect(limit,).toBe("10",);
+    expect(remaining,).toBe("0",);
+    expect(Number(reset,),).toBeGreaterThan(0,);
+    expect(Number(retryAfter,),).toBeGreaterThan(0,);
+    expect(Number(retryAfter,),).toBeLessThanOrEqual(60,);
+  });
+
+  test("throttled request produces exactly one telemetry increment (BUG-governance-429s-double-counted-in-telemetry)", async () => {
+    metrics.reset();
+    const app = makeApp("user-gov-telemetry",);
+    let throttled = 0;
+    let ok = 0;
+    for (let i = 0; i < 11; i++) {
+      const res = await app.handle(new Request("http://localhost/api/v1/auth/ping",),);
+      if (res.status === 429) { throttled += 1; }
+      else { ok += 1; }
+    }
+    expect(throttled,).toBeGreaterThan(0,);
+    const snapshot = metrics.snapshot();
+    // Each 429 recorded exactly once — not twice (before + after handle).
+    expect(snapshot.counters["rate_limited_total"],).toBe(throttled,);
+    const route = snapshot.routes.find((r,) => r.route === "/api/v1/auth/ping");
+    expect(route?.requests,).toBe(ok + throttled,);
   });
 });
 

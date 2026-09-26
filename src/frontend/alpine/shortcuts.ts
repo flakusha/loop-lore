@@ -91,7 +91,10 @@ export function registerKeynavHandler(action: string, handler: () => void,): () 
   set.add(handler,);
   return () => {
     set?.delete(handler,);
-    if (set && set.size === 0) {
+    // Only remove the map entry if it is still the set we registered into;
+    // a stale unsubscribe from a previous registration must not delete the
+    // live handler set registered afterwards.
+    if (set && set.size === 0 && keynavHandlers.get(action,) === set) {
       keynavHandlers.delete(action,);
     }
   };

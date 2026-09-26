@@ -30,6 +30,21 @@ import type { ChatState, } from "./types";
  */
 export const slashTokenRe = /(?:^|\s)\/([a-z][a-z0-9_-]*)?(?=\s|$)/i;
 
+/**
+ * Find the slash token that ENDS at the caret (end of `text`). Only such a
+ * token may trigger interception, so stale tokens earlier in the message
+ * (e.g. a fully typed `/cmd args`) never do.
+ * @param text - Text up to and including the caret position.
+ * @returns The match whose end equals `text.length`, or null.
+ */
+function findCaretToken(text: string,): RegExpExecArray | null {
+  const anchored = new RegExp(slashTokenRe.source, "g",);
+  for (let m = anchored.exec(text,); m; m = anchored.exec(text,)) {
+    if (m.index + m[0].length === text.length) { return m; }
+  }
+  return null;
+}
+
 export interface SlashCandidate {
   name: string;
   description: string;
@@ -43,7 +58,7 @@ export interface SlashCandidate {
  *   token is present at the caret.
  */
 export function extractSlashQuery(beforeCursor: string,): string | null {
-  const match = slashTokenRe.exec(beforeCursor,);
+  const match = findCaretToken(beforeCursor,);
   if (!match) { return null; }
   return (match[1] ?? "").toLowerCase();
 }
@@ -105,13 +120,16 @@ export const slashAutocomplete: Partial<ChatState> & ThisType<ChatState> = {
     const beforeCursor = value.slice(0, cursorPos,);
     const afterCursor = value.slice(cursorPos,);
     const replacement = `/${candidate.name} `;
-    const newBefore = beforeCursor.replace(slashTokenRe, (full,) => {
-      // Preserve the leading separator (start-of-string or whitespace) so we
-      // do not collapse the gap between the prior text and the command.
-      const trimmed = full.trimStart();
-      const sep = full.slice(0, full.length - trimmed.length,);
-      return `${sep}${replacement}`;
-    },);
+    // Replace the caret-anchored token (the one that opened the popover),
+    // never an earlier token elsewhere in the text.
+    const match = findCaretToken(beforeCursor,);
+    if (!match) { return; }
+    const matched = match[0];
+    // Preserve the leading separator (start-of-string or whitespace) so we
+    // do not collapse the gap between the prior text and the command.
+    const trimmed = matched.trimStart();
+    const sep = matched.slice(0, matched.length - trimmed.length,);
+    const newBefore = beforeCursor.slice(0, match.index,) + sep + replacement;
     textarea.value = newBefore + afterCursor;
     const caret = newBefore.length;
     textarea.selectionStart = textarea.selectionEnd = caret;

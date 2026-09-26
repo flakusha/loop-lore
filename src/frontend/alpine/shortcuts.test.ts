@@ -131,6 +131,22 @@ describe("shortcuts.ts", () => {
       expect(order,).toEqual(["a", "b",],);
     });
 
+    it("stale unsubscribe does not delete the live handler set", () => {
+      let calls = 0;
+      const staleUnsub = registerKeynavHandler("goto-chatlist", () => {
+        calls += 1;
+      },);
+      staleUnsub();
+      const liveUnsub = registerKeynavHandler("goto-chatlist", () => {
+        calls += 1;
+      },);
+      // The stale unsubscribe must not remove the replacement registration.
+      staleUnsub();
+      dispatchKeynavActionToHandlers("goto-chatlist",);
+      expect(calls,).toBe(1,);
+      liveUnsub();
+    });
+
     it("dispatching an action with no handlers is a no-op", () => {
       expect(() => dispatchKeynavActionToHandlers("does-not-exist",)).not.toThrow();
     });

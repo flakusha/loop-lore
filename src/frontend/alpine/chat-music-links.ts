@@ -57,7 +57,7 @@ export const chatMusicLinks: Partial<ChatState & ChatMusicLinksState> & ThisType
       const res = await apiFetch(`/api/v1/chats/${this.activeChat}/music-links`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
-        body: jsonBody({ url: this._musicLinkUrl.trim(), sectionId: null, },),
+        body: jsonBody({ url: this._musicLinkUrl.trim(), },),
       },);
       if (res.ok) {
         this._musicLinkUrl = "";

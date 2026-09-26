@@ -4,6 +4,7 @@
 import { Elysia, } from "elysia";
 import { recordTurnSkip, } from "../../chat/service/crud/turn-skip";
 import { isLlmGenerationConfigured, triggerAutoGeneration, } from "../../generation/auto-gen";
+import { getLogger, type Logger, } from "../../logger";
 import { createRateLimiter, rateLimitHeaders, } from "../../middleware/rate-limit";
 import { ChatIdParams, TurnSkipBody, } from "../../validation/schemas";
 import {
@@ -16,6 +17,11 @@ import type { HandlerOpts, } from "./types";
 
 /** Per-user + per-chat skip budget: 10 events / minute. */
 const turnSkipLimiter = createRateLimiter({ windowMs: 60_000, maxRequests: 10, },);
+
+/** Logger bound to the chats module namespace. */
+function log(): Logger {
+  return getLogger().child({ module: "chats", },);
+}
 
 /**
  * Mount POST /api/chats/:id/turn-skip on a parent Elysia app.
@@ -62,13 +68,19 @@ export function turnSkipRoutes(opts: HandlerOpts, prefix = "/api",) {
             return jsonError(result.message, status, result.code as never,);
           }
 
-          if (body.mode === "advance" && isLlmGenerationConfigured(config,)) {
+          // A deduped advance replays a stored row — its generation beat
+          // already fired on the original request; don't cue a second one.
+          if (body.mode === "advance" && !result.deduped && isLlmGenerationConfigured(config,)) {
             void triggerAutoGeneration({
               database,
               config,
               chatId: id,
               parentMessageId: result.messageId,
               userId,
+            },).catch((error: unknown,) => {
+              // Fire-and-forget: surface failures via the structured logger
+              // instead of emitting an unhandled-rejection warning at runtime.
+              log().error(`triggerAutoGeneration failed: ${String(error,)}`, undefined, { chatId: id, },);
             },);
           }
           return jsonResponse({ ok: true, messageId: result.messageId, mode: result.mode, deduped: result.deduped, },);

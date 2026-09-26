@@ -9,6 +9,7 @@ import {
   cancelSession,
   clearSessions,
   getSession,
+  missingStepIds,
   nextStepId,
   startSession,
 } from "./workflow-session";
@@ -54,6 +55,26 @@ describe("workflow sessions", () => {
     expect(nextStepId(session,),).toBe("b",);
     session.run.values.b = "filled";
     expect(nextStepId(session,),).toBeUndefined();
+    clearSessions();
+  });
+
+  test("optional steps are never offered and never block dispatch", () => {
+    clearSessions();
+    const workflow = makeWorkflow("w-opt",);
+    workflow.steps.push({
+      id: "style",
+      name: "Style",
+      type: "text",
+      formatTemplate: "Style: {value}",
+      required: false,
+    },);
+    const session = startSession("chat-1", workflow,);
+    expect(nextStepId(session,),).toBe("a",);
+    session.run.values.a = "filled";
+    session.run.values.b = "filled";
+    // Optional step left unfilled — nothing is offered and the run can dispatch.
+    expect(nextStepId(session,),).toBeUndefined();
+    expect(missingStepIds(session,),).toEqual([],);
     clearSessions();
   });
 });

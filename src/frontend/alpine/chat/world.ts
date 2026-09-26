@@ -91,6 +91,12 @@ export const chatWorld: Partial<ChatState> & ThisType<ChatState> = {
     Alpine.store("ui",).showChatList = false;
     Alpine.store("ui",).showGallery = false;
     Alpine.store("ui",).showCharacterInfo = false;
+    Alpine.store("ui",).showMusicLinksPanel = false;
+    // Reset the music-links panel state so stale rows from the outgoing chat
+    // are not shown if the panel is reopened.
+    this._musicLinks = [];
+    this._musicLinksConfirmDelete = null;
+    this._musicLinkError = "";
     const chat = this.chats.find((c: { id: string; name?: string; encryption_level?: string },) => c.id === chatId);
     this.activeChatName = chat?.name || t("chats.untitledChat",);
     // Tier for the key fetch: `encryption_level` rides on the list rows

@@ -49,6 +49,32 @@ describe("validateLlmConfig", () => {
     expect(validateLlmConfig({ merge: "replace", },),).toEqual({ merge: "replace", },);
   });
 
+  test("accepts every legal entityTemplatePosition silently", () => {
+    for (const position of ["before", "after", "off",] as const) {
+      expect(validateLlmConfig({ entityTemplatePosition: position, },),).toEqual(
+        { entityTemplatePosition: position, },
+      );
+    }
+  });
+
+  test("warns and falls back on an unknown entityTemplatePosition", () => {
+    const raw: Record<string, unknown> = { entityTemplatePosition: "befor", };
+    const warnings = captureWarnings(() => validateLlmConfig(raw,));
+    expect(raw.entityTemplatePosition,).toBe("after",);
+    expect(warnings,).toHaveLength(1,);
+    const message = String(warnings[0]?.[0],);
+    expect(message,).toContain("entityTemplatePosition",);
+    expect(message,).toContain("befor",);
+    expect(message,).toContain('falling back to "after"',);
+  });
+
+  test("falls back on a non-string entityTemplatePosition", () => {
+    const raw: Record<string, unknown> = { entityTemplatePosition: 42, };
+    const warnings = captureWarnings(() => validateLlmConfig(raw,));
+    expect(raw.entityTemplatePosition,).toBe("after",);
+    expect(warnings,).toHaveLength(1,);
+  });
+
   test("rejects an illegal merge strategy", () => {
     expect(() => validateLlmConfig({ merge: "explode", },)).toThrow(/merge must be one of/,);
   });

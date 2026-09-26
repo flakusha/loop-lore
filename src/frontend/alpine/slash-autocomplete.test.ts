@@ -100,13 +100,21 @@ describe("extractSlashQuery", () => {
   });
 
   test("captures after whitespace so email-like text does not trigger", () => {
-    expect(extractSlashQuery("say /he to me",),).toBe("he",);
+    expect(extractSlashQuery("say /he",),).toBe("he",);
     expect(extractSlashQuery("email/foo@bar",),).toBeNull();
   });
 
-  test("ignores trailing whitespace so typing args keeps the token alive", () => {
-    expect(extractSlashQuery("/roll ",),).toBe("roll",);
-    expect(extractSlashQuery("/improve prompt here",),).toBe("improve",);
+  test("returns null when the token does not end at the caret", () => {
+    // A fully typed `/cmd args` must not intercept Enter — send normally.
+    expect(extractSlashQuery("/cmd args",),).toBeNull();
+    expect(extractSlashQuery("say /he to me",),).toBeNull();
+    expect(extractSlashQuery("/improve prompt here",),).toBeNull();
+  });
+
+  test("multi-token input only matches a token ending at the caret", () => {
+    expect(extractSlashQuery("/old /new",),).toBe("new",);
+    expect(extractSlashQuery("/roll ",),).toBeNull();
+    expect(extractSlashQuery("/roll 2d6 ",),).toBeNull();
   });
 
   test("returns empty string for a bare slash and null when no token", () => {
@@ -192,6 +200,20 @@ describe("slashAutocomplete.handleSlashInput", () => {
     expect(ta.value,).toBe("say /help  to me",);
     expect(ta.selectionStart,).toBe("say /help ".length,);
     expect(ctx._showSlashPopover,).toBe(false,);
+  });
+
+  test("accepting a candidate replaces the caret token, not an earlier token", () => {
+    const ta = makeTextarea("/old /ne",);
+    const ctx = buildCtx(commandFixtures, ta,);
+    wire(ctx,);
+    slashAutocomplete.handleSlashInput!.call(ctx as never, { target: ta, } as unknown as Event,);
+    expect(ctx._slashQuery,).toBe("ne",);
+    slashAutocomplete.selectSlashCandidate!.call(
+      ctx as never,
+      { name: "new", description: "d", descriptionKey: "commands.new", },
+    );
+    expect(ta.value,).toBe("/old /new ",);
+    expect(ta.selectionStart,).toBe("/old /new ".length,);
   });
 
   test("Tab accepts the active candidate and prevents the default Tab behavior", () => {
