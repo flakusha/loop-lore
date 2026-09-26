@@ -14,19 +14,23 @@
  *     success: closes modal + reloads participants; on error: surfaces message
  *   - canTransferOwnership: predicate
  */
-import { afterEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, expect, mock, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../../../test-utils/isolate-only";
 import { ownershipActions, } from "./ownership";
 
 let fetchCalls: { url: string; opts: RequestInit }[] = [];
 let fetchHandler: ((url: string, opts: RequestInit,) => Response) | null = null;
 
-mock.module("../htmx", () => ({
-  apiFetch: async (url: string, opts?: RequestInit,) => {
-    fetchCalls.push({ url, opts: opts ?? {}, },);
-    if (!fetchHandler) { return new Response("{}", { status: 200, },); }
-    return fetchHandler(url, opts ?? {},);
-  },
-}),);
+// Gated: mock.module is process-global (BUG 9c8bea1).
+if (ISOLATED) {
+  mock.module("../htmx", () => ({
+    apiFetch: async (url: string, opts?: RequestInit,) => {
+      fetchCalls.push({ url, opts: opts ?? {}, },);
+      if (!fetchHandler) { return new Response("{}", { status: 200, },); }
+      return fetchHandler(url, opts ?? {},);
+    },
+  }),);
+}
 
 function mockFetch(status: number, body: unknown = {},): void {
   fetchHandler = () => Response.json(body, { status, },);
@@ -50,7 +54,7 @@ function ownershipCtx(overrides: Record<string, unknown> = {},): Record<string, 
   };
 }
 
-describe("ownershipActions.openOwnershipTransferModal", () => {
+describeOrSkip("ownershipActions.openOwnershipTransferModal", () => {
   test("opens the modal and resets fields when activeChat is set", () => {
     const ctx = ownershipCtx({
       _ownershipError: "stale",
@@ -69,9 +73,9 @@ describe("ownershipActions.openOwnershipTransferModal", () => {
     ownershipActions.openOwnershipTransferModal!.call(ctx,);
     expect(ctx._ownershipModalOpen,).toBe(false,);
   });
-});
+},);
 
-describe("ownershipActions.closeOwnershipTransferModal", () => {
+describeOrSkip("ownershipActions.closeOwnershipTransferModal", () => {
   test("clears state", () => {
     const ctx = ownershipCtx({
       _ownershipModalOpen: true,
@@ -83,9 +87,9 @@ describe("ownershipActions.closeOwnershipTransferModal", () => {
     expect(ctx._ownershipSubmitting,).toBe(false,);
     expect(ctx._ownershipError,).toBe("",);
   });
-});
+},);
 
-describe("ownershipActions.submitOwnershipTransfer", () => {
+describeOrSkip("ownershipActions.submitOwnershipTransfer", () => {
   test("no-ops without activeChat", async () => {
     const ctx = ownershipCtx({ activeChat: null, },);
     await ownershipActions.submitOwnershipTransfer!.call(ctx,);
@@ -181,9 +185,9 @@ describe("ownershipActions.submitOwnershipTransfer", () => {
     await ownershipActions.submitOwnershipTransfer!.call(ctx,);
     expect(JSON.parse(fetchCalls[0]!.opts.body as string,),).toEqual({ newOwnerId: "new-owner", confirm: true, },);
   });
-});
+},);
 
-describe("ownershipActions.canTransferOwnership", () => {
+describeOrSkip("ownershipActions.canTransferOwnership", () => {
   test("true when activeChat is set", () => {
     expect(ownershipActions.canTransferOwnership!.call(ownershipCtx(),),).toBe(true,);
   });
@@ -193,4 +197,4 @@ describe("ownershipActions.canTransferOwnership", () => {
   test("false when activeChat is empty string", () => {
     expect(ownershipActions.canTransferOwnership!.call(ownershipCtx({ activeChat: "", },),),).toBe(false,);
   });
-});
+},);

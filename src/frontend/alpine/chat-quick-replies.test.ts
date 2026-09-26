@@ -1,5 +1,6 @@
 import "./i18n.test-helper";
-import { afterEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, expect, mock, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import {
   AUTO_FIRE_MAX_CONSECUTIVE,
   AUTO_FIRE_MIN_INTERVAL_MS,
@@ -10,13 +11,16 @@ import {
 let fetchCalls: { url: string; opts: RequestInit }[] = [];
 let fetchHandler: ((url: string, opts: RequestInit,) => Response) | null = null;
 
-mock.module("./htmx", () => ({
-  apiFetch: async (url: string, opts?: RequestInit,) => {
-    fetchCalls.push({ url, opts: opts ?? {}, },);
-    if (!fetchHandler) { return new Response("{}", { status: 200, },); }
-    return fetchHandler(url, opts ?? {},);
-  },
-}),);
+// Gated: mock.module is process-global (BUG 9c8bea1).
+if (ISOLATED) {
+  mock.module("./htmx", () => ({
+    apiFetch: async (url: string, opts?: RequestInit,) => {
+      fetchCalls.push({ url, opts: opts ?? {}, },);
+      if (!fetchHandler) { return new Response("{}", { status: 200, },); }
+      return fetchHandler(url, opts ?? {},);
+    },
+  }),);
+}
 
 /**
  * @param status
@@ -89,7 +93,7 @@ afterEach(() => {
 
 // ── fireAutoQuickReplies — loop guard + event triggers ──────
 
-describe("chatQuickReplies.fireAutoQuickReplies", () => {
+describeOrSkip("chatQuickReplies.fireAutoQuickReplies", () => {
   test("fires user-triggered commands when invoked from a human send", async () => {
     const { ctx, sends, } = buildCtx({
       quickReplies: [
@@ -153,11 +157,11 @@ describe("chatQuickReplies.fireAutoQuickReplies", () => {
     await chatQuickReplies.fireAutoQuickReplies!.call(ctx, "ai",);
     expect(sends,).toEqual(["/p", "/q",],); // capped — the feedback iteration emits nothing
   });
-});
+},);
 
 // ── executeQuickReply — marks automated sends ───────────────
 
-describe("chatQuickReplies.executeQuickReply", () => {
+describeOrSkip("chatQuickReplies.executeQuickReply", () => {
   test("sets _autoFired so the produced send does not re-trigger user events", async () => {
     const { ctx, sends, } = buildCtx();
     await chatQuickReplies.executeQuickReply!.call(ctx, "/greet",);
@@ -166,11 +170,11 @@ describe("chatQuickReplies.executeQuickReply", () => {
     // during the send it was true (verified via the stub's counter branch).
     expect(ctx._consecutiveAutoFires,).toBe(1,);
   });
-});
+},);
 
 // ── saveQuickReplies — persists the button set ──────────────
 
-describe("chatQuickReplies.saveQuickReplies", () => {
+describeOrSkip("chatQuickReplies.saveQuickReplies", () => {
   test("PUTs quickReplies and clears the dirty flag on success", async () => {
     mockFetch(200, { ok: true, },);
     const { ctx, } = buildCtx();
@@ -190,4 +194,4 @@ describe("chatQuickReplies.saveQuickReplies", () => {
     await chatQuickReplies.saveQuickReplies!.call(ctx,);
     expect(ctx._quickRepliesDirty,).toBe(true,);
   });
-});
+},);

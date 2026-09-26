@@ -9,12 +9,13 @@
  * Requires `--isolate` so `mock.module` can rebind the asset link service
  * before `createRoutes` is loaded.
  */
-import { afterEach, beforeEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, beforeEach, expect, mock, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertUsers, } from "../../test-utils/insert-helpers";
+import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 
 import * as realLinks from "../../assets/service/links";
 import { createRoutes, } from "./create";
@@ -26,17 +27,20 @@ interface LinkAssetCall {
 }
 
 const linkAssetCalls: LinkAssetCall[] = [];
-mock.module("../../assets/service/links", () => {
-  const linkAssetMock = async (opts: LinkAssetCall,) => {
-    linkAssetCalls.push(opts,);
-  };
-  return {
-    ...realLinks,
-    linkAsset: linkAssetMock,
-    unlinkAsset: async () => {},
-    getAssetLinks: async () => [],
-  };
-},);
+// Gated: mock.module is process-global (BUG 9c8bea1).
+if (ISOLATED) {
+  mock.module("../../assets/service/links", () => {
+    const linkAssetMock = async (opts: LinkAssetCall,) => {
+      linkAssetCalls.push(opts,);
+    };
+    return {
+      ...realLinks,
+      linkAsset: linkAssetMock,
+      unlinkAsset: async () => {},
+      getAssetLinks: async () => [],
+    };
+  },);
+}
 
 /**
  * @param db
@@ -48,7 +52,7 @@ function makeApp(db: Kysely<DB>, userId: string,): Elysia {
   return app.use(createRoutes({ database: db, }, "/api",),) as unknown as Elysia;
 }
 
-describe("createRoutes avatar asset linking", () => {
+describeOrSkip("createRoutes avatar asset linking", () => {
   let testEnv: Awaited<ReturnType<typeof createTestDb>>;
   let app: Elysia;
   const USER = "00000000-0000-4000-8000-000000000001";
@@ -143,4 +147,4 @@ describe("createRoutes avatar asset linking", () => {
     const settings = JSON.parse(row?.settings ?? "{}",) as { tags?: string[] };
     expect(settings.tags,).toEqual(["fantasy", "elf", "mentor",],);
   });
-});
+},);
