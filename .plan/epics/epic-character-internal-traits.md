@@ -273,6 +273,7 @@ interface AutonomyProfile {
   visibility: TraitVisibility;
 }
 ```
+
 **Integration with relationships:** Characters with high `strength` relationships
 have higher `group_comfort` (the relationship _anchors_ them). A "loyal" character
 with a strong ally relationship will resist separation even under stress.
