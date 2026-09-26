@@ -9,6 +9,7 @@
 **Type:** Task
 
 ## Summary
+
 `.tmp/` carries **99 MB across 1177 files** (scratchpad §1, baseline measured 2026-09-26 in the parent checkout). The single-largest waste is 47 orphan `*.lcov.info.*.tmp` files totalling **49.1 MB** (P-01); the oldest artifact in `.tmp/async-store/` is **16 days** old (P-03); **16 analysis `.md` documents have zero inbound references from `.plan/`, `docs/`, or `src/`** (P-05) and are invisible to the discovery-by-`grep .plan/` workflow; and stale logs keep steering conclusions (P-13 — `.tmp/test-run2.log` reports 255 Elysia route-collision errors that `src/routes/messages/forward.ts:53` proves are fixed). This ticket adds (1) a **read-only advisory `.tmp` janitor** wired into `runNonBlockingChecks` so the four metrics are visible alongside every other gate, and (2) a `<!-- verified-at: <sha> -->` header convention for `.tmp` markdown analysis docs plus a small `scripts/check-staleness.ts` that warns when the recorded sha is behind HEAD by > 100 commits. **No deletion in this ticket** — deletion is G-3 in giwt (separate concern, opt-in).
 
 ## Repro / Current state
@@ -33,6 +34,7 @@ Measured in the parent checkout, 2026-09-26 (this worktree's `.tmp/` is freshly 
 ## Fix shape
 
 ### 3.1 `.tmp` janitor (advisory)
+
 New step in `runNonBlockingChecks` reporting four metrics:
 
 1. **Total `.tmp/` bytes**: `du -sb .tmp/ 2>/dev/null` (or `Bun.file(path).size` summed under `readdirSync`). Reported as `info` with the byte count.
@@ -41,6 +43,7 @@ New step in `runNonBlockingChecks` reporting four metrics:
 4. **`.tmp` markdown files with zero `.plan/` references**: for each `*.md` directly under `.tmp/` (depth 1), grep the basename across `.plan/`, `docs/`, `src/`. Report the count of unreferenced docs as `info` (today: 16).
 
 All four lines emit at `level: "info"`. The step is **advisory only** — non-blocking. Output lines look like:
+
 ```
 info: .tmp janitor: 99.0 MB total, 47 orphan *.lcov.info.*.tmp, oldest artifact 16d, 16 markdown docs unreferenced by .plan/
 ```
@@ -50,6 +53,7 @@ The script may live inlined inside `check-parallel.mjs` (matching the jscpd/lice
 ### 3.2 `verified-at:` staleness convention
 
 Header syntax (HTML comment, parsable without breaking markdown):
+
 ```markdown
 <!-- verified-at: a4e98136658e -->
 
@@ -69,9 +73,11 @@ The script also handles **missing** headers (warn-once at `info`: `info: .tmp/<f
 It runs as a separate `bun run check:staleness` script (matches the `bun run md:links` style), and is invoked by `runNonBlockingChecks` next to the janitor.
 
 ### 3.3 Deletion is NOT in this ticket
+
 The janitor is read-only. The actual deletion is `giwt clean [--dry-run]` (G-3 in `.tmp/scratchpad-pattern-analysis-2026-09-26.md` §4.1), a separate opt-in tool that needs a documented default config (loop-lore has no `giwt.toml`). This ticket **only** reports the numbers; it never `rm`s anything.
 
 ## Acceptance Criteria
+
 1. **Janitor step runs and reports all four metrics**: trigger via `bun run check`; grep the output for the four info lines above (or the equivalent `.tmp janitor: …` single-line rollup); none of them block.
 2. **Janitor is read-only**: confirm no `unlinkSync` / `rmSync` / `rm` calls added; `git status` after a check run shows no `.tmp` files removed.
 3. **`verified-at:` header is parsed**: place a `<!-- verified-at: $(git rev-parse --short HEAD~200) -->` in a temporary `.tmp/_test-stale.md`; run `bun run check:staleness`; it emits `warn: stale .tmp/_test-stale.md: verified at <sha>, now 200 commits behind`. Remove the file after.
@@ -80,6 +86,7 @@ The janitor is read-only. The actual deletion is `giwt clean [--dry-run]` (G-3 i
 6. **CI-safe — no deletion**: `git status` after running the new step reports zero modifications outside `.tmp/_test-stale.md` (the throwaway test artifact from criterion 3, which the test cleans up itself).
 
 ## Cross-references
+
 - `.tmp/scratchpad-pattern-analysis-2026-09-26.md` §2 P-05 (16 zero-ref docs — janitor metric #4)
 - `.tmp/scratchpad-pattern-analysis-2026-09-26.md` §2 P-13 (stale logs steering conclusions — `verified-at:` is the fix)
 - `.tmp/scratchpad-pattern-analysis-2026-09-26.md` §4.3 L-5 (janitor gate canonical proposition)
