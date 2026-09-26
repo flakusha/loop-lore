@@ -523,7 +523,7 @@ checks["coverage - per-module line %"] = coverageCommand();
 function jscpdGateCommand() {
   const jscpdScan =
     `bunx jscpd src/ --min-lines 4 --min-tokens 30 --ignore '**/*.test.ts,**/migrations/*,**/public/**,**/schema-manifest.ts,**/db-schemas.ts,**/insert-helpers.ts' --reporters json --output ${JSCPD_DIR_RELATIVE}`;
-  return `${jscpdScan} && bun scripts/check/jscpd-ratchet.mjs --report ${JSCPD_REPORT_RELATIVE}`;
+  return `${jscpdScan} && bun run jscpd:ratchet --report ${JSCPD_REPORT_RELATIVE}`;
 }
 checks["jscpd ratchet"] = jscpdGateCommand();
 
