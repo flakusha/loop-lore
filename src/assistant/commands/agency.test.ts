@@ -129,4 +129,69 @@ describe("/agency", () => {
     expect(result.handled,).toBe(true,);
     expect(result.systemMessage,).toContain("Usage",);
   });
+  test("reports missing actor", async () => {
+    const handler = getCommand("agency",)!;
+    const result = await handler([], ctxFor({ userId: undefined, db, roleInChat: ChatParticipantRole.Owner, },),);
+    expect(result.handled,).toBe(true,);
+    expect(result.systemMessage,).toContain("no calling actor",);
+  });
+
+  test("earn with zero amount surfaces service InvalidAmountError", async () => {
+    const handler = getCommand("agency",)!;
+    const result = await handler(["earn", "0",], ctxFor({ userId: OWNER, },),);
+    expect(result.handled,).toBe(true,);
+    expect(result.systemMessage,).toContain("**Agency earn:** amount must be a positive integer.",);
+  });
+
+  test("earn with cap exceeded returns generic failure", async () => {
+    const handler = getCommand("agency",)!;
+    const ownerCtx = ctxFor({ userId: OWNER, },);
+    await handler(["cap", "2",], ownerCtx,);
+    await handler(["earn", "2",], ownerCtx,);
+    const result = await handler(["earn", "1",], ownerCtx,);
+    expect(result.handled,).toBe(true,);
+    expect(result.systemMessage,).toContain("**Agency earn failed:**",);
+    expect(result.systemMessage,).toContain("cap 2",);
+  });
+
+  test("spend with non-numeric amount returns usage message", async () => {
+    const handler = getCommand("agency",)!;
+    const result = await handler(["spend", "abc",], ctxFor({ userId: OWNER, },),);
+    expect(result.handled,).toBe(true,);
+    expect(result.systemMessage,).toContain("Usage: `/agency spend <amount> [reason]`",);
+    expect(result.systemMessage,).toContain("positive integer",);
+  });
+
+  test("spend with zero amount surfaces service InvalidAmountError", async () => {
+    const handler = getCommand("agency",)!;
+    const result = await handler(["spend", "0",], ctxFor({ userId: OWNER, },),);
+    expect(result.handled,).toBe(true,);
+    expect(result.systemMessage,).toContain("**Agency spend:** amount must be a positive integer.",);
+  });
+
+  test("spend when insufficient returns specific friendly message", async () => {
+    const handler = getCommand("agency",)!;
+    const result = await handler(
+      ["spend", "5",],
+      ctxFor({ userId: NON_OWNER, roleInChat: ChatParticipantRole.Member, },),
+    );
+    expect(result.handled,).toBe(true,);
+    expect(result.systemMessage,).toContain("**Not enough story points.**",);
+    expect(result.systemMessage,).toContain("have 0",);
+    expect(result.systemMessage,).toContain("need 5",);
+  });
+
+  test("cap with no argument returns usage message", async () => {
+    const handler = getCommand("agency",)!;
+    const result = await handler(["cap",], ctxFor({ userId: OWNER, },),);
+    expect(result.handled,).toBe(true,);
+    expect(result.systemMessage,).toContain("Usage: `/agency cap <amount|clear>`",);
+  });
+
+  test("cap with non-numeric argument returns usage message", async () => {
+    const handler = getCommand("agency",)!;
+    const result = await handler(["cap", "abc",], ctxFor({ userId: OWNER, },),);
+    expect(result.handled,).toBe(true,);
+    expect(result.systemMessage,).toContain("**Agency cap:** must be a positive integer or `clear`.",);
+  });
 });
