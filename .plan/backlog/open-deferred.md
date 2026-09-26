@@ -10,11 +10,14 @@ trade history, combat equipment durability) all shipped in the A8 unwired close-
 
 ## Hardening / deferred clusters
 
+> Row numbers are stable ids referenced from other docs (e.g. `matrix-authentication-channels.md`
+> reconciles #7); gaps are retired rows, not missing work. Items owned by the active decision
+> queue live in `open-inflight.md` (world-timeline steering = row G2, party Phases 3–4 = row C7)
+> and are not duplicated here.
+
 | # | Item                                                                                                                                                                         | Status                                                    |
 | - | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
-| 2 | World timeline §5.3 forward-event steering + §5.4 cross-story convergence | 🟡 Service layer done 2026-09-10 (`event-steering.ts`); branching UI + `loreSection` injection open — `TASK-timeline-branching-ui.md` |
 | 4 | External music linking UI                                                                                                                                                    | 🟡 Open                                                   |
-| 5 | Party join/leave with VN narration | 🟡 Phase 1 shipped 2026-08-19; Phases 3–4 (split/reunite + VN choice cards) open — `TASK-travel-party-migration.md` |
 | 6 | Authoring/creation ownership indicators                                                                                                                                      | 🟡 Open                                                   |
 | 7 | MFA (TOTP) + `/api/sessions`                                                                                                                                                 | 🔄 Re-planned 2026-09-02 (`epic-auth-channel-provisioning.md` + `matrix-authentication-channels.md`); impl still P6+ until human triage                          |
 | 8 | Plugin ecosystem / three-tier memory / artifact / ComfyUI / provider ecosystem / RAG / social hub / decentralization / impersonation / 3D views / model-comparison reactions | ⏸ Deferred P6+ (see `epics/`)                             |
