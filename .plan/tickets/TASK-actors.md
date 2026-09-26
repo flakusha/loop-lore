@@ -3,26 +3,18 @@
 
 # TASK: Actors & Entity System
 
-**Effort:** Medium
-**Summary:** (none captured)
-**Context:** (none captured)
-**Acceptance Criteria:** (none captured)
-
-
 **Status:** done
 **Priority:** Medium
+**Effort:** Medium
 **Epic:** epic-actors
+**Summary:** Hub stub — superseded by the four-bucket breakdown in `epic-actors.md` §Tickets (data-versioning, child-tables-crud, api-routes, import-export). No independent scope remains.
 
-## Summary
+**Context:** Epic table (2026-09-25) already records this file as superseded; two buckets closed, two open pending AC verification. Keeping the stub open double-counts the epic.
 
-Implementation tasks for Actors & Entity System. See `.plan/epics/epic-actors.md` for full epic scope.
+**Acceptance Criteria:**
 
-## Linked Epics
+- [x] Closed as superseded; epic table is the tracker.
 
-- `epic-actors.md`
+## Resolution
 
-## Acceptance Criteria
-
-- [ ] Core implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+Superseded by the four-bucket breakdown in `epic-actors.md` §Tickets — verified 2026-09-26. Concrete work lives in `TASK-actors-data-versioning.md` (closed), `TASK-actors-child-tables-crud.md` (open), `TASK-actors-api-routes.md` (open), `TASK-actors-import-export.md` (closed).

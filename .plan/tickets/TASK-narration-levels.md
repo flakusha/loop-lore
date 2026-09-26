@@ -3,23 +3,15 @@
 
 # TASK: Narration levels (actor-only vs actor+narrator)
 
-**Summary:** (none captured)
-**Context:** (none captured)
-**Acceptance Criteria:** (none captured)
-
-
 **Status:** open
 **Priority:** medium
 **Effort:** Medium
+**Summary:** Per-chat narration level config (off | actors-only | actors-plus-narrator): level 1 rotates actors only; level 2 interleaves a narrator at configurable cadence (no hardcoded every-3rd).
 
-## Summary
+**Context:** `sceneBasedSelect` in `src/turning/turn-strategies.ts` hardcodes narrator-every-3rd with no level enum and no narrator-vs-actor message distinction. Narrator turns render under the MessageKind narration contract (`epic-narration-actor-separation.md`); narrator-absent fallback is actor ambient-notice, never omniscient.
 
-Support 1/2-level narration as per-chat configuration: level 1 rotates actors only (actor, actor, actor); level 2 interleaves a narrator (actor, narrator, actor, actor, narrator — cadence configurable, dreamrunner-style variants). Today sceneBasedSelect hardcodes narrator-every-3rd in src/turning/turn-strategies.ts with no level enum and no narrator-vs-actor message distinction. Introduce a level enum (off | actors-only | actors-plus-narrator), parametrize narrator cadence, render narrator turns under the MessageKind narration contract (epic-narration-actor-separation), and keep narrator-absent fallback (actor ambient-notice, never omniscient).
+**Acceptance Criteria:**
 
-## Acceptance Criteria
-
-- [ ] Per-chat narration level config (off / actors-only / actors-plus-narrator)
-- [ ] Narrator cadence configurable (no hardcoded every-3rd)
-- [ ] Narrator turns stamped/rendered as narration kind, distinct from actor turns
-- [ ] Level off produces zero narrator turns; absence falls back to actor notice
-- [ ] Tests passing
+- [ ] Narrator cadence configurable; level off produces zero narrator turns.
+- [ ] Narrator turns stamped/rendered as narration kind, distinct from actor turns.
+- [ ] Absence falls back to actor notice (test); `bun run check` green.

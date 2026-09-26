@@ -6,21 +6,12 @@
 **Status:** open
 **Priority:** medium
 **Effort:** Medium
-**Summary:** (none captured)
-**Context:** (none captured)
-**Acceptance Criteria:** (none captured)
+**Summary:** `should_interact` gate: utility-scored reaction decision (chat / wait / do-other / flee / attack / ignore) reusing the shipped utility scorer weights.
 
+**Context:** Reaction model exists in `src/characters/services/personality-service/utility-scorer.ts` (22 tests green); this ticket wires it as the per-turn social decision for NPC encounters, distinct from `TASK-social-interaction.md` skill checks. Governor budgets apply once `TASK-autonomy-rate-governor` lands.
 
-**Status**: open
-**Priority**: medium
-**Labels**:
-**Assignee**:
-**Epic**: epic-social-interaction
-**Related**:
+**Acceptance Criteria:**
 
-**Summary:**
-Implement `should_interact` logic for NPCs
-
-## Acceptance
-
-- [ ] Complete
+- [ ] Decision function unit-tested across modes (chat/wait/flee/attack/ignore).
+- [ ] Budgets respected when governor present; safe default deny otherwise.
+- [ ] `bun run check` green.

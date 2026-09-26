@@ -143,3 +143,13 @@ cooldowns.
 - TASK-character-mood-happiness.md — Mood swings (separate but related)
 - Epic RPG Mechanics — Extensible Game Systems
 - Epic 43 (NSFW) — Heat-cycle mood instability (different mechanism)
+
+**Summary:** Structural personality splits (DID / faceted / role-locked) with random, stimulus, locked, and manual switching modes; world/chat-level personality locks; switching audit.
+
+**Context:** No personality tables or switching code exist yet (no `src/characters/personalities.ts`, no `schema-personalities.ts`, no resolver merge — verified 2026-09-26). Distinct from mood swings (`TASK-character-mood-happiness.md`) and from the BDI loop (personalities are the *self* that plans, not the plan). Tracked by `epic-character-multi-personality.md`; this ticket is its implementation vehicle.
+
+**Acceptance Criteria:**
+
+- [ ] `character_personalities` table + world/chat locks + switching triggers (random/stimulus/manual) tested.
+- [ ] Active personality resolves at Layer 0 of character resolution.
+- [ ] `bun run check` green.
