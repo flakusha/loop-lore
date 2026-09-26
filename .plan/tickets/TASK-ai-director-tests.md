@@ -6,9 +6,9 @@
 **Status:** open
 **Priority:** medium
 **Effort:** Medium
-**Summary:** (none captured)
-**Context:** (none captured)
-**Acceptance Criteria:** (none captured)
+**Summary:** Unit + integration tests for tension transitions, arc phase resolution, event pacing multipliers, difficulty modifiers, GM override.
+**Context:** Source: epic-assistant-gm-flows.md § AI Director → Tests row in Tasks table. Covers all 5 sibling tickets.
+**Acceptance Criteria:** [ ] TensionState persistence + transitions; [ ] arc phase picker handles tension_range edges; [ ] event pacing clamps; [ ] difficulty adjustment thresholds; [ ] GM override veto path.
 
 
 **Status**: open
