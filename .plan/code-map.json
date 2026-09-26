@@ -735,6 +735,17 @@
       "source": ".plan/tickets/BUG-assets-serve-servefile-omits-x-content-type-options-nosniff-.md"
     }
   ],
+
+  "src/assets/serve-handlers.coverage.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-test-async-store-offload-dir-fixed-path-race.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-async-store-tests-per-test-tmpdir.md"
+    }
+  ],
   "src/assets/serve-handlers.ts": [
     {
       "kind": "ticket",
@@ -3107,6 +3118,17 @@
       "source": ".plan/tickets/BUG-table-backend-request-id-collision-overwrites-foreign-row.md"
     }
   ],
+
+  "src/async/offload-daemon.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-test-async-store-offload-dir-fixed-path-race.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-async-store-tests-per-test-tmpdir.md"
+    }
+  ],
   "src/async/offload-daemon.ts": [
     {
       "kind": "ticket",
@@ -3114,6 +3136,14 @@
     }
   ],
   "src/async/offload.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-test-async-store-offload-dir-fixed-path-race.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-async-store-tests-per-test-tmpdir.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-distributed-healing-revalidation-backups.md"
@@ -3154,6 +3184,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-async-store-retention-cap.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-cron-migrate-existing-timers.md"
     },
     {
@@ -3173,6 +3207,39 @@
       "source": ".plan/tickets/TASK-middleware-in-progress-status-endpoint-for-long-running-requ.md"
     }
   ],
+
+  "src/async/retention.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-async-store-retention-cap.md"
+    }
+  ],
+
+  "src/async/spill.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-test-async-store-offload-dir-fixed-path-race.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-async-store-tests-per-test-tmpdir.md"
+    }
+  ],
+
+  "src/async/spill.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-test-async-store-offload-dir-fixed-path-race.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-async-store-retention-cap.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-async-store-tests-per-test-tmpdir.md"
+    }
+  ],
   "src/async/store.ts": [
     {
       "kind": "epic",
@@ -3189,6 +3256,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-async-store-complete-fail-lifecycle-hooks.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-async-store-retention-cap.md"
     },
     {
       "kind": "ticket",
@@ -6877,6 +6948,38 @@
       "source": ".plan/tickets/TASK-optique-cli-tooling-integration.md"
     }
   ],
+
+  "src/commands/issues.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-giwt-issues-gains-state-open-closed-all-filter.md"
+    }
+  ],
+
+  "src/commands/resolver.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-giwt-show-state-resolve-plan-tickets-filename-slugs.md"
+    }
+  ],
+
+  "src/commands/show.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-giwt-issues-gains-state-open-closed-all-filter.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-giwt-show-state-resolve-plan-tickets-filename-slugs.md"
+    }
+  ],
+
+  "src/commands/state.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-giwt-show-state-resolve-plan-tickets-filename-slugs.md"
+    }
+  ],
   "src/commands/ticket.ts": [
     {
       "kind": "ticket",
@@ -8281,6 +8384,13 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-middleware-request-lifecycle.md"
+    }
+  ],
+
+  "src/config/schema/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-async-store-retention-cap.md"
     }
   ],
   "src/config/schema/messages.ts": [
@@ -26347,6 +26457,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-msg-forward-across-chats.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tmp-janitor-and-staleness-markers.md"
     }
   ],
   "src/routes/messages/handle-scene-transitions.ts": [
@@ -27771,6 +27885,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-api-versioning.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-test-e2e-env-default-mismatch.md"
     },
     {
       "kind": "ticket",
