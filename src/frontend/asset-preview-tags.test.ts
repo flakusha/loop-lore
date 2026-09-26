@@ -165,6 +165,7 @@ interface FakeDocument {
   querySelector(sel: string,): El | null;
   createElement(_tag: string,): El;
   addEventListener(_t: string, _fn: unknown,): void;
+  removeEventListener(_t: string, _fn: unknown,): void;
 }
 
 function makeDocument(): FakeDocument {
@@ -176,6 +177,7 @@ function makeDocument(): FakeDocument {
     querySelector: (sel,) => (sel.startsWith("#",) ? byId.get(sel.slice(1,),) ?? null : bySelector.get(sel,) ?? null),
     createElement: () => makeEl(),
     addEventListener: () => {},
+    removeEventListener: () => {},
   };
 }
 

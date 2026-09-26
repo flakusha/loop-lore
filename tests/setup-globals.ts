@@ -19,6 +19,7 @@ if (typeof process !== "undefined" && !process.env.LOOP_LORE_DB_PATH) {
 if (typeof globalThis.document === "undefined") {
   (globalThis as any).document = {
     addEventListener: () => {},
+    removeEventListener: () => {},
     dispatchEvent: () => {},
     querySelector: () => null,
     createElement: (tag: string,) => ({

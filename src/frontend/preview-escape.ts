@@ -19,7 +19,7 @@ export function previewEscapeState() {
   let handler: ((e: { key: string },) => void) | null = null;
   let trigger: { focus(): void } | null = null;
   const detach = (): void => {
-    if (handler && doc) {
+    if (handler && doc && typeof doc.removeEventListener === "function") {
       doc.removeEventListener("keydown", handler,);
       handler = null;
     }
