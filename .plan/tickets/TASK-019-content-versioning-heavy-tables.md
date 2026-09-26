@@ -35,3 +35,6 @@
 
 **Tags:** db, content-versioning, integrity, migration
 **Related:** src/db/content-version.ts, src/db/migrations/018_guard_triggers_update_twins.ts, .plan/tickets/TASK-019-audit-columns.md (companion migration), .plan/tickets/TASK-db-content-versioning.md, .plan/tickets/TASK-content-hash-consistency.md
+
+
+git issue: f9f5b1c

@@ -32,3 +32,6 @@
 
 **Tags:** db, crypto, search, encryption, blind-index, backfill
 **Related:** src/crypto/message-content.ts, src/search/encrypted-tokens.ts, src/search/token-store.ts, src/search/providers/messages.ts, .plan/tickets/TASK-019-users-encryption-secret.md (prerequisite), .plan/tickets/TASK-search-encrypted-backfill.md, .plan/tickets/TASK-message-search-cannot-index-compressed-or-encrypted-content.md, .plan/tickets/TASK-rag-search-providers.md
+
+
+git issue: e352a13
