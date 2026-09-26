@@ -12,7 +12,10 @@
 // Value import — ENTITY_TEMPLATES is used lazily inside resolveEntityGenerationPrompt,
 // avoiding a circular-runtime dependency (entity-templates.ts only imports a type).
 import type { Config, } from "../../../config/schema";
-import type { EntityTemplatePosition, } from "../../../config/sections/templates";
+import {
+  DEFAULT_ENTITY_TEMPLATE_POSITION,
+  type EntityTemplatePosition,
+} from "../../../config/sections/templates";
 import { safeJsonStringify, } from "../../../utils";
 import { ENTITY_TEMPLATES, } from "./entity-templates";
 
@@ -51,10 +54,6 @@ const DEFAULT_PROMPTS: Record<EntityKind, EntityPrompt> = {
   item: (description,) =>
     `Generate an item from this description. Return JSON with: name (string), description (string, 1 paragraph), ${LORE_SCHEMA} Description: ${description}`,
 };
-
-/** Default position when none is configured. Mirrors the spec in
- * `epic-assistant-gm-flows.md` (pre-compiled-templates section). */
-const DEFAULT_ENTITY_TEMPLATE_POSITION: EntityTemplatePosition = "after";
 
 /**
  * Build the pre-compiled schema+example block for one entity kind. The block

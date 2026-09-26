@@ -58,6 +58,9 @@ export interface ChatFormatTemplate {
  * entity-generation prompts (per `epic-assistant-gm-flows.md`). */
 export type EntityTemplatePosition = "before" | "after" | "off";
 
+/** Documented fallback when `entityTemplatePosition` is unset or invalid. */
+export const DEFAULT_ENTITY_TEMPLATE_POSITION: EntityTemplatePosition = "after";
+
 /** LLM template configuration */
 export interface LlmTemplateConfig {
   merge: MergeStrategy;

@@ -63,14 +63,28 @@ export function matchWorkflowTrigger(
 }
 
 /**
+ * Imperative-generation opener. The `INTENT_PATTERNS` regexes are unanchored
+ * (`/make.*character/i`), so intent routing must only fire when the message
+ * *starts* with a generation request — otherwise roleplay prose like "we
+ * make our way toward the character" hijacks normal chat. A generation
+ * request opens with a verb plus article ("create a …", "draw me a …") or
+ * one of the article-less phrasings "new …", "I need …", "give me …".
+ */
+const GENERATION_REQUEST =
+  /^(?:please\s+)?(?:(?:create|make|generate|design|craft|draw)\s+(?:me\s+)?(?:a|an|the|some|another|my)\b|new\b|i\s+need\b|give\s+me\b)/i;
+
+/**
  * Match a message to a workflow by `INTENT_PATTERNS` taxonomy rather than by
  * literal trigger phrase (epic §7.4). Catches phrasings the trigger list
  * misses — "make me a character named Y" has no trigger substring but does
  * match the `generate`/`character` intent group.
  *
- * Only `generate` intents route to workflows, and only workflows that declare
- * matching `intent` metadata participate. Highest-confidence intent group
- * wins; ties keep the first group declared in `INTENT_PATTERNS`.
+ * Only messages that *open* with an imperative generation request route
+ * (see {@link GENERATION_REQUEST}) — prose that merely contains an intent
+ * noun mid-sentence falls through to chat/GM. Only `generate` intents route
+ * to workflows, and only workflows that declare matching `intent` metadata
+ * participate. Highest-confidence intent group wins; ties keep the first
+ * group declared in `INTENT_PATTERNS`.
  * @param message - Raw user message
  * @param workflows - Loaded workflow templates
  * @returns The matched template, or undefined
@@ -79,6 +93,7 @@ export function matchWorkflowIntent(
   message: string,
   workflows: readonly AssistantWorkflowConfig[],
 ): AssistantWorkflowConfig | undefined {
+  if (!GENERATION_REQUEST.test(message.trim(),)) { return undefined; }
   const routed = workflows.filter((w,) => w.intent?.type === "generate");
   if (routed.length === 0) { return undefined; }
   let best: { readonly target: string; readonly confidence: number } | undefined;

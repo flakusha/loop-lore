@@ -28,6 +28,7 @@ import {
 import {
   cancelSession,
   getSession,
+  missingStepIds,
   nextStepId,
   type WorkflowSession,
 } from "../workflow-session";
@@ -127,9 +128,9 @@ export async function confirmSession(
   session: WorkflowSession,
   ctx: CommandContext,
 ): Promise<CommandResult> {
-  const missing = session.workflow.steps
-    .filter((step,) => session.run.values[step.id] === undefined)
-    .map((step,) => step.id);
+  // Only required steps gate dispatch — optional steps (`required === false`)
+  // are auto-skipped, consistent with nextStepId/fillNextStep.
+  const missing = missingStepIds(session,);
   if (missing.length > 0) {
     return {
       systemMessage: `**Workflow incomplete** — still missing: ${missing.join(", ",)}.`,

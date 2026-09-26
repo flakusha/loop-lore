@@ -73,11 +73,44 @@ const ENTITY_WORKFLOW: AssistantWorkflowConfig = {
   approval: { type: "confirm", preview: true, },
 };
 
+const TEASER_WORKFLOW: AssistantWorkflowConfig = {
+  id: "test-teaser",
+  name: "Test teaser",
+  triggers: ["make a teaser",],
+  steps: [
+    {
+      id: "subject",
+      name: "Subject",
+      type: "text",
+      description: "Main subject.",
+      formatTemplate: "Subject: {value}",
+    },
+    {
+      id: "style",
+      name: "Style",
+      type: "text",
+      description: "Visual style.",
+      formatTemplate: "Style: {value}",
+      required: false,
+    },
+  ],
+  dispatch: {
+    backend: "test-backend",
+    target: "POST /teaser",
+    payloadTemplate: { prompt: "{prompt}", },
+  },
+  approval: { type: "confirm", preview: true, },
+};
+
 const CONFIG = {
   templates: {
     workflows: {
       merge: "extend",
-      workflows: { "test-video": VIDEO_WORKFLOW, "test-character": ENTITY_WORKFLOW, },
+      workflows: {
+        "test-video": VIDEO_WORKFLOW,
+        "test-character": ENTITY_WORKFLOW,
+        "test-teaser": TEASER_WORKFLOW,
+      },
     },
   },
 } as never;
@@ -163,6 +196,23 @@ describe("workflow dispatch via message route", () => {
     const cancelled = await send(db, chatId, "/workflow cancel",);
     expect(String(cancelled.body?.systemMessage ?? "",),).toContain("cancelled",);
     expect(await send(db, chatId, "hello again",),).toEqual({ handled: false, },);
+  });
+
+  test("optional steps never block fill or confirm", async () => {
+    const started = await send(db, chatId, "make a teaser of the harbor",);
+    expect(started.body?.action,).toBe("workflow-preview",);
+
+    // Required step fills first; the optional style step is never offered.
+    const filled = await send(db, chatId, "dawn over the breakwater",);
+    expect(filled.body?.action,).toBe("workflow-progress",);
+    expect(String(filled.body?.systemMessage ?? "",),).toContain("/workflow confirm",);
+
+    const confirmed = await send(db, chatId, "/workflow confirm",);
+    expect(confirmed.body?.action,).toBe("workflow-dispatch",);
+    const payload = confirmed.body?.actionPayload as Record<string, unknown>;
+    expect(payload.target,).toBe("POST /teaser",);
+    // Unfilled optional step is simply omitted from the assembled prompt.
+    expect(payload.prompt,).toBe("Subject: dawn over the breakwater",);
   });
 
   test("registered slash commands win over step capture", async () => {

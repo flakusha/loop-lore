@@ -79,7 +79,7 @@ describe("selective gate filter — --gates (whitelist)", () => {
     // to use an em-dash so the full name is one CSV element. Verify
     // that the renamed gate is now selectable via --gates.
     const r = runRunner(
-      ["--gates", "frontend - banned patterns (ESLint-gap heuristic — advisory)",],
+      ["--gates", "frontend - banned patterns (ESLint-gap heuristic — non-blocking)",],
       { defaultSkip: [], },
     );
     expect(r.stderr,).toMatch(/gates filter: whitelisted 1 of \d+ gates/,);
@@ -91,7 +91,7 @@ describe("selective gate filter — --skip-gates (inverse)", () => {
     const r = runRunner(["--skip-gates", "coverage - per-module line %",], {
       defaultSkip: [],
     },);
-    expect(r.stderr,).toMatch(/gates filter: skipped 1; running 20 of 21 gates/,);
+    expect(r.stderr,).toMatch(/gates filter: skipped 1; running 27 of 28 gates/,);
   },);
 
   test("multiple comma-separated skips accepted", { timeout: 120_000, }, () => {
@@ -99,7 +99,7 @@ describe("selective gate filter — --skip-gates (inverse)", () => {
       ["--skip-gates", "coverage - per-module line %,no - shell - refs,context - weight",],
       { defaultSkip: [], },
     );
-    expect(r.stderr,).toMatch(/gates filter: skipped 3; running 18 of 21 gates/,);
+    expect(r.stderr,).toMatch(/gates filter: skipped 3; running 25 of 28 gates/,);
   },);
 });
 
