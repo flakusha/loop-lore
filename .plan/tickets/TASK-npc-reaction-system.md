@@ -6,21 +6,12 @@
 **Status:** open
 **Priority:** medium
 **Effort:** Medium
-**Summary:** (none captured)
-**Context:** (none captured)
-**Acceptance Criteria:** (none captured)
+**Summary:** Perceived-event → reaction pipeline: focus selection, mode decision (via utility scorer), execution, episodic memory update. Feeds the daytime planning loop and the nightly reflection cycle.
 
+**Context:** Reaction model in `src/characters/services/personality-service/utility-scorer.ts`; memory write path in `src/actors/actor-memories.ts`. Distinct from `TASK-npc-social-decision.md` (social-encounter gating) — this is the general event-reaction path.
 
-**Status**: open
-**Priority**: medium
-**Labels**:
-**Assignee**:
-**Epic**: epic-agency-story-points
-**Related**:
+**Acceptance Criteria:**
 
-**Summary:**
-Event perception + reaction decision system
-
-## Acceptance
-
-- [ ] Complete
+- [ ] Event → decision → execution → memory-update round trip tested (in-memory, no LLM).
+- [ ] Interrupted plans route to `TASK-npc-plan-revision.md` (no silent drops).
+- [ ] `bun run check` green.

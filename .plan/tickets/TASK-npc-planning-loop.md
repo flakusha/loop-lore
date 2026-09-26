@@ -6,21 +6,12 @@
 **Status:** open
 **Priority:** medium
 **Effort:** Medium
-**Summary:** (none captured)
-**Context:** (none captured)
-**Acceptance Criteria:** (none captured)
+**Summary:** Daily planning + task decomposition loop writing `actor_daily_plans` / `actor_planned_activities` (migration 011, shipped). Supersedes the planning slice of the `TASK-npc-bdi-planning` sketch; reaction/revision/buffer slices live in their own tickets.
 
+**Context:** Tables exist; `src/services/agency/bdi-nightly.ts` runs the nightly cycle. Remaining work is the daytime planning pass (wake → daily plan → hourly blocks → subtasks) dispatched by the story-auto-drive scheduler once it lands.
 
-**Status**: open
-**Priority**: medium
-**Labels**:
-**Assignee**:
-**Epic**: epic-agency-story-points
-**Related**:
+**Acceptance Criteria:**
 
-**Summary:**
-Implement daily planning + task decomposition
-
-## Acceptance
-
-- [ ] Complete
+- [ ] Daytime planning pass writes plans readable by the nightly reflection cycle.
+- [ ] Idempotent re-run for the same actor-day (no duplicate plans).
+- [ ] `bun run check` green.
