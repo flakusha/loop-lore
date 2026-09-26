@@ -3,7 +3,7 @@
 
 # TASK: Battle Core Round-Loop / Initiative Epic
 
-**Status:** ✅ Done (duplicate, verified 2026-09-19)
+**Status:** done
 **Priority:** high
 **Effort:** XL
 **Summary:** Battle Core Round-Loop / Initiative Epic

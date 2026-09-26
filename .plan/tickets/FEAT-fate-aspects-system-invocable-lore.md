@@ -3,7 +3,7 @@
 
 # FEAT: FATE Aspects System (Invocable Lore)
 
-**Status:** ✅ Done (duplicate, verified 2026-09-19)
+**Status:** done
 **Priority:** medium
 **Effort:** Large
 **Summary:** FATE Aspects System (Invocable Lore)

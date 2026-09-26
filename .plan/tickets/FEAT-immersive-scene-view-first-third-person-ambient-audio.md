@@ -3,7 +3,7 @@
 
 # FEAT: Immersive Scene View (first/third-person + ambient audio)
 
-**Status:** ✅ Done (duplicate, verified 2026-09-19)
+**Status:** done
 **Priority:** low
 **Effort:** XL
 **Summary:** Immersive Scene View (first/third-person + ambient audio)

@@ -3,7 +3,7 @@
 
 # TASK: Battle Integration Wiring (items/social/NPC/weather/resolution)
 
-**Status:** ✅ Done (duplicate, verified 2026-09-19)
+**Status:** done
 **Priority:** high
 **Effort:** Large
 **Summary:** Battle Integration Wiring (items/social/NPC/weather/resolution)

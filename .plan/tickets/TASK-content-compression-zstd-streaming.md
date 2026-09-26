@@ -3,7 +3,7 @@
 
 # TASK: Content Compression (Zstd Streaming)
 
-**Status:** ✅ Resolved (already on dev, 2026-09-19)
+**Status:** done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Content Compression (Zstd Streaming)

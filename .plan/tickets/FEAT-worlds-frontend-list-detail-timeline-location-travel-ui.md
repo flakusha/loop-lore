@@ -3,7 +3,7 @@
 
 # FEAT: Worlds Frontend (list/detail, timeline, location travel UI)
 
-**Status:** ✅ Resolved (already on dev, 2026-09-19)
+**Status:** done
 **Priority:** medium
 **Effort:** Large
 **Summary:** Worlds Frontend (list/detail, timeline, location travel UI)

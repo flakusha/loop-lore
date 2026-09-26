@@ -3,7 +3,7 @@
 
 # FEAT: Async NPC Mail (NPCs message user when away)
 
-**Status:** ✅ Resolved (already on dev, 2026-09-19)
+**Status:** done
 **Priority:** low
 **Effort:** Medium
 **Summary:** Async NPC Mail (NPCs message user when away)

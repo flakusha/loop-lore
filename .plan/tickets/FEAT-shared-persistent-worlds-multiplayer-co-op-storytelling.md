@@ -3,7 +3,7 @@
 
 # FEAT: Shared Persistent Worlds (multiplayer co-op storytelling)
 
-**Status:** ✅ Done (duplicate, verified 2026-09-19)
+**Status:** done
 **Priority:** low
 **Effort:** XL
 **Summary:** Shared Persistent Worlds (multiplayer co-op storytelling)

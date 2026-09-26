@@ -3,7 +3,7 @@
 
 # TASK: Profanity Filter (Runtime, Per-Chat)
 
-**Status:** ✅ Done (duplicate — remainder extracted, 2026-09-19)
+**Status:** done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Profanity Filter (Runtime, Per-Chat)

@@ -3,7 +3,7 @@
 
 # TASK: Story Notes Panel (3 tabs, role access matrix)
 
-**Status:** ✅ Done (duplicate — remainder extracted, 2026-09-19)
+**Status:** done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Story Notes Panel (3 tabs, role access matrix)

@@ -3,7 +3,7 @@
 
 # TASK: Users, Roles & Sessions Lifecycle
 
-**Status:** ✅ Done (duplicate — remainder extracted, 2026-09-19)
+**Status:** done
 **Priority:** high
 **Effort:** Large
 **Summary:** Users, Roles & Sessions Lifecycle

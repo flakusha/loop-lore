@@ -3,7 +3,7 @@
 
 # FEAT: Workflow DAG Engine (Task Dependencies + Scheduler)
 
-**Status:** ✅ Done (duplicate — remainder extracted, 2026-09-19)
+**Status:** done
 **Priority:** medium
 **Effort:** Large
 **Summary:** Workflow DAG Engine (Task Dependencies + Scheduler)

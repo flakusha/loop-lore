@@ -3,7 +3,7 @@
 
 # FEAT: GURPS Point-Buy Character Creation
 
-**Status:** ✅ Done (duplicate — remainder extracted, 2026-09-19)
+**Status:** done
 **Priority:** low
 **Effort:** Large
 **Summary:** GURPS Point-Buy Character Creation

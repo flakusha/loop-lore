@@ -3,7 +3,7 @@
 
 # FEAT: Visual Novel Mode Full Implementation
 
-**Status:** ✅ Resolved (already on dev, 2026-09-19)
+**Status:** done
 **Priority:** high
 **Effort:** XL
 **Summary:** Visual Novel Mode Full Implementation

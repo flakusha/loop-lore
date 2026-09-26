@@ -3,7 +3,7 @@
 
 # FEAT: Conversation Analytics (sentiment, word clouds, beat map)
 
-**Status:** ✅ Done (duplicate, verified 2026-09-19)
+**Status:** done
 **Priority:** low
 **Effort:** Large
 **Summary:** Conversation Analytics (sentiment, word clouds, beat map)
