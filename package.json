@@ -31,7 +31,6 @@
     "config:generate-schema": "bun run src/config/generate-schema.ts",
     "config:generate-character-schema": "bun run src/config/generate-character-schema.ts",
     "config:generate-toml-schema": "bun run src/config/generate-toml-schema.ts",
-
     "docs:dev": "bun run scripts/docs/sync-plan.mjs && bunx vitepress dev docs",
     "docs:build": "bun run scripts/docs/sync-plan.mjs && bunx vitepress build docs",
     "docs:preview": "bun run scripts/docs/sync-plan.mjs && bunx vitepress preview docs",
