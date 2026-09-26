@@ -53,6 +53,7 @@ export const MAX_KEY_LENGTH = 100;
 /** Per-kind required field sets. `name` is always required. Character also requires personality + appearance (spec mandatory set). */
 export const REQUIRED_FIELDS: Record<EntityKind, string[]> = {
   character: ["name", "description", "personality", "appearance",],
+  npc: ["name", "description", "personality", "appearance",],
   location: ["name", "description",],
   world: ["name", "description",],
   item: ["name", "description",],

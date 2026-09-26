@@ -128,3 +128,47 @@ describe("assemblePrompt + confirmAndDispatch", () => {
     expect(() => confirmAndDispatch(WORKFLOW, run, "x",)).toThrow("missing steps: motion, style",);
   });
 });
+
+describe("optional steps", () => {
+  const OPTIONAL: AssistantWorkflowConfig = {
+    id: "entity-npc",
+    name: "NPC creation",
+    entityType: "npc",
+    steps: [
+      { id: "name", name: "Name", type: "text", formatTemplate: "Name: {value}", },
+      {
+        id: "rumour",
+        name: "Rumour",
+        type: "text",
+        required: false,
+        formatTemplate: "Rumour: {value}",
+      },
+    ],
+    dispatch: { backend: "assistant-create", target: "/create npc", payloadTemplate: {}, },
+    approval: { type: "confirm", preview: true, },
+  };
+
+  test("preview marks required steps and leaves optional ones skippable", () => {
+    const preview = previewSteps(OPTIONAL,);
+    expect(preview.map((s,) => [s.id, s.required,]),).toEqual([
+      ["name", true,],
+      ["rumour", false,],
+    ],);
+  });
+
+  test("omitting an optional step does not block dispatch", () => {
+    const run = startWorkflow(OPTIONAL,);
+    buildStep(OPTIONAL, run, "name", "Sera",);
+    const prompt = assemblePrompt(OPTIONAL, run,);
+    expect(prompt,).toBe("Name: Sera",);
+    confirmRun(run,);
+    expect(confirmAndDispatch(OPTIONAL, run, prompt,).target,).toBe("/create npc",);
+  });
+
+  test("a still-missing required step still blocks dispatch", () => {
+    const run = startWorkflow(OPTIONAL,);
+    buildStep(OPTIONAL, run, "rumour", "she owes money",);
+    confirmRun(run,);
+    expect(() => confirmAndDispatch(OPTIONAL, run, "x",)).toThrow("missing steps: name",);
+  });
+});

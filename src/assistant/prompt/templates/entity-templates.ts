@@ -55,6 +55,18 @@ export const ENTITY_TEMPLATES: Record<EntityKind, EntityTemplate> = {
       ],
     },
   },
+  npc: {
+    schema:
+      `name (string, required), description (string, required, 1-2 paragraphs), personality (string, required), appearance (string, required), scenario (string, 1 sentence), lore (array of lore entries, optional) — each entry: ${LORE_ENTRY_SCHEMA}`,
+    example: {
+      name: "Sera Quickfingers",
+      description:
+        "A leather-clad fence who runs messages through the lower market. Speaks quickly, watches the exits before sitting down, and never touches her own cup.",
+      personality: "Nervous on the surface, methodical underneath; loyal to whoever pays on time.",
+      appearance: "Close-cropped dark hair, a burn scar across the knuckles, courier's satchel.",
+      scenario: "Slides a sealed note across the table and asks whether the party was followed.",
+    },
+  },
   location: {
     schema:
       `name (string, required), description (string, required, 1-2 paragraphs), lore (array of lore entries, optional) — each entry: ${LORE_ENTRY_SCHEMA}`,

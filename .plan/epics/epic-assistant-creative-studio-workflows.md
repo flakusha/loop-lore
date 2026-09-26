@@ -375,6 +375,35 @@ Spans Workflow Engine (intent routing, runner, approval) + Model Family Presets
 
 ---
 
+## Implementation Status (entity workflow batch)
+
+Landed in the `entity-workflow-batch` pass:
+
+- **Schema + loader** — `WorkflowTemplateConfig` gained `entityTypes`
+  (`src/config/sections/templates-workflow.ts`). `loadTemplateConfig` routes
+  the `entityTypes` block to its own domain *before* the workflow validator
+  runs, so a preset file no longer registers `entityTypes` as a workflow id,
+  then cross-checks the merged result via `validateEntityTypePresets`.
+- **Optional steps** — `WorkflowStepConfig.required` defaults to `true`; a step
+  with `required: false` is reported in `previewSteps` and skipped by
+  `confirmAndDispatch`'s missing-step check (`src/assistant/workflow-runner.ts`).
+- **Intent routing** — workflows may declare `intent: {type, target}` and
+  `entityType`; `matchWorkflowIntent` routes a message through the
+  `INTENT_PATTERNS` taxonomy to a workflow (`src/assistant/workflow-routing.ts`).
+- **`npc` end-to-end** — new `EntityKind` member threaded through
+  `create-entity-lore.ts` (shares the actors table with characters),
+  `quality/entity-creation-types.ts`, `prompt/templates/entity-templates.ts`,
+  `entity-spec/entity-spec-kinds.ts`, and the `create-entity-confirm` allowlist.
+  `configs/templates/workflows/entities.yaml` adds the `entity-npc` workflow
+  (required: name/description/appearance/personality; optional: scenario and
+  three role steps) dispatching to `/create npc`; `entity-types.yaml` declares
+  the matching preset.
+
+Not landed (blocked, see the ticket verdicts): the `species` entity workflow —
+there is no `bestiary_catalog` table, so `/create species` has nothing to insert
+into. `INTENT_PATTERNS` does carry a `species` target, but it resolves to no
+workflow and no create backend.
+
 ## References
 
 - `src/config/sections/templates.ts` — `MergeStrategy`, `TemplatesConfig`, domain configs

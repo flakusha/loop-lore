@@ -5,7 +5,7 @@
  * /image — Generate an image from a text prompt.
  *
  * Returns a command action for the frontend to dispatch via
- * POST /api/generation/image. Does NOT execute generation synchronously
+ * POST /api/v1/generation/image. Does NOT execute generation synchronously
  * to avoid double execution (command handler + frontend action).
  *
  * Availability gated on configured image provider (mirrors sfx/music/video

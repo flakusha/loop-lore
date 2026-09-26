@@ -303,8 +303,8 @@ describe("REGEX_SPECIAL_CHARS", () => {
 // ── Structure ─────────────────────────────────────────────
 
 describe("INTENT_PATTERNS structure", () => {
-  test("has 10 pattern groups", () => {
-    expect(INTENT_PATTERNS.length,).toBe(10,);
+  test("has 12 pattern groups", () => {
+    expect(INTENT_PATTERNS.length,).toBe(12,);
   });
 
   test("every group has at least 1 pattern", () => {

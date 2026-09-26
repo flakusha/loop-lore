@@ -13,7 +13,7 @@ import {
   fillNextStep,
   formatWorkflowPreview,
 } from "../../assistant/commands/workflow";
-import { matchWorkflowTrigger, } from "../../assistant/workflow-routing";
+import { matchWorkflowIntent, matchWorkflowTrigger, } from "../../assistant/workflow-routing";
 import { previewSteps, } from "../../assistant/workflow-runner";
 import { getSession, startSession, } from "../../assistant/workflow-session";
 import { loadPersistedSession, saveSession, } from "../../assistant/workflow-session-store";
@@ -68,7 +68,11 @@ export async function dispatchCommand(
     // Rehydrate persisted runs (restart/second process) into memory before
     // deciding whether this message belongs to a workflow.
     const session = getSession(chatId,) ?? await loadPersistedSession(database, chatId, loadedWorkflows,);
-    if (!session && !matchWorkflowTrigger(effectiveContent, loadedWorkflows,)) {
+    const workflowMatch = session
+      ? undefined
+      : matchWorkflowTrigger(effectiveContent, loadedWorkflows,) ??
+        matchWorkflowIntent(effectiveContent, loadedWorkflows,);
+    if (!session && workflowMatch === undefined) {
       return { handled: false, };
     }
   }
@@ -167,7 +171,11 @@ export async function dispatchCommand(
       };
       await saveSession(database, chatId, session,);
     } else {
-      const match = matchWorkflowTrigger(effectiveContent, loadedWorkflows,)!;
+      const match = matchWorkflowTrigger(effectiveContent, loadedWorkflows,) ??
+        matchWorkflowIntent(effectiveContent, loadedWorkflows,);
+      if (match === undefined) {
+        return { handled: false, };
+      }
       const started = startSession(chatId, match,);
       await saveSession(database, chatId, started,);
       result = {

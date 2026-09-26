@@ -1,0 +1,77 @@
+# SPDX-License-Identifier: LGPL-3.0-or-later
+# SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
+# Per-entity-type step contracts (epic-assistant-creative-studio-workflows section 7.6c).
+#
+# Loaded by loadTemplateConfig alongside workflows/*.yaml. The `entityTypes`
+# block is routed to its own domain before the workflow validator runs, then
+# cross-checked against the merged workflows by validateEntityTypePresets:
+#
+#   - workflowId      must name a loaded workflow
+#   - requiredSteps   must all be steps of that workflow, and none may be
+#                     marked `required: false` (catches drift in the dangerous
+#                     direction - a preset demanding a step the template calls optional)
+#   - qualityGates    must be a subset of schema|consistency|duplicate, the
+#                     gates runQualityGates executes before persistence
+#   - dispatchTarget  the `/create` token a confirmed run dispatches to
+merge: extend
+
+entityTypes:
+  character:
+    workflowId: entity-character
+    requiredSteps:
+      - name
+      - description
+      - appearance
+      - personality
+    qualityGates:
+      - schema
+      - consistency
+      - duplicate
+    dispatchTarget: char
+
+  npc:
+    workflowId: entity-npc
+    requiredSteps:
+      - name
+      - description
+      - appearance
+      - personality
+    qualityGates:
+      - schema
+      - consistency
+      - duplicate
+    dispatchTarget: npc
+
+  world:
+    workflowId: entity-world
+    requiredSteps:
+      - name
+      - description
+    qualityGates:
+      - schema
+      - consistency
+      - duplicate
+    dispatchTarget: world
+
+  location:
+    workflowId: entity-location
+    requiredSteps:
+      - name
+      - description
+    qualityGates:
+      - schema
+      - consistency
+      - duplicate
+    dispatchTarget: loc
+
+  item:
+    workflowId: entity-item
+    requiredSteps:
+      - name
+      - description
+    qualityGates:
+      - schema
+      - consistency
+      - duplicate
+    dispatchTarget: item

@@ -109,6 +109,32 @@ export async function insertGeneratedEntity(
         return { id, kind, name, };
       }
 
+      case "npc": {
+        // NPCs share the actors table with characters; `agent_type: "npc"` is
+        // the discriminator separating cast members from player roles.
+        await trx
+          .insertInto("actors",)
+          .values({
+            id,
+            actor_type: "character",
+            display_name: name,
+            user_id: userId,
+            owner_id: userId,
+            agent_type: "npc",
+            description: data.description ?? description,
+            system_prompt: null,
+            settings: "{}",
+            personality: data.personality ?? null,
+            appearance: data.appearance ?? null,
+            default_outfit: defaultOutfitFor(data,),
+            outfits: outfitsJsonFor(data,),
+            import_spec: "llm-generated",
+          },)
+          .execute();
+        await insertEntityLore(trx, kind, id, worldId, data.lore,);
+        return { id, kind, name, };
+      }
+
       case "location": {
         const resolvedWorld = worldId ?? "default";
         await trx

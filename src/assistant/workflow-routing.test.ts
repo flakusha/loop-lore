@@ -7,6 +7,7 @@ import { describe, expect, test, } from "bun:test";
 import type { AssistantWorkflowConfig, } from "../config/sections/templates";
 import {
   findWorkflowById,
+  matchWorkflowIntent,
   matchWorkflowTrigger,
   routeAssistantMessage,
   withShadowSteering,
@@ -37,6 +38,44 @@ describe("matchWorkflowTrigger", () => {
     expect(matchWorkflowTrigger("make a MINIMAX VIDEO please", [VIDEO, ENTITY,],),).toBe(VIDEO,);
     expect(matchWorkflowTrigger("nothing relevant", [VIDEO, ENTITY,],),).toBeUndefined();
     expect(matchWorkflowTrigger("anything", [],),).toBeUndefined();
+  });
+});
+
+describe("matchWorkflowIntent", () => {
+  function makeEntityWorkflow(id: string, entityType: string, target: string,): AssistantWorkflowConfig {
+    return {
+      id,
+      name: id,
+      intent: { type: "generate", target, },
+      entityType,
+      steps: [],
+      dispatch: { backend: "assistant-create", target: `/create ${target}`, payloadTemplate: {}, },
+    };
+  }
+  const NPC = makeEntityWorkflow("entity-npc", "npc", "npc",);
+  const ITEM = makeEntityWorkflow("entity-item", "item", "item",);
+
+  test("routes a generate-intent message to the matching target", () => {
+    expect(matchWorkflowIntent("I need a new npc for the tavern", [NPC, ITEM,],),).toBe(NPC,);
+    expect(matchWorkflowIntent("create a shiny item", [NPC, ITEM,],),).toBe(ITEM,);
+  });
+
+  test("the npc target is reachable and does not shadow character", () => {
+    const CHAR = makeEntityWorkflow("entity-character", "character", "character",);
+    expect(matchWorkflowIntent("I need a new npc for the tavern", [CHAR, NPC,],),).toBe(NPC,);
+  });
+
+  test("returns undefined when nothing matches (no false positives)", () => {
+    expect(matchWorkflowIntent("design a location for my campaign", [NPC, ITEM,],),).toBeUndefined();
+    expect(matchWorkflowIntent("what is the weather like", [NPC, ITEM,],),).toBeUndefined();
+  });
+
+  test("non-generate intents never match by keyword", () => {
+    const TOOL: AssistantWorkflowConfig = {
+      ...ITEM,
+      intent: { type: "tool_exec", target: "summarize", },
+    };
+    expect(matchWorkflowIntent("summarize this please", [TOOL,],),).toBeUndefined();
   });
 });
 

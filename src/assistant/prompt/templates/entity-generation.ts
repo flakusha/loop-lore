@@ -16,12 +16,13 @@ import { safeJsonStringify, } from "../../../utils";
 import { ENTITY_TEMPLATES, } from "./entity-templates";
 
 /** Entity kinds the `/create` command can generate. */
-export type EntityKind = "character" | "location" | "world" | "item";
+export type EntityKind = "character" | "npc" | "location" | "world" | "item";
 
 /** Map a `/create` subcommand alias to its canonical entity kind. */
 export const ENTITY_KIND_ALIASES: Record<string, EntityKind> = {
   char: "character",
   character: "character",
+  npc: "npc",
   loc: "location",
   location: "location",
   world: "world",
@@ -40,6 +41,8 @@ const LORE_SCHEMA =
 const DEFAULT_PROMPTS: Record<EntityKind, EntityPrompt> = {
   character: (description,) =>
     `Generate a character profile from this description. Return JSON with: name (string), description (string, 1-2 paragraphs), personality (string), scenario (string, 1 sentence), ${LORE_SCHEMA} Description: ${description}`,
+  npc: (description,) =>
+    `Generate a non-player character from this description. Return JSON with: name (string), description (string, 1-2 paragraphs), personality (string), scenario (string, 1 sentence), ${LORE_SCHEMA} Description: ${description}`,
   location: (description,) =>
     `Generate a location from this description. Return JSON with: name (string), description (string, 1-2 paragraphs), ${LORE_SCHEMA} Description: ${description}`,
   world: (description,) =>
