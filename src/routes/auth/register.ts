@@ -114,47 +114,57 @@ async function handleRegister(
   // check + insert into a single INSERT ... ON CONFLICT (username) DO
   // NOTHING via `insertUnique`; "skipped" is the authoritative answer
   // when a concurrent winner already claimed the username.
+  //
+  // All three writes (users, actors, actor_key when encryption is on)
+  // run inside one transaction: a mid-flight throw rolls the users row
+  // back, so a retry sees no committed username and re-inserts cleanly
+  // (BUG-register-non-atomic-user-actor-key-insert).
   const userId = uid();
   const passwordHash = await Bun.password.hash(password,);
-  const userResult = await insertUnique(
-    database,
-    "users",
-    {
-      id: userId,
-      username,
-      display_name: username,
-      password_hash: passwordHash,
-      role: UserRole.User,
-      status: UserStatus.Active,
-      settings: "{}",
-    },
-    ["username",] as const,
-  );
+  const smk = isEncryptionEnabled() ? getSmk()! : null;
+
+  const userResult = await database.transaction().execute(async (trx,) => {
+    const result = await insertUnique(
+      trx,
+      "users",
+      {
+        id: userId,
+        username,
+        display_name: username,
+        password_hash: passwordHash,
+        role: UserRole.User,
+        status: UserStatus.Active,
+        settings: "{}",
+      },
+      ["username",] as const,
+    );
+    if (result === "skipped") { return "skipped" as const; }
+
+    await trx
+      .insertInto("actors",)
+      .values({
+        id: userId,
+        actor_type: "user",
+        display_name: username,
+        user_id: userId,
+        owner_id: userId,
+        agent_type: "none",
+        settings: "{}",
+        import_spec: "raw",
+        data_source_format: "json",
+        data_raw: null,
+        format_version: 0,
+      },)
+      .execute();
+
+    if (smk) {
+      await ensureActorKey({ database: trx, actorId: userId, smk, },);
+    }
+    return "inserted" as const;
+  },);
 
   if (userResult === "skipped") {
     return errorResponse(request, HttpStatus.Conflict, "auth.usernameTaken", t, "Username already taken.",);
-  }
-
-  await database
-    .insertInto("actors",)
-    .values({
-      id: userId,
-      actor_type: "user",
-      display_name: username,
-      user_id: userId,
-      owner_id: userId,
-      agent_type: "none",
-      settings: "{}",
-      import_spec: "raw",
-      data_source_format: "json",
-      data_raw: null,
-      format_version: 0,
-    },)
-    .execute();
-
-  if (isEncryptionEnabled()) {
-    const smk = getSmk()!;
-    await ensureActorKey({ database, actorId: userId, smk, },);
   }
   return createSessionAndCookie(request, database, config, userId, UserRole.User, ip, t,);
 }
