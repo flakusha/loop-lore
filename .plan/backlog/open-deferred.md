@@ -1,31 +1,20 @@
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
-## Item-systems deferred follow-ups (from `epic-item-systems-unification` backend 10/15)
+## Item-systems deferred follow-ups — ✅ CLOSED 2026-08-18
 
-> Backend wire-* work landed 2026-08-12 (10/10 tickets complete + review pass). The following
-> were explicitly deferred and remain open — see `epic-item-systems-unification.md`
-> § Remaining Points for full details.
-
-| # | Deferred point | Blocks on | Where tracked |
-|---|----------------|-----------|---------------|
-| IS1 | Crafting station def/instance CRUD + `GET stations` route | `StationsService` (`TASK-complete-crafting-system-services`) | `TASK-wire-crafting-routes.md` |
-| IS2 | Crafting attempt execution (`POST /craft`: consume materials → output, success/skill/level checks) | `CraftingProcessService` | `TASK-wire-crafting-routes.md` |
-| IS3 | Crafting orders placed/fulfilled via HTTP (+ payment) | `CraftingProcessService` + TradeService (payment primitive exists) | `TASK-wire-crafting-routes.md`, `TASK-implement-trade.md` |
-| IS4 | Trade offer/accept/cancel lifecycle (persistent pending exchanges) | — | `TASK-implement-trade.md` |
-| IS5 | NPC trading (sell to NPC, buy from NPC inventory) | `TASK-npc-inventory-frontend` | `TASK-implement-trade.md` |
-| IS6 | Trade history queryable | — | `TASK-implement-trade.md` |
-| IS7 | Combat-action equipment usage + durability degradation in combat | — | `TASK-battle-item-integration.md` |
+The IS1–IS7 deferrals (crafting stations/execution/orders, trade lifecycle, NPC trading,
+trade history, combat equipment durability) all shipped in the A8 unwired close-out
+(`49ee5c1a`, routes mounted in `src/app/register-plugins.ts`). History:
+`open-closed.md` § Dead / unwired + `../open-debt.md`.
 
 ## Hardening / deferred clusters
 
 | # | Item                                                                                                                                                                         | Status                                                    |
 | - | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
-| 1 | AUX M6 telemetry (tokens/latency per call)                                                                                                                                   | ✅ Done (2026-08-18) — `aux.call` events + `GET /api/admin/telemetry/aux` + latencyMs fix |
-| 2 | World timeline §5.3 forward-event steering + §5.4 cross-story convergence                                                                                                    | 🟡 Greenfield (cluster B)                                 |
-| 3 | Avatar-gallery visibility inheritance                                                                                                                                        | ✅ done (G6)                   |
+| 2 | World timeline §5.3 forward-event steering + §5.4 cross-story convergence | 🟡 Service layer done 2026-09-10 (`event-steering.ts`); branching UI + `loreSection` injection open — `TASK-timeline-branching-ui.md` |
 | 4 | External music linking UI                                                                                                                                                    | 🟡 Open                                                   |
-| 5 | Party join/leave with VN narration                                                                                                                                           | 🟡 Open                                                   |
+| 5 | Party join/leave with VN narration | 🟡 Phase 1 shipped 2026-08-19; Phases 3–4 (split/reunite + VN choice cards) open — `TASK-travel-party-migration.md` |
 | 6 | Authoring/creation ownership indicators                                                                                                                                      | 🟡 Open                                                   |
 | 7 | MFA (TOTP) + `/api/sessions`                                                                                                                                                 | 🔄 Re-planned 2026-09-02 (`epic-auth-channel-provisioning.md` + `matrix-authentication-channels.md`); impl still P6+ until human triage                          |
 | 8 | Plugin ecosystem / three-tier memory / artifact / ComfyUI / provider ecosystem / RAG / social hub / decentralization / impersonation / 3D views / model-comparison reactions | ⏸ Deferred P6+ (see `epics/`)                             |
@@ -35,32 +24,10 @@
 > G39 (quiet hours), G40 (keyphrase recall) as 0.1.0 Quick Wins** — pulled from P6-E to
 > `../priority-release-010.md` § 0.1.0 Quick Wins items 13–14 (`TASK-proactive-messaging`,
 > `TASK-quiet-hours`, `TASK-keyphrase-recall`). Not deferred here.
-
-## Recent bug clusters (filed 2026-09-03)
-
-### Config schema + DevEx bug cluster
-
-| Git issue | Type | Severity | Problem | Where |
-| --------- | ---- | -------- | ------- | ----- |
-| `2d7a60c` | BUG | Medium | Config schema emitter missing top-level sections | `src/config/schema` |
-| `8f17329` | BUG | Medium | Config schema defaults leak absolute paths (resolved in `2f5c5f17`, needs verification) | `src/config/schema` |
-| `94675a8` | BUG | Medium | size-strict pre-existing dev drift | `check:size` gate |
-| `508a7ea` | BUG | Medium | worktree finalize must hard-fail on non-mergeable/multi-merge dev state | `scripts/worktree/` |
-
-**Status**: config-schema-emitter fix landed (`2f5c5f17`); size-strict drift tracked; worktree finalize hardening needed. → `open-build-integrity.md`
-
-### Audit follow-up cluster (8 tickets)
-
-| Git issue | Severity | Problem |
-| --------- | -------- | ------- |
-| `864a2bc` | NIT-1 | Check report `name` field dropped after ratchet-perf changes |
-| `0391ad6` | NIT-1 | `safeDecompress` maxRatio silently raised 10× without regression test |
-| `0735878` | LOW | DI fast path (4-arg call) untested in resolveUserIdFromRequest |
-| `4636043` | NIT-1 | `templates.ts` at 190L convention ceiling |
-| `1448001` | NIT-2 | `.catch()` path of triggerAutoGeneration not isolated |
-| `6caa51a` | NIT-2 | Secondary chat-ownership check in reuniteChats untested |
-| `06d25f6` | LOW | Proposed removal of `reapStale(): boolean` as dead-code pattern |
-
-| `3afdeb2` | NIT-1 | Chat-swipe-index-race test uses Promise.all (JS-thread serial, no real concurrency) |
-**Status**: all 8 filed as git issues + `.plan/tickets/TASK-audit-follow-up-*` files. → `open-debt.md` § Audit Follow-up Cluster
+>
+> **Closed clusters dropped 2026-09-26** — the 2026-09-03 config-schema / DevEx bug cluster
+> (`2d7a60c`, `8f17329`, `94675a8`, `508a7ea`; all landed or resolved on their tickets) and
+> the 8-ticket audit follow-up cluster (resolved 2026-09-10). Open size-gate work lives in
+> `TASK-size-strict-debt`, `TASK-frontend-size-gate`, `TASK-promote-size-check-to-ci` and
+> `../priority-release-010.md`.
 

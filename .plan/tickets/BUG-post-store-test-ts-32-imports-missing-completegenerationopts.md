@@ -35,7 +35,7 @@ The runtime function `completeGeneration` lives in `lifecycle.ts`; the `Complete
 
 `bunx tsc --noEmit -p tsconfig.backend.json` no longer flags this file.
 
-Bucket X close-out: `.plan/backlog/bucket-x-build-integrity-close-out-2026-09-03.md`.
+Bucket X close-out history: `.plan/backlog/open-closed.md` (section Retired 2026-09-18); the standalone close-out doc was pruned 2026-09-26.
 
 git issue: d660ce1
 

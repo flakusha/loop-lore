@@ -17,7 +17,7 @@ tracking: `epic-release-010.md`.
 - **Gate C** — VN, chat, assistant+tool calling, GM flows, GM-guided story, auth/access,
   gallery usable. **Complete — all core + GM-guided story shipped to `dev` (2026-08-14)**.
 - **Gate D** — P3–P5 0.1.0 value tiers operational; P6+ non-blocking.
-- **`bun run check` gate green (2026-08-14)** — lint-ts closed; dprint + md-lint green. Gate has since regressed (size-strict + schema-manifest episodes) — see Build Integrity Cluster + size-strict ceiling below; must be green again before A9.
+- **`bun run check` gate green (2026-08-14)** — lint-ts closed; dprint + md-lint green. Gate has since regressed (size-strict + schema-manifest episodes) — see the size-strict ceiling below; the build-integrity cluster closed 2026-09-03 and is no longer part of this picture. Gate must be green again before A9.
 - **e2e browser suite stable ✅ (2026-08-14)** — `test:e2e:browser` green across two
   consecutive runs (`e2e-stabilization` worktree: raised setup budgets, page-load
   timeouts, `ctx?.close()` guard).
