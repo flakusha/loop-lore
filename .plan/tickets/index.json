@@ -2901,7 +2901,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-governance-429-responses-missing-ratelimit-retry-after-heade.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-GOVERNANCE-429S-DOUBLE-COUNTED-IN-TELEMETRY": {
     "hash": "ba9949e",
@@ -2914,7 +2914,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-governance-429s-double-counted-in-telemetry.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-GPG-UNLOCK-WARM-NEVER-POPULATED-AGENT-CACHE-ASSERTGPGUNLOCKE": {
     "hash": "d121328",
@@ -4484,7 +4484,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-rate-limit-in-memory-store-never-evicts-idle-keys.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-RATE-LIMIT-POLICIES-STARVE-NORMAL-CHAT-TRAFFIC-WITH-429S": {
     "hash": "07332c9",
@@ -4497,7 +4497,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-rate-limit-policies-starve-normal-chat-traffic-with-429s.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-RATE-LIMIT-SLIDING-WINDOW-EXPIRY-USES-CUTOFF-OFF-BY-ONE-RETA": {
     "hash": "70472f7",
