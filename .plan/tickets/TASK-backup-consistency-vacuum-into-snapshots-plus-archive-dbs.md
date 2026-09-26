@@ -9,12 +9,12 @@
 **Epic:** epic-db-growth-tiered-storage
 **Tags:** database, backup
 
-## Summary
+**Summary:** Replace raw file-copy backup with VACUUM INTO consistent snapshots (no WAL dependence); --archive flag covers archive DBs; fully checkpoint WAL before copy; extend validate-backup-restore.ts with row-count verification.
 
-Replace raw file-copy backup with VACUUM INTO consistent snapshots (no WAL dependence); --archive flag covers archive DBs; fully checkpoint WAL before copy; extend validate-backup-restore.ts with row-count verification. Acceptance: backup needs no WAL files; archive DBs included; row counts verified; check green.
+**Context:** scripts/backup-sqlite.ts copies DB + WAL + SHM sidecars without checkpointing and covers only the single hot DB; archive DBs from the tiered-storage phases need consistent snapshotting in the same chain.
 
-## Acceptance Criteria
+**Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [ ] Backup produces consistent snapshots without needing WAL files; archive DBs included.
+- [ ] validate-backup-restore.ts checks row counts, not just page integrity.
+- [ ] `bun run check` green.

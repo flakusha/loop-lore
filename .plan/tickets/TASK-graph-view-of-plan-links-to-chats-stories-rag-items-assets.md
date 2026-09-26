@@ -9,12 +9,12 @@
 **Epic:** epic-assistant-step-planning
 **Tags:** assistant, planning, graph
 
-## Summary
+**Summary:** Read-only SVG/DOM graph: nodes = plan items + 1-hop chats/stories/RAG docs/entities/assets via plan_links + asset_links + knowledge-graph relationships; 2-hop on demand; 200-node cap with paging (no O(n2) full render).
 
-Read-only SVG/DOM graph: nodes = plan items + 1-hop chats/stories/RAG docs/entities/assets via plan_links + asset_links + knowledge-graph relationships; 2-hop on demand; 200-node cap with paging (no O(n2) full render). Acceptance: 1-hop links render for a plan item; paging works; check green.
+**Context:** Interconnections between context RAG items, stories, chats, memories, and assets need visual representation; existing asset_links and knowledge-graph storage (TASK-rag-knowledge-graph, FEAT-memory-visualizer) are reused read-only, no canvas dependency.
 
-## Acceptance Criteria
+**Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [ ] 1-hop links render for a plan item to its chats/stories/RAG items/assets.
+- [ ] 200-node cap with "show more" paging (test).
+- [ ] `bun run check` green.
