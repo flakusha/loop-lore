@@ -5321,6 +5321,32 @@
     "status": "done",
     "git_issue": "f4ea054"
   },
+  "BUG-TEST-ASYNC-STORE-OFFLOAD-DIR-FIXED-PATH-RACE": {
+    "hash": "3cbb21e",
+    "git_issue": "3cbb21e",
+    "extid": "BUG-TEST-ASYNC-STORE-OFFLOAD-DIR-FIXED-PATH-RACE",
+    "type": "BUG",
+    "title": "# async-store tests share fixed OFFLOAD_DIR with runtime and concurrent tests",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-test-async-store-offload-dir-fixed-path-race.md",
+    "status": "open"
+  },
+  "BUG-TEST-E2E-ENV-DEFAULT-MISMATCH": {
+    "hash": "f511378",
+    "extid": "BUG-TEST-E2E-ENV-DEFAULT-MISMATCH",
+    "type": "BUG",
+    "title": "# e2e suite fails 29 tests with E2E_SAFEGUARD unset (canonical shape)",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-test-e2e-env-default-mismatch.md",
+    "status": "open",
+    "git_issue": "f511378"
+  },
   "BUG-TEST-RUN-ID-USES-DATE-NOW-COLLISION-RISK-UNDER-PARALLEL": {
     "hash": "f3941cb",
     "git_issue": "f3941cb",
@@ -19430,6 +19456,32 @@
     "status": "done",
     "git_issue": "18c63eb"
   },
+  "TASK-ASYNC-STORE-RETENTION-CAP": {
+    "hash": "35cb967",
+    "extid": "TASK-ASYNC-STORE-RETENTION-CAP",
+    "type": "TASK",
+    "title": "# async-store retention: cap OFFLOAD_DIR by age + bytes",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-async-store-retention-cap.md",
+    "status": "open",
+    "git_issue": "35cb967"
+  },
+  "TASK-ASYNC-STORE-TESTS-PER-TEST-TMPDIR": {
+    "hash": "968fd6b",
+    "git_issue": "968fd6b",
+    "extid": "TASK-ASYNC-STORE-TESTS-PER-TEST-TMPDIR",
+    "type": "TASK",
+    "title": "# async-store tests use per-test OFFLOAD_DIR + deterministic teardown",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-async-store-tests-per-test-tmpdir.md",
+    "status": "open"
+  },
   "TASK-ATTACHMENT-MODERATION-PIPELINE": {
     "hash": "d612f4a",
     "git_issue": "d612f4a",
@@ -27705,6 +27757,19 @@
     "git_issue": "7a1b009",
     "status": "open"
   },
+  "TASK-GIWT-ISSUES-GAINS-STATE-OPEN-CLOSED-ALL-FILTER": {
+    "hash": "4ab6fbe",
+    "git_issue": "4ab6fbe",
+    "extid": "TASK-GIWT-ISSUES-GAINS-STATE-OPEN-CLOSED-ALL-FILTER",
+    "type": "TASK",
+    "title": "giwt issues gains --state open|closed|all filter",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-giwt-issues-gains-state-open-closed-all-filter.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-GIWT-MIGRATION-OPEN-ITEMS": {
     "hash": "524ebfb",
     "extid": "TASK-GIWT-MIGRATION-OPEN-ITEMS",
@@ -27717,6 +27782,19 @@
     "source": ".plan/tickets/TASK-giwt-migration-open-items.md",
     "status": "⬜ Not Started",
     "git_issue": "524ebfb"
+  },
+  "TASK-GIWT-SHOW-STATE-RESOLVE-PLAN-TICKETS-FILENAME-SLUGS": {
+    "hash": "9966e2a",
+    "git_issue": "9966e2a",
+    "extid": "TASK-GIWT-SHOW-STATE-RESOLVE-PLAN-TICKETS-FILENAME-SLUGS",
+    "type": "TASK",
+    "title": "giwt show/state resolve .plan/tickets filename slugs",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-giwt-show-state-resolve-plan-tickets-filename-slugs.md",
+    "status": "⬜ Not Started"
   },
   "TASK-GLOBAL-GENERATION-PAUSE-KILL-SWITCH": {
     "hash": "a4151b4",
@@ -29108,6 +29186,19 @@
     "source": ".plan/tickets/TASK-join-flow-mechanics.md",
     "status": "open",
     "git_issue": "0dc70a4"
+  },
+  "TASK-JSCPD-RATCHET-PERSISTENT-BASELINE": {
+    "hash": "28444bc",
+    "extid": "TASK-JSCPD-RATCHET-PERSISTENT-BASELINE",
+    "type": "TASK",
+    "title": "jscpd ratchet: persist baseline, gate on rising clones/dup-%",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-jscpd-ratchet-persistent-baseline.md",
+    "status": "⬜ Not Started",
+    "git_issue": "28444bc"
   },
   "TASK-JSDOC-COVERAGE-CLEANUP-PUBLIC-EXPORTS": {
     "hash": "8030bc0",
@@ -37256,6 +37347,19 @@
     "source": ".plan/tickets/TASK-ticket-epic-link-backfill.md",
     "status": "open"
   },
+  "TASK-TICKET-STATUS-ENUM-AND-MIGRATION": {
+    "hash": "5af9ef9",
+    "extid": "TASK-TICKET-STATUS-ENUM-AND-MIGRATION",
+    "type": "TASK",
+    "title": "Ticket **Status:** enum + migration of 302 distinct values",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-ticket-status-enum-and-migration.md",
+    "status": "⬜ Not Started",
+    "git_issue": "5af9ef9"
+  },
   "TASK-TIER-1-OPENAI-COMPATIBLE-PLATFORM-CATALOG": {
     "hash": "d0ba5cb",
     "extid": "TASK-TIER-1-OPENAI-COMPATIBLE-PLATFORM-CATALOG",
@@ -37441,6 +37545,19 @@
     "source": ".plan/tickets/TASK-tls-configuration-audit-and-startup-validation.md",
     "git_issue": "124f1f7",
     "status": "open"
+  },
+  "TASK-TMP-JANITOR-AND-STALENESS-MARKERS": {
+    "hash": "f6100ba",
+    "extid": "TASK-TMP-JANITOR-AND-STALENESS-MARKERS",
+    "type": "TASK",
+    "title": ".tmp janitor gate + verified-at staleness markers",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-tmp-janitor-and-staleness-markers.md",
+    "status": "⬜ Not Started",
+    "git_issue": "f6100ba"
   },
   "TASK-TOOL-CALL-USER-TEXT-SANITIZATION": {
     "hash": "92adc57",
