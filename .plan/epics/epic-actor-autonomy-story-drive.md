@@ -93,6 +93,8 @@ Generation-level regulation (holds, concurrency semaphore, request-rate limits) 
 `epic-generation-flow-control.md`: the autonomy scheduler is a governed consumer of those
 controls, and the governor stacks actor-level budgets on top — the layers do not reimplement each other.
 
+The `autonomy_preferences` data schema (AutonomyProfile, D9) is owned by
+`epic-character-internal-traits.md`; this epic consumes it at runtime and does not redefine it.
 ## Docs-Gap Audit Remainders (2026-09-19)
 
 - [ ] [gap-audit E15] Per-agent/user budget caps UI + cost dashboards
