@@ -44,8 +44,8 @@ tiers (see `../priority.md`) · Gate C ✅ (complete — GM-guided story P2-Da d
 | File | Holds |
 | ---- | ----- |
 | [`open-inflight.md`](./open-inflight.md) | **In-flight / decision queue** — rows needing a finalize-vs-defer call (A9, C5, C7, D3, G2, X2) + draft-epic planning rows (R1, R2) + deferred pointers |
-| [`open-debt.md`](./open-debt.md) | **Debt** — dead/unwired code, schema drift / latent bugs, release hardening |
-| [`open-deferred.md`](./open-deferred.md) | **Deferred** — hardening / deferred clusters, migration-hygiene gate, pull-forward notes |
+| [`open-debt.md`](./open-debt.md) | **Debt** — dead/unwired code, migration hygiene, release hardening, closed-cluster record |
+| [`open-deferred.md`](./open-deferred.md) | **Deferred** — hardening / deferred clusters (stable row ids), pull-forward notes, dropped-cluster record |
 | [`open-untriaged.md`](./open-untriaged.md) | **Untriaged** — re-triaged 2026-09-10: Aug-25 waves closed out, current advisory orphans + new cluster suggestions (mesh/federation, VN sprites, RPG opt-in, coverage waivers, item-gen) |
 | [`open-closed.md`](./open-closed.md) | **Closed (reference)** — recent wiring log, security & access closed, resolved (moved off), preserved notes |
 | [`security-review-2026-08-25.md`](./security-review-2026-08-25.md) | **Security review plan** — auth/access surface findings (CRIT→LOW) + proposed fix tickets + next-review backlog (WS/RBAC/asset reviews done 2026-08-25) |

@@ -78,9 +78,11 @@ inheritance, `bun test src/story/` verification.
 - LLM `classifyIntent` wired (short-reply, 2026-08-05); rule `detectIntent` removed (see `../open-inflight.md`).
 - **Tool-call UI shipped 2026-08-12** — `messages.tool_calls` persisted (migration 037),
   returned by read API, rendered as collapsible blocks, live via `tool_call` SSE.
-- Open: command palette expansion (summarize/rewrite/translate), creation wizards,
-  `/commands` tiered access, assistant↔GM interface reconciliation, GM config type
-  authoring (human/hybrid).
+- Command palette hydrates from the live registry (`GET /api/commands`) —
+  `WIRE-assistant-command-palette-stale-static-list` ✅; text-tool verbs (improve /
+  rewrite / translate / summarize) ship as command buttons
+  (`src/frontend/alpine/chat-actions/command-buttons.ts`).
+- Open: GM config type authoring (human/hybrid).
 
 ### P2-E details — Auth & access
 
