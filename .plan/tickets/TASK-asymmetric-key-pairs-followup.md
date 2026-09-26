@@ -126,3 +126,16 @@ First slice landed in commits `f534c4d3` + `a2f90efa` + `1108b063` (branch
 - `docs/spec/encryption-workflow.md` — current workflow spec
 
 git issue: 5d9636b
+
+
+## Verification 2026-09-26
+
+Verdict: **still-open-expanded** (umbrella; foundation + Phase A–D confirmed in-tree; 1 of 4 children done).
+
+Src checked:
+- Foundation present: `actor_e2e_pubkeys` table + indexes (`001_init.ts:829-986`, `schema-core.ts:319`, `schema-manifest.ts:1003`), `src/crypto/e2e/key-pairs.ts` (ECDH P-256, JWK, HKDF→AES-256-GCM), `server-registry.ts` (register/get-active/list/revoke), `src/routes/actor-e2e-pubkeys.ts` (`GET/PUT/DELETE /api/actors/:id/e2e-public-key`), `src/frontend/e2e/key-store.ts` (localStorage per-actor JWK), key-pairs + registry tests green-shape.
+- Beyond foundation: `src/crypto/e2e/double-ratchet.ts` + `ratchet.ts` (`nextRatchetStep`, tested), `src/frontend/e2e/encrypt-message.ts` + `decrypt-message.ts` (receiver decrypt via `loadOrCreateKeyPair` + `deriveSharedBytes` + ratchet step), `group-encrypt-message.ts`, `e2e-session`/`e2e-roundtrip` integration tests — i.e. receiver-side wiring (Phase E scope) has substantial code in-tree.
+- Children (all exist): `TASK-e2ee-open-bugs.md` (done), `TASK-e2ee-receiver-wiring.md` (open), `TASK-e2ee-double-ratchet.md` (open), `TASK-e2ee-crypto-ui.md` (open, blocked on arch clarification).
+
+Refreshed deltas:
+- No checkboxes live here (by design) — verify each child against the in-tree receiver/ratchet code before closing: open-bugs fixes vs `dh-ratchet.ts` semantics, receiver-wiring vs `decrypt-message.ts` hydration gaps (chain-state, skipped keys, IndexedDB hardening), double-ratchet vs X3DH/out-of-order/forward-secrecy window, crypto-ui vs tier dropdown/recovery/consent. Keep this parent open until all four land + external audit (risk section stands).
