@@ -17994,7 +17994,7 @@
     "status": "open"
   },
   "TASK-AGGREGATE-BROWSER-LOOP-NO-FAIL-FAST": {
-    "hash": "pending",
+    "hash": "41b26ce",
     "extid": "TASK-AGGREGATE-BROWSER-LOOP-NO-FAIL-FAST",
     "type": "TASK",
     "title": "Browser test loop must aggregate, not fail-fast",
@@ -18003,7 +18003,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-aggregate-browser-loop-no-fail-fast.md",
-    "status": "⬜ Not Started"
+    "status": "⬜ Not Started",
+    "git_issue": "41b26ce"
   },
   "TASK-AI-DIRECTOR-ARC": {
     "hash": "92fbd74",
@@ -18110,7 +18111,7 @@
     "git_issue": "11a3988"
   },
   "TASK-ALIGN-INNERHTML-BANNED-PATTERN-GATE-SEMANTICS": {
-    "hash": "pending",
+    "hash": "08d2d8f",
     "extid": "TASK-ALIGN-INNERHTML-BANNED-PATTERN-GATE-SEMANTICS",
     "type": "TASK",
     "title": "Align innerHTML + banned-pattern gate semantics",
@@ -18119,7 +18120,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-align-innerhtml-banned-pattern-gate-semantics.md",
-    "status": "⬜ Not Started"
+    "status": "⬜ Not Started",
+    "git_issue": "08d2d8f"
   },
   "TASK-ALIGNMENT-SPEECH-SOCIAL-CONTEXT": {
     "hash": "3e045f4",
@@ -20348,7 +20350,7 @@
     "status": "done"
   },
   "TASK-BROWSER-SUITE-RELEASE-GATE-WIRING": {
-    "hash": "pending",
+    "hash": "6465282",
     "extid": "TASK-BROWSER-SUITE-RELEASE-GATE-WIRING",
     "type": "TASK",
     "title": "Browser suite must gate release artifacts",
@@ -20357,7 +20359,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-browser-suite-release-gate-wiring.md",
-    "status": "⬜ Not Started"
+    "status": "⬜ Not Started",
+    "git_issue": "6465282"
   },
   "TASK-BROWSER-TEST-FIXTURE-NO-MOCK-LLM-PROVIDER-STALE-FRONTEND-BUI": {
     "hash": "30d0e69",
@@ -24476,7 +24479,7 @@
     "status": "open"
   },
   "TASK-DELETE-SCENARIO-CATALOG-TOOLING": {
-    "hash": "pending",
+    "hash": "60449a6",
     "extid": "TASK-DELETE-SCENARIO-CATALOG-TOOLING",
     "type": "TASK",
     "title": "Delete unused, broken scenario-catalog tooling",
@@ -24485,7 +24488,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-delete-scenario-catalog-tooling.md",
-    "status": "⬜ Not Started"
+    "status": "⬜ Not Started",
+    "git_issue": "60449a6"
   },
   "TASK-DELETECHAT-RUNS-9-SEQUENTIAL-DELETES-WITHOUT-TRANSACTION-ORP": {
     "hash": "abc8205",
@@ -26404,7 +26408,7 @@
     "status": "⬜ Not Started"
   },
   "TASK-FOCUSED-STREAMING-HTMX-CONTRACT-BROWSER-TESTS": {
-    "hash": "pending",
+    "hash": "4358099",
     "extid": "TASK-FOCUSED-STREAMING-HTMX-CONTRACT-BROWSER-TESTS",
     "type": "TASK",
     "title": "Add focused streaming + HTMX contract browser tests",
@@ -26413,7 +26417,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-focused-streaming-htmx-contract-browser-tests.md",
-    "status": "⬜ Not Started"
+    "status": "⬜ Not Started",
+    "git_issue": "4358099"
   },
   "TASK-FORMAT-VERSION-MIGRATION": {
     "hash": "e705303",
@@ -29731,7 +29736,7 @@
     "status": "⬜ Not Started"
   },
   "TASK-MARKUPLINT-DIFF-SCOPED-TEMPLATE-GATE": {
-    "hash": "pending",
+    "hash": "0e067e7",
     "extid": "TASK-MARKUPLINT-DIFF-SCOPED-TEMPLATE-GATE",
     "type": "TASK",
     "title": "Invoke installed markuplint as a diff-scoped template gate",
@@ -29740,7 +29745,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-markuplint-diff-scoped-template-gate.md",
-    "status": "⬜ Not Started"
+    "status": "⬜ Not Started",
+    "git_issue": "0e067e7"
   },
   "TASK-MATH-ADVANTAGE-CANCEL-RULE": {
     "hash": "0820515",
@@ -34430,7 +34436,7 @@
     "status": "open"
   },
   "TASK-REMOVE-NOOP-OXLINT-CORRECTNESS-GATE": {
-    "hash": "pending",
+    "hash": "0493fc9",
     "extid": "TASK-REMOVE-NOOP-OXLINT-CORRECTNESS-GATE",
     "type": "TASK",
     "title": "Remove no-op oxlint (correctness) gate from runner registry",
@@ -34439,7 +34445,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-remove-noop-oxlint-correctness-gate.md",
-    "status": "⬜ Not Started"
+    "status": "⬜ Not Started",
+    "git_issue": "0493fc9"
   },
   "TASK-RENDER-PATH-RESOLVETRANSFORM-IN-CHAT-BUBBLES": {
     "hash": "4484e39",
@@ -34455,7 +34462,7 @@
     "status": "open"
   },
   "TASK-REPAIR-CHAT-NORMAL-STARTUP-REMOVE-TEST-BYPASS": {
-    "hash": "pending",
+    "hash": "242efba",
     "extid": "TASK-REPAIR-CHAT-NORMAL-STARTUP-REMOVE-TEST-BYPASS",
     "type": "TASK",
     "title": "Repair chat normal startup, remove browser test bypass",
@@ -34464,7 +34471,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-repair-chat-normal-startup-remove-test-bypass.md",
-    "status": "⬜ Not Started"
+    "status": "⬜ Not Started",
+    "git_issue": "242efba"
   },
   "TASK-REPETITION-HALLUCINATION-GUARDS": {
     "hash": "4cec862",
@@ -34883,7 +34891,7 @@
     "status": "open"
   },
   "TASK-RESPONSIVE-REAL-CLICK-CANARY": {
-    "hash": "pending",
+    "hash": "1beae3a",
     "extid": "TASK-RESPONSIVE-REAL-CLICK-CANARY",
     "type": "TASK",
     "title": "Add one real-click responsive canary at desktop + mobile widths",
@@ -34892,7 +34900,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-responsive-real-click-canary.md",
-    "status": "⬜ Not Started"
+    "status": "⬜ Not Started",
+    "git_issue": "1beae3a"
   },
   "TASK-RESTART-REQUIRED-INDICATOR-ON-SYSTEM-CONFIG-CHANGES": {
     "hash": "5e62e8c",
@@ -34908,7 +34917,7 @@
     "status": "⬜ Not Started"
   },
   "TASK-RETIRE-STALE-INTEGRATION-TESTING-TOOLS": {
-    "hash": "pending",
+    "hash": "7282dd8",
     "extid": "TASK-RETIRE-STALE-INTEGRATION-TESTING-TOOLS",
     "type": "TASK",
     "title": "Update or retire stale integration-testing-tools.md",
@@ -34917,7 +34926,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-retire-stale-integration-testing-tools.md",
-    "status": "⬜ Not Started"
+    "status": "⬜ Not Started",
+    "git_issue": "7282dd8"
   },
   "TASK-REWRITE-APPLY-WRITE-BACK-TO-TARGET-MESSAGE": {
     "hash": "0286f47",
@@ -36701,7 +36711,7 @@
     "status": "open"
   },
   "TASK-TEMPLATE-PREFLIGHT-PRODUCTION-RESOLVER-GATE": {
-    "hash": "pending",
+    "hash": "12a55a4",
     "extid": "TASK-TEMPLATE-PREFLIGHT-PRODUCTION-RESOLVER-GATE",
     "type": "TASK",
     "title": "Add production-resolver template preflight gate",
@@ -36710,7 +36720,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-template-preflight-production-resolver-gate.md",
-    "status": "⬜ Not Started"
+    "status": "⬜ Not Started",
+    "git_issue": "12a55a4"
   },
   "TASK-TEMPLATE-SYSTEM-UNIFIED-ARCHITECTURE": {
     "hash": "e8ee912",
