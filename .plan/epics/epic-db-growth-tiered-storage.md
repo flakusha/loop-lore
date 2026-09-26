@@ -14,7 +14,7 @@
 
 ## Summary
 
-As the single-file SQLite DB (`loop-lore.db`, 185 tables, WAL mode, `src/db/index.ts`) grows, hot tables (`messages`, `message_search_tokens`, `memory_embeddings`, `assets` metadata) dominate size and slow backups/checkpoints. Strategy is tiered storage, not live sharding: keep one writable hot DB; move cold rows to per-domain archive DB files; snapshot consistently; prune dense tables by policy. No ATTACH-in-hot-path, no multi-Kysely routing, no per-file encryption (bun:sqlite has no cipher extension) — those options were evaluated and rejected; see Design.
+As the single-file SQLite DB (`loop-lore.db`, WAL mode, `src/db/index.ts`) grows, hot tables (`messages`, `message_search_tokens`, `memory_embeddings`, `assets` metadata) dominate size and slow backups/checkpoints. Strategy is tiered storage, not live sharding: keep one writable hot DB; move cold rows to per-domain archive DB files; snapshot consistently; prune dense tables by policy. No ATTACH-in-hot-path, no multi-Kysely routing, no per-file encryption (bun:sqlite has no cipher extension) — those options were evaluated and rejected; see Design.
 
 ## Scope
 
@@ -34,7 +34,7 @@ As the single-file SQLite DB (`loop-lore.db`, 185 tables, WAL mode, `src/db/inde
 ## Design
 
 ```
-Research: scout report DbSplittingProbe (2026-09-26) — current wiring (src/db/index.ts, migrate.ts, 18 migrations 001-018, scripts/backup-sqlite.ts), 6 options evaluated (ATTACH / domain-sharding / VACUUM-archive / read-replica / per-file-crypto / cross-DB FTS), growth ranking (messages > search_tokens > assets > memory_embeddings > logs/counters > telemetry-bounded).
+Research: scout report DbSplittingProbe (2026-09-26) — current wiring (src/db/index.ts, migrate.ts, append-only migrations, scripts/backup-sqlite.ts), 6 options evaluated (ATTACH / domain-sharding / VACUUM-archive / read-replica / per-file-crypto / cross-DB FTS), growth ranking (messages > search_tokens > assets > memory_embeddings > logs/counters > telemetry-bounded).
 ```
 
 - Phase order: archival → asset lifecycle → backup consistency → embedding pruning → telemetry partitions → read replica. Each phase ships independently; replica last and only on measured need.
@@ -50,3 +50,6 @@ Research: scout report DbSplittingProbe (2026-09-26) — current wiring (src/db/
 ## Dependencies
 
 - None blocking. Builds on `src/db/migrate.ts` append-only migrations and `scripts/backup-sqlite.ts`.
+
+
+git issue: 29223be
