@@ -739,6 +739,16 @@
       "source": ".plan/tickets/BUG-assets-serve-servefile-omits-x-content-type-options-nosniff-.md"
     }
   ],
+  "src/assets/serve-handlers.coverage.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-test-async-store-offload-dir-fixed-path-race.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-async-store-tests-per-test-tmpdir.md"
+    }
+  ],
   "src/assets/serve-handlers.ts": [
     {
       "kind": "ticket",
@@ -3221,6 +3231,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-in-progress-status-endpoint-for-long-running-requ.md"
+    }
+  ],
+  "src/async/retention.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-async-store-retention-cap.md"
     }
   ],
   "src/async/spill.test.ts": [
@@ -7025,7 +7041,23 @@
       "source": ".plan/tickets/TASK-giwt-issues-gains-state-open-closed-all-filter.md"
     }
   ],
+  "src/commands/resolver.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-giwt-show-state-resolve-plan-tickets-filename-slugs.md"
+    }
+  ],
   "src/commands/show.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-giwt-issues-gains-state-open-closed-all-filter.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-giwt-show-state-resolve-plan-tickets-filename-slugs.md"
+    }
+  ],
+  "src/commands/state.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-giwt-show-state-resolve-plan-tickets-filename-slugs.md"

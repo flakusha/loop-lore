@@ -7,8 +7,13 @@
 **Priority:** medium
 **Effort:** Medium
 **Type:** Task
+**Summary:** Add a pure `retainSpillDir({ maxBytes, maxAgeDays })` helper to `src/async/spill.ts` and wire it into the offload daemon.
+**Context:** `OFFLOAD_DIR` has no delete path; only `runOffloadPass` Phase 3 unlinks files when their parent row is `expired`, so orphans and fixtures accumulate (`.tmp/async-store/` = 279 files / 18 MB, oldest 2026-09-10).
+**Acceptance Criteria:** [see body — pure helper, daemon integration, config knobs with sensible defaults, idempotent]
 
-**Summary:** The runtime async-store spill directory (`OFFLOAD_DIR` = `.tmp/async-store/`, exported from `src/async/spill.ts:12`) has **no delete path** — only a write path (`spill()`, `src/async/spill.ts:24-33`). Phase 3 of `runOffloadPass` (`src/async/offload.ts`) unlinks a file when its parent `request_results` row transitions to `expired`, but that depends on the eviction sweep actually firing and on rows making it to the `expired` state; nothing reaps orphans, fixtures, or rows that linger past TTL. Result: the directory grows monotonically across runs.
+## Summary
+
+The runtime async-store spill directory (`OFFLOAD_DIR` = `.tmp/async-store/`, exported from `src/async/spill.ts:12`) has **no delete path** — only a write path (`spill()`, `src/async/spill.ts:24-33`). Phase 3 of `runOffloadPass` (`src/async/offload.ts`) unlinks a file when its parent `request_results` row transitions to `expired`, but that depends on the eviction sweep actually firing and on rows making it to the `expired` state; nothing reaps orphans, fixtures, or rows that linger past TTL. Result: the directory grows monotonically across runs.
 
 Add a pure `retainSpillDir({ maxBytes, maxAgeDays })` helper in `src/async/spill.ts`, expose config (`config.asyncStore.retention = { maxBytes, maxAgeDays }`, defaults `100 MB` / `7 days`), and wire it into the existing daemon loop (`startOffloadDaemon` -> `runOffloadPass` path). The helper must be callable from any scheduler (the in-tree `setInterval` daemon **and** the cron-shaped replacement ticket `TASK-adopt-elysiajs-cron-for-scheduled-tasks.md`), so it is defined as a pure function with no scheduler coupling.
 
@@ -91,8 +96,38 @@ Add a pure `retainSpillDir({ maxBytes, maxAgeDays })` helper in `src/async/spill
    No `src/config/schema/` mirror needed for v1 (the type is the live schema); add a one-line comment in `src/config/schema/index.ts` noting the live type lives at `src/async/store.ts:73` so future mirroring is straightforward.
 3. **Wire into daemon** — extend `startOffloadDaemon` (`src/async/offload.ts:172-228`) to accept the new config and run `retainSpillDir` **after** `runOffloadPass` completes each tick. The phase ordering matters: phase 1 of `runOffloadPass` may have just spilled a new file, so retention MUST run after it. Schedule: same interval (`DEFAULT_INTERVAL_MS = 5 min`) as offload; on first tick after startup, run a retention pass immediately so a fresh process doesn't inherit months of leftovers. The interval field is reused — no new scheduler needed.
 4. **Wire into cron ticket** — `TASK-adopt-elysiajs-cron-for-scheduled-tasks.md` lists "telemetry retention enforcement" as one of the cron jobs to migrate. This ticket does not depend on that one landing first: `retainSpillDir` is the pure helper; the cron ticket can wire it as a cron expression once `@elysiajs/cron` lands, and the daemon wiring here keeps retention running in the meantime.
-**Context:** Filed via giwt template lacking required bold sections; normalized 2026-09-26 during the mock-isolation migration finalize.
-**Acceptance Criteria:**
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Verification executed green
+
+## Acceptance Criteria
+
+- [ ] `src/async/spill.ts` exports `retainSpillDir(opts: RetainOpts): RetainResult` per the signature above.
+- [ ] `AsyncStoreConfig` extended with `retention?: { maxBytes?: number; maxAgeDays?: number }`; defaults `100 MB` / `7 days`.
+- [ ] `startOffloadDaemon` runs `retainSpillDir` after each `runOffloadPass` tick, using the resolved config defaults. A startup-time pass runs once before the first interval elapses.
+- [ ] New test file `src/async/retention.test.ts` with at least:
+  - **Fixture A:** under cap (1 file, maxBytes=1 MB, maxAgeDays=7) -> `{ bytesBefore: bytesAfter, droppedByAge: 0, droppedByParentGone: 0, droppedByBytes: 0 }`.
+  - **Fixture B:** over bytes (3 files of `mtimeMs` A < B < C, maxBytes = size(B), maxAgeDays=0, no DB) -> C survives, A+B dropped, `droppedByBytes == 2`.
+  - **Fixture C:** parent gone (1 file, DB returns no row for its id) -> dropped, `droppedByParentGone == 1`.
+  - **Fixture D:** over age (1 file with mtime 30 days ago, maxAgeDays=7, no DB) -> dropped, `droppedByAge == 1`.
+  - Fixtures MUST redirect `OFFLOAD_DIR` via per-test tmp dirs (`os.tmpdir()/retain-<uuid>`) — do NOT write into the repo `.tmp/async-store`.
+- [ ] `bun run test:unit` green; `E2E_SAFEGUARD=1 bun test --parallel=4 --isolate tests/e2e/` still 277 pass / 0 fail.
+- [ ] Re-run `.tmp/scratchpad-audit/e2e-matrix2.sh` post-fix: spill-dir delta per arm must be `0` for the passing arm (B). The failing arm (A) is expected to leak 1-2 files only because D-01 (separate ticket) lets the rate-limit guard trip before cleanup — flagged as a follow-up measurement, not a blocker.
+
+## Cross-references
+
+- `.tmp/scratchpad-pattern-analysis-2026-09-26.md` §3 D-04 (this ticket), §2 P-03 (the runtime spill dir as test scratch dir), §6 disposition row "D-04 -> L-3".
+- `.tmp/scratchpad-audit/e2e-matrix2.txt` (leak-rate evidence; both arms).
+- `TASK-adopt-elysiajs-cron-for-scheduled-tasks.md` line 17 ("telemetry retention enforcement" — the cron-shaped migration that will also call `retainSpillDir` once `@elysiajs/cron` lands).
+- `src/async/spill.ts:12` (the dir), `:24-33` (the only write), `:63-75` (the existing byte counter `retainSpillDir` extends).
+- `src/async/offload.ts:172-228` (the daemon wiring point), `:68-163` (`runOffloadPass` — phase 3 at `:124-133` is the only existing delete path and depends on `status = 'expired'`).
+- `src/async/store.ts:73-80` (`AsyncStoreConfig` schema to extend).
+- Epic: `epic-async-request-response-result-store` (open in `.plan/epics/`).
+
+## Notes
+
+- **Resource contract** — same fixed-path race as D-03 / the BUG ticket about test-fixtures writing into the production spill dir: `retainSpillDir` MUST default to the production `OFFLOAD_DIR` so the live daemon keeps running, but the test file (`src/async/retention.test.ts`) MUST NOT write into the repo `.tmp/async-store`. Tests redirect `OFFLOAD_DIR` via a per-test tmp dir (or via an env override — pick one in the test file and document it). The two tickets' fixes are independent: this one adds retention; the D-03 ticket isolates test fixtures. Do not regress the BUG ticket while landing this one.
+- **Why pure, not daemon-coupled** — `retainSpillDir` takes an optional `database` and an optional `now`, performs no I/O outside `OFFLOAD_DIR`, and never throws. That makes it directly callable from cron (`@elysiajs/cron` task) and from the existing daemon loop without forcing one to wait for the other.
+- **Phase A is opportunistic, not strict** — the parent-row lookup is best-effort. If `request_results` is dropped mid-lookup we ignore it (don't fail the whole pass). The age and bytes caps are the authoritative reapers.
+- **Phase ordering A -> B -> C is deliberate** — dropping rows whose parent is gone first is the cheapest correctness fix (it removes orphan files from crashed/killed tests). Age comes next (cheap; one stat per file). Bytes is the most expensive (sort + iterate) and runs only when needed.
+- **No expansion of `offloadDiskBytes`** — that function reports bytes; `retainSpillDir` is the mutator. Keeping them split keeps the read-only seam testable and the mutator side-effecting but explicit.
+- **ponytail: default retention thresholds are conservative** — `100 MB` / `7 days` is what production-sized async-store churn looks like under the matrix. Tighten in a follow-up ticket if real-traffic numbers say so; the helper takes plain numbers, so the only change is the default constants.
+
+git issue: 35cb967
