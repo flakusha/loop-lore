@@ -95,7 +95,9 @@ describe("views/worlds", () => {
       const html = await (await serveWorldDetailContent("w-mine", db, "owner", "user",)).text();
       expect(html,).toContain("Village",);
       expect(html,).toContain("World Template",);
-      expect(html,).toContain('"templateIsDefault":true',);
+      // The locations JSON is HTML-escaped into the x-data attribute, so the
+      // JSON quotes arrive as &quot; in the served markup.
+      expect(html,).toContain("&quot;templateIsDefault&quot;:true",);
     });
 
     test("marks location with non-default template and includes features json", async () => {
@@ -109,8 +111,8 @@ describe("views/worlds", () => {
       },);
 
       const html = await (await serveWorldDetailContent("w-theirs", db, "admin", "admin",)).text();
-      expect(html,).toContain('"templateName":"Quest Template"',);
-      expect(html,).toContain('"templateIsDefault":false',);
+      expect(html,).toContain("&quot;templateName&quot;:&quot;Quest Template&quot;",);
+      expect(html,).toContain("&quot;templateIsDefault&quot;:false",);
       expect(html,).toContain("combat",);
       expect(html,).toContain("loot",);
     });

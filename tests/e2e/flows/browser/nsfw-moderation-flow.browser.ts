@@ -6,7 +6,7 @@
  *
  * Verifies the /views/nsfw-moderation audit view under auth.required=true:
  *  - admin user can load the view (header + consent audit table render)
- *  - non-admin user is redirected away by the admin view guard
+ *  - non-admin user receives 403 and no moderation content
  */
 
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
@@ -64,20 +64,19 @@ describe("NSFW moderation view E2E", () => {
     }
   }, 60_000,);
 
-  test("non-admin is redirected away from the nsfw moderation view", async () => {
+  test("non-admin receives 403 and no moderation view", async () => {
     const page = await ctx.openPage();
     await login(page, SEED.user.username, SEED.user.password,);
     const errors = trackPageErrors(page, {
       allowlist: [/401 \(Unauthorized\)/, /Failed to load resource/,],
     },);
     try {
-      await page.goto(`${ctx.url}/views/nsfw-moderation`, {
+      const response = await page.goto(`${ctx.url}/views/nsfw-moderation`, {
         waitUntil: "domcontentloaded",
         timeout: 30_000,
       },);
-      await page.waitForURL((url,) => url.pathname !== "/views/nsfw-moderation", { timeout: 30_000, },);
-      const path = new URL(page.url(),).pathname;
-      expect(path,).not.toBe("/views/nsfw-moderation",);
+      expect(response?.status(),).toBe(403,);
+      expect(await page.locator("[data-testid='nsfw-moderation-header']",).count(),).toBe(0,);
     } finally {
       errors.assert();
       errors.detach();

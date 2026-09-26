@@ -178,7 +178,9 @@ describe("VN settings block in chat-settings modal", () => {
         await typewriter.uncheck();
 
         const slider = page.locator("[data-testid='vn-typewriter-speed']",);
-        // x-show="false" parents are still in the DOM; use isVisible
+        // x-show="false" parents are still in the DOM; use isVisible. The
+        // binding flushes on Alpine's next tick, so wait for the flip first.
+        await slider.waitFor({ state: "hidden", timeout: 5_000, },);
         const visible = await slider.isVisible();
         expect(visible,).toBe(false,);
       } finally {

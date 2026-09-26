@@ -113,6 +113,7 @@ describe("Creation flows E2E", () => {
     test("adds a location to a created world that persists to DB", async () => {
       const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
+
       try {
         // Create a world owned by the solo user via the UI modal (the app
         // redirects to its edit page on success where we add the location).
@@ -130,10 +131,14 @@ describe("Creation flows E2E", () => {
           .executeTakeFirst();
         expect(worldRow,).not.toBeNull();
 
-        // Navigate to its edit page and wait for the world to load (tab bar).
+        // The create form ALREADY redirects to the new world's edit page
+        // (createWorld() → location.assign, asserted by the create test).
+        // Wait for that redirect instead of re-navigating: a second goto() to
+        // the URL the page is already navigating to aborts the in-flight
+        // client-side redirect (net::ERR_ABORTED).
+        await page.waitForURL((url,) => url.pathname === `/worlds/${worldRow!.id}/edit`, { timeout: 30_000, },);
         // Two .world-edit-tabs elements exist (primary bar + NPC sub-tabs);
         // scope to the first — the primary tab bar.
-        await page.goto(`${ctx.url}/worlds/${worldRow!.id}/edit`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
         await page.locator(".world-edit-tabs",).first().waitFor({ state: "visible", timeout: 30_000, },);
 
         // Switch to the Locations tab.

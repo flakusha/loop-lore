@@ -36,7 +36,7 @@ bun run check && bun test src/
 #   only for modules the diff touches). `giwt finalize` Step 2 passes
 #   this automatically; static gates always run project-wide.
 # - `bun run check --gates <csv>` / `--skip-gates <csv>` runs a subset of
-#   the 21 gates. Names are matched verbatim against the runner's check
+#   the registered gates. Names are matched verbatim against the runner's check
 #   registry; unknown names exit 2 and list available gates. `--gates`
 #   and `--skip-gates` are mutually exclusive. `giwt finalize`
 #   accepts `--gates` / `--skip-gates` and forwards them to Step 2.
@@ -244,6 +244,12 @@ Each `bun run check` writes `.tmp/check-report.json` atomically with provenance
 stale w.r.t. the tree's current HEAD; treat a stale or failed report as
 "unverified". `bun run check:report-ls` (or `giwt report`)
 aggregates report status across all worktrees.
+
+A gate that could not be evaluated is reported as **skipped**, not failed:
+`summary.skipped` and the per-check `skipped` flag carry the count, and
+`--report-ls` renders those rows as `pass (N skipped)`. The plan gates skip
+when giwt cannot reach the git issue CLI — that state is never a pass and never
+a red gate with the phantom findings giwt emits in that mode.
 
 ### Check report stdout contract (programmatic consumption)
 

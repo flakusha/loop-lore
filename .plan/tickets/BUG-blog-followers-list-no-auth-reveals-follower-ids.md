@@ -2,6 +2,7 @@
 hash: pending
 
 git issue: 5ccf305
+---
 
 **Summary:** `GET /api/blog/authors/:authorId/followers` is fully unauthenticated and leaks the complete follower-id list for any author.
 **Context:** `src/routes/blog/follows.ts` (followers handler); `src/rpg/blog/service/follows.ts` (`getFollowers`).

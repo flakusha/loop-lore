@@ -60,7 +60,7 @@ export function locationExplorerRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 
   return (
-    new Elysia({ name: "location-explorer", },)
+    new Elysia({ name: `location-explorer-${prefix}`, },)
       // ── Explore tree (all locations + states, no paging) ─
       .get(
         `${prefix}/worlds/:worldId/location-explorer`,

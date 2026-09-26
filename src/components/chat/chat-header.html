@@ -108,7 +108,7 @@
       class="btn-icon"
       x-bind:title="t('gallery.chatSettings')"
       x-bind:aria-label="t('gallery.chatSettings')"
-      @click="$store.ui.showChatSettings = true"
+      @click="document.dispatchEvent(new CustomEvent('open-chat-settings'))"
       x-show="$store.ui.hasActiveChat"
       data-testid="toggle-chat-settings"
     >
@@ -254,7 +254,7 @@
         <span class="context-label" x-text="`${percentage}%`"></span>
       </div>
     </div>
-    <div class="notif-bell" x-data="notificationsBell()" x-init="init()" x-show="unreadCount > 0">
+    <div class="notif-bell" x-data="notificationsBell()" x-show="unreadCount > 0">
       <button
         class="btn-icon"
         x-bind:title="t('chats.notifications')"

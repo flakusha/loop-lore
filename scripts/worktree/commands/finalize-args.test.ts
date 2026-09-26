@@ -67,13 +67,9 @@ describe("parseFinalizeArgs — --gates / --skip-gates forwarding", () => {
     expect(r.gatesFilter,).toBe("",);
   });
 
-  test("--gates with em-dash punctuation in name (regression: was a CSV-split trap)", () => {
-    const r = parseFinalizeArgs(
-      ["--gates", "frontend - banned patterns (ESLint-gap heuristic — advisory)",],
-    );
-    expect(r.gatesFilter,).toBe(
-      "frontend - banned patterns (ESLint-gap heuristic — advisory)",
-    );
+  test("--gates with punctuation in the gate name (regression: was a CSV-split trap)", () => {
+    const r = parseFinalizeArgs(["--gates", "mermaid - lint (mmdlint)",],);
+    expect(r.gatesFilter,).toBe("mermaid - lint (mmdlint)",);
   });
 
   test("--gates followed by another flag uses empty string (matches the parser contract)", () => {

@@ -28,6 +28,7 @@ import { chatQuickReplies, } from "../chat-quick-replies";
 import { chatSections, } from "../chat-sections";
 import { chatSectionsNav, } from "../chat-sections-nav";
 import { chatSettings, } from "../chat-settings";
+import { actorModelActions, } from "../chat-settings/actor-models";
 import { chatSideChannels, } from "../chat-side-channels";
 import { chatUtils, } from "../chat-utils";
 import { chatVariants, } from "../chat-variants";
@@ -51,8 +52,6 @@ import { mergeReactiveSource, } from "./merge-reactive";
  */
 export function chatState() {
   const state = {
-    ...chatInlineState,
-
     // ── Sub-module state + methods ──
     ...chatKeys,
     ...chatGroup,
@@ -65,8 +64,6 @@ export function chatState() {
     ...chatProactive,
     ...creationWizard,
 
-    // ── Lifecycle (init / destroy / user + chat list load) ──
-    ...chatLifecycle,
     ...chatWorld,
 
     // ── Sub-module methods ──
@@ -94,6 +91,9 @@ export function chatState() {
     ...messageArchive,
     ...chatInvites,
     ...worldChannels,
+
+    // Lifecycle must be last: sub-modules such as commandPalette also expose init().
+    ...chatLifecycle,
   };
 
   // chatLocation + chatUtils + chatSections + chatSectionsNav declare `get`
@@ -107,6 +107,12 @@ export function chatState() {
   mergeReactiveSource(state, chatParticipants,);
   // chatSideChannels declares a getter (isGroupChat) — merge descriptor-preserving.
   mergeReactiveSource(state, chatSideChannels,);
+  // chatInlineState declares filteredChats and currentChat getters —
+  // preserve them instead of freezing their initial values via spread.
+  mergeReactiveSource(state, chatInlineState,);
+  // actorModelActions declares the _actorModelRows getter — a plain spread
+  // (as in chatSettings) would freeze it to a static empty array.
+  mergeReactiveSource(state, actorModelActions,);
 
   return state as unknown as AlpineState<ChatState>;
 }

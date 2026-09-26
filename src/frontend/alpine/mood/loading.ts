@@ -34,8 +34,15 @@ export const moodStateLoading: Partial<ChatState> & ThisType<ChatState> = {
       } catch { /* keep null */ }
 
       const worldQuery = this._activeChatWorldId ? `?worldId=${this._activeChatWorldId}` : "";
-      const moodRes = await apiFetch(`/api/v1/actors/${npc.actor_id}/mood${worldQuery}`,);
-      if (moodRes.ok) {
+      let moodRes: Response | null = null;
+      try {
+        moodRes = await apiFetch(`/api/v1/actors/${npc.actor_id}/mood${worldQuery}`,);
+      } catch (error) {
+        // 404 is the documented answer for "actor has no mood record yet"
+        // (src/routes/character-mood/state.ts); only real failures propagate.
+        if ((error as Error & { status?: number }).status !== 404) { throw error; }
+      }
+      if (moodRes?.ok) {
         const mood = await moodRes.json();
         this._mood = {
           happiness: mood.happiness ?? 50,
