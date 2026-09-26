@@ -8,6 +8,10 @@
 **Effort:** Large
 **Type:** Task
 
+**Summary:** detailed in the [Summary](#summary) section below.
+**Context:** detailed in the body sections below (current state / repro / root cause).
+**Acceptance Criteria:** detailed in the [Acceptance Criteria](#acceptance-criteria) section below.
+
 ## Summary
 
 `.plan/tickets/*.md` carries **302 distinct `**Status:**` strings** today (measured fresh in this worktree, `2026-09-26`); the `index.json` itself carries 60 distinct variants plus the literal `undefined` (scratchpad §7 row 15). Every downstream consumer (`giwt sync`, `plan:validate`, `find-work`, the receipt bridge, the cross-ticket cross-references) re-derives state semantics from prose, so the same intent appears under half a dozen labels (`open` / `Open` / `⬜ Open` / `🟡 Open`; `done` / `Done` / `✅ Done` / `✅ Resolved`; `not-yet-implemented`; `fixed-in-worktree`; etc.). This ticket introduces a closed enum, migrates every file idempotently, and adds a blocking `status-vocab` gate so the regression cannot recur.

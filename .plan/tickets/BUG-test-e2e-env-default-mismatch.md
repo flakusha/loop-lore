@@ -8,6 +8,10 @@
 **Effort:** Small
 **Type:** Bug
 
+**Summary:** detailed in the [Summary](#summary) section below.
+**Context:** detailed in the body sections below (current state / repro / root cause).
+**Acceptance Criteria:** detailed in the [Acceptance Criteria](#acceptance-criteria) section below.
+
 ## Summary
 
 Running the e2e suite with the canonical shape (`bun test --parallel=4 --isolate tests/e2e/`) and `E2E_SAFEGUARD` **unset** flips the v1 `governanceGuard` ON (its `enabled` predicate is `process.env.E2E_SAFEGUARD !== "1"`, which is `true` when the var is absent). The e2e harness fires hundreds of requests per user in milliseconds, so per-user windows 429 every flow. With the safeguard set to `1` the suite goes green (277 / 0); without it, 248 pass and 29 fail — every failure is `Received: 429` with body `{"error":"Rate limit exceeded","code":"TOO_MANY_REQUESTS",…}`. Four npm scripts (`test:e2e`, `test:e2e:browser`, `test:e2e:smoke`, `test:all`) do not export `E2E_SAFEGUARD=1`, so any developer running them locally sees the false-positive cascade.
