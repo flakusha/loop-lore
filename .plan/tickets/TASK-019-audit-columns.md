@@ -35,3 +35,6 @@
 
 **Tags:** db, audit, migration, observability
 **Related:** src/db/migrations/001_init.ts (audit baseline), .plan/tickets/TASK-019-hot-path-indexes.md (companion migration)
+
+
+git issue: 9c1193f

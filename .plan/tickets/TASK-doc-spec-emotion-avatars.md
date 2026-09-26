@@ -34,3 +34,17 @@ it from the README features table.
 - [ ] Sidebar entry added under Characters & RPG
 - [ ] README Emotion avatars row links the new spec
 - [ ] `bun run md:lint` + `bun run format` pass on the new file
+
+## Clarification 2026-09-26
+
+Current behavior: `docs/spec/emotion-avatars.md` EXISTS (4.1KB). Sidebar entry exists at `docs/.vitepress/config.mts:93` under Characters & RPG. Implementation surface: `src/characters/services/emotion-avatar-service/` (`index.ts:19-63` service shell, `emotions.ts`, `generation.ts`, `job-store.ts`, `types.ts`), metadata-extraction fallback in `src/characters/services/emotion-avatar-fallback.ts`, prompt integration in `src/assistant/prompt/sections/emotion-avatar.ts:14-46` (`emotionAvatarSection`, enabled on `emotion`/`emotionAvatar` params, emits wrapped `emotion_context` system section).
+
+Scope disambiguation: same README caveat as the sibling doc-spec tickets — `README.md:39-41` has no features table, so the "README row links spec" criterion needs reinterpretation. Spec must additionally cover the in-memory job-store lifetime (server lifetime, `index.ts:16-17`) as a known limitation.
+
+Scoped next step: verify spec against the service/job-store/fallback/prompt-section surface, run `bun run md:lint` + `bun run format`, then close. Nearest open work is ticket `BUG-EMOTION-AVATAR-FALLBACK-METADATA-INCOMPLETE`; no open git issue directly topical.
+
+Acceptance:
+
+- [ ] Spec describes service API + generation flow + emotion model + fallback + prompt section (verified vs `src/`)
+- [ ] Job-store volatility documented as a limitation
+- [ ] `bun run md:lint` + `bun run format` pass on `docs/spec/emotion-avatars.md`

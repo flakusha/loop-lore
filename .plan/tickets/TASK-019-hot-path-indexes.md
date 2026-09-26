@@ -39,3 +39,6 @@
 
 **Tags:** db, indexes, performance, migration
 **Related:** src/db/migrations/016_item_instance_state.ts, src/db/migrations/017_asset_links_archived_at.ts, src/db/migrations/018_guard_triggers_update_twins.ts, .plan/tickets/TASK-rag-search-providers.md (search/RAG panels also exercise these paths)
+
+
+git issue: 8f23860

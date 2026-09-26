@@ -30,3 +30,6 @@ For new users, generate `randomBytes(32).toString('hex')` during user-create (`s
 
 **Tags:** db, crypto, search, encryption, blind-index
 **Related:** src/crypto/pipeline.ts, src/search/encrypted-tokens.ts, src/search/token-store.ts, src/search/providers/messages.ts, .plan/tickets/TASK-search-encrypted-backfill.md, .plan/tickets/TASK-encrypted-search-minimal-first-slice.md, .plan/tickets/TASK-rag-search-providers.md
+
+
+git issue: d14e674
