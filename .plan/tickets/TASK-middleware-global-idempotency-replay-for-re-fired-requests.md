@@ -152,3 +152,22 @@ not in effect.
 - Backend abstraction ready for the table backend (the async store).
 - 113-line test file exercising first-call, replay, in-flight 409,
   different-id-passes, expired-TTL-reruns, etc.
+
+
+## Verification 2026-09-26
+
+Verdict: **shipped-suggest-close** (parent wiring landed; per-route `ctx.requestId` migration owned by still-open child).
+
+Src checked:
+- `src/elysia-app.ts:149-176` — `idempotent()` instantiated once (shared instance) with `backend/ttlMs/asyncStore/enabled/bypassHeader` from config; `onBeforeHandle` → `idem.beforeHandle`, `onAfterHandle` → `recordResponse` for 2xx/3xx `Response` only (else `release`), `onError` → `asyncStore.fail(requestId, { userId })` user-scoped.
+- `src/middleware/idempotency.ts:62-110` — `IDEMPOTENCY_BYPASS_HEADER = "x-idempotency-bypass"` honored (`=== "1"` → pass-through), `enabled: false` → pass-through, `DEFAULT_TTL_MS = 24h` (ticket's 24h ask met — the 5-min default noted in Closing Notes is gone), memory + table backends, `Set-Cookie`/hop-by-hop strip on replay.
+- Follow-ups exist: `TASK-middleware-idempotency-wire-into-elysia.md` (status **done** in index), `TASK-middleware-request-id-elysia-derive.md` (status **⬜ Open** — owns the remaining `reply.ts`/`send-handler.ts` direct header reads).
+
+Refreshed deltas:
+- The 2026-08-26 Closing Notes ("not applied to any production route", "bypass header not implemented", "TTL 5 min") are all STALE — every AC in this parent is now met globally.
+- Suggest closing this parent; keep the child `request-id-elysia-derive` open for the two raw `headers.get("x-request-id")` reads (`src/routes/messages/reply.ts:87,105`, `src/routes/proactive-messaging/send-handler.ts:71`) that bypass validation/fallback. Do NOT close here (no issue-state mutation allowed).
+
+### Deep research: what changed since this ticket was written
+
+- 2026-08-26 (Closing Notes): middleware module + unit tests existed (`idempotent()`, memory/table backends) but zero production callers; no bypass header; no enabled flag; TTL 5 min.
+- Since then: `src/elysia-app.ts` gained the full lifecycle chain — request-id `.derive()` (line 77) → idempotency `beforeHandle` (157) → route handlers → `recordResponse` afterHandle (159-176) → `recordLifecycle` afterHandle (180) → `onError` fail path (185-192). Config surface `config.idempotency.{backend,ttlMs,enabled,bypassHeader}` added; TTL default raised to 24h matching `messages.idempotencyExpiryHours`; bypass + enabled flags implemented in `idempotency.ts:106-110`; error-path `fail()` scoped by `userId` (BUG-bug-async-lifecycle-writes-request-results-unscoped-by-user). Child `wire-into-elysia` ticket flipped to done. Only the per-route `ctx.requestId` substitution (child ticket) remains.

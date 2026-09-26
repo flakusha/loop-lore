@@ -163,3 +163,17 @@ DB-side trigger, to keep migrations portable to Postgres).
 The current AC ("server emits `X-Record-Hash` on every response from a
 tracked route") is the resolved decision. No further change needed;
 the option list under "Architectural questions" is removed.
+
+
+## Verification 2026-09-26
+
+Verdict: **still-open-expanded** (pure helper + schema + registry landed; service hooks + header emission missing).
+
+Src checked:
+- `src/hash/record-hash.ts` — `computeRecordHash(table, pk, inputs)` pure SHA-256 hex, `RECORD_HASH_VERSION = 1`, `asTableName` branding, `canonicalJSON` sorted-keys; tested in `record-hash.test.ts` (determinism, version bump, key-order/whitespace invariance, 64-char hex, known-vector vs `Bun.CryptoHasher`).
+- `src/db/content-version.ts` — `(table, data_version)` → projection registry + batch `refreshRecordHashes` runner (with the `record_hash` select fix); `data_version` + `record_hash` columns + `idx_*_record_hash` indexes across `request_results/assets/worlds/characters/chats/messages/chat_sections` and more (`schema-core.ts`, `schema-manifest.ts`, `001_init.ts`); `insert-helpers.ts` + `validation/db-schemas.ts` carry the columns.
+- MISSING: no `record_hash`/`computeRecordHash` reference in `src/assets/service/create.ts` or `src/routes/messages/create.ts` (grep: zero hits); no `X-Record-Hash` emission anywhere in `src/` (grep: zero hits); `src/middleware/idempotency-utils.ts` `makeKey` still `(method, route, requestId)` without `record_hash`.
+
+Refreshed deltas:
+- The "commit 2053bfe3 helper + schema migration" half is confirmed shipped and extended (registry + runner + wide column rollout). Schema ownership by the compaction ticket held — no migration race observed.
+- Concrete acceptance delta remaining: (a) compute-before-INSERT hooks in asset create + message create; (b) `X-Record-Hash` echo on tracked-route responses + replay path; (c) extend idempotency `makeKey` with `record_hash` so same-id/different-payload retries key separately; (d) 016 `down()` fix-up verification. Recommend needs-split if (d) is independently shippable: hash-hooks vs header-propagation.

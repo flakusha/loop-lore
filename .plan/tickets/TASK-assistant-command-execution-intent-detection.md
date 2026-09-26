@@ -52,3 +52,18 @@ Assistant command parsing: /improve, /dice, /stats, /attack, /image with intent 
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+
+## Verification 2026-09-26
+
+Verdict: **still-open-expanded** — two of four "Next Actionable Items" are done; vocabulary + command-scope items remain.
+
+Src checked:
+- `src/generation/auto-gen/classify-intent.ts:43-47` — `classifyIntent` now runs on the shared `callAux("intent", …, { temperature: 0, maxTokens: 100 })` runner (2s timeout + BYO-key handled centrally in `src/aux-pipeline/runner.ts`), called pre-generation from `call-llm.ts:108` with the `shortReply && confidence > 0.7` fast path. The "no timeout/apiKey" claim is STALE.
+- `src/assistant/command-parser.ts` + `src/assistant/commands/` — slash parsing/execution live (incl. `/image` usage-hint path in `simple-commands.test.ts:137`); `src/assistant/commands/registry.test.ts` covers tiered `requiredRole` metadata (`getCommandRequirement`).
+- `src/assistant/intent.ts` — `detectIntent`/`APPROVED_TOOLS` are GONE (only `detectAvatarChangeIntent` + `AssistantIntent` re-export from `src/regex/intent` remain); the "dead code" claim is half-stale — the dead classifier was deleted, the avatar helper is retained-but-unused (zero production consumers).
+- `src/generation/image-edit-service/` + `src/image-edit/routes.ts` — image-edit pipeline mounted (`POST /api/v1/image-edit/run`); assistant `/image` → pipeline wiring still unverified.
+
+Refreshed deltas:
+- Done: M1 runner migration (timeout/BYO/temp), dead-`detectIntent` removal.
+- Still open: (1) single intent vocabulary across `src/regex/intent.ts` `AssistantIntent` and the LLM `intent` prompt; (2) route AUX intent → `executeToolCalls`/plugin registry (or confirm `classifyIntent` shortReply-only scope and close); (3) `/improve /dice /stats /attack /image` + tiered access end-to-end (registry metadata exists, per-command enforcement + `/image`→pipeline call unverified).

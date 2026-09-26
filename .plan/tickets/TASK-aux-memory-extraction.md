@@ -135,3 +135,18 @@ interface MemoryExtraction {
 - [ ] Importance within 1-10 range
 - [ ] Timeout/error → no memories extracted (graceful)
 - [ ] Existing memory tests still pass
+
+
+## Verification 2026-09-26
+
+Verdict: **still-open-expanded** — the headline `model: "default"` bug is FIXED, but the ticket's `scope` design item is still open.
+
+Src checked:
+- `src/memory/extraction.ts:35-77` — now calls `callAux("memory", config, db, messages, { userId, maxTokens: 200 })` on the shared AUX runner (auxiliary role, 2s timeout, BYO-aware). No `model: "default"` literal and no `as never` cast remain anywhere in `src/memory/`.
+- `src/memory/types.ts:91-111` — `ExtractionOpts` has `actorId/chatId/messageId/aiContent/userContent/sourceMessageIds/sourceChatIds/extractionKind/reviewMode/config/userId`; the dead `modelId` field is GONE.
+- `src/generation/generate-route/non-stream.ts:189-200` and `stream-to-client.ts:275` — fire-and-forget `extractAndStoreMemories` with explicit `.catch`, passing through `config` + `userId`.
+- `src/aux-pipeline/prompts.ts:71` — `MEMORY_EXTRACTION_PROMPT` returns `{content, memoryType, confidence, importance, keywords}`; `src/memory/extraction.ts:69-71` gates on `confidence >= 0.5 && content.length > 10`.
+
+Refreshed deltas:
+- Items 1–3 of the ticket's "Next Actionable Items" (fix default-model bug, move to auxiliary role, BYO-key parity) are DONE — suggest marking them complete rather than re-doing.
+- Still open: item 4 scope/importance alignment — the prompt returns `memoryType: episodic|semantic|procedural`, not the ticket's `scope: character|world|assistant`; importance 1-10 exists but no scope-gated routing. Either update the design to `memoryType` or add the `scope` field. Also `src/memory/extraction.ts` still drops `scope` on parse — the concrete acceptance delta.

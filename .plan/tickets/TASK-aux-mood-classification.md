@@ -125,3 +125,17 @@ this ticket (tracked separately by the mood/integration epic).
 - [ ] Mood updates applied to character state
 - [ ] Timeout/error → no mood update (graceful)
 - [ ] Existing mood tests still pass
+
+
+## Verification 2026-09-26
+
+Verdict: **still-open-expanded** (keyword hook + persistence wired; LLM classifier still missing).
+
+Src checked:
+- `src/generation/hooks/mood-hook.ts` — `MoodHook` still keyword-based (`mood_shift` event, `data.delta`/`dominantMood`); no LLM call.
+- `src/generation/auto-gen/content-hooks.ts:224-228` — extracts `moodShiftDelta`; post-store persists via `MoodService.applyHappinessDelta` (covered by `src/generation/auto-gen-emotion-avatar.test.ts`).
+- `src/aux-pipeline/types.ts` — `AuxTaskName` has intent|memory|nsfw|moderation|gm-tool|transition|prompt-improve|prompt-analysis|injection-check; **no `mood` task**. `src/aux-pipeline/tasks/mood.ts` does not exist; `src/aux-pipeline/prompts.ts` has no mood prompt.
+
+Refreshed deltas:
+- The 2026-08-01 "results unconsumed" claim is now STALE — hook results ARE consumed and persisted. Remaining gap is only the LLM classifier (temp 0.0, maxTokens 80, 2s timeout, confidence >= 0.5 gate via shared `callAux` runner, mirroring `classifyIntent` in `src/generation/auto-gen/classify-intent.ts:43-47`).
+- Acceptance delta: add `mood` to `AuxTaskName`, add `MOOD_CLASSIFICATION_PROMPT`, call `callAux("mood", …)` and replace keyword `MoodHook` behind the existing `hooks.enableMoodHooks` flag; add parser unit test + confidence-gate test.

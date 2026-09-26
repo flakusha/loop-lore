@@ -32,3 +32,16 @@ The round-trip is gated on Bun shipping a `lineWidth` knob for `Bun.YAML.stringi
 - `js-yaml` is kept in `package.json`; both `parser.ts` and exporter deferred together so the parser/serializer pair stays symmetric.
 
 Re-evaluate when the issue closes (or when Bun adds a block-style multiline option).
+
+
+## Verification 2026-09-26
+
+Verdict: **still-open-expanded** (deferral still valid; adoption is halfway — parse migrated in 6 places, character round-trip still on js-yaml).
+
+Src checked:
+- `src/characters/parser.ts:7-13` + `src/characters/exporters/yaml.ts:9-21` — deferral notes intact, still `import { load/dump } from "js-yaml"`; blocker `oven-sh/bun#39959` (`Bun.YAML.stringify` lacks `lineWidth`, breaks multi-line block scalars) unchanged per ticket.
+- Already on `Bun.YAML.parse`: `src/chat/service/templates.ts:54`, `src/config/character-loader.ts:120`, `src/config/migrate-config.ts:83`, `src/config/load/parse.ts:85`, `src/config/template-expansion/discovery.ts:54`, `src/config/templates-loader/discovery.ts:122`. `js-yaml` retained in `package.json` for the character pair + `src/admin/config.ts:12` + `src/chat/export/formats.ts:22`.
+- Parser/serializer symmetry argument (defer both together) still holds — no partial swap observed.
+
+Refreshed deltas:
+- None on the blocker; re-evaluate only when upstream ships `lineWidth`/block-style-multiline. If Bun closes the issue as wont-fix, the follow-up is: keep js-yaml for character cards, finish `Bun.YAML.parse` everywhere else, and close this ticket as "adopted except character round-trip" with the exception documented in the two files above.

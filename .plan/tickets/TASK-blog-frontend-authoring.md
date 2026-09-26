@@ -62,3 +62,16 @@ Create blog authoring and reader UI. Backend routes exist at `/api/blog/*` (post
 - `epic-blog-system.md` — Blog epic
 - `TASK-blog-system.md` — Existing task (updated: threading + visibility done)
 - `BUG-blog-comments-lack-threading-parent-comment-id-blocking-lemm.md` — Resolved by `075_blog_comments_threading.ts` migration
+
+## Verification 2026-09-26
+
+Verdict: **still-open-expanded** (reader + plain-markdown authoring landed in-tree; the "unmerged branch" note is stale).
+
+Src checked:
+- `src/views/blog.html` — list + search/tag filter + inline create form + threaded detail + follow toggle + RAG sources, all present as the ticket describes.
+- `src/frontend/alpine/blog.ts` (`loadPosts/loadPost/createPost/createComment/searchPosts/visiblePosts/followAuthor/unfollowAuthor/getFollowStatus/loadSources`, envelope-tolerant parsing) + `src/frontend/pages/blog.ts` (`blogPage()`, `initBlogPage`) + `layout.html` `nav-blog` link — all in-tree, so the "on `blog-frontend-left-menu`, unmerged" status is STALE; the work is merged.
+- Store shape (`_blogPosts/_blogPost/_blogComments/_blogSources/_blogFilter/_blogTag/_blogFollowStatus`) confirms the gaps: no draft state, no WYSIWYG/rich-text (plain-markdown form only), no category filter (tag filter only), no follower-management UI.
+
+Refreshed deltas:
+- Check off: store with `apiFetch`+`jsonBody`, page registration, list/search/filter, detail + threading, comment submission, follow/unfollow, RAG sources, tag filtering.
+- Still open, each a concrete UI slice: (a) WYSIWYG rich-text editor for post creation; (b) draft save/resume/management; (c) category filtering (beyond tags); (d) moderation/follower-management UI (backend `PATCH /moderate` exists, no UI calls it).

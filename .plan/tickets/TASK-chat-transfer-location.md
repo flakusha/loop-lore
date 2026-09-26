@@ -176,3 +176,21 @@ bun test src/chat/
 bun test src/routes/chats.ts
 bun test src/routes/chat-search.ts
 ```
+
+
+## Verification 2026-09-26
+
+Verdict: **still-open-expanded** (foundation overshot the ticket design in places; auto-section + VN wiring still missing; recommend needs-split on close pass).
+
+Src checked:
+- `PUT /api/chats/:id/location` (`src/routes/chats/extras.ts:36-101`, incl. background auto-sync test `chat-backgrounds.test.ts:222`), `POST /api/chats/:id/transfer` (`src/routes/chat-search/transfer.ts` — same-world check, updates `current_location_id`), `POST /api/chats/:id/join` + `GET /api/chats/joinable` (`src/routes/chat-search/`), transition classifier (`src/chat/transition-classifier.ts`, regex-first + AUX fallback) — all ✅.
+- `chat_sections` + `messages.section_id` SHIPPED but with a different schema than the ticket's Step 1: actual `ChatSections` (`src/db/schema-core.ts:620-629`) is `{id, chat_id, label, description, location_id, sort_index, created_at, updated_at, background_id}` — no `world_id/section_order/title/transition_type/started_at/ended_at`. Full CRUD + assign + reorder + narrative routes (`src/routes/chat-sections/`), frontend (`chat-types/location-state.ts`, `chat-sections.ts`, `sections-panel.html`, `message-list.html:79-99` dividers), `carryHistory`/`carryLocation` remap, `recordLocationChange(..., {sectionId})` (`src/chat/service/location-events.ts:40-54`) — all beyond the ticket.
+- MISSING vs ticket Steps 3-6: `transfer.ts:63-71` updates location WITHOUT creating/ending a section and emits no `chat.location_changed` event; no `POST /create-at-location` flow (participants copy + `parent_chat_id` + dual narration); join does not return section history; VN side is only the `on_location_change` template trigger (`src/frontend/vn/templates/transition-triggers.ts:42`) — no scene-renderer background/sound sync on location change.
+
+Refreshed deltas:
+- Rewrite Steps 1-2 (schema + service) to match the shipped `label/sort_index/location_id` shape instead of the ticket's `section_order/transition_type` DDL — do not run the ticket's migration verbatim.
+- Remaining: auto-section lifecycle on location/transfer, create-at-location flow, join-returns-sections, VN transition event → scene renderer. Each is an independent slice (needs-split candidate).
+
+### Deep research: what changed since this ticket was written
+
+- Ticket design assumed NO section infrastructure (`chat_sections`: "❌ No DB table, no section logic"). Since then the section system was built to a different shape: `chat_sections(label, description, location_id NULLABLE, sort_index)` + `messages.section_id` + `chat_location_events(section_id, from/to_location_id, triggering_message_id, source)` + full section CRUD/assign/reorder/narrative routes + frontend section nav/panel/dividers + migration-carry (`carryHistory`/`carryLocation`) + background auto-sync on location PUT. Location changes are recorded as *events* (`recordLocationChange`) optionally linked to a section, not as ticket-proposed section-lifecycle (end-current + create-new inside the location/transfer handlers). The transfer route is a bare `current_location_id` update with no event, no section, no narration. So the ticket's Steps 3-4 (wire location change → section creation → VN event) are the live gap, while Steps 1-2/7 (table + service + section-aware queries) are superseded by the shipped equivalents and must not be re-implemented from the ticket text.
