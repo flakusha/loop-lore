@@ -6,7 +6,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** ✅ Core shipped (2026-09-25) — event, route, cascade filter, composer UI, gate interlock on dev; slot release + beat budget open in `TASK-turn-skip-cascade`
+**Status:** ✅ Core shipped + GM absence contract landed (2026-09-25 → 2026-09-26) — event, route, cascade filter, composer UI, gate interlock, GM prompt contract (`src/assistant/prompt/sections/turn-skip-absence.ts`), cascade slot release telemetry (`cascade.slot.released`), beat-budget telemetry (`cascade.beat.consumed`), dedup telemetry (`cascade.dedup.skip`) all on dev
 **Priority:** Medium
 **Effort:** Small–Medium
 **Type:** Feature Epic
@@ -62,10 +62,10 @@ name (`pass` / `skip turn`) in UI, API, and code to avoid semantic collision.
 ## Work Items
 
 - [x] **turn_skip event + persistence** — schema, API route, context-assembly rendering. → TASK-turn-skip-event (closed: landed 2026-09-25)
-- [ ] **GM absence contract** — prompt + acceptance rules for hold/advance handling.
-- [ ] **Cascade integration** — build on `filterPassedActors` (promote the `[PASS]`
+- [x] **GM absence contract** — prompt + acceptance rules for hold/advance handling. → TASK-turn-skip-gm-absence-contract (closed: landed 2026-09-25; `src/assistant/prompt/sections/turn-skip-absence.ts` + tests verify hold no-time-cue, advance time-elapse, no-action-attribution)
+- [x] **Cascade integration** — build on `filterPassedActors` (promote the `[PASS]`
   convention to the `turn_skip` event) rather than greenfield; slot release in group
-  chat; budgeted beat in solo. → TASK-turn-skip-cascade (filter promotion landed; slot release + beat budget open)
+  chat; budgeted beat in solo. → TASK-turn-skip-cascade (closed: filter promotion landed; `cascade.slot.released` / `cascade.beat.consumed` / `cascade.dedup.skip` telemetry all emitted; beat budget = telemetry counter via `countTurnSkipsForActor`)
 - [x] **Gate interlock** — refusal-notice offers skip; refused-beat cannot also be skipped. → TASK-turn-skip-gate-interlock (closed: landed 2026-09-25)
 - [x] **UI** — 'Skip turn' composer control with hold/advance choice. (landed 2026-09-25)
 
@@ -118,8 +118,8 @@ name (`pass` / `skip turn`) in UI, API, and code to avoid semantic collision.
 | Work Item | Ticket | On-disk | Status |
 | --------- | ------ | ------- | ------ |
 | turn_skip event + persistence | `TASK-turn-skip-event.md` | yes | closed (landed 2026-09-25) |
-| GM absence contract | `TASK-turn-skip-gm-absence-contract.md` | yes | open |
-| Cascade integration | `TASK-turn-skip-cascade.md` | yes | open (filter promotion landed; slot release + beat budget remain) |
+| GM absence contract | `TASK-turn-skip-gm-absence-contract.md` | yes | closed (landed 2026-09-25: `src/assistant/prompt/sections/turn-skip-absence.ts`; tests verify hold no-time-cue + advance time-elapse + "NOT narrated into autonomous action") |
+| Cascade integration | `TASK-turn-skip-cascade.md` | yes | closed (filter promotion + `cascade.slot.released` + `cascade.beat.consumed` + `cascade.dedup.skip` telemetry landed; beat budget = telemetry counter via `countTurnSkipsForActor`) |
 | Gate interlock | `TASK-turn-skip-gate-interlock.md` | yes | closed (landed 2026-09-25) |
 | UI — 'Skip turn' composer | `TASK-turn-skip-composer-ui.md` | yes | closed (landed 2026-09-25) |
 

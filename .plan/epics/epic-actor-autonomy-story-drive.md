@@ -29,8 +29,10 @@ exists solely for headless stress-testing and is explicitly gated.
 ## Current State (reviewed 2026-08-25)
 
 - Movement execution exists: `NpcNavigationService` (`src/rpg/npc-navigation/`,
-  migration 001/p07) — tick-based movement, code-complete, routes wired, **no caller
-  drives ticks autonomously** (`TASK-wire-npc-navigation-routes` pending).
+  migration 001/p07) — tick-based movement, code-complete, routes wired, **no autonomous
+  scheduler-driven caller** (`processMovementTick` only fires from
+  `src/story/game-master/execute.ts:45` and the manual HTTP route at
+  `src/routes/rpg/npc-navigation.ts:149`). `TASK-wire-npc-navigation-routes` pending.
 - Decision intelligence planned but deferred: BDI planning loop, reaction system, plan
   revision (`epic-agency-story-points.md` extension, P6+).
 - GM orchestration is reactive: `GameMasterService` generates on user turns only;
@@ -105,7 +107,7 @@ The `autonomy_preferences` data schema (AutonomyProfile, D9) is owned by
 | Work Item | Ticket | On-disk | Status |
 | --------- | ------ | ------- | ------ |
 | Story auto-drive scheduler | `TASK-story-auto-drive-scheduler.md` | yes | open |
-| NPC navigation tick driver | `TASK-world-simulation-npc-navigation-tick-driver.md` | yes | open |
+| NPC navigation tick driver | `TASK-world-simulation-npc-navigation-tick-driver.md` | yes | open (code missing — `src/rpg/npc-navigation/tick-driver.ts` does not exist; `processMovementTick` only fires from `src/story/game-master/execute.ts:45` and the manual HTTP route `src/routes/rpg/npc-navigation.ts:149`; scheduler-driven caller required) |
 | Autonomy config surface | `TASK-autonomy-config-surface.md` | yes | open |
 | Per-agent/user budget caps UI (gap-audit E15) | `TASK-autonomy-rate-governor.md` | yes | open |
 
