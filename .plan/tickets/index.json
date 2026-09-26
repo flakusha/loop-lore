@@ -16886,7 +16886,7 @@
     "tags": [],
     "source": ".plan/tickets/TASK-actors.md",
     "git_issue": "9c68d3b",
-    "status": "open"
+    "status": "done"
   },
   "TASK-ACTORS-API-ROUTES": {
     "hash": "f86deef",
@@ -31374,7 +31374,7 @@
     "epic": "epic-agency-story-points, NPC/Actor System",
     "tags": [],
     "source": ".plan/tickets/TASK-npc-bdi-planning.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "1de6c08"
   },
   "TASK-NPC-BEHAVIOR": {
