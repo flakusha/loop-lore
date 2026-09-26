@@ -137,3 +137,18 @@ NOT met. Verified state on `dev` at HEAD:
 - The async store + idempotency modules both consume `ctx.requestId`,
   so the moment the Elysia wiring lands, those features compose without
   further change.
+
+
+## Verification 2026-09-26
+
+Verdict: **still-open-expanded** (Elysia `.derive()` wiring landed; two route modules still read the raw header).
+
+Src checked:
+- `src/middleware/request-id.ts` — `REQUEST_ID_HEADER`/`IDEMPOTENCY_KEY_HEADER` precedence, `MAX_REQUEST_ID_LENGTH = 128`, `SAFE_REQUEST_ID` printable-ASCII gate, `resolveRequestId`/`applyRequestId`/`isValidRequestId` pure + `requestIdMiddleware()` derive fn.
+- `src/elysia-app.ts:77` — `.derive(requestIdMiddleware())` BEFORE auth, populating `ctx.requestId` for all downstream consumers (idempotency, lifecycle, CSRF plugin which documents the requirement in `csrf-plugin.ts:16-18`). The ticket's primary AC is MET at the app level.
+- `src/server/handler.ts:42-54,83-96` — legacy path resolves + echoes `X-Request-Id`, access log attributes the same id.
+- Still raw (unvalidated, no fallback): `src/routes/messages/reply.ts:87,105` (`request.headers.get("x-request-id") ?? undefined`, twice) and `src/routes/proactive-messaging/send-handler.ts:71` (same pattern). `src/middleware/permissions.ts:89` direct read noted in ticket needs re-check (file has since been refactored — verify on close pass).
+
+Refreshed deltas:
+- Done: `requestIdMiddleware()` module + tests, legacy `handler.ts` path, Elysia `.derive()` chain wiring, downstream `ctx.requestId` consumers (idempotency, async store, CSRF).
+- Still open (owned by `TASK-middleware-request-id-elysia-derive.md`, status ⬜ Open): replace the three raw header reads with `ctx.requestId` run through `isValidRequestId`; extend `RequestContext` if still unpopulated for migrated routes. Small.

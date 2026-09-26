@@ -213,3 +213,18 @@ bun run check
 bun test src/characters/services/avatar-service.ts
 bun test src/aux-pipeline/
 ```
+
+
+## Verification 2026-09-26
+
+Verdict: **still-open-expanded** (per-message binding shipped + tested; LLM emotion classifier still missing).
+
+Src checked:
+- `src/generation/hooks/emotion-hook.ts` — `EmotionHook` still keyword-based (`emotion_change`, `data.dominantEmotion`); no LLM call.
+- `src/generation/auto-gen/content-hooks.ts:219-221` — extracts `dominantEmotion`; bound to `messages.emotion` and rendered per message via `avatarForMessage` (`src/frontend/alpine/mood/avatars.ts:135`, `src/components/chat/message-list.html:117-121`). Covered by `src/generation/auto-gen-emotion-avatar.test.ts` + `src/frontend/alpine/mood.test.ts`.
+- `src/assistant/intent.ts` — `detectAvatarChangeIntent()` retained, tested in `src/assistant/intent.test.ts`, but has zero production consumers (confirmed: only the test imports it).
+- `src/aux-pipeline/types.ts` — no `emotion`/`avatar` task; no emotion prompt in `src/aux-pipeline/prompts.ts`.
+
+Refreshed deltas:
+- The ticket's "Auto-trigger on response: manual API call only" row is STALE — the hook chain fires auto-trigger inside generation and binds per message; the explicit `POST /api/actors/:actorId/avatars/select` route is now the manual override, not the only path.
+- Remaining gap is only the AUX LLM classifier upgrade: add `emotion` task to `callAux`, gate on `changeFromPrevious && confidence >= 0.5`, keep the `emotion_first` scoring rule and `EmotionType` enum alignment (`src/db/enums-character.ts:126`) as the follow-up checklist.

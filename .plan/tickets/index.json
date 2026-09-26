@@ -22767,6 +22767,38 @@
     "git_issue": "0636c4e",
     "status": "open"
   },
+  "TASK-CLARIFY-PROMPT-IMPROVE-ROUTE-PATH-RECONCILIATION": {
+    "hash": "e1f77a8",
+    "git_issue": "e1f77a8",
+    "extid": "TASK-CLARIFY-PROMPT-IMPROVE-ROUTE-PATH-RECONCILIATION",
+    "type": "TASK",
+    "title": "CLARIFY-prompt-improve-route-path-reconciliation",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-prompt-improvement.md",
+    "tags": [
+      "docs",
+      "prompt-improve"
+    ],
+    "source": ".plan/tickets/TASK-clarify-prompt-improve-route-path-reconciliation.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-CLARIFY-STORY-STATE-SSE-SUBSCRIPTION-CONTRACT": {
+    "hash": "c657918",
+    "git_issue": "c657918",
+    "extid": "TASK-CLARIFY-STORY-STATE-SSE-SUBSCRIPTION-CONTRACT",
+    "type": "TASK",
+    "title": "CLARIFY-story-state-sse-subscription-contract",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-story-mode-ui.md",
+    "tags": [
+      "frontend",
+      "story"
+    ],
+    "source": ".plan/tickets/TASK-clarify-story-state-sse-subscription-contract.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-CLASSIFIER-MODEL-SURVEY-MESSAGE-INTENT-MEMORY-RANKING-EMOTIO": {
     "hash": "e5be98c",
     "git_issue": "e5be98c",
@@ -30192,6 +30224,70 @@
     "status": "⬜ Not Started",
     "git_issue": "587f716"
   },
+  "TASK-MATRIX-AUTH-ADAPTER-AUTH-APPROVAL-SCOPE-DECIDE-PER-ADAPTER-I": {
+    "hash": "ab8fc6a",
+    "git_issue": "ab8fc6a",
+    "extid": "TASK-MATRIX-AUTH-ADAPTER-AUTH-APPROVAL-SCOPE-DECIDE-PER-ADAPTER-I",
+    "type": "TASK",
+    "title": "MATRIX-auth-adapter-auth-approval-scope: decide per-adapter inbound scope for auth-approval",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-auth-channel-provisioning",
+    "tags": [
+      "matrix-gap",
+      "auth"
+    ],
+    "source": ".plan/tickets/TASK-matrix-auth-adapter-auth-approval-scope-decide-per-adapter-i.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-MATRIX-AUTH-CAPABILITY-REGISTRY-NAMING-ALIGN-AUTH-CHALLENGE-": {
+    "hash": "83db208",
+    "git_issue": "83db208",
+    "extid": "TASK-MATRIX-AUTH-CAPABILITY-REGISTRY-NAMING-ALIGN-AUTH-CHALLENGE-",
+    "type": "TASK",
+    "title": "MATRIX-auth-capability-registry-naming: align auth-challenge/auth-approval capability enum with integrations-core registry",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-auth-channel-provisioning",
+    "tags": [
+      "matrix-gap",
+      "auth"
+    ],
+    "source": ".plan/tickets/TASK-matrix-auth-capability-registry-naming-align-auth-challenge-.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-MATRIX-AUTH-MATRIX-MEGOLM-APPROVAL-DECIDE-MEGOLM-VERIFIED-SE": {
+    "hash": "825ef56",
+    "git_issue": "825ef56",
+    "extid": "TASK-MATRIX-AUTH-MATRIX-MEGOLM-APPROVAL-DECIDE-MEGOLM-VERIFIED-SE",
+    "type": "TASK",
+    "title": "MATRIX-auth-matrix-megolm-approval: decide Megolm-verified-session requirement for Matrix approval",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-auth-channel-provisioning",
+    "tags": [
+      "matrix-gap",
+      "auth"
+    ],
+    "source": ".plan/tickets/TASK-matrix-auth-matrix-megolm-approval-decide-megolm-verified-se.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-MATRIX-AUTH-PER-ROLE-FACTOR-POLICY-SHAPE-DECIDE-PER-ROLE-MIN": {
+    "hash": "d39ed73",
+    "git_issue": "d39ed73",
+    "extid": "TASK-MATRIX-AUTH-PER-ROLE-FACTOR-POLICY-SHAPE-DECIDE-PER-ROLE-MIN",
+    "type": "TASK",
+    "title": "MATRIX-auth-per-role-factor-policy-shape: decide per-role minimum factor count policy storage",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-auth-channel-provisioning",
+    "tags": [
+      "matrix-gap",
+      "auth"
+    ],
+    "source": ".plan/tickets/TASK-matrix-auth-per-role-factor-policy-shape-decide-per-role-min.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-MATRIX-INTEGRATION": {
     "hash": "1b92bae",
     "extid": "TASK-MATRIX-INTEGRATION",
@@ -30204,6 +30300,38 @@
     "source": ".plan/tickets/TASK-matrix-integration.md",
     "git_issue": "1b92bae",
     "status": "open"
+  },
+  "TASK-MATRIX-STORY-COHERENCE-GATE-PASS2-QA-DECIDE-WHETHER-GATE-VER": {
+    "hash": "735875b",
+    "git_issue": "735875b",
+    "extid": "TASK-MATRIX-STORY-COHERENCE-GATE-PASS2-QA-DECIDE-WHETHER-GATE-VER",
+    "type": "TASK",
+    "title": "MATRIX-story-coherence-gate-pass2-qa: decide whether gate verdict engines run in pass-2 QA",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-two-pass-delivery",
+    "tags": [
+      "matrix-gap",
+      "story-coherence"
+    ],
+    "source": ".plan/tickets/TASK-matrix-story-coherence-gate-pass2-qa-decide-whether-gate-ver.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-MATRIX-STORY-COHERENCE-PERSPECTIVE-AWARE-DRAFT-SET-PERSPECTI": {
+    "hash": "20fe258",
+    "git_issue": "20fe258",
+    "extid": "TASK-MATRIX-STORY-COHERENCE-PERSPECTIVE-AWARE-DRAFT-SET-PERSPECTI",
+    "type": "TASK",
+    "title": "MATRIX-story-coherence-perspective-aware-draft: set perspective-aware mood-intent dosage for drafts",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-two-pass-delivery",
+    "tags": [
+      "matrix-gap",
+      "story-coherence"
+    ],
+    "source": ".plan/tickets/TASK-matrix-story-coherence-perspective-aware-draft-set-perspecti.md",
+    "status": "⬜ Not Started"
   },
   "TASK-MATTING-FALLBACK-AUX-PIPELINE-JOB": {
     "hash": "8341527",
