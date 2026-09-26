@@ -29,3 +29,6 @@
 
 **Tags:** db, state-machine, validators, runtime
 **Related:** src/db/state.ts, src/db/enums-core/messages.ts, src/characters/license-enforcement.ts, src/chat/service/branches.ts, src/story/items/placement.ts, .plan/tickets/TASK-adopt-state-machine-framework-in-runtime-status-writes.md, .plan/tickets/TASK-gate-branches-display-invariant-item-instance-state.md, .plan/tickets/TASK-gate-shadow-notes-status-x-visibility-composite.md, .plan/tickets/TASK-gate-world-lore-lifecycle-confidence-distortion-disputed-tri.md, .plan/tickets/TASK-gate-licensing-triple-via-licenserightsvalidator.md, .plan/tickets/TASK-gate-worlds-rpg-7-col-flags-through-master-mechanics-validat.md
+
+
+git issue: 63a45b3
