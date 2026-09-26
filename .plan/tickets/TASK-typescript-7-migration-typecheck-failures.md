@@ -79,5 +79,5 @@ No code change required.
 
 - `BUG-visualnovel-type-mismatch-across-api-db-layers` (incorrectly marked done)
 - `BUG-redundant-vn-state-stored-in-two-independent-locations` (incorrectly marked done)
-- `open-vn-settings-bugs.md` (umbrella ticket)
+- umbrella ticket `TASK-validate-and-fix-fe-be-db-gaps-for-chat-vn-settings` (the `open-vn-settings-bugs.md` cluster file was pruned 2026-09-26)
 - `BUG-content-hooks-ts-missing-imports-breaks-typecheck.md` (separate, already resolved)
