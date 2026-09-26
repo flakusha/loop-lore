@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { afterEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, expect, mock, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import {
   actorTraits,
   actorTraitsFactory,
@@ -15,12 +16,15 @@ type ApiFetchMock = (url: string, opts?: RequestInit,) => Promise<Response>;
 let calls: { url: string; opts: RequestInit }[] = [];
 let handler: ApiFetchMock = async () => Response.json([],);
 
-mock.module("./htmx", () => ({
-  apiFetch: ((url: string, opts?: RequestInit,) => {
-    calls.push({ url, opts: opts ?? {}, },);
-    return handler(url, opts,);
-  }) satisfies ApiFetchMock,
-}),);
+// Gated: mock.module is process-global (BUG 9c8bea1).
+if (ISOLATED) {
+  mock.module("./htmx", () => ({
+    apiFetch: ((url: string, opts?: RequestInit,) => {
+      calls.push({ url, opts: opts ?? {}, },);
+      return handler(url, opts,);
+    }) satisfies ApiFetchMock,
+  }),);
+}
 
 const baseCtx = (): ActorTraitsState => {
   const state = Object.create(actorTraits,) as ActorTraitsState;
@@ -52,7 +56,7 @@ const sampleTrait = (over: Partial<PermanentTrait> = {},): PermanentTrait => ({
   ...over,
 });
 
-describe("actorTraits.setActorId", () => {
+describeOrSkip("actorTraits.setActorId", () => {
   test("binds and clears prior state", () => {
     const ctx = baseCtx();
     ctx.setActorId("actor-1",);
@@ -67,9 +71,9 @@ describe("actorTraits.setActorId", () => {
     ctx.setActorId("actor-1",);
     expect(ctx.error,).toBe("old",);
   });
-});
+},);
 
-describe("actorTraits.loadTraits", () => {
+describeOrSkip("actorTraits.loadTraits", () => {
   test("no-op without actor", async () => {
     const ctx = baseCtx();
     await ctx.loadTraits();
@@ -102,9 +106,9 @@ describe("actorTraits.loadTraits", () => {
     await ctx.loadTraits();
     expect(ctx.traitsError,).toBeTruthy();
   });
-});
+},);
 
-describe("actorTraits.filteredTraits", () => {
+describeOrSkip("actorTraits.filteredTraits", () => {
   test("returns all when search empty + filter empty", () => {
     const ctx = baseCtx();
     ctx.traits = [sampleTrait(), sampleTrait({ id: "tr-2", trait_name: "wise", },),];
@@ -131,9 +135,9 @@ describe("actorTraits.filteredTraits", () => {
     ctx.search = "loud";
     expect(ctx.filteredTraits().map((t,) => t.id),).toEqual(["tr-1",],);
   });
-});
+},);
 
-describe("actorTraits.startEdit / cancelEdit", () => {
+describeOrSkip("actorTraits.startEdit / cancelEdit", () => {
   test("startEdit copies values into draft", () => {
     const ctx = baseCtx();
     ctx.startEdit(sampleTrait({ trait_category: "skill", value: 7, },),);
@@ -150,9 +154,9 @@ describe("actorTraits.startEdit / cancelEdit", () => {
     expect(ctx.draft.editingName,).toBeNull();
     expect(ctx.draft.name,).toBe("",);
   });
-});
+},);
 
-describe("actorTraits.save (create)", () => {
+describeOrSkip("actorTraits.save (create)", () => {
   test("no-op without actor", async () => {
     const ctx = baseCtx();
     ctx.draft.name = "loyal";
@@ -201,9 +205,9 @@ describe("actorTraits.save (create)", () => {
     await ctx.save();
     expect(ctx.error,).toBe("dup",);
   });
-});
+},);
 
-describe("actorTraits.save (update)", () => {
+describeOrSkip("actorTraits.save (update)", () => {
   test("PUTs edited trait and reloads", async () => {
     let callIdx = 0;
     handler = async (url: string,) => {
@@ -221,9 +225,9 @@ describe("actorTraits.save (update)", () => {
     const putCall = calls.find((c,) => c.opts.method === "PUT");
     expect(putCall?.url,).toBe("/api/v1/actors/actor-1/traits/brave",);
   });
-});
+},);
 
-describe("actorTraits.remove", () => {
+describeOrSkip("actorTraits.remove", () => {
   test("no-op without actor", async () => {
     const ctx = baseCtx();
     await ctx.remove("brave",);
@@ -271,9 +275,9 @@ describe("actorTraits.remove", () => {
     await ctx.remove("brave",);
     expect(ctx.error,).toBeTruthy();
   });
-});
+},);
 
-describe("actorTraits.buildPayload", () => {
+describeOrSkip("actorTraits.buildPayload", () => {
   test("builds the trait_category/trait_name/value body", () => {
     const ctx = baseCtx();
     ctx.draft.category = "skill";
@@ -285,9 +289,9 @@ describe("actorTraits.buildPayload", () => {
       value: "+2",
     },);
   });
-});
+},);
 
-describe("actorTraits.describeCategory", () => {
+describeOrSkip("actorTraits.describeCategory", () => {
   test("returns human label", () => {
     const ctx = baseCtx();
     expect(ctx.describeCategory("personality",),).toBe("Personality",);
@@ -298,9 +302,9 @@ describe("actorTraits.describeCategory", () => {
     const ctx = baseCtx();
     expect(ctx.describeCategory("unknown_category",),).toBe("unknown_category",);
   });
-});
+},);
 
-describe("TRAIT_CATEGORIES export", () => {
+describeOrSkip("TRAIT_CATEGORIES export", () => {
   test("includes the default categories", () => {
     expect(new Set(TRAIT_CATEGORIES,),).toEqual(
       new Set([
@@ -313,9 +317,9 @@ describe("TRAIT_CATEGORIES export", () => {
       ],),
     );
   });
-});
+},);
 
-describe("actorTraitsFactory", () => {
+describeOrSkip("actorTraitsFactory", () => {
   test("returns a fresh state bound to the actor", () => {
     const a = actorTraitsFactory("actor-a",);
     const b = actorTraitsFactory("actor-b",);
@@ -323,4 +327,4 @@ describe("actorTraitsFactory", () => {
     expect(a._trActorId,).toBe("actor-a",);
     expect(b._trActorId,).toBe("actor-b",);
   });
-});
+},);

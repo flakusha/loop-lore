@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { afterEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, expect, mock, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import "./context-window";
 
 type CtxWindowState = {
@@ -36,13 +37,16 @@ function fresh(): CtxWindowState {
 let fetchCalls: { url: string; opts: RequestInit }[] = [];
 let fetchHandler: ((url: string, opts: RequestInit,) => Response) | null = null;
 
-mock.module("./htmx", () => ({
-  apiFetch: async (url: string, opts?: RequestInit,) => {
-    fetchCalls.push({ url, opts: opts ?? {}, },);
-    if (!fetchHandler) { return new Response("{}", { status: 200, },); }
-    return fetchHandler(url, opts ?? {},);
-  },
-}),);
+// Gated: mock.module is process-global (BUG 9c8bea1).
+if (ISOLATED) {
+  mock.module("./htmx", () => ({
+    apiFetch: async (url: string, opts?: RequestInit,) => {
+      fetchCalls.push({ url, opts: opts ?? {}, },);
+      if (!fetchHandler) { return new Response("{}", { status: 200, },); }
+      return fetchHandler(url, opts ?? {},);
+    },
+  }),);
+}
 
 function mockFetch(status: number, body: unknown = {},): void {
   fetchHandler = () => Response.json(body, { status, },);
@@ -53,7 +57,7 @@ afterEach(() => {
   fetchHandler = null;
 },);
 
-describe("contextWindow display getters", () => {
+describeOrSkip("contextWindow display getters", () => {
   test("statusColor maps every status", () => {
     const s = fresh();
     s.status = "healthy";
@@ -111,9 +115,9 @@ describe("contextWindow display getters", () => {
     s.sections = [{ name: "history", tokens: 5, pct: 1, },];
     expect(s.hasSections,).toBe(true,);
   });
-});
+},);
 
-describe("contextWindow.load", () => {
+describeOrSkip("contextWindow.load", () => {
   test("returns early without a chat id", async () => {
     const s = fresh();
     await s.load("",);
@@ -177,9 +181,9 @@ describe("contextWindow.load", () => {
     expect(s.currentTokens,).toBe(0,);
     expect(s.loading,).toBe(false,);
   });
-});
+},);
 
-describe("contextWindow.refresh", () => {
+describeOrSkip("contextWindow.refresh", () => {
   test("skips the network without a chat id", async () => {
     const s = fresh();
     s.chatId = null;
@@ -202,4 +206,4 @@ describe("contextWindow.refresh", () => {
     s.load = mock(async () => {},) as unknown as CtxWindowState["load"];
     await expect(s.refresh(),).resolves.toBeUndefined();
   });
-});
+},);

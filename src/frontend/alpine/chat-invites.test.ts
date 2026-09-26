@@ -3,19 +3,23 @@
 
 import "./i18n.test-helper";
 import { afterEach, describe, expect, mock, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { chatInvites, } from "./chat-invites";
 import type { ChatState, } from "./types";
 
 let fetchCalls: { url: string; opts: RequestInit }[] = [];
 let fetchHandler: ((url: string, opts: RequestInit,) => Response) | null = null;
 
-mock.module("./htmx", () => ({
-  apiFetch: async (url: string, opts?: RequestInit,) => {
-    fetchCalls.push({ url, opts: opts ?? {}, },);
-    if (!fetchHandler) { return new Response("{}", { status: 200, },); }
-    return fetchHandler(url, opts ?? {},);
-  },
-}),);
+// Gated: mock.module is process-global (BUG 9c8bea1).
+if (ISOLATED) {
+  mock.module("./htmx", () => ({
+    apiFetch: async (url: string, opts?: RequestInit,) => {
+      fetchCalls.push({ url, opts: opts ?? {}, },);
+      if (!fetchHandler) { return new Response("{}", { status: 200, },); }
+      return fetchHandler(url, opts ?? {},);
+    },
+  }),);
+}
 
 interface Toast {
   type: string;
@@ -61,7 +65,7 @@ afterEach(() => {
   globalThis.confirm = () => true;
 },);
 
-describe("chatInvites", () => {
+describeOrSkip("chatInvites", () => {
   describe("loadChatInvites", () => {
     test("returns early without an active chat", async () => {
       const ctx = buildCtx({ activeChat: null, },);
@@ -161,4 +165,4 @@ describe("chatInvites", () => {
       expect(ctx._chatJoinCode,).toBe("BROKEN00",);
     });
   });
-});
+},);
