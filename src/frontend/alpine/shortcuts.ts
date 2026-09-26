@@ -134,81 +134,81 @@ export function __resetKeynavHandlersForTests(): void {
 let pendingG = false;
 
 if (typeof document.addEventListener === "function") {
-document.addEventListener("keydown", (e: KeyboardEvent,) => {
-  const target = e.target as HTMLElement;
-  const isInput = target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable;
+  document.addEventListener("keydown", (e: KeyboardEvent,) => {
+    const target = e.target as HTMLElement;
+    const isInput = target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable;
 
-  // Ctrl+B — toggle sidebar (works everywhere)
-  if (e.ctrlKey && e.key === "b") {
-    e.preventDefault();
-    globalThis.toggleSidebar();
-    return;
-  }
-
-  // Skip remaining shortcuts when typing in an input
-  if (isInput) { return; }
-
-  // Ctrl+N — new chat
-  if (e.ctrlKey && e.key === "n") {
-    e.preventDefault();
-    const link = document.querySelector<HTMLAnchorElement>('[href="/views/new-chat"]',);
-    if (link) {
-      link.click();
-    } else {
-      location.assign("/views/new-chat",);
-    }
-    return;
-  }
-
-  // Ctrl+L — focus message input
-  if (e.ctrlKey && e.key === "l") {
-    e.preventDefault();
-    const input = document.querySelector<HTMLTextAreaElement>("#message-input, .input-row textarea",);
-    input?.focus();
-    return;
-  }
-
-  // Ctrl+K — focus search
-  if (e.ctrlKey && e.key === "k") {
-    e.preventDefault();
-    const search = document.querySelector<HTMLInputElement>('.list-search, [type="search"]',);
-    search?.focus();
-    return;
-  }
-
-  // Opt-in key navigation below — inert unless the user enabled it.
-  if (!isKeyboardNavEnabled() || e.ctrlKey || e.altKey || e.metaKey) { return; }
-
-  // "?" — toggle the keynav help overlay (always allowed once nav is on)
-  if (e.key === "?") {
-    e.preventDefault();
-    window.dispatchEvent(new CustomEvent("keynav:toggle-help",),);
-    return;
-  }
-
-  // "g" starts a two-key sequence; the next key completes it.
-  if (pendingG) {
-    pendingG = false;
-    const sequence = `g ${e.key}`;
-    const entry = DEFAULT_KEYMAP.find((k,) => k.combo === sequence);
-    if (entry) {
+    // Ctrl+B — toggle sidebar (works everywhere)
+    if (e.ctrlKey && e.key === "b") {
       e.preventDefault();
-      dispatchKeynavActionToHandlers(entry.action,);
-      dispatchKeynavAction(entry.action,);
+      globalThis.toggleSidebar();
+      return;
     }
-    return;
-  }
 
-  if (e.key === "g") {
-    pendingG = true;
-    return;
-  }
+    // Skip remaining shortcuts when typing in an input
+    if (isInput) { return; }
 
-  const single = DEFAULT_KEYMAP.find((k,) => k.combo === e.key);
-  if (single) {
-    e.preventDefault();
-    dispatchKeynavActionToHandlers(single.action,);
-    dispatchKeynavAction(single.action,);
-  }
-},);
+    // Ctrl+N — new chat
+    if (e.ctrlKey && e.key === "n") {
+      e.preventDefault();
+      const link = document.querySelector<HTMLAnchorElement>('[href="/views/new-chat"]',);
+      if (link) {
+        link.click();
+      } else {
+        location.assign("/views/new-chat",);
+      }
+      return;
+    }
+
+    // Ctrl+L — focus message input
+    if (e.ctrlKey && e.key === "l") {
+      e.preventDefault();
+      const input = document.querySelector<HTMLTextAreaElement>("#message-input, .input-row textarea",);
+      input?.focus();
+      return;
+    }
+
+    // Ctrl+K — focus search
+    if (e.ctrlKey && e.key === "k") {
+      e.preventDefault();
+      const search = document.querySelector<HTMLInputElement>('.list-search, [type="search"]',);
+      search?.focus();
+      return;
+    }
+
+    // Opt-in key navigation below — inert unless the user enabled it.
+    if (!isKeyboardNavEnabled() || e.ctrlKey || e.altKey || e.metaKey) { return; }
+
+    // "?" — toggle the keynav help overlay (always allowed once nav is on)
+    if (e.key === "?") {
+      e.preventDefault();
+      window.dispatchEvent(new CustomEvent("keynav:toggle-help",),);
+      return;
+    }
+
+    // "g" starts a two-key sequence; the next key completes it.
+    if (pendingG) {
+      pendingG = false;
+      const sequence = `g ${e.key}`;
+      const entry = DEFAULT_KEYMAP.find((k,) => k.combo === sequence);
+      if (entry) {
+        e.preventDefault();
+        dispatchKeynavActionToHandlers(entry.action,);
+        dispatchKeynavAction(entry.action,);
+      }
+      return;
+    }
+
+    if (e.key === "g") {
+      pendingG = true;
+      return;
+    }
+
+    const single = DEFAULT_KEYMAP.find((k,) => k.combo === e.key);
+    if (single) {
+      e.preventDefault();
+      dispatchKeynavActionToHandlers(single.action,);
+      dispatchKeynavAction(single.action,);
+    }
+  },);
 }
