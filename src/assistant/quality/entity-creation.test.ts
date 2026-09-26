@@ -98,6 +98,43 @@ describe("checkDuplicate (DB-backed)", () => {
     expect(miss.found,).toBe(false,);
   });
 
+  it("scopes npc duplicates by owner, same as characters", async () => {
+    const { db, } = await createTestDb();
+    await db.insertInto("users",)
+      .values({
+        id: "u1",
+        username: "owner",
+        display_name: "Owner",
+        password_hash: null,
+        role: "user",
+        status: "active",
+        settings: "{}",
+        format_version: 1,
+      },)
+      .execute();
+    await db.insertInto("actors",)
+      .values({
+        id: "npc-1",
+        actor_type: "character",
+        display_name: "Barkeep",
+        owner_id: "u1",
+        user_id: "u1",
+        agent_type: "npc",
+        settings: "{}",
+        import_spec: "llm-generated",
+      },)
+      .execute();
+
+    // Same owner + same name must warn — an npc shares the actors table with
+    // characters, so the duplicate scope is identical.
+    const hit = await checkDuplicate(db, "npc", { name: "barkeep", }, { ownerId: "u1", },);
+    expect(hit.found,).toBe(true,);
+    expect(hit.existingId,).toBe("npc-1",);
+
+    const miss = await checkDuplicate(db, "npc", { name: "Smith", }, { ownerId: "u1", },);
+    expect(miss.found,).toBe(false,);
+  });
+
   it("scopes items by world_id", async () => {
     const { db, } = await createTestDb();
     await db.insertInto("users",)
