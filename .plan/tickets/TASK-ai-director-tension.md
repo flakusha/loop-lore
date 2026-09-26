@@ -6,9 +6,9 @@
 **Status:** open
 **Priority:** medium
 **Effort:** Medium
-**Summary:** (none captured)
-**Context:** (none captured)
-**Acceptance Criteria:** (none captured)
+**Summary:** Tension tracking state per chat. Persists current_tension, target_tension, tension_curve (planned arc), pace_modifier, last_event_time, events_since_last_rest. TensionState schema at epic-assistant-gm-flows.md lines 102-118.
+**Context:** Source: epic-assistant-gm-flows.md § AI Director → Tension Management. State feeds narrative arc templates and event pacing.
+**Acceptance Criteria:** [ ] TensionState persisted on chat state; [ ] paceModifier exposed for auto-gen.ts; [ ] eventsSinceLastRest counter resets on rest event; [ ] tension_curve stored as ordered TensionPoint[].
 
 
 **Status**: open
