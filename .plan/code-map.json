@@ -8743,6 +8743,12 @@
       "source": ".plan/tickets/TASK-templates-loader-merge-strategy-consistency.md"
     }
   ],
+  "src/config/templates-loader/validation-entity-types.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam.md"
+    }
+  ],
   "src/config/templates-loader/validation.ts": [
     {
       "kind": "ticket",
@@ -24619,6 +24625,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-group-participant-injection-absent-on-manual-generate-route.md"
+    }
+  ],
+  "src/routes/chat-context/handlers.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam.md"
     }
   ],
   "src/routes/chat-export.test.ts": [
