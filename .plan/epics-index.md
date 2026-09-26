@@ -45,7 +45,7 @@
 | ⬜ Not Started | 3D Asset Generation (Future) | Low | Very High | 25 | [epic-3d-generation.md](/.plan/epics/epic-3d-generation.md) |
 | 🟡 In Progress | Accessibility & Input Systems | P0 — Critical | High | 2 | [epic-accessibility-input.md](/.plan/epics/epic-accessibility-input.md) |
 | Not Started | Actor Autonomy & Story Auto-Drive | High | Large | 8 | [epic-actor-autonomy-story-drive.md](/.plan/epics/epic-actor-autonomy-story-drive.md) |
-| done | Actor Turn Skip ('Continue' Without Breaking the Story) | Medium | Small–Medium | 6 | [epic-actor-turn-skip.md](/.plan/epics/epic-actor-turn-skip.md) |
+| ✅ Core shipped + GM absence contract landed (2026-09-25 → 2026-09-26) — event, route, cascade filter, composer UI, gate interlock, GM prompt contract (`src/assistant/prompt/sections/turn-skip-absence.ts`), cascade slot release telemetry (`cascade.slot.released`), beat-budget telemetry (`cascade.beat.consumed`), dedup telemetry (`cascade.dedup.skip`) all on dev | Actor Turn Skip ('Continue' Without Breaking the Story) | Medium | Small–Medium | 4 | [epic-actor-turn-skip.md](/.plan/epics/epic-actor-turn-skip.md) |
 | done | Actors & Entity System | High | High | 12 | [epic-actors.md](/.plan/epics/epic-actors.md) |
 | 🟢 Near-complete — 12 tabs + user Flag button/dialog shipped; remaining gap: Revision History | Admin Panel & Dashboard | Medium | Medium | 0 | [epic-frontend-admin.md](/.plan/epics/epic-frontend-admin.md) |
 | ⬜ Not Started | Age Gate & Content Warnings | Medium | Medium | 0 | [epic-frontend-age-gate.md](/.plan/epics/epic-frontend-age-gate.md) |
@@ -652,7 +652,7 @@ Long-horizon vision for 3D asset generation and rendering. This epic covers:
 
 ### Actor Turn Skip ('Continue' Without Breaking the Story)
 
-- **Status:** done
+- **Status:** ✅ Core shipped + GM absence contract landed (2026-09-25 → 2026-09-26) — event, route, cascade filter, composer UI, gate interlock, GM prompt contract (`src/assistant/prompt/sections/turn-skip-absence.ts`), cascade slot release telemetry (`cascade.slot.released`), beat-budget telemetry (`cascade.beat.consumed`), dedup telemetry (`cascade.dedup.skip`) all on dev
 - **Priority:** Medium
 - **Effort:** Small–Medium
 - **Type:** Feature Epic

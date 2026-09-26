@@ -6433,7 +6433,7 @@
     "tags": [],
     "source": ".plan/tickets/EPIC-2026-23.md",
     "git_issue": "8c07e16",
-    "status": "open"
+    "status": "done"
   },
   "EPIC-2026-24": {
     "hash": "96970f5",
@@ -19183,6 +19183,18 @@
     "source": ".plan/tickets/TASK-assistant-entity-access-asset-access.md",
     "status": "open",
     "git_issue": "2451ede"
+  },
+  "TASK-ASSISTANT-ENTITY-ACCESS-BATCH-RAG-ASSET": {
+    "hash": "pending",
+    "extid": "TASK-ASSISTANT-ENTITY-ACCESS-BATCH-RAG-ASSET",
+    "type": "TASK",
+    "title": "B1 — RAG + Asset Access MVP",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-assistant-entity-access-batch-rag-asset.md",
+    "status": "open"
   },
   "TASK-ASSISTANT-ENTITY-ACCESS-CHARACTER-ITEM-INVENTORY": {
     "hash": "4566643",
