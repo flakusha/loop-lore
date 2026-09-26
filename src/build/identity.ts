@@ -79,6 +79,11 @@ const SOURCE_EXCLUDE_DIRS: Record<string, true> = {
   ".tmp": true,
   dist: true,
   worktree: true,
+  // `tree` is giwt's default worktree dir (settings paths.tree). The build
+  // hash must cover only the running server's code, so local worktrees are
+  // excluded alongside node_modules; without this the hash changes whenever a
+  // worktree exists and hashing blows past the federation test's timeout.
+  tree: true,
 };
 
 /**
