@@ -25,6 +25,7 @@ import { adminCharacterOverridesRoutes, } from "../routes/admin-character-overri
 import { adminNsfwRoutes, } from "../routes/admin-nsfw";
 import { adminTemplateRoutes, } from "../routes/admin-templates";
 import { sdTemplatesRoutes, } from "../routes/admin/sd-templates";
+import { agencyRoutes, } from "../routes/agency";
 import { analyticsRoutes, } from "../routes/analytics";
 import { apiKeysRoutes, } from "../routes/api-keys";
 import { assetSearchRoutes, } from "../routes/asset-search";
@@ -150,6 +151,7 @@ export function registerPlugins(app: Elysia<any>, opts: RegisterPluginsOpts,): v
   app.use(switchSessionRoutes(handleOpts,),);
   app.use(actorE2EPubkeyRoutes(handleOpts,),);
   app.use(actorItemsRoutes(handleOpts,),);
+  app.use(agencyRoutes({ database: handleOpts.database, },),);
   app.use(actorMemoriesRoutes(handleOpts,),);
   app.use(memoryAuditRoutes({ database: handleOpts.database, },),);
   app.use(actorLoreEntriesRoutes(handleOpts,),);

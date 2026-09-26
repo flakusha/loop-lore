@@ -2904,3 +2904,19 @@ export const ModelComparisonRunsSchema = t.Object({
   ratings: t.Optional(t.String(),),
   metadata: t.Optional(t.String(),),
 },);
+
+// ── actor_story_points ────────────────────────────────────────────
+export const ActorStoryPointsSchema = t.Object({
+  actor_id: t.String(),
+  world_id: t.Optional(t.String(),),
+  balance: t.Optional(t.Number(),),
+  earned_total: t.Optional(t.Number(),),
+  spent_total: t.Optional(t.Number(),),
+  cap: t.Optional(t.Number(),),
+  last_earn_at: t.Optional(t.String(),),
+  last_spend_at: t.Optional(t.String(),),
+  last_earn_reason: t.Optional(t.String(),),
+  last_spend_reason: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);

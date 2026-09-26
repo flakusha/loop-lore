@@ -629,6 +629,11 @@
           "type": "boolean",
           "default": true,
           "description": "Enable moderation flagging"
+        },
+        "enableModerationLlmClassifier": {
+          "type": "boolean",
+          "default": true,
+          "description": "LLM moderation verdict alongside keyword scan"
         }
       },
       "required": [

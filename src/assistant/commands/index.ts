@@ -34,6 +34,7 @@ import "./analyze";
 import "./regen";
 import "./workflow";
 import "./interaction";
+import "./agency";
 
 export { BUILTIN_COMMANDS, isBuiltinCommand, parseCommand, } from "../command-parser";
 export type { ParsedCommand, } from "../command-parser";
