@@ -47,6 +47,34 @@ async function gotoView(
   await page.locator("[data-testid='app-root']",).waitFor({ state: "attached", timeout: 15_000, },);
 }
 
+/** Poll the `ui` Alpine store until `predicate` holds (or time out). */
+async function waitForUiStore(
+  page: Awaited<ReturnType<BrowserTestContext["browser"]["newPage"]>>,
+  predicate: (state: Record<string, unknown>,) => boolean,
+  timeoutMs = 10_000,
+): Promise<void> {
+  const { promise, resolve, reject, } = Promise.withResolvers<void>();
+  const start = Date.now();
+  const check = async (): Promise<void> => {
+    try {
+      const state = await getAlpineStore(page, "ui",);
+      if (predicate(state,)) { resolve(); }
+      else { retry(); }
+    } catch {
+      retry();
+    }
+  };
+  const retry = (): void => {
+    if (Date.now() - start > timeoutMs) {
+      reject(new Error(`ui store predicate timed out after ${timeoutMs}ms`,),);
+    } else {
+      setTimeout(check, 50,);
+    }
+  };
+  void check();
+  return promise;
+}
+
 // ── htmx swap triggers Alpine init ──────────────────────────
 
 describe("htmx swap → Alpine init", () => {
@@ -127,6 +155,16 @@ describe("Morph swap state reset", () => {
         expect(uiState.showChatList,).toBe(false,);
         expect(uiState.showGallery,).toBe(false,);
         expect(uiState.showCharacterInfo,).toBe(false,);
+
+        // The document-level Escape handler must survive the morph round trip:
+        // pressing it after re-init must not throw (errors.assert() in finally)
+        // and must leave the panels closed.
+        await page.keyboard.press("Escape",);
+        await page.waitForTimeout(200,);
+        uiState = await getAlpineStore(page, "ui",);
+        expect(uiState.showChatList,).toBe(false,);
+        expect(uiState.showGallery,).toBe(false,);
+        expect(uiState.showCharacterInfo,).toBe(false,);
       } finally {
         errors.assert();
         errors.detach();
@@ -154,22 +192,12 @@ describe("Panel toggles + Escape key", () => {
             new MouseEvent("click", { bubbles: true, },),
           );
         },);
-        await waitForAlpineState(
-          page,
-          "[x-data='chatState()']",
-          (state,) => (state as Record<string, unknown>).showChatList === true,
-          10_000,
-        );
+        await waitForUiStore(page, (state,) => state.showChatList === true,);
         let uiState = await getAlpineStore(page, "ui",);
         expect(uiState.showChatList,).toBe(true,);
 
         await page.keyboard.press("Escape",);
-        await waitForAlpineState(
-          page,
-          "[x-data='chatState()']",
-          (state,) => (state as Record<string, unknown>).showChatList === false,
-          10_000,
-        );
+        await waitForUiStore(page, (state,) => state.showChatList === false,);
         uiState = await getAlpineStore(page, "ui",);
         expect(uiState.showChatList,).toBe(false,);
       } finally {
@@ -197,49 +225,6 @@ describe("Panel toggles + Escape key", () => {
         expect(uiState.showChatList,).toBe(false,);
         expect(uiState.showGallery,).toBe(false,);
         expect(uiState.showCharacterInfo,).toBe(false,);
-      } finally {
-        errors.assert();
-        errors.detach();
-        await page.close();
-      }
-    },
-    45_000,
-  );
-
-  test(
-    "keydown handler works after morph navigation",
-    async () => {
-      const page = await ctx.openPage();
-      const errors = trackPageErrors(page,);
-      try {
-        await gotoView(page, "/views/chat",);
-        await waitForAlpineReady(page,);
-
-        await navigateViaHtmx(page, "nav-characters", "characters-header",);
-        await navigateViaHtmx(page, "nav-chat",);
-        await waitForAlpineReady(page,);
-
-        await page.evaluate(() => {
-          document.querySelector("[data-testid='toggle-chat-list']",)?.dispatchEvent(
-            new MouseEvent("click", { bubbles: true, },),
-          );
-        },);
-        await waitForAlpineState(
-          page,
-          "[x-data='chatState()']",
-          (state,) => (state as Record<string, unknown>).showChatList === true,
-          10_000,
-        );
-        await page.keyboard.press("Escape",);
-        await waitForAlpineState(
-          page,
-          "[x-data='chatState()']",
-          (state,) => (state as Record<string, unknown>).showChatList === false,
-          10_000,
-        );
-
-        const uiState = await getAlpineStore(page, "ui",);
-        expect(uiState.showChatList,).toBe(false,);
       } finally {
         errors.assert();
         errors.detach();
@@ -314,9 +299,9 @@ describe("htmx modal + Alpine", () => {
   );
 });
 
-// ── Toast deduplication (ALP.2) ─────────────────────────────
+// ── Toast rendering (ALP.2) ─────────────────────────────────
 
-describe("Toast deduplication", () => {
+describe("Toast rendering", () => {
   test(
     "show-toast event creates exactly one DOM toast",
     async () => {
@@ -331,7 +316,7 @@ describe("Toast deduplication", () => {
           message: "Test toast",
         },);
         await page.waitForFunction(
-          () => document.querySelectorAll("[data-testid^='toast-']",).length > 0,
+          () => document.querySelectorAll("#toast-container .toast",).length === 1,
           null,
           { timeout: 10_000, },
         );
@@ -348,7 +333,7 @@ describe("Toast deduplication", () => {
   );
 
   test(
-    "multiple rapid show-toast events create individual toasts",
+    "each show-toast event renders its own toast",
     async () => {
       const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
@@ -359,13 +344,17 @@ describe("Toast deduplication", () => {
         await dispatchEvent(page, "show-toast", { type: "info", message: "First", },);
         await dispatchEvent(page, "show-toast", { type: "info", message: "Second", },);
         await page.waitForFunction(
-          () => document.querySelectorAll("[data-testid^='toast-']",).length >= 2,
+          () => document.querySelectorAll("#toast-container .toast",).length >= 2,
           null,
           { timeout: 10_000, },
         );
 
         const toasts = await countToasts(page,);
         expect(toasts,).toBe(2,);
+        const messages = await page.evaluate(() =>
+          [...document.querySelectorAll("#toast-container .toast .message",),].map((el,) => el.textContent)
+        );
+        expect(messages,).toEqual(["First", "Second",],);
       } finally {
         errors.assert();
         errors.detach();

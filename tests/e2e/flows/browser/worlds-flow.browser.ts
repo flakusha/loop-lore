@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
-import { mkdirSync, writeFileSync, } from "node:fs";
+import { mkdirSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 import { type BrowserTestContext, createBrowserTest, } from "../../helpers/browser-server";
@@ -25,21 +25,20 @@ describe("Worlds flow E2E", () => {
   async function gotoWorlds(
     page: Awaited<ReturnType<BrowserTestContext["browser"]["newPage"]>>,
   ) {
-    try {
-      await page.goto(`${ctx.url}/views/worlds`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
-    } catch {}
+    await page.goto(`${ctx.url}/views/worlds`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
     await page.locator("[data-testid='app-root']",).waitFor({ state: "attached", timeout: 15_000, },);
   }
 
   async function createWorldViaApi(name: string,): Promise<string> {
     const client = createClient(ctx.url,);
+    if (!await client.login()) { throw new Error(`World E2E login failed: ${name}`,); }
     const res = await client.post<{ id: string }>("/api/v1/worlds", { name, description: `E2E: ${name}`, },);
     return res.data!.id;
   }
 
   describe("Page load", () => {
     test("worlds page loads with header", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await gotoWorlds(page,);
@@ -54,7 +53,7 @@ describe("Worlds flow E2E", () => {
     });
 
     test("create and import buttons exist", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await gotoWorlds(page,);
@@ -70,7 +69,7 @@ describe("Worlds flow E2E", () => {
 
   describe("Create world", () => {
     test("create world modal opens", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await gotoWorlds(page,);
@@ -85,7 +84,7 @@ describe("Worlds flow E2E", () => {
     });
 
     test("create world form has required fields", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await gotoWorlds(page,);
@@ -110,7 +109,7 @@ describe("Worlds flow E2E", () => {
   describe("World list and navigation", () => {
     test("world list renders seeded worlds", async () => {
       await createWorldViaApi("API Created World",);
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await gotoWorlds(page,);
@@ -129,7 +128,7 @@ describe("Worlds flow E2E", () => {
 
     test("clicking a world card navigates to detail page", async () => {
       await createWorldViaApi("Detail Test World",);
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await gotoWorlds(page,);
@@ -148,7 +147,7 @@ describe("Worlds flow E2E", () => {
 
   describe("Sidebar navigation", () => {
     test("sidebar navigation works from worlds page", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await gotoWorlds(page,);
@@ -168,7 +167,7 @@ describe("Worlds flow E2E", () => {
 
   describe("World import/export menus", () => {
     test("world import opens import modal", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await gotoWorlds(page,);
@@ -192,6 +191,7 @@ describe("Worlds flow E2E", () => {
       const sourceId = await createWorldViaApi("Source Export World",);
 
       const client = createClient(ctx.url,);
+      if (!await client.login()) { throw new Error("World E2E export login failed",); }
       const dlRes = await fetch(`${ctx.url}/api/v1/worlds/${sourceId}/export`, {
         headers: { Cookie: `ll_token=${client.token ?? ""}`, },
       },);
@@ -199,39 +199,52 @@ describe("Worlds flow E2E", () => {
       expect(dlRes.headers.get("content-disposition",),).toContain("attachment",);
       const bundle = await dlRes.text();
 
-      const tmpDir = join(tmpdir(), `loop-lore-e2e-import`,);
+      const tmpDir = join(tmpdir(), `loop-lore-e2e-import-${crypto.randomUUID()}`,);
       mkdirSync(tmpDir, { recursive: true, },);
       const tmpPath = join(tmpDir, `source-${sourceId}.world.json`,);
       writeFileSync(tmpPath, bundle,);
 
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await gotoWorlds(page,);
+        const before = await page.locator("[data-testid='world-list'] .world-name",).allTextContents();
+        expect(before.some((n: string,) => n.includes("Source Export World",)),).toBe(true,);
         await page.click("[data-testid='import-world']",);
 
         const input = page.locator("[data-testid='import-world-form'] #world-import-file-input",);
         await input.setInputFiles(tmpPath,);
 
         // Submit the form → importWorld() reads the file, POSTs the bundle,
-        // then refreshes #world-list via htmx.
+        // then refreshes #world-list via htmx. The imported world keeps the
+        // source name, so a successful import shows a SECOND entry with that
+        // name — asserting mere presence would pass on the source row alone.
         await page.locator("[data-testid='import-world-form'] button[type='submit']",).click();
-        await page.locator("[data-testid='world-list'] .world-name",).first().waitFor({
-          state: "attached",
-          timeout: 30_000,
-        },);
+        await page.waitForFunction(
+          (expected: number,) => document.querySelectorAll("[data-testid='world-list'] .world-name",).length > expected,
+          before.length,
+          { timeout: 30_000, },
+        );
         const names = await page.locator("[data-testid='world-list'] .world-name",).allTextContents();
-        expect(names.some((n: string,) => n.includes("Source Export World",)),).toBe(true,);
+        expect(names.filter((n: string,) => n.includes("Source Export World",)).length,)
+          .toBeGreaterThan(before.filter((n: string,) => n.includes("Source Export World",)).length,);
       } finally {
-        errors.assert();
         errors.detach();
-        await page.close();
+        try {
+          errors.assert();
+        } finally {
+          try {
+            await page.close();
+          } finally {
+            rmSync(tmpDir, { recursive: true, force: true, },);
+          }
+        }
       }
     }, 90_000,);
 
     test("world detail export button triggers exportWorld download handler", async () => {
       const worldId = await createWorldViaApi("Detail Export World",);
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await gotoWorlds(page,);

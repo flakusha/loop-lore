@@ -55,6 +55,11 @@ export const chatSearch: Partial<ChatState> & ThisType<ChatState> = {
         lastActiveAt: (r.lastActiveAt as string | null) ?? null,
       }),);
     } catch (error) {
+      const status = error instanceof Error && "status" in error ? error.status : undefined;
+      if (status === 429) {
+        this._joinableChats = [];
+        return;
+      }
       getLogger().error(
         "Failed to load joinable chats",
         error instanceof Error ? error : new Error(String(error,),),

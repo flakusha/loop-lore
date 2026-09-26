@@ -250,6 +250,7 @@ const checks = {
     // ESLint (single canonical entry — duplicate "lint - ts (eslint)" removed;
     // running ESLint twice doubled its 1.5GB RSS peak with no new signal.)
     "lint - eslint": "bun run lint:eslint",
+    // oxlint remains manual; the canonical runner does not report it as correctness evidence.
 
     // Formatting
     "format - dprint": "bun run format",
@@ -261,11 +262,7 @@ const checks = {
     // Dead-code analysis (knip)
     "dead - code (knip)": "bun run dead:code",
 
-    // Circular-import gate (madge). skipTypeImports=true in package.json
-    // filters erased-at-compile-time `import type` edges, so only runtime
-    // cycles are reported. Currently advisory: existing 9 runtime cycles
-    // in src/ are tracked for a follow-up sweep (see TASK-madge-runtime-cycles).
-    "circular - imports (advisory)": "bun run circular:check || true",
+    // Circular-import check remains manual; current debt is non-blocking.
 
     // Wiring + dead-code check gate (routes mounted, services wired, plugins registered)
     "wiring - check": "bun run scripts/check-wiring.ts",
@@ -311,18 +308,14 @@ const checks = {
     // The actual command is built lazily in `coverageCommand()` below so
     // it can reference the per-RUN constants (declared after this block).
     "coverage - per-module line %": NOOP_OK, // placeholder; replaced before run
+    // Blocking: resolve every physical view through production includes/icons.
+    "frontend - template preflight": "bun run scripts/check-frontend-templates.ts",
     // Blocking: unescaped server-derived data in innerHTML is a stored-XSS vector.
     "frontend - innerHTML xss": "bun run scripts/check-frontend-innerhtml-xss.ts",
-    // Non-blocking reporter: surfaces pre-existing banned-pattern debt in the
-    // gate's `output` field of the check report. Kept non-blocking via `|| true`
-    // so existing debt does not block the gate; when findings clear, drop the
-    // `|| true` and the gate becomes blocking by default. The label now matches
-    // the runner behavior (the prior label said "advisory" while the runner
-    // invoked it blocking — TASK-align-innerhtml-banned-pattern-gate-semantics).
-    "frontend - banned patterns (ESLint-gap heuristic — non-blocking)":
-      "bun run scripts/check-frontend-banned-patterns.ts || true",
-    // Advisory: planning hygiene — stale/missing epic coverage.
-    "plan - epic coverage (advisory)": "bun run scripts/check-epic-coverage.ts || true",
+    // Browser baseline: one serial gate runs the complete Playwright surface.
+    "e2e - browser (baseline)": "bun run test:e2e:browser",
+    // Banned-pattern findings are collected in the non-blocking report below.
+    // Epic coverage remains manual; current planning debt is non-blocking.
   },
   // ── Run checks in parallel ──────────────────────────────────────
 
@@ -663,6 +656,30 @@ function parseJobs() {
 }
 const JOBS = Math.min(parseJobs(), Object.keys(checks,).length,);
 
+// Keep the TAIL of a failing gate's output. Failure details and summaries come
+// last; gates that print thousands of advisory lines first (e.g. giwt's
+// placeholder-hash list) otherwise push the actionable text past the cap.
+function clipOutput(text, limit,) {
+  if (text.length <= limit) { return text; }
+  return `... (${text.length - limit} earlier chars elided) ...\n${text.slice(-limit,)}`;
+}
+
+// giwt reconciles .plan/ against the git issue CLI by shelling out to
+// `git issue ls --all --format oneline` with a hard 10s budget (~3.2k issues;
+// the call measures 5.4s idle and 15.5s on a loaded box, and is not always
+// resolvable from the gate's environment at all). When it fails, giwt degrades
+// to "git issue CLI unavailable", then lists every issue it could not see as an
+// actionable finding (~112 phantom findings) and exits 1. A gate that could not
+// be evaluated is not a gate that failed: report it as skipped with the reason
+// printed, never as a red gate carrying invented findings to "fix".
+//
+// ponytail: ceiling — on a host where the issue CLI is *permanently*
+// unreachable the plan gates never gate .plan/ drift. The skip is printed on
+// every run and recorded in the report, so it is visible rather than silent.
+// Fail closed once upstream giwt returns a distinct exit code for "cannot
+// evaluate" (BUG-giwt-plan-gates-report-112-phantom-actionable-issues-when-th).
+const GIWT_ISSUE_CLI_UNAVAILABLE = "git issue CLI unavailable";
+
 // oxlint-disable-next-line func-style
 async function runCheck(name, command,) {
   const startedAt = performance.now(),
@@ -678,12 +695,16 @@ async function runCheck(name, command,) {
       exitCode = await proc.exited,
       stdout = await new Response(proc.stdout,).text(),
       stderr = await new Response(proc.stderr,).text(),
-      output = stdout || stderr;
+      // `bun test` prints its banner on stdout and every failure detail on
+      // stderr, so `stdout || stderr` reported a failing gate as one banner
+      // line and hid the cause. Keep both streams whenever stderr has content.
+      output = stderr.trim() ? `${stdout}${stderr}` : stdout || stderr;
     // oxlint-disable-next-line sort-keys
     return {
       name,
       command,
       passed: exitCode === 0,
+      skipped: exitCode !== 0 && output.includes(GIWT_ISSUE_CLI_UNAVAILABLE,),
       output,
       exitCode,
       durationMs: Math.round(performance.now() - startedAt,),
@@ -695,6 +716,7 @@ async function runCheck(name, command,) {
       name,
       command,
       passed: false,
+      skipped: false,
       output: error.message,
       exitCode: 1,
       durationMs: Math.round(performance.now() - startedAt,),
@@ -716,6 +738,7 @@ async function runCheck(name, command,) {
 // deterministically across three consecutive runs).
 const HEAVY_NAMES = new Set([
   "coverage - per-module line %",
+  "e2e - browser (baseline)",
   "plan - ticket index (sync)",
 ],);
 
@@ -782,14 +805,29 @@ async function runAllChecks() {
 function reportResults(results,) {
   let passed = 0;
   let failed = 0;
+  let skipped = 0;
 
   for (const result of results) {
-    if (result.passed) {
+    if (result.skipped) {
+      console.log(`SKIP: ${result.name}`,);
+      console.log(
+        `  ${GIWT_ISSUE_CLI_UNAVAILABLE} - the gate could not be evaluated. Re-run \`bun run ${
+          result.command.replace(/^bun run /, "",)
+        }\` on an idle host to check it.`,
+      );
+      skipped++;
+    } else if (result.passed) {
       console.log(`PASS: ${result.name}`,);
       passed++;
     } else {
       console.log(`FAIL: ${result.name}`,);
-      console.log(`  Output: ${result.output.split("\n",).slice(0, 10,).join("\n  ",)}`,);
+      // Head for context, tail for the actual failure (see clipOutput).
+      const outputLines = result.output.split("\n",),
+        head = outputLines.slice(0, 5,),
+        tail = outputLines.slice(-20,);
+      console.log(
+        `  Output: ${[...new Set([...head, ...(outputLines.length > 25 ? ["...",] : []), ...tail,],),].join("\n  ",)}`,
+      );
       failed++;
     }
   }
@@ -797,6 +835,7 @@ function reportResults(results,) {
   console.log("\n=== Summary ===",);
   console.log(`Total: ${results.length}`,);
   console.log(`Passed: ${passed}`,);
+  console.log(`Skipped: ${skipped}`,);
   console.log(`Failed: ${failed}`,);
 
   return failed;
@@ -810,7 +849,8 @@ function reportResults(results,) {
  */
 function buildReport({ exitCode, checks, nonBlocking, gpgPrecheck, },) {
   const passedCount = checks.filter((check,) => check.passed).length;
-  const failedCount = checks.length - passedCount;
+  const skippedCount = checks.filter((check,) => check.skipped).length;
+  const failedCount = checks.length - passedCount - skippedCount;
   const durationMs = checks.reduce((sum, check,) => sum + (check.durationMs ?? 0), 0,);
 
   return {
@@ -836,15 +876,17 @@ function buildReport({ exitCode, checks, nonBlocking, gpgPrecheck, },) {
     summary: {
       total: checks.length,
       passed: passedCount,
+      skipped: skippedCount,
       failed: failedCount,
       durationMs,
     },
     checks: checks.map((check,) => ({
       command: check.command,
       passed: check.passed,
+      skipped: check.skipped === true,
       exitCode: check.exitCode,
       durationMs: check.durationMs ?? 0,
-      output: check.passed ? null : (check.output ?? "").slice(0, MAX_OUTPUT_CHARS,),
+      output: check.passed ? null : clipOutput(check.output ?? "", MAX_OUTPUT_CHARS,),
       truncated: check.passed ? false : (check.output ?? "").length > MAX_OUTPUT_CHARS,
     })),
     nonBlocking,
@@ -1102,8 +1144,12 @@ function cmdReportLs() {
     if (corrupt) { status = "CORRUPT"; }
     else if (report === null) { status = "no-report"; }
     else if (report.gitHead && !wt.head.startsWith(report.gitHead,)) { status = "STALE"; }
-    else if (report.passed === true) { status = "pass"; }
-    else { status = "FAIL"; }
+    else if (report.passed === true) {
+      // A skipped gate was not evaluated (see GIWT_ISSUE_CLI_UNAVAILABLE) -
+      // surface it instead of letting the row read as a clean pass.
+      const skipped = report.summary?.skipped ?? 0;
+      status = skipped > 0 ? `pass (${skipped} skipped)` : "pass";
+    } else { status = "FAIL"; }
 
     const reportHead = report?.gitHead ?? "-";
     const name = path.basename(wt.path,).padEnd(32,);
@@ -1162,6 +1208,34 @@ async function runNonBlockingChecks(notes,) {
   } catch {
     console.log("warn: Version check skipped",);
     notes.push({ level: "skipped", message: "Version check skipped", },);
+  }
+
+  // Banned-pattern findings are advisory debt, but remain visible in the report.
+  try {
+    const bannedProc = Bun.spawn(["bun", "run", "scripts/check-frontend-banned-patterns.ts",], {
+      cwd: PROJECT_ROOT,
+      stdout: "pipe",
+      stderr: "pipe",
+    },);
+    const bannedExit = await bannedProc.exited;
+    const [bannedStdout, bannedStderr,] = await Promise.all([
+      new Response(bannedProc.stdout,).text(),
+      new Response(bannedProc.stderr,).text(),
+    ],);
+    const bannedText = (bannedStdout + bannedStderr).trim();
+    const level = bannedExit === 0 ? "ok" : "warn";
+    console.log(
+      `${bannedExit === 0 ? "OK" : "warn"}: Frontend banned-pattern check (${bannedExit === 0 ? "clean" : "findings"})`,
+    );
+    if (bannedText) { console.log(bannedText,); }
+    notes.push({
+      level,
+      message: `Frontend banned-pattern check: ${bannedExit === 0 ? "clean" : "findings"}${
+        bannedText ? `\n${bannedText.slice(0, 4000,)}` : ""
+      }`,
+    },);
+  } catch (error) {
+    notes.push({ level: "skipped", message: `Frontend banned-pattern check skipped: ${error.message}`, },);
   }
 
   // Code duplication check (jscpd:full) — parses the JSON report the script

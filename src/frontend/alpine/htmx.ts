@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { refreshHtmx, } from "../dom";
 import { feFetch, getCsrfToken, } from "../fe-fetch";
 import { normalizeHeaderSlot, } from "./htmx-header";
 import { t, } from "./i18n";
@@ -133,8 +134,7 @@ document.addEventListener("htmx:afterRequest", (e: Event,) => {
 document.addEventListener("asset:uploaded", () => {
   document.querySelector("#upload-modal",)?.classList.remove("open",);
   showToast("success", t("toasts.assetUploaded",),);
-  const grid = document.querySelector("#asset-grid",);
-  if (grid) { htmx.trigger(grid, "load",); }
+  refreshHtmx("#asset-grid",);
 },);
 
 document.addEventListener(
@@ -150,22 +150,19 @@ document.addEventListener(
 
 document.addEventListener("character:created", () => {
   showToast("success", t("toasts.characterCreated",),);
-  const grid = document.querySelector("#character-grid",);
-  if (grid) { htmx.trigger(grid, "load",); }
+  refreshHtmx("#character-grid",);
 },);
 
 document.addEventListener("character:imported", () => {
   document.querySelector("#import-modal",)?.classList.remove("open",);
   showToast("success", t("toasts.characterImported",),);
-  const grid = document.querySelector("#character-grid",);
-  if (grid) { htmx.trigger(grid, "load",); }
+  refreshHtmx("#character-grid",);
 },);
 
 document.addEventListener("world:saved", () => {
   document.querySelector("#edit-world-modal",)?.classList.remove("open",);
   showToast("success", t("toasts.worldSaved",),);
-  const detail = document.querySelector("#world-detail",);
-  if (detail) { htmx.trigger(detail, "load",); }
+  refreshHtmx("#world-detail",);
 },);
 
 // ── Global keyboard: Escape closes sidebar ──────────────────

@@ -37,7 +37,7 @@ async function gotoChat(page: Awaited<ReturnType<BrowserTestContext["browser"]["
 
 describe("Toggle buttons", () => {
   test("toggle buttons present in DOM", async () => {
-    const page = await ctx.browser.newPage();
+    const page = await ctx.openPage();
     const errors = trackPageErrors(page,);
     try {
       await gotoChat(page,);
@@ -52,7 +52,7 @@ describe("Toggle buttons", () => {
   });
 
   test("chat list panel exists in DOM", async () => {
-    const page = await ctx.browser.newPage();
+    const page = await ctx.openPage();
     const errors = trackPageErrors(page,);
     try {
       await gotoChat(page,);
@@ -65,7 +65,7 @@ describe("Toggle buttons", () => {
   });
 
   test("gallery sidebar exists in DOM", async () => {
-    const page = await ctx.browser.newPage();
+    const page = await ctx.openPage();
     const errors = trackPageErrors(page,);
     try {
       await gotoChat(page,);
@@ -78,7 +78,7 @@ describe("Toggle buttons", () => {
   });
 
   test("character info panel exists in DOM", async () => {
-    const page = await ctx.browser.newPage();
+    const page = await ctx.openPage();
     const errors = trackPageErrors(page,);
     try {
       await gotoChat(page,);
@@ -93,7 +93,7 @@ describe("Toggle buttons", () => {
 
 describe("Elements present", () => {
   test("all chat panel elements exist in DOM", async () => {
-    const page = await ctx.browser.newPage();
+    const page = await ctx.openPage();
     const errors = trackPageErrors(page,);
     try {
       await gotoChat(page,);
@@ -108,7 +108,7 @@ describe("Elements present", () => {
   });
 
   test("generation status container exists", async () => {
-    const page = await ctx.browser.newPage();
+    const page = await ctx.openPage();
     const errors = trackPageErrors(page,);
     try {
       await gotoChat(page,);
@@ -123,7 +123,7 @@ describe("Elements present", () => {
 
 describe("Message input", () => {
   test("message input exists in DOM", async () => {
-    const page = await ctx.browser.newPage();
+    const page = await ctx.openPage();
     const errors = trackPageErrors(page,);
     try {
       await gotoChat(page,);
@@ -136,7 +136,7 @@ describe("Message input", () => {
   });
 
   test("send button exists in DOM", async () => {
-    const page = await ctx.browser.newPage();
+    const page = await ctx.openPage();
     const errors = trackPageErrors(page,);
     try {
       await gotoChat(page,);
@@ -149,7 +149,7 @@ describe("Message input", () => {
   });
 
   test("attach input exists", async () => {
-    const page = await ctx.browser.newPage();
+    const page = await ctx.openPage();
     const errors = trackPageErrors(page,);
     try {
       await gotoChat(page,);
@@ -162,7 +162,7 @@ describe("Message input", () => {
   });
 
   test("message form exists", async () => {
-    const page = await ctx.browser.newPage();
+    const page = await ctx.openPage();
     const errors = trackPageErrors(page,);
     try {
       await gotoChat(page,);
@@ -177,7 +177,7 @@ describe("Message input", () => {
 
 describe("Chat list panel", () => {
   test("chat list panel has chat template in DOM", async () => {
-    const page = await ctx.browser.newPage();
+    const page = await ctx.openPage();
     const errors = trackPageErrors(page,);
     try {
       await gotoChat(page,);
@@ -208,7 +208,7 @@ describe("Chat list panel", () => {
   });
 
   test("cancel generation button exists in DOM", async () => {
-    const page = await ctx.browser.newPage();
+    const page = await ctx.openPage();
     const errors = trackPageErrors(page,);
     try {
       await gotoChat(page,);
@@ -227,7 +227,7 @@ describe("Chat gallery upload linkage", () => {
   // pages.js all ship chat-list code; the mounted instance's init exits before
   // the fetch). Fails identically on dev; TASK-browser-chatflow-upload-deferred.
   test.skip("chat sidebar upload links the asset to the active chat", async () => {
-    const page = await ctx.browser.newPage();
+    const page = await ctx.openPage();
     const errors = trackPageErrors(page,);
     try {
       await gotoChat(page,);

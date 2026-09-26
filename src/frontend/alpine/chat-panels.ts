@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { log as rootLog, } from "./logger";
 import type { ChatState, } from "./types";
 
+const log = rootLog.child({ module: "chat-panels", },);
 /** A single assistant tool-call invocation, flattened for display. */
 export interface AssistantToolCall {
   actorId: string;
@@ -64,6 +66,7 @@ export const chatPanels: Partial<ChatState> & ThisType<ChatState> = {
   _toggleGalleryHandler: null as (() => void) | null,
   _toggleCharacterInfoHandler: null as (() => void) | null,
   _toggleMemoryPanelHandler: null as (() => void) | null,
+  _openChatSettingsHandler: null as (() => void) | null,
   _panelClickHandler: null as ((e: MouseEvent,) => void) | null,
   _keydownHandler: null as ((e: KeyboardEvent,) => void) | null,
   _observer: null as MutationObserver | null,
@@ -90,6 +93,16 @@ export const chatPanels: Partial<ChatState> & ThisType<ChatState> = {
     document.addEventListener("toggle-gallery", this._toggleGalleryHandler,);
     document.addEventListener("toggle-character-info", this._toggleCharacterInfoHandler,);
     document.addEventListener("toggle-memory-panel", this._toggleMemoryPanelHandler,);
+    // The chat header renders OUTSIDE chatState()'s x-data, so it cannot call
+    // openChatSettings() directly. Go through the event bus so the modal only
+    // becomes visible after openChatSettings() finishes hydrating — a click in
+    // that window would otherwise be overwritten by the late assignment.
+    this._openChatSettingsHandler = () => {
+      void this.openChatSettings().catch((err,) => {
+        log.warn("openChatSettings failed", err,);
+      },);
+    };
+    document.addEventListener("open-chat-settings", this._openChatSettingsHandler,);
 
     this._panelClickHandler = (e: MouseEvent,) => {
       const target = e.target as HTMLElement;
@@ -151,6 +164,9 @@ export const chatPanels: Partial<ChatState> & ThisType<ChatState> = {
     }
     if (this._toggleMemoryPanelHandler) {
       document.removeEventListener("toggle-memory-panel", this._toggleMemoryPanelHandler,);
+    }
+    if (this._openChatSettingsHandler) {
+      document.removeEventListener("open-chat-settings", this._openChatSettingsHandler,);
     }
     if (this._panelClickHandler) { document.removeEventListener("click", this._panelClickHandler, true,); }
     if (this._keydownHandler) { document.removeEventListener("keydown", this._keydownHandler,); }

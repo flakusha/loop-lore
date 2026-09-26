@@ -10,13 +10,15 @@
  * - Non-markdown files (index.json, code-map.json, ...) are skipped.
  * - Generates index pages (docs/plan-gen/index.md plus one per top-level
  *   directory) with relative links so the site's '/docs/' base works.
- * - No content transformation: mermaid fences and front matter stay as-is.
+ * - Normalizations (normalizePlanMarkdown): ../../docs/ links drop the docs/
+ *   hop; unclosed front matter gains its closing fence. Mermaid fences and
+ *   everything else stay as-is.
  *
  * Usage:
  *   bun run scripts/docs/sync-plan.mjs
  */
 
-import { copyFile, mkdir, readdir, rm, writeFile } from "node:fs/promises";
+import { mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 const REPO_ROOT = path.resolve(import.meta.dir, "..", "..");
@@ -78,6 +80,21 @@ async function writeDirIndex(dir, mdFiles) {
   await writeFile(path.join(OUT_DIR, dir, "index.md"), lines.join("\n"));
 }
 
+// Ticket bodies link to repo docs as ../../docs/... , which resolves from
+// .plan/<dir>/ but lands in docs/docs/ in the copy under docs/plan-gen/ (the
+// link checker scans both trees). Strip the docs/ hop for the copy.
+const REPO_DOC_LINK_RE = /\]\(\.\.\/\.\.\/docs\//g;
+
+function normalizePlanMarkdown(content) {
+  content = content.replaceAll(REPO_DOC_LINK_RE, "](../../",);
+  if (!content.startsWith("---\n")) return content;
+  const bodyStart = content.search(/\n\*\*[^*\n]+:\*\*/);
+  if (bodyStart === -1) return content;
+  const frontmatterEnd = content.indexOf("\n---", 4);
+  if (frontmatterEnd !== -1 && frontmatterEnd < bodyStart) return content;
+  return `${content.slice(0, bodyStart)}\n---${content.slice(bodyStart)}`;
+}
+
 // ── Main ────────────────────────────────────────────────────────
 
 async function main() {
@@ -88,7 +105,8 @@ async function main() {
   for (const rel of mdFiles) {
     const dest = path.join(OUT_DIR, rel);
     await mkdir(path.dirname(dest), { recursive: true });
-    await copyFile(path.join(PLAN_DIR, rel), dest);
+    const source = await readFile(path.join(PLAN_DIR, rel), "utf8");
+    await writeFile(dest, normalizePlanMarkdown(source),);
   }
 
   const subdirs = [];

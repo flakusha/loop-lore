@@ -266,6 +266,8 @@ stateDiagram-v2
     MessageResolved --> [*]
     AskStaysOpen --> Dispatch
 
+```
+
 ### Edge cases + risks (must be addressed by tests)
 
 1. **Concurrent dispatches** — two users dispatch the same persistent ask → second wins, first receives `outcome='cancelled'` audit row. Test: parallel dispatch test.

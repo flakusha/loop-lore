@@ -24,6 +24,7 @@
 
 import { describe, expect, test, } from "bun:test";
 import { spawnSync, } from "node:child_process";
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync, } from "node:fs";
 import { resolve, } from "node:path";
 
 const PROJECT_ROOT = import.meta.dir + "/..";
@@ -36,7 +37,11 @@ const RUNNER = resolve(PROJECT_ROOT, "scripts/check-parallel.mjs",);
  * filter in isolation.
  */
 function runRunner(extraArgs, options = {},) {
-  const { defaultSkip = ["coverage - per-module line %",], } = options;
+  const {
+    defaultSkip = ["coverage - per-module line %", "e2e - browser (baseline)",],
+    env: envOverrides = {},
+    timeout = 120_000,
+  } = options;
   const args = [
     "run",
     "--no-install",
@@ -49,8 +54,8 @@ function runRunner(extraArgs, options = {},) {
   const result = spawnSync("bun", args, {
     cwd: PROJECT_ROOT,
     encoding: "utf8",
-    env: { ...process.env, CHECK_SKIP_GPG_PRECHECK: "1", CHECK_JOBS: "1", },
-    timeout: 120_000,
+    env: { ...process.env, ...envOverrides, CHECK_SKIP_GPG_PRECHECK: "1", CHECK_JOBS: "1", },
+    timeout,
   },);
   return {
     exit: result.status,
@@ -73,13 +78,11 @@ describe("selective gate filter — --gates (whitelist)", () => {
     expect(r.stderr,).toMatch(/gates filter: whitelisted 2 of \d+ gates/,);
   },);
 
-  test("gate names with em-dash punctuation are selectable (no CSV-split collision)", { timeout: 120_000, }, () => {
-    // Regression: prior version had a gate named with an embedded COMMA,
-    // which collided with the CSV separator. The gate name was renamed
-    // to use an em-dash so the full name is one CSV element. Verify
-    // that the renamed gate is now selectable via --gates.
+  test("gate names with parentheses are selectable (no CSV-split collision)", { timeout: 120_000, }, () => {
+    // Regression: gate names may contain punctuation; the full name must
+    // remain one CSV element and stay selectable via --gates.
     const r = runRunner(
-      ["--gates", "frontend - banned patterns (ESLint-gap heuristic — non-blocking)",],
+      ["--gates", "mermaid - lint (mmdlint)",],
       { defaultSkip: [], },
     );
     expect(r.stderr,).toMatch(/gates filter: whitelisted 1 of \d+ gates/,);
@@ -88,18 +91,70 @@ describe("selective gate filter — --gates (whitelist)", () => {
 
 describe("selective gate filter — --skip-gates (inverse)", () => {
   test("inverse filter runs every other gate", { timeout: 120_000, }, () => {
-    const r = runRunner(["--skip-gates", "coverage - per-module line %",], {
+    const r = runRunner(["--skip-gates", "coverage - per-module line %,e2e - browser (baseline)",], {
       defaultSkip: [],
     },);
-    expect(r.stderr,).toMatch(/gates filter: skipped 1; running 27 of 28 gates/,);
+    expect(r.stderr,).toMatch(/gates filter: skipped 2; running 25 of 27 gates/,);
   },);
 
   test("multiple comma-separated skips accepted", { timeout: 120_000, }, () => {
     const r = runRunner(
-      ["--skip-gates", "coverage - per-module line %,no - shell - refs,context - weight",],
+      ["--skip-gates", "coverage - per-module line %,no - shell - refs,context - weight,e2e - browser (baseline)",],
       { defaultSkip: [], },
     );
-    expect(r.stderr,).toMatch(/gates filter: skipped 3; running 25 of 28 gates/,);
+    expect(r.stderr,).toMatch(/gates filter: skipped 4; running 23 of 27 gates/,);
+  },);
+});
+
+describe("unevaluable gate is skipped, not failed", () => {
+  test("plan gate reports SKIP (run stays green) when giwt cannot reach the issue CLI", { timeout: 180_000, }, () => {
+    // giwt shells out to `git issue ls --all`; when that call fails it reports
+    // "git issue CLI unavailable" and then lists every issue it could not see
+    // as an actionable finding (~112 phantom findings) before exiting 1. The
+    // runner must classify that as skipped. The shim injects the fault and
+    // records that it fired, so this test cannot pass vacuously if giwt ever
+    // stops resolving `git issue` through PATH.
+    //
+    // The PATH override below is scoped to this child process through spawn's
+    // structured `env` option — never a shell prefix, and never this agent's
+    // own shell — so the shim must be found ahead of the real git.
+    const shimDir = resolve(PROJECT_ROOT, `.tmp/test-issue-shim-${process.pid}`,);
+    const shimLog = resolve(shimDir, "fired.log",);
+    mkdirSync(shimDir, { recursive: true, },);
+    // Resolve the real git before the PATH override so passthrough works on
+    // hosts where git does not live at /usr/bin/git.
+    const realGit = Bun.which("git",) ?? "/usr/bin/git";
+    writeFileSync(
+      resolve(shimDir, "git",),
+      [
+        "#!/usr/bin/env bash",
+        `if [ "$1" = "issue" ]; then echo "$*" >> ${JSON.stringify(shimLog,)}; exit 1; fi`,
+        `exec ${JSON.stringify(realGit,)} "$@"`,
+        "",
+      ].join("\n",),
+      { mode: 0o755, },
+    );
+    try {
+      const r = runRunner(["--gates", "plan - validate",], {
+        defaultSkip: [],
+        env: { PATH: `${shimDir}:${process.env.PATH ?? ""}`, },
+        timeout: 300_000,
+      },);
+      expect(existsSync(shimLog,),).toBe(true,);
+      expect(r.stdout,).toMatch(/SKIP: plan - validate/,);
+      expect(r.stdout,).not.toMatch(/FAIL: plan - validate/,);
+      // Skipped is not passed and not failed: the run stays green, the gate
+      // does not.
+      expect(r.exit,).toBe(0,);
+      const report = JSON.parse(
+        readFileSync(resolve(PROJECT_ROOT, ".tmp/check-report.json",), "utf8",),
+      );
+      expect(report.summary.skipped,).toBe(1,);
+      expect(report.summary.failed,).toBe(0,);
+      expect(report.checks[0].skipped,).toBe(true,);
+    } finally {
+      rmSync(shimDir, { recursive: true, force: true, },);
+    }
   },);
 });
 
@@ -119,9 +174,12 @@ describe("selective gate filter — mutual exclusion", () => {
     // activate an empty whitelist.
     const r = runRunner(
       ["--gates", "   ",],
-      { defaultSkip: ["coverage - per-module line %",], },
+      { defaultSkip: ["coverage - per-module line %", "e2e - browser (baseline)",], },
     );
-    expect(r.exit,).toBe(0,);
     expect(r.stderr,).not.toMatch(/gates filter: whitelisted 0/,);
+    // A no-filter run must also come back green: gates that could not be
+    // evaluated report as skipped, never as a failure carrying the findings
+    // they invented while unevaluated (see GIWT_ISSUE_CLI_UNAVAILABLE).
+    expect(r.exit,).toBe(0,);
   },);
 });

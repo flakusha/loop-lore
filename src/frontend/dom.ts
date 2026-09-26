@@ -72,3 +72,27 @@ export function eventTarget<T extends HTMLElement,>(e: Event,): T | null {
 export function eventCurrentTarget<T extends HTMLElement,>(e: Event,): T | null {
   return e.currentTarget as T | null;
 }
+
+/**
+ * Re-issue an htmx `hx-get` element's request so its content reflects a
+ * mutation that happened outside htmx.
+ *
+ * `htmx.trigger(el, "load")` does NOT re-run an `hx-trigger="load"` handler in
+ * htmx 2 — that trigger is one-shot, so the swap silently never happens and the
+ * panel keeps rendering pre-mutation data. Re-issuing through `htmx.ajax`
+ * against the element's own `hx-get` keeps the URL in exactly one place.
+ * @param selector - selector for the element carrying `hx-get`, already in the DOM
+ * @returns whether a request was issued
+ */
+export function refreshHtmx(selector: string | null | undefined,): boolean {
+  if (!selector) { return false; }
+  const el = document.querySelector(selector,);
+  if (!el) { return false; }
+  const url = el.getAttribute("hx-get",);
+  if (!url) { return false; }
+  htmx.ajax("GET", url, {
+    target: selector,
+    swap: el.getAttribute("hx-swap",) ?? "innerHTML",
+  },);
+  return true;
+}

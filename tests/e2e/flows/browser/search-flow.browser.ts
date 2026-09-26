@@ -100,16 +100,6 @@ describe("Search & filtering E2E", () => {
   // Reuses the solo seed: SEED.soloChat is created by createBrowserTest's
   // seedSolo() — no separate createBrowserTest or chat inserts required.
   describe("Search & filtering E2E > Chat-list search", () => {
-    let ctx: BrowserTestContext;
-
-    beforeAll(async () => {
-      ctx = await createBrowserTest();
-    }, 90_000,);
-
-    afterAll(async () => {
-      await ctx?.close();
-    },);
-
     test("chat-list-search input narrows filteredChats to matching entries", async () => {
       const page = await ctx.openPage();
       const errors = trackPageErrors(page, {
@@ -170,15 +160,12 @@ describe("Search & filtering E2E", () => {
   // Uses the seeded solo chat — direct DB insert of two messages into it, then
   // navigate via /views/chat?chatid=... so selectChat() runs on the right chat.
   describe("Search & filtering E2E > In-chat message search (FTS5)", () => {
-    let ctx: BrowserTestContext;
-
     const needle = `needle${Date.now()}`;
     const distractor = `distractor${Date.now()}`;
     const matchMsgId = "d3333331-0000-4000-a000-000000000099";
     const distractorMsgId = "d3333332-0000-4000-a000-000000000099";
 
     beforeAll(async () => {
-      ctx = await createBrowserTest();
       await ctx.db
         .insertInto("messages",)
         .values([
@@ -213,10 +200,6 @@ describe("Search & filtering E2E", () => {
         ],)
         .execute();
     }, 90_000,);
-
-    afterAll(async () => {
-      await ctx?.close();
-    },);
 
     test("FTS5 /api/v1/messages/search scopes results to the active chat", async () => {
       const page = await ctx.openPage();
