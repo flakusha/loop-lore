@@ -9,12 +9,12 @@
 **Epic:** epic-rag-extract-link
 **Tags:** rag, extraction, linking
 
-## Summary
+**Summary:** Extract entities/keyphrases/facts writing chunk_entities join + knowledge_graph tables (TASK-rag-knowledge-graph schema when landed; inline facts JSON until then). Every row carries source_document_id/chunk_id (+chat/story/asset refs) for retrieval citations. Low-confidence items to admin review queue (attachment-review-queue pattern).
 
-Extract entities/keyphrases/facts writing chunk_entities join + knowledge_graph tables (TASK-rag-knowledge-graph schema when landed; inline facts JSON until then). Every row carries source_document_id/chunk_id (+chat/story/asset refs) for retrieval citations. Low-confidence items to admin review queue (attachment-review-queue pattern). Acceptance: doc yields linked entities via API; citations resolve no dangling refs (FK test); check green.
+**Context:** Retrieval must cite linked source chunks instead of raw text blobs; low-confidence extractions need human review before they pollute the graph. Entity storage reuses TASK-rag-knowledge-graph tables when available, without blocking on them.
 
-## Acceptance Criteria
+**Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [ ] Ingested document yields entities/facts linked to source chunk ids, queryable via API.
+- [ ] Retrieval citations resolve through link tables with no dangling refs (FK test).
+- [ ] `bun run check` green.

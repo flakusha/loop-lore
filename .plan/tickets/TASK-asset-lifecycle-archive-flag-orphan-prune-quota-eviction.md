@@ -9,12 +9,12 @@
 **Epic:** epic-db-growth-tiered-storage
 **Tags:** database, assets
 
-## Summary
+**Summary:** assets archived_at flag + archived timestamp; orphaned storage_path file prune job; per-user/world size quota with oldest-first eviction enforced on upload.
 
-assets archived_at flag + archived_at timestamp; orphaned storage_path file prune job; per-user/world size quota with oldest-first eviction enforced on upload. Acceptance: archive + hard-delete work; orphans detected/removed; quota enforced (test); check green.
+**Context:** Asset metadata grows unbounded while files live on disk outside the backup chain; orphaned storage_path files accumulate with no prune path and no quota backpressure.
 
-## Acceptance Criteria
+**Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [ ] Assets can be archived and hard-deleted; orphaned files detected and removed.
+- [ ] Storage quota configurable and enforced on upload (test).
+- [ ] `bun run check` green.
