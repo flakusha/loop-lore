@@ -16,6 +16,7 @@
 **Labels**:
 **Assignee**:
 **Epic**: epic-assistant-gm-flows
+**git issue**: # TODO: file git issue when scope locked
 **Related**:
 
 ## Summary
