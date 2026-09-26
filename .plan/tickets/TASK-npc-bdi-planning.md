@@ -11,7 +11,7 @@
 **Epic:** epic-agency-story-points, NPC/Actor System
 **Priority:** Medium (P6+ deferred)
 **Effort:** High
-**Status:** open
+**Status:** done
 **Created:** 2026-08-14
 **Platform Candidate:** E1 (Agentic NPC autonomy — Inworld AI, generative-agents)
 **Research Source:** Stanford generative-agents (2023), BDI architecture patterns
@@ -46,7 +46,7 @@ interface DailyPlan {
   wake_time: Date;
   activities: PlannedActivity[];
   current_activity_index: number;
-  status: "planning" | "executing" | "reacting" | "revising";
+  status: done
 }
 
 interface PlannedActivity {
@@ -56,7 +56,7 @@ interface PlannedActivity {
   duration_minutes: number;
   location: string;
   subtasks: string[];
-  status: "pending" | "active" | "completed" | "interrupted";
+  status: done
   aspiration_id?: string;
 }
 
@@ -80,7 +80,7 @@ interface ChatBuffer {
   max_messages: number;        // personality-based
   last_topic: string;
   topic_repetition_count: number;
-  status: "engaged" | "disengaging" | "idle";
+  status: done
 }
 ```
 
