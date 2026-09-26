@@ -12,8 +12,7 @@
  * Server-derived asset ids/labels interpolated unescaped are a stored-XSS
  * vector (see BUG-stored-xss-unescaped-server-derived-asset-ids-labels-in-inne).
  *
- * Advisory: wired non-blocking in check-parallel.mjs. Promote to blocking once
- * the referenced BUG is fixed and the few safe-local FPs below are escaped.
+ * Blocking: check-parallel.mjs runs this checker as a correctness gate.
  *
  * Run: `bun run scripts/check-frontend-innerhtml-xss.ts`
  */
@@ -162,7 +161,7 @@ function scan(): Finding[] {
 }
 
 const findings = scan();
-console.log("=== Frontend innerHTML XSS check (advisory) ===",);
+console.log("=== Frontend innerHTML XSS check (blocking) ===",);
 if (findings.length === 0) {
   console.log("OK: No unescaped interpolations in innerHTML assignments.",);
   process.exit(0,);
@@ -176,6 +175,6 @@ for (const f of findings) {
   if (f.snippet) { console.log(`    ${f.snippet}`,); }
 }
 console.log(
-  `\nwarn: ${seen.size} unescaped interpolation(s). Wrap with escapeHtml() or use textContent/property assignment. (advisory)`,
+  `\nerror: ${seen.size} unescaped interpolation(s). Wrap with escapeHtml() or use textContent/property assignment.`,
 );
 process.exit(1,);

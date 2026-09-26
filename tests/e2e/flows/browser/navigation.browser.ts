@@ -35,7 +35,7 @@ describe("Navigation E2E", () => {
 
   describe("Sidebar navigation", () => {
     test("navigates from chat to characters via sidebar link", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await goto(page, "/views/chat",);
@@ -52,7 +52,7 @@ describe("Navigation E2E", () => {
     }, 90_000,);
 
     test("navigates from characters to gallery via sidebar link", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await goto(page, "/views/characters",);
@@ -69,7 +69,7 @@ describe("Navigation E2E", () => {
     }, 90_000,);
 
     test("navigates from gallery to worlds via sidebar link", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await goto(page, "/views/gallery",);
@@ -86,7 +86,7 @@ describe("Navigation E2E", () => {
     }, 90_000,);
 
     test("navigates from worlds to chat via sidebar link", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await goto(page, "/views/worlds",);
@@ -103,7 +103,7 @@ describe("Navigation E2E", () => {
     }, 90_000,);
 
     test("hamburger button exists and toggles sidebar open class", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await goto(page, "/views/chat",);
@@ -132,7 +132,7 @@ describe("Navigation E2E", () => {
 
   describe("Header integrity", () => {
     test("single header-slot exists in DOM", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await goto(page, "/views/chat",);
@@ -147,7 +147,7 @@ describe("Navigation E2E", () => {
     });
 
     test("header-slot has correct testid for current page", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await goto(page, "/views/chat",);
@@ -164,7 +164,7 @@ describe("Navigation E2E", () => {
 
   describe("New Chat navigation", () => {
     test("navigates to new-chat form", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await goto(page, "/views/new-chat",);
@@ -178,7 +178,7 @@ describe("Navigation E2E", () => {
     });
 
     test("creates new chat and redirects to chat page", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await goto(page, "/views/new-chat",);
@@ -202,7 +202,7 @@ describe("Navigation E2E", () => {
 
   describe("Settings navigation", () => {
     test("navigates to settings page", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await goto(page, "/views/settings",);
@@ -216,7 +216,7 @@ describe("Navigation E2E", () => {
     });
 
     test("settings page has header and tabs", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await goto(page, "/views/settings",);
@@ -234,7 +234,7 @@ describe("Navigation E2E", () => {
 
   describe("Login navigation", () => {
     test("login page has all required elements", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await goto(page, "/views/login",);
@@ -250,7 +250,7 @@ describe("Navigation E2E", () => {
     });
 
     test("demo login hx-post attribute is correct", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await goto(page, "/views/login",);

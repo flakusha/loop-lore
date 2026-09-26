@@ -151,7 +151,9 @@ async function serveWorldDetailContent(
   );
 
   return htmlResponse(
-    `<div style="max-width:800px;margin:0 auto" x-data="worldDetail({ worldId: '${worldId}', locations: ${locationsJson}, templates: ${templatesJson} })">
+    `<div style="max-width:800px;margin:0 auto" x-data="worldDetail({ worldId: '${escapeHtml(worldId,)}', locations: ${
+      escapeHtml(locationsJson,)
+    }, templates: ${escapeHtml(templatesJson,)} })">
       <div class="form-group" style="margin-bottom:var(--space-6)">
         <h2>${name}</h2>
         <p class="description">${desc}</p>

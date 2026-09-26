@@ -23,7 +23,10 @@ export function createMoodPanelState(): MoodPanelState {
       try {
         const res = await apiFetch(`/api/v1/actors/${actorId}/mood`,);
         if (res.ok) { this.mood = await res.json(); }
-      } catch {
+      } catch (error) {
+        // 404 is the documented answer for "actor has no mood record yet"
+        // (src/routes/character-mood/state.ts); only real failures are logged.
+        if ((error as Error & { status?: number }).status === 404) { return; }
         log.error("Failed to load mood", undefined, { actorId, },);
       }
     },

@@ -14,6 +14,7 @@ Build/type/lint/test/format + code-generated artifacts + correctness gates:
 
 - `build-frontend.mjs`, `build-native.ts` (`build:*`, `dev`, `start`, `tui`)
 - `generate-db-types.ts`, `generate-schema-manifest.ts`, `generate-openapi.ts`, `check-schemas.ts`, `fix-schemas.ts` (`db:*`, `schemas:*`, `openapi`)
+- `run-browser-tests.ts` (`test:e2e:browser`)
 - `check-parallel.mjs`, `check/*` (`check:*`, `ci`)
 - `check-file-size.ts`, `check-wiring.ts`, `check-context-weight.ts`, `check-md-links.ts`, `check-spdx.ts`, `check-licenses.ts`, `check-changelog.ts` (`size`, `wiring`, `context:weight`, `md:links`, `spdx`, `license`)
 - `i18n-reconcile.ts` (`i18n:*`); `gen-deno-config.ts`, `gen-pkg-from-deno.ts`, `audit-runtime-compat.ts` (`deno:*`)

@@ -27,6 +27,7 @@ import { notificationsRoutes, } from "../notifications";
 import { nsfwRoutes, } from "../nsfw";
 import { nsfwModerationRoutes, } from "../nsfw-moderation";
 import { proactiveMessagingRoutes, } from "../proactive-messaging";
+import { promptTemplateRoutes, } from "../templates";
 
 export function contentSurface(opts: RegisterPluginsOpts,) {
   const { database, config, } = opts;
@@ -55,5 +56,6 @@ export function contentSurface(opts: RegisterPluginsOpts,) {
     .use(modelComparisonsRoutes({ database, }, prefix,),)
     .use(modelComparisonsAnalyticsRoutes({ database, }, prefix,),)
     .use(comparisonsExportRoutes({ database, }, prefix,),)
-    .use(generationCompareRoutes({ config, database, }, prefix,),);
+    .use(generationCompareRoutes({ config, database, }, prefix,),)
+    .use(promptTemplateRoutes({ database, }, prefix,),);
 }

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { Type, } from "@sinclair/typebox";
 import { Elysia, } from "elysia";
 import { authenticate, } from "../../middleware/auth";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
@@ -28,13 +29,10 @@ export function worldImportRoutes({ database, config, }: HandlerOpts, prefix = "
       },);
     }
 
-    let body: unknown;
-    try {
-      body = await ctx.request.json();
-    } catch {
-      return jsonError({ message: "Invalid JSON body", status: HttpStatus.BadRequest, },);
-    }
-
+    // Elysia parses the JSON body (the composed app forces a JSON parser
+    // across the chain), so a manual `ctx.request.json()` here reads an
+    // already-consumed stream and rejects every real import with a 400.
+    const body: unknown = ctx.body;
     const bundle = rowOf(body,);
     if (!bundle || !rowOf(bundle.world,)) {
       return jsonError({
@@ -46,6 +44,10 @@ export function worldImportRoutes({ database, config, }: HandlerOpts, prefix = "
     const { worldId, counts, } = await importWorldBundle(database, userId, body as WorldBundle,);
     return jsonCreated({ id: worldId, imported: counts, },);
   }, {
+    // Loose payload: a WorldBundle is a nested, versioned structure. Elysia
+    // cannot statically infer through Type.Unknown, so the handler asserts the
+    // shape at the boundary (rowOf checks below).
+    body: Type.Unknown(),
     response: {
       200: SuccessResponse,
       201: SuccessResponse,

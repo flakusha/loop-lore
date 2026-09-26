@@ -25,7 +25,14 @@ export interface ParticipantRow {
 export function activeChatId(): string | null {
   const alpine = (globalThis as { Alpine?: { store: (name: string,) => Record<string, unknown> } }).Alpine;
   const chat = alpine?.store("chat",) as { currentChat?: { id?: string } } | undefined;
-  return chat?.currentChat?.id ?? null;
+  const fromStore = chat?.currentChat?.id;
+  if (fromStore) { return fromStore; }
+  // The chat page is always entered as /views/chat?chatid=<id> (chat list, new
+  // chat, notification links). storyState() initializes before chatState's
+  // async selectChat fills the store, so without this fallback the story panel
+  // bails out and never loads on a fresh page load.
+  const search = (globalThis as { location?: { search?: string } }).location?.search ?? "";
+  return new URLSearchParams(search,).get("chatid",) || null;
 }
 
 /**

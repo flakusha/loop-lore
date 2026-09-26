@@ -9,11 +9,12 @@
  * sub-ticket TASK-010-plurals).
  *
  * What we verify here:
- *  1. The locale selector on /views/settings updates visible strings on the
- *     page WITHOUT a full reload (`src/frontend/ui.ts:251-254` swaps
- *     `globalThis.__localeStrings` and Alpine re-renders bound nodes), and
- *     the page translator resolves a known key to its distinct Spanish
- *     string.
+ *  1. The locale selector on /views/settings switches the page's active catalog
+ *     to Spanish (`src/frontend/ui.ts:251-254` swaps
+ *     `globalThis.__localeStrings` and Alpine re-renders bound nodes), the page
+ *     translator resolves a known key to its distinct Spanish string, and
+ *     `onLocaleChange()` (src/frontend/alpine/settings/general.ts) then reloads
+ *     so the server re-serves views in the new locale.
  *  2. A translation key missing from the active catalog renders the RAW key:
  *     the shipped frontend translator has NO fallback-locale chain
  *     (src/frontend/ui.ts `t` returns the key; src/frontend/alpine/i18n.ts
@@ -24,6 +25,7 @@
  * @pillar i18n
  */
 
+import type { Page, } from "@playwright/test";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { type BrowserTestContext, createBrowserTest, } from "../../helpers/browser-server";
 import { trackPageErrors, } from "../../helpers/htmx-alpine";
@@ -37,6 +39,31 @@ const ENGLISH_EDIT_LABEL = "Edit";
 const SPANISH_EDIT_LABEL = "Editar";
 /** A key that exists in no locale catalog — probes the missing-key path. */
 const MISSING_KEY = "test.nonexistent.key";
+/** Marker stamped on the pre-reload document; gone once the reload commits. */
+const PRE_RELOAD_STAMP = "__preReloadDoc";
+
+/**
+ * Switch the locale select and wait for the reload it triggers.
+ *
+ * `onLocaleChange()` (src/frontend/alpine/settings/general.ts) persists the
+ * choice, then calls `location.reload()` so the server re-serves views in the
+ * new locale. The in-place catalog swap happens BEFORE that reload, so a plain
+ * `waitForFunction` can match the pre-reload document and hand the next
+ * `page.evaluate` a context the reload then destroys. Stamp the current
+ * document first, then wait for the stamp to be gone: that is the reload having
+ * committed.
+ */
+async function switchLocale(page: Page, locale: string,): Promise<void> {
+  await page.evaluate((stamp: string,) => {
+    Reflect.set(globalThis, stamp, true,);
+  }, PRE_RELOAD_STAMP,);
+  await page.selectOption(LOCALE_SELECT, locale,);
+  await page.waitForFunction(
+    (stamp: string,) => Reflect.get(globalThis, stamp,) !== true,
+    PRE_RELOAD_STAMP,
+    { timeout: 30_000, },
+  );
+}
 
 describe("i18n E2E", () => {
   let ctx: BrowserTestContext;
@@ -49,7 +76,7 @@ describe("i18n E2E", () => {
     await ctx?.close();
   },);
 
-  test("locale selector switches active language without page reload", async () => {
+  test("locale selector switches the active catalog, then reloads the page", async () => {
     const page = await ctx.openPage();
     const errors = trackPageErrors(page,);
     try {
@@ -70,31 +97,17 @@ describe("i18n E2E", () => {
       },);
       expect(initialEditLabel,).toBe(ENGLISH_EDIT_LABEL,);
 
-      // Capture the navigation entry count BEFORE switching locale — proves we
-      // didn't trigger a full page reload (Playwright navigations add to this
-      // list; in-place locale swaps do not).
-      const navCountBefore = await page.evaluate(
-        () => performance.getEntriesByType("navigation",).length,
-      );
+      // Switch to Spanish; the helper waits for the reload onLocaleChange()
+      // triggers, so every assertion below runs on the post-reload document
+      // instead of racing its teardown.
+      await switchLocale(page, "es",);
 
-      await page.selectOption(LOCALE_SELECT, "es",);
-      // Wait for the SHIPPED translator (ui.ts `t`, assigned to globalThis by
-      // the layout bundle) to resolve `common.edit` to the Spanish string.
-      // `saveLocale` flips <html lang> synchronously BEFORE the async catalog
-      // fetch lands, so lang alone proves nothing about the swap.
-      await page.waitForFunction(
-        (expected: string,) => {
-          const g = globalThis as unknown as { t?: (key: string,) => string };
-          return (g.t?.("common.edit",) ?? null) === expected;
-        },
-        SPANISH_EDIT_LABEL,
-        { timeout: 10_000, },
+      // The server re-served this document in the new locale — the cookie the
+      // handler set before reloading.
+      const reloadedLang = await page.evaluate(
+        () => (document.documentElement.lang || ""),
       );
-
-      const navCountAfter = await page.evaluate(
-        () => performance.getEntriesByType("navigation",).length,
-      );
-      expect(navCountAfter,).toBe(navCountBefore,);
+      expect(reloadedLang.startsWith("es",),).toBe(true,);
 
       // English strings are pre-injected at layout render time
       // (src/routes/views/layout.ts wrapWithLayout), so a non-empty catalog
@@ -108,7 +121,10 @@ describe("i18n E2E", () => {
     } finally {
       errors.assert();
       errors.detach();
-      await page.close();
+      // onLocaleChange() reloads the page (settings general.ts) so a reload is
+      // in flight here; closeAllPages bounds the close instead of hanging on
+      // Chromium's withheld close ack.
+      await ctx.closeAllPages();
     }
   }, 60_000,);
 
@@ -120,15 +136,14 @@ describe("i18n E2E", () => {
       await page.waitForSelector(LOCALE_SELECT, { timeout: 30_000, },);
 
       // Switch to Spanish so the active catalog is the Spanish one.
-      await page.selectOption(LOCALE_SELECT, "es",);
-      await page.waitForFunction(
-        (expected: string,) => {
-          const g = globalThis as unknown as { t?: (key: string,) => string };
-          return (g.t?.("common.edit",) ?? null) === expected;
-        },
-        SPANISH_EDIT_LABEL,
-        { timeout: 10_000, },
-      );
+      await switchLocale(page, "es",);
+      // The SHIPPED translator (ui.ts `t`, assigned to globalThis by the layout
+      // bundle) resolves the known key in the post-reload document.
+      const reloadedEditLabel = await page.evaluate(() => {
+        const g = globalThis as unknown as { t?: (key: string,) => string };
+        return g.t?.("common.edit",) ?? null;
+      },);
+      expect(reloadedEditLabel,).toBe(SPANISH_EDIT_LABEL,);
 
       // Drive the REAL entry point — the ui.ts `t` the page's inline handlers
       // and Alpine bindings resolve through. No in-test reimplementation of
@@ -152,7 +167,7 @@ describe("i18n E2E", () => {
     } finally {
       errors.assert();
       errors.detach();
-      await page.close();
+      await ctx.closeAllPages();
     }
   }, 60_000,);
 });

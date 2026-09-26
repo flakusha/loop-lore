@@ -5,6 +5,7 @@
 import { jsonBody, } from "../alpine/json";
 import { log as rootLog, } from "../alpine/logger";
 import { fetchMood, happinessColor, moodToEmoji, moodToLabel, } from "../alpine/mood-panel";
+import { refreshHtmx, } from "../dom";
 import { feFetch, } from "../fe-fetch";
 import { showToast, } from "../ui";
 import { escapeHtml, fetchPartial, filterCards, } from "./shared";
@@ -208,10 +209,7 @@ export async function deleteCharacter(btn: HTMLElement,) {
     if (res.ok) {
       document.querySelector("#character-detail-modal",)?.classList.remove("open",);
       showToast("success", "Character deleted",);
-      const grid = document.querySelector("#character-grid",);
-      if (grid) {
-        htmx.trigger(grid, "load",);
-      }
+      refreshHtmx("#character-grid",);
     }
   } catch {
     /* ignore */

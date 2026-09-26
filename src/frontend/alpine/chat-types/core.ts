@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 324
+// size-allow: 325
 import type { DraftStore, } from "../chat-drafts";
-import type { AlpineMagicThis, GalleryAsset, QuickReplyButton, } from "../types";
+import type { AlpineMagicThis, GalleryAsset, GmConfig, QuickReplyButton, } from "../types";
 import type * as filterState from "./filter-state";
 import type { GenerationDetail, GroupedMessage, Message, } from "./messages";
 import type * as uiState from "./ui-state";
@@ -78,6 +78,7 @@ export interface ChatCoreState
   _toggleGalleryHandler: (() => void) | null;
   _toggleCharacterInfoHandler: (() => void) | null;
   _toggleMemoryPanelHandler: (() => void) | null;
+  _openChatSettingsHandler: (() => void) | null;
   _panelClickHandler: ((e: MouseEvent,) => void) | null;
   _keydownHandler: ((e: KeyboardEvent,) => void) | null;
   _chatSettingsName: string;
@@ -108,6 +109,8 @@ export interface ChatCoreState
   _assistantTemperature: number | null;
   _assistantMaxTokens: number | null;
   _actorModels: Record<string, { model: string; provider: string }>;
+  readonly _actorModelRows: { actor_id: string; label: string; slot: { model: string; provider: string } }[];
+  loadActorModels: (config: GmConfig,) => void;
   // VN (visual novel) mode settings — persisted to gm_config.
   _vnEnabled: boolean;
   _vnLayout: "overlay" | "below" | "split";

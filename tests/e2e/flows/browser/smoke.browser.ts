@@ -42,7 +42,7 @@ describe("Smoke E2E", () => {
 
   describe("Chat view", () => {
     test("loads chat page with message list container", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await gotoView(page, "/views/chat",);
@@ -56,7 +56,7 @@ describe("Smoke E2E", () => {
     });
 
     test("has message input and send button", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await gotoView(page, "/views/chat",);
@@ -70,7 +70,7 @@ describe("Smoke E2E", () => {
     });
 
     test("has sidebar toggle buttons", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await gotoView(page, "/views/chat",);
@@ -89,7 +89,7 @@ describe("Smoke E2E", () => {
 
   describe("Characters view", () => {
     test("loads characters page", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await gotoView(page, "/views/characters",);
@@ -106,7 +106,7 @@ describe("Smoke E2E", () => {
     });
 
     test("create character button exists", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await gotoView(page, "/views/characters",);
@@ -120,7 +120,7 @@ describe("Smoke E2E", () => {
     });
 
     test("import character button exists", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await gotoView(page, "/views/characters",);
@@ -138,7 +138,7 @@ describe("Smoke E2E", () => {
 
   describe("Gallery view", () => {
     test("loads gallery page", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await gotoView(page, "/views/gallery",);
@@ -160,7 +160,7 @@ describe("Smoke E2E", () => {
     });
 
     test("upload button exists", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await gotoView(page, "/views/gallery",);
@@ -178,7 +178,7 @@ describe("Smoke E2E", () => {
 
   describe("Settings view", () => {
     test("loads settings page with header and tabs", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await gotoView(page, "/views/settings",);
@@ -195,7 +195,7 @@ describe("Smoke E2E", () => {
     });
 
     test("theme and locale selectors exist in DOM", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await gotoView(page, "/views/settings",);
@@ -215,7 +215,7 @@ describe("Smoke E2E", () => {
 
   describe("Worlds view", () => {
     test("loads worlds page", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await gotoView(page, "/views/worlds",);
@@ -231,7 +231,7 @@ describe("Smoke E2E", () => {
     });
 
     test("create world button exists", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await gotoView(page, "/views/worlds",);
@@ -249,7 +249,7 @@ describe("Smoke E2E", () => {
 
   describe("New Chat view", () => {
     test("loads new chat form with all fields", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await gotoView(page, "/views/new-chat",);
@@ -266,7 +266,7 @@ describe("Smoke E2E", () => {
     });
 
     test("can type chat name", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await gotoView(page, "/views/new-chat",);
@@ -286,7 +286,7 @@ describe("Smoke E2E", () => {
 
   describe("Login view", () => {
     test("loads login form", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await gotoView(page, "/views/login",);
@@ -302,7 +302,7 @@ describe("Smoke E2E", () => {
     });
 
     test("demo login link has correct hx-post", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await gotoView(page, "/views/login",);
@@ -321,7 +321,7 @@ describe("Smoke E2E", () => {
 
   describe("Layout navigation", () => {
     test("sidebar rendered on chat view", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await gotoView(page, "/views/chat",);
@@ -338,7 +338,7 @@ describe("Smoke E2E", () => {
     });
 
     test("nav links have expected htmx attributes", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await gotoView(page, "/views/chat",);
@@ -357,7 +357,7 @@ describe("Smoke E2E", () => {
     });
 
     test("hamburger toggles sidebar open class", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await gotoView(page, "/views/settings",);

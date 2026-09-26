@@ -9,9 +9,9 @@
 <!-- tickers are position:fixed and never shift the chat scroll position. -->
 {{> overlay-stack.html }}
 
-<div class="app-layout" x-data="chatState()" x-init="init()">
+<div class="app-layout" x-data="chatState()">
   <!-- Story-mode layout: loads story state (turns/quests/world) + exposes it to all chat components -->
-  <div class="story-layout" x-data="storyState()" x-init="init()">
+  <div class="story-layout" x-data="storyState()">
     <main class="main-content">
       {{> chat/message-search-bar.html }} {{> chat/chat-list-panel.html }}
 

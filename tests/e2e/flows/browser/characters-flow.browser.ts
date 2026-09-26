@@ -61,7 +61,7 @@ describe("Characters flow E2E", () => {
 
   describe("Page load", () => {
     test("characters page loads with header", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await gotoCharacters(page,);
@@ -75,7 +75,7 @@ describe("Characters flow E2E", () => {
     });
 
     test("create and import buttons exist", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await gotoCharacters(page,);
@@ -89,7 +89,7 @@ describe("Characters flow E2E", () => {
     });
 
     test("characters grid, loading, or empty state present", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await gotoCharacters(page,);
@@ -114,7 +114,7 @@ describe("Characters flow E2E", () => {
 
   describe("Create character", () => {
     test("create character modal opens", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await gotoCharacters(page,);
@@ -129,7 +129,7 @@ describe("Characters flow E2E", () => {
     });
 
     test("create character form has required fields", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await gotoCharacters(page,);
@@ -150,7 +150,7 @@ describe("Characters flow E2E", () => {
 
   describe("Import character", () => {
     test("import character modal opens", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await gotoCharacters(page,);
@@ -165,7 +165,7 @@ describe("Characters flow E2E", () => {
     });
 
     test("import form has file input", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await gotoCharacters(page,);
@@ -181,7 +181,7 @@ describe("Characters flow E2E", () => {
 
   describe("Character detail", () => {
     test("clicking a character opens detail modal", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await gotoCharacters(page,);
@@ -208,7 +208,7 @@ describe("Characters flow E2E", () => {
     }, 30_000,);
 
     test("start chat button in detail modal redirects to chat", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await gotoCharacters(page,);
@@ -229,7 +229,7 @@ describe("Characters flow E2E", () => {
 
   describe("Navigation from characters", () => {
     test("sidebar navigation works from characters page", async () => {
-      const page = await ctx.browser.newPage();
+      const page = await ctx.openPage();
       const errors = trackPageErrors(page,);
       try {
         await gotoCharacters(page,);

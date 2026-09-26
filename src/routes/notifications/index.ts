@@ -32,7 +32,10 @@ export function notificationsRoutes({ database, }: { database: Kysely<DB> }, pre
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       const unreadOnly = ctx.query?.unread === "true";
-      const items = await new NotificationService(database,).list(userId, unreadOnly,);
+      const items = (await new NotificationService(database,).list(userId, unreadOnly,)).map((item,) => ({
+        ...item,
+        read: item.read === "read" ? 1 : 0,
+      }));
       return jsonResponse({ items, },);
     }, {
       response: {

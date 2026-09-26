@@ -63,11 +63,14 @@ export const chatLifecycle: Partial<ChatState> & ThisType<ChatState> = {
     ];
 
     // Force-reset panel visibility on every mount (belt-and-suspenders
-    // against stale store state from a previous component instance)
-    Alpine.store("ui",).showGallery = false;
-    Alpine.store("ui",).showChatList = false;
-    Alpine.store("ui",).showCharacterInfo = false;
-    Alpine.store("ui",).showMemoryPanel = false;
+    // against stale store state from a previous component instance).
+    const uiStore = Alpine.store("ui",);
+    if (uiStore) {
+      uiStore.showGallery = false;
+      uiStore.showChatList = false;
+      uiStore.showCharacterInfo = false;
+      uiStore.showMemoryPanel = false;
+    }
 
     const storedDetail = localStorage.getItem("chat-detail-level",);
     if (storedDetail === "Basic" || storedDetail === "Detailed") {
@@ -88,6 +91,10 @@ export const chatLifecycle: Partial<ChatState> & ThisType<ChatState> = {
     // method isn't spread into the chatState factory, so guard the call.
     (this as { initSeenPopover?: () => void }).initSeenPopover?.();
     this.restoreChatFilters();
+    // chatLifecycle is spread last, so it shadows commandPalette.init() — call
+    // the loader explicitly or the assistant palette and slash autocomplete
+    // render from an empty _commandList.
+    await this._loadCommandList();
     await this.loadChats();
     this.loadWorldChannels();
     this.loadJoinableChats();

@@ -14,7 +14,6 @@
  * raw authenticated endpoint.
  */
 
-import { type Download, } from "@playwright/test";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { type BrowserTestContext, createBrowserTest, } from "../../helpers/browser-server";
 import { trackPageErrors, } from "../../helpers/htmx-alpine";
@@ -125,8 +124,11 @@ describe("Gallery flow E2E", () => {
 
         // Open the preview modal, then trigger the Download button.
         await page.locator(`[data-testid='asset-card-${id}']`,).click();
-        await page.locator("[data-testid='preview-modal']",).waitFor({ state: "visible", timeout: 15_000, },);
-        await page.locator("[data-testid='preview-modal']",).getByRole("button", { name: "Download", },).click();
+        await page.locator("[data-testid='asset-preview-modal']",).waitFor({ state: "visible", timeout: 15_000, },);
+        // Register the event listener before clicking; a fast anchor click can
+        // emit the download event before a later waitForEvent call.
+        const downloadPromise = page.waitForEvent("download", { timeout: 15_000, },);
+        await page.locator("[data-testid='asset-preview-modal']",).getByRole("button", { name: "Download", },).click();
 
         // The download must first POST for a signed URL, then fetch the media
         // through the signed download endpoint (carrying sig+expires) — never
@@ -140,12 +142,7 @@ describe("Gallery flow E2E", () => {
         // which Playwright surfaces via the `download` event rather than a
         // response we can wait on. Assert the download URL is the signed
         // endpoint carrying sig+expires.
-        let download: Download | null = null;
-        try {
-          download = await page.waitForEvent("download", { timeout: 15_000, },);
-        } catch {
-          download = null;
-        }
+        const download = await downloadPromise;
         expect(download, "download should be initiated",).not.toBeNull();
         if (download) {
           const dlUrl = new URL(download.url(),);
