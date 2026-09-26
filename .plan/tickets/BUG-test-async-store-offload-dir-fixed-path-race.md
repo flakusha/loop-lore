@@ -40,6 +40,7 @@ This is a parallel-safety defect: violates the project rule that tests must own 
   ```
 
 - Reproduce on a fresh shell (single-threaded to avoid OOM):
+
   ```
   ls .tmp/async-store | wc -l                          # before
   E2E_SAFEGUARD=1 bun test --parallel=4 --isolate src/async/
