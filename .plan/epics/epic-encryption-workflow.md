@@ -116,6 +116,10 @@ The encryption workflow now supports future additions of new algorithms through:
 - Auto-key-rotation IS built (`src/crypto/key-rotation/`) but re-encrypt is a
   silent no-op (orphans history) and is disabled by config drift. See
   `BUG-key-rotation-noop-orphans-history.md`, `BUG-auto-rotation-config-drift.md`.
+  Both BUGs Closed — fixes verified on dev (commit `10f1418bf` 2026-08-21:
+  rotation history-preservation + auto-rotation timer tests; post-054 stable
+  per-chat keys removed the re-encrypt requirement; `KEY_ROTATION_DAYS` wired
+  in schema-class/env-map).
 - Asset encryption IS wired (upload/download) — Phase 2b below is stale on that
   point; the open gap is the HKDF asset subkey, not the wiring.
 - Group key distribution loses history on join/leave. See
