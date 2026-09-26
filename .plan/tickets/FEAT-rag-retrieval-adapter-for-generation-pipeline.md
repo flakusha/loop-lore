@@ -9,7 +9,7 @@
 **Summary:** RAG Retrieval Adapter for Generation Pipeline
 **Context:** Epic proposed:epic-rag-adapter; tags rag, generation.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
-**Epic:** proposed:epic-rag-adapter
+**Epic:** proposed:epic-rag-adapter, epic-assistant-entity-access
 **Tags:** rag, generation
 
 ## Summary

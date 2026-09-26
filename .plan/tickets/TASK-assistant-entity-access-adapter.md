@@ -13,6 +13,7 @@
 **Effort:** Medium
 **Type:** Task
 **Tags:** assistant, adapter, composition, integration
+**Epic:** epic-assistant-entity-access
 **Related:** `epic-assistant-entity-access.md`, `src/assistant/commands/registry.ts`
 
 ## Summary
