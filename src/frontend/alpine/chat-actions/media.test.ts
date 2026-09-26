@@ -1,5 +1,4 @@
-import { afterEach, expect, mock, test, } from "bun:test";
-import { describeOrSkip, ISOLATED, } from "../../../test-utils/isolate-only";
+import { afterEach, describe, expect, mock, test, } from "bun:test";
 import { media, } from "./media";
 
 import type { ApiFetchMock, Toast, } from "../../tests/test-types";
@@ -8,15 +7,12 @@ import type { ApiFetchMock, Toast, } from "../../tests/test-types";
 let calls: { url: string; opts: RequestInit }[] = [];
 let handler: ApiFetchMock = async () => Response.json({},);
 
-// Gated: mock.module is process-global (BUG 9c8bea1).
-if (ISOLATED) {
-  mock.module("../htmx", () => ({
-    apiFetch: (async (url: string, opts?: RequestInit,) => {
-      calls.push({ url, opts: opts ?? {}, },);
-      return handler(url, opts,);
-    }) satisfies ApiFetchMock,
-  }),);
-}
+mock.module("../htmx", () => ({
+  apiFetch: (async (url: string, opts?: RequestInit,) => {
+    calls.push({ url, opts: opts ?? {}, },);
+    return handler(url, opts,);
+  }) satisfies ApiFetchMock,
+}),);
 
 interface MediaMsg {
   id: string;
@@ -51,7 +47,7 @@ afterEach(() => {
   handler = async () => Response.json({},);
 },);
 
-describeOrSkip("media.generateImageFromMessage", () => {
+describe("media.generateImageFromMessage", () => {
   test("warns when there is no active chat", async () => {
     const ctx = buildCtx({ activeChat: null, },);
     await media.generateImageFromMessage!.call(ctx as never, "m1",);
@@ -109,9 +105,9 @@ describeOrSkip("media.generateImageFromMessage", () => {
     await media.generateImageFromMessage!.call(ctx as never, "m1",);
     expect(ctx.toasts[0]!.type,).toBe("error",);
   });
-},);
+});
 
-describeOrSkip("media.captionMessage", () => {
+describe("media.captionMessage", () => {
   test("does nothing when the message does not exist", async () => {
     const ctx = buildCtx();
     await media.captionMessage!.call(ctx as never, "missing",);
@@ -166,4 +162,4 @@ describeOrSkip("media.captionMessage", () => {
     expect(ctx.toasts,).toHaveLength(2,);
     expect(ctx.toasts[1]!.type,).toBe("error",);
   });
-},);
+});

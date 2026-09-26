@@ -1,23 +1,19 @@
 import "./i18n.test-helper";
-import { afterEach, expect, mock, test, } from "bun:test";
+import { afterEach, describe, expect, mock, test, } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { creationWizard, } from "./creation-wizard";
 
 let fetchCalls: { url: string; opts: RequestInit }[] = [];
 let fetchHandler: ((url: string, opts: RequestInit,) => Response) | null = null;
 
-// Gated: mock.module is process-global (BUG 9c8bea1).
-if (ISOLATED) {
-  mock.module("./htmx", () => ({
-    apiFetch: async (url: string, opts?: RequestInit,) => {
-      fetchCalls.push({ url, opts: opts ?? {}, },);
-      if (!fetchHandler) { return new Response("{}", { status: 200, },); }
-      return fetchHandler(url, opts ?? {},);
-    },
-  }),);
-}
+mock.module("./htmx", () => ({
+  apiFetch: async (url: string, opts?: RequestInit,) => {
+    fetchCalls.push({ url, opts: opts ?? {}, },);
+    if (!fetchHandler) { return new Response("{}", { status: 200, },); }
+    return fetchHandler(url, opts ?? {},);
+  },
+}),);
 
 /**
  * @param status
@@ -56,7 +52,7 @@ function buildCtx(): { ctx: Record<string, unknown>; toasts: { type: string; mes
   return { ctx, toasts, };
 }
 
-describeOrSkip("creationWizard.confirmWizard", () => {
+describe("creationWizard.confirmWizard", () => {
   test("rejects when wizardId does not match the current draft (cross-talk guard)", async () => {
     const { ctx, toasts, } = buildCtx();
     ctx.wizardDraft = {
@@ -96,9 +92,9 @@ describeOrSkip("creationWizard.confirmWizard", () => {
     expect(ctx.wizardStep,).toBe(1,);
     expect(toasts.some((t,) => t.type === "success"),).toBe(true,);
   });
-},);
+});
 
-describeOrSkip("creationWizard.cancelWizard", () => {
+describe("creationWizard.cancelWizard", () => {
   test("clears draft regardless of wizardId argument", async () => {
     const { ctx, } = buildCtx();
     ctx.wizardDraft = {
@@ -114,7 +110,7 @@ describeOrSkip("creationWizard.cancelWizard", () => {
     expect(ctx.wizardDraft,).toBeNull();
     expect(ctx.wizardPreviewOpen,).toBe(false,);
   });
-},);
+});
 
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
@@ -127,7 +123,7 @@ describeOrSkip("creationWizard.cancelWizard", () => {
  * callers call `cancelWizard()` with no argument.
  */
 
-describeOrSkip("creation-wizard.cancelWizard signature", () => {
+describe("creation-wizard.cancelWizard signature", () => {
   test("impl no longer takes a wizardId parameter", () => {
     const src = fs.readFileSync(
       path.join(import.meta.dir, "creation-wizard.ts",),
@@ -173,4 +169,4 @@ describeOrSkip("creation-wizard.cancelWizard signature", () => {
     );
     expect(src,).toContain("BUG-character-creation-wizard-bug-wizardid-unused",);
   });
-},);
+});

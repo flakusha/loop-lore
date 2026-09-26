@@ -1,6 +1,5 @@
 import "./i18n.test-helper";
 import { afterEach, describe, expect, mock, test, } from "bun:test";
-import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { chatParticipants, } from "./chat-participants";
 import type { ChatState, } from "./types";
 
@@ -12,16 +11,13 @@ import type { ChatState, } from "./types";
 let fetchCalls: { url: string; opts: RequestInit }[] = [];
 let fetchHandler: ((url: string, opts: RequestInit,) => Response) | null = null;
 
-// Gated: mock.module is process-global (BUG 9c8bea1).
-if (ISOLATED) {
-  mock.module("./htmx", () => ({
-    apiFetch: async (url: string, opts?: RequestInit,) => {
-      fetchCalls.push({ url, opts: opts ?? {}, },);
-      if (!fetchHandler) { return new Response("{}", { status: 200, },); }
-      return fetchHandler(url, opts ?? {},);
-    },
-  }),);
-}
+mock.module("./htmx", () => ({
+  apiFetch: async (url: string, opts?: RequestInit,) => {
+    fetchCalls.push({ url, opts: opts ?? {}, },);
+    if (!fetchHandler) { return new Response("{}", { status: 200, },); }
+    return fetchHandler(url, opts ?? {},);
+  },
+}),);
 
 /**
  * @param status
@@ -79,7 +75,7 @@ afterEach(() => {
   fetchHandler = null;
 },);
 
-describeOrSkip("chatParticipants", () => {
+describe("chatParticipants", () => {
   describe("loadParticipants", () => {
     test("populates _participants and syncs _chatParticipants for mentions", async () => {
       mockFetch(200, [
@@ -311,4 +307,4 @@ describeOrSkip("chatParticipants", () => {
       expect(result.map((a,) => a.id),).toEqual(["a3",],);
     });
   });
-},);
+});

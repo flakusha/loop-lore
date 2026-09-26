@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { afterEach, expect, mock, test, } from "bun:test";
-import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
+import { afterEach, describe, expect, mock, test, } from "bun:test";
 import {
   actorSystems,
   actorSystemsFactory,
@@ -15,15 +14,12 @@ type ApiFetchMock = (url: string, opts?: RequestInit,) => Promise<Response>;
 let calls: { url: string; opts: RequestInit }[] = [];
 let handler: ApiFetchMock = async () => Response.json({},);
 
-// Gated: mock.module is process-global (BUG 9c8bea1).
-if (ISOLATED) {
-  mock.module("./htmx", () => ({
-    apiFetch: ((url: string, opts?: RequestInit,) => {
-      calls.push({ url, opts: opts ?? {}, },);
-      return handler(url, opts,);
-    }) satisfies ApiFetchMock,
-  }),);
-}
+mock.module("./htmx", () => ({
+  apiFetch: ((url: string, opts?: RequestInit,) => {
+    calls.push({ url, opts: opts ?? {}, },);
+    return handler(url, opts,);
+  }) satisfies ApiFetchMock,
+}),);
 
 const baseCtx = (): ActorSystemsState & Record<string, unknown> => {
   const state = Object.create(actorSystems,) as ActorSystemsState & Record<string, unknown>;
@@ -52,7 +48,7 @@ afterEach(() => {
   handler = async () => Response.json({},);
 },);
 
-describeOrSkip("actorSystems.setActorId", () => {
+describe("actorSystems.setActorId", () => {
   test("binds and clears prior state", () => {
     const ctx = baseCtx();
     ctx.setActorId("actor-1",);
@@ -66,9 +62,9 @@ describeOrSkip("actorSystems.setActorId", () => {
     ctx.setActorId("actor-1",);
     expect(ctx.error,).toBe("old",);
   });
-},);
+});
 
-describeOrSkip("actorSystems.buildExportBody", () => {
+describe("actorSystems.buildExportBody", () => {
   test("emits one includeXxx per section + worldId", () => {
     const ctx = baseCtx();
     ctx._sysActorId = "actor-1";
@@ -86,9 +82,9 @@ describeOrSkip("actorSystems.buildExportBody", () => {
     const body = ctx.buildExportBody();
     expect("worldId" in body,).toBe(false,);
   });
-},);
+});
 
-describeOrSkip("actorSystems.exportAsBlob", () => {
+describe("actorSystems.exportAsBlob", () => {
   test("returns null without actor", async () => {
     const ctx = baseCtx();
     expect(await ctx.exportAsBlob(),).toBeNull();
@@ -120,9 +116,9 @@ describeOrSkip("actorSystems.exportAsBlob", () => {
     ctx._sysActorId = "actor-1";
     expect(await ctx.exportAsBlob(),).toBeNull();
   });
-},);
+});
 
-describeOrSkip("actorSystems.triggerDownload", () => {
+describe("actorSystems.triggerDownload", () => {
   test("no-op without actor", async () => {
     const ctx = baseCtx();
     await ctx.triggerDownload();
@@ -137,9 +133,9 @@ describeOrSkip("actorSystems.triggerDownload", () => {
     expect(ctx.error,).toBeTruthy();
     expect(ctx.busy,).toBe(false,);
   });
-},);
+});
 
-describeOrSkip("actorSystems.describeSection", () => {
+describe("actorSystems.describeSection", () => {
   test("returns human label for known sections", () => {
     const ctx = baseCtx();
     expect(ctx.describeSection("traits",),).toBe("Traits",);
@@ -150,9 +146,9 @@ describeOrSkip("actorSystems.describeSection", () => {
     const ctx = baseCtx();
     expect(ctx.describeSection("unknown_section",),).toBe("unknown_section",);
   });
-},);
+});
 
-describeOrSkip("actorSystems.importFromPayload", () => {
+describe("actorSystems.importFromPayload", () => {
   test("no-op without actor", async () => {
     const ctx = baseCtx();
     ctx.importPreview = '{"version":1}';
@@ -214,9 +210,9 @@ describeOrSkip("actorSystems.importFromPayload", () => {
     expect(ctx.error,).toBeTruthy();
     expect(ctx.busy,).toBe(false,);
   });
-},);
+});
 
-describeOrSkip("actorSystems.importFromUrl", () => {
+describe("actorSystems.importFromUrl", () => {
   test("no-op without actor", async () => {
     const ctx = baseCtx();
     ctx.importUrl = "https://example.com/x.json";
@@ -252,9 +248,9 @@ describeOrSkip("actorSystems.importFromUrl", () => {
     await ctx.importFromUrl();
     expect(ctx.error,).toBe("denied",);
   });
-},);
+});
 
-describeOrSkip("actorSystems.resetImport", () => {
+describe("actorSystems.resetImport", () => {
   test("clears all import fields and status", () => {
     const ctx = baseCtx();
     ctx.importPreview = "x";
@@ -269,9 +265,9 @@ describeOrSkip("actorSystems.resetImport", () => {
     expect(ctx.message,).toBe("",);
     expect(ctx.error,).toBe("",);
   });
-},);
+});
 
-describeOrSkip("EXPORT_SECTIONS export", () => {
+describe("EXPORT_SECTIONS export", () => {
   test("includes every supported section key", () => {
     expect(new Set(EXPORT_SECTIONS,),).toEqual(
       new Set([
@@ -285,9 +281,9 @@ describeOrSkip("EXPORT_SECTIONS export", () => {
       ],),
     );
   });
-},);
+});
 
-describeOrSkip("actorSystemsFactory", () => {
+describe("actorSystemsFactory", () => {
   test("returns a fresh state bound to the actor", () => {
     const a = actorSystemsFactory("actor-a",);
     const b = actorSystemsFactory("actor-b",);
@@ -295,4 +291,4 @@ describeOrSkip("actorSystemsFactory", () => {
     expect(a._sysActorId,).toBe("actor-a",);
     expect(b._sysActorId,).toBe("actor-b",);
   });
-},);
+});

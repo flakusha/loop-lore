@@ -1,19 +1,15 @@
 import "./i18n.test-helper";
-import { afterEach, expect, mock, test, } from "bun:test";
-import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
+import { afterEach, describe, expect, mock, test, } from "bun:test";
 import { type BlogPost, blogStore, } from "./blog";
 
 let fetchHandler: ((url: string, opts: RequestInit,) => Response) | null = null;
 
-// Gated: mock.module is process-global (BUG 9c8bea1).
-if (ISOLATED) {
-  mock.module("./htmx", () => ({
-    apiFetch: async (url: string, opts?: RequestInit,) => {
-      if (!fetchHandler) { return new Response("{}", { status: 200, },); }
-      return fetchHandler(url, opts ?? {},);
-    },
-  }),);
-}
+mock.module("./htmx", () => ({
+  apiFetch: async (url: string, opts?: RequestInit,) => {
+    if (!fetchHandler) { return new Response("{}", { status: 200, },); }
+    return fetchHandler(url, opts ?? {},);
+  },
+}),);
 
 /**
  * @param status
@@ -45,7 +41,7 @@ blogStore.$dispatch = (event, detail,) => {
   dispatched.push({ event, detail, },);
 };
 
-describeOrSkip("blogStore — envelope parsing", () => {
+describe("blogStore — envelope parsing", () => {
   afterEach(() => {
     fetchHandler = null;
     dispatched.length = 0;
@@ -85,9 +81,9 @@ describeOrSkip("blogStore — envelope parsing", () => {
     expect(blogStore._blogComments,).toEqual([],);
     expect(blogStore._blogError,).toBe("",);
   });
-},);
+});
 
-describeOrSkip("blogStore — follow and sources", () => {
+describe("blogStore — follow and sources", () => {
   afterEach(() => {
     fetchHandler = null;
     dispatched.length = 0;
@@ -123,9 +119,9 @@ describeOrSkip("blogStore — follow and sources", () => {
     expect(blogStore._blogSources.length,).toBe(1,);
     expect(blogStore._blogSources[0]!.title,).toBe("t",);
   });
-},);
+});
 
-describeOrSkip("blogStore — visiblePosts", () => {
+describe("blogStore — visiblePosts", () => {
   afterEach(() => {
     blogStore._blogPosts = [];
     blogStore._blogFilter = "";
@@ -146,4 +142,4 @@ describeOrSkip("blogStore — visiblePosts", () => {
     blogStore._blogTag = "lore";
     expect(blogStore.visiblePosts().map((p,) => p.id),).toEqual(["p1",],);
   });
-},);
+});

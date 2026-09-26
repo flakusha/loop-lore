@@ -1,5 +1,4 @@
-import { afterEach, expect, mock, test, } from "bun:test";
-import { describeOrSkip, ISOLATED, } from "../../../test-utils/isolate-only";
+import { afterEach, describe, expect, mock, test, } from "bun:test";
 import { createMoodPanelState, } from "./factory";
 
 // ── Mock ../htmx (must precede importing ./factory) ──
@@ -7,22 +6,19 @@ type ApiFetchMock = (url: string, opts?: RequestInit,) => Promise<Response>;
 let calls: { url: string; opts: RequestInit }[] = [];
 let handler: ApiFetchMock = async () => Response.json({},);
 
-// Gated: mock.module is process-global (BUG 9c8bea1).
-if (ISOLATED) {
-  mock.module("../htmx", () => ({
-    apiFetch: (async (url: string, opts?: RequestInit,) => {
-      calls.push({ url, opts: opts ?? {}, },);
-      return handler(url, opts,);
-    }) satisfies ApiFetchMock,
-  }),);
-}
+mock.module("../htmx", () => ({
+  apiFetch: (async (url: string, opts?: RequestInit,) => {
+    calls.push({ url, opts: opts ?? {}, },);
+    return handler(url, opts,);
+  }) satisfies ApiFetchMock,
+}),);
 
 afterEach(() => {
   calls = [];
   handler = async () => Response.json({},);
 },);
 
-describeOrSkip("createMoodPanelState", () => {
+describe("createMoodPanelState", () => {
   test("starts with empty defaults", () => {
     const state = createMoodPanelState();
     expect(state.mood,).toBeNull();
@@ -120,9 +116,9 @@ describeOrSkip("createMoodPanelState", () => {
     expect(state.happinessToMood(25,),).toBe("sad",);
     expect(state.happinessToMood(0,),).toBe("miserable",);
   });
-},);
+});
 
-describeOrSkip("createMoodPanelState — rejection paths", () => {
+describe("createMoodPanelState — rejection paths", () => {
   test("loadEmotions swallows rejections and keeps the old list", async () => {
     const state = createMoodPanelState();
     state.emotions = [{ emotion_id: "calm", intensity: 0.5, },] as never;
@@ -153,4 +149,4 @@ describeOrSkip("createMoodPanelState — rejection paths", () => {
     await state.applyHappinessDelta("a1", 20,);
     expect(state.mood,).toEqual({ happiness: 70, currentMood: "happy", } as never,);
   });
-},);
+});

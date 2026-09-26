@@ -12,53 +12,43 @@
  * page modules (`./shared`, `../ui`) are stubbed on globalThis with
  * listener-stashing fakes.
  */
-import { afterEach, beforeEach, expect, mock, test, } from "bun:test";
-import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
+import { afterEach, beforeEach, describe, expect, mock, test, } from "bun:test";
 
 let fetchCalls: { url: string; opts?: RequestInit }[] = [];
 let feHandler: ((url: string, opts?: RequestInit,) => Response | Promise<Response>) | null = null;
 
-// Gated: mock.module is process-global (BUG 9c8bea1).
-if (ISOLATED) {
-  mock.module("../fe-fetch", () => ({
-    feFetch: async (url: string, opts: RequestInit = {},) => {
-      fetchCalls.push({ url, opts, },);
-      if (!feHandler) { return new Response("{}", { status: 404, },); }
-      return feHandler(url, opts,);
-    },
-    getCsrfToken: () => "",
-  }),);
-}
+mock.module("../fe-fetch", () => ({
+  feFetch: async (url: string, opts: RequestInit = {},) => {
+    fetchCalls.push({ url, opts, },);
+    if (!feHandler) { return new Response("{}", { status: 404, },); }
+    return feHandler(url, opts,);
+  },
+  getCsrfToken: () => "",
+}),);
 
-// Gated: mock.module is process-global (BUG 9c8bea1).
-if (ISOLATED) {
-  mock.module("../ui", () => ({
-    showToast: (type: string, message: string,) => {
-      toastCalls.push({ type, message, },);
-    },
-  }),);
-}
+mock.module("../ui", () => ({
+  showToast: (type: string, message: string,) => {
+    toastCalls.push({ type, message, },);
+  },
+}),);
 
-// Gated: mock.module is process-global (BUG 9c8bea1).
-if (ISOLATED) {
-  mock.module("./shared", () => ({
-    escapeHtml: (s: string,) =>
-      s.replace(/[&<>"']/g, (c,) => {
-        switch (c) {
-          case "&":
-            return "&amp;";
-          case "<":
-            return "&lt;";
-          case ">":
-            return "&gt;";
-          case '"':
-            return "&quot;";
-          default:
-            return "&#39;";
-        }
-      },),
-  }),);
-}
+mock.module("./shared", () => ({
+  escapeHtml: (s: string,) =>
+    s.replace(/[&<>"']/g, (c,) => {
+      switch (c) {
+        case "&":
+          return "&amp;";
+        case "<":
+          return "&lt;";
+        case ">":
+          return "&gt;";
+        case '"':
+          return "&quot;";
+        default:
+          return "&#39;";
+      }
+    },),
+}),);
 
 let toastCalls: { type: string; message: string }[] = [];
 
@@ -119,7 +109,7 @@ function seedForm(values: Record<string, string>,): void {
   els.set("avatar-preview", makeEl(),);
 }
 
-describeOrSkip("saveCharacterEdit", () => {
+describe("saveCharacterEdit", () => {
   test("mirrors appearance + defaultOutfit into the PUT body on success", async () => {
     await import("./characters-edit-form");
     seedForm({
@@ -191,9 +181,9 @@ describeOrSkip("saveCharacterEdit", () => {
 
     expect(toastCalls,).toEqual([{ type: "error", message: "Failed to save character", },],);
   });
-},);
+});
 
-describeOrSkip("uploadAvatar / clearAvatar", () => {
+describe("uploadAvatar / clearAvatar", () => {
   test("uploadAvatar stores the asset id and renders the preview", async () => {
     await import("./characters-edit-form");
     seedForm({ "char-avatar-id": "", },);
@@ -245,4 +235,4 @@ describeOrSkip("uploadAvatar / clearAvatar", () => {
     expect(els.get("avatar-preview",)!.innerHTML,).toBe("<span>👤</span>",);
     expect(toastCalls,).toEqual([{ type: "info", message: "Avatar cleared — save to apply", },],);
   });
-},);
+});

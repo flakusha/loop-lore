@@ -1,5 +1,4 @@
-import { afterEach, expect, mock, test, } from "bun:test";
-import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
+import { afterEach, describe, expect, mock, test, } from "bun:test";
 import { useRequestStatus, } from "./use-request-status";
 
 // ── Mock ../fe-fetch (must precede importing ./use-request-status) ──
@@ -7,15 +6,12 @@ type FeFetchMock = (url: string, opts?: RequestInit,) => Promise<Response>;
 let seenUrls: string[] = [];
 let handler: FeFetchMock = async () => Response.json({ requestId: "r1", status: "complete", },);
 
-// Gated: mock.module is process-global (BUG 9c8bea1).
-if (ISOLATED) {
-  mock.module("../fe-fetch", () => ({
-    feFetch: (async (url: string, opts?: RequestInit,) => {
-      seenUrls.push(url,);
-      return handler(url, opts,);
-    }) satisfies FeFetchMock,
-  }),);
-}
+mock.module("../fe-fetch", () => ({
+  feFetch: (async (url: string, opts?: RequestInit,) => {
+    seenUrls.push(url,);
+    return handler(url, opts,);
+  }) satisfies FeFetchMock,
+}),);
 
 afterEach(() => {
   seenUrls = [];
@@ -32,7 +28,7 @@ function record(): Recorder {
   return rec;
 }
 
-describeOrSkip("useRequestStatus", () => {
+describe("useRequestStatus", () => {
   test("polls the status endpoint and terminates on complete", async () => {
     const rec = record();
     const { subscribe, cancel, } = useRequestStatus({
@@ -119,9 +115,9 @@ describeOrSkip("useRequestStatus", () => {
     expect(rec.updates,).toEqual(["in_progress",],);
     expect(rec.terminals,).toEqual([],);
   });
-},);
+});
 
-describeOrSkip("useRequestStatus — odd failure payloads", () => {
+describe("useRequestStatus — odd failure payloads", () => {
   test("stringifies a non-Error rejection into the error channel", async () => {
     const rec: { updates: string[]; terminals: string[] } = { updates: [], terminals: [], };
     handler = async () => {
@@ -137,4 +133,4 @@ describeOrSkip("useRequestStatus — odd failure payloads", () => {
     expect(rec.terminals,).toEqual(["failed",],);
     cancel();
   });
-},);
+});

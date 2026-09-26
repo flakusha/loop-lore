@@ -8,7 +8,7 @@
  * Translates RecordTurnSkipResult -> HTTP: not_found -> 404,
  * refused_beat -> 409, forbidden -> 403. Per-user+chat rate limit -> 429.
  */
-import { afterEach, beforeEach, expect, mock, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, mock, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
@@ -22,24 +22,20 @@ import {
   insertChats,
   insertUsers,
 } from "../../test-utils/insert-helpers";
-import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { turnSkipRoutes, } from "./turn-skip-routes";
 
 // Spy the auto-generation trigger: the route must fire it at most once per
 // advance, and never for a deduped (replayed) advance.
 const triggerCalls: Array<Record<string, unknown>> = [];
-// Gated: mock.module is process-global (BUG 9c8bea1).
-if (ISOLATED) {
-  mock.module("../../generation/auto-gen", () => ({
-    isLlmGenerationConfigured: () => true,
-    triggerAutoGeneration: (input: Record<string, unknown>,) => {
-      triggerCalls.push(input,);
-      return Promise.resolve();
-    },
-  }),);
-}
+mock.module("../../generation/auto-gen", () => ({
+  isLlmGenerationConfigured: () => true,
+  triggerAutoGeneration: (input: Record<string, unknown>,) => {
+    triggerCalls.push(input,);
+    return Promise.resolve();
+  },
+}),);
 
-describeOrSkip("chats turn-skip-routes", () => {
+describe("chats turn-skip-routes", () => {
   let db: Kysely<DB>;
   const OWNER_ID = crypto.randomUUID();
   const CHAT_ID = crypto.randomUUID();
@@ -144,4 +140,4 @@ describeOrSkip("chats turn-skip-routes", () => {
     // No second generation beat for the replayed advance.
     expect(triggerCalls.length,).toBe(1,);
   });
-},);
+});
