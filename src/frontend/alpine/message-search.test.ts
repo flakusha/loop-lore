@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { afterEach, beforeEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, beforeEach, expect, mock, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { messageSearch, } from "./message-search";
 
 // ── Mock apiFetch (message-search imports ./htmx) ──
@@ -10,13 +11,16 @@ import { messageSearch, } from "./message-search";
 let fetchCalls: { url: string; opts: RequestInit }[] = [];
 let fetchHandler: ((url: string, opts: RequestInit,) => Response) | null = null;
 
-mock.module("./htmx", () => ({
-  apiFetch: async (url: string, opts?: RequestInit,) => {
-    fetchCalls.push({ url, opts: opts ?? {}, },);
-    if (!fetchHandler) { return new Response("{}", { status: 200, },); }
-    return fetchHandler(url, opts ?? {},);
-  },
-}),);
+// Gated: mock.module is process-global (BUG 9c8bea1).
+if (ISOLATED) {
+  mock.module("./htmx", () => ({
+    apiFetch: async (url: string, opts?: RequestInit,) => {
+      fetchCalls.push({ url, opts: opts ?? {}, },);
+      if (!fetchHandler) { return new Response("{}", { status: 200, },); }
+      return fetchHandler(url, opts ?? {},);
+    },
+  }),);
+}
 
 function mockFetch(status: number, body: unknown = {},): void {
   fetchHandler = () => Response.json(body, { status, },);
@@ -50,7 +54,7 @@ function searchCtx(overrides: Record<string, unknown> = {},): Record<string, unk
   };
 }
 
-describe("messageSearch.runMessageSearch", () => {
+describeOrSkip("messageSearch.runMessageSearch", () => {
   test("returns early without an active chat", async () => {
     const ctx = searchCtx({ activeChat: null, _msgSearchQuery: "hi", },);
     await messageSearch.runMessageSearch!.call(ctx,);
@@ -113,9 +117,9 @@ describe("messageSearch.runMessageSearch", () => {
     expect(fetchCalls[0]!.url,).toContain(`chatId=${encodeURIComponent("chat/1",)}`,);
     expect(fetchCalls[0]!.url,).toContain(`q=${encodeURIComponent("酒場",)}`,);
   });
-});
+},);
 
-describe("messageSearch navigation", () => {
+describeOrSkip("messageSearch navigation", () => {
   test("next wraps around the match list", () => {
     const ctx = searchCtx({ _msgSearchMatches: ["a", "b",], _msgSearchIndex: 1, },);
     messageSearch.nextMessageMatch!.call(ctx,);
@@ -146,9 +150,9 @@ describe("messageSearch navigation", () => {
     messageSearch.onMessageSearchEnter!.call(ctx, { shiftKey: true, } as KeyboardEvent,);
     expect(prev,).toHaveBeenCalledTimes(1,);
   });
-});
+},);
 
-describe("messageSearch open/close", () => {
+describeOrSkip("messageSearch open/close", () => {
   test("closeMessageSearch resets every field", () => {
     const ctx = searchCtx({
       _msgSearchOpen: true,
@@ -228,4 +232,4 @@ describe("messageSearch open/close", () => {
     expect(runs,).toBe(1,);
     messageSearch.closeMessageSearch!.call(ctx,);
   });
-});
+},);

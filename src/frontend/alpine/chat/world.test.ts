@@ -1,20 +1,24 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { afterEach, beforeEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, beforeEach, expect, mock, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../../../test-utils/isolate-only";
 import { chatWorld, } from "./world";
 
 // ── Mock apiFetch (chat/world imports ../htmx) ──
 let fetchCalls: { url: string; opts: RequestInit }[] = [];
 let handler: ((url: string, opts?: RequestInit,) => Response | Promise<Response>) | null = null;
 
-mock.module("../htmx", () => ({
-  apiFetch: async (url: string, opts?: RequestInit,) => {
-    fetchCalls.push({ url, opts: opts ?? {}, },);
-    if (!handler) { return new Response("{}", { status: 200, },); }
-    return handler(url, opts ?? {},);
-  },
-}),);
+// Gated: mock.module is process-global (BUG 9c8bea1).
+if (ISOLATED) {
+  mock.module("../htmx", () => ({
+    apiFetch: async (url: string, opts?: RequestInit,) => {
+      fetchCalls.push({ url, opts: opts ?? {}, },);
+      if (!handler) { return new Response("{}", { status: 200, },); }
+      return handler(url, opts ?? {},);
+    },
+  }),);
+}
 
 function mockFetch(status: number, body: unknown = {},): void {
   handler = () => Response.json(body, { status, },);
@@ -131,7 +135,7 @@ function makeSelectCtx(overrides: Record<string, unknown> = {},): Record<string,
   },);
 }
 
-describe("chatWorld.loadWorldChannels", () => {
+describeOrSkip("chatWorld.loadWorldChannels", () => {
   test("returns early while already loading", async () => {
     const ctx = worldCtx({ _worldsLoading: true, },);
     await chatWorld.loadWorldChannels!.call(ctx,);
@@ -176,9 +180,9 @@ describe("chatWorld.loadWorldChannels", () => {
     await expect(chatWorld.loadWorldChannels!.call(ctx,),).resolves.toBeUndefined();
     expect(ctx._worldsLoading,).toBe(false,);
   });
-});
+},);
 
-describe("chatWorld.loadWorldChats", () => {
+describeOrSkip("chatWorld.loadWorldChats", () => {
   test("stores rows per world", async () => {
     mockFetch(200, { data: [{ id: "c1", },], },);
     const ctx = worldCtx();
@@ -209,9 +213,9 @@ describe("chatWorld.loadWorldChats", () => {
     await chatWorld.loadWorldChats!.call(ctx, "w1",);
     expect((ctx._worldChats as Record<string, unknown[]>)["w1"],).toEqual([],);
   });
-});
+},);
 
-describe("chatWorld.toggleWorld", () => {
+describeOrSkip("chatWorld.toggleWorld", () => {
   test("expands and loads uncached worlds", () => {
     let loaded: string[] = [];
     const ctx = worldCtx({
@@ -252,16 +256,16 @@ describe("chatWorld.toggleWorld", () => {
     chatWorld.toggleWorld!.call(ctx, "w1",);
     expect(loads,).toBe(0,);
   });
-});
+},);
 
-describe("chatWorld.getChatId", () => {
+describeOrSkip("chatWorld.getChatId", () => {
   test("returns the active chat", () => {
     expect(chatWorld.getChatId!.call({ activeChat: "c1", },),).toBe("c1",);
     expect(chatWorld.getChatId!.call({ activeChat: null, },),).toBeNull();
   });
-});
+},);
 
-describe("chatWorld.selectChat guards", () => {
+describeOrSkip("chatWorld.selectChat guards", () => {
   test("ignores reentrant calls while a selection is in flight", async () => {
     let inner = 0;
     const ctx = worldCtx({
@@ -313,11 +317,11 @@ describe("chatWorld.selectChat guards", () => {
     await chatWorld.selectChat!.call(ctx, "c1",);
     expect(events,).toEqual(["flush", "inner",],);
   });
-});
+},);
 
 // ── Coverage for _selectChatInner ──────────────────────────────────
 
-describe("chatWorld._selectChatInner happy path", () => {
+describeOrSkip("chatWorld._selectChatInner happy path", () => {
   test("populates state, dismisses panels, restores draft, and reloads", async () => {
     const events: string[] = [];
     const titleEl = { textContent: "", };
@@ -499,9 +503,9 @@ describe("chatWorld._selectChatInner happy path", () => {
     await chatWorld._selectChatInner!.call(ctx, "c1",);
     expect(groupCalls,).toBe(0,);
   });
-});
+},);
 
-describe("chatWorld.selectChat successful flow", () => {
+describeOrSkip("chatWorld.selectChat successful flow", () => {
   test("enters _selectChatInner, clears the guard, and propagates errors", async () => {
     let inner = 0;
     const ctx = worldCtx({
@@ -515,4 +519,4 @@ describe("chatWorld.selectChat successful flow", () => {
     expect(inner,).toBe(1,);
     expect(ctx._selectingChat,).toBe(false,);
   });
-});
+},);

@@ -1,4 +1,5 @@
-import { afterEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, expect, mock, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../../../test-utils/isolate-only";
 import { moodStateAvatars, } from "./avatars";
 
 // ── Mock ../htmx (must precede importing ./avatars) ──
@@ -6,12 +7,15 @@ type ApiFetchMock = (url: string, opts?: RequestInit,) => Promise<Response>;
 let calls: { url: string; opts: RequestInit }[] = [];
 let handler: ApiFetchMock = async () => Response.json([],);
 
-mock.module("../htmx", () => ({
-  apiFetch: (async (url: string, opts?: RequestInit,) => {
-    calls.push({ url, opts: opts ?? {}, },);
-    return handler(url, opts,);
-  }) satisfies ApiFetchMock,
-}),);
+// Gated: mock.module is process-global (BUG 9c8bea1).
+if (ISOLATED) {
+  mock.module("../htmx", () => ({
+    apiFetch: (async (url: string, opts?: RequestInit,) => {
+      calls.push({ url, opts: opts ?? {}, },);
+      return handler(url, opts,);
+    }) satisfies ApiFetchMock,
+  }),);
+}
 
 interface EmotionAvatar {
   emotion: string;
@@ -89,7 +93,7 @@ afterEach(() => {
   handler = async () => Response.json([],);
 },);
 
-describe("moodStateAvatars.loadEmotionAvatars", () => {
+describeOrSkip("moodStateAvatars.loadEmotionAvatars", () => {
   test("returns early without an active chat", async () => {
     const ctx = buildCtx({ activeChat: null, },);
     await moodStateAvatars.loadEmotionAvatars!.call(ctx as never,);
@@ -137,9 +141,9 @@ describe("moodStateAvatars.loadEmotionAvatars", () => {
     await moodStateAvatars.loadEmotionAvatars!.call(ctx as never,);
     expect(ctx._emotionAvatarsLoading,).toBe(false,);
   });
-});
+},);
 
-describe("moodStateAvatars.generateEmotionAvatars", () => {
+describeOrSkip("moodStateAvatars.generateEmotionAvatars", () => {
   test("refuses to run without a chat or while already running", async () => {
     const ctx = buildCtx({ activeChat: null, },);
     await moodStateAvatars.generateEmotionAvatars!.call(ctx as never,);
@@ -190,9 +194,9 @@ describe("moodStateAvatars.generateEmotionAvatars", () => {
     expect(ctx._emotionGenJobId,).toBeNull();
     expect(ctx._emotionGenRunning,).toBe(false,);
   });
-});
+},);
 
-describe("moodStateAvatars._pollEmotionJob", () => {
+describeOrSkip("moodStateAvatars._pollEmotionJob", () => {
   test("reports the no-job-id outcome immediately", async () => {
     const ctx = buildCtx();
     await moodStateAvatars._pollEmotionJob!.call(ctx as never, "actor-9", null,);
@@ -205,9 +209,9 @@ describe("moodStateAvatars._pollEmotionJob", () => {
     await moodStateAvatars._pollEmotionJob!.call(ctx as never, "actor-9", "",);
     expect(calls,).toEqual([],);
   });
-});
+},);
 
-describe("moodStateAvatars.avatarForMessage", () => {
+describeOrSkip("moodStateAvatars.avatarForMessage", () => {
   test("hides avatars for user messages", () => {
     const ctx = buildCtx({
       currentCharacter: { id: "c1", avatar_asset_id: "base-1", },
@@ -248,9 +252,9 @@ describe("moodStateAvatars.avatarForMessage", () => {
     const bare = buildCtx();
     expect(moodStateAvatars.avatarForMessage!.call(bare as never, { role: "assistant", },),).toBeNull();
   });
-});
+},);
 
-describe("moodStateAvatars.selectEmotionAvatar", () => {
+describeOrSkip("moodStateAvatars.selectEmotionAvatar", () => {
   test("returns null for an empty avatar list", () => {
     const ctx = buildCtx();
     expect(moodStateAvatars.selectEmotionAvatar!.call(ctx as never, "happy",),).toBeNull();
@@ -278,4 +282,4 @@ describe("moodStateAvatars.selectEmotionAvatar", () => {
     },);
     expect(moodStateAvatars.selectEmotionAvatar!.call(first as never, "sad",),).toBe("as-first",);
   });
-});
+},);

@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { afterEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, expect, mock, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import {
   actorLicensing,
   actorLicensingFactory,
@@ -15,12 +16,15 @@ type ApiFetchMock = (url: string, opts?: RequestInit,) => Promise<Response>;
 let calls: { url: string; opts: RequestInit }[] = [];
 let handler: ApiFetchMock = async () => Response.json({}, { status: 404, },);
 
-mock.module("./htmx", () => ({
-  apiFetch: ((url: string, opts?: RequestInit,) => {
-    calls.push({ url, opts: opts ?? {}, },);
-    return handler(url, opts,);
-  }) satisfies ApiFetchMock,
-}),);
+// Gated: mock.module is process-global (BUG 9c8bea1).
+if (ISOLATED) {
+  mock.module("./htmx", () => ({
+    apiFetch: ((url: string, opts?: RequestInit,) => {
+      calls.push({ url, opts: opts ?? {}, },);
+      return handler(url, opts,);
+    }) satisfies ApiFetchMock,
+  }),);
+}
 
 const baseCtx = (): ActorLicensingState & Record<string, unknown> => {
   const state = Object.create(actorLicensing,) as ActorLicensingState & Record<string, unknown>;
@@ -55,7 +59,7 @@ afterEach(() => {
   handler = async () => Response.json({}, { status: 404, },);
 },);
 
-describe("actorLicensing.setActorId", () => {
+describeOrSkip("actorLicensing.setActorId", () => {
   test("binds and clears prior state", () => {
     const ctx = baseCtx();
     ctx.setActorId("actor-1",);
@@ -71,9 +75,9 @@ describe("actorLicensing.setActorId", () => {
     ctx.setActorId("actor-1",);
     expect(ctx.licenseDirty,).toBe(true,);
   });
-});
+},);
 
-describe("actorLicensing.loadLicensing", () => {
+describeOrSkip("actorLicensing.loadLicensing", () => {
   const sampleLicensing: CharacterLicensing = {
     id: "lic-1",
     actor_id: "actor-1",
@@ -130,9 +134,9 @@ describe("actorLicensing.loadLicensing", () => {
     await flush();
     expect(ctx.licenseError,).toBeTruthy();
   });
-});
+},);
 
-describe("actorLicensing.save", () => {
+describeOrSkip("actorLicensing.save", () => {
   test("no-op without actor id", async () => {
     const ctx = baseCtx();
     await ctx.save();
@@ -183,9 +187,9 @@ describe("actorLicensing.save", () => {
     await ctx.save();
     expect(ctx.licenseError,).toBeTruthy();
   });
-});
+},);
 
-describe("actorLicensing.remove", () => {
+describeOrSkip("actorLicensing.remove", () => {
   test("DELETEs and clears license on 200", async () => {
     handler = async () => Response.json({ ok: true, },);
     const ctx = baseCtx();
@@ -221,9 +225,9 @@ describe("actorLicensing.remove", () => {
     await ctx.remove();
     expect(calls,).toHaveLength(0,);
   });
-});
+},);
 
-describe("actorLicensing.describeLicense", () => {
+describeOrSkip("actorLicensing.describeLicense", () => {
   test("returns human label for known codes", () => {
     const ctx = baseCtx();
     expect(ctx.describeLicense("cc_by_nc_sa",),).toBe("CC BY-NC-SA",);
@@ -234,18 +238,18 @@ describe("actorLicensing.describeLicense", () => {
     const ctx = baseCtx();
     expect(ctx.describeLicense("unknown_xyz",),).toBe("unknown_xyz",);
   });
-});
+},);
 
-describe("LICENSE_TYPES export", () => {
+describeOrSkip("LICENSE_TYPES export", () => {
   test("includes every enum value", () => {
     expect(LICENSE_TYPES.includes("cc0",),).toBe(true,);
     expect(LICENSE_TYPES.includes("cc_by_nc_sa",),).toBe(true,);
     expect(LICENSE_TYPES.includes("proprietary",),).toBe(true,);
     expect(LICENSE_TYPES.includes("custom",),).toBe(true,);
   });
-});
+},);
 
-describe("actorLicensingFactory", () => {
+describeOrSkip("actorLicensingFactory", () => {
   test("returns a fresh state bound to the given actor", async () => {
     handler = async () =>
       Response.json({
@@ -273,9 +277,9 @@ describe("actorLicensingFactory", () => {
     expect(a._licActorId,).toBe("actor-a",);
     expect(b._licActorId,).toBe("actor-b",);
   });
-});
+},);
 
-describe("actorLicensing.loadLicenseHistory", () => {
+describeOrSkip("actorLicensing.loadLicenseHistory", () => {
   test("populates history on 200 and clears on failure", async () => {
     const ctx = baseCtx();
     handler = async () =>
@@ -299,4 +303,4 @@ describe("actorLicensing.loadLicenseHistory", () => {
     await flush();
     expect(ctx.licenseHistory,).toEqual([],);
   });
-});
+},);

@@ -1,4 +1,5 @@
-import { afterEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, expect, mock, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { storyControl, } from "./story-controls";
 import type { StoryControlAction, } from "./story-controls";
 
@@ -7,14 +8,17 @@ let fetchCalls: { url: string; opts: RequestInit }[] = [];
 let fetchHandler: ((url: string, opts: RequestInit,) => Response) | null = null;
 let fetchError: Error | null = null;
 
-mock.module("./htmx", () => ({
-  apiFetch: async (url: string, opts?: RequestInit,) => {
-    fetchCalls.push({ url, opts: opts ?? {}, },);
-    if (fetchError) { throw fetchError; }
-    if (!fetchHandler) { return new Response("{}", { status: 200, },); }
-    return fetchHandler(url, opts ?? {},);
-  },
-}),);
+// Gated: mock.module is process-global (BUG 9c8bea1).
+if (ISOLATED) {
+  mock.module("./htmx", () => ({
+    apiFetch: async (url: string, opts?: RequestInit,) => {
+      fetchCalls.push({ url, opts: opts ?? {}, },);
+      if (fetchError) { throw fetchError; }
+      if (!fetchHandler) { return new Response("{}", { status: 200, },); }
+      return fetchHandler(url, opts ?? {},);
+    },
+  }),);
+}
 
 /**
  * @param status
@@ -30,7 +34,7 @@ afterEach(() => {
   fetchError = null;
 },);
 
-describe("storyControl", () => {
+describeOrSkip("storyControl", () => {
   const actions: StoryControlAction[] = ["pause", "resume", "step",];
 
   for (const action of actions) {
@@ -78,4 +82,4 @@ describe("storyControl", () => {
     expect(result.ok,).toBe(false,);
     expect(result.message,).toContain("unavailable",);
   });
-});
+},);

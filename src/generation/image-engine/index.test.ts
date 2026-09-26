@@ -19,9 +19,10 @@
  * because the dispatch contract under test is that a valid URL reaches
  * the backend, not the backend's error transport.
  */
-import { describe, expect, it, } from "bun:test";
+import { expect, it, } from "bun:test";
 import type { ImageProviderConfig, } from "../../config/schema";
 import { createLogger, } from "../../logger";
+import { describeOrSkip, } from "../../test-utils/isolate-only";
 import { generateImages, } from "./index";
 import type { ImageGenFailure, } from "./types";
 
@@ -62,7 +63,7 @@ const dispatchIsReal = probe.ok === false;
 
 const itRealDispatch = it.skipIf(!dispatchIsReal,);
 
-describe("generateImages", () => {
+describeOrSkip("generateImages", () => {
   itRealDispatch("rejects unparseable base URLs with a 400 failure", async () => {
     const outcome = await generateImages(
       { ...BASE, baseUrl: "not-a-url", apiFamily: "openai", },
@@ -112,4 +113,4 @@ describe("generateImages", () => {
     // skip instead of asserting against the stub.
     expect(dispatchIsReal,).toBe(probe.ok === false,);
   });
-});
+},);

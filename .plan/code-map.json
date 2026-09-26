@@ -17,7 +17,6 @@
       "source": ".plan/epics/epic-rag-assets-unified-storage-and-assistant-flows.md"
     }
   ],
-
   "src/actors/actor-items.ts": [
     {
       "kind": "ticket",
@@ -738,17 +737,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-assets-serve-servefile-omits-x-content-type-options-nosniff-.md"
-    }
-  ],
-
-  "src/assets/serve-handlers.coverage.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-test-async-store-offload-dir-fixed-path-race.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-async-store-tests-per-test-tmpdir.md"
     }
   ],
   "src/assets/serve-handlers.ts": [
@@ -1663,7 +1651,6 @@
       "source": ".plan/tickets/TASK-guided-regen-action-menu-on-assistant-messages.md"
     }
   ],
-
   "src/assistant/commands/registry.test.ts": [
     {
       "kind": "ticket",
@@ -1952,7 +1939,6 @@
       "source": ".plan/epics/epic-creative-studio.md"
     }
   ],
-
   "src/assistant/intent.test.ts": [
     {
       "kind": "ticket",
@@ -3149,7 +3135,6 @@
       "source": ".plan/tickets/BUG-table-backend-request-id-collision-overwrites-foreign-row.md"
     }
   ],
-
   "src/async/offload-daemon.test.ts": [
     {
       "kind": "ticket",
@@ -3238,14 +3223,6 @@
       "source": ".plan/tickets/TASK-middleware-in-progress-status-endpoint-for-long-running-requ.md"
     }
   ],
-
-  "src/async/retention.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-async-store-retention-cap.md"
-    }
-  ],
-
   "src/async/spill.test.ts": [
     {
       "kind": "ticket",
@@ -3256,7 +3233,6 @@
       "source": ".plan/tickets/TASK-async-store-tests-per-test-tmpdir.md"
     }
   ],
-
   "src/async/spill.ts": [
     {
       "kind": "ticket",
@@ -5491,7 +5467,6 @@
       "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
     }
   ],
-
   "src/chat/export/formats.ts": [
     {
       "kind": "ticket",
@@ -6254,7 +6229,6 @@
       "source": ".plan/tickets/TASK-gm-guided-story-creation.md"
     }
   ],
-
   "src/chat/service/crud/turn-skip.ts": [
     {
       "kind": "ticket",
@@ -7045,33 +7019,13 @@
       "source": ".plan/tickets/TASK-optique-cli-tooling-integration.md"
     }
   ],
-
   "src/commands/issues.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-giwt-issues-gains-state-open-closed-all-filter.md"
     }
   ],
-
-  "src/commands/resolver.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-giwt-show-state-resolve-plan-tickets-filename-slugs.md"
-    }
-  ],
-
   "src/commands/show.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-giwt-issues-gains-state-open-closed-all-filter.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-giwt-show-state-resolve-plan-tickets-filename-slugs.md"
-    }
-  ],
-
-  "src/commands/state.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-giwt-show-state-resolve-plan-tickets-filename-slugs.md"
@@ -8503,7 +8457,6 @@
       "source": ".plan/epics/epic-middleware-request-lifecycle.md"
     }
   ],
-
   "src/config/schema/index.ts": [
     {
       "kind": "ticket",
@@ -8888,7 +8841,6 @@
       "source": ".plan/tickets/TASK-user-seeding-role-expansion.md"
     }
   ],
-
   "src/config/template-expansion/discovery.ts": [
     {
       "kind": "ticket",
@@ -8985,7 +8937,6 @@
       "source": ".plan/tickets/TASK-templates-loader-merge-strategy-consistency.md"
     }
   ],
-
   "src/config/templates-loader/validation-entity-types.ts": [
     {
       "kind": "ticket",
@@ -8998,7 +8949,6 @@
       "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
     }
   ],
-
   "src/config/templates.ts": [
     {
       "kind": "ticket",
@@ -9575,7 +9525,6 @@
       "source": ".plan/tickets/TASK-e2ee-receiver-wiring.md"
     }
   ],
-
   "src/crypto/e2e/double-ratchet.ts": [
     {
       "kind": "ticket",
@@ -14316,7 +14265,6 @@
       "source": ".plan/tickets/TASK-emotion-avatar-message-binding.md"
     }
   ],
-
   "src/frontend/alpine/chat-music-links.ts": [
     {
       "kind": "ticket",
@@ -15661,7 +15609,6 @@
       "source": ".plan/tickets/TASK-skills-frontend.md"
     }
   ],
-
   "src/frontend/alpine/slash-autocomplete": [
     {
       "kind": "ticket",
@@ -19420,7 +19367,6 @@
       "source": ".plan/epics/epic-provider-plugin-ecosystem.md"
     }
   ],
-
   "src/generation/providers/anthropic/http.ts": [
     {
       "kind": "ticket",
@@ -23861,7 +23807,6 @@
       "source": ".plan/tickets/TASK-regex-extraction-tests.md"
     }
   ],
-
   "src/regex/intent": [
     {
       "kind": "ticket",
@@ -23962,7 +23907,6 @@
       "source": ".plan/tickets/TASK-template-unified-variable-engine.md"
     }
   ],
-
   "src/regex/safe-exec.ts": [
     {
       "kind": "ticket",
@@ -25071,7 +25015,6 @@
       "source": ".plan/tickets/BUG-group-participant-injection-absent-on-manual-generate-route.md"
     }
   ],
-
   "src/routes/chat-context/handlers.test.ts": [
     {
       "kind": "ticket",
@@ -25536,7 +25479,6 @@
       "source": ".plan/tickets/TASK-frontend-chat-setup-templates-edit-delete.md"
     }
   ],
-
   "src/routes/chats/turn-skip-routes.ts": [
     {
       "kind": "ticket",
@@ -27245,7 +27187,6 @@
       "source": ".plan/tickets/TASK-search-quota-cost-ceiling.md"
     }
   ],
-
   "src/routes/music-links.coverage.test.ts": [
     {
       "kind": "ticket",
@@ -28286,7 +28227,6 @@
       "source": "docs/frontend/chat/search-and-filter.md"
     }
   ],
-
   "src/routes/views/blog.test.ts": [
     {
       "kind": "ticket",
@@ -34009,7 +33949,6 @@
       "source": ".plan/tickets/BUG-t-any-schemas-persist-arbitrary-json-actor-settings-entity-d.md"
     }
   ],
-
   "src/validation/schemas/music-links.ts": [
     {
       "kind": "ticket",
