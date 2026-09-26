@@ -99,7 +99,7 @@ describe("refreshHtmx", () => {
 
 describe("query and event helpers", () => {
   test("$ returns the element the root finds, or null", () => {
-    const el = makeEl({},);
+    const el = makeEl({},) as unknown as HTMLElement;
     stubDocument(el,);
     expect($("#hit",),).toBe(el,);
     stubDocument(null,);
@@ -113,9 +113,9 @@ describe("query and event helpers", () => {
       querySelector: () => makeEl({},),
       querySelectorAll: (selector: string,) => (selector === ".all" ? list : none),
     };
-    expect($("#any", root as ParentNode,),).not.toBe(null,);
-    expect($all(".all", root as ParentNode,),).toBe(list,);
-    expect($all(".none", root as ParentNode,),).toBe(none,);
+    expect($("#any", root as unknown as ParentNode,),).not.toBe(null,);
+    expect($all(".all", root as unknown as ParentNode,),).toBe(list,);
+    expect($all(".none", root as unknown as ParentNode,),).toBe(none,);
   });
 
   test("eventTarget and eventCurrentTarget narrow the element", () => {
