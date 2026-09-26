@@ -52,3 +52,6 @@ src/rag/enrich/        # detect.ts, extract.ts, cleanup.ts, link.ts — one cohe
 ## Dependencies
 
 - Builds on epic-rag-ingestion (documents/chunks exist). Consumes TASK-rag-knowledge-graph storage when available; not blocked on it.
+
+
+git issue: 4f7e4c0
