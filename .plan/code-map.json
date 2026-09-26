@@ -3039,6 +3039,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-assistant-step-planning.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-workflow-engine.md"
     },
     {
@@ -10858,6 +10862,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-db-growth-tiered-storage.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-deno-support.md"
     },
     {
@@ -10917,6 +10925,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-architecture.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-db-growth-tiered-storage.md"
     },
     {
       "kind": "epic",
@@ -22613,6 +22625,17 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-persona-setdefault-getdefault-unwired-delete-or-wire.md"
+    }
+  ],
+
+  "src/planning/service.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-step-planning.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-todo-planning-tables-service-assistant-wiring.md"
     }
   ],
   "src/plugins": [
