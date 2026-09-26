@@ -9,12 +9,12 @@
 **Epic:** epic-assistant-step-planning
 **Tags:** assistant, planning, kanban
 
-## Summary
+**Summary:** Board projection over plan_items: columns by state with kind swimlanes (story/task/context/steps/creative/drafts ideas). Card move updates todo state (same rows). htmx partials + Alpine drag, button-move fallback; per-card links to chats/stories/RAG items.
 
-Board projection over plan_items: columns by state with kind swimlanes (story/task/context/steps/creative/drafts ideas). Card move updates todo state (same rows). htmx partials + Alpine drag, button-move fallback; per-card links to chats/stories/RAG items. Acceptance: move card = state change visible in todo view; links resolve; check green.
+**Context:** Story, task, context, steps, creative, and drafts-ideas planning need a board view over the same rows the todo list shows; existing chat/panel htmx patterns are reused, no new framework.
 
-## Acceptance Criteria
+**Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [ ] Moving a card updates todo state, visible in both views.
+- [ ] Per-card links to chats/stories/RAG items resolve.
+- [ ] `bun run check` green.

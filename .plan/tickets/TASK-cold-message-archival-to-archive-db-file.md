@@ -9,12 +9,12 @@
 **Epic:** epic-db-growth-tiered-storage
 **Tags:** database, archival
 
-## Summary
+**Summary:** Age-threshold move of messages + message_search_tokens (+FTS rows) to archive-messages.db; hot inserts unchanged; date-bounded reads via on-demand ATTACH; background job non-blocking; archive DB own WAL + FK pragma; migrations apply to archive DB (no drift).
 
-Age-threshold move of messages + message_search_tokens (+FTS rows) to archive-messages.db; hot inserts unchanged; date-bounded reads via on-demand ATTACH; background job non-blocking; archive DB own WAL + FK pragma; migrations apply to archive DB (no drift). Acceptance: old messages queryable but absent from hot DB; FTS over archive works; check green.
+**Context:** messages is the #1 growth hotspot with messages_fts + content_plaintext + per-word blind-index rows multiplying storage; the hot DB slows backups and WAL checkpoints. Tiered storage (not live sharding) keeps one writable hot DB per the DbSplittingProbe evaluation.
 
-## Acceptance Criteria
+**Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [ ] Messages older than threshold are absent from hot DB but still queryable; FTS5 over archive works.
+- [ ] Archive DB has independent WAL + FK pragma; migrations apply to it (no drift).
+- [ ] `bun run check` green.

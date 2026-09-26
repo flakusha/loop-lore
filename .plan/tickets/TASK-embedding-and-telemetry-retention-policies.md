@@ -9,12 +9,12 @@
 **Epic:** epic-db-growth-tiered-storage
 **Tags:** database, retention
 
-## Summary
+**Summary:** TTL/prune for memory_embeddings + actor_memories (per-world-activity retention + batch-delete job, no orphans after actor/world delete); time-partitioned telemetry_events with scheduled DROP of old partitions + sampling-rate config (telemetry OFF by default, 90-day retention).
 
-TTL/prune for memory_embeddings + actor_memories (per-world-activity retention + batch-delete job, no orphans after actor/world delete); time-partitioned telemetry_events with scheduled DROP of old partitions + sampling-rate config (telemetry OFF by default, 90-day retention). Acceptance: old embeddings deleted per policy; old telemetry partitions dropped; check green.
+**Context:** memory_embeddings is the densest storage (~KB/row) with no TTL; telemetry_events is bounded only by config that has no partition-enforcement mechanism. Policy must precede any scale event.
 
-## Acceptance Criteria
+**Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [ ] Embeddings older than configured retention are deleted; no orphans after actor/world deletion.
+- [ ] Old telemetry partitions dropped on schedule; sampling rate reduces volume by configured factor.
+- [ ] `bun run check` green.
