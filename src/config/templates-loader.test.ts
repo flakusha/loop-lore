@@ -452,6 +452,103 @@ chatFormats:
       "chatFormats.chatml.user must be a string",
     );
   });
+
+  test("loads image-edit.yaml workflows", () => {
+    writeTemplateFile(
+      "image-edit.yaml",
+      `merge: extend
+workflows:
+  retouch:
+    name: "Retouch"
+    category: "photo"
+    backend: "sd"
+`,
+    );
+
+    const config = loadTemplateConfig(TEST_DIR,);
+    expect(config.imageEdit.workflows.retouch?.name,).toBe("Retouch",);
+  });
+
+  test("loads character.yaml templates", () => {
+    writeTemplateFile(
+      "character.yaml",
+      `merge: extend
+templates:
+  - name: "Custom"
+    description: "A custom template"
+`,
+    );
+
+    const config = loadTemplateConfig(TEST_DIR,);
+    expect(config.character.templates.some((t,) => t.name === "Custom",),).toBe(true,);
+  });
+
+  test("loads character files from configs/characters", () => {
+    const charsDir = path.join(TEST_DIR, "configs", "characters",);
+    mkdirSync(charsDir, { recursive: true, },);
+    writeFileSync(
+      path.join(charsDir, "hero.yaml",),
+      ["name: Hero", "description: A hero", "appearance: Cloaked", ""].join("\n",),
+    );
+
+    const config = loadTemplateConfig(TEST_DIR,);
+    expect(config.character.templates.some((t,) => t.name === "Hero",),).toBe(true,);
+  });
+
+  test("rejects a non-array character templates block", () => {
+    writeTemplateFile("character.yaml", "merge: extend\ntemplates: nope\n",);
+    expect(() => loadTemplateConfig(TEST_DIR,)).toThrow(
+      "templates must be an array of character template objects",
+    );
+  });
+
+  test("rejects a character template with an unknown content rating", () => {
+    writeTemplateFile(
+      "character.yaml",
+      `merge: extend
+templates:
+  - name: "Rated"
+    description: "d"
+    content_rating: "gore"
+`,
+    );
+
+    expect(() => loadTemplateConfig(TEST_DIR,)).toThrow(
+      /content_rating must be one of/,
+    );
+  });
+
+  test("rejects a character template entry that is not an object", () => {
+    writeTemplateFile("character.yaml", "merge: extend\ntemplates:\n  - flat\n",);
+    expect(() => loadTemplateConfig(TEST_DIR,)).toThrow(/templates\[0\] must be an object/,);
+  });
+
+  test("rejects a character template with a non-string description", () => {
+    writeTemplateFile(
+      "character.yaml",
+      "merge: extend\ntemplates:\n  - name: X\n    description: 42\n",
+    );
+    expect(() => loadTemplateConfig(TEST_DIR,)).toThrow(
+      /templates\[0\]\.description must be a string/,
+    );
+  });
+
+  test("rejects a character template with an empty name", () => {
+    writeTemplateFile(
+      "character.yaml",
+      "merge: extend\ntemplates:\n  - name: ''\n    description: d\n",
+    );
+    expect(() => loadTemplateConfig(TEST_DIR,)).toThrow(
+      /templates\[0\]\.name must be a non-empty string/,
+    );
+  });
+
+  test("rejects a non-array image-edit workflows block", () => {
+    writeTemplateFile("image-edit.yaml", "merge: extend\nworkflows: []\n",);
+    expect(() => loadTemplateConfig(TEST_DIR,)).toThrow(
+      /workflows must be an object mapping/,
+    );
+  });
 });
 
 // ── File Discovery Tests ────────────────────────────────────
@@ -581,5 +678,53 @@ describe("canonical merge semantics", () => {
     const shared = result.templates.find((t,) => t.name === "Shared");
     expect(shared?.system_prompt,).toBe("base",);
     expect(result.templates.some((t,) => t.name === "New"),).toBe(true,);
+  });
+
+  test("image-edit override lets the override win on conflict", () => {
+    const base: ImageEditTemplateConfig = {
+      merge: "extend",
+      workflows: { w: { id: "w", name: "base", category: "cat", backend: "comfy", description: "d", } },
+    };
+    const override: Partial<ImageEditTemplateConfig> = {
+      workflows: {
+        w: { id: "w", name: "override", category: "cat", backend: "comfy", description: "d" },
+        n: { id: "n", name: "new", category: "cat", backend: "comfy", description: "d" },
+      },
+    };
+
+    const result = mergeImageEditConfig(base, override, "override",);
+    expect(result.workflows.w!.name,).toBe("override",);
+    expect(result.workflows.n,).toBeDefined();
+  });
+
+  test("image-edit replace discards base workflows", () => {
+    const base: ImageEditTemplateConfig = {
+      merge: "extend",
+      workflows: { w: { id: "w", name: "base", category: "cat", backend: "comfy", description: "d", } },
+    };
+
+    expect(mergeImageEditConfig(base, {}, "replace",).workflows,).toEqual({});
+  });
+
+  test("character override replaces the template of the same name", () => {
+    const base: CharacterTemplateConfig = {
+      merge: "extend",
+      templates: [{ name: "Shared", description: "d", system_prompt: "base", },],
+    };
+    const override: Partial<CharacterTemplateConfig> = {
+      templates: [{ name: "Shared", description: "d", system_prompt: "override", },],
+    };
+
+    const result = mergeCharacterConfig(base, override, "override",);
+    expect(result.templates.find((t,) => t.name === "Shared",)?.system_prompt,).toBe("override",);
+  });
+
+  test("character replace discards base templates", () => {
+    const base: CharacterTemplateConfig = {
+      merge: "extend",
+      templates: [{ name: "Shared", description: "d", system_prompt: "base", },],
+    };
+
+    expect(mergeCharacterConfig(base, {}, "replace",).templates,).toEqual([]);
   });
 });
