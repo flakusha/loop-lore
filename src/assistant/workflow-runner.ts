@@ -30,6 +30,8 @@ export interface WorkflowStepPreview {
   type: WorkflowStepConfig["type"];
   recommendations: string[];
   options?: string[];
+  /** False when the step may be skipped before dispatch */
+  required: boolean;
 }
 
 /** Final dispatch envelope produced by confirmAndDispatch */
@@ -61,6 +63,7 @@ export function previewSteps(workflow: AssistantWorkflowConfig,): WorkflowStepPr
     type: step.type,
     recommendations: step.recommendations ?? [],
     options: step.options,
+    required: step.required !== false,
   }));
 }
 
@@ -108,7 +111,7 @@ export function assemblePrompt(workflow: AssistantWorkflowConfig, run: WorkflowR
 /**
  * Confirm the run and produce the dispatch envelope.
  * @param workflow - Resolved workflow template
- * @param run - Current run (all steps must be filled)
+ * @param run - Current run (every step with `required !== false` must be filled)
  * @param prompt - Assembled prompt (from assemblePrompt)
  * @returns Dispatch envelope for the caller to POST
  * @throws When steps are missing or the workflow requires explicit confirmation
@@ -119,7 +122,7 @@ export function confirmAndDispatch(
   prompt: string,
 ): WorkflowDispatch {
   const missing = workflow.steps
-    .filter((step,) => run.values[step.id] === undefined)
+    .filter((step,) => step.required !== false && run.values[step.id] === undefined)
     .map((step,) => step.id);
   if (missing.length > 0) {
     throw new Error(

@@ -6,17 +6,17 @@
  *
  * Elysia plugin for LLM generation control routes.
  *
- *   POST /api/generation/generate       — Main generation endpoint
- *   POST /api/generation/cancel         — Cancel active generation
- *   GET  /api/generation/status/:chatId — Check generation status
- *   GET  /api/generation/stream/:chatId — HTMX SSE streaming
- *   GET  /api/generation/active         — List active
- *   POST /api/generation/retry          — Retry with step-from-point
- *   POST /api/generation/continue       — Continue partial/cancelled message
- *   POST /api/generation/regenerate     — Replace AI response
- *   POST /api/generation/image          — Generate image from prompt
- *   POST /api/generation/caption        — Caption image assets
- *   POST /api/generation/prompt         — Improve/analyze prompt drafts
+ *   POST /api/v1/generation/generate       — Main generation endpoint
+ *   POST /api/v1/generation/cancel         — Cancel active generation
+ *   GET  /api/v1/generation/status/:chatId — Check generation status
+ *   GET  /api/v1/generation/stream/:chatId — HTMX SSE streaming
+ *   GET  /api/v1/generation/active         — List active
+ *   POST /api/v1/generation/retry          — Retry with step-from-point
+ *   POST /api/v1/generation/continue       — Continue partial/cancelled message
+ *   POST /api/v1/generation/regenerate     — Replace AI response
+ *   POST /api/v1/generation/image          — Generate image from prompt
+ *   POST /api/v1/generation/caption        — Caption image assets
+ *   POST /api/v1/generation/prompt         — Improve/analyze prompt drafts
  */
 
 import { Elysia, } from "elysia";
@@ -63,7 +63,7 @@ function readBody(ctx: { body: unknown },): unknown {
  */
 export function generationRoutes(
   { database, config, }: { database: Kysely<DB>; config: Config },
-  prefix = "/api",
+  prefix = "/api/v1",
 ): Elysia {
   const app = new Elysia({ name: "generation", },);
 

@@ -72,6 +72,7 @@ function validateWorkflowStepEntry(entry: unknown, workflowId: string, index: nu
     formatTemplate: unknown;
     options: unknown;
     recommendations: unknown;
+    required: unknown;
   }>;
   if (typeof s.id !== "string" || s.id === "") {
     throw new TypeError(`workflows.${workflowId}.steps[${index}].id must be a non-empty string`,);
@@ -93,6 +94,9 @@ function validateWorkflowStepEntry(entry: unknown, workflowId: string, index: nu
   if (s.recommendations !== undefined && !Array.isArray(s.recommendations,)) {
     throw new TypeError(`workflows.${workflowId}.steps[${index}].recommendations must be an array`,);
   }
+  if (s.required !== undefined && typeof s.required !== "boolean") {
+    throw new TypeError(`workflows.${workflowId}.steps[${index}].required must be a boolean`,);
+  }
 }
 
 /**
@@ -111,39 +115,61 @@ export function validateWorkflowConfig(raw: Record<string, unknown>,): void {
   }
   for (const [id, value,] of Object.entries(table,)) {
     if (id === "merge") { continue; }
-    if (typeof value !== "object" || value === null) {
-      throw new Error(`workflows.${id} must be an object`,);
-    }
-    const w = value as Partial<{
-      id: unknown;
-      name: unknown;
-      steps: unknown;
-      dispatch: unknown;
-      triggers: unknown;
-      modelFamily: unknown;
-    }>;
-    if (w.id !== undefined && typeof w.id !== "string") {
-      throw new TypeError(`workflows.${id}.id must be a string`,);
-    }
-    if (w.name !== undefined && typeof w.name !== "string") {
-      throw new TypeError(`workflows.${id}.name must be a string`,);
-    }
-    if (w.steps !== undefined) {
-      if (!Array.isArray(w.steps,)) {
-        throw new Error(`workflows.${id}.steps must be an array`,);
-      }
-      w.steps.forEach((entry, i,) => {
-        validateWorkflowStepEntry(entry, id, i,);
-      },);
-    }
-    if (w.dispatch !== undefined && (typeof w.dispatch !== "object" || w.dispatch === null)) {
-      throw new TypeError(`workflows.${id}.dispatch must be an object`,);
-    }
-    if (w.triggers !== undefined && !Array.isArray(w.triggers,)) {
-      throw new TypeError(`workflows.${id}.triggers must be an array`,);
-    }
-    if (w.modelFamily !== undefined && typeof w.modelFamily !== "string") {
-      throw new TypeError(`workflows.${id}.modelFamily must be a string`,);
-    }
+    validateWorkflowEntry(id, value,);
   }
 }
+
+/** Validate the `intent: { type, target }` block on one workflow. */
+function validateWorkflowIntentEntry(intent: unknown, workflowId: string,): void {
+  if (typeof intent !== "object" || intent === null || Array.isArray(intent,)) {
+    throw new TypeError(`workflows.${workflowId}.intent must be an object`,);
+  }
+  const i = intent as { type?: unknown; target?: unknown };
+  if (typeof i.type !== "string" || i.type === "") {
+    throw new TypeError(`workflows.${workflowId}.intent.type must be a non-empty string`,);
+  }
+  if (typeof i.target !== "string" || i.target === "") {
+    throw new TypeError(`workflows.${workflowId}.intent.target must be a non-empty string`,);
+  }
+}
+
+/** Validate one workflow definition in the `workflows` domain. */
+function validateWorkflowEntry(id: string, value: unknown,): void {
+  if (typeof value !== "object" || value === null) {
+    throw new Error(`workflows.${id} must be an object`,);
+  }
+  const w = value as Partial<{
+    id: unknown;
+    name: unknown;
+    steps: unknown;
+    dispatch: unknown;
+    triggers: unknown;
+    modelFamily: unknown;
+    intent: unknown;
+    entityType: unknown;
+  }>;
+  for (const field of ["id", "name", "modelFamily", "entityType",] as const) {
+    if (w[field] !== undefined && typeof w[field] !== "string") {
+      throw new TypeError(`workflows.${id}.${field} must be a string`,);
+    }
+  }
+  if (w.steps !== undefined) {
+    if (!Array.isArray(w.steps,)) {
+      throw new Error(`workflows.${id}.steps must be an array`,);
+    }
+    w.steps.forEach((entry, i,) => {
+      validateWorkflowStepEntry(entry, id, i,);
+    },);
+  }
+  if (w.dispatch !== undefined && (typeof w.dispatch !== "object" || w.dispatch === null)) {
+    throw new TypeError(`workflows.${id}.dispatch must be an object`,);
+  }
+  if (w.triggers !== undefined && !Array.isArray(w.triggers,)) {
+    throw new TypeError(`workflows.${id}.triggers must be an array`,);
+  }
+  if (w.intent !== undefined) {
+    validateWorkflowIntentEntry(w.intent, id,);
+  }
+}
+
+// Entity-type preset validation lives in validation-entity-types.ts.

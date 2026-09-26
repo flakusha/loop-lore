@@ -97,9 +97,9 @@ describe("handoffToEntityCreationChat", () => {
     expect(session!.workflow_id,).toBe("entity-character",);
   });
 
-  test("rejects unknown kinds without creating anything", async () => {
-    const result = await handoffToEntityCreationChat(db, await opts({ kind: "npc", },),);
-    expect(result,).toEqual({ ok: false, code: "unknown_kind", message: "Unknown entity kind: npc", },);
+  test("rejects kinds with no registered workflow template", async () => {
+    const result = await handoffToEntityCreationChat(db, await opts({ kind: "species", },),);
+    expect(result,).toEqual({ ok: false, code: "unknown_kind", message: "Unknown entity kind: species", },);
   });
 
   test("rejects when the kind's workflow template is not loaded", async () => {

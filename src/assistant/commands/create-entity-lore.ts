@@ -41,6 +41,7 @@ function resolveLoreTarget(kind: EntityKind,): LoreTarget | null {
     case "item":
       return { table: "world_lore_entries", fkColumn: "world_id", };
     case "character":
+    case "npc":
       return { table: "actor_lore_entries", fkColumn: "actor_id", };
   }
 }

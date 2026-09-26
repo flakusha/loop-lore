@@ -9,7 +9,7 @@
 // returns undefined: unknown input falls through to "chat", never silence.
 
 import type { AssistantWorkflowConfig, } from "../config/sections/templates";
-import { SLASH_COMMAND, } from "../regex/intent";
+import { INTENT_PATTERNS, SLASH_COMMAND, } from "../regex/intent";
 
 /** Where a non-command message goes after routing */
 export type RouteTarget =
@@ -63,8 +63,39 @@ export function matchWorkflowTrigger(
 }
 
 /**
+ * Match a message to a workflow by `INTENT_PATTERNS` taxonomy rather than by
+ * literal trigger phrase (epic §7.4). Catches phrasings the trigger list
+ * misses — "make me a character named Y" has no trigger substring but does
+ * match the `generate`/`character` intent group.
+ *
+ * Only `generate` intents route to workflows, and only workflows that declare
+ * matching `intent` metadata participate. Highest-confidence intent group
+ * wins; ties keep the first group declared in `INTENT_PATTERNS`.
+ * @param message - Raw user message
+ * @param workflows - Loaded workflow templates
+ * @returns The matched template, or undefined
+ */
+export function matchWorkflowIntent(
+  message: string,
+  workflows: readonly AssistantWorkflowConfig[],
+): AssistantWorkflowConfig | undefined {
+  const routed = workflows.filter((w,) => w.intent?.type === "generate");
+  if (routed.length === 0) { return undefined; }
+  let best: { readonly target: string; readonly confidence: number } | undefined;
+  for (const group of INTENT_PATTERNS) {
+    if (group.intent !== "generate") { continue; }
+    if (!group.patterns.some((p,) => p.test(message,))) { continue; }
+    if (best === undefined || group.confidence > best.confidence) {
+      best = { target: group.target, confidence: group.confidence, };
+    }
+  }
+  if (best === undefined) { return undefined; }
+  return routed.find((w,) => w.intent?.target === best.target);
+}
+
+/**
  * Route one chat message to its handler.
- * Precedence: slash command → workflow trigger → story GM → chat.
+ * Precedence: slash command → workflow trigger → workflow intent → story GM → chat.
  * @param opts - Message, loaded workflows, story-mode flag
  * @returns Route target (always defined — unknown input routes to chat)
  */
@@ -73,7 +104,8 @@ export function routeAssistantMessage(opts: RouteMessageOptions,): RouteTarget {
   if (slash?.[1] !== undefined) {
     return { kind: "command", name: slash[1], };
   }
-  const workflow = matchWorkflowTrigger(opts.message, opts.workflows,);
+  const workflow = matchWorkflowTrigger(opts.message, opts.workflows,) ??
+    matchWorkflowIntent(opts.message, opts.workflows,);
   if (workflow !== undefined) {
     return { kind: "workflow", workflow, };
   }

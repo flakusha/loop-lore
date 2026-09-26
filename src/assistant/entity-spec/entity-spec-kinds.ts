@@ -31,6 +31,11 @@ export const ENTITY_SPEC_DESCRIPTORS: Record<EntityKind, EntitySpecDescriptor> =
     workflowId: "entity-character",
     chatTitlePrefix: "Character creation",
   },
+  npc: {
+    kind: "npc",
+    workflowId: "entity-npc",
+    chatTitlePrefix: "NPC creation",
+  },
   location: {
     kind: "location",
     workflowId: "entity-location",
