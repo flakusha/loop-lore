@@ -425,6 +425,12 @@
       "source": ".plan/tickets/TASK-rate-limiting-telemetry.md"
     }
   ],
+  "src/api-governance/rate-limiting/policies.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-rate-limit-policies-starve-normal-chat-traffic-with-429s.md"
+    }
+  ],
   "src/api-governance/rate-limiting/policies.ts": [
     {
       "kind": "epic",
@@ -433,6 +439,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-rate-limit-policies-starve-normal-chat-traffic-with-429s.md"
+    }
+  ],
+  "src/api-governance/rate-limiting/store.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-rate-limit-in-memory-store-never-evicts-idle-keys.md"
     }
   ],
   "src/api-governance/rate-limiting/store.ts": [
@@ -24637,14 +24649,12 @@
       "source": ".plan/tickets/TASK-world-editor-structured-ui.md"
     }
   ],
-
   "src/routes/agency/balance.test.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-story-points-prototype.md"
     }
   ],
-
   "src/routes/agency/spend.test.ts": [
     {
       "kind": "ticket",
@@ -28433,6 +28443,16 @@
       "source": ".plan/tickets/TASK-analytics-observability.md"
     }
   ],
+  "src/routes/v1/governance.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-governance-429-responses-missing-ratelimit-retry-after-heade.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-governance-429s-double-counted-in-telemetry.md"
+    }
+  ],
   "src/routes/v1/index.ts": [
     {
       "kind": "epic",
@@ -32149,20 +32169,6 @@
       "source": "docs/spec/crafting-professions.md"
     }
   ],
-
-  "src/services/agency/spend-helpers.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-story-points-prototype.md"
-    }
-  ],
-
-  "src/services/agency/story-points.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-story-points-prototype.md"
-    }
-  ],
   "src/services/agency/bdi-nightly.ts": [
     {
       "kind": "epic",
@@ -32185,6 +32191,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-npc-plan-revision.md"
+    }
+  ],
+  "src/services/agency/spend-helpers.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-story-points-prototype.md"
+    }
+  ],
+  "src/services/agency/story-points.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-story-points-prototype.md"
     }
   ],
   "src/services/external-server-utils.ts": [

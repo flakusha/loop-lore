@@ -134,7 +134,7 @@
 | ⬜ Not Started | Epic: Ambient, Music & Sound Effects | Medium | High | 14 | [epic-ambient-music-sfx.md](/.plan/epics/epic-ambient-music-sfx.md) |
 | Draft | Epic: AO NSFW Game Mechanics | High | Very High | 0 | [epic-nsfw-game-mechanics.md](/.plan/epics/epic-nsfw-game-mechanics.md) |
 | ⬜ Not Started | Epic: API OpenAPI Specification | High | Medium | 6 | [epic-api-openapi.md](/.plan/epics/epic-api-openapi.md) |
-| ⬜ Not Started | Epic: API Rate Limiting | High | Medium | 6 | [epic-api-rate-limiting.md](/.plan/epics/epic-api-rate-limiting.md) |
+| In Progress | Epic: API Rate Limiting | High | Medium | 6 | [epic-api-rate-limiting.md](/.plan/epics/epic-api-rate-limiting.md) |
 | ⬜ Not Started | Epic: API Task Offloading | High | Medium | 6 | [epic-api-task-offloading.md](/.plan/epics/epic-api-task-offloading.md) |
 | ⬜ Not Started | Epic: API Telemetry | High | Medium | 6 | [epic-api-telemetry.md](/.plan/epics/epic-api-telemetry.md) |
 | ⬜ Not Started | Epic: API Validation & Guardrails | High | High | 12 | [epic-api-validation-guardrails.md](/.plan/epics/epic-api-validation-guardrails.md) |
@@ -1493,7 +1493,7 @@ Game mechanics for adult/NSFW content — intimacy systems, seduction, relations
 
 ### Epic: API Rate Limiting
 
-- **Status:** ⬜ Not Started
+- **Status:** In Progress
 - **Priority:** High
 - **Effort:** Medium
 - **Type:** Infrastructure Epic
