@@ -3,22 +3,18 @@
 
 # TASK: B1 — RAG + Asset Access MVP
 
-**Status**: open
-**Priority**: high
-**Effort**: Medium
-**Type**: Batch Task
-**Tags**: assistant, rag, assets, access, mvp, batch-b1
-**Epic**: epic-assistant-entity-access
+**Status:** open
+**Priority:** high
+**Effort:** Medium
+**Type:** Batch Task
+**Tags:** assistant, rag, assets, access, mvp, batch-b1
+**Epic:** epic-assistant-entity-access
 
-## Summary
+**Summary:** MVP wedge implementing the RAG + Asset access slash commands under the entity-access epic. Builds on the schema + quota tickets. Wires `/rag-search`, `/rag-ask`, `/asset-list`, `/asset-preview`, `/asset-search` to the existing service layer.
 
-MVP wedge implementing the RAG + Asset access slash commands under the entity-access epic. Builds on the schema + quota tickets. Wires `/rag-search`, `/rag-ask`, `/asset-list`, `/asset-preview`, `/asset-search` to the existing service layer.
+**Context:** Source: `.plan/epics/epic-assistant-entity-access.md` §1 RAG Access, §2 Asset Access, and §Batches B1. Read-only by default (no state mutation). Reuses FTS5 keyword search over `documents` rows until `epic-rag-assets-unified-storage-and-assistant-flows.md` lands the document-as-object model. Asset search composes FTS5 + pHash hybrid.
 
-## Context
-
-Source: `.plan/epics/epic-assistant-entity-access.md` §1 RAG Access, §2 Asset Access, and §Batches B1. Read-only by default (no state mutation). Reuses FTS5 keyword search over `documents` rows until `epic-rag-assets-unified-storage-and-assistant-flows.md` lands the document-as-object model. Asset search composes FTS5 + pHash hybrid.
-
-## Acceptance Criteria
+**Acceptance Criteria:**
 
 - [ ] `/rag-search <query>` calls `ragSearch(query, opts)` returning ranked DocumentObject summaries
 - [ ] `/rag-ask <query>` calls `answerWithRAG(query)` streaming answer + citations
