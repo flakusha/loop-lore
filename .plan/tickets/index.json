@@ -8478,6 +8478,28 @@
     "status": "⬜ Not Started",
     "git_issue": "6db042a"
   },
+  "EPIC-EFFECT-V4-ADOPTION-EVALUATION": {
+    "hash": "pending",
+    "extid": "EPIC-EFFECT-V4-ADOPTION-EVALUATION",
+    "type": "EPIC",
+    "title": "Effect v4 Adoption Evaluation",
+    "label": "epic",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [
+      "effect",
+      "typescript",
+      "fp",
+      "typed-errors",
+      "retry",
+      "concurrency",
+      "dependency-injection",
+      "observability",
+      "evaluation"
+    ],
+    "source": ".plan/tickets/epic-effect-v4-adoption-evaluation.md",
+    "status": "⬜ Not Started"
+  },
   "EPIC-EMAIL-INTEGRATION": {
     "hash": "6e850fc",
     "extid": "EPIC-EMAIL-INTEGRATION",
@@ -25745,6 +25767,99 @@
     "source": ".plan/tickets/TASK-economy-trading.md",
     "status": "open",
     "git_issue": "5b7bc13"
+  },
+  "TASK-EFFECT-V4-BUN-ESM-TYPECHECK-COMPATIBILITY-SPIKE": {
+    "hash": "2c0223a",
+    "git_issue": "2c0223a",
+    "extid": "TASK-EFFECT-V4-BUN-ESM-TYPECHECK-COMPATIBILITY-SPIKE",
+    "type": "TASK",
+    "title": "Effect v4 Bun/ESM/typecheck compatibility spike",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-effect-v4-adoption-evaluation",
+    "tags": [
+      "effect",
+      "evaluation",
+      "spike",
+      "dependency-risk"
+    ],
+    "source": ".plan/tickets/TASK-effect-v4-bun-esm-typecheck-compatibility-spike.md",
+    "status": "Not Started"
+  },
+  "TASK-EFFECT-V4-DI-WIRING-SPIKE-VERSUS-THE-HANDLEOPTS-BAG": {
+    "hash": "d52c2c3",
+    "git_issue": "d52c2c3",
+    "extid": "TASK-EFFECT-V4-DI-WIRING-SPIKE-VERSUS-THE-HANDLEOPTS-BAG",
+    "type": "TASK",
+    "title": "Effect v4 DI wiring spike versus the handleOpts bag",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-effect-v4-adoption-evaluation",
+    "tags": [
+      "effect",
+      "evaluation",
+      "spike",
+      "dependency-injection",
+      "wiring"
+    ],
+    "source": ".plan/tickets/TASK-effect-v4-di-wiring-spike-versus-the-handleopts-bag.md",
+    "status": "Not Started"
+  },
+  "TASK-EFFECT-V4-GO-NO-GO-ADOPTION-DECISION": {
+    "hash": "2c152fe",
+    "git_issue": "2c152fe",
+    "extid": "TASK-EFFECT-V4-GO-NO-GO-ADOPTION-DECISION",
+    "type": "TASK",
+    "title": "Effect v4 go/no-go adoption decision",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-effect-v4-adoption-evaluation",
+    "tags": [
+      "effect",
+      "evaluation",
+      "decision",
+      "go-no-go"
+    ],
+    "source": ".plan/tickets/TASK-effect-v4-go-no-go-adoption-decision.md",
+    "status": "Not Started"
+  },
+  "TASK-EFFECT-V4-RETRY-SCHEDULE-PARITY-SPIKE-ON-THE-PROVIDER-CALL-P": {
+    "hash": "2162276",
+    "git_issue": "2162276",
+    "extid": "TASK-EFFECT-V4-RETRY-SCHEDULE-PARITY-SPIKE-ON-THE-PROVIDER-CALL-P",
+    "type": "TASK",
+    "title": "Effect v4 retry/Schedule parity spike on the provider call path",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-effect-v4-adoption-evaluation",
+    "tags": [
+      "effect",
+      "evaluation",
+      "spike",
+      "retry",
+      "scheduling"
+    ],
+    "source": ".plan/tickets/TASK-effect-v4-retry-schedule-parity-spike-on-the-provider-call-p.md",
+    "status": "Not Started"
+  },
+  "TASK-EFFECT-V4-SCOPED-CONCURRENCY-AND-INTERRUPTION-SPIKE": {
+    "hash": "dc61314",
+    "git_issue": "dc61314",
+    "extid": "TASK-EFFECT-V4-SCOPED-CONCURRENCY-AND-INTERRUPTION-SPIKE",
+    "type": "TASK",
+    "title": "Effect v4 scoped concurrency and interruption spike",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-effect-v4-adoption-evaluation",
+    "tags": [
+      "effect",
+      "evaluation",
+      "spike",
+      "concurrency",
+      "resource-safety"
+    ],
+    "source": ".plan/tickets/TASK-effect-v4-scoped-concurrency-and-interruption-spike.md",
+    "status": "Not Started"
   },
   "TASK-EMAIL-INTEGRATION": {
     "hash": "15de0c7",

@@ -51,6 +51,12 @@
       "source": "docs/spec/observability.md"
     }
   ],
+  "src/admin/config-keys.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-effect-v4-adoption-evaluation.md"
+    }
+  ],
   "src/admin/config.test.ts": [
     {
       "kind": "ticket",
@@ -546,6 +552,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-effect-v4-adoption-evaluation.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-file-splitting.md"
     },
     {
@@ -571,6 +581,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-crafting-stations-execution.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-effect-v4-di-wiring-spike-versus-the-handleopts-bag.md"
     },
     {
       "kind": "ticket",
@@ -3252,6 +3266,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-effect-v4-adoption-evaluation.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-middleware-request-lifecycle.md"
     },
     {
@@ -3289,6 +3307,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-cron-registry-core.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-effect-v4-scoped-concurrency-and-interruption-spike.md"
     },
     {
       "kind": "ticket",
@@ -5813,12 +5835,20 @@
       "source": ".plan/epics/epic-chat-product-features.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-effect-v4-adoption-evaluation.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-quiet-hours-boundary.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-context-memory-events.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-effect-v4-retry-schedule-parity-spike-on-the-provider-call-p.md"
     }
   ],
   "src/chat/proactive/types.ts": [
@@ -6446,6 +6476,10 @@
     }
   ],
   "src/chat/service/ownership.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-effect-v4-adoption-evaluation.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-audit-follow-up-secondary-chat-ownership-check-in-reunitecha.md"
@@ -8240,6 +8274,10 @@
     }
   ],
   "src/config/load/env.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-effect-v4-adoption-evaluation.md"
+    },
     {
       "kind": "spec",
       "source": "docs/spec/integrations/llm-serving.md"
@@ -19247,6 +19285,12 @@
       "source": ".plan/tickets/TASK-2026-openwebui-comfyui-websocket-progress.md"
     }
   ],
+  "src/generation/image-engine/types.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-effect-v4-adoption-evaluation.md"
+    }
+  ],
   "src/generation/image-gen-route.ts": [
     {
       "kind": "epic",
@@ -19557,8 +19601,16 @@
   ],
   "src/generation/providers/anthropic/http.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-effect-v4-adoption-evaluation.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-dedup-top-jscpd-clone-clusters.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-effect-v4-retry-schedule-parity-spike-on-the-provider-call-p.md"
     }
   ],
   "src/generation/providers/bedrock.ts": [
@@ -19567,7 +19619,21 @@
       "source": ".plan/epics/epic-provider-plugin-ecosystem.md"
     }
   ],
+  "src/generation/providers/call-with-failover.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-effect-v4-adoption-evaluation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-effect-v4-retry-schedule-parity-spike-on-the-provider-call-p.md"
+    }
+  ],
   "src/generation/providers/circuit-breaker.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-effect-v4-adoption-evaluation.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-platform-integrations.md"
@@ -19575,6 +19641,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-provider-plugin-ecosystem.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-effect-v4-retry-schedule-parity-spike-on-the-provider-call-p.md"
     },
     {
       "kind": "ticket",
@@ -20857,6 +20927,16 @@
       "source": ".plan/tickets/TASK-2026-openwebui-thinking-block-render.md"
     }
   ],
+  "src/llm/concurrency-limiter.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-effect-v4-adoption-evaluation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-effect-v4-scoped-concurrency-and-interruption-spike.md"
+    }
+  ],
   "src/llm/queue.ts": [
     {
       "kind": "epic",
@@ -20900,6 +20980,10 @@
     }
   ],
   "src/logger": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-effect-v4-adoption-evaluation.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-tui-app-getlogger-throws-when-running-standalone.md"
@@ -27349,6 +27433,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-api-telemetry.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-effect-v4-adoption-evaluation.md"
     }
   ],
   "src/routes/middleware/deprecation-headers.ts": [
@@ -34147,6 +34235,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-cross-layer-reconciliation.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-effect-v4-adoption-evaluation.md"
     },
     {
       "kind": "epic",

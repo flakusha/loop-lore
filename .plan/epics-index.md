@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 306 epics
+**Total:** 307 epics
 
 ## Summary
 
@@ -151,6 +151,7 @@
 | Not Started | Epic: Deployment Infrastructure (Docker & Bare Metal) | medium | Medium | 0 | [epic-deployment-infrastructure.md](/.plan/epics/epic-deployment-infrastructure.md) |
 | ⬜ Not Started | Epic: Desktop App | Low | High | 10 | [epic-desktop-app.md](/.plan/epics/epic-desktop-app.md) |
 | Audit complete; 108 gap tickets created (commits `7fb991879` + `0fb5c899d` on dev). Verified + reconciled 2026-09-19 — see ## Verified Results. | Epic: Docs-vs-Plan Gap Audit (2026-09-19) | P2 | XL (audit + ticket creation) | 1 | [epic-docs-vs-plan-gap-audit-2026-09-19.md](/.plan/epics/epic-docs-vs-plan-gap-audit-2026-09-19.md) |
+| ⬜ Not Started | Epic: Effect v4 Adoption Evaluation | Medium | Medium | 5 | [epic-effect-v4-adoption-evaluation.md](/.plan/epics/epic-effect-v4-adoption-evaluation.md) |
 | ⬜ Not Started | Epic: Embeddable Backend | Low | Medium | 7 | [epic-embeddable-backend.md](/.plan/epics/epic-embeddable-backend.md) |
 | ⬜ Not Started | Epic: Entity Generation Workflows | High (MVP scoped, post-Gate C) | Medium | 5 | [epic-entity-generation-workflows.md](/.plan/epics/epic-entity-generation-workflows.md) |
 | open | Epic: Federation, Swarm Sync & Decentralized Comms | medium | Medium | 0 | [epic-federation-swarm-sync.md](/.plan/epics/epic-federation-swarm-sync.md) |
@@ -1653,6 +1654,15 @@ Containerize the loop-lore application and establish deployment strategies for b
 - **Type:** Audit
 - **Tags:** audit, epics, tickets, docs-gap
 - **File:** `.plan/epics/epic-docs-vs-plan-gap-audit-2026-09-19.md`
+
+### Epic: Effect v4 Adoption Evaluation
+
+- **Status:** ⬜ Not Started
+- **Priority:** Medium
+- **Effort:** Medium
+- **Type:** Infrastructure Epic
+- **Tags:** effect, typescript, fp, typed-errors, retry, concurrency, dependency-injection, observability, evaluation
+- **File:** `.plan/epics/epic-effect-v4-adoption-evaluation.md`
 
 ### Epic: Embeddable Backend
 
