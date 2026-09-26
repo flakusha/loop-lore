@@ -10,6 +10,7 @@
 import { loadCharacterFiles, } from "../character-loader";
 import type {
   AssistantWorkflowConfig,
+  EntityTypePreset,
   MergeStrategy,
   TemplatesConfig,
 } from "../sections/templates";
@@ -26,6 +27,8 @@ import {
 import {
   validateAvatarConfig,
   validateCharacterConfig,
+  validateEntityTypeConfig,
+  validateEntityTypePresets,
   validateImageEditConfig,
   validateLlmConfig,
   validateSdConfig,
@@ -121,28 +124,56 @@ export function loadTemplateConfig(cwd?: string,): TemplatesConfig {
   // Assistant workflow templates: multi-file workflows/*.yaml, merged in
   // discovery order (defaults first, user overrides layer over them).
   for (const filePath of findWorkflowFiles(directory,)) {
-    try {
-      const raw = parseTemplateFile(filePath,);
-      const strategy = (raw.merge as MergeStrategy) ?? "extend";
-      validateWorkflowConfig(raw,);
-      const table = {
-        ...((raw.workflows !== undefined ? raw.workflows : raw) as Record<string, unknown>),
-      };
-      delete table.merge;
-      config.workflows = mergeWorkflowConfig(
-        config.workflows,
-        { workflows: table as unknown as Record<string, AssistantWorkflowConfig>, },
-        strategy,
-      );
-    } catch (error) {
-      throw new Error(
-        `Failed to load workflow template ${filePath}: ${(error as Error).message}`,
-        { cause: error, },
-      );
-    }
+    config.workflows = loadWorkflowFile(config.workflows, filePath,);
   }
 
+  validateEntityTypePresets(config.workflows,);
+
   return config;
+}
+
+/**
+ * Parse, validate and merge one `workflows/*.yaml` file into the workflow
+ * domain. A file may carry an `entityTypes:` block (presets keyed by entity
+ * kind) alongside its `workflows:` map; the block is routed to the preset
+ * domain first so the workflow validator never sees it as a workflow id.
+ * @param current
+ * @param filePath
+ * @returns WorkflowTemplateConfig
+ */
+function loadWorkflowFile(
+  current: TemplatesConfig["workflows"],
+  filePath: string,
+): TemplatesConfig["workflows"] {
+  try {
+    const raw = parseTemplateFile(filePath,);
+    const strategy = (raw.merge as MergeStrategy) ?? "extend";
+    const { entityTypes, ...workflowRaw } = raw;
+    const presets = entityTypes as Record<string, EntityTypePreset> | undefined;
+    if (presets !== undefined) {
+      validateEntityTypeConfig({ entityTypes: presets, },);
+    }
+    validateWorkflowConfig(workflowRaw as Record<string, unknown>,);
+    const table = {
+      ...(workflowRaw.workflows !== undefined
+        ? workflowRaw.workflows as Record<string, unknown>
+        : workflowRaw as Record<string, unknown>),
+    };
+    delete table.merge;
+    return mergeWorkflowConfig(
+      current,
+      {
+        workflows: table as unknown as Record<string, AssistantWorkflowConfig>,
+        entityTypes: presets ?? {},
+      },
+      strategy,
+    );
+  } catch (error) {
+    throw new Error(
+      `Failed to load workflow template ${filePath}: ${(error as Error).message}`,
+      { cause: error, },
+    );
+  }
 }
 
 export {
@@ -161,6 +192,8 @@ export {
 export {
   validateAvatarConfig,
   validateCharacterConfig,
+  validateEntityTypeConfig,
+  validateEntityTypePresets,
   validateImageEditConfig,
   validateLlmConfig,
   validateSdConfig,

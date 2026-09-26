@@ -4,8 +4,14 @@
 # Guided entity-creation workflows (TASK-gm-reuse-workflowrunner-for-guided-entity-creation).
 # Each workflow walks the user through prompt construction step by step via
 # src/assistant/workflow-runner.ts; the assembled prompt feeds the /create
-# description, which keeps generate → quality gates → create-entity-preview
+# description, which keeps generate -> quality gates -> create-entity-preview
 # confirmation (entities are never persisted without user approval).
+#
+# `intent` lets src/assistant/workflow-routing.ts match a message through the
+# INTENT_PATTERNS taxonomy (epic-assistant-creative-studio-workflows section 7.4),
+# which catches phrasings the literal `triggers` list misses.
+# `entityType` keys this workflow into entity-types.yaml, which cross-validates
+# the required steps, quality gates, and dispatch target at load time.
 merge: extend
 
 workflows:
@@ -17,6 +23,10 @@ workflows:
       - create a character
       - new character
       - guided character
+    intent:
+      type: generate
+      target: character
+    entityType: character
     steps:
       - id: name
         name: Name
@@ -32,6 +42,15 @@ workflows:
         minLength: 4
         maxLength: 2000
         formatTemplate: "Description: {value}"
+      - id: appearance
+        name: Appearance
+        type: text
+        description: Distinctive features, clothing, and silhouette.
+        recommendations:
+          - weathered leathers, close-cropped hair, a scar across the knuckles
+        minLength: 2
+        maxLength: 1000
+        formatTemplate: "Appearance: {value}"
       - id: personality
         name: Personality
         type: text
@@ -42,15 +61,99 @@ workflows:
         maxLength: 1000
         formatTemplate: "Personality: {value}"
       - id: scenario
-        name: Scenario
+        name: Opening scenario
         type: text
-        description: Opening scenario for the character.
+        description: How this character enters the story.
         minLength: 2
         maxLength: 2000
+        required: false
         formatTemplate: "Scenario: {value}"
+      - id: motivation
+        name: Motivation
+        type: text
+        description: What this character wants right now.
+        minLength: 2
+        maxLength: 1000
+        required: false
+        formatTemplate: "Motivation: {value}"
     dispatch:
       backend: assistant-create
       target: /create char
+      payloadTemplate:
+        description: "{prompt}"
+      nsfwPolicy: prefilter
+    approval:
+      type: confirm
+      preview: true
+
+  entity-npc:
+    id: entity-npc
+    name: Guided NPC creation
+    description: Step-by-step NPC prompt building for GM-guided creation.
+    triggers:
+      - create an npc
+      - new npc
+      - guided npc
+    intent:
+      type: generate
+      target: npc
+    entityType: npc
+    steps:
+      - id: name
+        name: Name
+        type: text
+        description: NPC name.
+        minLength: 1
+        maxLength: 120
+        formatTemplate: "Name: {value}"
+      - id: description
+        name: Description
+        type: text
+        description: Role, mannerisms, and secret.
+        minLength: 4
+        maxLength: 2000
+        formatTemplate: "Description: {value}"
+      - id: appearance
+        name: Appearance
+        type: text
+        description: Distinctive features, clothing, and silhouette.
+        minLength: 2
+        maxLength: 1000
+        formatTemplate: "Appearance: {value}"
+      - id: personality
+        name: Personality
+        type: text
+        description: How the NPC talks and acts.
+        minLength: 2
+        maxLength: 1000
+        formatTemplate: "Personality: {value}"
+      - id: role_function
+        name: Story function
+        type: text
+        description: What this NPC does for the party - questgiver, rival, shopkeeper.
+        minLength: 2
+        maxLength: 500
+        required: false
+        formatTemplate: "Story function: {value}"
+      - id: faction_allegiance
+        name: Faction allegiance
+        type: text
+        description: Faction, guild, or patron this NPC answers to.
+        minLength: 2
+        maxLength: 500
+        required: false
+        formatTemplate: "Faction allegiance: {value}"
+      - id: relationship_to_player
+        name: Relationship to the party
+        type: text
+        description: Starting disposition toward the player characters.
+        minLength: 2
+        maxLength: 500
+        required: false
+        formatTemplate: "Relationship to the party: {value}"
+    dispatch:
+      backend: assistant-create
+      target: /create npc
       payloadTemplate:
         description: "{prompt}"
       nsfwPolicy: prefilter
@@ -66,6 +169,10 @@ workflows:
       - create a world
       - new world
       - guided world
+    intent:
+      type: generate
+      target: world
+    entityType: world
     steps:
       - id: name
         name: Name
@@ -81,6 +188,30 @@ workflows:
         minLength: 4
         maxLength: 2000
         formatTemplate: "Description: {value}"
+      - id: theme_genre
+        name: Theme and genre
+        type: text
+        description: Core genre and thematic pitch.
+        minLength: 2
+        maxLength: 500
+        required: false
+        formatTemplate: "Theme and genre: {value}"
+      - id: core_conflict
+        name: Core conflict
+        type: text
+        description: The central tension the world revolves around.
+        minLength: 2
+        maxLength: 1000
+        required: false
+        formatTemplate: "Core conflict: {value}"
+      - id: magic_tech_level
+        name: Magic and technology level
+        type: text
+        description: Where the setting sits between mundane and magical.
+        minLength: 2
+        maxLength: 500
+        required: false
+        formatTemplate: "Magic and technology level: {value}"
     dispatch:
       backend: assistant-create
       target: /create world
@@ -99,6 +230,10 @@ workflows:
       - create a location
       - new location
       - guided location
+    intent:
+      type: generate
+      target: location
+    entityType: location
     steps:
       - id: name
         name: Name
@@ -114,6 +249,22 @@ workflows:
         minLength: 4
         maxLength: 2000
         formatTemplate: "Description: {value}"
+      - id: environment_biome
+        name: Environment
+        type: text
+        description: Biome, terrain, and weather.
+        minLength: 2
+        maxLength: 500
+        required: false
+        formatTemplate: "Environment: {value}"
+      - id: notable_features
+        name: Notable features
+        type: text
+        description: Landmarks or details worth remembering.
+        minLength: 2
+        maxLength: 1000
+        required: false
+        formatTemplate: "Notable features: {value}"
     dispatch:
       backend: assistant-create
       target: /create loc
@@ -132,6 +283,10 @@ workflows:
       - create an item
       - new item
       - guided item
+    intent:
+      type: generate
+      target: item
+    entityType: item
     steps:
       - id: name
         name: Name
@@ -147,49 +302,25 @@ workflows:
         minLength: 4
         maxLength: 2000
         formatTemplate: "Description: {value}"
+      - id: properties
+        name: Properties
+        type: text
+        description: What the item does mechanically or magically.
+        minLength: 2
+        maxLength: 1000
+        required: false
+        formatTemplate: "Properties: {value}"
+      - id: origin
+        name: Origin
+        type: text
+        description: Who made it and where it came from.
+        minLength: 2
+        maxLength: 500
+        required: false
+        formatTemplate: "Origin: {value}"
     dispatch:
       backend: assistant-create
       target: /create item
-      payloadTemplate:
-        description: "{prompt}"
-      nsfwPolicy: prefilter
-    approval:
-      type: confirm
-      preview: true
-
-  entity-npc:
-    id: entity-npc
-    name: Guided NPC creation
-    description: Step-by-step NPC prompt building for GM-guided creation.
-    triggers:
-      - create an npc
-      - new npc
-      - guided npc
-    steps:
-      - id: name
-        name: Name
-        type: text
-        description: NPC name.
-        minLength: 1
-        maxLength: 120
-        formatTemplate: "Name: {value}"
-      - id: description
-        name: Description
-        type: text
-        description: Role, mannerisms, and secret.
-        minLength: 4
-        maxLength: 2000
-        formatTemplate: "Description: {value}"
-      - id: personality
-        name: Personality
-        type: text
-        description: How the NPC talks and acts.
-        minLength: 2
-        maxLength: 1000
-        formatTemplate: "Personality: {value}"
-    dispatch:
-      backend: assistant-create
-      target: /create char
       payloadTemplate:
         description: "{prompt}"
       nsfwPolicy: prefilter

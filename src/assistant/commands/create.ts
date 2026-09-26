@@ -34,6 +34,7 @@ import {
 import { type CommandContext, type CommandResult, registerCommand, } from "./registry";
 const KIND_LABELS: Record<EntityKind, string> = {
   character: "Character",
+  npc: "NPC",
   location: "Location",
   world: "World",
   item: "Item",
@@ -88,7 +89,7 @@ export async function runCreateGeneration(
 
   if (!token || !VALID_ENTITY_TOKENS.includes(token,)) {
     return {
-      systemMessage: "Usage: /create <char|loc|world|item> <description>",
+      systemMessage: "Usage: /create <char|npc|loc|world|item> <description>",
       handled: true,
     };
   }

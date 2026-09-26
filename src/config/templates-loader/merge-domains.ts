@@ -118,10 +118,12 @@ export function mergeWorkflowConfig(
   strategy: MergeStrategy,
 ): WorkflowTemplateConfig {
   const overrideWorkflows: Record<string, AssistantWorkflowConfig> = override.workflows ?? {};
+  const overrideTypes = override.entityTypes ?? {};
   if (strategy === "replace") {
     return {
       merge: base.merge,
       workflows: overrideWorkflows,
+      entityTypes: overrideTypes,
     };
   }
   if (strategy === "override") {
@@ -130,10 +132,12 @@ export function mergeWorkflowConfig(
       ...override,
       merge: base.merge,
       workflows: { ...base.workflows, ...overrideWorkflows, },
+      entityTypes: { ...base.entityTypes, ...overrideTypes, },
     };
   }
   return {
     merge: base.merge,
     workflows: { ...overrideWorkflows, ...base.workflows, },
+    entityTypes: { ...overrideTypes, ...base.entityTypes, },
   };
 }

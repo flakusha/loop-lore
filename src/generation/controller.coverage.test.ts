@@ -53,19 +53,19 @@ interface RouteCase {
 }
 
 const ROUTES: RouteCase[] = [
-  { name: "generate", method: "POST", path: "/api/generation/generate", body: {}, expected: 400, },
-  { name: "cancel", method: "POST", path: "/api/generation/cancel", body: {}, expected: 400, },
-  { name: "status", method: "GET", path: "/api/generation/status/:chatId", expected: 200, },
+  { name: "generate", method: "POST", path: "/api/v1/generation/generate", body: {}, expected: 400, },
+  { name: "cancel", method: "POST", path: "/api/v1/generation/cancel", body: {}, expected: 400, },
+  { name: "status", method: "GET", path: "/api/v1/generation/status/:chatId", expected: 200, },
   // Unknown chat → access denied before the SSE stream is opened.
-  { name: "stream", method: "GET", path: "/api/generation/stream/missing-chat", expected: 403, },
-  { name: "active", method: "GET", path: "/api/generation/active", expected: 403, },
-  { name: "retry", method: "POST", path: "/api/generation/retry", body: {}, expected: 400, },
-  { name: "continue", method: "POST", path: "/api/generation/continue", body: {}, expected: 400, },
-  { name: "regenerate", method: "POST", path: "/api/generation/regenerate", body: {}, expected: 400, },
-  { name: "image", method: "POST", path: "/api/generation/image", body: {}, expected: 400, },
-  { name: "caption", method: "POST", path: "/api/generation/caption", body: {}, expected: 400, },
-  { name: "prompt", method: "POST", path: "/api/generation/prompt", body: {}, expected: 400, },
-  { name: "test-connection", method: "POST", path: "/api/generation/test-connection", body: {}, expected: 400, },
+  { name: "stream", method: "GET", path: "/api/v1/generation/stream/missing-chat", expected: 403, },
+  { name: "active", method: "GET", path: "/api/v1/generation/active", expected: 403, },
+  { name: "retry", method: "POST", path: "/api/v1/generation/retry", body: {}, expected: 400, },
+  { name: "continue", method: "POST", path: "/api/v1/generation/continue", body: {}, expected: 400, },
+  { name: "regenerate", method: "POST", path: "/api/v1/generation/regenerate", body: {}, expected: 400, },
+  { name: "image", method: "POST", path: "/api/v1/generation/image", body: {}, expected: 400, },
+  { name: "caption", method: "POST", path: "/api/v1/generation/caption", body: {}, expected: 400, },
+  { name: "prompt", method: "POST", path: "/api/v1/generation/prompt", body: {}, expected: 400, },
+  { name: "test-connection", method: "POST", path: "/api/v1/generation/test-connection", body: {}, expected: 400, },
 ];
 
 /**

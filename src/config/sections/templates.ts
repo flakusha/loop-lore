@@ -65,7 +65,7 @@ export interface LlmTemplateConfig {
    * Overrides the built-in default prompt for that kind; the value should
    * contain a `{description}` placeholder.
    */
-  entityGeneration?: Partial<Record<"character" | "location" | "world" | "item", string>>;
+  entityGeneration?: Partial<Record<"character" | "npc" | "location" | "world" | "item", string>>;
 }
 
 // ── SD Templates ────────────────────────────────────────────
@@ -148,12 +148,16 @@ export interface ImageEditTemplateConfig {
   workflows: Record<string, ImageEditWorkflowConfig>;
 }
 
-export type {
-  AssistantWorkflowConfig,
-  WorkflowApprovalConfig,
-  WorkflowDispatchConfig,
-  WorkflowStepConfig,
-  WorkflowTemplateConfig,
+export {
+  type AssistantWorkflowConfig,
+  ENTITY_QUALITY_GATES,
+  type EntityQualityGate,
+  type EntityTypePreset,
+  type WorkflowApprovalConfig,
+  type WorkflowDispatchConfig,
+  type WorkflowIntentConfig,
+  type WorkflowStepConfig,
+  type WorkflowTemplateConfig,
 } from "./templates-workflow";
 // ── Combined TemplatesConfig ─────────────────────────────────
 
@@ -247,5 +251,6 @@ export const TEMPLATES_DEFAULTS: TemplatesConfig = {
   workflows: {
     merge: DEFAULT_MERGE,
     workflows: {},
+    entityTypes: {},
   },
 };

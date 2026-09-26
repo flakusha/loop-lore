@@ -7,17 +7,18 @@ import { creationChatTitle, ENTITY_SPEC_KINDS, findEntitySpec, } from "./entity-
 describe("ENTITY_SPEC_DESCRIPTORS", () => {
   test("every kind maps to its config workflow template", () => {
     expect(findEntitySpec("character",)!.workflowId,).toBe("entity-character",);
+    expect(findEntitySpec("npc",)!.workflowId,).toBe("entity-npc",);
     expect(findEntitySpec("location",)!.workflowId,).toBe("entity-location",);
     expect(findEntitySpec("world",)!.workflowId,).toBe("entity-world",);
     expect(findEntitySpec("item",)!.workflowId,).toBe("entity-item",);
   });
 
   test("registry covers exactly the accepted kind list", () => {
-    expect([...ENTITY_SPEC_KINDS,].sort(),).toEqual(["character", "item", "location", "world",],);
+    expect([...ENTITY_SPEC_KINDS,].sort(),).toEqual(["character", "item", "location", "npc", "world",],);
   });
 
   test("unknown kinds resolve to undefined", () => {
-    expect(findEntitySpec("npc",),).toBeUndefined();
+    expect(findEntitySpec("species",),).toBeUndefined();
     expect(findEntitySpec("",),).toBeUndefined();
     expect(findEntitySpec("__proto__",),).toBeUndefined();
   });
