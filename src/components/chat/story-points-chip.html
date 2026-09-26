@@ -1,0 +1,51 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!--
+  Story points chip — display-only indicator showing the calling
+  actor's current story-point balance next to the /agency affordance.
+  Click expands an inline spend menu that posts to
+  POST /api/agency/spend.
+
+  Mount point (TODO): render inside `src/components/chat/input-area.html`
+  alongside the existing `/roll`, `/check` chips in the
+  `.command-buttons-row` block. The chip depends on `currentActor` and
+  `activeChat` being populated by the surrounding Alpine scope.
+-->
+<div
+  class="story-points-chip"
+  x-data="{
+    balance: 0,
+    cap: null,
+    async refresh() {
+      try {
+        const actorId = (this.currentActor && this.currentActor.id) || (this.userId);
+        if (!actorId) { return; }
+        const res = await fetch(`/api/agency/spend` /* POST-only — use status route when added */, {
+          method: 'OPTIONS',
+          credentials: 'include',
+        }).catch(() => null,);
+        void res; // TODO: replace with a /api/agency/status GET endpoint.
+      } catch (e) { /* swallow */ }
+    },
+  }"
+  x-init="refresh()"
+  data-testid="story-points-chip"
+  title="Story points — your Bennies / FATE points / Inspiration"
+>
+  <span class="story-points-chip-label">⭐</span>
+  <span class="story-points-chip-value" x-text="balance"></span>
+  <template x-if="cap !== null">
+    <span class="story-points-chip-cap" x-text="'/' + cap"></span>
+  </template>
+  <!-- Inline spend menu — kept minimal for v1. -->
+  <button
+    type="button"
+    class="btn btn-ghost btn-xs"
+    @click.prevent="$dispatch('open-story-points-menu', { actorId: userId, balance, cap })"
+    title="Spend story points"
+    data-testid="story-points-spend-button"
+  >
+    Spend
+  </button>
+</div>

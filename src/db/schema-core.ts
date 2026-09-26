@@ -1345,3 +1345,20 @@ export interface ModelComparisonRuns {
   metadata: Generated<string>;
   created_at: string;
 }
+
+// ── actor_story_points ────────────────────────────────────────────
+export interface ActorStoryPoints {
+  id: Generated<string>;
+  actor_id: string;
+  world_id: string | null;
+  balance: Generated<number>;
+  earned_total: Generated<number>;
+  spent_total: Generated<number>;
+  cap: number | null;
+  last_earn_at: string | null;
+  last_spend_at: string | null;
+  last_earn_reason: string | null;
+  last_spend_reason: string | null;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}

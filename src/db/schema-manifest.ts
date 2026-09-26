@@ -1129,6 +1129,21 @@ export const SCHEMA = new SchemaManifest()
     completed: col("integer", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("actor_story_points", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    actor_id: col("text", { notNull: true, },),
+    world_id: col("text",),
+    balance: col("integer", { notNull: true, hasDefault: true, },),
+    earned_total: col("integer", { notNull: true, hasDefault: true, },),
+    spent_total: col("integer", { notNull: true, hasDefault: true, },),
+    cap: col("integer",),
+    last_earn_at: col("text",),
+    last_spend_at: col("text",),
+    last_earn_reason: col("text",),
+    last_spend_reason: col("text",),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("character_arc", {
     id: col("text", { primaryKey: true, },),
     actor_id: col("text", { notNull: true, },),
