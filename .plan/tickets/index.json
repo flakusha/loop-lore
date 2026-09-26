@@ -3176,6 +3176,24 @@
     "source": ".plan/tickets/BUG-idempotency-cache-key-lacks-user-scope-cross-user-response-r.md",
     "status": "done"
   },
+  "BUG-IDEMPOTENCY-TABLE-BACKEND-VERIFY-REPRODUCES": {
+    "hash": "4ddc410",
+    "git_issue": "4ddc410",
+    "extid": "BUG-IDEMPOTENCY-TABLE-BACKEND-VERIFY-REPRODUCES",
+    "type": "BUG",
+    "title": "idempotency table backend — verify reproducer or close (advisory orphan)",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "idempotency",
+      "middleware",
+      "advisory-orphan",
+      "untriaged"
+    ],
+    "source": ".plan/tickets/BUG-idempotency-table-backend-verify-reproduces.md",
+    "status": "open"
+  },
   "BUG-IMPERSONATE-BUILDIMPRESULT-REFERENCEERROR": {
     "hash": "2873edb",
     "extid": "BUG-IMPERSONATE-BUILDIMPRESULT-REFERENCEERROR",
@@ -19575,6 +19593,19 @@
     "status": "open",
     "git_issue": "35cb967"
   },
+  "TASK-ASYNC-STORE-RETENTION-CAP-OFFLOAD-DIR-BY-AGE-BYTES": {
+    "hash": "fce9413",
+    "git_issue": "fce9413",
+    "extid": "TASK-ASYNC-STORE-RETENTION-CAP-OFFLOAD-DIR-BY-AGE-BYTES",
+    "type": "TASK",
+    "title": "async-store retention: cap OFFLOAD_DIR by age + bytes",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-ASYNC-STORE-RETENTION-CAP-OFFLOAD-DIR-BY-AGE-BYTES.md",
+    "status": "open"
+  },
   "TASK-ASYNC-STORE-TESTS-PER-TEST-TMPDIR": {
     "hash": "968fd6b",
     "git_issue": "968fd6b",
@@ -20055,6 +20086,172 @@
     "source": ".plan/tickets/TASK-avatars-dynamic-2d.md",
     "status": "open",
     "git_issue": "a987a8d"
+  },
+  "TASK-BACKLOG-BUILD-INTEGRITY-CLUSTER-CLOSE-OUT": {
+    "hash": "332c1aa",
+    "git_issue": "332c1aa",
+    "extid": "TASK-BACKLOG-BUILD-INTEGRITY-CLUSTER-CLOSE-OUT",
+    "type": "TASK",
+    "title": "backlog — verify Build Integrity Cluster close-out (3 BUGs + plan:sync orphan)",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [
+      "build-integrity",
+      "typecheck",
+      "plan-sync",
+      "retirement",
+      "release-010"
+    ],
+    "source": ".plan/tickets/TASK-backlog-build-integrity-cluster-close-out.md",
+    "status": "open"
+  },
+  "TASK-BACKLOG-COVERAGE-WAIVERS-FRONTEND-BATCHES": {
+    "hash": "04475df",
+    "git_issue": "04475df",
+    "extid": "TASK-BACKLOG-COVERAGE-WAIVERS-FRONTEND-BATCHES",
+    "type": "TASK",
+    "title": "backlog — coverage waivers + frontend batches (release-010 hardening)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "coverage",
+      "waivers",
+      "frontend",
+      "alpine",
+      "testing-qa"
+    ],
+    "source": ".plan/tickets/TASK-backlog-coverage-waivers-frontend-batches.md",
+    "status": "open"
+  },
+  "TASK-BACKLOG-FEDERATION-INTERCONNECT-BATCH": {
+    "hash": "efca0be",
+    "git_issue": "efca0be",
+    "extid": "TASK-BACKLOG-FEDERATION-INTERCONNECT-BATCH",
+    "type": "TASK",
+    "title": "backlog — schedule Mesh / Federation Interconnect batch (post content-sharing)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-backlog-federation-interconnect-batch.md",
+    "status": "open"
+  },
+  "TASK-BACKLOG-ITEM-GENERATION-DISCOVERABILITY-BATCH": {
+    "hash": "9f9e158",
+    "git_issue": "9f9e158",
+    "extid": "TASK-BACKLOG-ITEM-GENERATION-DISCOVERABILITY-BATCH",
+    "type": "TASK",
+    "title": "backlog — schedule Item-Generation Discoverability batch (P2-C assistant tooling)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "item-generation",
+      "assistant",
+      "subcommands",
+      "draft-store",
+      "p2-c"
+    ],
+    "source": ".plan/tickets/TASK-backlog-item-generation-discoverability-batch.md",
+    "status": "open"
+  },
+  "TASK-BACKLOG-MIGRATION-HYGIENE-DUPLICATE-PREFIX-GATE": {
+    "hash": "94870aa",
+    "git_issue": "94870aa",
+    "extid": "TASK-BACKLOG-MIGRATION-HYGIENE-DUPLICATE-PREFIX-GATE",
+    "type": "TASK",
+    "title": "backlog — add migration-hygiene gate (duplicate numeric prefixes + unused parts/ pointers)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "migration",
+      "hygiene",
+      "gate",
+      "code-map",
+      "schema-drift"
+    ],
+    "source": ".plan/tickets/TASK-backlog-migration-hygiene-duplicate-prefix-gate.md",
+    "status": "open"
+  },
+  "TASK-BACKLOG-RPG-MECHANICS-OPT-IN-GATING-PRIORITY": {
+    "hash": "aadf424",
+    "git_issue": "aadf424",
+    "extid": "TASK-BACKLOG-RPG-MECHANICS-OPT-IN-GATING-PRIORITY",
+    "type": "TASK",
+    "title": "backlog — schedule RPG Mechanics Opt-in Gating (safety-first before new mechanics)",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-backlog-rpg-mechanics-opt-in-gating-priority.md",
+    "status": "open"
+  },
+  "TASK-BACKLOG-SIZE-STRICT-REGRESSION-RECOVERY": {
+    "hash": "d5ffa23",
+    "git_issue": "d5ffa23",
+    "extid": "TASK-BACKLOG-SIZE-STRICT-REGRESSION-RECOVERY",
+    "type": "TASK",
+    "title": "backlog — size-strict ceiling regressed; split-down + verify before A9",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [
+      "size-strict",
+      "regression",
+      "refactor",
+      "release-010",
+      "a9"
+    ],
+    "source": ".plan/tickets/TASK-backlog-size-strict-regression-recovery.md",
+    "status": "open"
+  },
+  "TASK-BACKLOG-UNTRIAGED-ADVISORY-ORPHAN-SWEEP-2026-09-25": {
+    "hash": "c7448b3",
+    "git_issue": "c7448b3",
+    "extid": "TASK-BACKLOG-UNTRIAGED-ADVISORY-ORPHAN-SWEEP-2026-09-25",
+    "type": "TASK",
+    "title": "backlog — close 2026-09-25 epic-linkage advisory orphans + backfill metadata",
+    "label": "task",
+    "priority": "medium",
+    "epic": "field with a real epic name.",
+    "tags": [
+      "plan-sync",
+      "untriaged",
+      "advisory-orphan",
+      "epic-linkage",
+      "bookkeeping"
+    ],
+    "source": ".plan/tickets/TASK-backlog-untriaged-advisory-orphan-sweep-2026-09-25.md",
+    "status": "open"
+  },
+  "TASK-BACKLOG-VN-SPRITE-STAGING-BATCH": {
+    "hash": "d13502f",
+    "git_issue": "d13502f",
+    "extid": "TASK-BACKLOG-VN-SPRITE-STAGING-BATCH",
+    "type": "TASK",
+    "title": "backlog — schedule VN Sprite Staging cluster (post-VN core)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-backlog-vn-sprite-staging-batch.md",
+    "status": "open"
+  },
+  "TASK-BACKLOG-WORKFLOW-GM-ROUTING-BATCH": {
+    "hash": "f4ff46f",
+    "git_issue": "f4ff46f",
+    "extid": "TASK-BACKLOG-WORKFLOW-GM-ROUTING-BATCH",
+    "type": "TASK",
+    "title": "backlog — schedule Workflow / GM Routing batch (P2-C/P2-D)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-backlog-workflow-gm-routing-batch.md",
+    "status": "open"
   },
   "TASK-BACKUP-CONSISTENCY-VACUUM-INTO-SNAPSHOTS-PLUS-ARCHIVE-DBS": {
     "hash": "f91f01e",
@@ -25938,6 +26135,58 @@
     "git_issue": "daaad2d",
     "status": "open"
   },
+  "TASK-EPIC-FRONTEND-COMPONENT-ARCHITECTURE-CLARIFICATION-2026-09-26": {
+    "hash": "41bb3e2",
+    "git_issue": "41bb3e2",
+    "extid": "TASK-EPIC-FRONTEND-COMPONENT-ARCHITECTURE-CLARIFICATION-2026-09-26",
+    "type": "TASK",
+    "title": "# TASK-epic-frontend-component-architecture-clarification-2026-09-26: clarify epic-frontend-component-architecture.md direction",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-epic-frontend-component-architecture-clarification-2026-09-26.md",
+    "status": "open"
+  },
+  "TASK-EPIC-FRONTEND-ENCRYPTION-CLARIFICATION-2026-09-26": {
+    "hash": "f01b0db",
+    "git_issue": "f01b0db",
+    "extid": "TASK-EPIC-FRONTEND-ENCRYPTION-CLARIFICATION-2026-09-26",
+    "type": "TASK",
+    "title": "# TASK-epic-frontend-encryption-clarification-2026-09-26: clarify epic-frontend-encryption.md vs epic-encryption-workflow.md split",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-epic-frontend-encryption-clarification-2026-09-26.md",
+    "status": "open"
+  },
+  "TASK-EPIC-TRANSPORT-LAYER-EXPANSION-CLARIFICATION-2026-09-26": {
+    "hash": "bf2de0c",
+    "git_issue": "bf2de0c",
+    "extid": "TASK-EPIC-TRANSPORT-LAYER-EXPANSION-CLARIFICATION-2026-09-26",
+    "type": "TASK",
+    "title": "# TASK-epic-transport-layer-expansion-clarification-2026-09-26: clarify epic-transport-layer-expansion.md vs epic-transport-expansion.md / epic-realtime-transports.md",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-epic-transport-layer-expansion-clarification-2026-09-26.md",
+    "status": "open"
+  },
+  "TASK-EPIC-USE-CASE-AGENTIC-WORKSPACE-CLARIFICATION-2026-09-26": {
+    "hash": "5945a00",
+    "git_issue": "5945a00",
+    "extid": "TASK-EPIC-USE-CASE-AGENTIC-WORKSPACE-CLARIFICATION-2026-09-26",
+    "type": "TASK",
+    "title": "# TASK-epic-use-case-agentic-workspace-clarification-2026-09-26: clarify epic-use-case-agentic-workspace.md ownership",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-epic-use-case-agentic-workspace-clarification-2026-09-26.md",
+    "status": "open"
+  },
   "TASK-EPIC11-ADMIN-SETTINGS-RECONCILIATION": {
     "hash": "fd05676",
     "extid": "TASK-EPIC11-ADMIN-SETTINGS-RECONCILIATION",
@@ -29406,6 +29655,19 @@
     "status": "open",
     "git_issue": "0dc70a4"
   },
+  "TASK-JSCPD-RATCHET-PERSIST-BASELINE-GATE-ON-RISING-CLONES-DUP": {
+    "hash": "78da9f9",
+    "git_issue": "78da9f9",
+    "extid": "TASK-JSCPD-RATCHET-PERSIST-BASELINE-GATE-ON-RISING-CLONES-DUP",
+    "type": "TASK",
+    "title": "jscpd ratchet: persist baseline, gate on rising clones/dup-%",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-JSCPD-RATCHET-PERSIST-BASELINE-GATE-ON-RISING-CLONES-DUP.md",
+    "status": "open"
+  },
   "TASK-JSCPD-RATCHET-PERSISTENT-BASELINE": {
     "hash": "28444bc",
     "extid": "TASK-JSCPD-RATCHET-PERSISTENT-BASELINE",
@@ -30460,6 +30722,68 @@
     "source": ".plan/tickets/TASK-matrix-auth-capability-registry-naming-align-auth-challenge-.md",
     "status": "⬜ Not Started"
   },
+  "TASK-MATRIX-AUTH-CHANNEL-AC12-PER-ROLE-POLICY-SHAPE": {
+    "hash": "4e68abe",
+    "git_issue": "4e68abe",
+    "extid": "TASK-MATRIX-AUTH-CHANNEL-AC12-PER-ROLE-POLICY-SHAPE",
+    "type": "TASK",
+    "title": "# TASK-matrix-auth-channel-ac12: Settle WAC4 — per-role minimum-factor-count policy (static config vs DB table)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "auth",
+      "2fa",
+      "policy",
+      "config",
+      "admin",
+      "WAC4",
+      "AC12"
+    ],
+    "source": ".plan/tickets/TASK-matrix-auth-channel-ac12-per-role-policy-shape.md",
+    "status": "open"
+  },
+  "TASK-MATRIX-AUTH-CHANNEL-AC3-CAPABILITY-REGISTRY-NAMING": {
+    "hash": "5719d09",
+    "git_issue": "5719d09",
+    "extid": "TASK-MATRIX-AUTH-CHANNEL-AC3-CAPABILITY-REGISTRY-NAMING",
+    "type": "TASK",
+    "title": "# TASK-matrix-auth-channel-ac3: Settle WAC1 — capability-enum naming match for `auth-challenge`",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "auth",
+      "2fa",
+      "capability-registry",
+      "integrations",
+      "WAC1",
+      "AC3"
+    ],
+    "source": ".plan/tickets/TASK-matrix-auth-channel-ac3-capability-registry-naming.md",
+    "status": "open"
+  },
+  "TASK-MATRIX-AUTH-CHANNEL-AC4-MATRIX-BOT-APPROVAL-SESSION": {
+    "hash": "c0f0d2d",
+    "git_issue": "c0f0d2d",
+    "extid": "TASK-MATRIX-AUTH-CHANNEL-AC4-MATRIX-BOT-APPROVAL-SESSION",
+    "type": "TASK",
+    "title": "# TASK-matrix-auth-channel-ac4: Settle WAC2 — Matrix approval via Megolm-verified or unverified session",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "auth",
+      "2fa",
+      "matrix",
+      "megolm",
+      "e2ee",
+      "WAC2",
+      "AC4"
+    ],
+    "source": ".plan/tickets/TASK-matrix-auth-channel-ac4-matrix-bot-approval-session.md",
+    "status": "open"
+  },
   "TASK-MATRIX-AUTH-MATRIX-MEGOLM-APPROVAL-DECIDE-MEGOLM-VERIFIED-SE": {
     "hash": "825ef56",
     "git_issue": "825ef56",
@@ -30491,6 +30815,145 @@
     ],
     "source": ".plan/tickets/TASK-matrix-auth-per-role-factor-policy-shape-decide-per-role-min.md",
     "status": "⬜ Not Started"
+  },
+  "TASK-MATRIX-CROSS-MECH-G18-AGENTIC-NPC-AUTONOMY": {
+    "hash": "4e6e2b9",
+    "git_issue": "4e6e2b9",
+    "extid": "TASK-MATRIX-CROSS-MECH-G18-AGENTIC-NPC-AUTONOMY",
+    "type": "TASK",
+    "title": "# TASK-matrix-cross-mech-g18: Agentic NPC autonomy — memory + goals + emotion + autonomous action",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [
+      "npc",
+      "autonomy",
+      "goals",
+      "memory",
+      "actor",
+      "P6+"
+    ],
+    "source": ".plan/tickets/TASK-matrix-cross-mech-g18-agentic-npc-autonomy.md",
+    "status": "open"
+  },
+  "TASK-MATRIX-CROSS-MECH-G19-AGENT-MEMORY-SCORING": {
+    "hash": "3904a3d",
+    "git_issue": "3904a3d",
+    "extid": "TASK-MATRIX-CROSS-MECH-G19-AGENT-MEMORY-SCORING",
+    "type": "TASK",
+    "title": "# TASK-matrix-cross-mech-g19: Agent-memory scoring (recency × importance × relevance + reflection)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "memory",
+      "scoring",
+      "reflection",
+      "retrieval",
+      "P6+"
+    ],
+    "source": ".plan/tickets/TASK-matrix-cross-mech-g19-agent-memory-scoring.md",
+    "status": "open"
+  },
+  "TASK-MATRIX-CROSS-MECH-G20-LIVING-WORLD-PERSISTENCE": {
+    "hash": "c634f81",
+    "git_issue": "c634f81",
+    "extid": "TASK-MATRIX-CROSS-MECH-G20-LIVING-WORLD-PERSISTENCE",
+    "type": "TASK",
+    "title": "# TASK-matrix-cross-mech-g20: Living-world persistence across time + between sessions",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "world",
+      "persistence",
+      "scheduler",
+      "between-session",
+      "P6+",
+      "P6-0"
+    ],
+    "source": ".plan/tickets/TASK-matrix-cross-mech-g20-living-world-persistence.md",
+    "status": "open"
+  },
+  "TASK-MATRIX-CROSS-MECH-G21-ASSET-CONSISTENCY-GENERATION": {
+    "hash": "33878b5",
+    "git_issue": "33878b5",
+    "extid": "TASK-MATRIX-CROSS-MECH-G21-ASSET-CONSISTENCY-GENERATION",
+    "type": "TASK",
+    "title": "# TASK-matrix-cross-mech-g21: Asset-consistency generation (reference conditioning + in-chat edit)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "assets",
+      "generation",
+      "consistency",
+      "reference-conditioning",
+      "in-chat-edit",
+      "low-severity"
+    ],
+    "source": ".plan/tickets/TASK-matrix-cross-mech-g21-asset-consistency-generation.md",
+    "status": "open"
+  },
+  "TASK-MATRIX-CROSS-MECH-G22-EVENT-DRIVEN-AUTOMATION": {
+    "hash": "c4b588c",
+    "git_issue": "c4b588c",
+    "extid": "TASK-MATRIX-CROSS-MECH-G22-EVENT-DRIVEN-AUTOMATION",
+    "type": "TASK",
+    "title": "# TASK-matrix-cross-mech-g22: Event-driven automation (Quick-Replies / auto-execute on triggers)",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [
+      "quick-replies",
+      "automation",
+      "events",
+      "frontend",
+      "0.1.0-quick-win",
+      "low-severity"
+    ],
+    "source": ".plan/tickets/TASK-matrix-cross-mech-g22-event-driven-automation.md",
+    "status": "open"
+  },
+  "TASK-MATRIX-CROSS-MECH-G23-DYNAMIC-MEMORY-MID-RESPONSE": {
+    "hash": "bc6beae",
+    "git_issue": "bc6beae",
+    "extid": "TASK-MATRIX-CROSS-MECH-G23-DYNAMIC-MEMORY-MID-RESPONSE",
+    "type": "TASK",
+    "title": "# TASK-matrix-cross-mech-g23: Dynamic memory writes — assistant mid-response memory notes (multi-message)",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [
+      "memory",
+      "dynamic",
+      "mid-response",
+      "sse",
+      "0.1.0-quick-win",
+      "low-severity"
+    ],
+    "source": ".plan/tickets/TASK-matrix-cross-mech-g23-dynamic-memory-mid-response.md",
+    "status": "open"
+  },
+  "TASK-MATRIX-CROSS-MECH-G46-INTERRUPT-SEMANTICS": {
+    "hash": "97535c1",
+    "git_issue": "97535c1",
+    "extid": "TASK-MATRIX-CROSS-MECH-G46-INTERRUPT-SEMANTICS",
+    "type": "TASK",
+    "title": "# TASK-matrix-cross-mech-g46: Interrupt semantics — stream abort, truncate-to-last-observed, never-bill-undelivered",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "interrupt",
+      "abort",
+      "billing",
+      "streaming",
+      "truncation",
+      "side-effects"
+    ],
+    "source": ".plan/tickets/TASK-matrix-cross-mech-g46-interrupt-semantics.md",
+    "status": "open"
   },
   "TASK-MATRIX-INTEGRATION": {
     "hash": "1b92bae",
@@ -37743,6 +38206,19 @@
     "status": "⬜ Not Started",
     "git_issue": "5af9ef9"
   },
+  "TASK-TICKET-STATUS-ENUM-MIGRATION-OF-302-DISTINCT-VALUES": {
+    "hash": "937955d",
+    "git_issue": "937955d",
+    "extid": "TASK-TICKET-STATUS-ENUM-MIGRATION-OF-302-DISTINCT-VALUES",
+    "type": "TASK",
+    "title": "Ticket **Status:** enum + migration of 302 distinct values",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-TICKET-STATUS-ENUM-MIGRATION-OF-302-DISTINCT-VALUES.md",
+    "status": "open"
+  },
   "TASK-TIER-1-OPENAI-COMPATIBLE-PLATFORM-CATALOG": {
     "hash": "d0ba5cb",
     "extid": "TASK-TIER-1-OPENAI-COMPATIBLE-PLATFORM-CATALOG",
@@ -37941,6 +38417,19 @@
     "source": ".plan/tickets/TASK-tmp-janitor-and-staleness-markers.md",
     "status": "⬜ Not Started",
     "git_issue": "f6100ba"
+  },
+  "TASK-TMP-JANITOR-GATE-VERIFIED-AT-STALENESS-MARKERS": {
+    "hash": "2301fa5",
+    "git_issue": "2301fa5",
+    "extid": "TASK-TMP-JANITOR-GATE-VERIFIED-AT-STALENESS-MARKERS",
+    "type": "TASK",
+    "title": ".tmp janitor gate + verified-at staleness markers",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-TMP-JANITOR-GATE-VERIFIED-AT-STALENESS-MARKERS.md",
+    "status": "open"
   },
   "TASK-TOOL-CALL-USER-TEXT-SANITIZATION": {
     "hash": "92adc57",
