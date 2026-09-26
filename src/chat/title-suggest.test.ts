@@ -1,6 +1,7 @@
 import { beforeAll, describe, expect, it, mock, } from "bun:test";
 import type { AuxCallResult, } from "../aux-pipeline/types";
 import { createLogger, } from "../logger";
+import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
 import {
   deriveChatTitleFallback,
   isUntitledChatName,
@@ -10,7 +11,12 @@ import {
 
 const callAuxMock = mock<() => Promise<AuxCallResult | null>>(() => Promise.resolve(null,));
 // Hoisted above imports: title-suggest binds the stubbed callAux.
-mock.module("../aux-pipeline", () => ({ callAux: callAuxMock, }),);
+// Gated: bun's mock.module is process-global — unguarded, later files in a
+// shared-process `bun test src/` run resolve ../aux-pipeline to this stub
+// (BUG 9c8bea1 cross-file contamination). Canonical gates run --isolate.
+if (ISOLATED) {
+  mock.module("../aux-pipeline", () => ({ callAux: callAuxMock, }),);
+}
 
 beforeAll(() => {
   createLogger({ level: "error", },);
@@ -48,7 +54,7 @@ describe("deriveChatTitleFallback", () => {
   });
 });
 
-describe("suggestChatTitle (fallback)", () => {
+describeOrSkip("suggestChatTitle (fallback)", () => {
   it("falls back when AUX returns null", async () => {
     const result = await suggestChatTitle({
       config: noAuxConfig,
@@ -66,9 +72,9 @@ describe("suggestChatTitle (fallback)", () => {
     },);
     expect(result,).toBe("New chat",);
   });
-});
+},);
 
-describe("suggestChatTitle (mocked AUX)", () => {
+describeOrSkip("suggestChatTitle (mocked AUX)", () => {
   function auxResult(content: string,) {
     return {
       content,
@@ -119,7 +125,7 @@ describe("suggestChatTitle (mocked AUX)", () => {
     },);
     expect(result,).toBe("Explore the dark forest",);
   });
-});
+},);
 
 describe("isUntitledChatName", () => {
   it("treats null, empty, and the placeholder as untitled", () => {
@@ -130,7 +136,7 @@ describe("isUntitledChatName", () => {
   });
 });
 
-describe("titleUntitledChatFromFirstMessage", () => {
+describeOrSkip("titleUntitledChatFromFirstMessage", () => {
   function mockChatDb(captured: { name?: string }, fail = false,) {
     return {
       updateTable: () => ({
@@ -195,4 +201,4 @@ describe("titleUntitledChatFromFirstMessage", () => {
       firstMessage: "hello",
     },);
   });
-});
+},);
