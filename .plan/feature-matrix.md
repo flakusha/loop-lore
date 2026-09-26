@@ -5,7 +5,7 @@
 
 # Feature matrix
 
-Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
+Total tickets: **2949** — untagged: **2520** — unbound to epic: **1505**
 
 ## By tag × status
 
@@ -20,7 +20,7 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 | "llama.cpp"] | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | "wllama" | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | "worktree"] | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| (none) | 78 | 2 | 9 | 0 | 6 | 0 | 61 |
+| (none) | 78 | 5 | 9 | 0 | 6 | 0 | 58 |
 | ["check" | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | ["inference" | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | ["worktree" | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
@@ -43,13 +43,13 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 | access | 3 | 0 | 0 | 0 | 2 | 0 | 1 |
 | access-control | 3 | 1 | 1 | 0 | 0 | 0 | 1 |
 | accessibility | 3 | 1 | 1 | 1 | 0 | 0 | 0 |
-| achievements | 2 | 1 | 0 | 0 | 0 | 0 | 1 |
+| achievements | 3 | 1 | 0 | 0 | 0 | 0 | 2 |
 | acid | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | acme | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | action-economy | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | actor | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | actor-state | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| actors | 3 | 0 | 0 | 0 | 1 | 0 | 2 |
+| actors | 3 | 1 | 0 | 0 | 0 | 0 | 2 |
 | adaptation | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | adapters | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | admin | 5 | 0 | 0 | 1 | 0 | 0 | 4 |
@@ -162,7 +162,7 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 | browser-storage | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | buffs | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | build | 2 | 0 | 2 | 0 | 0 | 0 | 0 |
-| build-hash | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| build-hash | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | build-integrity | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | build-pipeline | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | bun | 2 | 1 | 0 | 0 | 0 | 0 | 1 |
@@ -171,7 +171,7 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 | burglary | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | byok | 6 | 1 | 1 | 0 | 1 | 0 | 3 |
 | caching | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
-| cadence | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| cadence | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | camera | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | capabilities | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | capability-registry | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
@@ -186,7 +186,7 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 | character | 8 | 0 | 1 | 0 | 2 | 0 | 5 |
 | character-integration | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | character-style | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
-| characters | 7 | 1 | 2 | 0 | 4 | 0 | 0 |
+| characters | 7 | 2 | 2 | 0 | 3 | 0 | 0 |
 | chat | 14 | 2 | 3 | 0 | 1 | 0 | 8 |
 | chat-branches | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | chat-mode | 2 | 0 | 1 | 0 | 0 | 0 | 1 |
@@ -231,7 +231,7 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 | consistency | 2 | 0 | 0 | 1 | 0 | 0 | 1 |
 | content-creation | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | context | 4 | 1 | 1 | 0 | 1 | 0 | 1 |
-| continue | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| continue | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | continuity | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | contract | 2 | 0 | 0 | 0 | 1 | 0 | 1 |
 | coping | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
@@ -263,10 +263,11 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 | data | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | data-integrity | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | data-lifecycle | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
-| data-model | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
+| data-model | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | database | 8 | 0 | 0 | 0 | 2 | 0 | 6 |
 | day-night | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | db | 9 | 0 | 0 | 8 | 0 | 0 | 1 |
+| db-types | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | dead-code | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
 | debt | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | debuffs | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -339,8 +340,9 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 | endurance | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | enrichment | 3 | 0 | 0 | 0 | 1 | 0 | 2 |
 | enterprise | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| entities | 2 | 0 | 0 | 0 | 2 | 0 | 0 |
+| entities | 2 | 1 | 0 | 0 | 1 | 0 | 0 |
 | entity-generation | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| enum-consolidation | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | environment | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | epic-linkage | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epics | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
@@ -368,7 +370,7 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 | fate | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | favorites | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | fe-be-db | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
-| federation | 9 | 0 | 1 | 0 | 1 | 0 | 7 |
+| federation | 9 | 1 | 1 | 0 | 1 | 0 | 6 |
 | ffi | 2 | 0 | 2 | 0 | 0 | 0 | 0 |
 | file-split | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | flagging | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -396,7 +398,7 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 | geography | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | gestures | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | giwt | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
-| gm | 11 | 0 | 3 | 0 | 0 | 0 | 8 |
+| gm | 11 | 1 | 3 | 0 | 0 | 0 | 7 |
 | goals | 2 | 0 | 0 | 1 | 1 | 0 | 0 |
 | god-module | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | godot | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -404,7 +406,7 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 | governance | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | gpu | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | graph | 3 | 0 | 0 | 0 | 1 | 0 | 2 |
-| group-chat | 6 | 0 | 1 | 0 | 1 | 0 | 4 |
+| group-chat | 6 | 1 | 1 | 0 | 1 | 0 | 3 |
 | growth | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | guardrails | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | guards | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
@@ -440,7 +442,7 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 | image-generation | 2 | 0 | 1 | 1 | 0 | 0 | 0 |
 | imap | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | immersion | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| import | 2 | 1 | 0 | 0 | 1 | 0 | 0 |
+| import | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
 | in-chat-edit | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | incentives | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | index | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -452,7 +454,7 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 | integration | 6 | 1 | 0 | 0 | 1 | 0 | 4 |
 | integration-testing | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | integrations | 3 | 0 | 0 | 1 | 0 | 0 | 2 |
-| integrity | 2 | 1 | 0 | 0 | 0 | 0 | 1 |
+| integrity | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
 | intent | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | intent-detection | 3 | 0 | 1 | 0 | 1 | 0 | 1 |
 | interactable | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
@@ -616,9 +618,9 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 | parseable source of truth. The validator already accepts the inline format (`**Tags:** rpg | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | parsing | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | partials | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| participants | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
+| participants | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | party | 9 | 0 | 0 | 0 | 0 | 0 | 9 |
-| pass | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| pass | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | pathfinding | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | paths | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | patrol | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -707,7 +709,7 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 | recipe-matrix | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | reconciliation | 4 | 1 | 1 | 0 | 1 | 0 | 1 |
 | reconnection | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| recovery | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| recovery | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | recursion | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | redis | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | refactor | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
@@ -860,7 +862,7 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 | tailwind | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | talkativity | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | taming | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| tamper-detection | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| tamper-detection | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | task-management | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | task-queue | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | tasks | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -921,7 +923,7 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 | tts | 3 | 0 | 0 | 0 | 0 | 0 | 3 |
 | turn | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | turn-orchestration | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
-| turn-skip | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| turn-skip | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | turning | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | two-pass | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | typebox | 2 | 1 | 0 | 0 | 0 | 0 | 1 |
@@ -992,7 +994,7 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 | yaml | 4 | 0 | 2 | 0 | 1 | 0 | 1 |
 | yaml-frontmatter | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| (untagged) | 2520 | 860 | 58 | 1281 | 39 | 0 | 282 |
+| (untagged) | 2520 | 959 | 58 | 1281 | 36 | 0 | 186 |
 
 ## By epic × status
 
@@ -1017,6 +1019,7 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 | `epic-memory-propagation.md` | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | `epic-rarity-extensions.md` | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | `epic-timeline-system.md` | 4 | 1 | 0 | 0 | 3 | 0 | 0 |
+| achievements | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | AO NSFW Game Mechanics | 13 | 0 | 0 | 13 | 0 | 0 | 0 |
 | Asset Platform Capabilities (Messenger/Social Patterns) | 7 | 0 | 0 | 7 | 0 | 0 | 0 |
 | Asset Transform Editing + Metadata | 9 | 0 | 0 | 9 | 0 | 0 | 0 |
@@ -1057,13 +1060,13 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 | epic-actor-autonomy-story-drive.md | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
 | epic-actor-turn-skip | 5 | 3 | 0 | 2 | 0 | 0 | 0 |
 | epic-actors | 5 | 3 | 0 | 0 | 0 | 0 | 2 |
-| epic-agency-story-points | 4 | 0 | 0 | 2 | 0 | 0 | 2 |
+| epic-agency-story-points | 4 | 1 | 0 | 2 | 0 | 0 | 1 |
 | epic-agency-story-points, NPC/Actor System | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-ambient-music-sfx | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| epic-analytics-observability | 9 | 3 | 0 | 1 | 0 | 0 | 5 |
+| epic-analytics-observability | 9 | 4 | 0 | 1 | 0 | 0 | 4 |
 | epic-analytics-observability.md | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-anonymity-decentralization.md | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| epic-api-first-foundation | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| epic-api-first-foundation | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-api-governance | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-api-governance.md | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
 | epic-api-library-distribution.md | 3 | 0 | 0 | 3 | 0 | 0 | 0 |
@@ -1081,7 +1084,7 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 | epic-assistant-entity-access.md (extends quota engine) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-assistant-generation-extensions | 7 | 2 | 0 | 4 | 0 | 0 | 1 |
 | epic-assistant-generation-extensions (Phase 4), epic-blog-system | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| epic-assistant-gm-flows | 15 | 4 | 4 | 4 | 0 | 0 | 3 |
+| epic-assistant-gm-flows | 15 | 5 | 4 | 4 | 0 | 0 | 2 |
 | epic-assistant-gm-flows, epic-chat-lifecycle-moderation | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
 | epic-assistant-gm-flows, epic-creative-studio | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-assistant-gm-flows, epic-output-control-transforms | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
@@ -1091,15 +1094,15 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 | epic-audio-video-sound (Phase 5) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-audio-video-sound (Phase 6) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-auth | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| epic-auth-access | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| epic-auth-access | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-auth-channel-provisioning | 4 | 0 | 0 | 0 | 0 | 0 | 4 |
 | epic-auth-permissions | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-authoring-creation | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-aux-enrichment-pipeline | 11 | 3 | 3 | 4 | 0 | 0 | 1 |
 | epic-aux-enrichment-pipeline / epic-emotion-avatar-message-binding | 2 | 0 | 1 | 1 | 0 | 0 | 0 |
-| epic-battle-action-systems | 8 | 2 | 0 | 5 | 0 | 0 | 1 |
+| epic-battle-action-systems | 8 | 3 | 0 | 5 | 0 | 0 | 0 |
 | epic-battle-action-systems, epic-chat-lifecycle-moderation | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| epic-battle-integration-gaps | 2 | 1 | 0 | 0 | 0 | 0 | 1 |
+| epic-battle-integration-gaps | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
 | epic-battle-ui | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
 | epic-battle-ui.md | 6 | 0 | 0 | 6 | 0 | 0 | 0 |
 | epic-blog-system | 3 | 1 | 1 | 1 | 0 | 0 | 0 |
@@ -1116,9 +1119,9 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 | epic-character-internal-traits | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-character-internal-traits (D10) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-character-multi-personality | 6 | 0 | 0 | 0 | 0 | 0 | 6 |
-| epic-character-spec | 7 | 0 | 0 | 3 | 0 | 0 | 4 |
+| epic-character-spec | 7 | 1 | 0 | 3 | 0 | 0 | 3 |
 | epic-character-world-setup | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
-| epic-chat-composer-flows | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| epic-chat-composer-flows | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-chat-composer-flows.md | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | epic-chat-composer-flows.md (proposed) | 3 | 0 | 0 | 3 | 0 | 0 | 0 |
 | epic-chat-context-optimization | 4 | 3 | 0 | 0 | 1 | 0 | 0 |
@@ -1127,7 +1130,7 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 | epic-chat-lifecycle-moderation, epic-assistant-gm-flows | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
 | epic-chat-lifecycle-moderation, epic-chat-context-optimization | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
 | epic-chat-privacy.md | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| epic-chat-product-features | 32 | 0 | 0 | 29 | 0 | 0 | 3 |
+| epic-chat-product-features | 32 | 2 | 0 | 29 | 0 | 0 | 1 |
 | epic-chat-product-features.md | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-chat-rich-engagement.md | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-chat-rich-engagement.md (proposed) | 4 | 0 | 0 | 4 | 0 | 0 | 0 |
@@ -1144,7 +1147,7 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 | epic-companion-pet-mount | 3 | 1 | 0 | 2 | 0 | 0 | 0 |
 | epic-config-extensions | 3 | 1 | 0 | 2 | 0 | 0 | 0 |
 | epic-config-extensions.md | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| epic-config-templates | 2 | 1 | 0 | 0 | 0 | 0 | 1 |
+| epic-config-templates | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
 | epic-configs-path-resolution | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-content-hashing-distributed-integrity | 2 | 0 | 1 | 1 | 0 | 0 | 0 |
 | epic-content-hashing-distributed-integrity (cross-cuts with `epic-database-backup-recovery`, `epic-multi-instance-reconciliation`, `epic-federation-swarm-sync`) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
@@ -1154,7 +1157,7 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 | epic-continuous-improvement | 5 | 1 | 0 | 4 | 0 | 0 | 0 |
 | epic-conversation-branching | 3 | 0 | 0 | 1 | 0 | 0 | 2 |
 | epic-core-testing-frameworks | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| epic-crafting-professions | 19 | 5 | 0 | 12 | 0 | 0 | 2 |
+| epic-crafting-professions | 19 | 6 | 0 | 12 | 0 | 0 | 1 |
 | epic-creative-studio | 3 | 1 | 0 | 2 | 0 | 0 | 0 |
 | epic-creative-studio (research sub-area) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-creative-studio.md (MVP Tier 1) | 6 | 0 | 0 | 6 | 0 | 0 | 0 |
@@ -1162,7 +1165,7 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 | epic-cross-platform-portability.md | 5 | 0 | 0 | 5 | 0 | 0 | 0 |
 | epic-crypto | 26 | 12 | 2 | 12 | 0 | 0 | 0 |
 | epic-data-integrity-acid | 6 | 1 | 0 | 4 | 0 | 0 | 1 |
-| epic-database-backup-recovery | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| epic-database-backup-recovery | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-database-backup-recovery.md | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-database-backup-recovery.md (cross: epic-federation-swarm-sync.md, epic-db-asset-snapshot-recovery.md) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-db-asset-snapshot-recovery | 4 | 0 | 0 | 4 | 0 | 0 | 0 |
@@ -1170,7 +1173,7 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 | epic-db-growth-tiered-storage | 4 | 0 | 0 | 0 | 0 | 0 | 4 |
 | epic-deno-support | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-deno-support (future Deno parity) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| epic-deployment-infrastructure | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| epic-deployment-infrastructure | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-deployment-topologies | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-disease-poison | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
 | epic-distributed-compute-sharing | 7 | 0 | 0 | 7 | 0 | 0 | 0 |
@@ -1183,14 +1186,14 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 | epic-embeddable-engine | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-embeddable-engine-game-frontend | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-emergent-narrative-design | 4 | 2 | 0 | 2 | 0 | 0 | 0 |
-| epic-emotion-avatar-message-binding | 7 | 3 | 0 | 2 | 0 | 0 | 2 |
+| epic-emotion-avatar-message-binding | 7 | 5 | 0 | 2 | 0 | 0 | 0 |
 | epic-emotion-avatar-message-binding / epic-character-core-system | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-encryption-foundation | 3 | 2 | 0 | 1 | 0 | 0 | 0 |
 | epic-enemies-monsters | 9 | 0 | 0 | 1 | 0 | 0 | 8 |
 | epic-error-envelope | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-exploration-discovery | 3 | 1 | 0 | 2 | 0 | 0 | 0 |
-| epic-faction-reputation | 6 | 1 | 0 | 1 | 0 | 0 | 4 |
-| epic-federation-swarm-sync | 5 | 0 | 0 | 1 | 0 | 0 | 4 |
+| epic-faction-reputation | 6 | 2 | 0 | 1 | 0 | 0 | 3 |
+| epic-federation-swarm-sync | 5 | 1 | 0 | 1 | 0 | 0 | 3 |
 | epic-federation-swarm-sync.md | 4 | 4 | 0 | 0 | 0 | 0 | 0 |
 | epic-fractal-locations | 13 | 0 | 0 | 0 | 0 | 0 | 13 |
 | epic-frontend-admin | 5 | 4 | 0 | 1 | 0 | 0 | 0 |
@@ -1203,7 +1206,7 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 | epic-frontend-chat-commands.md | 3 | 2 | 0 | 1 | 0 | 0 | 0 |
 | epic-frontend-components.md | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-frontend-emoji-reactions.md | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
-| epic-frontend-gallery | 2 | 0 | 0 | 1 | 0 | 0 | 1 |
+| epic-frontend-gallery | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
 | epic-frontend-gallery, epic-character-core-system | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-frontend-gallery.md | 4 | 2 | 0 | 2 | 0 | 0 | 0 |
 | epic-frontend-gallery.md (Phase 3 Polish) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
@@ -1218,7 +1221,7 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 | epic-game-frontend-scenes.md (parent: epic-embeddable-engine-game-frontend.md) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-generation-flow-control | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-generation-flow-control.md | 5 | 1 | 0 | 4 | 0 | 0 | 0 |
-| epic-gm-shadow-notes | 6 | 2 | 0 | 0 | 0 | 0 | 4 |
+| epic-gm-shadow-notes | 6 | 3 | 0 | 0 | 0 | 0 | 3 |
 | epic-group-chat | 3 | 1 | 0 | 2 | 0 | 0 | 0 |
 | epic-group-chat.md | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-headless-alternative-frontends | 4 | 0 | 0 | 4 | 0 | 0 | 0 |
@@ -1228,22 +1231,22 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 | epic-housing-base-building | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-http-protocol-features | 6 | 0 | 0 | 6 | 0 | 0 | 0 |
 | epic-http-protocol-features.md | 4 | 0 | 0 | 4 | 0 | 0 | 0 |
-| epic-i18n | 11 | 7 | 0 | 3 | 0 | 0 | 1 |
+| epic-i18n | 11 | 8 | 0 | 3 | 0 | 0 | 0 |
 | epic-i18n (Phase 3) | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | epic-immersion-consistency-gate | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | epic-immersion-presentation | 6 | 3 | 0 | 3 | 0 | 0 | 0 |
 | epic-impersonation | 2 | 0 | 2 | 0 | 0 | 0 | 0 |
 | epic-implementation | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| epic-import-export-io | 6 | 1 | 0 | 4 | 0 | 0 | 1 |
+| epic-import-export-io | 6 | 2 | 0 | 4 | 0 | 0 | 0 |
 | epic-import-export-io\ | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-instance-federation | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | epic-inventory | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
-| epic-inventory-ui | 3 | 0 | 0 | 2 | 0 | 0 | 1 |
+| epic-inventory-ui | 3 | 1 | 0 | 2 | 0 | 0 | 0 |
 | epic-inventory-ui.md | 5 | 0 | 0 | 5 | 0 | 0 | 0 |
 | epic-io-formats | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-item-system-extensions | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-item-systems-unification | 16 | 10 | 0 | 6 | 0 | 0 | 0 |
-| epic-items | 11 | 4 | 0 | 6 | 0 | 0 | 1 |
+| epic-items | 11 | 5 | 0 | 6 | 0 | 0 | 0 |
 | epic-items-economy-crafting | 4 | 0 | 0 | 0 | 0 | 0 | 4 |
 | epic-licensing | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-llm-queue | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
@@ -1252,15 +1255,15 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 | epic-local-process-swarm.md | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
 | epic-locations | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-logging | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| epic-logging-telemetry | 5 | 4 | 0 | 0 | 0 | 0 | 1 |
+| epic-logging-telemetry | 5 | 5 | 0 | 0 | 0 | 0 | 0 |
 | epic-logic-reconciliation | 20 | 12 | 0 | 8 | 0 | 0 | 0 |
 | epic-lora-discovery-application | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
-| epic-lore-knowledge | 5 | 3 | 0 | 1 | 0 | 0 | 1 |
+| epic-lore-knowledge | 5 | 4 | 0 | 1 | 0 | 0 | 0 |
 | epic-magic-spell-systems | 3 | 1 | 0 | 2 | 0 | 0 | 0 |
 | epic-math-ai-bridge | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | epic-math-resolution | 5 | 0 | 0 | 0 | 0 | 0 | 5 |
 | epic-mechanics-governance.md | 5 | 2 | 0 | 3 | 0 | 0 | 0 |
-| epic-memory-knowledge-systems | 15 | 5 | 0 | 5 | 0 | 0 | 5 |
+| epic-memory-knowledge-systems | 15 | 8 | 0 | 5 | 0 | 0 | 2 |
 | epic-memory-knowledge-systems, epic-character-core-system | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-memory-knowledge-systems.md | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-memory-systems | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
@@ -1269,7 +1272,7 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 | epic-message-seen-state | 5 | 0 | 0 | 5 | 0 | 0 | 0 |
 | epic-messages | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-middleware-request-lifecycle | 13 | 9 | 2 | 2 | 0 | 0 | 0 |
-| epic-mobile-app | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| epic-mobile-app | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-multi-instance-reconciliation | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
 | epic-multi-session | 4 | 1 | 0 | 3 | 0 | 0 | 0 |
 | epic-multimodal-asset-reuse | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
@@ -1278,10 +1281,10 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 | epic-notification-expansion | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
 | epic-npc-navigation | 3 | 1 | 1 | 1 | 0 | 0 | 0 |
 | epic-npcs | 5 | 0 | 0 | 0 | 1 | 0 | 4 |
-| epic-nsfw-capabilities | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| epic-nsfw-capabilities | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-nsfw-game-mechanics | 5 | 2 | 0 | 3 | 0 | 0 | 0 |
 | epic-nsfw-game-mechanics.md | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| epic-nsfw-integration-gaps | 2 | 1 | 0 | 0 | 0 | 0 | 1 |
+| epic-nsfw-integration-gaps | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
 | epic-nsfw-integration-gaps.md | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
 | epic-nsfw-moderation-priority | 15 | 12 | 0 | 3 | 0 | 0 | 0 |
 | epic-nsfw-ui.md | 4 | 0 | 0 | 4 | 0 | 0 | 0 |
@@ -1290,22 +1293,22 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 | epic-output-control-transforms | 9 | 6 | 0 | 3 | 0 | 0 | 0 |
 | epic-output-control-transforms, epic-chat-lifecycle-moderation | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-party-migration | 10 | 0 | 0 | 1 | 0 | 0 | 9 |
-| epic-performance-dashboard-slo | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| epic-performance-dashboard-slo | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-platform-integrations | 9 | 0 | 0 | 9 | 0 | 0 | 0 |
 | epic-platform-research.md | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | epic-platform-research.md (research) + epic-rag-document-processing.md (impl) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| epic-plugin-extension-points | 3 | 2 | 0 | 0 | 0 | 0 | 1 |
+| epic-plugin-extension-points | 3 | 3 | 0 | 0 | 0 | 0 | 0 |
 | epic-plugin-management-ui.md | 5 | 0 | 0 | 5 | 0 | 0 | 0 |
-| epic-plugin-system | 10 | 0 | 0 | 8 | 0 | 0 | 2 |
+| epic-plugin-system | 10 | 1 | 0 | 8 | 0 | 0 | 1 |
 | epic-plugin-system, epic-assistant-gm-flows | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-plugin-system, epic-plugin-extension-points | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-precompiled-hot-binaries | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
-| epic-profanity-filter | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| epic-profanity-filter | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-prompt-improvement | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
 | epic-prompt-improvement.md | 4 | 0 | 3 | 0 | 0 | 0 | 1 |
 | epic-provider-plugin-ecosystem | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
 | epic-provider-plugin-ecosystem.md | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| epic-quests-encounters | 6 | 2 | 0 | 1 | 1 | 0 | 2 |
+| epic-quests-encounters | 6 | 4 | 0 | 1 | 1 | 0 | 0 |
 | epic-quests-encounters.md | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-rag-assets-unified-storage-and-assistant-flows | 3 | 1 | 0 | 2 | 0 | 0 | 0 |
 | epic-rag-assets-unified-storage-and-assistant-flows.md (recommended as bridge) + epic-rag-document-processing.md (core) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
@@ -1314,12 +1317,12 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 | epic-rag-document-processing.md | 15 | 2 | 1 | 12 | 0 | 0 | 0 |
 | epic-rag-extract-link | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | epic-rag-ui.md | 5 | 0 | 0 | 5 | 0 | 0 | 0 |
-| epic-rarity-extensions | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| epic-relationships | 3 | 0 | 1 | 1 | 0 | 0 | 1 |
+| epic-rarity-extensions | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
+| epic-relationships | 3 | 1 | 1 | 1 | 0 | 0 | 0 |
 | epic-replayability | 4 | 1 | 1 | 2 | 0 | 0 | 0 |
-| epic-resolution-system | 4 | 1 | 0 | 1 | 0 | 0 | 2 |
+| epic-resolution-system | 4 | 3 | 0 | 1 | 0 | 0 | 0 |
 | epic-resource-provision | 12 | 0 | 0 | 12 | 0 | 0 | 0 |
-| epic-rpg-mechanics | 10 | 7 | 0 | 0 | 0 | 0 | 3 |
+| epic-rpg-mechanics | 10 | 9 | 0 | 0 | 0 | 0 | 1 |
 | epic-rpg-mechanics.md | 4 | 0 | 0 | 4 | 0 | 0 | 0 |
 | epic-rpg-patterns | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-rpg-progression.md | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
@@ -1327,16 +1330,16 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 | epic-rpg-wiring-phase3.md | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
 | epic-runtime-integrity-fail-safes | 3 | 0 | 0 | 3 | 0 | 0 | 0 |
 | epic-schema | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| epic-security-sandboxing | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| epic-security-sandboxing | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-security-sandboxing.md | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| epic-shared-schemas | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
+| epic-shared-schemas | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
 | epic-skills | 8 | 1 | 1 | 1 | 0 | 0 | 5 |
 | epic-skills-professions-config | 6 | 0 | 0 | 6 | 0 | 0 | 0 |
 | epic-social-hub.md | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
-| epic-social-interaction | 5 | 1 | 0 | 2 | 0 | 0 | 2 |
+| epic-social-interaction | 5 | 2 | 0 | 2 | 0 | 0 | 1 |
 | epic-social-interaction, NPC/Actor System | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-stealth-crime | 5 | 1 | 0 | 1 | 0 | 0 | 3 |
-| epic-story-mode-ui | 4 | 0 | 0 | 3 | 0 | 0 | 1 |
+| epic-story-mode-ui | 4 | 1 | 0 | 3 | 0 | 0 | 0 |
 | epic-story-mode-ui.md | 6 | 1 | 1 | 3 | 0 | 0 | 1 |
 | epic-task-management-integration | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | epic-terminal-ui | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
@@ -1346,18 +1349,18 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 | epic-testing-qa.md | 6 | 1 | 0 | 5 | 0 | 0 | 0 |
 | epic-testing-qa.md (see also epic-prompt-improvement.md) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-time-scale | 2 | 0 | 1 | 1 | 0 | 0 | 0 |
-| epic-tooling-improvement | 7 | 1 | 0 | 4 | 0 | 0 | 2 |
+| epic-tooling-improvement | 7 | 2 | 0 | 4 | 0 | 0 | 1 |
 | epic-tooling.md | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-transport-expansion | 3 | 0 | 2 | 1 | 0 | 0 | 0 |
 | epic-two-factor-auth | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
 | epic-two-pass-delivery | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | epic-use-case-agentic-workspace | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
 | epic-user-stories | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| epic-visual-novel-mode | 5 | 1 | 0 | 3 | 0 | 0 | 1 |
+| epic-visual-novel-mode | 5 | 2 | 0 | 3 | 0 | 0 | 0 |
 | epic-visual-novel-mode.md | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-wardrobe-avatar-variants.md | 8 | 0 | 0 | 8 | 0 | 0 | 0 |
 | epic-weather-environment | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
-| epic-workflow-engine | 10 | 0 | 0 | 7 | 0 | 0 | 3 |
+| epic-workflow-engine | 10 | 1 | 0 | 7 | 0 | 0 | 2 |
 | epic-world-chat-channels-invites | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-world-chat-channels-invites.md | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-world-diplomacy-karma | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -1366,7 +1369,7 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 | epic-world-locations (config-templates sub-area) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-world-locations (research sub-area) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-world-locations, epic-character-core-system | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| epic-world-management-ui | 2 | 0 | 0 | 1 | 0 | 0 | 1 |
+| epic-world-management-ui | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
 | epic-world-management-ui.md | 5 | 1 | 0 | 4 | 0 | 0 | 0 |
 | epic-world-travel-time | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | epic-worlds-extension | 5 | 0 | 0 | 4 | 0 | 0 | 1 |
@@ -1380,53 +1383,53 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 | NSFW Game Mechanics, Disease & Poison Systems | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | NSFW Game Mechanics, Social Interaction | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | NSFW Game Mechanics, Weather & Environment | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| proposed:epic-3d-avatars | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| proposed:epic-3d-world-map | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| proposed:epic-access-model | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| proposed:epic-3d-avatars | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
+| proposed:epic-3d-world-map | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
+| proposed:epic-access-model | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | proposed:epic-admin-analytics | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| proposed:epic-admin-moderation | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
-| proposed:epic-approval-gates | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| proposed:epic-asset-metadata | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| proposed:epic-admin-moderation | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
+| proposed:epic-approval-gates | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
+| proposed:epic-asset-metadata | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | proposed:epic-asset-thumbnail | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| proposed:epic-attachment-moderation | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
-| proposed:epic-audit-store | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| proposed:epic-auth-middleware | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| proposed:epic-attachment-moderation | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
+| proposed:epic-audit-store | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
+| proposed:epic-auth-middleware | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | proposed:epic-balance-bot | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| proposed:epic-battle-core | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| proposed:epic-branch-simulator | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| proposed:epic-chat-effects-overlays | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| proposed:epic-co-authoring | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| proposed:epic-content-compression | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| proposed:epic-conversation-analytics | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| proposed:epic-cost-governance | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| proposed:epic-cross-device-sync | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| proposed:epic-db-versioning | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| proposed:epic-directors-mode | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| proposed:epic-error-alerting | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| proposed:epic-battle-core | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
+| proposed:epic-branch-simulator | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
+| proposed:epic-chat-effects-overlays | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
+| proposed:epic-co-authoring | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
+| proposed:epic-content-compression | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
+| proposed:epic-conversation-analytics | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
+| proposed:epic-cost-governance | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
+| proposed:epic-cross-device-sync | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
+| proposed:epic-db-versioning | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
+| proposed:epic-directors-mode | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
+| proposed:epic-error-alerting | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | proposed:epic-finetune-export | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | proposed:epic-frontend-strictness | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| proposed:epic-gdpr-data-rights | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| proposed:epic-immersive-scene | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| proposed:epic-knowledge-graph-viz | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| proposed:epic-marketplace | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| proposed:epic-model-dashboard | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| proposed:epic-modular-rules | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| proposed:epic-multimodal-input | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| proposed:epic-npc-mail | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| proposed:epic-offline-pwa | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| proposed:epic-output-control-transforms | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
-| proposed:epic-platform-support | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| proposed:epic-plot-autopilot | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| proposed:epic-procedural-assets | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| proposed:epic-gdpr-data-rights | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
+| proposed:epic-immersive-scene | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
+| proposed:epic-knowledge-graph-viz | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
+| proposed:epic-marketplace | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
+| proposed:epic-model-dashboard | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
+| proposed:epic-modular-rules | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
+| proposed:epic-multimodal-input | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
+| proposed:epic-npc-mail | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
+| proposed:epic-offline-pwa | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
+| proposed:epic-output-control-transforms | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
+| proposed:epic-platform-support | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
+| proposed:epic-plot-autopilot | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
+| proposed:epic-procedural-assets | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | proposed:epic-public-feed | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| proposed:epic-rag-adapter | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| proposed:epic-rbac-tenancy | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| proposed:epic-regex-extraction | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| proposed:epic-replayability | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| proposed:epic-rag-adapter | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
+| proposed:epic-rbac-tenancy | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
+| proposed:epic-regex-extraction | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
+| proposed:epic-replayability | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | proposed:epic-rpg-action-economy | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| proposed:epic-scheduler | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| proposed:epic-shared-worlds | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| proposed:epic-user-engagement | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| proposed:epic-scheduler | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
+| proposed:epic-shared-worlds | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
+| proposed:epic-user-engagement | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | review-dev-2026-08-26-late-merges | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
 | review-dev-2026-08-26-security-data-integrity-merges | 5 | 1 | 0 | 4 | 0 | 0 | 0 |
 | RPG Mechanics & Extensible Game Systems | 7 | 2 | 0 | 5 | 0 | 0 | 0 |
@@ -1434,7 +1437,7 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 | Visual Novel Mode; Immersion & Presentation | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Wardrobe / Loadout Avatar Variants | 8 | 0 | 0 | 8 | 0 | 0 | 0 |
 | World & Locations | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| (unbound) | 1505 | 552 | 57 | 552 | 54 | 0 | 290 |
+| (unbound) | 1505 | 560 | 57 | 552 | 50 | 0 | 286 |
 
 ## Ticket detail
 
@@ -1472,7 +1475,7 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 - `access` (3): EPIC-ASSISTANT-ENTITY-ACCESS, EPIC-AUTH-ACCESS, EPIC-CHARACTER-NPC-LORE-ACCESS
 - `access-control` (3): EPIC-CHAT-PRIVACY, EPIC-RAG-ENTERPRISE, EPIC-WORLD-CHAT-CHANNELS-INVITES
 - `accessibility` (3): EPIC-ACCESSIBILITY-INPUT, EPIC-I18N, TASK-TOUCH-GESTURES
-- `achievements` (2): EPIC-ACHIEVEMENTS, EPIC-RPG-CONTENT-SYSTEMS
+- `achievements` (3): EPIC-ACHIEVEMENTS, EPIC-RPG-CONTENT-SYSTEMS, TASK-ACHIEVEMENTS-ENUM-REVIVAL-PROMOTE-SERVICE-LAYER-TO-DB-BARREL
 - `acid` (1): EPIC-DATA-INTEGRITY-PHASE1
 - `acme` (1): EPIC-CERTIFICATE-AND-TLS-MANAGEMENT
 - `action-economy` (1): EPIC-MATH-ECONOMY
@@ -1696,6 +1699,7 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 - `database` (8): EPIC-DB-ASSET-SNAPSHOT-RECOVERY, EPIC-DB-CONTENT-VERSIONING, EPIC-DB-GROWTH-TIERED-STORAGE, EPIC-SCHEMA, TASK-ASSET-LIFECYCLE-ARCHIVE-FLAG-ORPHAN-PRUNE-QUOTA-EVICTION, TASK-BACKUP-CONSISTENCY-VACUUM-INTO-SNAPSHOTS-PLUS-ARCHIVE-DBS, TASK-COLD-MESSAGE-ARCHIVAL-TO-ARCHIVE-DB-FILE, TASK-EMBEDDING-AND-TELEMETRY-RETENTION-POLICIES
 - `day-night` (1): EPIC-TIME-SCALE
 - `db` (9): BUG-DB-GUARD-TRIGGERS-BYPASSED-ON-UPDATE-003-005, EPIC-DB-MIGRATION-COMPACTION, TASK-019-ENFORCE-STATE-MACHINE-VALIDATORS-AT-WRITE, TASK-DELETE-DEAD-MIGRATION-HELPERS-TS-BOOLTOENUM, TASK-GATE-BRANCHES-DISPLAY-INVARIANT-ITEM-INSTANCE-STATE, TASK-GATE-LICENSING-TRIPLE-VIA-LICENSERIGHTSVALIDATOR, TASK-GATE-SHADOW-NOTES-STATUS-X-VISIBILITY-COMPOSITE, TASK-GATE-WORLD-LORE-LIFECYCLE-CONFIDENCE-DISTORTION-DISPUTED-TRI, TASK-GATE-WORLDS-RPG-7-COL-FLAGS-THROUGH-MASTER-MECHANICS-VALIDAT
+- `db-types` (1): TASK-ACHIEVEMENTS-ENUM-REVIVAL-PROMOTE-SERVICE-LAYER-TO-DB-BARREL
 - `dead-code` (2): EPIC-E2E-INTEGRATION-TESTING, TASK-DELETE-DEAD-MIGRATION-HELPERS-TS-BOOLTOENUM
 - `debt` (1): TASK-PLAN-INDEX-ORPHAN-PHANTOM-CLEANUP
 - `debuffs` (1): EPIC-RPG-PROGRESSION
@@ -1770,6 +1774,7 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 - `enterprise` (1): EPIC-RAG-ENTERPRISE
 - `entities` (2): EPIC-ACTORS, EPIC-RAG-EXTRACT-LINK
 - `entity-generation` (1): EPIC-ENTITY-GENERATION-WORKFLOWS
+- `enum-consolidation` (1): TASK-ACHIEVEMENTS-ENUM-REVIVAL-PROMOTE-SERVICE-LAYER-TO-DB-BARREL
 - `environment` (1): EPIC-WEATHER-ENVIRONMENT
 - `epic-linkage` (1): TASK-BACKLOG-UNTRIAGED-ADVISORY-ORPHAN-SWEEP-2026-09-25
 - `epics` (1): EPIC-DOCS-VS-PLAN-GAP-AUDIT-2026-09-19
@@ -2136,7 +2141,7 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 - `recipe-matrix` (1): TASK-COMFYUI-FIRST-CLASS-LLAMA-SWAP-RECIPE-STANDALONE-VS-PROXY-MA
 - `reconciliation` (4): EPIC-API-TASK-OFFLOADING, EPIC-CHAT-LIFECYCLE-MODERATION, EPIC-CROSS-LAYER-RECONCILIATION, EPIC-DOCS-RECONCILIATION
 - `reconnection` (1): EPIC-GAME-ENGINE-SDKS
-- `recovery` (1): EPIC-DB-ASSET-SNAPSHOT-RECOVERY
+- `recovery` (2): EPIC-DB-ASSET-SNAPSHOT-RECOVERY, TASK-ACHIEVEMENTS-ENUM-REVIVAL-PROMOTE-SERVICE-LAYER-TO-DB-BARREL
 - `recursion` (1): EPIC-FRACTAL-LOCATIONS
 - `redis` (1): EPIC-API-RATE-LIMITING
 - `refactor` (2): EPIC-FILE-SPLITTING, TASK-BACKLOG-SIZE-STRICT-REGRESSION-RECOVERY
@@ -2444,6 +2449,7 @@ Total tickets: **2948** — untagged: **2520** — unbound to epic: **1505**
 - ``epic-memory-propagation.md`` (1): TASK-TIMELINE-MEMORY-INJECTION
 - ``epic-rarity-extensions.md`` (1): TASK-TIMELINE-RARITY-MULTIPLIER
 - ``epic-timeline-system.md`` (4): TASK-CROSS-STORY-PROPAGATION, TASK-TIMELINE-BRANCHING-UI, TASK-TIMELINE-ID-WORLD-TIMELINE-EVENTS, TASK-TIMELINE-SELECTION-API
+- `achievements` (1): TASK-ACHIEVEMENTS-ENUM-REVIVAL-PROMOTE-SERVICE-LAYER-TO-DB-BARREL
 - `AO NSFW Game Mechanics` (13): TASK-NSFW-BODY-PHYSICAL, TASK-NSFW-ENCOUNTER-SYSTEM, TASK-NSFW-FANTASY-KINK, TASK-NSFW-INTIMACY-SYSTEM, TASK-NSFW-LOCATION-ENVIRONMENT, TASK-NSFW-MOOD-EMOTIONAL, TASK-NSFW-PHEROMONES-CHEMISTRY, TASK-NSFW-PREGNANCY-REPRODUCTION, TASK-NSFW-REPUTATION-SOCIAL, TASK-NSFW-SEDUCTION-DESIRE, TASK-NSFW-SKILLS-EXPERIENCE, TASK-NSFW-SPECIES-MECHANICS, TASK-NSFW-TRAUMA-RECOVERY
 - `Asset Platform Capabilities (Messenger/Social Patterns)` (7): TASK-ASSET-PLATFORM-B1-CONTENT-FOUNDATION, TASK-ASSET-PLATFORM-B2-CHAT-UPLOAD-UX-PATTERNS, TASK-ASSET-PLATFORM-B3-LIFECYCLE-GOVERNANCE, TASK-ASSET-PLATFORM-B4-MACHINE-READABLE-SURFACE, TASK-ASSET-PLATFORM-B5-DETERMINISTIC-ASSET-OPS, TASK-DECISION-AV10-ALBUM-MESSAGE-KIND-AXIS, TASK-DECISION-AV8-AUX-CAPTIONING-ROLE
 - `Asset Transform Editing + Metadata` (9): TASK-ALPINE-CROPPER-COMPONENT-AND-INTEGRATIONS, TASK-ASSET-TRANSFORMS-MIGRATION-AND-TRANSFORMCONTEXT-ENUM, TASK-DECISION-AV3-TRANSFORMS-STORAGE-CANON, TASK-DERIVE-BAKE-ENDPOINT-SERVER-SIDE-CROP, TASK-RE-ROLL-TRANSFORM-INHERITANCE-FROM-PARENT-AVATAR, TASK-RENDER-PATH-RESOLVETRANSFORM-IN-CHAT-BUBBLES, TASK-TRANSFORM-ROUTES-VALIDATION-AND-OWNERSHIP-AUTHZ, TASK-TRANSFORM-SERVICE-UPSERT-READ-DERIVED-DEFAULT, TASK-TRANSFORM-TESTS-IDEMPOTENCY-PRECEDENCE-AUTHZ

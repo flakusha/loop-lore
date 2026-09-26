@@ -10170,6 +10170,10 @@
   "src/db/column-types.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-achievements-enum-revival-promote-service-layer-to-db-barrel.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-fix-actor-item-value-type.md"
     },
     {
@@ -10790,6 +10794,10 @@
     }
   ],
   "src/db/enums-story/rpg.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-achievements-enum-revival-promote-service-layer-to-db-barrel.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-adopt-state-machine-framework-in-runtime-status-writes.md"
@@ -12416,6 +12424,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-achievements-enum-revival-promote-service-layer-to-db-barrel.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-actor-item-service.md"
     },
     {
@@ -13245,6 +13257,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-refactor-typed-kysely-upsert-by-unique-key-helpers.md"
+    }
+  ],
+  "src/db/validation/db-schemas.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-achievements-enum-revival-promote-service-layer-to-db-barrel.md"
     }
   ],
   "src/db/validators/enforce.ts": [
@@ -28951,6 +28969,10 @@
   ],
   "src/rpg/achievements/service/types.ts": [
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-achievements-enum-revival-promote-service-layer-to-db-barrel.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/achievements.md"
     }
@@ -33009,6 +33031,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-character-world-setup.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-achievements-enum-revival-promote-service-layer-to-db-barrel.md"
     },
     {
       "kind": "ticket",

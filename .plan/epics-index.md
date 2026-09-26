@@ -45,8 +45,8 @@
 | ⬜ Not Started | 3D Asset Generation (Future) | Low | Very High | 25 | [epic-3d-generation.md](/.plan/epics/epic-3d-generation.md) |
 | 🟡 In Progress | Accessibility & Input Systems | P0 — Critical | High | 2 | [epic-accessibility-input.md](/.plan/epics/epic-accessibility-input.md) |
 | Not Started | Actor Autonomy & Story Auto-Drive | High | Large | 8 | [epic-actor-autonomy-story-drive.md](/.plan/epics/epic-actor-autonomy-story-drive.md) |
-| ✅ Core shipped (2026-09-25) — event, route, cascade filter, composer UI, gate interlock on dev; slot release + beat budget open in `TASK-turn-skip-cascade` | Actor Turn Skip ('Continue' Without Breaking the Story) | Medium | Small–Medium | 6 | [epic-actor-turn-skip.md](/.plan/epics/epic-actor-turn-skip.md) |
-| 🚧 Core landed (2026-09-25) — CRUD services + routes + card import/export on dev; versioning superseded by data-migrations runner; 2 of 4 bucket tickets closed, 2 open pending AC verification | Actors & Entity System | High | High | 12 | [epic-actors.md](/.plan/epics/epic-actors.md) |
+| done | Actor Turn Skip ('Continue' Without Breaking the Story) | Medium | Small–Medium | 6 | [epic-actor-turn-skip.md](/.plan/epics/epic-actor-turn-skip.md) |
+| done | Actors & Entity System | High | High | 12 | [epic-actors.md](/.plan/epics/epic-actors.md) |
 | 🟢 Near-complete — 12 tabs + user Flag button/dialog shipped; remaining gap: Revision History | Admin Panel & Dashboard | Medium | Medium | 0 | [epic-frontend-admin.md](/.plan/epics/epic-frontend-admin.md) |
 | ⬜ Not Started | Age Gate & Content Warnings | Medium | Medium | 0 | [epic-frontend-age-gate.md](/.plan/epics/epic-frontend-age-gate.md) |
 | Not Started | Anonymity & Decentralization — Epic | medium | Medium | 27 | [epic-anonymity-decentralization.md](/.plan/epics/epic-anonymity-decentralization.md) |
@@ -232,12 +232,12 @@
 | ⬜ Not Started | Matrix Integration | Medium | High | 14 | [epic-matrix-integration.md](/.plan/epics/epic-matrix-integration.md) |
 | ⬜ Not Started | Mechanics Governance — Per-World Config, Control Levels & Plugin API | Medium | Medium | 5 | [epic-mechanics-governance.md](/.plan/epics/epic-mechanics-governance.md) |
 | ⬜ Not Started | Memory Profiling & Budgets | High | High | 12 | [epic-memory-profiling-budgets.md](/.plan/epics/epic-memory-profiling-budgets.md) |
-| Not Started | Mesh Federation — Encrypted Content Sharing, Quota & Coordinator Server | medium | Medium | 0 | [epic-mesh-federation-content-sharing.md](/.plan/epics/epic-mesh-federation-content-sharing.md) |
+| done | Mesh Federation — Encrypted Content Sharing, Quota & Coordinator Server | medium | Medium | 0 | [epic-mesh-federation-content-sharing.md](/.plan/epics/epic-mesh-federation-content-sharing.md) |
 | ⬜ Not Started | Message Seen-State & Viewership Ledger | High | Large | 0 | [epic-message-seen-state.md](/.plan/epics/epic-message-seen-state.md) |
 | ⬜ Not Started | Messages & Message Pipeline | High | Medium | 0 | [epic-messages.md](/.plan/epics/epic-messages.md) |
 | 🟢 Complete (reopened 2026-08-27 for review; defects fixed in worktree merge-review-followups) | Middleware — Request Lifecycle, Idempotency & Async Results | Medium | Large | 0 | [epic-middleware-request-lifecycle.md](/.plan/epics/epic-middleware-request-lifecycle.md) |
 | Not Started | Mini-Games: Database Schema Design | medium | Medium | 0 | [epic-mini-games-db.md](/.plan/epics/epic-mini-games-db.md) |
-| Not Started | Mini-Games: Deep Mechanics & Game-Specific Designs | medium | Medium | 0 | [epic-mini-games-mechanics.md](/.plan/epics/epic-mini-games-mechanics.md) |
+| done | Mini-Games: Deep Mechanics & Game-Specific Designs | medium | Medium | 0 | [epic-mini-games-mechanics.md](/.plan/epics/epic-mini-games-mechanics.md) |
 | Draft | Mini-Games: Design Document | medium | Medium | 0 | [epic-mini-games-design.md](/.plan/epics/epic-mini-games-design.md) |
 | Draft | Mini-Games: Expanded Design — UI/UX, Flow, & Deep Mechanics | medium | Medium | 0 | [epic-mini-games-expanded.md](/.plan/epics/epic-mini-games-expanded.md) |
 | Not Started | Mini-Games: UI Components & API Contracts | medium | Medium | 0 | [epic-mini-games-ui-api.md](/.plan/epics/epic-mini-games-ui-api.md) |
@@ -283,7 +283,7 @@
 | ⬜ Not Started | RPG Progression — Traits, Skills & Status Effects | Medium | High | 3 | [epic-rpg-progression.md](/.plan/epics/epic-rpg-progression.md) |
 | ⬜ Not Started | RPG Skills, Professions & Config Templates | High | High | 9 | [epic-skills-professions-config.md](/.plan/epics/epic-skills-professions-config.md) |
 | 🟡 In Progress (7 services wired + quest consolidation `51a7bc01` 2026-08-14; crafting/trade/battle execution shipped `49ee5c1a` 2026-08-18) | RPG Wiring Completion — Phase 3 | High | High | 0 | [epic-rpg-wiring-phase3.md](/.plan/epics/epic-rpg-wiring-phase3.md) |
-| Not Started | Runtime Integrity, Crash Recovery & Fail-Safes | medium | Medium | 0 | [epic-runtime-integrity-fail-safes.md](/.plan/epics/epic-runtime-integrity-fail-safes.md) |
+| done | Runtime Integrity, Crash Recovery & Fail-Safes | medium | Medium | 0 | [epic-runtime-integrity-fail-safes.md](/.plan/epics/epic-runtime-integrity-fail-safes.md) |
 | 🟡 In Progress (tasks 1-2 complete) | Script Migration to Modular Architecture | Medium | Medium | 0 | [epic-script-migration.md](/.plan/epics/epic-script-migration.md) |
 | Not Started | Security & Sandboxing — Epic | medium | Medium | 27 | [epic-security-sandboxing.md](/.plan/epics/epic-security-sandboxing.md) |
 | Not Started | Security & Sandboxing — Quick Reference | High | High | 0 | [epic-security-sandboxing-quickref.md](/.plan/epics/epic-security-sandboxing-quickref.md) |
@@ -652,7 +652,7 @@ Long-horizon vision for 3D asset generation and rendering. This epic covers:
 
 ### Actor Turn Skip ('Continue' Without Breaking the Story)
 
-- **Status:** ✅ Core shipped (2026-09-25) — event, route, cascade filter, composer UI, gate interlock on dev; slot release + beat budget open in `TASK-turn-skip-cascade`
+- **Status:** done
 - **Priority:** Medium
 - **Effort:** Small–Medium
 - **Type:** Feature Epic
@@ -661,7 +661,7 @@ Long-horizon vision for 3D asset generation and rendering. This epic covers:
 
 ### Actors & Entity System
 
-- **Status:** 🚧 Core landed (2026-09-25) — CRUD services + routes + card import/export on dev; versioning superseded by data-migrations runner; 2 of 4 bucket tickets closed, 2 open pending AC verification
+- **Status:** done
 - **Priority:** High
 - **Effort:** High
 - **Type:** Foundation Epic
@@ -2437,7 +2437,7 @@ Per-component memory tracking with heap, RSS, and GC pressure targets, leak dete
 
 ### Mesh Federation — Encrypted Content Sharing, Quota & Coordinator Server
 
-- **Status:** Not Started
+- **Status:** done
 - **Priority:** medium
 - **Effort:** Medium
 - **Type:** epic
@@ -2482,7 +2482,7 @@ Per-component memory tracking with heap, RSS, and GC pressure targets, leak dete
 
 ### Mini-Games: Deep Mechanics & Game-Specific Designs
 
-- **Status:** Not Started
+- **Status:** done
 - **Priority:** medium
 - **Effort:** Medium
 - **Type:** epic
@@ -2906,7 +2906,7 @@ Real-time observability dashboard combining benchmarking results, live telemetry
 
 ### Runtime Integrity, Crash Recovery & Fail-Safes
 
-- **Status:** Not Started
+- **Status:** done
 - **Priority:** medium
 - **Effort:** Medium
 - **Type:** epic
