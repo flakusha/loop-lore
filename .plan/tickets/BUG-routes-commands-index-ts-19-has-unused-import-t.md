@@ -33,7 +33,7 @@ Fixed in commit `4a1f56b8` (fix(plan): resolve Bucket X build integrity):
 
 `src/routes/commands/index.ts:19` now imports only `Elysia`; the unused Elysia TypeBox builder `t` has been removed. The route handlers continue to work without a behavior change — all request bodies keep their existing primitive schemas (`ErrorResponse`, `SuccessResponse`) imported from `../../validation/schemas/primitives`.
 
-Bucket X close-out: `.plan/backlog/bucket-x-build-integrity-close-out-2026-09-03.md`.
+Bucket X close-out history: `.plan/backlog/open-closed.md` (section Retired 2026-09-18); the standalone close-out doc was pruned 2026-09-26.
 
 git issue: 2226309
 
