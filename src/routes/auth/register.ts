@@ -6,63 +6,13 @@ import type { Config, } from "../../config/schema";
 import { ensureActorKey, getSmk, isEncryptionEnabled, } from "../../crypto";
 import { UserRole, UserStatus, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import { insertUnique, } from "../../db/upsert-helpers";
 import type { TranslatorFn, } from "../../i18n/types";
 import type { RateLimiter, } from "../../middleware/rate-limit";
 import { uid, } from "../../utils";
 import { HttpStatus, } from "../http-utils";
 import { createSessionAndCookie, } from "./session";
 import { errorResponse, getClientIp, parseCredentials, rateLimitHtml, registerLimiter, } from "./shared";
-
-/**
- * Hash the password and insert the user row + mirror actor.
- * @param database
- * @param username
- * @param password
- */
-async function insertRegisteredUser(
-  database: Kysely<DB>,
-  username: string,
-  password: string,
-): Promise<string> {
-  const passwordHash = await Bun.password.hash(password,);
-  const userId = uid();
-
-  await database
-    .insertInto("users",)
-    .values({
-      id: userId,
-      username,
-      display_name: username,
-      password_hash: passwordHash,
-      role: UserRole.User,
-      status: UserStatus.Active,
-      settings: "{}",
-    },)
-    .execute();
-
-  await database
-    .insertInto("actors",)
-    .values({
-      id: userId,
-      actor_type: "user",
-      display_name: username,
-      user_id: userId,
-      owner_id: userId,
-      agent_type: "none",
-      settings: "{}",
-      import_spec: "raw",
-      data_source_format: "json",
-      data_raw: null,
-      format_version: 0,
-    },)
-    .execute();
-
-  if (isEncryptionEnabled()) {
-    const smk = getSmk()!;
-    await ensureActorKey({ database, actorId: userId, smk, },);
-  }
-  return userId;
-}
 
 /**
  * Enforce registration-open + rate-limit gates.
@@ -157,17 +107,55 @@ async function handleRegister(
     );
   }
 
-  const existing = await database
-    .selectFrom("users",)
-    .select(["id",],)
-    .where("username", "=", username,)
-    .executeTakeFirst();
+  // Username uniqueness: the previous SELECT-then-INSERT left a race
+  // window where two concurrent registrations of the same username both
+  // passed the existence check, then the second hit the unique
+  // constraint and bubbled an uncaught 500. The fix collapses the
+  // check + insert into a single INSERT ... ON CONFLICT (username) DO
+  // NOTHING via `insertUnique`; "skipped" is the authoritative answer
+  // when a concurrent winner already claimed the username.
+  const userId = uid();
+  const passwordHash = await Bun.password.hash(password,);
+  const userResult = await insertUnique(
+    database,
+    "users",
+    {
+      id: userId,
+      username,
+      display_name: username,
+      password_hash: passwordHash,
+      role: UserRole.User,
+      status: UserStatus.Active,
+      settings: "{}",
+    },
+    ["username",] as const,
+  );
 
-  if (existing) {
+  if (userResult === "skipped") {
     return errorResponse(request, HttpStatus.Conflict, "auth.usernameTaken", t, "Username already taken.",);
   }
 
-  const userId = await insertRegisteredUser(database, username, password,);
+  await database
+    .insertInto("actors",)
+    .values({
+      id: userId,
+      actor_type: "user",
+      display_name: username,
+      user_id: userId,
+      owner_id: userId,
+      agent_type: "none",
+      settings: "{}",
+      import_spec: "raw",
+      data_source_format: "json",
+      data_raw: null,
+      format_version: 0,
+    },)
+    .execute();
+
+  if (isEncryptionEnabled()) {
+    const smk = getSmk()!;
+    await ensureActorKey({ database, actorId: userId, smk, },);
+  }
   return createSessionAndCookie(request, database, config, userId, UserRole.User, ip, t,);
 }
 
