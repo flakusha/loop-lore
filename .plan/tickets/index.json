@@ -381,6 +381,19 @@
     "git_issue": "821e0d1",
     "status": "done"
   },
+  "BUG-ASSISTANT-INTENT-REGEXES-HIJACK-NORMAL-CHAT-MESSAGES": {
+    "hash": "9bb9cbf",
+    "git_issue": "9bb9cbf",
+    "extid": "BUG-ASSISTANT-INTENT-REGEXES-HIJACK-NORMAL-CHAT-MESSAGES",
+    "type": "BUG",
+    "title": "assistant intent regexes hijack normal chat messages",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-assistant-intent-regexes-hijack-normal-chat-messages.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-AUDIT-PANEL-DETAILS-NOT-EXPANDABLE": {
     "hash": "ea31566",
     "git_issue": "ea31566",
@@ -1657,6 +1670,19 @@
     "source": ".plan/tickets/BUG-check-parallel-gpg-preflight-crashes-on-undefined-m.md",
     "status": "done"
   },
+  "BUG-CHECK-RUNNER-GATE-LABEL-RENAME-BREAKS-CHECK-PARALLEL-GATES-T": {
+    "hash": "f31d786",
+    "git_issue": "f31d786",
+    "extid": "BUG-CHECK-RUNNER-GATE-LABEL-RENAME-BREAKS-CHECK-PARALLEL-GATES-T",
+    "type": "BUG",
+    "title": "check runner gate label rename breaks check-parallel.gates.test.mjs",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-check-runner-gate-label-rename-breaks-check-parallel-gates-t.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-CLASSIFY-IN-RESPONSE-HEADER-POLICY-USES-CASE-SENSITIVE-CONTE": {
     "hash": "878986d",
     "git_issue": "878986d",
@@ -2304,6 +2330,19 @@
     "git_issue": "76cbe80",
     "status": "done"
   },
+  "BUG-ENTITY-TEMPLATE-POSITION-CONFIG-UNVALIDATED-TYPOS-SILENTLY-B": {
+    "hash": "7d9c2dd",
+    "git_issue": "7d9c2dd",
+    "extid": "BUG-ENTITY-TEMPLATE-POSITION-CONFIG-UNVALIDATED-TYPOS-SILENTLY-B",
+    "type": "BUG",
+    "title": "entity template position config unvalidated typos silently become after",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-entity-template-position-config-unvalidated-typos-silently-b.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-EXAMPLE-DIALOGUE-MES-EXAMPLE-FEW-SHOT-NEVER-INJECTED-INCLUDE": {
     "hash": "6b6c898",
     "extid": "BUG-EXAMPLE-DIALOGUE-MES-EXAMPLE-FEW-SHOT-NEVER-INJECTED-INCLUDE",
@@ -2329,6 +2368,19 @@
     "tags": [],
     "source": ".plan/tickets/BUG-executereversal-and-reviewappeal-do-not-exclude-soft-deleted.md",
     "status": "done"
+  },
+  "BUG-EXPORT-PROGRESS-STREAM-TEST-LOST-STREAM-CONTRACT-ASSERTION": {
+    "hash": "73e9fe0",
+    "git_issue": "73e9fe0",
+    "extid": "BUG-EXPORT-PROGRESS-STREAM-TEST-LOST-STREAM-CONTRACT-ASSERTION",
+    "type": "BUG",
+    "title": "export progress stream test lost stream contract assertion",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-export-progress-stream-test-lost-stream-contract-assertion.md",
+    "status": "⬜ Not Started"
   },
   "BUG-EXPORT-PROGRESS-STREAM-TEST-STATUS-ASSERTION-IS-FLAKY": {
     "hash": "2b8da26",
@@ -2812,6 +2864,32 @@
     "source": ".plan/tickets/BUG-gmnotessection-injects-shadow-notes-into-all-actors-prompts.md",
     "status": "done"
   },
+  "BUG-GOVERNANCE-429-RESPONSES-MISSING-RATELIMIT-RETRY-AFTER-HEADE": {
+    "hash": "3d318f8",
+    "git_issue": "3d318f8",
+    "extid": "BUG-GOVERNANCE-429-RESPONSES-MISSING-RATELIMIT-RETRY-AFTER-HEADE",
+    "type": "BUG",
+    "title": "governance 429 responses missing RateLimit Retry-After headers",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-governance-429-responses-missing-ratelimit-retry-after-heade.md",
+    "status": "⬜ Not Started"
+  },
+  "BUG-GOVERNANCE-429S-DOUBLE-COUNTED-IN-TELEMETRY": {
+    "hash": "ba9949e",
+    "git_issue": "ba9949e",
+    "extid": "BUG-GOVERNANCE-429S-DOUBLE-COUNTED-IN-TELEMETRY",
+    "type": "BUG",
+    "title": "governance 429s double counted in telemetry",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-governance-429s-double-counted-in-telemetry.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-GPG-UNLOCK-WARM-NEVER-POPULATED-AGENT-CACHE-ASSERTGPGUNLOCKE": {
     "hash": "d121328",
     "git_issue": "d121328",
@@ -3240,6 +3318,19 @@
     "source": ".plan/tickets/BUG-key-rotation-noop-orphans-history.md",
     "git_issue": "966f256",
     "status": "done"
+  },
+  "BUG-KEYNAV-STALE-UNSUBSCRIBE-DELETES-LIVE-HANDLER-SET": {
+    "hash": "a5286e6",
+    "git_issue": "a5286e6",
+    "extid": "BUG-KEYNAV-STALE-UNSUBSCRIBE-DELETES-LIVE-HANDLER-SET",
+    "type": "BUG",
+    "title": "keynav stale unsubscribe deletes live handler set",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-keynav-stale-unsubscribe-deletes-live-handler-set.md",
+    "status": "⬜ Not Started"
   },
   "BUG-LEADER-AND-SWARM-TOPOLOGIES-LACK-SIMULTANEOUS-WRITE-ARBITRAT": {
     "hash": "b760e48",
@@ -3695,6 +3786,32 @@
     "tags": [],
     "source": ".plan/tickets/BUG-moderatecomment-has-no-authorization-any-caller-can-change-a.md",
     "status": "done"
+  },
+  "BUG-MUSIC-LINKS-PANEL-SENDS-EXPLICIT-NULL-SECTIONID-CAUSING-422-": {
+    "hash": "05367bf",
+    "git_issue": "05367bf",
+    "extid": "BUG-MUSIC-LINKS-PANEL-SENDS-EXPLICIT-NULL-SECTIONID-CAUSING-422-",
+    "type": "BUG",
+    "title": "music links panel sends explicit null sectionId causing 422 on every add",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-music-links-panel-sends-explicit-null-sectionid-causing-422-.md",
+    "status": "⬜ Not Started"
+  },
+  "BUG-MUSIC-LINKS-PANEL-STALE-AFTER-IN-PAGE-CHAT-SWITCH": {
+    "hash": "93521c5",
+    "git_issue": "93521c5",
+    "extid": "BUG-MUSIC-LINKS-PANEL-STALE-AFTER-IN-PAGE-CHAT-SWITCH",
+    "type": "BUG",
+    "title": "music links panel stale after in-page chat switch",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-music-links-panel-stale-after-in-page-chat-switch.md",
+    "status": "⬜ Not Started"
   },
   "BUG-MUSIC-LINKS-POST-BODY-CHATID-IS-REQUIRED-BUT-IGNORED-DEAD-SC": {
     "hash": "63e7492",
@@ -4312,6 +4429,32 @@
     "source": ".plan/tickets/BUG-put-messages-id-variant-silently-returns-200-with-no-variant.md",
     "status": "done"
   },
+  "BUG-RATE-LIMIT-IN-MEMORY-STORE-NEVER-EVICTS-IDLE-KEYS": {
+    "hash": "7c53777",
+    "git_issue": "7c53777",
+    "extid": "BUG-RATE-LIMIT-IN-MEMORY-STORE-NEVER-EVICTS-IDLE-KEYS",
+    "type": "BUG",
+    "title": "rate limit in-memory store never evicts idle keys",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-rate-limit-in-memory-store-never-evicts-idle-keys.md",
+    "status": "⬜ Not Started"
+  },
+  "BUG-RATE-LIMIT-POLICIES-STARVE-NORMAL-CHAT-TRAFFIC-WITH-429S": {
+    "hash": "07332c9",
+    "git_issue": "07332c9",
+    "extid": "BUG-RATE-LIMIT-POLICIES-STARVE-NORMAL-CHAT-TRAFFIC-WITH-429S",
+    "type": "BUG",
+    "title": "rate limit policies starve normal chat traffic with 429s",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-rate-limit-policies-starve-normal-chat-traffic-with-429s.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-RATE-LIMIT-SLIDING-WINDOW-EXPIRY-USES-CUTOFF-OFF-BY-ONE-RETA": {
     "hash": "70472f7",
     "git_issue": "70472f7",
@@ -4826,6 +4969,19 @@
     "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md",
     "status": "done"
   },
+  "BUG-SLASH-AUTOCOMPLETE-REGEX-NOT-CARET-ANCHORED-SWALLOWS-ENTER": {
+    "hash": "8a3b90e",
+    "git_issue": "8a3b90e",
+    "extid": "BUG-SLASH-AUTOCOMPLETE-REGEX-NOT-CARET-ANCHORED-SWALLOWS-ENTER",
+    "type": "BUG",
+    "title": "slash autocomplete regex not caret anchored swallows enter",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-slash-autocomplete-regex-not-caret-anchored-swallows-enter.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-SMART-REGEN-STYLE-NOT-THREADED-THROUGH": {
     "hash": "pending",
     "extid": "BUG-SMART-REGEN-STYLE-NOT-THREADED-THROUGH",
@@ -5272,6 +5428,19 @@
     "status": "done",
     "git_issue": "18797fe"
   },
+  "BUG-TURN-SKIP-FIRES-GENERATION-WITHOUT-CATCH-AND-ON-DEDUPED-ADVA": {
+    "hash": "5c7ec8c",
+    "git_issue": "5c7ec8c",
+    "extid": "BUG-TURN-SKIP-FIRES-GENERATION-WITHOUT-CATCH-AND-ON-DEDUPED-ADVA",
+    "type": "BUG",
+    "title": "turn skip fires generation without catch and on deduped advance",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-turn-skip-fires-generation-without-catch-and-on-deduped-adva.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-TURN-STATE-BLIND-READ-MODIFY-WRITE-LOST-UPDATES-ON-CONCURREN": {
     "hash": "02abf8a",
     "extid": "BUG-TURN-STATE-BLIND-READ-MODIFY-WRITE-LOST-UPDATES-ON-CONCURREN",
@@ -5532,6 +5701,19 @@
     "tags": [],
     "source": ".plan/tickets/BUG-whitenote-ui-types-rejected-422.md",
     "status": "done"
+  },
+  "BUG-WORKFLOW-CONFIRM-SESSION-TREATS-OPTIONAL-STEPS-AS-REQUIRED": {
+    "hash": "4f9bcd8",
+    "git_issue": "4f9bcd8",
+    "extid": "BUG-WORKFLOW-CONFIRM-SESSION-TREATS-OPTIONAL-STEPS-AS-REQUIRED",
+    "type": "BUG",
+    "title": "workflow confirm session treats optional steps as required",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-workflow-confirm-session-treats-optional-steps-as-required.md",
+    "status": "⬜ Not Started"
   },
   "BUG-WORKTREE-FINALIZE-MUST-HARD-FAIL-ON-NON-MERGEABLE-OR-MULTI-M": {
     "hash": "508a7ea",
@@ -24382,6 +24564,19 @@
     "source": ".plan/tickets/TASK-dedup-route-handler-boilerplate-via-shared-route-factory.md",
     "status": "open"
   },
+  "TASK-DEDUP-TOP-JSCPD-CLONE-CLUSTERS": {
+    "hash": "e3b21d3",
+    "git_issue": "e3b21d3",
+    "extid": "TASK-DEDUP-TOP-JSCPD-CLONE-CLUSTERS",
+    "type": "TASK",
+    "title": "dedup top jscpd clone clusters",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-dedup-top-jscpd-clone-clusters.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-DEDUPE-CONTEXT-WINDOW": {
     "hash": "b32dec9",
     "extid": "TASK-DEDUPE-CONTEXT-WINDOW",
@@ -24789,6 +24984,19 @@
     "source": ".plan/tickets/TASK-docs-reconcile-implementation.md",
     "status": "done",
     "git_issue": "304d4fa"
+  },
+  "TASK-DOCS-REMOVE-DELETED-SCENARIO-CATALOG-TOOLING-REFERENCES": {
+    "hash": "5f30792",
+    "git_issue": "5f30792",
+    "extid": "TASK-DOCS-REMOVE-DELETED-SCENARIO-CATALOG-TOOLING-REFERENCES",
+    "type": "TASK",
+    "title": "docs remove deleted scenario catalog tooling references",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-docs-remove-deleted-scenario-catalog-tooling-references.md",
+    "status": "⬜ Not Started"
   },
   "TASK-DOCS-UI-ENDPOINT-LINKAGE": {
     "hash": "bc98d57",
