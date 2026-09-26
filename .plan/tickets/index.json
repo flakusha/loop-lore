@@ -7021,7 +7021,7 @@
     "git_issue": "81f9696"
   },
   "EPIC-ASSISTANT-STEP-PLANNING": {
-    "hash": "pending",
+    "hash": "07f52a6",
     "extid": "EPIC-ASSISTANT-STEP-PLANNING",
     "type": "EPIC",
     "title": "Assistant Step Planning Surfaces (Todo / Kanban / Graph)",
@@ -7036,8 +7036,9 @@
       "graph",
       "visualization"
     ],
-    "source": ".plan/tickets/epic-assistant-step-planning.md",
-    "status": "draft"
+    "source": ".plan/epics/epic-assistant-step-planning.md",
+    "status": "draft",
+    "git_issue": "07f52a6"
   },
   "EPIC-AUDIO-VIDEO-SOUND": {
     "hash": "fb81619",
@@ -8219,7 +8220,7 @@
     "git_issue": "a1c07e4"
   },
   "EPIC-DB-GROWTH-TIERED-STORAGE": {
-    "hash": "pending",
+    "hash": "29223be",
     "extid": "EPIC-DB-GROWTH-TIERED-STORAGE",
     "type": "EPIC",
     "title": "Database Growth & File Splitting (Tiered Storage)",
@@ -8234,8 +8235,9 @@
       "backup",
       "tiered-storage"
     ],
-    "source": ".plan/tickets/epic-db-growth-tiered-storage.md",
-    "status": "draft"
+    "source": ".plan/epics/epic-db-growth-tiered-storage.md",
+    "status": "draft",
+    "git_issue": "29223be"
   },
   "EPIC-DB-MIGRATION-COMPACTION": {
     "hash": "067de5a",
@@ -10844,7 +10846,7 @@
     "git_issue": "9ef32dd"
   },
   "EPIC-RAG-EXTRACT-LINK": {
-    "hash": "pending",
+    "hash": "4f7e4c0",
     "extid": "EPIC-RAG-EXTRACT-LINK",
     "type": "EPIC",
     "title": "RAG Detection, Extraction, Linking & Referencing",
@@ -10859,8 +10861,9 @@
       "references",
       "enrichment"
     ],
-    "source": ".plan/tickets/epic-rag-extract-link.md",
-    "status": "draft"
+    "source": ".plan/epics/epic-rag-extract-link.md",
+    "status": "draft",
+    "git_issue": "4f7e4c0"
   },
   "EPIC-RAG-INGESTION": {
     "hash": "e67b3e3",
