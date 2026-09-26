@@ -939,7 +939,7 @@ Total tickets: **2894** — untagged: **2498** — unbound to epic: **1464**
 | yaml | 4 | 0 | 2 | 0 | 1 | 0 | 1 |
 | yaml-frontmatter | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| (untagged) | 2498 | 856 | 58 | 1268 | 39 | 0 | 277 |
+| (untagged) | 2498 | 858 | 58 | 1266 | 39 | 0 | 277 |
 
 ## By epic × status
 
@@ -1003,9 +1003,9 @@ Total tickets: **2894** — untagged: **2498** — unbound to epic: **1464**
 | epic-actor-autonomy-story-drive | 7 | 0 | 0 | 3 | 0 | 0 | 4 |
 | epic-actor-autonomy-story-drive.md | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
 | epic-actor-turn-skip | 5 | 2 | 0 | 3 | 0 | 0 | 0 |
-| epic-actors | 5 | 2 | 0 | 1 | 0 | 0 | 2 |
+| epic-actors | 5 | 3 | 0 | 0 | 0 | 0 | 2 |
 | epic-agency-story-points | 3 | 0 | 0 | 2 | 0 | 0 | 1 |
-| epic-agency-story-points, NPC/Actor System | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
+| epic-agency-story-points, NPC/Actor System | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-ambient-music-sfx | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-analytics-observability | 9 | 3 | 0 | 1 | 0 | 0 | 5 |
 | epic-analytics-observability.md | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
