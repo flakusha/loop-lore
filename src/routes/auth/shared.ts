@@ -27,6 +27,18 @@ const DEMO_LOGIN_MAX_ATTEMPTS = 5;
 // (BUG-rate-limiter-module-singletons-shared-across-test-files). Callers
 // that need isolation pass a fresh `create*Limiter()` — each instance owns
 // its own Map + prune timer.
+//
+// MULTI-INSTANCE DEPLOYMENT (TASK-register-username-race-and-rate-limiter-multi-instance-gap):
+// these limiters are per-process in-memory Maps. In a multi-worker Bun
+// cluster or any deployment serving /api/auth/* from more than one
+// process, each process tracks its own bucket, so an attacker can multiply
+// their effective budget by the worker count. The current production
+// runtime is single-process (see src/server/start.ts), so the
+// cross-instance gap does NOT fire today — keep this comment accurate:
+// when multi-instance support is added, swap the store for a shared
+// backend (Redis or SQLite) and route every request through it.
+// ponytail: do not introduce a Redis dependency preemptively; the
+// single-process deploy is the documented invariant.
 const loginLimiter = createRateLimiter({ windowMs: 60_000, maxRequests: LOGIN_MAX_ATTEMPTS, },);
 const registerLimiter = createRateLimiter({ windowMs: 60 * 60 * 1000, maxRequests: REGISTER_MAX_ATTEMPTS, },);
 const demoLoginLimiter = createRateLimiter({ windowMs: 60_000, maxRequests: DEMO_LOGIN_MAX_ATTEMPTS, },);
