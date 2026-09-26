@@ -3549,6 +3549,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-aux-enrichment-emotion-avatar-task.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-prompt-improve-shared-service.md"
     }
   ],
   "src/backup/browser-backup.ts": [
@@ -13927,6 +13931,18 @@
       "source": ".plan/tickets/FEAT-attachment-content-analysis-pipeline.md"
     }
   ],
+  "src/frontend/alpine/chat-actions/prompt-improve-local.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-prompt-improve-composer-ui.md"
+    }
+  ],
+  "src/frontend/alpine/chat-actions/prompt-improve-model.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-prompt-improve-composer-ui.md"
+    }
+  ],
   "src/frontend/alpine/chat-actions/prompt-improve.ts": [
     {
       "kind": "ticket",
@@ -15413,6 +15429,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-story-mode-ui.md"
+    }
+  ],
+  "src/frontend/alpine/story-state.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-story-alpine.md"
     }
   ],
   "src/frontend/alpine/story-state.ts": [
@@ -18950,6 +18972,12 @@
     }
   ],
   "src/generation/prompt-route.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-prompt-improve-shared-service.md"
+    }
+  ],
+  "src/generation/prompt-route.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-prompt-improve-shared-service.md"
