@@ -3,7 +3,7 @@
 
 # TASK: giwt issues gains --state open|closed|all filter
 
-**Status:** ⬜ Not Started
+**Status:** done
 **Priority:** low
 **Effort:** Small
 
@@ -12,7 +12,7 @@
 
 # giwt issues gains --state open|closed|all filter
 
-**Status:** open
+**Status:** done
 **Priority:** low
 **Effort:** Small
 **Type:** Task
