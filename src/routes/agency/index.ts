@@ -6,11 +6,13 @@
  * domain sub-plugins. Registration point/name is preserved so the
  * `register-plugins.ts` wiring is unchanged.
  *
- *   POST /api/agency/spend — debit story points
+ *   GET  /api/agency/balance — read the caller's balance (composer chip)
+ *   POST /api/agency/spend   — debit story points
  */
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
+import { agencyBalanceRoute, } from "./balance";
 import { agencySpendRoute, } from "./spend";
 
 export interface AgencyHandlerOpts {
@@ -18,5 +20,7 @@ export interface AgencyHandlerOpts {
 }
 
 export function agencyRoutes(opts: AgencyHandlerOpts, prefix = "/api",) {
-  return new Elysia({ name: "agency", },).use(agencySpendRoute(opts, prefix,),);
+  return new Elysia({ name: "agency", },)
+    .use(agencyBalanceRoute(opts, prefix,),)
+    .use(agencySpendRoute(opts, prefix,),);
 }

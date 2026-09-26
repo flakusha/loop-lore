@@ -19,21 +19,6 @@ import {
   type StoryPointLedger,
 } from "./types";
 
-/** Helper: raw balance-only read (no upsert). */
-async function readBalanceRow(
-  db: Kysely<DB>,
-  actorId: string,
-  worldKey: string | null,
-): Promise<{ balance: number }> {
-  const row = await db
-    .selectFrom("actor_story_points",)
-    .select("balance",)
-    .where("actor_id", "=", actorId,)
-    .where("world_id", "is", worldKey,)
-    .executeTakeFirst();
-  return { balance: row?.balance ?? 0, };
-}
-
 /** Atomically credit story points to an actor; `earned_total` is monotonic. */
 export async function earnStoryPoints(
   db: Kysely<DB>,
@@ -125,6 +110,10 @@ export async function spendStoryPoints(
     throw new InsufficientStoryPointsError(params.actorId, params.amount, 0,);
   }
 
+  // Conditional UPDATE: the WHERE clause includes `balance >= amount`
+  // so a concurrent spend that drains the balance will leave zero rows
+  // touched. Read numAffectedRows from the raw result -- 0 means the
+  // conditional UPDATE missed (insufficient or concurrent winner).
   const updateResult = await sql`
     UPDATE actor_story_points
     SET
@@ -137,14 +126,14 @@ export async function spendStoryPoints(
       AND balance >= ${params.amount}
   `.execute(db,);
 
-  const affected = (updateResult as unknown as { numAffectedRows?: number }).numAffectedRows ??
-      (await readBalanceRow(db, params.actorId, worldKey,)).balance >= 0
-    ? 1
-    : 0;
-
+  const affected = Number(updateResult.numAffectedRows ?? 0n,);
   if (affected === 0) {
     const bal = await getStoryPointBalance(db, params.actorId, worldKey,);
-    throw new InsufficientStoryPointsError(params.actorId, params.amount, bal.balance,);
+    throw new InsufficientStoryPointsError(
+      params.actorId,
+      params.amount,
+      bal.balance,
+    );
   }
 
   const after = await getStoryPointBalance(db, params.actorId, worldKey,);

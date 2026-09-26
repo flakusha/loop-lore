@@ -12,10 +12,14 @@
 import { Elysia, t, } from "elysia";
 import {
   InsufficientStoryPointsError,
-  InvalidAmountError,
   spendStoryPoints,
 } from "../../services/agency/story-points";
-import { jsonError, jsonResponse, } from "../http-utils";
+import {
+  forbiddenResponse,
+  jsonError,
+  jsonResponse,
+  requireUserId,
+} from "../http-utils";
 
 export function agencySpendRoute(
   opts: { database: import("kysely").Kysely<import("../../db/schema").DB> },
@@ -26,12 +30,18 @@ export function agencySpendRoute(
     .post(
       `${prefix}/agency/spend`,
       async (ctx: any,) => {
-        const body = ctx.body as { actor_id?: string; amount?: number; reason?: string; world_id?: string | null };
-        if (!body.actor_id || typeof body.actor_id !== "string") {
-          return jsonError({ message: "actor_id is required", status: 400, },);
-        }
-        if (typeof body.amount !== "number" || !Number.isInteger(body.amount,)) {
-          return jsonError({ message: "amount must be a positive integer", status: 400, },);
+        const body = ctx.body as { actor_id: string; amount: number; reason?: string; world_id?: string | null };
+        // actor_id and amount are already narrowed by the t.Object schema below
+        // (t.String({minLength:1}) / t.Integer({minimum:1})) — Elysia rejects a
+        // malformed body with 422 before this handler runs, so the manual shape
+        // checks would be unreachable. Only the authz checks live here.
+        // Authz: the calling session must own the actor whose story points
+        // are being debited. Without this, a client could debit any actor's
+        // balance by supplying a foreign actor_id.
+        const authUserId = requireUserId(ctx,);
+        if (typeof authUserId !== "string") { return authUserId; }
+        if (body.actor_id !== authUserId) {
+          return forbiddenResponse("actor_id must match the authenticated session",);
         }
         try {
           const ledger = await spendStoryPoints(database, {
@@ -47,9 +57,6 @@ export function agencySpendRoute(
               message: `Not enough story points (have ${err.available}, need ${err.requested})`,
               status: 400,
             },);
-          }
-          if (err instanceof InvalidAmountError) {
-            return jsonError({ message: "amount must be a positive integer", status: 400, },);
           }
           const msg = err instanceof Error ? err.message : String(err,);
           return jsonError({ message: `spend failed: ${msg}`, status: 500, },);

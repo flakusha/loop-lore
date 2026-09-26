@@ -16,6 +16,7 @@
  */
 import { type Kysely, } from "kysely";
 import type { DB, } from "../../db";
+import { badRequestResponse, } from "../../routes/http-utils";
 import {
   InsufficientStoryPointsError,
   spendStoryPoints,
@@ -94,4 +95,46 @@ export async function trySpendForReroll(
     const msg = err instanceof Error ? err.message : String(err,);
     return { ok: false, charged: false, cost, reason: "error", message: msg, };
   }
+}
+
+/**
+ * Opt-in story-point charge for routes that own a chat (regenerate, retry).
+ * Reads `chat.world_id` so the spend debits the per-world balance (NULL
+ * falls through to the global balance inside `trySpendForReroll`).
+ *
+ * Returns `null` when no charge is requested, when the body lacks the
+ * `chargeStoryPoints` flag, or when the spend succeeds. Returns a 400
+ * `Response` when the spend is requested and fails — callers MUST propagate
+ * that response verbatim.
+ *
+ * @param db
+ * @param chatId
+ * @param body
+ * @param actorId
+ * @param reason
+ */
+export async function chargeStoryPointsForChat(
+  db: Kysely<DB>,
+  chatId: string,
+  body: unknown,
+  actorId: string,
+  reason: "reroll" | "retry",
+): Promise<Response | null> {
+  const raw = body as Record<string, unknown> | null;
+  if (raw?.chargeStoryPoints !== true) { return null; }
+  const chatRow = await db
+    .selectFrom("chats",)
+    .select("world_id",)
+    .where("id", "=", chatId,)
+    .executeTakeFirst();
+  const worldId = chatRow?.world_id ?? null;
+  const spend = await trySpendForReroll(
+    db,
+    { actorId, worldId, },
+    { spendStoryPoints: true, cost: 1, reason, },
+  );
+  if (!spend.ok) {
+    return badRequestResponse(spend.message ?? "Story-point spend failed.",);
+  }
+  return null;
 }

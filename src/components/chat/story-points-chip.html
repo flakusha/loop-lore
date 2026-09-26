@@ -2,15 +2,14 @@
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
 <!--
-  Story points chip — display-only indicator showing the calling
-  actor's current story-point balance next to the /agency affordance.
-  Click expands an inline spend menu that posts to
-  POST /api/agency/spend.
+  Story points chip — shows the calling actor's current story-point balance
+  next to the /agency affordance. Reads GET /api/agency/balance (auth-scoped:
+  the actor is always the session user). The Spend button dispatches an event
+  for the composer's spend menu; this component only owns the read + display.
 
-  Mount point (TODO): render inside `src/components/chat/input-area.html`
-  alongside the existing `/roll`, `/check` chips in the
-  `.command-buttons-row` block. The chip depends on `currentActor` and
-  `activeChat` being populated by the surrounding Alpine scope.
+  Mounted from `src/views/chat.html` as the `chat/story-points-chip.html`
+  partial, alongside the input area. Depends on the surrounding Alpine scope
+  exposing the chat store (`$store.chat.activeChat.world_id`).
 -->
 <div
   class="story-points-chip"
@@ -18,15 +17,15 @@
     balance: 0,
     cap: null,
     async refresh() {
-      try {
-        const actorId = (this.currentActor && this.currentActor.id) || (this.userId);
-        if (!actorId) { return; }
-        const res = await fetch(`/api/agency/spend` /* POST-only — use status route when added */, {
-          method: 'OPTIONS',
-          credentials: 'include',
-        }).catch(() => null,);
-        void res; // TODO: replace with a /api/agency/status GET endpoint.
-      } catch (e) { /* swallow */ }
+      const worldId = this.$store?.chat?.activeChat?.world_id || null;
+      const qs = worldId ? `?world_id=${encodeURIComponent(worldId)}` : '';
+      const res = await fetch(`/api/agency/balance${qs}`, { credentials: 'include' })
+        .catch(() => null);
+      if (!res || !res.ok) { return; }
+      const data = await res.json().catch(() => null);
+      if (!data) { return; }
+      this.balance = data.balance ?? 0;
+      this.cap = data.cap ?? null;
     },
   }"
   x-init="refresh()"
