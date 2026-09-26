@@ -122,7 +122,12 @@ no per-kind forks.
 
 - **Parent hub:** Assistant Creative Studio — Workflow Templates (`epic-assistant-creative-studio-workflows.md`)
 - **Requires:** `epic-workflow-engine.md` — entity templates are workflow instances;
-  schema/loader/runner/approval plumbing all come from the engine.
+  schema/loader/runner/approval plumbing all come from the engine. Regex intent
+  routing (`matchWorkflowIntent` in `src/routes/messages/command.ts`) is wired;
+  this epic's remaining work is template content only (per-entity step schemas,
+  `entity_type_presets`, species/npc dispatch backends, `/create` gating).
+  LLM-side `classifyIntent` routing is tracked separately in
+  `TASK-wire-intent-output-to-workflow-runner-startworkflow.md`.
 - **Siblings:** `epic-model-family-presets.md` (pattern analog for `entity_type_presets`);
   `epic-gallery-batch-operations.md` is independent of this epic.
 

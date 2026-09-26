@@ -26647,6 +26647,10 @@
   ],
   "src/routes/messages/command.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-entity-generation-workflows.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-assistant-intent-regexes-hijack-normal-chat-messages.md"
     },
@@ -31905,6 +31909,13 @@
     {
       "kind": "spec",
       "source": "docs/spec/crafting-professions.md"
+    }
+  ],
+
+  "src/services/agency/bdi-nightly.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-agency-story-points.md"
     }
   ],
   "src/services/external-server-utils.ts": [

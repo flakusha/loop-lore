@@ -273,11 +273,14 @@ interface AutonomyProfile {
   visibility: TraitVisibility;
 }
 ```
-
 **Integration with relationships:** Characters with high `strength` relationships
 have higher `group_comfort` (the relationship _anchors_ them). A "loyal" character
 with a strong ally relationship will resist separation even under stress.
 A "wanderer" with weak relationships will drift regardless.
+
+> **Runtime note (2026-09-26):** this D9 schema is consumed at runtime by
+> `epic-actor-autonomy-story-drive.md` (scheduler + governor + dispatch loop).
+> The autonomy epic does not redefine it.
 
 **Integration with aspirations:** A character whose aspiration `priority` is
 high and whose autonomy `preference` is "independent" will proactively pursue
