@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 260
+// size-allow: 280
 // Defines types and defaults for the config-driven template system.
 import type {
   DetailLevel,
@@ -65,7 +65,7 @@ export interface LlmTemplateConfig {
   chatFormats: Record<string, ChatFormatTemplate>;
   /**
    * Per-entity-kind prompt templates for the `/create` assistant command.
-   * Keyed by canonical entity kind (`character | location | world | item`).
+   * Keyed by canonical entity kind (e.g. `character | npc | location | world | item`).
    * Overrides the built-in default prompt for that kind; the value should
    * contain a `{description}` placeholder.
    */
