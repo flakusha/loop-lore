@@ -34,21 +34,6 @@ export interface GroupCascadeOpts {
 }
 
 /**
- * After an AI response in a group chat, check if cascade should continue.
- *
- * Cascade triggers when:
- * - `auto_advance` is set on the chat (turns cascade without needing @mentions), OR
- * - The AI response contains @mentions of other participants
- *
- * Cascade stops when:
- * - `max_turns` is reached (default: 3, 0 = no cascade)
- * - No @mentions found and `auto_advance` is off
- * - The chat is paused
- * - No eligible AI participants remain
- * - An error occurs
- */
-
-/**
  * Pick the next actor in the cascade: @mentions win, else auto-advance.
  * @param aiParticipants Eligible AI participants.
  * @param aiContent Most recent AI message content.
@@ -100,9 +85,6 @@ async function resolveNextCascadeActor(
   }
   return null;
 }
-/**
- * @param opts
- */
 /**
  * Run one group-chat cascade step.
  * @param opts Group cascade options.
