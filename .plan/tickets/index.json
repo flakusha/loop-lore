@@ -15122,7 +15122,7 @@
     "git_issue": "fc3b325"
   },
   "TASK-019-AUDIT-COLUMNS": {
-    "hash": "pending",
+    "hash": "9c1193f",
     "extid": "TASK-019-AUDIT-COLUMNS",
     "type": "TASK",
     "title": "Audit columns — `created_at` / `updated_at` for underdocumented tables",
@@ -15131,10 +15131,11 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-019-audit-columns.md",
-    "status": "open"
+    "status": "open",
+    "git_issue": "9c1193f"
   },
   "TASK-019-CONTENT-VERSIONING-HEAVY-TABLES": {
-    "hash": "pending",
+    "hash": "f9f5b1c",
     "extid": "TASK-019-CONTENT-VERSIONING-HEAVY-TABLES",
     "type": "TASK",
     "title": "Content versioning for heavy-text tables — extend `data_version`/`record_hash`",
@@ -15143,10 +15144,11 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-019-content-versioning-heavy-tables.md",
-    "status": "open"
+    "status": "open",
+    "git_issue": "f9f5b1c"
   },
   "TASK-019-ENFORCE-STATE-MACHINE-VALIDATORS-AT-WRITE": {
-    "hash": "pending",
+    "hash": "63a45b3",
     "extid": "TASK-019-ENFORCE-STATE-MACHINE-VALIDATORS-AT-WRITE",
     "type": "TASK",
     "title": "Enforce state-machine + composite validators at write time",
@@ -15160,10 +15162,11 @@
       "runtime"
     ],
     "source": ".plan/tickets/TASK-019-enforce-state-machine-validators-at-write.md",
-    "status": "open"
+    "status": "open",
+    "git_issue": "63a45b3"
   },
   "TASK-019-HOT-PATH-INDEXES": {
-    "hash": "pending",
+    "hash": "8f23860",
     "extid": "TASK-019-HOT-PATH-INDEXES",
     "type": "TASK",
     "title": "Hot-path index sweep — append-only migration 019",
@@ -15172,10 +15175,11 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-019-hot-path-indexes.md",
-    "status": "open"
+    "status": "open",
+    "git_issue": "8f23860"
   },
   "TASK-019-USERS-ENCRYPTION-SECRET": {
-    "hash": "pending",
+    "hash": "d14e674",
     "extid": "TASK-019-USERS-ENCRYPTION-SECRET",
     "type": "TASK",
     "title": "`users.encryption_secret` — per-user HMAC key for token-indexed search",
@@ -15184,7 +15188,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-019-users-encryption-secret.md",
-    "status": "open"
+    "status": "open",
+    "git_issue": "d14e674"
   },
   "TASK-023": {
     "hash": "149948e",
@@ -17988,6 +17993,18 @@
     "git_issue": "b56fbb5",
     "status": "open"
   },
+  "TASK-AGGREGATE-BROWSER-LOOP-NO-FAIL-FAST": {
+    "hash": "pending",
+    "extid": "TASK-AGGREGATE-BROWSER-LOOP-NO-FAIL-FAST",
+    "type": "TASK",
+    "title": "Browser test loop must aggregate, not fail-fast",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-aggregate-browser-loop-no-fail-fast.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-AI-DIRECTOR-ARC": {
     "hash": "92fbd74",
     "extid": "TASK-AI-DIRECTOR-ARC",
@@ -18091,6 +18108,18 @@
     "source": ".plan/tickets/TASK-ai-message-utilities.md",
     "status": "open",
     "git_issue": "11a3988"
+  },
+  "TASK-ALIGN-INNERHTML-BANNED-PATTERN-GATE-SEMANTICS": {
+    "hash": "pending",
+    "extid": "TASK-ALIGN-INNERHTML-BANNED-PATTERN-GATE-SEMANTICS",
+    "type": "TASK",
+    "title": "Align innerHTML + banned-pattern gate semantics",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-align-innerhtml-banned-pattern-gate-semantics.md",
+    "status": "⬜ Not Started"
   },
   "TASK-ALIGNMENT-SPEECH-SOCIAL-CONTEXT": {
     "hash": "3e045f4",
@@ -20317,6 +20346,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-browser-side-randomuuidv7-for-time-sortable-ids.md",
     "status": "done"
+  },
+  "TASK-BROWSER-SUITE-RELEASE-GATE-WIRING": {
+    "hash": "pending",
+    "extid": "TASK-BROWSER-SUITE-RELEASE-GATE-WIRING",
+    "type": "TASK",
+    "title": "Browser suite must gate release artifacts",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-browser-suite-release-gate-wiring.md",
+    "status": "⬜ Not Started"
   },
   "TASK-BROWSER-TEST-FIXTURE-NO-MOCK-LLM-PROVIDER-STALE-FRONTEND-BUI": {
     "hash": "30d0e69",
@@ -24434,6 +24475,18 @@
     "source": ".plan/tickets/TASK-delete-dead-migration-helpers-ts-booltoenum.md",
     "status": "open"
   },
+  "TASK-DELETE-SCENARIO-CATALOG-TOOLING": {
+    "hash": "pending",
+    "extid": "TASK-DELETE-SCENARIO-CATALOG-TOOLING",
+    "type": "TASK",
+    "title": "Delete unused, broken scenario-catalog tooling",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-delete-scenario-catalog-tooling.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-DELETECHAT-RUNS-9-SEQUENTIAL-DELETES-WITHOUT-TRANSACTION-ORP": {
     "hash": "abc8205",
     "extid": "TASK-DELETECHAT-RUNS-9-SEQUENTIAL-DELETES-WITHOUT-TRANSACTION-ORP",
@@ -25176,7 +25229,7 @@
     "status": "open"
   },
   "TASK-ENCRYPTED-SEARCH-MINIMAL-FIRST-SLICE": {
-    "hash": "pending",
+    "hash": "e352a13",
     "extid": "TASK-ENCRYPTED-SEARCH-MINIMAL-FIRST-SLICE",
     "type": "TASK",
     "title": "Encrypted-search minimal first slice — wire + backfill for pilot chat",
@@ -25185,7 +25238,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-encrypted-search-minimal-first-slice.md",
-    "status": "open"
+    "status": "open",
+    "git_issue": "e352a13"
   },
   "TASK-ENCRYPTION-ACCESS-MANAGEMENT": {
     "hash": "377b6d5",
@@ -26347,6 +26401,18 @@
       "timeline"
     ],
     "source": ".plan/tickets/TASK-flashback-roleplay-chat-with-memory-propagation.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-FOCUSED-STREAMING-HTMX-CONTRACT-BROWSER-TESTS": {
+    "hash": "pending",
+    "extid": "TASK-FOCUSED-STREAMING-HTMX-CONTRACT-BROWSER-TESTS",
+    "type": "TASK",
+    "title": "Add focused streaming + HTMX contract browser tests",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-focused-streaming-htmx-contract-browser-tests.md",
     "status": "⬜ Not Started"
   },
   "TASK-FORMAT-VERSION-MIGRATION": {
@@ -29662,6 +29728,18 @@
     "epic": "epic-chat-composer-flows",
     "tags": [],
     "source": ".plan/tickets/TASK-markdown-preview-before-send.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-MARKUPLINT-DIFF-SCOPED-TEMPLATE-GATE": {
+    "hash": "pending",
+    "extid": "TASK-MARKUPLINT-DIFF-SCOPED-TEMPLATE-GATE",
+    "type": "TASK",
+    "title": "Invoke installed markuplint as a diff-scoped template gate",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-markuplint-diff-scoped-template-gate.md",
     "status": "⬜ Not Started"
   },
   "TASK-MATH-ADVANTAGE-CANCEL-RULE": {
@@ -34351,6 +34429,18 @@
     "git_issue": "15bf677",
     "status": "open"
   },
+  "TASK-REMOVE-NOOP-OXLINT-CORRECTNESS-GATE": {
+    "hash": "pending",
+    "extid": "TASK-REMOVE-NOOP-OXLINT-CORRECTNESS-GATE",
+    "type": "TASK",
+    "title": "Remove no-op oxlint (correctness) gate from runner registry",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-remove-noop-oxlint-correctness-gate.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-RENDER-PATH-RESOLVETRANSFORM-IN-CHAT-BUBBLES": {
     "hash": "4484e39",
     "git_issue": "4484e39",
@@ -34363,6 +34453,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-render-path-resolvetransform-in-chat-bubbles.md",
     "status": "open"
+  },
+  "TASK-REPAIR-CHAT-NORMAL-STARTUP-REMOVE-TEST-BYPASS": {
+    "hash": "pending",
+    "extid": "TASK-REPAIR-CHAT-NORMAL-STARTUP-REMOVE-TEST-BYPASS",
+    "type": "TASK",
+    "title": "Repair chat normal startup, remove browser test bypass",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-repair-chat-normal-startup-remove-test-bypass.md",
+    "status": "⬜ Not Started"
   },
   "TASK-REPETITION-HALLUCINATION-GUARDS": {
     "hash": "4cec862",
@@ -34780,6 +34882,18 @@
     "git_issue": "121a09b",
     "status": "open"
   },
+  "TASK-RESPONSIVE-REAL-CLICK-CANARY": {
+    "hash": "pending",
+    "extid": "TASK-RESPONSIVE-REAL-CLICK-CANARY",
+    "type": "TASK",
+    "title": "Add one real-click responsive canary at desktop + mobile widths",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-responsive-real-click-canary.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-RESTART-REQUIRED-INDICATOR-ON-SYSTEM-CONFIG-CHANGES": {
     "hash": "5e62e8c",
     "git_issue": "5e62e8c",
@@ -34791,6 +34905,18 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-restart-required-indicator-on-system-config-changes.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-RETIRE-STALE-INTEGRATION-TESTING-TOOLS": {
+    "hash": "pending",
+    "extid": "TASK-RETIRE-STALE-INTEGRATION-TESTING-TOOLS",
+    "type": "TASK",
+    "title": "Update or retire stale integration-testing-tools.md",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-retire-stale-integration-testing-tools.md",
     "status": "⬜ Not Started"
   },
   "TASK-REWRITE-APPLY-WRITE-BACK-TO-TARGET-MESSAGE": {
@@ -36573,6 +36699,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-template-based-entity-creation-deterministic-plus-llm-paths.md",
     "status": "open"
+  },
+  "TASK-TEMPLATE-PREFLIGHT-PRODUCTION-RESOLVER-GATE": {
+    "hash": "pending",
+    "extid": "TASK-TEMPLATE-PREFLIGHT-PRODUCTION-RESOLVER-GATE",
+    "type": "TASK",
+    "title": "Add production-resolver template preflight gate",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-template-preflight-production-resolver-gate.md",
+    "status": "⬜ Not Started"
   },
   "TASK-TEMPLATE-SYSTEM-UNIFIED-ARCHITECTURE": {
     "hash": "e8ee912",

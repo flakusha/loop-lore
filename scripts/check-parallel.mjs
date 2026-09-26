@@ -250,9 +250,6 @@ const checks = {
     // ESLint (single canonical entry — duplicate "lint - ts (eslint)" removed;
     // running ESLint twice doubled its 1.5GB RSS peak with no new signal.)
     "lint - eslint": "bun run lint:eslint",
-    // oxlint gate is advisory: tsc + eslint already cover real correctness,
-    // and oxlint reports thousands of style warnings that don't fail other gates.
-    "lint - oxlint (correctness)": "bun run lint:oxlint:advisory",
 
     // Formatting
     "format - dprint": "bun run format",
@@ -316,8 +313,13 @@ const checks = {
     "coverage - per-module line %": NOOP_OK, // placeholder; replaced before run
     // Blocking: unescaped server-derived data in innerHTML is a stored-XSS vector.
     "frontend - innerHTML xss": "bun run scripts/check-frontend-innerhtml-xss.ts",
-    // Advisory: reports pre-existing banned-pattern debt; not blocking.
-    "frontend - banned patterns (ESLint-gap heuristic — advisory)":
+    // Non-blocking reporter: surfaces pre-existing banned-pattern debt in the
+    // gate's `output` field of the check report. Kept non-blocking via `|| true`
+    // so existing debt does not block the gate; when findings clear, drop the
+    // `|| true` and the gate becomes blocking by default. The label now matches
+    // the runner behavior (the prior label said "advisory" while the runner
+    // invoked it blocking — TASK-align-innerhtml-banned-pattern-gate-semantics).
+    "frontend - banned patterns (ESLint-gap heuristic — non-blocking)":
       "bun run scripts/check-frontend-banned-patterns.ts || true",
     // Advisory: planning hygiene — stale/missing epic coverage.
     "plan - epic coverage (advisory)": "bun run scripts/check-epic-coverage.ts || true",

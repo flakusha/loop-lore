@@ -12,7 +12,7 @@
   `docs/spec/api-routes.md` describe a **Zod** layer in `src/schemas/` with
   per-route companion `.schema.ts` files and `z.infer<>` types — this is
   **not implemented**. The Zod + OpenAPI migration lives only as a _plan_ in
-  `docs/meta/integration-testing-tools.md`.
+  `docs/meta/integration-testing-tools.md` (retired 2026-09-26 — file deleted; the Zod-vs-TypeBox migration was never started because TypeBox was already in place via Elysia).
 - **No OpenAPI document is produced.** There is no `/openapi.json` and no
   Swagger UI. The plan notes `@elysiajs/swagger` would require "a complete
   server rewrite" because routes use closure injection + a catch-all rather
