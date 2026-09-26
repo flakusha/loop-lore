@@ -7020,6 +7020,25 @@
     "status": "in_progress",
     "git_issue": "81f9696"
   },
+  "EPIC-ASSISTANT-STEP-PLANNING": {
+    "hash": "pending",
+    "extid": "EPIC-ASSISTANT-STEP-PLANNING",
+    "type": "EPIC",
+    "title": "Assistant Step Planning Surfaces (Todo / Kanban / Graph)",
+    "label": "epic",
+    "priority": "High",
+    "epic": "",
+    "tags": [
+      "assistant",
+      "planning",
+      "todo",
+      "kanban",
+      "graph",
+      "visualization"
+    ],
+    "source": ".plan/tickets/epic-assistant-step-planning.md",
+    "status": "draft"
+  },
   "EPIC-AUDIO-VIDEO-SOUND": {
     "hash": "fb81619",
     "extid": "EPIC-AUDIO-VIDEO-SOUND",
@@ -8198,6 +8217,25 @@
     "source": ".plan/tickets/epic-db-content-versioning.md",
     "status": "draft",
     "git_issue": "a1c07e4"
+  },
+  "EPIC-DB-GROWTH-TIERED-STORAGE": {
+    "hash": "pending",
+    "extid": "EPIC-DB-GROWTH-TIERED-STORAGE",
+    "type": "EPIC",
+    "title": "Database Growth & File Splitting (Tiered Storage)",
+    "label": "epic",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [
+      "database",
+      "sqlite",
+      "scaling",
+      "archival",
+      "backup",
+      "tiered-storage"
+    ],
+    "source": ".plan/tickets/epic-db-growth-tiered-storage.md",
+    "status": "draft"
   },
   "EPIC-DB-MIGRATION-COMPACTION": {
     "hash": "067de5a",
@@ -10804,6 +10842,25 @@
     "source": ".plan/tickets/epic-rag-evaluation-observability.md",
     "status": "⬜ Not Started",
     "git_issue": "9ef32dd"
+  },
+  "EPIC-RAG-EXTRACT-LINK": {
+    "hash": "pending",
+    "extid": "EPIC-RAG-EXTRACT-LINK",
+    "type": "EPIC",
+    "title": "RAG Detection, Extraction, Linking & Referencing",
+    "label": "epic",
+    "priority": "High",
+    "epic": "",
+    "tags": [
+      "rag",
+      "extraction",
+      "entities",
+      "linking",
+      "references",
+      "enrichment"
+    ],
+    "source": ".plan/tickets/epic-rag-extract-link.md",
+    "status": "draft"
   },
   "EPIC-RAG-INGESTION": {
     "hash": "e67b3e3",
@@ -18643,6 +18700,22 @@
     "git_issue": "c8dbeab",
     "status": "open"
   },
+  "TASK-ASSET-LIFECYCLE-ARCHIVE-FLAG-ORPHAN-PRUNE-QUOTA-EVICTION": {
+    "hash": "336ac25",
+    "git_issue": "336ac25",
+    "extid": "TASK-ASSET-LIFECYCLE-ARCHIVE-FLAG-ORPHAN-PRUNE-QUOTA-EVICTION",
+    "type": "TASK",
+    "title": "Asset lifecycle: archive flag, orphan prune, quota eviction",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-db-growth-tiered-storage",
+    "tags": [
+      "database",
+      "assets"
+    ],
+    "source": ".plan/tickets/TASK-asset-lifecycle-archive-flag-orphan-prune-quota-eviction.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-ASSET-PLATFORM-B1-CONTENT-FOUNDATION": {
     "hash": "eb57d4e",
     "git_issue": "eb57d4e",
@@ -19391,6 +19464,23 @@
     "status": "draft",
     "git_issue": "e36efe7"
   },
+  "TASK-ASSISTANT-TODO-PLANNING-TABLES-SERVICE-ASSISTANT-WIRING": {
+    "hash": "f34235b",
+    "git_issue": "f34235b",
+    "extid": "TASK-ASSISTANT-TODO-PLANNING-TABLES-SERVICE-ASSISTANT-WIRING",
+    "type": "TASK",
+    "title": "Assistant todo planning: tables, service, assistant wiring",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-assistant-step-planning",
+    "tags": [
+      "assistant",
+      "planning",
+      "todo"
+    ],
+    "source": ".plan/tickets/TASK-assistant-todo-planning-tables-service-assistant-wiring.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-ASSISTANT-TOOL-INJECTION-GUARD": {
     "hash": "be41fae",
     "extid": "TASK-ASSISTANT-TOOL-INJECTION-GUARD",
@@ -19949,6 +20039,22 @@
     "source": ".plan/tickets/TASK-avatars-dynamic-2d.md",
     "status": "open",
     "git_issue": "a987a8d"
+  },
+  "TASK-BACKUP-CONSISTENCY-VACUUM-INTO-SNAPSHOTS-PLUS-ARCHIVE-DBS": {
+    "hash": "f91f01e",
+    "git_issue": "f91f01e",
+    "extid": "TASK-BACKUP-CONSISTENCY-VACUUM-INTO-SNAPSHOTS-PLUS-ARCHIVE-DBS",
+    "type": "TASK",
+    "title": "Backup consistency: VACUUM INTO snapshots plus archive DBs",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-db-growth-tiered-storage",
+    "tags": [
+      "database",
+      "backup"
+    ],
+    "source": ".plan/tickets/TASK-backup-consistency-vacuum-into-snapshots-plus-archive-dbs.md",
+    "status": "⬜ Not Started"
   },
   "TASK-BACKUP-RESTORE-RELIABILITY-AND-SELF-HEALING-FOR-FEDERATED-DE": {
     "hash": "cd70f50",
@@ -22916,6 +23022,22 @@
     "source": ".plan/tickets/TASK-cognitive-complexity-cap-refactor.md",
     "status": "⬜ Not Started"
   },
+  "TASK-COLD-MESSAGE-ARCHIVAL-TO-ARCHIVE-DB-FILE": {
+    "hash": "6c446d8",
+    "git_issue": "6c446d8",
+    "extid": "TASK-COLD-MESSAGE-ARCHIVAL-TO-ARCHIVE-DB-FILE",
+    "type": "TASK",
+    "title": "Cold message archival to archive DB file",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-db-growth-tiered-storage",
+    "tags": [
+      "database",
+      "archival"
+    ],
+    "source": ".plan/tickets/TASK-cold-message-archival-to-archive-db-file.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-COMBINED-FILTER-SUPPORT": {
     "hash": "de3f9e0",
     "extid": "TASK-COMBINED-FILTER-SUPPORT",
@@ -25432,6 +25554,22 @@
     "source": ".plan/tickets/TASK-embeddable-engine-game-frontend.md",
     "status": "open",
     "git_issue": "5391da3"
+  },
+  "TASK-EMBEDDING-AND-TELEMETRY-RETENTION-POLICIES": {
+    "hash": "242ab43",
+    "git_issue": "242ab43",
+    "extid": "TASK-EMBEDDING-AND-TELEMETRY-RETENTION-POLICIES",
+    "type": "TASK",
+    "title": "Embedding and telemetry retention policies",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-db-growth-tiered-storage",
+    "tags": [
+      "database",
+      "retention"
+    ],
+    "source": ".plan/tickets/TASK-embedding-and-telemetry-retention-policies.md",
+    "status": "⬜ Not Started"
   },
   "TASK-EMBEDDING-VECTOR-STORE": {
     "hash": "d4450ad",
@@ -27962,6 +28100,23 @@
     "status": "done",
     "git_issue": "dbe91d6"
   },
+  "TASK-GRAPH-VIEW-OF-PLAN-LINKS-TO-CHATS-STORIES-RAG-ITEMS-ASSETS": {
+    "hash": "78ed776",
+    "git_issue": "78ed776",
+    "extid": "TASK-GRAPH-VIEW-OF-PLAN-LINKS-TO-CHATS-STORIES-RAG-ITEMS-ASSETS",
+    "type": "TASK",
+    "title": "Graph view of plan links to chats, stories, RAG items, assets",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-assistant-step-planning",
+    "tags": [
+      "assistant",
+      "planning",
+      "graph"
+    ],
+    "source": ".plan/tickets/TASK-graph-view-of-plan-links-to-chats-stories-rag-items-assets.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-GROUP-CHAT-MENTION-AUTOCOMPLETE-DROPDOWN-ACCEPTANCE": {
     "hash": "36d317c",
     "git_issue": "36d317c",
@@ -29273,6 +29428,23 @@
     "source": ".plan/tickets/TASK-jwt-header-alg-kid-never-asserted-fail-open-route-guard-patt.md",
     "git_issue": "379011c",
     "status": "open"
+  },
+  "TASK-KANBAN-BOARD-FOR-STORY-TASK-CONTEXT-CREATIVE-DRAFTS-PLANNING": {
+    "hash": "4057dad",
+    "git_issue": "4057dad",
+    "extid": "TASK-KANBAN-BOARD-FOR-STORY-TASK-CONTEXT-CREATIVE-DRAFTS-PLANNING",
+    "type": "TASK",
+    "title": "Kanban board for story, task, context, creative, drafts planning",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-assistant-step-planning",
+    "tags": [
+      "assistant",
+      "planning",
+      "kanban"
+    ],
+    "source": ".plan/tickets/TASK-kanban-board-for-story-task-context-creative-drafts-planning.md",
+    "status": "⬜ Not Started"
   },
   "TASK-KARMA-DISPLAY-METER-AND-TIERS": {
     "hash": "f0a0935",
@@ -34055,6 +34227,23 @@
     "status": "open",
     "git_issue": "befd94f"
   },
+  "TASK-RAG-DETECT-CLEANUP-ENHANCE-PIPELINE-OVER-INGESTED-CHUNKS": {
+    "hash": "2cd2dc0",
+    "git_issue": "2cd2dc0",
+    "extid": "TASK-RAG-DETECT-CLEANUP-ENHANCE-PIPELINE-OVER-INGESTED-CHUNKS",
+    "type": "TASK",
+    "title": "RAG detect-cleanup-enhance pipeline over ingested chunks",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-rag-extract-link",
+    "tags": [
+      "rag",
+      "extraction",
+      "cleanup"
+    ],
+    "source": ".plan/tickets/TASK-rag-detect-cleanup-enhance-pipeline-over-ingested-chunks.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-RAG-DOCUMENT-LIST": {
     "hash": "1bd0372",
     "extid": "TASK-RAG-DOCUMENT-LIST",
@@ -34106,6 +34295,23 @@
     "tags": [],
     "source": ".plan/tickets/TASK-rag-embedding-rerank-model-survey-qwen3-nomic-bge.md",
     "status": "done"
+  },
+  "TASK-RAG-ENTITY-FACT-EXTRACTION-WITH-SOURCE-LINKING-AND-REVIEW-QU": {
+    "hash": "3573bcb",
+    "git_issue": "3573bcb",
+    "extid": "TASK-RAG-ENTITY-FACT-EXTRACTION-WITH-SOURCE-LINKING-AND-REVIEW-QU",
+    "type": "TASK",
+    "title": "RAG entity-fact extraction with source linking and review queue",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-rag-extract-link",
+    "tags": [
+      "rag",
+      "extraction",
+      "linking"
+    ],
+    "source": ".plan/tickets/TASK-rag-entity-fact-extraction-with-source-linking-and-review-qu.md",
+    "status": "⬜ Not Started"
   },
   "TASK-RAG-FEED-SOURCES": {
     "hash": "8a1fd22",

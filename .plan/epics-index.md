@@ -6,15 +6,17 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 303 epics
+**Total:** 306 epics
 
 ## Summary
 
 | Status | Title | Priority | Effort | Tasks | File |
 | ------ | ----- | -------- | ------ | ----- | ---- |
 | 📝 Draft | Assistant Entity Access & Manipulation | High | High | 10 | [epic-assistant-entity-access.md](/.plan/epics/epic-assistant-entity-access.md) |
+| 📝 Draft | Assistant Step Planning Surfaces (Todo / Kanban / Graph) | High | Large | 5 | [epic-assistant-step-planning.md](/.plan/epics/epic-assistant-step-planning.md) |
 | 📝 Draft | Character & NPC Lore Access | High | High | 17 | [epic-character-npc-lore-access.md](/.plan/epics/epic-character-npc-lore-access.md) |
 | 📝 Draft | Cross-Layer Reconciliation | High | Large (permanently ongoing) | 12 | [epic-cross-layer-reconciliation.md](/.plan/epics/epic-cross-layer-reconciliation.md) |
+| 📝 Draft | Database Growth & File Splitting (Tiered Storage) | Medium | Large | 4 | [epic-db-growth-tiered-storage.md](/.plan/epics/epic-db-growth-tiered-storage.md) |
 | 📝 Draft | EPIC-RESEARCH-MATH-AI-BRIDGE — LLM ↔ math contract | medium | Medium (typed contract + prompt section + regression tests) | 0 | [epic-math-ai-bridge.md](/.plan/epics/epic-math-ai-bridge.md) |
 | 📝 Draft | EPIC-RESEARCH-MATH-ECONOMY — Action & resource economy | medium | Medium (turn budget table + Bennies table + dispatch enforcement) | 0 | [epic-math-economy.md](/.plan/epics/epic-math-economy.md) |
 | 📝 Draft | EPIC-RESEARCH-MATH-LEDGER — Event-sourced projections | medium | Large (event table + projection rebuild + tests) | 0 | [epic-math-ledger.md](/.plan/epics/epic-math-ledger.md) |
@@ -33,6 +35,7 @@
 | 📝 Draft | Epic: Social Graph | High | High | 0 | [epic-social-graph.md](/.plan/epics/epic-social-graph.md) |
 | 📝 Draft | Epic: Time Scale | High | Medium | 8 | [epic-time-scale.md](/.plan/epics/epic-time-scale.md) |
 | 📝 Draft | Player State Machine — Cross-System Design | Medium | Medium | 0 | [epic-player-state-machine.md](/.plan/epics/epic-player-state-machine.md) |
+| 📝 Draft | RAG Detection, Extraction, Linking & Referencing | High | Large | 5 | [epic-rag-extract-link.md](/.plan/epics/epic-rag-extract-link.md) |
 | 📝 Draft | Resource Provision | High | Large | 12 | [epic-resource-provision.md](/.plan/epics/epic-resource-provision.md) |
 | 📝 Draft | Task Management Integration | Medium | Medium | 6 | [epic-task-management-integration.md](/.plan/epics/epic-task-management-integration.md) |
 | ✅ Complete | Epic: Config File Separation | High | High | 0 | [epic-config-file-separation.md](/.plan/epics/epic-config-file-separation.md) |
@@ -329,6 +332,15 @@
 - **Tags:** assistant, rag, assets, world, location, character, item, inventory, access, manipulation, duplication, adaptation
 - **File:** `.plan/epics/epic-assistant-entity-access.md`
 
+### Assistant Step Planning Surfaces (Todo / Kanban / Graph)
+
+- **Status:** 📝 Draft
+- **Priority:** High
+- **Effort:** Large
+- **Type:** Feature Epic
+- **Tags:** assistant, planning, todo, kanban, graph, visualization
+- **File:** `.plan/epics/epic-assistant-step-planning.md`
+
 ### Character & NPC Lore Access
 
 - **Status:** 📝 Draft
@@ -346,6 +358,15 @@
 - **Type:** Quality / Chore Epic
 - **Tags:** reconciliation, cross-check, fe-be-db, docs, specs, drift, warnings
 - **File:** `.plan/epics/epic-cross-layer-reconciliation.md`
+
+### Database Growth & File Splitting (Tiered Storage)
+
+- **Status:** 📝 Draft
+- **Priority:** Medium
+- **Effort:** Large
+- **Type:** Architecture Epic
+- **Tags:** database, sqlite, scaling, archival, backup, tiered-storage
+- **File:** `.plan/epics/epic-db-growth-tiered-storage.md`
 
 ### EPIC-RESEARCH-MATH-AI-BRIDGE — LLM ↔ math contract
 
@@ -532,6 +553,15 @@ Time scale system — manage game time progression, day/night cycles, seasons, a
 - **Type:** Feature Epic
 - **Tags:** player-state, state-machine, cross-system, design
 - **File:** `.plan/epics/epic-player-state-machine.md`
+
+### RAG Detection, Extraction, Linking & Referencing
+
+- **Status:** 📝 Draft
+- **Priority:** High
+- **Effort:** Large
+- **Type:** Feature Epic
+- **Tags:** rag, extraction, entities, linking, references, enrichment
+- **File:** `.plan/epics/epic-rag-extract-link.md`
 
 ### Resource Provision
 
