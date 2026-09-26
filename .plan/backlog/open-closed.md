@@ -35,8 +35,8 @@
   fixed, 5 new guide pages (first-chat, personas, worlds, gallery, settings) +
   rewritten getting-started; **3/4 tickets done** (fix-dangling-links, guide-how-tos,
   ui-endpoint-linkage), **1 in progress** (`TASK-docs-reconcile-implementation.md` —
-  spec-vs-`src/` audit). Follow-on open: 17 broken internal markdown links
-  (see § Open / next actions below).
+  spec-vs-`src/` audit). Follow-on open: broken internal markdown links (link hygiene is
+  owned by the `md:links` gate; the live queue is in `open.md` § Open / next actions).
 - **AUX M5 ModerationHook safety** — shipped (2026-08-06): tokenized word-boundary
   matching, severity scoring, audit trail, non-destructive suppression.
 - **Emotions** — EmotionHook emits canonical `EmotionType`; prompt `emotion` defaults +
@@ -99,7 +99,9 @@
 ## Bucket A close-out — Security / Perf / Tooling (2026-09-03)
 
 **33 commits landed on `dev`** (commit `f37056eb`): 20 security + 6 perf + 7 tooling.
-Full detail: `bucket-A-security-perf-close-out-2026-09-03.md`.
+This section is the cluster summary; the full per-commit list lives in the git log
+(`git log --oneline 6c55ed8c..f37056eb`) and in the `## Resolution` blocks of the
+follow-up tickets.
 
 ### Security cluster (20 commits)
 
@@ -146,23 +148,38 @@ Full detail: `bucket-A-security-perf-close-out-2026-09-03.md`.
 - **Auto-gen catch path** (`7cbcea68` + `e2f086e5`) — `triggerAutoGeneration` `.catch()`
   path gains DI override + buffer stubs + `signalError` assertion.
 
-### Audit follow-up tickets (8, open)
+### Audit follow-up tickets (8)
 
-Filed as `TASK-audit-follow-up-*` git issues — tracked in `open-debt.md` § Audit Follow-up
-Cluster. No BLOCKING issues found; all are NIT-1/LOW/MED follow-ups.
+Filed as `TASK-audit-follow-up-*` git issues. No BLOCKING issues found; all were
+NIT-1/LOW/MED follow-ups. ✅ Resolved 2026-09-10 (see § Retired 2026-09-18).
 
 ## Retired 2026-09-18 (cluster cleanup)
 
 - **Build integrity cluster** — 3 BUG tickets (Bucket X) flipped ✅ Resolved on `dev`
-  via commits `4a1f56b8` and `1cddba36`. See `open-build-integrity.md` (pointer stub)
-  , `bucket-x-build-integrity-close-out-2026-09-03.md` + `open-closed.md` § "Bucket X
-  close-out" for resolution evidence.
+  via commits `4a1f56b8` and `1cddba36`. Resolution blocks live on the four tickets
+  (`BUG-routes-commands-index-ts-19-has-unused-import-t`,
+  `BUG-register-plugins-150-references-undefined-chatsectionsroutes`,
+  `BUG-post-store-test-ts-32-imports-missing-completegenerationopts`,
+  `BUG-plan-sync-fix-mass-creates-orphan-git-issues-for-placeholder`).
 - **Audit follow-up cluster** — 8 follow-up tickets ✅ Resolved 2026-09-10 in worktree
-  `audit-followups-2026-09-10`. See `open-debt.md` (pointer stub) and
-  `audit-followups-2026-09-10` worktree log for commit refs.
+  `audit-followups-2026-09-10`. See the `audit-followups-2026-09-10` worktree log for
+  commit refs.
 - **Refactor cluster (Post-bug-bucket refactoring session-2026-09-03)** — 4 refactor
   tickets ✅ Resolved on `dev`: `resolveActorAccess`, `worldScoped`,
   `upsertByUnique`/`upsertByUniqueWith`/`insertUnique`, and
   `assertChatViewShape` (+ audit pass). 5th refactor
   `TASK-refactor-llm-provider-adapters-onto-shared-base-factory` is ⬜ Not Started
   (carried forward, not part of this retirement).
+
+## Pruned 2026-09-26 (backlog doc cleanup)
+
+Four backlog documents were deleted as no longer relevant. Their resolution evidence
+stays reachable through this file, the per-ticket `## Resolution` blocks, and the
+git log:
+
+| Deleted document | Evidence retained here / elsewhere |
+| ---------------- | --------------------------------- |
+| `open-build-integrity.md` | § Retired 2026-09-18 + the four Bucket X tickets under `.plan/tickets/` |
+| `open-vn-settings-bugs.md` | Checked row in `priority-p3-p5.md` (P4) + ticket `TASK-validate-and-fix-fe-be-db-gaps-for-chat-vn-settings` |
+| `bucket-A-security-perf-close-out-2026-09-03.md` | § Bucket A close-out (above) + the commit list in the git log |
+| `bucket-x-build-integrity-close-out-2026-09-03.md` | § Retired 2026-09-18 + the four Bucket X tickets |
