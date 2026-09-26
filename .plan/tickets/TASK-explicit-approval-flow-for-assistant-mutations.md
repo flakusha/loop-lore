@@ -11,6 +11,7 @@
 **Status:** open
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-assistant-entity-access
 
 ## Summary
 
