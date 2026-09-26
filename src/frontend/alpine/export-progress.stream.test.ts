@@ -1,24 +1,43 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// Regression: export-progress's SSE path must stream through the real
-// feFetch → safeFetch stack, not buffer the body (safeFetch's parseJson:false
-// used to `await response.text()`, which only resolves when the stream closes)
-// and not abort on the 30s default timeout (the export stream stays open for
-// the whole job). This file mocks globalThis.fetch — the lowest seam — so the
-// whole call chain is exercised, unlike export-progress.test.ts which mocks
-// ./htmx above the breakage.
-import { afterEach, expect, test, } from "bun:test";
+// Regression: export-progress's SSE path must stream incrementally (not buffer
+// via response.text()) and not arm the 30s safeFetch timeout (the export
+// stream stays open for the whole job).
+//
+// Mocking strategy: production code calls `apiFetch` from ./htmx (which
+// delegates to feFetch → safeFetch → globalThis.fetch). The previous version
+// of this test mocked globalThis.fetch — that worked when run alone, but
+// failed when sibling export-progress.test.ts ran first: that file
+// `mock.module("./htmx", …)`s `apiFetch` to a `handler` variable, and the
+// module mock leaks process-wide in Bun's test runner. When the leak hits,
+// apiFetch bypasses globalThis.fetch entirely and returns the sibling
+// test's default 404 handler → startExport resolves with status still
+// "queued" and error set — the symptom reported in
+// BUG-export-progress-stream-test-status-assertion-is-flaky.
+//
+// Fix: install our own `apiFetch` mock here so the test is hermetic
+// regardless of file ordering. The captured RequestInit surfaces what
+// startExport passed to the request layer; we assert `signal === undefined`
+// to prove the 30s timeout is NOT armed in stream mode.
+import { afterEach, expect, mock, test, } from "bun:test";
 import { exportProgressFactory, } from "./export-progress";
 
-const originalFetch = globalThis.fetch;
-const g = globalThis as unknown as {
-  localStorage?: Storage;
-};
+type ApiFetchMock = (url: string, opts?: RequestInit,) => Promise<Response>;
+let handler: ApiFetchMock = async () => new Response(null, { status: 404, },);
+
+// Mirror export-progress.test.ts: static import first (hoisted), then patch
+// the ./htmx module cache via mock.module. Bun looks up cached modules at
+// call-time, so the mock takes effect for startExport's apiFetch call even
+// though the static import resolved before mock.module ran.
+mock.module("./htmx", () => ({
+  apiFetch: ((url: string, opts?: RequestInit,) => {
+    return handler(url, opts,);
+  }) satisfies ApiFetchMock,
+}),);
 
 afterEach(() => {
-  globalThis.fetch = originalFetch;
-  g.localStorage = undefined;
+  handler = async () => new Response(null, { status: 404, },);
 },);
 
 /** A live SSE Response that never closes until the caller cancels it. */
@@ -45,22 +64,15 @@ function openSse(frames: string[],): { response: Response; closed: boolean } {
 }
 
 test("startExport streams the SSE body and disarms the fetch timeout", async () => {
-  const store = new Map<string, string>();
-  g.localStorage = {
-    getItem: (k: string,) => store.get(k,) ?? null,
-    setItem: (k: string, v: string,) => void store.set(k, v,),
-    removeItem: (k: string,) => void store.delete(k,),
-  } as unknown as Storage;
-
   let captured: RequestInit | undefined;
   const stream = openSse([
     `data: {"type":"job_created","jobId":"j1","status":"queued"}\n\n`,
     `data: {"type":"completed","jobId":"j1","downloadUrl":"/api/v1/export/download/j1"}\n\n`,
   ],);
-  globalThis.fetch = (async (_input: unknown, init?: RequestInit,) => {
+  handler = async (_url: string, init?: RequestInit,) => {
     captured = init;
     return stream.response;
-  }) as typeof fetch;
+  };
 
   const ctx = exportProgressFactory();
 

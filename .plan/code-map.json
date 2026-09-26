@@ -14145,7 +14145,6 @@
       "source": ".plan/tickets/TASK-visual-novel-mode.md"
     }
   ],
-
   "src/frontend/alpine/chat-state.ts": [
     {
       "kind": "ticket",
@@ -14540,7 +14539,29 @@
       "source": ".plan/tickets/TASK-equipment-stat-preview.md"
     }
   ],
+  "src/frontend/alpine/export-progress": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-export-progress-stream-test-status-assertion-is-flaky.md"
+    }
+  ],
+  "src/frontend/alpine/export-progress.stream.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-export-progress-stream-test-status-assertion-is-flaky.md"
+    }
+  ],
+  "src/frontend/alpine/export-progress.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-export-progress-stream-test-status-assertion-is-flaky.md"
+    }
+  ],
   "src/frontend/alpine/export-progress.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-export-progress-stream-test-status-assertion-is-flaky.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-export-frontend-progress.md"
