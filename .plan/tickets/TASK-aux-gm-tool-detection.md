@@ -103,3 +103,17 @@ interface GMToolDetection {
 - [ ] Tool results posted as system message
 - [ ] Timeout/error → no tool detection (graceful)
 - [ ] Existing GM flow tests still pass
+
+
+## Verification 2026-09-26
+
+Verdict: **still-open-expanded** (detection module shipped on AUX runner; dispatch wiring still missing).
+
+Src checked:
+- `src/assistant/gm-tool-detection.ts:105-132` — `detectGmTool` + `parseGmToolDetection` exist, call `callAux("gm-tool", …, { temperature: 0, maxTokens: 100 })` with unknown-tool rejection and confidence clamping; tested in `src/assistant/gm-tool-detection.test.ts`.
+- `src/aux-pipeline/types.ts` — `gm-tool` is a registered `AuxTaskName`; prompt exists (`GM_TOOL_DETECTION_PROMPT`, exported via `src/aux-pipeline/index.ts`).
+- Zero production callers: the only imports of `detectGmTool`/`gm-tool-detection` are the unit test. No call site in `src/assistant/commands/`, no GM-mode gate (`gm_config.assistantRole === "gm"`) wired, no tool-result-as-system-message posting.
+
+Refreshed deltas:
+- The "Files to Create" section is DONE (`src/assistant/gm-tool-detection.ts` supersedes the planned `src/aux-pipeline/tasks/gm-tool.ts` — do not create a second module).
+- Remaining work is purely wiring: GM-mode guard → `detectGmTool` → confidence >= 0.7 gate → queue execution → post result as system message → timeout/error returns null (already graceful in the module).
