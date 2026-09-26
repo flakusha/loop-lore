@@ -34,3 +34,6 @@ If the baseline is too large for full-project mode, run markuplint diff-scoped (
 - [ ] Canonical check output names the exact template scope.
 - [ ] Diff-scoped mode runs only files changed vs `dev` on the branch.
 - [ ] Clean tree passes the new gate.
+
+
+git issue: 0e067e7

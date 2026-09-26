@@ -31,3 +31,6 @@ tsc + eslint already cover real correctness. Oxlint reports style warnings that 
 - [ ] `bun run lint:oxlint` remains available for direct invocation.
 - [ ] `bun run check` does not list or run the removed gate.
 - [ ] No regression to existing `lint - eslint` gate.
+
+
+git issue: 0493fc9

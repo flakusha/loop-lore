@@ -32,3 +32,6 @@ would have stopped at the first failure and hidden the rest.
 - [ ] Final exit code is non-zero when ANY file fails.
 - [ ] Controlled `a-fail` + `b-pass` pair shows both files ran and exit is 1.
 - [ ] Output identifies which files failed (not just the first).
+
+
+git issue: 41b26ce
