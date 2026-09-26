@@ -53,3 +53,6 @@ src/views/planning/    # htmx partials: todo list, kanban board, graph (SVG)
 ## Dependencies
 
 - Prerequisite: none (standalone tables). Reuses but does not block on TASK-rag-knowledge-graph (entity storage) and epic-workflow-engine (template runtime).
+
+
+git issue: 07f52a6
