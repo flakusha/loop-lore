@@ -102,6 +102,10 @@ export async function checkDuplicate(
   // Note: `actors` stores the entity name in `display_name` (no `name` column).
   let row: { id: string } | undefined;
   switch (kind) {
+    // NPCs live in `actors` exactly like characters (agent_type is the
+    // discriminator), so they share the same duplicate scope. Without this case
+    // the switch falls through and npc drafts never get the advisory.
+    case "npc":
     case "character": {
       row = await db
         .selectFrom("actors",)
