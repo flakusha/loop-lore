@@ -24,6 +24,7 @@ import {
   MessageVisibility,
 } from "../../../db/enums";
 import type { DB, } from "../../../db/schema";
+import { isTelemetryEnabled, record as recordTelemetryEvent, } from "../../../telemetry/service";
 import { safeJsonStringify, } from "../../../utils/safe-json";
 import { checkChatAccess, } from "../access";
 
@@ -97,6 +98,18 @@ export async function recordTurnSkip(
   if (latest) {
     if (latest.content_type === MessageContentType.TurnSkip) {
       // Already sitting out — replay instead of stacking a second event.
+      // Telemetry: cascade dedup (TASK-turn-skip-cascade). The dedup path
+      // is the latest-message guard, NOT the bucket id — the dedupKey in
+      // the stored row may be from a prior minute bucket, so we always
+      // log a dedup event whenever the latest row is a turn_skip.
+      if (isTelemetryEnabled()) {
+        void recordTelemetryEvent(database, {
+          eventType: "cascade.dedup.skip",
+          chatId: input.chatId,
+          userId: input.userId,
+          data: { actorId: input.actorId, mode: input.mode, },
+        },);
+      }
       return { ok: true, messageId: latest.id, mode: input.mode, deduped: true, };
     }
     if (latest.status === MessageStatus.Rejected) {
@@ -133,5 +146,47 @@ export async function recordTurnSkip(
       idempotency_key: dedupKey(input.chatId, input.actorId, input.mode,),
     },)
     .execute();
+  // Beat budget telemetry (TASK-turn-skip-cascade): each fresh skip
+  // consumes one beat from this actor's per-chat budget. The gate
+  // interlock (`TASK-turn-skip-gate-interlock`) reads the post-cascade
+  // state via `countTurnSkipsForActor`; telemetry here keeps the count
+  // observable without a dedicated counter table.
+  if (isTelemetryEnabled()) {
+    void recordTelemetryEvent(database, {
+      eventType: "cascade.beat.consumed",
+      chatId: input.chatId,
+      userId: input.userId,
+      data: { actorId: input.actorId, mode: input.mode, messageId: id, },
+    },);
+  }
   return { ok: true, messageId: id, mode: input.mode, deduped: false, };
+}
+
+/**
+ * Count turn_skip events an actor has recorded in a chat.
+ *
+ * Reads the messages log directly — there is no separate counter table.
+ * The gate interlock (`TASK-turn-skip-gate-interlock`) calls this to read
+ * the post-cascade beat count; the telemetry events emitted from
+ * `recordTurnSkip` carry the same count observably. A dedicated index on
+ * `(chat_id, actor_id, content_type)` would let this become an index-only
+ * scan; without one the query is a chat+actor range scan filtered by
+ * `content_type = 'turn_skip'` (low-cardinality on most chats).
+ * @param database
+ * @param chatId
+ * @param actorId
+ */
+export async function countTurnSkipsForActor(
+  database: Kysely<DB>,
+  chatId: string,
+  actorId: string,
+): Promise<number> {
+  const row = await database
+    .selectFrom("messages",)
+    .select((eb,) => eb.fn.count<number>("id",).as("n",))
+    .where("chat_id", "=", chatId,)
+    .where("actor_id", "=", actorId,)
+    .where("content_type", "=", MessageContentType.TurnSkip,)
+    .executeTakeFirst();
+  return Number(row?.n ?? 0,);
 }
