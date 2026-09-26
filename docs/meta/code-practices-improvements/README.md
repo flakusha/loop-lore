@@ -11,10 +11,14 @@ references) plus a concrete improvement plan.
 > (`docs/spec/implementation.md`, `docs/spec/api-routes.md`) describe a **Zod**
 > validation layer in `src/schemas/` with per-route companion `.schema.ts`
 > files. The real code uses **Elysia's `t` (TypeBox)** in a single file
-> `src/validation/schemas.ts`, and `src/schemas/` does not exist. The Zod +
-> OpenAPI migration lives only as a _plan_ in
-> `docs/meta/integration-testing-tools.md`. Treat the docs as aspirational until
-> reconciled — see `06-schemas-and-openapi.md`.
+> `src/validation/schemas.ts`, and `src/schemas/` does not exist. Treat the
+> docs as aspirational until reconciled — see `06-schemas-and-openapi.md`.
+>
+> The earlier migration plan that lived in
+> `docs/meta/integration-testing-tools.md` was retired (2026-09-26,
+> `TASK-retire-stale-integration-testing-tools.md`) because the document
+> described a custom router that no part of the codebase uses, and
+> recommended introducing Zod on top of the already-adopted TypeBox stack.
 
 ## Topic index
 

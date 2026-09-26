@@ -131,11 +131,18 @@ jobs:
         env:
           E2E_SAFEGUARD: "1"
         run: |
+          status=0
           for f in tests/e2e/flows/browser/*.browser.ts; do
             echo "Running $f..."
-            bun test --max-concurrency=1 "./$f" || exit 1
+            bun test --max-concurrency=1 "./$f" || status=1
             sleep 0.3
           done
+          if [ $status -ne 0 ]; then
+            echo "FAILED browser files (see above); aggregated exit 1"
+          else
+            echo "All browser files passed"
+          fi
+          exit $status
 
       - name: Upload test results
         if: always()
@@ -157,7 +164,7 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    needs: [test-unit, test-e2e]
+    needs: [test-unit, test-e2e, test-browser]
     steps:
       - uses: actions/checkout@v4
 
