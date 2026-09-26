@@ -133,6 +133,7 @@ export function __resetKeynavHandlersForTests(): void {
 /** Pending "g"-prefixed sequence awaiting its second key. */
 let pendingG = false;
 
+if (typeof document.addEventListener === "function") {
 document.addEventListener("keydown", (e: KeyboardEvent,) => {
   const target = e.target as HTMLElement;
   const isInput = target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable;
@@ -210,3 +211,4 @@ document.addEventListener("keydown", (e: KeyboardEvent,) => {
     dispatchKeynavAction(single.action,);
   }
 },);
+}
