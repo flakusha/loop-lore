@@ -11,22 +11,28 @@
  * `./ui` is stubbed so the fire-and-forget toast import resolves without
  * pulling the real UI module.
  */
-import { afterEach, beforeEach, describe, expect, mock, test, vi, } from "bun:test";
+import { afterEach, beforeEach, expect, mock, test, vi, } from "bun:test";
 
+import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
 import "./asset-preview";
 
 let calls: { url: string; opts: RequestInit }[] = [];
 let feHandler: ((url: string, opts: RequestInit,) => Response) | null = null;
-mock.module("./fe-fetch", () => ({
-  feFetch: async (url: string, opts: RequestInit = {},) => {
-    calls.push({ url, opts, },);
-    return feHandler ? feHandler(url, opts,) : new Response("{}", { status: 404, },);
-  },
-  getCsrfToken: () => "",
-}),);
-mock.module("./ui", () => ({
-  showToast: (_type: string, _message: string,) => {},
-}),);
+// Gated: bun's mock.module is process-global — unguarded, later files in a
+// shared-process `bun test src/` run resolve ./fe-fetch to the 404 stub
+// (BUG 9c8bea1 cross-file contamination). Canonical gates run --isolate.
+if (ISOLATED) {
+  mock.module("./fe-fetch", () => ({
+    feFetch: async (url: string, opts: RequestInit = {},) => {
+      calls.push({ url, opts, },);
+      return feHandler ? feHandler(url, opts,) : new Response("{}", { status: 404, },);
+    },
+    getCsrfToken: () => "",
+  }),);
+  mock.module("./ui", () => ({
+    showToast: (_type: string, _message: string,) => {},
+  }),);
+}
 
 // ── Minimal fake DOM ────────────────────────────────────────
 
@@ -236,7 +242,7 @@ afterEach(() => {
   docHost.document = originalDocument;
 },);
 
-describe("renderTagsPanel", () => {
+describeOrSkip("renderTagsPanel", () => {
   test("renders tag chips and proposition chips", async () => {
     serveTags(
       [{ id: "t1", tag: "shared", scope: "global", source: "manual", },],
@@ -281,9 +287,9 @@ describe("renderTagsPanel", () => {
     await flushMicrotasks();
     expect(calls.length,).toBe(before,);
   });
-});
+},);
 
-describe("remove / dismiss wiring", () => {
+describeOrSkip("remove / dismiss wiring", () => {
   test("remove button sends DELETE with scope", async () => {
     serveTags([{ id: "t1", tag: "chip", scope: "user", source: "manual", },], [],);
     await previewHost.openAssetPreview!("a1",);
@@ -303,9 +309,9 @@ describe("remove / dismiss wiring", () => {
     expect(del,).toBeDefined();
     expect(JSON.parse(String(del.opts.body,),),).toEqual({ tag: "prop", },);
   });
-});
+},);
 
-describe("rename wiring", () => {
+describeOrSkip("rename wiring", () => {
   test("user-scope chips render a rename control; global chips do not", async () => {
     serveTags(
       [
@@ -380,9 +386,9 @@ describe("rename wiring", () => {
 
     expect(calls.filter((c,) => c.url === "/api/v1/assets/a1/tags" && !c.opts.method).length,).toBe(getsBefore,);
   });
-});
+},);
 
-describe("renderAutocomplete", () => {
+describeOrSkip("renderAutocomplete", () => {
   test("debounced input fetches vocabulary and populates the container", async () => {
     vi.useFakeTimers();
     try {
@@ -401,4 +407,4 @@ describe("renderAutocomplete", () => {
       vi.useRealTimers();
     }
   });
-});
+},);
