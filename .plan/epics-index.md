@@ -88,7 +88,7 @@
 | Proposed | Chat Rich Engagement (draft for new worktree) | Medium — messenger/AI parity gap | Medium | 0 | [epic-chat-rich-engagement.md](/.plan/epics/epic-chat-rich-engagement.md) |
 | 🟡 Design — taxonomy agreed; column mapping established; per-variant implementation open (see task list) | Chat Variants Taxonomy | High | Medium | 15 | [epic-chat-variants-taxonomy.md](/.plan/epics/epic-chat-variants-taxonomy.md) |
 | 🟡 Partial — foundation + sectioning backend shipped; party join/leave + split/merge + VN integration + frontend flows open | Chat/Group Chat Transfer & Location Change Mechanics | P2-B | High | 20 | [epic-chat-transfer-location.md](/.plan/epics/epic-chat-transfer-location.md) |
-| ⬜ Not Started | CI/CD Pipeline | Low | Medium | 0 | [epic-cicd-pipeline.md](/.plan/epics/epic-cicd-pipeline.md) |
+| ⬜ Not Started | CI/CD Pipeline | Low | Medium | 6 | [epic-cicd-pipeline.md](/.plan/epics/epic-cicd-pipeline.md) |
 | ⬜ Not Started | Client-Side Routing | Medium | Medium | 0 | [epic-frontend-routing.md](/.plan/epics/epic-frontend-routing.md) |
 | 🟡 Permanently Ongoing | Code Quality & Best Practices (Permanently Ongoing) | High | Continuous | 0 | [epic-code-quality.md](/.plan/epics/epic-code-quality.md) |
 | 🟡 Partial — ComfyUI integration shipped across **two** surfaces (generation image-engine + image-edit template system). Builtin TS templates, node discovery (`/object_info`), config-driven workflows, and `/api/v1/image-edit/*` routes (mounted via v1 content barrel) exist. **Blocking gaps:** `handleRun` has no auth (IDOR write open); `submitWorkflow` omits `client_id` (no WebSocket progress, ambiguous multi-client scoping). (Corrected 2026-09-25: `ComfyUIEditProvider.execute` DOES download + `createAsset`/`linkAsset` — the old 'dangling links' entry was stale; re-verify + pin via regression test.) GGUF model loading + FLUX.1 Kontext / Qwen Edit templates pending. **First-class program (branch `comfyui-first-class`):** standalone auto-start + `client_id`/WS + route authz + VN un-defer + sprite/matting templates + recipe matrix + queue scoping — see Linked Tasks. | ComfyUI Plugin & Workflow Templates | High | High | 16 | [epic-comfyui-plugin.md](/.plan/epics/epic-comfyui-plugin.md) |
@@ -102,7 +102,7 @@
 | ⬜ Not Started | Core Testing Frameworks | High | Very High | 23 | [epic-core-testing-frameworks.md](/.plan/epics/epic-core-testing-frameworks.md) |
 | 📝 Draft → 🟡 In Progress (MVP scoped) | Creative Studio | High (MVP), Medium (full) | High | 0 | [epic-creative-studio.md](/.plan/epics/epic-creative-studio.md) |
 | 🟡 In Progress (T1.3+T1.4 complete) | Cross-Platform Portability — Windows & macOS | High | Large | 9 | [epic-cross-platform-portability.md](/.plan/epics/epic-cross-platform-portability.md) |
-| ⬜ Not Started | Database Schema | High | Medium | 0 | [epic-schema.md](/.plan/epics/epic-schema.md) |
+| ⬜ Not Started | Database Schema | High | Medium | 5 | [epic-schema.md](/.plan/epics/epic-schema.md) |
 | 🔵 Research | DB & Asset Snapshot Recovery | High | High | 7 | [epic-db-asset-snapshot-recovery.md](/.plan/epics/epic-db-asset-snapshot-recovery.md) |
 | 📝 Planned (document only — no migration edits until reviewed) | DB Migration Compaction — final-form single migration (Path B) | Medium (maintainability; no runtime behavior change on a fresh DB) | High | 7 | [epic-db-migration-compaction.md](/.plan/epics/epic-db-migration-compaction.md) |
 | ⬜ Not Started | Deno Support (Possible Node) | Low | Medium | 20 | [epic-deno-support.md](/.plan/epics/epic-deno-support.md) |
@@ -183,7 +183,7 @@
 | Not Started | Epic: World Encounters & Resources | Medium | High | 12 | [epic-world-encounters.md](/.plan/epics/epic-world-encounters.md) |
 | Not Started | Epic: World NPCs | High | High | 11 | [epic-world-npcs.md](/.plan/epics/epic-world-npcs.md) |
 | Not Started | Epic: World Travel & Time | High | High | 25 | [epic-world-travel-time.md](/.plan/epics/epic-world-travel-time.md) |
-| ⬜ Not Started | Error Envelope | Medium | Medium | 0 | [epic-error-envelope.md](/.plan/epics/epic-error-envelope.md) |
+| ⬜ Not Started | Error Envelope | Medium | Medium | 6 | [epic-error-envelope.md](/.plan/epics/epic-error-envelope.md) |
 | ⬜ Not Started | Exploration & Discovery Systems | Medium | High | 0 | [epic-exploration-discovery.md](/.plan/epics/epic-exploration-discovery.md) |
 | ⬜ Not Started | External Search Providers & Context Enrichment | Medium | Low | 6 | [epic-rag-context-sources.md](/.plan/epics/epic-rag-context-sources.md) |
 | ⬜ Not Started | Factions, Reputation & Persistent Consequences | High | High | 0 | [epic-faction-reputation.md](/.plan/epics/epic-faction-reputation.md) |
@@ -209,7 +209,7 @@
 | Proposed | Hidden Carriage — Chat-Includeable Structured Memory Context | medium | Medium | 0 | [epic-hidden-carriage-context.md](/.plan/epics/epic-hidden-carriage-context.md) |
 | ⬜ Not Started | Housing & Base Building | Medium | Very High | 0 | [epic-housing-base-building.md](/.plan/epics/epic-housing-base-building.md) |
 | done | Housing System | Medium | Very High | 6 | [epic-housing.md](/.plan/epics/epic-housing.md) |
-| ⬜ Not Started | I/O Formats | Medium | Medium | 0 | [epic-io-formats.md](/.plan/epics/epic-io-formats.md) |
+| ⬜ Not Started | I/O Formats | Medium | Medium | 5 | [epic-io-formats.md](/.plan/epics/epic-io-formats.md) |
 | ⬜ Not Started | Immersion & Presentation | Medium | Medium | 0 | [epic-immersion-presentation.md](/.plan/epics/epic-immersion-presentation.md) |
 | Not Started | Immersion Consistency Gate (Actor-State Blockage & Refusal) | High | Large | 10 | [epic-immersion-consistency-gate.md](/.plan/epics/epic-immersion-consistency-gate.md) |
 | 🟡 Partially Implemented (wiring gaps remain) | Impersonation System | Medium | Med | 5 | [epic-impersonation.md](/.plan/epics/epic-impersonation.md) |
@@ -220,10 +220,10 @@
 | ⬜ Not Started | Inventory & Trading UI | P1 — High | Medium | 14 | [epic-inventory-ui.md](/.plan/epics/epic-inventory-ui.md) |
 | ⬜ Not Started | Item System Extensions | High | High | 0 | [epic-item-system-extensions.md](/.plan/epics/epic-item-system-extensions.md) |
 | 🟡 In Progress (backend wiring merged 2026-08-14 — `rpg-wire-routes`; item frontend/UX tickets remain) | Item Systems Unification & Gap Closure | High | High | 6 | [epic-item-systems-unification.md](/.plan/epics/epic-item-systems-unification.md) |
-| ⬜ Not Started | Licensing | Low | Medium | 0 | [epic-licensing.md](/.plan/epics/epic-licensing.md) |
+| ⬜ Not Started | Licensing | Low | Medium | 6 | [epic-licensing.md](/.plan/epics/epic-licensing.md) |
 | ⬜ Not Started | LLM Request Throughput & Message Scheduling | Medium | Large | 13 | [epic-llm-queue.md](/.plan/epics/epic-llm-queue.md) |
 | ⬜ Not Started | Local Process Swarm (Bun-Managed Multi-Process Decomposition) | Medium | Very High | 0 | [epic-local-process-swarm.md](/.plan/epics/epic-local-process-swarm.md) |
-| ⬜ Not Started | Logging & Structured Logging | Medium | Medium | 0 | [epic-logging.md](/.plan/epics/epic-logging.md) |
+| ⬜ Not Started | Logging & Structured Logging | Medium | Medium | 5 | [epic-logging.md](/.plan/epics/epic-logging.md) |
 | 🟡 In Progress — TASK-add-trace-fatal, TASK-unify-logging-output-to-canonical-jsonl, TASK-insert-log-fatal-and-log-trace-calls, TASK-verify-logging-changes-green all ✅ Done (merged to dev 2026-08-07) | Logging & Telemetry — Complete Level Set + Canonical JSONL | High | Medium | 5 | [epic-logging-telemetry.md](/.plan/epics/epic-logging-telemetry.md) |
 | 🟡 Permanently Ongoing | Logic Reconciliation (Permanently Ongoing) | High | Continuous | 0 | [epic-logic-reconciliation.md](/.plan/epics/epic-logic-reconciliation.md) |
 | ⬜ Not Started | Login & Authentication UI | Medium | Medium | 0 | [epic-frontend-login.md](/.plan/epics/epic-frontend-login.md) |
@@ -3242,4 +3242,3 @@ Extends the World & Locations foundation (see `epic-world-locations.md`, which
 ## Backlog
 
 Full backlog with prioritized tasks: [.plan/backlog/](/.plan/backlog/)
-

@@ -240,3 +240,51 @@ operator credential store ticket; add explicit frontend subtasks there.
 - TASK-native-aws-bedrock-adapter.md — native Bedrock ConverseStream + SigV4 adapter
 - TASK-native-adapters-vertex-cohere-replicate-cloudflare.md — Vertex/Cohere/Replicate/Cloudflare adapters
 - TASK-platform-health-discovery-cost-display.md — health + model discovery + cost display
+
+
+## Integration Points
+
+### Systems This Epic Depends On
+
+<!-- Systems whose output this epic consumes -->
+
+| System | What It Provides | How Used |
+| ------ | ---------------- | -------- |
+| Provider Plugin Ecosystem | `LLMProvider` interface, plugin lifecycle, registry | Native adapters register as core plugins |
+| BYOK API Keys | User-side `user_api_keys` table | Per-user keys distinct from server-operator credentials |
+| BYOK Local Models | Local tunnel/browser inference | `http://localhost:*` providers reuse BYOK plumbing |
+| Crypto | `encryptValue`, key wrapping | Server-operator platform credentials encrypted at rest |
+| Realtime Transports | WebSocket/SSE | Streaming provider responses flow over the real-time layer |
+
+### Systems That Depend On This Epic
+
+<!-- Systems that consume this epic's output -->
+
+| System | What It Consumes | How Used |
+| ------ | ---------------- | -------- |
+| Generation Pipeline | `LLMProvider` registry | All chat / generation routes use the unified provider surface |
+| Assistant Generation Extensions | Image / video / embedding dispatch | Provider catalog is reused for non-text modalities |
+| Provider Health Dashboard | `GET /api/providers` extended listing | Status, capabilities, discovered models, per-model cost |
+| Federation / Mesh | Optional provider sharing hooks | Cross-instance provider catalog sync |
+
+### Shared Data Contracts
+
+<!-- Types, interfaces, or schemas shared between this and other systems -->
+
+| Contract | Shared With | Purpose |
+| -------- | ----------- | ------- |
+| `LLMProvider` interface | Provider Plugin Ecosystem | Common provider contract (chat, stream, embed) |
+| `EmbeddingProvider` / `ImageProvider` / `TTSProvider` / `STTProvider` | Generation Pipeline | New interfaces for non-LLM modalities |
+| `PlatformCredential` (encrypted) | BYOK API Keys | Distinct shape for operator vs user keys |
+| `ModelInfo` | Provider Health, Cost Tracking | Cached model metadata |
+
+### Cross-System Events
+
+<!-- Events this system emits or subscribes to from other systems -->
+
+| Event | Direction | Purpose |
+| ----- | --------- | ------- |
+| `provider.health_changed` | emits → Provider Health Dashboard | Status refresh |
+| `provider.registered` | emits → Registry, Audit | New provider or core plugin registered |
+| `provider.credential_rotated` | emits → Audit, Crypto | Server-operator key rotation |
+| `key.user_changed` | subscribes ← BYOK API Keys | Cache invalidation for per-user models |
