@@ -83,7 +83,7 @@ describe("insertGeneratedEntity", () => {
     expect(inserted.kind,).toBe("npc",);
     const actor = await db
       .selectFrom("actors",)
-      .select(["agent_type", "actor_type", "default_outfit", "outfits",])
+      .select(["agent_type", "actor_type", "default_outfit", "outfits",],)
       .where("id", "=", inserted.id,)
       .executeTakeFirst();
     expect(actor?.agent_type,).toBe("npc",);
@@ -91,7 +91,7 @@ describe("insertGeneratedEntity", () => {
     // appearance doubles as the default outfit when none is supplied
     expect(actor?.default_outfit,).toBe("Broad, grey-bearded.",);
     expect(actor?.outfits,).toContain("Broad, grey-bearded.",);
-  },);
+  });
 
   test("npc lore lands in actor_lore_entries", async () => {
     const inserted = await insertGeneratedEntity(db, {
@@ -101,7 +101,7 @@ describe("insertGeneratedEntity", () => {
         description: "Keeps the town archive.",
         personality: "Patient.",
         appearance: "Robe-covered.",
-        lore: [{ name: "Archive Key", content: "Holds the east wing.", keys: ["archive",], }],
+        lore: [{ name: "Archive Key", content: "Holds the east wing.", keys: ["archive",], },],
       },
       description: "keeps records",
     }, userId,);
@@ -111,8 +111,8 @@ describe("insertGeneratedEntity", () => {
       .select("name",)
       .where("actor_id", "=", inserted.id,)
       .execute();
-    expect(lore.map((l,) => l.name,),).toEqual(["Archive Key",],);
-  },);
+    expect(lore.map((l,) => l.name),).toEqual(["Archive Key",],);
+  });
 
   test("location creation binds a public chat when template-world exists", async () => {
     await insertChatSetupTemplates(db, "world", "World Chat", {
@@ -124,7 +124,7 @@ describe("insertGeneratedEntity", () => {
 
     const inserted = await insertGeneratedEntity(db, {
       kind: "location",
-      data: { name: "Waystation", description: "A dusty waystation." },
+      data: { name: "Waystation", description: "A dusty waystation.", },
       description: "a waystation",
       worldId,
     }, userId,);
@@ -132,7 +132,7 @@ describe("insertGeneratedEntity", () => {
     expect(inserted.linkedChatId,).toBeString();
     const chat = await db
       .selectFrom("chats",)
-      .select(["id", "visibility", "template_id", "world_id", "current_location_id", "turn_strategy",])
+      .select(["id", "visibility", "template_id", "world_id", "current_location_id", "turn_strategy",],)
       .where("id", "=", inserted.linkedChatId!,)
       .executeTakeFirst();
     expect(chat?.current_location_id,).toBe(inserted.id,);
@@ -140,5 +140,5 @@ describe("insertGeneratedEntity", () => {
     expect(chat?.template_id,).toBe("template-world",);
     expect(chat?.visibility,).toBe("public",);
     expect(chat?.turn_strategy,).toBe("round_robin",);
-  },);
+  });
 });
