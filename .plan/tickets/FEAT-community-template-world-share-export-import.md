@@ -3,7 +3,7 @@
 
 # FEAT: Community Template/World/Share Export-Import
 
-**Status:** ✅ Done (duplicate, verified 2026-09-19)
+**Status:** done
 **Priority:** medium
 **Effort:** Large
 **Summary:** Community Template/World/Share Export-Import

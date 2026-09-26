@@ -3,7 +3,7 @@
 
 # FEAT: Procedural Asset Pipelines (maps/portraits/music/sfx)
 
-**Status:** ✅ Done (duplicate, verified 2026-09-19)
+**Status:** done
 **Priority:** low
 **Effort:** XL
 **Summary:** Procedural Asset Pipelines (maps/portraits/music/sfx)

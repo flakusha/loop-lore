@@ -3,7 +3,7 @@
 
 # TASK: Replayability (Session-Seeded Random Tables)
 
-**Status:** ✅ Resolved (already on dev, 2026-09-19)
+**Status:** done
 **Priority:** low
 **Effort:** Small
 **Summary:** Replayability (Session-Seeded Random Tables)

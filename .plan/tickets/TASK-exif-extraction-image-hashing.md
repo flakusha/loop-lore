@@ -3,7 +3,7 @@
 
 # TASK: EXIF Extraction + Image Hashing
 
-**Status:** ✅ Done (duplicate — remainder extracted, 2026-09-19)
+**Status:** done
 **Priority:** low
 **Effort:** Medium
 **Summary:** EXIF Extraction + Image Hashing

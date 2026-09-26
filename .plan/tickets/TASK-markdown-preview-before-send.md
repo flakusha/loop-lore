@@ -3,7 +3,7 @@
 
 # TASK: Markdown Preview Before Send
 
-**Status:** ✅ Done (duplicate, verified 2026-09-19)
+**Status:** done
 **Priority:** medium
 **Effort:** Small
 **Summary:** Markdown Preview Before Send

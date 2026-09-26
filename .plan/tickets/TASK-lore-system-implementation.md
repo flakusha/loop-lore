@@ -3,7 +3,7 @@
 
 # TASK: Lore System Implementation
 
-**Status:** ✅ Done (duplicate, verified 2026-09-19)
+**Status:** done
 **Priority:** high
 **Effort:** Large
 **Summary:** Lore System Implementation

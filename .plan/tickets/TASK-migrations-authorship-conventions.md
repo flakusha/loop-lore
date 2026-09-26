@@ -3,7 +3,7 @@
 
 # TASK: Migrations Authorship Conventions
 
-**Status:** ✅ Done (duplicate — remainder extracted, 2026-09-19)
+**Status:** done
 **Priority:** medium
 **Effort:** Small
 **Summary:** Migrations Authorship Conventions

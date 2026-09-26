@@ -3,7 +3,7 @@
 
 # FEAT: GDPR & User Data Rights
 
-**Status:** ✅ Done (duplicate — remainder extracted, 2026-09-19)
+**Status:** done
 **Priority:** high
 **Effort:** Large
 **Summary:** GDPR & User Data Rights

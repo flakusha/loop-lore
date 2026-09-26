@@ -3,7 +3,7 @@
 
 # FEAT: Auto-translation Layer (Input/Output)
 
-**Status:** ✅ Done (duplicate, verified 2026-09-19)
+**Status:** done
 **Priority:** low
 **Effort:** Large
 **Summary:** Auto-translation Layer (Input/Output)

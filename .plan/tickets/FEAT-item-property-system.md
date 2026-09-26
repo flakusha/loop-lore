@@ -3,7 +3,7 @@
 
 # FEAT: Item Property System
 
-**Status:** ✅ Done (duplicate, verified 2026-09-19)
+**Status:** done
 **Priority:** low
 **Effort:** Medium
 **Summary:** Item Property System

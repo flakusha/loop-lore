@@ -3,7 +3,7 @@
 
 # FEAT: Inventory Management UI
 
-**Status:** ✅ Done (duplicate, verified 2026-09-19)
+**Status:** done
 **Priority:** medium
 **Effort:** Large
 **Summary:** Inventory Management UI
