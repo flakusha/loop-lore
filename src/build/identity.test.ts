@@ -126,6 +126,23 @@ describe("computeBuildIdentity — sensitivity", () => {
     expect(after.buildHash,).not.toBe(before.buildHash,);
   });
 
+  // `tree` is giwt's default worktree dir. A local worktree must not shift the
+  // build hash — it is not part of the running server's code, and hashing it
+  // makes the fingerprint unstable across checkouts.
+  test("worktree dir under tree/ does not change buildHash", async () => {
+    seedProject();
+    const before = await computeBuildIdentity({ projectRoot: tempDir, },);
+    mkdirSync(join(tempDir, "tree", "feature", "src",), { recursive: true, },);
+    writeFileSync(
+      join(tempDir, "tree", "feature", "src", "index.ts",),
+      "export const other = 99;\n",
+    );
+    __resetBuildIdentityForTests();
+    const after = await computeBuildIdentity({ projectRoot: tempDir, },);
+    expect(after.sourceTreeHash,).toBe(before.sourceTreeHash,);
+    expect(after.buildHash,).toBe(before.buildHash,);
+  });
+
   test("manifest carries APP_NAME + APP_VERSION", async () => {
     seedProject();
     const id = await computeBuildIdentity({ projectRoot: tempDir, },);
