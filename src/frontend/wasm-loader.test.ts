@@ -8,16 +8,20 @@
  * @module wasm-loader.test
  */
 
-import { describe, expect, mock, test, } from "bun:test";
+import { expect, mock, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
 import type { WasmNativeModule, } from "./wasm-loader";
 // Static import: bun hoists mock.module above imports, so the fe-fetch stub
 // registers before ./wasm-loader evaluates (see asset-preview.test.ts).
 import { __buildWasmWrapperForTest, getWasmModule, isWasmAvailable, } from "./wasm-loader";
 
-mock.module("./fe-fetch", () => ({
-  feFetch: async () => new Response("{}", { status: 404, },),
-  getCsrfToken: () => "",
-}),);
+// Gated: mock.module is process-global (BUG 9c8bea1).
+if (ISOLATED) {
+  mock.module("./fe-fetch", () => ({
+    feFetch: async () => new Response("{}", { status: 404, },),
+    getCsrfToken: () => "",
+  }),);
+}
 /** Scripted C ABI exports backed by a real WebAssembly.Memory. */
 function fakeModule(overrides: Record<string, unknown> = {},): {
   instance: WebAssembly.Instance;
@@ -81,7 +85,7 @@ function build(overrides: Record<string, unknown> = {},): WasmNativeModule {
   return __buildWasmWrapperForTest(instance, memory,);
 }
 
-describe("wasm-loader — module load", () => {
+describeOrSkip("wasm-loader — module load", () => {
   test("null when the wasm asset is missing", async () => {
     await expect(getWasmModule(),).resolves.toBeNull();
   });
@@ -89,9 +93,9 @@ describe("wasm-loader — module load", () => {
   test("unavailable when the module failed to load", async () => {
     await expect(isWasmAvailable(),).resolves.toBe(false,);
   });
-});
+},);
 
-describe("wasm-loader — blake3 wrapper", () => {
+describeOrSkip("wasm-loader — blake3 wrapper", () => {
   test("returns the 32 digest bytes verbatim", () => {
     const mod = build();
     expect(mod.version,).toBe(1024,);
@@ -107,9 +111,9 @@ describe("wasm-loader — blake3 wrapper", () => {
     const mod = build({ ll_blake3: () => -1, },);
     expect(mod.blake3.hash(new Uint8Array([1,],),),).toBeNull();
   });
-});
+},);
 
-describe("wasm-loader — zstd wrapper", () => {
+describeOrSkip("wasm-loader — zstd wrapper", () => {
   test("compress echoes the input through the scratch area", () => {
     const mod = build();
     expect(mod.zstd.compress(new Uint8Array([9, 8, 7,],), 3,),).toEqual(new Uint8Array([9, 8, 7,],),);
@@ -138,9 +142,9 @@ describe("wasm-loader — zstd wrapper", () => {
     const failing = build({ ll_zstd_decompress: () => -1, },);
     expect(failing.zstd.decompress(new Uint8Array([1,],), 16,),).toBeNull();
   });
-});
+},);
 
-describe("wasm-loader — gguf wrapper", () => {
+describeOrSkip("wasm-loader — gguf wrapper", () => {
   test("decodes the 32-byte probe summary", () => {
     const mod = build();
     expect(mod.gguf.probe(new Uint8Array([0x47, 0x47, 0x55, 0x46,],),),).toEqual({
@@ -174,4 +178,4 @@ describe("wasm-loader — gguf wrapper", () => {
     );
     expect(failing.gguf.probe(new Uint8Array([0x47,],),),).toBeNull();
   });
-});
+},);

@@ -2,19 +2,23 @@
  * Tests for chat section dividers — story-spanning navigation.
  */
 
-import { describe, expect, mock, test, } from "bun:test";
+import { expect, mock, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { chatSections, } from "./chat-sections";
 import { chatSectionsNav, } from "./chat-sections-nav";
 import { computeGroupedMessages, } from "./chat-utils/grouped";
 
 // ── Mock apiFetch (bulk-assign + narrative calls) ──────────────────────
 const fetchCalls: { url: string; opts: RequestInit }[] = [];
-mock.module("./htmx", () => ({
-  apiFetch: async (url: string, opts?: RequestInit,) => {
-    fetchCalls.push({ url, opts: opts ?? {}, },);
-    return new Response("{}", { status: 200, },);
-  },
-}),);
+// Gated: mock.module is process-global (BUG 9c8bea1).
+if (ISOLATED) {
+  mock.module("./htmx", () => ({
+    apiFetch: async (url: string, opts?: RequestInit,) => {
+      fetchCalls.push({ url, opts: opts ?? {}, },);
+      return new Response("{}", { status: 200, },);
+    },
+  }),);
+}
 const emptyNarrative = " ".repeat(3,);
 
 const section = (id: string, label: string,) => ({
@@ -39,7 +43,7 @@ function msg(id: string, sectionId: string | null,) {
   };
 }
 
-describe("chatSections.sectionDividerFor", () => {
+describeOrSkip("chatSections.sectionDividerFor", () => {
   const ctx = Object.assign(Object.create(chatSections,), {
     _sections: [
       section("s1", "The Dark Forest",),
@@ -75,9 +79,9 @@ describe("chatSections.sectionDividerFor", () => {
     ctx.groupedMessages = [msg("m1", "nope",),];
     expect((chatSections as any).sectionDividerFor.call(ctx, 0, "nope",),).toBeNull();
   });
-});
+},);
 
-describe("computeGroupedMessages section breaks", () => {
+describeOrSkip("computeGroupedMessages section breaks", () => {
   const base = {
     role: "assistant",
     content: "x",
@@ -109,9 +113,9 @@ describe("computeGroupedMessages section breaks", () => {
   test("empty messages returns empty", () => {
     expect(computeGroupedMessages.call({ ...base, messages: [], } as any,),).toEqual([],);
   });
-});
+},);
 
-describe("chatSectionsNav.sectionMessageCounts", () => {
+describeOrSkip("chatSectionsNav.sectionMessageCounts", () => {
   const ctx = Object.assign(Object.create(chatSectionsNav,), {
     _sections: [section("s1", "Forest",), section("s2", "Tavern",),],
     groupedMessages: [
@@ -136,9 +140,9 @@ describe("chatSectionsNav.sectionMessageCounts", () => {
     },);
     expect(counts.size,).toBe(0,);
   });
-});
+},);
 
-describe("chatSectionsNav.sectionActors", () => {
+describeOrSkip("chatSectionsNav.sectionActors", () => {
   const ctx = Object.assign(Object.create(chatSectionsNav,), {
     groupedMessages: [
       { ...msg("m1", "s1",), actor_name: "Aria", },
@@ -158,9 +162,9 @@ describe("chatSectionsNav.sectionActors", () => {
   test("actor present in multiple sections", () => {
     expect((chatSectionsNav as any).sectionActors.call(ctx, "s2",),).toEqual(["Aria",],);
   });
-});
+},);
 
-describe("chatSectionsNav.partySplit", () => {
+describeOrSkip("chatSectionsNav.partySplit", () => {
   // Object.create avoids evaluating getters during spread (getters read `this`).
   const getter = () => Object.getOwnPropertyDescriptor(chatSectionsNav, "partySplit",)!;
   const ctxFor = (groupedMessages: unknown[],) => Object.assign(Object.create(chatSectionsNav,), { groupedMessages, },);
@@ -188,9 +192,9 @@ describe("chatSectionsNav.partySplit", () => {
     ],);
     expect(getter().get!.call(ctx,),).toBe(false,);
   });
-});
+},);
 
-describe("chatSectionsNav.currentSectionName", () => {
+describeOrSkip("chatSectionsNav.currentSectionName", () => {
   const getter = () => Object.getOwnPropertyDescriptor(chatSectionsNav, "currentSectionName",)!;
 
   test("resolves label for current section", () => {
@@ -206,9 +210,9 @@ describe("chatSectionsNav.currentSectionName", () => {
     const ctx = Object.assign(Object.create(chatSectionsNav,), { _currentSectionId: null, },);
     expect(getter().get!.call(ctx,),).toBeNull();
   });
-});
+},);
 
-describe("chatSectionsNav.transferToSection", () => {
+describeOrSkip("chatSectionsNav.transferToSection", () => {
   test("sets active, jumps, and syncs location when section has one", async () => {
     const jumped: string[] = [];
     const changed: { to: string | null } = { to: null, };
@@ -260,9 +264,9 @@ describe("chatSectionsNav.transferToSection", () => {
     await (chatSectionsNav as any).transferToSection.call(ctx, "s1",);
     expect(jumped,).toBe(false,);
   });
-});
+},);
 
-describe("chatSectionsNav.trackCurrentSection", () => {
+describeOrSkip("chatSectionsNav.trackCurrentSection", () => {
   // tests/setup-globals.ts installs a shared globalThis.document for all
   // frontend tests: save/restore it instead of deleting, so later files
   // (e.g. chat-seen.test.ts) keep their DOM shim.
@@ -300,9 +304,9 @@ describe("chatSectionsNav.trackCurrentSection", () => {
     expect(ctx._currentSectionId,).toBe("s1",);
     (globalThis as any).document = originalDocument;
   });
-});
+},);
 
-describe("chatSections.sectionDividerMeta", () => {
+describeOrSkip("chatSections.sectionDividerMeta", () => {
   test("counts messages and reports first message time", () => {
     const ctx = Object.assign(Object.create(chatSections,), {
       groupedMessages: [
@@ -328,9 +332,9 @@ describe("chatSections.sectionDividerMeta", () => {
     expect((chatSections as any).formatSectionTime.call(ctx, null,),).toBe("",);
     expect((chatSections as any).formatSectionTime.call(ctx, "not-a-date",),).toBe("",);
   });
-});
+},);
 
-describe("chatSectionsNav.bulkAssignToSection", () => {
+describeOrSkip("chatSectionsNav.bulkAssignToSection", () => {
   test("posts assign-all and reloads stream + sections", async () => {
     let loaded = 0;
     const ctx = Object.assign(Object.create(chatSectionsNav,), {
@@ -353,9 +357,9 @@ describe("chatSectionsNav.bulkAssignToSection", () => {
     await (chatSectionsNav as any).bulkAssignToSection.call(ctx, "s1",);
     expect(fetchCalls.length,).toBe(calls,);
   });
-});
+},);
 
-describe("chatSectionsNav.insertNarrative", () => {
+describeOrSkip("chatSectionsNav.insertNarrative", () => {
   test("posts narrative and reloads stream", async () => {
     let loaded = 0;
     const ctx = Object.assign(Object.create(chatSectionsNav,), {
@@ -375,9 +379,9 @@ describe("chatSectionsNav.insertNarrative", () => {
     await (chatSectionsNav as any).insertNarrative.call(ctx, "s1", emptyNarrative,);
     expect(fetchCalls.length,).toBe(calls,);
   });
-});
+},);
 
-describe("chatSectionsNav.transition + narrative transfer", () => {
+describeOrSkip("chatSectionsNav.transition + narrative transfer", () => {
   test("setTransitionType stores the pick", () => {
     const ctx = Object.create(chatSectionsNav,);
     (chatSectionsNav as any).setTransitionType.call(ctx, "teleport",);
@@ -422,4 +426,4 @@ describe("chatSectionsNav.transition + narrative transfer", () => {
     await (chatSectionsNav as any).transferToSection.call(ctx, "s1",);
     expect(inserted,).toBe(false,);
   });
-});
+},);
