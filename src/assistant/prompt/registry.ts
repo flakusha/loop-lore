@@ -31,6 +31,7 @@ import { storyContextSection, } from "./sections/story-context";
 import { systemSection, } from "./sections/system";
 import { taskClarificationSection, } from "./sections/task-clarification";
 import { travelSection, } from "./sections/travel";
+import { turnSkipAbsenceSection, } from "./sections/turn-skip-absence";
 import { userPersonaSection, } from "./sections/user-persona";
 import type { SectionBuilder, } from "./types";
 
@@ -55,6 +56,11 @@ export const PROMPT_SECTIONS: SectionBuilder[] = [
   storyContextSection,
   travelSection,
   gmNotesSection,
+  // Turn-skip absence contract (TASK-turn-skip-gm-absence-contract). Sits
+  // next to gmNotes so the LLM sees the hold/advance rules in the same
+  // steering block as other GM-only directives; turns into an empty
+  // section when no skip events are in the recent log.
+  turnSkipAbsenceSection,
   dynamicContextSection,
   recentEventsSection,
   interactionContextSection,

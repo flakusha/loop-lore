@@ -24,8 +24,7 @@ import {
   insertMessages,
   insertUsers,
 } from "../../../test-utils/insert-helpers";
-import { recordTurnSkip, } from "./turn-skip";
-
+import { countTurnSkipsForActor, recordTurnSkip, } from "./turn-skip";
 describe("recordTurnSkip", () => {
   let db: Kysely<DB>;
   const OWNER_ID = crypto.randomUUID();
@@ -132,5 +131,150 @@ describe("recordTurnSkip", () => {
     expect(res.ok,).toBe(false,);
     if (res.ok) { return; }
     expect(res.code,).toBe("refused_beat",);
+  });
+});
+
+describe("cascade telemetry (TASK-turn-skip-cascade)", () => {
+  let db: Kysely<DB>;
+  const OWNER_ID = crypto.randomUUID();
+  const MEMBER_ID = crypto.randomUUID();
+  const CHAT_ID = crypto.randomUUID();
+
+  beforeEach(async () => {
+    createLogger({ level: "error", },);
+    ({ db, } = await createTestDb());
+    for (const [name, id,] of [["owner", OWNER_ID,], ["member", MEMBER_ID,],] as const) {
+      await insertUsers(db, name, name, { id, } as never,);
+      await insertActors(db, name, { id, user_id: id, owner_id: id, } as never,);
+    }
+    await insertChats(db, "Cascade Chat", OWNER_ID, { id: CHAT_ID, } as never,);
+    await insertChatParticipants(db, CHAT_ID, OWNER_ID, { role_in_chat: "owner", },);
+    await insertChatParticipants(db, CHAT_ID, MEMBER_ID, { role_in_chat: "member", },);
+  },);
+
+  afterEach(async () => {
+    await db.destroy();
+  },);
+
+  async function telemetryEvents(eventType: string,): Promise<Array<{ event_data: string }>> {
+    return db.selectFrom("telemetry_events",).select("event_data",)
+      .where("event_type", "=", eventType,).execute();
+  }
+
+  test("fresh skip records cascade.beat.consumed telemetry", async () => {
+    const res = await recordTurnSkip(db, {
+      chatId: CHAT_ID,
+      actorId: MEMBER_ID,
+      mode: "hold",
+      userId: MEMBER_ID,
+      userRole: null,
+    },);
+    expect(res.ok,).toBe(true,);
+    const events = await telemetryEvents("cascade.beat.consumed",);
+    expect(events.length,).toBeGreaterThanOrEqual(1,);
+  });
+
+  test("deduped skip records cascade.dedup.skip telemetry", async () => {
+    const first = await recordTurnSkip(db, {
+      chatId: CHAT_ID,
+      actorId: MEMBER_ID,
+      mode: "hold",
+      userId: MEMBER_ID,
+      userRole: null,
+    },);
+    expect(first.ok,).toBe(true,);
+    const second = await recordTurnSkip(db, {
+      chatId: CHAT_ID,
+      actorId: MEMBER_ID,
+      mode: "hold",
+      userId: MEMBER_ID,
+      userRole: null,
+    },);
+    expect(second.ok,).toBe(true,);
+    if (!second.ok) { return; }
+    expect(second.deduped,).toBe(true,);
+    const events = await telemetryEvents("cascade.dedup.skip",);
+    expect(events.length,).toBeGreaterThanOrEqual(1,);
+  });
+
+  test("refused_beat does not record any telemetry", async () => {
+    await insertMessages(db, CHAT_ID, MEMBER_ID, MessageRole.User, "attempted beat", {
+      status: MessageStatus.Rejected,
+    },);
+    const res = await recordTurnSkip(db, {
+      chatId: CHAT_ID,
+      actorId: MEMBER_ID,
+      mode: "hold",
+      userId: MEMBER_ID,
+      userRole: null,
+    },);
+    expect(res.ok,).toBe(false,);
+    const consumed = await telemetryEvents("cascade.beat.consumed",);
+    const dedup = await telemetryEvents("cascade.dedup.skip",);
+    expect(consumed,).toHaveLength(0,);
+    expect(dedup,).toHaveLength(0,);
+  });
+});
+
+describe("countTurnSkipsForActor (TASK-turn-skip-cascade)", () => {
+  let db: Kysely<DB>;
+  const OWNER_ID = crypto.randomUUID();
+  const MEMBER_ID = crypto.randomUUID();
+  const CHAT_ID = crypto.randomUUID();
+
+  beforeEach(async () => {
+    createLogger({ level: "error", },);
+    ({ db, } = await createTestDb());
+    for (const [name, id,] of [["owner", OWNER_ID,], ["member", MEMBER_ID,],] as const) {
+      await insertUsers(db, name, name, { id, } as never,);
+      await insertActors(db, name, { id, user_id: id, owner_id: id, } as never,);
+    }
+    await insertChats(db, "Count Chat", OWNER_ID, { id: CHAT_ID, } as never,);
+    await insertChatParticipants(db, CHAT_ID, OWNER_ID, { role_in_chat: "owner", },);
+    await insertChatParticipants(db, CHAT_ID, MEMBER_ID, { role_in_chat: "member", },);
+  },);
+
+  afterEach(async () => {
+    await db.destroy();
+  },);
+
+  test("returns 0 when no skips exist", async () => {
+    const n = await countTurnSkipsForActor(db, CHAT_ID, MEMBER_ID,);
+    expect(n,).toBe(0,);
+  });
+
+  test("counts skips per actor and ignores other actors", async () => {
+    // Each owner skip needs a non-skip row in between; the latest-message
+    // dedup guard short-circuits a back-to-back skip regardless of mode
+    // (see turn-skip.ts:99-113). Realistic flow: actor skips, the GM
+    // produces a beat, the actor skips again.
+    await recordTurnSkip(db, {
+      chatId: CHAT_ID,
+      actorId: MEMBER_ID,
+      mode: "hold",
+      userId: MEMBER_ID,
+      userRole: null,
+    },);
+    await recordTurnSkip(db, {
+      chatId: CHAT_ID,
+      actorId: OWNER_ID,
+      mode: "advance",
+      userId: OWNER_ID,
+      userRole: null,
+    },);
+    // Owner emits a non-skip message (e.g. a confirmed beat) → next owner
+    // skip is no longer deduped against the prior skip row.
+    await insertMessages(db, CHAT_ID, OWNER_ID, MessageRole.Character, "Meanwhile, the captain stood watch.",);
+    await recordTurnSkip(db, {
+      chatId: CHAT_ID,
+      actorId: OWNER_ID,
+      mode: "hold",
+      userId: OWNER_ID,
+      userRole: null,
+    },);
+    const memberCount = await countTurnSkipsForActor(db, CHAT_ID, MEMBER_ID,);
+    const ownerCount = await countTurnSkipsForActor(db, CHAT_ID, OWNER_ID,);
+    expect(memberCount,).toBe(1,);
+    expect(ownerCount,).toBe(2,);
   });
 });
