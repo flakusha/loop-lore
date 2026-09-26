@@ -31,3 +31,6 @@ Keep `navigateViaHtmx()` for its documented headless workaround. Add ONE ordinar
 - [ ] Same assertion runs at 390×844 (mobile width).
 - [ ] Test fails when the control is covered, clipped, or unreachable.
 - [ ] Existing `navigateViaHtmx()` workaround remains unchanged.
+
+
+git issue: 1beae3a

@@ -31,3 +31,6 @@ Two semantic mismatches in the runner-gate contracts:
 - [ ] banned-pattern output is captured in the runner's `nonBlocking` report (visible findings, green gate) rather than discarded.
 - [ ] A controlled banned-pattern finding appears in the check report's `nonBlocking` section.
 - [ ] InnerHTML stays blocking on real findings (current behavior preserved unless explicitly downgraded).
+
+
+git issue: 08d2d8f

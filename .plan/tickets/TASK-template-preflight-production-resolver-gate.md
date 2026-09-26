@@ -35,3 +35,6 @@ The current 19 physical views render non-empty output (verified), so the preflig
 - [ ] `assets` alias is intentionally excluded from physical enumeration.
 - [ ] Controlled missing include and circular include each fail the gate.
 - [ ] Clean tree passes the new gate.
+
+
+git issue: 12a55a4

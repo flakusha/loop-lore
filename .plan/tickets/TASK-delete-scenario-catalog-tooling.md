@@ -31,3 +31,6 @@
 - [ ] script-map entry is removed.
 - [ ] `bun run check` does not reference scenario-catalog tooling.
 - [ ] No regression to standard `bun test tests/e2e/` or `bun run test:e2e:browser`.
+
+
+git issue: 60449a6

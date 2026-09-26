@@ -31,3 +31,6 @@ The existing browser chat/Alpine tests also time out waiting for chat list state
 - [ ] The existing send/encryption test passes using the UI-driven path.
 - [ ] `selectChatViaAlpine()` helper is removed from chat-send.browser.ts.
 - [ ] A page-error assertion covers the normal startup transition.
+
+
+git issue: 242efba
