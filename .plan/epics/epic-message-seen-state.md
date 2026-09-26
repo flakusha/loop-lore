@@ -47,3 +47,47 @@ This is distinct from reactions (human-only, emoji) and from message quality sco
 - `TASK-message-seen-indicator-frontend.md`
 - `TASK-message-seen-realtime-broadcast.md`
 - `TASK-message-seen-ai-processing-integration.md`
+
+
+## Integration Points
+
+### Systems This Epic Depends On
+
+<!-- Systems whose output this epic consumes -->
+
+| System | What It Provides | How Used |
+| ------ | ---------------- | -------- |
+| Messages Pipeline | `messages` table, `parent_id` tree, content metadata | Per-message seen-state ledger attaches to existing message rows |
+| Chat Lifecycle | `checkChatAccess` gate, participant/actor model | Access enforcement + AI vs human recipient discrimination (actor_id vs user_id) |
+| Realtime Transports | SSE / WebSocket event envelopes | Broadcast seen-state deltas to subscribed clients |
+| Group Chat | Multi-actor chat participation | Per-actor ledger rows (one per viewer) |
+| Turn Scheduler | Rate-limit/batch admission decisions | AI actor transitions Seen → Processing when admitted, → Seen on response |
+
+### Systems That Depend On This Epic
+
+<!-- Systems that consume this epic's output -->
+
+| System | What It Consumes | How Used |
+| ------ | ---------------- | -------- |
+| Chat Lifecycle / Moderation | Viewership list per message | "Who saw this flagged message" — moderation context |
+| Reactions | `message_reactions` per-user pattern | Parallel interaction table; reuse route shape |
+| Frontend Backend Integration | Indicator widget + viewer popover | UI consumes seen + processing states |
+
+### Shared Data Contracts
+
+<!-- Types, interfaces, or schemas shared between this and other systems -->
+
+| Contract | Shared With | Purpose |
+| -------- | ----------- | ------- |
+| `MessageSeenState` (enum) | enums-core/flags.ts | Mirrors `NotificationStatus` state machine; reused for moderation + UX |
+| `(message_id, actor_id)` | Reactions, NSFW flags, chat_participants | Per-actor interaction table key |
+
+### Cross-System Events
+
+<!-- Events this system emits or subscribes to from other systems -->
+
+| Event | Direction | Purpose |
+| ----- | --------- | ------- |
+| `message.seen_changed` | emits → Realtime Transports | Live seen/processing update to subscribers |
+| `turn.actor_admitted` | subscribes ← Turn Scheduler | AI actor → Processing |
+| `message.actor_responded` | subscribes ← Messages | AI actor → Seen |
