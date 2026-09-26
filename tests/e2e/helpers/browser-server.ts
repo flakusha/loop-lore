@@ -10,7 +10,7 @@
  *
  * Usage:
  *   const ctx = await createBrowserTest();
- *   const page = await ctx.browser.newPage();
+ *   const page = await ctx.openPage();
  *   await page.goto(ctx.url + "/views/chat");
  *   await ctx.close();
  */
@@ -21,16 +21,17 @@ import { initSmk, } from "@/crypto";
 import { setTestDatabase, } from "@/db/index";
 import type { DB, } from "@/db/schema";
 import { createApp, } from "@/elysia-app";
-import { initializeProviders, } from "@/generation";
+import { initializeProviders, registerProvider, } from "@/generation";
 import { createLogger, setGlobalLogger, } from "@/logger";
 import { resetSoloUserCache, } from "@/middleware/index";
 import { loadAllPlugins, unloadAllPlugins, } from "@/plugins";
 import { handleApiRequest, } from "@/server";
-import { type Browser, chromium, type Page, } from "@playwright/test";
+import { MockLLMProvider, } from "@/test-utils/mock-provider";
+import { type Browser, type BrowserContext, chromium, type Page, } from "@playwright/test";
 import type { Kysely, } from "kysely";
-import { spawnSync, } from "node:child_process";
-import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync, } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, rmSync, } from "node:fs";
 import { join, } from "node:path";
+import { ensureFrontendBuild, } from "./browser-frontend-build";
 import { seedSolo, } from "./seed";
 import { createTestDb, loadTestConfig, runMigrations, } from "./server";
 
@@ -40,7 +41,7 @@ export interface BrowserTestContext {
   url: string;
   db: Kysely<DB>;
   config: Config;
-  browser: Browser;
+  browser: BrowserContext;
   /** Open a page and track it so a test failure can't leak it into the next test. */
   openPage: () => Promise<Page>;
   /** Close every page still open (call in afterEach/finally to prevent failure cascade). */
@@ -48,59 +49,15 @@ export interface BrowserTestContext {
   close: () => Promise<void>;
 }
 
-// ── Build frontend JS/CSS first ──────────────────────────────
+let activeBrowserContext = false;
 
-// Source-tree fingerprint: rebuild dist/public whenever any frontend input
-// changes (BUG-browser-harness-stale-frontend-build). Size+mtime inputs keep
-// the check cheap while staying exact across rebases and worktree reuse.
-function hashFrontendSources(root: string,): string {
-  const hash = new Bun.CryptoHasher("sha256",);
-  const inputs = ["src/frontend", "src/views", "src/public",];
-  for (const rel of inputs) {
-    const dir = join(root, rel,);
-    if (!existsSync(dir,)) { continue; }
-    const files = [...new Bun.Glob("**/*",).scanSync({ cwd: dir, dot: false, },),].sort();
-    for (const entry of files) {
-      const file = join(dir, entry,);
-      if (!existsSync(file,)) { continue; }
-      const stat = Bun.file(file,);
-      hash.update(rel,);
-      hash.update(entry,);
-      hash.update(String(stat.size,),);
-      hash.update(String(stat.lastModified,),);
-    }
-  }
-  return hash.digest("hex",);
-}
-
-function ensureFrontendBuild(): string {
-  const root = join(import.meta.dir, "..", "..", "..",);
-  const distPublic = join(root, "dist", "public",);
-  const jsPath = join(distPublic, "app.js",);
-  const hashPath = join(distPublic, ".build-hash",);
-  const expectedHash = hashFrontendSources(root,);
-  if (
-    existsSync(jsPath,) &&
-    existsSync(hashPath,) &&
-    readFileSync(hashPath, "utf8",) === expectedHash
-  ) { return distPublic; }
-
-  const result = spawnSync("bun", ["run", "build:frontend",], {
-    stdio: ["ignore", "pipe", "pipe",],
-    cwd: root,
-  },);
-  if (result.status !== 0) {
-    throw new Error(`Frontend build failed: ${result.stderr?.toString()}`,);
-  }
-
-  const srcViews = join(root, "src", "views",);
-  const srcPublic = join(root, "src", "public",);
-  if (existsSync(srcViews,)) { cpSync(srcViews, distPublic, { recursive: true, force: true, },); }
-  if (existsSync(srcPublic,)) { cpSync(srcPublic, distPublic, { recursive: true, force: true, },); }
-  writeFileSync(hashPath, expectedHash,);
-
-  return distPublic;
-}
+/**
+ * Upper bound for a single `page.close()`. A page mid-navigation (e.g. the
+ * locale switch's `location.reload()`) can make Chromium withhold the close
+ * acknowledgement, which otherwise hangs the test - or the whole suite
+ * teardown - with no timeout of its own.
+ */
+const CLOSE_TIMEOUT_MS = 5_000;
 
 // ── Create browser test context ──────────────────────────────
 
@@ -108,16 +65,40 @@ export async function createBrowserTest(
   overrides?: Omit<Partial<Config>, "auth"> & { auth?: Partial<Config["auth"]> },
 ): Promise<BrowserTestContext> {
   const publicDir = ensureFrontendBuild();
+  if (activeBrowserContext) {
+    throw new Error("Browser E2E uses process-global app state; create one context per worker process.",);
+  }
+  activeBrowserContext = true;
 
   // Use crypto.randomUUID() so concurrent workers can't collide on
-  // millisecond+Math.random() (BUG-test-run-id-uses-Date-now-collision-risk-under-parallel).
+  // millisecond+Math.random() (BUG-test-run-id-uses-Date.now-collision-risk-under-parallel).
   const testRunId = `loop-lore-e2e-${crypto.randomUUID()}`;
-  // TS-22/23/24: Bun.Server has `port: number` and `stop(): Promise<void>`.
   let bunServer: Bun.Server<undefined> | null = null;
   let browser: Browser | null = null;
+  let db: Kysely<DB> | null = null;
+  let closed = false;
+
+  /** @throws Propagates the first resource teardown failure after releasing all resources. */
+  async function cleanup(): Promise<void> {
+    if (closed) { return; }
+    closed = true;
+    const teardown = await Promise.allSettled([browser?.close(), bunServer?.stop(), db?.destroy(),],);
+    setTestDatabase(null,);
+    resetSoloUserCache();
+    activeBrowserContext = false;
+    try {
+      await unloadAllPlugins();
+    } finally {
+      const testDir = join("/tmp", testRunId,);
+      if (existsSync(testDir,)) { rmSync(testDir, { recursive: true, force: true, },); }
+    }
+    const failure = teardown.find((result,): result is PromiseRejectedResult => result.status === "rejected");
+    if (failure) { throw failure.reason; }
+  }
+
   try {
     // Create DB + run migrations
-    const db = createTestDb();
+    db = createTestDb();
     await runMigrations(db,);
 
     const config = loadTestConfig(overrides,);
@@ -132,6 +113,14 @@ export async function createBrowserTest(
     setGlobalLogger(logger,);
     initAgeGate(config.ageGate,);
     await initSmk(config.encryption,);
+    // Browser tests mount views that resolve a default model/provider at Alpine
+    // init (chat settings, VN settings). config.yaml may point defaultProvider at a
+    // real endpoint, so pin the mock as default and drop real providers — same
+    // contract as createTestServer(registerMock) in helpers/server.ts.
+    registerProvider("mock-provider", new MockLLMProvider(),);
+    config.generation.defaultProvider = "mock-provider";
+    config.generation.defaultModels["mock-provider"] = "mock-model";
+    config.generation.providers.openaiCompatible = [];
     initializeProviders(config,);
     await loadAllPlugins(db,);
 
@@ -184,8 +173,6 @@ export async function createBrowserTest(
     browser = await chromium.launch({ headless: true, },);
 
     // Create browser context with generous viewport so sidebar nav is visible.
-    // Cast to Browser — BrowserContext also has newPage() and is compatible
-    // at runtime with the BrowserTestContext interface.
     const browserContext = await browser.newContext({
       viewport: { width: 1440, height: 900, },
     },);
@@ -201,37 +188,33 @@ export async function createBrowserTest(
       url,
       db,
       config,
-      browser: browserContext as unknown as Browser,
+      browser: browserContext,
       openPage: async () => browserContext.newPage(),
       closeAllPages: async () => {
         // Close in reverse order (newest first) to avoid detached-frame races.
         const pages = [...openPages,];
         pages.reverse();
+        let abandoned = 0;
         await Promise.allSettled(pages.map(async (page,) => {
-          try {
-            await page.close();
-          } catch { /* already detached */ }
+          // Best-effort with a bound: a page we give up on is still reaped by
+          // the context teardown in cleanup(). The catch counts the abandoned
+          // promise instead of surfacing an unhandled rejection.
+          const closing = page.close().catch(() => {
+            abandoned += 1;
+          },);
+          await Promise.race([closing, Bun.sleep(CLOSE_TIMEOUT_MS,),],);
         },),);
         openPages.clear();
+        if (abandoned > 0) {
+          logger.warn(`closeAllPages: ${abandoned} page close(s) abandoned to context teardown`,);
+        }
       },
-      close: async () => {
-        await browser?.close();
-        void bunServer?.stop();
-        setTestDatabase(null,);
-        resetSoloUserCache();
-        await unloadAllPlugins();
-        const testDir = join("/tmp", testRunId,);
-        if (existsSync(testDir,)) { rmSync(testDir, { recursive: true, force: true, },); }
-      },
+      close: cleanup,
     };
   } catch (err) {
-    // Clear the module-global override and any partial upload dir if setup
-    // throws mid-way (BUG-settestdatabase-global-leak-on-test-throw).
-    await browser?.close();
-    void bunServer?.stop();
-    setTestDatabase(null,);
-    const testDir = join("/tmp", testRunId,);
-    if (existsSync(testDir,)) { rmSync(testDir, { recursive: true, force: true, },); }
+    // Teardown failure must not mask the setup error — cleanup's own
+    // rejection is swallowed so the original `err` always propagates.
+    await cleanup().catch((): null => null);
     throw err;
   }
 }

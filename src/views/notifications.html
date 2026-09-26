@@ -94,7 +94,7 @@
               <div class="notif-sub" x-text="n.body" x-show="n.body"></div>
               <div class="notif-time" x-text="timeAgo(n.createdAt)" x-show="n.createdAt"></div>
             </div>
-            <span class="notif-dot" x-show="!n.read"></span>
+            <span class="notif-dot" x-show="!n.read" data-testid="notifications-unread"></span>
           </div>
         </template>
       </div>

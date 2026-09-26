@@ -3,7 +3,7 @@
 
 // ── World import/export — separate module so pages/worlds.ts stays < 250 lines ──
 import { jsonBody, safeJsonParse, } from "../alpine/json";
-import { eventTarget, } from "../dom";
+import { eventTarget, refreshHtmx, } from "../dom";
 import { feFetch, } from "../fe-fetch";
 import { showToast, } from "../ui";
 
@@ -33,23 +33,22 @@ globalThis.importWorld = async function(event: Event,) {
       headers: { "Content-Type": "application/json", },
       body: jsonBody(bundle as Record<string, unknown>,),
     },);
-    if (res.ok) {
-      const data = (await res.json()) as { id: string; imported: Record<string, number> };
-      document.querySelector("#import-world-modal",)?.classList.remove("open",);
-      let totalImported = 0;
-      const counts = data.imported ?? {};
-      for (const key of Object.keys(counts,)) {
-        totalImported += typeof counts[key] === "number" ? counts[key] : 0;
-      }
-      showToast("success", `Imported world (${totalImported} records)`,);
-      const list = document.querySelector("#world-list",);
-      if (list) { htmx.trigger(list, "load",); }
-    } else {
-      const err = await res.json();
-      showToast("error", err.message || err.error || "Failed to import world",);
+    // feFetch THROWS on any non-2xx (it never hands back the Response), so
+    // the API's own error message is unreachable here — surface the thrown
+    // error instead of a blanket "Network error".
+    const data = (await res.json()) as { id: string; imported: Record<string, number> };
+    document.querySelector("#import-world-modal",)?.classList.remove("open",);
+    let totalImported = 0;
+    const counts = data.imported ?? {};
+    for (const key of Object.keys(counts,)) {
+      totalImported += typeof counts[key] === "number" ? counts[key] : 0;
     }
-  } catch {
-    showToast("error", "Network error",);
+    showToast("success", `Imported world (${totalImported} records)`,);
+    refreshHtmx("#world-list",);
+  } catch (error) {
+    const status = (error as { status?: number }).status;
+    const message = error instanceof Error ? error.message : "Failed to import world";
+    showToast("error", status ? `Import failed (${status}): ${message}` : message,);
   }
 };
 

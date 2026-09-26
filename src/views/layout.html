@@ -236,7 +236,7 @@
     <header id="header-slot" class="main-header"></header>
 
     <!-- Persistent notification bell: global, survives per-view htmx header swaps -->
-    <div id="notification-bell-host" class="notification-bell" x-data="notificationsBell()" x-init="init()">
+    <div id="notification-bell-host" class="notification-bell" x-data="notificationsBell()">
       <style>
         .notification-bell { position: fixed; top: 0.7rem; right: 1rem; z-index: 1200; text-align: right; }
         .notification-bell__btn { position: relative; background: var(--bg-tertiary, #2a2a35); border: 1px solid var(--border, #444); color: var(--fg, #eee); border-radius: 8px; padding: 0.4rem 0.6rem; cursor: pointer; font-size: 1.1rem; }

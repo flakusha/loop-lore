@@ -108,12 +108,7 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
     const storyState = chat?.story_state ? jsonParseOr<Record<string, unknown>>(chat.story_state, {},) : {};
     const autoLang = storyState.autoTranslateLang;
     this._chatAutoTranslateLang = typeof autoLang === "string" ? autoLang : "";
-    // so the modal bindings have a stable object per participant.
-    const actorModels: Record<string, { model: string; provider: string }> = {};
-    for (const p of this._chatParticipants) {
-      actorModels[p.actor_id] = config.actorModels?.[p.actor_id] ?? { model: "", provider: "", };
-    }
-    this._actorModels = actorModels;
+    this.loadActorModels(config,);
     await this.loadPromptTemplate();
     this.loadQuickReplies();
     Alpine.store("ui",).showChatSettings = true;

@@ -22,26 +22,18 @@ import { SEED, seedAll, } from "../../helpers/seed";
 
 const VALID_HEX_KEY = "b".repeat(64,); // 32 bytes = 256-bit SMK
 
-/** Select the seeded chat through the Alpine component API. The bundled chat
- * page's chatState().init() never reaches loadChats()
- * (TASK-browser-chatflow-upload-deferred), so the panel has no items to
- * click; the send path under test stays fully UI-driven. */
-async function selectChatViaAlpine(
+/** Open chat view and select the seeded solo chat through the visible UI. */
+async function openAndSelectChat(
   page: Awaited<ReturnType<BrowserTestContext["browser"]["newPage"]>>,
   url: string,
 ) {
   await page.goto(`${url}/views/chat`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
   await page.locator("[data-testid='message-list']",).waitFor({ state: "attached", timeout: 30_000, },);
   await waitForAlpineReady(page,);
-  await page.evaluate((chatId,) => {
-    const el = document.querySelector("[x-data='chatState()']",);
-    // Alpine's per-element reactive data stack; the mounted component API.
-    const stack =
-      (el as unknown as { _x_dataStack?: Array<{ selectChat: (id: string,) => Promise<void> }> })._x_dataStack;
-    const data = stack?.[0];
-    if (!data) { throw new Error("chatState not mounted",); }
-    return data.selectChat(chatId,);
-  }, SEED.soloChat.id,);
+  await page.locator("[data-testid='toggle-chat-list']",).click();
+  const chatLink = page.locator("#chat-list .nav-item",).filter({ hasText: SEED.soloChat.name, },).first();
+  await chatLink.waitFor({ state: "visible", timeout: 15_000, },);
+  await chatLink.click();
   await waitForAlpineState(
     page,
     "[x-data='chatState()']",
@@ -62,20 +54,13 @@ describe("Chat send round-trip (plaintext)", () => {
     await ctx?.close();
   },);
 
-  /** Open chat view and select the seeded solo chat. */
-  async function openAndSelectChat(
-    page: Awaited<ReturnType<BrowserTestContext["browser"]["newPage"]>>,
-  ) {
-    await selectChatViaAlpine(page, ctx.url,);
-  }
-
   test("sends a message that renders and persists in DB", async () => {
     const page = await ctx.openPage();
     const errors = trackPageErrors(page, {
       allowlist: [/404 \(Not Found\)/, /401 \(Unauthorized\)/, /Failed to load resource/,],
     },);
     try {
-      await openAndSelectChat(page,);
+      await openAndSelectChat(page, ctx.url,);
 
       const sent = `round-trip-${Date.now()}`;
       await page.fill("[data-testid='message-input']", sent,);
@@ -106,7 +91,7 @@ describe("Chat send round-trip (plaintext)", () => {
       allowlist: [/404 \(Not Found\)/, /401 \(Unauthorized\)/, /Failed to load resource/,],
     },);
     try {
-      await openAndSelectChat(page,);
+      await openAndSelectChat(page, ctx.url,);
 
       const before = await ctx.db
         .selectFrom("messages",)
@@ -177,7 +162,7 @@ describe("Chat encryption flow (SMK configured)", () => {
       allowlist: [/404 \(Not Found\)/, /401 \(Unauthorized\)/, /Failed to load resource/,],
     },);
     try {
-      await selectChatViaAlpine(page, ctx.url,);
+      await openAndSelectChat(page, ctx.url,);
 
       // Chat key must be loaded into the Alpine chat-keys component.
       await waitForAlpineState(

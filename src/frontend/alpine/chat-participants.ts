@@ -79,8 +79,9 @@ export const chatParticipants: Partial<ChatParticipantsState> & ThisType<ChatSta
     try {
       const res = await apiFetch("/api/v1/actors",);
       if (!res.ok) { return; }
-      const actors = (await res.json()) as { id: string; display_name: string; actor_type: string }[];
-      this._availableActors = actors;
+      // GET /api/v1/actors answers with a { data: [...] } envelope.
+      const body = (await res.json()) as { data?: { id: string; display_name: string; actor_type: string }[] };
+      this._availableActors = body.data ?? [];
     } catch {
       /* ignore */
     }

@@ -32,10 +32,13 @@ describe("Group-chat matrix UI (C1)", () => {
     await ctx.db
       .insertInto("chats",)
       .values({
-        id: "g1000001-0000-4000-a000-000000000001",
+        id: "11000001-0000-4000-a000-000000000001",
         name: "Group Chat Matrix E2E",
         type: ChatType.Group,
         mode: ChatMode.Story,
+        // The turn-order view only marks a "next" actor when a strategy is set
+        // (src/chat/service/turn-order.ts: nextActorId stays null without one).
+        turn_strategy: "round_robin",
         created_by: SEED.solo.id,
       },)
       .onConflict((oc,) => oc.column("id",).doNothing())
@@ -43,14 +46,14 @@ describe("Group-chat matrix UI (C1)", () => {
 
     await ctx.db
       .insertInto("chat_participants",)
-      .values({ chat_id: "g1000001-0000-4000-a000-000000000001", actor_id: SEED.solo.id, role_in_chat: "owner", },)
+      .values({ chat_id: "11000001-0000-4000-a000-000000000001", actor_id: SEED.solo.id, role_in_chat: "owner", },)
       .onConflict((oc,) => oc.columns(["chat_id", "actor_id",],).doNothing())
       .execute();
 
     await ctx.db
       .insertInto("chat_participants",)
       .values({
-        chat_id: "g1000001-0000-4000-a000-000000000001",
+        chat_id: "11000001-0000-4000-a000-000000000001",
         actor_id: SEED.soloCharacter.id,
         role_in_chat: "member",
       },)
@@ -60,7 +63,7 @@ describe("Group-chat matrix UI (C1)", () => {
     const chat = await ctx.db
       .selectFrom("chats",)
       .select(["id",],)
-      .where("id", "=", "g1000001-0000-4000-a000-000000000001",)
+      .where("id", "=", "11000001-0000-4000-a000-000000000001",)
       .executeTakeFirst();
     groupId = chat!.id;
   }, 90_000,);
@@ -82,18 +85,18 @@ describe("Group-chat matrix UI (C1)", () => {
 
   /** Open the participant panel (turn-order indicator) via the header toggle. */
   async function openParticipantPanel(page: Awaited<ReturnType<BrowserTestContext["browser"]["newPage"]>>,) {
-    await page.evaluate(() => {
-      document.querySelector("[data-testid='participant-mgmt']",)?.dispatchEvent(
-        new MouseEvent("click", { bubbles: true, },),
-      );
-    },);
+    await page.locator("[data-testid='gm-toggle']",).click();
     await page.locator("[data-testid='gm-panel']",).waitFor({ state: "visible", timeout: 10_000, },);
+    // participant-mgmt lives in the Story tab, which only renders in story mode.
+    await page.locator("[data-testid='gm-tab-story']",).click();
     await page.locator("[data-testid='participant-mgmt']",).waitFor({ state: "visible", timeout: 10_000, },);
   }
 
   test("turn-order indicator renders the AI companion as the next speaker", async () => {
     const page = await ctx.openPage();
-    const errors = trackPageErrors(page,);
+    // GET /api/v1/actors/:id/mood answers 404 when the character has no mood
+    // record yet (documented contract) and Chromium logs every non-2xx load.
+    const errors = trackPageErrors(page, { allowlist: [/status of 404/,], },);
     try {
       await openGroupChat(page,);
       await openParticipantPanel(page,);
@@ -119,16 +122,14 @@ describe("Group-chat matrix UI (C1)", () => {
 
   test("side-channels dropdown lists channels and opens them", async () => {
     const page = await ctx.openPage();
-    const errors = trackPageErrors(page,);
+    // GET /api/v1/actors/:id/mood answers 404 when the character has no mood
+    // record yet (documented contract) and Chromium logs every non-2xx load.
+    const errors = trackPageErrors(page, { allowlist: [/status of 404/,], },);
     try {
       await openGroupChat(page,);
 
       // Open the side-channels dropdown.
-      await page.evaluate(() => {
-        document.querySelector("[data-testid='side-channels-toggle']",)?.dispatchEvent(
-          new MouseEvent("click", { bubbles: true, },),
-        );
-      },);
+      await page.locator("[data-testid='side-channels-toggle']",).click();
       const menu = page.locator("[data-testid='side-channels-menu']",);
       await menu.waitFor({ state: "visible", timeout: 10_000, },);
       // No side-channels seeded → empty state shown.
@@ -136,15 +137,10 @@ describe("Group-chat matrix UI (C1)", () => {
 
       // Create a side-channel via the dropdown form.
       await page.fill("[data-testid='side-channel-name-input']", "OOC Thread",);
-      await page.evaluate(() => {
-        document.querySelector("[data-testid='side-channel-create-btn']",)?.dispatchEvent(
-          new MouseEvent("click", { bubbles: true, },),
-        );
-      },);
+      await page.locator("[data-testid='side-channel-create-btn']",).click();
 
       // The new side-channel appears in the list and the app switches to it
-      // (URL changes to the new chat id — avoids serializing the full Alpine
-      // state, whose `filteredAvailableActors` getter throws pre-init).
+      // (URL changes to the new chat id).
       const row = page.locator("[data-testid='side-channel-row']",).filter({ hasText: "OOC Thread", },);
       await row.waitFor({ state: "attached", timeout: 15_000, },);
       await page.waitForFunction(
@@ -161,7 +157,9 @@ describe("Group-chat matrix UI (C1)", () => {
 
   test("assistant panel opens from the dedicated sidebar toggle (D1)", async () => {
     const page = await ctx.openPage();
-    const errors = trackPageErrors(page,);
+    // GET /api/v1/actors/:id/mood answers 404 when the character has no mood
+    // record yet (documented contract) and Chromium logs every non-2xx load.
+    const errors = trackPageErrors(page, { allowlist: [/status of 404/,], },);
     try {
       await openGroupChat(page,);
 
@@ -170,23 +168,18 @@ describe("Group-chat matrix UI (C1)", () => {
       await toggle.waitFor({ state: "attached", timeout: 10_000, },);
 
       // Clicking it opens the unified panel on the Assistant tab.
-      await page.evaluate(() => {
-        document.querySelector("[data-testid='assistant-toggle']",)?.dispatchEvent(
-          new MouseEvent("click", { bubbles: true, },),
-        );
-      },);
+      await toggle.click();
       await page.locator("[data-testid='gm-panel']",).waitFor({ state: "visible", timeout: 10_000, },);
       await page.locator("[data-testid='assistant-tab']",).waitFor({ state: "visible", timeout: 10_000, },);
 
       // The command palette list populates inside the assistant surface.
-      await page.locator("[data-testid='assistant-command-help']",).waitFor({ state: "attached", timeout: 10_000, },);
+      await page.locator("[data-testid^='assistant-command-']",).first().waitFor({
+        state: "visible",
+        timeout: 10_000,
+      },);
 
       // Toggling again closes the panel (toggle-aware behavior).
-      await page.evaluate(() => {
-        document.querySelector("[data-testid='assistant-toggle']",)?.dispatchEvent(
-          new MouseEvent("click", { bubbles: true, },),
-        );
-      },);
+      await toggle.click();
       await page.locator("[data-testid='gm-panel']",).waitFor({ state: "hidden", timeout: 10_000, },);
     } finally {
       errors.assert();

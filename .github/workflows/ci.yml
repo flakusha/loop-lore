@@ -50,6 +50,9 @@ jobs:
       - name: Lint HTML
         run: bun run lint:html
 
+      - name: Template preflight
+        run: bun run check:templates
+
       - name: Format check
         run: bun run format
 
@@ -130,19 +133,7 @@ jobs:
       - name: Run browser tests
         env:
           E2E_SAFEGUARD: "1"
-        run: |
-          status=0
-          for f in tests/e2e/flows/browser/*.browser.ts; do
-            echo "Running $f..."
-            bun test --max-concurrency=1 "./$f" || status=1
-            sleep 0.3
-          done
-          if [ $status -ne 0 ]; then
-            echo "FAILED browser files (see above); aggregated exit 1"
-          else
-            echo "All browser files passed"
-          fi
-          exit $status
+        run: bun run test:e2e:browser
 
       - name: Upload test results
         if: always()
