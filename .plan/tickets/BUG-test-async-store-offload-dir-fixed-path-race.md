@@ -8,6 +8,10 @@
 **Effort:** Small
 **Type:** Bug
 
+**Summary:** detailed in the [Summary](#summary) section below.
+**Context:** detailed in the body sections below (current state / repro / root cause).
+**Acceptance Criteria:** detailed in the [Acceptance Criteria](#acceptance-criteria) section below.
+
 ## Summary
 
 `OFFLOAD_DIR` is defined as `path.resolve(".tmp", "async-store")` in `src/async/spill.ts:12` — a fixed, repo-relative path. Every `src/async/*test*.ts` file (`offload.test.ts`, `offload-daemon.test.ts`, `spill.test.ts`) reads this constant directly with no per-test override and no teardown, so:

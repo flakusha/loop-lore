@@ -8,6 +8,10 @@
 **Effort:** Small
 **Type:** Task
 
+**Summary:** detailed in the [Summary](#summary) section below.
+**Context:** detailed in the body sections below (current state / repro / root cause).
+**Acceptance Criteria:** detailed in the [Acceptance Criteria](#acceptance-criteria) section below.
+
 ## Summary
 
 The jscpd step (`scripts/check-parallel.mjs:1167-1231`) compares the current run against `.tmp/jscpd/prev.json` and overwrites it every run, so the comparison spans **one run only**. Observed drift in `.tmp/check-report.json` (line ~262): 3003 clones on 2026-09-25 (first run, baseline recorded) → 3005 clones on 2026-09-26 (reported as `level: "info"` non-blocking, message "unchanged vs last run"). The 09-18 gate audit (`grep -c -i 'jscpd\|clone' .tmp/heavy-gate-audit-2026-09-18.md` = 0) never mentions jscpd at all — silent debt. This ticket adds a **committed, long-lived** `.jscpd-baseline.json` at the repo root, gates the check on rising clones OR dup-%, and exposes `bun run jscpd:baseline` as the intentional opt-in to raise the bar.
