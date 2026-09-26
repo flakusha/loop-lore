@@ -191,6 +191,10 @@ export const PRIORITY = {
   storyContext: 1,
   travelPrompts: 0,
   gmNotes: 0,
+  /** Turn-skip absence contract (TASK-turn-skip-gm-absence-contract) —
+   *  behavior-critical when any skip is in play; trims only on extreme
+   *  budget pressure. */
+  turnSkipAbsence: 0,
   lore: 2,
   memories: 3,
   dynamicContext: 0,
