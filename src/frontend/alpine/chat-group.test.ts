@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import "./i18n.test-helper";
 import { describe, expect, mock, test, } from "bun:test";
 import { commandPalette, } from "./chat-actions/command-palette";
 import { chatGroup, } from "./chat-group";
@@ -367,6 +368,7 @@ describe("chatGroup.handleComposerEnter", () => {
     },);
     chatGroup.handleComposerEnter!.call(ctx as never,);
     await new Promise((resolve,) => setTimeout(resolve, 0,));
-    expect(toasts,).toEqual([{ type: "error", message: "toasts.failedSend", },],);
+    // i18n.test-helper loads the real en.json catalog; t("toasts.failedSend") resolves to "Failed to send".
+    expect(toasts,).toEqual([{ type: "error", message: "Failed to send", },],);
   });
 });

@@ -2,7 +2,7 @@
  * Frontend i18n utilities — unit tests
  */
 
-import { beforeEach, describe, expect, it, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import {
   createFrontendTranslator,
   DEFAULT_LOCALE,
@@ -48,9 +48,18 @@ Object.defineProperty(globalThis, "document", { value: mockDocument, writable: t
 
 // Dynamic import for ui.ts to avoid module-level side effects
 let t: (key: string, params?: Record<string, string>,) => string;
+let savedLocaleStrings: unknown;
+const localeStringsHost = globalThis as { __localeStrings?: unknown };
 beforeEach(async () => {
   const ui = await import("../ui");
   t = ui.t;
+},);
+// The `globalThis.t (from ui.ts)` describe block below overwrites `__localeStrings`
+// with a stub map in its nested `beforeEach`. Save the pre-test value before each
+// overwrite and restore it afterward so downstream tests in the same bun:test process
+// (e.g. gif-picker.test.ts) keep the real en.json catalog loaded by i18n.test-helper.
+afterEach(() => {
+  if (savedLocaleStrings !== undefined) { localeStringsHost.__localeStrings = savedLocaleStrings; }
 },);
 
 describe("resolveKey", () => {
@@ -220,10 +229,14 @@ describe("LOCALE_REGISTRY", () => {
 
 describe("globalThis.t (from ui.ts)", () => {
   beforeEach(() => {
-    (globalThis as any).__localeStrings = {
+    // Snapshot whatever's currently in `__localeStrings` so the afterEach hook
+    // above can restore it after this describe block runs. Without this the
+    // stubbed map below would leak into later test files in the same worker.
+    savedLocaleStrings = localeStringsHost.__localeStrings;
+    localeStringsHost.__localeStrings = {
       common: { save: "Save", cancel: "Cancel", },
       greeting: { hello: "Hello {name}", },
-    };
+    } as Record<string, unknown>;
   },);
 
   it("returns translated string for valid key", () => {

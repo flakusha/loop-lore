@@ -104,8 +104,11 @@ export const chatWorld: Partial<ChatState> & ThisType<ChatState> = {
         /* store not ready */
       }
     }
-    const titleEl = document.querySelector<HTMLElement>("#page-title",);
-    if (titleEl) { titleEl.textContent = this.activeChatName; }
+    // Guard against SSR/Node test environments where `document` may lack querySelector.
+    if (typeof document?.querySelector === "function") {
+      const titleEl = document.querySelector<HTMLElement>("#page-title",);
+      if (titleEl) { titleEl.textContent = this.activeChatName; }
+    }
     history.replaceState(null, "", `/views/chat?chatid=${chatId}`,);
     this.currentPage = 1;
     this.hasMoreMessages = true;
