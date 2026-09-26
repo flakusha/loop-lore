@@ -40,3 +40,6 @@ into the release gate.
 - [ ] The CI `build` job depends on `test-browser` succeeding.
 - [ ] A controlled failing browser test blocks both local `bun run ci` and the CI build job.
 - [ ] No regression to existing `test:unit`, `test:e2e`, or `build` ordering.
+
+
+git issue: 6465282

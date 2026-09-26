@@ -28,3 +28,6 @@ The FE↔BE harmonizer (`scripts/check-fe-be-harmonization.ts:105-176`) verifies
 - [ ] HTMX error test: same form into controlled 4xx; visible error behavior; stable UI.
 - [ ] All three tests use `createBrowserTest()`, `trackPageErrors()`, `waitForAlpineReady()`, `MockLLMProvider` — no new framework.
 - [ ] Each test fails on a plausible frontend/backend mismatch, not on source-text or mock echo.
+
+
+git issue: 4358099

@@ -25,3 +25,6 @@
 - [ ] Document is either updated to reflect Elysia + TypeBox + OpenAPI generation or retired.
 - [ ] No mention of Zod, custom router, Pact, or Schemathesis remains as current recommendation.
 - [ ] No documentation cross-reference assumes the stale router exists.
+
+
+git issue: 7282dd8
