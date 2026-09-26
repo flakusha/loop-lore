@@ -3,7 +3,7 @@
 
 # TASK: RPG Mechanics Base Implementation Tickets
 
-**Status:** ✅ Resolved (already on dev, 2026-09-19)
+**Status:** done
 **Priority:** high
 **Effort:** XL
 **Summary:** RPG Mechanics Base Implementation Tickets

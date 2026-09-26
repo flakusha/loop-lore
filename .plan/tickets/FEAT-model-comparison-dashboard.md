@@ -3,7 +3,7 @@
 
 # FEAT: Model-comparison Dashboard
 
-**Status:** ✅ Done (duplicate, verified 2026-09-19)
+**Status:** done
 **Priority:** low
 **Effort:** Medium
 **Summary:** Model-comparison Dashboard

@@ -3,7 +3,7 @@
 
 # TASK: Logging System (Structured JSONL)
 
-**Status:** ✅ Resolved (already on dev, 2026-09-19)
+**Status:** done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Logging System (Structured JSONL)

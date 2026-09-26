@@ -3,7 +3,7 @@
 
 # TASK: Cognitive Complexity Cap + Refactor
 
-**Status:** ✅ Done (duplicate — remainder extracted, 2026-09-19)
+**Status:** done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Cognitive Complexity Cap + Refactor

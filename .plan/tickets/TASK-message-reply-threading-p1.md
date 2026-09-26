@@ -3,7 +3,7 @@
 
 # TASK: Message Reply Threading (P1)
 
-**Status:** ✅ Done (duplicate, verified 2026-09-19)
+**Status:** done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Message Reply Threading (P1)

@@ -3,7 +3,7 @@
 
 # FEAT: 3D World-map Navigation
 
-**Status:** ✅ Done (duplicate, verified 2026-09-19)
+**Status:** done
 **Priority:** low
 **Effort:** XL
 **Summary:** 3D World-map Navigation

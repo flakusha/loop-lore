@@ -3,7 +3,7 @@
 
 # FEAT: Blades in the Dark - Position/Effect + Clocks
 
-**Status:** ✅ Done (duplicate — remainder extracted, 2026-09-19)
+**Status:** done
 **Priority:** medium
 **Effort:** Large
 **Summary:** Blades in the Dark - Position/Effect + Clocks

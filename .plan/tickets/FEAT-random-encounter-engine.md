@@ -3,7 +3,7 @@
 
 # FEAT: Random Encounter Engine
 
-**Status:** ✅ Resolved (already on dev, 2026-09-19)
+**Status:** done
 **Priority:** medium
 **Effort:** Large
 **Summary:** Random Encounter Engine

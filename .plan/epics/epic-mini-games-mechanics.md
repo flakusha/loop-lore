@@ -3,7 +3,7 @@
 
 # Mini-Games: Deep Mechanics & Game-Specific Designs
 
-**Status:** Not Started
+**Status:** done
 **Priority:** medium
 **Effort:** Medium
 **Type:** epic
@@ -21,7 +21,7 @@
 Game ID: uuid
 Player 1: { id, hand?, score }
 Player 2: { id, hand?, score, isNPC }
-Status: waiting | choosing | resolving | finished
+Status: done
 Best of: 1 | 3 | 5
 Timer: seconds remaining
 ```
@@ -105,7 +105,7 @@ Dealer: { roll: number | null }
 Dice Type: d6 | d8 | d10 | d12 | d20
 Streak: number
 Payout Multiplier: number
-Status: waiting | choosing | rolling | resolving | finished
+Status: done
 ```
 
 **Payout Calculation:**
@@ -181,7 +181,7 @@ Scorecard: {
   yahtzee: number | null,
   bonus: boolean
 }
-Status: rolling | choosing | scoring | finished
+Status: done
 ```
 
 **Hand Rankings:**
@@ -253,7 +253,7 @@ Player: { id, bet, choice: 'heads' | 'tails' }
 Result: 'heads' | 'tails' | null
 Streak: number
 Payout: number
-Status: waiting | flipping | resolved
+Status: done
 ```
 
 **Coin Flip Variants:**
@@ -313,7 +313,7 @@ Deck: Card[] (shuffled)
 Current Card: Card
 Drawn Card: Card | null
 Streak: number
-Status: waiting | choosing | drawing | resolving | finished
+Status: done
 ```
 
 **Card Values:**
@@ -357,7 +357,7 @@ Player 1: { id, roll, score, diceCount }
 Player 2: { id, roll, score, diceCount, isNPC }
 Dice: d6 | d8 | d10 | d12 | d20
 Rounds: 1 | 3 | 5
-Status: waiting | rolling | resolving | finished
+Status: done
 ```
 
 **Rolling Mechanic:**
@@ -400,7 +400,7 @@ Community: Card[]
 Pot: number
 Current Bet: number
 Phase: preflop | flop | turn | river | showdown
-Status: waiting | betting | showdown | finished
+Status: done
 ```
 
 **Simplified for Chat:**
@@ -459,7 +459,7 @@ Game ID: uuid
 Player: { id, hand: Card[], bet, status }
 Dealer: { hand: Card[], hidden: boolean }
 Actions: hit | stand | double | split
-Status: dealing | playing | dealerTurn | finished
+Status: done
 ```
 
 **Basic Strategy Table:**
@@ -529,7 +529,7 @@ Category: string
 Questions: Question[]
 Current Question: number
 Time Limit: seconds
-Status: waiting | answering | checking | finished
+Status: done
 ```
 
 **Question Types:**
@@ -598,7 +598,7 @@ Game ID: uuid
 Player: { id, bet, result }
 Wheel: { segments: WheelSegment[] }
 Result: { segment, multiplier, special }
-Status: waiting | spinning | resolved
+Status: done
 ```
 
 **Wheel Segments:**
@@ -643,7 +643,7 @@ Player: { id, card: number[][] }
 Numbers: number[]
 Called: number[]
 Pattern: 'line' | 'two_lines' | 'full_card' | 'four_corners'
-Status: waiting | calling | finished
+Status: done
 ```
 
 **Bingo Card:**

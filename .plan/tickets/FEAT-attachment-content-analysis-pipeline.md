@@ -3,7 +3,7 @@
 
 # FEAT: Attachment Content Analysis Pipeline
 
-**Status:** ✅ Done (duplicate — remainder extracted, 2026-09-19)
+**Status:** done
 **Priority:** medium
 **Effort:** Large
 **Summary:** Attachment Content Analysis Pipeline

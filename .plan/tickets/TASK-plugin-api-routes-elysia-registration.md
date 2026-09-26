@@ -3,7 +3,7 @@
 
 # TASK: Plugin API Routes -> Elysia Registration
 
-**Status:** ✅ Done (duplicate — remainder extracted, 2026-09-19)
+**Status:** done
 **Priority:** high
 **Effort:** Medium
 **Summary:** Plugin API Routes -> Elysia Registration

@@ -3,7 +3,7 @@
 
 # FEAT: Ironsworn Oracle (d6+d10)
 
-**Status:** ✅ Done (duplicate — remainder extracted, 2026-09-19)
+**Status:** done
 **Priority:** low
 **Effort:** Large
 **Summary:** Ironsworn Oracle (d6+d10)

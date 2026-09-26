@@ -3,7 +3,7 @@
 
 # FEAT: MARS Modules/Modes Modular Rules Architecture
 
-**Status:** ✅ Done (duplicate — remainder extracted, 2026-09-19)
+**Status:** done
 **Priority:** medium
 **Effort:** XL
 **Summary:** MARS Modules/Modes Modular Rules Architecture

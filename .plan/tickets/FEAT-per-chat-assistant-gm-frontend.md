@@ -3,7 +3,7 @@
 
 # FEAT: Per-chat Assistant/GM Frontend
 
-**Status:** ✅ Resolved (already on dev, 2026-09-19)
+**Status:** done
 **Priority:** medium
 **Effort:** Large
 **Summary:** Per-chat Assistant/GM Frontend

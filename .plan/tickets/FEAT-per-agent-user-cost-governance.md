@@ -3,7 +3,7 @@
 
 # FEAT: Per-Agent/User Cost Governance
 
-**Status:** ✅ Done (duplicate — remainder extracted, 2026-09-19)
+**Status:** done
 **Priority:** medium
 **Effort:** Large
 **Summary:** Per-Agent/User Cost Governance

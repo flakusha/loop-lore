@@ -3,7 +3,7 @@
 
 # FEAT: Prompt/Lorebook Marketplace (Community-shared)
 
-**Status:** ✅ Done (duplicate, verified 2026-09-19)
+**Status:** done
 **Priority:** low
 **Effort:** XL
 **Summary:** Prompt/Lorebook Marketplace (Community-shared)

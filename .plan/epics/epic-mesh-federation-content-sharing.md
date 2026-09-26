@@ -3,7 +3,7 @@
 
 # EPIC: Mesh Federation — Encrypted Content Sharing, Quota & Coordinator Server
 
-**Status:** Not Started
+**Status:** done
 **Priority:** medium
 **Effort:** Medium
 **Type:** epic
@@ -11,7 +11,7 @@
 **Overview:** (see sections below)
 
 
-**Status**: 🟡 Draft — analysis complete, tickets scoped
+**Status**: done
 **Priority**: medium
 **Effort**: Very High
 **Type**: Architecture / Feature Epic
