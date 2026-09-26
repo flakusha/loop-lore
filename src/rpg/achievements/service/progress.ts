@@ -5,6 +5,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../../db";
 import { getAchievement, listAchievements, } from "./crud";
 import { getLog, rowToPlayerAchievement, } from "./helpers";
+import { applySingleAchievementReward, } from "./reward-apply";
 import type {
   AchievementReward,
   PlayerAchievement,
@@ -165,6 +166,11 @@ export async function claimRewards(
     .where("player_id", "=", playerId,)
     .where("achievement_id", "=", achievementId,)
     .execute();
+
+  // Apply rewards — see `./reward-apply` for the per-type applicator.
+  for (const reward of achievement.rewards) {
+    await applySingleAchievementReward(reward, { db, playerId, achievementId, },);
+  }
 
   getLog().info("Achievement rewards claimed", {
     playerId,

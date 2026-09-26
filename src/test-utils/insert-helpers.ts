@@ -4606,3 +4606,32 @@ export async function insertModelComparisonRuns(
   } as any,).execute();
   return id;
 }
+
+/** Insert a actor_story_points row. */
+export async function insertActorStoryPoints(
+  db: Db,
+  actor_id: string,
+  opts?: {
+    id?: string;
+    world_id?: string | null;
+    balance?: number;
+    earned_total?: number;
+    spent_total?: number;
+    cap?: number | null;
+    last_earn_at?: string | null;
+    last_spend_at?: string | null;
+    last_earn_reason?: string | null;
+    last_spend_reason?: string | null;
+    created_at?: string;
+    updated_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("actor_story_points",).values({
+    id,
+    actor_id,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}

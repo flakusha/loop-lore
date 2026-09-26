@@ -56,7 +56,7 @@ export interface UnlockCondition {
 
 /** Achievement reward */
 export interface AchievementReward {
-  type: "experience" | "item" | "currency" | "title" | "cosmetic" | "unlock";
+  type: "experience" | "item" | "currency" | "title" | "cosmetic" | "unlock" | "story_points";
   value: unknown;
   description: string;
 }
