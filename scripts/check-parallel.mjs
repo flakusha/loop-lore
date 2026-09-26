@@ -355,9 +355,8 @@ const checks = {
   // check-report retention count to keep disk usage bounded.
   RUN_TMP_DIR_RELATIVE = `.tmp/run-${RUN_ID}`,
   RUN_TMP_DIR = path.resolve(PROJECT_ROOT, RUN_TMP_DIR_RELATIVE,),
-  // Sub-paths consumed by `scripts/check/coverage.mjs` and the inline jscpd
-  // reporter. Tools read their default location unless an env override is
-  // passed in the gate command below.
+  // Sub-paths consumed by `scripts/check/coverage.mjs` and the jscpd ratchet
+  // gate (`scripts/check/jscpd-ratchet.mjs`).
   COVERAGE_DIR_RELATIVE = `${RUN_TMP_DIR_RELATIVE}/coverage`,
   COVERAGE_DIR = path.resolve(PROJECT_ROOT, COVERAGE_DIR_RELATIVE,),
   COVERAGE_LCOV_RELATIVE = `${COVERAGE_DIR_RELATIVE}/lcov.info`,
@@ -513,6 +512,20 @@ function walkTestFiles(root, dir,) {
 }
 
 checks["coverage - per-module line %"] = coverageCommand();
+
+/**
+ * Blocking jscpd ratchet gate: run jscpd into the per-RUN scratch dir, then
+ * compare the clone count against the committed baseline
+ * (`scripts/check/jscpd-baseline.json`) via `scripts/check/jscpd-ratchet.mjs`.
+ * Replaces the former advisory warn-only block in `runNonBlockingChecks`
+ * (a permanent "N clones" warning never moved the number).
+ */
+function jscpdGateCommand() {
+  const jscpdScan =
+    `bunx jscpd src/ --min-lines 4 --min-tokens 30 --ignore '**/*.test.ts,**/migrations/*,**/public/**,**/schema-manifest.ts,**/db-schemas.ts,**/insert-helpers.ts' --reporters json --output ${JSCPD_DIR_RELATIVE}`;
+  return `${jscpdScan} && bun scripts/check/jscpd-ratchet.mjs --report ${JSCPD_REPORT_RELATIVE}`;
+}
+checks["jscpd ratchet"] = jscpdGateCommand();
 
 // ── Apply selective gate filter ────────────────────────────────
 // Runs after the `coverage - per-module line %` entry is registered so
@@ -1164,76 +1177,6 @@ async function runNonBlockingChecks(notes,) {
     notes.push({ level: "skipped", message: "Version check skipped", },);
   }
 
-  // Code duplication check (jscpd:full) — parses the JSON report the script
-  // writes under the per-RUN JSCPD_DIR; falls back to counting console
-  // "Clone found" lines only when the report is missing/corrupt. Advisory
-  // (never blocking), reports clone count + duplicated-lines % and records
-  // the trend under .tmp/run-<prev_RUN_ID>/jscpd/prev.json when present.
-  try {
-    mkdirSync(JSCPD_DIR, { recursive: true, },);
-    const jscpdCmd =
-      `jscpd src/ --min-lines 4 --min-tokens 30 --ignore '**/*.test.ts,**/migrations/*,**/public/**,**/schema-manifest.ts,**/db-schemas.ts,**/insert-helpers.ts' --reporters console,json --output ${JSCPD_DIR_RELATIVE}`;
-    const jscpdProc = Bun.spawn(["bash", "-c", jscpdCmd,], {
-      cwd: PROJECT_ROOT,
-      stdout: "pipe",
-      stderr: "pipe",
-    },);
-    await jscpdProc.exited;
-    const jscpdText = await new Response(jscpdProc.stdout,).text();
-    let cloneCount = null;
-    let pctText = "";
-    try {
-      const report = JSON.parse(readFileSync(JSCPD_REPORT, "utf8",),);
-      cloneCount = report.duplicates.length;
-      const formats = Object.values(report.statistics?.formats ?? {},);
-      const dupLines = formats.reduce((sum, f,) => sum + f.duplicatedLines, 0,);
-      const allLines = formats.reduce((sum, f,) => sum + f.lines, 0,);
-      pctText = allLines > 0 ? `, ${(100 * dupLines / allLines).toFixed(2,)}% dup lines` : "";
-    } catch {
-      cloneCount = (jscpdText.match(/Clone found/g,) ?? []).length;
-    }
-    // Trend baseline is taken from the most-recent prior run that left a
-    // prev.json behind (we don't compare per-RUN counts — jscpd output is
-    // a property of the source tree, which is stable across runs in the
-    // same checkout).
-    let trend = " (first run: baseline recorded)";
-    const baselineDir = path.resolve(PROJECT_ROOT, ".tmp/jscpd",);
-    const prevPath = path.resolve(baselineDir, "prev.json",);
-    try {
-      const prev = JSON.parse(readFileSync(prevPath, "utf8",),);
-      const delta = cloneCount - prev.clones;
-      trend = delta === 0
-        ? " (unchanged vs last run)"
-        : delta > 0
-        ? ` (+${delta} clones vs last run, warning)`
-        : ` (${delta} clones vs last run, ok)`;
-    } catch {
-      // no previous report in this checkout — baseline gets recorded below
-    }
-    mkdirSync(baselineDir, { recursive: true, },);
-    writeFileSync(
-      prevPath,
-      `${JSON.stringify({ clones: cloneCount, generatedAt: new Date().toISOString(), },)}\n`,
-      "utf8",
-    );
-    if (cloneCount > 0) {
-      console.log(`warn: Code duplication detected (jscpd:full): ${cloneCount} clones${pctText}${trend}`,);
-      console.log(`  Full report: ${JSCPD_REPORT_RELATIVE}`,);
-      notes.push({
-        level: "warn",
-        message: `Code duplication (jscpd:full): ${cloneCount} clones${pctText}${trend}`,
-      },);
-    } else {
-      console.log("OK: No code duplication issues (jscpd:full)",);
-      notes.push({ level: "ok", message: "No code duplication issues (jscpd:full)", },);
-    }
-  } catch (error) {
-    console.log("warn: Code duplication check skipped (jscpd run failed)",);
-    notes.push({
-      level: "skipped",
-      message: `Code duplication check skipped: ${error.message}`,
-    },);
-  }
   try {
     const linksProc = Bun.spawn(["bash", "-c", "bun run md:links",], {
       cwd: PROJECT_ROOT,
