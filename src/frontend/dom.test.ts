@@ -11,7 +11,7 @@
  * no ordering dependence.
  */
 import { afterEach, describe, expect, test, } from "bun:test";
-import { refreshHtmx, } from "./dom";
+import { $, $all, eventCurrentTarget, eventTarget, refreshHtmx, } from "./dom";
 
 interface AjaxCall {
   verb: string;
@@ -94,5 +94,34 @@ describe("refreshHtmx", () => {
     expect(calls,).toEqual([
       { verb: "GET", url: "/api/other", target: "[data-panel]", swap: "innerHTML", },
     ],);
+  });
+});
+
+describe("query and event helpers", () => {
+  test("$ returns the element the root finds, or null", () => {
+    const el = makeEl({},);
+    stubDocument(el,);
+    expect($("#hit",),).toBe(el,);
+    stubDocument(null,);
+    expect($("#miss",),).toBe(null,);
+  });
+
+  test("$ queries an explicit root, $all returns the nodelist", () => {
+    const list = { length: 2, } as unknown as NodeListOf<HTMLElement>;
+    const none = { length: 0, } as unknown as NodeListOf<HTMLElement>;
+    const root = {
+      querySelector: () => makeEl({},),
+      querySelectorAll: (selector: string,) => (selector === ".all" ? list : none),
+    };
+    expect($("#any", root as ParentNode,),).not.toBe(null,);
+    expect($all(".all", root as ParentNode,),).toBe(list,);
+    expect($all(".none", root as ParentNode,),).toBe(none,);
+  });
+
+  test("eventTarget and eventCurrentTarget narrow the element", () => {
+    const el = makeEl({},) as unknown as HTMLElement;
+    const e = { target: el, currentTarget: null, } as unknown as Event;
+    expect(eventTarget(e,),).toBe(el,);
+    expect(eventCurrentTarget(e,),).toBe(null,);
   });
 });
