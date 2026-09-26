@@ -3,7 +3,7 @@
 
 # FEAT: Memory Frontend (3 memory types, selection UI, mid-chat panel)
 
-**Status:** ✅ Resolved (already on dev, 2026-09-19)
+**Status:** done
 **Priority:** medium
 **Effort:** Large
 **Summary:** Memory Frontend (3 memory types, selection UI, mid-chat panel)

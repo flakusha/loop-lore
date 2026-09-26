@@ -3,7 +3,7 @@
 
 # TASK: DB Reinit & Backup Retention Policy
 
-**Status:** ✅ Resolved (already on dev, 2026-09-19)
+**Status:** done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** DB Reinit & Backup Retention Policy

@@ -3,7 +3,7 @@
 
 # FEAT: Queryable Audit Store
 
-**Status:** ✅ Resolved (already on dev, 2026-09-19)
+**Status:** done
 **Priority:** high
 **Effort:** Large
 **Summary:** Queryable Audit Store

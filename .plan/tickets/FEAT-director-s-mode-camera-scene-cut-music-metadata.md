@@ -3,7 +3,7 @@
 
 # FEAT: Director's Mode (Camera/Scene-cut/Music Metadata)
 
-**Status:** ✅ Done (duplicate, verified 2026-09-19)
+**Status:** done
 **Priority:** low
 **Effort:** XL
 **Summary:** Director's Mode (Camera/Scene-cut/Music Metadata)

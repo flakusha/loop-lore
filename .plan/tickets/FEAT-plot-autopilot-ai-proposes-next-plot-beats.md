@@ -3,7 +3,7 @@
 
 # FEAT: Plot Autopilot (AI proposes next plot beats)
 
-**Status:** ✅ Done (duplicate, verified 2026-09-19)
+**Status:** done
 **Priority:** low
 **Effort:** Large
 **Summary:** Plot Autopilot (AI proposes next plot beats)

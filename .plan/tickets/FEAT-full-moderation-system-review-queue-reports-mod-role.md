@@ -3,7 +3,7 @@
 
 # FEAT: Full Moderation System (Review Queue, Reports, Mod Role)
 
-**Status:** ✅ Done (duplicate — remainder extracted, 2026-09-19)
+**Status:** done
 **Priority:** high
 **Effort:** XL
 **Summary:** Full Moderation System (Review Queue, Reports, Mod Role)

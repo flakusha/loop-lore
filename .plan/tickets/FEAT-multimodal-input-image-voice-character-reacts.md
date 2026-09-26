@@ -3,7 +3,7 @@
 
 # FEAT: Multimodal Input (image/voice -> character reacts)
 
-**Status:** ✅ Done (duplicate — remainder extracted, 2026-09-19)
+**Status:** done
 **Priority:** medium
 **Effort:** Large
 **Summary:** Multimodal Input (image/voice -> character reacts)

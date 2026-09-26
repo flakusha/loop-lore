@@ -3,7 +3,7 @@
 
 # FEAT: Offline-first PWA + On-device Inference
 
-**Status:** ✅ Done (duplicate, verified 2026-09-19)
+**Status:** done
 **Priority:** low
 **Effort:** XL
 **Summary:** Offline-first PWA + On-device Inference

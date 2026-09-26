@@ -3,7 +3,7 @@
 
 # FEAT: Cross-chat Global Memory
 
-**Status:** ✅ Resolved (already on dev, 2026-09-19)
+**Status:** done
 **Priority:** medium
 **Effort:** Large
 **Summary:** Cross-chat Global Memory

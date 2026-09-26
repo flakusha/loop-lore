@@ -3,7 +3,7 @@
 
 # FEAT: 3D Character/Avatar Rendering
 
-**Status:** ✅ Done (duplicate, verified 2026-09-19)
+**Status:** done
 **Priority:** low
 **Effort:** XL
 **Summary:** 3D Character/Avatar Rendering

@@ -6562,7 +6562,7 @@
       "group-chat"
     ],
     "source": ".plan/tickets/epic-actor-turn-skip.md",
-    "status": "Not Started",
+    "status": "done",
     "git_issue": "eedc367"
   },
   "EPIC-ACTORS": {
@@ -6582,7 +6582,7 @@
       "import"
     ],
     "source": ".plan/tickets/epic-actors.md",
-    "status": "draft",
+    "status": "done",
     "git_issue": "043696c"
   },
   "EPIC-AGENCY-STORY-POINTS": {
@@ -9983,7 +9983,7 @@
       "(none)"
     ],
     "source": ".plan/tickets/epic-mesh-federation-content-sharing.md",
-    "status": "Not Started",
+    "status": "done",
     "git_issue": "d0e739b"
   },
   "EPIC-MESSAGE-SEEN-STATE": {
@@ -10114,7 +10114,7 @@
       "(none)"
     ],
     "source": ".plan/tickets/epic-mini-games-mechanics.md",
-    "status": "Not Started",
+    "status": "done",
     "git_issue": "a63bb47"
   },
   "EPIC-MINI-GAMES-UI-API": {
@@ -11329,7 +11329,7 @@
       "(none)"
     ],
     "source": ".plan/tickets/epic-runtime-integrity-fail-safes.md",
-    "status": "Not Started",
+    "status": "done",
     "git_issue": "1e472ed"
   },
   "EPIC-SCHEMA": {
@@ -13143,7 +13143,7 @@
     "epic": "proposed:epic-3d-avatars",
     "tags": [],
     "source": ".plan/tickets/FEAT-3d-character-avatar-rendering.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-3D-WORLD-MAP-NAVIGATION": {
     "hash": "f573499",
@@ -13156,7 +13156,7 @@
     "epic": "proposed:epic-3d-world-map",
     "tags": [],
     "source": ".plan/tickets/FEAT-3d-world-map-navigation.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-ACHIEVEMENTS": {
     "hash": "4e7f571",
@@ -13260,7 +13260,7 @@
     "epic": "proposed:epic-npc-mail",
     "tags": [],
     "source": ".plan/tickets/FEAT-async-npc-mail-npcs-message-user-when-away.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-ATTACHMENT-CONTENT-ANALYSIS-PIPELINE": {
     "hash": "099a3af",
@@ -13273,7 +13273,7 @@
     "epic": "proposed:epic-attachment-moderation",
     "tags": [],
     "source": ".plan/tickets/FEAT-attachment-content-analysis-pipeline.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-ATTACHMENT-FRONTEND-UI": {
     "hash": "48d96af",
@@ -13286,7 +13286,7 @@
     "epic": "epic-frontend-gallery",
     "tags": [],
     "source": ".plan/tickets/FEAT-attachment-frontend-ui.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-ATTACHMENT-REVIEW-QUEUE-ADMIN-UI": {
     "hash": "1f96c7f",
@@ -13299,7 +13299,7 @@
     "epic": "proposed:epic-admin-moderation",
     "tags": [],
     "source": ".plan/tickets/FEAT-attachment-review-queue-admin-ui.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-AUDIO-VIDEO-SOUND-GENERATION": {
     "hash": "d78b900",
@@ -13325,7 +13325,7 @@
     "epic": "epic-i18n",
     "tags": [],
     "source": ".plan/tickets/FEAT-auto-translation-layer-input-output.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-AUTOMATED-BALANCE-PLAYTEST-BOT": {
     "hash": "86d6b0a",
@@ -13377,7 +13377,7 @@
     "epic": "epic-battle-action-systems",
     "tags": [],
     "source": ".plan/tickets/FEAT-battle-core-implementation.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-BLADES-IN-THE-DARK-POSITION-EFFECT-CLOCKS": {
     "hash": "3795cf7",
@@ -13390,7 +13390,7 @@
     "epic": "epic-resolution-system",
     "tags": [],
     "source": ".plan/tickets/FEAT-blades-in-the-dark-position-effect-clocks.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-BLOG-SYSTEM": {
     "hash": "4a18214",
@@ -13624,7 +13624,7 @@
     "epic": "proposed:epic-co-authoring",
     "tags": [],
     "source": ".plan/tickets/FEAT-co-authoring-presence-live-cursors-typing-indicators.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-COMFYUI-PLUGIN-WORKFLOW-TEMPLATES": {
     "hash": "989166a",
@@ -13650,7 +13650,7 @@
     "epic": "epic-import-export-io",
     "tags": [],
     "source": ".plan/tickets/FEAT-community-template-world-share-export-import.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-CONFIG-FILE-SEPARATION-DOMAIN-EXTRACTION": {
     "hash": "c3808b2",
@@ -13728,7 +13728,7 @@
     "epic": "proposed:epic-conversation-analytics",
     "tags": [],
     "source": ".plan/tickets/FEAT-conversation-analytics-sentiment-word-clouds-beat-map.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-CREATIVE-PROCESS-COMMIT-GATING": {
     "hash": "720ed41",
@@ -13754,7 +13754,7 @@
     "epic": "epic-memory-knowledge-systems",
     "tags": [],
     "source": ".plan/tickets/FEAT-cross-chat-global-memory.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-CROSS-DEVICE-E2E-SYNC": {
     "hash": "98653ae",
@@ -13767,7 +13767,7 @@
     "epic": "proposed:epic-cross-device-sync",
     "tags": [],
     "source": ".plan/tickets/FEAT-cross-device-e2e-sync.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-DATA-INTEGRITY-ACID-GUARANTEES": {
     "hash": "910b341",
@@ -13806,7 +13806,7 @@
     "epic": "proposed:epic-directors-mode",
     "tags": [],
     "source": ".plan/tickets/FEAT-director-s-mode-camera-scene-cut-music-metadata.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-E2E-PERFORMANCE-BENCHMARKS": {
     "hash": "2082412",
@@ -13832,7 +13832,7 @@
     "epic": "epic-emotion-avatar-message-binding",
     "tags": [],
     "source": ".plan/tickets/FEAT-emotion-reactive-portraits-auto-swap-on-emotion-detect.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-ENCRYPTED-ENVELOPE-V3-ALWAYS-EMIT-COMPALGO-AND-EXPLICIT-VERS": {
     "hash": "802ab64",
@@ -13897,7 +13897,7 @@
     "epic": "proposed:epic-error-alerting",
     "tags": [],
     "source": ".plan/tickets/FEAT-error-monitoring-alerting.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-EXPOSE-FULL-VN-SETTINGS-FROM-SPEC": {
     "hash": "8a1613e",
@@ -13923,7 +13923,7 @@
     "epic": "epic-faction-reputation",
     "tags": [],
     "source": ".plan/tickets/FEAT-faction-system-backend.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-FATE-ASPECTS-SYSTEM-INVOCABLE-LORE": {
     "hash": "679da28",
@@ -13936,7 +13936,7 @@
     "epic": "epic-agency-story-points",
     "tags": [],
     "source": ".plan/tickets/FEAT-fate-aspects-system-invocable-lore.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-FATE-SKILL-PYRAMID": {
     "hash": "195fbfa",
@@ -14014,7 +14014,7 @@
     "epic": "epic-api-first-foundation",
     "tags": [],
     "source": ".plan/tickets/FEAT-frontend-mode-config-accept-header-content-negotiation-cors.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-FULL-MODERATION-SYSTEM-REVIEW-QUEUE-REPORTS-MOD-ROLE": {
     "hash": "4bde49a",
@@ -14027,7 +14027,7 @@
     "epic": "proposed:epic-admin-moderation",
     "tags": [],
     "source": ".plan/tickets/FEAT-full-moderation-system-review-queue-reports-mod-role.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-GDPR-USER-DATA-RIGHTS": {
     "hash": "0b3709e",
@@ -14040,7 +14040,7 @@
     "epic": "proposed:epic-gdpr-data-rights",
     "tags": [],
     "source": ".plan/tickets/FEAT-gdpr-user-data-rights.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-GURPS-POINT-BUY-CHARACTER-CREATION": {
     "hash": "6f9ada1",
@@ -14053,7 +14053,7 @@
     "epic": "epic-character-spec",
     "tags": [],
     "source": ".plan/tickets/FEAT-gurps-point-buy-character-creation.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-HUMAN-IN-THE-LOOP-APPROVAL-GATES": {
     "hash": "d6efa35",
@@ -14066,7 +14066,7 @@
     "epic": "proposed:epic-approval-gates",
     "tags": [],
     "source": ".plan/tickets/FEAT-human-in-the-loop-approval-gates.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-I18N-ACCESSIBILITY-FOUNDATION": {
     "hash": "4004e81",
@@ -14092,7 +14092,7 @@
     "epic": "proposed:epic-immersive-scene",
     "tags": [],
     "source": ".plan/tickets/FEAT-immersive-scene-view-first-third-person-ambient-audio.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-IN-CHAT-ASSET-PREVIEW-LINKAGE-SIDE-PANEL": {
     "hash": "fef7e3b",
@@ -14131,7 +14131,7 @@
     "epic": "epic-inventory-ui",
     "tags": [],
     "source": ".plan/tickets/FEAT-inventory-management-ui.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-IRC-INTEGRATION-CHANNELS-AS-GROUP-CHAT-PM-AS-CHAT": {
     "hash": "eed7cfa",
@@ -14157,7 +14157,7 @@
     "epic": "epic-resolution-system",
     "tags": [],
     "source": ".plan/tickets/FEAT-ironsworn-oracle-d6-d10.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-ITEM-CRAFTING-SYSTEM": {
     "hash": "b29220b",
@@ -14170,7 +14170,7 @@
     "epic": "epic-crafting-professions",
     "tags": [],
     "source": ".plan/tickets/FEAT-item-crafting-system.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-ITEM-PROPERTY-SYSTEM": {
     "hash": "29df29a",
@@ -14183,7 +14183,7 @@
     "epic": "epic-items",
     "tags": [],
     "source": ".plan/tickets/FEAT-item-property-system.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-ITEM-RARITY-SYSTEM": {
     "hash": "e3ee539",
@@ -14196,7 +14196,7 @@
     "epic": "epic-rarity-extensions",
     "tags": [],
     "source": ".plan/tickets/FEAT-item-rarity-system.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-ITEM-SYSTEM-EXTENSIONS": {
     "hash": "4a1f830",
@@ -14274,7 +14274,7 @@
     "epic": "proposed:epic-modular-rules",
     "tags": [],
     "source": ".plan/tickets/FEAT-mars-modules-modes-modular-rules-architecture.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-MEMORY-FRONTEND-3-MEMORY-TYPES-SELECTION-UI-MID-CHAT-PANEL": {
     "hash": "12df5e7",
@@ -14287,7 +14287,7 @@
     "epic": "epic-memory-knowledge-systems",
     "tags": [],
     "source": ".plan/tickets/FEAT-memory-frontend-3-memory-types-selection-ui-mid-chat-panel.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-MEMORY-KNOWLEDGE-GRAPH-VISUALIZER": {
     "hash": "b764f06",
@@ -14300,7 +14300,7 @@
     "epic": "proposed:epic-knowledge-graph-viz",
     "tags": [],
     "source": ".plan/tickets/FEAT-memory-knowledge-graph-visualizer.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-MEMORY-SYSTEMS-THREE-TIER": {
     "hash": "17d9889",
@@ -14365,7 +14365,7 @@
     "epic": "epic-mobile-app",
     "tags": [],
     "source": ".plan/tickets/FEAT-mobile-native-ux-haptics-swipe-voice-thumb-layout.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-MODEL-COMPARISON-DASHBOARD": {
     "hash": "e788b4c",
@@ -14378,7 +14378,7 @@
     "epic": "proposed:epic-model-dashboard",
     "tags": [],
     "source": ".plan/tickets/FEAT-model-comparison-dashboard.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-MULTI-INSTANCE-RECONCILIATION": {
     "hash": "e901ee2",
@@ -14404,7 +14404,7 @@
     "epic": "epic-story-mode-ui",
     "tags": [],
     "source": ".plan/tickets/FEAT-multi-llm-story-mode-frontend.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-MULTIMODAL-INPUT-IMAGE-VOICE-CHARACTER-REACTS": {
     "hash": "acebfa6",
@@ -14417,7 +14417,7 @@
     "epic": "proposed:epic-multimodal-input",
     "tags": [],
     "source": ".plan/tickets/FEAT-multimodal-input-image-voice-character-reacts.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-NOTIFICATION-EXPANSION": {
     "hash": "883be1e",
@@ -14469,7 +14469,7 @@
     "epic": "proposed:epic-offline-pwa",
     "tags": [],
     "source": ".plan/tickets/FEAT-offline-first-pwa-on-device-inference.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-ORIGIN-CAPTURE-GENERATION-SEEDING": {
     "hash": "e7cc2b6",
@@ -14508,7 +14508,7 @@
     "epic": "proposed:epic-cost-governance",
     "tags": [],
     "source": ".plan/tickets/FEAT-per-agent-user-cost-governance.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-PER-CHAT-ASSISTANT-GM-FRONTEND": {
     "hash": "2202975",
@@ -14521,7 +14521,7 @@
     "epic": "epic-assistant-gm-flows",
     "tags": [],
     "source": ".plan/tickets/FEAT-per-chat-assistant-gm-frontend.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-PLOT-AUTOPILOT-AI-PROPOSES-NEXT-PLOT-BEATS": {
     "hash": "0d4da41",
@@ -14534,7 +14534,7 @@
     "epic": "proposed:epic-plot-autopilot",
     "tags": [],
     "source": ".plan/tickets/FEAT-plot-autopilot-ai-proposes-next-plot-beats.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-PLUGIN-SYSTEM-EXTENSIBILITY-DELAYED": {
     "hash": "42d36a1",
@@ -14560,7 +14560,7 @@
     "epic": "proposed:epic-procedural-assets",
     "tags": [],
     "source": ".plan/tickets/FEAT-procedural-asset-pipelines-maps-portraits-music-sfx.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-PROMPT-LOREBOOK-MARKETPLACE-COMMUNITY-SHARED": {
     "hash": "2b89d6b",
@@ -14573,7 +14573,7 @@
     "epic": "proposed:epic-marketplace",
     "tags": [],
     "source": ".plan/tickets/FEAT-prompt-lorebook-marketplace-community-shared.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-PROVIDER-PLUGIN-ECOSYSTEM": {
     "hash": "478307a",
@@ -14612,7 +14612,7 @@
     "epic": "proposed:epic-audit-store",
     "tags": [],
     "source": ".plan/tickets/FEAT-queryable-audit-store.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-QUEST-LOG-UI-EXTENDED-TO-FULL-SPEC-QUEST-BROWSER": {
     "hash": "83b6db1",
@@ -14638,7 +14638,7 @@
     "epic": "epic-quests-encounters",
     "tags": [],
     "source": ".plan/tickets/FEAT-quest-system-backend-implementation.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-RACE-ORIGIN-LORE-IDENTITY-MEMORY-CONFIG": {
     "hash": "b8ad5f2",
@@ -14690,7 +14690,7 @@
     "epic": "proposed:epic-rag-adapter",
     "tags": [],
     "source": ".plan/tickets/FEAT-rag-retrieval-adapter-for-generation-pipeline.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-RANDOM-ENCOUNTER-ENGINE": {
     "hash": "d773318",
@@ -14703,7 +14703,7 @@
     "epic": "epic-quests-encounters",
     "tags": [],
     "source": ".plan/tickets/FEAT-random-encounter-engine.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-RBAC-SSO-TENANT-ISOLATION": {
     "hash": "ddff839",
@@ -14716,7 +14716,7 @@
     "epic": "proposed:epic-rbac-tenancy",
     "tags": [],
     "source": ".plan/tickets/FEAT-rbac-sso-tenant-isolation.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-REGEX-OUTPUT-TRANSFORMS-USER-DEFINED-RULES": {
     "hash": "fa30d42",
@@ -14729,7 +14729,7 @@
     "epic": "proposed:epic-output-control-transforms",
     "tags": [],
     "source": ".plan/tickets/FEAT-regex-output-transforms-user-defined-rules.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-RELATIONSHIP-DRIFT-TIMELINE-VISUALIZER": {
     "hash": "586a5ff",
@@ -14742,7 +14742,7 @@
     "epic": "epic-relationships",
     "tags": [],
     "source": ".plan/tickets/FEAT-relationship-drift-timeline-visualizer.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-RELATIONSHIPS": {
     "hash": "23967eb",
@@ -14820,7 +14820,7 @@
     "epic": "proposed:epic-shared-worlds",
     "tags": [],
     "source": ".plan/tickets/FEAT-shared-persistent-worlds-multiplayer-co-op-storytelling.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-SKILLS": {
     "hash": "ae2f718",
@@ -14859,7 +14859,7 @@
     "epic": "proposed:epic-output-control-transforms",
     "tags": [],
     "source": ".plan/tickets/FEAT-smart-regen-transforms-shorter-longer-funnier-darker.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-STATIC-FILE-SERVER-HONORS-ACCEPT-ENCODING-Q-VALUES-AND-WILDC": {
     "hash": "fb24118",
@@ -15015,7 +15015,7 @@
     "epic": "epic-security-sandboxing",
     "tags": [],
     "source": ".plan/tickets/FEAT-tool-execution-sandbox-wasm-container-isolation.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-TRANSPORT-COMPRESSION-WIRE-RECEIVE-SIDE-DECOMPRESSION-WITH-L": {
     "hash": "9606042",
@@ -15067,7 +15067,7 @@
     "epic": "proposed:epic-user-engagement",
     "tags": [],
     "source": ".plan/tickets/FEAT-user-engagement-leaderboards.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-USER-THEMING-SYSTEM": {
     "hash": "a3b0368",
@@ -15106,7 +15106,7 @@
     "epic": "epic-visual-novel-mode",
     "tags": [],
     "source": ".plan/tickets/FEAT-visual-novel-mode-full-implementation.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-WHAT-IF-BRANCH-SIMULATOR-FORK-WORLD-STATE-DIFF-NARRATIVES": {
     "hash": "6aa11b0",
@@ -15119,7 +15119,7 @@
     "epic": "proposed:epic-branch-simulator",
     "tags": [],
     "source": ".plan/tickets/FEAT-what-if-branch-simulator-fork-world-state-diff-narratives.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-WORKFLOW-DAG-ENGINE-TASK-DEPENDENCIES-SCHEDULER": {
     "hash": "45b7eec",
@@ -15132,7 +15132,7 @@
     "epic": "epic-workflow-engine",
     "tags": [],
     "source": ".plan/tickets/FEAT-workflow-dag-engine-task-dependencies-scheduler.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FEAT-WORKTREE-COMMIT-COMMANDS-LACK-MESSAGE-FILE-INPUT": {
     "hash": "e195260",
@@ -15223,7 +15223,7 @@
     "epic": "epic-world-management-ui",
     "tags": [],
     "source": ".plan/tickets/FEAT-worlds-frontend-list-detail-timeline-location-travel-ui.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "FIX-PARALLELIZE-BUN-TEST-INVOCATIONS-ISOLATE-PINS-SUITE-TO-ONE-C": {
     "hash": "9778cc3",
@@ -16762,7 +16762,7 @@
     "epic": "proposed:epic-access-model",
     "tags": [],
     "source": ".plan/tickets/TASK-access-model-composition.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "TASK-ACCESS-PROFILE-GENERATION-FROM-ACTOR-EXPERIENCE": {
     "hash": "c7a9b06",
@@ -16789,6 +16789,24 @@
     "source": ".plan/tickets/TASK-achievements.md",
     "git_issue": "5270026",
     "status": "open"
+  },
+  "TASK-ACHIEVEMENTS-ENUM-REVIVAL-PROMOTE-SERVICE-LAYER-TO-DB-BARREL": {
+    "hash": "6211e38",
+    "git_issue": "6211e38",
+    "extid": "TASK-ACHIEVEMENTS-ENUM-REVIVAL-PROMOTE-SERVICE-LAYER-TO-DB-BARREL",
+    "type": "TASK",
+    "title": "Achievements enum revival — promote service-layer to db barrel",
+    "label": "task",
+    "priority": "medium",
+    "epic": "achievements",
+    "tags": [
+      "achievements",
+      "db-types",
+      "enum-consolidation",
+      "recovery"
+    ],
+    "source": ".plan/tickets/TASK-achievements-enum-revival-promote-service-layer-to-db-barrel.md",
+    "status": "Not Started"
   },
   "TASK-ACTION-APPLICABILITY-GATE": {
     "hash": "1fc81c9",
@@ -18160,7 +18178,7 @@
     "epic": "epic-memory-knowledge-systems",
     "tags": [],
     "source": ".plan/tickets/TASK-advanced-memory-systems-implementation.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "TASK-AFFORDANCE-ACTION-PARSER": {
     "hash": "85f1b0a",
@@ -18173,7 +18191,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-affordance-action-parser.md",
-    "status": "draft"
+    "status": "done"
   },
   "TASK-AFFORDANCE-LOOKUP-TABLE": {
     "hash": "9c23bd8",
@@ -18186,7 +18204,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-affordance-lookup-table.md",
-    "status": "draft"
+    "status": "done"
   },
   "TASK-AGENCY-BDI-REFLECTION-CYCLE": {
     "hash": "cf7879a",
@@ -18251,7 +18269,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-agency-utility-scorer.md",
-    "status": "draft"
+    "status": "done"
   },
   "TASK-AGENT-MEMORY-SCORING": {
     "hash": "522d9a8",
@@ -19630,7 +19648,7 @@
     "epic": "proposed:epic-attachment-moderation",
     "tags": [],
     "source": ".plan/tickets/TASK-attachment-moderation-pipeline.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "TASK-AUDIO-PLAYER-COMPONENT": {
     "hash": "966af4f",
@@ -19812,7 +19830,7 @@
     "epic": "proposed:epic-auth-middleware",
     "tags": [],
     "source": ".plan/tickets/TASK-auth-middleware-implementation.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "TASK-AUTH-POLISH-MIME-SNIFF-VISIBILITY-LAST-SEEN-I18N-COOKIE-REGI": {
     "hash": "843a93c",
@@ -20358,7 +20376,7 @@
     "epic": "proposed:epic-battle-core",
     "tags": [],
     "source": ".plan/tickets/TASK-battle-core-round-loop-initiative-epic.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "TASK-BATTLE-ENCOUNTER-TEMPLATE-SYSTEM": {
     "hash": "dfcf39a",
@@ -20449,7 +20467,7 @@
     "epic": "epic-battle-integration-gaps",
     "tags": [],
     "source": ".plan/tickets/TASK-battle-integration-wiring-items-social-npc-weather-resolutio.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "TASK-BATTLE-ITEM-INTEGRATION": {
     "hash": "00878b7",
@@ -20991,7 +21009,7 @@
     "epic": "epic-deployment-infrastructure",
     "tags": [],
     "source": ".plan/tickets/TASK-build-deployment-pipeline.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "TASK-BUILD-IDENTITY-HASH-FOR-TAMPER-DETECTION-SEARXNG-STYLE-COMMI": {
     "hash": "9e5fbf8",
@@ -21009,7 +21027,7 @@
       "integrity"
     ],
     "source": ".plan/tickets/TASK-build-identity-hash-for-tamper-detection-searxng-style-commi.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "TASK-BULK-EXPORT-ZIP": {
     "hash": "c1ad423",
@@ -21728,7 +21746,7 @@
     "epic": "epic-social-interaction",
     "tags": [],
     "source": ".plan/tickets/TASK-character-interaction-outcomes.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "TASK-CHARACTER-INTERNAL-TRAITS": {
     "hash": "0a8ef8c",
@@ -22781,7 +22799,7 @@
     "epic": "epic-chat-product-features",
     "tags": [],
     "source": ".plan/tickets/TASK-chat-room-sidebar-search-filter-chips.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "TASK-CHAT-ROUTE-EXTRACTION": {
     "hash": "d60edc4",
@@ -22859,7 +22877,7 @@
     "epic": "proposed:epic-chat-effects-overlays",
     "tags": [],
     "source": ".plan/tickets/TASK-chat-text-effects-overlays-implementation.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "TASK-CHAT-TRANSFER-FRONTEND": {
     "hash": "fe6dab4",
@@ -23233,7 +23251,7 @@
     "epic": "epic-tooling-improvement",
     "tags": [],
     "source": ".plan/tickets/TASK-cognitive-complexity-cap-refactor.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "TASK-COLD-MESSAGE-ARCHIVAL-TO-ARCHIVE-DB-FILE": {
     "hash": "6c446d8",
@@ -23720,7 +23738,7 @@
     "epic": "proposed:epic-content-compression",
     "tags": [],
     "source": ".plan/tickets/TASK-content-compression-zstd-streaming.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "TASK-CONTENT-HASH-CONSISTENCY": {
     "hash": "b084a58",
@@ -24825,7 +24843,7 @@
     "epic": "proposed:epic-db-versioning",
     "tags": [],
     "source": ".plan/tickets/TASK-db-content-versioning-snapshot-restore.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "TASK-DB-MIGRATION-EPOCH-SQUASH": {
     "hash": "b2666f6",
@@ -24877,7 +24895,7 @@
     "epic": "epic-database-backup-recovery",
     "tags": [],
     "source": ".plan/tickets/TASK-db-reinit-backup-retention-policy.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "TASK-DBRT-VALIDATION-GAPS": {
     "hash": "8989ccf",
@@ -25847,7 +25865,7 @@
     "epic": "epic-emotion-avatar-message-binding",
     "tags": [],
     "source": ".plan/tickets/TASK-emotion-avatars-pipeline.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "TASK-EMOTION-INTENT-DETECTION": {
     "hash": "888f6ff",
@@ -26315,7 +26333,7 @@
     "epic": "epic-plugin-extension-points",
     "tags": [],
     "source": ".plan/tickets/TASK-eventbus-toolregistry-core-wiring.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "TASK-EXIF-EXTRACTION-IMAGE-HASHING": {
     "hash": "5e84069",
@@ -26328,7 +26346,7 @@
     "epic": "proposed:epic-asset-metadata",
     "tags": [],
     "source": ".plan/tickets/TASK-exif-extraction-image-hashing.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "TASK-EXPLICIT-APPROVAL-FLOW-FOR-ASSISTANT-MUTATIONS": {
     "hash": "601e5df",
@@ -29345,7 +29363,7 @@
     "epic": "epic-rpg-mechanics",
     "tags": [],
     "source": ".plan/tickets/TASK-interaction-service-foundation.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "git_issue": "9ba6e7e"
   },
   "TASK-INTERNAL-EXTERNAL-FLAGGING": {
@@ -30302,7 +30320,7 @@
     "epic": "epic-logging-telemetry",
     "tags": [],
     "source": ".plan/tickets/TASK-logging-system-structured-jsonl.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "TASK-LOOT-BUDGET-AFFORDANCE-GATE": {
     "hash": "5a3f199",
@@ -30419,7 +30437,7 @@
     "epic": "epic-lore-knowledge",
     "tags": [],
     "source": ".plan/tickets/TASK-lore-system-implementation.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "TASK-LORE-TIMELINE-REVEAL": {
     "hash": "40c0f0e",
@@ -30556,7 +30574,7 @@
     "epic": "epic-chat-composer-flows",
     "tags": [],
     "source": ".plan/tickets/TASK-markdown-preview-before-send.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "TASK-MARKUPLINT-DIFF-SCOPED-TEMPLATE-GATE": {
     "hash": "0e067e7",
@@ -31314,7 +31332,7 @@
     "epic": "epic-chat-product-features",
     "tags": [],
     "source": ".plan/tickets/TASK-message-reply-threading-p1.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "TASK-MESSAGE-SEARCH-CANNOT-INDEX-COMPRESSED-OR-ENCRYPTED-CONTENT": {
     "hash": "c0020da",
@@ -31587,7 +31605,7 @@
     "epic": "epic-shared-schemas",
     "tags": [],
     "source": ".plan/tickets/TASK-migrations-authorship-conventions.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "TASK-MINI-GAMES-FRAMEWORK": {
     "hash": "c157175",
@@ -32534,7 +32552,7 @@
     "epic": "epic-nsfw-integration-gaps",
     "tags": [],
     "source": ".plan/tickets/TASK-nsfw-cross-cutting-integration.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "TASK-NSFW-DISEASE": {
     "hash": "634b539",
@@ -32869,7 +32887,7 @@
     "epic": "epic-nsfw-capabilities",
     "tags": [],
     "source": ".plan/tickets/TASK-nsfw-rating-schema-consent-state-machine.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "TASK-NSFW-REPUTATION-CONSEQUENCES": {
     "hash": "aa31b9f",
@@ -33058,7 +33076,7 @@
     "epic": "epic-analytics-observability",
     "tags": [],
     "source": ".plan/tickets/TASK-observability-telemetry-analytics.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "TASK-OCSP-STAPLING-FOR-TLS-CERTIFICATE-STATUS": {
     "hash": "d555260",
@@ -33542,7 +33560,7 @@
     "epic": "epic-performance-dashboard-slo",
     "tags": [],
     "source": ".plan/tickets/TASK-performance-dashboard-slos.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "TASK-PERSIST-LOOT-DROPS": {
     "hash": "ecec58f",
@@ -33911,7 +33929,7 @@
     "epic": "proposed:epic-platform-support",
     "tags": [],
     "source": ".plan/tickets/TASK-platform-support-multi-os-mobile-browser-matrix.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "TASK-PLUGIN-ALPINE": {
     "hash": "095eb1e",
@@ -33937,7 +33955,7 @@
     "epic": "epic-plugin-system",
     "tags": [],
     "source": ".plan/tickets/TASK-plugin-api-routes-elysia-registration.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "TASK-PLUGIN-API-SYSTEM": {
     "hash": "5f69027",
@@ -34223,7 +34241,7 @@
     "epic": "epic-profanity-filter",
     "tags": [],
     "source": ".plan/tickets/TASK-profanity-filter-runtime-per-chat.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "TASK-PROFESSIONS-FRONTEND": {
     "hash": "f41bf23",
@@ -35383,7 +35401,7 @@
     "epic": "proposed:epic-regex-extraction",
     "tags": [],
     "source": ".plan/tickets/TASK-regex-extraction-pipeline-implementation.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "TASK-REGEX-EXTRACTION-TESTS": {
     "hash": "592149a",
@@ -35721,7 +35739,7 @@
     "epic": "proposed:epic-replayability",
     "tags": [],
     "source": ".plan/tickets/TASK-replayability-session-seeded-random-tables.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "TASK-REPUTATION-SCHEMA": {
     "hash": "828ae63",
@@ -36384,7 +36402,7 @@
     "epic": "epic-rpg-mechanics",
     "tags": [],
     "source": ".plan/tickets/TASK-rpg-mechanics-base-implementation-tickets.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "TASK-RPG-MECHANICS-COMBAT": {
     "hash": "3d96483",
@@ -36800,7 +36818,7 @@
     "epic": "proposed:epic-scheduler",
     "tags": [],
     "source": ".plan/tickets/TASK-scheduler-implementation-internal-cron-jobs.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "TASK-SCHEMA": {
     "hash": "a4f6353",
@@ -37658,7 +37676,7 @@
     "epic": "epic-gm-shadow-notes",
     "tags": [],
     "source": ".plan/tickets/TASK-story-notes-panel-3-tabs-role-access-matrix.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "TASK-STORY-POINTS-PROTOTYPE": {
     "hash": "435385e",
@@ -37905,7 +37923,7 @@
     "epic": "epic-config-templates",
     "tags": [],
     "source": ".plan/tickets/TASK-template-system-unified-architecture.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "TASK-TEMPLATE-UNIFIED-VARIABLE-ENGINE": {
     "hash": "34553da",
@@ -39137,7 +39155,7 @@
     "epic": "epic-auth-access",
     "tags": [],
     "source": ".plan/tickets/TASK-users-roles-sessions-lifecycle.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "TASK-VALIDATE-AND-FIX-FE-BE-DB-GAPS-FOR-CHAT-VN-SETTINGS": {
     "hash": "66c4c3d",
@@ -40321,7 +40339,7 @@
     "epic": "epic-shared-schemas",
     "tags": [],
     "source": ".plan/tickets/TASK-zod-vs-typebox-docs-code-reconciliation.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "TEST-ADMIN-SEEDDEFAULTS-SILENT-DUPLICATE-SKIP-UNTESTED": {
     "hash": "e08077b",

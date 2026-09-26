@@ -3,7 +3,7 @@
 
 # FEAT: Human-in-the-Loop Approval Gates
 
-**Status:** ✅ Done (duplicate — remainder extracted, 2026-09-19)
+**Status:** done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Human-in-the-Loop Approval Gates

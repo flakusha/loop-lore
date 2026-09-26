@@ -6,7 +6,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** 🚧 Core landed (2026-09-25) — CRUD services + routes + card import/export on dev; versioning superseded by data-migrations runner; 2 of 4 bucket tickets closed, 2 open pending AC verification
+**Status:** done
 **Priority:** High
 **Effort:** High
 **Type:** Foundation Epic

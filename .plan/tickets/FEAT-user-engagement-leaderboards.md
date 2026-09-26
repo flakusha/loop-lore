@@ -3,7 +3,7 @@
 
 # FEAT: User Engagement & Leaderboards
 
-**Status:** ✅ Done (duplicate — remainder extracted, 2026-09-19)
+**Status:** done
 **Priority:** medium
 **Effort:** Large
 **Summary:** User Engagement & Leaderboards

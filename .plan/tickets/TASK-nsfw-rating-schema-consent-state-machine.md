@@ -3,7 +3,7 @@
 
 # TASK: NSFW Rating Schema & Consent State Machine
 
-**Status:** ✅ Resolved (already on dev, 2026-09-19)
+**Status:** done
 **Priority:** high
 **Effort:** Large
 **Summary:** NSFW Rating Schema & Consent State Machine

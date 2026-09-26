@@ -3,7 +3,7 @@
 
 # FEAT: Emotion-reactive Portraits (Auto-swap on emotion detect)
 
-**Status:** ✅ Resolved (already on dev, 2026-09-19)
+**Status:** done
 **Priority:** medium
 **Effort:** Large
 **Summary:** Emotion-reactive Portraits (Auto-swap on emotion detect)
