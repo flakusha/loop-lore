@@ -46,6 +46,15 @@ beforeAll(() => {
   createLogger({ level: "error", },);
 },);
 
+/**
+ * Resource contract: every test in this file owns a private `mkdtemp` project
+ * root, created in `beforeEach` and removed in `afterEach`, so no two tests
+ * share a path. `computeBuildIdentity` memoizes process-globally but keys that
+ * memo by resolved projectRoot and recomputes from filesystem state, so the
+ * `__resetBuildIdentityForTests()` clear is safe to interleave with concurrent
+ * tests: it can only force a recompute, never return a value for the wrong
+ * root. Verified with 6 concurrent processes and `--rerun-each=5`.
+ */
 beforeEach(() => {
   tempDir = mkdtempSync(join(tmpdir(), "loop-lore-build-id-test-",),);
   __resetBuildIdentityForTests();
