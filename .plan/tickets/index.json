@@ -2330,6 +2330,19 @@
     "source": ".plan/tickets/BUG-executereversal-and-reviewappeal-do-not-exclude-soft-deleted.md",
     "status": "done"
   },
+  "BUG-EXPORT-PROGRESS-STREAM-TEST-STATUS-ASSERTION-IS-FLAKY": {
+    "hash": "2b8da26",
+    "git_issue": "2b8da26",
+    "extid": "BUG-EXPORT-PROGRESS-STREAM-TEST-STATUS-ASSERTION-IS-FLAKY",
+    "type": "BUG",
+    "title": "# BUG-export-progress-stream-test-status-assertion-is-flaky: Test asserted on terminal status immediately after startExport; hermetic mock required",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "(none)",
+    "tags": [],
+    "source": ".plan/tickets/BUG-export-progress-stream-test-status-assertion-is-flaky.md",
+    "status": "open"
+  },
   "BUG-EXPORT-SSE-START-THROWS-CONTROLLER-IS-ALREADY-CLOSED-ON-CLIE": {
     "hash": "dad17cb",
     "git_issue": "dad17cb",
