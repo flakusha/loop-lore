@@ -3,21 +3,15 @@
 
 # TASK: Turn skip GM absence contract
 
-**Summary:** (none captured)
-**Context:** (none captured)
-**Acceptance Criteria:** (none captured)
-
-
 **Status:** open
 **Priority:** medium
 **Effort:** Medium
+**Summary:** GM prompt contract for absent actors: hold keeps beat with conspicuous inactivity (later spotlight); advance lets GM elapse scene time (meanwhile). Absent actor is never narrated into autonomous action.
 
-## Summary
+**Context:** Turn-skip core shipped 2026-09-25 (event, gate interlock, composer UI, cascade filter in `src/generation/auto-gen/pass-filter.ts`). Last open item before cascade completes: the GM prompt text that governs hold vs advance when an actor is absent. Lives in the prompt assembly path (`src/assistant/prompt-assembler.ts` or section equivalent), GM-role gated like shadow notes.
 
-GM prompt contract for absent actors: hold keeps beat with conspicuous inactivity (later spotlight); advance lets GM elapse scene time (meanwhile). Absent actor is never narrated into autonomous action. Acceptance: hold produces no scene-time cues; advance visibly progresses beat; absence never attributed action.
+**Acceptance Criteria:**
 
-## Acceptance Criteria
-
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [ ] Hold produces no scene-time cues; advance visibly progresses beat (test).
+- [ ] Absence never attributes action to the absent actor (test).
+- [ ] `bun run check` green.

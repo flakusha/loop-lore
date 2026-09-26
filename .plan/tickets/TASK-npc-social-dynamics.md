@@ -6,21 +6,12 @@
 **Status:** open
 **Priority:** medium
 **Effort:** Medium
-**Summary:** (none captured)
-**Context:** (none captured)
-**Acceptance Criteria:** (none captured)
+**Summary:** NPC-to-NPC information propagation + relationship drift driven by completed encounters (gossip spread, disposition shifts). Research-stage; builds on conversation/decision/memory tickets.
 
+**Context:** No code exists; this is emergent behavior over encounter outcomes, not a service to build first. Explicitly after `TASK-npc-social-conversation`, `-decision`, `-memory`, and the story-auto-drive scheduler. `epic-social-interaction.md` covers the mechanics (reputation/disposition) this loop mutates.
 
-**Status**: open
-**Priority**: medium
-**Labels**:
-**Assignee**:
-**Epic**: epic-social-interaction
-**Related**:
+**Acceptance Criteria:**
 
-**Summary:**
-Emergent social behavior system
-
-## Acceptance
-
-- [ ] Complete
+- [ ] Propagation rule + drift rule specified with worked example in-ticket.
+- [ ] Simulator test (in-memory actors, no LLM) shows gossip reaching 2nd hop.
+- [ ] `bun run check` green.
