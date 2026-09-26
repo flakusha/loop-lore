@@ -495,6 +495,66 @@ describe("resolveEntityGenerationPrompt", () => {
     expect(p,).toContain("Invent something",);
     expect(p,).toContain("a sword",);
   });
+
+  it("defaults to 'after' position when entityTemplatePosition is unset", () => {
+    const config = {
+      templates: { llm: { entityGeneration: {}, }, },
+    } as never;
+    const p = resolveEntityGenerationPrompt(config, "character", "a mage",);
+    const blockIdx = p.indexOf("Follow this schema",);
+    const templateIdx = p.indexOf("Generate a character profile",);
+    expect(blockIdx,).toBeGreaterThan(-1,);
+    expect(templateIdx,).toBeGreaterThan(-1,);
+    expect(templateIdx,).toBeLessThan(blockIdx,);
+  });
+
+  it("places the schema+example block before the base instruction when position='before'", () => {
+    const config = {
+      templates: { llm: { entityGeneration: {}, entityTemplatePosition: "before", }, },
+    } as never;
+    const p = resolveEntityGenerationPrompt(config, "location", "a tavern",);
+    const blockIdx = p.indexOf("Follow this schema",);
+    const templateIdx = p.indexOf("Generate a location",);
+    expect(blockIdx,).toBeGreaterThan(-1,);
+    expect(templateIdx,).toBeGreaterThan(-1,);
+    expect(blockIdx,).toBeLessThan(templateIdx,);
+  });
+
+  it("places the schema+example block after the base instruction when position='after'", () => {
+    const config = {
+      templates: { llm: { entityGeneration: {}, entityTemplatePosition: "after", }, },
+    } as never;
+    const p = resolveEntityGenerationPrompt(config, "world", "a continent",);
+    const blockIdx = p.indexOf("Follow this schema",);
+    const templateIdx = p.indexOf("Generate a world setting",);
+    expect(blockIdx,).toBeGreaterThan(-1,);
+    expect(templateIdx,).toBeGreaterThan(-1,);
+    expect(templateIdx,).toBeLessThan(blockIdx,);
+  });
+
+  it("omits the schema+example block entirely when position='off'", () => {
+    const config = {
+      templates: { llm: { entityGeneration: {}, entityTemplatePosition: "off", }, },
+    } as never;
+    for (const kind of ["character", "location", "world", "item",] as const) {
+      const p = resolveEntityGenerationPrompt(config, kind, "test",);
+      expect(p,).not.toContain("Follow this schema",);
+      expect(p,).not.toContain("Example:",);
+    }
+  });
+
+  it("config override bypasses position entirely (override wins)", () => {
+    const config = {
+      templates: {
+        llm: {
+          entityGeneration: { character: "CUSTOM {description}", },
+          entityTemplatePosition: "off",
+        },
+      },
+    } as never;
+    const p = resolveEntityGenerationPrompt(config, "character", "a knight",);
+    expect(p,).toBe("CUSTOM a knight",);
+  });
 });
 
 describe("entity token aliases", () => {
