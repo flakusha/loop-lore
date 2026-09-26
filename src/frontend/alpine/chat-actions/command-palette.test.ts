@@ -1,5 +1,4 @@
-import { afterEach, beforeEach, expect, mock, test, } from "bun:test";
-import { describeOrSkip, ISOLATED, } from "../../../test-utils/isolate-only";
+import { afterEach, beforeEach, describe, expect, mock, test, } from "bun:test";
 import { commandPalette, } from "./command-palette";
 
 import type { ApiFetchMock, } from "../../tests/test-types";
@@ -8,15 +7,12 @@ import type { ApiFetchMock, } from "../../tests/test-types";
 let calls: { url: string; opts: RequestInit }[] = [];
 let handler: ApiFetchMock = async () => Response.json({},);
 
-// Gated: mock.module is process-global (BUG 9c8bea1).
-if (ISOLATED) {
-  mock.module("../htmx", () => ({
-    apiFetch: (async (url: string, opts?: RequestInit,) => {
-      calls.push({ url, opts: opts ?? {}, },);
-      return handler(url, opts,);
-    }) satisfies ApiFetchMock,
-  }),);
-}
+mock.module("../htmx", () => ({
+  apiFetch: (async (url: string, opts?: RequestInit,) => {
+    calls.push({ url, opts: opts ?? {}, },);
+    return handler(url, opts,);
+  }) satisfies ApiFetchMock,
+}),);
 
 beforeEach(() => {
   calls = [];
@@ -57,7 +53,7 @@ const listFixture = [
   { name: "insult", descriptionKey: "k2", description: "d2", },
 ];
 
-describeOrSkip("commandPalette._loadCommandList", () => {
+describe("commandPalette._loadCommandList", () => {
   test("maps server entries into the command list", async () => {
     handler = async () =>
       Response.json({
@@ -99,9 +95,9 @@ describeOrSkip("commandPalette._loadCommandList", () => {
     await commandPalette._loadCommandList!();
     expect(commandPalette._commandList,).toEqual([],);
   });
-},);
+});
 
-describeOrSkip("commandPalette.handleCommandInput", () => {
+describe("commandPalette.handleCommandInput", () => {
   function inputEvent(value: string,): Event {
     return { target: { value, }, } as unknown as Event;
   }
@@ -133,9 +129,9 @@ describeOrSkip("commandPalette.handleCommandInput", () => {
     expect(ctx._showCommandPalette,).toBe(true,);
     expect(ctx._filteredCommands,).toEqual([],);
   });
-},);
+});
 
-describeOrSkip("commandPalette.selectCommand", () => {
+describe("commandPalette.selectCommand", () => {
   test("fills the input and closes the palette", () => {
     const ctx = buildCtx(true,);
     commandPalette.selectCommand!.call(ctx as never, "roll",);
@@ -148,9 +144,9 @@ describeOrSkip("commandPalette.selectCommand", () => {
     commandPalette.selectCommand!.call(ctx as never, "roll",);
     expect(ctx._showCommandPalette,).toBe(false,);
   });
-},);
+});
 
-describeOrSkip("commandPalette palette selection", () => {
+describe("commandPalette palette selection", () => {
   test("filtering resets the active index", () => {
     const ctx = buildCtx();
     ctx._commandList = listFixture.map((c,) => ({ ...c, }));
@@ -184,4 +180,4 @@ describeOrSkip("commandPalette palette selection", () => {
     commandPalette.movePaletteSelection!.call(ctx as never, 1,);
     expect(ctx._paletteActiveIndex,).toBe(0,);
   });
-},);
+});

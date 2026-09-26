@@ -1,5 +1,4 @@
-import { afterEach, expect, mock, test, } from "bun:test";
-import { describeOrSkip, ISOLATED, } from "../../../test-utils/isolate-only";
+import { afterEach, describe, expect, mock, test, } from "bun:test";
 import { messageTools, } from "./message-tools";
 
 import type { ApiFetchMock, Toast, } from "../../tests/test-types";
@@ -8,15 +7,12 @@ import type { ApiFetchMock, Toast, } from "../../tests/test-types";
 let calls: { url: string; opts: RequestInit }[] = [];
 let handler: ApiFetchMock = async () => Response.json({},);
 
-// Gated: mock.module is process-global (BUG 9c8bea1).
-if (ISOLATED) {
-  mock.module("../htmx", () => ({
-    apiFetch: (async (url: string, opts?: RequestInit,) => {
-      calls.push({ url, opts: opts ?? {}, },);
-      return handler(url, opts,);
-    }) satisfies ApiFetchMock,
-  }),);
-}
+mock.module("../htmx", () => ({
+  apiFetch: (async (url: string, opts?: RequestInit,) => {
+    calls.push({ url, opts: opts ?? {}, },);
+    return handler(url, opts,);
+  }) satisfies ApiFetchMock,
+}),);
 
 interface ToolsCtx {
   activeChat: string | null;
@@ -43,7 +39,7 @@ afterEach(() => {
   handler = async () => Response.json({},);
 },);
 
-describeOrSkip("messageTools.forwardMessage", () => {
+describe("messageTools.forwardMessage", () => {
   test("warns when there is no active chat", async () => {
     const ctx = buildCtx({ activeChat: null, },);
     await messageTools.forwardMessage!.call(ctx as never, "m1",);
@@ -91,9 +87,9 @@ describeOrSkip("messageTools.forwardMessage", () => {
     }
     expect(ctx.toasts[0]?.type,).toBe("warning",);
   });
-},);
+});
 
-describeOrSkip("messageTools.runMessageAiAction", () => {
+describe("messageTools.runMessageAiAction", () => {
   test("warns when there is no active chat", async () => {
     const ctx = buildCtx({ activeChat: null, },);
     await messageTools.runMessageAiAction!.call(ctx as never, "m1", "summarize",);
@@ -116,4 +112,4 @@ describeOrSkip("messageTools.runMessageAiAction", () => {
     await messageTools.runMessageAiAction!.call(ctx as never, "m1", "explain",);
     expect(ctx.toasts[0]?.type,).toBe("info",);
   });
-},);
+});

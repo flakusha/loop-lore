@@ -6,8 +6,7 @@
  * preview image, prefill from the sprite transform, transport failure
  * fallbacks, click-to-save round-trip, and remount disposal.
  */
-import { afterEach, beforeEach, expect, mock, test, } from "bun:test";
-import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
+import { afterEach, beforeEach, describe, expect, mock, test, } from "bun:test";
 import { mountPreviewAnchorEditor, } from "./asset-preview-anchor";
 import { type FakeDom, type FakeEl, installVnFakeDom, makeEl, tick, } from "./tests/vn-fake-dom";
 
@@ -15,16 +14,13 @@ let dom: FakeDom;
 let calls: { url: string; opts: RequestInit }[];
 let feHandler: ((url: string, opts: RequestInit,) => Response | Promise<Response>) | null;
 
-// Gated: mock.module is process-global (BUG 9c8bea1).
-if (ISOLATED) {
-  mock.module("./fe-fetch", () => ({
-    feFetch: async (url: string, opts: RequestInit = {},) => {
-      calls.push({ url, opts, },);
-      return feHandler ? feHandler(url, opts,) : new Response("{}", { status: 404, },);
-    },
-    getCsrfToken: () => "",
-  }),);
-}
+mock.module("./fe-fetch", () => ({
+  feFetch: async (url: string, opts: RequestInit = {},) => {
+    calls.push({ url, opts, },);
+    return feHandler ? feHandler(url, opts,) : new Response("{}", { status: 404, },);
+  },
+  getCsrfToken: () => "",
+}),);
 
 beforeEach(() => {
   dom = installVnFakeDom();
@@ -49,7 +45,7 @@ async function flush(times = 6,) {
   for (let i = 0; i < times; i += 1) { await tick(); }
 }
 
-describeOrSkip("mountPreviewAnchorEditor", () => {
+describe("mountPreviewAnchorEditor", () => {
   test("returns early when the body has no preview image", () => {
     const body = makeEl("div",);
     mountPreviewAnchorEditor(body as unknown as HTMLElement, "a1",);
@@ -140,4 +136,4 @@ describeOrSkip("mountPreviewAnchorEditor", () => {
     await flush();
     expect(body.querySelectorAll(".asset-anchor-marker",).length,).toBe(1,);
   });
-},);
+});
