@@ -7,8 +7,13 @@
 **Priority:** medium
 **Effort:** Small
 **Type:** Task
+**Summary:** Add a read-only `.tmp` janitor (4 advisory metrics) inside `runNonBlockingChecks` plus a `<!-- verified-at: <sha> -->` staleness convention for `.tmp` analysis markdown.
+**Context:** `.tmp/` holds 99 MB / 1177 files (baseline 2026-09-26); 49.1 MB in 47 orphan `*.lcov.info.*.tmp`, oldest artifact 16d, 16 `.tmp/*.md` documents have zero inbound references, stale logs steer conclusions (P-13).
+**Acceptance Criteria:** [see body — advisory janitor step wired between license and md:links; verified-at header parser; staleness warning at > 100 commits behind HEAD]
 
-**Summary:** `.tmp/` carries **99 MB across 1177 files** (scratchpad §1, baseline measured 2026-09-26 in the parent checkout). The single-largest waste is 47 orphan `*.lcov.info.*.tmp` files totalling **49.1 MB** (P-01); the oldest artifact in `.tmp/async-store/` is **16 days** old (P-03); **16 analysis `.md` documents have zero inbound references from `.plan/`, `docs/`, or `src/`** (P-05) and are invisible to the discovery-by-`grep .plan/` workflow; and stale logs keep steering conclusions (P-13 — `.tmp/test-run2.log` reports 255 Elysia route-collision errors that `src/routes/messages/forward.ts:53` proves are fixed). This ticket adds (1) a **read-only advisory `.tmp` janitor** wired into `runNonBlockingChecks` so the four metrics are visible alongside every other gate, and (2) a `<!-- verified-at: <sha> -->` header convention for `.tmp` markdown analysis docs plus a small `scripts/check-staleness.ts` that warns when the recorded sha is behind HEAD by > 100 commits. **No deletion in this ticket** — deletion is G-3 in giwt (separate concern, opt-in).
+## Summary
+
+`.tmp/` carries **99 MB across 1177 files** (scratchpad §1, baseline measured 2026-09-26 in the parent checkout). The single-largest waste is 47 orphan `*.lcov.info.*.tmp` files totalling **49.1 MB** (P-01); the oldest artifact in `.tmp/async-store/` is **16 days** old (P-03); **16 analysis `.md` documents have zero inbound references from `.plan/`, `docs/`, or `src/`** (P-05) and are invisible to the discovery-by-`grep .plan/` workflow; and stale logs keep steering conclusions (P-13 — `.tmp/test-run2.log` reports 255 Elysia route-collision errors that `src/routes/messages/forward.ts:53` proves are fixed). This ticket adds (1) a **read-only advisory `.tmp` janitor** wired into `runNonBlockingChecks` so the four metrics are visible alongside every other gate, and (2) a `<!-- verified-at: <sha> -->` header convention for `.tmp` markdown analysis docs plus a small `scripts/check-staleness.ts` that warns when the recorded sha is behind HEAD by > 100 commits. **No deletion in this ticket** — deletion is G-3 in giwt (separate concern, opt-in).
 
 ## Repro / Current state
 
@@ -73,8 +78,22 @@ It runs as a separate `bun run check:staleness` script (matches the `bun run md:
 ### 3.3 Deletion is NOT in this ticket
 
 The janitor is read-only. The actual deletion is `giwt clean [--dry-run]` (G-3 in `.tmp/scratchpad-pattern-analysis-2026-09-26.md` §4.1), a separate opt-in tool that needs a documented default config (loop-lore has no `giwt.toml`). This ticket **only** reports the numbers; it never `rm`s anything.
-**Context:** Filed via giwt template lacking required bold sections; normalized 2026-09-26 during the mock-isolation migration finalize.
-**Acceptance Criteria:**
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Verification executed green
+
+## Acceptance Criteria
+
+1. **Janitor step runs and reports all four metrics**: trigger via `bun run check`; grep the output for the four info lines above (or the equivalent `.tmp janitor: …` single-line rollup); none of them block.
+2. **Janitor is read-only**: confirm no `unlinkSync` / `rmSync` / `rm` calls added; `git status` after a check run shows no `.tmp` files removed.
+3. **`verified-at:` header is parsed**: place a `<!-- verified-at: $(git rev-parse --short HEAD~200) -->` in a temporary `.tmp/_test-stale.md`; run `bun run check:staleness`; it emits `warn: stale .tmp/_test-stale.md: verified at <sha>, now 200 commits behind`. Remove the file after.
+4. **Missing header is non-blocking**: an unannotated `.tmp` markdown file produces an `info:` (not `warn:`) line and does not affect exit code.
+5. **Numbers match the baseline**: on the parent checkout, the rollup line reads `99.0 MB total, 47 orphan *.lcov.info.*.tmp, oldest artifact 16d, 16 markdown docs unreferenced by .plan/` (the four P-01/P-03/P-05 figures from the scratchpad).
+6. **CI-safe — no deletion**: `git status` after running the new step reports zero modifications outside `.tmp/_test-stale.md` (the throwaway test artifact from criterion 3, which the test cleans up itself).
+
+## Cross-references
+
+- `.tmp/scratchpad-pattern-analysis-2026-09-26.md` §2 P-05 (16 zero-ref docs — janitor metric #4)
+- `.tmp/scratchpad-pattern-analysis-2026-09-26.md` §2 P-13 (stale logs steering conclusions — `verified-at:` is the fix)
+- `.tmp/scratchpad-pattern-analysis-2026-09-26.md` §4.3 L-5 (janitor gate canonical proposition)
+- `.tmp/scratchpad-pattern-analysis-2026-09-26.md` §4.3 L-9 (staleness marker convention)
+- `.tmp/scratchpad-pattern-analysis-2026-09-26.md` §4.1 G-3 (`giwt clean [--dry-run]` — the deletion side; **not** in this ticket)
+
+git issue: f6100ba

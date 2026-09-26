@@ -7,8 +7,13 @@
 **Priority:** medium
 **Effort:** Small
 **Type:** Task
+**Summary:** Persist a committed `.jscpd-baseline.json`, gate the check on rising clones or dup-%, expose `bun run jscpd:baseline` as the only sanctioned way to raise the bar.
+**Context:** `scripts/check-parallel.mjs:1167-1231` overwrites `.tmp/jscpd/prev.json` every run (git-ignored); observed 3003 → 3005 silent creep between 2026-09-25 and 2026-09-26 with no gate trip.
+**Acceptance Criteria:** [see body — committed baseline, blocking error on regression, opt-in baseline script, drop the `.tmp/jscpd/prev.json` write path]
 
-**Summary:** The jscpd step (`scripts/check-parallel.mjs:1167-1231`) compares the current run against `.tmp/jscpd/prev.json` and overwrites it every run, so the comparison spans **one run only**. Observed drift in `.tmp/check-report.json` (line ~262): 3003 clones on 2026-09-25 (first run, baseline recorded) → 3005 clones on 2026-09-26 (reported as `level: "info"` non-blocking, message "unchanged vs last run"). The 09-18 gate audit (`grep -c -i 'jscpd\|clone' .tmp/heavy-gate-audit-2026-09-18.md` = 0) never mentions jscpd at all — silent debt. This ticket adds a **committed, long-lived** `.jscpd-baseline.json` at the repo root, gates the check on rising clones OR dup-%, and exposes `bun run jscpd:baseline` as the intentional opt-in to raise the bar.
+## Summary
+
+The jscpd step (`scripts/check-parallel.mjs:1167-1231`) compares the current run against `.tmp/jscpd/prev.json` and overwrites it every run, so the comparison spans **one run only**. Observed drift in `.tmp/check-report.json` (line ~262): 3003 clones on 2026-09-25 (first run, baseline recorded) → 3005 clones on 2026-09-26 (reported as `level: "info"` non-blocking, message "unchanged vs last run"). The 09-18 gate audit (`grep -c -i 'jscpd\|clone' .tmp/heavy-gate-audit-2026-09-18.md` = 0) never mentions jscpd at all — silent debt. This ticket adds a **committed, long-lived** `.jscpd-baseline.json` at the repo root, gates the check on rising clones OR dup-%, and exposes `bun run jscpd:baseline` as the intentional opt-in to raise the bar.
 
 ## Repro / Current state
 
@@ -73,8 +78,20 @@ Empirical observed values (per scratchpad §2 P-10):
 4. **Stop writing `.tmp/jscpd/prev.json`** — delete that path entirely. The committed baseline supersedes it. (Keep `.tmp/run-<id>/jscpd/` per-run reports — those are still useful as per-run evidence.)
 
 5. **Add `.jscpd-baseline.json` to `.gitignore`** exception list: the file IS meant to be committed, so `git check-ignore` must return "not ignored".
-**Context:** Filed via giwt template lacking required bold sections; normalized 2026-09-26 during the mock-isolation migration finalize.
-**Acceptance Criteria:**
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Verification executed green
+
+## Acceptance Criteria
+
+1. **Baseline file present and committed**: `cat .jscpd-baseline.json` returns valid JSON with `clones`, `dupPercent`, `recordedAt`; `git ls-files .jscpd-baseline.json` returns the path (i.e., tracked).
+2. **Gate trips on regression**: temporarily bump the gate's expected `clones` by setting `JSCPD_TEST_BASELINE_CLONES_OVERRIDE` (test hook) so the comparison fails; run `bun run check`; the jscpd step now reports `level: "error"` and the runner exits non-zero. Remove the override; run again; gate passes.
+3. **Opt-in script works**: `bun run jscpd:baseline` rewrites `.jscpd-baseline.json` with current run values; second run is a no-op (idempotent on identical input).
+4. **Removed `.tmp/jscpd/prev.json` write**: `grep -n 'prev.json' scripts/check-parallel.mjs` returns 0 matches (or only references in comments explaining the removal).
+5. **Existing non-blocking `level: "info"` on regression path is now `level: "error"`**: a regression run produces a blocking failure with the diff line above; an improvement (clones or dup-% decreased) still emits a `warn` info line but does not block.
+
+## Cross-references
+
+- `.tmp/scratchpad-pattern-analysis-2026-09-26.md` §2 P-10 (duplication-debt measurement + silent drift)
+- `.tmp/scratchpad-pattern-analysis-2026-09-26.md` §4.3 L-7 (canonical proposition)
+- `.tmp/scratchpad-pattern-analysis-2026-09-26.md` §7 row 3 (the 09-18 audit never mentioned jscpd; corrected in revision 2)
+- `TASK-dedup-top-jscpd-clone-clusters.md` (filed 2026-09-26 from `jscpd-top.py` output — orthogonal: it identifies the worst offenders; this ticket is the gate that fails when they multiply)
+
+git issue: 28444bc

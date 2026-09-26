@@ -7,8 +7,13 @@
 **Priority:** high
 **Effort:** Small
 **Type:** Bug
+**Summary:** Add an immediate `beforeEach` guard that fails any async-store test pointing at the shared `OFFLOAD_DIR`.
+**Context:** Parallel-safety defect (`src/async/spill.ts:12` defines a fixed `OFFLOAD_DIR = path.resolve(".tmp", "async-store")`); concurrent tests race on shared file ops and leak residue into the running app's spill dir.
+**Acceptance Criteria:** [see body — per-test guard or per-test tmpdir override; deterministic teardown]
 
-**Summary:** `OFFLOAD_DIR` is defined as `path.resolve(".tmp", "async-store")` in `src/async/spill.ts:12` — a fixed, repo-relative path. Every `src/async/*test*.ts` file (`offload.test.ts`, `offload-daemon.test.ts`, `spill.test.ts`) reads this constant directly with no per-test override and no teardown, so:
+## Summary
+
+`OFFLOAD_DIR` is defined as `path.resolve(".tmp", "async-store")` in `src/async/spill.ts:12` — a fixed, repo-relative path. Every `src/async/*test*.ts` file (`offload.test.ts`, `offload-daemon.test.ts`, `spill.test.ts`) reads this constant directly with no per-test override and no teardown, so:
 
 1. The running app, every test file, and every parallel test process all write into the same directory.
 2. With `--parallel=4 --isolate`, concurrent tests race on `mkdirSync` / `writeFileSync` / `readdirSync` and leave residue that bleeds into the next suite run (and into the running app's spill dir).
@@ -45,8 +50,18 @@ This is a parallel-safety defect: violates the project rule that tests must own 
   ls .tmp/async-store | wc -l                          # after — delta > 0
   ```
 
-**Context:** Filed via giwt template lacking required bold sections; normalized 2026-09-26 during the mock-isolation migration finalize.
-**Acceptance Criteria:**
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Verification executed green
+## Acceptance Criteria
+
+1. Add a `beforeEach` guard that **fails any test** whose `process.env.OFFLOAD_DIR` (or the resolved module-level `OFFLOAD_DIR`) points at `<repo>/.tmp/async-store`. Cite the project's `rule://parallel-safe-tests` (parallel-safe-tests convention: unique resource per test, deterministic teardown — see `finalize-signal-safety.test.ts:7`, `serve-handlers.coverage.test.ts:14`, `find-worktree.test.ts:8` for the canonical wording).
+2. Acceptable alternative: override `OFFLOAD_DIR` to `os.tmpdir()/loop-lore-test-<uuid>` in a top-level `beforeAll`, and `rm -rf` it in a top-level `afterAll`, in every `src/async/*test*.ts` file. Either form satisfies the rule; the guard form is preferred because it makes regressions loud.
+3. Re-run `e2e-matrix2.sh` after the fix: `.tmp/async-store` file count must be unchanged (or reduced) after both arms.
+4. Resource contract (per `rule://parallel-safe-tests`): each test owns a unique `os.tmpdir()/loop-lore-test-<uuid>/` OFFLOAD_DIR; release in `afterEach` (per-test) or `finally` (per-test) — never `afterAll`-only, because a fail-mid-file otherwise leaks; no shared globals; passes alone, in any order. Document the contract in the test file's header comment ("Resource contract (parallel-safe): …"), matching the canonical wording in `scripts/worktree/finalize-signal-safety.test.ts:7`, `src/assets/serve-handlers.coverage.test.ts:14`, and `scripts/worktree/find-worktree.test.ts:8`. End goal: seconds-fast pre-commit hook under `--parallel=4 --isolate`; serial minute-long suites are unacceptable.
+5. Verification-execution note (mandatory): running this test fix verification MUST NOT be concurrent with another test suite or `bun run check`. The repo host OOMs on two parallel bun-test processes (AGENTS.md). Run arms sequentially; `-j 1` is acceptable for shakeout only — the committed fix MUST be fast under the project's verify gate.
+
+## Cross-references
+
+- `.tmp/scratchpad-pattern-analysis-2026-09-26.md` §D-03 (OFFLOAD_DIR race)
+- Sibling cleanup ticket: `.plan/tickets/TASK-async-store-tests-per-test-tmpdir.md`
+- Canonical evidence: `.tmp/scratchpad-audit/e2e-matrix2.sh` + `.tmp/scratchpad-audit/e2e-matrix2.txt`
+
+git issue: 3cbb21e
