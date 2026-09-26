@@ -6,9 +6,9 @@
 **Status:** open
 **Priority:** medium
 **Effort:** Medium
-**Summary:** (none captured)
-**Context:** (none captured)
-**Acceptance Criteria:** (none captured)
+**Summary:** EventPacing (tension_level, event_frequency, event_intensity, rest_probability, npc_aggression_modifier, npc_helpfulness_modifier) maps tension → frequency/intensity. PoignancyScore weights novelty, emotional_impact, plot_significance, character_development.
+**Context:** Source: epic-assistant-gm-flows.md § AI Director → Event Pacing + Poignancy Scoring.
+**Acceptance Criteria:** [ ] EventPacing derived from TensionState; [ ] PoignancyScore computed per emitted event; [ ] high-tension → high frequency/intensity; [ ] rest events gated by rest_probability.
 
 
 **Status**: open
