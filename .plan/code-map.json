@@ -3086,6 +3086,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-wire-intent-output-to-workflow-runner-startworkflow.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-workflow-runner-start-preview-step-confirm-dispatch-step-ui.md"
     }
   ],
@@ -18043,6 +18047,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-classifier-model-survey-message-intent-memory-ranking-emotio.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-wire-intent-output-to-workflow-runner-startworkflow.md"
     }
   ],
   "src/generation/auto-gen/content-hooks-nsfw-gate.test.ts": [
@@ -23913,6 +23921,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-regex-pipeline-hardening-sweep-input-caps-lastindex-hazards-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-wire-intent-output-to-workflow-runner-startworkflow.md"
     }
   ],
   "src/regex/narrative.ts": [
@@ -25969,6 +25981,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-creative-studio-workflows.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-minimal-video-generation-dispatch-route-for-workflow-engine.md"
     }
   ],
   "src/routes/gifs/search.test.ts": [

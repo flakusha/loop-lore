@@ -28339,6 +28339,22 @@
     "status": "done",
     "git_issue": "8b0fa75"
   },
+  "TASK-HTTP-EXPOSE-AGENCY-EARN-AND-STATUS-ALONGSIDE-SPEND": {
+    "hash": "4ee97f5",
+    "git_issue": "4ee97f5",
+    "extid": "TASK-HTTP-EXPOSE-AGENCY-EARN-AND-STATUS-ALONGSIDE-SPEND",
+    "type": "TASK",
+    "title": "HTTP-expose agency earn and status alongside spend",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-agency-story-points",
+    "tags": [
+      "agency",
+      "routes"
+    ],
+    "source": ".plan/tickets/TASK-http-expose-agency-earn-and-status-alongside-spend.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-HTTPS-REDIRECT-ENFORCEMENT-FOR-PLAINTEXT-HTTP": {
     "hash": "b3888da",
     "extid": "TASK-HTTPS-REDIRECT-ENFORCEMENT-FOR-PLAINTEXT-HTTP",
@@ -30934,6 +30950,23 @@
     "source": ".plan/tickets/TASK-mini-games-framework.md",
     "status": "open",
     "git_issue": "c157175"
+  },
+  "TASK-MINIMAL-VIDEO-GENERATION-DISPATCH-ROUTE-FOR-WORKFLOW-ENGINE": {
+    "hash": "a93c32a",
+    "git_issue": "a93c32a",
+    "extid": "TASK-MINIMAL-VIDEO-GENERATION-DISPATCH-ROUTE-FOR-WORKFLOW-ENGINE",
+    "type": "TASK",
+    "title": "Minimal video generation dispatch route for workflow engine",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-workflow-engine",
+    "tags": [
+      "assistant",
+      "workflow",
+      "video"
+    ],
+    "source": ".plan/tickets/TASK-minimal-video-generation-dispatch-route-for-workflow-engine.md",
+    "status": "⬜ Not Started"
   },
   "TASK-MOBILE-TOUCH-GESTURES": {
     "hash": "b442367",
@@ -38927,6 +38960,23 @@
     "source": ".plan/tickets/TASK-wire-gm-service-story-mode.md",
     "status": "done",
     "git_issue": "9fc2b42"
+  },
+  "TASK-WIRE-INTENT-OUTPUT-TO-WORKFLOW-RUNNER-STARTWORKFLOW": {
+    "hash": "9d598b8",
+    "git_issue": "9d598b8",
+    "extid": "TASK-WIRE-INTENT-OUTPUT-TO-WORKFLOW-RUNNER-STARTWORKFLOW",
+    "type": "TASK",
+    "title": "Wire intent output to workflow-runner.startWorkflow",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-workflow-engine",
+    "tags": [
+      "assistant",
+      "workflow",
+      "intent"
+    ],
+    "source": ".plan/tickets/TASK-wire-intent-output-to-workflow-runner-startworkflow.md",
+    "status": "⬜ Not Started"
   },
   "TASK-WIRE-MEMORY-INJECTION": {
     "hash": "dbc20c6",
