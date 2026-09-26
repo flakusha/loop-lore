@@ -85,3 +85,48 @@ The surrounding **provisioning semantics** (which channel may grant login/unlock
 
 - TASK-two-factor-multi-factor-auth.md (canonical)
 - TASK-2fa-mfa.md (duplicate — folded)
+
+
+## Integration Points
+
+### Systems This Epic Depends On
+
+<!-- Systems whose output this epic consumes -->
+
+| System | What It Provides | How Used |
+| ------ | ---------------- | -------- |
+| Auth Channel Provisioning | `FactorKind`, `FactorState`, `ChallengePurpose` shared vocabulary, challenge service | Factor mechanisms plug into shared lifecycle |
+| Auth & Access | `jwt.ts`, login routes, `UserStatus` | Factor verification gates token issuance; lockout state |
+| Crypto | Hashing, encryption primitives, key wrapping | Backup-code hashing, secret encryption at rest |
+| Email Integration | `EmailAdapter` interface | E-mail OTP delivery |
+| IM Integrations | Messenger OTP transports | Replaces SMS role; messenger OTP path |
+
+### Systems That Depend On This Epic
+
+<!-- Systems that consume this epic's output -->
+
+| System | What It Consumes | How Used |
+| ------ | ---------------- | -------- |
+| Auth Channel Provisioning | Factor enrollment + verification results | Provisioning ladder enforces required factors per channel |
+| Federation | Federated login step-up | Step-up auth via factor on cross-instance login |
+| Admin Dashboard | Enrollment audit + recovery admin actions | Audit surface for factor changes |
+
+### Shared Data Contracts
+
+<!-- Types, interfaces, or schemas shared between this and other systems -->
+
+| Contract | Shared With | Purpose |
+| -------- | ----------- | ------- |
+| `FactorKind` | Auth Channel Provisioning, Matrix-Auth | Enumerated factor types (TOTP/WebAuthn/email/messenger) |
+| `FactorState` | Auth Channel Provisioning | Lifecycle state (pending/active/disabled/revoked) |
+| `ChallengePurpose` | Auth Channel Provisioning | Why a challenge was issued (enroll/login/recover/step-up) |
+
+### Cross-System Events
+
+<!-- Events this system emits or subscribes to from other systems -->
+
+| Event | Direction | Purpose |
+| ----- | --------- | ------- |
+| `factor.enrolled` | emits → Auth Channel Provisioning, Audit | New factor available |
+| `factor.verified` | emits → Auth Channel Provisioning, Auth & Access | Challenge passed |
+| `factor.revoked` | emits → Auth Channel Provisioning, Audit | Factor disabled/removed |
