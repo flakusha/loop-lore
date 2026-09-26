@@ -38387,7 +38387,7 @@
     "epic": "epic-actor-turn-skip",
     "tags": [],
     "source": ".plan/tickets/TASK-turn-skip-gm-absence-contract.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "db47e87"
   },
   "TASK-TWO-FACTOR-MULTI-FACTOR-AUTH": {
