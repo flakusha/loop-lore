@@ -17911,10 +17911,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-composer-user-visible-streaming-vs-complete-toggle.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-story-points-prototype.md"
     }
   ],
   "src/generation/actor-resolver.ts": [
@@ -24641,6 +24637,20 @@
       "source": ".plan/tickets/TASK-world-editor-structured-ui.md"
     }
   ],
+
+  "src/routes/agency/balance.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-story-points-prototype.md"
+    }
+  ],
+
+  "src/routes/agency/spend.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-story-points-prototype.md"
+    }
+  ],
   "src/routes/analytics.test.ts": [
     {
       "kind": "epic",
@@ -28945,10 +28955,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-resolution-family-decision.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-story-points-prototype.md"
     }
   ],
   "src/rpg/achievements/index.ts": [
@@ -32143,6 +32149,20 @@
       "source": "docs/spec/crafting-professions.md"
     }
   ],
+
+  "src/services/agency/spend-helpers.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-story-points-prototype.md"
+    }
+  ],
+
+  "src/services/agency/story-points.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-story-points-prototype.md"
+    }
+  ],
   "src/services/agency/bdi-nightly.ts": [
     {
       "kind": "epic",
@@ -34635,6 +34655,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-rigged-model-buffer-render.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-story-points-prototype.md"
     },
     {
       "kind": "ticket",

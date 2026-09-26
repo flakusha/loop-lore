@@ -6,6 +6,7 @@ import { checkChatAccess, } from "../../chat/service";
 import { CancelReason, CancelSource, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { forbiddenResponse, jsonError, jsonResponse, requireUserId, } from "../../routes/http-utils";
+import { chargeStoryPointsForChat, } from "../../services/agency/spend-helpers";
 import { cancelGenerationByChat, } from "../cancellation-manager";
 import type { RetryFromPointResponse, } from "../types";
 
@@ -59,6 +60,11 @@ export async function handleRetryGeneration(
   // chat's generation (BUG-generation-control-plane-routes-lack-authorization).
   const access = await checkChatAccess(db, chatId, authUserId, userRole,);
   if (!access.ok) { return forbiddenResponse(); }
+
+  // Opt-in story-point spend on retry. Caller flips
+  // body.chargeStoryPoints=true to charge one point before retry.
+  const chargeErr = await chargeStoryPointsForChat(db, chatId, body, authUserId, "retry",);
+  if (chargeErr) { return chargeErr; }
 
   const wasActive = cancelGenerationByChat({
     db,

@@ -26,8 +26,16 @@ role. Validates `epic-agency-story-points.md`.
 
 ## Current State
 
-- No story-point concept in `src/` or specs.
-- Resolution/dice exists but no spend/economy layer.
+- Schema + service landed: `actor_story_points` (migration `019`), earn/spend/cap
+  mutations in `src/services/agency/story-points/`.
+- HTTP surface: `POST /api/agency/spend` (authz: session must own `actor_id`),
+  `GET /api/agency/balance` (session-scoped read for the chip).
+- Spend hooks wired into the generation control plane via
+  `chargeStoryPointsForChat` (`src/services/agency/spend-helpers.ts`), consumed
+  by the regenerate and retry routes.
+- UI: `chat/story-points-chip.html`, mounted from `src/views/chat.html`.
+- Earn hooks for roleplay signal / arc completion are NOT wired yet — the
+  balance is currently only credited by explicit service calls.
 
 ## Architecture (sketch)
 
@@ -38,7 +46,15 @@ role. Validates `epic-agency-story-points.md`.
 
 ## Acceptance
 
-- [ ] Schema + migration
-- [ ] Earn + spend service in `src/rpg` or `src/generation`
-- [ ] Minimal UI affordance
-- [ ] Unit test for earn/spend invariants
+- [x] Schema + migration — `019_actor_story_points`, partial-unique follow-up
+      `020_actor_story_points_partial_unique`
+- [x] Earn + spend service — `src/services/agency/story-points/`
+      (mutations + queries + typed errors), spend hooks consumed by the
+      regenerate and retry routes
+- [x] Minimal UI affordance — `chat/story-points-chip.html` reading
+      `GET /api/agency/balance`
+- [x] Unit test for earn/spend invariants —
+      `src/services/agency/story-points.test.ts`,
+      `src/routes/agency/spend.test.ts`, `src/routes/agency/balance.test.ts`
+- [ ] Earn hooks (roleplay signal, arc completion) — deferred; balances are
+      credited by explicit service calls only

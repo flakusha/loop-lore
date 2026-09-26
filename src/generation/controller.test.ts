@@ -4,6 +4,7 @@
 import { afterEach, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
+import { earnStoryPoints, getStoryPointBalance, } from "../services/agency/story-points";
 import { createTestDb, } from "../test-utils/create-test-db";
 import type { TestDb, } from "../test-utils/create-test-db";
 import {
@@ -189,6 +190,40 @@ describe("handleRetryGeneration", () => {
     expect(res.status,).toBe(200,);
     const data = (await res.json()) as { resumeFromStep: number };
     expect(data.resumeFromStep,).toBe(0,);
+  });
+
+  test("chargeStoryPoints=true debits one story point on success", async () => {
+    const { member, } = await makeFixtures();
+    await earnStoryPoints(testDb!, { actorId: member, amount: 3, },);
+    const res = await handleRetryGeneration(
+      { chatId, chargeStoryPoints: true, },
+      testDb!,
+      member,
+    );
+    expect(res.status,).toBe(200,);
+    const bal = await getStoryPointBalance(testDb!, member, null,);
+    expect(bal.balance,).toBe(2,);
+    expect(bal.spent_total,).toBe(1,);
+  });
+
+  test("chargeStoryPoints=true returns 400 when balance is too low", async () => {
+    const { member, } = await makeFixtures();
+    // No earnStoryPoints — balance is 0, cost is 1.
+    const res = await handleRetryGeneration(
+      { chatId, chargeStoryPoints: true, },
+      testDb!,
+      member,
+    );
+    expect(res.status,).toBe(400,);
+  });
+
+  test("chargeStoryPoints omitted/false does not touch the balance", async () => {
+    const { member, } = await makeFixtures();
+    await earnStoryPoints(testDb!, { actorId: member, amount: 5, },);
+    const res = await handleRetryGeneration({ chatId, }, testDb!, member,);
+    expect(res.status,).toBe(200,);
+    const bal = await getStoryPointBalance(testDb!, member, null,);
+    expect(bal.balance,).toBe(5,);
   });
 });
 
