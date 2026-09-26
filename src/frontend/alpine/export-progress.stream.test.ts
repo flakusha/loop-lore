@@ -87,5 +87,7 @@ test("startExport streams the SSE body and disarms the fetch timeout", async () 
   // Stream mode must not arm the 30s timeout: a bare signal (undefined)
   // means no AbortController chain from safeFetch.
   expect(captured?.signal,).toBeUndefined();
+  // The SSE contract: startExport must request a streaming response.
+  expect((captured as { stream?: unknown } | undefined)?.stream,).toBe(true,);
   expect(stream.closed,).toBe(true,);
 });
