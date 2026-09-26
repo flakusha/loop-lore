@@ -43,22 +43,20 @@ function makeConfig(overrides?: { registrationOpen?: boolean },): any {
 }
 
 /**
- * @param existingUser
- */
-function executeTakeFirst(existingUser?: boolean,) {
-  return async () => {
-    if (existingUser) { return { id: "existing-user-id", }; }
-    return null;
-  };
-}
-
-/**
  * @param overrides
  * @param overrides.existingUser
  * @param overrides.sessionsCount
  */
 function makeDb(overrides?: { existingUser?: boolean; sessionsCount?: number },): any {
   const sessionsCount = overrides?.sessionsCount ?? 0;
+  // Track usernames the mock has already accepted -- simulates the
+  // DB's unique-username constraint. handleRegister no longer does a
+  // SELECT pre-check; it relies on insertUnique -> ON CONFLICT
+  // (username) DO NOTHING to detect a duplicate. The mock returns
+  // 0 rows when the username is already known so the route returns
+  // the "Username already taken." inline error.
+  const seenUsernames = new Set<string>();
+  if (overrides?.existingUser) { seenUsernames.add("existinguser",); }
   return {
     fn: {
       countAll: () => ({ as: (_alias: string,) => "count_all_marker", }),
@@ -70,16 +68,51 @@ function makeDb(overrides?: { existingUser?: boolean; sessionsCount?: number },)
           where: () => ({
             executeTakeFirst: async () => {
               if (isSessionsCount) { return { cnt: BigInt(sessionsCount,), }; }
-              return executeTakeFirst(overrides?.existingUser,)();
+              return null;
             },
           }),
         };
       },
     }),
-    insertInto: () => ({
-      values: () => ({
-        execute: async () => ({ numInsertedOrUpdatedRows: 1n, }),
+    deleteFrom: (_table: string,) => ({
+      where: () => ({
+        orderBy: () => ({
+          limit: () => ({ execute: async () => ({ numAffectedRows: 0n, }), }),
+        }),
       }),
+    }),
+    insertInto: (table: string,) => ({
+      values: (vals: { username?: string; id?: string } = {},) => {
+        // insertUnique uses Kysely's callback form:
+        //   .onConflict((oc) => oc.columns(...).doNothing()).execute()
+        // The callback returns the next chainable object. We simulate
+        // the ON CONFLICT DO NOTHING result by reading from the table
+        // column -- when the table is `users` and the username has
+        // already been accepted by the mock, the unique constraint
+        // fires and the insert is dropped (0 rows). All other inserts
+        // (actors, sessions, ...) report a fresh 1-row insert.
+        const skipped = table === "users" && !!vals.username && seenUsernames.has(vals.username,);
+        if (table === "users" && vals.username && !skipped) {
+          seenUsernames.add(vals.username,);
+        }
+        return {
+          onConflict: (cb: (oc: any,) => any,) =>
+            cb({
+              columns: () => ({
+                doNothing: () => ({
+                  // Kysely's `.execute()` returns `QueryResult` which is
+                  // an ARRAY-shaped row-collection with `numInsertedOrUpdatedRows`.
+                  // insertUnique indexes `result[0]` so we must hand back an
+                  // array, not a plain object.
+                  execute: async () => [{
+                    numInsertedOrUpdatedRows: skipped ? 0n : 1n,
+                  },],
+                }),
+              }),
+            },),
+          execute: async () => [{ numInsertedOrUpdatedRows: 1n, },],
+        };
+      },
     }),
   };
 }
@@ -214,5 +247,38 @@ describe("POST /api/auth/register", () => {
     const cookieHeader = res.headers.get("Set-Cookie",);
     expect(cookieHeader,).toContain("ll_token=",);
     expect(cookieHeader,).toContain("HttpOnly",);
+  });
+
+  test("concurrent same-username registrations: only one wins (BUG-register-username-race)", async () => {
+    // Regression: before the insertUnique fix, handleRegister did a
+    // SELECT-then-INSERT -- two concurrent calls with the same username
+    // both passed the existence check, then the second hit the unique
+    // constraint with an uncaught 500. The fix collapses the check +
+    // insert into a single INSERT ... ON CONFLICT (username) DO NOTHING
+    // via insertUnique; the loser of the race sees "skipped" and gets
+    // a clean inline-error response (the htmx swap contract returns
+    // 200 + "Username already taken." rather than a 409 -- see
+    // routes/auth/responses.ts: errorResponse keeps 200 for the inline
+    // path so htmx can swap it). The pre-fix behavior would have
+    // produced a 500 here for the loser.
+    const app = makeApp(makeDb(), makeConfig(),);
+
+    const [a, b,] = await Promise.all([
+      app.handle(makeRequest("username=raceuser&password=" + "secret123",),),
+      app.handle(makeRequest("username=raceuser&password=" + "secret123",),),
+    ],);
+
+    expect(a.status,).toBe(200,);
+    expect(b.status,).toBe(200,);
+    const aBody = await a.text();
+    const bBody = await b.text();
+    const combined = aBody + bBody;
+    // Exactly one body is the inline "Username already taken." error
+    // (the loser of the race) and exactly one response carries the
+    // HX-Redirect header (the winner). The pre-fix code would have
+    // thrown a 500 for the loser on the unique-constraint violation.
+    expect(combined,).toContain("Username already taken.",);
+    const redirects = [a, b,].filter((r,) => r.headers.get("HX-Redirect",) === "/views/chat").length;
+    expect(redirects,).toBe(1,);
   });
 });
