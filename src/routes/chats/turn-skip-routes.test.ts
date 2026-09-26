@@ -8,7 +8,7 @@
  * Translates RecordTurnSkipResult -> HTTP: not_found -> 404,
  * refused_beat -> 409, forbidden -> 403. Per-user+chat rate limit -> 429.
  */
-import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, mock, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
@@ -23,6 +23,17 @@ import {
   insertUsers,
 } from "../../test-utils/insert-helpers";
 import { turnSkipRoutes, } from "./turn-skip-routes";
+
+// Spy the auto-generation trigger: the route must fire it at most once per
+// advance, and never for a deduped (replayed) advance.
+const triggerCalls: Array<Record<string, unknown>> = [];
+mock.module("../../generation/auto-gen", () => ({
+  isLlmGenerationConfigured: () => true,
+  triggerAutoGeneration: (input: Record<string, unknown>,) => {
+    triggerCalls.push(input,);
+    return Promise.resolve();
+  },
+}),);
 
 describe("chats turn-skip-routes", () => {
   let db: Kysely<DB>;
@@ -104,5 +115,29 @@ describe("chats turn-skip-routes", () => {
       last = res.status;
     }
     expect(last,).toBe(429,);
+  });
+
+  test("POST turn-skip: deduped advance does not re-trigger generation", async () => {
+    const app = makeApp(OWNER_ID,);
+    const makeReq = () =>
+      new Request(`http://localhost/api/chats/${CHAT_ID}/turn-skip`, {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ mode: "advance", },),
+      },);
+
+    const first = await app.handle(makeReq(),);
+    expect(first.status,).toBe(200,);
+    const firstBody = await first.json() as { deduped: boolean };
+    expect(firstBody.deduped,).toBe(false,);
+    expect(triggerCalls.length,).toBe(1,);
+
+    // Same actor + chat + mode within the dedup bucket replays the row.
+    const second = await app.handle(makeReq(),);
+    expect(second.status,).toBe(200,);
+    const secondBody = await second.json() as { deduped: boolean };
+    expect(secondBody.deduped,).toBe(true,);
+    // No second generation beat for the replayed advance.
+    expect(triggerCalls.length,).toBe(1,);
   });
 });

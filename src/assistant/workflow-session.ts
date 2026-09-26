@@ -55,12 +55,27 @@ export function cancelSession(chatId: string,): boolean {
 }
 
 /**
- * Next unfilled step id for a session, in template order.
+ * Ids of unfilled required steps, in template order. Optional steps
+ * (`required === false`) never appear — they are auto-skipped at fill and
+ * confirm time, mirroring confirmAndDispatch in workflow-runner.ts.
  * @param session - Active session
- * @returns Step id, or undefined when all steps are filled
+ * @returns Missing step ids; empty when the run is ready to dispatch
+ */
+export function missingStepIds(session: WorkflowSession,): string[] {
+  return session.workflow.steps
+    .filter((step,) => step.required !== false && session.run.values[step.id] === undefined)
+    .map((step,) => step.id);
+}
+
+/**
+ * Next unfilled required step id for a session, in template order.
+ * Optional steps (`required === false`) are auto-skipped — plain messages
+ * are never offered to them and they never block dispatch.
+ * @param session - Active session
+ * @returns Step id, or undefined when all required steps are filled
  */
 export function nextStepId(session: WorkflowSession,): string | undefined {
-  return session.workflow.steps.find((step,) => session.run.values[step.id] === undefined)?.id;
+  return missingStepIds(session,)[0];
 }
 
 /**

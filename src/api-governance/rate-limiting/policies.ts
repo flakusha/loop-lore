@@ -27,11 +27,15 @@ export const authPolicy: RatePolicy = { name: "auth", windowMs: 60_000, max: 10,
 /** LLM / SD generation endpoints — money + tokens per call. */
 export const generationPolicy: RatePolicy = { name: "generation", windowMs: 60_000, max: 20, burst: 5, };
 
+/** Chat browsing + send cycles + the seen-poller — UI volume, not billable. */
+export const chatPolicy: RatePolicy = { name: "chat", windowMs: 60_000, max: 300, burst: 50, };
+
 /** */
 export const policies: Record<string, RatePolicy> = {
   [defaultPolicy.name]: defaultPolicy,
   [authPolicy.name]: authPolicy,
   [generationPolicy.name]: generationPolicy,
+  [chatPolicy.name]: chatPolicy,
 };
 
 /** */
@@ -47,7 +51,7 @@ export function resolvePolicy(name: string | undefined,): RatePolicy {
 export const routePolicies: Array<[prefix: string, policy: RatePolicy,]> = [
   ["/api/v1/auth", authPolicy,],
   ["/api/v1/generation", generationPolicy,],
-  ["/api/v1/chats", generationPolicy,],
+  ["/api/v1/chats", chatPolicy,],
 ];
 
 /** */

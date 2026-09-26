@@ -12,6 +12,7 @@ import {
   MessageRole,
 } from "../../db/enums";
 import { isLlmGenerationConfigured, triggerAutoGeneration, } from "../../generation/auto-gen";
+import { getLogger, } from "../../logger";
 import { canAccessNsfw, getActorContentRating, isNsfwRating, } from "../../middleware/nsfw-gate";
 import { jsonParseOr, uid, } from "../../utils";
 import { ChatCreateBody, } from "../../validation/schemas";
@@ -116,7 +117,15 @@ async function seedWelcomeMessages(
   if (characterActors.length === 0 && body.participantIds?.length) {
     const { database: db, config, } = opts;
     if (isLlmGenerationConfigured(config,)) {
-      void triggerAutoGeneration({ database: db, config, chatId, parentMessageId: null, userId, },);
+      void triggerAutoGeneration({ database: db, config, chatId, parentMessageId: null, userId, },).catch(
+        (error: unknown,) => {
+          // Fire-and-forget: surface failures via the structured logger instead
+          // of emitting an unhandled-rejection warning at runtime.
+          getLogger().child({ module: "chats", },).error(`triggerAutoGeneration failed: ${String(error,)}`, undefined, {
+            chatId,
+          },);
+        },
+      );
     }
   }
 }
