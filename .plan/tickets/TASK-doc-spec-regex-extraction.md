@@ -36,3 +36,17 @@ it from the README features table.
 - [ ] Sidebar entry added under Core Systems
 - [ ] README Regex extraction row links the new spec
 - [ ] `bun run md:lint` + `bun run format` pass on the new file
+
+## Clarification 2026-09-26
+
+Current behavior: `docs/spec/regex-extraction.md` EXISTS (4.0KB). Sidebar entry exists at `docs/.vitepress/config.mts:80` under Core Systems. `src/regex/` holds ~20 modules; `src/regex/index.ts:12-187` re-exports: image-edit, intent, action-parser, memory-classification, transitions, hallucination, music-urls, html-sanitize (+streaming), story-events, template, narrative, cookies, slugs, commit/semver, dice, code-fence, placeholders/i18n, plus `safe-exec` hardening (`assertInputSize`, `safeRegexExec`, `safeRegexMatch`).
+
+Scope disambiguation: ticket scope predates `safe-exec.ts` and `html-sanitize-streaming.ts` — the spec's module map must include the hardening helpers and the streaming sanitizer, not just the story-event grouping. README-row criterion is un-actionable (`README.md:39-41`, no features table).
+
+Scoped next step: verify the spec's export map against `index.ts`, run `bun run md:lint` + `bun run format`, then close. Topical open git issues: `9bb9cbf` (assistant intent regexes hijack normal chat — precision hazard in `intent.ts`), `8a3b90e` (slash-autocomplete regex not caret-anchored) — both are consumer bugs, out of scope for the spec ticket but must-read before touching patterns.
+
+Acceptance:
+
+- [ ] Spec module map matches every export block in `src/regex/index.ts` incl. `safe-exec`
+- [ ] `bun run md:lint` + `bun run format` pass on `docs/spec/regex-extraction.md`
+- [ ] README-row criterion reinterpreted or removed
