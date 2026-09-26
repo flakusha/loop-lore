@@ -54,6 +54,10 @@ export interface ChatFormatTemplate {
   assistant: string;
 }
 
+/** Position of the pre-compiled schema+example block in `/create`
+ * entity-generation prompts (per `epic-assistant-gm-flows.md`). */
+export type EntityTemplatePosition = "before" | "after" | "off";
+
 /** LLM template configuration */
 export interface LlmTemplateConfig {
   merge: MergeStrategy;
@@ -66,6 +70,8 @@ export interface LlmTemplateConfig {
    * contain a `{description}` placeholder.
    */
   entityGeneration?: Partial<Record<"character" | "npc" | "location" | "world" | "item", string>>;
+  /** Position of the pre-compiled block; undefined defaults to "after". */
+  entityTemplatePosition?: EntityTemplatePosition;
 }
 
 // ── SD Templates ────────────────────────────────────────────

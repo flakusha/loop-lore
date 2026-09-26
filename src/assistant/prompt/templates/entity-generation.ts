@@ -12,6 +12,7 @@
 // Value import — ENTITY_TEMPLATES is used lazily inside resolveEntityGenerationPrompt,
 // avoiding a circular-runtime dependency (entity-templates.ts only imports a type).
 import type { Config, } from "../../../config/schema";
+import type { EntityTemplatePosition, } from "../../../config/sections/templates";
 import { safeJsonStringify, } from "../../../utils";
 import { ENTITY_TEMPLATES, } from "./entity-templates";
 
@@ -51,6 +52,23 @@ const DEFAULT_PROMPTS: Record<EntityKind, EntityPrompt> = {
     `Generate an item from this description. Return JSON with: name (string), description (string, 1 paragraph), ${LORE_SCHEMA} Description: ${description}`,
 };
 
+/** Default position when none is configured. Mirrors the spec in
+ * `epic-assistant-gm-flows.md` (pre-compiled-templates section). */
+const DEFAULT_ENTITY_TEMPLATE_POSITION: EntityTemplatePosition = "after";
+
+/**
+ * Build the pre-compiled schema+example block for one entity kind. The block
+ * is the deterministic, schema-steered guidance appended/prepended to the
+ * base instruction per the `epic-assistant-gm-flows.md` pre-compiled-templates
+ * spec.
+ * @returns The rendered block, or empty string if it cannot be assembled
+ */
+function buildEntityTemplateBlock(kind: EntityKind,): string {
+  const entityTemplate = ENTITY_TEMPLATES[kind];
+  const exampleResult = safeJsonStringify(entityTemplate.example, 2,);
+  const example = exampleResult.ok ? exampleResult.value : "{}";
+  return `Follow this schema and use the example as a model:\nSchema: ${entityTemplate.schema}\nExample: ${example}`;
+}
 /**
  * Resolve the prompt template for an entity kind.
  *
@@ -60,7 +78,11 @@ const DEFAULT_PROMPTS: Record<EntityKind, EntityPrompt> = {
  * it is appended automatically so callers can rely on substitution.
  *
  * When using the built-in default, the entity template (schema + example) from
- * {@link ENTITY_TEMPLATES} is appended so the LLM sees the full field guidance.
+ * {@link ENTITY_TEMPLATES} is composed into the prompt at the position
+ * configured by `config.templates.llm.entityTemplatePosition`:
+ * - `"after"` (default if unset): schema+example follow the base instruction
+ * - `"before"`: schema+example precede the base instruction
+ * - `"off"`: skip injection entirely; only the base instruction is sent
  * @param config - Active resolved config (may be undefined in tests)
  * @param kind - Canonical entity kind
  * @param description - User-supplied description to embed
@@ -78,9 +100,11 @@ export function resolveEntityGenerationPrompt(
       : `${override} Description: ${description}`;
   }
   const template = DEFAULT_PROMPTS[kind](description,);
-  const entityTemplate = ENTITY_TEMPLATES[kind];
-  const exampleResult = safeJsonStringify(entityTemplate.example, 2,);
-  return `${template}\n\nFollow this schema and use the example as a model:\nSchema: ${entityTemplate.schema}\nExample: ${
-    exampleResult.ok ? exampleResult.value : "{}"
-  }`;
+  const position: EntityTemplatePosition = config?.templates?.llm?.entityTemplatePosition ??
+    DEFAULT_ENTITY_TEMPLATE_POSITION;
+  if (position === "off") {
+    return template;
+  }
+  const block = buildEntityTemplateBlock(kind,);
+  return position === "before" ? `${block}\n\n${template}` : `${template}\n\n${block}`;
 }
