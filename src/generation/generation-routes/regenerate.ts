@@ -13,6 +13,7 @@ import { CancelReason, CancelSource, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
 import { forbiddenResponse, jsonError, jsonResponse, requireUserId, } from "../../routes/http-utils";
+import { chargeStoryPointsForChat, } from "../../services/agency/spend-helpers";
 import { cancelGenerationByChat, } from "../cancellation-manager";
 import { handleGenerate, } from "../generate-route";
 import { isValidRegenStyle, type RegenStyle, VALID_REGEN_STYLES, } from "../smart-regen";
@@ -20,6 +21,10 @@ import { isValidRegenStyle, type RegenStyle, VALID_REGEN_STYLES, } from "../smar
 // ── Route: Regenerate (validator) ─────────────────────────
 
 /**
+ * Body may carry `chargeStoryPoints: boolean` (default false). When true,
+ * the route spends one story point from the actor's per-chat balance before
+ * running the regeneration. The flag is opt-in so existing callers see no
+ * behavior change.
  * @param body
  */
 function validateRegenerate(
@@ -154,6 +159,10 @@ export async function handleRegenerate(
   if (typeof authUserId !== "string") { return authUserId; }
   const access = await checkChatAccess(db, chatId, authUserId, userRole,);
   if (!access.ok) { return forbiddenResponse(); }
+
+  // Opt-in story-point spend: caller decides whether the reroll costs a point.
+  const chargeErr = await chargeStoryPointsForChat(db, chatId, body, authUserId, "reroll",);
+  if (chargeErr) { return chargeErr; }
 
   const wasActive = cancelGenerationByChat({
     db,

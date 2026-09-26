@@ -1163,6 +1163,23 @@ body {
   margin-right: var(--space-2);
 }
 
+/* --- Story Points Chip --- */
+.story-points-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-right: var(--space-2);
+  font-size: 12px;
+}
+
+.story-points-chip-value {
+  font-variant-numeric: tabular-nums;
+}
+
+.story-points-chip-cap {
+  opacity: 0.6;
+}
+
 .pending-asset-tag {
   display: inline-flex;
   align-items: center;
