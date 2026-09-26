@@ -7,7 +7,9 @@
 **Priority:** medium
 **Effort:** Medium
 
-**Summary:** <!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+## Summary
+
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
 # giwt show/state resolve .plan/tickets filename slugs
@@ -16,6 +18,9 @@
 **Priority:** medium
 **Effort:** Small
 **Type:** Task
+**Summary:** Have `giwt show <ID>` and `giwt state <ID>` resolve the lowercase `.plan/tickets/<slug>.md` filename form, not just uppercase extids / hex hashes.
+**Context:** Substring-match resolver in `giwt/src/commands/show.ts:18` (via `resolveExtid`) drops the `.md` suffix and is fragile to ambiguous substring overlap (e.g. `TASK-tui` -> `TASK-TUI-DEDUPE-API-BASE`).
+**Acceptance Criteria:** [see body — accept bare/`.md`/extid/hex forms, prefer exact slug, fall back to substring]
 
 ## Summary
 
@@ -86,8 +91,64 @@ recorded the 10 failed probes (10 real + 1 bogus = 11 attempts, all
 `error: issue not found`). Reproduced fresh on 2026-09-26 with the table
 above; the historical list mixes done/real (most were already resolved) so
 this probe re-runs against confirmed-open tickets.
-**Context:** Filed via giwt template lacking required bold sections; normalized 2026-09-26 during the mock-isolation migration finalize.
-**Acceptance Criteria:**
+
+## Acceptance Criteria
+
+1. `giwt show BUG-export-progress-stream-test-status-assertion-is-flaky.md`
+   and `giwt show BUG-export-progress-stream-test-status-assertion-is-flaky`
+   both resolve to issue `2b8da26`. Same for the 10 slugs above (`.md`
+   form and bare form).
+2. `giwt state TASK-typescript-mjs-reconciliation.md open` resolves
+   correctly (does **not** error with `issue not found`).
+3. When the slug maps to multiple extids in `index.json`, prefer the one
+   whose filename matches the input exactly; otherwise return the unique
+   match. No silent misselection like `TASK-tui` -> `TASK-TUI-DEDUPE-API-BASE`.
+4. Hex input still works (no regression).
+5. Filename form `.md` literal is stripped (defense-in-depth even if the
+   lookup table also handles it).
+6. Unit test: 10 real slugs from the table above all resolve; the
+   historical `BUG-scratch` (bogus) still errors.
+
+## Fix shape
+
+In `/home/flak/git-ai/giwt/src/commands/show.ts` and
+`/home/flak/git-ai/giwt/src/commands/state.ts`, accept any of:
+
+- `(a)` the bare kebab-case slug from `index.json` (`bug-foo-bar`)
+- `(b)` the filename slug with `.md` (`bug-foo-bar.md`)
+- `(c)` the existing uppercase extid (`BUG-FOO-BAR`)
+- `(d)` the hex (`1234abcd`)
+
+Resolve via:
+
+1. Strip trailing `.md` if present.
+2. Look up the slug in `.plan/tickets/index.json`'s `source` field
+   (`source` already maps `<TYPE>-<kebab-case>` to `{extid, hash}`).
+   Confirm the index shape before implementing; if it does not carry the
+   mapping yet, fall back to: `git issue ls` with a per-line slug match
+   on the lowercase kebab form, then a `--format oneline` plus slug
+   column.
+3. Return `{ hash, raw }` matching the existing `ResolvedIssue` shape so
+   the rest of `show.ts`/`state.ts` is untouched.
+
+`resolveExtid` (in `/home/flak/git-ai/giwt/src/commands/resolver.ts`) is the
+shared helper both commands already use - extend it rather than duplicating
+the lookup. Keep its current substring-match behavior as a final fallback
+for back-compat with users who quote lowercase forms directly.
+
+## Cross-references
+
+- `.tmp/scratchpad-pattern-analysis-2026-09-26.md` 4.1 G-7 (D-05 cited)
+- `.tmp/scratchpad-audit/ticket-states.txt` (historical probe output)
+- `giwt/src/commands/show.ts:1-26` (current shape)
+- `giwt/src/commands/state.ts:1-32` (current shape)
+- `giwt/src/commands/resolver.ts:11-32` (shared resolver to extend)
+- `.plan/tickets/index.json` (canonical slug to extid map under `source`)
+
+## Acceptance Criteria
+
 - [ ] Implementation complete
 - [ ] Tests passing
-- [ ] Verification executed green
+- [ ] Documentation updated
+
+git issue: 9966e2a
