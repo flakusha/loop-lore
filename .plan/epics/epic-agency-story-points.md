@@ -203,6 +203,12 @@ Autonomy orchestration + rate governance (scheduler, budgets, kill switch): `epi
 `epic-rpg-mechanics.md`, `epic-assistant-generation-extensions.md`,
 `epic-emergent-narrative-design.md`
 
+> **BDI scope note (2026-09-26):** the NPC goal-pursuit loop sketched above
+> (§NPC Goal-Pursuit Loop) is implemented under `epic-research-agency-decision.md`
+> (migration 011, `src/services/agency/bdi-nightly.ts`, `bdi-reflection.ts`,
+> `TASK-agency-bdi-reflection-cycle`). This epic keeps the story-points
+> meta-currency scope; the NPC task table in §Tasks is reference only.
+
 ## Linked Tasks
 
 - TASK-agency-story-points.md
