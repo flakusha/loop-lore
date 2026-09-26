@@ -1045,6 +1045,19 @@
     "source": ".plan/tickets/BUG-buildstyleprompt-result-returned-but-never-consumed.md",
     "status": "done"
   },
+  "BUG-BUN-TEST-SRC-FULL-SUITE-IS-ORDER-DEPENDENT-CROSS-FILE-CONTAM": {
+    "hash": "9c8bea1",
+    "git_issue": "9c8bea1",
+    "extid": "BUG-BUN-TEST-SRC-FULL-SUITE-IS-ORDER-DEPENDENT-CROSS-FILE-CONTAM",
+    "type": "BUG",
+    "title": "bun test src full suite is order-dependent cross-file contamination",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-CALLAUX-GRACEFUL-FAILURE-THROWS-ON-EMPTY-CONFIG": {
     "hash": "4591587",
     "extid": "BUG-CALLAUX-GRACEFUL-FAILURE-THROWS-ON-EMPTY-CONFIG",
