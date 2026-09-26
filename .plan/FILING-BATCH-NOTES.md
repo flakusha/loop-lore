@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Filing batch notes — 2026-09-26
 
 ## Already-resolved tickets referenced by the audit
@@ -14,13 +17,14 @@
 - D-03 / L-10: BUG-test-async-store-offload-dir-fixed-path-race.md
 - L-4: TASK-async-store-tests-per-test-tmpdir.md
 - D-04 / L-3: TASK-async-store-retention-cap.md
-- D-05 / G-7: TASK-giwt-show-resolve-plan-ticket-slug.md
-- G-1: TASK-giwt-issues-state-filter-flag.md
+- D-05 / G-7: filed in the ../giwt repo (plan-ticket-slug resolution); no loop-lore ticket file
+- G-1: filed in the ../giwt repo (issues state filter flag); no loop-lore ticket file
 - P-08 / L-6: TASK-ticket-status-enum-and-migration.md
 - P-10 / L-7: TASK-jscpd-ratchet-persistent-baseline.md
 - P-05/P-13 / L-5/L-9: TASK-tmp-janitor-and-staleness-markers.md
 
-## Tickets filed in sibling repos this batch
+## Tickets filed in sibling repos this batch (no loop-lore ticket files)
 
-- ../giwt: TASK-giwt-clean-doctor-runs-scratchpad.md (G-3+G-4+G-5); TASK-giwt-schema-contract-gate.md (G-6); TASK-giwt-plan-validate-status-vocab.md (G-8)
-- ../omp-plugins: TASK-omp-scratchpad-audit-and-session-artifacts.md (O-1+O-2); TASK-omp-ticket-finalize-find-work-hardening.md (O-3+O-4+O-5+O-6+O-7)
+- ../giwt: G-3+G-4+G-5 clean doctor runs scratchpad; G-6 schema contract gate; G-8 plan validate status vocab
+- ../omp-plugins: O-1+O-2 scratchpad audit and session artifacts; O-3..O-7 ticket finalize/find-work hardening
+
