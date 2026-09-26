@@ -480,7 +480,7 @@ templates:
     );
 
     const config = loadTemplateConfig(TEST_DIR,);
-    expect(config.character.templates.some((t,) => t.name === "Custom",),).toBe(true,);
+    expect(config.character.templates.some((t,) => t.name === "Custom"),).toBe(true,);
   });
 
   test("loads character files from configs/characters", () => {
@@ -488,11 +488,11 @@ templates:
     mkdirSync(charsDir, { recursive: true, },);
     writeFileSync(
       path.join(charsDir, "hero.yaml",),
-      ["name: Hero", "description: A hero", "appearance: Cloaked", ""].join("\n",),
+      ["name: Hero", "description: A hero", "appearance: Cloaked", "",].join("\n",),
     );
 
     const config = loadTemplateConfig(TEST_DIR,);
-    expect(config.character.templates.some((t,) => t.name === "Hero",),).toBe(true,);
+    expect(config.character.templates.some((t,) => t.name === "Hero"),).toBe(true,);
   });
 
   test("rejects a non-array character templates block", () => {
@@ -683,12 +683,12 @@ describe("canonical merge semantics", () => {
   test("image-edit override lets the override win on conflict", () => {
     const base: ImageEditTemplateConfig = {
       merge: "extend",
-      workflows: { w: { id: "w", name: "base", category: "cat", backend: "comfy", description: "d", } },
+      workflows: { w: { id: "w", name: "base", category: "cat", backend: "comfy", description: "d", }, },
     };
     const override: Partial<ImageEditTemplateConfig> = {
       workflows: {
-        w: { id: "w", name: "override", category: "cat", backend: "comfy", description: "d" },
-        n: { id: "n", name: "new", category: "cat", backend: "comfy", description: "d" },
+        w: { id: "w", name: "override", category: "cat", backend: "comfy", description: "d", },
+        n: { id: "n", name: "new", category: "cat", backend: "comfy", description: "d", },
       },
     };
 
@@ -700,10 +700,10 @@ describe("canonical merge semantics", () => {
   test("image-edit replace discards base workflows", () => {
     const base: ImageEditTemplateConfig = {
       merge: "extend",
-      workflows: { w: { id: "w", name: "base", category: "cat", backend: "comfy", description: "d", } },
+      workflows: { w: { id: "w", name: "base", category: "cat", backend: "comfy", description: "d", }, },
     };
 
-    expect(mergeImageEditConfig(base, {}, "replace",).workflows,).toEqual({});
+    expect(mergeImageEditConfig(base, {}, "replace",).workflows,).toEqual({},);
   });
 
   test("character override replaces the template of the same name", () => {
@@ -716,7 +716,7 @@ describe("canonical merge semantics", () => {
     };
 
     const result = mergeCharacterConfig(base, override, "override",);
-    expect(result.templates.find((t,) => t.name === "Shared",)?.system_prompt,).toBe("override",);
+    expect(result.templates.find((t,) => t.name === "Shared")?.system_prompt,).toBe("override",);
   });
 
   test("character replace discards base templates", () => {
@@ -725,6 +725,6 @@ describe("canonical merge semantics", () => {
       templates: [{ name: "Shared", description: "d", system_prompt: "base", },],
     };
 
-    expect(mergeCharacterConfig(base, {}, "replace",).templates,).toEqual([]);
+    expect(mergeCharacterConfig(base, {}, "replace",).templates,).toEqual([],);
   });
 });

@@ -123,9 +123,9 @@ describe("validateWorkflowConfig", () => {
     expect(() => validateWorkflowConfig({ workflows: { w: { steps: "x", }, }, },)).toThrow(
       "workflows.w.steps must be an array",
     );
-    expect(() =>
-      validateWorkflowConfig({ workflows: { w: { steps: ["flat",], }, }, },)
-    ).toThrow("workflows.w.steps[0] must be an object");
+    expect(() => validateWorkflowConfig({ workflows: { w: { steps: ["flat",], }, }, },)).toThrow(
+      "workflows.w.steps[0] must be an object",
+    );
   });
 
   test("rejects a step with an empty id, name, or formatTemplate", () => {
@@ -133,19 +133,19 @@ describe("validateWorkflowConfig", () => {
       validateWorkflowConfig({
         workflows: { w: { steps: [{ id: "", name: "S", type: "text", formatTemplate: "x", },], }, },
       },)
-    ).toThrow("steps[0].id must be a non-empty string");
+    ).toThrow("steps[0].id must be a non-empty string",);
     expect(() =>
       validateWorkflowConfig({
         workflows: {
           w: { steps: [{ id: "s", name: "", type: "text", formatTemplate: "x", },], },
         },
       },)
-    ).toThrow("steps[0].name must be a non-empty string");
+    ).toThrow("steps[0].name must be a non-empty string",);
     expect(() =>
       validateWorkflowConfig({
         workflows: { w: { steps: [{ id: "s", name: "S", type: "text", formatTemplate: "", },], }, },
       },)
-    ).toThrow("steps[0].formatTemplate must be a non-empty string");
+    ).toThrow("steps[0].formatTemplate must be a non-empty string",);
   });
 
   test("rejects non-array recommendations and non-boolean required", () => {
@@ -157,14 +157,14 @@ describe("validateWorkflowConfig", () => {
           },
         },
       },)
-    ).toThrow("steps[0].recommendations must be an array");
+    ).toThrow("steps[0].recommendations must be an array",);
     expect(() =>
       validateWorkflowConfig({
         workflows: {
           w: { steps: [{ id: "s", name: "S", type: "text", formatTemplate: "x", required: "yes", },], },
         },
       },)
-    ).toThrow("steps[0].required must be a boolean");
+    ).toThrow("steps[0].required must be a boolean",);
   });
 
   test("rejects a non-object dispatch and non-array triggers", () => {
@@ -183,9 +183,8 @@ describe("validateWorkflowConfig", () => {
     expect(() => validateWorkflowConfig({ workflows: { w: { intent: { target: "npc", }, }, }, },)).toThrow(
       "intent.type must be a non-empty string",
     );
-    expect(() =>
-      validateWorkflowConfig({ workflows: { w: { intent: { type: "generate", target: "", }, }, }, },)
-    ).toThrow("intent.target must be a non-empty string");
+    expect(() => validateWorkflowConfig({ workflows: { w: { intent: { type: "generate", target: "", }, }, }, },))
+      .toThrow("intent.target must be a non-empty string",);
   });
 });
 
@@ -354,7 +353,7 @@ describe("loadTemplateConfig routes entityTypes out of the workflow domain", () 
     mkdirSync(workflowsDir, { recursive: true, },);
     writeFileSync(
       path.join(workflowsDir, "broken.yaml",),
-      ["workflows:", "  bad:", "    steps: not-an-array", ""].join("\n",),
+      ["workflows:", "  bad:", "    steps: not-an-array", "",].join("\n",),
     );
     try {
       expect(() => loadTemplateConfig(scratchRoot,)).toThrow(
@@ -363,5 +362,5 @@ describe("loadTemplateConfig routes entityTypes out of the workflow domain", () 
     } finally {
       rmSync(scratchRoot, { recursive: true, force: true, },);
     }
-  },);
+  });
 });
