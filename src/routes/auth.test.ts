@@ -46,8 +46,11 @@ function makeConfig(overrides?: { registrationOpen?: boolean },): any {
  * @param overrides
  * @param overrides.existingUser
  * @param overrides.sessionsCount
+ * @param overrides.failActorInsert
  */
-function makeDb(overrides?: { existingUser?: boolean; sessionsCount?: number },): any {
+function makeDb(
+  overrides?: { existingUser?: boolean; sessionsCount?: number; failActorInsert?: boolean },
+): any {
   const sessionsCount = overrides?.sessionsCount ?? 0;
   // Track usernames the mock has already accepted -- simulates the
   // DB's unique-username constraint. handleRegister no longer does a
@@ -57,6 +60,39 @@ function makeDb(overrides?: { existingUser?: boolean; sessionsCount?: number },)
   // the "Username already taken." inline error.
   const seenUsernames = new Set<string>();
   if (overrides?.existingUser) { seenUsernames.add("existinguser",); }
+  const failActorInsert = overrides?.failActorInsert ?? false;
+  const insertIntoImpl = (table: string,): any => ({
+    values: (vals: { username?: string; id?: string } = {},) => {
+      // BUG-register-non-atomic-user-actor-key-insert: simulate the
+      // actor-insert throwing inside the transaction. Kysely+SQLite
+      // would abort and roll back; the mock throws here so the test
+      // can assert the retry path.
+      if (table === "actors" && failActorInsert) {
+        throw new Error("simulated actor insert failure",);
+      }
+      const skipped = table === "users" && !!vals.username && seenUsernames.has(vals.username,);
+      if (table === "users" && vals.username && !skipped) {
+        seenUsernames.add(vals.username,);
+      }
+      return {
+        onConflict: (cb: (oc: any,) => any,) =>
+          cb({
+            columns: () => ({
+              doNothing: () => ({
+                // Kysely's `.execute()` returns `QueryResult` which is
+                // an ARRAY-shaped row-collection with `numInsertedOrUpdatedRows`.
+                // insertUnique indexes `result[0]` so we must hand back an
+                // array, not a plain object.
+                execute: async () => [{
+                  numInsertedOrUpdatedRows: skipped ? 0n : 1n,
+                },],
+              }),
+            }),
+          },),
+        execute: async () => [{ numInsertedOrUpdatedRows: 1n, },],
+      };
+    },
+  });
   return {
     fn: {
       countAll: () => ({ as: (_alias: string,) => "count_all_marker", }),
@@ -81,37 +117,24 @@ function makeDb(overrides?: { existingUser?: boolean; sessionsCount?: number },)
         }),
       }),
     }),
-    insertInto: (table: string,) => ({
-      values: (vals: { username?: string; id?: string } = {},) => {
-        // insertUnique uses Kysely's callback form:
-        //   .onConflict((oc) => oc.columns(...).doNothing()).execute()
-        // The callback returns the next chainable object. We simulate
-        // the ON CONFLICT DO NOTHING result by reading from the table
-        // column -- when the table is `users` and the username has
-        // already been accepted by the mock, the unique constraint
-        // fires and the insert is dropped (0 rows). All other inserts
-        // (actors, sessions, ...) report a fresh 1-row insert.
-        const skipped = table === "users" && !!vals.username && seenUsernames.has(vals.username,);
-        if (table === "users" && vals.username && !skipped) {
-          seenUsernames.add(vals.username,);
+    insertInto: insertIntoImpl,
+    // BUG-register-non-atomic-user-actor-key-insert: handleRegister now
+    // wraps users+actors+actor_key writes in database.transaction(). The
+    // mock simulates the rollback semantics: if the callback throws, the
+    // staged users row is discarded so retries succeed.
+    transaction: () => ({
+      execute: async (cb: (trx: any,) => Promise<unknown>,) => {
+        const beforeSize = seenUsernames.size;
+        try {
+          return await cb({ insertInto: insertIntoImpl, },);
+        } catch (err) {
+          while (seenUsernames.size > beforeSize) {
+            const last = Array.from(seenUsernames,).pop();
+            if (last === undefined) { break; }
+            seenUsernames.delete(last,);
+          }
+          throw err;
         }
-        return {
-          onConflict: (cb: (oc: any,) => any,) =>
-            cb({
-              columns: () => ({
-                doNothing: () => ({
-                  // Kysely's `.execute()` returns `QueryResult` which is
-                  // an ARRAY-shaped row-collection with `numInsertedOrUpdatedRows`.
-                  // insertUnique indexes `result[0]` so we must hand back an
-                  // array, not a plain object.
-                  execute: async () => [{
-                    numInsertedOrUpdatedRows: skipped ? 0n : 1n,
-                  },],
-                }),
-              }),
-            },),
-          execute: async () => [{ numInsertedOrUpdatedRows: 1n, },],
-        };
       },
     }),
   };
@@ -280,5 +303,30 @@ describe("POST /api/auth/register", () => {
     expect(combined,).toContain("Username already taken.",);
     const redirects = [a, b,].filter((r,) => r.headers.get("HX-Redirect",) === "/views/chat").length;
     expect(redirects,).toBe(1,);
+  });
+
+  test("rolled-back registration allows a clean retry (BUG-register-non-atomic-user-actor-key-insert)", async () => {
+    // Regression: before the transaction wrapper, a partial failure
+    // (users inserted, actor insert throws) left the users row stranded.
+    // A retry then hit insertUnique -> 'skipped' -> 409 forever. The fix
+    // wraps all three writes in one transaction so a mid-flight throw
+    // rolls the users row back; the retry sees no committed username
+    // and re-inserts cleanly.
+    const failingApp = makeApp(makeDb({ failActorInsert: true, },), makeConfig(),);
+
+    const req1 = makeRequest("username=rollbackuser&password=secret123",);
+    const res1 = await failingApp.handle(req1,);
+    // The transaction threw on the simulated actor-insert failure; the
+    // route surfaces a 5xx because the framework's outer try/catch is
+    // unaware of the transaction-level abort.
+    expect(res1.status,).toBeGreaterThanOrEqual(500,);
+
+    // Retry must succeed. The rolled-back users row is gone, so
+    // insertUnique produces 'inserted' again on a fresh request.
+    const freshApp = makeApp(makeDb(), makeConfig(),);
+    const req2 = makeRequest("username=rollbackuser&password=secret123",);
+    const res2 = await freshApp.handle(req2,);
+    expect(res2.status,).toBe(200,);
+    expect(res2.headers.get("HX-Redirect",),).toBe("/views/chat",);
   });
 });
