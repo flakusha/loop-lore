@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Resolved (verified 2026-09-07; followup in chat-turning-bugfix-batch-9)
+**Status:** Done
+**Status Note:** verified 2026-09-07; followup in chat-turning-bugfix-batch-9
 **Severity:** medium
 **Priority:** medium
 **Effort:** medium

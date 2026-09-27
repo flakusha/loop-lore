@@ -3,7 +3,7 @@
 
 # TASK-prompt-nsfw-traits-section
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +11,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: open
+**Status**: Not Started
 **Priority**: medium
 **Labels**: prompt-assembly, nsfw, character-traits, templates
 **Assignee**:

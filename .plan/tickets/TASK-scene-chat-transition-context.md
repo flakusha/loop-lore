@@ -11,7 +11,7 @@
 
 **Epic:** epic-chat-transfer-location.md
 **See also:** epic-game-frontend-scenes.md
-**Status:** Open
+**Status:** Not Started
 **Priority:** High
 
 ## Scope

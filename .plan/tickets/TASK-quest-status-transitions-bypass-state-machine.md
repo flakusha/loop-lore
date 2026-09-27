@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Related:** TASK-adopt-state-machine-framework-in-runtime-status-writes

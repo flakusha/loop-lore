@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Resolved (verified 2026-09-07; documented dual-injection contract)
+**Status:** Done
+**Status Note:** verified 2026-09-07; documented dual-injection contract
 **Priority:** high
 **Effort:** Medium
 

@@ -3,7 +3,7 @@
 
 # FEAT: FATE Skill Pyramid
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** low
 **Effort:** Medium
 **Summary:** FATE Skill Pyramid

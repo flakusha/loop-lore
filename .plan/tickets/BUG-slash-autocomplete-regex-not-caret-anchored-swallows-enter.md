@@ -3,7 +3,7 @@
 
 # BUG: slash autocomplete regex not caret anchored swallows enter
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 

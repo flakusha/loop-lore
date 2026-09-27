@@ -3,14 +3,14 @@
 
 # TASK-049: Quest Reward / Item Ledger (Items-Domain Slice)
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Quest reward ledger — persist LootDrop[] as world_items; reconcile stackable vs unique.
 **Context:** Items-slice of quest lifecycle; full quest engine lives in epic-rpg-content-systems.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: open
+**Status**: Not Started
 **Priority**: medium
 **Labels**: items, rpg, quests, ledger
 **Epic**: epic-items

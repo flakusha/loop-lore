@@ -3,14 +3,14 @@
 
 # TASK-003: GPU Compute Separation for Loop-Lore
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Separate GPU compute layers — ComfyUI vs LLM inference on dedicated instances.
 **Context:** Service separation diagram and RunPod/Lambda hosting matrix.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Epic:** epic-deployment-infrastructure
 **Labels:** infrastructure, gpu, deployment

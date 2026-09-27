@@ -3,7 +3,7 @@
 
 # TASK: Asset lifecycle: archive flag, orphan prune, quota eviction
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-db-growth-tiered-storage

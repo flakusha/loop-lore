@@ -3,7 +3,7 @@
 
 # TASK: Federation admin UI for follows, blocklists, defederation, key rotation
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Frontend admin UI that exposes federation follows, per-origin blocklists, defederate/re-federate actions, and actor-key rotation. Backed by the admin endpoints in `TASK-federation-defederation-admin-operations-peer-state-block-al` and the defederation spec at `docs/spec/federation-defederation-admin.md`.

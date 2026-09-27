@@ -3,7 +3,7 @@
 
 # TASK: Minimal video generation dispatch route for workflow engine
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 
 Imported from git issue a93c32a.

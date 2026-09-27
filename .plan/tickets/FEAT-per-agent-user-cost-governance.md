@@ -3,7 +3,7 @@
 
 # FEAT: Per-Agent/User Cost Governance
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Large
 **Summary:** Per-Agent/User Cost Governance

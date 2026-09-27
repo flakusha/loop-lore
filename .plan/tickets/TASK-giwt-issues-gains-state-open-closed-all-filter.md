@@ -3,7 +3,7 @@
 
 # TASK: giwt issues gains --state open|closed|all filter
 
-**Status:** done
+**Status:** Done
 **Priority:** low
 **Effort:** Small
 **Summary:** Forward `git issue ls --state open|closed|all` through `giwt issues` and validate the value.
@@ -17,7 +17,7 @@
 
 # giwt issues gains --state open|closed|all filter
 
-**Status:** done
+**Status:** Done
 **Priority:** low
 **Effort:** Small
 **Type:** Task

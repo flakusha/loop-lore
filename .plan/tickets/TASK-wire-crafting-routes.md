@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Complete (2026-08-18 — all items including deferred)
+**Status:** Done
+**Status Note:** 2026-08-18 — all items including deferred
 **Priority:** P1 — High
 **Effort:** Large
 **Epic:** epic-item-systems-unification

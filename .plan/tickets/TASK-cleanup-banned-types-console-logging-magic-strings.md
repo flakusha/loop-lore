@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done
+**Status:** Done
 **Priority:** low
 **Effort:** Small
 **Related:** TASK-quest-status-transitions-bypass-state-machine, TASK-data-migrations-atomicity-and-concurrency-guard

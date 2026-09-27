@@ -3,7 +3,7 @@
 
 # TASK: backlog — schedule RPG Mechanics Opt-in Gating (safety-first before new mechanics)
 
-**Status:** open
+**Status:** Not Started
 **Priority:** high
 **Effort:** Small
 **Type:** Task

@@ -3,7 +3,7 @@
 
 # TASK: 2D world review: canvas click to VN choice-card payload contract
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Shared canvas-click to VN choice/StoryEvent payload contract.

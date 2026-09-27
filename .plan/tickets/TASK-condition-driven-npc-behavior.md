@@ -7,7 +7,7 @@
 **Context:** Complements FEAT-2d-world-npc-simulation-tiers (behavior substrate) and the implemented combat conditions (src/rpg/combat/conditions.ts); conditions become a shared input to both combat resolution and out-of-combat NPC choice.
 **Acceptance Criteria:** NPC decision function consumes active conditions via the shared Condition contract; at minimum frightened → flee/surrender bias and poisoned → initiative/accuracy penalty outside combat; effects deterministic and testable; behavior shifts surface in prompt narration; tests per condition-behavior mapping.
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 

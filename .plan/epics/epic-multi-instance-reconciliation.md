@@ -10,7 +10,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Draft — description pending (formerly in `chore-docs-reconcile`, worktree merged 2026-08-14)\
+**Status:** Not Started
+**Status Note:** description pending (formerly in `chore-docs-reconcile`, worktree merged 2026-08-14)\
 **Proposed Epic Branch:** `epic/26`\
 **Owner:** TBD\
 **Blocks:** Epic 25 (Deployment Topologies), Epic 27 depends on its config guards

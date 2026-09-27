@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** done
+**Status:** Done
 **Priority:** Medium
 **Epic:** epic-crypto
 **Parent:** TASK-encryption-asset-encryption.md

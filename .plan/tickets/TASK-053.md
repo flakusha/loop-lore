@@ -3,14 +3,14 @@
 
 # TASK-053: Item Stats Drift System
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Item stats drift stored on ItemInstance.properties.drift; per-rarity caps.
 **Context:** Stat evolution over item lifetime.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: open
+**Status**: Not Started
 **Priority**: medium
 **Labels**: items, rpg, stats
 **Epic**: epic-items

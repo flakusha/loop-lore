@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** open
+**Status:** Not Started
 **Priority:** Medium
 **Effort:** Med
 **Epic:** Epic 24 (Filtering & Pagination), Epic 36 (Chat Lifecycle)

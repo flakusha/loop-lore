@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Draft
+**Status:** Not Started
 **Priority:** Medium
 **Epic:** `epic-rarity-extensions.md`
 **Type:** Migration

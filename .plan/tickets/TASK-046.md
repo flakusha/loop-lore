@@ -3,7 +3,7 @@
 
 # TASK-046: Plugin Override System
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Plugin override hooks for service-level defaults; per-plugin config schema merge.
@@ -11,7 +11,7 @@
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
 
-**Status**: open
+**Status**: Not Started
 **Priority**: medium
 **Labels**: plugins, security, rpg, override
 **Epic**: epic-plugin-extension-points

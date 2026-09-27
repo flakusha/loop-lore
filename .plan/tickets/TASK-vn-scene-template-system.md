@@ -9,7 +9,8 @@
 
 
 **Priority:** Medium
-**Status:** ✅ Engine Complete (2026-08-23) — Template core done; GM builder UI not implemented
+**Status:** In Progress
+**Status Note:** Engine Complete (2026-08-23) — Template core done; GM builder UI not implemented
 **Epic:** Epic Visual Novel Mode (51)
 **Tags:** vn, templates, system, engine, custom, gm-tools
 **Effort:** Med

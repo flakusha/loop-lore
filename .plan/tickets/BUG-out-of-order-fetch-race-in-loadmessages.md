@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Resolved (commit 04411f8 — loadMessages ordering)
+**Status:** Done
+**Status Note:** commit 04411f8 — loadMessages ordering
 **Priority:** medium
 **Effort:** Medium
 

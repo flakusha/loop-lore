@@ -1,0 +1,56 @@
+# giwt lifecycle config for loop-lore (see giwt src/utils/settings.ts schema).
+
+[branches]
+# Worktrees branch from dev; dev is the integration target.
+root = "dev"
+
+[status.aliases]
+# Free-form legacy statuses -> the closed plan vocabulary
+# (Not Started | In Progress | Blocked | Done | Wontfix | Postponed).
+#
+# Consumed by `giwt plan validate --fix` (status-vocab gate). The gate's
+# annotation tolerance resolves a trailing "(...)" against the core, so these
+# core keys also fix decorated values such as
+#   "OK Resolved (commit 6b3cadc6, follow-up d0a24be8 guard)"
+#     -> "Done (commit 6b3cadc6, follow-up d0a24be8 guard)"
+# without an entry per commit reference.
+
+# --- actually done -> Done -----------------------------------------------
+resolved = "Done"
+finished = "Done"
+shipped = "Done"
+applied = "Done"
+landed = "Done"
+implemented = "Done"
+fixed = "Done"
+verified = "Done"
+
+# --- deliberately dropped -> Wontfix -------------------------------------
+wontfix = "Wontfix"
+rejected = "Wontfix"
+not-a-bug = "Wontfix"
+superseded = "Wontfix"
+
+# --- parked -> Postponed --------------------------------------------------
+postponed = "Postponed"
+deferred = "Postponed"
+
+# --- part-built / actively moving -> In Progress -------------------------
+in_progress = "In Progress"
+partial = "In Progress"
+partially = "In Progress"
+foundation = "In Progress"
+unwired = "In Progress"
+ongoing = "In Progress"
+fixed-in-worktree = "In Progress"
+
+# --- not begun -> Not Started --------------------------------------------
+draft = "Not Started"
+proposed = "Not Started"
+planned = "Not Started"
+design = "Not Started"
+research = "Not Started"
+todo = "Not Started"
+idea = "Not Started"
+not-yet-implemented = "Not Started"
+stub = "Not Started"

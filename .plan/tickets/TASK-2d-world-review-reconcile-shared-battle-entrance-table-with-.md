@@ -3,7 +3,7 @@
 
 # TASK: 2D world review: reconcile shared battle-entrance table with current chat initiation path
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Reconcile shared battle-entrance table with chat initiation path.

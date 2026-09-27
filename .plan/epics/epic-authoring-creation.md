@@ -9,7 +9,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
+**Status Note:** Not Started
 **Priority:** Medium
 **Plan.md:** §47
 **Issue:** `EPIC-047`

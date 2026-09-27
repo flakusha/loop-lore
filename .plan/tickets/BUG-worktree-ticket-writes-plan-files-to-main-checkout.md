@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Closed — duplicate of `BUG-scripts-worktree-ticket-writes-to-cwd-instead-of-worktree-pa` (issue 81dc8f9); root-cause analysis posted there (2026-08-31)
+**Status:** Done
+**Status Note:** duplicate of `BUG-scripts-worktree-ticket-writes-to-cwd-instead-of-worktree-pa` (issue 81dc8f9); root-cause analysis posted there (2026-08-31)
 **Priority:** medium
 **Effort:** low
 

@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 In Progress
+**Status:** In Progress
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-time-scale

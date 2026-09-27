@@ -13,7 +13,7 @@ git issue: 996cae7
 
 # BUG: negotiate() falls back to CompressionAlgorithm.None when client requests an algorithm the server supports but the serverCaps order does not match
 
-**Status:** done
+**Status:** Done
 **Reason:** Accept-Encoding is the client's preference list; servers pick from the intersection, honoring client-preferred ordering — this is the standard per RFC 7231. Server-first iteration reverses client priority and would violate RFC. The None fallback when no intersection exists is also RFC-correct (treats as "no acceptable encoding, send uncompressed"). The scout's "server metadata will lie" claim is wrong: the server compresses with the negotiated (intersection) value — both ends agree. No defect.
 **Priority:** n/a  **Effort:** n/a
 

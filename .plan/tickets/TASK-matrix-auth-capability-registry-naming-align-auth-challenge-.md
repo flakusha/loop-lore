@@ -3,7 +3,7 @@
 
 # TASK: MATRIX-auth-capability-registry-naming: align auth-challenge/auth-approval capability enum with integrations-core registry
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-auth-channel-provisioning
@@ -12,7 +12,7 @@
 
 ## Summary
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Small
 **Summary:** matrix-authentication-channels AC3 (WAC1) is open: adapters must expose sendAuthChallenge via auth-challenge/auth-approval capability flags, but the enum naming must match the integrations-core registry shape when it lands. The seam already exists in code and risks drift.

@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Complete (2026-08-23) — Modal UI, scene renderer, choice/QA wiring all live
+**Status:** Done
+**Status Note:** (2026-08-23) — Modal UI, scene renderer, choice/QA wiring all live
 **Priority:** Medium
 **Effort:** Med-High (frontend rendering)
 **Epic:** Epic Immersion & Presentation (sub-task)

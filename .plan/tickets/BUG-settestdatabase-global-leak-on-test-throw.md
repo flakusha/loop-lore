@@ -3,7 +3,7 @@
 
 # BUG: setTestDatabase-global-leak-on-test-throw
 
-**Status:** done
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 **Summary:** Module-global testDatabaseOverride leaks when test setup throws before the close()-path cleanup runs

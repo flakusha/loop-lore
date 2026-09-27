@@ -10,7 +10,8 @@
 
 
 **Epic:** epic-generation-flow-control.md
-**Status:** ✅ Resolved (67c170fc3) — closed 2026-09-15
+**Status:** Done
+**Status Note:** (67c170fc3) — closed 2026-09-15
 **Priority:** Medium
 
 ## Problem

@@ -3,7 +3,7 @@
 
 # FEAT: Memory Frontend (3 memory types, selection UI, mid-chat panel)
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Large
 **Summary:** Memory Frontend (3 memory types, selection UI, mid-chat panel)

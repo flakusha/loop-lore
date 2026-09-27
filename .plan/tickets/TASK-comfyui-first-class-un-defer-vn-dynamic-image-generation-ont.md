@@ -3,7 +3,7 @@
 
 # TASK: ComfyUI first-class: un-defer VN dynamic image generation onto ComfyUI
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium (provider pick + cache + fallback)
 **Summary:** VN story image step routes to `generateComfyUI` via `pickSdProvider`, keyed by `(scene_hash, emotion)` cache with backend-down fallback, removing the ComfyUI defer in VN dynamic generation.

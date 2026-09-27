@@ -3,7 +3,7 @@
 
 # TASK: Intellectual & skill-growth interactions (/study /meditate /practice /translate)
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** Medium
 **Effort:** Small
 **Epic:** epic-character-growth

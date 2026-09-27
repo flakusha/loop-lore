@@ -3,7 +3,7 @@
 
 # TASK: HTTP-expose agency earn and status alongside spend
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 
 Imported from git issue 4ee97f5.

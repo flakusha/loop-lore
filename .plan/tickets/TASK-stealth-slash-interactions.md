@@ -3,7 +3,7 @@
 
 # TASK: Stealth & risk slash interactions (/pickpocket /hide /blend /mimic /stalk /ambush /blend-in)
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-stealth-crime

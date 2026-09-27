@@ -3,7 +3,7 @@
 
 # TASK: .tmp janitor gate + verified-at staleness markers
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 
 Imported from git issue 2301fa5.

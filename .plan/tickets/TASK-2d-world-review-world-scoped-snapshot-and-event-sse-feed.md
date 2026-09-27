@@ -3,7 +3,7 @@
 
 # TASK: 2D world review: world-scoped snapshot and event SSE feed
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium
 **Summary:** World-scoped snapshots endpoint + WorldEventType SSE feed.

@@ -3,7 +3,7 @@
 
 # FEAT: Multi-LLM Story Mode Frontend
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** XL
 **Summary:** Multi-LLM Story Mode Frontend

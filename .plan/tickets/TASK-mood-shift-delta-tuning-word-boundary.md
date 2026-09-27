@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** open
+**Status:** Not Started
 **Priority:** P2
 **Effort:** Small
 **Epic:** epic-emotion-avatar-message-binding

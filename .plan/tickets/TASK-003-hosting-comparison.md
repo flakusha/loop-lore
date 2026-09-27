@@ -3,14 +3,14 @@
 
 # TASK-003: Hosting Provider Comparison for Loop-Lore Deployment
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Detailed comparison of RunPod, Lambda, Vast.ai, OVH, AWS Lambda for hosting.
 **Context:** Per-provider pricing models in $/hr; recommendation matrix.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Epic:** epic-deployment-infrastructure
 **Labels:** infrastructure, cloud-hosting, cost-analysis

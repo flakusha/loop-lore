@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 Partially Implemented
+**Status:** In Progress
+**Status Note:** Implemented
 **Priority:** Medium
 **Effort:** Low (remaining)
 **Epic:** epic-impersonation

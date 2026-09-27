@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 Partially Built
+**Status:** In Progress
+**Status Note:** Built
 **Priority:** Medium
 **Effort:** Medium (remaining gaps only)
 **Epic:** epic-transport-expansion

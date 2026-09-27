@@ -3,7 +3,7 @@
 
 # TASK: Profanity filter — hot reload, per-chat sensitivity, audit trail
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** low
 **Effort:** Medium
 **Summary:** Runtime configurability for the shipped profanity filter: hot reload, per-chat sensitivity, moderation audit trail

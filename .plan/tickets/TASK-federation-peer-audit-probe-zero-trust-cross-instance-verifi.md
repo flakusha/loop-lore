@@ -3,7 +3,7 @@
 
 # TASK: Federation peer audit probe (zero-trust cross-instance verification)
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Large
 **Summary:** Zero-trust cross-instance verification: each instance probes its federated peers over the federation transport with a signed challenge and verifies (1) build hash matches a pinned value, (2) NodeInfo is internally consistent, (3) peer trusts are bounded (no transitive trust), (4) defederation audit log is fresh. Auto-defederate on 3 consecutive failures. See `docs/spec/federation-peer-audit-probe.md` for the full implementation spec.

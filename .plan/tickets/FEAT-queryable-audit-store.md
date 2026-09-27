@@ -3,7 +3,7 @@
 
 # FEAT: Queryable Audit Store
 
-**Status:** done
+**Status:** Done
 **Priority:** high
 **Effort:** Large
 **Summary:** Queryable Audit Store

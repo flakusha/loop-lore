@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Resolved (client-side rendering, 2026-09-15)
+**Status:** Done
+**Status Note:** client-side rendering, 2026-09-15
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-i18n

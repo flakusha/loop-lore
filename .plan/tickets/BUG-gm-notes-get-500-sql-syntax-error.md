@@ -10,7 +10,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done
+**Status:** Done
 **Priority**: high
 **Labels**: bug, gm-notes, sqlite, kysely
 **Assignee**: (next session)

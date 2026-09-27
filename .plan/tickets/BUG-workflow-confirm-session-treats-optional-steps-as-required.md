@@ -3,7 +3,7 @@
 
 # BUG: workflow confirm session treats optional steps as required
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 

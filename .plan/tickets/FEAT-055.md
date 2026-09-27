@@ -1,6 +1,6 @@
 ---
 title: "FEAT-055: Lorebook activation conditions"
-status: done
+status: Done
 priority: medium
 labels: [feature, prompt-system, lorebook]
 epic: epic-character-core-system
@@ -21,7 +21,8 @@ worktree: lorebook-activation
 
 # FEAT-055: Lorebook activation conditions
 
-**Status:** ✅ Done (2026-08-21, worktree `lorebook-activation`, based on dev)
+**Status:** Done
+**Status Note:** 2026-08-21, worktree `lorebook-activation`, based on dev
 
 ## What
 

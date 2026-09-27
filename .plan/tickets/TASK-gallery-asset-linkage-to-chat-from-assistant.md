@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-rag-assets-unified-storage-and-assistant-flows

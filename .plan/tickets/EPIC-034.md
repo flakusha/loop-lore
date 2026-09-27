@@ -3,7 +3,8 @@
 
 # EPIC-034: 034: AO NSFW Game Mechanics
 
-**Status:** Not Started → closed (duplicate)
+**Status:** Done
+**Status Note:** duplicate
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +12,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: duplicate-of-epic-nsfw-game-mechanics
+**Status:** Wontfix
+**Status Note:** duplicate-of-epic-nsfw-game-mechanics
 **Priority**: medium
 **Labels**: epic
 **Epic**: (if applicable)

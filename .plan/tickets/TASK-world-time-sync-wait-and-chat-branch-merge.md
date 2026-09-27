@@ -3,7 +3,7 @@
 
 # TASK: World Time Sync Wait And Chat Branch Merge
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-conversation-branching

@@ -3,7 +3,7 @@
 
 # TASK-2026-openwebui-tool-valves-panel: Per-Tool User Valves Configuration Panel
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Labels:** frontend, tools, controls

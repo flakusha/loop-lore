@@ -3,7 +3,8 @@
 
 # EPIC-054: 054: Embeddable Engine & Game Frontend
 
-**Status:** Not Started → closed (duplicate)
+**Status:** Done
+**Status Note:** duplicate
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +12,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: duplicate-of-epic-embeddable-engine-game-frontend
+**Status:** Wontfix
+**Status Note:** duplicate-of-epic-embeddable-engine-game-frontend
 **Priority**: medium
 **Labels**: epic
 **Epic**: (if applicable)

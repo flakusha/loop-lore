@@ -3,7 +3,7 @@
 
 # TASK: Actors — SillyTavern Import + V2 Export
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-actors

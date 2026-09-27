@@ -3,7 +3,7 @@
 
 # TASK: Zod vs TypeBox Docs/Code Reconciliation
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Small
 **Summary:** Zod vs TypeBox Docs/Code Reconciliation

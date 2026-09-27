@@ -3,7 +3,7 @@
 
 # BUG: Audit panel renders action text labels instead of icons
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 

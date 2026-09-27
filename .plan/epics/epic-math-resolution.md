@@ -3,7 +3,7 @@
 
 # EPIC-RESEARCH-MATH-RESOLUTION — Math models behind roll resolution
 
-**Status:** 📝 Draft
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Large (multiple sub-tickets, see Sub-systems)
 **Type:** Research → Implementation

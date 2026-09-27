@@ -1,6 +1,6 @@
 ---
 title: "FEAT-045: Branching data model"
-status: open
+status: Not Started
 priority: medium
 labels: [feature, chat, data-model]
 epic: epic-conversation-branching
@@ -8,7 +8,7 @@ related: [FEAT-046, FEAT-047]
 ---
 
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

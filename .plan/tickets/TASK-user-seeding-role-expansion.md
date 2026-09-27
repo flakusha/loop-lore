@@ -11,7 +11,8 @@
 **Epic:** Logic Reconciliation
 **Priority:** High
 **Effort:** Medium
-**Status:** ✅ Done (2026-08-17) — user-role expansion + config-driven user seeding + seed_audit migrated to `dev` (`a1d18329`); character/world/chat content seeding + environment overrides shipped via worktree `content-seeding` → `dev`; admin-surface RBAC route migration shipped via worktree `rbac-route-migration` → `dev`. Items/quests content seeding + chat `initial_messages` seeding remain deferred (optional per spec).
+**Status:** Done
+**Status Note:** (2026-08-17) — user-role expansion + config-driven user seeding + seed_audit migrated to `dev` (`a1d18329`); character/world/chat content seeding + environment overrides shipped via worktree `content-seeding` → `dev`; admin-surface RBAC route migration shipped via worktree `rbac-route-migration` → `dev`. Items/quests content seeding + chat `initial_messages` seeding remain deferred (optional per spec).
 
 **Done scope (2026-08-17):**
 - `UserRole` expanded 4→11 (adds moderator/creator/player/guest/bot/tester/custom)

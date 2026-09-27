@@ -13,7 +13,7 @@ git issue: c92bfc9
 
 # BUG: upgrade.ts metadata state lost — Object.assign mutates newConnection.metadata in-place, erasing fresh factory metadata
 
-**Status:** done
+**Status:** Done
 **Priority:** High
 **Effort:** Low
 

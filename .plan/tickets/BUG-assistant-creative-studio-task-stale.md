@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done (both files now gone: sd.ts already absent on dev HEAD; scenario-source.ts deleted as a zero-caller DB-less stub — storeScenarioSource returned fake `scenario-${Date.now()}` ids with no table. Parent TASK Phase-3 stub-reactivation lines now historical; see TASK-assistant-creative-studio-workflows.md update.)
+**Status:** Done
+**Status Note:** both files now gone: sd.ts already absent on dev HEAD; scenario-source.ts deleted as a zero-caller DB-less stub — storeScenarioSource returned fake `scenario-${Date.now()}` ids with no table. Parent TASK Phase-3 stub-reactivation lines now historical; see TASK-assistant-creative-studio-workflows.md update.
 **Severity:** low
 **Priority:** low
 **Effort:** small

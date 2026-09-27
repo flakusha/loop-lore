@@ -3,7 +3,7 @@
 
 # FEAT-messaging-bridge-extensions: Messaging bridge registry & extended bridges
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

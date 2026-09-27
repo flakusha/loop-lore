@@ -3,7 +3,7 @@
 
 # TASK: Fast-action command-to-prompt pipeline (/say /action /speak-think)
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** High
 **Effort:** Medium
 **Epic:** epic-frontend-chat-commands

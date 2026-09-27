@@ -3,7 +3,7 @@
 
 # TASK: Party Economy Shared Loot And Currency Split
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-party-migration

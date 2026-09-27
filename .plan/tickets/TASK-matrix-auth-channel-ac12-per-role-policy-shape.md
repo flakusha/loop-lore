@@ -3,7 +3,7 @@
 
 # TASK-matrix-auth-channel-ac12: Settle WAC4 — per-role minimum-factor-count policy (static config vs DB table)
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Small
 **Type:** Task

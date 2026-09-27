@@ -3,7 +3,7 @@
 
 # TASK-matrix-auth-channel-ac4: Settle WAC2 — Matrix approval via Megolm-verified or unverified session
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Small
 **Type:** Task

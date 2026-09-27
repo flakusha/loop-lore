@@ -3,7 +3,7 @@
 
 # TASK-epic-transport-layer-expansion-clarification-2026-09-26: clarify epic-transport-layer-expansion.md vs epic-transport-expansion.md / epic-realtime-transports.md
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Small
 **Type:** Task

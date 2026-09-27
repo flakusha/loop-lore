@@ -9,7 +9,7 @@
 
 
 **Priority:** Medium
-**Status:** open
+**Status:** Not Started
 **Epic:** Epic Battle & Action Systems
 **Tags:** battle, templates, encounters, system, engine, gm-tools
 **Effort:** Med

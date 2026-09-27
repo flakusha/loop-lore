@@ -3,7 +3,7 @@
 
 # TASK: Wire intent output to workflow-runner.startWorkflow
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-workflow-engine

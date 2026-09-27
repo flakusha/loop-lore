@@ -7,7 +7,7 @@
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)
 
-**Status:** ✅ Done
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 

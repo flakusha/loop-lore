@@ -3,7 +3,7 @@
 
 # FEAT: Attachment Review Queue + Admin UI
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Large
 **Summary:** Attachment Review Queue + Admin UI

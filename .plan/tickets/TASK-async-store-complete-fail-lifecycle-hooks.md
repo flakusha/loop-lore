@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done (fixed in worktree merge-review-followups, 2026-08-27)
+**Status:** Done
+**Status Note:** fixed in worktree merge-review-followups, 2026-08-27
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-middleware-request-lifecycle

@@ -3,7 +3,7 @@
 
 # FEAT: 2D world: position-aware encounters via zone-as-context
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-2d-sprite-world

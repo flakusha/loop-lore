@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** ✅ Complete (merged to dev: backend `95680e00`, frontend `d61ce737`)
+**Status:** Done
+**Status Note:** merged to dev: backend `95680e00`, frontend `d61ce737`
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Feature Epic

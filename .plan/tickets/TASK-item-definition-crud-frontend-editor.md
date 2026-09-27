@@ -3,7 +3,7 @@
 
 # TASK: Item Definition CRUD Frontend Editor
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 

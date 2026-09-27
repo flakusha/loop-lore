@@ -3,7 +3,8 @@
 
 # EPIC-047: 047: API Versioning Strategy
 
-**Status:** Not Started → closed (duplicate)
+**Status:** Done
+**Status Note:** duplicate
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +12,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: duplicate-of-epic-api-versioning
+**Status:** Wontfix
+**Status Note:** duplicate-of-epic-api-versioning
 **Priority**: medium
 **Labels**: epic
 **Epic**: (if applicable)

@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done
+**Status:** Done
 **Priority:** Medium
 **Effort:** Low
 **Epic:** epic-frontend-html-dedup-htmx-reuse

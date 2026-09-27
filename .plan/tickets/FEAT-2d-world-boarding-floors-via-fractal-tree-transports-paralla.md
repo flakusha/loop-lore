@@ -3,7 +3,7 @@
 
 # FEAT: 2D world: boarding + floors via fractal tree (transports, parallax)
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** low
 **Effort:** Large
 **Epic:** epic-2d-sprite-world

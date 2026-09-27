@@ -3,7 +3,8 @@
 
 # BUG: battle dice: critical success/failure checks discarded die under advantage/disadvantage
 
-**Status:** ✅ Resolved (batch 2)
+**Status:** Done
+**Status Note:** batch 2
 **Priority:** high
 **Effort:** Medium
 **Summary:** (see ## Summary)

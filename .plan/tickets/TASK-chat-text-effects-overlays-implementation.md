@@ -3,7 +3,7 @@
 
 # TASK: Chat Text Effects & Overlays Implementation
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Large
 **Summary:** Chat Text Effects & Overlays Implementation

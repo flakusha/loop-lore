@@ -3,7 +3,7 @@
 
 # TASK-2026-openwebui-tool-access-grants: Per-Tool Access Grants Beyond Role Gating
 
-**Status:** open
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium
 **Labels:** generation, tools, security, access-control

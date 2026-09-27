@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Related:** TASK-config-file-separation-domain-extraction

@@ -3,7 +3,7 @@
 
 # TASK: ComfyUI first-class: llama-swap recipe standalone-vs-proxy matrix + docs
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Small (recipe matrix + docs promotion)
 **Summary:** llama-swap recipe mode matrix covering standalone vs proxy deployments; promote `image-generation.md` ComfyUI status from 'Future' to first-class with the supported recipe matrix.

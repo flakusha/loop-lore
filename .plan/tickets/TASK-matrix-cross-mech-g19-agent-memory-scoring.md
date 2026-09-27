@@ -3,7 +3,7 @@
 
 # TASK-matrix-cross-mech-g19: Agent-memory scoring (recency × importance × relevance + reflection)
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Type:** Task

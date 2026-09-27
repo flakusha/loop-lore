@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Resolved (already on dev, 2026-09-19)
+**Status:** Done
+**Status Note:** already on dev, 2026-09-19
 **Priority:** medium
 **Effort:** Medium
 **Epic:** Avatar Alpha Channel + VN Layering

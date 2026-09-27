@@ -3,7 +3,7 @@
 
 # TASK: Crafting & economy slash interactions (/craft /barter /evaluate /trade /repair /appraise)
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-crafting-professions

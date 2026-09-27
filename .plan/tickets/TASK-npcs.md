@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 📝 Draft
+**Status:** Not Started
 **Priority:** High
 **Epic:** epic-npcs
 

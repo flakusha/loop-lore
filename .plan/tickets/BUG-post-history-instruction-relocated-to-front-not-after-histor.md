@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Fixed (fix-post-history-instruction-position @ ed1844be+3)
+**Status:** Done
+**Status Note:** fix-post-history-instruction-position @ ed1844be+3
 **Priority:** medium
 **Effort:** Medium
 

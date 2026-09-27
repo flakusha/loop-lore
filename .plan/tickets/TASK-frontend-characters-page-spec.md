@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** open
+**Status:** Not Started
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** (none — no dedicated frontend epic tracks this spec)

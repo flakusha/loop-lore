@@ -3,7 +3,7 @@
 
 # TASK-2026-openwebui-sse-reconnect-replay: SSE Reconnect with Last-Event-ID Sequence Replay
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Small
 **Labels:** frontend, streaming

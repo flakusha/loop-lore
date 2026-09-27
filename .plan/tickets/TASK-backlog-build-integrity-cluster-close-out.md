@@ -3,7 +3,7 @@
 
 # TASK: backlog — verify Build Integrity Cluster close-out (3 BUGs + plan:sync orphan)
 
-**Status:** open
+**Status:** Not Started
 **Priority:** high
 **Effort:** Small
 **Type:** Task

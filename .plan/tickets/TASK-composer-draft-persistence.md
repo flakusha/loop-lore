@@ -3,7 +3,7 @@
 
 # TASK: Composer draft persistence
 
-**Status:** open
+**Status:** Not Started
 **Summary:** (none captured)
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)

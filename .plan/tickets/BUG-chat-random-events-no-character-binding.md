@@ -8,7 +8,7 @@
 
 # BUG: random-event templates substitute `{npc}` from a generic pool, never from the chat's actual participants
 
-**Status:** ✅ Done
+**Status:** Done
 **Priority:** low
 **Severity:** low
 **Effort:** small

@@ -3,7 +3,7 @@
 
 # TASK-2026-050: Character Relationships Graph
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +11,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: open
+**Status**: Not Started
 **Priority**: medium
 **Labels**: feature, characters, relationships
 **Assignee**:

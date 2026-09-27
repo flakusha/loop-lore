@@ -3,14 +3,14 @@
 
 # TASK-052: Item Effects System
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Item effects via ItemEffect discriminated union — on-use, on-equip, passive, timed.
 **Context:** Coord with body-systems HeatEffects to avoid duplicate timed-effect machinery.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: open
+**Status**: Not Started
 **Priority**: medium
 **Labels**: items, rpg, effects
 **Epic**: epic-items

@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done (2026-08-22, feature/location-explorer-ui)
+**Status:** Done
+**Status Note:** 2026-08-22, feature/location-explorer-ui
 **Priority:** P0 — Critical
 **Effort:** Medium
 **Type:** Feature Task

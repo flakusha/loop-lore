@@ -3,7 +3,7 @@
 
 # TASK-2026-openwebui-mcp-client-skeleton: MCP Streamable-HTTP Client Wrapper for Tool Servers
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Small
 **Labels:** generation, tools, mcp

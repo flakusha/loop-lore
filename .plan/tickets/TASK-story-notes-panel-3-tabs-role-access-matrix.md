@@ -3,7 +3,7 @@
 
 # TASK: Story Notes Panel (3 tabs, role access matrix)
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Story Notes Panel (3 tabs, role access matrix)

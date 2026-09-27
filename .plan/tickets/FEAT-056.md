@@ -3,7 +3,7 @@
 
 # FEAT-056: Memory selection UI
 
-**Status:** ✅ Done
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Memory selection UI for mid-chat pinning, manual memory choice, and audit visibility.
@@ -11,7 +11,7 @@
 **Acceptance Criteria:** Epic FEA-2026-053 ✅ Done. Code: `src/frontend/alpine/memory-panel/transform.ts`; memory provision/injection under `src/memory/`. See `.plan/epics/epic-memory-knowledge-systems.md`.
 
 
-**Status**: done
+**Status**: Done
 **Priority**: medium
 **Labels**:
 **Assignee**:

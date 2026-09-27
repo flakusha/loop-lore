@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done
+**Status:** Done
 **Priority:** high
 **Effort:** Low
 **Epic:** epic-docs-reconciliation.md

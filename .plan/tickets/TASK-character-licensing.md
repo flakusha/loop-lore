@@ -3,7 +3,7 @@
 
 # TASK-2026-047: Character Licensing System
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +11,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: open
+**Status**: Not Started
 **Priority**: low
 **Labels**: feature, characters, licensing
 **Assignee**:

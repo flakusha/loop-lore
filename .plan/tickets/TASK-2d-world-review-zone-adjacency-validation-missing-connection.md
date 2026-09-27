@@ -3,7 +3,7 @@
 
 # TASK: 2D world review: zone adjacency validation missing (connections unwired)
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium
 **Summary:** Enforce zone adjacency on movement via validated connections graph.

@@ -3,7 +3,7 @@
 
 # FEAT-065-IMG: Image Prompt Template Persistence
 
-**Status:** closed
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -13,7 +13,8 @@
 
 **Epic:** epic-items
 
-**Status**: closed (implemented — see Resolution)
+**Status:** Done
+**Status Note:** implemented — see Resolution
 **Priority**: medium
 **Labels**: generation, image, prompts, templates
 **Assignee**:

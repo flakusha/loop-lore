@@ -3,7 +3,7 @@
 
 # TASK: turn_skip Cascade Integration
 
-**Status:** open
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium (cascade wiring + slot release + beat budget)
 **Summary:** Cascade integration of the `turn_skip` event across the system: group-chat slot release when all actors pass, solo-chat beat-budget bookkeeping, and the `filterPassedActors` promotion. Builds on `TASK-turn-skip-event` rather than greenfield.

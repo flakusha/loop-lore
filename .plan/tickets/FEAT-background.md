@@ -3,7 +3,7 @@
 
 # FEAT: Background Removal — Matting Backends + Alpha Serving
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** high
 **Summary:** Background removal for generated character/sprite images — pluggable matting backends (ComfyUI BiRefNet graph, rembg HTTP sidecar, phase-2 in-process ONNX; sd.cpp ruled out — no matting endpoint), async matted derivative, and serving the cut-out on request (`GET /api/assets/:id/matted`).

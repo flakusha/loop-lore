@@ -10,7 +10,7 @@
 
 
 **Issue:** 3bfb101c-e553-4879-b239-a817bc68a83f
-**Status:** open
+**Status:** Not Started
 **Priority:** high
 **Epic:** epic-memory-knowledge-systems
 

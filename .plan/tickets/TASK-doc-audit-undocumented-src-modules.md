@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** open
+**Status:** Not Started
 **Priority:** P3
 **Epic:** epic-docs-reconciliation
 **Labels:** docs, spec, reconciliation

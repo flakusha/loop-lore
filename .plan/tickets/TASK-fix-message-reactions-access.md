@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done (2026-08-05) — reaction access shipped: all reaction endpoints gated via `checkChatAccess`; POST toggle added; `message-reactions.test.ts` (8 tests)
+**Status:** Done
+**Status Note:** 2026-08-05) — reaction access shipped: all reaction endpoints gated via `checkChatAccess`; POST toggle added; `message-reactions.test.ts` (8 tests
 **Priority:** Medium
 **Effort:** Small
 **Epic:** epic-logic-reconciliation

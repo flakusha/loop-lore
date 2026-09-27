@@ -10,7 +10,8 @@
 
 
 **Priority:** Medium
-**Status:** ✅ Complete (2026-08-23) — Backend, routes, frontend cards, accumulated impacts, split/reunite detection all live
+**Status:** Done
+**Status Note:** (2026-08-23) — Backend, routes, frontend cards, accumulated impacts, split/reunite detection all live
 **Epic:** epic-immersion-presentation
 **Tags:** visual-novel, branching, choices, relationships, immersion
 

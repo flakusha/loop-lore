@@ -3,7 +3,7 @@
 
 # TASK: GM Trigger And Timeline Backfill Propagation
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-gm-shadow-notes

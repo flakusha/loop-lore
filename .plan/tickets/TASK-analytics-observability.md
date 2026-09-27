@@ -8,7 +8,7 @@
 **Acceptance Criteria:** Partial — 2 of 3 features shipped
 
 
-**Status:** open
+**Status:** Not Started
 **Priority:** Medium
 **Effort:** Large
 **Epic:** epic-analytics-observability

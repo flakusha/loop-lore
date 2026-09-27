@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟨 Partial
+**Status:** In Progress
 **Priority:** Medium
 **Effort:** Med
 **Parent:** TASK-epic17-encryption-e2e-expansion

@@ -3,7 +3,7 @@
 
 # TASK-math-structured-llm-dice-result — Typed DiceResult contract
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium (1 day)
 **Summary:** Emit a typed `DiceResult` JSON for the LLM and force the assistant response to include the contract verbatim, not a free-form re-narration.

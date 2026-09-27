@@ -11,7 +11,7 @@
 **Epic:** epic-social-interaction, NPC/Actor System
 **Priority:** Medium (P6+ deferred)
 **Effort:** High
-**Status:** open
+**Status:** Not Started
 **Created:** 2026-08-14
 **Platform Candidate:** E1 (Agentic NPC autonomy — generative-agents, Inworld AI)
 **Research Source:** Stanford generative-agents social simulation, Inworld AI multi-agent dialogue
@@ -48,7 +48,7 @@ interface NPCConversation {
   relationship_impact: number;      // -100 to 100
   information_exchanged: string[];  // facts propagated
   mood_impact: { initiator: number; responder: number };
-  status: "initiating" | "ongoing" | "ending";
+  status: open
 }
 ```
 

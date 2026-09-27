@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Already Implemented (companion BUG ticket closed)
+**Status:** Done
+**Status Note:** Implemented (companion BUG ticket closed)
 **Priority:** High
 **Effort:** Small
 **Epic:** epic-group-chat

@@ -8,7 +8,7 @@
 
 ## TASK: Provider health rescan schedule
 
-**Status:** ✅ Done
+**Status:** Done
 **Priority:** Low
 **Effort:** Small
 **Epic:** epic-cron-scheduler

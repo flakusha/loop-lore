@@ -3,7 +3,7 @@
 
 # TASK: Enforce state-machine + composite validators at write time
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium (one helper + 6 service wire-ups + tests)
 **Summary:** The validators added by `cc4b39ed4` (`feat(db): state-machine composite validators + write-path guards`) are defined and unit-tested but never consulted at runtime — write paths still use raw Kysely `insertInto`/`updateTable`. Add a single `assertValidWrite(table, row)` helper that picks the right `CompositeValidator` or `StateMachine`, and wire it into the 6 affected service entry points. No column changes.

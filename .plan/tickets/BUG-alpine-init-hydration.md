@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Resolved — verified stale (no code change required)
+**Status:** Done
+**Status Note:** verified stale (no code change required)
 **Priority:** High
 **Effort:** Medium
 **Type:** Bug

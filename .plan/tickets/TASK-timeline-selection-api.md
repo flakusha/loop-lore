@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Draft
+**Status:** Not Started
 **Priority:** P0 — Critical
 **Epic:** `epic-timeline-system.md`
 **Type:** Feature

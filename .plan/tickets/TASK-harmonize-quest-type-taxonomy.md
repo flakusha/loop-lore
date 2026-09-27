@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ⬜ Todo
+**Status:** Not Started
 **Priority:** High
 **Effort:** Medium
 **Epic:** epic-quests-encounters

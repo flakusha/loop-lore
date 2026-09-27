@@ -3,7 +3,7 @@
 
 # TASK: Advanced Memory Systems Implementation
 
-**Status:** done
+**Status:** Done
 **Priority:** high
 **Effort:** XL
 **Summary:** Advanced Memory Systems Implementation

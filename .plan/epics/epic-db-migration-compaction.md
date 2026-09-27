@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** 📝 Planned (document only — no migration edits until reviewed)
+**Status:** Not Started
+**Status Note:** document only — no migration edits until reviewed
 **Priority:** Medium (maintainability; no runtime behavior change on a fresh DB)
 **Effort:** High
 **Type:** Refactor Epic

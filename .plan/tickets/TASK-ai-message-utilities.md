@@ -3,7 +3,7 @@
 
 # TASK: AI message utilities (translate/summarize/explain)
 
-**Status:** open
+**Status:** Not Started
 **Summary:** (none captured)
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)

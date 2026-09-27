@@ -3,7 +3,7 @@
 
 # BUG: keynav stale unsubscribe deletes live handler set
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 

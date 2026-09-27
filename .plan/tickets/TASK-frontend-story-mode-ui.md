@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 In Progress (2026-08-14 — story view header, GM story panel, quest log, quality badges built in worktree story-chat-view; backend orchestration endpoints pending LLM-role-wiring workstream)
+**Status:** In Progress
+**Status Note:** 2026-08-14 — story view header, GM story panel, quest log, quality badges built in worktree story-chat-view; backend orchestration endpoints pending LLM-role-wiring workstream
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-assistant-gm-flows

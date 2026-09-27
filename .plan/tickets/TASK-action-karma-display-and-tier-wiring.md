@@ -3,7 +3,7 @@
 
 # TASK: Action Karma Display And Tier Wiring
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-world-diplomacy-karma

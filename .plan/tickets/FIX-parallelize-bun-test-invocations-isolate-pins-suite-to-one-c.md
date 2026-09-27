@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Resolved (verified 2026-09-18 — all listed changes landed on `dev` HEAD `80b11e372`; ticket left open as bookkeeping)
+**Status:** Done
+**Status Note:** verified 2026-09-18 — all listed changes landed on `dev` HEAD `80b11e372`; ticket left open as bookkeeping
 **Priority:** high
 **Effort:** Medium
 

@@ -3,7 +3,7 @@
 
 # TASK: Backup consistency: VACUUM INTO snapshots plus archive DBs
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 
 Imported from git issue f91f01e.

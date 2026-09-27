@@ -3,7 +3,8 @@
 
 # BUG: characters emotion-avatar: sortOrder derived from Object.values() insertion order
 
-**Status:** ✅ Resolved (batch 2)
+**Status:** Done
+**Status Note:** batch 2
 **Priority:** low
 **Effort:** Medium
 **Summary:** (see ## Summary)

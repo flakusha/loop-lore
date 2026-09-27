@@ -6,7 +6,7 @@
 **Epic:** epic-character-core-system
 **Related:** TASK-character-stat-modifiers-and-trait-application-engine, TASK-character-stat-allocation-backend-api-and-db-integration
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium
 

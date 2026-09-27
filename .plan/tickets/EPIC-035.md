@@ -3,7 +3,8 @@
 
 # EPIC-035: 035: Magic & Spell Systems
 
-**Status:** Not Started → closed (duplicate)
+**Status:** Done
+**Status Note:** duplicate
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +12,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: duplicate-of-epic-magic-spell-systems
+**Status:** Wontfix
+**Status Note:** duplicate-of-epic-magic-spell-systems
 **Priority**: medium
 **Labels**: epic
 **Epic**: (if applicable)

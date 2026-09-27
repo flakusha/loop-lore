@@ -3,7 +3,7 @@
 
 # Ticket: Invite Code Generation System
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

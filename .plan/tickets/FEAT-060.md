@@ -1,6 +1,6 @@
 ---
 title: "FEAT-060: Model comparison A/B"
-status: open
+status: Not Started
 priority: medium
 labels: [feature, generation, admin]
 epic: epic-byok-api-keys
@@ -8,7 +8,7 @@ related: [FEAT-067, FEAT-062, FEAT-068]
 ---
 
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Resolved (commit a4503d43 — fix(battle): gate loot POST on user session + world-owner + actor/location ownership)
+**Status:** Done
+**Status Note:** commit a4503d43 — fix(battle): gate loot POST on user session + world-owner + actor/location ownership
 **Priority:** critical
 **Priority Tier:** P0
 **Effort:** Small

@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Resolved (explicit .select([...]) projection matches AdminAuditRow schema; q capped at 200)
+**Status:** Done
+**Status Note:** explicit .select([...]) projection matches AdminAuditRow schema; q capped at 200
 **Severity:** Medium
 **Priority:** medium
 **Effort:** Small

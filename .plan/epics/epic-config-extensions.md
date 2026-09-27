@@ -7,7 +7,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** 📝 Draft — description pending (formerly planned in `chore-docs-reconcile`, worktree merged 2026-08-14)
+**Status:** Not Started
+**Status Note:** description pending (formerly planned in `chore-docs-reconcile`, worktree merged 2026-08-14)
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Feature Epic / Cross-cutting Framework

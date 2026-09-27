@@ -3,7 +3,7 @@
 
 # TASK: Fractal locations migration (013_locations_fractal.ts)
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Large
 **Epic:** epic-fractal-locations

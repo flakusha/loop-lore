@@ -3,7 +3,7 @@
 
 # TASK: DB Reinit & Backup Retention Policy
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** DB Reinit & Backup Retention Policy

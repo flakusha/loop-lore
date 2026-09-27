@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-chat-rich-engagement.md

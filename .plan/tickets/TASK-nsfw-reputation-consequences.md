@@ -10,7 +10,7 @@
 
 
 **Priority:** Medium
-**Status:** open
+**Status:** Not Started
 **Epic:** epic-nsfw-game-mechanics
 **Tags:** nsfw, reputation, consequences, social, content-rating
 

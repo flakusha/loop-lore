@@ -3,7 +3,7 @@
 
 # FEAT: Attachment Frontend UI
 
-**Status:** done
+**Status:** Done
 **Priority:** low
 **Effort:** Large
 **Summary:** Attachment Frontend UI

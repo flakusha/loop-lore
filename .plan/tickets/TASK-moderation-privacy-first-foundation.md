@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 Partial — moderation data model + NSFW gate exist; ModerationHook keyword-only, dead `Moderation` model role, destructive suppression (2026-08-01)
+**Status:** In Progress
+**Status Note:** moderation data model + NSFW gate exist; ModerationHook keyword-only, dead `Moderation` model role, destructive suppression (2026-08-01)
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-chat-lifecycle-moderation

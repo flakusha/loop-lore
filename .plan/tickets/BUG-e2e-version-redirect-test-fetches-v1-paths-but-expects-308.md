@@ -3,7 +3,8 @@
 
 # BUG: e2e version-redirect.test.ts fetches /api/v1/* paths but expects 308 redirect
 
-**Status:** ✅ Done (fix-version-redirect-e2e — corrected the two `/api/v1/...` URLs to `/api/...` and dropped the duplicate obsolete "(legacy route still registered)" test)
+**Status:** Done
+**Status Note:** fix-version-redirect-e2e — corrected the two `/api/v1/...` URLs to `/api/...` and dropped the duplicate obsolete "(legacy route still registered)" test
 
 **Priority:** medium
 

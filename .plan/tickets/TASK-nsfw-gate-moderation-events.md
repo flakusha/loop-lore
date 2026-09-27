@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** done
+**Status:** Done
 **Priority:** low (moderation — postpone)
 **Effort:** Medium
 **Epic:** epic-nsfw-game-mechanics

@@ -3,7 +3,7 @@
 
 # IDEA: 2D world: RAG/business-process mapping spike
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** low
 **Effort:** Small
 **Epic:** epic-2d-sprite-world

@@ -3,7 +3,7 @@
 
 # TASK: Ai Director Difficulty
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** DifficultyAdjustment derived from player_performance: event_intensity, npc_aggression, resource_scarcity, mystery_level modifiers (each -50..+50). adjustment_type ∈ {increase, decrease, maintain}.
@@ -11,7 +11,7 @@
 **Acceptance Criteria:** [ ] player_performance → adjustment_type thresholds; [ ] struggling player reduces intensity + helpful NPCs; [ ] succeeding player increases intensity + complications; [ ] bored player injects mysteries.
 
 
-**Status**: open
+**Status**: Not Started
 **Priority**: medium
 **Labels**:
 **Assignee**:

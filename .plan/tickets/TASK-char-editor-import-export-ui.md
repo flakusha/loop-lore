@@ -3,7 +3,7 @@
 
 # TASK-char-editor-import-export-ui
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +11,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: open
+**Status**: Not Started
 **Priority**: high
 **Labels**: frontend, character-editor, import-export, ux
 **Assignee**:

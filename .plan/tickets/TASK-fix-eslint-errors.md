@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done (2026-08-07) — all 73 errors fixed on dev (`e729a7c2`; `bun run lint` exits 0)
+**Status:** Done
+**Status Note:** 2026-08-07) — all 73 errors fixed on dev (`e729a7c2`; `bun run lint` exits 0
 **Priority:** High
 **Effort:** Medium
 **Epic:** epic-continuous-improvement

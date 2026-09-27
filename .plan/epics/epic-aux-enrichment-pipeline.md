@@ -7,7 +7,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** 🟡 Partial — transition detection + memory extraction implemented; shared runner missing, wiring gaps open (2026-08-01 review)
+**Status:** In Progress
+**Status Note:** transition detection + memory extraction implemented; shared runner missing, wiring gaps open (2026-08-01 review)
 **Priority:** P2-B
 **Effort:** Medium
 **Type:** Feature Epic

@@ -3,7 +3,7 @@
 
 # TASK: Assistant slash-command typed-token autocomplete
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Mirror `@`-mention autocomplete (`src/frontend/alpine/chat-group.ts:79-110`) for `/`-prefixed slash commands in the composer; surface candidates from `registry.listCommands()` with Tab/Enter/Esc/keyboard navigation + a11y.

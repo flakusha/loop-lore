@@ -3,7 +3,8 @@
 
 # IDEA: Chat Setup Templates (Validated ChatCreateBody Presets)
 
-**Status:** 🟡 Satisfied-as-decomposed (bookkeeping 2026-09-19; cross-links re-verified 2026-09-23)
+**Status:** Done
+**Status Note:** as-decomposed (bookkeeping 2026-09-19; cross-links re-verified 2026-09-23)
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Turn chat creation presets into data, not code — `ChatSetupTemplate` = validated `ChatCreateBody` preset, selectable on `new-chat.html`. Decomposed into `chat_setup_templates` table + routes + UI binding tasks.
@@ -11,7 +12,8 @@
 **Acceptance Criteria:** Backend table + routes ✅ shipped; PUT/DELETE wiring + UI binding open (see decomposed TASK tickets).
 
 
-**Status**: satisfied-as-decomposed
+**Status:** Done
+**Status Note:** as-decomposed
 **Priority**: medium
 **Labels**: chat, templates, chat-setup, architecture
 **Assignee**:

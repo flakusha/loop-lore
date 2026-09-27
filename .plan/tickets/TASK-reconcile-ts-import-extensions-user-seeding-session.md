@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ⬜ Open — follow-up for a future session
+**Status:** Not Started
+**Status Note:** Open — follow-up for a future session
 **Priority:** Low
 **Effort:** Small
 **Epic:** epic-deno-support (future Deno parity)

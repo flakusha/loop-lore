@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done — implemented in `src/chat/transition-classifier.ts` (2026-08-01)
+**Status:** Done
+**Status Note:** implemented in `src/chat/transition-classifier.ts` (2026-08-01)
 **Priority:** P2-B
 **Effort:** Small
 **Epic:** epic-aux-enrichment-pipeline

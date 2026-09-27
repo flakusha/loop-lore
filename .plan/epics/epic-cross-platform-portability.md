@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** 🟡 In Progress (T1.3+T1.4 complete)
+**Status:** In Progress
+**Status Note:** T1.3+T1.4 complete
 **Priority:** High
 **Effort:** Large
 **Type:** Infrastructure Epic

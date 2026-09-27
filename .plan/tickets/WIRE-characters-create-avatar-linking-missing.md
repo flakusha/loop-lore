@@ -3,7 +3,7 @@
 
 # WIRE: character creation missing avatar asset linking
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Summary:** (none captured)
 **Context:** (none captured)

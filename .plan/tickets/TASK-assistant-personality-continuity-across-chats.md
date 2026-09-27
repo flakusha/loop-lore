@@ -3,7 +3,7 @@
 
 # TASK: Assistant Personality Continuity Across Chats
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-character-multi-personality

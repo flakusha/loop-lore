@@ -10,7 +10,7 @@
 
 
 **Epic:** epic-creative-studio.md (MVP Tier 1)
-**Status:** open
+**Status:** Not Started
 **Effort:** Low
 **Depends On:** —
 

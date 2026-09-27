@@ -11,7 +11,7 @@
 **Epic:** NPC/Actor System, Memory & Knowledge Systems
 **Priority:** High
 **Effort:** Medium
-**Status:** open
+**Status:** Not Started
 **Created:** 2026-07-28
 **Cross-Mechanics Gap:** G13 (NPC/Actor ↔ Supporting System)
 

@@ -3,7 +3,7 @@
 
 # TASK: Npc Reaction System
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Perceived-event → reaction pipeline: focus selection, mode decision (via utility scorer), execution, episodic memory update. Feeds the daytime planning loop and the nightly reflection cycle.

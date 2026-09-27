@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Resolved (commit 6b3cadc6, plus follow-up d0a24be8 guard) — auth derive at src/elysia-app.ts:64-77 sets x-user-id on the request from the authenticated context, and clears any client-supplied value on the unauthenticated path. The ticket's root-cause description is stale: as of the d0a24be8 follow-up the derive DOES inject x-user-id. Verified by re-reading elysia-app.ts:64-77 and git log on the file.
+**Status:** Done
+**Status Note:** (commit 6b3cadc6, plus follow-up d0a24be8 guard) — auth derive at src/elysia-app.ts:64-77 sets x-user-id on the request from the authenticated context, and clears any client-supplied value on the unauthenticated path. The ticket's root-cause description is stale: as of the d0a24be8 follow-up the derive DOES inject x-user-id. Verified by re-reading elysia-app.ts:64-77 and git log on the file.
 **Priority:** high
 **Effort:** Medium
 

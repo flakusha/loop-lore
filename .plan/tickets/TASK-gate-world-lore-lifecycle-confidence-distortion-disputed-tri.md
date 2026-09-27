@@ -3,7 +3,7 @@
 
 # TASK: Gate world_lore lifecycle confidence-distortion-disputed triple
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Small (state machine wrap + unit test)
 **Summary:** `world_lore_entries` `confidence` × `distortion_level` → `disputed` (migration `005`) is computed in `assistant/lore/lifecycle.ts:isDisputed` but unwrapped at the DB boundary. Convert disputed reads to a `DisputedState` machine + `CompositeValidator` wrapping the existing resolver. Unit test. No column changes.

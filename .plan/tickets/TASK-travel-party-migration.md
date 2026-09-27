@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** done
+**Status:** Done
 **Priority:** P2-B
 **Effort:** High
 **Epic:** epic-chat-transfer-location

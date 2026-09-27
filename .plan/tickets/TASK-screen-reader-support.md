@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 In Progress
+**Status:** In Progress
 **Priority:** P0 — Critical
 **Effort:** Medium
 **Epic:** epic-accessibility-input

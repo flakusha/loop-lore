@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟢 Closed
+**Status:** Done
 **Severity:** Medium
 **Priority:** Medium
 **Epic:** epic-crypto

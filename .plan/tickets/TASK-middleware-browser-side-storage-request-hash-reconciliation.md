@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ⬜ Open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** medium
 **Epic:** epic-content-hashing-distributed-integrity
@@ -48,7 +48,7 @@ ll-req::<id> ::= JSON({
   hash: "<record_hash>",            // last-known server X-Record-Hash
   method: "POST",
   route: "/api/...",
-  status: <number>,
+  status: open
   body: <string>,                   // raw response body
   headers: { ... },                 // subset of response_headers
   storedAt: <iso-8601>,

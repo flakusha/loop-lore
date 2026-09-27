@@ -3,7 +3,7 @@
 
 # TASK: Auth Middleware Implementation
 
-**Status:** done
+**Status:** Done
 **Priority:** high
 **Effort:** Large
 **Summary:** Auth Middleware Implementation

@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🔄 In Progress (plain-run failures eliminated 2026-09-08; coverage-mode + gate-env verification pending)
+**Status:** In Progress
+**Status Note:** plain-run failures eliminated 2026-09-08; coverage-mode + gate-env verification pending
 **Priority:** Medium
 **Effort:** Medium
 

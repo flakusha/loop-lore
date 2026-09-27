@@ -3,7 +3,7 @@
 
 # FEAT: Mobile-native UX (haptics, swipe, voice, thumb layout)
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Large
 **Summary:** Mobile-native UX (haptics, swipe, voice, thumb layout)

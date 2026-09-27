@@ -3,7 +3,7 @@
 
 # FEAT: Emotion-reactive Portraits (Auto-swap on emotion detect)
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Large
 **Summary:** Emotion-reactive Portraits (Auto-swap on emotion detect)

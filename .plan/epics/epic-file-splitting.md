@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** 🟢 Complete (core size-strict debt closed; `src/server/start.ts` remains documented follow-on)
+**Status:** Done
+**Status Note:** core size-strict debt closed; `src/server/start.ts` remains documented follow-on
 **Priority:** High
 **Effort:** Very High
 **Type:** Refactoring Epic

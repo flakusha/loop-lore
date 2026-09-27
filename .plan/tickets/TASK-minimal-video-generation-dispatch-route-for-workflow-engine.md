@@ -3,7 +3,7 @@
 
 # TASK: Minimal video generation dispatch route for workflow engine
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-workflow-engine

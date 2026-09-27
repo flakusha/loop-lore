@@ -3,7 +3,7 @@
 
 # TASK: docs remove deleted scenario catalog tooling references
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** low
 **Effort:** Medium
 

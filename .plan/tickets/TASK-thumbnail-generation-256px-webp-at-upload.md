@@ -3,7 +3,8 @@
 
 # TASK: Thumbnail Generation (256px WebP at upload)
 
-**Status:** ✅ Resolved (already on dev, 2026-09-19)
+**Status:** Done
+**Status Note:** already on dev, 2026-09-19
 **Priority:** low
 **Effort:** Medium
 **Summary:** Thumbnail Generation (256px WebP at upload)

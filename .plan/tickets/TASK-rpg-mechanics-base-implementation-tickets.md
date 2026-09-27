@@ -3,7 +3,7 @@
 
 # TASK: RPG Mechanics Base Implementation Tickets
 
-**Status:** done
+**Status:** Done
 **Priority:** high
 **Effort:** XL
 **Summary:** RPG Mechanics Base Implementation Tickets

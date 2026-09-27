@@ -3,7 +3,7 @@
 
 # TASK: Faction Politics Coups And Expansion Engine
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-faction-reputation

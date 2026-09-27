@@ -11,7 +11,7 @@
 
 **Epic:** epic-world-chat-channels-invites.md
 **See also:** epic-chat-lifecycle-moderation.md, epic-group-chat.md
-**Status:** Open
+**Status:** Not Started
 **Priority:** High
 
 ## Scope

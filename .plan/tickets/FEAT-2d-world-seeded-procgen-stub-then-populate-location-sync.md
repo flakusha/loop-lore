@@ -3,7 +3,7 @@
 
 # FEAT: 2D world: seeded procgen + stub-then-populate location sync
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Large
 **Epic:** epic-2d-sprite-world

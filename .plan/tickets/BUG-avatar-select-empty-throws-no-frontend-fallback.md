@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done
+**Status:** Done
 **Priority:** P2
 **Epic:** epic-character-core-system
 **Labels:** avatar, fallback, error-handling

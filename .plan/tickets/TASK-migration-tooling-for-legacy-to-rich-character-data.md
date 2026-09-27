@@ -7,7 +7,7 @@
 **Context:** Schema promotion to richer character fields landed; legacy cards become more useful with explicit, opt-in migration of safe defaults. Migration must be idempotent (no fabrication of fields when source data is absent) and must not require schema changes (bun:sqlite, production DB).
 **Acceptance Criteria:** bun-runnable migration script src/scripts/migrate-character-legacy.ts registered in package.json scripts as 'migrate:character:legacy' that iterates characters, leaves inventory items missing rarity/weight/value undefined, defaults relationship target_type to 'character' when target_character_id present, logs per-character shape match / fields added / skipped report, is idempotent. Unit test src/scripts/migrate-character-legacy.test.ts covers a V1 character with 3 inventory items + 2 relationships. Run-record lands in .tmp/ for traceability.
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** low
 **Effort:** Medium
 

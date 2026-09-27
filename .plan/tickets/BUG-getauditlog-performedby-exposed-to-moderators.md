@@ -15,7 +15,7 @@ git issue: b0e78c5
 
 # BUG: `getAuditLog` returns `performedBy` (moderator identity) to all callers with `moderation.review`
 
-**Status:** done
+**Status:** Done
 **Severity:** n/a (design)
 **Reason:** two claims — only one is a concrete defect:
 

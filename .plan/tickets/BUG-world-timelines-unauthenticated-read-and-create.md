@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Resolved (commit 88544034 — GET list/POST create GET-by-id gated on extractAuth + requireWorldAccess/Owner)
+**Status:** Done
+**Status Note:** commit 88544034 — GET list/POST create GET-by-id gated on extractAuth + requireWorldAccess/Owner
 **Priority:** critical
 **Effort:** Small
 

@@ -11,7 +11,7 @@
 **Epic:** Crafting & Professions, Magic & Spell Systems
 **Priority:** Medium
 **Effort:** Medium
-**Status:** open
+**Status:** Not Started
 **Created:** 2026-07-28
 **Cross-Mechanics Gap:** G11 (Crafting ↔ Magic)
 

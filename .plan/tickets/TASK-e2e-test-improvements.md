@@ -3,7 +3,7 @@
 
 # TASK: E2E & Unit Test Coverage Improvements
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

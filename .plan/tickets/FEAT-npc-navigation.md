@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 In Progress
+**Status:** In Progress
 **Priority:** high
 **Effort:** Large
 **Epic:** epic-npc-navigation

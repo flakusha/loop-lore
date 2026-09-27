@@ -3,7 +3,7 @@
 
 # FEAT: Error Monitoring & Alerting
 
-**Status:** done
+**Status:** Done
 **Priority:** high
 **Effort:** Large
 **Summary:** Error Monitoring & Alerting

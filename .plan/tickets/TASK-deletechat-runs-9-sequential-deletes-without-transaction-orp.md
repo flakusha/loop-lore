@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Implemented (chat-bugfix-batch-1)
+**Status:** Done
+**Status Note:** chat-bugfix-batch-1
 **Priority:** high
 **Effort:** Medium
 

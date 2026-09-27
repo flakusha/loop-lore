@@ -3,7 +3,7 @@
 
 # TASK: Npc Social Decision
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** `should_interact` gate: utility-scored reaction decision (chat / wait / do-other / flee / attack / ignore) reusing the shipped utility scorer weights.

@@ -12,7 +12,7 @@ git issue: 680817d
 
 # BUG: Blog post GET bypasses visibility policy (IDOR)
 
-**Status:** done
+**Status:** Done
 **Priority:** High
 **Effort:** Small
 

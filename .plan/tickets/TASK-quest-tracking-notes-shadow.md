@@ -11,7 +11,7 @@
 
 **Epic:** epic-quests-encounters.md
 **See also:** epic-gm-shadow-notes.md
-**Status:** Open
+**Status:** Not Started
 **Priority:** Medium
 
 ## Scope

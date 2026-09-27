@@ -3,7 +3,7 @@
 
 # BUG: entity template position config unvalidated typos silently become after
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** low
 **Effort:** Medium
 

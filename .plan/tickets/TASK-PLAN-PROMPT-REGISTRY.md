@@ -3,7 +3,7 @@
 
 # TASK-PLAN-PROMPT-REGISTRY: Implement prompt-template registry
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +11,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: done
+**Status**: Done
 **Priority**: medium
 **Labels**:
 **Assignee**:

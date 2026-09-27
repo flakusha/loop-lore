@@ -3,7 +3,7 @@
 
 # FEAT: Message Swipe & Replay Branch (Regenerate / Retry Generation)
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +11,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: open
+**Status**: Not Started
 **Priority**: medium
 **Labels**: chat, messages, swipe, regenerate, replay, branch, llm
 **Assignee**:

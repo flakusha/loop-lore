@@ -3,7 +3,7 @@
 
 # TASK: RPG Skill Tree Visualization Frontend
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 

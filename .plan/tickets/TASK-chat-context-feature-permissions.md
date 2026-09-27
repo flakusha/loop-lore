@@ -11,7 +11,7 @@
 **Epic:** epic-chat-lifecycle-moderation
 **Priority:** Medium
 **Effort:** Medium
-**Status:** ✅ Done
+**Status:** Done
 **Source:** `.tmp/loop-lore-ideas.md` — Text input: availability of functionality based on chat/world/location permissions
 
 ## Summary

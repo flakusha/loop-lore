@@ -3,7 +3,7 @@
 
 # TASK: Npc Social Dynamics
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** NPC-to-NPC information propagation + relationship drift driven by completed encounters (gossip spread, disposition shifts). Research-stage; builds on conversation/decision/memory tickets.

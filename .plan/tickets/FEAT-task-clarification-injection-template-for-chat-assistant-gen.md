@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done (2026-08-24, feat-injection-templates)
+**Status:** Done
+**Status Note:** 2026-08-24, feat-injection-templates
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-context-injection-templates

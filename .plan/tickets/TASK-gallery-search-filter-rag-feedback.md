@@ -11,7 +11,7 @@
 
 **Epic:** epic-frontend-gallery.md
 **See also:** epic-gallery-batch-operations.md
-**Status:** Open
+**Status:** Not Started
 **Priority:** High
 
 ## Scope

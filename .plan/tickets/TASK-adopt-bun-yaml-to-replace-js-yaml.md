@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 Deferred (lean-ctx gap; `adopt-bun-features` commit `255ef74c`)
+**Status:** Postponed
+**Status Note:** Postponed (lean-ctx gap; `adopt-bun-features` commit `255ef74c`)
 **Priority:** low
 **Effort:** Medium
 

@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** 🟢 Complete (implementation + integration + tests verified 2026-08-15; migration tests N/A — in-memory schemas, no DB tables)
+**Status:** Done
+**Status Note:** implementation + integration + tests verified 2026-08-15; migration tests N/A — in-memory schemas, no DB tables
 **Priority:** High
 **Effort:** Medium
 **Type:** Feature Epic

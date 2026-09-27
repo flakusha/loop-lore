@@ -3,7 +3,7 @@
 
 # TASK: RAG entity-fact extraction with source linking and review queue
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Large
 **Epic:** epic-rag-extract-link

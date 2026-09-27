@@ -3,7 +3,7 @@
 
 # TASK: Time Sync Replay Prohibition Policy
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-conversation-branching

@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** done
+**Status:** Done
 **Priority:** P2 — Medium
 **Effort:** Medium
 **Type:** Feature Task

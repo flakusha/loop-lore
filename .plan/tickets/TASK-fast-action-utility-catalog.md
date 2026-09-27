@@ -3,7 +3,7 @@
 
 # TASK: Fast-action utility & flow-control catalog (/pass /story /draft /see /lore /more-actions …)
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-frontend-chat-commands

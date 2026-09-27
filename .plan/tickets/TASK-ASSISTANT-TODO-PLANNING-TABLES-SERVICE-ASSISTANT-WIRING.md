@@ -3,7 +3,7 @@
 
 # TASK: Assistant todo planning: tables, service, assistant wiring
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 
 Imported from git issue f34235b.

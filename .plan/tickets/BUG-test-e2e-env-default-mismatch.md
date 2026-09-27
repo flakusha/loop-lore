@@ -3,7 +3,7 @@
 
 # e2e suite fails 29 tests with E2E_SAFEGUARD unset (canonical shape)
 
-**Status:** open
+**Status:** Not Started
 **Priority:** high
 **Effort:** Small
 **Type:** Bug
