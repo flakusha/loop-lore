@@ -17,12 +17,18 @@ const MAX_DELAY_MS = 10_000;
 
 /**
  * Map a raw transport failure onto the error the retry policy should see.
- * A cancelled signal and a fetch-level AbortError both become non-retryable
- * ProviderErrors; anything else is passed through untouched.
+ *
+ * Precedence matters and is preserved from the hand-rolled loops these three
+ * call sites used to carry: a non-retryable ProviderError is surfaced
+ * untouched (a 401 raised while the user cancelled is still an auth failure,
+ * and callers map auth errors differently from cancellations), then a
+ * cancelled signal, then a fetch-level AbortError. Everything else passes
+ * through and is retried.
  * @param cause - Raw failure from the request thunk
  * @param signal - Caller abort signal, when the request has one
  */
 function classifyFailure(cause: unknown, signal?: AbortSignal,): unknown {
+  if (cause instanceof ProviderError && !cause.retryable) { return cause; }
   if (signal?.aborted) { return new ProviderError("Request cancelled", undefined, undefined, false,); }
   if (cause instanceof Error && cause.name === "AbortError") {
     return new ProviderError("Request timed out", undefined, 504, false,);

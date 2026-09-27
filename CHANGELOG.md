@@ -18,6 +18,10 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 - **Provider retry deduplication (Effect v4, per-surface adoption)** — the three byte-identical backoff loops in the Anthropic, Ollama-native and OpenAI-compatible HTTP clients now share one policy in `src/generation/providers/retry.ts`, built on `Effect.retry` + `Schedule` from `effect@4.0.0-rc.117` (pinned exactly). Attempt count, delay sequence, retryability filter, abort/timeout classification and the surfaced error identity are unchanged; the triplicated loop bodies are gone.
 - **DB v0 collapse** — replaced 23 forward migrations + 20 `parts/` sub-modules with a single atomic `001_init.ts` (~4 600 lines, all 154 tables + indexes + triggers). Dropped `parts/` orchestration, the `parts/`-vs-append strategy policy, the `schema_version` ledger, and the boot-time `schema-backfill` step. Regenerated `schema.ts`, `schema-*.ts`, `schema-manifest.ts`, `insert-helpers.ts`, `db-schemas.ts`. AGENTS.md updated: append-only policy retained, but with only two valid paths (new top-level `NNN_*.ts` or extend current HEAD if not yet shipped).
 
+### Fixed
+
+- **Non-retryable provider errors keep their identity when the request is cancelled** — `withProviderRetry` classified an aborted signal before checking whether the failure was already a non-retryable `ProviderError`, so a 401 raised in the same tick as a user cancel surfaced as `Request cancelled` (no status) instead of the auth error. `callWithFailover` maps the two down different paths, which would have swallowed auth failures. Precedence now matches the hand-rolled loops these call sites replaced, and `retry.test.ts` pins it.
+
 ## [0.1.0] - 2026-08-15
 
 First release. Clean-room reimplementation of SillyTavern-style RPG chat.
