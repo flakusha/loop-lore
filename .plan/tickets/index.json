@@ -2747,6 +2747,19 @@
     "git_issue": "5d355aa",
     "status": "done"
   },
+  "BUG-GENERATION-COMPLETED-LATENCYMS-HARDCODED-TO-0-ON-TWO-EMIT-PA": {
+    "hash": "6b732d8",
+    "git_issue": "6b732d8",
+    "extid": "BUG-GENERATION-COMPLETED-LATENCYMS-HARDCODED-TO-0-ON-TWO-EMIT-PA",
+    "type": "BUG",
+    "title": "generation.completed latencyMs hardcoded to 0 on two emit paths",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-analytics-observability",
+    "tags": [],
+    "source": ".plan/tickets/BUG-generation-completed-latencyms-hardcoded-to-0-on-two-emit-pa.md",
+    "status": "Not Started"
+  },
   "BUG-GENERATION-CONTROL-PLANE-ROUTES-LACK-AUTHORIZATION": {
     "hash": "8746eca",
     "git_issue": "8746eca",
@@ -2759,6 +2772,19 @@
     "tags": [],
     "source": ".plan/tickets/BUG-generation-control-plane-routes-lack-authorization.md",
     "status": "done"
+  },
+  "BUG-GENERATION-FAILED-DROPS-MODEL-PROVIDER-CONTEXT": {
+    "hash": "0d42054",
+    "git_issue": "0d42054",
+    "extid": "BUG-GENERATION-FAILED-DROPS-MODEL-PROVIDER-CONTEXT",
+    "type": "BUG",
+    "title": "generation.failed drops model/provider context — failed calls unattributable",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-analytics-observability",
+    "tags": [],
+    "source": ".plan/tickets/BUG-generation-failed-drops-model-provider-context.md",
+    "status": "Not Started"
   },
   "BUG-GET-MESSAGES-ID-VARIANTS-HAS-TOCTOU-RACE-ON-PARENT-CHAT-AUTH": {
     "hash": "c1778a0",
@@ -17589,6 +17615,19 @@
     "source": ".plan/tickets/TASK-admin-handlers-lack-explicit-requireuserid-fail-open-structu.md",
     "git_issue": "67ed226",
     "status": "open"
+  },
+  "TASK-ADMIN-LLM-EXECUTION-ANALYTICS-PER-MODEL-PER-PROVIDER-ROLLUPS": {
+    "hash": "9219a9b",
+    "git_issue": "9219a9b",
+    "extid": "TASK-ADMIN-LLM-EXECUTION-ANALYTICS-PER-MODEL-PER-PROVIDER-ROLLUPS",
+    "type": "TASK",
+    "title": "Admin LLM execution analytics — per-model/per-provider tokens, latency, cost rollups",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-analytics-observability",
+    "tags": [],
+    "source": ".plan/tickets/TASK-admin-llm-execution-analytics-per-model-per-provider-rollups.md",
+    "status": "Not Started"
   },
   "TASK-ADMIN-MODULE-CLEANUP-INDEX-TS-EXPORTS-CONSISTENT-ERROR-HANDL": {
     "hash": "bc0b75f",
@@ -33779,6 +33818,19 @@
     "tags": [],
     "source": ".plan/tickets/TASK-per-command-valves-like-options-schema.md",
     "status": "open"
+  },
+  "TASK-PER-MODEL-PER-PROVIDER-COST-ATTRIBUTION-FOR-LLM-EXECUTION-ST": {
+    "hash": "d62ada5",
+    "git_issue": "d62ada5",
+    "extid": "TASK-PER-MODEL-PER-PROVIDER-COST-ATTRIBUTION-FOR-LLM-EXECUTION-ST",
+    "type": "TASK",
+    "title": "Per-model/per-provider cost attribution for LLM execution stats",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-analytics-observability",
+    "tags": [],
+    "source": ".plan/tickets/TASK-per-model-per-provider-cost-attribution-for-llm-execution-st.md",
+    "status": "Not Started"
   },
   "TASK-PERFORMANCE-DASHBOARD-SLOS": {
     "hash": "13632a5",
