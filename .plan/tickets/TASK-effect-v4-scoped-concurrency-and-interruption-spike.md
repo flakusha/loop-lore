@@ -8,7 +8,8 @@
 **Acceptance Criteria:** See ## Acceptance Criteria below — a cancellation case reproduced (or its absence recorded), the fork-scoped run compared, LOC measured, one of ADOPT/ADOPT-SUBSET/REJECT written, no `src/` change.
 
 
-**Status:** Not Started
+**Status:** Done
+**Status Note:** REJECT (2026-09-27, worktree effect-adoption-dedup) — effect@4.0.0-rc.117 ships no semaphore/permit operator anywhere (root or ./unstable/*), so there is nothing to migrate `src/llm/concurrency-limiter.ts` onto. Re-probe also confirmed the footgun: `Effect.forkScoped` followed by an immediate scope exit silently never runs the forked body.
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-effect-v4-adoption-evaluation
