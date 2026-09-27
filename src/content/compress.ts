@@ -4,8 +4,8 @@
 import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync, } from "node:fs";
 import { extname, join, } from "node:path";
 import { brotliCompressSync, gzipSync, } from "node:zlib";
-import { minifyCSS, minifyHTMLContent, minifyJS, minifyText, } from "./minify";
 import { safeFromString, } from "../utils/safe-buffer";
+import { minifyCSS, minifyHTMLContent, minifyJS, minifyText, } from "./minify";
 
 const COMPRESSIBLE_EXTS = new Set([".css", ".js", ".html", ".json", ".svg",],);
 
