@@ -89,8 +89,8 @@ function decodeCursor(cursor: string,): { createdAt: string; id: string } | null
   // parseable JSON with both fields rather than validating signature —
   // this is a pagination cursor, not a security token.
   try {
-    const decBuf = safeFromUint8Array(new Uint8Array(Buffer.from(cursor, "base64url",)),);
-    const decoded = decBuf.ok ? decBuf.buffer.toString("utf8") : "";
+    const decBuf = safeFromUint8Array(new Uint8Array(Buffer.from(cursor, "base64url",),),);
+    const decoded = decBuf.ok ? decBuf.buffer.toString("utf8",) : "";
     const parsed = safeJsonParse<{ c?: unknown; i?: unknown }>(decoded,);
     if (!parsed.ok) { return null; }
     const obj = parsed.value;
@@ -114,7 +114,7 @@ function encodeNextCursor(lastRow: MemoryAuditRow, _requestedLimit: number,): st
   // created_at (possible at second resolution) advance correctly via
   // the compound comparison in the query.
   const encBuf = safeFromString(jsonStringifyOr({ c: lastRow.createdAt, i: lastRow.id, },), "utf8",);
-  return encBuf.ok ? encBuf.buffer.toString("base64url") : "";
+  return encBuf.ok ? encBuf.buffer.toString("base64url",) : "";
 }
 
 /**

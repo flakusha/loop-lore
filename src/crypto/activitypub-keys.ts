@@ -17,8 +17,8 @@ import { assertFederationConsent, } from "../characters/services/federation-cons
 import { encryptBytes, } from "../crypto/actor-key-bytes";
 import type { DB, } from "../db/schema";
 import { safeJsonStringify, } from "../utils";
-import { getSmk, } from "./smk";
 import { safeFromUint8Array, } from "../utils/safe-buffer";
+import { getSmk, } from "./smk";
 export interface ActivityPubActorKey {
   id: string;
   actor_id: string;
@@ -92,7 +92,10 @@ export async function generateActivityPubKey(
         actor_id: actorId,
         key_id: keyId,
         public_jwk: publicJwkResult.value,
-        encrypted_private_jwk: ((): string => { const r = safeFromUint8Array(new Uint8Array(Buffer.from(encryptedPrivate,))); return r.ok ? r.buffer.toString("base64") : ""; })(),
+        encrypted_private_jwk: ((): string => {
+          const r = safeFromUint8Array(new Uint8Array(Buffer.from(encryptedPrivate,),),);
+          return r.ok ? r.buffer.toString("base64",) : "";
+        })(),
         status: "active",
         created_at: now,
       },)
