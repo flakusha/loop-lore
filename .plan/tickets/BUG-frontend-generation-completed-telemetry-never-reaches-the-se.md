@@ -11,6 +11,7 @@
 **Context:** Found 2026-09-28 verifying the 2026-09-27 LLM execution-stats batch on dev HEAD `fbce2b129`.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 **Related:** BUG-analytics-per-user-routes-filter-telemetry-events-by-raw-ids (sibling ticket — server-side half of the same invisibility), TASK-telemetry-endpoint-trusts-userid-from-request-body (Done — confirms server-derived identity posture)
+
 ## What
 
 - `src/frontend/alpine/chat-generations.ts:44` (stream-done) and `:114` (poll-completion) fire `trackTelemetry("generation.completed", { chatId })`.
