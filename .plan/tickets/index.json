@@ -11143,10 +11143,10 @@
   "EPIC-RECURSIVE-SELF-IMPROVEMENT": {
     "epic": "",
     "extid": "EPIC-RECURSIVE-SELF-IMPROVEMENT",
-    "hash": "pending",
+    "hash": "42bbf1a",
     "label": "epic",
     "priority": "High",
-    "source": ".plan/tickets/epic-recursive-self-improvement.md",
+    "source": ".plan/epics/epic-recursive-self-improvement.md",
     "status": "Not Started",
     "tags": [
       "watchdog",
@@ -11165,7 +11165,8 @@
       "dev-loop"
     ],
     "title": "Recursive Self-Improvement — Watchdog, Agent Loop & On-the-Fly Development",
-    "type": "EPIC"
+    "type": "EPIC",
+    "git_issue": "42bbf1a"
   },
   "EPIC-RELATIONSHIPS": {
     "epic": "",
@@ -35657,26 +35658,6 @@
     "title": "Recursive Self-Improvement: Agent Worktree Spawn (TTY-free) and Sandbox",
     "type": "TASK"
   },
-  "TASK-RECURSIVE-SELF-IMPROVEMENT-BRIEFINGSCRIPT-LINTER": {
-    "epic": "epic-recursive-self-improvement",
-    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-BRIEFINGSCRIPT-LINTER",
-    "hash": "pending",
-    "label": "task",
-    "priority": "Medium",
-    "source": ".plan/tickets/TASK-recursive-self-improvement-briefingscript-linter.md",
-    "status": "Not Started",
-    "tags": [
-      "briefingscript",
-      "sase",
-      "ticket-lint",
-      "pre-agent",
-      "briefing",
-      "structured-spec",
-      "validator"
-    ],
-    "title": "BriefingScript Linter — Pre-Agent Ticket Quality Gate",
-    "type": "TASK"
-  },
   "TASK-RECURSIVE-SELF-IMPROVEMENT-BRIEFINGSCRIPT-LINTER-PRE-AGENT-T": {
     "epic": "epic-recursive-self-improvement",
     "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-BRIEFINGSCRIPT-LINTER-PRE-AGENT-T",
@@ -35740,26 +35721,6 @@
     "title": "Recursive Self-Improvement: Evaluator Reliability Drift Detector",
     "type": "TASK"
   },
-  "TASK-RECURSIVE-SELF-IMPROVEMENT-EVALUATOR-RELIABILITY-DRIFT-DETECTOR": {
-    "epic": "epic-recursive-self-improvement",
-    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-EVALUATOR-RELIABILITY-DRIFT-DETECTOR",
-    "hash": "pending",
-    "label": "task",
-    "priority": "High",
-    "source": ".plan/tickets/TASK-recursive-self-improvement-evaluator-reliability-drift-detector.md",
-    "status": "Not Started",
-    "tags": [
-      "evaluator-reliability",
-      "drift",
-      "flake-rate",
-      "suspicious-pass",
-      "coverage-regression",
-      "self-confirming-loop",
-      "urc-rsi-survey"
-    ],
-    "title": "Evaluator Reliability Drift Detector — Flake / Suspicious-Pass / Coverage-Regression Tracker",
-    "type": "TASK"
-  },
   "TASK-RECURSIVE-SELF-IMPROVEMENT-HEALTH-LIVENESS-READINESS-PROBES": {
     "epic": "epic-recursive-self-improvement",
     "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-HEALTH-LIVENESS-READINESS-PROBES",
@@ -35777,26 +35738,6 @@
       "http"
     ],
     "title": "Recursive Self-Improvement: Health Liveness Readiness Probes",
-    "type": "TASK"
-  },
-  "TASK-RECURSIVE-SELF-IMPROVEMENT-MERGE-READINESS-PACK": {
-    "epic": "epic-recursive-self-improvement",
-    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-MERGE-READINESS-PACK",
-    "hash": "pending",
-    "label": "task",
-    "priority": "Medium",
-    "source": ".plan/tickets/TASK-recursive-self-improvement-merge-readiness-pack.md",
-    "status": "Not Started",
-    "tags": [
-      "merge-readiness-pack",
-      "mrp",
-      "sase",
-      "briefing",
-      "evaluator",
-      "evidence",
-      "gate-report"
-    ],
-    "title": "Merge-Readiness Pack Generator from Check-Report JSON",
     "type": "TASK"
   },
   "TASK-RECURSIVE-SELF-IMPROVEMENT-MERGE-READINESS-PACK-GENERATOR-FR": {
@@ -35818,26 +35759,6 @@
       "gate-report"
     ],
     "title": "Recursive Self-Improvement: Merge-Readiness Pack Generator from Check-Report JSON",
-    "type": "TASK"
-  },
-  "TASK-RECURSIVE-SELF-IMPROVEMENT-N-VERSION-PATCH-ARENA": {
-    "epic": "epic-recursive-self-improvement",
-    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-N-VERSION-PATCH-ARENA",
-    "hash": "pending",
-    "label": "task",
-    "priority": "High",
-    "source": ".plan/tickets/TASK-recursive-self-improvement-n-version-patch-arena.md",
-    "status": "Not Started",
-    "tags": [
-      "n-version",
-      "patch-arena",
-      "sase",
-      "agentic-se",
-      "evaluation",
-      "candidate-ranking",
-      "cross-reference"
-    ],
-    "title": "N-Version Patch Arena — Cross-Reference Candidate Patches Against the Deterministic Evaluator",
     "type": "TASK"
   },
   "TASK-RECURSIVE-SELF-IMPROVEMENT-N-VERSION-PATCH-ARENA-DETERMINIST": {

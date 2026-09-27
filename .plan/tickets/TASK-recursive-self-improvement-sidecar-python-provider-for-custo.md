@@ -36,6 +36,7 @@ A sidecar pattern lets loop-lore shell out to a user-provided Python HTTP server
   - `types.ts` — provider config: `endpoint: string`, `headers: Record<string,string>`, `requestShape: 'openai' | 'tgi' | 'custom'`, `streamEventType: string`, `tlsVerify: boolean`
   - `index.ts` — registry export
 - Config surface (`src/config/schema.ts`):
+
   ```typescript
   sidecarPython: {
     providers: Array<{
@@ -49,6 +50,7 @@ A sidecar pattern lets loop-lore shell out to a user-provided Python HTTP server
     }>;
   };
   ```
+
 - Discovery via `Bun.which('python3')` (per `TASK-adopt-bun-which-for-binary-discovery`); surface a `bun run sidecar:discover` helper that probes for `python3`, `rembg`, `transformers`, etc.
 - Sidecar health probe via `GET <endpoint>/health` at startup, surfaced through `src/admin/provider-health.ts`
 - Reference recipes in `configs/config.sidecar-python.example.yaml` for: TGI, vLLM, llama-cpp-python, custom-transformers
