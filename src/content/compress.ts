@@ -5,6 +5,7 @@ import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFi
 import { extname, join, } from "node:path";
 import { brotliCompressSync, gzipSync, } from "node:zlib";
 import { minifyCSS, minifyHTMLContent, minifyJS, minifyText, } from "./minify";
+import { safeFromString, } from "../utils/safe-buffer";
 
 const COMPRESSIBLE_EXTS = new Set([".css", ".js", ".html", ".json", ".svg",],);
 
@@ -105,7 +106,9 @@ export async function compressFile(filePath: string,): Promise<void> {
   const extension = extname(filePath,);
   const minimized = await _getMinimizedContent(content, extension,);
 
-  const buffer = Buffer.from(minimized, "utf8",);
+  const bufResult = safeFromString(minimized, "utf8",);
+  if (!bufResult.ok) { throw bufResult.error; }
+  const buffer = bufResult.buffer;
 
   if (minimized.length < content.length) {
     writeFileSync(filePath, minimized, "utf8",);
