@@ -66,6 +66,35 @@ describe("insertUnique", () => {
     expect(row?.display_name,).toBe("Alice",);
   });
 
+  test("id in the conflict target reports 'skipped' for a duplicate id (no probe misfire)", async () => {
+    const id1 = crypto.randomUUID();
+    const first = await insertUnique(
+      db,
+      "users",
+      {
+        id: id1,
+        username: `probe-${id1}`,
+        display_name: "Probe",
+      },
+      ["id",],
+    );
+    expect(first,).toBe("inserted",);
+
+    // Same id → genuine conflict on the id column itself. The probe would
+    // find the pre-existing row AT values.id and misreport "inserted".
+    const second = await insertUnique(
+      db,
+      "users",
+      {
+        id: id1,
+        username: `probe-other-${crypto.randomUUID()}`,
+        display_name: "Probe Two",
+      },
+      ["id",],
+    );
+    expect(second,).toBe("skipped",);
+  });
+
   test("returns 'inserted' for distinct usernames", async () => {
     const username = `bob-${crypto.randomUUID()}`;
     const result = await insertUnique(
