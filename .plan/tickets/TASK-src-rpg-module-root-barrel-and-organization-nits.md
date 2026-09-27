@@ -24,17 +24,17 @@
 
 NIT 1 - Barrel shape inconsistency (3 styles in 10 NSFW barrels):
 
-  - 5 just-shipped barrels (`seduction.ts`, `encounter.ts`, `fantasy.ts`) use `export * from "./<dir>/index.js"` (re-export dir index)
-  - 5 pre-existing barrels (`body.ts`, `chemistry.ts`, `intimacy.ts`, `reproduction.ts`, `reputation.ts`) use `export * from "./<dir>/service"` (straight to service)
-  - 2 new barrels deviate: `mood.ts` (named `export { MoodService }`, declaration-merged factory+interface) and `nsfw-skills.ts` (named multi-export with explicit type list)
+- 5 just-shipped barrels (`seduction.ts`, `encounter.ts`, `fantasy.ts`) use `export * from "./<dir>/index.js"` (re-export dir index)
+- 5 pre-existing barrels (`body.ts`, `chemistry.ts`, `intimacy.ts`, `reproduction.ts`, `reputation.ts`) use `export * from "./<dir>/service"` (straight to service)
+- 2 new barrels deviate: `mood.ts` (named `export { MoodService }`, declaration-merged factory+interface) and `nsfw-skills.ts` (named multi-export with explicit type list)
 
   Proposal: pick one shape. (a) `export *` from dir index is curated and surface-stable; (b) `export *` from service is thin but couples barrels to service layout; (c) named multi-export maximizes readability. Recommend (a) project-wide and migrate the 5 pre-existing barrels in a follow-up ticket.
 
 NIT 2 - Pluralization split (3 of 10 NSFW dirs are plural):
 
-  - plural dirs: `src/rpg/encounters/`, `src/rpg/fantasies/`, `src/rpg/loot/`, `src/rpg/dice/`
-  - singular dirs: `src/rpg/seduction/`, `src/rpg/intimacy/`, `src/rpg/combat/`, `src/rpg/skills/`, `src/rpg/crafting/`, `src/rpg/body-systems/`
-  - singleton at root: `src/rpg/quests.ts` (no dir)
+- plural dirs: `src/rpg/encounters/`, `src/rpg/fantasies/`, `src/rpg/loot/`, `src/rpg/dice/`
+- singular dirs: `src/rpg/seduction/`, `src/rpg/intimacy/`, `src/rpg/combat/`, `src/rpg/skills/`, `src/rpg/crafting/`, `src/rpg/body-systems/`
+- singleton at root: `src/rpg/quests.ts` (no dir)
 
   The just-shipped `src/rpg/encounter.ts` and `src/rpg/fantasy.ts` use singular filenames for plural dirs. Both work, but the filename-side plural is more discoverable.
 
@@ -42,9 +42,9 @@ NIT 2 - Pluralization split (3 of 10 NSFW dirs are plural):
 
 NIT 3 - Three sibling files at root share one theme (`reproduction/`):
 
-  - `src/rpg/reproduction.ts` (top-level barrel)
-  - `src/rpg/reproduction-birth.ts` (birth mechanics)
-  - `src/rpg/reproduction-store.ts` (store helpers)
+- `src/rpg/reproduction.ts` (top-level barrel)
+- `src/rpg/reproduction-birth.ts` (birth mechanics)
+- `src/rpg/reproduction-store.ts` (store helpers)
 
   Compare to the 10 sibling dirs (`seduction/`, `encounters/`, ...) which organize their sub-files into a single dir. The three flat files are a leftover from before the dir migration.
 
