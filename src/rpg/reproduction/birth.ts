@@ -2,10 +2,10 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { Kysely, } from "kysely";
-import type { DB, } from "../db/schema";
-import { getLogger, } from "../logger";
-import { uid, } from "../utils";
-import { getPregnancy, getPregnancyMeta, PREGNANCY_EFFECT, } from "./reproduction-store";
+import type { DB, } from "../../db/schema";
+import { getLogger, } from "../../logger";
+import { uid, } from "../../utils";
+import { getPregnancy, getPregnancyMeta, PREGNANCY_EFFECT, } from "./store";
 
 /**
  * Birth: removes the pregnancy row, creates the child actor, and
