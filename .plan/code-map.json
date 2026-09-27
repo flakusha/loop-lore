@@ -101,6 +101,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-admin-module-cleanup-index-ts-exports-consistent-error-handl.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md"
     }
   ],
   "src/admin/model-capabilities.ts": [
@@ -4457,6 +4461,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-import-export-io.md"
+    }
+  ],
+  "src/characters/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md"
     }
   ],
   "src/characters/integration-growth.test.ts": [
@@ -29299,6 +29309,12 @@
       "source": ".plan/tickets/TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s.md"
     }
   ],
+  "src/routing/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md"
+    }
+  ],
   "src/rpg": [
     {
       "kind": "epic",
@@ -29471,6 +29487,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-add-missing-rpg-module-barrels.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md"
     }
   ],
   "src/rpg/body/appearance.ts": [
@@ -29527,6 +29547,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-add-missing-rpg-module-barrels.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md"
     }
   ],
   "src/rpg/combat.test.ts": [
@@ -29883,6 +29907,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-add-missing-rpg-module-barrels.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md"
+    }
+  ],
+  "src/rpg/encounters.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md"
     }
   ],
   "src/rpg/encounters/aftercare.ts": [
@@ -30073,6 +30107,12 @@
       "source": ".plan/epics/epic-exploration-discovery.md"
     }
   ],
+  "src/rpg/fantasies.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md"
+    }
+  ],
   "src/rpg/fantasies/index.ts": [
     {
       "kind": "ticket",
@@ -30139,6 +30179,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-add-missing-rpg-module-barrels.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md"
     }
   ],
   "src/rpg/fantasy/categories.ts": [
@@ -30227,6 +30271,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-rpg-mechanics.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md"
     }
   ],
   "src/rpg/integration-registry.ts": [
@@ -30257,6 +30305,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-shared-schemas.md"
+    }
+  ],
+  "src/rpg/integration-registry/edges/quest.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md"
     }
   ],
   "src/rpg/integration-registry/player-state-layers.ts": [
@@ -30321,6 +30375,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-add-missing-rpg-module-barrels.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md"
     }
   ],
   "src/rpg/intimacy/actions.ts": [
@@ -30757,6 +30815,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-add-missing-rpg-module-barrels.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md"
     }
   ],
   "src/rpg/mounts/riding.ts": [
@@ -30843,6 +30905,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-add-missing-rpg-module-barrels.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md"
     }
   ],
   "src/rpg/pets/battles.ts": [
@@ -31005,6 +31071,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-033.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md"
     }
   ],
   "src/rpg/quests/index.ts": [
@@ -31099,6 +31169,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-038.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md"
     }
   ],
   "src/rpg/reproduction-reputation.test.ts": [
@@ -31115,6 +31189,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-038.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md"
     }
   ],
   "src/rpg/reproduction.test.ts": [
@@ -31139,6 +31217,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-add-missing-rpg-module-barrels.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md"
     }
   ],
   "src/rpg/reputation-nsfw/conquests.ts": [
@@ -31187,6 +31269,10 @@
       "source": ".plan/tickets/TASK-add-missing-rpg-module-barrels.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/social-interaction.md"
     }
@@ -31223,6 +31309,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-add-missing-rpg-module-barrels.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md"
     }
   ],
   "src/rpg/seduction/arousal.ts": [
