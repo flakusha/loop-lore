@@ -8,7 +8,8 @@
 **Acceptance Criteria:** See ## Acceptance Criteria below — parity demonstrated on the failure path, LOC/latency measured, explicit breaker answer, one of ADOPT/ADOPT-SUBSET/REJECT written, no `src/` change.
 
 
-**Status:** Not Started
+**Status:** Done
+**Status Note:** ADOPT (2026-09-27, worktree effect-adoption-dedup) — parity measured on attempt count, delay sequence, retryability filter and error identity; three byte-identical provider loops collapsed into `src/generation/providers/retry.ts`. The circuit breaker is NOT redundant and stays: v4 ships no breaker/limit operator at all, and `callWithFailover` also does cross-provider failover plus cancellation remapping that `Schedule` cannot express.
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-effect-v4-adoption-evaluation

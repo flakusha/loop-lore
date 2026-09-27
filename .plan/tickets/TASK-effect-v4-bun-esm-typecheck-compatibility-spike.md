@@ -8,7 +8,8 @@
 **Acceptance Criteria:** See ## Acceptance Criteria below — measured numbers recorded in the epic's Spike Results table, PASS/FAIL verdict written, no `package.json` change lands.
 
 
-**Status:** Not Started
+**Status:** Done
+**Status Note:** PASS (2026-09-27, worktree effect-adoption-dedup) — installs, runs under Bun 1.4.2, typechecks under tsgo strict with no new `bun run check` failure; the feared typecheck risk never applied because the repo already sets `skipLibCheck: true`
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-effect-v4-adoption-evaluation
