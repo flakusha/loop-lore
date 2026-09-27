@@ -6,7 +6,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** Code+tests+schema done (migration 035); UNWIRED — routes pending
 **Priority:** Medium
 **Effort:** Medium

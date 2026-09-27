@@ -6,7 +6,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
+**Status:** Done
 **Status Note:** (Phase A) — research + schema proposal complete; tooling to land
 **Priority:** High
 **Effort:** Large (spread across 4 phases)

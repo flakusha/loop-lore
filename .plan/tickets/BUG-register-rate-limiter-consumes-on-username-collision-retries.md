@@ -3,9 +3,13 @@
 
 # BUG: register rate limiter consumes on username-collision retries
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** low
 **Effort:** Medium
+
+## Context
+
+Caught during post-merge audit of commit ba2871422 (register path). Per-IP rate-limit tokens were being consumed by the route handler before the username-collision check, exposing a denial-of-service via username guessing.
 
 ## Summary
 

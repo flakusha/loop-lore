@@ -7,7 +7,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** Near-complete — 12 tabs + user Flag button/dialog shipped; remaining gap: Revision History
 **Priority:** Medium
 **Effort:** Medium

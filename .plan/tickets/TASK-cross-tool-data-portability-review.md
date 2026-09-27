@@ -1,4 +1,4 @@
-**Status:** Not Started
+**Status:** Done
 **Status Note:** Analysis (investigation complete, not scheduled)
 Priority: Medium
 Effort: TBD (analysis only)
@@ -20,7 +20,7 @@ Related: docs/ideas/index.md (gap summary refreshed 2026-08-12)
 
 # Cross-Tool Data Portability Review (both directions)
 
-**Status:** Not Started
+**Status:** Done
 **Status Note:** Analysis complete (2026-08-12). Informs follow-up tickets; not an
 implementation task itself. Research sourced from SillyTavern, RisuAI, Agnai,
 Chub, NovelAI, Open WebUI, KoboldCpp current (2025-2026) docs.

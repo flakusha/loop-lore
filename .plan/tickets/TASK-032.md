@@ -3,7 +3,7 @@
 
 # TASK-032: User Seeding & Role Expansion
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** Shipped — script + matrix + role-change audit in commits c6f2a6b / 5f49431; admin user-list UI already existed in pre-batch code (no new file created)
 **Priority:** medium
 **Effort:** Medium
@@ -11,7 +11,7 @@
 **Context:** User bootstrap + RBAC expansion.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** seed + matrix + audit shipped 2026-09-22
 **Priority**: medium
 **Effort**: Medium

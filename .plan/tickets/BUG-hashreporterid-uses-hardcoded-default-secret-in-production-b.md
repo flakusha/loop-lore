@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** worktree fix-nsfw-hashreporterid-default-secret, pending commit
 **Priority:** high
 **Effort:** Small
