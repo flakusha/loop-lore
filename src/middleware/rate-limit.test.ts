@@ -285,4 +285,64 @@ describe("createRateLimiter", () => {
     const headers = rateLimitHeaders(result, 0,);
     expect(headers["Retry-After"],).toBe("1",);
   });
+
+  // ── Two-step gate (peek / record / refund) ─────────────────────────────
+  // BUG-register-rate-limiter-consumes-on-username-collision-retries
+
+  test("peek does not consume a slot", () => {
+    const limiter = makeLimiter(60_000, 2,);
+    expect(limiter.peek("k",).allowed,).toBe(true,);
+    expect(limiter.peek("k",).allowed,).toBe(true,);
+    expect(limiter.peek("k",).allowed,).toBe(true,); // still allowed: never recorded
+    expect(limiter.consume("k",).allowed,).toBe(true,);
+    expect(limiter.consume("k",).allowed,).toBe(true,);
+    expect(limiter.consume("k",).allowed,).toBe(false,);
+  });
+
+  test("peek shows the same allowed flag as consume under contention", () => {
+    const limiter = makeLimiter(60_000, 1,);
+    limiter.record("k",);
+    expect(limiter.peek("k",).allowed,).toBe(false,);
+    expect(limiter.consume("k",).allowed,).toBe(false,);
+  });
+
+  test("record pushes a timestamp without re-blocking", () => {
+    const limiter = makeLimiter(60_000, 3,);
+    limiter.record("k",);
+    limiter.record("k",);
+    expect(limiter.consume("k",).allowed,).toBe(true,);
+    expect(limiter.consume("k",).allowed,).toBe(false,);
+  });
+
+  test("refund pops the most recent timestamp", () => {
+    const limiter = makeLimiter(60_000, 1,);
+    limiter.record("k",);
+    expect(limiter.consume("k",).allowed,).toBe(false,);
+    limiter.refund("k",);
+    expect(limiter.consume("k",).allowed,).toBe(true,);
+  });
+
+  test("refund is a no-op when the bucket is empty", () => {
+    const limiter = makeLimiter(60_000, 1,);
+    limiter.refund("k",);
+    limiter.refund("k",);
+    expect(limiter.peek("k",).allowed,).toBe(true,);
+  });
+
+  test("refund releases a slot under sliding-window math", () => {
+    // BUG-register-rate-limiter-consumes-on-username-collision-retries:
+    // 3 collisions: peek-allowed, then refund. Bucket stays at zero.
+    const limiter = makeLimiter(60_000, 3,);
+    for (let i = 0; i < 3; i++) {
+      const peeked = limiter.peek("ip",);
+      expect(peeked.allowed,).toBe(true,);
+      limiter.refund("ip",);
+    }
+    expect(limiter.peek("ip",).allowed,).toBe(true,);
+    expect(limiter.peek("ip",).remaining,).toBe(3,);
+    limiter.record("ip",);
+    limiter.record("ip",);
+    limiter.record("ip",);
+    expect(limiter.peek("ip",).allowed,).toBe(false,);
+  });
 });
