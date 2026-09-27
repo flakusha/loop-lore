@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// size-allow: 275
+// size-allow: 285
 
 /**
  * Auto-generation orchestration.
@@ -95,6 +95,9 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
   };
 
   let attemptId: string | undefined;
+  let resolvedModel: string | undefined;
+  let resolvedProviderName: string | undefined;
+  const startedAtMs = Date.now();
 
   try {
     emitProgress("preparing",);
@@ -175,6 +178,8 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       systemPromptOverride,
     },);
     const { resolved, prompt, } = prepared;
+    resolvedModel = resolved.resolvedModel;
+    resolvedProviderName = resolved.resolvedProviderName;
     const tracking = combineTrackingAbortSignal({ tracking: prepared.tracking, abortSignal: opts.abortSignal, },);
     if (parentMessageId && tracking) { attemptId = tracking.attemptId; }
 
@@ -257,6 +262,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       moodShiftDelta: hooks.moodShiftDelta,
       worldId: chat?.world_id,
       attemptId,
+      startedAtMs,
       resolvedModel: resolved.resolvedModel,
       resolvedProviderName: resolved.resolvedProviderName,
       isGroupChat: chat?.type === "group",
@@ -268,6 +274,9 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       // Scope by userId — see BUG-bug-async-lifecycle-writes-request-results-unscoped-by-user.
       asyncStore.fail(requestId, { userId, }, String(error,),);
     }
-    await handleGenerationError(error, database, d, chatId, userId, attemptId,);
+    await handleGenerationError(error, database, d, chatId, userId, attemptId, {
+      model: resolvedModel,
+      provider: resolvedProviderName,
+    },);
   }
 }
