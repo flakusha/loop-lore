@@ -54,6 +54,11 @@ describe("Access control E2E", () => {
       (res,) => res.url().includes("/api/auth/login",) && res.request().method() === "POST",
       { timeout: 30_000, },
     );
+    // The login POST returning is not the same as the login navigation
+    // finishing — the client still has a redirect to /views/chat in flight.
+    // Callers goto() immediately, and that goto is aborted if a competing
+    // navigation lands first, so wait for the redirect to actually settle.
+    await page.waitForURL((url,) => url.pathname === "/views/chat", { timeout: 30_000, },);
   }
 
   beforeAll(async () => {
