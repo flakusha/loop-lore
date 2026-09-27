@@ -11,7 +11,7 @@
 **Context:** Gameplay-layer mood modifiers feeding intimacy/seduction.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: Done — pre-existing implementation; mood module shipped in commits 2b227bde8 / d60c43349 / d286585cb
+**Status**: Done
 **Priority**: high
 **Labels**: nsfw, rpg, game-mechanics
 **Epic**: epic-nsfw-game-mechanics

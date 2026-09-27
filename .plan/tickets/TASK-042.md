@@ -11,7 +11,7 @@
 **Context:** Gameplay-layer social consequences feeding faction/crime.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: Done — pre-existing implementation; reputation module shipped in commits e3abf5adf / d286585cb / a88211f72
+**Status**: Done
 **Priority**: medium
 **Labels**: nsfw, rpg, game-mechanics
 **Epic**: epic-nsfw-game-mechanics
