@@ -2148,7 +2148,7 @@
     "git_issue": "9699dbb",
     "extid": "BUG-DOCS-SITE-BUILD-EMITS-DANGLING-VP-ICONS-CSS-LINK-FAILING-EVE",
     "type": "BUG",
-    "title": "Docs site build emits dangling vp-icons.css link, failing every docs-mermaid browser e2e page",
+    "title": "Docs build dies mid-render on case-colliding plan pages, leaving every page 404ing on vp-icons.css",
     "label": "bug",
     "priority": "medium",
     "epic": "",
