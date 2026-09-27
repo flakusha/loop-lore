@@ -683,6 +683,7 @@ export interface Chats {
   custom_instructions: string | null;
   prompt_template_id: string | null;
   active_branch_id: string | null;
+  autonomy_config: Generated<string>;
 }
 
 // ── chat_random_events ────────────────────────────────────────────
@@ -1376,4 +1377,14 @@ export interface GameStates {
   message_id: string | null;
   state: Generated<string>;
   created_at: Generated<string>;
+}
+
+// ── autonomy_budget ────────────────────────────────────────────
+export interface AutonomyBudget {
+  scope_kind: string;
+  scope_id: string;
+  limit_name: string;
+  window_start_at: string;
+  window_count: Generated<number>;
+  updated_at: Generated<string>;
 }

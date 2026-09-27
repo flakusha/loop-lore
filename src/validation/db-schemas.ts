@@ -1040,6 +1040,7 @@ export const WorldsSchema = t.Object({
   rpg_loot: t.Optional(t.Number(),),
   rpg_quests: t.Optional(t.Number(),),
   rules: t.Optional(t.String(),),
+  autonomy_config: t.Optional(t.String(),),
 },);
 
 // ── activitypub_actor_keys ────────────────────────────────────────────
@@ -1716,6 +1717,7 @@ export const ChatsSchema = t.Object({
   custom_instructions: t.Optional(t.String(),),
   prompt_template_id: t.Optional(t.String(),),
   active_branch_id: t.Optional(t.String(),),
+  autonomy_config: t.Optional(t.String(),),
 },);
 
 // ── chat_random_events ────────────────────────────────────────────
@@ -2931,4 +2933,14 @@ export const GameStatesSchema = t.Object({
   message_id: t.Optional(t.String(),),
   state: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
+},);
+
+// ── autonomy_budget ────────────────────────────────────────────
+export const AutonomyBudgetSchema = t.Object({
+  scope_kind: t.String(),
+  scope_id: t.String(),
+  limit_name: t.String(),
+  window_start_at: t.String(),
+  window_count: t.Optional(t.Number(),),
+  updated_at: t.Optional(t.String(),),
 },);

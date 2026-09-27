@@ -188,6 +188,14 @@ export const SCHEMA = new SchemaManifest()
     hour_bucket: col("text", { notNull: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("autonomy_budget", {
+    scope_kind: col("text", { notNull: true, },),
+    scope_id: col("text", { notNull: true, },),
+    limit_name: col("text", { notNull: true, },),
+    window_start_at: col("text", { notNull: true, },),
+    window_count: col("integer", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("battles", {
     id: col("text", { primaryKey: true, hasDefault: true, },),
     chat_id: col("text", { notNull: true, },),
@@ -1798,6 +1806,7 @@ export const SCHEMA = new SchemaManifest()
     custom_instructions: col("text",),
     prompt_template_id: col("text",),
     active_branch_id: col("text",),
+    autonomy_config: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("messages", {
     id: col("text", { primaryKey: true, },),
@@ -2166,6 +2175,7 @@ export const SCHEMA = new SchemaManifest()
     rpg_loot: col("integer", { notNull: true, hasDefault: true, },),
     rpg_quests: col("integer", { notNull: true, hasDefault: true, },),
     rules: col("text", { notNull: true, hasDefault: true, },),
+    autonomy_config: col("text", { notNull: true, hasDefault: true, },),
   },)
   // ── Generation & Prompts ──────────────────────────────────────────────
   .table("model_capabilities", {
