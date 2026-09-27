@@ -162,10 +162,17 @@ if (p.required && !body.params[p.name]) { missing.push(p.name); }
 
 `txt2img` declares `width: { min: 64, max: 2048, step: 64 }` and accepts
 `width: 999999` or `width: 13`, which flow straight into the ComfyUI graph. This is
-a **trust boundary**, not cosmetics. The primitives already exist (`clamp`,
-`clampUnit` in `src/utils/clamp.ts`; `t.Number({ minimum, maximum })` at
-`src/generation/lora/routes/validate.ts:13`). Tracked in
+a **trust boundary**, not cosmetics. The primitives already exist (`clamp` at
+`src/utils/clamp.ts:30`, `clampUnit` at `:56`; `t.Number({ minimum, maximum })`
+at `src/generation/lora/routes/validate.ts:13`). Tracked in
 `TASK-comfyui-template-parameter-validation`.
+
+**Second bug in the same three lines:** `!body.params[p.name]` is a falsy test, so
+a legitimately-supplied `0` or `false` is reported as a *missing* required
+parameter. `steps: 0`, `cfg_scale: 0`, and `enableHr: false` are all valid inputs
+that the route rejects. Falsy is not absent — the check needs
+`=== undefined` / `=== null`. Found under adversarial review 2026-09-27; it is
+narrower than the range gap but on the same line, so it rides in the same ticket.
 
 ### Defect 6 — no width/height in the generation options type (found 2026-09-27)
 
@@ -205,28 +212,64 @@ Two consequences: model-family detection cannot infer from
 > original design proposed a new `comfy_workflows` table with a `body_path`
 > column. Both parts were re-checked against the code and **rejected**. The
 > reasoning is preserved below so the decision is not re-litigated from memory.
+>
+> **Second correction, same day, under adversarial review of the first.** The
+> first amendment also claimed the payload variant "slots into that union with no
+> schema change" and that an `is_default` concept already existed. Both were
+> **wrong**. See the table below and *Cost of adding a modality*.
 
-`prompt_templates` (`src/db/schema-manifest.ts:2209-2220`) already carries the
-full shape the original design proposed:
+`prompt_templates` (`src/db/schema-manifest.ts:2209-2220`) is exactly
+`id, owner_id, modality, name, description, model_family, detail_level, payload,
+created_at, updated_at`. `modality` is a **plain `text` column with a default**
+(`col("text", { notNull: true, hasDefault: true })`) — there is no DB-level enum
+constraint, so SQLite needs no table rebuild to accept a new value.
 
 | original proposal | existing column |
 | --- | --- |
 | `id`, `name`, `description` | same |
 | `family` | `model_family` (present, unused for image) |
-| `category` | `modality` (enum: `llm`/`image`/`video`/`audio`) |
+| `category` | `modality` (`llm`/`image`/`video`/`audio`) |
 | `params` | `payload` (JSON, dispatched on `modality`) |
 | `owner_id` | `owner_id` (per-user templates already supported) |
-| `is_default` | a default concept already exists — see the admin `PUT /:id/defaults` route (`src/routes/admin-templates/profiles.ts:36-59`) |
+| `is_default` | **absent.** No `is_default` column exists. |
 
-`src/generation/template-types.ts:34-49` already dispatches `payload` on
-`modality` through the `TemplatePayload` union (`ImageTemplatePayload`,
-`LlmTemplatePayload`, `SimpleTemplatePayload`). A `workflow` modality plus a
-`ComfyWorkflowPayload` variant slots into that union with **no schema change**,
-and inherits ownership, admin CRUD, the list endpoint, and the Alpine admin
-surface.
+**Correcting a false claim.** An earlier draft cited
+`PUT /api/admin/templates/:id/defaults` (`src/routes/admin-templates/profiles.ts:36-59`)
+as evidence a default concept exists. That is wrong twice over: the route is in
+`update.ts:79-124`, and it updates **model generation defaults** (`cfgScale`,
+`steps`, `sampler`, `scheduler`, `clipSkip`) inside a `system_config` KV blob
+(`shared.ts:21-39`, `defaultProfileId`). It has nothing to do with marking a
+template row as default. The epic's `resolveWorkflow` step *"default row for
+(familyHint, category)"* therefore has **no storage at all** and `is_default` is a
+genuinely new column.
 
-Genuinely new fields: `enabled`, `lora_slots`, `min_vram`. That is a smaller diff
-than a new table plus a parallel admin UI.
+Genuinely new columns: `is_default`, `enabled`, `lora_slots`, `min_vram`.
+
+**Cost of adding a modality — larger than first stated.** A `workflow` value is a
+TS-level enum change, not a DB one, but it is duplicated in **9 places**:
+
+- 3 enum definitions: `src/db/enums-generation.ts:78-85` (`TemplateModality`),
+  `src/validation/db-schemas.ts:516` (**generated** — `bun run db:sync-*`),
+  `src/validation/schemas/templates.ts:15-20` (hand-written TypeBox literals, a
+  *separate* definition from the generated one)
+- 6 hardcoded `MODALITIES` arrays: `src/generation/template-service/crud.ts:15`,
+  `src/routes/templates/crud.ts:39`, `src/routes/templates/transfer.ts:25`
+- `src/test-utils/insert-helpers.ts` (generated; types the column)
+
+**Two silent fallthroughs must be closed or the new modality misbehaves quietly:**
+
+1. `parseTemplatePayload` (`src/generation/template-types.ts:83-103`) branches on
+   `llm`, then `image`, then **falls through to `SimpleTemplatePayload` on anything
+   else** (line 101). A `workflow` payload with no `body: string` returns `null`
+   → rejected at create by the shape probe at `template-service/crud.ts:49`; a
+   *typo’d* modality string silently shape-checks as `Simple`. Needs an explicit
+   `workflow` branch plus an explicit `default: return null`.
+2. `src/routes/templates/apply.ts:91-94` does `if (modality === "image") … else
+   applySimpleTemplate(...)`. A `workflow` row would have its **graph rendered as
+   a string template**. Needs an explicit branch or a 400.
+
+`src/generation/image-gen-route.ts:87` is already safe — it guards
+`row.modality !== "image"` with a 400.
 
 **The graph is stored inline in `payload`, not as a file on disk.** The original
 design put the body at `configs/workflows/uploads/<id>.json` for diff-friendliness.
@@ -303,9 +346,18 @@ strings throughout.
 
 ### Phase 1: Workflow library (DB + admin upload)
 
-- [ ] Migration `021_` adding `enabled` / `lora_slots` / `min_vram` to
-      `prompt_templates`, plus a `workflow` value on the `modality` enum
-      (append-only; latest is `020_`).
+- [ ] Migration `021_` adding `is_default` / `enabled` / `lora_slots` / `min_vram`
+      to `prompt_templates` (append-only; latest is `020_`). `modality` is a plain
+      `text` column, so the column itself needs no change.
+- [ ] Add `workflow` to the `TemplateModality` enum in **all 9 places** listed in
+      *Design* — 3 enum definitions (one is generated: run `bun run db:sync-*`) and
+      6 hardcoded `MODALITIES` arrays. A miss compiles clean and silently 400s or
+      renders the wrong shape.
+- [ ] Add an explicit `workflow` branch to `parseTemplatePayload` and an explicit
+      `default: return null`, so an unknown modality cannot fall through to
+      `SimpleTemplatePayload`.
+- [ ] Add an explicit branch (or 400) in `src/routes/templates/apply.ts:91-94` so a
+      `workflow` row is never passed to `applySimpleTemplate`.
 - [ ] Seed `workflow`-modality rows from `configs/workflows/*.json` on first boot;
       the existing two become rows and their filenames stay ids.
 - [ ] Ingest validation: parse; per-node `class_type` + `inputs` shape; declared
