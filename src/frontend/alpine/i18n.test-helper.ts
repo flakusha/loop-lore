@@ -15,13 +15,12 @@
  */
 import { readFileSync, } from "node:fs";
 import { join, } from "node:path";
+import { safeJsonParse, } from "./json";
 
 const enJson = readFileSync(
   join(import.meta.dir, "../../public/locales/en.json",),
   "utf8",
 );
 
-(globalThis as { __localeStrings?: Record<string, unknown> }).__localeStrings = JSON.parse(enJson,) as Record<
-  string,
-  unknown
->;
+const parsed = safeJsonParse<Record<string, unknown>>(enJson,);
+(globalThis as { __localeStrings?: Record<string, unknown> }).__localeStrings = parsed.ok ? parsed.value : {};

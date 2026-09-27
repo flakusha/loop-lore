@@ -18,6 +18,7 @@
  * use the per-asset subkey. Decryption auto-detects the version.
  */
 import { safeJsonParse, } from "../utils";
+import { safeFromBase64, safeFromString, } from "../utils/safe-buffer";
 import type { ChatKey, } from "./chat-keys";
 import {
   compressThenEncrypt,
@@ -106,7 +107,7 @@ export async function encryptAssetBlob(
   return {
     encrypted: true,
     keyId,
-    data: Buffer.from(encryptedJson, "utf8",),
+    data: ((): Buffer => { const r = safeFromString(encryptedJson, "utf8",); return r.ok ? r.buffer : Buffer.alloc(0); })(),
   };
 }
 
@@ -134,7 +135,10 @@ export async function decryptAssetBlob(
   const subkeySource = isV2 && payloadAId ? payloadAId : assetId;
   const key = isV2 ? await deriveAssetSubkey(chatKey, subkeySource,) : chatKey.key;
   const base64 = await decryptThenDecompress(encryptedJson, key,);
-  return Buffer.from(base64, "base64",);
+  if (base64.length === 0) { return Buffer.alloc(0,); }
+  const decBuf = safeFromBase64(base64,);
+  if (!decBuf.ok) { throw decBuf.error; }
+  return decBuf.buffer;
 }
 
 /**

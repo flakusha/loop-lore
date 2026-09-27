@@ -7,7 +7,7 @@ import { handleImportExportError, } from "../../characters/errors";
 import { parseCharacterCard, } from "../../characters/parser";
 import type { DB, } from "../../db/schema";
 import { jsonStringifyOr, safeJsonStringify, } from "../../utils";
-import { safeFromUint8Array, } from "../../utils/safe-buffer";
+import { safeFromString, safeFromUint8Array, } from "../../utils/safe-buffer";
 import { HttpStatus, jsonError, unauthorizedResponse, } from "../http-utils";
 import { importActor, } from "./actor";
 
@@ -48,7 +48,7 @@ async function importFromCharx(
 
   const cardJsonResult = safeJsonStringify(charxResult.card,);
   const result = await parseCharacterCard(
-    Buffer.from(cardJsonResult.ok ? cardJsonResult.value : jsonStringifyOr(charxResult.card, "{}",), "utf8",),
+    ((): Buffer => { const cardText = cardJsonResult.ok ? cardJsonResult.value : jsonStringifyOr(charxResult.card, "{}"); const r = safeFromString(cardText, "utf8",); return r.ok ? r.buffer : Buffer.alloc(0); })(),
     filename,
   );
 
