@@ -35,6 +35,21 @@ straight through to the graph.
 This is a **trust boundary**, not cosmetics: the values become ComfyUI graph
 inputs.
 
+### Gap A2 — `0` and `false` are reported as *missing* (found 2026-09-27)
+
+Same three lines as Gap A. `!body.params[p.name]` is a **falsy** test, so a
+legitimately-supplied `0` or `false` is treated as absent:
+
+- `steps: 0` → "Missing required parameters: steps"
+- `cfg_scale: 0` → same
+- `enableHr: false` → same
+
+All three are valid inputs; the route rejects them. Falsy is not absent — the
+check needs `=== undefined` / `=== null`.
+
+Narrower than Gap A, but on the same line and the same fix, so it rides here
+rather than becoming its own ticket.
+
 ### Gap B — no width/height in the options type
 
 `ImageGenOptions` (`src/generation/image-engine/types.ts:6-25`) has no `width` or
@@ -77,6 +92,9 @@ same bug, already shipped in a builtin template.
       `t.Number({ minimum, maximum })` pattern already used at
       `src/generation/lora/routes/validate.ts:13`. No new dependency.
 - [ ] `select` params reject values outside `options`.
+- [ ] **Gap A2:** the required-param check uses `=== undefined` / `=== null`,
+      not a falsy test. Regression test: a required `number` param supplied as
+      `0` and a required `boolean` supplied as `false` are both **accepted**.
 - [ ] Tests: below-min, above-max, off-step, unknown-select-value, and a
       boundary-valid value all behave as declared.
 - [ ] The declared `step: 64` on width/height is re-evaluated — see Gap D.
