@@ -18,5 +18,8 @@ export { getWorkflowLoader, resetWorkflowLoaderForTests, } from "./loader";
 // ── Convenience one-shot loader ────────────────────────────
 export { loadComfyUIWorkflow, } from "./convenience";
 
+// ── Graph validation ───────────────────────────────────────
+export { findDeadNodes, isValidWorkflow, TERMINAL_SINK_CLASSES, } from "./workflow-validation";
+
 // ── Public types ───────────────────────────────────────────
 export type { LoadWorkflowOptions, } from "./types";
