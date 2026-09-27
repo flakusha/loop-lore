@@ -6,7 +6,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** Core Complete — lifecycle/context/transitions shipped (chat-lifecycle merge `cd833142` + moderation hardening `658f5469`); discovery + moderation remainder open (see task list)
 **Priority:** High
 **Effort:** High
@@ -196,7 +196,7 @@ interface ModerationAction {
 
 # Chat Mode Reconciliation
 
-**Status:** Design
+**Status:** Done
 **Created:** 2026-07-28
 **Gap:** Three orthogonal axes (participant structure, behavioral mode, response style) conflated into one field
 

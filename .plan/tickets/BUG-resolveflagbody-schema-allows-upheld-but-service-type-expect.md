@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** fix landed on branch `fix-nsfw-resolveflagbody-status-enum`; awaiting merge
 **Priority:** medium
 **Effort:** Small
