@@ -16,6 +16,11 @@ root = "dev"
 # without an entry per commit reference.
 
 # --- actually done -> Done -----------------------------------------------
+# `done` is the spelling `giwt sync` writes when it pushes a git issue state
+# into a ticket's **Status:** field. Without this alias, reconciling a stale
+# status makes `sync` emit `done` and then `plan validate`'s status-vocab gate
+# reject it, so the two commands can never both be satisfied.
+done = "Done"
 resolved = "Done"
 finished = "Done"
 shipped = "Done"
