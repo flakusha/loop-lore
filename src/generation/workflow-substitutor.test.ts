@@ -23,6 +23,45 @@ describe("substituteWorkflow", () => {
     expect(substituteWorkflow(7, {},),).toBe(7,);
     expect(substituteWorkflow(null, {},),).toBeNull();
   });
+
+  it("keeps a whole-string placeholder's original type (Defect 1)", () => {
+    // The var type is the point: ComfyUI numeric node inputs are numbers, and
+    // a stringified numeric is rejected or silently coerced at submit time.
+    expect(substituteWorkflow("{{width}}", { width: 768, },),).toBe(768,);
+    expect(substituteWorkflow("{{cfg}}", { cfg: 7.5, },),).toBe(7.5,);
+    expect(substituteWorkflow("{{flag}}", { flag: false, },),).toBe(false,);
+    expect(substituteWorkflow("{{prompt}}", { prompt: "cat", },),).toBe("cat",);
+  });
+
+  it("interpolates to a string when the placeholder is not the whole value", () => {
+    // Mixed content has no single type to preserve.
+    expect(substituteWorkflow("w={{width}}", { width: 768, },),).toBe("w=768",);
+    expect(substituteWorkflow("{{a}}-{{b}}", { a: 1, b: 2, },),).toBe("1-2",);
+  });
+
+  it("blanks a whole-string placeholder for an unknown var", () => {
+    expect(substituteWorkflow("{{nope}}", { width: 768, },),).toBe("",);
+  });
+
+  it("preserves numeric types across a real workflow's node inputs", () => {
+    // Regression shape: assert on the *substituted workflow*, not the vars map.
+    // The original tests only checked interpolation, which is why a stringified
+    // width/seed/steps shipped to ComfyUI unnoticed.
+    const wf = {
+      "4": { class_type: "EmptyLatentImage", inputs: { width: "{{width}}", height: "{{height}}", }, },
+      "5": { class_type: "KSampler", inputs: { seed: "{{seed}}", steps: "{{steps}}", cfg: "{{cfg}}", }, },
+      "6": { class_type: "SaveImage", inputs: { filename_prefix: "a-{{seed}}", }, },
+    };
+    const out = substituteWorkflow(wf, { width: 768, height: 512, seed: 42, steps: 25, cfg: 7, },);
+
+    expect(out["4"].inputs.width,).toBe(768,);
+    expect(out["4"].inputs.height,).toBe(512,);
+    expect(out["5"].inputs.seed,).toBe(42,);
+    expect(out["5"].inputs.steps,).toBe(25,);
+    expect(out["5"].inputs.cfg,).toBe(7,);
+    // A string template stays a string even though its var is numeric.
+    expect(out["6"].inputs.filename_prefix,).toBe("a-42",);
+  });
 });
 
 describe("applyNodeOverrides", () => {

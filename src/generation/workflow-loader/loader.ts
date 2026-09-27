@@ -11,6 +11,7 @@ import {
   substituteWorkflow,
 } from "../workflow-substitutor";
 import type { LoadWorkflowOptions, } from "./types";
+import { findDeadNodes, isValidWorkflow, } from "./workflow-validation";
 
 /** Workflow metadata parsed from filename */
 interface WorkflowMeta {
@@ -73,9 +74,11 @@ class WorkflowLoader {
       workflow = applyNodeOverrides(workflow, options.nodeOverrides,);
     }
 
-    // Apply template variable substitution
+    // Apply template variable substitution. The widened leaf type is the price
+    // of a whole-string {{var}} yielding a number; a node's structural keys
+    // (class_type, _meta.title) are never placeholders in a real export.
     if (options.vars && Object.keys(options.vars,).length > 0) {
-      workflow = substituteWorkflow(workflow, options.vars,);
+      workflow = substituteWorkflow(workflow, options.vars,) as ComfyUIWorkflow;
     }
 
     return workflow;
@@ -155,8 +158,21 @@ class WorkflowLoader {
           continue;
         }
 
-        if (!this.isValidWorkflow(parsed,)) {
+        if (!isValidWorkflow(parsed,)) {
           getLogger().warn({ message: "Invalid workflow format, skipping", file: filename, },);
+          continue;
+        }
+
+        // Strict ingest: a node nothing links from, that is not a terminal
+        // sink, is dead weight in the graph. Reject rather than warn, so a
+        // broken export cannot sit in the library looking loadable.
+        const deadNodes = findDeadNodes(parsed,);
+        if (deadNodes.length > 0) {
+          getLogger().warn({
+            message: "Workflow has dead nodes, skipping",
+            file: filename,
+            deadNodes,
+          },);
           continue;
         }
 
@@ -177,31 +193,6 @@ class WorkflowLoader {
     }
 
     getLogger().info({ message: "Workflows loaded", count: this.cache.size, dir: dirPath, },);
-  }
-
-  /**
-   * Validate that a parsed JSON object is a valid ComfyUI workflow.
-   *
-   * A valid workflow is a Record where each value has `inputs` and `class_type`.
-   * @param obj
-   */
-  private isValidWorkflow(obj: unknown,): obj is ComfyUIWorkflow {
-    if (typeof obj !== "object" || obj === null || Array.isArray(obj,)) {
-      return false;
-    }
-
-    const entries = Object.entries(obj as Record<string, unknown>,);
-    if (entries.length === 0) { return false; }
-
-    // Check that at least one entry has the expected structure
-    for (const [, value,] of entries) {
-      if (typeof value !== "object" || value === null) { continue; }
-      const node = value as Record<string, unknown>;
-      if ("inputs" in node && "class_type" in node) {
-        return true;
-      }
-    }
-    return false;
   }
 
   /** */
