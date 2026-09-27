@@ -103,6 +103,17 @@ describe("governanceEndpoints", () => {
     expect(body.remaining,).toBe(9,);
   });
 
+  test("hostile ?path= value degrades to the request path, never a 500", async () => {
+    const app = makeApp("user-gov-5",);
+    const res = await app.handle(
+      new Request("http://localhost/api/v1/rate-limit/status?path=://",),
+    );
+    expect(res.status,).toBe(200,);
+    const body = await res.json() as { policy: string };
+    // Falls back to /api/v1/rate-limit/status → default policy.
+    expect(body.policy,).toBe("default",);
+  });
+
   test("metrics requires admin", async () => {
     const app = makeApp("user-gov-4", "user",);
     const denied = await app.handle(new Request("http://localhost/api/v1/metrics",),);
