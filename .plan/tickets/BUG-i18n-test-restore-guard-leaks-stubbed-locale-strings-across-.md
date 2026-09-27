@@ -7,7 +7,7 @@
 **Priority:** low
 **Effort:** Medium
 
-**Summary:** i18n test restore guard leaks stubbed locale strings across 
+**Summary:** i18n test restore guard leaks stubbed locale strings across
 **Context:** Context: 223285960/c41bbb186.
 **Acceptance Criteria:** unconditional save/restore via sentinel boolean or import the shared i18n test helper.
 

@@ -7,7 +7,7 @@
 **Priority:** low
 **Effort:** Medium
 
-**Summary:** refund contract invites over admission in peek record flows 
+**Summary:** refund contract invites over admission in peek record flows
 **Context:** Context: fba9dbcd8.
 **Acceptance Criteria:** scope refund() docs to consume() flows (or delete the export) and make the test record first.
 

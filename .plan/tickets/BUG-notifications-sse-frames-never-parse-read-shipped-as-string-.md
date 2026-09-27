@@ -7,7 +7,7 @@
 **Priority:** medium
 **Effort:** Medium
 
-**Summary:** notifications sse frames never parse read shipped as string 
+**Summary:** notifications sse frames never parse read shipped as string
 **Context:** Context: pre-existing (schema from cd17af3fc), worsened this week when e0ba5f698 fixed only the REST twin (routes/notifications/index.ts:35-38 maps read->1/0).
 **Acceptance Criteria:** map read to 1/0 in stream.ts send path (mirror index.ts) or widen schema to accept the enum strings.
 

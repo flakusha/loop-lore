@@ -7,7 +7,7 @@
 **Priority:** high
 **Effort:** Medium
 
-**Summary:** achievement claimrewards double credit race and lost reward 
+**Summary:** achievement claimrewards double credit race and lost reward
 **Context:** Context: src/rpg/achievements/service/progress.ts:144-182.
 **Acceptance Criteria:** wrap claim+payout in db.transaction; gate UPDATE on claimed_at IS NULL and require numAffectedRows===1 before earning; mirror spendStoryPoints conditional-UPDATE pattern.
 
