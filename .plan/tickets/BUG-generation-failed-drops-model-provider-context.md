@@ -4,7 +4,6 @@
 # BUG: generation.failed drops model/provider context — failed calls unattributable
 
 **Status:** Done
-**Status Note:** Fixed by `cc7eb52af` (same commit as sibling latency BUG). Verified 2026-09-28: `generation-stats.test.ts` failed-generation cases pass (model+provider carried; no-context shape unchanged).
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-analytics-observability
@@ -38,6 +37,6 @@ Error-rate-by-model is the core E11-adjacent admin question ("which model is fai
 
 ## Acceptance Criteria
 
-- [x] `generation.failed` `event_data` carries `model` + `provider` on the auto-gen path (sole emitter — generate-route failure paths verified to emit no `generation.failed`)
-- [x] Errors projection wire shape unchanged (no new PII/raw-text leak)
-- [x] `bun test src/generation/auto-gen/auto-generation.test.ts` green
+- [ ] `generation.failed` `event_data` carries `model` + `provider` on the auto-gen path (sole emitter — generate-route failure paths verified to emit no `generation.failed`)
+- [ ] Errors projection wire shape unchanged (no new PII/raw-text leak)
+- [ ] `bun test src/generation/auto-gen/auto-generation.test.ts` green
