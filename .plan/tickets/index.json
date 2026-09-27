@@ -13142,6 +13142,19 @@
     "source": ".plan/tickets/FEAT-2026-irc-group-chat-integration.md",
     "status": "open"
   },
+  "FEAT-2D-INTERACTIVE-GAME-CANVAS-FOR-CHAT-SCENES": {
+    "hash": "0341593",
+    "git_issue": "0341593",
+    "extid": "FEAT-2D-INTERACTIVE-GAME-CANVAS-FOR-CHAT-SCENES",
+    "type": "FEAT",
+    "title": "2D interactive game canvas for chat scenes",
+    "label": "feat",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-2d-interactive-game-canvas-for-chat-scenes.md",
+    "status": "⬜ Not Started"
+  },
   "FEAT-2D-WORLD-BOARDING-FLOORS-VIA-FRACTAL-TREE-TRANSPORTS-PARALLA": {
     "hash": "065f89d",
     "git_issue": "065f89d",
@@ -14155,6 +14168,19 @@
     "tags": [],
     "source": ".plan/tickets/FEAT-full-moderation-system-review-queue-reports-mod-role.md",
     "status": "done"
+  },
+  "FEAT-GAME-STATE-EXTRACTION-AND-ANALYSIS-PIPELINE": {
+    "hash": "83cc0ad",
+    "git_issue": "83cc0ad",
+    "extid": "FEAT-GAME-STATE-EXTRACTION-AND-ANALYSIS-PIPELINE",
+    "type": "FEAT",
+    "title": "Game state extraction and analysis pipeline",
+    "label": "feat",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-game-state-extraction-and-analysis-pipeline.md",
+    "status": "⬜ Not Started"
   },
   "FEAT-GDPR-USER-DATA-RIGHTS": {
     "hash": "0b3709e",
