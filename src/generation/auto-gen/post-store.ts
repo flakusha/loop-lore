@@ -53,6 +53,8 @@ export interface PostStoreOpts {
   worldId: string | null | undefined;
   /** Generation attempt ID (undefined for initial greeting). */
   attemptId: string | undefined;
+  /** Wall-clock start (ms) for latencyMs; optional for back-compat. */
+  startedAtMs?: number;
   /** Resolved model/provider for telemetry + completion. */
   resolvedModel: string;
   resolvedProviderName: string;
@@ -88,6 +90,7 @@ export async function applyPostStoreEffects(opts: PostStoreOpts,): Promise<void>
     attemptId,
     resolvedModel,
     resolvedProviderName,
+    startedAtMs,
     isGroupChat,
     cascadeDepth,
     deps,
@@ -152,7 +155,7 @@ export async function applyPostStoreEffects(opts: PostStoreOpts,): Promise<void>
         promptTokens: tokenUsage.promptTokens,
         completionTokens: tokenUsage.completionTokens,
         totalTokens: tokenUsage.totalTokens,
-        latencyMs: 0,
+        latencyMs: startedAtMs != null ? Date.now() - startedAtMs : 0,
         model: resolvedModel,
         provider: resolvedProviderName,
         finishReason,

@@ -18,6 +18,7 @@ import type { GenDeps, } from "./deps";
  * @param chatId
  * @param userId
  * @param attemptId
+ * @param context - optional model/provider for failure attribution
  */
 export async function handleGenerationError(
   error: unknown,
@@ -26,6 +27,7 @@ export async function handleGenerationError(
   chatId: string,
   userId: string,
   attemptId?: string,
+  context?: { model?: string; provider?: string },
 ) {
   if (attemptId) {
     try {
@@ -37,7 +39,7 @@ export async function handleGenerationError(
       eventType: "generation.failed",
       userId,
       chatId,
-      data: { error: (error as Error).message, chatId, },
+      data: { error: (error as Error).message, chatId, ...(context?.model ? { model: context.model, } : {}), ...(context?.provider ? { provider: context.provider, } : {}), },
     },);
   }
   try {
