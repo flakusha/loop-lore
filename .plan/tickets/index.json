@@ -194,6 +194,19 @@
     "git_issue": "20354a1",
     "status": "done"
   },
+  "BUG-ANALYTICS-PER-USER-ROUTES-FILTER-TELEMETRY-EVENTS-BY-RAW-IDS": {
+    "hash": "f5340e2",
+    "git_issue": "f5340e2",
+    "extid": "BUG-ANALYTICS-PER-USER-ROUTES-FILTER-TELEMETRY-EVENTS-BY-RAW-IDS",
+    "type": "BUG",
+    "title": "analytics per-user routes filter telemetry_events by raw IDs but record() stores hashed IDs",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-analytics-observability",
+    "tags": [],
+    "source": ".plan/tickets/BUG-analytics-per-user-routes-filter-telemetry-events-by-raw-ids.md",
+    "status": "Not Started"
+  },
   "BUG-ANY-CHAT-PARTICIPANT-CAN-HARD-DELETE-ANY-MESSAGE": {
     "hash": "7d3c8b8",
     "git_issue": "7d3c8b8",
@@ -2654,6 +2667,19 @@
     "tags": [],
     "source": ".plan/tickets/BUG-frontend-dead-csrf-bearer-header-machinery.md",
     "status": "done"
+  },
+  "BUG-FRONTEND-GENERATION-COMPLETED-TELEMETRY-NEVER-REACHES-THE-SE": {
+    "hash": "e76f0c4",
+    "git_issue": "e76f0c4",
+    "extid": "BUG-FRONTEND-GENERATION-COMPLETED-TELEMETRY-NEVER-REACHES-THE-SE",
+    "type": "BUG",
+    "title": "frontend generation.completed telemetry never reaches the server ingest union",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-analytics-observability",
+    "tags": [],
+    "source": ".plan/tickets/BUG-frontend-generation-completed-telemetry-never-reaches-the-se.md",
+    "status": "Not Started"
   },
   "BUG-FRONTEND-MINOR-BUGS-BATCH": {
     "hash": "aae9870",
@@ -12623,7 +12649,7 @@
     "status": "open"
   },
   "FEAT-065-TEMPLATE-SYSTEM": {
-    "hash": "4c0d918",
+    "hash": "dc95659",
     "extid": "FEAT-065-TEMPLATE-SYSTEM",
     "type": "FEAT",
     "title": "# Template System — Unified Architecture Spec",
@@ -12634,43 +12660,6 @@
     "source": ".plan/tickets/FEAT-065-template-system.md",
     "git_issue": "dc95659",
     "status": "in_progress"
-  },
-
-  "IDEA-CHAT-COMPOSER-PREDICTIVE-INLINE-TEXT-SUGGESTIONS": {
-    "hash": "056e932",
-    "extid": "IDEA-CHAT-COMPOSER-PREDICTIVE-INLINE-TEXT-SUGGESTIONS",
-    "type": "IDEA",
-    "title": "Chat composer: predictive inline text suggestions",
-    "label": "idea",
-    "priority": "low",
-    "epic": "epic-chat-product-features.md",
-    "tags": [],
-    "source": ".plan/tickets/IDEA-chat-composer-predictive-inline-text-suggestions.md",
-    "status": "Not Started"
-  },
-  "IDEA-CHAT-COMPOSER-INLINE-SUGGESTIONS-PROPOSAL": {
-    "hash": "8ae1e91",
-    "extid": "IDEA-CHAT-COMPOSER-INLINE-SUGGESTIONS-PROPOSAL",
-    "type": "IDEA",
-    "title": "Chat composer — predictive inline text suggestions (proposal)",
-    "label": "idea",
-    "priority": "low",
-    "epic": "epic-chat-product-features.md",
-    "tags": [],
-    "source": ".plan/tickets/IDEA-chat-composer-inline-suggestions-proposal.md",
-    "status": "Not Started"
-  },
-  "TASK-PUBLIC-TEMPLATES-ROUTES": {
-    "hash": "97df5a4",
-    "extid": "TASK-PUBLIC-TEMPLATES-ROUTES",
-    "type": "TASK",
-    "title": "Public per-modality templates routes (/api/templates/:modality)",
-    "label": "task",
-    "priority": "medium",
-    "epic": "epic-config-templates",
-    "tags": ["templates", "routes", "api"],
-    "source": ".plan/tickets/TASK-public-templates-routes.md",
-    "status": "Not Started"
   },
   "FEAT-066": {
     "hash": "5c9402a",
@@ -15375,6 +15364,30 @@
     "tags": [],
     "source": ".plan/tickets/FIX-parallelize-bun-test-invocations-isolate-pins-suite-to-one-c.md",
     "status": "done"
+  },
+  "IDEA-CHAT-COMPOSER-INLINE-SUGGESTIONS-PROPOSAL": {
+    "hash": "8ae1e91",
+    "extid": "IDEA-CHAT-COMPOSER-INLINE-SUGGESTIONS-PROPOSAL",
+    "type": "IDEA",
+    "title": "Chat composer — predictive inline text suggestions (proposal)",
+    "label": "idea",
+    "priority": "low",
+    "epic": "epic-chat-product-features.md",
+    "tags": [],
+    "source": ".plan/tickets/IDEA-chat-composer-inline-suggestions-proposal.md",
+    "status": "Not Started"
+  },
+  "IDEA-CHAT-COMPOSER-PREDICTIVE-INLINE-TEXT-SUGGESTIONS": {
+    "hash": "056e932",
+    "extid": "IDEA-CHAT-COMPOSER-PREDICTIVE-INLINE-TEXT-SUGGESTIONS",
+    "type": "IDEA",
+    "title": "Chat composer: predictive inline text suggestions",
+    "label": "idea",
+    "priority": "low",
+    "epic": "epic-chat-product-features.md",
+    "tags": [],
+    "source": ".plan/tickets/IDEA-chat-composer-predictive-inline-text-suggestions.md",
+    "status": "Not Started"
   },
   "IDEA-MICRODRAMA-POST-EPISODE-CHAT-HANDOFF": {
     "hash": "387a34f",
@@ -34811,6 +34824,23 @@
     "tags": [],
     "source": ".plan/tickets/TASK-provider-wiring-settings-convention-for-byok-and-resource-pr.md",
     "status": "open"
+  },
+  "TASK-PUBLIC-TEMPLATES-ROUTES": {
+    "hash": "b9f2c0f",
+    "extid": "TASK-PUBLIC-TEMPLATES-ROUTES",
+    "type": "TASK",
+    "title": "Public per-modality templates routes (/api/templates/:modality)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-config-templates",
+    "tags": [
+      "templates",
+      "routes",
+      "api"
+    ],
+    "source": ".plan/tickets/TASK-public-templates-routes.md",
+    "status": "Not Started",
+    "git_issue": "b9f2c0f"
   },
   "TASK-QUEST-LOG": {
     "hash": "1e4bab5",
