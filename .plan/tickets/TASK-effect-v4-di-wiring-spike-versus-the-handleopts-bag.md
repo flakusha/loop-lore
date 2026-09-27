@@ -30,11 +30,22 @@ fights Elysia's own plugin model, which already does the same job.
   TypeScript's instantiation depth (TS2589); closed by *splitting the chain*, a
   workaround, not a fix. The structural cause is untouched.
 
-## The honest counter-argument
+## Why this is not a duplicate container
 
-Elysia is already a DI container: `.use()` with `decorate()` is its service
-mechanism, and it is what the route chain already is. Effect `Layer` would be a
-**second** container layered on top. The bar for a `go` is therefore high:
+An earlier draft of this ticket claimed "Elysia is already a DI container via
+`.decorate()`" and treated Effect `Layer` as redundant. **That was wrong for
+this repo.** `src/elysia-app.ts:14-15` says verbatim:
+
+> Uses closure injection (not .state()/.decorate()) to avoid Elysia's complex
+> type inference issues when merging plugins.
+
+The closure-injection bag is not a stylistic choice — it is the documented
+workaround for Elysia's own type-inference pain, and that same pain is what
+produced the TS2589 route-chain failure later. A type-checked service layer is
+therefore a genuine alternative candidate, not a second container stacked on
+the first.
+
+That does not make it a free win. The bar for a `go` stays high:
 
 - the `Elysia<any>` escape hatch is actually removed (not moved), **and**
 - the TS2589 class of failure goes away structurally, **and**
