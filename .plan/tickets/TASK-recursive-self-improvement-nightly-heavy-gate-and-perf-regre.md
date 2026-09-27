@@ -1,19 +1,48 @@
-<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
-<!-- SPDX-FileCopyrightText: 2026 giwt Contributors -->
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
-# TASK: Recursive Self-Improvement: Nightly Heavy Gate and Perf Regression Wiring
+# TASK: Nightly Heavy Gate + Perf Regression Wiring
 
-**Status:** ⬜ Not Started
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+**Status:** Not Started
 **Priority:** Medium
-**Effort:** Medium
+**Effort:** (set per-ticket)
+**Type:** Feature Task / Infrastructure
 **Tags:** nightly, ci, heavy-gate, perf-regression
+**Epic:** epic-recursive-self-improvement
 
-## Summary
+`.github/workflows/nightly.yml` runs the full `bun run check` + e2e + browser + perf-regression on a nightly cron + on PR label `nightly`. Surfaces results as artifacts.
 
---priority
+## Core Features
+
+- `.github/workflows/nightly.yml`:
+  - cron: `0 2 * * *` (2am UTC)
+  - manual trigger via `workflow_dispatch`
+  - PR trigger via label `nightly`
+  - runs: typecheck + lint + e2e + browser + perf-regression
+  - uploads `.tmp/check-report.json` + `tests/benchmarks/results/`
+- Wires `epic-benchmark-ci-regression.md` perf-regression gate into the nightly flow
+- Posts summary comment on PRs with the nightly label
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [ ] Workflow runs nightly; results visible in Actions tab
+- [ ] PR with `nightly` label triggers the workflow
+- [ ] Perf-regression thresholds from `epic-benchmark-ci-regression.md` enforced
+- [ ] Artifacts uploaded: check report + benchmark results
+- [ ] No regression vs `epic-benchmark-ci-regression.md` thresholds
+
+## Files
+
+- `.github/workflows/nightly.yml` — new
+- `scripts/check-parallel.mjs` — register `nightly` gate set
+- `.github/labeler.yml` — add `nightly` label config (if missing)
+
+## Notes / Verification
+
+- Reuse `tests/benchmarks/` + `scripts/run-benchmarks.ts` from `epic-benchmark-ci-regression.md`.
+- Cron timing: 2am UTC avoids peak hours.
+

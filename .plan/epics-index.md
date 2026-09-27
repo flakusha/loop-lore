@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 307 epics
+**Total:** 308 epics
 
 ## Summary
 
@@ -272,6 +272,7 @@
 | Not Started | RAG Ingestion & Document Processing | High | High | 22 | [epic-rag-ingestion.md](/.plan/epics/epic-rag-ingestion.md) |
 | Not Started | RAG Retrieval & Context Injection | High | Medium | 11 | [epic-rag-retrieval.md](/.plan/epics/epic-rag-retrieval.md) |
 | Not Started | Realtime Transports | Medium | Medium | 3 | [epic-realtime-transports.md](/.plan/epics/epic-realtime-transports.md) |
+| Not Started | Recursive Self-Improvement — Watchdog, Agent Loop & On-the-Fly Development | High | Very High | 26 | [epic-recursive-self-improvement.md](/.plan/epics/epic-recursive-self-improvement.md) |
 | In Progress | Release 0.1.0 | High | Medium | 0 | [epic-release-010.md](/.plan/epics/epic-release-010.md) |
 | Not Started | Resolution System & Ruleset Family | High | Medium | 3 | [epic-resolution-system.md](/.plan/epics/epic-resolution-system.md) |
 | Not Started | Resource Provision | High | Large | 12 | [epic-resource-provision.md](/.plan/epics/epic-resource-provision.md) |
@@ -2805,6 +2806,15 @@ Real-time observability dashboard combining benchmarking results, live telemetry
 - **Type:** Feature Epic
 - **Tags:** websocket, webtransport, realtime, sse, transports
 - **File:** `.plan/epics/epic-realtime-transports.md`
+
+### Recursive Self-Improvement — Watchdog, Agent Loop & On-the-Fly Development
+
+- **Status:** Not Started
+- **Priority:** High
+- **Effort:** Very High
+- **Type:** Infrastructure Epic
+- **Tags:** watchdog, supervisor, agent, agentic-development, on-the-fly, hot-reload, self-heal, sandbox, ci, cicd, observability, automation, programmatic-api, dev-loop
+- **File:** `.plan/epics/epic-recursive-self-improvement.md`
 
 ### Release 0.1.0
 

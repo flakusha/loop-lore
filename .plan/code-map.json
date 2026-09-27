@@ -185,6 +185,10 @@
       "source": ".plan/epics/epic-platform-integrations.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-recursive-self-improvement.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-type-scanallproviders-db-param-as-kysely-db-instead-of-unkno.md"
     },
@@ -199,6 +203,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-prometheus-metrics-endpoint-opt-in.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-health-liveness-readiness-probes.md"
     }
   ],
   "src/age-gate": [
@@ -233,6 +241,124 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-untrusted-new-date-parse-without-invalid-date-guard.md"
+    }
+  ],
+  "src/agent/api/auth.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-agent-api-router-and-token-scope-.md"
+    }
+  ],
+  "src/agent/api/auth.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-recursive-self-improvement.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-agent-api-router-and-token-scope-.md"
+    }
+  ],
+  "src/agent/api/check.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-agent-check-stream-bun-run-check-.md"
+    }
+  ],
+  "src/agent/api/check.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-recursive-self-improvement.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-agent-check-stream-bun-run-check-.md"
+    }
+  ],
+  "src/agent/api/commit.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-agent-commit-and-finalize-gpg-del.md"
+    }
+  ],
+  "src/agent/api/commit.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-recursive-self-improvement.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-agent-commit-and-finalize-gpg-del.md"
+    }
+  ],
+  "src/agent/api/finalize.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-agent-commit-and-finalize-gpg-del.md"
+    }
+  ],
+  "src/agent/api/finalize.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-recursive-self-improvement.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-agent-commit-and-finalize-gpg-del.md"
+    }
+  ],
+  "src/agent/api/router.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-recursive-self-improvement.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-agent-api-router-and-token-scope-.md"
+    }
+  ],
+  "src/agent/api/sandbox.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-recursive-self-improvement.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-agent-worktree-spawn-tty-free-and.md"
+    }
+  ],
+  "src/agent/api/worktree.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-agent-worktree-spawn-tty-free-and.md"
+    }
+  ],
+  "src/agent/api/worktree.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-recursive-self-improvement.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-agent-worktree-spawn-tty-free-and.md"
+    }
+  ],
+  "src/agent/audit.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-agent-actions-audit-table-and-sur.md"
+    }
+  ],
+  "src/agent/audit.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-agent-actions-audit-table-and-sur.md"
+    }
+  ],
+  "src/agent/cleanup.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-agent-worktree-spawn-tty-free-and.md"
     }
   ],
   "src/agentic-workspace/agents/claude-code.ts": [
@@ -9855,6 +9981,12 @@
       "source": ".plan/tickets/TASK-asymmetric-key-pairs-followup.md"
     }
   ],
+  "src/crypto/hasher.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-agent-api-router-and-token-scope-.md"
+    }
+  ],
   "src/crypto/index.ts": [
     {
       "kind": "ticket",
@@ -10315,6 +10447,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-memory-history-search-bind-message-chain-reconstructable-con.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-watchdog-events-table-and-telemet.md"
     },
     {
       "kind": "ticket",
@@ -11290,6 +11426,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-watchdog-events-table-and-telemet.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s.md"
     },
     {
@@ -11845,6 +11985,32 @@
       "source": "docs/spec/migrations.md"
     }
   ],
+  "src/db/migrations/NNN_rsi_agent_actions.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-recursive-self-improvement.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-agent-actions-audit-table-and-sur.md"
+    }
+  ],
+  "src/db/migrations/NNN_rsi_agent_tokens.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-agent-api-router-and-token-scope-.md"
+    }
+  ],
+  "src/db/migrations/NNN_rsi_watchdog_events.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-recursive-self-improvement.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-watchdog-events-table-and-telemet.md"
+    }
+  ],
   "src/db/migrations/README": [
     {
       "kind": "ticket",
@@ -12283,6 +12449,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-fe-be-db-record-content-hashing.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-watchdog-events-table-and-telemet.md"
     },
     {
       "kind": "ticket",
@@ -13280,6 +13450,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-watchdog-events-table-and-telemet.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-resource-provision-schema.md"
     },
     {
@@ -13639,6 +13813,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-request-id-elysia-derive.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-agent-api-router-and-token-scope-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-health-liveness-readiness-probes.md"
     },
     {
       "kind": "ticket",
@@ -19079,6 +19261,12 @@
       "source": ".plan/tickets/TASK-memory-history-search-bind-message-chain-reconstructable-con.md"
     }
   ],
+  "src/generation/generate-route/sse-utils.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-agent-check-stream-bun-run-check-.md"
+    }
+  ],
   "src/generation/generate-route/stream-to-client.test.ts": [
     {
       "kind": "ticket",
@@ -22357,6 +22545,10 @@
       "source": ".plan/epics/epic-local-process-swarm.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-recursive-self-improvement.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-in-memory-limiter-not-shared-across-instances-no-shutdown-cl.md"
     },
@@ -22391,6 +22583,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-rate-limit-coverage-expansion.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-agent-api-router-and-token-scope-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-health-liveness-readiness-probes.md"
     },
     {
       "kind": "ticket",
@@ -24829,6 +25029,12 @@
       "source": ".plan/tickets/TASK-file-split-routes.md"
     }
   ],
+  "src/routes/admin/agent-actions.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-agent-actions-audit-table-and-sur.md"
+    }
+  ],
   "src/routes/admin/assistant-capabilities.ts": [
     {
       "kind": "ticket",
@@ -25031,6 +25237,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-032.md"
+    }
+  ],
+  "src/routes/admin/watchdog.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-watchdog-events-table-and-telemet.md"
     }
   ],
   "src/routes/admin/worlds.ts": [
@@ -32879,6 +33091,22 @@
       "source": ".plan/tickets/TASK-server-edge-error-handling-gaps-in-routes-layer.md"
     }
   ],
+  "src/server/health.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-health-liveness-readiness-probes.md"
+    }
+  ],
+  "src/server/health.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-recursive-self-improvement.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-health-liveness-readiness-probes.md"
+    }
+  ],
   "src/server/health/backup-status.ts": [
     {
       "kind": "ticket",
@@ -32937,6 +33165,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-local-process-swarm.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-recursive-self-improvement.md"
     },
     {
       "kind": "epic",
@@ -33024,6 +33256,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-watchdog-supervisor-process-spawn.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-replace-sighup-full-restart-with-server-reload-for-cert-rota.md"
     },
     {
@@ -33095,6 +33331,86 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-docs-ui-endpoint-linkage.md"
+    }
+  ],
+  "src/server/watchdog/cli.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-recursive-self-improvement.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-watchdog-supervisor-process-spawn.md"
+    }
+  ],
+  "src/server/watchdog/events.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-watchdog-events-table-and-telemet.md"
+    }
+  ],
+  "src/server/watchdog/events.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-recursive-self-improvement.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-watchdog-events-table-and-telemet.md"
+    }
+  ],
+  "src/server/watchdog/health-probe.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-recursive-self-improvement.md"
+    }
+  ],
+  "src/server/watchdog/notify.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-watchdog-to-heavy-gate-webhook-tr.md"
+    }
+  ],
+  "src/server/watchdog/notify.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-watchdog-to-heavy-gate-webhook-tr.md"
+    }
+  ],
+  "src/server/watchdog/state.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-watchdog-state-machine-and-restar.md"
+    }
+  ],
+  "src/server/watchdog/state.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-recursive-self-improvement.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-watchdog-state-machine-and-restar.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-watchdog-to-heavy-gate-webhook-tr.md"
+    }
+  ],
+  "src/server/watchdog/supervisor.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-watchdog-supervisor-process-spawn.md"
+    }
+  ],
+  "src/server/watchdog/supervisor.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-recursive-self-improvement.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-watchdog-supervisor-process-spawn.md"
     }
   ],
   "src/services": [
@@ -35091,6 +35407,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-migration-compaction-data-version-hash.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-watchdog-events-table-and-telemet.md"
     },
     {
       "kind": "ticket",
