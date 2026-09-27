@@ -15,6 +15,7 @@ import { dynamicContextSection, } from "./sections/dynamic-context";
 import { emotionAvatarSection, } from "./sections/emotion-avatar";
 import { eventSection, } from "./sections/events";
 import { examplesSection, } from "./sections/examples";
+import { gameStateSection, } from "./sections/game-state";
 import { gmNotesSection, } from "./sections/gm-notes";
 import { groupParticipantsSection, } from "./sections/group-participants";
 import { groupTalkativitySection, } from "./sections/group-talkativity";
@@ -56,6 +57,10 @@ export const PROMPT_SECTIONS: SectionBuilder[] = [
   storyContextSection,
   travelSection,
   gmNotesSection,
+  // Game canvas state emission + snapshot summary (TASK-game-canvas).
+  // Sits with the steering block near gmNotes so layout-emission rules
+  // travel with other scene directives.
+  gameStateSection,
   // Turn-skip absence contract (TASK-turn-skip-gm-absence-contract). Sits
   // next to gmNotes so the LLM sees the hold/advance rules in the same
   // steering block as other GM-only directives; turns into an empty

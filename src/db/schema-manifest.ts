@@ -370,6 +370,13 @@ export const SCHEMA = new SchemaManifest()
     icon: col("text", { hasDefault: true, },),
     created_at: col("text", { notNull: true, },),
   },)
+  .table("game_states", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    chat_id: col("text", { notNull: true, },),
+    message_id: col("text",),
+    state: col("text", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("gathering_node_defs", {
     id: col("text", { primaryKey: true, },),
     world_id: col("text", { notNull: true, },),

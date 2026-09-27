@@ -176,6 +176,14 @@ export {
   WORKFLOW_TAG,
 } from "./placeholders";
 
+// ── Game State ───────────────────────────────────────────────
+
+export {
+  extractGameStateBlock,
+  extractGameStateBlocks,
+  GAME_STATE_BLOCK,
+} from "./game-state";
+
 // ── Hardening helpers ───────────────────────────────────────
 
 export {

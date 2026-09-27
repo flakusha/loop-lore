@@ -2920,3 +2920,11 @@ export const ActorStoryPointsSchema = t.Object({
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
 },);
+
+// ── game_states ────────────────────────────────────────────
+export const GameStatesSchema = t.Object({
+  chat_id: t.String(),
+  message_id: t.Optional(t.String(),),
+  state: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+},);

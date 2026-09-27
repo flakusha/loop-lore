@@ -183,4 +183,5 @@ export interface DB {
   chat_branches: import("./schema-core").ChatBranches;
   model_comparison_runs: import("./schema-core").ModelComparisonRuns;
   actor_story_points: import("./schema-core").ActorStoryPoints;
+  game_states: import("./schema-core").GameStates;
 }
