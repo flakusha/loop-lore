@@ -91,6 +91,52 @@ describe("withProviderRetry", () => {
     expect(calls,).toBe(1,);
   });
 
+  test("surfaces a non-retryable ProviderError even when the signal is aborted", async () => {
+    // Precedence: an auth failure stays an auth failure. callWithFailover
+    // maps ProviderError subclasses and cancellations down different paths,
+    // so reclassifying a 401 as "Request cancelled" would swallow it.
+    const controller = new AbortController();
+    controller.abort();
+    let calls = 0;
+    await withProviderRetry(
+      () => {
+        calls++;
+        return Promise.reject(new ProviderError("API key invalid", undefined, 401, false,),);
+      },
+      3,
+      controller.signal,
+    ).then(
+      () => expect.unreachable(),
+      (error: unknown,) => {
+        expect(error,).toBeInstanceOf(ProviderError,);
+        expect((error as ProviderError).message,).toBe("API key invalid",);
+        expect((error as ProviderError).statusCode,).toBe(401,);
+      },
+    );
+    expect(calls,).toBe(1,);
+  });
+
+  test("waits 1s then 2s across three attempts, then rethrows the last failure", async () => {
+    // Real clock on purpose: the delay sequence is part of the contract the
+    // three hand-rolled loops used to guarantee, so it is measured, not mocked.
+    const stamps: number[] = [];
+    const at = (index: number,): number => stamps[index] ?? 0;
+    await withProviderRetry(() => {
+      stamps.push(Date.now(),);
+      return Promise.reject(new Error(`attempt ${stamps.length}`,),);
+    }, 2,).then(
+      () => expect.unreachable(),
+      (error: unknown,) => {
+        expect((error as Error).message,).toBe("attempt 3",);
+      },
+    );
+    expect(stamps.length,).toBe(3,);
+    expect(at(1,) - at(0,),).toBeGreaterThan(900,);
+    expect(at(1,) - at(0,),).toBeLessThan(1_400,);
+    expect(at(2,) - at(1,),).toBeGreaterThan(1_800,);
+    expect(at(2,) - at(1,),).toBeLessThan(2_400,);
+  }, 20_000,);
+
   test("classifies a fetch AbortError as a non-retryable 504 timeout", async () => {
     await withProviderRetry(() => Promise.reject(new DOMException("Aborted", "AbortError",),), 3,).then(
       () => expect.unreachable(),
