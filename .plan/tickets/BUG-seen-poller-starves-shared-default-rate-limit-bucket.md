@@ -3,7 +3,7 @@
 
 # BUG: Seen-poller starves shared default rate-limit bucket
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 

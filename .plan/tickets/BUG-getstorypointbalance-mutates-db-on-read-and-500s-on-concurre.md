@@ -3,7 +3,7 @@
 
 # BUG: getStoryPointBalance mutates DB on read and 500s on concurrent first read
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 

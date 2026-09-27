@@ -64,6 +64,19 @@
     "title": "account-tier custom instructions render as system message without injection preamble - GM override vector",
     "type": "BUG"
   },
+  "BUG-ACHIEVEMENT-CLAIMREWARDS-DOUBLE-CREDIT-RACE-AND-LOST-REWARD-": {
+    "hash": "19b8c4f",
+    "git_issue": "19b8c4f",
+    "extid": "BUG-ACHIEVEMENT-CLAIMREWARDS-DOUBLE-CREDIT-RACE-AND-LOST-REWARD-",
+    "type": "BUG",
+    "title": "Achievement claimRewards double-credit race and lost reward on crash",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-achievement-claimrewards-double-credit-race-and-lost-reward-.md",
+    "status": "done"
+  },
   "BUG-ACTIVITYPUB-ACTOR-SIGNING-KEYS-AND-ROTATION-UNDEFINED-NO-CRY": {
     "epic": "",
     "extid": "BUG-ACTIVITYPUB-ACTOR-SIGNING-KEYS-AND-ROTATION-UNDEFINED-NO-CRY",
@@ -128,6 +141,19 @@
     "tags": [],
     "title": "`/api/admin/telemetry/aux` returns `userId` + `chatId` + raw `error` string per AUX call — no scoping, no hashing",
     "type": "BUG"
+  },
+  "BUG-ADMIN-DASHBOARD-BROWSER-TESTS-REPEAT-THE-LOGIN-HX-REDIRECT-R": {
+    "hash": "cd3e6ad",
+    "git_issue": "cd3e6ad",
+    "extid": "BUG-ADMIN-DASHBOARD-BROWSER-TESTS-REPEAT-THE-LOGIN-HX-REDIRECT-R",
+    "type": "BUG",
+    "title": "Admin dashboard browser tests repeat the login HX-Redirect race fixed elsewhere",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-admin-dashboard-browser-tests-repeat-the-login-hx-redirect-r.md",
+    "status": "⬜ Not Started"
   },
   "BUG-ADMIN-TEMPLATES-UPDATE-REMOVE-LACK-ADMIN-SETTINGS-GATE": {
     "epic": "",
@@ -206,6 +232,19 @@
     "tags": [],
     "title": "analytics per-user routes filter telemetry_events by raw IDs but record() stores hashed IDs",
     "type": "BUG"
+  },
+  "BUG-ANTHROPIC-RETRY-AFTER-TEST-COVERS-MISSING-HEADER-BUT-NOT-UNP": {
+    "hash": "68e4956",
+    "git_issue": "68e4956",
+    "extid": "BUG-ANTHROPIC-RETRY-AFTER-TEST-COVERS-MISSING-HEADER-BUT-NOT-UNP",
+    "type": "BUG",
+    "title": "Anthropic retry-after test covers missing header but not unparsable header",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-anthropic-retry-after-test-covers-missing-header-but-not-unp.md",
+    "status": "⬜ Not Started"
   },
   "BUG-ANY-CHAT-PARTICIPANT-CAN-HARD-DELETE-ANY-MESSAGE": {
     "epic": "",
@@ -406,6 +445,19 @@
     "tags": [],
     "title": "assistant intent regexes hijack normal chat messages",
     "type": "BUG"
+  },
+  "BUG-ASYNC-ORPHAN-SPILL-RETENTION-SWEEP-SILENTLY-DELETED-BY-WORKT": {
+    "hash": "91b384a",
+    "git_issue": "91b384a",
+    "extid": "BUG-ASYNC-ORPHAN-SPILL-RETENTION-SWEEP-SILENTLY-DELETED-BY-WORKT",
+    "type": "BUG",
+    "title": "Async orphan-spill retention sweep silently deleted by worktree fold",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-async-orphan-spill-retention-sweep-silently-deleted-by-workt.md",
+    "status": "done"
   },
   "BUG-AUDIT-PANEL-DETAILS-NOT-EXPANDABLE": {
     "epic": "",
@@ -1317,6 +1369,19 @@
     "tags": [],
     "title": "chat carryHistory: skipped ciphertext messages orphan all descendants",
     "type": "BUG"
+  },
+  "BUG-CHAT-FORMAT-WRAPPER-CORRUPTS-CONTENT-VIA-STRING-REPLACE-REPL": {
+    "hash": "a58851b",
+    "git_issue": "a58851b",
+    "extid": "BUG-CHAT-FORMAT-WRAPPER-CORRUPTS-CONTENT-VIA-STRING-REPLACE-REPL",
+    "type": "BUG",
+    "title": "Chat format wrapper corrupts content via String.replace replacement patterns",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-chat-format-wrapper-corrupts-content-via-string-replace-repl.md",
+    "status": "done"
   },
   "BUG-CHAT-FTS-ENCRYPT-MISMATCH": {
     "epic": "epic-chat-context-optimization",
@@ -2278,6 +2343,19 @@
     "title": "eager-db-init-creates-on-disk-db-on-test-import",
     "type": "BUG"
   },
+  "BUG-EARNSTORYPOINTS-LOST-UPDATE-RACE-AND-RAW-UNIQUE-VIOLATION-ON": {
+    "hash": "0a730c3",
+    "git_issue": "0a730c3",
+    "extid": "BUG-EARNSTORYPOINTS-LOST-UPDATE-RACE-AND-RAW-UNIQUE-VIOLATION-ON",
+    "type": "BUG",
+    "title": "earnStoryPoints lost-update race and raw UNIQUE violation on first earn",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-earnstorypoints-lost-update-race-and-raw-unique-violation-on.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-ELYSIA-AUTH-TS-DEAD-SHIM-DUPLICATE-LOGIC": {
     "epic": "epic-architecture",
     "extid": "BUG-ELYSIA-AUTH-TS-DEAD-SHIM-DUPLICATE-LOGIC",
@@ -2877,6 +2955,19 @@
     "title": "`getEffectiveNsfw` returns `enabled: true` for users with no preferences row (phantom users)",
     "type": "BUG"
   },
+  "BUG-GETSTORYPOINTBALANCE-MUTATES-DB-ON-READ-AND-500S-ON-CONCURRE": {
+    "hash": "f3ce06a",
+    "git_issue": "f3ce06a",
+    "extid": "BUG-GETSTORYPOINTBALANCE-MUTATES-DB-ON-READ-AND-500S-ON-CONCURRE",
+    "type": "BUG",
+    "title": "getStoryPointBalance mutates DB on read and 500s on concurrent first read",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-getstorypointbalance-mutates-db-on-read-and-500s-on-concurre.md",
+    "status": "done"
+  },
   "BUG-GIWT-PLAN-GATES-REPORT-112-PHANTOM-ACTIONABLE-ISSUES-WHEN-TH": {
     "epic": "",
     "extid": "BUG-GIWT-PLAN-GATES-REPORT-112-PHANTOM-ACTIONABLE-ISSUES-WHEN-TH",
@@ -3228,6 +3319,19 @@
     "title": "Http1Handler.send is a silent no-op",
     "type": "BUG"
   },
+  "BUG-I18N-TEST-RESTORE-GUARD-LEAKS-STUBBED-LOCALE-STRINGS-ACROSS-": {
+    "hash": "bb51e44",
+    "git_issue": "bb51e44",
+    "extid": "BUG-I18N-TEST-RESTORE-GUARD-LEAKS-STUBBED-LOCALE-STRINGS-ACROSS-",
+    "type": "BUG",
+    "title": "i18n test restore guard leaks stubbed locale strings across worker",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-i18n-test-restore-guard-leaks-stubbed-locale-strings-across-.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-IDEMPOTENCY-CACHE-KEY-LACKS-USER-SCOPE-CROSS-USER-RESPONSE-R": {
     "epic": "",
     "extid": "BUG-IDEMPOTENCY-CACHE-KEY-LACKS-USER-SCOPE-CROSS-USER-RESPONSE-R",
@@ -3258,6 +3362,19 @@
     ],
     "title": "idempotency table backend — verify reproducer or close (advisory orphan)",
     "type": "BUG"
+  },
+  "BUG-IMAGE-EDIT-SUITE-RELEASES-ITS-DEAD-PORT-BEFORE-PROBING-IT-TO": {
+    "hash": "11b117b",
+    "git_issue": "11b117b",
+    "extid": "BUG-IMAGE-EDIT-SUITE-RELEASES-ITS-DEAD-PORT-BEFORE-PROBING-IT-TO",
+    "type": "BUG",
+    "title": "Image-edit suite releases its dead port before probing it (TOCTOU)",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-image-edit-suite-releases-its-dead-port-before-probing-it-to.md",
+    "status": "⬜ Not Started"
   },
   "BUG-IMPERSONATE-BUILDIMPRESULT-REFERENCEERROR": {
     "epic": "",
@@ -3363,6 +3480,19 @@
     "title": "insertUnique discriminator relies on adapter-specific row count",
     "type": "BUG"
   },
+  "BUG-INSERTUNIQUE-PROBE-MISREPORTS-SKIP-AS-INSERTED-WHEN-CONFLICT": {
+    "hash": "8f02a19",
+    "git_issue": "8f02a19",
+    "extid": "BUG-INSERTUNIQUE-PROBE-MISREPORTS-SKIP-AS-INSERTED-WHEN-CONFLICT",
+    "type": "BUG",
+    "title": "insertUnique probe misreports skip as inserted when conflict target includes id",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-insertunique-probe-misreports-skip-as-inserted-when-conflict.md",
+    "status": "done"
+  },
   "BUG-IRC-INTEGRATION-UNSCOPED-AS-GROUP-CHAT-ONLY-IN-SOCIAL-HUB-AD": {
     "epic": "",
     "extid": "BUG-IRC-INTEGRATION-UNSCOPED-AS-GROUP-CHAT-ONLY-IN-SOCIAL-HUB-AD",
@@ -3388,6 +3518,19 @@
     "tags": [],
     "title": "isGenerating stuck true bricks chat switching",
     "type": "BUG"
+  },
+  "BUG-JSCPD-RATCHET-GATE-SILENTLY-REMOVED-WITHOUT-TICKET": {
+    "hash": "8b06f29",
+    "git_issue": "8b06f29",
+    "extid": "BUG-JSCPD-RATCHET-GATE-SILENTLY-REMOVED-WITHOUT-TICKET",
+    "type": "BUG",
+    "title": "jscpd ratchet gate silently removed without ticket",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-jscpd-ratchet-gate-silently-removed-without-ticket.md",
+    "status": "⬜ Not Started"
   },
   "BUG-JWT-PAYLOAD-PARSE-FAILURE-YIELDS-EMPTY-OBJECT-ACCEPTED-AS-VA": {
     "epic": "",
@@ -3440,6 +3583,19 @@
     "tags": [],
     "title": "Actor-key rotation is a silent no-op that orphans all encrypted history",
     "type": "BUG"
+  },
+  "BUG-KEYNAV-HANDLER-ISOLATION-LOGS-VIA-CONSOLE-ERROR-INSTEAD-OF-L": {
+    "hash": "76c2be6",
+    "git_issue": "76c2be6",
+    "extid": "BUG-KEYNAV-HANDLER-ISOLATION-LOGS-VIA-CONSOLE-ERROR-INSTEAD-OF-L",
+    "type": "BUG",
+    "title": "Keynav handler isolation logs via console.error instead of logger",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-keynav-handler-isolation-logs-via-console-error-instead-of-l.md",
+    "status": "⬜ Not Started"
   },
   "BUG-KEYNAV-STALE-UNSUBSCRIBE-DELETES-LIVE-HANDLER-SET": {
     "epic": "",
@@ -3831,6 +3987,19 @@
     "title": "migrate.ts loader imports *.test.ts files from src/db/migrations/, breaks unrelated tests",
     "type": "BUG"
   },
+  "BUG-MIGRATION-020-LOGS-VIA-CONSOLE-WARN-WITH-ESLINT-DISABLE-INST": {
+    "hash": "8c89080",
+    "git_issue": "8c89080",
+    "extid": "BUG-MIGRATION-020-LOGS-VIA-CONSOLE-WARN-WITH-ESLINT-DISABLE-INST",
+    "type": "BUG",
+    "title": "Migration 020 logs via console.warn with eslint-disable instead of emitWarning",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-migration-020-logs-via-console-warn-with-eslint-disable-inst.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-MIGRATION-ACTIVITYPUB-ACTOR-KEYS-FK-MISSING-ONDELETE-CASCADE": {
     "epic": "",
     "extid": "BUG-MIGRATION-ACTIVITYPUB-ACTOR-KEYS-FK-MISSING-ONDELETE-CASCADE",
@@ -4051,6 +4220,19 @@
     "tags": [],
     "title": "NotificationStreamer error path is unreachable — allSettled swallows failures",
     "type": "BUG"
+  },
+  "BUG-NOTIFICATIONS-SSE-FRAMES-NEVER-PARSE-READ-SHIPPED-AS-STRING-": {
+    "hash": "756157b",
+    "git_issue": "756157b",
+    "extid": "BUG-NOTIFICATIONS-SSE-FRAMES-NEVER-PARSE-READ-SHIPPED-AS-STRING-",
+    "type": "BUG",
+    "title": "Notifications SSE frames never parse: read shipped as string, schema expects number",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-notifications-sse-frames-never-parse-read-shipped-as-string-.md",
+    "status": "done"
   },
   "BUG-NPC-NAVIGATION-ROUTES-ALL-STUBBED": {
     "epic": "",
@@ -4538,6 +4720,19 @@
     "title": "promptOverride schema has no maxLength - token-bomb storage vector",
     "type": "BUG"
   },
+  "BUG-PRUNEEXPIRED-BOUNDARY-COMMENT-STATES-OPPOSITE-OF-IMPLEMENTAT": {
+    "hash": "910710d",
+    "git_issue": "910710d",
+    "extid": "BUG-PRUNEEXPIRED-BOUNDARY-COMMENT-STATES-OPPOSITE-OF-IMPLEMENTAT",
+    "type": "BUG",
+    "title": "pruneExpired boundary comment states opposite of implementation",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-pruneexpired-boundary-comment-states-opposite-of-implementat.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-PUT-MESSAGES-ID-VARIANT-SILENTLY-RETURNS-200-WITH-NO-VARIANT": {
     "epic": "",
     "extid": "BUG-PUT-MESSAGES-ID-VARIANT-SILENTLY-RETURNS-200-WITH-NO-VARIANT",
@@ -4589,6 +4784,19 @@
     "tags": [],
     "title": "rate-limit sliding-window expiry uses <= cutoff (off-by-one) - retains just-expired timestamps",
     "type": "BUG"
+  },
+  "BUG-RATE-LIMIT-STATUS-ENDPOINT-500S-ON-HOSTILE-PATH-QUERY": {
+    "hash": "335d186",
+    "git_issue": "335d186",
+    "extid": "BUG-RATE-LIMIT-STATUS-ENDPOINT-500S-ON-HOSTILE-PATH-QUERY",
+    "type": "BUG",
+    "title": "Rate-limit status endpoint 500s on hostile ?path= query",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-rate-limit-status-endpoint-500s-on-hostile-path-query.md",
+    "status": "done"
   },
   "BUG-RATE-LIMITER-COLLAPSES-TO-GLOBAL-BUCKET-GETCLIENTIP-RETURNS-": {
     "epic": "",
@@ -4676,6 +4884,19 @@
     "title": "Redundant VN state stored in two independent locations",
     "type": "BUG"
   },
+  "BUG-REFUND-CONTRACT-INVITES-OVER-ADMISSION-IN-PEEK-RECORD-FLOWS-": {
+    "hash": "7c12660",
+    "git_issue": "7c12660",
+    "extid": "BUG-REFUND-CONTRACT-INVITES-OVER-ADMISSION-IN-PEEK-RECORD-FLOWS-",
+    "type": "BUG",
+    "title": "refund() contract invites over-admission in peek/record flows; vacuous test pins it",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-refund-contract-invites-over-admission-in-peek-record-flows-.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-REGEX-TRANSFORM-RUNS-AT-STORE-TIME-NOT-RENDER-TIME": {
     "epic": "",
     "extid": "BUG-REGEX-TRANSFORM-RUNS-AT-STORE-TIME-NOT-RENDER-TIME",
@@ -4701,6 +4922,19 @@
     "tags": [],
     "title": "register non-atomic user-actor-key insert",
     "type": "BUG"
+  },
+  "BUG-REGISTER-PEEK-RECORD-SPLIT-ADMITS-UNLIMITED-CONCURRENT-REGIS": {
+    "hash": "815f45a",
+    "git_issue": "815f45a",
+    "extid": "BUG-REGISTER-PEEK-RECORD-SPLIT-ADMITS-UNLIMITED-CONCURRENT-REGIS",
+    "type": "BUG",
+    "title": "Register peek/record split admits unlimited concurrent registrations per IP",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-register-peek-record-split-admits-unlimited-concurrent-regis.md",
+    "status": "done"
   },
   "BUG-REGISTER-PLUGINS-150-REFERENCES-UNDEFINED-CHATSECTIONSROUTES": {
     "epic": "",
@@ -4960,6 +5194,19 @@
     "tags": [],
     "title": "Security/auth merge wrapper `3ab26ccd` breaks the backend build",
     "type": "BUG"
+  },
+  "BUG-SEEN-POLLER-STARVES-SHARED-DEFAULT-RATE-LIMIT-BUCKET": {
+    "hash": "36b98b4",
+    "git_issue": "36b98b4",
+    "extid": "BUG-SEEN-POLLER-STARVES-SHARED-DEFAULT-RATE-LIMIT-BUCKET",
+    "type": "BUG",
+    "title": "Seen-poller starves shared default rate-limit bucket",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-seen-poller-starves-shared-default-rate-limit-bucket.md",
+    "status": "done"
   },
   "BUG-SELECTCHAT-RESETS-FRESHLY-LOADED-STATE-AND-LACKS-REENTRANCY-": {
     "epic": "",
@@ -5339,6 +5586,19 @@
     "title": "story-mode.ts stores `turnResult.prompt` as the message content — `gmDecision.turnPrompt` is the prompt to LLM, not the user-visible AI response",
     "type": "BUG"
   },
+  "BUG-STORY-POINTS-MUTATIONS-DOUBLE-SWALLOW-CACHE-REFRESH-FAILURES": {
+    "hash": "9e05192",
+    "git_issue": "9e05192",
+    "extid": "BUG-STORY-POINTS-MUTATIONS-DOUBLE-SWALLOW-CACHE-REFRESH-FAILURES",
+    "type": "BUG",
+    "title": "Story-points mutations double-swallow cache-refresh failures silently",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-story-points-mutations-double-swallow-cache-refresh-failures.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-STRAY-INPUT-CLOSE-TAGS-CORRUPT-THREE-PLANNING-DOCS": {
     "epic": "",
     "extid": "BUG-STRAY-INPUT-CLOSE-TAGS-CORRUPT-THREE-PLANNING-DOCS",
@@ -5601,6 +5861,19 @@
     "tags": [],
     "title": "tui/app.ts never threads a session token into ChatWidget — auth header never sent",
     "type": "BUG"
+  },
+  "BUG-TURN-SKIP-CONCURRENT-ADVANCE-POSTS-DOUBLE-FIRE-AUTO-GENERATI": {
+    "hash": "c4f570d",
+    "git_issue": "c4f570d",
+    "extid": "BUG-TURN-SKIP-CONCURRENT-ADVANCE-POSTS-DOUBLE-FIRE-AUTO-GENERATI",
+    "type": "BUG",
+    "title": "Turn-skip concurrent advance POSTs double-fire auto-generation",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-turn-skip-concurrent-advance-posts-double-fire-auto-generati.md",
+    "status": "⬜ Not Started"
   },
   "BUG-TURN-SKIP-FIRES-GENERATION-WITHOUT-CATCH-AND-ON-DEDUPED-ADVA": {
     "epic": "",
@@ -41431,278 +41704,5 @@
     ],
     "title": "Recursive Self-Improvement: Watchdog to Heavy Gate Webhook Trigger",
     "type": "TASK"
-  },
-  "BUG-ACHIEVEMENT-CLAIMREWARDS-DOUBLE-CREDIT-RACE-AND-LOST-REWARD-": {
-    "hash": "19b8c4f",
-    "git_issue": "19b8c4f",
-    "extid": "BUG-ACHIEVEMENT-CLAIMREWARDS-DOUBLE-CREDIT-RACE-AND-LOST-REWARD-",
-    "type": "BUG",
-    "title": "Achievement claimRewards double-credit race and lost reward on crash",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-achievement-claimrewards-double-credit-race-and-lost-reward-.md",
-    "status": "⬜ Not Started"
-  },
-  "BUG-ADMIN-DASHBOARD-BROWSER-TESTS-REPEAT-THE-LOGIN-HX-REDIRECT-R": {
-    "hash": "cd3e6ad",
-    "git_issue": "cd3e6ad",
-    "extid": "BUG-ADMIN-DASHBOARD-BROWSER-TESTS-REPEAT-THE-LOGIN-HX-REDIRECT-R",
-    "type": "BUG",
-    "title": "Admin dashboard browser tests repeat the login HX-Redirect race fixed elsewhere",
-    "label": "bug",
-    "priority": "low",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-admin-dashboard-browser-tests-repeat-the-login-hx-redirect-r.md",
-    "status": "⬜ Not Started"
-  },
-  "BUG-ANTHROPIC-RETRY-AFTER-TEST-COVERS-MISSING-HEADER-BUT-NOT-UNP": {
-    "hash": "68e4956",
-    "git_issue": "68e4956",
-    "extid": "BUG-ANTHROPIC-RETRY-AFTER-TEST-COVERS-MISSING-HEADER-BUT-NOT-UNP",
-    "type": "BUG",
-    "title": "Anthropic retry-after test covers missing header but not unparsable header",
-    "label": "bug",
-    "priority": "low",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-anthropic-retry-after-test-covers-missing-header-but-not-unp.md",
-    "status": "⬜ Not Started"
-  },
-  "BUG-ASYNC-ORPHAN-SPILL-RETENTION-SWEEP-SILENTLY-DELETED-BY-WORKT": {
-    "hash": "91b384a",
-    "git_issue": "91b384a",
-    "extid": "BUG-ASYNC-ORPHAN-SPILL-RETENTION-SWEEP-SILENTLY-DELETED-BY-WORKT",
-    "type": "BUG",
-    "title": "Async orphan-spill retention sweep silently deleted by worktree fold",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-async-orphan-spill-retention-sweep-silently-deleted-by-workt.md",
-    "status": "⬜ Not Started"
-  },
-  "BUG-CHAT-FORMAT-WRAPPER-CORRUPTS-CONTENT-VIA-STRING-REPLACE-REPL": {
-    "hash": "a58851b",
-    "git_issue": "a58851b",
-    "extid": "BUG-CHAT-FORMAT-WRAPPER-CORRUPTS-CONTENT-VIA-STRING-REPLACE-REPL",
-    "type": "BUG",
-    "title": "Chat format wrapper corrupts content via String.replace replacement patterns",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-chat-format-wrapper-corrupts-content-via-string-replace-repl.md",
-    "status": "⬜ Not Started"
-  },
-  "BUG-EARNSTORYPOINTS-LOST-UPDATE-RACE-AND-RAW-UNIQUE-VIOLATION-ON": {
-    "hash": "0a730c3",
-    "git_issue": "0a730c3",
-    "extid": "BUG-EARNSTORYPOINTS-LOST-UPDATE-RACE-AND-RAW-UNIQUE-VIOLATION-ON",
-    "type": "BUG",
-    "title": "earnStoryPoints lost-update race and raw UNIQUE violation on first earn",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-earnstorypoints-lost-update-race-and-raw-unique-violation-on.md",
-    "status": "⬜ Not Started"
-  },
-  "BUG-GETSTORYPOINTBALANCE-MUTATES-DB-ON-READ-AND-500S-ON-CONCURRE": {
-    "hash": "f3ce06a",
-    "git_issue": "f3ce06a",
-    "extid": "BUG-GETSTORYPOINTBALANCE-MUTATES-DB-ON-READ-AND-500S-ON-CONCURRE",
-    "type": "BUG",
-    "title": "getStoryPointBalance mutates DB on read and 500s on concurrent first read",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-getstorypointbalance-mutates-db-on-read-and-500s-on-concurre.md",
-    "status": "⬜ Not Started"
-  },
-  "BUG-I18N-TEST-RESTORE-GUARD-LEAKS-STUBBED-LOCALE-STRINGS-ACROSS-": {
-    "hash": "bb51e44",
-    "git_issue": "bb51e44",
-    "extid": "BUG-I18N-TEST-RESTORE-GUARD-LEAKS-STUBBED-LOCALE-STRINGS-ACROSS-",
-    "type": "BUG",
-    "title": "i18n test restore guard leaks stubbed locale strings across worker",
-    "label": "bug",
-    "priority": "low",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-i18n-test-restore-guard-leaks-stubbed-locale-strings-across-.md",
-    "status": "⬜ Not Started"
-  },
-  "BUG-IMAGE-EDIT-SUITE-RELEASES-ITS-DEAD-PORT-BEFORE-PROBING-IT-TO": {
-    "hash": "11b117b",
-    "git_issue": "11b117b",
-    "extid": "BUG-IMAGE-EDIT-SUITE-RELEASES-ITS-DEAD-PORT-BEFORE-PROBING-IT-TO",
-    "type": "BUG",
-    "title": "Image-edit suite releases its dead port before probing it (TOCTOU)",
-    "label": "bug",
-    "priority": "low",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-image-edit-suite-releases-its-dead-port-before-probing-it-to.md",
-    "status": "⬜ Not Started"
-  },
-  "BUG-INSERTUNIQUE-PROBE-MISREPORTS-SKIP-AS-INSERTED-WHEN-CONFLICT": {
-    "hash": "8f02a19",
-    "git_issue": "8f02a19",
-    "extid": "BUG-INSERTUNIQUE-PROBE-MISREPORTS-SKIP-AS-INSERTED-WHEN-CONFLICT",
-    "type": "BUG",
-    "title": "insertUnique probe misreports skip as inserted when conflict target includes id",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-insertunique-probe-misreports-skip-as-inserted-when-conflict.md",
-    "status": "⬜ Not Started"
-  },
-  "BUG-JSCPD-RATCHET-GATE-SILENTLY-REMOVED-WITHOUT-TICKET": {
-    "hash": "8b06f29",
-    "git_issue": "8b06f29",
-    "extid": "BUG-JSCPD-RATCHET-GATE-SILENTLY-REMOVED-WITHOUT-TICKET",
-    "type": "BUG",
-    "title": "jscpd ratchet gate silently removed without ticket",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-jscpd-ratchet-gate-silently-removed-without-ticket.md",
-    "status": "⬜ Not Started"
-  },
-  "BUG-KEYNAV-HANDLER-ISOLATION-LOGS-VIA-CONSOLE-ERROR-INSTEAD-OF-L": {
-    "hash": "76c2be6",
-    "git_issue": "76c2be6",
-    "extid": "BUG-KEYNAV-HANDLER-ISOLATION-LOGS-VIA-CONSOLE-ERROR-INSTEAD-OF-L",
-    "type": "BUG",
-    "title": "Keynav handler isolation logs via console.error instead of logger",
-    "label": "bug",
-    "priority": "low",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-keynav-handler-isolation-logs-via-console-error-instead-of-l.md",
-    "status": "⬜ Not Started"
-  },
-  "BUG-MIGRATION-020-LOGS-VIA-CONSOLE-WARN-WITH-ESLINT-DISABLE-INST": {
-    "hash": "8c89080",
-    "git_issue": "8c89080",
-    "extid": "BUG-MIGRATION-020-LOGS-VIA-CONSOLE-WARN-WITH-ESLINT-DISABLE-INST",
-    "type": "BUG",
-    "title": "Migration 020 logs via console.warn with eslint-disable instead of emitWarning",
-    "label": "bug",
-    "priority": "low",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-migration-020-logs-via-console-warn-with-eslint-disable-inst.md",
-    "status": "⬜ Not Started"
-  },
-  "BUG-NOTIFICATIONS-SSE-FRAMES-NEVER-PARSE-READ-SHIPPED-AS-STRING-": {
-    "hash": "756157b",
-    "git_issue": "756157b",
-    "extid": "BUG-NOTIFICATIONS-SSE-FRAMES-NEVER-PARSE-READ-SHIPPED-AS-STRING-",
-    "type": "BUG",
-    "title": "Notifications SSE frames never parse: read shipped as string, schema expects number",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-notifications-sse-frames-never-parse-read-shipped-as-string-.md",
-    "status": "⬜ Not Started"
-  },
-  "BUG-PRUNEEXPIRED-BOUNDARY-COMMENT-STATES-OPPOSITE-OF-IMPLEMENTAT": {
-    "hash": "910710d",
-    "git_issue": "910710d",
-    "extid": "BUG-PRUNEEXPIRED-BOUNDARY-COMMENT-STATES-OPPOSITE-OF-IMPLEMENTAT",
-    "type": "BUG",
-    "title": "pruneExpired boundary comment states opposite of implementation",
-    "label": "bug",
-    "priority": "low",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-pruneexpired-boundary-comment-states-opposite-of-implementat.md",
-    "status": "⬜ Not Started"
-  },
-  "BUG-RATE-LIMIT-STATUS-ENDPOINT-500S-ON-HOSTILE-PATH-QUERY": {
-    "hash": "335d186",
-    "git_issue": "335d186",
-    "extid": "BUG-RATE-LIMIT-STATUS-ENDPOINT-500S-ON-HOSTILE-PATH-QUERY",
-    "type": "BUG",
-    "title": "Rate-limit status endpoint 500s on hostile ?path= query",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-rate-limit-status-endpoint-500s-on-hostile-path-query.md",
-    "status": "⬜ Not Started"
-  },
-  "BUG-REFUND-CONTRACT-INVITES-OVER-ADMISSION-IN-PEEK-RECORD-FLOWS-": {
-    "hash": "7c12660",
-    "git_issue": "7c12660",
-    "extid": "BUG-REFUND-CONTRACT-INVITES-OVER-ADMISSION-IN-PEEK-RECORD-FLOWS-",
-    "type": "BUG",
-    "title": "refund() contract invites over-admission in peek/record flows; vacuous test pins it",
-    "label": "bug",
-    "priority": "low",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-refund-contract-invites-over-admission-in-peek-record-flows-.md",
-    "status": "⬜ Not Started"
-  },
-  "BUG-REGISTER-PEEK-RECORD-SPLIT-ADMITS-UNLIMITED-CONCURRENT-REGIS": {
-    "hash": "815f45a",
-    "git_issue": "815f45a",
-    "extid": "BUG-REGISTER-PEEK-RECORD-SPLIT-ADMITS-UNLIMITED-CONCURRENT-REGIS",
-    "type": "BUG",
-    "title": "Register peek/record split admits unlimited concurrent registrations per IP",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-register-peek-record-split-admits-unlimited-concurrent-regis.md",
-    "status": "⬜ Not Started"
-  },
-  "BUG-SEEN-POLLER-STARVES-SHARED-DEFAULT-RATE-LIMIT-BUCKET": {
-    "hash": "36b98b4",
-    "git_issue": "36b98b4",
-    "extid": "BUG-SEEN-POLLER-STARVES-SHARED-DEFAULT-RATE-LIMIT-BUCKET",
-    "type": "BUG",
-    "title": "Seen-poller starves shared default rate-limit bucket",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-seen-poller-starves-shared-default-rate-limit-bucket.md",
-    "status": "⬜ Not Started"
-  },
-  "BUG-STORY-POINTS-MUTATIONS-DOUBLE-SWALLOW-CACHE-REFRESH-FAILURES": {
-    "hash": "9e05192",
-    "git_issue": "9e05192",
-    "extid": "BUG-STORY-POINTS-MUTATIONS-DOUBLE-SWALLOW-CACHE-REFRESH-FAILURES",
-    "type": "BUG",
-    "title": "Story-points mutations double-swallow cache-refresh failures silently",
-    "label": "bug",
-    "priority": "low",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-story-points-mutations-double-swallow-cache-refresh-failures.md",
-    "status": "⬜ Not Started"
-  },
-  "BUG-TURN-SKIP-CONCURRENT-ADVANCE-POSTS-DOUBLE-FIRE-AUTO-GENERATI": {
-    "hash": "c4f570d",
-    "git_issue": "c4f570d",
-    "extid": "BUG-TURN-SKIP-CONCURRENT-ADVANCE-POSTS-DOUBLE-FIRE-AUTO-GENERATI",
-    "type": "BUG",
-    "title": "Turn-skip concurrent advance POSTs double-fire auto-generation",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-turn-skip-concurrent-advance-posts-double-fire-auto-generati.md",
-    "status": "⬜ Not Started"
   }
 }
