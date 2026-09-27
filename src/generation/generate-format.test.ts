@@ -42,4 +42,14 @@ describe("applyChatFormat", () => {
     expect(out[4]!.content,).toBe('{"result": 42}',);
     expect(out[4]!.tool_call_id,).toBe("call_1",);
   });
+
+  test("content with replacement patterns ($&, $$, $`, $') is preserved verbatim", () => {
+    const msgs: GenerationMessage[] = [
+      { role: "user", content: "echo $$ and $& and $` and $' done", },
+    ];
+    const out = applyChatFormat(msgs, CHATML,);
+    expect(out[0]!.content,).toBe(
+      "<|im_start|>user\necho $$ and $& and $` and $' done<|im_end|>",
+    );
+  });
 });
