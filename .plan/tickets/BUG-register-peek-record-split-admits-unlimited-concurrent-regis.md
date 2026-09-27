@@ -3,7 +3,7 @@
 
 # BUG: Register peek/record split admits unlimited concurrent registrations per IP
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 
