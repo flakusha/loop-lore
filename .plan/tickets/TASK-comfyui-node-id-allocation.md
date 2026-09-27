@@ -9,7 +9,7 @@
 **Acceptance Criteria:** One `allocateNodeId` helper; both call sites use it; regression tests for both failure modes.
 
 **Priority:** P0 — Critical
-**Status:** Not Started
+**Status:** In Progress
 **Epic:** epic-comfyui-first-class-citizen
 **Depends on:** none
 
@@ -75,33 +75,48 @@ on ids.
 
 ## Acceptance Criteria
 
-- [ ] `allocateNodeId(existing: Iterable<string>, prefer?: string)` exported from a
-      shared module under `src/generation/`.
-- [ ] It never calls `Number()` on a key. It returns an id that is not already
-      present in `existing`.
-- [ ] Allocation is deterministic and collision-free for arbitrary input: an
+- [x] `allocateNodeId(reserved: Iterable<string>)` exported from a shared
+      module under `src/generation/` — implemented in `src/generation/node-id.ts`.
+      No `prefer` parameter: nothing needed it, and an unused parameter is a
+      second convention to keep in sync.
+- [x] It never coerces a whole key with `Number()`. It reads the **leading integer
+      run**, so a colon-grouped id contributes its prefix instead of `NaN`. It
+      returns an id that is provably not already present in `reserved`.
+- [x] Allocation is deterministic and collision-free for arbitrary input: an
       empty graph, an all-colon-id graph, a graph with numeric ids, and a graph
       that already contains every candidate in a naive probe range.
-- [ ] `injectComfyUILora` uses it (Defect 2 regression).
-- [ ] `buildLoraNodes` uses it, and its signature changes to accept the existing
-      node key set. Update every caller — `txt2img.ts:88-97` and any other
-      builtin template that calls it.
-- [ ] Regression test: the probe above (graph owning `100`/`101`) passes after the
+- [x] `injectComfyUILora` uses it (Defect 2 regression). The duplicated
+      `Math.max(...keys.map(Number))` computation also collapsed into one call.
+- [x] `buildLoraNodes` uses it, and its signature changes to accept the existing
+      node key set. `txt2img.ts` is the **only** caller (verified by grep — an
+      earlier draft of this ticket claimed more than one; it was wrong).
+- [x] Regression test: the probe above (graph owning `100`/`101`) passes after the
       fix and fails before it.
-- [ ] Regression test: colon-grouped ids (the Anima shape) do not yield `NaN`.
-- [ ] Existing LoRA chaining behavior is otherwise unchanged — same output shape,
+- [x] Regression test: colon-grouped ids (the Anima shape) do not yield `NaN`.
+- [x] Existing LoRA chaining behavior is otherwise unchanged — same output shape,
       same model/clip threading.
-- [ ] The misleading `// Start LORA nodes at 100 to avoid collisions` comment is
+- [x] The misleading `// Start LORA nodes at 100 to avoid collisions` comment is
       removed, not reworded.
 
 ## Technical Notes
 
-- Prefer a uuid or a `lora-<n>` style id over a bare integer. Bare integers are
-  exactly what makes these collisions likely; a namespaced prefix is both
-  collision-free by construction and readable in a ComfyUI UI. Keep it short —
-  node ids appear in error messages and in the graph JSON the operator exports.
-- Callers of `buildLoraNodes` must be updated in the same change; it is exported
-  from the builtin templates module and used by more than `txt2img`.
+- **Id format — decided: bare integer, not `lora-<n>`.** An earlier draft of this
+  note asked for a namespaced `lora-<n>` id on readability grounds. Not taken:
+  the builtin templates and every shipped reference workflow already use bare
+  integers, `KSampler` refs are typed `[string, number]`, and a bare integer is
+  the maximally-compatible choice for ComfyUI's prompt API. The collision was
+  never caused by *integer-ness* — it was caused by inventing ids without
+  checking. Fixing the check makes the format question moot.
+- **A real second trap, found while fixing this.** `txt2img.build` builds the
+  LoRA chain *before* the sampler node exists, so allocating against the nodes
+  present at that moment hands out the sampler's id `"5"` and the subsequent
+  spread silently overwrites the `KSampler`. `buildLoraNodes` therefore takes
+  the **full** id space the template will use, and `txt2img` derives it by
+  building its fixed nodes first (they are pure, so the double build is cheap).
+  Any future template that interleaves node construction with id allocation hits
+  this; the test asserts the invariant rather than a literal id.
+- Callers of `buildLoraNodes` must be updated in the same change. There is one:
+  `txt2img.ts`.
 - Do not special-case colon ids — treat every id as opaque and the problem
   disappears without enumerating id formats.
 

@@ -3,7 +3,7 @@
 
 import type { ComfyUIWorkflow, } from "../../../generation/providers/comfyui";
 import type { WorkflowTemplate, } from "../../types";
-import { decodeAndSave, ksamplerNode, resolveSeed, } from "./_helpers";
+import { decodeAndSave, ksamplerNode, promptNodes, resolveSeed, } from "./_helpers";
 import { buildLoraNodes, parseLoraString, } from "./lora";
 
 export const txt2img: WorkflowTemplate = {
@@ -85,46 +85,33 @@ export const txt2img: WorkflowTemplate = {
       },
     };
 
-    let modelRef: [string, number,] = ["1", 0,];
-    let clipRef: [string, number,] = ["1", 1,];
-    let loraNodes: ComfyUIWorkflow = {};
-
-    if (loras.length > 0) {
-      const result = buildLoraNodes(loras, modelRef, clipRef,);
-      loraNodes = result.nodes;
-      modelRef = result.modelRef;
-      clipRef = result.clipRef;
-    }
-
-    const promptNodes: ComfyUIWorkflow = {
-      "2": {
-        inputs: { text: (params.prompt as string) ?? "", clip: clipRef, },
-        class_type: "CLIPTextEncode",
-        _meta: { title: "Positive Prompt", },
-      },
-      "3": {
-        inputs: { text: (params.negative_prompt as string) ?? "", clip: clipRef, },
-        class_type: "CLIPTextEncode",
-        _meta: { title: "Negative Prompt", },
-      },
-    };
-
-    const samplerNodes = ksamplerNode(params, actualSeed, {
-      id: "5",
-      model: modelRef,
-      positive: ["2", 0,],
-      negative: ["3", 0,],
-      latent: ["4", 0,],
-      denoise: 1,
-      sampler: (params.sampler as string) ?? "euler",
-    },);
-
-    return {
+    // Every node this template owns, minus the LoRA chain. Built twice: once
+    // with the base refs to discover the id space, then with the chained refs.
+    // Constructing these is pure, so the double build is cheap — and it means a
+    // LoRA id can never collide with a node this template adds *after* the
+    // chain, which the old hardcoded offset from 100 only avoided by luck.
+    const buildFixed = (model: [string, number,], clip: [string, number,],): ComfyUIWorkflow => ({
       ...baseNodes,
-      ...loraNodes,
-      ...promptNodes,
-      ...samplerNodes,
+      ...promptNodes(params, clip,),
+      ...ksamplerNode(params, actualSeed, {
+        id: "5",
+        model,
+        positive: ["2", 0,],
+        negative: ["3", 0,],
+        latent: ["4", 0,],
+        denoise: 1,
+        sampler: (params.sampler as string) ?? "euler",
+      },),
       ...decodeAndSave("5", ["1", 2,], "loop-lore",),
-    };
+    });
+
+    const { nodes: loraNodes, modelRef, clipRef, } = buildLoraNodes(
+      loras,
+      ["1", 0,],
+      ["1", 1,],
+      Object.keys(buildFixed(["1", 0,], ["1", 1,],),),
+    );
+
+    return { ...buildFixed(modelRef, clipRef,), ...loraNodes, };
   },
 };
