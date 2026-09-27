@@ -14,6 +14,7 @@
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
+import { assertNsfwConfigEnabled, } from "../../nsfw/capability-gate";
 import { LocationNsfwConfigStore, } from "./config-store";
 import type {
   LocationAtmosphere,
@@ -58,6 +59,7 @@ export class LocationNsfwService {
     locationId: string,
     updates: UpdateLocationNsfwOpts,
   ): Promise<boolean> {
+    assertNsfwConfigEnabled();
     return this.store.updateConfig(locationId, updates,);
   }
 
@@ -74,6 +76,7 @@ export class LocationNsfwService {
    * @param locationId
    */
   async deleteConfig(locationId: string,): Promise<boolean> {
+    assertNsfwConfigEnabled();
     return this.store.deleteConfig(locationId,);
   }
 

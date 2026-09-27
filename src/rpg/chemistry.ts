@@ -4,6 +4,7 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
+import { assertNsfwConfigEnabled, } from "../nsfw/capability-gate";
 import { jsonStringifyOr, uid, } from "../utils";
 import { getActiveEffects, } from "./status-effects";
 
@@ -70,6 +71,7 @@ export class ChemistryService {
     magnitude?: number | null,
     source = "chemistry",
   ): Promise<string> {
+    assertNsfwConfigEnabled();
     if (!KNOWN_IDS.has(effectId,)) {
       throw new Error(`Unknown chemistry effect: ${effectId}`,);
     }

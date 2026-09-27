@@ -24,6 +24,7 @@ import {
   NSFWContentRating,
   type NSFWRatingEnforcement,
 } from "../schemas";
+import { getRuntimeNsfwConfig, } from "./runtime-config";
 
 // ── Error type ───────────────────────────────────────────────
 
@@ -155,4 +156,32 @@ export async function assertNsfwCapability(
   }
 
   return { enforcement: gate.enforcement, consent: gate.consent, intimacy, };
+}
+
+// ── Config-level gate ─────────────────────────────────────────
+
+/**
+ * Assert that NSFW is enabled at the runtime-config level.
+ *
+ * `assertNsfwCapability` enforces rating + consent + intimacy for an
+ * actor pair; this helper enforces the cheaper prior question: is NSFW
+ * turned on at all? When `nsfw.allowNsfw === false` (the file-config
+ * default-true can be flipped to false at runtime via the admin
+ * override surface), every NSFW mutation must short-circuit regardless
+ * of consent or rating.
+ *
+ * Intended as the first call inside every NSFW RPG service's public
+ * method, before any state mutation. Reads the live runtime config
+ * (admin-overridable) so toggling the flag takes effect without restart.
+ *
+ * @throws {CapabilityBlockedError} `access_denied` (`reason: "nsfw_disabled"`)
+ *   when NSFW is globally disabled.
+ */
+export function assertNsfwConfigEnabled(): void {
+  if (!getRuntimeNsfwConfig().allowNsfw) {
+    throw new CapabilityBlockedError(
+      "access_denied",
+      "NSFW capability blocked: nsfw.allowNsfw is false (NSFW subsystem disabled at config level)",
+    );
+  }
 }

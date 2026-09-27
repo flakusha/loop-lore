@@ -19,6 +19,7 @@
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../../db/schema";
+import { assertNsfwConfigEnabled, } from "../../../nsfw/capability-gate";
 import {
   applyAction as applyActionDispatch,
   decayAll as decayAllDispatch,
@@ -78,6 +79,7 @@ export class IntimacyService {
    * @param opts
    */
   async applyAction(opts: ApplyIntimacyActionOpts,): Promise<ApplyIntimacyResult> {
+    assertNsfwConfigEnabled();
     return applyActionDispatch(this.db, opts,);
   }
 
@@ -137,6 +139,7 @@ export class IntimacyService {
    * @param decayAmount - How much to decay per call (default 1).
    */
   async decayAll(actorId: string, decayAmount = 1,): Promise<number> {
+    assertNsfwConfigEnabled();
     return decayAllDispatch(this.db, actorId, decayAmount,);
   }
 }
