@@ -20272,6 +20272,13 @@
       "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
     }
   ],
+
+  "src/generation/node-id.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-node-id-allocation.md"
+    }
+  ],
   "src/generation/policy-detector.ts": [
     {
       "kind": "spec",

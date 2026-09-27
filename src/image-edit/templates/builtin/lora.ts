@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { allocateNodeId, } from "../../../generation/node-id";
 import type { ComfyUIWorkflow, } from "../../../generation/providers/comfyui";
 import type { LoraEntry, } from "../../types";
 
@@ -33,22 +34,29 @@ export function parseLoraString(loraStr: string,): LoraEntry[] {
  * Build ComfyUI LORA nodes from a list of LoraEntry objects.
  * Returns workflow nodes and the final model/clip output refs
  * after all LORAs have been applied.
+ * `reserved` is **required**: ids the caller will use for other nodes. It is
+ * not optional because a caller that omits it reintroduces the silent-clobber
+ * bug this replaces (ids used to be hardcoded from 100, unchecked).
+ *
  * @param loras
  * @param startModelRef
  * @param startClipRef
+ * @param reserved
  */
 export function buildLoraNodes(
   loras: LoraEntry[],
   startModelRef: [string, number,],
   startClipRef: [string, number,],
+  reserved: Iterable<string>,
 ): { nodes: ComfyUIWorkflow; modelRef: [string, number,]; clipRef: [string, number,] } {
   const nodes: ComfyUIWorkflow = {};
   let currentModel = startModelRef;
   let currentClip = startClipRef;
-  let nodeIndex = 100; // Start LORA nodes at 100 to avoid collisions
+  const taken = new Set(reserved,);
 
   for (const lora of loras) {
-    const id = String(nodeIndex,);
+    const id = allocateNodeId(taken,);
+    taken.add(id,);
     nodes[id] = {
       inputs: {
         lora_name: lora.path,
@@ -62,7 +70,6 @@ export function buildLoraNodes(
     };
     currentModel = [id, 0,];
     currentClip = [id, 1,];
-    nodeIndex++;
   }
 
   return { nodes, modelRef: currentModel, clipRef: currentClip, };

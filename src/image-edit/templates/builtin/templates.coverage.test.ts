@@ -57,28 +57,30 @@ describe("parseLoraString", () => {
 
 describe("buildLoraNodes", () => {
   test("empty list returns no nodes and unchanged refs", () => {
-    const result = buildLoraNodes([], ["1", 0,], ["1", 1,],);
+    const result = buildLoraNodes([], ["1", 0,], ["1", 1,], ["1",],);
     expect(result.nodes,).toEqual({},);
     expect(result.modelRef,).toEqual(["1", 0,],);
     expect(result.clipRef,).toEqual(["1", 1,],);
   });
 
-  test("single lora chains model and clip refs through node 100", () => {
+  test("single lora chains model and clip refs through its allocated id", () => {
     const result = buildLoraNodes(
       [{ path: "detail", strength: 0.8, },],
       ["1", 0,],
       ["1", 1,],
+      ["1",],
     );
-    expect(result.nodes["100"]!.class_type,).toBe("LoraLoader",);
-    expect(result.nodes["100"]!.inputs["lora_name"]!,).toBe("detail",);
-    expect(result.nodes["100"]!.inputs["strength_model"]!,).toBe(0.8,);
-    expect(result.nodes["100"]!.inputs["model"]!,).toEqual(["1", 0,],);
-    expect(result.nodes["100"]!.inputs["clip"]!,).toEqual(["1", 1,],);
-    expect(result.modelRef,).toEqual(["100", 0,],);
-    expect(result.clipRef,).toEqual(["100", 1,],);
+    const [id,] = Object.keys(result.nodes,);
+    expect(id,).toBe("2",);
+    expect(result.nodes[id!]!.inputs["lora_name"]!,).toBe("detail",);
+    expect(result.nodes[id!]!.inputs["strength_model"]!,).toBe(0.8,);
+    expect(result.nodes[id!]!.inputs["model"]!,).toEqual(["1", 0,],);
+    expect(result.nodes[id!]!.inputs["clip"]!,).toEqual(["1", 1,],);
+    expect(result.modelRef,).toEqual([id!, 0,],);
+    expect(result.clipRef,).toEqual([id!, 1,],);
   });
 
-  test("multiple loras chain sequentially from node 100", () => {
+  test("multiple loras chain sequentially through distinct ids", () => {
     const result = buildLoraNodes(
       [
         { path: "first", strength: 0.8, },
@@ -86,12 +88,43 @@ describe("buildLoraNodes", () => {
       ],
       ["1", 0,],
       ["1", 1,],
+      ["1",],
     );
-    expect(Object.keys(result.nodes,).toSorted(),).toEqual(["100", "101",],);
-    expect(result.nodes["101"]!.inputs["model"]!,).toEqual(["100", 0,],);
-    expect(result.nodes["101"]!.inputs["clip"]!,).toEqual(["100", 1,],);
-    expect(result.modelRef,).toEqual(["101", 0,],);
-    expect(result.clipRef,).toEqual(["101", 1,],);
+    const ids = Object.keys(result.nodes,).toSorted();
+    expect(ids,).toHaveLength(2,);
+    expect(new Set(ids,).size,).toBe(2,);
+    const [first, second,] = ids;
+    expect(result.nodes[second!]!.inputs["model"]!,).toEqual([first!, 0,],);
+    expect(result.nodes[second!]!.inputs["clip"]!,).toEqual([first!, 1,],);
+    expect(result.modelRef,).toEqual([second!, 0,],);
+    expect(result.clipRef,).toEqual([second!, 1,],);
+  });
+
+  test("never displaces an id the caller reserved (Defect 4)", () => {
+    // Ids used to be hardcoded from 100 with no knowledge of the graph, so a
+    // workflow already owning 100/101 had them silently overwritten.
+    const result = buildLoraNodes(
+      [
+        { path: "first", strength: 0.8, },
+        { path: "second", strength: 0.6, },
+      ],
+      ["1", 0,],
+      ["1", 1,],
+      ["1", "100", "101",],
+    );
+    for (const id of Object.keys(result.nodes,)) {
+      expect(["100", "101",],).not.toContain(id,);
+    }
+  });
+
+  test("handles reserved ids the graph has not allocated yet", () => {
+    const result = buildLoraNodes(
+      [{ path: "detail", strength: 0.8, },],
+      ["1", 0,],
+      ["1", 1,],
+      ["1", "2", "3", "4", "5", "6", "7",],
+    );
+    expect(Object.keys(result.nodes,),).toEqual(["8",],);
   });
 });
 
@@ -123,8 +156,8 @@ describe("txt2img build", () => {
     expect(wf["7"]!.inputs["filename_prefix"]!,).toBe("loop-lore",);
   });
 
-  test("loras string inserts LoraLoader nodes and rewires clip", () => {
-    const wf = txt2img.build({
+  test("loras string inserts a LoraLoader and rewires clip + model", () => {
+    const base = {
       prompt: "a castle",
       negative_prompt: "",
       width: 512,
@@ -133,11 +166,37 @@ describe("txt2img build", () => {
       cfg_scale: 7,
       sampler: "euler",
       seed: 1,
-      loras: "detail:0.8",
-    },);
-    expect(wf["100"]!.class_type,).toBe("LoraLoader",);
-    expect(wf["2"]!.inputs["clip"]!,).toEqual(["100", 1,],);
-    expect(wf["5"]!.inputs["model"]!,).toEqual(["100", 0,],);
+    };
+    const wf = txt2img.build({ ...base, loras: "detail:0.8", },);
+
+    const loraIds = Object.keys(wf,).filter((id,) => wf[id]!.class_type === "LoraLoader");
+    expect(loraIds,).toHaveLength(1,);
+    const [loraId,] = loraIds;
+
+    expect(wf[loraId!]!.inputs["lora_name"]!,).toBe("detail",);
+    expect(wf["2"]!.inputs["clip"]!,).toEqual([loraId, 1,],);
+    expect(wf["3"]!.inputs["clip"]!,).toEqual([loraId, 1,],);
+    expect(wf["5"]!.inputs["model"]!,).toEqual([loraId, 0,],);
+  });
+
+  test("lora injection adds a node without displacing any (Defect 4)", () => {
+    const base = { prompt: "a castle", loras: "", };
+    const without = txt2img.build(base,);
+    const wf = txt2img.build({ ...base, loras: "first:0.8,second:0.6", },);
+
+    // The LoRA chain is built before the sampler's node, so a naive max+1 would
+    // have been handed the sampler's id and then overwritten by the merge.
+    const added = Object.keys(wf,).filter((id,) => !(id in without));
+    const removed = Object.keys(without,).filter((id,) => !(id in wf));
+    expect(added,).toHaveLength(2,);
+    expect(removed,).toEqual([],);
+
+    // A clobber replaces a node wholesale; legitimate rewiring only touches
+    // `inputs`. So class_type must survive for every pre-existing node.
+    for (const id of Object.keys(without,)) {
+      expect(wf[id]!.class_type,).toBe(without[id]!.class_type,);
+    }
+    expect(wf["5"]!.class_type,).toBe("KSampler",);
   });
 
   test("missing optionals fall back to defaults", () => {

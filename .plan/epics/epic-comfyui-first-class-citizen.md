@@ -335,11 +335,16 @@ strings throughout.
 - [ ] Regression test asserting the *substituted workflow* keeps `number`/
       `boolean` for `width`/`height`/`seed`/`steps`/`cfg_scale`. Existing tests
       only check the vars map, which is why the bug shipped.
-- [ ] Fix Defect 2 — opaque-string node ids in the LoRA injector; regression
-      test using colon-grouped ids.
-- [ ] Fix Defect 4 — shared `allocateNodeId` helper covering **both** Defect 2 and
+- [x] Fix Defect 2 — opaque-string node ids in the LoRA injector; regression
+      test using colon-grouped ids. *(Done with Defect 4 — same helper.)*
+- [x] Fix Defect 4 — shared `allocateNodeId` helper covering **both** Defect 2 and
       Defect 4 in one place; regression test using a graph that already owns
       `100`/`101`. One helper, both call sites, no third regression.
+      *(Shipped in `TASK-comfyui-node-id-allocation`. A second trap surfaced
+      during the fix: `txt2img.build` allocates LoRA ids before the sampler node
+      exists, so a naive max+1 was handed the sampler's id and the merge
+      clobbered the `KSampler`. The template now derives its full id space up
+      front. The regression test asserts the invariant, not a literal id.)*
 - [ ] Fix Defect 3 — terminal-sink-aware dead-node detection in upload
       validation (warning, not error).
 - [ ] Fix stale `/api/image-edit/*` doc comments → `/api/v1/*`.
