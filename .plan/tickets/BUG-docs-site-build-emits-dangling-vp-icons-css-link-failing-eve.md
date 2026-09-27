@@ -3,7 +3,11 @@
 
 # BUG: Docs site build emits dangling vp-icons.css link, failing every docs-mermaid browser e2e page
 
-**Status:** ⬜ Not Started
+**Summary:** The docs build links a stylesheet it never emits, so every built page 404s on it and the docs-mermaid browser e2e fails 11/11 even though mermaid renders correctly.
+**Context:** withMermaid() (vitepress-plugin-mermaid) injects a `<link href="/docs/vp-icons.css">` into every page, but no such file is written to docs/.vitepress/dist/. vitepress 1.6.4 ships no vp-icons.css at all — its theme icons.css is bundled into assets/style.*.css — so the link dangles by construction.
+**Acceptance Criteria:** [ ] `bun test ./tests/e2e/flows/browser/docs-mermaid.browser.ts` passes; [ ] the `e2e - browser (baseline)` gate is green; [ ] no page under docs/.vitepress/dist/ references a missing asset.
+
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 
