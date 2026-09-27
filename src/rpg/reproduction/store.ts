@@ -2,8 +2,8 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { Kysely, } from "kysely";
-import type { DB, } from "../db/schema";
-import { jsonParseOr, } from "../utils";
+import type { DB, } from "../../db/schema";
+import { jsonParseOr, } from "../../utils";
 
 /** Pregnancy record shape (carried in `status_effect` meta). */
 export interface PregnancyStatus {
