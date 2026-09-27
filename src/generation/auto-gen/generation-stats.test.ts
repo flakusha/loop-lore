@@ -18,8 +18,8 @@ import { describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
-import { createTestDb, } from "../../test-utils/create-test-db";
 import { isTelemetryEnabled, } from "../../telemetry/service";
+import { createTestDb, } from "../../test-utils/create-test-db";
 import type { GenDeps, } from "./deps";
 import { handleGenerationError, } from "./handle-generation-error";
 import { applyPostStoreEffects, } from "./post-store";
@@ -33,7 +33,7 @@ const runOrSkip = isTelemetryEnabled() ? describe : describe.skip;
  * the insert lands before we read it back.
  */
 async function drainTelemetry(): Promise<void> {
-  await new Promise<void>((resolve,) => setTimeout(resolve, 25,),);
+  await new Promise<void>((resolve,) => setTimeout(resolve, 25,));
 }
 
 /**
@@ -94,7 +94,7 @@ runOrSkip("generation telemetry fields", () => {
     } finally {
       sqlite.close();
     }
-  },);
+  });
 
   test("failed generation carries model + provider", async () => {
     const { db, sqlite, } = await createTestDb();
@@ -115,7 +115,7 @@ runOrSkip("generation telemetry fields", () => {
     } finally {
       sqlite.close();
     }
-  },);
+  });
 
   test("failed generation without context keeps the old shape", async () => {
     const { db, sqlite, } = await createTestDb();
@@ -135,5 +135,5 @@ runOrSkip("generation telemetry fields", () => {
     } finally {
       sqlite.close();
     }
-  },);
-});
+  });
+},);

@@ -39,7 +39,12 @@ export async function handleGenerationError(
       eventType: "generation.failed",
       userId,
       chatId,
-      data: { error: (error as Error).message, chatId, ...(context?.model ? { model: context.model, } : {}), ...(context?.provider ? { provider: context.provider, } : {}), },
+      data: {
+        error: (error as Error).message,
+        chatId,
+        ...(context?.model ? { model: context.model, } : {}),
+        ...(context?.provider ? { provider: context.provider, } : {}),
+      },
     },);
   }
   try {
