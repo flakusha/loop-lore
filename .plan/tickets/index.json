@@ -64,19 +64,6 @@
     "title": "account-tier custom instructions render as system message without injection preamble - GM override vector",
     "type": "BUG"
   },
-  "BUG-ACHIEVEMENT-CLAIMREWARDS-DOUBLE-CREDIT-RACE-AND-LOST-REWARD-": {
-    "hash": "19b8c4f",
-    "git_issue": "19b8c4f",
-    "extid": "BUG-ACHIEVEMENT-CLAIMREWARDS-DOUBLE-CREDIT-RACE-AND-LOST-REWARD-",
-    "type": "BUG",
-    "title": "Achievement claimRewards double-credit race and lost reward on crash",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-achievement-claimrewards-double-credit-race-and-lost-reward-.md",
-    "status": "done"
-  },
   "BUG-ACTIVITYPUB-ACTOR-SIGNING-KEYS-AND-ROTATION-UNDEFINED-NO-CRY": {
     "epic": "",
     "extid": "BUG-ACTIVITYPUB-ACTOR-SIGNING-KEYS-AND-ROTATION-UNDEFINED-NO-CRY",
@@ -142,19 +129,6 @@
     "title": "`/api/admin/telemetry/aux` returns `userId` + `chatId` + raw `error` string per AUX call — no scoping, no hashing",
     "type": "BUG"
   },
-  "BUG-ADMIN-DASHBOARD-BROWSER-TESTS-REPEAT-THE-LOGIN-HX-REDIRECT-R": {
-    "hash": "cd3e6ad",
-    "git_issue": "cd3e6ad",
-    "extid": "BUG-ADMIN-DASHBOARD-BROWSER-TESTS-REPEAT-THE-LOGIN-HX-REDIRECT-R",
-    "type": "BUG",
-    "title": "Admin dashboard browser tests repeat the login HX-Redirect race fixed elsewhere",
-    "label": "bug",
-    "priority": "low",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-admin-dashboard-browser-tests-repeat-the-login-hx-redirect-r.md",
-    "status": "⬜ Not Started"
-  },
   "BUG-ADMIN-TEMPLATES-UPDATE-REMOVE-LACK-ADMIN-SETTINGS-GATE": {
     "epic": "",
     "extid": "BUG-ADMIN-TEMPLATES-UPDATE-REMOVE-LACK-ADMIN-SETTINGS-GATE",
@@ -219,32 +193,6 @@
     "tags": [],
     "title": "Alpine init hydration errors abort chat subtree rendering",
     "type": "BUG"
-  },
-  "BUG-ANALYTICS-PER-USER-ROUTES-FILTER-TELEMETRY-EVENTS-BY-RAW-IDS": {
-    "epic": "epic-analytics-observability",
-    "extid": "BUG-ANALYTICS-PER-USER-ROUTES-FILTER-TELEMETRY-EVENTS-BY-RAW-IDS",
-    "git_issue": "f5340e2",
-    "hash": "f5340e2",
-    "label": "bug",
-    "priority": "high",
-    "source": ".plan/tickets/BUG-analytics-per-user-routes-filter-telemetry-events-by-raw-ids.md",
-    "status": "Not Started",
-    "tags": [],
-    "title": "analytics per-user routes filter telemetry_events by raw IDs but record() stores hashed IDs",
-    "type": "BUG"
-  },
-  "BUG-ANTHROPIC-RETRY-AFTER-TEST-COVERS-MISSING-HEADER-BUT-NOT-UNP": {
-    "hash": "68e4956",
-    "git_issue": "68e4956",
-    "extid": "BUG-ANTHROPIC-RETRY-AFTER-TEST-COVERS-MISSING-HEADER-BUT-NOT-UNP",
-    "type": "BUG",
-    "title": "Anthropic retry-after test covers missing header but not unparsable header",
-    "label": "bug",
-    "priority": "low",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-anthropic-retry-after-test-covers-missing-header-but-not-unp.md",
-    "status": "⬜ Not Started"
   },
   "BUG-ANY-CHAT-PARTICIPANT-CAN-HARD-DELETE-ANY-MESSAGE": {
     "epic": "",
@@ -445,19 +393,6 @@
     "tags": [],
     "title": "assistant intent regexes hijack normal chat messages",
     "type": "BUG"
-  },
-  "BUG-ASYNC-ORPHAN-SPILL-RETENTION-SWEEP-SILENTLY-DELETED-BY-WORKT": {
-    "hash": "91b384a",
-    "git_issue": "91b384a",
-    "extid": "BUG-ASYNC-ORPHAN-SPILL-RETENTION-SWEEP-SILENTLY-DELETED-BY-WORKT",
-    "type": "BUG",
-    "title": "Async orphan-spill retention sweep silently deleted by worktree fold",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-async-orphan-spill-retention-sweep-silently-deleted-by-workt.md",
-    "status": "done"
   },
   "BUG-AUDIT-PANEL-DETAILS-NOT-EXPANDABLE": {
     "epic": "",
@@ -1369,19 +1304,6 @@
     "tags": [],
     "title": "chat carryHistory: skipped ciphertext messages orphan all descendants",
     "type": "BUG"
-  },
-  "BUG-CHAT-FORMAT-WRAPPER-CORRUPTS-CONTENT-VIA-STRING-REPLACE-REPL": {
-    "hash": "a58851b",
-    "git_issue": "a58851b",
-    "extid": "BUG-CHAT-FORMAT-WRAPPER-CORRUPTS-CONTENT-VIA-STRING-REPLACE-REPL",
-    "type": "BUG",
-    "title": "Chat format wrapper corrupts content via String.replace replacement patterns",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-chat-format-wrapper-corrupts-content-via-string-replace-repl.md",
-    "status": "done"
   },
   "BUG-CHAT-FTS-ENCRYPT-MISMATCH": {
     "epic": "epic-chat-context-optimization",
@@ -2343,19 +2265,6 @@
     "title": "eager-db-init-creates-on-disk-db-on-test-import",
     "type": "BUG"
   },
-  "BUG-EARNSTORYPOINTS-LOST-UPDATE-RACE-AND-RAW-UNIQUE-VIOLATION-ON": {
-    "hash": "0a730c3",
-    "git_issue": "0a730c3",
-    "extid": "BUG-EARNSTORYPOINTS-LOST-UPDATE-RACE-AND-RAW-UNIQUE-VIOLATION-ON",
-    "type": "BUG",
-    "title": "earnStoryPoints lost-update race and raw UNIQUE violation on first earn",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-earnstorypoints-lost-update-race-and-raw-unique-violation-on.md",
-    "status": "⬜ Not Started"
-  },
   "BUG-ELYSIA-AUTH-TS-DEAD-SHIM-DUPLICATE-LOGIC": {
     "epic": "epic-architecture",
     "extid": "BUG-ELYSIA-AUTH-TS-DEAD-SHIM-DUPLICATE-LOGIC",
@@ -2746,19 +2655,6 @@
     "title": "frontend dead CSRF bearer header machinery",
     "type": "BUG"
   },
-  "BUG-FRONTEND-GENERATION-COMPLETED-TELEMETRY-NEVER-REACHES-THE-SE": {
-    "epic": "epic-analytics-observability",
-    "extid": "BUG-FRONTEND-GENERATION-COMPLETED-TELEMETRY-NEVER-REACHES-THE-SE",
-    "git_issue": "e76f0c4",
-    "hash": "e76f0c4",
-    "label": "bug",
-    "priority": "medium",
-    "source": ".plan/tickets/BUG-frontend-generation-completed-telemetry-never-reaches-the-se.md",
-    "status": "Not Started",
-    "tags": [],
-    "title": "frontend generation.completed telemetry never reaches the server ingest union",
-    "type": "BUG"
-  },
   "BUG-FRONTEND-MINOR-BUGS-BATCH": {
     "epic": "",
     "extid": "BUG-FRONTEND-MINOR-BUGS-BATCH",
@@ -2851,19 +2747,6 @@
     "title": "Generated images owned by 'system' are invisible to the requesting user",
     "type": "BUG"
   },
-  "BUG-GENERATION-COMPLETED-LATENCYMS-HARDCODED-TO-0-ON-TWO-EMIT-PA": {
-    "epic": "epic-analytics-observability",
-    "extid": "BUG-GENERATION-COMPLETED-LATENCYMS-HARDCODED-TO-0-ON-TWO-EMIT-PA",
-    "git_issue": "6b732d8",
-    "hash": "6b732d8",
-    "label": "bug",
-    "priority": "high",
-    "source": ".plan/tickets/BUG-generation-completed-latencyms-hardcoded-to-0-on-two-emit-pa.md",
-    "status": "done",
-    "tags": [],
-    "title": "generation.completed latencyMs hardcoded to 0 on two emit paths",
-    "type": "BUG"
-  },
   "BUG-GENERATION-CONTROL-PLANE-ROUTES-LACK-AUTHORIZATION": {
     "epic": "epic-auth-permissions",
     "extid": "BUG-GENERATION-CONTROL-PLANE-ROUTES-LACK-AUTHORIZATION",
@@ -2875,19 +2758,6 @@
     "status": "done",
     "tags": [],
     "title": "generation control-plane routes lack authorization",
-    "type": "BUG"
-  },
-  "BUG-GENERATION-FAILED-DROPS-MODEL-PROVIDER-CONTEXT": {
-    "epic": "epic-analytics-observability",
-    "extid": "BUG-GENERATION-FAILED-DROPS-MODEL-PROVIDER-CONTEXT",
-    "git_issue": "0d42054",
-    "hash": "0d42054",
-    "label": "bug",
-    "priority": "medium",
-    "source": ".plan/tickets/BUG-generation-failed-drops-model-provider-context.md",
-    "status": "done",
-    "tags": [],
-    "title": "generation.failed drops model/provider context — failed calls unattributable",
     "type": "BUG"
   },
   "BUG-GET-MESSAGES-ID-VARIANTS-HAS-TOCTOU-RACE-ON-PARENT-CHAT-AUTH": {
@@ -2954,19 +2824,6 @@
     "tags": [],
     "title": "`getEffectiveNsfw` returns `enabled: true` for users with no preferences row (phantom users)",
     "type": "BUG"
-  },
-  "BUG-GETSTORYPOINTBALANCE-MUTATES-DB-ON-READ-AND-500S-ON-CONCURRE": {
-    "hash": "f3ce06a",
-    "git_issue": "f3ce06a",
-    "extid": "BUG-GETSTORYPOINTBALANCE-MUTATES-DB-ON-READ-AND-500S-ON-CONCURRE",
-    "type": "BUG",
-    "title": "getStoryPointBalance mutates DB on read and 500s on concurrent first read",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-getstorypointbalance-mutates-db-on-read-and-500s-on-concurre.md",
-    "status": "done"
   },
   "BUG-GIWT-PLAN-GATES-REPORT-112-PHANTOM-ACTIONABLE-ISSUES-WHEN-TH": {
     "epic": "",
@@ -3319,19 +3176,6 @@
     "title": "Http1Handler.send is a silent no-op",
     "type": "BUG"
   },
-  "BUG-I18N-TEST-RESTORE-GUARD-LEAKS-STUBBED-LOCALE-STRINGS-ACROSS-": {
-    "hash": "bb51e44",
-    "git_issue": "bb51e44",
-    "extid": "BUG-I18N-TEST-RESTORE-GUARD-LEAKS-STUBBED-LOCALE-STRINGS-ACROSS-",
-    "type": "BUG",
-    "title": "i18n test restore guard leaks stubbed locale strings across worker",
-    "label": "bug",
-    "priority": "low",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-i18n-test-restore-guard-leaks-stubbed-locale-strings-across-.md",
-    "status": "⬜ Not Started"
-  },
   "BUG-IDEMPOTENCY-CACHE-KEY-LACKS-USER-SCOPE-CROSS-USER-RESPONSE-R": {
     "epic": "",
     "extid": "BUG-IDEMPOTENCY-CACHE-KEY-LACKS-USER-SCOPE-CROSS-USER-RESPONSE-R",
@@ -3362,19 +3206,6 @@
     ],
     "title": "idempotency table backend — verify reproducer or close (advisory orphan)",
     "type": "BUG"
-  },
-  "BUG-IMAGE-EDIT-SUITE-RELEASES-ITS-DEAD-PORT-BEFORE-PROBING-IT-TO": {
-    "hash": "11b117b",
-    "git_issue": "11b117b",
-    "extid": "BUG-IMAGE-EDIT-SUITE-RELEASES-ITS-DEAD-PORT-BEFORE-PROBING-IT-TO",
-    "type": "BUG",
-    "title": "Image-edit suite releases its dead port before probing it (TOCTOU)",
-    "label": "bug",
-    "priority": "low",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-image-edit-suite-releases-its-dead-port-before-probing-it-to.md",
-    "status": "⬜ Not Started"
   },
   "BUG-IMPERSONATE-BUILDIMPRESULT-REFERENCEERROR": {
     "epic": "",
@@ -3480,19 +3311,6 @@
     "title": "insertUnique discriminator relies on adapter-specific row count",
     "type": "BUG"
   },
-  "BUG-INSERTUNIQUE-PROBE-MISREPORTS-SKIP-AS-INSERTED-WHEN-CONFLICT": {
-    "hash": "8f02a19",
-    "git_issue": "8f02a19",
-    "extid": "BUG-INSERTUNIQUE-PROBE-MISREPORTS-SKIP-AS-INSERTED-WHEN-CONFLICT",
-    "type": "BUG",
-    "title": "insertUnique probe misreports skip as inserted when conflict target includes id",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-insertunique-probe-misreports-skip-as-inserted-when-conflict.md",
-    "status": "done"
-  },
   "BUG-IRC-INTEGRATION-UNSCOPED-AS-GROUP-CHAT-ONLY-IN-SOCIAL-HUB-AD": {
     "epic": "",
     "extid": "BUG-IRC-INTEGRATION-UNSCOPED-AS-GROUP-CHAT-ONLY-IN-SOCIAL-HUB-AD",
@@ -3518,19 +3336,6 @@
     "tags": [],
     "title": "isGenerating stuck true bricks chat switching",
     "type": "BUG"
-  },
-  "BUG-JSCPD-RATCHET-GATE-SILENTLY-REMOVED-WITHOUT-TICKET": {
-    "hash": "8b06f29",
-    "git_issue": "8b06f29",
-    "extid": "BUG-JSCPD-RATCHET-GATE-SILENTLY-REMOVED-WITHOUT-TICKET",
-    "type": "BUG",
-    "title": "jscpd ratchet gate silently removed without ticket",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-jscpd-ratchet-gate-silently-removed-without-ticket.md",
-    "status": "⬜ Not Started"
   },
   "BUG-JWT-PAYLOAD-PARSE-FAILURE-YIELDS-EMPTY-OBJECT-ACCEPTED-AS-VA": {
     "epic": "",
@@ -3583,19 +3388,6 @@
     "tags": [],
     "title": "Actor-key rotation is a silent no-op that orphans all encrypted history",
     "type": "BUG"
-  },
-  "BUG-KEYNAV-HANDLER-ISOLATION-LOGS-VIA-CONSOLE-ERROR-INSTEAD-OF-L": {
-    "hash": "76c2be6",
-    "git_issue": "76c2be6",
-    "extid": "BUG-KEYNAV-HANDLER-ISOLATION-LOGS-VIA-CONSOLE-ERROR-INSTEAD-OF-L",
-    "type": "BUG",
-    "title": "Keynav handler isolation logs via console.error instead of logger",
-    "label": "bug",
-    "priority": "low",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-keynav-handler-isolation-logs-via-console-error-instead-of-l.md",
-    "status": "⬜ Not Started"
   },
   "BUG-KEYNAV-STALE-UNSUBSCRIBE-DELETES-LIVE-HANDLER-SET": {
     "epic": "",
@@ -3987,19 +3779,6 @@
     "title": "migrate.ts loader imports *.test.ts files from src/db/migrations/, breaks unrelated tests",
     "type": "BUG"
   },
-  "BUG-MIGRATION-020-LOGS-VIA-CONSOLE-WARN-WITH-ESLINT-DISABLE-INST": {
-    "hash": "8c89080",
-    "git_issue": "8c89080",
-    "extid": "BUG-MIGRATION-020-LOGS-VIA-CONSOLE-WARN-WITH-ESLINT-DISABLE-INST",
-    "type": "BUG",
-    "title": "Migration 020 logs via console.warn with eslint-disable instead of emitWarning",
-    "label": "bug",
-    "priority": "low",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-migration-020-logs-via-console-warn-with-eslint-disable-inst.md",
-    "status": "⬜ Not Started"
-  },
   "BUG-MIGRATION-ACTIVITYPUB-ACTOR-KEYS-FK-MISSING-ONDELETE-CASCADE": {
     "epic": "",
     "extid": "BUG-MIGRATION-ACTIVITYPUB-ACTOR-KEYS-FK-MISSING-ONDELETE-CASCADE",
@@ -4220,19 +3999,6 @@
     "tags": [],
     "title": "NotificationStreamer error path is unreachable — allSettled swallows failures",
     "type": "BUG"
-  },
-  "BUG-NOTIFICATIONS-SSE-FRAMES-NEVER-PARSE-READ-SHIPPED-AS-STRING-": {
-    "hash": "756157b",
-    "git_issue": "756157b",
-    "extid": "BUG-NOTIFICATIONS-SSE-FRAMES-NEVER-PARSE-READ-SHIPPED-AS-STRING-",
-    "type": "BUG",
-    "title": "Notifications SSE frames never parse: read shipped as string, schema expects number",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-notifications-sse-frames-never-parse-read-shipped-as-string-.md",
-    "status": "done"
   },
   "BUG-NPC-NAVIGATION-ROUTES-ALL-STUBBED": {
     "epic": "",
@@ -4720,19 +4486,6 @@
     "title": "promptOverride schema has no maxLength - token-bomb storage vector",
     "type": "BUG"
   },
-  "BUG-PRUNEEXPIRED-BOUNDARY-COMMENT-STATES-OPPOSITE-OF-IMPLEMENTAT": {
-    "hash": "910710d",
-    "git_issue": "910710d",
-    "extid": "BUG-PRUNEEXPIRED-BOUNDARY-COMMENT-STATES-OPPOSITE-OF-IMPLEMENTAT",
-    "type": "BUG",
-    "title": "pruneExpired boundary comment states opposite of implementation",
-    "label": "bug",
-    "priority": "low",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-pruneexpired-boundary-comment-states-opposite-of-implementat.md",
-    "status": "⬜ Not Started"
-  },
   "BUG-PUT-MESSAGES-ID-VARIANT-SILENTLY-RETURNS-200-WITH-NO-VARIANT": {
     "epic": "",
     "extid": "BUG-PUT-MESSAGES-ID-VARIANT-SILENTLY-RETURNS-200-WITH-NO-VARIANT",
@@ -4784,19 +4537,6 @@
     "tags": [],
     "title": "rate-limit sliding-window expiry uses <= cutoff (off-by-one) - retains just-expired timestamps",
     "type": "BUG"
-  },
-  "BUG-RATE-LIMIT-STATUS-ENDPOINT-500S-ON-HOSTILE-PATH-QUERY": {
-    "hash": "335d186",
-    "git_issue": "335d186",
-    "extid": "BUG-RATE-LIMIT-STATUS-ENDPOINT-500S-ON-HOSTILE-PATH-QUERY",
-    "type": "BUG",
-    "title": "Rate-limit status endpoint 500s on hostile ?path= query",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-rate-limit-status-endpoint-500s-on-hostile-path-query.md",
-    "status": "done"
   },
   "BUG-RATE-LIMITER-COLLAPSES-TO-GLOBAL-BUCKET-GETCLIENTIP-RETURNS-": {
     "epic": "",
@@ -4884,19 +4624,6 @@
     "title": "Redundant VN state stored in two independent locations",
     "type": "BUG"
   },
-  "BUG-REFUND-CONTRACT-INVITES-OVER-ADMISSION-IN-PEEK-RECORD-FLOWS-": {
-    "hash": "7c12660",
-    "git_issue": "7c12660",
-    "extid": "BUG-REFUND-CONTRACT-INVITES-OVER-ADMISSION-IN-PEEK-RECORD-FLOWS-",
-    "type": "BUG",
-    "title": "refund() contract invites over-admission in peek/record flows; vacuous test pins it",
-    "label": "bug",
-    "priority": "low",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-refund-contract-invites-over-admission-in-peek-record-flows-.md",
-    "status": "⬜ Not Started"
-  },
   "BUG-REGEX-TRANSFORM-RUNS-AT-STORE-TIME-NOT-RENDER-TIME": {
     "epic": "",
     "extid": "BUG-REGEX-TRANSFORM-RUNS-AT-STORE-TIME-NOT-RENDER-TIME",
@@ -4922,19 +4649,6 @@
     "tags": [],
     "title": "register non-atomic user-actor-key insert",
     "type": "BUG"
-  },
-  "BUG-REGISTER-PEEK-RECORD-SPLIT-ADMITS-UNLIMITED-CONCURRENT-REGIS": {
-    "hash": "815f45a",
-    "git_issue": "815f45a",
-    "extid": "BUG-REGISTER-PEEK-RECORD-SPLIT-ADMITS-UNLIMITED-CONCURRENT-REGIS",
-    "type": "BUG",
-    "title": "Register peek/record split admits unlimited concurrent registrations per IP",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-register-peek-record-split-admits-unlimited-concurrent-regis.md",
-    "status": "done"
   },
   "BUG-REGISTER-PLUGINS-150-REFERENCES-UNDEFINED-CHATSECTIONSROUTES": {
     "epic": "",
@@ -5194,19 +4908,6 @@
     "tags": [],
     "title": "Security/auth merge wrapper `3ab26ccd` breaks the backend build",
     "type": "BUG"
-  },
-  "BUG-SEEN-POLLER-STARVES-SHARED-DEFAULT-RATE-LIMIT-BUCKET": {
-    "hash": "36b98b4",
-    "git_issue": "36b98b4",
-    "extid": "BUG-SEEN-POLLER-STARVES-SHARED-DEFAULT-RATE-LIMIT-BUCKET",
-    "type": "BUG",
-    "title": "Seen-poller starves shared default rate-limit bucket",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-seen-poller-starves-shared-default-rate-limit-bucket.md",
-    "status": "done"
   },
   "BUG-SELECTCHAT-RESETS-FRESHLY-LOADED-STATE-AND-LACKS-REENTRANCY-": {
     "epic": "",
@@ -5586,19 +5287,6 @@
     "title": "story-mode.ts stores `turnResult.prompt` as the message content — `gmDecision.turnPrompt` is the prompt to LLM, not the user-visible AI response",
     "type": "BUG"
   },
-  "BUG-STORY-POINTS-MUTATIONS-DOUBLE-SWALLOW-CACHE-REFRESH-FAILURES": {
-    "hash": "9e05192",
-    "git_issue": "9e05192",
-    "extid": "BUG-STORY-POINTS-MUTATIONS-DOUBLE-SWALLOW-CACHE-REFRESH-FAILURES",
-    "type": "BUG",
-    "title": "Story-points mutations double-swallow cache-refresh failures silently",
-    "label": "bug",
-    "priority": "low",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-story-points-mutations-double-swallow-cache-refresh-failures.md",
-    "status": "⬜ Not Started"
-  },
   "BUG-STRAY-INPUT-CLOSE-TAGS-CORRUPT-THREE-PLANNING-DOCS": {
     "epic": "",
     "extid": "BUG-STRAY-INPUT-CLOSE-TAGS-CORRUPT-THREE-PLANNING-DOCS",
@@ -5861,19 +5549,6 @@
     "tags": [],
     "title": "tui/app.ts never threads a session token into ChatWidget — auth header never sent",
     "type": "BUG"
-  },
-  "BUG-TURN-SKIP-CONCURRENT-ADVANCE-POSTS-DOUBLE-FIRE-AUTO-GENERATI": {
-    "hash": "c4f570d",
-    "git_issue": "c4f570d",
-    "extid": "BUG-TURN-SKIP-CONCURRENT-ADVANCE-POSTS-DOUBLE-FIRE-AUTO-GENERATI",
-    "type": "BUG",
-    "title": "Turn-skip concurrent advance POSTs double-fire auto-generation",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-turn-skip-concurrent-advance-posts-double-fire-auto-generati.md",
-    "status": "⬜ Not Started"
   },
   "BUG-TURN-SKIP-FIRES-GENERATION-WITHOUT-CATCH-AND-ON-DEDUPED-ADVA": {
     "epic": "",
@@ -8856,14 +8531,13 @@
     "type": "EPIC"
   },
   "EPIC-EFFECT-V4-ADOPTION-EVALUATION": {
-    "epic": "",
-    "extid": "EPIC-EFFECT-V4-ADOPTION-EVALUATION",
-    "git_issue": "5bb3855",
     "hash": "5bb3855",
+    "extid": "EPIC-EFFECT-V4-ADOPTION-EVALUATION",
+    "type": "EPIC",
+    "title": "Effect v4 Adoption Evaluation",
     "label": "epic",
     "priority": "Medium",
-    "source": ".plan/tickets/epic-effect-v4-adoption-evaluation.md",
-    "status": "⬜ Not Started",
+    "epic": "",
     "tags": [
       "effect",
       "typescript",
@@ -8875,8 +8549,9 @@
       "observability",
       "evaluation"
     ],
-    "title": "Effect v4 Adoption Evaluation",
-    "type": "EPIC"
+    "source": ".plan/epics/epic-effect-v4-adoption-evaluation.md",
+    "status": "⬜ Not Started",
+    "git_issue": "5bb3855"
   },
   "EPIC-EMAIL-INTEGRATION": {
     "epic": "",
@@ -10017,27 +9692,6 @@
     ],
     "title": "LLM Request Throughput & Message Scheduling",
     "type": "EPIC"
-  },
-  "EPIC-LLM-REQUEST-SCHEDULER": {
-    "hash": "04ef186",
-    "extid": "EPIC-LLM-REQUEST-SCHEDULER",
-    "type": "EPIC",
-    "title": "LLM Request Scheduler — Complexity, Resources, Model Rotation",
-    "label": "epic",
-    "priority": "high",
-    "epic": "",
-    "tags": [
-      "llm",
-      "scheduler",
-      "queue",
-      "concurrency",
-      "llama-swap",
-      "admission-control",
-      "cost"
-    ],
-    "source": ".plan/epics/epic-llm-request-scheduler.md",
-    "status": "Proposed",
-    "git_issue": "04ef186"
   },
   "EPIC-LOCAL-PROCESS-SWARM": {
     "epic": "",
@@ -11432,34 +11086,6 @@
       "transports"
     ],
     "title": "Realtime Transports",
-    "type": "EPIC"
-  },
-  "EPIC-RECURSIVE-SELF-IMPROVEMENT": {
-    "epic": "",
-    "extid": "EPIC-RECURSIVE-SELF-IMPROVEMENT",
-    "git_issue": "42bbf1a",
-    "hash": "42bbf1a",
-    "label": "epic",
-    "priority": "High",
-    "source": ".plan/epics/epic-recursive-self-improvement.md",
-    "status": "Not Started",
-    "tags": [
-      "watchdog",
-      "supervisor",
-      "agent",
-      "agentic-development",
-      "on-the-fly",
-      "hot-reload",
-      "self-heal",
-      "sandbox",
-      "ci",
-      "cicd",
-      "observability",
-      "automation",
-      "programmatic-api",
-      "dev-loop"
-    ],
-    "title": "Recursive Self-Improvement — Watchdog, Agent Loop & On-the-Fly Development",
     "type": "EPIC"
   },
   "EPIC-RELATIONSHIPS": {
@@ -13464,19 +13090,6 @@
     "title": "# FEAT-2026-irc-group-chat-integration: IRC integration as group-chat (channel) + DM (PM) — RFC 1459/2812",
     "type": "FEAT"
   },
-  "FEAT-2D-INTERACTIVE-GAME-CANVAS-FOR-CHAT-SCENES": {
-    "hash": "0341593",
-    "git_issue": "0341593",
-    "extid": "FEAT-2D-INTERACTIVE-GAME-CANVAS-FOR-CHAT-SCENES",
-    "type": "FEAT",
-    "title": "2D interactive game canvas for chat scenes",
-    "label": "feat",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/FEAT-2d-interactive-game-canvas-for-chat-scenes.md",
-    "status": "Not Started"
-  },
   "FEAT-2D-WORLD-BOARDING-FLOORS-VIA-FRACTAL-TREE-TRANSPORTS-PARALLA": {
     "epic": "epic-2d-sprite-world",
     "extid": "FEAT-2D-WORLD-BOARDING-FLOORS-VIA-FRACTAL-TREE-TRANSPORTS-PARALLA",
@@ -14491,19 +14104,6 @@
     "title": "Full Moderation System (Review Queue, Reports, Mod Role)",
     "type": "FEAT"
   },
-  "FEAT-GAME-STATE-EXTRACTION-AND-ANALYSIS-PIPELINE": {
-    "hash": "83cc0ad",
-    "git_issue": "83cc0ad",
-    "extid": "FEAT-GAME-STATE-EXTRACTION-AND-ANALYSIS-PIPELINE",
-    "type": "FEAT",
-    "title": "Game state extraction and analysis pipeline",
-    "label": "feat",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/FEAT-game-state-extraction-and-analysis-pipeline.md",
-    "status": "in_progress"
-  },
   "FEAT-GDPR-USER-DATA-RIGHTS": {
     "epic": "proposed:epic-gdpr-data-rights",
     "extid": "FEAT-GDPR-USER-DATA-RIGHTS",
@@ -14699,19 +14299,6 @@
     "title": "Liveness and readiness endpoints (opt-in by config)",
     "type": "FEAT"
   },
-  "FEAT-LLAMA-SWAP-ROTATION-EXCLUSION-POLICY": {
-    "hash": "2eaea4f",
-    "extid": "FEAT-LLAMA-SWAP-ROTATION-EXCLUSION-POLICY",
-    "type": "FEAT",
-    "title": "llama-swap rotation and exclusion policy",
-    "label": "feat",
-    "priority": "medium",
-    "epic": "`.plan/epics/epic-llm-request-scheduler.md`",
-    "tags": [],
-    "source": ".plan/tickets/FEAT-llama-swap-rotation-exclusion-policy.md",
-    "status": "Not Started",
-    "git_issue": "2eaea4f"
-  },
   "FEAT-LLM-ENHANCE-FOR-CHAT-AND-TEXT-WINDOWS-WITH-LEVELED-REWRITES": {
     "epic": "",
     "extid": "FEAT-LLM-ENHANCE-FOR-CHAT-AND-TEXT-WINDOWS-WITH-LEVELED-REWRITES",
@@ -14724,45 +14311,6 @@
     "tags": [],
     "title": "LLM-enhance for chat and text windows with leveled rewrites",
     "type": "FEAT"
-  },
-  "FEAT-LLM-REQUEST-COMPLEXITY-CLASSIFICATION": {
-    "hash": "27f9dd5",
-    "extid": "FEAT-LLM-REQUEST-COMPLEXITY-CLASSIFICATION",
-    "type": "FEAT",
-    "title": "LLM request complexity classification and priority derivation",
-    "label": "feat",
-    "priority": "high",
-    "epic": "`.plan/epics/epic-llm-request-scheduler.md`",
-    "tags": [],
-    "source": ".plan/tickets/FEAT-llm-request-complexity-classification.md",
-    "status": "Not Started",
-    "git_issue": "27f9dd5"
-  },
-  "FEAT-LLM-RESOURCE-AWARE-ADMISSION-CONTROL": {
-    "hash": "3202973",
-    "extid": "FEAT-LLM-RESOURCE-AWARE-ADMISSION-CONTROL",
-    "type": "FEAT",
-    "title": "Resource-aware admission control",
-    "label": "feat",
-    "priority": "high",
-    "epic": "`.plan/epics/epic-llm-request-scheduler.md`",
-    "tags": [],
-    "source": ".plan/tickets/FEAT-llm-resource-aware-admission-control.md",
-    "status": "Not Started",
-    "git_issue": "3202973"
-  },
-  "FEAT-LLM-SCHEDULER-CONFIG-SURFACE": {
-    "hash": "5247560",
-    "extid": "FEAT-LLM-SCHEDULER-CONFIG-SURFACE",
-    "type": "FEAT",
-    "title": "Scheduler config surface (`[generation.scheduler]`)",
-    "label": "feat",
-    "priority": "high",
-    "epic": "`.plan/epics/epic-llm-request-scheduler.md`",
-    "tags": [],
-    "source": ".plan/tickets/FEAT-llm-scheduler-config-surface.md",
-    "status": "Not Started",
-    "git_issue": "5247560"
   },
   "FEAT-LORA-ADMIN-ANNOTATION-ARCHIVAL": {
     "epic": "epic-lora-discovery-application",
@@ -15764,30 +15312,6 @@
     "tags": [],
     "title": "Parallelize bun test invocations - isolate pins suite to one core",
     "type": "FIX"
-  },
-  "IDEA-CHAT-COMPOSER-INLINE-SUGGESTIONS-PROPOSAL": {
-    "epic": "epic-chat-product-features.md",
-    "extid": "IDEA-CHAT-COMPOSER-INLINE-SUGGESTIONS-PROPOSAL",
-    "hash": "8ae1e91",
-    "label": "idea",
-    "priority": "low",
-    "source": ".plan/tickets/IDEA-chat-composer-inline-suggestions-proposal.md",
-    "status": "Not Started",
-    "tags": [],
-    "title": "Chat composer — predictive inline text suggestions (proposal)",
-    "type": "IDEA"
-  },
-  "IDEA-CHAT-COMPOSER-PREDICTIVE-INLINE-TEXT-SUGGESTIONS": {
-    "epic": "epic-chat-product-features.md",
-    "extid": "IDEA-CHAT-COMPOSER-PREDICTIVE-INLINE-TEXT-SUGGESTIONS",
-    "hash": "056e932",
-    "label": "idea",
-    "priority": "low",
-    "source": ".plan/tickets/IDEA-chat-composer-predictive-inline-text-suggestions.md",
-    "status": "Not Started",
-    "tags": [],
-    "title": "Chat composer: predictive inline text suggestions",
-    "type": "IDEA"
   },
   "IDEA-MICRODRAMA-POST-EPISODE-CHAT-HANDOFF": {
     "epic": "epic-platform-research.md",
@@ -17795,19 +17319,6 @@
     "title": "Add HeatPhase state machine for character_heat_cycle.current_phase",
     "type": "TASK"
   },
-  "TASK-ADD-MISSING-RPG-MODULE-BARRELS": {
-    "epic": "epic-nsfw-game-mechanics",
-    "extid": "TASK-ADD-MISSING-RPG-MODULE-BARRELS",
-    "git_issue": "d06f5c7",
-    "hash": "d06f5c7",
-    "label": "task",
-    "priority": "medium",
-    "source": ".plan/tickets/TASK-add-missing-rpg-module-barrels.md",
-    "status": "done",
-    "tags": [],
-    "title": "Add missing rpg module barrels (TASK-034 / 036 / 037 / 040 / 041 AC #1)",
-    "type": "TASK"
-  },
   "TASK-ADD-MODEL-ROLES-TEST-TS-FOR-SRC-ADMIN-MODEL-ROLES-TS": {
     "epic": "",
     "extid": "TASK-ADD-MODEL-ROLES-TEST-TS-FOR-SRC-ADMIN-MODEL-ROLES-TS",
@@ -18027,19 +17538,6 @@
     "status": "open",
     "tags": [],
     "title": "Admin handlers lack explicit requireUserId (fail-open structural risk)",
-    "type": "TASK"
-  },
-  "TASK-ADMIN-LLM-EXECUTION-ANALYTICS-PER-MODEL-PER-PROVIDER-ROLLUPS": {
-    "epic": "epic-analytics-observability",
-    "extid": "TASK-ADMIN-LLM-EXECUTION-ANALYTICS-PER-MODEL-PER-PROVIDER-ROLLUPS",
-    "git_issue": "9219a9b",
-    "hash": "9219a9b",
-    "label": "task",
-    "priority": "medium",
-    "source": ".plan/tickets/TASK-admin-llm-execution-analytics-per-model-per-provider-rollups.md",
-    "status": "Not Started",
-    "tags": [],
-    "title": "Admin LLM execution analytics — per-model/per-provider tokens, latency, cost rollups",
     "type": "TASK"
   },
   "TASK-ADMIN-MODULE-CLEANUP-INDEX-TS-EXPORTS-CONSISTENT-ERROR-HANDL": {
@@ -19762,17 +19260,24 @@
     "type": "TASK"
   },
   "TASK-ASSISTANT-ENTITY-ACCESS-BATCH-RAG-ASSET": {
-    "epic": "",
-    "extid": "TASK-ASSISTANT-ENTITY-ACCESS-BATCH-RAG-ASSET",
-    "git_issue": "fe57375",
     "hash": "fe57375",
+    "extid": "TASK-ASSISTANT-ENTITY-ACCESS-BATCH-RAG-ASSET",
+    "type": "TASK",
+    "title": "B1 — RAG + Asset Access MVP",
     "label": "task",
-    "priority": "medium",
+    "priority": "high",
+    "epic": "epic-assistant-entity-access",
+    "tags": [
+      "assistant",
+      "rag",
+      "assets",
+      "access",
+      "mvp",
+      "batch-b1"
+    ],
     "source": ".plan/tickets/TASK-assistant-entity-access-batch-rag-asset.md",
     "status": "open",
-    "tags": [],
-    "title": "B1 — RAG + Asset Access MVP",
-    "type": "TASK"
+    "git_issue": "fe57375"
   },
   "TASK-ASSISTANT-ENTITY-ACCESS-CHARACTER-ITEM-INVENTORY": {
     "epic": "",
@@ -30672,19 +30177,6 @@
     "title": "LLM Sandboxing",
     "type": "TASK"
   },
-  "TASK-LLM-SCHEDULER-OBSERVABILITY": {
-    "hash": "1051b53",
-    "extid": "TASK-LLM-SCHEDULER-OBSERVABILITY",
-    "type": "TASK",
-    "title": "LLM scheduler observability",
-    "label": "task",
-    "priority": "medium",
-    "epic": "`.plan/epics/epic-llm-request-scheduler.md`",
-    "tags": [],
-    "source": ".plan/tickets/TASK-llm-scheduler-observability.md",
-    "status": "Not Started",
-    "git_issue": "1051b53"
-  },
   "TASK-LOCAL-IMAGE-GENERATION-QUEUE": {
     "epic": "epic-llm-queue.md (see also epic-generation-flow-control.md)",
     "extid": "TASK-LOCAL-IMAGE-GENERATION-QUEUE",
@@ -34245,19 +33737,6 @@
     "title": "Per-command Valves-like options schema",
     "type": "TASK"
   },
-  "TASK-PER-MODEL-PER-PROVIDER-COST-ATTRIBUTION-FOR-LLM-EXECUTION-ST": {
-    "epic": "epic-analytics-observability",
-    "extid": "TASK-PER-MODEL-PER-PROVIDER-COST-ATTRIBUTION-FOR-LLM-EXECUTION-ST",
-    "git_issue": "d62ada5",
-    "hash": "d62ada5",
-    "label": "task",
-    "priority": "medium",
-    "source": ".plan/tickets/TASK-per-model-per-provider-cost-attribution-for-llm-execution-st.md",
-    "status": "Not Started",
-    "tags": [],
-    "title": "Per-model/per-provider cost attribution for LLM execution stats",
-    "type": "TASK"
-  },
   "TASK-PERFORMANCE-DASHBOARD-SLOS": {
     "epic": "epic-performance-dashboard-slo",
     "extid": "TASK-PERFORMANCE-DASHBOARD-SLOS",
@@ -35238,23 +34717,6 @@
     "title": "Provider wiring settings convention for BYOK and resource-provision",
     "type": "TASK"
   },
-  "TASK-PUBLIC-TEMPLATES-ROUTES": {
-    "epic": "epic-config-templates",
-    "extid": "TASK-PUBLIC-TEMPLATES-ROUTES",
-    "git_issue": "b9f2c0f",
-    "hash": "b9f2c0f",
-    "label": "task",
-    "priority": "medium",
-    "source": ".plan/tickets/TASK-public-templates-routes.md",
-    "status": "Not Started",
-    "tags": [
-      "templates",
-      "routes",
-      "api"
-    ],
-    "title": "Public per-modality templates routes (/api/templates/:modality)",
-    "type": "TASK"
-  },
   "TASK-QUEST-LOG": {
     "epic": "epic-story-mode-ui.md",
     "extid": "TASK-QUEST-LOG",
@@ -35945,378 +35407,6 @@
     "status": "done",
     "tags": [],
     "title": "Backend Logic Reconciliation Plan",
-    "type": "TASK"
-  },
-  "TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-ACTIONS-AUDIT-TABLE-AND-SUR": {
-    "epic": "epic-recursive-self-improvement",
-    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-ACTIONS-AUDIT-TABLE-AND-SUR",
-    "git_issue": "7821dd3",
-    "hash": "7821dd3",
-    "label": "task",
-    "priority": "Medium",
-    "source": ".plan/tickets/TASK-recursive-self-improvement-agent-actions-audit-table-and-sur.md",
-    "status": "⬜ Not Started",
-    "tags": [
-      "agent",
-      "audit",
-      "kysely",
-      "migration",
-      "telemetry"
-    ],
-    "title": "Recursive Self-Improvement: Agent Actions Audit Table and Surface",
-    "type": "TASK"
-  },
-  "TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-API-ROUTER-AND-TOKEN-SCOPE-": {
-    "epic": "epic-recursive-self-improvement",
-    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-API-ROUTER-AND-TOKEN-SCOPE-",
-    "git_issue": "a9925f5",
-    "hash": "a9925f5",
-    "label": "task",
-    "priority": "Medium",
-    "source": ".plan/tickets/TASK-recursive-self-improvement-agent-api-router-and-token-scope-.md",
-    "status": "⬜ Not Started",
-    "tags": [
-      "agent",
-      "api",
-      "auth",
-      "elysia",
-      "scope"
-    ],
-    "title": "Recursive Self-Improvement: Agent API Router and Token Scope Auth",
-    "type": "TASK"
-  },
-  "TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-CHECK-STREAM-BUN-RUN-CHECK-": {
-    "epic": "epic-recursive-self-improvement",
-    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-CHECK-STREAM-BUN-RUN-CHECK-",
-    "git_issue": "dfc680d",
-    "hash": "dfc680d",
-    "label": "task",
-    "priority": "Medium",
-    "source": ".plan/tickets/TASK-recursive-self-improvement-agent-check-stream-bun-run-check-.md",
-    "status": "⬜ Not Started",
-    "tags": [
-      "agent",
-      "check",
-      "sse",
-      "streaming",
-      "gates"
-    ],
-    "title": "Recursive Self-Improvement: Agent Check Stream (bun run check over SSE)",
-    "type": "TASK"
-  },
-  "TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-COMMIT-AND-FINALIZE-GPG-DEL": {
-    "epic": "epic-recursive-self-improvement",
-    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-COMMIT-AND-FINALIZE-GPG-DEL",
-    "git_issue": "04539d9",
-    "hash": "04539d9",
-    "label": "task",
-    "priority": "Medium",
-    "source": ".plan/tickets/TASK-recursive-self-improvement-agent-commit-and-finalize-gpg-del.md",
-    "status": "⬜ Not Started",
-    "tags": [
-      "agent",
-      "commit",
-      "finalize",
-      "gpg",
-      "pty",
-      "giwt"
-    ],
-    "title": "Recursive Self-Improvement: Agent Commit and Finalize (GPG-delegated)",
-    "type": "TASK"
-  },
-  "TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-WORKTREE-SPAWN-TTY-FREE-AND": {
-    "epic": "epic-recursive-self-improvement",
-    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-WORKTREE-SPAWN-TTY-FREE-AND",
-    "git_issue": "6484af6",
-    "hash": "6484af6",
-    "label": "task",
-    "priority": "Medium",
-    "source": ".plan/tickets/TASK-recursive-self-improvement-agent-worktree-spawn-tty-free-and.md",
-    "status": "⬜ Not Started",
-    "tags": [
-      "agent",
-      "worktree",
-      "sandbox",
-      "giwt",
-      "tty-free"
-    ],
-    "title": "Recursive Self-Improvement: Agent Worktree Spawn (TTY-free) and Sandbox",
-    "type": "TASK"
-  },
-  "TASK-RECURSIVE-SELF-IMPROVEMENT-BRIEFINGSCRIPT-LINTER-PRE-AGENT-T": {
-    "epic": "epic-recursive-self-improvement",
-    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-BRIEFINGSCRIPT-LINTER-PRE-AGENT-T",
-    "git_issue": "068a3fd",
-    "hash": "068a3fd",
-    "label": "task",
-    "priority": "medium",
-    "source": ".plan/tickets/TASK-recursive-self-improvement-briefingscript-linter-pre-agent-t.md",
-    "status": "⬜ Not Started",
-    "tags": [
-      "briefingscript",
-      "sase",
-      "ticket-lint",
-      "pre-agent",
-      "briefing",
-      "structured-spec",
-      "validator"
-    ],
-    "title": "Recursive Self-Improvement: BriefingScript Linter — Pre-Agent Ticket Quality Gate",
-    "type": "TASK"
-  },
-  "TASK-RECURSIVE-SELF-IMPROVEMENT-DEEP-ANALYSIS-LOGGING-AND-TELEMET": {
-    "epic": "epic-recursive-self-improvement",
-    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-DEEP-ANALYSIS-LOGGING-AND-TELEMET",
-    "git_issue": "36a9209",
-    "hash": "36a9209",
-    "label": "task",
-    "priority": "Medium",
-    "source": ".plan/tickets/TASK-recursive-self-improvement-deep-analysis-logging-and-telemet.md",
-    "status": "Not Started",
-    "tags": [
-      "logging",
-      "telemetry",
-      "deep-analysis",
-      "structured",
-      "tracing",
-      "observability",
-      "agent-diagnostics"
-    ],
-    "title": "Deep-Analysis Logging + Telemetry — Structured Traces for Agent Diagnostics",
-    "type": "TASK"
-  },
-  "TASK-RECURSIVE-SELF-IMPROVEMENT-EVALUATOR-RELIABILITY-DRIFT-DETEC": {
-    "epic": "epic-recursive-self-improvement",
-    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-EVALUATOR-RELIABILITY-DRIFT-DETEC",
-    "git_issue": "0c5b570",
-    "hash": "0c5b570",
-    "label": "task",
-    "priority": "high",
-    "source": ".plan/tickets/TASK-recursive-self-improvement-evaluator-reliability-drift-detec.md",
-    "status": "⬜ Not Started",
-    "tags": [
-      "evaluator-reliability",
-      "drift",
-      "flake-rate",
-      "suspicious-pass",
-      "coverage-regression",
-      "self-confirming-loop",
-      "urc-rsi-survey"
-    ],
-    "title": "Recursive Self-Improvement: Evaluator Reliability Drift Detector",
-    "type": "TASK"
-  },
-  "TASK-RECURSIVE-SELF-IMPROVEMENT-HEALTH-LIVENESS-READINESS-PROBES": {
-    "epic": "epic-recursive-self-improvement",
-    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-HEALTH-LIVENESS-READINESS-PROBES",
-    "git_issue": "d2034b8",
-    "hash": "d2034b8",
-    "label": "task",
-    "priority": "Medium",
-    "source": ".plan/tickets/TASK-recursive-self-improvement-health-liveness-readiness-probes.md",
-    "status": "⬜ Not Started",
-    "tags": [
-      "health",
-      "liveness",
-      "readiness",
-      "probe",
-      "http"
-    ],
-    "title": "Recursive Self-Improvement: Health Liveness Readiness Probes",
-    "type": "TASK"
-  },
-  "TASK-RECURSIVE-SELF-IMPROVEMENT-MERGE-READINESS-PACK-GENERATOR-FR": {
-    "epic": "epic-recursive-self-improvement",
-    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-MERGE-READINESS-PACK-GENERATOR-FR",
-    "git_issue": "29341db",
-    "hash": "29341db",
-    "label": "task",
-    "priority": "medium",
-    "source": ".plan/tickets/TASK-recursive-self-improvement-merge-readiness-pack-generator-fr.md",
-    "status": "⬜ Not Started",
-    "tags": [
-      "merge-readiness-pack",
-      "mrp",
-      "sase",
-      "briefing",
-      "evaluator",
-      "evidence",
-      "gate-report"
-    ],
-    "title": "Recursive Self-Improvement: Merge-Readiness Pack Generator from Check-Report JSON",
-    "type": "TASK"
-  },
-  "TASK-RECURSIVE-SELF-IMPROVEMENT-N-VERSION-PATCH-ARENA-DETERMINIST": {
-    "epic": "epic-recursive-self-improvement",
-    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-N-VERSION-PATCH-ARENA-DETERMINIST",
-    "git_issue": "56d7716",
-    "hash": "56d7716",
-    "label": "task",
-    "priority": "high",
-    "source": ".plan/tickets/TASK-recursive-self-improvement-n-version-patch-arena-determinist.md",
-    "status": "⬜ Not Started",
-    "tags": [
-      "n-version",
-      "patch-arena",
-      "sase",
-      "agentic-se",
-      "evaluation",
-      "candidate-ranking",
-      "cross-reference"
-    ],
-    "title": "Recursive Self-Improvement: N-Version Patch Arena — Deterministic Cross-Reference of Candidate Patches",
-    "type": "TASK"
-  },
-  "TASK-RECURSIVE-SELF-IMPROVEMENT-NEAR-REAL-TIME-DESKTOP-AGENT-PLAY": {
-    "epic": "epic-recursive-self-improvement",
-    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-NEAR-REAL-TIME-DESKTOP-AGENT-PLAY",
-    "git_issue": "283b206",
-    "hash": "283b206",
-    "label": "task",
-    "priority": "High",
-    "source": ".plan/tickets/TASK-recursive-self-improvement-near-real-time-desktop-agent-play.md",
-    "status": "Not Started",
-    "tags": [
-      "agent",
-      "interactive",
-      "desktop",
-      "playwright",
-      "web-search",
-      "doom",
-      "application-testing",
-      "near-real-time"
-    ],
-    "title": "Near-Real-Time Desktop Agent — Interactive Testing via Playwright + Web Search",
-    "type": "TASK"
-  },
-  "TASK-RECURSIVE-SELF-IMPROVEMENT-NIGHTLY-HEAVY-GATE-AND-PERF-REGRE": {
-    "epic": "epic-recursive-self-improvement",
-    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-NIGHTLY-HEAVY-GATE-AND-PERF-REGRE",
-    "git_issue": "739c867",
-    "hash": "739c867",
-    "label": "task",
-    "priority": "Medium",
-    "source": ".plan/tickets/TASK-recursive-self-improvement-nightly-heavy-gate-and-perf-regre.md",
-    "status": "⬜ Not Started",
-    "tags": [
-      "nightly",
-      "ci",
-      "heavy-gate",
-      "perf-regression"
-    ],
-    "title": "Recursive Self-Improvement: Nightly Heavy Gate and Perf Regression Wiring",
-    "type": "TASK"
-  },
-  "TASK-RECURSIVE-SELF-IMPROVEMENT-SIDECAR-PYTHON-PROVIDER-FOR-CUSTO": {
-    "epic": "epic-recursive-self-improvement",
-    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-SIDECAR-PYTHON-PROVIDER-FOR-CUSTO",
-    "git_issue": "56e69db",
-    "hash": "56e69db",
-    "label": "task",
-    "priority": "High",
-    "source": ".plan/tickets/TASK-recursive-self-improvement-sidecar-python-provider-for-custo.md",
-    "status": "Not Started",
-    "tags": [
-      "sidecar",
-      "python",
-      "llm-provider",
-      "custom-llm",
-      "llama-cpp-alternative",
-      "http"
-    ],
-    "title": "Sidecar Python Provider for Custom LLMs (Non-llama.cpp)",
-    "type": "TASK"
-  },
-  "TASK-RECURSIVE-SELF-IMPROVEMENT-SMOKE-GATE-FAST-CI-LOOP": {
-    "epic": "epic-recursive-self-improvement",
-    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-SMOKE-GATE-FAST-CI-LOOP",
-    "git_issue": "f584248",
-    "hash": "f584248",
-    "label": "task",
-    "priority": "Medium",
-    "source": ".plan/tickets/TASK-recursive-self-improvement-smoke-gate-fast-ci-loop.md",
-    "status": "⬜ Not Started",
-    "tags": [
-      "smoke",
-      "ci",
-      "gate",
-      "fast"
-    ],
-    "title": "Recursive Self-Improvement: Smoke Gate (Fast CI Loop)",
-    "type": "TASK"
-  },
-  "TASK-RECURSIVE-SELF-IMPROVEMENT-WATCHDOG-EVENTS-TABLE-AND-TELEMET": {
-    "epic": "epic-recursive-self-improvement",
-    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-WATCHDOG-EVENTS-TABLE-AND-TELEMET",
-    "git_issue": "5aba414",
-    "hash": "5aba414",
-    "label": "task",
-    "priority": "Medium",
-    "source": ".plan/tickets/TASK-recursive-self-improvement-watchdog-events-table-and-telemet.md",
-    "status": "⬜ Not Started",
-    "tags": [
-      "watchdog",
-      "telemetry",
-      "kysely",
-      "migration",
-      "audit"
-    ],
-    "title": "Recursive Self-Improvement: Watchdog Events Table and Telemetry Sink",
-    "type": "TASK"
-  },
-  "TASK-RECURSIVE-SELF-IMPROVEMENT-WATCHDOG-STATE-MACHINE-AND-RESTAR": {
-    "epic": "epic-recursive-self-improvement",
-    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-WATCHDOG-STATE-MACHINE-AND-RESTAR",
-    "git_issue": "c9e41cf",
-    "hash": "c9e41cf",
-    "label": "task",
-    "priority": "Medium",
-    "source": ".plan/tickets/TASK-recursive-self-improvement-watchdog-state-machine-and-restar.md",
-    "status": "⬜ Not Started",
-    "tags": [
-      "watchdog",
-      "state-machine",
-      "restart-policy"
-    ],
-    "title": "Recursive Self-Improvement: Watchdog State Machine and Restart Policy",
-    "type": "TASK"
-  },
-  "TASK-RECURSIVE-SELF-IMPROVEMENT-WATCHDOG-SUPERVISOR-PROCESS-SPAWN": {
-    "epic": "epic-recursive-self-improvement",
-    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-WATCHDOG-SUPERVISOR-PROCESS-SPAWN",
-    "git_issue": "ffb6490",
-    "hash": "ffb6490",
-    "label": "task",
-    "priority": "high",
-    "source": ".plan/tickets/TASK-recursive-self-improvement-watchdog-supervisor-process-spawn.md",
-    "status": "⬜ Not Started",
-    "tags": [
-      "watchdog",
-      "supervisor",
-      "process",
-      "restart",
-      "ci"
-    ],
-    "title": "Recursive Self-Improvement: Watchdog Supervisor Process Spawn and Restart Loop",
-    "type": "TASK"
-  },
-  "TASK-RECURSIVE-SELF-IMPROVEMENT-WATCHDOG-TO-HEAVY-GATE-WEBHOOK-TR": {
-    "epic": "epic-recursive-self-improvement",
-    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-WATCHDOG-TO-HEAVY-GATE-WEBHOOK-TR",
-    "git_issue": "52c2ab5",
-    "hash": "52c2ab5",
-    "label": "task",
-    "priority": "Medium",
-    "source": ".plan/tickets/TASK-recursive-self-improvement-watchdog-to-heavy-gate-webhook-tr.md",
-    "status": "⬜ Not Started",
-    "tags": [
-      "watchdog",
-      "ci",
-      "webhook",
-      "repository-dispatch",
-      "alert"
-    ],
-    "title": "Recursive Self-Improvement: Watchdog to Heavy Gate Webhook Trigger",
     "type": "TASK"
   },
   "TASK-REDOS-CONFIG-TRANSFORMS-BUILD-REGEXP-FROM-UNTRUSTED-PATTERN": {
@@ -37541,19 +36631,6 @@
     "title": "RPG Mechanics — XP Progression & Loot",
     "type": "TASK"
   },
-  "TASK-RPG-NSFW-SERVICES-ADD-CONFIG-LEVEL-OPT-IN-GATE": {
-    "hash": "9dd5789",
-    "extid": "TASK-RPG-NSFW-SERVICES-ADD-CONFIG-LEVEL-OPT-IN-GATE",
-    "type": "TASK",
-    "title": "rpg NSFW services: add config-level opt-in gate",
-    "label": "task",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/TASK-rpg-nsfw-services-add-config-level-opt-in-gate.md",
-    "status": "done",
-    "git_issue": "9dd5789"
-  },
   "TASK-RPG-PATTERNS": {
     "epic": "epic-rpg-patterns",
     "extid": "TASK-RPG-PATTERNS",
@@ -38619,32 +37696,6 @@
     "tags": [],
     "title": "SQLite Backup Mechanisms Research",
     "type": "TASK"
-  },
-  "TASK-SRC-RPG-MODULE-ROOT-BARREL-AND-ORGANIZATION-NITS": {
-    "epic": "",
-    "extid": "TASK-SRC-RPG-MODULE-ROOT-BARREL-AND-ORGANIZATION-NITS",
-    "git_issue": "d81d73e",
-    "hash": "d81d73e",
-    "label": "task",
-    "priority": "medium",
-    "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md",
-    "status": "Not Started",
-    "tags": [],
-    "title": "src/rpg/ module-root barrel and organization nits",
-    "type": "TASK"
-  },
-  "TASK-SRC-RPG-NIT-1-4-BARREL-ORGANIZATION-IMPLEMENTATIONS": {
-    "hash": "f96b4dd",
-    "extid": "TASK-SRC-RPG-NIT-1-4-BARREL-ORGANIZATION-IMPLEMENTATIONS",
-    "type": "TASK",
-    "title": "src/rpg/ NIT 1-4 barrel/organization implementations",
-    "label": "task",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/TASK-src-rpg-nit-1-4-barrel-organization-implementations.md",
-    "status": "done",
-    "git_issue": "f96b4dd"
   },
   "TASK-STABLE-STORED-CHAT-KEY-FUTURE": {
     "epic": "epic-encryption-foundation",
@@ -40844,19 +39895,6 @@
     "title": "Wire intent output to workflow-runner.startWorkflow",
     "type": "TASK"
   },
-  "TASK-WIRE-LLM-RESOURCE-MANAGER-INTO-GENERATION-DISPATCH": {
-    "hash": "25e3c7b",
-    "extid": "TASK-WIRE-LLM-RESOURCE-MANAGER-INTO-GENERATION-DISPATCH",
-    "type": "TASK",
-    "title": "Wire `src/llm` ResourceManager into generation dispatch",
-    "label": "task",
-    "priority": "high",
-    "epic": "`.plan/epics/epic-llm-request-scheduler.md`",
-    "tags": [],
-    "source": ".plan/tickets/TASK-wire-llm-resource-manager-into-generation-dispatch.md",
-    "status": "Not Started",
-    "git_issue": "25e3c7b"
-  },
   "TASK-WIRE-MEMORY-INJECTION": {
     "epic": "epic-logic-reconciliation",
     "extid": "TASK-WIRE-MEMORY-INJECTION",
@@ -41805,5 +40843,1059 @@
     "tags": [],
     "title": "nsfw-audit view route has no inline authz guard",
     "type": "WIRE"
+  },
+  "BUG-ACHIEVEMENT-CLAIMREWARDS-DOUBLE-CREDIT-RACE-AND-LOST-REWARD-": {
+    "hash": "19b8c4f",
+    "git_issue": "19b8c4f",
+    "extid": "BUG-ACHIEVEMENT-CLAIMREWARDS-DOUBLE-CREDIT-RACE-AND-LOST-REWARD-",
+    "type": "BUG",
+    "title": "Achievement claimRewards double-credit race and lost reward on crash",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-achievement-claimrewards-double-credit-race-and-lost-reward-.md",
+    "status": "done"
+  },
+  "BUG-ADMIN-DASHBOARD-BROWSER-TESTS-REPEAT-THE-LOGIN-HX-REDIRECT-R": {
+    "hash": "cd3e6ad",
+    "git_issue": "cd3e6ad",
+    "extid": "BUG-ADMIN-DASHBOARD-BROWSER-TESTS-REPEAT-THE-LOGIN-HX-REDIRECT-R",
+    "type": "BUG",
+    "title": "Admin dashboard browser tests repeat the login HX-Redirect race fixed elsewhere",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-admin-dashboard-browser-tests-repeat-the-login-hx-redirect-r.md",
+    "status": "⬜ Not Started"
+  },
+  "BUG-ANALYTICS-PER-USER-ROUTES-FILTER-TELEMETRY-EVENTS-BY-RAW-IDS": {
+    "epic": "epic-analytics-observability",
+    "extid": "BUG-ANALYTICS-PER-USER-ROUTES-FILTER-TELEMETRY-EVENTS-BY-RAW-IDS",
+    "git_issue": "f5340e2",
+    "hash": "f5340e2",
+    "label": "bug",
+    "priority": "high",
+    "source": ".plan/tickets/BUG-analytics-per-user-routes-filter-telemetry-events-by-raw-ids.md",
+    "status": "Not Started",
+    "tags": [],
+    "title": "analytics per-user routes filter telemetry_events by raw IDs but record() stores hashed IDs",
+    "type": "BUG"
+  },
+  "BUG-ANTHROPIC-RETRY-AFTER-TEST-COVERS-MISSING-HEADER-BUT-NOT-UNP": {
+    "hash": "68e4956",
+    "git_issue": "68e4956",
+    "extid": "BUG-ANTHROPIC-RETRY-AFTER-TEST-COVERS-MISSING-HEADER-BUT-NOT-UNP",
+    "type": "BUG",
+    "title": "Anthropic retry-after test covers missing header but not unparsable header",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-anthropic-retry-after-test-covers-missing-header-but-not-unp.md",
+    "status": "⬜ Not Started"
+  },
+  "BUG-ASYNC-ORPHAN-SPILL-RETENTION-SWEEP-SILENTLY-DELETED-BY-WORKT": {
+    "hash": "91b384a",
+    "git_issue": "91b384a",
+    "extid": "BUG-ASYNC-ORPHAN-SPILL-RETENTION-SWEEP-SILENTLY-DELETED-BY-WORKT",
+    "type": "BUG",
+    "title": "Async orphan-spill retention sweep silently deleted by worktree fold",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-async-orphan-spill-retention-sweep-silently-deleted-by-workt.md",
+    "status": "done"
+  },
+  "BUG-CHAT-FORMAT-WRAPPER-CORRUPTS-CONTENT-VIA-STRING-REPLACE-REPL": {
+    "hash": "a58851b",
+    "git_issue": "a58851b",
+    "extid": "BUG-CHAT-FORMAT-WRAPPER-CORRUPTS-CONTENT-VIA-STRING-REPLACE-REPL",
+    "type": "BUG",
+    "title": "Chat format wrapper corrupts content via String.replace replacement patterns",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-chat-format-wrapper-corrupts-content-via-string-replace-repl.md",
+    "status": "done"
+  },
+  "BUG-EARNSTORYPOINTS-LOST-UPDATE-RACE-AND-RAW-UNIQUE-VIOLATION-ON": {
+    "hash": "0a730c3",
+    "git_issue": "0a730c3",
+    "extid": "BUG-EARNSTORYPOINTS-LOST-UPDATE-RACE-AND-RAW-UNIQUE-VIOLATION-ON",
+    "type": "BUG",
+    "title": "earnStoryPoints lost-update race and raw UNIQUE violation on first earn",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-earnstorypoints-lost-update-race-and-raw-unique-violation-on.md",
+    "status": "⬜ Not Started"
+  },
+  "BUG-FRONTEND-GENERATION-COMPLETED-TELEMETRY-NEVER-REACHES-THE-SE": {
+    "epic": "epic-analytics-observability",
+    "extid": "BUG-FRONTEND-GENERATION-COMPLETED-TELEMETRY-NEVER-REACHES-THE-SE",
+    "git_issue": "e76f0c4",
+    "hash": "e76f0c4",
+    "label": "bug",
+    "priority": "medium",
+    "source": ".plan/tickets/BUG-frontend-generation-completed-telemetry-never-reaches-the-se.md",
+    "status": "Not Started",
+    "tags": [],
+    "title": "frontend generation.completed telemetry never reaches the server ingest union",
+    "type": "BUG"
+  },
+  "BUG-GENERATION-COMPLETED-LATENCYMS-HARDCODED-TO-0-ON-TWO-EMIT-PA": {
+    "epic": "epic-analytics-observability",
+    "extid": "BUG-GENERATION-COMPLETED-LATENCYMS-HARDCODED-TO-0-ON-TWO-EMIT-PA",
+    "git_issue": "6b732d8",
+    "hash": "6b732d8",
+    "label": "bug",
+    "priority": "high",
+    "source": ".plan/tickets/BUG-generation-completed-latencyms-hardcoded-to-0-on-two-emit-pa.md",
+    "status": "done",
+    "tags": [],
+    "title": "generation.completed latencyMs hardcoded to 0 on two emit paths",
+    "type": "BUG"
+  },
+  "BUG-GENERATION-FAILED-DROPS-MODEL-PROVIDER-CONTEXT": {
+    "epic": "epic-analytics-observability",
+    "extid": "BUG-GENERATION-FAILED-DROPS-MODEL-PROVIDER-CONTEXT",
+    "git_issue": "0d42054",
+    "hash": "0d42054",
+    "label": "bug",
+    "priority": "medium",
+    "source": ".plan/tickets/BUG-generation-failed-drops-model-provider-context.md",
+    "status": "done",
+    "tags": [],
+    "title": "generation.failed drops model/provider context — failed calls unattributable",
+    "type": "BUG"
+  },
+  "BUG-GETSTORYPOINTBALANCE-MUTATES-DB-ON-READ-AND-500S-ON-CONCURRE": {
+    "hash": "f3ce06a",
+    "git_issue": "f3ce06a",
+    "extid": "BUG-GETSTORYPOINTBALANCE-MUTATES-DB-ON-READ-AND-500S-ON-CONCURRE",
+    "type": "BUG",
+    "title": "getStoryPointBalance mutates DB on read and 500s on concurrent first read",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-getstorypointbalance-mutates-db-on-read-and-500s-on-concurre.md",
+    "status": "done"
+  },
+  "BUG-I18N-TEST-RESTORE-GUARD-LEAKS-STUBBED-LOCALE-STRINGS-ACROSS-": {
+    "hash": "bb51e44",
+    "git_issue": "bb51e44",
+    "extid": "BUG-I18N-TEST-RESTORE-GUARD-LEAKS-STUBBED-LOCALE-STRINGS-ACROSS-",
+    "type": "BUG",
+    "title": "i18n test restore guard leaks stubbed locale strings across worker",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-i18n-test-restore-guard-leaks-stubbed-locale-strings-across-.md",
+    "status": "⬜ Not Started"
+  },
+  "BUG-IMAGE-EDIT-SUITE-RELEASES-ITS-DEAD-PORT-BEFORE-PROBING-IT-TO": {
+    "hash": "11b117b",
+    "git_issue": "11b117b",
+    "extid": "BUG-IMAGE-EDIT-SUITE-RELEASES-ITS-DEAD-PORT-BEFORE-PROBING-IT-TO",
+    "type": "BUG",
+    "title": "Image-edit suite releases its dead port before probing it (TOCTOU)",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-image-edit-suite-releases-its-dead-port-before-probing-it-to.md",
+    "status": "⬜ Not Started"
+  },
+  "BUG-INSERTUNIQUE-PROBE-MISREPORTS-SKIP-AS-INSERTED-WHEN-CONFLICT": {
+    "hash": "8f02a19",
+    "git_issue": "8f02a19",
+    "extid": "BUG-INSERTUNIQUE-PROBE-MISREPORTS-SKIP-AS-INSERTED-WHEN-CONFLICT",
+    "type": "BUG",
+    "title": "insertUnique probe misreports skip as inserted when conflict target includes id",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-insertunique-probe-misreports-skip-as-inserted-when-conflict.md",
+    "status": "done"
+  },
+  "BUG-JSCPD-RATCHET-GATE-SILENTLY-REMOVED-WITHOUT-TICKET": {
+    "hash": "8b06f29",
+    "git_issue": "8b06f29",
+    "extid": "BUG-JSCPD-RATCHET-GATE-SILENTLY-REMOVED-WITHOUT-TICKET",
+    "type": "BUG",
+    "title": "jscpd ratchet gate silently removed without ticket",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-jscpd-ratchet-gate-silently-removed-without-ticket.md",
+    "status": "⬜ Not Started"
+  },
+  "BUG-KEYNAV-HANDLER-ISOLATION-LOGS-VIA-CONSOLE-ERROR-INSTEAD-OF-L": {
+    "hash": "76c2be6",
+    "git_issue": "76c2be6",
+    "extid": "BUG-KEYNAV-HANDLER-ISOLATION-LOGS-VIA-CONSOLE-ERROR-INSTEAD-OF-L",
+    "type": "BUG",
+    "title": "Keynav handler isolation logs via console.error instead of logger",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-keynav-handler-isolation-logs-via-console-error-instead-of-l.md",
+    "status": "⬜ Not Started"
+  },
+  "BUG-MIGRATION-020-LOGS-VIA-CONSOLE-WARN-WITH-ESLINT-DISABLE-INST": {
+    "hash": "8c89080",
+    "git_issue": "8c89080",
+    "extid": "BUG-MIGRATION-020-LOGS-VIA-CONSOLE-WARN-WITH-ESLINT-DISABLE-INST",
+    "type": "BUG",
+    "title": "Migration 020 logs via console.warn with eslint-disable instead of emitWarning",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-migration-020-logs-via-console-warn-with-eslint-disable-inst.md",
+    "status": "⬜ Not Started"
+  },
+  "BUG-NOTIFICATIONS-SSE-FRAMES-NEVER-PARSE-READ-SHIPPED-AS-STRING-": {
+    "hash": "756157b",
+    "git_issue": "756157b",
+    "extid": "BUG-NOTIFICATIONS-SSE-FRAMES-NEVER-PARSE-READ-SHIPPED-AS-STRING-",
+    "type": "BUG",
+    "title": "Notifications SSE frames never parse: read shipped as string, schema expects number",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-notifications-sse-frames-never-parse-read-shipped-as-string-.md",
+    "status": "done"
+  },
+  "BUG-PRUNEEXPIRED-BOUNDARY-COMMENT-STATES-OPPOSITE-OF-IMPLEMENTAT": {
+    "hash": "910710d",
+    "git_issue": "910710d",
+    "extid": "BUG-PRUNEEXPIRED-BOUNDARY-COMMENT-STATES-OPPOSITE-OF-IMPLEMENTAT",
+    "type": "BUG",
+    "title": "pruneExpired boundary comment states opposite of implementation",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-pruneexpired-boundary-comment-states-opposite-of-implementat.md",
+    "status": "⬜ Not Started"
+  },
+  "BUG-RATE-LIMIT-STATUS-ENDPOINT-500S-ON-HOSTILE-PATH-QUERY": {
+    "hash": "335d186",
+    "git_issue": "335d186",
+    "extid": "BUG-RATE-LIMIT-STATUS-ENDPOINT-500S-ON-HOSTILE-PATH-QUERY",
+    "type": "BUG",
+    "title": "Rate-limit status endpoint 500s on hostile ?path= query",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-rate-limit-status-endpoint-500s-on-hostile-path-query.md",
+    "status": "done"
+  },
+  "BUG-REFUND-CONTRACT-INVITES-OVER-ADMISSION-IN-PEEK-RECORD-FLOWS-": {
+    "hash": "7c12660",
+    "git_issue": "7c12660",
+    "extid": "BUG-REFUND-CONTRACT-INVITES-OVER-ADMISSION-IN-PEEK-RECORD-FLOWS-",
+    "type": "BUG",
+    "title": "refund() contract invites over-admission in peek/record flows; vacuous test pins it",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-refund-contract-invites-over-admission-in-peek-record-flows-.md",
+    "status": "⬜ Not Started"
+  },
+  "BUG-REGISTER-PEEK-RECORD-SPLIT-ADMITS-UNLIMITED-CONCURRENT-REGIS": {
+    "hash": "815f45a",
+    "git_issue": "815f45a",
+    "extid": "BUG-REGISTER-PEEK-RECORD-SPLIT-ADMITS-UNLIMITED-CONCURRENT-REGIS",
+    "type": "BUG",
+    "title": "Register peek/record split admits unlimited concurrent registrations per IP",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-register-peek-record-split-admits-unlimited-concurrent-regis.md",
+    "status": "done"
+  },
+  "BUG-SEEN-POLLER-STARVES-SHARED-DEFAULT-RATE-LIMIT-BUCKET": {
+    "hash": "36b98b4",
+    "git_issue": "36b98b4",
+    "extid": "BUG-SEEN-POLLER-STARVES-SHARED-DEFAULT-RATE-LIMIT-BUCKET",
+    "type": "BUG",
+    "title": "Seen-poller starves shared default rate-limit bucket",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-seen-poller-starves-shared-default-rate-limit-bucket.md",
+    "status": "done"
+  },
+  "BUG-STORY-POINTS-MUTATIONS-DOUBLE-SWALLOW-CACHE-REFRESH-FAILURES": {
+    "hash": "9e05192",
+    "git_issue": "9e05192",
+    "extid": "BUG-STORY-POINTS-MUTATIONS-DOUBLE-SWALLOW-CACHE-REFRESH-FAILURES",
+    "type": "BUG",
+    "title": "Story-points mutations double-swallow cache-refresh failures silently",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-story-points-mutations-double-swallow-cache-refresh-failures.md",
+    "status": "⬜ Not Started"
+  },
+  "BUG-TURN-SKIP-CONCURRENT-ADVANCE-POSTS-DOUBLE-FIRE-AUTO-GENERATI": {
+    "hash": "c4f570d",
+    "git_issue": "c4f570d",
+    "extid": "BUG-TURN-SKIP-CONCURRENT-ADVANCE-POSTS-DOUBLE-FIRE-AUTO-GENERATI",
+    "type": "BUG",
+    "title": "Turn-skip concurrent advance POSTs double-fire auto-generation",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-turn-skip-concurrent-advance-posts-double-fire-auto-generati.md",
+    "status": "⬜ Not Started"
+  },
+  "EPIC-LLM-REQUEST-SCHEDULER": {
+    "hash": "04ef186",
+    "extid": "EPIC-LLM-REQUEST-SCHEDULER",
+    "type": "EPIC",
+    "title": "LLM Request Scheduler — Complexity, Resources, Model Rotation",
+    "label": "epic",
+    "priority": "high",
+    "epic": "",
+    "tags": [
+      "llm",
+      "scheduler",
+      "queue",
+      "concurrency",
+      "llama-swap",
+      "admission-control",
+      "cost"
+    ],
+    "source": ".plan/epics/epic-llm-request-scheduler.md",
+    "status": "Proposed",
+    "git_issue": "04ef186"
+  },
+  "EPIC-RECURSIVE-SELF-IMPROVEMENT": {
+    "epic": "",
+    "extid": "EPIC-RECURSIVE-SELF-IMPROVEMENT",
+    "git_issue": "42bbf1a",
+    "hash": "42bbf1a",
+    "label": "epic",
+    "priority": "High",
+    "source": ".plan/epics/epic-recursive-self-improvement.md",
+    "status": "Not Started",
+    "tags": [
+      "watchdog",
+      "supervisor",
+      "agent",
+      "agentic-development",
+      "on-the-fly",
+      "hot-reload",
+      "self-heal",
+      "sandbox",
+      "ci",
+      "cicd",
+      "observability",
+      "automation",
+      "programmatic-api",
+      "dev-loop"
+    ],
+    "title": "Recursive Self-Improvement — Watchdog, Agent Loop & On-the-Fly Development",
+    "type": "EPIC"
+  },
+  "FEAT-2D-INTERACTIVE-GAME-CANVAS-FOR-CHAT-SCENES": {
+    "hash": "0341593",
+    "git_issue": "0341593",
+    "extid": "FEAT-2D-INTERACTIVE-GAME-CANVAS-FOR-CHAT-SCENES",
+    "type": "FEAT",
+    "title": "2D interactive game canvas for chat scenes",
+    "label": "feat",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-2d-interactive-game-canvas-for-chat-scenes.md",
+    "status": "Not Started"
+  },
+  "FEAT-GAME-STATE-EXTRACTION-AND-ANALYSIS-PIPELINE": {
+    "hash": "83cc0ad",
+    "git_issue": "83cc0ad",
+    "extid": "FEAT-GAME-STATE-EXTRACTION-AND-ANALYSIS-PIPELINE",
+    "type": "FEAT",
+    "title": "Game state extraction and analysis pipeline",
+    "label": "feat",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-game-state-extraction-and-analysis-pipeline.md",
+    "status": "in_progress"
+  },
+  "FEAT-LLAMA-SWAP-ROTATION-EXCLUSION-POLICY": {
+    "hash": "2eaea4f",
+    "extid": "FEAT-LLAMA-SWAP-ROTATION-EXCLUSION-POLICY",
+    "type": "FEAT",
+    "title": "llama-swap rotation and exclusion policy",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "`.plan/epics/epic-llm-request-scheduler.md`",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-llama-swap-rotation-exclusion-policy.md",
+    "status": "Not Started",
+    "git_issue": "2eaea4f"
+  },
+  "FEAT-LLM-REQUEST-COMPLEXITY-CLASSIFICATION": {
+    "hash": "27f9dd5",
+    "extid": "FEAT-LLM-REQUEST-COMPLEXITY-CLASSIFICATION",
+    "type": "FEAT",
+    "title": "LLM request complexity classification and priority derivation",
+    "label": "feat",
+    "priority": "high",
+    "epic": "`.plan/epics/epic-llm-request-scheduler.md`",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-llm-request-complexity-classification.md",
+    "status": "Not Started",
+    "git_issue": "27f9dd5"
+  },
+  "FEAT-LLM-RESOURCE-AWARE-ADMISSION-CONTROL": {
+    "hash": "3202973",
+    "extid": "FEAT-LLM-RESOURCE-AWARE-ADMISSION-CONTROL",
+    "type": "FEAT",
+    "title": "Resource-aware admission control",
+    "label": "feat",
+    "priority": "high",
+    "epic": "`.plan/epics/epic-llm-request-scheduler.md`",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-llm-resource-aware-admission-control.md",
+    "status": "Not Started",
+    "git_issue": "3202973"
+  },
+  "FEAT-LLM-SCHEDULER-CONFIG-SURFACE": {
+    "hash": "5247560",
+    "extid": "FEAT-LLM-SCHEDULER-CONFIG-SURFACE",
+    "type": "FEAT",
+    "title": "Scheduler config surface (`[generation.scheduler]`)",
+    "label": "feat",
+    "priority": "high",
+    "epic": "`.plan/epics/epic-llm-request-scheduler.md`",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-llm-scheduler-config-surface.md",
+    "status": "Not Started",
+    "git_issue": "5247560"
+  },
+  "IDEA-CHAT-COMPOSER-INLINE-SUGGESTIONS-PROPOSAL": {
+    "epic": "epic-chat-product-features.md",
+    "extid": "IDEA-CHAT-COMPOSER-INLINE-SUGGESTIONS-PROPOSAL",
+    "hash": "8ae1e91",
+    "label": "idea",
+    "priority": "low",
+    "source": ".plan/tickets/IDEA-chat-composer-inline-suggestions-proposal.md",
+    "status": "Not Started",
+    "tags": [],
+    "title": "Chat composer — predictive inline text suggestions (proposal)",
+    "type": "IDEA"
+  },
+  "IDEA-CHAT-COMPOSER-PREDICTIVE-INLINE-TEXT-SUGGESTIONS": {
+    "epic": "epic-chat-product-features.md",
+    "extid": "IDEA-CHAT-COMPOSER-PREDICTIVE-INLINE-TEXT-SUGGESTIONS",
+    "hash": "056e932",
+    "label": "idea",
+    "priority": "low",
+    "source": ".plan/tickets/IDEA-chat-composer-predictive-inline-text-suggestions.md",
+    "status": "Not Started",
+    "tags": [],
+    "title": "Chat composer: predictive inline text suggestions",
+    "type": "IDEA"
+  },
+  "TASK-ADD-MISSING-RPG-MODULE-BARRELS": {
+    "epic": "epic-nsfw-game-mechanics",
+    "extid": "TASK-ADD-MISSING-RPG-MODULE-BARRELS",
+    "git_issue": "d06f5c7",
+    "hash": "d06f5c7",
+    "label": "task",
+    "priority": "medium",
+    "source": ".plan/tickets/TASK-add-missing-rpg-module-barrels.md",
+    "status": "done",
+    "tags": [],
+    "title": "Add missing rpg module barrels (TASK-034 / 036 / 037 / 040 / 041 AC #1)",
+    "type": "TASK"
+  },
+  "TASK-ADMIN-LLM-EXECUTION-ANALYTICS-PER-MODEL-PER-PROVIDER-ROLLUPS": {
+    "epic": "epic-analytics-observability",
+    "extid": "TASK-ADMIN-LLM-EXECUTION-ANALYTICS-PER-MODEL-PER-PROVIDER-ROLLUPS",
+    "git_issue": "9219a9b",
+    "hash": "9219a9b",
+    "label": "task",
+    "priority": "medium",
+    "source": ".plan/tickets/TASK-admin-llm-execution-analytics-per-model-per-provider-rollups.md",
+    "status": "Not Started",
+    "tags": [],
+    "title": "Admin LLM execution analytics — per-model/per-provider tokens, latency, cost rollups",
+    "type": "TASK"
+  },
+  "TASK-LLM-SCHEDULER-OBSERVABILITY": {
+    "hash": "1051b53",
+    "extid": "TASK-LLM-SCHEDULER-OBSERVABILITY",
+    "type": "TASK",
+    "title": "LLM scheduler observability",
+    "label": "task",
+    "priority": "medium",
+    "epic": "`.plan/epics/epic-llm-request-scheduler.md`",
+    "tags": [],
+    "source": ".plan/tickets/TASK-llm-scheduler-observability.md",
+    "status": "Not Started",
+    "git_issue": "1051b53"
+  },
+  "TASK-PER-MODEL-PER-PROVIDER-COST-ATTRIBUTION-FOR-LLM-EXECUTION-ST": {
+    "epic": "epic-analytics-observability",
+    "extid": "TASK-PER-MODEL-PER-PROVIDER-COST-ATTRIBUTION-FOR-LLM-EXECUTION-ST",
+    "git_issue": "d62ada5",
+    "hash": "d62ada5",
+    "label": "task",
+    "priority": "medium",
+    "source": ".plan/tickets/TASK-per-model-per-provider-cost-attribution-for-llm-execution-st.md",
+    "status": "Not Started",
+    "tags": [],
+    "title": "Per-model/per-provider cost attribution for LLM execution stats",
+    "type": "TASK"
+  },
+  "TASK-PUBLIC-TEMPLATES-ROUTES": {
+    "epic": "epic-config-templates",
+    "extid": "TASK-PUBLIC-TEMPLATES-ROUTES",
+    "git_issue": "b9f2c0f",
+    "hash": "b9f2c0f",
+    "label": "task",
+    "priority": "medium",
+    "source": ".plan/tickets/TASK-public-templates-routes.md",
+    "status": "Not Started",
+    "tags": [
+      "templates",
+      "routes",
+      "api"
+    ],
+    "title": "Public per-modality templates routes (/api/templates/:modality)",
+    "type": "TASK"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-ACTIONS-AUDIT-TABLE-AND-SUR": {
+    "epic": "epic-recursive-self-improvement",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-ACTIONS-AUDIT-TABLE-AND-SUR",
+    "git_issue": "7821dd3",
+    "hash": "7821dd3",
+    "label": "task",
+    "priority": "Medium",
+    "source": ".plan/tickets/TASK-recursive-self-improvement-agent-actions-audit-table-and-sur.md",
+    "status": "⬜ Not Started",
+    "tags": [
+      "agent",
+      "audit",
+      "kysely",
+      "migration",
+      "telemetry"
+    ],
+    "title": "Recursive Self-Improvement: Agent Actions Audit Table and Surface",
+    "type": "TASK"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-API-ROUTER-AND-TOKEN-SCOPE-": {
+    "epic": "epic-recursive-self-improvement",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-API-ROUTER-AND-TOKEN-SCOPE-",
+    "git_issue": "a9925f5",
+    "hash": "a9925f5",
+    "label": "task",
+    "priority": "Medium",
+    "source": ".plan/tickets/TASK-recursive-self-improvement-agent-api-router-and-token-scope-.md",
+    "status": "⬜ Not Started",
+    "tags": [
+      "agent",
+      "api",
+      "auth",
+      "elysia",
+      "scope"
+    ],
+    "title": "Recursive Self-Improvement: Agent API Router and Token Scope Auth",
+    "type": "TASK"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-CHECK-STREAM-BUN-RUN-CHECK-": {
+    "epic": "epic-recursive-self-improvement",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-CHECK-STREAM-BUN-RUN-CHECK-",
+    "git_issue": "dfc680d",
+    "hash": "dfc680d",
+    "label": "task",
+    "priority": "Medium",
+    "source": ".plan/tickets/TASK-recursive-self-improvement-agent-check-stream-bun-run-check-.md",
+    "status": "⬜ Not Started",
+    "tags": [
+      "agent",
+      "check",
+      "sse",
+      "streaming",
+      "gates"
+    ],
+    "title": "Recursive Self-Improvement: Agent Check Stream (bun run check over SSE)",
+    "type": "TASK"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-COMMIT-AND-FINALIZE-GPG-DEL": {
+    "epic": "epic-recursive-self-improvement",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-COMMIT-AND-FINALIZE-GPG-DEL",
+    "git_issue": "04539d9",
+    "hash": "04539d9",
+    "label": "task",
+    "priority": "Medium",
+    "source": ".plan/tickets/TASK-recursive-self-improvement-agent-commit-and-finalize-gpg-del.md",
+    "status": "⬜ Not Started",
+    "tags": [
+      "agent",
+      "commit",
+      "finalize",
+      "gpg",
+      "pty",
+      "giwt"
+    ],
+    "title": "Recursive Self-Improvement: Agent Commit and Finalize (GPG-delegated)",
+    "type": "TASK"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-WORKTREE-SPAWN-TTY-FREE-AND": {
+    "epic": "epic-recursive-self-improvement",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-WORKTREE-SPAWN-TTY-FREE-AND",
+    "git_issue": "6484af6",
+    "hash": "6484af6",
+    "label": "task",
+    "priority": "Medium",
+    "source": ".plan/tickets/TASK-recursive-self-improvement-agent-worktree-spawn-tty-free-and.md",
+    "status": "⬜ Not Started",
+    "tags": [
+      "agent",
+      "worktree",
+      "sandbox",
+      "giwt",
+      "tty-free"
+    ],
+    "title": "Recursive Self-Improvement: Agent Worktree Spawn (TTY-free) and Sandbox",
+    "type": "TASK"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-BRIEFINGSCRIPT-LINTER-PRE-AGENT-T": {
+    "epic": "epic-recursive-self-improvement",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-BRIEFINGSCRIPT-LINTER-PRE-AGENT-T",
+    "git_issue": "068a3fd",
+    "hash": "068a3fd",
+    "label": "task",
+    "priority": "medium",
+    "source": ".plan/tickets/TASK-recursive-self-improvement-briefingscript-linter-pre-agent-t.md",
+    "status": "⬜ Not Started",
+    "tags": [
+      "briefingscript",
+      "sase",
+      "ticket-lint",
+      "pre-agent",
+      "briefing",
+      "structured-spec",
+      "validator"
+    ],
+    "title": "Recursive Self-Improvement: BriefingScript Linter — Pre-Agent Ticket Quality Gate",
+    "type": "TASK"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-DEEP-ANALYSIS-LOGGING-AND-TELEMET": {
+    "epic": "epic-recursive-self-improvement",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-DEEP-ANALYSIS-LOGGING-AND-TELEMET",
+    "git_issue": "36a9209",
+    "hash": "36a9209",
+    "label": "task",
+    "priority": "Medium",
+    "source": ".plan/tickets/TASK-recursive-self-improvement-deep-analysis-logging-and-telemet.md",
+    "status": "Not Started",
+    "tags": [
+      "logging",
+      "telemetry",
+      "deep-analysis",
+      "structured",
+      "tracing",
+      "observability",
+      "agent-diagnostics"
+    ],
+    "title": "Deep-Analysis Logging + Telemetry — Structured Traces for Agent Diagnostics",
+    "type": "TASK"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-EVALUATOR-RELIABILITY-DRIFT-DETEC": {
+    "epic": "epic-recursive-self-improvement",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-EVALUATOR-RELIABILITY-DRIFT-DETEC",
+    "git_issue": "0c5b570",
+    "hash": "0c5b570",
+    "label": "task",
+    "priority": "high",
+    "source": ".plan/tickets/TASK-recursive-self-improvement-evaluator-reliability-drift-detec.md",
+    "status": "⬜ Not Started",
+    "tags": [
+      "evaluator-reliability",
+      "drift",
+      "flake-rate",
+      "suspicious-pass",
+      "coverage-regression",
+      "self-confirming-loop",
+      "urc-rsi-survey"
+    ],
+    "title": "Recursive Self-Improvement: Evaluator Reliability Drift Detector",
+    "type": "TASK"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-HEALTH-LIVENESS-READINESS-PROBES": {
+    "epic": "epic-recursive-self-improvement",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-HEALTH-LIVENESS-READINESS-PROBES",
+    "git_issue": "d2034b8",
+    "hash": "d2034b8",
+    "label": "task",
+    "priority": "Medium",
+    "source": ".plan/tickets/TASK-recursive-self-improvement-health-liveness-readiness-probes.md",
+    "status": "⬜ Not Started",
+    "tags": [
+      "health",
+      "liveness",
+      "readiness",
+      "probe",
+      "http"
+    ],
+    "title": "Recursive Self-Improvement: Health Liveness Readiness Probes",
+    "type": "TASK"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-MERGE-READINESS-PACK-GENERATOR-FR": {
+    "epic": "epic-recursive-self-improvement",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-MERGE-READINESS-PACK-GENERATOR-FR",
+    "git_issue": "29341db",
+    "hash": "29341db",
+    "label": "task",
+    "priority": "medium",
+    "source": ".plan/tickets/TASK-recursive-self-improvement-merge-readiness-pack-generator-fr.md",
+    "status": "⬜ Not Started",
+    "tags": [
+      "merge-readiness-pack",
+      "mrp",
+      "sase",
+      "briefing",
+      "evaluator",
+      "evidence",
+      "gate-report"
+    ],
+    "title": "Recursive Self-Improvement: Merge-Readiness Pack Generator from Check-Report JSON",
+    "type": "TASK"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-N-VERSION-PATCH-ARENA-DETERMINIST": {
+    "epic": "epic-recursive-self-improvement",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-N-VERSION-PATCH-ARENA-DETERMINIST",
+    "git_issue": "56d7716",
+    "hash": "56d7716",
+    "label": "task",
+    "priority": "high",
+    "source": ".plan/tickets/TASK-recursive-self-improvement-n-version-patch-arena-determinist.md",
+    "status": "⬜ Not Started",
+    "tags": [
+      "n-version",
+      "patch-arena",
+      "sase",
+      "agentic-se",
+      "evaluation",
+      "candidate-ranking",
+      "cross-reference"
+    ],
+    "title": "Recursive Self-Improvement: N-Version Patch Arena — Deterministic Cross-Reference of Candidate Patches",
+    "type": "TASK"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-NEAR-REAL-TIME-DESKTOP-AGENT-PLAY": {
+    "epic": "epic-recursive-self-improvement",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-NEAR-REAL-TIME-DESKTOP-AGENT-PLAY",
+    "git_issue": "283b206",
+    "hash": "283b206",
+    "label": "task",
+    "priority": "High",
+    "source": ".plan/tickets/TASK-recursive-self-improvement-near-real-time-desktop-agent-play.md",
+    "status": "Not Started",
+    "tags": [
+      "agent",
+      "interactive",
+      "desktop",
+      "playwright",
+      "web-search",
+      "doom",
+      "application-testing",
+      "near-real-time"
+    ],
+    "title": "Near-Real-Time Desktop Agent — Interactive Testing via Playwright + Web Search",
+    "type": "TASK"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-NIGHTLY-HEAVY-GATE-AND-PERF-REGRE": {
+    "epic": "epic-recursive-self-improvement",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-NIGHTLY-HEAVY-GATE-AND-PERF-REGRE",
+    "git_issue": "739c867",
+    "hash": "739c867",
+    "label": "task",
+    "priority": "Medium",
+    "source": ".plan/tickets/TASK-recursive-self-improvement-nightly-heavy-gate-and-perf-regre.md",
+    "status": "⬜ Not Started",
+    "tags": [
+      "nightly",
+      "ci",
+      "heavy-gate",
+      "perf-regression"
+    ],
+    "title": "Recursive Self-Improvement: Nightly Heavy Gate and Perf Regression Wiring",
+    "type": "TASK"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-SIDECAR-PYTHON-PROVIDER-FOR-CUSTO": {
+    "epic": "epic-recursive-self-improvement",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-SIDECAR-PYTHON-PROVIDER-FOR-CUSTO",
+    "git_issue": "56e69db",
+    "hash": "56e69db",
+    "label": "task",
+    "priority": "High",
+    "source": ".plan/tickets/TASK-recursive-self-improvement-sidecar-python-provider-for-custo.md",
+    "status": "Not Started",
+    "tags": [
+      "sidecar",
+      "python",
+      "llm-provider",
+      "custom-llm",
+      "llama-cpp-alternative",
+      "http"
+    ],
+    "title": "Sidecar Python Provider for Custom LLMs (Non-llama.cpp)",
+    "type": "TASK"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-SMOKE-GATE-FAST-CI-LOOP": {
+    "epic": "epic-recursive-self-improvement",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-SMOKE-GATE-FAST-CI-LOOP",
+    "git_issue": "f584248",
+    "hash": "f584248",
+    "label": "task",
+    "priority": "Medium",
+    "source": ".plan/tickets/TASK-recursive-self-improvement-smoke-gate-fast-ci-loop.md",
+    "status": "⬜ Not Started",
+    "tags": [
+      "smoke",
+      "ci",
+      "gate",
+      "fast"
+    ],
+    "title": "Recursive Self-Improvement: Smoke Gate (Fast CI Loop)",
+    "type": "TASK"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-WATCHDOG-EVENTS-TABLE-AND-TELEMET": {
+    "epic": "epic-recursive-self-improvement",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-WATCHDOG-EVENTS-TABLE-AND-TELEMET",
+    "git_issue": "5aba414",
+    "hash": "5aba414",
+    "label": "task",
+    "priority": "Medium",
+    "source": ".plan/tickets/TASK-recursive-self-improvement-watchdog-events-table-and-telemet.md",
+    "status": "⬜ Not Started",
+    "tags": [
+      "watchdog",
+      "telemetry",
+      "kysely",
+      "migration",
+      "audit"
+    ],
+    "title": "Recursive Self-Improvement: Watchdog Events Table and Telemetry Sink",
+    "type": "TASK"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-WATCHDOG-STATE-MACHINE-AND-RESTAR": {
+    "epic": "epic-recursive-self-improvement",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-WATCHDOG-STATE-MACHINE-AND-RESTAR",
+    "git_issue": "c9e41cf",
+    "hash": "c9e41cf",
+    "label": "task",
+    "priority": "Medium",
+    "source": ".plan/tickets/TASK-recursive-self-improvement-watchdog-state-machine-and-restar.md",
+    "status": "⬜ Not Started",
+    "tags": [
+      "watchdog",
+      "state-machine",
+      "restart-policy"
+    ],
+    "title": "Recursive Self-Improvement: Watchdog State Machine and Restart Policy",
+    "type": "TASK"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-WATCHDOG-SUPERVISOR-PROCESS-SPAWN": {
+    "epic": "epic-recursive-self-improvement",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-WATCHDOG-SUPERVISOR-PROCESS-SPAWN",
+    "git_issue": "ffb6490",
+    "hash": "ffb6490",
+    "label": "task",
+    "priority": "high",
+    "source": ".plan/tickets/TASK-recursive-self-improvement-watchdog-supervisor-process-spawn.md",
+    "status": "⬜ Not Started",
+    "tags": [
+      "watchdog",
+      "supervisor",
+      "process",
+      "restart",
+      "ci"
+    ],
+    "title": "Recursive Self-Improvement: Watchdog Supervisor Process Spawn and Restart Loop",
+    "type": "TASK"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-WATCHDOG-TO-HEAVY-GATE-WEBHOOK-TR": {
+    "epic": "epic-recursive-self-improvement",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-WATCHDOG-TO-HEAVY-GATE-WEBHOOK-TR",
+    "git_issue": "52c2ab5",
+    "hash": "52c2ab5",
+    "label": "task",
+    "priority": "Medium",
+    "source": ".plan/tickets/TASK-recursive-self-improvement-watchdog-to-heavy-gate-webhook-tr.md",
+    "status": "⬜ Not Started",
+    "tags": [
+      "watchdog",
+      "ci",
+      "webhook",
+      "repository-dispatch",
+      "alert"
+    ],
+    "title": "Recursive Self-Improvement: Watchdog to Heavy Gate Webhook Trigger",
+    "type": "TASK"
+  },
+  "TASK-RPG-NSFW-SERVICES-ADD-CONFIG-LEVEL-OPT-IN-GATE": {
+    "hash": "9dd5789",
+    "extid": "TASK-RPG-NSFW-SERVICES-ADD-CONFIG-LEVEL-OPT-IN-GATE",
+    "type": "TASK",
+    "title": "rpg NSFW services: add config-level opt-in gate",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-rpg-nsfw-services-add-config-level-opt-in-gate.md",
+    "status": "done",
+    "git_issue": "9dd5789"
+  },
+  "TASK-SRC-RPG-MODULE-ROOT-BARREL-AND-ORGANIZATION-NITS": {
+    "epic": "",
+    "extid": "TASK-SRC-RPG-MODULE-ROOT-BARREL-AND-ORGANIZATION-NITS",
+    "git_issue": "d81d73e",
+    "hash": "d81d73e",
+    "label": "task",
+    "priority": "medium",
+    "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md",
+    "status": "Not Started",
+    "tags": [],
+    "title": "src/rpg/ module-root barrel and organization nits",
+    "type": "TASK"
+  },
+  "TASK-SRC-RPG-NIT-1-4-BARREL-ORGANIZATION-IMPLEMENTATIONS": {
+    "hash": "f96b4dd",
+    "extid": "TASK-SRC-RPG-NIT-1-4-BARREL-ORGANIZATION-IMPLEMENTATIONS",
+    "type": "TASK",
+    "title": "src/rpg/ NIT 1-4 barrel/organization implementations",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-src-rpg-nit-1-4-barrel-organization-implementations.md",
+    "status": "done",
+    "git_issue": "f96b4dd"
+  },
+  "TASK-WIRE-LLM-RESOURCE-MANAGER-INTO-GENERATION-DISPATCH": {
+    "hash": "25e3c7b",
+    "extid": "TASK-WIRE-LLM-RESOURCE-MANAGER-INTO-GENERATION-DISPATCH",
+    "type": "TASK",
+    "title": "Wire `src/llm` ResourceManager into generation dispatch",
+    "label": "task",
+    "priority": "high",
+    "epic": "`.plan/epics/epic-llm-request-scheduler.md`",
+    "tags": [],
+    "source": ".plan/tickets/TASK-wire-llm-resource-manager-into-generation-dispatch.md",
+    "status": "Not Started",
+    "git_issue": "25e3c7b"
+  },
+  "EPIC-COMFYUI-FIRST-CLASS-CITIZEN": {
+    "hash": "6e95cc2",
+    "extid": "EPIC-COMFYUI-FIRST-CLASS-CITIZEN",
+    "type": "EPIC",
+    "title": "ComfyUI First-Class Citizen — Workflow Library, Chat Selection, Admin Setup",
+    "label": "epic",
+    "priority": "High",
+    "epic": "",
+    "tags": [
+      "comfyui",
+      "image-generation",
+      "workflows",
+      "admin",
+      "chat",
+      "lora"
+    ],
+    "source": ".plan/epics/epic-comfyui-first-class-citizen.md",
+    "status": "Not Started",
+    "git_issue": "6e95cc2"
+  },
+  "TASK-COMFYUI-FIRST-CLASS-ADMIN-WORKFLOWS": {
+    "hash": "4baa39c",
+    "extid": "TASK-COMFYUI-FIRST-CLASS-ADMIN-WORKFLOWS",
+    "type": "TASK",
+    "title": "ComfyUI Admin Panel — Workflow Management + Parameterized Templates",
+    "label": "task",
+    "priority": "P1 — High",
+    "epic": "epic-comfyui-first-class-citizen",
+    "tags": [],
+    "source": ".plan/tickets/TASK-comfyui-first-class-admin-workflows.md",
+    "status": "Not Started",
+    "git_issue": "4baa39c"
+  },
+  "TASK-COMFYUI-FIRST-CLASS-CHAT-SELECTION": {
+    "hash": "5831b4d",
+    "extid": "TASK-COMFYUI-FIRST-CLASS-CHAT-SELECTION",
+    "type": "TASK",
+    "title": "ComfyUI Chat + User Preferred Workflow Selection",
+    "label": "task",
+    "priority": "P1 — High",
+    "epic": "epic-comfyui-first-class-citizen",
+    "tags": [],
+    "source": ".plan/tickets/TASK-comfyui-first-class-chat-selection.md",
+    "status": "Not Started",
+    "git_issue": "5831b4d"
+  },
+  "TASK-COMFYUI-FIRST-CLASS-LORA-STACKS": {
+    "hash": "df43373",
+    "extid": "TASK-COMFYUI-FIRST-CLASS-LORA-STACKS",
+    "type": "TASK",
+    "title": "ComfyUI LoRA Stacks (Multi-LoRA Chaining)",
+    "label": "task",
+    "priority": "P2 — Medium",
+    "epic": "epic-comfyui-first-class-citizen",
+    "tags": [],
+    "source": ".plan/tickets/TASK-comfyui-first-class-lora-stacks.md",
+    "status": "Not Started",
+    "git_issue": "df43373"
+  },
+  "TASK-COMFYUI-FIRST-CLASS-WORKFLOW-LIBRARY": {
+    "hash": "c79d1ae",
+    "extid": "TASK-COMFYUI-FIRST-CLASS-WORKFLOW-LIBRARY",
+    "type": "TASK",
+    "title": "ComfyUI Workflow Library (DB-Backed)",
+    "label": "task",
+    "priority": "P1 — High",
+    "epic": "epic-comfyui-first-class-citizen",
+    "tags": [],
+    "source": ".plan/tickets/TASK-comfyui-first-class-workflow-library.md",
+    "status": "Not Started",
+    "git_issue": "c79d1ae"
+  },
+  "TASK-COMFYUI-WORKFLOW-PARAMETERIZATION": {
+    "hash": "cefeb42",
+    "extid": "TASK-COMFYUI-WORKFLOW-PARAMETERIZATION",
+    "type": "TASK",
+    "title": "ComfyUI Workflow Parameterization Correctness",
+    "label": "task",
+    "priority": "P0 — Critical",
+    "epic": "epic-comfyui-first-class-citizen",
+    "tags": [],
+    "source": ".plan/tickets/TASK-comfyui-workflow-parameterization.md",
+    "status": "Not Started",
+    "git_issue": "cefeb42"
   }
 }
