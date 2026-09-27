@@ -39,4 +39,4 @@ Latency is the base unit for E10 (p50/p95/p99 trends). Shipping percentile aggre
 - [ ] `generation.completed` from post-store and stream-to-client carries measured wall-clock `latencyMs`
 - [ ] `generation.truncated` shape unchanged (no latency field, no billing)
 - [ ] Analytics `avgLatencyMs` reflects recorded values in a seeded fixture test
-- [ ] `bun test src/generation/ src/routes/analytics.test.ts` green
+- [ ] `bun test src/generation/auto-gen/post-store.test.ts src/generation/auto-gen/post-store.happy.test.ts src/generation/generate-route/non-stream.test.ts src/generation/generate-route/stream-to-client.test.ts src/routes/analytics.test.ts` green
