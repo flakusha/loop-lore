@@ -23,7 +23,7 @@ import { builtinTemplates, } from "./templates/builtin";
 import type { ImageEditTemplateConfig, } from "../config/sections/templates";
 
 /** */
-class TemplateRegistry {
+export class TemplateRegistry {
   private templates = new Map<string, WorkflowTemplate>();
 
   /**
