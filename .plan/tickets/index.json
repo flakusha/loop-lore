@@ -11140,6 +11140,33 @@
     "status": "⬜ Not Started",
     "git_issue": "47b874d"
   },
+  "EPIC-RECURSIVE-SELF-IMPROVEMENT": {
+    "hash": "pending",
+    "extid": "EPIC-RECURSIVE-SELF-IMPROVEMENT",
+    "type": "EPIC",
+    "title": "Recursive Self-Improvement — Watchdog, Agent Loop & On-the-Fly Development",
+    "label": "epic",
+    "priority": "High",
+    "epic": "",
+    "tags": [
+      "watchdog",
+      "supervisor",
+      "agent",
+      "agentic-development",
+      "on-the-fly",
+      "hot-reload",
+      "self-heal",
+      "sandbox",
+      "ci",
+      "cicd",
+      "observability",
+      "automation",
+      "programmatic-api",
+      "dev-loop"
+    ],
+    "source": ".plan/tickets/epic-recursive-self-improvement.md",
+    "status": "Not Started"
+  },
   "EPIC-RELATIONSHIPS": {
     "hash": "4c39313",
     "extid": "EPIC-RELATIONSHIPS",
@@ -35559,6 +35586,231 @@
     "source": ".plan/tickets/TASK-reconciliation-plan.md",
     "git_issue": "4fee514",
     "status": "done"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-ACTIONS-AUDIT-TABLE-AND-SUR": {
+    "hash": "7821dd3",
+    "git_issue": "7821dd3",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-ACTIONS-AUDIT-TABLE-AND-SUR",
+    "type": "TASK",
+    "title": "Recursive Self-Improvement: Agent Actions Audit Table and Surface",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [
+      "agent",
+      "audit",
+      "kysely",
+      "migration",
+      "telemetry"
+    ],
+    "source": ".plan/tickets/TASK-recursive-self-improvement-agent-actions-audit-table-and-sur.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-API-ROUTER-AND-TOKEN-SCOPE-": {
+    "hash": "a9925f5",
+    "git_issue": "a9925f5",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-API-ROUTER-AND-TOKEN-SCOPE-",
+    "type": "TASK",
+    "title": "Recursive Self-Improvement: Agent API Router and Token Scope Auth",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [
+      "agent",
+      "api",
+      "auth",
+      "elysia",
+      "scope"
+    ],
+    "source": ".plan/tickets/TASK-recursive-self-improvement-agent-api-router-and-token-scope-.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-CHECK-STREAM-BUN-RUN-CHECK-": {
+    "hash": "dfc680d",
+    "git_issue": "dfc680d",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-CHECK-STREAM-BUN-RUN-CHECK-",
+    "type": "TASK",
+    "title": "Recursive Self-Improvement: Agent Check Stream (bun run check over SSE)",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [
+      "agent",
+      "check",
+      "sse",
+      "streaming",
+      "gates"
+    ],
+    "source": ".plan/tickets/TASK-recursive-self-improvement-agent-check-stream-bun-run-check-.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-COMMIT-AND-FINALIZE-GPG-DEL": {
+    "hash": "04539d9",
+    "git_issue": "04539d9",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-COMMIT-AND-FINALIZE-GPG-DEL",
+    "type": "TASK",
+    "title": "Recursive Self-Improvement: Agent Commit and Finalize (GPG-delegated)",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [
+      "agent",
+      "commit",
+      "finalize",
+      "gpg",
+      "pty",
+      "giwt"
+    ],
+    "source": ".plan/tickets/TASK-recursive-self-improvement-agent-commit-and-finalize-gpg-del.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-WORKTREE-SPAWN-TTY-FREE-AND": {
+    "hash": "6484af6",
+    "git_issue": "6484af6",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-WORKTREE-SPAWN-TTY-FREE-AND",
+    "type": "TASK",
+    "title": "Recursive Self-Improvement: Agent Worktree Spawn (TTY-free) and Sandbox",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [
+      "agent",
+      "worktree",
+      "sandbox",
+      "giwt",
+      "tty-free"
+    ],
+    "source": ".plan/tickets/TASK-recursive-self-improvement-agent-worktree-spawn-tty-free-and.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-HEALTH-LIVENESS-READINESS-PROBES": {
+    "hash": "d2034b8",
+    "git_issue": "d2034b8",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-HEALTH-LIVENESS-READINESS-PROBES",
+    "type": "TASK",
+    "title": "Recursive Self-Improvement: Health Liveness Readiness Probes",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [
+      "health",
+      "liveness",
+      "readiness",
+      "probe",
+      "http"
+    ],
+    "source": ".plan/tickets/TASK-recursive-self-improvement-health-liveness-readiness-probes.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-NIGHTLY-HEAVY-GATE-AND-PERF-REGRE": {
+    "hash": "739c867",
+    "git_issue": "739c867",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-NIGHTLY-HEAVY-GATE-AND-PERF-REGRE",
+    "type": "TASK",
+    "title": "Recursive Self-Improvement: Nightly Heavy Gate and Perf Regression Wiring",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [
+      "nightly",
+      "ci",
+      "heavy-gate",
+      "perf-regression"
+    ],
+    "source": ".plan/tickets/TASK-recursive-self-improvement-nightly-heavy-gate-and-perf-regre.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-SMOKE-GATE-FAST-CI-LOOP": {
+    "hash": "f584248",
+    "git_issue": "f584248",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-SMOKE-GATE-FAST-CI-LOOP",
+    "type": "TASK",
+    "title": "Recursive Self-Improvement: Smoke Gate (Fast CI Loop)",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [
+      "smoke",
+      "ci",
+      "gate",
+      "fast"
+    ],
+    "source": ".plan/tickets/TASK-recursive-self-improvement-smoke-gate-fast-ci-loop.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-WATCHDOG-EVENTS-TABLE-AND-TELEMET": {
+    "hash": "5aba414",
+    "git_issue": "5aba414",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-WATCHDOG-EVENTS-TABLE-AND-TELEMET",
+    "type": "TASK",
+    "title": "Recursive Self-Improvement: Watchdog Events Table and Telemetry Sink",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [
+      "watchdog",
+      "telemetry",
+      "kysely",
+      "migration",
+      "audit"
+    ],
+    "source": ".plan/tickets/TASK-recursive-self-improvement-watchdog-events-table-and-telemet.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-WATCHDOG-STATE-MACHINE-AND-RESTAR": {
+    "hash": "c9e41cf",
+    "git_issue": "c9e41cf",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-WATCHDOG-STATE-MACHINE-AND-RESTAR",
+    "type": "TASK",
+    "title": "Recursive Self-Improvement: Watchdog State Machine and Restart Policy",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [
+      "watchdog",
+      "state-machine",
+      "restart-policy"
+    ],
+    "source": ".plan/tickets/TASK-recursive-self-improvement-watchdog-state-machine-and-restar.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-WATCHDOG-SUPERVISOR-PROCESS-SPAWN": {
+    "hash": "ffb6490",
+    "git_issue": "ffb6490",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-WATCHDOG-SUPERVISOR-PROCESS-SPAWN",
+    "type": "TASK",
+    "title": "Recursive Self-Improvement: Watchdog Supervisor Process Spawn and Restart Loop",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [
+      "watchdog",
+      "supervisor",
+      "process",
+      "restart",
+      "ci"
+    ],
+    "source": ".plan/tickets/TASK-recursive-self-improvement-watchdog-supervisor-process-spawn.md",
+    "status": "⬜ Not Started"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-WATCHDOG-TO-HEAVY-GATE-WEBHOOK-TR": {
+    "hash": "52c2ab5",
+    "git_issue": "52c2ab5",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-WATCHDOG-TO-HEAVY-GATE-WEBHOOK-TR",
+    "type": "TASK",
+    "title": "Recursive Self-Improvement: Watchdog to Heavy Gate Webhook Trigger",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [
+      "watchdog",
+      "ci",
+      "webhook",
+      "repository-dispatch",
+      "alert"
+    ],
+    "source": ".plan/tickets/TASK-recursive-self-improvement-watchdog-to-heavy-gate-webhook-tr.md",
+    "status": "⬜ Not Started"
   },
   "TASK-REDOS-CONFIG-TRANSFORMS-BUILD-REGEXP-FROM-UNTRUSTED-PATTERN": {
     "hash": "1330c1f",
