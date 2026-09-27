@@ -1,0 +1,61 @@
+<!--
+  SPDX-License-Identifier: LGPL-3.0-or-later
+  SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
+  2D Game Canvas — interactive grid render of the chat's latest game state.
+  Nested inside chatState() scope; resolves the chat id via the Alpine `chat`
+  store (mirrors storyState). All entity text reaches the DOM via Alpine
+  x-text bindings or canvas fillText — never HTML interpolation.
+-->
+<div
+  x-data="gameCanvas()"
+  class="game-canvas"
+  data-testid="game-canvas"
+>
+  <style>
+  .game-canvas__canvas {
+    display: block;
+    max-width: 100%;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+  }
+  .game-canvas__toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .game-canvas__detail {
+    margin-top: 6px;
+    font-size: 13px;
+    color: #374151;
+  }
+  </style>
+
+  <div class="game-canvas__toolbar">
+    <button class="btn btn-sm btn-ghost" @click="refresh()" data-testid="game-canvas-refresh">Refresh</button>
+    <span x-show="loading" x-cloak class="spinner"></span>
+    <span x-show="error" x-cloak x-text="error" class="game-canvas__error" data-testid="game-canvas-error"></span>
+  </div>
+
+  <canvas
+    x-ref="canvas"
+    class="game-canvas__canvas"
+    @click="onCanvasClick($event)"
+    data-testid="game-canvas-grid"
+  ></canvas>
+
+  <!-- Selected token detail (text bindings only — no HTML interpolation) -->
+  <div class="game-canvas__detail" x-show="selected" x-cloak data-testid="game-canvas-detail">
+    <strong x-text="selected?.name"></strong>
+    <span x-text="selected ? ' — ' + selected.kind + ' (' + selected.x + ', ' + selected.y + ')' : ''"></span>
+  </div>
+
+  <!-- Diff analysis summary from the latest state -->
+  <div class="game-canvas__detail" x-show="analysis" x-cloak data-testid="game-canvas-analysis">
+    <span
+      x-text="analysis ? 'Moved: ' + analysis.movements.length + ' · Added: ' + analysis.added.length + ' · Removed: ' + analysis.removed.length : ''"
+    ></span>
+  </div>
+</div>

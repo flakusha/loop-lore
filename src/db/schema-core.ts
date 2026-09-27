@@ -1558,3 +1558,12 @@ export interface ActorStoryPoints {
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }
+
+// ── game_states ────────────────────────────────────────────
+export interface GameStates {
+  id: Generated<string>;
+  chat_id: string;
+  message_id: string | null;
+  state: Generated<string>;
+  created_at: Generated<string>;
+}

@@ -18,6 +18,8 @@ import {
   MessageVisibility,
 } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import { extractAndStore, } from "../../game-state";
+import { getLogger, } from "../../logger";
 import { uid, } from "../../utils";
 import type { GenDeps, } from "./deps";
 
@@ -176,6 +178,20 @@ export async function storeMessage(opts: StoreMessageOpts,): Promise<StoreMessag
     }
     return { swipeIndex: resolvedSwipeIndex, };
   },);
+
+  // Game-state extraction (FEAT-game-state-extraction-and-analysis-pipeline):
+  // persist a game_states snapshot when the narration carries a fenced
+  // ```game-state block. Strictly non-fatal — extraction failures must never
+  // break message storage.
+  try {
+    await extractAndStore({ database, chatId, messageId, content: storedText, },);
+  } catch (error) {
+    getLogger().warn("game-state: extraction failed after message store", {
+      chatId,
+      messageId,
+      error: error instanceof Error ? error.message : String(error,),
+    },);
+  }
 
   return { messageId, transformed: false, };
 }

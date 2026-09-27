@@ -63,6 +63,7 @@ import { craftingStationRoutes, } from "../routes/crafting/stations";
 import { exportRoutes, } from "../routes/export";
 import { exportSseRoutes, } from "../routes/export-sse";
 import { federationRoutes, } from "../routes/federation";
+import { gameStateRoutes, } from "../routes/game-state";
 import { generationCompareRoutes, } from "../routes/generation/compare";
 import { gifSearchRoutes, } from "../routes/gifs/search";
 import { gmNotesRoutes, } from "../routes/gm-notes";
@@ -165,6 +166,7 @@ export function registerPlugins(app: Elysia<any>, opts: RegisterPluginsOpts,): v
   app.use(chatBackgroundsRoutes(handleOpts,),);
   app.use(locationExplorerRoutes(handleOpts,),);
   app.use(locationExplorerRoutes(handleOpts, "/api/v1",),);
+  app.use(gameStateRoutes(handleOpts, "/api/v1",),);
   app.use(adminRoutes(handleOpts,),);
   app.use(sdTemplatesRoutes(handleOpts,),);
   app.use(pluginRoutes(handleOpts,),);

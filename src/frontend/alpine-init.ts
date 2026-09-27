@@ -23,6 +23,7 @@ import { initAlpineStores, } from "./stores";
 // ── 8. Alpine components (x-data functions on globalThis) ───────
 // Each import registers a globalThis.* function that Alpine picks up as x-data.
 import "./alpine/index";
+import "./alpine/game-canvas";
 
 // ── 9. UI utilities (sidebar, toast, modal) ─────────────────────
 import "./ui";
