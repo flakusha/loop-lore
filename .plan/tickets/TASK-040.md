@@ -11,7 +11,7 @@
 **Context:** Gameplay-layer skill progression; XP grants on encounter completion.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: Done — pre-existing implementation; skills + xp modules shipped in commits 8174c1feb / e4bfc9767 / a88211f72
+**Status**: Done
 **Priority**: high
 **Labels**: nsfw, rpg, game-mechanics
 **Epic**: epic-nsfw-game-mechanics

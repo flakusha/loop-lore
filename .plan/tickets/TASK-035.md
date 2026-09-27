@@ -11,7 +11,7 @@
 **Context:** Gameplay-layer physique; stamina/endurance mechanics.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: Done — pre-existing implementation; body-systems module shipped in commits e4bfc9767 / a88211f72 / cc6cb7c67
+**Status**: Done
 **Priority**: medium
 **Labels**: nsfw, rpg, game-mechanics
 **Epic**: epic-nsfw-game-mechanics

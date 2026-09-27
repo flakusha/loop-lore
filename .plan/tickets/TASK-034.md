@@ -11,7 +11,7 @@
 **Context:** Gameplay-layer seduction; skill checks use CHA/WIS.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: Done — pre-existing implementation; seduction/desire modules shipped in commits e4bfc9767 / a88211f72 / f824b3575 / bd863b319
+**Status**: Done
 **Priority**: high
 **Labels**: nsfw, rpg, game-mechanics
 **Epic**: epic-nsfw-game-mechanics

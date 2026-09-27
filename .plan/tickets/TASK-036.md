@@ -11,7 +11,7 @@
 **Context:** Gameplay-layer encounter phases + skill checks + outcomes.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: Done — pre-existing implementation; encounters module shipped in commits ad04ae4e7 / d286585cb / a88211f72 / 8174c1feb
+**Status**: Done
 **Priority**: high
 **Labels**: nsfw, rpg, game-mechanics
 **Epic**: epic-nsfw-game-mechanics
