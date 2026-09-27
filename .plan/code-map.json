@@ -13312,6 +13312,10 @@
   "src/db/upsert-helpers.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-insertunique-discriminator-relies-on-adapter-specific-row-co.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-refactor-typed-kysely-upsert-by-unique-key-helpers.md"
     }
   ],
@@ -24969,6 +24973,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-rate-limiter-module-singletons-shared-across-test-files-caus.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-register-rate-limiter-consumes-on-username-collision-retries.md"
     },
     {
       "kind": "ticket",

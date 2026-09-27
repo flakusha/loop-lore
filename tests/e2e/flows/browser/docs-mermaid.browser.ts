@@ -34,7 +34,15 @@ const DIST_DIR = join(REPO_ROOT, "docs", ".vitepress", "dist",);
 // ── Build the docs site if needed ─────────────────────────────
 
 function ensureDocsBuild(): void {
-  if (existsSync(join(DIST_DIR, "index.html",),)) { return; }
+  // `index.html` alone does not prove the build finished. A `docs:build` that
+  // throws mid-render leaves index.html on disk from an earlier run while
+  // skipping the post-render writes, so a partial dist looks ready and the
+  // suite fails on asset 404s that no longer have a cause. `hashmap.json`
+  // and `vp-icons.css` are written in the same post-render block, so either
+  // one is a completion marker — require it.
+  if (existsSync(join(DIST_DIR, "index.html",),) && existsSync(join(DIST_DIR, "hashmap.json",),)) {
+    return;
+  }
   const result = spawnSync("bun", ["run", "docs:build",], {
     stdio: ["ignore", "pipe", "pipe",],
     cwd: REPO_ROOT,
