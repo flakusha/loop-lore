@@ -838,6 +838,10 @@
   "src/assets/controller.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-frontend-gallery.md"
     },
     {
@@ -855,6 +859,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-background.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-first-class-admin-workflows.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-first-class-workflow-library.md"
     },
     {
       "kind": "ticket",
@@ -9015,6 +9027,12 @@
       "source": "docs/spec/integrations/llm-serving.md"
     }
   ],
+  "src/config/schema/sd-provider.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
+    }
+  ],
   "src/config/schema/sections/server.ts": [
     {
       "kind": "ticket",
@@ -9341,6 +9359,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-nsfw-api-prefiltering.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-first-class-admin-workflows.md"
     },
     {
       "kind": "ticket",
@@ -11899,6 +11921,12 @@
       "source": ".plan/tickets/TASK-019-users-encryption-secret.md"
     }
   ],
+  "src/db/migrations/021_comfy_workflows.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
+    }
+  ],
   "src/db/migrations/023_notifications.ts": [
     {
       "kind": "ticket",
@@ -12956,6 +12984,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-first-class-workflow-library.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-e2ee-receiver-wiring.md"
     },
     {
@@ -13954,6 +13986,14 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-first-class-admin-workflows.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-first-class-workflow-library.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-cors-middleware.md"
     },
     {
@@ -14601,6 +14641,12 @@
       "source": ".plan/tickets/TASK-epic11-admin-settings-reconciliation.md"
     }
   ],
+  "src/frontend/alpine/admin-comfy-workflows.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
+    }
+  ],
   "src/frontend/alpine/admin-models.ts": [
     {
       "kind": "ticket",
@@ -14615,6 +14661,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-modelsuitability-finetunereadiness-never-parse-b-suffixed-si.md"
+    }
+  ],
+  "src/frontend/alpine/admin-models/sd.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-first-class-admin-workflows.md"
     }
   ],
   "src/frontend/alpine/admin-plugins.ts": [
@@ -14651,6 +14703,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-admin-llm-execution-analytics-per-model-per-provider-rollups.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-first-class-admin-workflows.md"
     },
     {
       "kind": "ticket",
@@ -14701,6 +14757,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-admin-overview-dashboard.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-first-class-admin-workflows.md"
     },
     {
       "kind": "ticket",
@@ -19922,6 +19982,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-comfyui-plugin.md"
     },
     {
@@ -19943,6 +20007,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-065-template-system.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-first-class-chat-selection.md"
     },
     {
       "kind": "ticket",
@@ -19989,10 +20057,28 @@
       "source": ".plan/epics/epic-lora-discovery-application.md"
     }
   ],
+  "src/generation/lora/discovery-comfyui.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
+    }
+  ],
   "src/generation/lora/discovery-comfyui.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-lora-discovery-application.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-first-class-lora-stacks.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-workflow-parameterization.md"
     },
     {
       "kind": "ticket",
@@ -20023,6 +20109,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-lora-discovery-application.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-first-class-lora-stacks.md"
     },
     {
       "kind": "ticket",
@@ -20065,6 +20155,24 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-lora-discovery-application.md"
+    }
+  ],
+  "src/generation/lora/routes/urls.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-first-class-chat-selection.md"
+    }
+  ],
+  "src/generation/lora/stack.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
+    }
+  ],
+  "src/generation/lora/stack.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
     }
   ],
   "src/generation/lora/types.ts": [
@@ -20320,6 +20428,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-comfyui-plugin.md"
     },
     {
@@ -20484,6 +20596,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-first-class-chat-selection.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-crypto-hardening-minors-algo-field-decorative-pbkdf2-hot-pat.md"
     },
     {
@@ -20605,6 +20721,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-repetition-hallucination-guards.md"
+    }
+  ],
+  "src/generation/resolve-workflow.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
+    }
+  ],
+  "src/generation/resolve-workflow.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
     }
   ],
   "src/generation/resource-provider.ts": [
@@ -20835,7 +20963,17 @@
       "source": ".plan/tickets/FEAT-065-template-system.md"
     }
   ],
+  "src/generation/workflow-library.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
+    }
+  ],
   "src/generation/workflow-loader/loader.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-comfyui-plugin.md"
@@ -20843,12 +20981,32 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-configs-path-resolution.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-first-class-workflow-library.md"
     }
   ],
   "src/generation/workflow-substitutor": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-comfyui-plugin.md"
+    }
+  ],
+  "src/generation/workflow-substitutor.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
+    }
+  ],
+  "src/generation/workflow-substitutor.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-workflow-parameterization.md"
     }
   ],
   "src/gguf.rs": [
@@ -21120,6 +21278,10 @@
   "src/image-edit/routes.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-comfyui-plugin.md"
     },
     {
@@ -21129,6 +21291,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-creative-studio-workflow-gallery-edit.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-first-class-admin-workflows.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-workflow-parameterization.md"
     }
   ],
   "src/image-edit/template-registry.test.ts": [
@@ -21149,6 +21319,30 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-background.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-first-class-admin-workflows.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-first-class-workflow-library.md"
+    }
+  ],
+  "src/image-edit/templates/builtin/lora.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-first-class-lora-stacks.md"
+    }
+  ],
+  "src/image-edit/types.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-first-class-admin-workflows.md"
     }
   ],
   "src/import/__tests__/roundtrip.test.ts": [
@@ -25561,6 +25755,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-frontend-admin.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-first-class-admin-workflows.md"
     }
   ],
   "src/routes/admin/key-rotation.ts": [
@@ -25630,7 +25828,15 @@
   "src/routes/admin/system-config.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-frontend-admin.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-first-class-admin-workflows.md"
     }
   ],
   "src/routes/admin/templates.ts": [
@@ -36227,6 +36433,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-001.md"
+    }
+  ],
+  "src/views/admin-comfy-workflows.html": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
     }
   ],
   "src/views/admin.html": [

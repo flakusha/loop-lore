@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 309 epics
+**Total:** 310 epics
 
 ## Summary
 
@@ -65,6 +65,7 @@
 | Not Started | CI/CD Pipeline | Low | Medium | 6 | [epic-cicd-pipeline.md](/.plan/epics/epic-cicd-pipeline.md) |
 | Not Started | Client-Side Routing | Medium | Medium | 0 | [epic-frontend-routing.md](/.plan/epics/epic-frontend-routing.md) |
 | In Progress | Code Quality & Best Practices (Permanently Ongoing) | High | Continuous | 0 | [epic-code-quality.md](/.plan/epics/epic-code-quality.md) |
+| Not Started | ComfyUI First-Class Citizen — Workflow Library, Chat Selection, Admin Setup | High | High | 26 | [epic-comfyui-first-class-citizen.md](/.plan/epics/epic-comfyui-first-class-citizen.md) |
 | In Progress | ComfyUI Plugin & Workflow Templates | High | High | 16 | [epic-comfyui-plugin.md](/.plan/epics/epic-comfyui-plugin.md) |
 | Not Started | Communications Integrations | Medium | High (split into 5 sub-epics) | 8 | [epic-communications-integrations.md](/.plan/epics/epic-communications-integrations.md) |
 | Not Started | Communications Integrations — Quick Reference | Medium | High | 0 | [epic-communications-integrations-quickref.md](/.plan/epics/epic-communications-integrations-quickref.md) |
@@ -824,6 +825,17 @@ Loop Lore has accumulated a constellation of chat-shaped product surfaces (assis
 - **Type:** Ongoing Epic
 - **Tags:** eslint, linting, code-quality, best-practices, refactoring
 - **File:** `.plan/epics/epic-code-quality.md`
+
+### ComfyUI First-Class Citizen — Workflow Library, Chat Selection, Admin Setup
+
+- **Status:** Not Started
+- **Priority:** High
+- **Effort:** High
+- **Type:** Feature Epic
+- **Tags:** comfyui, image-generation, workflows, admin, chat, lora
+- **File:** `.plan/epics/epic-comfyui-first-class-citizen.md`
+
+`epic-comfyui-plugin` made ComfyUI a first-class *backend* — HTTP client,
 
 ### ComfyUI Plugin & Workflow Templates
 
