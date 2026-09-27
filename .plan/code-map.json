@@ -13372,6 +13372,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-effect-v4-adoption-evaluation.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-file-splitting.md"
     },
     {
@@ -13501,6 +13505,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-creative-studio-search-api.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-effect-v4-di-wiring-spike-versus-the-handleopts-bag.md"
     },
     {
       "kind": "ticket",
@@ -15942,6 +15950,14 @@
     }
   ],
   "src/frontend/alpine/tunnel-protocol.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-effect-v4-adoption-evaluation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-effect-v4-retry-schedule-parity-spike-on-the-provider-call-p.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-inference-browser-wllama-gguf.md"
@@ -19621,10 +19637,6 @@
   ],
   "src/generation/providers/call-with-failover.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-effect-v4-adoption-evaluation.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-effect-v4-retry-schedule-parity-spike-on-the-provider-call-p.md"
     }
@@ -19733,6 +19745,16 @@
       "source": ".plan/epics/epic-tts-foundation.md"
     }
   ],
+  "src/generation/providers/ollama-native/http.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-effect-v4-adoption-evaluation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-effect-v4-retry-schedule-parity-spike-on-the-provider-call-p.md"
+    }
+  ],
   "src/generation/providers/ollama.ts": [
     {
       "kind": "epic",
@@ -19751,8 +19773,16 @@
   ],
   "src/generation/providers/openai-compatible/http.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-effect-v4-adoption-evaluation.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-effect-v4-retry-schedule-parity-spike-on-the-provider-call-p.md"
     },
     {
       "kind": "ticket",
@@ -21134,6 +21164,10 @@
     }
   ],
   "src/logger/types.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-effect-v4-adoption-evaluation.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-logging-telemetry.md"
@@ -34085,6 +34119,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-tui.md"
+    }
+  ],
+  "src/utils/safe-fetch/retry.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-effect-v4-adoption-evaluation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-effect-v4-retry-schedule-parity-spike-on-the-provider-call-p.md"
     }
   ],
   "src/utils/safe-json.ts": [

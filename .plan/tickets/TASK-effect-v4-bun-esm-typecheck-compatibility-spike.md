@@ -4,7 +4,7 @@
 # TASK: Effect v4 Bun/ESM/typecheck compatibility spike
 
 **Summary:** Prove `effect@4.0.0-rc.117` installs, runs under Bun, and typechecks under tsgo strict without regressing a `bun run check` gate.
-**Context:** Epic epic-effect-v4-adoption-evaluation. Hard gate for the whole epic: v4 is a release candidate (`latest` is still 3.22.2) with its ecosystem surface under `./unstable/*`.
+**Context:** Epic epic-effect-v4-adoption-evaluation. Hard gate for the whole epic: v4 is a release candidate (`latest` is still 3.22.2) with its ecosystem surface under `./unstable/*`. A probe already confirmed the RC *runs* under Bun 1.4.2; what remains unmeasured is whether it typechecks cleanly under this repo's tsgo strict config with `skipLibCheck` off. Read the epic's `v4 API actuality` section first — several v3 names are gone.
 **Acceptance Criteria:** See ## Acceptance Criteria below — measured numbers recorded in the epic's Spike Results table, PASS/FAIL verdict written, no `package.json` change lands.
 
 
@@ -38,17 +38,23 @@ largest risk in the epic. Price it before measuring anything else.
 
 ## Method
 
-1. In `.tmp/` (scratch — never committed), add `effect@4.0.0-rc.117` and
-   write a minimal program that exercises the pillars the epic cares about:
-   `Effect.gen`, `Effect.retry` + `Schedule`, `Effect.forkScoped`,
-   `Context.Service` + `Layer`, and a `withSpan`.
-2. Run it under `bun`. Record whether the runtime works and the wall-clock
+1. In an isolated `.tmp/effect-probe/` package (its **own** `node_modules` —
+   the worktree symlinks the dev one, so `bun add` at the worktree root
+   pollutes dev), add `effect@4.0.0-rc.117` and write a minimal program that
+   exercises the pillars the epic cares about: `Effect.gen`, `Effect.retry` +
+   `Schedule`, `Effect.forkScoped`, `Context.Service` + `Layer`, and
+   `Effect.withSpan`.
+2. Use **v4 names only**. `Effect.fork`, `Context.Tag`, `Tag.asEffect()`,
+   `Effect.zipRight` are all gone in v4; `Effect.interrupt` and `Effect.void`
+   are objects, not functions. See the epic's `v4 API actuality` table.
+3. Run it under `bun`. Record whether the runtime works and the wall-clock
    overhead of entering `Effect.runPromise` on a trivial program.
-3. Run `bun run typecheck` with the dependency present. Record whether tsgo
-   strict survives the `.d.ts` surface.
-4. Run `bun run check` and record the delta (cold-start time, memory, any new
+4. Run `bun run typecheck` with the dependency present. Record whether tsgo
+   strict survives the `.d.ts` surface. This is the one thing the existing
+   probe did **not** establish — treat it as genuinely unmeasured.
+5. Run `bun run check` and record the delta (cold-start time, memory, any new
    lint/typecheck failures).
-5. Record the numbers in the epic's *Spike Results* table.
+6. Record the numbers in the epic's *Spike Results* table.
 
 ## Acceptance Criteria
 
