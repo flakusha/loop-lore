@@ -37,7 +37,9 @@ export function applyChatFormat(
     const wrapper = wrappers[key as keyof typeof wrappers];
     if (!wrapper) { return msg; }
     const wrapped = wrapper.includes("${content}",)
-      ? wrapper.replace("${content}", msg.content,)
+      // Replacer fn form: msg.content must never be interpreted as a
+      // String.replace replacement pattern ($&, $`, $', $$).
+      ? wrapper.replace("${content}", () => msg.content,)
       : `${wrapper}${msg.content}`;
     return { ...msg, content: wrapped, };
   },);
