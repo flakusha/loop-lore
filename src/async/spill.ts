@@ -4,6 +4,7 @@
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync, } from "node:fs";
 import path from "node:path";
 import { gunzipSync, gzipSync, } from "node:zlib";
+import { safeFromString, } from "../utils/safe-buffer";
 
 /**
  * Root directory for spilled bodies. Lives under the repo's `.tmp/` to keep
@@ -27,7 +28,9 @@ export async function spill(id: string, body: string,): Promise<string> {
   // the directory exists rather than relying on `startOffloadDaemon()`.
   mkdirSync(OFFLOAD_DIR, { recursive: true, },);
   const filePath = path.join(OFFLOAD_DIR, `${id}.json.gz`,);
-  const compressed = gzipSync(Buffer.from(body, "utf8",),);
+  const bufResult = safeFromString(body, "utf8",);
+  if (!bufResult.ok) { throw bufResult.error; }
+  const compressed = gzipSync(bufResult.buffer,);
   writeFileSync(filePath, compressed,);
   return filePath;
 }

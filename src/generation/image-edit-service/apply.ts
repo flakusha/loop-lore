@@ -10,6 +10,7 @@ import { pickSdProvider, } from "../../config/schema";
 import { AssetLinkEntity, } from "../../db/enums";
 import { jsonStringifyOr, safeFetch, } from "../../utils";
 import { validateProviderUrl, } from "../../utils/url-validation";
+import { safeFromBase64, } from "../../utils/safe-buffer";
 import type { EditTemplate, ParsedCommand, } from "../image-edit-commands";
 import type { ImageEditServiceContext, } from "./types";
 
@@ -99,7 +100,7 @@ export async function applyEdit(
         throw new Error(`img2img generation failed: ${result.error.message}`,);
       }
 
-      resultImages = Array.from(result.data.images, (b64,) => Buffer.from(b64, "base64",),);
+      resultImages = Array.from(result.data.images, (b64,) => { const r = safeFromBase64(b64,); return r.ok ? r.buffer : Buffer.alloc(0); },);
       break;
     }
     case "openai": {
@@ -145,7 +146,7 @@ export async function applyEdit(
         throw new Error(`Image edit failed: ${result.error.message}`,);
       }
 
-      resultImages = Array.from(result.data.data, (d,) => Buffer.from(d.b64_json, "base64",),);
+      resultImages = Array.from(result.data.data, (d,) => { const r = safeFromBase64(d.b64_json,); return r.ok ? r.buffer : Buffer.alloc(0); },);
       break;
     }
     case "sdcpp":

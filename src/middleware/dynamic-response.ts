@@ -31,6 +31,7 @@
 import { brotliCompressSync, gzipSync, } from "node:zlib";
 import type { DynamicResponseConfig, } from "../config/schema";
 import { minifyCSS, minifyHTMLContent, minifyJS, } from "../content/minify";
+import { safeFromString, } from "../utils/safe-buffer";
 import { CompressionAlgorithm, } from "../db/enums";
 import type { Logger, } from "../logger";
 import { parseAcceptEncoding, } from "../transport/negotiation-parsers";
@@ -187,7 +188,9 @@ export class DynamicResponsePolicy {
     request: Request;
     body: string;
   },): { encoding: string; buffer: Buffer } | null {
-    const buffer = Buffer.from(body, "utf8",);
+    const bufResult = safeFromString(body, "utf8",);
+    if (!bufResult.ok) { return null; }
+    const buffer = bufResult.buffer;
     if (buffer.length < this.config.compressThreshold) { return null; }
 
     const accept = (request.headers.get("accept-encoding",) ?? "").toLowerCase();

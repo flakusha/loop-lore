@@ -26,6 +26,7 @@ import { getLogger, type Logger, } from "../logger";
 import { notFound, } from "../validation/middleware";
 import { SuccessResponse, } from "../validation/schemas";
 import { extractAuth, HttpStatus, jsonError, jsonResponse, requireUserId, } from "./http-utils";
+import { safeFromUint8Array, } from "../utils/safe-buffer";
 
 /** */
 function log(): Logger {
@@ -76,7 +77,8 @@ export function messageEncryptionRoutes(opts: { database: Db; config: Config }, 
 
       try {
         const chatKey = await deriveChatKeyForChat(opts.database, chatId, smk,);
-        const rawB64 = Buffer.from(chatKey.rawKey,).toString("base64",);
+        const encBuf = safeFromUint8Array(chatKey.rawKey as unknown as Uint8Array,);
+        const rawB64 = encBuf.ok ? encBuf.buffer.toString("base64") : "";
 
         return jsonResponse({
           keyId: chatKey.keyId,

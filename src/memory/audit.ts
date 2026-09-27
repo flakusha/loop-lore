@@ -20,6 +20,7 @@ import { randomUUID, } from "node:crypto";
 import type { DB, } from "../db";
 import { getLogger, } from "../logger";
 import { jsonParseOr, jsonStringifyOr, safeJsonParse, } from "../utils";
+import { safeFromString, safeFromUint8Array, } from "../utils/safe-buffer";
 
 /**
  * @returns logger scoped to the memory-audit module
@@ -88,7 +89,8 @@ function decodeCursor(cursor: string,): { createdAt: string; id: string } | null
   // parseable JSON with both fields rather than validating signature —
   // this is a pagination cursor, not a security token.
   try {
-    const decoded = Buffer.from(cursor, "base64url",).toString("utf8",);
+    const decBuf = safeFromUint8Array(new Uint8Array(Buffer.from(cursor, "base64url",)),);
+    const decoded = decBuf.ok ? decBuf.buffer.toString("utf8") : "";
     const parsed = safeJsonParse<{ c?: unknown; i?: unknown }>(decoded,);
     if (!parsed.ok) { return null; }
     const obj = parsed.value;
@@ -111,7 +113,8 @@ function encodeNextCursor(lastRow: MemoryAuditRow, _requestedLimit: number,): st
   // Cursor encodes the last seen (created_at, id) so ties on
   // created_at (possible at second resolution) advance correctly via
   // the compound comparison in the query.
-  return Buffer.from(jsonStringifyOr({ c: lastRow.createdAt, i: lastRow.id, },),).toString("base64url",);
+  const encBuf = safeFromString(jsonStringifyOr({ c: lastRow.createdAt, i: lastRow.id, },), "utf8",);
+  return encBuf.ok ? encBuf.buffer.toString("base64url") : "";
 }
 
 /**
