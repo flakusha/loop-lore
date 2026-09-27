@@ -80,9 +80,21 @@ export const TemplateModality = {
   Image: "image",
   Video: "video",
   Audio: "audio",
+  /** ComfyUI API-format graph; the graph lives inline in `payload`. */
+  Workflow: "workflow",
 } as const;
 /** */
 export type TemplateModality = (typeof TemplateModality)[keyof typeof TemplateModality];
+
+/**
+ * Every modality the template library accepts, in enum order.
+ *
+ * Derived from the enum so a new value cannot be added in one place and
+ * forgotten in another. Three separate `MODALITIES` arrays used to be
+ * hand-maintained here and in the route layers; a miss compiled clean and
+ * only surfaced as a silent 400 at runtime.
+ */
+export const TEMPLATE_MODALITIES: readonly TemplateModality[] = Object.values(TemplateModality,);
 
 export const TemplateDetailLevel = {
   Instant: "instant",

@@ -14,6 +14,7 @@ import type {
   ChatParticipantRole,
   ChatType,
   ContentEncoding,
+  DefaultState,
   EquipState,
   InteractionCategory,
   InteractionOutcome,
@@ -21,6 +22,7 @@ import type {
   ItemCategory,
   KeyStatus,
   KeyType,
+  LoreEntryStatus,
   MessageContentFormat,
   MessageContentType,
   MessageRole,
@@ -1031,6 +1033,10 @@ export interface PromptTemplates {
   payload: Generated<string>;
   created_at: Generated<string>;
   updated_at: Generated<string>;
+  is_default: Generated<DefaultState>;
+  enabled: Generated<LoreEntryStatus>;
+  lora_slots: string | null;
+  min_vram: number | null;
 }
 
 // ── nsfw_consent_state ────────────────────────────────────────────
