@@ -4,7 +4,6 @@
 # BUG: generation.completed latencyMs hardcoded to 0 on two emit paths
 
 **Status:** Done
-**Status Note:** Fixed by `cc7eb52af` (fix(telemetry): measured latencyMs plus failure model context) + `350e4a187` (format long telemetry lines). Verified 2026-09-28: `generation-stats.test.ts` 3/3 pass; acceptance suites green (auto-gen catch-path 5/5; post-store/non-stream skips are isolate-gated by design).
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-analytics-observability
@@ -37,7 +36,7 @@ Latency is the base unit for E10 (p50/p95/p99 trends). Shipping percentile aggre
 
 ## Acceptance Criteria
 
-- [x] `generation.completed` from post-store and stream-to-client carries measured wall-clock `latencyMs`
-- [x] `generation.truncated` shape unchanged (no latency field, no billing)
-- [x] Analytics `avgLatencyMs` reflects recorded values in a seeded fixture test
-- [x] `bun test src/generation/auto-gen/post-store.test.ts src/generation/auto-gen/post-store.happy.test.ts src/generation/generate-route/non-stream.test.ts src/generation/generate-route/stream-to-client.test.ts src/routes/analytics.test.ts` green
+- [ ] `generation.completed` from post-store and stream-to-client carries measured wall-clock `latencyMs`
+- [ ] `generation.truncated` shape unchanged (no latency field, no billing)
+- [ ] Analytics `avgLatencyMs` reflects recorded values in a seeded fixture test
+- [ ] `bun test src/generation/auto-gen/post-store.test.ts src/generation/auto-gen/post-store.happy.test.ts src/generation/generate-route/non-stream.test.ts src/generation/generate-route/stream-to-client.test.ts src/routes/analytics.test.ts` green

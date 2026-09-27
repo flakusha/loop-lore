@@ -14,7 +14,6 @@
 
 **Owner**: FEAT-065 (Prompt Library)
 **Scope**: LLM, Image, Video, Audio generation templates
-// hint: Logic changed on both sides. Requires understanding intent of each change.
 
 
 git issue: dc95659
