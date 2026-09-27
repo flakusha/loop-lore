@@ -69,9 +69,17 @@ export async function ticket(args: string[], config: WorktreeConfig,): Promise<v
   } else {
     log("info", `creating ticket file: ${ticketFile}`,);
 
+    // Order and spelling are load-bearing: `plan:validate`'s format gate
+    // requires the three `**Field:**` lines, and its status-vocab gate
+    // rejects an emoji-prefixed status. Emitting only the `## Heading`
+    // sections (or `⬜ Not Started`) produced tickets that failed the gate
+    // the moment they were created.
     let content =
       `<!-- SPDX-License-Identifier: Apache-2.0 -->\n<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->\n\n# ${type}: ${title}\n\n`;
-    content += `**Status:** ⬜ Not Started\n`;
+    content += `**Summary:** ${body ? body.split("\n",)[0] : "(none captured)"}\n`;
+    content += `**Context:** (none captured)\n`;
+    content += `**Acceptance Criteria:** Implementation complete, tests passing, documentation updated.\n\n`;
+    content += `**Status:** Not Started\n`;
     content += `**Priority:** ${flags.priority || "Medium"}\n`;
     content += `**Effort:** ${flags.effort}\n`;
     if (flags.epic) {
