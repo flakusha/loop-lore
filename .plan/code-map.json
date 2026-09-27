@@ -2811,6 +2811,10 @@
       "source": ".plan/tickets/FEAT-065-sub-llm.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-065-template-system.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/template-system.md"
     }
@@ -5501,6 +5505,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-per-chat-auto-translation-layer.md"
+    }
+  ],
+  "src/chat/composer/local-suggest.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/IDEA-chat-composer-inline-suggestions-proposal.md"
     }
   ],
   "src/chat/context-degradation.test.ts": [
@@ -11276,6 +11286,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-065-template-system.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/FEAT-memory-visualizer-knowledge-graph-over-asset-links.md"
     },
     {
@@ -14447,6 +14461,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-tool-call-result-no-frontend-rendering.md"
+    }
+  ],
+  "src/frontend/alpine/chat-composer-inline-suggest.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/IDEA-chat-composer-inline-suggestions-proposal.md"
     }
   ],
   "src/frontend/alpine/chat-drafts.ts": [
@@ -19913,6 +19933,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-effect-v4-retry-schedule-parity-spike-on-the-provider-call-p.md"
+    }
+  ],
+  "src/generation/providers/stream-buffer.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/IDEA-chat-composer-inline-suggestions-proposal.md"
     }
   ],
   "src/generation/providers/tts.ts": [
