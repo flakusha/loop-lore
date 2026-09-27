@@ -5,18 +5,36 @@
  * Workflow Substitutor — Template variable replacement in ComfyUI workflow JSON
  *
  * Deep-walks workflow JSON and replaces `{{variable}}` placeholders with
- * values from a substitution map. Supports:
- *
- * - Simple: `{{prompt}}` → replaced from `vars.prompt`
- * - Nested: `{{node_id.inputs.field}}` → targeted node field override
+ * values from a substitution map. A placeholder that is the *whole* string
+ * yields the variable's own type; a placeholder mixed with other text yields
+ * a string. Node-targeted overrides are a separate mechanism — see
+ * {@link applyNodeOverrides}.
  * @module workflow-substitutor
  */
 
 /** Substitution map: variable name → replacement value */
 export type SubstitutionVars = Record<string, string | number | boolean>;
 
-/** Match pattern for {{variable}} or {{path.to.field}} */
+/** What a single string input can become after substitution. */
+export type SubstitutionValue = string | number | boolean;
+
+/**
+ * The substituted shape of `T`.
+ *
+ * A string leaf widens because a whole-string `{{var}}` yields the variable's
+ * own type, so `"{{width}}"` can come back a number. Every other leaf is
+ * returned untouched, hence the identity branches.
+ */
+export type Substituted<T,> = T extends string ? SubstitutionValue
+  : T extends readonly unknown[] ? { [K in keyof T]: Substituted<T[K]> }
+  : T extends object ? { [K in keyof T]: Substituted<T[K]> }
+  : T;
+
+/** Match pattern for a {{variable}} anywhere in a string */
 const PLACEHOLDER_RE = /\{\{([^}]+)\}\}/g;
+
+/** Match pattern for a string that is *exactly* one {{variable}} */
+const WHOLE_PLACEHOLDER_RE = /^\{\{([^}]+)\}\}$/;
 
 /**
  * Deep-clone and substitute placeholders in a JSON-compatible value.
@@ -26,21 +44,22 @@ const PLACEHOLDER_RE = /\{\{([^}]+)\}\}/g;
  * @param vars - Variable map for simple replacements
  * @param nodeOverrides - Optional node-targeted overrides (nodeId → field path → value)
  * @param _nodeOverrides
- * @returns New object with placeholders replaced
+ * @returns New object with placeholders replaced; string leaves may widen to
+ *   the substituted variable's own type
  */
 export function substituteWorkflow<T,>(
   obj: T,
   vars: SubstitutionVars,
   _nodeOverrides?: Map<string, Record<string, unknown>>,
-): T {
-  if (obj === null || obj === undefined) { return obj; }
+): Substituted<T> {
+  if (obj === null || obj === undefined) { return obj as Substituted<T>; }
 
   if (typeof obj === "string") {
-    return substituteString(obj, vars,) as T;
+    return substituteValue(obj, vars,) as Substituted<T>;
   }
 
   if (Array.isArray(obj,)) {
-    return Array.from(obj, (item,) => substituteWorkflow(item, vars, _nodeOverrides,),) as T;
+    return Array.from(obj, (item,) => substituteWorkflow(item, vars, _nodeOverrides,),) as Substituted<T>;
   }
 
   if (typeof obj === "object") {
@@ -48,11 +67,11 @@ export function substituteWorkflow<T,>(
     for (const [key, value,] of Object.entries(obj as Record<string, unknown>,)) {
       result[key] = substituteWorkflow(value, vars, _nodeOverrides,);
     }
-    return result as T;
+    return result as Substituted<T>;
   }
 
   // Numbers, booleans, null — pass through
-  return obj;
+  return obj as Substituted<T>;
 }
 
 /**
@@ -63,24 +82,30 @@ export function substituteWorkflow<T,>(
  * - `"a {{prompt}} b"` → string interpolation
  * - `"{{a}}{{b}}"` → multiple replacements
  * - Unknown variables → empty string
+ * Preserves the variable's type when the placeholder is the entire string.
+ * `"{{width}}"` with `width: 768` must yield the number `768`, not `"768"` —
+ * ComfyUI node inputs like width/seed/steps/cfg_scale are numeric, and a
+ * stringified numeric is rejected or silently coerced at submit time. Mixed
+ * content (`"a {{prompt}} b"`) has no single type to preserve, so it interpolates.
+ *
  * @param str - String containing `{{...}}` placeholders
  * @param vars - Variable map
- * @returns Replaced string (or original if no placeholders found)
+ * @returns The typed value, or a string when interpolating
  */
-function substituteString(str: string, vars: SubstitutionVars,): string {
+function substituteValue(str: string, vars: SubstitutionVars,): string | number | boolean {
   // Fast path: no placeholders
   if (!str.includes("{{",)) { return str; }
 
+  const whole = WHOLE_PLACEHOLDER_RE.exec(str,);
+  if (whole) {
+    const key = whole[1]!.trim();
+    // Unknown variable → empty string (preserves workflow structure)
+    return key in vars ? vars[key]! : "";
+  }
+
   return str.replaceAll(PLACEHOLDER_RE, (_match, path,) => {
     const key = path.trim();
-
-    // Direct lookup: vars["prompt"]
-    if (key in vars) {
-      return String(vars[key],);
-    }
-
-    // Unknown variable → empty string (preserves workflow structure)
-    return "";
+    return key in vars ? String(vars[key],) : "";
   },);
 }
 
