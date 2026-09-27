@@ -3,14 +3,14 @@
 
 # TASK-058: Transport doc — config + observability
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Markdown reference for transport-layer config schema, observability hooks, runtime tunables.
 **Context:** SRE/operator runbook for connection-level diagnostics.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: open
+**Status**: Not Started
 **Priority**: medium
 **Effort**: Medium
 **Labels**: transport, config, observability, docs

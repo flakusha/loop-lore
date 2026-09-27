@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** 🟡 Draft — extended with behavioral dimensions (D7–D9: coping, approach, autonomy)
+**Status:** Not Started
+**Status Note:** extended with behavioral dimensions (D7–D9: coping, approach, autonomy)
 **Priority:** High
 **Effort:** Medium
 **Type:** Feature Epic

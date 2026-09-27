@@ -3,14 +3,14 @@
 
 # TASK-039: NSFW Pheromones & Chemistry
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Pheromones/chemistry as shared StatusEffect consumed by Seduction/Encounter/Disease.
 **Context:** Gameplay-layer aphrodisiacs + heat-cycle chemistry.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: open
+**Status**: Not Started
 **Priority**: medium
 **Labels**: nsfw, rpg, game-mechanics
 **Epic**: epic-nsfw-game-mechanics

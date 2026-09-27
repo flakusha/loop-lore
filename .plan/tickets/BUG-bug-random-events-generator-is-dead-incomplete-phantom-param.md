@@ -8,7 +8,7 @@
 
 # BUG: BUG: random-events generator is dead/incomplete (phantom params, unconsumed)
 
-**Status:** ✅ Done
+**Status:** Done
 **Priority:** low
 **Effort:** Low
 

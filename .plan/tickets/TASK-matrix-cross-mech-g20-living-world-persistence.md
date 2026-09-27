@@ -3,7 +3,7 @@
 
 # TASK-matrix-cross-mech-g20: Living-world persistence across time + between sessions
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Large
 **Type:** Task

@@ -8,7 +8,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** 🟡 In Progress
+**Status:** In Progress
 **Priority:** High
 **Tags:** frontend, aux-pipeline, composer, prompt, security
 

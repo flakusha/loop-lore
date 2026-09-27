@@ -3,7 +3,7 @@
 
 # FEAT: World-Template Chat Lifecycle (Location → Public Chat, Template Selection, Feature List, Config Templates)
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +11,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: open
+**Status**: Not Started
 **Priority**: high
 **Labels**: chat, templates, world, locations, rpg, frontend, config
 **Assignee**:

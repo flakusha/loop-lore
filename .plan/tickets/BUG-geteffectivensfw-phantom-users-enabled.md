@@ -15,7 +15,7 @@ git issue: 8f7a2ea
 
 # BUG: `getEffectiveNsfw` returns `enabled: true` for users with no preferences row (phantom users)
 
-**Status:** done
+**Status:** Done
 **Reason:** the `?? true` fallback is deliberate and documented in source at `src/nsfw/moderation-service/overrides.ts:54-57`: "No row → schema default nsfw_enabled=1 is 'enabled'. Keep the fallback in sync with that default; defaulting to false here caused hooks to globally block users who never explicitly opted out (see e2e-integration test)." The schema migration sets write-side default nsfw_enabled=1, which the `updatePreferences` path uses at first insert. Changing to `?? false` would re-introduce the regression the comment explicitly cites. The "phantom enabled" reading is by design — a new user with no preferences row matches the same schema default any persisted user starts from. No defect.
 
 ## Summary

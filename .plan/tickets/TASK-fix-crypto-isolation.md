@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done (was misdiagnosed)
+**Status:** Done
+**Status Note:** was misdiagnosed
 **Priority:** High
 **Effort:** Med
 **Epic:** epic-testing-qa

@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done (2026-08-14, `51a7bc01`) — wired under `/api/rpg/achievements` (`src/routes/rpg/achievements.ts` + schemas + tests)
+**Status:** Done
+**Status Note:** 2026-08-14, `51a7bc01`) — wired under `/api/rpg/achievements` (`src/routes/rpg/achievements.ts` + schemas + tests
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-achievements

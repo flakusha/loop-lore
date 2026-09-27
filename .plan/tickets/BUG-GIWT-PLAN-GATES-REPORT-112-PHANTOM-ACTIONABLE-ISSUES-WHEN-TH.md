@@ -3,7 +3,7 @@
 
 # BUG: giwt plan gates report ~112 phantom actionable issues when the git issue CLI is unreachable
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 
 Imported from git issue 2dfa43a.

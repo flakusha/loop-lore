@@ -3,7 +3,7 @@
 
 # TASK: Regex Extraction Pipeline Implementation
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Large
 **Summary:** Regex Extraction Pipeline Implementation

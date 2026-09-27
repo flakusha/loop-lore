@@ -3,7 +3,7 @@
 
 # TASK: Character As Assistant Pick Character As GM
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-character-multi-personality

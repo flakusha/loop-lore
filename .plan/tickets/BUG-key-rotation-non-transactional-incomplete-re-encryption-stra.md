@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done (verified landed on dev — `rotateKeyOnLeave` wraps message re-encrypt + key swap in one Kysely transaction, calls `reEncryptChatAssets` pre-transaction, `RE_ENCRYPT_LIMIT = MAX_SAFE_INTEGER` with `includeAll: true`)
+**Status:** Done
+**Status Note:** verified landed on dev — `rotateKeyOnLeave` wraps message re-encrypt + key swap in one Kysely transaction, calls `reEncryptChatAssets` pre-transaction, `RE_ENCRYPT_LIMIT = MAX_SAFE_INTEGER` with `includeAll: true`
 **Priority:** high
 **Effort:** Medium
 

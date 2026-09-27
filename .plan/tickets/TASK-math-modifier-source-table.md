@@ -3,7 +3,7 @@
 
 # TASK-math-modifier-source-table — Normalize modifier breakdown
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium (1 day)
 **Summary:** Replace the `interaction_logs.modifiers` JSON column with a structured `interaction_modifiers` table that has FKs to a `modifier_sources` enum, so the LLM prompt section and analytics can reference modifier provenance row-by-row.

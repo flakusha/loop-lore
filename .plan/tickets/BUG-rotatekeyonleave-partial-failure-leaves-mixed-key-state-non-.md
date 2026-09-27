@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done (verified landed on dev — single transaction for re-encrypt + swap, `includeAll: true` covers non-visible messages, failures throw so the route returns 500)
+**Status:** Done
+**Status Note:** verified landed on dev — single transaction for re-encrypt + swap, `includeAll: true` covers non-visible messages, failures throw so the route returns 500
 **Priority:** high
 **Effort:** Medium
 

@@ -7,7 +7,7 @@
 **Context:** Language dimension was flagged UNCOVERED in the 2026-09-21 world-side review; pairs with FEAT-race-origin-lore-identity-model which adds homeland/origin/culture audience dimensions.
 **Acceptance Criteria:** isLoreVisibleTo (or sibling) accepts a language dimension; characters lacking the lore's language cannot see it; species → default language resolution; unknown/unset language fails open with a logged warning rather than hiding lore; unit tests for known/unknown/species-derived language cases.
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Small–Medium
 

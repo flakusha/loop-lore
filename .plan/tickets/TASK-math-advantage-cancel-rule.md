@@ -3,7 +3,7 @@
 
 # TASK-math-advantage-cancel-rule — Enforce 5e-style advantage cancel
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Small (½ day)
 **Summary:** Enforce the canonical D&D 5e rule that advantage and disadvantage cancel to plain when both are present.

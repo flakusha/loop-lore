@@ -3,7 +3,7 @@
 
 # TASK: Content Compression (Zstd Streaming)
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Content Compression (Zstd Streaming)

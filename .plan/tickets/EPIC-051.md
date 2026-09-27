@@ -3,7 +3,8 @@
 
 # EPIC-051: 051: Memory & Knowledge Systems
 
-**Status:** Not Started → closed (duplicate)
+**Status:** Done
+**Status Note:** duplicate
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +12,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: duplicate-of-epic-memory-knowledge-systems
+**Status:** Wontfix
+**Status Note:** duplicate-of-epic-memory-knowledge-systems
 **Priority**: medium
 **Labels**: epic
 **Epic**: (if applicable)

@@ -3,7 +3,7 @@
 
 # TASK-2026-openwebui-comfyui-websocket-progress: ComfyUI WebSocket Progress Tracking in `image-engine`
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Small
 **Labels:** generation, image-engine, comfyui

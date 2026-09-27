@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** 🟡 In Progress — proxy-termination slice landed (57dc551de); work items below open
+**Status:** In Progress
+**Status Note:** proxy-termination slice landed (57dc551de); work items below open
 **Priority:** High
 **Effort:** Large
 **Type:** Task

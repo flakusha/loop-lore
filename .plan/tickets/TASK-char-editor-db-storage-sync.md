@@ -3,7 +3,7 @@
 
 # TASK-char-editor-db-storage-sync
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +11,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: open
+**Status**: Not Started
 **Priority**: high
 **Labels**: backend, db, character-editor, schema, api
 **Assignee**:

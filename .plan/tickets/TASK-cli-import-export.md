@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ⬜ Deferred to v2
+**Status:** Postponed
+**Status Note:** to v2
 **Priority:** Low
 **Effort:** Low
 **Epic:** epic-import-export-io

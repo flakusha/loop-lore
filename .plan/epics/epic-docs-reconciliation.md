@@ -6,7 +6,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** 🟡 In Progress
+**Status:** In Progress
 **Priority:** Medium
 **Epic ID:** EPIC-2026-39
 **Effort:** Medium

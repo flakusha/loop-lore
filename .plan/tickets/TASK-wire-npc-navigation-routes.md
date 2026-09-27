@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done (2026-08-14, `51a7bc01`) — wired to HTTP (`src/routes/rpg/npc-navigation.ts` + schemas + tests)
+**Status:** Done
+**Status Note:** 2026-08-14, `51a7bc01`) — wired to HTTP (`src/routes/rpg/npc-navigation.ts` + schemas + tests
 **Priority:** High
 **Effort:** Medium
 **Epic:** epic-npc-navigation

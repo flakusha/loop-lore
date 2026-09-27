@@ -3,7 +3,7 @@
 
 # FEAT: frontend.mode Config + Accept-Header Content Negotiation + CORS
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Large
 **Summary:** frontend.mode Config + Accept-Header Content Negotiation + CORS

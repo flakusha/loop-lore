@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 Partial — Phase 1 landed 2026-08-19; VN renderer wiring + state snapshot open
+**Status:** In Progress
+**Status Note:** Phase 1 landed 2026-08-19; VN renderer wiring + state snapshot open
 **Priority:** P2-B
 **Effort:** High
 **Epic:** epic-chat-transfer-location

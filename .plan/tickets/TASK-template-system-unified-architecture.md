@@ -3,7 +3,7 @@
 
 # TASK: Template System Unified Architecture
 
-**Status:** done
+**Status:** Done
 **Priority:** high
 **Effort:** XL
 **Summary:** Template System Unified Architecture

@@ -3,7 +3,7 @@
 
 # TASK: Narration levels (actor-only vs actor+narrator)
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Per-chat narration level config (off | actors-only | actors-plus-narrator): level 1 rotates actors only; level 2 interleaves a narrator at configurable cadence (no hardcoded every-3rd).

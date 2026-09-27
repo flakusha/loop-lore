@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done (closed via git issue)
+**Status:** Done
+**Status Note:** closed via git issue
 **Priority:** High
 **Effort:** Medium
 **Epic:** epic-logic-reconciliation

@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done
+**Status:** Done
 **Priority:** Medium
 **Effort:** Low–Med
 **Completed:** 2026-07-31

@@ -3,7 +3,8 @@
 
 # BUG: server.host config and HOST env override are dead - start.ts never passes hostname to Bun.serve
 
-**Status:** ✅ Resolved (batch 2)
+**Status:** Done
+**Status Note:** batch 2
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (see ## Summary)

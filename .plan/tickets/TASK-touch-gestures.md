@@ -3,7 +3,7 @@
 
 # TASK: Touch gestures (mobile interaction surface)
 
-**Status:** open
+**Status:** Not Started
 **Priority:** low
 **Effort:** Medium
 **Summary:** Wire touch gesture handling (tap, swipe, pinch, long-press) for mobile chat surfaces so the mobile frontend matches the desktop keyboard-driven experience. Sub-feature of `epic-accessibility-input`.

@@ -3,7 +3,7 @@
 
 # TASK: RPG Skill Points On Level Up
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 

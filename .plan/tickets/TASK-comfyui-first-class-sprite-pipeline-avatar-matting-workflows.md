@@ -3,7 +3,7 @@
 
 # TASK: ComfyUI first-class: sprite-pipeline + avatar-matting workflows as in-place templates
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium (workflow JSON templates + template registry wiring)
 **Summary:** Ship `sprite-sheet`, `sprite-variant`, and `matting-cutout` as ComfyUI workflow JSON templates (Path A: in-place template files), requiring zero client/engine change; consumed by the sprite pipeline and avatar matting flows.

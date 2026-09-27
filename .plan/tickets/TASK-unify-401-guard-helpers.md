@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟢 Done (2026-08-06) — remaining raw-401 route sites migrated in `c99704c1`; only deliberate exclusions remain (separate module families, handler-funneled files)
+**Status:** Done
+**Status Note:** 2026-08-06) — remaining raw-401 route sites migrated in `c99704c1`; only deliberate exclusions remain (separate module families, handler-funneled files
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-code-quality

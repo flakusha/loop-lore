@@ -3,7 +3,7 @@
 
 # TASK-matrix-cross-mech-g18: Agentic NPC autonomy — memory + goals + emotion + autonomous action
 
-**Status:** open
+**Status:** Not Started
 **Priority:** high
 **Effort:** Large
 **Type:** Task

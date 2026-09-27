@@ -3,7 +3,7 @@
 
 # TASK-math-position-effect-columns — Position/Effect on interaction logs
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium (1 day)
 **Summary:** Add `position` and `effect` enum columns to `interaction_logs` so the LLM prompt can narrate "controlled miss" vs "desperate miss" without free-text risk.

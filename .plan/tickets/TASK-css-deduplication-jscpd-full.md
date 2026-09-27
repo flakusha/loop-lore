@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done (worktree `css-dedup`, commit pending)
+**Status:** In Progress
+**Status Note:** worktree `css-dedup`, commit pending
 **Priority:** Medium
 **Effort:** Medium
 

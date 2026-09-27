@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done (verified landed on dev — `rotateKeyOnLeave` calls `reEncryptChatAssets` with explicit old+new keys before the swap; asset failures abort rotation)
+**Status:** Done
+**Status Note:** verified landed on dev — `rotateKeyOnLeave` calls `reEncryptChatAssets` with explicit old+new keys before the swap; asset failures abort rotation
 **Priority:** high
 **Effort:** Medium
 

@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Fixed (ccac5b9d server + fix-review-quickwins clients)
+**Status:** Done
+**Status Note:** ccac5b9d server + fix-review-quickwins clients
 **Priority:** high
 **Effort:** Medium
 

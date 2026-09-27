@@ -3,14 +3,14 @@
 
 # TASK-044: NSFW Trauma & Recovery
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Trauma/recovery as shared StatusEffect with consent-violation severity escalation.
 **Context:** Gameplay-layer consequence system for non-consensual interactions.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: open
+**Status**: Not Started
 **Priority**: medium
 **Labels**: nsfw, rpg, game-mechanics
 **Epic**: epic-nsfw-game-mechanics

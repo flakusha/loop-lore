@@ -3,7 +3,7 @@
 
 # TASK: World Simulation Discovery And Trade Events
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-actor-autonomy-story-drive

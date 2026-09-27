@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 Foundation exists
+**Status:** In Progress
+**Status Note:** exists
 **Priority:** P2-B
 **Effort:** Medium
 **Epic:** epic-chat-transfer-location

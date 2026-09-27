@@ -3,7 +3,7 @@
 
 # TASK-2026-openwebui-structured-toolcall-renderer: Structured Tool-Call Renderer for SSE `tool_call` Events
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Large
 **Labels:** frontend, streaming, tools

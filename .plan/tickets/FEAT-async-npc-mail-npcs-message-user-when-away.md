@@ -3,7 +3,7 @@
 
 # FEAT: Async NPC Mail (NPCs message user when away)
 
-**Status:** done
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 **Summary:** Async NPC Mail (NPCs message user when away)

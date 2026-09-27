@@ -3,7 +3,7 @@
 
 # TASK: Actors — API Routes (actor + child-table REST surface)
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-actors

@@ -3,7 +3,7 @@
 
 # TASK: Delete dead migration-helpers.ts boolToEnum
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Small (deletion + doc fix)
 **Summary:** `boolToEnum`/`batchBoolToEnum` in `src/db/migration-helpers.ts` have zero importers (verified by grep, 2026-09-25). Delete the file, fix the `docs/meta/admin-visibility-research.md` bullet, and close the stale `TASK-cleanup-banned-types` checkbox as obsolete.

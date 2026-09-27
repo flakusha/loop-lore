@@ -3,7 +3,7 @@
 
 # IDEA: IDEA emotion-avatar batch progress over SSE: per-variant live progress
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** low
 **Effort:** Medium
 **Tags:** idea, avatars, sse
@@ -16,7 +16,7 @@
 
 # IDEA: Emotion-avatar batch progress events over SSE
 
-**Status:** draft
+**Status:** Not Started
 **Priority:** P3
 **Effort:** Medium
 **Summary:** Emotion-avatar batch generation runs server-side with an in-memory job store the client must poll; surface per-variant progress over the existing generation SSE channel so the character sheet shows live progress.

@@ -3,7 +3,7 @@
 
 # TASK-affordance-lookup-table: `(actor_caps, item_props, context_state) -> AffordanceResult`
 
-**Status:** done
+**Status:** Done
 **Priority:** P0 (within EPIC-RESEARCH-AGENCY-AFFORDANCE)
 **Effort:** 1-2 days
 **Parent epic:** `epic-research-agency-affordance.md`

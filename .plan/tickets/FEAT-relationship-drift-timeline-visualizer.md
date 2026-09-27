@@ -3,7 +3,7 @@
 
 # FEAT: Relationship-drift Timeline Visualizer
 
-**Status:** done
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 **Summary:** Relationship-drift Timeline Visualizer

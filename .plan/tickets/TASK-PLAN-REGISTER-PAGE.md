@@ -3,7 +3,7 @@
 
 # TASK-PLAN-REGISTER-PAGE: Build registration frontend page
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +11,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: done
+**Status**: Done
 **Priority**: medium
 **Labels**:
 **Assignee**:

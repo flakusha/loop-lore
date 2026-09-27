@@ -3,7 +3,7 @@
 
 # TASK-2026-046a: Creative Studio Core Features
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +11,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: open
+**Status**: Not Started
 **Priority**: medium
 **Labels**: feature, frontend, creative
 **Assignee**:

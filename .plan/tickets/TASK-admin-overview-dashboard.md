@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done — BE `src/routes/admin/stats.ts` (worlds + daily deltas), FE `admin.ts` (overview state, 30s poll, filters) + `admin.html` overview tab (clickable stat cards with delta badges, activity feed w/ q + event_type filters)
+**Status:** Done
+**Status Note:** BE `src/routes/admin/stats.ts` (worlds + daily deltas), FE `admin.ts` (overview state, 30s poll, filters) + `admin.html` overview tab (clickable stat cards with delta badges, activity feed w/ q + event_type filters)
 **Priority:** medium
 **Effort:** Low
 **Epic:** epic-frontend-admin

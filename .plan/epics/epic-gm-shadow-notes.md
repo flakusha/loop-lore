@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** 🟡 In Progress (2026-08-01 — frontend + DB + CRUD routes done; prompt injection pending)
+**Status:** In Progress
+**Status Note:** 2026-08-01 — frontend + DB + CRUD routes done; prompt injection pending
 **Priority:** High
 **Effort:** Medium
 **Type:** Feature Epic

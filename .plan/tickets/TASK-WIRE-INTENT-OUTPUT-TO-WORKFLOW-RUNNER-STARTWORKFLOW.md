@@ -3,7 +3,7 @@
 
 # TASK: Wire intent output to workflow-runner.startWorkflow
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 
 Imported from git issue 9d598b8.

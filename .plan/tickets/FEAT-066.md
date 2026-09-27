@@ -1,6 +1,6 @@
 ---
 title: "FEAT-066: Lore-consistency checker"
-status: open
+status: Not Started
 priority: medium
 labels: [feature, generation, quality]
 epic: epic-character-core-system
@@ -8,7 +8,7 @@ related: [FEAT-055, FEAT-059, FEAT-062]
 ---
 
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Complete (2026-09-07, worktree trading-inventory-barter)
+**Status:** Done
+**Status Note:** 2026-09-07, worktree trading-inventory-barter
 **Priority:** high
 **Effort:** Medium
 

@@ -3,7 +3,7 @@
 
 # FEAT: Synthetic Fine-tune Data Export
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** low
 **Effort:** Medium
 **Summary:** Synthetic Fine-tune Data Export

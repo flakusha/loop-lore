@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** open
+**Status:** Not Started
 **Priority:** Low
 **Effort:** High
 **Epic:** Epic 26 (Avatar & Expression), Epic 28 (Asset Support)

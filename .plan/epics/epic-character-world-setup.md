@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** 🟡 In Progress (schema + service + seed hook shipped; resolution integration pending)
+**Status:** In Progress
+**Status Note:** schema + service + seed hook shipped; resolution integration pending
 **Priority:** High
 **Effort:** Medium
 **Type:** Feature Epic

@@ -10,7 +10,7 @@
 
 
 **Priority:** Medium
-**Status:** open
+**Status:** Not Started
 **Epic:** epic-crafting-professions
 **Tags:** crafting, discovery, rare-materials, competition, gathering
 

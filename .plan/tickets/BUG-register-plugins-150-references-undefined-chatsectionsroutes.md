@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Resolved (commit `4a1f56b8`, follow-up `1cddba36`)
+**Status:** Done
+**Status Note:** commit `4a1f56b8`, follow-up `1cddba36`
 **Priority:** high
 **Effort:** Small
 

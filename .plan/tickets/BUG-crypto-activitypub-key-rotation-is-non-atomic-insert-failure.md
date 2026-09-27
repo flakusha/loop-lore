@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done (verified landed on dev — expire + insert wrapped in a single `database.transaction()`)
+**Status:** Done
+**Status Note:** verified landed on dev — expire + insert wrapped in a single `database.transaction()`
 **Priority:** high
 **Effort:** Medium
 

@@ -10,7 +10,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Resolved
+**Status:** Done
 **Priority Tier:** P2
 **Source:** reconcile review (Scout Batch B — ISSUE-002)
 `src/routes/views/nsfw-audit.ts:19-25` — `serveNsfwModerationAudit` calls `can(userRole, "admin.system")` in the template but has NO inline `beforeHandle` guard. The route is registered via `plugin-pages.ts` which may or may not apply `adminViewGuard`.

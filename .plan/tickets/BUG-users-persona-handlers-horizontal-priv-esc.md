@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Closed (2026-08-22, verified on `dev`)
+**Status:** Done
+**Status Note:** 2026-08-22, verified on `dev`
 **Priority:** high
 **Priority Tier:** P2
 **Effort:** Small

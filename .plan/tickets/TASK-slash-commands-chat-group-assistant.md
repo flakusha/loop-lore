@@ -10,7 +10,7 @@
 
 
 **Epic:** epic-frontend-chat-commands.md
-**Status:** Open
+**Status:** Not Started
 **Priority:** High
 
 ## Scope

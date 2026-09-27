@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** 🟡 In Progress (Gate C complete 2026-08-14; release blockers: tag + push)
+**Status:** In Progress
+**Status Note:** Gate C complete 2026-08-14; release blockers: tag + push
 **Priority:** High
 **Effort:** Medium
 **Type:** Release Epic

@@ -3,7 +3,7 @@
 
 # WIRE: impersonate command-palette FE has no actionPayload dispatch
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Summary:** (none captured)
 **Context:** (none captured)

@@ -3,7 +3,7 @@
 
 # TASK-BKP-001: SQLite Automated Backup System
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +11,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: drafted  
+**Status**: Not Started
 **Priority**: high  
 **Labels**: backup, sqlite, automation, security, cron  
 **Epic**: epic-database-backup-recovery  

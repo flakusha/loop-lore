@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done — validation landed as `assertChatViewShape` (`src/frontend/alpine/store-schema.ts`); required-field assertion replaces silent runtime defaults
+**Status:** Done
+**Status Note:** validation landed as `assertChatViewShape` (`src/frontend/alpine/store-schema.ts`); required-field assertion replaces silent runtime defaults
 **Priority:** medium
 **Effort:** Medium
 

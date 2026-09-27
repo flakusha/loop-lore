@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** done
+**Status:** Done
 **Priority:** Medium
 **Effort:** High
 **Epic:** epic-assistant-generation-extensions

@@ -3,7 +3,7 @@
 
 # FEAT: Full Moderation System (Review Queue, Reports, Mod Role)
 
-**Status:** done
+**Status:** Done
 **Priority:** high
 **Effort:** XL
 **Summary:** Full Moderation System (Review Queue, Reports, Mod Role)

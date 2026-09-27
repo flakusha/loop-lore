@@ -3,7 +3,7 @@
 
 # TASK: backlog — close 2026-09-25 epic-linkage advisory orphans + backfill metadata
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Small
 **Type:** Task

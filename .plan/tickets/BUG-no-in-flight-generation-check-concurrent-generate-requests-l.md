@@ -9,7 +9,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Resolved (hasInFlightGeneration check wired in handleGenerate; 409 Conflict on duplicate)
+**Status:** Done
+**Status Note:** hasInFlightGeneration check wired in handleGenerate; 409 Conflict on duplicate
 **Priority:** high
 
 ## Summary

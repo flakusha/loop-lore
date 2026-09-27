@@ -10,7 +10,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Draft — description pending (formerly in `chore-docs-reconcile`, worktree merged 2026-08-14)\
+**Status:** Not Started
+**Status Note:** description pending (formerly in `chore-docs-reconcile`, worktree merged 2026-08-14)\
 **Proposed Epic Branch:** `epic/27`\
 **Owner:** TBD\
 **Depends on:** Epic 26 (Multi-Instance Reconciliation) — hard prerequisite. Epic 27 and Epic 25 are independently sequenced after Epic 26 (suggested order: 26 → 27 → 25); neither lists the other as a dependency. Epic 25 consumes this epic's backend guards but is not a prerequisite.

@@ -3,7 +3,7 @@
 
 # TASK: Markdown Preview Before Send
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Small
 **Summary:** Markdown Preview Before Send

@@ -3,7 +3,7 @@
 
 # FEAT: Memory visualizer — knowledge graph over asset_links
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-analytics-observability

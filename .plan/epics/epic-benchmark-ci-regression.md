@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** 🟡 In Progress — benchmark suite structure defined + first benchmark shipped (2026-08-15, branch `native-blake3`)
+**Status:** In Progress
+**Status Note:** benchmark suite structure defined + first benchmark shipped (2026-08-15, branch `native-blake3`)
 **Priority:** High
 **Effort:** High
 **Type:** Infrastructure Epic

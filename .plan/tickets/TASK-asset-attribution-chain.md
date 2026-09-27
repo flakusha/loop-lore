@@ -3,7 +3,7 @@
 
 # TASK: Asset Attribution Chain
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Asset Attribution Chain

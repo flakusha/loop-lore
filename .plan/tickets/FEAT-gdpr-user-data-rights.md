@@ -3,7 +3,7 @@
 
 # FEAT: GDPR & User Data Rights
 
-**Status:** done
+**Status:** Done
 **Priority:** high
 **Effort:** Large
 **Summary:** GDPR & User Data Rights

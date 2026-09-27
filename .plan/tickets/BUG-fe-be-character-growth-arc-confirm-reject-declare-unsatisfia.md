@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Resolved (already on dev, 2026-09-14)
+**Status:** Done
+**Status Note:** already on dev, 2026-09-14
 **Priority:** high
 **Effort:** Medium
 

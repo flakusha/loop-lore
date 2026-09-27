@@ -3,7 +3,7 @@
 
 # TASK: Story Auto-Drive Scheduler
 
-**Status:** open
+**Status:** Not Started
 **Priority:** high
 **Effort:** Large (scheduler loop + due-actor selection + dispatch integration + persistence)
 **Summary:** World-tick loop that drives the actor autonomy subsystem: due-actor selection, action dispatch through the existing generation pipeline (navigation ticks, BDI decisions, GM beats), pause/resume/step controls, and persistence of simulation state across restarts.

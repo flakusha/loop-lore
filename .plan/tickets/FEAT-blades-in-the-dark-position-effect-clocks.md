@@ -3,7 +3,7 @@
 
 # FEAT: Blades in the Dark - Position/Effect + Clocks
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Large
 **Summary:** Blades in the Dark - Position/Effect + Clocks

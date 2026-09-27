@@ -7,7 +7,7 @@
 **Context:** Part of epic-character-world-integration.md. Builds on existing environmental hazard generation (generateEnvironmentalHazard) and the species/terrain layer; character survival/swimming skills from src/rpg/skills/service gate outcomes.
 **Acceptance Criteria:** BiomeHazard interface with countermeasures: Skill-name[]; hazard resolution reads character skills and reduces severity when a countermeasure skill meets threshold; resolution outcome surfaced in the prompt section for the location; unit tests for mitigate/no-mitigate/no-skill paths.
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 

@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** 🟡 Phase 1 Complete, Phase 2 Partial
+**Status:** Done
+**Status Note:** , Phase 2 Partial
 **Priority:** High
 **Effort:** Medium
 **Type:** Feature Epic

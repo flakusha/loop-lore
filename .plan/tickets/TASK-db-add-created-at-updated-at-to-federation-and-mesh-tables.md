@@ -3,7 +3,7 @@
 
 # TASK: DB: add created_at/updated_at to federation and mesh tables
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 

@@ -3,7 +3,7 @@
 
 # FEAT: 3D World-map Navigation
 
-**Status:** done
+**Status:** Done
 **Priority:** low
 **Effort:** XL
 **Summary:** 3D World-map Navigation

@@ -3,7 +3,7 @@
 
 # TASK: Patch planFileTicket footer-overrides-header for /find-work
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 

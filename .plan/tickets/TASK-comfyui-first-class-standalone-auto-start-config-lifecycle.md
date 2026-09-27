@@ -3,7 +3,7 @@
 
 # TASK: ComfyUI first-class: standalone auto-start config + lifecycle
 
-**Status:** open
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium (config schema + spawner + admin status endpoint)
 **Summary:** `ComfyUIAutoStartConfig` + `start-comfy.ts` spawner probing `/system_stats` for readiness + admin status surface; defines the standalone-vs-proxy baseUrl contract consumed by the rest of the first-class program.

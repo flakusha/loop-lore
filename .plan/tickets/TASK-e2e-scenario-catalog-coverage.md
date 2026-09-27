@@ -10,7 +10,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟢 Done
+**Status:** Done
 
 - [x] Implementation complete
 - [x] Tests passing

@@ -3,7 +3,7 @@
 
 # TASK: Attachment Moderation Pipeline
 
-**Status:** done
+**Status:** Done
 **Priority:** high
 **Effort:** Large
 **Summary:** Attachment Moderation Pipeline

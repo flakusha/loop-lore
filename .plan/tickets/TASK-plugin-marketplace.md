@@ -10,7 +10,7 @@
 
 
 **Priority:** Medium
-**Status:** open
+**Status:** Not Started
 **Epic:** epic-plugin-system
 **Tags:** plugin, marketplace, sharing, community, extensibility
 

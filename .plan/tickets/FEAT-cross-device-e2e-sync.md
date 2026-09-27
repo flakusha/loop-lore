@@ -3,7 +3,7 @@
 
 # FEAT: Cross-device E2E Sync
 
-**Status:** done
+**Status:** Done
 **Priority:** low
 **Effort:** XL
 **Summary:** Cross-device E2E Sync

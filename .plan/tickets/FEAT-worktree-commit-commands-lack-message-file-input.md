@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done (2026-09-02 — `-F`/`--message-file` shipped in `scripts/worktree/utils/message.ts`, wired into `commit`/`agent-commit`)
+**Status:** Done
+**Status Note:** 2026-09-02 — `-F`/`--message-file` shipped in `scripts/worktree/utils/message.ts`, wired into `commit`/`agent-commit`
 **Priority:** low
 **Effort:** low
 

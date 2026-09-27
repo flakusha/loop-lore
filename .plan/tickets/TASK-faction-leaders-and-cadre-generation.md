@@ -3,7 +3,7 @@
 
 # TASK: Faction Leaders And Cadre Generation
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-faction-reputation

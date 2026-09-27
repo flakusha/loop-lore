@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done
+**Status:** Done
 **Priority:** High
 **Effort:** Small
 **Epic:** epic-logic-reconciliation

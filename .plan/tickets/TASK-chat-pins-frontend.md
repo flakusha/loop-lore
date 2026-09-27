@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done — pins panel + Alpine component wired (0395b7af)
+**Status:** Done
+**Status Note:** pins panel + Alpine component wired (0395b7af)
 **Priority:** P2
 **Effort:** Low
 **Epic:** epic-frontend-backend-integration

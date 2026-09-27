@@ -9,7 +9,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Complete (2026-09-10) — per-chat roster lives in scene-renderer state, synced on init/addScene, cleared on destroy
+**Status:** Done
+**Status Note:** (2026-09-10) — per-chat roster lives in scene-renderer state, synced on init/addScene, cleared on destroy
 **Priority:** medium
 **Epic:** Avatar Alpha Channel + VN Layering; Visual Novel Mode
 

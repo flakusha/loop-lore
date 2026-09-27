@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Implemented
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-api-telemetry.md

@@ -3,7 +3,7 @@
 
 # TASK: Scheduler Implementation (Internal Cron Jobs)
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Large
 **Summary:** Scheduler Implementation (Internal Cron Jobs)

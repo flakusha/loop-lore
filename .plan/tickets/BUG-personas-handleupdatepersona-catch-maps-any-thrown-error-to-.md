@@ -3,7 +3,8 @@
 
 # BUG: personas handleUpdatePersona: catch maps ANY thrown error to 404 'Persona not found'
 
-**Status:** ✅ Resolved (catch narrowed: 404 only for not-found; generic 500 + logger.error otherwise)
+**Status:** Done
+**Status Note:** catch narrowed: 404 only for not-found; generic 500 + logger.error otherwise
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (see ## Summary)

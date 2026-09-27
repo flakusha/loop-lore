@@ -9,7 +9,7 @@
 **Acceptance Criteria:** Partial — 7 of 13 tasks shipped
 
 
-**Status:** open
+**Status:** Not Started
 **Priority:** Medium
 **Epic:** epic-archival-workflow
 

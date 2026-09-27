@@ -3,7 +3,7 @@
 
 # FEAT: 2D world: click-to-move + prediction/reconcile + proximity-to-chat
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** XL
 **Epic:** epic-2d-sprite-world

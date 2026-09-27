@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Complete (2026-08-12)
+**Status:** Done
+**Status Note:** 2026-08-12
 **Priority:** P2 — Medium
 **Effort:** Small
 **Epic:** epic-item-systems-unification

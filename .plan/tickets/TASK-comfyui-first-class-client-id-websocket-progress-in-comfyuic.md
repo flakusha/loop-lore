@@ -3,7 +3,7 @@
 
 # TASK: ComfyUI first-class: client_id + WebSocket progress in ComfyUIClient
 
-**Status:** open
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium (WS client + progress subscription + fallback)
 **Summary:** `client_id` request body + `subscribeProgress` sentinel/fallback in `ComfyUIClient`; `generateComfyUI` passes `client_id` always so progress events route to the requesting caller.

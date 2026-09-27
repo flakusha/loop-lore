@@ -3,7 +3,7 @@
 
 # BUG: criticalHit in makeAttackRoll ignores the kept die under advantage/disadvantage
 
-**Status:** done
+**Status:** Done
 **Severity:** medium
 **Priority:** medium
 **Effort:** small

@@ -3,7 +3,7 @@
 
 # TASK: Actor Position — Physical vs Spatial Split
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-fractal-locations

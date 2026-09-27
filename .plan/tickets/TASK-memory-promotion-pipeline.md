@@ -10,7 +10,7 @@
 
 
 **Issue:** 22f6cd99-562f-4df1-a09a-f7f343a41b69
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Epic:** epic-memory-knowledge-systems
 

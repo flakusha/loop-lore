@@ -3,14 +3,14 @@
 
 # TASK-010: E2E tests for i18n system
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** E2E coverage for the i18n runtime — locale switch, fallback, plurals, interpolation.
 **Context:** Browser-level Playwright suite on top of the existing unit tests; gates i18n merges.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: open
+**Status**: Not Started
 **Priority**: medium
 **Effort**: Medium
 **Labels**: i18n, e2e, testing

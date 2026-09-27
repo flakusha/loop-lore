@@ -3,14 +3,15 @@
 
 # TASK-029: RPG Chat with Question-Based Gameplay
 
-**Status:** ✅ Resolved (on dev, 2026-09-23)
+**Status:** Done
+**Status Note:** on dev, 2026-09-23
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Question-driven RPG chat mode — GM emits structured inline questions, answers drive quest/inventory state.
 **Context:** Question UI + answer orchestration; backend quest/inventory hooks already exist.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: closed
+**Status**: Done
 **Priority**: medium
 **Effort**: Medium
 **Labels**: rpg, chat, gameplay, quests

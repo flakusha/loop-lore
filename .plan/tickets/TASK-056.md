@@ -3,14 +3,14 @@
 
 # TASK-056: Overpowered Item Management
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** ItemPowerBudget keyed by ItemCategory; sits above TASK-052/053.
 **Context:** Admin audit endpoint + balance cap enforcement.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: open
+**Status**: Not Started
 **Priority**: medium
 **Labels**: items, rpg, balance, security
 **Epic**: epic-items

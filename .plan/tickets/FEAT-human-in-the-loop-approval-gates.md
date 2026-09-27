@@ -3,7 +3,7 @@
 
 # FEAT: Human-in-the-Loop Approval Gates
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Human-in-the-Loop Approval Gates

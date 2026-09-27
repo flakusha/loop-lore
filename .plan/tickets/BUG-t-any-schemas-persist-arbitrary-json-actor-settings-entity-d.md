@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done — fixed on dev by df8e19453 (2026-09-15), verified live + 17 regression tests green
+**Status:** Done
+**Status Note:** fixed on dev by df8e19453 (2026-09-15), verified live + 17 regression tests green
 **Priority:** high
 **Effort:** Medium
 

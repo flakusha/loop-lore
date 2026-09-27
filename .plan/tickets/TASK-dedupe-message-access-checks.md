@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done (2026-08-05) — no duplicate access-check helpers remain; cases use `chat/service.checkChatAccess`/`getMessageWithAccess`
+**Status:** Done
+**Status Note:** (2026-08-05) — no duplicate access-check helpers remain; cases use `chat/service.checkChatAccess`/`getMessageWithAccess`
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-logic-reconciliation

@@ -3,7 +3,7 @@
 
 # TASK: Embedding and telemetry retention policies
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-db-growth-tiered-storage

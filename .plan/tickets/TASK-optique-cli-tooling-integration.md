@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 In Progress
+**Status:** In Progress
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-cli-tooling-optique

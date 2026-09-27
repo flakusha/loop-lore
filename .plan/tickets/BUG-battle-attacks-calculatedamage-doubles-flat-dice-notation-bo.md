@@ -3,7 +3,8 @@
 
 # BUG: battle attacks: calculateDamage doubles flat dice-notation bonus on critical hits
 
-**Status:** ✅ Resolved (batch 2)
+**Status:** Done
+**Status Note:** batch 2
 **Priority:** high
 **Effort:** Medium
 **Summary:** (see ## Summary)

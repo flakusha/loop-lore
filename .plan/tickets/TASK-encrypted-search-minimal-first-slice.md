@@ -3,7 +3,7 @@
 
 # TASK: Encrypted-search minimal first slice — wire + backfill for pilot chat
 
-**Status:** open
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium (depends on `TASK-019-users-encryption-secret.md` landing first)
 **Summary:** Wire `reindexMessageTokens` into `encryptMessageContent` behind an `ENABLE_TOKEN_INDEXING` env flag, and ship a one-shot backfill CLI that derives tokens for every existing `messages` row with `content_plaintext IS NULL` (i.e. client-pre-encrypted). This is the minimal proof that the existing 70%-built blind-index pipeline works end-to-end on a real chat. After it ships for one user/chat, the pattern extends to all users.

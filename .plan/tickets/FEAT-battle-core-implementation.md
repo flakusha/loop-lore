@@ -3,7 +3,7 @@
 
 # FEAT: Battle Core Implementation
 
-**Status:** done
+**Status:** Done
 **Priority:** high
 **Effort:** XL
 **Summary:** Battle Core Implementation

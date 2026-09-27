@@ -1,6 +1,6 @@
 ---
 title: "FEAT-059: Conversation analytics dashboard"
-status: open
+status: Not Started
 priority: medium
 labels: [feature, analytics, frontend]
 epic: epic-analytics-observability
@@ -8,7 +8,7 @@ related: [FEAT-062, FEAT-060, FEAT-068]
 ---
 
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

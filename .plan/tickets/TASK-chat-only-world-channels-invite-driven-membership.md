@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Complete (merged to dev: backend `95680e00`, frontend `d61ce737`)
+**Status:** Done
+**Status Note:** merged to dev: backend `95680e00`, frontend `d61ce737`
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-world-chat-channels-invites

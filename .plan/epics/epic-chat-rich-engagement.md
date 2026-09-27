@@ -8,7 +8,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** Proposed
+**Status:** Not Started
 **Priority:** Medium — messenger/AI parity gap
 **Tags:** chat, polls, link-preview, voice-notes, ai-utilities
 

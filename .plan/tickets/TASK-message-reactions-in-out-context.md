@@ -11,7 +11,7 @@
 
 **Epic:** epic-frontend-emoji-reactions.md
 **See also:** epic-messages.md, epic-message-seen-state.md
-**Status:** Open
+**Status:** Not Started
 **Priority:** Medium
 
 ## Scope

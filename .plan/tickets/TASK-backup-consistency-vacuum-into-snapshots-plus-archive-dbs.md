@@ -3,7 +3,7 @@
 
 # TASK: Backup consistency: VACUUM INTO snapshots plus archive DBs
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-db-growth-tiered-storage

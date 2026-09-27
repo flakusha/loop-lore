@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 Phase 1 Complete — Core systems implemented; extended systems (quests, achievements, inventory, etc.) pending
+**Status:** Done
+**Status Note:** Core systems implemented; extended systems (quests, achievements, inventory, etc.) pending
 **Priority:** Medium
 **Effort:** Very High
 **Epic:** epic-rpg-mechanics

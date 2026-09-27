@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done — verified stale (no code change required)
+**Status:** Done
+**Status Note:** verified stale (no code change required)
 **Priority:** medium
 **Effort:** Medium
 

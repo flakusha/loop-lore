@@ -3,7 +3,7 @@
 
 # TASK-agency-bdi-reflection-cycle: BDI-lite nightly job + reflection checkpoints
 
-**Status:** Draft
+**Status:** Not Started
 **Priority:** P1 (within EPIC-RESEARCH-AGENCY-DECISION)
 **Effort:** 1 week
 **Parent epic:** `epic-research-agency-decision.md`

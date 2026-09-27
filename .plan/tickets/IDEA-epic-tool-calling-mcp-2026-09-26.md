@@ -3,7 +3,7 @@
 
 # IDEA-epic-tool-calling-mcp-2026-09-26: Tool-Calling / MCP Connectors — cross-cutting epic proposal
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium (P6+ per matrix, but 🔴 High future impact)
 **Effort:** Large
 **Type:** Research
@@ -18,7 +18,7 @@
 
 ### Status / Priority / Effort / Type
 
-- Status: 📝 Draft
+- Status: Not Started
 - Priority: Medium (matrix 🔴 High future severity, but P6+ deferred under 0.1.0 alignment)
 - Effort: Large (cross-cutting: schema + runtime + UI + 5+ subsystem integrations)
 - Type: Feature Epic

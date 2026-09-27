@@ -3,7 +3,7 @@
 
 # TASK: Asset lifecycle: archive flag, orphan prune, quota eviction
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 
 Imported from git issue 336ac25.

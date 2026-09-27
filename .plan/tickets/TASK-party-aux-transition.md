@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done 2026-08-01 (classifier + wiring); regression acceptance tracked here
+**Status:** Done
+**Status Note:** 2026-08-01 (classifier + wiring); regression acceptance tracked here
 **Priority:** P2-B
 **Effort:** Medium
 **Epic:** epic-chat-transfer-location

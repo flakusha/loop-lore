@@ -3,7 +3,7 @@
 
 # TASK: Baseline Skills Seed From Character Template
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 

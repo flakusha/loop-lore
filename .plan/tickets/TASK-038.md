@@ -3,14 +3,14 @@
 
 # TASK-038: NSFW Pregnancy & Reproduction
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Large
 **Summary:** Pregnancy/reproduction on species flags + Relationship parentage.
 **Context:** Gameplay-layer reproductive cycle + species interaction.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: open
+**Status**: Not Started
 **Priority**: medium
 **Labels**: nsfw, rpg, game-mechanics
 **Epic**: epic-nsfw-game-mechanics

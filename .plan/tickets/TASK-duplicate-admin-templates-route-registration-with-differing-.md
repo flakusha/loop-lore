@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done — landed on `authz-bug-cluster` (commit `a714a4376`)
+**Status:** Done
+**Status Note:** landed on `authz-bug-cluster` (commit `a714a4376`)
 **Priority:** low
 **Effort:** Medium
 

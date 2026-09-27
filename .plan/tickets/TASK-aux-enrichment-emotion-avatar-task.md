@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** open
+**Status:** Not Started
 **Priority:** P3
 **Epic:** epic-aux-enrichment-pipeline
 **Labels:** aux-llm, emotion-avatar, enrichment-task

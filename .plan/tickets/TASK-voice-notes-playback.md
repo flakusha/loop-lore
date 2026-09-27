@@ -3,7 +3,7 @@
 
 # TASK: Voice notes playback
 
-**Status:** open
+**Status:** Not Started
 **Summary:** (none captured)
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)

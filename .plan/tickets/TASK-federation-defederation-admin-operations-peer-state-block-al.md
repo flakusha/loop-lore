@@ -3,7 +3,7 @@
 
 # TASK: Federation defederation admin operations (peer state + block/allow)
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Add admin-side primitives that allow an operator to federate with a peer (promote pending → trusted) or defederate (trusted → suspended, or hard-delete). The state machine and audit log are in scope; the frontend UI lives in `IDEA-federation-admin-ui-for-follows-blocklists-key-rotation`. See `docs/spec/federation-defederation-admin.md` for the full implementation spec.

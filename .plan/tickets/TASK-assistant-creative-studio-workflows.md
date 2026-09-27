@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** done
+**Status:** Done
 **Priority:** High (MVP scoped, post-Gate C)
 **Effort:** Large
 **Epic:** `epic-assistant-creative-studio-workflows`

@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done (worktree fix-nsfw-soft-deleted-exclusion)
+**Status:** Done
+**Status Note:** worktree fix-nsfw-soft-deleted-exclusion
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-nsfw-moderation-priority

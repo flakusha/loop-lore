@@ -3,7 +3,7 @@
 
 # BUG: cascade abort signal is not threaded through — in-flight LLM call runs to completion after pause toggle
 
-**Status:** done
+**Status:** Done
 **Severity:** high
 **Priority:** high
 **Effort:** medium

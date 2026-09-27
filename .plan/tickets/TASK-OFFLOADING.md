@@ -3,7 +3,7 @@
 
 # TASK: API task offloading (background worker dispatch)
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Large
 **Summary:** Move long-running API calls (image generation, batch embeddings, RAG ingestion, content analysis) to a background worker so request-handling latency stays under SLO. The dispatcher hands a job to the worker, returns 202 Accepted with a polling URL, and the worker emits an SSE/completion event when done.

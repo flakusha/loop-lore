@@ -3,7 +3,7 @@
 
 # TASK: NSFW Rating Schema & Consent State Machine
 
-**Status:** done
+**Status:** Done
 **Priority:** high
 **Effort:** Large
 **Summary:** NSFW Rating Schema & Consent State Machine

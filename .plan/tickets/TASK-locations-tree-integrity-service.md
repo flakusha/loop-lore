@@ -3,7 +3,7 @@
 
 # TASK: Location Tree Integrity Service
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-fractal-locations

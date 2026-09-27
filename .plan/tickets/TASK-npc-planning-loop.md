@@ -3,7 +3,7 @@
 
 # TASK: Npc Planning Loop
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Daily planning + task decomposition loop writing `actor_daily_plans` / `actor_planned_activities` (migration 011, shipped). Supersedes the planning slice of the `TASK-npc-bdi-planning` sketch; reaction/revision/buffer slices live in their own tickets.

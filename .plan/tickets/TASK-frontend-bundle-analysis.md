@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** open
+**Status:** Not Started
 **Priority:** High
 **Effort:** Small
 **Epic:** epic-frontend-bundle-optimization

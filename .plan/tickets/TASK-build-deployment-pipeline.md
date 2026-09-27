@@ -3,7 +3,7 @@
 
 # TASK: Build & Deployment Pipeline
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Large
 **Summary:** Build & Deployment Pipeline

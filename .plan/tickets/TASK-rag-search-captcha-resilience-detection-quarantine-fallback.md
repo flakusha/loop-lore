@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟨 In Progress
+**Status:** In Progress
 **Priority:** High
 **Effort:** Medium
 **Type:** Feature Task (RAG external)

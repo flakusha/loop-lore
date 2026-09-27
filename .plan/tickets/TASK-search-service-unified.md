@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🔄 In Progress — providers, conveniences, gallery endpoint, memories-FTS migration landed; assistant/RAG consumers pending
+**Status:** In Progress
+**Status Note:** providers, conveniences, gallery endpoint, memories-FTS migration landed; assistant/RAG consumers pending
 **Priority:** High
 **Effort:** Medium
 **Type:** Feature Task

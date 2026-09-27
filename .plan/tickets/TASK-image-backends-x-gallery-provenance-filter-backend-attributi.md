@@ -3,7 +3,7 @@
 
 # TASK: Image backends x gallery: provenance filter + backend attribution validation
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Small-Medium (survey + validation + gap tickets)
 **Summary:** Survey + validate how generated images (sd.cpp, ComfyUI standalone/proxy, external OpenAI-compatible) surface in gallery. Ground state: gallery FE is search + type filter only (src/frontend/pages/gallery.ts, 29L — no backend awareness); server view (src/routes/views/gallery.ts) enforces G6 visibility inheritance (private-character assets hidden from non-owners, admin.character bypass).

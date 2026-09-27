@@ -3,7 +3,7 @@
 
 # TASK: Social & influence slash interactions (/persuade /intimidate /lie /charm /brag /insult /toast …)
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-social-interaction

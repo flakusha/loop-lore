@@ -3,14 +3,14 @@
 
 # TASK-055: Duplicate Item Protection
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Dedupe ItemDefinition templates by (worldId, name, category).
 **Context:** Distinct from TASK-054 (instance uniqueness vs template uniqueness).
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: open
+**Status**: Not Started
 **Priority**: medium
 **Labels**: items, rpg, duplicate, protection
 **Epic**: epic-items

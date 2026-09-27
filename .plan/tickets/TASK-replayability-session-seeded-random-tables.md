@@ -3,7 +3,7 @@
 
 # TASK: Replayability (Session-Seeded Random Tables)
 
-**Status:** done
+**Status:** Done
 **Priority:** low
 **Effort:** Small
 **Summary:** Replayability (Session-Seeded Random Tables)

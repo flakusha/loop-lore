@@ -3,7 +3,8 @@
 
 # EPIC: Fractal Locations — Recursive Containment + Mobile Transports
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
+**Status Note:** Not Started
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic

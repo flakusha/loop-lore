@@ -3,7 +3,7 @@
 
 # IDEA-epic-asset-consistency-generation-2026-09-26: Reference-Conditioned Asset Consistency (matrix gap G21)
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium (matrix 🟢 Low severity, "Med difficulty, do not defer — clean pull candidate")
 **Effort:** Medium
 **Type:** Research
@@ -18,7 +18,7 @@
 
 ### Status / Priority / Effort / Type
 
-- Status: 📝 Draft
+- Status: Not Started
 - Priority: Medium (matrix 🟢 Low severity; clean pull candidate per matrix)
 - Effort: Medium (ComfyUI reference workflow + in-chat edit UI + cache invalidation)
 - Type: Feature Epic

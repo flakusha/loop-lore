@@ -3,7 +3,7 @@
 
 # TASK: Task management integration (giwt ↔ loop-lore CLI/UI)
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Large
 **Summary:** Expose giwt's task/ticket management surface inside loop-lore's own CLI + admin UI so operators don't need to leave the runtime context to triage, file, or close tickets. Bidirectional sync: tickets authored in loop-lore's CLI land in giwt's index; tickets filed in giwt show up in loop-lore's admin task panel.

@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Done (commit `771e8b34`)
+**Status:** Done
+**Status Note:** commit `771e8b34`
 **Priority:** Medium
 **Effort:** Small
 

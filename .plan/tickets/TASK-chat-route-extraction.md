@@ -10,7 +10,7 @@
 
 
 **Issue:** db5a19ae-d4b9-4860-9905-96036be43286
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Epic:** epic-chat-lifecycle-moderation
 

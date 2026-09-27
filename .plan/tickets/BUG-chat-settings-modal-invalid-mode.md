@@ -3,7 +3,7 @@
 
 # BUG: Chat Settings Modal Sends Invalid Mode Values
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +11,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: done
+**Status**: Done
 **Priority**: high
 **Labels**: chat, bug, mode, validation
 **Assignee**:

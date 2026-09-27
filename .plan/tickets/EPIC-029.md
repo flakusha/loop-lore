@@ -3,7 +3,7 @@
 
 # EPIC-029: 029: Two-Factor / Multi-Factor Auth
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +11,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: open
+**Status**: Not Started
 **Priority**: medium
 **Labels**: epic
 **Epic**: (if applicable)

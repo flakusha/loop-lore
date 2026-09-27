@@ -7,7 +7,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** 🟢 Near-complete — 12 tabs + user Flag button/dialog shipped; remaining gap: Revision History
+**Status:** In Progress
+**Status Note:** Near-complete — 12 tabs + user Flag button/dialog shipped; remaining gap: Revision History
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Frontend Epic

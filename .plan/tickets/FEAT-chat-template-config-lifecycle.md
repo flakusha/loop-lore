@@ -3,7 +3,7 @@
 
 # FEAT: Chat Template Config Lifecycle — Bound Migration Over Live Mutation
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +11,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: verified-shipped
+**Status:** Done
+**Status Note:** shipped
 **Priority**: medium
 **Labels**: chat, templates, config, lifecycle, migration, architecture
 **Assignee**:

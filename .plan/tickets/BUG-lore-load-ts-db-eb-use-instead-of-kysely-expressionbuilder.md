@@ -3,7 +3,8 @@
 
 # BUG: lore-load.ts: db + eb use any instead of Kysely + ExpressionBuilder
 
-**Status:** ✅ Closed (duplicate of `BUG-lore-load-ts-uses-any-for-db-eb-instead-of-kysely-expression`; same fix landed in `0da9d9b0`)
+**Status:** Done
+**Status Note:** duplicate of `BUG-lore-load-ts-uses-any-for-db-eb-instead-of-kysely-expression`; same fix landed in `0da9d9b0`
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-lore-knowledge

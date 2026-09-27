@@ -3,7 +3,7 @@
 
 # TASK: backlog — schedule Item-Generation Discoverability batch (P2-C assistant tooling)
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Type:** Task

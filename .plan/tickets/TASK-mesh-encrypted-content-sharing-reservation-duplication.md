@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
- **Status:** 🟡 In Progress — transfer foundation landed (see Progress 2026-09-09)
+**Status:** In Progress
+**Status Note:** transfer foundation landed (see Progress 2026-09-09)
 **Priority:** high
 **Effort:** Large
 **Epic:** epic-mesh-federation-content-sharing

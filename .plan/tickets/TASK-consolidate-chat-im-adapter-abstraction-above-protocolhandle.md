@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 In Progress — decision recorded, seam landed
+**Status:** In Progress
+**Status Note:** decision recorded, seam landed
 **Priority:** high
 **Effort:** Medium
 

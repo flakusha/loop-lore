@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 In Progress — split into 2 child tickets
+**Status:** In Progress
+**Status Note:** split into 2 child tickets
 **Priority:** Medium
 **Effort:** Med
 **Epic:** epic-non-standard-browser-crypto

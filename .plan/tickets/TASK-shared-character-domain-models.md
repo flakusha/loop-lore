@@ -7,7 +7,7 @@
 **Context:** Prerequisite for every ticket in epic-character-world-integration.md. Types currently spec-only per review 2026-09-21; runtime counterparts (rpg/skills Skill, relationships-service Relationship, rpg/combat conditions) exist in parallel and must converge.
 **Acceptance Criteria:** Single authoritative module per model (src/characters/spec/ or promoted src/domain/); rpg skills/relationships/combat-conditions types unify onto it or map explicitly; no world module re-declares a character domain type; typecheck + tests green.
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium
 

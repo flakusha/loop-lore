@@ -1,6 +1,6 @@
 ---
 title: "FEAT-047: Branch UI controls"
-status: open
+status: Not Started
 priority: medium
 labels: [feature, chat, frontend]
 epic: epic-conversation-branching
@@ -8,7 +8,7 @@ related: [FEAT-045, FEAT-046]
 ---
 
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

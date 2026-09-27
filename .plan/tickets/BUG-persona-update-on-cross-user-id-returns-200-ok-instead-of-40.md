@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Resolved (verified fixed on dev; code + regression tests present)
+**Status:** Done
+**Status Note:** verified fixed on dev; code + regression tests present
 **Priority:** medium
 **Effort:** Medium
 

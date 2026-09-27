@@ -3,7 +3,7 @@
 
 # .tmp janitor gate + verified-at staleness markers
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Small
 **Type:** Task

@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🔨 Implemented (memory-history-search worktree — pending finalize)
+**Status:** In Progress
+**Status Note:** memory-history-search worktree — pending finalize
 **Priority:** high
 **Effort:** Large
 **Epic:** epic-memory-knowledge-systems.md

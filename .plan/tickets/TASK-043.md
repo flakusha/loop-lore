@@ -3,14 +3,14 @@
 
 # TASK-043: NSFW Location & Environment
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Location on NsfwLocationType + Housing private bonuses + Weather atmosphere.
 **Context:** Gameplay-layer location atmosphere modifiers.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: open
+**Status**: Not Started
 **Priority**: medium
 **Labels**: nsfw, rpg, game-mechanics
 **Epic**: epic-nsfw-game-mechanics

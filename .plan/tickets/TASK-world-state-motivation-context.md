@@ -7,7 +7,7 @@
 **Context:** Biggest planning gap found in the 2026-09-21 world-side review. Sits between epic-world-diplomacy-karma.md WorldStateEvolution fragments, world_states table, and timeline conditions JSON (src/story/timeline/event-steering.ts already persists conditions).
 **Acceptance Criteria:** World state enum + transition rules persisted per world; Motivation.context resolution consults current world state (effective strength modifier); faction-goal ↔ character-goal satisfaction check; state transitions emit timeline events; prompt section reflects state-modified motivations; unit tests for each state's motivation modifier.
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Large
 

@@ -3,7 +3,7 @@
 
 # TASK: Embedding and telemetry retention policies
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 
 Imported from git issue 242ab43.

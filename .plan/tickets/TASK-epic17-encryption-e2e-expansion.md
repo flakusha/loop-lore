@@ -3,7 +3,7 @@
 
 # TASK-epic17-encryption-e2e-expansion
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

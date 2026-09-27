@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done (2026-08-14, `51a7bc01`) — combat wired to HTTP (`src/routes/rpg/combat.ts` + tests); battle UI glue in `src/battle/` already shipped
+**Status:** Done
+**Status Note:** (2026-08-14, `51a7bc01`) — combat wired to HTTP (`src/routes/rpg/combat.ts` + tests); battle UI glue in `src/battle/` already shipped
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-rpg-mechanics

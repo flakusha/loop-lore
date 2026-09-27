@@ -3,7 +3,7 @@
 
 # Ticket: Join Flow Mechanics
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

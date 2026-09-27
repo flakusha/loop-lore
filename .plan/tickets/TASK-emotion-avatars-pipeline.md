@@ -3,7 +3,7 @@
 
 # TASK: Emotion Avatars Pipeline
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Large
 **Summary:** Emotion Avatars Pipeline

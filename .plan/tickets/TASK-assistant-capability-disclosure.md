@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** open
+**Status:** Not Started
 **Priority:** Medium
 **Effort:** Low
 **Type:** Feature Task
@@ -36,7 +36,7 @@ The user explicitly asked: "by-role, by-capability assistant responses ('i have 
 // src/assistant/capabilities-disclosure.ts
 export interface AssistantCapabilityView {
   tool: string;
-  status: "available" | "review" | "denied" | "unconfigured";
+  status: open
   /** Why this status (human-readable; safe to display). */
   reason: string;
   /** Tags that drove the decision. */

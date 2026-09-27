@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Draft
+**Status:** Not Started
 **Priority:** P1 — High
 **Epic:** `epic-memory-propagation.md`
 **Type:** Feature

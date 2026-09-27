@@ -3,7 +3,7 @@
 
 # FEAT: Admin Analytics Dashboard
 
-**Status:** done
+**Status:** Done
 **Priority:** high
 **Effort:** Large
 **Summary:** Admin Analytics Dashboard

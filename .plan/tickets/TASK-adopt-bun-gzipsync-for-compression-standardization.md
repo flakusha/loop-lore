@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟢 Partial (adopted in `adopt-bun-features`)
+**Status:** In Progress
+**Status Note:** adopted in `adopt-bun-features`
 **Priority:** medium
 **Effort:** Medium
 

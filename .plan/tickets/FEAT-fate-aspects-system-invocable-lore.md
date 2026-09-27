@@ -3,7 +3,7 @@
 
 # FEAT: FATE Aspects System (Invocable Lore)
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Large
 **Summary:** FATE Aspects System (Invocable Lore)

@@ -3,7 +3,8 @@
 
 # BUG: assets serve: serveFile omits X-Content-Type-Options: nosniff, enabling MIME-sniff attacks
 
-**Status:** ✅ Resolved (commit adds nosniff centrally in serveFile; encrypted branch keeps its own explicit header)
+**Status:** Done
+**Status Note:** commit adds nosniff centrally in serveFile; encrypted branch keeps its own explicit header
 **Priority:** high
 **Effort:** Medium
 **Summary:** (see ## Summary)

@@ -9,7 +9,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟢 Closed — fixed by crypto-chat-history-survives-membership branch (commits 8400433a + 8e75ae1f)
+**Status:** Done
+**Status Note:** fixed by crypto-chat-history-survives-membership branch (commits 8400433a + 8e75ae1f)
 **Severity:** Critical
 **Priority:** High
 **Epic:** epic-crypto

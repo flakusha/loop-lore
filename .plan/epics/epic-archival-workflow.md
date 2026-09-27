@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** 🚧 Implementation Landed (2026-09-25) — chat-level confirm dialog open
+**Status:** In Progress
+**Status Note:** Implementation Landed (2026-09-25) — chat-level confirm dialog open
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Feature Epic

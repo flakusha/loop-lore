@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Resolved (already implemented in scripts/worktree/commands/finalize.ts — checkDevMergeable hard-fail precheck L381, acquireFinalizeLock single-flight L382, transactional restoreDevFromStash with reset-on-conflict; --force skips gates only, never these invariants)
+**Status:** Done
+**Status Note:** already implemented in scripts/worktree/commands/finalize.ts — checkDevMergeable hard-fail precheck L381, acquireFinalizeLock single-flight L382, transactional restoreDevFromStash with reset-on-conflict; --force skips gates only, never these invariants
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-tooling-improvement

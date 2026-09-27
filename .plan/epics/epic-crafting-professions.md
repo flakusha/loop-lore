@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** 🟡 In Progress (crafting DB layer + memory injection + chat infrastructure merged; Professions/Stations/Quality services + UI pending)
+**Status:** In Progress
+**Status Note:** crafting DB layer + memory injection + chat infrastructure merged; Professions/Stations/Quality services + UI pending
 **Priority:** High
 **Effort:** Very High
 **Issue:** `328843b`

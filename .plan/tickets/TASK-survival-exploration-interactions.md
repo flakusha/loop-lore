@@ -3,7 +3,7 @@
 
 # TASK: Exploration, scavenging & survival interactions (/loot /search /forage /hunt /track /shelter …)
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-rpg-mechanics

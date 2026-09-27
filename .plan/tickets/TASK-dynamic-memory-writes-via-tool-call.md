@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Complete (23ed39fc, 2026-08-16)
+**Status:** Done
+**Status Note:** 23ed39fc, 2026-08-16
 **Priority:** medium
 **Effort:** Medium
 

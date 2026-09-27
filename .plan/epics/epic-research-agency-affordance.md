@@ -3,7 +3,7 @@
 
 # EPIC-RESEARCH-AGENCY-AFFORDANCE: Verb x Target x Context Affordance Layer
 
-**Status:** Draft
+**Status:** Not Started
 **Priority:** High
 **Effort:** Medium
 **Type:** Research epic (drives implementation tickets)

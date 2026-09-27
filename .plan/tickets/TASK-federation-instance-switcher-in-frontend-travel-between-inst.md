@@ -3,7 +3,7 @@
 
 # TASK: Federation instance switcher in frontend (travel between instances)
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Large
 **Summary:** Frontend instance switcher (top-bar control + Alpine store + htmx partial scoping) so a user can "travel" to a federated instance and operate on it as a first-class participant, then return home without losing local session identity. Backend actor-mapping + handle resolution lives in `epic-instance-federation.md`. See `docs/spec/federation-instance-switcher.md` for the full implementation spec.

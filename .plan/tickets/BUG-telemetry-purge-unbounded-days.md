@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done (already implemented in code)
+**Status:** Done
+**Status Note:** already implemented in code
 **Severity:** Medium
 **Priority:** medium
 **Effort:** Trivial

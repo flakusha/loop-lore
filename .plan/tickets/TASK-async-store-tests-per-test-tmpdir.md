@@ -3,7 +3,7 @@
 
 # async-store tests use per-test OFFLOAD_DIR + deterministic teardown
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Type:** Task

@@ -3,7 +3,7 @@
 
 # TASK: Travel routes schema + CRUD
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-fractal-locations

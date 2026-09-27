@@ -7,7 +7,8 @@
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)
 
-**Status:** ✅ Done (closed 2026-09-20) — INNER JOIN chat_participants
+**Status:** Done
+**Status Note:** (closed 2026-09-20) — INNER JOIN chat_participants
 **Priority:** high
 **Effort:** Medium
 

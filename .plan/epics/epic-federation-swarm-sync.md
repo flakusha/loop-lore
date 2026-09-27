@@ -3,7 +3,8 @@
 
 # Epic: Federation, Swarm Sync & Decentralized Comms
 
-**Status:** open
+**Status:** Not Started
+**Status Note:** open
 **Priority:** medium
 **Effort:** Medium
 **Type:** epic

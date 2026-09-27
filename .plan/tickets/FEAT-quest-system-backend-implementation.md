@@ -3,7 +3,7 @@
 
 # FEAT: Quest System Backend Implementation
 
-**Status:** done
+**Status:** Done
 **Priority:** high
 **Effort:** XL
 **Summary:** Quest System Backend Implementation

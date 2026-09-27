@@ -3,7 +3,7 @@
 
 # TASK-001: Dockerize the application
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +11,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: in-progress
+**Status**: Not Started
 **Priority**: high
 **Labels**: devops, docker, containerization
 **Epic**: epic-deployment-infrastructure

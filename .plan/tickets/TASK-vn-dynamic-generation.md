@@ -10,7 +10,7 @@
 
 
 **Priority:** Medium
-**Status:** done
+**Status:** Done
 **Epic:** epic-visual-novel-mode
 **Tags:** visual-novel, dynamic-image, story-generation, image-gen, llm
 

@@ -3,7 +3,7 @@
 
 # TASK-math-resolver-pbta-2d6 — 2d6 + stat resolution
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium (2 days)
 **Summary:** Implement PbtA-style 2d6 + stat resolution as a new dispatch path under `resolveInteraction`. Outcome bands: `full` (≥10), `partial` (7–9), `miss` (≤6).

@@ -3,14 +3,14 @@
 
 # TASK-047: Plugin API System
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Public plugin API surface — tool executor, event bus, UI component mount points.
 **Context:** Stabilizes the plugin↔core contract via existing API surfaces.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: done
+**Status**: Done
 **Priority**: medium
 **Labels**: plugins, rpg, api
 **Epic**: epic-plugin-extension-points

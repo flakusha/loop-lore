@@ -9,7 +9,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Resolved (failGeneration + completeGeneration DB writes wrapped in try/catch; in-memory cleanup runs regardless)
+**Status:** Done
+**Status Note:** failGeneration + completeGeneration DB writes wrapped in try/catch; in-memory cleanup runs regardless
 **Priority:** medium
 
 ## Summary

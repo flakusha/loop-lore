@@ -3,7 +3,8 @@
 
 # BUG: chat carryHistory: skipped ciphertext messages orphan all descendants
 
-**Status:** ✅ Resolved (batch 2)
+**Status:** Done
+**Status Note:** batch 2
 **Priority:** high
 **Effort:** Medium
 **Summary:** (see ## Summary)

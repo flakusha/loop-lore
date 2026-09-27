@@ -3,7 +3,7 @@
 
 # BUG: DB guard triggers bypassed on UPDATE (003, 005)
 
-**Status:** open
+**Status:** Not Started
 **Priority:** high
 **Effort:** Small (twin triggers + abort tests)
 **Summary:** `BEFORE INSERT`-only guard triggers in `003_memory_audit_log_action_check` and `005_world_lore_lifecycle` are bypassed by `UPDATE` statements. Add a migration with `BEFORE UPDATE` twins of both triggers + abort tests.

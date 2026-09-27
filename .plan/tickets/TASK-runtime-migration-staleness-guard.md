@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Related:** TASK-data-migrations-atomicity-and-concurrency-guard

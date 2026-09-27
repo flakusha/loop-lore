@@ -1,6 +1,6 @@
 ---
 title: "FEAT-062: Generation quality metrics"
-status: open
+status: Not Started
 priority: medium
 labels: [feature, generation, quality]
 epic: epic-analytics-observability
@@ -8,7 +8,7 @@ related: [FEAT-059, FEAT-060, FEAT-066]
 ---
 
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

@@ -3,7 +3,7 @@
 
 # TASK: MATRIX-story-coherence-gate-pass2-qa: decide whether gate verdict engines run in pass-2 QA
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-two-pass-delivery
@@ -12,7 +12,7 @@
 
 ## Summary
 
-**Status:** open
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium
 **Summary:** matrix-story-coherence SC4 is open: the immersion gate audits user input pre-pass-1, but generated actor output can also break consistency. Whether the verdict engines also run in pass-2 QA is undecided and must resolve before two-pass implementation; the gate/skip interlock seam already exists in code.

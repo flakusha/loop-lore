@@ -3,7 +3,7 @@
 
 # TASK: Chat auto-title for blank-name chats
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** low
 **Effort:** Small
 **Summary:** Auto-generate a chat title when the user leaves the name blank

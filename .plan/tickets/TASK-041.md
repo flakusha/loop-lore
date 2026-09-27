@@ -3,14 +3,14 @@
 
 # TASK-041: NSFW Mood & Emotional State
 
-**Status:** open
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium
 **Summary:** Mood on Character Core primitives + StatusEffect bridge.
 **Context:** Gameplay-layer mood modifiers feeding intimacy/seduction.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: open
+**Status**: Not Started
 **Priority**: high
 **Labels**: nsfw, rpg, game-mechanics
 **Epic**: epic-nsfw-game-mechanics

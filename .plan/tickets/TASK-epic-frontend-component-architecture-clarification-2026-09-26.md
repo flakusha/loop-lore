@@ -3,7 +3,7 @@
 
 # TASK-epic-frontend-component-architecture-clarification-2026-09-26: clarify epic-frontend-component-architecture.md direction
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Small
 **Type:** Task

@@ -3,7 +3,7 @@
 
 # TASK: MATRIX-auth-per-role-factor-policy-shape: decide per-role minimum factor count policy storage
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-auth-channel-provisioning
@@ -12,7 +12,7 @@
 
 ## Summary
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** matrix-authentication-channels AC12 (WAC4) is open: enforcement policy storage splits instance defaults (config.toml [auth] TypeBox schema) vs per-user state (auth_factors), but the per-role minimum count policy shape (static config vs DB policy table) is undecided. Blocks admin-gate enforcement work.

@@ -3,7 +3,8 @@
 
 # EPIC: Assistant Personality — Presets & Character-as-Assistant
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
+**Status Note:** Not Started
 **Priority:** High
 **Effort:** Medium
 **Type:** Feature Epic

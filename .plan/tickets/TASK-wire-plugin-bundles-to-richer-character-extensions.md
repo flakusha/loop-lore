@@ -7,7 +7,7 @@
 **Context:** Character spec promotion to richer fields (src/characters/spec/character.ts) happened; plugin bundles did not gain per-bundle declarations of which richer fields they require. The fantasy-rpg bundle is the first target.
 **Acceptance Criteria:** At least one plugin bundle (fantasy-rpg) explicitly lists required rich extension fields in its manifest. A character with rich fields (abilities/skills/vitals/motivations) injected via that bundle is round-tripped into the LLM prompt. New test asserts the bundle's required fields and validates a sample character. Bundle authoring UX, frontend surfaces, and migration tooling remain separate tickets.
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 

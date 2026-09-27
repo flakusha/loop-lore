@@ -3,7 +3,7 @@
 
 # TASK-2026-openwebui-stream-event-type-registry: Typed SSE Event Type Registry for Generation Stream
 
-**Status:** open
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium
 **Labels:** generation, streaming, types

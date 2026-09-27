@@ -3,14 +3,14 @@
 
 # TASK-045: NSFW Species Mechanics
 
-**Status:** open
+**Status:** Not Started
 **Priority:** low
 **Effort:** Very High
 **Summary:** Species variants gated by config.toml cross-species pairs matrix.
 **Context:** Gameplay-layer species-specific reproduction/attraction.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: open
+**Status**: Not Started
 **Priority**: low
 **Labels**: nsfw, rpg, game-mechanics
 **Epic**: epic-nsfw-game-mechanics

@@ -3,14 +3,14 @@
 
 # TASK-048: Plugin Security & Sandboxing
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Plugin permission boundaries and resource quotas.
 **Context:** Extension-points layer; deeper sandbox deferred to epic-plugin-system.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: done
+**Status**: Done
 **Priority**: medium
 **Labels**: plugins, security
 **Epic**: epic-plugin-extension-points

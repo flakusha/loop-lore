@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Related:** TASK-format-version-migration, TASK-runtime-migration-staleness-guard

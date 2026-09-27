@@ -3,7 +3,8 @@
 
 # Design: Memory Knowledge Isolation and World Timeline
 
-**Status:** design (no code — IDEA ticket, Low priority / Large effort)  
+**Status:** Not Started
+**Status Note:** no code — IDEA ticket, Low priority / Large effort
 **Ticket:** `IDEA-memory-knowledge-isolation-and-world-timeline`  
 **Spec pointer:** `docs/spec/memory-system.md` → Future Extensions  
 **Epic:** `epic-memory-knowledge-systems.md`

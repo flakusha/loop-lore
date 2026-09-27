@@ -3,7 +3,7 @@
 
 # FEAT: Error monitoring — alert rules CRUD, webhook notifications, error grouping
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-analytics-observability

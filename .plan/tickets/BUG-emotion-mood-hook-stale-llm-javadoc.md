@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Resolved
+**Status:** Done
 **Priority:** P3
 **Effort:** Trivial
 **Epic:** epic-emotion-avatar-message-binding

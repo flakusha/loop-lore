@@ -3,7 +3,7 @@
 
 # TASK: Gate licensing triple via licenseRightsValidator
 
-**Status:** open
+**Status:** Not Started
 **Priority:** low
 **Effort:** Small (validator map + unit test)
 **Summary:** `character_licensing` `allow_derivatives`/`allow_commercial`/`share_alike` (migration `001:1291-1293`) are a cache of `license_type`. Add `licenseRightsValidator` mapping `LicenseType` to the allowed triple, next to `licensing.test.ts`, with a unit test. No column changes.
