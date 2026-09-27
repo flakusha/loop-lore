@@ -8,6 +8,7 @@ import { Elysia, } from "elysia";
 import type { RegisterPluginsOpts, } from "../../app/register-plugins";
 import { adminRoutes, } from "../admin";
 import { adminCharacterOverridesRoutes, } from "../admin-character-overrides";
+import { adminComfyuiWorkflowRoutes, } from "../admin-comfyui-workflows";
 import { adminNsfwRoutes, } from "../admin-nsfw";
 import { adminTemplateRoutes, } from "../admin-templates";
 import { sdTemplatesRoutes, } from "../admin/sd-templates";
@@ -30,6 +31,7 @@ export function adminSurface(opts: RegisterPluginsOpts,) {
     .use(pluginRoutes(handleOpts, prefix,),)
     .use(adminCharacterOverridesRoutes(handleOpts, prefix,),)
     .use(adminTemplateRoutes({ database, }, prefix,),)
+    .use(adminComfyuiWorkflowRoutes({ database, }, prefix,),)
     .use(adminNsfwRoutes({ database, }, prefix,),)
     .use(commandsRoutes({ prefix, },),)
     // ── Import / export ──────────────────────────────────────
