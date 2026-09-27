@@ -10,6 +10,7 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
+import type { NotificationRecord, } from "../../notifications/service/types";
 import { NotificationService, } from "../../notifications/service";
 import { safeJsonStringify, } from "../../utils";
 
@@ -23,7 +24,20 @@ export const KEEPALIVE_MS = 8_000;
 /** Snapshot of the unread state surfaced over SSE. */
 export interface NotificationSnapshot {
   readonly count: number;
-  readonly recent: readonly { readonly id: string }[];
+  readonly recent: readonly NotificationRecord[];
+}
+
+/**
+ * Map service rows to the client wire shape. The REST twin
+ * (routes/notifications/index.ts) maps the raw DB `read` string to 1/0;
+ * the SSE frames MUST do the same or the client's strict parseOr drops
+ * every notifications event (BUG-notifications-sse-frames-never-parse-).
+ */
+function toWireItems(items: readonly NotificationRecord[],) {
+  return items.map((item,) => ({
+    ...item,
+    read: item.read === "read" ? 1 : 0,
+  }),);
 }
 
 /**
@@ -114,7 +128,7 @@ export class NotificationStreamer {
         const snap = `${count}:${recent[0]?.id ?? ""}`;
         if (snap !== lastSnapshot) {
           lastSnapshot = snap;
-          send(controller, "notifications", { unreadCount: count, items: recent.slice(0, 10,), },);
+          send(controller, "notifications", { unreadCount: count, items: toWireItems(recent.slice(0, 10,),), },);
         }
       } catch {
         // transient DB error — skip this tick, keep stream alive
@@ -129,7 +143,7 @@ export class NotificationStreamer {
           // inbox — BUG-notification-stream-error-unreachable.
           const { count, recent, } = await loadNotificationSnapshotStrict(this.database, this.userId,);
           lastSnapshot = `${count}:${recent[0]?.id ?? ""}`;
-          send(controller, "notifications", { unreadCount: count, items: recent.slice(0, 10,), },);
+          send(controller, "notifications", { unreadCount: count, items: toWireItems(recent.slice(0, 10,),), },);
         } catch (error) {
           // Never leak error internals to the client; log with a correlation id.
           const correlationId = crypto.randomUUID();
