@@ -48,7 +48,11 @@ async function importFromCharx(
 
   const cardJsonResult = safeJsonStringify(charxResult.card,);
   const result = await parseCharacterCard(
-    ((): Buffer => { const cardText = cardJsonResult.ok ? cardJsonResult.value : jsonStringifyOr(charxResult.card, "{}"); const r = safeFromString(cardText, "utf8",); return r.ok ? r.buffer : Buffer.alloc(0); })(),
+    ((): Buffer => {
+      const cardText = cardJsonResult.ok ? cardJsonResult.value : jsonStringifyOr(charxResult.card, "{}",);
+      const r = safeFromString(cardText, "utf8",);
+      return r.ok ? r.buffer : Buffer.alloc(0,);
+    })(),
     filename,
   );
 

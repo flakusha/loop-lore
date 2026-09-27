@@ -31,10 +31,10 @@
 import { brotliCompressSync, gzipSync, } from "node:zlib";
 import type { DynamicResponseConfig, } from "../config/schema";
 import { minifyCSS, minifyHTMLContent, minifyJS, } from "../content/minify";
-import { safeFromString, } from "../utils/safe-buffer";
 import { CompressionAlgorithm, } from "../db/enums";
 import type { Logger, } from "../logger";
 import { parseAcceptEncoding, } from "../transport/negotiation-parsers";
+import { safeFromString, } from "../utils/safe-buffer";
 
 /** Body content classes this policy knows how to optimize. */
 type BodyKind = "html" | "css" | "js" | "json";
