@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** memory-history-search worktree — pending finalize
 **Priority:** high
 **Effort:** Large

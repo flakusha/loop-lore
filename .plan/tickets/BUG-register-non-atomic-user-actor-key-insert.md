@@ -3,9 +3,13 @@
 
 # BUG: register non-atomic user-actor-key insert
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium
+
+## Context
+
+Caught during post-merge audit of commit ba2871422 (register path). Three sequential DB writes can leave a user row without its actor/key counterpart on a partial failure, orphaning the account.
 
 ## Summary
 

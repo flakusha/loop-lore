@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** Complete — manual pass done 2026-08-06
 **Priority:** Low
 **Effort:** Large

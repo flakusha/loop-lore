@@ -3,9 +3,13 @@
 
 # BUG: insertUnique discriminator relies on adapter-specific row count
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
+
+## Context
+
+Caught during post-merge audit of commit ba2871422 (register path). insertUnique currently relies on adapter-specific row-count semantics that diverge between SQLite and Postgres for partial unique indexes.
 
 ## Summary
 
