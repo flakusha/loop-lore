@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 In Progress — umbrella; work split into 4 child tickets (open, harness first)
+**Status:** In Progress
+**Status Note:** umbrella; work split into 4 child tickets (open, harness first)
 **Priority:** High
 **Effort:** Large
 **Type:** Feature Task / Test Infrastructure

@@ -7,7 +7,7 @@
 **Context:** giwt (upstream, bundled `readGitIssues`) shells out to `git issue ls --all --format oneline` with a hard 10s budget; on failure it reports "git issue CLI unavailable" yet still dumps every unseen issue as an actionable finding and exits 1, turning a green tree red in `bun run check`
 **Acceptance Criteria:** `bun run check` on a host where `git issue` is unreachable or slower than 10s reports the plan gates as skipped with a reason, not as a failing gate carrying 112 invented findings
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium
 

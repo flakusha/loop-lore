@@ -3,7 +3,7 @@
 
 # TASK: Turn skip GM absence contract
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** GM prompt contract for absent actors: hold keeps beat with conspicuous inactivity (later spotlight); advance lets GM elapse scene time (meanwhile). Absent actor is never narrated into autonomous action.

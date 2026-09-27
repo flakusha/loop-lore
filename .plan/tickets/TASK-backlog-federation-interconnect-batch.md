@@ -3,7 +3,7 @@
 
 # TASK: backlog — schedule Mesh / Federation Interconnect batch (post content-sharing)
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Type:** Task

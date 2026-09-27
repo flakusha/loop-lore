@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🔄 Split into two tickets below
+**Status:** Postponed
+**Status Note:** into two tickets below
 **Priority:** high
 **Effort:** Large
 **Epic:** epic-data-integrity-acid

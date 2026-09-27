@@ -3,7 +3,7 @@
 
 # BUG: Audit panel details not expandable
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 

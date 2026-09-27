@@ -9,7 +9,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Resolved (onValidationError sanitizes error output)
+**Status:** Done
+**Status Note:** onValidationError sanitizes error output
 **Priority:** high
 
 ## Summary

@@ -3,14 +3,14 @@
 
 # TASK-037: NSFW Fantasy & Kink System
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Large
 **Summary:** Fantasy/kink on FantasyCategory with content-warning triggers.
 **Context:** Gameplay-layer fantasy discovery + fulfillment.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: open
+**Status**: Not Started
 **Priority**: medium
 **Labels**: nsfw, rpg, game-mechanics
 **Epic**: epic-nsfw-game-mechanics

@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ⬜ Open
+**Status:** Not Started
 **Priority:** high
 **Effort:** medium
 **Epic:** epic-content-hashing-distributed-integrity (cross-cuts with `epic-frontend-gallery`)

@@ -3,7 +3,7 @@
 
 # TASK: Party Chat Branch Merge On Converge
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-party-migration

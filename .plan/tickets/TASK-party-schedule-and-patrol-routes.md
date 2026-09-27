@@ -3,7 +3,7 @@
 
 # TASK: Party Schedule And Patrol Routes
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-party-migration

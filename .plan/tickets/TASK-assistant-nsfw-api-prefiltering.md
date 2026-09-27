@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 📝 Draft
+**Status:** Not Started
 **Priority:** High (NSFW safety is a blocker for any third-party dispatch)
 **Effort:** Medium
 **Epic:** `epic-assistant-creative-studio-workflows`

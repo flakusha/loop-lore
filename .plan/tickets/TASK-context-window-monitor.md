@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done
+**Status:** Done
 **Priority:** Medium
 **Effort:** Low–Med
 **Epic:** Epic 36 (Chat Lifecycle & Moderation)

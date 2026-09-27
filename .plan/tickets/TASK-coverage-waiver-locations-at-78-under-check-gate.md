@@ -3,7 +3,7 @@
 
 # TASK-coverage-waiver-locations-at-78-under-check-gate
 
-**Status:** Open
+**Status:** Not Started
 
 **Priority:** Medium
 

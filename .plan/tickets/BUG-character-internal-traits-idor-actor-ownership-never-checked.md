@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done — duplicate of BUG-character-internal-traits-idor-cross-user-read-write-delete (fixed on dev by 06ca7e9d + f2f0eb26)
+**Status:** Done
+**Status Note:** duplicate of BUG-character-internal-traits-idor-cross-user-read-write-delete (fixed on dev by 06ca7e9d + f2f0eb26)
 **Priority:** high
 **Effort:** Medium
 

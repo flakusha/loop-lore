@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** fixed-in-worktree
+**Status:** In Progress
 **Priority:** critical
 **Effort:** Small
 

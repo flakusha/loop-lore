@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ⬜ Open
+**Status:** Not Started
 **Priority:** high
 **Effort:** large
 **Epic:** epic-content-hashing-distributed-integrity (cross-cuts with `epic-database-backup-recovery`, `epic-multi-instance-reconciliation`, `epic-federation-swarm-sync`)

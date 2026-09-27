@@ -3,7 +3,7 @@
 
 # TASK: InteractionService foundation (heavy-action engine)
 
-**Status:** done
+**Status:** Done
 **Priority:** High
 **Effort:** High
 **Epic:** epic-rpg-mechanics

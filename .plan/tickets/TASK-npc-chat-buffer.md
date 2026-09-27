@@ -3,7 +3,7 @@
 
 # TASK: Npc Chat Buffer
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Chat cooldown + buffer management over `actor_chat_buffers` (migration 011, shipped): per-partner cooldown, max consecutive chats before forced break, topic-repetition break detection.

@@ -3,7 +3,7 @@
 
 # TASK: Kanban board for story, task, context, creative, drafts planning
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 
 Imported from git issue 4057dad.

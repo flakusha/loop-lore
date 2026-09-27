@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Complete (2026-08-01 — code-verified)
+**Status:** Done
+**Status Note:** 2026-08-01 — code-verified
 **Priority:** High
 **Effort:** Large
 **Epic:** epic-logic-reconciliation

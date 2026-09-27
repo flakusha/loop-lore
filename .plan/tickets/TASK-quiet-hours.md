@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** open
+**Status:** Not Started
 **Priority:** Low
 **Effort:** Low
 **Created:** 2026-08-14

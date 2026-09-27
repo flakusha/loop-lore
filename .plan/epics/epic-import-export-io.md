@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** ✅ Implemented (updated 2026-07-30 — code audit)
+**Status:** Done
+**Status Note:** updated 2026-07-30 — code audit
 **Priority:** Medium
 **Effort:** ~~High~~ Low (remaining work)
 **Type:** Feature Epic

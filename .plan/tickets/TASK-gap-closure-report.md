@@ -3,7 +3,7 @@
 
 # Gap-closure report — P1–P6 18-item workstream
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

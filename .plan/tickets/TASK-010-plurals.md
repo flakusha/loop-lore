@@ -3,7 +3,7 @@
 
 # TASK-010-plurals: i18n Plural Rules (Intl.PluralRules integration)
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Add `Intl.PluralRules` (CLDR) integration to the i18n runtime so the `zero` / `one` / `other` plural categories resolve correctly per locale, gated by an e2e test.
@@ -11,7 +11,7 @@
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
 
-**Status**: open
+**Status**: Not Started
 **Priority**: medium
 **Labels**: i18n, plurals, deferred
 **Epic**: epic-frontend-internationalization

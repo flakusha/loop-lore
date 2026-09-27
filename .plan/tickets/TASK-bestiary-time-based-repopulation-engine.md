@@ -4,7 +4,7 @@
 
 # TASK: Bestiary Bestiary Time Based Repopulation Engine
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-enemies-monsters

@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Closed (commits a4ae0e30 + 427d9344 on dev)
+**Status:** Done
+**Status Note:** commits a4ae0e30 + 427d9344 on dev
 **Priority:** Medium
 **Effort:** Medium
 

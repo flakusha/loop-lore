@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** open
+**Status:** Not Started
 **Priority:** P2-C (deferred)
 **Effort:** Small
 **Epic:** epic-aux-enrichment-pipeline

@@ -3,7 +3,7 @@
 
 # TASK: async-store retention: cap OFFLOAD_DIR by age + bytes
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 
 Imported from git issue fce9413.

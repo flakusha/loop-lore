@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** open
+**Status:** Not Started
 **Priority:** Low
 **Effort:** Med–High
 **Related:** TASK-dynamic-avatars-dota-style, TASK-emotion-intent-detection

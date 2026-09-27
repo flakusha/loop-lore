@@ -3,7 +3,7 @@
 
 # EPIC-RESEARCH-MATH-AI-BRIDGE — LLM ↔ math contract
 
-**Status:** 📝 Draft
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium (typed contract + prompt section + regression tests)
 **Type:** Architecture → Implementation

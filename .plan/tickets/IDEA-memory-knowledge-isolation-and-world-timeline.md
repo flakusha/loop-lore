@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Open
+**Status:** Not Started
 **Priority:** Low
 **Effort:** Large
 **Epic:** epic-memory-knowledge-systems

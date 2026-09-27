@@ -3,7 +3,8 @@
 
 # BUG: lore lifecycle fields have no producers (last_verified, source_count, distortion_level)
 
-**Status:** ✅ Closed (resolved in `0da9d9b0` — `fix(assistant): wire last_verified producer + drop dead decay gate`)
+**Status:** Done
+**Status Note:** resolved in `0da9d9b0` — `fix(assistant): wire last_verified producer + drop dead decay gate`
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-lore-knowledge

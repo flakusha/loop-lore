@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
+**Status Note:** Not Started
 **Priority:** High
 **Effort:** Very High (decomposes into RAG-side and asset-side sub-batches; each ships standalone)
 **Type:** Feature Epic (cross-cutting bridge)

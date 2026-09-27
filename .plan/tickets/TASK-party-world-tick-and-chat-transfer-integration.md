@@ -3,7 +3,7 @@
 
 # TASK: Party World Tick And Chat Transfer Integration
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-party-migration

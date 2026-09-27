@@ -3,7 +3,7 @@
 
 # IDEA: IDEA prompt-improve undo history: multi-level undo stack for composer
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** low
 **Effort:** Small
 **Tags:** idea, frontend
@@ -16,7 +16,7 @@
 
 # IDEA: Prompt-improve multi-level undo history
 
-**Status:** draft
+**Status:** Not Started
 **Priority:** P3
 **Effort:** Small
 **Summary:** The composer keeps only one `_promptImproveBackup`, so a second Improve discards the original draft forever. Keep a small bounded stack instead.

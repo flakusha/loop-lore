@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** open
+**Status:** Not Started
 **Priority:** P3
 **Epic:** epic-aux-enrichment-pipeline / epic-emotion-avatar-message-binding
 **Labels:** aux-llm, emotion, classifier, hybrid

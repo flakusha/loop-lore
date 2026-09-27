@@ -3,14 +3,14 @@
 
 # TASK-040: NSFW Skills & Experience
 
-**Status:** open
+**Status:** Not Started
 **Priority:** high
 **Effort:** Large
 **Summary:** Skills/XP on SeductionSkillCategory routed through the shared XP ledger.
 **Context:** Gameplay-layer skill progression; XP grants on encounter completion.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: open
+**Status**: Not Started
 **Priority**: high
 **Labels**: nsfw, rpg, game-mechanics
 **Epic**: epic-nsfw-game-mechanics

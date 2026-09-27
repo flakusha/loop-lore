@@ -3,7 +3,7 @@
 
 # TASK-matrix-cross-mech-g21: Asset-consistency generation (reference conditioning + in-chat edit)
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Type:** Task

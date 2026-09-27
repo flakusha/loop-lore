@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Closed (commit 49731047 — fix(nsfw): gate correctness cluster)
+**Status:** Done
+**Status Note:** commit 49731047 — fix(nsfw): gate correctness cluster
 **Priority:** high
 **Effort:** Medium
 

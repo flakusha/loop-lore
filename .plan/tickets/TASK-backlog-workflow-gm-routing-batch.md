@@ -3,7 +3,7 @@
 
 # TASK: backlog — schedule Workflow / GM Routing batch (P2-C/P2-D)
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Type:** Task

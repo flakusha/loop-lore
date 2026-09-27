@@ -3,7 +3,7 @@
 
 # TASK: DB: add created_at/updated_at/metadata to infra and admin tables
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 

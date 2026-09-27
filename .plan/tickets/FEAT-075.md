@@ -1,6 +1,6 @@
 ---
 title: "FEAT-075: Memory access audit log"
-status: open
+status: Not Started
 priority: medium
 labels: [feature, memory, audit]
 epic: epic-memory-systems-three-tier
@@ -8,7 +8,7 @@ related: [FEAT-059, FEAT-066]
 ---
 
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

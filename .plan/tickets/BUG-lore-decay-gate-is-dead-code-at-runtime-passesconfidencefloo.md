@@ -3,7 +3,8 @@
 
 # BUG: lore decay gate is dead code at runtime (passesConfidenceFloor hardcodes worldDaysSince=0)
 
-**Status:** ✅ Closed (resolved in `0da9d9b0` — `fix(assistant): wire last_verified producer + drop dead decay gate`)
+**Status:** Done
+**Status Note:** resolved in `0da9d9b0` — `fix(assistant): wire last_verified producer + drop dead decay gate`
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-lore-knowledge

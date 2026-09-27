@@ -3,7 +3,7 @@
 
 # Mini-Games: Deep Mechanics & Game-Specific Designs
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Type:** epic

@@ -3,7 +3,7 @@
 
 # TASK: llama.cpp support for classifier models (GGUF encoder serving)
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Decide and document the llama.cpp/GGUF serving path for classifier models; Laya verdict resolved — two serving stories, pick one per deployment.

@@ -3,7 +3,7 @@
 
 # FEAT: Visual Novel Mode Full Implementation
 
-**Status:** done
+**Status:** Done
 **Priority:** high
 **Effort:** XL
 **Summary:** Visual Novel Mode Full Implementation

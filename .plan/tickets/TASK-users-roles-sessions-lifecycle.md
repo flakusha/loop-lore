@@ -3,7 +3,7 @@
 
 # TASK: Users, Roles & Sessions Lifecycle
 
-**Status:** done
+**Status:** Done
 **Priority:** high
 **Effort:** Large
 **Summary:** Users, Roles & Sessions Lifecycle

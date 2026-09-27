@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** open
+**Status:** Not Started
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-accessibility-input (Phase 2 Mobile Support, 🟡)

@@ -3,7 +3,7 @@
 
 # TASK: MATRIX-auth-matrix-megolm-approval: decide Megolm-verified-session requirement for Matrix approval
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-auth-channel-provisioning
@@ -12,7 +12,7 @@
 
 ## Summary
 
-**Status:** open
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium
 **Summary:** matrix-authentication-channels AC4 (WAC2) is open: Matrix DM as OTP channel with number-matching approval needs inbound verification, but whether approval requires a Megolm-verified session (stronger) or accepts unverified (availability) is undecided. Security-sensitive call blocking messenger-matrix factor work.

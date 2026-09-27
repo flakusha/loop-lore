@@ -3,7 +3,7 @@
 
 # TASK-2026-openwebui-retry-from-point: Structured Retry from Last Confirmed Output Step
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** low
 **Effort:** Medium
 **Labels:** frontend, generation, retry

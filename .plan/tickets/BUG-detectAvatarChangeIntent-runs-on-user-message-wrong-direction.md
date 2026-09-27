@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** done
+**Status:** Done
 **Priority:** P2
 **Epic:** epic-emotion-avatar-message-binding
 **Labels:** emotion-avatar, intent-detection, prompt-injection, wrong-direction

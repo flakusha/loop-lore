@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** 🟢 Implemented (mock data, UI shell)
+**Status:** Done
+**Status Note:** mock data, UI shell
 **Priority:** P2 — Medium
 **Effort:** Medium
 **Type:** Feature Epic

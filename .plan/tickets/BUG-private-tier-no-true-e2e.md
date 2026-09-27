@@ -9,7 +9,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟢 Closed — chose rename path (see below)
+**Status:** Done
+**Status Note:** chose rename path (see below)
 **Severity:** High
 **Priority:** High
 **Epic:** epic-crypto

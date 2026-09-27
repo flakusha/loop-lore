@@ -3,7 +3,7 @@
 
 # BUG: Archive retention hardcoded 30 days — should be configurable 90-day default
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-archival-workflow

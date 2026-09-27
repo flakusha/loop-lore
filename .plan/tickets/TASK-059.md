@@ -3,14 +3,14 @@
 
 # TASK-059: Transport doc — external protocols
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Markdown reference for external protocols (WebSocket, SSE, future WebTransport/QUIC).
 **Context:** Integrator-facing; auth, signing, retry semantics.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: open
+**Status**: Not Started
 **Priority**: medium
 **Effort:** Medium
 **Labels**: transport, external-protocols, docs

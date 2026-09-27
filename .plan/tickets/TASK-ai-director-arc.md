@@ -3,7 +3,7 @@
 
 # TASK: Ai Director Arc
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Narrative arc templates (id, name, description, phases). Each phase carries duration_minutes, tension_range [min,max], event_types, and npc_behavior {aggression, helpfulness, mystery}. Schema at epic-assistant-gm-flows.md lines 123-142.
@@ -11,7 +11,7 @@
 **Acceptance Criteria:** [ ] NarrativeArc + NarrativePhase types exported; [ ] Default arc templates seeded (rising/climax/falling/rest); [ ] phase resolution picks template by tension_range; [ ] npc_behavior scalars clamped 0-100.
 
 
-**Status**: open
+**Status**: Not Started
 **Priority**: medium
 **Labels**:
 **Assignee**:

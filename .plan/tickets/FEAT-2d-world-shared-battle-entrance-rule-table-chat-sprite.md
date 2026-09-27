@@ -3,7 +3,7 @@
 
 # FEAT: 2D world: shared battle entrance rule table (chat + sprite)
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Large
 **Epic:** epic-2d-sprite-world

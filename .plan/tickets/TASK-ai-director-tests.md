@@ -3,7 +3,7 @@
 
 # TASK: Ai Director Tests
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Unit + integration tests for tension transitions, arc phase resolution, event pacing multipliers, difficulty modifiers, GM override.
@@ -11,7 +11,7 @@
 **Acceptance Criteria:** [ ] TensionState persistence + transitions; [ ] arc phase picker handles tension_range edges; [ ] event pacing clamps; [ ] difficulty adjustment thresholds; [ ] GM override veto path.
 
 
-**Status**: open
+**Status**: Not Started
 **Priority**: medium
 **Labels**:
 **Assignee**:

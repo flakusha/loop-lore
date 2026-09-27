@@ -3,14 +3,16 @@
 
 # TASK-032: User Seeding & Role Expansion
 
-**Status:** 🟡 Partially Shipped — script + matrix + role-change audit in commits c6f2a6b / 5f49431; admin user-list UI already existed in pre-batch code (no new file created)
+**Status:** In Progress
+**Status Note:** Shipped — script + matrix + role-change audit in commits c6f2a6b / 5f49431; admin user-list UI already existed in pre-batch code (no new file created)
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Seed Command provisions demo accounts; role enum + capability matrix enforced in middleware.
 **Context:** User bootstrap + RBAC expansion.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: 🟡 Partial — seed + matrix + audit shipped 2026-09-22
+**Status:** In Progress
+**Status Note:** seed + matrix + audit shipped 2026-09-22
 **Priority**: medium
 **Effort**: Medium
 **Labels**: user, seeding, roles, onboarding

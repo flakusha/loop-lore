@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done — commit `nsfw-consent-gate-wiring` (see `agent-commit`); wired 2026-09-09
+**Status:** Done
+**Status Note:** commit `nsfw-consent-gate-wiring` (see `agent-commit`); wired 2026-09-09
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-nsfw-game-mechanics.md

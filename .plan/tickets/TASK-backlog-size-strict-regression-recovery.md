@@ -3,7 +3,7 @@
 
 # TASK: backlog — size-strict ceiling regressed; split-down + verify before A9
 
-**Status:** open
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium
 **Type:** Task

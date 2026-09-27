@@ -3,7 +3,8 @@
 
 # EPIC-049: 049: Conversation Branching
 
-**Status:** Not Started → closed (duplicate)
+**Status:** Done
+**Status Note:** duplicate
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +12,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: duplicate-of-epic-conversation-branching
+**Status:** Wontfix
+**Status Note:** duplicate-of-epic-conversation-branching
 **Priority**: medium
 **Labels**: epic
 **Epic**: (if applicable)

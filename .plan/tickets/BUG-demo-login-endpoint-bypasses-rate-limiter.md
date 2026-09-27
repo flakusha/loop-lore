@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Resolved (dedicated demoLoginLimiter; gate at top of handleDemoLogin; 4 regression tests)
+**Status:** Done
+**Status Note:** dedicated demoLoginLimiter; gate at top of handleDemoLogin; 4 regression tests
 
 **Priority:** high
 **Effort:** Medium

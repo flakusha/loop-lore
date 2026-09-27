@@ -3,7 +3,7 @@
 
 # TASK: Graph view of plan links to chats, stories, RAG items, assets
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-assistant-step-planning

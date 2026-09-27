@@ -9,7 +9,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** 🟡 Core Built, Integration Pending
+**Status:** In Progress
+**Status Note:** Core Built, Integration Pending
 **Priority:** Medium
 **Spec:** `docs/spec/encryption-workflow.md`
 

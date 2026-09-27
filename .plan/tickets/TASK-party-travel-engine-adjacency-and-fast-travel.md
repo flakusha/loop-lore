@@ -3,7 +3,7 @@
 
 # TASK: Party Travel Engine Adjacency And Fast Travel
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-party-migration

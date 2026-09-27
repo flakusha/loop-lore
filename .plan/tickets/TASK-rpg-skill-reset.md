@@ -3,7 +3,7 @@
 
 # TASK: RPG Skill Reset
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium
 

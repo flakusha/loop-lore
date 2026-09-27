@@ -3,7 +3,7 @@
 
 # TASK: NPC Boss Retinue Schema And Migration
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-npcs

@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done (`gguf-downloader-policy`)
+**Status:** Done
+**Status Note:** `gguf-downloader-policy`
 **Priority:** high
 **Effort:** Small
 **Labels:** byok, local-models, wasm, gguf, browser

@@ -4,7 +4,7 @@
 
 # TASK: Bestiary Bestiary CRUD Routes Admin GM
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-enemies-monsters

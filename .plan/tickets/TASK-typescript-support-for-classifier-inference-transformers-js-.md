@@ -3,7 +3,7 @@
 
 # TASK: TypeScript support for classifier inference (transformers.js / ONNX in-browser + server)
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** TypeScript classifier inference via transformers.js/ONNX reusing the browser local-engine and server seams; extend ELIGIBLE_TASKS with classify/rerank ops.

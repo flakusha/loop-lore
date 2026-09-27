@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 Partial (reader + authoring UI on `blog-frontend-left-menu`, unmerged)
+**Status:** In Progress
+**Status Note:** reader + authoring UI on `blog-frontend-left-menu`, unmerged
 **Priority:** P1
 **Effort:** High
 **Epic:** epic-frontend-backend-integration

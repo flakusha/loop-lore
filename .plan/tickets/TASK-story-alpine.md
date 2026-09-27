@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 In Progress (2026-08-14 — story-state.ts + story-controls.ts built + tested in worktree story-chat-view)
+**Status:** In Progress
+**Status Note:** 2026-08-14 — story-state.ts + story-controls.ts built + tested in worktree story-chat-view
 **Priority:** P1 — High
 **Effort:** Medium
 **Type:** Feature Task

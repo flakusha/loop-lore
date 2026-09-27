@@ -3,7 +3,7 @@
 
 # FEAT: RAG Retrieval Adapter for Generation Pipeline
 
-**Status:** done
+**Status:** Done
 **Priority:** high
 **Effort:** Large
 **Summary:** RAG Retrieval Adapter for Generation Pipeline

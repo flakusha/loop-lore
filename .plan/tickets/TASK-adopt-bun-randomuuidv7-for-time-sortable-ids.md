@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 Deferred (test-contract dependency)
+**Status:** Postponed
+**Status Note:** Postponed (test-contract dependency)
 **Priority:** medium
 **Effort:** Medium
 

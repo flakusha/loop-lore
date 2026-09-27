@@ -3,14 +3,14 @@
 
 # TASK-003: GPU instance requirements
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Recommended GPU instance matrix for development (SDXL, Anima, Krea 2, MiniMax H3, Llama/LFM).
 **Context:** $/hr pricing across providers with per-workload VRAM floors and 4-layer deployment strategy.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Epic:** epic-deployment-infrastructure
 **Labels:** infrastructure, gpu, deployment

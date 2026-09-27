@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Fixed (fix-review-quickwins)
+**Status:** Done
+**Status Note:** fix-review-quickwins
 **Priority:** low
 **Effort:** Medium
 

@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** 🟡 Partial (openai-compatible complete; native providers deferred)
+**Status:** In Progress
+**Status Note:** openai-compatible complete; native providers deferred
 **Priority:** Medium
 **Effort:** Large
 **Type:** Feature Epic

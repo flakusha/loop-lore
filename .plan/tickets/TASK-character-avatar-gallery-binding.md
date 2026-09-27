@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Complete
+**Status:** Done
 **Priority:** High
 **Effort:** Medium
 **Epic:** epic-frontend-gallery, epic-character-core-system

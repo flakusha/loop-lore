@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Epic:** Avatar Alpha Channel + VN Layering; Asset Transform Metadata
 **Effort:** Medium

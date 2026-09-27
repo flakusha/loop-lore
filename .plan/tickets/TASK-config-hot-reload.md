@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** open
+**Status:** Not Started
 **Priority:** Medium
 **Effort:** Low
 **Epic:** EPIC-2026-39 (Config File Separation)

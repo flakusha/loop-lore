@@ -10,7 +10,8 @@
 
 
 **Priority:** Medium
-**Status:** ✅ Done — SHA-256 hash-based duplicate detection implemented in `createAsset`; same file by same owner returns existing asset ID with HTTP 200 + `duplicate: true` flag
+**Status:** Done
+**Status Note:** SHA-256 hash-based duplicate detection implemented in `createAsset`; same file by same owner returns existing asset ID with HTTP 200 + `duplicate: true` flag
 **Epic:** epic-config-extensions
 **Tags:** config, gallery, file-attachment, idempotent, reload, asset
 

@@ -10,7 +10,7 @@
 
 
 **Priority:** Medium
-**Status:** open
+**Status:** Not Started
 **Epic:** epic-battle-action-systems
 **Tags:** battle, arena, spectator, replay, competitive
 

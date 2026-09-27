@@ -3,7 +3,7 @@
 
 # TASK-matrix-auth-channel-ac3: Settle WAC1 — capability-enum naming match for `auth-challenge`
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Small
 **Type:** Task

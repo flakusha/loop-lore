@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** 📝 Draft — spec Final (`docs/spec/chat-privacy.md`); partial implementation (GM notes, chat `public` flag); privacy/purpose columns + steering-notes API not implemented
+**Status:** Not Started
+**Status Note:** spec Final (`docs/spec/chat-privacy.md`); partial implementation (GM notes, chat `public` flag); privacy/purpose columns + steering-notes API not implemented
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Feature Epic

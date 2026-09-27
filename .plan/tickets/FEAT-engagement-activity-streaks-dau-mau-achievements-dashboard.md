@@ -3,7 +3,7 @@
 
 # FEAT: Engagement — activity streaks, DAU/MAU, achievements dashboard
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-analytics-observability

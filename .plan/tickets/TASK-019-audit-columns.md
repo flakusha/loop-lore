@@ -3,7 +3,7 @@
 
 # TASK: Audit columns — `created_at` / `updated_at` for underdocumented tables
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Small (one migration, 9 tables × 2 columns + default values + backfill)
 **Summary:** Append `created_at` and `updated_at` to 9 tables that the DBAudit (2026-09-25) found lacking both audit columns: `recipe_discoveries`, `travel_route_stops`, `blog_tags`, `chat_random_events`, `chat_pins`, `growth_log`, `status_effect`, `trade_history`, `nsfw_consent_state`. Backfill existing rows with `datetime('now')` defaults; non-destructive.

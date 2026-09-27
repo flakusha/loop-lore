@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Resolved (ownership guards present — requireChatParticipant in classifyTransitionMessage + promoteMessagesToMemories)
+**Status:** Done
+**Status Note:** ownership guards present — requireChatParticipant in classifyTransitionMessage + promoteMessagesToMemories
 **Severity:** medium
 **Priority:** medium
 **Effort:** small

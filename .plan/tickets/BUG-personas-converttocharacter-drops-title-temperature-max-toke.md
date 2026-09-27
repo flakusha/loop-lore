@@ -3,7 +3,8 @@
 
 # BUG: personas convertToCharacter: drops title, temperature, max_tokens, model from persona
 
-**Status:** ✅ Resolved (p3-bugfix-batch, 2026-09-18)
+**Status:** Done
+**Status Note:** p3-bugfix-batch, 2026-09-18
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (see ## Summary)

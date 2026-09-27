@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Resolved (commit `00d5e0f2`)
+**Status:** Done
+**Status Note:** commit `00d5e0f2`
 **Priority:** low
 **Effort:** Medium
 

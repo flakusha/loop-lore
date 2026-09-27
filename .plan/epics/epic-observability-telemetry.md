@@ -11,7 +11,7 @@
 **Overview:** (see sections below)
 
 
-**Status**: in-progress
+**Status:** In Progress
 **Priority**: high
 **Labels**: epic, observability, telemetry
 

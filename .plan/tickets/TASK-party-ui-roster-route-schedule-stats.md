@@ -3,7 +3,7 @@
 
 # TASK: Party UI Roster Route Schedule Stats
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-party-migration

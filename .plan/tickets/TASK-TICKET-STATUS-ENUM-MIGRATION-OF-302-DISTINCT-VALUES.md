@@ -3,7 +3,7 @@
 
 # TASK: Ticket **Status:** enum + migration of 302 distinct values
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 
 Imported from git issue 937955d.

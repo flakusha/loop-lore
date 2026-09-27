@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 Partial — MoodHook exists but keyword-based, no LLM, results unconsumed (2026-08-01)
+**Status:** In Progress
+**Status Note:** MoodHook exists but keyword-based, no LLM, results unconsumed (2026-08-01)
 **Priority:** P2-B
 **Effort:** Small
 **Epic:** epic-aux-enrichment-pipeline

@@ -11,7 +11,7 @@
 **Epic:** Immersion & Presentation (EPIC-048)
 **Priority:** Medium
 **Effort:** Low
-**Status:** open
+**Status:** Not Started
 **Source:** User request — info bubbles for `(?)` signs in menus, i18n intended
 
 ## Summary

@@ -3,7 +3,7 @@
 
 # TASK-2026-openwebui-cancel-generation-wiring: Wire `cancelGeneration()` Alpine Method to SSE Abort Endpoint
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Small
 **Labels:** frontend, streaming, generation

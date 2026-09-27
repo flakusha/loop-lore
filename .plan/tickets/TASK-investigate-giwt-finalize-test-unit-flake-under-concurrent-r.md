@@ -3,7 +3,7 @@
 
 # TASK: Investigate giwt finalize test:unit flake under concurrent runs
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 

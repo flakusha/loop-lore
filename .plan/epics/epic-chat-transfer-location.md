@@ -7,7 +7,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** 🟡 Partial — foundation + sectioning backend shipped; party join/leave + split/merge + VN integration + frontend flows open
+**Status:** In Progress
+**Status Note:** foundation + sectioning backend shipped; party join/leave + split/merge + VN integration + frontend flows open
 **Priority:** P2-B
 **Effort:** High
 **Type:** Feature Epic

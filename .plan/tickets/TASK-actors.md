@@ -3,7 +3,7 @@
 
 # TASK: Actors & Entity System
 
-**Status:** done
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-actors

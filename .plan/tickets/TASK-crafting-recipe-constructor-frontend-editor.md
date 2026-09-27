@@ -3,7 +3,7 @@
 
 # TASK: Crafting Recipe Constructor Frontend Editor
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 

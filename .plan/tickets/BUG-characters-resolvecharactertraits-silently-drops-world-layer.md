@@ -3,7 +3,8 @@
 
 # BUG: characters: resolveCharacterTraits silently drops world-layer integrity violations
 
-**Status:** ✅ Resolved (batch 2)
+**Status:** Done
+**Status Note:** batch 2
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (see ## Summary)

@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Labels:** battle, equipment, durability
 **Assignee**:

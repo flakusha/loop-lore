@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 Partial — extraction implemented but wired to MAIN provider with `model: "default"` bug; not on auxiliary role (2026-08-01)
+**Status:** In Progress
+**Status Note:** extraction implemented but wired to MAIN provider with `model: "default"` bug; not on auxiliary role (2026-08-01)
 **Priority:** P2-B
 **Effort:** Small
 **Epic:** epic-aux-enrichment-pipeline

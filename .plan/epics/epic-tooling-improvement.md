@@ -7,7 +7,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** 🟡 Permanently Ongoing
+**Status:** In Progress
+**Status Note:** Permanently Ongoing
 **Priority:** Medium
 **Effort:** Continuous
 **Type:** Ongoing Epic

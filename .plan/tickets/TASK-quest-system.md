@@ -11,7 +11,7 @@
 **Epic:** RPG Mechanics & Extensible Game Systems
 **Priority:** High
 **Effort:** Large
-**Status:** open
+**Status:** Not Started
 
 ## Summary
 
@@ -64,7 +64,7 @@ interface Quest {
   rewards: QuestReward[];
   prerequisites: QuestPrerequisite[];
   timeLimit?: number; // seconds
-  status: "available" | "active" | "completed" | "failed" | "abandoned";
+  status: open
   storyEndCondition: StoryEndCondition;
 }
 
@@ -105,7 +105,7 @@ interface QuestChain {
   name: string;
   quests: string[]; // ordered quest IDs
   currentIndex: number;
-  status: "active" | "completed" | "failed";
+  status: open
 }
 ```
 

@@ -3,7 +3,8 @@
 
 # BUG: chat reunite: secondary chat narrates 'archived' but is never archived
 
-**Status:** ✅ Resolved (batch 2)
+**Status:** Done
+**Status Note:** batch 2
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (see ## Summary)

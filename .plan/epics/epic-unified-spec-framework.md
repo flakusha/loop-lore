@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** 🟡 Design (Phase A) — research + schema proposal complete; tooling to land
+**Status:** Not Started
+**Status Note:** (Phase A) — research + schema proposal complete; tooling to land
 **Priority:** High
 **Effort:** Large (spread across 4 phases)
 **Type:** Meta-Epic (governs other epics' authoring)

@@ -12,7 +12,8 @@ hash: 396b5e3
 
 # BUG: Logger tests leak global logger state
 
-**Status:** ✅ Finished (dev commit `02d2d1156`) — test isolation via `withLogger` helper.
+**Status:** Done
+**Status Note:** (dev commit `02d2d1156`) — test isolation via `withLogger` helper.
 
 ## Resolution
 

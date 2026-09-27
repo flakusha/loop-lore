@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 📝 Draft
+**Status:** Not Started
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** `epic-frontend-keynav-mobile`

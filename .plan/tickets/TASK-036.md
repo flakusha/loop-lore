@@ -3,14 +3,14 @@
 
 # TASK-036: NSFW Encounter System
 
-**Status:** open
+**Status:** Not Started
 **Priority:** high
 **Effort:** Very High
 **Summary:** Encounter state machine on NsfwEncounterType + HeatPhase; encounter_completed event.
 **Context:** Gameplay-layer encounter phases + skill checks + outcomes.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: open
+**Status**: Not Started
 **Priority**: high
 **Labels**: nsfw, rpg, game-mechanics
 **Epic**: epic-nsfw-game-mechanics

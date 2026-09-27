@@ -8,7 +8,7 @@
 
 ## TASK: Cron admin observability + docs
 
-**Status:** ✅ Done
+**Status:** Done
 **Priority:** Medium
 **Effort:** Small
 **Epic:** epic-cron-scheduler

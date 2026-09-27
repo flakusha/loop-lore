@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Resolved (commit 832937e7 — VP8/VP8L/VP8X offsets match spec; NOTE: VP8X dimension mask is 14-bit, truncates >=16384px canvases — see BUG-asset-webp-vp8x-dimension-truncation)
+**Status:** Done
+**Status Note:** commit 832937e7 — VP8/VP8L/VP8X offsets match spec; NOTE: VP8X dimension mask is 14-bit, truncates >=16384px canvases — see BUG-asset-webp-vp8x-dimension-truncation
 **Priority:** medium
 **Effort:** Small
 

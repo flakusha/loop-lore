@@ -3,7 +3,7 @@
 
 # FEAT: World Lore Entries: add Alpine.js UI for CRUD
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** World Lore Entries: add Alpine.js UI for CRUD

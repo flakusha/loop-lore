@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-i18n (see epic-i18n.md for the 6 sub-tasks, all complete)

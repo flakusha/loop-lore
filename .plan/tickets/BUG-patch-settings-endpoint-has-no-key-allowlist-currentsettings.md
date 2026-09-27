@@ -6,7 +6,8 @@
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)
 
-**Status:** ✅ Done (closed 2026-09-20) — closed allowlist enforced
+**Status:** Done
+**Status Note:** (closed 2026-09-20) — closed allowlist enforced
 **Priority:** medium
 **Effort:** Small
 

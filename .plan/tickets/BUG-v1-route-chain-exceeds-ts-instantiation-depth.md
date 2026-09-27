@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Closed — fixed in dev (verified 2026-09-18)
+**Status:** Done
+**Status Note:** fixed in dev (verified 2026-09-18)
 
 ## Resolution
 

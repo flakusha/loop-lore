@@ -3,7 +3,7 @@
 
 # TASK-config-example-template-variables-doc
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +11,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: open
+**Status**: Not Started
 **Priority**: low
 **Labels**: config, documentation, templates
 **Assignee**:

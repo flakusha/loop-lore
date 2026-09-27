@@ -3,7 +3,7 @@
 
 # IDEA: IDEA regex precision telemetry: opt-in per-pattern match counters
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** low
 **Effort:** Medium
 **Tags:** idea, regex, observability
@@ -16,7 +16,7 @@
 
 # IDEA: Regex pattern precision telemetry (opt-in match logging)
 
-**Status:** draft
+**Status:** Not Started
 **Priority:** P3
 **Effort:** Medium
 **Summary:** `src/regex/` has no visibility into false-positive rates in production; intent hijacks (git issue 9bb9cbf) are found by accident. Add opt-in per-pattern match counters so precision problems show up in telemetry before users report them.

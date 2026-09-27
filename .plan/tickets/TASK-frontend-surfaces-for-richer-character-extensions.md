@@ -7,7 +7,8 @@
 **Context:** Richer character extension fields were promoted to the canonical character shape but the Alpine.js editor surface at src/frontend/alpine/ did not gain editors for them. Existing patterns in src/frontend/alpine/npc.ts (relationship/inventory editors) are the model to extend.
 **Acceptance Criteria:** Character edit page renders an editor section for each richer extension field (abilities record editor with +/- modifier; skills list editor with ability binding; equipment slot-based editor; vitals key/value HP/MP; motivations typed list; structured_tags category + value). Edits to richer fields round-trip via PUT /api/characters/:id. New test exercises one rich-field edit cycle. No regression in existing character editor flows.
 
-**Status:** open (partial; JSON extension editor is mounted and round-trips the canonical payload; field-level editors remain open).
+**Status:** Not Started
+**Status Note:** open (partial; JSON extension editor is mounted and round-trips the canonical payload; field-level editors remain open).
 **Priority:** medium
 **Effort:** Medium
 

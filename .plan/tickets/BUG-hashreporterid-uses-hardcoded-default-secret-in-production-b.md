@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done (worktree fix-nsfw-hashreporterid-default-secret, pending commit)
+**Status:** In Progress
+**Status Note:** worktree fix-nsfw-hashreporterid-default-secret, pending commit
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-nsfw-moderation-priority

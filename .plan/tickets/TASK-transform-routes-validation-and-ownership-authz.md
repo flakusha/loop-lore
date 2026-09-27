@@ -7,7 +7,7 @@
 **Context:** (none captured)
 **Summary:** CRUD endpoints for asset transforms guarded per repo ownership-check pattern. Part of epic-asset-platform-capabilities.md B1-B5.
 **Context:** Transform routes (src/routes/assets/transforms/*) accept per-transform create/update/delete. Today they require login but not ownership-of-the-parent-asset — a logged-in user can mutate transforms on assets they don't own. Fix: every transform route resolves assetId -> ownerId and runs requireOwnOrAdmin(assetId) before the body is parsed. Validates the request body against AssetTransformSchema (idempotent upsert by (asset_id, scope)).
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Epic:** Asset Transform Editing + Metadata

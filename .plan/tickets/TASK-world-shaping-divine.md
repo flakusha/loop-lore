@@ -10,7 +10,7 @@
 
 
 **Priority:** Medium
-**Status:** open
+**Status:** Not Started
 **Epic:** epic-worlds-extension
 **Tags:** world-shaping, divine, player-action, world-change, god-mode
 

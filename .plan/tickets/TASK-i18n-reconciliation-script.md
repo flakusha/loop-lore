@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Complete
+**Status:** Done
 **Priority:** High
 **Effort:** Small
 **Epic:** epic-i18n

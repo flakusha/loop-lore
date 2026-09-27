@@ -3,7 +3,7 @@
 
 # TASK: Codemod fetch to apiFetch and JSON to safeJson utils
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +11,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: done
+**Status**: Done
 **Priority**: low
 **Labels**: code-quality, codemod, refactor
 **Assignee**:

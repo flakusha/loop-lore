@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 Partial — slash command parser + AUX `classifyIntent` exist; no timeout/apiKey on AUX path, `detectIntent` dead (2026-08-01)
+**Status:** In Progress
+**Status Note:** slash command parser + AUX `classifyIntent` exist; no timeout/apiKey on AUX path, `detectIntent` dead (2026-08-01)
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-assistant-gm-flows

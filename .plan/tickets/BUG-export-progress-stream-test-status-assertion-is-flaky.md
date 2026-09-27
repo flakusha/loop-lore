@@ -4,7 +4,7 @@
 
 # BUG-export-progress-stream-test-status-assertion-is-flaky: Test asserted on terminal status immediately after startExport; hermetic mock required
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Trivial
 **Labels:** bug, frontend, testing

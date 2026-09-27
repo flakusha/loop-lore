@@ -3,7 +3,7 @@
 
 # FEAT: Item Crafting System
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Large
 **Summary:** Item Crafting System

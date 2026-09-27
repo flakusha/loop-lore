@@ -6,7 +6,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** 🟡 In Progress
+**Status:** In Progress
 **Priority:** High
 **Effort:** Large
 **Type:** Feature Epic / Configuration

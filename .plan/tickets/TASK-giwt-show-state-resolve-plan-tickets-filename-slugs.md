@@ -3,7 +3,7 @@
 
 # TASK: giwt show/state resolve .plan/tickets filename slugs
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 
@@ -14,7 +14,7 @@
 
 # giwt show/state resolve .plan/tickets filename slugs
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Small
 **Type:** Task

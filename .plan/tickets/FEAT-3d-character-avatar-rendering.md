@@ -3,7 +3,7 @@
 
 # FEAT: 3D Character/Avatar Rendering
 
-**Status:** done
+**Status:** Done
 **Priority:** low
 **Effort:** XL
 **Summary:** 3D Character/Avatar Rendering

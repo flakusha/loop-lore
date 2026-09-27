@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Resolved (4835dcaf, 2026-09-04)
+**Status:** Done
+**Status Note:** 4835dcaf, 2026-09-04
 **Priority:** high
 **Effort:** Medium
 

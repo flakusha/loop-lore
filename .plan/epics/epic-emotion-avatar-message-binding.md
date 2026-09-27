@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** 🟡 In Progress (migration + schema done)
+**Status:** In Progress
+**Status Note:** migration + schema done
 **Priority:** High
 **Effort:** Medium
 **Type:** Feature Epic

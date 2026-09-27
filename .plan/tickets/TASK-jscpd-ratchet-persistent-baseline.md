@@ -3,7 +3,7 @@
 
 # jscpd ratchet: persist baseline, gate on rising clones/dup-%
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Small
 **Type:** Task

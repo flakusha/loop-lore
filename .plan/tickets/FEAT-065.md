@@ -1,6 +1,6 @@
 ---
 title: "FEAT-065: Prompt library — expanded scope"
-status: closed
+status: Done
 priority: medium
 labels: [feature, prompt-system, generation]
 epic: epic-config-templates
@@ -8,7 +8,7 @@ related: [FEAT-065-IMG, FEAT-065-AUD, FEAT-065-VID, FEAT-065-LLM, FEAT-055]
 ---
 
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

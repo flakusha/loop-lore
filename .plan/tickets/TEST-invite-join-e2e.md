@@ -3,7 +3,7 @@
 
 # Ticket: E2E Invite/Flow Validation
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

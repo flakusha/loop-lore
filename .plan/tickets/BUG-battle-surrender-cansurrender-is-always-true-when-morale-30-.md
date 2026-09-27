@@ -3,7 +3,8 @@
 
 # BUG: battle surrender: canSurrender is always true when morale ≤ 30, redundant with surrenderChance
 
-**Status:** ✅ Resolved (batch 2)
+**Status:** Done
+**Status Note:** batch 2
 **Priority:** low
 **Effort:** Medium
 **Summary:** (see ## Summary)

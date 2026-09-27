@@ -3,7 +3,7 @@
 
 # TASK: Memory Compact Pointer To Message Chain
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-memory-knowledge-systems

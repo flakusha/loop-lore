@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Resolved (commit 04411f8 — selectChat state guard)
+**Status:** Done
+**Status Note:** commit 04411f8 — selectChat state guard
 **Priority:** medium
 **Effort:** Medium
 

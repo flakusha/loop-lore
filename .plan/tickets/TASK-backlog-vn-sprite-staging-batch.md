@@ -3,7 +3,7 @@
 
 # TASK: backlog — schedule VN Sprite Staging cluster (post-VN core)
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Type:** Task

@@ -3,7 +3,7 @@
 
 # TASK: Gate branches display invariant + item instance state
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Small (two guards + tests)
 **Summary:** `chat_branches.is_active` × `chats.active_branch_id` (migration `014`): the displayed branch must be the active one — enforce in `src/chat/service/branches.ts`. `world_items` instance (migration `016:19-27`: stackable/category × durability-NULL × is_active): add `ItemInstanceState` guard + test. No column changes.

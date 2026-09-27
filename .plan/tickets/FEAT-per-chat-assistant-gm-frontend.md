@@ -3,7 +3,7 @@
 
 # FEAT: Per-chat Assistant/GM Frontend
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Large
 **Summary:** Per-chat Assistant/GM Frontend

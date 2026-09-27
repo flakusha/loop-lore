@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ done
+**Status:** Done
 **Resolution:** Fixed in `5b080b4d0c013f04faa88076ac3abd47cab481ca`
 **Priority:** high
 **Effort:** Medium

@@ -3,7 +3,7 @@
 
 # FEAT: Public Story Feed + Moderation
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** low
 **Effort:** Large
 **Summary:** Public Story Feed + Moderation

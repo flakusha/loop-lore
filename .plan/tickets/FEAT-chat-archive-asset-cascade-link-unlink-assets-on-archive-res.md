@@ -3,7 +3,7 @@
 
 # FEAT: Chat archive asset cascade — link/unlink assets on archive/restore
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-archival-workflow

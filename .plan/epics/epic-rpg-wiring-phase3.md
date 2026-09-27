@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** 🟡 In Progress (7 services wired + quest consolidation `51a7bc01` 2026-08-14; crafting/trade/battle execution shipped `49ee5c1a` 2026-08-18)
+**Status:** In Progress
+**Status Note:** 7 services wired + quest consolidation `51a7bc01` 2026-08-14; crafting/trade/battle execution shipped `49ee5c1a` 2026-08-18
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic

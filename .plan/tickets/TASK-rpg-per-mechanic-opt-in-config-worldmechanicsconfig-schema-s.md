@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Implemented
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-mechanics-governance.md

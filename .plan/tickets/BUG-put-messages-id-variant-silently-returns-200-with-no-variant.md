@@ -7,13 +7,14 @@
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Small
 
 ## Summary
 
-**Status:** ❌ Rejected — code already enforces the guard (strict-review finding 2026-09-20)
+**Status:** Wontfix
+**Status Note:** code already enforces the guard (strict-review finding 2026-09-20)
 
 **Where:** src/routes/messages/read.ts:222-228
 

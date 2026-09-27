@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done (merged to dev 2026-09-15)
+**Status:** Done
+**Status Note:** merged to dev 2026-09-15
 **Priority:** P1
 **Effort:** Low
 **Epic:** epic-frontend-backend-integration

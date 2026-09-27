@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Closed — stale premise verified (2026-09-18)
+**Status:** Done
+**Status Note:** stale premise verified (2026-09-18)
 
 ## Verification
 

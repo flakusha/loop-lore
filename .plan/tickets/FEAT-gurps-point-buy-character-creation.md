@@ -3,7 +3,7 @@
 
 # FEAT: GURPS Point-Buy Character Creation
 
-**Status:** done
+**Status:** Done
 **Priority:** low
 **Effort:** Large
 **Summary:** GURPS Point-Buy Character Creation

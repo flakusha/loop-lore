@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** open
+**Status:** Not Started
 **Priority:** low
 **Effort:** Small
 **Epic:** review-dev-2026-08-26-security-data-integrity-merges

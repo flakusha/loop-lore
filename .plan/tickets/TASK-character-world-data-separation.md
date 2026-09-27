@@ -11,7 +11,7 @@
 **Epic:** Character Core System
 **Priority:** High
 **Effort:** Very High
-**Status:** done
+**Status:** Done
 
 ## Summary
 

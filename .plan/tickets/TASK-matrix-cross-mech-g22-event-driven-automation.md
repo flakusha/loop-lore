@@ -3,7 +3,7 @@
 
 # TASK-matrix-cross-mech-g22: Event-driven automation (Quick-Replies / auto-execute on triggers)
 
-**Status:** open
+**Status:** Not Started
 **Priority:** low
 **Effort:** Small
 **Type:** Task

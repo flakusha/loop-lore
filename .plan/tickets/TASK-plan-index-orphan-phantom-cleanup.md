@@ -3,7 +3,7 @@
 
 # TASK: plan index — prune 297 pre-existing phantom entries
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Small (giwt change + manual review)
 **Summary:** Audit and drop the 297 phantom entries in `.plan/tickets/index.json` — entries where the index has `extid` + `git_issue` but the corresponding `.plan/tickets/*.md` (or `.plan/epics/*.md`) file does not exist with that exact extid. These phantoms predate `giwt sync --fix --import` adoption; the entries are uppercase-cased extids (`EPIC-2D-SPRITE-WORLD`) whose lowercase `.md` files (`epic-2d-sprite-world.md`) never made it into the index because the sync dropped them on a case-sensitive match.

@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done — BE `src/routes/admin/danger-zone.ts` (audit purge / settings reset / factory reset, audit-logged, typed confirmations), FE `admin-system.ts` + `admin.html` Danger Zone section
+**Status:** Done
+**Status Note:** BE `src/routes/admin/danger-zone.ts` (audit purge / settings reset / factory reset, audit-logged, typed confirmations), FE `admin-system.ts` + `admin.html` Danger Zone section
 **Priority:** low
 **Effort:** Low
 **Epic:** epic-frontend-admin

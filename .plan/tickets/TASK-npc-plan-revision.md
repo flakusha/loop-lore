@@ -3,7 +3,7 @@
 
 # TASK: Npc Plan Revision
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Dynamic plan adjustment on goal-achieved / goal-blocked / new-opportunity / external-event / mood-shift, writing `actor_plan_revisions` rows (migration 011, shipped).

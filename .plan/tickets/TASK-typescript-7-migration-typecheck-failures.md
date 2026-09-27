@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done (closed 2026-09-15; all 19 errors resolved on dev)
+**Status:** Done
+**Status Note:** closed 2026-09-15; all 19 errors resolved on dev
 **Priority:** high
 **Effort:** Medium
 **Labels:** bug, typescript7, migration, typecheck

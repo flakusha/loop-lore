@@ -3,7 +3,7 @@
 
 # TASK: 2D world review: zone-rect editor for map_zones authoring
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium
 **Summary:** Zone-rect editor for map_zones authoring in world-management UI.

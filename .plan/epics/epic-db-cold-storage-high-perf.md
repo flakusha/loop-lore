@@ -6,7 +6,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** 📝 Draft
+**Status:** Not Started
 **Priority:** Low (speculative — "far-fetched" scenario, only justified by measured need)
 **Effort:** Large
 **Type:** Research / Architecture Epic

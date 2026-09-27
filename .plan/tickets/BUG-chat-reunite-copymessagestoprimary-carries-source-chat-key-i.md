@@ -3,7 +3,8 @@
 
 # BUG: chat reunite: copyMessagesToPrimary carries source chat key_id verbatim
 
-**Status:** ✅ Resolved (batch 2)
+**Status:** Done
+**Status Note:** batch 2
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (see ## Summary)

@@ -3,7 +3,7 @@
 
 # TASK: Battle Core Round-Loop / Initiative Epic
 
-**Status:** done
+**Status:** Done
 **Priority:** high
 **Effort:** XL
 **Summary:** Battle Core Round-Loop / Initiative Epic

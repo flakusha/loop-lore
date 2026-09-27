@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 Foundation + Phases A–D shipped (commit `10b203b4` on dev); remainder split into 4 child tickets
+**Status:** In Progress
+**Status Note:** + Phases A–D shipped (commit `10b203b4` on dev); remainder split into 4 child tickets
 **Priority:** Medium
 **Effort:** Large
 **Epic:** epic-crypto

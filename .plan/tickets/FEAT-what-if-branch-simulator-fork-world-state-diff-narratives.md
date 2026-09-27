@@ -3,7 +3,7 @@
 
 # FEAT: What-if Branch Simulator (fork world state, diff narratives)
 
-**Status:** done
+**Status:** Done
 **Priority:** low
 **Effort:** XL
 **Summary:** What-if Branch Simulator (fork world state, diff narratives)

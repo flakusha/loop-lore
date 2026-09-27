@@ -3,7 +3,7 @@
 
 # FEAT: Item Rarity System
 
-**Status:** done
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 **Summary:** Item Rarity System

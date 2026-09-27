@@ -3,7 +3,7 @@
 
 # BUG: bun test src full suite is order-dependent cross-file contamination
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium
 

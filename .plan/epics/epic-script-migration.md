@@ -7,7 +7,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** 🟡 In Progress (tasks 1-2 complete)
+**Status:** In Progress
+**Status Note:** tasks 1-2 complete
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Infrastructure

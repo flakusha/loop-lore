@@ -3,7 +3,7 @@
 
 # FEAT: 2D world: spatial layer migration (world_maps, map_zones, spawn_points, actor_snapshots + space LocationKinds)
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Large
 **Epic:** epic-2d-sprite-world

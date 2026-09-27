@@ -3,7 +3,7 @@
 
 # TASK-epic-frontend-encryption-clarification-2026-09-26: clarify epic-frontend-encryption.md vs epic-encryption-workflow.md split
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Small
 **Type:** Task

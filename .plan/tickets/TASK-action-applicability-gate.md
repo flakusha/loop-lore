@@ -3,7 +3,7 @@
 
 # TASK: Action applicability gate — context-aware command gating (solo/group chat)
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** High
 **Effort:** Medium
 **Epic:** epic-immersion-consistency-gate

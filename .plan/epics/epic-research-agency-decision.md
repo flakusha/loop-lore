@@ -3,7 +3,7 @@
 
 # EPIC-RESEARCH-AGENCY-DECISION: NPC Decision-Making Stack
 
-**Status:** Draft
+**Status:** Not Started
 **Priority:** High
 **Effort:** Large
 **Type:** Research epic (drives implementation tickets)

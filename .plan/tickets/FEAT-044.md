@@ -3,7 +3,7 @@
 
 # FEAT-044: Migration documentation
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +11,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: done
+**Status**: Done
 **Priority**: medium
 **Labels**:
 **Assignee**:

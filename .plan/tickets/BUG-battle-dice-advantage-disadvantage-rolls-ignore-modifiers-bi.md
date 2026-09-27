@@ -3,7 +3,8 @@
 
 # BUG: battle dice: advantage/disadvantage rolls ignore modifiers, biasing vs initial roll
 
-**Status:** ✅ Resolved (batch 2)
+**Status:** Done
+**Status Note:** batch 2
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (see ## Summary)

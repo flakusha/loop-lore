@@ -3,7 +3,7 @@
 
 # FEAT: Plot Autopilot (AI proposes next plot beats)
 
-**Status:** done
+**Status:** Done
 **Priority:** low
 **Effort:** Large
 **Summary:** Plot Autopilot (AI proposes next plot beats)

@@ -7,7 +7,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** 🟡 Partially Built — H2/WS handlers exist but http1/h2 send() are no-op stubs; NOT server-wired; H3/WebTransport missing
+**Status:** In Progress
+**Status Note:** Built — H2/WS handlers exist but http1/h2 send() are no-op stubs; NOT server-wired; H3/WebTransport missing
 **Priority:** Medium
 **Effort:** Medium (remaining gaps only)
 **Type:** Feature Epic

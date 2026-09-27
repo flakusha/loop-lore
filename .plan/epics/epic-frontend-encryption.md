@@ -9,7 +9,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** 🟨 Partial — browser crypto + send path built; receive-decrypt + key-management UI pending
+**Status:** In Progress
+**Status Note:** browser crypto + send path built; receive-decrypt + key-management UI pending
 **Priority:** Medium
 
 ## Summary

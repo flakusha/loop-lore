@@ -3,7 +3,7 @@
 
 # TASK: Ai Director Gm
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** AI Director + GM collaboration. GM override hook (manual tension/pacing/difficulty), AI Director suggestion feed (events, NPC behaviors, story beats), joint operation.
@@ -11,7 +11,7 @@
 **Acceptance Criteria:** [ ] GM can override TensionState per event; [ ] AI Director suggests events/NPC behaviors to GM; [ ] GM suggestions logged for replay; [ ] joint mode passes GM veto through.
 
 
-**Status**: open
+**Status**: Not Started
 **Priority**: medium
 **Labels**:
 **Assignee**:

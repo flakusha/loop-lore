@@ -3,7 +3,8 @@
 
 # EPIC-040: 040: Disease & Poison Systems
 
-**Status:** Not Started → closed (duplicate)
+**Status:** Done
+**Status Note:** duplicate
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +12,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: duplicate-of-epic-disease-poison
+**Status:** Wontfix
+**Status Note:** duplicate-of-epic-disease-poison
 **Priority**: medium
 **Labels**: epic
 **Epic**: (if applicable)

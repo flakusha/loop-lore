@@ -7,7 +7,7 @@
 **Context:** Read/write seam between character economy actions and the planned economy sim; tradecore currently lacks even a world-id filter (BUG-services-tradecore-validatelines-lacks-world-id-filter-cross) — that bug gates correct zone scoping and should land first.
 **Acceptance Criteria:** Purchase/sale events update zone-level demand for the item category; subsequent price lookups reflect the shift (bounded, decaying); feedback is per-world scoped; prompt/narration surface mentions scarcity or glut after large swings; tests for buy-shift, sell-shift, and decay.
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** low
 **Effort:** Medium
 

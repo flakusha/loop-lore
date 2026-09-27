@@ -3,7 +3,7 @@
 
 # TASK: Bestiary Bestiary Loot And XP Integration
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-enemies-monsters

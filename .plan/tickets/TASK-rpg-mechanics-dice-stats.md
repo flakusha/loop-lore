@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Complete
+**Status:** Done
 **Priority:** High
 **Effort:** High
 **Epic:** epic-rpg-mechanics

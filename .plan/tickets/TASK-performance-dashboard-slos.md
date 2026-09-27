@@ -3,7 +3,7 @@
 
 # TASK: Performance Dashboard & SLOs
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Large
 **Summary:** Performance Dashboard & SLOs

@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** 📝 Draft → 🟡 In Progress (MVP scoped)
+**Status:** Not Started
+**Status Note:** → 🟡 In Progress (MVP scoped)
 **Priority:** High (MVP), Medium (full)
 **Effort:** High
 **Type:** Feature Epic

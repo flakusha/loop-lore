@@ -3,7 +3,7 @@
 
 # TASK: ComfyUI first-class: mount image-edit routes + verify asset persistence
 
-**Status:** open
+**Status:** Not Started
 **Priority:** high
 **Effort:** Small-Medium (route mount + authz parity + persistence verify)
 **Summary:** Mount image-edit routes for the ComfyUI backend with `handleRun` authz at `handleImageGeneration` parity; fix stale `/api/*` doc comments to `/api/v1/*`; execute-then-fetch roundtrip pins the anti-dangling invariant (asset row exists before any response references it).

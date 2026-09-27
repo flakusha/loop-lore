@@ -3,7 +3,8 @@
 
 # EPIC-052: 052: Analytics & Observability
 
-**Status:** Not Started → closed (duplicate)
+**Status:** Done
+**Status Note:** duplicate
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +12,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: duplicate-of-epic-analytics-observability
+**Status:** Wontfix
+**Status Note:** duplicate-of-epic-analytics-observability
 **Priority**: medium
 **Labels**: epic
 **Epic**: (if applicable)

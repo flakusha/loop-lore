@@ -3,7 +3,7 @@
 
 # TASK-affordance-action-parser: Two-stage parser (regex + constrained-LLM) for free-form chat -> typed Action
 
-**Status:** done
+**Status:** Done
 **Priority:** P0 (within EPIC-RESEARCH-AGENCY-AFFORDANCE)
 **Effort:** 2-3 days
 **Parent epic:** `epic-research-agency-affordance.md`

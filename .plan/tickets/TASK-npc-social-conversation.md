@@ -3,7 +3,7 @@
 
 # TASK: Npc Social Conversation
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** NPC-initiated dialogue generation: proximity/mood/relationship-gated conversation openers flowing through the autonomy scheduler (not the social-skills check path).

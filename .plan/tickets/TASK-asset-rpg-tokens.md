@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** open
+**Status:** Not Started
 **Priority:** Medium
 **Epic:** epic-items
 **Tags:** asset, rpg

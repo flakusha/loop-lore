@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done (backend + frontend 2026-08-16)
+**Status:** Done
+**Status Note:** backend + frontend 2026-08-16
 **Priority:** Medium
 **Effort:** Medium
 **Created:** 2026-08-14

@@ -3,7 +3,7 @@
 
 # FEAT: Model-comparison Dashboard
 
-**Status:** done
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 **Summary:** Model-comparison Dashboard

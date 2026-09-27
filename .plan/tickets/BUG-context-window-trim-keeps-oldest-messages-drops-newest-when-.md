@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Resolved (verified 2026-09-07; bookkeeping)
+**Status:** Done
+**Status Note:** verified 2026-09-07; bookkeeping
 **Priority:** high
 **Effort:** Medium
 

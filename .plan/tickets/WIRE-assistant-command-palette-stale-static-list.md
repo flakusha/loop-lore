@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done (verified: GET /api/commands in src/routes/commands/index.ts wired via register-plugins.ts:188; palette hydrates on init in src/frontend/alpine/chat-actions/command-palette.ts; 54 pass incl. commands route + improve/translate/rewrite suites)
+**Status:** Done
+**Status Note:** verified: GET /api/commands in src/routes/commands/index.ts wired via register-plugins.ts:188; palette hydrates on init in src/frontend/alpine/chat-actions/command-palette.ts; 54 pass incl. commands route + improve/translate/rewrite suites
 **Priority:** medium
 **Priority Tier:** P3
 **Effort:** Medium

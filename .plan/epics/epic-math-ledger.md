@@ -3,7 +3,7 @@
 
 # EPIC-RESEARCH-MATH-LEDGER — Event-sourced projections
 
-**Status:** 📝 Draft
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Large (event table + projection rebuild + tests)
 **Type:** Architecture → Implementation

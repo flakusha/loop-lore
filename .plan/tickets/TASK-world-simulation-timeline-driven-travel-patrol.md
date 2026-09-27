@@ -3,7 +3,7 @@
 
 # TASK: World Simulation Timeline Driven Travel Patrol
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-actor-autonomy-story-drive

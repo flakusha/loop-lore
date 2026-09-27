@@ -3,7 +3,7 @@
 
 # FEAT: Item Property System
 
-**Status:** done
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 **Summary:** Item Property System

@@ -3,14 +3,14 @@
 
 # TASK-042: NSFW Reputation & Social
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Reputation on shared ReputationScore + reputation_changed event.
 **Context:** Gameplay-layer social consequences feeding faction/crime.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: open
+**Status**: Not Started
 **Priority**: medium
 **Labels**: nsfw, rpg, game-mechanics
 **Epic**: epic-nsfw-game-mechanics

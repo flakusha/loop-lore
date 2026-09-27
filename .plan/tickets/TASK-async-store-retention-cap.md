@@ -3,7 +3,7 @@
 
 # async-store retention: cap OFFLOAD_DIR by age + bytes
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Type:** Task

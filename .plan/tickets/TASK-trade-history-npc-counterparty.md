@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Labels:** rpg, trade, economy, routes
 **Assignee**:

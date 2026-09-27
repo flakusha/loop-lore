@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Resolved (audited + boundary sites routed, 2026-09-15)
+**Status:** Done
+**Status Note:** audited + boundary sites routed, 2026-09-15
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-code-quality

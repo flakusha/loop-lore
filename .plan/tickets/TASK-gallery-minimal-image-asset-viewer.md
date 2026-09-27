@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done — images, audio, and video all supported in gallery grid + preview modal
+**Status:** Done
+**Status Note:** images, audio, and video all supported in gallery grid + preview modal
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-asset-support-expansion

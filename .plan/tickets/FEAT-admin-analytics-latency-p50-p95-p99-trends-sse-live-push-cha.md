@@ -3,7 +3,7 @@
 
 # FEAT: Admin analytics — latency p50/p95/p99 trends, SSE live push, Chart.js widgets
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-analytics-observability

@@ -9,7 +9,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Complete (2026-08-18)
+**Status:** Done
+**Status Note:** 2026-08-18
 **Priority:** high
 **Labels:** rpg, crafting, routes
 **Assignee**:

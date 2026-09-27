@@ -3,7 +3,7 @@
 
 # TASK: DB Content Versioning & Snapshot/Restore
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Large
 **Summary:** DB Content Versioning & Snapshot/Restore

@@ -3,7 +3,7 @@
 
 # TASK-agency-quality-metrics: agency_mode column + Murray/agency-play dimension counters
 
-**Status:** Draft
+**Status:** Not Started
 **Priority:** P1 (within EPIC-RESEARCH-AGENCY-QUALITY)
 **Effort:** 1-2 days
 **Parent epic:** `epic-research-agency-quality.md`

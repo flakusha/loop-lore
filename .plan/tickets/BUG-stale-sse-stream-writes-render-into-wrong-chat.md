@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Resolved (commit 04411f8 — SSE stream scoped to chat)
+**Status:** Done
+**Status Note:** commit 04411f8 — SSE stream scoped to chat
 **Priority:** medium
 **Effort:** Medium
 

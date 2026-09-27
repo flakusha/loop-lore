@@ -6,7 +6,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** 🟡 In Progress
+**Status:** In Progress
 **Priority:** P0 — Critical
 **Effort:** High
 **Type:** Feature Epic

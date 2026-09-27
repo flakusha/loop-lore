@@ -9,7 +9,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** 🟡 Partially Built — blessed + blessed-contrib scaffolding shipped; integration hardening in progress
+**Status:** In Progress
+**Status Note:** Built — blessed + blessed-contrib scaffolding shipped; integration hardening in progress
 **Priority:** Low
 
 ## Summary

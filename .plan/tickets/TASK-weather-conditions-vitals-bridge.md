@@ -7,7 +7,7 @@
 **Context:** Write-back integration ticket for epic-character-world-integration.md; the first character write-back scheduled behind the world tick (substrate: FEAT-2d-world-npc-simulation-tiers tick or location_states updates).
 **Acceptance Criteria:** Weather-layer → condition mapping table; conditions applied/removed as layers change; vitals drain/regen hooks run on the tick and are idempotent; equipment insulation reduces drain; changes visible in prompt assembly and character state API; unit tests for apply/remove/mitigate cycles.
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Large
 

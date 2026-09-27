@@ -3,7 +3,7 @@
 
 # TASK: Frontend tsconfig Strictness Alignment
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Small
 **Summary:** Frontend tsconfig Strictness Alignment

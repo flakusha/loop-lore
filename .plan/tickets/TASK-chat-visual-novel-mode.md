@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium-High (frontend rendering)
 **Epic:** epic-immersion-presentation

@@ -3,7 +3,7 @@
 
 # FEAT: Inventory Management UI
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Large
 **Summary:** Inventory Management UI

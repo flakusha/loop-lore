@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** 🟡 Code+tests+schema done (migration 035); UNWIRED — routes pending
+**Status:** In Progress
+**Status Note:** Code+tests+schema done (migration 035); UNWIRED — routes pending
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Feature Epic

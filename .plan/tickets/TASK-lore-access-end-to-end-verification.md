@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** high
 **Epic:** Character & NPC Lore Access

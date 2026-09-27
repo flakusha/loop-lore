@@ -3,7 +3,7 @@
 
 # TASK: CLARIFY-prompt-improve-route-path-reconciliation
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-prompt-improvement.md

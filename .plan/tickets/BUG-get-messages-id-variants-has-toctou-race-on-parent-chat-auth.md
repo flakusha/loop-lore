@@ -6,7 +6,8 @@
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)
 
-**Status:** ✅ Done (closed 2026-09-20) — re-authorize parent + drop chat_id filter
+**Status:** Done
+**Status Note:** (closed 2026-09-20) — re-authorize parent + drop chat_id filter
 **Priority:** medium
 **Effort:** Medium
 

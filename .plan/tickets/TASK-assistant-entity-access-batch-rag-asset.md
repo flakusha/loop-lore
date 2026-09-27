@@ -3,7 +3,7 @@
 
 # TASK: B1 — RAG + Asset Access MVP
 
-**Status:** open
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium
 **Type:** Batch Task

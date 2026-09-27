@@ -3,7 +3,7 @@
 
 # TASK: Actors — Child Tables CRUD (memories / notes / lore / items)
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-actors

@@ -3,7 +3,8 @@
 
 # BUG: assets DELETE /assets/:id/links/:linkId ignores linkId path parameter
 
-**Status:** ✅ Resolved (p3-bugfix-batch, 2026-09-18)
+**Status:** Done
+**Status Note:** p3-bugfix-batch, 2026-09-18
 **Priority:** high
 **Effort:** Medium
 **Summary:** (see ## Summary)

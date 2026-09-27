@@ -3,7 +3,7 @@
 
 # TASK: Scene-asset precedence rule — world vs location
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** low
 **Effort:** Small
 **Summary:** Define + implement resolution precedence when world-level and location-level scene assets both exist

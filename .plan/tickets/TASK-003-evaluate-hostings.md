@@ -3,14 +3,14 @@
 
 # TASK-003: Evaluate hosting providers (Research)
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Research-only evaluation of hosting providers across 8 targets and 4 criteria categories.
 **Context:** Decision doc + benchmark results driving the hosting comparison ticket.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status:** 🟢 done
+**Status:** Done
 **Priority:** medium
 **Epic:** epic-deployment-infrastructure
 **Labels:** infrastructure, cloud-hosting, cost-analysis

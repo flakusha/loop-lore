@@ -3,7 +3,8 @@
 
 # BUG: rpg loot: luckModifier inverts drop quality — positive luck produces worse drops
 
-**Status:** ✅ Resolved (sign fixed: adjustedRoll = roll + luckModifier clamped to [1,100])
+**Status:** Done
+**Status Note:** sign fixed: adjustedRoll = roll + luckModifier clamped to [1,100]
 **Priority:** high
 **Effort:** Medium
 **Summary:** (see ## Summary)

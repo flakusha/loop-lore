@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Fixed (fix-review-quickwins; client wiring for ccac5b9d)
+**Status:** Done
+**Status Note:** fix-review-quickwins; client wiring for ccac5b9d
 **Priority:** high
 **Effort:** Medium
 

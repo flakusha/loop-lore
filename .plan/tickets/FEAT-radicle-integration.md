@@ -3,7 +3,7 @@
 
 # FEAT-radicle-integration: Radicle P2P collaborative editing
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

@@ -3,7 +3,7 @@
 
 # TASK: Test DB Dialect Parameterization (Postgres Matrix)
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Test DB Dialect Parameterization (Postgres Matrix)
