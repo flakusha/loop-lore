@@ -9,7 +9,7 @@
  * Seeding mirrors src/middleware/nsfw-gate/consent.test.ts (same
  * middleware stack under test).
  */
-import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
+import { afterAll, afterEach, beforeAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import type { Config, } from "../config/schema/config";
 import { NsfwSection, } from "../config/sections";
@@ -26,7 +26,8 @@ import {
   insertNsfwUserPreferences,
   insertUsers,
 } from "../test-utils/insert-helpers";
-import { assertNsfwCapability, CapabilityBlockedError, } from "./capability-gate";
+import { assertNsfwCapability, assertNsfwConfigEnabled, CapabilityBlockedError, } from "./capability-gate";
+import { initNsfwRuntimeConfig, resetNsfwRuntimeConfig, updateRuntimeNsfwConfig, } from "./runtime-config";
 
 /** */
 function makeConfig(overrides: Partial<Config["nsfw"]> = {},): Config {
@@ -278,5 +279,29 @@ describe("assertNsfwCapability", () => {
     await expect(gate(db, config, ids, {
       contentRating: NSFWContentRating.NSFW_EXTREME,
     },),).rejects.toMatchObject({ reason: "rating_blocked", },);
+  });
+});
+
+describe("assertNsfwConfigEnabled", () => {
+  afterEach(() => {
+    resetNsfwRuntimeConfig();
+  },);
+
+  test("passes when nsfw.allowNsfw is true (default)", () => {
+    resetNsfwRuntimeConfig();
+    expect(() => assertNsfwConfigEnabled()).not.toThrow();
+  });
+
+  test("throws CapabilityBlockedError when nsfw.allowNsfw is false", () => {
+    initNsfwRuntimeConfig({ allowNsfw: false, } as Parameters<typeof initNsfwRuntimeConfig>[0],);
+    expect(() => assertNsfwConfigEnabled()).toThrow(CapabilityBlockedError,);
+    expect(() => assertNsfwConfigEnabled()).toThrow(/nsfw\.allowNsfw is false/,);
+  });
+
+  test("live toggle: passing after re-enable", () => {
+    initNsfwRuntimeConfig({ allowNsfw: false, } as Parameters<typeof initNsfwRuntimeConfig>[0],);
+    expect(() => assertNsfwConfigEnabled()).toThrow(CapabilityBlockedError,);
+    updateRuntimeNsfwConfig({ allowNsfw: true, },);
+    expect(() => assertNsfwConfigEnabled()).not.toThrow();
   });
 });

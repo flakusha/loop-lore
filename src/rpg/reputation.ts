@@ -4,6 +4,7 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
+import { assertNsfwConfigEnabled, } from "../nsfw/capability-gate";
 import { calculateEncounterReputationChange, } from "../nsfw/social-integration";
 import {
   applyReputationChange as applyCanonicalChange,
@@ -61,6 +62,7 @@ export class ReputationService {
     delta: number,
     axis: "private" | "public" | "group" = "private",
   ): Promise<ReputationScore> {
+    assertNsfwConfigEnabled();
     const current = await this.getScore(actorId, axis,);
     const next = applyCanonicalChange(current, delta, source, {
       actor_id: actorId,
@@ -169,6 +171,7 @@ export class ReputationService {
     socialContext: "public" | "private" | "group",
     intimacyLevel: number,
   ): Promise<ReputationScore> {
+    assertNsfwConfigEnabled();
     const change = calculateEncounterReputationChange(
       encounterId,
       actorId,
