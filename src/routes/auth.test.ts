@@ -125,8 +125,21 @@ function makeDb(
     transaction: () => ({
       execute: async (cb: (trx: any,) => Promise<unknown>,) => {
         const beforeSize = seenUsernames.size;
+        // BUG-insertunique-discriminator-relies-on-adapter-specific-row-co:
+        // insertUnique probes by selectFrom(table).where(...). The trx
+        // must expose that chain on the inner call too.
+        const trx = {
+          insertInto: insertIntoImpl,
+          selectFrom: (_t: string,) => ({
+            select: (_cols: unknown,) => ({
+              where: (_col: string, _op: unknown, _val: unknown,) => ({
+                executeTakeFirst: async () => undefined,
+              }),
+            }),
+          }),
+        };
         try {
-          return await cb({ insertInto: insertIntoImpl, },);
+          return await cb(trx,);
         } catch (err) {
           while (seenUsernames.size > beforeSize) {
             const last = Array.from(seenUsernames,).pop();

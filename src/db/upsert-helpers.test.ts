@@ -80,6 +80,47 @@ describe("insertUnique", () => {
     );
     expect(result,).toBe("inserted",);
   });
+
+  // BUG-insertunique-discriminator-relies-on-adapter-specific-row-co
+  test("probe on the skip path reports 'skipped' when the row pre-exists", async () => {
+    // Seed a row directly so the conflict path is well-defined.
+    const seedId = crypto.randomUUID();
+    const username = `seed-${seedId}`;
+    await db
+      .insertInto("users",)
+      .values({
+        id: seedId,
+        username,
+        display_name: "Seed",
+      },)
+      .execute();
+
+    // Try to insert a *different* row at the same username. The adapter
+    // (here the test SQLite) reports numInsertedOrUpdatedRows=0 on the
+    // DO NOTHING skip, which sends the helper down the probe path.
+    // The probe must find the seeded row at a different id and report
+    // 'skipped'.
+    const secondId = crypto.randomUUID();
+    const result = await insertUnique(
+      db,
+      "users",
+      {
+        id: secondId,
+        username,
+        display_name: "Conflict",
+      },
+      ["username",],
+    );
+    expect(result,).toBe("skipped",);
+
+    // The seeded row must still be there with its original id.
+    const row = await db
+      .selectFrom("users",)
+      .select("id",)
+      .where("username", "=", username,)
+      .executeTakeFirst();
+    expect(row?.id,).toBe(seedId,);
+  });
 });
 
 describe("upsertByUnique", () => {
