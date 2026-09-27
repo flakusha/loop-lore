@@ -10,6 +10,7 @@
  * @module generation/lora/discovery-comfyui
  */
 
+import { allocateNodeId, } from "../node-id";
 import { discoveryErrorResult, fetchWithTimeout, } from "./discovery-http";
 import type { LoRADiscoveryResult, LoRAModel, } from "./types";
 import { extractLoRAName, } from "./validation";
@@ -213,15 +214,14 @@ export function injectComfyUILora(
     }
   }
 
+  // Generate the new node ID. `Number` on a grouped id ("60:45") is NaN, which
+  // made every node collapse onto a single key — see allocateNodeId.
+  const newNodeId = allocateNodeId(Object.keys(nodes,),);
+
   if (!nodeId) {
     // No suitable node found, add at end
-    const maxId = Math.max(...Array.from(Object.keys(nodes,), Number,), 0,);
-    nodeId = String(maxId + 1,);
+    nodeId = newNodeId;
   }
-
-  // Generate new node ID
-  const allIds = Array.from(Object.keys(nodes,), Number,);
-  const newNodeId = String(Math.max(...allIds, 0,) + 1,);
 
   // Create LoraLoader node
   const loraNode = buildComfyUILoraNode(loraName, strengthModel, strengthClip, nodeId,);
