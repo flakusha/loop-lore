@@ -1072,7 +1072,7 @@
     "status": "⬜ Not Started"
   },
   "BUG-CALLAUX-GRACEFUL-FAILURE-THROWS-ON-EMPTY-CONFIG": {
-    "hash": "4591587",
+    "hash": "bbf6769",
     "extid": "BUG-CALLAUX-GRACEFUL-FAILURE-THROWS-ON-EMPTY-CONFIG",
     "type": "BUG",
     "title": "callAux graceful failure throws on empty config",
@@ -1081,7 +1081,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-callaux-graceful-failure-throws-on-empty-config.md",
-    "git_issue": "pending",
+    "git_issue": "bbf6769",
     "status": "done"
   },
   "BUG-CANCELLATION-LIFECYCLE-DB-FAILURE-PERMANENTLY-MARKS-CHAT-GEN": {
@@ -36756,6 +36756,19 @@
     "status": "done",
     "git_issue": "44b3573"
   },
+  "TASK-RPG-NSFW-SERVICES-ADD-CONFIG-LEVEL-OPT-IN-GATE": {
+    "hash": "9dd5789",
+    "git_issue": "9dd5789",
+    "extid": "TASK-RPG-NSFW-SERVICES-ADD-CONFIG-LEVEL-OPT-IN-GATE",
+    "type": "TASK",
+    "title": "rpg NSFW services: add config-level opt-in gate",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-rpg-nsfw-services-add-config-level-opt-in-gate.md",
+    "status": "Not Started"
+  },
   "TASK-RPG-PATTERNS": {
     "hash": "2dd42ad",
     "extid": "TASK-RPG-PATTERNS",
@@ -37833,6 +37846,19 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md",
+    "status": "Not Started"
+  },
+  "TASK-SRC-RPG-NIT-1-4-BARREL-ORGANIZATION-IMPLEMENTATIONS": {
+    "hash": "f96b4dd",
+    "git_issue": "f96b4dd",
+    "extid": "TASK-SRC-RPG-NIT-1-4-BARREL-ORGANIZATION-IMPLEMENTATIONS",
+    "type": "TASK",
+    "title": "src/rpg/ NIT 1-4 barrel/organization implementations",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-src-rpg-nit-1-4-barrel-organization-implementations.md",
     "status": "Not Started"
   },
   "TASK-STABLE-STORED-CHAT-KEY-FUTURE": {

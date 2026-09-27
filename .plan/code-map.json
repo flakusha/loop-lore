@@ -22173,6 +22173,12 @@
       "source": ".plan/tickets/BUG-untrusted-new-date-parse-without-invalid-date-guard.md"
     }
   ],
+  "src/middleware/nsfw-gate/base-eval.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rpg-nsfw-services-add-config-level-opt-in-gate.md"
+    }
+  ],
   "src/middleware/nsfw-gate/consent-ledger.ts": [
     {
       "kind": "ticket",
@@ -22563,6 +22569,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-033.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rpg-nsfw-services-add-config-level-opt-in-gate.md"
     }
   ],
   "src/nsfw/capability-gate.ts": [
@@ -22577,6 +22587,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-037.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rpg-nsfw-services-add-config-level-opt-in-gate.md"
     }
   ],
   "src/nsfw/consent.ts": [
@@ -22589,6 +22603,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/nsfw-integration.md"
+    }
+  ],
+  "src/nsfw/feature-flag.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rpg-nsfw-services-add-config-level-opt-in-gate.md"
     }
   ],
   "src/nsfw/housing-integration.ts": [
@@ -29594,6 +29614,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-rpg-nsfw-services-add-config-level-opt-in-gate.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md"
     }
   ],
@@ -29955,12 +29979,20 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-src-rpg-nit-1-4-barrel-organization-implementations.md"
     }
   ],
   "src/rpg/encounters.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-src-rpg-nit-1-4-barrel-organization-implementations.md"
     }
   ],
   "src/rpg/encounters/aftercare.ts": [
@@ -30155,6 +30187,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-src-rpg-nit-1-4-barrel-organization-implementations.md"
     }
   ],
   "src/rpg/fantasies/index.ts": [
@@ -30227,6 +30263,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-src-rpg-nit-1-4-barrel-organization-implementations.md"
     }
   ],
   "src/rpg/fantasy/categories.ts": [
@@ -30319,6 +30359,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-src-rpg-nit-1-4-barrel-organization-implementations.md"
     }
   ],
   "src/rpg/integration-registry.ts": [
@@ -30465,6 +30509,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-033.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rpg-nsfw-services-add-config-level-opt-in-gate.md"
     },
     {
       "kind": "ticket",
@@ -30862,6 +30910,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-rpg-nsfw-services-add-config-level-opt-in-gate.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md"
     }
   ],
@@ -31217,6 +31269,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-src-rpg-nit-1-4-barrel-organization-implementations.md"
     }
   ],
   "src/rpg/reproduction-reputation.test.ts": [
@@ -31237,6 +31293,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-src-rpg-nit-1-4-barrel-organization-implementations.md"
     }
   ],
   "src/rpg/reproduction.test.ts": [
@@ -31265,6 +31325,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-src-rpg-nit-1-4-barrel-organization-implementations.md"
+    }
+  ],
+  "src/rpg/reproduction/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-src-rpg-nit-1-4-barrel-organization-implementations.md"
     }
   ],
   "src/rpg/reputation-nsfw/conquests.ts": [
@@ -31311,6 +31381,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-add-missing-rpg-module-barrels.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rpg-nsfw-services-add-config-level-opt-in-gate.md"
     },
     {
       "kind": "ticket",
