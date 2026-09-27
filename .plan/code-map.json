@@ -8936,6 +8936,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-output-directory-config.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-llama-swap-native-support-cpu-resident-classifier-model-reci.md"
     }
   ],
@@ -11921,7 +11925,7 @@
       "source": ".plan/tickets/TASK-019-users-encryption-secret.md"
     }
   ],
-  "src/db/migrations/021_comfy_workflows.ts": [
+  "src/db/migrations/021_": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
@@ -13211,6 +13215,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-growth.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
     },
     {
       "kind": "epic",
@@ -19953,7 +19961,17 @@
       "source": ".plan/tickets/TASK-hook-result-payload-carry-context.md"
     }
   ],
+  "src/generation/image-engine/comfyui.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
+    }
+  ],
   "src/generation/image-engine/comfyui.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-comfyui-plugin.md"
@@ -19961,6 +19979,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-2026-openwebui-comfyui-websocket-progress.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-template-parameter-validation.md"
     }
   ],
   "src/generation/image-engine/index.ts": [
@@ -19972,7 +19994,15 @@
   "src/generation/image-engine/types.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-effect-v4-adoption-evaluation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-template-parameter-validation.md"
     }
   ],
   "src/generation/image-gen-route.ts": [
@@ -20078,6 +20108,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-node-id-allocation.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-comfyui-workflow-parameterization.md"
     },
     {
@@ -20098,6 +20132,10 @@
   "src/generation/lora/discovery.test.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-lora-discovery-application.md"
     },
     {
@@ -20113,6 +20151,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-comfyui-first-class-lora-stacks.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-sampler-scheduler-discovery.md"
     },
     {
       "kind": "ticket",
@@ -20163,6 +20205,16 @@
       "source": ".plan/tickets/TASK-comfyui-first-class-chat-selection.md"
     }
   ],
+  "src/generation/lora/routes/validate.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-template-parameter-validation.md"
+    }
+  ],
   "src/generation/lora/stack.test.ts": [
     {
       "kind": "epic",
@@ -20205,6 +20257,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-vn-alpha-extraction-matting-job-for-opaque-character-images.md"
+    }
+  ],
+  "src/generation/node-id.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
     }
   ],
   "src/generation/policy-detector.ts": [
@@ -20401,6 +20459,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-recursive-self-improvement-sidecar-python-provider-for-custo.md"
+    }
+  ],
+  "src/generation/providers/comfyui-upload.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-parameter-form-renderer.md"
     }
   ],
   "src/generation/providers/comfyui.test.ts": [
@@ -20867,6 +20931,10 @@
   ],
   "src/generation/template-types.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/template-system.md"
     }
@@ -21003,6 +21071,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-template-parameter-validation.md"
     },
     {
       "kind": "ticket",
@@ -21263,6 +21335,12 @@
       "source": ".plan/tickets/TASK-reconciliation-plan.md"
     }
   ],
+  "src/image-edit/param-validation.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
+    }
+  ],
   "src/image-edit/providers/comfyui-provider.ts": [
     {
       "kind": "epic",
@@ -21298,6 +21376,14 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-sampler-scheduler-discovery.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-template-parameter-validation.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-comfyui-workflow-parameterization.md"
     }
   ],
@@ -21329,10 +21415,24 @@
       "source": ".plan/tickets/TASK-comfyui-first-class-workflow-library.md"
     }
   ],
+  "src/image-edit/templates/builtin/_helpers.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-template-parameter-validation.md"
+    }
+  ],
   "src/image-edit/templates/builtin/lora.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-comfyui-first-class-lora-stacks.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-node-id-allocation.md"
     }
   ],
   "src/image-edit/types.ts": [
@@ -21343,6 +21443,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-comfyui-first-class-admin-workflows.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-parameter-form-renderer.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-template-parameter-validation.md"
     }
   ],
   "src/import/__tests__/roundtrip.test.ts": [
@@ -25619,6 +25727,12 @@
       "source": ".plan/tickets/BUG-nsfw-runtime-config-singleton-leaks-across-tests.md"
     }
   ],
+  "src/routes/admin-templates/profiles.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
+    }
+  ],
   "src/routes/admin-templates/update.ts": [
     {
       "kind": "ticket",
@@ -25801,6 +25915,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-frontend-admin.md"
+    }
+  ],
+  "src/routes/admin/sd-templates.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
     }
   ],
   "src/routes/admin/search-providers.ts": [
@@ -34246,6 +34366,10 @@
   "src/services/server-external-manager/start-llama.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-llm-request-scheduler.md"
     },
     {
@@ -34255,6 +34379,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-llama-swap-rotation-exclusion-policy.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-output-directory-config.md"
     },
     {
       "kind": "ticket",
@@ -35887,6 +36015,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-e2ee-open-bugs.md"
+    }
+  ],
+  "src/utils/clamp.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-template-parameter-validation.md"
     }
   ],
   "src/utils/date.ts": [
