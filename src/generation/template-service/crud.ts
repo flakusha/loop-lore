@@ -13,6 +13,7 @@ import {
   type PromptTemplateRow,
   type TemplateSummary,
 } from "../template-types";
+import { validateWorkflowPayload, } from "../workflow-library/validate";
 const MODALITIES = TEMPLATE_MODALITIES;
 const DETAIL_LEVELS: readonly TemplateDetailLevel[] = ["instant", "balanced", "detailed",];
 
@@ -28,6 +29,11 @@ export interface CreateTemplateInput {
 
 /**
  * Validate a modality/detail pair and serialize the payload for storage.
+ *
+ * Every write path funnels through here — the user template API, the admin
+ * workflow surface, and pack import — so the workflow ingest gate lives here
+ * rather than in each caller. A workflow accepted by one path and rejected by
+ * another would be a worse bug than either outcome alone.
  * @param input - Create/update payload from the API layer
  * @returns serialized payload on success, or a validation error message
  */
@@ -50,6 +56,14 @@ export function serializeTemplateInput(
   const probe = parseTemplatePayload(jsonStringifyOr(input.payload,), input.modality,);
   if (!probe) {
     return { ok: false, error: `payload does not match the ${input.modality} template shape`, };
+  }
+  if (input.modality === "workflow") {
+    // The shape probe above cannot see a dead node or a parameter that has no
+    // placeholder, and either one fails later inside a generation queue.
+    const ingested = validateWorkflowPayload(input.payload,);
+    if (!ingested.ok) {
+      return { ok: false, error: ingested.errors.join("; ",), };
+    }
   }
   return { ok: true, payload: jsonStringifyOr(input.payload,), };
 }

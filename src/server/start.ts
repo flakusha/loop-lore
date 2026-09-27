@@ -113,6 +113,8 @@ export async function start() {
   await seedConfiguredContent(database, effectiveSeeding, config.auth.required,);
   const { seedChatSetupTemplates, } = await import("../chat/service");
   await seedChatSetupTemplates(database,);
+  // After user seeding: a seeded workflow needs a real owner row.
+  const { seedWorkflowLibrary, } = await import("../generation/workflow-library"); await seedWorkflowLibrary(database,);
 
   // ── Start HTTP server ──────────────────────────────────────
   const httpServer = serve({ port: config.server.port, hostname: config.server.host, fetch: handleRequest, },);
