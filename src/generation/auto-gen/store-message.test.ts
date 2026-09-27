@@ -18,6 +18,7 @@
  */
 import type { Database, } from "bun:sqlite";
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
+import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
 import { MessageRole, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
