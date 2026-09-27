@@ -35,21 +35,19 @@ afterEach(() => {
   raw.close();
 },);
 
-describe("getStoryPointBalance — get-or-create", () => {
-  test("creates a zero row when absent", async () => {
+describe("getStoryPointBalance — read-only on miss", () => {
+  test("returns a synthesized zero snapshot WITHOUT writing a row", async () => {
     const bal = await getStoryPointBalance(db, ACTOR, null,);
     expect(bal.balance,).toBe(0,);
     expect(bal.earned_total,).toBe(0,);
     expect(bal.spent_total,).toBe(0,);
     expect(bal.cap,).toBeNull();
     expect(bal.world_id,).toBeNull();
+    expect(bal.actor_id,).toBe(ACTOR,);
 
-    const row = raw.query("SELECT * FROM actor_story_points WHERE actor_id = ?",).get(ACTOR,) as {
-      actor_id: string;
-      balance: number;
-    };
-    expect(row,).toBeDefined();
-    expect(row.balance,).toBe(0,);
+    // GET-must-not-mutate: no row is created by a read.
+    const row = raw.query("SELECT * FROM actor_story_points WHERE actor_id = ?",).get(ACTOR,);
+    expect(row ?? undefined,).toBeUndefined();
   });
 
   test("returns existing row unchanged on second call", async () => {
