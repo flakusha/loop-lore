@@ -86,7 +86,14 @@ export function governanceEndpoints(prefix = "/api/v1",) {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
           const url = new URL(ctx.request.url,);
-          const target = new URL(url.searchParams.get("path",) ?? url.pathname, url.origin,);
+          // ?path= can be attacker-shaped ('?path=://'); a malformed value
+          // must degrade to the request path, never 500 the endpoint.
+          let target: URL;
+          try {
+            target = new URL(url.searchParams.get("path",) ?? url.pathname, url.origin,);
+          } catch {
+            target = url;
+          }
           const policy = policyForRoute(target.pathname,);
           const verdict = governanceRateLimiter.peek(`${userId}:${policy.name}`, policy,);
           return Response.json({
