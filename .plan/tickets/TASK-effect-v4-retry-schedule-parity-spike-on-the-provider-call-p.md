@@ -17,23 +17,40 @@
 ## Summary
 
 Spike S2. Effect's retry story is the one pillar where loop-lore is provably
-paying for duplication: retry/backoff policy is hand-rolled in **four**
-separate places. Measure whether `Effect.retry` + `Schedule` collapses them
-into one, without changing behaviour.
+Spike S2. Effect's retry story is the one pillar where loop-lore is provably
+paying for duplication: there are **seven** exponential-backoff
+implementations, and three of them are byte-identical copies of the same line.
+Measure whether `Effect.retry` + `Schedule` collapses the server-side ones into
+one, without changing behaviour.
 
 ## The duplication under test
 
-| Site | What it does |
-| ---- | ------------ |
-| `src/generation/providers/circuit-breaker.ts` | Circuit-breaker state machine (~190 lines) |
-| `src/generation/providers/call-with-failover.ts` | Provider failover loop |
-| `src/generation/providers/anthropic/http.ts` | Per-provider exponential backoff + jitter |
-| `src/chat/proactive/timing.ts:59` | `backoffMs(baseMs, count)` — `base * 2^count` |
+**Four server-side retry loops** — the real target:
+
+| Site | Expression |
+| ---- | ---------- |
+| `src/generation/providers/anthropic/http.ts:133` | `Math.min(1000 * 2 ** attempt, 10_000,)` |
+| `src/generation/providers/ollama-native/http.ts:180` | `Math.min(1000 * 2 ** attempt, 10_000,)` — byte-identical |
+| `src/generation/providers/openai-compatible/http.ts:206` | `Math.min(1000 * 2 ** attempt, 10_000,)` — byte-identical |
+| `src/utils/safe-fetch/retry.ts:42` | `Math.min(baseDelay * 2 ** attempt, 10_000,)` — same shape, configurable base |
+
+**Three sites that are NOT retry policies** — out of scope, do not "fix" them
+as part of this spike:
+
+| Site | What it actually is |
+| ---- | ------------------- |
+| `src/generation/providers/circuit-breaker.ts:134` | breaker cooldown: `baseCooldownMs * Math.pow(2, failures - threshold)` |
+| `src/chat/proactive/timing.ts:59` | message-cadence scheduler: `baseMs * 2^count` |
+| `src/frontend/alpine/tunnel-protocol.ts:43` | browser reconnect backoff — different runtime, cannot share a server helper |
+
+Also adjacent but not a duplicate: `src/generation/providers/call-with-failover.ts`
+performs *failover between providers*, not backoff math.
 
 Note up front: a **circuit breaker is not a retry policy.** Effect's `Schedule`
-covers backoff, jitter, and retry limits; it does not ship a breaker. If the
-breaker survives the spike, that alone disqualifies "delete the hand-rolled
-stack" and downgrades any verdict to `ADOPT-SUBSET` at best.
+covers backoff, jitter, and retry limits; a probe of the v4 RC's top-level
+exports found nothing matching /breaker|circuit/. So `circuit-breaker.ts`
+survives this spike regardless, which caps the achievable verdict at
+`ADOPT-SUBSET` unless the breaker proves redundant.
 
 ## Method
 
@@ -41,10 +58,15 @@ stack" and downgrades any verdict to `ADOPT-SUBSET` at best.
    candidate — it already owns backoff).
 2. Build the `Effect.retry` + `Schedule.exponential` equivalent beside it in
    `.tmp/`, against the same fake transport.
-3. Measure: net LOC delta; wall-clock latency on the happy path; and parity on
+3. **Use `Effect.runPromise`, not `Effect.runSync`.** Probed: `runSync` over a
+   *delayed* schedule (`Schedule.exponential`) throws `AsyncFiberError`. The
+   delay-free `Schedule.recurs` form that the v4 docs use in their own `runSync`
+   examples works fine — so a harness written from the docs alone will pass
+   while the real backoff shape is untested. This is a trap; do not fall in it.
+4. Measure: net LOC delta; wall-clock latency on the happy path; and parity on
    the failure path — same attempt count, same backoff curve, same jitter
    envelope, same error surfaced to the caller.
-4. Record the numbers in the epic's *Spike Results* table.
+5. Record the numbers in the epic's *Spike Results* table.
 
 ## Acceptance Criteria
 

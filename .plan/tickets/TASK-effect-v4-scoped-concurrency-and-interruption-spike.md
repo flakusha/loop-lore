@@ -26,14 +26,32 @@ rewrite — not whether the LOC is smaller.
 
 | Current | Effect v4 candidate |
 | ------- | ------------------- |
-| `src/llm/concurrency-limiter.ts` — async semaphore | `Effect.all(..., { concurrency: n })` |
-| `try/finally` cleanup on cancellation-prone paths (e.g. `src/async/offload.ts`) | `Effect.forkScoped` + scoped finalizers, interruption on scope exit |
-| No structured cancellation story for background work | `Effect.interrupt` / fiber interruption |
+| `src/llm/concurrency-limiter.ts` — async semaphore (~125 lines) | `Effect.all(..., { concurrency: n })` |
+| `try/finally` cleanup on cancellation-prone paths (e.g. `src/async/offload.ts`) | `Effect.forkScoped` + `Effect.acquireRelease` + `Effect.scoped` |
+| No structured cancellation story for background work | scope-exit interruption (probed: works, ~21 ms) |
 
 **The bar is cleanup correctness, not LOC.** A semaphore plus `try/finally` is
 ~125 lines and works. Effect wins only if scoped interruption removes a class of
 leaked-resource or orphaned-task bug that the semaphore cannot express. If the
 spike cannot name such a bug in the current code, the verdict is `REJECT`.
+
+## Known trap: `forkScoped` can silently skip cleanup
+
+Probed against the v4 RC with `Effect.acquireRelease`:
+
+| Scenario | Finalizers run |
+| -------- | -------------- |
+| fork, scope exits immediately | **0** — cleanup silently skipped |
+| fork, fiber runs, then scope exits | 1 |
+| interrupt a 10 s fiber via scope exit | 1, in ~21 ms |
+
+Interruption is real and fast. But a naive "fork and let the scope close"
+migration **drops a release that never ran, with no error**. This is the
+counter-risk to the pillar's premise and must be tested explicitly: a migration
+that introduces a silent cleanup skip is worse than the semaphore it replaced.
+
+API note: `Effect.interrupt` is an *object* in v4, not a callable. Use scope
+exit to interrupt; do not write `Effect.interrupt(...)`.
 
 ## Method
 
@@ -42,14 +60,17 @@ spike cannot name such a bug in the current code, the verdict is `REJECT`.
    request, an aborted stream, a shutdown mid-flight. Record what leaks or
    hangs today.
 3. Build the fork-scoped equivalent in `.tmp/` and run the same cancellation.
-4. Measure: LOC delta, plus whether the leak/hang from step 2 is actually gone.
-5. Record the numbers in the epic's *Spike Results* table.
+4. Test the **scope-exits-first** case from the trap table above and record
+   whether the finalizer ran. The RC skipped it silently; confirm or refute.
+5. Measure: LOC delta, plus whether the leak/hang from step 2 is actually gone.
+6. Record the numbers in the epic's *Spike Results* table.
 
 ## Acceptance Criteria
 
 - [ ] A concrete cancellation/leak case is reproduced against the current semaphore path, or the ticket records that none could be reproduced
 - [ ] The same case is run against the fork-scoped version and its behaviour recorded
 - [ ] Cleanup correctness, not LOC, is the stated basis of the verdict
+- [ ] The scope-exits-first cleanup-skip case is explicitly tested and its result recorded (a silent finalizer skip is disqualifying)
 - [ ] Net LOC delta recorded in the epic's *Spike Results* row S3
 - [ ] A written verdict of `ADOPT` / `ADOPT-SUBSET` / `REJECT` is recorded; a `REJECT` must name what ships instead
 - [ ] No `src/` file is modified — this is a measurement ticket
