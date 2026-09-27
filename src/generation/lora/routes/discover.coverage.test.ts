@@ -61,15 +61,18 @@ interface Stub {
 }
 
 /**
- * Start a real loopback HTTP stub.
+ * Start a real loopback HTTP stub on a kernel-assigned port.
+ *
+ * Always ephemeral. These stubs must not reserve a fixed host-global port:
+ * concurrent worktrees on one machine then collide, and the collision is
+ * invisible in isolation — the suite only fails under parallel runs.
  * @param handler - Produces the response for a request path
- * @param port - Fixed port to bind (0 = kernel-assigned)
  * @returns The running stub
  */
-function startStub(handler: (path: string,) => Response, port = 0,): Stub {
+function startStub(handler: (path: string,) => Response,): Stub {
   const paths: string[] = [];
   const server = Bun.serve({
-    port,
+    port: 0,
     fetch: (req,) => {
       const path = new URL(req.url,).pathname;
       paths.push(path,);
@@ -234,35 +237,20 @@ describe("POST /api/lora/discover — single backend", () => {
     }
   });
 
-  test("comfyui falls back to the documented default localhost URL", async () => {
-    // Binds the port `resolveBackendUrls` defaults to (8188 must be free —
-    // no other suite binds it), so a hit proves the fallback rather than
-    // merely observing a connection error.
-    const stub = startStub(() => Response.json(COMFY_OBJECT_INFO,), 8188,);
+  test("resolves the comfyui baseUrl from the comfyui provider config", async () => {
+    // Config-driven (not the body `baseUrl` override above) so the resolver
+    // read is actually exercised. The default 8188/9010 fallback is asserted
+    // directly in routes.test.ts — proving it here required reserving those
+    // host-global ports, which collide whenever two worktrees test at once.
+    const stub = startStub(() => Response.json(COMFY_OBJECT_INFO,));
     try {
-      const app = authedApp({} as Config,);
+      const app = authedApp(configWithSd([provider("comfyui", stub.origin,),],),);
       const res = await app.handle(post("/api/lora/discover", { backend: "comfyui", forceRefresh: true, },),);
       expect(res.status,).toBe(200,);
       const body = await res.json() as DiscoverBody;
       expect(body.ok,).toBe(true,);
       expect(body.models?.map((m,) => m.name),).toEqual(["style/anime", "detail/detailer.v1",],);
       expect(stub.paths,).toEqual(["/object_info",],);
-    } finally {
-      await stub.stop();
-    }
-  });
-
-  test("sd-server falls back to the documented default localhost URL", async () => {
-    // Same trick as the comfyui default: bind 9010 (must be free).
-    const stub = startStub(() => Response.json(SDCPP_MODELS,), 9010,);
-    try {
-      const app = authedApp({} as Config,);
-      const res = await app.handle(post("/api/lora/discover", { backend: "sd-server", forceRefresh: true, },),);
-      expect(res.status,).toBe(200,);
-      const body = await res.json() as DiscoverBody;
-      expect(body.ok,).toBe(true,);
-      expect(body.models?.map((m,) => m.name),).toEqual(["photo",],);
-      expect(stub.paths,).toEqual(["/sd-api/v1/models",],);
     } finally {
       await stub.stop();
     }
