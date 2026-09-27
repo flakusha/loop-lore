@@ -19,6 +19,7 @@
 import type { Kysely, } from "kysely";
 import type { NsfwEncounterType, } from "../../../db/enums";
 import type { DB, } from "../../../db/schema";
+import { assertNsfwConfigEnabled, } from "../../../nsfw/capability-gate";
 import {
   createEncounter as createEncounterDispatch,
   deleteEncounter as deleteEncounterDispatch,
@@ -56,6 +57,7 @@ export class EncounterService {
    * @param opts
    */
   async createEncounter(opts: CreateEncounterOpts,): Promise<NsfwEncounter> {
+    assertNsfwConfigEnabled();
     return createEncounterDispatch(this.db, opts,);
   }
 
@@ -74,6 +76,7 @@ export class EncounterService {
    * @param encounterId
    */
   async advancePhase(encounterId: string,): Promise<AdvancePhaseResult> {
+    assertNsfwConfigEnabled();
     return advancePhaseDispatch(this.db, encounterId,);
   }
 
@@ -96,6 +99,7 @@ export class EncounterService {
    * @param encounterId
    */
   async deleteEncounter(encounterId: string,): Promise<boolean> {
+    assertNsfwConfigEnabled();
     return deleteEncounterDispatch(this.db, encounterId,);
   }
 }

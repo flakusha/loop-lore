@@ -21,6 +21,7 @@ import type { Kysely, } from "kysely";
 import type { SeductionSkillCategory, } from "../../../db/enums";
 import type { ContentIntensity, } from "../../../db/enums-character/nsfw";
 import type { DB, } from "../../../db/schema";
+import { assertNsfwConfigEnabled, } from "../../../nsfw/capability-gate";
 import {
   addModifier as addModifierDispatch,
   decayArousal as decayArousalDispatch,
@@ -83,6 +84,7 @@ export class SeductionService {
       Pick<DesireProfile, "turnOns" | "turnOffs" | "fetishes" | "hardLimits" | "desireDecayRate" | "desireBuildupRate">
     >,
   ): Promise<boolean> {
+    assertNsfwConfigEnabled();
     return updateDesireProfileDispatch(this.db, actorId, updates,);
   }
 
@@ -115,6 +117,7 @@ export class SeductionService {
     name: string,
     amount: number,
   ): Promise<{ leveled: boolean; newLevel: number }> {
+    assertNsfwConfigEnabled();
     return awardXpDispatch(this.db, actorId, category, name, amount,);
   }
 
@@ -157,6 +160,7 @@ export class SeductionService {
     source?: string,
     intensityTier?: ContentIntensity,
   ): Promise<number> {
+    assertNsfwConfigEnabled();
     return modifyArousalDispatch(this.db, actorId, delta, worldId, source, intensityTier,);
   }
 
@@ -166,6 +170,7 @@ export class SeductionService {
    * @param worldId
    */
   async decayArousal(actorId: string, worldId: string | null = null,): Promise<number> {
+    assertNsfwConfigEnabled();
     return decayArousalDispatch(this.db, actorId, worldId,);
   }
 
@@ -180,6 +185,7 @@ export class SeductionService {
     modifier: Omit<ArousalModifier, "remainingTurns"> & { duration: number },
     worldId: string | null = null,
   ): Promise<void> {
+    assertNsfwConfigEnabled();
     return addModifierDispatch(this.db, actorId, modifier, worldId,);
   }
 
@@ -190,6 +196,7 @@ export class SeductionService {
    * @param opts
    */
   async attemptSeduction(opts: SeductionAttemptOpts,): Promise<SeductionResult> {
+    assertNsfwConfigEnabled();
     return attemptSeductionDispatch(this.db, opts,);
   }
 }
