@@ -3,7 +3,7 @@
 
 # BUG: Notifications SSE frames never parse: read shipped as string, schema expects number
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 

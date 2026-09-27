@@ -3,7 +3,7 @@
 
 # BUG: Async orphan-spill retention sweep silently deleted by worktree fold
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 

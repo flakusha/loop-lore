@@ -3,7 +3,7 @@
 
 # BUG: insertUnique probe misreports skip as inserted when conflict target includes id
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 
