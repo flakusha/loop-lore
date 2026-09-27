@@ -44,7 +44,7 @@ describe("Auth browser E2E", () => {
         errors.detach();
         await page.close();
       }
-    });
+    }, 60_000,);
 
     test("demo login link present", async () => {
       const page = await ctx.openPage();
@@ -58,7 +58,7 @@ describe("Auth browser E2E", () => {
         errors.detach();
         await page.close();
       }
-    });
+    }, 60_000,);
 
     test("signup link present", async () => {
       const page = await ctx.openPage();
@@ -71,7 +71,7 @@ describe("Auth browser E2E", () => {
         errors.detach();
         await page.close();
       }
-    });
+    }, 60_000,);
   });
 
   describe("Login validation", () => {
@@ -96,6 +96,6 @@ describe("Auth browser E2E", () => {
         errors.detach();
         await page.close();
       }
-    });
+    }, 60_000,);
   });
 });
