@@ -107,7 +107,10 @@ export async function encryptAssetBlob(
   return {
     encrypted: true,
     keyId,
-    data: ((): Buffer => { const r = safeFromString(encryptedJson, "utf8",); return r.ok ? r.buffer : Buffer.alloc(0); })(),
+    data: ((): Buffer => {
+      const r = safeFromString(encryptedJson, "utf8",);
+      return r.ok ? r.buffer : Buffer.alloc(0,);
+    })(),
   };
 }
 
