@@ -35,7 +35,10 @@ import { handleRun, handleTemplates, imageEditRoutes, } from "./routes";
 import { templateRegistry, } from "./template-registry";
 import type { ImageEditBackend, WorkflowTemplate, } from "./types";
 
-const BASE = "http://localhost/api/image-edit";
+// Exercises the prefix the app actually mounts (src/routes/v1/content-surface.ts),
+// not the `/api` default, so the shipped surface stays covered.
+const V1_PREFIX = "/api/v1";
+const BASE = `http://localhost${V1_PREFIX}/image-edit`;
 
 /** Template summary returned by GET /templates (build function stripped). */
 interface TemplateSummary {
@@ -89,13 +92,13 @@ function requiredParamsFor(templateId: string,): Record<string, string> {
 }
 
 function buildAnonApp() {
-  return new Elysia().use(imageEditRoutes({ database: db, },),);
+  return new Elysia().use(imageEditRoutes({ database: db, }, V1_PREFIX,),);
 }
 
 function buildAuthedApp() {
   return new Elysia()
     .derive(() => ({ userId: ownerId, userRole: "user", }))
-    .use(imageEditRoutes({ database: db, },),);
+    .use(imageEditRoutes({ database: db, }, V1_PREFIX,),);
 }
 
 beforeAll(async () => {
@@ -173,7 +176,7 @@ afterAll(async () => {
   await db.destroy();
 },);
 
-describe("GET /api/image-edit/templates", () => {
+describe("GET /api/v1/image-edit/templates", () => {
   test("lists builtin template summaries with the build function stripped", async () => {
     const res = await app.handle(new Request(`${BASE}/templates`,),);
     expect(res.status,).toBe(200,);
@@ -211,7 +214,7 @@ describe("GET /api/image-edit/templates", () => {
   });
 });
 
-describe("GET /api/image-edit/nodes", () => {
+describe("GET /api/v1/image-edit/nodes", () => {
   test("answers 200 with a discovery array when ComfyUI is unreachable", async () => {
     const res = await app.handle(new Request(`${BASE}/nodes`,),);
     expect(res.status,).toBe(200,);
@@ -221,7 +224,7 @@ describe("GET /api/image-edit/nodes", () => {
   });
 });
 
-describe("GET /api/image-edit/capabilities", () => {
+describe("GET /api/v1/image-edit/capabilities", () => {
   test("reports both backends, marking the unreachable one unhealthy", async () => {
     const res = await app.handle(new Request(`${BASE}/capabilities`,),);
     expect(res.status,).toBe(200,);
@@ -241,7 +244,7 @@ describe("GET /api/image-edit/capabilities", () => {
   });
 });
 
-describe("GET /api/image-edit/health", () => {
+describe("GET /api/v1/image-edit/health", () => {
   test("reports both backends unhealthy", async () => {
     const res = await app.handle(new Request(`${BASE}/health`,),);
     expect(res.status,).toBe(200,);
@@ -252,7 +255,7 @@ describe("GET /api/image-edit/health", () => {
   });
 });
 
-describe("POST /api/image-edit/run — authz gates (handleImageGeneration parity)", () => {
+describe("POST /api/v1/image-edit/run — authz gates (handleImageGeneration parity)", () => {
   test("401 without authentication (no derive on the mount)", async () => {
     const res = await app.handle(
       jsonRequest(`${BASE}/run`, "POST", { template_id: "txt2img", backend: "comfyui", params: {}, },),
@@ -297,7 +300,7 @@ describe("POST /api/image-edit/run — authz gates (handleImageGeneration parity
   });
 });
 
-describe("POST /api/image-edit/run", () => {
+describe("POST /api/v1/image-edit/run", () => {
   test("400 on an unparseable JSON body", async () => {
     const res = await authedApp.handle(
       new Request(`${BASE}/run`, {
