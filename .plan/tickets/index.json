@@ -3308,7 +3308,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-insertunique-discriminator-relies-on-adapter-specific-row-co.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "git_issue": "955b06b"
   },
   "BUG-IRC-INTEGRATION-UNSCOPED-AS-GROUP-CHAT-ONLY-IN-SOCIAL-HUB-AD": {
@@ -4647,7 +4647,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-register-non-atomic-user-actor-key-insert.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "git_issue": "ae83683"
   },
   "BUG-REGISTER-PLUGINS-150-REFERENCES-UNDEFINED-CHATSECTIONSROUTES": {
@@ -4678,7 +4678,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-register-rate-limiter-consumes-on-username-collision-retries.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "git_issue": "d161a7e"
   },
   "BUG-REMOTE-ACTOR-DISCOVERY-WEBFINGER-RESOLVE-HOST-META-ABSENT": {
