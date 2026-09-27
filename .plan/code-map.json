@@ -14524,6 +14524,10 @@
   "src/frontend/alpine/chat-generations.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-frontend-generation-completed-telemetry-never-reaches-the-se.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-stale-sse-stream-writes-render-into-wrong-chat.md"
     },
     {
@@ -16035,6 +16039,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-tui.md"
+    }
+  ],
+
+  "src/frontend/alpine/transports/telemetry.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-frontend-generation-completed-telemetry-never-reaches-the-se.md"
     }
   ],
   "src/frontend/alpine/travel-panel.ts": [
@@ -24984,6 +24995,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-analytics-per-user-routes-filter-telemetry-events-by-raw-ids.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-generation-completed-latencyms-hardcoded-to-0-on-two-emit-pa.md"
     },
     {
@@ -24999,6 +25014,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-analytics-observability.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-analytics-per-user-routes-filter-telemetry-events-by-raw-ids.md"
     },
     {
       "kind": "ticket",
@@ -28672,6 +28691,14 @@
     }
   ],
   "src/routes/telemetry.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-analytics-per-user-routes-filter-telemetry-events-by-raw-ids.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-frontend-generation-completed-telemetry-never-reaches-the-se.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-telemetry-errors-leaks-raw-event-data.md"
@@ -33874,6 +33901,10 @@
   "src/telemetry/service.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-analytics-per-user-routes-filter-telemetry-events-by-raw-ids.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-telemetry-errors-leaks-raw-event-data.md"
     },
     {
@@ -35232,6 +35263,10 @@
     }
   ],
   "src/validation/schemas/telemetry.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-frontend-generation-completed-telemetry-never-reaches-the-se.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-telemetry-errors-leaks-raw-event-data.md"

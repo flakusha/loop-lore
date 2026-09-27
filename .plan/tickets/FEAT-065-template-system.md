@@ -15,7 +15,8 @@
 **Owner**: FEAT-065 (Prompt Library)
 **Scope**: LLM, Image, Video, Audio generation templates
 
----
+
+git issue: dc95659
 
 ## Current State (verified against code 2026-09-27)
 
