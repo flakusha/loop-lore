@@ -271,6 +271,21 @@ describe("POST /api/auth/register", () => {
     expect(body,).toContain("Too many registration attempts",);
   });
 
+  test("failed attempts do not consume the register budget (BUG-register-peek-record-split-admits-unlimited-concurrent-regis)", async () => {
+    const app = makeApp(makeDb(), makeConfig(),);
+
+    // Burn 3 attempts on validation failures — each refunds its reservation.
+    for (let i = 0; i < 3; i++) {
+      const bad = makeRequest("username=ab&password=secret123",);
+      await app.handle(bad,);
+    }
+
+    // A valid registration still goes through (budget not consumed by refunds).
+    const ok = await app.handle(makeRequest("username=freshuser&password=secret123",),);
+    expect(ok.status,).toBe(200,);
+    expect(ok.headers.get("HX-Redirect",),).toBe("/views/chat",);
+  });
+
   test("successful registration returns 200 with HX-Redirect", async () => {
     const db = makeDb();
     const app = makeApp(db, makeConfig(),);
