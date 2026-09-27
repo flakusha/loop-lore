@@ -3,7 +3,7 @@
 
 # BUG: Chat format wrapper corrupts content via String.replace replacement patterns
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 

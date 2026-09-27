@@ -3,7 +3,7 @@
 
 # BUG: Achievement claimRewards double-credit race and lost reward on crash
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 

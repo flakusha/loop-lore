@@ -3,7 +3,7 @@
 
 # BUG: Rate-limit status endpoint 500s on hostile ?path= query
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 
