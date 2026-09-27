@@ -46,21 +46,21 @@ describe("handleImport", () => {
     const req = new Request("http://localhost/api/import", {
       method: "POST",
       headers: { "content-type": "application/json", },
-      body: JSON.stringify({}),
+      body: JSON.stringify({},),
     },);
     const res = await handleImport(req, db, "",);
     expect(res.status,).toBe(401,);
-  },);
+  });
 
   test("returns 400 when content-type is not multipart", async () => {
     const req = new Request("http://localhost/api/import", {
       method: "POST",
       headers: { "content-type": "application/json", },
-      body: JSON.stringify({}),
+      body: JSON.stringify({},),
     },);
     const res = await handleImport(req, db, userId,);
     expect(res.status,).toBe(400,);
-  },);
+  });
 
   test("returns 400 when multipart body lacks file field", async () => {
     const fd = new FormData();
@@ -71,7 +71,7 @@ describe("handleImport", () => {
     },);
     const res = await handleImport(req, db, userId,);
     expect(res.status,).toBe(400,);
-  },);
+  });
 
   test("imports a minimal JSON character card (standard path, no charx, no uploadDir)", async () => {
     const card = JSON.stringify({
@@ -101,11 +101,10 @@ describe("handleImport", () => {
     fd.append("file", new File([card,], "test.json", { type: "application/json", },),);
     const req = new Request("http://localhost/api/import", { method: "POST", body: fd, },);
     const res = await handleImport(req, db, userId,);
-    const body = (await res.json()) as { id?: string; error?: string; message?: string };
     // Either 201 (full import) or 422 (validation rejects the minimal card);
     // both paths exercise the safeFromUint8Array + standard-branch code.
-    expect(res.status,).toBeOneOf([201, 422,]);
-  },);
+    expect(res.status,).toBeOneOf([201, 422,],);
+  });
 
   test("imports a minimal CHARX archive (charx branch)", async () => {
     const card = {
@@ -125,13 +124,13 @@ describe("handleImport", () => {
       alternate_greetings: [],
       extensions: {},
     } as unknown as Parameters<typeof import("../../characters/charx").createCharx>[0];
-    const buf = await createCharx(card, [{ path: "portrait.png", data: makeMinimalPng(2, 2), },],);
+    const buf = await createCharx(card, [{ path: "portrait.png", data: makeMinimalPng(2, 2,), },],);
     const fd = new FormData();
     fd.append("file", new File([buf,], "smoke.charx", { type: "application/octet-stream", },),);
     const req = new Request("http://localhost/api/import", { method: "POST", body: fd, },);
     const res = await handleImport(req, db, userId, uploadDir,);
     expect([201, 422,],).toContain(res.status,);
-  },);
+  });
 
   test("rejects malformed JSON via handleImportExportError (returns handled 400)", async () => {
     const fd = new FormData();
@@ -140,5 +139,5 @@ describe("handleImport", () => {
     const res = await handleImport(req, db, userId,);
     // Either handled (400) or generic (400) — both paths land at 400
     expect(res.status,).toBe(400,);
-  },);
+  });
 });
