@@ -139,43 +139,43 @@ async function handleRegister(
   let userResult: "inserted" | "skipped";
   try {
     userResult = await database.transaction().execute(async (trx,) => {
-    const result = await insertUnique(
-      trx,
-      "users",
-      {
-        id: userId,
-        username,
-        display_name: username,
-        password_hash: passwordHash,
-        role: UserRole.User,
-        status: UserStatus.Active,
-        settings: "{}",
-      },
-      ["username",] as const,
-    );
-    if (result === "skipped") { return "skipped" as const; }
+      const result = await insertUnique(
+        trx,
+        "users",
+        {
+          id: userId,
+          username,
+          display_name: username,
+          password_hash: passwordHash,
+          role: UserRole.User,
+          status: UserStatus.Active,
+          settings: "{}",
+        },
+        ["username",] as const,
+      );
+      if (result === "skipped") { return "skipped" as const; }
 
-    await trx
-      .insertInto("actors",)
-      .values({
-        id: userId,
-        actor_type: "user",
-        display_name: username,
-        user_id: userId,
-        owner_id: userId,
-        agent_type: "none",
-        settings: "{}",
-        import_spec: "raw",
-        data_source_format: "json",
-        data_raw: null,
-        format_version: 0,
-      },)
-      .execute();
+      await trx
+        .insertInto("actors",)
+        .values({
+          id: userId,
+          actor_type: "user",
+          display_name: username,
+          user_id: userId,
+          owner_id: userId,
+          agent_type: "none",
+          settings: "{}",
+          import_spec: "raw",
+          data_source_format: "json",
+          data_raw: null,
+          format_version: 0,
+        },)
+        .execute();
 
-    if (smk) {
-      await ensureActorKey({ database: trx, actorId: userId, smk, },);
-    }
-    return "inserted" as const;
+      if (smk) {
+        await ensureActorKey({ database: trx, actorId: userId, smk, },);
+      }
+      return "inserted" as const;
     },);
   } catch (error) {
     // Transactional rollback must not cost the IP a budget slot.
