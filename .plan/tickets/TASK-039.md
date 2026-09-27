@@ -11,7 +11,7 @@
 **Context:** Gameplay-layer aphrodisiacs + heat-cycle chemistry.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: Done — pre-existing implementation; chemistry module shipped in commits cc6cb7c67 / a88211f72
+**Status**: Done
 **Priority**: medium
 **Labels**: nsfw, rpg, game-mechanics
 **Epic**: epic-nsfw-game-mechanics

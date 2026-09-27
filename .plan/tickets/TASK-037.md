@@ -11,7 +11,7 @@
 **Context:** Gameplay-layer fantasy discovery + fulfillment.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: Done — pre-existing implementation; fantasies module shipped in commits ad04ae4e7 / 2b227bde8 / a88211f72
+**Status**: Done
 **Priority**: medium
 **Labels**: nsfw, rpg, game-mechanics
 **Epic**: epic-nsfw-game-mechanics
