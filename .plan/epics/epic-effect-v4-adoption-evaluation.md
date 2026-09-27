@@ -28,7 +28,7 @@ Effect's pitch is that a program's failure modes, dependencies, and lifecycle
 should be visible to the compiler. loop-lore already hand-rolls a large part
 of that promise:
 
-- exponential backoff + jitter in the provider HTTP path
+- **seven** independent exponential-backoff implementations, three of them byte-identical
 - a circuit breaker + provider failover
 - a concurrency semaphore
 - a structured logger with child loggers and bindings
@@ -39,8 +39,8 @@ of that promise:
 So the adoption question is *not* "do we want typed errors" — the answer is
 mostly already yes, in the local idiom. The question is narrow: **does Effect
 replace something we currently pay for, at a cost we can afford?** Three
-specific costs are on the table: duplicated retry policy, the manual wiring
-bag, and the absence of request/operation spans.
+specific costs are on the table: the triplicated backoff math, the manual
+wiring bag, and the absence of request/operation spans.
 
 ## Critical constraint: v4 is not released
 
@@ -60,6 +60,50 @@ account for churn, and must never gate a load-bearing path (validation, HTTP,
 DB access, config) on an RC dependency. This constraint is the reason the
 compatibility spike is a hard gate and runs first.
 
+## v4 API actuality (probed 2026-09-26)
+
+A throwaway probe ran against `effect@4.0.0-rc.117` under Bun 1.4.2, in an
+isolated `.tmp/effect-probe/` package. It records what is actually true of v4
+today so the spikes do not spend their time rediscovering it. **The v4 API is
+not the v3 API** — several v3 names are gone, and the repo's own typechecker
+rejects them at compile time.
+
+| Name | v4 reality | Consequence |
+| ---- | ---------- | ----------- |
+| `Effect.fork` | `undefined` (removed) | Use `Effect.forkScoped` |
+| `Context.Tag` | `undefined` (removed) | Use `Context.Service` |
+| `Tag.asEffect()` | `undefined` — the `Service` class *is* the accessor; `.key` is a string | Calling it throws `TypeError` |
+| `Effect.interrupt` | an `object` (namespace), not callable | Not a direct call site |
+| `Effect.void` | an `object`, not a function | Cannot be used as a pipe operator |
+| `Effect.zipRight` | `undefined` (removed) | Use `Effect.andThen` |
+| `Effect.forkScoped`, `Effect.withSpan`, `Effect.all`, `Effect.runPromise`, `Schedule.exponential` / `recurs` / `spaced` / `jittered`, `Layer`, `Context.Service` | all present | — |
+
+Two behavioural findings that change how a harness must be written:
+
+1. **`Effect.runSync` cannot run a delayed retry.** Over
+   `Effect.retry(Schedule.exponential(...))` it throws
+   `AsyncFiberError: An asynchronous Effect was executed with Effect.runSync`.
+   The delay-free `Schedule.recurs(3)` form — which is what the v4 docs use in
+   their own `runSync` examples — does work. **Any backoff parity harness must
+   use `Effect.runPromise`.** Probed: `runPromise` + a delayed schedule
+   resolved after 3 attempts in ~15 ms.
+2. **`forkScoped` is not fire-and-forget, and silently skips cleanup if the
+   scope exits first.** Measured with `Effect.acquireRelease`:
+
+   | Scenario | Finalizers run |
+   | -------- | -------------- |
+   | fork, scope exits immediately | **0** — cleanup silently skipped |
+   | fork, fiber runs, then scope exits | 1 |
+   | interrupt a 10 s fiber via scope exit | 1, in ~21 ms |
+
+   Interruption is real and fast. But a naive "fork and let the scope close"
+   migration can drop a release that never ran. S3 must test for that case
+   explicitly — it is the counter-risk to the pillar's whole premise.
+
+Not verified by the probe: whether the package typechecks cleanly under the
+repo's own tsgo strict config with `skipLibCheck` still off. That is exactly
+what S1 measures, and remains open.
+
 ## Pillar-by-pillar assessment (verified 2026-09-26)
 
 Effect's onboarding page advertises ten out-of-the-box capabilities. Assessed
@@ -68,11 +112,11 @@ against what loop-lore actually ships:
 | Effect pillar | loop-lore today | Verdict |
 | ------------- | ---------------- | ------- |
 | Typed errors | Ad-hoc `{ ok: false, error }` unions, scoped to a few modules (e.g. `src/generation/image-engine/types.ts`, `src/chat/service/ownership.ts:141`) | **Low value.** The shape exists; Effect would add ceremony, not capability. |
-| Retries & scheduling | Hand-rolled in **four** places: `src/generation/providers/circuit-breaker.ts`, `src/generation/providers/call-with-failover.ts`, per-provider backoff in `src/generation/providers/anthropic/http.ts`, `src/chat/proactive/timing.ts:59` | **Real duplication.** The only pillar where hand-rolling is clearly costing us. Spike it. |
+| Retries & scheduling | **Seven** exponential-backoff implementations. Four are server-side retry loops, and three are **byte-identical**: `src/generation/providers/anthropic/http.ts:133`, `src/generation/providers/ollama-native/http.ts:180`, `src/generation/providers/openai-compatible/http.ts:206` all read `Math.min(1000 * 2 ** attempt, 10_000,)`; `src/utils/safe-fetch/retry.ts:42` repeats it with a configurable base. The other three are *not* retry policies: a breaker cooldown (`src/generation/providers/circuit-breaker.ts:134`), a message-cadence scheduler (`src/chat/proactive/timing.ts:59`), a browser reconnect backoff (`src/frontend/alpine/tunnel-protocol.ts:43`). | **Real duplication, and worse than "some".** Copy-paste triplication of one expression across three providers is a live maintenance hazard, not a style preference. Spike it. `call-with-failover.ts` does *failover*, not backoff math — adjacent, not a duplicate. |
 | Structured concurrency | `src/llm/concurrency-limiter.ts` (async semaphore) | **Worth a spike.** The semaphore is ~125 lines; scoped interruption is genuinely absent. |
 | Resource safety | Ad-hoc `try/finally` (e.g. `src/async/offload.ts`) | **Low-medium.** Improvement is real but bounded and rarely reached. |
-| Dependency injection | `RegisterPluginsOpts` (`src/app/register-plugins.ts:110-115`) — a 3-field bag `{ database, config, asyncStore }` threaded into ~100 route factories and registered onto `Elysia<any>` | **Real, but contested.** The `any` escape hatch and the route-chain type-instantiation blowout are the actual symptoms; Effect `Layer` must beat Elysia's own plugin model to be worth it. Spike it. |
-| Observability (spans) | `src/logger` with `child()` + bindings; `/metrics` Prometheus exposition in `src/routes/metrics.ts`; **no span concept anywhere in `src/`** | **Genuinely missing — but Effect is probably the wrong fix.** The cheap answer is the OpenTelemetry API composed onto the existing logger, and that evaluation already exists (see *Related*, not duplicated here). |
+| Dependency injection | `RegisterPluginsOpts` (`src/app/register-plugins.ts:110-115`) — a 3-field bag `{ database, config, asyncStore }` threaded into ~100 route factories and registered onto `Elysia<any>` (`register-plugins.ts:124`). The repo *chose* this: `src/elysia-app.ts:14-15` says it "Uses closure injection (not .state()/.decorate()) to avoid Elysia's complex type inference issues when merging plugins." | **Real, and not redundant.** Elysia's own DI mechanism was rejected here for type-inference reasons, so a type-checked service layer is a genuine alternative, not a duplicate container. Spike it. |
+| Observability (spans) | `src/logger` with `child()` + bindings; `/metrics` Prometheus exposition in `src/routes/metrics.ts`; **no span concept in any `src/**/*.ts`** (grepped `withSpan`, `startSpan`, `tracing`, `otel`; only near-miss is `src/logger/types.ts:34`, a `requestId?: string` commented "Request ID for tracing") | **Genuinely missing — but Effect is probably the wrong fix.** The cheap answer is the OpenTelemetry API composed onto the existing logger, and that evaluation already exists (see *Related*, not duplicated here). |
 | Streaming | — | **Skip.** No proven need. |
 | Schema validation | Elysia `t` (TypeBox) in `src/validation/schemas.ts`, plus Kysely-generated DB schemas | **Never.** TypeBox is load-bearing for Elysia request validation; swapping it is a rewrite with no offsetting gain. |
 | Configuration | `ConfigSchema` + `applyEnvironmentOverrides` (`src/config/load/env.ts`) + secret redaction (`src/admin/config-keys.ts`) | **Skip.** Already done, and it is a domain-specific schema, not an env reader. |
