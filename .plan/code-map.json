@@ -13375,6 +13375,13 @@
       "source": ".plan/tickets/BUG-test-run-id-uses-date-now-collision-risk-under-parallel.md"
     }
   ],
+
+  "src/db/upsert-helpers.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-insertunique-discriminator-relies-on-adapter-specific-row-co.md"
+    }
+  ],
   "src/db/upsert-helpers.ts": [
     {
       "kind": "ticket",
@@ -22263,6 +22270,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-rate-limit-sliding-window-expiry-uses-cutoff-off-by-one-reta.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-register-rate-limiter-consumes-on-username-collision-retries.md"
     }
   ],
   "src/middleware/rate-limit.ts": [
@@ -22297,6 +22308,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-rate-limit-sliding-window-expiry-uses-cutoff-off-by-one-reta.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-register-rate-limiter-consumes-on-username-collision-retries.md"
     },
     {
       "kind": "ticket",
@@ -25073,6 +25088,13 @@
       "source": ".plan/epics/epic-ambient-music-sfx.md"
     }
   ],
+
+  "src/routes/auth.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-register-non-atomic-user-actor-key-insert.md"
+    }
+  ],
   "src/routes/auth.ts": [
     {
       "kind": "epic",
@@ -25127,6 +25149,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-429-responses-omit-retry-after-and-x-ratelimit-headers.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-register-rate-limiter-consumes-on-username-collision-retries.md"
     },
     {
       "kind": "ticket",
@@ -28151,6 +28177,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-rag-search-robots-quota.md"
+    }
+  ],
+
+  "src/routes/register.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-register-non-atomic-user-actor-key-insert.md"
     }
   ],
   "src/routes/requests/status.test.ts": [
