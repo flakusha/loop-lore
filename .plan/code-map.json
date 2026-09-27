@@ -111,6 +111,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-adopt-bun-randomuuidv7-for-time-sortable-ids.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-per-model-per-provider-cost-attribution-for-llm-execution-st.md"
     }
   ],
   "src/admin/model-roles.test.ts": [
@@ -467,6 +471,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-api-telemetry.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-generation-completed-latencyms-hardcoded-to-0-on-two-emit-pa.md"
     },
     {
       "kind": "ticket",
@@ -11301,6 +11309,10 @@
       "source": ".plan/tickets/TASK-archival-workflow.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-per-model-per-provider-cost-attribution-for-llm-execution-st.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/achievements.md"
     },
@@ -11849,6 +11861,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-memory-history-search-bind-message-chain-reconstructable-con.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-per-model-per-provider-cost-attribution-for-llm-execution-st.md"
     },
     {
       "kind": "spec",
@@ -14238,11 +14254,19 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-admin-llm-execution-analytics-per-model-per-provider-rollups.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-epic11-admin-settings-reconciliation.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-setup-wizard-import-system-config-from-yaml-toml.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-per-model-per-provider-cost-attribution-for-llm-execution-st.md"
     },
     {
       "kind": "ticket",
@@ -18216,6 +18240,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-generation-failed-drops-model-provider-context.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-audit-follow-up-triggerautogeneration-catch-path-untested.md"
     }
   ],
@@ -18239,6 +18267,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-prompt-override-bypass-on-reply.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-generation-completed-latencyms-hardcoded-to-0-on-two-emit-pa.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-generation-failed-drops-model-provider-context.md"
     },
     {
       "kind": "ticket",
@@ -18428,6 +18464,10 @@
   "src/generation/auto-gen/handle-generation-error.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-generation-failed-drops-model-provider-context.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-telemetry-errors-leaks-raw-event-data.md"
     }
   ],
@@ -18455,10 +18495,20 @@
       "source": ".plan/tickets/BUG-hallucination-guard-isknownentity-stubs-unused-falls-through.md"
     }
   ],
+  "src/generation/auto-gen/post-store.happy.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-generation-completed-latencyms-hardcoded-to-0-on-two-emit-pa.md"
+    }
+  ],
   "src/generation/auto-gen/post-store.test.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-bug-auto-generation-applies-mood-delta-to-hook-payload-actor.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-generation-completed-latencyms-hardcoded-to-0-on-two-emit-pa.md"
     },
     {
       "kind": "ticket",
@@ -18489,6 +18539,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-emotion-mood-hook-payload-missing-actor-chat.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-generation-completed-latencyms-hardcoded-to-0-on-two-emit-pa.md"
     },
     {
       "kind": "ticket",
@@ -18932,10 +18986,18 @@
   "src/generation/generate-route/non-stream.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-generation-completed-latencyms-hardcoded-to-0-on-two-emit-pa.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-fix-cross-file-mock-module-leaks-under-non-isolated-and-cove.md"
     }
   ],
   "src/generation/generate-route/non-stream.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-generation-completed-latencyms-hardcoded-to-0-on-two-emit-pa.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-tool-call-result-no-frontend-rendering.md"
@@ -18956,10 +19018,18 @@
   "src/generation/generate-route/stream-to-client.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-generation-completed-latencyms-hardcoded-to-0-on-two-emit-pa.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-stream-cancel-leaves-attempt-stuck-processing-forever-no-cle.md"
     }
   ],
   "src/generation/generate-route/stream-to-client.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-generation-completed-latencyms-hardcoded-to-0-on-two-emit-pa.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
@@ -24717,6 +24787,10 @@
       "source": ".plan/tickets/BUG-admin-auxtelemetry-leaks-userid-chatid.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-admin-llm-execution-analytics-per-model-per-provider-rollups.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/observability.md"
     }
@@ -24886,13 +24960,25 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-generation-completed-latencyms-hardcoded-to-0-on-two-emit-pa.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-analytics-observability.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-per-model-per-provider-cost-attribution-for-llm-execution-st.md"
     }
   ],
   "src/routes/analytics.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-analytics-observability.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-generation-completed-latencyms-hardcoded-to-0-on-two-emit-pa.md"
     },
     {
       "kind": "ticket",
@@ -24912,7 +24998,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-admin-llm-execution-analytics-per-model-per-provider-rollups.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-analytics-observability.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-per-model-per-provider-cost-attribution-for-llm-execution-st.md"
     },
     {
       "kind": "spec",
@@ -26423,6 +26517,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-060.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-per-model-per-provider-cost-attribution-for-llm-execution-st.md"
     }
   ],
   "src/routes/generation/third-party.ts": [
@@ -28539,6 +28637,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-telemetry-purge-unbounded-days.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-admin-llm-execution-analytics-per-model-per-provider-rollups.md"
     }
   ],
   "src/routes/telemetry.ts": [
@@ -28565,6 +28667,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-error-monitoring-alerting.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-admin-llm-execution-analytics-per-model-per-provider-rollups.md"
     },
     {
       "kind": "ticket",
