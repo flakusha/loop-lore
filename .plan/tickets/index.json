@@ -2143,6 +2143,19 @@
     "source": ".plan/tickets/BUG-diff-scoped-coverage-gate-floors-whole-modules-on-partial-lc.md",
     "status": "done"
   },
+  "BUG-DOCS-SITE-BUILD-EMITS-DANGLING-VP-ICONS-CSS-LINK-FAILING-EVE": {
+    "hash": "9699dbb",
+    "git_issue": "9699dbb",
+    "extid": "BUG-DOCS-SITE-BUILD-EMITS-DANGLING-VP-ICONS-CSS-LINK-FAILING-EVE",
+    "type": "BUG",
+    "title": "Docs site build emits dangling vp-icons.css link, failing every docs-mermaid browser e2e page",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-docs-site-build-emits-dangling-vp-icons-css-link-failing-eve.md",
+    "status": "Not Started"
+  },
   "BUG-DUAL-VN-CHOICES-ROUTE-REGISTRATION-SHADOWS-GUARDED-ROUTE": {
     "hash": "df61a36",
     "git_issue": "df61a36",
@@ -9754,7 +9767,7 @@
       "character-style"
     ],
     "source": ".plan/tickets/epic-lora-discovery-application.md",
-    "status": "in_progress",
+    "status": "done",
     "git_issue": "165a6a3"
   },
   "EPIC-LORE-KNOWLEDGE": {
@@ -20907,7 +20920,7 @@
     "tags": [],
     "source": ".plan/tickets/TASK-branch-workflow-dev-stg-master.md",
     "git_issue": "3c7394e",
-    "status": "[OK] Documented in `docs/meta/workflow.md` (Branch tiers section)"
+    "status": "done"
   },
   "TASK-BROWSER-CHATFLOW-UPLOAD-DEFERRED": {
     "hash": "e1430f3",
