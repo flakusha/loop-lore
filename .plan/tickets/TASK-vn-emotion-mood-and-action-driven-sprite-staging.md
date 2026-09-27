@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Complete (2026-09-10) — frontend half: directive schema + derivation/application wired to renderer state; backend LLM/action extractors deferred
+**Status:** Done
+**Status Note:** (2026-09-10) — frontend half: directive schema + derivation/application wired to renderer state; backend LLM/action extractors deferred
 **Priority:** high
 **Epic:** Emotion Avatar Message Binding; Visual Novel Mode
 **Effort:** Medium

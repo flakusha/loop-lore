@@ -3,7 +3,7 @@
 
 # TASK: Item Inventory View Page
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 

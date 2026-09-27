@@ -3,7 +3,7 @@
 
 # TASK: Hot-path index sweep — append-only migration 019
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Small (one migration, 16 CREATE INDEX statements)
 **Summary:** Append 16 hot-path indexes that the DBAudit (2026-09-25) flagged as missing. Purely additive `CREATE INDEX` statements; no rewrites, no column changes, no renumber. Append-only policy per `src/db/migrations/README.md`.

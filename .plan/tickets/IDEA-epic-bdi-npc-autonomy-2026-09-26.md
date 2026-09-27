@@ -3,7 +3,7 @@
 
 # IDEA-epic-bdi-npc-autonomy-2026-09-26: NPC BDI Goal-Pursuit Loop (matrix gaps G27/G28/G32)
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium (P6+ per matrix, but 🔴 High future severity)
 **Effort:** Large
 **Type:** Research
@@ -18,7 +18,7 @@
 
 ### Status / Priority / Effort / Type
 
-- Status: 📝 Draft
+- Status: Not Started
 - Priority: Medium (matrix 🟡 Medium severity; P6+ deferred under 0.1.0)
 - Effort: Large (BDI runtime + scheduler + integration with traits/mood/memory/time)
 - Type: Feature Epic

@@ -3,7 +3,7 @@
 
 # TASK: Character Interaction Outcomes
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Character Interaction Outcomes

@@ -8,7 +8,7 @@
 
 # BUG: Alpine init crashes on chat view — store children/visibility undefined
 
-**Status:** ✅ done
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Resolution:** Commit 0c39d4f3 (`fix(alpine): default chat-view store fields`). Safe defaults added to the `$store.chat` registration (children: [], visibility: "visible") and a defensive guard inside `chatLifecycle.init()` ensures the same shape even when the store is recreated.

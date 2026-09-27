@@ -9,7 +9,7 @@
 
 
 **Priority:** Medium
-**Status:** open
+**Status:** Not Started
 **Epic:** Epic Battle & Action Systems
 **Tags:** battle, templates, actions, pre-configured, combat, ux
 **Effort:** Med

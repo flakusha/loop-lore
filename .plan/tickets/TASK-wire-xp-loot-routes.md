@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done (2026-08-14, `51a7bc01`) — XP/loot wired to HTTP (`src/routes/rpg/xp-loot.ts` + tests)
+**Status:** Done
+**Status Note:** 2026-08-14, `51a7bc01`) — XP/loot wired to HTTP (`src/routes/rpg/xp-loot.ts` + tests
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-rpg-mechanics

@@ -10,7 +10,8 @@
 
 
 **Priority:** Medium
-**Status:** ✅ Done (closed via git issue)
+**Status:** Done
+**Status Note:** closed via git issue
 **Epic:** epic-memory-systems-three-tier
 **Tags:** memory, distillation, dreams, recall, consolidation
 

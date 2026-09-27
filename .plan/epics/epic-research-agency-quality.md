@@ -3,7 +3,7 @@
 
 # EPIC-RESEARCH-AGENCY-QUALITY: Player Agency Quality Telemetry & Coordination
 
-**Status:** Draft
+**Status:** Not Started
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Research epic (drives implementation tickets)

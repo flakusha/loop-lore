@@ -3,7 +3,7 @@
 
 # TASK-agency-coordination-priority: Autonomy scheduler defers on pending player intent
 
-**Status:** Draft
+**Status:** Not Started
 **Priority:** P1 (within EPIC-RESEARCH-AGENCY-QUALITY)
 **Effort:** 1 day
 **Parent epic:** `epic-research-agency-quality.md`

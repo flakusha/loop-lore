@@ -3,7 +3,7 @@
 
 # TASK: Add eslint-plugin-import (no-cycle, order)
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Small
 **Summary:** Add eslint-plugin-import (no-cycle, order)

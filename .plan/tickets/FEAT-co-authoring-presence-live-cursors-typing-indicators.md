@@ -3,7 +3,7 @@
 
 # FEAT: Co-authoring Presence (live cursors, typing indicators)
 
-**Status:** done
+**Status:** Done
 **Priority:** low
 **Effort:** Large
 **Summary:** Co-authoring Presence (live cursors, typing indicators)

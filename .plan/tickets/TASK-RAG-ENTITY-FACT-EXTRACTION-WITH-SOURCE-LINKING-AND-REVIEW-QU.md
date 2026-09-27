@@ -3,7 +3,7 @@
 
 # TASK: RAG entity-fact extraction with source linking and review queue
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 
 Imported from git issue 3573bcb.

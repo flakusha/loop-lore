@@ -3,7 +3,7 @@
 
 # TASK-2026-openwebui-thinking-block-render: Collapsible Thinking/Reasoning Block Rendering
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Labels:** frontend, streaming, thinking

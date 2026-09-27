@@ -3,7 +3,7 @@
 
 # TASK-matrix-cross-mech-g46: Interrupt semantics — stream abort, truncate-to-last-observed, never-bill-undelivered
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Type:** Task

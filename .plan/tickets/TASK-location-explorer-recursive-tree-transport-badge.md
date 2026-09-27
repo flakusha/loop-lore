@@ -3,7 +3,7 @@
 
 # TASK: Location explorer recursive tree + transport badge
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-fractal-locations

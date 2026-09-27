@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Open
+**Status:** Not Started
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-lora-discovery-application

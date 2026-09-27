@@ -3,7 +3,7 @@
 
 # TASK: NPC Trade Inventory And Loot Service
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-stealth-crime

@@ -11,7 +11,7 @@
 **Epic:** World & Locations
 **Priority:** High
 **Effort:** Large
-**Status:** open
+**Status:** Not Started
 
 ## Summary
 
@@ -78,7 +78,7 @@ interface WorldState {
   id: string;
   locationId: string;
   type: WorldType;
-  status: WorldStatus;
+  status: open
   environment: WorldEnvironment;
   npcs: WorldNPC[];
   items: WorldItem[];
@@ -105,7 +105,7 @@ interface WorldNPC {
   id: string;
   name: string;
   type: string;
-  status: "idle" | "hostile" | "friendly" | "neutral";
+  status: open
   location: string;
   dialogue: string;
   inventory: string[];
@@ -115,7 +115,7 @@ interface WorldItem {
   id: string;
   name: string;
   type: string;
-  status: "available" | "taken" | "hidden" | "locked";
+  status: open
   location: string;
   quantity: number;
   condition: string;
@@ -125,7 +125,7 @@ interface WorldEvent {
   id: string;
   name: string;
   type: string;
-  status: "pending" | "active" | "completed" | "failed";
+  status: open
   trigger: string;
   effects: string[];
   duration: number;

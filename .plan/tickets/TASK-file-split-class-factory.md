@@ -3,7 +3,7 @@
 
 # TASK-file-split-class-factory: Convert class/stateful services to interface-merged factories (thisL)
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +11,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: open
+**Status**: Not Started
 **Priority**: medium
 **Labels**: refactor, factory, interface-merge, thisL
 **Assignee**:

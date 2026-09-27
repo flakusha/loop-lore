@@ -3,14 +3,15 @@
 
 # TASK-030: Character Creator Prerogative & Licensing
 
-**Status:** ✅ Done — feature shipped by prior commits (no new code authored in this batch)
+**Status:** Done
+**Status Note:** feature shipped by prior commits (no new code authored in this batch)
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Character creator picks license (ARR/CC-BY/CC-BY-SA/CC0/Custom); license stored + enforced.
 **Context:** License selector in creator; export/share enforce attribution.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: ✅ Done
+**Status**: Done
 **Priority**: medium
 **Effort**: Medium
 **Labels**: character, creator, licensing, legal

@@ -3,7 +3,7 @@
 
 # TASK: Autonomy Config Surface
 
-**Status:** open
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium (layering API + UI affordances + pacing presets)
 **Summary:** Provide the layered configuration surface for actor autonomy pacing: world default → chat override → per-actor override, with pacing presets (serene / organic / brisk), an unlimited stress preset gated to dev builds, and UI affordances in chat + world settings pages.

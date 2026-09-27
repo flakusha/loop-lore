@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done (2026-08-16) — mechanism shipped in `in-chat-asset-preview` worktree
+**Status:** Done
+**Status Note:** (2026-08-16) — mechanism shipped in `in-chat-asset-preview` worktree
 **Priority:** Medium
 **Effort:** Small
 **Epic:** epic-asset-support-expansion

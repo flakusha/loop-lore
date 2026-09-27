@@ -3,7 +3,7 @@
 
 # TASK: HTTP-expose agency earn and status alongside spend
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-agency-story-points

@@ -6,7 +6,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** ✅ Done
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Infrastructure Epic

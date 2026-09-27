@@ -3,7 +3,7 @@
 
 # FEAT: Memory/Knowledge Graph Visualizer
 
-**Status:** done
+**Status:** Done
 **Priority:** low
 **Effort:** Large
 **Summary:** Memory/Knowledge Graph Visualizer

@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done — review queue shipped (service + routes + Review tab) AND user Flag button/dialog shipped (message context menu + Detailed action row → POST /api/nsfw/moderation/flags). Reporter identity hardened (session-derived, not body).
+**Status:** Done
+**Status Note:** review queue shipped (service + routes + Review tab) AND user Flag button/dialog shipped (message context menu + Detailed action row → POST /api/nsfw/moderation/flags). Reporter identity hardened (session-derived, not body).
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-frontend-admin

@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done (2026-08-14) — GM-config authoring, story-mode frontend, GM-guided creation, per-actor multi-LLM (model + provider) shipped; full aspirational story chat view delegated to a separate agent (cross-review)
+**Status:** Done
+**Status Note:** 2026-08-14) — GM-config authoring, story-mode frontend, GM-guided creation, per-actor multi-LLM (model + provider) shipped; full aspirational story chat view delegated to a separate agent (cross-review
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-assistant-gm-flows

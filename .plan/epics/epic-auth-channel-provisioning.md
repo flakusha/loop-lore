@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** 📝 Planned (this bundle)
+**Status:** Not Started
+**Status Note:** this bundle
 **Priority:** High (security-critical provisioning)
 **Effort:** High
 **Type:** Feature Epic

@@ -10,7 +10,8 @@
 
 
 **Priority:** High
-**Status:** ✅ Done — Backend Complete + Tested — Injection Live. Closed 2026-08-03.
+**Status:** Done
+**Status Note:** Backend Complete + Tested — Injection Live. Closed 2026-08-03.
 **Epic:** epic-gm-shadow-notes
 **Tags:** gm, whitenotes, story-steering, narrative, assistant, system-message
 

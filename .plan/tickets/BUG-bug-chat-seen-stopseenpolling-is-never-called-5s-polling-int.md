@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Fixed (11c88484 chat-switch + fix-review-quickwins destroy)
+**Status:** Done
+**Status Note:** 11c88484 chat-switch + fix-review-quickwins destroy
 **Priority:** low
 **Effort:** Medium
 

@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** done
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-weather-environment

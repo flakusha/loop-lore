@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 Partial (commit 85657ffb on dev, 2026-08-26; middleware not wired into route chain)
+**Status:** In Progress
+**Status Note:** commit 85657ffb on dev, 2026-08-26; middleware not wired into route chain
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-middleware-request-lifecycle

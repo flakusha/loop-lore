@@ -3,7 +3,7 @@
 
 # FEAT: Classifier model support complementary to AUX pipeline (Laya/Jev)
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Large
 **Summary:** Dedicated classifier models (Laya/Jev-class) as a complement to the generative AUX pipeline — classifier ModelRole value, routing with generative fallback, fine-tune-vs-Jev decision per label set.

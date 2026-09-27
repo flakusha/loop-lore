@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 Open
+**Status:** Not Started
 **Priority:** High
 **Effort:** Small
 **Type:** Task

@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done — fixed on dev by 7190e37df + 3b95687df (2026-09-14), verified live + 36 consumer tests green
+**Status:** Done
+**Status Note:** fixed on dev by 7190e37df + 3b95687df (2026-09-14), verified live + 36 consumer tests green
 **Priority:** medium
 **Effort:** Tiny
 

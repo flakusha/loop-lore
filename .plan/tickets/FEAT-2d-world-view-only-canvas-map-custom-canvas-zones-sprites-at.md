@@ -3,7 +3,7 @@
 
 # FEAT: 2D world: view-only canvas map (custom canvas, zones + sprites at snapshot positions)
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Large
 **Epic:** epic-2d-sprite-world

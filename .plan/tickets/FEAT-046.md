@@ -1,6 +1,6 @@
 ---
 title: "FEAT-046: Branch navigation API"
-status: open
+status: Not Started
 priority: medium
 labels: [feature, chat, api]
 epic: epic-conversation-branching
@@ -8,7 +8,7 @@ related: [FEAT-045, FEAT-047]
 ---
 
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

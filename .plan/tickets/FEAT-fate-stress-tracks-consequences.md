@@ -3,7 +3,7 @@
 
 # FEAT: FATE Stress Tracks + Consequences
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** low
 **Effort:** Medium
 **Summary:** FATE Stress Tracks + Consequences

@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Resolved (2026-08-25, worktree `fix-ratelimiter-global-bucket`)
+**Status:** Done
+**Status Note:** 2026-08-25, worktree `fix-ratelimiter-global-bucket`
 **Priority:** critical
 **Effort:** Medium
 

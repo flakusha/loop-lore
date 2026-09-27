@@ -3,14 +3,14 @@
 
 # TASK-035: NSFW Body & Physical Systems
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Large
 **Summary:** Body/physical on BodyBuild + SizeCategory via shared StatusEffect.
 **Context:** Gameplay-layer physique; stamina/endurance mechanics.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: open
+**Status**: Not Started
 **Priority**: medium
 **Labels**: nsfw, rpg, game-mechanics
 **Epic**: epic-nsfw-game-mechanics

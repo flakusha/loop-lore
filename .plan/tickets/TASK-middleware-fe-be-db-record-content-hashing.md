@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 Partial (commit 2053bfe3 — helper + schema migration; service-layer hook + X-Record-Hash emission deferred to follow-up)
+**Status:** In Progress
+**Status Note:** commit 2053bfe3 — helper + schema migration; service-layer hook + X-Record-Hash emission deferred to follow-up
 **Priority:** high
 **Effort:** medium
 **Epic:** epic-content-hashing-distributed-integrity

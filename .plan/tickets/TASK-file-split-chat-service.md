@@ -3,7 +3,7 @@
 
 # TASK-file-split-chat-service: Split `src/chat/service.ts` (1830L)
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +11,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: open
+**Status**: Not Started
 **Priority**: high
 **Labels**: refactor, file-split, god-module
 **Assignee**:

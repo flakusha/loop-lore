@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium-high (HIGH-adjacent ReDoS in `b465b08`)
 **Effort:** Medium
 **Type:** Bug-fix batch

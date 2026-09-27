@@ -3,7 +3,7 @@
 
 # TASK: EventBus + ToolRegistry Core Wiring
 
-**Status:** done
+**Status:** Done
 **Priority:** high
 **Effort:** Large
 **Summary:** EventBus + ToolRegistry Core Wiring

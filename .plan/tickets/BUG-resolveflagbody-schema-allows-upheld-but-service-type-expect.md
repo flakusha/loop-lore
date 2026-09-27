@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done (fix landed on branch `fix-nsfw-resolveflagbody-status-enum`; awaiting merge)
+**Status:** In Progress
+**Status Note:** fix landed on branch `fix-nsfw-resolveflagbody-status-enum`; awaiting merge
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-nsfw-moderation-priority

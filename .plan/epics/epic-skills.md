@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** 🟢 Code+tests+schema done (migration 036); UNWIRED
+**Status:** In Progress
+**Status Note:** Code+tests+schema done (migration 036); UNWIRED
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic

@@ -3,7 +3,8 @@
 
 # EPIC-050: 050: Plugin Extension Points
 
-**Status:** Not Started → closed (duplicate)
+**Status:** Done
+**Status Note:** duplicate
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +12,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: duplicate-of-epic-plugin-extension-points
+**Status:** Wontfix
+**Status Note:** duplicate-of-epic-plugin-extension-points
 **Priority**: medium
 **Labels**: epic
 **Epic**: (if applicable)

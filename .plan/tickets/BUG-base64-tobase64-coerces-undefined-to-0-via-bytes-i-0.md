@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done (fixed by f69d0229)
+**Status:** Done
+**Status Note:** fixed by f69d0229
 **Priority:** low
 **Effort:** Medium
 

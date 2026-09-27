@@ -3,7 +3,7 @@
 
 # TASK: RAG detect-cleanup-enhance pipeline over ingested chunks
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 
 Imported from git issue 2cd2dc0.

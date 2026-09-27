@@ -4,7 +4,7 @@
 
 # TASK: Bestiary Bestiary Ecology Pressure Model
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-enemies-monsters

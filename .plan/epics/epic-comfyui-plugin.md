@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** 🟡 Partial — ComfyUI integration shipped across **two** surfaces (generation image-engine + image-edit template system). Builtin TS templates, node discovery (`/object_info`), config-driven workflows, and `/api/v1/image-edit/*` routes (mounted via v1 content barrel) exist. **Blocking gaps:** `handleRun` has no auth (IDOR write open); `submitWorkflow` omits `client_id` (no WebSocket progress, ambiguous multi-client scoping). (Corrected 2026-09-25: `ComfyUIEditProvider.execute` DOES download + `createAsset`/`linkAsset` — the old 'dangling links' entry was stale; re-verify + pin via regression test.) GGUF model loading + FLUX.1 Kontext / Qwen Edit templates pending. **First-class program (branch `comfyui-first-class`):** standalone auto-start + `client_id`/WS + route authz + VN un-defer + sprite/matting templates + recipe matrix + queue scoping — see Linked Tasks.
+**Status:** In Progress
+**Status Note:** ComfyUI integration shipped across **two** surfaces (generation image-engine + image-edit template system). Builtin TS templates, node discovery (`/object_info`), config-driven workflows, and `/api/v1/image-edit/*` routes (mounted via v1 content barrel) exist. **Blocking gaps:** `handleRun` has no auth (IDOR write open); `submitWorkflow` omits `client_id` (no WebSocket progress, ambiguous multi-client scoping). (Corrected 2026-09-25: `ComfyUIEditProvider.execute` DOES download + `createAsset`/`linkAsset` — the old 'dangling links' entry was stale; re-verify + pin via regression test.) GGUF model loading + FLUX.1 Kontext / Qwen Edit templates pending. **First-class program (branch `comfyui-first-class`):** standalone auto-start + `client_id`/WS + route authz + VN un-defer + sprite/matting templates + recipe matrix + queue scoping — see Linked Tasks.
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic

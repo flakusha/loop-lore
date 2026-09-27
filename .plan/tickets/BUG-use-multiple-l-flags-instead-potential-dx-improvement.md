@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done (fixed: comma lists + single-edit application)
+**Status:** Done
+**Status Note:** fixed: comma lists + single-edit application
 **Priority:** low
 **Effort:** Medium
 

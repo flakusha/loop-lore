@@ -3,7 +3,7 @@
 
 # async-store tests share fixed OFFLOAD_DIR with runtime and concurrent tests
 
-**Status:** open
+**Status:** Not Started
 **Priority:** high
 **Effort:** Small
 **Type:** Bug

@@ -4,7 +4,7 @@
 
 # TASK: Bestiary Bestiary Admin GM Force Spawn And Cull
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-enemies-monsters

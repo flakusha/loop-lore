@@ -3,7 +3,7 @@
 
 # TASK-epic-use-case-agentic-workspace-clarification-2026-09-26: clarify epic-use-case-agentic-workspace.md ownership
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Small
 **Type:** Task

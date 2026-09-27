@@ -8,7 +8,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** Proposed
+**Status:** Not Started
 **Priority:** High — messenger parity gap
 **Tags:** chat, messenger, forward, drafts, scheduled, reminders
 

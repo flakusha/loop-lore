@@ -3,7 +3,8 @@
 
 # Template System — Unified Architecture Spec
 
-**Status:** 🟡 In Progress — LLM + image template foundations shipped (spec reconciled with code 2026-09-13); DB-backed user templates + unified registry future
+**Status:** In Progress
+**Status Note:** LLM + image template foundations shipped (spec reconciled with code 2026-09-13); DB-backed user templates + unified registry future
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Unified prompt template system across LLM/Image/Video/Audio modalities — shared `TemplateRegistry` interface, DB-backed user templates, per-modality registries, model→template auto-matching.

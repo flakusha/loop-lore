@@ -3,7 +3,7 @@
 
 # TASK: Classifier model survey: message/intent, memory ranking, emotion, toxicity
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Survey dedicated classifier/reranker models per workflow currently grounded in main/aux generative LLMs; deliverable is a per-workflow recommendation table filed as follow-up FEATs.

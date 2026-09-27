@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Complete (2026-09-01 — dev cdd0b6c7)
+**Status:** Done
+**Status Note:** 2026-09-01 — dev cdd0b6c7
 **Priority:** low
 **Effort:** low
 **Epic:** epic-assistant-generation-extensions

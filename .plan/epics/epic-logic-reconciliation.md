@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** 🟡 Permanently Ongoing
+**Status:** In Progress
+**Status Note:** Permanently Ongoing
 **Priority:** High
 **Epic ID:** EPIC-2026-36
 **Effort:** Continuous

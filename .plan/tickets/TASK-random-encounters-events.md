@@ -10,7 +10,7 @@
 
 
 **Priority:** Medium
-**Status:** open
+**Status:** Not Started
 **Epic:** epic-world-event-system
 **Tags:** random, encounter, event, generation, ambient, dynamic
 

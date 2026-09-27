@@ -3,7 +3,7 @@
 
 # TASK: RAG detect-cleanup-enhance pipeline over ingested chunks
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-rag-extract-link

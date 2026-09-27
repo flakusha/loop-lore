@@ -9,7 +9,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Implemented (2026-09-10 — landed via final-form squash `e3b8edbf3`, verified on dev)
+**Status:** Done
+**Status Note:** 2026-09-10 — landed via final-form squash `e3b8edbf3`, verified on dev
 **Priority:** High
 **Epic:** `epic-timeline-system.md`
 **Type:** Migration

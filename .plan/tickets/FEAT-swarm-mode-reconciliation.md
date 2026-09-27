@@ -3,7 +3,7 @@
 
 # FEAT-swarm-mode-reconciliation: Swarm-mode CRDT multi-instance reconciliation
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

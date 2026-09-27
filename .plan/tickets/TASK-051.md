@@ -3,14 +3,14 @@
 
 # TASK-051: Item Durability System
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Item durability tracking — wear on use, repair paths, breakage thresholds.
 **Context:** Mirrors crafting_station_instances durability contract.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: open
+**Status**: Not Started
 **Priority**: medium
 **Labels**: items, rpg, durability
 **Epic**: epic-items

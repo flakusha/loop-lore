@@ -3,7 +3,7 @@
 
 # BUG: assistant intent regexes hijack normal chat messages
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium
 

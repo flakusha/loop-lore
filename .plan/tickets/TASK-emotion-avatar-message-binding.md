@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done — migration + schema done, per-message avatar binding shipped (cbf8ec95). Closed 2026-08-03.
+**Status:** Done
+**Status Note:** migration + schema done, per-message avatar binding shipped (cbf8ec95). Closed 2026-08-03.
 **Priority:** High
 **Effort:** Medium
 **Epic:** epic-emotion-avatar-message-binding

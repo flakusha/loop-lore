@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Resolved (verified via commit 359a3d3; bookkeeping)
+**Status:** Done
+**Status Note:** verified via commit 359a3d3; bookkeeping
 **Severity:** high
 **Priority:** high
 **Effort:** medium

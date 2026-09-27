@@ -3,7 +3,7 @@
 
 # FEAT: Smart-regen Transforms (shorter/longer/funnier/darker)
 
-**Status:** done
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 **Summary:** Smart-regen Transforms (shorter/longer/funnier/darker)

@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Resolved
+**Status:** Done
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-code-quality

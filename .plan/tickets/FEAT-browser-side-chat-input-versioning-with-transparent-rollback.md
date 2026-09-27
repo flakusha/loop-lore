@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done
+**Status:** Done
 **Epic:** epic-conversation-branching
 **Priority:** medium
 **Effort:** Medium

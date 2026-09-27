@@ -3,7 +3,7 @@
 
 # TASK: dedup top jscpd clone clusters
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** low
 **Effort:** Medium
 

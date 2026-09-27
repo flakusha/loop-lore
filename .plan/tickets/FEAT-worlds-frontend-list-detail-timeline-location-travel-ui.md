@@ -3,7 +3,7 @@
 
 # FEAT: Worlds Frontend (list/detail, timeline, location travel UI)
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Large
 **Summary:** Worlds Frontend (list/detail, timeline, location travel UI)

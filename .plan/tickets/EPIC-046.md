@@ -3,7 +3,8 @@
 
 # EPIC-046: 046: External Integrations: Provider Expansion
 
-**Status:** Not Started → closed (duplicate)
+**Status:** Done
+**Status Note:** duplicate
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +12,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: duplicate-of-epic-platform-integrations
+**Status:** Wontfix
+**Status Note:** duplicate-of-epic-platform-integrations
 **Priority**: medium
 **Labels**: epic
 **Epic**: (if applicable)

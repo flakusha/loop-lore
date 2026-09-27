@@ -3,7 +3,7 @@
 
 # TASK: Location Graph Editor And Discovery Gating
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-world-travel-time

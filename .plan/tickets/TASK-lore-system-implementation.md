@@ -3,7 +3,7 @@
 
 # TASK: Lore System Implementation
 
-**Status:** done
+**Status:** Done
 **Priority:** high
 **Effort:** Large
 **Summary:** Lore System Implementation

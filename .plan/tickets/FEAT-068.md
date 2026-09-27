@@ -1,6 +1,6 @@
 ---
 title: "FEAT-068: Token budget advisor"
-status: done
+status: Done
 priority: medium
 labels: [feature, prompt-system, frontend]
 epic: epic-chat-context-optimization
@@ -8,7 +8,7 @@ related: [FEAT-067, FEAT-055, FEAT-059]
 ---
 
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

@@ -3,7 +3,7 @@
 
 # TASK: Platform Support (Multi-OS / Mobile / Browser matrix)
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Large
 **Summary:** Platform Support (Multi-OS / Mobile / Browser matrix)

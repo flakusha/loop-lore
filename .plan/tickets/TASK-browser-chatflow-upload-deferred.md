@@ -6,7 +6,7 @@
 **Summary:** chat-flow upload-linkage browser test deferred; underlying product defect needs a bundle-level fix.
 **Context:** chat-flow upload test fails identically on dev and the views worktree; deferring the test rather than fixing the bundle defect here.
 **Acceptance Criteria:** one canonical bundle owns chatState init; init reaches loadChats; deferred test un-skipped and green.
-**Status:** open
+**Status:** Not Started
 **Priority:** P2
 **Effort:** Medium
 **Type:** Bug

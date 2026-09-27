@@ -3,14 +3,14 @@
 
 # TASK-031: Character vs World Data Separation
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Type-level boundary between character-owned and world-owned fields; APIs reject cross-boundary writes.
 **Context:** Schema split + migration + API guards.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: open
+**Status**: Not Started
 **Priority**: medium
 **Effort**: Medium
 **Labels**: character, world, data-model, architecture

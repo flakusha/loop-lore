@@ -3,7 +3,7 @@
 
 # IDEA-epic-npc-to-npc-social-2026-09-26: NPC-to-NPC Social Simulation (matrix gaps G29/G30)
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium (matrix 🟡 Medium severity, P6+ deferred)
 **Effort:** Medium
 **Type:** Research
@@ -18,7 +18,7 @@
 
 ### Status / Priority / Effort / Type
 
-- Status: 📝 Draft
+- Status: Not Started
 - Priority: Medium (matrix 🟡 Medium severity; P6+ deferred under 0.1.0)
 - Effort: Medium (runtime + relationship bridge + memory writer + catch-up surfacing)
 - Type: Feature Epic

@@ -3,7 +3,7 @@
 
 # TASK: NPC BDI Planning Loop
 
-**Status:** done
+**Status:** Done
 **Priority:** Medium (P6+ deferred)
 **Effort:** High
 **Epic:** epic-agency-story-points, NPC/Actor System

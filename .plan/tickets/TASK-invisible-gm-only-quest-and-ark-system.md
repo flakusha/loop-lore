@@ -3,7 +3,7 @@
 
 # TASK: Invisible GM Only Quest And Ark System
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-gm-shadow-notes

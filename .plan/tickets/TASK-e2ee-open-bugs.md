@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done (closed 2026-09-15; all three sub-bugs already resolved on dev)
+**Status:** Done
+**Status Note:** closed 2026-09-15; all three sub-bugs already resolved on dev
 **Priority:** High
 **Effort:** Small
 **Type:** BUG

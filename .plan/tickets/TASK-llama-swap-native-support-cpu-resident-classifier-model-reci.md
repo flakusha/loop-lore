@@ -3,7 +3,7 @@
 
 # TASK: llama-swap native support: CPU-resident classifier model recipe
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Small
 **Summary:** CPU-resident classifier model recipe in llama-swap config that coexists with GPU LLM rotation without eviction.

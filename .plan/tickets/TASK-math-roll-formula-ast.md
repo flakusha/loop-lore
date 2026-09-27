@@ -3,7 +3,7 @@
 
 # TASK-math-roll-formula-ast — Generic formula AST for roll composition
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Define a generic roll-formula AST (`Formula = Constant | DiceRef | Modifier | AdvExpr | Paren | BinaryOp`) so all roll resolvers (d20, 2d6, dice pool, custom) compose from the same parse → evaluate pipeline.

@@ -3,7 +3,7 @@
 
 # FEAT-byok-api-keys: BYOK API Keys
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +11,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: open
+**Status**: Not Started
 **Priority**: high
 **Labels**: byok, api-keys, llm, providers, privacy
 **Assignee**:

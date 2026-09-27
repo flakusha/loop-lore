@@ -3,7 +3,7 @@
 
 # FEAT: Prompt/Lorebook Marketplace (Community-shared)
 
-**Status:** done
+**Status:** Done
 **Priority:** low
 **Effort:** XL
 **Summary:** Prompt/Lorebook Marketplace (Community-shared)

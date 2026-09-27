@@ -3,7 +3,7 @@
 
 # TASK: 2D world review: shared seeded-RNG util for deterministic procgen
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium
 **Summary:** Shared seeded-RNG util (mulberry32 + string hash) with tests.

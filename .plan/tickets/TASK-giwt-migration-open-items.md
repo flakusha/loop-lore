@@ -3,7 +3,7 @@
 
 # TASK: giwt migration open items (docs/giwt-scripts-map.md)
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** low
 **Effort:** Small
 **Summary:** Close the three open decisions in the giwt migration try-log: gpg-unlock wrapping, legacy scripts/worktree CLI deletion, giwt-report schema-drift revisit

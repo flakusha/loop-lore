@@ -3,7 +3,7 @@
 
 # TASK-file-split-routes: Split oversized route modules (views/messages/auto-gen/admin)
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +11,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: open
+**Status**: Not Started
 **Priority**: high
 **Labels**: refactor, file-split, routes, god-module
 **Assignee**:

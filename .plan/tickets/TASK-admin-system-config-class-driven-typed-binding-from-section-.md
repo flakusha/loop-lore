@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done (2026-09-16, tree/admin-config-impl)
+**Status:** Done
+**Status Note:** 2026-09-16, tree/admin-config-impl
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-frontend-admin.md

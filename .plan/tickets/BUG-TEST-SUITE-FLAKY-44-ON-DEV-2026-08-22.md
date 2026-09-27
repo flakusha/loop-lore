@@ -4,7 +4,7 @@
 
 # BUG-TEST-SUITE-FLAKY-44-ON-DEV-2026-08-22: Closeout — Resolved by post-Aug-22 commits
 
-**Status:** closed
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -12,7 +12,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: closed
+**Status**: Done
 **Priority**: medium
 **Labels**: bug, bookkeeping
 **Epic**: (none)

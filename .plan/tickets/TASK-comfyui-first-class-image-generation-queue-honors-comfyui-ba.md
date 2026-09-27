@@ -3,7 +3,7 @@
 
 # TASK: ComfyUI first-class: image generation queue honors ComfyUI backend
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium (queue scoping + cancel + events)
 **Summary:** Image generation queue scopes concurrency to 1 per ComfyUI baseUrl, supports `/interrupt` cancel, and emits WS queue events so callers observe position/state; depends on the base queue plus `client_id`/WS progress.

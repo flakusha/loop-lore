@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done — duplicate of BUG-fe-be-character-growth-arc-confirm-reject-declare-unsatisfia (resolved on dev by 00d2c1201 + 70e9cb6eb, 2026-09-14)
+**Status:** Done
+**Status Note:** duplicate of BUG-fe-be-character-growth-arc-confirm-reject-declare-unsatisfia (resolved on dev by 00d2c1201 + 70e9cb6eb, 2026-09-14)
 **Priority:** Medium
 **Effort:** Medium
 

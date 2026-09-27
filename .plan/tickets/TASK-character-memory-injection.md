@@ -11,7 +11,7 @@
 **Epic:** epic-memory-knowledge-systems
 **Priority:** Medium
 **Effort:** High
-**Status:** ✅ Done
+**Status:** Done
 **Source:** `.tmp/loop-lore-ideas.md` — Memory System And Personalized Memories Injection
 
 ## Summary

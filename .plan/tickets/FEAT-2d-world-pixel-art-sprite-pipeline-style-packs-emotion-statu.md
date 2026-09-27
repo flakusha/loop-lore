@@ -3,7 +3,7 @@
 
 # FEAT: 2D world: pixel-art sprite pipeline (style packs, emotion+status overlays)
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Large
 **Epic:** epic-2d-sprite-world

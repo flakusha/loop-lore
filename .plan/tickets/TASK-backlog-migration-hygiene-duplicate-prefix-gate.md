@@ -3,7 +3,7 @@
 
 # TASK: backlog — add migration-hygiene gate (duplicate numeric prefixes + unused parts/ pointers)
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Small
 **Type:** Task

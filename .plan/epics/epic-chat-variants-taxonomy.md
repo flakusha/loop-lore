@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** 🟡 Design — taxonomy agreed; column mapping established; per-variant implementation open (see task list)
+**Status:** Not Started
+**Status Note:** taxonomy agreed; column mapping established; per-variant implementation open (see task list)
 **Priority:** High
 **Effort:** Medium
 **Type:** Feature Epic

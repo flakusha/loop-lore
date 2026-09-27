@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** open
+**Status:** Not Started
 **Priority:** P2
 **Epic:** epic-character-core-system
 **Labels:** test, avatar, selection, fallback, coverage

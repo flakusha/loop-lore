@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Resolved (verified 2026-09-07; LLM-first path already wired)
+**Status:** Done
+**Status Note:** verified 2026-09-07; LLM-first path already wired
 **Severity:** high
 **Priority:** high
 **Effort:** medium

@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 📝 Draft
+**Status:** Not Started
 **Priority:** High (post-Gate C)
 **Effort:** Medium
 **Epic:** `epic-assistant-creative-studio-workflows`

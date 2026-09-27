@@ -3,7 +3,7 @@
 
 # TASK: MATRIX-auth-adapter-auth-approval-scope: decide per-adapter inbound scope for auth-approval
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-auth-channel-provisioning
@@ -12,7 +12,7 @@
 
 ## Summary
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Small
 **Summary:** matrix-authentication-channels AC7 (WAC3) is open: IM adapters (xmpp/irc/feishu/telegram) need per-adapter auth-challenge capability plus inbound command parsing parity; adapters lacking inbound routes deliver OTP-only, approval-push needs inbound. feishu/xmpp inbound scope undecided per adapter epic.

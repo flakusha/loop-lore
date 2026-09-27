@@ -3,7 +3,7 @@
 
 # TASK: Plugin API Routes -> Elysia Registration
 
-**Status:** done
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Summary:** Plugin API Routes -> Elysia Registration

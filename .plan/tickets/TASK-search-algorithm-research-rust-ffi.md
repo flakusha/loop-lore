@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** open
+**Status:** Not Started
 **Priority:** Medium (research) → High (impl)
 **Effort:** High (research) + Very High (impl + dynamic selector)
 **Type:** Research + Feature Task

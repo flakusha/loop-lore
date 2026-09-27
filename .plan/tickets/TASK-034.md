@@ -3,14 +3,14 @@
 
 # TASK-034: NSFW Seduction & Desire System
 
-**Status:** open
+**Status:** Not Started
 **Priority:** high
 **Effort:** Large
 **Summary:** Seduction on SeductionSkillCategory + ArousalLevel, routed through ResolutionSystem.
 **Context:** Gameplay-layer seduction; skill checks use CHA/WIS.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: open
+**Status**: Not Started
 **Priority**: high
 **Labels**: nsfw, rpg, game-mechanics
 **Epic**: epic-nsfw-game-mechanics

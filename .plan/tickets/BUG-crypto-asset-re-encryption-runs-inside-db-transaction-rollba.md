@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done (verified landed on dev — asset files are re-encrypted BEFORE the transaction opens; DB rollback no longer affects already-written files)
+**Status:** Done
+**Status Note:** verified landed on dev — asset files are re-encrypted BEFORE the transaction opens; DB rollback no longer affects already-written files
 **Priority:** high
 **Effort:** Medium
 

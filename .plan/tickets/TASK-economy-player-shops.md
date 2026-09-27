@@ -10,7 +10,7 @@
 
 
 **Priority:** Medium
-**Status:** open
+**Status:** Not Started
 **Epic:** epic-economy-trading
 **Tags:** economy, shops, player-run, market, events
 

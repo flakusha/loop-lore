@@ -3,7 +3,7 @@
 
 # TASK: Npc Social Memory
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Persist NPC conversation outcomes as episodic memory via the existing actor-memories service (`memory_type: episodic`), retrievable for future social decisions.

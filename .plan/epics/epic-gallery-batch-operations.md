@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
+**Status Note:** Not Started
 **Priority:** High (MVP scoped, post-Gate C)
 **Effort:** Medium
 **Type:** Feature Epic / UI

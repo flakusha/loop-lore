@@ -3,7 +3,7 @@
 
 # EPIC-RESEARCH-MATH-ECONOMY — Action & resource economy
 
-**Status:** 📝 Draft
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium (turn budget table + Bennies table + dispatch enforcement)
 **Type:** Research → Implementation

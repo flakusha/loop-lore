@@ -3,7 +3,7 @@
 
 # TASK: Image backends x assistant: /image command backend routing + failure UX validation
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Small-Medium (validation + UX decision + wiring)
 **Summary:** Validate the assistant-to-backend path for image generation across sd.cpp, ComfyUI (standalone/proxy), external OpenAI-compatible. Ground state: `/image` (src/assistant/commands/image.ts) returns a generate-image action dispatched by FE (chat-actions/dispatch.ts:65) to `POST /api/v1/generation/image` with `{prompt, chatId}` — backend selection happens server-side via `pickSdProvider` purpose=generate (first-match/both fallback, NOT user-visible).

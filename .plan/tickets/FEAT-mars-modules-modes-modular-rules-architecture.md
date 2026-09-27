@@ -3,7 +3,7 @@
 
 # FEAT: MARS Modules/Modes Modular Rules Architecture
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** XL
 **Summary:** MARS Modules/Modes Modular Rules Architecture

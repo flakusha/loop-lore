@@ -7,7 +7,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** 🟡 In Progress (foundation laid)
+**Status:** In Progress
+**Status Note:** foundation laid
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Infrastructure / DX

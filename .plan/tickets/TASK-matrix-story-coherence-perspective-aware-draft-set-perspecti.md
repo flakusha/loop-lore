@@ -3,7 +3,7 @@
 
 # TASK: MATRIX-story-coherence-perspective-aware-draft: set perspective-aware mood-intent dosage for drafts
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-two-pass-delivery
@@ -12,7 +12,7 @@
 
 ## Summary
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Small
 **Summary:** matrix-story-coherence SC9 is open: draft-stage mood/intent extraction should be perspective-aware (3rd-person scene framing reads differently), but dosage is TBD. Non-blocking for sequencing yet needed before two-pass delivery lands so pass-1 drafts carry voice-consistent prompts.

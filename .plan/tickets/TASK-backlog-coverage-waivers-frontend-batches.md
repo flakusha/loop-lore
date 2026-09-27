@@ -3,7 +3,7 @@
 
 # TASK: backlog — coverage waivers + frontend batches (release-010 hardening)
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Type:** Task

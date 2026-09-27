@@ -3,14 +3,14 @@
 
 # TASK-033: NSFW Intimacy System
 
-**Status:** open
+**Status:** Not Started
 **Priority:** high
 **Effort:** Large
 **Summary:** Intimacy progression layered on the canonical IntimacyLevel enum, gated by NSFW rating + consent.
 **Context:** Gameplay-layer intimacy axis; tier transitions emit intimacy.level_changed.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: 🟡 Partial — barrel + applyInteraction shipped 2026-09-22
+**Status**: Not Started
 **Priority**: high
 **Labels**: nsfw, rpg, game-mechanics
 **Epic**: epic-nsfw-game-mechanics

@@ -3,7 +3,7 @@
 
 # TASK: NSFW Cross-Cutting Integration
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Large
 **Summary:** NSFW Cross-Cutting Integration

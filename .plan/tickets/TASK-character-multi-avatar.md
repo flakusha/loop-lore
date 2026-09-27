@@ -11,7 +11,7 @@
 **Epic:** Character Core System
 **Priority:** Medium
 **Effort:** High
-**Status:** done
+**Status:** Done
 **Supersedes:** TASK-emotions-avatar-edit-model.md
 
 ## Summary

@@ -10,7 +10,7 @@
 
 
 **Priority:** Medium
-**Status:** open
+**Status:** Not Started
 **Epic:** epic-character-core-system
 **Tags:** character, legacy, inheritance, generational
 

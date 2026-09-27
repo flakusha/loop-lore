@@ -10,7 +10,8 @@
 
 
 **Epic:** epic-frontend-gallery.md
-**Status:** ✅ Resolved (commit c0c24103 — feat(gallery): tag facet + preview tag rename)
+**Status:** Done
+**Status Note:** commit c0c24103 — feat(gallery): tag facet + preview tag rename
 **Priority:** Medium
 
 ## Scope

@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Implemented in `adopt-bun-and-elysia-remaining` worktree (2026-08-27). Smoke/e2e pending.
+**Status:** In Progress
+**Status Note:** in `adopt-bun-and-elysia-remaining` worktree (2026-08-27). Smoke/e2e pending.
 **Priority:** high
 **Effort:** Medium
 

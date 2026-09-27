@@ -8,7 +8,7 @@
 
 ## TASK: Periodic memory decay + purge jobs
 
-**Status:** ✅ Done
+**Status:** Done
 **Priority:** Medium
 **Effort:** Small
 **Epic:** epic-cron-scheduler

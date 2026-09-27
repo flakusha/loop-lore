@@ -3,14 +3,14 @@
 
 # TASK-023: 3D view modes
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Three camera modes (orbit / first-person / cinematic) bound to a single control.
 **Context:** Frontend view controller + camera state; persists in session and reflects in URL.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: done
+**Status**: Done
 **Priority**: medium
 **Effort:** Medium
 **Labels**: 3d, view-mode, frontend, immersion

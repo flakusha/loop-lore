@@ -3,7 +3,7 @@
 
 # FEAT: 2D world: NPC simulation tiers T0-T3 (TS tick, event-driven snapshots)
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** XL
 **Epic:** epic-2d-sprite-world

@@ -3,7 +3,7 @@
 
 # TASK: 2D world review: proximity query for nearby actors into group chat
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Radius/zone proximity lookup for nearby actors + group chats.

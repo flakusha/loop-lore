@@ -3,7 +3,7 @@
 
 # TASK: Cold message archival to archive DB file
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Large
 **Epic:** epic-db-growth-tiered-storage

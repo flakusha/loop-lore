@@ -3,7 +3,7 @@
 
 # EPIC-058: 058: Chat Lifecycle & Moderation
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +11,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: duplicate-of-epic-chat-lifecycle-moderation
+**Status:** Wontfix
+**Status Note:** duplicate-of-epic-chat-lifecycle-moderation
 **Priority**: medium
 **Labels**: epic
 **Epic**: (if applicable)

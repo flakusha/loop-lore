@@ -3,7 +3,7 @@
 
 # TASK: RPG Skill Combos and Synergies
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium
 

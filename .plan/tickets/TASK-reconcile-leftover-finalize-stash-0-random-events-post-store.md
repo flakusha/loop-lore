@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done (2026-09-05, fix-character-growth-gate-failures worktree)
+**Status:** Done
+**Status Note:** 2026-09-05, fix-character-growth-gate-failures worktree
 **Priority:** medium
 **Effort:** Medium
 

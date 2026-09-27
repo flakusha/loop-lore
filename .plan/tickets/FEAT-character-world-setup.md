@@ -9,7 +9,7 @@
 
 
 **Epic:** epic-character-world-setup
-**Status:** ✅ Done
+**Status:** Done
 **Priority:** High
 **Effort:** Medium
 **Tags:** characters, worlds, setup, inventory, lore, backstory, overlay

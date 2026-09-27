@@ -10,7 +10,7 @@
 
 
 **Epic:** epic-frontend-emoji-reactions.md
-**Status:** Open
+**Status:** Not Started
 **Priority:** Medium
 
 ## Scope

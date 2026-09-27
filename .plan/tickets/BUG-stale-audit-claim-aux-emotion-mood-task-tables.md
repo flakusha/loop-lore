@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** done
+**Status:** Done
 **Priority:** P3
 **Effort:** Trivial
 **Epic:** epic-aux-enrichment-pipeline

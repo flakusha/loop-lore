@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Resolved (build-break removed + fix compiles in worktree merge-review-followups, 2026-08-27)
+**Status:** Done
+**Status Note:** build-break removed + fix compiles in worktree merge-review-followups, 2026-08-27
 **Priority:** high
 **Effort:** Medium
 

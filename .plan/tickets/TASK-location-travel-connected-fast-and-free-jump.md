@@ -3,7 +3,7 @@
 
 # TASK: Location Travel Connected Fast And Free Jump
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-world-travel-time

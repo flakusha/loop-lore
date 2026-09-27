@@ -9,7 +9,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Resolved — closed 2026-09-14
+**Status:** Done
+**Status Note:** closed 2026-09-14
 **Priority:** Medium
 **Type:** BUG
 **Epic:** epic-tooling-check-gates

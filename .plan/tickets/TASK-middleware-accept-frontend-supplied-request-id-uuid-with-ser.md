@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 Partial (commit 85657ffb on dev, 2026-08-26; wiring gap on Elysia side)
+**Status:** In Progress
+**Status Note:** commit 85657ffb on dev, 2026-08-26; wiring gap on Elysia side
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-middleware-request-lifecycle

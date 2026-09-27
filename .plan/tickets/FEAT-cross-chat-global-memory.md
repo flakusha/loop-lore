@@ -3,7 +3,7 @@
 
 # FEAT: Cross-chat Global Memory
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Large
 **Summary:** Cross-chat Global Memory

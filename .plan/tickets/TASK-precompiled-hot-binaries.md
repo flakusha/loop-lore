@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 In Progress — BLAKE3 + zstd samples shipped (branch `native-blake3`, 2026-08-15); hot-reload + packaging open
+**Status:** In Progress
+**Status Note:** BLAKE3 + zstd samples shipped (branch `native-blake3`, 2026-08-15); hot-reload + packaging open
 **Priority:** Medium
 **Effort:** High
 **Epic:** epic-precompiled-hot-binaries

@@ -9,7 +9,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Finished (2026-09-10)
+**Status:** Done
+**Status Note:** 2026-09-10
 Refs: TBD (orphan from pre-sync)
 **Priority:** high
 **Tags:** ["inference", "gguf", "wllama", "browser", "llama.cpp"]

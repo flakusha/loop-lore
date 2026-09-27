@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done — helpers landed as `upsertByUnique` + `upsertByUniqueWith` + `insertUnique` (`src/db/upsert-helpers.ts` with motivating `@see BUG-chat-swipe-index-race`)
+**Status:** Done
+**Status Note:** helpers landed as `upsertByUnique` + `upsertByUniqueWith` + `insertUnique` (`src/db/upsert-helpers.ts` with motivating `@see BUG-chat-swipe-index-race`)
 **Priority:** medium
 **Effort:** Medium
 

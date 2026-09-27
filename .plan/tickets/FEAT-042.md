@@ -3,7 +3,8 @@
 
 # FEAT-042: Content versioning framework
 
-**Status:** ✅ Resolved (already on dev, 2026-09-20)
+**Status:** Done
+**Status Note:** already on dev, 2026-09-20
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Registry + batch runner for `data_version` columns.
@@ -13,7 +14,7 @@
 - [x] `runBatchRefresh(database, table, opts)` updates `record_hash` only when stale.
 - [x] Unit tests cover registry + envelope + batch runner.
 
-**Status**: open
+**Status**: Not Started
 **Priority**: medium
 **Labels**:
 **Assignee**:

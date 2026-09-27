@@ -3,7 +3,8 @@
 
 # BUG: jwtSecret reused across three security domains; BYOK PBKDF2 fixed global salt
 
-**Status:** ✅ Closed — all four legs verified in dev (verified 2026-09-18)
+**Status:** Done
+**Status Note:** all four legs verified in dev (verified 2026-09-18)
 
 **Priority:** high
 

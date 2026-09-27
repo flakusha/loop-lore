@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** 🟡 In Progress — Phase 1 core (dice/stats/combat/xp/loot) implemented and route-wired (2026-08-14); extended systems split into 6 sub-epics
+**Status:** In Progress
+**Status Note:** Phase 1 core (dice/stats/combat/xp/loot) implemented and route-wired (2026-08-14); extended systems split into 6 sub-epics
 **Priority:** Medium
 **Effort:** Very High (split into 6 sub-epics)
 **Type:** Feature Epic

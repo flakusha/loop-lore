@@ -3,7 +3,7 @@
 
 # TASK: Graph view of plan links to chats, stories, RAG items, assets
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 
 Imported from git issue 78ed776.

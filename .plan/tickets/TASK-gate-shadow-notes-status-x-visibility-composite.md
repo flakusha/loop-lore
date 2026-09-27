@@ -3,7 +3,7 @@
 
 # TASK: Gate shadow_notes status-x-visibility composite
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Small (composite validator + unit test)
 **Summary:** `shadow_notes` `status` (player reveal) × `visibility` (LLM gate, migration `002`) need a `CompositeValidator` mirroring `messagesStatusVisibility` (`src/db/enums-core/messages.ts:88`). `author_type` stays an orthogonal plain enum. Unit test. No column changes.

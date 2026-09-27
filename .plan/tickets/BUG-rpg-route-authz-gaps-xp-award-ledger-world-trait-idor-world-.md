@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Closed (2026-08-20, worktree `rpg-authz-fix`)
+**Status:** Done
+**Status Note:** 2026-08-20, worktree `rpg-authz-fix`
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-rpg-wiring-phase3

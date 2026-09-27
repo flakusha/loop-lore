@@ -7,7 +7,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** 🟡 Partially Implemented (wiring gaps remain)
+**Status:** In Progress
+**Status Note:** Implemented (wiring gaps remain)
 **Priority:** Medium
 **Effort:** Med
 **Type:** Feature Epic

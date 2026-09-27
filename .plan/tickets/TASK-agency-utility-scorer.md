@@ -3,7 +3,7 @@
 
 # TASK-agency-utility-scorer: Wire personality traits as utility weights for NPC reaction step
 
-**Status:** done
+**Status:** Done
 **Priority:** P0 (within EPIC-RESEARCH-AGENCY-DECISION)
 **Effort:** 2 days
 **Parent epic:** `epic-research-agency-decision.md`

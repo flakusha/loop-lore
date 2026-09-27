@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done — all listed failures resolved on dev prior to this batch.
+**Status:** Done
+**Status Note:** all listed failures resolved on dev prior to this batch.
 **Priority:** Medium
 **Effort:** Medium
 

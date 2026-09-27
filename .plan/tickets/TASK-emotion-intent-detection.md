@@ -11,7 +11,7 @@
 **Epic:** Character Core System
 **Priority:** Medium
 **Effort:** Medium
-**Status:** done
+**Status:** Done
 **Related:** TASK-character-multi-avatar, TASK-character-mood-happiness
 
 > **2026-08-16 deferral note:** The remaining "emotion → avatar selection" item is

@@ -3,7 +3,7 @@
 
 # FEAT: Ironsworn Oracle (d6+d10)
 
-**Status:** done
+**Status:** Done
 **Priority:** low
 **Effort:** Large
 **Summary:** Ironsworn Oracle (d6+d10)

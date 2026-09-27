@@ -3,7 +3,7 @@
 
 # FEAT: Regex Output Transforms (User-defined rules)
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Regex Output Transforms (User-defined rules)

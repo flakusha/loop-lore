@@ -3,7 +3,8 @@
 
 # EPIC-055: 055: Assistant Generation Extensions
 
-**Status:** Not Started → closed (duplicate)
+**Status:** Done
+**Status Note:** duplicate
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +12,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: duplicate-of-epic-assistant-generation-extensions
+**Status:** Wontfix
+**Status Note:** duplicate-of-epic-assistant-generation-extensions
 **Priority**: medium
 **Labels**: epic
 **Epic**: (if applicable)

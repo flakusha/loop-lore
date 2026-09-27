@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done
+**Status:** Done
 **Priority:** P2
 **Epic:** epic-emotion-avatar-message-binding / epic-character-core-system
 **Labels:** emotion-avatar, fallback, character-description

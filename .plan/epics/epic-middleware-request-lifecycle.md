@@ -7,7 +7,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** 🟢 Complete (reopened 2026-08-27 for review; defects fixed in worktree merge-review-followups)
+**Status:** Done
+**Status Note:** reopened 2026-08-27 for review; defects fixed in worktree merge-review-followups
 **Priority:** Medium
 **Effort:** Large
 **Type:** Feature Epic

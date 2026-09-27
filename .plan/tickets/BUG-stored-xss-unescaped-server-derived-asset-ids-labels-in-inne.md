@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Fixed (XSS escapes applied to 5 files; frontend innerHTML xss gate 0 findings)
+**Status:** Done
+**Status Note:** XSS escapes applied to 5 files; frontend innerHTML xss gate 0 findings
 **Priority:** high
 **Effort:** medium
 **Type:** Bug

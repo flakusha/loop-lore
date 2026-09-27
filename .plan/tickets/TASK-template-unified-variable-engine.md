@@ -3,7 +3,7 @@
 
 # TASK-template-unified-variable-engine
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +11,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: open
+**Status**: Not Started
 **Priority**: high
 **Labels**: templates, prompt-assembly, architecture, config
 **Assignee**:

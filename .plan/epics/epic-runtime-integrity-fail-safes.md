@@ -3,7 +3,7 @@
 
 # EPIC: Runtime Integrity, Crash Recovery & Fail-Safes
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Type:** epic
@@ -11,7 +11,7 @@
 **Overview:** (see sections below)
 
 
-**Status**: done
+**Status:** Done
 **Priority**: high
 **Effort**: Very High
 **Type**: Architecture / Reliability Epic

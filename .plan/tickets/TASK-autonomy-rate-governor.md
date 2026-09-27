@@ -3,7 +3,7 @@
 
 # TASK: Autonomy Rate Governor (per-agent/user budget caps)
 
-**Status:** open
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium (budget tracker + UI + telemetry hooks)
 **Summary:** Per-agent and per-user budget caps on autonomy actions — the rate-limiting layer that prevents runaway autonomy ticks from draining generation quota or flooding the chat timeline.

@@ -10,7 +10,7 @@
 
 
 **Priority:** Medium
-**Status:** open
+**Status:** Not Started
 **Epic:** epic-battle-action-systems
 **Tags:** battle, turn-based, chat-mode, mode-switch, combat
 

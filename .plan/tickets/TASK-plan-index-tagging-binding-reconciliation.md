@@ -3,7 +3,7 @@
 
 # TASK: plan index — bidirectional tagging/binding + reconciliation reporting
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium (giwt change; touch sync-index + new tag CLI)
 **Summary:** Extend giwt's plan/ticket index to support a first-class tag and binding model where:

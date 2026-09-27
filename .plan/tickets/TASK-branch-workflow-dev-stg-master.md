@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** [OK] Documented in `docs/meta/workflow.md` (Branch tiers section)
+**Status:** Done
+**Status Note:** in `docs/meta/workflow.md` (Branch tiers section)
 **Priority:** Low
 **Effort:** Med
 

@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Complete
+**Status:** Done
 **Priority:** Medium
 **Effort:** Low–Med
 **Epic:** epic-config-templates

@@ -7,7 +7,8 @@
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)
 
-**Status:** ✅ Done (closed 2026-09-20) — actor_type guard added after checkActorOwnership
+**Status:** Done
+**Status Note:** (closed 2026-09-20) — actor_type guard added after checkActorOwnership
 **Priority:** medium
 **Effort:** Small
 

@@ -3,7 +3,7 @@
 
 # TASK: Character Migration Route
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Character Migration Route

@@ -3,7 +3,7 @@
 
 # FEAT: RBAC + SSO + Tenant Isolation
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** XL
 **Summary:** RBAC + SSO + Tenant Isolation

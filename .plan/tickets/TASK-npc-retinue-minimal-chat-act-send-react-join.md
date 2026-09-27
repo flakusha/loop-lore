@@ -3,7 +3,7 @@
 
 # TASK: NPC Retinue Minimal Chat Act Send React Join
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-npcs

@@ -3,7 +3,7 @@
 
 # TASK: Cold message archival to archive DB file
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 
 Imported from git issue 6c446d8.

@@ -3,7 +3,7 @@
 
 # TASK: Content versioning for heavy-text tables — extend `data_version`/`record_hash`
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium (one migration + opt-in `registerContentVersion` calls in 7 services)
 **Summary:** Extend the existing `data_version` + `record_hash` pattern (already on `assets`, `characters`, `chats`, `messages`, `worlds`, `actors`) to 7 additional content-heavy tables: `items`, `world_lore_entries`, `actor_lore_entries`, `quests`, `locations`, `blog_posts`, `shadow_notes`, `whitenotes`, `crafting_recipes`. Schema-only adds; the `registerContentVersion` hookup is opt-in per service to avoid breaking existing writers.

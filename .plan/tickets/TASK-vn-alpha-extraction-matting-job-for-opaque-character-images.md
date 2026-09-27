@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Resolved (already on dev, 2026-09-19)
+**Status:** Done
+**Status Note:** already on dev, 2026-09-19
 **Priority:** high
 **Epic:** Avatar Alpha Channel + VN Layering; Aux Enrichment Pipeline
 **Effort:** Medium

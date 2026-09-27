@@ -7,7 +7,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
+**Status Note:** Not Started
 **Priority:** Medium
 **Effort:** High
 **Parent Epic:** 37 (Plugin System & Extensibility)

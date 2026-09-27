@@ -3,7 +3,7 @@
 
 # TASK: Logging System (Structured JSONL)
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Logging System (Structured JSONL)

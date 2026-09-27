@@ -3,7 +3,7 @@
 
 # TASK-matrix-cross-mech-g23: Dynamic memory writes — assistant mid-response memory notes (multi-message)
 
-**Status:** open
+**Status:** Not Started
 **Priority:** low
 **Effort:** Small
 **Type:** Task

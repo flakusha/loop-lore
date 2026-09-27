@@ -3,7 +3,7 @@
 
 # Ticket **Status:** enum + migration of 302 distinct values
 
-**Status:** open
+**Status:** Not Started
 **Priority:** high
 **Effort:** Large
 **Type:** Task

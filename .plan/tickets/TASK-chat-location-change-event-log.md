@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ⬜ Draft
+**Status:** Not Started
 **Priority:** P2-B
 **Effort:** Medium
 **Epic:** epic-chat-transfer-location

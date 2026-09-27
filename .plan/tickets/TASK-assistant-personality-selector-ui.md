@@ -3,7 +3,7 @@
 
 # TASK: Assistant Personality Selector UI
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-character-multi-personality

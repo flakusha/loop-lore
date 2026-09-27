@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Resolved (89cc294a0)
+**Status:** Done
+**Status Note:** 89cc294a0
 **Priority:** high
 **Effort:** Medium
 

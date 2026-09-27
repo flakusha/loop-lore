@@ -3,7 +3,7 @@
 
 # BUG: check runner gate label rename breaks check-parallel.gates.test.mjs
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium
 

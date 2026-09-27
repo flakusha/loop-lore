@@ -3,7 +3,7 @@
 
 # TASK: Assistant Personality Presets Catalog
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-character-multi-personality

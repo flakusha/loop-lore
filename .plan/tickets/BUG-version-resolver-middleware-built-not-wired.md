@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Resolved (2026-08-25, worktree fix-version-resolver-wiring — added `.use(versionResolver())` to `elysia-app.ts` before `registerPlugins`; covered by `src/routes/middleware/version-resolver.test.ts`)
+**Status:** Done
+**Status Note:** 2026-08-25, worktree fix-version-resolver-wiring — added `.use(versionResolver())` to `elysia-app.ts` before `registerPlugins`; covered by `src/routes/middleware/version-resolver.test.ts`
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-api-versioning

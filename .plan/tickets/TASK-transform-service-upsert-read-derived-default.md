@@ -7,7 +7,7 @@
 **Context:** (none captured)
 **Summary:** Service-layer upsert + read for asset transforms; the read path returns a derived-default transform when the user has not customized one (focal-point auto-seed on upload per `epic-asset-platform-capabilities.md` B1). Part of `epic-asset-platform-capabilities.md` B1-B5.
 **Context:** Today the asset upload pipeline creates a transform row only if the user explicitly opts in (focal-point picker). Users who skip the picker get no transform record, which breaks cover/crop heuristics in the gallery. The derived-default path inserts a transform with `source: "auto-seed"`, focal-point = entropy-center-of-image, and crop = none; subsequent reads return the user override OR fall back to the derived default. Auto-seed runs at upload completion in `assets.upload-complete.ts`.
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Epic:** Asset Transform Editing + Metadata

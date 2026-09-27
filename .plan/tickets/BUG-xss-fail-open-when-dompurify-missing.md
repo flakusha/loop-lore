@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Resolved (commit f9d21c8b — sanitize fallbacks escape instead of raw HTML when DOMPurify absent)
+**Status:** Done
+**Status Note:** commit f9d21c8b — sanitize fallbacks escape instead of raw HTML when DOMPurify absent
 **Priority:** high
 **Effort:** Medium
 

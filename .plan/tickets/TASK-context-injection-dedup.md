@@ -11,7 +11,7 @@
 
 **Epic:** epic-hidden-carriage-context.md
 **See also:** epic-context-injection-templates.md, epic-quests-encounters.md, epic-gm-shadow-notes.md
-**Status:** Open
+**Status:** Not Started
 **Priority:** High
 
 ## Scope

@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done — FTS5 migration 034 + `routes/message-search/` (scoped by chat, role/attachment/date filters, bm25 snippets) + in-chat search UI (`alpine/message-search.ts`, chat.html 🔍 toggle); extended filters verified + tested (`message-search/search.test.ts`): role, hasAttachment, attachmentType (resolved via asset_links → assets.asset_type; runtime enum check — t.UnionEnum query params are unsafe on Elysia 1.4, absent value is forced to the first member), linkPattern (escaped LIKE over plaintext mirror), chatId scope access check
+**Status:** Done
+**Status Note:** FTS5 migration 034 + `routes/message-search/` (scoped by chat, role/attachment/date filters, bm25 snippets) + in-chat search UI (`alpine/message-search.ts`, chat.html 🔍 toggle); extended filters verified + tested (`message-search/search.test.ts`): role, hasAttachment, attachmentType (resolved via asset_links → assets.asset_type; runtime enum check — t.UnionEnum query params are unsafe on Elysia 1.4, absent value is forced to the first member), linkPattern (escaped LIKE over plaintext mirror), chatId scope access check
 **Priority:** Medium
 **Effort:** Med–High
 **Epic:** Epic 24 (Filtering & Pagination), Epic 36 (Chat Lifecycle)

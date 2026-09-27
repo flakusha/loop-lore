@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 In Progress — coordinator role landed (registry + negotiation + resync); inbound-key provision/rotate/revoke landed (`revokeInboundKey` in `src/federation/peer-keys.ts`); peer-handshake transport + operational rotation surface remain
+**Status:** In Progress
+**Status Note:** coordinator role landed (registry + negotiation + resync); inbound-key provision/rotate/revoke landed (`revokeInboundKey` in `src/federation/peer-keys.ts`); peer-handshake transport + operational rotation surface remain
 **Priority:** high
 **Effort:** Large
 **Epic:** epic-mesh-federation-content-sharing

@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** 🟡 Partially Complete — manual pass done 2026-08-06
+**Status:** In Progress
+**Status Note:** Complete — manual pass done 2026-08-06
 **Priority:** Low
 **Effort:** Large
 **Epic:** epic-code-quality

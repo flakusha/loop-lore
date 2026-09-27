@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** open
+**Status:** Not Started
 **Priority:** High
 **Epic:** epic-crypto
 **Parent:** TASK-encryption-architecture-clarification

@@ -3,7 +3,7 @@
 
 # TASK: Party Schema CRUD Routes And Migration
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-party-migration

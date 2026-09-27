@@ -3,7 +3,7 @@
 
 # TASK: Chat Room Sidebar Search + Filter Chips
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Chat Room Sidebar Search + Filter Chips

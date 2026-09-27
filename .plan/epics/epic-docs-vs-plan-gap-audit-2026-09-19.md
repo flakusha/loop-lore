@@ -3,7 +3,8 @@
 
 # Epic: Docs-vs-Plan Gap Audit (2026-09-19)
 
-**Status:** Audit complete; 108 gap tickets created (commits `7fb991879` + `0fb5c899d` on dev). Verified + reconciled 2026-09-19 — see ## Verified Results.
+**Status:** Not Started
+**Status Note:** Audit complete; 108 gap tickets created (commits `7fb991879` + `0fb5c899d` on dev). Verified + reconciled 2026-09-19 — see ## Verified Results.
 
 **Type:** Audit
 

@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Resolved — already on dev (commit 1b967a2ee "fix(admin): model-roles tests, scanAllProviders typing, seedDefaults null guards"); verified 2026-09-19
+**Status:** Done
+**Status Note:** already on dev (commit 1b967a2ee "fix(admin): model-roles tests, scanAllProviders typing, seedDefaults null guards"); verified 2026-09-19
 **Priority:** Medium
 **Effort:** Medium
 

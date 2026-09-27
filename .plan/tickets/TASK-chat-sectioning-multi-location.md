@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ⬜ Research Needed
+**Status:** Not Started
+**Status Note:** Needed
 **Priority:** Medium
 **Effort:** High
 **Related:** TASK-chat-backgrounds-location-sync, TASK-chat-transfer-location, TASK-travel-party-migration, TASK-transition-aux-llm-fallback

@@ -3,7 +3,7 @@
 
 # FEAT-065-LLM: LLM Prompt Template System
 
-**Status:** closed
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -13,7 +13,8 @@
 
 **Epic:** epic-items
 
-**Status**: closed (implemented — see Resolution)
+**Status:** Done
+**Status Note:** implemented — see Resolution
 **Priority**: high
 **Labels**: generation, llm, prompts, templates
 **Assignee**:

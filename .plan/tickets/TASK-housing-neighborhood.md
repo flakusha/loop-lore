@@ -10,7 +10,7 @@
 
 
 **Priority:** Medium
-**Status:** open
+**Status:** Not Started
 **Epic:** epic-housing
 **Tags:** housing, neighborhood, customization, social, decoration
 

@@ -11,7 +11,8 @@
 **Epic:** Battle & Action Systems, Item System Extensions
 **Priority:** High
 **Effort:** High
-**Status:** 🟡 Partially Complete — superseded backend by `TASK-map-battle-equipment`; durability-in-combat/combat-equipment-use open (2026-08-12)
+**Status:** In Progress
+**Status Note:** Complete — superseded backend by `TASK-map-battle-equipment`; durability-in-combat/combat-equipment-use open (2026-08-12)
 **Created:** 2026-07-28
 **Cross-Mechanics Gap:** G1 (Battle ↔ Items)
 

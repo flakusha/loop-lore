@@ -3,7 +3,7 @@
 
 # TASK: Faction Standing And Reputation Drift Integration
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-faction-reputation

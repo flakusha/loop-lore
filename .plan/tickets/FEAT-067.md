@@ -1,6 +1,6 @@
 ---
 title: "FEAT-067: Model capability registry"
-status: open
+status: Not Started
 priority: medium
 labels: [feature, generation, providers]
 epic: epic-byok-api-keys
@@ -8,7 +8,7 @@ related: [FEAT-068, FEAT-060]
 ---
 
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

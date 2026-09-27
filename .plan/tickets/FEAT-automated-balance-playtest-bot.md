@@ -3,7 +3,7 @@
 
 # FEAT: Automated Balance Playtest Bot
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** low
 **Effort:** Large
 **Summary:** Automated Balance Playtest Bot

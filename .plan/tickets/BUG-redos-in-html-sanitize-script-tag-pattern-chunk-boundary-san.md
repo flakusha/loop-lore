@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Resolved (ReDoS + chunk-boundary on dev, 2026-09-21; tag/attr coverage audit deferred 2026-09-18)
+**Status:** Done
+**Status Note:** ReDoS + chunk-boundary on dev, 2026-09-21; tag/attr coverage audit deferred 2026-09-18
 
 ## Handoff (deferred to dedicated worktree)
 

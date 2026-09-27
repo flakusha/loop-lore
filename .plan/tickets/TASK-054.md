@@ -3,14 +3,14 @@
 
 # TASK-054: Unique Item Tracking
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Per-world uniqueness tracking; at most one instance of a unique-def item per world.
 **Context:** Cross-world uniqueness not enforced (consistent with TASK-050).
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: done
+**Status**: Done
 **Priority**: medium
 **Labels**: items, rpg, unique
 **Epic**: epic-items

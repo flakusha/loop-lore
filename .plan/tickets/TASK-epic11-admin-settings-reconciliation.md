@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Complete (reconciliation)
+**Status:** Done
+**Status Note:** reconciliation
 **Priority:** —
 **Effort:** —
 **Source:** User-directed reconciliation, 2026-07-19

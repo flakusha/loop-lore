@@ -3,7 +3,7 @@
 
 # TASK: Loot Table Constructor Frontend Editor
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 

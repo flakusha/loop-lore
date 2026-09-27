@@ -3,7 +3,7 @@
 
 # TASK: Human-in-the-loop tool approval gates
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Generic per-tool-call approval workflow for agentic tools (pause → approve/reject → resume)

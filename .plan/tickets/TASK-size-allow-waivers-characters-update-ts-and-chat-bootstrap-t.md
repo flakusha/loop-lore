@@ -3,7 +3,7 @@
 
 # TASK: Size allow waivers: characters/update.ts and chat/bootstrap.ts
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Size-allow waivers documenting pre-existing file-size ceiling breaches on dev.

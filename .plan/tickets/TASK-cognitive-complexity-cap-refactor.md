@@ -3,7 +3,7 @@
 
 # TASK: Cognitive Complexity Cap + Refactor
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Cognitive Complexity Cap + Refactor

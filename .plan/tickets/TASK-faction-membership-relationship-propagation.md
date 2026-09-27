@@ -7,7 +7,7 @@
 **Context:** Complements TASK-faction-standing-schema and TASK-faction-standing-and-reputation-drift-integration (schema + drift, both Not Started); this ticket owns the character-relationship projection of that data.
 **Acceptance Criteria:** Membership change creates/removes ally relationships (idempotent, scoped per world); standing deltas propagate to co-member relationship strength on drift tick; distortion lookup prefers high-strength friend/family/faction-ally relationships; prompt section renders faction-tinted relationships; tests for join/leave/standing-shift propagation.
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 

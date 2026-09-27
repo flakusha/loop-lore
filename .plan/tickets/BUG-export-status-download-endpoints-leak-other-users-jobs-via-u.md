@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Resolved (commit 242b78b44)
+**Status:** Done
+**Status Note:** commit 242b78b44
 **Priority:** high
 **Effort:** Medium
 

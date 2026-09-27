@@ -3,7 +3,7 @@
 
 # TASK: Skill Constructor On Character Edit
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 

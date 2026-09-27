@@ -3,7 +3,7 @@
 
 # FEAT: Forge Engine Energy Pool (SAGE Action Economy)
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Large
 **Summary:** Forge Engine Energy Pool (SAGE Action Economy)

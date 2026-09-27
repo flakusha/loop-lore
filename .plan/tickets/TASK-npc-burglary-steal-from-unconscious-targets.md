@@ -3,7 +3,7 @@
 
 # TASK: NPC Burglary Steal From Unconscious Targets
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-stealth-crime

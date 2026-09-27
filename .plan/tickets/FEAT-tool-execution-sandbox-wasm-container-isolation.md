@@ -3,7 +3,7 @@
 
 # FEAT: Tool Execution Sandbox (WASM/Container Isolation)
 
-**Status:** done
+**Status:** Done
 **Priority:** high
 **Effort:** XL
 **Summary:** Tool Execution Sandbox (WASM/Container Isolation)

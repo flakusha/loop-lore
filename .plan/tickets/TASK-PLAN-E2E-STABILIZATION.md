@@ -3,7 +3,7 @@
 
 # TASK-PLAN-E2E-STABILIZATION: Stabilize browser e2e (auth redirect-loop)
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +11,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: done
+**Status**: Done
 **Priority**: medium
 **Labels**: e2e, test-infra, release-closeout
 **Assignee**:

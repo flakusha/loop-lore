@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** open
+**Status:** Not Started
 **Priority:** Medium
 **Effort:** Medium
 **Related:** epic-agency-story-points.md, epic-rpg-mechanics.md

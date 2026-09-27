@@ -13,7 +13,7 @@ git issue: 5ccf305
 
 # BUG: Blog followers list has no authentication (unauthenticated enumeration)
 
-**Status:** done
+**Status:** Done
 **Priority:** High
 **Effort:** Small
 

@@ -3,7 +3,7 @@
 
 # TASK-2026-openwebui-tool-stream-interleaving: Async Tool-Result Interleaving with SSE Backpressure
 
-**Status:** open
+**Status:** Not Started
 **Priority:** high
 **Effort:** Large
 **Labels:** generation, streaming, tools

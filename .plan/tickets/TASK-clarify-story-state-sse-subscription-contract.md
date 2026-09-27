@@ -3,7 +3,7 @@
 
 # TASK: CLARIFY-story-state-sse-subscription-contract
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-story-mode-ui.md

@@ -3,7 +3,7 @@
 
 # TASK: Action Karma Estimation Via AUX Model
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-aux-enrichment-pipeline

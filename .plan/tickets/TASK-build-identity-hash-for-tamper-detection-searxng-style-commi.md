@@ -3,7 +3,7 @@
 
 # TASK: Build identity hash for tamper detection (searxng-style commit-pin)
 
-**Status:** done
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-federation-swarm-sync

@@ -3,14 +3,14 @@
 
 # TASK-025: Text effects and overlays
 
-**Status:** open
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Reusable text-effects primitives (shake, glow, typewriter, fade) plus overlay stack.
 **Context:** Pure presentation layer; composes on existing surfaces without altering backend schema.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: done
+**Status**: Done
 **Priority**: medium
 **Effort:** Medium
 **Labels**: text-effects, overlay, ui, immersion

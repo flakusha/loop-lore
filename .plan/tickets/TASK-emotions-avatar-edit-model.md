@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Phase 1 Complete (generation fallback)
+**Status:** Done
+**Status Note:** generation fallback
 **Priority:** Medium
 **Effort:** High
 **Blocked by:** Stable diffusion edit model ecosystem maturity (fallback mitigates)

@@ -3,7 +3,8 @@
 
 # BUG: personas setDefault: silently succeeds for invalid personaId with no existence check
 
-**Status:** ✅ Resolved (batch 2)
+**Status:** Done
+**Status Note:** batch 2
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (see ## Summary)

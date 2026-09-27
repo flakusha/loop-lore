@@ -7,7 +7,7 @@
 **Context:** Social-seam ticket for epic-character-world-integration.md; timeline conditions JSON (src/story/timeline/event-steering.ts) is the primitive precursor for persisted dialogue conditions; world state from TASK-world-state-motivation-context supplies the Festival/War context signal.
 **Acceptance Criteria:** DialogueCondition supports type "alignment" evaluated against the canonical alignment field; unavailable options are hidden (not refused) with a test per axis pair; SpeechPattern variant selection consumes social context (listener role, location, world state) and is overridable by explicit author hints; prompt rendering uses the selected variant; tests for gating and variant selection.
 
-**Status:** ⬜ Not Started
+**Status:** Not Started
 **Priority:** low
 **Effort:** Medium
 
