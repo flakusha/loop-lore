@@ -6,8 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
-**Status Note:** Not Started
+**Status:** In Progress
+**Status Note:** S1 PASS (compatibility) and S2 PASS (retry parity, adopted); S3 REJECT — v4 ships no semaphore operator
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Infrastructure Epic
@@ -61,11 +61,11 @@ account for churn, and must never gate a load-bearing path (validation, HTTP,
 DB access, config) on an RC dependency. This constraint is the reason the
 compatibility spike is a hard gate and runs first.
 
-## v4 API actuality (probed 2026-09-26)
+## v4 API actuality (probed 2026-09-26, re-probed 2026-09-27)
 
 A throwaway probe ran against `effect@4.0.0-rc.117` under Bun 1.4.2, in an
-isolated `.tmp/effect-probe/` package. It records what is actually true of v4
-today so the spikes do not spend their time rediscovering it. **The v4 API is
+isolated `.tmp/effect-compat-spike/` package. It records what is actually true of
+v4 today so the spikes do not spend their time rediscovering it. **The v4 API is
 not the v3 API** — several v3 names are gone, and the repo's own typechecker
 rejects them at compile time.
 
@@ -77,7 +77,14 @@ rejects them at compile time.
 | `Effect.interrupt` | an `object` (namespace), not callable | Not a direct call site |
 | `Effect.void` | an `object`, not a function | Cannot be used as a pipe operator |
 | `Effect.zipRight` | `undefined` (removed) | Use `Effect.andThen` |
-| `Effect.forkScoped`, `Effect.withSpan`, `Effect.all`, `Effect.runPromise`, `Schedule.exponential` / `recurs` / `spaced` / `jittered`, `Layer`, `Context.Service` | all present | — |
+| `Effect.catchAll` | `undefined` (removed) | Use `Effect.catch` |
+| `Effect.either` | `undefined` (removed) | Use `Effect.runPromiseExit` + `Exit`/`Cause` |
+| `Schedule.compose` | `undefined` (removed) | `Schedule.concat` exists but is **sequential** ("run self to completion, then other"), not an intersection — do not use it to bound an exponential schedule |
+| bounding a retry count | `Effect.retry(effect, { schedule, times, while })` — `Retry.Options` | `times` is the count bound; `while` is the retryability predicate |
+| `Context.Service` shape | `{ make: … }` — an Effect or a thunk, **not** `{ succeed: … }` | Compile error otherwise |
+| `Layer.succeed` | two-argument `Layer.succeed(Tag, service)`; the one-arg form returns a `Layer`, not a function | Calling the result throws |
+| `Effect.Semaphore` (or any semaphore/permit operator) | **absent from the whole package** — root and every `./unstable/*` entry | Nothing to migrate `src/llm/concurrency-limiter.ts` onto |
+| `Effect.forkScoped`, `Effect.withSpan`, `Effect.all`, `Effect.runPromise`, `Schedule.exponential` / `recurs` / `spaced` / `jittered` / `modifyDelay`, `Layer`, `Context.Service` | all present | — |
 
 Two behavioural findings that change how a harness must be written:
 
@@ -182,22 +189,63 @@ tsgo strict without regressing a `bun run check` gate, the epic closes as
 
 ## Tasks
 
-- [ ] S1 — Bun/ESM/typecheck compatibility spike (hard gate)
-- [ ] S2 — retry/Schedule parity spike on the provider call path
-- [ ] S3 — scoped concurrency and interruption spike
+- [x] S1 — Bun/ESM/typecheck compatibility spike (hard gate) — **PASS**
+- [x] S2 — retry/Schedule parity spike on the provider call path — **PASS, ADOPTED**
+- [x] S3 — scoped concurrency and interruption spike — **REJECT** (no operator exists)
 - [ ] S4 — DI wiring spike versus the `handleOpts` bag
 - [ ] S5 — go/no-go adoption decision
 
 ## Spike Results
 
-Empty until the spikes run. Populate with measured numbers, not adjectives.
+Measured on 2026-09-27 against `effect@4.0.0-rc.117` under Bun 1.4.2,
+worktree `effect-adoption-dedup`.
 
 | Spike | Metric | Current | With Effect | Delta | Verdict |
 | ----- | ------ | ------- | ----------- | ----- | ------- |
-| S1 | typecheck + gate pass | — | — | — | — |
-| S2 | LOC, happy-path latency, failover parity | — | — | — | — |
-| S3 | LOC, cleanup correctness under interruption | — | — | — | — |
-| S4 | LOC, `app:any` escapes removed, typecheck depth | — | — | — | — |
+| S1 | `bun run typecheck` with the dependency present | green | green | none | PASS |
+| S1 | `skipLibCheck` needed to get there | already `true` in `tsconfig.backend.json` | unchanged | none | PASS — the open typecheck risk never applied |
+| S1 | `Effect.runPromise(Effect.succeed(1))` entry cost | bare `await` 0.07 µs/op | 0.39 µs/op (10 000 iterations) | +0.32 µs/op | PASS — noise next to a network call |
+| S1 | `bun run check` with the dependency present | failing set unchanged | no new failures (the open ones — `.plan` index drift from a concurrent worktree, the known docs-mermaid e2e — also fail on `dev`) | none | PASS |
+| S2 | duplicate backoff loops on the provider path | 3 byte-identical loops (anthropic / ollama-native / openai-compatible `http.ts`) | 1 shared `src/generation/providers/retry.ts` | −~60 net LOC, 3 copies → 1 | ADOPT |
+| S2 | attempt count for `retries = n` | `n + 1` attempts | `n + 1` (`Retry.Options.times = n`) | 0 | parity |
+| S2 | delay sequence (base 200 ms, cap 400 ms) | 200, 400, 800→400, … | 200, 401, 402, 400, 401 ms | 0 | parity |
+| S2 | non-retryable `ProviderError` | throws on first attempt, no delay | `while: (e) => e.retryable` stops on first | 0 | parity |
+| S2 | error surfaced to the caller | the original `ProviderError` instance | the same instance (`Effect.runPromise` rejects with the typed failure, not a wrapped `Cause`) | 0 | parity |
+| S2 | abort classification | cancelled signal → `ProviderError("Request cancelled", retryable: false)`; fetch `AbortError` → 504 `"Request timed out"` | identical, moved into the shared module | 0 | parity |
+| S3 | semaphore operator for `src/llm/concurrency-limiter.ts` | ~125-line hand-rolled async semaphore | none — no `Semaphore`/permit operator anywhere in the package | n/a | REJECT |
+| S3 | `Effect.forkScoped` + immediate scope exit | n/a | forked body never ran (`forkBodyRan=false`) | n/a | REJECT — interruption exists, silent work-drop is a live footgun |
+| S4 | DI wiring versus the `handleOpts` bag | not measured | not measured | — | open |
+
+### What landed
+
+`effect@4.0.0-rc.117` is now a runtime dependency, pinned exactly (no `^`,
+no `~`) because the line is a release candidate. It is used in exactly one
+place: `src/generation/providers/retry.ts`, the shared retry policy that the
+three provider `fetchWithRetry` functions call. Nothing else in the repo
+imports it.
+
+`src/generation/providers/retry.ts` owns two decisions that were previously
+copy-pasted three times: the delay schedule (1 s, 2 s, 4 s … capped at 10 s)
+and the retryability rule (a `ProviderError` with `retryable: false` stops
+immediately; every other transport failure is retried). The abort and timeout
+classification moved in with them.
+
+### What was deliberately not migrated
+
+- **`src/utils/safe-fetch/retry.ts`** — same backoff expression, but the loop
+  returns a `FetchResult` union (with `status` and `headers`) instead of
+  throwing, and its base delay is caller-configurable. Routing it through the
+  shared throwing helper would mean synthesising a throw and unpacking the
+  result: more code, not less. It keeps its own loop.
+- **`src/llm/concurrency-limiter.ts`** — no Effect operator exists (S3).
+- **The circuit-breaker cooldown, the proactive-message cadence scheduler, and
+  the browser reconnect backoff** — not retry policies. The last one would pull
+  a server dependency into the frontend bundle. The breaker is not redundant
+  either: v4 ships no breaker/limit operator at all, and `callWithFailover` also
+  does cross-provider failover plus cancellation remapping that `Schedule`
+  cannot express.
+- **TypeBox, Elysia, `src/logger`, the config schema** — structurally off-limits
+  per the pillar table above.
 
 ## Dependencies
 
@@ -218,13 +266,18 @@ Empty until the spikes run. Populate with measured numbers, not adjectives.
 
 ## Files
 
+- `src/generation/providers/retry.ts` — the adopted surface: one Effect-backed retry policy shared by every provider
+- `src/generation/providers/retry.test.ts` — attempt count, retryability filter, abort/timeout classification
+- `src/generation/providers/anthropic/http.ts`
+- `src/generation/providers/ollama-native/http.ts`
+- `src/generation/providers/openai-compatible/http.ts`
+- `knip.json` — `effect` added to `ignoreDependencies` (knip does not follow the provider subdirectory index chain)
+- `package.json` / `bun.lock` — `effect@4.0.0-rc.117`, pinned exactly
 - `.plan/tickets/TASK-effect-v4-bun-esm-typecheck-compatibility-spike.md`
 - `.plan/tickets/TASK-effect-v4-retry-schedule-parity-spike-on-the-provider-call-p.md`
 - `.plan/tickets/TASK-effect-v4-scoped-concurrency-and-interruption-spike.md`
 - `.plan/tickets/TASK-effect-v4-di-wiring-spike-versus-the-handleopts-bag.md`
 - `.plan/tickets/TASK-effect-v4-go-no-go-adoption-decision.md`
-
-(No `src/` files. An evaluation epic ships no code.)
 
 ## Notes
 

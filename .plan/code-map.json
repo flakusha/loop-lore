@@ -19863,6 +19863,24 @@
       "source": ".plan/tickets/TASK-resource-provision-routing-facade.md"
     }
   ],
+
+  "src/generation/providers/retry.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-effect-v4-adoption-evaluation.md"
+    }
+  ],
+
+  "src/generation/providers/retry.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-effect-v4-adoption-evaluation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-effect-v4-retry-schedule-parity-spike-on-the-provider-call-p.md"
+    }
+  ],
   "src/generation/providers/tts.ts": [
     {
       "kind": "epic",
