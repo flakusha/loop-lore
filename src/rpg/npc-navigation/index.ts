@@ -13,3 +13,12 @@ export type {
   NpcMovementState,
 } from "./service";
 export { MovementPattern, } from "./service";
+
+/** Tick driver — scheduler-callable wrapper around processMovementTick
+ *  with autonomy config / governor / jitter gating.
+ */
+export { runNpcMovementTick, } from "./tick-driver";
+export type {
+  RunNpcMovementTickOptions,
+  RunNpcMovementTickResult,
+} from "./tick-driver";
