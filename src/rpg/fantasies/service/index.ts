@@ -21,6 +21,7 @@ import { MoodService, } from "../../../characters/services/mood-service";
 import type { MoodState, } from "../../../characters/services/mood-service";
 import type { FantasyCategory, } from "../../../db/enums";
 import type { DB, } from "../../../db/schema";
+import { assertNsfwConfigEnabled, } from "../../../nsfw/capability-gate";
 import {
   createFantasy as createFantasyDispatch,
   deleteFantasy as deleteFantasyDispatch,
@@ -58,6 +59,7 @@ export class FantasyService {
    * @param opts
    */
   async createFantasy(opts: CreateFantasyOpts,): Promise<Fantasy> {
+    assertNsfwConfigEnabled();
     return createFantasyDispatch(this.db, opts,);
   }
 
@@ -92,6 +94,7 @@ export class FantasyService {
     context: string,
     discoveryChance = 0.1,
   ): Promise<DiscoveryResult> {
+    assertNsfwConfigEnabled();
     return attemptDiscoveryDispatch(this.db, actorId, context, discoveryChance,);
   }
 
@@ -104,6 +107,7 @@ export class FantasyService {
     fantasyId: string,
     feeling?: string,
   ): Promise<boolean> {
+    assertNsfwConfigEnabled();
     return recordExplorationDispatch(this.db, fantasyId, feeling,);
   }
 
@@ -117,6 +121,7 @@ export class FantasyService {
     fantasyId: string,
     forTarget?: { actorId: string; worldId?: string | null },
   ): Promise<FulfillmentEffects | null> {
+    assertNsfwConfigEnabled();
     return fulfillFantasyDispatch(this.db, fantasyId, forTarget,);
   }
 
@@ -152,6 +157,7 @@ export class FantasyService {
     delta: number,
     worldId?: string,
   ): Promise<string> {
+    assertNsfwConfigEnabled();
     return MoodService(this.db,).logEvent({
       actorId,
       worldId,
@@ -167,6 +173,7 @@ export class FantasyService {
    * @param fantasyId
    */
   async deleteFantasy(fantasyId: string,): Promise<boolean> {
+    assertNsfwConfigEnabled();
     return deleteFantasyDispatch(this.db, fantasyId,);
   }
 }
