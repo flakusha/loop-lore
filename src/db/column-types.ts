@@ -124,6 +124,8 @@ export const COLUMN_TYPE_OVERRIDES: Record<string, Record<string, string>> = {
   "PromptTemplates": {
     "modality": "TemplateModality",
     "detail_level": "TemplateDetailLevel",
+    "is_default": "DefaultState",
+    "enabled": "LoreEntryStatus",
   },
   "GenerationAttempts": {
     "cancel_reason": "CancelReason",

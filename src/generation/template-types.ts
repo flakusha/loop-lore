@@ -9,7 +9,9 @@
  * are the contract for each variant.
  */
 import type { TemplateDetailLevel, TemplateModality, } from "../db/enums";
+import type { ImageEditCategory, TemplateParameter, } from "../image-edit/types";
 import { safeJsonParse, } from "../utils";
+import type { ComfyUIWorkflow, } from "./providers/comfyui";
 
 /** One ordered section of an LLM prompt template. */
 export interface LlmTemplateSection {
@@ -45,8 +47,44 @@ export interface SimpleTemplatePayload {
   params?: Record<string, string>;
 }
 
+/** One declared LoRA slot. Phase 4 wires the actual node chain. */
+export interface LoraSlot {
+  /** Node id in `body` this slot rewires. Must exist. */
+  nodeId: string;
+  /** Class of the node that must sit at `nodeId`, e.g. "LoraLoader". */
+  classType: string;
+  /** Human label for the admin UI. */
+  label: string;
+}
+
+/**
+ * ComfyUI workflow payload: an API-format graph plus the metadata the
+ * library needs to route, validate, and render it.
+ *
+ * The graph is stored inline rather than on disk — see the epic's design
+ * notes on why there is no config-file writer in this codebase. Building a
+ * runnable graph is `substituteWorkflow(body, vars)`, so `body` carries the
+ * `{{placeholder}}` tokens verbatim and they are resolved per call.
+ */
+export interface WorkflowPayload {
+  /** ComfyUI API-format graph: node id -> { class_type, inputs }. */
+  body: ComfyUIWorkflow;
+  /** Drives `GET /image-edit/templates?category=` filtering. */
+  category: ImageEditCategory;
+  /** Declared parameters. Each `name` must appear as a `{{name}}` in `body`. */
+  parameters: TemplateParameter[];
+  /** Node class_types required; validated as a subset of installed nodes. */
+  requiredNodes: string[];
+  /** Declared LoRA slots; each must resolve to a real node in `body`. */
+  loraSlots?: LoraSlot[];
+}
+
 /** */
-export type TemplatePayload = LlmTemplatePayload | ImageTemplatePayload | SimpleTemplatePayload;
+export type TemplatePayload =
+  | LlmTemplatePayload
+  | ImageTemplatePayload
+  | SimpleTemplatePayload
+  | WorkflowPayload;
 
 /** Full DB row shape for a user-created prompt template. */
 export interface PromptTemplateRow {
@@ -98,6 +136,21 @@ export function parseTemplatePayload(
     if (typeof record.templateBody !== "string") { return null; }
     return value as ImageTemplatePayload;
   }
+  // `workflow.body` is a graph object, not a template string — it must be
+  // branched on before the generic `body` string check below, or a graph
+  // would fail the string probe and a workflow row would be unreadable.
+  if (modality === "workflow") {
+    if (!isWorkflowPayloadShape(record,)) { return null; }
+    return value as WorkflowPayload;
+  }
   if (typeof record.body !== "string") { return null; }
   return value as SimpleTemplatePayload;
+}
+
+/** Structural probe for a `workflow` payload. Deeper ingest validation lives in `src/generation/workflow-library/`. */
+function isWorkflowPayloadShape(record: Record<string, unknown>,): boolean {
+  return typeof record.body === "object" && record.body !== null &&
+    typeof record.category === "string" &&
+    Array.isArray(record.parameters,) &&
+    Array.isArray(record.requiredNodes,);
 }

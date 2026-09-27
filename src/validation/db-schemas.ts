@@ -513,7 +513,7 @@ export const SyntheticDataTypeSchema = t.UnionEnum([
 ],);
 export const SyntheticTestModeSchema = t.UnionEnum(["replay", "mutation", "regression", "calibration", "stress",],);
 export const TemplateDetailLevelSchema = t.UnionEnum(["instant", "balanced", "detailed",],);
-export const TemplateModalitySchema = t.UnionEnum(["llm", "image", "video", "audio",],);
+export const TemplateModalitySchema = t.UnionEnum(["llm", "image", "video", "audio", "workflow",],);
 export const ThinkingVisibilitySchema = t.UnionEnum(["hidden", "collapsed", "visible",],);
 export const TraitCategorySchema = t.UnionEnum([
   "identity",
@@ -2465,6 +2465,10 @@ export const PromptTemplatesSchema = t.Object({
   payload: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
+  is_default: t.Optional(DefaultStateSchema,),
+  enabled: t.Optional(LoreEntryStatusSchema,),
+  lora_slots: t.Optional(t.String(),),
+  min_vram: t.Optional(t.Number(),),
 },);
 
 // ── content_flags ────────────────────────────────────────────
