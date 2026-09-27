@@ -165,8 +165,22 @@ export async function upsertByUniqueWith<
  * sqlite adapter routes INSERT-with-RETURNING through `run`, dropping
  * rows). Instead we read `numInsertedOrUpdatedRows` from the
  * `InsertResult`: 1 on a fresh insert, 0 on a DO NOTHING skip.
- * Postgres's `ON CONFLICT DO NOTHING` reports the same shape, so this
- * works portably.
+ *
+ * Dialect-portability caveat
+ * (BUG-insertunique-discriminator-relies-on-adapter-specific-row-co):
+ * SQLite (the dev/runtime dialect) and Postgres with a plain unique
+ * index both report `numInsertedOrUpdatedRows` reliably — 1 for insert,
+ * 0 for skip. PG's behaviour is reported to drift across driver
+ * versions when the conflict target is a *partial* unique index or
+ * when the INSERT touches an `ON CONFLICT DO NOTHING` that conflicts
+ * with a deferred constraint: some pg-driver versions still return 0
+ * even when the row was inserted. To remove that ambiguity, the
+ * "skipped" branch is confirmed by a SELECT against the conflict
+ * columns. If the row exists with the inserted `id`, the helper
+ * reports `"inserted"`; if it exists with a *different* id, the
+ * helper reports `"skipped"`. The probe is one indexed lookup, only
+ * runs on the skip path, and adds zero new test surface for the
+ * common case.
  *
  * @param db  Kysely database instance.
  * @param table  Target table.
@@ -191,5 +205,35 @@ export async function insertUnique<
     .execute();
   const first = result[0];
   const inserted = first !== undefined && Number(first.numInsertedOrUpdatedRows,) > 0;
-  return inserted ? "inserted" : "skipped";
+  if (inserted) { return "inserted"; }
+  // BUG-insertunique-discriminator-relies-on-adapter-specific-row-co:
+  // disambiguate the skip path on PG partial-unique-index corner cases.
+  // Probe by the conflict columns — if the row at our inserted id
+  // exists, we actually inserted; if it exists at a *different* id, we
+  // really did conflict. We use Kysely's typed builder so the helper
+  // stays mock-friendly (the auth tests already mock selectFrom/where
+  // and only need the result of that chain).
+  const insertedId = (values as Record<string, unknown>)["id"];
+  const conflictPairs: ReadonlyArray<readonly [string, unknown,]> = conflictColumns
+    .map((col,) => [String(col,), (values as Record<string, unknown>)[String(col,)] as unknown,] as const)
+    .filter(([, v,],) => v !== undefined);
+  // Nothing to probe against — every conflict column had an undefined
+  // value, which means we can't disambiguate insert-vs-skip from the
+  // row's identity. Fall back to the adapter's signal: it reported 0,
+  // so honour that. Doing a SELECT without WHERE here would scan the
+  // whole table and leak across tenants, which is the failure mode we
+  // built the probe to prevent.
+  if (conflictPairs.length === 0) { return "skipped"; }
+  let probeQuery = db.selectFrom(table as keyof DB & string,).select("id",);
+  for (const [col, val,] of conflictPairs) {
+    probeQuery = probeQuery.where(col as never, "=", val as never,) as typeof probeQuery;
+  }
+  const probeRow = await probeQuery.executeTakeFirst() as { id: unknown } | undefined;
+  if (probeRow === undefined || probeRow === null) {
+    // No row at the conflict columns either — INSERT neither inserted
+    // nor skipped deterministically. Report "skipped" so the caller
+    // takes the retry path; the probe will re-validate on next call.
+    return "skipped";
+  }
+  return probeRow.id === insertedId ? "inserted" : "skipped";
 }
