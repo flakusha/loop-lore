@@ -22,3 +22,7 @@ No inline typing assistance; proactive/ in loop-lore means server-event timing (
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Proposal (filed 2026-09-27)
+
+See `.plan/tickets/IDEA-chat-composer-inline-suggestions-proposal.md` for the three-path proposal (LLM ghost-text / local n-gram / hybrid), acceptance criteria, and the explicit decision needed before implementation. Original ticket left Not Started pending that product call.
