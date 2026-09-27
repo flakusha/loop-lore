@@ -17,21 +17,28 @@
  * window, so the worst case is one budget of `maxRequests` per `windowMs`
  * regardless of alignment.
  *
- * Usage:
- *   const limiter = createRateLimiter({ windowMs: 60_000, maxRequests: 100 });
- *   const result = limiter.consume(clientIp);
- *   if (!result.allowed) {
- *     return new Response(null, { status: 429, headers: rateLimitHeaders(result) });
- *   }
+ * Two-step gate usage (BUG-register-rate-limiter-consumes-on-username-collision-retries):
+ *   const r = limiter.peek(ip);
+ *   if (!r.allowed) return new Response(null, { status: 429 });
+ *   // ... do expensive work (e.g. insertUnique) ...
+ *   limiter.record(ip);            // only count successful requests
+ *   if (insertFailed) limiter.refund(ip); // undo a premature record
+ *
+ * The simpler `consume(ip)` is still the right primitive when there is
+ * no expensive-or-skippable work between gate and effect (login,
+ * demo-login, IP-level DOS protection).
+ *
+ * @see BUG-register-rate-limiter-consumes-on-username-collision-retries
+ *   for the two-step pattern origin.
  */
 
-/** Outcome of a single consume() call. */
+/** Outcome of a single rate-limit gate check. */
 export interface RateLimitResult {
   /** True iff the request is within budget. */
   allowed: boolean;
   /** Configured maximum requests per window. */
   limit: number;
-  /** Remaining requests in the current window after this call. */
+  /** Remaining requests in the current window (post-recording for consume). */
   remaining: number;
   /**
    * Whole seconds until the oldest timestamp in the window expires.
@@ -96,8 +103,10 @@ export function createRateLimiter(config: RateLimitConfig,) {
 
   /**
    * Record a request and report whether it is within budget.
-   * `consume()` is the single source of truth: it both checks and records.
-   * Callers that need the pre-recording shape should branch on `allowed`.
+   * `consume()` is the single source of truth for one-step flows: it
+   * both checks and records. For two-step flows (gate before an
+   * expensive effect, refund-or-record after) use {@link peek},
+   * {@link record}, and {@link refund} instead.
    * @param key
    * @param now
    */
@@ -142,6 +151,81 @@ export function createRateLimiter(config: RateLimitConfig,) {
   }
 
   /**
+   * Inspect the bucket without recording. Returns the same shape as
+   * {@link consume} so callers can reuse the 429-headers builder, but
+   * `remaining` is pre-recording (i.e. the count of slots still free
+   * if the request were accepted RIGHT NOW).
+   *
+   * Pair with {@link record} on success and {@link refund} on a
+   * post-gate skip to keep the bucket consistent with what actually
+   * happened.
+   * @param key
+   * @param now
+   */
+  function peek(key: string, now = Date.now(),): RateLimitResult {
+    const cutoff = now - config.windowMs;
+    const queue = timestamps.get(key,);
+    if (!queue) {
+      return {
+        allowed: true,
+        limit: config.maxRequests,
+        remaining: config.maxRequests,
+        resetSec: Math.max(1, Math.ceil(config.windowMs / 1000,),),
+      };
+    }
+    while (queue.length > 0 && queue[0]! < cutoff) { queue.shift(); }
+    const wouldBlock = queue.length >= config.maxRequests;
+    const oldest = queue[0];
+    const resetMs = oldest === undefined
+      ? config.windowMs
+      : oldest + config.windowMs - now;
+    return {
+      allowed: !wouldBlock,
+      limit: config.maxRequests,
+      remaining: Math.max(0, config.maxRequests - queue.length,),
+      resetSec: Math.max(1, Math.ceil(resetMs / 1000,),),
+    };
+  }
+
+  /**
+   * Record a request against the bucket without re-checking. Call this
+   * after a successful gate-and-effect so the bucket reflects only
+   * committed work. If the queue is already at-or-above maxRequests by
+   * the time `record()` runs (race: a concurrent request pushed us
+   * over), the extra timestamp is still pushed — the next {@link peek}
+   * or {@link consume} will block correctly. Keeping the over-budget
+   * push is the simplest invariant: every record() corresponds to one
+   * real request that touched the effect.
+   * @param key
+   * @param now
+   */
+  function record(key: string, now = Date.now(),): void {
+    const cutoff = now - config.windowMs;
+    let queue = timestamps.get(key,);
+    if (!queue) {
+      queue = [];
+      timestamps.set(key, queue,);
+    }
+    while (queue.length > 0 && queue[0]! < cutoff) { queue.shift(); }
+    queue.push(now,);
+  }
+
+  /**
+   * Refund a previously-recorded request. Use when the gate passed but
+   * the post-gate effect skipped the user (e.g. a 409 from
+   * insertUnique). Pops the most recent in-window timestamp for the
+   * key. If the queue is empty (race: window expired between record
+   * and refund) this is a no-op.
+   * @param key
+   */
+  function refund(key: string,): void {
+    const queue = timestamps.get(key,);
+    if (!queue || queue.length === 0) { return; }
+    queue.pop();
+    if (queue.length === 0) { timestamps.delete(key,); }
+  }
+
+  /**
    * Backward-compatible boolean check.
    * Records the request on success (same as consume().allowed === true).
    * Does NOT record on failure (caller is blocked).
@@ -170,7 +254,7 @@ export function createRateLimiter(config: RateLimitConfig,) {
     timestamps.clear();
   }
 
-  return { check, clear: clearAll, consume, destroy, reset, };
+  return { check, clear: clearAll, consume, destroy, peek, record, refund, reset, };
 }
 
 /** */
