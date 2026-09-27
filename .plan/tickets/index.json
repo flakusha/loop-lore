@@ -3298,6 +3298,18 @@
     "source": ".plan/tickets/BUG-injectnarration-hardcodes-actor-id-system-fk-drops-split-reu.md",
     "status": "done"
   },
+  "BUG-INSERTUNIQUE-DISCRIMINATOR-RELIES-ON-ADAPTER-SPECIFIC-ROW-CO": {
+    "hash": "pending",
+    "extid": "BUG-INSERTUNIQUE-DISCRIMINATOR-RELIES-ON-ADAPTER-SPECIFIC-ROW-CO",
+    "type": "BUG",
+    "title": "insertUnique discriminator relies on adapter-specific row count",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-insertunique-discriminator-relies-on-adapter-specific-row-co.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-IRC-INTEGRATION-UNSCOPED-AS-GROUP-CHAT-ONLY-IN-SOCIAL-HUB-AD": {
     "hash": "27cc7ab",
     "git_issue": "27cc7ab",
@@ -4624,6 +4636,18 @@
     "source": ".plan/tickets/BUG-regex-transform-runs-at-store-time-not-render-time.md",
     "status": "done"
   },
+  "BUG-REGISTER-NON-ATOMIC-USER-ACTOR-KEY-INSERT": {
+    "hash": "pending",
+    "extid": "BUG-REGISTER-NON-ATOMIC-USER-ACTOR-KEY-INSERT",
+    "type": "BUG",
+    "title": "register non-atomic user-actor-key insert",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-register-non-atomic-user-actor-key-insert.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-REGISTER-PLUGINS-150-REFERENCES-UNDEFINED-CHATSECTIONSROUTES": {
     "hash": "0b9a09b",
     "extid": "BUG-REGISTER-PLUGINS-150-REFERENCES-UNDEFINED-CHATSECTIONSROUTES",
@@ -4641,6 +4665,18 @@
     "source": ".plan/tickets/BUG-register-plugins-150-references-undefined-chatsectionsroutes.md",
     "git_issue": "0b9a09b",
     "status": "done"
+  },
+  "BUG-REGISTER-RATE-LIMITER-CONSUMES-ON-USERNAME-COLLISION-RETRIES": {
+    "hash": "pending",
+    "extid": "BUG-REGISTER-RATE-LIMITER-CONSUMES-ON-USERNAME-COLLISION-RETRIES",
+    "type": "BUG",
+    "title": "register rate limiter consumes on username-collision retries",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-register-rate-limiter-consumes-on-username-collision-retries.md",
+    "status": "⬜ Not Started"
   },
   "BUG-REMOTE-ACTOR-DISCOVERY-WEBFINGER-RESOLVE-HOST-META-ABSENT": {
     "hash": "550802a",
@@ -15692,7 +15728,7 @@
     "tags": [],
     "source": ".plan/tickets/TASK-033.md",
     "git_issue": "760729b",
-    "status": "open"
+    "status": "done"
   },
   "TASK-034": {
     "hash": "3301f96",
@@ -15705,7 +15741,7 @@
     "tags": [],
     "source": ".plan/tickets/TASK-034.md",
     "git_issue": "3301f96",
-    "status": "open"
+    "status": "done"
   },
   "TASK-035": {
     "hash": "f9e27d1",
@@ -15718,7 +15754,7 @@
     "tags": [],
     "source": ".plan/tickets/TASK-035.md",
     "git_issue": "f9e27d1",
-    "status": "open"
+    "status": "done"
   },
   "TASK-036": {
     "hash": "aa7c0f0",
@@ -15731,7 +15767,7 @@
     "tags": [],
     "source": ".plan/tickets/TASK-036.md",
     "git_issue": "aa7c0f0",
-    "status": "open"
+    "status": "done"
   },
   "TASK-037": {
     "hash": "650079b",
@@ -15744,7 +15780,7 @@
     "tags": [],
     "source": ".plan/tickets/TASK-037.md",
     "git_issue": "650079b",
-    "status": "open"
+    "status": "done"
   },
   "TASK-038": {
     "hash": "e8503af",
@@ -15757,7 +15793,7 @@
     "tags": [],
     "source": ".plan/tickets/TASK-038.md",
     "git_issue": "e8503af",
-    "status": "open"
+    "status": "done"
   },
   "TASK-039": {
     "hash": "243e54a",
@@ -15770,7 +15806,7 @@
     "tags": [],
     "source": ".plan/tickets/TASK-039.md",
     "git_issue": "243e54a",
-    "status": "open"
+    "status": "done"
   },
   "TASK-040": {
     "hash": "e288126",
@@ -15783,7 +15819,7 @@
     "tags": [],
     "source": ".plan/tickets/TASK-040.md",
     "git_issue": "e288126",
-    "status": "open"
+    "status": "done"
   },
   "TASK-041": {
     "hash": "947a46f",
@@ -15796,7 +15832,7 @@
     "tags": [],
     "source": ".plan/tickets/TASK-041.md",
     "git_issue": "947a46f",
-    "status": "open"
+    "status": "done"
   },
   "TASK-042": {
     "hash": "be46176",
@@ -15809,7 +15845,7 @@
     "tags": [],
     "source": ".plan/tickets/TASK-042.md",
     "git_issue": "be46176",
-    "status": "open"
+    "status": "done"
   },
   "TASK-043": {
     "hash": "edfb194",
@@ -25797,7 +25833,7 @@
       "dependency-risk"
     ],
     "source": ".plan/tickets/TASK-effect-v4-bun-esm-typecheck-compatibility-spike.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-EFFECT-V4-DI-WIRING-SPIKE-VERSUS-THE-HANDLEOPTS-BAG": {
     "hash": "d52c2c3",
@@ -25853,7 +25889,7 @@
       "scheduling"
     ],
     "source": ".plan/tickets/TASK-effect-v4-retry-schedule-parity-spike-on-the-provider-call-p.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-EFFECT-V4-SCOPED-CONCURRENCY-AND-INTERRUPTION-SPIKE": {
     "hash": "dc61314",
@@ -25872,7 +25908,7 @@
       "resource-safety"
     ],
     "source": ".plan/tickets/TASK-effect-v4-scoped-concurrency-and-interruption-spike.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-EMAIL-INTEGRATION": {
     "hash": "15de0c7",
