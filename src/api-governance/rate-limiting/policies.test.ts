@@ -44,6 +44,13 @@ describe("policyForRoute", () => {
     expect(policyForRoute("/api/v1/auth/login",),).toBe(authPolicy,);
   });
 
+  test("seen-poller volume routes to the chat policy, not the shared default", () => {
+    // Real call pattern: loadAllSeen N-GETs every message id every 5s —
+    // a 26-message chat sustains 312 req/min, above the default 300 cap.
+    expect(policyForRoute("/api/v1/messages/m1/seen",),).toBe(chatPolicy,);
+    expect(policyForRoute("/api/v1/messages",),).toBe(chatPolicy,);
+  });
+
   test("unmatched paths get the default policy", () => {
     expect(policyForRoute("/api/v1/actors",),).toBe(defaultPolicy,);
   });

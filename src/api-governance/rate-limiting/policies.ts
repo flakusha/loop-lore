@@ -52,6 +52,12 @@ export const routePolicies: Array<[prefix: string, policy: RatePolicy,]> = [
   ["/api/v1/auth", authPolicy,],
   ["/api/v1/generation", generationPolicy,],
   ["/api/v1/chats", chatPolicy,],
+  // BUG-seen-poller-starves-shared-default-rate-limit-bucket: the seen
+  // poller N-GETs /api/v1/messages/:id/seen every 5s per open chat; without
+  // this prefix those calls landed in the shared defaultPolicy bucket and a
+  // >=26-message chat sustained >300 req/min → 429 storm + starvation of
+  // every other unmatched route.
+  ["/api/v1/messages", chatPolicy,],
 ];
 
 /** */
