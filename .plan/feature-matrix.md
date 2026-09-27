@@ -1004,7 +1004,7 @@ Total tickets: **2971** — untagged: **2535** — unbound to epic: **1512**
 | yaml | 4 | 0 | 2 | 0 | 1 | 0 | 1 |
 | yaml-frontmatter | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| (untagged) | 2535 | 979 | 58 | 1271 | 36 | 0 | 191 |
+| (untagged) | 2535 | 981 | 58 | 1271 | 36 | 0 | 189 |
 
 ## By epic × status
 
@@ -1073,7 +1073,7 @@ Total tickets: **2971** — untagged: **2535** — unbound to epic: **1512**
 | epic-agency-story-points | 4 | 1 | 0 | 2 | 0 | 0 | 1 |
 | epic-agency-story-points, NPC/Actor System | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-ambient-music-sfx | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| epic-analytics-observability | 15 | 4 | 0 | 1 | 0 | 0 | 10 |
+| epic-analytics-observability | 15 | 6 | 0 | 1 | 0 | 0 | 8 |
 | epic-analytics-observability.md | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-anonymity-decentralization.md | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-api-first-foundation | 1 | 1 | 0 | 0 | 0 | 0 | 0 |

@@ -2784,7 +2784,7 @@
     "epic": "epic-analytics-observability",
     "tags": [],
     "source": ".plan/tickets/BUG-generation-completed-latencyms-hardcoded-to-0-on-two-emit-pa.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-GENERATION-CONTROL-PLANE-ROUTES-LACK-AUTHORIZATION": {
     "hash": "8746eca",
@@ -2810,7 +2810,7 @@
     "epic": "epic-analytics-observability",
     "tags": [],
     "source": ".plan/tickets/BUG-generation-failed-drops-model-provider-context.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-GET-MESSAGES-ID-VARIANTS-HAS-TOCTOU-RACE-ON-PARENT-CHAT-AUTH": {
     "hash": "c1778a0",

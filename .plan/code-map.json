@@ -16041,7 +16041,6 @@
       "source": ".plan/tickets/TASK-tui.md"
     }
   ],
-
   "src/frontend/alpine/transports/telemetry.ts": [
     {
       "kind": "ticket",
