@@ -11,6 +11,7 @@
 **Context:** Found 2026-09-28 verifying the 2026-09-27 LLM execution-stats batch on dev HEAD `fbce2b129`. Proven: `hashId("test-chat-1") = "edf616455388"` != raw input.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 **Related:** BUG-telemetry-stores-raw-client-body-real-user-chat-session-ids (introduced the hashing), BUG-generation-completed-latencyms-hardcoded-to-0-on-two-emit-pa (sibling consumer of the same rows), TASK-admin-llm-execution-analytics-per-model-per-provider-rollups (rollup reads `event_data` fields — unaffected, but any per-user scoping there needs the same hashing)
+
 ## What
 
 - `src/telemetry/service.ts:35-37` — `hashId()` truncates SHA-256 to 12 hex chars; `:88-95` stores `session_id`/`user_id`/`chat_id` hashed on every `record()` call. All four server emitters (post-store, non-stream, stream-to-client x2) flow through it.
@@ -28,6 +29,7 @@ The 2026-09-27 batch (latency fix, failure context, cost attribution, llm-usage 
 - Hash filter values with `hashId()` before querying in `src/routes/analytics.ts` (both endpoints, all three ID filters).
 - Update `src/routes/analytics.test.ts` to seed via `record()` (or pre-hashed IDs); add one regression test asserting a `record()`-written completion round-trips to non-zero `totalGenerations`/`totalTokens` through the route.
 - Out of scope: pricing table (sibling TASK), llm-usage rollup (sibling TASK — but any per-user scoping there copies this pattern), frontend dead-code BUG (sibling ticket).
+
 ## Acceptance Criteria
 
 - [ ] `record()`-written completion round-trips to non-zero `totalGenerations`/`totalTokens` through `GET /api/analytics/chat/:chatId`
