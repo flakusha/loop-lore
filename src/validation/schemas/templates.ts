@@ -17,6 +17,7 @@ export const TemplateModalitySchema = Type.Union([
   Type.Literal("image",),
   Type.Literal("video",),
   Type.Literal("audio",),
+  Type.Literal("workflow",),
 ],);
 
 /** */
