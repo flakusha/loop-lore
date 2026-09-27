@@ -9,6 +9,7 @@
 // size-allow: 264
 
 import { safeJsonStringify, } from "../../../utils";
+import { withProviderRetry, } from "../retry";
 import type { GenerateRequest, } from "../types";
 import { ProviderAuthError, ProviderError, ProviderRateLimitError, } from "../types";
 import type { OpenAiCompatibleState, } from "./types";
@@ -178,38 +179,16 @@ export async function fetchWithRetry(
   apiKey?: string,
 ): Promise<unknown> {
   const url = `${state.baseUrl}${path}`;
-  let lastError: Error | undefined;
 
-  for (let attempt = 0; attempt <= state.retries; attempt++) {
-    try {
+  return await withProviderRetry(
+    async () => {
       const response = await fetchRaw(state, url, body, signal, apiKey,);
-
-      if (response.ok) {
-        return await response.json();
-      }
-
-      await handleErrorResponse(response,);
-    } catch (error) {
-      lastError = error as Error;
-      if (error instanceof ProviderError && !error.retryable) {
-        throw error;
-      }
-      if (signal?.aborted) {
-        throw new ProviderError("Request cancelled", undefined, undefined, false,);
-      }
-      // AbortError from timeout or native abort — don't retry, fail fast
-      if ((error as Error).name === "AbortError") {
-        throw new ProviderError("Request timed out", undefined, 504, false,);
-      }
-      // Exponential backoff
-      if (attempt < state.retries) {
-        const delay = Math.min(1000 * 2 ** attempt, 10_000,);
-        await new Promise((resolve,) => setTimeout(resolve, delay,));
-      }
-    }
-  }
-
-  throw lastError ?? new ProviderError("Max retries exceeded", undefined, 500, true,);
+      if (response.ok) { return await response.json(); }
+      return await handleErrorResponse(response,);
+    },
+    state.retries,
+    signal,
+  );
 }
 
 /**

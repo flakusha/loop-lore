@@ -8,6 +8,7 @@
 // at config load). Tool use requires the `anthropic-beta: tools-2024-04-04` header.
 
 import { safeJsonStringify, } from "../../../utils";
+import { withProviderRetry, } from "../retry";
 import type { GenerateResponse, } from "../types";
 import { ProviderError, } from "../types";
 import type { AnthropicState, } from "./types";
@@ -112,31 +113,15 @@ export async function fetchWithRetry(
   apiKey?: string,
   toolCalling = false,
 ): Promise<unknown> {
-  for (let attempt = 0; attempt <= state.retries; attempt++) {
-    try {
+  return await withProviderRetry(
+    async () => {
       const response = await fetchRaw(state, url, body, signal, apiKey, toolCalling,);
       if (response.ok) { return await response.json(); }
-      await handleErrorResponse(response,);
-    } catch (error) {
-      if (error instanceof ProviderError && !error.retryable) {
-        throw error;
-      }
-      if (signal?.aborted) {
-        throw new ProviderError("Request cancelled", undefined, undefined, false,);
-      }
-      if ((error as Error).name === "AbortError") {
-        throw new ProviderError("Request timed out", undefined, 504, false,);
-      }
-      if (attempt >= state.retries) {
-        throw error;
-      }
-      const delayMs = Math.min(1000 * 2 ** attempt, 10_000,);
-      const { promise, resolve, } = Promise.withResolvers<undefined>();
-      setTimeout(() => resolve(undefined,), delayMs,);
-      await promise;
-    }
-  }
-  throw new ProviderError("Max retries exceeded", undefined, 500, true,);
+      return await handleErrorResponse(response,);
+    },
+    state.retries,
+    signal,
+  );
 }
 
 /**
