@@ -87,6 +87,7 @@ export function streamToClient({
   let abortController: AbortController | null = null;
   const buffer = getOrCreateBuffer(input.chatId,);
   const log = getLogger().child({ module: "generate-route", },);
+  const streamStartedAtMs = Date.now();
   const collectedToolCalls: { id: string; type: "function"; function: { name: string; arguments: string } }[] = [];
 
   const sseStream = new ReadableStream({
@@ -238,7 +239,7 @@ export function streamToClient({
               promptTokens: result.tokenUsage.promptTokens,
               completionTokens: result.tokenUsage.completionTokens,
               totalTokens: result.tokenUsage.totalTokens,
-              latencyMs: 0,
+              latencyMs: Date.now() - streamStartedAtMs,
               model: modelId,
               provider: providerName,
               finishReason: finalResponse.finishReason,
