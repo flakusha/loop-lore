@@ -35657,15 +35657,56 @@
     "title": "Recursive Self-Improvement: Agent Worktree Spawn (TTY-free) and Sandbox",
     "type": "TASK"
   },
-  "TASK-RECURSIVE-SELF-IMPROVEMENT-DEEP-ANALYSIS-LOGGING-AND-TELEMET": {
-    "hash": "36a9209",
-    "git_issue": "36a9209",
-    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-DEEP-ANALYSIS-LOGGING-AND-TELEMET",
-    "type": "TASK",
-    "title": "Deep-Analysis Logging + Telemetry — Structured Traces for Agent Diagnostics",
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-BRIEFINGSCRIPT-LINTER": {
+    "epic": "epic-recursive-self-improvement",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-BRIEFINGSCRIPT-LINTER",
+    "hash": "pending",
     "label": "task",
     "priority": "Medium",
+    "source": ".plan/tickets/TASK-recursive-self-improvement-briefingscript-linter.md",
+    "status": "Not Started",
+    "tags": [
+      "briefingscript",
+      "sase",
+      "ticket-lint",
+      "pre-agent",
+      "briefing",
+      "structured-spec",
+      "validator"
+    ],
+    "title": "BriefingScript Linter — Pre-Agent Ticket Quality Gate",
+    "type": "TASK"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-BRIEFINGSCRIPT-LINTER-PRE-AGENT-T": {
     "epic": "epic-recursive-self-improvement",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-BRIEFINGSCRIPT-LINTER-PRE-AGENT-T",
+    "git_issue": "068a3fd",
+    "hash": "068a3fd",
+    "label": "task",
+    "priority": "medium",
+    "source": ".plan/tickets/TASK-recursive-self-improvement-briefingscript-linter-pre-agent-t.md",
+    "status": "⬜ Not Started",
+    "tags": [
+      "briefingscript",
+      "sase",
+      "ticket-lint",
+      "pre-agent",
+      "briefing",
+      "structured-spec",
+      "validator"
+    ],
+    "title": "Recursive Self-Improvement: BriefingScript Linter — Pre-Agent Ticket Quality Gate",
+    "type": "TASK"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-DEEP-ANALYSIS-LOGGING-AND-TELEMET": {
+    "epic": "epic-recursive-self-improvement",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-DEEP-ANALYSIS-LOGGING-AND-TELEMET",
+    "git_issue": "36a9209",
+    "hash": "36a9209",
+    "label": "task",
+    "priority": "Medium",
+    "source": ".plan/tickets/TASK-recursive-self-improvement-deep-analysis-logging-and-telemet.md",
+    "status": "Not Started",
     "tags": [
       "logging",
       "telemetry",
@@ -35675,8 +35716,49 @@
       "observability",
       "agent-diagnostics"
     ],
-    "source": ".plan/tickets/TASK-recursive-self-improvement-deep-analysis-logging-and-telemet.md",
-    "status": "Not Started"
+    "title": "Deep-Analysis Logging + Telemetry — Structured Traces for Agent Diagnostics",
+    "type": "TASK"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-EVALUATOR-RELIABILITY-DRIFT-DETEC": {
+    "epic": "epic-recursive-self-improvement",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-EVALUATOR-RELIABILITY-DRIFT-DETEC",
+    "git_issue": "0c5b570",
+    "hash": "0c5b570",
+    "label": "task",
+    "priority": "high",
+    "source": ".plan/tickets/TASK-recursive-self-improvement-evaluator-reliability-drift-detec.md",
+    "status": "⬜ Not Started",
+    "tags": [
+      "evaluator-reliability",
+      "drift",
+      "flake-rate",
+      "suspicious-pass",
+      "coverage-regression",
+      "self-confirming-loop",
+      "urc-rsi-survey"
+    ],
+    "title": "Recursive Self-Improvement: Evaluator Reliability Drift Detector",
+    "type": "TASK"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-EVALUATOR-RELIABILITY-DRIFT-DETECTOR": {
+    "epic": "epic-recursive-self-improvement",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-EVALUATOR-RELIABILITY-DRIFT-DETECTOR",
+    "hash": "pending",
+    "label": "task",
+    "priority": "High",
+    "source": ".plan/tickets/TASK-recursive-self-improvement-evaluator-reliability-drift-detector.md",
+    "status": "Not Started",
+    "tags": [
+      "evaluator-reliability",
+      "drift",
+      "flake-rate",
+      "suspicious-pass",
+      "coverage-regression",
+      "self-confirming-loop",
+      "urc-rsi-survey"
+    ],
+    "title": "Evaluator Reliability Drift Detector — Flake / Suspicious-Pass / Coverage-Regression Tracker",
+    "type": "TASK"
   },
   "TASK-RECURSIVE-SELF-IMPROVEMENT-HEALTH-LIVENESS-READINESS-PROBES": {
     "epic": "epic-recursive-self-improvement",
@@ -35697,15 +35779,97 @@
     "title": "Recursive Self-Improvement: Health Liveness Readiness Probes",
     "type": "TASK"
   },
-  "TASK-RECURSIVE-SELF-IMPROVEMENT-NEAR-REAL-TIME-DESKTOP-AGENT-PLAY": {
-    "hash": "283b206",
-    "git_issue": "283b206",
-    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-NEAR-REAL-TIME-DESKTOP-AGENT-PLAY",
-    "type": "TASK",
-    "title": "Near-Real-Time Desktop Agent — Interactive Testing via Playwright + Web Search",
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-MERGE-READINESS-PACK": {
+    "epic": "epic-recursive-self-improvement",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-MERGE-READINESS-PACK",
+    "hash": "pending",
+    "label": "task",
+    "priority": "Medium",
+    "source": ".plan/tickets/TASK-recursive-self-improvement-merge-readiness-pack.md",
+    "status": "Not Started",
+    "tags": [
+      "merge-readiness-pack",
+      "mrp",
+      "sase",
+      "briefing",
+      "evaluator",
+      "evidence",
+      "gate-report"
+    ],
+    "title": "Merge-Readiness Pack Generator from Check-Report JSON",
+    "type": "TASK"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-MERGE-READINESS-PACK-GENERATOR-FR": {
+    "epic": "epic-recursive-self-improvement",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-MERGE-READINESS-PACK-GENERATOR-FR",
+    "git_issue": "29341db",
+    "hash": "29341db",
+    "label": "task",
+    "priority": "medium",
+    "source": ".plan/tickets/TASK-recursive-self-improvement-merge-readiness-pack-generator-fr.md",
+    "status": "⬜ Not Started",
+    "tags": [
+      "merge-readiness-pack",
+      "mrp",
+      "sase",
+      "briefing",
+      "evaluator",
+      "evidence",
+      "gate-report"
+    ],
+    "title": "Recursive Self-Improvement: Merge-Readiness Pack Generator from Check-Report JSON",
+    "type": "TASK"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-N-VERSION-PATCH-ARENA": {
+    "epic": "epic-recursive-self-improvement",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-N-VERSION-PATCH-ARENA",
+    "hash": "pending",
     "label": "task",
     "priority": "High",
+    "source": ".plan/tickets/TASK-recursive-self-improvement-n-version-patch-arena.md",
+    "status": "Not Started",
+    "tags": [
+      "n-version",
+      "patch-arena",
+      "sase",
+      "agentic-se",
+      "evaluation",
+      "candidate-ranking",
+      "cross-reference"
+    ],
+    "title": "N-Version Patch Arena — Cross-Reference Candidate Patches Against the Deterministic Evaluator",
+    "type": "TASK"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-N-VERSION-PATCH-ARENA-DETERMINIST": {
     "epic": "epic-recursive-self-improvement",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-N-VERSION-PATCH-ARENA-DETERMINIST",
+    "git_issue": "56d7716",
+    "hash": "56d7716",
+    "label": "task",
+    "priority": "high",
+    "source": ".plan/tickets/TASK-recursive-self-improvement-n-version-patch-arena-determinist.md",
+    "status": "⬜ Not Started",
+    "tags": [
+      "n-version",
+      "patch-arena",
+      "sase",
+      "agentic-se",
+      "evaluation",
+      "candidate-ranking",
+      "cross-reference"
+    ],
+    "title": "Recursive Self-Improvement: N-Version Patch Arena — Deterministic Cross-Reference of Candidate Patches",
+    "type": "TASK"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-NEAR-REAL-TIME-DESKTOP-AGENT-PLAY": {
+    "epic": "epic-recursive-self-improvement",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-NEAR-REAL-TIME-DESKTOP-AGENT-PLAY",
+    "git_issue": "283b206",
+    "hash": "283b206",
+    "label": "task",
+    "priority": "High",
+    "source": ".plan/tickets/TASK-recursive-self-improvement-near-real-time-desktop-agent-play.md",
+    "status": "Not Started",
     "tags": [
       "agent",
       "interactive",
@@ -35716,8 +35880,8 @@
       "application-testing",
       "near-real-time"
     ],
-    "source": ".plan/tickets/TASK-recursive-self-improvement-near-real-time-desktop-agent-play.md",
-    "status": "Not Started"
+    "title": "Near-Real-Time Desktop Agent — Interactive Testing via Playwright + Web Search",
+    "type": "TASK"
   },
   "TASK-RECURSIVE-SELF-IMPROVEMENT-NIGHTLY-HEAVY-GATE-AND-PERF-REGRE": {
     "epic": "epic-recursive-self-improvement",
@@ -35738,14 +35902,14 @@
     "type": "TASK"
   },
   "TASK-RECURSIVE-SELF-IMPROVEMENT-SIDECAR-PYTHON-PROVIDER-FOR-CUSTO": {
-    "hash": "56e69db",
-    "git_issue": "56e69db",
+    "epic": "epic-recursive-self-improvement",
     "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-SIDECAR-PYTHON-PROVIDER-FOR-CUSTO",
-    "type": "TASK",
-    "title": "Sidecar Python Provider for Custom LLMs (Non-llama.cpp)",
+    "git_issue": "56e69db",
+    "hash": "56e69db",
     "label": "task",
     "priority": "High",
-    "epic": "epic-recursive-self-improvement",
+    "source": ".plan/tickets/TASK-recursive-self-improvement-sidecar-python-provider-for-custo.md",
+    "status": "Not Started",
     "tags": [
       "sidecar",
       "python",
@@ -35754,8 +35918,8 @@
       "llama-cpp-alternative",
       "http"
     ],
-    "source": ".plan/tickets/TASK-recursive-self-improvement-sidecar-python-provider-for-custo.md",
-    "status": "Not Started"
+    "title": "Sidecar Python Provider for Custom LLMs (Non-llama.cpp)",
+    "type": "TASK"
   },
   "TASK-RECURSIVE-SELF-IMPROVEMENT-SMOKE-GATE-FAST-CI-LOOP": {
     "epic": "epic-recursive-self-improvement",
