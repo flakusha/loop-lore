@@ -206,6 +206,11 @@ export async function insertUnique<
   const first = result[0];
   const inserted = first !== undefined && Number(first.numInsertedOrUpdatedRows,) > 0;
   if (inserted) { return "inserted"; }
+  // BUG-insertunique-probe-misreports-skip-as-inserted-when-conflict:
+  // when `id` itself is a conflict column the probe below finds the
+  // PRE-EXISTING conflicting row at values.id and misreports a genuine
+  // skip as "inserted". The adapter's 0-row signal is authoritative then.
+  if (conflictColumns.map(String,).includes("id",)) { return "skipped"; }
   // BUG-insertunique-discriminator-relies-on-adapter-specific-row-co:
   // disambiguate the skip path on PG partial-unique-index corner cases.
   // Probe by the conflict columns — if the row at our inserted id
