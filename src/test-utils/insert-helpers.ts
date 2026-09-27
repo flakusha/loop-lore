@@ -4635,3 +4635,19 @@ export async function insertActorStoryPoints(
   } as any,).execute();
   return id;
 }
+
+/** Insert a game_states row. */
+export async function insertGameStates(
+  db: Db,
+  chat_id: string,
+  opts?: { id?: string; message_id?: string | null; state?: string; created_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("game_states",).values({
+    id,
+    chat_id,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
