@@ -23,40 +23,81 @@ additions.
 
 ### 0.1 The proposed `comfy_workflows` table duplicates `prompt_templates`
 
-`prompt_templates` (`src/db/schema-manifest.ts:2209-2220`) already has exactly the
-columns the epic proposed:
+> **Corrected 2026-09-27 under adversarial review.** The first version of this
+> section claimed the payload variant "slots into that union with no schema
+> change" and that an `is_default` concept already existed. Both were wrong.
+> The correction is folded in here; see also the epic's *Cost of adding a
+> modality*.
+
+`prompt_templates` (`src/db/schema-manifest.ts:2209-2220`) is exactly
+`id, owner_id, modality, name, description, model_family, detail_level, payload,
+created_at, updated_at`.
 
 | proposed `comfy_workflows` | existing `prompt_templates` |
 | --- | --- |
 | `id` | `id` (PK) |
 | `name` / `description` | `name` / `description` |
 | `family` | **`model_family`** (already there, unused for image) |
-| `category` | `modality` (enum: llm/image/video/audio) |
+| `category` | `modality` — plain `text` column, `notNull` + `hasDefault`, **no DB enum constraint** |
 | `params` | `payload` (JSON, modality-dispatched) |
 | `owner_id` | `owner_id` (already supports per-user templates) |
-| `enabled` / `is_default` | *missing* — but the admin templates UI already has a `PUT /:id/defaults` route (`src/routes/admin-templates/profiles.ts:36-59`) implying a default concept exists |
+| `enabled` / `is_default` | **both absent** |
 
-`src/generation/template-types.ts:34-49` dispatches the `payload` JSON on
-`modality` — `ImageTemplatePayload`, `LlmTemplatePayload`, `SimpleTemplatePayload`.
-A `ComfyWorkflowPayload` variant slots into that union with no schema change.
+`src/generation/template-types.ts:49` dispatches the `payload` JSON on `modality`
+through the `TemplatePayload` union (`LlmTemplatePayload`, `ImageTemplatePayload`,
+`SimpleTemplatePayload`).
 
-**Consequence:** a new table is the *bigger* change. Adding a modality + payload
-variant is smaller and inherits existing ownership, admin CRUD, the list route,
-and the Alpine admin surface for free. Only `enabled`, `lora_slots`, and
-`body_path` are genuinely new — and `body_path` is avoidable entirely (see 0.2).
+**On "no schema change"** — technically true of the *column* (plain text, so
+SQLite needs no table rebuild) but badly understates the work. The `modality`
+value is a TS-level enum duplicated in **9 places**:
+
+- `src/db/enums-generation.ts:78-85` — the `TemplateModality` const + type
+- `src/validation/db-schemas.ts:516` — `t.UnionEnum([...])`, **generated**
+- `src/validation/schemas/templates.ts:15-20` — hand-written TypeBox literals, a
+  *separate* definition from the generated one
+- 6 hardcoded `MODALITIES` arrays: `src/generation/template-service/crud.ts:15`,
+  `src/routes/templates/crud.ts:39`, `src/routes/templates/transfer.ts:25`
+- `src/test-utils/insert-helpers.ts` — generated, types the column
+
+Missing one compiles clean and fails at runtime, which is the worst profile.
+
+**Two silent fallthroughs** — the reason "just add a variant" is wrong here:
+
+1. `parseTemplatePayload` (`src/generation/template-types.ts:83-103`) tests `llm`,
+   then `image`, then **falls through to `SimpleTemplatePayload` for anything
+   else** (line 101). A `workflow` payload without a `body: string` returns `null`
+   → the create-time shape probe at `template-service/crud.ts:49` rejects it; a
+   *typo’d* modality string silently validates as `Simple`. Needs an explicit
+   `workflow` branch **and** an explicit `default: return null`.
+2. `src/routes/templates/apply.ts:91-94` is `if (modality === "image") … else
+   applySimpleTemplate(...)`. A `workflow` row has its **graph rendered as a string
+   template**. Needs an explicit branch or a 400.
+
+`src/generation/image-gen-route.ts:87` is already safe (guards
+`row.modality !== "image"` with a 400).
+
+**Consequence:** a new table is still the *bigger* change — but the delta is
+narrower than "three new fields". Genuinely new columns: `is_default`,
+`enabled`, `lora_slots`, `min_vram`; plus a `workflow` payload variant and the 9
+enum edits. `body_path` is avoidable entirely (see 0.2).
 
 ### 0.2 The epic's "DB row + body on disk" split has no existing mechanism
 
 `startLlamaSwap` (`src/services/server-external-manager/start-llama.ts:167-180`)
 spawns with `--config <hand-written path>` and reads `startPort` from that file.
-**loop-lore never writes a config file.** The system-config *export* endpoint
-(`src/routes/admin/system-config.ts:64`) serializes rows to a download; there is no
-write path that produces a file a subprocess consumes.
+**loop-lore never writes a config file.** Verified: `system-config.ts` has no
+`writeFile` anywhere; its `POST /import` handler (`:163-212`) calls
+`importConfigFromText(db, content, format)`, which parses YAML/TOML *text into KV
+rows* rather than producing a file. The `PATCH` handler (`:143-161`) calls
+`setConfig` — again KV-only.
 
 So the epic's `body_path` column implies a build: a generated-config writer, a
 `reload()` on the `WorkflowLoader` singleton, and a mtime-invalidation story. The
-loader caches by *directory* mtime (`loader.ts:114`), so an overwrite inside an
-already-scanned directory is invisible until reload.
+loader caches by *directory* mtime. Verified at `loader.ts:106-118`:
+`stat(dirPath)` → `currentMtime`, then `if (currentMtime <= this.dirMtime &&
+this.cache.size > 0) return;`. Only adding/removing/renaming an entry changes a
+directory's mtime, so **overwriting a file's contents in an already-scanned
+directory is invisible until an explicit `reload()`**.
 
 Storing the graph inline in `prompt_templates.payload` sidesteps the whole
 problem: no file, no path, no sync, no stale cache. The cost is large JSON rows in
