@@ -7,14 +7,18 @@
  * POST /run validation ladder, and the `handleImageGeneration`-parity authz
  * gates (401 unauthenticated, 403 foreign chat/message — IDOR write closed).
  *
- * No ComfyUI or sd-server runs here: 127.0.0.1:8188 refuses the connection
- * (fast ECONNREFUSED, not the 120s workflow timeout) and sd-server is
- * unconfigured, so the provider failures pin the 500 branch and the false
- * health reports without any network double.
+ * No ComfyUI or sd-server runs here: both providers are pointed at a port
+ * nothing is listening on (kernel-assigned, reserved then released in
+ * `beforeAll`), so every probe fails fast with ECONNREFUSED rather than
+ * sitting on the 120s workflow timeout. That pins the 500 branch and the
+ * false health reports without a network double — and without depending on
+ * any fixed port being free, which silently broke these assertions whenever
+ * another process on the host happened to hold 8188.
  */
-import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
+import { afterAll, beforeAll, describe, expect, mock, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
+import * as realConfigLoad from "../config/load";
 import { setTestDatabase, } from "../db";
 import { MessageRole, } from "../db/enums";
 import type { DB, } from "../db/schema";
@@ -95,6 +99,35 @@ function buildAuthedApp() {
 }
 
 beforeAll(async () => {
+  // Point every SD provider at a port nothing is listening on, by
+  // construction. ComfyUI's provider otherwise falls back to a hardcoded
+  // 127.0.0.1:8188, so each "backend is unreachable" assertion below was
+  // really asserting "nothing else on this host holds 8188" — untrue the
+  // moment a second worktree runs its own suite.
+  const dead = Bun.serve({ port: 0, fetch: () => new Response("ok",), },);
+  const deadPort = dead.port;
+  await dead.stop(true,);
+  mock.module("../config/load", () => ({
+    ...realConfigLoad,
+    loadConfig: () => ({
+      generation: {
+        providers: {
+          sd: [
+            {
+              name: "unreachable-edit-backend",
+              label: "Unreachable Edit Backend",
+              baseUrl: `http://127.0.0.1:${deadPort}`,
+              apiFamily: "comfyui",
+              purpose: "edit",
+              defaults: { model: "default", steps: 20, width: 512, height: 512, },
+              timeout: 10_000,
+              generationTimeout: 60_000,
+            },
+          ],
+        },
+      },
+    }),
+  }),);
   const testDb = await createTestDb();
   db = testDb.db;
   setTestDatabase(db,);
@@ -135,6 +168,7 @@ beforeAll(async () => {
 },);
 
 afterAll(async () => {
+  mock.module("../config/load", () => realConfigLoad,);
   setTestDatabase(null,);
   await db.destroy();
 },);
