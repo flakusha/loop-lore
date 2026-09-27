@@ -17,19 +17,10 @@
  * window, so the worst case is one budget of `maxRequests` per `windowMs`
  * regardless of alignment.
  *
- * Two-step gate usage (BUG-register-rate-limiter-consumes-on-username-collision-retries):
- *   const r = limiter.peek(ip);
- *   if (!r.allowed) return new Response(null, { status: 429 });
- *   // ... do expensive work (e.g. insertUnique) ...
- *   limiter.record(ip);            // only count successful requests
- *   if (insertFailed) limiter.refund(ip); // undo a premature record
- *
- * The simpler `consume(ip)` is still the right primitive when there is
- * no expensive-or-skippable work between gate and effect (login,
- * demo-login, IP-level DOS protection).
- *
- * @see BUG-register-rate-limiter-consumes-on-username-collision-retries
- *   for the two-step pattern origin.
+ * Two-step gate flows (peek / record / refund, see BUG-register-rate-limiter-consumes-on-username-collision-retries)
+ * let callers gate before an expensive effect and only count committed work.
+ * `consume()` is still the right primitive when there is no expensive-or-skippable
+ * work between gate and effect (login, demo-login, IP-level DOS protection).
  */
 
 /** Outcome of a single rate-limit gate check. */
@@ -40,18 +31,11 @@ export interface RateLimitResult {
   limit: number;
   /** Remaining requests in the current window (post-recording for consume). */
   remaining: number;
-  /**
-   * Whole seconds until the oldest timestamp in the window expires.
-   * Always > 0 when blocked; equals `windowMs / 1000` on the first request.
-   */
+  /** Whole seconds until the oldest in-window timestamp ages out. */
   resetSec: number;
 }
 
-/**
- * Build the headers for a 429 (or informational) response.
- * @param result
- * @param retryAfterSec
- */
+/** Build the headers for a 429 (or informational) response. */
 export function rateLimitHeaders(
   result: RateLimitResult,
   retryAfterSec?: number,
@@ -91,12 +75,18 @@ export function createRateLimiter(config: RateLimitConfig,) {
   // maxRequests for any key in normal operation.
   const timestamps = new Map<string, number[]>();
 
-  // Prune keys whose queues are empty (key has been idle past the window).
+  // Drop timestamps that fell out of the window. BUG-rate-limit-off-by-one:
+  // strict boundary (sliding-window math). A timestamp at exactly `cutoff`
+  // has aged out: now - windowMs == ts.
+  function pruneExpired(queue: number[], cutoff: number,): void {
+    while (queue.length > 0 && queue[0]! < cutoff) { queue.shift(); }
+  }
+
+  // Sweep idle keys (empty after prune) and clear their queue.
   const pruneInterval = setInterval(() => {
     const cutoff = Date.now() - config.windowMs;
     for (const [key, queue,] of timestamps) {
-      // Drop expired entries; if the queue empties, drop the key entirely.
-      while (queue.length > 0 && queue[0]! < cutoff) { queue.shift(); }
+      pruneExpired(queue, cutoff,);
       if (queue.length === 0) { timestamps.delete(key,); }
     }
   }, config.windowMs,);
@@ -117,10 +107,7 @@ export function createRateLimiter(config: RateLimitConfig,) {
       queue = [];
       timestamps.set(key, queue,);
     }
-    // Drop timestamps that fell out of the window.
-    // BUG-rate-limit-off-by-one: strict boundary (sliding-window math).
-    // A timestamp at exactly `cutoff` has aged out: now - windowMs == ts.
-    while (queue.length > 0 && queue[0]! < cutoff) { queue.shift(); }
+    pruneExpired(queue, cutoff,);
 
     if (queue.length >= config.maxRequests) {
       // Blocked: do NOT add a timestamp. Retry-After = ms until the
@@ -173,7 +160,7 @@ export function createRateLimiter(config: RateLimitConfig,) {
         resetSec: Math.max(1, Math.ceil(config.windowMs / 1000,),),
       };
     }
-    while (queue.length > 0 && queue[0]! < cutoff) { queue.shift(); }
+    pruneExpired(queue, cutoff,);
     const wouldBlock = queue.length >= config.maxRequests;
     const oldest = queue[0];
     const resetMs = oldest === undefined
@@ -206,7 +193,7 @@ export function createRateLimiter(config: RateLimitConfig,) {
       queue = [];
       timestamps.set(key, queue,);
     }
-    while (queue.length > 0 && queue[0]! < cutoff) { queue.shift(); }
+    pruneExpired(queue, cutoff,);
     queue.push(now,);
   }
 
