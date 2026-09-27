@@ -21076,6 +21076,13 @@
       "source": ".plan/tickets/TASK-comfyui-first-class-workflow-library.md"
     }
   ],
+
+  "src/generation/workflow-loader/workflow-validation.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
+    }
+  ],
   "src/generation/workflow-substitutor": [
     {
       "kind": "epic",
@@ -33844,6 +33851,10 @@
     }
   ],
   "src/server/handler.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-middleware-request-lifecycle.md"

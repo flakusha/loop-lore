@@ -331,10 +331,15 @@ strings throughout.
 
 ### Phase 0: Correctness (blocks everything)
 
-- [ ] Fix Defect 1 — numeric type preservation through `substituteWorkflow`.
-- [ ] Regression test asserting the *substituted workflow* keeps `number`/
+- [x] Fix Defect 1 — numeric type preservation through `substituteWorkflow`.
+      A placeholder that is the **whole** string yields the variable's own type;
+      mixed content interpolates to a string. `substituteString` →
+      `substituteValue`. Its own JSDoc already promised this and the code never
+      did it.
+- [x] Regression test asserting the *substituted workflow* keeps `number`/
       `boolean` for `width`/`height`/`seed`/`steps`/`cfg_scale`. Existing tests
-      only check the vars map, which is why the bug shipped.
+      only check the vars map, which is why the bug shipped. Probe before the fix:
+      every one of those inputs came out as a string.
 - [x] Fix Defect 2 — opaque-string node ids in the LoRA injector; regression
       test using colon-grouped ids. *(Done with Defect 4 — same helper.)*
 - [x] Fix Defect 4 — shared `allocateNodeId` helper covering **both** Defect 2 and
@@ -345,9 +350,20 @@ strings throughout.
       exists, so a naive max+1 was handed the sampler's id and the merge
       clobbered the `KSampler`. The template now derives its full id space up
       front. The regression test asserts the invariant, not a literal id.)*
-- [ ] Fix Defect 3 — terminal-sink-aware dead-node detection in upload
-      validation (warning, not error).
-- [ ] Fix stale `/api/image-edit/*` doc comments → `/api/v1/*`.
+- [x] Fix Defect 3 — terminal-sink-aware dead-node detection. `findDeadNodes`
+      lives in `src/generation/workflow-loader/workflow-validation.ts` and is exported for
+      the Phase 1 upload path to reuse. **Rejected, not warned** — the operator
+      decision recorded above supersedes this checklist's earlier "warning, not
+      error" wording, which contradicted it.
+- [x] Fix the duplicate `/api/image-edit/*` mount. *This item was wrong about
+      what was broken.* The doc comments in `src/image-edit/routes.ts` already
+      said `/api/v1` and were correct. The real defect: `plugins/core/image-editing/
+      plugin.ts` registered the same five handlers a **second** time at the
+      un-versioned `/api/image-edit/*`, and `src/server/handler.ts:133` runs
+      `dispatchPluginRoute` **before** the Elysia app — so the duplicate was live
+      and shadowing, on a different auth path. No client consumed it (checked the
+      frontend, e2e, views, and scripts). The plugin now registers templates only;
+      the routes are served once, at `/api/v1/image-edit/*`.
 
 ### Phase 1: Workflow library (DB + admin upload)
 
