@@ -10,8 +10,8 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
-import type { NotificationRecord, } from "../../notifications/service/types";
 import { NotificationService, } from "../../notifications/service";
+import type { NotificationRecord, } from "../../notifications/service/types";
 import { safeJsonStringify, } from "../../utils";
 
 export const POLL_INTERVAL_MS = 5000;
@@ -37,7 +37,7 @@ function toWireItems(items: readonly NotificationRecord[],) {
   return items.map((item,) => ({
     ...item,
     read: item.read === "read" ? 1 : 0,
-  }),);
+  }));
 }
 
 /**
