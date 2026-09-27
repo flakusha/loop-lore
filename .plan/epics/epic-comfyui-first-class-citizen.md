@@ -6,7 +6,7 @@
 **Overview:** (see sections below)
 
 **Status:** Not Started
-**Status Note:** Surface preparation. Existing ComfyUI surface inventoried against real code; three defects confirmed by runnable probe against the operator-supplied `i-anima-0001.json` reference workflow (numeric coercion, colon node ids, dead-node tolerance). Phases 0–1 are unblocked by that reference; the rest await the remaining operator workflows.
+**Status Note:** Surface preparation, plus a follow-up investigation (`docs/meta/research/comfyui-first-class-investigation.md`) that **amended three design decisions**: the workflow library reuses `prompt_templates` rather than a new `comfy_workflows` table, the graph is stored inline in `payload` rather than on disk (no generated-config writer exists, and the loader's dir-mtime cache is not overwrite-safe), and two cited paths did not exist. Six defects are now confirmed by runnable probe against the operator's `i-anima-0001.json` — three original, three found by the investigation. Phases 0–1 are unblocked by that reference; the rest await the remaining operator workflows.
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic
@@ -47,7 +47,10 @@ usecases stay workflow JSON, never custom API calls — the in-place decision fr
 | LoRA injection          | `src/generation/lora/discovery-comfyui.ts`  | **Bug** | Assumes integer node ids. Defect 2. Single-LoRA only.  |
 | Workflow validation     | `loader.ts` `isValidWorkflow`              | **Gap** | Rejects on empty + no `class_type`; tolerates dead nodes. Defect 3. |
 | Image-gen route         | `src/generation/image-gen-route.ts`         | Built  | `workflow` body param. No persisted preference.         |
-| Image-edit templates    | `src/image-edit/templates/builtin/`         | Built  | 5 TS templates. `registerConfigWorkflows` ignores `params`. |
+| Generation options      | `src/generation/image-engine/types.ts`      | **Bug** | No `width`/`height` in `ImageGenOptions`; providers read `sdConfig.defaults`. Defect 6. |
+| Param validation        | `src/image-edit/routes.ts` `handleRun`      | **Gap** | Only `required` is checked. `min`/`max`/`step`/`options` unenforced. Defect 5. |
+| Param form rendering    | —                                           | **None** | `TemplateParamType` declares 7 types; nothing renders them. |
+| Image-edit templates    | `src/image-edit/templates/builtin/`         | Built  | 5 TS templates. `registerConfigWorkflows` ignores `params`. `buildLoraNodes` hardcodes node ids from 100. Defect 4. |
 | Image-edit routes       | `src/image-edit/routes.ts`                  | Built  | `authorizeRunLinkage` closes the IDOR.                  |
 | Provider selection      | `src/config/schema/sd-provider.ts`          | Thin  | `pickSdProvider()` by `purpose`. No family routing.     |
 | Admin ComfyUI panel     | —                                           | **None** | No routes, no view, no Alpine component.             |
@@ -57,7 +60,7 @@ usecases stay workflow JSON, never custom API calls — the in-place decision fr
 ## Confirmed Defects (runnable probe, not inferred)
 
 Probed against the operator-supplied reference workflow
-`.tmp/comfyui/i-anima-0001.json` (Anima txt2img, 10 nodes, colon-separated node
+`configs/workflows/uploads/i-anima-0001.json` (Anima txt2img, 10 nodes, colon-separated node
 ids `46`, `60:8`, `60:11`, …).
 
 ### Defect 1 — `substituteWorkflow` destroys numeric types
@@ -122,6 +125,60 @@ variant is what lands as a library row. This is a deliberate trade: strict
 ingest keeps broken graphs out of the library, at the cost of rejecting real
 operator exports until they are cleaned.
 
+### Defect 4 — `buildLoraNodes` silently clobbers existing nodes (found 2026-09-27)
+
+Same root cause as Defect 2 — inventing node ids by arithmetic — but a **different and
+worse** failure mode: silent, not a visible `NaN`.
+
+`src/image-edit/templates/builtin/lora.ts:40-69` starts at a hardcoded
+`nodeIndex = 100` with the comment `// Start LORA nodes at 100 to avoid
+collisions`, increments per LoRA, and is **not** given the set of existing ids, so
+it cannot know what is taken. Probe against a graph already owning `100`/`101`:
+
+```
+parsed:        [{style.safetensors, 0.7}, {detail.safetensors, 0.4}]
+generated ids: ["100","101"]
+ASSERT no collision: FAIL — clobbers ["100","101"]
+```
+
+The graph still submits; a real node is simply gone. Graphs exceed 100 nodes
+routinely (the Anima reference is 10; sprite-sheet and ControlNet graphs are far
+larger), so the heuristic holds for small fixtures and breaks for real ones — the
+worst possible failure profile.
+
+**Fix:** one shared `allocateNodeId(existing)` helper used by both this and the
+Defect 2 injector, so a third call site cannot regress independently. Tracked in
+`TASK-comfyui-node-id-allocation`.
+
+### Defect 5 — declared parameter ranges are never enforced (found 2026-09-27)
+
+`TemplateParameter` (`src/image-edit/types.ts:59-70`) declares `min`, `max`,
+`step`, `required`, `options`. `handleRun`
+(`src/image-edit/routes.ts:97-106`) checks **only** `required`:
+
+```ts
+if (p.required && !body.params[p.name]) { missing.push(p.name); }
+```
+
+`txt2img` declares `width: { min: 64, max: 2048, step: 64 }` and accepts
+`width: 999999` or `width: 13`, which flow straight into the ComfyUI graph. This is
+a **trust boundary**, not cosmetics. The primitives already exist (`clamp`,
+`clampUnit` in `src/utils/clamp.ts`; `t.Number({ minimum, maximum })` at
+`src/generation/lora/routes/validate.ts:13`). Tracked in
+`TASK-comfyui-template-parameter-validation`.
+
+### Defect 6 — no width/height in the generation options type (found 2026-09-27)
+
+`ImageGenOptions` (`src/generation/image-engine/types.ts:6-25`) has **no `width`
+or `height` field at all**, so `generateComfyUI`
+(`src/generation/image-engine/comfyui.ts:29-38`) cannot honour a request-supplied
+size even in principle — it reads `sdConfig.defaults.width/height`, ignoring the
+request. Same in `sdapi.ts:20-28` and `sdcpp.ts:44-58`.
+
+**Consequence: every WxH/aspect-ratio template is currently unimplementable at the
+route layer**, independent of anything on the ComfyUI side. This blocks Phase 2
+regardless of how the workflow library turns out.
+
 ### Reference workflow shape (what operators actually produce)
 
 | Property            | Value in `i-anima-0001.json`                                   |
@@ -141,38 +198,59 @@ Two consequences: model-family detection cannot infer from
 
 ## Design
 
-### Workflow library (DB-backed, disk-seeded)
+### Workflow library (reusing `prompt_templates`)
 
-A new `comfy_workflows` table is the source of truth for *what workflows exist*
-and *which are active*. The JSON body stays a file on disk — workflow JSON is
-large, diff-friendly, and belongs in git, not a KV blob.
+> **Amended 2026-09-27** after investigation
+> (`docs/meta/research/comfyui-first-class-investigation.md` §0.1–0.2). The
+> original design proposed a new `comfy_workflows` table with a `body_path`
+> column. Both parts were re-checked against the code and **rejected**. The
+> reasoning is preserved below so the decision is not re-litigated from memory.
 
-```
-comfy_workflows
-  id            TEXT PK      stable slug, e.g. "anima-txt2img"
-  name          TEXT NOT NULL
-  family        TEXT NOT NULL  model family: sdxl | anima | krea2 | ...
-  category      TEXT NOT NULL  txt2img | img2img | identity-edit | ...
-  backend       TEXT NOT NULL  "comfyui"
-  description   TEXT
-  body_path     TEXT NOT NULL  path under configs/workflows/uploads/
-  params        TEXT NOT NULL  JSON: declared TemplateParameter[]
-  lora_slots    TEXT NOT NULL  JSON: ordered LoRA slot descriptors
-  enabled       INTEGER        0/1
-  is_default    INTEGER        0/1, at most one per (family, category)
-  created_at / updated_at
-```
+`prompt_templates` (`src/db/schema-manifest.ts:2209-2220`) already carries the
+full shape the original design proposed:
 
-Seeded on first boot from `configs/workflows/*.json` (existing two become rows;
-filenames stay ids so nothing else moves). Admin upload writes the body to
-`configs/workflows/uploads/<id>.json` and upserts the row — disk and DB stay in
-lockstep and the file stays reviewable in a PR.
+| original proposal | existing column |
+| --- | --- |
+| `id`, `name`, `description` | same |
+| `family` | `model_family` (present, unused for image) |
+| `category` | `modality` (enum: `llm`/`image`/`video`/`audio`) |
+| `params` | `payload` (JSON, dispatched on `modality`) |
+| `owner_id` | `owner_id` (per-user templates already supported) |
+| `is_default` | a default concept already exists — see the admin `PUT /:id/defaults` route (`src/routes/admin-templates/profiles.ts:36-59`) |
 
-**Why not the KV store.** `system_config` is flat string key/value: no indexing,
-no uniqueness, no list query. A library needs list-by-family,
-one-default-per-(family,category), and enable/disable. Forcing that into one JSON blob
-means read-modify-write races and no partial updates. `getAllConfig/setConfig`
-stay for the flat `comfyui_url` / `comfyui_enabled` keys.
+`src/generation/template-types.ts:34-49` already dispatches `payload` on
+`modality` through the `TemplatePayload` union (`ImageTemplatePayload`,
+`LlmTemplatePayload`, `SimpleTemplatePayload`). A `workflow` modality plus a
+`ComfyWorkflowPayload` variant slots into that union with **no schema change**,
+and inherits ownership, admin CRUD, the list endpoint, and the Alpine admin
+surface.
+
+Genuinely new fields: `enabled`, `lora_slots`, `min_vram`. That is a smaller diff
+than a new table plus a parallel admin UI.
+
+**The graph is stored inline in `payload`, not as a file on disk.** The original
+design put the body at `configs/workflows/uploads/<id>.json` for diff-friendliness.
+That needs a mechanism loop-lore does not have: **nothing writes a config file
+that a subprocess consumes.** `startLlamaSwap`
+(`src/services/server-external-manager/start-llama.ts:167-180`) spawns with
+`--config <hand-written path>` and only reads it. The system-config export endpoint
+(`src/routes/admin/system-config.ts:64`) serializes *to a download*; there is no
+write path.
+
+It also breaks the loader cache. `WorkflowLoader` invalidates by **directory
+mtime** (`src/generation/workflow-loader/loader.ts:114`), so overwriting a file
+inside an already-scanned directory is invisible until an explicit `reload()`.
+
+Inline storage removes the generated-config writer, the path, the sync, and the
+stale-cache story in one decision. Cost: large JSON rows in the DB — acceptable at
+this size (the Anima reference is 3.4 KB). Revisit only if graphs exceed ~100 KB,
+at which point the operator wants them in git and a separate table is justified.
+
+**What the KV store is still good for.** `system_config` is flat string key/value,
+so it stays for the flat `comfyui_url` / `comfyui_enabled` keys. The original
+rejection of the KV store for the *library* stands — the library needs
+list-by-family and one-default-per-(family, category), which a flat KV blob cannot
+express. That reasoning is unchanged; only the table choice changed.
 
 ### Selection resolution
 
@@ -216,21 +294,30 @@ strings throughout.
       only check the vars map, which is why the bug shipped.
 - [ ] Fix Defect 2 — opaque-string node ids in the LoRA injector; regression
       test using colon-grouped ids.
+- [ ] Fix Defect 4 — shared `allocateNodeId` helper covering **both** Defect 2 and
+      Defect 4 in one place; regression test using a graph that already owns
+      `100`/`101`. One helper, both call sites, no third regression.
 - [ ] Fix Defect 3 — terminal-sink-aware dead-node detection in upload
       validation (warning, not error).
 - [ ] Fix stale `/api/image-edit/*` doc comments → `/api/v1/*`.
 
 ### Phase 1: Workflow library (DB + admin upload)
 
-- [ ] Migration `021_comfy_workflows` (append-only; latest is `020_`).
-- [ ] Seed from `configs/workflows/*.json` on first boot.
+- [ ] Migration `021_` adding `enabled` / `lora_slots` / `min_vram` to
+      `prompt_templates`, plus a `workflow` value on the `modality` enum
+      (append-only; latest is `020_`).
+- [ ] Seed `workflow`-modality rows from `configs/workflows/*.json` on first boot;
+      the existing two become rows and their filenames stay ids.
 - [ ] Ingest validation: parse; per-node `class_type` + `inputs` shape; declared
       params must exist as placeholders; declared LoRA slots must resolve to real
       nodes; `required_nodes` must be a *subset* of installed (not exact match —
       the Anima reference installs more than it uses). Reject malformed uploads:
       a bad workflow stored now fails confusingly at 3am in a generation queue.
 - [ ] Admin routes: list / create / update / delete / upload / set-default,
-      mirroring `src/routes/admin/templates/`.
+      mirroring `src/routes/admin-templates/`. Note the prompt-template module
+      is at `/api/admin/templates` and SD templates are at `/api/admin/sd-templates`
+      (split deliberately, `src/routes/admin/sd-templates.ts:19-21`); a ComfyUI
+      surface must pick a third non-colliding prefix.
 - [ ] Admin view + Alpine component; register in `admin.ts` `showTab`.
 - [ ] Reuse the `handleUpload` multipart pattern (`POST /api/assets` +
       parent-app registration) — Elysia body consumption is a known trap here.
@@ -240,6 +327,11 @@ strings throughout.
 
 ### Phase 2: Parameterized config workflows
 
+- [ ] **Defect 6 first:** add `width`/`height` to `ImageGenOptions` and honour
+      `opts` over `sdConfig.defaults` in `generateComfyUI` / `generateSDAPI` /
+      `generateSDCPP`. Nothing in this phase works without it.
+- [ ] **Defect 5:** enforce the already-declared `TemplateParameter` ranges
+      server-side. Trust boundary — reuse `clamp` / `clampUnit`, do not invent.
 - [ ] `registerConfigWorkflows` ignores `params` and returns static `nodes`.
       Route config-declared workflows through `substituteWorkflow` with declared
       params so `{{var}}` actually substitutes.
@@ -252,6 +344,10 @@ strings throughout.
 - [ ] Migration for preference columns (`chats`, `users`).
 - [ ] Pure `resolveWorkflow` resolver + unit tests over the specificity order.
 - [ ] Chat settings UI: pick preferred workflow, grouped by family/category.
+- [ ] Parameter form renderer. `TemplateParamType` already declares seven types
+      and **nothing renders them** — this is the largest unbudgeted UI cost in this
+      epic and was folded implicitly into the admin work.
+      (`TASK-comfyui-parameter-form-renderer`)
 - [ ] `image-gen-route` consumes the resolver; explicit `workflow` still wins.
 - [ ] Per-family defaults so a chat can prefer "anima txt2img" and a VN scene
       can hint `family` without hardcoding a workflow id.
@@ -267,6 +363,16 @@ strings throughout.
 ### Phase 5: Defaults + operational readiness
 
 - [ ] First-run config example covering the operator's workflow set.
+- [ ] Output/input directory config for the managed spawner — no `output_dir`
+      concept exists in the config schema today and no ticket owned it. Launch
+      ComfyUI with `--output-directory` so the operator's `filename_prefix`
+      composes correctly. (`TASK-comfyui-output-directory-config`)
+- [ ] Sampler + scheduler enums discovered from `/object_info` at runtime, cached
+      like LoRA discovery. **Two independent axes** — InvokeAI's single conflated
+      `SCHEDULER_NAME_VALUES` is not a ComfyUI sampler list and would silently drop
+      the scheduler axis. (`TASK-comfyui-sampler-scheduler-discovery`)
+- [ ] `min_vram` declared per workflow, advised in the admin panel. Full VRAM
+      budgeting out of scope; a declaration check catches the common case.
 - [ ] Capability surfacing: which declared workflows are runnable given installed
       nodes (`/object_info`) and installed LoRAs. A workflow missing
       `required_nodes` must be visibly disabled, not silently failing at run time.
@@ -306,7 +412,9 @@ git issue. Workflow JSON is inert — no secrets.
 - Existing: `src/generation/providers/comfyui.ts` (client)
 - Existing: `src/generation/workflow-loader/` + `workflow-substitutor`
 - Existing: `src/image-edit/` (template registry, provider, routes)
-- Existing: `src/routes/admin/templates/` (admin CRUD pattern to mirror)
+- Existing: `src/routes/admin-templates/` (admin CRUD pattern to mirror — the
+  path cited in earlier drafts of this epic, `src/routes/admin/templates/`, does
+  not exist)
 - Existing: `src/assets/controller.ts` `handleUpload` (multipart pattern)
 - New: operator-supplied workflow JSONs (Anima txt2img delivered; rest listed above)
 - New: ComfyUI server with the target models/nodes
@@ -317,6 +425,10 @@ git issue. Workflow JSON is inert — no secrets.
 | ----------- | -------------------------------------------------------- | ------------------------------------------- |
 | Unit        | Numeric type preservation through substitution           | `src/generation/workflow-substitutor.test.ts` |
 | Unit        | Opaque/colon node ids in LoRA injection                   | `src/generation/lora/discovery-comfyui.test.ts` |
+| Unit        | `allocateNodeId` collision-free on opaque ids (Defects 2+4) | `src/generation/node-id.test.ts`           |
+| Unit        | Declared `min`/`max`/`step`/`options` enforced (Defect 5) | `src/image-edit/param-validation.test.ts`   |
+| Unit        | `opts.width`/`height` beat config defaults (Defect 6)     | `src/generation/image-engine/comfyui.test.ts` |
+| Unit        | Sampler and scheduler read as two distinct enums          | `src/generation/lora/discovery.test.ts`      |
 | Unit        | Terminal-sink-aware dead-node detection                   | `src/generation/workflow-library.test.ts`  |
 | Unit        | `resolveWorkflow` specificity order                       | `src/generation/resolve-workflow.test.ts`  |
 | Unit        | Upload validation rejects malformed / node-less workflows | `src/generation/workflow-library.test.ts`  |
@@ -326,15 +438,16 @@ git issue. Workflow JSON is inert — no secrets.
 
 ## Files (proposed)
 
-- `src/db/migrations/021_comfy_workflows.ts` — new table + preference columns
-- `src/generation/workflow-library/` — CRUD + validation + disk sync
+- `src/db/migrations/021_*.ts` — `prompt_templates` additions + preference columns
+- `src/generation/workflow-library/` — CRUD + validation (no disk sync; see Design)
 - `src/generation/resolve-workflow.ts` — pure selection resolver
 - `src/generation/lora/stack.ts` — slot chaining
 - `src/generation/workflow-substitutor.ts` — Defect 1 fix
 - `src/generation/lora/discovery-comfyui.ts` — Defect 2 fix
 - `src/routes/admin/comfy-workflows/` — admin routes
 - `src/views/admin-comfy-workflows.html` + `src/frontend/alpine/admin-comfy-workflows.ts`
-- `configs/workflows/uploads/` — operator-supplied workflow bodies
+- `configs/workflows/uploads/` — operator-supplied workflow bodies (ingest source;
+  stored inline in `payload` after import)
 
 ## Open Questions
 
@@ -357,6 +470,11 @@ git issue. Workflow JSON is inert — no secrets.
 - TASK-comfyui-first-class-admin-workflows.md
 - TASK-comfyui-first-class-lora-stacks.md
 - TASK-comfyui-workflow-parameterization.md
+- TASK-comfyui-node-id-allocation.md
+- TASK-comfyui-template-parameter-validation.md
+- TASK-comfyui-sampler-scheduler-discovery.md
+- TASK-comfyui-output-directory-config.md
+- TASK-comfyui-parameter-form-renderer.md
 
 ## Related Epics
 
@@ -364,6 +482,8 @@ git issue. Workflow JSON is inert — no secrets.
 - `epic-lora-discovery-application` — LoRA discovery (done); stacks are the gap
 - `epic-assistant-generation-extensions` — assistant-side image commands
 - `epic-generation-flow-control` — queue that will host ComfyUI concurrency
+- `docs/meta/research/comfyui-first-class-investigation.md` — the 2026-09-27
+  investigation behind Defects 4-6 and the amended table/storage decisions
 
 
 git issue: 6e95cc2
