@@ -45,7 +45,7 @@ The recursive-self-improvement agent (#5 router) consumes `.plan/tickets/<slug>.
 - [ ] `BRIEFING_GATE=fail` fails CI when any ticket scores <3
 - [ ] Each scoring axis has a deterministic unit test (10 tickets × 5 axes = 50+ cases)
 - [ ] The linter suggests ONE specific improvement per missing axis (no "improve your ticket" hand-waving)
-- [ ] `bun run plan:lint-briefing TASK-xxx` returns the same score as the batch run for the same ticket
+- [ ] `bun run plan:lint-briefing TASK-test-untested-routes` returns the same score as the batch run for the same ticket
 - [ ] Linter runs in <200ms per ticket on the current `.plan/tickets/` corpus (cold cache)
 - [ ] Integration: the agent router (#5) returns `409 Conflict` on a task submission whose ticket scores <3 unless `force=true`
 

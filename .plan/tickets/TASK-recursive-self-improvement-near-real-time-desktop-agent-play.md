@@ -75,6 +75,7 @@ Two pillars, one data pipeline:
 ## Acceptance Criteria
 
 ### Pillar A — Research
+
 - [ ] Agent POSTs a research query; receives ≥5 deduplicated results within 5s
 - [ ] Page fetch extracts headings + paragraphs + code blocks from a sample article (deterministic unit test against a saved fixture)
 - [ ] Research cache persists across agent check-stream chunks (same `trace_id` reuses prior results)
@@ -82,6 +83,7 @@ Two pillars, one data pipeline:
 - [ ] Optional paid providers (Tavily, Jina) gated behind env flag; off by default
 
 ### Pillar B — Canvas
+
 - [ ] Agent opens a canvas game-mode session against a running loop-lore dev server; receives ≥3 canvas frame snapshots in 2s
 - [ ] Console + pageerror events stream over SSE; errors tagged with `sessionId` + `traceId`
 - [ ] Network bodies redacted for routes matching `/api/auth/*`, `/api/users/*/sessions`, `/api/keys/*` — verified by a privacy test fixture
@@ -91,6 +93,7 @@ Two pillars, one data pipeline:
 - [ ] Replay mode re-executes a recorded session deterministically; pixel-diff < 0.5% on the seeded fixture
 
 ### Data Pipeline
+
 - [ ] `console-errors.ts` groups 3 repeated errors into one signature; produces a draft BUG ticket body (markdown)
 - [ ] `network-anomalies.ts` flags a 500 response + slow request as a report
 - [ ] `canvas-regression.ts` produces `changedPixels` + `changeRatio` + bounded region list (no full-image blob)
@@ -98,6 +101,7 @@ Two pillars, one data pipeline:
 - [ ] `GET /api/v1/agent/data/:trace_id` returns the manifest + links to outputs
 
 ### Cross-cutting
+
 - [ ] All research + canvas actions audit-logged to `agent_actions` (#9) with trace_id linkage
 - [ ] Privacy: no raw `user_id`, `chat_id`, API keys, or auth headers in any persisted artifact (privacy test fixture)
 - [ ] Existing `bun run check` gates stay green; no new top-level deps beyond what's already declared

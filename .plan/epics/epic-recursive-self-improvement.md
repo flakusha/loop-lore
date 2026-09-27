@@ -137,6 +137,7 @@ Per the user's global-target clause, the agent API MUST be sandboxed:
 ## Features
 
 ### Watchdog
+
 - [ ] Process supervisor (`src/server/watchdog/supervisor.ts`) — spawn, monitor, restart with backoff
 - [ ] Health/liveness/readiness probes (`src/server/health.ts` — `/health`, `/ready`)
 - [ ] State machine (starting -> healthy -> degraded -> crashed -> stopping)
@@ -146,6 +147,7 @@ Per the user's global-target clause, the agent API MUST be sandboxed:
 - [ ] `deploy/docker-compose.yml` `restart: unless-stopped` already wired (verified 2026-09-27)
 
 ### Agent Development Loop
+
 - [ ] `POST /api/v1/agent/tasks` — submit a task (patch, check, commit, finalize)
 - [ ] `POST /api/v1/agent/worktrees` — spawn a worktree (TTY-free path via `scripts/worktree/`)
 - [ ] `POST /api/v1/agent/check` — run gates; stream progress over SSE
@@ -156,6 +158,7 @@ Per the user's global-target clause, the agent API MUST be sandboxed:
 - [ ] Audit trail (`agent_actions` table)
 
 ### CI/CD Loop
+
 - [ ] `bun run smoke` script — fast gate (target <=60s)
 - [ ] `.github/workflows/smoke.yml` — every commit to `dev`/PR; 60s timeout
 - [ ] `.github/workflows/nightly.yml` — full `bun run check` + e2e + browser + perf-regression
@@ -163,31 +166,47 @@ Per the user's global-target clause, the agent API MUST be sandboxed:
 - [ ] Promote `size:strict` to blocking (lands `TASK-promote-size-check-to-ci`)
 
 ### Observability
+
 - [ ] Watchdog events -> existing `src/telemetry/` + new `watchdog_events` table
 - [ ] Agent actions -> existing `src/notifications/` + new `agent_actions` table
 - [ ] Health probe -> existing `src/admin/provider-health.ts` (extend)
 
 ### Documentation
+
 - [ ] `docs/ops/watchdog.md` — operations runbook
 - [ ] `docs/ops/agent-api.md` — API reference + auth model
 - [ ] `docs/ops/ci-cd-loop.md` — gate matrix + failure handling
 
-## Tasks (12)
+## Tasks (19)
 
 | # | Ticket | Scope | Effort | Dependencies |
 | - | ------ | ----- | ------ | ------------ |
-| 1 | `TASK-rsi-watchdog-supervisor` | supervisor process + restart loop | High | — |
-| 2 | `TASK-rsi-watchdog-state-machine` | state machine + restart policy | Medium | #1 |
-| 3 | `TASK-rsi-health-probes` | `/health`, `/ready` handlers | Low | — |
-| 4 | `TASK-rsi-watchdog-events-table` | `watchdog_events` Kysely migration + telemetry sink | Medium | #1 |
-| 5 | `TASK-rsi-agent-api-router` | `/api/v1/agent/*` router + auth scope | High | #3 |
-| 6 | `TASK-rsi-agent-worktree-spawn` | TTY-free `giwt new` path + sandbox | High | #5 |
-| 7 | `TASK-rsi-agent-check-stream` | `bun run check` over SSE | Medium | #5, #6 |
-| 8 | `TASK-rsi-agent-commit-finalize` | GPG-delegated `giwt commit-wt` + `giwt finalize` | High | #6 |
-| 9 | `TASK-rsi-agent-actions-audit` | `agent_actions` table + audit surface | Medium | #5 |
-| 10 | `TASK-rsi-smoke-gate` | `bun run smoke` + `.github/workflows/smoke.yml` | Medium | — |
-| 11 | `TASK-rsi-nightly-heavy-gate` | `.github/workflows/nightly.yml` + perf-regression wiring | Medium | #10 |
-| 12 | `TASK-rsi-watchdog-gate-trigger` | watchdog -> heavy-gate webhook | Medium | #1, #11 |
+| 1 | `TASK-recursive-self-improvement-watchdog-supervisor-process-spawn` | supervisor process + restart loop | High | — |
+| 2 | `TASK-recursive-self-improvement-watchdog-state-machine-and-restar` | state machine + restart policy | Medium | #1 |
+| 3 | `TASK-recursive-self-improvement-health-liveness-readiness-probes` | `/health`, `/ready` handlers | Low | — |
+| 4 | `TASK-recursive-self-improvement-watchdog-events-table-and-telemet` | `watchdog_events` Kysely migration + telemetry sink | Medium | #1 |
+| 5 | `TASK-recursive-self-improvement-agent-api-router-and-token-scope-` | `/api/v1/agent/*` router + auth scope | High | #3 |
+| 6 | `TASK-recursive-self-improvement-agent-worktree-spawn-tty-free-and` | TTY-free `giwt new` path + sandbox | High | #5 |
+| 7 | `TASK-recursive-self-improvement-agent-check-stream-bun-run-check-` | `bun run check` over SSE | Medium | #5, #6 |
+| 8 | `TASK-recursive-self-improvement-agent-commit-and-finalize-gpg-del` | GPG-delegated `giwt commit-wt` + `giwt finalize` | High | #6 |
+| 9 | `TASK-recursive-self-improvement-agent-actions-audit-table-and-sur` | `agent_actions` table + audit surface | Medium | #5 |
+| 10 | `TASK-recursive-self-improvement-smoke-gate-fast-ci-loop` | `bun run smoke` + `.github/workflows/smoke.yml` | Medium | — |
+| 11 | `TASK-recursive-self-improvement-nightly-heavy-gate-and-perf-regre` | `.github/workflows/nightly.yml` + perf-regression wiring | Medium | #10 |
+| 12 | `TASK-recursive-self-improvement-watchdog-to-heavy-gate-webhook-tr` | watchdog -> heavy-gate webhook | Medium | #1, #11 |
+
+### Extension tickets (#13-#19)
+
+Filed 2026-09-27 from a research sweep of SASE (Hassan et al., arXiv:2509.06216) and the UCR RSI survey (Chen et al., arXiv:2607.07663). These close the data-acquisition loop (agent eyes), wire the agent API into real production routes, and add the SASE BriefingScript / MRP / N-version artifacts:
+
+| # | Ticket | Scope | Effort | Dependencies |
+| - | ------ | ----- | ------ | ------------ |
+| 13 | `TASK-recursive-self-improvement-near-real-time-desktop-agent-play` | web-search + Playwright canvas runner + data-sink for agent | Large | #5, #7 |
+| 14 | `TASK-recursive-self-improvement-deep-analysis-logging-and-telemet` | trace IDs + JSONL archive + sampling + logs TUI | Medium | #1, #5 |
+| 15 | `TASK-recursive-self-improvement-sidecar-python-provider-for-custo` | Python sidecar provider adapter (TGI / vLLM / custom) | High | — |
+| 16 | `TASK-recursive-self-improvement-merge-readiness-pack-generator-fr` | MRP schema wrapping `bun run check` output | Medium | #11 |
+| 17 | `TASK-recursive-self-improvement-briefingscript-linter-pre-agent-t` | pre-agent ticket quality linter (SASE BriefingScript) | Medium | #5 |
+| 18 | `TASK-recursive-self-improvement-evaluator-reliability-drift-detec` | flake / suspicious-pass / coverage-drift detector (UCR §5) | High | #16 |
+| 19 | `TASK-recursive-self-improvement-n-version-patch-arena-determinist` | N-version patch arena + diversity-collapse detection (SASE §4.1) | High | #16, #18 |
 
 ## Files
 
@@ -242,3 +261,6 @@ Per the user's global-target clause, the agent API MUST be sandboxed:
   - `src/crypto/` — token generation + rotation
   - `src/notifications/` — webhook delivery for watchdog alerts
   - `src/admin/provider-health.ts` — extend for watchdog health surface
+
+
+git issue: 42bbf1a

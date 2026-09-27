@@ -19,6 +19,7 @@ Kysely migration for `watchdog_events` table; sink that records every state tran
 ## Core Features
 
 - Migration `NNN_rsi_watchdog_events.ts` (append-only; check next sequential number):
+
   ```sql
   CREATE TABLE watchdog_events (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -34,6 +35,7 @@ Kysely migration for `watchdog_events` table; sink that records every state tran
   );
   CREATE INDEX idx_watchdog_events_created_at ON watchdog_events(created_at DESC);
   ```
+
 - Sink `src/server/watchdog/events.ts` — writes to table + logger
 - Admin route `GET /api/admin/watchdog` — returns last 100 events + current state
 
