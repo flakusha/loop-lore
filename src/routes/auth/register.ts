@@ -34,11 +34,10 @@ function checkRegisterGate(
     return errorResponse(request, HttpStatus.Forbidden, "auth.registrationClosed", t, "Registration is closed.",);
   }
   // BUG-429-responses-omit-retry-after-and-x-ratelimit-headers: emit headers.
-  // BUG-register-rate-limiter-consumes-on-username-collision-retries: peek
-  // (no record) at the gate; only record() after the insert succeeds.
-  // A 409 on a duplicate username, a 422 on bad form data, or a 500 on
-  // a transactional rollback must NOT cost the IP a budget slot — only
-  // a successful registration that consumed DB writes should.
+  // BUG-register-rate-limiter-consumes-on-username-collision-retries: a
+  // 409 on a duplicate username, a 422 on bad form data, or a 500 on
+  // a transactional rollback must NOT cost the IP a budget slot — handleRegister
+  // refunds the slot reserved below on every such skip path.
   const regLimit = limiter.peek(ip,);
   if (!regLimit.allowed) {
     return rateLimitHtml({
@@ -70,9 +69,15 @@ async function handleRegister(
   const ip = getClientIp(request, config, peerIp ?? null,);
   const gateError = checkRegisterGate(request, config, ip, t, limiter,);
   if (gateError) { return gateError; }
+  // Reserve at the GATE, not after commit: a pure peek lets N concurrent
+  // POSTs from one IP all pass an empty bucket and bounds nothing in flight
+  // (BUG-register-peek-record-split-admits-unlimited-concurrent-regis).
+  // Skip paths below refund the reservation.
+  limiter.record(ip,);
 
   const formData = await parseCredentials(request,);
   if (!formData) {
+    limiter.refund(ip,);
     return errorResponse(
       request,
       HttpStatus.BadRequest,
@@ -85,6 +90,7 @@ async function handleRegister(
   const username = formData.get("username",)?.trim();
   const password = formData.get("password",);
   if (!username || !password) {
+    limiter.refund(ip,);
     return errorResponse(
       request,
       HttpStatus.UnprocessableEntity,
@@ -94,6 +100,7 @@ async function handleRegister(
     );
   }
   if (username.length < 3 || username.length > 32) {
+    limiter.refund(ip,);
     return errorResponse(
       request,
       HttpStatus.UnprocessableEntity,
@@ -103,6 +110,7 @@ async function handleRegister(
     );
   }
   if (password.length < 6) {
+    limiter.refund(ip,);
     return errorResponse(
       request,
       HttpStatus.UnprocessableEntity,
@@ -128,7 +136,9 @@ async function handleRegister(
   const passwordHash = await Bun.password.hash(password,);
   const smk = isEncryptionEnabled() ? getSmk()! : null;
 
-  const userResult = await database.transaction().execute(async (trx,) => {
+  let userResult: "inserted" | "skipped";
+  try {
+    userResult = await database.transaction().execute(async (trx,) => {
     const result = await insertUnique(
       trx,
       "users",
@@ -166,14 +176,18 @@ async function handleRegister(
       await ensureActorKey({ database: trx, actorId: userId, smk, },);
     }
     return "inserted" as const;
-  },);
+    },);
+  } catch (error) {
+    // Transactional rollback must not cost the IP a budget slot.
+    limiter.refund(ip,);
+    throw error;
+  }
 
   if (userResult === "skipped") {
+    limiter.refund(ip,);
     return errorResponse(request, HttpStatus.Conflict, "auth.usernameTaken", t, "Username already taken.",);
   }
-  // The gate only peeked; record now that the rows are committed.
-  // BUG-register-rate-limiter-consumes-on-username-collision-retries.
-  limiter.record(ip,);
+  // Slot was reserved at the gate and the rows committed — keep it.
   return createSessionAndCookie(request, database, config, userId, UserRole.User, ip, t,);
 }
 
