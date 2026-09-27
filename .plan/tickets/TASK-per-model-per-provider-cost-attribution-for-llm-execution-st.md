@@ -31,7 +31,7 @@ Flat-rate cost is worse than no cost: it presents as accounting while misattribu
 
 - Add `input_price_per_1k` / `output_price_per_1k` (naming per implementer) to `model_capabilities` via a new forward migration (append-only policy; see `src/db/migrations/README.md`), regenerate schemas.
 - Seed/override path: admin override surface (extend `src/admin/model-capabilities.ts` or model-roles) + documented default table for known models; unknown models fall back to the current flat rate with an explicit `estimated: true` flag on the response.
-- Wire both cost sites (`analytics.ts`, `compare.ts`) to the lookup; split prompt vs completion pricing where the event carries the split.
+- Wire both cost sites (`analytics.ts`, `compare.ts`) to the lookup; split prompt vs completion pricing where the event carries the split. The `estimated` flag is additive on the JSON response — `src/frontend/alpine/admin-system.ts:67` ignores unknown fields, so no frontend break; surface an "estimated" indicator in the admin UI when wiring the display.
 - Unit tests: known model prices correctly; unknown model falls back with `estimated: true`; prompt/completion split applied.
 - Out of scope: budget-cap enforcement (governor ticket), latency fix (sibling BUG), percentile dashboards (E10).
 
