@@ -159,6 +159,7 @@ export interface Worlds {
   rpg_loot: Generated<number>;
   rpg_quests: Generated<number>;
   rules: Generated<string>;
+  autonomy_config: Generated<string>;
 }
 
 // ── actor_lore_entries ────────────────────────────────────────────

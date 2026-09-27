@@ -184,4 +184,5 @@ export interface DB {
   model_comparison_runs: import("./schema-core").ModelComparisonRuns;
   actor_story_points: import("./schema-core").ActorStoryPoints;
   game_states: import("./schema-core").GameStates;
+  autonomy_budget: import("./schema-core").AutonomyBudget;
 }
