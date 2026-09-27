@@ -12,6 +12,7 @@
  * @module image-edit-routes
  */
 
+import { ensureWorkflowRegistry, } from "../generation/workflow-library";
 import { HttpStatus, jsonError, jsonResponse, parseBody, } from "../routes/http-utils";
 import { ComfyUIEditProvider, } from "./providers/comfyui-provider";
 import { SDServerEditProvider, } from "./providers/sd-server-provider";
@@ -219,7 +220,13 @@ export function imageEditRoutes(opts: { database: Kysely<DB> }, prefix = "/api",
   }
 
   return new Elysia({ name: "image-edit", },)
-    .get(`${prefix}/image-edit/templates`, ({ request, },) => handleTemplates(request,),)
+    .get(`${prefix}/image-edit/templates`, async ({ request, },) => {
+      // DB-backed workflows are hydrated on first use, not at boot, so tests
+      // and e2e (which never run start.ts) see the same list the server does.
+      // A hydration failure must not blank the built-in templates.
+      await ensureWorkflowRegistry(opts.database,).catch(() => 0);
+      return handleTemplates(request,);
+    },)
     .get(`${prefix}/image-edit/nodes`, () => handleNodes(),)
     .get(`${prefix}/image-edit/capabilities`, () => handleCapabilities(),)
     .get(`${prefix}/image-edit/health`, () => handleHealth(),)
