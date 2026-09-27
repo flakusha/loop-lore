@@ -37792,6 +37792,19 @@
     "git_issue": "3f44046",
     "status": "open"
   },
+  "TASK-SRC-RPG-MODULE-ROOT-BARREL-AND-ORGANIZATION-NITS": {
+    "hash": "d81d73e",
+    "git_issue": "d81d73e",
+    "extid": "TASK-SRC-RPG-MODULE-ROOT-BARREL-AND-ORGANIZATION-NITS",
+    "type": "TASK",
+    "title": "src/rpg/ module-root barrel and organization nits",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md",
+    "status": "Not Started"
+  },
   "TASK-STABLE-STORED-CHAT-KEY-FUTURE": {
     "hash": "b001026",
     "extid": "TASK-STABLE-STORED-CHAT-KEY-FUTURE",
