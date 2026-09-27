@@ -5019,10 +5019,38 @@
       "source": ".plan/tickets/TASK-adopt-bun-randomuuidv7-for-time-sortable-ids.md"
     }
   ],
+  "src/characters/services/mood-service.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-041.md"
+    }
+  ],
   "src/characters/services/mood-service/apply-happiness-delta.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-041.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-mood-shift-delta-tuning-word-boundary.md"
+    }
+  ],
+  "src/characters/services/mood-service/happiness-to-mood.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-041.md"
+    }
+  ],
+  "src/characters/services/mood-service/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-041.md"
+    }
+  ],
+  "src/characters/services/mood-service/log-event.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-041.md"
     }
   ],
   "src/characters/services/personality-service.ts": [
@@ -19863,14 +19891,12 @@
       "source": ".plan/tickets/TASK-resource-provision-routing-facade.md"
     }
   ],
-
   "src/generation/providers/retry.test.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-effect-v4-adoption-evaluation.md"
     }
   ],
-
   "src/generation/providers/retry.ts": [
     {
       "kind": "epic",
@@ -22405,6 +22431,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-033.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-034.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-037.md"
     }
   ],
   "src/nsfw/consent.ts": [
@@ -22667,8 +22701,18 @@
       "source": ".plan/epics/epic-shared-schemas.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-042.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/nsfw-integration.md"
+    }
+  ],
+  "src/nsfw/status-sweep.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-039.md"
     }
   ],
   "src/nsfw/telemetry-id-hashes.test.ts": [
@@ -29213,6 +29257,66 @@
       "source": ".plan/tickets/BUG-updatepost-has-no-ownership-check-any-authenticated-user-can.md"
     }
   ],
+  "src/rpg/body-chemistry-trauma.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-035.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-039.md"
+    }
+  ],
+  "src/rpg/body-systems/enums.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-035.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-038.md"
+    }
+  ],
+  "src/rpg/body-systems/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-035.md"
+    }
+  ],
+  "src/rpg/body-systems/service/derived.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-035.md"
+    }
+  ],
+  "src/rpg/body-systems/service/heat.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-035.md"
+    }
+  ],
+  "src/rpg/body-systems/service/heat.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-035.md"
+    }
+  ],
+  "src/rpg/body-systems/service/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-035.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-039.md"
+    }
+  ],
+  "src/rpg/body-systems/service/profile.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-035.md"
+    }
+  ],
   "src/rpg/body-systems/service/types.ts": [
     {
       "kind": "ticket",
@@ -29512,6 +29616,14 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-038.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-040.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-resolution-family-decision.md"
     },
     {
@@ -29645,10 +29757,80 @@
       "source": ".plan/tickets/TASK-nsfw-encounter-system.md"
     }
   ],
+  "src/rpg/encounters/service/crud.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-036.md"
+    }
+  ],
+  "src/rpg/encounters/service/index.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-036.md"
+    }
+  ],
+  "src/rpg/encounters/service/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-036.md"
+    }
+  ],
+  "src/rpg/encounters/service/participant-legs.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-036.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-038.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-039.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-040.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-041.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-042.md"
+    }
+  ],
+  "src/rpg/encounters/service/phases.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-036.md"
+    }
+  ],
+  "src/rpg/encounters/service/reputation-leg.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-036.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-042.md"
+    }
+  ],
   "src/rpg/encounters/service/types.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-036.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-052.md"
+    }
+  ],
+  "src/rpg/encounters/service/venue.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-036.md"
     }
   ],
   "src/rpg/encounters/skill-checks.ts": [
@@ -29733,6 +29915,48 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-037.md"
+    }
+  ],
+  "src/rpg/fantasies/service/discovery.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-037.md"
+    }
+  ],
+  "src/rpg/fantasies/service/fulfill.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-037.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-041.md"
+    }
+  ],
+  "src/rpg/fantasies/service/index.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-037.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-041.md"
+    }
+  ],
+  "src/rpg/fantasies/service/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-037.md"
+    }
+  ],
+  "src/rpg/fantasies/service/types.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-037.md"
     }
   ],
   "src/rpg/fantasy.ts": [
@@ -29981,6 +30205,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-033.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-041.md"
     }
   ],
   "src/rpg/intimacy/thresholds.ts": [
@@ -30679,10 +30907,42 @@
       "source": ".plan/tickets/TASK-db-asset-delete-no-tx-n-1-memory-purge-column-allowlist-play.md"
     }
   ],
+  "src/rpg/reproduction-birth.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-038.md"
+    }
+  ],
+  "src/rpg/reproduction-reputation.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-038.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-042.md"
+    }
+  ],
+  "src/rpg/reproduction-store.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-038.md"
+    }
+  ],
+  "src/rpg/reproduction.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-038.md"
+    }
+  ],
   "src/rpg/reproduction.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-038.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-042.md"
     },
     {
       "kind": "ticket",
@@ -30789,13 +31049,75 @@
       "source": ".plan/tickets/TASK-nsfw-seduction-desire.md"
     }
   ],
+  "src/rpg/seduction/service": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-034.md"
+    }
+  ],
+  "src/rpg/seduction/service/arousal.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-034.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-039.md"
+    }
+  ],
+  "src/rpg/seduction/service/attempt.coverage.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-034.md"
+    }
+  ],
   "src/rpg/seduction/service/attempt.test.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-pre-existing-unit-test-failures-blocking-clean-suite.md"
     }
   ],
+  "src/rpg/seduction/service/attempt.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-034.md"
+    }
+  ],
+  "src/rpg/seduction/service/desire.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-034.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-037.md"
+    }
+  ],
+  "src/rpg/seduction/service/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-034.md"
+    }
+  ],
+  "src/rpg/seduction/service/settle.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-034.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-041.md"
+    }
+  ],
   "src/rpg/seduction/service/skills.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-034.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-040.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-rpg-xp-intimacy-read-modify-write-lost-updates-under-concurr.md"
@@ -30978,6 +31300,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-040.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-skill-biome-hazard-countermeasures.md"
     },
     {
@@ -30985,10 +31311,20 @@
       "source": ".plan/tickets/TASK-skill-check-slash-commands.md"
     }
   ],
+  "src/rpg/skills/service.coverage.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-040.md"
+    }
+  ],
   "src/rpg/skills/service.test.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-skills.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-040.md"
     },
     {
       "kind": "ticket",
@@ -31020,6 +31356,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-040.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-baseline-skills-seed-from-character-template.md"
     },
     {
@@ -31034,6 +31374,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-040.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-skills-routes.md"
     }
   ],
@@ -31041,6 +31385,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-growth.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-040.md"
     },
     {
       "kind": "ticket",
@@ -31190,6 +31538,10 @@
   "src/rpg/stats/modifiers.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-040.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-052.md"
     },
     {
@@ -31222,6 +31574,14 @@
     }
   ],
   "src/rpg/status-effects.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-039.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-041.md"
+    },
     {
       "kind": "spec",
       "source": "docs/spec/rpg-patterns.md"
@@ -31555,6 +31915,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-faction-system-backend.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-042.md"
     },
     {
       "kind": "ticket",
@@ -32552,6 +32916,12 @@
     }
   ],
   "src/social/reputation.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-042.md"
+    }
+  ],
+  "src/social/rumors.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-042.md"
