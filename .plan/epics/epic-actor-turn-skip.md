@@ -6,7 +6,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** Core shipped + GM absence contract landed (2026-09-25 → 2026-09-26) — event, route, cascade filter, composer UI, gate interlock, GM prompt contract (`src/assistant/prompt/sections/turn-skip-absence.ts`), cascade slot release telemetry (`cascade.slot.released`), beat-budget telemetry (`cascade.beat.consumed`), dedup telemetry (`cascade.dedup.skip`) all on dev
 **Priority:** Medium
 **Effort:** Small–Medium

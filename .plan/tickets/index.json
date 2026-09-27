@@ -3299,7 +3299,7 @@
     "status": "done"
   },
   "BUG-INSERTUNIQUE-DISCRIMINATOR-RELIES-ON-ADAPTER-SPECIFIC-ROW-CO": {
-    "hash": "pending",
+    "hash": "955b06b",
     "extid": "BUG-INSERTUNIQUE-DISCRIMINATOR-RELIES-ON-ADAPTER-SPECIFIC-ROW-CO",
     "type": "BUG",
     "title": "insertUnique discriminator relies on adapter-specific row count",
@@ -3308,7 +3308,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-insertunique-discriminator-relies-on-adapter-specific-row-co.md",
-    "status": "⬜ Not Started"
+    "status": "⬜ Not Started",
+    "git_issue": "955b06b"
   },
   "BUG-IRC-INTEGRATION-UNSCOPED-AS-GROUP-CHAT-ONLY-IN-SOCIAL-HUB-AD": {
     "hash": "27cc7ab",
@@ -4637,7 +4638,7 @@
     "status": "done"
   },
   "BUG-REGISTER-NON-ATOMIC-USER-ACTOR-KEY-INSERT": {
-    "hash": "pending",
+    "hash": "ae83683",
     "extid": "BUG-REGISTER-NON-ATOMIC-USER-ACTOR-KEY-INSERT",
     "type": "BUG",
     "title": "register non-atomic user-actor-key insert",
@@ -4646,7 +4647,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-register-non-atomic-user-actor-key-insert.md",
-    "status": "⬜ Not Started"
+    "status": "⬜ Not Started",
+    "git_issue": "ae83683"
   },
   "BUG-REGISTER-PLUGINS-150-REFERENCES-UNDEFINED-CHATSECTIONSROUTES": {
     "hash": "0b9a09b",
@@ -4667,7 +4669,7 @@
     "status": "done"
   },
   "BUG-REGISTER-RATE-LIMITER-CONSUMES-ON-USERNAME-COLLISION-RETRIES": {
-    "hash": "pending",
+    "hash": "d161a7e",
     "extid": "BUG-REGISTER-RATE-LIMITER-CONSUMES-ON-USERNAME-COLLISION-RETRIES",
     "type": "BUG",
     "title": "register rate limiter consumes on username-collision retries",
@@ -4676,7 +4678,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-register-rate-limiter-consumes-on-username-collision-retries.md",
-    "status": "⬜ Not Started"
+    "status": "⬜ Not Started",
+    "git_issue": "d161a7e"
   },
   "BUG-REMOTE-ACTOR-DISCOVERY-WEBFINGER-RESOLVE-HOST-META-ABSENT": {
     "hash": "550802a",
