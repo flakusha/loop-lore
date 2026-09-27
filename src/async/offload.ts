@@ -6,9 +6,11 @@ import { mkdirSync, unlinkSync, } from "node:fs";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
 import { OFFLOAD_DIR, spill, } from "./spill";
+import { pruneOrphanSpills, } from "./spill-retention";
 import type { AsyncStoreConfig, } from "./store";
 
 export { OFFLOAD_DIR, offloadDiskBytes, offloadExists, readOffloadedBody, spill, } from "./spill";
+export { pruneOrphanSpills, } from "./spill-retention";
 
 /** Node's setInterval returns `Timeout` on Node and `number` on Bun — name it. */
 type IntervalHandle = ReturnType<typeof setInterval>;
@@ -58,17 +60,17 @@ function getMaxInlineBytes(override: number | undefined, fallback: AsyncStoreCon
 
 /**
  * Run one offload scan: spill oversized completed bodies to disk, then mark
- * rows past TTL as expired. Scheduling belongs to the caller (daemon timer
- * or the cron registry's `async.offload` job); this unit stays directly
- * testable.
+ * rows past TTL as expired, then sweep unreferenced spill files past the
+ * retention cap. Scheduling belongs to the caller (daemon timer or the cron
+ * registry's `async.offload` job); this unit stays directly testable.
  * @param database - Kysely handle
  * @param opts - min-age, TTL, max-inline thresholds
- * @returns counts `{ offloaded, expired }` for this pass.
+ * @returns counts `{ offloaded, expired, pruned }` for this pass.
  */
 export async function runOffloadPass(
   database: Kysely<DB>,
   opts: OffloadPassOpts,
-): Promise<{ offloaded: number; expired: number }> {
+): Promise<{ offloaded: number; expired: number; pruned: number }> {
   const log = getLogger().child({ module: "async-offload", },);
   const { minAgeMs, ttlMs, maxInlineBytes, } = opts;
   let offloaded = 0;
@@ -159,7 +161,8 @@ export async function runOffloadPass(
       unlinkSync(filePath,);
     } catch { /* already gone */ }
   }
-  return { offloaded, expired, };
+  const pruned = await pruneOrphanSpills(database, { ttlMs, now, },);
+  return { offloaded, expired, pruned, };
 }
 
 /**
@@ -190,10 +193,10 @@ export function startOffloadDaemon(
 
   /**
    * Run a single offload pass (re-entrancy guarded; returns zeros if already running).
-   * @returns counts `{ offloaded, expired }` for this pass.
+   * @returns counts `{ offloaded, expired, pruned }` for this pass.
    */
-  async function runOnce(): Promise<{ offloaded: number; expired: number }> {
-    if (running) { return { offloaded: 0, expired: 0, }; }
+  async function runOnce(): Promise<{ offloaded: number; expired: number; pruned: number }> {
+    if (running) { return { offloaded: 0, expired: 0, pruned: 0, }; }
     running = true;
     try {
       return await runOffloadPass(database, { minAgeMs, ttlMs, maxInlineBytes, },);
@@ -231,6 +234,6 @@ export function startOffloadDaemon(
 export interface OffloadDaemon {
   start(): void;
   stop(): void;
-  runOnce(): Promise<{ offloaded: number; expired: number }>;
+  runOnce(): Promise<{ offloaded: number; expired: number; pruned: number }>;
   readonly state: DaState;
 }
