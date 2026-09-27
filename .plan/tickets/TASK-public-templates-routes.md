@@ -60,3 +60,6 @@ Reuse: `src/generation/template-service/{crud,apply,resolve,index}.ts`. Don't du
 - Owner identity comes from the existing session-derived `userId`; no new auth code.
 - Video/audio routes can return 501 on `apply` until providers land (mirrors the FEAT-065-sub-* ticket contracts).
 - Built-in rows are not in `prompt_templates` today — they live in config files (`configs/templates/llm.yaml`, etc.). If a future built-in registry inserts them, this route should detect `is_builtin` and short-circuit writes; current contract only needs to handle `owner_id IS NULL OR owner_id = caller`.
+
+
+git issue: b9f2c0f
