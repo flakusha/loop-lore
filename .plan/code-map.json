@@ -3545,6 +3545,12 @@
       "source": ".plan/tickets/TASK-async-store-retention-cap.md"
     }
   ],
+  "src/async/spill-retention.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-async-orphan-spill-retention-sweep-silently-deleted-by-workt.md"
+    }
+  ],
   "src/async/spill.test.ts": [
     {
       "kind": "ticket",
@@ -16206,6 +16212,10 @@
   "src/frontend/alpine/shortcuts.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-keynav-handler-isolation-logs-via-console-error-instead-of-l.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-keynav-stale-unsubscribe-deletes-live-handler-set.md"
     },
     {
@@ -17965,6 +17975,12 @@
       "source": ".plan/tickets/TASK-story-world-state.md"
     }
   ],
+  "src/frontend/tests/i18n.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-i18n-test-restore-guard-leaks-stubbed-locale-strings-across-.md"
+    }
+  ],
   "src/frontend/tests/vn-fake-dom.ts": [
     {
       "kind": "ticket",
@@ -19235,6 +19251,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/integrations/llm-serving.md"
+    }
+  ],
+  "src/generation/generate-format.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-format-wrapper-corrupts-content-via-string-replace-repl.md"
     }
   ],
   "src/generation/generate-route.ts": [
@@ -20947,6 +20969,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-comfyui-plugin.md"
+    }
+  ],
+  "src/image-edit/routes.coverage.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-image-edit-suite-releases-its-dead-port-before-probing-it-to.md"
     }
   ],
   "src/image-edit/routes.ts": [
@@ -29863,6 +29891,12 @@
       "source": ".plan/tickets/TASK-fix-eslint-errors.md"
     }
   ],
+  "src/rpg/achievements/service/progress.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-achievement-claimrewards-double-credit-race-and-lost-reward-.md"
+    }
+  ],
   "src/rpg/achievements/service/types.ts": [
     {
       "kind": "ticket",
@@ -33697,6 +33731,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-story-points-prototype.md"
+    }
+  ],
+  "src/services/agency/story-points/mutations.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-earnstorypoints-lost-update-race-and-raw-unique-violation-on.md"
+    }
+  ],
+  "src/services/agency/story-points/queries.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-getstorypointbalance-mutates-db-on-read-and-500s-on-concurre.md"
     }
   ],
   "src/services/external-server-utils.ts": [
