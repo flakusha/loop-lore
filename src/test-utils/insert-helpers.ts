@@ -927,6 +927,7 @@ export async function insertWorlds(
     rpg_loot?: number;
     rpg_quests?: number;
     rules?: string;
+    autonomy_config?: string;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
@@ -2244,6 +2245,7 @@ export async function insertChats(
     custom_instructions?: string | null;
     prompt_template_id?: string | null;
     active_branch_id?: string | null;
+    autonomy_config?: string;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
@@ -4652,6 +4654,27 @@ export async function insertGameStates(
   await db.insertInto("game_states",).values({
     id,
     chat_id,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a autonomy_budget row. */
+export async function insertAutonomyBudget(
+  db: Db,
+  scope_kind: string,
+  scope_id: string,
+  limit_name: string,
+  window_start_at: string,
+  opts?: { window_count?: number; updated_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("autonomy_budget",).values({
+    scope_kind,
+    scope_id,
+    limit_name,
+    window_start_at,
     ...restOpts,
   } as any,).execute();
   return id;
