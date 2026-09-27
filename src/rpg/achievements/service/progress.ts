@@ -156,21 +156,38 @@ export async function claimRewards(
 
   const now = new Date().toISOString();
 
-  await (db as any)
-    .updateTable("player_achievements",)
-    .set({
-      status: "claimed",
-      claimed_at: now,
-      updated_at: now,
-    },)
-    .where("player_id", "=", playerId,)
-    .where("achievement_id", "=", achievementId,)
-    .execute();
+  // BUG-achievement-claimrewards-double-credit-race-and-lost-reward-:
+  // claim + payout must be one atomic unit. The UPDATE is conditional on
+  // `claimed_at IS NULL` so a concurrent second claim touches 0 rows and
+  // throws instead of double-crediting; the payout runs inside the same
+  // transaction so a crash cannot strand a claimed-but-unpaid row.
+  await db
+    .transaction()
+    .execute(async (trx,) => {
+      const claimUpdate = await trx
+        .updateTable("player_achievements",)
+        .set({
+          status: "claimed",
+          claimed_at: now,
+          updated_at: now,
+        },)
+        .where("player_id", "=", playerId,)
+        .where("achievement_id", "=", achievementId,)
+        .where("claimed_at", "is", null,)
+        .execute();
+      // Bun's sqlite dialect reports `numUpdatedRows` on UpdateResult.
+      const affected = Number(
+        (claimUpdate[0] as Record<string, unknown> | undefined)?.numUpdatedRows ?? 0n,
+      );
+      if (affected === 0) {
+        throw new Error("Rewards already claimed",);
+      }
 
-  // Apply rewards — see `./reward-apply` for the per-type applicator.
-  for (const reward of achievement.rewards) {
-    await applySingleAchievementReward(reward, { db, playerId, achievementId, },);
-  }
+      // Apply rewards — see `./reward-apply` for the per-type applicator.
+      for (const reward of achievement.rewards) {
+        await applySingleAchievementReward(reward, { db: trx, playerId, achievementId, },);
+      }
+    },);
 
   getLog().info("Achievement rewards claimed", {
     playerId,
