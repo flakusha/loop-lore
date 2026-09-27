@@ -34,7 +34,12 @@ function checkRegisterGate(
     return errorResponse(request, HttpStatus.Forbidden, "auth.registrationClosed", t, "Registration is closed.",);
   }
   // BUG-429-responses-omit-retry-after-and-x-ratelimit-headers: emit headers.
-  const regLimit = limiter.consume(ip,);
+  // BUG-register-rate-limiter-consumes-on-username-collision-retries: peek
+  // (no record) at the gate; only record() after the insert succeeds.
+  // A 409 on a duplicate username, a 422 on bad form data, or a 500 on
+  // a transactional rollback must NOT cost the IP a budget slot — only
+  // a successful registration that consumed DB writes should.
+  const regLimit = limiter.peek(ip,);
   if (!regLimit.allowed) {
     return rateLimitHtml({
       limit: regLimit,
@@ -166,6 +171,9 @@ async function handleRegister(
   if (userResult === "skipped") {
     return errorResponse(request, HttpStatus.Conflict, "auth.usernameTaken", t, "Username already taken.",);
   }
+  // The gate only peeked; record now that the rows are committed.
+  // BUG-register-rate-limiter-consumes-on-username-collision-retries.
+  limiter.record(ip,);
   return createSessionAndCookie(request, database, config, userId, UserRole.User, ip, t,);
 }
 
