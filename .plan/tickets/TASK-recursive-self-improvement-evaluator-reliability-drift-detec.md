@@ -36,7 +36,7 @@ Each of these is invisible to a `bun run check` exit code. The gate suite return
   - `coverage_drift`: per-module coverage delta vs 7-day rolling window; flagged at >2pp drop
   - `gate_consistency`: same code → same gate score across two consecutive runs (catches non-determinism in tests, e.g. `Math.random()` without seed)
   - `false_pass_candidate`: tests that have NEVER failed but run in <1ms (do-nothing tests)
-- Output: `tree/.tmp/check-drift-report.json` with per-metric score, threshold breach, suggested action ("open BUG-test-flake-XXX", "open TASK-coverage-lift-module-YYY")
+- Output: `tree/.tmp/check-drift-report.json` with per-metric score, threshold breach, suggested action ("open BUG-test-flake-XXX", "open TASK-coverage-waiver-locations-at-78-under-check-gate")
 - `scripts/check-drift.ts` — gate: emits a structured alert via `src/notifications/` + writes to `tree/.tmp/agent-data/drift-<date>.json` for the agent loop to triage
 - Threshold config in `src/config/schema.ts` under `drift:` section (defaults: flake 3%, suspicious-pass 10× ratio, coverage drift 2pp, consistency tolerance 0)
 - Wire into watchdog (#1) — drift alert triggers watchdog event + opens a BUG ticket via the agent loop

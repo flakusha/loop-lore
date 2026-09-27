@@ -19,6 +19,7 @@ Kysely migration for `agent_actions` table; record every agent API call. Admin s
 ## Core Features
 
 - Migration `NNN_rsi_agent_actions.ts` (append-only):
+
   ```sql
   CREATE TABLE agent_actions (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -35,6 +36,7 @@ Kysely migration for `agent_actions` table; record every agent API call. Admin s
   CREATE INDEX idx_agent_actions_created_at ON agent_actions(created_at DESC);
   CREATE INDEX idx_agent_actions_token_hash ON agent_actions(token_hash);
   ```
+
 - Sink writes from every agent API handler
 - Admin route `GET /api/admin/agent-actions?token=&action=&limit=` (admin-scoped, paginated)
 
