@@ -2,23 +2,24 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { Kysely, } from "kysely";
-import type { DB, } from "../db/schema";
-import { getLogger, } from "../logger";
-import { jsonStringifyOr, uid, } from "../utils";
-import { type ReproductionCapability, Species, } from "./body-systems/enums";
-import { BodySystemService, } from "./body-systems/service";
-import { rollDice, } from "./dice";
-import type { NsfwEncounter, } from "./encounters/service/types";
-import { birthChild, } from "./reproduction-birth";
+import type { DB, } from "../../db/schema";
+import { getLogger, } from "../../logger";
+import { assertNsfwConfigEnabled, } from "../../nsfw/capability-gate";
+import { jsonStringifyOr, uid, } from "../../utils";
+import { type ReproductionCapability, Species, } from "../body-systems/enums";
+import { BodySystemService, } from "../body-systems/service";
+import { rollDice, } from "../dice";
+import type { NsfwEncounter, } from "../encounters/service/types";
+import { birthChild, } from "./birth";
 import {
   GESTATION_WEEKS,
   getPregnancy as getPregnancyFromStore,
   getPregnancyMeta as getPregnancyMetaFromStore,
   PREGNANCY_EFFECT,
   type PregnancyStatus,
-} from "./reproduction-store";
+} from "./store";
 
-export type { PregnancyStatus, } from "./reproduction-store";
+export type { PregnancyStatus, } from "./store";
 
 /**
  * Pregnancy / reproduction service (TASK-038).
@@ -63,7 +64,7 @@ export function capabilityFor(species: string,): ReproductionCapability {
   return CAPABILITY_BY_SPECIES[species.toLowerCase()] ?? DEFAULT_CAPABILITY;
 }
 
-/** Pregnancy record shape (carried in `status_effect` meta) — see reproduction-store. */
+/** Pregnancy record shape (carried in `status_effect` meta) — see store. */
 
 const COMPLICATION_EVENT = "disease.reproductive_complication";
 
@@ -97,6 +98,7 @@ export class ReproductionService {
     carrierSpecies?: string,
     sireSpecies?: string,
   ): Promise<string | null> {
+    assertNsfwConfigEnabled();
     const log = getLogger().child({ module: "reproduction", },);
     const bodies = new BodySystemService(this.db,);
     const carrierRow = await bodies.getHeatCycle(carrierId, carrierSpecies ?? Species.Human,);
@@ -175,6 +177,7 @@ export class ReproductionService {
    * @param weeks
    */
   async advanceGestation(characterId: string, weeks = 1,): Promise<PregnancyStatus> {
+    assertNsfwConfigEnabled();
     const status = await getPregnancyFromStore(this.db, characterId,);
     if (!status.pregnant) { return status; }
     const next = status.weeksElapsed + weeks;
@@ -226,6 +229,7 @@ export class ReproductionService {
    * @param childName
    */
   async birth(characterId: string, childName: string,): Promise<string | null> {
+    assertNsfwConfigEnabled();
     return birthChild(this.db, characterId, childName,);
   }
 
