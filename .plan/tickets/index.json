@@ -8531,7 +8531,7 @@
     "git_issue": "6db042a"
   },
   "EPIC-EFFECT-V4-ADOPTION-EVALUATION": {
-    "hash": "pending",
+    "hash": "5bb3855",
     "extid": "EPIC-EFFECT-V4-ADOPTION-EVALUATION",
     "type": "EPIC",
     "title": "Effect v4 Adoption Evaluation",
@@ -8550,7 +8550,8 @@
       "evaluation"
     ],
     "source": ".plan/tickets/epic-effect-v4-adoption-evaluation.md",
-    "status": "⬜ Not Started"
+    "status": "⬜ Not Started",
+    "git_issue": "5bb3855"
   },
   "EPIC-EMAIL-INTEGRATION": {
     "hash": "6e850fc",
@@ -17318,6 +17319,19 @@
     "source": ".plan/tickets/TASK-add-heatphase-state-machine-for-character-heat-cycle-current.md",
     "status": "open"
   },
+  "TASK-ADD-MISSING-RPG-MODULE-BARRELS": {
+    "hash": "d06f5c7",
+    "git_issue": "d06f5c7",
+    "extid": "TASK-ADD-MISSING-RPG-MODULE-BARRELS",
+    "type": "TASK",
+    "title": "Add missing rpg module barrels (TASK-034 / 036 / 037 / 040 / 041 AC #1)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-nsfw-game-mechanics",
+    "tags": [],
+    "source": ".plan/tickets/TASK-add-missing-rpg-module-barrels.md",
+    "status": "done"
+  },
   "TASK-ADD-MODEL-ROLES-TEST-TS-FOR-SRC-ADMIN-MODEL-ROLES-TS": {
     "hash": "0423c27",
     "git_issue": "0423c27",
@@ -19259,7 +19273,7 @@
     "git_issue": "2451ede"
   },
   "TASK-ASSISTANT-ENTITY-ACCESS-BATCH-RAG-ASSET": {
-    "hash": "pending",
+    "hash": "fe57375",
     "extid": "TASK-ASSISTANT-ENTITY-ACCESS-BATCH-RAG-ASSET",
     "type": "TASK",
     "title": "B1 — RAG + Asset Access MVP",
@@ -19268,7 +19282,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-assistant-entity-access-batch-rag-asset.md",
-    "status": "open"
+    "status": "open",
+    "git_issue": "fe57375"
   },
   "TASK-ASSISTANT-ENTITY-ACCESS-CHARACTER-ITEM-INVENTORY": {
     "hash": "4566643",
