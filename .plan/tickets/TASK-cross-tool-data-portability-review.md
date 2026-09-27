@@ -1,4 +1,3 @@
----
 **Status:** Not Started
 **Status Note:** Analysis (investigation complete, not scheduled)
 Priority: Medium
@@ -8,7 +7,6 @@ Tags: migration, integration, import, export, interop, characters, chats
 Epic: epic-import-export-io.md
 Linked Epics: epic-io-formats.md, epic-platform-integrations.md
 Related: docs/ideas/index.md (gap summary refreshed 2026-08-12)
----
 
 
 **Priority:** medium
