@@ -11,7 +11,7 @@
 **Context:** Gameplay-layer reproductive cycle + species interaction.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-**Status**: Done — pre-existing implementation; reproduction module shipped in commits e3abf5adf / cc6cb7c67 / a88211f72
+**Status**: Done
 **Priority**: medium
 **Labels**: nsfw, rpg, game-mechanics
 **Epic**: epic-nsfw-game-mechanics
