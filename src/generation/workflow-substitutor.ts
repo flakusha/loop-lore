@@ -37,6 +37,36 @@ const PLACEHOLDER_RE = /\{\{([^}]+)\}\}/g;
 const WHOLE_PLACEHOLDER_RE = /^\{\{([^}]+)\}\}$/;
 
 /**
+ * Every `{{placeholder}}` name appearing anywhere in a JSON-compatible value.
+ *
+ * Shares PLACEHOLDER_RE with the substitutor on purpose: workflow ingest
+ * validation checks that a declared parameter actually appears in the graph,
+ * and a second copy of this regex would eventually disagree with the one that
+ * actually does the substituting.
+ * @param obj - JSON value to scan
+ */
+export function collectPlaceholders(obj: unknown,): Set<string> {
+  const found = new Set<string>();
+  const walk = (value: unknown,): void => {
+    if (typeof value === "string") {
+      for (const match of value.matchAll(PLACEHOLDER_RE,)) {
+        found.add(match[1]!.trim(),);
+      }
+      return;
+    }
+    if (Array.isArray(value,)) {
+      for (const item of value) { walk(item,); }
+      return;
+    }
+    if (typeof value === "object" && value !== null) {
+      for (const nested of Object.values(value,)) { walk(nested,); }
+    }
+  };
+  walk(obj,);
+  return found;
+}
+
+/**
  * Deep-clone and substitute placeholders in a JSON-compatible value.
  *
  * Strings containing `{{...}}` are processed. All other types pass through unchanged.
