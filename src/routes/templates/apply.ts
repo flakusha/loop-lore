@@ -91,6 +91,16 @@ export function templateApplyRoutes(
       if (modality === "image") {
         return jsonResponse(applyImageTemplate(payload as ImageTemplatePayload, body.context ?? {},),);
       }
+      // A workflow payload holds a ComfyUI graph, not a prompt body. Falling
+      // through to applySimpleTemplate would stringify the graph and hand the
+      // operator a nonsense preview, so reject it with a pointer to the real
+      // surface instead of rendering it.
+      if (modality === "workflow") {
+        return jsonError({
+          message: "Workflow templates are not prompt bodies — use the image-edit run endpoint",
+          status: HttpStatus.BadRequest,
+        },);
+      }
       return jsonResponse({ body: applySimpleTemplate(payload as SimpleTemplatePayload, body.context ?? {},), },);
     }, {
       params: ApplyParams,

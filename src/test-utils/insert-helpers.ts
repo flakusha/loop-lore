@@ -29,6 +29,7 @@ import type {
   CraftingAttemptStatus,
   CraftingDiscipline,
   CraftingStationType,
+  DefaultState,
   DifficultyReroll,
   DifficultyState,
   DiscoveryMethod,
@@ -3688,6 +3689,10 @@ export async function insertPromptTemplates(
     payload?: string;
     created_at?: string;
     updated_at?: string;
+    is_default?: DefaultState;
+    enabled?: LoreEntryStatus;
+    lora_slots?: string | null;
+    min_vram?: number | null;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };

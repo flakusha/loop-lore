@@ -5,6 +5,7 @@
 import type { Kysely, } from "kysely";
 import { LLM_TEMPLATE_PRESETS, } from "../../assistant/prompt/presets";
 import type { TemplateDetailLevel, TemplateModality, } from "../../db/enums";
+import { TEMPLATE_MODALITIES, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { jsonStringifyOr, uid, } from "../../utils";
 import {
@@ -12,7 +13,7 @@ import {
   type PromptTemplateRow,
   type TemplateSummary,
 } from "../template-types";
-const MODALITIES: readonly TemplateModality[] = ["llm", "image", "video", "audio",];
+const MODALITIES = TEMPLATE_MODALITIES;
 const DETAIL_LEVELS: readonly TemplateDetailLevel[] = ["instant", "balanced", "detailed",];
 
 /** */

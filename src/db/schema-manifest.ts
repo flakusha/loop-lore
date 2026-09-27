@@ -2224,6 +2224,10 @@ export const SCHEMA = new SchemaManifest()
     payload: col("text", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
+    is_default: col("text", { notNull: true, hasDefault: true, },),
+    enabled: col("text", { notNull: true, hasDefault: true, },),
+    lora_slots: col("text",),
+    min_vram: col("integer",),
   },)
   // ── Core: Users & Sessions ──────────────────────────────────────────────
   .table("personas", {

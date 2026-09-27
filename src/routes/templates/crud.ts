@@ -14,6 +14,7 @@ import { Type, } from "@sinclair/typebox";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { TemplateModality, } from "../../db/enums";
+import { TEMPLATE_MODALITIES, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import type { CreateTemplateInput, } from "../../generation/template-service";
 import {
@@ -36,7 +37,7 @@ import {
 } from "../../validation/schemas";
 import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
 
-const MODALITIES: readonly TemplateModality[] = ["llm", "image", "video", "audio",];
+const MODALITIES = TEMPLATE_MODALITIES;
 
 const IdParams = Type.Object({ id: Type.String(), },);
 const ListQuery = Type.Object({ modality: Type.Optional(Type.String(),), },);
