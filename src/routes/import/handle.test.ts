@@ -126,7 +126,7 @@ describe("handleImport", () => {
     } as unknown as Parameters<typeof import("../../characters/charx").createCharx>[0];
     const buf = await createCharx(card, [{ path: "portrait.png", data: makeMinimalPng(2, 2,), },],);
     const fd = new FormData();
-    fd.append("file", new File([buf,], "smoke.charx", { type: "application/octet-stream", },),);
+    fd.append("file", new File([buf as unknown as BlobPart,], "smoke.charx", { type: "application/octet-stream", },),);
     const req = new Request("http://localhost/api/import", { method: "POST", body: fd, },);
     const res = await handleImport(req, db, userId, uploadDir,);
     expect([201, 422,],).toContain(res.status,);
