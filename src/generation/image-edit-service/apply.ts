@@ -100,9 +100,15 @@ export async function applyEdit(
         throw new Error(`img2img generation failed: ${result.error.message}`,);
       }
 
-      resultImages = Array.from(result.data.images, (b64,) => {
+      resultImages = result.data.images.map((b64,) => {
         const r = safeFromBase64(b64,);
-        return r.ok ? r.buffer : Buffer.alloc(0,);
+        if (!r.ok) {
+          // A provider that returns undecodable base64 is a generation
+          // failure, not an empty image. Persisting 0 bytes would hand the
+          // user a broken asset with no error anywhere.
+          throw new Error(`img2img provider returned undecodable image data: ${r.error.message}`,);
+        }
+        return r.buffer;
       },);
       break;
     }
@@ -149,9 +155,12 @@ export async function applyEdit(
         throw new Error(`Image edit failed: ${result.error.message}`,);
       }
 
-      resultImages = Array.from(result.data.data, (d,) => {
+      resultImages = result.data.data.map((d,) => {
         const r = safeFromBase64(d.b64_json,);
-        return r.ok ? r.buffer : Buffer.alloc(0,);
+        if (!r.ok) {
+          throw new Error(`Image edit provider returned undecodable image data: ${r.error.message}`,);
+        }
+        return r.buffer;
       },);
       break;
     }
