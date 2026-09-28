@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { spawnSync, } from "bun";
+import { Database, } from "bun:sqlite";
 import { copyFileSync, existsSync, readdirSync, statSync, unlinkSync, writeFileSync, } from "node:fs";
 import { basename, join, } from "node:path";
 
@@ -38,22 +39,22 @@ try {
     log(`ERROR: database not found at ${DB_PATH}`,);
     process.exit(1,);
   }
-  copyFileSync(DB_PATH, BACKUP_BASE,);
-  const walPath = `${DB_PATH}-wal`;
-  const shmPath = `${DB_PATH}-shm`;
-  if (existsSync(walPath,)) { copyFileSync(walPath, `${BACKUP_BASE}-wal`,); }
-  if (existsSync(shmPath,)) { copyFileSync(shmPath, `${BACKUP_BASE}-shm`,); }
+  // `VACUUM INTO` takes SQLite's own read snapshot, so the result is a
+  // consistent single-file database with no WAL sidecars even while the app is
+  // writing. Do NOT replace this with copyFileSync + copyFileSync(-wal): a
+  // checkpoint landing between the two copies folds WAL frames into the main
+  // file and resets the WAL, leaving the copied pair missing data that was
+  // committed -- observed as a restore with no schema at all. See
+  // BUG-backup-sqlite-copies-live-db-without-checkpoint.
+  const source = new Database(DB_PATH, { readonly: true, },);
+  try {
+    await source.query(`VACUUM INTO '${BACKUP_BASE.replaceAll("'", "''",)}'`,).run();
+  } finally {
+    source.close();
+  }
 
   // Step 2: Compress
-  const compressArgs = [
-    "tar",
-    "-czf",
-    `${BACKUP_BASE}.tar.gz`,
-    "-C",
-    BACKUP_DIR,
-    basename(BACKUP_BASE,),
-    `${basename(BACKUP_BASE,)}-wal`,
-  ];
+  const compressArgs = ["tar", "-czf", `${BACKUP_BASE}.tar.gz`, "-C", BACKUP_DIR, basename(BACKUP_BASE,),];
   const tarProc = spawnSync(compressArgs, { stdout: "pipe", stderr: "pipe", },);
   if (tarProc.exitCode !== 0) {
     log(`Warning: compression skipped (${new TextDecoder().decode(tarProc.stderr as Buffer,).trim()})`,);
