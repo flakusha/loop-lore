@@ -30,7 +30,7 @@ read on every beat.
   (`worlds.autonomy_config`) → the `organic` preset baseline. A layer only
   overrides the fields it explicitly sets, so a chat can raise the tick
   interval without resetting the budget caps. Columns land in
-  `022_autonomy_config_columns.ts`.
+  `025_autonomy_config_columns.ts`.
 - Presets: `presets.ts` holds `serene` / `organic` / `brisk` (always
   available) plus `unlimited-stress`, which `getPreset` refuses with
   `UnboundedStressGatedError` when `NODE_ENV === 'production'` — a hard
@@ -43,7 +43,7 @@ read on every beat.
 
 ## Write path (the gap the columns left open)
 
-Migration 022 created `autonomy_config` on both tables, but **no route
+Migration 025 created `autonomy_config` on both tables, but **no route
 accepted the field** — the columns were readable and never writable, so any
 settings UI would have shown a saved value that the resolver never saw.
 Fixed at the source, on both layers:
