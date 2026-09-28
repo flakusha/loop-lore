@@ -24,7 +24,9 @@ import type { WorkflowPayload, } from "../template-types";
 import { findDeadNodes, } from "../workflow-loader/workflow-validation";
 import { collectPlaceholders, } from "../workflow-substitutor";
 
-const CATEGORIES: readonly ImageEditCategory[] = [
+/** Every valid `ImageEditCategory`, as a runtime list. The TS type is a union,
+ * so the seeder needs this to resolve a filename to a category. */
+export const CATEGORIES: readonly ImageEditCategory[] = [
   "txt2img",
   "img2img",
   "inpaint",
