@@ -3,7 +3,7 @@
 
 # BUG: backup-sqlite copies a live WAL database without checkpointing
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-db-growth-tiered-storage
@@ -43,11 +43,41 @@ Do NOT add `wal_checkpoint(TRUNCATE)` before the copy - that is the operation th
 
 ## Acceptance Criteria
 
-- [ ] Backup no longer depends on WAL sidecar files being copied.
+- [x] Backup no longer depends on WAL sidecar files being copied.
 - [ ] A backup taken while the app is writing restores to a database that passes `integrity_check` AND matches the source row counts.
-- [ ] No orphaned `-shm` copy in the archive path.
+- [x] No orphaned `-shm` copy in the archive path.
 - [ ] Covered by a test that writes to the source DB during the backup.
-- [ ] `bun run check` green.
+- [x] `bun run check` green.
+
+## Partial fix landed 2026-09-29 — NOT closed
+
+The code fix is on `dev` and the first and third criteria are met, verified by
+reading the shipped source rather than by trusting the commit subject:
+
+- `35c002570 fix(db): cascade memory embeddings and snapshot backups via VACUUM INTO`
+- `ac7f7dedc fix(scripts): remove a partial snapshot when VACUUM INTO fails`
+
+`scripts/backup-sqlite.ts:56` now runs `VACUUM INTO '<dest>'` inside a `try`, and
+the comment at :42-48 explicitly names this ticket as the reason `copyFileSync`
+must not be reinstated. The `copyFileSync(DB_PATH, ...)` + `-wal` + `-shm` sequence
+described in Evidence is gone, and the `tar` argv no longer carries sidecars, so
+criteria 1 and 3 hold. The `ac7f7dedc` follow-up also closes the truncated-file
+hazard: a failed `VACUUM INTO` now unlinks its partial output rather than leaving
+a `backup_`-prefixed file for the retention sweep to pick up.
+
+Two criteria remain genuinely unmet, so this stays open:
+
+- **No test covers the backup path at all.** `scripts/scripts.test.ts` has zero
+  occurrences of `backup`; there is no `scripts/backup-sqlite.test.ts`. The
+  second and fourth criteria are both unverified, and the original reproduction
+  in this ticket was manual.
+- **The row-count assertion is still missing.** `scripts/validate-backup-restore.ts`
+  runs `PRAGMA integrity_check` only, which is exactly the gap Evidence called out:
+  a backup missing whole tables passes it.
+
+The `TASK-backup-consistency-vacuum-into-snapshots-plus-archive-dbs.md` epic-phase
+ticket remains the right home for the row-count + archive-DB work. This ticket
+should close once a concurrent-write backup test exists.
 
 ## Related
 

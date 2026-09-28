@@ -85,7 +85,7 @@
     "label": "bug",
     "priority": "high",
     "source": ".plan/tickets/BUG-activitypub-actor-signing-keys-and-rotation-undefined-no-cry.md",
-    "status": "not-yet-implemented",
+    "status": "done",
     "tags": [],
     "title": "ActivityPub actor signing keys and rotation undefined; no crypto-epic link",
     "type": "BUG"
@@ -458,7 +458,7 @@
     "label": "bug",
     "priority": "high",
     "source": ".plan/tickets/BUG-assistant-intent-regexes-hijack-normal-chat-messages.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [],
     "title": "assistant intent regexes hijack normal chat messages",
     "type": "BUG"
@@ -2102,7 +2102,7 @@
     "label": "bug",
     "priority": "high",
     "source": ".plan/tickets/BUG-db-guard-triggers-bypassed-on-update-003-005.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "db",
       "triggers",
@@ -2528,7 +2528,7 @@
     "label": "bug",
     "priority": "low",
     "source": ".plan/tickets/BUG-entity-template-position-config-unvalidated-typos-silently-b.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [],
     "title": "entity template position config unvalidated typos silently become after",
     "type": "BUG"

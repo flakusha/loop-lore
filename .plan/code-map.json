@@ -7517,6 +7517,12 @@
       "source": ".plan/tickets/TASK-giwt-show-state-resolve-plan-tickets-filename-slugs.md"
     }
   ],
+  "src/commands/sync.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-giwt-sync-fix-writes-an-out-of-vocabulary-status.md"
+    }
+  ],
   "src/commands/ticket.ts": [
     {
       "kind": "ticket",
@@ -9481,6 +9487,12 @@
       "source": ".plan/tickets/TASK-adopt-bun-yaml-to-replace-js-yaml.md"
     }
   ],
+  "src/config/templates-loader/entity-position.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-entity-template-position-config-unvalidated-typos-silently-b.md"
+    }
+  ],
   "src/config/templates-loader/index.ts": [
     {
       "kind": "epic",
@@ -9700,6 +9712,10 @@
   "src/crypto/activitypub-keys.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-activitypub-actor-signing-keys-and-rotation-undefined-no-cry.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-backfill-of-historical-posts-on-new-follower-unspecified.md"
     },
     {
@@ -9713,6 +9729,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-crypto-activitypub-keys-ts-has-zero-test-coverage.md"
+    }
+  ],
+  "src/crypto/actor-keys.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-activitypub-actor-signing-keys-and-rotation-undefined-no-cry.md"
     }
   ],
   "src/crypto/actor-keys.ts": [
@@ -11353,6 +11375,12 @@
       "source": "docs/frontend/chat/search-and-filter.md"
     }
   ],
+  "src/db/guard-triggers-update-twins.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-db-guard-triggers-bypassed-on-update-003-005.md"
+    }
+  ],
   "src/db/heal.test.ts": [
     {
       "kind": "ticket",
@@ -11660,6 +11688,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-activitypub-actor-signing-keys-and-rotation-undefined-no-cry.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-memory-audit-log-action-column-typed-string-not-union.md"
     },
     {
@@ -11910,6 +11942,10 @@
     }
   ],
   "src/db/migrations/018_guard_triggers_update_twins.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-db-guard-triggers-bypassed-on-update-003-005.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-019-content-versioning-heavy-tables.md"
@@ -12963,6 +12999,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-world-chat-channels-invites.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-activitypub-actor-signing-keys-and-rotation-undefined-no-cry.md"
     },
     {
       "kind": "ticket",
@@ -35444,7 +35484,17 @@
   "src/tickets/sync-index.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-giwt-sync-fix-writes-an-out-of-vocabulary-status.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-plan-index-orphan-phantom-cleanup.md"
+    }
+  ],
+  "src/tickets/sync-issues-ops.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-giwt-sync-fix-writes-an-out-of-vocabulary-status.md"
     }
   ],
   "src/tickets/sync-ticket.ts": [
