@@ -125,20 +125,18 @@ const panelState: AutonomyPanelState = {
   },
 
   async saveActor() {
-    if (!this._autoActorId) { return; }
+    if (!this._autoActorId || !this._autoWorldId) { return; }
     this.autoSaving = true;
     this.autoError = "";
     try {
-      // The actor layer lives on the character's internal traits, which
-      // already accept an `autonomy` block. Sending only that key keeps
-      // the panel from clobbering the traits it does not own.
-      // The traits route takes the actor as a query param, not a path segment.
-      const qs = new URLSearchParams({ actorId: this._autoActorId, },);
-      await apiFetch(`/api/character-internal-traits?${qs.toString()}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json", },
-        body: jsonBody({ autonomyPreferences: { autonomy: this.autoActorDraft, }, },),
-      },);
+      await apiFetch(
+        `/api/worlds/${this._autoWorldId}/autonomy/actor/${this._autoActorId}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json", },
+          body: jsonBody({ autonomy: this.autoActorDraft, },),
+        },
+      );
       await this.load();
     } catch (error) {
       log.warn("Failed to save actor autonomy", { error: String(error,), },);
