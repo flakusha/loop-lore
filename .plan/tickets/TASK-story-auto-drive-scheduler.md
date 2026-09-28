@@ -48,6 +48,18 @@ orchestrator; the class owns the loop and delegates every beat.
 - Telemetry: `scheduler.world_tick.started` / `.completed` / `.error`,
   fire-and-forget — a telemetry outage must never stall the tick it
   describes.
+- Driver: the `autonomy.world-tick` job in the cron catalog
+  (`src/cron/jobs.ts`) runs every minute and calls `tickOnce()`. It only
+  pumps the due-set selection; per-world cadence is the world's own
+  `tickIntervalMs`, and a world whose `next_tick_at` has not arrived is
+  skipped without being rescheduled.
+- Due set: `SimulationStore.dueWorlds` left-joins `worlds` against the
+  cursor table, so a world that has never ticked is due immediately. The
+  due set used to read `world_simulation_state` alone, which meant a
+  never-ticked world had no row, was never selected, and no tick ever
+  created the row — the loop did nothing for every new world until an
+  admin paused or stepped it. `load` already synthesized an epoch cursor
+  for that case; the two now agree.
 - Cadence: per-world, from the resolved `AutonomyConfig`
   (`tickIntervalMs` + `jitterRatio`), so the config surface tunes the loop
   without a scheduler change.

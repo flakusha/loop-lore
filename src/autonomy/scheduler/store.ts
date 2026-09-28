@@ -69,15 +69,50 @@ export class SimulationStore {
    * @param nowMs
    */
   async dueWorlds(nowMs: number,): Promise<WorldScheduleEntry[]> {
+    const iso = toDate(nowMs,).toISOString();
     const rows = await this.#db
-      .selectFrom("world_simulation_state",)
-      .selectAll()
-      .where("paused", "=", 0,)
-      .where("next_tick_at", "<=", toDate(nowMs,).toISOString(),)
-      .orderBy("next_tick_at", "asc",)
-      .orderBy("world_id", "asc",)
+      .selectFrom("worlds",)
+      .leftJoin("world_simulation_state", "world_simulation_state.world_id", "worlds.id",)
+      .select([
+        "worlds.id as world_id",
+        "world_simulation_state.next_tick_at",
+        "world_simulation_state.paused",
+        "world_simulation_state.last_run_at",
+        "world_simulation_state.last_error",
+        "world_simulation_state.tick_count",
+      ],)
+      .where((eb,) =>
+        eb.or([
+          // No cursor row at all: due immediately. Selecting the due set
+          // from world_simulation_state alone meant a world that had never
+          // ticked was never selected, so nothing ever created its row and
+          // the loop was dead for every new world until an admin paused or
+          // stepped it. `load` already synthesizes an epoch cursor for that
+          // case; the due set has to agree with it.
+          eb("world_simulation_state.world_id", "is", null,),
+          eb.and([
+            eb("world_simulation_state.paused", "=", 0,),
+            eb("world_simulation_state.next_tick_at", "<=", iso,),
+          ],),
+        ],)
+      )
+      .orderBy("world_simulation_state.next_tick_at", "asc",)
+      .orderBy("worlds.id", "asc",)
       .execute();
-    return rows.map((row,) => ({ worldId: row.world_id, state: row, }));
+
+    const epoch = toDate(0,).toISOString();
+    return rows.map((row,) => ({
+      worldId: row.world_id,
+      state: {
+        world_id: row.world_id,
+        next_tick_at: row.next_tick_at ?? epoch,
+        paused: row.paused ?? 0,
+        last_run_at: row.last_run_at ?? null,
+        last_error: row.last_error ?? null,
+        tick_count: row.tick_count ?? 0,
+        updated_at: epoch,
+      },
+    }));
   }
 
   /**
