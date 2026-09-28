@@ -12,17 +12,6 @@
       "title": "Save Image"
     }
   },
-  "60:45": {
-    "inputs": {
-      "clip_name": "krea2/qwen3-vl-4b-int8.safetensors",
-      "type": "stable_diffusion",
-      "device": "default"
-    },
-    "class_type": "CLIPLoader",
-    "_meta": {
-      "title": "Load CLIP"
-    }
-  },
   "60:15": {
     "inputs": {
       "vae_name": "qwen_image_vae.safetensors"

@@ -15,6 +15,7 @@ import { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, } from "bun:test";
 import { Elysia, } from "elysia";
 import { Kysely, } from "kysely";
+import { readFile, } from "node:fs/promises";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertUsers, } from "../../test-utils/insert-helpers";
@@ -23,6 +24,9 @@ import { adminComfyuiWorkflowRoutes, } from "./index";
 
 const PREFIX = "/api/v1";
 const BASE = `${PREFIX}/admin/comfyui-workflows`;
+
+/** The real operator export that shipped with the epic, kept as a fixture. */
+const ANIMA_PATH = "./configs/workflows/uploads/i-anima-0001.json";
 
 /** Minimal valid graph: a loader feeding a terminal SaveImage sink. */
 const GRAPH = {
@@ -105,6 +109,27 @@ describe("admin ComfyUI workflow routes — create", () => {
     expect(payload.category,).toBe("txt2img",);
     expect(payload.parameters,).toEqual([],);
     expect(payload.requiredNodes,).toEqual([],);
+  });
+
+  it("lands the real Anima export — the reference fixture, unmodified on disk", async () => {
+    // Reads the shipped file rather than an inline copy, so cleaning the graph
+    // and landing it here cannot drift apart. This export is what strict
+    // dead-node rejection originally refused (stale `60:45` CLIPLoader); the
+    // node was removed because nothing referenced it — both CLIPTextEncode
+    // nodes take their clip from 60:61 (CLIPLoaderGGUF).
+    const raw = await readFile(ANIMA_PATH, "utf8",);
+    const { status, json, } = await postAsAdmin(BASE, { name: "Anima", ...JSON.parse(raw,), },);
+    expect(status,).toBe(201,);
+
+    const row = await rowById(String(json.id,),);
+    expect(row?.modality,).toBe("workflow",);
+    const payload = JSON.parse(String(row?.payload,),) as { body: Record<string, unknown> };
+    expect(Object.keys(payload.body,),).toHaveLength(9,);
+    // The removed node is gone and the CLIP the text encoders actually use is
+    // still wired in.
+    expect(Object.hasOwn(payload.body, "60:45",),).toBe(false,);
+    expect(payload.body["60:11"],).toBeDefined();
+    expect(payload.body["60:61"],).toBeDefined();
   });
 
   it("rejects a dead node with the offending ids", async () => {

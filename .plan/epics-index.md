@@ -65,7 +65,7 @@
 | Not Started | CI/CD Pipeline | Low | Medium | 6 | [epic-cicd-pipeline.md](/.plan/epics/epic-cicd-pipeline.md) |
 | Not Started | Client-Side Routing | Medium | Medium | 0 | [epic-frontend-routing.md](/.plan/epics/epic-frontend-routing.md) |
 | In Progress | Code Quality & Best Practices (Permanently Ongoing) | High | Continuous | 0 | [epic-code-quality.md](/.plan/epics/epic-code-quality.md) |
-| Not Started | ComfyUI First-Class Citizen — Workflow Library, Chat Selection, Admin Setup | High | High | 21 | [epic-comfyui-first-class-citizen.md](/.plan/epics/epic-comfyui-first-class-citizen.md) |
+| Not Started | ComfyUI First-Class Citizen — Workflow Library, Chat Selection, Admin Setup | High | High | 20 | [epic-comfyui-first-class-citizen.md](/.plan/epics/epic-comfyui-first-class-citizen.md) |
 | In Progress | ComfyUI Plugin & Workflow Templates | High | High | 16 | [epic-comfyui-plugin.md](/.plan/epics/epic-comfyui-plugin.md) |
 | Not Started | Communications Integrations | Medium | High (split into 5 sub-epics) | 8 | [epic-communications-integrations.md](/.plan/epics/epic-communications-integrations.md) |
 | Not Started | Communications Integrations — Quick Reference | Medium | High | 0 | [epic-communications-integrations-quickref.md](/.plan/epics/epic-communications-integrations-quickref.md) |
