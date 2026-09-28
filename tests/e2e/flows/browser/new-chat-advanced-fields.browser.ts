@@ -107,6 +107,14 @@ describe("New chat advanced fields E2E", () => {
         (res,) => res.url().includes("/api/v1/chats",) && res.request().method() === "POST",
         { timeout: 15_000, },
       );
+      // Start the body read NOW, not after the assertions below. A successful
+      // create navigates to the chat view, and Playwright discards the response
+      // body once that navigation commits. Awaiting `createRes` and only then
+      // calling `res.json()` leaves an intervening `expect` for that navigation
+      // to slip into, which is what made this fail under load when the 34-file
+      // e2e batch runs concurrently. Attaching the read before the click puts it
+      // in flight the moment the response arrives.
+      const bodyPromise = createRes.then((res,) => res.json().catch(() => null));
 
       const name = `Advanced-Chat-${Date.now()}`;
       await page.fill("[data-testid='chat-name-input']", name,);
@@ -116,8 +124,8 @@ describe("New chat advanced fields E2E", () => {
 
       const res = await createRes;
       expect(res.status(), `chat create should succeed (got ${res.status()})`,).toBeLessThan(400,);
-      const body = (await res.json()) as { id?: string; data?: { id?: string } };
-      const createdId = body.id ?? body.data?.id;
+      const body = (await bodyPromise) as { id?: string; data?: { id?: string } } | null;
+      const createdId = body?.id ?? body?.data?.id;
       expect(createdId, "create response should carry chat id",).toBeDefined();
 
       const row = await ctx.db
