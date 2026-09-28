@@ -9681,6 +9681,10 @@
       "source": ".plan/tickets/TASK-scheduler-implementation-internal-cron-jobs.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-story-auto-drive-scheduler.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/npc-navigation.md"
     },
