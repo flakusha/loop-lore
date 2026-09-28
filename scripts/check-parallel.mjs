@@ -11,13 +11,14 @@
  *   bun run scripts/check-parallel.mjs [--diff-base <ref>] [--gates <csv>] [--skip-gates <csv>]
  *
  * Concurrency cap (added to keep peak RSS sane across multiple worktrees):
- *   --jobs N    Override per-run concurrency cap (default: CHECK_JOBS env, or 8).
+ *   --jobs N    Override per-run concurrency cap (default: CHECK_JOBS env, or 4).
  *   CHECK_JOBS  Env override for the same value. The cap controls how many
  *               checks run in parallel; the script still launches all checks,
- *               but processes them in chunks of `jobs` at a time. With the
- *               default (8), peak RSS per run stays well under half of the
- *               historical `Promise.all`-everything behaviour, which lets
- *               2 worktrees share a 64GB host without OOM.
+ *               but processes them in chunks of `jobs` at a time. The default
+ *               of 4 is the observed-safe ceiling on this host: 8 OOMs when a
+ *               second worktree is running its own heavy gates at the same time.
+ *               Raise it with --jobs N / CHECK_JOBS=N when running a single
+ *               worktree with headroom to spare.
  *
  * Writes a machine-readable report to .tmp/check-report.json after every run
  * (success: summary only; failure: summary + full failed-check output).
@@ -630,11 +631,16 @@ async function ensureGpgWarm() {
 
 // ── Concurrency cap ────────────────────────────────────────────
 // Resolve the per-run concurrency cap with priority: --jobs flag > CHECK_JOBS
-// env > default 8. We refuse values < 1 (would deadlock) and cap at the check
+// env > default 4. We refuse values < 1 (would deadlock) and cap at the check
 // count to avoid the Promise.all-of-empty-array footgun. The cap exists so
 // multiple worktrees can run `bun run check` simultaneously without the host
 // hitting OOM — peak RSS scales ~linearly with concurrent checks.
-const DEFAULT_JOBS = 8;
+//
+// ponytail: 4 is the observed-safe ceiling on this host, not a measured one —
+// 8 OOMs when a second worktree runs its own heavy gates concurrently. Raise it
+// with --jobs N / CHECK_JOBS=N once per-worktree heavy-gate serialization is
+// guaranteed; the number is a guess we can revise, not a constant to tune.
+const DEFAULT_JOBS = 4;
 function parseJobs() {
   const flagIdx = process.argv.indexOf("--jobs",);
   let raw;
@@ -651,6 +657,13 @@ function parseJobs() {
       `warn: Invalid --jobs/CHECK_JOBS value ${JSON.stringify(raw,)}; falling back to ${DEFAULT_JOBS}.`,
     );
     return DEFAULT_JOBS;
+  }
+  if (parsed > DEFAULT_JOBS) {
+    console.error(
+      `warn: concurrency ${parsed} exceeds the default ceiling of ${DEFAULT_JOBS}; ` +
+        `peak RSS scales with concurrent checks and this OOMs when another worktree ` +
+        `runs heavy gates at the same time.`,
+    );
   }
   return parsed;
 }
