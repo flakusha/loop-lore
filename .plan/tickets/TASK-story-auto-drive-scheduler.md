@@ -12,8 +12,8 @@
 **Acceptance Criteria:**
 - [x] World-tick loop with configurable cadence (per-world), respecting the autonomy rate governor.
 - [x] Due-actor selection: deterministic ordering across restarts (sorted by `nextTickAt`), with a documented tie-break rule.
-- [ ] Dispatch through existing generation pipeline: `NpcNavigationService`, `BDI reflection cycle`, GM beat scheduling — no greenfield dispatch paths.
-- [ ] Pause / resume / step primitives: world admin controls + a CLI surface (`giwt sim pause/resume/step`) for ops.
+- [ ] Dispatch through existing generation pipeline: `NpcNavigationService`, `BDI reflection cycle`, GM beat scheduling — no greenfield dispatch paths. (`NpcNavigationService` ships; the other two wait on the decision layer.)
+- [x] Pause / resume / step primitives: world admin controls land as `POST /api/worlds/:worldId/autonomy/control` on the shared panel. The `giwt sim` CLI is a cross-repo change — see Remaining.
 - [x] Persistence: the per-world cursor, pause flag, tick count, last error, and governor budgets survive restarts.
 - [x] Telemetry: `scheduler.world_tick.started` / `.completed` / `.error` events with the world + payload envelope.
 - [x] Unit + integration tests cover the tick loop, due-actor selection determinism, dispatch integration, and restart persistence.
@@ -54,7 +54,7 @@ orchestrator; the class owns the loop and delegates every beat.
 
 ### Remaining (why this is In Progress, not Done)
 
-Two criteria are deliberately open rather than half-shipped:
+One criterion is deliberately open rather than half-shipped:
 
 1. **BDI reflection + GM beat dispatch.** The loop selects and dispatches
    navigation ticks today. `BDI reflection cycle` and `GM narrative beat`
@@ -63,15 +63,14 @@ Two criteria are deliberately open rather than half-shipped:
    for a decision layer that does not exist yet, which is exactly the
    greenfield path the criterion forbids. The scheduler's per-world tick
    hook is the seam they plug into.
-2. **CLI surface.** `pause` / `resume` / `stepOnce` are implemented and
-   tested on the class. The `giwt sim pause/resume/step` command would
-   live in `giwt` — an **external git dependency**
-   (`package.json`: `github:flakusha/giwt`), not in this repo. It would
-   also have to reach into loop-lore's `world_simulation_state` table,
-   coupling a worktree-management CLI to the app's schema. That is a
-   cross-repo change and is filed as a follow-up rather than attempted
-   here. An in-app HTTP admin route for the same three operations is the
-   lower-friction alternative and needs no new repository.
+
+The admin half of the pause/resume/step criterion did land, as
+`POST /api/worlds/:worldId/autonomy/control` (`pause` / `resume` / `step`),
+served by the shared autonomy panel on the world settings page. The
+`giwt sim` CLI half stays open: `giwt` is an **external git dependency**
+(`package.json`: `github:flakusha/giwt`), and the command would have to reach
+into loop-lore's `world_simulation_state` table — coupling a worktree
+management CLI to this app's schema. Cross-repo change; not attempted here.
 
 ## Design Notes (merged from the prior world-tick-and-actor-turns ticket variant)
 

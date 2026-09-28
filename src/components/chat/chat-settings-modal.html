@@ -399,6 +399,23 @@
         </div>
       </template>
 
+      <!--
+        Per-chat autonomy pacing override (TASK-autonomy-config-surface).
+        Its own Alpine scope: the chat store owns the rest of this
+        modal, and the panel owns its own layer of the config.
+      -->
+      <template x-if="currentChat?.world_id">
+        <div
+          class="form-group"
+          style="margin-top: var(--space-3); border-top: 1px solid var(--border); padding-top: var(--space-3)"
+          x-data="autonomyPanelFactory({ worldId: currentChat.world_id, chatId: currentChat.id, layer: 'chat', scopeId: __USER_ID })"
+          x-init="init()"
+          data-testid="chat-autonomy-section"
+        >
+          {{> autonomy-panel.html }}
+        </div>
+      </template>
+
       <!-- Visual Novel Mode -->
       <div
         class="form-group"

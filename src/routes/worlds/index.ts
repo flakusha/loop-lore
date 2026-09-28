@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, } from "elysia";
+import { autonomyRoutes, } from "./autonomy-routes";
 import { chatsRoutes, } from "./chats";
 import { fractalLocationsRoutes, } from "./fractal-locations-routes";
 import { fractalTravelRoutes, } from "./fractal-travel-routes";
@@ -19,6 +20,7 @@ export function worldsRoutes(opts: HandleOpts, prefix = "/api",) {
     .use(locationRoutes(opts, prefix,),)
     .use(chatsRoutes(opts, prefix,),)
     .use(timelinesRoutes(opts, prefix,),)
+    .use(autonomyRoutes(opts, prefix,),)
     .use(fractalLocationsRoutes(opts, prefix,),)
     .use(fractalTravelRoutes(opts, prefix,),);
 }
