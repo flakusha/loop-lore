@@ -23,7 +23,7 @@ import { readdir, readFile, } from "node:fs/promises";
 import { extname, join, } from "node:path";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
-import { jsonParseOr, } from "../../utils";
+import { jsonParseOr, jsonStringifyOr, } from "../../utils";
 import type { WorkflowPayload, } from "../template-types";
 import { isValidWorkflow, } from "../workflow-loader/workflow-validation";
 import { validateWorkflowPayload, } from "./validate";
@@ -156,7 +156,7 @@ export async function seedWorkflowLibrary(
         name: id,
         description: null,
         model_family: null,
-        payload: JSON.stringify(validated.payload,),
+        payload: jsonStringifyOr(validated.payload,),
       },)
       .execute();
     outcome.imported.push(id,);

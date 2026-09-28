@@ -20,6 +20,7 @@ import { applyStoredNsfwConfig, initNsfwRuntimeConfig, } from "../nsfw/runtime-c
 import { loadAllPlugins, unloadAllPlugins, } from "../plugins";
 import { applyEnvironmentOverrides, seedConfiguredContent, seedConfiguredUsers, } from "../seeding";
 import { ServerExternalManager, } from "../services/server-external-manager";
+import { seedDynamicContent, } from "./boot-seed";
 import { createRequestHandler, handleApiRequest, } from "./handler";
 import { initAssetCompression, } from "./init-asset-compression";
 import { initBackgroundServices, } from "./init-background-services";
@@ -111,10 +112,7 @@ export async function start() {
   const effectiveSeeding = applyEnvironmentOverrides(config.seeding,);
   await seedConfiguredUsers(database, { ...config, seeding: effectiveSeeding, },);
   await seedConfiguredContent(database, effectiveSeeding, config.auth.required,);
-  const { seedChatSetupTemplates, } = await import("../chat/service");
-  await seedChatSetupTemplates(database,);
-  // After user seeding: a seeded workflow needs a real owner row.
-  const { seedWorkflowLibrary, } = await import("../generation/workflow-library"); await seedWorkflowLibrary(database,);
+  await seedDynamicContent(database,); // after user seeding: rows need a real owner_id
 
   // ── Start HTTP server ──────────────────────────────────────
   const httpServer = serve({ port: config.server.port, hostname: config.server.host, fetch: handleRequest, },);
