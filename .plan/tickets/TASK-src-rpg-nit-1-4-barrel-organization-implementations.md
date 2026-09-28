@@ -3,7 +3,7 @@
 
 # TASK: src/rpg/ NIT 1-4 barrel/organization implementations
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 
