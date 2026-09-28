@@ -177,5 +177,10 @@ function buildChatUpdates(
   if (params.customInstructions !== undefined) {
     updates.custom_instructions = params.customInstructions || null;
   }
+  // Autonomy pacing override (TASK-autonomy-config-surface). An empty object
+  // clears the chat layer, matching the world layer's "cleared" encoding.
+  if (params.autonomyConfig !== undefined) {
+    updates.autonomy_config = jsonStringifyOr(params.autonomyConfig,);
+  }
   return updates;
 }

@@ -474,3 +474,71 @@ describe("updateChat customInstructions (two-tier steering, story tier)", () => 
     expect(await customInstructionsOf(),).toBe("steady",);
   });
 });
+
+describe("updateChat autonomyConfig (chat-level pacing override)", () => {
+  let db: Kysely<DB>;
+  let chatId: string;
+
+  beforeEach(async () => {
+    const fresh = await createTestDb();
+    db = fresh.db;
+    await insertUsers(db, "auto-creator", "Auto Creator", { id: "user-auto", } as never,);
+    await insertActors(
+      db,
+      "Auto Creator",
+      { id: "user-auto", user_id: "user-auto", owner_id: "user-auto", } as never,
+    );
+    chatId = await createChat(db, {
+      name: "Autonomy Chat",
+      type: "direct",
+      mode: "story",
+      createdBy: "user-auto",
+      participantIds: ["user-auto",],
+    },);
+  },);
+
+  afterEach(async () => {
+    await db?.destroy();
+  },);
+
+  /**
+   * @returns the raw autonomy_config column, or null when absent
+   */
+  async function autonomyConfigOf(): Promise<string | null> {
+    const row = await db
+      .selectFrom("chats",)
+      .select("autonomy_config",)
+      .where("id", "=", chatId,)
+      .executeTakeFirst();
+    return row?.autonomy_config ?? null;
+  }
+
+  it("persists a chat autonomy override", async () => {
+    const res = await updateChat(db, chatId, { autonomyConfig: { preset: "serene", tickIntervalMs: 45000, }, },);
+    expect(res,).toEqual({ ok: true, },);
+    expect(JSON.parse((await autonomyConfigOf()) ?? "null",),).toEqual({
+      preset: "serene",
+      tickIntervalMs: 45000,
+    },);
+  });
+
+  it("clears the chat layer with an empty object", async () => {
+    await updateChat(db, chatId, { autonomyConfig: { preset: "brisk", }, },);
+    expect(await autonomyConfigOf(),).not.toBe("{}",);
+
+    const res = await updateChat(db, chatId, { autonomyConfig: {}, },);
+    expect(res,).toEqual({ ok: true, },);
+    // NOT NULL column: cleared means "{}" - the resolver's no-override blob.
+    expect(await autonomyConfigOf(),).toBe("{}",);
+  });
+
+  it("leaves the chat layer untouched when the field is omitted", async () => {
+    const cfg = { preset: "organic", };
+    await updateChat(db, chatId, { autonomyConfig: cfg, },);
+
+    // A settings save that does not mention autonomy must not wipe it.
+    const res = await updateChat(db, chatId, { name: "Renamed", },);
+    expect(res,).toEqual({ ok: true, },);
+    expect(JSON.parse((await autonomyConfigOf()) ?? "null",),).toEqual(cfg,);
+  });
+});
