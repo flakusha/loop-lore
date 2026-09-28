@@ -11578,6 +11578,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-duplicate-migration-numeric-prefix-021.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-migration-activitypub-actor-keys-fk-missing-ondelete-cascade.md"
     },
     {
@@ -12245,6 +12249,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-create-test-db-custom-dialect-can-bypass-settestdatabase.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-duplicate-migration-numeric-prefix-021.md"
     },
     {
       "kind": "ticket",
