@@ -10,7 +10,9 @@ import type { AutonomyConfig, } from "../../autonomy/config/types";
  * the database (chats.autonomy_config, worlds.autonomy_config,
  * character_internal_traits.autonomy_preferences.autonomy).
  */
-export interface AutonomyConfigSection extends Pick<
-  AutonomyConfig,
-  "enabled" | "preset" | "perAgentCap" | "perUserCap"
-> {}
+export interface AutonomyConfigSection extends
+  Pick<
+    AutonomyConfig,
+    "enabled" | "preset" | "perAgentCap" | "perUserCap"
+  >
+{}
