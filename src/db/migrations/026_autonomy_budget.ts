@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * 022_autonomy_budget
+ * 026_autonomy_budget
  *
  * Single rolling-window counter table for the autonomy rate governor
  * (TASK-autonomy-rate-governor). One row per (scope_kind, scope_id,

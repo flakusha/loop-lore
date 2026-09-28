@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * 023_world_simulation_state
+ * 027_world_simulation_state
  *
  * Per-world simulation cursor for the autonomy scheduler
  * (TASK-story-auto-drive-scheduler). One row per world so the tick
