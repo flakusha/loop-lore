@@ -86,6 +86,14 @@ export function ensureFrontendBuild(): string {
 
   try {
     if (isReady()) { return distPublic; }
+    // Drop the hash BEFORE rebuilding. isReady() is the only gate a waiting
+    // worker consults before it starts serving dist, and it currently keeps
+    // reporting the PREVIOUS build as valid while this process is mid-rebuild.
+    // The lock alone does not close that window: a waiter returns distPublic
+    // from the top of the loop, then reads files that the non-atomic cpSync
+    // below is still overwriting. Invalidating first makes every other worker
+    // block in acquireBuildLock until the rebuild lands.
+    if (existsSync(hashPath,)) { unlinkSync(hashPath,); }
     const result = Bun.spawnSync(["bun", "run", "build:frontend",], {
       stdio: ["ignore", "pipe", "pipe",],
       cwd: root,
