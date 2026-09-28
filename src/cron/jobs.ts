@@ -146,6 +146,23 @@ export function defaultJobs(): CronJobDef[] {
       },
     },),
     defineJob({
+      name: "autonomy.world-tick",
+      // Every minute. Per-world cadence is NOT set here: the scheduler
+      // reads each world's resolved `tickIntervalMs` and skips any world
+      // whose `next_tick_at` cursor has not arrived. This job only pumps
+      // the due-set selection.
+      schedule: "* * * * *",
+      enabled: true,
+      run: async ({ database, logger, },) => {
+        const { AutonomyScheduler, } = await import("../autonomy/scheduler");
+        const result = await new AutonomyScheduler(database,).tickOnce();
+        if (result.dueWorldIds.length > 0) {
+          logger.info("autonomy world tick complete", { module: "cron", ...result, },);
+        }
+        return result;
+      },
+    },),
+    defineJob({
       name: "locations.tick",
       schedule: "*/2 * * * *",
       enabled: true,
