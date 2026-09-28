@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * 021_autonomy_config_columns
+ * 025_autonomy_config_columns
  *
  * Adds `autonomy_config` (text, JSON) to `chats` and `worlds` so
  * autonomy pacing overrides can be layered: world default → chat
