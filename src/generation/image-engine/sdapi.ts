@@ -3,7 +3,7 @@
 
 import type { ImageProviderConfig, } from "../../config/schema";
 import { safeFetch, safeJsonStringify, } from "../../utils";
-import { decodeB64, failure, ok, } from "./helpers";
+import { decodeImages, failure, } from "./helpers";
 import type { ImageGenOptions, ImageGenOutcome, } from "./types";
 
 /**
@@ -42,5 +42,5 @@ export async function generateSDAPI(
   }
 
   const sdData = result.data;
-  return ok(Array.from(sdData.images, (b64,) => decodeB64(b64,),), "image/png",);
+  return decodeImages(sdData.images, "image/png",);
 }

@@ -20,6 +20,7 @@ import { randomUUID, } from "node:crypto";
 import type { DB, } from "../db";
 import { getLogger, } from "../logger";
 import { jsonParseOr, jsonStringifyOr, safeJsonParse, } from "../utils";
+import { safeFromBase64Url, } from "../utils/safe-buffer";
 
 /**
  * @returns logger scoped to the memory-audit module
@@ -77,6 +78,14 @@ export interface ListAuditLogOpts {
 const DEFAULT_LIMIT = 50;
 /** Hard cap so a runaway caller cannot drain a multi-million-row log. */
 const MAX_LIMIT = 200;
+/**
+ * Cursor decode cap. A cursor holds one (ISO timestamp, UUID) pair, so 512
+ * chars is orders of magnitude above any real value; the point is to reject
+ * an oversized request body early instead of base64-decoding it. Decoded
+ * bytes are far below the shared 10 MB asset default, which is sized for
+ * payloads and would make an oversized cursor undetectable.
+ */
+const MAX_CURSOR_BYTES = 512;
 
 /**
  * Decode an opaque cursor back into its `(created_at, id)` boundary.
@@ -87,18 +96,20 @@ function decodeCursor(cursor: string,): { createdAt: string; id: string } | null
   // Format: base64url(json({c: "<iso>", i: "<uuid>"})). We accept any
   // parseable JSON with both fields rather than validating signature —
   // this is a pagination cursor, not a security token.
-  try {
-    const decoded = Buffer.from(cursor, "base64url",).toString("utf8",);
-    const parsed = safeJsonParse<{ c?: unknown; i?: unknown }>(decoded,);
-    if (!parsed.ok) { return null; }
-    const obj = parsed.value;
-    if (typeof obj.c === "string" && obj.c.length > 0 && typeof obj.i === "string" && obj.i.length > 0) {
-      return { createdAt: obj.c, id: obj.i, };
-    }
-    return null;
-  } catch {
-    return null;
+  //
+  // `Buffer.from(cursor, "base64url")` silently skips characters outside the
+  // alphabet, so a corrupted cursor decodes to a short garbage string and the
+  // caller treats it as a valid first page. safeFromBase64Url rejects instead.
+  const bytes = safeFromBase64Url(cursor, MAX_CURSOR_BYTES,);
+  if (!bytes.ok) { return null; }
+
+  const parsed = safeJsonParse<{ c?: unknown; i?: unknown }>(bytes.buffer.toString("utf8",),);
+  if (!parsed.ok) { return null; }
+  const obj = parsed.value;
+  if (typeof obj.c === "string" && obj.c.length > 0 && typeof obj.i === "string" && obj.i.length > 0) {
+    return { createdAt: obj.c, id: obj.i, };
   }
+  return null;
 }
 
 /**

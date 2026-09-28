@@ -246,6 +246,44 @@ describe("memory audit — listAuditLog", () => {
     const result = await listAuditLog(db, actorId, { cursor: "not-base64-junk", },);
     expect(result.entries,).toHaveLength(0,);
   });
+
+  test("a cursor padded with junk is rejected, not silently repaired", async () => {
+    const userId = crypto.randomUUID();
+    const actorId = crypto.randomUUID();
+    await insertUsers(db, "test-user", "Test User", { id: userId, },);
+    await insertActors(db, "test-actor", { id: actorId, user_id: userId, },);
+    await insertActorMemories(db, actorId, "memory", { id: "m1", },);
+    await recordAuditLog(db, [{ memoryId: "m1", actorId, userId, action: "pin", },],);
+
+    // A real cursor boundary wrapped in characters outside the alphabet.
+    // `Buffer.from(s, "base64url")` skips them and recovers the inner payload,
+    // so the lenient decoder resumes mid-list from a value the server never
+    // issued. The strict guard rejects the whole string instead.
+    const inner = Buffer.from(
+      JSON.stringify({ c: "2026-01-01T00:00:00.000Z", i: "m1", },),
+    ).toString("base64url",);
+    const tampered = `!!!!${inner}`;
+    expect(Buffer.from(tampered, "base64url",).toString("utf8",),).not.toBe("",);
+
+    const result = await listAuditLog(db, actorId, { cursor: tampered, },);
+    // Treated as no cursor at all: the newest page, not a resumed middle page.
+    expect(result.entries,).toHaveLength(1,);
+    expect(result.entries[0]?.action,).toBe("pin",);
+  });
+
+  test("an oversized cursor is rejected without decoding", async () => {
+    const userId = crypto.randomUUID();
+    const actorId = crypto.randomUUID();
+    await insertUsers(db, "test-user", "Test User", { id: userId, },);
+    await insertActors(db, "test-actor", { id: actorId, user_id: userId, },);
+
+    // 4 KB of valid base64url is ~3 KB decoded, well past the 512-byte cap.
+    const oversized = Buffer.alloc(4096, 0x41,).toString("base64url",);
+    expect(oversized.length,).toBeGreaterThan(512,);
+
+    const result = await listAuditLog(db, actorId, { cursor: oversized, },);
+    expect(result.entries,).toHaveLength(0,);
+  });
 });
 
 describe("memory audit — extraction hook (create)", () => {

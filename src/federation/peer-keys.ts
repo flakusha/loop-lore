@@ -27,13 +27,13 @@ export const INBOUND_KEY_BYTES = 32;
 /**
  * Generate a fresh inbound key (base64 of 32 random bytes). Usable directly
  * as the `pskCipher` secret — HKDF derives the AES key from it.
+ *
+ * No size guard here: the input length is the compile-time constant
+ * `INBOUND_KEY_BYTES` (32), so a 10 MB cap could never fire and the check
+ * could only obscure the code it claimed to protect.
  */
 export function generateInboundKey(): string {
-  const bytes = safeFromUint8Array(crypto.getRandomValues(new Uint8Array(INBOUND_KEY_BYTES,),),);
-  if (!bytes.ok) { throw bytes.error; }
-  const b64 = safeToBase64(bytes.buffer,);
-  if (!b64.ok) { throw b64.error; }
-  return b64.buffer;
+  return Buffer.from(crypto.getRandomValues(new Uint8Array(INBOUND_KEY_BYTES,),),).toString("base64",);
 }
 
 /**
