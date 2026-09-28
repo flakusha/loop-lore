@@ -12,4 +12,23 @@ const DEFAULT_MAX_RATIO = 1000;
 /** Default max base64 input length (before decode) */
 const DEFAULT_MAX_BASE64_LEN = 20_971_520; // 20 MB encoded
 
-export { DEFAULT_MAX_BASE64_LEN, DEFAULT_MAX_RATIO, DEFAULT_MAX_SIZE, };
+/**
+ * Max cursor length: 512 chars. A pagination cursor encodes one row
+ * boundary (ISO timestamp + UUID) — 512 is ~10x any real value, and far
+ * below the 10 MB asset default that made oversized cursors undetectable.
+ */
+const MAX_CURSOR_LEN = 512;
+
+/**
+ * Max key-envelope length: 8 KB. Wraps a raw or wrapped content key, so
+ * it stays well under a typical key size but catches a buffer mix-up.
+ */
+const MAX_KEY_LEN = 8_192;
+
+export {
+  DEFAULT_MAX_BASE64_LEN,
+  DEFAULT_MAX_RATIO,
+  DEFAULT_MAX_SIZE,
+  MAX_CURSOR_LEN,
+  MAX_KEY_LEN,
+};
