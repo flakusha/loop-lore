@@ -118,12 +118,34 @@ describe("AutonomyScheduler.tickOnce — due selection", () => {
   });
 
   test("a world with no state row is due without a seed row", async () => {
+    // The due set used to be selected from world_simulation_state alone, so
+    // a world that had never ticked had no row, was never selected, and no
+    // tick ever created the row — the loop was dead for every new world
+    // until an admin paused or stepped it. `stepOnce` bypasses the due set,
+    // so the old version of this test passed while the loop itself did
+    // nothing; this one goes through tickOnce.
     const world = await makePatrolWorld("unseeded",);
     const sched = new AutonomyScheduler(db, { rng: RNG_FIRES, },);
 
     const before = await sched.stateFor(world.worldId,);
     expect(before.tick_count,).toBe(0,);
     expect(before.paused,).toBe(0,);
+
+    const result = await sched.tickOnce(T0,);
+    expect(result.dueWorldIds,).toEqual([world.worldId,],);
+    expect(result.errors,).toBe(0,);
+
+    const after = await sched.stateFor(world.worldId,);
+    expect(after.tick_count,).toBe(1,);
+    // A cursor row now exists, so the next pass is driven by that row
+    // rather than by the seedless-world branch.
+    expect(Date.parse(after.next_tick_at,),).toBeGreaterThan(T0,);
+    expect((await sched.tickOnce(T0,)).dueWorldIds,).toEqual([],);
+  });
+
+  test("stepOnce still works on a world with no state row", async () => {
+    const world = await makePatrolWorld("step-unseeded",);
+    const sched = new AutonomyScheduler(db, { rng: RNG_FIRES, },);
 
     const step = await sched.stepOnce(world.worldId, T0,);
     expect(step.outcome,).toEqual({ dispatched: 1, },);
