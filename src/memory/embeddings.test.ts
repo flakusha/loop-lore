@@ -32,6 +32,23 @@ import {
   storeEmbedding,
 } from "./embeddings";
 
+/**
+ * 024 added a real FK from `memory_embeddings.memory_id` to
+ * `actor_memories.id` with ON DELETE CASCADE, so a stored vector must have a
+ * parent memory row. These suites test the storage/recall math, not the FK, so
+ * they seed the parents their ids reference.
+ */
+async function seedEmbeddingParents(db: Kysely<DB>, memoryIds: string[],): Promise<void> {
+  if (memoryIds.length === 0) { return; }
+  const actorId = await insertActors(db, "Embedding Actor", { id: `emb-actor-${crypto.randomUUID()}`, },);
+  for (const id of memoryIds) {
+    await db
+      .insertInto("actor_memories",)
+      .values({ id, actor_id: actorId, content: `memory ${id}`, memory_type: "episodic", },)
+      .execute();
+  }
+}
+
 // ── Fake Ollama server ──────────────────────────────────────────────────────
 
 /** Embedding payload the fake server will serve next (null → 500 error). */
@@ -276,6 +293,13 @@ describe("embedding storage", () => {
     const ctx = await createTestDb();
     db = ctx.db;
     sqlite = ctx.sqlite;
+    await seedEmbeddingParents(db, [
+      "mem-emb-1",
+      "mem-emb-2",
+      "mem-emb-3",
+      "mem-truncated",
+      "mem-empty-blob",
+    ],);
   },);
 
   afterEach(() => {
@@ -381,6 +405,7 @@ describe("semanticRecall", () => {
     db = ctx.db;
     sqlite = ctx.sqlite;
     await insertActors(db, "Rerank Actor", { id: "actor-rerank", },);
+    await seedEmbeddingParents(db, ["recall-a", "recall-b", "recall-c", "rerank-1", "rerank-2", "rerank-3",],);
   },);
 
   afterAll(async () => {
@@ -417,35 +442,23 @@ describe("semanticRecall", () => {
     expect(matches[0]?.memoryId,).toBe("recall-a",);
   });
 
-  /** Seed an actor_memories row so rerank can fetch document text. */
-  async function seedRerankMemory(id: string, content: string,): Promise<void> {
-    await db
-      .insertInto("actor_memories",)
-      .values({
-        id,
-        actor_id: "actor-rerank",
-        content,
-        memory_type: "episodic",
-        confidence: 1,
-        importance: 1,
-        keywords: "[]",
-        scope: "character",
-        privacy: "shared",
-        pinned: "unpinned",
-      },)
-      .execute();
-  }
-
   test("RERANK_MODEL reorders matches via the rerank endpoint", async () => {
     process.env.RERANK_MODEL = "bge-reranker-under-test";
     nextEmbeddings = [[0.6, 0.8,],];
     // Cosine order vs query [0.6, 0.8]: rerank-1 (1.0), rerank-2 (0.6), rerank-3 (0).
+    // The parent memories are created in beforeAll (they must exist for the FK);
+    // only their text differs per test, and the rerank document fetch reads it.
+    const texts: [string, string,][] = [
+      ["rerank-1", "blue text",],
+      ["rerank-2", "red text",],
+      ["rerank-3", "green text",],
+    ];
+    for (const [id, content,] of texts) {
+      await db.updateTable("actor_memories",).set({ content, },).where("id", "=", id,).execute();
+    }
     await storeEmbedding(db, "rerank-1", new Float32Array([0.6, 0.8,],), "m",);
     await storeEmbedding(db, "rerank-2", new Float32Array([1, 0,],), "m",);
     await storeEmbedding(db, "rerank-3", new Float32Array([0.8, -0.6,],), "m",);
-    await seedRerankMemory("rerank-1", "blue text",);
-    await seedRerankMemory("rerank-2", "red text",);
-    await seedRerankMemory("rerank-3", "green text",);
     nextRerank = { results: [{ index: 1, relevance_score: 0.99, }, { index: 0, relevance_score: 0.42, },], };
     rerankHits = 0;
 
@@ -478,18 +491,23 @@ describe("semanticRecall", () => {
     expect(matches[1]?.score,).toBeCloseTo(0.6, 4,);
   });
 
-  test("missing actor_memories text fails open instead of crashing", async () => {
+  test("rerank index outside the shortlist fails open to the cosine order", async () => {
     process.env.RERANK_MODEL = "bge-reranker-under-test";
     nextEmbeddings = [[0.6, 0.8,],];
-    // Stored vector without an actor_memories row.
-    await storeEmbedding(db, "rerank-ghost", new Float32Array([1, 0,],), "m",);
-    nextRerank = { results: [{ index: 0, relevance_score: 1, },], };
+    // A shortlist of 2 but an index of 7: the index mapping in semanticRecall
+    // throws, and the stage must fail open rather than crash the recall.
+    //
+    // This replaced "missing actor_memories text fails open", which seeded a
+    // stored vector with no parent memory row. 024's FK makes that state
+    // impossible, so the guard in fetchMemoryTexts is no longer reachable that
+    // way; this exercises the same catch block through a route that is real.
+    nextRerank = { results: [{ index: 7, relevance_score: 1, },], };
     rerankHits = 0;
 
-    const matches = await semanticRecall(db, ["rerank-ghost", "rerank-1",], "ghost", 2, 0.3,);
+    const matches = await semanticRecall(db, ["rerank-1", "rerank-2",], "ghost", 2, 0.3,);
 
-    expect(rerankHits,).toBe(0,);
-    expect(matches.map((m,) => m.memoryId),).toEqual(["rerank-1", "rerank-ghost",],);
+    expect(rerankHits,).toBe(1,);
+    expect(matches.map((m,) => m.memoryId),).toEqual(["rerank-1", "rerank-2",],);
     expect(matches[0]?.score,).toBeCloseTo(1, 4,);
   });
 

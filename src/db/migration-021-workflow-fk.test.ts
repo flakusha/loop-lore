@@ -213,7 +213,7 @@ describe("migration 021/022 prompt_templates rebuild", () => {
     sqlite.close();
   });
 
-  test("rolls back 022 and 021 without losing chat bindings", async () => {
+  test("rolls back to before the workflow columns without losing chat bindings", async () => {
     const { db, sqlite, } = createFreshDb();
     const migrator = new Migrator({ db, provider: buildMigrationProvider(), },);
 
@@ -222,8 +222,11 @@ describe("migration 021/022 prompt_templates rebuild", () => {
     await migrator.migrateToLatest();
     expect(readChatTemplateId(sqlite, "c-bound",),).toBe("t-bound",);
 
-    const down = await migrator.migrateDown();
-    expect(down.error, "migrateDown should not error",).toBeUndefined();
+    // Target the pre-workflow point explicitly rather than a single
+    // migrateDown(): migrations added after 022 (e.g. 024) sit on top, and one
+    // step down would no longer be the workflow rebuild this test is about.
+    const down = await migrator.migrateTo(LAST_PRE_WORKFLOW_MIGRATION,);
+    expect(down.error, "migrateTo should not error",).toBeUndefined();
 
     expect(readChatTemplateId(sqlite, "c-bound",),).toBe("t-bound",);
     expect(foreignKeyViolations(sqlite,),).toEqual([],);
