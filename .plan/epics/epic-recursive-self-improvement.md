@@ -93,7 +93,7 @@ Key modules (new):
 - `src/server/watchdog/cli.ts` — `bun run watchdog` entrypoint.
 - `src/server/health.ts` — `/health` (liveness) + `/ready` (readiness) handlers.
 
-Design constraints (verified against `src/server/start.ts:32-247`):
+Design constraints (verified against `src/server/start.ts:154-247`, signal handlers at :219-246):
 - **No double-init**: when running under watchdog, `start.ts` does NOT register `uncaughtException` -> `shutdown` -> `process.exit(0)` (the supervisor owns the lifecycle). A new env var `LOOP_LORE_WATCHDOG=1` flips that branch.
 - **No GPG blocking**: the watchdog does **not** sign on behalf of agents — signing stays agent-side (see Part B).
 - **No secrets on disk**: watchdog tokens live in `~/.omp/agent/managed-skills` (existing path) or `LOOP_LORE_WATCHDOG_TOKEN` env var.
