@@ -5,7 +5,7 @@
 
 # Feature matrix
 
-Total tickets: **3041** — untagged: **2582** — unbound to epic: **1546**
+Total tickets: **3046** — untagged: **2582** — unbound to epic: **1546**
 
 ## By tag × status
 
@@ -130,7 +130,7 @@ Total tickets: **3041** — untagged: **2582** — unbound to epic: **1546**
 | background-worker | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | backlog-md | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | backstory | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
-| backup | 4 | 0 | 0 | 0 | 2 | 0 | 2 |
+| backup | 5 | 0 | 0 | 0 | 2 | 0 | 3 |
 | badges | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | balance | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | banking | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -143,7 +143,7 @@ Total tickets: **3041** — untagged: **2582** — unbound to epic: **1546**
 | bdi | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | bedrock | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | behavior | 2 | 0 | 0 | 0 | 1 | 0 | 1 |
-| benchmark | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
+| benchmark | 2 | 0 | 0 | 0 | 1 | 0 | 1 |
 | benchmarking | 4 | 0 | 3 | 0 | 0 | 0 | 1 |
 | bennies | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | best-practices | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -281,9 +281,9 @@ Total tickets: **3041** — untagged: **2582** — unbound to epic: **1546**
 | data-integrity | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | data-lifecycle | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | data-model | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| database | 8 | 0 | 0 | 0 | 2 | 0 | 6 |
+| database | 12 | 0 | 0 | 0 | 2 | 0 | 10 |
 | day-night | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
-| db | 9 | 0 | 0 | 8 | 0 | 0 | 1 |
+| db | 10 | 0 | 0 | 8 | 0 | 0 | 2 |
 | db-types | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | dead-code | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
 | debt | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -335,7 +335,7 @@ Total tickets: **3041** — untagged: **2582** — unbound to epic: **1546**
 | duckduckgo | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | dupe-protection | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | duplication | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
-| durability | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| durability | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | dynamic | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | dynamic-image | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | e2e | 6 | 3 | 0 | 1 | 0 | 0 | 2 |
@@ -351,7 +351,7 @@ Total tickets: **3041** — untagged: **2582** — unbound to epic: **1546**
 | email | 3 | 0 | 0 | 0 | 0 | 0 | 3 |
 | embeddable | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | embedding | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| embeddings | 3 | 0 | 0 | 0 | 0 | 0 | 3 |
+| embeddings | 4 | 0 | 0 | 0 | 0 | 0 | 4 |
 | emergence | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | emotion | 3 | 0 | 1 | 0 | 0 | 0 | 2 |
 | emotion-impact | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
@@ -491,7 +491,7 @@ Total tickets: **3041** — untagged: **2582** — unbound to epic: **1546**
 | integration | 6 | 1 | 0 | 0 | 1 | 0 | 4 |
 | integration-testing | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | integrations | 3 | 0 | 0 | 1 | 0 | 0 | 2 |
-| integrity | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
+| integrity | 3 | 2 | 0 | 0 | 0 | 0 | 1 |
 | intent | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | intent-detection | 3 | 0 | 1 | 0 | 1 | 0 | 1 |
 | interactable | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
@@ -579,6 +579,7 @@ Total tickets: **3041** — untagged: **2582** — unbound to epic: **1546**
 | math | 11 | 0 | 0 | 0 | 4 | 0 | 7 |
 | matrix | 3 | 0 | 0 | 1 | 0 | 0 | 2 |
 | matrix-gap | 6 | 0 | 0 | 0 | 0 | 0 | 6 |
+| measurement | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | mechanics | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | media | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | megolm | 2 | 0 | 0 | 1 | 0 | 0 | 1 |
@@ -598,7 +599,7 @@ Total tickets: **3041** — untagged: **2582** — unbound to epic: **1546**
 | mid-response | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | middleware | 2 | 0 | 0 | 1 | 0 | 0 | 1 |
 | migration | 4 | 0 | 0 | 1 | 0 | 0 | 3 |
-| migrations | 5 | 0 | 0 | 2 | 1 | 0 | 2 |
+| migrations | 6 | 0 | 0 | 2 | 1 | 0 | 3 |
 | milestones | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | missions | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | mobile | 4 | 0 | 1 | 1 | 0 | 0 | 2 |
@@ -676,8 +677,9 @@ Total tickets: **3041** — untagged: **2582** — unbound to epic: **1546**
 | peer-to-peer | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | peer-verification | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | per-world-config | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| perf | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | perf-regression | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| performance | 7 | 0 | 4 | 0 | 1 | 0 | 2 |
+| performance | 8 | 0 | 4 | 0 | 1 | 0 | 3 |
 | permissions | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | persistence | 3 | 0 | 1 | 1 | 0 | 0 | 1 |
 | persona | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -691,6 +693,7 @@ Total tickets: **3041** — untagged: **2582** — unbound to epic: **1546**
 | pipeline | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | placement | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | places | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
+| plan-hygiene | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | plan-management | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | plan-sync | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
 | planning | 7 | 1 | 0 | 0 | 2 | 0 | 4 |
@@ -714,6 +717,7 @@ Total tickets: **3041** — untagged: **2582** — unbound to epic: **1546**
 | pre-generation | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | preact | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | predator-prey | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| prerequisite | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | presets | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | privacy | 3 | 0 | 2 | 0 | 0 | 0 | 1 |
 | probe | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -901,6 +905,7 @@ Total tickets: **3041** — untagged: **2582** — unbound to epic: **1546**
 | squashing | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | sse | 3 | 0 | 0 | 1 | 0 | 0 | 2 |
 | stable-diffusion | 2 | 1 | 0 | 0 | 0 | 0 | 1 |
+| stale-doc | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | standalone | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | standards | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | standing | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -913,7 +918,7 @@ Total tickets: **3041** — untagged: **2582** — unbound to epic: **1546**
 | steering | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | steganography | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | step-up | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| storage | 3 | 0 | 0 | 0 | 2 | 0 | 1 |
+| storage | 5 | 0 | 0 | 0 | 2 | 0 | 3 |
 | story | 3 | 0 | 2 | 0 | 0 | 0 | 1 |
 | story-coherence | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | story-drive | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -1253,8 +1258,10 @@ Total tickets: **3041** — untagged: **2582** — unbound to epic: **1546**
 | epic-database-backup-recovery.md | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-database-backup-recovery.md (cross: epic-federation-swarm-sync.md, epic-db-asset-snapshot-recovery.md) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-db-asset-snapshot-recovery | 4 | 0 | 0 | 4 | 0 | 0 | 0 |
+| epic-db-cold-storage-high-perf | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | epic-db-content-versioning | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
-| epic-db-growth-tiered-storage | 4 | 0 | 0 | 0 | 0 | 0 | 4 |
+| epic-db-growth-tiered-storage | 7 | 0 | 0 | 0 | 0 | 0 | 7 |
+| epic-db-migration-compaction | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | epic-deno-support | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-deno-support (future Deno parity) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-deployment-infrastructure | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
@@ -1648,7 +1655,7 @@ Total tickets: **3041** — untagged: **2582** — unbound to epic: **1546**
 - `background-worker` (1): EPIC-API-TASK-OFFLOADING
 - `backlog-md` (1): EPIC-UNIFIED-SPEC-FRAMEWORK
 - `backstory` (1): EPIC-CHARACTER-WORLD-SETUP
-- `backup` (4): EPIC-DB-ASSET-SNAPSHOT-RECOVERY, EPIC-DB-GROWTH-TIERED-STORAGE, EPIC-RESOURCE-PROVISION, TASK-BACKUP-CONSISTENCY-VACUUM-INTO-SNAPSHOTS-PLUS-ARCHIVE-DBS
+- `backup` (5): BUG-BACKUP-SQLITE-COPIES-LIVE-DB-WITHOUT-CHECKPOINT, EPIC-DB-ASSET-SNAPSHOT-RECOVERY, EPIC-DB-GROWTH-TIERED-STORAGE, EPIC-RESOURCE-PROVISION, TASK-BACKUP-CONSISTENCY-VACUUM-INTO-SNAPSHOTS-PLUS-ARCHIVE-DBS
 - `badges` (1): EPIC-ACHIEVEMENTS
 - `balance` (1): EPIC-ITEM-SYSTEM-EXTENSIONS
 - `banking` (1): EPIC-ECONOMY-TRADING
@@ -1661,7 +1668,7 @@ Total tickets: **3041** — untagged: **2582** — unbound to epic: **1546**
 - `bdi` (1): EPIC-ACTOR-AUTONOMY-STORY-DRIVE
 - `bedrock` (1): EPIC-PROVIDER-PLUGIN-ECOSYSTEM
 - `behavior` (2): EPIC-NPCS, TASK-PARTY-BOUND-NPC-RETINUE-AND-GROUP-BEHAVIOR
-- `benchmark` (1): EPIC-DB-COLD-STORAGE-HIGH-PERF
+- `benchmark` (2): EPIC-DB-COLD-STORAGE-HIGH-PERF, TASK-DB-READ-PATH-BENCHMARK-BASELINE
 - `benchmarking` (4): EPIC-BENCHMARK-CI-REGRESSION, EPIC-CONCURRENCY-RUNTIME-BENCHMARKS, EPIC-NATIVE-MODULE-BENCHMARKS, EPIC-TESTING-BENCHMARKING
 - `bennies` (1): EPIC-MATH-ECONOMY
 - `best-practices` (1): EPIC-CODE-QUALITY
@@ -1799,9 +1806,9 @@ Total tickets: **3041** — untagged: **2582** — unbound to epic: **1546**
 - `data-integrity` (1): EPIC-DB-CONTENT-VERSIONING
 - `data-lifecycle` (1): EPIC-ARCHIVAL-WORKFLOW
 - `data-model` (1): EPIC-ACTORS
-- `database` (8): EPIC-DB-ASSET-SNAPSHOT-RECOVERY, EPIC-DB-CONTENT-VERSIONING, EPIC-DB-GROWTH-TIERED-STORAGE, EPIC-SCHEMA, TASK-ASSET-LIFECYCLE-ARCHIVE-FLAG-ORPHAN-PRUNE-QUOTA-EVICTION, TASK-BACKUP-CONSISTENCY-VACUUM-INTO-SNAPSHOTS-PLUS-ARCHIVE-DBS, TASK-COLD-MESSAGE-ARCHIVAL-TO-ARCHIVE-DB-FILE, TASK-EMBEDDING-AND-TELEMETRY-RETENTION-POLICIES
+- `database` (12): BUG-BACKUP-SQLITE-COPIES-LIVE-DB-WITHOUT-CHECKPOINT, BUG-MEMORY-EMBEDDINGS-ORPHANED-ON-ACTOR-DELETE, EPIC-DB-ASSET-SNAPSHOT-RECOVERY, EPIC-DB-CONTENT-VERSIONING, EPIC-DB-GROWTH-TIERED-STORAGE, EPIC-SCHEMA, TASK-ASSET-LIFECYCLE-ARCHIVE-FLAG-ORPHAN-PRUNE-QUOTA-EVICTION, TASK-BACKUP-CONSISTENCY-VACUUM-INTO-SNAPSHOTS-PLUS-ARCHIVE-DBS, TASK-COLD-MESSAGE-ARCHIVAL-TO-ARCHIVE-DB-FILE, TASK-DB-GROWTH-MEASUREMENT-BASELINE, TASK-DB-READ-PATH-BENCHMARK-BASELINE, TASK-EMBEDDING-AND-TELEMETRY-RETENTION-POLICIES
 - `day-night` (1): EPIC-TIME-SCALE
-- `db` (9): BUG-DB-GUARD-TRIGGERS-BYPASSED-ON-UPDATE-003-005, EPIC-DB-MIGRATION-COMPACTION, TASK-019-ENFORCE-STATE-MACHINE-VALIDATORS-AT-WRITE, TASK-DELETE-DEAD-MIGRATION-HELPERS-TS-BOOLTOENUM, TASK-GATE-BRANCHES-DISPLAY-INVARIANT-ITEM-INSTANCE-STATE, TASK-GATE-LICENSING-TRIPLE-VIA-LICENSERIGHTSVALIDATOR, TASK-GATE-SHADOW-NOTES-STATUS-X-VISIBILITY-COMPOSITE, TASK-GATE-WORLD-LORE-LIFECYCLE-CONFIDENCE-DISTORTION-DISPUTED-TRI, TASK-GATE-WORLDS-RPG-7-COL-FLAGS-THROUGH-MASTER-MECHANICS-VALIDAT
+- `db` (10): BUG-DB-GUARD-TRIGGERS-BYPASSED-ON-UPDATE-003-005, EPIC-DB-MIGRATION-COMPACTION, TASK-019-ENFORCE-STATE-MACHINE-VALIDATORS-AT-WRITE, TASK-DELETE-DEAD-MIGRATION-HELPERS-TS-BOOLTOENUM, TASK-EPIC-DB-MIGRATION-COMPACTION-STALE-PREMISE-RECONCILE, TASK-GATE-BRANCHES-DISPLAY-INVARIANT-ITEM-INSTANCE-STATE, TASK-GATE-LICENSING-TRIPLE-VIA-LICENSERIGHTSVALIDATOR, TASK-GATE-SHADOW-NOTES-STATUS-X-VISIBILITY-COMPOSITE, TASK-GATE-WORLD-LORE-LIFECYCLE-CONFIDENCE-DISTORTION-DISPUTED-TRI, TASK-GATE-WORLDS-RPG-7-COL-FLAGS-THROUGH-MASTER-MECHANICS-VALIDAT
 - `db-types` (1): TASK-ACHIEVEMENTS-ENUM-REVIVAL-PROMOTE-SERVICE-LAYER-TO-DB-BARREL
 - `dead-code` (2): EPIC-E2E-INTEGRATION-TESTING, TASK-DELETE-DEAD-MIGRATION-HELPERS-TS-BOOLTOENUM
 - `debt` (1): TASK-PLAN-INDEX-ORPHAN-PHANTOM-CLEANUP
@@ -1853,7 +1860,7 @@ Total tickets: **3041** — untagged: **2582** — unbound to epic: **1546**
 - `duckduckgo` (1): EPIC-RAG-CONTEXT-SOURCES
 - `dupe-protection` (1): EPIC-ITEM-SYSTEM-EXTENSIONS
 - `duplication` (1): EPIC-ASSISTANT-ENTITY-ACCESS
-- `durability` (1): EPIC-ITEM-SYSTEM-EXTENSIONS
+- `durability` (2): BUG-BACKUP-SQLITE-COPIES-LIVE-DB-WITHOUT-CHECKPOINT, EPIC-ITEM-SYSTEM-EXTENSIONS
 - `dynamic` (1): TASK-MATRIX-CROSS-MECH-G23-DYNAMIC-MEMORY-MID-RESPONSE
 - `dynamic-image` (1): EPIC-VISUAL-NOVEL-MODE
 - `e2e` (6): BUG-ASSETS-E2E-UPLOAD-RETURNS-NULL-DATA-7-OF-8-TESTS-FAIL-IN-TES, BUG-E2E-VERSION-REDIRECT-TEST-FETCHES-V1-PATHS-BUT-EXPECTS-308, EPIC-CORE-TESTING-FRAMEWORKS, EPIC-E2E-INTEGRATION-TESTING, EPIC-TESTING-QA, TASK-BROWSER-CHATFLOW-UPLOAD-DEFERRED
@@ -1869,7 +1876,7 @@ Total tickets: **3041** — untagged: **2582** — unbound to epic: **1546**
 - `email` (3): EPIC-AUTH-CHANNEL-PROVISIONING, EPIC-EMAIL-INTEGRATION, EPIC-SOCIAL-HUB-QUICKREF
 - `embeddable` (2): EPIC-EMBEDDABLE-BACKEND, EPIC-EMBEDDABLE-ENGINE-GAME-FRONTEND
 - `embedding` (1): EPIC-RAG-DOCUMENT-PROCESSING-QUICKREF
-- `embeddings` (3): EPIC-PLATFORM-INTEGRATIONS, EPIC-RAG-DOCUMENT-PROCESSING, EPIC-RAG-VECTOR-STORE
+- `embeddings` (4): BUG-MEMORY-EMBEDDINGS-ORPHANED-ON-ACTOR-DELETE, EPIC-PLATFORM-INTEGRATIONS, EPIC-RAG-DOCUMENT-PROCESSING, EPIC-RAG-VECTOR-STORE
 - `emergence` (1): EPIC-CHARACTER-WORLD-INTEGRATION
 - `emotion` (3): EPIC-AVATAR-REGENERATION-CONTROL, EPIC-EMOTION-AVATAR-MESSAGE-BINDING, EPIC-WARDROBE-AVATAR-VARIANTS
 - `emotion-impact` (1): EPIC-MEMORY-KNOWLEDGE-SYSTEMS
@@ -2009,7 +2016,7 @@ Total tickets: **3041** — untagged: **2582** — unbound to epic: **1546**
 - `integration` (6): EPIC-BATTLE-INTEGRATION-GAPS, EPIC-CHARACTER-WORLD-INTEGRATION, EPIC-E2E-INTEGRATION-TESTING, EPIC-NSFW-INTEGRATION-GAPS, EPIC-TASK-MANAGEMENT-INTEGRATION, TASK-MANAGEMENT-INTEGRATION
 - `integration-testing` (1): EPIC-CORE-TESTING-FRAMEWORKS
 - `integrations` (3): EPIC-INTEGRATIONS-CORE, EPIC-PLATFORM-INTEGRATIONS, TASK-MATRIX-AUTH-CHANNEL-AC3-CAPABILITY-REGISTRY-NAMING
-- `integrity` (2): EPIC-DATA-INTEGRITY-PHASE1, TASK-BUILD-IDENTITY-HASH-FOR-TAMPER-DETECTION-SEARXNG-STYLE-COMMI
+- `integrity` (3): BUG-MEMORY-EMBEDDINGS-ORPHANED-ON-ACTOR-DELETE, EPIC-DATA-INTEGRITY-PHASE1, TASK-BUILD-IDENTITY-HASH-FOR-TAMPER-DETECTION-SEARXNG-STYLE-COMMI
 - `intent` (1): TASK-WIRE-INTENT-OUTPUT-TO-WORKFLOW-RUNNER-STARTWORKFLOW
 - `intent-detection` (3): EPIC-ASSISTANT-CREATIVE-STUDIO-WORKFLOWS, EPIC-ASSISTANT-GENERATION-EXTENSIONS, EPIC-WORKFLOW-ENGINE
 - `interactable` (1): EPIC-ITEMS
@@ -2097,6 +2104,7 @@ Total tickets: **3041** — untagged: **2582** — unbound to epic: **1546**
 - `math` (11): EPIC-MATH-AI-BRIDGE, EPIC-MATH-ECONOMY, EPIC-MATH-LEDGER, EPIC-MATH-RESOLUTION, TASK-MATH-ADVANTAGE-CANCEL-RULE, TASK-MATH-MODIFIER-SOURCE-TABLE, TASK-MATH-POSITION-EFFECT-COLUMNS, TASK-MATH-RESOLVER-PBTA-2D6, TASK-MATH-ROLL-FORMULA-AST, TASK-MATH-STRUCTURED-LLM-DICE-RESULT, TASK-PLAN-INDEX-TAGGING-BINDING-RECONCILIATION
 - `matrix` (3): EPIC-AUTH-CHANNEL-PROVISIONING, EPIC-MATRIX-INTEGRATION, TASK-MATRIX-AUTH-CHANNEL-AC4-MATRIX-BOT-APPROVAL-SESSION
 - `matrix-gap` (6): TASK-MATRIX-AUTH-ADAPTER-AUTH-APPROVAL-SCOPE-DECIDE-PER-ADAPTER-I, TASK-MATRIX-AUTH-CAPABILITY-REGISTRY-NAMING-ALIGN-AUTH-CHALLENGE-, TASK-MATRIX-AUTH-MATRIX-MEGOLM-APPROVAL-DECIDE-MEGOLM-VERIFIED-SE, TASK-MATRIX-AUTH-PER-ROLE-FACTOR-POLICY-SHAPE-DECIDE-PER-ROLE-MIN, TASK-MATRIX-STORY-COHERENCE-GATE-PASS2-QA-DECIDE-WHETHER-GATE-VER, TASK-MATRIX-STORY-COHERENCE-PERSPECTIVE-AWARE-DRAFT-SET-PERSPECTI
+- `measurement` (1): TASK-DB-GROWTH-MEASUREMENT-BASELINE
 - `mechanics` (1): EPIC-RPG-MECHANICS
 - `media` (1): EPIC-FRONTEND-GALLERY
 - `megolm` (2): EPIC-MATRIX-INTEGRATION, TASK-MATRIX-AUTH-CHANNEL-AC4-MATRIX-BOT-APPROVAL-SESSION
@@ -2116,7 +2124,7 @@ Total tickets: **3041** — untagged: **2582** — unbound to epic: **1546**
 - `mid-response` (1): TASK-MATRIX-CROSS-MECH-G23-DYNAMIC-MEMORY-MID-RESPONSE
 - `middleware` (2): BUG-IDEMPOTENCY-TABLE-BACKEND-VERIFY-REPRODUCES, EPIC-API-ROUTES
 - `migration` (4): EPIC-WORLD-NPCS, TASK-BACKLOG-MIGRATION-HYGIENE-DUPLICATE-PREFIX-GATE, TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-ACTIONS-AUDIT-TABLE-AND-SUR, TASK-RECURSIVE-SELF-IMPROVEMENT-WATCHDOG-EVENTS-TABLE-AND-TELEMET
-- `migrations` (5): BUG-DB-GUARD-TRIGGERS-BYPASSED-ON-UPDATE-003-005, EPIC-DB-CONTENT-VERSIONING, EPIC-DB-MIGRATION-COMPACTION, EPIC-SCHEMA, TASK-DELETE-DEAD-MIGRATION-HELPERS-TS-BOOLTOENUM
+- `migrations` (6): BUG-DB-GUARD-TRIGGERS-BYPASSED-ON-UPDATE-003-005, EPIC-DB-CONTENT-VERSIONING, EPIC-DB-MIGRATION-COMPACTION, EPIC-SCHEMA, TASK-DELETE-DEAD-MIGRATION-HELPERS-TS-BOOLTOENUM, TASK-EPIC-DB-MIGRATION-COMPACTION-STALE-PREMISE-RECONCILE
 - `milestones` (1): EPIC-ACHIEVEMENTS
 - `missions` (1): EPIC-QUESTS-ENCOUNTERS
 - `mobile` (4): EPIC-ACCESSIBILITY-INPUT, EPIC-EMBEDDABLE-ENGINE-GAME-FRONTEND, EPIC-MOBILE-APP, TASK-TOUCH-GESTURES
@@ -2194,8 +2202,9 @@ Total tickets: **3041** — untagged: **2582** — unbound to epic: **1546**
 - `peer-to-peer` (1): EPIC-DISTRIBUTED-COMPUTE-SHARING
 - `peer-verification` (1): TASK-FEDERATION-PEER-AUDIT-PROBE-ZERO-TRUST-CROSS-INSTANCE-VERIFI
 - `per-world-config` (1): EPIC-MECHANICS-GOVERNANCE
+- `perf` (1): TASK-DB-GROWTH-MEASUREMENT-BASELINE
 - `perf-regression` (1): TASK-RECURSIVE-SELF-IMPROVEMENT-NIGHTLY-HEAVY-GATE-AND-PERF-REGRE
-- `performance` (7): EPIC-BENCHMARK-CI-REGRESSION, EPIC-CONCURRENCY-RUNTIME-BENCHMARKS, EPIC-DB-COLD-STORAGE-HIGH-PERF, EPIC-FRONTEND-BUNDLE-OPTIMIZATION, EPIC-NATIVE-MODULE-BENCHMARKS, EPIC-PRECOMPILED-HOT-BINARIES, EPIC-TESTING-BENCHMARKING
+- `performance` (8): EPIC-BENCHMARK-CI-REGRESSION, EPIC-CONCURRENCY-RUNTIME-BENCHMARKS, EPIC-DB-COLD-STORAGE-HIGH-PERF, EPIC-FRONTEND-BUNDLE-OPTIMIZATION, EPIC-NATIVE-MODULE-BENCHMARKS, EPIC-PRECOMPILED-HOT-BINARIES, EPIC-TESTING-BENCHMARKING, TASK-DB-READ-PATH-BENCHMARK-BASELINE
 - `permissions` (1): EPIC-LOGIC-RECONCILIATION
 - `persistence` (3): EPIC-MESSAGES, EPIC-RPG-CORE-WIRING, TASK-MATRIX-CROSS-MECH-G20-LIVING-WORLD-PERSISTENCE
 - `persona` (1): EPIC-PERSPECTIVE-NARRATION-VOICE
@@ -2209,6 +2218,7 @@ Total tickets: **3041** — untagged: **2582** — unbound to epic: **1546**
 - `pipeline` (1): EPIC-MESSAGES
 - `placement` (1): EPIC-WORLD-NPCS
 - `places` (1): EPIC-LOCATIONS
+- `plan-hygiene` (1): TASK-EPIC-DB-MIGRATION-COMPACTION-STALE-PREMISE-RECONCILE
 - `plan-management` (1): TASK-IMPLEMENT-REUSABLE-BULK-TICKET-RESOLUTION-HELPER
 - `plan-sync` (2): TASK-BACKLOG-BUILD-INTEGRITY-CLUSTER-CLOSE-OUT, TASK-BACKLOG-UNTRIAGED-ADVISORY-ORPHAN-SWEEP-2026-09-25
 - `planning` (7): EPIC-ASSISTANT-STEP-PLANNING, EPIC-TASK-MANAGEMENT-INTEGRATION, EPIC-UNIFIED-SPEC-FRAMEWORK, TASK-ASSISTANT-TODO-PLANNING-TABLES-SERVICE-ASSISTANT-WIRING, TASK-GRAPH-VIEW-OF-PLAN-LINKS-TO-CHATS-STORIES-RAG-ITEMS-ASSETS, TASK-KANBAN-BOARD-FOR-STORY-TASK-CONTEXT-CREATIVE-DRAFTS-PLANNING, TASK-PLAN-INDEX-ORPHAN-PHANTOM-CLEANUP
@@ -2232,6 +2242,7 @@ Total tickets: **3041** — untagged: **2582** — unbound to epic: **1546**
 - `pre-generation` (1): EPIC-IMMERSION-CONSISTENCY-GATE
 - `preact` (1): EPIC-FRAMEWORK-SDKS
 - `predator-prey` (1): TASK-BESTIARY-ECOLOGY-PRESSURE-MODEL
+- `prerequisite` (1): TASK-DB-READ-PATH-BENCHMARK-BASELINE
 - `presets` (2): EPIC-CHARACTER-MULTI-PERSONALITY, TASK-ASSISTANT-PERSONALITY-PRESETS-CATALOG
 - `privacy` (3): EPIC-BLOG-SYSTEM, EPIC-BYOK-API-KEYS, EPIC-CHAT-PRIVACY
 - `probe` (1): TASK-RECURSIVE-SELF-IMPROVEMENT-HEALTH-LIVENESS-READINESS-PROBES
@@ -2419,6 +2430,7 @@ Total tickets: **3041** — untagged: **2582** — unbound to epic: **1546**
 - `squashing` (1): EPIC-DB-MIGRATION-COMPACTION
 - `sse` (3): EPIC-REALTIME-TRANSPORTS, TASK-MATRIX-CROSS-MECH-G23-DYNAMIC-MEMORY-MID-RESPONSE, TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-CHECK-STREAM-BUN-RUN-CHECK-
 - `stable-diffusion` (2): EPIC-ASSISTANT-GENERATION-EXTENSIONS, EPIC-LORA-DISCOVERY-APPLICATION
+- `stale-doc` (1): TASK-EPIC-DB-MIGRATION-COMPACTION-STALE-PREMISE-RECONCILE
 - `standalone` (1): TASK-COMFYUI-FIRST-CLASS-STANDALONE-AUTO-START-CONFIG-LIFECYCLE
 - `standards` (1): EPIC-RAG-ASSETS-UNIFIED-STORAGE-AND-ASSISTANT-FLOWS
 - `standing` (1): EPIC-FACTION-REPUTATION
@@ -2431,7 +2443,7 @@ Total tickets: **3041** — untagged: **2582** — unbound to epic: **1546**
 - `steering` (1): EPIC-GM-SHADOW-NOTES
 - `steganography` (1): EPIC-IMPORT-EXPORT-IO
 - `step-up` (1): EPIC-AUTH-CHANNEL-PROVISIONING
-- `storage` (3): EPIC-HOUSING-BASE-BUILDING, EPIC-INVENTORY, EPIC-RESOURCE-PROVISION
+- `storage` (5): BUG-MEMORY-EMBEDDINGS-ORPHANED-ON-ACTOR-DELETE, EPIC-HOUSING-BASE-BUILDING, EPIC-INVENTORY, EPIC-RESOURCE-PROVISION, TASK-DB-GROWTH-MEASUREMENT-BASELINE
 - `story` (3): EPIC-GM-SHADOW-NOTES, EPIC-STORY-MODE-UI, TASK-CLARIFY-STORY-STATE-SSE-SUBSCRIPTION-CONTRACT
 - `story-coherence` (2): TASK-MATRIX-STORY-COHERENCE-GATE-PASS2-QA-DECIDE-WHETHER-GATE-VER, TASK-MATRIX-STORY-COHERENCE-PERSPECTIVE-AWARE-DRAFT-SET-PERSPECTI
 - `story-drive` (1): EPIC-ACTOR-AUTONOMY-STORY-DRIVE
@@ -2769,8 +2781,10 @@ Total tickets: **3041** — untagged: **2582** — unbound to epic: **1546**
 - `epic-database-backup-recovery.md` (1): TASK-DB-REINIT-ARCHIVES-PREVIOUS-DATABASE-INSTEAD-OF-DELETING
 - `epic-database-backup-recovery.md (cross: epic-federation-swarm-sync.md, epic-db-asset-snapshot-recovery.md)` (1): TASK-BACKUP-RESTORE-RELIABILITY-AND-SELF-HEALING-FOR-FEDERATED-DE
 - `epic-db-asset-snapshot-recovery` (4): TASK-ASSET-SNAPSHOT-RESEARCH, TASK-CHARACTER-BUNDLE-RESEARCH, TASK-DISASTER-RECOVERY-RESEARCH, TASK-SQLITE-BACKUP-RESEARCH
+- `epic-db-cold-storage-high-perf` (1): TASK-DB-READ-PATH-BENCHMARK-BASELINE
 - `epic-db-content-versioning` (1): TASK-DB-CONTENT-VERSIONING
-- `epic-db-growth-tiered-storage` (4): TASK-ASSET-LIFECYCLE-ARCHIVE-FLAG-ORPHAN-PRUNE-QUOTA-EVICTION, TASK-BACKUP-CONSISTENCY-VACUUM-INTO-SNAPSHOTS-PLUS-ARCHIVE-DBS, TASK-COLD-MESSAGE-ARCHIVAL-TO-ARCHIVE-DB-FILE, TASK-EMBEDDING-AND-TELEMETRY-RETENTION-POLICIES
+- `epic-db-growth-tiered-storage` (7): BUG-BACKUP-SQLITE-COPIES-LIVE-DB-WITHOUT-CHECKPOINT, BUG-MEMORY-EMBEDDINGS-ORPHANED-ON-ACTOR-DELETE, TASK-ASSET-LIFECYCLE-ARCHIVE-FLAG-ORPHAN-PRUNE-QUOTA-EVICTION, TASK-BACKUP-CONSISTENCY-VACUUM-INTO-SNAPSHOTS-PLUS-ARCHIVE-DBS, TASK-COLD-MESSAGE-ARCHIVAL-TO-ARCHIVE-DB-FILE, TASK-DB-GROWTH-MEASUREMENT-BASELINE, TASK-EMBEDDING-AND-TELEMETRY-RETENTION-POLICIES
+- `epic-db-migration-compaction` (1): TASK-EPIC-DB-MIGRATION-COMPACTION-STALE-PREMISE-RECONCILE
 - `epic-deno-support` (1): TASK-DENO-SUPPORT
 - `epic-deno-support (future Deno parity)` (1): TASK-RECONCILE-TS-IMPORT-EXTENSIONS-USER-SEEDING-SESSION
 - `epic-deployment-infrastructure` (1): TASK-BUILD-DEPLOYMENT-PIPELINE
