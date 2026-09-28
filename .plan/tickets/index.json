@@ -197,8 +197,8 @@
   "BUG-ALPINE-INIT-CRASH-CHAT-VIEW-STORE-UNDEFINED": {
     "epic": "",
     "extid": "BUG-ALPINE-INIT-CRASH-CHAT-VIEW-STORE-UNDEFINED",
-    "git_issue": "0c39d4f",
-    "hash": "0c39d4f",
+    "git_issue": "328ceac",
+    "hash": "328ceac",
     "label": "bug",
     "priority": "high",
     "source": ".plan/tickets/BUG-alpine-init-crash-chat-view-store-undefined.md",
@@ -5168,6 +5168,19 @@
     "tags": [],
     "title": "runOffloadPass phase 3 — unlinkSync races with phase 1 re-spill",
     "type": "BUG"
+  },
+  "BUG-SAFE-BUFFER-BASE64URL-GUARD-ACCEPTS-WHITESPACE-VARIANTS-AND-": {
+    "hash": "2ef22a3",
+    "git_issue": "2ef22a3",
+    "extid": "BUG-SAFE-BUFFER-BASE64URL-GUARD-ACCEPTS-WHITESPACE-VARIANTS-AND-",
+    "type": "BUG",
+    "title": "safe-buffer: base64url guard accepts whitespace variants and the per-call cap does not bound decode work",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-safe-buffer-base64url-guard-accepts-whitespace-variants-and-.md",
+    "status": "Not Started"
   },
   "BUG-SAFEDECOMPRESS-PRE-CHECK-REJECTS-COMPRESSED-PAYLOADS-OVER-10": {
     "epic": "",
