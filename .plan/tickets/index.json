@@ -5058,6 +5058,19 @@
     "title": "rotateKeyOnLeave re-encrypts messages only - encrypted assets become undecryptable",
     "type": "BUG"
   },
+  "BUG-ROUTES-CHARACTER-AVATARS-SUBDIR-IS-SHADOWED-BY-FLAT-FILE-CRU": {
+    "hash": "911cb41",
+    "git_issue": "911cb41",
+    "extid": "BUG-ROUTES-CHARACTER-AVATARS-SUBDIR-IS-SHADOWED-BY-FLAT-FILE-CRU",
+    "type": "BUG",
+    "title": "routes/character-avatars subdir is shadowed by flat file; crud/select/config routes never mount",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-routes-character-avatars-subdir-is-shadowed-by-flat-file-cru.md",
+    "status": "Not Started"
+  },
   "BUG-ROUTES-COMMANDS-INDEX-TS-19-HAS-UNUSED-IMPORT-T": {
     "epic": "",
     "extid": "BUG-ROUTES-COMMANDS-INDEX-TS-19-HAS-UNUSED-IMPORT-T",
