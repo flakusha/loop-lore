@@ -71,15 +71,36 @@ stays green through all of those breakages.
 **Surfaces:** `src/components/autonomy-panel.html`, mounted twice from the one
 `autonomyPanelFactory` in `src/frontend/alpine/autonomy-panel.ts` — on the
 world-edit page's Autonomy tab (`layer: 'world'`, plus the per-actor editor)
-and in the chat settings modal (`layer: 'chat'`). Reads go through
-`GET /api/worlds/:worldId/autonomy`, which returns each layer separately next
-to the merged config, so a page can show inherited vs overridden per field.
-Writes go through the existing world/chat PUTs — no save route of its own.
+and in the chat settings modal (`layer: 'chat'`, behind
+`x-if="currentChat?.world_id"` — a chat with no world has no pacing to
+tune). Reads go through `GET /api/worlds/:worldId/autonomy`, which returns
+each layer separately next to the merged config, so a page can show
+inherited vs overridden per field.
+
+**Writes split by what already owns the column.** The world and chat layers
+need no save route of their own: their columns live on rows the existing
+`PUT /api/worlds/:worldId` and `PUT /api/v1/chats/:id` already update. The
+per-actor layer had no such host — it lives inside
+`character_internal_traits`, and the traits PUT takes the actor as a query
+param on a route declared as a computed const, which the FE/BE harmonization
+checker cannot see. Rather than loosen a shared gate, the actor write got its
+own route: `PUT /api/worlds/:worldId/autonomy/actor/:actorId`
+(`src/routes/worlds/autonomy-routes.ts`), delegating to
+`CharacterInternalTraitsService.upsert`. Two gates, not one:
+`requireWorldOwner` for the world and `requireActorAccess` for the
+character, because owning a world is not owning its cast. `{}` clears the
+layer, matching the other two.
 
 The panel drafts from the LAYER's own values, never the merged ones: seeding
 the form from `resolved` would write every inherited field back as an
 override on the first save, freezing the preset's tuning into a per-layer
 override.
+
+**Tests:** `autonomy-routes.test.ts` covers the actor PUT's precedence, the
+`{}` clear, traits preservation, and both auth gates.
+`autonomy-panel.browser.ts` drives both real surfaces — the world tab writes a
+character's `autonomy_preferences`; the chat modal writes
+`chats.autonomy_config` and stays hidden for a world-less chat.
 
 **Epic:** epic-actor-autonomy-story-drive
 **Tags:** autonomy, config, presets, chat-settings, world-settings, ui, layering
