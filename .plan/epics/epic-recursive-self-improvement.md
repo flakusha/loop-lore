@@ -253,7 +253,7 @@ Filed 2026-09-27 from a research sweep of SASE (Hassan et al., arXiv:2509.06216)
   - **GitHub Copilot Coding Agent**, **Devin**, **Claude Code** — closed-loop coding agents
 - Internal:
   - `AGENTS.md` GPG signing — preserve agent-side signing constraint
-  - `src/server/start.ts:32-247` — server lifecycle; new watchdog hooks in here
+  - `src/server/start.ts:154-247` — server lifecycle (`REQUIRES_RESTART_KEYS` note at :155; SIGTERM/SIGINT/SIGHUP/uncaughtException/unhandledRejection handlers at :219-246); new watchdog hooks in here
   - `.github/workflows/{ci,release,deploy}.yml` — existing CI surface to extend
   - `scripts/check-parallel.mjs` — gate runner; new smoke + watchdog gates extend it
   - `deploy/docker-compose.yml` — `restart: unless-stopped` already wired
