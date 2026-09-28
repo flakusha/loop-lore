@@ -63,6 +63,16 @@ const customRestrictedSyntax = [
     selector: "NewExpression[callee.name='Date'][arguments.length>0]",
     message: "Use toDate() from utils/date instead of bare new Date(var). new Date() (now) and new Date(epochMs) arithmetic are allowed.",
   },
+  {
+    // safeFromUint8Array performs NO decoding, so wrapping a
+    // `Buffer.from(<string>)` launders an unvalidated string-to-bytes coercion
+    // through a size guard that cannot catch it. Encode with
+    // safeFromString / mustFromString instead.
+    selector:
+      "CallExpression:matches([callee.name='safeFromUint8Array'], [callee.name='mustFromUint8Array'])[arguments.0.type='CallExpression'][arguments.0.callee.object.name='Buffer'][arguments.0.callee.property.name='from'][arguments.0.arguments.0.type='Literal']",
+    message:
+      "safeFromUint8Array() does not decode. Buffer.from(<string literal>) must be encoded with safeFromString()/mustFromString() so the coercion is validated.",
+  },
 ];
 
 // Shared plugins

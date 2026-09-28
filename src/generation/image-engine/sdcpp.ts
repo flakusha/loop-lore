@@ -6,7 +6,7 @@ import { safeFetch, safeJsonStringify, } from "../../utils";
 import { discoverLoras, } from "../lora/discovery";
 import { injectSdCppLora, } from "../lora/discovery-sdserver";
 import type { LoRAModel, } from "../lora/types";
-import { decodeB64, failure, ok, } from "./helpers";
+import { decodeImages, failure, } from "./helpers";
 import type { ImageGenOptions, ImageGenOutcome, } from "./types";
 /**
  * Generate images via sd.cpp — async job submission + polling.
@@ -123,5 +123,5 @@ export async function generateSDCPP(
     return failure("sd.cpp job timed out", 504,);
   }
 
-  return ok(Array.from(jobImages, (b64,) => decodeB64(b64,),), "image/png",);
+  return decodeImages(jobImages, "image/png",);
 }
