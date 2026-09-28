@@ -2,14 +2,14 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * 022_prompt_templates_workflow_columns
+ * 023_prompt_templates_workflow_columns
  *
  * The four columns the ComfyUI workflow library needs on `prompt_templates`.
- * Split out of 021 on purpose: 021 rebuilds the table to relax
+ * Split out of 022 on purpose: 022 rebuilds the table to relax
  * `ck_prompt_templates_modality`, and both schema generators rebuild a table
  * from its `createTable` and then apply `alterTable` adds. A column that
  * first appears on a table which is later dropped-and-renamed is discarded,
- * so declaring these inside 021 left the generated `PromptTemplates`
+ * so declaring these inside 022 left the generated `PromptTemplates`
  * interface at 10 columns while the live table had 14. As plain adds here the
  * generators model them correctly.
  *
