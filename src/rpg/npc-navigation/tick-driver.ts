@@ -23,14 +23,14 @@
 // Deterministic given `rng` and `nowMs` are injected; tests pin both.
 
 import type { Kysely, } from "kysely";
-import type { DB, } from "../../db/schema";
+import { resolveAutonomyConfig, } from "../../autonomy/config";
 import type {
   AutonomyScope,
   GovernorLimitName,
   GovernorResult,
 } from "../../autonomy/governor";
 import { AutonomyGovernor, } from "../../autonomy/governor";
-import { resolveAutonomyConfig, } from "../../autonomy/config";
+import type { DB, } from "../../db/schema";
 import { processMovementTick, } from "./service/processing";
 import type { MovementResult, } from "./service/types";
 
@@ -71,10 +71,10 @@ export interface RunNpcMovementTickOptions {
  *  outcomes; on a successful dispatch, `results` carries the movements.
  */
 export type RunNpcMovementTickResult =
-  | { skipped: "paused"; }
-  | { skipped: "disabled"; preset: string; }
-  | { skipped: "jitter"; jitterRatio: number; }
-  | { skipped: "budget"; reason: GovernorResult; }
+  | { skipped: "paused" }
+  | { skipped: "disabled"; preset: string }
+  | { skipped: "jitter"; jitterRatio: number }
+  | { skipped: "budget"; reason: GovernorResult }
   | {
     results: MovementResult[];
     preset: string;
@@ -131,7 +131,7 @@ export async function runNpcMovementTick(
 
   const gate = await governor.tryConsume(
     db,
-    tickScope(worldId),
+    tickScope(worldId,),
     TICK_LIMIT,
     {
       cap: cfg.perAgentCap,

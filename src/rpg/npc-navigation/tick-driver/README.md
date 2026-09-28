@@ -26,34 +26,34 @@ import { runNpcMovementTick, } from "../rpg/npc-navigation";
 setInterval(async () => {
   const out = await runNpcMovementTick(db, worldId, {
     chatId: activeChatId,
-    paused:  world.paused,    // caller's policy
+    paused: world.paused, // caller's policy
     governor: sharedGovernor, // optional — shared across beats
-  });
+  },);
   if ("results" in out) {
-    log.info("moved", out.results.length, "npcs");
+    log.info("moved", out.results.length, "npcs",);
   }
-}, cfg.tickIntervalMs);
+}, cfg.tickIntervalMs,);
 ```
 
 ## Options
 
-| Field      | Type                  | Default        | Purpose                          |
-| ---------- | --------------------- | -------------- | -------------------------------- |
-| `chatId`   | `string`              | `"__none__"`   | Governor cap scope resolution.   |
-| `paused`   | `boolean`             | `false`        | Skip without DB / governor work. |
-| `nowMs`    | `number`              | `Date.now()`   | Test determinism.                |
-| `governor` | `AutonomyGovernor`    | `new`          | Inject shared instance.          |
-| `rng`      | `() => number`        | `Math.random`  | Inject deterministic RNG.        |
+| Field      | Type               | Default       | Purpose                          |
+| ---------- | ------------------ | ------------- | -------------------------------- |
+| `chatId`   | `string`           | `"__none__"`  | Governor cap scope resolution.   |
+| `paused`   | `boolean`          | `false`       | Skip without DB / governor work. |
+| `nowMs`    | `number`           | `Date.now()`  | Test determinism.                |
+| `governor` | `AutonomyGovernor` | `new`         | Inject shared instance.          |
+| `rng`      | `() => number`     | `Math.random` | Inject deterministic RNG.        |
 
 ## Result
 
 ```ts
 type RunNpcMovementTickResult =
-  | { skipped: "paused"; }
-  | { skipped: "disabled"; preset: string; }
-  | { skipped: "jitter"; jitterRatio: number; }
-  | { skipped: "budget"; reason: GovernorResult; }
-  | { results: MovementResult[]; preset: string; jitterRatio: number; };
+  | { skipped: "paused" }
+  | { skipped: "disabled"; preset: string }
+  | { skipped: "jitter"; jitterRatio: number }
+  | { skipped: "budget"; reason: GovernorResult }
+  | { results: MovementResult[]; preset: string; jitterRatio: number };
 ```
 
 ## Acceptance (from TASK-world-simulation-npc-navigation-tick-driver)
