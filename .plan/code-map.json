@@ -25945,12 +25945,6 @@
       "source": ".plan/epics/epic-frontend-admin.md"
     }
   ],
-  "src/routes/admin/sd-templates.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
-    }
-  ],
   "src/routes/admin/search-providers.ts": [
     {
       "kind": "ticket",

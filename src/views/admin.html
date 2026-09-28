@@ -40,6 +40,9 @@
         <button class="world-edit-tab" :class="{ active: activeTab === 'templates' }" @click="showTab('templates')">
           Templates
         </button>
+        <button class="world-edit-tab" :class="{ active: activeTab === 'workflows' }" @click="showTab('workflows')">
+          Workflows
+        </button>
         <button class="world-edit-tab" :class="{ active: activeTab === 'plugins' }" @click="showTab('plugins')">
           Plugins
         </button>
@@ -2219,6 +2222,265 @@
                       :disabled="!newProfile.id || !newProfile.name"
                     >
                       Create
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </template>
+          </div>
+        </template>
+      </div>
+
+      <!-- Workflows Tab -->
+      <div x-show="activeTab === 'workflows'">
+        <div x-show="loadingWorkflows" class="empty-state" style="padding: var(--space-12)">
+          <div class="icon">⏳</div>
+          <div class="title">Loading workflows...</div>
+        </div>
+        <template x-if="!loadingWorkflows">
+          <div style="padding: var(--space-6)">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4); gap: var(--space-3); flex-wrap: wrap">
+              <div>
+                <h3 style="font-size: 16px; font-weight: 600; margin: 0">ComfyUI Workflows</h3>
+                <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px">
+                  <span x-text="workflowTotal + ' workflows'"></span>
+                  <span x-show="!comfyuiReachable" style="color: var(--color-warning, #856404)">
+                    · ComfyUI unreachable — required nodes are not verified
+                  </span>
+                </div>
+              </div>
+              <div style="display: flex; gap: var(--space-2); align-items: center">
+                <select
+                  class="form-input"
+                  style="font-size: 12px; padding: 4px 8px; width: auto"
+                  x-model="workflowFilter"
+                  @change="loadWorkflows()"
+                >
+                  <option value="">All</option>
+                  <option value="enabled">Enabled</option>
+                  <option value="disabled">Disabled</option>
+                </select>
+                <button class="btn btn-secondary btn-xs" @click="loadWorkflows()">Refresh</button>
+                <button class="btn btn-primary btn-xs" @click="openWorkflowCreate()">New Workflow</button>
+              </div>
+            </div>
+
+            <!-- Workflow List -->
+            <div style="display: grid; gap: var(--space-3)">
+              <template x-if="workflows.length === 0">
+                <div class="empty-state" style="padding: var(--space-8)">
+                  <div class="title">No workflows in the library</div>
+                </div>
+              </template>
+              <template x-for="w in workflows" :key="w.id">
+                <div style="padding: var(--space-4); background: var(--bg-secondary, #f8f9fa); border-radius: 6px; border: 1px solid var(--border-default, #e9ecef)">
+                  <div style="display: flex; justify-content: space-between; align-items: center; gap: var(--space-3)">
+                    <div>
+                      <strong x-text="w.name"></strong>
+                      <span
+                        style="font-size: 11px; color: var(--text-secondary); margin-left: var(--space-2)"
+                        x-text="'(' + w.id + ')'"
+                      ></span>
+                      <span
+                        x-show="w.enabled === 'enabled'"
+                        style="font-size: 10px; padding: 1px 6px; background: #28a74522; border: 1px solid #28a74544; border-radius: 10px; color: #28a745; margin-left: var(--space-2)"
+                      >enabled</span>
+                      <span
+                        x-show="w.enabled === 'disabled'"
+                        style="font-size: 10px; padding: 1px 6px; background: #dc354522; border: 1px solid #dc354544; border-radius: 10px; color: #dc3545; margin-left: var(--space-2)"
+                      >disabled</span>
+                      <span
+                        x-show="w.is_default === 'default'"
+                        style="font-size: 10px; padding: 1px 6px; background: var(--bg-tertiary, #fff); border: 1px solid var(--border-default, #e9ecef); border-radius: 10px; color: var(--color-primary); margin-left: var(--space-2)"
+                      >default</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: var(--space-2)">
+                      <button class="btn btn-secondary btn-xs" @click="openWorkflowEdit(w.id)">Edit</button>
+                      <button
+                        class="btn btn-secondary btn-xs"
+                        @click="toggleWorkflowEnabled(w.id)"
+                        x-text="w.enabled === 'enabled' ? 'Disable' : 'Enable'"
+                      >
+                      </button>
+                      <template x-if="w.is_default !== 'default'">
+                        <button class="btn btn-secondary btn-xs" @click="setWorkflowDefault(w.id)">Set Default</button>
+                      </template>
+                      <template x-if="confirmDeleteWorkflow !== w.id">
+                        <button class="btn btn-danger btn-xs" @click="confirmDeleteWorkflow = w.id">Delete</button>
+                      </template>
+                      <template x-if="confirmDeleteWorkflow === w.id">
+                        <div style="display: flex; gap: 4px">
+                          <button class="btn btn-danger btn-xs" @click="deleteWorkflow(w.id)">Confirm</button>
+                          <button class="btn btn-secondary btn-xs" @click="confirmDeleteWorkflow = ''">Cancel</button>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                  <div style="font-size: 11px; color: var(--text-secondary); margin-top: var(--space-2)">
+                    Family: <span x-text="w.model_family || '—'"></span>
+                    · Min VRAM: <span x-text="w.min_vram === null ? '—' : w.min_vram + ' GB'"></span>
+                    · <span x-text="w.node_count + ' nodes'"></span>
+                    · <span x-text="w.category || '—'"></span>
+                    · ID <span x-text="w.id"></span>
+                  </div>
+                  <div
+                    x-show="w.description"
+                    style="font-size: 11px; color: var(--text-secondary)"
+                    x-text="w.description"
+                  >
+                  </div>
+                  <div
+                    x-show="w.missing_nodes && w.missing_nodes.length > 0"
+                    style="font-size: 11px; color: var(--color-danger, #dc3545); margin-top: 2px"
+                  >
+                    Missing nodes: <span x-text="(w.missing_nodes || []).join(', ')"></span>
+                  </div>
+                  <div x-show="w.lora_slots" style="font-size: 11px; color: var(--text-secondary); margin-top: 2px">
+                    LoRA slots:
+                    <span
+                      style="font-family: monospace; white-space: pre-wrap"
+                      x-text="formatWorkflowJson(w.lora_slots)"
+                    ></span>
+                  </div>
+                </div>
+              </template>
+            </div>
+
+            <!-- Create / Edit Workflow Modal -->
+            <template x-if="showWorkflowForm">
+              <div
+                class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+                @click.self="closeWorkflowForm()"
+              >
+                <div style="background: var(--bg-primary, #fff); border-radius: 8px; padding: var(--space-6); width: 100%; max-width: 720px; max-height: 90vh; overflow-y: auto; display: grid; gap: var(--space-4)">
+                  <h3
+                    style="font-size: 16px; font-weight: 600; margin: 0"
+                    x-text="workflowForm.id ? 'Edit Workflow' : 'New ComfyUI Workflow'"
+                  >
+                  </h3>
+
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3)">
+                    <div>
+                      <label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 4px">Name</label>
+                      <input
+                        class="form-input"
+                        style="font-size: 13px"
+                        x-model="workflowForm.name"
+                        placeholder="e.g. SDXL portrait"
+                      />
+                    </div>
+                    <div>
+                      <label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 4px"
+                      >Model family</label>
+                      <input
+                        class="form-input"
+                        style="font-size: 13px"
+                        x-model="workflowForm.model_family"
+                        placeholder="e.g. sdxl"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 4px"
+                    >Description</label>
+                    <input
+                      class="form-input"
+                      style="font-size: 13px"
+                      x-model="workflowForm.description"
+                      placeholder="What this workflow is for"
+                    />
+                  </div>
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3)">
+                    <div>
+                      <label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 4px"
+                      >Min VRAM (GB)</label>
+                      <input
+                        class="form-input"
+                        style="font-size: 13px"
+                        x-model="workflowForm.min_vram"
+                        placeholder="e.g. 12"
+                      />
+                    </div>
+                    <div>
+                      <label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 4px"
+                      >Category</label>
+                      <select class="form-input" style="font-size: 13px" x-model="workflowForm.category">
+                        <option value="txt2img">txt2img</option>
+                        <option value="img2img">img2img</option>
+                        <option value="inpaint">inpaint</option>
+                        <option value="upscale">upscale</option>
+                        <option value="controlnet">controlnet</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div>
+                    <label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 4px"
+                    >Required nodes (comma-separated)</label>
+                    <input
+                      class="form-input"
+                      style="font-size: 13px"
+                      x-model="workflowForm.requiredNodes"
+                      placeholder="e.g. KSampler, CheckpointLoaderSimple, SaveImage"
+                    />
+                  </div>
+                  <div>
+                    <label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 4px"
+                    >ComfyUI graph (API format JSON)</label>
+                    <textarea
+                      class="form-input"
+                      style="font-size: 12px; min-height: 200px; font-family: monospace"
+                      x-model="workflowForm.graph"
+                      placeholder="{ &quot;3&quot;: { &quot;class_type&quot;: &quot;KSampler&quot;, &quot;inputs&quot;: {} } }"
+                    ></textarea>
+                  </div>
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3)">
+                    <div>
+                      <label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 4px"
+                      >Parameters (JSON array)</label>
+                      <textarea
+                        class="form-input"
+                        style="font-size: 11px; min-height: 90px; font-family: monospace"
+                        x-model="workflowForm.parametersJson"
+                        placeholder="[{ &quot;name&quot;: &quot;steps&quot;, ... }]"
+                      ></textarea>
+                    </div>
+                    <div>
+                      <label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 4px"
+                      >LoRA slots (JSON array)</label>
+                      <textarea
+                        class="form-input"
+                        style="font-size: 11px; min-height: 90px; font-family: monospace"
+                        x-model="workflowForm.loraSlotsJson"
+                        placeholder="[{ &quot;nodeId&quot;: &quot;10&quot;, &quot;classType&quot;: &quot;LoraLoader&quot;, ... }]"
+                      ></textarea>
+                    </div>
+                  </div>
+                  <div style="font-size: 11px; color: var(--text-secondary)">
+                    Leave the JSON fields blank to keep whatever is stored. Every declared parameter must appear as a
+                    <code>&#123;&#123;name&#125;&#125;</code> in the graph, and every required node must exist in it.
+                  </div>
+                  <!-- Server-side ingest errors, next to the action that produced them -->
+                  <div
+                    x-show="workflowFormErrors.length > 0"
+                    style="padding: var(--space-3); background: #dc354522; border: 1px solid #dc354544; border-radius: 4px"
+                  >
+                    <div style="font-size: 12px; font-weight: 600; color: var(--color-danger, #dc3545)">
+                      Workflow rejected — fix and resubmit
+                    </div>
+                    <ul style="margin: var(--space-2) 0 0; padding-left: var(--space-5); font-size: 12px; color: var(--color-danger, #dc3545)">
+                      <template x-for="(message, index) in workflowFormErrors" :key="index">
+                        <li x-text="message"></li>
+                      </template>
+                    </ul>
+                  </div>
+                  <div style="display: flex; justify-content: flex-end; gap: var(--space-2)">
+                    <button class="btn btn-secondary btn-xs" @click="closeWorkflowForm()">Cancel</button>
+                    <button
+                      class="btn btn-primary btn-xs"
+                      @click="saveWorkflow()"
+                      :disabled="savingWorkflow"
+                      x-text="savingWorkflow ? 'Saving...' : (workflowForm.id ? 'Save Changes' : 'Create')"
+                    >
                     </button>
                   </div>
                 </div>
