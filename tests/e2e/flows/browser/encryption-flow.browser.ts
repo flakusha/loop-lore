@@ -169,7 +169,9 @@ describe("Chat compression-encryption-decryption flow (UI)", () => {
           row = candidate;
           break;
         }
-        await new Promise((r,) => setTimeout(r, 250,));
+        const { promise, resolve, } = Promise.withResolvers<void>();
+        setTimeout(resolve, 250,);
+        await promise;
       }
       expect(row, "no new message row appeared after send",).toBeDefined();
       expect(row!.content,).not.toContain(secret,);
@@ -196,28 +198,47 @@ describe("Chat compression-encryption-decryption flow (UI)", () => {
 
       // API also returns plaintext (server-side decrypt).
       //
-      // The list endpoint paginates (default pageSize 20). The seeded chat can
-      // hold enough messages that the newest one lands on a later page, so
-      // walk pages until the secret appears instead of assuming page 1. Poll
-      // for the same reason as the DB read: the row may not be committed yet.
+      // listMessages orders by `created_at` ASC (src/chat/service/read.ts), so
+      // page 1 is the OLDEST slice and our new message is on the LAST page.
+      // Reading page 1 (or pages 1-2) is the wrong end of the list — the
+      // assertion would fail on any chat with more than a page of history.
+      // Use the `total` the response already carries to ask for the final page,
+      // and poll because the row may not be committed yet.
+      const PAGE_SIZE = 100;
       let list: { status: number; body: string } | undefined;
       for (let attempt = 0; attempt < 20; attempt++) {
-        const page1 = await page.evaluate(async (chatId,) => {
-          const fetchAll = async (p: number,) => {
-            const r = await fetch(`/api/v1/chats/${chatId}/messages?page=${p}&pageSize=100`, {
-              credentials: "include",
-            },);
-            return { status: r.status, body: await r.text(), };
-          };
-          return { first: await fetchAll(1,), second: await fetchAll(2,), };
-        }, SEED.soloChat.id,);
-        const combined = `${page1.first.body}\n${page1.second.body}`;
-        list = page1.first;
-        if (page1.first.status === 200 && combined.includes(secret,)) {
-          list = { ...page1.first, body: combined, };
-          break;
-        }
-        await new Promise((r,) => setTimeout(r, 250,));
+        const snapshot = await page.evaluate(
+          async (args,) => {
+            const first = await fetch(
+              `/api/v1/chats/${args.chatId}/messages?page=1&pageSize=${args.pageSize}`,
+              { credentials: "include", },
+            );
+            const firstBody = await first.text();
+            let lastBody = firstBody;
+            try {
+              const parsed: unknown = JSON.parse(firstBody,);
+              const total = typeof parsed === "object" && parsed !== null && "total" in parsed &&
+                  typeof parsed.total === "number"
+                ? parsed.total
+                : 0;
+              const lastPage = Math.max(1, Math.ceil(total / args.pageSize,),);
+              if (total > 0 && lastPage > 1) {
+                const last = await fetch(
+                  `/api/v1/chats/${args.chatId}/messages?page=${lastPage}&pageSize=${args.pageSize}`,
+                  { credentials: "include", },
+                );
+                lastBody = `${firstBody}\n${await last.text()}`;
+              }
+            } catch { /* non-JSON body: page 1 alone */ }
+            return { status: first.status, body: lastBody, };
+          },
+          { chatId: SEED.soloChat.id, pageSize: PAGE_SIZE, },
+        );
+        list = snapshot;
+        if (snapshot.status === 200 && snapshot.body.includes(secret,)) { break; }
+        const { promise, resolve, } = Promise.withResolvers<void>();
+        setTimeout(resolve, 250,);
+        await promise;
       }
       expect(list!.status,).toBe(200,);
       expect(list!.body,).toContain(secret,);
