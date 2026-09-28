@@ -1383,7 +1383,7 @@
 
     "get-tsconfig": ["get-tsconfig@4.14.3", "", { "dependencies": { "resolve-pkg-maps": "^1.0.0" } }, "sha512-++QEw4DIY7WGoukz+/+A/8dGYPT9l9yIadnmSgZ8Rjr3YVSVDipQSO9CdnJo9ePqFqUUqh+wk9uIaoiAwsiPkA=="],
 
-    "giwt": ["giwt@github:flakusha/giwt#c85eda2", { "dependencies": { "@optique/core": "^1.2.6", "@optique/run": "^1.2.6" }, "bin": { "giwt": "src/cli.ts" } }, "flakusha-giwt-c85eda2", "sha512-x7hUCQiRyIJBLfWShb9Vw0cWdwiueRVMa2cDgRKYDfWh9jJRAEQVx/YdgeRbVKrMkoxpkX2fjVvuBjHRsqUJIQ=="],
+    "giwt": ["giwt@github:flakusha/giwt#f57ba15", { "dependencies": { "@optique/core": "^1.2.6", "@optique/run": "^1.2.6" }, "bin": { "giwt": "src/cli.ts" } }, "flakusha-giwt-f57ba15", "sha512-upehZJJkPjANxlaglfuP93aidJi+j4W+uEiM0BM7hDX668XIDWBRcEpAp1qtMITXYWDIRCrX2wvGOqoWhnsa2A=="],
 
     "gl-matrix": ["gl-matrix@2.8.1", "", {}, "sha512-0YCjVpE3pS5XWlN3J4X7AiAx65+nqAI54LndtVFnQZB6G/FVLkZH8y8V6R3cIoOQR4pUdfwQGd1iwyoXHJ4Qfw=="],
 
