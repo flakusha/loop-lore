@@ -10,6 +10,7 @@ import { adminReview, } from "./admin-review";
 import { adminSystem, } from "./admin-system";
 import { adminTemplates, } from "./admin-templates";
 import { adminUsers, } from "./admin-users";
+import { adminWorkflows, } from "./admin-workflows";
 import { adminWorlds, } from "./admin-worlds";
 import { formatDisplayDate, } from "./chat-utils/time";
 import { apiFetch, } from "./htmx";
@@ -60,6 +61,7 @@ import { apiFetch, } from "./htmx";
     ...adminReview,
     ...adminSystem,
     ...adminTemplates,
+    ...adminWorkflows,
 
     // ── Lifecycle ───────────────────────────────────────
     async init() {
@@ -115,6 +117,10 @@ import { apiFetch, } from "./htmx";
         }
         case "templates": {
           this.loadTemplates();
+          break;
+        }
+        case "workflows": {
+          this.loadWorkflows();
           break;
         }
         case "plugins": {

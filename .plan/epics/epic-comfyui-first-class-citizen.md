@@ -367,36 +367,64 @@ strings throughout.
 
 ### Phase 1: Workflow library (DB + admin upload)
 
-- [ ] Migration `021_` adding `is_default` / `enabled` / `lora_slots` / `min_vram`
-      to `prompt_templates` (append-only; latest is `020_`). `modality` is a plain
-      `text` column, so the column itself needs no change.
-- [ ] Add `workflow` to the `TemplateModality` enum in **all 9 places** listed in
+- [x] Migration adding `is_default` / `enabled` / `lora_slots` / `min_vram`
+      to `prompt_templates` (append-only; latest was `020_`).
+      *Split into `021_` and `022_`, and the epic's own reasoning above was
+      wrong on this item twice.* `modality` is NOT a free `text` column:
+      `001_init.ts` put a `CHECK (modality IN (...))` on it, and SQLite cannot
+      ALTER a CHECK, so the table had to be rebuilt. The rebuild also had to
+      snapshot and restore `chats.prompt_template_id` — dropping the old table
+      fires its `ON DELETE SET NULL`, and neither `PRAGMA foreign_keys = OFF`
+      nor `defer_foreign_keys` prevents that inside Kysely's migration
+      transaction (both verified empirically). The four library columns live in
+      `022_` as plain `addColumn` alters because a column first added on a table
+      that is later dropped-and-renamed is discarded by the schema generators.
+- [x] Add `workflow` to the `TemplateModality` enum in **all 9 places** listed in
       *Design* — 3 enum definitions (one is generated: run `bun run db:sync-*`) and
       6 hardcoded `MODALITIES` arrays. A miss compiles clean and silently 400s or
       renders the wrong shape.
-- [ ] Add an explicit `workflow` branch to `parseTemplatePayload` and an explicit
+- [x] Add an explicit `workflow` branch to `parseTemplatePayload` and an explicit
       `default: return null`, so an unknown modality cannot fall through to
       `SimpleTemplatePayload`.
-- [ ] Add an explicit branch (or 400) in `src/routes/templates/apply.ts:91-94` so a
+- [x] Add an explicit branch (or 400) in `src/routes/templates/apply.ts:91-94` so a
       `workflow` row is never passed to `applySimpleTemplate`.
-- [ ] Seed `workflow`-modality rows from `configs/workflows/*.json` on first boot;
-      the existing two become rows and their filenames stay ids.
-- [ ] Ingest validation: parse; per-node `class_type` + `inputs` shape; declared
+- [x] Seed `workflow`-modality rows from `configs/workflows/*.json` on first boot;
+      the existing two become rows and their filenames stay ids. *Seeding is
+      INSERT-IF-ABSENT and the DB wins once a row exists, so an admin edit is not
+      reverted on the next boot. A bad file is skipped, not fatal — one malformed
+      JSON must not stop the server starting.*
+- [x] Ingest validation: parse; per-node `class_type` + `inputs` shape; declared
       params must exist as placeholders; declared LoRA slots must resolve to real
-      nodes; `required_nodes` must be a *subset* of installed (not exact match —
-      the Anima reference installs more than it uses). Reject malformed uploads:
-      a bad workflow stored now fails confusingly at 3am in a generation queue.
-- [ ] Admin routes: list / create / update / delete / upload / set-default,
-      mirroring `src/routes/admin-templates/`. Note the prompt-template module
-      is at `/api/admin/templates` and SD templates are at `/api/admin/sd-templates`
-      (split deliberately, `src/routes/admin/sd-templates.ts:19-21`); a ComfyUI
-      surface must pick a third non-colliding prefix.
-- [ ] Admin view + Alpine component; register in `admin.ts` `showTab`.
-- [ ] Reuse the `handleUpload` multipart pattern (`POST /api/assets` +
-      parent-app registration) — Elysia body consumption is a known trap here.
-- [ ] `GET /api/v1/image-edit/templates` reads the registry, not the TS builtin
-      list, so uploaded workflows are discoverable.
+      nodes. Reject malformed uploads: a bad workflow stored now fails
+      confusingly at 3am in a generation queue. *Reuses `findDeadNodes` from the
+      loader rather than re-deriving the graph walk, so an uploaded graph is
+      held to the same bar a config file is.*
+      *`required_nodes` ⊆ installed is deliberately **not** an ingest check: it
+      depends on what the operator's ComfyUI happens to have, so it cannot be
+      decided at write time. The admin list reports it per row as
+      `missing_nodes` (`null` when the server is unreachable) instead.*
+- [x] Admin routes: list / create / update / delete / set-default / toggle-enabled,
+      at `/api/v1/admin/comfyui-workflows` — the third non-colliding prefix the
+      item above called for. *Every query is built in one `rows.ts` that
+      hardcodes `modality = 'workflow'`, so the surface cannot reach an LLM or
+      image row even if a handler forgets to filter; a test deletes an LLM id
+      through it and asserts 404 **and** that the row survived.*
+- [x] Admin view + Alpine component; registered in `admin.ts` `showTab` as `workflows`.
+- [x] `GET /api/v1/image-edit/templates` reads the registry, not the TS builtin
+      list, so uploaded workflows are discoverable. *Hydration is memoized and
+      awaited by that route rather than kicked off in `start.ts` — tests and e2e
+      never run `start.ts`, so a boot-time kickoff would leave them with an empty
+      registry, and awaiting it means the list can never precede hydration.*
 - [ ] Land `i-anima-0001.json` as the first uploaded workflow + reference fixture.
+      *Still open, and deliberately so: Phase 0's strict dead-node rejection
+      (confirmed above) rejects this file because of its stale node `60:45`
+      (`CLIPLoader`). It must be cleaned before the upload path will take it.*
+- [ ] Reuse the `handleUpload` multipart pattern (`POST /api/assets` +
+      parent-app registration). *Deviation: the create endpoint takes a JSON
+      body and accepts a bare ComfyUI export, a wrapper (`workflow`/`body`/
+      `graph`/`payload`), or the library payload shape — which covers both paste
+      and file-upload without the Elysia body-consumption trap. Worth
+      revisiting if direct binary multipart upload is ever wanted.*
 
 ### Phase 2: Parameterized config workflows
 
