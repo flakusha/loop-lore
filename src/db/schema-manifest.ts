@@ -2119,6 +2119,15 @@ export const SCHEMA = new SchemaManifest()
     world_id: col("text", { notNull: true, },),
     actor_id: col("text", { notNull: true, },),
   },)
+  .table("world_simulation_state", {
+    world_id: col("text", { primaryKey: true, },),
+    next_tick_at: col("text", { notNull: true, },),
+    paused: col("integer", { notNull: true, hasDefault: true, },),
+    last_run_at: col("text",),
+    last_error: col("text",),
+    tick_count: col("integer", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("world_states", {
     id: col("text", { primaryKey: true, },),
     world_id: col("text", { notNull: true, },),

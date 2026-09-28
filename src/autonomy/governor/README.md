@@ -9,22 +9,22 @@ against configured per-actor / per-user caps.
 import { AutonomyGovernor, } from "../autonomy";
 
 const governor = new AutonomyGovernor();
-const r = await governor.tryConsume(db,
-  { kind: "actor", id: actorId, },
-  "per_minute_generation",
-  { cap: cfg.perAgentCap, chatId, sessionId, },
-);
-if (!r.ok) { return; }   // cap exceeded → skip
+const r = await governor.tryConsume(db, { kind: "actor", id: actorId, }, "per_minute_generation", {
+  cap: cfg.perAgentCap,
+  chatId,
+  sessionId,
+},);
+if (!r.ok) { return; } // cap exceeded → skip
 await doWork();
 ```
 
 ## Shape
 
-| Limit                    | Window | Cap source          |
-| ------------------------ | ------ | ------------------- |
-| `per_tick_action`        | 60s    | `perAgentCap`       |
-| `per_minute_generation`  | 60s    | `perAgentCap`       |
-| `per_hour_beat_dispatch` | 3600s  | `perUserCap`        |
+| Limit                    | Window | Cap source    |
+| ------------------------ | ------ | ------------- |
+| `per_tick_action`        | 60s    | `perAgentCap` |
+| `per_minute_generation`  | 60s    | `perAgentCap` |
+| `per_hour_beat_dispatch` | 3600s  | `perUserCap`  |
 
 Actor-scoped consumes consult `AutonomyConfig.perAgentCap`; user-scoped
 consumes consult `perUserCap`. `null` = unbounded (skip DB, skip

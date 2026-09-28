@@ -1388,3 +1388,14 @@ export interface AutonomyBudget {
   window_count: Generated<number>;
   updated_at: Generated<string>;
 }
+
+// ── world_simulation_state ────────────────────────────────────────────
+export interface WorldSimulationState {
+  world_id: Generated<string>;
+  next_tick_at: string;
+  paused: Generated<number>;
+  last_run_at: string | null;
+  last_error: string | null;
+  tick_count: Generated<number>;
+  updated_at: Generated<string>;
+}
