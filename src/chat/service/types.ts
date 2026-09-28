@@ -135,6 +135,8 @@ export interface UpdateChatParams {
   outputStylePreset?: string | null;
   /** Per-story custom instructions ("" / null clears; max 5000 chars). */
   customInstructions?: string | null;
+  /** Chat-level autonomy pacing override (TASK-autonomy-config-surface). */
+  autonomyConfig?: Record<string, unknown>;
 }
 
 /** */

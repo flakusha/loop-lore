@@ -42,6 +42,9 @@ export const WorldUpdateBody = t.Object({
   rpgXp: t.Optional(Flag,),
   rpgLoot: t.Optional(Flag,),
   rpgQuests: t.Optional(Flag,),
+  // Autonomy pacing override blob (TASK-autonomy-config-surface). A JSON
+  // object, a raw JSON string, or null to clear the world layer.
+  autonomyConfig: t.Optional(t.Union([t.Record(t.String(), t.Unknown(),), t.String(), t.Null(),],),),
 }, {
   // TASK-031: pass unknown keys through instead of silently stripping them
   // so the character/world boundary guard can reject misdirected
