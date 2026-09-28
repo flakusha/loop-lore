@@ -2693,6 +2693,16 @@
       "source": ".plan/epics/epic-chat-context-optimization.md"
     }
   ],
+  "src/assistant/prompt/sections/game-state.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-game-state-extraction-and-analysis-pipeline.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/game-canvas.md"
+    }
+  ],
   "src/assistant/prompt/sections/gm-notes.ts": [
     {
       "kind": "ticket",
@@ -7833,6 +7843,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-gallery-fuzzy-search-pagination.md"
+    }
+  ],
+  "src/components/chat/game-canvas.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-2d-interactive-game-canvas-for-chat-scenes.md"
     }
   ],
   "src/components/chat/gm-guidance-panel.html": [
@@ -15533,6 +15549,12 @@
       "source": ".plan/tickets/TASK-gallery-fuzzy-search-pagination.md"
     }
   ],
+  "src/frontend/alpine/game-canvas.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-2d-interactive-game-canvas-for-chat-scenes.md"
+    }
+  ],
   "src/frontend/alpine/games.ts": [
     {
       "kind": "epic",
@@ -18367,6 +18389,18 @@
       "source": ".plan/tickets/TASK-world-dashboard.md"
     }
   ],
+  "src/game-state/analyze.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/game-canvas.md"
+    }
+  ],
+  "src/game-state/service.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/game-canvas.md"
+    }
+  ],
   "src/gc/archive-expiration.ts": [
     {
       "kind": "epic",
@@ -18965,6 +18999,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-stale-audit-claim-aux-emotion-mood-task-tables.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-game-state-extraction-and-analysis-pipeline.md"
     },
     {
       "kind": "ticket",
@@ -22533,6 +22571,12 @@
       "source": ".plan/tickets/BUG-untrusted-new-date-parse-without-invalid-date-guard.md"
     }
   ],
+  "src/middleware/nsfw-gate/base-eval.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rpg-nsfw-services-add-config-level-opt-in-gate.md"
+    }
+  ],
   "src/middleware/nsfw-gate/consent-ledger.ts": [
     {
       "kind": "ticket",
@@ -22939,6 +22983,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-033.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rpg-nsfw-services-add-config-level-opt-in-gate.md"
     }
   ],
   "src/nsfw/capability-gate.ts": [
@@ -22953,6 +23001,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-037.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rpg-nsfw-services-add-config-level-opt-in-gate.md"
     }
   ],
   "src/nsfw/consent.ts": [
@@ -22965,6 +23017,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/nsfw-integration.md"
+    }
+  ],
+  "src/nsfw/feature-flag.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rpg-nsfw-services-add-config-level-opt-in-gate.md"
     }
   ],
   "src/nsfw/housing-integration.ts": [
@@ -24729,6 +24787,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-vn-emotion-mood-and-action-driven-sprite-staging.md"
+    }
+  ],
+  "src/regex/game-state.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-game-state-extraction-and-analysis-pipeline.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/game-canvas.md"
     }
   ],
   "src/regex/html-sanitize-streaming.edge.test.ts": [
@@ -29994,6 +30062,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-rpg-nsfw-services-add-config-level-opt-in-gate.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md"
     }
   ],
@@ -30355,12 +30427,20 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-src-rpg-nit-1-4-barrel-organization-implementations.md"
     }
   ],
   "src/rpg/encounters.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-src-rpg-nit-1-4-barrel-organization-implementations.md"
     }
   ],
   "src/rpg/encounters/aftercare.ts": [
@@ -30555,6 +30635,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-src-rpg-nit-1-4-barrel-organization-implementations.md"
     }
   ],
   "src/rpg/fantasies/index.ts": [
@@ -30627,6 +30711,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-src-rpg-nit-1-4-barrel-organization-implementations.md"
     }
   ],
   "src/rpg/fantasy/categories.ts": [
@@ -30719,6 +30807,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-src-rpg-nit-1-4-barrel-organization-implementations.md"
     }
   ],
   "src/rpg/integration-registry.ts": [
@@ -30865,6 +30957,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-033.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rpg-nsfw-services-add-config-level-opt-in-gate.md"
     },
     {
       "kind": "ticket",
@@ -31262,6 +31358,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-rpg-nsfw-services-add-config-level-opt-in-gate.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md"
     }
   ],
@@ -31617,6 +31717,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-src-rpg-nit-1-4-barrel-organization-implementations.md"
     }
   ],
   "src/rpg/reproduction-reputation.test.ts": [
@@ -31637,6 +31741,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-src-rpg-nit-1-4-barrel-organization-implementations.md"
     }
   ],
   "src/rpg/reproduction.test.ts": [
@@ -31665,6 +31773,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-src-rpg-nit-1-4-barrel-organization-implementations.md"
+    }
+  ],
+  "src/rpg/reproduction/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-src-rpg-nit-1-4-barrel-organization-implementations.md"
     }
   ],
   "src/rpg/reputation-nsfw/conquests.ts": [
@@ -31711,6 +31829,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-add-missing-rpg-module-barrels.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rpg-nsfw-services-add-config-level-opt-in-gate.md"
     },
     {
       "kind": "ticket",
@@ -33961,6 +34083,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-encryption-tier-not-enforced.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/game-canvas.md"
     }
   ],
   "src/story/gm/decisions/hardcoded.ts": [
@@ -36015,6 +36141,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-047.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-2d-interactive-game-canvas-for-chat-scenes.md"
     },
     {
       "kind": "ticket",

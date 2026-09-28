@@ -5532,7 +5532,7 @@
     "label": "bug",
     "priority": "medium",
     "source": ".plan/tickets/BUG-tool-call-result-no-frontend-rendering.md",
-    "status": "open",
+    "status": "Done",
     "tags": [],
     "title": "LLM tool calls persist in `messages.tool_calls` (migration 037) but no `MessageContentType.ToolResult` exists and no frontend bubble renders them — tool calls appear as raw JSON text in chat",
     "type": "BUG"
@@ -11143,6 +11143,7 @@
   "EPIC-RECURSIVE-SELF-IMPROVEMENT": {
     "epic": "",
     "extid": "EPIC-RECURSIVE-SELF-IMPROVEMENT",
+    "git_issue": "42bbf1a",
     "hash": "42bbf1a",
     "label": "epic",
     "priority": "High",
@@ -11165,8 +11166,7 @@
       "dev-loop"
     ],
     "title": "Recursive Self-Improvement — Watchdog, Agent Loop & On-the-Fly Development",
-    "type": "EPIC",
-    "git_issue": "42bbf1a"
+    "type": "EPIC"
   },
   "EPIC-RELATIONSHIPS": {
     "epic": "",
@@ -12892,7 +12892,7 @@
     "label": "feat",
     "priority": "medium",
     "source": ".plan/tickets/FEAT-2026-012.md",
-    "status": "open",
+    "status": "Done",
     "tags": [],
     "title": "# FEAT-2026-012: Signed URLs for asset downloads",
     "type": "FEAT"
@@ -13169,6 +13169,19 @@
     "tags": [],
     "title": "# FEAT-2026-irc-group-chat-integration: IRC integration as group-chat (channel) + DM (PM) — RFC 1459/2812",
     "type": "FEAT"
+  },
+  "FEAT-2D-INTERACTIVE-GAME-CANVAS-FOR-CHAT-SCENES": {
+    "hash": "0341593",
+    "git_issue": "0341593",
+    "extid": "FEAT-2D-INTERACTIVE-GAME-CANVAS-FOR-CHAT-SCENES",
+    "type": "FEAT",
+    "title": "2D interactive game canvas for chat scenes",
+    "label": "feat",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-2d-interactive-game-canvas-for-chat-scenes.md",
+    "status": "Not Started"
   },
   "FEAT-2D-WORLD-BOARDING-FLOORS-VIA-FRACTAL-TREE-TRANSPORTS-PARALLA": {
     "epic": "epic-2d-sprite-world",
@@ -14183,6 +14196,19 @@
     "tags": [],
     "title": "Full Moderation System (Review Queue, Reports, Mod Role)",
     "type": "FEAT"
+  },
+  "FEAT-GAME-STATE-EXTRACTION-AND-ANALYSIS-PIPELINE": {
+    "hash": "83cc0ad",
+    "git_issue": "83cc0ad",
+    "extid": "FEAT-GAME-STATE-EXTRACTION-AND-ANALYSIS-PIPELINE",
+    "type": "FEAT",
+    "title": "Game state extraction and analysis pipeline",
+    "label": "feat",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-game-state-extraction-and-analysis-pipeline.md",
+    "status": "in_progress"
   },
   "FEAT-GDPR-USER-DATA-RIGHTS": {
     "epic": "proposed:epic-gdpr-data-rights",
@@ -37156,6 +37182,18 @@
     "title": "RPG Mechanics — XP Progression & Loot",
     "type": "TASK"
   },
+  "TASK-RPG-NSFW-SERVICES-ADD-CONFIG-LEVEL-OPT-IN-GATE": {
+    "hash": "pending",
+    "extid": "TASK-RPG-NSFW-SERVICES-ADD-CONFIG-LEVEL-OPT-IN-GATE",
+    "type": "TASK",
+    "title": "rpg NSFW services: add config-level opt-in gate",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-rpg-nsfw-services-add-config-level-opt-in-gate.md",
+    "status": "Not Started"
+  },
   "TASK-RPG-PATTERNS": {
     "epic": "epic-rpg-patterns",
     "extid": "TASK-RPG-PATTERNS",
@@ -38234,6 +38272,18 @@
     "tags": [],
     "title": "src/rpg/ module-root barrel and organization nits",
     "type": "TASK"
+  },
+  "TASK-SRC-RPG-NIT-1-4-BARREL-ORGANIZATION-IMPLEMENTATIONS": {
+    "hash": "pending",
+    "extid": "TASK-SRC-RPG-NIT-1-4-BARREL-ORGANIZATION-IMPLEMENTATIONS",
+    "type": "TASK",
+    "title": "src/rpg/ NIT 1-4 barrel/organization implementations",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-src-rpg-nit-1-4-barrel-organization-implementations.md",
+    "status": "Not Started"
   },
   "TASK-STABLE-STORED-CHAT-KEY-FUTURE": {
     "epic": "epic-encryption-foundation",
@@ -39592,7 +39642,7 @@
     "label": "task",
     "priority": "P1 — High",
     "source": ".plan/tickets/TASK-turn-skip-event.md",
-    "status": "open",
+    "status": "Done",
     "tags": [],
     "title": "turn_skip Event + Persistence",
     "type": "TASK"
