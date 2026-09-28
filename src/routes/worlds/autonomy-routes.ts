@@ -18,12 +18,15 @@ import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import { resolveAutonomyLayers, } from "../../autonomy/config";
 import { PRESETS, } from "../../autonomy/config/presets";
+import type { AutonomyConfigOverride, } from "../../autonomy/config/types";
 import { AutonomyGovernor, } from "../../autonomy/governor";
 import type { AutonomyScopeKind, } from "../../autonomy/governor/types";
 import { AutonomyScheduler, } from "../../autonomy/scheduler";
 import { NO_CHAT, } from "../../autonomy/scheduler/store";
+import { CharacterInternalTraitsService, } from "../../characters/services/internal-traits";
 import type { DB, } from "../../db/schema";
 import { ErrorResponse, } from "../../validation/schemas";
+import { requireActorAccess, } from "../actor-auth";
 import { extractAuth, jsonError, jsonResponse, } from "../http-utils";
 import { requireWorldOwner, } from "./access";
 import type { HandleOpts, } from "./types";
@@ -167,6 +170,47 @@ export function autonomyRoutes(opts: HandleOpts, prefix = "/api",) {
           summary: "Pause, resume, or single-step a world's autonomy loop",
           description:
             "Human-in-loop control over the world tick. `step` forces one tick regardless of the pause flag and cursor; the pause survives it.",
+          tags: ["Worlds",],
+        },
+      },
+    )
+    .put(
+      `${prefix}/worlds/:worldId/autonomy/actor/:actorId`,
+      async (ctx: any,) => {
+        const { userId, userRole, } = extractAuth(ctx,);
+        const { worldId, actorId, } = ctx.params as { worldId: string; actorId: string };
+        const denied = await requireWorldOwner(database, worldId, userId, userRole,);
+        if (denied) { return denied; }
+
+        // Owning the world is not owning every actor in it: an admin can
+        // hold world ownership without owning the cast. Gate the actor
+        // layer on the same helper the traits route uses.
+        const access = await requireActorAccess(
+          { ...ctx, params: { actorId, }, } as Parameters<typeof requireActorAccess>[0],
+          database,
+        );
+        if (access instanceof Response) { return access; }
+
+        // `{}` is how the per-actor layer says "no override of my own" —
+        // that is also the clear, so the panel never sends null here.
+        const { autonomy, } = ctx.body as { autonomy?: AutonomyConfigOverride };
+        const svc = new CharacterInternalTraitsService(database,);
+        try {
+          await svc.upsert(actorId, { autonomyPreferences: { autonomy: autonomy ?? {}, }, },);
+          return jsonResponse(
+            await resolveAutonomyLayers(database, { worldId, chatId: NO_CHAT, actorId, },),
+          );
+        } catch (err) {
+          return jsonError({ message: `Failed to save actor autonomy: ${String(err,)}`, status: 500, },);
+        }
+      },
+      {
+        body: t.Object({ autonomy: t.Optional(t.Record(t.String(), t.Unknown(),),), },),
+        response: { 200: t.Any(), 401: ErrorResponse, 403: ErrorResponse, 404: ErrorResponse, },
+        detail: {
+          summary: "Set a character's autonomy pacing override",
+          description:
+            "Writes the per-actor layer (the highest-precedence override) and returns the full resolved layer set. Send an empty object to clear the override.",
           tags: ["Worlds",],
         },
       },

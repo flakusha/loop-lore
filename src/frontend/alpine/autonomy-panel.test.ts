@@ -127,7 +127,7 @@ describe("autonomyPanelFactory", () => {
     expect(calls[1]?.url,).toContain("actorId=a1",);
   });
 
-  test("saveActor writes the character traits, not the world", async () => {
+  test("saveActor writes the per-actor layer, not the world", async () => {
     const state = autonomyPanelFactory({ worldId: "w1", layer: "world", actorId: "a1", },);
     await state.init();
     state.autoActorDraft.perUserCap = 2;
@@ -136,10 +136,8 @@ describe("autonomyPanelFactory", () => {
 
     await state.saveActor();
     const put = calls.find((c,) => c.method === "PUT");
-    expect(put?.url,).toBe("/api/character-internal-traits?actorId=a1",);
-    expect(JSON.parse(put?.body ?? "",),).toEqual(
-      { autonomyPreferences: { autonomy: { perUserCap: 2, }, }, },
-    );
+    expect(put?.url,).toBe("/api/worlds/w1/autonomy/actor/a1",);
+    expect(JSON.parse(put?.body ?? "",),).toEqual({ autonomy: { perUserCap: 2, }, },);
   });
 
   test("saveActor is a no-op with no character selected", async () => {

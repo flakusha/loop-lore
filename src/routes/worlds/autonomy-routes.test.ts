@@ -234,3 +234,109 @@ describe("POST /api/worlds/:worldId/autonomy/control", () => {
     expect(after.simulation.paused,).toBe(0,);
   });
 });
+
+const ACTOR_URL = (wid: string, actorId: string,) => `${BASE}/api/worlds/${wid}/autonomy/actor/${actorId}`;
+
+/**
+ * @param actorId the character to write the override for
+ * @param body the request body
+ * @param as an app bound to another identity, or the default owner
+ * @returns the raw response
+ */
+function putActor(actorId: string, body: unknown, as?: Elysia,): Promise<Response> {
+  const target = as ?? app;
+  return target.handle(
+    new Request(ACTOR_URL(worldId, actorId,), {
+      method: "PUT",
+      headers: { "content-type": "application/json", },
+      body: JSON.stringify(body,),
+    },),
+  );
+}
+
+/**
+ * @param name the character's display name
+ * @param ownerId the user who owns the character row
+ * @returns a world member that `ownerId` may write an override for
+ */
+async function addActor(name: string, ownerId: string,): Promise<string> {
+  const actorId = uid();
+  await insertActors(db, name, {
+    id: actorId,
+    actor_type: "character",
+    agent_type: "npc",
+    owner_id: ownerId,
+  },);
+  await db.insertInto("world_members",).values({ world_id: worldId, actor_id: actorId, },).execute();
+  return actorId;
+}
+
+describe("PUT /api/worlds/:worldId/autonomy/actor/:actorId", () => {
+  test("the per-actor override wins over the world and chat layers", async () => {
+    const actorId = await addActor("Zara", ownerId,);
+    const res = await putActor(actorId, { autonomy: { preset: "brisk", perAgentCap: 2, }, },);
+    expect(res.status,).toBe(200,);
+
+    const data = await readAutonomy(`?actorId=${actorId}&chatId=${chatId}`,);
+    expect(data.layers.actor,).toEqual({ preset: "brisk", perAgentCap: 2, },);
+    expect(data.resolved.preset,).toBe("brisk",);
+  });
+
+  test("leaves the traits the panel does not own untouched", async () => {
+    const actorId = await addActor("Bryn", ownerId,);
+    await db.insertInto("character_internal_traits",).values({
+      actor_id: actorId,
+      aspirations: JSON.stringify({ primary: "find the sea", },),
+    },).execute();
+
+    await putActor(actorId, { autonomy: { preset: "serene", }, },);
+
+    const row = await db
+      .selectFrom("character_internal_traits",)
+      .select(["aspirations", "autonomy_preferences",],)
+      .where("actor_id", "=", actorId,)
+      .executeTakeFirstOrThrow();
+    expect(row.aspirations,).toContain("find the sea",);
+    expect(row.autonomy_preferences,).toContain("serene",);
+  });
+
+  test("an empty object clears the override back to the world layer", async () => {
+    const actorId = await addActor("Cass", ownerId,);
+    await putActor(actorId, { autonomy: { preset: "brisk", }, },);
+
+    const res = await putActor(actorId, { autonomy: {}, },);
+    expect(res.status,).toBe(200,);
+
+    const data = await readAutonomy(`?actorId=${actorId}`,);
+    expect(data.layers.actor,).toEqual({},);
+    expect(data.resolved.preset,).toBe("serene",);
+  });
+
+  test("owning the world is not enough to write someone else's character", async () => {
+    const castOwnerId = uid();
+    await insertUsers(db, "cast-" + castOwnerId, "Cast", { id: castOwnerId, },);
+    const otherOwnerId = uid();
+    await insertUsers(db, "ow-" + otherOwnerId, "Other", { id: otherOwnerId, },);
+    await db.updateTable("worlds",).set({ owner_id: otherOwnerId, },).where("id", "=", worldId,).execute();
+    const actorId = await addActor("Dev", castOwnerId,);
+
+    const res = await putActor(actorId, { autonomy: { preset: "brisk", }, }, appAs(otherOwnerId,),);
+    expect(res.status,).toBe(404,);
+
+    const row = await db
+      .selectFrom("character_internal_traits",)
+      .select("autonomy_preferences",)
+      .where("actor_id", "=", actorId,)
+      .executeTakeFirst();
+    expect(row,).toBeUndefined();
+  });
+
+  test("a non-owner cannot write a character override at all", async () => {
+    const actorId = await addActor("Zara", ownerId,);
+    const strangerId = uid();
+    await insertUsers(db, "s3-" + strangerId, "S3", { id: strangerId, },);
+
+    const res = await putActor(actorId, { autonomy: { preset: "brisk", }, }, appAs(strangerId,),);
+    expect(res.status,).toBe(403,);
+  });
+});
