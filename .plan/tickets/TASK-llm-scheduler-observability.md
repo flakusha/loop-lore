@@ -20,7 +20,7 @@
   - `narrow` events on 429-driven cap reduction, per provider
   - `rotate` events with the cost in ms, once `FEAT-llama-swap-rotation-exclusion-policy` lands
 - [ ] Metrics reuse the existing per-request correlation id (`attemptId` from the cancellation tracker) so a wait time can be joined to the generation it delayed. Do not mint a second correlation scheme.
-- [ ] **A read-only status surface** exposes current queue depth and per-provider in-flight/queued counts, on the existing generation-status route family rather than a new top-level route. `GET /api/generation/active` (`epic-generation-flow-control.md`) is the natural host — extend it, do not fork it.
+- [ ] **A read-only status surface** exposes current queue depth and per-provider in-flight/queued counts, on the existing generation-status route family rather than a new top-level route. `GET /api/v1/generation/active` (`src/generation/controller.ts:96`, handler `handleListActiveGenerations`) is the natural host — extend it, do not fork it.
 - [ ] No admin *control* surface here (pause, limit adjustment, cancel-all) — that is `TASK-admin-generation-controls` in `epic-generation-flow-control.md`. Read-only only.
 - [ ] Queue depth is a gauge sampled on enqueue/dequeue, not a cumulative counter — a monotonic counter cannot answer "how deep is the queue right now".
 - [ ] The `llmRequestStateMachine` states (`pending`/`queued`/`scheduled`/`generating`/`paused`/terminals, `src/llm/message-state-machine.ts:37-59`) are reflected in the emitted state field, so the wire format and the state machine do not drift apart.
@@ -31,7 +31,7 @@
 
 **Read-only on purpose.** Adding scheduler controls here would create a second admin path alongside `TASK-admin-generation-controls` in the sibling epic, and two paths to the same switch always disagree. This ticket observes; that ticket controls.
 
-**Extend `/api/generation/active`, do not fork it.** A new scheduler-status route duplicates the existing active-generation view and gives clients two endpoints whose numbers can disagree under load. Extending the existing route keeps one source of truth.
+**Extend `/api/v1/generation/active`, do not fork it.** A new scheduler-status route duplicates the existing active-generation view and gives clients two endpoints whose numbers can disagree under load. Extending the existing route keeps one source of truth.
 
 **Join on the existing id.** The generation already carries an `attemptId` through cancellation tracking and telemetry. A scheduler-specific correlation id would need its own propagation and would eventually diverge from the one the frontend already logs against.
 
