@@ -29,3 +29,6 @@ Suspects: a chat store/component reading `$store.<x>.children` / `.visibility` b
 - [x] Chat view renders chat list (empty state at minimum) without console errors (safe defaults now provided by `stores/index.ts`)
 - [x] `chat-flow.browser.ts` "chat list panel has chat template in DOM" (strengthened behavioral assertion) passes (defended by the new defaults + chatLifecycle guard)
 - [x] smoke chat-view cluster passes (covered by the same fix)
+
+
+git issue: 328ceac
