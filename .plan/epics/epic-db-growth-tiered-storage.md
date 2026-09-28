@@ -37,6 +37,8 @@ As the single-file SQLite DB (`loop-lore.db`, WAL mode, `src/db/index.ts`) grows
 Research: scout report DbSplittingProbe (2026-09-26) — current wiring (src/db/index.ts, migrate.ts, append-only migrations, scripts/backup-sqlite.ts), 6 options evaluated (ATTACH / domain-sharding / VACUUM-archive / read-replica / per-file-crypto / cross-DB FTS), growth ranking (messages > search_tokens > assets > memory_embeddings > logs/counters > telemetry-bounded).
 ```
 
+> **Status of that research (2026-09-28 review):** the scout report is not retained anywhere in the repo, so the growth ranking above is currently an unverified claim. `TASK-db-growth-measurement-baseline.md` reproduces it with `dbstat` + `PRAGMA page_count/freelist_count`; until that ticket lands, treat the ranking as a hypothesis, not a premise. Separately, `BUG-memory-embeddings-orphaned-on-actor-delete.md` shows the `memory_embeddings` growth is already leaking today (no FK, delete helper called only from tests), so at least part of this epic's problem is a bug fix rather than a storage split.
+
 - Phase order: archival → asset lifecycle → backup consistency → embedding pruning → telemetry partitions → read replica. Each phase ships independently; replica last and only on measured need.
 - Archive DBs get their own WAL + `PRAGMA foreign_keys = ON` per connection; migrations apply to archive DBs to prevent drift (append-only policy).
 
