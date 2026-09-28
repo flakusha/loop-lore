@@ -3,7 +3,7 @@
 
 import type { ImageProviderConfig, } from "../../config/schema";
 import { safeFetch, safeJsonStringify, } from "../../utils";
-import { decodeB64, failure, ok, } from "./helpers";
+import { decodeImages, failure, } from "./helpers";
 import type { ImageGenOptions, ImageGenOutcome, } from "./types";
 
 /**
@@ -45,8 +45,8 @@ export async function generateOpenAI(
   }
 
   const data = result.data;
-  return ok(
-    Array.from(data.data, (d,) => decodeB64(d.b64_json,),),
+  return decodeImages(
+    data.data.map((d,) => d.b64_json),
     outputFormat === "jpeg" ? "image/jpeg" : "image/png",
   );
 }
