@@ -1,9 +1,15 @@
 # Autonomy Scheduler
 
 `src/autonomy/scheduler/` — world-tick loop that drives the actor
-autonomy subsystem. Pure module: no singleton, no `setInterval`, no
-cron. The caller owns an `AutonomyScheduler` instance and decides when
-a tick happens.
+autonomy subsystem. The module itself is pure: no singleton, no
+`setInterval`, no cron. The caller owns an `AutonomyScheduler`
+instance and decides when a tick happens.
+
+In production that caller is the `autonomy.world-tick` job in the cron
+catalog (`src/cron/jobs.ts`), which runs every minute. The job only
+pumps the due-set selection — per-world cadence comes from each
+world's resolved `tickIntervalMs`, so a world whose `next_tick_at`
+cursor has not arrived is skipped without being rescheduled.
 
 ## Use
 
@@ -66,7 +72,7 @@ driver is the only dispatch target in v1.
 
 ## Persistence
 
-One row in `world_simulation_state` per world (migration `023`):
+One row in `world_simulation_state` per world (migration `027`):
 
 | Column         | Meaning                                             |
 | -------------- | --------------------------------------------------- |
