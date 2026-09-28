@@ -165,10 +165,13 @@ describe("Chat compression-encryption-decryption flow (UI)", () => {
           .where("chat_id", "=", SEED.soloChat.id,)
           .orderBy("created_at", "desc",)
           .executeTakeFirst();
-        if (candidate && candidate.id !== beforeId) { row = candidate; break; }
-        await new Promise((r) => setTimeout(r, 250));
+        if (candidate && candidate.id !== beforeId) {
+          row = candidate;
+          break;
+        }
+        await new Promise((r,) => setTimeout(r, 250,));
       }
-      expect(row, "no new message row appeared after send").toBeDefined();
+      expect(row, "no new message row appeared after send",).toBeDefined();
       expect(row!.content,).not.toContain(secret,);
       expect(row!.key_id,).not.toBeNull();
 
@@ -176,20 +179,20 @@ describe("Chat compression-encryption-decryption flow (UI)", () => {
       // on `"algo":` passed a mutation that rewrote the algorithm to
       // aes-128-ctr — it checked JSON punctuation, not encryption. Parsing the
       // envelope makes each field carry its own contract.
-      const envelope = JSON.parse(row!.content) as {
+      const envelope = JSON.parse(row!.content,) as {
         enc?: unknown;
         nonce?: unknown;
         algo?: unknown;
         comp?: unknown;
         key_id?: unknown;
       };
-      expect(typeof envelope.enc, "enc must be base64 ciphertext").toBe("string",);
+      expect(typeof envelope.enc, "enc must be base64 ciphertext",).toBe("string",);
       expect((envelope.enc as string).length,).toBeGreaterThan(0,);
-      expect(typeof envelope.nonce, "nonce must be a 12-byte base64 string").toBe("string",);
+      expect(typeof envelope.nonce, "nonce must be a 12-byte base64 string",).toBe("string",);
       expect(Buffer.from(envelope.nonce as string, "base64",).byteLength,).toBe(12,);
       expect(envelope.algo,).toBe("aes-256-gcm",);
-      expect(typeof envelope.comp, "comp must be a boolean").toBe("boolean",);
-      expect(envelope.key_id, "envelope key_id must match the row key_id").toBe(row!.key_id,);
+      expect(typeof envelope.comp, "comp must be a boolean",).toBe("boolean",);
+      expect(envelope.key_id, "envelope key_id must match the row key_id",).toBe(row!.key_id,);
 
       // API also returns plaintext (server-side decrypt).
       //
@@ -200,18 +203,21 @@ describe("Chat compression-encryption-decryption flow (UI)", () => {
       let list: { status: number; body: string } | undefined;
       for (let attempt = 0; attempt < 20; attempt++) {
         const page1 = await page.evaluate(async (chatId,) => {
-          const fetchAll = async (p: number) => {
+          const fetchAll = async (p: number,) => {
             const r = await fetch(`/api/v1/chats/${chatId}/messages?page=${p}&pageSize=100`, {
               credentials: "include",
-            });
+            },);
             return { status: r.status, body: await r.text(), };
           };
-          return { first: await fetchAll(1), second: await fetchAll(2), };
+          return { first: await fetchAll(1,), second: await fetchAll(2,), };
         }, SEED.soloChat.id,);
         const combined = `${page1.first.body}\n${page1.second.body}`;
         list = page1.first;
-        if (page1.first.status === 200 && combined.includes(secret)) { list = { ...page1.first, body: combined, }; break; }
-        await new Promise((r) => setTimeout(r, 250));
+        if (page1.first.status === 200 && combined.includes(secret,)) {
+          list = { ...page1.first, body: combined, };
+          break;
+        }
+        await new Promise((r,) => setTimeout(r, 250,));
       }
       expect(list!.status,).toBe(200,);
       expect(list!.body,).toContain(secret,);
