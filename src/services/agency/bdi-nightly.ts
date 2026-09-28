@@ -149,13 +149,22 @@ async function newId(db: Kysely<DB>,): Promise<string> {
   return row.rows[0]!.id;
 }
 
+/** The actor's world, via the `world_members` link.
+ *
+ *  An actor may belong to several worlds; `world_id ASC` keeps the choice
+ *  deterministic so a restart re-derives the same plan row.
+ *
+ *  This used to return `actorId` whenever the actor existed, which wrote
+ *  the actor's own id into `actor_daily_plans.world_id`.
+ */
 async function actorWorldId(db: Kysely<DB>, actorId: string,): Promise<string | null> {
   const row = await db
-    .selectFrom("actors",)
-    .select("id",)
-    .where("id", "=", actorId,)
+    .selectFrom("world_members",)
+    .select("world_id",)
+    .where("actor_id", "=", actorId,)
+    .orderBy("world_id", "asc",)
     .executeTakeFirst();
-  return row ? actorId : null;
+  return row?.world_id ?? null;
 }
 
 function todayIso(): string {
