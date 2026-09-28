@@ -12,7 +12,9 @@
  */
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
+
 import type { Kysely, } from "kysely";
+import { EMPTY_AUTONOMY_OVERRIDE, } from "../../autonomy/config";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
@@ -20,6 +22,8 @@ import { insertActors, insertUsers, } from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
 import type { HandleOpts, } from "./types";
 import { worldRoutes, } from "./worlds-routes";
+
+import { autonomyUpdate, } from "./autonomy-config";
 
 type TestDb = Awaited<ReturnType<typeof createTestDb>>;
 
@@ -192,5 +196,52 @@ describe("PUT /api/worlds/:worldId — autonomyConfig", () => {
     expect(res.status,).toBe(403,);
     // Untouched default: no override was written by the rejected call.
     expect(await readColumn(worldId,),).toBe("{}",);
+  });
+});
+
+/**
+ * `autonomyUpdate` is a trust-boundary normaliser: whatever a client puts in
+ * the `autonomyConfig` field becomes a TEXT column the resolver later parses.
+ * The routes above only ever send shapes the settings page produces, so the
+ * non-object rejections never run through HTTP — they are pinned here
+ * directly, since accepting one would write a value the resolver silently
+ * discards (or a NOT NULL violation) with no visible error.
+ */
+describe("autonomyUpdate — direct normaliser contract", () => {
+  /**
+   * @param r
+   * @returns the response status, or null when the value was accepted
+   */
+  async function statusOf(r: ReturnType<typeof autonomyUpdate>,): Promise<number | null> {
+    return r.ok ? null : r.error.status;
+  }
+
+  test("an absent field yields undefined so the caller skips the column", () => {
+    const r = autonomyUpdate(undefined,);
+    expect(r.ok,).toBe(true,);
+    if (!r.ok) { return; }
+    expect(r.value,).toBeUndefined();
+  });
+
+  test("null clears the world layer with the empty override, not SQL NULL", () => {
+    const r = autonomyUpdate(null,);
+    expect(r.ok,).toBe(true,);
+    if (!r.ok) { return; }
+    // The column is NOT NULL DEFAULT '{}' and the resolver reads {} as
+    // "no override"; writing SQL NULL would violate the constraint.
+    expect(r.value,).toBe(EMPTY_AUTONOMY_OVERRIDE,);
+    expect(r.value,).not.toBeNull();
+  });
+
+  test("a bare number is a 400: the resolver would read a non-object", async () => {
+    const r = autonomyUpdate(42,);
+    expect(await statusOf(r,),).toBe(400,);
+    if (r.ok) { return; }
+    const body = await r.error.json() as { error: string };
+    expect(body.error,).toBe("autonomyConfig must be an object or JSON string",);
+  });
+
+  test("a boolean is a 400 for the same reason", async () => {
+    expect(await statusOf(autonomyUpdate(true,),),).toBe(400,);
   });
 });

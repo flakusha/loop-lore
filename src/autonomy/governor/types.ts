@@ -52,6 +52,9 @@ export interface TryConsumeOptions {
   sessionId?: string;
   /** Chat ID for telemetry scoping. */
   chatId?: string;
+
+  /** World id for config resolution. Defaults to the chat's own world. */
+  worldId?: string;
 }
 
 /** Result of a `tryConsume` call. */
