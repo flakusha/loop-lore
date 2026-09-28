@@ -31,6 +31,7 @@ The guard's stated purpose is to reject malformed input, and the M7 review rejec
 `memory/audit.ts` passes `MAX_CURSOR_BYTES = 512` precisely so an oversized request is rejected early, but a 20 MB cursor is fully decoded first. Derive the encoded-length bound from `maxSize` (`ceil(maxSize / 3) * 4`, plus slack for the url alphabet) so the per-call cap actually caps the work.
 
 ## Acceptance Criteria
+
 - [ ] `safeFromBase64Url` rejects every input containing ASCII whitespace, with a test per whitespace class (space, tab, LF, CRLF, VT, FF)
 - [ ] The encoded-length pre-check derives from `maxSize`, so `safeFromBase64Url(x, 512)` rejects a 1 MB input without decoding it (assert via a payload that would throw if decoded)
 - [ ] The canonical-alphabet guarantee is stated in the function JSDoc: accepted input is exactly RFC 4648 s4 or s5 with optional padding
@@ -38,6 +39,7 @@ The guard's stated purpose is to reject malformed input, and the M7 review rejec
 - [ ] Existing `guards.test.ts` cases still pass, plus a case asserting the 256-byte round-trip is unaffected
 
 ## Notes
+
 All five acceptance criteria on the base64 helper ticket are met; these are defects within the shipped implementation, not gaps in that ticket.
 
 The original `decodedResult.ok` pattern this replaced was rejected for substituting a silent default. Silent whitespace stripping is the same class of problem at the decode layer.
