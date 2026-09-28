@@ -10,6 +10,26 @@
 **Summary:** Per open-debt.md § Migration hygiene #2, duplicate numeric prefixes (041×2, 042×2, 044×2, 046×3, 047×3, 054×2) are unenforced today. The next migration must take 057 and numbers must never be reused. This ticket is the check-gate addition that prevents future duplicate-prefix regressions and validates the migration parts/ pointers that .plan/code-map.json references but don't exist as files (5 historical/ghost pointers).
 **Context:** Open-debt.md § Migration hygiene #1 documents that `migrations/parts/` is the real schema source (`001_init.ts:11-40` ESM-imports every `parts/NNN_*.ts`), while `migrate.ts` readdirSync loader intentionally ignores `parts/`. code-map.json contains 5 keys referencing non-existent parts files (004_chats_actors, 005_actor_data, 006_messages_keys, 007_story_generation, 016_telemetry_events). #3 (combine-applied-migrations) is closed (append-only holds); #2 (duplicate prefixes) is open.
 
+## Status correction (2026-09-28, DB-split review)
+
+Both premises of this ticket are stale:
+
+1. **The gate now exists** - `scripts/check-migration-ordering.ts` scans `src/db/migrations/*.ts` and already checks stray files, loader-scope order stability, and duplicate numeric prefixes. Step 1 is done; step 2 (wiring) is done - it runs as the `migrations - ordering` check gate.
+2. **It is currently RED on `dev`** and has been, independent of any plan-doc work:
+
+   ```
+   X loader scope: duplicate numeric prefixes (1):
+       prefix 021:
+         - src/db/migrations/021_game_states.ts
+         - src/db/migrations/021_prompt_templates_workflow_modality.ts
+   ```
+
+   Reproduce with `bun run scripts/check-migration-ordering.ts` on a clean `dev` checkout.
+
+Also stale: the Context paragraph describes a `migrations/parts/` tree that no longer exists, and the duplicate-prefix list (041x2 ... 054x2) predates the current 23-file series.
+
+So the remaining work is not "add a gate" but "resolve the live `021` collision, then re-verify". Note the constraint: `021_game_states.ts` and `021_prompt_templates_workflow_modality.ts` are both shipped, so under the append-only policy the fix is a rename/renumber decision with live-database implications, not a free renumber.
+
 ## Steps
 
 1. Add a check step in scripts/check/ that:
