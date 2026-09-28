@@ -9,7 +9,7 @@
 **Epic:** epic-db-growth-tiered-storage
 **Tags:** database, backup, durability
 
-**Summary:** The shipped backup path copies `loop-lore.db`, `-wal` and `-shm` with plain `copyFileSync` while the app may be writing. That is a torn snapshot, and the tar it builds omits the `-shm` file it just copied.
+**Summary:** The shipped backup path copies `loop-lore.db`, `-wal` and `-shm` with plain `copyFileSync` while the app may be writing. If a checkpoint lands between the two copies the backup is missing data that was committed - reproduced deterministically as a restore with no schema at all - and the tar it builds omits the `-shm` file it just copied.
 **Context:** Found while reviewing the DB-split epics. This is a live durability bug in the backup path, independent of any storage-splitting work - tiered storage makes it worse by adding archive DBs to the same script. `TASK-backup-consistency-vacuum-into-snapshots-plus-archive-dbs.md` already names the fix but is filed as a `medium` / epic-scoped task; this is a `high` correctness issue on the current single-DB path.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
@@ -17,15 +17,29 @@
 
 `scripts/backup-sqlite.ts:41-56`:
 
-- `copyFileSync(DB_PATH, BACKUP_BASE)` then `copyFileSync(walPath, ...)` and `copyFileSync(shmPath, ...)` - three independent reads of a database that another process may be committing into. SQLite's own guidance is to run `wal_checkpoint(TRUNCATE)` (or use the backup API) before copying, because the WAL can change between the copy of the main DB and the copy of the WAL.
+- `copyFileSync(DB_PATH, BACKUP_BASE)` then `copyFileSync(walPath, ...)` and `copyFileSync(shmPath, ...)` - three independent reads of a database that another process may be committing into.
 - The `tar` argv built immediately after (`basename(BACKUP_BASE)`, `basename(BACKUP_BASE) + "-wal"`) omits `-shm`. So the copied `-shm` is never archived - dead work at best, and evidence the copy sequence was never reasoned about as a unit.
-- No `PRAGMA integrity_check` or row-count assertion in the backup path itself; `scripts/validate-backup-restore.ts:72` only runs `integrity_check` on a decrypted file, which detects page corruption but not a semantically torn snapshot.
+- No row-count assertion in the backup path. `scripts/validate-backup-restore.ts:72` runs `PRAGMA integrity_check` on the decrypted file; that verifies page-level structure only, so a backup that is missing whole tables or rows still passes it. The reproduction below produces exactly that: a restore where the table is simply not there to query.
 
-`VACUUM INTO` is available on this `bun:sqlite` build (verified), and produces a consistent single-file snapshot with no WAL sidecars - which is what the tiered-storage epic already proposes.
+### Reproduction (2026-09-28)
+
+The failure is specifically **a checkpoint landing between the two copies**, not concurrent writes. Concurrent writes are the SAFE direction: a main file older than its WAL replays forward. The unsafe direction is:
+
+1. `copyFileSync(db)` - main file at state M
+2. the app runs a checkpoint - WAL frames are folded into the main file and **the WAL is reset**
+3. `copyFileSync(db-wal)` - the NEW, reset WAL, which no longer contains the folded frames
+
+Result: frames that lived only in the pre-reset WAL exist in neither copy. Observed on this `bun:sqlite` build (bun 1.4.2):
+
+- `PRAGMA wal_checkpoint(TRUNCATE)` between the copies: **6/6 trials produced a backup where the table did not exist** (`SQLiteError: no such table: t`). Deterministic.
+- `PRAGMA wal_checkpoint(PASSIVE)` between the copies: 6/6 trials recovered all rows. Timing-dependent, not safe.
+- Partial-checkpoint pressure (large rows + a concurrent reader holding a read txn, forcing `RESTART` to stop partway) did not lose rows in 40 trials - so row loss is real but harder to hit than schema loss.
+
+So the worst case is a backup that restores to a database **missing the schema**, not merely stale rows - and `integrity_check` will not flag it.
 
 ## Fix Shape
 
-Replace the copy sequence with `wal_checkpoint(TRUNCATE)` + `VACUUM INTO '<dest>'`, or open the source with SQLite's online-backup API. Keep GPG-at-rest and retention as-is; change only how the bytes are obtained.
+Do NOT add `wal_checkpoint(TRUNCATE)` before the copy - that is the operation that produces the failure above. Use `VACUUM INTO '<dest>'` (verified working on this build) or SQLite's online-backup API, both of which produce a consistent single-file snapshot with no WAL sidecars - which is what the tiered-storage epic already proposes. Keep GPG-at-rest and retention as-is; change only how the bytes are obtained.
 
 ## Acceptance Criteria
 
