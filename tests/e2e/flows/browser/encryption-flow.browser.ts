@@ -131,6 +131,18 @@ describe("Chat compression-encryption-decryption flow (UI)", () => {
       );
 
       const secret = `encryption-flow-${Date.now()}`;
+      // Snapshot the newest row BEFORE sending. The assertions below must look
+      // at OUR row, and "newest row" is not that: the htmx swap resolves when
+      // the bubble renders, which is not a barrier for the INSERT, so under load
+      // the newest row was still the previous message. Identifying the row by
+      // id-not-in-snapshot is the only check that cannot pass on a stale row.
+      const before = await ctx.db
+        .selectFrom("messages",)
+        .select(["id",],)
+        .where("chat_id", "=", SEED.soloChat.id,)
+        .orderBy("created_at", "desc",)
+        .executeTakeFirst();
+      const beforeId = before?.id ?? null;
       await page.fill("[data-testid='message-input']", secret,);
       await page.click("[data-testid='send-button']",);
 
@@ -139,29 +151,71 @@ describe("Chat compression-encryption-decryption flow (UI)", () => {
       const bodyText = await page.evaluate(() => document.body.textContent || "");
       expect(bodyText,).not.toContain("[Encrypted \u2014 unable to decrypt]",);
 
-      // DB row is the encrypted payload, not plaintext.
-      const row = await ctx.db
-        .selectFrom("messages",)
-        .select(["content", "key_id", "chat_id",],)
-        .where("chat_id", "=", SEED.soloChat.id,)
-        .orderBy("created_at", "desc",)
-        .executeTakeFirst();
-      expect(row,).not.toBeNull();
+      // The row write races the assertions: the htmx swap resolves when the
+      // bubble renders, which is not a barrier for the INSERT. Reading the
+      // newest row once returned the PREVIOUS message under load. Poll until the
+      // secret's row exists, then assert on that row rather than on "whatever
+      // is newest" — a row count change is not proof it is ours.
+      let row: { id: string; content: string; key_id: string | null } | undefined;
+      const deadline = Date.now() + 15_000;
+      while (Date.now() < deadline) {
+        const candidate = await ctx.db
+          .selectFrom("messages",)
+          .select(["id", "content", "key_id", "chat_id",],)
+          .where("chat_id", "=", SEED.soloChat.id,)
+          .orderBy("created_at", "desc",)
+          .executeTakeFirst();
+        if (candidate && candidate.id !== beforeId) { row = candidate; break; }
+        await new Promise((r) => setTimeout(r, 250));
+      }
+      expect(row, "no new message row appeared after send").toBeDefined();
       expect(row!.content,).not.toContain(secret,);
       expect(row!.key_id,).not.toBeNull();
-      expect(row!.content,).toMatch(/^\{"enc":/,);
-      expect(row!.content,).toMatch(/"algo":/,);
-      expect(row!.content,).toMatch(/"comp":/,);
-      expect(row!.content,).toMatch(/"key_id":/,);
+
+      // Assert the envelope's VALUES, not just its keys. A presence-only match
+      // on `"algo":` passed a mutation that rewrote the algorithm to
+      // aes-128-ctr — it checked JSON punctuation, not encryption. Parsing the
+      // envelope makes each field carry its own contract.
+      const envelope = JSON.parse(row!.content) as {
+        enc?: unknown;
+        nonce?: unknown;
+        algo?: unknown;
+        comp?: unknown;
+        key_id?: unknown;
+      };
+      expect(typeof envelope.enc, "enc must be base64 ciphertext").toBe("string",);
+      expect((envelope.enc as string).length,).toBeGreaterThan(0,);
+      expect(typeof envelope.nonce, "nonce must be a 12-byte base64 string").toBe("string",);
+      expect(Buffer.from(envelope.nonce as string, "base64",).byteLength,).toBe(12,);
+      expect(envelope.algo,).toBe("aes-256-gcm",);
+      expect(typeof envelope.comp, "comp must be a boolean").toBe("boolean",);
+      expect(envelope.key_id, "envelope key_id must match the row key_id").toBe(row!.key_id,);
 
       // API also returns plaintext (server-side decrypt).
-      const list = await page.evaluate(async (chatId,) => {
-        const r = await fetch(`/api/v1/chats/${chatId}/messages`, { credentials: "include", },);
-        return { status: r.status, body: await r.text(), };
-      }, SEED.soloChat.id,);
-      expect(list.status,).toBe(200,);
-      expect(list.body,).toContain(secret,);
-      expect(list.body,).not.toContain("[Encrypted \u2014 unable to decrypt]",);
+      //
+      // The list endpoint paginates (default pageSize 20). The seeded chat can
+      // hold enough messages that the newest one lands on a later page, so
+      // walk pages until the secret appears instead of assuming page 1. Poll
+      // for the same reason as the DB read: the row may not be committed yet.
+      let list: { status: number; body: string } | undefined;
+      for (let attempt = 0; attempt < 20; attempt++) {
+        const page1 = await page.evaluate(async (chatId,) => {
+          const fetchAll = async (p: number) => {
+            const r = await fetch(`/api/v1/chats/${chatId}/messages?page=${p}&pageSize=100`, {
+              credentials: "include",
+            });
+            return { status: r.status, body: await r.text(), };
+          };
+          return { first: await fetchAll(1), second: await fetchAll(2), };
+        }, SEED.soloChat.id,);
+        const combined = `${page1.first.body}\n${page1.second.body}`;
+        list = page1.first;
+        if (page1.first.status === 200 && combined.includes(secret)) { list = { ...page1.first, body: combined, }; break; }
+        await new Promise((r) => setTimeout(r, 250));
+      }
+      expect(list!.status,).toBe(200,);
+      expect(list!.body,).toContain(secret,);
+      expect(list!.body,).not.toContain("[Encrypted \u2014 unable to decrypt]",);
     } finally {
       errors.assert();
       errors.detach();
