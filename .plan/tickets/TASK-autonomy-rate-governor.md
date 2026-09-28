@@ -23,7 +23,7 @@
 Shipped in `src/autonomy/governor/` (`AutonomyGovernor.tryConsume`), gated
 by the tick driver and the scheduler before either dispatches work.
 
-- Persistence: `autonomy_budget` (migration `023_autonomy_budget.ts`), one row
+- Persistence: `autonomy_budget` (migration `026_autonomy_budget.ts`), one row
   per `(scope_kind, scope_id, limit_name)` carrying the window start and
   count, so budgets survive a restart.
 - Limits: `LIMIT_CATALOG` fixes the three windows (per-tick action 60s,
