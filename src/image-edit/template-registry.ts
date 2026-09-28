@@ -27,11 +27,45 @@ export class TemplateRegistry {
   private templates = new Map<string, WorkflowTemplate>();
 
   /**
+   * Ids each managed source contributed, so a source can replace its own slice
+   * without touching anyone else's. Built-in and config workflows use plain
+   * `register()` and never appear here.
+   */
+  private managed = new Map<string, Set<string>>();
+
+  /**
    * Register a workflow template
    * @param template
    */
   register(template: WorkflowTemplate,): void {
     this.templates.set(template.id, template,);
+  }
+
+  /**
+   * Replace every template contributed by `source`.
+   *
+   * Hydration is a full re-read of a table, so it has to be authoritative: a
+   * row the operator deleted or disabled must vanish from the list, not linger
+   * from the previous pass. Only `source`'s own ids are *removed* — built-in
+   * TypeScript templates and config workflows registered by other sources are
+   * not swept.
+   *
+   * A built-in whose id a managed source also claims is still **overwritten**:
+   * the library copy wins, because it is the operator-editable one. This is
+   * deliberate and it is lossy while library rows carry no parameter metadata —
+   * see `src/generation/workflow-library/hydrate.ts`.
+   * @param source - Ownership tag for the templates being replaced
+   * @param templates - The full set `source` now owns
+   */
+  replaceManaged(source: string, templates: WorkflowTemplate[],): void {
+    for (const id of this.managed.get(source,) ?? []) {
+      this.templates.delete(id,);
+    }
+    this.managed.set(source, new Set(),);
+    for (const template of templates) {
+      this.templates.set(template.id, template,);
+      this.managed.get(source,)?.add(template.id,);
+    }
   }
 
   /**

@@ -13,7 +13,7 @@ import type { WorkflowTemplate, } from "../../image-edit/types";
 import { jsonParseOr, } from "../../utils";
 import type { ComfyUINodeInfo, ComfyUIWorkflow, } from "../providers/comfyui";
 import type { WorkflowPayload, } from "../template-types";
-import { substituteWorkflow, type SubstitutionVars, } from "../workflow-substitutor";
+import { collectPlaceholders, substituteWorkflow, type SubstitutionVars, } from "../workflow-substitutor";
 
 /** The columns a workflow library row needs. Matches the generated schema. */
 export interface WorkflowRow {
@@ -51,8 +51,15 @@ export function rowToPayload(row: WorkflowRow,): WorkflowPayload | null {
  * substitution only accepts primitives, so non-primitive caller values are
  * dropped rather than stringified — a `{{width}}` must not become "[object
  * Object]".
+ *
+ * Unresolved placeholders are an error, not an empty string. A library row
+ * that declares no parameters (every seeded row does) would otherwise reach
+ * ComfyUI with `text: ""` and no width, and the server would cheerfully return
+ * a blank image. Failing here makes the missing metadata visible at the call
+ * site instead.
  * @param payload - Validated workflow payload
  * @param params - Caller-supplied parameter values
+ * @throws {Error} When a `{{placeholder}}` survives substitution
  */
 export function buildWorkflowGraph(
   payload: WorkflowPayload,
@@ -63,6 +70,26 @@ export function buildWorkflowGraph(
     if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
       vars[key] = value;
     }
+  }
+  // Resolve the needed set from the *body*, before substitution: the
+  // substitutor replaces an unknown placeholder with "", so scanning the output
+  // would always come back clean.
+  //
+  // Only a template that declares NO parameters at all is rejected. An
+  // unfilled *optional* parameter is legitimate and still collapses to ""; a
+  // zero-parameter template whose body has placeholders is a metadata gap, and
+  // submitting it would send ComfyUI an empty prompt and return a blank image.
+  //
+  // "Missing" means the caller passed no such key at all. A key that was
+  // supplied but held a non-primitive was deliberately dropped above, and that
+  // path already has its own contract — it must not be reported as missing.
+  const provided = new Set(Object.keys(params,),);
+  const missing = [...collectPlaceholders(payload.body,),].filter((name,) => !provided.has(name,));
+  if (payload.parameters.length === 0 && missing.length > 0) {
+    throw new Error(
+      `workflow has unresolved placeholders: ${missing.join(", ",)}. ` +
+        `Declare them as parameters before running this workflow.`,
+    );
   }
   return substituteWorkflow(payload.body, vars,) as ComfyUIWorkflow;
 }
