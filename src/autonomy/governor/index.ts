@@ -1,30 +1,20 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// size-allow: 341
-// One class whose gate sequence (config resolve → read row → window
-// check → upsert) reads as a single ordered transaction.
-
 // src/autonomy/governor/index.ts — Autonomy rate governor
 //
-// Pure module: no scheduler / tick-driver / cron dependency. The scheduler
-// and tick driver (separate tickets) call `tryConsume` as a gate before
-// dispatching work.
-//
-// Persistence: every consume reads + writes `autonomy_budget` so state
-// survives process restarts. An in-memory cache avoids SELECT-per-consume
-// when the same scope/limit is hit within `cacheTtlMs`.
-//
-// Telemetry: emits `governor.budget.exceeded` once on the failing
-// tryConsume. Fires-and-forgets — never blocks the gate decision.
-
+// Pure module: no scheduler / tick-driver / cron dependency. The gate
+// sequence (config resolve → read row → window check → upsert) reads as one
+// ordered transaction; the row cache lives in ./cache.ts and cap resolution
+// in ./caps.ts so this file stays under the 250-line size gate. Emits
+// `governor.budget.exceeded` once per denial, fire-and-forget.
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
 import { record, } from "../../telemetry/service";
 import { toDate, } from "../../utils/date";
-import { resolveAutonomyConfig, } from "../config";
-import type { AutonomyConfig, } from "../config";
+import { BudgetCache, } from "./cache";
+import { capFromConfig, resolveScopeConfig, } from "./caps";
 import type {
   AutonomyScope,
   BudgetRow,
@@ -62,28 +52,6 @@ export const LIMIT_CATALOG: GovernorLimitCatalog = {
   per_hour_beat_dispatch: { windowMs: 3_600_000, cap: null, },
 } as const;
 
-/** Resolve the cap for a given scope/limit from a layered AutonomyConfig.
- *  - "actor" limits use `perAgentCap` (null = unbounded).
- *  - "user"  limits use `perUserCap`.
- */
-function capFromConfig(
-  scope: AutonomyScope,
-  _limitName: GovernorLimitName,
-  cfg: AutonomyConfig,
-): number | null {
-  return scope.kind === "actor" ? cfg.perAgentCap : cfg.perUserCap;
-}
-
-/** Compose the cache key. */
-function cacheKey(scope: AutonomyScope, limitName: GovernorLimitName,): string {
-  return `${scope.kind}|${scope.id}|${limitName}`;
-}
-
-interface CacheEntry {
-  row: BudgetRow;
-  expiresAtMs: number;
-}
-
 /**
  * Autonomy rate governor.
  *
@@ -104,11 +72,10 @@ interface CacheEntry {
  * ```
  */
 export class AutonomyGovernor {
-  readonly #cacheTtlMs: number;
-  readonly #cache = new Map<string, CacheEntry>();
+  readonly #cache: BudgetCache;
 
   constructor(opts?: { cacheTtlMs?: number },) {
-    this.#cacheTtlMs = opts?.cacheTtlMs ?? DEFAULT_CACHE_TTL_MS;
+    this.#cache = new BudgetCache(opts?.cacheTtlMs ?? DEFAULT_CACHE_TTL_MS,);
   }
 
   /** Test helper: drop the in-memory cache (no-op on production deploy). */
@@ -147,7 +114,7 @@ export class AutonomyGovernor {
     // the resolver reads 2–3 rows on every call.
     const cap = opts.cap !== undefined
       ? opts.cap
-      : capFromConfig(scope, limitName, await this.#resolveConfig(db, scope, opts,),);
+      : capFromConfig(scope, await resolveScopeConfig(db, { scope, opts, },),);
 
     // Unbounded: no DB work, no telemetry.
     if (cap === null) {
@@ -161,7 +128,7 @@ export class AutonomyGovernor {
     }
 
     // Step 2: read current row.
-    const row = await this.#loadRow(db, scope, limitName, nowMs,);
+    const row = await this.#cache.load(db, { scope, limitName, nowMs, },);
 
     // Step 3: compute effective (start, count). If row absent or window
     // has rolled past, reset to (nowMs, 0).
@@ -198,7 +165,7 @@ export class AutonomyGovernor {
         window_count: 0,
         updated_at: nowIso,
       };
-      this.#writeCache(scope, limitName, unchangedRow, nowMs,);
+      this.#cache.write(scope, limitName, unchangedRow, nowMs,);
 
       record(db, {
         eventType: TELEMETRY_EVENT_TRIPPED,
@@ -262,7 +229,7 @@ export class AutonomyGovernor {
       window_count: nextCount,
       updated_at: nowIso,
     };
-    this.#writeCache(scope, limitName, persisted, nowMs,);
+    this.#cache.write(scope, limitName, persisted, nowMs,);
 
     return {
       ok: true,
@@ -271,73 +238,5 @@ export class AutonomyGovernor {
       cap,
       count: nextCount,
     };
-  }
-
-  async #resolveConfig(
-    db: Kysely<DB>,
-    scope: AutonomyScope,
-    opts: TryConsumeOptions,
-  ): Promise<AutonomyConfig> {
-    const chatId = opts.chatId;
-    if (!chatId) {
-      // No chat context: caller drives the cap explicitly. Return a
-      // sentinel config so capFromConfig can run without a real DB lookup.
-      // The caller passed `opts.cap` explicitly when chatId is missing —
-      // capFromConfig output is unused in that path.
-      return resolveAutonomyConfig(db, {
-        worldId: "__none__",
-        chatId: "__none__",
-        actorId: scope.kind === "actor" ? scope.id : undefined,
-      },);
-    }
-    return resolveAutonomyConfig(db, {
-      worldId: "__none__",
-      chatId,
-      actorId: scope.kind === "actor" ? scope.id : undefined,
-    },);
-  }
-
-  async #loadRow(
-    db: Kysely<DB>,
-    scope: AutonomyScope,
-    limitName: GovernorLimitName,
-    nowMs: number,
-  ): Promise<BudgetRow | null> {
-    const key = cacheKey(scope, limitName,);
-    const cached = this.#cache.get(key,);
-    if (cached && cached.expiresAtMs > nowMs) { return cached.row; }
-
-    const row = await db
-      .selectFrom("autonomy_budget",)
-      .selectAll()
-      .where("scope_kind", "=", scope.kind,)
-      .where("scope_id", "=", scope.id,)
-      .where("limit_name", "=", limitName,)
-      .executeTakeFirst();
-
-    if (!row) { return null; }
-
-    const r: BudgetRow = {
-      scope_kind: row.scope_kind as BudgetRow["scope_kind"],
-      scope_id: row.scope_id,
-      limit_name: row.limit_name as BudgetRow["limit_name"],
-      window_start_at: row.window_start_at,
-      window_count: row.window_count,
-      updated_at: row.updated_at,
-    };
-    this.#writeCache(scope, limitName, r, nowMs,);
-    return r;
-  }
-
-  #writeCache(
-    scope: AutonomyScope,
-    limitName: GovernorLimitName,
-    row: BudgetRow,
-    nowMs: number,
-  ): void {
-    this.#cache.set(cacheKey(scope, limitName,), {
-      row,
-      expiresAtMs: nowMs + this.#cacheTtlMs,
-    },);
   }
 }
