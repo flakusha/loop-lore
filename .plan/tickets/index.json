@@ -10018,6 +10018,27 @@
     "title": "LLM Request Throughput & Message Scheduling",
     "type": "EPIC"
   },
+  "EPIC-LLM-REQUEST-SCHEDULER": {
+    "hash": "04ef186",
+    "extid": "EPIC-LLM-REQUEST-SCHEDULER",
+    "type": "EPIC",
+    "title": "LLM Request Scheduler — Complexity, Resources, Model Rotation",
+    "label": "epic",
+    "priority": "high",
+    "epic": "",
+    "tags": [
+      "llm",
+      "scheduler",
+      "queue",
+      "concurrency",
+      "llama-swap",
+      "admission-control",
+      "cost"
+    ],
+    "source": ".plan/epics/epic-llm-request-scheduler.md",
+    "status": "Proposed",
+    "git_issue": "04ef186"
+  },
   "EPIC-LOCAL-PROCESS-SWARM": {
     "epic": "",
     "extid": "EPIC-LOCAL-PROCESS-SWARM",
@@ -14650,6 +14671,19 @@
     "title": "Liveness and readiness endpoints (opt-in by config)",
     "type": "FEAT"
   },
+  "FEAT-LLAMA-SWAP-ROTATION-EXCLUSION-POLICY": {
+    "hash": "2eaea4f",
+    "extid": "FEAT-LLAMA-SWAP-ROTATION-EXCLUSION-POLICY",
+    "type": "FEAT",
+    "title": "llama-swap rotation and exclusion policy",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "`.plan/epics/epic-llm-request-scheduler.md`",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-llama-swap-rotation-exclusion-policy.md",
+    "status": "Not Started",
+    "git_issue": "2eaea4f"
+  },
   "FEAT-LLM-ENHANCE-FOR-CHAT-AND-TEXT-WINDOWS-WITH-LEVELED-REWRITES": {
     "epic": "",
     "extid": "FEAT-LLM-ENHANCE-FOR-CHAT-AND-TEXT-WINDOWS-WITH-LEVELED-REWRITES",
@@ -14662,6 +14696,45 @@
     "tags": [],
     "title": "LLM-enhance for chat and text windows with leveled rewrites",
     "type": "FEAT"
+  },
+  "FEAT-LLM-REQUEST-COMPLEXITY-CLASSIFICATION": {
+    "hash": "27f9dd5",
+    "extid": "FEAT-LLM-REQUEST-COMPLEXITY-CLASSIFICATION",
+    "type": "FEAT",
+    "title": "LLM request complexity classification and priority derivation",
+    "label": "feat",
+    "priority": "high",
+    "epic": "`.plan/epics/epic-llm-request-scheduler.md`",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-llm-request-complexity-classification.md",
+    "status": "Not Started",
+    "git_issue": "27f9dd5"
+  },
+  "FEAT-LLM-RESOURCE-AWARE-ADMISSION-CONTROL": {
+    "hash": "3202973",
+    "extid": "FEAT-LLM-RESOURCE-AWARE-ADMISSION-CONTROL",
+    "type": "FEAT",
+    "title": "Resource-aware admission control",
+    "label": "feat",
+    "priority": "high",
+    "epic": "`.plan/epics/epic-llm-request-scheduler.md`",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-llm-resource-aware-admission-control.md",
+    "status": "Not Started",
+    "git_issue": "3202973"
+  },
+  "FEAT-LLM-SCHEDULER-CONFIG-SURFACE": {
+    "hash": "5247560",
+    "extid": "FEAT-LLM-SCHEDULER-CONFIG-SURFACE",
+    "type": "FEAT",
+    "title": "Scheduler config surface (`[generation.scheduler]`)",
+    "label": "feat",
+    "priority": "high",
+    "epic": "`.plan/epics/epic-llm-request-scheduler.md`",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-llm-scheduler-config-surface.md",
+    "status": "Not Started",
+    "git_issue": "5247560"
   },
   "FEAT-LORA-ADMIN-ANNOTATION-ARCHIVAL": {
     "epic": "epic-lora-discovery-application",
@@ -30571,6 +30644,19 @@
     "title": "LLM Sandboxing",
     "type": "TASK"
   },
+  "TASK-LLM-SCHEDULER-OBSERVABILITY": {
+    "hash": "1051b53",
+    "extid": "TASK-LLM-SCHEDULER-OBSERVABILITY",
+    "type": "TASK",
+    "title": "LLM scheduler observability",
+    "label": "task",
+    "priority": "medium",
+    "epic": "`.plan/epics/epic-llm-request-scheduler.md`",
+    "tags": [],
+    "source": ".plan/tickets/TASK-llm-scheduler-observability.md",
+    "status": "Not Started",
+    "git_issue": "1051b53"
+  },
   "TASK-LOCAL-IMAGE-GENERATION-QUEUE": {
     "epic": "epic-llm-queue.md (see also epic-generation-flow-control.md)",
     "extid": "TASK-LOCAL-IMAGE-GENERATION-QUEUE",
@@ -40355,6 +40441,19 @@
     ],
     "title": "Wire intent output to workflow-runner.startWorkflow",
     "type": "TASK"
+  },
+  "TASK-WIRE-LLM-RESOURCE-MANAGER-INTO-GENERATION-DISPATCH": {
+    "hash": "25e3c7b",
+    "extid": "TASK-WIRE-LLM-RESOURCE-MANAGER-INTO-GENERATION-DISPATCH",
+    "type": "TASK",
+    "title": "Wire `src/llm` ResourceManager into generation dispatch",
+    "label": "task",
+    "priority": "high",
+    "epic": "`.plan/epics/epic-llm-request-scheduler.md`",
+    "tags": [],
+    "source": ".plan/tickets/TASK-wire-llm-resource-manager-into-generation-dispatch.md",
+    "status": "Not Started",
+    "git_issue": "25e3c7b"
   },
   "TASK-WIRE-MEMORY-INJECTION": {
     "epic": "epic-logic-reconciliation",
