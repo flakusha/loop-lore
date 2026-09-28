@@ -1081,7 +1081,7 @@ Total tickets: **3049** — untagged: **2583** — unbound to epic: **1549**
 | yaml | 4 | 0 | 2 | 0 | 1 | 0 | 1 |
 | yaml-frontmatter | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| (untagged) | 2583 | 999 | 59 | 1266 | 36 | 0 | 223 |
+| (untagged) | 2583 | 1001 | 59 | 1264 | 36 | 0 | 223 |
 
 ## By epic × status
 
@@ -1144,7 +1144,7 @@ Total tickets: **3049** — untagged: **2583** — unbound to epic: **1549**
 | epic-accessibility-input | 5 | 1 | 2 | 2 | 0 | 0 | 0 |
 | epic-accessibility-input (Phase 2 Mobile Support, 🟡) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-achievements | 5 | 1 | 1 | 3 | 0 | 0 | 0 |
-| epic-actor-autonomy-story-drive | 7 | 1 | 0 | 3 | 0 | 0 | 3 |
+| epic-actor-autonomy-story-drive | 7 | 3 | 0 | 1 | 0 | 0 | 3 |
 | epic-actor-autonomy-story-drive.md | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
 | epic-actor-turn-skip | 5 | 4 | 0 | 1 | 0 | 0 | 0 |
 | epic-actors | 5 | 3 | 0 | 0 | 0 | 0 | 2 |
