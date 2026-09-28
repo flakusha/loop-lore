@@ -34,6 +34,7 @@ describe("cron default jobs", () => {
       "federation.gossip",
       "federation.resync",
       "providers.health-rescan",
+      "autonomy.world-tick",
       "locations.tick",
       "nsfw.status-sweep",
     ],);

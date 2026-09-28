@@ -29564,10 +29564,6 @@
   "src/routes/rpg/npc-navigation.ts": [
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-actor-autonomy-story-drive.md"
-    },
-    {
-      "kind": "epic",
       "source": ".plan/epics/epic-rpg-wiring-phase3.md"
     },
     {
@@ -34469,12 +34465,20 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-npc-planning-loop.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-story-auto-drive-scheduler.md"
     }
   ],
   "src/services/agency/bdi-reflection.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-npc-plan-revision.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-story-auto-drive-scheduler.md"
     }
   ],
   "src/services/agency/spend-helpers.ts": [
@@ -34883,16 +34887,19 @@
   ],
   "src/story/game-master/execute.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-actor-autonomy-story-drive.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-story-mode-prompt-stored-as-content.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TEST-npc-navigation-processMovementTick-untested.md"
+    }
+  ],
+
+  "src/story/game-master/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-story-auto-drive-scheduler.md"
     }
   ],
   "src/story/game-master/narration.ts": [
@@ -35239,6 +35246,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-alignment-speech-social-context.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-story-auto-drive-scheduler.md"
     },
     {
       "kind": "ticket",
