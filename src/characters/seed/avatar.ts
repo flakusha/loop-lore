@@ -10,7 +10,6 @@ import { mimeFromExtension, } from "../../assets/service";
 import type { CharactersConfig, } from "../../config/schema";
 import { UserRole, UserStatus, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
-import { safeFromString, } from "../../utils/safe-buffer";
 
 /**
  * Normalize a species/race value for consistent storage.
@@ -58,12 +57,7 @@ export function resolveTemplateAvatar(
     '<rect width="256" height="256" fill="#4b5563"/>' +
     '<circle cx="128" cy="104" r="52" fill="#d1d5db"/>' +
     '<path d="M32 240c12-52 56-76 96-76s84 24 96 76z" fill="#d1d5db"/></svg>';
-  const encBuf = safeFromString(svg, "utf8",);
-  return {
-    buffer: encBuf.ok ? encBuf.buffer : Buffer.alloc(0,),
-    mimeType: "image/svg+xml",
-    filename: "default-avatar.svg",
-  };
+  return { buffer: Buffer.from(svg, "utf8",), mimeType: "image/svg+xml", filename: "default-avatar.svg", };
 }
 
 /** Stable id for the system user that owns assets of ownerless (system-seeded) characters. */
