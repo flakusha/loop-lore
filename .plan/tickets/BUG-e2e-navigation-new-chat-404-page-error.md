@@ -37,18 +37,68 @@ console.error: Failed to load resource: the server responded with a status of 40
  1 fail
 ```
 
-## Notes
+## Root cause (established 2026-09-28)
 
-The 404 is not identified by the harness — `trackPageErrors` records the
-message but not the failing URL, so the first step of the fix is to log
-`request.url()` for non-2xx responses in `tests/e2e/helpers/htmx-alpine.ts`.
-Likely candidates on that page: a missing static asset under `src/public/`, or
-an htmx partial that the new-chat view requests after redirect.
+The 404 was a **concurrency race in the shared frontend build**, not a product
+defect. Fixed by `test(e2e): invalidate dist hash before rebuild`.
 
-Note the test also calls `loadNewChatPage?.()` manually because `page.goto()`
-bypasses the `htmx:load` event, so this path is partially synthetic; the 404 may
-be an artifact of that bypass rather than a real user-facing bug. Determine that
-before treating it as a product defect.
+`tests/e2e/helpers/browser-frontend-build.ts` had every browser worker sharing
+one `dist/public` build:
+
+- `isReady()` returned true while a hash file matched the current sources —
+  including while a worker was mid-`cpSync` overwriting that build.
+- `acquireBuildLock(lockPath, isReady)` loops `while (!isReady())`, so a worker
+  arriving during a rebuild saw `isReady()` true, skipped the lock entirely, and
+  returned `distPublic` at the top of the function.
+- That worker then served files another process was still writing, producing the
+  intermittent 404 recorded in the console.
+
+The fix unlinks `.build-hash` **before** rebuilding, so `isReady()` is false for
+the duration and every other worker blocks in `acquireBuildLock` until the new
+build lands.
+
+Reproduced pre-fix as intermittent: on an untouched `dev`, three consecutive
+runs of `navigation.browser.ts` gave `12 pass 1 fail`, then `13 pass`, then
+`13 pass`. Post-fix, the full suite reports `Browser suite passed: 34 files`.
+
+## Remaining improvement
+
+`trackPageErrors` still records only `message.text()` and never the request URL,
+so any *future* unattributed 404 will be just as hard to diagnose. Consider
+including `message.location()` or a `page.on('response')` non-2xx logger so the
+failing resource is named in the assertion message.
+
+## Re-verification 2026-09-29: root cause fixed, gate still red
+
+The `4156e2bf4` fix is present on `dev` and does what the ticket says: the helper
+unlinks `.build-hash` *before* `bun run build:frontend` (`tests/e2e/helpers/browser-frontend-build.ts:96`),
+so `isReady()` reports false for the whole rebuild and other workers block in
+`acquireBuildLock`.
+
+But the gate is **not** green, and the earlier "34 files green" note above does not
+reproduce. Measured on a clean `dev` at `38d95ac01`:
+
+```
+$ E2E_SAFEGUARD=1 bun run scripts/check-parallel.mjs --gates 'e2e - browser (baseline)'
+FAIL: e2e - browser (baseline)
+  Browser suite failed: 1/34 files failed:
+   - ./tests/e2e/flows/browser/navigation.browser.ts
+
+$ E2E_SAFEGUARD=1 bun test ./tests/e2e/flows/browser/navigation.browser.ts
+ 13 pass / 0 fail   (13.55s)
+```
+
+So the failure is concurrency-only: the same file passes standalone and fails inside
+the 34-file parallel suite. `acquireBuildLock` closes the *build* window but the
+suite still shares one `dist/public` tree across workers, so a worker can be reading
+files while a different worker's `cpSync` is mid-write. The unlink-invalidate fixed
+the symptom's most common trigger, not the shared-mutable-output root cause.
+
+The first acceptance criterion is therefore the right next step: without the failing
+URL in the assertion, there is no way to tell which resource 404s under load, and no
+way to tell whether it is `alpine-init.js`, a lazily-fetched view partial, or a font.
+Ticking the criteria on a single green standalone run would be pinning a flaky test,
+not closing the defect.
 
 ## Acceptance Criteria
 

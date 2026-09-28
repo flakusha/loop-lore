@@ -26603,6 +26603,30 @@
       "source": ".plan/tickets/TASK-character-stat-allocation-integration-tests-e2e.md"
     }
   ],
+  "src/routes/character-traits.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-aggregated-traits-endpoint-shadowed-and-dropped.md"
+    }
+  ],
+  "src/routes/character-traits.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-aggregated-traits-endpoint-shadowed-and-dropped.md"
+    }
+  ],
+  "src/routes/character-traits/bulk.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-aggregated-traits-endpoint-shadowed-and-dropped.md"
+    }
+  ],
+  "src/routes/character-traits/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-aggregated-traits-endpoint-shadowed-and-dropped.md"
+    }
+  ],
   "src/routes/character-traits/location.ts": [
     {
       "kind": "ticket",
