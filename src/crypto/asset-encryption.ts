@@ -103,14 +103,13 @@ export async function encryptAssetBlob(
     config,
     aId: assetId,
   },);
+  const dataBuf = safeFromString(encryptedJson, "utf8",);
+  if (!dataBuf.ok) { throw new Error(`Encrypted asset payload too large: ${dataBuf.error.message}`,); }
 
   return {
     encrypted: true,
     keyId,
-    data: ((): Buffer => {
-      const r = safeFromString(encryptedJson, "utf8",);
-      return r.ok ? r.buffer : Buffer.alloc(0,);
-    })(),
+    data: dataBuf.buffer,
   };
 }
 
