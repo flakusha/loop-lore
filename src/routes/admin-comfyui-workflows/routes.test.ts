@@ -112,24 +112,34 @@ describe("admin ComfyUI workflow routes — create", () => {
   });
 
   it("lands the real Anima export — the reference fixture, unmodified on disk", async () => {
+    // Resource contract: owns nothing but the one row it inserts, which the
+    // file-level `beforeEach` clears. `ANIMA_PATH` is a version-controlled file
+    // that no test writes, so reading it is not a shared-resource race.
+    //
     // Reads the shipped file rather than an inline copy, so cleaning the graph
     // and landing it here cannot drift apart. This export is what strict
     // dead-node rejection originally refused (stale `60:45` CLIPLoader); the
     // node was removed because nothing referenced it — both CLIPTextEncode
     // nodes take their clip from 60:61 (CLIPLoaderGGUF).
     const raw = await readFile(ANIMA_PATH, "utf8",);
-    const { status, json, } = await postAsAdmin(BASE, { name: "Anima", ...JSON.parse(raw,), },);
+    const source: unknown = JSON.parse(raw,);
+    const { status, json, } = await postAsAdmin(BASE, { name: "Anima", ...source as object, },);
     expect(status,).toBe(201,);
 
     const row = await rowById(String(json.id,),);
     expect(row?.modality,).toBe("workflow",);
-    const payload = JSON.parse(String(row?.payload,),) as { body: Record<string, unknown> };
-    expect(Object.keys(payload.body,),).toHaveLength(9,);
-    // The removed node is gone and the CLIP the text encoders actually use is
-    // still wired in.
-    expect(Object.hasOwn(payload.body, "60:45",),).toBe(false,);
-    expect(payload.body["60:11"],).toBeDefined();
-    expect(payload.body["60:61"],).toBeDefined();
+    const payload = JSON.parse(String(row?.payload,),) as { body: unknown };
+    // The invariant is that ingest stores the graph intact — asserted against
+    // the source, not against a hardcoded node count, so adding a legitimate
+    // node to the reference export does not break this.
+    expect(payload.body,).toEqual(source,);
+    // The decision this file encodes: the unreferenced loader is gone, and the
+    // CLIP both text encoders actually use is still wired in.
+    expect(Object.hasOwn(payload.body as object, "60:45",),).toBe(false,);
+    expect(payload.body,).toMatchObject({
+      "60:11": { inputs: { clip: ["60:61", 0,], }, },
+      "60:12": { inputs: { clip: ["60:61", 0,], }, },
+    },);
   });
 
   it("rejects a dead node with the offending ids", async () => {
