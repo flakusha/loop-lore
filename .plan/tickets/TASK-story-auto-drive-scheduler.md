@@ -54,15 +54,36 @@ orchestrator; the class owns the loop and delegates every beat.
 
 ### Remaining (why this is In Progress, not Done)
 
-One criterion is deliberately open rather than half-shipped:
+One criterion is deliberately open rather than half-shipped.
 
-1. **BDI reflection + GM beat dispatch.** The loop selects and dispatches
-   navigation ticks today. `BDI reflection cycle` and `GM narrative beat`
-   dispatch land with `epic-agency-story-points` (the decision layer) and
-   the GM actor work — wiring them now would mean inventing a dispatch path
-   for a decision layer that does not exist yet, which is exactly the
-   greenfield path the criterion forbids. The scheduler's per-world tick
-   hook is the seam they plug into.
+**BDI reflection dispatch.** An earlier revision of this note claimed the
+BDI reflection cycle "does not exist yet". That was wrong: the plumbing is
+real — `runNightlyReflectionCycle` (`src/services/agency/bdi-nightly.ts`)
+and `applyReflectionCheckpoint` (`src/services/agency/bdi-reflection.ts`)
+are implemented against migration 011's tables and covered by tests. What
+does not exist is the **decision function**: `planRecompute`, the injected
+callback that decides what an actor actually wants to do tonight, has no
+implementation anywhere in `src/`. Its only implementations are the literal
+fixtures inside `bdi-nightly.test.ts`.
+
+So the cycle is a shell: supply a `planRecompute` and a `budgetApprove`
+(the latter is a one-liner over `AutonomyGovernor`) and it works. Supplying
+`planRecompute` *is* the decision-layer work this epic's Non-Goals assign to
+`epic-agency-story-points.md`, and shipping a hardcoded planner to close the
+checkbox would be exactly the greenfield path the criterion forbids.
+`budgetApprove` was deliberately left unwired too — gating a cycle that
+cannot run is dead code.
+
+**GM beat dispatch.** Genuinely absent. `GameMasterService`
+(`src/story/game-master/index.ts`) is chat-scoped: it needs `(db, chatId,
+gmConfig, generateText)` and produces a turn, not a world-scoped beat. No
+unit in `src/` generates a narrative beat for a world. The nearest thing,
+`createSteering` (`src/story/timeline/event-steering.ts`), is a
+GM-authored future-event teaser store that generates no text and has no
+callers outside its own test. Building a world-scoped beat producer is the
+`epic-assistant-gm-flows` AI-director work, again out of scope here.
+
+The scheduler's per-world tick hook is the seam both plug into.
 
 The admin half of the pause/resume/step criterion did land, as
 `POST /api/worlds/:worldId/autonomy/control` (`pause` / `resume` / `step`),
@@ -74,7 +95,7 @@ management CLI to this app's schema. Cross-repo change; not attempted here.
 
 ## Design Notes (merged from the prior world-tick-and-actor-turns ticket variant)
 
-Current state: `NpcNavigationService` (src/rpg/npc-navigation/) is tick-based but nothing drives ticks. `GameMasterService` generates only on user turns; `GameMasterConfig.type` llm/human/hybrid + actorModels per-actor routing exist. BDI planning/reaction tickets (epic-agency-story-points) are the decision layer — accommodate when they land, do not wait.
+Current state (as first written): `NpcNavigationService` (src/rpg/npc-navigation/) is tick-based but nothing drives ticks. `GameMasterService` generates only on user turns; `GameMasterConfig.type` llm/human/hybrid + actorModels per-actor routing exist. BDI planning/reaction tickets (epic-agency-story-points) are the decision layer — accommodate when they land, do not wait.
 
 Direction:
 1. Tick source pluggable: real-time (background interval), accelerated (N game-hours per real minute), manual (advance-world affordance); per world/chat. UI never blocks on the loop.
