@@ -4679,3 +4679,25 @@ export async function insertAutonomyBudget(
   } as any,).execute();
   return id;
 }
+
+/** Insert a world_simulation_state row. */
+export async function insertWorldSimulationState(
+  db: Db,
+  next_tick_at: string,
+  opts?: {
+    world_id?: string;
+    paused?: number;
+    last_run_at?: string | null;
+    last_error?: string | null;
+    tick_count?: number;
+    updated_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("world_simulation_state",).values({
+    next_tick_at,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}

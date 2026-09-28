@@ -16,8 +16,6 @@
  */
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { sql, } from "kysely";
-import { resolveAutonomyConfig, UnboundedStressGatedError, } from "./index";
-import { getPreset, PRESETS, } from "./presets";
 import { createTestDb, type TestDb, } from "../../test-utils/create-test-db";
 import {
   insertActors,
@@ -26,6 +24,8 @@ import {
   insertUsers,
   insertWorlds,
 } from "../../test-utils/insert-helpers";
+import { resolveAutonomyConfig, UnboundedStressGatedError, } from "./index";
+import { getPreset, PRESETS, } from "./presets";
 
 let testDb: TestDb;
 
@@ -42,7 +42,7 @@ async function setColumn(
   id: string,
   json: string,
 ): Promise<void> {
-  await sql`UPDATE ${sql.table(table)} SET autonomy_config = ${json} WHERE id = ${id}`.execute(testDb.db,);
+  await sql`UPDATE ${sql.table(table,)} SET autonomy_config = ${json} WHERE id = ${id}`.execute(testDb.db,);
 }
 
 /**
@@ -86,7 +86,7 @@ describe("resolveAutonomyConfig — layering precedence", () => {
 
   test("world override sets preset; chat/actor absent", async () => {
     const { worldId, chatId, } = await setupScope();
-    await setColumn("worlds", worldId, JSON.stringify({ preset: "brisk", }),);
+    await setColumn("worlds", worldId, JSON.stringify({ preset: "brisk", },),);
     const cfg = await resolveAutonomyConfig(testDb.db, { worldId, chatId, },);
     expect(cfg.preset,).toBe("brisk",);
     expect(cfg.tickIntervalMs,).toBe(PRESETS.brisk.tickIntervalMs,);
@@ -95,8 +95,8 @@ describe("resolveAutonomyConfig — layering precedence", () => {
 
   test("chat preset wins over world; world-set scalar survives", async () => {
     const { worldId, chatId, } = await setupScope();
-    await setColumn("worlds", worldId, JSON.stringify({ preset: "brisk", jitterRatio: 0.1, }),);
-    await setColumn("chats", chatId, JSON.stringify({ preset: "serene", }),);
+    await setColumn("worlds", worldId, JSON.stringify({ preset: "brisk", jitterRatio: 0.1, },),);
+    await setColumn("chats", chatId, JSON.stringify({ preset: "serene", },),);
     const cfg = await resolveAutonomyConfig(testDb.db, { worldId, chatId, },);
     expect(cfg.preset,).toBe("serene",);
     expect(cfg.tickIntervalMs,).toBe(PRESETS.serene.tickIntervalMs,);
@@ -111,7 +111,7 @@ describe("resolveAutonomyConfig — layering precedence", () => {
       },),
     );
     await setColumn("worlds", worldId, JSON.stringify({ preset: "brisk", },),);
-    await setColumn("chats", chatId, JSON.stringify({ preset: "serene", perUserCap: 999, }),);
+    await setColumn("chats", chatId, JSON.stringify({ preset: "serene", perUserCap: 999, },),);
     const cfg = await resolveAutonomyConfig(testDb.db, { worldId, chatId, actorId, },);
     expect(cfg.preset,).toBe("organic",);
     expect(cfg.tickIntervalMs,).toBe(12_345,);
@@ -134,19 +134,19 @@ describe("resolveAutonomyConfig — layering precedence", () => {
   test("invalid JSON in any layer falls through to next layer", async () => {
     const { worldId, chatId, } = await setupScope();
     await setColumn("worlds", worldId, "{not-json",);
-    await setColumn("chats", chatId, JSON.stringify({ preset: "brisk", }),);
+    await setColumn("chats", chatId, JSON.stringify({ preset: "brisk", },),);
     const cfg = await resolveAutonomyConfig(testDb.db, { worldId, chatId, },);
     expect(cfg.preset,).toBe("brisk",);
   });
 
   test("chat enabled=true wins over world enabled=false (highest layer wins)", async () => {
     const { worldId, chatId, } = await setupScope();
-    await setColumn("worlds", worldId, JSON.stringify({ enabled: false, }),);
-    await setColumn("chats", chatId, JSON.stringify({ enabled: true, }),);
+    await setColumn("worlds", worldId, JSON.stringify({ enabled: false, },),);
+    await setColumn("chats", chatId, JSON.stringify({ enabled: true, },),);
     const cfg = await resolveAutonomyConfig(testDb.db, { worldId, chatId, },);
     expect(cfg.enabled,).toBe(true,);
   });
-},);
+});
 
 describe("dev-only gating", () => {
   test("unlimited-stress preset returns definition outside production", () => {
@@ -165,7 +165,7 @@ describe("dev-only gating", () => {
     const prev = process.env.NODE_ENV;
     process.env.NODE_ENV = "production";
     try {
-      expect(() => getPreset("unlimited-stress",),).toThrow(UnboundedStressGatedError,);
+      expect(() => getPreset("unlimited-stress",)).toThrow(UnboundedStressGatedError,);
     } finally {
       process.env.NODE_ENV = prev;
     }
@@ -206,4 +206,4 @@ describe("dev-only gating", () => {
       process.env.NODE_ENV = prev;
     }
   });
-},);
+});

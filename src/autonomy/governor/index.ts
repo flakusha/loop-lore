@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+// size-allow: 341
+// One class whose gate sequence (config resolve → read row → window
+// check → upsert) reads as a single ordered transaction.
+
 // src/autonomy/governor/index.ts — Autonomy rate governor
 //
 // Pure module: no scheduler / tick-driver / cron dependency. The scheduler
@@ -15,11 +19,12 @@
 // tryConsume. Fires-and-forgets — never blocks the gate decision.
 
 import type { Kysely, } from "kysely";
+import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
 import { record, } from "../../telemetry/service";
+import { toDate, } from "../../utils/date";
 import { resolveAutonomyConfig, } from "../config";
 import type { AutonomyConfig, } from "../config";
-import type { DB, } from "../../db/schema";
 import type {
   AutonomyScope,
   BudgetRow,
@@ -52,9 +57,9 @@ const DEFAULT_CACHE_TTL_MS = 1000;
  *  resolved `AutonomyConfig` at runtime.
  */
 export const LIMIT_CATALOG: GovernorLimitCatalog = {
-  per_tick_action:         { windowMs: 60_000,   cap: null, },
-  per_minute_generation:   { windowMs: 60_000,   cap: null, },
-  per_hour_beat_dispatch:  { windowMs: 3_600_000, cap: null, },
+  per_tick_action: { windowMs: 60_000, cap: null, },
+  per_minute_generation: { windowMs: 60_000, cap: null, },
+  per_hour_beat_dispatch: { windowMs: 3_600_000, cap: null, },
 } as const;
 
 /** Resolve the cap for a given scope/limit from a layered AutonomyConfig.
@@ -135,12 +140,13 @@ export class AutonomyGovernor {
     const limit = LIMIT_CATALOG[limitName];
 
     const nowMs = opts.nowMs ?? Date.now();
-    const nowIso = new Date(nowMs,).toISOString();
+    const nowIso = toDate(nowMs,).toISOString();
 
     // Step 1: resolve cap (caller override > scope default). When the
     // caller supplies `opts.cap` explicitly we skip the config SELECT —
     // the resolver reads 2–3 rows on every call.
-    const cap = opts.cap !== undefined ? opts.cap
+    const cap = opts.cap !== undefined
+      ? opts.cap
       : capFromConfig(scope, limitName, await this.#resolveConfig(db, scope, opts,),);
 
     // Unbounded: no DB work, no telemetry.
@@ -165,7 +171,7 @@ export class AutonomyGovernor {
       activeStartMs = nowMs;
       activeCount = 0;
     } else {
-      const rowStartMs = Date.parse(row.window_start_at,);
+      const rowStartMs = toDate(row.window_start_at,).getTime();
       const rowResetMs = rowStartMs + limit.windowMs;
       if (nowMs >= rowResetMs) {
         activeStartMs = nowMs;
@@ -204,7 +210,7 @@ export class AutonomyGovernor {
           limit_name: limitName,
           cap,
           window_count: activeCount,
-          window_reset_at: new Date(resetAtMs,).toISOString(),
+          window_reset_at: toDate(resetAtMs,).toISOString(),
           timestamp: nowIso,
         },
       },).catch((err: unknown,) => {
@@ -226,7 +232,7 @@ export class AutonomyGovernor {
     // activeStartMs — NOT nowMs — so each successful consume does NOT
     // slide the window forward. Only when the previous window expired
     // does activeStartMs = nowMs (a real reset).
-    const activeStartIso = new Date(activeStartMs,).toISOString();
+    const activeStartIso = toDate(activeStartMs,).toISOString();
     await db
       .insertInto("autonomy_budget",)
       .values({
@@ -237,13 +243,15 @@ export class AutonomyGovernor {
         window_count: nextCount,
         updated_at: nowIso,
       },)
-      .onConflict((oc,) => oc
-        .columns(["scope_kind", "scope_id", "limit_name",],)
-        .doUpdateSet({
-          window_start_at: activeStartIso,
-          window_count: nextCount,
-          updated_at: nowIso,
-        },),)
+      .onConflict((oc,) =>
+        oc
+          .columns(["scope_kind", "scope_id", "limit_name",],)
+          .doUpdateSet({
+            window_start_at: activeStartIso,
+            window_count: nextCount,
+            updated_at: nowIso,
+          },)
+      )
       .execute();
 
     const persisted: BudgetRow = {

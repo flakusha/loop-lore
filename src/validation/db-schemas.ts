@@ -2944,3 +2944,14 @@ export const AutonomyBudgetSchema = t.Object({
   window_count: t.Optional(t.Number(),),
   updated_at: t.Optional(t.String(),),
 },);
+
+// ── world_simulation_state ────────────────────────────────────────────
+export const WorldSimulationStateSchema = t.Object({
+  next_tick_at: t.String(),
+  world_id: t.Optional(t.String(),),
+  paused: t.Optional(t.Number(),),
+  last_run_at: t.Optional(t.String(),),
+  last_error: t.Optional(t.String(),),
+  tick_count: t.Optional(t.Number(),),
+  updated_at: t.Optional(t.String(),),
+},);
