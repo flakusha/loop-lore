@@ -34,7 +34,7 @@ function runOrExit(args: string[],): Buffer {
 try {
   log(`Starting backup: ${TIMESTAMP}`,);
 
-  // Step 1: Copy WAL files
+  // Step 1: Snapshot the database
   if (!existsSync(DB_PATH,)) {
     log(`ERROR: database not found at ${DB_PATH}`,);
     process.exit(1,);
@@ -46,9 +46,21 @@ try {
   // file and resets the WAL, leaving the copied pair missing data that was
   // committed -- observed as a restore with no schema at all. See
   // BUG-backup-sqlite-copies-live-db-without-checkpoint.
+  //
+  // A failed snapshot leaves a truncated BACKUP_BASE behind, and step 6's
+  // retention sweep matches it on the `backup_` prefix -- so the partial file
+  // would be retained and age like a good backup, and an operator restoring
+  // from it would get a corrupt database with no error anywhere. Remove it.
   const source = new Database(DB_PATH, { readonly: true, },);
   try {
     await source.query(`VACUUM INTO '${BACKUP_BASE.replaceAll("'", "''",)}'`,).run();
+  } catch (err) {
+    if (existsSync(BACKUP_BASE,)) {
+      try {
+        unlinkSync(BACKUP_BASE,);
+      } catch { /* best effort; the throw below still fails the run */ }
+    }
+    throw err;
   } finally {
     source.close();
   }
