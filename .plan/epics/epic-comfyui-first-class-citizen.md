@@ -415,10 +415,15 @@ strings throughout.
       awaited by that route rather than kicked off in `start.ts` — tests and e2e
       never run `start.ts`, so a boot-time kickoff would leave them with an empty
       registry, and awaiting it means the list can never precede hydration.*
-- [ ] Land `i-anima-0001.json` as the first uploaded workflow + reference fixture.
-      *Still open, and deliberately so: Phase 0's strict dead-node rejection
-      (confirmed above) rejects this file because of its stale node `60:45`
-      (`CLIPLoader`). It must be cleaned before the upload path will take it.*
+- [x] Land `i-anima-0001.json` as the first uploaded workflow + reference fixture.
+      *Was blocked on Phase 0's strict dead-node rejection, which refused this
+      file over stale node `60:45` (`CLIPLoader`). The node was genuinely dead,
+      not a false positive: nothing referenced it, and both `CLIPTextEncode`
+      nodes take their clip from `60:61` (`CLIPLoaderGGUF`). Removing it took
+      the graph from 10 nodes to 9 with zero dead, and it now ingests. A route
+      test reads this file off disk — not an inline copy, so the fixture cannot
+      drift from what ships — and the same test fails with a 400 if the node
+      ever returns.*
 - [ ] Reuse the `handleUpload` multipart pattern (`POST /api/assets` +
       parent-app registration). *Deviation: the create endpoint takes a JSON
       body and accepts a bare ComfyUI export, a wrapper (`workflow`/`body`/
