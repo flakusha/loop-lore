@@ -22,6 +22,7 @@ import { loadAllPlugins, unloadAllPlugins, } from "../plugins";
 import { loadConfig, } from "../config/load";
 import { runDataMigrations, runMigrations, } from "../db/migrate";
 import { seedDefaultActors, } from "../db/seed";
+import { seedDynamicContent, } from "./boot-seed";
 import { serve, } from "bun";
 /**
  * Bootstrap the Loop Lore HTTP/HTTPS server: init subsystems, seed the DB,
@@ -109,10 +110,7 @@ export async function start() {
   const effectiveSeeding = applyEnvironmentOverrides(config.seeding,);
   await seedConfiguredUsers(database, { ...config, seeding: effectiveSeeding, },);
   await seedConfiguredContent(database, effectiveSeeding, config.auth.required,);
-  const { seedChatSetupTemplates, } = await import("../chat/service");
-  await seedChatSetupTemplates(database,);
-  // After user seeding: a seeded workflow needs a real owner row.
-  const { seedWorkflowLibrary, } = await import("../generation/workflow-library"); await seedWorkflowLibrary(database,);
+  await seedDynamicContent(database,); // after user seeding: rows need a real owner_id
 
   // ── Start HTTP server ──────────────────────────────────────
   const httpServer = serve({ port: config.server.port, hostname: config.server.host, fetch: handleRequest, },);
