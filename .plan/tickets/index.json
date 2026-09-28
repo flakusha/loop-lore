@@ -7807,6 +7807,26 @@
     "title": "Code Quality & Best Practices (Permanently Ongoing)",
     "type": "EPIC"
   },
+  "EPIC-COMFYUI-FIRST-CLASS-CITIZEN": {
+    "hash": "6e95cc2",
+    "extid": "EPIC-COMFYUI-FIRST-CLASS-CITIZEN",
+    "type": "EPIC",
+    "title": "ComfyUI First-Class Citizen — Workflow Library, Chat Selection, Admin Setup",
+    "label": "epic",
+    "priority": "High",
+    "epic": "",
+    "tags": [
+      "comfyui",
+      "image-generation",
+      "workflows",
+      "admin",
+      "chat",
+      "lora"
+    ],
+    "source": ".plan/epics/epic-comfyui-first-class-citizen.md",
+    "status": "Not Started",
+    "git_issue": "6e95cc2"
+  },
   "EPIC-COMFYUI-PLUGIN": {
     "epic": "",
     "extid": "EPIC-COMFYUI-PLUGIN",
@@ -23377,6 +23397,32 @@
     "title": "Combined Filter Support",
     "type": "TASK"
   },
+  "TASK-COMFYUI-FIRST-CLASS-ADMIN-WORKFLOWS": {
+    "hash": "4baa39c",
+    "extid": "TASK-COMFYUI-FIRST-CLASS-ADMIN-WORKFLOWS",
+    "type": "TASK",
+    "title": "ComfyUI Admin Panel — Workflow Management + Parameterized Templates",
+    "label": "task",
+    "priority": "P1 — High",
+    "epic": "epic-comfyui-first-class-citizen",
+    "tags": [],
+    "source": ".plan/tickets/TASK-comfyui-first-class-admin-workflows.md",
+    "status": "Not Started",
+    "git_issue": "4baa39c"
+  },
+  "TASK-COMFYUI-FIRST-CLASS-CHAT-SELECTION": {
+    "hash": "5831b4d",
+    "extid": "TASK-COMFYUI-FIRST-CLASS-CHAT-SELECTION",
+    "type": "TASK",
+    "title": "ComfyUI Chat + User Preferred Workflow Selection",
+    "label": "task",
+    "priority": "P1 — High",
+    "epic": "epic-comfyui-first-class-citizen",
+    "tags": [],
+    "source": ".plan/tickets/TASK-comfyui-first-class-chat-selection.md",
+    "status": "Not Started",
+    "git_issue": "5831b4d"
+  },
   "TASK-COMFYUI-FIRST-CLASS-CLIENT-ID-WEBSOCKET-PROGRESS-IN-COMFYUIC": {
     "epic": "epic-comfyui-plugin",
     "extid": "TASK-COMFYUI-FIRST-CLASS-CLIENT-ID-WEBSOCKET-PROGRESS-IN-COMFYUIC",
@@ -23433,6 +23479,19 @@
     ],
     "title": "ComfyUI first-class: llama-swap recipe standalone-vs-proxy matrix + docs",
     "type": "TASK"
+  },
+  "TASK-COMFYUI-FIRST-CLASS-LORA-STACKS": {
+    "hash": "df43373",
+    "extid": "TASK-COMFYUI-FIRST-CLASS-LORA-STACKS",
+    "type": "TASK",
+    "title": "ComfyUI LoRA Stacks (Multi-LoRA Chaining)",
+    "label": "task",
+    "priority": "P2 — Medium",
+    "epic": "epic-comfyui-first-class-citizen",
+    "tags": [],
+    "source": ".plan/tickets/TASK-comfyui-first-class-lora-stacks.md",
+    "status": "Not Started",
+    "git_issue": "df43373"
   },
   "TASK-COMFYUI-FIRST-CLASS-MOUNT-IMAGE-EDIT-ROUTES-VERIFY-ASSET-PER": {
     "epic": "epic-comfyui-plugin",
@@ -23509,6 +23568,19 @@
     ],
     "title": "ComfyUI first-class: un-defer VN dynamic image generation onto ComfyUI",
     "type": "TASK"
+  },
+  "TASK-COMFYUI-FIRST-CLASS-WORKFLOW-LIBRARY": {
+    "hash": "c79d1ae",
+    "extid": "TASK-COMFYUI-FIRST-CLASS-WORKFLOW-LIBRARY",
+    "type": "TASK",
+    "title": "ComfyUI Workflow Library (DB-Backed)",
+    "label": "task",
+    "priority": "P1 — High",
+    "epic": "epic-comfyui-first-class-citizen",
+    "tags": [],
+    "source": ".plan/tickets/TASK-comfyui-first-class-workflow-library.md",
+    "status": "Not Started",
+    "git_issue": "c79d1ae"
   },
   "TASK-COMFYUI-NODE-DISCOVERY": {
     "epic": "epic-comfyui-plugin",
@@ -23600,6 +23672,19 @@
     "tags": [],
     "title": "ComfyUI Workflow Template Registry",
     "type": "TASK"
+  },
+  "TASK-COMFYUI-WORKFLOW-PARAMETERIZATION": {
+    "hash": "cefeb42",
+    "extid": "TASK-COMFYUI-WORKFLOW-PARAMETERIZATION",
+    "type": "TASK",
+    "title": "ComfyUI Workflow Parameterization Correctness",
+    "label": "task",
+    "priority": "P0 — Critical",
+    "epic": "epic-comfyui-first-class-citizen",
+    "tags": [],
+    "source": ".plan/tickets/TASK-comfyui-workflow-parameterization.md",
+    "status": "Not Started",
+    "git_issue": "cefeb42"
   },
   "TASK-COMPANION-BONDING-QUESTS": {
     "epic": "epic-companion-pet-mount",
@@ -40440,21 +40525,21 @@
     "type": "TASK"
   },
   "TASK-WORLD-SIMULATION-NPC-NAVIGATION-TICK-DRIVER": {
-    "epic": "epic-actor-autonomy-story-drive",
-    "extid": "TASK-WORLD-SIMULATION-NPC-NAVIGATION-TICK-DRIVER",
-    "git_issue": "3895396",
     "hash": "3895396",
+    "git_issue": "3895396",
+    "extid": "TASK-WORLD-SIMULATION-NPC-NAVIGATION-TICK-DRIVER",
+    "type": "TASK",
+    "title": "World Simulation NPC Navigation Tick Driver",
     "label": "task",
     "priority": "high",
-    "source": ".plan/tickets/TASK-world-simulation-npc-navigation-tick-driver.md",
-    "status": "done",
+    "epic": "epic-actor-autonomy-story-drive",
     "tags": [
       "world",
       "simulation",
       "navigation"
     ],
-    "title": "World Simulation NPC Navigation Tick Driver",
-    "type": "TASK"
+    "source": ".plan/tickets/TASK-world-simulation-npc-navigation-tick-driver.md",
+    "status": "done"
   },
   "TASK-WORLD-SIMULATION-TIMELINE-DRIVEN-TRAVEL-PATROL": {
     "epic": "epic-actor-autonomy-story-drive",
@@ -41877,90 +41962,5 @@
     "source": ".plan/tickets/TASK-wire-llm-resource-manager-into-generation-dispatch.md",
     "status": "Not Started",
     "git_issue": "25e3c7b"
-  },
-  "EPIC-COMFYUI-FIRST-CLASS-CITIZEN": {
-    "hash": "6e95cc2",
-    "extid": "EPIC-COMFYUI-FIRST-CLASS-CITIZEN",
-    "type": "EPIC",
-    "title": "ComfyUI First-Class Citizen — Workflow Library, Chat Selection, Admin Setup",
-    "label": "epic",
-    "priority": "High",
-    "epic": "",
-    "tags": [
-      "comfyui",
-      "image-generation",
-      "workflows",
-      "admin",
-      "chat",
-      "lora"
-    ],
-    "source": ".plan/epics/epic-comfyui-first-class-citizen.md",
-    "status": "Not Started",
-    "git_issue": "6e95cc2"
-  },
-  "TASK-COMFYUI-FIRST-CLASS-ADMIN-WORKFLOWS": {
-    "hash": "4baa39c",
-    "extid": "TASK-COMFYUI-FIRST-CLASS-ADMIN-WORKFLOWS",
-    "type": "TASK",
-    "title": "ComfyUI Admin Panel — Workflow Management + Parameterized Templates",
-    "label": "task",
-    "priority": "P1 — High",
-    "epic": "epic-comfyui-first-class-citizen",
-    "tags": [],
-    "source": ".plan/tickets/TASK-comfyui-first-class-admin-workflows.md",
-    "status": "Not Started",
-    "git_issue": "4baa39c"
-  },
-  "TASK-COMFYUI-FIRST-CLASS-CHAT-SELECTION": {
-    "hash": "5831b4d",
-    "extid": "TASK-COMFYUI-FIRST-CLASS-CHAT-SELECTION",
-    "type": "TASK",
-    "title": "ComfyUI Chat + User Preferred Workflow Selection",
-    "label": "task",
-    "priority": "P1 — High",
-    "epic": "epic-comfyui-first-class-citizen",
-    "tags": [],
-    "source": ".plan/tickets/TASK-comfyui-first-class-chat-selection.md",
-    "status": "Not Started",
-    "git_issue": "5831b4d"
-  },
-  "TASK-COMFYUI-FIRST-CLASS-LORA-STACKS": {
-    "hash": "df43373",
-    "extid": "TASK-COMFYUI-FIRST-CLASS-LORA-STACKS",
-    "type": "TASK",
-    "title": "ComfyUI LoRA Stacks (Multi-LoRA Chaining)",
-    "label": "task",
-    "priority": "P2 — Medium",
-    "epic": "epic-comfyui-first-class-citizen",
-    "tags": [],
-    "source": ".plan/tickets/TASK-comfyui-first-class-lora-stacks.md",
-    "status": "Not Started",
-    "git_issue": "df43373"
-  },
-  "TASK-COMFYUI-FIRST-CLASS-WORKFLOW-LIBRARY": {
-    "hash": "c79d1ae",
-    "extid": "TASK-COMFYUI-FIRST-CLASS-WORKFLOW-LIBRARY",
-    "type": "TASK",
-    "title": "ComfyUI Workflow Library (DB-Backed)",
-    "label": "task",
-    "priority": "P1 — High",
-    "epic": "epic-comfyui-first-class-citizen",
-    "tags": [],
-    "source": ".plan/tickets/TASK-comfyui-first-class-workflow-library.md",
-    "status": "Not Started",
-    "git_issue": "c79d1ae"
-  },
-  "TASK-COMFYUI-WORKFLOW-PARAMETERIZATION": {
-    "hash": "cefeb42",
-    "extid": "TASK-COMFYUI-WORKFLOW-PARAMETERIZATION",
-    "type": "TASK",
-    "title": "ComfyUI Workflow Parameterization Correctness",
-    "label": "task",
-    "priority": "P0 — Critical",
-    "epic": "epic-comfyui-first-class-citizen",
-    "tags": [],
-    "source": ".plan/tickets/TASK-comfyui-workflow-parameterization.md",
-    "status": "Not Started",
-    "git_issue": "cefeb42"
   }
 }
