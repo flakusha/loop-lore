@@ -185,4 +185,5 @@ export interface DB {
   actor_story_points: import("./schema-core").ActorStoryPoints;
   game_states: import("./schema-core").GameStates;
   autonomy_budget: import("./schema-core").AutonomyBudget;
+  world_simulation_state: import("./schema-core").WorldSimulationState;
 }

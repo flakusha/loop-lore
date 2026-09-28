@@ -46,7 +46,7 @@ async function readJsonColumn(
   // before the regen runs.
   const result = await sql<{ value: string | null }>`
     SELECT autonomy_config AS value
-    FROM ${sql.table(table)}
+    FROM ${sql.table(table,)}
     WHERE id = ${id}
     LIMIT 1
   `.execute(db,);
@@ -110,10 +110,10 @@ export async function resolveAutonomyConfig(
     : {};
 
   // preset name: actor > chat > world > DEFAULT.
-  const presetName: PacingPresetName = actorOverride.preset
-    ?? chatOverride.preset
-    ?? worldOverride.preset
-    ?? DEFAULT_PRESET;
+  const presetName: PacingPresetName = actorOverride.preset ??
+    chatOverride.preset ??
+    worldOverride.preset ??
+    DEFAULT_PRESET;
   const preset = getPreset(presetName,);
 
   // Start from preset baseline; layers apply in order (lowest first).

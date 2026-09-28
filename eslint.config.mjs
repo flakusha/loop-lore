@@ -126,6 +126,9 @@ export default [
       "*.har",
       "*.example.*",
       ".agents/**/*.md",
+      // eslint-plugin-markdown's virtual code-block files (`README.md/0_0.ts`)
+      // are not tsconfig members, so the typed parser rejects them.
+      "src/**/*.md/**",
     ],
   },
   ...markdown.configs.recommended,
