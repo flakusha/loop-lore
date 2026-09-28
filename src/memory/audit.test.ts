@@ -186,6 +186,43 @@ describe("memory audit — listAuditLog", () => {
     expect(page3.nextCursor,).toBeUndefined();
   });
 
+  test("cursor round-trip visits every row exactly once across pages", async () => {
+    const userId = crypto.randomUUID();
+    const actorId = crypto.randomUUID();
+    await insertUsers(db, "test-user", "Test User", { id: userId, },);
+    await insertActors(db, "test-actor", { id: actorId, user_id: userId, },);
+    await insertActorMemories(db, actorId, "memory", { id: "m1", },);
+
+    const entries = Array.from({ length: 7, }, (_, i,) => ({
+      memoryId: "m1",
+      actorId,
+      userId,
+      action: "modify" as const,
+      details: { i, },
+    }),);
+    await recordAuditLog(db, entries,);
+
+    // Walk every page and collect ids. A cursor that silently degrades to
+    // "" terminates the walk early and drops rows; a cursor that fails to
+    // advance repeats page 1 forever. Both are silent data loss to the caller.
+    const seen = new Set<string>();
+    let cursor: string | undefined = undefined;
+    let pages = 0;
+    for (; pages < 10; pages++) {
+      const page = await listAuditLog(db, actorId, { limit: 3, cursor, },);
+      for (const row of page.entries) {
+        expect(seen.has(row.id,),).toBe(false,);
+        seen.add(row.id,);
+      }
+      if (page.nextCursor === undefined) { break; }
+      expect(page.nextCursor,).not.toBe("",);
+      cursor = page.nextCursor;
+    }
+
+    expect(seen.size,).toBe(7,);
+    expect(pages,).toBeLessThan(10,);
+  });
+
   test("limit is clamped to the 1..200 range", async () => {
     const userId = crypto.randomUUID();
     const actorId = crypto.randomUUID();
