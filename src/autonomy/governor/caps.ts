@@ -7,23 +7,44 @@
 // consumes read `perUserCap`. `null` means unbounded — the governor then
 // skips the DB entirely and always allows.
 
-import type { Kysely, } from "kysely";
+import { type Kysely, sql, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { resolveAutonomyConfig, } from "../config";
 import type { AutonomyConfig, } from "../config";
 import type { AutonomyScope, TryConsumeOptions, } from "./types";
 
-/** Sentinel used when the caller supplies no chat context. The config
- *  resolver needs a chat row; the returned caps are unused on that path
- *  because the caller passed an explicit cap.
+/** Sentinel for a row id that cannot exist. Both config columns read as
+ *  `{}` for it, so an unresolvable scope still gets the preset baseline
+ *  (finite caps) rather than an unbounded one.
  */
-const NO_CHAT = "__none__";
+const NO_ROW = "__none__";
 
 /**
- * Resolve the cap for a scope/limit from the layered autonomy config.
+ * Resolve the world id for a consume: an explicit hint wins, otherwise
+ * follow the chat's own world link.
  *
- * - actor scopes use `perAgentCap`
- * - user scopes use `perUserCap`
+ * @param db
+ * @param opts
+ * @returns the world id, or null when neither hint is available
+ */
+async function resolveWorldId(
+  db: Kysely<DB>,
+  opts: TryConsumeOptions,
+): Promise<string | null> {
+  if (opts.worldId !== undefined) { return opts.worldId; }
+  if (opts.chatId === undefined) { return null; }
+  const result = await sql<{ world_id: string | null }>`
+    SELECT world_id FROM chats WHERE id = ${opts.chatId} LIMIT 1
+  `.execute(db,);
+  return result.rows[0]?.world_id ?? null;
+}
+
+/**
+ * Resolve the layered autonomy config for a scope's consume.
+ *
+ * The world layer is the config surface's default and must be part of the
+ * lookup, or a world-level `perAgentCap` silently resolves to the preset's
+ * instead. It comes from `opts.worldId` when given, else from the chat row.
  *
  * @param db
  * @param root0
@@ -35,9 +56,10 @@ export async function resolveScopeConfig(
   db: Kysely<DB>,
   { scope, opts, }: { scope: AutonomyScope; opts: TryConsumeOptions },
 ): Promise<AutonomyConfig> {
+  const worldId = await resolveWorldId(db, opts,) ?? NO_ROW;
   return resolveAutonomyConfig(db, {
-    worldId: NO_CHAT,
-    chatId: opts.chatId ?? NO_CHAT,
+    worldId,
+    chatId: opts.chatId ?? NO_ROW,
     actorId: scope.kind === "actor" ? scope.id : undefined,
   },);
 }
