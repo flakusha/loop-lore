@@ -19277,6 +19277,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-clarify-prompt-improve-route-path-reconciliation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-llm-scheduler-observability.md"
     }
   ],
   "src/generation/emotion-avatar-pipeline.test.ts": [
@@ -20223,10 +20227,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-effect-v4-adoption-evaluation.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/FEAT-llm-resource-aware-admission-control.md"
     },
     {
       "kind": "ticket",

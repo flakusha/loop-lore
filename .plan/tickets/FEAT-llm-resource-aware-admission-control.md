@@ -8,7 +8,7 @@
 **Effort:** Large
 **Epic:** `.plan/epics/epic-llm-request-scheduler.md`
 **Summary:** Adds an admission gate between dequeue and dispatch that answers "can this provider take this request right now?" — local slot budget, external in-flight cap, and windowed token/request budgets — plus reactive narrowing of the cap when a provider returns 429. Priority decides *order*; this decides *whether now*.
-**Context:** Priority alone does not bound throughput. With every provider cap set generously enough to never queue, a burst of aux + embedding traffic will still overshoot a local llama-swap slot budget, and external keys will still trip 429s that the retry loop converts into a 10s stall (`src/generation/providers/retry.ts:47`). This ticket is the second half of the epic's scheduling decision.
+**Context:** Priority alone does not bound throughput. With every provider cap set generously enough to never queue, a burst of aux + embedding traffic will still overshoot a local llama-swap slot budget, and external keys will still trip 429s. A 429 is `retryable`, so it is re-attempted by the shared policy at `src/generation/providers/retry.ts:47` (1s base, capped at 10s, `retries` attempts from `ProviderInstanceConfig.retries`); the caller blocks for that whole span while holding no local slot. This ticket is the second half of the epic's scheduling decision.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
 ## Acceptance Criteria
@@ -29,7 +29,7 @@
 
 **Do not probe VRAM per request.** A synchronous resource probe on the interactive path adds latency to the one request a human is actively waiting on, in exchange for a signal that is noisy and already implied by the slot count. If live headroom becomes necessary it is a periodic sampler that adjusts the effective cap — the same knob, driven by a slower signal. This is the deliberate, named ceiling: configured slots, not measured headroom.
 
-**Learning, not replacement.** The 429 feedback loop narrows the cap; it does not supersede the circuit breaker. Three layers, three jobs: the scheduler admits, the breaker decides aliveness, the retry loop handles transient faults. Collapsing any two of them re-creates the seven duplicate backoff implementations the codebase already suffers from (`src/generation/providers/anthropic/http.ts:133`, `ollama-native/http.ts:180`, `openai-compatible/http.ts:206`, and four more — documented in `epic-effect-v4-adoption-evaluation.md`).
+**Learning, not replacement.** The 429 feedback loop narrows the cap; it does not supersede the circuit breaker. Three layers, three jobs: the scheduler admits, the breaker decides aliveness, the retry loop handles transient faults. Do not fold retry into admission: `withProviderRetry` already owns the delay schedule and the retryability rule, and the Effect spike (S2) deliberately consolidated the three byte-identical provider backoff loops into that one shared module. Re-deriving a delay schedule in the scheduler re-opens duplication that was just closed.
 
 **Fairness is a test, not an intention.** Under sustained saturation, a strict priority queue starves the lowest band forever. That is acceptable for interactive vs. background (background is droppable) but not within a band. Assert non-starvation rather than trusting the queue's FIFO tiebreak.
 

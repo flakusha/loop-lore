@@ -32,7 +32,7 @@ several of these are true at once:
 
 The result is predictable and bad: interactive turns queue behind aux classification
 jobs (and vice versa), local concurrency overshoots into swap/OOM, external calls trip
-429s that the retry loop turns into a 10-second stall, and there is no way to say
+429s and the caller sits through the whole retry backoff, and there is no way to say
 "this request is trivial, this one is a 32k-token scene — run them in that order."
 
 This epic adds a **scheduler** in front of `callWithFailover` that decides *when* each
