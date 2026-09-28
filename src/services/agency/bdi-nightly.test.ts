@@ -42,6 +42,39 @@ describe("runNightlyReflectionCycle — first-night creation", () => {
     const acts = raw.query("SELECT * FROM actor_planned_activities",).all() as Array<Record<string, unknown>>;
     expect(acts.length,).toBe(2,);
   });
+
+  test("plan row carries the actor's real world, not its own id", async () => {
+    // `actorWorldId` used to read the `actors` table and return `actorId`,
+    // so every plan the cycle created recorded the actor's own id in
+    // actor_daily_plans.world_id. The actor row below is what made the old
+    // lookup succeed — and return the wrong value.
+    raw.exec(`INSERT INTO users(id, username, display_name) VALUES ('u1', 'owner', 'Owner');`);
+    raw.exec(`INSERT INTO worlds(id, owner_id, name) VALUES ('world-7', 'u1', 'W');`);
+    raw.exec(`INSERT INTO actors(id, display_name) VALUES ('actor1', 'A');`);
+    raw.exec(`INSERT INTO world_members(world_id, actor_id) VALUES ('world-7', 'actor1');`);
+
+    await runNightlyReflectionCycle(db, ["actor1",], {
+      budgetApprove: async () => true,
+      planRecompute: async () => ({ summary: "rest", priority: "low", activities: [], }),
+    },);
+
+    const row = raw.query("SELECT world_id FROM actor_daily_plans WHERE actor_id='actor1'",).get() as {
+      world_id: string | null;
+    } | null;
+    expect(row?.world_id,).toBe("world-7");
+  });
+
+  test("an actor in no world plans with a null world", async () => {
+    await runNightlyReflectionCycle(db, ["loner",], {
+      budgetApprove: async () => true,
+      planRecompute: async () => ({ summary: "wander", priority: "normal", activities: [], }),
+    },);
+
+    const row = raw.query("SELECT world_id FROM actor_daily_plans WHERE actor_id='loner'",).get() as {
+      world_id: string | null;
+    } | null;
+    expect(row?.world_id,).toBeNull();
+  });
 });
 
 describe("runNightlyReflectionCycle — same priority → no revision", () => {
