@@ -11,7 +11,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
-import { insertUsers, } from "../../test-utils/insert-helpers";
+import { insertActors, insertChats, insertPromptTemplates, insertUsers, } from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
 import { promptTemplateRoutes, } from "./index";
 
@@ -35,16 +35,45 @@ const IMAGE_BODY = {
   },
 };
 
+const LLM_BODY = {
+  name: "Roleplay system",
+  modality: "llm",
+  payload: {
+    sections: [{ identifier: "system", role: "system", content: "", enabled: true, priority: 0, },],
+  },
+};
+
+const WORKFLOW_BODY = {
+  name: "Anima txt2img",
+  modality: "workflow",
+  payload: {
+    name: "Anima",
+    category: "txt2img",
+    parameters: [],
+    requiredNodes: [],
+    body: {
+      "1": { class_type: "KSampler", inputs: { seed: 1, }, },
+      "2": { class_type: "SaveImage", inputs: { images: ["1", 0,], }, },
+    },
+  },
+};
+
 describe("promptTemplateRoutes", () => {
   let db: Kysely<DB>;
   const userId = uid();
   const otherId = uid();
+  const actorId = uid();
+  const chatId = uid();
 
   beforeAll(async () => {
     createLogger({ level: "error", },);
     ({ db, } = await createTestDb());
     await insertUsers(db, `user-${userId}`, "Template User", { id: userId, } as never,);
     await insertUsers(db, `user-${otherId}`, "Other User", { id: otherId, } as never,);
+    // The LLM apply path renders through PromptAssembler, which needs a real
+    // actor and chat — a preset row is not enough to reach the assembler.
+    await insertActors(db, "Alice", { id: actorId, user_id: userId, system_prompt: "Actor prompt.", } as never,);
+    await insertChats(db, "Template chat", userId, { id: chatId, } as never,);
   },);
 
   afterAll(async () => {
@@ -180,6 +209,88 @@ describe("promptTemplateRoutes", () => {
       },),
     );
     expect(res.status,).toBe(404,);
+  });
+
+  /**
+   * Create a template through the API, then apply it in one step.
+   * @param opts
+   * @param opts.app - App carrying the session under test
+   * @param opts.template - Template body to create
+   * @param opts.apply - Apply request body
+   */
+  async function createThenApply(
+    { app, template, apply, }: { app: Elysia; template: unknown; apply: unknown },
+  ): Promise<Response> {
+    const created = await app.handle(
+      new Request("http://localhost/api/templates", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify(template,),
+      },),
+    );
+    expect(created.status,).toBe(200,);
+    const { id, } = ((await created.json()) as { template: { id: string } }).template;
+    return await app.handle(
+      new Request(`http://localhost/api/templates/${id}/apply`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify(apply,),
+      },),
+    );
+  }
+
+  test("apply rejects an LLM template without an actor and chat", async () => {
+    const res = await createThenApply({ app: makeApp(db, userId,), template: LLM_BODY, apply: {}, },);
+    expect(res.status,).toBe(400,);
+    const body = (await res.json()) as { error: string };
+    expect(body.error,).toContain("requires actorId and chatId",);
+  });
+
+  test("apply assembles an LLM template against the actor and chat", async () => {
+    const res = await createThenApply({
+      app: makeApp(db, userId,),
+      template: LLM_BODY,
+      apply: { actorId, chatId, },
+    },);
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as {
+      messages: { role: string; content: string }[];
+      systemPrompt: string;
+      tokenCount: number;
+      tokenBudget: number;
+    };
+    // The override template supplies an empty system section, so the actor's
+    // own system prompt is what must survive into the assembled messages.
+    const rendered = body.messages.map((m,) => m.content).join("\n",);
+    expect(rendered,).toContain("Actor prompt.",);
+    expect(body.tokenCount,).toBeGreaterThan(0,);
+  });
+
+  test("apply rejects a workflow template instead of rendering the graph", async () => {
+    const res = await createThenApply({ app: makeApp(db, userId,), template: WORKFLOW_BODY, apply: {}, },);
+    expect(res.status,).toBe(400,);
+    const body = (await res.json()) as { error: string };
+    // The message must point at the surface that actually runs a graph;
+    // silently stringifying the ComfyUI JSON is the bug this guards.
+    expect(body.error,).toContain("not prompt bodies",);
+  });
+
+  test("apply rejects a row whose payload does not match its modality", async () => {
+    // Written straight to the DB: the create endpoint shape-checks payloads,
+    // so a mismatched row can only come from a legacy or direct write.
+    const id = await insertPromptTemplates(db, userId, "Corrupt video", {
+      modality: "video",
+      payload: JSON.stringify({ body: 42, },),
+    },);
+    const res = await makeApp(db, userId,).handle(
+      new Request(`http://localhost/api/templates/${id}/apply`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({},),
+      },),
+    );
+    expect(res.status,).toBe(400,);
+    expect(((await res.json()) as { error: string }).error,).toContain("malformed",);
   });
 
   test("ownership: another user cannot see, patch, or delete", async () => {
