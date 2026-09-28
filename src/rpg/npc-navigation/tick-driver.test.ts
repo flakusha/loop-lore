@@ -207,9 +207,10 @@ describe("runNpcMovementTick", () => {
     const loc = await makeLocation(worldId, "p",);
     await makeNpc(worldId, loc, { movementPattern: MovementPattern.Stationary, },);
 
-    // organic preset: perAgentCap = 8. Override world cap to 2 for fast
-    // exhaustion (organic also has perUserCap = 24, but the driver scopes
-    // to `world:<id>` so it hits perUserCap; we override BOTH for safety).
+    // organic preset: perUserCap = 24. The driver bills a `user`-scoped
+    // budget, so that is the cap that gates the tick; set both to 2 for
+    // fast exhaustion. (The perUserCap-vs-perAgentCap distinction has its
+    // own test below — setting both equal here would hide a swap.)
     await db
       .updateTable("worlds",)
       .set({
@@ -305,6 +306,77 @@ describe("runNpcMovementTick", () => {
       },);
       expect("skipped" in out && out.skipped,).toBe("budget",);
     }
+  });
+
+  // Regression: the driver bills a `user`-scoped budget (it has no actor
+  // identity of its own), so perUserCap is the cap that must gate the
+  // tick. It previously passed perAgentCap, which made perUserCap dead
+  // for NPC movement — a world could tick past its per-user ceiling.
+  // The existing budget tests set both caps to the SAME value, so they
+  // passed either way and could not catch this.
+  test("perUserCap gates the tick; perAgentCap does not", async () => {
+    const { ownerId, worldId, } = await makeWorld("cap-kind",);
+    const chatId = await makeChat(worldId, ownerId,);
+    const loc = await makeLocation(worldId, "k",);
+    await makeNpc(worldId, loc, { movementPattern: MovementPattern.Stationary, },);
+
+    // Agent cap 1 (tight), user cap 99 (loose). If the driver charged the
+    // agent cap the very first tick would be denied; charging the user
+    // cap lets it through.
+    await db
+      .updateTable("worlds",)
+      .set({
+        autonomy_config: JSON.stringify({
+          perAgentCap: 1,
+          perUserCap: 99,
+          enabled: true,
+        },),
+      },)
+      .where("id", "=", worldId,)
+      .execute();
+
+    const out = await runNpcMovementTick(db, worldId, {
+      chatId,
+      rng: RNG_FIRES,
+      governor: new AutonomyGovernor(),
+    },);
+    expect("skipped" in out,).toBe(false,);
+
+    // The charged row must be the user-scoped one, holding the user cap.
+    const rows = await db
+      .selectFrom("autonomy_budget",)
+      .selectAll()
+      .where("scope_id", "=", `world:${worldId}`,)
+      .execute();
+    expect(rows.length,).toBe(1,);
+    expect(rows[0]!.scope_kind,).toBe("user",);
+    expect(rows[0]!.window_count,).toBe(1,);
+  });
+
+  test("a zero perUserCap denies the tick outright", async () => {
+    const { ownerId, worldId, } = await makeWorld("zero-cap",);
+    const chatId = await makeChat(worldId, ownerId,);
+    const loc = await makeLocation(worldId, "zc",);
+    await makeNpc(worldId, loc, { movementPattern: MovementPattern.Stationary, },);
+
+    await db
+      .updateTable("worlds",)
+      .set({
+        autonomy_config: JSON.stringify({
+          perAgentCap: 50,
+          perUserCap: 0,
+          enabled: true,
+        },),
+      },)
+      .where("id", "=", worldId,)
+      .execute();
+
+    const out = await runNpcMovementTick(db, worldId, {
+      chatId,
+      rng: RNG_FIRES,
+      governor: new AutonomyGovernor(),
+    },);
+    expect("skipped" in out && out.skipped,).toBe("budget",);
   });
 
   test("no NPCs: tick still fires and returns empty results", async () => {

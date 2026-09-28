@@ -129,12 +129,16 @@ export async function runNpcMovementTick(
     return { skipped: "jitter", jitterRatio: cfg.jitterRatio, };
   }
 
+  // The tick is billed to a `user`-scoped budget (the driver has no
+  // actor identity of its own), so it must be charged perUserCap.
+  // Passing perAgentCap here let a world tick past the per-user ceiling
+  // entirely, and made the perUserCap setting dead for NPC movement.
   const gate = await governor.tryConsume(
     db,
     tickScope(worldId,),
     TICK_LIMIT,
     {
-      cap: cfg.perAgentCap,
+      cap: cfg.perUserCap,
       chatId,
       nowMs,
     },
