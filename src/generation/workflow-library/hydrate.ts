@@ -32,11 +32,22 @@ const WORKFLOW_COLUMNS = [
   "min_vram",
 ] as const;
 
+/** Ownership tag for the registry slice this module owns. */
+const SOURCE = "workflow-library";
+
 /**
  * Load every enabled workflow row into the registry.
  *
- * Replaces prior library registrations but leaves the built-in TypeScript
- * templates alone, so calling this after `registerBuiltinTemplates` is safe.
+ * Replaces prior library registrations. A library row **intentionally wins an
+ * id collision** with a built-in TypeScript template: the DB copy is the one the
+ * operator edits, so it is the authoritative version of `txt2img` / `img2img`.
+ * Built-ins whose ids are not in the library (inpaint, upscale, controlnet)
+ * survive untouched.
+ *
+ * Registration order makes this deterministic: `registerBuiltinTemplates` runs
+ * at route mount, and this memoized pass runs on the first `/templates`
+ * request, so the library always has the last word. `registerBuiltinTemplates`
+ * is a one-shot guard, so a built-in can never take an id back afterwards.
  * @param database - Kysely handle
  * @param registry - Registry to populate; defaults to the singleton
  */
@@ -52,15 +63,20 @@ export async function hydrateWorkflowRegistry(
     .execute();
 
   let registered = 0;
+  const templates = [];
   for (const row of rows as WorkflowRow[]) {
     const template = rowToTemplate(row,);
     if (!template) {
       log.warn("skipping unusable workflow row", { id: row.id, enabled: row.enabled, },);
       continue;
     }
-    registry.register(template,);
+    templates.push(template,);
     registered += 1;
   }
+  // replaceManaged, not register: a row the operator deleted or disabled has to
+  // disappear from the list, and a plain re-register would leave the previous
+  // pass's copy in the registry until the process restarted.
+  registry.replaceManaged(SOURCE, templates,);
 
   log.info("hydrated workflow registry", { registered, total: rows.length, },);
   return registered;

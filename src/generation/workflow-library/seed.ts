@@ -20,15 +20,33 @@
  */
 import type { Kysely, } from "kysely";
 import { readdir, readFile, } from "node:fs/promises";
-import { extname, join, } from "node:path";
+import { basename, extname, join, } from "node:path";
 import type { DB, } from "../../db/schema";
+import type { ImageEditCategory, } from "../../image-edit/types";
 import { getLogger, } from "../../logger";
 import { jsonParseOr, jsonStringifyOr, } from "../../utils";
 import type { WorkflowPayload, } from "../template-types";
 import { isValidWorkflow, } from "../workflow-loader/workflow-validation";
-import { validateWorkflowPayload, } from "./validate";
+import { CATEGORIES, validateWorkflowPayload, } from "./validate";
 
 const DEFAULT_DIR = "configs/workflows";
+
+/**
+ * Category for a seeded file, from its name.
+ *
+ * A bare API-format graph has no category field. The shipped files are named
+ * after the category they implement (`img2img.json` is an img2img workflow), so
+ * that name is the category. Anything else falls back to txt2img, which the
+ * operator can correct in the admin UI.
+ *
+ * Getting this wrong is not cosmetic: `SDServerEditProvider.execute` switches
+ * on `template.category` to pick a dispatch, so a mislabelled workflow runs
+ * the wrong pipeline.
+ * @param id - Workflow id (the file's basename)
+ */
+function categoryFor(id: string,): ImageEditCategory {
+  return CATEGORIES.includes(id as ImageEditCategory,) ? id as ImageEditCategory : "txt2img";
+}
 
 /** What the seed did, for logging and for the boot caller. */
 export interface SeedOutcome {
@@ -40,8 +58,15 @@ export interface SeedOutcome {
  * Owner for seeded rows.
  *
  * `prompt_templates.owner_id` is NOT NULL and cascades on user delete, so a
- * seeded workflow must belong to a real user row. The oldest admin is used
- * when one exists; otherwise seeding is skipped rather than inventing a user.
+ * seeded workflow must belong to a real user row.
+ *
+ * Both `solo` and `admin` qualify. A default install runs in solo mode, where
+ * the operator's account has `role = 'solo'` and there is *no* admin user until
+ * the avatar seeder runs several steps later — matching on `admin` alone made
+ * the seed silently skip on every fresh install, which a booted server proved
+ * (`no admin user to own seeded workflows; skipping seed`) even though the unit
+ * tests, which create an admin, passed. Oldest first so the choice is stable
+ * across restarts.
  */
 let ownerId: string | null = null;
 
@@ -52,13 +77,13 @@ export function resetSeedOwnerForTests(): void {
 
 async function resolveOwner(database: Kysely<DB>,): Promise<string | null> {
   if (ownerId !== null) { return ownerId === "" ? null : ownerId; }
-  const admin = await database
+  const owner = await database
     .selectFrom("users",)
     .select("id",)
-    .where("role", "=", "admin",)
+    .where("role", "in", ["solo", "admin",],)
     .orderBy("created_at", "asc",)
     .executeTakeFirst();
-  ownerId = admin?.id ?? "";
+  ownerId = owner?.id ?? "";
   return ownerId === "" ? null : ownerId;
 }
 
@@ -80,9 +105,12 @@ async function readPayload(
     ok: true,
     payload: {
       body: graph as WorkflowPayload["body"],
-      // Seeded files predate the category field; txt2img is the overwhelmingly
-      // common case and the admin can correct it in the UI.
-      category: "txt2img",
+      // A bare graph carries no category. When the file is named after a
+      // category (img2img.json, inpaint.json) that name is the category;
+      // otherwise fall back to txt2img, which the admin can correct in the UI.
+      // Guessing txt2img unconditionally mislabelled img2img, and
+      // `sd-server-provider` dispatches on this value.
+      category: categoryFor(basename(path, ".json",),),
       parameters: [],
       requiredNodes: [],
     },

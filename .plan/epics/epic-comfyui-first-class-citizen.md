@@ -426,6 +426,50 @@ strings throughout.
       and file-upload without the Elysia body-consumption trap. Worth
       revisiting if direct binary multipart upload is ever wanted.*
 
+### Boot review (Phase 1)
+
+Phase 0 and most of Phase 1 passed their unit tests while three real defects
+shipped. None were visible from the suite — all three were found by **booting
+the server and reading its log, then querying the DB it produced**. Recorded
+because it changes what "verified" means here: every gate was green at each
+point below.
+
+- [x] **The seed never landed on a fresh install.** `resolveOwner` matched
+      `role = 'admin'`, but a default install runs in solo mode, where the
+      operator's account is `role = 'solo'` and no admin exists yet — the avatar
+      seeder creates `system-user` several steps *later*. Boot log:
+      `no admin user to own seeded workflows; skipping seed`. The unit tests
+      passed because they created an admin first, which no real deployment does.
+      Now matches `solo` **or** `admin`, oldest first. *An earlier commit message
+      for this feature claimed "seeds on first boot". That was false.*
+- [x] **The seed silently clobbered two built-in templates.** Filenames are ids,
+      so `configs/workflows/txt2img.json` and `img2img.json` import under exactly
+      the ids the TypeScript built-ins register, into the same singleton — and
+      `replaceManaged` overwrites by id. Measured on a booted server: `txt2img`
+      9 parameters → **0**, `img2img` 10 → **0**.
+      *Operator decision: the library row **wins**. It is the operator-editable
+      copy, so it is the authoritative version of those ids.* The old
+      `hydrateWorkflowRegistry` docstring claimed built-ins "must survive"; that
+      claim was false and is what let this ship, so it is corrected in place.
+- [x] **A zero-parameter library row generated a blank image.** With no declared
+      parameters the run path sends `{}`, every `{{placeholder}}` collapsed to
+      `""`, and ComfyUI was asked for an empty prompt — no error, just a blank
+      image. `buildWorkflowGraph` now rejects a template that declares *no*
+      parameters while its body still has unsupplied placeholders. An unfilled
+      *optional* parameter still collapses to `""`; that path is unchanged.
+- [x] **`img2img` was labelled `category: "txt2img"`.** The seed hardcoded it with
+      a "txt2img is the overwhelmingly common case" comment. Not cosmetic:
+      `SDServerEditProvider.execute` switches on `template.category` to pick a
+      dispatch, so the workflow ran the wrong pipeline, and `?category=img2img`
+      returned nothing. The category now comes from the filename when the
+      filename names one, via a single exported `CATEGORIES` list.
+
+**Known gap, accepted.** Because the library wins the collision, `txt2img` and
+`img2img` are served from DB rows that declare no parameter metadata, so they
+cannot be run until a later phase generates it. They now fail loudly rather than
+producing a blank image. `inpaint`, `upscale`, and `controlnet` are untouched and
+keep their built-in metadata.
+
 ### Phase 2: Parameterized config workflows
 
 - [ ] **Defect 6 first:** add `width`/`height` to `ImageGenOptions` and honour
