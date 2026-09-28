@@ -3856,6 +3856,14 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-llm-request-complexity-classification.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-llm-resource-aware-admission-control.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-add-model-roles-test-ts-for-src-admin-model-roles-ts.md"
     },
     {
@@ -5773,6 +5781,10 @@
       "source": ".plan/epics/epic-chat-product-features.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-llm-request-scheduler.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-059.md"
     },
@@ -7157,8 +7169,20 @@
       "source": ".plan/epics/epic-chat-context-optimization.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-llm-request-scheduler.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-068.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-llm-request-complexity-classification.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-llm-resource-aware-admission-control.md"
     },
     {
       "kind": "ticket",
@@ -8513,6 +8537,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-data-integrity-acid.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-llm-scheduler-config-surface.md"
     }
   ],
   "src/config/load.ts": [
@@ -8883,6 +8911,18 @@
   ],
   "src/config/schema/auto-start.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-llm-request-scheduler.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-llama-swap-rotation-exclusion-policy.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-llm-scheduler-config-surface.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-llama-swap-native-support-cpu-resident-classifier-model-reci.md"
     }
@@ -8910,6 +8950,18 @@
     }
   ],
   "src/config/schema/generation.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-llm-request-scheduler.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-llama-swap-rotation-exclusion-policy.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-llm-scheduler-config-surface.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-user-defined-regex-rules-storage-crud-route-ui.md"
@@ -8954,6 +9006,10 @@
     }
   ],
   "src/config/schema/providers.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-llm-scheduler-config-surface.md"
+    },
     {
       "kind": "spec",
       "source": "docs/spec/integrations/llm-serving.md"
@@ -13307,6 +13363,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-llm-queue.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-llm-request-scheduler.md"
     }
   ],
   "src/db/schema-rpg.ts": [
@@ -13943,6 +14003,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-server-side-i18n-middleware.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-wire-llm-resource-manager-into-generation-dispatch.md"
     },
     {
       "kind": "spec",
@@ -18674,7 +18738,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-llm-request-complexity-classification.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-generation-error-handling-gaps-detector-abort-void-promises.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-wire-llm-resource-manager-into-generation-dispatch.md"
     }
   ],
   "src/generation/auto-gen/classify-intent.test.ts": [
@@ -18789,6 +18861,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-inject-runcontenthooks-into-gendeps-for-testable-story-mode-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-wire-llm-resource-manager-into-generation-dispatch.md"
     }
   ],
   "src/generation/auto-gen/fire-random-event.ts": [
@@ -19360,6 +19436,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-llm-request-complexity-classification.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-generation-maxtokens-and-prompt-array-unvalidated-cost-dos.md"
     }
   ],
@@ -19393,6 +19473,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-memory-history-search-bind-message-chain-reconstructable-con.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-wire-llm-resource-manager-into-generation-dispatch.md"
     }
   ],
   "src/generation/generate-route/sse-utils.ts": [
@@ -19443,6 +19527,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-memory-history-search-bind-message-chain-reconstructable-con.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-wire-llm-resource-manager-into-generation-dispatch.md"
     }
   ],
   "src/generation/generate-route/tool-execution.test.ts": [
@@ -20138,6 +20226,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-llm-resource-aware-admission-control.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-dedup-top-jscpd-clone-clusters.md"
     },
     {
@@ -20153,8 +20245,20 @@
   ],
   "src/generation/providers/call-with-failover.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-llm-request-scheduler.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-llm-resource-aware-admission-control.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-effect-v4-retry-schedule-parity-spike-on-the-provider-call-p.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-wire-llm-resource-manager-into-generation-dispatch.md"
     }
   ],
   "src/generation/providers/circuit-breaker.ts": [
@@ -20164,11 +20268,19 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-llm-request-scheduler.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-platform-integrations.md"
     },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-provider-plugin-ecosystem.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-llm-resource-aware-admission-control.md"
     },
     {
       "kind": "ticket",
@@ -20336,6 +20448,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-llm-request-scheduler.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-local-process-swarm.md"
     },
     {
@@ -20360,6 +20476,14 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-llama-swap-rotation-exclusion-policy.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-llm-scheduler-config-surface.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-crypto-hardening-minors-algo-field-decorative-pbkdf2-hot-pat.md"
     },
     {
@@ -20381,6 +20505,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-resource-provision-routing-facade.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-wire-llm-resource-manager-into-generation-dispatch.md"
     }
   ],
   "src/generation/providers/retry.test.ts": [
@@ -20393,6 +20521,14 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-effect-v4-adoption-evaluation.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-llm-request-scheduler.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-llm-resource-aware-admission-control.md"
     },
     {
       "kind": "ticket",
@@ -20423,6 +20559,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-067.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-llm-resource-aware-admission-control.md"
     },
     {
       "kind": "spec",
@@ -21509,6 +21649,12 @@
       "source": ".plan/tickets/TASK-2026-openwebui-thinking-block-render.md"
     }
   ],
+  "src/llm": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-wire-llm-resource-manager-into-generation-dispatch.md"
+    }
+  ],
   "src/llm/concurrency-limiter.ts": [
     {
       "kind": "epic",
@@ -21519,10 +21665,26 @@
       "source": ".plan/tickets/TASK-effect-v4-scoped-concurrency-and-interruption-spike.md"
     }
   ],
+  "src/llm/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-wire-llm-resource-manager-into-generation-dispatch.md"
+    }
+  ],
+  "src/llm/message-state-machine.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-llm-scheduler-observability.md"
+    }
+  ],
   "src/llm/queue.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-llm-queue.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-llm-request-scheduler.md"
     }
   ],
   "src/llm/rate-limiter.ts": [
@@ -21531,10 +21693,38 @@
       "source": ".plan/epics/epic-llm-queue.md"
     }
   ],
+  "src/llm/resource-manager-types.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-llm-request-complexity-classification.md"
+    }
+  ],
+  "src/llm/resource-manager.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-wire-llm-resource-manager-into-generation-dispatch.md"
+    }
+  ],
   "src/llm/resource-manager.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-llm-queue.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-llm-request-scheduler.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-llm-resource-aware-admission-control.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-llm-scheduler-observability.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-wire-llm-resource-manager-into-generation-dispatch.md"
     }
   ],
   "src/llm/scheduler.ts": [
@@ -21547,6 +21737,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-llm-queue.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-llm-request-scheduler.md"
     }
   ],
   "src/locations/routes.ts": [
@@ -21854,6 +22048,10 @@
   "src/memory/embeddings.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-llm-request-complexity-classification.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-classifier-model-survey-message-intent-memory-ranking-emotio.md"
     },
     {
@@ -22079,6 +22277,12 @@
     {
       "kind": "frontend",
       "source": "docs/frontend/chat/memories.md"
+    }
+  ],
+  "src/memory/rerank.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-llm-request-complexity-classification.md"
     }
   ],
   "src/memory/score.test.ts": [
@@ -28687,6 +28891,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-llm-queue.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-llm-request-scheduler.md"
     }
   ],
   "src/routes/rag/search.ts": [
@@ -33823,10 +34031,24 @@
       "source": ".plan/tickets/TASK-swarm-supervisor.md"
     }
   ],
+  "src/services/server-external-manager/probes.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-llama-swap-rotation-exclusion-policy.md"
+    }
+  ],
   "src/services/server-external-manager/start-llama.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-llm-request-scheduler.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-local-process-swarm.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-llama-swap-rotation-exclusion-policy.md"
     },
     {
       "kind": "ticket",

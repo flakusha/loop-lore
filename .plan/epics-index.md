@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 308 epics
+**Total:** 309 epics
 
 ## Summary
 
@@ -217,6 +217,7 @@
 | Not Started | Item System Extensions | High | High | 0 | [epic-item-system-extensions.md](/.plan/epics/epic-item-system-extensions.md) |
 | In Progress | Item Systems Unification & Gap Closure | High | High | 6 | [epic-item-systems-unification.md](/.plan/epics/epic-item-systems-unification.md) |
 | Not Started | Licensing | Low | Medium | 6 | [epic-licensing.md](/.plan/epics/epic-licensing.md) |
+| Proposed | LLM Request Scheduler — Complexity, Resources, Model Rotation | high | Large | 0 | [epic-llm-request-scheduler.md](/.plan/epics/epic-llm-request-scheduler.md) |
 | Not Started | LLM Request Throughput & Message Scheduling | Medium | Large | 13 | [epic-llm-queue.md](/.plan/epics/epic-llm-queue.md) |
 | Not Started | Local Process Swarm (Bun-Managed Multi-Process Decomposition) | Medium | Very High | 0 | [epic-local-process-swarm.md](/.plan/epics/epic-local-process-swarm.md) |
 | Not Started | Logging & Structured Logging | Medium | Medium | 5 | [epic-logging.md](/.plan/epics/epic-logging.md) |
@@ -2295,6 +2296,15 @@ Extended item system mechanics — durability degradation, stat effects, stats d
 - **Type:** epic
 - **Tags:** (none)
 - **File:** `.plan/epics/epic-licensing.md`
+
+### LLM Request Scheduler — Complexity, Resources, Model Rotation
+
+- **Status:** Proposed
+- **Priority:** high
+- **Effort:** Large
+- **Type:** Feature Epic
+- **Tags:** llm, scheduler, queue, concurrency, llama-swap, admission-control, cost
+- **File:** `.plan/epics/epic-llm-request-scheduler.md`
 
 ### LLM Request Throughput & Message Scheduling
 
