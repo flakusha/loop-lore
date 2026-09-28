@@ -181,6 +181,23 @@
     "title": "advertised /sfx /music /video commands are stubs",
     "type": "BUG"
   },
+  "BUG-AGGREGATED-TRAITS-ENDPOINT-SHADOWED-AND-DROPPED": {
+    "hash": "pending",
+    "extid": "BUG-AGGREGATED-TRAITS-ENDPOINT-SHADOWED-AND-DROPPED",
+    "type": "BUG",
+    "title": "Aggregated traits endpoint silently dropped by shadowed subdir barrel",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "routes",
+      "rpg",
+      "database",
+      "silent-regression"
+    ],
+    "source": ".plan/tickets/BUG-aggregated-traits-endpoint-shadowed-and-dropped.md",
+    "status": "Not Started"
+  },
   "BUG-ALIGN-SEEDDEFAULTS-NULL-HANDLING-WITH-RESOLVEMODELROLE-DEFEN": {
     "epic": "",
     "extid": "BUG-ALIGN-SEEDDEFAULTS-NULL-HANDLING-WITH-RESOLVEMODELROLE-DEFEN",
@@ -2287,7 +2304,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-duplicate-migration-numeric-prefix-021.md",
-    "status": "Not Started",
+    "status": "done",
     "git_issue": "22c7ae9"
   },
   "BUG-DUPLICATE-OPENASSETPREVIEW-DEFINITIONS-WITH-DIVERGENT-BEHAVI": {
