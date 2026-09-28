@@ -8,10 +8,11 @@
 // consume the resolver at runtime.
 
 export { EMPTY_AUTONOMY_OVERRIDE, getPreset, PRESETS, SHIPPED_PRESETS, UnboundedStressGatedError, } from "./presets";
-export { resolveAutonomyConfig, } from "./resolver";
+export { resolveAutonomyConfig, resolveAutonomyLayers, } from "./resolver";
 export type {
   AutonomyConfig,
   AutonomyConfigOverride,
+  AutonomyLayers,
   PacingPresetName,
   PresetDefinition,
   ResolveAutonomyScope,

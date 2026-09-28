@@ -50,6 +50,24 @@ export type AutonomyConfigOverride = Partial<
   >
 >;
 
+/** Each layer's own override, plus the config they merge into. A
+ *  settings page reads `layers` to show what a scope overrides versus
+ *  what it inherits — the resolved config alone cannot say that.
+ */
+export interface AutonomyLayers {
+  /** Raw per-layer overrides, keyed by the layer they came from. */
+  layers: {
+    /** `worlds.autonomy_config` — the world-wide default. */
+    world: AutonomyConfigOverride;
+    /** `chats.autonomy_config` — this chat's override. */
+    chat: AutonomyConfigOverride;
+    /** `character_internal_traits.autonomy_preferences.autonomy`. Empty when no actor scope. */
+    actor: AutonomyConfigOverride;
+  };
+  /** The merged result of all layers plus the preset baseline. */
+  resolved: AutonomyConfig;
+}
+
 /** Inputs the resolver needs to layer the config. */
 export interface ResolveAutonomyScope {
   worldId: string;

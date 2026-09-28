@@ -18,14 +18,17 @@ import { capFromConfig, resolveScopeConfig, } from "./caps";
 import type {
   AutonomyScope,
   BudgetRow,
+  GovernedWindow,
   GovernorLimitCatalog,
   GovernorLimitName,
   GovernorResult,
   TryConsumeOptions,
 } from "./types";
+import { effectiveWindow, } from "./window";
 export type {
   AutonomyScope,
   BudgetRow,
+  GovernedWindow,
   GovernorLimit,
   GovernorLimitCatalog,
   GovernorLimitName,
@@ -84,17 +87,55 @@ export class AutonomyGovernor {
   }
 
   /**
+   * Read the current budget for a scope WITHOUT consuming from it.
+   *
+   * The settings UI needs "remaining / resets at" but must not spend a
+   * tick to ask. Same cap and window derivation as `tryConsume`, so a
+   * peeked number matches what the next consume would act on.
+   *
+   * @param db
+   * @param scope
+   * @param limitName
+   * @param opts
+   * @returns the window in force now; `remaining` is capacity, not a decision
+   */
+  async peek(
+    db: Kysely<DB>,
+    scope: AutonomyScope,
+    limitName: GovernorLimitName,
+    opts: TryConsumeOptions = {},
+  ): Promise<GovernedWindow> {
+    const limit = LIMIT_CATALOG[limitName];
+    const nowMs = opts.nowMs ?? Date.now();
+    const cap = opts.cap !== undefined
+      ? opts.cap
+      : capFromConfig(scope, await resolveScopeConfig(db, { scope, opts, },),);
+
+    if (cap === null) {
+      return { remaining: null, resetAt: nowMs + limit.windowMs, cap: null, count: 0, };
+    }
+    const row = await this.#cache.load(db, { scope, limitName, nowMs, },);
+    const win = effectiveWindow(row, limit, nowMs,);
+    return {
+      remaining: Math.max(0, cap - win.count,),
+      resetAt: win.resetAtMs,
+      cap,
+      count: win.count,
+    };
+  }
+
+  /**
    * Attempt to consume one unit of `limitName` for `scope`.
    *
    * Steps:
    *   1. Resolve cap (caller override > scope kind default from config).
    *   2. Read the persisted row (cache → DB fallback).
-   *   3. If no row or window expired, treat as fresh (count = 0).
+   *   3. Fold the row into the window in force now (see ./window.ts).
    *   4. Compute nextCount = current + 1. If nextCount > cap → deny,
    *      emit telemetry, do NOT mutate the row (so a denied consume
    *      cannot keep the gate tripped forever).
-   *   5. Else: UPSERT the row with window_start_at = nowMs, count = nextCount.
-   *      Update cache.
+   *   5. Else: UPSERT the row with window_start_at = the window's own
+   *      start, count = nextCount. Update cache.
    *
    * @returns Decision + remaining + resetAt. Caller MUST check `ok`.
    */
@@ -105,7 +146,6 @@ export class AutonomyGovernor {
     opts: TryConsumeOptions = {},
   ): Promise<GovernorResult> {
     const limit = LIMIT_CATALOG[limitName];
-
     const nowMs = opts.nowMs ?? Date.now();
     const nowIso = toDate(nowMs,).toISOString();
 
@@ -127,30 +167,10 @@ export class AutonomyGovernor {
       };
     }
 
-    // Step 2: read current row.
+    // Step 2–3: read the row and fold it into the current window.
     const row = await this.#cache.load(db, { scope, limitName, nowMs, },);
-
-    // Step 3: compute effective (start, count). If row absent or window
-    // has rolled past, reset to (nowMs, 0).
-    let activeStartMs: number;
-    let activeCount: number;
-    if (row === null) {
-      activeStartMs = nowMs;
-      activeCount = 0;
-    } else {
-      const rowStartMs = toDate(row.window_start_at,).getTime();
-      const rowResetMs = rowStartMs + limit.windowMs;
-      if (nowMs >= rowResetMs) {
-        activeStartMs = nowMs;
-        activeCount = 0;
-      } else {
-        activeStartMs = rowStartMs;
-        activeCount = row.window_count;
-      }
-    }
-
-    const resetAtMs = activeStartMs + limit.windowMs;
-    const nextCount = activeCount + 1;
+    const win = effectiveWindow(row, limit, nowMs,);
+    const nextCount = win.count + 1;
 
     // Step 4: cap check.
     if (nextCount > cap) {
@@ -176,8 +196,8 @@ export class AutonomyGovernor {
           scope_id: scope.id,
           limit_name: limitName,
           cap,
-          window_count: activeCount,
-          window_reset_at: toDate(resetAtMs,).toISOString(),
+          window_count: win.count,
+          window_reset_at: toDate(win.resetAtMs,).toISOString(),
           timestamp: nowIso,
         },
       },).catch((err: unknown,) => {
@@ -186,20 +206,13 @@ export class AutonomyGovernor {
           .warn("Failed to emit governor.budget.exceeded", { error: String(err,), },);
       },);
 
-      return {
-        ok: false,
-        remaining: 0,
-        resetAt: resetAtMs,
-        cap,
-        count: activeCount,
-      };
+      return { ok: false, remaining: 0, resetAt: win.resetAtMs, cap, count: win.count, };
     }
 
-    // Step 5: upsert the new count. window_start_at stays anchored to
-    // activeStartMs — NOT nowMs — so each successful consume does NOT
-    // slide the window forward. Only when the previous window expired
-    // does activeStartMs = nowMs (a real reset).
-    const activeStartIso = toDate(activeStartMs,).toISOString();
+    // Step 5: upsert the new count. window_start_at stays anchored to the
+    // window's own start — NOT nowMs — so each successful consume does NOT
+    // slide the window forward. Only a real reset moves it.
+    const activeStartIso = toDate(win.startMs,).toISOString();
     await db
       .insertInto("autonomy_budget",)
       .values({
@@ -221,22 +234,15 @@ export class AutonomyGovernor {
       )
       .execute();
 
-    const persisted: BudgetRow = {
+    this.#cache.write(scope, limitName, {
       scope_kind: scope.kind,
       scope_id: scope.id,
       limit_name: limitName,
       window_start_at: activeStartIso,
       window_count: nextCount,
       updated_at: nowIso,
-    };
-    this.#cache.write(scope, limitName, persisted, nowMs,);
+    }, nowMs,);
 
-    return {
-      ok: true,
-      remaining: cap - nextCount,
-      resetAt: resetAtMs,
-      cap,
-      count: nextCount,
-    };
+    return { ok: true, remaining: cap - nextCount, resetAt: win.resetAtMs, cap, count: nextCount, };
   }
 }

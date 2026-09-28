@@ -20691,7 +20691,7 @@
     "label": "task",
     "priority": "P2 — Medium",
     "source": ".plan/tickets/TASK-autonomy-config-surface.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Autonomy Config Surface",
     "type": "TASK"
@@ -20717,7 +20717,7 @@
     "label": "task",
     "priority": "P1 — High",
     "source": ".plan/tickets/TASK-autonomy-rate-governor.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Autonomy Rate Governor (per-agent/user budget caps)",
     "type": "TASK"

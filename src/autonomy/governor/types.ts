@@ -68,6 +68,22 @@ export interface GovernorResult {
   count: number;
 }
 
+/** Result of a non-consuming `peek` — the window as it stands, with no
+ *  decision and no mutation. `remaining` is null (not infinite) for an
+ *  unbounded scope, so a UI can render "unlimited" rather than a
+ *  misleadingly huge number.
+ */
+export interface GovernedWindow {
+  /** Capacity left in the current window. null = unbounded. */
+  remaining: number | null;
+  /** When the current window resets (epoch ms). */
+  resetAt: number;
+  /** Cap in force. null = unbounded. */
+  cap: number | null;
+  /** Consumes already recorded in this window. */
+  count: number;
+}
+
 /** A persisted budget row. The governor never auto-prunes. */
 export interface BudgetRow {
   scope_kind: AutonomyScopeKind;

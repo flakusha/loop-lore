@@ -20,6 +20,7 @@ import { getPreset, } from "./presets";
 import type {
   AutonomyConfig,
   AutonomyConfigOverride,
+  AutonomyLayers,
   PacingPresetName,
   ResolveAutonomyScope,
 } from "./types";
@@ -92,28 +93,42 @@ function applyLayer(out: AutonomyConfig, layer: AutonomyConfigOverride,): void {
 }
 
 /**
- * Resolve the full autonomy config for a scope. Reads 2–3 rows
- * depending on whether `actorId` is supplied. Pure I/O; safe to call
- * per tick.
+ * Read every layer for a scope, plus the config they resolve to.
+ *
+ * Settings UI needs the per-layer values to show what a layer
+ * actually overrides versus what it inherits — the resolved config
+ * alone cannot answer that. Same SELECTs as `resolveAutonomyConfig`,
+ * and the merge is shared, so the two cannot disagree on precedence.
  * @param db
  * @param scope
- * @returns Fully layered AutonomyConfig.
+ * @returns each layer's raw override plus the merged result
  */
-export async function resolveAutonomyConfig(
+export async function resolveAutonomyLayers(
   db: Db,
   scope: ResolveAutonomyScope,
-): Promise<AutonomyConfig> {
-  const worldOverride = await readJsonColumn(db, "worlds", scope.worldId,);
-  const chatOverride = await readJsonColumn(db, "chats", scope.chatId,);
-  const actorOverride = scope.actorId
-    ? await readActorOverride(db, scope.actorId,)
-    : {};
+): Promise<AutonomyLayers> {
+  const world = await readJsonColumn(db, "worlds", scope.worldId,);
+  const chat = await readJsonColumn(db, "chats", scope.chatId,);
+  const actor = scope.actorId ? await readActorOverride(db, scope.actorId,) : {};
+  return { layers: { world, chat, actor, }, resolved: mergeLayers(world, chat, actor,), };
+}
 
+/**
+ * Apply the four layers into one config. The preset name resolves
+ * actor > chat > world > default; values layer lowest-first onto the
+ * preset baseline.
+ * @param world
+ * @param chat
+ * @param actor
+ * @returns the merged config
+ */
+function mergeLayers(
+  world: AutonomyConfigOverride,
+  chat: AutonomyConfigOverride,
+  actor: AutonomyConfigOverride,
+): AutonomyConfig {
   // preset name: actor > chat > world > DEFAULT.
-  const presetName: PacingPresetName = actorOverride.preset ??
-    chatOverride.preset ??
-    worldOverride.preset ??
-    DEFAULT_PRESET;
+  const presetName: PacingPresetName = actor.preset ?? chat.preset ?? world.preset ?? DEFAULT_PRESET;
   const preset = getPreset(presetName,);
 
   // Start from preset baseline; layers apply in order (lowest first).
@@ -125,8 +140,26 @@ export async function resolveAutonomyConfig(
     perAgentCap: preset.perAgentCap,
     perUserCap: preset.perUserCap,
   };
-  applyLayer(out, worldOverride,);
-  applyLayer(out, chatOverride,);
-  applyLayer(out, actorOverride,);
+  applyLayer(out, world,);
+  applyLayer(out, chat,);
+  applyLayer(out, actor,);
   return out;
+}
+
+/**
+ * Resolve the full autonomy config for a scope. Reads 2–3 rows
+ * depending on whether `actorId` is supplied. Pure I/O; safe to call
+ * per tick.
+ * @param db
+ * @param scope
+ * @returns Fully layered AutonomyConfig.
+ */
+export async function resolveAutonomyConfig(
+  db: Db,
+  scope: ResolveAutonomyScope,
+): Promise<AutonomyConfig> {
+  const world = await readJsonColumn(db, "worlds", scope.worldId,);
+  const chat = await readJsonColumn(db, "chats", scope.chatId,);
+  const actor = scope.actorId ? await readActorOverride(db, scope.actorId,) : {};
+  return mergeLayers(world, chat, actor,);
 }
