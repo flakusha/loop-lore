@@ -27,8 +27,8 @@ import {
   insertWorlds,
 } from "../../test-utils/insert-helpers.js";
 import { uid, } from "../../utils.js";
-import { runNpcMovementTick, } from "./tick-driver";
 import { MovementPattern, } from "./service/types.js";
+import { runNpcMovementTick, } from "./tick-driver";
 
 let db: Kysely<DB>;
 
@@ -93,10 +93,10 @@ afterEach(async () => {
 
 describe("runNpcMovementTick", () => {
   test("happy path: dispatches to processMovementTick and returns results", async () => {
-    const { ownerId, worldId, } = await makeWorld("happy");
+    const { ownerId, worldId, } = await makeWorld("happy",);
     const chatId = await makeChat(worldId, ownerId,);
-    const locA = await makeLocation(worldId, "a");
-    const locB = await makeLocation(worldId, "b");
+    const locA = await makeLocation(worldId, "a",);
+    const locB = await makeLocation(worldId, "b",);
     const actorId = await makeNpc(worldId, locA, {
       movementPattern: MovementPattern.Patrol,
       patrolRoute: [locA, locB,],
@@ -117,12 +117,12 @@ describe("runNpcMovementTick", () => {
       expect(out.preset,).toBe("organic",);
       expect(out.jitterRatio,).toBeGreaterThan(0,);
     }
-  },);
+  });
 
   test("paused: skips without touching DB or governor", async () => {
-    const { ownerId, worldId, } = await makeWorld("paused");
+    const { ownerId, worldId, } = await makeWorld("paused",);
     const chatId = await makeChat(worldId, ownerId,);
-    const loc = await makeLocation(worldId, "square");
+    const loc = await makeLocation(worldId, "square",);
     await makeNpc(worldId, loc, { movementPattern: MovementPattern.Stationary, },);
 
     // Spy: governor's tryConsume MUST NOT be called.
@@ -142,10 +142,10 @@ describe("runNpcMovementTick", () => {
 
     expect(out,).toEqual({ skipped: "paused", },);
     expect(governorCalls,).toBe(0,);
-  },);
+  });
 
   test("disabled config: skips when autonomy is disabled", async () => {
-    const { ownerId, worldId, } = await makeWorld("disabled");
+    const { ownerId, worldId, } = await makeWorld("disabled",);
     const chatId = await makeChat(worldId, ownerId,);
     // Disable autonomy at world layer.
     await db
@@ -163,12 +163,12 @@ describe("runNpcMovementTick", () => {
     if ("skipped" in out && out.skipped === "disabled") {
       expect(out.preset,).toBe("organic",);
     }
-  },);
+  });
 
   test("jitter: rng below jitterRatio returns skipped: 'jitter'", async () => {
-    const { ownerId, worldId, } = await makeWorld("jitter");
+    const { ownerId, worldId, } = await makeWorld("jitter",);
     const chatId = await makeChat(worldId, ownerId,);
-    const loc = await makeLocation(worldId, "a");
+    const loc = await makeLocation(worldId, "a",);
     await makeNpc(worldId, loc, {
       movementPattern: MovementPattern.Stationary,
     },);
@@ -183,12 +183,12 @@ describe("runNpcMovementTick", () => {
     if ("skipped" in out && out.skipped === "jitter") {
       expect(out.jitterRatio,).toBeGreaterThan(0,);
     }
-  },);
+  });
 
   test("jitter: rng above jitterRatio lets the tick fire", async () => {
-    const { ownerId, worldId, } = await makeWorld("jitter-fire");
+    const { ownerId, worldId, } = await makeWorld("jitter-fire",);
     const chatId = await makeChat(worldId, ownerId,);
-    const loc = await makeLocation(worldId, "x");
+    const loc = await makeLocation(worldId, "x",);
     await makeNpc(worldId, loc, {
       movementPattern: MovementPattern.Stationary,
     },);
@@ -199,12 +199,12 @@ describe("runNpcMovementTick", () => {
     },);
 
     expect("results" in out,).toBe(true,);
-  },);
+  });
 
   test("budget: governor denies after per_tick_action cap exhausts", async () => {
-    const { ownerId, worldId, } = await makeWorld("budget");
+    const { ownerId, worldId, } = await makeWorld("budget",);
     const chatId = await makeChat(worldId, ownerId,);
-    const loc = await makeLocation(worldId, "p");
+    const loc = await makeLocation(worldId, "p",);
     await makeNpc(worldId, loc, { movementPattern: MovementPattern.Stationary, },);
 
     // organic preset: perAgentCap = 8. Override world cap to 2 for fast
@@ -243,13 +243,13 @@ describe("runNpcMovementTick", () => {
       expect(denied.reason.ok,).toBe(false,);
       expect(denied.reason.remaining,).toBe(0,);
     }
-  },);
+  });
 
   test("cadence: repeated scheduled calls fire repeatedly", async () => {
-    const { ownerId, worldId, } = await makeWorld("cadence");
+    const { ownerId, worldId, } = await makeWorld("cadence",);
     const chatId = await makeChat(worldId, ownerId,);
-    const locA = await makeLocation(worldId, "a");
-    const locB = await makeLocation(worldId, "b");
+    const locA = await makeLocation(worldId, "a",);
+    const locB = await makeLocation(worldId, "b",);
     const actorId = await makeNpc(worldId, locA, {
       movementPattern: MovementPattern.Patrol,
       patrolRoute: [locA, locB,],
@@ -268,12 +268,12 @@ describe("runNpcMovementTick", () => {
         expect(out.results[0]!.actorId,).toBe(actorId,);
       }
     }
-  },);
+  });
 
   test("cadence: budget exhaustion persists across scheduled calls", async () => {
-    const { ownerId, worldId, } = await makeWorld("cadence-budget");
+    const { ownerId, worldId, } = await makeWorld("cadence-budget",);
     const chatId = await makeChat(worldId, ownerId,);
-    const loc = await makeLocation(worldId, "z");
+    const loc = await makeLocation(worldId, "z",);
     await makeNpc(worldId, loc, { movementPattern: MovementPattern.Stationary, },);
 
     await db
@@ -305,10 +305,10 @@ describe("runNpcMovementTick", () => {
       },);
       expect("skipped" in out && out.skipped,).toBe("budget",);
     }
-  },);
+  });
 
   test("no NPCs: tick still fires and returns empty results", async () => {
-    const { ownerId, worldId, } = await makeWorld("empty");
+    const { ownerId, worldId, } = await makeWorld("empty",);
     const chatId = await makeChat(worldId, ownerId,);
     const out = await runNpcMovementTick(db, worldId, {
       chatId,
@@ -318,5 +318,5 @@ describe("runNpcMovementTick", () => {
     if ("results" in out) {
       expect(out.results,).toEqual([],);
     }
-  },);
+  });
 });
