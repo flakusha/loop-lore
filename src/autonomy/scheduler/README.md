@@ -33,6 +33,13 @@ Constructor takes the Kysely handle plus optional `{ governor, rng }`.
 `governor` shares a `AutonomyGovernor` across the tick driver;
 `rng` makes the driver's jitter coin flip deterministic in tests.
 
+A world that has **never ticked** is due immediately. The due set
+left-joins `worlds` against the cursor table rather than reading the
+cursor table alone: a never-ticked world has no cursor row, so reading
+`world_simulation_state` on its own would never select it and no tick
+would ever create the row. `load` synthesizes an epoch cursor for that
+case, and `dueWorlds` now agrees with it.
+
 ## Due-world selection
 
 A world is **due** when its persisted row satisfies:
