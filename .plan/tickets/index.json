@@ -37557,6 +37557,22 @@
     "title": "Update or retire stale integration-testing-tools.md",
     "type": "TASK"
   },
+  "TASK-RETIRE-THE-SCRIPTS-WORKTREE-FORK-OF-GIWT-MIGRATION-NOT-DELET": {
+    "hash": "9a53c07",
+    "git_issue": "9a53c07",
+    "extid": "TASK-RETIRE-THE-SCRIPTS-WORKTREE-FORK-OF-GIWT-MIGRATION-NOT-DELET",
+    "type": "TASK",
+    "title": "Retire the scripts/worktree fork of giwt (migration, not deletion)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "worktree",
+      "migration"
+    ],
+    "source": ".plan/tickets/TASK-retire-the-scripts-worktree-fork-of-giwt-migration-not-delet.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-REWRITE-APPLY-WRITE-BACK-TO-TARGET-MESSAGE": {
     "epic": "epic-output-control-transforms",
     "extid": "TASK-REWRITE-APPLY-WRITE-BACK-TO-TARGET-MESSAGE",
