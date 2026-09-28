@@ -628,6 +628,23 @@
     "title": "Backfill of historical posts on new follower unspecified",
     "type": "BUG"
   },
+  "BUG-BACKUP-SQLITE-COPIES-LIVE-DB-WITHOUT-CHECKPOINT": {
+    "hash": "5055a30",
+    "git_issue": "5055a30",
+    "extid": "BUG-BACKUP-SQLITE-COPIES-LIVE-DB-WITHOUT-CHECKPOINT",
+    "type": "BUG",
+    "title": "backup-sqlite copies a live WAL database without checkpointing",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-db-growth-tiered-storage",
+    "tags": [
+      "database",
+      "backup",
+      "durability"
+    ],
+    "source": ".plan/tickets/BUG-backup-sqlite-copies-live-db-without-checkpoint.md",
+    "status": "Not Started"
+  },
   "BUG-BASE64-TOBASE64-COERCES-UNDEFINED-TO-0-VIA-BYTES-I-0": {
     "epic": "",
     "extid": "BUG-BASE64-TOBASE64-COERCES-UNDEFINED-TO-0-VIA-BYTES-I-0",
@@ -3895,6 +3912,24 @@
     "tags": [],
     "title": "memory decay writes NaN strength",
     "type": "BUG"
+  },
+  "BUG-MEMORY-EMBEDDINGS-ORPHANED-ON-ACTOR-DELETE": {
+    "hash": "fc8d36e",
+    "git_issue": "fc8d36e",
+    "extid": "BUG-MEMORY-EMBEDDINGS-ORPHANED-ON-ACTOR-DELETE",
+    "type": "BUG",
+    "title": "memory_embeddings rows are orphaned on actor/memory deletion",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-db-growth-tiered-storage",
+    "tags": [
+      "database",
+      "storage",
+      "integrity",
+      "embeddings"
+    ],
+    "source": ".plan/tickets/BUG-memory-embeddings-orphaned-on-actor-delete.md",
+    "status": "Not Started"
   },
   "BUG-MEMORY-INJECTION-REASON-NOT-DISPLAYED-IN-UI": {
     "epic": "",
@@ -25670,6 +25705,24 @@
     "title": "DB Content Versioning & Snapshot/Restore",
     "type": "TASK"
   },
+  "TASK-DB-GROWTH-MEASUREMENT-BASELINE": {
+    "hash": "5682537",
+    "git_issue": "5682537",
+    "extid": "TASK-DB-GROWTH-MEASUREMENT-BASELINE",
+    "type": "TASK",
+    "title": "DB growth measurement baseline (per-table bytes + row counts)",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-db-growth-tiered-storage",
+    "tags": [
+      "database",
+      "measurement",
+      "storage",
+      "perf"
+    ],
+    "source": ".plan/tickets/TASK-db-growth-measurement-baseline.md",
+    "status": "Not Started"
+  },
   "TASK-DB-MIGRATION-EPOCH-SQUASH": {
     "epic": "",
     "extid": "TASK-DB-MIGRATION-EPOCH-SQUASH",
@@ -25682,6 +25735,24 @@
     "tags": [],
     "title": "db-migration-compaction (Path B — final-form, parts/-decomposed)",
     "type": "TASK"
+  },
+  "TASK-DB-READ-PATH-BENCHMARK-BASELINE": {
+    "hash": "ca8b2ba",
+    "git_issue": "ca8b2ba",
+    "extid": "TASK-DB-READ-PATH-BENCHMARK-BASELINE",
+    "type": "TASK",
+    "title": "DB read-path benchmark baseline (the gate the cold-cache epic requires)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-db-cold-storage-high-perf",
+    "tags": [
+      "benchmark",
+      "performance",
+      "database",
+      "prerequisite"
+    ],
+    "source": ".plan/tickets/TASK-db-read-path-benchmark-baseline.md",
+    "status": "Not Started"
   },
   "TASK-DB-RECOVERY-VIA-CANONICAL-JSONL-LOG-REPLAY-RESEARCH": {
     "epic": "",
@@ -27070,6 +27141,24 @@
     "tags": [],
     "title": "epic-36 lint: fix array method warnings",
     "type": "TASK"
+  },
+  "TASK-EPIC-DB-MIGRATION-COMPACTION-STALE-PREMISE-RECONCILE": {
+    "hash": "930cabe",
+    "git_issue": "930cabe",
+    "extid": "TASK-EPIC-DB-MIGRATION-COMPACTION-STALE-PREMISE-RECONCILE",
+    "type": "TASK",
+    "title": "epic-db-migration-compaction describes a tree that no longer exists",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-db-migration-compaction",
+    "tags": [
+      "db",
+      "migrations",
+      "plan-hygiene",
+      "stale-doc"
+    ],
+    "source": ".plan/tickets/TASK-epic-db-migration-compaction-stale-premise-reconcile.md",
+    "status": "Not Started"
   },
   "TASK-EPIC-FRONTEND-COMPONENT-ARCHITECTURE-CLARIFICATION-2026-09-26": {
     "epic": "",
