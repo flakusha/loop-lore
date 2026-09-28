@@ -15,7 +15,7 @@
  * rejection inside the tick loop. The happy path (a real write lands) is
  * covered by index.test.ts.
  */
-import { afterAll, beforeAll, describe, expect, mock, test, } from "bun:test";
+import { afterAll, beforeAll, expect, mock, test, } from "bun:test";
 import * as realTelemetryService from "../../telemetry/service";
 import { createTestDb, type TestDb, } from "../../test-utils/create-test-db";
 import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
