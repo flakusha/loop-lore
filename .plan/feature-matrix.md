@@ -629,7 +629,7 @@ Total tickets: **3023** — untagged: **2566** — unbound to epic: **1539**
 | narration | 4 | 0 | 0 | 0 | 0 | 0 | 4 |
 | narrative | 2 | 0 | 0 | 0 | 1 | 0 | 1 |
 | native-modules | 2 | 0 | 2 | 0 | 0 | 0 | 0 |
-| navigation | 3 | 1 | 0 | 0 | 0 | 0 | 2 |
+| navigation | 3 | 2 | 0 | 0 | 0 | 0 | 1 |
 | near-real-time | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | new-game-plus | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | next | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -868,7 +868,7 @@ Total tickets: **3023** — untagged: **2566** — unbound to epic: **1539**
 | side-effects | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | sidecar | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | signal | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| simulation | 4 | 0 | 0 | 0 | 0 | 0 | 4 |
+| simulation | 4 | 1 | 0 | 0 | 0 | 0 | 3 |
 | single-source-of-truth | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | size-strict | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
 | skills | 6 | 1 | 0 | 0 | 2 | 0 | 3 |
@@ -1059,7 +1059,7 @@ Total tickets: **3023** — untagged: **2566** — unbound to epic: **1539**
 | workflow-templates | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | workflows | 4 | 0 | 1 | 0 | 1 | 0 | 2 |
 | worktree | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| world | 14 | 0 | 0 | 1 | 3 | 0 | 10 |
+| world | 14 | 1 | 0 | 1 | 3 | 0 | 9 |
 | world events | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | world-gate | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | world-items | 2 | 0 | 0 | 1 | 1 | 0 | 0 |
@@ -1136,7 +1136,7 @@ Total tickets: **3023** — untagged: **2566** — unbound to epic: **1539**
 | epic-accessibility-input | 5 | 1 | 2 | 2 | 0 | 0 | 0 |
 | epic-accessibility-input (Phase 2 Mobile Support, 🟡) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-achievements | 5 | 1 | 1 | 3 | 0 | 0 | 0 |
-| epic-actor-autonomy-story-drive | 7 | 0 | 0 | 3 | 0 | 0 | 4 |
+| epic-actor-autonomy-story-drive | 7 | 1 | 0 | 3 | 0 | 0 | 3 |
 | epic-actor-autonomy-story-drive.md | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
 | epic-actor-turn-skip | 5 | 4 | 0 | 1 | 0 | 0 | 0 |
 | epic-actors | 5 | 3 | 0 | 0 | 0 | 0 | 2 |
