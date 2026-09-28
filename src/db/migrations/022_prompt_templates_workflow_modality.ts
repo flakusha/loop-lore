@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * 021_prompt_templates_workflow_library
+ * 022_prompt_templates_workflow_modality
  *
  * Add the `workflow` modality to the prompt-template library, plus the four
  * columns the ComfyUI workflow library needs.
