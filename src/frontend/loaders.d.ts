@@ -96,6 +96,12 @@ declare global {
 
   var actorEmotionAvatarsFactory: (actorId: string,) => unknown;
   var actorLicensingFactory: (actorId: string,) => unknown;
+  var autonomyPanelFactory: (opts: {
+    worldId: string;
+    chatId?: string;
+    layer?: string;
+    scopeId?: string;
+  },) => unknown;
   var actorEntitiesFactory: (actorId: string, kind: string,) => unknown;
   var actorSystemsFactory: (actorId: string,) => unknown;
   var actorTraitsFactory: (actorId: string,) => unknown;

@@ -1,0 +1,192 @@
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!--
+  Autonomy pacing panel (TASK-autonomy-config-surface).
+
+  Include from a view with the partial include tag. The panel reads its
+  mount from the parent Alpine scope, so the host sets the bindings
+  before including it:
+
+    <div x-data="autonomyPanelFactory({ worldId: 'W', layer: 'world' })">
+      {{ include autonomy-panel.html }}
+    </div>
+
+  Two hosts, same component: the world settings page passes layer
+  'world'; the chat settings modal passes a chatId and layer 'chat' for
+  a per-chat override on top of it.
+
+  Empty fields mean "inherit": the panel only writes fields that were
+  set, so clearing one hands control back to the layer below.
+-->
+<section class="autonomy-panel" data-testid="autonomy-panel">
+  <header class="autonomy-header">
+    <h4 class="autonomy-title">Autonomy</h4>
+    <p class="autonomy-help">How fast characters act on their own. Empty fields inherit from below.</p>
+  </header>
+
+  <div class="autonomy-loading" x-show="autoLoading" data-testid="autonomy-loading">
+    <span class="spinner"></span> Loading autonomy…
+  </div>
+
+  <p class="autonomy-error" x-show="autoError" x-text="autoError" data-testid="autonomy-error"></p>
+
+  <div class="autonomy-body" x-show="!autoLoading && autoData" data-testid="autonomy-body">
+    <!--
+      The per-actor layer. Tightest one, so it gets its own draft: a
+      shared draft would let editing a character clobber the world
+      default in the same form.
+    -->
+    <div class="autonomy-section" data-testid="autonomy-actor-editor">
+      <h5>Per-character override</h5>
+      <p class="autonomy-help">Applies to this character only. Empty inherits everything below.</p>
+      <label class="form-label">
+        <span>Character</span>
+        <select x-model="_autoActorId" @change="selectActor()" data-testid="autonomy-actor-picker">
+          <option value="">None selected</option>
+          <template x-for="a in autoData?.actors ?? []" :key="a.id">
+            <option :value="a.id" x-text="a.name"></option>
+          </template>
+        </select>
+      </label>
+      <template x-if="_autoActorId">
+        <div>
+          <label class="form-label">
+            <span>Preset</span>
+            <select x-model="autoActorDraft.preset">
+              <option value="">Inherit</option>
+              <template x-for="p in presetNames()" :key="p">
+                <option :value="p" x-text="p"></option>
+              </template>
+            </select>
+          </label>
+
+          <button
+            type="button"
+            class="btn btn-sm btn-primary"
+            data-testid="autonomy-actor-save"
+            :disabled="autoSaving || !actorDirty()"
+            @click="saveActor()"
+          >
+            Save character override
+          </button>
+        </div>
+      </template>
+    </div>
+
+    <!--
+      The layer this mount owns: the world default, or the chat
+      override sitting on top of it.
+    -->
+    <div class="autonomy-section" data-testid="autonomy-layer-editor">
+      <h5 x-text="_autoLayer === 'chat' ? 'This chat' : 'This world'"></h5>
+      <label class="form-label">
+        <span>Preset</span>
+        <select x-model="autoDraft.preset">
+          <option value="">Inherit</option>
+          <template x-for="p in presetNames()" :key="p">
+            <option :value="p" x-text="p"></option>
+          </template>
+        </select>
+        <small
+          class="autonomy-hint"
+          x-show="ownValue('preset') === ''"
+          data-testid="autonomy-preset-inherited"
+          x-text="`inherited: ${autoData?.resolved?.preset}`"
+        >
+        </small>
+      </label>
+
+      <label class="form-label">
+        <span>Tick interval (ms)</span>
+        <input type="number" min="1000" step="1000" x-model.number="autoDraft.tickIntervalMs" placeholder="Inherit" />
+        <small
+          class="autonomy-hint"
+          x-show="ownValue('tickIntervalMs') === ''"
+          data-testid="autonomy-interval-inherited"
+          x-text="`inherited: ${inheritedValue('tickIntervalMs')}`"
+        >
+        </small>
+      </label>
+
+      <label class="form-label">
+        <span>Per-user cap (per minute)</span>
+        <input type="number" min="0" x-model.number="autoDraft.perUserCap" placeholder="Inherit" />
+        <small
+          class="autonomy-hint"
+          x-show="ownValue('perUserCap') === ''"
+          data-testid="autonomy-usercap-inherited"
+          x-text="`inherited: ${inheritedValue('perUserCap')}`"
+        >
+        </small>
+      </label>
+
+      <label class="form-label">
+        <span>Per-agent cap (per minute)</span>
+        <input type="number" min="0" x-model.number="autoDraft.perAgentCap" placeholder="Inherit" />
+        <small
+          class="autonomy-hint"
+          x-show="ownValue('perAgentCap') === ''"
+          data-testid="autonomy-agentcap-inherited"
+          x-text="`inherited: ${inheritedValue('perAgentCap')}`"
+        >
+        </small>
+      </label>
+    </div>
+
+    <div class="autonomy-actions">
+      <button
+        type="button"
+        class="btn btn-secondary"
+        data-testid="autonomy-save"
+        :disabled="!autoDirty() || autoSaving"
+        @click="save()"
+      >
+        Save
+      </button>
+      <button type="button" class="btn btn-ghost" :disabled="autoSaving" @click="load()">Revert</button>
+    </div>
+
+    <!--
+      Loop control and live budget. The page reports the state the
+      scheduler is actually in, not a local guess.
+    -->
+    <div class="autonomy-section" data-testid="autonomy-loop">
+      <h5>Simulation</h5>
+      <p class="autonomy-status" data-testid="autonomy-status">
+        <span x-text="autoData?.simulation?.paused ? 'Paused' : 'Running'"></span>
+        &middot;
+        <span x-text="`${autoData?.simulation?.tick_count ?? 0} ticks`"></span>
+      </p>
+      <div class="autonomy-actions">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          x-show="!autoData?.simulation?.paused"
+          @click="control('pause')"
+          data-testid="autonomy-pause"
+        >
+          Pause
+        </button>
+        <button
+          type="button"
+          class="btn btn-secondary"
+          x-show="autoData?.simulation?.paused"
+          @click="control('resume')"
+          data-testid="autonomy-resume"
+        >
+          Resume
+        </button>
+        <button type="button" class="btn btn-ghost" @click="control('step')" data-testid="autonomy-step">
+          Step once
+        </button>
+      </div>
+      <p class="autonomy-status" x-show="autoData?.budget" data-testid="autonomy-budget">
+        <span
+          x-text="`Budget: ${autoData?.budget?.remaining ?? 'unlimited'} of ${autoData?.budget?.cap ?? 'unlimited'} left`"
+        >
+        </span>
+      </p>
+    </div>
+  </div>
+</section>

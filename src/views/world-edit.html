@@ -77,6 +77,14 @@
               >
                 Fractal
               </button>
+              <button
+                class="world-edit-tab"
+                :class="{ active: activeTab === 'autonomy' }"
+                @click="activeTab = 'autonomy'"
+                data-testid="tab-autonomy"
+              >
+                Autonomy
+              </button>
             </div>
 
             <!-- General Tab -->
@@ -150,6 +158,17 @@
                   </div>
                 </div>
               </form>
+            </div>
+
+            <!--
+              Autonomy tab: the world-layer pacing default plus the
+              loop controls. A chat can still override this, and a
+              character can override that.
+            -->
+            <div x-show="activeTab === 'autonomy'" data-testid="autonomy-tab">
+              <div x-data="autonomyPanelFactory({ worldId: '{{worldId}}', layer: 'world' })" x-init="init()">
+                {{> autonomy-panel.html }}
+              </div>
             </div>
 
             <!-- Locations Tab (Alpine-rendered from loadLocations()) -->

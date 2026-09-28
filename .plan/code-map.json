@@ -3731,6 +3731,20 @@
       "source": ".plan/tickets/TASK-action-karma-estimation-via-aux-model.md"
     }
   ],
+
+  "src/autonomy/config/config-api.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-autonomy-config-surface.md"
+    }
+  ],
+
+  "src/autonomy/config/presets.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-autonomy-config-surface.md"
+    }
+  ],
   "src/aux-pipeline": [
     {
       "kind": "epic",
@@ -7587,6 +7601,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-i18n-template-strings.md"
+    }
+  ],
+
+  "src/components/autonomy-panel.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-autonomy-config-surface.md"
     }
   ],
   "src/components/availability-editor.html": [
@@ -14875,6 +14896,13 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-auth-access.md"
+    }
+  ],
+
+  "src/frontend/alpine/autonomy-panel.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-autonomy-config-surface.md"
     }
   ],
   "src/frontend/alpine/battle-actions.ts": [
@@ -30441,6 +30469,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-entity-access-world-location-access.md"
+    }
+  ],
+
+  "src/routes/worlds/autonomy-config.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-autonomy-config-surface.md"
     }
   ],
   "src/routes/worlds/context-window.ts": [

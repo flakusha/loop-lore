@@ -30,11 +30,30 @@ const moralDispositionSchema = t.Object({
   good_evil: t.Optional(t.Number(),),
 },);
 
+/** Pacing override layer. Keys mirror the other autonomy layers, so a
+ *  per-actor override is written in the same vocabulary the world and
+ *  chat layers use (`resolveAutonomyConfig` reads this exact key).
+ *  Record-shaped: an unknown key is a forward-compatible preset
+ *  addition, not a 422 on a field the resolver would ignore anyway.
+ */
+const actorAutonomyOverrideSchema = t.Object({
+  preset: t.Optional(t.String(),),
+  enabled: t.Optional(t.Boolean(),),
+  tickIntervalMs: t.Optional(t.Number(),),
+  jitterRatio: t.Optional(t.Number(),),
+  perAgentCap: t.Optional(t.Union([t.Number(), t.Null(),],),),
+  perUserCap: t.Optional(t.Union([t.Number(), t.Null(),],),),
+},);
+
 const autonomyPreferencesSchema = t.Object({
   group_comfort: t.Optional(t.Number(),),
   solo_comfort: t.Optional(t.Number(),),
   separation_triggers: t.Optional(t.Array(t.String(),),),
   reunion_triggers: t.Optional(t.Array(t.String(),),),
+  // Per-actor pacing override (TASK-autonomy-config-surface) — the
+  // highest-precedence layer. Without this the layer the resolver
+  // reads could never be written through the API.
+  autonomy: t.Optional(actorAutonomyOverrideSchema,),
 },);
 
 const copingMechanismsSchema = t.Object({

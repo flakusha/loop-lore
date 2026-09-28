@@ -10,6 +10,8 @@
  * See .plan/epics/epic-character-internal-traits.md
  */
 
+import type { AutonomyConfigOverride, } from "../../../autonomy/config/types";
+
 /** Aspiration — a goal the character is pursuing */
 export interface Aspiration {
   id: string;
@@ -43,6 +45,13 @@ export interface AutonomyPreferences {
   separation_triggers: string[];
   /** What brings comfort when reuniting */
   reunion_triggers: string[];
+  /** Per-actor pacing override (TASK-autonomy-config-surface) — the
+   *  highest-precedence layer of `resolveAutonomyConfig`. Optional and
+   *  partial: absent means "inherit", an empty object means "no
+   *  override of my own". Kept as the resolver's own override shape so
+   *  the three layers cannot drift into different vocabularies.
+   */
+  autonomy?: AutonomyConfigOverride;
 }
 
 /** Coping mechanisms — how the character handles stress and failure */
