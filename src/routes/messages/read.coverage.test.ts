@@ -150,6 +150,57 @@ describe("readRoutes coverage", () => {
     expect(ids,).not.toContain(firstMessageId,);
   });
 
+  // Regression guard for the encryption-flow e2e flake. listMessages orders by
+  // `created_at` ASC, so with more than one page of history the NEWEST message
+  // is on the LAST page and is invisible to a page-1 read. A client that reads
+  // the wrong end of the list silently asserts against old messages.
+  //
+  // This is an API-level test on purpose: the bug is in how the paginated
+  // response is consumed, not in how the chat view renders. Driving it through
+  // a browser would add a 20+ message render burst that trips the rate limiter
+  // (429) and tests the limiter instead of the pagination contract.
+  test("newest message sits on the last page when history exceeds one page", async () => {
+    const pageSize = 10;
+    const deepChatId = uid();
+    await insertChats(db, "Deep Chat", owner, { id: deepChatId, } as never,);
+    const base = Date.now() - 60 * 60_000;
+    for (let i = 0; i < 25; i++) {
+      await insertMessages(db, deepChatId, owner, MessageRole.User, `deep-${i}`, {
+        created_at: new Date(base + i * 1000,).toISOString(),
+      } as never,);
+    }
+
+    const app = makeApp(db, owner, "user",);
+    const page1 = await app.handle(
+      new Request(`http://localhost/api/chats/${deepChatId}/messages?page=1&pageSize=${pageSize}`,),
+    );
+    expect(page1.status,).toBe(200,);
+    const first = (await page1.json()) as {
+      data: { content: string }[];
+      pagination: { total: number; page: number; pageSize: number };
+    };
+
+    // `total` is nested under `pagination` (jsonPaginated), NOT top level.
+    // Reading `body.total` yields undefined, collapses lastPage to 1, and
+    // silently reduces this to a page-1-only read — the exact bug guarded here.
+    expect(first.pagination.total,).toBe(25,);
+    expect(first.pagination.pageSize,).toBe(pageSize,);
+    expect(first.data.length,).toBe(pageSize,);
+    const total = first.pagination.total;
+    const lastPage = Math.max(1, Math.ceil(total / pageSize,),);
+    expect(lastPage,).toBeGreaterThan(1,);
+
+    // The newest message must NOT be reachable from page 1.
+    expect(first.data.map((m,) => m.content),).not.toContain("deep-24",);
+
+    const lastRes = await app.handle(
+      new Request(`http://localhost/api/chats/${deepChatId}/messages?page=${lastPage}&pageSize=${pageSize}`,),
+    );
+    expect(lastRes.status,).toBe(200,);
+    const last = (await lastRes.json()) as { data: { content: string }[] };
+    expect(last.data.map((m,) => m.content),).toContain("deep-24",);
+  });
+
   test("list 404 for missing chat and stranger", async () => {
     const app = makeApp(db, owner, "user",);
     const missing = await app.handle(

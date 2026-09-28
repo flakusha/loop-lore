@@ -202,9 +202,15 @@ describe("Chat compression-encryption-decryption flow (UI)", () => {
       // page 1 is the OLDEST slice and our new message is on the LAST page.
       // Reading page 1 (or pages 1-2) is the wrong end of the list — the
       // assertion would fail on any chat with more than a page of history.
-      // Use the `total` the response already carries to ask for the final page,
-      // and poll because the row may not be committed yet.
-      const PAGE_SIZE = 100;
+      //
+      // `total` lives at `body.pagination.total`, NOT `body.total`:
+      // jsonPaginated (src/routes/http-utils/responses.ts) nests the
+      // pagination fields. Reading the top level yields undefined, collapses
+      // lastPage to 1, and silently reverts this read to page 1 — which is the
+      // exact bug this block exists to prevent.
+      //
+      // Poll because the row may not be committed yet.
+      const PAGE_SIZE = 20;
       let list: { status: number; body: string } | undefined;
       for (let attempt = 0; attempt < 20; attempt++) {
         const snapshot = await page.evaluate(
@@ -217,9 +223,12 @@ describe("Chat compression-encryption-decryption flow (UI)", () => {
             let lastBody = firstBody;
             try {
               const parsed: unknown = JSON.parse(firstBody,);
-              const total = typeof parsed === "object" && parsed !== null && "total" in parsed &&
-                  typeof parsed.total === "number"
-                ? parsed.total
+              const pagination = typeof parsed === "object" && parsed !== null && "pagination" in parsed &&
+                  typeof parsed.pagination === "object" && parsed.pagination !== null
+                ? parsed.pagination
+                : {};
+              const total = "total" in pagination && typeof pagination.total === "number"
+                ? pagination.total
                 : 0;
               const lastPage = Math.max(1, Math.ceil(total / args.pageSize,),);
               if (total > 0 && lastPage > 1) {
