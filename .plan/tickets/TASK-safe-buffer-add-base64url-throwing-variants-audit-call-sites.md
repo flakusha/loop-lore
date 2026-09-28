@@ -3,7 +3,7 @@
 
 # TASK: safe-buffer: add base64url + throwing variants, audit call sites
 
-**Summary:** Make the safeFrom* API hard to misuse by splitting it by coercion risk - add a base64url variant, add throwing (mustFrom*) variants, and remove the call sites that could never fail.
+**Summary:** Make the `safeFrom*` API hard to misuse by splitting it by coercion risk - add a base64url variant, add throwing `mustFrom*` variants, and remove the call sites that could never fail.
 **Context:** A single mechanical migration (3ecd37e4f) wrapped 11 call sites, of which 4 could never fail and 2 silently substituted a wrong value instead of raising. The memory-audit base64url pagination cursor is the live example of a caller with no correct helper.
 **Acceptance Criteria:** safeFromBase64Url round-trips every byte value; mustFrom* throw a typed error over one shared guard implementation; a lint rule or knip query flags safeFromUint8Array(Buffer.from(<string>)); src/memory/audit.ts migrates to the base64url-aware helper; unreachable wrappers are removed.
 **Status:** Not Started
