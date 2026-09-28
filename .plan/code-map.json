@@ -26397,7 +26397,17 @@
       "source": ".plan/tickets/TASK-character-creator-prerogative.md"
     }
   ],
+  "src/routes/character-avatars": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-routes-character-avatars-subdir-is-shadowed-by-flat-file-cru.md"
+    }
+  ],
   "src/routes/character-avatars.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-routes-character-avatars-subdir-is-shadowed-by-flat-file-cru.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-character-avatar-gallery-binding.md"
@@ -26415,6 +26425,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-char-avatar-config.md"
+    }
+  ],
+  "src/routes/character-avatars/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-routes-character-avatars-subdir-is-shadowed-by-flat-file-cru.md"
     }
   ],
   "src/routes/character-avatars/select.ts": [
