@@ -784,6 +784,19 @@
     "title": "Blog post GET bypasses visibility policy (IDOR)",
     "type": "BUG"
   },
+  "BUG-BROWSER-E2E-SUITE-FLAKES-UNDER-CONCURRENT-RUNS": {
+    "hash": "c7d2800",
+    "git_issue": "c7d2800",
+    "extid": "BUG-BROWSER-E2E-SUITE-FLAKES-UNDER-CONCURRENT-RUNS",
+    "type": "BUG",
+    "title": "Browser e2e suite flakes under concurrent runs",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-browser-e2e-suite-flakes-under-concurrent-runs.md",
+    "status": "Not Started"
+  },
   "BUG-BROWSER-ZSTD-DECOMPRESS-USES-FIXED-16X-OUTPUT-CAPACITY-HIGH-": {
     "epic": "",
     "extid": "BUG-BROWSER-ZSTD-DECOMPRESS-USES-FIXED-16X-OUTPUT-CAPACITY-HIGH-",
@@ -3006,6 +3019,19 @@
     "tags": [],
     "title": "giwt plan gates report ~112 phantom actionable issues when the git issue CLI is unreachable",
     "type": "BUG"
+  },
+  "BUG-GIWT-SYNC-FIX-WRITES-AN-OUT-OF-VOCABULARY-STATUS": {
+    "hash": "8a0e647",
+    "git_issue": "8a0e647",
+    "extid": "BUG-GIWT-SYNC-FIX-WRITES-AN-OUT-OF-VOCABULARY-STATUS",
+    "type": "BUG",
+    "title": "giwt sync --fix writes an out-of-vocabulary status",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-giwt-sync-fix-writes-an-out-of-vocabulary-status.md",
+    "status": "Not Started"
   },
   "BUG-GIWT-TICKET-EXTID-DOUBLE-PREFIX-ON-DUPLICATE-TYPE-SLUG": {
     "epic": "",
@@ -38048,6 +38074,19 @@
     "tags": [],
     "title": "Runtime migration staleness guard",
     "type": "TASK"
+  },
+  "TASK-SAFE-BUFFER-ADD-BASE64URL-THROWING-VARIANTS-AUDIT-CALL-SITES": {
+    "hash": "7d67e02",
+    "git_issue": "7d67e02",
+    "extid": "TASK-SAFE-BUFFER-ADD-BASE64URL-THROWING-VARIANTS-AUDIT-CALL-SITES",
+    "type": "TASK",
+    "title": "safe-buffer: add base64url + throwing variants, audit call sites",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-safe-buffer-add-base64url-throwing-variants-audit-call-sites.md",
+    "status": "Not Started"
   },
   "TASK-SAVE-IMPROVED-PROMPT-AS-REUSABLE-TEMPLATE": {
     "epic": "epic-assistant-generation-extensions",
