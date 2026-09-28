@@ -120,6 +120,7 @@ export function manageRoutes(opts: HandlerOpts, prefix = "/api",) {
             quickReplies: hasExplicit("quickReplies",) ? body.quickReplies : undefined,
             outputStylePreset: hasExplicit("outputStylePreset",) ? body.outputStylePreset : undefined,
             customInstructions: hasExplicit("customInstructions",) ? body.customInstructions : undefined,
+            autonomyConfig: hasExplicit("autonomyConfig",) ? body.autonomyConfig : undefined,
             userRole,
           },);
           if ("code" in result) {

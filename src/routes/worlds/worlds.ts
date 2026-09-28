@@ -22,6 +22,7 @@ import {
   jsonResponse,
 } from "../http-utils";
 import { requireWorldAccess, requireWorldOwner, } from "./access";
+import { autonomyUpdate, } from "./autonomy-config";
 import { applyRpgUpdates, rpgCreateFlags, } from "./world-rpg-flags";
 
 /**
@@ -173,6 +174,10 @@ export async function handleUpdateWorld(
   if (body.difficultyState != null) { updates.difficulty_state = body.difficultyState; }
   if (body.kind != null) { updates.kind = body.kind; }
   if (body.visibility != null) { updates.visibility = body.visibility; }
+  // Autonomy pacing override (TASK-autonomy-config-surface).
+  const autonomy = autonomyUpdate(body.autonomyConfig,);
+  if (!autonomy.ok) { return autonomy.error; }
+  if (autonomy.value !== undefined) { updates.autonomy_config = autonomy.value; }
   // Master switch arms every mechanic; per-mechanic flags after it refine
   // the result, so one request can enable RPG and opt a mechanic back out.
   applyRpgUpdates(body, updates,);

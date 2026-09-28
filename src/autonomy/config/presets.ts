@@ -9,6 +9,14 @@
 import type { PacingPresetName, PresetDefinition, } from "./types";
 
 /**
+ * The "no override at this layer" blob. `chats.autonomy_config` and
+ * `worlds.autonomy_config` are `NOT NULL DEFAULT '{}'` (migration 022) and the
+ * resolver reads `{}` as no override, so clearing a layer writes this rather
+ * than SQL NULL.
+ */
+export const EMPTY_AUTONOMY_OVERRIDE = "{}";
+
+/**
  * Built-in preset table. Lookup by name → definition.
  * Custom presets must be registered here in code, not via TOML config.
  */
