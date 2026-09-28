@@ -11482,6 +11482,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-epic-db-migration-compaction-stale-premise-reconcile.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-runtime-migration-staleness-guard.md"
     },
     {
@@ -11657,6 +11661,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-memory-audit-log-action-column-typed-string-not-union.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-memory-embeddings-orphaned-on-actor-delete.md"
     },
     {
       "kind": "ticket",
@@ -12256,6 +12264,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-memory-embeddings-orphaned-on-actor-delete.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-019-hot-path-indexes.md"
     },
     {
@@ -12265,6 +12277,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-dead-migration-helpers-ts-booltoenum.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-epic-db-migration-compaction-stale-premise-reconcile.md"
     },
     {
       "kind": "ticket",
@@ -22393,7 +22409,17 @@
       "source": ".plan/tickets/TASK-matrix-cross-mech-g23-dynamic-memory-mid-response.md"
     }
   ],
+  "src/memory/embeddings.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-memory-embeddings-orphaned-on-actor-delete.md"
+    }
+  ],
   "src/memory/embeddings.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-memory-embeddings-orphaned-on-actor-delete.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-llm-request-complexity-classification.md"
@@ -28589,6 +28615,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-tool-call-result-no-frontend-rendering.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-db-read-path-benchmark-baseline.md"
     }
   ],
   "src/routes/messages/reply.test.ts": [
