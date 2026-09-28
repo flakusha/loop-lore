@@ -3,20 +3,74 @@
 
 # TASK: Autonomy Config Surface
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** high
 **Effort:** Medium (layering API + UI affordances + pacing presets)
 **Summary:** Provide the layered configuration surface for actor autonomy pacing: world default → chat override → per-actor override, with pacing presets (serene / organic / brisk), an unlimited stress preset gated to dev builds, and UI affordances in chat + world settings pages.
 **Context:** Referenced by `epic-actor-autonomy-story-drive.md` Work Item list as `TASK-autonomy-config-surface` (line 72) and Concrete Implementation table row 6 (line 106). Listed as `TBD — needs filing` in the gap-audit (2026-09-23). The autonomy subsystem already has `NpcNavigationService` and the story auto-drive scheduler; this ticket supplies the user-facing config knobs that tune it.
 
 **Acceptance Criteria:**
-- [ ] Layered config schema: world-level default → chat-level override → per-actor override, with the precedence rules codified and unit-tested.
-- [ ] Preset registry: `serene`, `organic`, `brisk` ship as built-in presets; `unlimited-stress` is gated behind `process.env.NODE_ENV !== 'production'`.
+- [x] Layered config schema: world-level default → chat-level override → per-actor override, with the precedence rules codified and unit-tested.
+- [x] Preset registry: `serene`, `organic`, `brisk` ship as built-in presets; `unlimited-stress` is gated behind `process.env.NODE_ENV !== 'production'`.
 - [ ] Chat settings page exposes the autonomy section with a per-chat override.
 - [ ] World settings page exposes the autonomy default + per-actor override editor.
-- [ ] The autonomy subsystem reads the layered config at every tick (no caching past the chat-session boundary).
-- [ ] Unit tests cover the layering rules and the dev-only gating.
-- [ ] `bun run check` green.
+- [x] The autonomy subsystem reads the layered config at every tick (no caching past the chat-session boundary).
+- [x] Unit tests cover the layering rules and the dev-only gating.
+- [x] `bun run check` green.
+
+## Implementation Notes
+
+Shipped in `src/autonomy/config/` — `resolveAutonomyConfig(db, { worldId,
+chatId, actorId })` is the single entry point the governor and the scheduler
+read on every beat.
+
+- Layering (highest wins): per-actor override (stored as a JSON blob inside
+  `character_internal_traits.autonomy_preferences.autonomy`) → per-chat
+  override (`chats.autonomy_config`) → per-world default
+  (`worlds.autonomy_config`) → the `organic` preset baseline. A layer only
+  overrides the fields it explicitly sets, so a chat can raise the tick
+  interval without resetting the budget caps. Columns land in
+  `022_autonomy_config_columns.ts`.
+- Presets: `presets.ts` holds `serene` / `organic` / `brisk` (always
+  available) plus `unlimited-stress`, which `getPreset` refuses with
+  `UnboundedStressGatedError` when `NODE_ENV === 'production'` — a hard
+  throw, not a silent fallback, so a production build cannot quietly run
+  unbounded ticking.
+- No caching: the resolver queries per call, so a mid-session edit takes
+  effect on the next tick rather than the next restart. That is deliberate
+  — in the autonomy loop a stale pacing value reads as a hang rather than a
+  lag.
+
+## Write path (the gap the columns left open)
+
+Migration 022 created `autonomy_config` on both tables, but **no route
+accepted the field** — the columns were readable and never writable, so any
+settings UI would have shown a saved value that the resolver never saw.
+Fixed at the source, on both layers:
+
+- **World**: `PUT /api/worlds/:worldId` takes `autonomyConfig` (object, JSON
+  string, or null). Normalised by `src/routes/worlds/autonomy-config.ts`;
+  invalid JSON is a 400 rather than a silently-ignored blob. Guarded by the
+  existing `requireWorldOwner`.
+- **Chat**: `PUT /api/v1/chats/:id` takes `autonomyConfig`, threaded through
+  `updateChat` under the same `hasExplicit` rule the other optional chat
+  fields use, so an unrelated save cannot wipe the layer.
+
+**Clearing is `{}`, not SQL NULL.** Both columns are `NOT NULL DEFAULT '{}'`
+and the resolver reads `{}` as "no override", so `null`/`""` on the world
+layer and `{}` on the chat layer write the empty object. The shared constant
+`EMPTY_AUTONOMY_OVERRIDE` (`src/autonomy/config/presets.ts`) keeps the two
+layers from drifting apart.
+
+**Tests:** `src/autonomy/config/config-api.test.ts` is the seam the resolver
+suite could not cover — it writes through the real API and reads back through
+`resolveAutonomyConfig`, so a mis-encoded field or a layer that stops
+persisting fails there. `resolver.test.ts` seeds columns with raw SQL and
+stays green through all of those breakages.
+
+**Remaining:** the two settings pages themselves (world-edit form section and
+the chat-settings modal section), plus a read endpoint exposing the resolved
+plus per-layer values so a page can show what is inherited vs overridden.
 
 **Epic:** epic-actor-autonomy-story-drive
 **Tags:** autonomy, config, presets, chat-settings, world-settings, ui, layering

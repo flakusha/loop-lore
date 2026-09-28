@@ -82,6 +82,8 @@ export const ChatUpdateBody = t.Object({
     t.String({ maxLength: 5000, },),
     t.Null(),
   ],),),
+  // Chat-level autonomy pacing override (TASK-autonomy-config-surface).
+  autonomyConfig: t.Optional(t.Record(t.String(), t.Unknown(),),),
 },);
 
 /**

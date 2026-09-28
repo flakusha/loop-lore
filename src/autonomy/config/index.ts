@@ -7,7 +7,7 @@
 // scheduler (cron) and the autonomy governor (separate tickets)
 // consume the resolver at runtime.
 
-export { getPreset, PRESETS, SHIPPED_PRESETS, UnboundedStressGatedError, } from "./presets";
+export { EMPTY_AUTONOMY_OVERRIDE, getPreset, PRESETS, SHIPPED_PRESETS, UnboundedStressGatedError, } from "./presets";
 export { resolveAutonomyConfig, } from "./resolver";
 export type {
   AutonomyConfig,
