@@ -7,7 +7,7 @@
 **Context:** `bun run check` is red on `dev` for every branch, not only those touching migrations. The gate rejects duplicate numeric prefixes outright, even though the loader's comparator already disambiguates them alphabetically, so nothing is actually mis-ordered at runtime.
 **Acceptance Criteria:** Ordering gate passes on clean `dev`; no applied migration loses its `kysely_migration` identity; `bun run check` green.
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Small
 **Type:** Bug
@@ -58,10 +58,48 @@ cheap and unblocks the gate but hides the underlying sloppiness.
 
 ## Acceptance Criteria
 
-- [ ] `bun run scripts/check-parallel.mjs --gates 'migrations - ordering'` passes
-- [ ] No applied migration loses its `kysely_migration` identity
-- [ ] `src/db/migrations.test.ts` and `migration-roundtrip.test.ts` green
-- [ ] `bun run check` green on a clean `dev`
+- [x] `bun run scripts/check-parallel.mjs --gates 'migrations - ordering'` passes
+- [x] No applied migration loses its `kysely_migration` identity
+- [x] `src/db/migrations.test.ts` and `migration-roundtrip.test.ts` green
+- [x] `bun run check` green on a clean `dev`
+
+## Resolution
+
+Fixed on `dev` as `565680560 fix(db): renumber workflow migrations off duplicate 021`,
+which took option 2 from Constraints - the two workflow migrations were renumbered
+off the duplicate prefix and the files renamed to match:
+
+- `021_prompt_templates_workflow_modality.ts` -> `022_prompt_templates_workflow_modality.ts`
+- `022_prompt_templates_workflow_columns.ts` -> `023_prompt_templates_workflow_columns.ts`
+
+`021_game_states.ts` keeps `021` and is now the only file on that prefix.
+
+No `kysely_migration` row is orphaned: the workflow migrations were never applied to
+a shipped database, so no applied migration loses its filename identity. This was
+verified rather than assumed - both live local databases
+(`loop-lore-data/loop-lore.db`, `data/loop-lore.db`) were queried directly and neither
+carries the workflow migrations in `kysely_migration`:
+
+- `loop-lore-data/loop-lore.db` - migrated through `004_shadow_notes_ttl_and_author_type`
+- `data/loop-lore.db` - an older schema line, top entry `023_date_field_indexes`
+
+Had either carried the rows, this would have required a data migration rewriting
+`kysely_migration.name` in the same release, per the append-only policy.
+
+Verified on a clean `dev` checkout after the rename:
+
+```
+$ bun run scripts/check-migration-ordering.ts
+  ok loader scope: unique prefixes (24 prefixes across 24 files)
+  Migration ordering gate PASSED.
+
+$ bun test src/db/migrations.test.ts src/db/migration-roundtrip.test.ts
+  94 pass / 0 fail
+```
+
+The renumber also opened a clean slot at `024`+ for the autonomy migrations, which
+`actor-autonomy-story-drive` picked up as `025_autonomy_config_columns`,
+`026_autonomy_budget`, and `027_world_simulation_state`.
 
 ## Notes
 
