@@ -11187,7 +11187,6 @@
       "source": ".plan/tickets/TASK-professions-service-routes.md"
     }
   ],
-
   "src/db/enums-generation.ts": [
     {
       "kind": "epic",
@@ -20272,7 +20271,6 @@
       "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
     }
   ],
-
   "src/generation/node-id.ts": [
     {
       "kind": "ticket",
@@ -20943,7 +20941,6 @@
       "source": ".plan/tickets/FEAT-065-template-system.md"
     }
   ],
-
   "src/generation/template-service/crud.ts": [
     {
       "kind": "epic",
@@ -21076,7 +21073,6 @@
       "source": ".plan/tickets/TASK-comfyui-first-class-workflow-library.md"
     }
   ],
-
   "src/generation/workflow-loader/workflow-validation.ts": [
     {
       "kind": "epic",
@@ -29805,14 +29801,12 @@
       "source": ".plan/tickets/FEAT-065-template-system.md"
     }
   ],
-
   "src/routes/templates/apply.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
     }
   ],
-
   "src/routes/templates/crud.ts": [
     {
       "kind": "epic",
@@ -29825,7 +29819,6 @@
       "source": ".plan/tickets/FEAT-065-sub-image.md"
     }
   ],
-
   "src/routes/templates/transfer.ts": [
     {
       "kind": "epic",
