@@ -186,5 +186,10 @@
     "tests/e2e/flows/browser/chat-list-view.browser.ts",
     "tests/e2e/flows/browser/new-chat-advanced-fields.browser.ts",
     "tests/e2e/flows/browser/i18n-locale.browser.ts",
+
+    // Autonomy panel coverage (TASK-autonomy-config-surface). Same class
+    // as the .browser.ts entries above: Playwright discovers by glob, knip
+    // cannot trace a shell glob as an import edge.
+    "tests/e2e/flows/browser/autonomy-panel.browser.ts",
   ]
 }
