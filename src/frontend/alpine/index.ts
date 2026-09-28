@@ -10,6 +10,7 @@ import "./actor-entities";
 import "./actor-licensing";
 import "./actor-systems";
 import "./actor-traits";
+import "./autonomy-panel";
 import "./character-extension-editor";
 import "./admin";
 import "./app";

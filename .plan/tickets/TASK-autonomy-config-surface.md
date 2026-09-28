@@ -3,7 +3,7 @@
 
 # TASK: Autonomy Config Surface
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** high
 **Effort:** Medium (layering API + UI affordances + pacing presets)
 **Summary:** Provide the layered configuration surface for actor autonomy pacing: world default → chat override → per-actor override, with pacing presets (serene / organic / brisk), an unlimited stress preset gated to dev builds, and UI affordances in chat + world settings pages.
@@ -12,8 +12,8 @@
 **Acceptance Criteria:**
 - [x] Layered config schema: world-level default → chat-level override → per-actor override, with the precedence rules codified and unit-tested.
 - [x] Preset registry: `serene`, `organic`, `brisk` ship as built-in presets; `unlimited-stress` is gated behind `process.env.NODE_ENV !== 'production'`.
-- [ ] Chat settings page exposes the autonomy section with a per-chat override.
-- [ ] World settings page exposes the autonomy default + per-actor override editor.
+- [x] Chat settings page exposes the autonomy section with a per-chat override.
+- [x] World settings page exposes the autonomy default + per-actor override editor.
 - [x] The autonomy subsystem reads the layered config at every tick (no caching past the chat-session boundary).
 - [x] Unit tests cover the layering rules and the dev-only gating.
 - [x] `bun run check` green.
@@ -68,9 +68,18 @@ suite could not cover — it writes through the real API and reads back through
 persisting fails there. `resolver.test.ts` seeds columns with raw SQL and
 stays green through all of those breakages.
 
-**Remaining:** the two settings pages themselves (world-edit form section and
-the chat-settings modal section), plus a read endpoint exposing the resolved
-plus per-layer values so a page can show what is inherited vs overridden.
+**Surfaces:** `src/components/autonomy-panel.html`, mounted twice from the one
+`autonomyPanelFactory` in `src/frontend/alpine/autonomy-panel.ts` — on the
+world-edit page's Autonomy tab (`layer: 'world'`, plus the per-actor editor)
+and in the chat settings modal (`layer: 'chat'`). Reads go through
+`GET /api/worlds/:worldId/autonomy`, which returns each layer separately next
+to the merged config, so a page can show inherited vs overridden per field.
+Writes go through the existing world/chat PUTs — no save route of its own.
+
+The panel drafts from the LAYER's own values, never the merged ones: seeding
+the form from `resolved` would write every inherited field back as an
+override on the first save, freezing the preset's tuning into a per-layer
+override.
 
 **Epic:** epic-actor-autonomy-story-drive
 **Tags:** autonomy, config, presets, chat-settings, world-settings, ui, layering
