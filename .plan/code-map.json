@@ -19999,7 +19999,6 @@
       "source": ".plan/tickets/TASK-comfyui-template-parameter-validation.md"
     }
   ],
-
   "src/generation/image-engine/helpers.ts": [
     {
       "kind": "ticket",
@@ -22346,6 +22345,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-safe-buffer-base64url-guard-accepts-whitespace-variants-and-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-safe-buffer-add-base64url-throwing-variants-audit-call-sites.md"
     },
     {
       "kind": "spec",
@@ -36194,7 +36197,6 @@
       "source": ".plan/tickets/TASK-audit-follow-up-maxratio-silently-raised-10x-without-regress.md"
     }
   ],
-
   "src/utils/safe-buffer/index.ts": [
     {
       "kind": "ticket",
