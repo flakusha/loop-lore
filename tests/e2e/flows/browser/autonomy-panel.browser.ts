@@ -22,7 +22,8 @@
 import type { Page, } from "@playwright/test";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { type BrowserTestContext, createBrowserTest, } from "../../helpers/browser-server";
-import { trackPageErrors, } from "../../helpers/htmx-alpine";
+import { trackPageErrors, waitForAlpineState, } from "../../helpers/htmx-alpine";
+import { SEED, seedAll, } from "../../helpers/seed";
 
 describe("World autonomy panel E2E", () => {
   let ctx: BrowserTestContext;
@@ -31,6 +32,7 @@ describe("World autonomy panel E2E", () => {
 
   beforeAll(async () => {
     ctx = await createBrowserTest();
+    await seedAll(ctx.db,);
   }, 90_000,);
 
   afterAll(async () => {
@@ -177,5 +179,117 @@ describe("World autonomy panel E2E", () => {
         await page.close();
       }
     }, 120_000,);
+  });
+
+  describe("the chat settings modal", () => {
+    test("a chat with a world gets a per-chat pacing override", async () => {
+      // The modal only mounts the section for a world-bound chat, and the
+      // seeded chats are world-less, so bind one to the seeded world.
+      await ctx.db
+        .updateTable("chats",)
+        .set({ world_id: SEED.world.id, },)
+        .where("id", "=", SEED.soloChat.id,)
+        .execute();
+
+      const page = await ctx.openPage();
+      const errors = trackPageErrors(page, { allowlist: ALLOW_NOISE, },);
+      try {
+        await page.goto(`${ctx.url}/views/chat`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
+        await page.click("[data-testid='toggle-chat-list']",);
+        const item = page.locator("[data-testid='chat-list-panel'] .nav-item",).first();
+        await item.waitFor({ state: "attached", timeout: 30_000, },);
+        await item.click();
+        await waitForAlpineState(
+          page,
+          "[x-data='chatState()']",
+          (state,) => !!(state as Record<string, unknown>).activeChat,
+          20_000,
+        );
+        await page.click("[data-testid='toggle-chat-settings']",);
+
+        const section = page.locator("[data-testid='chat-autonomy-section']",);
+        await section.waitFor({ state: "visible", timeout: 20_000, },);
+
+        // Wait for init() to finish: the preset list and the draft both
+        // arrive with the load, and a change dispatched before that lands
+        // gets overwritten by the response. The layer editor's select, not
+        // the per-character picker above it.
+        await page.waitForFunction(
+          () => {
+            const root = document.querySelector("[data-testid='autonomy-layer-editor']",);
+            const preset = root?.querySelector("select",);
+            return preset instanceof HTMLSelectElement && preset.options.length > 1;
+          },
+          undefined,
+          { timeout: 20_000, },
+        );
+
+        // Pick a preset and save. Only the chat row may change; the world
+        // layer the panel inherits from has to stay untouched.
+        await page.evaluate(() => {
+          const root = document.querySelector("[data-testid='autonomy-layer-editor']",);
+          const select = root?.querySelector("select",);
+          if (select instanceof HTMLSelectElement) {
+            select.value = "brisk";
+            select.dispatchEvent(new Event("change", { bubbles: true, },),);
+          }
+        },);
+        const save = page.locator("[data-testid='autonomy-save']",);
+        await save.waitFor({ state: "visible", timeout: 15_000, },);
+        await save.click();
+
+        const deadline = Date.now() + 15_000;
+        let stored: string | null = null;
+        while (Date.now() < deadline && stored === null) {
+          const row = await ctx.db
+            .selectFrom("chats",)
+            .select("autonomy_config",)
+            .where("id", "=", SEED.soloChat.id,)
+            .executeTakeFirst();
+          const cfg = row?.autonomy_config;
+          if (typeof cfg === "string" && cfg.includes("brisk",)) { stored = cfg; }
+        }
+        expect(stored,).toContain("brisk",);
+        expect(errors.errors,).toEqual([],);
+      } finally {
+        errors.assert();
+        await page.close();
+      }
+    }, 180_000,);
+
+    test("a chat with no world does not render the section", async () => {
+      await ctx.db
+        .updateTable("chats",)
+        .set({ world_id: null, },)
+        .where("id", "=", SEED.soloChat.id,)
+        .execute();
+
+      const page = await ctx.openPage();
+      const errors = trackPageErrors(page, { allowlist: ALLOW_NOISE, },);
+      try {
+        await page.goto(`${ctx.url}/views/chat`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
+        await page.click("[data-testid='toggle-chat-list']",);
+        const item = page.locator("[data-testid='chat-list-panel'] .nav-item",).first();
+        await item.waitFor({ state: "attached", timeout: 30_000, },);
+        await item.click();
+        await waitForAlpineState(
+          page,
+          "[x-data='chatState()']",
+          (state,) => !!(state as Record<string, unknown>).activeChat,
+          20_000,
+        );
+        await page.click("[data-testid='toggle-chat-settings']",);
+        await page.locator("[data-testid='chat-settings-modal']",).waitFor({
+          state: "visible",
+          timeout: 20_000,
+        },);
+
+        expect(await page.locator("[data-testid='chat-autonomy-section']",).count(),).toBe(0,);
+        expect(errors.errors,).toEqual([],);
+      } finally {
+        errors.assert();
+        await page.close();
+      }
+    }, 180_000,);
   });
 });
