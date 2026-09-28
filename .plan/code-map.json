@@ -30478,6 +30478,13 @@
       "source": ".plan/tickets/TASK-autonomy-config-surface.md"
     }
   ],
+
+  "src/routes/worlds/autonomy-routes.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-autonomy-config-surface.md"
+    }
+  ],
   "src/routes/worlds/context-window.ts": [
     {
       "kind": "ticket",
