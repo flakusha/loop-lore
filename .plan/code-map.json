@@ -24163,6 +24163,12 @@
       "source": ".plan/tickets/TASK-recursive-self-improvement-briefingscript-linter-pre-agent-t.md"
     }
   ],
+  "src/plan/reconcile-conflicts.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-retire-the-scripts-worktree-fork-of-giwt-migration-not-delet.md"
+    }
+  ],
   "src/planning/service.ts": [
     {
       "kind": "epic",
