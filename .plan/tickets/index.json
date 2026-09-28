@@ -37065,7 +37065,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-rpg-nsfw-services-add-config-level-opt-in-gate.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-RPG-PATTERNS": {
     "epic": "epic-rpg-patterns",
@@ -38156,7 +38156,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-src-rpg-nit-1-4-barrel-organization-implementations.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-STABLE-STORED-CHAT-KEY-FUTURE": {
     "epic": "epic-encryption-foundation",

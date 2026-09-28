@@ -3,7 +3,7 @@
 
 # TASK: rpg NSFW services: add config-level opt-in gate
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Small
 
