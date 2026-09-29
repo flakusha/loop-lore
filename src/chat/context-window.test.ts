@@ -132,7 +132,7 @@ describe("computeContextWindow — input edges and option pass-through", () => {
 
     const result = computeContextWindow(messages, 1000, { minRecent: 8, },);
 
-    expect(result.retained.map((m,) => m.messageId,),).toEqual(["a", "b",],);
+    expect(result.retained.map((m,) => m.messageId),).toEqual(["a", "b",],);
   });
 
   it("minRecent: 0 routes every message through the phase 2 budget fill", () => {
@@ -145,7 +145,7 @@ describe("computeContextWindow — input edges and option pass-through", () => {
     const result = computeContextWindow(messages, 15, { minRecent: 0, },);
 
     // Only the newest message fits the 15-token budget.
-    expect(result.retained.map((m,) => m.messageId,),).toEqual(["c",],);
+    expect(result.retained.map((m,) => m.messageId),).toEqual(["c",],);
     expect(result.totalTokens,).toBe(10,);
   });
 
@@ -167,7 +167,7 @@ describe("computeContextWindow — input edges and option pass-through", () => {
 
     const result = computeContextWindow(messages, 0,);
 
-    expect(result.retained.map((m,) => m.messageId,),).toEqual(["a",],);
+    expect(result.retained.map((m,) => m.messageId),).toEqual(["a",],);
     expect(result.totalTokens,).toBe(0,);
     expect(result.usagePercentage,).toBe(0,);
     expect(result.willTrim,).toBe(false,);
@@ -224,7 +224,7 @@ describe("computeContextWindow — phase 2 budget fill", () => {
     // but not m2 (40).
     const result = computeContextWindow(messages, 35, { minRecent: 2, },);
 
-    expect(result.retained.map((m,) => m.messageId,),).toEqual(["m3", "m4", "m5",],);
+    expect(result.retained.map((m,) => m.messageId),).toEqual(["m3", "m4", "m5",],);
     expect(result.totalTokens,).toBe(30,);
     expect(result.usagePercentage,).toBe(86,);
   });
@@ -298,7 +298,7 @@ describe("injectMemories", () => {
     ],);
 
     // 30 fits; 30+20=50 exceeds the 40 remaining; 30+10=40 fits exactly.
-    expect(result.injectedMemories.map((m,) => m.memoryId,),).toEqual(["m1", "m3",],);
+    expect(result.injectedMemories.map((m,) => m.memoryId),).toEqual(["m1", "m3",],);
     expect(result.totalTokens,).toBe(100,);
     expect(result.usagePercentage,).toBe(100,);
   });
@@ -317,7 +317,7 @@ describe("injectMemories", () => {
     context = injectMemories(context, [makeMemory("m1", 10,),],);
     context = injectMemories(context, [makeMemory("m2", 10,),],);
 
-    expect(context.injectedMemories.map((m,) => m.memoryId,),).toEqual(["m1", "m2",],);
+    expect(context.injectedMemories.map((m,) => m.memoryId),).toEqual(["m1", "m2",],);
     expect(context.totalTokens,).toBe(80,);
   });
 });
@@ -353,7 +353,7 @@ describe("injectEvents", () => {
     ],);
 
     // 30 fits; 30+25=55 exceeds the 50 remaining; 30+10=40 fits.
-    expect(result.injectedEvents.map((e,) => e.eventId,),).toEqual(["e1", "e3",],);
+    expect(result.injectedEvents.map((e,) => e.eventId),).toEqual(["e1", "e3",],);
     expect(result.totalTokens,).toBe(90,);
     expect(result.usagePercentage,).toBe(90,);
   });
@@ -363,7 +363,7 @@ describe("injectEvents", () => {
     context = injectEvents(context, [makeEvent("e1", 10,),],);
     context = injectEvents(context, [makeEvent("e2", 10,),],);
 
-    expect(context.injectedEvents.map((e,) => e.eventId,),).toEqual(["e1", "e2",],);
+    expect(context.injectedEvents.map((e,) => e.eventId),).toEqual(["e1", "e2",],);
     expect(context.totalTokens,).toBe(70,);
   });
 });

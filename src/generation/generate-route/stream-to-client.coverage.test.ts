@@ -34,7 +34,7 @@ createLogger({ level: "error", },);
 const state = {
   active: new Map<string, { lastRenderedChunkIndex: number; deliveryConfirmed: boolean }>(),
   telemetryEnabled: false,
-  telemetryEvents: [] as { eventType: string; data: Record<string, unknown>; }[],
+  telemetryEvents: [] as { eventType: string; data: Record<string, unknown> }[],
   telemetryReject: false,
   memoryCalls: [] as unknown[],
   memoryReject: false,
@@ -120,7 +120,7 @@ if (STRICTLY_ISOLATED) {
 if (STRICTLY_ISOLATED) {
   mock.module("../../telemetry/service", () => ({
     isTelemetryEnabled: () => state.telemetryEnabled,
-    record: async (_db: unknown, event: { eventType: string; data: Record<string, unknown>; },) => {
+    record: async (_db: unknown, event: { eventType: string; data: Record<string, unknown> },) => {
       state.telemetryEvents.push(event,);
       if (state.telemetryReject) { throw new Error("telemetry down",); }
     },
@@ -206,7 +206,12 @@ function textProvider(
     stream: async (_req: ProviderRequest, handler: StreamHandler,) => {
       seen.calls += 1;
       for (const chunk of chunks) { handler(chunk,); }
-      return { content: response.content, thinking: response.thinking, finishReason: response.finishReason, usage: USAGE, };
+      return {
+        content: response.content,
+        thinking: response.thinking,
+        finishReason: response.finishReason,
+        usage: USAGE,
+      };
     },
     healthCheck: async () => ({ status: "ok" as const, }),
     listModels: async () => [],
@@ -555,7 +560,7 @@ describeOrSkipStrict("streamToClient coverage", () => {
     const done = events.find((e,) => e.type === "done");
     expect(done?.content,).toBe("Hello world",);
     expect(done?.cancelled,).toBe(false,);
-    const stored = state.storeCalls[0] as { result: { content: string; toolCalls: unknown; }, };
+    const stored = state.storeCalls[0] as { result: { content: string; toolCalls: unknown } };
     expect(stored.result.content,).toBe("Hello world",);
     expect(stored.result.toolCalls,).toBeUndefined();
   });
@@ -568,7 +573,7 @@ describeOrSkipStrict("streamToClient coverage", () => {
     );
     const { response, } = run(provider, "cov-p-think1", undefined, true,);
     await collectEvents(response,);
-    const stored = state.storeCalls[0] as { result: { thinking: string | null; }, };
+    const stored = state.storeCalls[0] as { result: { thinking: string | null } };
     expect(stored.result.thinking,).toBe("final-thought",);
   });
 
@@ -580,7 +585,7 @@ describeOrSkipStrict("streamToClient coverage", () => {
     );
     const { response, } = run(provider, "cov-p-think2", undefined, true,);
     await collectEvents(response,);
-    const stored = state.storeCalls[0] as { result: { thinking: string | null; }, };
+    const stored = state.storeCalls[0] as { result: { thinking: string | null } };
     expect(stored.result.thinking,).toBe("hmm",);
   });
 

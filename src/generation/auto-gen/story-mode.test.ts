@@ -17,11 +17,11 @@ import type { Kysely, } from "kysely";
 import { detectHallucinations, } from "../../chat";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
+import type { GenerateTextFn, } from "../../story/game-master";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertChats, } from "../../test-utils/insert-helpers";
 import { describeOrSkipStrict, STRICTLY_ISOLATED, } from "../../test-utils/isolate-only";
 import type { GenDeps, } from "./deps";
-import type { GenerateTextFn, } from "../../story/game-master";
 
 // Bun's mock.module is process-global and cannot be unmocked: under
 // `bun run` (ISOLATED=true) an earlier file (e.g.

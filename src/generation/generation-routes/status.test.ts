@@ -138,13 +138,13 @@ describe("handleGenerationStatus", () => {
 
   test("reports isActive=false for a cancelled generation but still returns its attemptId", async () => {
     await makeFixtures();
-    const attemptId = seedActive({ status: GenerationStatus.Cancelled, });
+    const attemptId = seedActive({ status: GenerationStatus.Cancelled, },);
     const res = await handleGenerationStatus(chatId, testDb!, ownerId,);
     expect(res.status,).toBe(200,);
     const data = (await res.json()) as {
       isActive: boolean;
       attemptId: string | null;
-      generation: { status: GenerationStatus; } | null;
+      generation: { status: GenerationStatus } | null;
     };
     expect(data.isActive,).toBe(false,);
     expect(data.attemptId,).toBe(attemptId,);
@@ -153,10 +153,10 @@ describe("handleGenerationStatus", () => {
 
   test("reports isActive=false for a completed generation", async () => {
     await makeFixtures();
-    seedActive({ status: GenerationStatus.Completed, });
+    seedActive({ status: GenerationStatus.Completed, },);
     const res = await handleGenerationStatus(chatId, testDb!, ownerId,);
     expect(res.status,).toBe(200,);
-    const data = (await res.json()) as { isActive: boolean; };
+    const data = (await res.json()) as { isActive: boolean };
     expect(data.isActive,).toBe(false,);
   });
 
@@ -165,7 +165,7 @@ describe("handleGenerationStatus", () => {
     seedActive();
     const res = await handleGenerationStatus(chatId, testDb!, outsiderId, "admin",);
     expect(res.status,).toBe(200,);
-    const data = (await res.json()) as { isActive: boolean; };
+    const data = (await res.json()) as { isActive: boolean };
     expect(data.isActive,).toBe(true,);
   });
 
@@ -187,4 +187,4 @@ describe("handleGenerationStatus", () => {
     const res = await handleGenerationStatus(chatId, testDb!,);
     expect(res.status,).toBe(401,);
   });
-},);
+});

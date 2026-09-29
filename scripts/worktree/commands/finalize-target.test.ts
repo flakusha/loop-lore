@@ -80,7 +80,7 @@ beforeEach(() => {
 },);
 
 afterEach(() => {
-  rmSync(repoRoot, { recursive: true, force: true },);
+  rmSync(repoRoot, { recursive: true, force: true, },);
 },);
 
 describe("finalize merge-target resolution", () => {
@@ -99,5 +99,5 @@ describe("finalize merge-target resolution", () => {
     expect(git(["rev-parse", "master",],),).toBe(masterBefore,);
     expect(git(["rev-parse", "feature",],),).toBe(featureBefore,);
     expect(git(["status", "--porcelain",], wtPath,),).toBe("",);
-  },);
+  });
 });
