@@ -11,7 +11,7 @@ import { slidingWindow, tokenBucket, type TokenBucketState, } from "./algorithms
 import { type RatePolicy, } from "./policies";
 import { InMemoryRateLimitStore, type RateLimitStore, } from "./store";
 
-/** */
+/** Rate limit verdict returned by consume(). */
 export interface RateLimitVerdict {
   allowed: boolean;
   policy: string;
@@ -21,19 +21,19 @@ export interface RateLimitVerdict {
   retryAfterSec?: number;
 }
 
-/** */
+/** Options for constructing a GovernanceRateLimiter. */
 export interface GovernanceRateLimiterOpts {
   store?: RateLimitStore;
   /** Injectable clock (ms epoch) — defaults to Date.now. */
   now?: () => number;
 }
 
-/** */
+/** Governance rate limiter with sliding window + optional token bucket. */
 export class GovernanceRateLimiter {
   private store: RateLimitStore;
   private now: () => number;
 
-  /** */
+  /** Create a new rate limiter with optional store and clock. */
   constructor(opts: GovernanceRateLimiterOpts = {},) {
     this.store = opts.store ?? new InMemoryRateLimitStore();
     this.now = opts.now ?? (() => Date.now());
@@ -46,7 +46,7 @@ export class GovernanceRateLimiter {
     return { policy: policy.name, limit: policy.max, remaining: Math.max(0, policy.max - fresh.length,), };
   }
 
-  /** */
+  /** Consume cost units against the key's policy. Returns verdict. */
   consume(key: string, policy: RatePolicy, cost = 1,): RateLimitVerdict {
     const nowMs = this.now();
     const win = slidingWindow(nowMs, this.store.loadWindow(key, nowMs,), policy.windowMs, policy.max,);
@@ -81,7 +81,7 @@ export class GovernanceRateLimiter {
     return { allowed: true, policy: policy.name, limit: policy.max, remaining: win.remaining, };
   }
 
-  /** */
+  /** Stop timers and release resources. */
   destroy(): void {
     this.store.destroy();
   }
