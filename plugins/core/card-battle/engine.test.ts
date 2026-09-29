@@ -207,15 +207,26 @@ describe("playBattleCard", () => {
     expect(state.finished).toBe(true);
   });
 
-  test("reduces HP on hit", () => {
+  test("a winning card reduces the opponent's HP", () => {
     const state = initBattle(100, "easy", 5);
+    // Pin the deal. The engine only deals damage to the loser of a WIN —
+    // calculateDamage returns 0 for lose/critical_lose — so an unpinned random
+    // hand made this test flap: it passed when the player happened to draw
+    // high and failed when they lost (no HP change, outcome "lose" not
+    // "draw"). drawCards pops from the END of remaining, so the last entry is
+    // the opponent's draw and the one before it is the player's replacement.
+    state.playerHand = [{ suit: "hearts", rank: "A", value: 14 }];
+    state.deck.remaining = [
+      { suit: "diamonds", rank: "K", value: 13 },
+      { suit: "clubs", rank: "2", value: 2 },
+    ];
+    state.deck.discarded = [];
     const initialHp = state.playerHp + state.opponentHp;
-    playBattleCard(state, 0, "attack");
-    const afterHp = state.playerHp + state.opponentHp;
-    // At least one side should lose HP (unless draw)
-    const hasDamage = afterHp < initialHp;
-    const isDraw = state.rounds[0]?.outcome === "draw";
-    expect(hasDamage || isDraw).toBe(true);
+    const round = playBattleCard(state, 0, "attack");
+    // Ace (14) + attack beats the 2, and value >= 12 on attack is a critical.
+    expect(round.outcome).toBe("critical_win");
+    expect(state.opponentHp).toBeLessThan(state.opponentMaxHp);
+    expect(state.playerHp + state.opponentHp).toBeLessThan(initialHp);
   });
 });
 
