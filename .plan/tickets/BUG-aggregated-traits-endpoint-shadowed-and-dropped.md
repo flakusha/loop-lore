@@ -98,3 +98,6 @@ Found while reviewing `refactor(routes): drop dead character-traits subdir
 barrel`. Pre-existing and unrelated to that commit — the endpoint was already
 unreachable before the barrel was deleted. The deletion is a genuine no-op; the
 loss happened earlier, when the two modules collided.
+
+
+git issue: 22f20a2

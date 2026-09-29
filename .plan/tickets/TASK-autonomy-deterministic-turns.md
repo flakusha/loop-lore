@@ -128,3 +128,6 @@ singleton.
   `world_simulation_state` remains the commit point.
 - **No seeding of LLM output.** Non-deterministic by nature; the BDI and
   GM tickets own that problem instead.
+
+
+git issue: adb5001
