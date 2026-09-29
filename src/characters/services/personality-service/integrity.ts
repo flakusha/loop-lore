@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// src/characters/services/personality-service/integrity.ts — Personality integrity rules
+// Personality integrity rules for trait modification.
 
 import type { TraitCategory, } from "../../../db/enums";
 
@@ -78,7 +78,7 @@ export function checkPersonalityIntegrity(
   }
 
   // Social category traits are immutable (friendliness, talkativity, etc.)
-  // but CAN be shifted by world/story stylistic requirements
+  // but can be shifted by world/story stylistic requirements
   if (traitCategory === "social") {
     return {
       allowed: true,
