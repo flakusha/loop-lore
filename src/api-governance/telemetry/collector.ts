@@ -9,7 +9,7 @@
  * (routes.ts) reads this collector directly.
  */
 
-/** */
+/** Per-route request/error/latency statistics. */
 export interface RouteStats {
   requests: number;
   errors: number;
@@ -19,13 +19,13 @@ export interface RouteStats {
 
 const LATENCY_CAP = 500;
 
-/** */
+/** In-process metrics collector for routes and counters. */
 export class MetricsCollector {
   private startedAtMs = Date.now();
   private routes = new Map<string, RouteStats>();
   private counters = new Map<string, number>();
 
-  /** */
+  /** Record a request with status and latency. */
   recordRequest(route: string, status: number, latencyMs: number,): void {
     const stats = this.routes.get(route,) ?? { requests: 0, errors: 0, latencies: [], };
     stats.requests += 1;
@@ -39,12 +39,12 @@ export class MetricsCollector {
     this.routes.set(route, stats,);
   }
 
-  /** */
+  /** Increment a named counter. */
   increment(name: string, by = 1,): void {
     this.counters.set(name, (this.counters.get(name,) ?? 0) + by,);
   }
 
-  /** */
+  /** Snapshot all metrics for export. */
   snapshot(): {
     uptimeSec: number;
     routes: Array<{ route: string; requests: number; errors: number; p50: number; p95: number }>;
@@ -67,7 +67,7 @@ export class MetricsCollector {
     return { uptimeSec: Math.floor((Date.now() - this.startedAtMs) / 1000,), routes, counters, };
   }
 
-  /** */
+  /** Reset all metrics to zero. */
   reset(): void {
     this.routes.clear();
     this.counters.clear();
