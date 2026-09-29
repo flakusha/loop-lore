@@ -183,7 +183,8 @@ function stubDb(options: StubDbOptions = {},): Kysely<DB> {
  * and resolves `getLogger().child(...)`.
  */
 const nullLogger: Logger = {
-
+  trace: () => {},
+  fatal: () => {},
   info: () => {},
   warn: () => {},
   error: () => {},
