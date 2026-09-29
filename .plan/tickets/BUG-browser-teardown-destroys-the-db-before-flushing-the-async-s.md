@@ -14,11 +14,11 @@
 - [x] `cleanup()` quiesces the async store (awaits a flush) before `db.destroy()`.
 - [x] The Elysia `onStop` path is either exercised or the harness explicitly flushes; the two do not silently diverge.
 - [x] A test asserts the queue is empty at teardown, so a reintroduced race fails loudly instead of logging.
-- [ ] The `async-store write failed` noise is gone from a green browser gate run.
+- [x] The `async-store write failed` noise is gone from a green browser gate run. — closed by BUG-async-spill-uses-cache-key-as-filename-so-routed-ids-lose, which found the 2 remaining lines to be a distinct defect (the spill filename was an idempotency cache key containing `/`, so the write hit a nonexistent directory and lost the body). A green run now logs zero, with the bodies actually persisting.
 - [x] Implementation complete.
 - [x] Tests passing.
 - [x] Documentation updated.
 
-**Out of scope (see the open criterion above):** the teardown race this ticket names is fixed and reproduced-as-fixed (30 swallowed `async-store write failed` writes before, 0 after). A green browser run still logs 2 of those lines, but they are a **different** defect with a different cause and a different fix: `ENOENT` on a spill file under `.tmp/async-store/`, not `RangeError: Cannot use a closed database`. Those 2 reproduce 3/3 on an unmodified tree, so they are untouched by this fix. Tracked as BUG-orphan-spill-sweeper-deletes-a-spill-file-before-its-row-ref. The noise criterion stays open until that ticket lands; do not re-investigate the teardown ordering on the strength of those 2 lines.
+**Out of scope (the criterion above is now closed):** the teardown race this ticket names is fixed and reproduced-as-fixed (30 swallowed `async-store write failed` writes before, 0 after). A green browser run then still logged 2 of those lines; they turned out to be a **different** defect with a different cause and a different fix — `ENOENT` on a spill file under `.tmp/async-store/`, not `RangeError: Cannot use a closed database` — and are now fixed too. See BUG-async-spill-uses-cache-key-as-filename-so-routed-ids-lose. Do not re-investigate the teardown ordering on the strength of leftover log lines — check the current count first.
 
 **Impact:** Cosmetic-to-mild, not a test failure — the error is swallowed, so it never fails a test and appears in fully green runs. It adds noise to every browser e2e log and hides real errors in the same stream, which is part of why this signal was mistaken for a flake cause. Any test asserting on async-store persistence near teardown can also race.
