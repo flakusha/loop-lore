@@ -23,4 +23,5 @@ export type {
   RequestResultRow,
   RequestStatus,
 } from "./store";
-export { apply, createAsyncStore, flushActiveStore, setStore, } from "./store";
+export { apply, createAsyncStore, } from "./store";
+export { flushActiveStore, setStore, } from "./store-registry";

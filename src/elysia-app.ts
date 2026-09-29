@@ -64,7 +64,7 @@ export function createApp(deps: AppDeps,): Elysia {
   // all read/write the same `request_results` table.
   const asyncStore = createAsyncStore(database,);
   // Publish the store so shutdown paths (SIGTERM, test teardown) can flush it.
-  setStore(asyncStore);
+  setStore(asyncStore,);
 
   const scheduler = startAppScheduler({ database, config, },);
 
