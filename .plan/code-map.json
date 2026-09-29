@@ -3452,10 +3452,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-orphan-spill-sweeper-deletes-a-spill-file-before-its-row-ref.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/BUG-table-backend-request-id-collision-overwrites-foreign-row.md"
     }
   ],
@@ -3561,14 +3557,16 @@
       "source": ".plan/tickets/TASK-async-store-retention-cap.md"
     }
   ],
+  "src/async/spill-filename.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-async-spill-uses-cache-key-as-filename-so-routed-ids-lose.md"
+    }
+  ],
   "src/async/spill-retention.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-async-orphan-spill-retention-sweep-silently-deleted-by-workt.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-orphan-spill-sweeper-deletes-a-spill-file-before-its-row-ref.md"
     }
   ],
   "src/async/spill.test.ts": [
@@ -3585,6 +3583,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-async-spill-offload-dir-is-a-fixed-cwd-relative-path-shared-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-async-spill-uses-cache-key-as-filename-so-routed-ids-lose.md"
     },
     {
       "kind": "ticket",
@@ -7539,6 +7541,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-optique-cli-tooling-integration.md"
+    }
+  ],
+  "src/commands/finalize.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FIX-add-jitter-to-the-finalize-lock-retry-backoff.md"
     }
   ],
   "src/commands/issues.ts": [
@@ -23128,6 +23136,10 @@
   "src/middleware/idempotency-utils.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-async-spill-uses-cache-key-as-filename-so-routed-ids-lose.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-middleware-idempotency-table-backend-unimplemented.md"
     },
     {
@@ -35249,6 +35261,12 @@
       "source": ".plan/epics/epic-perspective-narration-voice.md"
     }
   ],
+  "src/story/quality/scorers/lore-consistency.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-lore-consistency-scorer-entity-matching-branch-unreachable-d.md"
+    }
+  ],
   "src/story/quality/scorers/quest-relevance.test.ts": [
     {
       "kind": "ticket",
@@ -36048,6 +36066,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-tui-showerror-desyncs-itemcount-from-messagelist-length.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-coverage-waiver-tui-chat-index-ts-at-51-under-check-gate.md"
     },
     {
@@ -36387,6 +36409,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-recursive-self-improvement-briefingscript-linter-pre-agent-t.md"
+    }
+  ],
+  "src/utils/git.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-worktree-git-helpers-pass-no-isolated-env-so-hook-context-le.md"
     }
   ],
   "src/utils/image-diff.ts": [

@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { describe, expect, it, } from "bun:test";
-import { isInQuietHours, } from "./timing";
+import { backoffMs, isInQuietHours, msUntilMidnight, msUntilQuietHoursEnd, } from "./timing";
 
 /**
  * Build a Date with the given hour + minute (local).
@@ -55,5 +55,79 @@ describe("isInQuietHours general behavior", () => {
 
   it("returns true mid-window with minute precision (16:59 in 09:00–17:00)", () => {
     expect(isInQuietHours("09:00", "17:00", at(16, 59,),),).toBe(true,);
+  });
+});
+
+describe("isInQuietHours — minute precision and degenerate windows", () => {
+  it("minute-precision start: 09:29 is out, 09:30 is in (09:30–17:00)", () => {
+    expect(isInQuietHours("09:30", "17:00", at(9, 29,),),).toBe(false,);
+    expect(isInQuietHours("09:30", "17:00", at(9, 30,),),).toBe(true,);
+  });
+
+  it("minute-precision end: 17:29 is in, 17:30 is out (09:00–17:30)", () => {
+    expect(isInQuietHours("09:00", "17:30", at(17, 29,),),).toBe(true,);
+    expect(isInQuietHours("09:00", "17:30", at(17, 30,),),).toBe(false,);
+  });
+
+  it("zero-length window (start === end) is never in quiet hours", () => {
+    expect(isInQuietHours("09:00", "09:00", at(9, 0,),),).toBe(false,);
+    expect(isInQuietHours("09:00", "09:00", at(10, 0,),),).toBe(false,);
+  });
+});
+
+describe("backoffMs", () => {
+  it("returns the base wait when backoffCount is 0", () => {
+    expect(backoffMs(1000, 0,),).toBe(1000,);
+  });
+
+  it("doubles the wait per unanswered message", () => {
+    expect(backoffMs(1000, 1,),).toBe(2000,);
+    expect(backoffMs(1000, 5,),).toBe(32000,);
+  });
+
+  it("scales exponential growth with large counts", () => {
+    expect(backoffMs(500, 10,),).toBe(512000,);
+    expect(backoffMs(250, 4,),).toBe(4000,);
+  });
+
+  it("returns 0 for a zero base", () => {
+    expect(backoffMs(0, 3,),).toBe(0,);
+  });
+});
+
+describe("msUntilQuietHoursEnd", () => {
+  it("returns 0 when end is null", () => {
+    expect(msUntilQuietHoursEnd(null, at(10, 0,),),).toBe(0,);
+  });
+
+  it("returns the remaining time later the same day", () => {
+    expect(msUntilQuietHoursEnd("17:00", at(10, 0,),),).toBe(7 * 60 * 60 * 1000,);
+  });
+
+  it("rolls to the next day when end equals now", () => {
+    expect(msUntilQuietHoursEnd("10:00", at(10, 0,),),).toBe(24 * 60 * 60 * 1000,);
+  });
+
+  it("rolls to the next day when end is earlier than now", () => {
+    // 10:00 → next-day 08:00 is 22 hours.
+    expect(msUntilQuietHoursEnd("08:00", at(10, 0,),),).toBe(22 * 60 * 60 * 1000,);
+  });
+
+  it("handles minute precision", () => {
+    expect(msUntilQuietHoursEnd("17:30", at(17, 0,),),).toBe(30 * 60 * 1000,);
+  });
+});
+
+describe("msUntilMidnight", () => {
+  it("returns 1 hour at 23:00", () => {
+    expect(msUntilMidnight(at(23, 0,),),).toBe(60 * 60 * 1000,);
+  });
+
+  it("returns a full day at 00:00", () => {
+    expect(msUntilMidnight(at(0, 0,),),).toBe(24 * 60 * 60 * 1000,);
+  });
+
+  it("handles arbitrary times", () => {
+    expect(msUntilMidnight(at(12, 30,),),).toBe((11 * 60 + 30) * 60 * 1000,);
   });
 });
