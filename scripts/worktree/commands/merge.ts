@@ -3,8 +3,7 @@
 import { existsSync, } from "node:fs";
 import { resolve, } from "node:path";
 import { branchToPath, type WorktreeConfig, } from "../utils/config";
-import { gitSync, } from "../utils/git";
-import { findWorktreeForBranchSync, getWorktrees, } from "../utils/git";
+import { findWorktreeForBranchSync, getWorktrees, gitSync, isolatedGitEnv, } from "../utils/git";
 import { assertAgentGpgUnlocked, } from "../utils/gpg";
 import { log, } from "../utils/output";
 
@@ -62,11 +61,11 @@ export async function merge(
   // Check worktree clean
   const dirty = Bun.spawnSync(
     ["git", "-C", wtPath, "diff", "--quiet",],
-    { stdout: "pipe", stderr: "pipe", },
+    { stdout: "pipe", stderr: "pipe", env: isolatedGitEnv(), },
   );
   const staged = Bun.spawnSync(
     ["git", "-C", wtPath, "diff", "--cached", "--quiet",],
-    { stdout: "pipe", stderr: "pipe", },
+    { stdout: "pipe", stderr: "pipe", env: isolatedGitEnv(), },
   );
   if (dirty.exitCode !== 0 || staged.exitCode !== 0) {
     log("error", `uncommitted changes in worktree '${branch}'`,);
@@ -82,7 +81,7 @@ export async function merge(
 
   const result = Bun.spawnSync(
     ["git", "-C", wtPath, ...flags, "merge", source, "--no-edit",],
-    { stdout: "pipe", stderr: "pipe", },
+    { stdout: "pipe", stderr: "pipe", env: isolatedGitEnv(), },
   );
 
   if (result.exitCode !== 0) {

@@ -30,7 +30,7 @@ import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import { mkdtempSync, readFileSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
-import { acquireFinalizeLock, } from "./commands/finalize";
+import { acquireFinalizeLock, lockRetryDelayMs, } from "./commands/finalize";
 
 let tmp: string;
 
@@ -150,4 +150,31 @@ describe("finalize lock stale-reap", () => {
   it("reaps a lockfile whose owner PID is gone", () => {
     acquireOverStale("4194303",)();
   });
+});
+
+describe("finalize lock retry backoff", () => {
+  it("draws a bounded, non-constant delay", () => {
+    const draws = Array.from({ length: 200, }, () => lockRetryDelayMs(),);
+    for (const d of draws) {
+      expect(d,).toBeGreaterThanOrEqual(0,);
+      expect(d,).toBeLessThan(20,);
+    }
+    // A fixed-interval backoff keeps contenders in lockstep and colliding;
+    // full jitter de-phases them. A constant draw would collapse back into
+    // exactly that failure mode.
+    expect(new Set(draws,).size,).toBeGreaterThan(1,);
+  });
+});
+
+describe("finalize lock retry backoff (two contenders)", () => {
+  it("de-phases two contenders instead of retrying in lockstep", () => {
+    // Two processes contending for the same lock each draw their own delay
+    // per attempt. A fixed interval gives both the identical schedule, so
+    // every collision window recurs at the same instant. Full jitter makes
+    // the schedules differ, so they only ever collide by chance.
+    const contender = (): number[] => Array.from({ length: 50, }, () => lockRetryDelayMs(),);
+    const a = contender();
+    const b = contender();
+    expect(a,).not.toEqual(b,);
+  },);
 });

@@ -7,7 +7,7 @@ import { existsSync, } from "fs";
 import { resolve, } from "path";
 import { branchToPath, type WorktreeConfig, } from "../utils/config";
 import { credentials, } from "../utils/credentials.mjs";
-import { findWorktreeForBranchSync, getWorktrees, gitSyncQuiet, stagedDependencyPaths, } from "../utils/git";
+import { findWorktreeForBranchSync, getWorktrees, gitSyncQuiet, isolatedGitEnv, stagedDependencyPaths, } from "../utils/git";
 import { assertGpgUnlocked, } from "../utils/gpg";
 import { appendCommitOutcome, } from "../utils/ledger";
 import { extractMessageInput, validateMessage, } from "../utils/message";
@@ -62,7 +62,7 @@ export async function commitBranch(
   // Check staged changes — git diff --quiet exits 1 when differences exist
   const diffResult = Bun.spawnSync(
     ["git", "-C", wtPath, "diff", "--cached", "--quiet",],
-    { stdout: "pipe", stderr: "pipe", },
+    { stdout: "pipe", stderr: "pipe", env: isolatedGitEnv(), },
   );
   if (diffResult.exitCode === 0) {
     // Exit 0 = no staged changes
@@ -125,8 +125,11 @@ export async function commitBranch(
     {
       stdout: "pipe",
       stderr: "pipe",
+      // Strip inherited GIT_/harness context, then re-set only the committer
+      // identity this command owns. Forwarding process.env wholesale would
+      // let a hook's GIT_INDEX_FILE redirect the commit to another index.
       env: {
-        ...process.env,
+        ...isolatedGitEnv(),
         GIT_COMMITTER_NAME: credentials.name,
         GIT_COMMITTER_EMAIL: credentials.email,
       },
@@ -142,7 +145,7 @@ export async function commitBranch(
   // Verify signature
   const verify = Bun.spawnSync(
     ["git", "-C", wtPath, "log", "--show-signature", "-1",],
-    { stdout: "pipe", stderr: "pipe", },
+    { stdout: "pipe", stderr: "pipe", env: isolatedGitEnv(), },
   );
   const output = verify.stdout.toString();
 

@@ -8,10 +8,11 @@ import { branchToPath, type WorktreeConfig, } from "../utils/config";
 import {
   findWorktreeByBranch,
   findWorktreeForBranchSync,
-  getRootBranch,
   getWorktrees,
   gitSync,
   gitSyncQuiet,
+  isolatedGitEnv,
+  isProtected,
 } from "../utils/git";
 import { assertAgentGpgUnlocked, } from "../utils/gpg";
 import { appendGripe, printRecentLedger, } from "../utils/ledger";
@@ -114,6 +115,25 @@ function checkDevMergeable(repoRoot: string,): void {
   }
 }
 
+// Finalize lock acquisition: retry budget. Ceiling stays 50 attempts, each
+// sleeping at most 20ms — 1s worst case, unchanged by the jitter.
+const LOCK_RETRY_ATTEMPTS = 50;
+const LOCK_RETRY_MAX_MS = 20;
+
+/**
+ * Full-jitter backoff draw for one failed `acquireFinalizeLock` attempt.
+ *
+ * Contenders that retry on a fixed interval stay in lockstep and keep
+ * colliding; drawing uniformly from [0, 20ms] de-phases them without raising
+ * the worst case (still ≤20ms per attempt, 1s over 50 attempts).
+ *
+ * Exported so `finalize-lock-cleanup.test.ts` can assert the draw is
+ * non-constant and bounded.
+ */
+export function lockRetryDelayMs(): number {
+  return Math.floor(Math.random() * LOCK_RETRY_MAX_MS,);
+}
+
 /**
  * Acquire an exclusive finalize lock on the dev checkout.
  *
@@ -196,11 +216,13 @@ export function acquireFinalizeLock(repoRoot: string,): () => void {
     } catch { /* best-effort */ }
   };
 
-  for (let attempt = 0; attempt < 50; attempt++) {
+  for (let attempt = 0; attempt < LOCK_RETRY_ATTEMPTS; attempt++) {
     if (tryCreate()) { return release; }
     if (reapStale()) { return release; }
-    // Brief backoff before retry. 50 × 20ms = 1s ceiling.
-    Bun.sleepSync(20,);
+    // Jittered backoff: full jitter over [0, 20ms] so contenders de-phase
+    // instead of retrying in lockstep. Ceiling unchanged at 50 attempts ×
+    // ≤20ms = 1s worst case.
+    Bun.sleepSync(lockRetryDelayMs(),);
   }
   log("error", `could not acquire finalize lock at ${lockPath} - another finalize in progress?`,);
   console.log("  If no other finalize is running, remove the lockfile manually:",);
@@ -320,7 +342,7 @@ function handleSignalAbort(sig: FinalizeSignal,): void {
       log("info", `Aborting in-progress merge on ${state.branch}...`,);
       const abort = Bun.spawnSync(
         ["git", "-C", state.repoRoot, "merge", "--abort",],
-        { stdout: "pipe", stderr: "pipe", },
+        { stdout: "pipe", stderr: "pipe", env: isolatedGitEnv(), },
       );
       if (abort.exitCode === 0) {
         log("success", `merge --abort succeeded on ${state.branch}`,);
@@ -380,12 +402,6 @@ function setMergeInProgress(
   ACTIVE_ABORT_STATE = { stashLabel, mergeHead, mergeInProgress: inProgress, repoRoot, branch, };
 }
 
-const PROTECTED_BRANCHES = ["master", "main", "stg", "dev",];
-
-function isProtected(branch: string,): boolean {
-  return PROTECTED_BRANCHES.includes(branch,);
-}
-
 function gpgMergeFlags(config: WorktreeConfig,): string[] {
   if (!config.agentGpgKeyId) { return []; }
   const gpgCheck = Bun.spawnSync(
@@ -432,15 +448,15 @@ function branchToSquashMessage(branch: string,): string {
 function stashDevForMerge(repoRoot: string,): string | null {
   const dirty = Bun.spawnSync(
     ["git", "-C", repoRoot, "diff", "--quiet", "--ignore-submodules",],
-    { stdout: "pipe", stderr: "pipe", },
+    { stdout: "pipe", stderr: "pipe", env: isolatedGitEnv(), },
   );
   const staged = Bun.spawnSync(
     ["git", "-C", repoRoot, "diff", "--cached", "--quiet", "--ignore-submodules",],
-    { stdout: "pipe", stderr: "pipe", },
+    { stdout: "pipe", stderr: "pipe", env: isolatedGitEnv(), },
   );
   const untracked = Bun.spawnSync(
     ["git", "-C", repoRoot, "ls-files", "--others", "--exclude-standard",],
-    { stdout: "pipe", stderr: "pipe", },
+    { stdout: "pipe", stderr: "pipe", env: isolatedGitEnv(), },
   );
   const hasUntracked = untracked.stdout.toString().trim().length > 0;
   if (dirty.exitCode === 0 && staged.exitCode === 0 && !hasUntracked) {
@@ -452,7 +468,7 @@ function stashDevForMerge(repoRoot: string,): string | null {
   const flags = hasUntracked ? ["--include-untracked",] : [];
   const stash = Bun.spawnSync(
     ["git", "-C", repoRoot, "stash", "push", ...flags, "-m", stashLabel,],
-    { stdout: "pipe", stderr: "pipe", },
+    { stdout: "pipe", stderr: "pipe", env: isolatedGitEnv(), },
   );
   if (stash.exitCode !== 0) {
     log("error", `failed to stash dirty dev checkout: ${stash.stderr.toString().trim()}`,);
@@ -479,7 +495,7 @@ function restoreDevFromStash(
   // other agents may push stashes between our push and pop.
   const list = Bun.spawnSync(
     ["git", "-C", repoRoot, "stash", "list",],
-    { stdout: "pipe", stderr: "pipe", },
+    { stdout: "pipe", stderr: "pipe", env: isolatedGitEnv(), },
   );
   const lines = list.stdout.toString().split("\n",);
   const match = lines.find((line,) => line.includes(stashLabel,));
@@ -490,7 +506,7 @@ function restoreDevFromStash(
   const stashRef = match.split(":",)[0].trim();
   const pop = Bun.spawnSync(
     ["git", "-C", repoRoot, "stash", "pop", stashRef,],
-    { stdout: "pipe", stderr: "pipe", },
+    { stdout: "pipe", stderr: "pipe", env: isolatedGitEnv(), },
   );
   if (pop.exitCode === 0) {
     log("success", `Restored stash '${stashLabel}'`,);
@@ -505,7 +521,7 @@ function restoreDevFromStash(
   console.log("  Stash output:", pop.stderr.toString().trim(),);
   const reset = Bun.spawnSync(
     ["git", "-C", repoRoot, "reset", "--hard", mergeHead,],
-    { stdout: "pipe", stderr: "pipe", },
+    { stdout: "pipe", stderr: "pipe", env: isolatedGitEnv(), },
   );
   if (reset.exitCode !== 0) {
     log("error", `failed to reset dev to ${mergeHead} after stash pop failure`,);
@@ -722,7 +738,16 @@ export async function finalize(
     process.exit(1,);
   }
 
-  const targetBranch = getRootBranch(config.repoRoot,);
+  // Resolve the merge target from the checkout's actual branch, never from a
+  // fallback: a detached HEAD makes `branch --show-current` return empty, and
+  // merging the feature into that fallback branch would mutate a branch the
+  // operator never named. Refuse before anything is stashed or merged.
+  const targetBranch = gitSyncQuiet(config.repoRoot, "branch", "--show-current",);
+  if (!targetBranch) {
+    log("error", `main checkout is in detached HEAD state - cannot determine the merge target`,);
+    console.log(" Re-attach the integration branch, e.g. `git checkout dev` in the root checkout.",);
+    process.exit(1,);
+  }
 
   // Refuse concurrent or in-flight dev-checkout operations BEFORE doing
   // anything that mutates `repoRoot`. See BUG-finalize-race: two concurrent
@@ -780,11 +805,11 @@ async function runFinalize(
   log("info", "Step 1: Checking worktree state...",);
   const dirty = Bun.spawnSync(
     ["git", "-C", wtPath, "diff", "--quiet",],
-    { stdout: "pipe", stderr: "pipe", },
+    { stdout: "pipe", stderr: "pipe", env: isolatedGitEnv(), },
   );
   const staged = Bun.spawnSync(
     ["git", "-C", wtPath, "diff", "--cached", "--quiet",],
-    { stdout: "pipe", stderr: "pipe", },
+    { stdout: "pipe", stderr: "pipe", env: isolatedGitEnv(), },
   );
   if (dirty.exitCode !== 0 || staged.exitCode !== 0) {
     log("error", "uncommitted changes detected - commit or stash before finalizing",);
@@ -852,7 +877,7 @@ async function runFinalize(
     log("info", `Step 5a: Rebasing '${branch}' onto ${targetBranch}...`,);
     const rebaseResult = Bun.spawnSync(
       ["git", "-C", wtPath, "rebase", targetBranch,],
-      { stdout: "pipe", stderr: "pipe", },
+      { stdout: "pipe", stderr: "pipe", env: isolatedGitEnv(), },
     );
     if (rebaseResult.exitCode !== 0) {
       log("error", `Rebase conflicts - resolve in ${wtPath}`,);
@@ -880,7 +905,7 @@ async function runFinalize(
       try {
         const mergeResult = Bun.spawnSync(
           ["git", "-C", config.repoRoot, ...flags, "merge", branch, "--squash", "-m", msg,],
-          { stdout: "pipe", stderr: "pipe", },
+          { stdout: "pipe", stderr: "pipe", env: isolatedGitEnv(), },
         );
         if (mergeResult.exitCode !== 0) {
           log("error", "Squash merge failed",);
@@ -903,7 +928,7 @@ async function runFinalize(
       try {
         const mergeResult = Bun.spawnSync(
           ["git", "-C", config.repoRoot, "merge", branch, "--ff-only",],
-          { stdout: "pipe", stderr: "pipe", },
+          { stdout: "pipe", stderr: "pipe", env: isolatedGitEnv(), },
         );
         if (mergeResult.exitCode !== 0) {
           log("error", "Fast-forward merge failed",);
@@ -944,7 +969,7 @@ async function runFinalize(
     try {
       const mergeResult = Bun.spawnSync(
         ["git", "-C", config.repoRoot, ...flags, "merge", branch, "--no-edit",],
-        { stdout: "pipe", stderr: "pipe", },
+        { stdout: "pipe", stderr: "pipe", env: isolatedGitEnv(), },
       );
       if (mergeResult.exitCode !== 0) {
         log("error", `Merge conflicts - resolve on ${targetBranch}`,);
@@ -963,7 +988,7 @@ async function runFinalize(
     const mergeSha = gitSync(config.repoRoot, "rev-parse", "HEAD",);
     const verifyResult = Bun.spawnSync(
       ["git", "-C", config.repoRoot, "verify-commit", mergeSha,],
-      { stdout: "pipe", stderr: "pipe", },
+      { stdout: "pipe", stderr: "pipe", env: isolatedGitEnv(), },
     );
     // Strict verify: assertAgentGpgUnlocked above already gates against
     // cold-cache. An unsigned merge here means the cold-cache gate was
@@ -981,7 +1006,7 @@ async function runFinalize(
   log("info", "Step 6: Removing worktree...",);
   const removeResult = Bun.spawnSync(
     ["git", "worktree", "remove", wtPath, "--force",],
-    { stdout: "pipe", stderr: "pipe", cwd: config.repoRoot, },
+    { stdout: "pipe", stderr: "pipe", cwd: config.repoRoot, env: isolatedGitEnv(), },
   );
   if (removeResult.exitCode === 0) {
     log("success", "Worktree removed",);
@@ -993,7 +1018,7 @@ async function runFinalize(
   log("info", "Step 7: Deleting branch...",);
   const deleteResult = Bun.spawnSync(
     ["git", "-C", config.repoRoot, "branch", "-d", branch,],
-    { stdout: "pipe", stderr: "pipe", },
+    { stdout: "pipe", stderr: "pipe", env: isolatedGitEnv(), },
   );
   if (deleteResult.exitCode === 0) {
     log("success", "Branch deleted",);
@@ -1001,7 +1026,7 @@ async function runFinalize(
     // Force delete
     Bun.spawnSync(
       ["git", "-C", config.repoRoot, "branch", "-D", branch,],
-      { stdout: "pipe", stderr: "pipe", },
+      { stdout: "pipe", stderr: "pipe", env: isolatedGitEnv(), },
     );
     log("success", "Branch deleted (forced)",);
   }
