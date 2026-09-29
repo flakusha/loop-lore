@@ -251,6 +251,14 @@ A gate that could not be evaluated is reported as **skipped**, not failed:
 when giwt cannot reach the git issue CLI — that state is never a pass and never
 a red gate with the phantom findings giwt emits in that mode.
 
+A failing gate also prints `Full output: <path>`, pointing at
+`.tmp/run-<RUN_ID>/check-fail-<slug>.log` — the untruncated output of that
+one check. The console excerpt keeps only head-5 + tail-20 lines, which for a
+long gate (the e2e browser suite is 35 files) discards exactly where the
+failing assertion lives. **When a gate is red and the printed output does not
+explain why, read that file rather than re-running** — the per-run retention
+pass prunes it.
+
 ### Check report stdout contract (programmatic consumption)
 
 The runner emits machine-greppable lines on stdout for downstream tooling:
