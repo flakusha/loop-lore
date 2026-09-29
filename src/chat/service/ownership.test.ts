@@ -478,4 +478,89 @@ describe("transferOwnership", () => {
     expect(result.error.code,).toBe("bad_request",);
     expect(result.error.message,).toContain("already the current owner",);
   });
+
+  test("reason longer than 500 chars is truncated in the audit meta", async () => {
+    const reason = "r".repeat(600,);
+    const result = await transferOwnership(db, {
+      chatId: CHAT_ID,
+      requesterId: OWNER_ID,
+      requesterRole: "user",
+      newOwnerId: PARTICIPANT_ID,
+      reason,
+    },);
+    expect(result.ok,).toBe(true,);
+
+    const logs = await db
+      .selectFrom("log_entries",)
+      .select("meta",)
+      .where("event_type", "=", "chat_ownership_transferred",)
+      .where("entity_id", "=", CHAT_ID,)
+      .orderBy("timestamp", "desc",)
+      .limit(1,)
+      .execute();
+    const meta = JSON.parse(logs[0]!.meta ?? "{}",) as Record<string, unknown>;
+    expect(meta.reason,).toBe("r".repeat(500,),);
+  });
 });
+
+describe("transferOwnership — tx error mapping (stubbed db)", () => {
+  /**
+   * Minimal Kysely stub: selectFrom returns canned rows, transaction()
+   * throws a synthetic error so interpretTransferError's mapping is
+   * exercised without a real database.
+   * @param txError
+   */
+  function stubDb(txError: Error,): Kysely<DB> {
+    const chain = (row: unknown,): unknown => {
+      const c: Record<string, unknown> = {
+        executeTakeFirst: async () => row,
+        execute: async () => ({ numUpdatedRows: 1, }),
+      };
+      c.select = () => c;
+      c.where = () => c;
+      c.set = () => c;
+      return c;
+    };
+    return {
+      selectFrom: (table: string,) =>
+        chain(
+          table === "chats"
+            ? { id: CHAT_ID, created_by: OWNER_ID, }
+            : { actor_id: PARTICIPANT_ID, role_in_chat: "member", },
+        ),
+      transaction: () => ({
+        execute: async () => { throw txError; },
+      }),
+    } as unknown as Kysely<DB>;
+  }
+
+  test("generic tx error maps to 'Transfer failed; transaction rolled back'", async () => {
+    const result = await transferOwnership(stubDb(new Error("synthetic tx failure",),), {
+      chatId: CHAT_ID,
+      requesterId: STRANGER_ID,
+      requesterRole: "admin",
+      newOwnerId: PARTICIPANT_ID,
+    },);
+    expect(result.ok,).toBe(false,);
+    if (result.ok) { return; }
+    expect(result.error.code,).toBe("bad_request",);
+    expect(result.error.message,).toContain("Transfer failed",);
+  });
+
+  test("lost TOCTOU race maps to 'changed concurrently; refresh and retry'", async () => {
+    const result = await transferOwnership(
+      stubDb(new Error("chat-ownership-concurrent-modification",),),
+      {
+        chatId: CHAT_ID,
+        requesterId: STRANGER_ID,
+        requesterRole: "admin",
+        newOwnerId: PARTICIPANT_ID,
+      },
+    );
+    expect(result.ok,).toBe(false,);
+    if (result.ok) { return; }
+    expect(result.error.code,).toBe("bad_request",);
+    expect(result.error.message,).toContain("changed concurrently",);
+  });
+});
+

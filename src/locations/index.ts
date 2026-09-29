@@ -11,4 +11,4 @@ export type { AddStopInput, CreateTravelRouteInput, } from "./routes";
 export { TravelTickEngine, } from "./travel-engine";
 export type { TickOptions, TickSummary, } from "./travel-engine";
 export { LocationTreeService, } from "./tree";
-export type { InsertLocationInput, LocationTreeNode, } from "./tree";
+export type { InsertLocationInput, LocationTreeBranch, LocationTreeNode, } from "./tree";

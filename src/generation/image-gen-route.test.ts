@@ -22,11 +22,19 @@ import { createConfigSchema, } from "../config/schema-class";
 // (no realDb import: ../db/index is intentionally unstubbed; see NOTE above)
 import * as realUtils from "../utils";
 import * as realImageEngine from "./image-engine";
+import { createTestDb, } from "../test-utils/create-test-db";
+import { insertChats, } from "../test-utils/insert-helpers";
+import type { Kysely, } from "kysely";
+import type { DB, } from "../db/schema";
+import type { TemplateModality, } from "../db/enums";
 import type * as imageGenRoute from "./image-gen-route";
 
 // ── Mutable call-history containers (mutated in beforeEach, read in tests) ──────
 
 const generateImagesCalls: Array<[unknown, Record<string, unknown>,]> = [];
+const linkAssetCalls: Array<{ entityType: string; entityId: string; label: string, }> = [];
+/** When set, mockGenerateImages fails with this outcome (provider-error path). */
+let generateError: { ok: false; error: string; status: number, } | null = null;
 
 // ── Mock implementations ───────────────────────────────────────────────────────
 
@@ -39,6 +47,7 @@ async function mockGenerateImages(
   opts: Record<string, unknown>,
 ) {
   generateImagesCalls.push([_sdConfig, opts,],);
+  if (generateError) { return generateError; }
   return {
     ok: true,
     images: [Buffer.from("fake-image-bytes",),],
@@ -67,7 +76,9 @@ async function mockCreateAsset(_opts: unknown,) {
 /**
  * @param _opts
  */
-async function mockLinkAsset(_opts: unknown,) {}
+async function mockLinkAsset(opts: { link: { entityType: string; entityId: string; label: string, }, },) {
+  linkAssetCalls.push(opts.link,);
+}
 
 // NOTE: no getDatabase stub on purpose. The SUT only threads the handle to
 // the (mocked) createAsset, and a process-global stub breaks later files'
@@ -169,6 +180,38 @@ function makeBody(overrides?: Record<string, unknown>,) {
   };
 }
 
+/**
+ * Seed a user (prompt_templates.owner_id FK parent) and a template row.
+ * @param db
+ * @param id
+ * @param modality
+ * @param name
+ * @param payload
+ */
+async function seedTemplate(
+  db: Kysely<DB>,
+  id: string,
+  modality: TemplateModality,
+  name: string,
+  payload: string,
+): Promise<void> {
+  await db.insertInto("users",).values({
+    id: "test-user",
+    username: "test-user",
+    display_name: "Test User",
+    role: "solo",
+    status: "active",
+    settings: "{}",
+  },).execute();
+  await db.insertInto("prompt_templates",).values({
+    id,
+    owner_id: "test-user",
+    modality,
+    name,
+    payload,
+  },).execute();
+}
+
 const LORA_CONFIG = {
   name: "my_character",
   strength: 0.7,
@@ -185,6 +228,8 @@ const COMFYUI_CONFIG = {
 describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
   beforeEach(() => {
     generateImagesCalls.length = 0;
+    linkAssetCalls.length = 0;
+    generateError = null;
   },);
 
   // (1) Opt-out: no lora field → generateImages called WITHOUT lora
@@ -391,5 +436,135 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
     const res = await handleOpenAINoLora(body, undefined, "test-user",);
 
     expect(res.status,).toBe(200,);
-  });
+  },);
+
+  // (8) Authentication: missing userId → HTTP 401
+
+  it("returns HTTP 401 when userId is missing", async () => {
+    const res = await handleImageGeneration(makeBody(), undefined, undefined,);
+
+    expect(res.status,).toBe(401,);
+    const json = await res.json() as { error: string };
+    expect(json.error,).toContain("Authentication",);
+  },);
+
+  // (9) Authorization: unknown chat → HTTP 403 (IDOR write guard)
+
+  it("returns HTTP 403 when the chat does not exist for this user", async () => {
+    const { db, } = await createTestDb();
+    try {
+      const res = await handleImageGeneration(
+        makeBody({ prompt: "any prompt", chatId: "no-such-chat", },),
+        db,
+        "test-user",
+      );
+
+      expect(res.status,).toBe(403,);
+    } finally {
+      await db.destroy();
+    }
+  },);
+
+  // (10) Template path: unknown template → HTTP 404
+
+  it("returns HTTP 404 when the prompt template is not found", async () => {
+    const { db, } = await createTestDb();
+    try {
+      const res = await handleImageGeneration(
+        makeBody({ prompt: "any prompt", templateId: "tpl-missing", },),
+        db,
+        "test-user",
+      );
+
+      expect(res.status,).toBe(404,);
+      const json = await res.json() as { error: string };
+      expect(json.error,).toContain("Template not found",);
+    } finally {
+      await db.destroy();
+    }
+  },);
+
+  // (11) Template path: non-image modality → HTTP 400
+
+  it("returns HTTP 400 when the template is not an image template", async () => {
+    const { db, } = await createTestDb();
+    try {
+      await seedTemplate(db, "tpl-llm", "llm", "LLM template", JSON.stringify({ body: "x", },),);
+      const res = await handleImageGeneration(
+        makeBody({ prompt: "any prompt", templateId: "tpl-llm", },),
+        db,
+        "test-user",
+      );
+
+      expect(res.status,).toBe(400,);
+      const json = await res.json() as { error: string };
+      expect(json.error,).toContain("not an image template",);
+    } finally {
+      await db.destroy();
+    }
+  },);
+
+  // (12) Template path: renders {{variables}} and negativePrompt
+
+  it("renders the image template payload into the generation prompt", async () => {
+    const { db, } = await createTestDb();
+    try {
+      await seedTemplate(db, "tpl-image", "image", "Image template", JSON.stringify({ templateBody: "a {{mood}} portrait", negativePrompt: "blurry", },),);
+      const res = await handleImageGeneration(
+        makeBody({ templateId: "tpl-image", context: { mood: "dark", }, },),
+        db,
+        "test-user",
+      );
+
+      expect(res.status,).toBe(200,);
+      const [, opts,] = generateImagesCalls[generateImagesCalls.length - 1]!;
+      expect(opts.prompt,).toBe("a dark portrait",);
+      expect(opts.negativePrompt,).toBe("blurry",);
+    } finally {
+      await db.destroy();
+    }
+  },);
+
+  // (13) Provider failure → error status propagated
+
+  it("propagates the provider error status when generation fails", async () => {
+    generateError = { ok: false, error: "provider exploded", status: 502, };
+    try {
+      const res = await handleImageGeneration(makeBody(), undefined, "test-user",);
+
+      expect(res.status,).toBe(502,);
+      const json = await res.json() as { error: string };
+      expect(json.error,).toBe("provider exploded",);
+    } finally {
+      generateError = null;
+    }
+  },);
+
+  // (14) Asset linking: messageId + chatId links recorded
+
+  it("links the generated asset to the message and chat when both are provided", async () => {
+    const { db, } = await createTestDb();
+    try {
+      await db.insertInto("users",).values({
+        id: "test-user",
+        username: "test-user",
+        display_name: "Test User",
+        role: "solo",
+        status: "active",
+        settings: "{}",
+      },).execute();
+      await insertChats(db, "Linked chat", "test-user", { id: "chat-1", } as never,);
+      const res = await handleImageGeneration(
+        makeBody({ prompt: "linked", messageId: "msg-1", chatId: "chat-1", },),
+        db,
+        "test-user",
+      );
+
+      expect(res.status,).toBe(200,);
+      expect(linkAssetCalls,).toContainEqual({ entityType: "message", entityId: "msg-1", label: "generated", },);
+      expect(linkAssetCalls,).toContainEqual({ entityType: "chat", entityId: "chat-1", label: "generated", },);
+    } finally {
+      await db.destroy();
+    }
+  },);
 },);
