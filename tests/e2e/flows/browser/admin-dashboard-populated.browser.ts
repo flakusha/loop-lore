@@ -27,13 +27,16 @@ async function loginAsAdmin(ctx: BrowserTestContext,) {
     await page.waitForSelector("[data-testid='login-submit']", { timeout: 10_000, },);
     await page.fill("[data-testid='username-input']", SEED.admin.username,);
     await page.fill("[data-testid='password-input']", SEED.admin.password,);
-    await page.click("[data-testid='login-submit']",);
-    // Wait for the login POST response — proves the session cookie was set.
-    await page.waitForResponse(
+    // Arm the waiter before the click: attaching it afterwards races the
+    // htmx POST and degenerates into a guaranteed timeout under load.
+    const loginRes = page.waitForResponse(
       (res: import("playwright").Response,) =>
         res.url().includes("/api/auth/login",) && res.request().method() === "POST",
       { timeout: 30_000, },
     );
+    await page.click("[data-testid='login-submit']",);
+    // The login POST response proves the session cookie was set.
+    await loginRes;
     await page.waitForURL((url,) => url.pathname === "/views/chat", { timeout: 30_000, },);
     await page.goto(`${ctx.url}/views/admin`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
     await page.waitForSelector("[data-testid='admin-header']", { timeout: 15_000, },);
@@ -129,11 +132,14 @@ describe("Admin dashboard panels — populated", () => {
     await page.waitForSelector("[data-testid='login-submit']", { timeout: 10_000, },);
     await page.fill("[data-testid='username-input']", SEED.user.username,);
     await page.fill("[data-testid='password-input']", SEED.user.password,);
-    await page.click("[data-testid='login-submit']",);
-    await page.waitForResponse(
+    // Arm the waiter before the click: attaching it afterwards races the
+    // htmx POST and degenerates into a guaranteed timeout under load.
+    const loginRes = page.waitForResponse(
       (res,) => res.url().includes("/api/auth/login",) && res.request().method() === "POST",
       { timeout: 30_000, },
     );
+    await page.click("[data-testid='login-submit']",);
+    await loginRes;
     // Now start tracking — all subsequent nav errors are captured.
     const errors = trackPageErrors(page, { allowlist: [/401 \(Unauthorized\)/, /Failed to load resource/,], },);
     try {
