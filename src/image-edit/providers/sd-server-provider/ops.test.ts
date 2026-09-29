@@ -49,7 +49,7 @@ async function withMockFetch(
 
 /** Parse the JSON body safeFetch serialized for a recorded call. */
 function bodyOf(call: FetchCall,): Record<string, unknown> {
-  return JSON.parse(String(call.init?.body ?? "{}"),) as Record<string, unknown>;
+  return JSON.parse(String(call.init?.body ?? "{}",),) as Record<string, unknown>;
 }
 
 function makeCfg(): ImageProviderConfig {
@@ -70,9 +70,10 @@ function makeHost(family: ImageApiFamily,): SDServerHost {
 
 /** sdcpp job flow: POST returns a job id, GET polls to done. */
 function sdcppJobFlow(images: string[] = ["b64a",],): (url: string, init?: RequestInit,) => Response {
-  return (_url, init,) => init?.method === "POST"
-    ? Response.json({ id: "job-1", },)
-    : Response.json({ status: "done", images, },);
+  return (_url, init,) =>
+    init?.method === "POST"
+      ? Response.json({ id: "job-1", },)
+      : Response.json({ status: "done", images, },);
 }
 
 describe("executeTxt2Img", () => {
@@ -81,9 +82,11 @@ describe("executeTxt2Img", () => {
     const calls = await withMockFetch(
       sdcppJobFlow(),
       async () => {
-        const results = await executeTxt2Img(makeHost(ImageApiFamily.Sdcpp,), {}, makeCfg(), (p,) => { progress.push(p,); },);
+        const results = await executeTxt2Img(makeHost(ImageApiFamily.Sdcpp,), {}, makeCfg(), (p,) => {
+          progress.push(p,);
+        },);
         expect(results,).toHaveLength(1,);
-        expect(results[0]!.filename,).toMatch(/^sdserver-[0-9a-f]{8}-0\.png$/);
+        expect(results[0]!.filename,).toMatch(/^sdserver-[0-9a-f]{8}-0\.png$/,);
         expect(results[0]!.url,).toBe(`/api/assets/${results[0]!.id}/raw`,);
         expect(results[0]!.mimeType,).toBe("image/png",);
       },
@@ -101,7 +104,7 @@ describe("executeTxt2Img", () => {
     expect(body.batch_size,).toBe(1,);
     expect(body.output_format,).toBe("png",);
     expect(progress[0],).toEqual({ status: "running", message: "Generating image...", },);
-  },);
+  });
 
   test("explicit params override cfg defaults", async () => {
     const calls = await withMockFetch(
@@ -128,7 +131,7 @@ describe("executeTxt2Img", () => {
     expect(body.cfg_scale,).toBe(9,);
     expect(body.sampler,).toBe("dpmpp_2m",);
     expect(body.seed,).toBe(12345,);
-  },);
+  });
 
   test("appends the emotion modifier to the prompt", async () => {
     const calls = await withMockFetch(
@@ -141,7 +144,7 @@ describe("executeTxt2Img", () => {
       },
     );
     expect(bodyOf(calls[0]!,).prompt,).toBe("a cat, happy expression, smiling, bright eyes, cheerful",);
-  },);
+  });
 
   test("leaves the prompt unchanged for an unknown emotion", async () => {
     const calls = await withMockFetch(
@@ -154,7 +157,7 @@ describe("executeTxt2Img", () => {
       },
     );
     expect(bodyOf(calls[0]!,).prompt,).toBe("a cat",);
-  },);
+  });
 
   test("leaves the prompt unchanged when no emotion is given", async () => {
     const calls = await withMockFetch(
@@ -164,7 +167,7 @@ describe("executeTxt2Img", () => {
       },
     );
     expect(bodyOf(calls[0]!,).prompt,).toBe("a cat",);
-  },);
+  });
 
   test("sdapi family: posts to sdapi with sampler_name and no output_format", async () => {
     const calls = await withMockFetch(
@@ -172,7 +175,7 @@ describe("executeTxt2Img", () => {
       async () => {
         const results = await executeTxt2Img(makeHost(ImageApiFamily.Sdapi,), {}, makeCfg(),);
         expect(results,).toHaveLength(2,);
-        expect(results[0]!.filename,).toMatch(/^sdapi-[0-9a-f]{8}-0\.png$/);
+        expect(results[0]!.filename,).toMatch(/^sdapi-[0-9a-f]{8}-0\.png$/,);
       },
     );
     expect(calls[0]!.url,).toBe("http://sdserver.test/sdapi/v1/txt2img",);
@@ -180,7 +183,7 @@ describe("executeTxt2Img", () => {
     expect(body.sampler_name,).toBe("euler",);
     expect(body.batch_size,).toBe(1,);
     expect("output_format" in body,).toBe(false,);
-  },);
+  });
 
   test("openai family: posts size and n to the generations endpoint", async () => {
     const calls = await withMockFetch(
@@ -192,7 +195,7 @@ describe("executeTxt2Img", () => {
           height: 768,
         }, makeCfg(),);
         expect(results,).toHaveLength(2,);
-        expect(results[0]!.filename,).toMatch(/^openai-[0-9a-f]{8}-0\.png$/);
+        expect(results[0]!.filename,).toMatch(/^openai-[0-9a-f]{8}-0\.png$/,);
         expect(results[0]!.url,).toBe(`/api/assets/${results[0]!.id}/raw`,);
       },
     );
@@ -202,7 +205,7 @@ describe("executeTxt2Img", () => {
     expect(body.n,).toBe(1,);
     expect(body.size,).toBe("1024x768",);
     expect(body.output_format,).toBe("png",);
-  },);
+  });
 });
 
 describe("executeImg2Img", () => {
@@ -211,7 +214,9 @@ describe("executeImg2Img", () => {
     const calls = await withMockFetch(
       sdcppJobFlow(),
       async () => {
-        await executeImg2Img(makeHost(ImageApiFamily.Sdcpp,), { input_image: "b64src", }, makeCfg(), (p,) => { progress.push(p,); },);
+        await executeImg2Img(makeHost(ImageApiFamily.Sdcpp,), { input_image: "b64src", }, makeCfg(), (p,) => {
+          progress.push(p,);
+        },);
       },
     );
     expect(calls[0]!.url,).toBe("http://sdserver.test/sdcpp/v1/img2img",);
@@ -221,7 +226,7 @@ describe("executeImg2Img", () => {
     expect(body.batch_size,).toBe(1,);
     expect(body.output_format,).toBe("png",);
     expect(progress[0],).toEqual({ status: "running", message: "Transforming image...", },);
-  },);
+  });
 
   test("explicit denoise_strength overrides the default", async () => {
     const calls = await withMockFetch(
@@ -234,7 +239,7 @@ describe("executeImg2Img", () => {
       },
     );
     expect(bodyOf(calls[0]!,).denoising_strength,).toBe(0.5,);
-  },);
+  });
 
   test("sdapi family: wraps the input image in init_images", async () => {
     const calls = await withMockFetch(
@@ -247,19 +252,20 @@ describe("executeImg2Img", () => {
     const body = bodyOf(calls[0]!,);
     expect(body.init_images,).toEqual(["b64src",],);
     expect(body.denoising_strength,).toBe(0.75,);
-  },);
+  });
 
   test("openai family: rejects img2img without network access", async () => {
     const calls = await withMockFetch(
       () => Response.json({ data: [], },),
       async () => {
-        await expect(executeImg2Img(makeHost(ImageApiFamily.Openai,), { input_image: "x", }, makeCfg(),),).rejects.toThrow(
-          "img2img not supported with OpenAI API family",
-        );
+        await expect(executeImg2Img(makeHost(ImageApiFamily.Openai,), { input_image: "x", }, makeCfg(),),).rejects
+          .toThrow(
+            "img2img not supported with OpenAI API family",
+          );
       },
     );
     expect(calls,).toHaveLength(0,);
-  },);
+  });
 });
 
 describe("executeUpscale", () => {
@@ -268,9 +274,11 @@ describe("executeUpscale", () => {
     const calls = await withMockFetch(
       () => Response.json({ image: "b64out", },),
       async () => {
-        const results = await executeUpscale(makeHost(ImageApiFamily.Sdapi,), { input_image: "b64src", }, (p,) => { progress.push(p,); },);
+        const results = await executeUpscale(makeHost(ImageApiFamily.Sdapi,), { input_image: "b64src", }, (p,) => {
+          progress.push(p,);
+        },);
         expect(results,).toHaveLength(1,);
-        expect(results[0]!.filename,).toMatch(/^upscaled-[0-9a-f]{8}\.png$/);
+        expect(results[0]!.filename,).toMatch(/^upscaled-[0-9a-f]{8}\.png$/,);
         expect(results[0]!.url,).toBe(`/api/assets/${results[0]!.id}/raw`,);
         expect(results[0]!.mimeType,).toBe("image/png",);
       },
@@ -280,7 +288,7 @@ describe("executeUpscale", () => {
     expect(body.image,).toBe("b64src",);
     expect(body.upscale_model,).toBe("RealESRGAN_x4plus",);
     expect(progress[0],).toEqual({ status: "running", message: "Upscaling image...", },);
-  },);
+  });
 
   test("honors a custom upscale_model", async () => {
     const calls = await withMockFetch(
@@ -293,7 +301,7 @@ describe("executeUpscale", () => {
       },
     );
     expect(bodyOf(calls[0]!,).upscale_model,).toBe("ESRGAN",);
-  },);
+  });
 
   test("throws when the upscale call fails", async () => {
     await withMockFetch(
@@ -304,7 +312,7 @@ describe("executeUpscale", () => {
         );
       },
     );
-  },);
+  });
 
   test("non-sdapi families reject upscale without network access", async () => {
     const calls = await withMockFetch(
@@ -316,5 +324,5 @@ describe("executeUpscale", () => {
       },
     );
     expect(calls,).toHaveLength(0,);
-  },);
+  });
 });

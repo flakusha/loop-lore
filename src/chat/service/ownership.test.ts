@@ -529,7 +529,9 @@ describe("transferOwnership — tx error mapping (stubbed db)", () => {
             : { actor_id: PARTICIPANT_ID, role_in_chat: "member", },
         ),
       transaction: () => ({
-        execute: async () => { throw txError; },
+        execute: async () => {
+          throw txError;
+        },
       }),
     } as unknown as Kysely<DB>;
   }
@@ -563,4 +565,3 @@ describe("transferOwnership — tx error mapping (stubbed db)", () => {
     expect(result.error.message,).toContain("changed concurrently",);
   });
 });
-

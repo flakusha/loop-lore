@@ -82,32 +82,35 @@ beforeEach(() => {
  * seeded with working stubs.
  * @param overrides
  */
-function seedActive(overrides: { chatId?: string; aborted?: boolean; } = {},): string {
+function seedActive(overrides: { chatId?: string; aborted?: boolean } = {},): string {
   const targetChat = overrides.chatId ?? chatId;
   const attemptId = `att-${crypto.randomUUID()}`;
   const abortController = new AbortController();
   if (overrides.aborted) {
     abortController.abort(new GenerationCancelledError(CancelReason.UserCancel, CancelSource.User, "already",),);
   }
-  activeGenerations.set(attemptId, {
+  activeGenerations.set(
     attemptId,
-    chatId: targetChat,
-    parentMessageId: "parent-1",
-    actorId: "actor-1",
-    status: GenerationStatus.Streaming,
-    startedAt: Date.now(),
-    chunksReceived: 0,
-    charsReceived: 0,
-    abortController,
-    repetitionDetector: { getBufferText: () => "", } as never,
-    policyConfig: { expectedPolicy: PolicyType.Sfw, cancel: true, },
-    responseLimitConfig: { maxResponses: 1, isGroupChat: false, currentCount: 0, },
-    streaming: true,
-    stepIndex: 0,
-    totalSteps: 1,
-    lastRenderedChunkIndex: -1,
-    deliveryConfirmed: false,
-  } satisfies ActiveGeneration,);
+    {
+      attemptId,
+      chatId: targetChat,
+      parentMessageId: "parent-1",
+      actorId: "actor-1",
+      status: GenerationStatus.Streaming,
+      startedAt: Date.now(),
+      chunksReceived: 0,
+      charsReceived: 0,
+      abortController,
+      repetitionDetector: { getBufferText: () => "", } as never,
+      policyConfig: { expectedPolicy: PolicyType.Sfw, cancel: true, },
+      responseLimitConfig: { maxResponses: 1, isGroupChat: false, currentCount: 0, },
+      streaming: true,
+      stepIndex: 0,
+      totalSteps: 1,
+      lastRenderedChunkIndex: -1,
+      deliveryConfirmed: false,
+    } satisfies ActiveGeneration,
+  );
   chatToAttempt.set(targetChat, attemptId,);
   return attemptId;
 }
@@ -126,7 +129,7 @@ describe("handleCancelGeneration", () => {
     for (const body of [null, "str", 42, true,]) {
       const res = await handleCancelGeneration(body, testDb!, ownerId,);
       expect(res.status,).toBe(400,);
-      const data = (await res.json()) as { error: string; };
+      const data = (await res.json()) as { error: string };
       expect(data.error,).toBe("Invalid request body",);
     }
   });
@@ -143,7 +146,7 @@ describe("handleCancelGeneration", () => {
     for (const body of bodies) {
       const res = await handleCancelGeneration(body, testDb!, ownerId,);
       expect(res.status,).toBe(400,);
-      const data = (await res.json()) as { error: string; };
+      const data = (await res.json()) as { error: string };
       expect(data.error,).toBe("Invalid request body",);
     }
   });
@@ -152,7 +155,7 @@ describe("handleCancelGeneration", () => {
     await makeFixtures();
     const res = await handleCancelGeneration({ reason: "x", }, testDb!, ownerId,);
     expect(res.status,).toBe(400,);
-    const data = (await res.json()) as { error: string; };
+    const data = (await res.json()) as { error: string };
     expect(data.error,).toBe("Either chatId or attemptId is required",);
   });
 
@@ -161,14 +164,14 @@ describe("handleCancelGeneration", () => {
     const attemptId = seedActive();
     const res = await handleCancelGeneration({ chatId, }, testDb!, ownerId,);
     expect(res.status,).toBe(200,);
-    const data = (await res.json()) as { ok: boolean; chatId: string; reason: string; source: string; detail: string; };
+    const data = (await res.json()) as { ok: boolean; chatId: string; reason: string; source: string; detail: string };
     expect(data.ok,).toBe(true,);
     expect(data.chatId,).toBe(chatId,);
     expect(data.reason,).toBe(CancelReason.UserCancel,);
     expect(data.source,).toBe(CancelSource.User,);
     expect(data.detail,).toBe("User requested cancellation",);
-    expect(activeGenerations.has(attemptId),).toBe(false,);
-    expect(chatToAttempt.has(chatId),).toBe(false,);
+    expect(activeGenerations.has(attemptId,),).toBe(false,);
+    expect(chatToAttempt.has(chatId,),).toBe(false,);
   });
 
   test("cancels by attemptId only, resolving the chat from active generations", async () => {
@@ -176,31 +179,35 @@ describe("handleCancelGeneration", () => {
     const attemptId = seedActive();
     const res = await handleCancelGeneration({ attemptId, }, testDb!, ownerId,);
     expect(res.status,).toBe(200,);
-    const data = (await res.json()) as { ok: boolean; chatId: string; };
+    const data = (await res.json()) as { ok: boolean; chatId: string };
     expect(data.ok,).toBe(true,);
     expect(data.chatId,).toBe(chatId,);
-    expect(activeGenerations.has(attemptId),).toBe(false,);
+    expect(activeGenerations.has(attemptId,),).toBe(false,);
   });
 
   test("returns 404 when the attemptId matches no active generation", async () => {
     await makeFixtures();
     const res = await handleCancelGeneration({ attemptId: "att-missing", }, testDb!, ownerId,);
     expect(res.status,).toBe(404,);
-    const data = (await res.json()) as { error: string; };
+    const data = (await res.json()) as { error: string };
     expect(data.error,).toBe("No active generation found for the given ID",);
   });
 
   test("echoes custom reason/source/detail in the response", async () => {
     await makeFixtures();
     seedActive();
-    const res = await handleCancelGeneration({
-      chatId,
-      reason: CancelReason.ChatSwitch,
-      source: CancelSource.ChatSwitch,
-      detail: "user switched chats",
-    }, testDb!, ownerId,);
+    const res = await handleCancelGeneration(
+      {
+        chatId,
+        reason: CancelReason.ChatSwitch,
+        source: CancelSource.ChatSwitch,
+        detail: "user switched chats",
+      },
+      testDb!,
+      ownerId,
+    );
     expect(res.status,).toBe(200,);
-    const data = (await res.json()) as { reason: string; source: string; detail: string; };
+    const data = (await res.json()) as { reason: string; source: string; detail: string };
     expect(data.reason,).toBe(CancelReason.ChatSwitch,);
     expect(data.source,).toBe(CancelSource.ChatSwitch,);
     expect(data.detail,).toBe("user switched chats",);
@@ -210,30 +217,30 @@ describe("handleCancelGeneration", () => {
     await makeFixtures();
     const chat2 = `chat2-${crypto.randomUUID()}`;
     await insertChats(testDb!, "Chat 2", ownerId, { id: chat2, } as never,);
-    const attempt1 = seedActive({ chatId, });
-    const attempt2 = seedActive({ chatId: chat2, });
+    const attempt1 = seedActive({ chatId, },);
+    const attempt2 = seedActive({ chatId: chat2, },);
     const res = await handleCancelGeneration({ chatId, attemptId: attempt2, }, testDb!, ownerId,);
     expect(res.status,).toBe(200,);
-    const data = (await res.json()) as { chatId: string; };
+    const data = (await res.json()) as { chatId: string };
     expect(data.chatId,).toBe(chatId,);
-    expect(activeGenerations.has(attempt1),).toBe(false,);
-    expect(activeGenerations.has(attempt2),).toBe(true,);
+    expect(activeGenerations.has(attempt1,),).toBe(false,);
+    expect(activeGenerations.has(attempt2,),).toBe(true,);
   });
 
   test("returns 404 when the chat has no active generation to cancel", async () => {
     await makeFixtures();
     const res = await handleCancelGeneration({ chatId, }, testDb!, ownerId,);
     expect(res.status,).toBe(404,);
-    const data = (await res.json()) as { error: string; };
+    const data = (await res.json()) as { error: string };
     expect(data.error,).toBe("No active generation found or already cancelled",);
   });
 
   test("returns 404 when the tracked generation was already aborted", async () => {
     await makeFixtures();
-    seedActive({ aborted: true, });
+    seedActive({ aborted: true, },);
     const res = await handleCancelGeneration({ chatId, }, testDb!, ownerId,);
     expect(res.status,).toBe(404,);
-    const data = (await res.json()) as { error: string; };
+    const data = (await res.json()) as { error: string };
     expect(data.error,).toBe("No active generation found or already cancelled",);
   });
 
@@ -242,7 +249,7 @@ describe("handleCancelGeneration", () => {
     const attemptId = seedActive();
     const res = await handleCancelGeneration({ chatId, }, testDb!, outsiderId, "admin",);
     expect(res.status,).toBe(200,);
-    expect(activeGenerations.has(attemptId),).toBe(false,);
+    expect(activeGenerations.has(attemptId,),).toBe(false,);
   });
 
   test("forbids a non-participant from cancelling by attemptId", async () => {
@@ -250,6 +257,6 @@ describe("handleCancelGeneration", () => {
     const attemptId = seedActive();
     const res = await handleCancelGeneration({ attemptId, }, testDb!, outsiderId,);
     expect(res.status,).toBe(403,);
-    expect(activeGenerations.has(attemptId),).toBe(true,);
+    expect(activeGenerations.has(attemptId,),).toBe(true,);
   });
-},);
+});

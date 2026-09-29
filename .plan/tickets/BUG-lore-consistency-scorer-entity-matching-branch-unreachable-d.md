@@ -14,7 +14,7 @@
 
 ## Summary
 
-src/story/quality/scorers/lore-consistency.ts:18-32: scoreLoreConsistency lowercases lore/response BEFORE calling extractEntities, but extractEntities only matches capitalized ASCII words (\b[A-Z][a-z]{2,}...). The entity-matching branch (matchRatio scoring, +15/+8/-15 adjustments) is unreachable — every non-null lore scores exactly 70. Existing test at line 35-37 documents this. Fix: lowercase after entity extraction, or make extractEntities case-insensitive. Found by test-edge-case-strengthening worktree (StoryCore agent).
+src/story/quality/scorers/lore-consistency.ts:18-32: scoreLoreConsistency lowercases lore/response BEFORE calling extractEntities, but extractEntities only matches capitalized ASCII words (`\b[A-Z][a-z]{2,}...`). The entity-matching branch (matchRatio scoring, +15/+8/-15 adjustments) is unreachable — every non-null lore scores exactly 70. Existing test at line 35-37 documents this. Fix: lowercase after entity extraction, or make extractEntities case-insensitive. Found by test-edge-case-strengthening worktree (StoryCore agent).
 
 ## Acceptance Criteria
 

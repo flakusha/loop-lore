@@ -176,5 +176,5 @@ describe("finalize lock retry backoff (two contenders)", () => {
     const a = contender();
     const b = contender();
     expect(a,).not.toEqual(b,);
-  },);
+  });
 });

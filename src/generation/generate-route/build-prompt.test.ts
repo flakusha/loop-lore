@@ -33,7 +33,7 @@ let assembleResult: Assembled = {
   sections: [],
 };
 
-const compactCalls: { messages: GenerationMessage[]; budget: number; }[] = [];
+const compactCalls: { messages: GenerationMessage[]; budget: number }[] = [];
 let compactResult: {
   messages: GenerationMessage[];
   compacted: boolean;
@@ -87,16 +87,30 @@ const { ContextCompactor: CompactorFn, } = await import("../context-compactor");
 // above never apply. Fail-closed: verify this file's own doubles are the
 // ones in effect and skip otherwise instead of testing through another
 // file's stubs.
-const promptsSelfOk = resolveFn(undefined, "assistant",) === "fallback:assistant";
-const assemblerSelfOk = await (async () => {
+//
+// A probe that throws means the real implementation is bound — the real
+// PromptAssembler queries `this.db.selectFrom`, and the probes below pass a
+// stub db. That is the answer "not my doubles", not a test failure, so each
+// probe swallows and reports false.
+const probe = async (check: () => Promise<boolean> | boolean,): Promise<boolean> => {
+  try {
+    return await check();
+  } catch {
+    return false;
+  }
+};
+const promptsSelfOk = await probe(
+  () => resolveFn(undefined, "assistant",) === "fallback:assistant",
+);
+const assemblerSelfOk = await probe(async () => {
   const inst = new AssemblerFn({} as Kysely<DB>,);
   return (await inst.assemble({ actorId: "actor-1", chatId: "chat-1", modelId: "model-x", },)) ===
     assembleResult;
-})();
-const compactorSelfOk = await (async () => {
-  const inst = new CompactorFn({});
+},);
+const compactorSelfOk = await probe(async () => {
+  const inst = new CompactorFn({},);
   return (await inst.compact([], 1,)) === compactResult;
-})();
+},);
 const buildPromptSelfOk = promptsSelfOk && assemblerSelfOk && compactorSelfOk;
 const describeSelf = buildPromptSelfOk ? describeOrSkipStrict : describe.skip;
 
@@ -122,8 +136,8 @@ const baseInput = {
 
 async function run(
   overrides: Partial<GenerateRequest> = {},
-  opts: { userId?: string; groupParticipantIds?: string[]; includeExamples?: boolean; } = {},
-): Promise<{ messages: GenerationMessage[]; systemPrompt: string | undefined; }> {
+  opts: { userId?: string; groupParticipantIds?: string[]; includeExamples?: boolean } = {},
+): Promise<{ messages: GenerationMessage[]; systemPrompt: string | undefined }> {
   return buildPrompt({
     input: { ...baseInput, ...overrides, },
     database: {} as Kysely<DB>,

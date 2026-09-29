@@ -22,7 +22,7 @@ import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 import { gitSync, gitSyncQuiet, isolatedGitEnv, } from "./git";
 
-const STRIPPED_PREFIXES = ["GIT_", "OMP_", "PI_", "ENGRAM_", "MNEMO_"];
+const STRIPPED_PREFIXES = ["GIT_", "OMP_", "PI_", "ENGRAM_", "MNEMO_",];
 const temps: string[] = [];
 
 /**
@@ -37,48 +37,48 @@ const temps: string[] = [];
  * always have different HEADs - a comparison between them must not be able
  * to skip itself on a same-second empty commit.
  */
-function makeRepo(seed = "base"): string {
-  const root = mkdtempSync(join(tmpdir(), "loop-lore-isolated-env-"));
-  temps.push(root);
-  const git = (args: string[]): void => {
+function makeRepo(seed = "base",): string {
+  const root = mkdtempSync(join(tmpdir(), "loop-lore-isolated-env-",),);
+  temps.push(root,);
+  const git = (args: string[],): void => {
     // Isolated like the code under test: an ambient GIT_* on the runner's
     // env would otherwise redirect these fixture commands too, which is the
     // same class of bug the fixture is meant to stay clear of.
-    const r = Bun.spawnSync(["git", "-C", root, ...args], {
+    const r = Bun.spawnSync(["git", "-C", root, ...args,], {
       stdout: "pipe",
       stderr: "pipe",
       env: isolatedGitEnv(),
-    });
-    if (r.exitCode !== 0) throw new Error(r.stderr.toString().trim());
+    },);
+    if (r.exitCode !== 0) { throw new Error(r.stderr.toString().trim(),); }
   };
-  git(["init", "-q", "-b", "main", "."]);
-  git(["config", "user.email", "isolated-env@localhost"]);
-  git(["config", "user.name", "isolated env"]);
-  git(["commit", "--allow-empty", "-qm", seed]);
+  git(["init", "-q", "-b", "main", ".",],);
+  git(["config", "user.email", "isolated-env@localhost",],);
+  git(["config", "user.name", "isolated env",],);
+  git(["commit", "--allow-empty", "-qm", seed,],);
   // A staged-but-uncommitted file, so the real index is non-empty and a
   // comparison against it is distinguishable from one against an empty one.
-  writeFileSync(join(root, "staged.txt"), "staged\n");
-  git(["add", "staged.txt"]);
+  writeFileSync(join(root, "staged.txt",), "staged\n",);
+  git(["add", "staged.txt",],);
   return root;
 }
 
 /** Run a child git with an explicit env (the pre-fix shape used process.env). */
-function childGit(repoRoot: string, env: Record<string, string>, args: string[]): number {
-  return Bun.spawnSync(["git", "-C", repoRoot, ...args], {
+function childGit(repoRoot: string, env: Record<string, string>, args: string[],): number {
+  return Bun.spawnSync(["git", "-C", repoRoot, ...args,], {
     stdout: "pipe",
     stderr: "pipe",
     env,
-  }).exitCode;
+  },).exitCode;
 }
 
 /** Same child, but reporting stdout - the only way to tell WHICH repo a
  * ref resolved against, since `rev-parse` exits 0 in both. */
-function childGitOut(repoRoot: string, env: Record<string, string>, args: string[]): string {
-  return Bun.spawnSync(["git", "-C", repoRoot, ...args], {
+function childGitOut(repoRoot: string, env: Record<string, string>, args: string[],): string {
+  return Bun.spawnSync(["git", "-C", repoRoot, ...args,], {
     stdout: "pipe",
     stderr: "pipe",
     env,
-  }).stdout.toString().trim();
+  },).stdout.toString().trim();
 }
 
 /**
@@ -88,13 +88,13 @@ function childGitOut(repoRoot: string, env: Record<string, string>, args: string
  * point: it models the pre-fix child, deterministically, whatever the runner's
  * own environment happens to hold.
  */
-function hostileEnv(key: string, value: string): NodeJS.ProcessEnv {
+function hostileEnv(key: string, value: string,): NodeJS.ProcessEnv {
   return { ...isolatedGitEnv(), [key]: value, };
 }
 
 afterEach(() => {
-  for (const root of temps.splice(0)) rmSync(root, { recursive: true, force: true });
-});
+  for (const root of temps.splice(0,)) { rmSync(root, { recursive: true, force: true, },); }
+},);
 
 describe("isolatedGitEnv", () => {
   it("strips the GIT_ and harness session prefixes", () => {
@@ -110,8 +110,8 @@ describe("isolatedGitEnv", () => {
       ENGRAM_PROJECT: "loop-lore",
       MNEMO_SCOPE: "session",
     },);
-    const leaked = Object.keys(env).filter((k) => STRIPPED_PREFIXES.some((p) => k.startsWith(p)));
-    expect(leaked).toEqual([]);
+    const leaked = Object.keys(env,).filter((k,) => STRIPPED_PREFIXES.some((p,) => k.startsWith(p,)));
+    expect(leaked,).toEqual([],);
   });
 
   it("keeps the vars a child git needs to run at all", () => {
@@ -122,7 +122,7 @@ describe("isolatedGitEnv", () => {
 
   it("resolves the child against repoRoot, not a seeded GIT_INDEX_FILE", () => {
     const root = makeRepo();
-    const seeded = hostileEnv("GIT_INDEX_FILE", join(root, "seeded.index"),);
+    const seeded = hostileEnv("GIT_INDEX_FILE", join(root, "seeded.index",),);
     // `git diff --cached --quiet` exits 1 when the index holds staged changes.
     // The repo stages one file, so the isolated child reports 1. A child that
     // inherits the seeded index compares against an empty one and reports 0 - a
@@ -133,13 +133,13 @@ describe("isolatedGitEnv", () => {
   });
 
   it("resolves refs against repoRoot even with GIT_DIR seeded elsewhere", () => {
-    const root = makeRepo("repo-root");
-    const other = makeRepo("other-repo");
-    const head = gitSync(root, "rev-parse", "HEAD");
-    const otherHead = gitSync(other, "rev-parse", "HEAD");
+    const root = makeRepo("repo-root",);
+    const other = makeRepo("other-repo",);
+    const head = gitSync(root, "rev-parse", "HEAD",);
+    const otherHead = gitSync(other, "rev-parse", "HEAD",);
     // Distinct seeds, so this guard can never silently skip the real check.
-    expect(otherHead).not.toBe(head);
-    const seeded = hostileEnv("GIT_DIR", join(other, ".git"),);
+    expect(otherHead,).not.toBe(head,);
+    const seeded = hostileEnv("GIT_DIR", join(other, ".git",),);
     // `rev-parse HEAD` exits 0 in both repos, so the resolved SHA is the
     // discriminator: an inheriting child answers from `other` despite
     // `-C root`, the isolated one from `root`.
