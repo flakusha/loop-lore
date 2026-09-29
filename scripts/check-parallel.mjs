@@ -852,7 +852,7 @@ function reportResults(results,) {
         console.log(`  Full output: ${logPath}`,);
       } catch (error) {
         console.log(
-          `  Full output unavailable (${String(error)}). Re-run \`bun run ${
+          `  Full output unavailable (${String(error,)}). Re-run \`bun run ${
             result.command.replace(/^bun run /, "",)
           }\` directly.`,
         );
