@@ -74,8 +74,13 @@ its own. A short-circuit from the driver (`disabled`, `jitter`,
 so a budget-denied world is rescheduled rather than dropped or
 re-selected on every pass.
 
-BDI reflection cycles and GM beats are **future tickets**: the tick
-driver is the only dispatch target in v1.
+BDI reflection and GM beat dispatch are **split out**, not deferred:
+`TASK-bdi-plan-recompute-implementation` and `TASK-gm-beat-scheduling`.
+The tick driver is the only dispatch target today, and that is a
+deliberate boundary rather than a gap — see the split-out ACs in
+`.plan/tickets/TASK-story-auto-drive-scheduler.md` for why neither could
+be wired here without double-moving NPCs (GM) or authoring the decision
+layer from scratch (BDI).
 
 ## Persistence
 
@@ -125,10 +130,11 @@ autonomy.
 
 ## Not in v1
 
-- `giwt sim pause/resume/step` CLI surface and the admin HTTP route —
-  the primitives exist on the class; wiring them is a separate ticket
-  (the CLI lives outside this module).
-- BDI reflection / GM beat dispatch.
+- `giwt sim pause/resume/step` CLI surface — the primitives exist on
+  the class; wiring them is a separate ticket (the CLI lives outside
+  this module).
+- BDI reflection / GM beat dispatch — see the split-out tickets named
+  above.
 
 ## Files
 
