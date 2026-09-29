@@ -48,7 +48,7 @@ async function withMockFetch(
 
 /** Parse the JSON body safeFetch serialized for a recorded call. */
 function bodyOf(call: FetchCall,): Record<string, unknown> {
-  return JSON.parse(String(call.init?.body ?? "{}"),) as Record<string, unknown>;
+  return JSON.parse(String(call.init?.body ?? "{}",),) as Record<string, unknown>;
 }
 
 function makeHost(
@@ -62,14 +62,17 @@ describe("sdcppGenerate", () => {
   test("submits the job, polls to completion, and maps images to results", async () => {
     const progress: ImageEditProgress[] = [];
     const calls = await withMockFetch(
-      (_url, init,) => init?.method === "POST"
-        ? Response.json({ id: "job-42", },)
-        : Response.json({ status: "done", images: ["b64a", "b64b",], },),
+      (_url, init,) =>
+        init?.method === "POST"
+          ? Response.json({ id: "job-42", },)
+          : Response.json({ status: "done", images: ["b64a", "b64b",], },),
       async () => {
-        const results = await sdcppGenerate(makeHost(), "txt2img", { prompt: "a cat", }, (p,) => { progress.push(p,); },);
+        const results = await sdcppGenerate(makeHost(), "txt2img", { prompt: "a cat", }, (p,) => {
+          progress.push(p,);
+        },);
         expect(results,).toHaveLength(2,);
         for (const [i, result,] of results.entries()) {
-          expect(result.filename,).toMatch(new RegExp(`^sdserver-[0-9a-f]{8}-${i}\\.png$`),);
+          expect(result.filename,).toMatch(new RegExp(`^sdserver-[0-9a-f]{8}-${i}\\.png$`,),);
           expect(result.url,).toBe(`/api/assets/${result.id}/raw`,);
           expect(result.mimeType,).toBe("image/png",);
         }
@@ -80,7 +83,7 @@ describe("sdcppGenerate", () => {
     expect(calls[1]!.url,).toBe("http://sdserver.test/sdcpp/v1/jobs/job-42",);
     expect(bodyOf(calls[0]!,).prompt,).toBe("a cat",);
     expect(progress[0],).toEqual({ status: "running", progress: 0.1, message: "Processing...", },);
-  },);
+  });
 
   test("throws when job submission fails", async () => {
     await withMockFetch(
@@ -91,7 +94,7 @@ describe("sdcppGenerate", () => {
         );
       },
     );
-  },);
+  });
 
   test("throws when the submission response carries no job id", async () => {
     await withMockFetch(
@@ -102,7 +105,7 @@ describe("sdcppGenerate", () => {
         );
       },
     );
-  },);
+  });
 
   test("throws when the submission response omits the id field entirely", async () => {
     await withMockFetch(
@@ -113,59 +116,63 @@ describe("sdcppGenerate", () => {
         );
       },
     );
-  },);
+  });
 
   test("throws when polling fails", async () => {
     await withMockFetch(
-      (_url, init,) => init?.method === "POST"
-        ? Response.json({ id: "job-1", },)
-        : Response.json({ error: "poll boom", }, { status: 503, statusText: "Service Unavailable", },),
+      (_url, init,) =>
+        init?.method === "POST"
+          ? Response.json({ id: "job-1", },)
+          : Response.json({ error: "poll boom", }, { status: 503, statusText: "Service Unavailable", },),
       async () => {
         await expect(sdcppGenerate(makeHost(), "txt2img", {},),).rejects.toThrow(
           "sd.cpp polling failed: HTTP 503: Service Unavailable",
         );
       },
     );
-  },);
+  });
 
   test("throws when the job completes without images", async () => {
     await withMockFetch(
-      (_url, init,) => init?.method === "POST"
-        ? Response.json({ id: "job-1", },)
-        : Response.json({ status: "done", images: [], },),
+      (_url, init,) =>
+        init?.method === "POST"
+          ? Response.json({ id: "job-1", },)
+          : Response.json({ status: "done", images: [], },),
       async () => {
         await expect(sdcppGenerate(makeHost(), "txt2img", {},),).rejects.toThrow(
           "sd.cpp completed but no images",
         );
       },
     );
-  },);
+  });
 
   test("throws with the server detail when the job fails", async () => {
     await withMockFetch(
-      (_url, init,) => init?.method === "POST"
-        ? Response.json({ id: "job-1", },)
-        : Response.json({ status: "failed", error: "OOM at step 12", },),
+      (_url, init,) =>
+        init?.method === "POST"
+          ? Response.json({ id: "job-1", },)
+          : Response.json({ status: "failed", error: "OOM at step 12", },),
       async () => {
         await expect(sdcppGenerate(makeHost(), "txt2img", {},),).rejects.toThrow(
           "sd.cpp job failed: OOM at step 12",
         );
       },
     );
-  },);
+  });
 
   test("throws with 'no detail' when the job is cancelled without an error", async () => {
     await withMockFetch(
-      (_url, init,) => init?.method === "POST"
-        ? Response.json({ id: "job-1", },)
-        : Response.json({ status: "cancelled", },),
+      (_url, init,) =>
+        init?.method === "POST"
+          ? Response.json({ id: "job-1", },)
+          : Response.json({ status: "cancelled", },),
       async () => {
         await expect(sdcppGenerate(makeHost(), "txt2img", {},),).rejects.toThrow(
           "sd.cpp job cancelled: no detail",
         );
       },
     );
-  },);
+  });
 
   test("forwards poll progress to onProgress across multiple polls", async () => {
     const progress: ImageEditProgress[] = [];
@@ -179,7 +186,9 @@ describe("sdcppGenerate", () => {
           : Response.json({ status: "done", images: ["b64x",], },);
       },
       async () => {
-        const results = await sdcppGenerate(makeHost(), "txt2img", {}, (p,) => { progress.push(p,); },);
+        const results = await sdcppGenerate(makeHost(), "txt2img", {}, (p,) => {
+          progress.push(p,);
+        },);
         expect(results,).toHaveLength(1,);
       },
     );
@@ -187,7 +196,7 @@ describe("sdcppGenerate", () => {
       { status: "running", progress: 0.1, message: "Processing...", },
       { status: "running", progress: 0.42, },
     ],);
-  },);
+  });
 
   test("throws a timeout error when the deadline passes before completion", async () => {
     // First Date.now() call sets the deadline; the second (while-check) jumps past it.
@@ -196,9 +205,10 @@ describe("sdcppGenerate", () => {
     Date.now = () => (++nowCalls === 1 ? 1_000_000 : 1_400_000);
     try {
       await withMockFetch(
-        (_url, init,) => init?.method === "POST"
-          ? Response.json({ id: "job-1", },)
-          : Response.json({ status: "running", progress: 0.1, },),
+        (_url, init,) =>
+          init?.method === "POST"
+            ? Response.json({ id: "job-1", },)
+            : Response.json({ status: "running", progress: 0.1, },),
         async () => {
           await expect(sdcppGenerate(makeHost(), "txt2img", {},),).rejects.toThrow(
             "sd.cpp job timed out",
@@ -208,7 +218,7 @@ describe("sdcppGenerate", () => {
     } finally {
       Date.now = originalDateNow;
     }
-  },);
+  });
 });
 
 describe("sdapiGenerate", () => {
@@ -219,7 +229,7 @@ describe("sdapiGenerate", () => {
         const results = await sdapiGenerate(makeHost(ImageApiFamily.Sdapi,), "txt2img", { prompt: "x", },);
         expect(results,).toHaveLength(3,);
         for (const [i, result,] of results.entries()) {
-          expect(result.filename,).toMatch(new RegExp(`^sdapi-[0-9a-f]{8}-${i}\\.png$`),);
+          expect(result.filename,).toMatch(new RegExp(`^sdapi-[0-9a-f]{8}-${i}\\.png$`,),);
           expect(result.url,).toBe(`/api/assets/${result.id}/raw`,);
           expect(result.mimeType,).toBe("image/png",);
         }
@@ -228,7 +238,7 @@ describe("sdapiGenerate", () => {
     expect(calls,).toHaveLength(1,);
     expect(calls[0]!.url,).toBe("http://sdserver.test/sdapi/v1/txt2img",);
     expect(bodyOf(calls[0]!,).prompt,).toBe("x",);
-  },);
+  });
 
   test("throws when the sdapi call fails", async () => {
     await withMockFetch(
@@ -239,7 +249,7 @@ describe("sdapiGenerate", () => {
         );
       },
     );
-  },);
+  });
 });
 
 describe("openaiGenerate", () => {
@@ -260,8 +270,8 @@ describe("openaiGenerate", () => {
     expect(calls,).toHaveLength(1,);
     expect(calls[0]!.url,).toBe("http://sdserver.test/v1/images/generations",);
     const headers = calls[0]!.init?.headers as Headers;
-    expect(headers.get("Authorization"),).toBe("Bearer sk-test-123",);
-  },);
+    expect(headers.get("Authorization",),).toBe("Bearer sk-test-123",);
+  });
 
   test("omits Authorization when no apiKey is configured", async () => {
     const calls = await withMockFetch(
@@ -271,8 +281,8 @@ describe("openaiGenerate", () => {
       },
     );
     const headers = calls[0]!.init?.headers as Headers;
-    expect(headers.get("Authorization"),).toBeNull();
-  },);
+    expect(headers.get("Authorization",),).toBeNull();
+  });
 
   test("throws when the OpenAI call fails", async () => {
     await withMockFetch(
@@ -283,5 +293,5 @@ describe("openaiGenerate", () => {
         );
       },
     );
-  },);
+  });
 });

@@ -17,8 +17,8 @@
  */
 import { describe, expect, test, } from "bun:test";
 import type { GenerateRequest, ToolDef, } from "../types";
-import type { AnthropicState, } from "./types";
 import { buildBody, buildMessages, mapToolDef, } from "./request";
+import type { AnthropicState, } from "./types";
 
 const state: AnthropicState = {
   baseUrl: "https://api.anthropic.com",
@@ -192,7 +192,7 @@ describe("buildBody", () => {
 
   test("maps tools onto the Anthropic tools param", () => {
     const body = buildBody(state, makeReq({ tools: [tool,], },), false,);
-    expect(body.tools,).toEqual([mapToolDef(tool),],);
+    expect(body.tools,).toEqual([mapToolDef(tool,),],);
   });
 
   test("omits the tools param when no tools are given", () => {
@@ -226,7 +226,7 @@ describe("buildBody", () => {
           maxTokens: 100,
           topP: 0.5,
           stream: true,
-          stop: ["A"],
+          stop: ["A",],
           presencePenalty: 0.1,
           frequencyPenalty: 0.1,
           minP: 0.05,
@@ -252,22 +252,24 @@ describe("buildBody", () => {
     // stream comes from the argument, not from params.
     expect(body.stream,).toBe(false,);
     // Standard keys are not duplicated under their raw names.
-    for (const key of [
-      "presencePenalty",
-      "frequencyPenalty",
-      "minP",
-      "topK",
-      "typicalP",
-      "repeatPenalty",
-      "dryMultiplier",
-      "dryBase",
-      "dryAllowedLength",
-      "xtcProbability",
-      "dynatempRange",
-      "dynatempExponent",
-      "reasoningBudget",
-      "stop",
-    ]) {
+    for (
+      const key of [
+        "presencePenalty",
+        "frequencyPenalty",
+        "minP",
+        "topK",
+        "typicalP",
+        "repeatPenalty",
+        "dryMultiplier",
+        "dryBase",
+        "dryAllowedLength",
+        "xtcProbability",
+        "dynatempRange",
+        "dynatempExponent",
+        "reasoningBudget",
+        "stop",
+      ]
+    ) {
       expect(key in body,).toBe(false,);
     }
   });

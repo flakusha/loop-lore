@@ -33,7 +33,6 @@ export interface LocationTreeNode {
   depth: number;
 }
 
-
 /** A `LocationTreeNode` plus its immediate children, recursively. `tree()` also emits `name` for display. */
 export type LocationTreeBranch = LocationTreeNode & {
   name: string;
