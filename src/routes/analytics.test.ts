@@ -10,6 +10,7 @@ import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
+import { hashId, record, } from "../telemetry/service";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { insertChats, insertUsers, } from "../test-utils/insert-helpers";
 import { analyticsRoutes, } from "./analytics";
@@ -82,42 +83,21 @@ describe("analyticsRoutes", () => {
   // ── With data ────────────────────────────────────────────────
 
   test("GET /api/analytics/chat/:chatId returns correct stats", async () => {
-    // Insert test telemetry events
-    await db
-      .insertInto("telemetry_events",)
-      .values([
-        {
-          id: crypto.randomUUID(),
-          event_type: "generation.completed",
-          chat_id: chatId,
-          user_id: userId,
-          event_data: JSON.stringify({
-            promptTokens: 100,
-            completionTokens: 50,
-            totalTokens: 150,
-            latencyMs: 1000,
-            model: "test-model",
-          },),
-          source: "server",
-          created_at: new Date().toISOString(),
-        },
-        {
-          id: crypto.randomUUID(),
-          event_type: "generation.completed",
-          chat_id: chatId,
-          user_id: userId,
-          event_data: JSON.stringify({
-            promptTokens: 200,
-            completionTokens: 100,
-            totalTokens: 300,
-            latencyMs: 2000,
-            model: "test-model",
-          },),
-          source: "server",
-          created_at: new Date().toISOString(),
-        },
-      ],)
-      .execute();
+    // Written through `record()` — the only path production uses, and the one
+    // that hashes IDs — so raw-ID filters would read 0 here
+    // (BUG-analytics-per-user-routes-filter-telemetry-events-by-raw-ids).
+    await record(db, {
+      eventType: "generation.completed",
+      chatId,
+      userId,
+      data: { promptTokens: 100, completionTokens: 50, totalTokens: 150, latencyMs: 1000, model: "test-model", },
+    },);
+    await record(db, {
+      eventType: "generation.completed",
+      chatId,
+      userId,
+      data: { promptTokens: 200, completionTokens: 100, totalTokens: 300, latencyMs: 2000, model: "test-model", },
+    },);
 
     const app = createApp(db, userId,);
     const res = await app.handle(new Request(`http://localhost/api/analytics/chat/${chatId}`,),);
@@ -130,19 +110,14 @@ describe("analyticsRoutes", () => {
   });
 
   test("GET /api/analytics/overview returns aggregates", async () => {
-    // Insert a failed event for a different chat
-    await db
-      .insertInto("telemetry_events",)
-      .values({
-        id: crypto.randomUUID(),
-        event_type: "generation.failed",
-        chat_id: "other-chat",
-        user_id: userId,
-        event_data: JSON.stringify({ error: "timeout", },),
-        source: "server",
-        created_at: new Date().toISOString(),
-      },)
-      .execute();
+    // A failed generation through the real write path (hashed IDs), for a
+    // different chat — proves the overview filter matches what `record()` writes.
+    await record(db, {
+      eventType: "generation.failed",
+      chatId: "other-chat",
+      userId,
+      data: { reason: "timeout", },
+    },);
 
     const app = createApp(db, userId,);
     const res = await app.handle(new Request("http://localhost/api/analytics/overview",),);
@@ -175,8 +150,8 @@ describe("analyticsRoutes", () => {
         {
           id: crypto.randomUUID(),
           event_type: "generation.completed",
-          chat_id: otherChatId,
-          user_id: userId,
+          chat_id: hashId(otherChatId,),
+          user_id: hashId(userId,),
           event_data: JSON.stringify({ totalTokens: 100, latencyMs: 500, },),
           source: "server",
           created_at: new Date(inWindowAt,).toISOString(),
@@ -184,8 +159,8 @@ describe("analyticsRoutes", () => {
         {
           id: crypto.randomUUID(),
           event_type: "generation.completed",
-          chat_id: otherChatId,
-          user_id: userId,
+          chat_id: hashId(otherChatId,),
+          user_id: hashId(userId,),
           event_data: JSON.stringify({ totalTokens: 999, latencyMs: 9999, },),
           source: "server",
           created_at: new Date(outOfWindowAt,).toISOString(),
