@@ -49,11 +49,14 @@ describe("Access control E2E", () => {
     await page.locator("[data-testid='login-submit']",).waitFor({ state: "visible", timeout: 30_000, },);
     await page.fill("[data-testid='username-input']", OUTSIDER_USERNAME,);
     await page.fill("[data-testid='password-input']", OUTSIDER_PASSWORD,);
-    await page.click("[data-testid='login-submit']",);
-    await page.waitForResponse(
+    // Arm the waiter before the click: attaching it afterwards races the
+    // htmx POST and degenerates into a guaranteed timeout under load.
+    const loginRes = page.waitForResponse(
       (res,) => res.url().includes("/api/auth/login",) && res.request().method() === "POST",
       { timeout: 30_000, },
     );
+    await page.click("[data-testid='login-submit']",);
+    await loginRes;
     // The login POST returning is not the same as the login navigation
     // finishing — the client still has a redirect to /views/chat in flight.
     // Callers goto() immediately, and that goto is aborted if a competing

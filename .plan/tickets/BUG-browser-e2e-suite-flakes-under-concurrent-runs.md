@@ -3,34 +3,51 @@
 
 # BUG: Browser e2e suite flakes under concurrent runs
 
-**Summary:** The 'e2e - browser (baseline)' gate fails intermittently with a rotating set of files - resource contention in the browser harness, not a code regression.
-**Context:** Three full gate runs on comfyui-first-class-citizen gave a rotating failure set; every failing file passes in isolation, and the concurrent log is peppered with '[ERROR] [async-store] async-store write failed'.
-**Acceptance Criteria:** The 34 browser files' resource allocation is audited and the shared, unbounded resource (port, temp dir, server handle, or browser context) is made safe, so the gate can be trusted to gate a merge.
-**Status:** Not Started
+**Summary:** The 'e2e - browser (baseline)' gate fails intermittently with a rotating set of files. Not resource contention - a click/wait response race in five login helpers that only loses under load.
+**Context:** scripts/check-parallel.mjs truncated failing-gate output to head-5 + tail-20, discarding the assertion and making the failure look like resource contention for several sessions.
+**Acceptance Criteria:** Waiters are armed before the click that triggers them in every browser flow, and a failing gate's full output is persisted so the assertion is always recoverable.
+**Status:** In Progress
 **Priority:** medium
-**Effort:** Medium
+**Effort:** Small
 
 ## Summary
 
-The 'e2e - browser (baseline)' gate fails intermittently with a rotating set of files, while other files in the same run pass. It is resource contention in the browser harness, not a code regression.
+The 'e2e - browser (baseline)' gate fails intermittently with a rotating set of files, while other files in the same run pass.
 
-Evidence from one session on comfyui-first-class-citizen, three full gate runs:
+The original diagnosis in this ticket was wrong on two counts, both disproven by reproduction:
 
-- run 1: access-correctness.browser.ts failed
-- run 2: docs-mermaid failed
-- run 3: 2/34 files failed - i18n-locale.browser.ts and navigation.browser.ts
-  - in that same run access-correctness passed 10/0
+1. **The suite is not concurrent.** `scripts/run-browser-tests.ts` is a strict `for` loop that awaits `child.exited` before spawning the next file, with `--max-concurrency=1`. Nothing runs in parallel inside the suite.
+2. **The `async-store write failed` lines are not a failure signal.** `src/async/store.ts` drains a fire-and-forget queue whose catch only logs and never rethrows, so it cannot fail a test - it is emitted in fully green runs. It is a teardown artifact: `tests/e2e/helpers/browser-server.ts` `cleanup()` runs `browser.close()`, `bunServer.stop()` and `db.destroy()` inside one `Promise.allSettled`, so the SQLite handle closes while writes are still queued (`RangeError: Cannot use a closed database`).
 
-Every file that failed passes in isolation. i18n-locale + navigation run alone: 15 pass, 0 fail.
+## Why the failure was invisible
 
-The log is peppered with '[ERROR] [async-store] async-store write failed' throughout the concurrent run, which points at a genuine resource failure rather than a test assertion.
+`scripts/check-parallel.mjs` printed only the first 5 and last 20 lines of a failing check's output, with a literal `...` for the elided middle. For a 35-file suite run the discarded middle is exactly where the failing test's assertion lives, so a red gate reported `0 fail` immediately above `Browser suite failed: 1/35 files failed` with no cause at all. The 'rotating file' in the old evidence was an artifact of which file ran when the assertion got dropped, not the file that actually failed.
 
-Likely cause: the suite runs files concurrently and something is shared and unbounded - a port, a temp dir, a server handle, or a browser context. Needs an audit of the 34 browser files' resource allocation.
+## Root cause
 
-Impact: the gate is not trustworthy - a green run and a red run can both be correct, so it cannot gate a merge on its own.
+Five browser flows logged in through the UI with the response waiter attached *after* the click:
+
+```ts
+await page.click("[data-testid='login-submit']");
+await page.waitForResponse((res) => res.url().includes("/api/auth/login"), ...);
+```
+
+Once the htmx POST lands there is nothing left to wait for, so the wait can only burn its full timeout. On an idle host the response is slow enough that the listener attaches in time and the test passes; under gate load it arrives first and the test fails after 30 s. The endpoint itself is correct (`src/views/login.html` `hx-post="/api/auth/login"`, mounted at `src/routes/auth/index.ts` `${prefix}/auth/login`).
+
+The other flows in the suite (`chat-flow`, `gallery-flow`, `settings-flow`, `new-chat-advanced-fields`, the `access-correctness` worlds fetch) already used the correct arm-then-click order, which is why the bug survived in exactly the login helpers.
+
+## Impact
+
+The gate could not be trusted to gate a merge: a red run and a green run were both 'correct', and no session could see the real cause.
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Every `waitForResponse` is armed before the click that triggers it.
+- [x] A failing gate persists its untruncated output under `.tmp/run-<RUN_ID>/check-fail-<slug>.log` so the assertion is recoverable without a re-run.
+- [ ] The browser gate is green across repeated runs under `check`.
+- [ ] Documentation updated.
+
+## Out of scope (filed separately)
+
+- `browser-server.ts` `cleanup()` destroys the DB without first quiescing the async store, producing the swallowed teardown noise. The store's flush is registered through Elysia `app.onStop`, which never fires because the harness serves via `Bun.serve({ fetch })` instead of `app.listen()`.
+- `src/async/spill.ts` `OFFLOAD_DIR` is a fixed, CWD-relative, never-GC'd path shared by every worktree.
