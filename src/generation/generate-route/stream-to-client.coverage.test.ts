@@ -34,7 +34,7 @@ createLogger({ level: "error", },);
 const state = {
   active: new Map<string, { lastRenderedChunkIndex: number; deliveryConfirmed: boolean }>(),
   telemetryEnabled: false,
-  telemetryEvents: [] as { eventType: string }[],
+  telemetryEvents: [] as { eventType: string; data: Record<string, unknown>; }[],
   telemetryReject: false,
   memoryCalls: [] as unknown[],
   memoryReject: false,
@@ -91,11 +91,11 @@ if (STRICTLY_ISOLATED) {
 if (STRICTLY_ISOLATED) {
   mock.module("./persist", () => ({
     buildGenerationResult: (
-      response: { content: string; finishReason: string; usage: GenerateResponse["usage"] },
+      response: { content: string; thinking?: string; finishReason: string; usage: GenerateResponse["usage"] },
       cancelled: boolean,
     ) => ({
       content: response.content,
-      thinking: null,
+      thinking: response.thinking ?? null,
       tokenUsage: response.usage,
       finishReason: response.finishReason,
       cancelled,
@@ -120,7 +120,7 @@ if (STRICTLY_ISOLATED) {
 if (STRICTLY_ISOLATED) {
   mock.module("../../telemetry/service", () => ({
     isTelemetryEnabled: () => state.telemetryEnabled,
-    record: async (_db: unknown, event: { eventType: string },) => {
+    record: async (_db: unknown, event: { eventType: string; data: Record<string, unknown>; },) => {
       state.telemetryEvents.push(event,);
       if (state.telemetryReject) { throw new Error("telemetry down",); }
     },
@@ -195,7 +195,7 @@ async function tick(ms = 10,): Promise<void> {
  */
 function textProvider(
   chunks: ChunkEvent[],
-  response: { content: string; finishReason: GenerateResponse["finishReason"] },
+  response: { content: string; thinking?: string; finishReason: GenerateResponse["finishReason"] },
 ): { provider: LLMProvider; seen: { calls: number } } {
   const seen = { calls: 0, };
   const provider = {
@@ -206,7 +206,7 @@ function textProvider(
     stream: async (_req: ProviderRequest, handler: StreamHandler,) => {
       seen.calls += 1;
       for (const chunk of chunks) { handler(chunk,); }
-      return { content: response.content, finishReason: response.finishReason, usage: USAGE, };
+      return { content: response.content, thinking: response.thinking, finishReason: response.finishReason, usage: USAGE, };
     },
     healthCheck: async () => ({ status: "ok" as const, }),
     listModels: async () => [],
@@ -538,5 +538,123 @@ describeOrSkipStrict("streamToClient coverage", () => {
     expect(err?.error,).toBe("Generation failed",);
     expect(JSON.stringify(events,).includes("SECRET",),).toBe(false,);
     expect(state.failCalls.length,).toBe(1,);
+  });
+
+  test("empty final content falls back to accumulated streamed content", async () => {
+    resetState();
+    const { provider, } = textProvider(
+      [
+        { type: "content", content: "Hello ", },
+        { type: "content", content: "world", },
+      ],
+      { content: "", finishReason: "stop", },
+    );
+    const { response, } = run(provider, "cov-p-fallback", undefined, true,);
+    const events = await collectEvents(response,);
+    expect(events.find((e,) => e.type === "error"),).toBeUndefined();
+    const done = events.find((e,) => e.type === "done");
+    expect(done?.content,).toBe("Hello world",);
+    expect(done?.cancelled,).toBe(false,);
+    const stored = state.storeCalls[0] as { result: { content: string; toolCalls: unknown; }, };
+    expect(stored.result.content,).toBe("Hello world",);
+    expect(stored.result.toolCalls,).toBeUndefined();
+  });
+
+  test("prefers final response thinking over accumulated thinking chunks", async () => {
+    resetState();
+    const { provider, } = textProvider(
+      [{ type: "thinking", content: "chunk-thought", },],
+      { content: "hi", thinking: "final-thought", finishReason: "stop", },
+    );
+    const { response, } = run(provider, "cov-p-think1", undefined, true,);
+    await collectEvents(response,);
+    const stored = state.storeCalls[0] as { result: { thinking: string | null; }, };
+    expect(stored.result.thinking,).toBe("final-thought",);
+  });
+
+  test("falls back to accumulated thinking when the final response omits it", async () => {
+    resetState();
+    const { provider, } = textProvider(
+      [{ type: "thinking", content: "hmm", },],
+      { content: "hi", finishReason: "stop", },
+    );
+    const { response, } = run(provider, "cov-p-think2", undefined, true,);
+    await collectEvents(response,);
+    const stored = state.storeCalls[0] as { result: { thinking: string | null; }, };
+    expect(stored.result.thinking,).toBe("hmm",);
+  });
+
+  test("telemetry completed event carries latency, delivery flag, and chunk index", async () => {
+    resetState();
+    state.telemetryEnabled = true;
+    const { provider, } = textProvider(
+      [{ type: "content", content: "ok", },],
+      { content: "ok", finishReason: "stop", },
+    );
+    const { response, } = run(provider, "cov-p-telshape", undefined, true,);
+    await collectEvents(response,);
+    expect(state.telemetryEvents.length,).toBe(1,);
+    const data = state.telemetryEvents[0]!.data as {
+      latencyMs: number;
+      deliveryConfirmed: boolean;
+      lastRenderedChunkIndex: number;
+      promptTokens: number;
+      finishReason: string;
+    };
+    expect(data.latencyMs,).toBeGreaterThanOrEqual(0,);
+    expect(data.deliveryConfirmed,).toBe(true,);
+    expect(data.lastRenderedChunkIndex,).toBeGreaterThanOrEqual(0,);
+    expect(data.promptTokens,).toBe(1,);
+    expect(data.finishReason,).toBe("stop",);
+  });
+
+  test("memory extraction receives the full delivery context", async () => {
+    resetState();
+    const { provider, } = textProvider(
+      [{ type: "content", content: "ok", },],
+      { content: "ok", finishReason: "stop", },
+    );
+    const { response, chatId, } = run(provider, "cov-p-memshape", undefined, true,);
+    await collectEvents(response,);
+    expect(state.memoryCalls.length,).toBe(1,);
+    const args = state.memoryCalls[0] as [
+      unknown,
+      {
+        actorId: string;
+        chatId: string;
+        messageId: string;
+        sourceMessageIds: string[];
+        extractionKind: string;
+        aiContent: string;
+        userId: string;
+      },
+    ];
+    expect(args[1].actorId,).toBe("cov-actor",);
+    expect(args[1].chatId,).toBe(chatId,);
+    expect(args[1].messageId,).toBe("msg-cov-1",);
+    expect(args[1].sourceMessageIds,).toEqual(["msg-cov-1",],);
+    expect(args[1].extractionKind,).toBe("single_response",);
+    expect(args[1].aiContent,).toBe("ok",);
+    expect(args[1].userId,).toBe("cov-user",);
+  });
+
+  test("cancelled finish records truncated telemetry with deliveryConfirmed false", async () => {
+    resetState();
+    state.telemetryEnabled = true;
+    const { provider, } = textProvider(
+      [{ type: "content", content: "partial", },],
+      { content: "partial", finishReason: "cancelled", },
+    );
+    const { response, } = run(provider, "cov-p-teltrunc", undefined, true,);
+    await collectEvents(response,);
+    expect(state.telemetryEvents.length,).toBe(1,);
+    const data = state.telemetryEvents[0]!.data as {
+      deliveryConfirmed: boolean;
+      lastRenderedChunkIndex: number;
+      finishReason: string;
+    };
+    expect(data.deliveryConfirmed,).toBe(false,);
+    expect(data.lastRenderedChunkIndex,).toBeGreaterThanOrEqual(0,);
+    expect(data.finishReason,).toBe("cancelled",);
   });
 },);
