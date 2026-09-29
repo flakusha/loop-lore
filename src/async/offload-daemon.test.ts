@@ -26,6 +26,7 @@ import {
   pruneOrphanSpills,
   readOffloadedBody,
   spill,
+  spillFileStem,
   startOffloadDaemon,
 } from "./offload";
 
@@ -86,7 +87,7 @@ describe("spill() disk round-trip", () => {
     const body = JSON.stringify({ id: "msg-1", content: "spill me", },);
     const filePath = await spill(id, body,);
 
-    expect(filePath,).toBe(path.join(OFFLOAD_DIR, `${id}.json.gz`,),);
+    expect(filePath,).toBe(path.join(OFFLOAD_DIR, `${spillFileStem(id,)}.json.gz`,),);
     expect(offloadExists(id,),).toBe(true,);
     expect(readOffloadedBody(filePath,),).toBe(body,);
     expect(offloadDiskBytes(),).toBeGreaterThan(0,);
@@ -259,9 +260,11 @@ describe("OffloadDaemon.runOnce — phase 1: offload ripe rows", () => {
     daemon.stop();
   });
 
-  test("logs and skips a row whose id breaks the spill path (no crash)", async () => {
-    // A row id containing "/" makes spill() try to write into a missing
-    // subdirectory — the daemon must swallow the failure and keep going.
+  test("offloads a row whose id contains a path separator (no crash, no loss)", async () => {
+    // A row id containing "/" used to make spill() write into a missing
+    // subdirectory and fail with ENOENT, losing the body behind a swallowed
+    // log line. The filename is now a hash of the id, so such a row
+    // offloads like any other. BUG-async-spill-uses-cache-key-as-filename-so-routed-ids-lose
     await seedRequest(db, {
       id: "bad/path",
       status: "complete",
@@ -278,24 +281,23 @@ describe("OffloadDaemon.runOnce — phase 1: offload ripe rows", () => {
     const daemon = startOffloadDaemon(db, {}, { minAgeMs: 0, maxInlineBytes: 10, },);
     const result = await daemon.runOnce();
 
-    // The broken row failed; the healthy row after it was still offloaded.
-    expect(result.offloaded,).toBe(1,);
-    const good = await db
-      .selectFrom("request_results",)
-      .select(["offload_path", "response_body",],)
-      .where("id", "=", "good-1",)
-      .executeTakeFirst();
-    expect(good?.response_body,).toBeNull();
-    if (good?.offload_path) {
-      filePaths.push(good.offload_path,);
-      expect(readOffloadedBody(good.offload_path,),).toBe("x".repeat(64,),);
+    // Both rows offload — the separator no longer costs the body.
+    expect(result.offloaded,).toBe(2,);
+    for (const id of ["bad/path", "good-1",]) {
+      const row = await db
+        .selectFrom("request_results",)
+        .select(["offload_path", "response_body",],)
+        .where("id", "=", id,)
+        .executeTakeFirst();
+      expect(row?.response_body,).toBeNull();
+      expect(row?.offload_path,).toBeTypeOf("string",);
+      if (row?.offload_path) {
+        // The stored path stays inside OFFLOAD_DIR — no traversal.
+        expect(row.offload_path.startsWith(OFFLOAD_DIR,),).toBe(true,);
+        expect(readOffloadedBody(row.offload_path,),).toBe("x".repeat(64,),);
+        rmSync(row.offload_path, { force: true, },);
+      }
     }
-    const bad = await db
-      .selectFrom("request_results",)
-      .select("offload_path",)
-      .where("id", "=", "bad/path",)
-      .executeTakeFirst();
-    expect(bad?.offload_path,).toBeNull();
     daemon.stop();
   });
 
