@@ -44,8 +44,8 @@ The gate could not be trusted to gate a merge: a red run and a green run were bo
 
 - [x] Every `waitForResponse` is armed before the click that triggers it.
 - [x] A failing gate persists its untruncated output under `.tmp/run-<RUN_ID>/check-fail-<slug>.log` so the assertion is recoverable without a re-run.
-- [ ] The browser gate is green across repeated runs under `check`.
-- [ ] Documentation updated.
+- [x] The browser gate is green across repeated runs under `check`.
+- [x] Documentation updated — `AGENTS.md` now documents the `Full output:` path under the check-report contract.
 
 ## Out of scope (filed separately)
 
@@ -65,3 +65,18 @@ saturated by a busy loop:
 
 Same tree, same host, same load — the ordering is the variable, so the
 fix is load-bearing rather than a lucky pass.
+
+### Second defect, same gate
+
+Only reachable once the first was fixed and the gate ran again during
+finalize: `encryption-flow.browser.ts` polled the messages API with a fixed
+`20 x 250 ms` loop, capping the wait at 5 s. The row is committed by the
+send request the test has not yet observed completing, so under gate load
+the INSERT outran the window and the assertion read a 200 response whose
+body simply did not contain the message yet. Now polls to a 30 s
+deadline, which leaves headroom under the test's own 60 s budget.
+
+Worth recording as a pattern: **every one of these was a fixed attempt
+count standing in for a wait that had no observable completion signal.**
+Both the click/wait ordering and the poll cap are the same mistake at two
+scales.
