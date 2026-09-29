@@ -3452,6 +3452,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-orphan-spill-sweeper-deletes-a-spill-file-before-its-row-ref.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-table-backend-request-id-collision-overwrites-foreign-row.md"
     }
   ],
@@ -3561,6 +3565,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-async-orphan-spill-retention-sweep-silently-deleted-by-workt.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-orphan-spill-sweeper-deletes-a-spill-file-before-its-row-ref.md"
     }
   ],
   "src/async/spill.test.ts": [
