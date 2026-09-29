@@ -19,7 +19,7 @@ import type { TokenBucketState, } from "./algorithms";
 /** Sweep at most once per N saves — constant, no timers. */
 const SWEEP_INTERVAL = 1024;
 
-/** */
+/** Interface for rate limit state storage. */
 export interface RateLimitStore {
   /** Sliding-window request timestamps for a key (stale entries pruned). */
   loadWindow(key: string, nowMs: number,): number[];
@@ -33,7 +33,7 @@ export interface RateLimitStore {
   destroy(): void;
 }
 
-/** */
+/** Internal window entry for a key. */
 interface WindowEntry {
   timestamps: number[];
   windowMs: number;
@@ -41,14 +41,14 @@ interface WindowEntry {
   lastSaveMs: number;
 }
 
-/** */
+/** Internal bucket entry for a key. */
 interface BucketEntry {
   state: TokenBucketState;
   windowMs: number;
   lastSaveMs: number;
 }
 
-/** */
+/** In-memory rate limit store with lazy eviction. */
 export class InMemoryRateLimitStore implements RateLimitStore {
   private windows = new Map<string, WindowEntry>();
   private buckets = new Map<string, BucketEntry>();

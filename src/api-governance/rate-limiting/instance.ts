@@ -4,5 +4,5 @@
 /** Process-wide governance limiter (one per server process). */
 import { GovernanceRateLimiter, } from "./limiter";
 
-/** */
+/** Process-wide governance rate limiter singleton. */
 export const governanceRateLimiter = new GovernanceRateLimiter();
