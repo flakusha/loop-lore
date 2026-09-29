@@ -3610,10 +3610,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-browser-e2e-teardown-races-async-store-and-flush-never-runs.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/BUG-browser-teardown-destroys-the-db-before-flushing-the-async-s.md"
     },
     {
@@ -14031,10 +14027,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-access-log-never-records-userid-handle-x-user-id-header-neve.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-browser-e2e-teardown-races-async-store-and-flush-never-runs.md"
     },
     {
       "kind": "ticket",
