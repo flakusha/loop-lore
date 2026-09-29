@@ -32,11 +32,20 @@ describe("parseColumns", () => {
 });
 
 describe("listMigrationFiles", () => {
-  test("returns the single collapsed init migration", () => {
+  test("returns the whole append-only chain, collapsed init first", () => {
     const dir = resolve(import.meta.dir, "../../src/db/migrations",);
     const files = listMigrationFiles(dir,);
-    expect(files.length,).toBe(1,);
+    // The chain is append-only (src/db/migrations/README.md): one collapsed
+    // base plus numbered increments, applied in filename order. Asserting a
+    // count here would just churn on every new migration — assert the parts
+    // that are actually load-bearing for the generators that consume this:
+    // the base is present, ordering is stable, and nothing non-migration is
+    // swept in (README.md must not appear).
+    expect(files.length,).toBeGreaterThan(1,);
     expect(files[0],).toMatch(/001_init\.ts$/,);
+    expect(files.some((f,) => f.endsWith("README.md",)),).toBe(false,);
+    const suffixes = files.map((f,) => f.slice(dir.length + 1,));
+    expect(suffixes,).toEqual([...suffixes,].sort(),);
   });
 });
 
