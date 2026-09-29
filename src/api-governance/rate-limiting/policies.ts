@@ -8,7 +8,7 @@
  * spikes above steady state are absorbed without changing the window cap.
  */
 
-/** */
+/** Named rate limit policy configuration. */
 export interface RatePolicy {
   /** Stable name surfaced in RateLimit headers + the status endpoint. */
   name: string;
@@ -30,7 +30,7 @@ export const generationPolicy: RatePolicy = { name: "generation", windowMs: 60_0
 /** Chat browsing + send cycles + the seen-poller — UI volume, not billable. */
 export const chatPolicy: RatePolicy = { name: "chat", windowMs: 60_000, max: 300, burst: 50, };
 
-/** */
+/** Registry of all named policies. */
 export const policies: Record<string, RatePolicy> = {
   [defaultPolicy.name]: defaultPolicy,
   [authPolicy.name]: authPolicy,
@@ -38,7 +38,7 @@ export const policies: Record<string, RatePolicy> = {
   [chatPolicy.name]: chatPolicy,
 };
 
-/** */
+/** Resolve a policy by name, falling back to default. */
 export function resolvePolicy(name: string | undefined,): RatePolicy {
   if (name && policies[name]) { return policies[name]!; }
   return defaultPolicy;
@@ -60,7 +60,7 @@ export const routePolicies: Array<[prefix: string, policy: RatePolicy,]> = [
   ["/api/v1/messages", chatPolicy,],
 ];
 
-/** */
+/** Match a route pathname to its policy. */
 export function policyForRoute(pathname: string,): RatePolicy {
   for (const [prefix, policy,] of routePolicies) {
     if (pathname.startsWith(prefix,)) { return policy; }
