@@ -17,6 +17,7 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 ### Changed
 
 - **Provider retry deduplication (Effect v4, per-surface adoption)** — the three byte-identical backoff loops in the Anthropic, Ollama-native and OpenAI-compatible HTTP clients now share one policy in `src/generation/providers/retry.ts`, built on `Effect.retry` + `Schedule` from `effect@4.0.0-rc.117` (pinned exactly). Attempt count, delay sequence, retryability filter, abort/timeout classification and the surfaced error identity are unchanged; the triplicated loop bodies are gone.
+- **jscpd ratchet gate** — the advisory "N clones" warning is a blocking `jscpd ratchet` check again: the clone count is compared against a committed baseline (`scripts/check/jscpd-baseline.json`) and growth fails the gate; `--update` lowers the baseline only. Restored after a carry-over fold silently reverted the new gate three days after it landed (BUG-jscpd-ratchet-gate-silently-removed-without-ticket).
 - **DB v0 collapse** — replaced 23 forward migrations + 20 `parts/` sub-modules with a single atomic `001_init.ts` (~4 600 lines, all 154 tables + indexes + triggers). Dropped `parts/` orchestration, the `parts/`-vs-append strategy policy, the `schema_version` ledger, and the boot-time `schema-backfill` step. Regenerated `schema.ts`, `schema-*.ts`, `schema-manifest.ts`, `insert-helpers.ts`, `db-schemas.ts`. AGENTS.md updated: append-only policy retained, but with only two valid paths (new top-level `NNN_*.ts` or extend current HEAD if not yet shipped).
 
 ### Fixed
