@@ -106,18 +106,30 @@ describe("selective gate filter — --skip-gates (inverse)", () => {
   },);
 });
 
-describe("unevaluable gate is skipped, not failed", () => {
-  test("plan gate reports SKIP (run stays green) when giwt cannot reach the issue CLI", { timeout: 180_000, }, () => {
-    // giwt shells out to `git issue ls --all`; when that call fails it reports
-    // "git issue CLI unavailable" and then lists every issue it could not see
-    // as an actionable finding (~112 phantom findings) before exiting 1. The
-    // runner must classify that as skipped. The shim injects the fault and
-    // records that it fired, so this test cannot pass vacuously if giwt ever
-    // stops resolving `git issue` through PATH.
+describe("unevaluable gate is never a red gate carrying invented findings", () => {
+  test("plan gate stays green and invents no findings when the issue CLI is unreachable", { timeout: 180_000, }, () => {
+    // giwt shells out to `git issue ls --all`. That call can fail on a loaded
+    // box or when the issue CLI is not resolvable from the gate's environment,
+    // and at one point giwt answered that by printing "git issue CLI
+    // unavailable" and then listing every issue it could not SEE as an
+    // actionable finding (~112 phantoms) before exiting 1 — a red gate full of
+    // invented work. The invariant worth pinning is the one that was broken:
+    // an unreachable issue CLI must never turn into a failing gate carrying
+    // findings nobody can act on.
     //
-    // The PATH override below is scoped to this child process through spawn's
-    // structured `env` option — never a shell prefix, and never this agent's
-    // own shell — so the shim must be found ahead of the real git.
+    // giwt has since degraded gracefully instead: the .plan/-local gates still
+    // run and pass, the unreachable issue reconciliation is reported as
+    // advisory, and the command exits 0. So the gate now reports PASS rather
+    // than SKIP (the runner's GIWT_ISSUE_CLI_UNAVAILABLE branch is retained as
+    // the defence if giwt ever reverts). This test deliberately asserts the
+    // user-facing property — green run, no FAIL, no phantoms — instead of the
+    // specific classification, so it holds either way.
+    //
+    // The shim injects the fault and records that it fired, so this cannot pass
+    // vacuously if giwt ever stops resolving `git issue` through PATH. The PATH
+    // override is scoped to this child process through spawn's structured `env`
+    // option — never a shell prefix, and never this agent's own shell — so the
+    // shim must be found ahead of the real git.
     const shimDir = resolve(PROJECT_ROOT, `.tmp/test-issue-shim-${process.pid}`,);
     const shimLog = resolve(shimDir, "fired.log",);
     mkdirSync(shimDir, { recursive: true, },);
@@ -140,18 +152,17 @@ describe("unevaluable gate is skipped, not failed", () => {
         env: { PATH: `${shimDir}:${process.env.PATH ?? ""}`, },
         timeout: 300_000,
       },);
+      // Non-vacuous: the fault was actually injected.
       expect(existsSync(shimLog,),).toBe(true,);
-      expect(r.stdout,).toMatch(/SKIP: plan - validate/,);
       expect(r.stdout,).not.toMatch(/FAIL: plan - validate/,);
-      // Skipped is not passed and not failed: the run stays green, the gate
-      // does not.
+      // The phantom-findings regression: giwt could not read the issue list,
+      // so it must not have produced per-issue "findings" to fix.
+      expect(r.stdout,).not.toMatch(/git issue CLI unavailable/,);
       expect(r.exit,).toBe(0,);
       const report = JSON.parse(
         readFileSync(resolve(PROJECT_ROOT, ".tmp/check-report.json",), "utf8",),
       );
-      expect(report.summary.skipped,).toBe(1,);
       expect(report.summary.failed,).toBe(0,);
-      expect(report.checks[0].skipped,).toBe(true,);
     } finally {
       rmSync(shimDir, { recursive: true, force: true, },);
     }
