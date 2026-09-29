@@ -36542,6 +36542,62 @@
     "title": "Recursive Self-Improvement: Agent Commit and Finalize (GPG-delegated)",
     "type": "TASK"
   },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-TASK-QUEUE-CONCURRENCY-CAPS-WORKTREE": {
+    "hash": "e621c9a",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-TASK-QUEUE-CONCURRENCY-CAPS-WORKTREE",
+    "type": "TASK",
+    "title": "Agent Task Queue — Concurrency Caps + Worktree GC",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-recursive-self-improvement",
+    "tags": [
+      "agent",
+      "worktree",
+      "sandbox",
+      "gc",
+      "concurrency"
+    ],
+    "source": ".plan/tickets/TASK-recursive-self-improvement-agent-task-queue-concurrency-caps-worktree.md",
+    "status": "Not Started",
+    "git_issue": "e621c9a"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-TICKET-OPS-ENDPOINTS-OPEN-CLOSE-COMMENT": {
+    "hash": "e9d9428",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-TICKET-OPS-ENDPOINTS-OPEN-CLOSE-COMMENT",
+    "type": "TASK",
+    "title": "Agent Ticket-Ops Endpoints — Open/Close/Comment",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-recursive-self-improvement",
+    "tags": [
+      "agent",
+      "tickets",
+      "plan",
+      "api"
+    ],
+    "source": ".plan/tickets/TASK-recursive-self-improvement-agent-ticket-ops-endpoints-open-close-comment.md",
+    "status": "Not Started",
+    "git_issue": "e9d9428"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-TOKEN-LIFECYCLE-ISSUANCE-ROTATION-REV": {
+    "hash": "820ebec",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-TOKEN-LIFECYCLE-ISSUANCE-ROTATION-REV",
+    "type": "TASK",
+    "title": "Agent Token Lifecycle — Issuance, Rotation, Revocation",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-recursive-self-improvement",
+    "tags": [
+      "agent",
+      "auth",
+      "token",
+      "rotation",
+      "crypto"
+    ],
+    "source": ".plan/tickets/TASK-recursive-self-improvement-agent-token-lifecycle-issuance-rotation-rev.md",
+    "status": "Not Started",
+    "git_issue": "820ebec"
+  },
   "TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-WORKTREE-SPAWN-TTY-FREE-AND": {
     "epic": "epic-recursive-self-improvement",
     "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-AGENT-WORKTREE-SPAWN-TTY-FREE-AND",
@@ -36602,6 +36658,25 @@
     ],
     "title": "Deep-Analysis Logging + Telemetry — Structured Traces for Agent Diagnostics",
     "type": "TASK"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-DEV-TARGET-DISCOVERY-MINER-OVER-BACKLOG": {
+    "hash": "679d44b",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-DEV-TARGET-DISCOVERY-MINER-OVER-BACKLOG",
+    "type": "TASK",
+    "title": "Dev-Target Discovery Miner over Backlog",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-recursive-self-improvement",
+    "tags": [
+      "agent",
+      "backlog",
+      "discovery",
+      "rsi",
+      "automation"
+    ],
+    "source": ".plan/tickets/TASK-recursive-self-improvement-dev-target-discovery-miner-over-backlog.md",
+    "status": "Not Started",
+    "git_issue": "679d44b"
   },
   "TASK-RECURSIVE-SELF-IMPROVEMENT-EVALUATOR-RELIABILITY-DRIFT-DETEC": {
     "epic": "epic-recursive-self-improvement",
@@ -36725,6 +36800,44 @@
     "title": "Recursive Self-Improvement: Nightly Heavy Gate and Perf Regression Wiring",
     "type": "TASK"
   },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-SECRETS-IN-PATCH-PRE-COMMIT-SCANNER": {
+    "hash": "b17107c",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-SECRETS-IN-PATCH-PRE-COMMIT-SCANNER",
+    "type": "TASK",
+    "title": "Secrets-in-Patch Pre-Commit Scanner",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-recursive-self-improvement",
+    "tags": [
+      "agent",
+      "sandbox",
+      "secrets",
+      "pre-commit",
+      "security"
+    ],
+    "source": ".plan/tickets/TASK-recursive-self-improvement-secrets-in-patch-pre-commit-scanner.md",
+    "status": "Not Started",
+    "git_issue": "b17107c"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-SELF-ERROR-CHECK-LOOP-TARGETED-REPRO-BEFO": {
+    "hash": "2d2c5ea",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-SELF-ERROR-CHECK-LOOP-TARGETED-REPRO-BEFO",
+    "type": "TASK",
+    "title": "Self-Error-Check Loop — Targeted Repro Before Full Check",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-recursive-self-improvement",
+    "tags": [
+      "agent",
+      "check",
+      "repro",
+      "mrp",
+      "self-heal"
+    ],
+    "source": ".plan/tickets/TASK-recursive-self-improvement-self-error-check-loop-targeted-repro-befo.md",
+    "status": "Not Started",
+    "git_issue": "2d2c5ea"
+  },
   "TASK-RECURSIVE-SELF-IMPROVEMENT-SIDECAR-PYTHON-PROVIDER-FOR-CUSTO": {
     "epic": "epic-recursive-self-improvement",
     "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-SIDECAR-PYTHON-PROVIDER-FOR-CUSTO",
@@ -36762,6 +36875,24 @@
     ],
     "title": "Recursive Self-Improvement: Smoke Gate (Fast CI Loop)",
     "type": "TASK"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-WATCHDOG-ADMIN-UI-PAGE-GET-API": {
+    "hash": "d67ae69",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-WATCHDOG-ADMIN-UI-PAGE-GET-API",
+    "type": "TASK",
+    "title": "Watchdog Admin UI Page + API",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-recursive-self-improvement",
+    "tags": [
+      "watchdog",
+      "admin",
+      "observability",
+      "ui"
+    ],
+    "source": ".plan/tickets/TASK-recursive-self-improvement-watchdog-admin-ui-page-get-api.md",
+    "status": "Not Started",
+    "git_issue": "d67ae69"
   },
   "TASK-RECURSIVE-SELF-IMPROVEMENT-WATCHDOG-EVENTS-TABLE-AND-TELEMET": {
     "epic": "epic-recursive-self-improvement",
@@ -36836,6 +36967,25 @@
     ],
     "title": "Recursive Self-Improvement: Watchdog to Heavy Gate Webhook Trigger",
     "type": "TASK"
+  },
+  "TASK-RECURSIVE-SELF-IMPROVEMENT-WEEKLY-FAILURE-CLUSTER-MINING-CRON": {
+    "hash": "7b76f23",
+    "extid": "TASK-RECURSIVE-SELF-IMPROVEMENT-WEEKLY-FAILURE-CLUSTER-MINING-CRON",
+    "type": "TASK",
+    "title": "Weekly Failure-Cluster Mining Cron",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-recursive-self-improvement",
+    "tags": [
+      "watchdog",
+      "cron",
+      "telemetry",
+      "failure-cluster",
+      "automation"
+    ],
+    "source": ".plan/tickets/TASK-recursive-self-improvement-weekly-failure-cluster-mining-cron.md",
+    "status": "Not Started",
+    "git_issue": "7b76f23"
   },
   "TASK-REDOS-CONFIG-TRANSFORMS-BUILD-REGEXP-FROM-UNTRUSTED-PATTERN": {
     "epic": "",
