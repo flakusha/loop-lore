@@ -29,6 +29,30 @@ import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
 import { jsonParseOr, } from "../utils/safe-json";
 import { apply, type Write, } from "./apply";
+
+/**
+ * Module-level handle to the most recently constructed store, or null before
+ * `createApp` has run. Mirrors the cron scheduler registry so a shutdown path
+ * (SIGTERM, test teardown) can quiesce the store without threading it through
+ * every caller's hands — `createApp` returns the Elysia app, not the store.
+ */
+let activeStore: AsyncStore | null = null;
+
+/** Register the live store so `flushActiveStore()` can reach it. */
+export function setStore(store: AsyncStore | null,): void {
+  activeStore = store;
+}
+
+/**
+ * Flush the live store's queue, if one is registered. Awaits quiescence so a
+ * caller may destroy the DB handle immediately after. No-op when no store was
+ * ever constructed (unit tests that never boot the app).
+ * @throws Never — a store whose drain already failed logs and swallows, so this
+ * resolves even if the underlying writes error.
+ */
+export async function flushActiveStore(): Promise<void> {
+  await activeStore?.flush();
+}
 /** Lifecycle states mirrored in the `status` column. */
 export type RequestStatus = "pending" | "in_progress" | "complete" | "failed" | "expired";
 
