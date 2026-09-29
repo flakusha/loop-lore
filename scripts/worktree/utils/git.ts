@@ -114,12 +114,52 @@ export function assertNotInWorktree(command: string,): void {
 }
 
 /**
+ * Env prefixes stripped from every child git/process. Backported from
+ * `giwt` (src/utils/git.ts) — the two must not drift.
+ *
+ * 1. `GIT_` — git exports these into a hook, and this CLI runs from the
+ *    repo root with an explicit `-C`, so inherited context is at best
+ *    redundant and at worst fatal (a relative `GIT_INDEX_FILE` resolved
+ *    against the wrong worktree).
+ * 2. `OMP_`/`PI_`/`ENGRAM_`/`MNEMO_` — agent-harness session context. They
+ *    flow in with the invocation and back out through every `Bun.spawnSync`,
+ *    so a child takes a path a human shell never takes.
+ *
+ * Matched as prefixes, so a new harness var is covered without editing.
+ */
+const ISOLATED_ENV_STRIPPED_PREFIXES: readonly string[] = ["GIT_", "OMP_", "PI_", "ENGRAM_", "MNEMO_",];
+
+/**
+ * Build the env for a child git/process: `source` minus the stripped prefixes.
+ *
+ * `source` is injectable so tests can seed a hostile `GIT_*` var without
+ * mutating `process.env` — a process-wide global that a parallel test runner
+ * shares, so a test that writes to it races every other test in the file.
+ * Production callers omit it and filter the real environment.
+ */
+export function isolatedGitEnv(
+  source: NodeJS.ProcessEnv = process.env,
+): Record<string, string> {
+  const env: Record<string, string> = {};
+  for (const [key, value,] of Object.entries(source,)) {
+    if (value === undefined) { continue; }
+    if (ISOLATED_ENV_STRIPPED_PREFIXES.some((prefix,) => key.startsWith(prefix,))) { continue; }
+    env[key] = value;
+  }
+  return env;
+}
+
+/**
  * Run git in repoRoot. Throws on non-zero exit — callers use try/catch for
  * existence checks (rev-parse --verify). Use gitSyncQuiet for reads where a
  * non-zero exit is a legit empty result (e.g. unset git config).
  */
 export function gitSync(repoRoot: string, ...args: string[]): string {
-  const result = Bun.spawnSync(["git", "-C", repoRoot, ...args,], { stdout: "pipe", stderr: "pipe", },);
+  const result = Bun.spawnSync(["git", "-C", repoRoot, ...args,], {
+    stdout: "pipe",
+    stderr: "pipe",
+    env: isolatedGitEnv(),
+  },);
   if (result.exitCode !== 0) {
     const stderr = result.stderr.toString().trim();
     throw new Error(stderr || `git ${args.join(" ",)} failed (exit ${result.exitCode})`,);
@@ -129,7 +169,11 @@ export function gitSync(repoRoot: string, ...args: string[]): string {
 
 /** Like gitSync but returns stdout even on non-zero exit (never throws). */
 export function gitSyncQuiet(repoRoot: string, ...args: string[]): string {
-  const result = Bun.spawnSync(["git", "-C", repoRoot, ...args,], { stdout: "pipe", stderr: "pipe", },);
+  const result = Bun.spawnSync(["git", "-C", repoRoot, ...args,], {
+    stdout: "pipe",
+    stderr: "pipe",
+    env: isolatedGitEnv(),
+  },);
   return result.stdout.toString().trim();
 }
 

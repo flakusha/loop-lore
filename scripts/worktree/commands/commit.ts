@@ -6,7 +6,7 @@
  */
 
 import { type WorktreeConfig, } from "../utils/config";
-import { gitSync, gitSyncQuiet, stagedDependencyPaths, } from "../utils/git";
+import { gitSync, gitSyncQuiet, isolatedGitEnv, stagedDependencyPaths, } from "../utils/git";
 import { assertGpgUnlocked, } from "../utils/gpg";
 import { appendCommitOutcome, } from "../utils/ledger";
 import { extractMessageInput, validateMessage, } from "../utils/message";
@@ -40,7 +40,7 @@ export async function commit(
   // Check for staged changes
   const staged = Bun.spawnSync(
     ["git", "diff", "--cached", "--quiet",],
-    { stdout: "pipe", stderr: "pipe", cwd: config.repoRoot, },
+    { stdout: "pipe", stderr: "pipe", cwd: config.repoRoot, env: isolatedGitEnv(), },
   );
   if (staged.exitCode === 0) {
     log("error", "no staged changes",);
@@ -97,8 +97,11 @@ export async function commit(
     {
       stdout: "pipe",
       stderr: "pipe",
+      // Strip inherited GIT_/harness context, then re-set only the committer
+      // identity this command owns. Forwarding process.env wholesale would
+      // let a hook's GIT_INDEX_FILE redirect the commit to another index.
       env: {
-        ...process.env,
+        ...isolatedGitEnv(),
         GIT_COMMITTER_NAME: config.agentGpgName,
         GIT_COMMITTER_EMAIL: config.agentGpgEmail,
       },
@@ -115,7 +118,7 @@ export async function commit(
   const commitSha = gitSync(config.repoRoot, "rev-parse", "HEAD",);
   const verify = Bun.spawnSync(
     ["git", "-C", config.repoRoot, "verify-commit", commitSha,],
-    { stdout: "pipe", stderr: "pipe", },
+    { stdout: "pipe", stderr: "pipe", env: isolatedGitEnv(), },
   );
 
   if (verify.exitCode === 0) {

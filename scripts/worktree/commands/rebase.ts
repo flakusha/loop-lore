@@ -4,14 +4,8 @@
 import { existsSync, } from "node:fs";
 import { resolve, } from "node:path";
 import { branchToPath, type WorktreeConfig, } from "../utils/config";
-import { findWorktreeForBranchSync, getRootBranch, getWorktrees, gitSync, } from "../utils/git";
+import { findWorktreeForBranchSync, getWorktrees, gitSync, isolatedGitEnv, isProtected, } from "../utils/git";
 import { log, } from "../utils/output";
-
-const PROTECTED_BRANCHES = ["master", "main", "stg", "dev",];
-
-function isProtected(branch: string,): boolean {
-  return PROTECTED_BRANCHES.includes(branch,);
-}
 
 async function findWorktree(branch: string, config: WorktreeConfig,): Promise<string | null> {
   const dirName = branchToPath(branch,);
@@ -27,7 +21,7 @@ export async function rebase(
   config: WorktreeConfig,
 ): Promise<void> {
   const [branch, onto,] = args;
-  const target = onto || getRootBranch(config.repoRoot,);
+  let target = onto;
 
   if (!branch) {
     log("error", "branch name required",);
@@ -37,6 +31,25 @@ export async function rebase(
 
   if (isProtected(branch,)) {
     log("error", `cannot rebase protected branch '${branch}'`,);
+    process.exit(1,);
+  }
+
+  // Default target = the main checkout's current branch. `getRootBranch`
+  // falls back to the literal "master" on a detached HEAD, which silently
+  // rebases the branch onto the wrong base — refuse and make the caller name
+  // the target instead. (Deliberately NOT upstream giwt's "refuse a protected
+  // target" rule: the default target here is `dev`, which is protected.)
+  if (!target) {
+    target = gitSync(config.repoRoot, "branch", "--show-current",);
+    if (!target) {
+      log("error", "main checkout is in detached HEAD state - name the target explicitly",);
+      console.log("  Usage: worktree rebase <branch> [onto]",);
+      process.exit(1,);
+    }
+  }
+
+  if (target === branch) {
+    log("error", `cannot rebase '${branch}' onto itself`,);
     process.exit(1,);
   }
 
@@ -57,11 +70,11 @@ export async function rebase(
   // Check worktree clean
   const dirty = Bun.spawnSync(
     ["git", "-C", wtPath, "diff", "--quiet",],
-    { stdout: "pipe", stderr: "pipe", },
+    { stdout: "pipe", stderr: "pipe", env: isolatedGitEnv(), },
   );
   const staged = Bun.spawnSync(
     ["git", "-C", wtPath, "diff", "--cached", "--quiet",],
-    { stdout: "pipe", stderr: "pipe", },
+    { stdout: "pipe", stderr: "pipe", env: isolatedGitEnv(), },
   );
   if (dirty.exitCode !== 0 || staged.exitCode !== 0) {
     log("error", `uncommitted changes in worktree '${branch}'`,);
@@ -72,7 +85,7 @@ export async function rebase(
 
   const result = Bun.spawnSync(
     ["git", "-C", wtPath, "rebase", target,],
-    { stdout: "pipe", stderr: "pipe", },
+    { stdout: "pipe", stderr: "pipe", env: isolatedGitEnv(), },
   );
 
   if (result.exitCode !== 0) {

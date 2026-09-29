@@ -336,10 +336,11 @@ giwt abort              # recover (idempotent)
 giwt abort --dry-run   # preview what would happen
 ```
 
-> **Note:** The legacy in-repo CLI at `scripts/worktree/index.mjs` still
-> exists for backwards compatibility, but its commands are now thin shims
-> over `giwt` (or about to be — see `docs/giwt-scripts-map.md` try-5/6).
-> New work should call `giwt` directly. Flag-style differences worth noting:
+> **Note**: The legacy in-repo CLI at `scripts/worktree/index.mjs` still
+> exists for backwards compatibility, but it is a **full implementation**, not
+> a shim: `rebase`, `finalize`, `abort` and the rest carry their own git logic.
+> `giwt` is canonical — new work should call `giwt` directly. Flag-style
+> differences worth noting:
 > `giwt ticket` uses `--label` / `--priority` (long-form), not `-l` / `-p`;
 > `giwt commit-wt` is the renamed `commit-branch`; `giwt merge` takes
 > `<target-branch> <source>` instead of the legacy `<base> <feature>`.

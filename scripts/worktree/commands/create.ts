@@ -5,7 +5,7 @@ import { existsSync, mkdirSync, } from "fs";
 import { resolve, } from "path";
 import { branchToPath, linkWorktreeCredentials, } from "../utils/config";
 import type { WorktreeConfig, } from "../utils/config";
-import { gitSync, isProtected, } from "../utils/git";
+import { gitSync, isolatedGitEnv, isProtected, } from "../utils/git";
 import { linkNodeModules, } from "../utils/modules";
 import { log, } from "../utils/output";
 
@@ -52,7 +52,7 @@ export async function execute(
 
   const result = Bun.spawnSync(
     ["git", "-C", config.repoRoot, "worktree", "add", wtPath, branch,],
-    { stdout: "pipe", stderr: "pipe", },
+    { stdout: "pipe", stderr: "pipe", env: isolatedGitEnv(), },
   );
   if (result.exitCode !== 0) {
     log("error", `worktree add failed (exit ${result.exitCode})`,);

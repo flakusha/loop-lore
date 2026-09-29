@@ -69,8 +69,9 @@ Solution: SOL-2026-001
 `giwt` manages git worktrees so multiple branches can be worked on
 simultaneously without stashing. It is the canonical CLI for worktree ops,
 ticket creation, and git-issue flows. The legacy `scripts/worktree/` CLI is
-still in tree for backwards compatibility but its commands are now thin
-shims over `giwt` (see `docs/giwt-scripts-map.md` try-5/6).
+still in tree for backwards compatibility, but it is a full duplicate
+implementation rather than a thin shim — retiring it is tracked as a migration
+in `docs/giwt-scripts-map.md` (try-8).
 
 ```bash
 # Create a worktree for an existing branch

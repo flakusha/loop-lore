@@ -80,6 +80,42 @@ Other divergences worth noting before deleting: the fork's `isProtected` hardcod
 `["master","main","stg","dev"]` while `giwt` reads
 `config.settings.branches.protected` from the layered TOML schema.
 
+
+## Backport landed while this ticket stayed open (2026-09-29)
+
+The fork fell three fixes behind upstream and was brought current in place,
+rather than left to rot until retirement:
+
+- `utils/git.ts` gained `isolatedGitEnv()` (closes the isolated-env BUG), wired
+  into `gitSync`/`gitSyncQuiet` and the git-child spawns in `finalize.ts` and
+  `rebase.ts`. Test: `scripts/worktree/utils/git.test.ts` seeds
+  `GIT_INDEX_FILE` and asserts the child resolves against `repoRoot`.
+- `commands/finalize.ts` replaced the fixed 20ms lock retry with full jitter
+  (closes the lock-jitter FIX). Test: two contender schedules in
+  `finalize-lock-cleanup.test.ts`.
+- `commands/rebase.ts` no longer falls back to the literal `master` when the
+  main checkout is detached, and refuses a self-rebase up front. Test:
+  `commands/rebase.test.ts`.
+- `commands/finalize.ts` carried the same detached-HEAD fallback for its merge
+  target, via the shared `getRootBranch`. Found while reviewing the rebase fix,
+  not named in the original report — but the outcome is worse, since finalize
+  *merges into* the fallback branch rather than rebasing onto it. The guard now
+  resolves the target directly and refuses when detached. Test:
+  `commands/finalize-target.test.ts` (mutation-checked: with the fallback
+  restored, finalize exits 0 and merges the feature into `master`).
+  `getRootBranch` keeps its `|| "master"` fallback for its display-only
+  callers (`diff.ts`, `getStatus`); only the mutating caller was changed.
+- Docs claiming "thin shims" corrected: `AGENTS.md`, `docs/meta/workflow.md`,
+  and the `docs/giwt-scripts-map.md` keep-vs-wrap table.
+
+Upstream deliberately **not** mirrored: `giwt rebase` refuses a protected
+*target*, which with `branches.root = dev` and `dev` in
+`branches.protected` breaks the documented `giwt rebase <branch>` (no `onto`)
+on a default config. The fork refuses protected sources only.
+
+These are divergences closed, not widened — but they are also new code the
+retirement has to reconcile, so they do not reduce this ticket's scope.
+
 ## Acceptance Criteria
 
 - [ ] `scripts/worktree/utils/credentials.mjs` is either ported to `giwt` (the
@@ -93,8 +129,9 @@ Other divergences worth noting before deleting: the fork's `isProtected` hardcod
       `finalize-lock-fixture.ts` (L128) removed
 - [ ] `oxlint.config.ts:31` ignore entry removed
 - [ ] `eslint.config.mjs:384` `scripts/worktree/**/*.mjs` rule block removed
-- [ ] `AGENTS.md` L331-333, `docs/meta/workflow.md` L70-73, and `CONTRIBUTING.md`
-      L88 updated to drop the "thin shims" claim
+- [x] `AGENTS.md`, `docs/meta/workflow.md`, and the `docs/giwt-scripts-map.md`
+      keep-vs-wrap table updated to drop the "thin shims" claim
+      (`CONTRIBUTING.md` L88 only linked the map; no claim of its own)
 - [ ] `scripts/check-parallel.mjs:245` comment updated (it documents the
       `tsconfig.scripts.json` scope rationale that changes here)
 - [ ] `bun run check` green
