@@ -182,7 +182,7 @@
     "type": "BUG"
   },
   "BUG-AGGREGATED-TRAITS-ENDPOINT-SHADOWED-AND-DROPPED": {
-    "hash": "pending",
+    "hash": "22f20a2",
     "extid": "BUG-AGGREGATED-TRAITS-ENDPOINT-SHADOWED-AND-DROPPED",
     "type": "BUG",
     "title": "Aggregated traits endpoint silently dropped by shadowed subdir barrel",
@@ -196,7 +196,8 @@
       "silent-regression"
     ],
     "source": ".plan/tickets/BUG-aggregated-traits-endpoint-shadowed-and-dropped.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "22f20a2"
   },
   "BUG-ALIGN-SEEDDEFAULTS-NULL-HANDLING-WITH-RESOLVEMODELROLE-DEFEN": {
     "epic": "",
@@ -843,18 +844,6 @@
     "tags": [],
     "source": ".plan/tickets/BUG-browser-e2e-suite-flakes-under-concurrent-runs.md",
     "status": "done"
-  },
-  "BUG-BROWSER-E2E-TEARDOWN-RACES-ASYNC-STORE-AND-FLUSH-NEVER-RUNS": {
-    "hash": "pending",
-    "extid": "BUG-BROWSER-E2E-TEARDOWN-RACES-ASYNC-STORE-AND-FLUSH-NEVER-RUNS",
-    "type": "BUG",
-    "title": "browser e2e teardown races the async store, and the store flush never runs",
-    "label": "bug",
-    "priority": "low",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-browser-e2e-teardown-races-async-store-and-flush-never-runs.md",
-    "status": "Not Started"
   },
   "BUG-BROWSER-TEARDOWN-DESTROYS-THE-DB-BEFORE-FLUSHING-THE-ASYNC-S": {
     "hash": "7ce47b5",
@@ -20748,7 +20737,7 @@
     "type": "TASK"
   },
   "TASK-AUTONOMY-DETERMINISTIC-TURNS": {
-    "hash": "pending",
+    "hash": "adb5001",
     "extid": "TASK-AUTONOMY-DETERMINISTIC-TURNS",
     "type": "TASK",
     "title": "Deterministic and non-deterministic autonomy turns",
@@ -20764,7 +20753,8 @@
       "seed"
     ],
     "source": ".plan/tickets/TASK-autonomy-deterministic-turns.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "adb5001"
   },
   "TASK-AUTONOMY-RATE-GOVERNOR": {
     "epic": "epic-actor-autonomy-story-drive",
