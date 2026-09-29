@@ -3576,6 +3576,14 @@
   "src/async/spill.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-async-spill-offload-dir-is-a-fixed-cwd-relative-path-shared-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-browser-e2e-suite-flakes-under-concurrent-runs.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-test-async-store-offload-dir-fixed-path-race.md"
     },
     {
@@ -3591,6 +3599,22 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-middleware-request-lifecycle.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-async-spill-offload-dir-is-a-fixed-cwd-relative-path-shared-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-browser-e2e-suite-flakes-under-concurrent-runs.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-browser-e2e-teardown-races-async-store-and-flush-never-runs.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-browser-teardown-destroys-the-db-before-flushing-the-async-s.md"
     },
     {
       "kind": "ticket",
@@ -3741,6 +3765,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-autonomy-config-surface.md"
+    }
+  ],
+  "src/autonomy/config/types.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-autonomy-deterministic-turns.md"
+    }
+  ],
+  "src/autonomy/scheduler/README.md": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-autonomy-deterministic-turns.md"
     }
   ],
   "src/aux-pipeline": [
@@ -13995,6 +14031,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-access-log-never-records-userid-handle-x-user-id-header-neve.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-browser-e2e-teardown-races-async-store-and-flush-never-runs.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-browser-teardown-destroys-the-db-before-flushing-the-async-s.md"
     },
     {
       "kind": "ticket",
@@ -26309,6 +26353,12 @@
       "source": ".plan/tickets/BUG-getclientip-trusts-spoofable-proxy-headers-unconditionally.md"
     }
   ],
+  "src/routes/auth/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-browser-e2e-suite-flakes-under-concurrent-runs.md"
+    }
+  ],
   "src/routes/auth/login.test.ts": [
     {
       "kind": "ticket",
@@ -32210,6 +32260,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-autonomy-deterministic-turns.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-world-simulation-npc-navigation-tick-driver.md"
     },
     {
@@ -37238,6 +37292,10 @@
     }
   ],
   "src/views/login.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-browser-e2e-suite-flakes-under-concurrent-runs.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-i18n-template-strings.md"
