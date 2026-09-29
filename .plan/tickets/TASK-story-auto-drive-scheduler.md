@@ -3,16 +3,18 @@
 
 # TASK: Story Auto-Drive Scheduler
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** high
 **Effort:** Large (scheduler loop + due-actor selection + dispatch integration + persistence)
-**Summary:** World-tick loop that drives the actor autonomy subsystem: due-actor selection, action dispatch through the existing generation pipeline (navigation ticks, BDI decisions, GM beats), pause/resume/step controls, and persistence of simulation state across restarts.
-**Context:** Referenced by `epic-actor-autonomy-story-drive.md` Work Item list as `TASK-story-auto-drive-scheduler` (line 70) and Concrete Implementation table row 4 (line 104). Listed as `TBD — needs filing` in the gap-audit (2026-09-23). The scheduler is the orchestration backbone of the autonomy subsystem — without it, the per-actor navigation, BDI reflection, and GM beats have no driver.
+**Summary:** World-tick loop that drives the actor autonomy subsystem: due-actor selection, action dispatch through the existing navigation-tick pipeline, pause/resume/step controls, and persistence of simulation state across restarts. BDI reflection and GM beat dispatch are split out to `TASK-bdi-plan-recompute-implementation` and `TASK-gm-beat-scheduling` — neither had a callable, non-greenfield entry point (see the split-out ACs below).
+**Context:** Referenced by `epic-actor-autonomy-story-drive.md` Work Item list as `TASK-story-auto-drive-scheduler` (line 70) and Concrete Implementation table row 4 (line 104). Listed as `TBD — needs filing` in the gap-audit (2026-09-23). The scheduler is the orchestration backbone of the autonomy subsystem — without it, the per-actor navigation tick has no driver. BDI reflection and GM beats are driven by the split-out tickets, not by this loop.
 
 **Acceptance Criteria:**
 - [x] World-tick loop with configurable cadence (per-world), respecting the autonomy rate governor.
 - [x] Due-actor selection: deterministic ordering across restarts (sorted by `nextTickAt`), with a documented tie-break rule.
-- [ ] Dispatch through existing generation pipeline: `NpcNavigationService`, `BDI reflection cycle`, GM beat scheduling — no greenfield dispatch paths. (`NpcNavigationService` ships; the other two wait on the decision layer.)
+- [x] Dispatch through the existing generation pipeline: the tick driver `runNpcMovementTick` (`src/rpg/npc-navigation/tick-driver.ts`) wrapping `processMovementTick`. No greenfield dispatch path — the scheduler owns no dispatch of its own.
+- [~] BDI reflection dispatch — **split out to `TASK-bdi-plan-recompute-implementation`**. `runNightlyReflectionCycle` (`src/services/agency/bdi-nightly.ts`) is the only entry point and it is per-actor + nightly, not per-world-tick, and its `planRecompute` is a type whose only implementations are test stubs. Dispatching it needs the decision layer written first.
+- [~] GM beat dispatch — **split out to `TASK-gm-beat-scheduling`**. `executeTurn` (`src/story/game-master/execute.ts:45`) already calls `processMovementTick` itself, so a tick that called both it and the movement driver would advance every NPC twice per pass. It also resolves its world from a `chatId`, which a per-world tick does not guarantee.
 - [x] Pause / resume / step primitives: world admin controls land as `POST /api/worlds/:worldId/autonomy/control` on the shared panel. The `giwt sim` CLI is a cross-repo change — see Remaining.
 - [x] Persistence: the per-world cursor, pause flag, tick count, last error, and governor budgets survive restarts.
 - [x] Telemetry: `scheduler.world_tick.started` / `.completed` / `.error` events with the world + payload envelope.
@@ -111,7 +113,7 @@ Current state (as first written): `NpcNavigationService` (src/rpg/npc-navigation
 
 Direction:
 1. Tick source pluggable: real-time (background interval), accelerated (N game-hours per real minute), manual (advance-world affordance); per world/chat. UI never blocks on the loop.
-2. Due-actor selection each tick: BDI plan due, pending reaction, movement tick due, GM narrative beat due (LLM GM = governed actor consuming the same budget).
+2. Due-actor selection each tick: movement tick due (shipped). BDI plan due + GM narrative beat due were designed here and are now owned by `TASK-bdi-plan-recompute-implementation` and `TASK-gm-beat-scheduling`.
 3. Dispatch through the existing generation pipeline (story-mode/auto-gen path, group-cascade turn guards reused); results + episodic memory writes.
 4. Human-in-loop: pause/resume/step-one-action at any moment; user messages always pre-empt autonomous turns.
 5. Persistence: simulation state (tick cursor, actor queues, pending reactions) survives restart; crash recovery resumes without double-dispatch.
