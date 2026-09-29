@@ -12,6 +12,7 @@ import { initAnonymousMode, initSmk, } from "../crypto";
 import { getDatabase, } from "../db/index";
 import { runDataMigrations, runMigrations, } from "../db/migrate";
 import { seedDefaultActors, } from "../db/seed";
+import { flushActiveStore, } from "../async";
 import { createApp, } from "../elysia-app";
 import { initializeProviders, } from "../generation";
 import { initDefaultHooks, } from "../generation/hooks";
@@ -201,6 +202,9 @@ export async function start() {
   const shutdown = async (_signal: string,) => {
     (domainConfigWatcher as { __close?: () => void } | undefined)?.__close?.();
     getScheduler()?.stop();
+    // Drain the async-store queue before the process exits; otherwise
+    // fire-and-forget writes are lost on every restart.
+    await flushActiveStore();
     await serverManager.stopAll();
     await unloadAllPlugins();
     httpServer.stop();
