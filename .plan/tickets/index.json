@@ -490,6 +490,19 @@
     "source": ".plan/tickets/BUG-async-spill-offload-dir-is-a-fixed-cwd-relative-path-shared-.md",
     "status": "⬜ Not Started"
   },
+  "BUG-ASYNC-SPILL-USES-CACHE-KEY-AS-FILENAME-SO-ROUTED-IDS-LOSE": {
+    "hash": "33718af",
+    "extid": "BUG-ASYNC-SPILL-USES-CACHE-KEY-AS-FILENAME-SO-ROUTED-IDS-LOSE",
+    "type": "BUG",
+    "title": "Async spill uses the idempotency cache key as a filename, so every routed id loses its body",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-async-spill-uses-cache-key-as-filename-so-routed-ids-lose.md",
+    "status": "Not Started",
+    "git_issue": "33718af"
+  },
   "BUG-AUDIT-PANEL-DETAILS-NOT-EXPANDABLE": {
     "epic": "",
     "extid": "BUG-AUDIT-PANEL-DETAILS-NOT-EXPANDABLE",
@@ -4651,19 +4664,6 @@
     "title": "Ollama outage hard-fails all generations",
     "type": "BUG"
   },
-  "BUG-ORPHAN-SPILL-SWEEPER-DELETES-A-SPILL-FILE-BEFORE-ITS-ROW-REF": {
-    "hash": "689ccc9",
-    "git_issue": "689ccc9",
-    "extid": "BUG-ORPHAN-SPILL-SWEEPER-DELETES-A-SPILL-FILE-BEFORE-ITS-ROW-REF",
-    "type": "BUG",
-    "title": "Orphan-spill sweeper deletes a spill file before its row references it",
-    "label": "bug",
-    "priority": "Medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-orphan-spill-sweeper-deletes-a-spill-file-before-its-row-ref.md",
-    "status": "⬜ Not Started"
-  },
   "BUG-OUT-OF-ORDER-FETCH-RACE-IN-LOADMESSAGES": {
     "epic": "",
     "extid": "BUG-OUT-OF-ORDER-FETCH-RACE-IN-LOADMESSAGES",
@@ -4676,6 +4676,19 @@
     "tags": [],
     "title": "Out-of-order fetch race in loadMessages",
     "type": "BUG"
+  },
+  "BUG-PARALLEL-CHECK-RUNNER-HAS-NO-PER-GATE-TIMEOUT-SO-ONE-WEDGED-": {
+    "hash": "dcd07fe",
+    "git_issue": "dcd07fe",
+    "extid": "BUG-PARALLEL-CHECK-RUNNER-HAS-NO-PER-GATE-TIMEOUT-SO-ONE-WEDGED-",
+    "type": "BUG",
+    "title": "parallel check runner has no per-gate timeout, so one wedged gate hangs bun run check forever",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-parallel-check-runner-has-no-per-gate-timeout-so-one-wedged-.md",
+    "status": "Not Started"
   },
   "BUG-PARSEACCEPTLANGUAGE-IGNORES-QUALITY-VALUES-RETURNS-HEADER-OR": {
     "epic": "",
@@ -5925,6 +5938,19 @@
     "title": "# e2e suite fails 29 tests with E2E_SAFEGUARD unset (canonical shape)",
     "type": "BUG"
   },
+  "BUG-TEST-HARNESS-CLOSE-CANNOT-AWAIT-THE-STORE-FLUSH-IT-STARTS": {
+    "hash": "51bcaf4",
+    "git_issue": "51bcaf4",
+    "extid": "BUG-TEST-HARNESS-CLOSE-CANNOT-AWAIT-THE-STORE-FLUSH-IT-STARTS",
+    "type": "BUG",
+    "title": "Test harness close() cannot await the store flush it starts",
+    "label": "bug",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-test-harness-close-cannot-await-the-store-flush-it-starts.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-TEST-RUN-ID-USES-DATE-NOW-COLLISION-RISK-UNDER-PARALLEL": {
     "epic": "",
     "extid": "BUG-TEST-RUN-ID-USES-DATE-NOW-COLLISION-RISK-UNDER-PARALLEL",
@@ -6044,6 +6070,19 @@
     "tags": [],
     "title": "tui/app.ts never threads a session token into ChatWidget — auth header never sent",
     "type": "BUG"
+  },
+  "BUG-TUI-SHOWERROR-DESYNCS-ITEMCOUNT-FROM-MESSAGELIST-LENGTH": {
+    "hash": "71758ac",
+    "git_issue": "71758ac",
+    "extid": "BUG-TUI-SHOWERROR-DESYNCS-ITEMCOUNT-FROM-MESSAGELIST-LENGTH",
+    "type": "BUG",
+    "title": "tui showError() desyncs itemCount from messageList length",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-tui-showerror-desyncs-itemcount-from-messagelist-length.md",
+    "status": "⬜ Not Started"
   },
   "BUG-TURN-SKIP-CONCURRENT-ADVANCE-POSTS-DOUBLE-FIRE-AUTO-GENERATI": {
     "hash": "c4f570d",
@@ -6357,6 +6396,19 @@
     "tags": [],
     "title": "worktree finalize must hard-fail on non-mergeable or multi-merge dev state, never blind stash round-trip",
     "type": "BUG"
+  },
+  "BUG-WORKTREE-GIT-HELPERS-PASS-NO-ISOLATED-ENV-SO-HOOK-CONTEXT-LE": {
+    "hash": "fe8d35c",
+    "git_issue": "fe8d35c",
+    "extid": "BUG-WORKTREE-GIT-HELPERS-PASS-NO-ISOLATED-ENV-SO-HOOK-CONTEXT-LE",
+    "type": "BUG",
+    "title": "worktree git helpers pass no isolated env, so hook context leaks into every call",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-worktree-git-helpers-pass-no-isolated-env-so-hook-context-le.md",
+    "status": "Not Started"
   },
   "BUG-WORKTREE-REPORT-CRASHES-ON-MALFORMED-OR-MISSING-CHECK-REPORT": {
     "epic": "",
@@ -15954,6 +16006,19 @@
     "tags": [],
     "title": "Worlds Frontend (list/detail, timeline, location travel UI)",
     "type": "FEAT"
+  },
+  "FIX-ADD-JITTER-TO-THE-FINALIZE-LOCK-RETRY-BACKOFF": {
+    "hash": "a2c4b9b",
+    "git_issue": "a2c4b9b",
+    "extid": "FIX-ADD-JITTER-TO-THE-FINALIZE-LOCK-RETRY-BACKOFF",
+    "type": "FIX",
+    "title": "add jitter to the finalize lock retry backoff",
+    "label": "fix",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FIX-add-jitter-to-the-finalize-lock-retry-backoff.md",
+    "status": "Not Started"
   },
   "FIX-PARALLELIZE-BUN-TEST-INVOCATIONS-ISOLATE-PINS-SUITE-TO-ONE-C": {
     "epic": "",
