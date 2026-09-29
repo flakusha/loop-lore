@@ -21385,6 +21385,19 @@
     "title": "Battle Turn Order",
     "type": "TASK"
   },
+  "TASK-BDI-PLAN-RECOMPUTE-IMPLEMENTATION": {
+    "hash": "b43034d",
+    "git_issue": "b43034d",
+    "extid": "TASK-BDI-PLAN-RECOMPUTE-IMPLEMENTATION",
+    "type": "TASK",
+    "title": "BDI plan recompute implementation",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-bdi-plan-recompute-implementation.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-BESTIARY-ADMIN-GM-FORCE-SPAWN-AND-CULL": {
     "epic": "epic-enemies-monsters",
     "extid": "TASK-BESTIARY-ADMIN-GM-FORCE-SPAWN-AND-CULL",
@@ -29298,6 +29311,19 @@
     "tags": [],
     "title": "Global generation pause kill switch",
     "type": "TASK"
+  },
+  "TASK-GM-BEAT-SCHEDULING": {
+    "hash": "0361710",
+    "git_issue": "0361710",
+    "extid": "TASK-GM-BEAT-SCHEDULING",
+    "type": "TASK",
+    "title": "GM beat scheduling",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-gm-beat-scheduling.md",
+    "status": "⬜ Not Started"
   },
   "TASK-GM-CHAT-ASSISTANT-GM-HANDOFF-VIA-INTENT-TO-WORKFLOW-ROUTING": {
     "epic": "",
@@ -39128,7 +39154,7 @@
     "label": "task",
     "priority": "P1 — High",
     "source": ".plan/tickets/TASK-story-auto-drive-scheduler.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Story Auto-Drive Scheduler",
     "type": "TASK"

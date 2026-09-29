@@ -32224,6 +32224,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-story-auto-drive-scheduler.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-world-simulation-npc-navigation-tick-driver.md"
     }
   ],
@@ -34453,10 +34457,20 @@
       "source": "docs/spec/crafting-professions.md"
     }
   ],
+  "src/services/agency/bdi-nightly.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-bdi-plan-recompute-implementation.md"
+    }
+  ],
   "src/services/agency/bdi-nightly.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-agency-story-points.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-bdi-plan-recompute-implementation.md"
     },
     {
       "kind": "ticket",
@@ -34896,11 +34910,22 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-gm-beat-scheduling.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-story-auto-drive-scheduler.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TEST-npc-navigation-processMovementTick-untested.md"
     }
   ],
-
   "src/story/game-master/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gm-beat-scheduling.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-story-auto-drive-scheduler.md"

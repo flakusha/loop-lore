@@ -111,9 +111,11 @@ The `autonomy_preferences` data schema (AutonomyProfile, D9) is owned by
 
 | Work Item | Ticket | On-disk | Status |
 | --------- | ------ | ------- | ------ |
-| Story auto-drive scheduler | `TASK-story-auto-drive-scheduler.md` | yes | In Progress — loop, selection, dispatch via `runNpcMovementTick`, controls, persistence, telemetry all ship; BDI-decision + GM-beat dispatch blocked on the decision layer in `epic-agency-story-points.md` |
+| Story auto-drive scheduler | `TASK-story-auto-drive-scheduler.md` | yes | In Progress — loop, selection, dispatch via `runNpcMovementTick`, controls, persistence, telemetry all ship. BDI + GM dispatch split out: `TASK-bdi-plan-recompute-implementation`, `TASK-gm-beat-scheduling` |
+| BDI plan recompute implementation | `TASK-bdi-plan-recompute-implementation.md` | yes | open — `planRecompute` has no production impl; blocks BDI dispatch |
+| GM beat scheduling | `TASK-gm-beat-scheduling.md` | yes | open — GM is turn-driven only; double-movement + chat-vs-world blockers |
 | NPC navigation tick driver | `TASK-world-simulation-npc-navigation-tick-driver.md` | yes | Done — `src/rpg/npc-navigation/tick-driver.ts` (`runNpcMovementTick`) is the scheduler's caller; jitter + `perUserCap` governor gate |
 | Autonomy config surface | `TASK-autonomy-config-surface.md` | yes | Done — layered resolver, presets, world/chat/per-actor write routes, Autonomy tab + chat settings modal |
 | Per-agent/user budget caps UI (gap-audit E15) | `TASK-autonomy-rate-governor.md` | yes | Done — `AutonomyGovernor.tryConsume` + budget-remaining and reset-window UI in both settings surfaces |
 
-All 4 referenced tickets are filed on disk (verified 2026-09-25). Implementation tracks the Work Items list 1:1; no umbrella ticket needed. The 2026-09-23 gap-audit was stale — this table supersedes it.
+All referenced tickets are filed on disk. The scheduler's BDI and GM dispatch work was split into the two follow-up tickets above after scoping found neither had a callable, non-greenfield entry point. The 2026-09-23 gap-audit was stale — this table supersedes it.
