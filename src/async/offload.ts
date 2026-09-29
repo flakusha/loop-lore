@@ -9,7 +9,7 @@ import { OFFLOAD_DIR, spill, } from "./spill";
 import { pruneOrphanSpills, } from "./spill-retention";
 import type { AsyncStoreConfig, } from "./store";
 
-export { OFFLOAD_DIR, offloadDiskBytes, offloadExists, readOffloadedBody, spill, } from "./spill";
+export { OFFLOAD_DIR, offloadDiskBytes, offloadExists, readOffloadedBody, spill, spillFileStem, } from "./spill";
 export { pruneOrphanSpills, } from "./spill-retention";
 
 /** Node's setInterval returns `Timeout` on Node and `number` on Bun — name it. */

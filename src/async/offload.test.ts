@@ -9,6 +9,7 @@ import {
   offloadDiskBytes,
   offloadExists,
   readOffloadedBody,
+  spillFileStem,
 } from "./offload";
 
 /**
@@ -39,7 +40,7 @@ describe("offload helpers", () => {
     // The daemon writes via `spill()` (not exported); emulate the on-disk
     // shape here so the readers are covered without spinning up cron.
     const id = "req-roundtrip";
-    const filePath = path.join(OFFLOAD_DIR, `${id}.json.gz`,);
+    const filePath = path.join(OFFLOAD_DIR, `${spillFileStem(id,)}.json.gz`,);
     mkdirSync(OFFLOAD_DIR, { recursive: true, },);
     const { gzipSync, } = require("node:zlib",) as typeof import("node:zlib");
     const body = JSON.stringify({ id: "msg-99", content: "hello, world", },);

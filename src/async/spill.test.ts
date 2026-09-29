@@ -11,7 +11,7 @@ import { describe, expect, test, } from "bun:test";
 import { rmSync, writeFileSync, } from "node:fs";
 import path from "node:path";
 import { uid, } from "../utils";
-import { OFFLOAD_DIR, offloadDiskBytes, offloadExists, readOffloadedBody, spill, } from "./spill";
+import { OFFLOAD_DIR, offloadDiskBytes, offloadExists, readOffloadedBody, spill, spillFileStem, } from "./spill";
 
 describe("spill", () => {
   test("round-trips a body through disk", async () => {
@@ -20,7 +20,10 @@ describe("spill", () => {
     const before = offloadDiskBytes();
     const filePath = await spill(id, body,);
     try {
-      expect(filePath,).toBe(path.join(OFFLOAD_DIR, `${id}.json.gz`,),);
+      // The stem is a hash of the id, not the id itself: real ids are
+      // idempotency cache keys containing `/` and spaces.
+      // BUG-async-spill-uses-cache-key-as-filename-so-routed-ids-lose
+      expect(filePath,).toBe(path.join(OFFLOAD_DIR, `${spillFileStem(id,)}.json.gz`,),);
       expect(offloadExists(id,),).toBe(true,);
       expect(readOffloadedBody(filePath,),).toBe(body,);
       expect(offloadDiskBytes(),).toBeGreaterThan(before,);
