@@ -41,7 +41,7 @@
  * `createTable` and then apply `alterTable` adds; a column first appearing on
  * a table that is later dropped-and-renamed is discarded, so the generated
  * `PromptTemplates` interface silently kept 10 columns. The four library
- * columns therefore live in 022, as plain `addColumn` alters, which the
+ * columns therefore live in 023, as plain `addColumn` alters, which the
  * generators model correctly. Verified by re-running `db:sync-types`.
  *
  * Append-only policy (`src/db/migrations/README.md`): forward change only;
