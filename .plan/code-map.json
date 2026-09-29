@@ -12304,6 +12304,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-migration-hygiene-ticket-falsely-claims-021-migrations-are-s.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-019-hot-path-indexes.md"
     },
     {

@@ -4130,6 +4130,19 @@
     "title": "Migration files 069_nsfw_consent_state and 069_activitypub share numeric prefix",
     "type": "BUG"
   },
+  "BUG-MIGRATION-HYGIENE-TICKET-FALSELY-CLAIMS-021-MIGRATIONS-ARE-S": {
+    "hash": "46a89aa",
+    "git_issue": "46a89aa",
+    "extid": "BUG-MIGRATION-HYGIENE-TICKET-FALSELY-CLAIMS-021-MIGRATIONS-ARE-S",
+    "type": "BUG",
+    "title": "migration-hygiene ticket falsely claims 021 migrations are shipped",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-migration-hygiene-ticket-falsely-claims-021-migrations-are-s.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-MIGRATION-ORDERING-AMBIGUOUS-VIA-LOCALECOMPARE-DUPLICATE-NUM": {
     "epic": "",
     "extid": "BUG-MIGRATION-ORDERING-AMBIGUOUS-VIA-LOCALECOMPARE-DUPLICATE-NUM",
