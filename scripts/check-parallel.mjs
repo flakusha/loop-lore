@@ -841,6 +841,22 @@ function reportResults(results,) {
       console.log(
         `  Output: ${[...new Set([...head, ...(outputLines.length > 25 ? ["...",] : []), ...tail,],),].join("\n  ",)}`,
       );
+      // The excerpt above drops the middle of the output, which for a long
+      // gate run is exactly where the failing assertion lives. Persist the
+      // untruncated output so a red gate stays diagnosable without a re-run.
+      const slug = result.name.replace(/[^a-z0-9]+/gi, "-",).replace(/^-|-$/g, "",).toLowerCase();
+      const logPath = path.join(RUN_TMP_DIR, `check-fail-${slug}.log`,);
+      try {
+        mkdirSync(RUN_TMP_DIR, { recursive: true, },);
+        writeFileSync(logPath, result.output,);
+        console.log(`  Full output: ${logPath}`,);
+      } catch (error) {
+        console.log(
+          `  Full output unavailable (${String(error)}). Re-run \`bun run ${
+            result.command.replace(/^bun run /, "",)
+          }\` directly.`,
+        );
+      }
       failed++;
     }
   }

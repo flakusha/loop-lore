@@ -82,12 +82,15 @@ describe("Auth browser E2E", () => {
         await gotoLogin(page,);
         await page.fill("[data-testid='username-input']", "wronguser",);
         await page.fill("[data-testid='password-input']", "wrongpass",);
-        await page.click("[data-testid='login-submit']",);
-        // Wait for htmx POST response to /api/auth/login.
-        await page.waitForResponse(
+        // Arm the waiter BEFORE the click. Attaching it after page.click()
+        // races the htmx POST: once the response lands there is no longer
+        // anything to wait for, and the wait can only burn its full timeout.
+        const response = page.waitForResponse(
           (res,) => res.url().includes("/api/auth/login",) && res.request().method() === "POST",
           { timeout: 30_000, },
         );
+        await page.click("[data-testid='login-submit']",);
+        await response;
         // The error element should have received a swap (innerHTML changed).
         const innerHtml = await page.locator("[data-testid='login-error']",).innerHTML();
         expect(innerHtml.length,).toBeGreaterThan(0,);
