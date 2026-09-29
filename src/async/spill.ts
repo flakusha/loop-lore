@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { createHash, } from "node:crypto";
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync, } from "node:fs";
 import path from "node:path";
 import { gunzipSync, gzipSync, } from "node:zlib";
@@ -13,21 +14,39 @@ import { safeFromString, } from "../utils/safe-buffer";
 export const OFFLOAD_DIR = path.resolve(".tmp", "async-store",);
 
 /**
+ * Map a result-row id to a filesystem-safe stem.
+ *
+ * The id is an idempotency cache key (`makeKey()` builds
+ * `${METHOD} ${routePattern} ${userId} ${requestId}`), so it contains `/`
+ * and spaces — using it verbatim made `path.join` target a nested path
+ * whose parents do not exist, and the write failed with ENOENT.
+ * SHA-256 is collision-resistant enough here and keeps distinct ids on
+ * distinct files. The row's `offload_path` records the mapping, so nothing
+ * needs to reverse it.
+ * @param id - result row id
+ * @returns hex digest, safe as a single path segment
+ */
+export function spillFileStem(id: string,): string {
+  return createHash("sha256",).update(id,).digest("hex",);
+}
+
+/**
  * Compress + write a body to disk under OFFLOAD_DIR.
  *
  * Exported so `apply.ts` can eagerly spill bodies that exceed the inline
  * threshold at completion time (rather than nulling them and losing the
  * data). BUG-bug-async-store-complete-drops-response-body-larger-than-max.
- * @param id - result row id (used as filename stem)
+ * @param id - result row id (hashed into the filename stem)
  * @param body - raw response body text
  * @returns absolute path to the gzipped spill file.
+ * @throws If the body cannot be encoded, or the write fails.
  */
 export async function spill(id: string, body: string,): Promise<string> {
   // Self-sufficient: `apply()` may spill before the daemon's startup
   // `mkdirSync` has run (e.g. in unit tests or an early drain), so ensure
   // the directory exists rather than relying on `startOffloadDaemon()`.
   mkdirSync(OFFLOAD_DIR, { recursive: true, },);
-  const filePath = path.join(OFFLOAD_DIR, `${id}.json.gz`,);
+  const filePath = path.join(OFFLOAD_DIR, `${spillFileStem(id,)}.json.gz`,);
   const bufResult = safeFromString(body, "utf8",);
   if (!bufResult.ok) { throw bufResult.error; }
   const compressed = gzipSync(bufResult.buffer,);
@@ -53,10 +72,10 @@ export function readOffloadedBody(filePath: string,): string | null {
 /**
  * Test seam: report whether a spill file exists for a given id.
  * @param id - result row id
- * @returns `true` when `${OFFLOAD_DIR}/${id}.json.gz` exists.
+ * @returns `true` when the file for that id exists under `OFFLOAD_DIR`.
  */
 export function offloadExists(id: string,): boolean {
-  return existsSync(path.join(OFFLOAD_DIR, `${id}.json.gz`,),);
+  return existsSync(path.join(OFFLOAD_DIR, `${spillFileStem(id,)}.json.gz`,),);
 }
 
 /**
