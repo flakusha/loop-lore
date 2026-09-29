@@ -4651,6 +4651,19 @@
     "title": "Ollama outage hard-fails all generations",
     "type": "BUG"
   },
+  "BUG-ORPHAN-SPILL-SWEEPER-DELETES-A-SPILL-FILE-BEFORE-ITS-ROW-REF": {
+    "hash": "689ccc9",
+    "git_issue": "689ccc9",
+    "extid": "BUG-ORPHAN-SPILL-SWEEPER-DELETES-A-SPILL-FILE-BEFORE-ITS-ROW-REF",
+    "type": "BUG",
+    "title": "Orphan-spill sweeper deletes a spill file before its row references it",
+    "label": "bug",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-orphan-spill-sweeper-deletes-a-spill-file-before-its-row-ref.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-OUT-OF-ORDER-FETCH-RACE-IN-LOADMESSAGES": {
     "epic": "",
     "extid": "BUG-OUT-OF-ORDER-FETCH-RACE-IN-LOADMESSAGES",
