@@ -16,6 +16,7 @@ import { existsSync, mkdirSync, rmSync, } from "node:fs";
 import { resolve, } from "node:path";
 import "./logger-init";
 import { initAgeGate, } from "@/age-gate/controller";
+import { flushActiveStore, } from "@/async";
 import type { Config, } from "@/config/schema";
 import { createConfigSchema, } from "@/config/schema-class";
 import { initSmk, } from "@/crypto";
@@ -416,6 +417,9 @@ export async function createTestServer(
       context: { chatId: SEED_DEFAULT_CHAT_ID, },
       close: () => {
         void bunServer?.stop();
+        // Quiesce the async store's fire-and-forget queue before the caller
+        // tears the DB down. BUG-browser-teardown-destroys-the-db-before-flushing-the-async-s.
+        void flushActiveStore();
         setTestDatabase(null,);
         resetSoloUserCache();
         resetLoginRateLimiter();

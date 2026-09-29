@@ -9,6 +9,7 @@ import { createLogger, getLogger, setGlobalLogger, } from "../logger";
 import { createNonApiHandler, } from "./static-files";
 import { createRequestHandler, handleApiRequest, } from "./handler";
 import { ensureTlsCerts, } from "../config/cert";
+import { flushActiveStore, } from "../async";
 import { getDatabase, } from "../db/index";
 import { getScheduler, } from "../cron";
 import { initAgeGate, } from "../age-gate/controller";
@@ -199,6 +200,9 @@ export async function start() {
   const shutdown = async (_signal: string,) => {
     (domainConfigWatcher as { __close?: () => void } | undefined)?.__close?.();
     getScheduler()?.stop();
+    // Drain the async-store queue before the process exits; otherwise
+    // fire-and-forget writes are lost on every restart.
+    await flushActiveStore();
     await serverManager.stopAll();
     await unloadAllPlugins();
     httpServer.stop();
