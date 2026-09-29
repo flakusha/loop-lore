@@ -4,7 +4,7 @@
 // ── Health / list-models dispatchers ─────────────────────
 //
 // Extracted from the `OpenAiCompatibleProvider` class body. Threaded with an
-// explicit `state` handle (the class's private fields).
+// Explicit `state` handle (the class's private fields).
 
 import type { ModelInfo, } from "../types";
 import { fetchRaw, handleErrorResponse, } from "./http";
