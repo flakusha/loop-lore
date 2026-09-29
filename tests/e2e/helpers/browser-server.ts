@@ -16,6 +16,7 @@
  */
 import "./logger-init";
 import { initAgeGate, } from "@/age-gate/controller";
+import { flushActiveStore, } from "@/async";
 import type { Config, } from "@/config/schema";
 import { initSmk, } from "@/crypto";
 import { setTestDatabase, } from "@/db/index";
@@ -82,7 +83,18 @@ export async function createBrowserTest(
   async function cleanup(): Promise<void> {
     if (closed) { return; }
     closed = true;
-    const teardown = await Promise.allSettled([browser?.close(), bunServer?.stop(), db?.destroy(),],);
+    // Teardown order matters and the phases are sequential, not parallel:
+    //   1. stop accepting work, so nothing enqueues a new write after the flush
+    //   2. drain the store's fire-and-forget queue against a still-open handle
+    //   3. only then destroy the DB
+    // Destroying the handle in the same tick as the queued writes leaves them in
+    // flight against a closed database (`RangeError: Cannot use a closed
+    // database`), which the drain loop logs and swallows — the noise this
+    // ordering removes. BUG-browser-teardown-destroys-the-db-before-flushing-the-async-s.
+    const teardown = await Promise.allSettled([browser?.close(), bunServer?.stop(),],);
+    await flushActiveStore();
+    const dbTeardown = await Promise.allSettled([db?.destroy(),],);
+    teardown.push(...dbTeardown,);
     setTestDatabase(null,);
     resetSoloUserCache();
     activeBrowserContext = false;

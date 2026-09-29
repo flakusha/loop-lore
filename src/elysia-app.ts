@@ -17,7 +17,7 @@
 import { Elysia, } from "elysia";
 import { BunAdapter, } from "elysia/adapter/bun";
 import { registerPlugins, } from "./app/register-plugins";
-import { createAsyncStore, } from "./async";
+import { createAsyncStore, setStore, } from "./async";
 import type { Config, } from "./config/schema";
 import { startAppScheduler, } from "./cron";
 import type { Db, } from "./db";
@@ -63,6 +63,8 @@ export function createApp(deps: AppDeps,): Elysia {
   // The status endpoint, idempotency replay, and `triggerAutoGeneration`
   // all read/write the same `request_results` table.
   const asyncStore = createAsyncStore(database,);
+  // Publish the store so shutdown paths (SIGTERM, test teardown) can flush it.
+  setStore(asyncStore);
 
   const scheduler = startAppScheduler({ database, config, },);
 
