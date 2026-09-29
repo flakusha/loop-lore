@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// src/generation/providers/types.ts — Provider interface + shared types
+// Provider interface + shared types for LLM generation.
 //
 // Every LLM provider implements LLMProvider. Register via registry.
 // See .plan/epics/epic-provider-plugin-ecosystem.md for architecture.

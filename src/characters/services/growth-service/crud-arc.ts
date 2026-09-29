@@ -95,7 +95,7 @@ export async function upsertArc(
     .execute();
 
   // Audit trail: append a growth_log entry even on no-op (so the
-  // re-affirmation is visible).
+  // Re-affirmation is visible).
   await db
     .insertInto("growth_log",)
     .values({

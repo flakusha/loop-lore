@@ -102,7 +102,7 @@ export interface IntegrationEdge {
  * This is the "shared data contract" from the integration template.
  */
 export interface InterfaceContract {
-  id: string; // stable ID, e.g. "StatusEffect"
+  id: string; // Stable ID, e.g. "StatusEffect"
   kind: InterfaceKind;
   description: string;
   /** File path where the canonical definition lives (once implemented) */
@@ -118,7 +118,7 @@ export interface InterfaceContract {
  * Maps to the "Cross-System Events" subsection in each epic.
  */
 export interface CrossSystemEvent {
-  id: string; // e.g. "weather.changed", "player.state_changed"
+  id: string; // E.g. "weather.changed", "player.state_changed"
   payload?: string; // Description of payload shape
   direction: EventDirection;
   source: SystemId;
@@ -142,7 +142,7 @@ export interface GapStatus {
 
 /** */
 export interface PlayerStateLayer {
-  id: string; // e.g. "vitality", "consciousness", "physical"
+  id: string; // E.g. "vitality", "consciousness", "physical"
   classification: StateLayerClassification;
   owner: SystemId;
   /** Systems that can cause transitions into this layer */

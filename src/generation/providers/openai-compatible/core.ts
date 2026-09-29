@@ -4,7 +4,7 @@
 // ── Core generation dispatchers ─────────────────────────
 //
 // Extracted from the `OpenAiCompatibleProvider` class body. Each dispatcher is
-// threaded with an explicit `state` handle (the class's private fields).
+// Threaded with an explicit `state` handle (the class's private fields).
 
 import type {
   GenerateRequest,
@@ -114,7 +114,7 @@ export async function streamDispatch(
     try {
       reader.releaseLock();
     } catch {
-      /* reader already released */
+      /* Reader already released */
     }
   }
 

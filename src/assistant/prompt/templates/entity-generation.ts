@@ -10,7 +10,7 @@
  */
 
 // Value import — ENTITY_TEMPLATES is used lazily inside resolveEntityGenerationPrompt,
-// avoiding a circular-runtime dependency (entity-templates.ts only imports a type).
+// Avoiding a circular-runtime dependency (entity-templates.ts only imports a type).
 import type { Config, } from "../../../config/schema";
 import {
   DEFAULT_ENTITY_TEMPLATE_POSITION,

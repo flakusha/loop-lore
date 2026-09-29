@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// src/config/templates-loader/validation-domains.ts — character and workflow
-// domain validators (split from validation.ts; the exported validators are
-// re-exported there so existing import paths keep working).
+// Character and workflow domain validators (split from validation.ts; the
+// exported validators are re-exported there so existing import paths keep
+// working).
 
 import { jsonStringifyOr, } from "../../utils";
 
