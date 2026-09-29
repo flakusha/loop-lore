@@ -7,6 +7,7 @@ import type { Kysely, } from "kysely";
 import { sql, } from "kysely";
 import { checkChatAccess, } from "../chat/service/access";
 import type { DB, } from "../db/schema";
+import { hashId, } from "../telemetry/service";
 import { parseExpiryMs, toDate, } from "../utils/date";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { jsonError, jsonResponse, requireUserId, } from "./http-utils";
@@ -32,6 +33,11 @@ export function analyticsRoutes({ database, }: HandleOpts, prefix = "/api",): El
       if (typeof userId !== "string") { return userId; }
 
       const { chatId, } = ctx.params as { chatId: string };
+      // Telemetry rows store SHA-256-hashed IDs (`telemetry/service.ts`), so
+      // these filters must hash the raw request values the same way or every
+      // row reads 0 (BUG-analytics-per-user-routes-filter-telemetry-events-by-raw-ids).
+      const telemetryChatId = hashId(chatId,) ?? "";
+      const telemetryUserId = hashId(userId,) ?? "";
       const access = await checkChatAccess(database, chatId, userId, null,);
       const canReadChat = access.ok;
       if (!canReadChat) {
@@ -65,8 +71,8 @@ export function analyticsRoutes({ database, }: HandleOpts, prefix = "/api",): El
 
       let generations = database
         .selectFrom("telemetry_events",)
-        .where("chat_id", "=", chatId,)
-        .where("user_id", "=", userId,)
+        .where("chat_id", "=", telemetryChatId,)
+        .where("user_id", "=", telemetryUserId,)
         .where("event_type", "=", "generation.completed",);
       if (fromIso !== null) { generations = generations.where("created_at", ">=", fromIso,); }
       if (toIso !== null) { generations = generations.where("created_at", "<", toIso,); }
@@ -101,6 +107,7 @@ export function analyticsRoutes({ database, }: HandleOpts, prefix = "/api",): El
     .get(`${prefix}/analytics/overview`, async (ctx: any,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
+      const telemetryUserId = hashId(userId,) ?? "";
 
       const overview = await database
         .selectFrom("chats",)
@@ -131,7 +138,7 @@ export function analyticsRoutes({ database, }: HandleOpts, prefix = "/api",): El
 
       const completed = await database
         .selectFrom("telemetry_events",)
-        .where("user_id", "=", userId,)
+        .where("user_id", "=", telemetryUserId,)
         .where("event_type", "=", "generation.completed",)
         .select([
           sql<number>`count(*)`.as("totalGenerations",),
@@ -141,7 +148,7 @@ export function analyticsRoutes({ database, }: HandleOpts, prefix = "/api",): El
         .executeTakeFirst();
       const failed = await database
         .selectFrom("telemetry_events",)
-        .where("user_id", "=", userId,)
+        .where("user_id", "=", telemetryUserId,)
         .where("event_type", "=", "generation.failed",)
         .select(sql<number>`count(*)`.as("failedGenerations",),)
         .executeTakeFirst();
