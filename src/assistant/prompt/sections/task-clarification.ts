@@ -20,7 +20,7 @@ export const taskClarificationSection: SectionBuilder = {
   enabled: (ctx,) => ctx.task !== null,
   build: (ctx,) => {
     // Defensive: `enabled` should have gated this, but if a caller builds the
-    // section directly we still honor `task: null` as opt-out.
+    // Section directly we still honor `task: null` as opt-out.
     if (ctx.task === null) { return []; }
     const isCharacter = ctx.actor.type === "character";
     const isGM = ctx.task === "gm-decision";

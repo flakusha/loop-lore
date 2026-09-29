@@ -4,7 +4,7 @@
 // ── HTTP / request-building dispatchers ──────────────────
 //
 // Extracted from the `OpenAiCompatibleProvider` class body. Each dispatcher is
-// threaded with an explicit `state` handle (the class's private fields).
+// Threaded with an explicit `state` handle (the class's private fields).
 
 // size-allow: 264
 
@@ -15,10 +15,10 @@ import { ProviderAuthError, ProviderError, ProviderRateLimitError, } from "../ty
 import type { OpenAiCompatibleState, } from "./types";
 
 /**
- * camelCase param name → snake_case body key (`dryBase` → `dry_base`).
+ * CamelCase param name → snake_case body key (`dryBase` → `dry_base`).
  * Lets the override loop in `buildBody` recognise already-mapped params
  * without a separately maintained key list (which rots on every new param).
- * @param key camelCase param name from `GenerateRequest.params`.
+ * @param key CamelCase param name from `GenerateRequest.params`.
  */
 function toSnakeCase(key: string,): string {
   return key.replace(/([A-Z])/g, (ch,) => `_${ch.toLowerCase()}`,);
@@ -84,9 +84,9 @@ export function buildBody(
   applyLlamaParams(body, req.params,);
 
   // Provider-specific overrides — anything not already mapped above passes
-  // through verbatim. The snake_case check catches camelCase params whose
+  // Through verbatim. The snake_case check catches camelCase params whose
   // mapped key is already in the body, so no key list to keep in sync.
-  // `undefined` values are skipped: the route layer always sets every known
+  // `Undefined` values are skipped: the route layer always sets every known
   // key, and forwarding them would leak camelCase names as own properties.
   for (const [key, value,] of Object.entries(req.params,)) {
     // Skip unset values (route layer sets every known key) and prototype-pollution

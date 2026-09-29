@@ -136,7 +136,7 @@ export interface ImageEditProvider {
 // Re-export ComfyUINodeInfo from generation module for convenience
 export type { ComfyUINodeInfo, } from "../generation/providers/comfyui";
 
-/** sd-server capability info */
+/** SD-server capability info */
 export interface SDServerCapabilities {
   apiFamily: ImageApiFamily;
   features: ImageEditCategory[];

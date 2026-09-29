@@ -4,7 +4,7 @@
 // ── Health / list-models / embed dispatchers (Ollama native) ─────
 //
 // Threaded with an explicit `state` handle, mirroring the openai-compatible
-// provider's dispatcher structure.
+// Provider's dispatcher structure.
 
 import type { ModelInfo, } from "../types";
 import { fetchRaw, handleErrorResponse, } from "./http";

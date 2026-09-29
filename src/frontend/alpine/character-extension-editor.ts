@@ -5,7 +5,7 @@
 // ── Character extension editor panel state.
 //
 // Owns the per-actor draft of the canonical character's rich extension
-// fields (abilities, inventory, vitals, equipment, motivations,
+// Fields (abilities, inventory, vitals, equipment, motivations,
 // relationships, appearance_details, speech_patterns, plugin_bundle). The
 // panel is generic over any bundle — fantasy-rpg ships with required
 // fields, but the factory composes optional requirements at runtime
@@ -229,7 +229,7 @@ function safeParse(raw: string,): CharacterExtensionsPayload {
     if (result.ok && result.value && typeof result.value === "object" && !Array.isArray(result.value,)) {
       return result.value;
     }
-  } catch { /* fallthrough */ }
+  } catch { /* Fallthrough */ }
   return emptyPayload();
 }
 
@@ -252,7 +252,7 @@ export function characterExtensionEditorFactory(
   state.message = "";
   state.validation = { valid: true, missing: [], };
   state.setActorId(actorId,);
-  // load() makes a network request; callers can await or ignore.
+  // Load() makes a network request; callers can await or ignore.
   void state.load();
   return state;
 }

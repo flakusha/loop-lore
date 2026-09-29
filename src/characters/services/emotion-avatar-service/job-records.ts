@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// src/characters/services/emotion-avatar-service/job-records.ts — DB-backed job records
+// DB-backed job records for emotion avatar generation.
 
 import { type Kysely, sql, type UpdateObject, } from "kysely";
 import type { EmotionType, } from "../../../db/enums";

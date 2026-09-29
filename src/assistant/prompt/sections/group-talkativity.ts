@@ -30,7 +30,7 @@ export const groupTalkativitySection: SectionBuilder = {
       .where("chat_participants.chat_id", "=", ctx.params.chatId,)
       .where("actors.id", "in", ids,)
       // Deterministic line order — without this, SQLite returns rows in
-      // index/rowid order and the prompt jitters between identical calls.
+      // Index/rowid order and the prompt jitters between identical calls.
       .orderBy("actors.display_name",)
       .execute();
     if (rows.length === 0) { return []; }
