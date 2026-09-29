@@ -6,7 +6,7 @@
 **Summary:** The 'e2e - browser (baseline)' gate fails intermittently with a rotating set of files. Not resource contention - a click/wait response race in five login helpers that only loses under load.
 **Context:** scripts/check-parallel.mjs truncated failing-gate output to head-5 + tail-20, discarding the assertion and making the failure look like resource contention for several sessions.
 **Acceptance Criteria:** Waiters are armed before the click that triggers them in every browser flow, and a failing gate's full output is persisted so the assertion is always recoverable.
-**Status:** In Progress
+**Status:** Done
 **Priority:** medium
 **Effort:** Small
 
@@ -49,5 +49,19 @@ The gate could not be trusted to gate a merge: a red run and a green run were bo
 
 ## Out of scope (filed separately)
 
-- `browser-server.ts` `cleanup()` destroys the DB without first quiescing the async store, producing the swallowed teardown noise. The store's flush is registered through Elysia `app.onStop`, which never fires because the harness serves via `Bun.serve({ fetch })` instead of `app.listen()`.
-- `src/async/spill.ts` `OFFLOAD_DIR` is a fixed, CWD-relative, never-GC'd path shared by every worktree.
+- `browser-server.ts` `cleanup()` destroys the DB without first quiescing the async store, producing the swallowed teardown noise. The store's flush is registered through Elysia `app.onStop`, which never fires because the harness serves via `Bun.serve({ fetch })` instead of `app.listen()`. Filed as `BUG-browser-teardown-destroys-the-db-before-flushing-the-async-s` (7ce47b5).
+- `src/async/spill.ts` `OFFLOAD_DIR` is a fixed, CWD-relative, never-GC'd path shared by every worktree. Ruled out as the cause of this flake, but a real cross-run hazard on its own. Filed as `BUG-async-spill-offload-dir-is-a-fixed-cwd-relative-path-shared-` (0114005).
+
+## Verification
+
+The click/wait race reproduces on demand. Four login-heavy browser files
+(`access-correctness`, `auth-flow`, `admin-dashboard-empty`,
+`admin-dashboard-populated`) run three times each while the CPU is
+saturated by a busy loop:
+
+- patched: 3/3 runs green (11 pass / 0 fail each).
+- unpatched (waiter re-attached after the click): run 2 fails
+  `non-admin cannot load the admin view`.
+
+Same tree, same host, same load — the ordering is the variable, so the
+fix is load-bearing rather than a lucky pass.

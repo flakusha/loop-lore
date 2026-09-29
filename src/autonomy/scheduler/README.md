@@ -63,6 +63,14 @@ A world with **no row at all** is treated as due (epoch cursor, not
 paused) — autonomy does not require an opt-in seed row per world.
 `stateFor` and `stepOnce` synthesize the same shape for it.
 
+That guarantee covers **which worlds are selected and in what order**
+only — not what a turn does. Wander/flee target choice calls
+`Math.random()` directly inside `processMovementTick`
+(`src/rpg/npc-navigation/service/processing.ts:160,246`), and the jitter
+drop consumes a seeded draw, so movement output is not reproducible yet.
+The tier split, the seed placement, and why the governor's TTL cache is
+excluded are drafted in `TASK-autonomy-deterministic-turns`.
+
 ## Dispatch
 
 Per due world, the scheduler resolves cadence from the layered
