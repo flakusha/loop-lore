@@ -33,6 +33,11 @@ async function loginAsAdmin(ctx: BrowserTestContext,) {
     await page.click("[data-testid='login-submit']",);
     // The login POST response proves the session cookie was set.
     await loginRes;
+    // The login POST returning is not the same as the login navigation
+    // finishing — the client still has a redirect to /views/chat in flight.
+    // The goto() below is aborted if that competing navigation lands first,
+    // so wait for the redirect to actually settle.
+    await page.waitForURL((url,) => url.pathname === "/views/chat", { timeout: 30_000, },);
     await page.goto(`${ctx.url}/views/admin`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
     await page.waitForSelector("[data-testid='admin-header']", { timeout: 15_000, },);
     return { page, errors, };
