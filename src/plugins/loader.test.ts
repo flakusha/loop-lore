@@ -17,7 +17,7 @@ import { join, } from "node:path";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import type { Logger, } from "../logger";
-import { setGlobalLogger, } from "../logger";
+import { createLogger, getLogger, setGlobalLogger, } from "../logger";
 import { writeMemoryNoteTool, } from "../generation/tools/write-memory-note";
 import { dispatchPluginRoute, loadAllPlugins, loadSinglePlugin, registry, unloadAllPlugins, } from "./loader";
 
@@ -174,14 +174,25 @@ function stubDb(options: StubDbOptions = {},): Kysely<DB> {
   } as unknown as Kysely<DB>;
 }
 
-/** Null logger — keeps loader chatter out of test output. */
-const nullLogger = {
+/**
+ * Null logger — keeps loader chatter out of test output.
+ *
+ * Every `Logger` method must be present: `child()` hands this same object
+ * to any caller, so a missing method (`trace`, `fatal`) turns a partial
+ * stub into a landmine for every test file that runs later in the process
+ * and resolves `getLogger().child(...)`.
+ */
+const nullLogger: Logger = {
+
   info: () => {},
   warn: () => {},
   error: () => {},
   debug: () => {},
   child: () => nullLogger,
-} as unknown as Logger;
+  addTransport: () => {},
+  setBindings: () => {},
+  flush: () => Promise.resolve(),
+};
 
 /**
  */
@@ -189,8 +200,21 @@ function globals(): Record<string, unknown> {
   return globalThis as unknown as Record<string, unknown>;
 }
 
+/** The logger in place before this suite replaced it, if any. */
+let priorLogger: Logger | null = null;
+let capturedPrior = false;
+
 beforeEach(() => {
   registry.unregisterAll();
+  if (!capturedPrior) {
+    capturedPrior = true;
+    // Throws when nothing initialized a logger yet — that is a valid state.
+    try {
+      priorLogger = getLogger();
+    } catch {
+      priorLogger = null;
+    }
+  }
   setGlobalLogger(nullLogger,);
 });
 
@@ -203,6 +227,9 @@ afterEach(async () => {
     delete globals()[key];
   }
   await unloadAllPlugins();
+  // Restore a real logger: leaving `nullLogger` installed makes every later
+  // test file in this process inherit a stub instead of the real one.
+  setGlobalLogger(priorLogger ?? createLogger({ level: "error", },),);
 });
 
 // ── loadSinglePlugin ───────────────────────────────────────────
@@ -233,12 +260,12 @@ describe("loadSinglePlugin", () => {
       seen.push({ level, entry, },);
     };
     setGlobalLogger({
+      ...nullLogger,
       info: capture("info",),
       warn: capture("warn",),
       error: capture("error",),
       debug: capture("debug",),
-      child: () => nullLogger,
-    } as unknown as Logger,);
+    },);
     const db = stubDb();
     const dir = makePluginDir({ "plugin.ts": FULL_PLUGIN, });
 
