@@ -23,9 +23,10 @@ import {
   insertChatParticipants,
   insertChats,
   insertMessages,
+  insertMessageSeen,
   insertUsers,
 } from "../../test-utils/insert-helpers";
-import { recordMessageSeen, } from "./seen";
+import { deleteMessageSeen, getMessageSeen, recordMessageSeen, } from "./seen";
 
 describe("recordMessageSeen — first-seen semantics", () => {
   let db: Kysely<DB>;
@@ -147,4 +148,99 @@ describe("recordMessageSeen — first-seen semantics", () => {
     const ts = await readSeenAt(messageId,);
     expect(ts,).toBeTruthy();
   });
+
+describe("getMessageSeen", () => {
+  const otherUserId = crypto.randomUUID();
+  const otherActorId = crypto.randomUUID();
+
+  beforeAll(async () => {
+    await insertUsers(db, `user-${otherUserId}`, "Second Viewer", { id: otherUserId, } as never,);
+    await insertActors(db, "Second Actor", { id: otherActorId, user_id: otherUserId, owner_id: otherUserId, } as never,);
+    await insertChatParticipants(db, chatId, otherActorId, {},);
+  });
+
+  test("returns grouped viewers with mapped fields; null seen_at maps to null", async () => {
+    const messageId = crypto.randomUUID();
+    await insertMessages(db, chatId, actorId, "user", "test", { id: messageId, } as never,);
+    await insertMessageSeen(db, messageId, actorId, { state: "seen", seen_at: "2020-05-05T05:05:05.000Z", },);
+    await insertMessageSeen(db, messageId, otherActorId, { state: "unseen", seen_at: null, },);
+
+    const result = await getMessageSeen(db, messageId, chatId, userId, null,);
+    if (!("ok" in result)) { throw new Error(`expected success, got ${result.code}`,); }
+    expect(result.ok,).toBe(true,);
+
+    const byActor = Object.fromEntries(result.viewers.map((v,) => [v.actorId, v,]),);
+    expect(byActor[actorId],).toEqual({ actorId, state: "seen", seenAt: "2020-05-05T05:05:05.000Z", },);
+    expect(byActor[otherActorId],).toEqual({ actorId: otherActorId, state: "unseen", seenAt: null, },);
+  });
+
+  test("access denied: non-participant user gets not_found", async () => {
+    const messageId = crypto.randomUUID();
+    await insertMessages(db, chatId, actorId, "user", "test", { id: messageId, } as never,);
+
+    // seen.ts returns the bare ServiceError (no { ok, error } wrapper).
+    const result = await getMessageSeen(db, messageId, chatId, crypto.randomUUID(), null,);
+    expect(result,).toEqual({ code: "not_found", message: "Chat not found", },);
+  });
 });
+
+describe("deleteMessageSeen", () => {
+  test("deletes an existing seen-state row", async () => {
+    const { messageId, } = await seedRow("seen", "2020-01-01T00:00:00.000Z",);
+
+    const result = await deleteMessageSeen(db, messageId, chatId, actorId, userId, null,);
+    expect(result,).toEqual({ ok: true, },);
+    expect(await readState(messageId,),).toBeNull();
+  });
+
+  test("access denied: non-participant user gets not_found and the row survives", async () => {
+    const { messageId, } = await seedRow("seen", "2020-01-01T00:00:00.000Z",);
+
+    const result = await deleteMessageSeen(db, messageId, chatId, actorId, crypto.randomUUID(), null,);
+    expect(result,).toEqual({ code: "not_found", message: "Chat not found", },);
+    expect(await readState(messageId,),).toBe("seen",);
+  });
+});
+
+describe("recordMessageSeen — insert paths and access control", () => {
+  test("default state is 'seen' and sets seen_at", async () => {
+    const messageId = crypto.randomUUID();
+    await insertMessages(db, chatId, actorId, "user", "test", { id: messageId, } as never,);
+
+    const result = await recordMessageSeen(db, messageId, chatId, actorId, userId, null,);
+    expect(result,).toEqual({ ok: true, },);
+    expect(await readState(messageId,),).toBe("seen",);
+    expect(await readSeenAt(messageId,),).toBeTruthy();
+  });
+
+  test("insert with state 'processing' sets seen_at", async () => {
+    const messageId = crypto.randomUUID();
+    await insertMessages(db, chatId, actorId, "user", "test", { id: messageId, } as never,);
+
+    await recordMessageSeen(db, messageId, chatId, actorId, userId, null, "processing",);
+
+    expect(await readState(messageId,),).toBe("processing",);
+    expect(await readSeenAt(messageId,),).toBeTruthy();
+  });
+
+  test("insert with state 'unseen' leaves seen_at null", async () => {
+    const messageId = crypto.randomUUID();
+    await insertMessages(db, chatId, actorId, "user", "test", { id: messageId, } as never,);
+
+    await recordMessageSeen(db, messageId, chatId, actorId, userId, null, "unseen",);
+
+    expect(await readState(messageId,),).toBe("unseen",);
+    expect(await readSeenAt(messageId,),).toBeNull();
+  });
+
+  test("access denied: non-participant user gets not_found and no row is created", async () => {
+    const messageId = crypto.randomUUID();
+    await insertMessages(db, chatId, actorId, "user", "test", { id: messageId, } as never,);
+
+    const result = await recordMessageSeen(db, messageId, chatId, actorId, crypto.randomUUID(), null, "seen",);
+    expect(result,).toEqual({ code: "not_found", message: "Chat not found", },);
+    expect(await readState(messageId,),).toBeNull();
+  });
+});
+});
+

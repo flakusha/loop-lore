@@ -3879,6 +3879,19 @@
     "title": "Logout deletes session without signature or ownership check",
     "type": "BUG"
   },
+  "BUG-LORE-CONSISTENCY-SCORER-ENTITY-MATCHING-BRANCH-UNREACHABLE-D": {
+    "hash": "9f7d4ef",
+    "git_issue": "9f7d4ef",
+    "extid": "BUG-LORE-CONSISTENCY-SCORER-ENTITY-MATCHING-BRANCH-UNREACHABLE-D",
+    "type": "BUG",
+    "title": "lore-consistency scorer entity-matching branch unreachable (dead code)",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-lore-consistency-scorer-entity-matching-branch-unreachable-d.md",
+    "status": "Not Started"
+  },
   "BUG-LORE-DECAY-GATE-IS-DEAD-CODE-AT-RUNTIME-PASSESCONFIDENCEFLOO": {
     "epic": "epic-lore-knowledge",
     "extid": "BUG-LORE-DECAY-GATE-IS-DEAD-CODE-AT-RUNTIME-PASSESCONFIDENCEFLOO",

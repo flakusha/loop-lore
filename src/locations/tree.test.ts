@@ -170,4 +170,162 @@ describe("LocationTreeService", () => {
       ).rejects.toThrow(/depth/,);
     });
   });
+
+  describe("edge cases and uncovered branches", () => {
+    let worldId: string;
+    let rootId: string;
+    let regionId: string;
+    let settlementId: string;
+    let buildingId: string;
+    let roomId: string;
+
+    beforeAll(async () => {
+      await reset();
+      await insertUsers(testDb.db, "test-owner", "Test Owner", { id: "test-owner", },);
+      worldId = await insertWorld("test-owner",);
+      rootId = await insertLocation(worldId, "Root",);
+      regionId = await insertLocation(worldId, "Region", rootId,);
+      settlementId = await insertLocation(worldId, "Settlement", regionId,);
+      buildingId = await insertLocation(worldId, "Building", settlementId,);
+      roomId = await insertLocation(worldId, "Room", buildingId,);
+    },);
+
+    test("depth: null and empty paths are depth 1", () => {
+      expect(LocationTreeService.depth(null,),).toBe(1,);
+      expect(LocationTreeService.depth("",),).toBe(1,);
+    },);
+
+    test("depth: counts separators in materialized paths", () => {
+      expect(LocationTreeService.depth("/a/",),).toBe(1,);
+      expect(LocationTreeService.depth("/a/b/",),).toBe(2,);
+      expect(LocationTreeService.depth("/a/b/c/",),).toBe(3,);
+    },);
+
+    test("insertLocation rejects a missing parent", async () => {
+      const svc = new LocationTreeService(testDb.db,);
+      await expect(svc.insertLocation({
+        worldId, name: "Orphan", parentLocationId: randomUUID(),
+      },),).rejects.toThrow("parent location not found",);
+    },);
+
+    test("insertLocation rejects a cross-world parent", async () => {
+      const svc = new LocationTreeService(testDb.db,);
+      const otherWorldId = await insertWorld("test-owner",);
+      const otherRootId = await insertLocation(otherWorldId, "OtherRoot",);
+      await expect(svc.insertLocation({
+        worldId, name: "Sneaky", parentLocationId: otherRootId,
+      },),).rejects.toThrow("cross-world parent rejected",);
+    },);
+
+    test("insertLocation persists custom fields", async () => {
+      const svc = new LocationTreeService(testDb.db,);
+      const newId = await svc.insertLocation({
+        worldId, name: "Custom", description: "desc", kind: "settlement", mobilityMode: "free", parentLocationId: rootId,
+      },);
+      const row = testDb.sqlite.query(
+        `SELECT world_id, description, connections, publication_status, kind, mobility_mode, parent_location_id
+         FROM locations WHERE id = ?`,
+      ).get(newId,) as Record<string, unknown>;
+      expect(row.world_id,).toBe(worldId,);
+      expect(row.description,).toBe("desc",);
+      expect(row.connections,).toBe("[]",);
+      expect(row.publication_status,).toBe("draft",);
+      expect(row.kind,).toBe("settlement",);
+      expect(row.mobility_mode,).toBe("free",);
+      expect(row.parent_location_id,).toBe(rootId,);
+    },);
+
+    test("insertLocation applies region/static defaults when kind and mobilityMode are omitted", async () => {
+      const svc = new LocationTreeService(testDb.db,);
+      const newId = await svc.insertLocation({ worldId, name: "Defaults", parentLocationId: null, },);
+      const row = testDb.sqlite.query(
+        `SELECT description, connections, publication_status, kind, mobility_mode FROM locations WHERE id = ?`,
+      ).get(newId,) as Record<string, unknown>;
+      expect(row.description,).toBe("",);
+      expect(row.connections,).toBe("[]",);
+      expect(row.publication_status,).toBe("draft",);
+      expect(row.kind,).toBe("region",);
+      expect(row.mobility_mode,).toBe("static",);
+    },);
+
+    test("repairPath returns empty string for an unknown location", async () => {
+      const svc = new LocationTreeService(testDb.db,);
+      expect(await svc.repairPath(randomUUID(),),).toBe("",);
+    },);
+
+    test("repairPath on a root recomputes '/id/'", async () => {
+      const svc = new LocationTreeService(testDb.db,);
+      expect(await svc.repairPath(rootId,),).toBe(`/${rootId}/`,);
+    },);
+
+    test("getDescendants of a leaf returns empty", async () => {
+      const svc = new LocationTreeService(testDb.db,);
+      expect(await svc.getDescendants(roomId,),).toEqual([],);
+    },);
+
+    test("tree returns empty for a world with no locations", async () => {
+      const svc = new LocationTreeService(testDb.db,);
+      const emptyWorldId = await insertWorld("test-owner",);
+      expect(await svc.tree(emptyWorldId,),).toEqual([],);
+    },);
+
+    test("tree returns a single root with no children", async () => {
+      const svc = new LocationTreeService(testDb.db,);
+      const singleWorldId = await insertWorld("test-owner",);
+      const singleRootId = await insertLocation(singleWorldId, "OnlyRoot",);
+      const nodes = await svc.tree(singleWorldId,);
+      expect(nodes,).toHaveLength(1,);
+      expect(nodes[0]!.id,).toBe(singleRootId,);
+      expect(nodes[0]!.children,).toEqual([],);
+    },);
+
+    test("tree nests children under parents with roots ordered by name", async () => {
+      const svc = new LocationTreeService(testDb.db,);
+      const treeWorldId = await insertWorld("test-owner",);
+      // Insert out of name order to prove ordering comes from the query, not insertion.
+      const zeta = await insertLocation(treeWorldId, "Zeta",);
+      const alpha = await insertLocation(treeWorldId, "Alpha",);
+      const alphaChild = await insertLocation(treeWorldId, "AlphaChild", alpha,);
+      const alphaGrandchild = await insertLocation(treeWorldId, "AlphaGrandchild", alphaChild,);
+      const zetaChild = await insertLocation(treeWorldId, "ZetaChild", zeta,);
+      const nodes = await svc.tree(treeWorldId,);
+      expect(nodes.map((n,) => n.id,),).toEqual([alpha, zeta,],);
+      expect(nodes[0]!.children.map((c,) => c.id,),).toEqual([alphaChild,],);
+      expect(nodes[0]!.children[0]!.children.map((c,) => c.id,),).toEqual([alphaGrandchild,],);
+      expect(nodes[0]!.children[0]!.children[0]!.children,).toEqual([],);
+      expect(nodes[1]!.children.map((c,) => c.id,),).toEqual([zetaChild,],);
+      // tree() stamps depth 0 and the node's own id as path.
+      expect(nodes[0]!.depth,).toBe(0,);
+      expect(nodes[0]!.path,).toBe(alpha,);
+    },);
+
+    test("moveSubtree rejects a move that would create a cycle", async () => {
+      const svc = new LocationTreeService(testDb.db,);
+      // roomId is a descendant of rootId — moving root under room is a cycle.
+      await expect(svc.moveSubtree(rootId, roomId,),).rejects.toThrow("move would create a cycle",);
+    },);
+
+    test("moveSubtree rejects unknown location or parent", async () => {
+      const svc = new LocationTreeService(testDb.db,);
+      await expect(svc.moveSubtree(randomUUID(), rootId,),).rejects.toThrow("location or parent not found",);
+      await expect(svc.moveSubtree(rootId, randomUUID(),),).rejects.toThrow("location or parent not found",);
+    },);
+
+    test("moveSubtree to null re-parents to the world root and rewrites paths", async () => {
+      const svc = new LocationTreeService(testDb.db,);
+      const moveWorldId = await insertWorld("test-owner",);
+      const moveRoot = await insertLocation(moveWorldId, "MoveRoot",);
+      const moveChild = await insertLocation(moveWorldId, "MoveChild", moveRoot,);
+      await svc.moveSubtree(moveRoot, null,);
+      const rootRow = testDb.sqlite.query(
+        `SELECT parent_location_id, path FROM locations WHERE id = ?`,
+      ).get(moveRoot,) as { parent_location_id: string | null; path: string };
+      expect(rootRow.parent_location_id,).toBeNull();
+      expect(rootRow.path,).toBe(`/${moveRoot}/`,);
+      const childRow = testDb.sqlite.query(
+        `SELECT path FROM locations WHERE id = ?`,
+      ).get(moveChild,) as { path: string };
+      expect(childRow.path,).toBe(`/${moveRoot}/${moveChild}/`,);
+    },);
+  });
 });

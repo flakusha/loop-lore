@@ -33,6 +33,13 @@ export interface LocationTreeNode {
   depth: number;
 }
 
+
+/** A `LocationTreeNode` plus its immediate children, recursively. `tree()` also emits `name` for display. */
+export type LocationTreeBranch = LocationTreeNode & {
+  name: string;
+  children: LocationTreeBranch[];
+};
+
 export interface InsertLocationInput {
   worldId: string;
   name: string;
@@ -157,7 +164,7 @@ export class LocationTreeService {
    * Roots are locations with parent_location_id IS NULL.
    * Each node carries its immediate children.
    */
-  async tree(worldId: string,): Promise<Array<LocationTreeNode & { children: LocationTreeNode[] }>> {
+  async tree(worldId: string,): Promise<LocationTreeBranch[]> {
     // Load all locations for the world once, then assemble the tree in memory.
     // For ≤ a few thousand locations per world this is fine; if a world grows
     // larger, swap this for a recursive CTE that materializes nodes client-side.
@@ -175,7 +182,7 @@ export class LocationTreeService {
       if (bucket) { bucket.push(row,); }
       else { byParent.set(key, [row,],); }
     }
-    const build = (parentId: string | null,): Array<LocationTreeNode & { children: LocationTreeNode[] }> => {
+    const build = (parentId: string | null,): LocationTreeBranch[] => {
       const kids = byParent.get(parentId,) ?? [];
       return kids.map((k,) => ({
         id: k.id,
@@ -184,7 +191,7 @@ export class LocationTreeService {
         depth: 0,
         path: k.id,
         children: build(k.id,),
-      } as unknown as LocationTreeNode & { children: LocationTreeNode[] }));
+      }));
     };
     return build(null,);
   }

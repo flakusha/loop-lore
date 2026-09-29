@@ -21,6 +21,7 @@ import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertChats, } from "../../test-utils/insert-helpers";
 import { describeOrSkipStrict, STRICTLY_ISOLATED, } from "../../test-utils/isolate-only";
 import type { GenDeps, } from "./deps";
+import type { GenerateTextFn, } from "../../story/game-master";
 
 // Bun's mock.module is process-global and cannot be unmocked: under
 // `bun run` (ISOLATED=true) an earlier file (e.g.
@@ -44,12 +45,16 @@ let mockTurnResponse: string | null = "The hero advances.";
 let capturedEncryptPlaintext: unknown = null;
 let capturedHooksContent: unknown = null;
 let capturedAcceptResponse: unknown = null;
+let capturedGenerateText: GenerateTextFn | null = null;
+let hooksAllowed = true;
+const generateTextCalls: Array<Record<string, unknown>> = [];
 
 if (STRICTLY_ISOLATED) {
   mock.module("../../story", () => ({
     GameMasterService: class {
-      constructor(opts: { gmConfig: unknown },) {
+      constructor(opts: { gmConfig: unknown; generateText: GenerateTextFn },) {
         capturedGmConfig = opts.gmConfig;
+        capturedGenerateText = opts.generateText;
       }
 
       async initialize() {
@@ -58,6 +63,19 @@ if (STRICTLY_ISOLATED) {
 
       async executeTurn() {
         executeTurnCalls += 1;
+        // Drive the per-actor generateText callback the way the real GM
+        // service does: explicit provider/model override + sampling params.
+        if (capturedGenerateText) {
+          const params: Parameters<GenerateTextFn>[0] = {
+            messages: [{ role: "user", content: "turn prompt", },],
+            provider: "actor-provider",
+            model: "actor-model",
+            temperature: 0.5,
+            maxTokens: 100,
+          };
+          generateTextCalls.push(params,);
+          await capturedGenerateText(params,);
+        }
         return {
           prompt: mockTurnPrompt,
           response: mockTurnResponse,
@@ -77,7 +95,7 @@ if (STRICTLY_ISOLATED) {
     runContentHooks: async (args: { content: unknown },) => {
       capturedHooksContent = args.content;
       return {
-        allowed: true,
+        allowed: hooksAllowed,
         dominantEmotion: undefined,
         moodShiftDelta: undefined,
         actorId: "actor-gm",
@@ -94,9 +112,9 @@ const { triggerStoryModeGeneration, } = await import("./story-mode");
  */
 function makeDeps(): GenDeps {
   return {
-    resolveProvider: mock(async () => ({
-      resolvedProviderName: "test-provider",
-      resolvedModel: "test-model",
+    resolveProvider: mock(async (args: { provider?: string; model?: string },) => ({
+      resolvedProviderName: args.provider ?? "test-provider",
+      resolvedModel: args.model ?? "test-model",
       resolvedApiKey: "key",
       provider: {
         complete: async () => ({ content: "GM replies.", }),
@@ -167,6 +185,8 @@ describeReal("triggerStoryModeGeneration — gm_config NULL must not skip genera
     capturedEncryptPlaintext = null;
     capturedHooksContent = null;
     capturedAcceptResponse = null;
+    hooksAllowed = true;
+    generateTextCalls.length = 0;
     const created = await createTestDb();
     db = created.db;
   },);
@@ -271,5 +291,133 @@ describeReal("triggerStoryModeGeneration — gm_config NULL must not skip genera
     expect(messages,).toHaveLength(1,);
     expect(messages[0]!.content,).toBe("cipher",);
     expect(messages[0]!.actor_id,).toBe("actor-gm",);
+  }, 10000,);
+
+  test("valid gmConfig: llmConfig/actorModels/humanGM/escalationThreshold passthrough", async () => {
+    await seedStoryChat(db,);
+
+    await triggerStoryModeGeneration({
+      database: db,
+      config: { templates: { llm: {}, }, encryption: {}, } as never,
+      chatId: "chat-1",
+      parentMessageId: null,
+      userId: "user-1",
+      gmConfig: JSON.stringify({
+        type: "llm",
+        llmConfig: { temperature: 0.7, },
+        actorModels: { "actor-gm": { provider: "p", model: "m", }, },
+        humanGM: { tone: "grim", },
+        escalationThreshold: 3,
+      },),
+      worldId: null,
+      deps: makeDeps(),
+    },);
+
+    expect(capturedGmConfig,).toEqual({
+      type: "llm",
+      llmConfig: { temperature: 0.7, },
+      actorModels: { "actor-gm": { provider: "p", model: "m", }, },
+      humanGM: { tone: "grim", },
+      escalationThreshold: 3,
+    },);
+  }, 10000,);
+
+  test("invalid gmConfig JSON: synthesizes default LLM config without crashing", async () => {
+    await seedStoryChat(db,);
+
+    await triggerStoryModeGeneration({
+      database: db,
+      config: { templates: { llm: {}, }, encryption: {}, } as never,
+      chatId: "chat-1",
+      parentMessageId: null,
+      userId: "user-1",
+      gmConfig: "{{{not-json",
+      worldId: null,
+      deps: makeDeps(),
+    },);
+
+    expect((capturedGmConfig as { type?: string }).type,).toBe("llm",);
+    expect(executeTurnCalls,).toBe(1,);
+  }, 10000,);
+
+  test("generateText callback: per-actor provider/model override flows to stored message", async () => {
+    await seedStoryChat(db,);
+
+    await triggerStoryModeGeneration({
+      database: db,
+      config: { templates: { llm: {}, }, encryption: {}, } as never,
+      chatId: "chat-1",
+      parentMessageId: null,
+      userId: "user-1",
+      gmConfig: null,
+      worldId: null,
+      deps: makeDeps(),
+    },);
+
+    expect(generateTextCalls,).toHaveLength(1,);
+    expect(generateTextCalls[0],).toMatchObject({
+      provider: "actor-provider",
+      model: "actor-model",
+      temperature: 0.5,
+      maxTokens: 100,
+    },);
+    const messages = await db
+      .selectFrom("messages",)
+      .select(["model_id", "provider",],)
+      .where("chat_id", "=", "chat-1",)
+      .execute();
+    expect(messages,).toHaveLength(1,);
+    expect(messages[0]!.model_id,).toBe("actor-model",);
+    expect(messages[0]!.provider,).toBe("actor-provider",);
+  }, 10000,);
+
+  test("content hooks blocked: no message stored, acceptResponse skipped", async () => {
+    hooksAllowed = false;
+    await seedStoryChat(db,);
+
+    await triggerStoryModeGeneration({
+      database: db,
+      config: { templates: { llm: {}, }, encryption: {}, } as never,
+      chatId: "chat-1",
+      parentMessageId: null,
+      userId: "user-1",
+      gmConfig: null,
+      worldId: null,
+      deps: makeDeps(),
+    },);
+
+    expect(executeTurnCalls,).toBe(1,);
+    const messages = await db
+      .selectFrom("messages",)
+      .select("id",)
+      .where("chat_id", "=", "chat-1",)
+      .execute();
+    expect(messages,).toHaveLength(0,);
+    expect(capturedAcceptResponse,).toBeNull();
+  }, 10000,);
+
+  test("hallucination detected: unknown proper noun triggers warn path", async () => {
+    mockTurnResponse = "Zarathos the Bold conquers the northern realm today.";
+    await seedStoryChat(db,);
+
+    await triggerStoryModeGeneration({
+      database: db,
+      config: { templates: { llm: {}, }, encryption: {}, } as never,
+      chatId: "chat-1",
+      parentMessageId: null,
+      userId: "user-1",
+      gmConfig: null,
+      worldId: null,
+      deps: makeDeps(),
+    },);
+
+    // Detection is warn-only: the message is still stored and accepted.
+    const messages = await db
+      .selectFrom("messages",)
+      .select("id",)
+      .where("chat_id", "=", "chat-1",)
+      .execute();
+    expect(messages,).toHaveLength(1,);
+    expect(capturedAcceptResponse,).toBe(mockTurnResponse,);
   }, 10000,);
 },);
