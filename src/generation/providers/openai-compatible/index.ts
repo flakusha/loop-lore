@@ -8,7 +8,7 @@
 // See .plan/epics/epic-provider-plugin-ecosystem.md for full API mapping.
 //
 // `OpenAiCompatibleProvider` extends the shared `BaseProvider`; the
-// provider-specific bits live in sibling dispatcher modules.
+// Provider-specific bits live in sibling dispatcher modules.
 
 import type { ProviderInstanceConfig, } from "../../../config/schema";
 import { BaseProvider, type BaseProviderDispatchers, } from "../base";

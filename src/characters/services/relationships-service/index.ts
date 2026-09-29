@@ -22,7 +22,7 @@ import { createRelationship, deleteRelationship, updateRelationship, } from "./w
 
 /** Public API type — merged with the factory value below. */
 // The empty interface is intentional: it merges the `RelationshipsService`
-// factory value with a same-named type so one name is both API type and
+// Factory value with a same-named type so one name is both API type and
 // constructor.
 export interface RelationshipsService extends RelationshipsServiceIface {}
 

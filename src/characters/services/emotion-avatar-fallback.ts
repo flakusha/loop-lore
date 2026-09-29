@@ -73,7 +73,7 @@ export async function extractAvatarMetadata(
     return {};
   }
 
-  // asset.alt_text wins over any character-derived caption; if absent, fall
+  // Asset.alt_text wins over any character-derived caption; if absent, fall
   // back to actors.description when the caller knows the actor.
   let caption: string | undefined = asset.alt_text ?? undefined;
   let tags: Record<string, string> | undefined;
@@ -108,7 +108,7 @@ export async function extractAvatarMetadata(
     }
   }
   // Drop-in compat: only surface `tags` when the caller passed `actorId`,
-  // otherwise callers using the old single-arg signature get an unchanged
+  // Otherwise callers using the old single-arg signature get an unchanged
   // shape (no `tags: undefined` key).
   return tags !== undefined
     ? {

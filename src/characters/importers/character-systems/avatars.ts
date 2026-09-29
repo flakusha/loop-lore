@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// src/characters/importers/character-systems/avatars.ts — Import avatar data
+// Import avatar data into the character systems importer result.
 
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../../db/schema";

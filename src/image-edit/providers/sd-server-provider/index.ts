@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * sd-server Image Edit Provider — Executes templates via sd-server API
+ * SD-server Image Edit Provider — Executes templates via sd-server API
  *
  * Translates workflow templates to sd-server API calls (txt2img, img2img).
  * sd-server uses OpenAI-compatible, SDAPI, or sd.cpp API families.

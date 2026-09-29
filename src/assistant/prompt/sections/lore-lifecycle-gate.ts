@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * lore-lifecycle-gate — extracted from `lore.ts` to keep that file under the
+ * Lore-lifecycle-gate — extracted from `lore.ts` to keep that file under the
  * 250-line size limit. Composes the lifecycle gate (confidence floor +
  * disputed-wrap) into a single per-entry decision.
  *

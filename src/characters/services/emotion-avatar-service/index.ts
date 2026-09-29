@@ -109,7 +109,7 @@ export class EmotionAvatarService {
     void (async () => {
       try {
         // Auto-matting: an explicitly passed provider wins; otherwise resolve
-        // from `generation.matting`. Section absent / backend "none" /
+        // From `generation.matting`. Section absent / backend "none" /
         // autoEnqueue false → no provider, raw assets stay usable.
         const matting = loadConfig().generation.matting;
         const mattingEnabled = matting ? matting.autoEnqueue !== false : false;

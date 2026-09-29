@@ -32,7 +32,7 @@ export async function handleGenerationError(
   if (attemptId) {
     try {
       await d.failGeneration({ attemptId, error: error as Error, db: database, },);
-    } catch { /* best-effort */ }
+    } catch { /* Best-effort */ }
   }
   if (isTelemetryEnabled()) {
     void record(database, {

@@ -64,7 +64,7 @@ export async function runLlmAssist(
 
   // 2. Stubbed summarizer — production wires the aux-LLM call here.
   //    For now we emit an `observation` entry so the wiring is
-  //    exercisable end-to-end via the API.
+  //    Exercisable end-to-end via the API.
   const entry = await insertGrowthLog(db, {
     actorId: opts.actorId,
     axis: opts.hint?.axis ?? "arc",
