@@ -94,44 +94,44 @@ describe("detectNsfwLevel", () => {
     for (const kw of ["explicit", "graphic", "violent", "brutal", "gore",]) {
       expect(detectNsfwLevel(`some ${kw} content here`,),).toBe("intense",);
     }
-  },);
+  });
 
   test("returns moderate for each moderate keyword", () => {
     for (const kw of ["suggestive", "provocative", "steamy", "passionate", "arousing",]) {
       expect(detectNsfwLevel(`some ${kw} content here`,),).toBe("moderate",);
     }
-  },);
+  });
 
   test("returns mild for each mild keyword", () => {
     for (const kw of ["flirt", "attractive", "beautiful", "handsome", "charming",]) {
       expect(detectNsfwLevel(`some ${kw} content here`,),).toBe("mild",);
     }
-  },);
+  });
 
   test("matches keywords case-insensitively", () => {
     expect(detectNsfwLevel("EXPLICIT content",),).toBe("intense",);
     expect(detectNsfwLevel("Very GORE-ish",),).toBe("intense",);
     expect(detectNsfwLevel("quite Steamy",),).toBe("moderate",);
     expect(detectNsfwLevel("so CHARMING",),).toBe("mild",);
-  },);
+  });
 
   test("intense outranks moderate and mild", () => {
     expect(detectNsfwLevel("explicit, suggestive and flirtatious",),).toBe("intense",);
-  },);
+  });
 
   test("moderate outranks mild", () => {
     expect(detectNsfwLevel("suggestive and flirtatious",),).toBe("moderate",);
-  },);
+  });
 
   test("matches keywords as substrings", () => {
     expect(detectNsfwLevel("explicitly described",),).toBe("intense",);
     expect(detectNsfwLevel("blood and gorefest",),).toBe("intense",);
-  },);
+  });
 
   test("returns none when no keyword is present", () => {
     expect(detectNsfwLevel("a perfectly innocent gardening manual",),).toBe("none",);
     expect(detectNsfwLevel("",),).toBe("none",);
-  },);
+  });
 });
 
 // ── detectNsfwWithLlm ───────────────────────────────────────
@@ -142,44 +142,53 @@ describe("detectNsfwWithLlm", () => {
   },);
 
   test("maps each nsfw rating to its level", async () => {
-    expect(await detectNsfwWithLlm("x", makeCtx(), makeAux(async () => auxReply("nsfw_mild"),)),).toBe("mild",);
-    expect(await detectNsfwWithLlm("x", makeCtx(), makeAux(async () => auxReply("nsfw_moderate"),)),).toBe("moderate",);
-    expect(await detectNsfwWithLlm("x", makeCtx(), makeAux(async () => auxReply("nsfw_intense"),)),).toBe("intense",);
-    expect(await detectNsfwWithLlm("x", makeCtx(), makeAux(async () => auxReply("nsfw_extreme"),)),).toBe("extreme",);
-  },);
+    expect(await detectNsfwWithLlm("x", makeCtx(), makeAux(async () => auxReply("nsfw_mild",)),),).toBe("mild",);
+    expect(await detectNsfwWithLlm("x", makeCtx(), makeAux(async () => auxReply("nsfw_moderate",)),),).toBe(
+      "moderate",
+    );
+    expect(await detectNsfwWithLlm("x", makeCtx(), makeAux(async () => auxReply("nsfw_intense",)),),).toBe("intense",);
+    expect(await detectNsfwWithLlm("x", makeCtx(), makeAux(async () => auxReply("nsfw_extreme",)),),).toBe("extreme",);
+  });
 
   test("null AUX response degrades to none", async () => {
-    const verdict = await detectNsfwWithLlm("x", makeCtx(), makeAux(async () => null,),);
+    const verdict = await detectNsfwWithLlm("x", makeCtx(), makeAux(async () => null),);
     expect(verdict,).toBe("none",);
-  },);
+  });
 
   test("missing rating degrades to none", async () => {
-    const aux = makeAux(async () => ({ content: "{}", model: "m", provider: "p", latencyMs: 1, promptTokens: 1, completionTokens: 1, }),);
+    const aux = makeAux(async () => ({
+      content: "{}",
+      model: "m",
+      provider: "p",
+      latencyMs: 1,
+      promptTokens: 1,
+      completionTokens: 1,
+    }));
     expect(await detectNsfwWithLlm("x", makeCtx(), aux,),).toBe("none",);
-  },);
+  });
 
   test("unknown or sfw rating degrades to none", async () => {
-    const sfw = await detectNsfwWithLlm("x", makeCtx(), makeAux(async () => auxReply("sfw"),));
-    const unknown = await detectNsfwWithLlm("x", makeCtx(), makeAux(async () => auxReply("bogus"),));
+    const sfw = await detectNsfwWithLlm("x", makeCtx(), makeAux(async () => auxReply("sfw",)),);
+    const unknown = await detectNsfwWithLlm("x", makeCtx(), makeAux(async () => auxReply("bogus",)),);
     expect(sfw,).toBe("none",);
     expect(unknown,).toBe("none",);
-  },);
+  });
 
   test("AUX failure fails open to none", async () => {
     const aux = makeAux(async () => {
       throw new Error("boom",);
     },);
     expect(await detectNsfwWithLlm("x", makeCtx(), aux,),).toBe("none",);
-  },);
+  });
 
   test("truncates user content to 500 chars", async () => {
-    const aux = makeAux(async () => auxReply("nsfw_mild"),);
+    const aux = makeAux(async () => auxReply("nsfw_mild",));
     await detectNsfwWithLlm("x".repeat(600,), makeCtx(), aux,);
     expect(aux.mock.calls[0]![3]![1]!.content,).toHaveLength(500,);
-  },);
+  });
 
   test("resolves the system prompt from config templates", async () => {
-    const aux = makeAux(async () => auxReply("nsfw_mild"),);
+    const aux = makeAux(async () => auxReply("nsfw_mild",));
     const ctx = makeCtx({
       config: {
         templates: { llm: { systemPrompts: { nsfw: "CUSTOM NSFW PROMPT", }, }, },
@@ -187,10 +196,10 @@ describe("detectNsfwWithLlm", () => {
     },);
     await detectNsfwWithLlm("x", ctx, aux,);
     expect(aux.mock.calls[0]![3]![0]!.content,).toBe("CUSTOM NSFW PROMPT",);
-  },);
+  });
 
   test("passes the AUX contract (task, temperature, maxTokens, user/chat)", async () => {
-    const aux = makeAux(async () => auxReply("nsfw_intense"),);
+    const aux = makeAux(async () => auxReply("nsfw_intense",));
     await detectNsfwWithLlm("questionable content", makeCtx(), aux,);
     expect(aux.mock.calls,).toHaveLength(1,);
     const [task, , , messages, opts,] = aux.mock.calls[0]!;
@@ -200,5 +209,5 @@ describe("detectNsfwWithLlm", () => {
     expect(opts?.maxTokens,).toBe(50,);
     expect(opts?.userId,).toBe("user-1",);
     expect(opts?.chatId,).toBe("chat-1",);
-  },);
+  });
 });

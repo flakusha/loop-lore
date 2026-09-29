@@ -26,7 +26,7 @@ let toolResults: GenerationMessage[] = [];
 const failCalls: unknown[][] = [];
 const callMessages: unknown[][] = [];
 let responseQueue: unknown[] = [];
-const activeMap = new Map<string, { lastRenderedChunkIndex: number; deliveryConfirmed: boolean; }>();
+const activeMap = new Map<string, { lastRenderedChunkIndex: number; deliveryConfirmed: boolean }>();
 
 afterEach(() => {
   telemetryEnabled = true;
@@ -113,7 +113,7 @@ const fakeResponse = {
 
 if (STRICTLY_ISOLATED) {
   mock.module("../providers/call-with-failover", () => ({
-    callWithFailover: async (_providers: unknown, req: { messages: unknown[]; },) => {
+    callWithFailover: async (_providers: unknown, req: { messages: unknown[] },) => {
       callMessages.push(req.messages,);
       if (callDelayMs > 0) {
         await new Promise<void>(r => setTimeout(r, callDelayMs,));
@@ -264,7 +264,7 @@ describeSelf("runNonStreaming — error propagation and delivery edges", () => {
     responseQueue.push({ content: "", finishReason: "stop", usage: USAGE, toolCalls: null, },);
     const res = await runDefault("attempt-empty",);
     expect(res.status,).toBe(500,);
-    const body = await res.json() as { error: string; };
+    const body = await res.json() as { error: string };
     expect(body.error,).toContain("LLM returned empty content",);
     expect(body.error,).toContain("finishReason=stop",);
     expect(failCalls.length,).toBe(1,);
@@ -275,7 +275,7 @@ describeSelf("runNonStreaming — error propagation and delivery edges", () => {
     responseQueue.push({ content: "   \n\t ", finishReason: "stop", usage: USAGE, toolCalls: null, },);
     const res = await runDefault("attempt-ws",);
     expect(res.status,).toBe(500,);
-    const body = await res.json() as { error: string; };
+    const body = await res.json() as { error: string };
     expect(body.error,).toContain("LLM returned empty content",);
   });
 
@@ -284,7 +284,7 @@ describeSelf("runNonStreaming — error propagation and delivery edges", () => {
     responseQueue.push({ content: "", finishReason: "cancelled", usage: USAGE, toolCalls: null, },);
     const res = await runDefault("attempt-cancelled",);
     expect(res.status,).toBe(200,);
-    const body = await res.json() as { content: string; finishReason: string; };
+    const body = await res.json() as { content: string; finishReason: string };
     expect(body.content,).toBe("",);
     expect(body.finishReason,).toBe("cancelled",);
     expect(failCalls.length,).toBe(0,);
@@ -303,7 +303,7 @@ describeSelf("runNonStreaming — error propagation and delivery edges", () => {
     telemetryReject = true;
     const res = await runDefault("attempt-telrej",);
     expect(res.status,).toBe(200,);
-    const body = await res.json() as { content: string; };
+    const body = await res.json() as { content: string };
     expect(body.content,).toBe(fakeResponse.content,);
     expect(recordedEvents.length,).toBe(0,);
   });
@@ -312,7 +312,7 @@ describeSelf("runNonStreaming — error propagation and delivery edges", () => {
     memoryReject = true;
     const res = await runDefault("attempt-memrej",);
     expect(res.status,).toBe(200,);
-    const body = await res.json() as { content: string; };
+    const body = await res.json() as { content: string };
     expect(body.content,).toBe(fakeResponse.content,);
   });
 
@@ -321,7 +321,7 @@ describeSelf("runNonStreaming — error propagation and delivery edges", () => {
     failThrows = true;
     const res = await runDefault("attempt-failthrow",);
     expect(res.status,).toBe(500,);
-    const body = await res.json() as { error: string; };
+    const body = await res.json() as { error: string };
     expect(body.error,).toBe("Generation failed: provider exploded",);
     expect(failCalls.length,).toBe(1,);
   });
@@ -331,7 +331,7 @@ describeSelf("runNonStreaming — error propagation and delivery edges", () => {
     activeMap.set("attempt-err", { lastRenderedChunkIndex: -1, deliveryConfirmed: true, },);
     const res = await runDefault("attempt-err",);
     expect(res.status,).toBe(500,);
-    const body = await res.json() as { error: string; };
+    const body = await res.json() as { error: string };
     expect(body.error,).toContain("provider exploded",);
     expect(failCalls.length,).toBe(1,);
     expect(activeMap.get("attempt-err",)?.deliveryConfirmed,).toBe(false,);
@@ -346,7 +346,12 @@ describeSelf("runNonStreaming — error propagation and delivery edges", () => {
 
   it("feeds the assistant tool-call message and tool results back into the next round", async () => {
     responseQueue.push(
-      { content: "", finishReason: "stop", usage: USAGE, toolCalls: [{ id: "tc-1", function: { name: "lookup", arguments: "{}", }, },], },
+      {
+        content: "",
+        finishReason: "stop",
+        usage: USAGE,
+        toolCalls: [{ id: "tc-1", function: { name: "lookup", arguments: "{}", }, },],
+      },
       { content: "final answer", finishReason: "stop", usage: USAGE, toolCalls: null, },
     );
     toolResults = [{ role: "tool", content: "tool-out", tool_call_id: "tc-1", },];
@@ -361,7 +366,7 @@ describeSelf("runNonStreaming — error propagation and delivery edges", () => {
       tool_calls: [{ id: "tc-1", type: "function", function: { name: "lookup", arguments: "{}", }, },],
     },);
     expect(second[2],).toEqual({ role: "tool", content: "tool-out", tool_call_id: "tc-1", },);
-    const body = await res.json() as { content: string; };
+    const body = await res.json() as { content: string };
     expect(body.content,).toBe("final answer",);
   });
 
@@ -374,9 +379,9 @@ describeSelf("runNonStreaming — error propagation and delivery edges", () => {
       messageId: string;
       content: string;
       thinking: string | null;
-      tokenUsage: { promptTokens: number; completionTokens: number; totalTokens: number; };
+      tokenUsage: { promptTokens: number; completionTokens: number; totalTokens: number };
       finishReason: string;
-      meta: { api_version: string; };
+      meta: { api_version: string };
     };
     expect(body,).toEqual({
       ok: true,
@@ -386,7 +391,7 @@ describeSelf("runNonStreaming — error propagation and delivery edges", () => {
       thinking: null,
       tokenUsage: { promptTokens: 10, completionTokens: 5, totalTokens: 15, },
       finishReason: "stop",
-      meta: { api_version: expect.any(String), },
+      meta: { api_version: expect.any(String,), },
     },);
   });
 },);

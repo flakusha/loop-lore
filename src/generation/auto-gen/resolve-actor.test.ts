@@ -186,11 +186,11 @@ describe("resolveActor turn selection and single-chat", () => {
   beforeEach(async () => {
     const created = await createTestDb();
     db = created.db;
-  });
+  },);
 
   afterAll(async () => {
     await db?.destroy();
-  });
+  },);
 
   test("single-chat resolves the non-user participant", async () => {
     const { chatId, actorId, } = await seedChatWithActor(db, { chatType: "direct", },);

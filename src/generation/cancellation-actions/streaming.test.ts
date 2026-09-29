@@ -86,7 +86,11 @@ function registerStubPolicyDetector(): void {
       detected: true,
       policy: PolicyType.Sfw,
       confidence: 0.9,
-      indicators: [{ type: PolicyIndicatorType.Keyword, description: "stub indicator", severity: PolicySeverity.High, },],
+      indicators: [{
+        type: PolicyIndicatorType.Keyword,
+        description: "stub indicator",
+        severity: PolicySeverity.High,
+      },],
     }),
   },);
 }
@@ -104,7 +108,7 @@ async function waitForCancelDetail(db: Kysely<DB>, attemptId: string,): Promise<
       .where("id", "=", attemptId,)
       .executeTakeFirst();
     if (row?.cancel_reason_detail) { return row.cancel_reason_detail; }
-    await new Promise((resolve,) => setTimeout(resolve, 10,),);
+    await new Promise((resolve,) => setTimeout(resolve, 10,));
   }
   return null;
 }
@@ -115,10 +119,17 @@ async function waitForCancelDetail(db: Kysely<DB>, attemptId: string,): Promise<
  * @param db
  */
 async function seedAttemptParents(db: Kysely<DB>,): Promise<void> {
-  await db.insertInto("users",).values({ id: "user-x", username: "attempt-user", display_name: "Attempt User", } as never,).orIgnore().execute();
-  await db.insertInto("actors",).values({ id: "actor-1", display_name: "Actor", user_id: "user-x", owner_id: "user-x", } as never,).orIgnore().execute();
-  await db.insertInto("chats",).values({ id: "chat-1", name: "Chat", created_by: "user-x", } as never,).orIgnore().execute();
-  await db.insertInto("messages",).values({ id: "msg-1", chat_id: "chat-1", actor_id: "actor-1", role: MessageRole.Assistant, content: "parent", } as never,).orIgnore().execute();
+  await db.insertInto("users",).values(
+    { id: "user-x", username: "attempt-user", display_name: "Attempt User", } as never,
+  ).orIgnore().execute();
+  await db.insertInto("actors",).values(
+    { id: "actor-1", display_name: "Actor", user_id: "user-x", owner_id: "user-x", } as never,
+  ).orIgnore().execute();
+  await db.insertInto("chats",).values({ id: "chat-1", name: "Chat", created_by: "user-x", } as never,).orIgnore()
+    .execute();
+  await db.insertInto("messages",).values(
+    { id: "msg-1", chat_id: "chat-1", actor_id: "actor-1", role: MessageRole.Assistant, content: "parent", } as never,
+  ).orIgnore().execute();
 }
 
 /**
@@ -131,7 +142,9 @@ function spyOnWarnings(warnings: string[],): Logger {
     child: () => spy,
     debug: () => {},
     info: () => {},
-    warn: (message: string,) => { warnings.push(message,); },
+    warn: (message: string,) => {
+      warnings.push(message,);
+    },
     error: () => {},
   } as unknown as Logger;
   setGlobalLogger(spy,);
@@ -310,8 +323,8 @@ describe("processStreamingChunk", () => {
 
   test("fires onStreamingStart and onChunk with the expected payloads", async () => {
     const events = {
-      onStreamingStart: mock<NonNullable<GenerationEvents["onStreamingStart"]>>(() => {}),
-      onChunk: mock<NonNullable<GenerationEvents["onChunk"]>>(() => {}),
+      onStreamingStart: mock<NonNullable<GenerationEvents["onStreamingStart"]>>(() => {},),
+      onChunk: mock<NonNullable<GenerationEvents["onChunk"]>>(() => {},),
     };
     const active = buildActive({ attemptId: "events", events, },);
     activeGenerations.set(active.attemptId, active,);
@@ -327,10 +340,10 @@ describe("processStreamingChunk", () => {
     expect(events.onStreamingStart,).toHaveBeenCalledWith("events",);
     expect(events.onChunk,).toHaveBeenCalledTimes(1,);
     expect(events.onChunk,).toHaveBeenCalledWith("events", "hello", false,);
-  },);
+  });
 
   test("fires onRepetitionDetected with the analysis on high-score repetition", async () => {
-    const onRepetitionDetected = mock<NonNullable<GenerationEvents["onRepetitionDetected"]>>(() => {});
+    const onRepetitionDetected = mock<NonNullable<GenerationEvents["onRepetitionDetected"]>>(() => {},);
     const active = buildActive({
       attemptId: "rep-event",
       events: { onRepetitionDetected, },
@@ -348,12 +361,20 @@ describe("processStreamingChunk", () => {
     const [attemptId, analysis,] = onRepetitionDetected.mock.calls[0]!;
     expect(attemptId,).toBe("rep-event",);
     expect(analysis.score,).toBeGreaterThanOrEqual(0.85,);
-  },);
+  });
 
   test("policy mismatch with auto-cancel returns CancelPolicy and persists the cancel detail", async () => {
     registerStubPolicyDetector();
     await seedAttemptParents(db,);
-    const attemptId = await insertGenerationAttempts(db, "chat-1", "msg-1", "actor-1", "idem-1", "model-1", "provider-1",);
+    const attemptId = await insertGenerationAttempts(
+      db,
+      "chat-1",
+      "msg-1",
+      "actor-1",
+      "idem-1",
+      "model-1",
+      "provider-1",
+    );
 
     const active = buildActive({
       attemptId,
@@ -373,7 +394,7 @@ describe("processStreamingChunk", () => {
     expect(activeGenerations.has(attemptId,),).toBe(false,);
     const detail = await waitForCancelDetail(db, attemptId,);
     expect(detail,).toContain("Explicit content in SFW context",);
-  },);
+  });
 
   test("policy mismatch without auto-cancel returns Continue and logs a warning", async () => {
     registerStubPolicyDetector();
@@ -396,11 +417,11 @@ describe("processStreamingChunk", () => {
 
       expect(result,).toBe(ChunkAction.Continue,);
       expect(activeGenerations.has("policy-no-cancel",),).toBe(true,);
-      expect(warnings.some((w,) => w.includes("auto-cancel disabled"),),).toBe(true,);
+      expect(warnings.some((w,) => w.includes("auto-cancel disabled",)),).toBe(true,);
     } finally {
       setGlobalLogger(previousLogger,);
     }
-  },);
+  });
 
   test("policy branch fires on the 10th chunk (every multiple of 5)", async () => {
     registerStubPolicyDetector();
@@ -419,12 +440,20 @@ describe("processStreamingChunk", () => {
     },);
 
     expect(result,).toBe(ChunkAction.CancelPolicy,);
-  },);
+  });
 
   test("NSFW expected policy reports the SFW-in-NSFW mismatch detail", async () => {
     registerStubPolicyDetector();
     await seedAttemptParents(db,);
-    const attemptId = await insertGenerationAttempts(db, "chat-1", "msg-1", "actor-1", "idem-2", "model-1", "provider-1",);
+    const attemptId = await insertGenerationAttempts(
+      db,
+      "chat-1",
+      "msg-1",
+      "actor-1",
+      "idem-2",
+      "model-1",
+      "provider-1",
+    );
 
     const active = buildActive({
       attemptId,
@@ -443,7 +472,7 @@ describe("processStreamingChunk", () => {
     expect(result,).toBe(ChunkAction.CancelPolicy,);
     const detail = await waitForCancelDetail(db, attemptId,);
     expect(detail,).toContain("SFW content in NSFW context",);
-  },);
+  });
 
   test("streaming-start status update failure is caught and generation continues", async () => {
     // A destroyed DB makes the fire-and-forget updateAttemptStatus reject;
@@ -462,7 +491,7 @@ describe("processStreamingChunk", () => {
     expect(result,).toBe(ChunkAction.Continue,);
     expect(active.status,).toBe(GenerationStatus.Streaming,);
     expect(active.chunksReceived,).toBe(1,);
-  },);
+  });
 
   test("repetition-cancel status update failures are caught and CancelRepetition still returns", async () => {
     const { db: failDb, } = await createTestDb();
@@ -478,7 +507,7 @@ describe("processStreamingChunk", () => {
 
     expect(result,).toBe(ChunkAction.CancelRepetition,);
     expect(activeGenerations.has("rep-cancel-fail",),).toBe(false,);
-  },);
+  });
 
   test("policy-cancel status update failure is caught and CancelPolicy still returns", async () => {
     registerStubPolicyDetector();
@@ -500,5 +529,5 @@ describe("processStreamingChunk", () => {
 
     expect(result,).toBe(ChunkAction.CancelPolicy,);
     expect(activeGenerations.has("policy-cancel-fail",),).toBe(false,);
-  },);
+  });
 });

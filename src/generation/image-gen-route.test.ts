@@ -20,21 +20,21 @@ import * as realAssetLinks from "../assets/service/links";
 import * as realConfigLoad from "../config/load";
 import { createConfigSchema, } from "../config/schema-class";
 // (no realDb import: ../db/index is intentionally unstubbed; see NOTE above)
-import * as realUtils from "../utils";
-import * as realImageEngine from "./image-engine";
+import type { Kysely, } from "kysely";
+import type { TemplateModality, } from "../db/enums";
+import type { DB, } from "../db/schema";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { insertChats, } from "../test-utils/insert-helpers";
-import type { Kysely, } from "kysely";
-import type { DB, } from "../db/schema";
-import type { TemplateModality, } from "../db/enums";
+import * as realUtils from "../utils";
+import * as realImageEngine from "./image-engine";
 import type * as imageGenRoute from "./image-gen-route";
 
 // ── Mutable call-history containers (mutated in beforeEach, read in tests) ──────
 
 const generateImagesCalls: Array<[unknown, Record<string, unknown>,]> = [];
-const linkAssetCalls: Array<{ entityType: string; entityId: string; label: string, }> = [];
+const linkAssetCalls: Array<{ entityType: string; entityId: string; label: string }> = [];
 /** When set, mockGenerateImages fails with this outcome (provider-error path). */
-let generateError: { ok: false; error: string; status: number, } | null = null;
+let generateError: { ok: false; error: string; status: number } | null = null;
 
 // ── Mock implementations ───────────────────────────────────────────────────────
 
@@ -76,7 +76,7 @@ async function mockCreateAsset(_opts: unknown,) {
 /**
  * @param _opts
  */
-async function mockLinkAsset(opts: { link: { entityType: string; entityId: string; label: string, }, },) {
+async function mockLinkAsset(opts: { link: { entityType: string; entityId: string; label: string } },) {
   linkAssetCalls.push(opts.link,);
 }
 
@@ -436,7 +436,7 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
     const res = await handleOpenAINoLora(body, undefined, "test-user",);
 
     expect(res.status,).toBe(200,);
-  },);
+  });
 
   // (8) Authentication: missing userId → HTTP 401
 
@@ -446,7 +446,7 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
     expect(res.status,).toBe(401,);
     const json = await res.json() as { error: string };
     expect(json.error,).toContain("Authentication",);
-  },);
+  });
 
   // (9) Authorization: unknown chat → HTTP 403 (IDOR write guard)
 
@@ -463,7 +463,7 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
     } finally {
       await db.destroy();
     }
-  },);
+  });
 
   // (10) Template path: unknown template → HTTP 404
 
@@ -482,7 +482,7 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
     } finally {
       await db.destroy();
     }
-  },);
+  });
 
   // (11) Template path: non-image modality → HTTP 400
 
@@ -502,14 +502,20 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
     } finally {
       await db.destroy();
     }
-  },);
+  });
 
   // (12) Template path: renders {{variables}} and negativePrompt
 
   it("renders the image template payload into the generation prompt", async () => {
     const { db, } = await createTestDb();
     try {
-      await seedTemplate(db, "tpl-image", "image", "Image template", JSON.stringify({ templateBody: "a {{mood}} portrait", negativePrompt: "blurry", },),);
+      await seedTemplate(
+        db,
+        "tpl-image",
+        "image",
+        "Image template",
+        JSON.stringify({ templateBody: "a {{mood}} portrait", negativePrompt: "blurry", },),
+      );
       const res = await handleImageGeneration(
         makeBody({ templateId: "tpl-image", context: { mood: "dark", }, },),
         db,
@@ -523,7 +529,7 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
     } finally {
       await db.destroy();
     }
-  },);
+  });
 
   // (13) Provider failure → error status propagated
 
@@ -538,7 +544,7 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
     } finally {
       generateError = null;
     }
-  },);
+  });
 
   // (14) Asset linking: messageId + chatId links recorded
 
@@ -566,5 +572,5 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
     } finally {
       await db.destroy();
     }
-  },);
+  });
 },);

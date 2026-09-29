@@ -12,7 +12,13 @@ import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
-import { insertActors, insertChats, insertChatSetupTemplates, insertUsers, insertWorlds, } from "../../test-utils/insert-helpers";
+import {
+  insertActors,
+  insertChats,
+  insertChatSetupTemplates,
+  insertUsers,
+  insertWorlds,
+} from "../../test-utils/insert-helpers";
 import { locationCreationTool, } from "./create-location";
 
 describe("create_location tool", () => {
@@ -157,7 +163,7 @@ describe("create_location tool", () => {
     // Invalid template gm_config never leaks into the chat row; createChat
     // normalizes to valid JSON with a null renderingOverride.
     expect(chat.gm_config,).not.toContain("{{{not-json",);
-    expect(() => JSON.parse(chat.gm_config!,),).not.toThrow();
+    expect(() => JSON.parse(chat.gm_config!,)).not.toThrow();
   }, 10000,);
 
   test("creates no bound chat when the world template is missing", async () => {
