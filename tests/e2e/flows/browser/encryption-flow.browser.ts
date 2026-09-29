@@ -211,9 +211,8 @@ describe("Chat compression-encryption-decryption flow (UI)", () => {
       //
       // Poll because the row may not be committed yet.
       const PAGE_SIZE = 20;
-      let list: { status: number; body: string } | undefined;
-      for (let attempt = 0; attempt < 20; attempt++) {
-        const snapshot = await page.evaluate(
+      const fetchMessages = () =>
+        page.evaluate(
           async (args,) => {
             const first = await fetch(
               `/api/v1/chats/${args.chatId}/messages?page=1&pageSize=${args.pageSize}`,
@@ -243,12 +242,20 @@ describe("Chat compression-encryption-decryption flow (UI)", () => {
           },
           { chatId: SEED.soloChat.id, pageSize: PAGE_SIZE, },
         );
-        list = snapshot;
-        if (snapshot.status === 200 && snapshot.body.includes(secret,)) { break; }
+      // Poll until a deadline rather than a fixed attempt count. The previous
+      // 20 x 250ms loop capped the wait at 5s, which the INSERT outran whenever
+      // the suite ran under gate load - the send request the test has not yet
+      // observed completing is what commits the row. 30s leaves headroom under
+      // the test's own 60s budget while still failing fast when it is real.
+      const commitDeadline = Date.now() + 30_000;
+      let list: { status: number; body: string } | undefined;
+      do {
+        list = await fetchMessages();
+        if (list.status === 200 && list.body.includes(secret,)) { break; }
         const { promise, resolve, } = Promise.withResolvers<void>();
         setTimeout(resolve, 250,);
         await promise;
-      }
+      } while (Date.now() < commitDeadline);
       expect(list!.status,).toBe(200,);
       expect(list!.body,).toContain(secret,);
       expect(list!.body,).not.toContain("[Encrypted \u2014 unable to decrypt]",);
