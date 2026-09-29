@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// src/config/schema-class/json-schema/generation.ts — generation JSON Schema section.
+// Generation JSON Schema section.
 //
-// SINGLE SOURCE OF TRUTH: re-export the canonical generation meta from
+// Single source of truth: re-export the canonical generation meta from
 // src/config/sections/generation/meta.ts (which composes llamaCppMeta +
 // sdCppMeta). Adding a new generation config field only requires editing
 // src/config/sections/generation/{meta,llama,sd}.ts; this file used to

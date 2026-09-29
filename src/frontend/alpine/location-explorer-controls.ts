@@ -36,7 +36,7 @@ interface ExplorerControlState {
 export const locationExplorerControls = {
   // ── Filter option refresh ───────────────────────────────
   // Distinct non-null values from loaded location_states, used to
-  // populate the dropdown options. Sorted for stable UI order.
+  // Populate the dropdown options. Sorted for stable UI order.
   _refreshOptionLists(this: ExplorerControlState,) {
     const atmospheres = new Set<string>();
     const weathers = new Set<string>();
@@ -90,7 +90,7 @@ export const locationExplorerControls = {
 
   // ── Hover-preview (throttled) ──────────────────────────
   // Delay before selectLoc fires on mouseenter, so casual sweeps don't
-  // burn detail fetches. Cancelled if the user moves to another row.
+  // Burn detail fetches. Cancelled if the user moves to another row.
   hoverLoc(this: ExplorerControlState, locId: string,) {
     this._hoveredLocId = locId;
     if (typeof window !== "undefined") {

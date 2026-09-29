@@ -47,7 +47,7 @@ export const ChatPurpose = {
   Main: "main",
   Side: "side",
   Notes: "notes",
-  // chat-variants-taxonomy: 6 purpose strings for the 12-variant taxonomy.
+  // Chat-variants-taxonomy: 6 purpose strings for the 12-variant taxonomy.
   Assistant: "assistant",
   Roleplay: "roleplay",
   Rpg: "rpg",

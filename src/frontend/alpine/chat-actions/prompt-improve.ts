@@ -79,7 +79,7 @@ export const promptImproveActions: Partial<ChatState> & ThisType<ChatState> = {
     this._improving = true;
     try {
       // Group chats rewrite in the group's voice by default; direct chats in
-      // the 1:1 chat voice. Explicit levels from the level menu win.
+      // The 1:1 chat voice. Explicit levels from the level menu win.
       const requestedLevel = level ??
         (this.isGroupChat ? "style-group" : "style-chat");
       // Opt-in browser inference first: eligible levels run locally so the
