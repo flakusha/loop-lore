@@ -55,6 +55,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-effect-v4-adoption-evaluation.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-recursive-self-improvement.md"
     }
   ],
   "src/admin/config.test.ts": [
@@ -72,6 +76,10 @@
     }
   ],
   "src/admin/config.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-recursive-self-improvement.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen.md"
@@ -211,6 +219,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-recursive-self-improvement-sidecar-python-provider-for-custo.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-watchdog-admin-ui-page-get-api.md"
     }
   ],
   "src/age-gate": [
@@ -267,6 +279,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-recursive-self-improvement-agent-api-router-and-token-scope-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-agent-token-lifecycle-issuance-rotation-rev.md"
     }
   ],
   "src/agent/api/check.test.ts": [
@@ -287,6 +303,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-recursive-self-improvement-merge-readiness-pack-generator-fr.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-self-error-check-loop-targeted-repro-befo.md"
     }
   ],
   "src/agent/api/commit.test.ts": [
@@ -303,6 +323,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-recursive-self-improvement-agent-commit-and-finalize-gpg-del.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-secrets-in-patch-pre-commit-scanner.md"
     }
   ],
   "src/agent/api/drift.ts": [
@@ -327,6 +351,24 @@
       "source": ".plan/tickets/TASK-recursive-self-improvement-agent-commit-and-finalize-gpg-del.md"
     }
   ],
+  "src/agent/api/gc.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-agent-task-queue-concurrency-caps-worktree.md"
+    }
+  ],
+  "src/agent/api/queue.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-agent-task-queue-concurrency-caps-worktree.md"
+    }
+  ],
+  "src/agent/api/queue.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-agent-task-queue-concurrency-caps-worktree.md"
+    }
+  ],
   "src/agent/api/router.ts": [
     {
       "kind": "epic",
@@ -335,6 +377,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-recursive-self-improvement-agent-api-router-and-token-scope-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-agent-ticket-ops-endpoints-open-close-comment.md"
     },
     {
       "kind": "ticket",
@@ -348,6 +394,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-agent-task-queue-concurrency-caps-worktree.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-recursive-self-improvement-agent-worktree-spawn-tty-free-and.md"
     },
     {
@@ -357,6 +407,58 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-recursive-self-improvement-near-real-time-desktop-agent-play.md"
+    }
+  ],
+  "src/agent/api/secret-scan.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-secrets-in-patch-pre-commit-scanner.md"
+    }
+  ],
+  "src/agent/api/secret-scan.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-secrets-in-patch-pre-commit-scanner.md"
+    }
+  ],
+  "src/agent/api/self-check.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-self-error-check-loop-targeted-repro-befo.md"
+    }
+  ],
+  "src/agent/api/self-check.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-self-error-check-loop-targeted-repro-befo.md"
+    }
+  ],
+  "src/agent/api/tickets.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-agent-ticket-ops-endpoints-open-close-comment.md"
+    }
+  ],
+  "src/agent/api/tickets.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-agent-ticket-ops-endpoints-open-close-comment.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-dev-target-discovery-miner-over-backlog.md"
+    }
+  ],
+  "src/agent/api/tokens.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-agent-token-lifecycle-issuance-rotation-rev.md"
+    }
+  ],
+  "src/agent/api/tokens.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-agent-token-lifecycle-issuance-rotation-rev.md"
     }
   ],
   "src/agent/api/worktree.test.ts": [
@@ -9777,6 +9879,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-platform-integrations.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-recursive-self-improvement.md"
     }
   ],
   "src/crypto/activitypub-keys.ts": [
@@ -22857,6 +22963,10 @@
       "source": ".plan/tickets/TASK-epic11-admin-settings-reconciliation.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-watchdog-admin-ui-page-get-api.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/auth-middleware.md"
     }
@@ -23493,6 +23603,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-recursive-self-improvement-agent-api-router-and-token-scope-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-agent-task-queue-concurrency-caps-worktree.md"
     },
     {
       "kind": "ticket",
@@ -26049,6 +26163,12 @@
       "source": ".plan/tickets/TASK-chat-context-preference-per-scope.md"
     }
   ],
+  "src/routes/admin/cron.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-weekly-failure-cluster-mining-cron.md"
+    }
+  ],
   "src/routes/admin/danger-zone.ts": [
     {
       "kind": "epic",
@@ -26185,7 +26305,17 @@
       "source": ".plan/tickets/TASK-032.md"
     }
   ],
+  "src/routes/admin/watchdog.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-watchdog-admin-ui-page-get-api.md"
+    }
+  ],
   "src/routes/admin/watchdog.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-watchdog-admin-ui-page-get-api.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-recursive-self-improvement-watchdog-events-table-and-telemet.md"
@@ -34393,6 +34523,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-recursive-self-improvement-watchdog-supervisor-process-spawn.md"
+    }
+  ],
+  "src/server/watchdog/cluster-miner.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-weekly-failure-cluster-mining-cron.md"
+    }
+  ],
+  "src/server/watchdog/cluster-miner.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-recursive-self-improvement-weekly-failure-cluster-mining-cron.md"
     }
   ],
   "src/server/watchdog/events.test.ts": [

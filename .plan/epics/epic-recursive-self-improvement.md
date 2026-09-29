@@ -177,7 +177,7 @@ Per the user's global-target clause, the agent API MUST be sandboxed:
 - [ ] `docs/ops/agent-api.md` — API reference + auth model
 - [ ] `docs/ops/ci-cd-loop.md` — gate matrix + failure handling
 
-## Tasks (19)
+## Tasks (27)
 
 | # | Ticket | Scope | Effort | Dependencies |
 | - | ------ | ----- | ------ | ------------ |
@@ -208,6 +208,21 @@ Filed 2026-09-27 from a research sweep of SASE (Hassan et al., arXiv:2509.06216)
 | 18 | `TASK-recursive-self-improvement-evaluator-reliability-drift-detec` | flake / suspicious-pass / coverage-drift detector (UCR §5) | High | #16 |
 | 19 | `TASK-recursive-self-improvement-n-version-patch-arena-determinist` | N-version patch arena + diversity-collapse detection (SASE §4.1) | High | #16, #18 |
 
+### Expansion tickets (#20-#27)
+
+Filed 2026-09-29 from harmonization + cross-project survey (OpenClaw, Hermes Agent, OpenCode, Copilot coding agent, Devin, Claude Code — see `../rsi-cross-project-inspiration.md`). These close Part B/D gaps (admin UI, token lifecycle, ticket-ops, task queue), automate the failure-cluster sweep, and add the self-error-check + dev-target-discovery loops:
+
+| # | Ticket | Scope | Effort | Dependencies |
+| - | ------ | ----- | ------ | ------------ |
+| 20 | `TASK-recursive-self-improvement-weekly-failure-cluster-mining-cron` | weekly failure-cluster mining cron | Medium | #1, #4 |
+| 21 | `TASK-recursive-self-improvement-watchdog-admin-ui-page-get-api` | watchdog admin UI page + GET /api/admin/watchdog | Medium | #1, #3, #4 |
+| 22 | `TASK-recursive-self-improvement-agent-token-lifecycle-issuance-rotation-rev` | agent token lifecycle issuance/rotation/revocation via src/crypto 24h TTL | Medium | #5, #9 |
+| 23 | `TASK-recursive-self-improvement-secrets-in-patch-pre-commit-scanner` | secrets-in-patch pre-commit scanner | Low | #8 |
+| 24 | `TASK-recursive-self-improvement-agent-ticket-ops-endpoints-open-close-comment` | agent ticket-ops endpoints open/close/comment | Medium | #5, #9, #17, #22 |
+| 25 | `TASK-recursive-self-improvement-agent-task-queue-concurrency-caps-worktree` | agent task queue concurrency caps + worktree GC 24h idle | Medium | #6, #9 |
+| 26 | `TASK-recursive-self-improvement-self-error-check-loop-targeted-repro-befo` | self-error-check loop targeted repro before full check recorded in MRP | Medium | #7, #8, #16 |
+| 27 | `TASK-recursive-self-improvement-dev-target-discovery-miner-over-backlog` | automated dev-target discovery miner over .plan/backlog scoring RSI-suitable tasks | Medium | #20, #24 |
+
 ## Files
 
 - `src/server/watchdog/{supervisor,state,events,health-probe,cli}.ts` — new
@@ -224,14 +239,19 @@ Filed 2026-09-27 from a research sweep of SASE (Hassan et al., arXiv:2509.06216)
 
 - **Parent epic:** none (this is a new infrastructure epic).
 - **Siblings:**
-  - `epic-resource-provision.md` — provisions **external** compute/credentials; this epic covers the **internal** watchdog + agent loop.
+  - `epic-local-process-swarm.md` — its supervisor (planned `src/swarm/`, generalizing `ServerExternalManager` in `src/services/server-external-manager/`) owns in-host process allocation/routing (core + workers); this epic's watchdog owns server liveness/restart/alerts and the crash→agent-fix loop. Boundary: one hierarchy — the watchdog runs under (or alongside) the swarm supervisor, never a second competing supervisor.
+  - `epic-cicd-pipeline.md` — owns gate contents (quality gates → test pyramid → benchmark-regression via `ci.yml` + `scripts/check-parallel.mjs`); this epic's Part C owns loop cadence only (new `smoke.yml`/`nightly.yml`/`watchdog-gate.yml` triggers) without redefining gates.
+  - `epic-observability-telemetry.md` — owns telemetry sinks + admin analytics dashboard; this epic's `watchdog_events`/`agent_actions` tables are producers emitting into those sinks.
+  - `epic-logging-telemetry.md` — owns log levels, canonical JSONL, transports (`src/logger/`); the watchdog/agent log via `log.fatal`/`log.info` through that layer, never a parallel logger.
+  - `epic-federation-swarm-sync.md` — owns cross-instance CRDT/multi-writer sync; multi-instance watchdog (Open Question #5) stays deferred until its swarm-mode reconciliation lands — single-instance watchdog only in this epic.
+  - `epic-security-sandboxing.md` — owns sandbox mechanism (planned `src/security/sandbox/` + prompt-injection defense + execution audit per that epic's tree); this epic's `src/agent/api/sandbox.ts` (new) owns agent policy (worktree caps, patch-size cap, `confirm: true`, `agent_actions` audit rows) built on those primitives once landed.
+  - `epic-resource-provision.md` — provisions **external** compute/credentials/quota; this epic covers the **internal** watchdog + agent loop and only consumes the provider-registry facade, never provisions capacity.
+  - `epic-benchmark-ci-regression.md` — owns perf thresholds + `bench:ci` (`scripts/run-benchmarks.ts`, `tests/benchmarks/`) + `perf-regression.yml`; the nightly gate invokes them and blocks on their verdicts without redefining metrics.
   - `epic-testing-qa.md` — supplies failure modes that the watchdog catches.
   - `epic-code-quality.md` — supplies size-strict + lint gates that the smoke gate promotes.
-  - `epic-benchmark-ci-regression.md` — supplies the perf-regression gate that the nightly gate runs.
   - `epic-release-010.md` — release process; the watchdog gate + finalize hook into it.
-  - `epic-api-versioning.md` — `/api/v1/agent/*` lives under the same `/api/v1` prefix.
-  - `epic-security-sandboxing.md` — sandbox model reuses its primitives.
-  - `epic-api-rate-limiting.md` — agent API rate-limited by token.
+  - `epic-api-versioning.md` — `/api/v1/agent/*` lives under the same `/api/v1` prefix (routes currently unversioned; this epic follows whichever prefix that epic lands).
+  - `epic-api-rate-limiting.md` — agent API rate-limited per-token via `src/middleware/rate-limit.ts` (`createRateLimiter`); note its limiter is per-process in-memory (local-process-swarm B4), so multi-process deployments need that epic's shared-store follow-up.
 - **Tickets to merge into this epic on completion:** `TASK-promote-size-check-to-ci`, `BUG-alpine-init-hydration`, `BUG-plan-sync-fix-mass-creates-orphan-git-issues-for-placeholder`.
 
 ## Open Questions
@@ -253,14 +273,19 @@ Filed 2026-09-27 from a research sweep of SASE (Hassan et al., arXiv:2509.06216)
   - **GitHub Copilot Coding Agent**, **Devin**, **Claude Code** — closed-loop coding agents
 - Internal:
   - `AGENTS.md` GPG signing — preserve agent-side signing constraint
-  - `src/server/start.ts:154-247` — server lifecycle (`REQUIRES_RESTART_KEYS` note at :155; SIGTERM/SIGINT/SIGHUP/uncaughtException/unhandledRejection handlers at :219-246); new watchdog hooks in here
-  - `.github/workflows/{ci,release,deploy}.yml` — existing CI surface to extend
+  - `src/server/start.ts:156,221-248` — server lifecycle (`REQUIRES_RESTART_KEYS` note at :156, defined in `src/admin/config-keys.ts` and re-exported via `src/admin/config.ts`; SIGTERM/SIGINT/SIGHUP/uncaughtException/unhandledRejection handlers at :221-248); new watchdog hooks in here
+  - `.github/workflows/{ci,release,deploy}.yml` — existing CI surface to extend (repo also has `pr-checks.yml`, `dev-release.yml`; `scripts/check-parallel.mjs` is the gate runner)
+  - `scripts/worktree/index.mjs` — TTY-free agent path: thin shim delegating to the `index.ts` dispatcher (all worktree commands)
   - `scripts/check-parallel.mjs` — gate runner; new smoke + watchdog gates extend it
   - `deploy/docker-compose.yml` — `restart: unless-stopped` already wired
-  - `src/middleware/rate-limit.ts` — reuse for agent API rate limit
-  - `src/crypto/` — token generation + rotation
-  - `src/notifications/` — webhook delivery for watchdog alerts
+  - `src/middleware/rate-limit.ts` — reuse for agent API rate limit (`createRateLimiter`)
+  - `src/crypto/` — key management + rotation (`smk.ts`, `key-rotation/`); agent-token issuance/rotation to be defined here (no token helper exists yet)
+  - `src/notifications/service/` (`triggers.ts`, `service.ts`) — in-app notification surface for watchdog alerts (no outbound webhook delivery exists yet; add-or-reuse decision at implementation)
   - `src/admin/provider-health.ts` — extend for watchdog health surface
+
+## Harmonization note — 2026-09-29
+
+Verified every cited seam against the tree (`grep`/`read`): `src/server/start.ts` handlers at :221-248 (SIGHUP guarded on non-Windows), `REQUIRES_RESTART_KEYS` defined in `src/admin/config-keys.ts` / re-exported via `src/admin/config.ts`, `restart: unless-stopped` on all three `deploy/docker-compose.yml` services, `createRateLimiter` in `src/middleware/rate-limit.ts`, `scripts/check-parallel.mjs` present, `tests/benchmarks/` + `scripts/run-benchmarks.ts` present, `src/admin/provider-health.ts` present, `scripts/worktree/index.mjs` confirmed as thin shim over `index.ts` dispatcher. Three refs sharpened: `src/crypto/` has no agent-token helper yet (key mgmt + rotation only — issuance to be defined); `src/notifications/` has no outbound webhook delivery (in-app `service/triggers.ts` only — add-or-reuse decision deferred to implementation); `.github/workflows/` also contains `pr-checks.yml` + `dev-release.yml` beyond the three named. Deliberate overlaps kept: watchdog-under-swarm-supervisor hierarchy (no second supervisor), Part C cadence-only over cicd-pipeline gate contents, `watchdog_events`/`agent_actions` as producers into observability/logging sinks, single-instance watchdog until federation-swarm sync lands, agent policy in this epic over security-sandboxing mechanism, internal loop vs resource-provision external capacity, nightly invoking (not redefining) benchmark-ci-regression thresholds.
 
 
 git issue: 42bbf1a
