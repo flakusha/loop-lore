@@ -4,7 +4,7 @@
 import { existsSync, readdirSync, rmSync, } from "fs";
 import { resolve, } from "path";
 import type { WorktreeConfig, } from "../utils/config";
-import { getWorktrees, gitSync, } from "../utils/git";
+import { getWorktrees, gitSync, isolatedGitEnv, } from "../utils/git";
 import { colorize, log, } from "../utils/output";
 
 export async function execute(
@@ -46,7 +46,7 @@ export async function execute(
         console.log(`  ${colorize("Removing stale:", "red",)} ${wtPath} (branch '${branch}' deleted)`,);
         const result = Bun.spawnSync(
           ["git", "-C", config.repoRoot, "worktree", "remove", wtPath,],
-          { stdout: "pipe", stderr: "pipe", },
+          { stdout: "pipe", stderr: "pipe", env: isolatedGitEnv(), },
         );
         if (result.exitCode === 0) {
           removed++;

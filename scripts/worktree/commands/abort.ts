@@ -40,7 +40,7 @@
 import { existsSync, readFileSync, unlinkSync, } from "node:fs";
 import { resolve, } from "path";
 import { type WorktreeConfig, } from "../utils/config";
-import { gitSync, gitSyncQuiet, } from "../utils/git";
+import { gitSync, gitSyncQuiet, isolatedGitEnv, } from "../utils/git";
 import { log, section, } from "../utils/output";
 
 export const LOCK_FILENAME = ".worktree-finalize.lock";
@@ -167,7 +167,7 @@ export async function abort(
     if (dryRun) { continue; }
     const result = Bun.spawnSync(
       ["git", "-C", repoRoot, op, "--abort",],
-      { stdout: "pipe", stderr: "pipe", },
+      { stdout: "pipe", stderr: "pipe", env: isolatedGitEnv(), },
     );
     if (result.exitCode === 0) {
       log("success", `aborted in-progress ${op}`,);
@@ -190,7 +190,7 @@ export async function abort(
       if (dryRun) { continue; }
       const pop = Bun.spawnSync(
         ["git", "-C", repoRoot, "stash", "pop", entry.ref,],
-        { stdout: "pipe", stderr: "pipe", },
+        { stdout: "pipe", stderr: "pipe", env: isolatedGitEnv(), },
       );
       if (pop.exitCode === 0) {
         log("success", `restored ${entry.ref}`,);
@@ -200,7 +200,7 @@ export async function abort(
       const head = gitSyncQuiet(repoRoot, "rev-parse", "HEAD",);
       const reset = Bun.spawnSync(
         ["git", "-C", repoRoot, "reset", "--hard", head,],
-        { stdout: "pipe", stderr: "pipe", },
+        { stdout: "pipe", stderr: "pipe", env: isolatedGitEnv(), },
       );
       if (reset.exitCode !== 0) {
         log("error", `reset --hard HEAD failed`,);

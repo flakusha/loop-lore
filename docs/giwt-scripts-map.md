@@ -30,7 +30,7 @@ Build/type/lint/test/format + code-generated artifacts + correctness gates:
 | `plan:backlog:sync*` | `giwt plan backlog-sync [--fix]` | stays (try 1) | done (try-7: script deleted) |
 | `plan:docs` | `giwt plan gen-docs [--check]` | stays (try 1) | done (try-7: script deleted) |
 | `plan:map*`, `plan:find` | `giwt plan code-map [--check \| --find <path>]` | stays (try 1) | done (try-7: script deleted; `extractSrcRefs` + `stripMarkdownCode` + `SRC_REF_RE` dropped from `scripts/lib/src-refs.ts`) |
-| worktree ops (`scripts/worktree/`) | local CLI | stays (try 1) | thin shim to `giwt` (already feature-complete upstream) |
+| worktree ops (`scripts/worktree/`) | local CLI | stays (try 1) | **not a shim** — a full duplicate implementation; retirement is a migration, tracked by the fork-retirement ticket (see try-8) |
 | `gpg-unlock` | `scripts/gpg-unlock.mjs` | stays | `giwt gpg-unlock` (exists upstream) |
 
 ## Try-1 scope (this branch)
@@ -140,3 +140,33 @@ implementation detail that callers stop invoking directly.
 - Unit tests still pass: `bun test scripts/lib/src-refs.test.ts` (4 pass), `bun test scripts/scripts.test.ts` (40 pass), `bun test scripts/check-md-links.test.ts scripts/lib/` (8 pass).
 - Run-record parity: `giwt plan backlog-sync` matches the deleted script's report format; `giwt plan code-map` writes `.plan/code-map.json` in the same shape so existing tooling (knip, search) sees no change.
 - Unblocks the try-2 BLOCKED item for `plan:backlog:sync*` + `plan:docs` + `plan:map*` + `plan:find`. The remaining `gpg-unlock` migration is unchanged.
+
+
+## Try-8 fork backport (three upstream fixes, applied in-repo)
+
+The in-repo CLI at `scripts/worktree/` is a **full implementation**, not the
+shim try-6 described — `rebase.ts`, `finalize.ts`, `abort.ts` and friends each
+carry their own git logic. It had fallen three fixes behind upstream `giwt`.
+Backported rather than deleted, because the delete-vs-shim call above is still
+open and owner-gated.
+
+- `utils/git.ts`: added `isolatedGitEnv()` and wired it into `gitSync` /
+  `gitSyncQuiet`, plus the git-child spawns in `finalize.ts` and `rebase.ts`.
+  Without it a harness-set `GIT_INDEX_FILE` flips the
+  `git diff --cached --quiet` precheck verdict, so finalize/rebase gate on a
+  lie. `OMP_`/`PI_`/`ENGRAM_`/`MNEMO_` session vars leak the same way.
+- `commands/finalize.ts`: fixed 20ms lock retry replaced with full jitter
+  (`lockRetryDelayMs()` over `[0, 20ms]`, 50 attempts, ceiling unchanged).
+- `commands/rebase.ts`: the default target no longer falls back to the literal
+  `master` on a detached HEAD (it refuses instead), and a self-rebase is now
+  refused up front rather than by git after the full find-worktree walk.
+- Deleted the two duplicate `PROTECTED_BRANCHES` / `isProtected` copies
+  (`rebase.ts`, `finalize.ts`) in favour of the `utils/git.ts` export.
+- `AGENTS.md` corrected: the legacy CLI is not a shim.
+
+**Upstream divergence, deliberately not mirrored:** upstream refuses a
+*protected target* in `rebase` (`cannot rebase onto protected branch 'dev'`).
+With `DEFAULT_SETTINGS.branches.protected = [master, main, stg, dev]` and
+`root = dev`, that makes the documented `giwt rebase <branch>` (no `onto`)
+fail on a default config. The fork keeps protected *sources* refused and allows
+protected targets.
