@@ -2,6 +2,8 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { afterEach, describe, expect, it, } from "bun:test";
+import type { LogEntry, Transport, } from "../../logger/types";
+import { log as rootLog, } from "./logger";
 import {
   __resetKeynavHandlersForTests,
   DEFAULT_KEYMAP,
@@ -9,8 +11,48 @@ import {
   dispatchKeynavActionToHandlers,
   getKeymap,
   isKeyboardNavEnabled,
+  log as shortcutsLog,
   registerKeynavHandler,
 } from "./shortcuts";
+
+/** Entries captured by the shared recording transport. */
+let captured: LogEntry[] = [];
+
+/**
+ * A recording transport, registered once at module load. `addTransport` only
+ * pushes — there is no removal — so re-registering per test would duplicate
+ * every entry. Entries pass through an async queue, so callers must `flush()`
+ * before asserting.
+ */
+const captureTransport: Transport = {
+  name: "test-capture",
+  write: (entry: LogEntry,) => {
+    captured.push(entry,);
+    return Promise.resolve();
+  },
+  flush: () => Promise.resolve(),
+};
+
+rootLog.addTransport(captureTransport,);
+
+/**
+ * Run `fn`, drain the logger queue, and return what it logged. This is the only
+ * way to assert the keynav catch block reaches the logger: a console.error stub
+ * would only prove the old path is gone, not that the new one fires.
+ */
+async function captureLogEntries(fn: () => void,): Promise<LogEntry[]> {
+  // Drain first: an earlier test may have left entries buffered in the child
+  // logger's queue, and they would otherwise land in this test's window.
+  await shortcutsLog.flush();
+  await rootLog.flush();
+  captured = [];
+  fn();
+  // Each logger instance owns its OWN AsyncLogQueue, so flushing the root does
+  // not drain the queue the keynav child logger writes to.
+  await shortcutsLog.flush();
+  await rootLog.flush();
+  return captured;
+}
 
 describe("shortcuts.ts", () => {
   describe("DEFAULT_KEYMAP", () => {
@@ -181,23 +223,53 @@ describe("shortcuts.ts", () => {
     });
 
     it("a handler that throws does not prevent subsequent handlers from running", () => {
-      // Suppress the expected console.error from the catch block so test output stays clean.
-      const origError = console.error;
-      console.error = () => {};
-      try {
-        const order: string[] = [];
-        registerKeynavHandler("goto-chatlist", () => order.push("a",),);
+      const order: string[] = [];
+      registerKeynavHandler("goto-chatlist", () => order.push("a",),);
+      registerKeynavHandler("goto-chatlist", () => {
+        throw new Error("boom",);
+      },);
+      registerKeynavHandler("goto-chatlist", () => order.push("c",),);
+      // Should not throw out of dispatch.
+      expect(() => dispatchKeynavActionToHandlers("goto-chatlist",)).not.toThrow();
+      // Handlers after the throwing one must still fire.
+      expect(order,).toEqual(["a", "c",],);
+    });
+
+    it("routes a thrown handler error to the logger, not console.error", async () => {
+      const entries = await captureLogEntries(() => {
         registerKeynavHandler("goto-chatlist", () => {
-          throw new Error("boom",);
+          throw new Error("kaboom",);
         },);
-        registerKeynavHandler("goto-chatlist", () => order.push("c",),);
-        // Should not throw out of dispatch.
-        expect(() => dispatchKeynavActionToHandlers("goto-chatlist",)).not.toThrow();
-        // Handlers after the throwing one must still fire.
-        expect(order,).toEqual(["a", "c",],);
-      } finally {
-        console.error = origError;
-      }
+        dispatchKeynavActionToHandlers("goto-chatlist",);
+      },);
+
+      const keynav = entries.filter((e,) => String(e.message,).includes("goto-chatlist",));
+      expect(keynav.length,).toBe(1,);
+      expect(String(keynav[0]!.message,),).toContain("threw",);
+      expect(keynav[0]!.module,).toBe("shortcuts",);
+      // The ORIGINAL Error must reach the logger, not a re-wrapped copy.
+      // `error` is `error.stack ?? error.message`, and a re-wrapped
+      // `new Error(String(err))` built inside the catch block would carry the
+      // WHOLE call chain too — so merely finding this file in the stack proves
+      // nothing. What separates them is the TOP frame: the original Error is
+      // constructed in the handler, so its stack starts in the test file; the
+      // re-wrap starts in shortcuts.ts.
+      expect(keynav[0]!.error,).toContain("kaboom",);
+      const topFrame = keynav[0]!.error!.split("\n",)[1] ?? "";
+      expect(topFrame,).toContain("shortcuts.test.ts",);
+    });
+
+    it("normalizes a non-Error throw so the logger still receives an Error", async () => {
+      const entries = await captureLogEntries(() => {
+        registerKeynavHandler("goto-home", () => {
+          throw "bare-string";
+        },);
+        dispatchKeynavActionToHandlers("goto-home",);
+      },);
+
+      const keynav = entries.filter((e,) => String(e.message,).includes("goto-home",));
+      expect(keynav.length,).toBe(1,);
+      expect(keynav[0]!.error,).toContain("bare-string",);
     });
 
     it("re-entrant registration during dispatch fires in the same dispatch", () => {

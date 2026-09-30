@@ -266,3 +266,17 @@ describe("globalThis.t (from ui.ts)", () => {
     expect(t({} as unknown as string,),).toBe("",);
   });
 });
+
+// Declared last so it runs after the `globalThis.t` block installs the stub.
+describe("locale-string restore guard", () => {
+  it("leaves no {common,greeting} stub for later files in this worker", () => {
+    const current = localeStringsHost.__localeStrings as Record<string, unknown> | undefined;
+    // The stub is the only place {common,greeting} appears. If the restore guard
+    // silently skipped -- the old `!== undefined` check, which is wrong exactly
+    // when this file runs first in its worker and nothing has populated
+    // `__localeStrings` yet -- the stub survives into gif-picker.test.ts, which
+    // then resolves raw keys instead of the real en.json strings.
+    expect(current?.greeting,).toBeUndefined();
+    expect(current?.common,).toBeUndefined();
+  });
+});

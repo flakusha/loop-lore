@@ -17,7 +17,7 @@
  */
 import { log as rootLog, } from "./logger";
 
-const log = rootLog.child({ module: "shortcuts", },);
+export const log = rootLog.child({ module: "shortcuts", },);
 /** A single entry of the keyboard navigation keymap. */
 export interface ShortcutEntry {
   /** Key combo, e.g. "g g", "?", "j". */
