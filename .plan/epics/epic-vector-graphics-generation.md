@@ -77,8 +77,7 @@ raster source for any raster-to-vector step.
 - **Rendition table** — owned by asset-platform B1
   (`epic-asset-platform-capabilities.md`); vector thumbs/posters reuse
   whatever B1 builds, this epic adds no parallel rendition store.
-- New image provider backends, SD failover, animated raster formats
-  (APNG/WebP-animated/GIF policy unchanged).
+- New image provider backends, SD failover changes (pickSdProvider single-select unchanged).
 
 ## Work Items
 

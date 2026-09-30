@@ -34,10 +34,7 @@ mime gate. ComfyUI/SD raster engines untouched.
 3. Sanitizer policy before persist: strip `script`/`event-handler`
    attributes (`on*`), `foreignObject`, external refs (`href` to
    http/data/javascript); allowlist shapes/presentation attrs only.
-4. New sanitized-SVG mime gate in `validate.ts` (keep raw `image/svg+xml`
-   blocked per BUG-asset-serve-public-immutable-cache-inline-svg-exposure;
-   allow only sanitizer-stamped SVG through `persistGeneratedImages`/
-   `createAsset`).
+4. New sanitized-SVG mime gate in `validate.ts` (keep raw `image/svg+xml` blocked per BUG-asset-serve-public-immutable-cache-inline-svg-exposure; allow only sanitizer-stamped SVG through `persistGeneratedImages`/`createAsset`). Note: `validateMimeType(mime: string)` takes only mime today — the stamp needs a separate gate in createAsset/persistGeneratedImages or a signature change; task implements whichever is smaller.
 5. ComfyUI/SD/SDAPI providers untouched; no SD failover change.
 
 ## Edge Cases
