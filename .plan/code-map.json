@@ -14570,6 +14570,10 @@
   "src/frontend": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-seen-currentactorid-never-assigned-markseen-sends-null.md"
     },
     {
@@ -16096,6 +16100,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-frontend-dead-csrf-bearer-header-machinery.md"
     },
     {
@@ -16951,6 +16959,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-archival-workflow.md"
+    }
+  ],
+  "src/frontend/asset-preview-anchor.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam.md"
     }
   ],
   "src/frontend/asset-preview-tags.ts": [
@@ -18886,6 +18900,10 @@
     }
   ],
   "src/generation": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-composer-user-visible-streaming-vs-complete-toggle.md"
@@ -25940,6 +25958,10 @@
     }
   ],
   "src/routes": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-nodeinfo-well-known-discovery-endpoints.md"
@@ -34735,6 +34757,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-platform-research.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam.md"
     },
     {
       "kind": "ticket",
