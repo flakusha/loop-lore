@@ -23,6 +23,7 @@ Context: e0ba5f698/c565c81ab. Severity: nit (test-infra). tests/e2e/flows/browse
 
 ## Resolution
 
+// hint: All three dimensions conflict. Manual review required.
 Both call sites now wait for the login navigation before `goto`: `admin-dashboard-empty.browser.ts` and the **inline non-admin login** in `admin-dashboard-populated.browser.ts`. Only that file's `loginAsAdmin` helper already had the guard — that is the `c565c81ab` fix, and it is why the file looked covered; the non-admin path did not have it.
 
 The race was not merely flaky: without the guard the non-admin test's post-goto assertion `waitForURL(url => url.pathname !== "/views/admin")` passes **vacuously** when the competing `HX-Redirect: /views/chat` aborts the `goto`, so the admin guard under test was never exercised.
