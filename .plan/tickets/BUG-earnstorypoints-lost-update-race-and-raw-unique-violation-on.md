@@ -17,6 +17,6 @@ Context: src/services/agency/story-points/mutations.ts:39-68 (landed 681e6605e).
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete. — read-decide-write wrapped in one transaction; INSERT is `ON CONFLICT DO NOTHING` against the matching 020 partial index; UPDATE is relative (`balance = balance + ?`) with the cap re-applied in-statement; CapExceededError check moved inside the transaction.
+- [x] Tests passing. — `src/services/agency/story-points.test.ts` 20 pass / 0 fail, including three new concurrency tests. Reproduced before the fix: 7 of 8 parallel first-time earns rejected with `UNIQUE constraint failed: actor_story_points.actor_id`, and 10 parallel earns of 3 over a seed of 10 left `earned_total` at 40 with `balance` at 13.
+- [x] Documentation updated. — the `earnStoryPoints` JSDoc records the concurrency contract and the `@throws` the function can now raise.
