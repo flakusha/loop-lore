@@ -148,3 +148,6 @@ raster source for any raster-to-vector step.
 - `src/assets/service/validate.ts` — mime allowlist owning the SVG block
 - `.plan/tickets/BUG-asset-serve-public-immutable-cache-inline-svg-exposure.md`
   — stored-XSS constraint driving the sanitization gate
+
+
+git issue: f459705

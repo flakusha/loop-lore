@@ -6,6 +6,7 @@
 **Summary:** Sanitized-SVG allow path through the SVG block with hardened serve headers
 **Context:** Vector-graphics epic; constrained by BUG-asset-serve-public-immutable-cache-inline-svg-exposure.md
 **Acceptance Criteria:** See ## Acceptance Criteria below
+**Epic:** epic-vector-graphics-generation
 
 **Status:** Not Started
 **Priority:** high
@@ -31,3 +32,6 @@ assets; private/signed responses keep private/no-store per the BUG ticket.
 - [ ] Sanitizer-passed SVG serves inline with `Content-Security-Policy: sandbox` and `X-Content-Type-Options: nosniff` present (curl `-I` raw URL, both headers observed)
 - [ ] Unsanitized legacy SVG serves with `Content-Disposition: attachment` (curl `-I`, attachment observed, no inline execution)
 - [ ] Public sanitized SVG keeps immutable cache; signed/private responses send private/no-store (curl `-I` both URLs, cache directives differ as stated)
+
+
+git issue: c910362

@@ -56,3 +56,6 @@ mime gate. ComfyUI/SD raster engines untouched.
 - [ ] Non-SVG model output surfaces retry-then-error, creates no asset row.
 - [ ] Oversized SVG rejected before `createAsset`; no partial row/file.
 - [ ] Raster flow (`generateImages` openai|sdapi|sdcpp|comfyui) unchanged.
+
+
+git issue: 02cbb12

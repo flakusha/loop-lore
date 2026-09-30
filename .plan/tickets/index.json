@@ -12579,6 +12579,27 @@
     "title": "User Story & Use Case Improvements (Permanently Ongoing)",
     "type": "EPIC"
   },
+  "EPIC-VECTOR-GRAPHICS-GENERATION": {
+    "hash": "f459705",
+    "extid": "EPIC-VECTOR-GRAPHICS-GENERATION",
+    "type": "EPIC",
+    "title": "Vector Graphics & Animated Image Generation",
+    "label": "epic",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [
+      "assets",
+      "svg",
+      "vector",
+      "animation",
+      "smil",
+      "image-generation",
+      "sanitization"
+    ],
+    "source": ".plan/epics/epic-vector-graphics-generation.md",
+    "status": "Not Started",
+    "git_issue": "f459705"
+  },
   "EPIC-VIDEO-GENERATION": {
     "epic": "",
     "extid": "EPIC-VIDEO-GENERATION",
@@ -41003,6 +41024,67 @@
     "tags": [],
     "title": "Validate and fix FE/BE/DB gaps for chat/VN settings",
     "type": "TASK"
+  },
+  "TASK-VECTOR-GEN-ANIMATED-RASTER": {
+    "hash": "f156320",
+    "extid": "TASK-VECTOR-GEN-ANIMATED-RASTER",
+    "type": "TASK",
+    "title": "Vector Gen — Animated Raster (APNG/WebP/GIF)",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-vector-graphics-generation",
+    "tags": [
+      "assets",
+      "animation",
+      "generation"
+    ],
+    "source": ".plan/tickets/TASK-vector-gen-animated-raster.md",
+    "status": "draft",
+    "git_issue": "f156320"
+  },
+  "TASK-VECTOR-GEN-GALLERY-ASSET-SUPPORT": {
+    "hash": "47dd28f",
+    "extid": "TASK-VECTOR-GEN-GALLERY-ASSET-SUPPORT",
+    "type": "TASK",
+    "title": "Vector-gen gallery asset support",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-vector-graphics-generation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-vector-gen-gallery-asset-support.md",
+    "status": "Not Started",
+    "git_issue": "47dd28f"
+  },
+  "TASK-VECTOR-GEN-LLM-SVG-PIPELINE": {
+    "hash": "02cbb12",
+    "extid": "TASK-VECTOR-GEN-LLM-SVG-PIPELINE",
+    "type": "TASK",
+    "title": "Vector Gen — LLM SVG Pipeline",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-vector-graphics-generation",
+    "tags": [
+      "assets",
+      "vector",
+      "svg",
+      "generation"
+    ],
+    "source": ".plan/tickets/TASK-vector-gen-llm-svg-pipeline.md",
+    "status": "draft",
+    "git_issue": "02cbb12"
+  },
+  "TASK-VECTOR-GEN-SVG-SERVE-SAFETY": {
+    "hash": "c910362",
+    "extid": "TASK-VECTOR-GEN-SVG-SERVE-SAFETY",
+    "type": "TASK",
+    "title": "Vector-gen SVG serve safety",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-vector-graphics-generation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-vector-gen-svg-serve-safety.md",
+    "status": "Not Started",
+    "git_issue": "c910362"
   },
   "TASK-VERIFY-LOGGING-CHANGES-GREEN": {
     "epic": "epic-logging-telemetry",
