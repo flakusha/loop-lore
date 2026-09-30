@@ -46,6 +46,12 @@ async function tryLocalImprove(text: string, level: string,): Promise<LocalInfer
 }
 
 export const promptImproveActions: Partial<ChatState> & ThisType<ChatState> = {
+  // Reactive defaults — input-area.html binds `:disabled="!activeChat ||
+  // _improving"`; without an initial value the binding throws
+  // "_improving is not defined" as soon as a chat is selected (the
+  // `!activeChat` short-circuit hides it while no chat is open).
+  _improving: false,
+  _promptImproveHistory: [] as string[],
   /**
    * Push the current draft onto the undo stack, dropping the oldest level
    * once the bounded depth is reached.
@@ -72,7 +78,7 @@ export const promptImproveActions: Partial<ChatState> & ThisType<ChatState> = {
     this._improving = true;
     try {
       // Group chats rewrite in the group's voice by default; direct chats in
-      // The 1:1 chat voice. Explicit levels from the level menu win.
+      // the 1:1 chat voice. Explicit levels from the level menu win.
       const requestedLevel = level ??
         (this.isGroupChat ? "style-group" : "style-chat");
       // Opt-in browser inference first: eligible levels run locally so the
