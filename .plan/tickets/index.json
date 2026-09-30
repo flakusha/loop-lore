@@ -3456,7 +3456,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-i18n-test-restore-guard-leaks-stubbed-locale-strings-across-.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-IDEMPOTENCY-CACHE-KEY-LACKS-USER-SCOPE-CROSS-USER-RESPONSE-R": {
     "epic": "",
@@ -3500,7 +3500,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-image-edit-suite-releases-its-dead-port-before-probing-it-to.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-IMPERSONATE-BUILDIMPRESULT-REFERENCEERROR": {
     "epic": "",
@@ -3721,7 +3721,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-keynav-handler-isolation-logs-via-console-error-instead-of-l.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-KEYNAV-STALE-UNSUBSCRIBE-DELETES-LIVE-HANDLER-SET": {
     "epic": "",
@@ -3731,7 +3731,7 @@
     "label": "bug",
     "priority": "medium",
     "source": ".plan/tickets/BUG-keynav-stale-unsubscribe-deletes-live-handler-set.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [],
     "title": "keynav stale unsubscribe deletes live handler set",
     "type": "BUG"
@@ -3822,7 +3822,7 @@
     "label": "bug",
     "priority": "low",
     "source": ".plan/tickets/BUG-locations-tree-ts-header-names-nonexistent-triggers.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [],
     "title": "locations tree.ts header names nonexistent triggers",
     "type": "BUG"
@@ -4689,6 +4689,19 @@
     "tags": [],
     "title": "Out-of-order fetch race in loadMessages",
     "type": "BUG"
+  },
+  "BUG-PARALLEL-CHECK-RUNNER-HAS-NO-PER-GATE-TIMEOUT-SO-ONE-WEDGED-": {
+    "hash": "dcd07fe",
+    "git_issue": "dcd07fe",
+    "extid": "BUG-PARALLEL-CHECK-RUNNER-HAS-NO-PER-GATE-TIMEOUT-SO-ONE-WEDGED-",
+    "type": "BUG",
+    "title": "parallel check runner has no per-gate timeout, so one wedged gate hangs bun run check forever",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-parallel-check-runner-has-no-per-gate-timeout-so-one-wedged-.md",
+    "status": "Not Started"
   },
   "BUG-PARSEACCEPTLANGUAGE-IGNORES-QUALITY-VALUES-RETURNS-HEADER-OR": {
     "epic": "",
@@ -5938,6 +5951,19 @@
     "title": "# e2e suite fails 29 tests with E2E_SAFEGUARD unset (canonical shape)",
     "type": "BUG"
   },
+  "BUG-TEST-HARNESS-CLOSE-CANNOT-AWAIT-THE-STORE-FLUSH-IT-STARTS": {
+    "hash": "51bcaf4",
+    "git_issue": "51bcaf4",
+    "extid": "BUG-TEST-HARNESS-CLOSE-CANNOT-AWAIT-THE-STORE-FLUSH-IT-STARTS",
+    "type": "BUG",
+    "title": "Test harness close() cannot await the store flush it starts",
+    "label": "bug",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-test-harness-close-cannot-await-the-store-flush-it-starts.md",
+    "status": "Not Started"
+  },
   "BUG-TEST-RUN-ID-USES-DATE-NOW-COLLISION-RISK-UNDER-PARALLEL": {
     "epic": "",
     "extid": "BUG-TEST-RUN-ID-USES-DATE-NOW-COLLISION-RISK-UNDER-PARALLEL",
@@ -6057,6 +6083,19 @@
     "tags": [],
     "title": "tui/app.ts never threads a session token into ChatWidget — auth header never sent",
     "type": "BUG"
+  },
+  "BUG-TUI-SHOWERROR-DESYNCS-ITEMCOUNT-FROM-MESSAGELIST-LENGTH": {
+    "hash": "71758ac",
+    "git_issue": "71758ac",
+    "extid": "BUG-TUI-SHOWERROR-DESYNCS-ITEMCOUNT-FROM-MESSAGELIST-LENGTH",
+    "type": "BUG",
+    "title": "tui showError() desyncs itemCount from messageList length",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-tui-showerror-desyncs-itemcount-from-messagelist-length.md",
+    "status": "Not Started"
   },
   "BUG-TURN-SKIP-CONCURRENT-ADVANCE-POSTS-DOUBLE-FIRE-AUTO-GENERATI": {
     "hash": "c4f570d",
