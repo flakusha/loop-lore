@@ -35,7 +35,12 @@ export interface RateLimitResult {
   resetSec: number;
 }
 
-/** Build the headers for a 429 (or informational) response. */
+/**
+ * Build the headers for a 429 (or informational) response.
+ * @param {RateLimitResult} result
+ * @param {number} retryAfterSec
+ * @returns {Record<string, string>}
+ */
 export function rateLimitHeaders(
   result: RateLimitResult,
   retryAfterSec?: number,
@@ -69,6 +74,7 @@ export interface RateLimitConfig {
  * the process lifetime; call {@link destroy} on the returned instance to
  * stop it (tests, per-request instantiation, shutdown hooks).
  * @param config
+ * @returns {{ check: (key: string) => boolean; clear: () => void; consume: (key: string, now?: number) => RateLimitResult; destroy: () => void; peek: (key: string, now?: number) => RateLimitResult; record: (key: string, now?: number) => void; refund: (key: string) => void; reset: (key: string) => void; }}
  */
 export function createRateLimiter(config: RateLimitConfig,) {
   // Per-key queue of timestamps (ms). The queue length is bounded by

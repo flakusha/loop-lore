@@ -20,6 +20,7 @@ import type { HandlerOpts, } from "./types";
  * a Game Master can steer an in-progress story.
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { chats: { ":id": { "gm-guidance": { ...; }; }; }; }; }, { ...; }, { ...; }>}
  */
 export function gmGuidanceRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;

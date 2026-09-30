@@ -7,9 +7,14 @@ import type { SettingsState, } from "./types";
 
 const log = rootLog.child({ module: "settings", },);
 
-/** */
+/**
+ * @returns {Partial<SettingsState> & ThisType<SettingsState>}
+ */
 export function api(): Partial<SettingsState> & ThisType<SettingsState> {
   return {
+    /**
+     * @returns {Promise<void>}
+     */
     async saveApi() {
       this.saving = true;
       try {
@@ -28,6 +33,9 @@ export function api(): Partial<SettingsState> & ThisType<SettingsState> {
       }
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async testConnection() {
       try {
         const res = await apiFetch("/api/v1/generation/test-connection", { method: "POST", },);
@@ -41,6 +49,10 @@ export function api(): Partial<SettingsState> & ThisType<SettingsState> {
       }
     },
 
+    /**
+     * @param {Record<string, unknown>} payload
+     * @returns {Promise<void>}
+     */
     async persistSettings(payload: Record<string, unknown>,) {
       try {
         if (payload.theme) {
@@ -87,10 +99,16 @@ export function api(): Partial<SettingsState> & ThisType<SettingsState> {
       }
     },
 
+    /**
+     * @returns {void}
+     */
     clearApiKey() {
       this.apiKey = "";
     },
 
+    /**
+     * @returns {void}
+     */
     onProviderChange() {
       const endpointGroup = document.querySelector("#api-endpoint-group",) as HTMLElement | null;
       if (endpointGroup) {
@@ -98,6 +116,9 @@ export function api(): Partial<SettingsState> & ThisType<SettingsState> {
       }
     },
 
+    /**
+     * @returns {void}
+     */
     onTempInput() {
       const label = document.querySelector("#temp-value",);
       if (label) { label.textContent = Number(this.temperature,).toFixed(1,); }

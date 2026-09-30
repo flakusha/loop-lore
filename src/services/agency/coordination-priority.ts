@@ -38,6 +38,7 @@ const queuedActions: Array<{ sceneId: string; action: { actorId: string; payload
  * calls for the same `(sceneId, actorId)` are no-ops.
  * @param sceneId
  * @param actorId
+ * @returns {void}
  */
 export function markPlayerIntentPending(sceneId: string, actorId: string,): void {
   let bucket = sceneIntents.get(sceneId,);
@@ -52,6 +53,7 @@ export function markPlayerIntentPending(sceneId: string, actorId: string,): void
  * Mark a previously-pending intent as resolved (the response stream ended).
  * @param sceneId
  * @param actorId
+ * @returns {void}
  */
 export function markPlayerIntentResolved(sceneId: string, actorId: string,): void {
   const bucket = sceneIntents.get(sceneId,);
@@ -63,6 +65,7 @@ export function markPlayerIntentResolved(sceneId: string, actorId: string,): voi
 /**
  * Check whether any player intent is currently in flight on `sceneId`.
  * @param sceneId
+ * @returns {boolean}
  */
 export function hasPlayerIntent(sceneId: string,): boolean {
   const bucket = sceneIntents.get(sceneId,);
@@ -77,6 +80,7 @@ export function hasPlayerIntent(sceneId: string,): boolean {
  *
  * @param sceneId
  * @param action
+ * @returns {QueueResult}
  */
 export function enqueueIfNoPlayerIntent(
   sceneId: string,
@@ -93,6 +97,7 @@ export function enqueueIfNoPlayerIntent(
  * Drain queued actions for a scene. Called by the autonomy scheduler on
  * the next tick after a player intent clears.
  * @param sceneId
+ * @returns {{ actorId: string; payload: unknown; }[]}
  */
 export function drainQueuedActions(sceneId: string,): Array<{ actorId: string; payload: unknown }> {
   const out: Array<{ actorId: string; payload: unknown }> = [];
@@ -108,6 +113,7 @@ export function drainQueuedActions(sceneId: string,): Array<{ actorId: string; p
 
 /**
  * Test-only: clear all in-process state. Not part of the public API.
+ * @returns {void}
  */
 export function __resetCoordinationState(): void {
   sceneIntents.clear();
@@ -116,6 +122,7 @@ export function __resetCoordinationState(): void {
 
 /**
  * Test-only: peek the queue length. Not part of the public API.
+ * @returns {number}
  */
 export function __queueLength(): number {
   return queuedActions.length;

@@ -38,6 +38,7 @@ export function parseDbTimestamp(value: string,): number {
  * @param db - Database
  * @param chatId - Chat owning the session
  * @param session - Run to persist
+ * @returns {Promise<void>}
  */
 export async function saveSession(
   db: Kysely<DB>,
@@ -102,6 +103,7 @@ export async function loadPersistedSession(
  * Delete a persisted run (cancel/confirm).
  * @param db - Database
  * @param chatId - Chat to clear
+ * @returns {Promise<void>}
  */
 export async function deletePersistedSession(db: Kysely<DB>, chatId: string,): Promise<void> {
   await db.deleteFrom("workflow_sessions",).where("chat_id", "=", chatId,).execute();

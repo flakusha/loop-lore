@@ -81,6 +81,12 @@ export class EmotionAvatarService {
    * @param opts - Generation options
    * @returns Batch job ID for tracking
    */
+  /**
+   * @param {GenerateEmotionAvatarsOpts} opts
+   * @throws {Error}
+   * @throws {Error}
+   * @returns {Promise<BatchJobId>}
+   */
   async startBatchGeneration(opts: GenerateEmotionAvatarsOpts,): Promise<BatchJobId> {
     const jobId = randomUUID() as BatchJobId;
     const emotions = opts.emotions ?? DEFAULT_EMOTIONS;
@@ -147,6 +153,10 @@ export class EmotionAvatarService {
    * @param jobId - Batch job ID
    * @returns Job status or undefined if not found
    */
+  /**
+   * @param {BatchJobId} jobId
+   * @returns {BatchGenerationJob | undefined}
+   */
   getJobStatus(jobId: BatchJobId,): BatchGenerationJob | undefined {
     return getJob(jobId,);
   }
@@ -155,6 +165,10 @@ export class EmotionAvatarService {
    * Cancel a running batch generation job.
    * @param jobId - Batch job ID
    * @returns true if cancelled, false if not found or already completed
+   */
+  /**
+   * @param {BatchJobId} jobId
+   * @returns {boolean}
    */
   cancelJob(jobId: BatchJobId,): boolean {
     return cancelJobDispatch(jobId,);
@@ -165,6 +179,10 @@ export class EmotionAvatarService {
    * @param actorId - Character actor ID
    * @returns List of jobs
    */
+  /**
+   * @param {string} actorId
+   * @returns {BatchGenerationJob[]}
+   */
   listJobs(actorId: string,): BatchGenerationJob[] {
     return listJobsDispatch(actorId,);
   }
@@ -173,6 +191,10 @@ export class EmotionAvatarService {
    * Get emotion prompt modifier for a given emotion.
    * @param emotion - Emotion type
    * @returns Prompt modifier string
+   */
+  /**
+   * @param {EmotionType} emotion
+   * @returns {string}
    */
   getEmotionPromptModifier(emotion: EmotionType,): string {
     return getEmotionPromptModifierDispatch(emotion,);
@@ -187,6 +209,11 @@ export class EmotionAvatarService {
    * @param emotion - Emotion type being generated
    * @param avatarEmotions - Optional config emotion map (lowercase keys)
    * @returns Prompt modifier string
+   */
+  /**
+   * @param {EmotionType} emotion
+   * @param {Record<string, EmotionEntry>} avatarEmotions
+   * @returns {string}
    */
   resolveEmotionPromptModifier(emotion: EmotionType, avatarEmotions?: Record<string, EmotionEntry>,): string {
     return resolveEmotionPromptModifierDispatch(emotion, avatarEmotions,);
@@ -206,6 +233,20 @@ export class EmotionAvatarService {
    * @param opts.avatarEmotions
    * @returns Generated avatar ID and linked asset ID
    */
+  /**
+ * @param {{
+    actorId: string;
+    emotion: EmotionType;
+    sdConfig: import("../../../config/schema").ImageProviderConfig;
+    uploadDir: string;
+    promptPrefix?: string;
+    negativePrompt?: string;
+    baseAvatarId?: string;
+    fallbackMode?: "generation" | "none";
+    avatarEmotions?: Record<string, EmotionEntry>;
+  }} opts
+ * @returns {Promise<{ avatarId: string; assetId: string; }>}
+ */
   private async generateEmotionAvatar(opts: {
     actorId: string;
     emotion: EmotionType;

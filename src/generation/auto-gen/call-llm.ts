@@ -85,6 +85,7 @@ function bumpLastRendered(attemptId: string | undefined, seq: number,): void {
  * Run the LLM call for a generated message.
  * @param opts
  * @returns The accumulated content, thinking, token usage, and finish reason.
+ * @throws {Error}
  */
 export async function callLlm(opts: CallLlmOpts,): Promise<CallLlmResult> {
   const {

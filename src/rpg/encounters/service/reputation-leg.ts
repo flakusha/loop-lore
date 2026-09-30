@@ -17,6 +17,7 @@ import type { EncounterOutcome, NsfwEncounter, } from "./types";
  * leg in try/catch so a missing auxiliary row never fails completion.
  * @param db
  * @param row
+ * @returns {Promise<void>}
  */
 export async function insertFanOutEffect(
   db: Kysely<DB>,
@@ -60,6 +61,7 @@ export async function insertFanOutEffect(
  * @param log
  * @param encounter
  * @param outcome
+ * @returns {Promise<void>}
  */
 export async function applyReputationLeg(
   db: Kysely<DB>,

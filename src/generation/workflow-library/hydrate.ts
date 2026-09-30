@@ -50,6 +50,7 @@ const SOURCE = "workflow-library";
  * is a one-shot guard, so a built-in can never take an id back afterwards.
  * @param database - Kysely handle
  * @param registry - Registry to populate; defaults to the singleton
+ * @returns {Promise<number>}
  */
 export async function hydrateWorkflowRegistry(
   database: Kysely<DB>,
@@ -93,6 +94,8 @@ let hydrated: Promise<number> | null = null;
  * memo so a transient DB error is not cached forever.
  * @param database - Kysely handle
  * @param registry - Registry to populate; defaults to the singleton
+ * @throws {Error}
+ * @returns {Promise<number>}
  */
 export function ensureWorkflowRegistry(
   database: Kysely<DB>,
@@ -110,12 +113,16 @@ export function ensureWorkflowRegistry(
  *
  * Called by the admin surface after a create/update/delete so the public
  * template list does not serve a stale registry until restart.
+ * @returns {void}
  */
 export function invalidateWorkflowRegistry(): void {
   hydrated = null;
 }
 
-/** Test seam: forget the memoized hydration. */
+/**
+ * Test seam: forget the memoized hydration.
+ * @returns {void}
+ */
 export function resetWorkflowRegistryForTests(): void {
   hydrated = null;
 }

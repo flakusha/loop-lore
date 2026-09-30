@@ -80,7 +80,9 @@ export const FANTASY_RPG_REQUIREMENTS: BundleCharacterRequirements = {
 /**
  * Convenience lookup. Returns undefined when no requirements are registered
  * for the given bundle id (callers should treat undefined as "no enforcement").
- */
+  * @param {string | undefined} bundleId
+ * @returns {BundleCharacterRequirements | undefined}
+*/
 export function getRequirementsForBundle(
   bundleId: string | undefined,
 ): BundleCharacterRequirements | undefined {

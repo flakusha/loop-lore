@@ -32,6 +32,7 @@ function sha256Hex(token: string,): string {
  * Validate that a session token is well-formed (basic sanity).
  * Returns the raw token string or null.
  * @param request
+ * @returns {string | null}
  */
 export function extractBearerToken(request: Request,): string | null {
   const header = request.headers.get("Authorization",);

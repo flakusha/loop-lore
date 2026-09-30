@@ -44,6 +44,7 @@ const ForwardParams = t.Object({
  * @param opts
  * @param prefix
  * @returns Elysia plugin serving the forward endpoint
+ * @throws {Error}
  */
 export function forwardRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, config, } = opts;

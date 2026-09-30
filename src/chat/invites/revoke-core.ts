@@ -20,6 +20,10 @@ export interface RevokeParams {
   inviteId: string;
 }
 
+/**
+ * @param {RevokeParams} params
+ * @returns {Promise<InviteResult<{ id: string; status: InviteStatus; }>>}
+ */
 export async function revokeInviteRow(
   params: RevokeParams,
 ): Promise<InviteResult<{ id: string; status: InviteStatus }>> {

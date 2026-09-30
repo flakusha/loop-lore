@@ -54,6 +54,7 @@ let sceneIndex = 0;
  * @param containerEl
  * @param currentChatId
  * @param currentSceneIndex
+ * @returns {void}
  */
 export function initChoiceCards(
   containerEl: HTMLElement,
@@ -67,6 +68,7 @@ export function initChoiceCards(
 
 /**
  * Destroy the choice cards component.
+ * @returns {void}
  */
 export function destroyChoiceCards(): void {
   container = null;
@@ -76,6 +78,7 @@ export function destroyChoiceCards(): void {
 
 /**
  * Load choices for the current scene from the API.
+ * @returns {Promise<void>}
  */
 export async function loadChoices(): Promise<void> {
   if (!chatId) { return; }
@@ -221,6 +224,7 @@ export async function selectChoice(choiceId: string,): Promise<SelectChoiceResul
 
 /**
  * Get the relationship and mood impacts from all selected choices.
+ * @returns {{ relationships: Record<string, number>; moods: Record<string, number>; }}
  */
 export function getAccumulatedImpacts(): {
   relationships: Record<string, number>;

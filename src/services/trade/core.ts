@@ -30,6 +30,7 @@ import type { TradeHistoryEntry, TradeLine, TradeResult, TradeType, } from "./ty
  * @param opts.buyerItems
  * @param opts.sellerItems
  * @param opts.price
+ * @returns {Promise<TradeResult>}
  */
 export async function tradeCore(
   db: Kysely<DB>,
@@ -137,6 +138,7 @@ export async function tradeCore(
  * @param opts.itemsRequested
  * @param opts.tradeType
  * @param opts.trx
+ * @returns {Promise<void>}
  */
 export async function recordTrade(
   db: Kysely<DB>,
@@ -177,6 +179,7 @@ export async function recordTrade(
  * @param worldId
  * @param actorId
  * @param limit
+ * @returns {Promise<TradeHistoryEntry[]>}
  */
 export async function getTradeHistory(
   db: Kysely<DB>,

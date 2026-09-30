@@ -36,10 +36,17 @@ export interface ActorKeyMeta {
     revokeKeyId: null as string | null,
     revokeKeyName: "",
 
+    /**
+     * @returns {Promise<void>}
+     */
     async init() {
       await this.loadKeys();
     },
 
+    /**
+     * @throws {Error}
+     * @returns {Promise<void>}
+     */
     async loadKeys() {
       this.loading = true;
       this.error = null;
@@ -57,6 +64,10 @@ export interface ActorKeyMeta {
       }
     },
 
+    /**
+     * @throws {Error}
+     * @returns {Promise<void>}
+     */
     async generateKey() {
       if (!this.newKeyName.trim()) { return; }
 
@@ -82,6 +93,10 @@ export interface ActorKeyMeta {
       }
     },
 
+    /**
+     * @throws {Error}
+     * @returns {Promise<void>}
+     */
     async rotateKey() {
       this.loading = true;
       this.error = null;
@@ -102,12 +117,20 @@ export interface ActorKeyMeta {
       }
     },
 
+    /**
+     * @param {ActorKeyMeta} key
+     * @returns {void}
+     */
     confirmRevoke(key: ActorKeyMeta,) {
       this.revokeKeyId = key.id;
       this.revokeKeyName = key.name;
       this.showRevokeModal = true;
     },
 
+    /**
+     * @throws {Error}
+     * @returns {Promise<void>}
+     */
     async revokeKey() {
       if (!this.revokeKeyId) { return; }
 
@@ -132,11 +155,19 @@ export interface ActorKeyMeta {
       }
     },
 
+    /**
+     * @param {string | null} dateStr
+     * @returns {string}
+     */
     formatDate(dateStr: string | null,): string {
       if (!dateStr) { return "—"; }
       return formatDisplayDate(dateStr, "datetime",);
     },
 
+    /**
+     * @param {string} status
+     * @returns {string}
+     */
     statusColor(status: string,): string {
       switch (status) {
         case "active": {

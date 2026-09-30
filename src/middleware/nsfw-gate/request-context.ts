@@ -90,6 +90,7 @@ export interface RequestContext {
  * runs only when all previous stages passed, so the common deny (bad actor,
  * disabled toggle) costs a single batched read.
  * @param args
+ * @returns {Promise<RequestContext>}
  */
 export async function resolveRequestContext(args: RequestContextArgs,): Promise<RequestContext> {
   const { database, config, userId, chatId, actorId, skip, } = args;

@@ -79,6 +79,10 @@ export class ItemsService {
    * Create a new item definition
    * @param def
    */
+  /**
+   * @param {ItemDefinition} def
+   * @returns {Promise<string>}
+   */
   async createDefinition(def: ItemDefinition,): Promise<string> {
     return createDefinitionDispatch(this.state, def,);
   }
@@ -89,6 +93,11 @@ export class ItemsService {
    * @param itemId
    * @param worldId
    */
+  /**
+   * @param {string} itemId
+   * @param {string} worldId
+   * @returns {Promise<{ id: string; name: string; created_at: string; updated_at: string; world_id: string; value: number; properties: string; description: string | null; category: ItemCategory; weight: number; rarity: ItemRarity; stackable: StackableState; max_stack: number; } | null>}
+   */
   async getDefinition(itemId: string, worldId: string,) {
     return getDefinitionDispatch(this.state, itemId, worldId,);
   }
@@ -97,6 +106,11 @@ export class ItemsService {
    * List item definitions in a world
    * @param worldId
    * @param category
+   */
+  /**
+   * @param {string} worldId
+   * @param {ItemCategory} category
+   * @returns {Promise<{ id: string; name: string; created_at: string; updated_at: string; world_id: string; value: number; properties: string; description: string | null; category: ItemCategory; weight: number; rarity: ItemRarity; stackable: StackableState; max_stack: number; }[]>}
    */
   async listDefinitions(worldId: string, category?: ItemCategory,) {
     return listDefinitionsDispatch(this.state, worldId, category,);
@@ -111,6 +125,17 @@ export class ItemsService {
    * @param hidden
    * @param respawnable
    * @param spawnCondition
+   */
+  /**
+   * @param {string} itemId
+   * @param {string} locationId
+   * @param {string} worldId
+   * @param {unknown} quantity
+   * @param {unknown} hidden
+   * @param {unknown} respawnable
+   * @param {Record<string, unknown>} spawnCondition
+   * @param {DurabilityOverride} durability
+   * @returns {Promise<string>}
    */
   async placeInLocation(
     itemId: string,
@@ -142,6 +167,14 @@ export class ItemsService {
    * @param worldId
    * @param quantity
    */
+  /**
+   * @param {string} itemId
+   * @param {string} actorId
+   * @param {string} worldId
+   * @param {unknown} quantity
+   * @param {DurabilityOverride} durability
+   * @returns {Promise<string>}
+   */
   async giveToNpc(
     itemId: string,
     actorId: string,
@@ -157,6 +190,12 @@ export class ItemsService {
    * @param locationId
    * @param includeHidden
    */
+  /**
+   * @param {string} locationId
+   * @param {string} worldId
+   * @param {unknown} includeHidden
+   * @returns {Promise<{ world_id: string; visibility: ItemVisibility; location_id: string | null; item_id: string; owner_actor_id: string | null; quantity: number; max_durability: number | null; ... 10 more ...; instance_properties: string; }[]>}
+   */
   async getAtLocation(locationId: string, worldId: string, includeHidden = false,) {
     return getAtLocationDispatch(this.state, locationId, worldId, includeHidden,);
   }
@@ -164,6 +203,11 @@ export class ItemsService {
   /**
    * Get items carried by an NPC
    * @param actorId
+   */
+  /**
+   * @param {string} actorId
+   * @param {string} worldId
+   * @returns {Promise<ItemInstance[]>}
    */
   async getNpcInventory(actorId: string, worldId: string,) {
     return getNpcInventoryDispatch(this.state, actorId, worldId,);
@@ -174,10 +218,22 @@ export class ItemsService {
    * Returns actorId -> inventory. BUG-n-1-queries-in-story-world-state-context-per-participant.
    * @param actorIds
    */
+  /**
+   * @param {string[]} actorIds
+   * @param {string} worldId
+   * @returns {Promise<Map<string, ItemInstance[]>>}
+   */
   async getNpcInventoryBatch(actorIds: string[], worldId: string,): Promise<Map<string, ItemInstance[]>> {
     return getNpcInventoryBatchDispatch(this.state, actorIds, worldId,);
   }
 
+  /**
+   * @param {string} worldItemId
+   * @param {string} worldId
+   * @param {number} amount
+   * @param {Transaction<DB>} trx
+   * @returns {Promise<DurabilityResult>}
+   */
   async decrementDurability(
     worldItemId: string,
     worldId: string,
@@ -187,6 +243,13 @@ export class ItemsService {
     return decrementDurabilityDispatch(this.state, worldItemId, worldId, amount, trx,);
   }
 
+  /**
+   * @param {string} worldItemId
+   * @param {string} worldId
+   * @param {ItemDriftEvent} event
+   * @param {Transaction<DB>} trx
+   * @returns {Promise<ItemDrift | null>}
+   */
   async applyDrift(
     worldItemId: string,
     worldId: string,
@@ -196,6 +259,11 @@ export class ItemsService {
     return applyDriftDispatch(this.state, worldItemId, worldId, event, trx,);
   }
 
+  /**
+   * @param {string} itemId
+   * @param {string} worldId
+   * @returns {Promise<{ id: string; created_at: string; updated_at: string; world_id: string; properties: string; visibility: ItemVisibility; location_id: string | null; item_id: string; owner_actor_id: string | null; ... 5 more ...; is_active: number; } | null>}
+   */
   async getUniqueItem(itemId: string, worldId: string,) {
     return getUniqueItemDispatch(this.state, itemId, worldId,);
   }
@@ -208,6 +276,15 @@ export class ItemsService {
    * @param toLocationId
    * @param toActorId
    * @param trx
+   */
+  /**
+   * @param {string} worldItemId
+   * @param {string} worldId
+   * @param {number} quantity
+   * @param {string} toLocationId
+   * @param {string} toActorId
+   * @param {Transaction<DB>} trx
+   * @returns {Promise<TransferResult>}
    */
   async transfer(
     worldItemId: string,
@@ -226,6 +303,13 @@ export class ItemsService {
    * @param worldId
    * @param quantity
    * @param trx
+   */
+  /**
+   * @param {string} worldItemId
+   * @param {string} worldId
+   * @param {number} quantity
+   * @param {Transaction<DB>} trx
+   * @returns {Promise<boolean>}
    */
   async destroy(worldItemId: string, worldId: string, quantity?: number, trx?: Transaction<DB>,): Promise<boolean> {
     return destroyDispatch(this.state, worldItemId, worldId, quantity, trx,);

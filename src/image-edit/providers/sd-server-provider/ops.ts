@@ -45,6 +45,7 @@ function getEmotionModifier(emotion: string,): string {
  * @param params
  * @param cfg
  * @param onProgress
+ * @returns {Promise<ImageEditResult[]>}
  */
 export async function executeTxt2Img(
   host: SDServerHost,
@@ -111,6 +112,8 @@ export async function executeTxt2Img(
  * @param params
  * @param cfg
  * @param onProgress
+ * @throws {Error}
+ * @returns {Promise<ImageEditResult[]>}
  */
 export async function executeImg2Img(
   host: SDServerHost,
@@ -164,6 +167,9 @@ export async function executeImg2Img(
  * @param host
  * @param params
  * @param onProgress
+ * @throws {Error}
+ * @throws {Error}
+ * @returns {Promise<ImageEditResult[]>}
  */
 export async function executeUpscale(
   host: SDServerHost,

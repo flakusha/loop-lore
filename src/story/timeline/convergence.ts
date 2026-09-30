@@ -23,6 +23,7 @@ export interface ConvergentEventsOpts {
  * @param root0.excludeStoryId
  * @param root0.since
  * @param root0.limit
+ * @returns {Promise<{ id: string; actor_id: string | null; created_at: string; world_id: string; data: string | null; description: string; event_type: string; story_id: string | null; occurred_at: string; timeline_id: string; }[]>}
  */
 export async function getConvergentEvents(
   { db, worldId, excludeStoryId, since, limit, }: ConvergentEventsOpts,

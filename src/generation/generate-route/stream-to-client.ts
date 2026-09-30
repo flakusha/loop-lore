@@ -68,6 +68,9 @@ export interface StreamToClientOpts {
  * @param root0.providerName
  * @param root0.providerReq
  * @param root0.failoverList
+ * @throws {Error}
+ * @throws {Error}
+ * @returns {Response}
  */
 export function streamToClient({
   input,
@@ -91,6 +94,12 @@ export function streamToClient({
   const collectedToolCalls: { id: string; type: "function"; function: { name: string; arguments: string } }[] = [];
 
   const sseStream = new ReadableStream({
+    /**
+     * @param {unknown} controller
+     * @throws {Error}
+     * @throws {Error}
+     * @returns {Promise<void>}
+     */
     async start(controller,) {
       try {
         abortController = new AbortController();
@@ -331,6 +340,9 @@ export function streamToClient({
         controller.close();
       }
     },
+    /**
+     * @returns {void}
+     */
     cancel() {
       // Client disconnect: tear down the provider call AND propagate the
       // stop-and-respond fan-out. lastRenderedChunkIndex was last updated

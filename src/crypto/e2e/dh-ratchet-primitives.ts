@@ -99,6 +99,7 @@ export async function deriveChainKeyFromRoot(rootKey: Uint8Array,): Promise<Arra
  * Advance the chain key by one step.
  * @param chainKey
  * @returns void
+ * @throws {Error}
  */
 export async function chainStep(chainKey: Uint8Array,): Promise<{
   nextChainKey: Uint8Array;

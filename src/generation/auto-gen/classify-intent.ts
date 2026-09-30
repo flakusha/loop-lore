@@ -26,6 +26,7 @@ export interface IntentClassification {
  * @param config
  * @param db
  * @param userId
+ * @returns {Promise<IntentClassification | null>}
  */
 export async function classifyIntent(
   userMessage: string,

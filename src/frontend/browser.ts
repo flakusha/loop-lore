@@ -89,6 +89,7 @@ async function tryBrotliCompress(data: Uint8Array,): Promise<Uint8Array | null> 
  * @param key
  * @param keyId
  * @param threshold
+ * @returns {Promise<string>}
  */
 export async function browserCompressThenEncrypt(
   plaintext: string,
@@ -136,6 +137,9 @@ export async function browserCompressThenEncrypt(
  * Matches server-side crypto/pipeline.ts decryptThenDecompress.
  * @param stored
  * @param key
+ * @throws {Error}
+ * @throws {Error}
+ * @returns {Promise<string>}
  */
 export async function browserDecryptThenDecompress(stored: string, key: CryptoKey,): Promise<string> {
   const result = safeJsonParse<BrowserEncryptedPayload>(stored,);

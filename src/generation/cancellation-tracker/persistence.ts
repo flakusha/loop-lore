@@ -15,6 +15,7 @@ import type { UpdateAttemptStatusOpts, } from "./types";
  * @param attemptId
  * @param abortSignalId
  * @internal
+ * @returns {Promise<void>}
  */
 export async function insertAttempt(
   db: Kysely<DB>,
@@ -72,6 +73,7 @@ export async function insertAttempt(
  * @param root0.status
  * @param root0.extra
  * @internal
+ * @returns {Promise<void>}
  */
 export async function updateAttemptStatus({
   db,

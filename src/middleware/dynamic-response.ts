@@ -86,6 +86,10 @@ export class DynamicResponsePolicy {
    * @param options.response
    * @returns A new Response (or the original when no step applies).
    */
+  /**
+   * @param {DynamicApplyOptions} { request, response, }
+   * @returns {Promise<Response>}
+   */
   async apply({ request, response, }: DynamicApplyOptions,): Promise<Response> {
     if (!this.config.enabled) { return response; }
     if (!response.body) { return response; }
@@ -127,6 +131,18 @@ export class DynamicResponsePolicy {
    * @param root0.body
    * @param root0.kind
    */
+  /**
+ * @param {{
+    request: Request;
+    body: string;
+    kind: BodyKind;
+  }} {
+    request,
+    body,
+    kind,
+  }
+ * @returns {Promise<string>}
+ */
   private async minifyBody({
     request,
     body,
@@ -160,6 +176,11 @@ export class DynamicResponsePolicy {
    * @param body
    * @param kind
    */
+  /**
+   * @param {string} body
+   * @param {"html" | "css" | "js"} kind
+   * @returns {Promise<string>}
+   */
   private async runMinifier(body: string, kind: "html" | "css" | "js",): Promise<string> {
     switch (kind) {
       case "html": {
@@ -181,6 +202,16 @@ export class DynamicResponsePolicy {
    * @param root0.request
    * @param root0.body
    */
+  /**
+ * @param {{
+    request: Request;
+    body: string;
+  }} {
+    request,
+    body,
+  }
+ * @returns {{ encoding: string; buffer: Buffer<ArrayBufferLike>; } | null}
+ */
   private compressBody({
     request,
     body,
@@ -206,6 +237,10 @@ export class DynamicResponsePolicy {
    * configured preference. Returns null when no supported encoding is offered.
    * @param accept
    */
+  /**
+   * @param {string} accept
+   * @returns {"br" | "gzip" | null}
+   */
   private negotiateEncoding(accept: string,): "br" | "gzip" | null {
     // parseAcceptEncoding honors client q-values and excludes q<=0
     // ("not acceptable", RFC 7231); identity maps to None and is dropped.
@@ -228,6 +263,10 @@ export class DynamicResponsePolicy {
   /**
    * Merge `Accept-Encoding` into an existing Vary header without duplicates.
    * @param existing
+   */
+  /**
+   * @param {string | null} existing
+   * @returns {string}
    */
   private mergeVary(existing: string | null,): string {
     if (!existing) { return "Accept-Encoding"; }

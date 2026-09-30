@@ -23,6 +23,7 @@ export { NotificationStreamer, } from "./stream";
  * @param root0
  * @param root0.database
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { notifications: { ...; }; }; } & ... 6 more ... & { ...; }, { ...; }, { ...; }>}
  */
 export function notificationsRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
   const idParams = t.Object({ id: t.String(), },);

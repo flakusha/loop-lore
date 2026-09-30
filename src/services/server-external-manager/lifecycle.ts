@@ -9,6 +9,7 @@ import type { ServerExternalHost, ServerInstance, } from "./types";
  * Stop a specific instance by type + port
  * @param host
  * @param instance
+ * @returns {Promise<void>}
  */
 export async function stop(host: ServerExternalHost, instance: ServerInstance,): Promise<void> {
   host.log.info("Stopping server", { type: instance.type, pid: instance.pid, },);
@@ -34,6 +35,7 @@ export async function stop(host: ServerExternalHost, instance: ServerInstance,):
 /**
  * Stop all managed servers
  * @param host
+ * @returns {Promise<void>}
  */
 export async function stopAll(host: ServerExternalHost,): Promise<void> {
   stopLivenessProbes(host,);
@@ -47,6 +49,7 @@ export async function stopAll(host: ServerExternalHost,): Promise<void> {
  * Synchronous kill of all instances — for process.on('exit') handler.
  * Does not await, does not log (no event loop).
  * @param host
+ * @returns {void}
  */
 export function killAllSync(host: ServerExternalHost,): void {
   stopLivenessProbes(host,);

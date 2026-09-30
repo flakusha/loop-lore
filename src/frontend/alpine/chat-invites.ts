@@ -20,6 +20,9 @@ export const chatInvites: Partial<ChatState> & ThisType<ChatState> = {
   _newChatInviteMaxUses: "",
   _showChatInviteForm: false,
   _chatJoinCode: "",
+  /**
+   * @returns {Promise<void>}
+   */
   async loadChatInvites() {
     if (!this.activeChat) { return; }
     this._chatInvitesLoading = true;
@@ -34,6 +37,9 @@ export const chatInvites: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async createChatInvite() {
     if (!this.activeChat) { return; }
     const trimmed = this._newChatInviteMaxUses.trim();
@@ -67,6 +73,10 @@ export const chatInvites: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @param {string} code
+   * @returns {Promise<void>}
+   */
   async copyChatInviteCode(code: string,) {
     if (!navigator.clipboard) { return; }
     try {
@@ -74,6 +84,10 @@ export const chatInvites: Partial<ChatState> & ThisType<ChatState> = {
     } catch { /* clipboard unavailable — code already shown in panel */ }
   },
 
+  /**
+   * @param {string} inviteId
+   * @returns {Promise<void>}
+   */
   async revokeChatInvite(inviteId: string,) {
     if (!this.activeChat) { return; }
     const invite = this._chatInvites.find((row,) => row.id === inviteId);
@@ -95,6 +109,9 @@ export const chatInvites: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async joinChatByCode() {
     const code = (this._chatJoinCode || "").trim();
     if (!code) {

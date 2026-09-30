@@ -41,6 +41,7 @@ export interface StoredContent {
  * @param chatId
  * @param actorId
  * @param plaintext
+ * @returns {Promise<StoredContent>}
  */
 export async function prepareContentStorage(
   database: Kysely<DB>,
@@ -96,6 +97,7 @@ export async function prepareContentStorage(
  * @param messageId
  * @param attachments
  * @param ownerId
+ * @returns {Promise<void>}
  */
 export async function attachMessageAttachments(
   database: Kysely<DB>,
@@ -148,6 +150,8 @@ export interface MentionPersistResult {
  * @param senderId
  * @param messageId
  * @param filteredContent
+ * @throws {Error}
+ * @returns {Promise<MentionPersistResult>}
  */
 export async function persistMentions(
   database: Kysely<DB>,

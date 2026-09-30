@@ -54,6 +54,8 @@ export interface RecordRelationshipShiftOpts {
  * @param db
  * @param opts
  * @returns void
+ * @throws {Error}
+ * @throws {Error}
  */
 export async function recordRelationshipShift(
   db: Kysely<DB>,

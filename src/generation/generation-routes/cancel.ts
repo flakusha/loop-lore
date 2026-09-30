@@ -45,6 +45,7 @@ function validateCancel(
  * @param database
  * @param userId
  * @param userRole
+ * @returns {Promise<Response>}
  */
 export async function handleCancelGeneration(
   body: unknown,

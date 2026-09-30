@@ -55,6 +55,7 @@ export interface InitDhRatchetResult {
 /**
  * @param opts
  * @returns Promise<unknown>
+ * @throws {Error}
  */
 export async function initDhRatchet(opts: InitDhRatchetOpts,): Promise<InitDhRatchetResult> {
   if (opts.rootKey.byteLength !== KEY_BYTES) {
@@ -143,6 +144,10 @@ export interface DhRatchetDecryptResult {
 /**
  * @param opts
  * @returns void
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
  */
 export async function dhRatchetDecrypt(opts: DhRatchetDecryptOpts,): Promise<DhRatchetDecryptResult> {
   const { state, payload, } = opts;

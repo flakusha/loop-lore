@@ -39,6 +39,9 @@ export interface GeneratedActivityPubKey {
  * @param database
  * @param actorId
  * @returns void
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
  */
 export async function generateActivityPubKey(
   database: Kysely<DB>,

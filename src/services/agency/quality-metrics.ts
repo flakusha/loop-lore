@@ -29,6 +29,7 @@ const log = getLogger().child({ module: "agency/quality-metrics", },);
  * @param db
  * @param logId - interaction_logs.id
  * @param mode
+ * @returns {Promise<void>}
  */
 export async function recordAgencyMode(
   db: Kysely<DB>,
@@ -50,7 +51,17 @@ export async function recordAgencyMode(
  *
  * ponytail: agency_play_counters hour-bucket is coarse UTC; switch to
  * per-scene buckets when telemetry proves coarse insufficient.
- */
+  * @param {Kysely<DB>} db
+ * @param {{
+    worldId?: string | null;
+    chatId: string;
+    actorId?: string | null;
+    dimension: AgencyDimension;
+    hourBucket?: string;
+    meaningful: boolean;
+  }} params
+ * @returns {Promise<void>}
+*/
 export async function incrementDimensionCounter(
   db: Kysely<DB>,
   params: {
@@ -95,6 +106,10 @@ export async function incrementDimensionCounter(
 
 /**
  * Query rollup metrics for a world since a given ISO date.
+ * @param {Kysely<DB>} db
+ * @param {string} worldId
+ * @param {string} since
+ * @returns {Promise<{ total: number; meaningful: number; byDimension: Record<AgencyDimension, { total: number; meaningful: number; }>; }>}
  */
 export async function queryAgencyMetrics(
   db: Kysely<DB>,

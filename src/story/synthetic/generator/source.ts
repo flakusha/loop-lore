@@ -13,6 +13,11 @@ import type { GeneratorState, } from "./types";
 /**
  * @param state
  * @param chatId
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @returns {Promise<SyntheticSource | null>}
  */
 export async function fetchSource(state: GeneratorState, chatId: string,): Promise<SyntheticSource | null> {
   const chat = await state.db

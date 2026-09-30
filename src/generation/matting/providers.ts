@@ -16,10 +16,20 @@ import type { MattingProvider, MattingProviderConfig, } from "./types";
  * Create a matting provider from endpoint configuration.
  * @param config - endpoint, name, apiKey, timeout
  * @returns the HTTP matting provider
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
  */
 export function createHttpMattingProvider(config: MattingProviderConfig,): MattingProvider {
   return {
     name: config.name,
+    /**
+     * @param {Buffer} buffer
+     * @throws {Error}
+     * @throws {Error}
+     * @throws {Error}
+     * @returns {Promise<Buffer<ArrayBufferLike>>}
+     */
     async removeBackground(buffer: Buffer,): Promise<Buffer> {
       const timeoutMs = config.timeoutMs ?? 120_000;
       const response = await fetch(config.endpoint, {
@@ -88,6 +98,9 @@ export interface RembgMattingProviderConfig {
  * server contract) and expects PNG bytes back.
  * @param config - rembg baseUrl, model, decontamination, timeout
  * @returns the rembg matting provider
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
  */
 export function createRembgMattingProvider(config: RembgMattingProviderConfig,): MattingProvider {
   const model = config.model ?? "isnet-general-use";
@@ -95,6 +108,13 @@ export function createRembgMattingProvider(config: RembgMattingProviderConfig,):
   const timeoutMs = config.timeoutMs ?? 120_000;
   return {
     name: `rembg:${model}`,
+    /**
+     * @param {Buffer} buffer
+     * @throws {Error}
+     * @throws {Error}
+     * @throws {Error}
+     * @returns {Promise<Buffer<ArrayBufferLike>>}
+     */
     async removeBackground(buffer: Buffer,): Promise<Buffer> {
       const form = new FormData();
       form.append(

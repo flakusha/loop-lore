@@ -24,6 +24,7 @@ const API_META: ApiResponseMeta = { api_version: API_VERSION, };
  * @example
  *   jsonResponse({ ok: true, id: "abc" })
  *   jsonResponse(user, HttpStatus.Created)
+ * @returns {Response}
  */
 export function jsonResponse(data: unknown, status: HttpStatusCode = HttpStatus.OK,): Response {
   // Merge meta into object responses (backward-compatible for property access).
@@ -57,12 +58,23 @@ const STATUS_TO_CODE: Record<number, ErrorCode> = {
   [HttpStatus.ServiceUnavailable]: ErrorCode.ServiceUnavailable,
 };
 
+/**
+ * @param {string} message
+ * @param {HttpStatusCode} status
+ * @param {ErrorCode} code
+ * @returns {Response}
+ */
 export function jsonError(message: string, status?: HttpStatusCode, code?: ErrorCode,): Response;
+/**
+ * @param {JsonErrorOptions} options
+ * @returns {Response}
+ */
 export function jsonError(options: JsonErrorOptions,): Response;
 /**
  * @param messageOrOptions
  * @param status
  * @param code
+ * @returns {Response}
  */
 export function jsonError(
   messageOrOptions: string | JsonErrorOptions,
@@ -87,6 +99,7 @@ export function jsonError(
  *   jsonValidationError([
  *     { field: "email", message: "Invalid format" },
  *   ])
+ * @returns {Response}
  */
 export function jsonValidationError(errors: ValidationError[], message = "Validation failed",): Response {
   return Response.json(
@@ -108,9 +121,21 @@ export function jsonValidationError(errors: ValidationError[], message = "Valida
  * @example
  *   jsonPaginated({ data: items, total, page, pageSize })
  *   jsonPaginated(items, total, page, pageSize)
+ * @returns {Response}
  */
 export function jsonPaginated(data: unknown[], total: number, page: number, pageSize: number,): Response;
+/**
+ * @param {JsonPaginatedOptions} options
+ * @returns {Response}
+ */
 export function jsonPaginated(options: JsonPaginatedOptions,): Response;
+/**
+ * @param {unknown[] | JsonPaginatedOptions} dataOrOptions
+ * @param {number} total
+ * @param {number} page
+ * @param {number} pageSize
+ * @returns {Response}
+ */
 export function jsonPaginated(
   dataOrOptions: unknown[] | JsonPaginatedOptions,
   total?: number,
@@ -145,6 +170,7 @@ export function jsonPaginated(
  * @example
  *   jsonCreated({ id: "new-entity" })
  *   jsonCreated()  // no body
+ * @returns {Response}
  */
 export function jsonCreated(data?: unknown,): Response {
   if (data === undefined) { return new Response(null, { status: HttpStatus.Created, },); }
@@ -163,6 +189,7 @@ export function jsonCreated(data?: unknown,): Response {
 
 /**
  * Empty no-content response (204). No body.
+ * @returns {Response}
  */
 export function jsonNoContent(): Response {
   return new Response(null, { status: HttpStatus.NoContent, },);
@@ -174,6 +201,7 @@ export function jsonNoContent(): Response {
  * 404 Not Found with NOT_FOUND code.
  * @param message
  * @param t
+ * @returns {Response}
  */
 export function notFoundResponse(message?: string, t?: TranslatorFn,): Response {
   const msg = message ?? t?.("errors.notFound",) ?? "Not found";
@@ -184,6 +212,7 @@ export function notFoundResponse(message?: string, t?: TranslatorFn,): Response 
  * 404 "Not found or not owner" — ownership check failure.
  * @param entity
  * @param t
+ * @returns {Response}
  */
 export function notOwnerResponse(entity = "Resource", t?: TranslatorFn,): Response {
   return notFoundResponse(`${entity} ${t?.("errors.notFound",) ?? "not found or not owner"}`, t,);
@@ -193,6 +222,7 @@ export function notOwnerResponse(entity = "Resource", t?: TranslatorFn,): Respon
  * 401 Unauthorized.
  * @param message
  * @param t
+ * @returns {Response}
  */
 export function unauthorizedResponse(message?: string, t?: TranslatorFn,): Response {
   const msg = message ?? t?.("errors.unauthorized",) ?? "Unauthorized";
@@ -203,6 +233,7 @@ export function unauthorizedResponse(message?: string, t?: TranslatorFn,): Respo
  * 403 Forbidden.
  * @param message
  * @param t
+ * @returns {Response}
  */
 export function forbiddenResponse(message?: string, t?: TranslatorFn,): Response {
   const msg = message ?? t?.("errors.forbidden",) ?? "Forbidden";
@@ -212,6 +243,7 @@ export function forbiddenResponse(message?: string, t?: TranslatorFn,): Response
 /**
  * 400 Bad Request with message.
  * @param message
+ * @returns {Response}
  */
 export function badRequestResponse(message: string,): Response {
   return jsonError({ message, status: HttpStatus.BadRequest, code: ErrorCode.BadRequest, },);
@@ -222,6 +254,7 @@ export function badRequestResponse(message: string,): Response {
  * identifier, optimistic-lock mismatch). Use when the request is well-formed
  * but the server cannot resolve to a single target.
  * @param message
+ * @returns {Response}
  */
 export function conflictResponse(message: string,): Response {
   return jsonError({ message, status: HttpStatus.Conflict, code: ErrorCode.Conflict, },);
@@ -230,6 +263,7 @@ export function conflictResponse(message: string,): Response {
 /**
  * Extract userId from Elysia context or return a localized Unauthorized error response.
  * @param ctx
+ * @returns {string | Response}
  */
 export function requireUserId(ctx: unknown,): string | Response {
   const userId = (ctx as any).userId as string | null;

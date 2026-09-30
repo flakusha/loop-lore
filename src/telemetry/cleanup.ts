@@ -16,6 +16,7 @@ import { getRetentionDays, isTelemetryEnabled, } from "./service";
 /**
  * Run one retention cleanup pass. No-op when telemetry is disabled.
  * @param db
+ * @returns {Promise<void>}
  */
 export async function runRetentionCleanup(db: Kysely<DB>,): Promise<void> {
   if (!isTelemetryEnabled()) { return; }

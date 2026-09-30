@@ -69,6 +69,7 @@ export const MAX_STAGE_SPRITES = 5;
 /**
  * Create an empty roster, optionally seeded.
  * @param entries - Seed entries.
+ * @returns {SpriteRoster}
  */
 export function createRoster(entries: SpriteRosterEntry[] = [],): SpriteRoster {
   return { entries: entries.map((e,) => ({ visible: true, ...e, })), };
@@ -78,6 +79,7 @@ export function createRoster(entries: SpriteRosterEntry[] = [],): SpriteRoster {
  * Add or replace a cast member by characterId.
  * @param roster - Roster to mutate.
  * @param entry - Entry to upsert.
+ * @returns {void}
  */
 export function addToRoster(roster: SpriteRoster, entry: SpriteRosterEntry,): void {
   const at = roster.entries.findIndex((e,) => e.characterId === entry.characterId);
@@ -166,6 +168,7 @@ export function assignStageSlots(roster: SpriteRoster, activeSpeakerId: string |
  * opacity / scale) — no layout shift by design.
  * @param el - Sprite element from buildStageElement.
  * @param staged - Focus state.
+ * @returns {void}
  */
 export function applyStageHighlight(el: HTMLElement, staged: StagedSprite,): void {
   el.classList.toggle("vn-speaker-active", staged.active,);
@@ -177,6 +180,7 @@ export function applyStageHighlight(el: HTMLElement, staged: StagedSprite,): voi
  * Build a stage sprite element with slot + focus classes.
  * @param staged - Placed sprite.
  * @param emotion - Optional emotion key for variant resolution.
+ * @returns {HTMLElement}
  */
 export function buildStageElement(staged: StagedSprite, emotion?: string,): HTMLElement {
   const el = createPortraitElement({

@@ -36,6 +36,7 @@ export interface LocationNsfwRow {
 /**
  * Default atmosphere scores for a new location config.
  * Shared by get-or-create inserts and row-mapping fallbacks.
+ * @returns {LocationAtmosphere}
  */
 export function defaultAtmosphere(): LocationAtmosphere {
   return {
@@ -50,6 +51,7 @@ export function defaultAtmosphere(): LocationAtmosphere {
 /**
  * Default risk factors for a new location config.
  * Shared by get-or-create inserts and row-mapping fallbacks.
+ * @returns {LocationRisks}
  */
 export function defaultRisks(): LocationRisks {
   return { discovery: 10, injury: 0, arrest: 0, reputation: 5, };
@@ -58,6 +60,7 @@ export function defaultRisks(): LocationRisks {
 /**
  * Map a raw config row to its public shape.
  * @param row
+ * @returns {LocationNsfwConfig}
  */
 export function mapRowToConfig(row: LocationNsfwRow,): LocationNsfwConfig {
   return {
@@ -86,6 +89,10 @@ export class LocationNsfwConfigStore {
   /**
    * Get or create NSFW config for a location.
    * @param locationId
+   */
+  /**
+   * @param {string} locationId
+   * @returns {Promise<LocationNsfwConfig>}
    */
   async getConfig(locationId: string,): Promise<LocationNsfwConfig> {
     const row = await this.db
@@ -138,6 +145,11 @@ export class LocationNsfwConfigStore {
    * @param locationId
    * @param updates
    */
+  /**
+   * @param {string} locationId
+   * @param {UpdateLocationNsfwOpts} updates
+   * @returns {Promise<boolean>}
+   */
   async updateConfig(
     locationId: string,
     updates: UpdateLocationNsfwOpts,
@@ -170,6 +182,10 @@ export class LocationNsfwConfigStore {
    * Get NSFW configs for multiple locations.
    * @param locationIds
    */
+  /**
+   * @param {string[]} locationIds
+   * @returns {Promise<LocationNsfwConfig[]>}
+   */
   async getConfigs(locationIds: string[],): Promise<LocationNsfwConfig[]> {
     if (locationIds.length === 0) { return []; }
 
@@ -185,6 +201,10 @@ export class LocationNsfwConfigStore {
   /**
    * Delete a location's NSFW config.
    * @param locationId
+   */
+  /**
+   * @param {string} locationId
+   * @returns {Promise<boolean>}
    */
   async deleteConfig(locationId: string,): Promise<boolean> {
     const result = await this.db

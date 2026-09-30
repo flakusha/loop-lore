@@ -13,6 +13,7 @@ import type {
  * Create a location trait
  * @param db
  * @param input
+ * @returns {Promise<LocationTraitRow>}
  */
 export async function createLocationTrait(
   db: Kysely<any>,
@@ -47,6 +48,7 @@ export async function createLocationTrait(
  * @param db
  * @param actorId
  * @param locationId
+ * @returns {Promise<LocationTraitRow[]>}
  */
 export async function getLocationTraits(
   db: Kysely<any>,
@@ -66,6 +68,7 @@ export async function getLocationTraits(
  * @param db
  * @param id
  * @param input
+ * @returns {Promise<LocationTraitRow | undefined>}
  */
 export async function updateLocationTrait(
   db: Kysely<any>,
@@ -106,6 +109,7 @@ export async function updateLocationTrait(
  * Delete a location trait
  * @param db
  * @param id
+ * @returns {Promise<boolean>}
  */
 export async function deleteLocationTrait(db: Kysely<any>, id: string,): Promise<boolean> {
   const result = await db

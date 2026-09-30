@@ -41,6 +41,8 @@ export type TableName = string & { readonly __brand: "TableName" };
  *
  * @param value - Raw table name (typically `database` table literal).
  * @returns Branded TableName.
+ * @throws {Error}
+ * @throws {Error}
  */
 export function asTableName(value: string,): TableName {
   if (value.length === 0) { throw new Error("record-hash: empty table name",); }

@@ -13,6 +13,7 @@ import type { OpenAiCompatibleState, } from "./types";
 
 /**
  * @param state
+ * @returns {Promise<ModelInfo[]>}
  */
 export async function listModelsDispatch(state: OpenAiCompatibleState,): Promise<ModelInfo[]> {
   const url = new URL(`${state.baseUrl}/models`,);
@@ -30,6 +31,7 @@ export async function listModelsDispatch(state: OpenAiCompatibleState,): Promise
 
 /**
  * @param state
+ * @returns {Promise<{ status: "ok" | "degraded" | "down"; model?: string | undefined; latencyMs?: number | undefined; error?: string | undefined; }>}
  */
 export async function healthCheckDispatch(state: OpenAiCompatibleState,): Promise<{
   status: "ok" | "degraded" | "down";

@@ -148,6 +148,7 @@ export function getCachedLoras(): LoRAModel[] {
 /**
  * Clear the LoRA discovery cache.
  * @param backend - Optional backend to clear (clears all if omitted)
+ * @returns {void}
  */
 export function clearDiscoveryCache(backend?: "comfyui" | "sd-server",): void {
   if (backend) {

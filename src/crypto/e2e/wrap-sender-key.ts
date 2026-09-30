@@ -61,6 +61,7 @@ export type {
 /**
  * @param opts
  * @returns void
+ * @throws {Error}
  */
 export async function wrapSenderKey(
   opts: WrapSenderKeyOpts,
@@ -128,6 +129,9 @@ export async function wrapSenderKey(
 /**
  * @param opts
  * @returns void
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
  */
 export async function unwrapSenderKey(
   opts: UnwrapSenderKeyOpts,

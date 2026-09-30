@@ -67,6 +67,9 @@ export interface RunNonStreamingOpts {
  * @param root0.providerName
  * @param root0.providerReq
  * @param root0.failoverList
+ * @throws {Error}
+ * @throws {Error}
+ * @returns {Promise<Response>}
  */
 export async function runNonStreaming({
   input,

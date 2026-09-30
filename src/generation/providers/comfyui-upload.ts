@@ -15,6 +15,8 @@ import { safeFetch, } from "../../utils/safe-fetch";
  * @param buffer - image bytes
  * @param filename - name the file gets in the ComfyUI input directory
  * @returns the stored filename (pass to LoadImage's `image` input)
+ * @throws {Error}
+ * @throws {Error}
  */
 export async function uploadImageToComfy(
   baseUrl: string,

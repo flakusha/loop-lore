@@ -23,6 +23,7 @@ import type { MattingProvider, } from "./types";
  * @param root0.alphaStatus
  * @param root0.ownerId
  * @param root0.provider
+ * @returns {Promise<void>}
  */
 export async function enqueueAutoMatting({
   database,

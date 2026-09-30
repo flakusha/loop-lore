@@ -15,6 +15,7 @@ import type { TurnManagerHost, } from "./types";
  * @param strategy - Override strategy (default: state.strategy)
  * @param context - Turn context (@mentions, recent actors, chat mode, or story context)
  * @returns Selected actor ID, or null if no participants
+ * @throws {Error}
  */
 export async function selectNextActor(
   host: TurnManagerHost,
@@ -57,6 +58,8 @@ export async function selectNextActor(
 /**
  * Record a completed turn (persists state)
  * @param host
+ * @throws {Error}
+ * @returns {Promise<void>}
  */
 export async function recordTurn(host: TurnManagerHost,): Promise<void> {
   if (!host.state) { throw new Error("TurnManager not initialized",); }

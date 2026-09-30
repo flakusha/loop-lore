@@ -39,6 +39,7 @@ function migrationPrefix(name: string,): number {
  * `041b_`). BUG-migration-ordering-ambiguous-via-localecompare.
  * @param a
  * @param b
+ * @returns {number}
  */
 export function compareMigrationNames(a: string, b: string,): number {
   const an = migrationPrefix(a,);
@@ -139,6 +140,7 @@ export async function assertMigrationsNotStale<DB,>(
 /**
  * @param database
  * @returns void
+ * @throws {Error}
  */
 export async function runMigrations(database: ReturnType<typeof getDatabase>,): Promise<void> {
   const log = getLogger().child({ module: "migrate", },);

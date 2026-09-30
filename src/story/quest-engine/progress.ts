@@ -20,6 +20,8 @@ import type { ProgressQuestRow, QuestProgressEntry, QuestState, } from "./types"
  * Get completion percentage for a quest
  * @param state
  * @param questId
+ * @throws {Error}
+ * @returns {Promise<{ progress: number; target: number; percentage: number; }>}
  */
 export async function getCompletion(
   state: QuestState,
@@ -47,6 +49,7 @@ export async function getCompletion(
  * @param worldId
  * @param chatId
  * @param events
+ * @returns {Promise<QuestProgressEntry[]>}
  */
 export async function processEvent(
   state: QuestState,
@@ -77,6 +80,8 @@ export async function processEvent(
  * @param chatId
  * @param delta
  * @param sourceMessageId
+ * @throws {Error}
+ * @returns {Promise<QuestProgressEntry>}
  */
 export async function advanceProgress(
   state: QuestState,

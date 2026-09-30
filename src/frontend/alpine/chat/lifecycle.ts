@@ -15,6 +15,9 @@ const EMPTY_CHAT_PAGE = {
 
 /** Chat page lifecycle + core list/user loading. */
 export const chatLifecycle: Partial<ChatState> & ThisType<ChatState> = {
+  /**
+   * @returns {Promise<void>}
+   */
   async init() {
     // Ensure generation state is clean on fresh mount (prevents stale
     // isGenerating stuck after htmx morph re-initialization)
@@ -118,6 +121,9 @@ export const chatLifecycle: Partial<ChatState> & ThisType<ChatState> = {
     this.registerPanelHandlers();
   },
 
+  /**
+   * @returns {void}
+   */
   destroy() {
     this.unregisterPanelHandlers();
     destroyVnRenderer();
@@ -156,6 +162,9 @@ export const chatLifecycle: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async loadUserInfo() {
     try {
       const res = await apiFetch("/api/auth/me",);
@@ -172,6 +181,9 @@ export const chatLifecycle: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async loadChats() {
     try {
       const res = await apiFetch(`/api/v1/chats?${this._filterParams?.() ?? "pageSize=200"}`,);

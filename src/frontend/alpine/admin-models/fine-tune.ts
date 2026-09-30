@@ -23,6 +23,9 @@ export const fineTuneState: Partial<ModelsState> & ThisType<ModelsState> = {
    * row. Capability-registry rows are authoritative; raw discovered models
    * fill gaps.
    */
+  /**
+   * @returns {FineTuneCandidate[]}
+   */
   fineTuneCandidates(): FineTuneCandidate[] {
     const seen = new Map<
       string,
@@ -85,6 +88,10 @@ export const fineTuneState: Partial<ModelsState> & ThisType<ModelsState> = {
   /**
    * Readiness of a model as a fine-tune base, derived from real metadata.
    * @param c
+   */
+  /**
+   * @param {FineTuneCandidate} c
+   * @returns {string}
    */
   fineTuneReadiness(c: FineTuneCandidate,): string {
     const size = c.paramSize ? parseParamSizeOr(c.paramSize, Number.NaN,) : Number.NaN;

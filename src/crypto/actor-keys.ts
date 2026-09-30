@@ -235,6 +235,7 @@ export async function rotateActorKey({ database, actorId, smk, }: GenerateActorK
  * Revoke a specific key by ID. Irreversible.
  * @param database - Kysely handle
  * @param keyId - actor_keys.id to revoke
+ * @returns {Promise<void>}
  */
 export async function revokeActorKey(database: Kysely<DB>, keyId: string,): Promise<void> {
   await database.updateTable("actor_keys",).set({ status: "revoked", },).where("id", "=", keyId,).execute();

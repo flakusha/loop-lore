@@ -81,6 +81,10 @@ function actorLoreQuery(
  *   `db: any`) surfaces column typos at compile time and matches the
  *   convention enforced by the `route-ctx-typing` skill.
  * @returns The {@link LoadedLore} bundle consumed by `loreSection`.
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
  */
 export async function loadLore(
   ctx: Pick<AssembleContext, "db" | "chat" | "actor">,

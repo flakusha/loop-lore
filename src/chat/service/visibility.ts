@@ -63,6 +63,7 @@ export type HardDeleteChatResult = { ok: true; chatId: string } | ServiceError;
  * @param chatId
  * @param requesterId
  * @param userRole
+ * @returns {Promise<HardDeleteChatResult>}
  */
 export async function hardDeleteChat(
   database: Kysely<DB>,

@@ -164,6 +164,7 @@ export async function encodeEphemeralPayload(
 /**
  * @param opts
  * @returns void
+ * @throws {Error}
  */
 export async function decodeEphemeralPayload(
   opts: EphemeralRatchetDecryptOpts,

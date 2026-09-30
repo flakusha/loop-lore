@@ -12,6 +12,9 @@ export const providerState: Partial<ModelsState> & ThisType<ModelsState> = {
   scanning: false,
   expandProvider: "",
 
+  /**
+   * @returns {Promise<void>}
+   */
   async loadModels() {
     this.loadingModels = true;
     try {
@@ -27,6 +30,10 @@ export const providerState: Partial<ModelsState> & ThisType<ModelsState> = {
       this.loadingModels = false;
     }
   },
+  /**
+   * @param {string} name
+   * @returns {Promise<void>}
+   */
   async loadProviderModels(name: string,) {
     try {
       const res = await apiFetch(`/api/v1/admin/providers/${name}/models`, {
@@ -40,20 +47,36 @@ export const providerState: Partial<ModelsState> & ThisType<ModelsState> = {
       log.warn(`Failed to load models for ${name}`,);
     }
   },
+  /**
+   * @param {string} role
+   * @returns {ModelInfo[]}
+   */
   getModelsForRole(role: string,): ModelInfo[] {
     const entry = this.modelRoleList.find((e,) => e.role === role);
     const provider = entry?.provider;
     if (!provider) { return []; }
     return this.providerModels[provider] || [];
   },
+  /**
+   * @param {string} name
+   * @returns {ModelInfo[]}
+   */
   getProviderModels(name: string,): ModelInfo[] {
     return this.providerModels[name] || [];
   },
+  /**
+   * @param {string} role
+   * @returns {ModelInfo | undefined}
+   */
   getSelectedModel(role: string,): ModelInfo | undefined {
     const entry = this.modelRoleList.find((e,) => e.role === role);
     if (!entry?.provider || !entry.model) { return undefined; }
     return (this.providerModels[entry.provider] || []).find((m,) => m.id === entry.model);
   },
+  /**
+   * @param {ModelInfo | undefined} m
+   * @returns {string}
+   */
   modelSummary(m: ModelInfo | undefined,): string {
     if (!m) { return ""; }
     const parts: string[] = [];
@@ -64,6 +87,10 @@ export const providerState: Partial<ModelsState> & ThisType<ModelsState> = {
     if (m.modalities?.length) { parts.push(m.modalities.join("/",),); }
     return parts.join(" · ",);
   },
+  /**
+   * @param {ModelInfo | undefined} m
+   * @returns {string}
+   */
   modelSuitability(m: ModelInfo | undefined,): string {
     if (!m) { return ""; }
     const ctx = m.contextWindow ?? 0;
@@ -78,6 +105,9 @@ export const providerState: Partial<ModelsState> & ThisType<ModelsState> = {
     }
     return "";
   },
+  /**
+   * @returns {Promise<void>}
+   */
   async rescanProviders() {
     this.scanning = true;
     try {

@@ -32,7 +32,11 @@ export interface AuditApiPage {
   nextCursor?: string | null;
 }
 
-/** Map a raw API row to the panel AuditEntry shape. */
+/**
+ * Map a raw API row to the panel AuditEntry shape.
+ * @param {AuditApiRow} row
+ * @returns {AuditEntry}
+ */
 export function toAuditEntry(row: AuditApiRow,): AuditEntry {
   return {
     id: row.id,
@@ -70,10 +74,18 @@ export const AUDIT_ACTION_ICONS: Record<AuditAction, string> = {
   delete: "\uD83D\uDDD1",
 };
 
+/**
+ * @param {AuditAction} action
+ * @returns {string}
+ */
 export function auditActionLabel(action: AuditAction,): string {
   return AUDIT_ACTION_LABELS[action];
 }
 
+/**
+ * @param {AuditAction} action
+ * @returns {string}
+ */
 export function auditActionIcon(action: AuditAction,): string {
   return AUDIT_ACTION_ICONS[action];
 }
@@ -83,6 +95,7 @@ export function auditActionIcon(action: AuditAction,): string {
  * (2-space indented). Malformed JSON falls back to the raw string so
  * the operator still sees the payload; empty input renders as "".
  * @param details
+ * @returns {string}
  */
 export function formatAuditDetails(details: string,): string {
   if (!details.trim()) { return ""; }
@@ -96,6 +109,7 @@ export function formatAuditDetails(details: string,): string {
  * True when an audit entry's details block offers anything to expand
  * (non-empty payload).
  * @param entry
+ * @returns {boolean}
  */
 export function auditDetailsExpandable(entry: AuditEntry,): boolean {
   return entry.details.trim().length > 0;
@@ -121,6 +135,7 @@ export function formatAuditDate(iso: string,): string {
 /**
  * Parse an audit entry's `details` JSON. Returns `{}` for malformed input.
  * @param details
+ * @returns {Record<string, unknown>}
  */
 export function parseAuditDetails(details: string,): Record<string, unknown> {
   if (!details) { return {}; }
@@ -135,6 +150,7 @@ export function parseAuditDetails(details: string,): Record<string, unknown> {
  * Filter audit entries by the panel's current action filter.
  * @param entries
  * @param filter
+ * @returns {AuditEntry[]}
  */
 export function auditEntriesForFilter(entries: AuditEntry[], filter: AuditAction | null,): AuditEntry[] {
   if (!filter) { return entries; }
@@ -149,6 +165,7 @@ export function auditEntriesForFilter(entries: AuditEntry[], filter: AuditAction
  * not been loaded yet (the audit tab is paginated independently).
  * @param entry
  * @param panel
+ * @returns {string[]}
  */
 export function injectAuditKinds(entry: AuditEntry, panel: MemoryPanelState,): string[] {
   if (entry.action !== "inject") { return []; }

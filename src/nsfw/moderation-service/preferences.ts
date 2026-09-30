@@ -27,6 +27,7 @@ export interface GetPreferencesArgs {
  * @param root0
  * @param root0.thisL
  * @param root0.userId
+ * @returns {Promise<NsfwUserPrefs | null>}
  */
 export async function get({ thisL, userId, }: GetPreferencesArgs,): Promise<NsfwUserPrefs | null> {
   const row = await thisL.db
@@ -56,6 +57,7 @@ export interface GetOrCreateOwnArgs {
  * @param root0
  * @param root0.thisL
  * @param root0.userId
+ * @returns {Promise<NsfwUserPrefs>}
  */
 export async function getOrCreateOwn({ thisL, userId, }: GetOrCreateOwnArgs,): Promise<NsfwUserPrefs> {
   const existing = await get({ thisL, userId, },);
@@ -106,6 +108,7 @@ export interface UpdatePreferencesArgs {
  * @param root0.thisL
  * @param root0.userId
  * @param root0.updates
+ * @returns {Promise<NsfwUserPrefs>}
  */
 export async function updatePreferences({ thisL, userId, updates, }: UpdatePreferencesArgs,): Promise<NsfwUserPrefs> {
   const now = new Date().toISOString();
@@ -133,6 +136,7 @@ export async function updatePreferences({ thisL, userId, updates, }: UpdatePrefe
  * @param row.banned_by
  * @param row.created_at
  * @param row.updated_at
+ * @returns {NsfwUserPrefs}
  */
 export function mapPrefs(
   row: {

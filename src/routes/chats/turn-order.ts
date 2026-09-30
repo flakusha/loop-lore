@@ -23,6 +23,7 @@ import type { HandlerOpts, } from "./types";
  * Turn-order routes — read-only group-chat orchestration view.
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { chats: { ":id": { "turn-order": { ...; }; }; }; }; }, { ...; }, { ...; }>}
  */
 export function turnOrderRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;

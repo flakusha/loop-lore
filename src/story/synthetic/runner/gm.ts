@@ -14,6 +14,7 @@ import type { RunnerState, SyntheticTestStatus, } from "./types";
 /**
  * @param state
  * @param c
+ * @returns {Promise<{ status: SyntheticTestStatus; expected: Record<string, unknown>; actual: Record<string, unknown>; reason?: string | undefined; }>}
  */
 export async function runGmEscalation(state: RunnerState, c: SyntheticCase,): Promise<{
   status: SyntheticTestStatus;

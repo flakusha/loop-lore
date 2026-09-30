@@ -83,6 +83,11 @@ export class ComfyUIClient {
    * @param workflow - ComfyUI API-format workflow JSON
    * @returns prompt_id for tracking execution
    */
+  /**
+   * @param {ComfyUIWorkflow} workflow
+   * @throws {Error}
+   * @returns {Promise<ComfyUIPromptResult>}
+   */
   async submitWorkflow(workflow: ComfyUIWorkflow,): Promise<ComfyUIPromptResult> {
     const url = `${this.baseUrl}/prompt`;
     const resp = await fetch(url, {
@@ -110,6 +115,11 @@ export class ComfyUIClient {
    * Returns null if not yet complete, throws on failure.
    * @param promptId - prompt id from submitWorkflow
    * @returns completion state with images or error
+   */
+  /**
+   * @param {string} promptId
+   * @throws {Error}
+   * @returns {Promise<{ done: boolean; images?: { filename: string; subfolder?: string | undefined; type?: string | undefined; }[] | undefined; error?: string | undefined; }>}
    */
   async pollResult(promptId: string,): Promise<{
     done: boolean;
@@ -158,6 +168,13 @@ export class ComfyUIClient {
    * @param timeoutMs - max wait time in ms (overrides client timeout)
    * @returns list of generated image filenames
    */
+  /**
+   * @param {string} promptId
+   * @param {number} timeoutMs
+   * @throws {Error}
+   * @throws {Error}
+   * @returns {Promise<string[]>}
+   */
   async waitForCompletion(promptId: string, timeoutMs?: number,): Promise<string[]> {
     const deadline = Date.now() + (timeoutMs ?? this.timeout);
 
@@ -181,6 +198,10 @@ export class ComfyUIClient {
    * Cancel a running execution.
    * @param _promptId
    */
+  /**
+   * @param {string} _promptId
+   * @returns {Promise<void>}
+   */
   async cancelExecution(_promptId?: string,): Promise<void> {
     const url = `${this.baseUrl}/interrupt`;
     await fetch(url, {
@@ -192,6 +213,10 @@ export class ComfyUIClient {
   /**
    * Discover available nodes and their inputs.
    * @returns node info keyed by node name
+   */
+  /**
+   * @throws {Error}
+   * @returns {Promise<Record<string, ComfyUINodeInfo>>}
    */
   async getNodeInfo(): Promise<Record<string, ComfyUINodeInfo>> {
     const url = `${this.baseUrl}/object_info`;
@@ -212,6 +237,14 @@ export class ComfyUIClient {
    * @param subfolder - optional subfolder from ComfyUI output
    * @param type - output type ("output" default, "temp")
    * @returns the image bytes
+   */
+  /**
+   * @param {string} filename
+   * @param {string} subfolder
+   * @param {"output" | "temp"} type
+   * @throws {Error}
+   * @throws {Error}
+   * @returns {Promise<Buffer<ArrayBufferLike>>}
    */
   async downloadImage(
     filename: string,
@@ -240,6 +273,10 @@ export class ComfyUIClient {
    * @param workflow
    * @returns array of image buffers
    */
+  /**
+   * @param {ComfyUIWorkflow} workflow
+   * @returns {Promise<Buffer<ArrayBufferLike>[]>}
+   */
   async runWorkflow(workflow: ComfyUIWorkflow,): Promise<Buffer[]> {
     const { prompt_id, } = await this.submitWorkflow(workflow,);
     const filenames = await this.waitForCompletion(prompt_id,);
@@ -256,6 +293,11 @@ export class ComfyUIClient {
    * @param buffer - image bytes
    * @param filename - name the file gets in the ComfyUI input directory
    * @returns the stored filename (pass to LoadImage's `image` input)
+   */
+  /**
+   * @param {Buffer} buffer
+   * @param {string} filename
+   * @returns {Promise<string>}
    */
   async uploadImage(buffer: Buffer, filename: string,): Promise<string> {
     return uploadImageToComfy(this.baseUrl, this.timeout, buffer, filename,);

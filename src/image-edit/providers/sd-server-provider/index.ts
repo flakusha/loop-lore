@@ -54,6 +54,9 @@ export class SDServerEditProvider implements ImageEditProvider, SDServerHost {
   private config: ImageProviderConfig | null = null;
 
   /** */
+  /**
+   * @returns {ImageProviderConfig | null}
+   */
   getConfig(): ImageProviderConfig | null {
     if (this.config) { return this.config; }
 
@@ -74,6 +77,9 @@ export class SDServerEditProvider implements ImageEditProvider, SDServerHost {
   }
 
   /** */
+  /**
+   * @returns {Promise<boolean>}
+   */
   async healthCheck(): Promise<boolean> {
     try {
       const cfg = this.getConfig();
@@ -91,6 +97,9 @@ export class SDServerEditProvider implements ImageEditProvider, SDServerHost {
   }
 
   /** */
+  /**
+   * @returns {Promise<ImageEditCategory[]>}
+   */
   async listCapabilities(): Promise<ImageEditCategory[]> {
     const caps: ImageEditCategory[] = ["txt2img", "img2img",];
 
@@ -110,6 +119,9 @@ export class SDServerEditProvider implements ImageEditProvider, SDServerHost {
   }
 
   /** */
+  /**
+   * @returns {Promise<SDServerCapabilities>}
+   */
   async getCapabilities(): Promise<SDServerCapabilities> {
     const features = await this.listCapabilities();
     return {
@@ -123,6 +135,14 @@ export class SDServerEditProvider implements ImageEditProvider, SDServerHost {
    * @param request
    * @param template
    * @param onProgress
+   */
+  /**
+   * @param {ImageEditRequest} request
+   * @param {WorkflowTemplate} template
+   * @param {(progress: ImageEditProgress,) => void} onProgress
+   * @throws {Error}
+   * @throws {Error}
+   * @returns {Promise<ImageEditResult[]>}
    */
   async execute(
     request: ImageEditRequest,

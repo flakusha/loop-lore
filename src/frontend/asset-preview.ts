@@ -141,6 +141,10 @@ async function renderPreviewBody(
   }
 }
 
+/**
+ * @param {string} id
+ * @returns {Promise<void>}
+ */
 export async function openAssetPreview(id: string,): Promise<void> {
   try {
     const res = await feFetch(`/api/v1/assets/${id}`,);
@@ -162,6 +166,9 @@ export async function openAssetPreview(id: string,): Promise<void> {
   }
 }
 
+/**
+ * @returns {Promise<void>}
+ */
 export async function copyAssetUrl(): Promise<void> {
   const a = globalThis.__previewAsset;
   if (!a?.id) { return; }
@@ -176,6 +183,9 @@ export async function copyAssetUrl(): Promise<void> {
   }
 }
 
+/**
+ * @returns {Promise<void>}
+ */
 export async function downloadAsset(): Promise<void> {
   const a = globalThis.__previewAsset;
   if (!a?.id) { return; }
@@ -198,6 +208,9 @@ export async function downloadAsset(): Promise<void> {
   }
 }
 
+/**
+ * @returns {Promise<boolean>}
+ */
 export async function deleteAssetPreview(): Promise<boolean> {
   const a = globalThis.__previewAsset;
   if (!a?.id || !confirm("Delete this asset?",)) { return false; }

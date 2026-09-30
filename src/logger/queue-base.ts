@@ -44,6 +44,9 @@ export abstract class AsyncLogQueueBase {
   }
 
   /** */
+  /**
+   * @returns {void}
+   */
   start(): void {
     if (this.timer) { return; }
     this.timer = setInterval(() => {
@@ -60,6 +63,9 @@ export abstract class AsyncLogQueueBase {
   }
 
   /** */
+  /**
+   * @returns {void}
+   */
   stop(): void {
     if (!this.timer) { return; }
     clearInterval(this.timer,);
@@ -68,6 +74,10 @@ export abstract class AsyncLogQueueBase {
 
   /**
    * @param entry
+   */
+  /**
+   * @param {LogEntry} entry
+   * @returns {void}
    */
   enqueue(entry: LogEntry,): void {
     if (this.buffer.length >= this.queueMaxSize) {
@@ -104,9 +114,16 @@ export abstract class AsyncLogQueueBase {
     }
   }
 
+  /**
+   * @returns {Promise<void>}
+   */
   abstract flush(): Promise<void>;
 
   /** */
+  /**
+   * @throws {Error}
+   * @returns {Promise<void>}
+   */
   protected async flushToTransports(): Promise<void> {
     const batch = this.buffer.splice(0, this.batchSize,);
 
@@ -128,11 +145,21 @@ export abstract class AsyncLogQueueBase {
     this.handleTransportFailure(results,);
   }
 
+  /**
+   * @param {PromiseSettledResult<Awaited<void>[]>[]} results
+   * @returns {void}
+   */
   protected abstract handleTransportFailure(results: PromiseSettledResult<Awaited<void>[]>[],): void;
 
+  /**
+   * @returns {void}
+   */
   protected abstract setupTimerUnref(): void;
 
   /** */
+  /**
+   * @returns {void}
+   */
   protected scheduleFollowupFlush(): void {
     if (this.buffer.length > 0) {
       queueMicrotask(() => {
@@ -147,5 +174,8 @@ export abstract class AsyncLogQueueBase {
     }
   }
 
+  /**
+   * @returns {void}
+   */
   abstract flushSync(): void;
 }

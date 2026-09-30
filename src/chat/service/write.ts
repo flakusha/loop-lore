@@ -28,6 +28,7 @@ const REGEN_IDEMPOTENCY_PREFIX = "regen:variant:";
  * generation attempt's idempotencyKey when it drives the variant's LLM call.
  * @param parentId
  * @param style
+ * @returns {string}
  */
 export function regenIdempotencyKey(
   parentId: string | null,

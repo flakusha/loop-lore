@@ -181,6 +181,7 @@ export interface BrowserContentOptions {
  * @param plaintext
  * @param encoding
  * @param options Optional per-call overrides (zstd module injection).
+ * @returns {Promise<BrowserEncodeResult>}
  */
 export async function browserEncodeContent(
   plaintext: string,
@@ -210,6 +211,8 @@ export async function browserEncodeContent(
  * @param stored
  * @param encoding
  * @param options Optional per-call overrides (zstd module injection).
+ * @throws {Error}
+ * @returns {Promise<string>}
  */
 export async function browserDecodeContent(
   stored: string,

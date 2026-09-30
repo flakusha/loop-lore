@@ -57,6 +57,8 @@ export interface StoryStoreResult {
  * content-hook chain blocks the turn (already logged); throws fail-closed
  * when the hook chain itself errors.
  * @param opts
+ * @throws {Error}
+ * @returns {Promise<StoryStoreResult | null>}
  */
 export async function storeStoryResponse(opts: StoryStoreOpts,): Promise<StoryStoreResult | null> {
   const {

@@ -94,6 +94,7 @@ export type RunNpcMovementTickResult =
  * @param db
  * @param worldId
  * @param opts
+ * @returns {Promise<RunNpcMovementTickResult>}
  */
 export async function runNpcMovementTick(
   db: Kysely<DB>,

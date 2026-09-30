@@ -8,6 +8,7 @@ import type { TranslatorFn, } from "../../i18n/types";
 /**
  * Extract auth fields (userId, userRole) from Elysia context.
  * @param ctx
+ * @returns {{ userId: string | null; userRole: string | null; }}
  */
 export function extractAuth(ctx: unknown,): { userId: string | null; userRole: string | null } {
   return {
@@ -84,6 +85,7 @@ export class ForbiddenError extends Error {
  * If `t` is provided, translates the key; otherwise returns the key as-is.
  * @param key
  * @param t
+ * @returns {string}
  */
 export function translateError(key: string, t?: TranslatorFn,): string {
   return t ? t(key,) : key;

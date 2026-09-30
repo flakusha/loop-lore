@@ -30,6 +30,7 @@ import { getLogger, } from "../../logger";
  * @param newOwnerId Owner after the transfer (preserved GM if they were one).
  * @throws {Error} When the Kysely update fails; the caller is expected to
  *   log + swallow so the transfer itself is not rolled back.
+ * @returns {Promise<void>}
  */
 export async function reconcileModeratorGrants(
   database: Kysely<DB>,

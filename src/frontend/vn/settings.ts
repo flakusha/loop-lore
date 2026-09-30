@@ -43,6 +43,7 @@ const DEFAULTS: VnSettings = {
 /**
  * Get VN settings, merging GmConfig with localStorage overrides.
  * @param gmConfig
+ * @returns {VnSettings}
  */
 export function getVnSettings(gmConfig?: Record<string, unknown>,): VnSettings {
   const stored = loadFromStorage();
@@ -68,6 +69,7 @@ export function getVnSettings(gmConfig?: Record<string, unknown>,): VnSettings {
 /**
  * Save VN settings to localStorage.
  * @param settings
+ * @returns {void}
  */
 export function saveVnSettings(settings: Partial<VnSettings>,): void {
   const current = getVnSettings();
@@ -79,6 +81,7 @@ export function saveVnSettings(settings: Partial<VnSettings>,): void {
 
 /**
  * Reset VN settings to defaults.
+ * @returns {void}
  */
 export function resetVnSettings(): void {
   try {

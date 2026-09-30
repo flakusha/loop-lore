@@ -29,6 +29,9 @@ export const worldLocations: Partial<WorldEditState> & ThisType<WorldEditState> 
   editLocDesc: "",
   locationSearch: "",
 
+  /**
+   * @returns {Promise<void>}
+   */
   async loadLocations() {
     this.loadingLocations = true;
     this.locationsLoaded = false;
@@ -65,6 +68,9 @@ export const worldLocations: Partial<WorldEditState> & ThisType<WorldEditState> 
     this.loadingLocations = false;
   },
 
+  /**
+   * @returns {void}
+   */
   filterLocations() {
     if (typeof document === "undefined" || typeof document.querySelectorAll !== "function") { return; }
     const query = document.querySelector<HTMLInputElement>("#location-search",)?.value ?? this.locationSearch;
@@ -79,6 +85,9 @@ export const worldLocations: Partial<WorldEditState> & ThisType<WorldEditState> 
     },);
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async addLocation() {
     if (!this.newLocName.trim()) { return; }
     try {
@@ -107,6 +116,10 @@ export const worldLocations: Partial<WorldEditState> & ThisType<WorldEditState> 
     }
   },
 
+  /**
+   * @param {string} locId
+   * @returns {void}
+   */
   expandLoc(locId: string,) {
     if (this.expandedLoc === locId) {
       this.expandedLoc = "";
@@ -120,6 +133,10 @@ export const worldLocations: Partial<WorldEditState> & ThisType<WorldEditState> 
     }
   },
 
+  /**
+   * @param {string} locId
+   * @returns {Promise<void>}
+   */
   async saveLocation(locId: string,) {
     try {
       const res = await apiFetch(`/api/v1/worlds/${this.worldId}/locations/${locId}`, {
@@ -147,6 +164,10 @@ export const worldLocations: Partial<WorldEditState> & ThisType<WorldEditState> 
     }
   },
 
+  /**
+   * @param {string} locId
+   * @returns {Promise<void>}
+   */
   async deleteLocation(locId: string,) {
     if (!confirm(t("worlds.deleteLocationConfirm",),)) { return; }
     try {

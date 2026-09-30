@@ -51,6 +51,7 @@ const bodyUpdateSchema = t.Object({
 /**
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { nsfw: { body: { ":actorId": { ...; }; }; }; }; } & { ...; }, { ...; }, { ...; }>}
  */
 export function bodyRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, config, } = opts;

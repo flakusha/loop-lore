@@ -19,6 +19,7 @@ import type { DB, } from "../../db/schema";
  * @param database
  * @param sourceChatId
  * @param newChatId
+ * @returns {Promise<void>}
  */
 export async function carryLocation(
   database: Kysely<DB>,

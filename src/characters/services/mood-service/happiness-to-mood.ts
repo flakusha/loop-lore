@@ -12,6 +12,10 @@
  * @param happiness - Happiness value (0-100)
  * @returns Mood string
  */
+/**
+ * @param {number} happiness
+ * @returns {string}
+ */
 export function happinessToMood(happiness: number,): string {
   if (happiness >= 80) { return "ecstatic"; }
   if (happiness >= 60) { return "happy"; }

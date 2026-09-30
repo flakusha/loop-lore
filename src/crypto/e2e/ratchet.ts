@@ -59,6 +59,7 @@ export interface RatchetStep {
  *   Treated as input keying material; discarded after the call.
  * @returns The updated `chainKey` (pass back into the next call) and a fresh
  *   `messageKey` for one AES-256-GCM encryption.
+ * @throws {Error}
  */
 export async function nextRatchetStep(chainKey: Uint8Array,): Promise<RatchetStep> {
   if (chainKey.byteLength !== KEY_LENGTH) {

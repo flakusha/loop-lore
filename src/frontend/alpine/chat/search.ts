@@ -8,6 +8,10 @@ import type { ChatState, } from "../types";
 
 /** Chat search discovery + joinable-chat discovery/join + chat getters. */
 export const chatSearch: Partial<ChatState> & ThisType<ChatState> = {
+  /**
+   * @param {string} q
+   * @returns {Promise<void>}
+   */
   async searchChats(q: string,) {
     const query = (q || "").trim();
     if (!query) {
@@ -38,6 +42,9 @@ export const chatSearch: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async loadJoinableChats() {
     try {
       const res = await apiFetch("/api/v1/chats/joinable",);
@@ -69,6 +76,11 @@ export const chatSearch: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @param {string} chatId
+   * @throws {Error}
+   * @returns {Promise<void>}
+   */
   async joinChat(chatId: string,) {
     try {
       const res = await apiFetch(`/api/v1/chats/${chatId}/join`, { method: "POST", },);

@@ -48,6 +48,7 @@ export type Ctx = Context & AuthContext;
  * @param ctx
  * @param chatId
  * @param actorId
+ * @returns {Promise<string | Response>}
  */
 export async function authorizeProactiveTarget(
   database: Kysely<DB>,

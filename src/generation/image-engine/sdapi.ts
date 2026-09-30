@@ -10,6 +10,7 @@ import type { ImageGenOptions, ImageGenOutcome, } from "./types";
  * Generate images via the Stable Diffusion WebUI (SDAPI) txt2img endpoint.
  * @param sdConfig
  * @param opts
+ * @returns {Promise<ImageGenOutcome>}
  */
 export async function generateSDAPI(
   sdConfig: ImageProviderConfig,

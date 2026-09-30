@@ -93,6 +93,7 @@ export const TRANSITION_TRIGGERS: VnTransitionTrigger[] = [
 
 /**
  * @param context
+ * @returns {VnTemplate | null}
  */
 export function evaluateTriggers(
   context: VnTriggerContext,
@@ -126,6 +127,7 @@ const MAX_HISTORY = 50;
 /**
  * @param triggerId
  * @param templateId
+ * @returns {void}
  */
 export function recordTrigger(triggerId: string, templateId: string,): void {
   triggerHistory.push({
@@ -139,12 +141,16 @@ export function recordTrigger(triggerId: string, templateId: string,): void {
   }
 }
 
-/** */
+/**
+ * @returns {VnTriggerEvent[]}
+ */
 export function getTriggerHistory(): VnTriggerEvent[] {
   return [...triggerHistory,];
 }
 
-/** */
+/**
+ * @returns {void}
+ */
 export function clearTriggerHistory(): void {
   triggerHistory.length = 0;
 }

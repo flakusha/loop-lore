@@ -29,6 +29,7 @@ function mapRow(r: NotificationRow,): NotificationRecord {
  * when the linked world is muted.
  * @param db
  * @param input
+ * @returns {Promise<void>}
  */
 export async function createNotification(
   db: Kysely<DB>,
@@ -60,6 +61,7 @@ export async function createNotification(
  * @param db
  * @param userId
  * @param unreadOnly
+ * @returns {Promise<NotificationRecord[]>}
  */
 export async function listNotifications(
   db: Kysely<DB>,
@@ -76,6 +78,7 @@ export async function listNotifications(
  * Count of unread notifications for a user.
  * @param db
  * @param userId
+ * @returns {Promise<number>}
  */
 export async function getUnreadCount(db: Kysely<DB>, userId: string,): Promise<number> {
   const row = await db
@@ -92,6 +95,7 @@ export async function getUnreadCount(db: Kysely<DB>, userId: string,): Promise<n
  * @param db
  * @param id
  * @param userId
+ * @returns {Promise<void>}
  */
 export async function markNotificationRead(
   db: Kysely<DB>,
@@ -110,6 +114,7 @@ export async function markNotificationRead(
  * Mark every notification read for a user.
  * @param db
  * @param userId
+ * @returns {Promise<void>}
  */
 export async function markAllNotificationsRead(
   db: Kysely<DB>,
@@ -128,6 +133,7 @@ export async function markAllNotificationsRead(
  * @param db
  * @param id
  * @param userId
+ * @returns {Promise<void>}
  */
 export async function deleteNotification(
   db: Kysely<DB>,
@@ -143,6 +149,7 @@ export async function deleteNotification(
  * @param db
  * @param userId
  * @param chatId
+ * @returns {Promise<string>}
  */
 export async function buildRecentEvents(
   db: Kysely<DB>,

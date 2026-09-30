@@ -66,6 +66,7 @@ function getMaxInlineBytes(override: number | undefined, fallback: AsyncStoreCon
  * @param database - Kysely handle
  * @param opts - min-age, TTL, max-inline thresholds
  * @returns counts `{ offloaded, expired, pruned }` for this pass.
+ * @throws {Error}
  */
 export async function runOffloadPass(
   database: Kysely<DB>,
@@ -207,6 +208,9 @@ export function startOffloadDaemon(
   }
 
   return {
+    /**
+     * @returns {void}
+     */
     start(): void {
       if (timer !== null) { return; }
       timer = setInterval(() => {
@@ -217,6 +221,9 @@ export function startOffloadDaemon(
       }, intervalMs,);
       log.info("offload daemon started", { intervalMs, ttlMs, maxInlineBytes, },);
     },
+    /**
+     * @returns {void}
+     */
     stop(): void {
       stopping = true;
       if (timer !== null) {

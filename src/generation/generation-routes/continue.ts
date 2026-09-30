@@ -42,6 +42,7 @@ function validateContinue(
  * @param database
  * @param userId
  * @param userRole
+ * @returns {Promise<Response>}
  */
 export async function handleContinueGeneration(
   body: unknown,

@@ -30,6 +30,7 @@ import type { GenerateRequest, } from "./types";
  * @param opts.database
  * @param opts.abortSignal
  * @param opts.stream
+ * @returns {Promise<GenerateRequest>}
  */
 export async function buildProviderRequest(opts: {
   input: GenerateRequest;

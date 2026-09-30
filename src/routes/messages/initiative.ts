@@ -16,6 +16,7 @@ import { log, } from "./helpers";
  * @param database
  * @param chatId
  * @param actorId
+ * @returns {Promise<void>}
  */
 export async function persistInitiative(
   database: Kysely<DB>,

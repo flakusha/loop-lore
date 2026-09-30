@@ -48,6 +48,11 @@ export class ProactiveMessagingService {
    * @param chatId
    * @param actorId
    */
+  /**
+   * @param {string} chatId
+   * @param {string} actorId
+   * @returns {Promise<ProactiveConfig | null>}
+   */
   async getConfig(chatId: string, actorId: string,): Promise<ProactiveConfig | null> {
     return selectConfig(this.db, chatId, actorId,);
   }
@@ -55,6 +60,10 @@ export class ProactiveMessagingService {
   /**
    * Get all proactive configs for a chat.
    * @param chatId
+   */
+  /**
+   * @param {string} chatId
+   * @returns {Promise<ProactiveConfig[]>}
    */
   async getChatConfigs(chatId: string,): Promise<ProactiveConfig[]> {
     return selectChatConfigs(this.db, chatId,);
@@ -65,6 +74,12 @@ export class ProactiveMessagingService {
    * @param chatId
    * @param actorId
    * @param input
+   */
+  /**
+   * @param {string} chatId
+   * @param {string} actorId
+   * @param {ProactiveConfigInput} input
+   * @returns {Promise<ProactiveConfig>}
    */
   async upsertConfig(
     chatId: string,
@@ -88,6 +103,11 @@ export class ProactiveMessagingService {
    * Evaluates: enabled flag, quiet hours, frequency timing, anti-spam backoff.
    * @param chatId
    * @param actorId
+   */
+  /**
+   * @param {string} chatId
+   * @param {string} actorId
+   * @returns {Promise<ProactiveCheckResult>}
    */
   async checkShouldMessage(chatId: string, actorId: string,): Promise<ProactiveCheckResult> {
     const config = await this.getConfig(chatId, actorId,);
@@ -159,6 +179,11 @@ export class ProactiveMessagingService {
    * @param chatId
    * @param actorId
    */
+  /**
+   * @param {string} chatId
+   * @param {string} actorId
+   * @returns {Promise<void>}
+   */
   async recordSent(chatId: string, actorId: string,): Promise<void> {
     await this.db
       .updateTable("proactive_messaging_config",)
@@ -176,6 +201,11 @@ export class ProactiveMessagingService {
    * Increment backoff counter (called when user doesn't respond).
    * @param chatId
    * @param actorId
+   */
+  /**
+   * @param {string} chatId
+   * @param {string} actorId
+   * @returns {Promise<void>}
    */
   async incrementBackoff(chatId: string, actorId: string,): Promise<void> {
     const config = await this.getConfig(chatId, actorId,);
@@ -197,6 +227,11 @@ export class ProactiveMessagingService {
    * @param chatId
    * @param actorId
    */
+  /**
+   * @param {string} chatId
+   * @param {string} actorId
+   * @returns {Promise<void>}
+   */
   async resetBackoff(chatId: string, actorId: string,): Promise<void> {
     await this.db
       .updateTable("proactive_messaging_config",)
@@ -213,6 +248,11 @@ export class ProactiveMessagingService {
    * Delete proactive config for a chat+actor pair.
    * @param chatId
    * @param actorId
+   */
+  /**
+   * @param {string} chatId
+   * @param {string} actorId
+   * @returns {Promise<boolean>}
    */
   async deleteConfig(chatId: string, actorId: string,): Promise<boolean> {
     const result = await this.db

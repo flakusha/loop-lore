@@ -20,6 +20,10 @@ export interface InternalHandle<T,> extends ScheduleHandle<T> {
   onSettled?: () => void;
 }
 
+/**
+ * @param {ScheduledRequest<T>} req
+ * @returns {InternalHandle<T>}
+ */
 export function createInternalHandle<T,>(req: ScheduledRequest<T>,): InternalHandle<T> {
   let state: ScheduleState = "queued";
   let resolveFn: ((value: T,) => void) | null = null;
@@ -53,20 +57,39 @@ export function createInternalHandle<T,>(req: ScheduledRequest<T>,): InternalHan
     get state() {
       return state;
     },
+    /**
+     * @param {string} reason
+     * @returns {void}
+     */
     cancel(reason?: string,) {
       if (state === "complete" || state === "cancelled") { return; }
       settle("cancelled", rejectFn, new Error(`schedule cancelled: ${reason ?? "cancelled"}`,),);
     },
+    /**
+     * @param {T} value
+     * @returns {void}
+     */
     resolve(value: T,) {
       settle("complete", resolveFn, value,);
     },
+    /**
+     * @param {unknown} err
+     * @returns {void}
+     */
     reject(err: unknown,) {
       settle("complete", rejectFn, err,);
     },
+    /**
+     * @param {ScheduleState} next
+     * @returns {void}
+     */
     transition(next: ScheduleState,) {
       if (state === "cancelled" && next !== "cancelled") { return; }
       state = next;
     },
+    /**
+     * @returns {boolean}
+     */
     isCancelled() {
       return state === "cancelled";
     },

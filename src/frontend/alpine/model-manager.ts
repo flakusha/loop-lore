@@ -93,6 +93,9 @@ export function createModelManager(deps: ModelManagerDeps = {},): ModelManagerSt
     indexedDB: false,
     downloadsAllowed: true,
 
+    /**
+     * @returns {Promise<void>}
+     */
     async init(): Promise<void> {
       const support = detectLocalInferenceSupport();
       this.webgpu = support.webgpu;
@@ -110,6 +113,9 @@ export function createModelManager(deps: ModelManagerDeps = {},): ModelManagerSt
       }
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async refresh(): Promise<void> {
       this.loading = true;
       try {
@@ -121,6 +127,9 @@ export function createModelManager(deps: ModelManagerDeps = {},): ModelManagerSt
       }
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async downloadFromUrl(): Promise<void> {
       if (!this.downloadsAllowed) {
         this.error = "Model downloads are disabled on this instance.";
@@ -171,6 +180,10 @@ export function createModelManager(deps: ModelManagerDeps = {},): ModelManagerSt
       }
     },
 
+    /**
+     * @param {string} modelId
+     * @returns {Promise<void>}
+     */
     async downloadCatalogEntry(modelId: string,): Promise<void> {
       if (!this.downloadsAllowed) {
         this.error = "Model downloads are disabled on this instance.";
@@ -207,21 +220,36 @@ export function createModelManager(deps: ModelManagerDeps = {},): ModelManagerSt
       }
     },
 
+    /**
+     * @param {string} modelId
+     * @returns {number}
+     */
     storedFiles(modelId: string,): number {
       const prefix = `${modelId}/`;
       return this.stored.filter((entry,) => entry.id.startsWith(prefix,)).length;
     },
 
+    /**
+     * @returns {void}
+     */
     cancelDownload(): void {
       controller?.abort();
     },
 
+    /**
+     * @param {string} modelId
+     * @returns {Promise<void>}
+     */
     async removeModel(modelId: string,): Promise<void> {
       const store = deps.store ?? defaultModelStore();
       await store.remove(modelId,);
       await this.refresh();
     },
 
+    /**
+     * @param {number} bytes
+     * @returns {string}
+     */
     formatSize(bytes: number,): string {
       if (bytes < 1024) { return `${bytes} B`; }
       if (bytes < 1_048_576) { return `${(bytes / 1024).toFixed(1,)} KB`; }

@@ -12,6 +12,7 @@ const MINIMAL_PNG = Buffer.from(
 
 /**
  * Get a minimal PNG buffer suitable for character card export.
+ * @returns {Buffer<ArrayBufferLike>}
  */
 export function getMinimalPng(): Buffer {
   return Buffer.from(MINIMAL_PNG,);

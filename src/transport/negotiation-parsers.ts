@@ -8,6 +8,7 @@ import { CompressionAlgorithm, TransportProtocol, } from "../db/enums";
 /**
  * Parse `Accept` header into ordered protocol preference list.
  * @param accept
+ * @returns {TransportProtocol[]}
  */
 export function parseAcceptProtocols(accept: string | null,): TransportProtocol[] {
   if (!accept) { return []; }
@@ -39,6 +40,7 @@ export function parseAcceptProtocols(accept: string | null,): TransportProtocol[
 /**
  * Parse `Accept-Encoding` header into ordered compression preference list.
  * @param acceptEncoding
+ * @returns {CompressionAlgorithm[]}
  */
 export function parseAcceptEncoding(acceptEncoding: string | null,): CompressionAlgorithm[] {
   if (!acceptEncoding) { return []; }
@@ -69,6 +71,7 @@ export function parseAcceptEncoding(acceptEncoding: string | null,): Compression
 /**
  * Parse `Sec-WebSocket-Extensions` or custom extension header.
  * @param header
+ * @returns {string[]}
  */
 export function parseExtensions(header: string | null,): string[] {
   if (!header) { return []; }

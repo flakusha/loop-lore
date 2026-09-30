@@ -134,6 +134,7 @@ export async function createAvatar(db: Kysely<DB>, opts: CreateAvatarOpts,): Pro
  * @param avatarId
  * @param opts
  * @returns void
+ * @throws {Error}
  */
 export async function updateAvatar(
   db: Kysely<DB>,
@@ -182,6 +183,7 @@ export async function updateAvatar(
  * Delete an avatar
  * @param db
  * @param avatarId
+ * @returns {Promise<void>}
  */
 export async function deleteAvatar(db: Kysely<DB>, avatarId: string,): Promise<void> {
   const existing = await getAvatar(db, avatarId,);

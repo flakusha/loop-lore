@@ -53,6 +53,10 @@ function tokenize(value: string,): string[] {
 
 /** Static proposition source — tokens from `alt_text` then `filename`. */
 export const staticTagPropositionSource: TagPropositionSource = {
+  /**
+   * @param {unknown} asset
+   * @returns {string[]}
+   */
   propose(asset,): string[] {
     const fromAlt = asset.alt_text ? tokenize(asset.alt_text,) : [];
     const fromFilename = tokenize(asset.filename.replace(/\.[a-z0-9]+$/, "",),);

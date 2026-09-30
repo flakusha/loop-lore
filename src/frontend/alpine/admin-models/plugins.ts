@@ -9,6 +9,9 @@ export const pluginState: Partial<ModelsState> & ThisType<ModelsState> = {
   pluginList: [] as PluginInfo[],
   loadingPlugins: false,
 
+  /**
+   * @returns {Promise<void>}
+   */
   async loadPlugins() {
     this.loadingPlugins = true;
     try {
@@ -20,6 +23,11 @@ export const pluginState: Partial<ModelsState> & ThisType<ModelsState> = {
       this.loadingPlugins = false;
     }
   },
+  /**
+   * @param {string} name
+   * @param {boolean} enable
+   * @returns {Promise<void>}
+   */
   async togglePlugin(name: string, enable: boolean,) {
     const action = enable ? "enable" : "disable";
     try {

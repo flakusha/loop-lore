@@ -58,6 +58,7 @@ export async function minifyHTMLContent(content: string,): Promise<string> {
 /**
  * @param content
  * @returns void
+ * @throws {Error}
  */
 export function minifyCSS(content: string,): string {
   const output = cssMinifier.minify(content,);
@@ -69,6 +70,8 @@ export function minifyCSS(content: string,): string {
 
 /**
  * @param content
+ * @throws {Error}
+ * @returns {Promise<string>}
  */
 export async function minifyJS(content: string,): Promise<string> {
   try {

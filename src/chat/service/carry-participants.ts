@@ -16,6 +16,7 @@ import type { DB, } from "../../db/schema";
  * @param database
  * @param sourceChatId
  * @param newChatId
+ * @returns {Promise<void>}
  */
 export async function carryParticipants(
   database: Kysely<DB>,

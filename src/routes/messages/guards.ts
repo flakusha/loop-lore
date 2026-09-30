@@ -70,6 +70,7 @@ export async function enforceInjectionGate(
  * @param attachments
  * @param ownerId
  * @returns 403 response on ownership violation; null on success
+ * @throws {Error}
  */
 export async function attachAttachmentsOrForbidden(
   database: Kysely<DB>,

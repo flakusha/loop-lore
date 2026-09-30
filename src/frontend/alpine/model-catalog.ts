@@ -46,6 +46,7 @@ export interface LocalInferenceCapability {
  * Fetch catalog models from the static manifest endpoint.
  * @param fetchImpl - Request seam (defaults to apiFetch).
  * @returns Manifest catalog models (empty when the shape is unknown).
+ * @throws {Error}
  */
 export async function fetchCatalog(
   fetchImpl: (url: string,) => Promise<Response> = apiFetch,

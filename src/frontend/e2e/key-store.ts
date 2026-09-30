@@ -67,6 +67,7 @@ export interface LoadOrCreateResult {
  * The private key is imported as non-extractable (cannot be re-exported after
  * this call). Use `getStoredKeyPair` to retrieve the persisted JWK for backup.
  * @param opts
+ * @returns {Promise<LoadOrCreateResult>}
  */
 export async function loadOrCreateKeyPair(opts: LoadOrCreateOpts,): Promise<LoadOrCreateResult> {
   const existing = opts.rotate ? null : getStoredKeyPair(opts.actorId,);
@@ -97,6 +98,7 @@ export async function loadOrCreateKeyPair(opts: LoadOrCreateOpts,): Promise<Load
  * if no key pair is stored. Use this for backup/export flows — runtime code
  * should call `loadOrCreateKeyPair` instead.
  * @param actorId
+ * @returns {StoredKeyPair | null}
  */
 export function getStoredKeyPair(actorId: string,): StoredKeyPair | null {
   const raw = localStorage.getItem(storageKey(actorId,),);
@@ -113,12 +115,16 @@ export function getStoredKeyPair(actorId: string,): StoredKeyPair | null {
  * `actor_e2e_pubkeys` is NOT deleted automatically — call
  * `server-registry.revokePublicKey` for that.
  * @param actorId
+ * @returns {void}
  */
 export function deleteStoredKeyPair(actorId: string,): void {
   localStorage.removeItem(storageKey(actorId,),);
 }
 
-/** List all actor IDs that have a persisted key pair on this device. */
+/**
+ * List all actor IDs that have a persisted key pair on this device.
+ * @returns {string[]}
+ */
 export function listStoredActorIds(): string[] {
   const ids: string[] = [];
   for (let i = 0; i < localStorage.length; i++) {

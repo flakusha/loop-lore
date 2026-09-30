@@ -20,6 +20,7 @@ let anchorCleanup: (() => void) | null = null;
  *
  * @param body
  * @param assetId
+ * @returns {void}
  */
 export function mountPreviewAnchorEditor(body: HTMLElement, assetId: string,): void {
   anchorCleanup?.();

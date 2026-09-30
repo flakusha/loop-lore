@@ -9,6 +9,7 @@ import type { Kysely, } from "kysely";
 /**
  * @param db
  * @param id
+ * @returns {Promise<void>}
  */
 export async function incrementViewCount(
   db: Kysely<any>,

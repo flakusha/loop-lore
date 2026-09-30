@@ -60,6 +60,10 @@ export class WorldLocationTraitsService {
   /**
    * @param input
    */
+  /**
+   * @param {CreateWorldTraitInput} input
+   * @returns {Promise<WorldTraitRow>}
+   */
   async createWorldTrait(
     input: CreateWorldTraitInput,
   ): Promise<WorldTraitRow> {
@@ -69,6 +73,11 @@ export class WorldLocationTraitsService {
   /**
    * @param actorId
    * @param worldId
+   */
+  /**
+   * @param {string} actorId
+   * @param {string} worldId
+   * @returns {Promise<WorldTraitRow[]>}
    */
   async getWorldTraits(
     actorId: string,
@@ -81,6 +90,11 @@ export class WorldLocationTraitsService {
    * @param id
    * @param input
    */
+  /**
+   * @param {string} id
+   * @param {UpdateWorldTraitInput} input
+   * @returns {Promise<WorldTraitRow | undefined>}
+   */
   async updateWorldTrait(
     id: string,
     input: UpdateWorldTraitInput,
@@ -91,6 +105,10 @@ export class WorldLocationTraitsService {
   /**
    * @param id
    */
+  /**
+   * @param {string} id
+   * @returns {Promise<boolean>}
+   */
   async deleteWorldTrait(id: string,): Promise<boolean> {
     return deleteWorldTraitDispatch(this.db, id,);
   }
@@ -98,6 +116,10 @@ export class WorldLocationTraitsService {
   // ── Location Traits (Layer 3) ────────────────────────
   /**
    * @param input
+   */
+  /**
+   * @param {CreateLocationTraitInput} input
+   * @returns {Promise<LocationTraitRow>}
    */
   async createLocationTrait(
     input: CreateLocationTraitInput,
@@ -108,6 +130,11 @@ export class WorldLocationTraitsService {
   /**
    * @param actorId
    * @param locationId
+   */
+  /**
+   * @param {string} actorId
+   * @param {string} locationId
+   * @returns {Promise<LocationTraitRow[]>}
    */
   async getLocationTraits(
     actorId: string,
@@ -120,6 +147,11 @@ export class WorldLocationTraitsService {
    * @param id
    * @param input
    */
+  /**
+   * @param {string} id
+   * @param {UpdateLocationTraitInput} input
+   * @returns {Promise<LocationTraitRow | undefined>}
+   */
   async updateLocationTrait(
     id: string,
     input: UpdateLocationTraitInput,
@@ -130,6 +162,10 @@ export class WorldLocationTraitsService {
   /**
    * @param id
    */
+  /**
+   * @param {string} id
+   * @returns {Promise<boolean>}
+   */
   async deleteLocationTrait(id: string,): Promise<boolean> {
     return deleteLocationTraitDispatch(this.db, id,);
   }
@@ -137,6 +173,10 @@ export class WorldLocationTraitsService {
   // ── Aggregate queries ────────────────────────────────
   /**
    * @param actorId
+   */
+  /**
+   * @param {string} actorId
+   * @returns {Promise<{ worldTraits: WorldTraitRow[]; locationTraits: LocationTraitRow[]; }>}
    */
   async getAllTraitsForActor(
     actorId: string,

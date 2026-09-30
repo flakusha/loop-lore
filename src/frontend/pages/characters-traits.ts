@@ -20,6 +20,7 @@ let _feFetch: typeof feFetch;
 
 /**
  * @param fetchFn
+ * @returns {void}
  */
 export function initTraits(fetchFn: typeof feFetch,) {
   _feFetch = fetchFn;
@@ -60,7 +61,9 @@ function removeAspiration(idx: number,): void {
   renderAspirations();
 }
 (globalThis as Record<string, unknown>).removeAspiration = removeAspiration;
-/** */
+/**
+ * @returns {void}
+ */
 export function renderAspirations() {
   const container = document.querySelector("#aspirations-list",);
   if (!container) { return; }
@@ -169,7 +172,9 @@ const SLIDER_PAIRS: [string, string,][] = [
   ["voice-emotional", "voice-emotional-val",],
 ];
 
-/** */
+/**
+ * @returns {void}
+ */
 export function updateSliderDisplays() {
   for (const [inputId, displayId,] of SLIDER_PAIRS) {
     const input = document.querySelector<HTMLInputElement>(`#${inputId}`,);

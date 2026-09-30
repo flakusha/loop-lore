@@ -6,7 +6,10 @@ import { randomBytes, } from "node:crypto";
 const CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // no I/O/0/1 to avoid confusion
 const CODE_LENGTH = 8;
 
-/** Generate a short, human-friendly invite code. */
+/**
+ * Generate a short, human-friendly invite code.
+ * @returns {string}
+ */
 export function generateInviteCode(): string {
   const bytes = randomBytes(CODE_LENGTH,);
   let code = "";

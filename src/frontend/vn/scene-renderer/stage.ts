@@ -18,6 +18,7 @@ import { state, } from "./state";
  * @param scene.cast
  * @param settings
  * @param settings.layout
+ * @returns {HTMLElement | null}
  */
 export function createStage(
   scene: {

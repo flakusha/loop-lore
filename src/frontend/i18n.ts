@@ -42,6 +42,7 @@ export const SUPPORTED_LOCALES = Object.keys(LOCALE_REGISTRY,) as Locale[];
  * @example
  * resolveKey({ common: { save: "Save" } }, "common.save") // => "Save"
  * resolveKey({ common: { save: "Save" } }, "missing") // => undefined
+ * @returns {string | undefined}
  */
 export function resolveKey(
   map: TranslationMap,
@@ -72,6 +73,7 @@ export function resolveKey(
  * @example
  * flattenTranslations({ common: { save: "Save" } })
  * // => Map { "common.save" => "Save" }
+ * @returns {Map<string, string>}
  */
 export function flattenTranslations(
   map: TranslationMap,
@@ -102,6 +104,7 @@ export const INTERPOLATE_RE = /\{(\w+)\}/g;
  * @param params
  * @example
  * interpolate("Hello {name}", { name: "World" }) // => "Hello World"
+ * @returns {string}
  */
 export function interpolate(
   template: string,
@@ -131,6 +134,7 @@ export async function loadTranslations(locale: string,): Promise<TranslationMap 
 /**
  * Detect saved locale from localStorage.
  * Returns the saved locale if valid, otherwise the default.
+ * @returns {Locale}
  */
 export function getSavedLocale(): Locale {
   const saved = localStorage.getItem("locale",);
@@ -143,6 +147,7 @@ export function getSavedLocale(): Locale {
 /**
  * Save locale preference to localStorage and set cookie for server.
  * @param locale
+ * @returns {void}
  */
 export function saveLocale(locale: Locale,): void {
   localStorage.setItem("locale", locale,);
@@ -162,6 +167,7 @@ export function saveLocale(locale: Locale,): void {
 /**
  * Apply RTL direction based on locale.
  * @param locale
+ * @returns {void}
  */
 export function applyDirection(locale: Locale,): void {
   const info = LOCALE_REGISTRY[locale];

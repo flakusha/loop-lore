@@ -20,6 +20,9 @@ export const adminWorlds = {
   confirmDeleteWorld: "",
   worldSearch: "",
 
+  /**
+   * @returns {Promise<void>}
+   */
   async loadWorlds() {
     this.loadingWorlds = true;
     try {
@@ -40,10 +43,18 @@ export const adminWorlds = {
   get worldPages(): number {
     return Math.ceil(this.worldTotal / (this as any).pageSize,) || 1;
   },
+  /**
+   * @param {number} p
+   * @returns {Promise<void>}
+   */
   async goWorldsPage(p: number,) {
     this.worldPage = p;
     await this.loadWorlds();
   },
+  /**
+   * @param {string} worldId
+   * @returns {Promise<void>}
+   */
   async deleteWorld(worldId: string,) {
     if (this.confirmDeleteWorld !== worldId) { return; }
     try {
@@ -61,10 +72,16 @@ export const adminWorlds = {
       showToast("error", t("toasts.networkError",),);
     }
   },
+  /**
+   * @returns {void}
+   */
   searchWorlds() {
     this.worldPage = 1;
     this.loadWorlds();
   },
+  /**
+   * @returns {void}
+   */
   clearWorldFilters() {
     this.worldSearch = "";
     this.worldPage = 1;

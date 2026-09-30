@@ -15,6 +15,7 @@ let _feFetch: typeof feFetch;
 
 /**
  * @param fetchFn
+ * @returns {void}
  */
 export function initProactive(fetchFn: typeof feFetch,) {
   _feFetch = fetchFn;

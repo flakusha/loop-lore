@@ -18,6 +18,7 @@ import type { HandlerOpts, } from "./types";
  * Per-chat auto-translation target (`epic-output-control-transforms`).
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { chats: { ":id": { "auto-translate": { ...; }; }; }; }; } & { ...; }, { ...; }, { ...; }>}
  */
 export function autoTranslateRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;

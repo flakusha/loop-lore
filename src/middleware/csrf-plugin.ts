@@ -29,6 +29,7 @@ export type { CsrfMiddlewareOptions, };
  * Build the 403 JSON response used when CSRF verification rejects a
  * request. Kept as an export so production and test code share the exact
  * same body.
+ * @returns {Response}
  */
 export function csrfForbiddenResponse(): Response {
   const body = jsonStringifyOr({
@@ -58,9 +59,14 @@ export interface CsrfPlugin {
  * registration time so the hot-path does not re-read config on every
  * request.
  * @param opts
+ * @returns {CsrfPlugin}
  */
 export function csrfPlugin(opts: CsrfMiddlewareOptions,): CsrfPlugin {
   return {
+    /**
+     * @param {unknown} ctx
+     * @returns {Response | undefined}
+     */
     beforeHandle(ctx: unknown,): Response | undefined {
       const c = ctx as {
         request: Request;
@@ -84,6 +90,10 @@ export function csrfPlugin(opts: CsrfMiddlewareOptions,): CsrfPlugin {
       }
       return undefined;
     },
+    /**
+     * @param {unknown} ctx
+     * @returns {void}
+     */
     afterHandle(ctx: unknown,): void {
       const c = ctx as {
         request: Request;
@@ -124,6 +134,7 @@ export function csrfPlugin(opts: CsrfMiddlewareOptions,): CsrfPlugin {
  * @param app.onBeforeHandle
  * @param app.onAfterHandle
  * @param opts
+ * @returns {void}
  */
 export function applyCsrfPlugin(
   app: {

@@ -51,6 +51,11 @@ export class CircuitBreaker {
    * @param providerName
    * @param config
    */
+  /**
+   * @param {string} providerName
+   * @param {CircuitBreakerConfig} config
+   * @returns {void}
+   */
   register(providerName: string, config?: CircuitBreakerConfig,): void {
     if (this.configs.has(providerName,)) { return; }
     this.configs.set(providerName, { ...DEFAULT_CONFIG, ...config, },);
@@ -68,6 +73,10 @@ export class CircuitBreaker {
    * Returns true if closed or half-open, false if open.
    * Half-open probes are allowed — one request passes through to test recovery.
    * @param providerName
+   */
+  /**
+   * @param {string} providerName
+   * @returns {boolean}
    */
   allowRequest(providerName: string,): boolean {
     const cfg = this.configs.get(providerName,);
@@ -96,6 +105,10 @@ export class CircuitBreaker {
    * If half-open, transitions to closed.
    * @param providerName
    */
+  /**
+   * @param {string} providerName
+   * @returns {void}
+   */
   onSuccess(providerName: string,): void {
     const circuit = this.circuits.get(providerName,);
     if (!circuit) { return; }
@@ -113,6 +126,11 @@ export class CircuitBreaker {
    * Respects retryAfter if provided (from Retry-After header).
    * @param providerName
    * @param retryAfterMs
+   */
+  /**
+   * @param {string} providerName
+   * @param {number} retryAfterMs
+   * @returns {void}
    */
   onFailure(providerName: string, retryAfterMs?: number,): void {
     const cfg = this.configs.get(providerName,);
@@ -141,6 +159,10 @@ export class CircuitBreaker {
    * Reset a provider's circuit to closed state.
    * @param providerName
    */
+  /**
+   * @param {string} providerName
+   * @returns {void}
+   */
   reset(providerName: string,): void {
     const circuit = this.circuits.get(providerName,);
     if (!circuit) { return; }
@@ -154,6 +176,10 @@ export class CircuitBreaker {
   /**
    * Get current state for a provider (read-only).
    * @param providerName
+   */
+  /**
+   * @param {string} providerName
+   * @returns {{ state: CircuitState; consecutiveFailures: number; cooldownRemainingMs: number; } | undefined}
    */
   getState(
     providerName: string,
@@ -170,6 +196,9 @@ export class CircuitBreaker {
 
   /**
    * Get state for all providers.
+   */
+  /**
+   * @returns {{ name: string; state: CircuitState; consecutiveFailures: number; cooldownRemainingMs: number; }[]}
    */
   getAllStates(): {
     name: string;

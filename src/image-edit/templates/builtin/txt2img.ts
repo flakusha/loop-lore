@@ -64,6 +64,10 @@ export const txt2img: WorkflowTemplate = {
       default: "",
     },
   ],
+  /**
+   * @param {unknown} params
+   * @returns {{ [x: string]: { inputs: Record<string, unknown>; class_type: string; _meta?: { title?: string | undefined; } | undefined; }; }}
+   */
   build(params,) {
     const actualSeed = resolveSeed(params.seed,);
     const loras = parseLoraString((params.loras as string) ?? "",);

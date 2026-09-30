@@ -73,6 +73,7 @@ export function resolveTenorKey(opts: GifSearchOpts,): string | null {
  * Normalize a Tenor v2 search payload to picker results.
  * @param body - Upstream Tenor search payload.
  * @param limit - Max results to return.
+ * @returns {GifSearchResult[]}
  */
 export function normalizeGifResults(body: TenorSearchBody, limit: number,): GifSearchResult[] {
   const results = Array.isArray(body.results,) ? body.results : [];
@@ -102,6 +103,7 @@ export function normalizeGifResults(body: TenorSearchBody, limit: number,): GifS
 /**
  * @param opts - Handler opts (database/config) plus test seams.
  * @param prefix - API prefix, defaults to /api.
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { gifs: { search: { get: { ...; }; }; }; }; }, { ...; }, { ...; }>}
  */
 export function gifSearchRoutes(opts: GifSearchOpts, prefix = "/api",) {
   return (

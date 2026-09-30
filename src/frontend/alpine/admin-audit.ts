@@ -20,6 +20,9 @@ export const adminAudit = {
   auditEntityType: "",
   auditSearch: "",
 
+  /**
+   * @returns {Promise<void>}
+   */
   async loadAudit() {
     this.loadingAudit = true;
     try {
@@ -42,14 +45,24 @@ export const adminAudit = {
   get auditPages(): number {
     return Math.ceil(this.auditTotal / (this as any).pageSize,) || 1;
   },
+  /**
+   * @param {number} p
+   * @returns {Promise<void>}
+   */
   async goAuditPage(p: number,) {
     this.auditPage = p;
     await this.loadAudit();
   },
+  /**
+   * @returns {void}
+   */
   searchAudit() {
     this.auditPage = 1;
     this.loadAudit();
   },
+  /**
+   * @returns {void}
+   */
   clearAuditFilters() {
     this.auditSearch = "";
     this.auditEventType = "";

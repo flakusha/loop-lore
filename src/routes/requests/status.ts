@@ -46,6 +46,7 @@ export interface RequestStatusCtx {
  * @param deps
  * @param deps.asyncStore
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { requests: { ":id": { status: { ...; }; }; }; }; }, { ...; }, { ...; }>}
  */
 export function requestStatusRoutes(deps: { asyncStore: AsyncStore }, prefix = "/api",) {
   return new Elysia({ name: "request-status", },)

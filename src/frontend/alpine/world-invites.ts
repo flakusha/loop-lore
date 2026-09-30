@@ -30,6 +30,9 @@ export const worldInvites: Partial<WorldEditState> & ThisType<WorldEditState> = 
   newInviteMaxUses: "",
   showInviteForm: false,
 
+  /**
+   * @returns {Promise<void>}
+   */
   async loadInvites() {
     if (!this.worldId) { return; }
     this.loadingInvites = true;
@@ -47,6 +50,9 @@ export const worldInvites: Partial<WorldEditState> & ThisType<WorldEditState> = 
     this.loadingInvites = false;
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async createInvite() {
     if (!this.worldId) { return; }
     const trimmed = this.newInviteMaxUses.trim();
@@ -77,6 +83,10 @@ export const worldInvites: Partial<WorldEditState> & ThisType<WorldEditState> = 
     }
   },
 
+  /**
+   * @param {string} code
+   * @returns {Promise<void>}
+   */
   async copyInviteCode(code: string,) {
     if (!navigator.clipboard) { return; }
     try {
@@ -86,6 +96,10 @@ export const worldInvites: Partial<WorldEditState> & ThisType<WorldEditState> = 
     }
   },
 
+  /**
+   * @param {string} inviteId
+   * @returns {Promise<void>}
+   */
   async revokeInvite(inviteId: string,) {
     if (!this.worldId) { return; }
     const invite = this.invites.find((row,) => row.id === inviteId);

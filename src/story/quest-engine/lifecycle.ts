@@ -30,6 +30,7 @@ import type { QuestState, } from "./types";
  * @param params.deadline
  * @param params.rewards
  * @param params.narrativeHooks
+ * @returns {Promise<string>}
  */
 export async function createQuest(
   state: QuestState,
@@ -77,6 +78,7 @@ export async function createQuest(
  * Fail a quest (e.g., deadline passed)
  * @param state
  * @param questId
+ * @returns {Promise<void>}
  */
 export async function fail(state: QuestState, questId: string,): Promise<void> {
   await transitionQuestStatus(state.db, questId, QuestStatus.Failed, QuestProgressStatus.Failed,);
@@ -86,6 +88,7 @@ export async function fail(state: QuestState, questId: string,): Promise<void> {
  * Abandon a quest (GM action)
  * @param state
  * @param questId
+ * @returns {Promise<void>}
  */
 export async function abandon(state: QuestState, questId: string,): Promise<void> {
   await transitionQuestStatus(state.db, questId, QuestStatus.Abandoned, QuestProgressStatus.Ignored,);
@@ -95,6 +98,7 @@ export async function abandon(state: QuestState, questId: string,): Promise<void
  * Check time-based quests for deadline expiry
  * @param state
  * @param worldId
+ * @returns {Promise<string[]>}
  */
 export async function checkTimeQuests(state: QuestState, worldId: string,): Promise<string[]> {
   const now = new Date().toISOString();

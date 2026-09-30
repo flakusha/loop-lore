@@ -35,6 +35,9 @@ const VERSIONED_PREFIX = "loop-lore/v1/";
  *                `"nsfw-pii"`). MUST be unique per consumer.
  * @param length - Output length in bytes. Defaults to 32 (256 bits).
  * @returns `length` bytes of subkey material as a `Uint8Array`.
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
  */
 export async function domainKey(
   secret: string,

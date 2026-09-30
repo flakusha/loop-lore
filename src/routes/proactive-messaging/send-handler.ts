@@ -29,6 +29,7 @@ import type { ProactiveRouteOpts, } from "./schemas";
  * `{ triggered: true }` after the auto-gen + notification fan-out.
  * @param opts
  * @param ctx
+ * @returns {Promise<Response>}
  */
 export async function sendProactiveHandler(
   opts: ProactiveRouteOpts,

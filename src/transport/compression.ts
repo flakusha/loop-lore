@@ -131,24 +131,39 @@ export interface WithCompressionOpts {
  * @param opts.handler - Inner protocol handler to wrap
  * @param opts.algorithm - Compression algorithm to apply
  * @param opts.options - Tuning options (level, threshold)
+ * @returns {ProtocolHandler}
  */
 export function withCompression({ handler, algorithm, options = {}, }: WithCompressionOpts,): ProtocolHandler {
   return {
+    /**
+     * @returns {Promise<Connection>}
+     */
     async connect(): Promise<Connection> {
       const connection = await handler.connect();
       return { ...connection, metadata: { ...connection.metadata, compression: algorithm, }, };
     },
 
+    /**
+     * @param {string | Uint8Array} data
+     * @returns {Promise<void>}
+     */
     async send(data: string | Uint8Array,): Promise<void> {
       const raw = typeof data === "string" ? new TextEncoder().encode(data,) : data;
       const compressed = compress(raw, algorithm, options,);
       await handler.send(compressed,);
     },
 
+    /**
+     * @param {string} signature
+     * @returns {Promise<string>}
+     */
     async get(signature: string,): Promise<string> {
       return handler.get(signature,);
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async close(): Promise<void> {
       await handler.close();
     },

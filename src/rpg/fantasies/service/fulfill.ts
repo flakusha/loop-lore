@@ -27,6 +27,7 @@ import type {
  * @param db
  * @param fantasyId
  * @param forTarget
+ * @returns {Promise<FulfillmentEffects | null>}
  */
 export async function fulfillFantasy(
   db: Kysely<DB>,

@@ -18,6 +18,7 @@ import type { HandlerOpts, } from "./types";
 /**
  * @param _opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { battle: { weather: { ...; }; }; }; } & { ...; } & { ...; }, { ...; }, { ...; }>}
  */
 export function weatherRoutes(_opts: HandlerOpts, prefix = "/api",) {
   return new Elysia({ name: "battle-weather", },)

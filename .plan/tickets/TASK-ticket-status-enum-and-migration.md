@@ -30,7 +30,7 @@ Top variants by frequency (`grep -h '^\*\*Status:\*\*' .plan/tickets/*.md | sort
 |---:|---|
 | 1233 | `**Status:** open` |
 | 209  | `**Status:** ⬜ Not Started` |
-| 206  | `**Status:** done` |
+| 206  | `**Status:** Done` |
 | 138  | `**Status:** ✅ Done` |
 | 42   | `**Status:** ✅ Done (duplicate, verified 2026-09-19)` |
 | 41   | `**Status:** ✅ Resolved` |

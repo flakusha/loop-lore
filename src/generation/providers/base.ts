@@ -121,14 +121,26 @@ export abstract class BaseProvider<S extends BaseProviderState = BaseProviderSta
     this.dispatchers = options.dispatchers;
   }
 
+  /**
+   * @param {GenerateRequest} req
+   * @returns {Promise<GenerateResponse>}
+   */
   async complete(req: GenerateRequest,): Promise<GenerateResponse> {
     return this.dispatchers.complete(this.state, req,);
   }
 
+  /**
+   * @param {GenerateRequest} req
+   * @param {StreamHandler} handler
+   * @returns {Promise<GenerateResponse>}
+   */
   async stream(req: GenerateRequest, handler: StreamHandler,): Promise<GenerateResponse> {
     return this.dispatchers.stream(this.state, req, handler,);
   }
 
+  /**
+   * @returns {Promise<{ status: "ok" | "degraded" | "down"; model?: string | undefined; latencyMs?: number | undefined; error?: string | undefined; }>}
+   */
   async healthCheck(): Promise<{
     status: "ok" | "degraded" | "down";
     model?: string;
@@ -138,10 +150,18 @@ export abstract class BaseProvider<S extends BaseProviderState = BaseProviderSta
     return this.dispatchers.healthCheck(this.state,);
   }
 
+  /**
+   * @returns {Promise<ModelInfo[]>}
+   */
   async listModels(): Promise<ModelInfo[]> {
     return this.dispatchers.listModels(this.state,);
   }
 
+  /**
+   * @param {string | string[]} input
+   * @throws {Error}
+   * @returns {Promise<number[][]>}
+   */
   async embed(input: string | string[],): Promise<number[][]> {
     if (!this.dispatchers.embed) {
       throw new ProviderError(

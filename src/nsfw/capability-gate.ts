@@ -176,6 +176,7 @@ export async function assertNsfwCapability(
  *
  * @throws {CapabilityBlockedError} `access_denied` (`reason: "nsfw_disabled"`)
  *   when NSFW is globally disabled.
+ * @returns {void}
  */
 export function assertNsfwConfigEnabled(): void {
   if (!getRuntimeNsfwConfig().allowNsfw) {

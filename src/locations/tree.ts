@@ -55,6 +55,11 @@ export class LocationTreeService {
   constructor(private readonly db: Kysely<DB>,) {}
 
   /** Compute the canonical path for a location, given its parent's path. */
+  /**
+   * @param {string | null} parentPath
+   * @param {string} childId
+   * @returns {string}
+   */
   static computeChildPath(parentPath: string | null, childId: string,): string {
     // Strip trailing '/' from parent, then format as '/parent/child/' (canonical: leading + trailing).
     const base = parentPath === null ? "" : parentPath.replace(/\/$/, "",);
@@ -62,6 +67,10 @@ export class LocationTreeService {
   }
 
   /** Depth (separator count in path) of a given location. */
+  /**
+   * @param {string | null} parentPath
+   * @returns {number}
+   */
   static depth(parentPath: string | null,): number {
     if (parentPath === null || parentPath === "") { return 1; }
     return parentPath.split("/",).length - 2; // '/a/' → 1 separator
@@ -70,6 +79,13 @@ export class LocationTreeService {
   /**
    * Insert a Location with depth + cross-world checks at the application layer.
    * The trigger on `path` materializes the path automatically. Returns the new id.
+   */
+  /**
+   * @param {InsertLocationInput} input
+   * @throws {Error}
+   * @throws {Error}
+   * @throws {Error}
+   * @returns {Promise<string>}
    */
   async insertLocation(input: InsertLocationInput,): Promise<string> {
     if (input.parentLocationId !== null) {
@@ -104,6 +120,10 @@ export class LocationTreeService {
   }
 
   /** Repair a single location's `path` from its parent_location_id (idempotent). */
+  /**
+   * @param {string} locationId
+   * @returns {Promise<string>}
+   */
   async repairPath(locationId: string,): Promise<string> {
     return await this.db.transaction().execute(async (trx,) => {
       const row = await trx
@@ -128,6 +148,10 @@ export class LocationTreeService {
   }
 
   /** Walk up — root-most first (highest depth = closest to root), excludes self. */
+  /**
+   * @param {string} locationId
+   * @returns {Promise<LocationTreeNode[]>}
+   */
   async getAncestors(locationId: string,): Promise<LocationTreeNode[]> {
     const result = await sql<LocationTreeNode>`
       WITH RECURSIVE chain(id, parent_location_id, path, depth) AS (
@@ -145,6 +169,10 @@ export class LocationTreeService {
   }
 
   /** Walk down — direct children first. */
+  /**
+   * @param {string} locationId
+   * @returns {Promise<LocationTreeNode[]>}
+   */
   async getDescendants(locationId: string,): Promise<LocationTreeNode[]> {
     const result = await sql<LocationTreeNode>`
       WITH RECURSIVE tree(id, parent_location_id, path, depth) AS (

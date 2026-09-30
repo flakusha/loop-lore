@@ -32,6 +32,7 @@ export interface MusicLinkHandlerOpts {
 /**
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { chats: { ":id": { "music-links": { ...; }; }; }; }; } & { ...; } & { ...; }, { ...; }, { ...; }>}
  */
 export function musicLinksRoutes(opts: MusicLinkHandlerOpts, prefix = "/api",) {
   const { database: db, nsfwFilterEnabled = false, } = opts;

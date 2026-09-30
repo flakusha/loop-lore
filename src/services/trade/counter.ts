@@ -15,6 +15,7 @@ import type { TradeLine, } from "./types";
 /**
  * True when a deadline timestamp is set and already past.
  * @param deadline
+ * @returns {boolean}
  */
 export function isExpired(deadline: string | null,): boolean {
   if (!deadline) { return false; }
@@ -25,6 +26,7 @@ export function isExpired(deadline: string | null,): boolean {
  * Mark an offer expired (deadline passed without acceptance).
  * @param db
  * @param offerId
+ * @returns {Promise<void>}
  */
 export async function markOfferExpired(
   db: Kysely<DB>,
@@ -49,6 +51,7 @@ export async function markOfferExpired(
  * @param opts.buyerItems
  * @param opts.sellerItems
  * @param opts.price
+ * @returns {Promise<{ success: boolean; reason?: string | undefined; }>}
  */
 export async function counterOffer(
   db: Kysely<DB>,
@@ -122,6 +125,7 @@ export async function counterOffer(
  * @param db
  * @param worldId
  * @param actorId
+ * @returns {Promise<{ id: string; buyerActorId: string; sellerActorId: string | null; price: number; items: TradeLine[]; sellerItems: TradeLine[]; status: string; deadline: string | null; createdAt: string; }[]>}
  */
 export async function listOffers(
   db: Kysely<DB>,

@@ -129,6 +129,7 @@ export interface UpdateWorldTraitArgs {
  * @param root0.worldId
  * @param root0.opts
  * @returns void
+ * @throws {Error}
  */
 export async function updateWorldTrait(
   { thisL, actorId, worldId, opts, }: UpdateWorldTraitArgs,

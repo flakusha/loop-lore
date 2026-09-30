@@ -24,7 +24,9 @@ function serializeState(state: TurnManagerState,): ReturnType<typeof safeJsonStr
   return safeJsonStringify(state,);
 }
 
-/** */
+/**
+ * @returns {TurnManagerState}
+ */
 export function createInitialState(): TurnManagerState {
   return {
     currentTurn: 0,
@@ -60,6 +62,8 @@ export function createInitialState(): TurnManagerState {
  *   once per retry against a FRESH state object (committed + strategy/
  *   maxTurns from the host), so it must be idempotent / side-effect-free
  *   except for state fields.
+ * @throws {Error}
+ * @returns {Promise<void>}
  */
 export async function persistState(
   host: TurnManagerHost,
@@ -136,6 +140,8 @@ export async function persistState(
 /**
  * Load or initialize turn manager state from the DB
  * @param host
+ * @throws {Error}
+ * @returns {Promise<void>}
  */
 export async function initializeTurnManager(host: TurnManagerHost,): Promise<void> {
   const chat = await host.db

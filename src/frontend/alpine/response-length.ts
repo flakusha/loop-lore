@@ -43,6 +43,9 @@ const LENGTH_PRESETS = [
     },
 
     /** Toggle custom preset inputs */
+    /**
+     * @returns {void}
+     */
     toggleCustom(): void {
       this.showCustom = this.preset === "custom";
     },
@@ -51,17 +54,27 @@ const LENGTH_PRESETS = [
      * Set the preset and persist to localStorage
      * @param value
      */
+    /**
+     * @param {string} value
+     * @returns {void}
+     */
     setPreset(value: string,): void {
       localStorage.setItem("response-length-preset", value,);
     },
 
     /** Save custom min/max values */
+    /**
+     * @returns {void}
+     */
     saveCustom(): void {
       localStorage.setItem("response-length-custom-min", String(this.customMin,),);
       localStorage.setItem("response-length-custom-max", String(this.customMax,),);
     },
 
     /** Load saved settings from localStorage */
+    /**
+     * @returns {void}
+     */
     load(): void {
       const savedPreset = localStorage.getItem("response-length-preset",);
       if (savedPreset) { this.preset = savedPreset; }

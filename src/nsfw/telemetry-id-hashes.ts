@@ -37,6 +37,7 @@ const ERROR_PATTERNS: Array<[RegExp, ErrorCategory,]> = [
 /**
  * Map a raw error string to its ErrorCategory.
  * @param error
+ * @returns {ErrorCategory}
  */
 export function categoriseError(error: string,): ErrorCategory {
   for (const [pattern, category,] of ERROR_PATTERNS) {
@@ -57,6 +58,7 @@ export function categoriseError(error: string,): ErrorCategory {
  * @param value
  * @param secret
  * @param byteCount
+ * @returns {Promise<string | null>}
  */
 export async function hmacHex(value: string, secret: string, byteCount = 8,): Promise<string | null> {
   if (!secret) { return null; }
@@ -86,6 +88,7 @@ export async function hmacHex(value: string, secret: string, byteCount = 8,): Pr
  * chat-ID domain cannot be reused to forge or correlate actor hashes.
  * @param userId
  * @param authConfig
+ * @returns {Promise<string | null>}
  */
 export async function actorHash(
   userId: string | null,
@@ -102,6 +105,7 @@ export async function actorHash(
  * actor-ID domain cannot be reused to forge or correlate chat hashes.
  * @param chatId
  * @param authConfig
+ * @returns {Promise<string | null>}
  */
 export async function chatHash(
   chatId: string | null,
@@ -132,6 +136,7 @@ const MAX_ERROR_LEN = 200;
  * - truncates to MAX_ERROR_LEN chars
  * - returns the ErrorCategory enum value so admins can still group failures
  * @param raw
+ * @returns {{ category: ErrorCategory; text: string | null; }}
  */
 export function redactError(
   raw: string | null,

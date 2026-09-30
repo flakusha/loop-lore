@@ -116,6 +116,11 @@ const MATRIX: Record<Category, Partial<Record<Verb, Guard>>> = {
  * Novel items (not in the closed 6-category set) get the maximum
  * affordance: every affirmative verb is allowed, but the `reason` flags
  * the fallback so consumers can decide whether to gate.
+ * @param {ActorCaps} caps
+ * @param {ItemProps} item
+ * @param {ContextState} ctx
+ * @param {Verb} verb
+ * @returns {AffordanceResult}
  */
 export function evaluate(
   caps: ActorCaps,

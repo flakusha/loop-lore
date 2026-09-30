@@ -14,6 +14,11 @@
 import { getLogger, type Logger, } from "../logger";
 
 const log: Logger = new Proxy({} as Logger, {
+  /**
+   * @param {unknown} _target
+   * @param {unknown} prop
+   * @returns {any}
+   */
   get(_target, prop,) {
     const instance = getLogger().child({ module: "mention-parser", },);
     return Reflect.get(instance, prop,);
@@ -130,6 +135,7 @@ export function extractMentionedActorIds(
  * Detect initiative claim prefix (>>).
  * Returns { isInitiative: true, cleanMessage: string } if prefixed.
  * @param input
+ * @returns {{ isInitiative: boolean; cleanMessage: string; }}
  */
 export function parseInitiativeFlag(input: string,): { isInitiative: boolean; cleanMessage: string } {
   const trimmed = input.trim();
@@ -153,6 +159,7 @@ export function parseInitiativeFlag(input: string,): { isInitiative: boolean; cl
  *   `"hello"`                        -> false
  *   `"I should PASS this"`           -> false (mid-message, not opt-out)
  * @param text - Message content (plaintext, pre-encryption)
+ * @returns {boolean}
  */
 export function detectPassToken(text: string,): boolean {
   const trimmed = text.trim();

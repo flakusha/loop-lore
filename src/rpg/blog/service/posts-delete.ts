@@ -8,6 +8,7 @@ import type { Kysely, } from "kysely";
  * @param id
  * @param callerUserId authenticated user id performing the mutation
  * @param isAdmin       whether the caller may delete any author's post
+ * @returns {Promise<boolean>}
  */
 export async function deletePost(
   db: Kysely<any>,

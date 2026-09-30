@@ -15,6 +15,7 @@ import type { DB, } from "../../db/schema";
  * @param chatId
  * @param tipId
  * @param maxDepth
+ * @returns {Promise<string[]>}
  */
 export async function walkMessagePath(
   db: Kysely<DB>,
@@ -43,6 +44,7 @@ export async function walkMessagePath(
  * Next auto-name: "Branch N" where N is the existing count + 1.
  * @param db
  * @param chatId
+ * @returns {Promise<string>}
  */
 export async function nextAutoName(db: Kysely<DB>, chatId: string,): Promise<string> {
   const row = await db

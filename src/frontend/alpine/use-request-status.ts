@@ -56,6 +56,7 @@ const TERMINAL: ReadonlySet<RequestStatusKind> = new Set<RequestStatusKind>([
  * fetch are surfaced via `onUpdate` with `status: "failed"` so callers
  * can render an inline retry affordance without `try/catch` boilerplate.
  * @param opts
+ * @returns {{ subscribe: (requestId: string) => void; cancel: () => void; }}
  */
 export function useRequestStatus(opts: UseRequestStatusOptions = {},): {
   subscribe: (requestId: string,) => void;

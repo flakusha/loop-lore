@@ -40,6 +40,7 @@ const registeredDetectors: PolicyDetector[] = [];
  * Register a custom policy detector. Detectors run in registration order;
  * the first detector to return `detected: true` short-circuits.
  * @param detector
+ * @returns {void}
  */
 export function registerPolicyDetector(detector: PolicyDetector,): void {
   registeredDetectors.push(detector,);
@@ -47,6 +48,7 @@ export function registerPolicyDetector(detector: PolicyDetector,): void {
 
 /**
  * Clear all registered detectors. Useful in tests.
+ * @returns {void}
  */
 export function clearDetectors(): void {
   registeredDetectors.length = 0;
@@ -58,6 +60,11 @@ export function clearDetectors(): void {
 class NullDetector implements PolicyDetector {
   readonly name = "null";
 
+  /**
+   * @param {string} _text
+   * @param {PolicyDetectionConfig} _config
+   * @returns {Promise<PolicyAnalysis>}
+   */
   analyze(_text: string, _config: PolicyDetectionConfig,): Promise<PolicyAnalysis> {
     return Promise.resolve({
       detected: false,
@@ -70,7 +77,9 @@ class NullDetector implements PolicyDetector {
 
 // Register the null detector by default — no third-party dependency
 // Call this explicitly at startup. Export for use in tests.
-/** */
+/**
+ * @returns {void}
+ */
 export function registerDefaultNullDetector(): void {
   registerPolicyDetector(new NullDetector(),);
 }
@@ -83,6 +92,7 @@ export function registerDefaultNullDetector(): void {
  * or the aggregate result if none fire.
  * @param text
  * @param config
+ * @returns {Promise<PolicyAnalysis>}
  */
 export async function detectPolicyMismatch(
   text: string,

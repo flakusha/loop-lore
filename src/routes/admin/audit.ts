@@ -19,6 +19,7 @@ import type { AdminRouteOpts, } from "./types";
 /**
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { admin: { audit: { ...; }; }; }; } & { ...; }, { ...; }, { ...; }>}
  */
 export function auditRoutes(opts: AdminRouteOpts, prefix = "/api",) {
   return (
