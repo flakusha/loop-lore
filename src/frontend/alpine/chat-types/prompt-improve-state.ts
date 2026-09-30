@@ -5,8 +5,9 @@
 export interface ChatPromptImproveState {
   /** True while an improve/analyze call is in flight. */
   _improving: boolean;
-  /** Draft saved before the last improve — one-click undo. */
-  _promptImproveBackup: string | undefined;
+  /** Drafts saved before each improve — undo pops one level (max 5). */
+  _promptImproveHistory: string[];
+  pushPromptImproveHistory(draft: string,): void;
   improvePrompt(level?: string,): Promise<void>;
   restorePromptDraft(): void;
 }
