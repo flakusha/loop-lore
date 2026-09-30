@@ -11,6 +11,8 @@
 **Context:** See ## Summary, ## Change, and ## Edge Cases below.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 **Tags:** assets, animation, generation
+**Context:** See ## Summary below.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 
 **Context:** Phase 3 of epic-vector-graphics-generation — animated-raster output on top of the existing `generateImages` + `createAsset` path. Constraints, touched paths, change steps, and edge cases are spelled out under Summary / Touched Paths / Change / Edge Cases below.
 
