@@ -3,7 +3,7 @@
 
 # BUG: Image-edit suite releases its dead port before probing it (TOCTOU)
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 
