@@ -25,8 +25,8 @@ describe("Message edge-cases E2E", () => {
     await api.loginAs(SEED.user.username, SEED.user.password,);
   },);
 
-  afterAll(() => {
-    server.close();
+  afterAll(async () => {
+    await server.close();
   },);
 
   // ── Validation: required fields ──────────────────────────────

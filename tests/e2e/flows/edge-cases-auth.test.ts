@@ -59,8 +59,8 @@ describe("Auth edge-cases E2E", () => {
     await seedUsers(server.db,);
   },);
 
-  afterAll(() => {
-    server.close();
+  afterAll(async () => {
+    await server.close();
   },);
 
   // ── JSON API: empty / malformed bodies return 4xx JSON ───────

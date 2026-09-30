@@ -171,7 +171,7 @@ export interface TestServer {
   config: Config;
   mockProvider: MockLLMProvider | null;
   context: { chatId: string };
-  close: () => void;
+  close: () => Promise<void>;
 }
 /**
  * Factory that builds a Kysely `Dialect`. Defaults to in-memory SQLite;
@@ -335,7 +335,7 @@ function mergeGeneration(base: Config["generation"], overrides: Partial<Config["
  * Usage:
  *   const server = await createTestServer();
  *   const res = await fetch(`${server.url}/api/auth/me`);
- *   server.close();
+ *   await server.close();
  */
 export async function createTestServer(
   overrides?: Omit<Partial<Config>, "auth"> & { auth?: Partial<Config["auth"]> },
@@ -415,11 +415,15 @@ export async function createTestServer(
       config,
       mockProvider,
       context: { chatId: SEED_DEFAULT_CHAT_ID, },
-      close: () => {
-        void bunServer?.stop();
-        // Quiesce the async store's fire-and-forget queue before the caller
-        // tears the DB down. BUG-browser-teardown-destroys-the-db-before-flushing-the-async-s.
-        void flushActiveStore();
+      close: async () => {
+        // Stop accepting requests first, then wait for the async store's
+        // fire-and-forget queue to drain BEFORE the globals below are
+        // cleared. The browser harness already did this in its async
+        // cleanup(); this makes both harnesses quiesce the same way.
+        // BUG-browser-teardown-destroys-the-db-before-flushing-the-async-s,
+        // BUG-test-harness-close-cannot-await-the-store-flush-it-starts.
+        await bunServer?.stop();
+        await flushActiveStore();
         setTestDatabase(null,);
         resetSoloUserCache();
         resetLoginRateLimiter();

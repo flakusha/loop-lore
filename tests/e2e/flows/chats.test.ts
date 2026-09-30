@@ -31,8 +31,8 @@ describe("Chats E2E", () => {
       .execute();
   },);
 
-  afterAll(() => {
-    server.close();
+  afterAll(async () => {
+    await server.close();
   },);
   test("GET /api/v1/chats returns empty list when no chats", async () => {
     await api.login();

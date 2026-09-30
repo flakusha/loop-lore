@@ -31,8 +31,8 @@ describe("Chat settings access guard (PUT /api/v1/chats/:id)", () => {
     await api.get("/api/auth/me",);
   },);
 
-  afterAll(() => {
-    server.close();
+  afterAll(async () => {
+    await server.close();
   },);
 
   test("creator/owner can update chat name (200)", async () => {

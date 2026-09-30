@@ -33,8 +33,8 @@ describe("Characters E2E", () => {
     await api.loginAs(SEED.user.username, SEED.user.password,);
   },);
 
-  afterAll(() => {
-    server.close();
+  afterAll(async () => {
+    await server.close();
   },);
   test("GET /api/v1/actors returns list", async () => {
     const res = await api.get<{ data: Array<{ id: string; display_name: string }> }>("/api/v1/actors",);

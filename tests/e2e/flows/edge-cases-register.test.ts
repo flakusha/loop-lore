@@ -61,8 +61,8 @@ describe("Registration edge-cases E2E", () => {
     limiter.clear();
   },);
 
-  afterAll(() => {
-    server.close();
+  afterAll(async () => {
+    await server.close();
   },);
 
   // ── Length boundaries (route validates these) ────────────────
