@@ -12,6 +12,8 @@
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 **Tags:** assets, vector, svg, generation
 
+**Context:** Phase 1 of epic-vector-graphics-generation — the LLM-authored SVG path. Constraint: the mime allowlist in `src/assets/service/validate.ts` blocks raw `image/svg+xml` (stored-XSS hardening, see BUG-asset-serve-public-immutable-cache-inline-svg-exposure), so sanitized SVG must pass a new gate rather than bypass the existing one. Touched paths, change steps, and edge cases follow under Summary / Touched Paths / Change / Edge Cases.
+
 ## Summary
 
 Add LLM-generated SVG vector path reusing existing LLM text completion path:
@@ -48,7 +50,7 @@ mime gate. ComfyUI/SD raster engines untouched.
 - Size bomb (oversized SVG / entity expansion / deep nesting): byte cap +
   parse budget → reject before persist.
 
-## Acceptance Criteria
+**Acceptance Criteria:**
 
 - [ ] Prompting "svg icon of a cat" returns stored asset servable via
   `/raw` with sanitized SVG mime, no `script`/`on*` in served bytes.
