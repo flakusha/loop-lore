@@ -11,6 +11,8 @@
 **Context:** See ## Summary, ## Change, and ## Edge Cases below.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 **Tags:** assets, vector, svg, generation
+**Context:** See ## Summary below.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 
 **Context:** Phase 1 of epic-vector-graphics-generation — the LLM-authored SVG path. Constraint: the mime allowlist in `src/assets/service/validate.ts` blocks raw `image/svg+xml` (stored-XSS hardening, see BUG-asset-serve-public-immutable-cache-inline-svg-exposure), so sanitized SVG must pass a new gate rather than bypass the existing one. Touched paths, change steps, and edge cases follow under Summary / Touched Paths / Change / Edge Cases.
 
