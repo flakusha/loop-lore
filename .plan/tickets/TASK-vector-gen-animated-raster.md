@@ -12,6 +12,8 @@
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 **Tags:** assets, animation, generation
 
+**Context:** Phase 3 of epic-vector-graphics-generation — animated-raster output on top of the existing `generateImages` + `createAsset` path. Constraints, touched paths, change steps, and edge cases are spelled out under Summary / Touched Paths / Change / Edge Cases below.
+
 ## Summary
 
 Add animated-raster generation: prompt N frames via existing `generateImages`,
@@ -49,7 +51,7 @@ only, not implemented here.
 - Oversized assembly (frames × bytes cap): reject before persist, no
   partial asset row.
 
-## Acceptance Criteria
+**Acceptance Criteria:**
 
 - [ ] N-frame prompt yields one asset servable via `/raw` that animates
   (APNG/WebP/GIF per request), with `duration_secs` set.

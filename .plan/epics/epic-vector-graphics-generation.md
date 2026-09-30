@@ -11,6 +11,8 @@
 **Priority:** Medium
 **Effort:** Medium (phased; each phase ships standalone value)
 
+**Overview:** Vector graphics and animated image generation on top of the existing image pipeline — LLM-authored SVG with a sanitizer gate, SMIL/animated-vector support, and server-side APNG/animated-WebP/GIF assembly, all persisted through the existing `createAsset` path. Phased so each phase ships standalone value; every vector path goes through the existing `validate.ts` mime allowlist, never around it.
+
 ## Background
 
 Image generation entry (`src/generation/image-gen-route.ts`
