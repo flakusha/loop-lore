@@ -3,11 +3,11 @@
 
 # IDEA: IDEA prompt-improve undo history: multi-level undo stack for composer
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Small
 **Tags:** idea, frontend
-**Context:** Composer prompt-improve keeps a single _promptImproveBackup; a second Improve discards the original draft (src/frontend/alpine/chat-actions/prompt-improve.ts).
+**Context:** Composer prompt-improve kept a single `_promptImproveBackup`; a second Improve discarded the original draft. Replaced with a bounded 5-level `_promptImproveHistory` stack (src/frontend/alpine/chat-actions/prompt-improve.ts).
 
 ## Summary
 
@@ -16,30 +16,32 @@
 
 # IDEA: Prompt-improve multi-level undo history
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** P3
 **Effort:** Small
-**Summary:** The composer keeps only one `_promptImproveBackup`, so a second Improve discards the original draft forever. Keep a small bounded stack instead.
+**Summary:** The composer kept only one `_promptImproveBackup`, so a second Improve discarded the original draft forever. Shipped as a bounded 5-level `_promptImproveHistory` stack.
 **Acceptance Criteria:** (see below)
 **Tags:** idea, frontend, prompt-improve
-**Related:** src/frontend/alpine/chat-actions/prompt-improve.ts:113 (`_promptImproveBackup`), TASK-prompt-improve-composer-ui
+**Related:** src/frontend/alpine/chat-actions/prompt-improve.ts (`_promptImproveHistory`), TASK-prompt-improve-composer-ui
 
 ## Summary
 
-`improvePrompt` overwrites `_promptImproveBackup` on every run
-(`prompt-improve.ts:78,113`): Improve → Improve → Undo returns the
-*first improved* text, not the user's original. Users iterating through
-levels (wording → expand → creative) cannot walk back more than one step.
+`improvePrompt` overwrote a single backup on every run: Improve → Improve →
+Undo returned the *first improved* text, not the user's original. Users
+iterating through levels (wording → expand → creative) could not walk back more
+than one step. Now every improve pushes onto `_promptImproveHistory` (capped at
+5) and Undo pops one level; the menu entry shows the remaining step count and
+hides itself when the stack is empty.
 
 ## Acceptance Criteria
 
-- [ ] `_promptImproveBackup: string | undefined` becomes a bounded stack (e.g. last 5 drafts) with Undo popping one level
-- [ ] Undo button label/step count reflects remaining depth; empty stack hides the affordance
-- [ ] Existing single-undo tests (`prompt-improve-local.test.ts`) still pass; one new test covers Improve×2 → Undo×2 restores original
-- [ ] No new server surface; purely client-side state in `promptImproveActions`
+- [x] `_promptImproveBackup: string | undefined` becomes a bounded stack (e.g. last 5 drafts) with Undo popping one level
+- [x] Undo button label/step count reflects remaining depth; empty stack hides the affordance
+- [x] Existing single-undo tests (`prompt-improve-local.test.ts`) still pass; one new test covers Improve×2 → Undo×2 restores original
+- [x] No new server surface; purely client-side state in `promptImproveActions`
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
