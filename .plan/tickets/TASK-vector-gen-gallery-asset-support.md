@@ -6,6 +6,7 @@
 **Summary:** Gallery render path for sanitized-SVG + animated vector kinds
 **Context:** Vector-graphics epic; follows TASK-vector-gen-svg-serve-safety sanitized-SVG kind
 **Acceptance Criteria:** See ## Acceptance Criteria below
+**Epic:** epic-vector-graphics-generation
 
 **Status:** Not Started
 **Priority:** medium
@@ -33,3 +34,6 @@ note recorded append-only as a new `NNN_` file.
 - [ ] Preview modal renders both kinds without falling to the unknown-type branch (click each tile, modal shows content)
 - [ ] Animated upload persists a first-frame poster thumbnail via the thumbnail service (upload animated vector, `thumbnail_path` set, thumb loads)
 - [ ] No animated split in `src/db/enums-content.ts` `AssetType` enum; migration note recorded append-only as a new `NNN_` file (upload sanitized-SVG + animated vector with no AssetType enum change and no edit to landed migration files; new kind resolves through existing Image/Video mapping)
+
+
+git issue: 47dd28f
