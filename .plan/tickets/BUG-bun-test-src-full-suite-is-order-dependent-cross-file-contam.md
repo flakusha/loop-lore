@@ -11,8 +11,8 @@
 **Context:** Found 2026-09-26 during the flake review phase of the week-review orchestration: two consecutive full-suite runs in the review worktree plus one on dev; evidence and run outputs in the ticket body above.
 **Acceptance Criteria:**
 - [x] Polluter files identified via subset bisection
-- [x] Contamination fixed or per-file isolation wired
-- [x] Two consecutive `bun test src/` runs report zero failures
+- [x] Three polluters fixed (see Resolution)
+- [ ] Two consecutive `bun test src/` runs report zero failures — NOT YET MET
 
 
 ## Resolution
@@ -54,5 +54,27 @@ mounted a route registering a shared schema — which is what made it look
 order-dependent. Re-pointed at `ChatRenameBody` with the required `name` field
 supplied.
 
-Verified: two consecutive `bun test src/` runs at zero failures, plus
-`bun run typecheck`, `bun run lint:eslint`, and `bun run format`.
+Verified for those three: two consecutive `bun test src/` runs at zero failures
+on the branch at the time, plus `bun run typecheck`, `lint:eslint`, and `format`.
+
+## Re-audit 2026-09-30 — NOT fixed, criterion still open
+
+Post-rebase verification on `dev` (`3f79768a5`) shows the suite is still
+order-dependent: `bun test src/` exits 1 with roughly 25 failures, and every one
+of those files passes when run alone (spot-checked `autonomy-panel.test.ts`,
+`auth.test.ts`, `i18n.test.ts`, `lora/routes/discover.coverage.test.ts` — all
+PASS in isolation). The earlier "zero failures" result was real for the branch
+at the time but was not re-verified after the rebase, and the acceptance claim
+was wrong.
+
+Bisect on the current `dev` tree points at four more directories — `src/frontend`,
+`src/generation`, `src/routes`, `src/services` — each independently able to
+poison `autonomy-panel.test.ts`. One confirmed single-file polluter:
+`src/frontend/asset-preview-anchor.test.ts`, which `mock.module("./fe-fetch")`s
+the request helper. `src/frontend/alpine/htmx.ts:5` imports `feFetch`, so
+`apiFetch` picks up the anchor's stub process-wide, and `autonomy-panel.test.ts`
+(which stubs `globalThis.fetch` instead) never reaches its own handler. Same
+`mock.module` class as the three above.
+
+Likely a long tail: further `mock.module` sites exist over `fe-fetch` and
+`assets/service/links`. Fixing the tail is a separate sweep, not a single patch.
