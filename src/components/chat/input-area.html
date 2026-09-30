@@ -245,10 +245,10 @@
             <button
               type="button"
               class="prompt-improve-level"
-              x-show="_promptImproveBackup"
+              x-show="_promptImproveHistory.length"
               @click.prevent="open = false; restorePromptDraft()"
               data-testid="prompt-improve-undo"
-            >Undo — restore draft</button>
+            ><span x-text="'Undo — restore draft (' + _promptImproveHistory.length + ' step' + (_promptImproveHistory.length === 1 ? '' : 's') + ' back)'"></span></button>
           </div>
         </template>
       </div>

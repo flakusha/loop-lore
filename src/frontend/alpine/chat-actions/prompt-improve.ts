@@ -19,6 +19,9 @@ import type { ChatState, } from "../types";
 
 const log = rootLog.child({ module: "chat", },);
 
+/** Undo depth for the composer improve stack — 5 levels back is plenty. */
+const MAX_IMPROVE_HISTORY = 5;
+
 /**
  * Opt-in browser inference: deterministic cleanup first, then the downloaded
  * browser model when one is flagged ready. Anything unavailable returns null
@@ -48,11 +51,19 @@ export const promptImproveActions: Partial<ChatState> & ThisType<ChatState> = {
   // "_improving is not defined" as soon as a chat is selected (the
   // `!activeChat` short-circuit hides it while no chat is open).
   _improving: false,
-  _promptImproveBackup: undefined,
+  _promptImproveHistory: [] as string[],
+
+  /**
+   * Push the current draft onto the undo stack, dropping the oldest level
+   * once the bounded depth is reached.
+   */
+  pushPromptImproveHistory(draft: string,) {
+    this._promptImproveHistory = [...this._promptImproveHistory, draft,].slice(-MAX_IMPROVE_HISTORY,);
+  },
 
   /**
    * Improve the current draft through the shared prompt-improvement service.
-   * Keeps the previous draft in `_promptImproveBackup` for one-click undo.
+   * Pushes the previous draft onto `_promptImproveHistory` for multi-level undo.
    * @param level - Gradation level; group chats default to `style-group`
    */
   async improvePrompt(level?: string,) {
@@ -75,7 +86,7 @@ export const promptImproveActions: Partial<ChatState> & ThisType<ChatState> = {
       // draft never reaches the server. Null → fall through to server.
       const local = await tryLocalImprove(text, requestedLevel,);
       if (local) {
-        this._promptImproveBackup = text;
+        this.pushPromptImproveHistory(text,);
         input.value = local.content;
         this.autoResize(input,);
         log.debug("Prompt improved locally, server bypassed", { engine: local.engine, },);
@@ -110,7 +121,7 @@ export const promptImproveActions: Partial<ChatState> & ThisType<ChatState> = {
         this.$dispatch?.("show-toast", { type: "error", message: t("toasts.promptImproveFailed",), },);
         return;
       }
-      this._promptImproveBackup = text;
+      this.pushPromptImproveHistory(text,);
       input.value = improved;
       this.autoResize(input,);
       this.$dispatch?.("show-toast", { type: "success", message: t("toasts.promptImproved",), },);
@@ -121,15 +132,16 @@ export const promptImproveActions: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
-  /** Restore the draft saved by {@link improvePrompt}. */
+  /** Pop one level off the improve history and restore that draft. */
   restorePromptDraft() {
     const input = this.$refs.messageInput as HTMLTextAreaElement | undefined;
-    const backup = this._promptImproveBackup;
-    if (!input || !backup) { return; }
-    input.value = backup;
-    this._promptImproveBackup = undefined;
+    const history = this._promptImproveHistory;
+    if (!input || history.length === 0) { return; }
+    const depth = history.length;
+    this._promptImproveHistory = history.slice(0, -1,);
+    input.value = history[depth - 1] ?? "";
     this.autoResize(input,);
-    log.debug("Prompt draft restored after improve",);
+    log.debug("Prompt draft restored after improve", { remaining: depth - 1, },);
     this.$dispatch?.("show-toast", { type: "success", message: t("toasts.promptRestored",), },);
   },
 };
