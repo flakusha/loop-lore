@@ -153,7 +153,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-admin-dashboard-browser-tests-repeat-the-login-hx-redirect-r.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-ADMIN-TEMPLATES-UPDATE-REMOVE-LACK-ADMIN-SETTINGS-GATE": {
     "epic": "",
@@ -246,7 +246,7 @@
     "label": "bug",
     "priority": "high",
     "source": ".plan/tickets/BUG-analytics-per-user-routes-filter-telemetry-events-by-raw-ids.md",
-    "status": "Not Started",
+    "status": "done",
     "tags": [],
     "title": "analytics per-user routes filter telemetry_events by raw IDs but record() stores hashed IDs",
     "type": "BUG"
@@ -3656,7 +3656,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-jscpd-ratchet-gate-silently-removed-without-ticket.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-JWT-PAYLOAD-PARSE-FAILURE-YIELDS-EMPTY-OBJECT-ACCEPTED-AS-VA": {
     "epic": "",
