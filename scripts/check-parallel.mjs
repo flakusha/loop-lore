@@ -15,10 +15,23 @@
  *   CHECK_JOBS  Env override for the same value. The cap controls how many
  *               checks run in parallel; the script still launches all checks,
  *               but processes them in chunks of `jobs` at a time. The default
- *               of 4 is the observed-safe ceiling on this host: 8 OOMs when a
- *               second worktree is running its own heavy gates at the same time.
- *               Raise it with --jobs N / CHECK_JOBS=N when running a single
- *               worktree with headroom to spare.
+ *               of 4 is the observed-safe ceiling on this host: repeated OOM
+ *               kills when a second worktree ran its own heavy gates at the
+ *               same time. Raise it with --jobs N / CHECK_JOBS=N when running a
+ *               single worktree with headroom to spare.
+ *
+ * Per-gate timeout (every gate is bounded; the child is killed on expiry):
+ *   Default   15 min -- DEFAULT_GATE_TIMEOUT_MS in scripts/check/gate-timeout.mjs.
+ *   Per gate  GATE_TIMEOUT_MS below names the gates that need a longer budget;
+ *             every other gate gets the default.
+ *   Env       CHECK_GATE_TIMEOUT_MS=<ms> raises the default (slow hosts, loaded
+ *             CI runners) with no code change. An explicit per-gate budget wins
+ *             over the env value.
+ *   On expiry the gate's whole process group gets SIGTERM, then SIGKILL after a
+ *             5s grace, so workers the gate forked die with it. The gate is
+ *             reported FAILED with a message naming the gate and its budget in
+ *             ms, appended to the output so report clipping cannot drop it, and
+ *             the report entry carries `timedOut: true`.
  *
  * Writes a machine-readable report to .tmp/check-report.json after every run
  * (success: summary only; failure: summary + full failed-check output).
@@ -64,6 +77,14 @@ import {
   warmCacheViaPassphrase,
   warmCacheViaPinentry,
 } from "./gpg-unlock.mjs";
+
+// Bounded gate execution: every spawned gate has a deadline, so a wedged child
+// is killed and reported as failed instead of hanging the aggregate
+// (BUG-parallel-check-runner-has-no-per-gate-timeout).
+import {
+  DEFAULT_GATE_TIMEOUT_MS,
+  runGateWithTimeout,
+} from "./check/gate-timeout.mjs";
 
 // ── Parse args ──────────────────────────────────────────────────
 
@@ -650,10 +671,11 @@ async function ensureGpgWarm() {
 // multiple worktrees can run `bun run check` simultaneously without the host
 // hitting OOM — peak RSS scales ~linearly with concurrent checks.
 //
-// ponytail: 4 is the observed-safe ceiling on this host, not a measured one —
-// 8 OOMs when a second worktree runs its own heavy gates concurrently. Raise it
-// with --jobs N / CHECK_JOBS=N once per-worktree heavy-gate serialization is
-// guaranteed; the number is a guess we can revise, not a constant to tune.
+// ponytail: 4 is an observed-safe ceiling on this host, not a measured one —
+// repeated OOM kills when a second worktree ran its own heavy gates
+// concurrently. Raise it with --jobs N / CHECK_JOBS=N once per-worktree
+// heavy-gate serialization is guaranteed; the number is a guess we can revise,
+// not a constant to tune.
 const DEFAULT_JOBS = 4;
 function parseJobs() {
   const flagIdx = process.argv.indexOf("--jobs",);
@@ -688,7 +710,18 @@ const JOBS = Math.min(parseJobs(), Object.keys(checks,).length,);
 // placeholder-hash list) otherwise push the actionable text past the cap.
 function clipOutput(text, limit,) {
   if (text.length <= limit) { return text; }
-  return `... (${text.length - limit} earlier chars elided) ...\n${text.slice(-limit,)}`;
+  // Keep a head as well as the tail. A red gate's cause is not always at the
+  // end: tsc/bun print the first error early and keep going, and a gate killed
+  // by the OOM killer or a timeout has no verdict of its own to end on. The old
+  // tail-only clip threw the head away, so the first diagnostic of a long gate
+  // was unreachable without a re-run. Half the budget each side, since neither
+  // half alone is the whole story.
+  const head = Math.floor(limit / 2,),
+    tail = limit - head,
+    elided = text.length - limit;
+  return `${text.slice(0, head,)}\n... (${elided} earlier chars elided; ${head} head + ${tail} tail chars kept) ...\n${
+    text.slice(-tail,)
+  }`;
 }
 
 // giwt reconciles .plan/ against the git issue CLI by shelling out to
@@ -707,35 +740,81 @@ function clipOutput(text, limit,) {
 // evaluate" (BUG-giwt-plan-gates-report-112-phantom-actionable-issues-when-th).
 const GIWT_ISSUE_CLI_UNAVAILABLE = "git issue CLI unavailable";
 
+// Per-gate budget overrides, keyed by gate name. Every gate NOT listed here
+// gets the default (DEFAULT_GATE_TIMEOUT_MS, itself overridable by
+// CHECK_GATE_TIMEOUT_MS). Only the genuinely slow gates are named: the browser
+// baseline drives Playwright over the whole surface, and the coverage gate runs
+// the suite under instrumentation. 15 min is already generous for the rest --
+// the light-gate chunk finishes in seconds.
+//
+// ponytail: these are wall-clock budgets, not measured quantiles. A host that
+// legitimately needs longer raises CHECK_GATE_TIMEOUT_MS once instead of
+// widening this table gate by gate.
+const GATE_TIMEOUT_MS = {
+  "coverage - per-module line %": 30 * 60 * 1000,
+  "e2e - browser (baseline)": 45 * 60 * 1000,
+};
+
+/**
+ * Resolve a gate's wall-clock budget: explicit per-gate entry, else
+ * CHECK_GATE_TIMEOUT_MS, else the 15 min default. An invalid env value warns
+ * and falls back rather than failing the run over a typo.
+ */
+function resolveGateTimeoutMs(name,) {
+  const perGate = Object.hasOwn(GATE_TIMEOUT_MS, name,) ? GATE_TIMEOUT_MS[name] : undefined;
+  if (perGate !== undefined) { return perGate; }
+  const raw = process.env.CHECK_GATE_TIMEOUT_MS;
+  if (raw === undefined) { return DEFAULT_GATE_TIMEOUT_MS; }
+  const parsed = Number.parseInt(raw, 10,);
+  if (!Number.isFinite(parsed,) || parsed < 1) {
+    console.error(
+      `warn: Invalid CHECK_GATE_TIMEOUT_MS value ${JSON.stringify(raw,)}; ` +
+        `using ${DEFAULT_GATE_TIMEOUT_MS}ms.`,
+    );
+    return DEFAULT_GATE_TIMEOUT_MS;
+  }
+  return parsed;
+}
+
 // oxlint-disable-next-line func-style
 async function runCheck(name, command,) {
   const startedAt = performance.now(),
-    commandParts = ["-c", command,];
+    timeoutMs = resolveGateTimeoutMs(name,);
 
   try {
-    // oxlint-disable-next-line sort-keys
-    const proc = Bun.spawn(["bash", ...commandParts,], {
+    const gate = await runGateWithTimeout({
+        name,
+        command,
+        timeoutMs,
         cwd: PROJECT_ROOT,
-        stdout: "pipe",
-        stderr: "pipe",
       },),
-      exitCode = await proc.exited,
-      stdout = await new Response(proc.stdout,).text(),
-      stderr = await new Response(proc.stderr,).text(),
       // `bun test` prints its banner on stdout and every failure detail on
       // stderr, so `stdout || stderr` reported a failing gate as one banner
       // line and hid the cause. Keep both streams whenever stderr has content.
-      output = stderr.trim() ? `${stdout}${stderr}` : stdout || stderr;
+      gateOutput = gate.stderr.trim() ? `${gate.stdout}${gate.stderr}` : gate.stdout || gate.stderr,
+      // A killed gate produced no verdict of its own, so the reason has to be
+      // synthesized: name the gate and the budget that expired. It goes at the
+      // END because clipOutput keeps the tail of a long gate, and a wedged gate
+      // is exactly the kind that floods stdout -- prepended, this line is the
+      // first thing the report throws away.
+      output = gate.timedOut
+        ? `${gateOutput}\nTIMEOUT: gate ${
+          JSON.stringify(name,)
+        } exceeded its ${timeoutMs}ms budget and was killed. Raise the budget with CHECK_GATE_TIMEOUT_MS=<ms>.`
+        : gateOutput;
     // oxlint-disable-next-line sort-keys
     return {
       name,
       command,
-      passed: exitCode === 0,
-      skipped: exitCode !== 0 && output.includes(GIWT_ISSUE_CLI_UNAVAILABLE,),
+      passed: gate.ok,
+      // A timed-out gate is a failure, not an unevaluable gate: never let the
+      // giwt-unavailable skip path mask a kill.
+      skipped: !gate.timedOut && !gate.ok && gateOutput.includes(GIWT_ISSUE_CLI_UNAVAILABLE,),
       output,
-      exitCode,
-      durationMs: Math.round(performance.now() - startedAt,),
+      exitCode: gate.exitCode,
+      durationMs: gate.durationMs,
       truncated: output.length > MAX_OUTPUT_CHARS,
+      timedOut: gate.timedOut,
     };
   } catch (error) {
     // oxlint-disable-next-line sort-keys
@@ -748,6 +827,7 @@ async function runCheck(name, command,) {
       exitCode: 1,
       durationMs: Math.round(performance.now() - startedAt,),
       truncated: false,
+      timedOut: false,
     };
   }
 }
@@ -763,10 +843,17 @@ async function runCheck(name, command,) {
 // internally. Chunked together, the loser's scan dies under lock contention
 // and reports a false "index out of sync" / truncated ticket-set (observed
 // deterministically across three consecutive runs).
+//
+// `lint - eslint` joins them on footprint, not on measured causation: measured
+// at ~1.5 GB peak with `--concurrency=8` (package.json), it is the largest
+// light-pool gate by a wide margin, so chunking it beside other multi-GB work
+// is the shape that co-scheduled OOMs took. Moving it here removes that
+// exposure; it is not evidence that eslint caused any specific kill.
 const HEAVY_NAMES = new Set([
   "coverage - per-module line %",
   "e2e - browser (baseline)",
   "plan - ticket index (sync)",
+  "lint - eslint",
 ],);
 
 async function runAllChecks() {
@@ -818,6 +905,7 @@ async function runAllChecks() {
         output: message,
         durationMs: 0,
         truncated: false,
+        timedOut: false,
       },);
     }
   }
@@ -847,7 +935,9 @@ function reportResults(results,) {
       console.log(`PASS: ${result.name}`,);
       passed++;
     } else {
-      console.log(`FAIL: ${result.name}`,);
+      // A timeout is a distinct failure mode from "the gate ran and said no":
+      // the gate never got to render a verdict, so say so on the summary line.
+      console.log(`FAIL: ${result.name}${result.timedOut ? " (timed out, killed)" : ""}`,);
       // Head for context, tail for the actual failure (see clipOutput).
       const outputLines = result.output.split("\n",),
         head = outputLines.slice(0, 5,),
@@ -927,6 +1017,9 @@ function buildReport({ exitCode, checks, nonBlocking, gpgPrecheck, },) {
       command: check.command,
       passed: check.passed,
       skipped: check.skipped === true,
+      // True when the gate blew its budget and was killed; the failure output
+      // names the gate and the budget (see runCheck).
+      timedOut: check.timedOut === true,
       exitCode: check.exitCode,
       durationMs: check.durationMs ?? 0,
       output: check.passed ? null : clipOutput(check.output ?? "", MAX_OUTPUT_CHARS,),
