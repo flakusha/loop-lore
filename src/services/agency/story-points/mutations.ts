@@ -19,7 +19,17 @@ import {
   type StoryPointLedger,
 } from "./types";
 
-/** Atomically credit story points to an actor; `earned_total` is monotonic. */
+/**
+ * Atomically credit story points to an actor; `earned_total` is monotonic.
+ *
+ * Concurrency: the whole read-decide-write runs in one transaction, the
+ * UPDATE is relative (`balance = balance + ?`) rather than an absolute write
+ * of a value computed from a possibly-stale read, and the first-time INSERT
+ * is `ON CONFLICT DO NOTHING` against 020's partial unique index so a losing
+ * concurrent earn falls through to the UPDATE instead of raising a raw
+ * SQLITE UNIQUE violation. BUG-earnstorypoints-lost-update-race-and-raw-unique-violation-on
+ * @throws CapExceededError when a cap is set and the earn cannot fit under it.
+ */
 export async function earnStoryPoints(
   db: Kysely<DB>,
   params: StoryPointChange,
@@ -28,16 +38,15 @@ export async function earnStoryPoints(
   const worldKey = params.worldId ?? null;
   const ledgerId = sql<string>`lower(hex(randomblob(16)))`;
 
-  // SQLite UNIQUE treats NULL world_id as distinct — manage upsert manually.
-  const existing = await db
-    .selectFrom("actor_story_points",)
-    .select(["id", "balance", "earned_total", "cap",],)
-    .where("actor_id", "=", params.actorId,)
-    .where("world_id", "is", worldKey,)
-    .executeTakeFirst();
+  await db.transaction().execute(async (trx,) => {
+    // 020 splits the uniqueness into two partial indexes: one for a NULL
+    // world_id and one for a set world_id, so the conflict target has to
+    // match the shape of the row being written.
+    const conflictTarget = worldKey === null
+      ? sql`(actor_id) WHERE world_id IS NULL`
+      : sql`(actor_id, world_id) WHERE world_id IS NOT NULL`;
 
-  if (existing === undefined) {
-    await sql`
+    const insert = await sql`
       INSERT INTO actor_story_points (
         id, actor_id, world_id, balance, earned_total, spent_total,
         cap, last_earn_at, last_earn_reason, created_at, updated_at
@@ -46,26 +55,50 @@ export async function earnStoryPoints(
         ${ledgerId}, ${params.actorId}, ${worldKey}, ${params.amount}, ${params.amount}, 0,
         NULL, datetime('now'), ${params.reason ?? null}, datetime('now'), datetime('now')
       )
-    `.execute(db,);
-  } else {
-    const newBalance = existing.cap === null
-      ? existing.balance + params.amount
-      : Math.min(existing.cap, existing.balance + params.amount,);
-    if (existing.cap !== null && newBalance === existing.balance && params.amount > 0) {
-      // Cap already saturated — refuse rather than silently clamping.
-      throw new CapExceededError(params.actorId, params.amount, existing.cap,);
+      ON CONFLICT ${conflictTarget} DO NOTHING
+    `.execute(trx,);
+
+    // A concurrent earn that inserted first leaves zero rows affected here;
+    // that earn already credits this actor, so fall through to the UPDATE
+    // rather than reporting an error.
+    if (Number(insert.numAffectedRows ?? 0n,) === 0) {
+      const existing = await trx
+        .selectFrom("actor_story_points",)
+        .select(["balance", "cap",],)
+        .where("actor_id", "=", params.actorId,)
+        .where("world_id", "is", worldKey,)
+        .executeTakeFirst();
+
+      if (existing === undefined) {
+        // The row was deleted between the INSERT and here. Nothing to credit.
+        return;
+      }
+
+      if (existing.cap !== null && existing.balance + params.amount > existing.cap) {
+        // Cap check inside the transaction so a concurrent cap change or
+        // earn cannot open a window between the read and the write.
+        throw new CapExceededError(params.actorId, params.amount, existing.cap,);
+      }
+
+      // Relative update: the new balance is computed by SQLite from the value
+      // it holds at write time, not from a read that may already be stale.
+      // The cap is re-applied here so the relative add cannot overshoot it.
+      await sql`
+        UPDATE actor_story_points
+        SET
+          balance = MIN(
+            COALESCE(cap, balance + ${params.amount}),
+            balance + ${params.amount}
+          ),
+          earned_total = earned_total + ${params.amount},
+          last_earn_at = datetime('now'),
+          last_earn_reason = ${params.reason ?? null},
+          updated_at = datetime('now')
+        WHERE actor_id = ${params.actorId}
+          AND world_id IS ${worldKey}
+      `.execute(trx,);
     }
-    await sql`
-      UPDATE actor_story_points
-      SET
-        balance = ${newBalance},
-        earned_total = earned_total + ${params.amount},
-        last_earn_at = datetime('now'),
-        last_earn_reason = ${params.reason ?? null},
-        updated_at = datetime('now')
-      WHERE id = ${existing.id}
-    `.execute(db,);
-  }
+  },);
 
   const after = await getStoryPointBalance(db, params.actorId, worldKey,);
   // Fire-and-forget cache refresh — caller never blocks on this.
