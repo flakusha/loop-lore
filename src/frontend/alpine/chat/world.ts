@@ -97,6 +97,10 @@ export const chatWorld: Partial<ChatState> & ThisType<ChatState> = {
     this._musicLinks = [];
     this._musicLinksConfirmDelete = null;
     this._musicLinkError = "";
+    // Composers are per-chat (flush/restoreComposerDraft above), so the improve
+    // undo stack must not follow the user — Undo in the new chat would write
+    // the previous chat's draft into this one.
+    this._promptImproveHistory = [];
     const chat = this.chats.find((c: { id: string; name?: string; encryption_level?: string },) => c.id === chatId);
     this.activeChatName = chat?.name || t("chats.untitledChat",);
     // Tier for the key fetch: `encryption_level` rides on the list rows
