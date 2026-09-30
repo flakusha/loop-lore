@@ -3560,6 +3560,10 @@
   "src/async/offload-daemon.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-async-spill-uses-cache-key-as-filename-so-routed-ids-lose.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-test-async-store-offload-dir-fixed-path-race.md"
     },
     {
@@ -3574,6 +3578,10 @@
     }
   ],
   "src/async/offload.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-async-spill-uses-cache-key-as-filename-so-routed-ids-lose.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-test-async-store-offload-dir-fixed-path-race.md"
@@ -3672,6 +3680,10 @@
     }
   ],
   "src/async/spill.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-async-spill-uses-cache-key-as-filename-so-routed-ids-lose.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-test-async-store-offload-dir-fixed-path-race.md"
@@ -34714,6 +34726,10 @@
     }
   ],
   "src/services/agency/story-points.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-earnstorypoints-lost-update-race-and-raw-unique-violation-on.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-story-points-prototype.md"
