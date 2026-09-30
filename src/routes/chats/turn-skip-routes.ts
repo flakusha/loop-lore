@@ -35,6 +35,13 @@ function log(): Logger {
  */
 export function turnSkipRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, config, } = opts;
+  // Test seams, defaulting to the real auto-generation hub. Injected rather than
+  // `mock.module`d: Bun's module registry is process-global with no unmock, so a
+  // module-level stub also served every later file importing the same hub —
+  // src/routes/messages/reply.ts, where a forced-true isLlmGenerationConfigured
+  // made it take the generation branch and skip the assistant reply entirely.
+  const llmConfigured = opts.isLlmGenerationConfigured ?? isLlmGenerationConfigured;
+  const trigger = opts.triggerAutoGeneration ?? triggerAutoGeneration;
   return (
     new Elysia({ name: "chats-turn-skip", },)
       .post(
@@ -70,8 +77,8 @@ export function turnSkipRoutes(opts: HandlerOpts, prefix = "/api",) {
 
           // A deduped advance replays a stored row — its generation beat
           // already fired on the original request; don't cue a second one.
-          if (body.mode === "advance" && !result.deduped && isLlmGenerationConfigured(config,)) {
-            void triggerAutoGeneration({
+          if (body.mode === "advance" && !result.deduped && llmConfigured(config,)) {
+            void trigger({
               database,
               config,
               chatId: id,

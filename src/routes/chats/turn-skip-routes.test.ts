@@ -8,12 +8,13 @@
  * Translates RecordTurnSkipResult -> HTTP: not_found -> 404,
  * refused_beat -> 409, forbidden -> 403. Per-user+chat rate limit -> 429.
  */
-import { afterEach, beforeEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
 import { createConfigSchema, } from "../../config/schema-class";
 import type { DB, } from "../../db/schema";
+import type { AutoGenOpts, } from "../../generation/auto-gen";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import {
@@ -26,14 +27,14 @@ import { turnSkipRoutes, } from "./turn-skip-routes";
 
 // Spy the auto-generation trigger: the route must fire it at most once per
 // advance, and never for a deduped (replayed) advance.
-const triggerCalls: Array<Record<string, unknown>> = [];
-mock.module("../../generation/auto-gen", () => ({
-  isLlmGenerationConfigured: () => true,
-  triggerAutoGeneration: (input: Record<string, unknown>,) => {
-    triggerCalls.push(input,);
-    return Promise.resolve();
-  },
-}),);
+//
+// Injected through HandlerOpts, not `mock.module`d. Bun's module registry is
+// process-global and `mock.module` has no unmock, so the stub reached every later
+// file importing this hub — src/routes/messages/reply.ts took its generation
+// branch and returned replied:false, failing
+// src/routes/messages/reply-encrypted.test.ts. Re-registering the real module in
+// afterAll did not help: reply.ts had already bound the stubbed exports by then.
+const triggerCalls: AutoGenOpts[] = [];
 
 describe("chats turn-skip-routes", () => {
   let db: Kysely<DB>;
@@ -44,7 +45,17 @@ describe("chats turn-skip-routes", () => {
     const config = createConfigSchema().defaults as Config;
     return new Elysia({ name: "test-app", },)
       .derive(() => ({ userId, userRole: "user" as string | null, }))
-      .use(turnSkipRoutes({ database: db, config, }, "/api",),);
+      .use(turnSkipRoutes({
+        database: db,
+        config,
+        // Forced true: the route only fires the trigger when LLM generation is
+        // configured, and the harness config has none.
+        isLlmGenerationConfigured: () => true,
+        triggerAutoGeneration: (input: AutoGenOpts,) => {
+          triggerCalls.push(input,);
+          return Promise.resolve();
+        },
+      }, "/api",),);
   }
 
   beforeEach(async () => {
