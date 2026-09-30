@@ -43,4 +43,3 @@ Fixed in `3db1ad353` — `hashId()` applied to all three `telemetry_events` ID f
 Tests seed through the real write path (`record()`) for the round-trip cases and via pre-hashed ids elsewhere, so a raw-id regression fails: fails-before (3 red, 0 generations / 0 tokens) to passes-after (13 pass across `analytics.test.ts` + `src/telemetry/`).
 
 Residual: rows written before `567247fff` (2026-09-06, which introduced write-side hashing) still hold raw ids and are now invisible to these endpoints. The window is bounded by the 90-day retention; the hashed-only filter is what the acceptance criteria require, and an unhashed fallback branch would defeat the anonymisation the writer guarantees.
-
