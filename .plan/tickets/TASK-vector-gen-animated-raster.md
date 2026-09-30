@@ -3,11 +3,13 @@
 
 # TASK: Vector Gen — Animated Raster (APNG/WebP/GIF)
 
-**Status:** Draft
+**Status:** Not Started
 **Priority:** low
 **Effort:** Medium
 **Summary:** Assemble APNG/animated-WebP/GIF from generated frame sequences
 **Epic:** epic-vector-graphics-generation
+**Context:** See ## Summary, ## Change, and ## Edge Cases below.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Tags:** assets, animation, generation
 
 ## Summary

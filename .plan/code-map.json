@@ -16031,14 +16031,12 @@
       "source": ".plan/tickets/FEAT-2d-interactive-game-canvas-for-chat-scenes.md"
     }
   ],
-
   "src/frontend/alpine/game-canvas/draw.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-generic-2d-graph-canvas-renderer-reusing-game-canvas.md"
     }
   ],
-
   "src/frontend/alpine/game-canvas/index.ts": [
     {
       "kind": "ticket",
@@ -16515,7 +16513,6 @@
       "source": ".plan/tickets/TASK-dedupe-sse-activity-stream.md"
     }
   ],
-
   "src/frontend/alpine/npc-faction-mock.ts": [
     {
       "kind": "ticket",
