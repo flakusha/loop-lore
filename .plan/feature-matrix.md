@@ -52,7 +52,6 @@ Total tickets: **3082** — untagged: **2604** — unbound to epic: **1569**
 | actors | 3 | 1 | 0 | 0 | 0 | 0 | 2 |
 | adaptation | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | adapters | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-// hint: Logic changed on both sides. Requires understanding intent of each change.
 | admin | 7 | 0 | 0 | 1 | 0 | 0 | 6 |
 | admin panel filtering | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | admin-ui | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
@@ -1427,7 +1426,6 @@ Total tickets: **3082** — untagged: **2604** — unbound to epic: **1569**
 | epic-rag-extract-link | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | epic-rag-ui.md | 5 | 0 | 0 | 5 | 0 | 0 | 0 |
 | epic-rarity-extensions | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-// hint: Logic changed on both sides. Requires understanding intent of each change.
 | epic-recursive-self-improvement | 27 | 0 | 0 | 0 | 0 | 0 | 27 |
 | epic-relationships | 3 | 1 | 1 | 1 | 0 | 0 | 0 |
 | epic-replayability | 4 | 1 | 1 | 2 | 0 | 0 | 0 |
