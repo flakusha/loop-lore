@@ -30,6 +30,9 @@ export const creationWizard: Partial<ChatState> & ThisType<ChatState> = {
   /**
    * Advance to the next wizard step.
    */
+  /**
+   * @returns {void}
+   */
   wizardNextStep(): void {
     if (this.wizardStep < this.wizardTotalSteps) {
       this.wizardStep++;
@@ -38,6 +41,9 @@ export const creationWizard: Partial<ChatState> & ThisType<ChatState> = {
 
   /**
    * Go back to the previous wizard step.
+   */
+  /**
+   * @returns {void}
    */
   wizardPrevStep(): void {
     if (this.wizardStep > 1) {
@@ -48,6 +54,9 @@ export const creationWizard: Partial<ChatState> & ThisType<ChatState> = {
   /**
    * Reset wizard to step 1 (called on cancel or confirm).
    */
+  /**
+   * @returns {void}
+   */
   wizardResetSteps(): void {
     this.wizardStep = 1;
   },
@@ -56,6 +65,11 @@ export const creationWizard: Partial<ChatState> & ThisType<ChatState> = {
    * Update a single field in the wizard draft (called from inline edit inputs).
    * @param field
    * @param value
+   */
+  /**
+   * @param {string} field
+   * @param {string} value
+   * @returns {void}
    */
   updateWizardField(field: string, value: string,): void {
     if (!this.wizardDraft) { return; }
@@ -74,6 +88,10 @@ export const creationWizard: Partial<ChatState> & ThisType<ChatState> = {
    * by the guard rather than committing the wrong entity). Switching to a
    * keyed map would be required to support concurrent live drafts.
    * @param wizardId
+   */
+  /**
+   * @param {string} wizardId
+   * @returns {Promise<void>}
    */
   async confirmWizard(wizardId: string,): Promise<void> {
     if (this.wizardDraft?.wizardId !== wizardId) {
@@ -134,6 +152,9 @@ export const creationWizard: Partial<ChatState> & ThisType<ChatState> = {
    * `cancelWizard(_wizardId: string)` - the param was always ignored. Drop
    * the parameter; callers in wizard-panel.html now call `cancelWizard()`
    * with no argument.)
+   */
+  /**
+   * @returns {Promise<void>}
    */
   async cancelWizard(): Promise<void> {
     const cancelledWizardId = this.wizardDraft?.wizardId;

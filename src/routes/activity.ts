@@ -33,6 +33,7 @@ interface ActivityEntry {
  * reflect the exact same source of truth.
  * @param database
  * @param userId
+ * @returns {Promise<Record<string, ActivityEntry>>}
  */
 export async function computeActivity(
   database: Kysely<DB>,
@@ -118,6 +119,7 @@ export async function computeActivity(
  * @param root0
  * @param root0.database
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, {}, { derive: {}; resolve: {}; schema: {}; standaloneSchema: {}; response: {}; }, { ...; }>}
  */
 export function activityRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",): Elysia {
   return new Elysia({ name: "activity", },).get(`${prefix}/chats/activity`, async (ctx,) => {

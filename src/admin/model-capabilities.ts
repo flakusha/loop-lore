@@ -28,6 +28,7 @@ const STALE_THRESHOLD_MS = 30 * 24 * 60 * 60 * 1000;
  * @param db - Database instance.
  * @param providerId - Provider identifier.
  * @param models - List of model info objects.
+ * @returns {Promise<void>}
  */
 export async function upsertModelCapabilities(
   db: Kysely<DB>,

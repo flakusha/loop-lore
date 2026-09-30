@@ -49,6 +49,8 @@ export interface LogNsfwEventInput {
  * of free-form text — see BUG-nsfw-gate-log-plaintext-pii).
  * @param database
  * @param event
+ * @throws {Error}
+ * @returns {Promise<void>}
  */
 export async function logNsfwEvent(
   database: Kysely<DB>,

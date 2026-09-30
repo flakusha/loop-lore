@@ -14,6 +14,7 @@ import { questWorldRoutes, } from "./world";
  * `elysia-app.ts` wiring is unchanged.
  * @param root0
  * @param root0.database
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, {}, { derive: {}; resolve: {}; schema: {}; standaloneSchema: {}; response: {}; }, { ...; }>}
  */
 export function questsRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",): Elysia {
   return new Elysia({ name: "quests", },)

@@ -24,6 +24,9 @@ function apiBase(): string {
  * Returns null if the actor has no active key (404 from the route).
  * Throws on other network / parse errors.
  * @param actorId
+ * @throws {Error}
+ * @throws {Error}
+ * @returns {Promise<JsonWebKey | null>}
  */
 export async function fetchRecipientPublicKey(actorId: string,): Promise<JsonWebKey | null> {
   const url = `${apiBase()}/api/v1/actors/${encodeURIComponent(actorId,)}/e2e-public-key`;

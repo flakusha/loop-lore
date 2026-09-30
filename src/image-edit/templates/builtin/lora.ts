@@ -8,6 +8,7 @@ import type { LoraEntry, } from "../../types";
 /**
  * Parse LoRA entries from comma-separated string: "path:strength,path:strength"
  * @param loraStr
+ * @returns {LoraEntry[]}
  */
 export function parseLoraString(loraStr: string,): LoraEntry[] {
   const entries: LoraEntry[] = [];
@@ -42,6 +43,7 @@ export function parseLoraString(loraStr: string,): LoraEntry[] {
  * @param startModelRef
  * @param startClipRef
  * @param reserved
+ * @returns {{ nodes: ComfyUIWorkflow; modelRef: [string, number]; clipRef: [string, number]; }}
  */
 export function buildLoraNodes(
   loras: LoraEntry[],

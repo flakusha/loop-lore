@@ -37,7 +37,10 @@ const folderStore = new Map<string, Map<string, Folder>>();
 /** chatId → Set<tag> */
 const tagStore = new Map<string, Set<string>>();
 
-/** Test helper: drop everything in the in-memory stores. */
+/**
+ * Test helper: drop everything in the in-memory stores.
+ * @returns {void}
+ */
 export function resetOrganizationStores(): void {
   folderStore.clear();
   tagStore.clear();
@@ -50,6 +53,7 @@ export function resetOrganizationStores(): void {
  * @param userId
  * @param name
  * @returns The new folder, or the existing folder with the same name.
+ * @throws {Error}
  */
 export function createFolder(
   userId: string,
@@ -84,6 +88,7 @@ export function createFolder(
  * List folders owned by a user. Mostly a test seam; the eventual
  * DB-backed version will paginate.
  * @param userId
+ * @returns {{ id: string; userId: string; name: string; createdAt: string; }[]}
  */
 export function listFolders(
   userId: string,
@@ -97,6 +102,7 @@ export function listFolders(
  * Add a tag to a chat. Idempotent.
  * @param chatId
  * @param tag
+ * @returns {void}
  */
 export function tagChat(chatId: string, tag: string,): void {
   const normalized = tag.trim();
@@ -113,6 +119,7 @@ export function tagChat(chatId: string, tag: string,): void {
  * Remove a tag from a chat. Idempotent.
  * @param chatId
  * @param tag
+ * @returns {void}
  */
 export function untagChat(chatId: string, tag: string,): void {
   const tags = tagStore.get(chatId,);
@@ -123,6 +130,7 @@ export function untagChat(chatId: string, tag: string,): void {
 /**
  * List the tags currently applied to a chat.
  * @param chatId
+ * @returns {string[]}
  */
 export function listChatTags(chatId: string,): string[] {
   const tags = tagStore.get(chatId,);

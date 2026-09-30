@@ -41,6 +41,7 @@ interface CaptionBody {
  * @param database
  * @param userId
  * @param userRole
+ * @returns {Promise<Response>}
  */
 export async function handleImageCaption(
   body: unknown,

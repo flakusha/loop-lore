@@ -97,6 +97,7 @@ function truncateMeta(
  * Apply size limits to a log entry. Returns new entry, does not mutate.
  * @param entry
  * @param overrides
+ * @returns {LogEntry}
  */
 export function applyLimits(entry: LogEntry, overrides?: Partial<SizeLimits>,): LogEntry {
   const limits: Required<SizeLimits> = { ...DEFAULTS, ...overrides, };

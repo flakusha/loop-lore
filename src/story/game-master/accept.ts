@@ -21,6 +21,9 @@ import type { GmState, GmTurnResult, } from "./types";
  * @param state
  * @param turnId
  * @param response
+ * @throws {Error}
+ * @throws {Error}
+ * @returns {Promise<GmTurnResult>}
  */
 export async function acceptResponse(state: GmState, turnId: string, response: string,): Promise<GmTurnResult> {
   const turn = await state.db
@@ -138,6 +141,9 @@ export async function acceptResponse(state: GmState, turnId: string, response: s
  * @param _chatId
  * @param turnId
  * @param decision
+ * @throws {Error}
+ * @throws {Error}
+ * @returns {Promise<void>}
  */
 export async function humanOverride(
   state: GmState,

@@ -20,23 +20,29 @@ const registeredHooks: HookHandler[] = [];
 
 /**
  * @param hook
+ * @returns {void}
  */
 export function registerHook(hook: HookHandler,): void {
   registeredHooks.push(hook,);
 }
 
-/** */
+/**
+ * @returns {void}
+ */
 export function clearHooks(): void {
   registeredHooks.length = 0;
 }
 
-/** */
+/**
+ * @returns {readonly HookHandler[]}
+ */
 export function getRegisteredHooks(): readonly HookHandler[] {
   return registeredHooks;
 }
 
 /**
  * @param options
+ * @returns {Promise<HookChainResult>}
  */
 export async function runHookChain(options: HookChainOptions,): Promise<HookChainResult> {
   const log = getLogger();
@@ -75,6 +81,7 @@ export async function runHookChain(options: HookChainOptions,): Promise<HookChai
  * Initialize default hooks for the generation pipeline.
  * @param nsfwDeps Optional NsfwHook deps (e.g. injected moderation service
  * or LLM runner); forwarded to the default NsfwHook instance.
+ * @returns {void}
  */
 export function initDefaultHooks(nsfwDeps?: Partial<NsfwHookDeps>,): void {
   clearHooks();

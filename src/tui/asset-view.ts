@@ -87,6 +87,9 @@ export class AssetView {
   // ── Rendering ───────────────────────────────────────────────
 
   /** */
+  /**
+   * @returns {void}
+   */
   private renderCurrent(): void {
     if (this.assets.length === 0) {
       this.renderInfo("No assets linked to this chat.",);
@@ -116,6 +119,10 @@ export class AssetView {
   /**
    * @param msg
    */
+  /**
+   * @param {string} msg
+   * @returns {void}
+   */
   private renderInfo(msg: string,): void {
     this.assetCountLabel.setContent("",);
     this.infoLabel.setContent(msg,);
@@ -125,6 +132,10 @@ export class AssetView {
   /**
    * @param bytes - raw byte count
    * @returns human-readable size (`B` / `KB` / `MB`).
+   */
+  /**
+   * @param {number} bytes
+   * @returns {string}
    */
   private formatSize(bytes: number,): string {
     if (bytes < 1024) { return `${bytes} B`; }
@@ -137,6 +148,9 @@ export class AssetView {
   /**
    * Show the asset-view box and re-render the screen.
    */
+  /**
+   * @returns {void}
+   */
   show(): void {
     this.box.show();
     this.screen.render();
@@ -145,6 +159,9 @@ export class AssetView {
   /**
    * Hide the asset-view box and re-render the screen.
    */
+  /**
+   * @returns {void}
+   */
   hide(): void {
     this.box.hide();
     this.screen.render();
@@ -152,6 +169,9 @@ export class AssetView {
 
   /**
    * @returns `true` when the box is currently visible.
+   */
+  /**
+   * @returns {void}
    */
   toggle(): void {
     if (this.box.visible) {
@@ -164,12 +184,19 @@ export class AssetView {
   /**
    * @returns `true` when the asset-view box is currently visible.
    */
+  /**
+   * @returns {boolean}
+   */
   isVisible(): boolean {
     return this.box.visible;
   }
 
   /**
    * @param chatId - chat whose assets should be displayed
+   */
+  /**
+   * @param {string} chatId
+   * @returns {void}
    */
   setChatId(chatId: string,): void {
     this.chatId = chatId;
@@ -181,6 +208,9 @@ export class AssetView {
   /**
    * @returns currently-scoped chat id, or `null` when none.
    */
+  /**
+   * @returns {string | null}
+   */
   getChatId(): string | null {
     return this.chatId;
   }
@@ -188,6 +218,9 @@ export class AssetView {
   // ── Data loading ────────────────────────────────────────────
 
   /** Load assets for the current chat into the asset-view's backing list. */
+  /**
+   * @returns {Promise<void>}
+   */
   async loadAssets(): Promise<void> {
     if (!this.chatId) {
       this.assets = [];
@@ -218,6 +251,9 @@ export class AssetView {
   }
 
   /** Reload assets for the current chat (e.g., after upload). */
+  /**
+   * @returns {Promise<void>}
+   */
   async refresh(): Promise<void> {
     await this.loadAssets();
   }

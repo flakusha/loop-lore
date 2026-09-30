@@ -27,6 +27,7 @@ export interface TransferResult {
  * @param itemId
  * @param quantity
  * @param trx
+ * @returns {Promise<TransferResult>}
  */
 export async function transferItems(
   db: Kysely<DB>,

@@ -12,6 +12,7 @@ import type { OllamaEmbedResponse, OllamaNativeState, OllamaTagsResponse, Ollama
 
 /**
  * @param state
+ * @returns {Promise<ModelInfo[]>}
  */
 export async function listModelsDispatch(state: OllamaNativeState,): Promise<ModelInfo[]> {
   const url = new URL(`${state.baseUrl}/api/tags`,);
@@ -33,6 +34,7 @@ export async function listModelsDispatch(state: OllamaNativeState,): Promise<Mod
 
 /**
  * @param state
+ * @returns {Promise<{ status: "ok" | "degraded" | "down"; model?: string | undefined; latencyMs?: number | undefined; error?: string | undefined; }>}
  */
 export async function healthCheckDispatch(state: OllamaNativeState,): Promise<{
   status: "ok" | "degraded" | "down";
@@ -77,6 +79,7 @@ export async function healthCheckDispatch(state: OllamaNativeState,): Promise<{
  * @param state
  * @param input
  * @param model
+ * @returns {Promise<number[][]>}
  */
 export async function embedDispatch(
   state: OllamaNativeState,

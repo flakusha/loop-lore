@@ -99,15 +99,24 @@ function closeImpl(state: AssetPreviewModalState,): void {
 
 /**
  * Asset preview modal data factory.
+ * @returns {AssetPreviewModalState}
  */
 export function assetPreviewModal(): AssetPreviewModalState {
   const state: AssetPreviewModalState = {
     isOpen: false,
     asset: null,
     formatSize,
+    /**
+     * @param {PreviewAssetLike} asset
+     * @param {HTMLElement | null} trigger
+     * @returns {void}
+     */
     open(asset: PreviewAssetLike, trigger?: HTMLElement | null,) {
       openImpl(this, asset, trigger,);
     },
+    /**
+     * @returns {void}
+     */
     close() {
       closeImpl(this,);
     },
@@ -120,6 +129,8 @@ export function assetPreviewModal(): AssetPreviewModalState {
  * it to the Alpine modal. Triggered by tile clicks in the gallery; the
  * legacy chat-sidebar path still goes through `window.openAssetPreview`
  * since that side keeps its own #preview-modal payload.
+ * @param {string} id
+ * @returns {Promise<void>}
  */
 export async function openAssetPreviewById(id: string,): Promise<void> {
   // Inline fetch — no delegation to the legacy #preview-modal global.

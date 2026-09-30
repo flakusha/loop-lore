@@ -51,6 +51,7 @@ export interface SessionActor {
  *   const { userId } = actor;
  * @param ctx - Elysia request context (typed `unknown` to avoid
  *             coupling this helper to the full request shape).
+ * @returns {Response | SessionActor}
  */
 export function requireActorFromSession(ctx: unknown,): SessionActor | Response {
   const userId = requireUserId(ctx,);

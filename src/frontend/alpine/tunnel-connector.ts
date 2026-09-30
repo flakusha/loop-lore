@@ -32,6 +32,10 @@ import {
  * Create a tunnel connector (starts closed; call `connect()`).
  * @param url - Tunnel WebSocket URL (e.g. `ws://localhost:8080/tunnel`).
  * @param deps - Injectable seams.
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @returns {{ status: TunnelStatus; connect(): Promise<void>; disconnect(): void; health(): Promise<boolean>; complete(prompt: string, params: TunnelParams | undefined, onToken: (text: string) => void): Promise<...>; }}
  */
 export function createTunnelConnector(url: string, deps: TunnelConnectorDeps = {},): {
   status: TunnelStatus;

@@ -58,6 +58,9 @@ export interface EntitySuggestion {
     entityMessage: "",
     entitySuggestions: [] as EntitySuggestion[],
 
+    /**
+     * @returns {Promise<void>}
+     */
     async init() {
       const chatId = (this as any).activeChat;
       if (!chatId) { return; }
@@ -67,6 +70,10 @@ export interface EntitySuggestion {
       ],);
     },
 
+    /**
+     * @param {string} chatId
+     * @returns {Promise<void>}
+     */
     async loadShadowNotes(chatId: string,) {
       try {
         const res = await apiFetch(`/api/v1/chats/${chatId}/shadow-notes`, {},);
@@ -79,6 +86,10 @@ export interface EntitySuggestion {
       }
     },
 
+    /**
+     * @param {string} chatId
+     * @returns {Promise<void>}
+     */
     async loadWhitenotes(chatId: string,) {
       try {
         const res = await apiFetch(`/api/v1/chats/${chatId}/whitenotes`, {},);
@@ -91,6 +102,9 @@ export interface EntitySuggestion {
       }
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async addShadowNote() {
       if (!this.newShadowContent.trim()) { return; }
       const chatId = (this as any).activeChat;
@@ -114,6 +128,9 @@ export interface EntitySuggestion {
       }
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async addWhiteneote() {
       if (!this.newWhiteneoteContent.trim()) { return; }
       const chatId = (this as any).activeChat;
@@ -139,6 +156,10 @@ export interface EntitySuggestion {
       }
     },
 
+    /**
+     * @param {string} noteId
+     * @returns {Promise<void>}
+     */
     async revealShadowNote(noteId: string,) {
       const chatId = (this as any).activeChat;
       if (!chatId) { return; }
@@ -155,6 +176,10 @@ export interface EntitySuggestion {
       }
     },
 
+    /**
+     * @param {string} noteId
+     * @returns {Promise<void>}
+     */
     async deleteShadowNote(noteId: string,) {
       const chatId = (this as any).activeChat;
       if (!chatId) { return; }
@@ -171,6 +196,10 @@ export interface EntitySuggestion {
       }
     },
 
+    /**
+     * @param {string} noteId
+     * @returns {Promise<void>}
+     */
     async deleteWhiteneote(noteId: string,) {
       const chatId = (this as any).activeChat;
       if (!chatId) { return; }
@@ -188,6 +217,9 @@ export interface EntitySuggestion {
     },
 
     /** Start an in-place entity creation chat (story handoff). */
+    /**
+     * @returns {Promise<void>}
+     */
     async generateEntity() {
       const chatId = (this as any).activeChat;
       if (!chatId || !this.entitySeed.trim()) { return; }
@@ -222,6 +254,9 @@ export interface EntitySuggestion {
     },
 
     /** Scan recent narration for in-story entity introductions. */
+    /**
+     * @returns {Promise<void>}
+     */
     async loadEntitySuggestions() {
       const chatId = (this as any).activeChat;
       if (!chatId) { return; }
@@ -237,6 +272,10 @@ export interface EntitySuggestion {
     },
 
     /** Prefill the seed from a suggestion and start the handoff. */
+    /**
+     * @param {{ kind: string; seed: string }} suggestion
+     * @returns {Promise<void>}
+     */
     async useSuggestion(suggestion: { kind: string; seed: string },) {
       this.entityKind = suggestion.kind as typeof this.entityKind;
       this.entitySeed = suggestion.seed;

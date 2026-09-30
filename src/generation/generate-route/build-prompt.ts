@@ -56,6 +56,7 @@ export interface BuildPromptOpts {
  * @param root0.userId
  * @param root0.groupParticipantIds
  * @param root0.includeExamples
+ * @returns {Promise<{ messages: GenerationMessage[]; systemPrompt: string | undefined; }>}
  */
 export async function buildPrompt({
   input,

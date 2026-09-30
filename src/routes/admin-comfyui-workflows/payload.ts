@@ -39,6 +39,7 @@ function isRecord(value: unknown,): value is Record<string, unknown> {
  * keeps only its object values, so a `name` string mixed in with the nodes is
  * metadata rather than a malformed node.
  * @param body - Untrusted request body
+ * @returns {ComfyUIWorkflow | null}
  */
 export function uploadedGraph(body: unknown,): ComfyUIWorkflow | null {
   if (!isRecord(body,)) { return null; }
@@ -57,6 +58,7 @@ export function uploadedGraph(body: unknown,): ComfyUIWorkflow | null {
 /**
  * Library metadata carried alongside the graph in a request body.
  * @param body - Untrusted request body
+ * @returns {WorkflowMetaInput}
  */
 export function readMeta(body: unknown,): WorkflowMetaInput {
   if (!isRecord(body,)) { return {}; }
@@ -76,6 +78,7 @@ export function readMeta(body: unknown,): WorkflowMetaInput {
  * `validateWorkflowPayload` reports the operator's typo instead of hiding it.
  * @param graph - API-format graph, already known to be valid
  * @param meta - Metadata from the request or the stored row
+ * @returns {Record<string, unknown>}
  */
 export function buildWorkflowPayload(
   graph: ComfyUIWorkflow,
@@ -95,6 +98,7 @@ export function buildWorkflowPayload(
  * Value for the `lora_slots` column, mirroring `payload.loraSlots` so the list
  * endpoint can render slots without parsing every row's payload.
  * @param slots - Declared slots off a validated payload
+ * @returns {string | null}
  */
 export function slotsColumn(slots: unknown,): string | null {
   return Array.isArray(slots,) && slots.length > 0 ? jsonStringifyOr(slots,) : null;

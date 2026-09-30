@@ -112,6 +112,10 @@ export const actorLicensing: ActorLicensingState = {
   licenseDirty: false,
   licenseHistory: [],
 
+  /**
+   * @param {string} actorId
+   * @returns {void}
+   */
   setActorId(actorId: string,) {
     if (this._licActorId === actorId) { return; }
     this._licActorId = actorId;
@@ -124,6 +128,9 @@ export const actorLicensing: ActorLicensingState = {
     void this.loadLicenseHistory();
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async loadLicensing() {
     const actorId = this._licActorId;
     if (!actorId) { return; }
@@ -164,6 +171,9 @@ export const actorLicensing: ActorLicensingState = {
     }
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async loadLicenseHistory() {
     const actorId = this._licActorId;
     if (!actorId) { return; }
@@ -180,10 +190,16 @@ export const actorLicensing: ActorLicensingState = {
     }
   },
 
+  /**
+   * @returns {void}
+   */
   markDirty() {
     this.licenseDirty = true;
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async save() {
     const actorId = this._licActorId;
     if (!actorId || this.licenseSaving) { return; }
@@ -221,6 +237,9 @@ export const actorLicensing: ActorLicensingState = {
     }
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async remove() {
     const actorId = this._licActorId;
     if (!actorId || this.licenseSaving) { return; }
@@ -243,12 +262,20 @@ export const actorLicensing: ActorLicensingState = {
     }
   },
 
+  /**
+   * @param {string} code
+   * @returns {string}
+   */
   describeLicense(code: string,) {
     return LICENSE_LABELS[code] ?? code;
   },
 };
 
-/** Build the Alpine scope for the licensing panel partial. */
+/**
+ * Build the Alpine scope for the licensing panel partial.
+ * @param {string} actorId
+ * @returns {ActorLicensingState}
+ */
 export function actorLicensingFactory(actorId: string,): ActorLicensingState {
   const state = Object.create(actorLicensing,) as ActorLicensingState;
   state._licActorId = null;

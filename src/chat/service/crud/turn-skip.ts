@@ -66,6 +66,7 @@ function dedupKey(chatId: string, actorId: string, mode: TurnSkipMode,): string 
  * available as the escape hatch.
  * @param database
  * @param input
+ * @returns {Promise<RecordTurnSkipResult>}
  */
 export async function recordTurnSkip(
   database: Kysely<DB>,
@@ -175,6 +176,7 @@ export async function recordTurnSkip(
  * @param database
  * @param chatId
  * @param actorId
+ * @returns {Promise<number>}
  */
 export async function countTurnSkipsForActor(
   database: Kysely<DB>,

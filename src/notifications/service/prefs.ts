@@ -34,6 +34,7 @@ function mergePrefs(stored?: Partial<NotificationPreferences>,): NotificationPre
  * Read the user's notification preferences, merging over defaults.
  * @param db
  * @param userId
+ * @returns {Promise<NotificationPreferences>}
  */
 export async function getPrefs(
   db: Kysely<DB>,
@@ -56,6 +57,8 @@ export async function getPrefs(
  * @param patch
  * @param patch.enabled
  * @param patch.mutedWorlds
+ * @throws {Error}
+ * @returns {Promise<NotificationPreferences>}
  */
 export async function setPrefs(
   db: Kysely<DB>,

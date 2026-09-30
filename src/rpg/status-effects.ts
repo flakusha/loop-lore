@@ -83,6 +83,7 @@ export interface ActiveStatusEffect {
  * @param db
  * @param actorId
  * @param filter
+ * @returns {Promise<ActiveStatusEffect[]>}
  */
 export async function getActiveEffects(
   db: Kysely<DB>,

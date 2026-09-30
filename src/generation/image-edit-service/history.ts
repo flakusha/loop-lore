@@ -162,6 +162,7 @@ export interface ClearEditHistoryArgs {
  * @param args.assetId - Asset ID
  * @param root0
  * @param root0.assetId
+ * @returns {void}
  */
 export function clearEditHistory(
   { assetId, }: ClearEditHistoryArgs,

@@ -21,6 +21,7 @@ import type { HandlerOpts, } from "./types";
  * from chat mode + assistant role.
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { chats: { ":id": { "prompt-template": { ...; }; }; }; }; }, { ...; }, { ...; }>}
  */
 export function promptTemplateRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, config, } = opts;

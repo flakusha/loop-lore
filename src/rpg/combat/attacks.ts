@@ -24,6 +24,7 @@ import {
  * @param extraDamage - Additional flat damage from features
  * @param resistances - Target's damage resistances
  * @param advantage - Advantage mode for the attack roll
+ * @returns {AttackResult}
  */
 export function makeAttackRoll(
   attacker: Combatant,

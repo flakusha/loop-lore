@@ -11,6 +11,7 @@ import type { UpdateRecipeOpts, } from "./types";
  * @param db
  * @param recipeId
  * @param opts
+ * @returns {Promise<boolean>}
  */
 export async function updateRecipe(db: Kysely<DB>, recipeId: string, opts: UpdateRecipeOpts,): Promise<boolean> {
   const now = new Date().toISOString();

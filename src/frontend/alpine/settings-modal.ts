@@ -16,6 +16,9 @@ import { jsonBody, } from "./json";
     temperature: 1,
     customInstructions: "",
 
+    /**
+     * @returns {Promise<void>}
+     */
     async load() {
       try {
         const res = await apiFetch("/api/v1/settings", { headers: { Accept: "application/json", }, },);
@@ -33,6 +36,10 @@ import { jsonBody, } from "./json";
       }
     },
 
+    /**
+     * @param {string} section
+     * @returns {Promise<void>}
+     */
     async save(section: string,) {
       const payload: Record<string, unknown> = {};
       if (section === "theme" || this.tab === "theme") {
@@ -62,6 +69,9 @@ import { jsonBody, } from "./json";
       }
     },
 
+    /**
+     * @returns {void}
+     */
     applyTheme() {
       const themes = globalThis.__THEMES ?? [];
       if (themes.every((t: any,) => t.id !== this.theme)) { return; }

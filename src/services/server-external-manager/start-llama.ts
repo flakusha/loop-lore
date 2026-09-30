@@ -95,6 +95,7 @@ function appendLlamaAdvancedArgs(args: string[], opts: LlamaCppOptions,): void {
  * Skips (returns null) if binary not found or port unavailable.
  * @param host
  * @param opts
+ * @returns {Promise<ServerInstance | null>}
  */
 export async function startLlamaCpp(
   host: ServerExternalHost,
@@ -160,6 +161,7 @@ export async function startLlamaCpp(
  * Start llama-swap proxy with a config file.
  * @param host
  * @param opts
+ * @returns {Promise<ServerInstance | null>}
  */
 export async function startLlamaSwap(
   host: ServerExternalHost,

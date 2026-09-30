@@ -52,11 +52,17 @@ globalThis.notificationCenter = function(): NotificationCenterState {
     prefs: {} as Record<string, boolean>,
     types: Array.from(Object.keys(TYPE_LABELS,), (key,) => ({ key, label: TYPE_LABELS[key] ?? key, }),),
 
+    /**
+     * @returns {void}
+     */
     init() {
       void this.refresh();
       void this.loadPrefs();
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async refresh() {
       try {
         const res = await apiFetch("/api/v1/notifications",);
@@ -70,6 +76,9 @@ globalThis.notificationCenter = function(): NotificationCenterState {
     },
 
     /** Notifications visible under the active filter. */
+    /**
+     * @returns {NotificationCenterItem[]}
+     */
     visible() {
       if (this.filter === "all") { return this.items; }
       const out: NotificationCenterItem[] = [];
@@ -78,6 +87,9 @@ globalThis.notificationCenter = function(): NotificationCenterState {
     },
 
     /** Number of unread notifications across the whole list. */
+    /**
+     * @returns {number}
+     */
     unreadCount() {
       let count = 0;
       for (const n of this.items) { if (!n.read) { count += 1; } }
@@ -87,6 +99,10 @@ globalThis.notificationCenter = function(): NotificationCenterState {
     /**
      * Mark-read on open, then follow the notification link when present.
      * @param item
+     */
+    /**
+     * @param {NotificationCenterItem} item
+     * @returns {Promise<void>}
      */
     async onOpen(item: NotificationCenterItem,) {
       if (!item.read) {
@@ -108,6 +124,10 @@ globalThis.notificationCenter = function(): NotificationCenterState {
      * Mark a single notification read without navigating.
      * @param id
      */
+    /**
+     * @param {string} id
+     * @returns {Promise<void>}
+     */
     async markRead(id: string,) {
       try {
         await apiFetch(`/api/v1/notifications/${id}`, {
@@ -122,6 +142,9 @@ globalThis.notificationCenter = function(): NotificationCenterState {
       if (item) { item.read = 1; }
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async markAllRead() {
       try {
         await apiFetch("/api/v1/notifications/read-all", { method: "PATCH", },);
@@ -131,6 +154,9 @@ globalThis.notificationCenter = function(): NotificationCenterState {
       this.items = Array.from(this.items, (n,) => ({ ...n, read: 1, }),);
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async loadPrefs() {
       try {
         const res = await apiFetch("/api/v1/notifications/preferences",);
@@ -146,11 +172,18 @@ globalThis.notificationCenter = function(): NotificationCenterState {
      * Flip the mute setting for one notification type.
      * @param key
      */
+    /**
+     * @param {string} key
+     * @returns {Promise<void>}
+     */
     async toggleType(key: string,) {
       this.prefs = { ...this.prefs, [key]: !this.prefs[key], };
       await this.savePrefs();
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async savePrefs() {
       this.saving = true;
       try {
@@ -166,10 +199,18 @@ globalThis.notificationCenter = function(): NotificationCenterState {
       }
     },
 
+    /**
+     * @param {string} type
+     * @returns {string}
+     */
     iconFor(type: string,): string {
       return TYPE_ICONS[type] ?? "i";
     },
 
+    /**
+     * @param {string | undefined} iso
+     * @returns {string}
+     */
     timeAgo(iso: string | undefined,): string {
       if (!iso) { return ""; }
       const then = toDate(iso,).getTime();

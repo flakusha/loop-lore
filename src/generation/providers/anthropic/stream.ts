@@ -30,6 +30,9 @@ interface StreamAccum {
  * @param state
  * @param req
  * @param handler
+ * @throws {Error}
+ * @throws {Error}
+ * @returns {Promise<GenerateResponse>}
  */
 export async function streamDispatch(
   state: AnthropicState,

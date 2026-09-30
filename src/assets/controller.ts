@@ -159,6 +159,12 @@ async function requireAssetOwner(
   return asset;
 }
 
+/**
+ * @param {{ database: Kysely<DB>; config: Config }} { database, config, }
+ * @param {unknown} prefix
+ * @throws {Error}
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { assets: { get: { body: unknown; params: {}; query: unknown; headers: unknown; response: { ...; }; }; }; }; } & ... ...}
+ */
 export function assetRoutes({ database, config, }: { database: Kysely<DB>; config: Config }, prefix = "/api",) {
   return (
     new Elysia({ name: "assets", },)
@@ -475,6 +481,18 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
   );
 }
 
+/**
+ * @param {UploadOpts} {
+  request,
+  userId,
+  database,
+  uploadDir,
+  maxFileSize,
+  chatId,
+  config,
+}
+ * @returns {Promise<Response>}
+ */
 export async function handleUpload({
   request,
   userId,

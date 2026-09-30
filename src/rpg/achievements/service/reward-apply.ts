@@ -25,6 +25,9 @@ export interface RewardApplyCtx {
  * dispatched (whether it ultimately succeeded or was logged as a failure).
  * Non-`story_points` reward types are intentionally no-ops; callers should
  * not assume success for them.
+ * @param {AchievementReward} reward
+ * @param {RewardApplyCtx} ctx
+ * @returns {Promise<boolean>}
  */
 export async function applySingleAchievementReward(
   reward: AchievementReward,

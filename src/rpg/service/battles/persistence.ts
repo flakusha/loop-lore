@@ -15,6 +15,7 @@ import {
 /**
  * @param deps
  * @param chatId
+ * @returns {Promise<BattleWithRoster | null>}
  */
 export async function getActiveBattle(
   deps: RpgServiceDeps,
@@ -40,6 +41,11 @@ export async function getActiveBattle(
 /**
  * @param deps
  * @param battleId
+ */
+/**
+ * @param {RpgServiceDeps} deps
+ * @param {string} battleId
+ * @returns {Promise<BattleWithRoster | null>}
  */
 export async function getBattle(
   deps: RpgServiceDeps,
@@ -69,6 +75,13 @@ export async function getBattle(
  * @param deps
  * @param battleId
  */
+/**
+ * @param {RpgServiceDeps} deps
+ * @param {string} battleId
+ * @throws {Error}
+ * @throws {Error}
+ * @returns {Promise<BattleWithRoster>}
+ */
 export async function requireActiveBattle(
   deps: RpgServiceDeps,
   battleId: string,
@@ -91,6 +104,9 @@ export async function requireActiveBattle(
  * @param combatants
  * @param logEntries
  * @param status
+ * @throws {Error}
+ * @throws {Error}
+ * @returns {Promise<void>}
  */
 export async function persistBattle(
   deps: RpgServiceDeps,

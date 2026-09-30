@@ -26,10 +26,16 @@ export const commandPalette: Partial<ChatState> & ThisType<ChatState> = {
   _commandList: [] as { name: string; descriptionKey: string; description: string }[],
   _filteredCommands: [] as { name: string; descriptionKey: string; description: string }[],
 
+  /**
+   * @returns {Promise<void>}
+   */
   async init(): Promise<void> {
     await this._loadCommandList();
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async _loadCommandList(): Promise<void> {
     try {
       const res = await apiFetch("/api/v1/commands",);
@@ -50,6 +56,10 @@ export const commandPalette: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @param {Event} event
+   * @returns {void}
+   */
   handleCommandInput(event: Event,) {
     const input = event.target as HTMLTextAreaElement;
     const value = input.value;
@@ -69,6 +79,10 @@ export const commandPalette: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @param {string} name
+   * @returns {void}
+   */
   selectCommand(name: string,) {
     const input = this.$refs?.messageInput as HTMLTextAreaElement | undefined;
     if (input) {
@@ -78,12 +92,20 @@ export const commandPalette: Partial<ChatState> & ThisType<ChatState> = {
     this._showCommandPalette = false;
   },
 
+  /**
+   * @param {number} index
+   * @returns {void}
+   */
   acceptPaletteAtIndex(index: number,) {
     const entry = this._filteredCommands[index];
     if (!entry) { return; }
     this.selectCommand(entry.name,);
   },
 
+  /**
+   * @param {1 | -1} delta
+   * @returns {void}
+   */
   movePaletteSelection(delta: 1 | -1,) {
     const count = this._filteredCommands.length;
     if (count === 0) { return; }

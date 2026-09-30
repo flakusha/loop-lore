@@ -48,6 +48,9 @@ export class ConcurrencyLimiter {
    * Acquire a slot. Resolves when one is free. `release()` MUST be called by
    * the caller once (use `run` to make this automatic).
    */
+  /**
+   * @returns {Promise<() => void>}
+   */
   async acquire(): Promise<() => void> {
     if (this.held < this.max) {
       this.held++;
@@ -65,6 +68,10 @@ export class ConcurrencyLimiter {
    * Run `fn` while holding a slot; releases on completion or throw.
    * @throws whatever `fn` throws.
    */
+  /**
+   * @param {() => Promise<T>} fn
+   * @returns {Promise<T>}
+   */
   async run<T,>(fn: () => Promise<T>,): Promise<T> {
     const release = await this.acquire();
     try {
@@ -74,6 +81,9 @@ export class ConcurrencyLimiter {
     }
   }
 
+  /**
+   * @returns {() => void}
+   */
   private makeReleaser(): () => void {
     let called = false;
     return () => {
@@ -99,10 +109,18 @@ export interface LimiterRegistry {
 /**
  * Map-backed registry of per-key limiters. Lazy-creates a limiter the first
  * time `get(key, max)` is called for a key.
+ * @throws {Error}
+ * @returns {LimiterRegistry}
  */
 export function createLimiterRegistry(): LimiterRegistry {
   const map = new Map<string, ConcurrencyLimiter>();
   return {
+    /**
+     * @param {string} key
+     * @param {number} max
+     * @throws {Error}
+     * @returns {ConcurrencyLimiter}
+     */
     get(key: string, max: number,) {
       const existing = map.get(key,);
       if (existing) {
@@ -115,6 +133,10 @@ export function createLimiterRegistry(): LimiterRegistry {
       map.set(key, created,);
       return created;
     },
+    /**
+     * @param {string} key
+     * @returns {void}
+     */
     drop(key: string,) {
       map.delete(key,);
     },

@@ -15,6 +15,7 @@ import { uid, } from "../../utils";
  * @param database
  * @param chatId
  * @param backgroundId
+ * @returns {Promise<void>}
  */
 export async function setChatBackground(
   database: Kysely<DB>,
@@ -51,6 +52,7 @@ export async function setChatBackground(
  * @param database
  * @param chatId
  * @param locationId
+ * @returns {Promise<{ id: string; name: string; priority: number; created_at: string; config: string | null; type: string; location_id: string | null; asset_id: string | null; } | null>}
  */
 export async function autoSyncChatBackground(
   database: Kysely<DB>,
@@ -75,6 +77,7 @@ export async function autoSyncChatBackground(
  * Load a chat's resolved background (assignment joined to catalog) or null.
  * @param database
  * @param chatId
+ * @returns {Promise<{ id: string; name: string; priority: number; created_at: string; config: string | null; type: string; location_id: string | null; asset_id: string | null; } | null>}
  */
 export async function getChatBackground(
   database: Kysely<DB>,

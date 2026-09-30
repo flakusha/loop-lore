@@ -46,6 +46,7 @@ export type WorkflowDbRow = WorkflowRow & {
  * Every workflow row, ordered for display.
  * @param database - Kysely handle
  * @param enabled - Optional `enabled`/`disabled` filter
+ * @returns {Promise<WorkflowDbRow[]>}
  */
 export async function listWorkflowRows(
   database: Kysely<DB>,
@@ -60,6 +61,7 @@ export async function listWorkflowRows(
  * One workflow row, or null when the id is unknown or another modality's.
  * @param database - Kysely handle
  * @param id - Template id
+ * @returns {Promise<WorkflowDbRow | null>}
  */
 export async function getWorkflowRow(
   database: Kysely<DB>,
@@ -75,6 +77,7 @@ export async function getWorkflowRow(
  * category and probing the live server for the required nodes it lacks.
  * @param row - Stored workflow row
  * @param installed - Live node info, or null when ComfyUI is unreachable
+ * @returns {WorkflowSummary}
  */
 export function toSummary(row: WorkflowDbRow, installed: ComfyUINodeInfo[] | null,): WorkflowSummary {
   const payload = rowToPayload(row,);

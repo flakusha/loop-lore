@@ -26,6 +26,7 @@ export { getNpcInventory, getNpcInventoryBatch, } from "./npc-inventory";
  * @param toLocationId
  * @param toActorId
  * @param trx
+ * @returns {Promise<TransferResult>}
  */
 export async function transfer(
   state: ItemState,
@@ -122,6 +123,7 @@ export async function transfer(
  * @param worldId
  * @param quantity
  * @param trx
+ * @returns {Promise<boolean>}
  */
 export async function destroy(
   state: ItemState,

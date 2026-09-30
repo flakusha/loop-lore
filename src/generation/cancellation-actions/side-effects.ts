@@ -28,6 +28,7 @@ import type { SideEffectJob, } from "../cancellation-tracker/types";
  * Returns true on success, false if the attempt is no longer active.
  * @param attemptId
  * @param job
+ * @returns {boolean}
  */
 export function registerSideEffectJob(attemptId: string, job: SideEffectJob,): boolean {
   const active = activeGenerations.get(attemptId,);
@@ -49,6 +50,7 @@ export function registerSideEffectJob(attemptId: string, job: SideEffectJob,): b
  * a no-op.
  * @param attemptId
  * @param jobId
+ * @returns {boolean}
  */
 export function unregisterSideEffectJob(attemptId: string, jobId: string,): boolean {
   const active = activeGenerations.get(attemptId,);
@@ -63,6 +65,7 @@ export function unregisterSideEffectJob(attemptId: string, jobId: string,): bool
  * must not be mutated by callers — use register/unregister to change
  * the registry.
  * @param attemptId
+ * @returns {readonly SideEffectJob[]}
  */
 export function listSideEffectJobs(attemptId: string,): readonly SideEffectJob[] {
   const active = activeGenerations.get(attemptId,);

@@ -19,6 +19,7 @@ import {
 /**
  * @param db
  * @param input
+ * @returns {Promise<BlogPostRow>}
  */
 export async function createPost(
   db: Kysely<any>,
@@ -75,6 +76,7 @@ export async function createPost(
 /**
  * @param db
  * @param id
+ * @returns {Promise<BlogPostWithTags | undefined>}
  */
 export async function getPost(
   db: Kysely<any>,
@@ -103,6 +105,7 @@ export async function getPost(
  * @param filters.limit
  * @param filters.offset
  * @param filters.userId
+ * @returns {Promise<BlogPostWithTags[]>}
  */
 export async function listPosts(
   db: Kysely<any>,
@@ -181,6 +184,7 @@ export async function listPosts(
  * @param input
  * @param callerUserId authenticated user id performing the mutation
  * @param isAdmin       whether the caller may act on any author's post
+ * @returns {Promise<BlogPostWithTags | undefined>}
  */
 export async function updatePost(
   db: Kysely<any>,

@@ -22,11 +22,17 @@ export class H2Handler extends TransportBase<H2Options> {
   }
 
   /** */
+  /**
+   * @returns {TransportProtocol}
+   */
   protected getProtocol(): TransportProtocol {
     return TransportProtocol.Http2;
   }
 
   /** */
+  /**
+   * @returns {Record<string, unknown>}
+   */
   protected getMetadata(): Record<string, unknown> {
     return {
       multiplexing: true,
@@ -41,6 +47,11 @@ export class H2Handler extends TransportBase<H2Options> {
    *   surface is served by Bun's server, not this handler. Fail loudly rather
    *   than silently dropping outbound data.
    */
+  /**
+   * @param {string | Uint8Array} _data
+   * @throws {Error}
+   * @returns {Promise<void>}
+   */
   send(_data: string | Uint8Array,): Promise<void> {
     this.ensureConnected();
     throw new TransportError("H2Handler.send is not supported (non-sending stub)", {
@@ -50,6 +61,9 @@ export class H2Handler extends TransportBase<H2Options> {
   }
 
   /** */
+  /**
+   * @returns {Promise<void>}
+   */
   override close(): Promise<void> {
     this.streams.clear();
     return super.close();
@@ -58,6 +72,7 @@ export class H2Handler extends TransportBase<H2Options> {
 
 /**
  * @param options
+ * @returns {H2Handler}
  */
 export function createH2Handler(options: H2Options = {},): H2Handler {
   return new H2Handler(options,);

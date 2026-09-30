@@ -11,6 +11,7 @@ import { safeJsonStringify, } from "../../utils";
 
 /**
  * @param obj
+ * @returns {string}
  */
 export function sseData(obj: unknown,): string {
   const r = safeJsonStringify(obj,);
@@ -20,6 +21,7 @@ export function sseData(obj: unknown,): string {
 /**
  * Escape HTML special characters for safe injection into rendered output.
  * @param str
+ * @returns {string}
  */
 export function escapeHtml(str: string,): string {
   return str
@@ -34,6 +36,7 @@ export function escapeHtml(str: string,): string {
  * Render a collapsible tool-call block for the live stream consumer.
  * @param toolName
  * @param toolArguments
+ * @returns {string}
  */
 export function renderToolCallBlock(toolName: string, toolArguments: string,): string {
   const name = escapeHtml(toolName,);

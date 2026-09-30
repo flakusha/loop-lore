@@ -41,6 +41,10 @@ export abstract class TransportBase<
   constructor(protected readonly options: TOptions,) {}
 
   /** */
+  /**
+   * @throws {Error}
+   * @returns {Connection}
+   */
   protected ensureConnected(): Connection {
     if (this.closed || !this.connection) {
       throw new TransportError("connection closed", {
@@ -51,6 +55,9 @@ export abstract class TransportBase<
   }
 
   /** */
+  /**
+   * @returns {Promise<Connection>}
+   */
   connect(): Promise<Connection> {
     if (this.connection) {
       return Promise.resolve(this.connection,);
@@ -63,6 +70,9 @@ export abstract class TransportBase<
   /**
    * Factory hook — override in subclass to customize connection shape.
    * Default builds remoteAddr from `host:port`.
+   */
+  /**
+   * @returns {Connection}
    */
   protected createConnection(): Connection {
     const id = randomUUID();
@@ -77,10 +87,18 @@ export abstract class TransportBase<
     };
   }
 
+  /**
+   * @param {string | Uint8Array} data
+   * @returns {Promise<void>}
+   */
   abstract send(data: string | Uint8Array,): Promise<void>;
 
   /**
    * @param signature
+   */
+  /**
+   * @param {string} signature
+   * @returns {Promise<string>}
    */
   get(signature: string,): Promise<string> {
     const conn = this.ensureConnected();
@@ -89,13 +107,22 @@ export abstract class TransportBase<
   }
 
   /** */
+  /**
+   * @returns {Promise<void>}
+   */
   close(): Promise<void> {
     this.closed = true;
     this.connection = undefined;
     return Promise.resolve();
   }
 
+  /**
+   * @returns {TransportProtocol}
+   */
   protected abstract getProtocol(): TransportProtocol;
 
+  /**
+   * @returns {Record<string, unknown>}
+   */
   protected abstract getMetadata(): Record<string, unknown>;
 }

@@ -87,6 +87,10 @@ export class AutonomyScheduler {
    * @param nowMs tick instant. Inject for deterministic tests.
    * @returns per-tick summary.
    */
+  /**
+   * @param {number} nowMs
+   * @returns {Promise<TickResult>}
+   */
   async tickOnce(nowMs: number = Date.now(),): Promise<TickResult> {
     const due = await this.#store.dueWorlds(nowMs,);
     const worlds: WorldTickResult[] = [];
@@ -107,6 +111,11 @@ export class AutonomyScheduler {
    * @param worldId
    * @param nowMs
    */
+  /**
+   * @param {string} worldId
+   * @param {number} nowMs
+   * @returns {Promise<WorldTickResult>}
+   */
   async stepOnce(worldId: string, nowMs: number = Date.now(),): Promise<WorldTickResult> {
     return this.#tickWorld({ worldId, state: await this.#store.load(worldId,), }, nowMs,);
   }
@@ -114,6 +123,10 @@ export class AutonomyScheduler {
   /** Admin pause. Persisted, so it survives a restart.
    * @param worldId
    * @returns the persisted state after the pause
+   */
+  /**
+   * @param {string} worldId
+   * @returns {Promise<{ updated_at: string; world_id: string; next_tick_at: string; paused: number; last_run_at: string | null; last_error: string | null; tick_count: number; }>}
    */
   async pause(worldId: string,): Promise<SimulationState> {
     return this.#store.setPaused(worldId, 1,);
@@ -124,6 +137,10 @@ export class AutonomyScheduler {
    *  next tickOnce picks it up.
    * @param worldId
    */
+  /**
+   * @param {string} worldId
+   * @returns {Promise<{ updated_at: string; world_id: string; next_tick_at: string; paused: number; last_run_at: string | null; last_error: string | null; tick_count: number; }>}
+   */
   async resume(worldId: string,): Promise<SimulationState> {
     return this.#store.setPaused(worldId, 0,);
   }
@@ -132,6 +149,10 @@ export class AutonomyScheduler {
    *  ticked — the same value tickOnce would select it on).
    * @param worldId
    * @returns the persisted state
+   */
+  /**
+   * @param {string} worldId
+   * @returns {Promise<{ updated_at: string; world_id: string; next_tick_at: string; paused: number; last_run_at: string | null; last_error: string | null; tick_count: number; }>}
    */
   async stateFor(worldId: string,): Promise<SimulationState> {
     return this.#store.load(worldId,);
@@ -143,6 +164,11 @@ export class AutonomyScheduler {
    * @param entry
    * @param nowMs
    * @returns the world's result plus the cursor it was committed at
+   */
+  /**
+   * @param {WorldScheduleEntry} entry
+   * @param {number} nowMs
+   * @returns {Promise<WorldTickResult>}
    */
   async #tickWorld(entry: WorldScheduleEntry, nowMs: number,): Promise<WorldTickResult> {
     const { worldId, state, } = entry;
@@ -176,6 +202,12 @@ export class AutonomyScheduler {
    * @param chatId
    * @param nowMs
    */
+  /**
+   * @param {string} worldId
+   * @param {string} chatId
+   * @param {number} nowMs
+   * @returns {Promise<WorldTickOutcome>}
+   */
   async #dispatch(worldId: string, chatId: string, nowMs: number,): Promise<WorldTickOutcome> {
     const out = await runNpcMovementTick(this.#db, worldId, {
       chatId,
@@ -196,6 +228,13 @@ export class AutonomyScheduler {
    * @param nowMs
    * @param intervalMs
    * @returns the ISO cursor the world was committed at
+   */
+  /**
+   * @param {string} worldId
+   * @param {SimulationState} state
+   * @param {number} nowMs
+   * @param {number} intervalMs
+   * @returns {Promise<string>}
    */
   async #advance(
     worldId: string,
@@ -220,6 +259,13 @@ export class AutonomyScheduler {
    * @param err
    * @param nowMs
    * @returns the failed result with the backoff cursor
+   */
+  /**
+   * @param {string} worldId
+   * @param {SimulationState} state
+   * @param {unknown} err
+   * @param {number} nowMs
+   * @returns {Promise<WorldTickResult>}
    */
   async #onWorldError(
     worldId: string,

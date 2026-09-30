@@ -28,6 +28,7 @@ interface TransitionOpts {
  * @param root0.active
  * @param root0.to
  * @param root0.log
+ * @returns {void}
  */
 export function safeTransition({ active, to, log, }: TransitionOpts,): void {
   const from = active.status;
@@ -42,6 +43,7 @@ export function safeTransition({ active, to, log, }: TransitionOpts,): void {
 /**
  * Check if a chat currently has an active generation.
  * @param chatId
+ * @returns {boolean}
  */
 export function isChatGenerating(chatId: string,): boolean {
   const attemptId = chatToAttempt.get(chatId,);
@@ -58,6 +60,7 @@ export function isChatGenerating(chatId: string,): boolean {
 /**
  * Get the attempt ID for an active chat generation, if any.
  * @param chatId
+ * @returns {string | undefined}
  */
 export function getActiveAttemptId(chatId: string,): string | undefined {
   return chatToAttempt.get(chatId,);
@@ -65,6 +68,7 @@ export function getActiveAttemptId(chatId: string,): string | undefined {
 
 /**
  * List all active generation attempts (for admin/debugging).
+ * @returns {{ attemptId: string; chatId: string; actorId: string; status: GenerationStatus; elapsed: number; chunksReceived: number; charsReceived: number; }[]}
  */
 export function listActiveGenerations(): {
   attemptId: string;

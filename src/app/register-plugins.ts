@@ -121,6 +121,7 @@ export interface RegisterPluginsOpts {
  * can shadow earlier ones — keep this sequence stable. Mutates `app` in place.
  * @param app
  * @param opts
+ * @returns {void}
  */
 export function registerPlugins(app: Elysia<any>, opts: RegisterPluginsOpts,): void {
   const { database, config, asyncStore, } = opts;

@@ -15,6 +15,7 @@ export interface CreateLootTableParams {
 /**
  * @param deps
  * @param params
+ * @returns {Promise<string>}
  */
 export async function createLootTable(
   deps: RpgServiceDeps,
@@ -55,6 +56,7 @@ export interface AddLootEntryParams {
 /**
  * @param deps
  * @param params
+ * @returns {Promise<string>}
  */
 export async function addLootEntry(
   deps: RpgServiceDeps,
@@ -97,6 +99,7 @@ export async function addLootEntry(
 /**
  * @param deps
  * @param lootTableId
+ * @returns {Promise<{ itemName: string; description: string | null; itemType: string; rarity: string; quantity: number; } | null>}
  */
 export async function rollLootTable(
   deps: RpgServiceDeps,

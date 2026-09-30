@@ -18,6 +18,9 @@ export const chatMusicLinks: Partial<ChatState & ChatMusicLinksState> & ThisType
   _musicLinkError: "",
   _musicLinkSaving: false,
 
+  /**
+   * @returns {void}
+   */
   toggleMusicLinksPanel() {
     const store = (window as { Alpine?: { store: (n: string,) => Record<string, unknown> } }).Alpine?.store("ui",) as
       | Record<string, boolean>
@@ -34,6 +37,9 @@ export const chatMusicLinks: Partial<ChatState & ChatMusicLinksState> & ThisType
     }
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async loadMusicLinks() {
     if (!this.activeChat) { return; }
     this._musicLinksLoading = true;
@@ -49,6 +55,9 @@ export const chatMusicLinks: Partial<ChatState & ChatMusicLinksState> & ThisType
     this._musicLinksLoading = false;
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async addMusicLink() {
     if (!this.activeChat || !this._musicLinkUrl) { return; }
     this._musicLinkError = "";
@@ -73,10 +82,18 @@ export const chatMusicLinks: Partial<ChatState & ChatMusicLinksState> & ThisType
     this._musicLinkSaving = false;
   },
 
+  /**
+   * @param {string} id
+   * @returns {void}
+   */
   confirmDeleteMusicLink(id: string,) {
     this._musicLinksConfirmDelete = id;
   },
 
+  /**
+   * @param {string} id
+   * @returns {Promise<void>}
+   */
   async deleteMusicLink(id: string,) {
     if (!this.activeChat) { return; }
     try {

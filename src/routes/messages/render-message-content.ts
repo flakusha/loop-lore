@@ -21,7 +21,16 @@ import { resolveMessageContent, } from "./helpers";
  * takes effect on the next render. Pass `transforms = []` (or omit) to
  * skip — the message list endpoint uses this so user-visible content
  * always reflects the current config.
- */
+  * @param {Kysely<DB>} database
+ * @param {{
+    content: string;
+    content_encoding: string;
+    key_id: string | null;
+    chat_id: string;
+  }} message
+ * @param {ReadonlyArray<RegexTransform>} transforms
+ * @returns {Promise<string>}
+*/
 export async function resolveMessageContentForRender(
   database: Kysely<DB>,
   message: {

@@ -145,6 +145,7 @@ export interface CensorMetaOpts {
  * @param root0.meta
  * @param root0.extraRules
  * @param root0.maxDepth
+ * @returns {Record<string, unknown> | undefined}
  */
 export function censorMeta({
   meta,
@@ -159,6 +160,7 @@ export function censorMeta({
 /**
  * Convert extra field name strings to CensorRule objects.
  * @param fields
+ * @returns {CensorRule[]}
  */
 export function fieldNamesToRules(fields: string[],): CensorRule[] {
   return Array.from(fields, (f,) => ({ field: f, }),);

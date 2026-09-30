@@ -14,6 +14,8 @@ import type { ImportActorOpts, } from "./types";
 
 /**
  * @param opts
+ * @throws {Error}
+ * @returns {Promise<Response>}
  */
 export async function importActor(opts: ImportActorOpts,): Promise<Response> {
   const { character, format, warnings, database, userId, charxAssets, uploadDir, } = opts;

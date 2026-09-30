@@ -31,6 +31,11 @@ function resolveRetentionDays(raw: string | undefined,): number {
   return Number.isFinite(parsed,) && parsed >= 1 ? parsed : ARCHIVE_RETENTION_DAYS_DEFAULT;
 }
 
+/**
+ * @param {Kysely<DB>} database
+ * @param {RunArchiveExpirationGcOpts} opts
+ * @returns {Promise<ArchiveExpirationSummary>}
+ */
 export async function runArchiveExpirationGc(
   database: Kysely<DB>,
   opts: RunArchiveExpirationGcOpts = {},

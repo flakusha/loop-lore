@@ -25,6 +25,7 @@ addEventListener("error", (e: ErrorEvent,) => {
 /**
  * @param url
  * @param options
+ * @returns {Promise<Response>}
  */
 export async function apiFetch(
   url: string,

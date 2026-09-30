@@ -58,12 +58,22 @@ export const comparisonState: ComparisonState = {
   comparisonRatings: {} as Record<string, { rating: number; notes: string }>,
   loadingComparisons: false,
 
+  /**
+   * @returns {void}
+   */
   addComparisonModel() {
     this.comparisonModels.push({ provider: "", model: "", temperature: "", topP: "", maxTokens: "", },);
   },
+  /**
+   * @param {number} index
+   * @returns {void}
+   */
   removeComparisonModel(index: number,) {
     if (this.comparisonModels.length > 1) { this.comparisonModels.splice(index, 1,); }
   },
+  /**
+   * @returns {Promise<void>}
+   */
   async runComparison() {
     if (this.loadingComparisons) { return; }
     this.loadingComparisons = true;
@@ -92,10 +102,17 @@ export const comparisonState: ComparisonState = {
       this.loadingComparisons = false;
     }
   },
+  /**
+   * @returns {Promise<void>}
+   */
   async loadComparisonHistory() {
     const res = await apiFetch("/api/v1/comparisons?limit=20", { headers: { Accept: "application/json", }, },);
     if (res.ok) { this.comparisonHistory = (await res.json()).comparisons; }
   },
+  /**
+   * @param {number} resultIndex
+   * @returns {Promise<void>}
+   */
   async rateComparison(resultIndex: number,) {
     const result = this.comparisonResults[resultIndex];
     const rating = this.comparisonRatings["overall"];

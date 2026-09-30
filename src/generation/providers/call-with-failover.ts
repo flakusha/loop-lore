@@ -21,6 +21,10 @@ import type { ChunkEvent, GenerateRequest, GenerateResponse, LLMProvider, } from
  * @param providers
  * @param req
  * @param handler
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @returns {Promise<GenerateResponse>}
  */
 export async function callWithFailover(
   providers: { name: string; provider: LLMProvider }[],

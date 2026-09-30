@@ -29,6 +29,10 @@ export function validateConfig(config: Config,): void {
 /**
  * @param cwd
  * @returns void
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
  */
 export function loadConfig(cwd?: string,): Config {
   const directory = cwd ?? process.cwd();

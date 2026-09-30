@@ -48,6 +48,7 @@ export interface ResolvedModelRole {
  * @param config - App config.
  * @param db - Database instance.
  * @returns The resolved model role.
+ * @throws {Error}
  */
 export async function resolveModelRole(
   role: ModelRole,
@@ -123,6 +124,9 @@ export async function resolveAllModelRoles(config: Config, db: Kysely<DB>,): Pro
  * @param tuning - Optional temperature/maxTokens tuning.
  * @param tuning.temperature - Temperature override.
  * @param tuning.maxTokens - Max tokens override.
+ * @throws {Error}
+ * @throws {Error}
+ * @returns {Promise<void>}
  */
 export async function setModelRoleOverride(
   role: ModelRole,
@@ -167,6 +171,8 @@ export async function setModelRoleOverride(
  * Clear a model role override from the DB (revert to config/default).
  * @param role - The role to clear.
  * @param db - Database instance.
+ * @throws {Error}
+ * @returns {Promise<void>}
  */
 export async function clearModelRoleOverride(role: ModelRole, db: Kysely<DB>,): Promise<void> {
   if (!(VALID_ROLES as readonly string[]).includes(role,)) {

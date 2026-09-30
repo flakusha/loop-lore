@@ -17,6 +17,7 @@ import { MovementPattern, } from "./types";
  * Process NPC movement tick — advance NPCs based on their movement patterns
  * @param db
  * @param worldId
+ * @returns {Promise<MovementResult[]>}
  */
 export async function processMovementTick(
   db: Kysely<DB>,
@@ -61,6 +62,7 @@ export async function processMovementTick(
  * @param worldId
  * @param currentLocationId
  * @param schedule
+ * @returns {Promise<MovementResult | null>}
  */
 export async function processNpcMovement(
   db: Kysely<DB>,
@@ -101,6 +103,7 @@ export async function processNpcMovement(
  * @param worldId
  * @param currentLocationId
  * @param schedule
+ * @returns {Promise<MovementResult | null>}
  */
 export async function processPatrolMovement(
   db: Kysely<DB>,
@@ -141,6 +144,7 @@ export async function processPatrolMovement(
  * @param worldId
  * @param currentLocationId
  * @param _schedule
+ * @returns {Promise<MovementResult | null>}
  */
 export async function processWanderMovement(
   db: Kysely<DB>,
@@ -183,6 +187,7 @@ export async function processWanderMovement(
  * @param worldId
  * @param currentLocationId
  * @param schedule
+ * @returns {Promise<MovementResult | null>}
  */
 export async function processFollowMovement(
   db: Kysely<DB>,
@@ -227,6 +232,7 @@ export async function processFollowMovement(
  * @param worldId
  * @param currentLocationId
  * @param _schedule
+ * @returns {Promise<MovementResult | null>}
  */
 export async function processFleeMovement(
   db: Kysely<DB>,

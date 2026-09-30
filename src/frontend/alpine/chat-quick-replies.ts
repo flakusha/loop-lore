@@ -24,6 +24,9 @@ export const chatQuickReplies: Partial<ChatState> & ThisType<ChatState> = {
   _consecutiveAutoFires: 0,
 
   /** Parse the active chat's quick_replies JSON column into state. */
+  /**
+   * @returns {void}
+   */
   loadQuickReplies() {
     const chat = this.chats.find((c,) => c.id === this.activeChat);
     const raw = chat?.quick_replies ?? null;
@@ -33,6 +36,10 @@ export const chatQuickReplies: Partial<ChatState> & ThisType<ChatState> = {
   /**
    * Send a quick-reply command as a user message (reuses the send path).
    * @param command
+   */
+  /**
+   * @param {string} command
+   * @returns {Promise<void>}
    */
   async executeQuickReply(command: string,) {
     if (!command || !this.activeChat) { return; }
@@ -47,6 +54,9 @@ export const chatQuickReplies: Partial<ChatState> & ThisType<ChatState> = {
   },
 
   /** Run configured startup-triggered quick replies once per chat open. */
+  /**
+   * @returns {Promise<void>}
+   */
   async fireStartupQuickReplies() {
     if (!this.activeChat || this._startupFiredChat === this.activeChat) { return; }
     this._startupFiredChat = this.activeChat;
@@ -69,6 +79,10 @@ export const chatQuickReplies: Partial<ChatState> & ThisType<ChatState> = {
    *   ai-trigger → send → response → ai-trigger feedback loop.
    * @param trigger
    */
+  /**
+   * @param {"user" | "ai"} trigger
+   * @returns {Promise<void>}
+   */
   async fireAutoQuickReplies(trigger: "user" | "ai",) {
     if (!this.activeChat) { return; }
     if (this._autoFired) { return; }
@@ -89,6 +103,9 @@ export const chatQuickReplies: Partial<ChatState> & ThisType<ChatState> = {
   },
 
   /** Persist the quick-reply button set for the active chat. */
+  /**
+   * @returns {Promise<void>}
+   */
   async saveQuickReplies() {
     if (!this.activeChat || !this._quickRepliesDirty) { return; }
     const body: Record<string, unknown> = {

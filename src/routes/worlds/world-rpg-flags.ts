@@ -18,6 +18,10 @@
  * @example
  * toRpgFlag(true) → 1
  */
+/**
+ * @param {unknown} value
+ * @returns {0 | 1 | null}
+ */
 export function toRpgFlag(value: unknown,): 0 | 1 | null {
   if (value === true || value === 1) { return 1; }
   if (value === false || value === 0) { return 0; }
@@ -66,6 +70,7 @@ export function rpgCreateFlags(body: Record<string, unknown>,): RpgCreateFlags {
  * refine the result, so one request can enable RPG and opt a mechanic back out.
  * @param body - Raw request-body values (camelCase flag names).
  * @param updates - Update map receiving snake_case columns.
+ * @returns {void}
  */
 export function applyRpgUpdates(body: Record<string, unknown>, updates: Record<string, unknown>,): void {
   const rpgEnabled = toRpgFlag(body.rpgEnabled,);

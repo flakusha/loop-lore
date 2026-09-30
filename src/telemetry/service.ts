@@ -60,6 +60,7 @@ interface EventParams {
  * @param root0.chatId
  * @param root0.data
  * @param root0.source
+ * @returns {Promise<void>}
  */
 export async function record(
   db: Kysely<DB>,

@@ -43,6 +43,10 @@ export class SimulationStore {
    * autonomy must not require an opt-in seed row per world.
    * @param worldId
    */
+  /**
+   * @param {string} worldId
+   * @returns {Promise<{ updated_at: string; world_id: string; next_tick_at: string; paused: number; last_run_at: string | null; last_error: string | null; tick_count: number; }>}
+   */
   async load(worldId: string,): Promise<SimulationState> {
     const row = await this.#db
       .selectFrom("world_simulation_state",)
@@ -67,6 +71,10 @@ export class SimulationStore {
    * The id tie-break makes the order total, so the dispatch sequence
    * is byte-identical after a restart (see ./README.md).
    * @param nowMs
+   */
+  /**
+   * @param {number} nowMs
+   * @returns {Promise<WorldScheduleEntry[]>}
    */
   async dueWorlds(nowMs: number,): Promise<WorldScheduleEntry[]> {
     const iso = toDate(nowMs,).toISOString();
@@ -121,6 +129,11 @@ export class SimulationStore {
    * @param worldId
    * @param values
    */
+  /**
+   * @param {string} worldId
+   * @param {StateWrite} values
+   * @returns {Promise<void>}
+   */
   async write(worldId: string, values: StateWrite,): Promise<void> {
     await this.#db
       .insertInto("world_simulation_state",)
@@ -135,6 +148,11 @@ export class SimulationStore {
    * the schedule.
    * @param worldId
    * @param paused 1 = paused, 0 = running.
+   */
+  /**
+   * @param {string} worldId
+   * @param {number} paused
+   * @returns {Promise<{ updated_at: string; world_id: string; next_tick_at: string; paused: number; last_run_at: string | null; last_error: string | null; tick_count: number; }>}
    */
   async setPaused(worldId: string, paused: number,): Promise<SimulationState> {
     const state = await this.load(worldId,);
@@ -153,6 +171,10 @@ export class SimulationStore {
    * none. Oldest-first, id-tiebroken, so repeated calls in one
    * process always resolve the same chat.
    * @param worldId
+   */
+  /**
+   * @param {string} worldId
+   * @returns {Promise<string>}
    */
   async chatIdFor(worldId: string,): Promise<string> {
     const row = await this.#db

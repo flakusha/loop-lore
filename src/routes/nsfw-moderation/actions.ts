@@ -39,6 +39,7 @@ function rejectBodyImpersonation(ctx: any,): Response | undefined {
 /**
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { nsfw: { moderation: { ...; }; }; }; } & ... 4 more ... & { ...; }, { ...; }, { ...; }>}
  */
 export function actionsRoutes(opts: HandlerOpts, prefix = "/api",) {
   const svc = new NsfwModerationService(opts.database,);

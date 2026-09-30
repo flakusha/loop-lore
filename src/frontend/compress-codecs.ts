@@ -5,6 +5,7 @@ import { fromBase64, toBase64, } from "../utils/base64";
 
 /**
  * @param str
+ * @returns {Uint8Array<ArrayBufferLike>}
  */
 export function stringToUint8Array(str: string,): Uint8Array {
   return new TextEncoder().encode(str,);
@@ -12,6 +13,7 @@ export function stringToUint8Array(str: string,): Uint8Array {
 
 /**
  * @param buf
+ * @returns {string}
  */
 export function uint8ArrayToString(buf: Uint8Array,): string {
   return new TextDecoder().decode(buf,);
@@ -19,6 +21,7 @@ export function uint8ArrayToString(buf: Uint8Array,): string {
 
 /**
  * @param buf
+ * @returns {string}
  */
 export function uint8ArrayToBase64(buf: Uint8Array,): string {
   return toBase64(buf,);
@@ -26,6 +29,7 @@ export function uint8ArrayToBase64(buf: Uint8Array,): string {
 
 /**
  * @param b64
+ * @returns {Uint8Array<ArrayBufferLike>}
  */
 export function base64ToUint8Array(b64: string,): Uint8Array {
   return fromBase64(b64,);

@@ -22,6 +22,7 @@ import { jsonStringifyOr, } from "../utils/safe-json";
  *   user). Callers must surface this as 404 to match getById / delete /
  *   update — a silent no-op would let wrong-id probes return 200 and hide
  *   ownership mistakes.
+ * @returns {Promise<{ actorId: string; }>}
  */
 export async function convertPersonaToCharacter(
   db: Kysely<DB>,

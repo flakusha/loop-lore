@@ -79,6 +79,8 @@ export function getTypeOfPath(object: Record<string, unknown>, configPath: strin
 /**
  * @param content
  * @param extension
+ * @throws {Error}
+ * @returns {Record<string, unknown>}
  */
 export function parseFileContent(content: string, extension: string,): Record<string, unknown> {
   if (extension === "yaml" || extension === "yml") {
@@ -94,6 +96,8 @@ export function parseFileContent(content: string, extension: string,): Record<st
  * Recursively strip empty-string and null leaf values so they revert to schema
  * defaults. This prevents user typos (e.g. `port: ""`) from overriding defaults.
  * Only affects scalar leaves; empty arrays/objects are preserved.
+ * @param {Record<string, unknown>} obj
+ * @returns {Record<string, unknown>}
  */
 export function normalizeConfig(obj: Record<string, unknown>,): Record<string, unknown> {
   const result: Record<string, unknown> = {};

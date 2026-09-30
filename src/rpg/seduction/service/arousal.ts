@@ -15,6 +15,7 @@ import type { ArousalModifier, ArousalState, } from "./types";
  * @param db
  * @param actorId
  * @param worldId
+ * @returns {Promise<ArousalState>}
  */
 export async function getArousal(
   db: Kysely<DB>,
@@ -123,6 +124,7 @@ export async function modifyArousal(
  * @param db
  * @param actorId
  * @param worldId
+ * @returns {Promise<number>}
  */
 export async function decayArousal(db: Kysely<DB>, actorId: string, worldId: string | null = null,): Promise<number> {
   const state = await getArousal(db, actorId, worldId,);
@@ -151,6 +153,7 @@ export async function decayArousal(db: Kysely<DB>, actorId: string, worldId: str
  * @param actorId
  * @param modifier
  * @param worldId
+ * @returns {Promise<void>}
  */
 export async function addModifier(
   db: Kysely<DB>,

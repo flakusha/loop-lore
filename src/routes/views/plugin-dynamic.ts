@@ -13,6 +13,7 @@ import { serveWorldDetailContent, serveWorldsListDb, } from "./worlds";
 
 /**
  * @param database
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { dynamic: { characters: { ...; }; }; } & ... 9 more ... & { ...; }, { ...; }, { ...; }>}
  */
 export function dynamicRoutes(database: Kysely<DB>,) {
   return new Elysia({ name: "views-dynamic", },)

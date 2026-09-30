@@ -42,6 +42,7 @@ const OPEN_RESERVATION_STATES = ["reserved", "pushed",] as const;
  * Bytes currently held by open reservations for one peer.
  * @param database
  * @param peerOrigin Canonical peer origin.
+ * @returns {Promise<number>}
  */
 export async function outstandingBytes(
   database: Kysely<DB>,
@@ -120,6 +121,9 @@ export async function createInboundReservation(
  * @param database
  * @param id
  * @param next
+ * @throws {Error}
+ * @throws {Error}
+ * @returns {Promise<void>}
  */
 export async function advanceReservation(
   database: Kysely<DB>,
@@ -149,6 +153,9 @@ export async function advanceReservation(
  * Release a reservation (sender abort or failed push). Terminal.
  * @param database
  * @param id
+ * @throws {Error}
+ * @throws {Error}
+ * @returns {Promise<void>}
  */
 export async function releaseReservation(
   database: Kysely<DB>,

@@ -38,6 +38,7 @@ interface TemplatePack {
  * @param root0 - Handler options
  * @param root0.database - Kysely database handle
  * @param prefix - Route prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { templates: { export: { ...; }; }; }; } & { ...; }, { ...; }, { ...; }>}
  */
 export function templateTransferRoutes(
   { database, }: { database: Kysely<DB> },

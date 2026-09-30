@@ -54,6 +54,10 @@ export const safeUrl = (s: string | null | undefined,): string => {
 };
 
 export const chatMusicEmbed: ChatMusicEmbed = {
+  /**
+   * @param {MusicLinkMessage} msg
+   * @returns {string}
+   */
   renderMusicEmbed(msg: MusicLinkMessage,): string {
     const DOMPurify = getDOMPurify();
 

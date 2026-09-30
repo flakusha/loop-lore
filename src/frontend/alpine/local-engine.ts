@@ -41,6 +41,12 @@ interface Pending {
  * Create a browser model engine.
  * @param opts - Worker factory, CDN, and timeout overrides.
  * @returns Engine handle; worker spawns lazily on first use.
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
  */
 export function createLocalEngine(opts: LocalEngineOptions = {},): LocalEngine {
   const cdn = opts.cdn ?? TRANSFORMERS_CDN;
@@ -140,6 +146,13 @@ export function createLocalEngine(opts: LocalEngineOptions = {},): LocalEngine {
   }
 
   return {
+    /**
+     * @param {unknown} modelId
+     * @param {unknown} onProgress
+     * @throws {Error}
+     * @throws {Error}
+     * @returns {Promise<string>}
+     */
     async loadModel(modelId, onProgress?,): Promise<string> {
       const descriptor = BROWSER_MODEL_CATALOG.find((m,) => m.id === modelId);
       if (!descriptor) {
@@ -167,6 +180,13 @@ export function createLocalEngine(opts: LocalEngineOptions = {},): LocalEngine {
       }
     },
 
+    /**
+     * @param {unknown} input
+     * @param {unknown} maxTokens
+     * @throws {Error}
+     * @throws {Error}
+     * @returns {Promise<unknown>}
+     */
     async generate(input, maxTokens = 256,): Promise<unknown> {
       if (!worker || !loaded || !loadedUrl) {
         throw new LocalInferenceUnavailable("no browser model loaded",);
@@ -183,10 +203,16 @@ export function createLocalEngine(opts: LocalEngineOptions = {},): LocalEngine {
       return response.text;
     },
 
+    /**
+     * @returns {string | null}
+     */
     loadedModel(): string | null {
       return loaded;
     },
 
+    /**
+     * @returns {void}
+     */
     terminate(): void {
       dropWorker("engine terminated",);
     },
@@ -210,7 +236,10 @@ export function getLocalEngine(opts?: LocalEngineOptions,): LocalEngine {
   return singleton;
 }
 
-/** Drop the shared instance (tests, opt-out). */
+/**
+ * Drop the shared instance (tests, opt-out).
+ * @returns {void}
+ */
 export function resetLocalEngine(): void {
   try {
     singleton?.terminate();

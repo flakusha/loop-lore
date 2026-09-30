@@ -15,6 +15,7 @@ import { isKeyboardNavEnabled, } from "./shortcuts";
 /**
  * Alpine component for the mobile sticky composer.
  * Delegates send to the nearest parent chatState().
+ * @returns {{ isMobile: boolean; init(): void; destroy(): void; checkMobile(): boolean; submitMobile(): Promise<void>; }}
  */
 export function mobileComposer() {
   let unlisten: (() => void) | null = null;
@@ -22,6 +23,9 @@ export function mobileComposer() {
   return {
     isMobile: false,
 
+    /**
+     * @returns {void}
+     */
     init() {
       this.isMobile = this.checkMobile();
       unlisten = globalThis.matchMedia("(max-width: 768px)",)
@@ -30,10 +34,16 @@ export function mobileComposer() {
         },) as unknown as () => void;
     },
 
+    /**
+     * @returns {void}
+     */
     destroy() {
       unlisten?.();
     },
 
+    /**
+     * @returns {boolean}
+     */
     checkMobile(): boolean {
       return globalThis.matchMedia("(max-width: 768px)",).matches;
     },
@@ -41,6 +51,9 @@ export function mobileComposer() {
     /**
      * Forward submit to the parent chatState() sendMessage().
      * Reads the input value, delegates to parent, clears input.
+     */
+    /**
+     * @returns {Promise<void>}
      */
     async submitMobile() {
       if (!isKeyboardNavEnabled()) { return; }

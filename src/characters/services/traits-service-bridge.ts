@@ -41,6 +41,8 @@ export interface RecordTraitDriftOpts {
  * @param db
  * @param opts
  * @returns void
+ * @throws {Error}
+ * @throws {Error}
  */
 export async function recordTraitDrift(
   db: Kysely<DB>,

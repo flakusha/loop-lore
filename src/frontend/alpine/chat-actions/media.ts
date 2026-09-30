@@ -10,6 +10,10 @@ import type { ChatState, } from "../types";
 const log = rootLog.child({ module: "chat-actions", },);
 
 export const media: Partial<ChatState> & ThisType<ChatState> = {
+  /**
+   * @param {string} msgId
+   * @returns {Promise<void>}
+   */
   async generateImageFromMessage(msgId: string,) {
     log.info("generateImageFromMessage", { messageId: msgId, },);
     if (!this.activeChat) {
@@ -50,6 +54,10 @@ export const media: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @param {string} msgId
+   * @returns {Promise<void>}
+   */
   async captionMessage(msgId: string,) {
     log.info("captionMessage", { messageId: msgId, },);
     const msg = this.messages.find((m,) => m.id === msgId);

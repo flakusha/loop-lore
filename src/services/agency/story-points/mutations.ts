@@ -21,6 +21,7 @@ import {
 
 /**
  * Atomically credit story points to an actor; `earned_total` is monotonic.
+// hint: Structural and logic conflict. Both design and behavior differ.
  *
  * Concurrency: the whole read-decide-write runs in one transaction, the
  * UPDATE is relative (`balance = balance + ?`) rather than an absolute write
@@ -121,6 +122,7 @@ export async function earnStoryPoints(
 
 /**
  * Atomically debit story points; refuses when balance would go negative.
+// hint: Structural and logic conflict. Both design and behavior differ.
  *
  * The first-time INSERT is `ON CONFLICT DO NOTHING` against 020's partial
  * unique index for the same reason as in `earnStoryPoints`: concurrent
@@ -205,7 +207,14 @@ export async function spendStoryPoints(
   };
 }
 
-/** Set or clear the per-actor story-point cap. Pass `null` to clear. */
+/**
+ * Set or clear the per-actor story-point cap. Pass `null` to clear.
+ * @param {Kysely<DB>} db
+ * @param {string} actorId
+ * @param {string | null | undefined} worldId
+ * @param {number | null} cap
+ * @returns {Promise<void>}
+ */
 export async function setStoryPointCap(
   db: Kysely<DB>,
   actorId: string,

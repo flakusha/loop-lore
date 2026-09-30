@@ -45,6 +45,7 @@ export const ACTIONS: { kind: BattleActionKind; label: string }[] = [
  * @param kind
  * @param targetId
  * @param combatants
+ * @returns {string | null}
  */
 export function battleCommandFor(
   kind: BattleActionKind,
@@ -69,6 +70,7 @@ export function battleCommandFor(
  * Clamp an HP fraction to a 0–100 percentage for the progress bar.
  * @param hp
  * @param maxHp
+ * @returns {number}
  */
 export function hpPercent(hp: number, maxHp: number,): number {
   const raw = (hp / Math.max(1, maxHp,)) * 100;
@@ -77,6 +79,7 @@ export function hpPercent(hp: number, maxHp: number,): number {
 
 /**
  * @param name
+ * @returns {string}
  */
 export function quote(name: string,): string {
   return name.includes(" ",) ? `"${name}"` : name;
@@ -84,6 +87,7 @@ export function quote(name: string,): string {
 
 /**
  * @param value
+ * @returns {string}
  */
 export function escapeHtml(value: string,): string {
   return value

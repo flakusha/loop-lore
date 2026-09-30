@@ -12,6 +12,10 @@ export const messageArchive: Partial<ChatState> & ThisType<ChatState> = {
   _archiveConfirmOpen: false,
   _archiveConfirmId: null,
 
+  /**
+   * @param {string} messageId
+   * @returns {Promise<void>}
+   */
   async archiveMessage(messageId: string,) {
     if (!this.activeChat) { return; }
     try {
@@ -36,6 +40,10 @@ export const messageArchive: Partial<ChatState> & ThisType<ChatState> = {
     this._archiveConfirmId = null;
   },
 
+  /**
+   * @param {string} messageId
+   * @returns {Promise<void>}
+   */
   async restoreMessage(messageId: string,) {
     if (!this.activeChat) { return; }
     try {
@@ -53,6 +61,9 @@ export const messageArchive: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async purgeArchivedMessages() {
     if (!this.activeChat) { return; }
     if (!confirm("Permanently delete archived messages older than the retention window?",)) { return; }
@@ -73,12 +84,18 @@ export const messageArchive: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async confirmArchive() {
     if (this._archiveConfirmId) {
       await this.archiveMessage(this._archiveConfirmId,);
     }
   },
 
+  /**
+   * @returns {void}
+   */
   cancelArchive() {
     this._archiveConfirmOpen = false;
     this._archiveConfirmId = null;

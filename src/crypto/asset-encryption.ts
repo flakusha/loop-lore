@@ -75,6 +75,7 @@ export async function deriveAssetSubkey(chatKey: ChatKey, assetId: string,): Pro
  * @param config - Pipeline config (threshold, algorithm)
  * @param tier - Encryption tier (public = no encryption)
  * @returns Encrypted buffer (v2 payload with `a_id`) or original buffer if public tier
+ * @throws {Error}
  */
 export async function encryptAssetBlob(
   buffer: Buffer,

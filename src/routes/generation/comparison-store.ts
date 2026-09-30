@@ -33,14 +33,27 @@ export interface ComparisonRun {
 
 const runs = new Map<string, ComparisonRun>();
 
+/**
+ * @param {ComparisonRun} run
+ * @returns {void}
+ */
 export function saveRun(run: ComparisonRun,): void {
   runs.set(run.id, run,);
 }
 
+/**
+ * @param {string} id
+ * @returns {ComparisonRun | undefined}
+ */
 export function getRun(id: string,): ComparisonRun | undefined {
   return runs.get(id,);
 }
 
+/**
+ * @param {string} userId
+ * @param {number} limit
+ * @returns {ComparisonRun[]}
+ */
 export function listRuns(userId: string, limit: number,): ComparisonRun[] {
   return Array.from(runs.values(),)
     .filter((r,) => r.userId === userId)
@@ -48,6 +61,13 @@ export function listRuns(userId: string, limit: number,): ComparisonRun[] {
     .slice(0, limit,);
 }
 
+/**
+ * @param {string} runId
+ * @param {string} modelName
+ * @param {number} rating
+ * @param {string} notes
+ * @returns {boolean}
+ */
 export function setRating(
   runId: string,
   modelName: string,
@@ -60,7 +80,10 @@ export function setRating(
   return true;
 }
 
-/** Test helper — clears all runs. */
+/**
+ * Test helper — clears all runs.
+ * @returns {void}
+ */
 export function clearRuns(): void {
   runs.clear();
 }

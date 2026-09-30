@@ -61,6 +61,7 @@ let keyHandler: ((e: KeyboardEvent,) => void) | null = null;
  * Mount the battle panel into a container.
  * @param containerEl - DOM element to render into
  * @param battleCtx - Send bridge + option access
+ * @returns {void}
  */
 export function mountBattlePanel(
   containerEl: HTMLElement,
@@ -76,6 +77,7 @@ export function mountBattlePanel(
 
 /**
  * Destroy the battle panel, detaching listeners and clearing state.
+ * @returns {void}
  */
 export function destroyBattlePanel(): void {
   if (container && keyHandler) {
@@ -92,6 +94,7 @@ export function destroyBattlePanel(): void {
 /**
  * Render (or update) the battle from a command response payload.
  * @param view The battle state serialized by a `battle-*` command action
+ * @returns {void}
  */
 export function renderBattle(view: BattleView,): void {
   battle = view;
@@ -106,6 +109,7 @@ export function renderBattle(view: BattleView,): void {
 
 /**
  * Re-render from the last battle state (used after a command completes).
+ * @returns {void}
  */
 export function refreshBattle(): void {
   render();

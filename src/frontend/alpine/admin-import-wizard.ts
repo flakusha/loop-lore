@@ -37,6 +37,7 @@ interface ImportWizardHost {
 /**
  * Setup-wizard slice (TASK-frontend-setup-wizard): upload, preview, apply.
  * @returns Wizard state plus upload/preview/apply methods bound by the host.
+ * @param {ImportWizardHost} this
  */
 export function adminImportWizard(this: ImportWizardHost,) {
   return {
@@ -48,6 +49,10 @@ export function adminImportWizard(this: ImportWizardHost,) {
       preview: [] as ImportPreviewRow[],
       error: "",
     },
+    /**
+     * @param {ImportWizardHost} this
+     * @returns {void}
+     */
     openImportWizard(this: ImportWizardHost,) {
       this.importWizard.open = true;
       this.importWizard.step = 1;
@@ -55,9 +60,18 @@ export function adminImportWizard(this: ImportWizardHost,) {
       this.importWizard.error = "";
       this.importWizard.fileName = "";
     },
+    /**
+     * @param {ImportWizardHost} this
+     * @returns {void}
+     */
     cancelImport(this: ImportWizardHost,) {
       this.importWizard.open = false;
     },
+    /**
+     * @param {ImportWizardHost} this
+     * @param {Event} event
+     * @returns {Promise<void>}
+     */
     async handleFileSelect(this: ImportWizardHost, event: Event,) {
       const input = event.target as HTMLInputElement;
       const file = input.files?.[0];
@@ -89,6 +103,11 @@ export function adminImportWizard(this: ImportWizardHost,) {
      * @param content - Raw file text.
      * @returns Preview rows (possibly empty on unparsable input).
      */
+    /**
+     * @param {ImportWizardHost} this
+     * @param {string} content
+     * @returns {ImportPreviewRow[]}
+     */
     buildImportPreview(this: ImportWizardHost, content: string,): ImportPreviewRow[] {
       let parsed: unknown;
       if (this.importWizard.format === "yaml") {
@@ -114,6 +133,10 @@ export function adminImportWizard(this: ImportWizardHost,) {
      * Minimal YAML parser sufficient for flat `system_config: { key: value, … }` exports.
      * @param content - Raw file text.
      * @returns Parsed `system_config` mapping (possibly empty).
+     */
+    /**
+     * @param {string} content
+     * @returns {{ system_config?: Record<string, string> | undefined; }}
      */
     parseSimpleYaml(content: string,): { system_config?: Record<string, string> } {
       const lines = content.split("\n",);
@@ -143,6 +166,10 @@ export function adminImportWizard(this: ImportWizardHost,) {
      * @param content - Raw file text.
      * @returns Parsed `system_config` mapping (possibly empty).
      */
+    /**
+     * @param {string} content
+     * @returns {{ system_config?: Record<string, string> | undefined; }}
+     */
     parseSimpleToml(content: string,): { system_config?: Record<string, string> } {
       const lines = content.split("\n",);
       let inBlock = false;
@@ -161,6 +188,13 @@ export function adminImportWizard(this: ImportWizardHost,) {
       }
       return { system_config: out, };
     },
+    /**
+ * @param {ImportWizardHost & {
+        stringifySimpleYaml(r: KeyValueRow[],): string;
+        stringifySimpleToml(r: KeyValueRow[],): string;
+      }} this
+ * @returns {Promise<void>}
+ */
     async confirmImport(
       this: ImportWizardHost & {
         stringifySimpleYaml(r: KeyValueRow[],): string;
@@ -197,6 +231,10 @@ export function adminImportWizard(this: ImportWizardHost,) {
      * @param rows - Preview rows.
      * @returns YAML text under a `system_config:` root.
      */
+    /**
+     * @param {KeyValueRow[]} rows
+     * @returns {string}
+     */
     stringifySimpleYaml(rows: KeyValueRow[],): string {
       const lines = ["system_config:",];
       for (const { key, value, } of rows) {
@@ -209,6 +247,10 @@ export function adminImportWizard(this: ImportWizardHost,) {
      * Serialize preview rows back to the export TOML shape for the import POST.
      * @param rows - Preview rows.
      * @returns TOML text under a `[system_config]` table.
+     */
+    /**
+     * @param {KeyValueRow[]} rows
+     * @returns {string}
      */
     stringifySimpleToml(rows: KeyValueRow[],): string {
       const lines = ["[system_config]",];

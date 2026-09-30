@@ -13,6 +13,10 @@ import type { StoryPointBalance, } from "./types";
 /**
  * Get the current balance for an (actor, world) tuple, creating a zero row
  * if absent. `worldId === null` resolves to the cross-world global row.
+ * @param {Kysely<DB>} db
+ * @param {string} actorId
+ * @param {string | null} worldId
+ * @returns {Promise<StoryPointBalance>}
  */
 export async function getStoryPointBalance(
   db: Kysely<DB>,

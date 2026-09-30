@@ -52,6 +52,7 @@ export async function getPartialContent(
  * Preserves it across cancellation/failure for Continue feature.
  * @param attemptId — the generation attempt ID
  * @param content — partial content to store
+ * @returns {void}
  */
 export function storePartialContent(attemptId: string, content: string,): void {
   partialContentStore.set(attemptId, content,);
@@ -62,6 +63,7 @@ export function storePartialContent(attemptId: string, content: string,): void {
  * Used for rapid lookup when Continue targets a message.
  * @param messageId
  * @param attemptId
+ * @returns {void}
  */
 export function mapMessageToAttempt(messageId: string, attemptId: string,): void {
   messageToAttempt.set(messageId, attemptId,);
@@ -70,6 +72,7 @@ export function mapMessageToAttempt(messageId: string, attemptId: string,): void
 /**
  * Get the latest generation attempt ID for a message.
  * @param messageId
+ * @returns {string | undefined}
  */
 export function getAttemptForMessage(messageId: string,): string | undefined {
   return messageToAttempt.get(messageId,);
@@ -77,6 +80,7 @@ export function getAttemptForMessage(messageId: string,): string | undefined {
 
 /**
  * Clear all stored partial content (for testing / cleanup).
+ * @returns {void}
  */
 export function clearPartialContent(): void {
   partialContentStore.clear();

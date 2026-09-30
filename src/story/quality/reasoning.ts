@@ -6,6 +6,7 @@ import { QualityDimension, } from "../../db/enums";
 /**
  * @param dimension
  * @param score
+ * @returns {string}
  */
 export function getReasoning(dimension: QualityDimension, score: number,): string {
   if (score >= 80) {

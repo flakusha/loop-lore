@@ -48,7 +48,11 @@ function escapeHtml(s: string,): string {
   },);
 }
 
-/** Render the tag chips, input, and proposition feed into the preview modal. */
+/**
+ * Render the tag chips, input, and proposition feed into the preview modal.
+ * @param {string} assetId
+ * @returns {Promise<void>}
+ */
 export async function renderTagsPanel(assetId: string,): Promise<void> {
   const panel = document.querySelector<HTMLElement>("[data-field='tags-panel']",);
   if (!panel) { return; }

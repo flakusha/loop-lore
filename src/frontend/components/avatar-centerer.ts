@@ -47,11 +47,15 @@ function buildCenterStyle(vw: number, vh: number,): string {
  * @param host - window-like object (defaults to globalThis) — passed
  *   through so tests can stub window dimensions without touching the
  *   real DOM.
+ * @returns {AvatarCentererState}
  */
 export function avatarCenterer(host?: { innerWidth: number; innerHeight: number },): AvatarCentererState {
   const w = host ?? (globalThis as unknown as { innerWidth: number; innerHeight: number });
   return {
     centerStyle: buildCenterStyle(w.innerWidth, w.innerHeight,),
+    /**
+     * @returns {void}
+     */
     recompute() {
       this.centerStyle = buildCenterStyle(w.innerWidth, w.innerHeight,);
     },

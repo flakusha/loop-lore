@@ -10,6 +10,9 @@ import type { ChatState, } from "../types";
  * `chatSettings` so they run with full `ChatState` context.
  */
 export const personaActions: Partial<ChatState> & ThisType<ChatState> = {
+  /**
+   * @returns {Promise<void>}
+   */
   async loadPersonas() {
     try {
       const res = await apiFetch("/api/v1/personas",);
@@ -19,6 +22,9 @@ export const personaActions: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async setPersona() {
     if (!this.activeChat) { return; }
     try {
@@ -32,6 +38,9 @@ export const personaActions: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async toggleImpersonation() {
     if (!this.activeChat) { return; }
     const actorId = this._impersonatingActorId;
@@ -54,6 +63,9 @@ export const personaActions: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async loadImpersonationState() {
     if (!this.activeChat || this._impersonationLoaded) { return; }
     this._impersonationLoaded = true;

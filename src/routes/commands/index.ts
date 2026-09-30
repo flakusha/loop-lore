@@ -29,6 +29,7 @@ interface CommandDescriptor {
 /**
  * @param opts
  * @param opts.prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { commands: { get: { body: unknown; params: {}; query: unknown; headers: unknown; response: { ...; }; }; }; }; }, { ....}
  */
 export function commandsRoutes(opts: { prefix?: string },) {
   const prefix = opts.prefix ?? "/api";

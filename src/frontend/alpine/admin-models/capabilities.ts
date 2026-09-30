@@ -13,6 +13,9 @@ export const capabilitiesState: Partial<ModelsState> & ThisType<ModelsState> = {
   editingCapability: null as string | null,
   capabilityFilter: "",
 
+  /**
+   * @returns {Promise<void>}
+   */
   async loadModelCapabilities() {
     this.loadingCapabilities = true;
     try {
@@ -33,6 +36,12 @@ export const capabilitiesState: Partial<ModelsState> & ThisType<ModelsState> = {
     }
   },
 
+  /**
+   * @param {string} providerId
+   * @param {string} modelId
+   * @param {Record<string, unknown>} fields
+   * @returns {Promise<void>}
+   */
   async saveCapabilityOverride(providerId: string, modelId: string, fields: Record<string, unknown>,) {
     try {
       const res = await apiFetch(
@@ -54,6 +63,11 @@ export const capabilitiesState: Partial<ModelsState> & ThisType<ModelsState> = {
     }
   },
 
+  /**
+   * @param {string} providerId
+   * @param {string} modelId
+   * @returns {Promise<void>}
+   */
   async clearCapabilityOverride(providerId: string, modelId: string,) {
     try {
       const res = await apiFetch(
@@ -71,6 +85,10 @@ export const capabilitiesState: Partial<ModelsState> & ThisType<ModelsState> = {
     }
   },
 
+  /**
+   * @param {number | null} val
+   * @returns {string}
+   */
   formatCtxWindow(val: number | null,): string {
     if (val === null || val === undefined) { return "-"; }
     if (val >= 1_000_000) { return `${(val / 1_000_000).toFixed(1,)}M`; }

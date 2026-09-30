@@ -37,6 +37,9 @@ export const chatLocation: Partial<ChatState> & ThisType<ChatState> = {
     lastActiveAt: string | null;
   }[],
 
+  /**
+   * @returns {void}
+   */
   toggleLocationPanel() {
     this._locationOpen = !this._locationOpen;
     if (this._locationOpen && this.activeChat) {
@@ -45,6 +48,9 @@ export const chatLocation: Partial<ChatState> & ThisType<ChatState> = {
   },
 
   /** Mark recently-changed flag; cancel any pending reset timer first (rapid changes). */
+  /**
+   * @returns {void}
+   */
   _scheduleRecentLocationFlagReset() {
     if (this._locationFlagTimer) {
       globalThis.clearTimeout(this._locationFlagTimer,);
@@ -56,6 +62,9 @@ export const chatLocation: Partial<ChatState> & ThisType<ChatState> = {
   },
 
   /** Load the world's locations and chat metadata for the active chat. */
+  /**
+   * @returns {Promise<void>}
+   */
   async loadLocations() {
     if (!this.activeChat) { return; }
     this._locationsLoading = true;
@@ -88,6 +97,9 @@ export const chatLocation: Partial<ChatState> & ThisType<ChatState> = {
   /**
    * Resolve the active chat's world id (and current location), preferring the
    * already-loaded chat row and falling back to the chat detail endpoint.
+   */
+  /**
+   * @returns {Promise<string | null>}
    */
   async _locationWorldId(): Promise<string | null> {
     if (this._chatWorldId) { return this._chatWorldId; }
@@ -124,6 +136,10 @@ export const chatLocation: Partial<ChatState> & ThisType<ChatState> = {
   /**
    * Change the chat's current location in place (PUT /api/v1/chats/:id/location).
    * Ownership-gated server-side; only applies when a different location is chosen.
+   */
+  /**
+   * @throws {Error}
+   * @returns {Promise<void>}
    */
   async changeChatLocation() {
     if (!this.activeChat || !this._selectedLocationId || this._locationBusy) { return; }
@@ -164,6 +180,10 @@ export const chatLocation: Partial<ChatState> & ThisType<ChatState> = {
    * Transfer the chat to a location (POST /api/v1/chats/:id/transfer).
    * Participant-gated server-side; validates the location is in the chat's world.
    */
+  /**
+   * @throws {Error}
+   * @returns {Promise<void>}
+   */
   async transferChatLocation() {
     if (!this.activeChat || !this._selectedLocationId || this._locationBusy) { return; }
     this._locationBusy = true;
@@ -194,6 +214,9 @@ export const chatLocation: Partial<ChatState> & ThisType<ChatState> = {
   },
 
   /** Load discoverable chats already at the selected location. */
+  /**
+   * @returns {Promise<void>}
+   */
   async loadLocationJoinable() {
     if (!this._selectedLocationId) {
       this._locationJoinableChats = [];
@@ -229,12 +252,19 @@ export const chatLocation: Partial<ChatState> & ThisType<ChatState> = {
    * Join a discovered chat, then refresh the location-scoped list.
    * @param chatId
    */
+  /**
+   * @param {string} chatId
+   * @returns {Promise<void>}
+   */
   async joinLocationChat(chatId: string,) {
     await this.joinChat(chatId,);
     await this.loadLocationJoinable();
   },
 
   /** Broadcast a location change so the VN renderer can trigger a transition. */
+  /**
+   * @returns {void}
+   */
   _emitLocationChanged() {
     globalThis.dispatchEvent(
       new CustomEvent(LOCATION_CHANGED_EVENT, {

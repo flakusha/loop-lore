@@ -72,6 +72,7 @@ async function applyOutcomes(
  * Returns triggered outcomes if the encounter completes.
  * @param db
  * @param encounterId
+ * @returns {Promise<AdvancePhaseResult>}
  */
 export async function advancePhase(
   db: Kysely<DB>,

@@ -22,6 +22,7 @@ import type { AdminRouteOpts, } from "./types";
  * DELETE /admin/model-capabilities/:provider/:model — clear user override
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { admin: { "model-capabilities": { ...; }; }; }; } & { ...; } & { ...; } & { ...; }, { ...; }, { ...; }>}
  */
 export function modelCapabilitiesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
   return (

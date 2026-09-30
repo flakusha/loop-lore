@@ -106,6 +106,10 @@ export const actorTraits: ActorTraitsState = {
   message: "",
   error: "",
 
+  /**
+   * @param {string} actorId
+   * @returns {void}
+   */
   setActorId(actorId: string,) {
     if (this._trActorId === actorId) { return; }
     this._trActorId = actorId;
@@ -119,6 +123,9 @@ export const actorTraits: ActorTraitsState = {
     this.error = "";
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async loadTraits() {
     const actorId = this._trActorId;
     if (!actorId) { return; }
@@ -140,6 +147,9 @@ export const actorTraits: ActorTraitsState = {
     }
   },
 
+  /**
+   * @returns {PermanentTrait[]}
+   */
   filteredTraits() {
     const q = this.search.trim().toLowerCase();
     return this.traits.filter((trait,) => {
@@ -151,6 +161,10 @@ export const actorTraits: ActorTraitsState = {
     },);
   },
 
+  /**
+   * @param {PermanentTrait} trait
+   * @returns {void}
+   */
   startEdit(trait: PermanentTrait,) {
     this.draft = {
       category: trait.trait_category,
@@ -160,10 +174,16 @@ export const actorTraits: ActorTraitsState = {
     };
   },
 
+  /**
+   * @returns {void}
+   */
   cancelEdit() {
     this.draft = emptyDraft();
   },
 
+  /**
+   * @returns {{ trait_category: string; trait_name: string; value: string; }}
+   */
   buildPayload() {
     return {
       trait_category: this.draft.category,
@@ -172,6 +192,9 @@ export const actorTraits: ActorTraitsState = {
     };
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async save() {
     const actorId = this._trActorId;
     if (!actorId || this.busy) { return; }
@@ -211,6 +234,10 @@ export const actorTraits: ActorTraitsState = {
     }
   },
 
+  /**
+   * @param {string} traitName
+   * @returns {Promise<void>}
+   */
   async remove(traitName: string,) {
     const actorId = this._trActorId;
     if (!actorId || this.busy || !traitName) { return; }
@@ -236,12 +263,20 @@ export const actorTraits: ActorTraitsState = {
     }
   },
 
+  /**
+   * @param {string} category
+   * @returns {string}
+   */
   describeCategory(category: string,) {
     return CATEGORY_LABELS[category] ?? category;
   },
 };
 
-/** Build the Alpine scope for the permanent-traits panel. */
+/**
+ * Build the Alpine scope for the permanent-traits panel.
+ * @param {string} actorId
+ * @returns {ActorTraitsState}
+ */
 export function actorTraitsFactory(actorId: string,): ActorTraitsState {
   const state = Object.create(actorTraits,) as ActorTraitsState;
   state._trActorId = null;

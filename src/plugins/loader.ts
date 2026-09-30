@@ -196,7 +196,8 @@ async function persistPluginState(db: Kysely<DB>, name: string,): Promise<void> 
 /**
  * Dispatch a request against all registered plugin routes (enabled only)
  * @param request
- */
+  * @returns {Promise<Response | null>}
+*/
 export async function dispatchPluginRoute(request: Request): Promise<Response | null> {
   for (const route of registry.getEnabledRoutes()) {
     const url = new URL(request.url);
@@ -208,7 +209,10 @@ export async function dispatchPluginRoute(request: Request): Promise<Response | 
   return null;
 }
 
-/** Shutdown all plugins in reverse load order */
+/**
+ * Shutdown all plugins in reverse load order
+ * @returns {Promise<void>}
+ */
 export async function unloadAllPlugins(): Promise<void> {
   for (const name of loadOrder.reverse()) {
     const plugin = registry.getPlugin(name);

@@ -54,6 +54,7 @@ export { computeSendBlocked, decodeStoredDraft, sendBlockedReasonText, validateP
  * `bootstrap.ts` so the surface can be exercised without an Alpine
  * component instance.
  * @param deps
+ * @returns {ComposerPreSendState}
  */
 export function createComposerPreSend(deps: ComposerPreSendDeps = {},): ComposerPreSendState {
   const storage = deps.storage ??
@@ -70,6 +71,10 @@ export function createComposerPreSend(deps: ComposerPreSendDeps = {},): Composer
     _turnSkipSuggested: false,
     _showComposerPreview: false,
     _streamResponses: readStreamPreference(storage, null,),
+    /**
+     * @param {string} chatId
+     * @returns {string | null}
+     */
     restoreDraft(chatId: string,): string | null {
       if (!storage || !chatId) { return null; }
       const raw = storage.getItem(DRAFT_STORAGE_KEY,);
@@ -95,6 +100,11 @@ export function createComposerPreSend(deps: ComposerPreSendDeps = {},): Composer
         return null;
       }
     },
+    /**
+     * @param {string} chatId
+     * @param {string} text
+     * @returns {void}
+     */
     persistDraft(chatId: string, text: string,): void {
       if (!storage || !chatId) { return; }
       let map: Record<string, unknown> = {};
@@ -111,6 +121,10 @@ export function createComposerPreSend(deps: ComposerPreSendDeps = {},): Composer
       const persistJson = safeJsonStringify(map,);
       if (persistJson.ok) { storage.setItem(DRAFT_STORAGE_KEY, persistJson.value,); }
     },
+    /**
+     * @param {SendGateInputs} inputs
+     * @returns {SendBlockedReason | null}
+     */
     isSendBlocked(inputs: SendGateInputs,): SendBlockedReason | null {
       const reason = computeSendBlocked(inputs,);
       (this as ComposerPreSendState)._sendBlockedReason = reason;
@@ -120,31 +134,59 @@ export function createComposerPreSend(deps: ComposerPreSendDeps = {},): Composer
       (this as ComposerPreSendState)._turnSkipSuggested = reason !== null && HARD_GATE_REASONS[reason] === true;
       return reason;
     },
+    /**
+     * @param {unknown} text
+     * @param {unknown} participants
+     * @param {unknown} pendingAssetIds
+     * @returns {PreSendValidation}
+     */
     validateDraft(text, participants, pendingAssetIds,) {
       return validatePreSend(text, participants, pendingAssetIds,);
     },
+    /**
+     * @returns {void}
+     */
     toggleComposerPreview(): void {
       const self = this as ComposerPreSendState;
       self._showComposerPreview = !self._showComposerPreview;
     },
+    /**
+     * @returns {string}
+     */
     composerPreviewHtml(): string {
       const refs = (this as ComposerPreSendState & { $refs?: Record<string, unknown> }).$refs;
       const input = refs?.["messageInput"] as { value?: unknown } | undefined;
       const raw = typeof input?.value === "string" ? input.value : "";
       return renderPreviewHtml(raw,);
     },
+    /**
+     * @param {KeyboardEvent} event
+     * @returns {void}
+     */
     handlePreviewKeydown(event: KeyboardEvent,): void {
       if (!isPreviewToggleEvent(event,)) { return; }
       event.preventDefault();
       (this as ComposerPreSendState).toggleComposerPreview();
     },
+    /**
+     * @param {string} chatId
+     * @returns {boolean}
+     */
     getStreamPreference(chatId: string,): boolean {
       return readStreamPreference(storage, chatId,);
     },
+    /**
+     * @param {string} chatId
+     * @param {boolean} value
+     * @returns {void}
+     */
     setStreamPreference(chatId: string, value: boolean,): void {
       (this as ComposerPreSendState)._streamResponses = value;
       writeStreamPreference(storage, chatId, value,);
     },
+    /**
+     * @returns {void}
+     */
     toggleStreamResponses(): void {
       const self = this as ComposerPreSendState & { activeChat?: string | null };
       const next = !self._streamResponses;
@@ -159,10 +201,17 @@ export function createComposerPreSend(deps: ComposerPreSendDeps = {},): Composer
  * stays minimal while the template-friendly surface (with the validator
  * wired in) is one symbol the bootstrap imports.
  * @param factory
+ * @returns {ComposerPreSendState}
  */
 export function attachValidateDraft(factory: ComposerPreSendState,): ComposerPreSendState {
   return {
     ...factory,
+    /**
+     * @param {unknown} text
+     * @param {unknown} participants
+     * @param {unknown} pendingAssetIds
+     * @returns {PreSendValidation}
+     */
     validateDraft(text, participants, pendingAssetIds,) {
       return validatePreSend(text, participants, pendingAssetIds,);
     },

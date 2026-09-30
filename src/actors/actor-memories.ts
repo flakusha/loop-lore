@@ -49,7 +49,15 @@ export interface ListMemoriesOpts extends ActorListOpts {
   memoryType?: MemoryType;
 }
 
-/** List an actor's memories, most important first (matches the route order). */
+/**
+ * List an actor's memories, most important first (matches the route order).
+ * @param {Kysely<DB>} database
+ * @param {string} actorId
+ * @param {string} userId
+ * @param {string | null | undefined} userRole
+ * @param {ListMemoriesOpts} opts
+ * @returns {Promise<ActorListResult<{ id: string; actor_id: string; content: string; created_at: string; updated_at: string; world_id: string | null; source_chat_id: string | null; memory_type: MemoryType; ... 19 more ...; context_window_end: string | null; }>>}
+ */
 export async function listActorMemories(
   database: Kysely<DB>,
   actorId: string,
@@ -87,7 +95,15 @@ export async function listActorMemories(
   return { ok: true, items, total: Number(countResult?.total ?? 0,), page, pageSize, };
 }
 
-/** Create a memory for an actor. `content` is required. */
+/**
+ * Create a memory for an actor. `content` is required.
+ * @param {Kysely<DB>} database
+ * @param {string} actorId
+ * @param {string} userId
+ * @param {string | null | undefined} userRole
+ * @param {CreateMemoryInput} input
+ * @returns {Promise<ActorMutationResult<{ id: string; actor_id: string; content: string; created_at: string; updated_at: string; world_id: string | null; source_chat_id: string | null; memory_type: MemoryType; ... 19 more ...; context_window_end: string | null; }>>}
+ */
 export async function createActorMemory(
   database: Kysely<DB>,
   actorId: string,
@@ -135,7 +151,16 @@ export async function createActorMemory(
   return { ok: true, entity, };
 }
 
-/** Update a memory in place; the memory must belong to the given actor. */
+/**
+ * Update a memory in place; the memory must belong to the given actor.
+ * @param {Kysely<DB>} database
+ * @param {string} actorId
+ * @param {string} memoryId
+ * @param {string} userId
+ * @param {string | null | undefined} userRole
+ * @param {UpdateMemoryInput} patch
+ * @returns {Promise<ActorMutationResult<{ id: string; actor_id: string; content: string; created_at: string; updated_at: string; world_id: string | null; source_chat_id: string | null; memory_type: MemoryType; ... 19 more ...; context_window_end: string | null; }>>}
+ */
 export async function updateActorMemory(
   database: Kysely<DB>,
   actorId: string,
@@ -194,7 +219,15 @@ export async function updateActorMemory(
   return { ok: true, entity, };
 }
 
-/** Delete a memory; the memory must belong to the given actor. */
+/**
+ * Delete a memory; the memory must belong to the given actor.
+ * @param {Kysely<DB>} database
+ * @param {string} actorId
+ * @param {string} memoryId
+ * @param {string} userId
+ * @param {string | null | undefined} userRole
+ * @returns {Promise<ActorDeleteResult>}
+ */
 export async function deleteActorMemory(
   database: Kysely<DB>,
   actorId: string,

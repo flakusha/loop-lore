@@ -27,6 +27,10 @@ const getDOMPurify = () => (globalThis as any).__DOMPurify as { sanitize(html: s
 const getDOMPurify = () => (globalThis as any).__DOMPurify as { sanitize(html: string,): string } | undefined;
 const getDOMPurify = () => (globalThis as any).__DOMPurify as { sanitize(html: string,): string } | undefined;
 export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
+  /**
+   * @param {string} chatId
+   * @returns {void}
+   */
   connectGenerationSSE(chatId: string,) {
     if (this._generationEventSource) {
       this._generationEventSource.close();
@@ -98,6 +102,10 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
     },);
   },
 
+  /**
+   * @param {string} chatId
+   * @returns {Promise<void>}
+   */
   async checkGenerationStatus(chatId: string,) {
     log.debug("checkGenerationStatus", { chatId, },);
     try {
@@ -138,6 +146,11 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
       log.debug("checkGenerationStatus failed", { chatId, error: String(error,), },);
     }
   },
+  /**
+   * @param {string} chatId
+   * @param {() => void} onDone
+   * @returns {Promise<void>}
+   */
   async sendWithPreferredMode(chatId: string, onDone?: () => void,) {
     const pref = this.getStreamPreference?.(chatId,) ?? this._streamResponses !== false;
     if (pref) {
@@ -156,6 +169,9 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
     onDone?.();
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async cancelGeneration() {
     log.info("cancelGeneration", { chatId: this.activeChat, },);
     if (!this.activeChat) {
@@ -189,6 +205,9 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @returns {void}
+   */
   renderStreamContainer() {
     const container = document.querySelector("#stream-container",);
     if (!container) { return; }
@@ -204,6 +223,9 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
     container.replaceChildren(pre,);
   },
 
+  /**
+   * @returns {void}
+   */
   _cleanupSSE() {
     if (this._generationEventSource) {
       this._generationEventSource.close();

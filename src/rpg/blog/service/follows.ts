@@ -10,6 +10,7 @@ import type { BlogFollowRow, } from "./types";
  * @param db
  * @param followerId
  * @param authorId
+ * @returns {Promise<BlogFollowRow>}
  */
 export async function follow(
   db: Kysely<any>,
@@ -31,6 +32,7 @@ export async function follow(
  * @param db
  * @param followerId
  * @param authorId
+ * @returns {Promise<boolean>}
  */
 export async function unfollow(
   db: Kysely<any>,
@@ -48,6 +50,7 @@ export async function unfollow(
 /**
  * @param db
  * @param authorId
+ * @returns {Promise<string[]>}
  */
 export async function getFollowers(
   db: Kysely<any>,
@@ -65,6 +68,7 @@ export async function getFollowers(
  * @param db
  * @param followerId
  * @param authorId
+ * @returns {Promise<boolean>}
  */
 export async function isFollowing(
   db: Kysely<any>,
@@ -84,6 +88,7 @@ export async function isFollowing(
  * @param db
  * @param followerId
  * @param authorId
+ * @returns {Promise<{ following: boolean; }>}
  */
 export async function getFollowStatus(
   db: Kysely<any>,

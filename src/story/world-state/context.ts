@@ -18,6 +18,7 @@ import type { WorldState, } from "./types";
  * @param state
  * @param chatId
  * @param recentTurnCount
+ * @returns {Promise<StoryContext | null>}
  */
 export async function buildContext(
   state: WorldState,

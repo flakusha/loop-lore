@@ -30,6 +30,10 @@ export interface BuildIdRouteOpts {
   projectRoot?: string;
 }
 
+/**
+ * @param {BuildIdRouteOpts} opts
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, {}, { derive: {}; resolve: {}; schema: {}; standaloneSchema: {}; response: {}; }, { ...; }>}
+ */
 export function buildIdRoutes(opts: BuildIdRouteOpts = {},): Elysia {
   const app = new Elysia({ name: "build-id", },);
 

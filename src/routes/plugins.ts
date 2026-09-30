@@ -29,6 +29,7 @@ function log() {
  * @param root0
  * @param root0.database
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { plugins: { get: { ...; }; }; }; } & { ...; } & { ...; }, { ...; }, { ...; }>}
  */
 export function pluginRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
   return new Elysia({ name: "plugins", },)

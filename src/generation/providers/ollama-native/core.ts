@@ -15,6 +15,8 @@ import type { OllamaNativeState, OllamaStreamChunk, OllamaToolCallDTO, } from ".
 /**
  * @param state
  * @param req
+ * @throws {Error}
+ * @returns {Promise<GenerateResponse>}
  */
 export async function completeDispatch(
   state: OllamaNativeState,
@@ -75,6 +77,9 @@ interface StreamAccum {
  * @param state
  * @param req
  * @param handler
+ * @throws {Error}
+ * @throws {Error}
+ * @returns {Promise<GenerateResponse>}
  */
 export async function streamDispatch(
   state: OllamaNativeState,

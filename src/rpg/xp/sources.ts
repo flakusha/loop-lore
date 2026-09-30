@@ -54,6 +54,7 @@ export function xpForEnemyDefeat(
  * XP reward for completing a quest.
  * @param questLevel
  * @param difficulty
+ * @returns {number}
  */
 export function xpForQuest(
   questLevel: number,
@@ -73,6 +74,7 @@ export function xpForQuest(
  * XP reward for skill challenge or roleplay encounter.
  * @param characterLevel
  * @param difficulty
+ * @returns {number}
  */
 export function xpForSkillChallenge(
   characterLevel: number,

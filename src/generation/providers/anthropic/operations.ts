@@ -12,6 +12,7 @@ import type { AnthropicModelsResponse, AnthropicState, } from "./types";
 
 /**
  * @param state
+ * @returns {Promise<ModelInfo[]>}
  */
 export async function listModelsDispatch(state: AnthropicState,): Promise<ModelInfo[]> {
   const url = new URL(`${state.baseUrl}/v1/models`,);
@@ -32,6 +33,7 @@ export async function listModelsDispatch(state: AnthropicState,): Promise<ModelI
 
 /**
  * @param state
+ * @returns {Promise<{ status: "ok" | "degraded" | "down"; model?: string | undefined; latencyMs?: number | undefined; error?: string | undefined; }>}
  */
 export async function healthCheckDispatch(state: AnthropicState,): Promise<{
   status: "ok" | "degraded" | "down";

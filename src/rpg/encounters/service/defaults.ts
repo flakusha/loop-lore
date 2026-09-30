@@ -5,6 +5,7 @@ import type { EncounterOutcome, EncounterPhase, } from "./types";
 
 /**
  * Default encounter phases.
+ * @returns {EncounterPhase[]}
  */
 export function buildDefaultPhases(): EncounterPhase[] {
   return [
@@ -34,6 +35,7 @@ export function buildDefaultPhases(): EncounterPhase[] {
 
 /**
  * Default encounter outcomes.
+ * @returns {EncounterOutcome[]}
  */
 export function buildDefaultOutcomes(): EncounterOutcome[] {
   return [

@@ -14,6 +14,7 @@ import type { HandlerOpts, } from "./types";
  * `register-plugins.ts` wiring is unchanged.
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { chats: { search: { ...; }; }; }; } & { ...; } & { ...; } & { ...; }, { ...; }, { ...; } & { ...; }>}
  */
 export function chatSearchRoutes(opts: HandlerOpts, prefix = "/api",) {
   return (

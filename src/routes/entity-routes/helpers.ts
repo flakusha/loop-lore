@@ -9,6 +9,7 @@ import type { EntityConfig, } from "./types";
  * @param root0.config
  * @param root0.parentId
  * @param root0.body
+ * @returns {Record<string, unknown>}
  */
 export function buildCreateValues({
   config,
@@ -36,6 +37,7 @@ export function buildCreateValues({
  * @param root0
  * @param root0.config
  * @param root0.body
+ * @returns {Record<string, unknown>}
  */
 export function buildUpdateValues({
   config,
@@ -61,6 +63,7 @@ export function buildUpdateValues({
  * Map snake_case DB rows back to camelCase API shapes, applying responseTransforms.
  * @param config
  * @param row
+ * @returns {Record<string, unknown>}
  */
 export function applyResponseTransforms(
   config: EntityConfig,

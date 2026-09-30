@@ -22,6 +22,7 @@ import { getBuffer, } from "../index";
  * @param database
  * @param userId
  * @param userRole
+ * @returns {Promise<Response>}
  */
 export async function handleGenerationStream(
   chatId: string,
@@ -51,6 +52,10 @@ export async function handleGenerationStream(
   let cleanup: (() => void) | undefined;
 
   const sseStream = new ReadableStream({
+    /**
+     * @param {unknown} controller
+     * @returns {Promise<void>}
+     */
     async start(controller,) {
       const buffer = await waitForBuffer(chatId, 15_000,);
       if (!buffer) {
@@ -116,6 +121,9 @@ export async function handleGenerationStream(
         unsubscribe();
       };
     },
+    /**
+     * @returns {void}
+     */
     cancel() {
       cleanup?.();
     },

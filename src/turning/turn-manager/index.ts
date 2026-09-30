@@ -53,6 +53,9 @@ export class TurnManager {
   // ─── Initialization ───────────────────────────────────────────
 
   /** Load or initialize turn manager state from the DB */
+  /**
+   * @returns {Promise<void>}
+   */
   async initialize(): Promise<void> {
     return initializeTurnManager(this,);
   }
@@ -88,6 +91,11 @@ export class TurnManager {
    * @param context - Turn context (@mentions, recent actors, chat mode, or story context)
    * @returns Selected actor ID, or null if no participants
    */
+  /**
+   * @param {TurnStrategyType} strategy
+   * @param {GroupTurnContext | Record<string, unknown>} context
+   * @returns {Promise<string | null>}
+   */
   async selectNextActor(
     strategy?: TurnStrategyType,
     context?: GroupTurnContext | Record<string, unknown>,
@@ -96,6 +104,9 @@ export class TurnManager {
   }
 
   /** Record a completed turn (persists state) */
+  /**
+   * @returns {Promise<void>}
+   */
   async recordTurn(): Promise<void> {
     return recordTurnDispatch(this,);
   }
@@ -105,26 +116,43 @@ export class TurnManager {
    * @param turnId
    * @param reason
    */
+  /**
+   * @param {string} turnId
+   * @param {string} reason
+   * @returns {Promise<boolean>}
+   */
   async requestRegeneration(turnId: string, reason: string,): Promise<boolean> {
     return requestRegenerationDispatch(this, turnId, reason,);
   }
 
   /** Clear pending regeneration (accepted) */
+  /**
+   * @returns {Promise<void>}
+   */
   async clearRegeneration(): Promise<void> {
     return clearRegenerationDispatch(this,);
   }
 
   /** Pause turn generation */
+  /**
+   * @returns {Promise<void>}
+   */
   async pause(): Promise<void> {
     return pauseDispatch(this,);
   }
 
   /** Resume turn generation */
+  /**
+   * @returns {Promise<void>}
+   */
   async resume(): Promise<void> {
     return resumeDispatch(this,);
   }
 
   /** Reset turn counter (e.g., new scene) */
+  /**
+   * @returns {Promise<void>}
+   */
   async resetTurnCounter(): Promise<void> {
     return resetTurnCounterDispatch(this,);
   }
@@ -132,6 +160,10 @@ export class TurnManager {
   /**
    * Update turn order (e.g., participant added/removed)
    * @param mode
+   */
+  /**
+   * @param {"story" | "group"} mode
+   * @returns {Promise<void>}
    */
   async refreshOrder(mode: "story" | "group" = "story",): Promise<void> {
     return refreshOrderPublic(this, mode,);

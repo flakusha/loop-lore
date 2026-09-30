@@ -13,6 +13,9 @@ export const chatPins: Partial<ChatState> & ThisType<ChatState> = {
   _pinsLoading: false,
   _pinsOpen: false,
 
+  /**
+   * @returns {void}
+   */
   togglePinsPanel() {
     this._pinsOpen = !this._pinsOpen;
     if (this._pinsOpen && this.activeChat) {
@@ -20,6 +23,9 @@ export const chatPins: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async loadPins() {
     if (!this.activeChat) { return; }
     this._pinsLoading = true;
@@ -35,6 +41,10 @@ export const chatPins: Partial<ChatState> & ThisType<ChatState> = {
     this._pinsLoading = false;
   },
 
+  /**
+   * @param {string} messageId
+   * @returns {Promise<void>}
+   */
   async pinMessage(messageId: string,) {
     if (!this.activeChat) { return; }
     try {
@@ -50,6 +60,10 @@ export const chatPins: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @param {string} pinId
+   * @returns {Promise<void>}
+   */
   async unpinMessage(pinId: string,) {
     if (!this.activeChat) { return; }
     try {
@@ -62,6 +76,10 @@ export const chatPins: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @param {string} messageId
+   * @returns {void}
+   */
   scrollToPinnedMessage(messageId: string,) {
     const el = document.querySelector<HTMLElement>(
       `[data-message-id="${CSS.escape(messageId,)}"]`,

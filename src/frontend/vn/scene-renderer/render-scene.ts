@@ -182,6 +182,7 @@ function removeRenderedScenes(container: HTMLElement,): void {
 /**
  * @param animate
  * @param navigate
+ * @returns {Promise<void>}
  */
 export async function renderCurrentScene(
   animate = false,

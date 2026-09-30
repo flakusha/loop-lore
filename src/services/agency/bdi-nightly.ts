@@ -62,6 +62,7 @@ const DEFAULT_PRIORITY = "normal";
  * @param db
  * @param actorIds
  * @param opts
+ * @returns {Promise<NightlyResult>}
  */
 export async function runNightlyReflectionCycle(
   db: Kysely<DB>,
@@ -181,6 +182,11 @@ function todayIso(): string {
  *
  * Returns `{ allowed: true, buffer }` when the next chat proceeds; otherwise
  * `{ allowed: false, reason }`.
+ * @param {Kysely<DB>} db
+ * @param {string} actorId
+ * @param {string} partnerActorId
+ * @param {Date} now
+ * @returns {Promise<{ allowed: boolean; reason?: string | undefined; cooldownRemainingMs?: number | undefined; }>}
  */
 export async function recordChatTurn(
   db: Kysely<DB>,

@@ -21,6 +21,7 @@ import { isNsfwRating, NSFW_INTIMACY_THRESHOLD, } from "./constants";
  * @param database
  * @param config
  * @param userId
+ * @returns {Promise<{ allowed: boolean; reason?: string | undefined; }>}
  */
 export async function canAccessNsfw(
   database: Kysely<DB>,
@@ -39,6 +40,7 @@ export async function canAccessNsfw(
  * Check if a character (actor) has NSFW content that requires gating.
  * @param database
  * @param actorId
+ * @returns {Promise<ContentRating>}
  */
 export async function getActorContentRating(
   database: Kysely<DB>,
@@ -61,6 +63,7 @@ export async function getActorContentRating(
  * @param actorId
  * @param targetActorId
  * @param worldId
+ * @returns {Promise<{ sufficient: boolean; score: number; threshold: number; }>}
  */
 export async function checkIntimacyForNsfw(
   database: Kysely<DB>,
@@ -90,6 +93,7 @@ export async function checkIntimacyForNsfw(
  * skipped.
  * @param database
  * @param chatId
+ * @returns {Promise<string[]>}
  */
 export async function getChatParticipantUserIds(
   database: Kysely<DB>,
@@ -119,6 +123,7 @@ export async function getChatParticipantUserIds(
  * @param config
  * @param userId
  * @param chatId
+ * @returns {Promise<{ allowed: boolean; reason?: string | undefined; nsfwParticipants: string[]; }>}
  */
 export async function checkChatNsfwAccess(
   database: Kysely<DB>,

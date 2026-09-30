@@ -80,6 +80,9 @@ const safeParseList = (raw: string,): string[] => {
     _hoveredLocId: "" as string | null,
     _detailCache: {} as Record<string, ExplorerDetail>,
 
+    /**
+     * @returns {void}
+     */
     init() {
       this.load();
       this._refreshOptionLists();
@@ -91,16 +94,28 @@ const safeParseList = (raw: string,): string[] => {
       return out;
     },
 
+    /**
+     * @param {string} id
+     * @returns {ExplorerLocation[]}
+     */
     childrenOf(id: string,): ExplorerLocation[] {
       const out: ExplorerLocation[] = [];
       for (const l of this.locations) { if (l.parent_location_id === id) { out.push(l,); } }
       return out;
     },
 
+    /**
+     * @param {string} id
+     * @returns {boolean}
+     */
     isExpanded(id: string,): boolean {
       return this.expandedIds[id] === true;
     },
 
+    /**
+     * @param {string} id
+     * @returns {void}
+     */
     toggleExpand(id: string,) {
       this.expandedIds[id] = !this.expandedIds[id];
     },
@@ -139,14 +154,25 @@ const safeParseList = (raw: string,): string[] => {
       return out;
     },
 
+    /**
+     * @param {string} id
+     * @returns {boolean}
+     */
     hasChildren(id: string,): boolean {
       return this.childrenOf(id,).length > 0;
     },
 
+    /**
+     * @param {string} locationId
+     * @returns {ExplorerLocationState | undefined}
+     */
     locationStateFor(locationId: string,): ExplorerLocationState | undefined {
       return this.states.find((s,) => s.location_id === locationId);
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async load() {
       this.loading = true;
       this.error = false;
@@ -173,6 +199,10 @@ const safeParseList = (raw: string,): string[] => {
       this.loading = false;
     },
 
+    /**
+     * @param {string} locId
+     * @returns {Promise<void>}
+     */
     async selectLoc(locId: string,) {
       this.selectedLocId = locId;
       // Cache hit avoids round-trip on click-after-hover.
@@ -195,6 +225,10 @@ const safeParseList = (raw: string,): string[] => {
       }
     },
 
+    /**
+     * @param {ExplorerLocation} loc
+     * @returns {string}
+     */
     connectionNames(loc: ExplorerLocation,): string {
       const ids = safeParseList(loc.connections,);
       const byId: Record<string, string> = {};
@@ -202,6 +236,10 @@ const safeParseList = (raw: string,): string[] => {
       return Array.from(ids, (id,) => byId[id] ?? id,).join(", ",);
     },
 
+    /**
+     * @param {ExplorerLocation} loc
+     * @returns {string[]}
+     */
     npcList(loc: ExplorerLocation,): string[] {
       const state = this.locationStateFor(loc.id,);
       return state ? safeParseList(state.npcs_present,) : [];

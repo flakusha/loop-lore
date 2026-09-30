@@ -56,6 +56,7 @@ void _entryIsTable;
  * Every action is audit-logged BEFORE it executes so the trail survives.
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { admin: { audit: { ...; }; }; }; } & { ...; } & { ...; }, { ...; }, { ...; }>}
  */
 export function dangerZoneRoutes(opts: AdminRouteOpts, prefix = "/api",) {
   const db = opts.database;

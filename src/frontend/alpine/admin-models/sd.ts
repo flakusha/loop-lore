@@ -44,6 +44,9 @@ export const sdState: Partial<ModelsState> & ThisType<ModelsState> = {
     enabled: false,
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async loadSdStatus() {
     try {
       const res = await apiFetch("/api/v1/admin/sd-status", { headers: { Accept: "application/json", }, },);
@@ -58,6 +61,9 @@ export const sdState: Partial<ModelsState> & ThisType<ModelsState> = {
     }
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async loadSdConfig() {
     try {
       const res = await apiFetch("/api/v1/admin/system-config", { headers: { Accept: "application/json", }, },);
@@ -72,6 +78,9 @@ export const sdState: Partial<ModelsState> & ThisType<ModelsState> = {
     }
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async saveSdConfig() {
     try {
       const entries = [

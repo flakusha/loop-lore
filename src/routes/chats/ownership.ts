@@ -26,6 +26,7 @@ import type { HandlerOpts, } from "./types";
  *   404 — chat not found / new-owner actor not found
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { chats: { ":id": { "transfer-ownership": { ...; }; }; }; }; }, { ...; }, { ...; }>}
  */
 export function ownershipRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, config: _config, } = opts;

@@ -40,6 +40,7 @@ const CreateBody = t.Object(
  * @param opts
  * @param opts.database
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { admin: { "comfyui-workflows": { ...; }; }; }; }, { ...; }, { ...; }>}
  */
 export function createRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
   const { database, } = opts;

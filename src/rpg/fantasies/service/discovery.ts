@@ -19,6 +19,7 @@ import type { DiscoveryResult, } from "./types";
  * @param actorId
  * @param context
  * @param discoveryChance
+ * @returns {Promise<DiscoveryResult>}
  */
 export async function attemptDiscovery(
   db: Kysely<DB>,

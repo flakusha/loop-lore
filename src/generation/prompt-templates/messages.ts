@@ -67,6 +67,7 @@ function systemPromptForFamily(
  * Build a role-switch system message for image prompt generation
  * @param profile
  * @param detail
+ * @returns {string}
  */
 export function buildImageSystemPrompt(profile: ImageModelProfile, detail: DetailLevel,): string {
   const format = profile.promptFormat;
@@ -101,6 +102,7 @@ export interface ImagePromptMessage {
  * @param detail
  * @param ctx
  * @param opts
+ * @returns {ImagePromptMessage[]}
  */
 export function buildImagePromptMessages(
   mode: SdGenMode,
@@ -125,6 +127,7 @@ export function buildImagePromptMessages(
  * @param detail
  * @param ctx
  * @param opts
+ * @returns {{ messages: ImagePromptMessage[]; systemPrompt: string; userMessage: string; profile: ImageModelProfile; resolvedProfileId: string; estimatedTotalTokens: number; }}
  */
 export function buildImagePrompt(
   mode: SdGenMode,

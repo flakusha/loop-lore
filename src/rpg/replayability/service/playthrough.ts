@@ -16,6 +16,7 @@ function getLog() {
 /**
  * Convert database row to Playthrough interface
  * @param row
+ * @returns {Playthrough}
  */
 export function rowToPlaythrough(row: any,): Playthrough {
   return {
@@ -44,6 +45,7 @@ export function rowToPlaythrough(row: any,): Playthrough {
  * @param db
  * @param playerId
  * @param worldId
+ * @returns {Promise<number>}
  */
 export async function getPlaythroughCount(
   db: Kysely<DB>,
@@ -64,6 +66,7 @@ export async function getPlaythroughCount(
  * Start a new playthrough
  * @param db
  * @param input
+ * @returns {Promise<Playthrough>}
  */
 export async function startPlaythrough(
   db: Kysely<DB>,
@@ -110,6 +113,7 @@ export async function startPlaythrough(
  * Get playthrough by ID
  * @param db
  * @param playthroughId
+ * @returns {Promise<Playthrough | null>}
  */
 export async function getPlaythrough(
   db: Kysely<DB>,
@@ -129,6 +133,7 @@ export async function getPlaythrough(
  * @param db
  * @param playerId
  * @param worldId
+ * @returns {Promise<Playthrough[]>}
  */
 export async function getPlayerPlaythroughs(
   db: Kysely<DB>,
@@ -152,6 +157,7 @@ export async function getPlayerPlaythroughs(
  * Record a choice made during playthrough
  * @param db
  * @param playthroughId
+ * @returns {Promise<void>}
  */
 export async function recordChoice(db: Kysely<DB>, playthroughId: string,): Promise<void> {
   await (db as any)
@@ -169,6 +175,8 @@ export async function recordChoice(db: Kysely<DB>, playthroughId: string,): Prom
  * @param db
  * @param playthroughId
  * @param secretId
+ * @throws {Error}
+ * @returns {Promise<void>}
  */
 export async function recordSecretFound(
   db: Kysely<DB>,

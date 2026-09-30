@@ -16,6 +16,7 @@ import type {
  * Convert a config SD profile override into a full ImageModelProfile.
  * Fills in missing template fields with empty strings.
  * @param override
+ * @returns {ImageModelProfile}
  */
 export function configProfileToImageModelProfile(
   override: SdProfileOverride,
@@ -51,6 +52,7 @@ export function configProfileToImageModelProfile(
  * Config profiles are merged with built-in profiles; config wins on conflict.
  * @param sdConfig
  * @param base
+ * @returns {ImageModelProfileRegistry}
  */
 export function createConfigRegistry(
   sdConfig: SdTemplateConfig,

@@ -27,6 +27,7 @@ export const ChatBackgroundCreateBody = t.Object({
  * @param chatId
  * @param userId
  * @param userRole
+ * @returns {Promise<boolean>}
  */
 export async function chatAccess(
   database: Kysely<DB>,

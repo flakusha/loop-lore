@@ -6,12 +6,15 @@ import { SCENE_TEMPLATES, } from "./scene-templates";
 
 /**
  * @param id
+ * @returns {VnTemplate | undefined}
  */
 export function getSceneTemplate(id: string,): VnTemplate | undefined {
   return SCENE_TEMPLATES.find((t,) => t.id === id);
 }
 
-/** */
+/**
+ * @returns {VnTemplate[]}
+ */
 export function listSceneTemplates(): VnTemplate[] {
   return [...SCENE_TEMPLATES,];
 }

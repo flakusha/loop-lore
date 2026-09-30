@@ -38,7 +38,11 @@ export const policies: Record<string, RatePolicy> = {
   [chatPolicy.name]: chatPolicy,
 };
 
-/** Resolve a policy by name, falling back to default. */
+/**
+ * Resolve a policy by name, falling back to default.
+ * @param {string | undefined} name
+ * @returns {RatePolicy}
+ */
 export function resolvePolicy(name: string | undefined,): RatePolicy {
   if (name && policies[name]) { return policies[name]!; }
   return defaultPolicy;
@@ -60,7 +64,11 @@ export const routePolicies: Array<[prefix: string, policy: RatePolicy,]> = [
   ["/api/v1/messages", chatPolicy,],
 ];
 
-/** Match a route pathname to its policy. */
+/**
+ * Match a route pathname to its policy.
+ * @param {string} pathname
+ * @returns {RatePolicy}
+ */
 export function policyForRoute(pathname: string,): RatePolicy {
   for (const [prefix, policy,] of routePolicies) {
     if (pathname.startsWith(prefix,)) { return policy; }

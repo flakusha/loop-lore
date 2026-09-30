@@ -68,6 +68,10 @@ export interface FractalState {
   detachTransport(locId: string, routeId: string,): Promise<void>;
 }
 
+/**
+ * @param {string} worldId
+ * @returns {FractalState}
+ */
 export function buildFractalState(worldId: string,): FractalState {
   return {
     worldId,
@@ -98,11 +102,17 @@ export function buildFractalState(worldId: string,): FractalState {
       return out;
     },
 
+    /**
+     * @returns {void}
+     */
     init() {
       this.loadTree();
       this.loadRoutes();
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async loadTree() {
       this.loadingTree = true;
       this.error = false;
@@ -125,6 +135,9 @@ export function buildFractalState(worldId: string,): FractalState {
       }
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async loadRoutes() {
       this.loadingRoutes = true;
       try {
@@ -145,6 +158,10 @@ export function buildFractalState(worldId: string,): FractalState {
       }
     },
 
+    /**
+     * @param {string} routeId
+     * @returns {Promise<void>}
+     */
     async selectRoute(routeId: string,) {
       this.selectedRouteId = routeId;
       this.routeDetail = null;
@@ -160,6 +177,9 @@ export function buildFractalState(worldId: string,): FractalState {
       }
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async createRoute() {
       if (!this.newRoute.name.trim()) { return; }
       this.creatingRoute = true;
@@ -183,6 +203,9 @@ export function buildFractalState(worldId: string,): FractalState {
       }
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async attachTransport() {
       if (!this.attachLocationId || !this.attachRouteId) { return; }
       this.attaching = true;
@@ -199,6 +222,11 @@ export function buildFractalState(worldId: string,): FractalState {
       }
     },
 
+    /**
+     * @param {string} locId
+     * @param {string} routeId
+     * @returns {Promise<void>}
+     */
     async detachTransport(locId: string, routeId: string,) {
       const res = await apiFetch(
         `/api/v1/worlds/${this.worldId}/travel-routes/${routeId}/attach/${locId}`,

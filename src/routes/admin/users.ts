@@ -31,6 +31,7 @@ import type { AdminRouteOpts, } from "./types";
 /**
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { admin: { users: { ...; }; }; }; } & { ...; } & { ...; } & { ...; }, { ...; }, { ...; }>}
  */
 export function usersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
   const db = opts.database;

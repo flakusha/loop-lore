@@ -13,6 +13,14 @@ import { autoRenameChat, type ChatRecord, } from "./transitions";
  * rename, advisory AUX title for untitled non-direct chats (fire-and-forget,
  * never throws), scene-transition detection. Extracted from create.ts, which
  * sits at the size-gate limit.
+ * @param {Kysely<DB>} database
+ * @param {Config} config
+ * @param {string} chatId
+ * @param {string} actorId
+ * @param {string} messageId
+ * @param {string} effectiveContent
+ * @param {ChatRecord | undefined} chatRecord
+ * @returns {Promise<void>}
  */
 export async function runPostInsertChatEffects(
   database: Kysely<DB>,

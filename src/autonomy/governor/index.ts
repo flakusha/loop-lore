@@ -82,6 +82,9 @@ export class AutonomyGovernor {
   }
 
   /** Test helper: drop the in-memory cache (no-op on production deploy). */
+  /**
+   * @returns {void}
+   */
   resetCache(): void {
     this.#cache.clear();
   }
@@ -98,6 +101,13 @@ export class AutonomyGovernor {
    * @param limitName
    * @param opts
    * @returns the window in force now; `remaining` is capacity, not a decision
+   */
+  /**
+   * @param {Kysely<DB>} db
+   * @param {AutonomyScope} scope
+   * @param {GovernorLimitName} limitName
+   * @param {TryConsumeOptions} opts
+   * @returns {Promise<GovernedWindow>}
    */
   async peek(
     db: Kysely<DB>,
@@ -138,6 +148,13 @@ export class AutonomyGovernor {
    *      start, count = nextCount. Update cache.
    *
    * @returns Decision + remaining + resetAt. Caller MUST check `ok`.
+   */
+  /**
+   * @param {Kysely<DB>} db
+   * @param {AutonomyScope} scope
+   * @param {GovernorLimitName} limitName
+   * @param {TryConsumeOptions} opts
+   * @returns {Promise<GovernorResult>}
    */
   async tryConsume(
     db: Kysely<DB>,

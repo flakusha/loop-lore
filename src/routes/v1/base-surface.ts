@@ -24,6 +24,10 @@ import { settingsRoutes, } from "../settings";
 import { telemetryRoutes, } from "../telemetry";
 import { usersRoutes, } from "../users";
 
+/**
+ * @param {RegisterPluginsOpts} opts
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: { readonly apiVersion: "1"; }; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; } & { ...; }, { ...; } & ... 16 more ... & { ...; }, { ...; }, { ...; } & { ...; }>}
+ */
 export function baseSurface(opts: RegisterPluginsOpts,) {
   const { database, config, } = opts;
   const handleOpts = { database, config, };

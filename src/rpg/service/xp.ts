@@ -17,6 +17,7 @@ export interface LogXpParams {
 /**
  * @param deps
  * @param params
+ * @returns {Promise<string>}
  */
 export async function logXp(
   deps: RpgServiceDeps,
@@ -46,6 +47,7 @@ export async function logXp(
  * @param deps
  * @param actorId
  * @param limit
+ * @returns {Promise<{ id: string; amount: number; source: string; description: string | null; createdAt: string; }[]>}
  */
 export async function getXpHistory(
   deps: RpgServiceDeps,

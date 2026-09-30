@@ -192,6 +192,9 @@ function crc32(buf: Buffer,): number {
  * @param pngBase - base PNG image buffer (use `MINIMAL_PNG` if no avatar exists)
  * @param characterData - the `data` object from the character card (not wrapped in spec envelope)
  * @returns new PNG buffer with character data embedded
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
  */
 export function insertCharacterDataIntoPng(
   pngBase: Buffer,

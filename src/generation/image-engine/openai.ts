@@ -10,6 +10,7 @@ import type { ImageGenOptions, ImageGenOutcome, } from "./types";
  * Generate images via the OpenAI-compatible images endpoint.
  * @param sdConfig
  * @param opts
+ * @returns {Promise<ImageGenOutcome>}
  */
 export async function generateOpenAI(
   sdConfig: ImageProviderConfig,

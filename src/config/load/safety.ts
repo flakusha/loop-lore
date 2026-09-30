@@ -12,6 +12,7 @@ import { isNetworkFilesystem, } from "./fs";
  * Rejects SQLite for multi-instance deployments and warns on network filesystems.
  * @param config
  * @throws {Error} When SQLite is used in an unsafe multi-instance configuration
+ * @returns {void}
  */
 export function validateDatabaseSafety(config: Config,): void {
   const { db, } = config;
@@ -71,6 +72,7 @@ export const MIN_JWT_SECRET_LENGTH = 32;
  * check entirely — solo users are auto-authenticated and never see JWTs.
  * @param config
  * @throws {Error} When auth is required but the JWT secret is missing or weak
+ * @returns {void}
  */
 export function validateAuthSafety(config: Config,): void {
   const { auth, } = config;

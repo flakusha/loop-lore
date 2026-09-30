@@ -63,6 +63,7 @@ export function readPackageJsonOrNull(packageJsonPath: string,): PackageJson | n
  * @param packageJsonPath - path to `package.json`
  * @param version - version string to apply
  * @throws {Error} when the file is missing, unreadable, malformed, or unserializable.
+ * @returns {void}
  */
 export function setPackageJsonVersion(packageJsonPath: string, version: string,): void {
   const result = readPackageJson(packageJsonPath,);

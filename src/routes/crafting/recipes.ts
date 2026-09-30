@@ -58,6 +58,7 @@ async function resolveWorldOwner(
  * @param root0
  * @param root0.database
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, {}, { derive: {}; resolve: {}; schema: {}; standaloneSchema: {}; response: {}; }, { ...; }>}
  */
 export function craftingRecipeRoutes({ database, }: { database: Db }, prefix = "/api",): Elysia {
   const svc = () => new RecipesService(database,);

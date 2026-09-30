@@ -10,6 +10,10 @@ const getMarked = () => globalThis.__marked;
 const getDOMPurify = () => globalThis.__DOMPurify;
 
 export const chatUtilsRender: ChatUtilsRender = {
+  /**
+   * @param {string} content
+   * @returns {string}
+   */
   renderMarkdown(content: string,): string {
     if (!content) { return ""; }
     const marked = getMarked();
@@ -63,6 +67,10 @@ export const chatUtilsRender: ChatUtilsRender = {
     },);
   },
 
+  /**
+   * @param {string} str
+   * @returns {string}
+   */
   escapeHtml(str: string,) {
     const div = document.createElement("div",);
     div.textContent = str;

@@ -25,7 +25,10 @@ function normalizeRoute(pathname: string,): string {
     .replace(/\/\d+(?=\/|$)/g, "/:id",);
 }
 
-/** */
+/**
+ * @param {{ enabled?: () => boolean }} opts
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, {}, { derive: { readonly __governanceStart: number; }; resolve: {}; schema: {}; standaloneSchema: {}; response: { ...; }; }, { ...; }>}
+ */
 export function governanceGuard(opts: { enabled?: () => boolean } = {},) {
   const enabled = opts.enabled ?? (() => true);
   return new Elysia({ name: "v1-governance-guard", },)
@@ -76,7 +79,10 @@ export function governanceGuard(opts: { enabled?: () => boolean } = {},) {
     .as("scoped",);
 }
 
-/** */
+/**
+ * @param {unknown} prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { "rate-limit": { status: { ...; }; }; }; } & { ...; }, { ...; }, { ...; }>}
+ */
 export function governanceEndpoints(prefix = "/api/v1",) {
   return (
     new Elysia({ name: "v1-governance", },)

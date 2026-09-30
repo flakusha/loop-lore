@@ -32,6 +32,7 @@ export interface ProcessStreamingChunkOpts {
  * @param root0.attemptId
  * @param root0.chunk
  * @param root0.db
+ * @returns {Promise<ChunkAction>}
  */
 export async function processStreamingChunk({
   attemptId,

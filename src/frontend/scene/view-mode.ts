@@ -129,10 +129,17 @@ function attachSceneWatcher(state: ViewModeState,): void {
   sceneWatcher.observe(target, { attributes: true, attributeFilter: [SCENE_ID_ATTR,], },);
 }
 
+/**
+ * @returns {ViewModeState}
+ */
 export function viewMode(): ViewModeState {
   const state: ViewModeState = {
     mode: DEFAULT_MODE,
     available: [...VALID_MODES,],
+    /**
+     * @param {unknown} mode
+     * @returns {void}
+     */
     set(mode,) {
       if (!isValidMode(mode,)) { return; }
       this.mode = mode;
@@ -140,15 +147,24 @@ export function viewMode(): ViewModeState {
       syncSceneContainer(mode,);
       this.syncUrl();
     },
+    /**
+     * @returns {void}
+     */
     reset() {
       this.mode = DEFAULT_MODE;
       writeSession(DEFAULT_MODE,);
       syncSceneContainer(DEFAULT_MODE,);
       this.syncUrl();
     },
+    /**
+     * @returns {void}
+     */
     syncUrl() {
       writeUrl(this.mode,);
     },
+    /**
+     * @returns {void}
+     */
     restore() {
       // URL wins over sessionStorage wins over DEFAULT — the URL is
       // the most explicit user signal (e.g. a shared deep link).

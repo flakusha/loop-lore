@@ -35,6 +35,11 @@ export type InviteResult<T,> =
   | { ok: true; value: T }
   | { ok: false; error: InviteError };
 
+/**
+ * @param {CreateInviteParams<Input>} params
+ * @throws {Error}
+ * @returns {Promise<InviteResult<Record<string, unknown>>>}
+ */
 export async function createInviteRow<Input extends InviteCreateCommon,>(
   params: CreateInviteParams<Input>,
 ): Promise<InviteResult<Record<string, unknown>>> {

@@ -80,6 +80,10 @@ export class CraftingOrderService {
    * Open a new crafting commission in the `open` state. Returns the new order id.
    * @param input
    */
+  /**
+   * @param {PlaceOrderInput} input
+   * @returns {Promise<string>}
+   */
   async placeOrder(input: PlaceOrderInput,): Promise<string> {
     const now = new Date().toISOString();
     const id = uid();
@@ -107,6 +111,11 @@ export class CraftingOrderService {
    * @param worldId
    * @param actorId
    */
+  /**
+   * @param {string} worldId
+   * @param {string} actorId
+   * @returns {Promise<CraftingOrder[]>}
+   */
   async listOrders(worldId: string, actorId?: string,): Promise<CraftingOrder[]> {
     let query = this.db.selectFrom("crafting_orders",)
       .selectAll()
@@ -128,6 +137,11 @@ export class CraftingOrderService {
    * @param orderId
    * @param crafterActorId
    */
+  /**
+   * @param {string} orderId
+   * @param {string} crafterActorId
+   * @returns {Promise<boolean>}
+   */
   async acceptOrder(orderId: string, crafterActorId: string,): Promise<boolean> {
     const now = new Date().toISOString();
     const res = await this.db.updateTable("crafting_orders",)
@@ -142,6 +156,10 @@ export class CraftingOrderService {
    * Fulfil an accepted order: run the recipe as the requester, transfer the
    * offered payment from requester to crafter, then mark the order fulfilled.
    * @param orderId
+   */
+  /**
+   * @param {string} orderId
+   * @returns {Promise<FulfillResult>}
    */
   async fulfillOrder(orderId: string,): Promise<FulfillResult> {
     const order = await this.db.selectFrom("crafting_orders",)
@@ -188,6 +206,11 @@ export class CraftingOrderService {
    * @param orderId
    * @param actorId
    */
+  /**
+   * @param {string} orderId
+   * @param {string} actorId
+   * @returns {Promise<boolean>}
+   */
   async cancelOrder(orderId: string, actorId: string,): Promise<boolean> {
     const order = await this.db.selectFrom("crafting_orders",)
       .selectAll()
@@ -208,6 +231,10 @@ export class CraftingOrderService {
   /**
    * Map a `crafting_orders` row to the service-level {@link CraftingOrder}.
    * @param r
+   */
+  /**
+   * @param {Selectable<CraftingOrders>} r
+   * @returns {CraftingOrder}
    */
   private toCraftingOrder(r: Selectable<CraftingOrders>,): CraftingOrder {
     return {

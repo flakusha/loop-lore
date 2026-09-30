@@ -6,6 +6,7 @@ import { loadMemoriesForActor, } from "./memory";
 import { isGroup, type NewChatCtx, } from "./state";
 /**
  * @param ctx
+ * @returns {void}
  */
 export function renderSelected(ctx: NewChatCtx,): void {
   if (!ctx.selectedEl) { return; }
@@ -35,6 +36,7 @@ export function renderSelected(ctx: NewChatCtx,): void {
 /**
  * @param ctx
  * @param filtered
+ * @returns {void}
  */
 export function renderResults(ctx: NewChatCtx, filtered: any[],): void {
   if (!ctx.resultsEl) { return; }
@@ -89,6 +91,7 @@ export function renderResults(ctx: NewChatCtx, filtered: any[],): void {
 // Show memory carry when character is selected
 /**
  * @param ctx
+ * @returns {void}
  */
 export function updateMemoryCarryVisibility(ctx: NewChatCtx,): void {
   if (!ctx.memoryCarryGroup) {
@@ -105,6 +108,7 @@ export function updateMemoryCarryVisibility(ctx: NewChatCtx,): void {
 /**
  * @param ctx
  * @param id
+ * @returns {void}
  */
 export function removeParticipant(ctx: NewChatCtx, id: string,): void {
   const next: any[] = [];
@@ -124,6 +128,7 @@ export function removeParticipant(ctx: NewChatCtx, id: string,): void {
 /**
  * @param ctx
  * @param actor
+ * @returns {void}
  */
 export function selectActor(ctx: NewChatCtx, actor: any,): void {
   if (isGroup(ctx,)) {
@@ -144,6 +149,7 @@ export function selectActor(ctx: NewChatCtx, actor: any,): void {
 /**
  * @param ctx
  * @param id
+ * @returns {void}
  */
 export function selectActorFromList(ctx: NewChatCtx, id: string,): void {
   const actor = ctx.actors.find((a: any,) => a.id === id);
@@ -152,6 +158,7 @@ export function selectActorFromList(ctx: NewChatCtx, id: string,): void {
 
 /**
  * @param ctx
+ * @returns {void}
  */
 export function bindSelectionHandlers(ctx: NewChatCtx,): void {
   globalThis.removeParticipant = function(id: string,) {

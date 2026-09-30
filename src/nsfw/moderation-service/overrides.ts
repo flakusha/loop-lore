@@ -23,6 +23,7 @@ export interface GetEffectiveNsfwArgs {
  * @param root0.thisL
  * @param root0.chatId
  * @param root0.userId
+ * @returns {Promise<{ enabled: boolean; source: string; }>}
  */
 export async function getEffectiveNsfw(
   { thisL, chatId, userId, }: GetEffectiveNsfwArgs,
@@ -76,6 +77,8 @@ export interface SetChatNsfwOverrideArgs {
  * @param root0.chatId
  * @param root0.override
  * @param root0.performedBy
+ * @throws {Error}
+ * @returns {Promise<void>}
  */
 export async function setChatNsfwOverride(
   { thisL, chatId, override, performedBy, }: SetChatNsfwOverrideArgs,
@@ -118,6 +121,8 @@ export interface SetWorldNsfwOverrideArgs {
  * @param root0.worldId
  * @param root0.override
  * @param root0.performedBy
+ * @throws {Error}
+ * @returns {Promise<void>}
  */
 export async function setWorldNsfwOverride(
   { thisL, worldId, override, performedBy, }: SetWorldNsfwOverrideArgs,

@@ -30,6 +30,7 @@ import type {
  * @param row.status
  * @param row.created_at
  * @param row.updated_at
+ * @returns {NsfwEncounter}
  */
 export function rowToEncounter(row: {
   id: string;

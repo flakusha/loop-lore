@@ -22,6 +22,9 @@ export const chatSectionsNav: Partial<ChatState> & ThisType<ChatState> = {
   _narrativeText: "",
   _transferFx: false,
 
+  /**
+   * @returns {void}
+   */
   toggleStoryMap() {
     this._storyMapOpen = !this._storyMapOpen;
     if (this._storyMapOpen && this.activeChat) {
@@ -33,6 +36,9 @@ export const chatSectionsNav: Partial<ChatState> & ThisType<ChatState> = {
    * Map of section id → number of messages assigned to it (from the loaded
    * message stream). Unassigned messages are not counted.
    * @returns Map keyed by section id.
+   */
+  /**
+   * @returns {Map<string, number>}
    */
   sectionMessageCounts(): Map<string, number> {
     const counts = new Map<string, number>();
@@ -53,6 +59,10 @@ export const chatSectionsNav: Partial<ChatState> & ThisType<ChatState> = {
    * group-chat story map to show per-character location presence.
    * @param sectionId Section to inspect.
    * @returns Unique actor names.
+   */
+  /**
+   * @param {string} sectionId
+   * @returns {string[]}
    */
   sectionActors(sectionId: string,): string[] {
     const names = new Set<string>();
@@ -77,6 +87,9 @@ export const chatSectionsNav: Partial<ChatState> & ThisType<ChatState> = {
    * (the last section divider above the scroll position) and store it in
    * `_currentSectionId`. Throttled to animation frames; a no-op when the
    * stream is not mounted.
+   */
+  /**
+   * @returns {void}
    */
   trackCurrentSection() {
     const el = document.querySelector("#message-list",);
@@ -107,6 +120,10 @@ export const chatSectionsNav: Partial<ChatState> & ThisType<ChatState> = {
    * system-role narration message bound to the section.
    * @param sectionId Destination section.
    */
+  /**
+   * @param {string} sectionId
+   * @returns {Promise<void>}
+   */
   async transferToSection(sectionId: string,) {
     if (!this.activeChat) { return; }
     const section = this._sections.find((s,) => s.id === sectionId);
@@ -131,6 +148,10 @@ export const chatSectionsNav: Partial<ChatState> & ThisType<ChatState> = {
    * Pick the transfer transition (walk / teleport / narrative).
    * @param type
    */
+  /**
+   * @param {"walk" | "teleport" | "narrative"} type
+   * @returns {void}
+   */
   setTransitionType(type: "walk" | "teleport" | "narrative",) {
     this._transitionType = type;
   },
@@ -141,6 +162,11 @@ export const chatSectionsNav: Partial<ChatState> & ThisType<ChatState> = {
    * section list afterwards.
    * @param sectionId Destination section.
    * @param fromSectionId Optional source section to narrow the move.
+   */
+  /**
+   * @param {string} sectionId
+   * @param {string | null} fromSectionId
+   * @returns {Promise<void>}
    */
   async bulkAssignToSection(sectionId: string, fromSectionId?: string | null,) {
     if (!this.activeChat) { return; }
@@ -167,6 +193,11 @@ export const chatSectionsNav: Partial<ChatState> & ThisType<ChatState> = {
    * flourish, e.g. "the party rides north"). Reloads the stream afterwards.
    * @param sectionId Section to bind the narration to.
    * @param text Narrative content.
+   */
+  /**
+   * @param {string} sectionId
+   * @param {string} text
+   * @returns {Promise<void>}
    */
   async insertNarrative(sectionId: string, text: string,) {
     if (!this.activeChat || !text.trim()) { return; }

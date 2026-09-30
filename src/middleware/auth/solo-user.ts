@@ -19,6 +19,7 @@ const soloUserCache = new Map<Kysely<DB>, { id: string } | null>();
  * Exported for use in routes/auth.ts.
  * @param database
  * @param demoUsername
+ * @returns {Promise<{ id: string; } | null>}
  */
 export async function getOrCreateSoloUserForAuth(
   database: Kysely<DB>,
@@ -108,6 +109,7 @@ export async function getOrCreateSoloUserForAuth(
 
 /**
  * Clear the cached solo user reference (for testing).
+ * @returns {void}
  */
 export function resetSoloUserCache(): void {
   soloUserCache.clear();

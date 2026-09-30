@@ -75,6 +75,11 @@ export class ResourceManager {
    * @returns the schedule handle
    * @throws when a live request already uses the id
    */
+  /**
+   * @param {ScheduledRequest<T>} req
+   * @throws {Error}
+   * @returns {ScheduleHandle<T>}
+   */
   submit<T,>(req: ScheduledRequest<T>,): ScheduleHandle<T> {
     if (this.liveIds.has(req.id,)) {
       throw new Error(`ResourceManager: duplicate id ${req.id}`,);
@@ -96,6 +101,11 @@ export class ResourceManager {
    * @param reason - cancellation reason
    * @returns `true` when the request was found and not already cancelled
    */
+  /**
+   * @param {string} id
+   * @param {string} reason
+   * @returns {boolean}
+   */
   cancel(id: string, reason?: string,): boolean {
     for (const queue of this.queues.values()) {
       for (const entry of queue) {
@@ -114,6 +124,10 @@ export class ResourceManager {
    * @param provider - provider key
    * @returns void
    */
+  /**
+   * @param {string} provider
+   * @returns {void}
+   */
   forgetProvider(provider: string,): void {
     const queue = this.queues.get(provider,);
     if (queue) {
@@ -128,6 +142,10 @@ export class ResourceManager {
     this.running.drop(provider,);
   }
 
+  /**
+   * @param {string} provider
+   * @returns {PriorityQueue<QueueEntry>}
+   */
   private queueFor(provider: string,): PriorityQueue<QueueEntry> {
     let q = this.queues.get(provider,);
     if (!q) {
@@ -137,6 +155,10 @@ export class ResourceManager {
     return q;
   }
 
+  /**
+   * @param {string} provider
+   * @returns {ConcurrencyLimiter}
+   */
   private limiterFor(provider: string,): ConcurrencyLimiter {
     let lim = this.limiters.get(provider,);
     if (!lim) {
@@ -151,6 +173,10 @@ export class ResourceManager {
    * Start a drain if one isn't already running. Idempotent.
    * @param provider - provider key
    * @returns void
+   */
+  /**
+   * @param {string} provider
+   * @returns {void}
    */
   private kickDrain(provider: string,): void {
     if (this.drains.has(provider,)) { return; }
@@ -171,6 +197,10 @@ export class ResourceManager {
    * @returns void
    */
 
+  /**
+   * @param {string} provider
+   * @returns {Promise<void>}
+   */
   private async drainQueue(provider: string,): Promise<void> {
     const queue = this.queues.get(provider,);
     if (!queue) { return; }
@@ -203,6 +233,11 @@ export class ResourceManager {
     }
   }
 
+  /**
+   * @param {InternalHandle<T>} handle
+   * @param {() => void} release
+   * @returns {Promise<void>}
+   */
   private async runOne<T,>(handle: InternalHandle<T>, release: () => void,): Promise<void> {
     handle.transition("running",);
     // Track whether the handle settled itself (resolve/reject/cancel) or

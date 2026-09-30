@@ -25,6 +25,7 @@ import type { RowShape, RunnerState, SyntheticTestCaseResult, } from "./types";
  * @param mutationParams
  * @param mutationParams.temperatureVariance
  * @param mutationParams.promptVariations
+ * @returns {Promise<SyntheticTestCaseResult>}
  */
 export async function executeCase(
   state: RunnerState,

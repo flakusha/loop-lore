@@ -53,6 +53,7 @@ export async function reindexMessageTokens(
  * Remove all stored tokens for one message (delete path).
  * @param db - typed Kysely instance
  * @param messageId - owning message row
+ * @returns {Promise<void>}
  */
 export async function deleteMessageTokens(db: Kysely<DB>, messageId: string,): Promise<void> {
   await db.deleteFrom("message_search_tokens",).where("message_id", "=", messageId,).execute();

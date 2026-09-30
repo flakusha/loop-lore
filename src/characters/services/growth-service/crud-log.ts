@@ -87,6 +87,7 @@ export async function getGrowthMode(
  * @param db
  * @param input
  * @returns void
+ * @throws {Error}
  */
 export async function insertGrowthLog(
   db: Kysely<DB>,

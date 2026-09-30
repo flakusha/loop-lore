@@ -46,6 +46,7 @@ function syncRosterFromScenes(): void {
  * @param messages
  * @param gmConfig
  * @param chatId
+ * @returns {void}
  */
 export function initVnRenderer(
   containerEl: HTMLElement,
@@ -78,6 +79,7 @@ export function initVnRenderer(
 
 /**
  * Destroy the VN renderer, cleaning up DOM.
+ * @returns {void}
  */
 export function destroyVnRenderer(): void {
   if (state.locationChangeHandler) {
@@ -99,6 +101,7 @@ export function destroyVnRenderer(): void {
 
 /**
  * Navigate to the next scene.
+ * @returns {void}
  */
 export function nextScene(): void {
   if (state.currentIndex >= state.scenes.length - 1) {
@@ -112,6 +115,7 @@ export function nextScene(): void {
 
 /**
  * Navigate to the previous scene.
+ * @returns {void}
  */
 export function prevScene(): void {
   if (state.currentIndex <= 0) {
@@ -126,6 +130,7 @@ export function prevScene(): void {
 /**
  * Jump to a specific scene index.
  * @param index
+ * @returns {void}
  */
 export function jumpToScene(index: number,): void {
   if (!(index >= 0 && index < state.scenes.length)) {
@@ -139,6 +144,7 @@ export function jumpToScene(index: number,): void {
 
 /**
  * Get current scene index.
+ * @returns {number}
  */
 export function getCurrentSceneIndex(): number {
   return state.currentIndex;
@@ -146,6 +152,7 @@ export function getCurrentSceneIndex(): number {
 
 /**
  * Get total scene count.
+ * @returns {number}
  */
 export function getSceneCount(): number {
   return state.scenes.length;
@@ -154,6 +161,7 @@ export function getSceneCount(): number {
 /**
  * Add a new scene from an incoming message (for live streaming).
  * @param message
+ * @returns {void}
  */
 export function addScene(message: VnMessage,): void {
   const scene = msgToScene(message,);

@@ -36,6 +36,7 @@ export interface RerankOptions {
  * @param opts
  * @throws On timeout/transport failure, non-OK status, unset RERANK_MODEL, or
  *   a malformed response.
+ * @returns {Promise<RerankHit[]>}
  */
 export async function rerankViaLlamaCpp(
   query: string,
@@ -80,6 +81,7 @@ export async function rerankViaLlamaCpp(
  * @param db
  * @param ids
  * @throws If any id has no row (rerank callers fail open).
+ * @returns {Promise<string[]>}
  */
 export async function fetchMemoryTexts(db: Kysely<DB>, ids: string[],): Promise<string[]> {
   const rows = await db

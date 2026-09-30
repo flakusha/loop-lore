@@ -21,6 +21,8 @@ const LEGAL_MERGE_STRATEGIES: readonly MergeStrategy[] = [
  * Runtime-validate a raw template config before merging — malformed files
  * fail fast instead of silently casting into a half-shaped config.
  * @throws When `merge` is legal but `systemPrompts`/`chatFormats` are malformed
+ * @param {Record<string, unknown>} raw
+ * @returns {Record<string, unknown> | null}
  */
 export function validateLlmConfig(
   raw: Record<string, unknown>,
@@ -103,6 +105,14 @@ function validateChatFormats(chatFormats: unknown,): void {
  * Validate the `sd` domain raw config before merging.
  * @param raw
  * @returns void
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
  */
 export function validateSdConfig(raw: Record<string, unknown>,): void {
   if (raw.profiles !== undefined) {
@@ -145,6 +155,11 @@ export function validateSdConfig(raw: Record<string, unknown>,): void {
  * Validate the `avatar` domain raw config before merging.
  * @param raw
  * @returns void
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
  */
 export function validateAvatarConfig(raw: Record<string, unknown>,): void {
   if (raw.emotions !== undefined) {
@@ -172,6 +187,10 @@ export function validateAvatarConfig(raw: Record<string, unknown>,): void {
 /**
  * Validate the `imageEdit` domain raw config before merging.
  * @param raw
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @returns {void}
  */
 export function validateImageEditConfig(raw: Record<string, unknown>,): void {
   if (raw.workflows !== undefined) {

@@ -16,6 +16,10 @@
  * Drop headers that must NOT replay (cookies, hop-by-hop).
  * @param headers
  */
+/**
+ * @param {Record<string, string>} headers
+ * @returns {Record<string, string>}
+ */
 export function filterReplayHeaders(headers: Record<string, string>,): Record<string, string> {
   const out: Record<string, string> = {};
   for (const [name, value,] of Object.entries(headers,)) {
@@ -40,6 +44,7 @@ export function filterReplayHeaders(headers: Record<string, string>,): Record<st
  * @param routePattern
  * @param requestId
  * @param userId
+ * @returns {string}
  */
 export function makeKey(
   method: string,

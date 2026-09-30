@@ -23,12 +23,19 @@ export const chatGroup: Partial<ChatState> & ThisType<ChatState> = {
     actor_type?: string;
   }[],
 
+  /**
+   * @param {any} chat
+   * @returns {boolean}
+   */
   isChatPaused(chat: any,): boolean {
     if (!chat?.story_state) { return false; }
     const state = jsonParseOr<Record<string, unknown>>(chat.story_state, {},);
     return state.isPaused === true;
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async toggleGroupPause() {
     const chat = this.currentChat;
 
@@ -71,6 +78,10 @@ export const chatGroup: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @param {Event} event
+   * @returns {void}
+   */
   handleMentionInput(event: Event,) {
     const textarea = event.target as HTMLTextAreaElement;
     const value = textarea.value;
@@ -94,6 +105,10 @@ export const chatGroup: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @param {{ actor_id: string; name: string }} participant
+   * @returns {void}
+   */
   selectMention(participant: { actor_id: string; name: string },) {
     const textarea = this.$refs.messageInput as HTMLTextAreaElement | undefined;
     if (!textarea) { return; }
@@ -112,6 +127,9 @@ export const chatGroup: Partial<ChatState> & ThisType<ChatState> = {
     textarea.focus();
   },
 
+  /**
+   * @returns {void}
+   */
   hideMentionAutocomplete() {
     this._showMentionAutocomplete = false;
     this._mentionActiveIndex = 0;
@@ -119,18 +137,29 @@ export const chatGroup: Partial<ChatState> & ThisType<ChatState> = {
     this._mentionResults = [];
   },
 
+  /**
+   * @param {number} index
+   * @returns {void}
+   */
   acceptMentionAtIndex(index: number,) {
     const entry = this._mentionResults[index];
     if (!entry) { return; }
     this.selectMention(entry,);
   },
 
+  /**
+   * @param {1 | -1} delta
+   * @returns {void}
+   */
   moveMentionSelection(delta: 1 | -1,) {
     const count = this._mentionResults.length;
     if (count === 0) { return; }
     this._mentionActiveIndex = (this._mentionActiveIndex + delta + count) % count;
   },
 
+  /**
+   * @returns {void}
+   */
   handleComposerEnter() {
     if (this._showMentionAutocomplete && this._mentionResults.length > 0) {
       this.acceptMentionAtIndex(this._mentionActiveIndex,);
@@ -145,6 +174,10 @@ export const chatGroup: Partial<ChatState> & ThisType<ChatState> = {
     },);
   },
 
+  /**
+   * @param {KeyboardEvent} event
+   * @returns {void}
+   */
   handleComposerKeydown(event: KeyboardEvent,) {
     const target = event.target as { tagName?: string } | null;
     if (!target || target.tagName !== "TEXTAREA") { return; }

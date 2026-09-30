@@ -9,7 +9,10 @@ export const chatUtilsGroupedData: Partial<ChatState> & ThisType<ChatState> = {
   _groupedKey: "",
 };
 
-/** */
+/**
+ * @param {ChatState} this
+ * @returns {GroupedMessage[]}
+ */
 export function computeGroupedMessages(this: ChatState,): GroupedMessage[] {
   const msgs = this.messages;
   if (!msgs || msgs.length === 0) { return []; }

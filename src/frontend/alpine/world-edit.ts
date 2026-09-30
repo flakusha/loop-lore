@@ -23,12 +23,18 @@ const log = rootLog.child({ module: "world-edit", },);
     ...worldLocations,
     ...worldItems,
 
+    /**
+     * @returns {void}
+     */
     init() {
       const match = /\/worlds\/([\w-]+)\/edit/.exec(location.pathname,);
       if (match) { this.worldId = match[1] ?? null; }
       if (this.worldId) { this.loadWorld(); }
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async loadWorld() {
       this.loading = true;
       this.error = false;
@@ -55,6 +61,9 @@ const log = rootLog.child({ module: "world-edit", },);
       this.loading = false;
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async saveWorld() {
       this.saving = true;
       const tags: string[] = [];
@@ -82,6 +91,9 @@ const log = rootLog.child({ module: "world-edit", },);
       this.saving = false;
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async deleteWorld() {
       if (!confirm(t("worlds.deleteConfirm",),)) { return; }
       try {

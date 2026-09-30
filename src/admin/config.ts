@@ -77,6 +77,7 @@ export async function getConfigValue(db: Kysely<DB>, key: string,): Promise<stri
  * @param key - Config key.
  * @param value - Value to store.
  * @param description - Optional human-readable description.
+ * @returns {Promise<void>}
  */
 export async function setConfig(
   db: Kysely<DB>,
@@ -99,6 +100,7 @@ export async function setConfig(
  * Delete a config entry by key.
  * @param db - Database instance.
  * @param key - Config key.
+ * @returns {Promise<void>}
  */
 export async function deleteConfig(db: Kysely<DB>, key: string,): Promise<void> {
   await db.deleteFrom("system_config",).where("key", "=", key,).execute();
@@ -109,6 +111,7 @@ export async function deleteConfig(db: Kysely<DB>, key: string,): Promise<void> 
  * Missing config sections degrade gracefully: keys sourced from them are skipped.
  * @param db - Database instance.
  * @param config - App config to source defaults from.
+ * @returns {Promise<void>}
  */
 export async function seedDefaults(db: Kysely<DB>, config: Config,): Promise<void> {
   const defaults: { key: string; value: string; description: string }[] = [];

@@ -83,6 +83,7 @@ function pickBackend(
  * apiFamily "comfyui" is configured), then the rembg sidecar, then the
  * generic HTTP endpoint.
  * @param config - server config
+ * @returns {MattingProvider | null}
  */
 export function resolveMattingProvider(config: Config,): MattingProvider | null {
   const matting = config.generation.matting;

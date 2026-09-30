@@ -64,6 +64,7 @@ function resolveLoreTarget(kind: EntityKind,): LoreTarget | null {
  * @param worldId  - Resolved world id (required for world/loc/item; null for character)
  * @param lore     - Structured lore entries from the normalized entity
  * @throws when worldId is missing for a kind that requires it
+ * @returns {Promise<void>}
  */
 export async function insertEntityLore(
   db: Kysely<DB>,

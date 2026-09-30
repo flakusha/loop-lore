@@ -27,6 +27,7 @@ export interface AddEdgeArgs {
  * @param root0
  * @param root0.thisL
  * @param root0.edge
+ * @returns {void}
  */
 export function addEdge({ thisL, edge, }: AddEdgeArgs,): void {
   const key = edgeKey(edge.source, edge.target,);
@@ -44,6 +45,7 @@ export interface AddContractArgs {
  * @param root0
  * @param root0.thisL
  * @param root0.contract
+ * @returns {void}
  */
 export function addContract({ thisL, contract, }: AddContractArgs,): void {
   thisL.contracts.set(contract.id, contract,);
@@ -60,6 +62,7 @@ export interface RegisterStateLayerArgs {
  * @param root0
  * @param root0.thisL
  * @param root0.layer
+ * @returns {void}
  */
 export function registerStateLayer({ thisL, layer, }: RegisterStateLayerArgs,): void {
   thisL.stateLayers.push(layer,);

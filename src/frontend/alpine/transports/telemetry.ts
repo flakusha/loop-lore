@@ -54,6 +54,10 @@ export class TelemetryTransport implements Transport {
   /**
    * @param entry
    */
+  /**
+   * @param {LogEntry} entry
+   * @returns {Promise<void>}
+   */
   write(entry: LogEntry,): Promise<void> {
     const eventType = typeof entry.message === "string" ? entry.message : "log";
 
@@ -105,6 +109,9 @@ export class TelemetryTransport implements Transport {
   }
 
   /** */
+  /**
+   * @returns {Promise<void>}
+   */
   flush(): Promise<void> {
     return Promise.resolve();
   }

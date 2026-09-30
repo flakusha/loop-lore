@@ -41,10 +41,16 @@ const RE_ENCRYPT_LIMIT = Number.MAX_SAFE_INTEGER;
 const inflightRotations = new Map<string, Promise<ChatKey>>();
 let rotationEventCount = 0;
 
+/**
+ * @returns {number}
+ */
 export function getRotationEventCount(): number {
   return rotationEventCount;
 }
 
+/**
+ * @returns {void}
+ */
 export function resetRotationEventCount(): void {
   rotationEventCount = 0;
   inflightRotations.clear();
@@ -52,6 +58,8 @@ export function resetRotationEventCount(): void {
 
 /**
  * @throws When the in-flight rotation rejects — callers must fail closed.
+ * @param {string} chatId
+ * @returns {Promise<void>}
  */
 export async function awaitChatKeyLock(chatId: string,): Promise<void> {
   const inflight = inflightRotations.get(chatId,);
@@ -66,6 +74,7 @@ function log(): Logger {
  * @param database
  * @param chatId
  * @returns string
+ * @throws {Error}
  */
 export async function getChatKey(database: Kysely<DB>, chatId: string,): Promise<ChatKey> {
   const smk = getSmk();
@@ -78,6 +87,7 @@ export async function getChatKey(database: Kysely<DB>, chatId: string,): Promise
  * @param chatId
  * @param newParticipantId
  * @returns void
+ * @throws {Error}
  */
 export async function distributeKeysOnJoin(
   database: Kysely<DB>,

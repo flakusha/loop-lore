@@ -17,6 +17,7 @@ import { updateRoutes, } from "./update";
  * `elysia-app.ts` wiring is unchanged.
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { actors: { get: { body: unknown; params: {}; query: { ...; }; headers: unknown; response: { ...; }; }; }; }; } & ......}
  */
 export function charactersRoutes(opts: HandlerOpts, prefix = "/api",) {
   return new Elysia({ name: "characters", },)

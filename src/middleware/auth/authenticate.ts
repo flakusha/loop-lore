@@ -133,6 +133,7 @@ async function verifyTokenContext(
  * @param root0.request
  * @param root0.database
  * @param root0.authConfig
+ * @returns {Promise<Response | { context: RequestContext; }>}
  */
 export async function authenticate({
   request,

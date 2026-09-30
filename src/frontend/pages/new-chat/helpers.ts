@@ -4,6 +4,7 @@
 /**
  * Estimate tokens from content length (~4 chars per token).
  * @param content
+ * @returns {number}
  */
 export function estimateTokens(content: string,): number {
   return Math.ceil(content.length / 4,);

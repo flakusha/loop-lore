@@ -67,6 +67,9 @@ function removeTempMessage(ctx: ChatState, tempId: string,) {
 }
 
 export const chatSendMethods: Partial<ChatState> & ThisType<ChatState> = {
+  /**
+   * @returns {Promise<void>}
+   */
   async sendMessage() {
     log.info("sendMessage", { chatId: this.activeChat, },);
     const input = this.$refs.messageInput as HTMLTextAreaElement;

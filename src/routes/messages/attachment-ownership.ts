@@ -27,6 +27,8 @@ export class AttachmentOwnershipError extends Error {
  * @param database
  * @param attachments
  * @param ownerId
+ * @throws {Error}
+ * @returns {Promise<void>}
  */
 export async function verifyAttachmentsOwned(
   database: Kysely<DB>,

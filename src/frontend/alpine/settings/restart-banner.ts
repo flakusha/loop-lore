@@ -15,6 +15,9 @@ export function restartBanner(): Partial<SettingsState> & ThisType<SettingsState
     pendingRestartKeys: [] as string[],
     pendingRestartBannerDismissed: false,
 
+    /**
+     * @returns {Promise<void>}
+     */
     async loadPendingRestart() {
       try {
         const res = await apiFetch("/api/v1/admin/system-config", {
@@ -30,10 +33,16 @@ export function restartBanner(): Partial<SettingsState> & ThisType<SettingsState
       }
     },
 
+    /**
+     * @returns {boolean}
+     */
     hasPendingRestart(): boolean {
       return !this.pendingRestartBannerDismissed && this.pendingRestartKeys.length > 0;
     },
 
+    /**
+     * @returns {void}
+     */
     dismissRestartBanner() {
       this.pendingRestartBannerDismissed = true;
     },

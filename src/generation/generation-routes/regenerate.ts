@@ -124,6 +124,7 @@ async function generateVariant(
  * @param auth.userId
  * @param auth.userRole
  * @param config
+ * @returns {Promise<Response>}
  */
 export async function handleRegenerate(
   body: unknown,

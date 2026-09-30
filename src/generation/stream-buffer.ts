@@ -44,6 +44,11 @@ export class StreamBuffer {
    * @param type
    * @param html
    */
+  /**
+   * @param {string} type
+   * @param {string} html
+   * @returns {number}
+   */
   append(type: string, html: string,): number {
     const seq = this.sequence++;
     const event: StreamEvent = { type, html, sequence: seq, };
@@ -61,6 +66,9 @@ export class StreamBuffer {
   }
 
   /** Signal generation completed successfully */
+  /**
+   * @returns {void}
+   */
   signalDone(): void {
     this._done = true;
     for (const sub of this.onDone) { sub(); }
@@ -70,6 +78,10 @@ export class StreamBuffer {
    * Signal generation failed
    * @param error
    */
+  /**
+   * @param {string} error
+   * @returns {void}
+   */
   signalError(error: string,): void {
     this._error = error;
     for (const sub of this.onError) { sub(error,); }
@@ -78,6 +90,10 @@ export class StreamBuffer {
   /**
    * Replay events from a given sequence number (0 = all)
    * @param fromSequence
+   */
+  /**
+   * @param {unknown} fromSequence
+   * @returns {StreamEvent[]}
    */
   replay(fromSequence = 0,): StreamEvent[] {
     const out: StreamEvent[] = [];
@@ -92,6 +108,12 @@ export class StreamBuffer {
    * @param cb
    * @param onDone
    * @param onError
+   */
+  /**
+   * @param {EventSubscriber} cb
+   * @param {DoneSubscriber} onDone
+   * @param {ErrorSubscriber} onError
+   * @returns {() => void}
    */
   subscribe(cb: EventSubscriber, onDone?: DoneSubscriber, onError?: ErrorSubscriber,): () => void {
     this.onEvent.add(cb,);
@@ -151,6 +173,7 @@ function evictOldestBuffer(): void {
 /**
  * Get or create a buffer for the given chat
  * @param chatId
+ * @returns {StreamBuffer}
  */
 export function getOrCreateBuffer(chatId: string,): StreamBuffer {
   let buf = chatBuffers.get(chatId,);
@@ -166,6 +189,7 @@ export function getOrCreateBuffer(chatId: string,): StreamBuffer {
 /**
  * Get existing buffer (undefined if none)
  * @param chatId
+ * @returns {StreamBuffer | undefined}
  */
 export function getBuffer(chatId: string,): StreamBuffer | undefined {
   const buf = chatBuffers.get(chatId,);
@@ -176,6 +200,7 @@ export function getBuffer(chatId: string,): StreamBuffer | undefined {
 /**
  * Remove a buffer
  * @param chatId
+ * @returns {void}
  */
 export function removeBuffer(chatId: string,): void {
   chatBuffers.delete(chatId,);
@@ -187,6 +212,7 @@ export function removeBuffer(chatId: string,): void {
  * Schedule buffer cleanup after a TTL
  * @param chatId
  * @param ttlMs
+ * @returns {void}
  */
 export function scheduleBufferCleanup(chatId: string, ttlMs = 300_000,): void {
   setTimeout(() => {

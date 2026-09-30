@@ -53,6 +53,7 @@ function applyParams(body: Record<string, unknown>, params: GenerateRequest["par
  * @param state
  * @param req
  * @param stream
+ * @returns {Record<string, unknown>}
  */
 export function buildBody(
   state: OllamaNativeState,
@@ -81,6 +82,7 @@ export function buildBody(
 
 /**
  * @param signals
+ * @returns {AbortSignal | undefined}
  */
 export function combineAbortSignals(...signals: (AbortSignal | undefined)[]): AbortSignal | undefined {
   const defined: AbortSignal[] = [];
@@ -112,6 +114,7 @@ export function combineAbortSignals(...signals: (AbortSignal | undefined)[]): Ab
  * @param body - Optional JSON request body
  * @param signal - Caller abort signal
  * @param apiKeyOverride - Per-request key override (BYO support)
+ * @returns {Promise<Response>}
  */
 export async function fetchRaw(
   state: OllamaNativeState,
@@ -173,6 +176,11 @@ export async function fetchWithRetry(
 /**
  * Map a non-2xx response to the appropriate ProviderError subclass.
  * @param response - Failed HTTP response
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @returns {Promise<never>}
  */
 export async function handleErrorResponse(response: Response,): Promise<never> {
   let message = `Ollama request failed (${response.status})`;
@@ -201,6 +209,7 @@ export async function handleErrorResponse(response: Response,): Promise<never> {
  * Map a done_reason (or a stop-detected stream) to a shared finish value.
  * @param finishReason
  * @param defaultReason
+ * @returns {"error" | "cancelled" | "length" | "stop"}
  */
 export function mapFinishReason(
   finishReason: string | null | undefined,

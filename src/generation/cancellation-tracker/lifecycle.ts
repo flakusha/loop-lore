@@ -43,6 +43,8 @@ export class IdempotencyKeyConflictError extends Error {
  * @param root0.options
  * @param root0.db
  * @param root0.events
+ * @throws {Error}
+ * @returns {Promise<{ attemptId: string; abortSignal: AbortSignal; }>}
  */
 export async function startGenerationTracking({ options, db, events, }: StartGenerationTrackingOpts,): Promise<{
   attemptId: string;
@@ -153,6 +155,7 @@ export async function startGenerationTracking({ options, db, events, }: StartGen
  * @param root0.attemptId
  * @param root0.result
  * @param root0.db
+ * @returns {Promise<void>}
  */
 export async function completeGeneration({ attemptId, result, db, }: CompleteGenerationOpts,): Promise<void> {
   const active = activeGenerations.get(attemptId,);
@@ -234,6 +237,7 @@ export async function completeGeneration({ attemptId, result, db, }: CompleteGen
  * @param root0.attemptId
  * @param root0.error
  * @param root0.db
+ * @returns {Promise<void>}
  */
 export async function failGeneration({ attemptId, error, db, }: FailGenerationOpts,): Promise<void> {
   const active = activeGenerations.get(attemptId,);

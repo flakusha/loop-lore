@@ -29,6 +29,8 @@ import { safeJsonStringify, } from "../../utils";
  * found in quest-engine.ts createQuest.
  * @param value
  * @param fieldName
+ * @throws {Error}
+ * @returns {string}
  */
 export function serializeOrThrow(value: unknown, fieldName: string,): string {
   const r = safeJsonStringify(value,);
@@ -80,6 +82,7 @@ export async function requireQuestTransition(
  * @param progressStatus
  * @throws {Error} When the quest does not exist
  * @throws {TransitionError} When the status change is not allowed
+ * @returns {Promise<void>}
  */
 export async function transitionQuestStatus(
   db: Kysely<DB>,
@@ -107,6 +110,7 @@ export async function transitionQuestStatus(
  * Select all active quests for a world, ordered by priority descending.
  * @param db
  * @param worldId
+ * @returns {Promise<{ id: string; name: string; priority: number; created_at: string; updated_at: string; world_id: string; status: QuestStatus; config: string; progress: number; type: QuestType; ... 9 more ...; narrative_hooks: string; }[]>}
  */
 export async function selectActiveQuests(
   db: Kysely<DB>,
@@ -130,6 +134,7 @@ export async function selectActiveQuests(
  * @param newProgress
  * @param completed
  * @param sourceMessageId
+ * @returns {Promise<void>}
  */
 export async function upsertQuestProgress(
   db: Kysely<DB>,

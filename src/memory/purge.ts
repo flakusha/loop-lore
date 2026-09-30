@@ -41,6 +41,11 @@ const DEFAULT_STALE_AFTER_CHATS = 10;
  * @param opts.now
  * @returns Number of memories affected
  */
+/**
+ * @param {Kysely<DB>} db
+ * @param {{ now?: Date }} opts
+ * @returns {Promise<number>}
+ */
 export async function applyDecay(
   db: Kysely<DB>,
   opts: { now?: Date } = {},
@@ -204,6 +209,7 @@ export async function purgeStaleMemories(
  * when a memory is accessed, making recently-used memories more durable.
  * @param db - Kysely instance
  * @param memoryId - ID of the memory to touch
+ * @returns {Promise<void>}
  */
 export async function touchMemory(
   db: Kysely<DB>,

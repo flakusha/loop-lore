@@ -155,6 +155,12 @@ function extractTarget(input: string, verbMatchIndex: number,): TargetRef | unde
   return { kind: "item", displayName, };
 }
 
+/**
+ * @param {string} input
+ * @param {Stage2LLMFn} stage2
+ * @param {ParseContext} ctx
+ * @returns {Promise<Action | null>}
+ */
 export async function parseAction(
   input: string,
   stage2?: Stage2LLMFn,
@@ -193,6 +199,10 @@ export async function parseAction(
   return null;
 }
 
+/**
+ * @param {Action} action
+ * @returns {{ intent: AssistantIntent; target: string; confidence: number; }}
+ */
 export function actionToLegacyIntent(
   action: Action,
 ): { intent: AssistantIntent; target: string; confidence: number } {
@@ -224,6 +234,10 @@ export function actionToLegacyIntent(
   return { intent, target, confidence, };
 }
 
+/**
+ * @param {string} input
+ * @returns {Action | null}
+ */
 export function parseActionStage1(input: string,): Action | null {
   const trimmed = input.trim();
   if (!trimmed) { return null; }

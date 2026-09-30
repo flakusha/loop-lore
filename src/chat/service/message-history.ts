@@ -38,6 +38,7 @@ export type ResubmitMessageResult =
  * that chat (otherwise the branch silently leaks into another chat).
  * @param db
  * @param input
+ * @returns {Promise<ResubmitMessageResult>}
  */
 export async function resubmitMessage(
   db: Kysely<DB>,

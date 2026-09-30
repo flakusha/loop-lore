@@ -13,6 +13,7 @@ import type { BodyProfile, } from "./types";
  * no separate `ResolutionSystem`; the stats module IS the unified path.
  * @param profile
  * @param conModifier - CON modifier from the unified stat path (default 0)
+ * @returns {number}
  */
 export function calculateEncounterDuration(profile: BodyProfile, conModifier = 0,): number {
   return Math.floor((profile.stamina + profile.endurance) / 10,) + conModifier;
@@ -21,6 +22,7 @@ export function calculateEncounterDuration(profile: BodyProfile, conModifier = 0
 /**
  * Calculate available positions/actions based on flexibility + build.
  * @param profile
+ * @returns {number}
  */
 export function calculateAvailableActions(profile: BodyProfile,): number {
   const base = Math.floor(profile.flexibility / 10,);
@@ -39,6 +41,7 @@ export function calculateAvailableActions(profile: BodyProfile,): number {
 /**
  * Calculate arousal buildup modifier from sensitivity + body.
  * @param profile
+ * @returns {number}
  */
 export function calculateArousalModifier(profile: BodyProfile,): number {
   return 0.5 + (profile.sensitivity / 100) * 1.5;

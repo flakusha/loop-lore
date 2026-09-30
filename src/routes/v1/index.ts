@@ -36,6 +36,7 @@ import { governanceEndpoints, governanceGuard, } from "./governance";
  * All route plugins are called with `prefix = "/api/v1"` so they register
  * their routes under `/api/v1/...` instead of the default `/api/...`.
  * @param opts
+ * @returns {Elysia<"", { decorator: {}; store: any; derive: { readonly apiVersion: "1"; }; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; } & { ...; }, { ...; } & ... 423 more ... & { ...; }, { ...; }, { ...; } & ... 1 more ... & { ...; }>}
  */
 export function v1Routes(opts: RegisterPluginsOpts,) {
   return new Elysia({ name: "v1", },)

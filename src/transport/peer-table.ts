@@ -79,6 +79,9 @@ export class PeerTable {
   }
 
   /** Start the eviction sweep timer. Idempotent. */
+  /**
+   * @returns {void}
+   */
   start(): void {
     if (this.started) { return; }
     this.started = true;
@@ -86,6 +89,9 @@ export class PeerTable {
   }
 
   /** Stop the eviction sweep timer. Idempotent. */
+  /**
+   * @returns {void}
+   */
   stop(): void {
     if (!this.started) { return; }
     this.started = false;
@@ -98,6 +104,10 @@ export class PeerTable {
   /**
    * Discover a new peer origin. No-op if already known.
    * @param origin
+   */
+  /**
+   * @param {string} origin
+   * @returns {void}
    */
   discoverPeer(origin: string,): void {
     if (this.peers.has(origin,)) { return; }
@@ -115,6 +125,10 @@ export class PeerTable {
    * Unknown peers are discovered first, then promoted.
    * @param origin
    */
+  /**
+   * @param {string} origin
+   * @returns {void}
+   */
   trustPeer(origin: string,): void {
     this.discoverPeer(origin,);
     const peer = this.peers.get(origin,);
@@ -126,6 +140,11 @@ export class PeerTable {
    * @param origin
    * @param seq
    * @returns `true` if accepted (seq > lastSeq), `false` if stale/replayed.
+   */
+  /**
+   * @param {string} origin
+   * @param {number} seq
+   * @returns {boolean}
    */
   recordHeartbeat(origin: string, seq: number,): boolean {
     this.discoverPeer(origin,);
@@ -139,6 +158,9 @@ export class PeerTable {
   }
 
   /** Evict peers whose heartbeat has expired (lastSeen + ttl < now). */
+  /**
+   * @returns {number}
+   */
   sweep(): number {
     const now = this.now();
     let evicted = 0;
@@ -153,6 +175,9 @@ export class PeerTable {
   }
 
   /** Get a snapshot of all known peers (defensive copy). */
+  /**
+   * @returns {PeerEntry[]}
+   */
   listPeers(): PeerEntry[] {
     return Array.from(this.peers.values(),).map((p,) => ({ ...p, }));
   }
@@ -160,6 +185,10 @@ export class PeerTable {
   /**
    * Get a single peer by origin.
    * @param origin
+   */
+  /**
+   * @param {string} origin
+   * @returns {PeerEntry | undefined}
    */
   getPeer(origin: string,): PeerEntry | undefined {
     const peer = this.peers.get(origin,);

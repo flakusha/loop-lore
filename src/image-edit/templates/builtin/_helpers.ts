@@ -14,13 +14,17 @@ import type { ComfyUIWorkflow, } from "../../../generation/providers/comfyui";
 /**
  * Resolve the `seed` parameter, randomising when set to the sentinel `-1`.
  * @param seedParam
+ * @returns {number}
  */
 export function resolveSeed(seedParam: unknown,): number {
   const seed = (seedParam as number | undefined) ?? -1;
   return seed === -1 ? Math.floor(Math.random() * 2_147_483_647,) : seed;
 }
 
-/** Build the CheckpointLoaderSimple node (id "1"). */
+/**
+ * Build the CheckpointLoaderSimple node (id "1").
+ * @returns {ComfyUIWorkflow}
+ */
 export function checkpointNode(): ComfyUIWorkflow {
   return {
     "1": {
@@ -35,6 +39,7 @@ export function checkpointNode(): ComfyUIWorkflow {
  * Build the positive + negative CLIPTextEncode nodes (ids "2" + "3").
  * @param params
  * @param clipRef
+ * @returns {ComfyUIWorkflow}
  */
 export function promptNodes(
   params: Record<string, unknown>,
@@ -71,6 +76,7 @@ export interface KSamplerOptions {
  * @param params
  * @param seed
  * @param opts
+ * @returns {ComfyUIWorkflow}
  */
 export function ksamplerNode(
   params: Record<string, unknown>,
@@ -103,6 +109,7 @@ export function ksamplerNode(
  * @param samplerId
  * @param vaeRef
  * @param filenamePrefix
+ * @returns {ComfyUIWorkflow}
  */
 export function decodeAndSave(
   samplerId: string,
@@ -131,6 +138,7 @@ export function decodeAndSave(
  * @param paramName
  * @param params
  * @param title
+ * @returns {ComfyUIWorkflow}
  */
 export function loadImageNode(
   id: string,

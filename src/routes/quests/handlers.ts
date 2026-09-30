@@ -19,6 +19,7 @@ import { HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonPaginated, jsonR
  * @param questId
  * @param userId
  * @param userRole
+ * @returns {Promise<{ world_id: string; } | null>}
  */
 export async function checkQuestAccess(
   database: Kysely<DB>,
@@ -46,6 +47,7 @@ export async function checkQuestAccess(
  * @param worldId
  * @param userId
  * @param userRole
+ * @returns {Promise<boolean>}
  */
 export async function checkWorldAccess(
   database: Kysely<DB>,
@@ -68,6 +70,7 @@ export async function checkWorldAccess(
  * @param pageSize
  * @param userId
  * @param userRole
+ * @returns {Promise<Response>}
  */
 export async function handleListQuests(
   database: Kysely<DB>,
@@ -109,6 +112,7 @@ export async function handleListQuests(
  * @param userId
  * @param userRole
  * @param body
+ * @returns {Promise<Response>}
  */
 export async function handleCreateQuest(
   database: Kysely<DB>,
@@ -148,6 +152,7 @@ export async function handleCreateQuest(
  * @param userId
  * @param userRole
  * @param body
+ * @returns {Promise<Response>}
  */
 export async function handleQuest(
   database: Kysely<DB>,
@@ -204,6 +209,7 @@ export async function handleQuest(
  * @param questId
  * @param userId
  * @param userRole
+ * @returns {Promise<Response>}
  */
 export async function handleAbandonQuest(
   database: Kysely<DB>,
@@ -226,6 +232,7 @@ export async function handleAbandonQuest(
  * @param userId
  * @param userRole
  * @param body
+ * @returns {Promise<Response>}
  */
 export async function handleProgress(
   database: Kysely<DB>,

@@ -34,17 +34,28 @@ class NsfwRuntimeConfigStore {
   /**
    * @param config
    */
+  /**
+   * @param {NsfwRuntimeConfig} config
+   * @returns {void}
+   */
   init(config: NsfwRuntimeConfig,): void {
     this.config = { ...DEFAULTS, ...config, };
   }
 
   /** */
+  /**
+   * @returns {NsfwConfig}
+   */
   get(): NsfwRuntimeConfig {
     return { ...this.config, };
   }
 
   /**
    * @param partial
+   */
+  /**
+   * @param {Partial<NsfwRuntimeConfig>} partial
+   * @returns {void}
    */
   update(partial: Partial<NsfwRuntimeConfig>,): void {
     this.config = { ...this.config, ...partial, };
@@ -56,12 +67,16 @@ export const nsfwRuntimeConfig = new NsfwRuntimeConfigStore();
 /**
  * Seed the runtime config from file config. Called once during server start.
  * @param config
+ * @returns {void}
  */
 export function initNsfwRuntimeConfig(config: NsfwRuntimeConfig,): void {
   nsfwRuntimeConfig.init(config,);
 }
 
-/** Read the current (possibly admin-overridden) runtime NSFW config. */
+/**
+ * Read the current (possibly admin-overridden) runtime NSFW config.
+ * @returns {NsfwConfig}
+ */
 export function getRuntimeNsfwConfig(): NsfwRuntimeConfig {
   return nsfwRuntimeConfig.get();
 }
@@ -69,6 +84,7 @@ export function getRuntimeNsfwConfig(): NsfwRuntimeConfig {
 /**
  * Apply a partial update to the live runtime NSFW config.
  * @param partial
+ * @returns {void}
  */
 export function updateRuntimeNsfwConfig(partial: Partial<NsfwRuntimeConfig>,): void {
   nsfwRuntimeConfig.update(partial,);
@@ -79,6 +95,7 @@ export function updateRuntimeNsfwConfig(partial: Partial<NsfwRuntimeConfig>,): v
  * module-level singleton after a mutation (e.g. `PUT /api/admin/nsfw` during a
  * test run) so cross-file pollution doesn't leak into later test files when
  * the suite runs without `--isolate`.
+ * @returns {void}
  */
 export function resetNsfwRuntimeConfig(): void {
   initNsfwRuntimeConfig({ ...DEFAULTS, },);
@@ -89,6 +106,7 @@ export function resetNsfwRuntimeConfig(): void {
  * store. Called once during server start, after the DB is available, so a
  * value saved via the admin panel survives a restart.
  * @param db
+ * @returns {Promise<void>}
  */
 export async function applyStoredNsfwConfig(db: Kysely<DB>,): Promise<void> {
   const allowRaw = await getConfigValue(db, "nsfw_allow",);

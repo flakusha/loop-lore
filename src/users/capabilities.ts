@@ -150,6 +150,7 @@ export const SEEDED_ROLE_NAMES = ["admin", "moderator", "creator", "guest",] as 
 /**
  * Capabilities for a given role, or an empty list for unrecognised roles.
  * @param role
+ * @returns {readonly RoleCapability[]}
  */
 export function capabilitiesForRole(role: UserRole | string,): readonly RoleCapability[] {
   if (role === UserRole.Admin) { return ROLE_CAPABILITIES.admin; }

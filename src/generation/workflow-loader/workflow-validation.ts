@@ -25,6 +25,8 @@ export const TERMINAL_SINK_CLASSES: ReadonlySet<string> = new Set([
  *
  * A valid workflow is a non-empty Record where at least one value carries both
  * `inputs` and `class_type`.
+ * @param {unknown} obj
+ * @returns {boolean}
  */
 export function isValidWorkflow(obj: unknown,): obj is ComfyUIWorkflow {
   if (typeof obj !== "object" || obj === null || Array.isArray(obj,)) {

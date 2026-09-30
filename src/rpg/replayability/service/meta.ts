@@ -11,6 +11,7 @@ import type { EndingType, MetaProgression, PermanentBonus, } from "./types";
  * Get meta-progression for a player
  * @param db
  * @param playerId
+ * @returns {Promise<MetaProgression>}
  */
 export async function getMetaProgression(
   db: Kysely<DB>,
@@ -55,6 +56,7 @@ export async function getMetaProgression(
  * @param playerId
  * @param endingId
  * @param _endingType
+ * @returns {Promise<void>}
  */
 export async function updateMetaProgression(
   db: Kysely<DB>,

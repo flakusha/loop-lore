@@ -9,6 +9,7 @@
  * element that opened it. The listener is detached on every close path so
  * repeated opens never stack handlers.
  * @param doc - document carrying the keydown listener registry
+ * @returns {{ arm(current: { focus(): void; } | null, host: { addEventListener(t: string, fn: (e: { key: string; }) => void): void; removeEventListener(t: string, fn: (e: { key: string; }) => void): void; querySelector(sel: string): { ...; } | null; }): void; }}
  */
 export function previewEscapeState() {
   let doc: {
@@ -26,6 +27,15 @@ export function previewEscapeState() {
   };
   return {
     /** Attach the Escape listener, remembering the opening trigger. */
+    /**
+ * @param {{ focus(): void } | null} current
+ * @param {{
+        addEventListener(t: string, fn: (e: { key: string },) => void,): void;
+        removeEventListener(t: string, fn: (e: { key: string },) => void,): void;
+        querySelector(sel: string,): { classList: { remove(n: string,): void } } | null;
+      }} host
+ * @returns {void}
+ */
     arm(
       current: { focus(): void } | null,
       host: {

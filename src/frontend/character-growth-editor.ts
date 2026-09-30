@@ -60,6 +60,8 @@ export interface CharacterGrowthEditorComponent {
 /**
  * Build the Alpine component bound via x-data="characterGrowthEditor({ ... })".
  * @param opts
+ * @throws {Error}
+ * @returns {CharacterGrowthEditorComponent}
  */
 export function characterGrowthEditor(opts: CharacterGrowthEditorOptions,): CharacterGrowthEditorComponent {
   return {
@@ -71,6 +73,9 @@ export function characterGrowthEditor(opts: CharacterGrowthEditorOptions,): Char
     entries: Array.isArray(opts.initialEntries,) ? opts.initialEntries : [],
     message: "",
 
+    /**
+     * @returns {Promise<void>}
+     */
     async saveMode() {
       try {
         await feFetch(`/api/v1/actors/${encodeURIComponent(this.actorId,)}`, {
@@ -88,6 +93,10 @@ export function characterGrowthEditor(opts: CharacterGrowthEditorOptions,): Char
       }
     },
 
+    /**
+     * @throws {Error}
+     * @returns {Promise<void>}
+     */
     async saveArc() {
       try {
         const res = await feFetch(
@@ -109,6 +118,10 @@ export function characterGrowthEditor(opts: CharacterGrowthEditorOptions,): Char
       }
     },
 
+    /**
+     * @param {string} entryId
+     * @returns {Promise<void>}
+     */
     async confirmEntry(entryId: string,) {
       try {
         await feFetch(
@@ -125,6 +138,10 @@ export function characterGrowthEditor(opts: CharacterGrowthEditorOptions,): Char
       }
     },
 
+    /**
+     * @param {string} entryId
+     * @returns {Promise<void>}
+     */
     async rejectEntry(entryId: string,) {
       try {
         await feFetch(
@@ -141,6 +158,11 @@ export function characterGrowthEditor(opts: CharacterGrowthEditorOptions,): Char
       }
     },
 
+    /**
+     * @param {string} entryId
+     * @param {"applied" | "rejected"} status
+     * @returns {void}
+     */
     _updateEntryStatus(entryId: string, status: "applied" | "rejected",) {
       const idx = this.entries.findIndex((e,) => e.id === entryId);
       if (idx >= 0) {

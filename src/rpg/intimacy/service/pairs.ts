@@ -18,6 +18,7 @@ import type { IntimacyPair, } from "./types";
  * @param row.unlocked_thresholds
  * @param row.created_at
  * @param row.updated_at
+ * @returns {IntimacyPair}
  */
 export function rowToPair(row: {
   id: string;
@@ -50,6 +51,7 @@ export function rowToPair(row: {
  * @param actorId
  * @param targetActorId
  * @param worldId
+ * @returns {Promise<IntimacyPair>}
  */
 export async function getPair(
   db: Kysely<DB>,
@@ -106,6 +108,7 @@ export async function getPair(
  * @param db
  * @param actorId
  * @param worldId
+ * @returns {Promise<IntimacyPair[]>}
  */
 export async function getActorPairs(
   db: Kysely<DB>,

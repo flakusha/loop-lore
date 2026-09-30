@@ -31,6 +31,7 @@ import { applyRpgUpdates, rpgCreateFlags, } from "./world-rpg-flags";
  * @param pageSize
  * @param userId
  * @param q
+ * @returns {Promise<Response>}
  */
 export async function handleListWorlds(
   database: Kysely<DB>,
@@ -88,6 +89,7 @@ export async function handleListWorlds(
  * @param database
  * @param body
  * @param userId
+ * @returns {Promise<Response>}
  */
 export async function handleCreateWorld(database: Kysely<DB>, body: Record<string, unknown>, userId: string | null,) {
   if (!userId) { return unauthorized(); }
@@ -125,6 +127,7 @@ export async function handleCreateWorld(database: Kysely<DB>, body: Record<strin
  * @param worldId
  * @param userId
  * @param userRole
+ * @returns {Promise<Response>}
  */
 export async function handleGetWorld(
   database: Kysely<DB>,
@@ -144,6 +147,7 @@ export async function handleGetWorld(
  * @param body
  * @param userId
  * @param userRole
+ * @returns {Promise<Response>}
  */
 export async function handleUpdateWorld(
   database: Kysely<DB>,
@@ -192,6 +196,7 @@ export async function handleUpdateWorld(
  * @param worldId
  * @param userId
  * @param userRole
+ * @returns {Promise<Response>}
  */
 export async function handleInitializeStates(
   database: Kysely<DB>,

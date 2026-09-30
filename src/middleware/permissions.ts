@@ -49,6 +49,10 @@ class HandleCache {
   /**
    * @param userId
    */
+  /**
+   * @param {string} userId
+   * @returns {Promise<string | null>}
+   */
   async get(userId: string,): Promise<string | null> {
     const hit = this.cache.get(userId,);
     if (hit !== undefined) { return hit; }
@@ -77,6 +81,7 @@ export interface RequirePermissionOpts {
  * on denial and emits a security audit log entry.
  * @param permission - Permission string (see users/permissions.ts).
  * @param opts - Logger + handle resolver overrides.
+ * @returns {(ctx: PermissionCtx) => Promise<Response | undefined>}
  */
 export function requirePermission(
   permission: Permission,

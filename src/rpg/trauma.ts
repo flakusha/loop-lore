@@ -48,6 +48,7 @@ const RECOVERY_SECONDS: Record<Exclude<TraumaSeverity, 0>, number> = {
  * escalates one step (capped at 4) — the violation path.
  * @param outcome
  * @param nonConsensual
+ * @returns {TraumaSeverity}
  */
 export function severityFromOutcome(
   outcome: Pick<EncounterOutcome, "type" | "effects">,
@@ -87,6 +88,12 @@ export class TraumaService {
    * @param severity
    * @param sourceId - encounter id for provenance
    */
+  /**
+   * @param {string} actorId
+   * @param {TraumaSeverity} severity
+   * @param {string} sourceId
+   * @returns {Promise<string | null>}
+   */
   async applyTrauma(
     actorId: string,
     severity: TraumaSeverity,
@@ -125,6 +132,13 @@ export class TraumaService {
    * @param nonConsensual
    * @param sourceId
    */
+  /**
+   * @param {string} actorId
+   * @param {Pick<EncounterOutcome, "type" | "effects">} outcome
+   * @param {unknown} nonConsensual
+   * @param {string} sourceId
+   * @returns {Promise<string | null>}
+   */
   async applyFromOutcome(
     actorId: string,
     outcome: Pick<EncounterOutcome, "type" | "effects">,
@@ -142,6 +156,11 @@ export class TraumaService {
    * @param actorId
    * @param sourceId - gate/encounter id for provenance
    */
+  /**
+   * @param {string} actorId
+   * @param {string} sourceId
+   * @returns {Promise<string>}
+   */
   async escalateViolation(actorId: string, sourceId?: string,): Promise<string> {
     const active = await getActiveEffects(this.db, actorId, { category: "trauma", },);
     const current = active.reduce((max, e,) => Math.max(max, e.magnitude,), 0,);
@@ -154,6 +173,10 @@ export class TraumaService {
    * for this actor (the shared sweep handles global expiry; this is the
    * per-actor explicit step). Returns rows cleared.
    * @param actorId
+   */
+  /**
+   * @param {string} actorId
+   * @returns {Promise<number>}
    */
   async advanceRecovery(actorId: string,): Promise<number> {
     const now = new Date().toISOString();
@@ -170,6 +193,10 @@ export class TraumaService {
   /**
    * Current trauma status: active rows (highest severity first).
    * @param actorId
+   */
+  /**
+   * @param {string} actorId
+   * @returns {Promise<{ severity: number; effects: { effectId: string; magnitude: number; expiresAt: string | null; }[]; }>}
    */
   async getStatus(actorId: string,): Promise<{
     severity: number;

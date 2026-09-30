@@ -74,6 +74,7 @@ export class UnboundedStressGatedError extends Error {
  * while NODE_ENV=production.
  * @param name Preset name to resolve.
  * @returns Preset definition.
+ * @throws {Error}
  */
 export function getPreset(name: PacingPresetName,): PresetDefinition {
   if (name === "unlimited-stress" && process.env.NODE_ENV === "production") {

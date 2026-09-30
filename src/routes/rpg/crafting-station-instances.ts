@@ -39,6 +39,7 @@ const UpdateStationInstanceBody = t.Object({
  * @param db
  * @param userId
  * @param worldId
+ * @returns {Promise<Response | null>}
  */
 export async function assertWorldOwner(
   db: HandlerOpts["database"],
@@ -56,6 +57,7 @@ export async function assertWorldOwner(
  * @param opts
  * @param svc
  * @param R
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, {}, { derive: {}; resolve: {}; schema: {}; standaloneSchema: {}; response: {}; }, { ...; }>}
  */
 export function stationInstanceRoutes(opts: HandlerOpts, svc: StationsService, R: string,): Elysia {
   return (

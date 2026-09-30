@@ -59,6 +59,11 @@ export class InvalidAmountError extends Error {
   }
 }
 
+/**
+ * @param {number} amount
+ * @throws {Error}
+ * @returns {void}
+ */
 export function assertValidAmount(amount: number,): void {
   if (!Number.isInteger(amount,) || amount <= 0) { throw new InvalidAmountError(amount,); }
 }

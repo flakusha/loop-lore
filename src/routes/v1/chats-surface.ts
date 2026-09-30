@@ -22,6 +22,10 @@ import { musicLinksRoutes, } from "../music-links";
 import { vnGenerateRoutes, } from "../vn-generate";
 import { worldInvitesRoutes, } from "../world-invites";
 
+/**
+ * @param {RegisterPluginsOpts} opts
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { chats: { get: { body: unknown; params: {}; query: { ...; }; headers: unknown; response: { ...; }; }; }; }; } & ... ...}
+ */
 export function chatsSurface(opts: RegisterPluginsOpts,) {
   const { database, config, } = opts;
   const handleOpts = { database, config, };

@@ -14,6 +14,7 @@ import type { AdminRouteOpts, } from "./types";
  * resolution time, and the false-positive rate (dismissed / resolved).
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { admin: { review: { stats: { ...; }; }; }; }; }, { ...; }, { ...; }>}
  */
 export function reviewStatsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
   const db = opts.database;

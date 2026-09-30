@@ -64,6 +64,7 @@ export function deriveStageDirectives(prev: SceneCastView | null, next: SceneCas
  * intentionally roster-neutral (render resolves the expression).
  * @param roster - Cast registry to mutate.
  * @param directives - Directives from deriveStageDirectives.
+ * @returns {void}
  */
 export function applyStageDirectives(roster: SpriteRoster, directives: StageDirective[],): void {
   for (const directive of directives) {

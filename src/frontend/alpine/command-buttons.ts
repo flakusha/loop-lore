@@ -73,6 +73,10 @@ const COMMAND_BUTTONS: CommandButton[] = [
      * Run a command by inserting it into the message input
      * @param cmd
      */
+    /**
+     * @param {string} cmd
+     * @returns {void}
+     */
     runCommand(cmd: string,): void {
       // GM guidance commands open the GM Guidance panel instead of typing a
       // slash command — the panel captures narrative direction, scene, and
@@ -105,6 +109,9 @@ const COMMAND_BUTTONS: CommandButton[] = [
     },
 
     /** Toggle button labels visibility */
+    /**
+     * @returns {void}
+     */
     toggleLabels(): void {
       this.showLabels = !this.showLabels;
       localStorage.setItem("command-button-labels", this.showLabels ? "1" : "0",);

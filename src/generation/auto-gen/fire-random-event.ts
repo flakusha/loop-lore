@@ -27,6 +27,7 @@ import { loadChatLocation, loadChatParticipants, } from "./random-event-context"
  * the caller decides whether the failure is fatal.
  * @param database
  * @param chatId
+ * @returns {Promise<{ event: RandomEvent; eventRef: EventRef; } | null>}
  */
 export async function fireRandomEvent(
   database: Kysely<DB>,

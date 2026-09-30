@@ -29,6 +29,7 @@ function spriteUrlsForScene(s: VnScene,): string[] | undefined {
 }
 /**
  * @param msg
+ * @returns {VnScene}
  */
 export function msgToScene(msg: VnMessage,): VnScene {
   const displayName = msg.name ?? (msg.role === "user" ? "You" : (msg.role === "system" ? "System" : "Character"));
@@ -54,7 +55,9 @@ export function msgToScene(msg: VnMessage,): VnScene {
 
 // ── Image Preloading ─────────────────────────────────────────
 
-/** */
+/**
+ * @returns {Promise<void>}
+ */
 export async function preloadCurrentAndUpcoming(): Promise<void> {
   const indicator = state.loadingIndicator;
   if (!indicator || state.scenes.length === 0) { return; }
@@ -83,6 +86,7 @@ export async function preloadCurrentAndUpcoming(): Promise<void> {
  * back in to signal a location/travel transition. Only acts when the VN
  * renderer is mounted and the event targets the currently-rendered chat.
  * @param e
+ * @returns {void}
  */
 export function handleLocationChanged(e: Event,): void {
   const detail = (e as CustomEvent<{ chatId?: string; locationId?: string; locationName?: string | null }>).detail;

@@ -20,7 +20,8 @@ const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
 /** Resolve the archive directory. Env override beats the data-dir sibling —
  * operations may store archives on a separate volume (e.g. cheap object
- * storage) to keep the data volume small. */
+ * storage) to keep the data volume small.  * @returns {string}
+ */
 export function archiveDir(): string {
   return process.env.LOOP_LORE_BACKUP_DIR ??
     path.resolve(DATA_DIR, "..", "loop-lore-data-backup",);
@@ -28,7 +29,10 @@ export function archiveDir(): string {
 
 /** Move `p` into the timestamped backup dir; fall back to unlink on
  * cross-device rename. After the move, retention is enforced via
- * {@link pruneArchives}. */
+ * {@link pruneArchives}.  * @param {string} p
+ * @param {Logger} log
+ * @returns {void}
+ */
 export function archiveFile(p: string, log: Logger,): void {
   const dir = archiveDir();
   mkdirSync(dir, { recursive: true, },);
@@ -44,7 +48,9 @@ export function archiveFile(p: string, log: Logger,): void {
 
 /** Parse the moved-at timestamp from an archive filename. Returns null when
  * the name does not match the `<iso-stamp>-<original>` pattern produced by
- * {@link archiveFile}. Exported for tests. */
+ * {@link archiveFile}. Exported for tests.  * @param {string} name
+ * @returns {Date | null}
+ */
 export function parseArchiveStamp(name: string,): Date | null {
   // Filesystem-safe stamp: `2026-09-15T10-17-08-123Z` → ISO `2026-09-15T10:17:08.123Z`.
   // ISO uses `:` for the time fields and `.` for milliseconds — filename uses
@@ -65,7 +71,10 @@ interface ArchiveEntry {
 
 /** Enforce {@link MAX_ARCHIVES} + {@link MAX_AGE_DAYS} retention on `dir`.
  * Files without a parseable stamp prefix are left untouched so unrelated
- * files in the backup dir are not deleted. */
+ * files in the backup dir are not deleted.  * @param {string} dir
+ * @param {Logger} log
+ * @returns {void}
+ */
 export function pruneArchives(dir: string, log: Logger,): void {
   let entries: ArchiveEntry[];
   try {

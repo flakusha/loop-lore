@@ -13,6 +13,7 @@ const activeJobs = new Map<MattingJobId, MattingJob>();
 /**
  * Store a job in the in-memory store.
  * @param job
+ * @returns {void}
  */
 export function storeJob(job: MattingJob,): void {
   activeJobs.set(job.id, job,);
@@ -21,6 +22,7 @@ export function storeJob(job: MattingJob,): void {
 /**
  * Get a matting job by id.
  * @param jobId
+ * @returns {MattingJob | undefined}
  */
 export function getJob(jobId: MattingJobId,): MattingJob | undefined {
   return activeJobs.get(jobId,);
@@ -29,6 +31,7 @@ export function getJob(jobId: MattingJobId,): MattingJob | undefined {
 /**
  * List matting jobs for an owner, newest first.
  * @param ownerId
+ * @returns {MattingJob[]}
  */
 export function listJobs(ownerId: string,): MattingJob[] {
   const jobs: MattingJob[] = [];

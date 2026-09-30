@@ -17,6 +17,7 @@ import { deepMerge, parseFileContent, } from "./parse";
  * @param directory - The directory to search for domain configs
  * @param baseConfig - The base config to merge domain configs into
  * @returns Merged config with domain overrides applied
+ * @throws {Error}
  */
 export function loadDomainConfigs(directory: string, baseConfig: Config,): Config {
   const configsDir = path.join(directory, "configs",);
@@ -110,6 +111,7 @@ function validateLoggingDomain(parsed: Record<string, unknown>, filePath: string
  * @param parsed
  * @param filePath
  * @returns void
+ * @throws {Error}
  */
 export function validateDomainConfig(domain: string, parsed: Record<string, unknown>, filePath: string,): void {
   // Validate domain-specific constraints

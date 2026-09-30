@@ -15,6 +15,9 @@ declare global {
   var blogPage: () => BlogPageState;
 }
 
+/**
+ * @returns {void}
+ */
 export function initBlogPage() {
   blogLog.info("initBlogPage",);
   void blogStore.loadPosts();
@@ -83,10 +86,17 @@ globalThis.blogPage = function(): BlogPageState {
       return this.store._blogPosts.find((p,) => p.id === this.selectedPostId) ?? this.store._blogPost;
     },
 
+    /**
+     * @returns {void}
+     */
     init() {
       initBlogPage();
     },
 
+    /**
+     * @param {string} id
+     * @returns {Promise<void>}
+     */
     async selectPost(id: string,) {
       this.selectedPostId = id;
       this.replyTo = null;
@@ -101,23 +111,41 @@ globalThis.blogPage = function(): BlogPageState {
       this.following = authorId === undefined ? false : await this.store.getFollowStatus(authorId,);
     },
 
+    /**
+     * @returns {void}
+     */
     backToList() {
       this.selectedPostId = null;
       this.replyTo = null;
     },
 
+    /**
+     * @param {string | null} tag
+     * @returns {void}
+     */
     setTag(tag: string | null,) {
       this.store._blogTag = tag;
     },
 
+    /**
+     * @param {string} body
+     * @returns {string}
+     */
     excerpt(body: string,): string {
       return body.length > 200 ? body.slice(0, 200,) + "…" : body;
     },
 
+    /**
+     * @param {string} body
+     * @returns {string}
+     */
     renderBody(body: string,): string {
       return chatUtilsRender.renderMarkdown?.(body,) ?? body;
     },
 
+    /**
+     * @returns {FlatComment[]}
+     */
     flatComments(): FlatComment[] {
       const out: FlatComment[] = [];
       const walk = (list: BlogComment[], depth: number,): void => {
@@ -130,14 +158,24 @@ globalThis.blogPage = function(): BlogPageState {
       return out;
     },
 
+    /**
+     * @returns {number}
+     */
     commentCount(): number {
       return this.flatComments().length;
     },
 
+    /**
+     * @param {string | null} commentId
+     * @returns {void}
+     */
     startReply(commentId: string | null,) {
       this.replyTo = commentId;
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async submitComment() {
       if (this.selectedPostId === null || this.commentBody.trim() === "") { return; }
       await this.store.createComment(this.selectedPostId, this.commentBody.trim(), this.replyTo ?? undefined,);
@@ -145,6 +183,9 @@ globalThis.blogPage = function(): BlogPageState {
       this.replyTo = null;
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async toggleFollow() {
       const post = this.selected;
       if (post === null || post === undefined) { return; }
@@ -156,11 +197,17 @@ globalThis.blogPage = function(): BlogPageState {
       this.following = await this.store.getFollowStatus(post.author_id,);
     },
 
+    /**
+     * @returns {void}
+     */
     toggleCreate() {
       this.showCreate = !this.showCreate;
       this.formError = "";
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async submitPost() {
       this.formError = "";
       if (this.formTitle.trim() === "" || this.formBody.trim() === "") {

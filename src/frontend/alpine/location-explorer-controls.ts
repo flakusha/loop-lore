@@ -37,6 +37,10 @@ export const locationExplorerControls = {
   // ── Filter option refresh ───────────────────────────────
   // Distinct non-null values from loaded location_states, used to
   // Populate the dropdown options. Sorted for stable UI order.
+  /**
+   * @param {ExplorerControlState} this
+   * @returns {void}
+   */
   _refreshOptionLists(this: ExplorerControlState,) {
     const atmospheres = new Set<string>();
     const weathers = new Set<string>();
@@ -56,6 +60,10 @@ export const locationExplorerControls = {
    * Method (not getter) because spreads eagerly invoke getters with
    * an empty `this` — calling sites use `state.statusOptions()`.
    */
+  /**
+   * @param {ExplorerControlState} this
+   * @returns {string[]}
+   */
   statusOptions(this: ExplorerControlState,): string[] {
     const seen = new Set<string>();
     for (const l of this.locations) { if (l.publication_status) { seen.add(l.publication_status,); } }
@@ -65,6 +73,10 @@ export const locationExplorerControls = {
   /**
    * True when any filter differs from its default.
    * Drives the "Clear filters" affordance in the UI.
+   */
+  /**
+   * @param {ExplorerControlState} this
+   * @returns {boolean}
    */
   hasActiveFilters(this: ExplorerControlState,): boolean {
     return Boolean(
@@ -78,6 +90,10 @@ export const locationExplorerControls = {
     );
   },
 
+  /**
+   * @param {ExplorerControlState} this
+   * @returns {void}
+   */
   clearFilters(this: ExplorerControlState,) {
     this.search = "";
     this.filterStatus = "";
@@ -91,6 +107,11 @@ export const locationExplorerControls = {
   // ── Hover-preview (throttled) ──────────────────────────
   // Delay before selectLoc fires on mouseenter, so casual sweeps don't
   // Burn detail fetches. Cancelled if the user moves to another row.
+  /**
+   * @param {ExplorerControlState} this
+   * @param {string} locId
+   * @returns {void}
+   */
   hoverLoc(this: ExplorerControlState, locId: string,) {
     this._hoveredLocId = locId;
     if (typeof window !== "undefined") {
@@ -101,6 +122,10 @@ export const locationExplorerControls = {
     }
   },
 
+  /**
+   * @param {ExplorerControlState} this
+   * @returns {void}
+   */
   leaveLoc(this: ExplorerControlState,) {
     this._hoveredLocId = "";
     if (typeof window !== "undefined") { window.clearTimeout(this._hoverTimer,); }
@@ -110,6 +135,11 @@ export const locationExplorerControls = {
   // Deep-link to the chat anchored on this location. Best-effort —
   // resolves client-side via the existing chat-list / chat-location
   // routes; falls back to the world's public chat when none is bound.
+  /**
+   * @param {ExplorerControlState} this
+   * @param {string} locId
+   * @returns {void}
+   */
   navigateTo(this: ExplorerControlState, locId: string,) {
     const url = `/worlds/${this.worldId}/locations/${locId}`;
     if (typeof window !== "undefined") { window.location.href = url; }

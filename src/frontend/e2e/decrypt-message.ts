@@ -45,6 +45,7 @@ export interface DecryptedMessage {
  *   - Recipient has no persisted private key
  *   - WebCrypto failures
  * @param opts
+ * @returns {Promise<DecryptedMessage>}
  */
 export async function decryptMessage(opts: DecryptMessageOpts,): Promise<DecryptedMessage> {
   const { cryptoKeyPair, } = await loadOrCreateKeyPair({ actorId: opts.recipientActorId, },);

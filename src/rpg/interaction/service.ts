@@ -22,6 +22,11 @@ import type {
 
 const formatOutcome = (outcome: InteractionResolution["outcome"],): string => outcome.replaceAll("_", " ",);
 
+/**
+ * @param {Kysely<DB>} database
+ * @param {ResolveInteractionParams} params
+ * @returns {Promise<InteractionResolution>}
+ */
 export async function resolveInteraction(
   database: Kysely<DB>,
   params: ResolveInteractionParams,
@@ -155,6 +160,11 @@ export async function resolveInteraction(
   };
 }
 
+/**
+ * @param {Kysely<DB>} database
+ * @param {RecentInteractionParams} params
+ * @returns {Promise<InteractionSummary[]>}
+ */
 export async function getRecentInteractions(
   database: Kysely<DB>,
   params: RecentInteractionParams,
@@ -199,6 +209,10 @@ export async function getRecentInteractions(
   },);
 }
 
+/**
+ * @param {Kysely<DB>} database
+ * @returns {InteractionService}
+ */
 export function InteractionService(database: Kysely<DB>,): InteractionService {
   return {
     resolve: (params,) => resolveInteraction(database, params,),

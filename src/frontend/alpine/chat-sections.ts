@@ -32,6 +32,9 @@ export const chatSections: Partial<ChatState> & ThisType<ChatState> = {
   _newSectionLabel: "",
   _newSectionDesc: "",
 
+  /**
+   * @returns {void}
+   */
   toggleSectionsPanel() {
     this._sectionsOpen = !this._sectionsOpen;
     if (this._sectionsOpen && this.activeChat) {
@@ -39,6 +42,9 @@ export const chatSections: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async loadSections() {
     if (!this.activeChat) { return; }
     this._sectionsLoading = true;
@@ -57,6 +63,9 @@ export const chatSections: Partial<ChatState> & ThisType<ChatState> = {
     this._sectionsLoading = false;
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async createSection() {
     if (!this.activeChat || !this._newSectionLabel.trim()) { return; }
     try {
@@ -75,6 +84,10 @@ export const chatSections: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @param {string} sectionId
+   * @returns {Promise<void>}
+   */
   async deleteSection(sectionId: string,) {
     if (!this.activeChat) { return; }
     try {
@@ -88,6 +101,11 @@ export const chatSections: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @param {string} sectionId
+   * @param {-1 | 1} dir
+   * @returns {Promise<void>}
+   */
   async moveSection(sectionId: string, dir: -1 | 1,) {
     if (!this.activeChat) { return; }
     const idx = this._sections.findIndex((s,) => s.id === sectionId);
@@ -109,6 +127,10 @@ export const chatSections: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @param {string | null} sectionId
+   * @returns {string}
+   */
   sectionLabel(sectionId: string | null,): string {
     if (!sectionId) { return "Unassigned"; }
     return this._sections.find((s,) => s.id === sectionId)?.label ?? "Unknown";
@@ -121,6 +143,11 @@ export const chatSections: Partial<ChatState> & ThisType<ChatState> = {
    * message is the first in the stream with an assigned section).
    * @param index Index within the rendered (grouped) message list.
    * @param sectionId Section of the message at that index.
+   */
+  /**
+   * @param {number} index
+   * @param {string | null} sectionId
+   * @returns {ChatSectionRow | null}
    */
   sectionDividerFor(index: number, sectionId: string | null,): ChatSectionRow | null {
     if (!sectionId) { return null; }
@@ -135,6 +162,10 @@ export const chatSections: Partial<ChatState> & ThisType<ChatState> = {
   /**
    * Scroll the message list to the first message of a section.
    * @param sectionId
+   */
+  /**
+   * @param {string} sectionId
+   * @returns {void}
    */
   jumpToSection(sectionId: string,) {
     const target = this.groupedMessages.find((m,) => m.section_id === sectionId);
@@ -151,6 +182,10 @@ export const chatSections: Partial<ChatState> & ThisType<ChatState> = {
    * @param sectionId Section to summarize.
    * @returns `{ count, startTime }` (startTime `null` when the section is empty).
    */
+  /**
+   * @param {string} sectionId
+   * @returns {{ count: number; startTime: string | null; }}
+   */
   sectionDividerMeta(sectionId: string,): { count: number; startTime: string | null } {
     let count = 0;
     let startTime: string | null = null;
@@ -166,11 +201,20 @@ export const chatSections: Partial<ChatState> & ThisType<ChatState> = {
    * Format an ISO timestamp for divider display (HH:MM).
    * @param iso
    */
+  /**
+   * @param {string | null} iso
+   * @returns {string}
+   */
   formatSectionTime(iso: string | null,): string {
     if (!iso) { return ""; }
     return formatDisplayDate(iso, "time",);
   },
 
+  /**
+   * @param {string} messageId
+   * @param {string | null} sectionId
+   * @returns {Promise<void>}
+   */
   async assignMessageToSection(messageId: string, sectionId: string | null,) {
     if (!this.activeChat) { return; }
     try {

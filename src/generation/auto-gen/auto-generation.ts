@@ -68,6 +68,7 @@ export interface AutoGenOpts {
  * greeting), generation runs directly without an attempt row to avoid
  * the NOT NULL FK constraint on `generation_attempts.parent_message_id`.
  * @param opts
+ * @returns {Promise<void>}
  */
 export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
   const { database, config, chatId, parentMessageId, userId, userMessage, } = opts;

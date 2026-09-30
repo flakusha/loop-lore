@@ -13,6 +13,10 @@ export const moodStateEmotions: Partial<ChatState> & ThisType<ChatState> = {
    * emotion definitions so the template can render each emotion chip.
    * Populates _activeEmotions with { def: { id, icon, display_name }, intensity }.
    */
+  /**
+   * @throws {Error}
+   * @returns {Promise<void>}
+   */
   async loadEmotions() {
     const actorId = this._getCharacterActorId();
     if (!actorId) { return; }
@@ -53,6 +57,9 @@ export const moodStateEmotions: Partial<ChatState> & ThisType<ChatState> = {
   },
 
   /** Get the active emotions list (joined with definitions). */
+  /**
+   * @returns {{ def: { id: string; icon: string | null; display_name: string; }; intensity: number; }[]}
+   */
   getActiveEmotions() {
     return this._activeEmotions;
   },

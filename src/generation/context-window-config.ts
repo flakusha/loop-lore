@@ -61,6 +61,7 @@ export const DEFAULT_CONTEXT_WINDOW: ContextWindowConfig = {
 /**
  * Rough token estimate: ~4 characters per token (English-optimized)
  * @param text
+ * @returns {number}
  */
 export function defaultTokenCount(text: string,): number {
   return Math.ceil(text.length / 4,);

@@ -46,6 +46,7 @@ export interface AssistantTuning {
  * Clamp a candidate temperature to the valid range. Returns null for anything
  * outside 0–2 (the boundary validation for the tuning override).
  * @param value
+ * @returns {number | null}
  */
 export function clampAssistantTemperature(value: unknown,): number | null {
   if (typeof value !== "number" || !Number.isFinite(value,)) { return null; }
@@ -56,6 +57,7 @@ export function clampAssistantTemperature(value: unknown,): number | null {
 /**
  * Clamp a candidate max-tokens to a positive int, else null (boundary check).
  * @param value
+ * @returns {number | null}
  */
 export function clampAssistantMaxTokens(value: unknown,): number | null {
   if (typeof value !== "number" || !Number.isFinite(value,)) { return null; }
@@ -67,6 +69,7 @@ export function clampAssistantMaxTokens(value: unknown,): number | null {
  * Read the validated assistant tuning out of a persisted gm_config blob.
  * Unknown/invalid shapes degrade to nulls (no override).
  * @param config
+ * @returns {AssistantTuning}
  */
 export function readAssistantTuning(config: GmConfig,): AssistantTuning {
   const raw = (config as GmConfig & { assistantTuning?: unknown }).assistantTuning;
@@ -82,6 +85,7 @@ export function readAssistantTuning(config: GmConfig,): AssistantTuning {
  * Resolve the effective generation params: override wins, otherwise the
  * server defaults. Used for the read-only effective-params display floor.
  * @param tuning
+ * @returns {{ temperature: number; maxTokens: number; }}
  */
 export function effectiveAssistantParams(tuning: AssistantTuning,): { temperature: number; maxTokens: number } {
   return {

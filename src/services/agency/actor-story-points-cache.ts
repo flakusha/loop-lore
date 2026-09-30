@@ -35,6 +35,7 @@ import { getStoryPointBalance, } from "./story-points/queries";
  * @param db
  * @param actorId
  * @param worldId
+ * @returns {Promise<void>}
  */
 export async function refreshActorStoryPointsCache(
   db: Kysely<DB>,

@@ -17,6 +17,7 @@ import type { StreamBuffer, } from "../stream-buffer";
  * @param controller
  * @param buffer
  * @param chunk
+ * @returns {number}
  */
 export function flushChunk(
   controller: ReadableStreamDefaultController,
@@ -34,6 +35,7 @@ export function flushChunk(
  * where the user-visible response was truncated.
  * @param attemptId
  * @param seq
+ * @returns {void}
  */
 export function recordLastRendered(attemptId: string, seq: number,): void {
   const active = activeGenerations.get(attemptId,);

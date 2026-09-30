@@ -16,6 +16,7 @@ import type { HandlerOpts, MessageData, } from "./types";
  * @param root0.database
  * @param root0.config
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { chats: { ":id": { export: { ...; }; }; }; }; }, { ...; }, { ...; }>}
  */
 export function exportChatRoute({ database, config, }: HandlerOpts, prefix = "/api",) {
   return new Elysia().get(

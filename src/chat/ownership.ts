@@ -33,6 +33,7 @@ export class OwnershipError extends Error {
  * @param chatId
  * @param actorId
  * @returns void
+ * @throws {Error}
  */
 export async function requireChatParticipant(
   db: { selectFrom: Function },
@@ -63,6 +64,7 @@ export async function requireChatParticipant(
  * @param db.selectFrom
  * @param userId
  * @returns void
+ * @throws {Error}
  */
 export async function requireActorExists(
   db: { selectFrom: Function },

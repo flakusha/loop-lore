@@ -69,6 +69,7 @@ export function isKeyboardNavEnabled(): boolean {
 /**
  * Dispatch a keynav action on window for Alpine components.
  * @param action - The action identifier from the keymap
+ * @returns {void}
  */
 export function dispatchKeynavAction(action: string,): void {
   window.dispatchEvent(new CustomEvent("keynav:action", { detail: { action, }, bubbles: true, },),);
@@ -83,6 +84,7 @@ const keynavHandlers = new Map<string, Set<() => void>>();
  * Returns an unsubscribe function.
  * @param action - The action identifier from the keymap (e.g. "goto-chatlist")
  * @param handler - Side-effect to run when the action fires
+ * @returns {() => void}
  */
 export function registerKeynavHandler(action: string, handler: () => void,): () => void {
   let set = keynavHandlers.get(action,);
@@ -113,6 +115,7 @@ export function registerKeynavHandler(action: string, handler: () => void,): () 
  * iteration reflects mid-iteration mutations, so newly-added handlers for
  * the same action will be called in this dispatch.
  * @param action - The action identifier from the keymap
+ * @returns {void}
  */
 export function dispatchKeynavActionToHandlers(action: string,): void {
   const set = keynavHandlers.get(action,);
@@ -131,6 +134,7 @@ export function dispatchKeynavActionToHandlers(action: string,): void {
 
 /**
  * Test-only: clear all registered handlers. Not exported in the public API.
+ * @returns {void}
  */
 export function __resetKeynavHandlersForTests(): void {
   keynavHandlers.clear();

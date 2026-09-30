@@ -19,6 +19,8 @@ export interface LogEventArgs {
  * @param root0
  * @param root0.thisL
  * @param root0.opts
+ * @throws {Error}
+ * @returns {Promise<void>}
  */
 export async function logEvent(
   { thisL, opts, }: LogEventArgs,

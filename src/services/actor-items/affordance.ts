@@ -13,6 +13,7 @@ import type { EquipSlot, } from "./equip";
  * @param slot
  * @param caps
  * @param ctx
+ * @returns {Promise<string | null>}
  */
 export async function checkEquipAffordance(
   itemId: string,

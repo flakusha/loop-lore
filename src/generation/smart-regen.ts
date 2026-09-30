@@ -26,6 +26,7 @@ export type RegenStyle = keyof typeof VALID_REGEN_STYLES | null;
 
 /**
  * @param value
+ * @returns {boolean}
  */
 export function isValidRegenStyle(value: unknown,): value is NonNullable<RegenStyle> {
   return typeof value === "string" && value in VALID_REGEN_STYLES;

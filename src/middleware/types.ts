@@ -33,6 +33,7 @@ export interface RequestContext {
  * Create a minimal RequestContext with default locale/t.
  * Use when creating context outside the middleware pipeline.
  * @param partial
+ * @returns {RequestContext}
  */
 export function createRequestContext(
   partial: Pick<RequestContext, "userId" | "userRole" | "sessionId">,

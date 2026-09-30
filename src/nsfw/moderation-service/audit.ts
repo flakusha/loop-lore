@@ -28,6 +28,7 @@ export interface RecordActionArgs {
  * @param root0
  * @param root0.thisL
  * @param root0.params
+ * @returns {Promise<ModAction>}
  */
 export async function recordAction({ thisL, params, }: RecordActionArgs,): Promise<ModAction> {
   const id = crypto.randomUUID();
@@ -82,6 +83,7 @@ export interface GetAuditLogArgs {
  * @param root0.thisL
  * @param root0.targetUserId
  * @param root0.options
+ * @returns {Promise<ModAction[]>}
  */
 export async function getAuditLog({ thisL, targetUserId, options, }: GetAuditLogArgs,): Promise<ModAction[]> {
   const limit = options?.limit ?? 100;
@@ -104,6 +106,7 @@ export async function getAuditLog({ thisL, targetUserId, options, }: GetAuditLog
  * @param deps.log
  * @param userId
  * @param actionType
+ * @returns {Promise<void>}
  */
 export async function notifyUser(
   deps: { db: NsfwModerationServiceContext["db"]; log: NsfwModerationServiceContext["log"] },
@@ -158,6 +161,7 @@ export async function notifyUser(
  * @param row.created_at
  * @param row.deleted_at
  * @param row.deleted_by
+ * @returns {ModAction}
  */
 export function mapAction(
   row: {

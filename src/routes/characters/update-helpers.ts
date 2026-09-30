@@ -8,6 +8,7 @@ import { safeJsonParse, } from "../../utils";
  * Validation rejects non-numbers (422); numeric values outside the range are
  * clamped rather than rejected so permissive clients still save a sane crop.
  * @param value
+ * @returns {number}
  */
 export function clampFocusPercent(value: unknown,): number {
   const n = typeof value === "number" ? value : Number(value,);

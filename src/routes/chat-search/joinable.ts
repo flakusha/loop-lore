@@ -9,6 +9,7 @@ import { type HandlerOpts, JoinableQuery, } from "./types";
 /**
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { chats: { joinable: { ...; }; }; }; }, { ...; }, { ...; }>}
  */
 export function joinableRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;

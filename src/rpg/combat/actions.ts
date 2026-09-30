@@ -20,6 +20,7 @@ const BASE_REACTIONS = 1;
  * @param hp
  * @param ac
  * @param isNpc
+ * @returns {Combatant}
  */
 export function initCombatant(
   id: string,
@@ -53,6 +54,7 @@ export function initCombatant(
  * Check if a combatant can take a specific action type.
  * @param combatant
  * @param type
+ * @returns {boolean}
  */
 export function canTakeAction(combatant: Combatant, type: ActionType,): boolean {
   if (combatant.conditions.includes("stunned",) || combatant.conditions.includes("paralyzed",)) {
@@ -89,6 +91,7 @@ export function canTakeAction(combatant: Combatant, type: ActionType,): boolean 
  * Consume an action from a combatant.
  * @param combatant
  * @param type
+ * @returns {Combatant}
  */
 export function consumeAction(combatant: Combatant, type: ActionType,): Combatant {
   const updated = { ...combatant, };
@@ -128,6 +131,7 @@ export function consumeAction(combatant: Combatant, type: ActionType,): Combatan
 /**
  * Reset combatant's actions for a new turn.
  * @param combatant
+ * @returns {Combatant}
  */
 export function resetTurnActions(combatant: Combatant,): Combatant {
   return {
@@ -141,6 +145,7 @@ export function resetTurnActions(combatant: Combatant,): Combatant {
 /**
  * Reset reactions for a new round (start of turn cycle).
  * @param combatants
+ * @returns {Combatant[]}
  */
 export function resetRoundReactions(combatants: Combatant[],): Combatant[] {
   return Array.from(combatants, (c,) => ({ ...c, reactions: BASE_REACTIONS, }),);

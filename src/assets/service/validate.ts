@@ -11,6 +11,11 @@
  * @param maxSize
  * @returns string
  */
+/**
+ * @param {number} sizeBytes
+ * @param {number} maxSize
+ * @returns {string | null}
+ */
 export function validateFileSize(sizeBytes: number, maxSize: number,): string | null {
   if (sizeBytes > maxSize) {
     const maxMb = (maxSize / 1_048_576).toFixed(0,);

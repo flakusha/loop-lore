@@ -15,6 +15,7 @@ import type { CreateEncounterOpts, NsfwEncounter, } from "./types";
  * Create a new NSFW encounter.
  * @param db
  * @param opts
+ * @returns {Promise<NsfwEncounter>}
  */
 export async function createEncounter(
   db: Kysely<DB>,
@@ -102,6 +103,7 @@ export async function createEncounter(
  * Get an encounter by ID.
  * @param db
  * @param encounterId
+ * @returns {Promise<NsfwEncounter | null>}
  */
 export async function getEncounter(
   db: Kysely<DB>,
@@ -123,6 +125,7 @@ export async function getEncounter(
  * @param opts
  * @param opts.completed
  * @param opts.type
+ * @returns {Promise<NsfwEncounter[]>}
  */
 export async function listEncounters(
   db: Kysely<DB>,
@@ -149,6 +152,7 @@ export async function listEncounters(
  * Delete an encounter.
  * @param db
  * @param encounterId
+ * @returns {Promise<boolean>}
  */
 export async function deleteEncounter(
   db: Kysely<DB>,

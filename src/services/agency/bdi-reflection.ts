@@ -29,6 +29,10 @@ export interface ReflectionResult {
 /**
  * Apply one reflection step. Returns `{ emitted: false }` when no shift
  * occurred; `{ emitted: true, revisionId }` when a row was inserted.
+ * @param {Kysely<DB>} db
+ * @param {string} planId
+ * @param {ReflectionOpts} opts
+ * @returns {Promise<ReflectionResult>}
  */
 export async function applyReflectionCheckpoint(
   db: Kysely<DB>,

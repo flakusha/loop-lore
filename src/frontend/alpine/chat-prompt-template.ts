@@ -21,6 +21,9 @@ export const chatPromptTemplate: Partial<ChatState> & ThisType<ChatState> = {
   _promptOverrideDraft: "",
   _promptOverrideSaving: false,
 
+  /**
+   * @returns {Promise<void>}
+   */
   async loadPromptTemplate() {
     if (!this.activeChat) { return; }
     this._promptLoading = true;
@@ -39,6 +42,9 @@ export const chatPromptTemplate: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async savePromptOverride() {
     if (!this.activeChat || this._promptOverrideSaving) { return; }
     const next = this._promptOverrideDraft.trim();

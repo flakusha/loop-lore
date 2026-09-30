@@ -40,6 +40,7 @@ function validateCharacterTemplateEntry(entry: unknown, index: number,): void {
  * Validate the `character` domain raw config before merging.
  * @param raw
  * @returns void
+ * @throws {Error}
  */
 export function validateCharacterConfig(raw: Record<string, unknown>,): void {
   if (raw.templates !== undefined) {
@@ -105,6 +106,7 @@ function validateWorkflowStepEntry(entry: unknown, workflowId: string, index: nu
  * bare `{ [id]: workflow }` map (multi-file workflows/*.yaml shape).
  * @param raw
  * @returns workflow }` map (multi-file workflows/*.yaml shape).
+ * @throws {Error}
  */
 export function validateWorkflowConfig(raw: Record<string, unknown>,): void {
   const table = (

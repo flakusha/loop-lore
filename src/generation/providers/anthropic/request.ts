@@ -22,6 +22,7 @@ function mapRole(role: GenerationMessage["role"],): "user" | "assistant" {
 
 /**
  * @param tool
+ * @returns {Record<string, unknown>}
  */
 export function mapToolDef(tool: ToolDef,): Record<string, unknown> {
   return {
@@ -36,6 +37,7 @@ export function mapToolDef(tool: ToolDef,): Record<string, unknown> {
  * top-level `system` field (Anthropic does not accept a `system` role in
  * the messages array).
  * @param messages
+ * @returns {{ system: string; messages: { role: "assistant" | "user"; content: unknown; }[]; }}
  */
 export function buildMessages(
   messages: GenerationMessage[],
@@ -86,6 +88,7 @@ function buildToolCallsParam(req: GenerateRequest, body: Record<string, unknown>
  * @param state
  * @param req
  * @param stream
+ * @returns {Record<string, unknown>}
  */
 export function buildBody(
   state: AnthropicState,

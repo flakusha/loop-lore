@@ -44,6 +44,7 @@ const WHOLE_PLACEHOLDER_RE = /^\{\{([^}]+)\}\}$/;
  * and a second copy of this regex would eventually disagree with the one that
  * actually does the substituting.
  * @param obj - JSON value to scan
+ * @returns {Set<string>}
  */
 export function collectPlaceholders(obj: unknown,): Set<string> {
   const found = new Set<string>();

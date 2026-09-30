@@ -33,11 +33,17 @@ globalThis.personasPage = function() {
     formTemperature: "" as string | number,
     personaAvailableModels: [] as string[],
 
+    /**
+     * @returns {Promise<void>}
+     */
     async init() {
       await this.loadPersonas();
       await this.loadPersonaModels();
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async loadPersonaModels() {
       try {
         const res = await apiFetch("/api/v1/providers", { headers: { Accept: "application/json", }, },);
@@ -55,6 +61,11 @@ globalThis.personasPage = function() {
       }
     },
 
+    /**
+     * @param {string} providerName
+     * @param {string[]} models
+     * @returns {Promise<void>}
+     */
     async _collectModelsForProvider(providerName: string, models: string[],) {
       try {
         const modelsRes = await apiFetch(`/api/v1/admin/providers/${providerName}/models`, {
@@ -71,6 +82,9 @@ globalThis.personasPage = function() {
       }
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async loadPersonas() {
       this.loading = true;
       try {
@@ -86,6 +100,9 @@ globalThis.personasPage = function() {
       this.loading = false;
     },
 
+    /**
+     * @returns {void}
+     */
     filterList() {
       const q = this.search.toLowerCase().trim();
       if (!q) {
@@ -98,6 +115,10 @@ globalThis.personasPage = function() {
       this.filtered = out;
     },
 
+    /**
+     * @param {PersonaItem} p
+     * @returns {void}
+     */
     editPersona(p: PersonaItem,) {
       if (!globalThis.Alpine) { return; }
       const ui = Alpine.store("ui",);
@@ -112,6 +133,9 @@ globalThis.personasPage = function() {
       ui.showPersonaForm = true;
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async savePersona() {
       const name = this.formName.trim();
       if (!name) { return; }
@@ -157,6 +181,10 @@ globalThis.personasPage = function() {
       this.saving = false;
     },
 
+    /**
+     * @param {string} id
+     * @returns {Promise<void>}
+     */
     async deletePersona(id: string,) {
       if (!confirm("Delete this persona?",)) { return; }
       try {
@@ -172,6 +200,9 @@ globalThis.personasPage = function() {
       }
     },
 
+    /**
+     * @returns {void}
+     */
     onDefaultChange() {
       // handled on save
     },

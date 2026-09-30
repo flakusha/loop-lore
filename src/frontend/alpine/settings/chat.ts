@@ -4,9 +4,14 @@
 import { setLocalInferenceOptIn, } from "../local-inference";
 import type { SettingsState, } from "./types";
 
-/** */
+/**
+ * @returns {Partial<SettingsState> & ThisType<SettingsState>}
+ */
 export function chat(): Partial<SettingsState> & ThisType<SettingsState> {
   return {
+    /**
+     * @returns {Promise<void>}
+     */
     async saveChat() {
       localStorage.setItem("chat-enter-to-send", this.enterToSend ? "1" : "0",);
       localStorage.setItem("chat-auto-scroll", this.autoScroll ? "1" : "0",);

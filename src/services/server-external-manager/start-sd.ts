@@ -109,6 +109,7 @@ function appendValueFlags(args: string[], opts: SdCppOptions,): void {
  * - diffusion: --diffusion-model modelPath — requires --llm (text encoder), --vae optional
  * @param host
  * @param opts
+ * @returns {Promise<ServerInstance | null>}
  */
 export async function startSdCpp(
   host: ServerExternalHost,

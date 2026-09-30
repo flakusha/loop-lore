@@ -13,6 +13,7 @@ import { worldRoutes, } from "./worlds-routes";
 /**
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { worlds: { get: { body: unknown; params: {}; query: unknown; headers: unknown; response: { ...; }; }; }; }; } & ... ...}
  */
 export function worldsRoutes(opts: HandleOpts, prefix = "/api",) {
   return new Elysia({ name: "worlds", },)

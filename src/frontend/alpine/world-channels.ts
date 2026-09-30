@@ -18,6 +18,10 @@ export const worldChannels: Partial<ChatState> & ThisType<ChatState> = {
    * Group a world's channel chats by location (channel category).
    * @param worldId
    */
+  /**
+   * @param {string} worldId
+   * @returns {{ locationId: string; locationName: string; chats: WorldChannelChat[]; }[]}
+   */
   worldChatGroups(worldId: string,) {
     const chats = this._worldChats[worldId] || [];
     const groups = new Map<string, { locationId: string; locationName: string; chats: WorldChannelChat[] }>();
@@ -34,6 +38,9 @@ export const worldChannels: Partial<ChatState> & ThisType<ChatState> = {
   },
 
   /** Redeem a world invite code, then refresh the sidebar world tree. */
+  /**
+   * @returns {Promise<void>}
+   */
   async joinWorldByCode() {
     const code = (this.worldJoinCode || "").trim();
     if (!code) {

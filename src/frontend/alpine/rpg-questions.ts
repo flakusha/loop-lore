@@ -33,6 +33,9 @@ export const rpgQuestions: Partial<ChatState> & ThisType<ChatState> = {
   _answeringQuestionId: null as string | null,
   _pendingAnswer: null as RpgQuestionPendingAnswer | null,
 
+  /**
+   * @returns {Promise<void>}
+   */
   async loadOpenQuestions() {
     const activeChat = this.activeChat;
     if (!activeChat) {
@@ -75,23 +78,39 @@ export const rpgQuestions: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @param {string} questionId
+   * @param {string} optionId
+   * @returns {Promise<void>}
+   */
   async answerChoice(questionId: string, optionId: string,) {
     if (this._answeringQuestionId) { return; }
     this._pendingAnswer = { questionId, optionId, };
     await this._submitAnswer();
   },
 
+  /**
+   * @param {string} questionId
+   * @param {string | number} value
+   * @returns {Promise<void>}
+   */
   async answerValue(questionId: string, value: string | number,) {
     if (this._answeringQuestionId) { return; }
     this._pendingAnswer = { questionId, value, };
     await this._submitAnswer();
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async retryAnswer() {
     await this._submitAnswer();
   },
 
   /** Submits the pending answer; on failure it stays pending for retry. */
+  /**
+   * @returns {Promise<void>}
+   */
   async _submitAnswer() {
     const pending = this._pendingAnswer;
     if (!pending || this._answeringQuestionId) { return; }

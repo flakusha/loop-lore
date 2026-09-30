@@ -95,11 +95,17 @@ export class GossipService {
   }
 
   /** Start the table eviction sweep. Idempotent. */
+  /**
+   * @returns {void}
+   */
   start(): void {
     this.table.start();
   }
 
   /** Stop the table eviction sweep. Idempotent. */
+  /**
+   * @returns {void}
+   */
   stop(): void {
     this.table.stop();
   }
@@ -110,6 +116,9 @@ export class GossipService {
   }
 
   /** Canonical origins of all known peers (for instance-state exposure). */
+  /**
+   * @returns {string[]}
+   */
   origins(): string[] {
     return this.table.listPeers().map((p,) => p.origin);
   }
@@ -117,6 +126,10 @@ export class GossipService {
   /**
    * Get a peer entry by canonical origin.
    * @param origin
+   */
+  /**
+   * @param {string} origin
+   * @returns {PeerEntry | undefined}
    */
   getPeer(origin: string,): PeerEntry | undefined {
     return this.table.getPeer(origin,);
@@ -127,6 +140,9 @@ export class GossipService {
    * heartbeats keyed by this poll's tick, and discover advertised peers.
    * Per-peer misses never abort the round — they just go stale.
    * @returns Per-poll summary.
+   */
+  /**
+   * @returns {Promise<GossipPollSummary>}
    */
   async pollOnce(): Promise<GossipPollSummary> {
     this.tick += 1;
@@ -171,6 +187,7 @@ export class GossipService {
 /**
  * Public origin of this instance (proxy-aware).
  * @param server
+ * @returns {string}
  */
 export function publicOriginOf(server: ServerConfig,): string {
   return server.publicOrigin ??
@@ -192,6 +209,7 @@ let singleton: GossipService | null = null;
  * @param opts.trustByOrigin
  * @param opts.selfOrigin
  * @param opts.ttl
+ * @returns {GossipService}
  */
 export function getGossipService(opts: {
   seeds: string[];
@@ -204,12 +222,18 @@ export function getGossipService(opts: {
   return singleton;
 }
 
-/** Canonical origins of known peers, or [] when the service never started. */
+/**
+ * Canonical origins of known peers, or [] when the service never started.
+ * @returns {string[]}
+ */
 export function getGossipOrigins(): string[] {
   return singleton?.origins() ?? [];
 }
 
-/** Drop the process-wide service (tests only). */
+/**
+ * Drop the process-wide service (tests only).
+ * @returns {void}
+ */
 export function resetGossipService(): void {
   singleton?.stop();
   singleton = null;

@@ -16,6 +16,7 @@ import type { WorldState, } from "./types";
  * @param turnId
  * @param messageId
  * @param description
+ * @returns {Promise<string>}
  */
 export async function snapshot(
   state: WorldState,
@@ -44,6 +45,7 @@ export async function snapshot(
  * @param state
  * @param actorId
  * @param worldId
+ * @returns {Promise<{ id: string; actor_id: string; created_at: string; updated_at: string; world_id: string; relationships: string; health: number; location_id: string | null; mental_state: string; knowledge: string; inventory: string; schedule: string; } | undefined>}
  */
 export async function getNpcState(state: WorldState, actorId: string, worldId: string,) {
   return state.db
@@ -58,6 +60,7 @@ export async function getNpcState(state: WorldState, actorId: string, worldId: s
  * Get location state for a given location
  * @param state
  * @param locationId
+ * @returns {Promise<{ id: string; created_at: string; updated_at: string; world_id: string; weather: string | null; location_id: string; description_override: string | null; atmosphere: string | null; npcs_present: string; items_available: string; time_of_day: string | null; hazards: string; } | undefined>}
  */
 export async function getLocationState(state: WorldState, locationId: string,) {
   return state.db
@@ -71,6 +74,7 @@ export async function getLocationState(state: WorldState, locationId: string,) {
  * Get all NPCs at a given location
  * @param state
  * @param locationId
+ * @returns {Promise<{ display_name: string; agent_type: AgentType; actor_id: string; health: number; mental_state: string; }[]>}
  */
 export async function getNpcsAtLocation(state: WorldState, locationId: string,) {
   return state.db

@@ -15,6 +15,7 @@ import type { HandlerOpts, } from "./types";
 /**
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { actors: { post: { body: { ...; }; params: {}; query: unknown; headers: unknown; response: { ...; }; }; }; }; }, { ....}
  */
 export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;

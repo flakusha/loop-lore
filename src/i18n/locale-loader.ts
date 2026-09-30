@@ -71,6 +71,7 @@ export function getRawTranslations(locale: Locale,): TranslationMap | undefined 
 
 /**
  * Clear the locale cache (for testing).
+ * @returns {void}
  */
 export function clearLocaleCache(): void {
   localeCache.clear();

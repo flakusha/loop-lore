@@ -125,6 +125,7 @@ export async function discoverBackends(options?: DiscoveryOptions,): Promise<Dis
  * Convert a DiscoveredBackend to an ImageProviderConfig.
  * @param backend
  * @param name
+ * @returns {ImageProviderConfig}
  */
 export function backendToConfig(backend: DiscoveredBackend, name: string,): ImageProviderConfig {
   return {

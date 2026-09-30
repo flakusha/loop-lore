@@ -41,6 +41,7 @@ function prefersReducedMotion(): boolean {
  * @param container
  * @param text
  * @param options
+ * @returns {Promise<void>}
  */
 export function typewrite(
   container: HTMLElement,
@@ -91,6 +92,7 @@ export function typewrite(
  * Skip to end — instantly reveal all text.
  * @param container
  * @param fullText
+ * @returns {void}
  */
 export function skipTypewrite(container: HTMLElement, fullText: string,): void {
   if (activeAnimation !== null) {
@@ -104,6 +106,7 @@ export function skipTypewrite(container: HTMLElement, fullText: string,): void {
 
 /**
  * Check if a typewriter animation is currently running.
+ * @returns {boolean}
  */
 export function isTypewriting(): boolean {
   return activeAnimation !== null;

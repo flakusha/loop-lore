@@ -29,6 +29,7 @@ export type DeliveryVerdict = "stored" | "stale";
  * @param cipher
  * @param opts Optional reservation confirmation.
  * @param opts.reservationId
+ * @returns {Promise<DeliveryVerdict>}
  */
 export async function receiveDelivery(
   database: Kysely<DB>,
@@ -80,6 +81,7 @@ export async function receiveDelivery(
  * @param envelope Sealed envelope.
  * @param reservationId Receiver-side reservation to confirm.
  * @returns Delivery verdict.
+ * @throws {Error}
  */
 export async function pushEnvelope(
   post: PeerPost,

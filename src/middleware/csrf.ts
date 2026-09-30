@@ -63,6 +63,7 @@ export interface CsrfMiddlewareOptions {
  * by `src/routes/auth/shared.ts: setTokenCookie`.
  * @param override
  * @param prodDefault
+ * @returns {boolean}
  */
 export function resolveCookieSecure(
   override: boolean | undefined,
@@ -83,6 +84,8 @@ export function resolveCookieSecure(
  * Mirrors `src/routes/auth/shared.ts::setTokenCookie` so both cookies stay in
  * sync. Centralized so tests can assert the mapping without spinning up the
  * full Elysia app.
+ * @param {string | undefined} envValue
+ * @returns {boolean | undefined}
  */
 export function readCookieSecureOverrideFromEnv(
   envValue: string | undefined,
@@ -103,6 +106,7 @@ export function readCookieSecureOverrideFromEnv(
  * @param opts
  * @param opts.secure
  * @param opts.maxAgeSecs
+ * @returns {string}
  */
 export function buildCsrfCookie(
   token: string,
@@ -129,6 +133,7 @@ export function buildCsrfCookie(
  * @param sessionId
  * @param opts
  * @param opts.expiresInMs
+ * @returns {string}
  */
 export function mintCsrfToken(
   secret: string,
@@ -150,6 +155,7 @@ export function mintCsrfToken(
  * @param secret
  * @param token
  * @param sessionId
+ * @returns {boolean}
  */
 export function verifyCsrfToken(
   secret: string,
@@ -172,6 +178,7 @@ export function verifyCsrfToken(
  * the cookie value is opaque to the server (Bun.CSRF tokens are base64url
  * by default and carry their own structure).
  * @param cookieHeader
+ * @returns {string | null}
  */
 export function readCsrfCookie(cookieHeader: string | null,): string | null {
   if (cookieHeader === null) { return null; }
@@ -202,6 +209,7 @@ export interface CsrfDecision {
  * @param args.headers
  * @param args.sessionId
  * @param args.requestId
+ * @returns {CsrfDecision}
  */
 export function decideCsrf(
   opts: CsrfMiddlewareOptions,
@@ -287,6 +295,7 @@ export function decideCsrf(
  * `Secure` decision matrix.
  * @param decision
  * @param opts
+ * @returns {string | null}
  */
 export function cookieForDecision(
   decision: CsrfDecision,

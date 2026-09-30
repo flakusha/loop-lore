@@ -19,6 +19,7 @@ export interface LicenseHistoryRow {
  * Convert boolean to 0/1 integer, with fallback for undefined.
  * @param value
  * @param fallback
+ * @returns {number}
  */
 export function booleanToInt(value: boolean | undefined, fallback: number,): number {
   return value === undefined ? fallback : (value ? 1 : 0);
@@ -30,6 +31,7 @@ export function booleanToInt(value: boolean | undefined, fallback: number,): num
  * the existing values (or to the supplied defaults when no row exists).
  * @param existing
  * @param body
+ * @returns {LicenseHistoryRow & { license_type: LicenseType; }}
  */
 export function composeLicenseRow(
   existing: {
@@ -75,6 +77,7 @@ export function composeLicenseRow(
  * @param actorId
  * @param row
  * @param changedBy
+ * @returns {Promise<void>}
  */
 export async function recordLicenseHistory(
   database: Kysely<DB>,

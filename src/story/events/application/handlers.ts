@@ -22,6 +22,7 @@ import type { AppliedEvent, } from "./types";
  * @param worldId
  * @param items
  * @param event
+ * @returns {Promise<AppliedEvent>}
  */
 export async function applySingleEvent(
   database: Kysely<DB>,
@@ -71,6 +72,7 @@ export async function applySingleEvent(
 /**
  * @param db
  * @param event
+ * @returns {Promise<void>}
  */
 export async function applyLocationChange(db: Kysely<DB>, event: WorldEvent,): Promise<void> {
   if (!event.locationId) { return; }
@@ -88,6 +90,7 @@ export async function applyLocationChange(db: Kysely<DB>, event: WorldEvent,): P
 /**
  * @param db
  * @param event
+ * @returns {Promise<void>}
  */
 export async function applyNpcStateChange(db: Kysely<DB>, event: WorldEvent,): Promise<void> {
   const npcActorId = (event.data.npcActorId ?? event.actorId) as string;
@@ -116,6 +119,7 @@ export async function applyNpcStateChange(db: Kysely<DB>, event: WorldEvent,): P
  * @param db
  * @param worldId
  * @param event
+ * @returns {Promise<void>}
  */
 export async function applyTimeAdvancement(db: Kysely<DB>, worldId: string, event: WorldEvent,): Promise<void> {
   const minutes = (event.data.minutesAdvanced ?? 60) as number;
@@ -152,6 +156,7 @@ function advanceTimeOfDay(current: string, minutes: number,): string {
 /**
  * @param db
  * @param event
+ * @returns {Promise<void>}
  */
 export async function applyLocationModification(db: Kysely<DB>, event: WorldEvent,): Promise<void> {
   const locationId = (event.data.locationId ?? event.locationId) as string;
@@ -175,6 +180,7 @@ export async function applyLocationModification(db: Kysely<DB>, event: WorldEven
  * @param db
  * @param worldId
  * @param event
+ * @returns {Promise<void>}
  */
 export async function applyWorldLoreUpdate(db: Kysely<DB>, worldId: string, event: WorldEvent,): Promise<void> {
   const entry = event.data.newLoreEntry as string;
@@ -203,6 +209,7 @@ export async function applyWorldLoreUpdate(db: Kysely<DB>, worldId: string, even
 /**
  * @param db
  * @param event
+ * @returns {Promise<void>}
  */
 export async function applyCombatEvent(db: Kysely<DB>, event: WorldEvent,): Promise<void> {
   const defenderId = (event.data.defenderId ?? event.actorId) as string;

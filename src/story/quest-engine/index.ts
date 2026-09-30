@@ -78,6 +78,23 @@ export class QuestEngine {
    * @param params.rewards
    * @param params.narrativeHooks
    */
+  /**
+ * @param {{
+    worldId: string;
+    creatorId: string;
+    name: string;
+    description: string | null;
+    type: QT;
+    category?: QuestCategory;
+    config: QuestConfig;
+    target: number;
+    priority?: number;
+    deadline?: string;
+    rewards?: QuestReward;
+    narrativeHooks?: { progress: number; narrative: string }[];
+  }} params
+ * @returns {Promise<string>}
+ */
   async createQuest(params: {
     worldId: string;
     creatorId: string;
@@ -102,6 +119,12 @@ export class QuestEngine {
    * @param chatId
    * @param events
    */
+  /**
+   * @param {string} worldId
+   * @param {string} chatId
+   * @param {WorldEvent[]} events
+   * @returns {Promise<QuestProgressEntry[]>}
+   */
   async processEvent(worldId: string, chatId: string, events: WorldEvent[],): Promise<QuestProgressEntry[]> {
     return processEventDispatch(this.state, worldId, chatId, events,);
   }
@@ -112,6 +135,13 @@ export class QuestEngine {
    * @param chatId
    * @param delta
    * @param sourceMessageId
+   */
+  /**
+   * @param {string} questId
+   * @param {string} chatId
+   * @param {number} delta
+   * @param {string} sourceMessageId
+   * @returns {Promise<QuestProgressEntry>}
    */
   async advanceProgress(
     questId: string,
@@ -126,6 +156,10 @@ export class QuestEngine {
    * Get all active quests for a world
    * @param worldId
    */
+  /**
+   * @param {string} worldId
+   * @returns {Promise<{ id: string; name: string; priority: number; created_at: string; updated_at: string; world_id: string; status: QuestStatus; config: string; progress: number; type: QuestType; ... 9 more ...; narrative_hooks: string; }[]>}
+   */
   async getActiveQuests(worldId: string,) {
     return getActiveQuestsDispatch(this.state, worldId,);
   }
@@ -135,6 +169,11 @@ export class QuestEngine {
    * @param questId
    * @param chatId
    */
+  /**
+   * @param {string} questId
+   * @param {string} chatId
+   * @returns {Promise<{ id: string; created_at: string; updated_at: string; status: QuestProgressStatus; progress: number; chat_id: string; started_at: string; completed_at: string | null; quest_id: string; contributed_events: string; } | undefined>}
+   */
   async getChatProgress(questId: string, chatId: string,) {
     return getChatProgressDispatch(this.state, questId, chatId,);
   }
@@ -142,6 +181,10 @@ export class QuestEngine {
   /**
    * Fail a quest (e.g., deadline passed)
    * @param questId
+   */
+  /**
+   * @param {string} questId
+   * @returns {Promise<void>}
    */
   async fail(questId: string,): Promise<void> {
     return failDispatch(this.state, questId,);
@@ -151,6 +194,10 @@ export class QuestEngine {
    * Abandon a quest (GM action)
    * @param questId
    */
+  /**
+   * @param {string} questId
+   * @returns {Promise<void>}
+   */
   async abandon(questId: string,): Promise<void> {
     return abandonDispatch(this.state, questId,);
   }
@@ -159,6 +206,10 @@ export class QuestEngine {
    * Get completion percentage for a quest
    * @param questId
    */
+  /**
+   * @param {string} questId
+   * @returns {Promise<{ progress: number; target: number; percentage: number; }>}
+   */
   async getCompletion(questId: string,): Promise<{ progress: number; target: number; percentage: number }> {
     return getCompletionDispatch(this.state, questId,);
   }
@@ -166,6 +217,10 @@ export class QuestEngine {
   /**
    * Check time-based quests for deadline expiry
    * @param worldId
+   */
+  /**
+   * @param {string} worldId
+   * @returns {Promise<string[]>}
    */
   async checkTimeQuests(worldId: string,): Promise<string[]> {
     return checkTimeQuestsDispatch(this.state, worldId,);
@@ -176,6 +231,7 @@ export class QuestEngine {
  * @param db
  * @param worldState
  * @param items
+ * @returns {QuestEngine}
  */
 export function createQuestEngine(
   db: Kysely<DB>,

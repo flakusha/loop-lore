@@ -32,6 +32,7 @@ const ACCEPT_VERSION_RE = /application\/vnd\.loop-lore\.v(\d+)\+json/;
  * 2. Accept header: `application/vnd.loop-lore.v1+json` → `"1"`
  * 3. Default: `"1"`
  * @param request
+ * @returns {"1"}
  */
 export function resolveVersion(request: Request,): ApiVersion {
   const url = new URL(request.url ?? "",);
@@ -56,6 +57,7 @@ export function resolveVersion(request: Request,): ApiVersion {
  * @example
  * app.use(versionResolver())
  * // ctx.apiVersion === "1"
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: { readonly apiVersion: "1"; }; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: ExtractErrorFromHandle<{ readonly apiVersion: "1"; }>; }, {}, { ...; }, { ...; }>}
  */
 export function versionResolver() {
   return new Elysia({ name: "version-resolver", },)

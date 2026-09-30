@@ -129,12 +129,19 @@ export const workflowFormState: Partial<AdminWorkflows> & ThisType<AdminWorkflow
   workflowFormErrors: [],
   savingWorkflow: false,
 
+  /**
+   * @returns {void}
+   */
   openWorkflowCreate() {
     this.workflowForm = emptyWorkflowForm();
     this.workflowFormErrors = [];
     this.showWorkflowForm = true;
   },
 
+  /**
+   * @param {string} id
+   * @returns {Promise<void>}
+   */
   async openWorkflowEdit(id: string,) {
     this.workflowFormErrors = [];
     this.showWorkflowForm = true;
@@ -154,11 +161,17 @@ export const workflowFormState: Partial<AdminWorkflows> & ThisType<AdminWorkflow
     }
   },
 
+  /**
+   * @returns {void}
+   */
   closeWorkflowForm() {
     this.showWorkflowForm = false;
     this.workflowFormErrors = [];
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async saveWorkflow() {
     const form = this.workflowForm;
     const errors: string[] = [];

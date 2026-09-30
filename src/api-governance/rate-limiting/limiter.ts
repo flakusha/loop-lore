@@ -40,6 +40,11 @@ export class GovernanceRateLimiter {
   }
 
   /** Read-only view for the status endpoint — consumes nothing. */
+  /**
+   * @param {string} key
+   * @param {RatePolicy} policy
+   * @returns {{ policy: string; limit: number; remaining: number; }}
+   */
   peek(key: string, policy: RatePolicy,): { policy: string; limit: number; remaining: number } {
     const nowMs = this.now();
     const fresh = this.store.loadWindow(key, nowMs,).filter((t,) => t > nowMs - policy.windowMs);
@@ -47,6 +52,12 @@ export class GovernanceRateLimiter {
   }
 
   /** Consume cost units against the key's policy. Returns verdict. */
+  /**
+   * @param {string} key
+   * @param {RatePolicy} policy
+   * @param {unknown} cost
+   * @returns {RateLimitVerdict}
+   */
   consume(key: string, policy: RatePolicy, cost = 1,): RateLimitVerdict {
     const nowMs = this.now();
     const win = slidingWindow(nowMs, this.store.loadWindow(key, nowMs,), policy.windowMs, policy.max,);
@@ -82,6 +93,9 @@ export class GovernanceRateLimiter {
   }
 
   /** Stop timers and release resources. */
+  /**
+   * @returns {void}
+   */
   destroy(): void {
     this.store.destroy();
   }

@@ -31,6 +31,7 @@ export interface ApplyHappinessDeltaArgs {
  * @param args.delta - Happiness change (-100 to +100)
  * @param root0.delta
  * @returns New happiness value
+ * @throws {Error}
  */
 export async function applyHappinessDelta(
   { thisL, actorId, worldId, delta, }: ApplyHappinessDeltaArgs,

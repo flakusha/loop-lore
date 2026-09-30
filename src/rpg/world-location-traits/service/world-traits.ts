@@ -13,6 +13,7 @@ import type {
  * Create a world trait
  * @param db
  * @param input
+ * @returns {Promise<WorldTraitRow>}
  */
 export async function createWorldTrait(
   db: Kysely<any>,
@@ -44,6 +45,7 @@ export async function createWorldTrait(
  * @param db
  * @param actorId
  * @param worldId
+ * @returns {Promise<WorldTraitRow[]>}
  */
 export async function getWorldTraits(
   db: Kysely<any>,
@@ -64,6 +66,7 @@ export async function getWorldTraits(
  * @param db
  * @param id
  * @param input
+ * @returns {Promise<WorldTraitRow | undefined>}
  */
 export async function updateWorldTrait(
   db: Kysely<any>,
@@ -99,6 +102,7 @@ export async function updateWorldTrait(
  * Delete a world trait
  * @param db
  * @param id
+ * @returns {Promise<boolean>}
  */
 export async function deleteWorldTrait(db: Kysely<any>, id: string,): Promise<boolean> {
   const result = await db

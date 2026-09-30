@@ -41,6 +41,9 @@ export const chatParticipants: Partial<ChatParticipantsState> & ThisType<ChatSta
     return out;
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async loadParticipants() {
     if (!this.activeChat) { return; }
     try {
@@ -62,6 +65,9 @@ export const chatParticipants: Partial<ChatParticipantsState> & ThisType<ChatSta
     }
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async loadTurnOrder() {
     if (!this.activeChat || !this.isGroupChat) { return; }
     try {
@@ -74,6 +80,9 @@ export const chatParticipants: Partial<ChatParticipantsState> & ThisType<ChatSta
     }
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async loadAvailableActors() {
     if (!this.activeChat || !this.isGroupChat) { return; }
     try {
@@ -87,6 +96,11 @@ export const chatParticipants: Partial<ChatParticipantsState> & ThisType<ChatSta
     }
   },
 
+  /**
+   * @param {string} actorId
+   * @param {unknown} role
+   * @returns {Promise<void>}
+   */
   async addParticipant(actorId: string, role = "member",) {
     if (!actorId || !this.activeChat) { return; }
     this._participantsBusy = true;
@@ -119,6 +133,10 @@ export const chatParticipants: Partial<ChatParticipantsState> & ThisType<ChatSta
     }
   },
 
+  /**
+   * @param {string} actorId
+   * @returns {Promise<void>}
+   */
   async removeParticipant(actorId: string,) {
     if (!actorId || !this.activeChat) { return; }
     this._participantsBusy = true;
@@ -139,6 +157,11 @@ export const chatParticipants: Partial<ChatParticipantsState> & ThisType<ChatSta
     }
   },
 
+  /**
+   * @param {string} actorId
+   * @param {number} value
+   * @returns {Promise<void>}
+   */
   async updateParticipantTalkativity(actorId: string, value: number,) {
     if (!actorId || !this.activeChat) { return; }
     const clamped = Math.min(10, Math.max(1, Math.round(value,),),);
@@ -155,6 +178,11 @@ export const chatParticipants: Partial<ChatParticipantsState> & ThisType<ChatSta
     }
   },
 
+  /**
+   * @param {string} actorId
+   * @param {number} value
+   * @returns {Promise<void>}
+   */
   async updateParticipantInitiative(actorId: string, value: number,) {
     if (!actorId || !this.activeChat) { return; }
     const res = await apiFetch(`/api/v1/chats/${this.activeChat}/participants/${actorId}`, {

@@ -33,6 +33,9 @@ export const profiles = {
 
   // ── Data loading ────────────────────────────────────
 
+  /**
+   * @returns {Promise<void>}
+   */
   async loadTemplates() {
     this.loadingTemplates = true;
     try {
@@ -60,6 +63,10 @@ export const profiles = {
 
   // ── Profile selection ───────────────────────────────
 
+  /**
+   * @param {string} id
+   * @returns {Promise<void>}
+   */
   async selectProfile(id: string,) {
     try {
       const res = await apiFetch(`/api/v1/admin/templates/${id}`, {
@@ -73,6 +80,10 @@ export const profiles = {
     }
   },
 
+  /**
+   * @param {AdminTemplates} this
+   * @returns {void}
+   */
   clearSelection(this: AdminTemplates,) {
     this.selectedProfile = null;
     this.editingTemplate = null;
@@ -80,6 +91,10 @@ export const profiles = {
 
   // ── Delete profile ──────────────────────────────────
 
+  /**
+   * @param {string} id
+   * @returns {Promise<void>}
+   */
   async deleteProfile(id: string,) {
     try {
       const res = await (globalThis as any).apiFetch(`/api/v1/admin/templates/${id}`, {
@@ -99,6 +114,9 @@ export const profiles = {
 
   // ── Create profile ──────────────────────────────────
 
+  /**
+   * @returns {Promise<void>}
+   */
   async createProfile() {
     const np = this.newProfile;
     if (!np.id || !np.name) { return; }

@@ -15,6 +15,7 @@
  * `max + 1` can match neither a whole key nor any key's leading run.
  *
  * @param reserved - Ids already in use (or claimed for nodes not yet built)
+ * @returns {string}
  */
 export function allocateNodeId(reserved: Iterable<string>,): string {
   let max = 0;

@@ -20,6 +20,7 @@ import type { WorldEvent, } from "../../types";
  * @param itemsService
  * @param worldId
  * @param event
+ * @returns {Promise<void>}
  */
 export async function applyItemTransfer(
   db: Kysely<DB>,

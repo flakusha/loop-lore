@@ -8,6 +8,10 @@ import type { ChatState, GmConfig, } from "../types";
  * `chatSettings` so they run with full `ChatState` context.
  */
 export const actorModelActions: Partial<ChatState> & ThisType<ChatState> = {
+  /**
+   * @param {GmConfig} config
+   * @returns {void}
+   */
   loadActorModels(config: GmConfig,): void {
     const actorModels: Record<string, { model: string; provider: string }> = {};
     for (const p of this._chatParticipants) {

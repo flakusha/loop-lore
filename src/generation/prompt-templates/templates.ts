@@ -27,6 +27,7 @@ type TokenKey = keyof typeof TOKENS;
  * Resolve a template string by replacing all tokens
  * @param template
  * @param ctx
+ * @returns {string}
  */
 export function resolveTemplate(template: string, ctx: TemplateContext,): string {
   const tokenMap: Record<TokenKey, string> = {
@@ -59,6 +60,7 @@ export function resolveTemplate(template: string, ctx: TemplateContext,): string
 
 /**
  * @param styleTags
+ * @returns {Record<DetailLevel, ImageModelTemplates>}
  */
 export function tagTemplates(styleTags: string,): Record<DetailLevel, ImageModelTemplates> {
   const base = {
@@ -99,6 +101,7 @@ export function tagTemplates(styleTags: string,): Record<DetailLevel, ImageModel
 
 /**
  * @param style
+ * @returns {Record<DetailLevel, ImageModelTemplates>}
  */
 export function naturalTemplates(style: string,): Record<DetailLevel, ImageModelTemplates> {
   const base = {
@@ -139,6 +142,7 @@ export function naturalTemplates(style: string,): Record<DetailLevel, ImageModel
 
 /**
  * @param style
+ * @returns {Record<DetailLevel, ImageModelTemplates>}
  */
 export function mixedTagNaturalTemplates(style: string,): Record<DetailLevel, ImageModelTemplates> {
   const base = {

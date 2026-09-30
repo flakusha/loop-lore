@@ -49,6 +49,8 @@ function rowToGrowthEntry(row: GrowthLogRow,): GrowthLogEntry {
  * @param db
  * @param opts
  * @returns the confirmed growth-log entry
+ * @throws {Error}
+ * @throws {Error}
  */
 export async function confirmGrowthEntry(
   db: Kysely<DB>,
@@ -104,6 +106,8 @@ export async function confirmGrowthEntry(
  * @param db
  * @param opts
  * @returns the rejected growth-log entry
+ * @throws {Error}
+ * @throws {Error}
  */
 export async function rejectGrowthEntry(
   db: Kysely<DB>,

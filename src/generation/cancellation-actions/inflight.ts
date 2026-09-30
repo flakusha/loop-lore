@@ -10,6 +10,7 @@ import type { DB, } from "../../db/schema";
  * is in-flight (to prevent duplicate retries).
  * @param db
  * @param idempotencyKey
+ * @returns {Promise<boolean>}
  */
 export async function hasInFlightGeneration(db: Kysely<DB>, idempotencyKey: string,): Promise<boolean> {
   const existing = await db

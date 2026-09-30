@@ -15,6 +15,7 @@ import type { CharacterSystemsImportResult, } from "./types";
  * @param actorId
  * @param data
  * @param result
+ * @returns {Promise<void>}
  */
 export async function importLicensing(
   db: Kysely<DB>,

@@ -51,6 +51,7 @@ export const listLogQuery = t.Object({
 /**
  * Map service-layer growth errors to HTTP responses.
  * @param err
+ * @returns {Response}
  */
 export function errResponse(err: unknown,): Response {
   if (err instanceof GrowthServiceError) {
@@ -67,6 +68,7 @@ export function errResponse(err: unknown,): Response {
  * Type guard for unknown optional string params/query values.
  * @param obj
  * @param key
+ * @returns {string | undefined}
  */
 export function getString(obj: unknown, key: string,): string | undefined {
   if (obj === null || typeof obj !== "object") { return undefined; }
@@ -78,6 +80,7 @@ export function getString(obj: unknown, key: string,): string | undefined {
  * Type guard for unknown optional numeric params/query values.
  * @param obj
  * @param key
+ * @returns {number | undefined}
  */
 export function getNumber(obj: unknown, key: string,): number | undefined {
   if (obj === null || typeof obj !== "object") { return undefined; }
@@ -89,6 +92,7 @@ export function getNumber(obj: unknown, key: string,): number | undefined {
  * Type guard for unknown optional boolean params/query values.
  * @param obj
  * @param key
+ * @returns {boolean | undefined}
  */
 export function getBoolean(obj: unknown, key: string,): boolean | undefined {
   if (obj === null || typeof obj !== "object") { return undefined; }

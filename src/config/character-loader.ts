@@ -187,6 +187,7 @@ function normalizeTemplates(data: CharacterFileData,): CharacterTemplateConfig["
  * Load character definitions from configs/characters/ directory.
  * @param cwd - Working directory to search from (default: process.cwd())
  * @returns Array of character templates
+ * @throws {Error}
  */
 export function loadCharacterFiles(cwd?: string,): CharacterTemplateConfig["templates"] {
   const directory = cwd ?? process.cwd();

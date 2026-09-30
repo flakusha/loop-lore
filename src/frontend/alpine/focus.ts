@@ -13,6 +13,10 @@
  * Supports tab, shift+tab, arrow keys, and enter/space activation.
  * @param container
  */
+/**
+ * @param {Element} container
+ * @returns {HTMLElement | null}
+ */
 export function getFirstFocusable(container: Element,): HTMLElement | null {
   const focusables = container.querySelectorAll<HTMLElement>(
     'a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"]), [role="button"], [role="link"]',
@@ -23,6 +27,7 @@ export function getFirstFocusable(container: Element,): HTMLElement | null {
 /**
  * Get the last focusable element within a container.
  * @param container
+ * @returns {HTMLElement | null}
  */
 export function getLastFocusable(container: Element,): HTMLElement | null {
   const focusables = container.querySelectorAll<HTMLElement>(
@@ -35,6 +40,7 @@ export function getLastFocusable(container: Element,): HTMLElement | null {
  * Trap focus within a container (for modals, dialogs).
  * Returns a cleanup function to remove event listeners.
  * @param container
+ * @returns {() => void}
  */
 export function trapFocus(container: Element,): () => void {
   const first = getFirstFocusable(container,);
@@ -78,6 +84,7 @@ export function trapFocus(container: Element,): () => void {
  * Focus the first element that matches a selector.
  * Useful for focusing the message input or search field.
  * @param selector
+ * @returns {void}
  */
 export function focusFirst(selector: string,): void {
   const element = document.querySelector<HTMLElement>(selector,);
@@ -89,6 +96,7 @@ export function focusFirst(selector: string,): void {
 /**
  * Focus the skip-to-content link for keyboard users.
  * Skips to the main content area.
+ * @returns {void}
  */
 export function focusSkipToContent(): void {
   const skipLink = document.querySelector<HTMLAnchorElement>(".skip-to-content",);
@@ -100,6 +108,7 @@ export function focusSkipToContent(): void {
 /**
  * Focus the main content area.
  * Used after page transitions or modal closes.
+ * @returns {void}
  */
 export function focusMainContent(): void {
   const main = document.querySelector<HTMLElement>('[role="main"], #app-root',);
@@ -112,6 +121,7 @@ export function focusMainContent(): void {
 /**
  * Set focus to an element by ID.
  * @param id
+ * @returns {void}
  */
 export function focusById(id: string,): void {
   const element = document.querySelector<HTMLElement>(`#${id}`,);
@@ -122,6 +132,7 @@ export function focusById(id: string,): void {
  * Ensure focus is visible for keyboard navigation.
  * Removes outline-none classes and adds focus-visible styles.
  * @param element
+ * @returns {void}
  */
 export function ensureVisibleFocus(element: HTMLElement,): void {
   element.classList.remove("focus-hidden",);
@@ -131,6 +142,7 @@ export function ensureVisibleFocus(element: HTMLElement,): void {
 /**
  * Check if an element is currently visible in the viewport.
  * @param element
+ * @returns {boolean}
  */
 export function isInViewport(element: Element,): boolean {
   const rect = element.getBoundingClientRect();
@@ -146,6 +158,7 @@ export function isInViewport(element: Element,): boolean {
  * Scroll an element into view and focus it.
  * @param element
  * @param offset
+ * @returns {void}
  */
 export function focusIntoView(element: HTMLElement, offset = 0,): void {
   element.scrollIntoView({ block: "center", inline: "center", },);
@@ -167,6 +180,10 @@ export class FocusPortal {
   /**
    * @param container
    */
+  /**
+   * @param {Element} container
+   * @returns {void}
+   */
   enter(container: Element,): void {
     this.previousActiveElement = document.activeElement as HTMLElement | null;
     const first = getFirstFocusable(container,);
@@ -176,6 +193,9 @@ export class FocusPortal {
   }
 
   /** */
+  /**
+   * @returns {void}
+   */
   exit(): void {
     if (this.previousActiveElement) {
       this.previousActiveElement.focus();
@@ -191,6 +211,7 @@ let escapeKeyHandler: (() => void) | null = null;
  * Register an escape key handler for closing modals/sidebars.
  * Returns a function to unregister the handler.
  * @param handler
+ * @returns {() => void}
  */
 export function onEscapeKey(handler: () => void,): () => void {
   escapeKeyHandler = handler;
@@ -204,6 +225,7 @@ export function onEscapeKey(handler: () => void,): () => void {
 /**
  * Handle escape key for keyboard navigation.
  * Closes sidebar if open, or calls registered escape handler.
+ * @returns {void}
  */
 export function handleEscapeKey(): void {
   const sidebar = document.querySelector("#layout-sidebar",);

@@ -52,6 +52,10 @@ export class StationsService {
    * Create a new station definition. Returns the new ID.
    * @param opts
    */
+  /**
+   * @param {CreateStationDefOpts} opts
+   * @returns {Promise<string>}
+   */
   async createStationDef(opts: CreateStationDefOpts,): Promise<string> {
     const id = uid();
     const now = new Date().toISOString();
@@ -77,6 +81,10 @@ export class StationsService {
    * Get a single station definition by ID.
    * @param id
    */
+  /**
+   * @param {string} id
+   * @returns {Promise<StationDef | null>}
+   */
   async getStationDef(id: string,): Promise<StationDef | null> {
     const row = await this.db.selectFrom("crafting_station_defs",)
       .where("id", "=", id,)
@@ -89,6 +97,11 @@ export class StationsService {
    * List station definitions for a world, optionally filtered by type.
    * @param worldId
    * @param type
+   */
+  /**
+   * @param {string} worldId
+   * @param {CraftingStationType} type
+   * @returns {Promise<StationDef[]>}
    */
   async listStationDefs(
     worldId: string,
@@ -106,6 +119,11 @@ export class StationsService {
    * Update a station definition. Returns false when not found.
    * @param id
    * @param opts
+   */
+  /**
+   * @param {string} id
+   * @param {UpdateStationDefOpts} opts
+   * @returns {Promise<boolean>}
    */
   async updateStationDef(id: string, opts: UpdateStationDefOpts,): Promise<boolean> {
     const u: Record<string, unknown> = {};
@@ -131,6 +149,10 @@ export class StationsService {
    * Delete a station definition. Returns false when not found.
    * @param id
    */
+  /**
+   * @param {string} id
+   * @returns {Promise<boolean>}
+   */
   async deleteStationDef(id: string,): Promise<boolean> {
     const r = await this.db.deleteFrom("crafting_station_defs",)
       .where("id", "=", id,)
@@ -143,6 +165,10 @@ export class StationsService {
   /**
    * Place a new station instance. Returns the new ID.
    * @param opts
+   */
+  /**
+   * @param {CreateStationInstanceOpts} opts
+   * @returns {Promise<string>}
    */
   async createInstance(opts: CreateStationInstanceOpts,): Promise<string> {
     const id = uid();
@@ -166,6 +192,11 @@ export class StationsService {
    * @param worldId
    * @param id
    */
+  /**
+   * @param {string} worldId
+   * @param {string} id
+   * @returns {Promise<StationInstance | null>}
+   */
   async getInstance(worldId: string, id: string,): Promise<StationInstance | null> {
     const row = await this.db.selectFrom("crafting_station_instances",)
       .where("id", "=", id,)
@@ -182,6 +213,10 @@ export class StationsService {
    * worldId) for direct reads from request handlers.
    * @param id
    */
+  /**
+   * @param {string} id
+   * @returns {Promise<StationInstance | null>}
+   */
   async getInstanceById(id: string,): Promise<StationInstance | null> {
     const row = await this.db.selectFrom("crafting_station_instances",)
       .where("id", "=", id,)
@@ -194,6 +229,11 @@ export class StationsService {
    * List station instances for a world, optionally filtered by location.
    * @param worldId
    * @param locationId
+   */
+  /**
+   * @param {string} worldId
+   * @param {string} locationId
+   * @returns {Promise<StationInstance[]>}
    */
   async listInstances(
     worldId: string,
@@ -211,6 +251,12 @@ export class StationsService {
    * @param worldId
    * @param id
    * @param opts
+   */
+  /**
+   * @param {string} worldId
+   * @param {string} id
+   * @param {UpdateStationInstanceOpts} opts
+   * @returns {Promise<boolean>}
    */
   async updateInstance(worldId: string, id: string, opts: UpdateStationInstanceOpts,): Promise<boolean> {
     const u: Record<string, unknown> = {};
@@ -232,6 +278,11 @@ export class StationsService {
    * Delete a station instance, scoped to a world. Returns false when not found.
    * @param worldId
    * @param id
+   */
+  /**
+   * @param {string} worldId
+   * @param {string} id
+   * @returns {Promise<boolean>}
    */
   async deleteInstance(worldId: string, id: string,): Promise<boolean> {
     const r = await this.db.deleteFrom("crafting_station_instances",)

@@ -104,6 +104,13 @@ export async function getModerationBlock(
   return blocked ? "block" : null;
 }
 
+/**
+ * @param {Kysely<DB>} database
+ * @param {string} chatId
+ * @param {string} userId
+ * @param {string | null | undefined} userRole
+ * @returns {Promise<{ ok: true; } | { ok: false; error: ServiceError; }>}
+ */
 export async function checkChatAccess(
   database: Kysely<DB>,
   chatId: string,

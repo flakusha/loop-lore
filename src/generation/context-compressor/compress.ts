@@ -15,6 +15,7 @@ import type { CompressionResult, CompressMessagesOpts, } from "./types";
  * @param root0.config
  * @param root0.tokenCountFn
  * @param root0.summarizeFn
+ * @returns {CompressionResult}
  */
 export function compressMessages({
   messages,

@@ -55,6 +55,11 @@ export class WorldStateService {
    * @param chatId
    * @param recentTurnCount
    */
+  /**
+   * @param {string} chatId
+   * @param {unknown} recentTurnCount
+   * @returns {Promise<StoryContext | null>}
+   */
   async buildContext(chatId: string, recentTurnCount = 10,): Promise<StoryContext | null> {
     return buildContextDispatch(this.state, chatId, recentTurnCount,);
   }
@@ -62,6 +67,10 @@ export class WorldStateService {
   /**
    * Initialize NPC dynamic states for all characters in a world
    * @param worldId
+   */
+  /**
+   * @param {string} worldId
+   * @returns {Promise<number>}
    */
   async initializeNpcStates(worldId: string,): Promise<number> {
     return initializeNpcStatesDispatch(this.state, worldId,);
@@ -71,6 +80,10 @@ export class WorldStateService {
    * Initialize per-world character setup rows for all characters in a world
    * @param worldId
    */
+  /**
+   * @param {string} worldId
+   * @returns {Promise<number>}
+   */
   async initializeCharacterWorldSetup(worldId: string,): Promise<number> {
     return initializeCharacterWorldSetupDispatch(this.state, worldId,);
   }
@@ -79,6 +92,10 @@ export class WorldStateService {
    * Seed world_items from each character's starting_inventory on first join
    * @param worldId
    */
+  /**
+   * @param {string} worldId
+   * @returns {Promise<number>}
+   */
   async seedStartingInventory(worldId: string,): Promise<number> {
     return seedStartingInventoryDispatch(this.state, worldId,);
   }
@@ -86,6 +103,10 @@ export class WorldStateService {
   /**
    * Initialize location dynamic states for all locations in a world
    * @param worldId
+   */
+  /**
+   * @param {string} worldId
+   * @returns {Promise<number>}
    */
   async initializeLocationStates(worldId: string,): Promise<number> {
     return initializeLocationStatesDispatch(this.state, worldId,);
@@ -97,6 +118,13 @@ export class WorldStateService {
    * @param turnId
    * @param messageId
    * @param description
+   */
+  /**
+   * @param {string} worldId
+   * @param {string} turnId
+   * @param {string} messageId
+   * @param {string} description
+   * @returns {Promise<string>}
    */
   async snapshot(
     worldId: string,
@@ -112,6 +140,11 @@ export class WorldStateService {
    * @param actorId
    * @param worldId
    */
+  /**
+   * @param {string} actorId
+   * @param {string} worldId
+   * @returns {Promise<{ id: string; actor_id: string; created_at: string; updated_at: string; world_id: string; relationships: string; health: number; location_id: string | null; mental_state: string; knowledge: string; inventory: string; schedule: string; } | undefined>}
+   */
   async getNpcState(actorId: string, worldId: string,) {
     return getNpcStateDispatch(this.state, actorId, worldId,);
   }
@@ -120,6 +153,10 @@ export class WorldStateService {
    * Get location state for a given location
    * @param locationId
    */
+  /**
+   * @param {string} locationId
+   * @returns {Promise<{ id: string; created_at: string; updated_at: string; world_id: string; weather: string | null; location_id: string; description_override: string | null; atmosphere: string | null; npcs_present: string; items_available: string; time_of_day: string | null; hazards: string; } | undefined>}
+   */
   async getLocationState(locationId: string,) {
     return getLocationStateDispatch(this.state, locationId,);
   }
@@ -127,6 +164,10 @@ export class WorldStateService {
   /**
    * Get all NPCs at a given location
    * @param locationId
+   */
+  /**
+   * @param {string} locationId
+   * @returns {Promise<{ display_name: string; agent_type: AgentType; actor_id: string; health: number; mental_state: string; }[]>}
    */
   async getNpcsAtLocation(locationId: string,) {
     return getNpcsAtLocationDispatch(this.state, locationId,);

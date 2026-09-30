@@ -79,6 +79,7 @@ async function executeScopedByUser<O,>(
  * @param database
  * @param write
  * @param cfg
+ * @returns {Promise<void>}
  */
 export async function apply(
   database: Kysely<DB>,

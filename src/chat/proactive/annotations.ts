@@ -49,7 +49,11 @@ export interface CreateAnnotationInput {
 /** Map of annotation id → in-memory annotation, scoped per process. */
 const memoryStore = new Map<string, Annotation>();
 
-/** Lookup annotations created in-process (kind=note|quest). */
+/**
+ * Lookup annotations created in-process (kind=note|quest).
+ * @param {string} chatId
+ * @returns {Annotation[]}
+ */
 export function listMemoryAnnotations(chatId: string,): Annotation[] {
   const out: Annotation[] = [];
   for (const a of memoryStore.values()) {
@@ -58,7 +62,10 @@ export function listMemoryAnnotations(chatId: string,): Annotation[] {
   return out;
 }
 
-/** Reset the in-memory store (test helper). */
+/**
+ * Reset the in-memory store (test helper).
+ * @returns {void}
+ */
 export function clearMemoryAnnotations(): void {
   memoryStore.clear();
 }
@@ -67,6 +74,7 @@ export function clearMemoryAnnotations(): void {
  * Determine whether an annotation has passed its TTL window at `now`.
  * @param annotation
  * @param now
+ * @returns {boolean}
  */
 export function isAnnotationExpired(
   annotation: Annotation,
@@ -83,6 +91,7 @@ export function isAnnotationExpired(
  * @param db
  * @param input
  * @returns The created annotation.
+ * @throws {Error}
  */
 export async function createAnnotation(
   db: Kysely<DB>,

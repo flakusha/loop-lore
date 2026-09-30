@@ -15,6 +15,7 @@ import { LocationNsfwService, } from "../../location-nsfw/service";
  * venue was attached — the atmosphere bonus then stays zero.
  * @param db
  * @param encounterId
+ * @returns {Promise<string | null>}
  */
 export async function findEncounterLocation(
   db: Kysely<DB>,
@@ -41,6 +42,7 @@ export async function findEncounterLocation(
  * @param locations
  * @param log
  * @param encounterId
+ * @returns {Promise<number>}
  */
 export async function resolveAtmosphereBonus(
   db: Kysely<DB>,

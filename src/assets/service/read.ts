@@ -34,6 +34,7 @@ export async function getAsset(database: Kysely<DB>, assetId: string,): Promise<
  * @param uploadDir - Upload directory path
  * @param chatKey - Chat key for decryption (optional, required for encrypted assets)
  * @returns Decrypted buffer or null if asset not found
+ * @throws {Error}
  */
 export async function getAssetData(
   database: Kysely<DB>,

@@ -20,6 +20,8 @@ import type { BuildResultOptions, GmState, GmTurnResult, } from "./types";
  * @param state
  * @param context
  * @param debugActorId
+ * @throws {Error}
+ * @returns {Promise<GameMasterDecision>}
  */
 export async function getGmDecision(
   state: GmState,
@@ -105,6 +107,7 @@ function resolveGuidedActor(
  * @param turnId
  * @param turnNumber
  * @param decision
+ * @returns {Promise<void>}
  */
 export async function recordGmTurn(
   state: GmState,
@@ -137,6 +140,7 @@ export async function recordGmTurn(
 /**
  * Build a GmTurnResult from a recorded turn
  * @param options
+ * @returns {GmTurnResult}
  */
 export function buildResult(options: BuildResultOptions,): GmTurnResult {
   const { turn, response, qualityEval, worldEvents, accepted, escalated, regenerationSuggested, } = options;

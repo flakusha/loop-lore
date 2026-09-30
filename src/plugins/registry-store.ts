@@ -20,71 +20,139 @@ export class RegistryStore {
   private migrations = new Map<string, MigrationDefinition[]>();
   private enabledMap = new Map<string, boolean>();
 
-  enable(name: string): void {
+  /**
+ * @param {string} name
+ * @returns {void}
+ */
+enable(name: string): void {
     if (!this.enabledMap.has(name)) this.enabledMap.set(name, true);
   }
 
-  isEnabled(name: string): boolean {
+  /**
+ * @param {string} name
+ * @returns {boolean}
+ */
+isEnabled(name: string): boolean {
     return this.enabledMap.get(name) ?? name === "core";
   }
 
-  setEnabled(name: string, enabled: boolean): void {
+  /**
+ * @param {string} name
+ * @param {boolean} enabled
+ * @returns {void}
+ */
+setEnabled(name: string, enabled: boolean): void {
     this.enabledMap.set(name, enabled);
   }
 
-  setRoutes(pluginName: string, defs: RouteDefinition[]): void {
+  /**
+ * @param {string} pluginName
+ * @param {RouteDefinition[]} defs
+ * @returns {void}
+ */
+setRoutes(pluginName: string, defs: RouteDefinition[]): void {
     this.routes.set(pluginName, defs);
   }
 
-  getPluginRoutes(pluginName: string): RouteDefinition[] {
+  /**
+ * @param {string} pluginName
+ * @returns {RouteDefinition[]}
+ */
+getPluginRoutes(pluginName: string): RouteDefinition[] {
     return this.routes.get(pluginName) ?? [];
   }
 
-  getAllRoutes(): RouteDefinition[] {
+  /**
+ * @returns {RouteDefinition[]}
+ */
+getAllRoutes(): RouteDefinition[] {
     return this.enabledDefinitions(this.routes);
   }
 
-  setTools(pluginName: string, defs: ToolDefinition[]): void {
+  /**
+ * @param {string} pluginName
+ * @param {ToolDefinition[]} defs
+ * @returns {void}
+ */
+setTools(pluginName: string, defs: ToolDefinition[]): void {
     this.tools.set(pluginName, defs);
   }
 
-  getAllTools(): ToolDefinition[] {
+  /**
+ * @returns {ToolDefinition[]}
+ */
+getAllTools(): ToolDefinition[] {
     return this.enabledDefinitions(this.tools);
   }
 
-  setAgentRoles(pluginName: string, defs: AgentRoleDefinition[]): void {
+  /**
+ * @param {string} pluginName
+ * @param {AgentRoleDefinition[]} defs
+ * @returns {void}
+ */
+setAgentRoles(pluginName: string, defs: AgentRoleDefinition[]): void {
     this.agentRoles.set(pluginName, defs);
   }
 
-  getAllAgentRoles(): AgentRoleDefinition[] {
+  /**
+ * @returns {AgentRoleDefinition[]}
+ */
+getAllAgentRoles(): AgentRoleDefinition[] {
     return this.enabledDefinitions(this.agentRoles);
   }
 
-  setUIComponents(pluginName: string, defs: UIComponentDefinition[]): void {
+  /**
+ * @param {string} pluginName
+ * @param {UIComponentDefinition[]} defs
+ * @returns {void}
+ */
+setUIComponents(pluginName: string, defs: UIComponentDefinition[]): void {
     this.uiComponents.set(pluginName, defs);
   }
 
-  getAllUIComponents(): UIComponentDefinition[] {
+  /**
+ * @returns {UIComponentDefinition[]}
+ */
+getAllUIComponents(): UIComponentDefinition[] {
     return this.enabledDefinitions(this.uiComponents);
   }
 
-  setEventHandlers(pluginName: string, defs: EventHandlerDefinition[]): void {
+  /**
+ * @param {string} pluginName
+ * @param {EventHandlerDefinition[]} defs
+ * @returns {void}
+ */
+setEventHandlers(pluginName: string, defs: EventHandlerDefinition[]): void {
     this.eventHandlers.set(pluginName, defs);
   }
 
-  getAllEventHandlers(): EventHandlerDefinition[] {
+  /**
+ * @returns {EventHandlerDefinition[]}
+ */
+getAllEventHandlers(): EventHandlerDefinition[] {
     return this.enabledDefinitions(this.eventHandlers);
   }
 
-  setMigrations(pluginName: string, defs: MigrationDefinition[]): void {
+  /**
+ * @param {string} pluginName
+ * @param {MigrationDefinition[]} defs
+ * @returns {void}
+ */
+setMigrations(pluginName: string, defs: MigrationDefinition[]): void {
     this.migrations.set(pluginName, defs);
   }
 
-  getAllMigrations(): MigrationDefinition[] {
+  /**
+ * @returns {MigrationDefinition[]}
+ */
+getAllMigrations(): MigrationDefinition[] {
     return this.enabledDefinitions(this.migrations);
   }
 
-  clear(): void {
+  /**
+ * @returns {void}
+ */
+clear(): void {
     this.routes.clear();
     this.tools.clear();
     this.agentRoles.clear();
@@ -94,7 +162,11 @@ export class RegistryStore {
     this.enabledMap.clear();
   }
 
-  private enabledDefinitions<T>(definitions: Map<string, T[]>): T[] {
+  /**
+ * @param {Map<string, T[]>} definitions
+ * @returns {T[]}
+ */
+private enabledDefinitions<T>(definitions: Map<string, T[]>): T[] {
     const out: T[] = [];
     for (const [name, defs] of definitions) {
       if (!this.isEnabled(name)) continue;

@@ -13,6 +13,9 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../../db";
 import { createTestDb, } from "../../../test-utils/create-test-db";
 
+/**
+ * @returns {Promise<{ db: Kysely<DB>; raw: Database; }>}
+ */
 export async function createInMemoryDb(): Promise<{ db: Kysely<DB>; raw: Database }> {
   const { db, sqlite, } = await createTestDb();
   return { db, raw: sqlite, };

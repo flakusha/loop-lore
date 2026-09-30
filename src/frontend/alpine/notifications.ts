@@ -38,6 +38,9 @@ export class NotificationsManager {
   private beforeUnloadHandler: (() => void) | null = null;
 
   /** */
+  /**
+   * @returns {void}
+   */
   start(): void {
     if (this.started) { return; }
     this.started = true;
@@ -53,6 +56,9 @@ export class NotificationsManager {
   }
 
   /** */
+  /**
+   * @returns {void}
+   */
   stop(): void {
     this.es?.close();
     this.es = null;
@@ -73,6 +79,10 @@ export class NotificationsManager {
    * Mark a chat read (POST) and clear its local unseen state.
    * @param chatId
    */
+  /**
+   * @param {string} chatId
+   * @returns {Promise<void>}
+   */
   async markRead(chatId: string,): Promise<void> {
     try {
       await apiFetch(`/api/v1/chats/${chatId}/mark-read`, { method: "PUT", },);
@@ -86,6 +96,10 @@ export class NotificationsManager {
   /**
    * @param chatId
    */
+  /**
+   * @param {string | null} chatId
+   * @returns {void}
+   */
   setActiveChat(chatId: string | null,): void {
     this.state.activeChatId = chatId;
   }
@@ -94,11 +108,18 @@ export class NotificationsManager {
    * Read unseen count for a specific chat.
    * @param chatId
    */
+  /**
+   * @param {string} chatId
+   * @returns {number}
+   */
   getUnseenCount(chatId: string,): number {
     return this.state.unseen[chatId] ?? 0;
   }
 
   /** Read all unseen counts (for components that need the full map). */
+  /**
+   * @returns {Record<string, number>}
+   */
   getAllUnseen(): Record<string, number> {
     return { ...this.state.unseen, };
   }
@@ -107,12 +128,19 @@ export class NotificationsManager {
    * Clear unseen count for a chat locally (without POST).
    * @param chatId
    */
+  /**
+   * @param {string} chatId
+   * @returns {void}
+   */
   clearUnseen(chatId: string,): void {
     this.state.unseen[chatId] = 0;
     this.renderBadge(chatId,);
   }
 
   /** */
+  /**
+   * @returns {void}
+   */
   private openStream(): void {
     if (typeof EventSource === "undefined") { return; }
     try {
@@ -130,6 +158,9 @@ export class NotificationsManager {
   }
 
   /** */
+  /**
+   * @returns {Promise<void>}
+   */
   private async poll(): Promise<void> {
     try {
       const res = await apiFetch("/api/v1/chats/activity",);
@@ -144,6 +175,10 @@ export class NotificationsManager {
   /**
    * Merge a server snapshot into local state and update UI.
    * @param chats
+   */
+  /**
+   * @param {Record<string, ActivityEntry>} chats
+   * @returns {void}
    */
   private applySnapshot(chats: Record<string, ActivityEntry>,): void {
     for (const [chatId, entry,] of Object.entries(chats,)) {
@@ -161,6 +196,10 @@ export class NotificationsManager {
 
   /**
    * @param chatId
+   */
+  /**
+   * @param {string} chatId
+   * @returns {void}
    */
   private renderBadge(chatId: string,): void {
     const host = document.querySelector<HTMLElement>(`[data-chat-id="${CSS.escape(chatId,)}"]`,);
@@ -183,6 +222,9 @@ export class NotificationsManager {
   }
 
   /** Re-read the active chat from the DOM after an htmx swap. */
+  /**
+   * @returns {void}
+   */
   private syncFromDom(): void {
     const open = document.querySelector<HTMLElement>("[data-chat-id].active, [data-active-chat]",);
     const id = open?.dataset.chatId ?? open?.dataset.activeChat ?? null;

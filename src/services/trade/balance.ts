@@ -18,6 +18,7 @@ import { DEFAULT_CURRENCY, } from "./types";
  * @param actorId
  * @param worldId
  * @param currency
+ * @returns {Promise<number>}
  */
 export async function ensureBalanceRow(
   db: Kysely<DB>,
@@ -54,6 +55,7 @@ export async function ensureBalanceRow(
  * @param actorId
  * @param worldId
  * @param currency
+ * @returns {Promise<number>}
  */
 export async function getBalance(
   db: Kysely<DB>,
@@ -79,6 +81,8 @@ export async function getBalance(
  * @param amount
  * @param currency
  * @param trx
+ * @throws {Error}
+ * @returns {Promise<number>}
  */
 export async function credit(
   db: Kysely<DB>,
@@ -110,6 +114,8 @@ export async function credit(
  * @param amount
  * @param currency
  * @param trx
+ * @throws {Error}
+ * @returns {Promise<boolean>}
  */
 export async function debit(
   db: Kysely<DB>,
@@ -143,6 +149,7 @@ export async function debit(
  * @param amount
  * @param currency
  * @param trx
+ * @returns {Promise<boolean>}
  */
 export async function transferCurrency(
   db: Kysely<DB>,

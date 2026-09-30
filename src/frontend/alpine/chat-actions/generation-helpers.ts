@@ -26,6 +26,7 @@ export interface DispatchCtx {
  * @param body
  * @param label
  * @param chatId
+ * @returns {Promise<void>}
  */
 export async function dispatchGenerationAction(
   ctx: DispatchCtx,
@@ -76,6 +77,7 @@ export async function dispatchGenerationAction(
  * @param ctx
  * @param description
  * @param chatId
+ * @returns {Promise<void>}
  */
 export async function dispatchQuestAction(ctx: DispatchCtx, description: string, chatId: string,) {
   if (!description) {

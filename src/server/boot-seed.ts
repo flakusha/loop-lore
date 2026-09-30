@@ -19,6 +19,7 @@ import { seedWorkflowLibrary, } from "../generation/workflow-library";
  * The workflow seed resolves the oldest admin as owner, so it must run after
  * user seeding — `start.ts` calls this only once `seedConfiguredUsers` has.
  * @param database - Kysely handle
+ * @returns {Promise<void>}
  */
 export async function seedDynamicContent(database: Kysely<DB>,): Promise<void> {
   await seedChatSetupTemplates(database,);

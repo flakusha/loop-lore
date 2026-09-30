@@ -29,6 +29,10 @@ import { nsfwModerationRoutes, } from "../nsfw-moderation";
 import { proactiveMessagingRoutes, } from "../proactive-messaging";
 import { promptTemplateRoutes, } from "../templates";
 
+/**
+ * @param {RegisterPluginsOpts} opts
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { lora: { discover: { ...; }; }; }; } & ... 121 more ... & { ...; }, { ...; }, { ...; } & { ...; }>}
+ */
 export function contentSurface(opts: RegisterPluginsOpts,) {
   const { database, config, } = opts;
   const handleOpts = { database, config, };

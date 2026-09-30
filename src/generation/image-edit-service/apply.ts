@@ -31,6 +31,16 @@ export interface ApplyEditArgs {
  * @param root0
  * @param root0.thisL
  * @param root0.opts
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @returns {Promise<string>}
  */
 export async function applyEdit(
   { thisL, opts, }: ApplyEditArgs,

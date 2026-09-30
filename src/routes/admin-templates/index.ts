@@ -24,6 +24,7 @@ import { updateRoutes, } from "./update";
  * @param opts
  * @param opts.database
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { admin: { templates: { ...; }; }; }; } & ... 5 more ... & { ...; }, { ...; }, { ...; } & { ...; }>}
  */
 export function adminTemplateRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
   return (

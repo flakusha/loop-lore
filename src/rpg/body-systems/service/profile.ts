@@ -29,6 +29,7 @@ import type {
  * @param row.modifications
  * @param row.created_at
  * @param row.updated_at
+ * @returns {BodyProfile}
  */
 export function rowToProfile(row: {
   id: string;
@@ -78,6 +79,7 @@ function clamp(value: number,): number {
  * Get or create a body profile for an actor.
  * @param db
  * @param actorId
+ * @returns {Promise<BodyProfile>}
  */
 export async function getProfile(
   db: Kysely<DB>,
@@ -142,6 +144,7 @@ export async function getProfile(
  * @param db
  * @param actorId
  * @param updates
+ * @returns {Promise<boolean>}
  */
 export async function updateProfile(
   db: Kysely<DB>,
@@ -179,6 +182,7 @@ export async function updateProfile(
  * @param db
  * @param actorId
  * @param modification
+ * @returns {Promise<void>}
  */
 export async function addModification(
   db: Kysely<DB>,
@@ -204,6 +208,7 @@ export async function addModification(
  * @param db
  * @param actorId
  * @param index
+ * @returns {Promise<boolean>}
  */
 export async function removeModification(
   db: Kysely<DB>,

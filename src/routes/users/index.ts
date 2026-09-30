@@ -24,6 +24,7 @@ export type { UsersRoutesOpts, } from "./types";
 /**
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, {}, { derive: {}; resolve: {}; schema: {}; standaloneSchema: {}; response: {}; }, { ...; }>}
  */
 export function usersRoutes(opts: UsersRoutesOpts, prefix = "/api",): Elysia {
   return new Elysia({ name: "users", },)

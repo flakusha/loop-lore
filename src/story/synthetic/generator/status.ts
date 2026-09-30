@@ -15,6 +15,7 @@ import type { GeneratorState, } from "./types";
  * @param id
  * @param to
  * @param validatedBy
+ * @returns {Promise<boolean>}
  */
 export async function transitionStatus(
   state: GeneratorState,

@@ -33,6 +33,7 @@ export interface CreateCharacterStatsParams {
 /**
  * @param deps
  * @param params
+ * @returns {Promise<string>}
  */
 export async function createCharacterStats(
   deps: RpgServiceDeps,
@@ -82,6 +83,7 @@ export async function createCharacterStats(
 /**
  * @param deps
  * @param actorId
+ * @returns {Promise<{ id: string; level: number; hp: number; maxHp: number; tempHp: number; mp: number; maxMp: number; ac: number; speed: number; str: number; dex: number; con: number; int: number; wis: number; cha: number; ... 8 more ...; activeEffects: string; } | null>}
  */
 export async function getCharacterStats(
   deps: RpgServiceDeps,
@@ -185,6 +187,7 @@ export interface UpdateCharacterStatsParams {
  * @param deps
  * @param statsId
  * @param params
+ * @returns {Promise<boolean>}
  */
 export async function updateCharacterStats(
   deps: RpgServiceDeps,

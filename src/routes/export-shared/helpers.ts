@@ -11,6 +11,7 @@ import { safeJsonStringify, } from "../../utils";
  * Pretty-print a JSON value (2-space indent) safely, mirroring the previous
  * `JSON.stringify(value, null, 2)` calls. Never throws.
  * @param value
+ * @returns {string}
  */
 export function prettyJson(value: unknown,): string {
   const sr = safeJsonStringify(value, 2,);
@@ -23,6 +24,7 @@ export function prettyJson(value: unknown,): string {
  * @param checksums
  * @param path
  * @param content
+ * @returns {void}
  */
 export function addChecksum(
   checksums: Record<string, string>,

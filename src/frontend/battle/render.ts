@@ -27,6 +27,7 @@ export interface BattleRenderCallbacks {
 
 /**
  * @param battle
+ * @returns {HTMLElement}
  */
 export function renderHeader(battle: BattleView,): HTMLElement {
   const h = document.createElement("div",);
@@ -41,6 +42,7 @@ export function renderHeader(battle: BattleView,): HTMLElement {
  * @param battle
  * @param selectedTargetId
  * @param callbacks
+ * @returns {HTMLElement}
  */
 export function renderRoster(
   battle: BattleView,
@@ -90,6 +92,7 @@ export function renderRoster(
 /**
  * @param selectedTargetId
  * @param callbacks
+ * @returns {HTMLElement}
  */
 export function renderActions(
   selectedTargetId: string | null,

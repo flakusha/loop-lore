@@ -64,7 +64,9 @@ export interface NewChatCtx {
   memorySelectAllBtn: HTMLButtonElement | null;
 }
 
-/** */
+/**
+ * @returns {NewChatCtx}
+ */
 export function createCtx(): NewChatCtx {
   return {
     actors: [],

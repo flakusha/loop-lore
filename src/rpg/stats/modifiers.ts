@@ -22,6 +22,7 @@ export function abilityModifier(stat: number,): number {
 /**
  * Compute all modifiers from a stat block.
  * @param stats
+ * @returns {StatBlockWithModifiers}
  */
 export function computeModifiers(stats: StatBlock,): StatBlockWithModifiers {
   return {
@@ -39,6 +40,7 @@ export function computeModifiers(stats: StatBlock,): StatBlockWithModifiers {
  * Get the modifier for a specific ability from a stat block.
  * @param stats
  * @param ability
+ * @returns {number}
  */
 export function getModifier(stats: StatBlock, ability: AbilityName,): number {
   return abilityModifier(stats[ability],);

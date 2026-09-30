@@ -31,6 +31,10 @@ export const upscale: WorkflowTemplate = {
       ],
     },
   ],
+  /**
+   * @param {unknown} params
+   * @returns {{ "1": { inputs: { image: {}; }; class_type: string; _meta: { title: string; }; }; "2": { inputs: { model_name: {}; }; class_type: string; _meta: { title: string; }; }; "3": { inputs: { upscale_model: (string | number)[]; image: (string | number)[]; }; class_type: string; _meta: { ...; }; }; "4": { ...; }; }}
+   */
   build(params,) {
     return {
       "1": {

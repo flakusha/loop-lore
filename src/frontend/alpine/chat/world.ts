@@ -11,6 +11,9 @@ const g = globalThis as Record<string, unknown>;
 /** Chat-only world channels sidebar tree. */
 export const chatWorld: Partial<ChatState> & ThisType<ChatState> = {
   /** Load chat-only worlds and their grouped channels for the sidebar tree. */
+  /**
+   * @returns {Promise<void>}
+   */
   async loadWorldChannels() {
     if (this._worldsLoading) { return; }
     this._worldsLoading = true;
@@ -40,6 +43,10 @@ export const chatWorld: Partial<ChatState> & ThisType<ChatState> = {
    * Load one world's channel chats via the grouped endpoint.
    * @param worldId
    */
+  /**
+   * @param {string} worldId
+   * @returns {Promise<void>}
+   */
   async loadWorldChats(worldId: string,) {
     try {
       const res = await apiFetch(`/api/v1/worlds/${worldId}/chats`,);
@@ -51,6 +58,10 @@ export const chatWorld: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @param {string} worldId
+   * @returns {void}
+   */
   toggleWorld(worldId: string,) {
     this._worldExpanded = { ...this._worldExpanded, [worldId]: !this._worldExpanded[worldId], };
     if (this._worldExpanded[worldId] && !this._worldChats[worldId]) {
@@ -58,6 +69,10 @@ export const chatWorld: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @param {string} chatId
+   * @returns {Promise<void>}
+   */
   async selectChat(chatId: string,) {
     // Reentrancy guard: overlapping selectChat calls interleave their loads and
     // interleave last-writer-wins writes → mixed-chat state.
@@ -80,6 +95,13 @@ export const chatWorld: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @param {string} chatId
+   * @throws {Error}
+   * @throws {Error}
+   * @throws {Error}
+   * @returns {Promise<void>}
+   */
   async _selectChatInner(chatId: string,) {
     this.loadingError = null;
     this.activeChat = chatId;
@@ -167,6 +189,9 @@ export const chatWorld: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @returns {string | null}
+   */
   getChatId() {
     return this.activeChat;
   },

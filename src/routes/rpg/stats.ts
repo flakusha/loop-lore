@@ -28,6 +28,7 @@ import { type HandlerOpts, StatsBody, StatsGenerateBody, } from "./types.js";
  * RPG Stats routes — stat-block calculations (no actor context).
  * @param _opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { rpg: { stats: { calculate: { ...; }; }; }; }; } & { ...; } & { ...; }, { ...; }, { ...; }>}
  */
 export function statsRoutes(_opts: HandlerOpts, prefix = "/api",) {
   return (

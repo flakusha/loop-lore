@@ -15,6 +15,7 @@ import type {
  * Create a recipe with materials in a single transaction.
  * @param db
  * @param opts
+ * @returns {Promise<string>}
  */
 export async function createRecipe(db: Kysely<DB>, opts: CreateRecipeOpts,): Promise<string> {
   const id = uid();
@@ -61,6 +62,7 @@ export async function createRecipe(db: Kysely<DB>, opts: CreateRecipeOpts,): Pro
  * Get a recipe with all its materials.
  * @param db
  * @param recipeId
+ * @returns {Promise<RecipeWithMaterials | null>}
  */
 export async function getRecipe(db: Kysely<DB>, recipeId: string,): Promise<RecipeWithMaterials | null> {
   const recipe = await db
@@ -88,6 +90,7 @@ export async function getRecipe(db: Kysely<DB>, recipeId: string,): Promise<Reci
  * @param opts
  * @param opts.discipline
  * @param opts.tier
+ * @returns {Promise<RecipeWithMaterials[]>}
  */
 export async function listRecipes(
   db: Kysely<DB>,
@@ -128,6 +131,7 @@ export async function listRecipes(
  * Delete a recipe and its materials (cascade handles materials).
  * @param db
  * @param recipeId
+ * @returns {Promise<boolean>}
  */
 export async function deleteRecipe(db: Kysely<DB>, recipeId: string,): Promise<boolean> {
   const result = await db

@@ -69,6 +69,7 @@ export interface PostStoreOpts {
 /**
  * Apply post-store effects and finish the generation attempt.
  * @param opts
+ * @returns {Promise<void>}
  */
 export async function applyPostStoreEffects(opts: PostStoreOpts,): Promise<void> {
   const {

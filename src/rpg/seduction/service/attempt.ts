@@ -50,6 +50,7 @@ async function getActorStatBlock(db: Kysely<DB>, actorId: string,): Promise<Stat
  * DC is influenced by target's arousal, turn-ons, and hard limits.
  * @param db
  * @param opts
+ * @returns {Promise<SeductionResult>}
  */
 export async function attemptSeduction(db: Kysely<DB>, opts: SeductionAttemptOpts,): Promise<SeductionResult> {
   const { actorId, targetId, skillCategory, approach, worldId, reputationTier, } = opts;

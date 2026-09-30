@@ -37,6 +37,7 @@ export const KNOWN_SUBJECT_KINDS: Record<string, true> = {
  * - race: non-empty string required
  * - location: locationId must be a valid UUID when present
  * @param value
+ * @returns {LoreScope | null}
  */
 export function normalizeAudienceScope(value: unknown,): LoreScope | null {
   if (!value || typeof value !== "object") { return null; }

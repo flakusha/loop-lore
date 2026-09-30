@@ -39,6 +39,7 @@ export interface GateInputs {
  *   backends (e.g. own-settings provisioning) that read, rather than enforce,
  *   moderation state. NEVER expose to client input.
  * @param opts.ignoreModeration
+ * @returns {{ allowed: boolean; reason?: string | undefined; }}
  */
 export function evaluateNsfwBase(
   gateConfig: { allowNsfw: boolean; nsfwMinAge: number },
@@ -77,6 +78,7 @@ export function evaluateNsfwBase(
  * as `user_not_found`); missing prefs rows read as clear (null status).
  * @param database
  * @param userIds
+ * @returns {Promise<Map<string, GateInputs>>}
  */
 export async function loadGateInputs(
   database: Kysely<DB>,
@@ -121,6 +123,7 @@ export async function loadGateInputs(
  * @param participantUserIds User-backed participant ids (AI/system actors
  *   carry no user and are excluded upstream by `getChatParticipantUserIds`).
  * @param excludeUserId Already-checked requester to skip.
+ * @returns {Promise<{ userId: string; reason: string; } | null>}
  */
 export async function findBlockedParticipant(
   database: Kysely<DB>,

@@ -39,6 +39,7 @@ const NEXT: Record<Exclude<NegotiationState, "closed">, NegotiationState> = {
  * @param database
  * @param peerOrigin
  * @returns Negotiation id.
+ * @throws {Error}
  */
 export async function beginNegotiation(
   database: Kysely<DB>,
@@ -64,6 +65,9 @@ export async function beginNegotiation(
  * @param database
  * @param id
  * @param next
+ * @throws {Error}
+ * @throws {Error}
+ * @returns {Promise<void>}
  */
 export async function advanceNegotiation(
   database: Kysely<DB>,

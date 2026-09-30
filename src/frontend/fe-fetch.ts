@@ -25,7 +25,9 @@ import { safeFetch, } from "../utils";
 
 const API_BASE = "";
 
-/** */
+/**
+ * @returns {string}
+ */
 export function getCsrfToken(): string {
   const meta = document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]',);
   if (meta?.content) { return meta.content; }
@@ -36,6 +38,9 @@ export function getCsrfToken(): string {
 /**
  * @param url
  * @param options
+ * @throws {Error}
+ * @throws {Error}
+ * @returns {Promise<Response>}
  */
 export async function feFetch(
   url: string,

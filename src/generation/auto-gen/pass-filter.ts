@@ -43,6 +43,7 @@ export interface PassFilterResult {
 /**
  * Remove actors whose latest message ends with `[PASS]`.
  * @param opts
+ * @returns {Promise<PassFilterResult>}
  */
 export async function filterPassedActors(opts: PassFilterOpts,): Promise<PassFilterResult> {
   const { database, chatId, aiParticipantsRaw, deps, log, } = opts;

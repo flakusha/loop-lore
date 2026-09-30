@@ -100,6 +100,8 @@ async function _getMinimizedContent(content: string, extension: string,): Promis
 
 /**
  * @param filePath
+ * @throws {Error}
+ * @returns {Promise<void>}
  */
 export async function compressFile(filePath: string,): Promise<void> {
   const content = readFileSync(filePath, "utf8",);
@@ -131,6 +133,7 @@ export async function compressFile(filePath: string,): Promise<void> {
 /**
  * @param sourceDirectory
  * @param destinationDirectory
+ * @returns {Promise<{ total: number; compressed: number; originalBytes: number; compressedBytes: Record<string, number>; }>}
  */
 export async function compressAssets(
   sourceDirectory: string,

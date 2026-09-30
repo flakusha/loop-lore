@@ -23,6 +23,7 @@ import { handleImport, } from "./handle";
  * @param root0.config.assets
  * @param root0.config.assets.uploadDir
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, {}, { derive: {}; resolve: {}; schema: {}; standaloneSchema: {}; response: {}; }, { ...; }>}
  */
 export function importRoutes(
   { database, config, }: { database: Kysely<DB>; config: { auth: AuthConfig; assets?: { uploadDir?: string } } },

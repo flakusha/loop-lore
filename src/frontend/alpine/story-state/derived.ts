@@ -21,7 +21,10 @@ export interface ParticipantRow {
   actor_type?: string;
 }
 
-/** Resolve the active chat id from the global Alpine `chat` store. */
+/**
+ * Resolve the active chat id from the global Alpine `chat` store.
+ * @returns {string | null}
+ */
 export function activeChatId(): string | null {
   const alpine = (globalThis as { Alpine?: { store: (name: string,) => Record<string, unknown> } }).Alpine;
   const chat = alpine?.store("chat",) as { currentChat?: { id?: string } } | undefined;
@@ -39,6 +42,7 @@ export function activeChatId(): string | null {
  * Post a toast via the app store (no-op when the store is unavailable).
  * @param message
  * @param type
+ * @returns {void}
  */
 export function toast(message: string, type = "info",): void {
   try {
@@ -53,6 +57,7 @@ export function toast(message: string, type = "info",): void {
 /**
  * Parse quest_progress JSON from a turn into display banners.
  * @param raw
+ * @returns {QuestBanner[]}
  */
 export function parseQuestBanners(raw: string,): QuestBanner[] {
   const entries = jsonParseOr<{ quest_name?: string; questName?: string; progress?: number }[]>(raw, [],);
@@ -70,6 +75,7 @@ export function parseQuestBanners(raw: string,): QuestBanner[] {
 /**
  * CSS tier for a quality score: good (≥70) / mid (≥40) / low.
  * @param score
+ * @returns {string}
  */
 export function qualityClass(score: number,): string {
   if (score >= 70) { return "is-good"; }
@@ -80,6 +86,7 @@ export function qualityClass(score: number,): string {
 /**
  * Quest progress clamped to 0..100.
  * @param quest
+ * @returns {number}
  */
 export function questProgressPct(quest: StoryQuest,): number {
   return Math.max(0, Math.min(100, Math.round(quest.progress,),),);
@@ -97,6 +104,7 @@ export interface TurnSummary {
 /**
  * Index turns by parent message id and derive latest-turn state.
  * @param turns
+ * @returns {TurnSummary}
  */
 export function summarizeTurns(turns: StoryTurnRow[],): TurnSummary {
   const turnMeta: Record<string, StoryTurnMeta> = {};
@@ -127,6 +135,7 @@ export function summarizeTurns(turns: StoryTurnRow[],): TurnSummary {
 /**
  * Map participant rows to turn-order actors plus the next actor's name.
  * @param participants
+ * @returns {{ actors: StoryParticipant[]; nextActorName: string | null; }}
  */
 export function mapParticipants(
   participants: ParticipantRow[],

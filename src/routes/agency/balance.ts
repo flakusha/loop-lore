@@ -13,6 +13,11 @@ import { Elysia, t, } from "elysia";
 import { getStoryPointBalance, } from "../../services/agency/story-points";
 import { jsonResponse, requireUserId, } from "../http-utils";
 
+/**
+ * @param {{ database: import("kysely").Kysely<import("../../db/schema").DB> }} opts
+ * @param {unknown} prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { agency: { balance: { ...; }; }; }; }, { ...; }, { ...; }>}
+ */
 export function agencyBalanceRoute(
   opts: { database: import("kysely").Kysely<import("../../db/schema").DB> },
   prefix = "/api",

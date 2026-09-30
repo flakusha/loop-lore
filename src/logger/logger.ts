@@ -91,6 +91,14 @@ export class LoggerImpl implements Logger {
    * @param meta
    * @param options
    */
+  /**
+   * @param {LogLevel} level
+   * @param {string | Record<string, unknown>} message
+   * @param {Error} error
+   * @param {Record<string, unknown>} meta
+   * @param {LogOptions} options
+   * @returns {void}
+   */
   private log(
     level: LogLevel,
     message: string | Record<string, unknown>,
@@ -143,6 +151,11 @@ export class LoggerImpl implements Logger {
    * @param message
    * @param meta
    */
+  /**
+   * @param {string | Record<string, unknown>} message
+   * @param {Record<string, unknown>} meta
+   * @returns {void}
+   */
   trace(message: string | Record<string, unknown>, meta?: Record<string, unknown>,): void {
     this.log("trace", message, undefined, meta,);
   }
@@ -150,6 +163,11 @@ export class LoggerImpl implements Logger {
   /**
    * @param message
    * @param meta
+   */
+  /**
+   * @param {string | Record<string, unknown>} message
+   * @param {Record<string, unknown>} meta
+   * @returns {void}
    */
   debug(message: string | Record<string, unknown>, meta?: Record<string, unknown>,): void {
     this.log("debug", message, undefined, meta,);
@@ -159,6 +177,11 @@ export class LoggerImpl implements Logger {
    * @param message
    * @param meta
    */
+  /**
+   * @param {string | Record<string, unknown>} message
+   * @param {Record<string, unknown>} meta
+   * @returns {void}
+   */
   info(message: string | Record<string, unknown>, meta?: Record<string, unknown>,): void {
     this.log("info", message, undefined, meta,);
   }
@@ -166,6 +189,11 @@ export class LoggerImpl implements Logger {
   /**
    * @param message
    * @param meta
+   */
+  /**
+   * @param {string | Record<string, unknown>} message
+   * @param {Record<string, unknown>} meta
+   * @returns {void}
    */
   warn(message: string | Record<string, unknown>, meta?: Record<string, unknown>,): void {
     this.log("warn", message, undefined, meta,);
@@ -176,6 +204,12 @@ export class LoggerImpl implements Logger {
    * @param error
    * @param meta
    */
+  /**
+   * @param {string | Record<string, unknown>} message
+   * @param {Error} error
+   * @param {Record<string, unknown>} meta
+   * @returns {void}
+   */
   error(message: string | Record<string, unknown>, error?: Error, meta?: Record<string, unknown>,): void {
     this.log("error", message, error, meta,);
   }
@@ -185,12 +219,22 @@ export class LoggerImpl implements Logger {
    * @param error
    * @param meta
    */
+  /**
+   * @param {string | Record<string, unknown>} message
+   * @param {Error} error
+   * @param {Record<string, unknown>} meta
+   * @returns {void}
+   */
   fatal(message: string | Record<string, unknown>, error?: Error, meta?: Record<string, unknown>,): void {
     this.log("fatal", message, error, meta,);
   }
 
   /**
    * @param bindings
+   */
+  /**
+   * @param {LoggerBindings} bindings
+   * @returns {Logger}
    */
   child(bindings: LoggerBindings,): Logger {
     return new LoggerImpl(
@@ -207,6 +251,10 @@ export class LoggerImpl implements Logger {
   /**
    * @param transport
    */
+  /**
+   * @param {Transport} transport
+   * @returns {void}
+   */
   addTransport(transport: Transport,): void {
     this.transports.push(transport,);
   }
@@ -214,11 +262,19 @@ export class LoggerImpl implements Logger {
   /**
    * @param partial
    */
+  /**
+   * @param {LoggerBindings} partial
+   * @returns {void}
+   */
   setBindings(partial: LoggerBindings,): void {
     this.bindings = { ...this.bindings, ...partial, };
   }
 
   /** */
+  /**
+   * @throws {Error}
+   * @returns {Promise<void>}
+   */
   async flush(): Promise<void> {
     await this.queue.flush();
     const results = await Promise.allSettled(

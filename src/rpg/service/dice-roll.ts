@@ -24,6 +24,7 @@ export interface LogDiceRollParams {
 /**
  * @param deps
  * @param params
+ * @returns {Promise<string>}
  */
 export async function logDiceRoll(
   deps: RpgServiceDeps,
@@ -61,6 +62,7 @@ export async function logDiceRoll(
  * @param params.userId
  * @param params.chatId
  * @param params.limit
+ * @returns {Promise<{ id: string; sides: number; count: number; modifier: number; advantageMode: string; total: number; purpose: string | null; createdAt: string; }[]>}
  */
 export async function getDiceRollHistory(
   deps: RpgServiceDeps,

@@ -9,6 +9,7 @@ import type { ExportContext, } from "./types";
  * Ownership is scoped through the owning world. Populates
  * `ctx.counts.locations`.
  * @param ctx
+ * @returns {Promise<void>}
  */
 export async function exportLocationsToZip(ctx: ExportContext,): Promise<void> {
   const locations = await ctx.database

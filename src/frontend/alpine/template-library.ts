@@ -35,6 +35,9 @@ interface TemplateDetail extends TemplateSummary {
     draft: null as { name: string; modality: string; description: string; payload: string } | null,
     saving: false,
 
+    /**
+     * @returns {Promise<void>}
+     */
     async load() {
       this.loading = true;
       this.error = "";
@@ -54,11 +57,18 @@ interface TemplateDetail extends TemplateSummary {
       }
     },
 
+    /**
+     * @returns {void}
+     */
     startCreate() {
       this.editingId = "";
       this.draft = { name: "", modality: "image", description: "", payload: '{\n  "templateBody": ""\n}', };
     },
 
+    /**
+     * @param {string} id
+     * @returns {Promise<void>}
+     */
     async startEdit(id: string,) {
       try {
         const res = await apiFetch(`/api/v1/templates/${encodeURIComponent(id,)}`,);
@@ -92,6 +102,9 @@ interface TemplateDetail extends TemplateSummary {
       }
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async save() {
       if (!this.draft) { return; }
       this.saving = true;
@@ -133,6 +146,10 @@ interface TemplateDetail extends TemplateSummary {
       }
     },
 
+    /**
+     * @param {string} id
+     * @returns {Promise<void>}
+     */
     async remove(id: string,) {
       if (!confirm("Delete this template?",)) { return; }
       try {
@@ -143,6 +160,9 @@ interface TemplateDetail extends TemplateSummary {
       }
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async exportPack() {
       try {
         const res = await apiFetch("/api/v1/templates/export",);
@@ -167,6 +187,10 @@ interface TemplateDetail extends TemplateSummary {
       }
     },
 
+    /**
+     * @param {File} file
+     * @returns {Promise<void>}
+     */
     async importPack(file: File,) {
       this.error = "";
       try {

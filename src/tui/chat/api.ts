@@ -11,6 +11,7 @@ export const API_BASE = process.env.LOOP_LORE_API_BASE_URL ?? "http://localhost:
  * Shows typing indicator, adds user message + assistant auto-reply.
  * @param host
  * @param text
+ * @returns {Promise<void>}
  */
 export async function handleSend(host: ChatHost, text: string,): Promise<void> {
   if (!host.chatId) {
@@ -66,6 +67,7 @@ export async function handleSend(host: ChatHost, text: string,): Promise<void> {
 /**
  * Load messages from GET /api/chats/:id/messages with cursor-based pagination
  * @param host
+ * @returns {Promise<void>}
  */
 export async function loadMessages(host: ChatHost,): Promise<void> {
   if (!host.chatId) { return; }

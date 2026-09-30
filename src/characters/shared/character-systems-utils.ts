@@ -166,6 +166,7 @@ export function mapAvatarForExport(
 /**
  * Error message helper (moved from importer)
  * @param error
+ * @returns {string}
  */
 export function errMsg(error: unknown,): string {
   return error instanceof Error ? error.message : String(error,);

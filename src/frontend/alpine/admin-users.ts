@@ -25,6 +25,9 @@ export const adminUsers = {
   userRoleFilter: "",
   userStatusFilter: "",
 
+  /**
+   * @returns {Promise<void>}
+   */
   async loadUsers() {
     this.loadingUsers = true;
     try {
@@ -48,18 +51,32 @@ export const adminUsers = {
   get userPages(): number {
     return Math.ceil(this.userTotal / (this as any).pageSize,) || 1;
   },
+  /**
+   * @param {number} p
+   * @returns {Promise<void>}
+   */
   async goUsersPage(p: number,) {
     this.userPage = p;
     await this.loadUsers();
   },
+  /**
+   * @param {UserRow} u
+   * @returns {void}
+   */
   startEditRole(u: UserRow,) {
     this.editRoleUserId = u.id;
     this.editRoleValue = u.role;
   },
+  /**
+   * @returns {void}
+   */
   cancelEditRole() {
     this.editRoleUserId = "";
     this.editRoleValue = "";
   },
+  /**
+   * @returns {Promise<void>}
+   */
   async saveRole() {
     if (!this.editRoleUserId) { return; }
     try {
@@ -80,6 +97,10 @@ export const adminUsers = {
       showToast("error", t("toasts.networkError",),);
     }
   },
+  /**
+   * @param {string} userId
+   * @returns {Promise<void>}
+   */
   async deleteUser(userId: string,) {
     if (this.confirmDeleteUser !== userId) { return; }
     try {
@@ -97,10 +118,16 @@ export const adminUsers = {
       showToast("error", t("toasts.networkError",),);
     }
   },
+  /**
+   * @returns {void}
+   */
   searchUsers() {
     this.userPage = 1;
     this.loadUsers();
   },
+  /**
+   * @returns {void}
+   */
   clearUserFilters() {
     this.userSearch = "";
     this.userRoleFilter = "";

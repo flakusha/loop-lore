@@ -17,6 +17,7 @@ import { HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonPaginated, jsonR
  * @param value
  * @param validValues
  * @param fallback
+ * @returns {T}
  */
 export function enumOr<T extends string,>(value: unknown, validValues: readonly T[], fallback: T,): T {
   return typeof value === "string" && (validValues as readonly string[]).includes(value,)
@@ -29,6 +30,7 @@ export function enumOr<T extends string,>(value: unknown, validValues: readonly 
  * @param worldId
  * @param userId
  * @param userRole
+ * @returns {Promise<boolean>}
  */
 export async function checkWorldOwnership(
   database: Kysely<DB>,
@@ -50,6 +52,7 @@ export async function checkWorldOwnership(
  * @param itemId
  * @param userId
  * @param userRole
+ * @returns {Promise<Response>}
  */
 export async function handleInstances(
   database: Kysely<DB>,
@@ -79,6 +82,7 @@ export async function handleInstances(
  * @param userId
  * @param userRole
  * @param body
+ * @returns {Promise<Response>}
  */
 export async function handleDefinition(
   database: Kysely<DB>,
@@ -130,6 +134,7 @@ export async function handleDefinition(
  * @param itemId
  * @param userId
  * @param userRole
+ * @returns {Promise<Response>}
  */
 export async function handleDeleteDefinition(
   database: Kysely<DB>,
@@ -157,6 +162,7 @@ export async function handleDeleteDefinition(
  * @param pageSize
  * @param category
  * @param body
+ * @returns {Promise<Response>}
  */
 export async function handleDefinitions(
   database: Kysely<DB>,
@@ -207,6 +213,7 @@ export async function handleDefinitions(
  * @param userId
  * @param userRole
  * @param body
+ * @returns {Promise<Response>}
  */
 export async function handleTransfer(
   database: Kysely<DB>,
@@ -238,6 +245,7 @@ export async function handleTransfer(
  * @param instanceId
  * @param userId
  * @param userRole
+ * @returns {Promise<Response>}
  */
 export async function handleInstance(
   database: Kysely<DB>,

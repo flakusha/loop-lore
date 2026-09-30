@@ -47,6 +47,7 @@ export interface ResolvedProfile {
  * @param mode
  * @param detail
  * @param opts
+ * @returns {ResolvedProfile}
  */
 export function resolveProfile(
   mode: SdGenMode,
@@ -98,6 +99,7 @@ export function resolveProfile(
  * @param detail
  * @param ctx
  * @param opts
+ * @returns {{ prompt: string; profile: ImageModelProfile; resolvedProfileId: string; }}
  */
 export function generatePrompt(
   mode: SdGenMode,

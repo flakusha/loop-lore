@@ -33,6 +33,7 @@ export interface CreateLocationChatInput {
  * binds a non-default template, which the frontend marks.
  * @param database
  * @param body
+ * @returns {Promise<ChatSetupTemplate | null>}
  */
 export async function resolveLocationTemplate(
   database: Kysely<DB>,
@@ -64,6 +65,7 @@ function readTemplateRenderingOverride(gmConfig: string | null,): ChatRenderingO
  * @param tx
  * @param input
  * @param template
+ * @returns {Promise<void>}
  */
 export async function createLocationChat(
   tx: Transaction<DB>,

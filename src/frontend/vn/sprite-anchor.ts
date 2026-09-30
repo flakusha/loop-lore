@@ -50,6 +50,7 @@ export function anchorToObjectPosition(anchor: SpriteAnchor,): string {
  * Apply an anchor to a sprite image (or clear to the CSS default).
  * @param img - Staged sprite image element.
  * @param anchor - Anchor point, or null to clear.
+ * @returns {void}
  */
 export function applySpriteAnchor(img: HTMLImageElement, anchor: SpriteAnchor | null,): void {
   img.style.objectPosition = anchor ? anchorToObjectPosition(anchor,) : "";
@@ -99,6 +100,7 @@ export function createAnchorLoader(fetchRow: FetchTransform = fetchTransformRow,
  * CSS defaults when metadata is missing or unreachable.
  * @param stage - Stage element containing `.vn-stage-sprite` nodes.
  * @param load - Memoized anchor loader.
+ * @returns {Promise<void>}
  */
 export async function decorateStageAnchors(
   stage: ParentNode,

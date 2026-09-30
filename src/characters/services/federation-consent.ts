@@ -60,6 +60,7 @@ export async function getFederationConsent(
  * @param database
  * @param actorId
  * @returns void
+ * @throws {Error}
  */
 export async function assertFederationConsent(
   database: Kysely<DB>,

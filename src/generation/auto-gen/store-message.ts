@@ -67,6 +67,8 @@ export interface StoreMessageResult {
  *
  * @param opts
  * @returns The new message ID and the (legacy) transformed flag.
+ * @throws {Error}
+ * @throws {Error}
  */
 export async function storeMessage(opts: StoreMessageOpts,): Promise<StoreMessageResult> {
   const {

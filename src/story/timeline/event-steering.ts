@@ -132,6 +132,7 @@ export async function createSteering(
  * @param root0.worldId
  * @param root0.timelineId
  * @param root0.limit
+ * @returns {Promise<SteeringRow[]>}
  */
 export async function listPendingSteerings(
   { db, worldId, timelineId, limit, }: ListSteeringsOpts,
@@ -209,6 +210,7 @@ export async function rollSteering(
  * @param root0.id
  * @param root0.manifest
  * @throws {Error} When the steering is unknown, already resolved, or a red herring forced to manifest.
+ * @returns {Promise<void>}
  */
 export async function resolveSteering(
   { db, id, manifest, }: ResolveSteeringOpts,
