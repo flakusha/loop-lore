@@ -3,7 +3,7 @@
 
 # BUG: frontend generation.completed telemetry never reaches the server ingest union
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-analytics-observability
