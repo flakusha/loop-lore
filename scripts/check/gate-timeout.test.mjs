@@ -6,8 +6,8 @@
 // (BUG-parallel-check-runner-has-no-per-gate-timeout).
 
 import { expect, test, } from "bun:test";
-import { join, } from "node:path";
 import { tmpdir, } from "node:os";
+import { join, } from "node:path";
 import {
   DEFAULT_GATE_TIMEOUT_MS,
   runGateWithTimeout,
