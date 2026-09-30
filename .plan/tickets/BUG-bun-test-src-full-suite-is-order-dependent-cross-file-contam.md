@@ -78,3 +78,57 @@ the request helper. `src/frontend/alpine/htmx.ts:5` imports `feFetch`, so
 
 Likely a long tail: further `mock.module` sites exist over `fe-fetch` and
 `assets/service/links`. Fixing the tail is a separate sweep, not a single patch.
+
+## Root cause established 2026-10-01 — the gate detects the wrong thing
+
+Contamination is a property of the INVOCATION, not of any one file. A bare
+`bun test src/` runs all 1208 files in one process with one module registry;
+`mock.module` is process-global and cannot be unmocked, so leaks are
+structural. Per-file isolation removes the class entirely.
+
+Three facts, each measured on this branch:
+
+1. The canonical gate `bun run test:unit` (`bun test --parallel=4 src/
+   --isolate`; `--parallel` implies `--isolate`) is green:
+   **13295 pass / 2 skip / 0 fail / 1208 files / ~85s**.
+2. A minimal 2-file reproduction (`.tmp/repro/`: one file `mock.module`s a
+   shared module, the next asserts it still gets the real one) passes only
+   under `--isolate`. Adding `isolate = true` to `bunfig.toml` did NOT take
+   effect — Bun 1.4.2 ignores that key. Isolation therefore cannot be made the
+   default by configuration; it has to be on the command line.
+3. Bare `bun test src/` fails 57 and takes 232s (3x the isolated run).
+
+### Fixed here: CI was silently skipping 213 tests
+
+`ISOLATED` keyed on `npm_lifecycle_event`, a proxy for "the gate ran". CI
+(`.github/workflows/ci.yml:78`) runs `bun test --parallel=4 src/ --isolate`
+directly, with no npm lifecycle var — so every guarded suite reported
+"not isolated" for a genuinely isolated run and skipped.
+
+`ISOLATED` now keys on `BUN_TEST_WORKER_ID`, which Bun sets inside every
+`--parallel` worker. Measured on the CI invocation shape:
+
+| invocation | before | after |
+| --- | --- | --- |
+| `bun test --parallel=4 src/ --isolate` (ci.yml) | 13100 pass / **213 skip** / 0 fail | 13211 pass / **89 skip** / 0 fail |
+| `bun run test:unit` (canonical gate) | 13295 pass / 2 skip / 0 fail | unchanged |
+| `bun test src/` (bare) | 57 fail | 57 fail (unchanged, correctly non-isolated) |
+
+111 previously-skipped tests now run in CI, with no new failures.
+
+Three files under `src/native/` (`blake3-gaps`, `loader-dlopen`, `zstd-gaps`)
+reimplemented the same detection locally against a hardcoded allow-list of
+script names; they now import the shared helper.
+
+### Still open: the bare-`bun test src/` criterion
+
+Bare runs remain order-dependent. The remaining leaks are unguarded
+`mock.module` sites — `src/frontend/alpine/*.test.ts` (~22 files) mock
+`"./htmx"`, and ~5 `src/frontend/*.test.ts` mock `"./fe-fetch"`. Neither mock
+is necessary: `apiFetch` -> `feFetch` -> `safeFetch` -> `globalThis.fetch`, so
+stubbing `globalThis.fetch` reaches the same seam without a process-global
+module mock. Converting that class makes those suites order-independent
+*everywhere* rather than skipping them outside the gate. Remaining vectors
+after that class (`routes/admin/*`, `auth.test.ts`, `probes.test.ts`,
+`safe-fetch-with-retry`, `lora/routes/discover.coverage`, `i18n.test.ts`)
+still need individual bisection.
