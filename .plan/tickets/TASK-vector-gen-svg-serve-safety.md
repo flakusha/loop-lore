@@ -14,17 +14,7 @@
 
 ## Summary
 
-`BLOCKED_MIME_TYPES` in `src/assets/service/validate.ts` currently rejects
-`image/svg+xml` outright (stored-XSS: SVG served inline executes — see
-`.plan/tickets/BUG-asset-serve-public-immutable-cache-inline-svg-exposure.md`).
-Define the sanitized-SVG allow path: new sanitizer in
-`src/assets/service/sanitize-svg.ts` strips script/event-handler/
-`foreignObject` content at persist time; only sanitizer-passed SVG is stored
-as the sanitized kind, everything else stays blocked. Serve via
-`src/assets/serve-file.ts` with `Content-Security-Policy: sandbox` and
-`X-Content-Type-Options: nosniff`; unsanitized legacy bytes serve only as
-`Content-Disposition: attachment`. Immutable cache headers kept for public
-assets; private/signed responses keep private/no-store per the BUG ticket.
+Add sanitizer at `src/assets/service/sanitize-svg.ts` (new file; allowlist elements/attrs/CSS/schemes; strip script/on*/foreignObject/external refs) enforced at persist time; only sanitizer-passed SVG stored as servable kind, all else stays blocked. Add cacheControl branch in `serve-file.ts` (which today serves public-immutable always) for private/signed → private/no-store. Serve via `src/assets/serve-file.ts` with `Content-Security-Policy: sandbox` and `X-Content-Type-Options: nosniff`; unsanitized legacy bytes serve only as `Content-Disposition: attachment`.
 
 ## Acceptance Criteria
 
