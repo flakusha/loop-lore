@@ -12,10 +12,6 @@ import { describe, } from "bun:test";
  * `--isolate` and break unrelated tests. The canonical gate runs with
  * `--isolate` through `bun run`, so coverage is preserved there.
  */
-/**
- * True when tests are run via `bun run test:unit` / `bun run check` (which set
- * the `npm_lifecycle_event` env var). Plain `bun test src/` leaves this false.
- */
 export const ISOLATED = !!process.env.npm_lifecycle_event;
 
 /**

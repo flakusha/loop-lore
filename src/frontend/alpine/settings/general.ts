@@ -185,9 +185,6 @@ export function general(): Partial<SettingsState> & ThisType<SettingsState> {
      * Persists the choice, sets the server-side locale cookie, then reloads so
      * the server re-serves views rendered in the new locale.
      */
-    /**
-     * @returns {Promise<void>}
-     */
     async onLocaleChange() {
       await this.saveGeneral();
       // Cookie is read by server-side locale detection on reload.

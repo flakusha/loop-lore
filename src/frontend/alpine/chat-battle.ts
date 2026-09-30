@@ -52,10 +52,6 @@ export const chatBattle: Partial<ChatState> & ThisType<ChatState> = {
    * Render (or update) the battle panel from a `battle-*` command action.
    * @param view
    */
-  /**
-   * @param {BattleView | null} view
-   * @returns {void}
-   */
   renderBattlePanel(view: BattleView | null,) {
     if (view) {
       this._battle = view;

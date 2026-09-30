@@ -174,10 +174,6 @@ export const messageSearch: Partial<ChatState> & ThisType<ChatState> = {
    * Enter → next match, Shift+Enter → previous.
    * @param event
    */
-  /**
-   * @param {KeyboardEvent} event
-   * @returns {void}
-   */
   onMessageSearchEnter(event: KeyboardEvent,) {
     if (event.shiftKey) { this.prevMessageMatch(); }
     else { this.nextMessageMatch(); }

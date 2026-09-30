@@ -45,11 +45,6 @@ export class Http1Handler extends TransportBase<Http1Options> {
    *   Silently dropping outbound data was the previous behavior; fail loudly
    *   so a miswired caller surfaces the error instead of losing messages.
    */
-  /**
-   * @param {string | Uint8Array} _data
-   * @throws {Error}
-   * @returns {Promise<void>}
-   */
   send(_data: string | Uint8Array,): Promise<void> {
     this.ensureConnected();
     throw new TransportError("Http1Handler.send is not supported (non-sending stub)", {

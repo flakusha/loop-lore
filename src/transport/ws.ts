@@ -76,10 +76,6 @@ export class WsHandler extends TransportBase<WsOptions> {
   /**
    * @param ws
    */
-  /**
-   * @param {WebSocket} ws
-   * @returns {void}
-   */
   attach(ws: WebSocket,): void {
     this.ws = ws;
     // BUG-wshandler-queue: drain messages that were buffered while the
@@ -115,10 +111,6 @@ export class WsHandler extends TransportBase<WsOptions> {
 
   /**
    * @param data
-   */
-  /**
-   * @param {string | Uint8Array} data
-   * @returns {Promise<void>}
    */
   send(data: string | Uint8Array,): Promise<void> {
     this.ensureConnected();

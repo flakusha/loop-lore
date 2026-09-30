@@ -170,11 +170,6 @@ export const chatUtilsGallery: ChatUtilsGallery = {
    * toast but do not cancel sibling uploads.
    * @param event The change event from the sidebar's file input.
    */
-
-  /**
-   * @param {Event} event
-   * @returns {Promise<void>}
-   */
   async uploadChatAssets(event: Event,) {
     const activeChat = this.activeChat;
     if (!activeChat) {

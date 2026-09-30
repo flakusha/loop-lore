@@ -100,10 +100,6 @@ globalThis.notificationCenter = function(): NotificationCenterState {
      * Mark-read on open, then follow the notification link when present.
      * @param item
      */
-    /**
-     * @param {NotificationCenterItem} item
-     * @returns {Promise<void>}
-     */
     async onOpen(item: NotificationCenterItem,) {
       if (!item.read) {
         item.read = 1;
@@ -123,10 +119,6 @@ globalThis.notificationCenter = function(): NotificationCenterState {
     /**
      * Mark a single notification read without navigating.
      * @param id
-     */
-    /**
-     * @param {string} id
-     * @returns {Promise<void>}
      */
     async markRead(id: string,) {
       try {
@@ -171,10 +163,6 @@ globalThis.notificationCenter = function(): NotificationCenterState {
     /**
      * Flip the mute setting for one notification type.
      * @param key
-     */
-    /**
-     * @param {string} key
-     * @returns {Promise<void>}
      */
     async toggleType(key: string,) {
       this.prefs = { ...this.prefs, [key]: !this.prefs[key], };

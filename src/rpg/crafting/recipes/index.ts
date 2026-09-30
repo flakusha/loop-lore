@@ -54,10 +54,6 @@ export class RecipesService {
    * Create a recipe with materials in a single transaction.
    * @param opts
    */
-  /**
-   * @param {CreateRecipeOpts} opts
-   * @returns {Promise<string>}
-   */
   async createRecipe(opts: CreateRecipeOpts,): Promise<string> {
     return createRecipeDispatch(this.db, opts,);
   }
@@ -65,10 +61,6 @@ export class RecipesService {
   /**
    * Get a recipe with all its materials.
    * @param recipeId
-   */
-  /**
-   * @param {string} recipeId
-   * @returns {Promise<RecipeWithMaterials | null>}
    */
   async getRecipe(recipeId: string,): Promise<RecipeWithMaterials | null> {
     return getRecipeDispatch(this.db, recipeId,);
@@ -80,11 +72,6 @@ export class RecipesService {
    * @param opts
    * @param opts.discipline
    * @param opts.tier
-   */
-  /**
-   * @param {string} worldId
-   * @param {{ discipline?: CraftingDiscipline; tier?: number }} opts
-   * @returns {Promise<RecipeWithMaterials[]>}
    */
   async listRecipes(
     worldId: string,
@@ -98,11 +85,6 @@ export class RecipesService {
    * @param recipeId
    * @param opts
    */
-  /**
-   * @param {string} recipeId
-   * @param {UpdateRecipeOpts} opts
-   * @returns {Promise<boolean>}
-   */
   async updateRecipe(recipeId: string, opts: UpdateRecipeOpts,): Promise<boolean> {
     return updateRecipeDispatch(this.db, recipeId, opts,);
   }
@@ -110,10 +92,6 @@ export class RecipesService {
   /**
    * Delete a recipe and its materials (cascade handles materials).
    * @param recipeId
-   */
-  /**
-   * @param {string} recipeId
-   * @returns {Promise<boolean>}
    */
   async deleteRecipe(recipeId: string,): Promise<boolean> {
     return deleteRecipeDispatch(this.db, recipeId,);
@@ -123,11 +101,6 @@ export class RecipesService {
    * Replace all materials for a recipe.
    * @param recipeId
    * @param materials
-   */
-  /**
-   * @param {string} recipeId
-   * @param {CreateRecipeMaterialOpts[]} materials
-   * @returns {Promise<void>}
    */
   async replaceMaterials(recipeId: string, materials: CreateRecipeMaterialOpts[],): Promise<void> {
     return replaceMaterialsDispatch(this.db, recipeId, materials,);

@@ -65,10 +65,6 @@ export class AvatarService {
    * @param actorId
    * @returns the character's avatars in sort order
    */
-  /**
-   * @param {string} actorId
-   * @returns {Promise<Avatar[]>}
-   */
   async getAvatars(actorId: string,): Promise<Avatar[]> {
     return getAvatarsDispatch(this.db, actorId,);
   }
@@ -78,10 +74,6 @@ export class AvatarService {
    * @param avatarId
    * @returns the avatar, or undefined when missing
    */
-  /**
-   * @param {string} avatarId
-   * @returns {Promise<Avatar | undefined>}
-   */
   async getAvatar(avatarId: string,): Promise<Avatar | undefined> {
     return getAvatarDispatch(this.db, avatarId,);
   }
@@ -90,10 +82,6 @@ export class AvatarService {
    * Create a new avatar
    * @param opts
    * @returns the created avatar id
-   */
-  /**
-   * @param {CreateAvatarOpts} opts
-   * @returns {Promise<string>}
    */
   async createAvatar(opts: CreateAvatarOpts,): Promise<string> {
     return createAvatarDispatch(this.db, opts,);
@@ -105,11 +93,6 @@ export class AvatarService {
    * @param opts
    * @returns void
    */
-  /**
-   * @param {string} avatarId
-   * @param {UpdateAvatarOpts} opts
-   * @returns {Promise<void>}
-   */
   async updateAvatar(avatarId: string, opts: UpdateAvatarOpts,): Promise<void> {
     return updateAvatarDispatch(this.db, avatarId, opts,);
   }
@@ -118,10 +101,6 @@ export class AvatarService {
    * Delete an avatar
    * @param avatarId
    * @returns void
-   */
-  /**
-   * @param {string} avatarId
-   * @returns {Promise<void>}
    */
   async deleteAvatar(avatarId: string,): Promise<void> {
     return deleteAvatarDispatch(this.db, avatarId,);
@@ -133,12 +112,6 @@ export class AvatarService {
    * @param context
    * @param worldId
    * @returns the selected avatar, or null when none matches
-   */
-  /**
-   * @param {string} actorId
-   * @param {AvatarSelectionContext} context
-   * @param {string} worldId
-   * @returns {Promise<Avatar | null>}
    */
   async selectAvatar(
     actorId: string,
@@ -153,10 +126,6 @@ export class AvatarService {
    * @param actorId
    * @returns the avatar config, or undefined when unset
    */
-  /**
-   * @param {string} actorId
-   * @returns {Promise<AvatarConfig | undefined>}
-   */
   async getAvatarConfig(actorId: string,): Promise<AvatarConfig | undefined> {
     return getAvatarConfigDispatch(this.db, actorId,);
   }
@@ -170,15 +139,6 @@ export class AvatarService {
    * @param config.fallbackChain
    * @returns the config id
    */
-  /**
- * @param {string} actorId
- * @param {{
-      selectionRule?: AvatarSelectionRule;
-      weights?: Partial<Record<AvatarTagType, number>>;
-      fallbackChain?: AvatarTagType[];
-    }} config
- * @returns {Promise<string>}
- */
   async upsertAvatarConfig(
     actorId: string,
     config: {
@@ -196,11 +156,6 @@ export class AvatarService {
    * @param worldId
    * @returns the world-specific config row
    */
-  /**
-   * @param {string} actorId
-   * @param {string} worldId
-   * @returns {Promise<WorldAvatarConfig | undefined>}
-   */
   async getWorldAvatarConfig(actorId: string, worldId: string,) {
     return getWorldAvatarConfigDispatch(this.db, actorId, worldId,);
   }
@@ -214,15 +169,6 @@ export class AvatarService {
    * @param config.weightsOverride
    * @returns the world config id
    */
-  /**
- * @param {string} actorId
- * @param {string} worldId
- * @param {{
-      selectionRuleOverride?: AvatarSelectionRule;
-      weightsOverride?: Partial<Record<AvatarTagType, number>>;
-    }} config
- * @returns {Promise<string>}
- */
   async upsertWorldAvatarConfig(
     actorId: string,
     worldId: string,

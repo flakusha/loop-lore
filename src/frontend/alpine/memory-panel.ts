@@ -51,9 +51,6 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
    * In a character chat, the first non-user participant is the character.
    * @returns the character actor id, or null when no non-user participant exists
    */
-  /**
-   * @returns {string | null}
-   */
   _getCharacterActorId(): string | null {
     const participants = this._chatParticipants;
     if (!participants || participants.length === 0) { return null; }
@@ -243,9 +240,6 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
    * True when the user may write world memories (admin/solo roles).
    * @returns whether the current role may write world memories
    */
-  /**
-   * @returns {boolean}
-   */
   _isWorldAdmin(): boolean {
     return this.userRole === "admin" || this.userRole === "solo";
   },
@@ -253,9 +247,6 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
   /**
    * True when write actions are allowed on the active tab (world tab is admin-managed).
    * @returns whether the active tab accepts writes for this role
-   */
-  /**
-   * @returns {boolean}
    */
   _canWriteActiveTab(): boolean {
     return this.memoryPanel.activeTab !== "world" || this._isWorldAdmin();

@@ -122,16 +122,6 @@ export class ActorPositionService {
    * physical = transport, spatial = current stop on transport's route.
    * Caller passes the routeId; if absent, falls back to locations.current_route_id.
    */
-  /**
-   * @param {string} actorId
-   * @param {string} transportLocationId
-   * @param {string} routeId
-   * @throws {Error}
-   * @throws {Error}
-   * @throws {Error}
-   * @throws {Error}
-   * @returns {Promise<void>}
-   */
   async deriveForTransport(
     actorId: string,
     transportLocationId: string,

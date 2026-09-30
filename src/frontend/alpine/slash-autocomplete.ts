@@ -183,10 +183,6 @@ export const slashAutocomplete: Partial<ChatState> & ThisType<ChatState> = {
    * open (slash last so chat-group's draft flush stays harmless).
    * @param event - keydown event from the composer textarea.
    */
-  /**
-   * @param {KeyboardEvent} event
-   * @returns {void}
-   */
   handleSlashKeydown(event: KeyboardEvent,) {
     const target = event.target as { tagName?: string } | null;
     if (!target || target.tagName !== "TEXTAREA") { return; }
@@ -216,9 +212,6 @@ export const slashAutocomplete: Partial<ChatState> & ThisType<ChatState> = {
    * Returns true when handled so the template can short-circuit chat-group's
    * handleComposerEnter and avoid sending the message prematurely.
    * @returns true when the slash popover consumed the Enter press.
-   */
-  /**
-   * @returns {boolean}
    */
   handleSlashEnter(): boolean {
     if (!this._showSlashPopover || this._slashCandidates.length === 0) { return false; }

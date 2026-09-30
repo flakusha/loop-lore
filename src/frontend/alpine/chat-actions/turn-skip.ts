@@ -51,10 +51,6 @@ export const turnSkipActions: Partial<TurnSkipState> & ThisType<TurnSkipCtx> = {
    * Record a turn skip for the active chat and refresh the message list.
    * @param mode - `hold` records the opt-out; `advance` also cues the next beat.
    */
-  /**
-   * @param {TurnSkipMode} mode
-   * @returns {Promise<void>}
-   */
   async skipTurn(mode: TurnSkipMode,) {
     if (!this.activeChat) {
       this.$dispatch?.("show-toast", { type: "warning", message: t("toasts.noActiveChat",), },);
