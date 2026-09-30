@@ -132,8 +132,8 @@ describe("Chat Invite & Join E2E", () => {
     await joiner2.loginAs("e2ejoiner2", "password",);
   },);
 
-  afterAll(() => {
-    server.close();
+  afterAll(async () => {
+    await server.close();
   },);
 
   test("owner creates an invite for the chat", async () => {

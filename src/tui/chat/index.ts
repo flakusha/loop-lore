@@ -218,6 +218,10 @@ export class ChatWidget implements ChatHost {
    */
   showError(message: string,): void {
     this.messageList.addItem(`{red-fg}⚠ Error: ${message}{/red-fg}`,);
+    // itemCount tracks the list length for scrollToBottom's select().
+    // Omitting it here desynced the two, so the error line was the one
+    // line that could never be selected.
+    this.itemCount++;
     this.scrollToBottom();
   }
 

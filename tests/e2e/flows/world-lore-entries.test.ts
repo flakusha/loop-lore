@@ -20,8 +20,8 @@ describe("World Lore Entries E2E", () => {
     worldId = worldRes.data!.id;
   },);
 
-  afterAll(() => {
-    server.close();
+  afterAll(async () => {
+    await server.close();
   },);
 
   test("GET /api/v1/worlds/:id/lore-entries returns empty list", async () => {

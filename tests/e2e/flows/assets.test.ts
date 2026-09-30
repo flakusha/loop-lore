@@ -30,8 +30,8 @@ describeReal("Assets E2E", () => {
     await api.loginAs(SEED.user.username, SEED.user.password,);
   },);
 
-  afterAll(() => {
-    server.close();
+  afterAll(async () => {
+    await server.close();
   },);
   test("GET /api/v1/assets returns empty list", async () => {
     const res = await api.get<{ data: [] }>("/api/v1/assets",);

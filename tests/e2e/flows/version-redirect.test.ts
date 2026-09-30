@@ -17,8 +17,8 @@ describe("API versioning redirects", () => {
     server = await createTestServer({ auth: { required: false, }, },);
   },);
 
-  afterAll(() => {
-    server.close();
+  afterAll(async () => {
+    await server.close();
   },);
 
   test("GET /api/v1/chats is served by the v1 barrel", async () => {

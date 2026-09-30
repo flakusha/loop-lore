@@ -14,8 +14,8 @@ describe("Users E2E", () => {
     await api.loginAs(SEED.user.username, SEED.user.password,);
   },);
 
-  afterAll(() => {
-    server.close();
+  afterAll(async () => {
+    await server.close();
   },);
 
   test("GET /api/v1/users/me returns current user", async () => {

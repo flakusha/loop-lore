@@ -22,8 +22,8 @@ describe("Age Gate E2E", () => {
     api = createClient(server.url,);
   },);
 
-  afterAll(() => {
-    server.close();
+  afterAll(async () => {
+    await server.close();
   },);
 
   test("blocks chat creation when age gate not accepted", async () => {
