@@ -3278,7 +3278,6 @@ Extends the World & Locations foundation (see `epic-world-locations.md`, which
 - **Type:** Feature Epic
 - **Tags:** xmpp, omemo, muc, jingle, federation
 - **File:** `.plan/epics/epic-xmpp-integration.md`
-
 ---
 
 ## Backlog
