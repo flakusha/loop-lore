@@ -33,8 +33,8 @@ describe("Chat Full Functionality", () => {
       await api.loginAs(SEED.user.username, SEED.user.password,);
     },);
 
-    afterAll(() => {
-      server.close();
+    afterAll(async () => {
+      await server.close();
     },);
 
     test("uploads asset and links it to chat", async () => {
@@ -79,8 +79,8 @@ describe("Chat Full Functionality", () => {
       await api.loginAs(SEED.user.username, SEED.user.password,);
     },);
 
-    afterAll(() => {
-      server.close();
+    afterAll(async () => {
+      await server.close();
     },);
 
     test("regenerates assistant response via generation endpoint", async () => {
@@ -120,8 +120,8 @@ describe("Chat Full Functionality", () => {
       await api.loginAs(SEED.user.username, SEED.user.password,);
     },);
 
-    afterAll(() => {
-      server.close();
+    afterAll(async () => {
+      await server.close();
     },);
 
     test("create message with assistant auto-reply and check variants", async () => {

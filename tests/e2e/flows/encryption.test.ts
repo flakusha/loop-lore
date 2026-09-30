@@ -38,8 +38,8 @@ describe("Encryption Workflow", () => {
     encryptionEnabled = isEncryptionEnabled();
   },);
 
-  afterAll(() => {
-    server.close();
+  afterAll(async () => {
+    await server.close();
   },);
 
   // ── Key Management ────────────────────────────────────────

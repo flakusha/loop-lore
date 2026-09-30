@@ -28,8 +28,8 @@ describe("Import E2E", () => {
     await api.loginAs(SEED.user.username, SEED.user.password,);
   },);
 
-  afterAll(() => {
-    server.close();
+  afterAll(async () => {
+    await server.close();
   },);
 
   test("POST /api/v1/actors/import imports JSON actor", async () => {

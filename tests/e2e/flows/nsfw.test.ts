@@ -46,8 +46,8 @@ describe("NSFW E2E", () => {
     await adminApi.loginAs(SEED.admin.username, SEED.admin.password,);
   },);
 
-  afterAll(() => {
-    server.close();
+  afterAll(async () => {
+    await server.close();
   },);
 
   // Helper: write endpoint requires both fields per modBody schema.

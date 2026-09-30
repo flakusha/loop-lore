@@ -26,8 +26,8 @@ describe("Story E2E", () => {
     locationId = locRes.data!.id;
   },);
 
-  afterAll(() => {
-    server.close();
+  afterAll(async () => {
+    await server.close();
   },);
 
   // ── Story Turns ──────────────────────────────────────────────

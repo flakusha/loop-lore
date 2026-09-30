@@ -46,8 +46,8 @@ describe("Cross-Tenant Isolation E2E", () => {
     expect(bOk,).toBe(true,);
   }, 30_000,);
 
-  afterAll(() => {
-    server.close();
+  afterAll(async () => {
+    await server.close();
   },);
 
   test("User A creates chat — User B gets 403/404", async () => {

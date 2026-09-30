@@ -39,8 +39,8 @@ describe("Personas E2E", () => {
     await adminApi.loginAs(SEED.admin.username, SEED.admin.password,);
   },);
 
-  afterAll(() => {
-    server.close();
+  afterAll(async () => {
+    await server.close();
   },);
 
   test("GET /api/v1/personas returns 401 when unauthenticated", async () => {

@@ -32,8 +32,34 @@ describe("lore-consistency gaps — reachable behavior", () => {
     ).toBe(70,);
   });
 
-  test("even exact entity matches score the base (entities never extracted)", () => {
-    expect(score("Aldoria has fallen.", "Aldoria has fallen.",),).toBe(70,);
+  // The scorer used to lowercase its input before extractEntities, whose
+  // pattern only matches capitalized words. Both sets came back empty and
+  // every non-null lore scored exactly 70, so these three branches never
+  // ran. BUG-lore-consistency-scorer-entity-matching-branch-unreachable-d.
+
+  test("entities echoed from lore earn the full match bonus (70 + 15)", () => {
+    expect(score("Aldoria has fallen.", "Aldoria has fallen.",),).toBe(85,);
+  });
+
+  // Note on the fixtures below: extractEntities chains ADJACENT capitalized
+  // words into one entity, and only the first word of a sentence is
+  // capitalized. The inputs are therefore short sentence fragments with a
+  // trailing period between each word, which is what makes them extract as
+  // four distinct entities rather than one chained run.
+
+  test("a 1-in-4 entity overlap earns the partial bonus (70 + 8)", () => {
+    // Response: knight, sword, aldoria, thorn (4). Lore holds aldoria only
+    // among those, so matchCount is 1 and the ratio is 0.25 — above the 0.2
+    // floor, at the boundary below the 0.5 full-bonus threshold.
+    expect(
+      score("Knight. Sword. Aldoria. Thorn.", "Aldoria. Castle. Kingdom. Fallen.",),
+    ).toBe(78,);
+  });
+
+  test("no response entities in lore are penalised (70 - 15)", () => {
+    expect(
+      score("Gnarled. Jittering. Twitching. Flickering.", "Aldoria. Castle. Kingdom. Fallen.",),
+    ).toBe(55,);
   });
 
   test("score stays within bounds for long inputs", () => {
