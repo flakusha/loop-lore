@@ -14806,6 +14806,19 @@
     "title": "GDPR & User Data Rights",
     "type": "FEAT"
   },
+  "FEAT-GENERIC-2D-GRAPH-CANVAS-RENDERER-REUSING-GAME-CANVAS": {
+    "hash": "4dbc02d",
+    "git_issue": "4dbc02d",
+    "extid": "FEAT-GENERIC-2D-GRAPH-CANVAS-RENDERER-REUSING-GAME-CANVAS",
+    "type": "FEAT",
+    "title": "Generic 2D graph-canvas renderer reusing game-canvas",
+    "label": "feat",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-generic-2d-graph-canvas-renderer-reusing-game-canvas.md",
+    "status": "Not Started"
+  },
   "FEAT-GURPS-POINT-BUY-CHARACTER-CREATION": {
     "epic": "epic-character-spec",
     "extid": "FEAT-GURPS-POINT-BUY-CHARACTER-CREATION",
@@ -26559,6 +26572,19 @@
     "title": "Docs UI endpoint linkage",
     "type": "TASK"
   },
+  "TASK-DOCUMENT-ASSET-RELATION-GRAPH-ON-2D-CANVAS": {
+    "hash": "afdce38",
+    "git_issue": "afdce38",
+    "extid": "TASK-DOCUMENT-ASSET-RELATION-GRAPH-ON-2D-CANVAS",
+    "type": "TASK",
+    "title": "Document/asset relation graph on 2D canvas",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-document-asset-relation-graph-on-2d-canvas.md",
+    "status": "Not Started"
+  },
   "TASK-DOCUMENT-PROCESSING-PIPELINE": {
     "epic": "epic-rag-document-processing.md",
     "extid": "TASK-DOCUMENT-PROCESSING-PIPELINE",
@@ -27798,6 +27824,19 @@
     ],
     "title": "Faction Politics Coups And Expansion Engine",
     "type": "TASK"
+  },
+  "TASK-FACTION-RELATION-GRAPH-ON-2D-CANVAS-BACKEND-FIRST": {
+    "hash": "4bc63f0",
+    "git_issue": "4bc63f0",
+    "extid": "TASK-FACTION-RELATION-GRAPH-ON-2D-CANVAS-BACKEND-FIRST",
+    "type": "TASK",
+    "title": "Faction relation graph on 2D canvas (backend first)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-faction-relation-graph-on-2d-canvas-backend-first.md",
+    "status": "Not Started"
   },
   "TASK-FACTION-RELATIONS-LIST-AND-STANDING": {
     "epic": "",
@@ -31375,6 +31414,19 @@
     "title": "Location Travel Connected Fast And Free Jump",
     "type": "TASK"
   },
+  "TASK-LOCATION-TRAVEL-GRAPH-ON-2D-CANVAS": {
+    "hash": "fa3956e",
+    "git_issue": "fa3956e",
+    "extid": "TASK-LOCATION-TRAVEL-GRAPH-ON-2D-CANVAS",
+    "type": "TASK",
+    "title": "Location/travel graph on 2D canvas",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-location-travel-graph-on-2d-canvas.md",
+    "status": "Not Started"
+  },
   "TASK-LOCATION-TREE-INTEGRITY-SERVICE": {
     "epic": "epic-fractal-locations",
     "extid": "TASK-LOCATION-TREE-INTEGRITY-SERVICE",
@@ -32386,6 +32438,19 @@
     "tags": [],
     "title": "Wire memory provision into prompt assembly",
     "type": "TASK"
+  },
+  "TASK-MEMORY-RELATION-GRAPH-ON-2D-CANVAS": {
+    "hash": "e8c33f8",
+    "git_issue": "e8c33f8",
+    "extid": "TASK-MEMORY-RELATION-GRAPH-ON-2D-CANVAS",
+    "type": "TASK",
+    "title": "Memory relation graph on 2D canvas",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-memory-relation-graph-on-2d-canvas.md",
+    "status": "Not Started"
   },
   "TASK-MEMORY-RETRIEVAL-FILTERING-BY-LORE-ACCESS-PROFILE": {
     "epic": "Character & NPC Lore Access",
@@ -39468,6 +39533,19 @@
     "title": "Story Auto-Drive Scheduler",
     "type": "TASK"
   },
+  "TASK-STORY-ENTITY-RELATION-GRAPH-ON-2D-CANVAS": {
+    "hash": "90d60b6",
+    "git_issue": "90d60b6",
+    "extid": "TASK-STORY-ENTITY-RELATION-GRAPH-ON-2D-CANVAS",
+    "type": "TASK",
+    "title": "Story/entity relation graph on 2D canvas",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-story-entity-relation-graph-on-2d-canvas.md",
+    "status": "Not Started"
+  },
   "TASK-STORY-GM-GENERATION-NEVER-NSFW-GATED-CONTENT-SAFETY-BYPASS": {
     "epic": "",
     "extid": "TASK-STORY-GM-GENERATION-NEVER-NSFW-GATED-CONTENT-SAFETY-BYPASS",
@@ -39545,6 +39623,19 @@
     "tags": [],
     "title": "Story Points Prototype",
     "type": "TASK"
+  },
+  "TASK-STORY-TIMELINE-VIEW-ON-2D-CANVAS": {
+    "hash": "1050882",
+    "git_issue": "1050882",
+    "extid": "TASK-STORY-TIMELINE-VIEW-ON-2D-CANVAS",
+    "type": "TASK",
+    "title": "Story timeline view on 2D canvas",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-story-timeline-view-on-2d-canvas.md",
+    "status": "Not Started"
   },
   "TASK-STORY-TURN-ORDER": {
     "epic": "epic-story-mode-ui.md",
