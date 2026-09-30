@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 310 epics
+**Total:** 311 epics
 
 ## Summary
 
@@ -313,6 +313,7 @@
 | Done | Unified Spec Framework for `.plan/` | High | Large (spread across 4 phases) | 17 | [epic-unified-spec-framework.md](/.plan/epics/epic-unified-spec-framework.md) |
 | Not Started | Use Case: Agentic Workspace | Medium | Medium | 0 | [epic-use-case-agentic-workspace.md](/.plan/epics/epic-use-case-agentic-workspace.md) |
 | In Progress | User Story & Use Case Improvements (Permanently Ongoing) | Medium | Continuous | 0 | [epic-user-stories.md](/.plan/epics/epic-user-stories.md) |
+| Not Started | Vector Graphics & Animated Image Generation | Medium | Medium (phased; each phase ships standalone value) | 17 | [epic-vector-graphics-generation.md](/.plan/epics/epic-vector-graphics-generation.md) |
 | In Progress | Visual Novel Mode — Dynamic Generation & Q&A Mode | Medium | Very High | 0 | [epic-visual-novel-mode.md](/.plan/epics/epic-visual-novel-mode.md) |
 | Not Started | Wardrobe / Loadout Avatar Variants | Medium | Large | 8 | [epic-wardrobe-avatar-variants.md](/.plan/epics/epic-wardrobe-avatar-variants.md) |
 | Not Started | Weather & Environmental Effects | Medium | High | 0 | [epic-weather-environment.md](/.plan/epics/epic-weather-environment.md) |
@@ -3191,6 +3192,15 @@ Loop-lore has 281 epics and ~2100 tickets under `.plan/`. Each is hand-shaped pr
 - **Type:** Ongoing Epic
 - **Tags:** (none)
 - **File:** `.plan/epics/epic-user-stories.md`
+
+### Vector Graphics & Animated Image Generation
+
+- **Status:** Not Started
+- **Priority:** Medium
+- **Effort:** Medium (phased; each phase ships standalone value)
+- **Type:** Feature Epic
+- **Tags:** assets, svg, vector, animation, smil, image-generation, sanitization
+- **File:** `.plan/epics/epic-vector-graphics-generation.md`
 
 ### Visual Novel Mode — Dynamic Generation & Q&A Mode
 
