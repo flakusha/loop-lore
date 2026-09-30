@@ -20,7 +20,7 @@ import { randomUUID, } from "node:crypto";
 import type { DB, } from "../db";
 import { getLogger, } from "../logger";
 import { jsonParseOr, jsonStringifyOr, safeJsonParse, } from "../utils";
-import { safeFromBase64Url, } from "../utils/safe-buffer";
+import { mustFromString, safeFromBase64Url, } from "../utils/safe-buffer";
 
 /**
  * @returns logger scoped to the memory-audit module
@@ -122,7 +122,15 @@ function encodeNextCursor(lastRow: MemoryAuditRow, _requestedLimit: number,): st
   // Cursor encodes the last seen (created_at, id) so ties on
   // created_at (possible at second resolution) advance correctly via
   // the compound comparison in the query.
-  return Buffer.from(jsonStringifyOr({ c: lastRow.createdAt, i: lastRow.id, },),).toString("base64url",);
+  //
+  // Encoded through the same guard family that decodes it, under the same
+  // `MAX_CURSOR_BYTES` cap, so encode and decode cannot drift: a cursor this
+  // emits is always one `decodeCursor` accepts.
+  return mustFromString(
+    jsonStringifyOr({ c: lastRow.createdAt, i: lastRow.id, },),
+    "utf8",
+    MAX_CURSOR_BYTES,
+  ).toString("base64url",);
 }
 
 /**
