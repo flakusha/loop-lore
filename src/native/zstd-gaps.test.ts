@@ -1,21 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { describe, expect, mock, test, } from "bun:test";
-
-/**
- * True only when each test file owns its module registry: the allow-list
- * names exactly the scripts whose `bun test` runs pass `--isolate` — direct
- * (`test`, `test:unit`, `test:coverage`) and pipeline-spawned
- * (`check:parallel`, whose coverage command runs `bun test --isolate`
- * in-process). The `--isolate` flag itself is invisible inside test
- * processes, so argv cannot be used. Shared-process runs
- * (bare `bun test`) skip, keeping the real loader.
- */
-const ISOLATED_RUN = ["test", "test:unit", "test:coverage", "check:parallel",].includes(
-  process.env.npm_lifecycle_event ?? "",
-);
-const describeOrSkipIsolated = ISOLATED_RUN ? describe : describe.skip;
+import { expect, mock, test, } from "bun:test";
+import { describeOrSkip as describeOrSkipIsolated, ISOLATED as ISOLATED_RUN, } from "../test-utils/isolate-only";
 
 /** Typed view of Bun's built-in zstd (mirrors the unit under test). */
 interface BunZstd {
