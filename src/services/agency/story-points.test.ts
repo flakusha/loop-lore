@@ -218,3 +218,56 @@ describe("actor isolation", () => {
     expect(bal2.balance,).toBe(2,);
   });
 });
+
+
+describe("earnStoryPoints — concurrency", () => {
+  // BUG-earnstorypoints-lost-update-race-and-raw-unique-violation-on
+  // The earn path read the row, computed an absolute new balance, and wrote
+  // it back outside a transaction. Concurrent earns both read the same stale
+  // balance, so the second absolute write clobbered the first (balance drifts
+  // from earned_total), and two first-time earns both took the INSERT branch,
+  // so the loser hit a raw SQLITE UNIQUE violation from 020's partial index
+  // and surfaced as a 500 rather than a domain error.
+
+  test("parallel first-time earns do not raise a raw UNIQUE violation", async () => {
+    const results = await Promise.allSettled(
+      Array.from({ length: 8, }, (_, i) => earnStoryPoints(db, { actorId: ACTOR, amount: i + 1, },),),
+    );
+
+    // Every earn must resolve — a raw UNIQUE violation is a defect, not an
+    // expected rejection. This actor has no cap, so CapExceededError would
+    // not be legitimate either.
+    const rejected = results.filter((r,) => r.status === "rejected",);
+    expect(rejected,).toEqual([]);
+
+    const bal = await getStoryPointBalance(db, ACTOR, null,);
+    expect(bal.balance,).toBe(36,); // 1+2+...+8
+    expect(bal.earned_total,).toBe(36,);
+  });
+
+  test("parallel earns preserve the balance = earned - spent invariant", async () => {
+    // Seed a row first so this exercises the UPDATE branch's lost update
+    // rather than the INSERT race.
+    await earnStoryPoints(db, { actorId: ACTOR, amount: 10, },);
+
+    await Promise.all(
+      Array.from({ length: 10, }, () => earnStoryPoints(db, { actorId: ACTOR, amount: 3, },),),
+    );
+
+    const bal = await getStoryPointBalance(db, ACTOR, null,);
+    expect(bal.earned_total,).toBe(40,); // 10 + 10*3 — earned_total is relative
+    // The lost update: absolute writes from a stale read under-credit here.
+    expect(bal.balance,).toBe(40,);
+    expect(bal.balance,).toBe(bal.earned_total - bal.spent_total,);
+  });
+
+  test("only one row exists after parallel first-time earns", async () => {
+    await Promise.allSettled(
+      Array.from({ length: 6, }, () => earnStoryPoints(db, { actorId: ACTOR, amount: 1, },),),
+    );
+    const rows = raw
+      .query("SELECT COUNT(*) AS n FROM actor_story_points WHERE actor_id = ?",)
+      .get(ACTOR,) as { n: number };
+    expect(rows.n,).toBe(1,);
+  });
+});
