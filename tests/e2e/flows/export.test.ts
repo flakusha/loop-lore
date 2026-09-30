@@ -22,8 +22,8 @@ describe("Export E2E", () => {
     await api.loginAs(SEED.user.username, SEED.user.password,);
   },);
 
-  afterAll(() => {
-    server.close();
+  afterAll(async () => {
+    await server.close();
   },);
 
   describe("GET /api/v1/chats/:id/export", () => {

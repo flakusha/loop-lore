@@ -20,8 +20,8 @@ describe("Auth E2E", () => {
     api = createClient(server.url,);
   },);
 
-  afterAll(() => {
-    server.close();
+  afterAll(async () => {
+    await server.close();
   },);
   test("GET /api/auth/me returns 401 when not authenticated", async () => {
     const res = await api.get("/api/auth/me",);

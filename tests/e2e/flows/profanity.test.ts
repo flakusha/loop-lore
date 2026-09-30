@@ -22,8 +22,8 @@ describe("Profanity Filter E2E", () => {
     await api.loginAs(SEED.user.username, SEED.user.password,);
   },);
 
-  afterAll(() => {
-    server.close();
+  afterAll(async () => {
+    await server.close();
   },);
   test("filters profanity from user messages", async () => {
     // Send a message with profanity

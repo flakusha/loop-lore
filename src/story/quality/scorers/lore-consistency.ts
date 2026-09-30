@@ -9,11 +9,12 @@ export const scoreLoreConsistency: Scorer = ({ response, lore, },) => {
 
   let score = 70;
 
-  const loreLower = lore.toLowerCase();
-  const responseLower = response.toLowerCase();
-
-  const loreEntities = extractEntities(loreLower,);
-  const responseEntities = extractEntities(responseLower,);
+  // extractEntities matches capitalized words and lowercases each hit
+  // itself, so it needs the original casing. Lowercasing here first made
+  // both sets permanently empty and the whole matchRatio block below
+  // unreachable — every non-null lore scored exactly 70.
+  const loreEntities = extractEntities(lore,);
+  const responseEntities = extractEntities(response,);
 
   if (loreEntities.size > 0 && responseEntities.size > 0) {
     let matchCount = 0;

@@ -69,7 +69,7 @@ describeReal("Real-Server Generation E2E", () => {
   },);
 
   afterAll(async () => {
-    if (server) { server.close(); }
+    if (server) { await server.close(); }
     if (manager) { await manager.stopAll(); }
   },);
 

@@ -29,8 +29,8 @@ describe("Generation E2E", () => {
     await api.loginAs(SEED.user.username, SEED.user.password,);
   },);
 
-  afterAll(() => {
-    if (server) { server.close(); }
+  afterAll(async () => {
+    if (server) { await server.close(); }
   },);
 
   beforeEach(() => {

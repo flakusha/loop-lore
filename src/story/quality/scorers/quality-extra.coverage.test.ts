@@ -176,10 +176,12 @@ describe("scoreLoreConsistency", () => {
     expect(scoreLoreConsistency(ctx({ response: "Anything.", lore: "", },),),).toBe(75,);
   });
 
-  test("lowercased input yields no extractable entities, so the base holds", () => {
+  test("matching lore now scores above the base", () => {
+    // Pinned at 70 before the fix, documenting an unreachable branch.
+    // BUG-lore-consistency-scorer-entity-matching-branch-unreachable-d.
     expect(
       scoreLoreConsistency(ctx({ response: "Aldoria has fallen.", lore: "Aldoria has fallen.", },),),
-    ).toBe(70,);
+    ).toBe(85,);
   });
 
   test("unrelated lore keeps the base score", () => {

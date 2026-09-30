@@ -36,8 +36,8 @@ describe("Message Variants, Visibility, Status E2E", () => {
     },);
   },);
 
-  afterAll(() => {
-    server.close();
+  afterAll(async () => {
+    await server.close();
   },);
 
   test("GET /api/v1/messages/:id/variants returns variants array", async () => {
