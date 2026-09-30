@@ -29,13 +29,6 @@ import type { FetchAuth, FetchResult, SafeFetchOptions, } from "./types";
  * @param options - Fetch options with safety extensions
  * @returns FetchResult with parsed data or error
  */
-
-/**
- * Combine an external signal with an internal timeout signal.
- * @param external - caller-provided abort signal (may be undefined)
- * @param timeoutSignal - internal timeout-driven abort signal
- * @returns combined AbortSignal that aborts when either input aborts.
- */
 function combineSignals(external: AbortSignal | undefined, timeoutSignal: AbortSignal,): AbortSignal {
   if (!external) { return timeoutSignal; }
   const combined = new AbortController();
@@ -50,13 +43,6 @@ function combineSignals(external: AbortSignal | undefined, timeoutSignal: AbortS
  * Serialize a request body: strings pass through (avoids double-serialization),
  * other values are JSON-stringified. Returns undefined for null bodies or
  * when stringification fails.
- */
-/**
- * Serialize a request body. Native body types (FormData, Blob, stream,
- * URLSearchParams, ArrayBuffer, view, string) pass through untouched so
- * multipart/uploads work; plain objects/arrays become JSON.
- * @param body - request body (any value)
- * @returns `BodyInit` for valid bodies, `undefined` for null bodies or failed serialization.
  */
 function serializeBody(body: unknown,): BodyInit | undefined {
   if (body === undefined || body === null) { return undefined; }

@@ -122,17 +122,6 @@ export class CraftingProcessService {
   /**
    * @param opts
    */
-  /**
-   * @param {CraftAttemptOpts} opts
-   * @throws {Error}
-   * @throws {Error}
-   * @throws {Error}
-   * @throws {Error}
-   * @throws {Error}
-   * @throws {Error}
-   * @throws {Error}
-   * @returns {Promise<CraftResult>}
-   */
   async attemptCraft(opts: CraftAttemptOpts,): Promise<CraftResult> {
     const recipe = await this.db.selectFrom("crafting_recipes",).selectAll()
       .where("id", "=", opts.recipeId,).executeTakeFirst();
@@ -280,10 +269,6 @@ export class CraftingProcessService {
   /**
    * @param id
    */
-  /**
-   * @param {string} id
-   * @returns {Promise<CraftAttempt | null>}
-   */
   async getAttempt(id: string,): Promise<CraftAttempt | null> {
     const r = await this.db.selectFrom("crafting_attempts",).selectAll()
       .where("id", "=", id,).executeTakeFirst();
@@ -292,11 +277,6 @@ export class CraftingProcessService {
   /**
    * @param actorId
    * @param worldId
-   */
-  /**
-   * @param {string} actorId
-   * @param {string} worldId
-   * @returns {Promise<CraftAttempt[]>}
    */
   async listAttempts(actorId: string, worldId: string,): Promise<CraftAttempt[]> {
     const rows = await this.db.selectFrom("crafting_attempts",).selectAll()

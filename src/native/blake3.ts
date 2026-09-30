@@ -18,10 +18,6 @@ import { getNativeModule, getNativeStatus, isNativeAvailable, } from "./loader";
 /**
 BLAKE3 digest length in bytes (256-bit output).
  */
-
-/**
- * Which implementation is currently active (diagnostics / health probes).
- */
 export type Blake3Implementation = "rust" | "ts";
 
 /**

@@ -136,14 +136,6 @@ export class SDServerEditProvider implements ImageEditProvider, SDServerHost {
    * @param template
    * @param onProgress
    */
-  /**
-   * @param {ImageEditRequest} request
-   * @param {WorkflowTemplate} template
-   * @param {(progress: ImageEditProgress,) => void} onProgress
-   * @throws {Error}
-   * @throws {Error}
-   * @returns {Promise<ImageEditResult[]>}
-   */
   async execute(
     request: ImageEditRequest,
     template: WorkflowTemplate,

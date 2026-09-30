@@ -56,11 +56,6 @@ export class NsfwFilter {
    * @param contentRating - optional upstream rating hint
    * @returns `true` when the message matches a trigger rating or keyword.
    */
-  /**
-   * @param {string} content
-   * @param {string} contentRating
-   * @returns {boolean}
-   */
   isNsfw(content: string, contentRating?: string,): boolean {
     // Check content rating
     if (contentRating && this.config.triggerRatings.includes(contentRating,)) {
@@ -80,11 +75,6 @@ export class NsfwFilter {
    * @param contentRating - optional upstream rating hint
    * @returns filtered string per the configured mode (`blur`, `hide`, `fade_to_black`, …),
    *   or `null` when the message is fully hidden.
-   */
-  /**
-   * @param {string} content
-   * @param {string} contentRating
-   * @returns {string | null}
    */
   filter(content: string, contentRating?: string,): string | null {
     if (!this.isNsfw(content, contentRating,)) {
@@ -117,9 +107,6 @@ export class NsfwFilter {
   /**
    * @returns currently-configured filter mode (`show` / `blur` / `hide` / `fade_to_black`).
    */
-  /**
-   * @returns {NsfwFilterMode}
-   */
   getMode(): NsfwFilterMode {
     return this.config.mode;
   }
@@ -128,10 +115,6 @@ export class NsfwFilter {
    * Set the filter mode.
    * @param mode
    */
-  /**
-   * @param {NsfwFilterMode} mode
-   * @returns {void}
-   */
   setMode(mode: NsfwFilterMode,): void {
     this.config.mode = mode;
   }
@@ -139,10 +122,6 @@ export class NsfwFilter {
   /**
    * Add a keyword to the filter list.
    * @param keyword
-   */
-  /**
-   * @param {string} keyword
-   * @returns {void}
    */
   addKeyword(keyword: string,): void {
     if (!this.config.keywords.includes(keyword,)) {
@@ -153,10 +132,6 @@ export class NsfwFilter {
   /**
    * Remove a keyword from the filter list.
    * @param keyword
-   */
-  /**
-   * @param {string} keyword
-   * @returns {void}
    */
   removeKeyword(keyword: string,): void {
     const kept: string[] = [];

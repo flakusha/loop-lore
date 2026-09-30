@@ -47,10 +47,6 @@ export class PersonasService {
    * @param userId - owning user id
    * @returns all personas owned by `userId`, default-first then newest.
    */
-  /**
-   * @param {string} userId
-   * @returns {Promise<{ id: string; name: string; created_at: string; updated_at: string; user_id: string; title: string | null; model: string | null; temperature: number | null; description: string | null; avatar_asset_id: string | null; is_default: string; format_version: number; max_tokens: number | null; }[]>}
-   */
   async listByUser(userId: string,) {
     return this.db
       .selectFrom("personas",)
@@ -66,11 +62,6 @@ export class PersonasService {
    * @param userId - owning user id
    * @returns the persona row, or `undefined` if not found / not owned.
    */
-  /**
-   * @param {string} id
-   * @param {string} userId
-   * @returns {Promise<{ id: string; name: string; created_at: string; updated_at: string; user_id: string; title: string | null; model: string | null; temperature: number | null; description: string | null; avatar_asset_id: string | null; is_default: string; format_version: number; max_tokens: number | null; } | undefined>}
-   */
   async getById(id: string, userId: string,) {
     return this.db
       .selectFrom("personas",)
@@ -83,10 +74,6 @@ export class PersonasService {
   /**
    * @param params - persona fields (userId, name, avatarAssetId, description, title, temperature, maxTokens, model)
    * @returns the inserted persona's id.
-   */
-  /**
-   * @param {CreatePersonaParams} params
-   * @returns {Promise<string>}
    */
   async create(params: CreatePersonaParams,): Promise<string> {
     const id = uid();
@@ -146,11 +133,6 @@ export class PersonasService {
    * @param id
    * @param userId
    */
-  /**
-   * @param {string} id
-   * @param {string} userId
-   * @returns {Promise<void>}
-   */
   async delete(id: string, userId: string,): Promise<void> {
     // Ownership check first: only the persona's owner may delete it, and the
     // chat_participants cleanup below must never run for a persona that stays.
@@ -178,11 +160,6 @@ export class PersonasService {
    * @param id
    * @param userId
    */
-  /**
-   * @param {string} id
-   * @param {string} userId
-   * @returns {Promise<void>}
-   */
   async setDefault(id: string, userId: string,): Promise<void> {
     await this.db.transaction().execute(async (trx,) => {
       await applyDefault(trx, id, userId,);
@@ -193,11 +170,6 @@ export class PersonasService {
    * @param id - persona id
    * @param userId - owning user id
    * @returns `{ actorId }` for the newly-created character.
-   */
-  /**
-   * @param {string} id
-   * @param {string} userId
-   * @returns {Promise<{ actorId: string; }>}
    */
   async convertToCharacter(id: string, userId: string,): Promise<{ actorId: string }> {
     // Delegated: carries title/temperature/max_tokens/model into the actor

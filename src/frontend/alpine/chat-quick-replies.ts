@@ -37,10 +37,6 @@ export const chatQuickReplies: Partial<ChatState> & ThisType<ChatState> = {
    * Send a quick-reply command as a user message (reuses the send path).
    * @param command
    */
-  /**
-   * @param {string} command
-   * @returns {Promise<void>}
-   */
   async executeQuickReply(command: string,) {
     if (!command || !this.activeChat) { return; }
     const input = this.$refs?.messageInput as HTMLTextAreaElement | undefined;
@@ -78,10 +74,6 @@ export const chatQuickReplies: Partial<ChatState> & ThisType<ChatState> = {
    *   human-initiated send resets the counter. This breaks the
    *   ai-trigger → send → response → ai-trigger feedback loop.
    * @param trigger
-   */
-  /**
-   * @param {"user" | "ai"} trigger
-   * @returns {Promise<void>}
    */
   async fireAutoQuickReplies(trigger: "user" | "ai",) {
     if (!this.activeChat) { return; }

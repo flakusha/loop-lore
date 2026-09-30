@@ -61,9 +61,6 @@ export const ownershipActions: Partial<ChatState> & ThisType<ChatState> = {
    * the request and surfaces server errors in `_ownershipError`. On success,
    * closes the modal and triggers a chat reload.
    */
-  /**
-   * @returns {Promise<void>}
-   */
   async submitOwnershipTransfer() {
     if (!this.activeChat) { return; }
     const newOwnerId = (this._ownershipNewOwnerId ?? "").trim();
@@ -137,9 +134,6 @@ export const ownershipActions: Partial<ChatState> & ThisType<ChatState> = {
    * hide the button when no chat is active. True auth lives server-side.
    * TODO(chat-ownership): gate on created_by/admin instead of !!activeChat — every
    * non-owner currently sees the button and eats a 403 on submit.
-   */
-  /**
-   * @returns {boolean}
    */
   canTransferOwnership(): boolean {
     return !!this.activeChat;

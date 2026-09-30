@@ -32,10 +32,6 @@ export class AsyncLogQueue extends AsyncLogQueueBase {
   /**
    * @param results
    */
-  /**
-   * @param {PromiseSettledResult<Awaited<void>[]>[]} results
-   * @returns {void}
-   */
   protected override handleTransportFailure(results: PromiseSettledResult<Awaited<void>[]>[],): void {
     for (const result of results) {
       if (result.status !== "rejected") { continue; }

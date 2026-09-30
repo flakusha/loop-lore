@@ -28,24 +28,6 @@ const DEFAULT_STALE_AFTER_CHATS = 10;
  * Apply decay to memory confidence.
  * Reduces confidence by decayRate for memories that were accessed.
  */
-/**
- * Apply time-based decay to memory strength.
- *
- * Uses per-memory `decay_rate` and elapsed time since `last_accessed_at`
- * to reduce `strength`. Memories with higher decay_rate fade faster.
- *
- * Formula: strength -= decay_rate × elapsed_days
- * Strength is clamped to [0, 1].
- * @param db - Kysely instance
- * @param opts - Optional overrides
- * @param opts.now
- * @returns Number of memories affected
- */
-/**
- * @param {Kysely<DB>} db
- * @param {{ now?: Date }} opts
- * @returns {Promise<number>}
- */
 export async function applyDecay(
   db: Kysely<DB>,
   opts: { now?: Date } = {},

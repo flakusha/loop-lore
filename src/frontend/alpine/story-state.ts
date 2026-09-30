@@ -111,10 +111,6 @@ const log = rootLog.child({ module: "story-state", },);
      * CSS tier for a quality score: good (≥70) / mid (≥40) / low.
      * @param score
      */
-    /**
-     * @param {number} score
-     * @returns {string}
-     */
     qualityClass(score: number,): string {
       return qualityClassTier(score,);
     },

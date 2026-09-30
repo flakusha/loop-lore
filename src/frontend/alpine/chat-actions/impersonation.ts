@@ -69,10 +69,6 @@ export const impersonation: Partial<ChatState> & ThisType<ChatState> = {
    * which starts or ends impersonation depending on current state.
    * @param _cmd
    */
-  /**
-   * @param {string} _cmd
-   * @returns {Promise<void>}
-   */
   async impersonate(_cmd: string,): Promise<void> {
     await this.toggleImpersonate();
   },

@@ -51,12 +51,6 @@ export class TradeService extends OfferService {
    * @param worldId
    * @param currency
    */
-  /**
-   * @param {string} actorId
-   * @param {string} worldId
-   * @param {string} currency
-   * @returns {Promise<number>}
-   */
   getBalance(
     actorId: string,
     worldId: string,
@@ -71,13 +65,6 @@ export class TradeService extends OfferService {
    * @param worldId
    * @param amount
    * @param currency
-   */
-  /**
-   * @param {string} actorId
-   * @param {string} worldId
-   * @param {number} amount
-   * @param {string} currency
-   * @returns {Promise<number>}
    */
   credit(
     actorId: string,
@@ -95,13 +82,6 @@ export class TradeService extends OfferService {
    * @param amount
    * @param currency
    */
-  /**
-   * @param {string} actorId
-   * @param {string} worldId
-   * @param {number} amount
-   * @param {string} currency
-   * @returns {Promise<boolean>}
-   */
   debit(
     actorId: string,
     worldId: string,
@@ -118,14 +98,6 @@ export class TradeService extends OfferService {
    * @param worldId
    * @param amount
    * @param currency
-   */
-  /**
-   * @param {string} fromActorId
-   * @param {string} toActorId
-   * @param {string} worldId
-   * @param {number} amount
-   * @param {string} currency
-   * @returns {Promise<boolean>}
    */
   transferCurrency(
     fromActorId: string,
@@ -147,17 +119,6 @@ export class TradeService extends OfferService {
    * @param opts.sellerItems
    * @param opts.price
    */
-  /**
- * @param {{
-    worldId: string;
-    buyerActorId: string;
-    sellerActorId: string;
-    buyerItems: TradeLine[];
-    sellerItems: TradeLine[];
-    price: number;
-  }} opts
- * @returns {Promise<TradeResult>}
- */
   trade(opts: {
     worldId: string;
     buyerActorId: string;
@@ -174,12 +135,6 @@ export class TradeService extends OfferService {
    * @param worldId
    * @param actorId
    * @param limit
-   */
-  /**
-   * @param {string} worldId
-   * @param {string} actorId
-   * @param {unknown} limit
-   * @returns {Promise<TradeHistoryEntry[]>}
    */
   getTradeHistory(
     worldId: string,
@@ -198,16 +153,6 @@ export class TradeService extends OfferService {
    * @param opts.sellerItems
    * @param opts.price
    */
-  /**
- * @param {{
-    worldId: string;
-    buyerActorId: string;
-    npcActorId: string;
-    sellerItems: TradeLine[];
-    price: number;
-  }} opts
- * @returns {Promise<TradeResult>}
- */
   buyFromNpc(opts: {
     worldId: string;
     buyerActorId: string;
@@ -227,16 +172,6 @@ export class TradeService extends OfferService {
    * @param opts.buyerItems
    * @param opts.price
    */
-  /**
- * @param {{
-    worldId: string;
-    sellerActorId: string;
-    npcActorId: string;
-    buyerItems: TradeLine[];
-    price: number;
-  }} opts
- * @returns {Promise<TradeResult>}
- */
   sellToNpc(opts: {
     worldId: string;
     sellerActorId: string;

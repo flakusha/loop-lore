@@ -79,11 +79,6 @@ export class NsfwHook implements HookHandler {
    * @param _content
    * @param _context
    */
-  /**
-   * @param {string} _content
-   * @param {HookContext} _context
-   * @returns {Promise<boolean>}
-   */
   async canHandle(_content: string, _context: HookContext,): Promise<boolean> {
     // No length bypass: short content can carry NSFW tokens. canHandle only
     // answers "is this hook applicable?" — it gates on the global toggle.
@@ -93,11 +88,6 @@ export class NsfwHook implements HookHandler {
   /**
    * @param _content
    * @param _context
-   */
-  /**
-   * @param {string} _content
-   * @param {HookContext} _context
-   * @returns {Promise<HookResult>}
    */
   async execute(_content: string, _context: HookContext,): Promise<HookResult> {
     const log = getLogger();
@@ -199,10 +189,6 @@ export class NsfwHook implements HookHandler {
   /**
    * @param context
    */
-  /**
-   * @param {HookContext} context
-   * @returns {NsfwModerationService}
-   */
   private getModService(context: HookContext,): NsfwModerationService {
     if (this.injectedModService) {
       return this.injectedModService;
@@ -221,12 +207,6 @@ export class NsfwHook implements HookHandler {
    * @param context
    * @param nsfwLevel
    * @param allowed
-   */
-  /**
-   * @param {HookContext} context
-   * @param {string} nsfwLevel
-   * @param {boolean} allowed
-   * @returns {Promise<void>}
    */
   private async recordAudit(context: HookContext, nsfwLevel: string, allowed: boolean,): Promise<void> {
     try {

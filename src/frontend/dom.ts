@@ -13,22 +13,6 @@
  *   const form = $<HTMLFormElement>("#my-form", container);
  *   const items = $all<HTMLLIElement>(".list-item");
  */
-
-/**
- * Query a single element by CSS selector, typed.
- * @param selector
- * @param root
- */
-
-/**
- * @param selector
- * @param root
- */
-/**
- * @param {string} selector
- * @param {ParentNode} root
- * @returns {T | null}
- */
 export function $<T extends HTMLElement,>(
   selector: string,
   root: ParentNode = document,
@@ -59,14 +43,6 @@ export function $all<T extends HTMLElement,>(
  *   }
  * @param e
  */
-
-/**
- * @param e
- */
-/**
- * @param {Event} e
- * @returns {T | null}
- */
 export function eventTarget<T extends HTMLElement,>(e: Event,): T | null {
   return e.target as T | null;
 }
@@ -74,14 +50,6 @@ export function eventTarget<T extends HTMLElement,>(e: Event,): T | null {
 /**
  * Typed `currentTarget` — extracts the element the listener is bound to.
  * @param e
- */
-
-/**
- * @param e
- */
-/**
- * @param {Event} e
- * @returns {T | null}
  */
 export function eventCurrentTarget<T extends HTMLElement,>(e: Event,): T | null {
   return e.currentTarget as T | null;

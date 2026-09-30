@@ -30,10 +30,6 @@ export class DBTransport implements Transport {
   /**
    * @param entry
    */
-  /**
-   * @param {LogEntry} entry
-   * @returns {Promise<void>}
-   */
   async write(entry: LogEntry,): Promise<void> {
     try {
       const metaStr = entry.meta && Object.keys(entry.meta,).length > 0 ? jsonStringifyOr(entry.meta,) : null;

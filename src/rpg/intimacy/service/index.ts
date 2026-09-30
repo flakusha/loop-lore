@@ -59,12 +59,6 @@ export class IntimacyService {
    * @param targetActorId
    * @param worldId
    */
-  /**
-   * @param {string} actorId
-   * @param {string} targetActorId
-   * @param {string | null} worldId
-   * @returns {Promise<IntimacyPair>}
-   */
   async getPair(
     actorId: string,
     targetActorId: string,
@@ -84,10 +78,6 @@ export class IntimacyService {
    * Updates score, records history, and fires threshold events.
    * @param opts
    */
-  /**
-   * @param {ApplyIntimacyActionOpts} opts
-   * @returns {Promise<ApplyIntimacyResult>}
-   */
   async applyAction(opts: ApplyIntimacyActionOpts,): Promise<ApplyIntimacyResult> {
     assertNsfwConfigEnabled();
     return applyActionDispatch(this.db, opts,);
@@ -106,13 +96,6 @@ export class IntimacyService {
    * @param action - The intimacy action descriptor.
    * @param worldId - Optional world scope (null = cross-world).
    * @returns Post-delta intimacy score.
-   */
-  /**
-   * @param {string} actor
-   * @param {string} target
-   * @param {ApplyIntimacyActionOpts["action"]} action
-   * @param {string | null} worldId
-   * @returns {Promise<number>}
    */
   async applyInteraction(
     actor: string,
@@ -135,11 +118,6 @@ export class IntimacyService {
    * @param actorId
    * @param worldId
    */
-  /**
-   * @param {string} actorId
-   * @param {string | null} worldId
-   * @returns {Promise<IntimacyPair[]>}
-   */
   async getActorPairs(
     actorId: string,
     worldId?: string | null,
@@ -151,10 +129,6 @@ export class IntimacyService {
    * Get the intimacy level label for a numeric score.
    * @param score
    */
-  /**
-   * @param {number} score
-   * @returns {string}
-   */
   static getLevelLabel(score: number,): string {
     return getLevelLabelDispatch(score,);
   }
@@ -163,11 +137,6 @@ export class IntimacyService {
    * Decay intimacy over time (natural drift toward 0).
    * @param actorId
    * @param decayAmount - How much to decay per call (default 1).
-   */
-  /**
-   * @param {string} actorId
-   * @param {unknown} decayAmount
-   * @returns {Promise<number>}
    */
   async decayAll(actorId: string, decayAmount = 1,): Promise<number> {
     assertNsfwConfigEnabled();

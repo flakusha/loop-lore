@@ -52,9 +52,6 @@ export function mobileComposer() {
      * Forward submit to the parent chatState() sendMessage().
      * Reads the input value, delegates to parent, clears input.
      */
-    /**
-     * @returns {Promise<void>}
-     */
     async submitMobile() {
       if (!isKeyboardNavEnabled()) { return; }
       const input = (this as unknown as { $refs: { mobileInput?: HTMLInputElement } }).$refs.mobileInput ?? null;

@@ -92,14 +92,6 @@ export class ReproductionService {
    * @param carrierSpecies - override (default: heat-cycle row)
    * @param sireSpecies - override (default: heat-cycle row)
    */
-  /**
-   * @param {string} carrierId
-   * @param {string} sireId
-   * @param {Pick<NsfwEncounter, "id" | "worldId">} encounter
-   * @param {string} carrierSpecies
-   * @param {string} sireSpecies
-   * @returns {Promise<string | null>}
-   */
   async rollPregnancy(
     carrierId: string,
     sireId: string,
@@ -185,11 +177,6 @@ export class ReproductionService {
    * @param characterId - the pregnant actor
    * @param weeks
    */
-  /**
-   * @param {string} characterId
-   * @param {unknown} weeks
-   * @returns {Promise<PregnancyStatus>}
-   */
   async advanceGestation(characterId: string, weeks = 1,): Promise<PregnancyStatus> {
     assertNsfwConfigEnabled();
     const status = await getPregnancyFromStore(this.db, characterId,);
@@ -242,11 +229,6 @@ export class ReproductionService {
    * @param characterId - the pregnant actor (carrier)
    * @param childName
    */
-  /**
-   * @param {string} characterId
-   * @param {string} childName
-   * @returns {Promise<string | null>}
-   */
   async birth(characterId: string, childName: string,): Promise<string | null> {
     assertNsfwConfigEnabled();
     return birthChild(this.db, characterId, childName,);
@@ -256,10 +238,6 @@ export class ReproductionService {
    * Current pregnancy status for an actor (null-safe: not pregnant when
    * no active row).
    * @param characterId
-   */
-  /**
-   * @param {string} characterId
-   * @returns {Promise<PregnancyStatus>}
    */
   async getPregnancy(characterId: string,): Promise<PregnancyStatus> {
     return getPregnancyFromStore(this.db, characterId,);

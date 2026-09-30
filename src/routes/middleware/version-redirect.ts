@@ -8,19 +8,6 @@
  * for backward compatibility during the versioning migration.
  * @see docs/spec/api-versioning.md
  */
-
-/**
- * Create a redirect handler that sends 308 Permanent Redirect from
- * `/api/{path}` to `/api/v1/{path}`, preserving method and body.
- * @param targetVersion
- * @example
- * app.all("/api/:resource", versionRedirect("v1",));
- * app.all("/api/:resource/*", versionRedirect("v1",));
- */
-/**
- * @param {string} targetVersion
- * @returns {(ctx: { request: Request; }) => Response}
- */
 export function versionRedirect(targetVersion: string,) {
   return (ctx: { request: Request },) => {
     const url = new URL(ctx.request.url,);

@@ -79,10 +79,6 @@ export class NotificationsManager {
    * Mark a chat read (POST) and clear its local unseen state.
    * @param chatId
    */
-  /**
-   * @param {string} chatId
-   * @returns {Promise<void>}
-   */
   async markRead(chatId: string,): Promise<void> {
     try {
       await apiFetch(`/api/v1/chats/${chatId}/mark-read`, { method: "PUT", },);
@@ -96,10 +92,6 @@ export class NotificationsManager {
   /**
    * @param chatId
    */
-  /**
-   * @param {string | null} chatId
-   * @returns {void}
-   */
   setActiveChat(chatId: string | null,): void {
     this.state.activeChatId = chatId;
   }
@@ -107,10 +99,6 @@ export class NotificationsManager {
   /**
    * Read unseen count for a specific chat.
    * @param chatId
-   */
-  /**
-   * @param {string} chatId
-   * @returns {number}
    */
   getUnseenCount(chatId: string,): number {
     return this.state.unseen[chatId] ?? 0;
@@ -127,10 +115,6 @@ export class NotificationsManager {
   /**
    * Clear unseen count for a chat locally (without POST).
    * @param chatId
-   */
-  /**
-   * @param {string} chatId
-   * @returns {void}
    */
   clearUnseen(chatId: string,): void {
     this.state.unseen[chatId] = 0;
@@ -176,10 +160,6 @@ export class NotificationsManager {
    * Merge a server snapshot into local state and update UI.
    * @param chats
    */
-  /**
-   * @param {Record<string, ActivityEntry>} chats
-   * @returns {void}
-   */
   private applySnapshot(chats: Record<string, ActivityEntry>,): void {
     for (const [chatId, entry,] of Object.entries(chats,)) {
       const prev = this.state.unseen[chatId] ?? 0;
@@ -196,10 +176,6 @@ export class NotificationsManager {
 
   /**
    * @param chatId
-   */
-  /**
-   * @param {string} chatId
-   * @returns {void}
    */
   private renderBadge(chatId: string,): void {
     const host = document.querySelector<HTMLElement>(`[data-chat-id="${CSS.escape(chatId,)}"]`,);

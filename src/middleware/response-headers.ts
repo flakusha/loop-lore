@@ -116,10 +116,6 @@ export class ResponseHeaderPolicy {
    * @param options.response
    * @returns A new Response carrying the merged headers (original untouched).
    */
-  /**
-   * @param {ApplyOptions} { request, response, }
-   * @returns {Response}
-   */
   apply({ request, response, }: ApplyOptions,): Response {
     if (!this.config.enabled) { return response; }
 
@@ -171,10 +167,6 @@ export class ResponseHeaderPolicy {
    * @param root0.request
    * @param root0.response
    */
-  /**
-   * @param {ApplyOptions} { request, response, }
-   * @returns {RouteKind}
-   */
   private classify({ request, response, }: ApplyOptions,): RouteKind {
     // BUG-classify-response-header: case-insensitive per RFC 9110 §6.1.
     // Headers preserve case verbatim; lowercase once before comparison so
@@ -191,11 +183,6 @@ export class ResponseHeaderPolicy {
    * here — merge logic in {@link apply} handles precedence.
    * @param kind
    * @param request
-   */
-  /**
-   * @param {RouteKind} kind
-   * @param {Request} request
-   * @returns {Record<string, string>}
    */
   private buildHeaders(kind: RouteKind, request: Request,): Record<string, string> {
     const cfg = this.config;
@@ -247,11 +234,6 @@ export class ResponseHeaderPolicy {
    * @param headers
    * @param request
    */
-  /**
-   * @param {Record<string, string>} headers
-   * @param {Request} request
-   * @returns {void}
-   */
   private applyHtmlHeaders(headers: Record<string, string>, request: Request,): void {
     const cfg = this.config;
     if (cfg.csp.enabled) {
@@ -284,10 +266,6 @@ export class ResponseHeaderPolicy {
 
   /**
    * @param request
-   */
-  /**
-   * @param {Request} request
-   * @returns {string}
    */
   private buildCsp(request: Request,): string {
     const c = this.config.csp;
@@ -364,10 +342,6 @@ export class ResponseHeaderPolicy {
    * @param root0
    * @param root0.request
    * @param root0.headers
-   */
-  /**
-   * @param {{ request: Request; headers: Headers }} { request, headers, }
-   * @returns {void}
    */
   private augmentImmutable({ request, headers, }: { request: Request; headers: Headers },): void {
     const cacheControl = headers.get("Cache-Control",);

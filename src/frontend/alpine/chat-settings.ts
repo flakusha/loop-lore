@@ -141,9 +141,6 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
    * the renderer down when it is disabled. Reads the chat's persisted gm_config
    * so the renderer and the settings modal stay in sync.
    */
-  /**
-   * @returns {void}
-   */
   updateVnMode() {
     const chat = this.chats.find((c: { id: string },) => c.id === this.activeChat);
     syncVnRenderer(this.messages, chat?.gm_config, this._vnEnabled, this.activeChat ?? undefined,);

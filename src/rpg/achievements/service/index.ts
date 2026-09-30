@@ -60,10 +60,6 @@ export class AchievementsService {
    * Create a new achievement definition
    * @param input
    */
-  /**
-   * @param {CreateAchievementInput} input
-   * @returns {Promise<Achievement>}
-   */
   async createAchievement(input: CreateAchievementInput,): Promise<Achievement> {
     return createAchievementDispatch(this.db, input,);
   }
@@ -71,10 +67,6 @@ export class AchievementsService {
   /**
    * Get an achievement by ID
    * @param achievementId
-   */
-  /**
-   * @param {string} achievementId
-   * @returns {Promise<Achievement | null>}
    */
   async getAchievement(achievementId: string,): Promise<Achievement | null> {
     return getAchievementDispatch(this.db, achievementId,);
@@ -84,11 +76,6 @@ export class AchievementsService {
    * List all achievements
    * @param category
    * @param includeSecret
-   */
-  /**
-   * @param {AchievementCategory} category
-   * @param {unknown} includeSecret
-   * @returns {Promise<Achievement[]>}
    */
   async listAchievements(
     category?: AchievementCategory,
@@ -102,11 +89,6 @@ export class AchievementsService {
    * @param achievementId
    * @param input
    */
-  /**
-   * @param {string} achievementId
-   * @param {UpdateAchievementInput} input
-   * @returns {Promise<Achievement>}
-   */
   async updateAchievement(achievementId: string, input: UpdateAchievementInput,): Promise<Achievement> {
     return updateAchievementDispatch(this.db, achievementId, input,);
   }
@@ -114,10 +96,6 @@ export class AchievementsService {
   /**
    * Delete an achievement
    * @param achievementId
-   */
-  /**
-   * @param {string} achievementId
-   * @returns {Promise<void>}
    */
   async deleteAchievement(achievementId: string,): Promise<void> {
     return deleteAchievementDispatch(this.db, achievementId,);
@@ -128,11 +106,6 @@ export class AchievementsService {
    * @param playerId
    * @param achievementId
    */
-  /**
-   * @param {string} playerId
-   * @param {string} achievementId
-   * @returns {Promise<PlayerAchievement | null>}
-   */
   async getPlayerAchievement(playerId: string, achievementId: string,): Promise<PlayerAchievement | null> {
     return getPlayerAchievementDispatch(this.db, playerId, achievementId,);
   }
@@ -140,10 +113,6 @@ export class AchievementsService {
   /**
    * Get all achievements for a player
    * @param playerId
-   */
-  /**
-   * @param {string} playerId
-   * @returns {Promise<PlayerAchievement[]>}
    */
   async getPlayerAchievements(playerId: string,): Promise<PlayerAchievement[]> {
     return getPlayerAchievementsDispatch(this.db, playerId,);
@@ -154,12 +123,6 @@ export class AchievementsService {
    * @param playerId
    * @param achievementId
    * @param progressIncrement
-   */
-  /**
-   * @param {string} playerId
-   * @param {string} achievementId
-   * @param {unknown} progressIncrement
-   * @returns {Promise<ProgressUpdateResult>}
    */
   async updateProgress(
     playerId: string,
@@ -174,11 +137,6 @@ export class AchievementsService {
    * @param playerId
    * @param achievementId
    */
-  /**
-   * @param {string} playerId
-   * @param {string} achievementId
-   * @returns {Promise<AchievementReward[]>}
-   */
   async claimRewards(playerId: string, achievementId: string,): Promise<AchievementReward[]> {
     return claimRewardsDispatch(this.db, playerId, achievementId,);
   }
@@ -188,11 +146,6 @@ export class AchievementsService {
    * @param playerId
    * @param achievementId
    */
-  /**
-   * @param {string} playerId
-   * @param {string} achievementId
-   * @returns {Promise<boolean>}
-   */
   async isUnlocked(playerId: string, achievementId: string,): Promise<boolean> {
     return isUnlockedDispatch(this.db, playerId, achievementId,);
   }
@@ -200,10 +153,6 @@ export class AchievementsService {
   /**
    * Get achievement statistics for a player
    * @param playerId
-   */
-  /**
-   * @param {string} playerId
-   * @returns {Promise<{ totalUnlocked: number; totalAvailable: number; byCategory: Record<string, number>; byTier: Record<string, number>; }>}
    */
   async getPlayerStats(playerId: string,): Promise<{
     totalUnlocked: number;

@@ -141,13 +141,6 @@ function tryParseCharacter(text: string | null,): ExtractedCharacter | null {
  * Minimal 1×1 white pixel PNG (67 bytes).
  * Used as a base image when no avatar is available for export.
  */
-
-/**
- * Build a PNG tEXt chunk: [length:4][type:4][keyword\0value][crc:4]
- * @param keyword
- * @param value
- * @returns void
- */
 function buildTextChunk(keyword: string, value: string,): Buffer {
   const payload = Buffer.alloc(keyword.length + 1 + value.length,);
   Buffer.from(keyword, "latin1",).copy(payload,);

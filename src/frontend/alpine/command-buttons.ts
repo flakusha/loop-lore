@@ -73,10 +73,6 @@ const COMMAND_BUTTONS: CommandButton[] = [
      * Run a command by inserting it into the message input
      * @param cmd
      */
-    /**
-     * @param {string} cmd
-     * @returns {void}
-     */
     runCommand(cmd: string,): void {
       // GM guidance commands open the GM Guidance panel instead of typing a
       // slash command — the panel captures narrative direction, scene, and

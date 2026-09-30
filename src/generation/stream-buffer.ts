@@ -44,11 +44,6 @@ export class StreamBuffer {
    * @param type
    * @param html
    */
-  /**
-   * @param {string} type
-   * @param {string} html
-   * @returns {number}
-   */
   append(type: string, html: string,): number {
     const seq = this.sequence++;
     const event: StreamEvent = { type, html, sequence: seq, };
@@ -78,10 +73,6 @@ export class StreamBuffer {
    * Signal generation failed
    * @param error
    */
-  /**
-   * @param {string} error
-   * @returns {void}
-   */
   signalError(error: string,): void {
     this._error = error;
     for (const sub of this.onError) { sub(error,); }
@@ -90,10 +81,6 @@ export class StreamBuffer {
   /**
    * Replay events from a given sequence number (0 = all)
    * @param fromSequence
-   */
-  /**
-   * @param {unknown} fromSequence
-   * @returns {StreamEvent[]}
    */
   replay(fromSequence = 0,): StreamEvent[] {
     const out: StreamEvent[] = [];
@@ -108,12 +95,6 @@ export class StreamBuffer {
    * @param cb
    * @param onDone
    * @param onError
-   */
-  /**
-   * @param {EventSubscriber} cb
-   * @param {DoneSubscriber} onDone
-   * @param {ErrorSubscriber} onError
-   * @returns {() => void}
    */
   subscribe(cb: EventSubscriber, onDone?: DoneSubscriber, onError?: ErrorSubscriber,): () => void {
     this.onEvent.add(cb,);

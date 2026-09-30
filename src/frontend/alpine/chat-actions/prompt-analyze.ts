@@ -49,9 +49,6 @@ export const promptAnalyzeActions: Partial<AnalyzeCtx> & ThisType<AnalyzeCtx> = 
    * Analyze the current draft (intent/clarity profile) into display-only
    * state plus a summary toast. Never touches the composer draft.
    */
-  /**
-   * @returns {Promise<void>}
-   */
   async analyzePrompt() {
     const input = this.$refs.messageInput as HTMLTextAreaElement | undefined;
     const text = input?.value.trim() ?? "";

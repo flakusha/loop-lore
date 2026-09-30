@@ -59,11 +59,6 @@ export class SyntheticGenerator {
    * @param chatId
    * @param types
    */
-  /**
-   * @param {string} chatId
-   * @param {SyntheticDataType[]} types
-   * @returns {Promise<string[]>}
-   */
   async generateForChat(chatId: string, types?: SyntheticDataType[],): Promise<string[]> {
     const source = await fetchSource(this.state, chatId,);
     if (!source) { return []; }
@@ -86,12 +81,6 @@ export class SyntheticGenerator {
    * @param id
    * @param to
    * @param validatedBy
-   */
-  /**
-   * @param {string} id
-   * @param {SyntheticDataStatus} to
-   * @param {string} validatedBy
-   * @returns {Promise<boolean>}
    */
   async transitionStatus(id: string, to: SyntheticDataStatus, validatedBy?: string,): Promise<boolean> {
     return transitionStatus(this.state, id, to, validatedBy,);

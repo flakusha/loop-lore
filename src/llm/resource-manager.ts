@@ -75,11 +75,6 @@ export class ResourceManager {
    * @returns the schedule handle
    * @throws when a live request already uses the id
    */
-  /**
-   * @param {ScheduledRequest<T>} req
-   * @throws {Error}
-   * @returns {ScheduleHandle<T>}
-   */
   submit<T,>(req: ScheduledRequest<T>,): ScheduleHandle<T> {
     if (this.liveIds.has(req.id,)) {
       throw new Error(`ResourceManager: duplicate id ${req.id}`,);
@@ -101,11 +96,6 @@ export class ResourceManager {
    * @param reason - cancellation reason
    * @returns `true` when the request was found and not already cancelled
    */
-  /**
-   * @param {string} id
-   * @param {string} reason
-   * @returns {boolean}
-   */
   cancel(id: string, reason?: string,): boolean {
     for (const queue of this.queues.values()) {
       for (const entry of queue) {
@@ -123,10 +113,6 @@ export class ResourceManager {
    * Drop the queue + limiter for a provider (e.g. on provider removal).
    * @param provider - provider key
    * @returns void
-   */
-  /**
-   * @param {string} provider
-   * @returns {void}
    */
   forgetProvider(provider: string,): void {
     const queue = this.queues.get(provider,);
@@ -174,10 +160,6 @@ export class ResourceManager {
    * @param provider - provider key
    * @returns void
    */
-  /**
-   * @param {string} provider
-   * @returns {void}
-   */
   private kickDrain(provider: string,): void {
     if (this.drains.has(provider,)) { return; }
     const p = this.drainQueue(provider,).finally(() => {
@@ -195,11 +177,6 @@ export class ResourceManager {
    * The loop exits when the queue empties.
    * @param provider - provider key
    * @returns void
-   */
-
-  /**
-   * @param {string} provider
-   * @returns {Promise<void>}
    */
   private async drainQueue(provider: string,): Promise<void> {
     const queue = this.queues.get(provider,);

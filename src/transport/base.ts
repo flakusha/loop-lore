@@ -71,9 +71,6 @@ export abstract class TransportBase<
    * Factory hook — override in subclass to customize connection shape.
    * Default builds remoteAddr from `host:port`.
    */
-  /**
-   * @returns {Connection}
-   */
   protected createConnection(): Connection {
     const id = randomUUID();
     const host = this.options.host ?? "localhost";
@@ -95,10 +92,6 @@ export abstract class TransportBase<
 
   /**
    * @param signature
-   */
-  /**
-   * @param {string} signature
-   * @returns {Promise<string>}
    */
   get(signature: string,): Promise<string> {
     const conn = this.ensureConnected();
