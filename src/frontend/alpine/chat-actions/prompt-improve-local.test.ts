@@ -25,7 +25,8 @@ interface ImproveCtx {
   activeChat: string | null;
   isGroupChat: boolean;
   _improving: boolean;
-  _promptImproveBackup: string | undefined;
+  _promptImproveHistory: string[];
+  pushPromptImproveHistory: (draft: string,) => void;
   $refs: { messageInput: { value: string } };
   autoResize: (el: unknown,) => void;
   dispatched: { event: string; detail: unknown }[];
@@ -37,7 +38,10 @@ function buildCtx(text: string,): ImproveCtx {
     activeChat: "chat-1",
     isGroupChat: false,
     _improving: false,
-    _promptImproveBackup: undefined,
+    _promptImproveHistory: [],
+    pushPromptImproveHistory(draft: string,) {
+      promptImproveActions.pushPromptImproveHistory!.call(ctx as unknown as ChatState, draft,);
+    },
     $refs: { messageInput: { value: text, }, },
     autoResize: () => {},
     dispatched: [],
@@ -92,7 +96,7 @@ describe("improvePrompt local-first", () => {
     const ctx = buildCtx("hello   world ,  test",);
     await improve(ctx, "spellcheck",);
     expect(ctx.$refs.messageInput.value,).toBe("hello world, test",);
-    expect(ctx._promptImproveBackup,).toBe("hello   world ,  test",);
+    expect(ctx._promptImproveHistory,).toEqual(["hello   world ,  test",],);
     expect(fetchCalls,).toEqual([],);
     expect(ctx._improving,).toBe(false,);
   });
@@ -149,7 +153,7 @@ describe("improvePrompt guards + server errors", () => {
     };
     const ctx = buildCtx("hello",);
     await improve(ctx, "wording",);
-    expect(ctx._promptImproveBackup,).toBeUndefined();
+    expect(ctx._promptImproveHistory,).toEqual([],);
   });
   test("network throw surfaces failure + resets flag", async () => {
     globals.apiFetch = () => Promise.reject(new Error("down",),);
@@ -160,13 +164,53 @@ describe("improvePrompt guards + server errors", () => {
   });
 });
 describe("restorePromptDraft", () => {
-  test("restores backup then no-ops when empty", async () => {
+  test("pops one level per undo, then no-ops when the stack is empty", () => {
     const ctx = buildCtx("new",);
-    ctx._promptImproveBackup = "old";
+    ctx._promptImproveHistory = ["original", "first improve",];
     promptImproveActions.restorePromptDraft!.call(ctx as unknown as ChatState,);
-    expect(ctx.$refs.messageInput.value,).toBe("old",);
-    expect(ctx._promptImproveBackup,).toBeUndefined();
+    expect(ctx.$refs.messageInput.value,).toBe("first improve",);
+    expect(ctx._promptImproveHistory,).toEqual(["original",],);
     promptImproveActions.restorePromptDraft!.call(ctx as unknown as ChatState,);
-    expect(ctx.$refs.messageInput.value,).toBe("old",);
+    expect(ctx.$refs.messageInput.value,).toBe("original",);
+    expect(ctx._promptImproveHistory,).toEqual([],);
+    promptImproveActions.restorePromptDraft!.call(ctx as unknown as ChatState,);
+    expect(ctx.$refs.messageInput.value,).toBe("original",);
+  });
+});
+
+describe("improvePrompt undo stack", () => {
+  test("improve twice then undo twice restores the original draft", async () => {
+    let reply = "improve-1";
+    globals.apiFetch = (url,) => {
+      fetchCalls.push(url,);
+      return Promise.resolve(Response.json({ data: { content: reply, }, },),);
+    };
+    const ctx = buildCtx("original",);
+    await improve(ctx, "wording",);
+    expect(ctx.$refs.messageInput.value,).toBe("improve-1",);
+    reply = "improve-2";
+    await improve(ctx, "creative",);
+    expect(ctx.$refs.messageInput.value,).toBe("improve-2",);
+    expect(ctx._promptImproveHistory,).toEqual(["original", "improve-1",],);
+
+    promptImproveActions.restorePromptDraft!.call(ctx as unknown as ChatState,);
+    expect(ctx.$refs.messageInput.value,).toBe("improve-1",);
+    promptImproveActions.restorePromptDraft!.call(ctx as unknown as ChatState,);
+    expect(ctx.$refs.messageInput.value,).toBe("original",);
+    expect(ctx._promptImproveHistory,).toEqual([],);
+  });
+
+  test("stack is bounded at 5 levels — oldest draft drops first", () => {
+    const ctx = buildCtx("draft-0",);
+    for (const draft of ["draft-0", "draft-1", "draft-2", "draft-3", "draft-4", "draft-5", "draft-6",]) {
+      promptImproveActions.pushPromptImproveHistory!.call(ctx as unknown as ChatState, draft,);
+    }
+    expect(ctx._promptImproveHistory,).toEqual([
+      "draft-2",
+      "draft-3",
+      "draft-4",
+      "draft-5",
+      "draft-6",
+    ],);
   });
 });

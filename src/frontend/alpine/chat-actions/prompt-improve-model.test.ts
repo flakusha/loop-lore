@@ -27,7 +27,8 @@ interface ImproveCtx {
   activeChat: string | null;
   isGroupChat: boolean;
   _improving: boolean;
-  _promptImproveBackup: string | undefined;
+  _promptImproveHistory: string[];
+  pushPromptImproveHistory: (draft: string,) => void;
   $refs: { messageInput: { value: string } };
   autoResize: (el: unknown,) => void;
   dispatched: { event: string; detail: unknown }[];
@@ -39,7 +40,10 @@ function buildCtx(text: string,): ImproveCtx {
     activeChat: "chat-1",
     isGroupChat: false,
     _improving: false,
-    _promptImproveBackup: undefined,
+    _promptImproveHistory: [],
+    pushPromptImproveHistory(draft: string,) {
+      promptImproveActions.pushPromptImproveHistory!.call(ctx as unknown as ChatState, draft,);
+    },
     $refs: { messageInput: { value: text, }, },
     autoResize: () => {},
     dispatched: [],
@@ -155,7 +159,7 @@ describe("improvePrompt model-backed branch", () => {
     await drive(improve(ctx, "wording",), ctx, "hello world",);
     expect(fetchCalls,).toEqual([],);
     expect(ctx.$refs.messageInput.value,).toBe("model-polished",);
-    expect(ctx._promptImproveBackup,).toBe("hello world",);
+    expect(ctx._promptImproveHistory,).toEqual(["hello world",],);
   });
 
   test("missing download falls back to the server", async () => {
