@@ -3,7 +3,7 @@
 
 # BUG: Browser teardown destroys the DB before flushing the async store
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 

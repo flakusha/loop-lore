@@ -3,7 +3,7 @@
 
 # BUG: export progress stream test lost stream contract assertion
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 

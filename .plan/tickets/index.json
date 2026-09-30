@@ -500,7 +500,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-async-spill-uses-cache-key-as-filename-so-routed-ids-lose.md",
-    "status": "Not Started",
+    "status": "done",
     "git_issue": "33718af"
   },
   "BUG-AUDIT-PANEL-DETAILS-NOT-EXPANDABLE": {
@@ -869,7 +869,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-browser-teardown-destroys-the-db-before-flushing-the-async-s.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-BROWSER-ZSTD-DECOMPRESS-USES-FIXED-16X-OUTPUT-CAPACITY-HIGH-": {
     "epic": "",
@@ -2467,7 +2467,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-earnstorypoints-lost-update-race-and-raw-unique-violation-on.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-ELYSIA-AUTH-TS-DEAD-SHIM-DUPLICATE-LOGIC": {
     "epic": "epic-architecture",
@@ -2607,7 +2607,7 @@
     "label": "bug",
     "priority": "low",
     "source": ".plan/tickets/BUG-export-progress-stream-test-lost-stream-contract-assertion.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [],
     "title": "export progress stream test lost stream contract assertion",
     "type": "BUG"
@@ -4701,7 +4701,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-parallel-check-runner-has-no-per-gate-timeout-so-one-wedged-.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-PARSEACCEPTLANGUAGE-IGNORES-QUALITY-VALUES-RETURNS-HEADER-OR": {
     "epic": "",
