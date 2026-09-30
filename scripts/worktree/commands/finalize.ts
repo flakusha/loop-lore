@@ -2,7 +2,15 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { existsSync, } from "fs";
-import { closeSync, openSync, readFileSync, unlinkSync, writeSync, } from "node:fs";
+import {
+  closeSync,
+  mkdirSync,
+  openSync,
+  readFileSync,
+  unlinkSync,
+  writeFileSync,
+  writeSync,
+} from "node:fs";
 import { resolve, } from "path";
 import { branchToPath, type WorktreeConfig, } from "../utils/config";
 import {
@@ -648,12 +656,63 @@ function runCheck(
   return result.exitCode === 0;
 }
 
-function runTests(wtPath: string,): boolean {
+/**
+ * How much test output to echo to stderr when the step fails. `bun test` puts
+ * its banner on stdout and every failure detail on stderr, so both streams are
+ * kept -- but a whole-suite run produces far more than a terminal can show, and
+ * the assertion that matters is usually the last one emitted. The full output
+ * goes to a file; this is the tail that makes the failure legible without
+ * opening it.
+ */
+const TEST_FAILURE_ECHO_LINES = 40;
+
+/**
+ * Run `bun run test:unit` in the worktree.
+ *
+ * On failure, persist both streams untruncated under the worktree's `.tmp/`
+ * and echo the tail to stderr. Previously the streams were piped and dropped,
+ * so a red Step 3 printed only "Tests failed - fix before finalizing" with no
+ * indication of which test failed -- the operator had to re-run the suite by
+ * hand. `bun run check` in Step 2 got this treatment (see runCheck above); the
+ * test step did not.
+ *
+ * @param wtPath - Absolute path to the worktree being finalized.
+ * @returns `true` when the suite passed.
+ */
+export function runTests(wtPath: string,): boolean {
   const result = Bun.spawnSync(
     ["bun", "run", "test:unit",],
     { stdout: "pipe", stderr: "pipe", cwd: wtPath, },
   );
-  return result.exitCode === 0;
+  if (result.exitCode === 0) { return true; }
+
+  // `bun test` prints its banner on stdout and every failure detail on stderr,
+  // so `stdout || stderr` would report a failing suite as a banner line and
+  // hide the cause -- same reasoning as runCheck.
+  const stdout = result.stdout.toString(),
+    stderr = result.stderr.toString(),
+    output = stderr.trim() ? `${stdout}${stderr}` : stdout || stderr;
+
+  let logPath: string | null = null;
+  try {
+    const logDir = resolve(wtPath, ".tmp",),
+      logFile = resolve(logDir, "finalize-test-unit.log",);
+    mkdirSync(logDir, { recursive: true, },);
+    writeFileSync(logFile, output,);
+    logPath = logFile;
+  } catch (error) {
+    // A read-only or missing worktree must not turn a test failure into a
+    // crash: the tail on stderr is still worth having.
+    log("warn", `Could not write test output log: ${String(error,)}`,);
+  }
+
+  process.stderr.write(
+    `${output.split("\n",).slice(-TEST_FAILURE_ECHO_LINES,).join("\n",)}\n`,
+  );
+  if (logPath !== null) {
+    process.stderr.write(`Full test output: ${logPath}\n`,);
+  }
+  return false;
 }
 
 /**
