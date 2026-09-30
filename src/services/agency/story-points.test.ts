@@ -219,7 +219,6 @@ describe("actor isolation", () => {
   });
 });
 
-
 describe("earnStoryPoints — concurrency", () => {
   // BUG-earnstorypoints-lost-update-race-and-raw-unique-violation-on
   // The earn path read the row, computed an absolute new balance, and wrote
@@ -231,14 +230,14 @@ describe("earnStoryPoints — concurrency", () => {
 
   test("parallel first-time earns do not raise a raw UNIQUE violation", async () => {
     const results = await Promise.allSettled(
-      Array.from({ length: 8, }, (_, i) => earnStoryPoints(db, { actorId: ACTOR, amount: i + 1, },),),
+      Array.from({ length: 8, }, (_, i,) => earnStoryPoints(db, { actorId: ACTOR, amount: i + 1, },),),
     );
 
     // Every earn must resolve — a raw UNIQUE violation is a defect, not an
     // expected rejection. This actor has no cap, so CapExceededError would
     // not be legitimate either.
-    const rejected = results.filter((r,) => r.status === "rejected",);
-    expect(rejected,).toEqual([]);
+    const rejected = results.filter((r,) => r.status === "rejected");
+    expect(rejected,).toEqual([],);
 
     const bal = await getStoryPointBalance(db, ACTOR, null,);
     expect(bal.balance,).toBe(36,); // 1+2+...+8
