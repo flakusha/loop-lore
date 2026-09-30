@@ -12,4 +12,4 @@
 **Acceptance Criteria:**
 - [x] Implementation complete. — landed in `fix: resolve 13 week-review BUG tickets` (97e26cd02, 2026-09-26), which added `expect(captured?.stream).toBe(true)` to `src/frontend/alpine/export-progress.stream.test.ts`. The ticket status was left at `Not Started` after that.
 - [x] Tests passing. — the assertion is non-tautological: `startExport` passes `{ method: "POST", stream: true }` to `apiFetch`, so the captured `RequestInit` carries `stream` only if the flag survives to the request layer.
-- [x] Verification command from ticket executed green. — `bun test src/frontend/alpine/export-progress.stream.test.ts` passes; removing `stream: true` from `startExport` drops the assertion.
+- [x] Verification command from ticket executed green. — re-verified independently 2026-09-30 rather than taken on the earlier session's word: `bun test src/frontend/alpine/export-progress.stream.test.ts` passes; removing `stream: true` from `startExport` makes it fail with `Expected: true, Received: undefined` at line 91, and restoring the flag returns the file to its original hash. The assertion is load-bearing.
