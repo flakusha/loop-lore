@@ -20,6 +20,7 @@ import {
   ChatImpersonateBody,
   ChatMarkReadBody,
   ChatParticipantUpdateBody,
+  ChatRenameBody,
   ChatUpdateBody,
 } from "./chat";
 
@@ -165,11 +166,18 @@ describe("ChatUpdateBody — additional field edge cases", () => {
     // Pin: t.Optional(t.String()) without minLength/maxLength/format means
     // this is effectively a free-form string field. Pin the contract so a
     // future tightening is explicit, not silent.
+    //
+    // Checked against ChatRenameBody, NOT ChatUpdateBody: `name_source` is a
+    // ChatRenameBody field. Asserting it against ChatUpdateBody was vacuous —
+    // that object has no such property, so the check passed for any input and
+    // then flipped to false the moment another file mounted a route that
+    // registered a shared schema, which is what made the suite look
+    // order-dependent. `name` is required on ChatRenameBody, so it is supplied.
     expect(
-      Value.Check(ChatUpdateBody, body({ name_source: "user.manual", },),),
+      Value.Check(ChatRenameBody, body({ name: "New Name", name_source: "user.manual", },),),
     ).toBe(true,);
     expect(
-      Value.Check(ChatUpdateBody, body({ name_source: "x".repeat(10_000,), },),),
+      Value.Check(ChatRenameBody, body({ name: "New Name", name_source: "x".repeat(10_000,), },),),
     ).toBe(true,);
   });
 },);
