@@ -4,15 +4,20 @@
 import { describe, } from "bun:test";
 
 /**
- * `describe` when run via `bun run test:unit` / `bun run check` (which set the
- * `npm_lifecycle_event` env var), otherwise `describe.skip`.
+ * True when each test file owns a fresh global and module registry, i.e. when
+ * Bun runs the suite with per-file isolation.
  *
- * Plain `bun test src/` (non-isolated) skips tests that intentionally replace
- * shared modules via `mock.module` — those mocks leak across files without
- * `--isolate` and break unrelated tests. The canonical gate runs with
- * `--isolate` through `bun run`, so coverage is preserved there.
+ * Bun sets `BUN_TEST_WORKER_ID` inside every `--parallel` worker, and
+ * `--parallel` implies `--isolate` — so that variable is the reliable signal.
+ * A bare `bun test src/` runs every file in one shared process and leaves it
+ * unset.
+ *
+ * Do NOT key this on `npm_lifecycle_event`. CI runs
+ * `bun test --parallel=4 src/ --isolate` (.github/workflows/ci.yml) with no npm
+ * lifecycle var set, so that proxy reported "not isolated" for a genuinely
+ * isolated run and silently skipped every guarded suite.
  */
-export const ISOLATED = !!process.env.npm_lifecycle_event;
+export const ISOLATED = process.env.BUN_TEST_WORKER_ID !== undefined;
 
 /**
  * `describe` when run via the isolated gate, otherwise `describe.skip`. Lets a

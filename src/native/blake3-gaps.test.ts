@@ -8,21 +8,14 @@
  * the `getNativeModule() !== null` branches need an injected fake handle.
  * Isolated-gate only: `mock.module` must not serve the fake handle to
  * unrelated suites in shared-process runs (bare `bun test`). Gated on
- * `npm_lifecycle_event` (the `--isolate` flag itself
- * is invisible inside test processes): the allow-list names exactly the
- * scripts whose `bun test` runs pass `--isolate` — direct (`test`,
- * `test:unit`, `test:coverage`) and pipeline-spawned (`check:parallel`,
- * whose coverage command runs `bun test --isolate` in-process).
+ * `ISOLATED` from `test-utils/isolate-only`, which detects per-file
+ * isolation via `BUN_TEST_WORKER_ID` — set in every `--parallel` worker,
+ * and `--parallel` implies `--isolate`.
  */
 
-import { describe, expect, mock, test, } from "bun:test";
+import { expect, mock, test, } from "bun:test";
+import { describeOrSkip as describeOrSkipIsolated, ISOLATED as ISOLATED_RUN, } from "../test-utils/isolate-only";
 import { blake3Hash as fallbackBlake3, } from "./fallback/blake3";
-
-/** True only when each test file owns its module registry (`--isolate`). */
-const ISOLATED_RUN = ["test", "test:unit", "test:coverage", "check:parallel",].includes(
-  process.env.npm_lifecycle_event ?? "",
-);
-const describeOrSkipIsolated = ISOLATED_RUN ? describe : describe.skip;
 
 const stub = { status: 0, };
 
