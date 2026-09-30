@@ -151,4 +151,29 @@ describe("chats turn-skip-routes", () => {
     // No second generation beat for the replayed advance.
     expect(triggerCalls.length,).toBe(1,);
   });
+
+  test("POST turn-skip: concurrent advances insert once and trigger generation once", async () => {
+    // BUG-turn-skip-concurrent-advance-posts-double-fire: two simultaneous
+    // advance posts used to both insert (deduped:false each) and both cue an
+    // auto-generation beat — double LLM spend.
+    const app = makeApp(OWNER_ID,);
+    const chatId = crypto.randomUUID();
+    await insertChats(db, "Concurrent Chat", OWNER_ID, { id: chatId, } as never,);
+    await insertChatParticipants(db, chatId, OWNER_ID, { role_in_chat: "owner", },);
+    const makeReq = () =>
+      new Request(`http://localhost/api/chats/${chatId}/turn-skip`, {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ mode: "advance", },),
+      },);
+
+    const before = triggerCalls.length;
+    const [a, b,] = await Promise.all([app.handle(makeReq(),), app.handle(makeReq(),),],);
+    expect(a.status,).toBe(200,);
+    expect(b.status,).toBe(200,);
+    const bodyA = await a.json() as { deduped: boolean };
+    const bodyB = await b.json() as { deduped: boolean };
+    expect([bodyA.deduped, bodyB.deduped,].sort(),).toEqual([false, true,],);
+    expect(triggerCalls.length - before,).toBe(1,);
+  });
 });

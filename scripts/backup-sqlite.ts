@@ -31,91 +31,104 @@ function runOrExit(args: string[],): Buffer {
   return proc.stdout as Buffer;
 }
 
-try {
-  log(`Starting backup: ${TIMESTAMP}`,);
-
-  // Step 1: Snapshot the database
-  if (!existsSync(DB_PATH,)) {
-    log(`ERROR: database not found at ${DB_PATH}`,);
-    process.exit(1,);
-  }
-  // `VACUUM INTO` takes SQLite's own read snapshot, so the result is a
-  // consistent single-file database with no WAL sidecars even while the app is
-  // writing. Do NOT replace this with copyFileSync + copyFileSync(-wal): a
-  // checkpoint landing between the two copies folds WAL frames into the main
-  // file and resets the WAL, leaving the copied pair missing data that was
-  // committed -- observed as a restore with no schema at all. See
-  // BUG-backup-sqlite-copies-live-db-without-checkpoint.
-  //
-  // A failed snapshot leaves a truncated BACKUP_BASE behind, and step 6's
-  // retention sweep matches it on the `backup_` prefix -- so the partial file
-  // would be retained and age like a good backup, and an operator restoring
-  // from it would get a corrupt database with no error anywhere. Remove it.
-  const source = new Database(DB_PATH, { readonly: true, },);
+/**
+ * `VACUUM INTO` takes SQLite's own read snapshot, so the result is a
+ * consistent single-file database with no WAL sidecars even while the app is
+ * writing. Do NOT replace this with copyFileSync + copyFileSync(-wal): a
+ * checkpoint landing between the two copies folds WAL frames into the main
+ * file and resets the WAL, leaving the copied pair missing data that was
+ * committed -- observed as a restore with no schema at all. See
+ * BUG-backup-sqlite-copies-live-db-without-checkpoint.
+ * @throws Error rethrown from `VACUUM INTO`, after unlinking any partial file.
+ */
+export async function createSnapshot(sourcePath: string, destPath: string,): Promise<void> {
+  const source = new Database(sourcePath, { readonly: true, },);
   try {
-    await source.query(`VACUUM INTO '${BACKUP_BASE.replaceAll("'", "''",)}'`,).run();
+    await source.query(`VACUUM INTO '${destPath.replaceAll("'", "''",)}'`,).run();
   } catch (err) {
-    if (existsSync(BACKUP_BASE,)) {
+    // A failed snapshot leaves a truncated file behind, and the retention
+    // sweep matches it on the `backup_` prefix -- so the partial file would be
+    // retained and age like a good backup, and an operator restoring from it
+    // would get a corrupt database with no error anywhere. Remove it.
+    if (existsSync(destPath,)) {
       try {
-        unlinkSync(BACKUP_BASE,);
+        unlinkSync(destPath,);
       } catch { /* best effort; the throw below still fails the run */ }
     }
     throw err;
   } finally {
     source.close();
   }
+}
 
-  // Step 2: Compress
-  const compressArgs = ["tar", "-czf", `${BACKUP_BASE}.tar.gz`, "-C", BACKUP_DIR, basename(BACKUP_BASE,),];
-  const tarProc = spawnSync(compressArgs, { stdout: "pipe", stderr: "pipe", },);
-  if (tarProc.exitCode !== 0) {
-    log(`Warning: compression skipped (${new TextDecoder().decode(tarProc.stderr as Buffer,).trim()})`,);
-  }
+async function runBackup(): Promise<void> {
+  try {
+    log(`Starting backup: ${TIMESTAMP}`,);
 
-  // Step 3: Encrypt
-  log(`Encrypting with GPG recipient: ${GPG_RECIPIENT}`,);
-  runOrExit([
-    "gpg",
-    "--batch",
-    "--yes",
-    "--encrypt",
-    "--recipient",
-    GPG_RECIPIENT,
-    "--output",
-    ENCRYPTED_FILE,
-    BACKUP_BASE,
-  ],);
-
-  // Step 4: Checksum
-  const shaOut = runOrExit(["sha256sum", ENCRYPTED_FILE,],);
-  writeFileSync(CHECKSUM_FILE, new TextDecoder().decode(shaOut,).trim() + "\n",);
-
-  // Step 5: Push to network mount
-  if (existsSync(NETWORK_MOUNT,)) {
-    copyFileSync(ENCRYPTED_FILE, join(NETWORK_MOUNT, basename(ENCRYPTED_FILE,),),);
-    copyFileSync(CHECKSUM_FILE, join(NETWORK_MOUNT, basename(CHECKSUM_FILE,),),);
-    log(`Backup pushed to ${NETWORK_MOUNT}`,);
-  } else {
-    log(`Warning: Network mount not available at ${NETWORK_MOUNT}`,);
-  }
-
-  // Step 6: Cleanup old backups
-  const cutoffMs = Date.now() - RETENTION_DAYS * 86_400_000;
-  for (const dir of [BACKUP_DIR, NETWORK_MOUNT,]) {
-    if (!existsSync(dir,)) { continue; }
-    for (const entry of readdirSync(dir,)) {
-      if (!entry.startsWith("backup_",)) { continue; }
-      const fullPath = join(dir, entry,);
-      try {
-        if (statSync(fullPath,).mtimeMs < cutoffMs) {
-          unlinkSync(fullPath,);
-        }
-      } catch { /* race, skip */ }
+    // Step 1: Snapshot the database
+    if (!existsSync(DB_PATH,)) {
+      log(`ERROR: database not found at ${DB_PATH}`,);
+      process.exit(1,);
     }
-  }
+    await createSnapshot(DB_PATH, BACKUP_BASE,);
 
-  log(`Backup completed: ${TIMESTAMP}`,);
-} catch (err) {
-  log(`ERROR: backup failed: ${err}`,);
-  process.exit(1,);
+    // Step 2: Compress
+    const compressArgs = ["tar", "-czf", `${BACKUP_BASE}.tar.gz`, "-C", BACKUP_DIR, basename(BACKUP_BASE,),];
+    const tarProc = spawnSync(compressArgs, { stdout: "pipe", stderr: "pipe", },);
+    if (tarProc.exitCode !== 0) {
+      log(`Warning: compression skipped (${new TextDecoder().decode(tarProc.stderr as Buffer,).trim()})`,);
+    }
+
+    // Step 3: Encrypt
+    log(`Encrypting with GPG recipient: ${GPG_RECIPIENT}`,);
+    runOrExit([
+      "gpg",
+      "--batch",
+      "--yes",
+      "--encrypt",
+      "--recipient",
+      GPG_RECIPIENT,
+      "--output",
+      ENCRYPTED_FILE,
+      BACKUP_BASE,
+    ],);
+
+    // Step 4: Checksum
+    const shaOut = runOrExit(["sha256sum", ENCRYPTED_FILE,],);
+    writeFileSync(CHECKSUM_FILE, new TextDecoder().decode(shaOut,).trim() + "\n",);
+
+    // Step 5: Push to network mount
+    if (existsSync(NETWORK_MOUNT,)) {
+      copyFileSync(ENCRYPTED_FILE, join(NETWORK_MOUNT, basename(ENCRYPTED_FILE,),),);
+      copyFileSync(CHECKSUM_FILE, join(NETWORK_MOUNT, basename(CHECKSUM_FILE,),),);
+      log(`Backup pushed to ${NETWORK_MOUNT}`,);
+    } else {
+      log(`Warning: Network mount not available at ${NETWORK_MOUNT}`,);
+    }
+
+    // Step 6: Cleanup old backups
+    const cutoffMs = Date.now() - RETENTION_DAYS * 86_400_000;
+    for (const dir of [BACKUP_DIR, NETWORK_MOUNT,]) {
+      if (!existsSync(dir,)) { continue; }
+      for (const entry of readdirSync(dir,)) {
+        if (!entry.startsWith("backup_",)) { continue; }
+        const fullPath = join(dir, entry,);
+        try {
+          if (statSync(fullPath,).mtimeMs < cutoffMs) {
+            unlinkSync(fullPath,);
+          }
+        } catch { /* race, skip */ }
+      }
+    }
+
+    log(`Backup completed: ${TIMESTAMP}`,);
+  } catch (err) {
+    log(`ERROR: backup failed: ${err}`,);
+    process.exit(1,);
+  }
+}
+
+// CLI guard: only run when executed directly (not when imported).
+if (import.meta.main) {
+  await runBackup();
 }
