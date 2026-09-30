@@ -3,7 +3,7 @@
 
 # BUG: analytics per-user routes filter telemetry_events by raw IDs but record() stores hashed IDs
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-analytics-observability
@@ -32,7 +32,15 @@ The 2026-09-27 batch (latency fix, failure context, cost attribution, llm-usage 
 
 ## Acceptance Criteria
 
-- [ ] `record()`-written completion round-trips to non-zero `totalGenerations`/`totalTokens` through `GET /api/analytics/chat/:chatId`
-- [ ] Overview aggregates include `record()`-written rows
-- [ ] No raw IDs in new query code; `bun test src/routes/analytics.test.ts src/telemetry/` green
+- [x] `record()`-written completion round-trips to non-zero `totalGenerations`/`totalTokens` through `GET /api/analytics/chat/:chatId`
+- [x] Overview aggregates include `record()`-written rows
+- [x] No raw IDs in new query code; `bun test src/routes/analytics.test.ts src/telemetry/` green
+
+## Resolution
+
+Fixed in `3db1ad353` — `hashId()` applied to all three `telemetry_events` ID filters in `src/routes/analytics.ts`: per-chat `chat_id` + `user_id`, and `user_id` for both the completed and failed overview aggregates. `checkChatAccess` keeps the raw `chatId`, which is correct: the `chats` table stores raw ids, confirmed by the access-denied test still returning 404.
+
+Tests seed through the real write path (`record()`) for the round-trip cases and via pre-hashed ids elsewhere, so a raw-id regression fails: fails-before (3 red, 0 generations / 0 tokens) to passes-after (13 pass across `analytics.test.ts` + `src/telemetry/`).
+
+Residual: rows written before `567247fff` (2026-09-06, which introduced write-side hashing) still hold raw ids and are now invisible to these endpoints. The window is bounded by the 90-day retention; the hashed-only filter is what the acceptance criteria require, and an unhashed fallback branch would defeat the anonymisation the writer guarantees.
 
