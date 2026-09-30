@@ -10,6 +10,7 @@ const log = rootLog.child({ module: "admin-health", },);
 /**
  * Health panel state and methods for the admin system panel.
  * Extracted from admin-system.ts for the 250L size gate.
+ * @returns {{ healthStatus: string; healthUptime: number; healthTimestamp: string; healthProviders: { name: string; status: string; models?: string[] | undefined; latencyMs?: number | undefined; error?: string | undefined; }[]; ... 15 more ...; saveNsfwConfig(): Promise<...>; }}
  */
 export function healthPanelMethods() {
   return {
@@ -54,6 +55,9 @@ export function healthPanelMethods() {
     nsfwConfig: { allowNsfw: true, nsfwMinAge: 18, },
     loadingNsfw: false,
 
+    /**
+     * @returns {Promise<void>}
+     */
     async loadHealth() {
       this.loadingHealth = true;
       await this.loadAuxTelemetry();
@@ -88,6 +92,9 @@ export function healthPanelMethods() {
       }
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async refreshHealthWithRescan() {
       this.loadingHealth = true;
       try {
@@ -102,6 +109,9 @@ export function healthPanelMethods() {
       }
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async loadAuxTelemetry() {
       this.loadingAuxTelemetry = true;
       try {
@@ -121,6 +131,9 @@ export function healthPanelMethods() {
       }
     },
 
+    /**
+     * @returns {void}
+     */
     toggleHealthAutoRefresh() {
       this.healthAutoRefresh = !this.healthAutoRefresh;
       if (this.healthAutoRefresh) {
@@ -133,6 +146,9 @@ export function healthPanelMethods() {
       }
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async loadNsfwConfig() {
       this.loadingNsfw = true;
       try {
@@ -147,6 +163,9 @@ export function healthPanelMethods() {
       }
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async saveNsfwConfig() {
       try {
         const res = await apiFetch("/api/v1/admin/nsfw", {

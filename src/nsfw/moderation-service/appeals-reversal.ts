@@ -40,6 +40,13 @@ export interface ExecuteReversalArgs {
  * @param root0.appealId
  * @param root0.executedBy
  * @param root0.approvedBy
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @returns {Promise<ModAction>}
  */
 export async function executeReversal(
   { thisL, appealId, executedBy, approvedBy, }: ExecuteReversalArgs,
@@ -115,6 +122,7 @@ export async function executeReversal(
  * @param appealId
  * @param originalActionId
  * @param reversalActionId
+ * @returns {Promise<void>}
  */
 export async function notifyModeratorReversal(
   thisL: NsfwModerationServiceContext,

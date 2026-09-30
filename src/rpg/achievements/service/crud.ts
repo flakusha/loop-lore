@@ -16,6 +16,7 @@ import type {
  * Create a new achievement definition
  * @param db
  * @param input
+ * @returns {Promise<Achievement>}
  */
 export async function createAchievement(db: Kysely<DB>, input: CreateAchievementInput,): Promise<Achievement> {
   const now = new Date().toISOString();
@@ -48,6 +49,7 @@ export async function createAchievement(db: Kysely<DB>, input: CreateAchievement
  * Get an achievement by ID
  * @param db
  * @param achievementId
+ * @returns {Promise<Achievement | null>}
  */
 export async function getAchievement(db: Kysely<DB>, achievementId: string,): Promise<Achievement | null> {
   const row = await (db as any)
@@ -64,6 +66,7 @@ export async function getAchievement(db: Kysely<DB>, achievementId: string,): Pr
  * @param db
  * @param category
  * @param includeSecret
+ * @returns {Promise<Achievement[]>}
  */
 export async function listAchievements(
   db: Kysely<DB>,
@@ -92,6 +95,7 @@ export async function listAchievements(
  * @param db
  * @param achievementId
  * @param input
+ * @returns {Promise<Achievement>}
  */
 export async function updateAchievement(
   db: Kysely<DB>,
@@ -127,6 +131,7 @@ export async function updateAchievement(
  * Delete an achievement
  * @param db
  * @param achievementId
+ * @returns {Promise<void>}
  */
 export async function deleteAchievement(db: Kysely<DB>, achievementId: string,): Promise<void> {
   // Delete player progress first

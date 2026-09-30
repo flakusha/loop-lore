@@ -44,6 +44,10 @@ const DEFAULT_PIPELINE_CONFIG: PipelineConfig = { threshold: DEFAULT_THRESHOLD, 
  * @param storedContent
  * @returns boolean
  */
+/**
+ * @param {string} storedContent
+ * @returns {boolean}
+ */
 export function isEncryptedPayload(storedContent: string,): boolean {
   if (typeof storedContent !== "string") { return false; }
   const trimmed = storedContent.trim();
@@ -98,6 +102,7 @@ export function extractKeyIdFromPayload(storedContent: string,): string | null {
  * @param root0.config
  * @param root0.aId
  * @returns void
+ * @throws {Error}
  */
 export async function compressThenEncrypt({
   plaintext,

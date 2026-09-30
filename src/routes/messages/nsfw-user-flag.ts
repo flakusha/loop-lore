@@ -22,6 +22,7 @@ const RATING_ORDER = ["sfw", "nsfw_mild", "nsfw_moderate", "nsfw_intense", "nsfw
  * @param userId
  * @param chatId
  * @param content
+ * @returns {Promise<void>}
  */
 export async function flagNsfwUserMessage(
   database: HandlerOpts["database"],

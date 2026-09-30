@@ -25,15 +25,24 @@ export const turnSkipActions: Partial<TurnSkipState> & ThisType<TurnSkipCtx> = {
   _turnSkipOpen: false,
   _skipping: false,
 
+  /**
+   * @returns {void}
+   */
   toggleTurnSkip() {
     this._turnSkipOpen = !this._turnSkipOpen;
   },
 
+  /**
+   * @returns {void}
+   */
   closeTurnSkip() {
     this._turnSkipOpen = false;
   },
 
   /** Escape hatch: open the skip choice when a hard gate blocks send. */
+  /**
+   * @returns {void}
+   */
   suggestTurnSkip() {
     this._turnSkipOpen = true;
   },
@@ -41,6 +50,10 @@ export const turnSkipActions: Partial<TurnSkipState> & ThisType<TurnSkipCtx> = {
   /**
    * Record a turn skip for the active chat and refresh the message list.
    * @param mode - `hold` records the opt-out; `advance` also cues the next beat.
+   */
+  /**
+   * @param {TurnSkipMode} mode
+   * @returns {Promise<void>}
    */
   async skipTurn(mode: TurnSkipMode,) {
     if (!this.activeChat) {

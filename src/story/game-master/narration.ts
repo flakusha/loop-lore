@@ -24,6 +24,7 @@ import type { GmState, } from "./types";
  * @param state
  * @param worldId
  * @param text
+ * @returns {Promise<void>}
  */
 export async function injectNarration(state: GmState, worldId: string, text: string,): Promise<void> {
   const narrator = await state.db

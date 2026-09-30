@@ -83,6 +83,8 @@ const emptyPayload = (): CharacterExtensionsPayload => ({});
  * Pure: build the JSON string posted to `PUT /api/actors/:actorId`.
  * Lives at module scope so the test suite can verify the wire shape
  * without standing up an Alpine factory.
+ * @param {CharacterExtensionsPayload} draft
+ * @returns {string}
  */
 export function serializeExtensions(
   draft: CharacterExtensionsPayload,
@@ -95,6 +97,9 @@ export function serializeExtensions(
  * Pure: validate a draft against bundle requirements and return a
  * human-readable failure list. Pure so the editor's draft can be checked
  * at any time and so the requirement integration is easy to test.
+ * @param {CharacterExtensionsPayload} draft
+ * @param {BundleCharacterRequirements | undefined} requirements
+ * @returns {BundleValidationReport}
  */
 export function checkBundle(
   draft: CharacterExtensionsPayload,
@@ -128,6 +133,10 @@ const seed: CharacterExtensionEditorState = {
   message: "",
   validation: { valid: true, missing: [], },
 
+  /**
+   * @param {unknown} actorId
+   * @returns {void}
+   */
   setActorId(actorId,) {
     if (this._cxActorId === actorId) { return; }
     this._cxActorId = actorId;
@@ -139,11 +148,18 @@ const seed: CharacterExtensionEditorState = {
     this.validation = { valid: true, missing: [], };
   },
 
+  /**
+   * @param {unknown} reqs
+   * @returns {void}
+   */
   setBundleRequirements(reqs,) {
     this._cxRequirements = reqs;
     this.validation = checkBundle(this.draft, reqs,);
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async load() {
     const actorId = this._cxActorId;
     if (!actorId || this.loading) { return; }
@@ -172,6 +188,9 @@ const seed: CharacterExtensionEditorState = {
     }
   },
 
+  /**
+   * @returns {void}
+   */
   reset() {
     this.draft = structuredClone(this.current,) as CharacterExtensionsPayload;
     this.validation = checkBundle(this.draft, this._cxRequirements,);
@@ -179,15 +198,24 @@ const seed: CharacterExtensionEditorState = {
     this.error = "";
   },
 
+  /**
+   * @returns {BundleValidationReport}
+   */
   validateAgainstBundle() {
     this.validation = checkBundle(this.draft, this._cxRequirements,);
     return this.validation;
   },
 
+  /**
+   * @returns {string}
+   */
   serialize() {
     return serializeExtensions(this.draft,);
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async save() {
     const actorId = this._cxActorId;
     if (!actorId || this.saving) { return; }
@@ -233,7 +261,13 @@ function safeParse(raw: string,): CharacterExtensionsPayload {
   return emptyPayload();
 }
 
-/** Build a fresh editor instance bound to an actor. */
+/**
+ * Build a fresh editor instance bound to an actor.
+ * @param {string} actorId
+ * @param {BundleCharacterRequirements | undefined} requirements
+ * @param {(url: string, init?: RequestInit,) => Promise<Response>} fetcher
+ * @returns {CharacterExtensionEditorState}
+ */
 export function characterExtensionEditorFactory(
   actorId: string,
   requirements: BundleCharacterRequirements | undefined,

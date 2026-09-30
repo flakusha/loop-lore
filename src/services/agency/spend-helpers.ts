@@ -60,6 +60,7 @@ const NO_OP: TrySpendResult = { ok: true, charged: false, cost: 0, reason: "no-o
  * @param db
  * @param actorCtx
  * @param opts
+ * @returns {Promise<TrySpendResult>}
  */
 export async function trySpendForReroll(
   db: Kysely<DB>,
@@ -112,6 +113,7 @@ export async function trySpendForReroll(
  * @param body
  * @param actorId
  * @param reason
+ * @returns {Promise<Response | null>}
  */
 export async function chargeStoryPointsForChat(
   db: Kysely<DB>,

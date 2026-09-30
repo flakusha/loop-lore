@@ -22,6 +22,9 @@ import { BattleStatus, } from "./types.js";
 /**
  * @param deps
  * @param params
+ * @throws {Error}
+ * @throws {Error}
+ * @returns {Promise<ResolvedAttack>}
  */
 export async function performAttack(
   deps: RpgServiceDeps,
@@ -99,6 +102,12 @@ export async function performAttack(
  * @param deps
  * @param params
  */
+/**
+ * @param {RpgServiceDeps} deps
+ * @param {HealParams} params
+ * @throws {Error}
+ * @returns {Promise<ResolvedHeal>}
+ */
 export async function performHeal(
   deps: RpgServiceDeps,
   params: HealParams,
@@ -149,6 +158,11 @@ export async function performHeal(
 /**
  * @param deps
  * @param battleId
+ */
+/**
+ * @param {RpgServiceDeps} deps
+ * @param {string} battleId
+ * @returns {Promise<BattleWithRoster>}
  */
 export async function advanceTurn(
   deps: RpgServiceDeps,

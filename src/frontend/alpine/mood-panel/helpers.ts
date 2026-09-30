@@ -5,6 +5,7 @@
 
 /**
  * @param mood
+ * @returns {string}
  */
 export function moodToEmoji(mood: string,): string {
   switch (mood) {
@@ -31,6 +32,7 @@ export function moodToEmoji(mood: string,): string {
 
 /**
  * @param mood
+ * @returns {string}
  */
 export function moodToLabel(mood: string,): string {
   switch (mood) {
@@ -57,6 +59,7 @@ export function moodToLabel(mood: string,): string {
 
 /**
  * @param happiness
+ * @returns {string}
  */
 export function happinessColor(happiness: number,): string {
   if (happiness >= 80) { return "var(--accent-green,)"; }

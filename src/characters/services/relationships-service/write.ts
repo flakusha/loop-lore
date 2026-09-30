@@ -103,6 +103,7 @@ export interface UpdateRelationshipArgs {
  * @param root0.worldId
  * @param root0.opts
  * @returns void
+ * @throws {Error}
  */
 export async function updateRelationship(
   { thisL, actorId, targetActorId, worldId, opts, }: UpdateRelationshipArgs,
@@ -176,6 +177,7 @@ export interface DeleteRelationshipArgs {
  * @param root0.targetActorId
  * @param root0.worldId
  * @returns void
+ * @throws {Error}
  */
 export async function deleteRelationship(
   { thisL, actorId, targetActorId, worldId, }: DeleteRelationshipArgs,

@@ -24,9 +24,19 @@ export interface ContentCipher {
 /**
  * Shared-secret cipher over the BYOK AES-256-GCM module.
  * @param secret Mesh PSK (operator-distributed, env-only: MESH_PSK).
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @returns {ContentCipher}
  */
 export function pskCipher(secret: string,): ContentCipher {
   return {
+    /**
+     * @param {Uint8Array} plaintext
+     * @throws {Error}
+     * @throws {Error}
+     * @returns {Promise<string>}
+     */
     async seal(plaintext: Uint8Array,): Promise<string> {
       const bytes = safeFromUint8Array(plaintext,);
       if (!bytes.ok) { throw bytes.error; }
@@ -34,6 +44,11 @@ export function pskCipher(secret: string,): ContentCipher {
       if (!b64.ok) { throw b64.error; }
       return encryptValue(b64.buffer, secret,);
     },
+    /**
+     * @param {string} ciphertext
+     * @throws {Error}
+     * @returns {Promise<Uint8Array<ArrayBufferLike>>}
+     */
     async open(ciphertext: string,): Promise<Uint8Array> {
       const raw = await decryptValue(ciphertext, secret,);
       const bytes = safeFromBase64(raw,);

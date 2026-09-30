@@ -10,6 +10,7 @@ import type { NewChatCtx, } from "./state";
 
 /**
  * @param ctx
+ * @returns {void}
  */
 export function bindSubmitHandler(ctx: NewChatCtx,): void {
   ctx.form!.addEventListener("submit", async function(e: Event,) {

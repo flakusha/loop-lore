@@ -47,6 +47,7 @@ function prefersReducedMotion(): boolean {
  * Returns a cleanup function.
  * @param element
  * @param options
+ * @returns {() => void}
  */
 export function onSwipe(element: Element, options: SwipeOptions,): () => void {
   const { threshold = 50, maxDuration = 300, onSwipe: callback, } = options;
@@ -101,6 +102,7 @@ export function onSwipe(element: Element, options: SwipeOptions,): () => void {
  * Returns a cleanup function.
  * @param element
  * @param options
+ * @returns {() => void}
  */
 export function onTap(element: Element, options: TapOptions,): () => void {
   const { onTap: callback, } = options;
@@ -124,6 +126,7 @@ export function onTap(element: Element, options: TapOptions,): () => void {
  * Returns a cleanup function.
  * @param element
  * @param options
+ * @returns {() => void}
  */
 export function onLongPress(element: Element, options: LongPressOptions,): () => void {
   const { delay = 500, onLongPress: callback, } = options;

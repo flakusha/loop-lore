@@ -26,6 +26,7 @@ import { log, } from "./log";
  *   transaction has already committed.
  * @param audit - Row payload. `actorId` is the participant who left
  *   (`null` for non-actor triggers).
+ * @returns {Promise<void>}
  */
 export async function recordRotationAuditLeave(
   database: Kysely<DB>,

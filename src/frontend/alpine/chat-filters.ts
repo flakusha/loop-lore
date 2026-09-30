@@ -70,6 +70,9 @@ export const chatFilters: Partial<ChatState> & ThisType<ChatState> = {
   _chatUpdatedSince: "",
 
   /** Restore persisted filters from localStorage (no-op without storage). */
+  /**
+   * @returns {void}
+   */
   restoreChatFilters(): void {
     let store: Storage | null = null;
     try {
@@ -91,6 +94,9 @@ export const chatFilters: Partial<ChatState> & ThisType<ChatState> = {
   },
 
   /** Persist the current filters to localStorage (no-op without storage). */
+  /**
+   * @returns {void}
+   */
   persistChatFilters(): void {
     let store: Storage | null = null;
     try {
@@ -116,6 +122,9 @@ export const chatFilters: Partial<ChatState> & ThisType<ChatState> = {
   },
 
   /** Serialize the active filters (plus pagination) into /api/v1/chats query params. */
+  /**
+   * @returns {string}
+   */
   _filterParams(): string {
     const params = new URLSearchParams();
     params.set("pageSize", "200",);
@@ -131,6 +140,9 @@ export const chatFilters: Partial<ChatState> & ThisType<ChatState> = {
   },
 
   /** Active filters as removable chips (world resolves to its display name). */
+  /**
+   * @returns {{ key: keyof StoredFilters; label: string; }[]}
+   */
   activeChatFilterChips(): { key: ChatFilterChipKey; label: string }[] {
     const chips: { key: ChatFilterChipKey; label: string }[] = [];
     if (this._chatType !== "all") { chips.push({ key: "type", label: this._chatType, },); }
@@ -147,6 +159,10 @@ export const chatFilters: Partial<ChatState> & ThisType<ChatState> = {
   },
 
   /** Remove one filter chip (reset to default) and refresh the list. */
+  /**
+   * @param {ChatFilterChipKey} key
+   * @returns {Promise<void>}
+   */
   async clearChatFilter(key: ChatFilterChipKey,): Promise<void> {
     switch (key) {
       case "type": {
@@ -182,6 +198,9 @@ export const chatFilters: Partial<ChatState> & ThisType<ChatState> = {
   },
 
   /** Reset every filter to its default and refresh the list. */
+  /**
+   * @returns {Promise<void>}
+   */
   async clearAllChatFilters(): Promise<void> {
     this._chatType = FILTER_DEFAULTS._chatType;
     this._chatStatus = FILTER_DEFAULTS._chatStatus;
@@ -194,6 +213,9 @@ export const chatFilters: Partial<ChatState> & ThisType<ChatState> = {
   },
 
   /** Called from the filter controls: re-fetches the chat list with active filters. */
+  /**
+   * @returns {Promise<void>}
+   */
   async applyChatFilters() {
     // Switching server-side filters supersedes any in-progress text search.
     this._searchResults = [];

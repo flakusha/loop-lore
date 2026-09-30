@@ -22,6 +22,10 @@ export class ServerTransport implements Transport {
   /**
    * @param entry
    */
+  /**
+   * @param {LogEntry} entry
+   * @returns {Promise<void>}
+   */
   write(entry: LogEntry,): Promise<void> {
     this.buffer.push(entry,);
     this.scheduleFlush();
@@ -29,6 +33,9 @@ export class ServerTransport implements Transport {
   }
 
   /** */
+  /**
+   * @returns {Promise<void>}
+   */
   async flush(): Promise<void> {
     if (this.timer) {
       clearTimeout(this.timer,);
@@ -55,6 +62,9 @@ export class ServerTransport implements Transport {
   }
 
   /** */
+  /**
+   * @returns {void}
+   */
   private scheduleFlush(): void {
     if (this.timer) { return; }
     this.timer = setTimeout(() => {

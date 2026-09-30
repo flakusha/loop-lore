@@ -49,6 +49,7 @@ export type {
  * Create an ImageEditService instance.
  * @param opts - Service options (matches the former `new ImageEditService(opts)`)
  * @returns An ImageEditService bound to the given database
+ * @throws {Error}
  */
 export function ImageEditService(opts: ImageEditServiceOpts = {},): ImageEditService {
   if (!opts.database) {

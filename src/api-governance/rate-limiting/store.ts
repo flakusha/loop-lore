@@ -55,6 +55,11 @@ export class InMemoryRateLimitStore implements RateLimitStore {
   private savesSinceSweep = 0;
 
   /** */
+  /**
+   * @param {string} key
+   * @param {number} nowMs
+   * @returns {number[]}
+   */
   loadWindow(key: string, nowMs: number,): number[] {
     const entry = this.windows.get(key,);
     if (!entry) { return []; }
@@ -69,6 +74,13 @@ export class InMemoryRateLimitStore implements RateLimitStore {
   }
 
   /** */
+  /**
+   * @param {string} key
+   * @param {number[]} timestamps
+   * @param {number} windowMs
+   * @param {number} nowMs
+   * @returns {void}
+   */
   saveWindow(key: string, timestamps: number[], windowMs: number, nowMs: number,): void {
     if (timestamps.length === 0) {
       this.windows.delete(key,);
@@ -79,17 +91,31 @@ export class InMemoryRateLimitStore implements RateLimitStore {
   }
 
   /** */
+  /**
+   * @param {string} key
+   * @returns {TokenBucketState | undefined}
+   */
   loadBucket(key: string,): TokenBucketState | undefined {
     return this.buckets.get(key,)?.state;
   }
 
   /** */
+  /**
+   * @param {string} key
+   * @param {TokenBucketState} state
+   * @param {number} windowMs
+   * @param {number} nowMs
+   * @returns {void}
+   */
   saveBucket(key: string, state: TokenBucketState, windowMs: number, nowMs: number,): void {
     this.buckets.set(key, { state, windowMs, lastSaveMs: nowMs, },);
     this.maybeSweep(nowMs,);
   }
 
   /** */
+  /**
+   * @returns {void}
+   */
   destroy(): void {
     this.windows.clear();
     this.buckets.clear();
@@ -99,6 +125,10 @@ export class InMemoryRateLimitStore implements RateLimitStore {
   /**
    * Drop entries whose window is fully expired (idled past windowMs since
    * the last activity). Runs at most once per SWEEP_INTERVAL saves.
+   */
+  /**
+   * @param {number} nowMs
+   * @returns {void}
    */
   private maybeSweep(nowMs: number,): void {
     this.savesSinceSweep += 1;

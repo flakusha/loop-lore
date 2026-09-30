@@ -101,6 +101,10 @@ function buildWrapper(instance: WebAssembly.Instance, memory: WebAssembly.Memory
   return {
     version,
     blake3: {
+      /**
+       * @param {Uint8Array} data
+       * @returns {Uint8Array<ArrayBufferLike> | null}
+       */
       hash(data: Uint8Array,): Uint8Array | null {
         const dataLen = data.length;
         if (dataLen > SCRATCH_SIZE - 32) { return null; // too large
@@ -113,6 +117,11 @@ function buildWrapper(instance: WebAssembly.Instance, memory: WebAssembly.Memory
       },
     },
     zstd: {
+      /**
+       * @param {Uint8Array} data
+       * @param {number} level
+       * @returns {Uint8Array<ArrayBufferLike> | null}
+       */
       compress(data: Uint8Array, level: number,): Uint8Array | null {
         const dataLen = data.length;
         if (dataLen > SCRATCH_SIZE / 2) { return null; }
@@ -124,6 +133,11 @@ function buildWrapper(instance: WebAssembly.Instance, memory: WebAssembly.Memory
         if (result < 0) { return null; }
         return new Uint8Array(view.slice(dataLen + 512, dataLen + 512 + result,),);
       },
+      /**
+       * @param {Uint8Array} data
+       * @param {number} _outCapacity
+       * @returns {Uint8Array<ArrayBufferLike> | null}
+       */
       decompress(data: Uint8Array, _outCapacity: number,): Uint8Array | null {
         const dataLen = data.length;
         if (dataLen > SCRATCH_SIZE / 2) { return null; }
@@ -137,6 +151,10 @@ function buildWrapper(instance: WebAssembly.Instance, memory: WebAssembly.Memory
         if (result < 0) { return null; }
         return new Uint8Array(view.slice(dataLen + 512, dataLen + 512 + result,),);
       },
+      /**
+       * @param {Uint8Array} data
+       * @returns {number | null}
+       */
       decompressBound(data: Uint8Array,): number | null {
         const dataLen = data.length;
         if (dataLen > SCRATCH_SIZE / 2) { return null; }
@@ -148,6 +166,10 @@ function buildWrapper(instance: WebAssembly.Instance, memory: WebAssembly.Memory
       },
     },
     gguf: {
+      /**
+       * @param {Uint8Array} header
+       * @returns {{ version: number; tensorCount: number; kvCount: number; } | null}
+       */
       probe(header: Uint8Array,): { version: number; tensorCount: number; kvCount: number } | null {
         if (typeof ll_gguf_probe !== "function") { return null; }
         const headerLen = header.length;

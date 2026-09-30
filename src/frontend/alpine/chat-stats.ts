@@ -3,6 +3,7 @@
 
 /**
  * @param ms
+ * @returns {string}
  */
 export function formattedGenerationTime(ms?: number,): string {
   if (!ms) { return ""; }
@@ -16,6 +17,7 @@ export function formattedGenerationTime(ms?: number,): string {
  * @param msg.tokens_per_second
  * @param msg.generation_time_ms
  * @param msg.token_count_total
+ * @returns {string}
  */
 export function formattedTokensPerSecond(msg: {
   tokens_per_second?: number;
@@ -37,6 +39,7 @@ export function formattedTokensPerSecond(msg: {
  * @param msg.generation_time_ms
  * @param msg.token_count_total
  * @param msg.tokens_per_second
+ * @returns {string}
  */
 export function statsLine(msg: {
   model_id?: string;

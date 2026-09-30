@@ -31,10 +31,20 @@ const SKILL_ABILITIES: Record<string, AbilityName> = {
   persuasion: "cha",
 };
 
+/**
+ * @param {string} skill
+ * @returns {AbilityName | null}
+ */
 export function getInteractionAbility(skill: string,): AbilityName | null {
   return SKILL_ABILITIES[skill.toLowerCase()] ?? null;
 }
 
+/**
+ * @param {Kysely<DB>} database
+ * @param {string} actorId
+ * @param {string} skill
+ * @returns {Promise<InteractionModifier[]>}
+ */
 export async function getAbilityModifier(
   database: Kysely<DB>,
   actorId: string,
@@ -51,6 +61,10 @@ export async function getAbilityModifier(
   return [{ source: `ability.${ability}`, value: abilityModifier(stats[ability],), },];
 }
 
+/**
+ * @param {string | null} value
+ * @returns {InteractionModifier[]}
+ */
 export function parseInteractionModifiers(value: string | null,): InteractionModifier[] {
   const parsed = safeJsonParse<InteractionModifier[]>(value ?? "[]",);
   return parsed.ok && Array.isArray(parsed.value,) ? parsed.value : [];

@@ -37,6 +37,7 @@ function log(): Logger {
  * @param root0
  * @param root0.database
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { keys: { get: { body: unknown; params: {}; query: unknown; headers: unknown; response: { ...; }; }; }; }; } & { ...;...}
  */
 export function keyManagementRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
   return new Elysia({ name: "key-management", },)

@@ -28,6 +28,8 @@ export async function encryptBytes(key: CryptoKey, plaintext: Uint8Array,): Prom
  * @param key
  * @param encrypted
  * @returns void
+ * @throws {Error}
+ * @throws {Error}
  */
 export async function decryptBytes(key: CryptoKey, encrypted: string,): Promise<Uint8Array> {
   if (!encrypted) { throw new Error("decryptBytes: encrypted value is empty",); }

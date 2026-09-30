@@ -42,6 +42,7 @@ const clampWindow = (value: number,): number => Math.max(MIN_TALKATIVITY, Math.m
  * @param actor - Participant row (carries baseline talkativity).
  * @param chat - Chat-scoped talkativity override.
  * @param opts - Resolver options (per-actor override).
+ * @returns {number}
  */
 export function effectiveTalkativity(
   actor: Pick<TurnParticipant, "talkativity">,

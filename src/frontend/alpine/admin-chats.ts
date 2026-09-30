@@ -21,6 +21,9 @@ export const adminChats = {
   chatSearch: "",
   chatTypeFilter: "",
 
+  /**
+   * @returns {Promise<void>}
+   */
   async loadChats() {
     this.loadingChats = true;
     try {
@@ -42,10 +45,18 @@ export const adminChats = {
   get chatPages(): number {
     return Math.ceil(this.chatTotal / (this as any).pageSize,) || 1;
   },
+  /**
+   * @param {number} p
+   * @returns {Promise<void>}
+   */
   async goChatsPage(p: number,) {
     this.chatPage = p;
     await this.loadChats();
   },
+  /**
+   * @param {string} chatId
+   * @returns {Promise<void>}
+   */
   async deleteChat(chatId: string,) {
     if (this.confirmDeleteChat !== chatId) { return; }
     try {
@@ -63,10 +74,16 @@ export const adminChats = {
       showToast("error", t("toasts.networkError",),);
     }
   },
+  /**
+   * @returns {void}
+   */
   searchChats() {
     this.chatPage = 1;
     this.loadChats();
   },
+  /**
+   * @returns {void}
+   */
   clearChatFilters() {
     this.chatSearch = "";
     this.chatTypeFilter = "";

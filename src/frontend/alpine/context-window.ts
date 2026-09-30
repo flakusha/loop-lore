@@ -59,6 +59,10 @@ interface ContextWindowState {
      * Color class for a section segment in the stacked budget bar.
      * @param name
      */
+    /**
+     * @param {string} name
+     * @returns {string}
+     */
     sectionColor(name: string,): string {
       switch (name) {
         case "system": {
@@ -79,6 +83,10 @@ interface ContextWindowState {
     /**
      * CSS flex-grow weight for a section segment (its budget share in pct).
      * @param name
+     */
+    /**
+     * @param {string} name
+     * @returns {number}
      */
     sectionGrow(name: string,): number {
       const seg = this.sections.find((s,) => s.name === name);
@@ -125,6 +133,10 @@ interface ContextWindowState {
      * Load context window state from the API
      * @param chatId
      */
+    /**
+     * @param {string} chatId
+     * @returns {Promise<void>}
+     */
     async load(chatId: string,): Promise<void> {
       if (!chatId) { return; }
       this.chatId = chatId;
@@ -152,6 +164,9 @@ interface ContextWindowState {
     },
 
     /** Refresh context window state */
+    /**
+     * @returns {Promise<void>}
+     */
     async refresh(): Promise<void> {
       if (this.chatId) {
         await this.load(this.chatId,);
@@ -159,6 +174,9 @@ interface ContextWindowState {
     },
 
     /** Subscribe to the chat-loaded event so the meter updates per chat. */
+    /**
+     * @returns {void}
+     */
     init(): void {
       this._refreshHandler = (evt: Event,) => {
         const chatId = (evt as CustomEvent<{ chatId?: string }>).detail?.chatId;
@@ -180,6 +198,9 @@ interface ContextWindowState {
     },
 
     /** Remove the refresh listener (attached on unmount, belt-and-suspenders). */
+    /**
+     * @returns {void}
+     */
     destroy(): void {
       if (this._refreshHandler) {
         document.removeEventListener("chat-context-refresh", this._refreshHandler,);
@@ -187,6 +208,9 @@ interface ContextWindowState {
     },
 
     /** Trigger a warning toast if at warning threshold */
+    /**
+     * @returns {void}
+     */
     checkWarning(): void {
       if (this.status !== "warning") {
         return;

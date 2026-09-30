@@ -37,6 +37,7 @@ export interface TokenBucketDecision {
  * @param timestamps In-window request times (ms epoch), oldest first.
  * @param windowMs
  * @param max
+ * @returns {SlidingWindowDecision & { kept: number[]; }}
  */
 export function slidingWindow(
   nowMs: number,
@@ -66,6 +67,7 @@ export function slidingWindow(
  * @param capacity
  * @param refillPerSec
  * @param cost
+ * @returns {TokenBucketDecision}
  */
 export function tokenBucket(
   nowMs: number,

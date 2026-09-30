@@ -35,6 +35,8 @@ const MAX_HISTORY = 50;
  * Updates score, records history, and fires threshold events.
  * @param db
  * @param opts
+ * @throws {Error}
+ * @returns {Promise<ApplyIntimacyResult>}
  */
 export async function applyAction(
   db: Kysely<DB>,
@@ -178,6 +180,7 @@ export async function applyAction(
  * @param db
  * @param actorId
  * @param decayAmount - How much to decay per call (default 1).
+ * @returns {Promise<number>}
  */
 export async function decayAll(
   db: Kysely<DB>,

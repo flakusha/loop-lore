@@ -16,6 +16,7 @@ import { registry, } from "../../../plugins/registry";
  * Task: TASK-deletechat-runs-9-sequential-deletes-without-transaction-orp.
  * @param database
  * @param chatId
+ * @returns {Promise<void>}
  */
 export async function deleteChat(database: Kysely<DB>, chatId: string,): Promise<void> {
   await database.transaction().execute((trx,) => {

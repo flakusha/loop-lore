@@ -131,6 +131,7 @@ function encodeNextCursor(lastRow: MemoryAuditRow, _requestedLimit: number,): st
  * load-bearing for the user's primary action.
  * @param db - Kysely instance
  * @param entries - one or more rows to append
+ * @returns {Promise<void>}
  */
 export async function recordAuditLog(
   db: Kysely<DB>,

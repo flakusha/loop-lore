@@ -34,6 +34,7 @@ import type { HandlerOpts, } from "./types";
 /**
  * @param _opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, {}, { derive: {}; resolve: {}; schema: {}; standaloneSchema: {}; response: {}; }, { ...; }>}
  */
 export function combatStatusRoutes(_opts: HandlerOpts, prefix = "/api",): Elysia {
   const R = `${prefix}/rpg/combat`;

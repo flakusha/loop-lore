@@ -33,6 +33,9 @@ export const messageSearch: Partial<ChatState> & ThisType<ChatState> = {
   _msgSearchLoading: false,
   _msgSearchDebounce: null as ReturnType<typeof setTimeout> | null,
 
+  /**
+   * @returns {void}
+   */
   toggleMessageSearch() {
     this._msgSearchOpen = !this._msgSearchOpen;
     if (this._msgSearchOpen) {
@@ -49,6 +52,9 @@ export const messageSearch: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @returns {void}
+   */
   onMessageSearchInput() {
     if (this._msgSearchDebounce) { clearTimeout(this._msgSearchDebounce,); }
     this._msgSearchDebounce = setTimeout(() => {
@@ -56,6 +62,9 @@ export const messageSearch: Partial<ChatState> & ThisType<ChatState> = {
     }, SEARCH_DEBOUNCE_MS,);
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async runMessageSearch() {
     const chatId = this.activeChat;
     const q = this._msgSearchQuery.trim();
@@ -99,6 +108,9 @@ export const messageSearch: Partial<ChatState> & ThisType<ChatState> = {
   },
 
   /** Add/remove highlight classes on message bubbles for the current match set. */
+  /**
+   * @returns {void}
+   */
   applyMessageSearchHighlights() {
     const scope = this.$refs.messageList ?? document;
     scope.querySelectorAll<HTMLElement>(".search-match-active",).forEach((el,) =>
@@ -115,6 +127,9 @@ export const messageSearch: Partial<ChatState> & ThisType<ChatState> = {
   },
 
   /** Highlight the current match as the active one. */
+  /**
+   * @returns {void}
+   */
   applySearchMatchActive() {
     const current = this._msgSearchMatches[this._msgSearchIndex];
     if (!current) { return; }
@@ -123,6 +138,10 @@ export const messageSearch: Partial<ChatState> & ThisType<ChatState> = {
     el?.classList.add("search-match-active",);
   },
 
+  /**
+   * @param {number} index
+   * @returns {void}
+   */
   scrollToSearchMatch(index: number,) {
     const id = this._msgSearchMatches[index];
     if (!id) { return; }
@@ -131,6 +150,9 @@ export const messageSearch: Partial<ChatState> & ThisType<ChatState> = {
     el?.scrollIntoView({ behavior: "smooth", block: "center", },);
   },
 
+  /**
+   * @returns {void}
+   */
   nextMessageMatch() {
     if (this._msgSearchMatches.length === 0) { return; }
     this._msgSearchIndex = (this._msgSearchIndex + 1) % this._msgSearchMatches.length;
@@ -138,6 +160,9 @@ export const messageSearch: Partial<ChatState> & ThisType<ChatState> = {
     this.scrollToSearchMatch(this._msgSearchIndex,);
   },
 
+  /**
+   * @returns {void}
+   */
   prevMessageMatch() {
     if (this._msgSearchMatches.length === 0) { return; }
     this._msgSearchIndex = (this._msgSearchIndex - 1 + this._msgSearchMatches.length) % this._msgSearchMatches.length;
@@ -149,11 +174,18 @@ export const messageSearch: Partial<ChatState> & ThisType<ChatState> = {
    * Enter → next match, Shift+Enter → previous.
    * @param event
    */
+  /**
+   * @param {KeyboardEvent} event
+   * @returns {void}
+   */
   onMessageSearchEnter(event: KeyboardEvent,) {
     if (event.shiftKey) { this.prevMessageMatch(); }
     else { this.nextMessageMatch(); }
   },
 
+  /**
+   * @returns {void}
+   */
   closeMessageSearch() {
     if (this._msgSearchDebounce) { clearTimeout(this._msgSearchDebounce,); }
     this._msgSearchDebounce = null;

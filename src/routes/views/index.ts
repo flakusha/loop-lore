@@ -17,6 +17,7 @@ export { serveView, } from "./view-serving";
  * `elysia-app.ts` wiring is unchanged.
  * @param root0
  * @param root0.database
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { partials: { ":page": { ":section": { ...; }; }; }; } & ... 20 more ... & { ...; }, { ...; }, { ...; } & { ...; }>}
  */
 export function viewRoutes({ database, }: { database: Kysely<DB> },) {
   return new Elysia({ name: "views", },)

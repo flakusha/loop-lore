@@ -14,6 +14,7 @@ import type { DB, } from "../../db/schema";
  * Maps `actor_type` → random-event `role` (`"ai"` for characters, `"user"` for everyone else).
  * @param database
  * @param chatId
+ * @returns {Promise<RandomEventParticipant[]>}
  */
 export async function loadChatParticipants(
   database: Kysely<DB>,
@@ -38,6 +39,7 @@ export async function loadChatParticipants(
  * Returns `null` if the chat has no current location or the location row is missing.
  * @param database
  * @param locationId
+ * @returns {Promise<RandomEventLocation | null>}
  */
 export async function loadChatLocation(
   database: Kysely<DB>,

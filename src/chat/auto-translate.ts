@@ -55,6 +55,7 @@ export interface AutoTranslateOutcome {
 /**
  * Normalize a language code against the shared /translate catalog.
  * @param code
+ * @returns {string | null}
  */
 export function normalizeTargetLang(code: string | null | undefined,): string | null {
   if (!code) { return null; }
@@ -65,6 +66,7 @@ export function normalizeTargetLang(code: string | null | undefined,): string | 
 /**
  * Resolve the opt-in target language from a `story_state` JSON blob.
  * @param storyState
+ * @returns {string | null}
  */
 export function resolveTargetLang(storyState: string | null | undefined,): string | null {
   if (!storyState) { return null; }
@@ -78,6 +80,7 @@ export function resolveTargetLang(storyState: string | null | undefined,): strin
  * Merge a target language into a `story_state` JSON blob for persistence.
  * @param storyState
  * @param targetLang
+ * @returns {string | null}
  */
 export function setChatTargetLang(
   storyState: string | null | undefined,
@@ -100,6 +103,7 @@ export function setChatTargetLang(
  * Cheap skip heuristic: true when translation would be a no-op.
  * @param text
  * @param targetLang
+ * @returns {boolean}
  */
 export function shouldSkipTranslation(text: string, targetLang: string,): boolean {
   if (!text.trim()) { return true; }
@@ -112,6 +116,7 @@ export function shouldSkipTranslation(text: string, targetLang: string,): boolea
 /**
  * Translate text for a chat when it opted into a target language.
  * @param options
+ * @returns {Promise<AutoTranslateOutcome>}
  */
 export async function autoTranslateText(options: AutoTranslateOptions,): Promise<AutoTranslateOutcome> {
   const { text, storyState, chatId, deps, } = options;
@@ -139,6 +144,7 @@ export async function autoTranslateText(options: AutoTranslateOptions,): Promise
  * @param database
  * @param config
  * @param userId
+ * @returns {Promise<TranslateDeps>}
  */
 export async function buildTranslateDeps(
   database: Kysely<DB>,

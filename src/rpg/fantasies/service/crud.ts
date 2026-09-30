@@ -20,6 +20,7 @@ import type {
  * Create a fantasy for an actor.
  * @param db
  * @param opts
+ * @returns {Promise<Fantasy>}
  */
 export async function createFantasy(
   db: Kysely<DB>,
@@ -107,6 +108,7 @@ export async function createFantasy(
  * Get all fantasies for an actor.
  * @param db
  * @param actorId
+ * @returns {Promise<Fantasy[]>}
  */
 export async function getActorFantasies(
   db: Kysely<DB>,
@@ -128,6 +130,7 @@ export async function getActorFantasies(
  * @param db
  * @param actorId
  * @param category
+ * @returns {Promise<Fantasy[]>}
  */
 export async function getByCategory(
   db: Kysely<DB>,
@@ -150,6 +153,7 @@ export async function getByCategory(
  * @param db
  * @param fantasyId
  * @param feeling
+ * @returns {Promise<boolean>}
  */
 export async function recordExploration(
   db: Kysely<DB>,
@@ -188,6 +192,7 @@ export async function recordExploration(
  * Delete a fantasy.
  * @param db
  * @param fantasyId
+ * @returns {Promise<boolean>}
  */
 export async function deleteFantasy(
   db: Kysely<DB>,

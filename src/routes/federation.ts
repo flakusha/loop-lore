@@ -40,7 +40,10 @@ function coarseState(): CoarseState {
   return "ok";
 }
 
-/** @param opts */
+/**
+ * @param opts
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, {}, { derive: {}; resolve: {}; schema: {}; standaloneSchema: {}; response: {}; }, { ...; }>}
+ */
 export function federationRoutes(opts: MeshRouteOpts,): Elysia {
   const { config, } = opts;
   const app = new Elysia();

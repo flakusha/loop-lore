@@ -111,6 +111,8 @@ export async function findActiveSession(
  * chat_id anchor.
  * @param opts
  * @returns void
+ * @throws {Error}
+ * @throws {Error}
  */
 export async function ensureActiveSession(
   opts: EnsureActiveSessionOpts,

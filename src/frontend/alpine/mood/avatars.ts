@@ -10,6 +10,9 @@ import type { ChatState, } from "./../types";
 const log = rootLog.child({ module: "mood", },);
 
 export const moodStateAvatars: Partial<ChatState> & ThisType<ChatState> = {
+  /**
+   * @returns {Promise<void>}
+   */
   async loadEmotionAvatars() {
     if (!this.activeChat) { return; }
     this._emotionAvatarsLoading = true;
@@ -49,6 +52,9 @@ export const moodStateAvatars: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async generateEmotionAvatars() {
     if (!this.activeChat || this._emotionGenRunning) { return; }
     try {
@@ -95,6 +101,11 @@ export const moodStateAvatars: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @param {string} actorId
+   * @param {string | null} jobId
+   * @returns {Promise<void>}
+   */
   async _pollEmotionJob(actorId: string, jobId: string | null,) {
     if (!jobId) {
       this._emotionGenStatus = t("status.generationNoJobId",);
@@ -132,6 +143,10 @@ export const moodStateAvatars: Partial<ChatState> & ThisType<ChatState> = {
    * @param msg.emotion
    * @returns Asset id to display, or null to hide the avatar
    */
+  /**
+   * @param {{ role?: string; emotion?: string | null }} msg
+   * @returns {string | null}
+   */
   avatarForMessage(msg: { role?: string; emotion?: string | null },): string | null {
     if (msg.role === "user") { return null; }
     if (msg.emotion) {
@@ -150,6 +165,10 @@ export const moodStateAvatars: Partial<ChatState> & ThisType<ChatState> = {
    * Select the best emotion avatar for the given emotion.
    * Returns the asset ID or null if no matching avatar found.
    * @param emotion
+   */
+  /**
+   * @param {string} emotion
+   * @returns {string | null}
    */
   selectEmotionAvatar(emotion: string,): string | null {
     if (this._emotionAvatars.length === 0) { return null; }

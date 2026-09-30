@@ -36,6 +36,7 @@ export interface GetContractArgs {
  * @param root0
  * @param root0.thisL
  * @param root0.id
+ * @returns {InterfaceContract | undefined}
  */
 export function getContract({ thisL, id, }: GetContractArgs,): InterfaceContract | undefined {
   return thisL.contracts.get(id,);
@@ -52,6 +53,7 @@ export interface GetDependenciesArgs {
  * @param root0
  * @param root0.thisL
  * @param root0.systemId
+ * @returns {IntegrationEdge[]}
  */
 export function getDependencies({ thisL, systemId, }: GetDependenciesArgs,): IntegrationEdge[] {
   const out: IntegrationEdge[] = [];
@@ -76,6 +78,7 @@ export interface GetDependentsArgs {
  * @param root0
  * @param root0.thisL
  * @param root0.systemId
+ * @returns {IntegrationEdge[]}
  */
 export function getDependents({ thisL, systemId, }: GetDependentsArgs,): IntegrationEdge[] {
   const out: IntegrationEdge[] = [];
@@ -102,6 +105,7 @@ export interface GetEdgeArgs {
  * @param root0.thisL
  * @param root0.source
  * @param root0.target
+ * @returns {IntegrationEdge | undefined}
  */
 export function getEdge({ thisL, source, target, }: GetEdgeArgs,): IntegrationEdge | undefined {
   return (
@@ -123,6 +127,7 @@ export interface GetGapArgs {
  * @param root0.thisL
  * @param root0.source
  * @param root0.target
+ * @returns {GapStatus | undefined}
  */
 export function getGap({ thisL, source, target, }: GetGapArgs,): GapStatus | undefined {
   return getEdge({ thisL, source, target, },)?.gap;
@@ -137,6 +142,7 @@ export interface GetUnresolvedGapsArgs {
  * All unresolved gaps, severity-sorted.
  * @param root0
  * @param root0.thisL
+ * @returns {IntegrationEdge[]}
  */
 export function getUnresolvedGaps({ thisL, }: GetUnresolvedGapsArgs,): IntegrationEdge[] {
   const out: IntegrationEdge[] = [];
@@ -162,6 +168,7 @@ export interface GetEventsArgs {
  * @param root0.thisL
  * @param root0.systemId
  * @param root0.direction
+ * @returns {CrossSystemEvent[]}
  */
 export function getEvents(
   { thisL, systemId, direction, }: GetEventsArgs,
@@ -191,6 +198,7 @@ export interface GetSharedTypesArgs {
  * @param root0
  * @param root0.thisL
  * @param root0.systemId
+ * @returns {InterfaceContract[]}
  */
 export function getSharedTypes({ thisL, systemId, }: GetSharedTypesArgs,): InterfaceContract[] {
   const out: InterfaceContract[] = [];
@@ -211,6 +219,7 @@ export interface ResolveEdgeInterfacesArgs {
  * @param root0
  * @param root0.thisL
  * @param root0.edge
+ * @returns {InterfaceContract[]}
  */
 export function resolveEdgeInterfaces({ thisL, edge, }: ResolveEdgeInterfacesArgs,): InterfaceContract[] {
   const out: InterfaceContract[] = [];
@@ -232,6 +241,7 @@ export interface GetStateLayersArgs {
  * @param root0
  * @param root0.thisL
  * @param root0.systemId
+ * @returns {PlayerStateLayer[]}
  */
 export function getStateLayers({ thisL, systemId, }: GetStateLayersArgs,): PlayerStateLayer[] {
   const out: PlayerStateLayer[] = [];
@@ -250,6 +260,7 @@ export interface GetGraphArgs {
  * Full adjacency list for Mermaid/graph rendering.
  * @param root0
  * @param root0.thisL
+ * @returns {Map<SystemId, SystemId[]>}
  */
 export function getGraph({ thisL, }: GetGraphArgs,): Map<SystemId, SystemId[]> {
   const adj = new Map<SystemId, SystemId[]>();

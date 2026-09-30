@@ -30,6 +30,7 @@ export interface CancelGenerationOpts {
  * @param root0.reason
  * @param root0.source
  * @param root0.detail
+ * @returns {boolean}
  */
 export function cancelGeneration({ attemptId, reason, source, detail, }: CancelGenerationOpts,): boolean {
   const active = activeGenerations.get(attemptId,);
@@ -121,6 +122,7 @@ export interface CancelGenerationByChatOpts {
  * @param root0.reason
  * @param root0.source
  * @param root0.detail
+ * @returns {boolean}
  */
 export function cancelGenerationByChat({
   db,
@@ -172,6 +174,7 @@ export function cancelGenerationByChat({
  * Get the abort signal for a given attempt. Returns null if the
  * attempt is not active or has already been cancelled.
  * @param attemptId
+ * @returns {AbortSignal | null}
  */
 export function getAbortSignal(attemptId: string,): AbortSignal | null {
   const active = activeGenerations.get(attemptId,);

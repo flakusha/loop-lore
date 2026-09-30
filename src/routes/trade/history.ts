@@ -13,6 +13,7 @@ import type { TradeRoutesOptions, } from "./shared";
  * filtered by actor (owner-gated).
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { worlds: { ":worldId": { ...; }; }; }; }, { ...; }, { ...; }>}
  */
 export function tradeHistoryRoutes(opts: TradeRoutesOptions, prefix = "/api",) {
   return (

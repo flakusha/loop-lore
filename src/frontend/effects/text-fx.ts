@@ -45,6 +45,7 @@ let activeRuns = 0;
 /**
  * Mirrors the helper used by src/frontend/vn/typewriter.ts so the
  * behaviour is consistent across the codebase.
+ * @returns {boolean}
  */
 export function prefersReducedMotion(): boolean {
   try {
@@ -61,6 +62,7 @@ export function prefersReducedMotion(): boolean {
  * @param el
  * @param name
  * @param opts
+ * @returns {() => void}
  */
 export function applyFx(
   el: HTMLElement,
@@ -146,6 +148,7 @@ function runTypewriter(el: HTMLElement, opts: FxOptions,): () => void {
 
 /**
  * True while any fx-driven animation is in flight.
+ * @returns {boolean}
  */
 export function isFxActive(): boolean {
   return activeRuns > 0;

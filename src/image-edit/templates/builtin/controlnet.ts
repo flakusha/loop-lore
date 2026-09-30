@@ -66,6 +66,10 @@ export const controlnet: WorkflowTemplate = {
     { name: "cfg_scale", type: "number", label: "CFG Scale", default: 7, min: 1, max: 30, step: 0.5, },
     { name: "seed", type: "number", label: "Seed", default: -1, min: -1, max: 2_147_483_647, },
   ],
+  /**
+   * @param {unknown} params
+   * @returns {{ "6": { inputs: { control_net_name: string; }; class_type: string; _meta: { title: string; }; }; "7": { inputs: { strength: number; condition: (string | number)[]; control_net: (string | number)[]; image: (string | number)[]; }; class_type: string; _meta: { ...; }; }; "4": { ...; }; }}
+   */
   build(params,) {
     const seed = resolveSeed(params.seed,);
     return {

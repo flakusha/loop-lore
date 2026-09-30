@@ -89,6 +89,7 @@ function rowToEntry(row: RequestResultRow,): InMemoryEntry {
  * Build a table backend.
  * @param ttlMs - TTL for completed entries in ms.
  * @param asyncStore - Async store bound to the same `request_results` table.
+ * @returns {IdempotencyBackendApi}
  */
 export function createTableBackend(ttlMs: number, asyncStore: AsyncStore,): IdempotencyBackendApi {
   // Process-local fast path. Hydrated lazily from the table on first miss.
@@ -111,6 +112,10 @@ export function createTableBackend(ttlMs: number, asyncStore: AsyncStore,): Idem
   };
 
   return {
+    /**
+     * @param {unknown} key
+     * @returns {InMemoryEntry | null}
+     */
     get(key,) {
       const cached = cache.get(key,);
       if (cached) { return liveEntry(key, cached,); }
@@ -129,6 +134,11 @@ export function createTableBackend(ttlMs: number, asyncStore: AsyncStore,): Idem
       }
       return null;
     },
+    /**
+     * @param {unknown} key
+     * @param {unknown} meta
+     * @returns {InMemoryEntry}
+     */
     markInFlight(key, meta,) {
       // Reserve the slot locally so concurrent same-process re-fires see the
       // in-flight marker immediately (no DB round-trip).
@@ -151,6 +161,12 @@ export function createTableBackend(ttlMs: number, asyncStore: AsyncStore,): Idem
       },);
       return entry;
     },
+    /**
+     * @param {unknown} key
+     * @param {unknown} meta
+     * @param {unknown} args
+     * @returns {void}
+     */
     recordResponse(key, meta, args,) {
       // Update the local fast path first so same-process re-fires replay
       // immediately without a DB round-trip.
@@ -171,6 +187,11 @@ export function createTableBackend(ttlMs: number, asyncStore: AsyncStore,): Idem
         { status: args.status, headers: args.headers, body: args.body, },
       );
     },
+    /**
+     * @param {unknown} key
+     * @param {unknown} _meta
+     * @returns {void}
+     */
     release(key, _meta,) {
       // Drop the local fast-path entry so the next call retries the handler.
       cache.delete(key,);
@@ -178,6 +199,9 @@ export function createTableBackend(ttlMs: number, asyncStore: AsyncStore,): Idem
       // abandons the in-flight slot. Future re-fires against the same key
       // will see no row on hydrate and proceed.
     },
+    /**
+     * @returns {void}
+     */
     clear() {
       cache.clear();
     },
@@ -247,6 +271,7 @@ async function hydrateFromTable(
  * Exported for direct unit testing — the production code path is exercised
  * by the surrounding hydrate catch block.
  * @param key
+ * @returns {string}
  */
 export function redactKeyForLog(key: string,): string {
   // Cache key format (fixed by `makeKey`):

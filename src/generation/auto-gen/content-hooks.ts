@@ -74,6 +74,7 @@ export interface NsfwEligibilityResult {
  * @param opts.chatId
  * @param opts.actorId
  * @param opts.userId
+ * @returns {Promise<NsfwEligibilityResult>}
  */
 export async function checkNsfwEligibility(opts: {
   database: Kysely<DB>;

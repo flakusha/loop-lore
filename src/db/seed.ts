@@ -21,6 +21,7 @@ const ASSISTANT_ID = "assistant-default";
  * Safe to call on every startup — checks for existence first.
  * @param database - Kysely instance
  * @param config
+ * @returns {Promise<void>}
  */
 export async function seedDefaultActors(database: Kysely<DB>, config?: Config,): Promise<void> {
   const log = getLogger().child({ module: "seed", },);

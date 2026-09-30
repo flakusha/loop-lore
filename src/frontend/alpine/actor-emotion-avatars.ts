@@ -89,6 +89,10 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
   _pollHandle: null,
   _pollInterval: null,
 
+  /**
+   * @param {string} actorId
+   * @returns {void}
+   */
   setActorId(actorId: string,) {
     if (this._eaActorId === actorId) { return; }
     this._eaActorId = actorId;
@@ -104,10 +108,17 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
     this.stopPolling();
   },
 
+  /**
+   * @param {EmotionAvatarJob} job
+   * @returns {boolean}
+   */
   isJobActive(job: EmotionAvatarJob,) {
     return job.status === "queued" || job.status === "running";
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async listJobs() {
     const actorId = this._eaActorId;
     if (!actorId) { return; }
@@ -129,12 +140,19 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
     }
   },
 
+  /**
+   * @param {string} emotion
+   * @returns {void}
+   */
   toggleEmotion(emotion: string,) {
     const i = this.selectedEmotions.indexOf(emotion,);
     if (i >= 0) { this.selectedEmotions.splice(i, 1,); }
     else { this.selectedEmotions.push(emotion,); }
   },
 
+  /**
+   * @returns {Promise<boolean>}
+   */
   async startGeneration() {
     const actorId = this._eaActorId;
     if (!actorId || this.busy) { return false; }
@@ -176,6 +194,10 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
     }
   },
 
+  /**
+   * @param {string} jobId
+   * @returns {Promise<void>}
+   */
   async cancelJob(jobId: string,) {
     const actorId = this._eaActorId;
     if (!actorId || this.busy || !jobId) { return; }
@@ -205,6 +227,10 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
     }
   },
 
+  /**
+   * @param {string} jobId
+   * @returns {Promise<void>}
+   */
   async refreshJob(jobId: string,) {
     const actorId = this._eaActorId;
     if (!actorId || !jobId) { return; }
@@ -223,6 +249,9 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
     }
   },
 
+  /**
+   * @returns {void}
+   */
   startPolling() {
     this.stopPolling();
     const tick = async () => {
@@ -245,6 +274,9 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
     }, 100,);
   },
 
+  /**
+   * @returns {void}
+   */
   stopPolling() {
     if (this._pollHandle) {
       clearTimeout(this._pollHandle,);
@@ -257,7 +289,11 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
   },
 };
 
-/** Build the Alpine scope for the emotion avatars panel. */
+/**
+ * Build the Alpine scope for the emotion avatars panel.
+ * @param {string} actorId
+ * @returns {ActorEmotionAvatarsState}
+ */
 export function actorEmotionAvatarsFactory(actorId: string,): ActorEmotionAvatarsState {
   const state = Object.create(actorEmotionAvatars,) as ActorEmotionAvatarsState;
   state._eaActorId = null;

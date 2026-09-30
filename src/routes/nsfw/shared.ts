@@ -56,6 +56,7 @@ function toNsfwRouteAccessFailure(reason: string | undefined,): NsfwRouteAccessF
  * @param database
  * @param targetActor
  * @param ctx
+ * @returns {Promise<string | Response>}
  */
 export async function requireNsfwActorAccess(
   database: Kysely<DB>,
@@ -84,6 +85,7 @@ export async function requireNsfwActorAccess(
  * @param opts
  * @param opts.chatId - chat scope for the persisted consent ledger
  * @param opts.actorId - actor whose content rating gates the consent check
+ * @returns {Promise<{ ok: true; userId: string; } | { ok: false; reason: NsfwRouteAccessFailure; }>}
  */
 export async function requireNsfwRouteAccess(
   database: Kysely<DB>,
@@ -116,6 +118,7 @@ export async function requireNsfwRouteAccess(
 /**
  * Convert a {@link NsfwRouteAccessFailure} into an HTTP response.
  * @param reason
+ * @returns {Response}
  */
 export function nsfwAccessErrorResponse(reason: NsfwRouteAccessFailure,): Response {
   if (reason === "auth_required") {

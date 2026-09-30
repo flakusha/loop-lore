@@ -22,14 +22,22 @@ export interface MeshClock {
  * @example
  * const clock = createMeshClock();
  * const envelope = await sealContent({ ..., clock: clock.tick(), cipher, });
+ * @returns {MeshClock}
  */
 export function createMeshClock(now: () => number = Date.now,): MeshClock {
   let last = 0;
   return {
+    /**
+     * @returns {number}
+     */
     tick(): number {
       last = Math.max(now(), last + 1,);
       return last;
     },
+    /**
+     * @param {number} remote
+     * @returns {void}
+     */
     observe(remote: number,): void {
       if (remote > last) { last = remote; }
     },

@@ -153,6 +153,7 @@ async function handleExportAll(database: Kysely<DB>, userId: string,): Promise<R
  * @param root0
  * @param root0.database
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { settings: { get: { ...; }; }; }; } & { ...; } & { ...; }, { ...; }, { ...; }>}
  */
 export function settingsRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
   return new Elysia({ name: "settings", },)

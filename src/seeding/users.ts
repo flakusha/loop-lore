@@ -24,6 +24,8 @@ import { safeJsonStringify, uid, } from "../utils";
 /**
  * Resolve "${ENV_VAR}" references in a password string.
  * @param value
+ * @throws {Error}
+ * @returns {string}
  */
 export function resolvePasswordReference(value: string,): string {
   const match = /^\$\{([A-Za-z_]\w*)\}$/.exec(value.trim(),);

@@ -8,7 +8,9 @@ import type { ImageModelProfile, } from "../../generation/prompt-templates";
 import { getLogger, type Logger, } from "../../logger";
 import { jsonStringifyOr, safeJsonParse, } from "../../utils";
 
-/** */
+/**
+ * @returns {Logger}
+ */
 export function log(): Logger {
   return getLogger().child({ module: "admin-templates", },);
 }
@@ -24,6 +26,7 @@ export interface StoredTemplates {
 
 /**
  * @param db
+ * @returns {Promise<StoredTemplates>}
  */
 export async function loadStoredTemplates(db: Kysely<DB>,): Promise<StoredTemplates> {
   const raw = await getConfig(db, TEMPLATES_KEY,);
@@ -41,6 +44,7 @@ export async function loadStoredTemplates(db: Kysely<DB>,): Promise<StoredTempla
 /**
  * @param db
  * @param data
+ * @returns {Promise<void>}
  */
 export async function saveStoredTemplates(db: Kysely<DB>, data: StoredTemplates,): Promise<void> {
   await setConfig(db, TEMPLATES_KEY, jsonStringifyOr(data,), "Custom prompt template profiles",);
@@ -49,6 +53,7 @@ export async function saveStoredTemplates(db: Kysely<DB>, data: StoredTemplates,
 /**
  * @param builtin
  * @param custom
+ * @returns {Record<string, ImageModelProfile>}
  */
 export function mergeProfiles(
   builtin: Record<string, ImageModelProfile>,
@@ -60,6 +65,7 @@ export function mergeProfiles(
 /**
  * Count total templates across all detail levels and modes
  * @param templates
+ * @returns {number}
  */
 export function countTemplates(templates: ImageModelProfile["templates"],): number {
   let count = 0;

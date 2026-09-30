@@ -12,6 +12,7 @@ import type { ImageGenOptions, ImageGenOutcome, } from "./types";
  * Generate images via sd.cpp — async job submission + polling.
  * @param sdConfig
  * @param opts
+ * @returns {Promise<ImageGenOutcome>}
  */
 export async function generateSDCPP(
   sdConfig: ImageProviderConfig,

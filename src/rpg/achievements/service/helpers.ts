@@ -13,6 +13,7 @@ import type {
 /**
  * Get the achievements module logger.
  * Delegates to the shared RPG logger factory.
+ * @returns {Logger}
  */
 export function getLog(): Logger {
   return getRpgLog("achievements",);
@@ -21,6 +22,7 @@ export function getLog(): Logger {
 /**
  * Convert database row to Achievement interface
  * @param row
+ * @returns {Achievement}
  */
 export function rowToAchievement(row: any,): Achievement {
   return {
@@ -43,6 +45,7 @@ export function rowToAchievement(row: any,): Achievement {
 /**
  * Convert database row to PlayerAchievement interface
  * @param row
+ * @returns {PlayerAchievement}
  */
 export function rowToPlayerAchievement(row: any,): PlayerAchievement {
   return {

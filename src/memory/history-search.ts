@@ -72,6 +72,7 @@ function readableContent(
  * @param chatId
  * @param fromMessageId
  * @param direction - "up" toward parents, "down" toward children
+ * @returns {Promise<ReconstructedMessage[]>}
  */
 export async function walkMessageChain(
   db: Kysely<DB>,
@@ -132,6 +133,7 @@ export async function walkMessageChain(
  * `source_chat_ids` when the chain crosses chats.
  * @param db
  * @param memoryId
+ * @returns {Promise<ReconstructedMessage[]>}
  */
 export async function reconstructMessageChain(
   db: Kysely<DB>,
@@ -174,6 +176,7 @@ export async function reconstructMessageChain(
  * @param db
  * @param memoryId
  * @param opts
+ * @returns {Promise<ExpandedMemoryContext | null>}
  */
 export async function expandMemoryContext(
   db: Kysely<DB>,
@@ -221,6 +224,7 @@ export interface ExpansionSelectOpts {
  * @param config - injection configuration
  * @param ctx - current injection context
  * @param opts - expansion thresholds
+ * @returns {Promise<{ selected: MemoryEntry[]; rejected: { memory: MemoryEntry; reason: string; probability: number; }[]; expansions: Map<string, ExpandedMemoryContext>; }>}
  */
 export async function selectMemoriesWithExpansion(
   db: Kysely<DB>,

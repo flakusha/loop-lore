@@ -24,6 +24,9 @@ export const chatSideChannels: Partial<ChatSideChannelsState> & ThisType<ChatSta
     return this.currentChat?.type === "group";
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async loadSideChannels() {
     if (!this.activeChat || !this.isGroupChat) { return; }
     try {
@@ -42,6 +45,10 @@ export const chatSideChannels: Partial<ChatSideChannelsState> & ThisType<ChatSta
     }
   },
 
+  /**
+   * @param {string} name
+   * @returns {Promise<void>}
+   */
   async createSideChannel(name: string,) {
     if (!this.activeChat || !name.trim()) { return; }
     try {
@@ -70,6 +77,10 @@ export const chatSideChannels: Partial<ChatSideChannelsState> & ThisType<ChatSta
     }
   },
 
+  /**
+   * @param {string} chatId
+   * @returns {Promise<void>}
+   */
   async switchSideChannel(chatId: string,) {
     if (typeof Alpine !== "undefined") {
       try {
@@ -88,6 +99,9 @@ export const chatSideChannels: Partial<ChatSideChannelsState> & ThisType<ChatSta
     if (typeof fn === "function") { await fn.call(this, chatId,); }
   },
 
+  /**
+   * @returns {void}
+   */
   toggleSideChannels() {
     if (typeof Alpine === "undefined") {
       return;

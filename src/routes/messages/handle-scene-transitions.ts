@@ -73,6 +73,7 @@ async function resolveLocation(
  * @param effectiveContent
  * @param chatRecord
  * @param messageId
+ * @returns {Promise<void>}
  */
 export async function handleSceneTransitions(
   database: Kysely<DB>,

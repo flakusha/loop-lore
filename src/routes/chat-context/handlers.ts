@@ -33,6 +33,7 @@ function log() {
 /**
  * Validate regenerate request body
  * @param body
+ * @returns {{ chatId: string; messageId: string; parentId?: string | undefined; style?: RegenStyle | undefined; } | null}
  */
 export function validateRegenerateBody(
   body: unknown,
@@ -65,6 +66,7 @@ export function validateRegenerateBody(
  * @param userId
  * @param userRole
  * @param config
+ * @returns {Promise<Response>}
  */
 export async function handleGetContext(
   database: Kysely<DB>,
@@ -164,6 +166,7 @@ export async function handleGetContext(
  * @param userId
  * @param userRole
  * @param style
+ * @returns {Promise<Response>}
  */
 export async function handleRegenerateMessage(
   database: Kysely<DB>,

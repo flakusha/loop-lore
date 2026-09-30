@@ -82,6 +82,7 @@ function validateScene(
 
 /**
  * @param scenes
+ * @returns {VnQaReport}
  */
 export function runQaCheck(
   scenes: Array<{ text: string; characterName: string; backgroundUrl?: string; role: string }>,
@@ -124,6 +125,7 @@ export function runQaCheck(
 /**
  * @param report
  * @param container
+ * @returns {void}
  */
 export function renderQaReport(
   report: VnQaReport,

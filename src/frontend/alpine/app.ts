@@ -25,11 +25,19 @@ globalThis.app = function() {
     localeStrings: ((globalThis as any).__localeStrings || {}) as TranslationMap,
     pageTitle: "loop-lore",
 
+    /**
+     * @param {string} key
+     * @param {string} fallback
+     * @returns {string}
+     */
     __(key: string, fallback?: string,): string {
       const value = resolveKey(this.localeStrings as TranslationMap, key,);
       return value ?? fallback ?? key;
     },
 
+    /**
+     * @returns {void}
+     */
     init() {
       initTelemetry();
       const initCount = ((globalThis as any).__appInitCount ?? 0) + 1;
@@ -49,6 +57,10 @@ globalThis.app = function() {
       this.loadLocale(locale,);
     },
 
+    /**
+     * @param {string} themeId
+     * @returns {void}
+     */
     applyTheme(themeId: string,) {
       const themes = globalThis.__THEMES ?? [];
       if (!themeId || themes.every((t: { id: string },) => t.id !== themeId)) { return; }
@@ -60,11 +72,18 @@ globalThis.app = function() {
       localStorage.setItem("theme-preference", themeId,);
     },
 
+    /**
+     * @param {string} type
+     * @returns {string}
+     */
     iconFor(type: string,) {
       const icons: Record<string, string> = { success: "✓", error: "✗", info: "ℹ", warning: "⚠", };
       return icons[type] || "ℹ";
     },
 
+    /**
+     * @returns {void}
+     */
     closeAllModals() {
       this.sidebarOpen = false;
       if (!globalThis.Alpine) { return; }
@@ -76,6 +95,10 @@ globalThis.app = function() {
       }
     },
 
+    /**
+     * @param {string} locale
+     * @returns {Promise<void>}
+     */
     async loadLocale(locale: string,) {
       try {
         const res = await apiFetch(`/locales/${locale}.json`,);
@@ -90,28 +113,47 @@ globalThis.app = function() {
       }
     },
 
+    /**
+     * @param {string} type
+     * @param {string} message
+     * @returns {void}
+     */
     toast(type: string, message: string,) {
       this.toasts.push({ type, msg: message, icon: this.iconFor(type,), },);
       setTimeout(() => this.toasts.shift(), 5000,);
     },
 
+    /**
+     * @param {string} themeId
+     * @returns {void}
+     */
     setTheme(themeId: string,) {
       this.currentTheme = themeId;
       this.applyTheme(themeId,);
     },
 
+    /**
+     * @returns {any}
+     */
     getThemeName() {
       const themes = globalThis.__THEMES ?? [];
       const theme = themes.find((t: { id: string },) => t.id === this.currentTheme);
       return theme ? theme.name : "Default";
     },
 
+    /**
+     * @param {string} localeId
+     * @returns {void}
+     */
     setLocale(localeId: string,) {
       saveLocale(localeId as any,);
       this.currentLocale = localeId;
       this.loadLocale(localeId,);
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async logout() {
       try {
         await apiFetch("/api/auth/logout", { method: "POST", },);

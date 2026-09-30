@@ -53,6 +53,9 @@ export interface GameCanvasComponent {
     loading: false,
     error: null,
 
+    /**
+     * @returns {Promise<void>}
+     */
     init(): Promise<void> {
       onVisibility = () => {
         if (document.visibilityState === "visible") {
@@ -68,6 +71,9 @@ export interface GameCanvasComponent {
       return component.refresh();
     },
 
+    /**
+     * @returns {void}
+     */
     destroy(): void {
       if (pollTimer !== null) {
         globalThis.clearInterval(pollTimer,);
@@ -79,6 +85,9 @@ export interface GameCanvasComponent {
       }
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async refresh(): Promise<void> {
       const chatId = activeChatId();
       if (!chatId) { return; }
@@ -113,6 +122,10 @@ export interface GameCanvasComponent {
       }
     },
 
+    /**
+     * @param {MouseEvent} event
+     * @returns {void}
+     */
     onCanvasClick(event: MouseEvent,): void {
       const state = component.gameState;
       if (!state) { return; }
@@ -146,6 +159,10 @@ export interface GameCanvasComponent {
      * @param canvas - canvas whose client width drives the cell size
      * @returns cell size in px
      */
+    /**
+     * @param {HTMLCanvasElement} canvas
+     * @returns {number}
+     */
     _cellSize(canvas: HTMLCanvasElement,): number {
       const grid = component.gameState?.state.grid;
       if (!grid || grid.width <= 0) { return MIN_CELL; }
@@ -156,10 +173,16 @@ export interface GameCanvasComponent {
      * Locate the canvas element (raw closure scope has no Alpine $refs proxy).
      * @returns the game canvas element, or null when absent
      */
+    /**
+     * @returns {HTMLCanvasElement | null}
+     */
     _canvas(): HTMLCanvasElement | null {
       return document.querySelector<HTMLCanvasElement>("canvas[data-testid='game-canvas-grid']",);
     },
 
+    /**
+     * @returns {void}
+     */
     _draw(): void {
       const canvas = component._canvas();
       if (!canvas) { return; }

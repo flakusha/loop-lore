@@ -44,6 +44,7 @@ async function installedNodeClasses(): Promise<ComfyUINodeInfo[] | null> {
  * @param opts
  * @param opts.database
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { admin: { "comfyui-workflows": { ...; }; }; }; } & { ...; }, { ...; }, { ...; }>}
  */
 export function listRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
   const { database, } = opts;

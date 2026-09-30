@@ -121,6 +121,7 @@ function resolveNumeric(
  * non-empty strings, the progress delta a finite number, complete a boolean.
  * @param effect
  * @throws {QuestionError} `invalid_input` when the effect is malformed.
+ * @returns {void}
  */
 export function assertValidEffect(effect: QuestionEffect,): void {
   if (effect.quest !== undefined) {

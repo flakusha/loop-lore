@@ -37,6 +37,7 @@ function requireOwnPlayer(ctx: any, playerId: string,): string | Response {
 /**
  * @param svc
  * @param R
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, {}, { derive: {}; resolve: {}; schema: {}; standaloneSchema: {}; response: {}; }, { ...; }>}
  */
 export function replayabilityPlaythroughRoutes(svc: () => ReplayabilityService, R: string,): Elysia {
   return new Elysia({ name: "rpg-replayability-playthroughs", },)

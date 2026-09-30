@@ -21,6 +21,7 @@ import type { ArousalState, DesireProfile, SeductionSkill, } from "./types";
  * @param row.desire_buildup_rate
  * @param row.created_at
  * @param row.updated_at
+ * @returns {DesireProfile}
  */
 export function rowToDesireProfile(row: {
   id: string;
@@ -62,6 +63,7 @@ export function rowToDesireProfile(row: {
  * @param row.xp_to_next
  * @param row.created_at
  * @param row.updated_at
+ * @returns {SeductionSkill}
  */
 export function rowToSkill(row: {
   id: string;
@@ -100,6 +102,7 @@ export function rowToSkill(row: {
  * @param row.last_update
  * @param row.created_at
  * @param row.updated_at
+ * @returns {ArousalState}
  */
 export function rowToArousal(row: {
   id: string;

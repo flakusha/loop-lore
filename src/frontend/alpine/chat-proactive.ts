@@ -30,6 +30,9 @@ export const chatProactive: Partial<ChatState> & ThisType<ChatState> = {
   _proactiveLastSendAt: 0,
 
   /** Begin polling for due proactive messages for the active chat. */
+  /**
+   * @returns {void}
+   */
   startProactiveScheduler() {
     if (!this.activeChat) { return; }
     this.stopProactiveScheduler();
@@ -40,6 +43,9 @@ export const chatProactive: Partial<ChatState> & ThisType<ChatState> = {
   },
 
   /** Stop the scheduler (e.g. on component destroy). */
+  /**
+   * @returns {void}
+   */
   stopProactiveScheduler() {
     if (!this._proactiveTimer) { return; }
     clearInterval(this._proactiveTimer,);
@@ -47,6 +53,9 @@ export const chatProactive: Partial<ChatState> & ThisType<ChatState> = {
   },
 
   /** One poll: fetch configs, check each enabled one, send the first due. */
+  /**
+   * @returns {Promise<void>}
+   */
   async tickProactive() {
     const chatId = this.activeChat;
     if (!chatId || this._proactiveInFlight) { return; }

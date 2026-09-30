@@ -66,6 +66,11 @@ function sanitizeSession(
   };
 }
 
+/**
+ * @param {HandleOpts} opts
+ * @param {unknown} prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, {}, { derive: {}; resolve: {}; schema: {}; standaloneSchema: {}; response: {}; }, { ...; }>}
+ */
 export function sessionsRoutes(opts: HandleOpts, prefix = "/api",): Elysia {
   const { database, } = opts;
 

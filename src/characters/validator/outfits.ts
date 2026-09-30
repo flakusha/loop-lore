@@ -18,6 +18,7 @@ import type {
  * @param errors
  * @param warnings
  * @param mode
+ * @returns {void}
  */
 export function validateOutfitFields(
   character: CanonicalCharacter,

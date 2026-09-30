@@ -296,7 +296,10 @@ export async function computeBuildIdentity(
   return identity;
 }
 
-/** Clear the in-process memo. Test-only — production callers should never invoke this. */
+/**
+ * Clear the in-process memo. Test-only — production callers should never invoke this.
+ * @returns {void}
+ */
 export function __resetBuildIdentityForTests(): void {
   memo.clear();
 }

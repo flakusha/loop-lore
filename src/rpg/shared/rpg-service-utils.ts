@@ -13,12 +13,16 @@ import { safeJsonParse, uid, } from "../../utils";
  * Create a module-scoped logger for RPG services.
  * Replaces the per-service `getLog()` wrapper pattern.
  * @param moduleName
+ * @returns {Logger}
  */
 export function getRpgLog(moduleName: string,): Logger {
   return getLogger().child({ module: moduleName, },);
 }
 
-/** Generate a new ID and timestamp */
+/**
+ * Generate a new ID and timestamp
+ * @returns {{ id: string; now: string; }}
+ */
 export function nowAndId(): { id: string; now: string } {
   return { id: uid(), now: new Date().toISOString(), };
 }
@@ -27,6 +31,8 @@ export function nowAndId(): { id: string; now: string } {
  * Assert that at least one row was updated
  * @param numRows
  * @param label
+ * @throws {Error}
+ * @returns {void}
  */
 export function assertRowUpdated(numRows: number, label: string,): void {
   if (numRows === 0) {
@@ -38,6 +44,8 @@ export function assertRowUpdated(numRows: number, label: string,): void {
  * Assert that at least one row was deleted
  * @param numRows
  * @param label
+ * @throws {Error}
+ * @returns {void}
  */
 export function assertRowDeleted(numRows: number, label: string,): void {
   if (numRows === 0) {
@@ -49,6 +57,7 @@ export function assertRowDeleted(numRows: number, label: string,): void {
  * Parse a JSON field safely from an unknown source, returning fallback on error or non-string input
  * @param raw
  * @param fallback
+ * @returns {T}
  */
 export function parseJsonField<T,>(raw: unknown, fallback: T,): T {
   if (typeof raw !== "string") { return fallback; }
@@ -62,6 +71,7 @@ export function parseJsonField<T,>(raw: unknown, fallback: T,): T {
  * @param table
  * @param findFn
  * @param insertData
+ * @returns {Promise<Selectable<DB[T]>>}
  */
 export async function getOrCreateRow<DB, T extends keyof DB & string,>(
   db: Kysely<DB>,

@@ -41,14 +41,25 @@ export interface MeshEncryptionProvider {
 /**
  * Build the provider around one operator-distributed mesh PSK.
  * @param pskSecret Mesh PSK (env-only: MESH_PSK).
+ * @returns {MeshEncryptionProvider}
  */
 export function createMeshEncryption(pskSecret: string,): MeshEncryptionProvider {
   const psk = pskCipher(pskSecret,);
   return {
     psk,
+    /**
+     * @param {string | undefined} contentKey
+     * @returns {ContentCipher}
+     */
     contentCipher(contentKey: string | undefined,): ContentCipher {
       return contentKey !== undefined ? pskCipher(contentKey,) : psk;
     },
+    /**
+     * @param {Kysely<DB>} database
+     * @param {string} senderOrigin
+     * @param {CryptoKey | null} smk
+     * @returns {Promise<ContentCipher[]>}
+     */
     receiverCiphers(
       database: Kysely<DB>,
       senderOrigin: string,

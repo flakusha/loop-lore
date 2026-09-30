@@ -142,6 +142,7 @@ async function storeGeneratedMessage({
  * @param response.usage.totalTokens
  * @param cancelled
  * @param cancelReason
+ * @returns {GenerationResult}
  */
 export function buildGenerationResult(
   response: {
@@ -183,6 +184,7 @@ export function buildGenerationResult(
  * @param opts.provider
  * @param opts.continuationNumber
  * @param opts.targetMessageId
+ * @returns {Promise<string>}
  */
 export async function storeGenerationResult(opts: {
   db: Kysely<DB>;

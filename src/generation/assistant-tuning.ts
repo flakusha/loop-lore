@@ -28,6 +28,7 @@ export interface AssistantTuningOverride {
  * Parse and validate the `assistantTuning` sub-key out of a `chats.gm_config`
  * JSON string. Anything missing or malformed degrades to no override.
  * @param gmConfigJson Raw `gm_config` column value.
+ * @returns {AssistantTuningOverride}
  */
 export function parseAssistantTuning(gmConfigJson: string | null | undefined,): AssistantTuningOverride {
   if (!gmConfigJson) { return { temperature: null, maxTokens: null, }; }
@@ -49,6 +50,7 @@ export function parseAssistantTuning(gmConfigJson: string | null | undefined,): 
  * wins, then the chat override, then undefined (provider default).
  * @param explicit Request-level temperature, if any.
  * @param override Validated per-chat override, if any.
+ * @returns {number | undefined}
  */
 export function resolveAssistantTemperature(
   explicit: number | undefined,
@@ -61,6 +63,7 @@ export function resolveAssistantTemperature(
  * Resolve the effective maxTokens for provider params (same precedence).
  * @param explicit Request-level maxTokens, if any.
  * @param override Validated per-chat override, if any.
+ * @returns {number | undefined}
  */
 export function resolveAssistantMaxTokens(
   explicit: number | undefined,

@@ -17,6 +17,7 @@ import type { HandlerOpts, } from "./types";
 /**
  * @param _opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { battle: { resolution: { ...; }; }; }; } & { ...; } & { ...; } & { ...; }, { ...; }, { ...; }>}
  */
 export function resolutionRoutes(_opts: HandlerOpts, prefix = "/api",) {
   return new Elysia({ name: "battle-resolution", },)

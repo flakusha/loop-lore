@@ -89,6 +89,10 @@ export const slashAutocomplete: Partial<ChatState> & ThisType<ChatState> = {
   _showSlashPopover: false,
   _slashActiveIndex: 0,
 
+  /**
+   * @param {Event} event
+   * @returns {void}
+   */
   handleSlashInput(event: Event,) {
     const textarea = event.target as HTMLTextAreaElement;
     const value = textarea.value;
@@ -112,6 +116,10 @@ export const slashAutocomplete: Partial<ChatState> & ThisType<ChatState> = {
     this._slashActiveIndex = 0;
   },
 
+  /**
+   * @param {SlashCandidate} candidate
+   * @returns {void}
+   */
   selectSlashCandidate(candidate: SlashCandidate,) {
     const textarea = this.$refs?.messageInput as HTMLTextAreaElement | undefined;
     if (!textarea) { return; }
@@ -137,6 +145,9 @@ export const slashAutocomplete: Partial<ChatState> & ThisType<ChatState> = {
     textarea.focus();
   },
 
+  /**
+   * @returns {void}
+   */
   hideSlashPopover() {
     this._showSlashPopover = false;
     this._slashActiveIndex = 0;
@@ -144,6 +155,10 @@ export const slashAutocomplete: Partial<ChatState> & ThisType<ChatState> = {
     this._slashCandidates = [];
   },
 
+  /**
+   * @param {number} index
+   * @returns {boolean}
+   */
   acceptSlashAtIndex(index: number,): boolean {
     const entry = this._slashCandidates[index];
     if (!entry) { return false; }
@@ -151,6 +166,10 @@ export const slashAutocomplete: Partial<ChatState> & ThisType<ChatState> = {
     return true;
   },
 
+  /**
+   * @param {1 | -1} delta
+   * @returns {void}
+   */
   moveSlashSelection(delta: 1 | -1,) {
     const count = this._slashCandidates.length;
     if (count === 0) { return; }
@@ -163,6 +182,10 @@ export const slashAutocomplete: Partial<ChatState> & ThisType<ChatState> = {
    * owns mention keys, this owns slash keys, Escape closes whichever is
    * open (slash last so chat-group's draft flush stays harmless).
    * @param event - keydown event from the composer textarea.
+   */
+  /**
+   * @param {KeyboardEvent} event
+   * @returns {void}
    */
   handleSlashKeydown(event: KeyboardEvent,) {
     const target = event.target as { tagName?: string } | null;
@@ -193,6 +216,9 @@ export const slashAutocomplete: Partial<ChatState> & ThisType<ChatState> = {
    * Returns true when handled so the template can short-circuit chat-group's
    * handleComposerEnter and avoid sending the message prematurely.
    * @returns true when the slash popover consumed the Enter press.
+   */
+  /**
+   * @returns {boolean}
    */
   handleSlashEnter(): boolean {
     if (!this._showSlashPopover || this._slashCandidates.length === 0) { return false; }

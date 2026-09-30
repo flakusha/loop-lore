@@ -22,6 +22,7 @@ import { safeFetch, } from "../utils/safe-fetch";
 /**
  * Single source of truth for the embedding model.
  * OLLAMA_EMBED_MODEL overrides; default "nomic-embed-text".
+ * @returns {string}
  */
 export function resolveEmbedModel(): string {
   return process.env.OLLAMA_EMBED_MODEL ?? "nomic-embed-text";
@@ -67,6 +68,7 @@ function l2Norm(vec: Float32Array,): number {
 /**
  * @param a
  * @param b
+ * @returns {number}
  */
 export function dot(a: Float32Array, b: Float32Array,): number {
   let s = 0;
@@ -112,6 +114,7 @@ async function embedViaOpenAI(text: string, model: string, baseUrl: string,): Pr
  * (EMBEDDINGS_API: "ollama" default | "openai" for llama.cpp / llama-swap).
  * @param text
  * @throws If the embedding call fails or returns no results.
+ * @returns {Promise<Float32Array<ArrayBufferLike>>}
  */
 export async function embedText(text: string,): Promise<Float32Array> {
   const model = resolveEmbedModel();

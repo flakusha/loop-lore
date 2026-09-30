@@ -16,6 +16,7 @@ import { updateRoutes, } from "./update";
  * `elysia-app.ts` wiring is unchanged.
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { chats: { ":id": { messages: { ...; }; }; }; }; } & ... 13 more ... & { ...; }, { ...; }, { ...; } & { ...; }>}
  */
 export function messagesRoutes(opts: HandlerOpts, prefix = "/api",) {
   return new Elysia({ name: "messages", },)

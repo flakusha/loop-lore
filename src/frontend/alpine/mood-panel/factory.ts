@@ -10,7 +10,9 @@ import type { EmotionDefinition, MoodPanelState, } from "./types";
 
 const log = rootLog.child({ module: "mood-panel", },);
 
-/** */
+/**
+ * @returns {MoodPanelState}
+ */
 export function createMoodPanelState(): MoodPanelState {
   return {
     mood: null,
@@ -19,6 +21,10 @@ export function createMoodPanelState(): MoodPanelState {
     loading: false,
     _happinessDelta: 5,
 
+    /**
+     * @param {string} actorId
+     * @returns {Promise<void>}
+     */
     async loadMood(actorId: string,) {
       try {
         const res = await apiFetch(`/api/v1/actors/${actorId}/mood`,);
@@ -31,6 +37,10 @@ export function createMoodPanelState(): MoodPanelState {
       }
     },
 
+    /**
+     * @param {string} actorId
+     * @returns {Promise<void>}
+     */
     async loadEmotions(actorId: string,) {
       try {
         const res = await apiFetch(`/api/v1/actors/${actorId}/emotions`,);
@@ -40,6 +50,9 @@ export function createMoodPanelState(): MoodPanelState {
       }
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async loadEmotionDefs() {
       try {
         const res = await apiFetch("/api/v1/emotions",);
@@ -49,6 +62,11 @@ export function createMoodPanelState(): MoodPanelState {
       }
     },
 
+    /**
+     * @param {string} actorId
+     * @param {number} delta
+     * @returns {Promise<void>}
+     */
     async applyHappinessDelta(actorId: string, delta: number,) {
       try {
         const res = await apiFetch(`/api/v1/actors/${actorId}/mood/delta`, {
@@ -68,18 +86,30 @@ export function createMoodPanelState(): MoodPanelState {
       }
     },
 
+    /**
+     * @returns {string}
+     */
     getMoodEmoji() {
       return moodToEmoji(this.mood?.currentMood ?? "neutral",);
     },
 
+    /**
+     * @returns {string}
+     */
     getMoodLabel() {
       return moodToLabel(this.mood?.currentMood ?? "neutral",);
     },
 
+    /**
+     * @returns {string}
+     */
     getHappinessColor() {
       return happinessColor(this.mood?.happiness ?? 50,);
     },
 
+    /**
+     * @returns {{ def: EmotionDefinition; intensity: number; }[]}
+     */
     getActiveEmotions() {
       const defs = new Map<string, EmotionDefinition>();
       for (const d of this.emotionDefs) {
@@ -95,6 +125,10 @@ export function createMoodPanelState(): MoodPanelState {
       return result;
     },
 
+    /**
+     * @param {number} happiness
+     * @returns {"ecstatic" | "happy" | "neutral" | "sad" | "miserable"}
+     */
     happinessToMood(happiness: number,) {
       if (happiness >= 80) { return "ecstatic"; }
       if (happiness >= 60) { return "happy"; }

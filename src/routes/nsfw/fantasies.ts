@@ -15,6 +15,7 @@ import type { HandlerOpts, } from "./types";
 /**
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { nsfw: { fantasies: { ...; }; }; }; } & { ...; } & { ...; } & { ...; }, { ...; }, { ...; }>}
  */
 export function fantasyRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, config, } = opts;

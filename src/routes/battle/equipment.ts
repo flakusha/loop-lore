@@ -26,6 +26,7 @@ import type { HandlerOpts, } from "./types";
 /**
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { battle: { equipment: { ...; }; }; }; } & ... 4 more ... & { ...; }, { ...; }, { ...; }>}
  */
 export function equipmentRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;

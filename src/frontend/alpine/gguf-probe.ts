@@ -68,6 +68,11 @@ class Cursor {
    * @param len Byte count to consume.
    * @throws {GgufProbeError} -3 when fewer than `len` bytes remain.
    */
+  /**
+   * @param {number} len
+   * @throws {Error}
+   * @returns {Uint8Array<ArrayBufferLike>}
+   */
   take(len: number,): Uint8Array {
     if (len > this.rest) {
       throw new GgufProbeError(-3, `gguf header truncated (need ${len}, have ${this.rest})`,);
@@ -80,6 +85,9 @@ class Cursor {
   /**
    * Read a little-endian u32.
    * @throws {GgufProbeError} -3 on truncation.
+   */
+  /**
+   * @returns {number}
    */
   u32(): number {
     const raw = this.take(4,);
@@ -94,6 +102,9 @@ class Cursor {
    * Read a little-endian u64. Exact for values under 2^53; larger values
    * saturate to infinity (callers reject both via `MAX_SPAN`).
    * @throws {GgufProbeError} -3 on truncation.
+   */
+  /**
+   * @returns {number}
    */
   u64(): number {
     const raw = this.take(8,);
@@ -110,6 +121,11 @@ class Cursor {
    * @param len Byte count to skip.
    * @throws {GgufProbeError} -3 on truncation, -4 on absurd lengths.
    */
+  /**
+   * @param {number} len
+   * @throws {Error}
+   * @returns {void}
+   */
   skip(len: number,): void {
     if (len > MAX_SPAN || len > this.rest) {
       const code: GgufProbeCode = len > MAX_SPAN ? -4 : -3;
@@ -121,6 +137,9 @@ class Cursor {
   /**
    * Skip one length-prefixed string.
    * @throws {GgufProbeError} -3 on truncation, -4 on absurd lengths.
+   */
+  /**
+   * @returns {void}
    */
   ggufString(): void {
     this.skip(this.u64(),);

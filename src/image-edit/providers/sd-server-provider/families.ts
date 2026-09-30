@@ -10,6 +10,13 @@ import type { SDServerHost, } from "./types";
  * @param endpoint
  * @param body
  * @param onProgress
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @returns {Promise<ImageEditResult[]>}
  */
 export async function sdcppGenerate(
   host: SDServerHost,
@@ -92,6 +99,8 @@ export async function sdcppGenerate(
  * @param endpoint
  * @param body
  * @param _onProgress
+ * @throws {Error}
+ * @returns {Promise<ImageEditResult[]>}
  */
 export async function sdapiGenerate(
   host: SDServerHost,
@@ -131,6 +140,8 @@ export async function sdapiGenerate(
 /**
  * @param host
  * @param body
+ * @throws {Error}
+ * @returns {Promise<ImageEditResult[]>}
  */
 export async function openaiGenerate(
   host: SDServerHost,

@@ -21,6 +21,7 @@ import type { HeatCycleState, HeatEffects, } from "./types";
  * @param row.effects
  * @param row.created_at
  * @param row.updated_at
+ * @returns {HeatCycleState}
  */
 export function rowToHeatCycle(row: {
   id: string;
@@ -51,6 +52,7 @@ export function rowToHeatCycle(row: {
  * @param db
  * @param actorId
  * @param species
+ * @returns {Promise<HeatCycleState>}
  */
 export async function getHeatCycle(
   db: Kysely<DB>,
@@ -114,6 +116,7 @@ export async function getHeatCycle(
  * @param db
  * @param actorId
  * @param days
+ * @returns {Promise<{ newPhase: HeatPhase; daysUntilNext: number; }>}
  */
 export async function advanceHeatCycle(
   db: Kysely<DB>,
@@ -164,6 +167,7 @@ export async function advanceHeatCycle(
  * Returns nullified effects for non-heat species.
  * @param db
  * @param actorId
+ * @returns {Promise<HeatEffects>}
  */
 export async function getHeatEffects(
   db: Kysely<DB>,

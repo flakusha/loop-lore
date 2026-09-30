@@ -46,6 +46,10 @@ export class LocationNsfwService {
    * Get or create NSFW config for a location.
    * @param locationId
    */
+  /**
+   * @param {string} locationId
+   * @returns {Promise<LocationNsfwConfig>}
+   */
   async getConfig(locationId: string,): Promise<LocationNsfwConfig> {
     return this.store.getConfig(locationId,);
   }
@@ -54,6 +58,11 @@ export class LocationNsfwService {
    * Update a location's NSFW config.
    * @param locationId
    * @param updates
+   */
+  /**
+   * @param {string} locationId
+   * @param {UpdateLocationNsfwOpts} updates
+   * @returns {Promise<boolean>}
    */
   async updateConfig(
     locationId: string,
@@ -67,6 +76,10 @@ export class LocationNsfwService {
    * Get NSFW configs for multiple locations.
    * @param locationIds
    */
+  /**
+   * @param {string[]} locationIds
+   * @returns {Promise<LocationNsfwConfig[]>}
+   */
   async getConfigs(locationIds: string[],): Promise<LocationNsfwConfig[]> {
     return this.store.getConfigs(locationIds,);
   }
@@ -74,6 +87,10 @@ export class LocationNsfwService {
   /**
    * Delete a location's NSFW config.
    * @param locationId
+   */
+  /**
+   * @param {string} locationId
+   * @returns {Promise<boolean>}
    */
   async deleteConfig(locationId: string,): Promise<boolean> {
     assertNsfwConfigEnabled();
@@ -84,6 +101,11 @@ export class LocationNsfwService {
    * Check if a location is suitable for NSFW encounters.
    * @param locationId
    * @param minPrivacy
+   */
+  /**
+   * @param {string} locationId
+   * @param {unknown} minPrivacy
+   * @returns {Promise<{ suitable: boolean; reason?: string | undefined; }>}
    */
   async isSuitableForEncounter(
     locationId: string,
@@ -123,6 +145,11 @@ export class LocationNsfwService {
    * @param worldId
    * @param minPrivacy
    */
+  /**
+   * @param {string} worldId
+   * @param {unknown} minPrivacy
+   * @returns {Promise<LocationNsfwConfig[]>}
+   */
   async listAvailable(
     worldId: string,
     minPrivacy = "semi_private",
@@ -152,6 +179,10 @@ export class LocationNsfwService {
    * `weather.changed` subscriber adjusts the stored config, not a copy.
    * @param locationId
    */
+  /**
+   * @param {string} locationId
+   * @returns {Promise<LocationAtmosphere>}
+   */
   async resolveAtmosphere(locationId: string,): Promise<LocationAtmosphere> {
     const config = await this.getConfig(locationId,);
     return config.atmosphere;
@@ -160,6 +191,10 @@ export class LocationNsfwService {
   /**
    * Whether a location counts as private (private or isolated tier).
    * @param locationId
+   */
+  /**
+   * @param {string} locationId
+   * @returns {Promise<boolean>}
    */
   async isPrivate(locationId: string,): Promise<boolean> {
     const config = await this.getConfig(locationId,);

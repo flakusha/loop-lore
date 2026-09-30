@@ -61,6 +61,10 @@ export class SkillsService {
    * Create a new skill for an actor
    * @param input
    */
+  /**
+   * @param {CreateSkillInput} input
+   * @returns {Promise<Skill>}
+   */
   async createSkill(input: CreateSkillInput,): Promise<Skill> {
     return createSkillDispatch(this.db, input,);
   }
@@ -68,6 +72,10 @@ export class SkillsService {
   /**
    * Get a skill by ID
    * @param skillId
+   */
+  /**
+   * @param {string} skillId
+   * @returns {Promise<Skill | null>}
    */
   async getSkill(skillId: string,): Promise<Skill | null> {
     return getSkillDispatch(this.db, skillId,);
@@ -78,6 +86,11 @@ export class SkillsService {
    * @param actorId
    * @param worldId
    */
+  /**
+   * @param {string} actorId
+   * @param {string} worldId
+   * @returns {Promise<Skill[]>}
+   */
   async getActorSkills(actorId: string, worldId?: string,): Promise<Skill[]> {
     return getActorSkillsDispatch(this.db, actorId, worldId,);
   }
@@ -87,6 +100,12 @@ export class SkillsService {
    * @param actorId
    * @param category
    * @param worldId
+   */
+  /**
+   * @param {string} actorId
+   * @param {SkillCategory} category
+   * @param {string} worldId
+   * @returns {Promise<Skill[]>}
    */
   async getSkillsByCategory(
     actorId: string,
@@ -101,6 +120,11 @@ export class SkillsService {
    * @param skillId
    * @param input
    */
+  /**
+   * @param {string} skillId
+   * @param {UpdateSkillInput} input
+   * @returns {Promise<Skill>}
+   */
   async updateSkill(skillId: string, input: UpdateSkillInput,): Promise<Skill> {
     return updateSkillDispatch(this.db, skillId, input,);
   }
@@ -108,6 +132,10 @@ export class SkillsService {
   /**
    * Delete a skill
    * @param skillId
+   */
+  /**
+   * @param {string} skillId
+   * @returns {Promise<void>}
    */
   async deleteSkill(skillId: string,): Promise<void> {
     return deleteSkillDispatch(this.db, skillId,);
@@ -118,6 +146,11 @@ export class SkillsService {
    * @param skillId
    * @param xpAmount
    */
+  /**
+   * @param {string} skillId
+   * @param {number} xpAmount
+   * @returns {Promise<XpGainResult>}
+   */
   async addXp(skillId: string, xpAmount: number,): Promise<XpGainResult> {
     return addXpDispatch(this.db, skillId, xpAmount,);
   }
@@ -126,6 +159,11 @@ export class SkillsService {
    * Specialize a skill
    * @param skillId
    * @param specialization
+   */
+  /**
+   * @param {string} skillId
+   * @param {string} specialization
+   * @returns {Promise<Skill>}
    */
   async specializeSkill(skillId: string, specialization: string,): Promise<Skill> {
     return specializeSkillDispatch(this.db, skillId, specialization,);
@@ -136,6 +174,12 @@ export class SkillsService {
    * @param actorId
    * @param prerequisites
    * @param worldId
+   */
+  /**
+   * @param {string} actorId
+   * @param {string[]} prerequisites
+   * @param {string} worldId
+   * @returns {Promise<{ met: boolean; missing: string[]; }>}
    */
   async checkPrerequisites(
     actorId: string,
@@ -149,6 +193,11 @@ export class SkillsService {
    * Build skill tree for an actor
    * @param actorId
    * @param worldId
+   */
+  /**
+   * @param {string} actorId
+   * @param {string} worldId
+   * @returns {Promise<SkillTreeNode[]>}
    */
   async buildSkillTree(
     actorId: string,

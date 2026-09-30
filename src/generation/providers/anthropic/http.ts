@@ -19,6 +19,7 @@ const TOOLS_BETA = "anthropic-beta: tools-2024-04-04";
 
 /**
  * @param signals
+ * @returns {AbortSignal | undefined}
  */
 export function combineAbortSignals(...signals: (AbortSignal | undefined)[]): AbortSignal | undefined {
   const defined: AbortSignal[] = [];
@@ -51,6 +52,8 @@ export function combineAbortSignals(...signals: (AbortSignal | undefined)[]): Ab
  * @param signal - Caller abort signal
  * @param apiKeyOverride - Per-request key override (BYO support); apiKey is required
  * @param toolCalling - Whether to send the tools beta header
+ * @throws {Error}
+ * @returns {Promise<Response>}
  */
 export async function fetchRaw(
   state: AnthropicState,
@@ -127,6 +130,11 @@ export async function fetchWithRetry(
 /**
  * Map a non-2xx response to the appropriate ProviderError subclass.
  * @param response - Failed HTTP response
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @returns {Promise<never>}
  */
 export async function handleErrorResponse(response: Response,): Promise<never> {
   let message = `Anthropic request failed (${response.status})`;
@@ -154,6 +162,7 @@ export async function handleErrorResponse(response: Response,): Promise<never> {
 /**
  * Map an Anthropic stop_reason to the shared finish-reason value.
  * @param stopReason
+ * @returns {"error" | "cancelled" | "length" | "stop"}
  */
 export function mapFinishReason(
   stopReason: string | null | undefined,

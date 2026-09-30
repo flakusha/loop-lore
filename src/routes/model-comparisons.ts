@@ -47,6 +47,7 @@ function parseRun(row: ComparisonRunRow,): Record<string, unknown> {
  * @param root0
  * @param root0.database
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, {}, { derive: {}; resolve: {}; schema: {}; standaloneSchema: {}; response: {}; }, { ...; }>}
  */
 export function modelComparisonsRoutes({ database, }: HandleOpts, prefix = "/api",): Elysia {
   return new Elysia({ name: "model-comparisons", },)

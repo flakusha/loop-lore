@@ -207,6 +207,8 @@ export const VARIANT_DEFAULTS: Record<ChatVariant, VariantDefaults> = {
 
 /**
  * Look up the defaults for a variant, returning `undefined` if unknown.
+ * @param {string} variant
+ * @returns {VariantDefaults | undefined}
  */
 export function getVariantDefaults(variant: string,): VariantDefaults | undefined {
   return (VARIANT_DEFAULTS as Record<string, VariantDefaults | undefined>)[variant];
@@ -216,6 +218,11 @@ export function getVariantDefaults(variant: string,): VariantDefaults | undefine
  * Validate that a supplied `(chat_type, chat_mode, chat_purpose)` triple
  * matches what the variant table declares. Returns `null` on success, or
  * a human-readable error string on mismatch.
+ * @param {ChatVariant} variant
+ * @param {string} type
+ * @param {string} mode
+ * @param {string} purpose
+ * @returns {string | null}
  */
 export function validateVariantTriple(
   variant: ChatVariant,

@@ -26,6 +26,7 @@ interface SwitchOpts {
 /**
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, {}, { derive: {}; resolve: {}; schema: {}; standaloneSchema: {}; response: {}; }, { ...; }>}
  */
 export function switchSessionRoutes(opts: SwitchOpts, prefix = "/api",): Elysia {
   const { database, config, } = opts;

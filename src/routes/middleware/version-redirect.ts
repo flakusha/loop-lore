@@ -17,6 +17,10 @@
  * app.all("/api/:resource", versionRedirect("v1",));
  * app.all("/api/:resource/*", versionRedirect("v1",));
  */
+/**
+ * @param {string} targetVersion
+ * @returns {(ctx: { request: Request; }) => Response}
+ */
 export function versionRedirect(targetVersion: string,) {
   return (ctx: { request: Request },) => {
     const url = new URL(ctx.request.url,);

@@ -12,6 +12,7 @@ import type { HandlerOpts, } from "./types";
  * sub-plugins. Registration point/name (`character-avatars`) is preserved so
  * the `register-plugins.ts` wiring is unchanged.
  * @param opts
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { actors: { ":actorId": { ...; }; }; }; } & ... 9 more ... & { ...; }, { ...; }, { ...; } & { ...; }>}
  */
 export function characterAvatarsRoutes(opts: HandlerOpts,) {
   return (

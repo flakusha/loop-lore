@@ -17,6 +17,7 @@ export type EquipSlot = (typeof EQUIP_SLOTS)[number];
 /**
  * Slot an ItemCategory occupies when equipped.
  * @param category
+ * @returns {"weapon" | "armor" | "accessory" | null}
  */
 export function slotForCategory(category: ItemCategory,): EquipSlot | null {
   switch (category) {

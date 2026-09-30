@@ -83,6 +83,7 @@ export class SwipeInsertExhaustedError extends Error {
  * @param database
  * @param chatId
  * @param idempotencyKey
+ * @returns {Promise<string | null>}
  */
 export async function findByIdempotencyKey(
   database: Kysely<DB>,
@@ -105,6 +106,8 @@ export async function findByIdempotencyKey(
  * via the input shape so this helper is testable without Elysia fixtures.
  * @param database
  * @param input
+ * @throws {Error}
+ * @returns {Promise<SwipeInsertResult>}
  */
 export async function insertUserMessageWithRetry(
   database: Kysely<DB>,

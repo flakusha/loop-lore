@@ -3,6 +3,7 @@
 
 /**
  * @param text
+ * @returns {Set<string>}
  */
 export function extractEntities(text: string,): Set<string> {
   const entities = new Set<string>();
@@ -38,6 +39,7 @@ export function extractEntities(text: string,): Set<string> {
 /**
  * @param a
  * @param b
+ * @returns {number}
  */
 export function calculateSimilarity(a: string, b: string,): number {
   const wordsA = new Set(a.toLowerCase().split(/\s+/,),);

@@ -13,6 +13,7 @@ import type { ExportContext, WorldBundle, } from "./types";
  * per-world export route so both produce identical bundles.
  * @param database
  * @param worldId
+ * @returns {Promise<WorldBundle | null>}
  */
 export async function buildWorldBundle(database: Kysely<DB>, worldId: string,): Promise<WorldBundle | null> {
   const world = await database
@@ -45,6 +46,7 @@ export async function buildWorldBundle(database: Kysely<DB>, worldId: string,): 
  * Export a self-contained {@link WorldBundle} per owned world into
  * `zip/story/<worldId>.json`. Populates `ctx.counts.story`.
  * @param ctx
+ * @returns {Promise<void>}
  */
 export async function exportStoryToZip(ctx: ExportContext,): Promise<void> {
   const worlds = await ctx.database

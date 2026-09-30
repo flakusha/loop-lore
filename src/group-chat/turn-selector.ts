@@ -23,6 +23,11 @@ import { safeJsonParse, } from "../utils";
 import { extractMentionedActorIds, } from "./mention-parser";
 
 const log: Logger = new Proxy({} as Logger, {
+  /**
+   * @param {unknown} _target
+   * @param {unknown} prop
+   * @returns {any}
+   */
   get(_target, prop,) {
     const instance = getLogger().child({ module: "group-turn-selector", },);
     return Reflect.get(instance, prop,);
@@ -122,6 +127,7 @@ export async function selectNextGroupActor(options: TurnSelectorOptions,): Promi
 /**
  * Check if a chat is paused from story_state JSON.
  * @param storyState
+ * @returns {boolean}
  */
 export function checkPaused(storyState: string | null,): boolean {
   if (!storyState) { return false; }

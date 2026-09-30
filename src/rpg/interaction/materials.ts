@@ -5,6 +5,12 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import type { MaterialRequirement, } from "./types";
 
+/**
+ * @param {Kysely<DB>} database
+ * @param {string} actorId
+ * @param {MaterialRequirement[]} requirements
+ * @returns {Promise<string[]>}
+ */
 export async function findMissingMaterials(
   database: Kysely<DB>,
   actorId: string,

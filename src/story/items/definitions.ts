@@ -16,6 +16,7 @@ import type { ItemDefinition, ItemState, } from "./types";
  * Create a new item definition
  * @param state
  * @param def
+ * @returns {Promise<string>}
  */
 export async function createDefinition(state: ItemState, def: ItemDefinition,): Promise<string> {
   parseItemEffects(def.properties.effects,);
@@ -49,6 +50,12 @@ export async function createDefinition(state: ItemState, def: ItemDefinition,): 
  * @param itemId
  * @param worldId
  */
+/**
+ * @param {ItemState} state
+ * @param {string} itemId
+ * @param {string} worldId
+ * @returns {Promise<{ id: string; name: string; created_at: string; updated_at: string; world_id: string; value: number; properties: string; description: string | null; category: ItemCategory; weight: number; rarity: ItemRarity; stackable: StackableState; max_stack: number; } | null>}
+ */
 export async function getDefinition(state: ItemState, itemId: string, worldId: string,) {
   return (await state.db.selectFrom("items",).selectAll().where("id", "=", itemId,).where("world_id", "=", worldId,)
     .executeTakeFirst()) ?? null;
@@ -59,6 +66,7 @@ export async function getDefinition(state: ItemState, itemId: string, worldId: s
  * @param state
  * @param worldId
  * @param category
+ * @returns {Promise<{ id: string; name: string; created_at: string; updated_at: string; world_id: string; value: number; properties: string; description: string | null; category: ItemCategory; weight: number; rarity: ItemRarity; stackable: StackableState; max_stack: number; }[]>}
  */
 export async function listDefinitions(state: ItemState, worldId: string, category?: ItemCategory,) {
   let query = state.db.selectFrom("items",).selectAll().where("world_id", "=", worldId,);

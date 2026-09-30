@@ -14,6 +14,7 @@ import type { ExportJob, HandlerOpts, } from "./types";
  * @param root0
  * @param root0.database
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, {}, { derive: {}; resolve: {}; schema: {}; standaloneSchema: {}; response: {}; }, { ...; }>}
  */
 export function startRoutes({ database, }: HandlerOpts, prefix = "/api",): Elysia {
   return new Elysia()
@@ -56,6 +57,10 @@ export function startRoutes({ database, }: HandlerOpts, prefix = "/api",): Elysi
       // Return SSE stream
       const encoder = new TextEncoder();
       const stream = new ReadableStream({
+        /**
+         * @param {unknown} controller
+         * @returns {void}
+         */
         start(controller,) {
           // Client disconnects mid-stream make any further controller op throw
           // ("Controller is already closed"). Every enqueue/close below runs

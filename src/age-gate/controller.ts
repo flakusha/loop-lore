@@ -40,6 +40,10 @@ class AgeGateConfigStore {
    * Initialize the store with config.
    * @param config - Age-gate configuration.
    */
+  /**
+   * @param {AgeGateConfig} config
+   * @returns {void}
+   */
   init(config: AgeGateConfig,): void {
     this.config = { ...config, };
   }
@@ -48,6 +52,9 @@ class AgeGateConfigStore {
    * Get the current config.
    * @returns Current configuration.
    */
+  /**
+   * @returns {AgeGateConfig}
+   */
   get(): AgeGateConfig {
     return { ...this.config, };
   }
@@ -55,6 +62,10 @@ class AgeGateConfigStore {
   /**
    * Update the config partially.
    * @param partial - Partial config to merge.
+   */
+  /**
+   * @param {Partial<AgeGateConfig>} partial
+   * @returns {void}
    */
   update(partial: Partial<AgeGateConfig>,): void {
     this.config = { ...this.config, ...partial, };
@@ -66,6 +77,7 @@ export const ageGateConfig = new AgeGateConfigStore();
 /**
  * Seed the runtime config. Called once during server start.
  * @param config - Age-gate configuration.
+ * @returns {void}
  */
 export function initAgeGate(config: AgeGateConfig,): void {
   ageGateConfig.init(config,);

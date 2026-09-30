@@ -28,6 +28,7 @@ function xpForLevel(level: number,): number {
  * @param actorId
  * @param category
  * @param name
+ * @returns {Promise<SeductionSkill>}
  */
 export async function getSkill(
   db: Kysely<DB>,
@@ -86,6 +87,7 @@ export async function getSkill(
  * @param category
  * @param name
  * @param amount
+ * @returns {Promise<{ leveled: boolean; newLevel: number; }>}
  */
 export async function awardXp(
   db: Kysely<DB>,
@@ -135,6 +137,7 @@ export async function awardXp(
  * Get all seduction skills for an actor.
  * @param db
  * @param actorId
+ * @returns {Promise<SeductionSkill[]>}
  */
 export async function getActorSkills(db: Kysely<DB>, actorId: string,): Promise<SeductionSkill[]> {
   const rows = await db

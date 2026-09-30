@@ -8,6 +8,7 @@ import type { LocationTraitRow, WorldTraitRow, } from "./types";
  * Get all world and location traits for a single actor
  * @param db
  * @param actorId
+ * @returns {Promise<{ worldTraits: WorldTraitRow[]; locationTraits: LocationTraitRow[]; }>}
  */
 export async function getAllTraitsForActor(
   db: Kysely<any>,

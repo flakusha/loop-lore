@@ -13,6 +13,7 @@ export { LogLevel, LogLevelNumeric, } from "./types";
  * Convert config string to numeric threshold.
  * Entries with level < threshold are filtered out.
  * @param level
+ * @returns {number}
  */
 export function levelFromConfig(level: LogLevelT,): number {
   switch (level) {
@@ -43,6 +44,7 @@ export function levelFromConfig(level: LogLevelT,): number {
 /**
  * Map numeric level back to string label for console output.
  * @param numeric
+ * @returns {string}
  */
 export function numericToLabel(numeric: number,): string {
   switch (numeric) {
@@ -74,6 +76,7 @@ export function numericToLabel(numeric: number,): string {
  * Check if a numeric log level should be emitted at given threshold.
  * @param entryLevel
  * @param threshold
+ * @returns {boolean}
  */
 export function shouldEmit(entryLevel: number, threshold: number,): boolean {
   return entryLevel >= threshold;

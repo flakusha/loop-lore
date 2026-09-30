@@ -47,6 +47,7 @@ const LOCK_KEY = "__alpineStoresInitialized";
  * Wrapped in try-catch so a store registration failure never prevents
  * Alpine.start() from being scheduled (vendor.ts calls this inline before
  * the DOMContentLoaded listener).
+ * @returns {void}
  */
 export function initAlpineStores(): void {
   if (!globalThis.Alpine) { return; }

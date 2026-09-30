@@ -36,6 +36,11 @@ const rule: any = {
     ],
   },
 
+  /**
+   * @param {any} context
+   * @param {any[]} options
+   * @returns {{ FunctionDeclaration: (node: any) => void; FunctionExpression: (node: any) => void; ArrowFunctionExpression: (node: any) => void; }}
+   */
   create(context: any, options: any[],) {
     const maxParams = options?.[0]?.maxParams ?? 2;
 

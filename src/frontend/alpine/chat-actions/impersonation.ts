@@ -7,6 +7,9 @@ import { jsonBody, } from "../json";
 import type { ChatState, } from "../types";
 
 export const impersonation: Partial<ChatState> & ThisType<ChatState> = {
+  /**
+   * @returns {Promise<void>}
+   */
   async toggleImpersonate() {
     if (!this.activeChat || !this.currentCharacter) {
       this.$dispatch?.("show-toast", { type: "warning", message: t("toasts.noChatOrCharacter",), },);
@@ -66,10 +69,17 @@ export const impersonation: Partial<ChatState> & ThisType<ChatState> = {
    * which starts or ends impersonation depending on current state.
    * @param _cmd
    */
+  /**
+   * @param {string} _cmd
+   * @returns {Promise<void>}
+   */
   async impersonate(_cmd: string,): Promise<void> {
     await this.toggleImpersonate();
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async loadImpersonationState() {
     if (!this.activeChat) { return; }
     try {

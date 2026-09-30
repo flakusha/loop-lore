@@ -9,6 +9,10 @@ import type { ChatState, } from "./../types";
 const log = rootLog.child({ module: "mood", },);
 
 export const moodStateLoading: Partial<ChatState> & ThisType<ChatState> = {
+  /**
+   * @throws {Error}
+   * @returns {Promise<void>}
+   */
   async loadMood() {
     if (!this.activeChat) { return; }
     this._moodLoading = true;
@@ -70,6 +74,10 @@ export const moodStateLoading: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @param {number} happiness
+   * @returns {Promise<void>}
+   */
   async updateMoodHappiness(happiness: number,) {
     if (!this._mood || !this.activeChat) { return; }
     try {
@@ -100,6 +108,10 @@ export const moodStateLoading: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @param {number} delta
+   * @returns {Promise<void>}
+   */
   async applyMoodDelta(delta: number,) {
     if (!this._mood || !this.activeChat) { return; }
     try {
@@ -133,6 +145,10 @@ export const moodStateLoading: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @param {number} happiness
+   * @returns {string}
+   */
   _happinessToMood(happiness: number,): string {
     if (happiness >= 80) { return "ecstatic"; }
     if (happiness >= 60) { return "happy"; }
@@ -141,6 +157,10 @@ export const moodStateLoading: Partial<ChatState> & ThisType<ChatState> = {
     return "miserable";
   },
 
+  /**
+   * @param {string} mood
+   * @returns {string}
+   */
   _getMoodEmoji(mood: string,): string {
     const emojis: Record<string, string> = {
       ecstatic: "😆",
@@ -160,6 +180,10 @@ export const moodStateLoading: Partial<ChatState> & ThisType<ChatState> = {
     return emojis[mood] ?? "😐";
   },
 
+  /**
+   * @param {number} happiness
+   * @returns {string}
+   */
   _getMoodColor(happiness: number,): string {
     if (happiness >= 80) { return "#22c55e"; } // green
     if (happiness >= 60) { return "#84cc16"; } // lime

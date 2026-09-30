@@ -20,6 +20,10 @@ import { pluginRoutes, } from "../plugins";
 import { worldImportRoutes, } from "../world-import";
 import { versionedOpenApiPlugin, } from "./openapi";
 
+/**
+ * @param {RegisterPluginsOpts} opts
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { admin: { "sd-templates": { ...; }; }; }; } & ... 27 more ... & { ...; }, { ...; }, { ...; } & { ...; }>}
+ */
 export function adminSurface(opts: RegisterPluginsOpts,) {
   const { database, config, } = opts;
   const handleOpts = { database, config, };

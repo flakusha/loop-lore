@@ -33,6 +33,7 @@ const R_SUFFIX = "/character-growth";
  * Mount all character-growth routes on the supplied Elysia instance.
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { arc: { get: { body: unknown; params: {}; query: { ...; }; headers: unknown; response: { ...; }; }; }; }; } & { ...;...}
  */
 export function characterGrowthRoutes(opts: HandlerOpts, prefix = "/api",) {
   const svc = () => characterGrowthService(opts.database,);

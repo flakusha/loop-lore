@@ -96,6 +96,9 @@ export function safeFromBase64Url(encoded: string, maxSize = DEFAULT_MAX_SIZE,):
 /**
  * Decode standard base64 or throw `SafeBufferError`.
  * @throws {SafeBufferError} when the input is empty, oversized, or malformed
+ * @param {string} encoded
+ * @param {unknown} maxSize
+ * @returns {Buffer<ArrayBufferLike>}
  */
 export function mustFromBase64(encoded: string, maxSize = DEFAULT_MAX_SIZE,): Buffer {
   return unwrapGuard(safeFromBase64(encoded, maxSize,),);
@@ -104,6 +107,9 @@ export function mustFromBase64(encoded: string, maxSize = DEFAULT_MAX_SIZE,): Bu
 /**
  * Decode base64url or throw `SafeBufferError`.
  * @throws {SafeBufferError} when the input is empty, oversized, or malformed
+ * @param {string} encoded
+ * @param {unknown} maxSize
+ * @returns {Buffer<ArrayBufferLike>}
  */
 export function mustFromBase64Url(encoded: string, maxSize = DEFAULT_MAX_SIZE,): Buffer {
   return unwrapGuard(safeFromBase64Url(encoded, maxSize,),);

@@ -17,6 +17,7 @@ import { createEntityRoutes, } from "./entity-routes";
  * @param opts.database
  * @param opts.config
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, {}, { derive: {}; resolve: {}; schema: {}; standaloneSchema: {}; response: {}; }, { ...; }>}
  */
 export function actorNotesRoutes(opts: { database: Db; config: Config }, prefix = "/api",): Elysia {
   return createEntityRoutes(

@@ -116,6 +116,11 @@ export async function encryptAtRest(opts: AtRestEncryptOpts,): Promise<AtRestRes
 /**
  * @param opts
  * @returns void
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
  */
 export async function decryptAtRest(opts: AtRestDecryptOpts,): Promise<string> {
   const { database, storedContent, encryptionLevel, } = opts;

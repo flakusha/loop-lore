@@ -54,6 +54,10 @@ function encodeProperties(properties: Record<string, unknown>,): string {
  * 016 invariant: stackable/consumable instances carry NULL durability
  * and stay active; durable instances carry 0 ≤ current ≤ max with
  * `is_active` mirroring `current > 0`.
+ * @param {{ category: ItemCategory; stackable: StackableState }} definition
+ * @param {{ current: number | null; max: number | null }} durabilityState
+ * @param {number} isActive
+ * @returns {boolean}
  */
 export function isItemInstanceStateConsistent(
   definition: { category: ItemCategory; stackable: StackableState },
@@ -81,6 +85,9 @@ export function isItemInstanceStateConsistent(
  * @param hidden
  * @param respawnable
  * @param spawnCondition
+ * @throws {Error}
+ * @throws {Error}
+ * @returns {Promise<string>}
  */
 export async function placeInLocation(
   state: ItemState,
@@ -134,7 +141,17 @@ export async function placeInLocation(
   return id;
 }
 
-/** Give item instance to an NPC. */
+/**
+ * Give item instance to an NPC.
+ * @param {ItemState} state
+ * @param {string} itemId
+ * @param {string} actorId
+ * @param {string} worldId
+ * @param {unknown} quantity
+ * @param {DurabilityOverride} durability
+ * @throws {Error}
+ * @returns {Promise<string>}
+ */
 export async function giveToNpc(
   state: ItemState,
   itemId: string,
@@ -183,6 +200,7 @@ export async function giveToNpc(
  * @param state
  * @param locationId
  * @param includeHidden
+ * @returns {Promise<{ world_id: string; visibility: ItemVisibility; location_id: string | null; item_id: string; owner_actor_id: string | null; quantity: number; max_durability: number | null; ... 10 more ...; instance_properties: string; }[]>}
  */
 export async function getAtLocation(state: ItemState, locationId: string, worldId: string, includeHidden = false,) {
   let query = state.db

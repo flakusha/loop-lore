@@ -46,6 +46,11 @@ export class NpcMovementIndicatorService {
    * @param messageId
    * @param events
    */
+  /**
+   * @param {string} messageId
+   * @param {MovementEvent[]} events
+   * @returns {Promise<void>}
+   */
   async storeMovementEvents(
     messageId: string,
     events: MovementEvent[],
@@ -79,6 +84,10 @@ export class NpcMovementIndicatorService {
   /**
    * Get movement events for a chat.
    * @param query
+   */
+  /**
+   * @param {MovementQuery} query
+   * @returns {Promise<MovementEvent[]>}
    */
   async getMovementEvents(query: MovementQuery,): Promise<MovementEvent[]> {
     let qb = this.db
@@ -119,6 +128,11 @@ export class NpcMovementIndicatorService {
    * Get recent movement events for display in chat.
    * @param chatId
    * @param limit
+   */
+  /**
+   * @param {string} chatId
+   * @param {unknown} limit
+   * @returns {Promise<MovementEvent[]>}
    */
   async getRecentMovements(
     chatId: string,

@@ -22,6 +22,9 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
   ...chatDraftMethods,
   ...chatSendMethods,
   ...chatSeenMethods,
+  /**
+   * @returns {Promise<void>}
+   */
   async loadMessages() {
     // Capture the target chat up front so a rapid selectChat A→B cannot let a
     // slow A response overwrite B's state (out-of-order fetch race).
@@ -75,6 +78,9 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
     this.updateVnMode?.();
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async loadOlderMessages() {
     const chatId = this.activeChat;
     log.info("loadOlderMessages", { chatId, page: this.currentPage + 1, },);
@@ -107,6 +113,9 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @returns {void}
+   */
   setupInfiniteScroll() {
     if (this.scrollObserver) {
       this.scrollObserver?.disconnect();
@@ -125,6 +134,9 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
     this.scrollObserver?.observe(sentinel,);
   },
 
+  /**
+   * @returns {void}
+   */
   scrollToBottom() {
     const el = document.querySelector("#message-list",);
     if (el) {
@@ -134,6 +146,9 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @returns {void}
+   */
   setupScrollDetection() {
     const el = document.querySelector("#message-list",);
     if (!el) { return; }
@@ -149,6 +164,9 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
     el.addEventListener("scroll", this._scrollHandler, { passive: true, },);
   },
 
+  /**
+   * @returns {void}
+   */
   scrollToBottomSmooth() {
     const el = document.querySelector("#message-list",);
     if (el) {
@@ -157,11 +175,20 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @param {HTMLTextAreaElement} el
+   * @returns {void}
+   */
   autoResize(el: HTMLTextAreaElement,) {
     el.style.height = "auto";
     el.style.height = `${Math.min(el.scrollHeight, 200,)}px`;
   },
 
+  /**
+   * @param {string} msgId
+   * @param {string} emoji
+   * @returns {Promise<void>}
+   */
   async toggleReaction(msgId: string, emoji: string,) {
     if (!this.activeChat) { return; }
     try {
@@ -177,6 +204,10 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
       // non-critical
     }
   },
+  /**
+   * @param {string} msgId
+   * @returns {Promise<void>}
+   */
   async loadMessageReactions(msgId: string,) {
     try {
       const res = await apiFetch(`/api/v1/messages/${msgId}/reactions`,);
@@ -190,6 +221,9 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async loadAllReactions() {
     if (!this.activeChat || this.messages.length === 0) { return; }
     const ids = Array.from(this.messages, (m,) => m.id,);

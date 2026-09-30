@@ -35,6 +35,8 @@ export class SafeBufferError extends Error {
  * The thrown error keeps the guarding function's own `operation`, since that
  * is what actually rejected the input; the entry point is the same guard.
  * @throws {SafeBufferError} when the guard rejected the input
+ * @param {BufferResult<T>} result
+ * @returns {T}
  */
 export function unwrapGuard<T,>(result: BufferResult<T>,): T {
   if (result.ok) { return result.buffer; }

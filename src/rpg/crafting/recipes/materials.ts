@@ -11,6 +11,7 @@ import type { CreateRecipeMaterialOpts, } from "./types";
  * @param db
  * @param recipeId
  * @param materials
+ * @returns {Promise<void>}
  */
 export async function replaceMaterials(
   db: Kysely<DB>,

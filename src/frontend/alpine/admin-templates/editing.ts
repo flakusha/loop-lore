@@ -12,14 +12,27 @@ export const editing = {
 
   // ── Inline template editing ─────────────────────────
 
+  /**
+   * @param {string} detail
+   * @param {string} mode
+   * @param {string} value
+   * @returns {void}
+   */
   startEditTemplate(detail: string, mode: string, value: string,) {
     this.editingTemplate = { detail, mode, value, };
   },
 
+  /**
+   * @returns {void}
+   */
   cancelEditTemplate() {
     this.editingTemplate = null;
   },
 
+  /**
+   * @param {AdminTemplates} this
+   * @returns {Promise<void>}
+   */
   async saveTemplate(this: AdminTemplates,) {
     if (!this.editingTemplate || !this.selectedProfile) { return; }
     this.savingTemplate = true;
@@ -58,6 +71,10 @@ export const editing = {
 
   // ── Save model defaults ─────────────────────────────
 
+  /**
+   * @param {AdminTemplates} this
+   * @returns {Promise<void>}
+   */
   async saveDefaults(this: AdminTemplates,) {
     if (!this.selectedProfile) { return; }
     try {

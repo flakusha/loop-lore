@@ -8,6 +8,7 @@
  * (excessive emoting, parentheticals, asterisk actions)
  * which can indicate the model is stuck in a loop.
  * @param text
+ * @returns {{ detected: boolean; score: number; }}
  */
 export function detectTheatricalLoop(text: string,): { detected: boolean; score: number } {
   const lines = text.split("\n",);

@@ -55,6 +55,9 @@ interface GmGuidanceComponent {
     _gmParticipants: [],
 
     /** Load guidance + participants for the active chat. */
+    /**
+     * @returns {Promise<void>}
+     */
     async init() {
       const chatId = activeChatId();
       if (!chatId) { return; }
@@ -73,6 +76,9 @@ interface GmGuidanceComponent {
       }
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async loadGmParticipants() {
       const chatId = activeChatId();
       if (!chatId) { return; }
@@ -91,6 +97,9 @@ interface GmGuidanceComponent {
       }
     },
 
+    /**
+     * @returns {void}
+     */
     addGmConstraint() {
       const c = this._gmNewConstraint.trim();
       if (!c) { return; }
@@ -103,6 +112,10 @@ interface GmGuidanceComponent {
       this._gmNewConstraint = "";
     },
 
+    /**
+     * @param {string} constraint
+     * @returns {void}
+     */
     removeGmConstraint(constraint: string,) {
       const kept: string[] = [];
       for (const c of this._gmGuidance.constraints) {
@@ -111,6 +124,11 @@ interface GmGuidanceComponent {
       this._gmGuidance = { ...this._gmGuidance, constraints: kept, };
     },
 
+    /**
+     * @param {string} actorId
+     * @param {GmTurnPriority} level
+     * @returns {void}
+     */
     setGmTurnPriority(actorId: string, level: GmTurnPriority,) {
       this._gmGuidance = {
         ...this._gmGuidance,
@@ -118,6 +136,9 @@ interface GmGuidanceComponent {
       };
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async applyGmGuidance() {
       const chatId = activeChatId();
       if (!chatId) { return; }
@@ -141,6 +162,9 @@ interface GmGuidanceComponent {
       }
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async clearGmGuidance() {
       this._gmGuidance = { constraints: [], turnPriority: {}, };
       this._gmNewConstraint = "";

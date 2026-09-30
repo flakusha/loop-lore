@@ -27,6 +27,7 @@ import type {
  * @param row.times_explored
  * @param row.created_at
  * @param row.updated_at
+ * @returns {Fantasy}
  */
 export function getRow(row: {
   id: string;

@@ -53,6 +53,8 @@ export interface HandleGenerateOpts {
  * @param root0.config
  * @param root0.userId
  * @param root0.userRole
+ * @throws {Error}
+ * @returns {Promise<Response>}
  */
 export async function handleGenerate({
   body,

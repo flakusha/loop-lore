@@ -14,6 +14,10 @@ export const chatEditing: Partial<ChatState> & ThisType<ChatState> = {
   previewMediaAsset: null as GalleryAsset | null,
   pendingAssets: [] as { assetId: string; filename: string }[],
 
+  /**
+   * @param {string} msgId
+   * @returns {void}
+   */
   startEdit(msgId: string,) {
     const msgs = this.messages;
     const msg = msgs.find((m,) => m.id === msgId);
@@ -22,11 +26,18 @@ export const chatEditing: Partial<ChatState> & ThisType<ChatState> = {
     this.editContent = msg.content;
   },
 
+  /**
+   * @returns {void}
+   */
   cancelEdit() {
     this.editingMessageId = null;
     this.editContent = "";
   },
 
+  /**
+   * @param {string} msgId
+   * @returns {Promise<void>}
+   */
   async saveEdit(msgId: string,) {
     log.info("saveEdit", { messageId: msgId, },);
     if (!this.activeChat || !this.editContent.trim()) { return; }
@@ -53,6 +64,11 @@ export const chatEditing: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @param {string} msgId
+   * @param {Event} event
+   * @returns {Promise<void>}
+   */
   async removeMessage(msgId: string, event: Event,) {
     log.info("removeMessage", { messageId: msgId, },);
     if (!this.activeChat) { return; }
@@ -75,6 +91,11 @@ export const chatEditing: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @param {string} msgId
+   * @param {Event} event
+   * @returns {Promise<void>}
+   */
   async copyMessage(msgId: string, event: Event,) {
     log.info("copyMessage", { messageId: msgId, },);
     const msgs = this.messages;
@@ -90,6 +111,10 @@ export const chatEditing: Partial<ChatState> & ThisType<ChatState> = {
     button?.blur();
   },
 
+  /**
+   * @param {Event} event
+   * @returns {Promise<void>}
+   */
   async handleAttach(event: Event,) {
     log.info("handleAttach",);
     if (!this.activeChat) {
@@ -131,6 +156,10 @@ export const chatEditing: Partial<ChatState> & ThisType<ChatState> = {
     input.value = "";
   },
 
+  /**
+   * @param {string} assetId
+   * @returns {void}
+   */
   removePendingAsset(assetId: string,) {
     const pending = this.pendingAssets;
     const filtered: typeof pending = [];

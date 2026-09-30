@@ -22,6 +22,7 @@ import type { TradeLine, TradeResult, } from "./types";
  * @param opts.npcActorId
  * @param opts.sellerItems
  * @param opts.price
+ * @returns {Promise<TradeResult>}
  */
 export async function buyFromNpc(
   db: Kysely<DB>,
@@ -73,6 +74,7 @@ export async function buyFromNpc(
  * @param opts.npcActorId
  * @param opts.buyerItems
  * @param opts.price
+ * @returns {Promise<TradeResult>}
  */
 export async function sellToNpc(
   db: Kysely<DB>,

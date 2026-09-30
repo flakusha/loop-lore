@@ -17,6 +17,7 @@ import { safeJsonStringify, uid, } from "../utils";
  * @param seedType - Entity type, e.g. "character" | "world" | "chat"
  * @param seedId - ID of the seeded entity
  * @param metadata - Optional structured detail (username/owners/participants)
+ * @returns {Promise<void>}
  */
 export async function recordSeedAudit(
   database: Kysely<DB>,

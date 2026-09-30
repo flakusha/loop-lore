@@ -33,6 +33,10 @@ function getManager(): ActivityManager | undefined {
 export const chatActivity: Partial<ChatState> & ThisType<ChatState> = {
   _unseenCounts: {},
 
+  /**
+   * @param {string} chatId
+   * @returns {Promise<void>}
+   */
   async markChatAsRead(chatId: string,) {
     const messages = this.messages;
     if (messages.length === 0) { return; }
@@ -61,6 +65,10 @@ export const chatActivity: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @param {string} chatId
+   * @returns {number}
+   */
   getUnseenCount(chatId: string,): number {
     const mgr = getManager();
     return mgr ? mgr.getUnseenCount(chatId,) : (this._unseenCounts[chatId] ?? 0);

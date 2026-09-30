@@ -17,13 +17,26 @@ import { notFoundResponse, } from "../http-utils";
 /** Route param schema shared by every `/assets/:id/tags*` endpoint. */
 export const AssetIdParams = t.Object({ id: t.String(), },);
 
-/** Whether a caller may edit `global`-scope tags on an asset. */
+/**
+ * Whether a caller may edit `global`-scope tags on an asset.
+ * @param {string} userId
+ * @param {string | null} userRole
+ * @param {string} assetOwnerId
+ * @returns {boolean}
+ */
 export function canCurateGlobal(userId: string, userRole: string | null, assetOwnerId: string,): boolean {
   if (assetOwnerId === userId) { return true; }
   return can(userRole, "admin.character",);
 }
 
-/** Load the asset and enforce visibility for an already-authenticated caller. */
+/**
+ * Load the asset and enforce visibility for an already-authenticated caller.
+ * @param {Kysely<DB>} database
+ * @param {string} id
+ * @param {string} userId
+ * @param {string | null} userRole
+ * @returns {Promise<Response | AssetRecord>}
+ */
 export async function resolveAccessibleAsset(
   database: Kysely<DB>,
   id: string,

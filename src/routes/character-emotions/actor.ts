@@ -38,6 +38,7 @@ const ActorEmotionResponse = t.Object({
  * Actor emotions sub-plugin — CRUD for an actor's active emotions.
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { actors: { ":actorId": { ...; }; }; }; } & { ...; } & { ...; } & { ...; }, { ...; }, { ...; }>}
  */
 export function actorRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;

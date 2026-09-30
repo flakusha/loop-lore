@@ -10,6 +10,7 @@ import type { InjectionContext, InjectionPrivacyLevel, } from "./types";
 /**
  * Map extended privacy to base privacy for provision pipeline.
  * @param level
+ * @returns {MemoryPrivacy}
  */
 export function toBasePrivacy(level: InjectionPrivacyLevel,): MemoryPrivacy {
   switch (level) {
@@ -37,6 +38,7 @@ export function toBasePrivacy(level: InjectionPrivacyLevel,): MemoryPrivacy {
  * Returns rejection reason, or null if allowed.
  * @param level
  * @param ctx
+ * @returns {string | null}
  */
 export function checkInjectionPrivacy(
   level: InjectionPrivacyLevel,

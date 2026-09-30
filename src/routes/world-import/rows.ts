@@ -5,6 +5,7 @@ import type { Row, } from "./types";
 
 /**
  * @param value
+ * @returns {Row[]}
  */
 export function rowsOf(value: unknown,): Row[] {
   if (!Array.isArray(value,)) { return []; }
@@ -17,6 +18,7 @@ export function rowsOf(value: unknown,): Row[] {
 
 /**
  * @param value
+ * @returns {Row | null}
  */
 export function rowOf(value: unknown,): Row | null {
   if (value && typeof value === "object") { return value as Row; }
@@ -26,6 +28,7 @@ export function rowOf(value: unknown,): Row | null {
 /**
  * @param row
  * @param key
+ * @returns {string | undefined}
  */
 export function str(row: Row, key: string,): string | undefined {
   const v = row[key];
@@ -35,6 +38,7 @@ export function str(row: Row, key: string,): string | undefined {
 /**
  * @param row
  * @param key
+ * @returns {string | null}
  */
 export function strOrNull(row: Row, key: string,): string | null {
   const v = row[key];
@@ -44,6 +48,7 @@ export function strOrNull(row: Row, key: string,): string | null {
 /**
  * @param row
  * @param key
+ * @returns {number | undefined}
  */
 export function num(row: Row, key: string,): number | undefined {
   const v = row[key];

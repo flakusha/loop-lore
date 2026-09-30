@@ -49,6 +49,7 @@ import type {
 /**
  * Create an in-memory moderation action record. Pure — does not persist.
  * @param params
+ * @returns {ModerationAction}
  */
 export function createModerationAction(params: {
   type: ModerationActionType;
@@ -79,6 +80,7 @@ export function createModerationAction(params: {
  * @param action
  * @param callerRole
  * @param isTargetSelf
+ * @returns {{ allowed: boolean; reason?: string | undefined; }}
  */
 export function checkModerationPermission(
   action: ModerationAction,
@@ -119,6 +121,7 @@ export function checkModerationPermission(
  * @param blocks
  * @param targetActorId
  * @param scope
+ * @returns {boolean}
  */
 export function isBlocked(
   blocks: ModerationAction[],
@@ -139,6 +142,7 @@ export function isBlocked(
  * Check if a user is banned.
  * @param bans
  * @param targetActorId
+ * @returns {boolean}
  */
 export function isBanned(bans: ModerationAction[], targetActorId: string,): boolean {
   for (const b of bans) {
@@ -151,6 +155,7 @@ export function isBanned(bans: ModerationAction[], targetActorId: string,): bool
  * Check if a viewer is affected by shadow/collapse actions.
  * @param actions
  * @param viewerId
+ * @returns {"shadow" | "collapse" | null}
  */
 export function getShadowState(
   actions: ModerationAction[],
@@ -294,6 +299,7 @@ async function writeAuditPair(
  * `can(callerRole, "moderation.action")`) before invocation.
  * @param db
  * @param opts
+ * @returns {Promise<ApplyResult>}
  */
 export async function applyBan(db: Kysely<DB>, opts: ApplyOptions,): Promise<ApplyResult> {
   if (opts.targetActorId === opts.byActorId) {
@@ -370,6 +376,7 @@ export async function applyBan(db: Kysely<DB>, opts: ApplyOptions,): Promise<App
  *   path is not blocked by a kick (unlike ban).
  * @param db
  * @param opts
+ * @returns {Promise<ApplyResult>}
  */
 export async function applyKick(db: Kysely<DB>, opts: ApplyOptions,): Promise<ApplyResult> {
   if (opts.targetActorId === opts.byActorId) {
@@ -421,6 +428,7 @@ export async function applyKick(db: Kysely<DB>, opts: ApplyOptions,): Promise<Ap
  *   `metadata.duration_ms` for compliance replay.
  * @param db
  * @param opts
+ * @returns {Promise<ApplyResult>}
  */
 export async function applyMute(db: Kysely<DB>, opts: ApplyOptions,): Promise<ApplyResult> {
   if (opts.targetActorId === opts.byActorId) {
@@ -491,6 +499,7 @@ export async function applyMute(db: Kysely<DB>, opts: ApplyOptions,): Promise<Ap
  * @param opts
  * @param content - Content body to scan (required for `flag-nsfw`;
  *   ignored for `flag-tox`).
+ * @returns {Promise<ApplyResult>}
  */
 export async function applyFlag(
   db: Kysely<DB>,
@@ -552,6 +561,7 @@ export async function applyFlag(
  * `moderation_actions` — it always re-reads `chat_participants`.
  * @param participant - A `chat_participants` row (only `muted_until` is consulted).
  * @param now - Reference timestamp in ms.
+ * @returns {boolean}
  */
 export function isMuted(
   participant: { muted_until: string | null } | null | undefined,
@@ -570,6 +580,7 @@ export function isMuted(
  * join path will admit the target freely.
  * @param participant
  * @param now
+ * @returns {boolean}
  */
 export function isParticipantBanned(
   participant: { banned_until: string | null } | null | undefined,

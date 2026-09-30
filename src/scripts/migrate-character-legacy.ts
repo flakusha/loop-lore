@@ -46,6 +46,8 @@ export interface MigrationStep {
  *      when `target_character_id` is present and `target_type` is undefined
  *
  *  Inventory items are left as-is (no fabricated rarity/weight/value).
+ * @param {Record<string, unknown>} payload
+ * @returns {MigrationStep}
  */
 export function migrateCanonicalExtensions(
   payload: Record<string, unknown>,
@@ -82,6 +84,9 @@ export function migrateCanonicalExtensions(
 /**
  * Iterate actors whose `data_raw` is non-null + non-empty + parseable JSON,
  * normalize each, write back when changed. Returns a summary suitable for CLI output.
+ * @param {Kysely<DB>} database
+ * @param {{ verbose?: boolean }} _opts
+ * @returns {Promise<{ totalActors: number; candidates: number; changed: number; unchanged: number; skipped: number; fieldsAdded: Record<string, number>; perActor: { actorId: string; status: "skipped" | "changed" | "unchanged"; reason?: string | undefined; fieldsAdded?: string[] | undefined; }[]; }>}
  */
 export async function runMigration(
   database: Kysely<DB>,
@@ -177,6 +182,7 @@ export async function runMigration(
 /**
  * CLI entry: open the configured DB and run the migration.
  * Exits 0 on success (changed + skipped is normal); exits 1 on DB error.
+ * @returns {Promise<number>}
  */
 export async function main(): Promise<number> {
   const config = loadConfig();

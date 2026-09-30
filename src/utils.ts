@@ -74,6 +74,7 @@ export function toErrorMessage(error: unknown,): string {
  *   case GenerationStatus.Completed: return "done";
  *   default: return assertNever(status);
  * }
+ * @returns {never}
  */
 export function assertNever(value: never,): never {
   throw new Error(`Unhandled case: ${JSON.stringify(value,)}`,);

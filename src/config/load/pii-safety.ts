@@ -12,7 +12,10 @@ export const NSFW_PII_DEV_FALLBACK = "nsfw-pii-dev-secret-do-not-use-in-prod";
 export const REPORTER_HASH_DEV_FALLBACK = "loop-lore-nsfw-default-do-not-use-in-prod";
 export const TELEMETRY_PII_DEV_FALLBACK = "telemetry-pii-dev-secret-do-not-use-in-prod";
 
-/** Unset/empty NODE_ENV counts as production-like. */
+/**
+ * Unset/empty NODE_ENV counts as production-like.
+ * @returns {boolean}
+ */
 export function isDevEnv(): boolean {
   const env = process.env["NODE_ENV"] ?? "";
   return env === "test" || env === "development" || env === "dev";
@@ -29,6 +32,12 @@ function firstSet(...candidates: Array<string | undefined>): string | undefined 
 /**
  * Resolve one PII-class secret: merged Config wins, raw process.env is the
  * documented fallback, then the hardcoded dev fallback.
+ * @param {string | undefined} configured
+ * @param {string[]} envNames
+ * @param {string} devFallback
+ * @param {string} missingMessage
+ * @throws {Error}
+ * @returns {string}
  */
 export function resolvePiiSecret(
   configured: string | undefined,
@@ -47,7 +56,11 @@ export function resolvePiiSecret(
 
 const GEN_HINT = "Generate with `openssl rand -base64 48`.";
 
-/** Resolve the effective NSFW PII secret (gate audit hashing). */
+/**
+ * Resolve the effective NSFW PII secret (gate audit hashing).
+ * @param {{ piiSecret?: string }} config
+ * @returns {string}
+ */
 export function resolveNsfwPiiSecret(config?: { piiSecret?: string },): string {
   return resolvePiiSecret(
     config?.piiSecret,
@@ -60,6 +73,8 @@ export function resolveNsfwPiiSecret(config?: { piiSecret?: string },): string {
 /**
  * Resolve the effective reporter-hash secret: explicit reporter secret wins,
  * then the legacy moderation HMAC env, then the NSFW PII secret.
+ * @param {{ piiSecret?: string; reporterHashSecret?: string }} config
+ * @returns {string}
  */
 export function resolveReporterHashSecret(config?: { piiSecret?: string; reporterHashSecret?: string },): string {
   return resolvePiiSecret(
@@ -74,7 +89,11 @@ export function resolveReporterHashSecret(config?: { piiSecret?: string; reporte
   );
 }
 
-/** Resolve the effective admin-telemetry PII secret. */
+/**
+ * Resolve the effective admin-telemetry PII secret.
+ * @param {{ piiSecret?: string }} config
+ * @returns {string}
+ */
 export function resolveTelemetryPiiSecret(config?: { piiSecret?: string },): string {
   return resolvePiiSecret(
     config?.piiSecret,
@@ -97,6 +116,8 @@ function assertPiiLength(name: string, secret: string,): void {
  * Validate PII-class secrets at config-load time so a production boot without
  * adequate secrets fails immediately with a clear message rather than silently
  * pseudonymizing with a trivially brute-forced key.
+ * @param {Config} config
+ * @returns {void}
  */
 export function validatePiiSafety(config: Config,): void {
   if (!isDevEnv()) {

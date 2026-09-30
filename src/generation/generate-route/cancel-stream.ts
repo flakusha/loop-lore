@@ -36,6 +36,7 @@ import { sseData, } from "./sse-utils";
  * @param deps.accumulatedContent
  * @param deps.buffer
  * @param deps.controller
+ * @returns {Promise<void>}
  */
 export async function streamCancelCleanup(deps: {
   db: Kysely<DB>;

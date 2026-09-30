@@ -66,6 +66,7 @@ interface GenerationJobRow {
  * @param database
  * @param job
  * @throws Propagates insert failures (a dead database fails the batch loudly).
+ * @returns {Promise<void>}
  */
 export async function createGenerationJobRecord(
   database: Kysely<DB>,
@@ -90,6 +91,7 @@ export async function createGenerationJobRecord(
  * @param database
  * @param id
  * @param patch
+ * @returns {Promise<void>}
  */
 export async function updateGenerationJobRecord(
   database: Kysely<DB>,
@@ -177,6 +179,7 @@ function toRecord(row: GenerationJobRow,): GenerationJobRecord {
  * @param database
  * @param job
  * @param opts
+ * @returns {Promise<void>}
  */
 export async function recordBatchStart(
   database: Kysely<DB>,
@@ -199,6 +202,7 @@ export async function recordBatchStart(
  * Record batch end: persists terminal status plus per-emotion results.
  * @param database
  * @param job
+ * @returns {Promise<void>}
  */
 export async function recordBatchFinish(
   database: Kysely<DB>,

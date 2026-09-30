@@ -10,6 +10,7 @@ import type { BlogRAGSourceRow, } from "./types";
  * @param db
  * @param postId
  * @param source
+ * @returns {Promise<BlogRAGSourceRow>}
  */
 export async function addRAGSource(
   db: Kysely<any>,
@@ -34,6 +35,7 @@ export async function addRAGSource(
 /**
  * @param db
  * @param postId
+ * @returns {Promise<BlogRAGSourceRow[]>}
  */
 export async function getRAGSources(
   db: Kysely<any>,

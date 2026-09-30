@@ -12,6 +12,7 @@ import { PLAYER_STATE_LAYERS, } from "./player-state-layers";
 /**
  * Runtime Mermaid graph export. Call to generate a diagram.
  * Use in docs gen, CI, or admin dashboard.
+ * @returns {string}
  */
 export function renderIntegrationMermaid(): string {
   const owners = [...new Set(Array.from(PLAYER_STATE_LAYERS, (l,) => l.owner,),),];

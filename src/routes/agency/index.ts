@@ -19,6 +19,11 @@ export interface AgencyHandlerOpts {
   database: Kysely<DB>;
 }
 
+/**
+ * @param {AgencyHandlerOpts} opts
+ * @param {unknown} prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { agency: { balance: { ...; }; }; }; } & { ...; }, { ...; }, { ...; } & { ...; }>}
+ */
 export function agencyRoutes(opts: AgencyHandlerOpts, prefix = "/api",) {
   return new Elysia({ name: "agency", },)
     .use(agencyBalanceRoute(opts, prefix,),)

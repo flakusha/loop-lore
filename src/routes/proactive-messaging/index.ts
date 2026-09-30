@@ -25,6 +25,7 @@ import { sendProactiveHandler, } from "./send-handler";
 /**
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { config: { get: { body: unknown; params: {}; query: { ...; }; headers: unknown; response: { ...; }; }; }; }; } & ......}
  */
 export function proactiveMessagingRoutes(opts: ProactiveRouteOpts, prefix = "/api",) {
   const svc = () => new ProactiveMessagingService(opts.database,);

@@ -11,6 +11,11 @@ import type { InternalHandle, } from "./internal-handle";
 export class RunningHandles {
   readonly #byProvider = new Map<string, Set<InternalHandle<unknown>>>();
 
+  /**
+   * @param {string} provider
+   * @param {InternalHandle<unknown>} handle
+   * @returns {void}
+   */
   track(provider: string, handle: InternalHandle<unknown>,): void {
     let set = this.#byProvider.get(provider,);
     if (!set) {
@@ -20,11 +25,21 @@ export class RunningHandles {
     set.add(handle,);
   }
 
+  /**
+   * @param {string} provider
+   * @param {InternalHandle<unknown>} handle
+   * @returns {void}
+   */
   untrack(provider: string, handle: InternalHandle<unknown>,): void {
     this.#byProvider.get(provider,)?.delete(handle,);
   }
 
   /** Cancel every dispatched handle of `provider`; returns the handles hit. */
+  /**
+   * @param {string} provider
+   * @param {string} reason
+   * @returns {void}
+   */
   cancelAll(provider: string, reason: string,): void {
     const set = this.#byProvider.get(provider,);
     if (!set) { return; }
@@ -32,6 +47,11 @@ export class RunningHandles {
   }
 
   /** Find a dispatched handle by id and cancel it. */
+  /**
+   * @param {string} id
+   * @param {string} reason
+   * @returns {boolean}
+   */
   cancelById(id: string, reason: string,): boolean {
     for (const set of this.#byProvider.values()) {
       for (const handle of set) {
@@ -45,6 +65,10 @@ export class RunningHandles {
     return false;
   }
 
+  /**
+   * @param {string} provider
+   * @returns {void}
+   */
   drop(provider: string,): void {
     this.#byProvider.delete(provider,);
   }

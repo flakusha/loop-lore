@@ -12,6 +12,7 @@ import { DiceAdvantageBody, DiceNotationBody, DiceRollBody, type HandlerOpts, } 
 /**
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { rpg: { dice: { roll: { ...; }; }; }; }; } & { ...; } & { ...; }, { ...; }, { ...; }>}
  */
 export function diceRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;

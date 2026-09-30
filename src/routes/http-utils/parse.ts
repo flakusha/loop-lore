@@ -10,6 +10,7 @@ import { HttpStatus, } from "./status";
  * Parse request body: JSON or form-encoded.
  * Returns typed body on success, error Response on parse failure.
  * @param request
+ * @returns {Promise<Response | T>}
  */
 export async function parseBody<T = Record<string, unknown>,>(request: Request,): Promise<T | Response> {
   const ct = request.headers.get("content-type",) ?? "";
@@ -32,6 +33,7 @@ export async function parseBody<T = Record<string, unknown>,>(request: Request,)
  * Defaults: page=1, pageSize=50 (capped at 200).
  * Clamps to safe ranges: page >= 1, pageSize 1..200.
  * @param searchParams
+ * @returns {{ page: number; pageSize: number; }}
  */
 export function parsePagination(searchParams: URLSearchParams,): { page: number; pageSize: number } {
   const rawPage = Number(searchParams.get("page",) ?? "1",);
@@ -47,6 +49,7 @@ export function parsePagination(searchParams: URLSearchParams,): { page: number;
  * Cast body field as string | undefined
  * @param body
  * @param key
+ * @returns {string | undefined}
  */
 export function str(body: Record<string, unknown>, key: string,): string | undefined {
   return body[key] as string | undefined;
@@ -56,6 +59,7 @@ export function str(body: Record<string, unknown>, key: string,): string | undef
  * Cast body field as number | undefined
  * @param body
  * @param key
+ * @returns {number | undefined}
  */
 export function num(body: Record<string, unknown>, key: string,): number | undefined {
   return body[key] as number | undefined;

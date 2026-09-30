@@ -26,6 +26,7 @@ import { validateConnections, } from "./location-connections";
  * @param userId
  * @param userRole
  * @param q
+ * @returns {Promise<Response>}
  */
 export async function handleListLocations(
   database: Kysely<DB>,
@@ -74,6 +75,7 @@ export async function handleListLocations(
  * @param body
  * @param userId
  * @param userRole
+ * @returns {Promise<Response>}
  */
 export async function handleCreateLocation(
   database: Kysely<DB>,
@@ -158,6 +160,7 @@ export async function handleCreateLocation(
  * @param locId
  * @param userId
  * @param userRole
+ * @returns {Promise<Response>}
  */
 export async function handleGetLocation(
   database: Kysely<DB>,
@@ -187,6 +190,7 @@ export async function handleGetLocation(
  * @param body
  * @param userId
  * @param userRole
+ * @returns {Promise<Response>}
  */
 export async function handleUpdateLocation(
   database: Kysely<DB>,
