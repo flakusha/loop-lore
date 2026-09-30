@@ -8,7 +8,7 @@
  * integration layer.
  */
 
-import type { Page, } from "@playwright/test";
+import type { ConsoleMessage, Page, Request, Response, } from "@playwright/test";
 
 // ── Auth noise allowlist ────────────────────────────────────
 
@@ -44,9 +44,39 @@ export const EXPECTED_404_NOISE_ALLOWLIST: readonly RegExp[] = [
 // ── Page error tracking ─────────────────────────────────────
 
 /**
- * Collect page errors (uncaught exceptions) and console.error messages for a page.
- * Wire in before the interesting interaction, then call `assertNoPageErrors` after.
- * Returns a collector object with `errors`, `assert()`, and `detach()`.
+ * Canonical reason phrases for the statuses the e2e suite meets. The suite's
+ * allowlists match Chromium's own wording (`/404 \(Not Found\)/`) and
+ * `response.statusText()` comes back empty when a server omits the phrase, so
+ * fall back here rather than letting a recorded status drift out of the
+ * vocabulary the existing allowlists match.
+ */
+const HTTP_REASON_PHRASES: Record<number, string> = {
+  400: "Bad Request",
+  401: "Unauthorized",
+  403: "Forbidden",
+  404: "Not Found",
+  409: "Conflict",
+  422: "Unprocessable Entity",
+  429: "Too Many Requests",
+  500: "Internal Server Error",
+  502: "Bad Gateway",
+  503: "Service Unavailable",
+};
+
+/**
+ * One failing resource, one line: Chromium's wording for a failed load with the
+ * offending URL appended, so `assert()` names the resource instead of only
+ * reporting "404 (Not Found)".
+ */
+function failedResourceMessage(status: number, reason: string, url: string,): string {
+  return `Failed to load resource: the server responded with a status of ${status} (${reason}) [${url}]`;
+}
+
+/**
+ * Collect page errors (uncaught exceptions), console.error messages and failing
+ * network responses for a page. Wire in before the interesting interaction,
+ * then call `assertNoPageErrors` after. Returns a collector object with
+ * `errors`, `assert()`, and `detach()`.
  */
 export function trackPageErrors(
   page: Page,
@@ -54,19 +84,52 @@ export function trackPageErrors(
 ): { errors: string[]; assert: () => void; detach: () => void } {
   const errors: string[] = [];
   const allowlist = options.allowlist ?? [];
+  // A 404 produces both a console error and a response event; dedupe per URL so
+  // one broken resource is reported once instead of twice.
+  const seenUrls = new Set<string>();
 
-  const onPageError = (error: Error,) => {
-    const msg = `pageerror: ${error.message}`;
+  const record = (msg: string, url?: string,) => {
+    if (url !== undefined) {
+      if (seenUrls.has(url,)) { return; }
+      seenUrls.add(url,);
+    }
     if (allowlist.every((re,) => !re.test(msg,))) { errors.push(msg,); }
   };
-  const onConsole = (message: import("@playwright/test").ConsoleMessage,) => {
+
+  const onPageError = (error: Error,) => {
+    record(`pageerror: ${error.message}`,);
+  };
+  const onConsole = (message: ConsoleMessage,) => {
     if (message.type() !== "error") { return; }
-    const msg = `console.error: ${message.text()}`;
-    if (allowlist.every((re,) => !re.test(msg,))) { errors.push(msg,); }
+    // location().url is the failing resource for "Failed to load resource"
+    // messages; without it a 404 is unattributable.
+    const url = message.location().url || undefined;
+    record(`console.error: ${message.text()}${url === undefined ? "" : ` [${url}]`}`, url,);
+  };
+  // fetch()/XHR failures never reach the console, so the response event is the
+  // only place their resource gets named. 4xx/5xx only: 3xx is routine here
+  // (login POSTs, htmx swaps and chat creation all redirect).
+  const onResponse = (response: Response,) => {
+    const status = response.status();
+    if (status < 400) { return; }
+    const url = response.url();
+    const reason = response.statusText() || HTTP_REASON_PHRASES[status] || `status ${status}`;
+    record(failedResourceMessage(status, reason, url,), url,);
+  };
+  // Network-level failures (connection reset, empty response) produce no
+  // response at all. ERR_ABORTED is skipped: a test that closes the page or
+  // navigates mid-flight aborts its own requests — harness behaviour, not a
+  // product defect.
+  const onRequestFailed = (request: Request,) => {
+    const reason = request.failure()?.errorText ?? "unknown error";
+    if (reason.includes("ERR_ABORTED",)) { return; }
+    record(`requestfailed: ${reason}: ${request.url()}`, request.url(),);
   };
 
   page.on("pageerror", onPageError,);
   page.on("console", onConsole,);
+  page.on("response", onResponse,);
+  page.on("requestfailed", onRequestFailed,);
 
   return {
     errors,
@@ -78,6 +141,8 @@ export function trackPageErrors(
     detach: () => {
       page.off("pageerror", onPageError,);
       page.off("console", onConsole,);
+      page.off("response", onResponse,);
+      page.off("requestfailed", onRequestFailed,);
     },
   };
 }

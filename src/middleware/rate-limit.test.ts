@@ -330,19 +330,25 @@ describe("createRateLimiter", () => {
   });
 
   test("refund releases a slot under sliding-window math", () => {
-    // BUG-register-rate-limiter-consumes-on-username-collision-retries:
-    // 3 collisions: peek-allowed, then refund. Bucket stays at zero.
+    // BUG-refund-contract-invites-over-admission-in-peek-record-flows-:
+    // refund() is only meaningful once something was recorded. Fill the
+    // bucket with real records (the register.ts gate pattern: peek →
+    // record at the gate → refund on a post-gate skip), assert the gate
+    // blocks, then refund one reservation and the slot must come back.
+    // A refund() that stopped popping would fail the next three assertions.
     const limiter = makeLimiter(60_000, 3,);
     for (let i = 0; i < 3; i++) {
-      const peeked = limiter.peek("ip",);
-      expect(peeked.allowed,).toBe(true,);
-      limiter.refund("ip",);
+      expect(limiter.peek("ip",).allowed,).toBe(true,);
+      limiter.record("ip",);
     }
-    expect(limiter.peek("ip",).allowed,).toBe(true,);
-    expect(limiter.peek("ip",).remaining,).toBe(3,);
-    limiter.record("ip",);
-    limiter.record("ip",);
-    limiter.record("ip",);
+    expect(limiter.peek("ip",).remaining,).toBe(0,);
     expect(limiter.peek("ip",).allowed,).toBe(false,);
+    expect(limiter.consume("ip",).allowed,).toBe(false,);
+
+    limiter.refund("ip",);
+    expect(limiter.peek("ip",).remaining,).toBe(1,);
+    expect(limiter.peek("ip",).allowed,).toBe(true,);
+    expect(limiter.consume("ip",).allowed,).toBe(true,);
+    expect(limiter.consume("ip",).allowed,).toBe(false,);
   });
 });

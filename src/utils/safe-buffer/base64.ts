@@ -36,7 +36,22 @@ function guardDecode(
     return { ok: false, error: new SafeBufferError("Empty base64 input", operation,), };
   }
 
-  if (encoded.length > DEFAULT_MAX_BASE64_LEN) {
+  // `Uint8Array.fromBase64` strips ASCII whitespace, so a value would have
+  // several valid encoded forms. Reject instead: the accepted set is exactly
+  // the canonical alphabet.
+  if (/\s/u.test(encoded,)) {
+    return { ok: false, error: new SafeBufferError("Base64 input contains whitespace", operation,), };
+  }
+
+  // A non-finite or non-positive cap is a caller bug, not a licence to decode
+  // without a limit; fall back to the default rather than disabling the guard.
+  const limit = Number.isFinite(maxSize,) && maxSize > 0 ? maxSize : DEFAULT_MAX_SIZE;
+
+  // Work bound derived from the caller's cap, with the global ceiling as a hard
+  // maximum. The post-decode size check stays the exact cap; this only stops
+  // oversized input from being decoded at all.
+  const maxEncodedLen = Math.min(DEFAULT_MAX_BASE64_LEN, Math.ceil((limit + 2) / 3,) * 4 + 2,);
+  if (encoded.length > maxEncodedLen) {
     return {
       ok: false,
       error: new SafeBufferError(`Base64 input too large: ${encoded.length} chars`, operation,),
@@ -47,11 +62,11 @@ function guardDecode(
     const uint8 = Uint8Array.fromBase64(normalizeAlphabet(encoded, alphabet,),);
     const buffer = Buffer.from(uint8,);
 
-    if (buffer.length > maxSize) {
+    if (buffer.length > limit) {
       return {
         ok: false,
         error: new SafeBufferError(
-          `Decoded buffer too large: ${buffer.length} bytes (max: ${maxSize})`,
+          `Decoded buffer too large: ${buffer.length} bytes (max: ${limit})`,
           operation,
         ),
       };
@@ -71,6 +86,9 @@ function guardDecode(
  *
  * Prevents memory exhaustion from oversized base64 inputs, and rejects
  * malformed input that `Buffer.from(s, "base64")` would silently truncate.
+ *
+ * Accepted input is exactly RFC 4648 §4 (standard alphabet) with optional
+ * padding, and nothing else: no ASCII whitespace, no other variants.
  * @param encoded - Base64-encoded string
  * @param maxSize - Maximum decoded size in bytes (default: 10 MB)
  * @returns BufferResult with decoded buffer or error
@@ -85,6 +103,9 @@ export function safeFromBase64(encoded: string, maxSize = DEFAULT_MAX_SIZE,): Bu
  * Accepts the `-`/`_` alphabet emitted by `toString("base64url")`, which
  * `safeFromBase64` rejects. Padding is optional in base64url and accepted
  * when present.
+ *
+ * Accepted input is exactly RFC 4648 §5 (url-safe alphabet) with optional
+ * padding, and nothing else: no ASCII whitespace, no other variants.
  * @param encoded - base64url-encoded string
  * @param maxSize - Maximum decoded size in bytes (default: 10 MB)
  * @returns BufferResult with decoded buffer or error
@@ -96,9 +117,6 @@ export function safeFromBase64Url(encoded: string, maxSize = DEFAULT_MAX_SIZE,):
 /**
  * Decode standard base64 or throw `SafeBufferError`.
  * @throws {SafeBufferError} when the input is empty, oversized, or malformed
- * @param {string} encoded
- * @param {unknown} maxSize
- * @returns {Buffer<ArrayBufferLike>}
  */
 export function mustFromBase64(encoded: string, maxSize = DEFAULT_MAX_SIZE,): Buffer {
   return unwrapGuard(safeFromBase64(encoded, maxSize,),);
@@ -107,9 +125,6 @@ export function mustFromBase64(encoded: string, maxSize = DEFAULT_MAX_SIZE,): Bu
 /**
  * Decode base64url or throw `SafeBufferError`.
  * @throws {SafeBufferError} when the input is empty, oversized, or malformed
- * @param {string} encoded
- * @param {unknown} maxSize
- * @returns {Buffer<ArrayBufferLike>}
  */
 export function mustFromBase64Url(encoded: string, maxSize = DEFAULT_MAX_SIZE,): Buffer {
   return unwrapGuard(safeFromBase64Url(encoded, maxSize,),);

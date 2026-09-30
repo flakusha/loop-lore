@@ -186,9 +186,14 @@ describe("Navigation E2E", () => {
         await goto(page, "/views/new-chat",);
         await page.locator("[data-testid='create-chat-form']",).waitFor({ state: "attached", timeout: 15_000, },);
         // loadNewChatPage() is only called on htmx:load — page.goto() bypasses htmx,
-        // so we must manually initialize the form submit handler
-        await page.evaluate(() => {
-          (globalThis as any).loadNewChatPage?.();
+        // so we must manually initialize the form submit handler. Await it: it
+        // fires /api/v1/actors, /api/v1/chat-setup-templates and /api/v1/worlds,
+        // and leaving them in flight lets the test finish — and abort them on
+        // page.close() — mid-request, which surfaces as unattributed network
+        // noise in errors.assert().
+        await page.evaluate(async () => {
+          const loader = (globalThis as { loadNewChatPage?: () => Promise<void> }).loadNewChatPage;
+          await loader?.();
         },);
         await page.locator("[data-testid='chat-name-input']",).fill("Browser Test Chat",);
         await page.locator("[data-testid='create-chat-btn']",).click();
