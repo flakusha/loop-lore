@@ -1117,6 +1117,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-assets-serve-servefile-omits-x-content-type-options-nosniff-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vector-gen-svg-serve-safety.md"
     }
   ],
   "src/assets/serve-handlers.coverage.test.ts": [
@@ -1313,10 +1317,30 @@
       "source": ".plan/tickets/TASK-item-asset-avatar-display-in-inventory-trading-and-provision.md"
     }
   ],
+  "src/assets/service/persist-generated.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-vector-graphics-generation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vector-gen-animated-raster.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vector-gen-llm-svg-pipeline.md"
+    }
+  ],
   "src/assets/service/read.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-listassets-treats-shared-visibility-as-world-readable.md"
+    }
+  ],
+  "src/assets/service/sanitize-svg.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vector-gen-svg-serve-safety.md"
     }
   ],
   "src/assets/service/shares.ts": [
@@ -1357,6 +1381,20 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-assets-delete-fk-constraint-fails.md"
+    }
+  ],
+  "src/assets/service/validate.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-vector-graphics-generation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vector-gen-animated-raster.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vector-gen-llm-svg-pipeline.md"
     }
   ],
   "src/assets/signed-url.ts": [
@@ -11144,6 +11182,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-vector-graphics-generation.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-video-generation.md"
     },
     {
@@ -11161,6 +11203,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-item-asset-avatar-display-in-inventory-trading-and-provision.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vector-gen-gallery-asset-support.md"
     },
     {
       "kind": "ticket",
@@ -15606,6 +15652,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-vector-gen-gallery-asset-support.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TEST-gallery-frontend-utils-untested.md"
     }
   ],
@@ -16931,6 +16981,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-sanitize-fallbacks-inject-raw-html-when-lib-missing.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vector-gen-gallery-asset-support.md"
     }
   ],
   "src/frontend/avatar/audio-manager.ts": [
@@ -20265,8 +20319,20 @@
   ],
   "src/generation/image-engine/index.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-vector-graphics-generation.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-2026-openwebui-comfyui-websocket-progress.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vector-gen-animated-raster.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vector-gen-llm-svg-pipeline.md"
     }
   ],
   "src/generation/image-engine/types.ts": [
@@ -20299,6 +20365,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-lora-discovery-application.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-vector-graphics-generation.md"
     },
     {
       "kind": "ticket",
@@ -20335,6 +20405,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-lora-discovery-application.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vector-gen-animated-raster.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vector-gen-llm-svg-pipeline.md"
     },
     {
       "kind": "spec",
@@ -20927,6 +21005,10 @@
       "source": ".plan/epics/epic-resource-provision.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-vector-graphics-generation.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
     },
@@ -20969,6 +21051,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-resource-provision-routing-facade.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vector-gen-animated-raster.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vector-gen-llm-svg-pipeline.md"
     },
     {
       "kind": "ticket",
