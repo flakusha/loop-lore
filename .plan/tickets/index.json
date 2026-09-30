@@ -262,7 +262,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-anthropic-retry-after-test-covers-missing-header-but-not-unp.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-ANY-CHAT-PARTICIPANT-CAN-HARD-DELETE-ANY-MESSAGE": {
     "epic": "",
@@ -1205,7 +1205,7 @@
     "label": "bug",
     "priority": "high",
     "source": ".plan/tickets/BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [],
     "title": "bun test src full suite is order-dependent cross-file contamination",
     "type": "BUG"
@@ -1856,7 +1856,7 @@
     "label": "bug",
     "priority": "high",
     "source": ".plan/tickets/BUG-check-runner-gate-label-rename-breaks-check-parallel-gates-t.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [],
     "title": "check runner gate label rename breaks check-parallel.gates.test.mjs",
     "type": "BUG"
@@ -2867,7 +2867,7 @@
     "label": "bug",
     "priority": "medium",
     "source": ".plan/tickets/BUG-frontend-generation-completed-telemetry-never-reaches-the-se.md",
-    "status": "Not Started",
+    "status": "done",
     "tags": [],
     "title": "frontend generation.completed telemetry never reaches the server ingest union",
     "type": "BUG"
