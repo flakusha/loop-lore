@@ -49,6 +49,11 @@ Object.defineProperty(globalThis, "document", { value: mockDocument, writable: t
 // Dynamic import for ui.ts to avoid module-level side effects
 let t: (key: string, params?: Record<string, string>,) => string;
 let savedLocaleStrings: unknown;
+// Sentinel, not `savedLocaleStrings !== undefined`: when this file runs FIRST in a
+// worker nothing has populated `__localeStrings` yet, so the snapshot is legitimately
+// undefined and an undefined-check would skip the restore entirely — leaking the
+// {common,greeting} stub below into later files in the worker.
+let hasSavedLocaleStrings = false;
 const localeStringsHost = globalThis as { __localeStrings?: unknown };
 beforeEach(async () => {
   const ui = await import("../ui");
@@ -59,7 +64,9 @@ beforeEach(async () => {
 // overwrite and restore it afterward so downstream tests in the same bun:test process
 // (e.g. gif-picker.test.ts) keep the real en.json catalog loaded by i18n.test-helper.
 afterEach(() => {
-  if (savedLocaleStrings !== undefined) { localeStringsHost.__localeStrings = savedLocaleStrings; }
+  if (!hasSavedLocaleStrings) { return; }
+  localeStringsHost.__localeStrings = savedLocaleStrings;
+  hasSavedLocaleStrings = false;
 },);
 
 describe("resolveKey", () => {
@@ -233,6 +240,7 @@ describe("globalThis.t (from ui.ts)", () => {
     // above can restore it after this describe block runs. Without this the
     // stubbed map below would leak into later test files in the same worker.
     savedLocaleStrings = localeStringsHost.__localeStrings;
+    hasSavedLocaleStrings = true;
     localeStringsHost.__localeStrings = {
       common: { save: "Save", cancel: "Cancel", },
       greeting: { hello: "Hello {name}", },

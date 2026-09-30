@@ -18,6 +18,7 @@
 import { afterAll, beforeAll, describe, expect, mock, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
+import { connect, } from "node:net";
 import * as realConfigLoad from "../config/load";
 import { setTestDatabase, } from "../db";
 import { MessageRole, } from "../db/enums";
@@ -101,15 +102,47 @@ function buildAuthedApp() {
     .use(imageEditRoutes({ database: db, }, V1_PREFIX,),);
 }
 
+/**
+ * Reserve a kernel-assigned ephemeral port, release it, and confirm the release
+ * actually left it unbound. A concurrent binder can reclaim the port in the gap
+ * between `stop()` and the probe — that is exactly the false-healthy failure this
+ * suite exists to rule out — so re-pick until the port is verifiably refused.
+ */
+async function reserveDeadPort(): Promise<number> {
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const dead = Bun.serve({ port: 0, fetch: () => new Response("ok",), },);
+    const { port, } = dead;
+    if (port === undefined) {
+      await dead.stop(true,);
+      continue;
+    }
+    await dead.stop(true,);
+    if (await isConnectionRefused(port,)) { return port; }
+  }
+  throw new Error("could not reserve an unreachable port: every candidate was reclaimed",);
+}
+
+/** Whether a TCP connect to 127.0.0.1:<port> is refused (nothing is listening). */
+function isConnectionRefused(port: number,): Promise<boolean> {
+  const { promise, resolve, } = Promise.withResolvers<boolean>();
+  const socket = connect({ port, host: "127.0.0.1", },);
+  const settle = (refused: boolean,) => {
+    socket.removeAllListeners();
+    socket.destroy();
+    resolve(refused,);
+  };
+  socket.once("connect", () => settle(false,),);
+  socket.once("error", (err: NodeJS.ErrnoException,) => settle(err.code === "ECONNREFUSED",),);
+  return promise;
+}
+
 beforeAll(async () => {
-  // Point every SD provider at a port nothing is listening on, by
-  // construction. ComfyUI's provider otherwise falls back to a hardcoded
+  // Point every SD provider at a port nothing is listening on, verified by
+  // probe. ComfyUI's provider otherwise falls back to a hardcoded
   // 127.0.0.1:8188, so each "backend is unreachable" assertion below was
   // really asserting "nothing else on this host holds 8188" — untrue the
   // moment a second worktree runs its own suite.
-  const dead = Bun.serve({ port: 0, fetch: () => new Response("ok",), },);
-  const deadPort = dead.port;
-  await dead.stop(true,);
+  const deadPort = await reserveDeadPort();
   mock.module("../config/load", () => ({
     ...realConfigLoad,
     loadConfig: () => ({

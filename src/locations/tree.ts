@@ -9,11 +9,14 @@
  *   - ancestor / descendant / sibling navigation via recursive CTEs
  *   - subtree-move with cycle + cross-world rejection at the app layer
  *
- * The DB layer (triggers) already enforces:
- *   - cycle rejection (trg_locations_no_cycle on parent_location_id update)
- *   - depth limit (trg_locations_depth_limit, ≤ 12 per LOCATION_DEPTH_LIMIT)
- *   - cross-world parent (trg_locations_cross_world_parent)
- *   - path auto-materialization on insert (trg_locations_path_on_insert)
+ * The DB layer (triggers, see 001_init.ts) enforces:
+ *   - self-parent rejection (trg_locations_no_self_parent, BEFORE INSERT)
+ *   - cross-world parent (trg_locations_cross_world_parent, BEFORE INSERT)
+ *   - path auto-materialization (trg_locations_set_path_on_insert / _on_update)
+ *
+ * Cycle rejection and the depth ceiling (LOCATION_DEPTH_LIMIT) are NOT trigger-
+ * enforced: SQLite triggers cannot express the recursive walk, so both live in
+ * this service — `insertLocation` for depth, `moveSubtree` for cycles.
  *
  * This service exists for: (1) the tests that should pass without DB triggers
  * (e.g. in-memory repos, unit tests), (2) operations that need batched repair
@@ -195,7 +198,7 @@ export class LocationTreeService {
     return build(null,);
   }
 
-  /** Move a subtree under a new parent (cross-world rejected; cycle rejected via trigger). */
+  /** Move a subtree under a new parent (cross-world and cycle rejected at the app layer). */
   async moveSubtree(locationId: string, newParentId: string | null,): Promise<void> {
     if (newParentId === locationId) {
       throw new Error("location cannot be its own parent",);
