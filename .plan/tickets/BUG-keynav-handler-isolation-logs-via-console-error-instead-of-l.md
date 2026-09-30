@@ -3,7 +3,7 @@
 
 # BUG: Keynav handler isolation logs via console.error instead of logger
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 

@@ -3,7 +3,7 @@
 
 # BUG: i18n test restore guard leaks stubbed locale strings across worker
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 

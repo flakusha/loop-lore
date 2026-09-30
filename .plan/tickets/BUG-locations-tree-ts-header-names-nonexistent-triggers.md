@@ -3,7 +3,7 @@
 
 # BUG: locations tree.ts header names nonexistent triggers
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 **Summary:** Fix tree.ts header naming nonexistent triggers.
