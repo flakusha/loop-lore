@@ -22,10 +22,6 @@ export class ServerTransport implements Transport {
   /**
    * @param entry
    */
-  /**
-   * @param {LogEntry} entry
-   * @returns {Promise<void>}
-   */
   write(entry: LogEntry,): Promise<void> {
     this.buffer.push(entry,);
     this.scheduleFlush();

@@ -52,13 +52,6 @@ export function loadDomainConfigs(directory: string, baseConfig: Config,): Confi
  * @param parsed - The parsed config object
  * @param filePath - The file path for error messages
  */
-
-/**
- * Validate the server domain: port range.
- * @param parsed
- * @param filePath
- * @returns string
- */
 function validateServerDomain(parsed: Record<string, unknown>, filePath: string,): void {
   const server = parsed.server as Record<string, unknown> | undefined;
   if (server?.port === undefined) { return; }

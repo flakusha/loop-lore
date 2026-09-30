@@ -46,11 +46,6 @@ export class StateMachine<S extends string,> {
    * @param to - proposed next state
    * @returns `true` when `to` is reachable from `from` per the transition table.
    */
-  /**
-   * @param {S} from
-   * @param {S} to
-   * @returns {boolean}
-   */
   canTransition(from: S, to: S,): boolean {
     return (this.def.transitions[from] as readonly string[] | undefined)?.includes(to,) ?? false;
   }
@@ -60,12 +55,6 @@ export class StateMachine<S extends string,> {
    * @param to - proposed next state
    * @returns `to` when the transition is allowed.
    * @throws {TransitionError} when `to` is not in `from`'s allowed transitions.
-   */
-  /**
-   * @param {S} from
-   * @param {S} to
-   * @throws {Error}
-   * @returns {S}
    */
   transition(from: S, to: S,): S {
     if (!this.canTransition(from, to,)) {
@@ -78,10 +67,6 @@ export class StateMachine<S extends string,> {
    * @param state - state to check
    * @returns `true` when `state` is in the terminal set (no outgoing transitions).
    */
-  /**
-   * @param {S} state
-   * @returns {boolean}
-   */
   isTerminal(state: S,): boolean {
     return (this.def.terminal as readonly string[]).includes(state,);
   }
@@ -89,10 +74,6 @@ export class StateMachine<S extends string,> {
   /**
    * @param state - state to validate
    * @returns `true` when `state` is a known value in the machine definition.
-   */
-  /**
-   * @param {S} state
-   * @returns {boolean}
    */
   isValid(state: S,): boolean {
     return (this.def.values as readonly string[]).includes(state,);
@@ -123,11 +104,6 @@ export class CompositeValidator<A extends string, B extends string,> {
    * @param b - value on axis B
    * @returns `true` when `${a}:${b}` is in the allowed-pairs set.
    */
-  /**
-   * @param {A} a
-   * @param {B} b
-   * @returns {boolean}
-   */
   isValid(a: A, b: B,): boolean {
     return this.allowed.has(`${a}:${b}`,);
   }
@@ -136,12 +112,6 @@ export class CompositeValidator<A extends string, B extends string,> {
    * @param a - value on axis A
    * @param b - value on axis B
    * @throws {Error} `Invalid composite state: ${a}:${b}` when the pair is not in the allowed set.
-   */
-  /**
-   * @param {A} a
-   * @param {B} b
-   * @throws {Error}
-   * @returns {void}
    */
   assertValid(a: A, b: B,): void {
     if (!this.isValid(a, b,)) {

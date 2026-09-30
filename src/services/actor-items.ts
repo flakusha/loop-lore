@@ -53,10 +53,6 @@ export class ActorItemsService {
    * Base carry weight: 50 lb + STR×10 (STR defaults to 10).
    * @param actorId
    */
-  /**
-   * @param {string} actorId
-   * @returns {Promise<number>}
-   */
   private async capacityFor(actorId: string,): Promise<number> {
     const actor = await this.db
       .selectFrom("actors",)
@@ -71,10 +67,6 @@ export class ActorItemsService {
   /**
    * Sum of weight × quantity carried.
    * @param actorId
-   */
-  /**
-   * @param {string} actorId
-   * @returns {Promise<number>}
    */
   async getCarriedWeight(actorId: string,): Promise<number> {
     const rows = await this.db
@@ -92,12 +84,6 @@ export class ActorItemsService {
   /**
    * Current load vs capacity + encumbrance level.
    * @param actorId
-   */
-  /**
-   * @param {string} actorId
-   * @throws {Error}
-   * @throws {Error}
-   * @returns {Promise<CarryStatus>}
    */
   async getCarryStatus(actorId: string,): Promise<CarryStatus> {
     const [carriedResult, capacityResult,] = await Promise.allSettled([
@@ -129,11 +115,6 @@ export class ActorItemsService {
    * @param actorId
    * @param itemId
    */
-  /**
-   * @param {string} actorId
-   * @param {string} itemId
-   * @returns {Promise<{ id: string; actor_id: string; name: string; sort_order: number; created_at: string; updated_at: string; tags: string | null; value: number; description: string | null; metadata: string | null; ... 5 more ...; equipped: EquipState; } | undefined>}
-   */
   private async getItem(actorId: string, itemId: string,) {
     return this.db
       .selectFrom("actor_items",)
@@ -149,15 +130,6 @@ export class ActorItemsService {
    * @param itemId
    * @param opts - Optional affordance context (TASK-affordance-lookup-table).
    */
-  /**
- * @param {string} actorId
- * @param {string} itemId
- * @param {{
-      actorCaps?: import("./affordance/lookup").ActorCaps;
-      context?: import("./affordance/lookup").ContextState;
-    }} opts
- * @returns {Promise<EquipResult>}
- */
   async equip(
     actorId: string,
     itemId: string,
@@ -208,11 +180,6 @@ export class ActorItemsService {
    * @param actorId
    * @param itemId
    */
-  /**
-   * @param {string} actorId
-   * @param {string} itemId
-   * @returns {Promise<EquipResult>}
-   */
   async unequip(actorId: string, itemId: string,): Promise<EquipResult> {
     const item = await this.getItem(actorId, itemId,);
     if (!item) { return { ok: false, reason: "Item not found", }; }
@@ -227,10 +194,6 @@ export class ActorItemsService {
   /**
    * List all equipped items.
    * @param actorId
-   */
-  /**
-   * @param {string} actorId
-   * @returns {Promise<{ id: string; actor_id: string; name: string; sort_order: number; created_at: string; updated_at: string; tags: string | null; value: number; description: string | null; metadata: string | null; ... 5 more ...; equipped: EquipState; }[]>}
    */
   async getEquipped(actorId: string,) {
     return this.db
@@ -252,14 +215,6 @@ export class ActorItemsService {
    * @param itemId
    * @param quantity
    * @param trx
-   */
-  /**
-   * @param {string} fromActorId
-   * @param {string} toActorId
-   * @param {string} itemId
-   * @param {number} quantity
-   * @param {Transaction<DB>} trx
-   * @returns {Promise<TransferResult>}
    */
   transfer(
     fromActorId: string,

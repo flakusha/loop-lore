@@ -22,12 +22,6 @@ export const dispatch: Partial<ChatState> & ThisType<ChatState> = {
    * @param payload - Action payload from CommandResult.actionPayload
    * @param chatId - Active chat ID
    */
-  /**
-   * @param {string} action
-   * @param {Record<string, unknown> | null} payload
-   * @param {string} chatId
-   * @returns {Promise<void>}
-   */
   async dispatchCommandAction(action: string, payload: Record<string, unknown> | null, chatId: string,) {
     log.info("dispatchCommandAction", { action, chatId, },);
 

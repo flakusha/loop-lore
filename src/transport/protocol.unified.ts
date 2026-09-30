@@ -26,15 +26,6 @@ export interface Connection {
  * layer up: see `src/integrations/adapter.ts` (`ProtocolAdapter`). This
  * file owns byte transports only.
  */
-
-/**
- * Unified protocol handler — all transport adapters implement this.
- *
- * `connect()` establishes the connection.
- * `send()` transmits data (string = text frame, Uint8Array = binary).
- * `get()` retrieves a value by key (negotiated capability, e.g. remote signature).
- * `close()` tears down gracefully.
- */
 export interface ProtocolHandler {
   /** Establish connection. Resolves once connected. */
   connect(): Promise<Connection>;

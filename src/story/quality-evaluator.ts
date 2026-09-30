@@ -68,10 +68,6 @@ export class QualityEvaluator {
   /**
    * @param params
    */
-  /**
-   * @param {EvaluateParams} params
-   * @returns {QualityScores}
-   */
   private computeScores(params: EvaluateParams,): QualityScores {
     const ctx = toScorerContext(params,);
     const scores = {} as Omit<QualityScores, "overall">;
@@ -87,10 +83,6 @@ export class QualityEvaluator {
   /**
    * @param scores
    */
-  /**
-   * @param {QualityScores} scores
-   * @returns {Record<QualityDimension, { score: number; reasoning: string; }>}
-   */
   private buildDetails(scores: QualityScores,): QualityEvaluation["details"] {
     const details = {} as QualityEvaluation["details"];
     for (const dim of DIMENSIONS) {
@@ -103,10 +95,6 @@ export class QualityEvaluator {
    * Evaluate a generated response against the story context.
    * Returns detailed scores and a pass/regenerate/escalate decision.
    * @param params
-   */
-  /**
-   * @param {EvaluateParams} params
-   * @returns {QualityEvaluation}
    */
   evaluate(params: EvaluateParams,): QualityEvaluation {
     const scores = this.computeScores(params,);
@@ -143,10 +131,6 @@ export class QualityEvaluator {
   /**
    * Get the raw dimension scores without full evaluation metadata
    * @param params
-   */
-  /**
-   * @param {EvaluateParams} params
-   * @returns {QualityScores}
    */
   computeScore(params: EvaluateParams,): QualityScores {
     return this.computeScores(params,);

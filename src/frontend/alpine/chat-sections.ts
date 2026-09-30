@@ -144,11 +144,6 @@ export const chatSections: Partial<ChatState> & ThisType<ChatState> = {
    * @param index Index within the rendered (grouped) message list.
    * @param sectionId Section of the message at that index.
    */
-  /**
-   * @param {number} index
-   * @param {string | null} sectionId
-   * @returns {ChatSectionRow | null}
-   */
   sectionDividerFor(index: number, sectionId: string | null,): ChatSectionRow | null {
     if (!sectionId) { return null; }
     const section = this._sections.find((s,) => s.id === sectionId);
@@ -162,10 +157,6 @@ export const chatSections: Partial<ChatState> & ThisType<ChatState> = {
   /**
    * Scroll the message list to the first message of a section.
    * @param sectionId
-   */
-  /**
-   * @param {string} sectionId
-   * @returns {void}
    */
   jumpToSection(sectionId: string,) {
     const target = this.groupedMessages.find((m,) => m.section_id === sectionId);
@@ -182,10 +173,6 @@ export const chatSections: Partial<ChatState> & ThisType<ChatState> = {
    * @param sectionId Section to summarize.
    * @returns `{ count, startTime }` (startTime `null` when the section is empty).
    */
-  /**
-   * @param {string} sectionId
-   * @returns {{ count: number; startTime: string | null; }}
-   */
   sectionDividerMeta(sectionId: string,): { count: number; startTime: string | null } {
     let count = 0;
     let startTime: string | null = null;
@@ -200,10 +187,6 @@ export const chatSections: Partial<ChatState> & ThisType<ChatState> = {
   /**
    * Format an ISO timestamp for divider display (HH:MM).
    * @param iso
-   */
-  /**
-   * @param {string | null} iso
-   * @returns {string}
    */
   formatSectionTime(iso: string | null,): string {
     if (!iso) { return ""; }

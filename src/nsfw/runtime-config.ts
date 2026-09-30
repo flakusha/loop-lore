@@ -34,10 +34,6 @@ class NsfwRuntimeConfigStore {
   /**
    * @param config
    */
-  /**
-   * @param {NsfwRuntimeConfig} config
-   * @returns {void}
-   */
   init(config: NsfwRuntimeConfig,): void {
     this.config = { ...DEFAULTS, ...config, };
   }
@@ -52,10 +48,6 @@ class NsfwRuntimeConfigStore {
 
   /**
    * @param partial
-   */
-  /**
-   * @param {Partial<NsfwRuntimeConfig>} partial
-   * @returns {void}
    */
   update(partial: Partial<NsfwRuntimeConfig>,): void {
     this.config = { ...this.config, ...partial, };

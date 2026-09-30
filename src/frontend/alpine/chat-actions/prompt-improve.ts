@@ -59,10 +59,6 @@ export const promptImproveActions: Partial<ChatState> & ThisType<ChatState> = {
    * Pushes the previous draft onto `_promptImproveHistory` for multi-level undo.
    * @param level - Gradation level; group chats default to `style-group`
    */
-  /**
-   * @param {string} level
-   * @returns {Promise<void>}
-   */
   async improvePrompt(level?: string,) {
     const input = this.$refs.messageInput as HTMLTextAreaElement | undefined;
     const text = input?.value.trim() ?? "";

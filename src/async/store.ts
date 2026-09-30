@@ -161,12 +161,6 @@ export function createAsyncStore(database: Kysely<DB>, config: AsyncStoreConfig 
      * @param owner
      * @param update
      */
-    /**
-     * @param {string} id
-     * @param {OwnerRef} owner
-     * @param {ProgressUpdate} update
-     * @returns {void}
-     */
     progress(id: string, owner: OwnerRef, update: ProgressUpdate,) {
       enqueue({
         kind: "progress",
@@ -184,12 +178,6 @@ export function createAsyncStore(database: Kysely<DB>, config: AsyncStoreConfig 
      * @param owner
      * @param response
      */
-    /**
-     * @param {string} id
-     * @param {OwnerRef} owner
-     * @param {CapturedResponse} response
-     * @returns {void}
-     */
     complete(id: string, owner: OwnerRef, response: CapturedResponse,) {
       enqueue({ kind: "complete", id, userId: owner.userId, response, },);
     },
@@ -199,12 +187,6 @@ export function createAsyncStore(database: Kysely<DB>, config: AsyncStoreConfig 
      * @param id
      * @param owner
      * @param error
-     */
-    /**
-     * @param {string} id
-     * @param {OwnerRef} owner
-     * @param {string} error
-     * @returns {void}
      */
     fail(id: string, owner: OwnerRef, error: string,) {
       enqueue({ kind: "fail", id, userId: owner.userId, error, },);

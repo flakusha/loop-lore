@@ -65,10 +65,6 @@ export class BlogService extends BlogFollowsService {
    * Create a post.
    * @param input
    */
-  /**
-   * @param {CreateBlogPostInput} input
-   * @returns {Promise<BlogPostRow>}
-   */
   async createPost(input: CreateBlogPostInput,): Promise<BlogPostRow> {
     return createPostDispatch(this.db, input,);
   }
@@ -76,10 +72,6 @@ export class BlogService extends BlogFollowsService {
   /**
    * Get a post by ID.
    * @param id
-   */
-  /**
-   * @param {string} id
-   * @returns {Promise<BlogPostWithTags | undefined>}
    */
   async getPost(id: string,): Promise<BlogPostWithTags | undefined> {
     return getPostDispatch(this.db, id,);
@@ -97,19 +89,6 @@ export class BlogService extends BlogFollowsService {
    * @param filters.offset
    * @param filters.userId
    */
-  /**
- * @param {{
-    author_id?: string;
-    visibility?: BlogPostVisibility;
-    status?: BlogPostStatus;
-    category?: string;
-    world_id?: string;
-    limit?: number;
-    offset?: number;
-    userId?: string;
-  }} filters
- * @returns {Promise<BlogPostWithTags[]>}
- */
   async listPosts(filters: {
     author_id?: string;
     visibility?: BlogPostVisibility;
@@ -130,13 +109,6 @@ export class BlogService extends BlogFollowsService {
    * @param callerUserId
    * @param isAdmin
    */
-  /**
-   * @param {string} id
-   * @param {UpdateBlogPostInput} input
-   * @param {string} callerUserId
-   * @param {unknown} isAdmin
-   * @returns {Promise<BlogPostRow | undefined>}
-   */
   async updatePost(
     id: string,
     input: UpdateBlogPostInput,
@@ -152,22 +124,12 @@ export class BlogService extends BlogFollowsService {
    * @param callerUserId
    * @param isAdmin
    */
-  /**
-   * @param {string} id
-   * @param {string} callerUserId
-   * @param {unknown} isAdmin
-   * @returns {Promise<boolean>}
-   */
   async deletePost(id: string, callerUserId: string, isAdmin = false,): Promise<boolean> {
     return deletePostDispatch(this.db, id, callerUserId, isAdmin,);
   }
   /**
    * Increment a post's view count.
    * @param id
-   */
-  /**
-   * @param {string} id
-   * @returns {Promise<void>}
    */
   async incrementViewCount(id: string,): Promise<void> {
     return incrementViewCountDispatch(this.db, id,);
@@ -178,10 +140,6 @@ export class BlogService extends BlogFollowsService {
    * Create a comment.
    * @param input
    */
-  /**
-   * @param {CreateCommentInput} input
-   * @returns {Promise<BlogCommentRow>}
-   */
   async createComment(input: CreateCommentInput,): Promise<BlogCommentRow> {
     return createCommentDispatch(this.db, input,);
   }
@@ -189,10 +147,6 @@ export class BlogService extends BlogFollowsService {
   /**
    * Get a comment.
    * @param id
-   */
-  /**
-   * @param {string} id
-   * @returns {Promise<BlogCommentRow | undefined>}
    */
   async getComment(id: string,): Promise<BlogCommentRow | undefined> {
     return getCommentDispatch(this.db, id,);
@@ -204,11 +158,6 @@ export class BlogService extends BlogFollowsService {
    * @param opts
    * @param opts.limit
    * @param opts.offset
-   */
-  /**
-   * @param {string} postId
-   * @param {{ limit?: number; offset?: number }} opts
-   * @returns {Promise<BlogCommentRow[]>}
    */
   async listComments(
     postId: string,
@@ -224,11 +173,6 @@ export class BlogService extends BlogFollowsService {
    * @param opts.limit
    * @param opts.offset
    */
-  /**
-   * @param {string} postId
-   * @param {{ limit?: number; offset?: number }} opts
-   * @returns {Promise<BlogCommentWithChildren[]>}
-   */
   async listCommentsThreaded(
     postId: string,
     opts?: { limit?: number; offset?: number },
@@ -241,12 +185,6 @@ export class BlogService extends BlogFollowsService {
    * @param id
    * @param status
    * @param caller
-   */
-  /**
-   * @param {string} id
-   * @param {BlogCommentStatus} status
-   * @param {{ userId: string; role: string | null }} caller
-   * @returns {Promise<boolean>}
    */
   async moderateComment(
     id: string,

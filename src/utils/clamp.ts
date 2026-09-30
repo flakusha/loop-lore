@@ -9,24 +9,6 @@
  * back to `0.5` when the input is `NaN`/`±Infinity` — a safe default for
  * confidence scores that must always be present in downstream heuristics.
  */
-
-/**
- * Constrain `value` to the inclusive range `[min, max]`.
- *
- * Returns `NaN` unchanged so callers can distinguish "clamped" from
- * "non-finite" — useful when callers want to substitute a default on
- * non-finite input via `clampUnit`.
- *
- * @param value - Number to clamp
- * @param min - Lower bound (inclusive)
- * @param max - Upper bound (inclusive)
- * @returns `max` if `value > max`, `min` if `value < min`, else `value`
- *
- * @example
- * clamp(1.5, 0, 1); // 1
- * clamp(-0.5, 0, 1); // 0
- * clamp(0.7, 0, 1); // 0.7
- */
 export function clamp(value: number, min: number, max: number,): number {
   if (value < min) { return min; }
   if (value > max) { return max; }

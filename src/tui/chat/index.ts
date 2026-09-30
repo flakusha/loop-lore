@@ -124,10 +124,6 @@ export class ChatWidget implements ChatHost {
   /**
    * @param token
    */
-  /**
-   * @param {string} token
-   * @returns {void}
-   */
   setSessionToken(token: string,): void {
     this.sessionToken = token;
   }
@@ -136,10 +132,6 @@ export class ChatWidget implements ChatHost {
 
   /**
    * @param chatId
-   */
-  /**
-   * @param {string} chatId
-   * @returns {void}
    */
   setChatId(chatId: string,): void {
     this.chatId = chatId;
@@ -151,9 +143,6 @@ export class ChatWidget implements ChatHost {
   /**
    * @returns currently-scoped chat id, or `null` when none.
    */
-  /**
-   * @returns {string | null}
-   */
   getChatId(): string | null {
     return this.chatId;
   }
@@ -162,10 +151,6 @@ export class ChatWidget implements ChatHost {
 
   /**
    * @param message - chat message to append to the list
-   */
-  /**
-   * @param {ChatMessage} message
-   * @returns {void}
    */
   addMessage(message: ChatMessage,): void {
     this.messages.push(message,);
@@ -176,10 +161,6 @@ export class ChatWidget implements ChatHost {
 
   /**
    * @param messages - replacement message list (cursor page or empty)
-   */
-  /**
-   * @param {ChatMessage[]} messages
-   * @returns {void}
    */
   setMessages(messages: ChatMessage[],): void {
     this.messages = messages;
@@ -235,10 +216,6 @@ export class ChatWidget implements ChatHost {
   /**
    * @param message - error text to append in red
    */
-  /**
-   * @param {string} message
-   * @returns {void}
-   */
   showError(message: string,): void {
     this.messageList.addItem(`{red-fg}⚠ Error: ${message}{/red-fg}`,);
     this.scrollToBottom();
@@ -252,10 +229,6 @@ export class ChatWidget implements ChatHost {
    * @param text - user message body
    * @returns resolves after dispatching to the API and updating local state.
    */
-  /**
-   * @param {string} text
-   * @returns {Promise<void>}
-   */
   async handleSend(text: string,): Promise<void> {
     return handleSendDispatch(this, text,);
   }
@@ -263,9 +236,6 @@ export class ChatWidget implements ChatHost {
   /**
    * Load messages from GET /api/chats/:id/messages with cursor-based pagination.
    * @returns resolves after updating the local message cache.
-   */
-  /**
-   * @returns {Promise<void>}
    */
   async loadMessages(): Promise<void> {
     return loadMessagesDispatch(this,);

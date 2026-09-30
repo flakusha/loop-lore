@@ -33,10 +33,6 @@ export class NotificationService {
    * Read the user's notification preferences, merging over defaults.
    * @param userId
    */
-  /**
-   * @param {string} userId
-   * @returns {Promise<NotificationPreferences>}
-   */
   async getPrefs(userId: string,): Promise<NotificationPreferences> {
     return getPrefsDispatch(this.db, userId,);
   }
@@ -47,11 +43,6 @@ export class NotificationService {
    * @param patch
    * @param patch.enabled
    * @param patch.mutedWorlds
-   */
-  /**
-   * @param {string} userId
-   * @param {{ enabled?: Partial<Record<NotificationType, boolean>>; mutedWorlds?: string[] }} patch
-   * @returns {Promise<NotificationPreferences>}
    */
   async setPrefs(
     userId: string,
@@ -65,10 +56,6 @@ export class NotificationService {
    * when the linked world is muted.
    * @param input
    */
-  /**
-   * @param {NotificationInput} input
-   * @returns {Promise<void>}
-   */
   async create(input: NotificationInput,): Promise<void> {
     return createNotification(this.db, input,);
   }
@@ -76,10 +63,6 @@ export class NotificationService {
   /**
    * Fire-and-forget variant: logs and drops on failure.
    * @param input
-   */
-  /**
-   * @param {NotificationInput} input
-   * @returns {void}
    */
   emit(input: NotificationInput,): void {
     void this.create(input,).catch((error,) => {
@@ -95,11 +78,6 @@ export class NotificationService {
    * @param userId
    * @param unreadOnly
    */
-  /**
-   * @param {string} userId
-   * @param {unknown} unreadOnly
-   * @returns {Promise<NotificationRecord[]>}
-   */
   async list(userId: string, unreadOnly = false,): Promise<NotificationRecord[]> {
     return listNotifications(this.db, userId, unreadOnly,);
   }
@@ -107,10 +85,6 @@ export class NotificationService {
   /**
    * Count of unread notifications for a user.
    * @param userId
-   */
-  /**
-   * @param {string} userId
-   * @returns {Promise<number>}
    */
   async getUnreadCount(userId: string,): Promise<number> {
     return getUnreadCount(this.db, userId,);
@@ -121,11 +95,6 @@ export class NotificationService {
    * @param id
    * @param userId
    */
-  /**
-   * @param {string} id
-   * @param {string} userId
-   * @returns {Promise<void>}
-   */
   async markRead(id: string, userId: string,): Promise<void> {
     return markNotificationRead(this.db, id, userId,);
   }
@@ -133,10 +102,6 @@ export class NotificationService {
   /**
    * Mark every notification read for a user.
    * @param userId
-   */
-  /**
-   * @param {string} userId
-   * @returns {Promise<void>}
    */
   async markAllRead(userId: string,): Promise<void> {
     return markAllNotificationsRead(this.db, userId,);
@@ -147,11 +112,6 @@ export class NotificationService {
    * @param id
    * @param userId
    */
-  /**
-   * @param {string} id
-   * @param {string} userId
-   * @returns {Promise<void>}
-   */
   async delete(id: string, userId: string,): Promise<void> {
     return deleteNotification(this.db, id, userId,);
   }
@@ -161,11 +121,6 @@ export class NotificationService {
    * characters stay aware of off-screen activity. Returns "" when empty.
    * @param userId
    * @param chatId
-   */
-  /**
-   * @param {string} userId
-   * @param {string} chatId
-   * @returns {Promise<string>}
    */
   async buildRecentEventsContext(userId: string, chatId?: string,): Promise<string> {
     return buildRecentEvents(this.db, userId, chatId,);

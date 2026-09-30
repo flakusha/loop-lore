@@ -28,11 +28,6 @@ export class MoodHook implements HookHandler {
    * @param content
    * @param context
    */
-  /**
-   * @param {string} content
-   * @param {HookContext} context
-   * @returns {Promise<boolean>}
-   */
   async canHandle(content: string, context: HookContext,): Promise<boolean> {
     // Private content opt-out: skip mood detection entirely so private
     // conversations are never analyzed for mood shifts.
@@ -43,11 +38,6 @@ export class MoodHook implements HookHandler {
   /**
    * @param content
    * @param context
-   */
-  /**
-   * @param {string} content
-   * @param {HookContext} context
-   * @returns {Promise<HookResult>}
    */
   async execute(content: string, context: HookContext,): Promise<HookResult> {
     const log = getLogger();
@@ -93,10 +83,6 @@ export class MoodHook implements HookHandler {
 
   /**
    * @param content
-   */
-  /**
-   * @param {string} content
-   * @returns {string[]}
    */
   private detectMoodIndicators(content: string,): string[] {
     const indicators: string[] = [];
@@ -144,10 +130,6 @@ export class MoodHook implements HookHandler {
   /**
    * @param indicators
    */
-  /**
-   * @param {string[]} indicators
-   * @returns {string}
-   */
   private determineDominantMood(indicators: string[],): string {
     let positive = 0;
     for (const i of indicators) { if (i.startsWith("positive:",)) { positive += 1; } }
@@ -163,10 +145,6 @@ export class MoodHook implements HookHandler {
 
   /**
    * @param mood
-   */
-  /**
-   * @param {string} mood
-   * @returns {number}
    */
   private calculateMoodDelta(mood: string,): number {
     switch (mood) {

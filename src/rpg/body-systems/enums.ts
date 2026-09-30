@@ -7,12 +7,6 @@
  * Open-ended domain unions consolidated into const-object enums so call sites
  * stop leaking magic string literals.
  */
-
-/**
- * Well-known species values. `species` remains an open string field (any
- * custom species allowed) — this consolidation covers the canonical
- * baseline NSFW game mechanics branch on (TASK-045 species variants).
- */
 export const Species = {
   Human: "human",
   Elf: "elf",

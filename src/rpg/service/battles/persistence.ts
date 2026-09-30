@@ -37,16 +37,6 @@ export async function getActiveBattle(
  * @param battleId - Battle id
  * @returns The battle roster, or null when not found
  */
-
-/**
- * @param deps
- * @param battleId
- */
-/**
- * @param {RpgServiceDeps} deps
- * @param {string} battleId
- * @returns {Promise<BattleWithRoster | null>}
- */
 export async function getBattle(
   deps: RpgServiceDeps,
   battleId: string,
@@ -69,18 +59,6 @@ export async function getBattle(
  * @param deps - Service dependencies
  * @param params - Attack resolution parameters
  * @returns The resolved attack + updated roster + end-of-battle state
- */
-
-/**
- * @param deps
- * @param battleId
- */
-/**
- * @param {RpgServiceDeps} deps
- * @param {string} battleId
- * @throws {Error}
- * @throws {Error}
- * @returns {Promise<BattleWithRoster>}
  */
 export async function requireActiveBattle(
   deps: RpgServiceDeps,
