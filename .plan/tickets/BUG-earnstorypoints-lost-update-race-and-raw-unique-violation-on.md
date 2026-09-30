@@ -3,7 +3,7 @@
 
 # BUG: earnStoryPoints lost-update race and raw UNIQUE violation on first earn
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 
