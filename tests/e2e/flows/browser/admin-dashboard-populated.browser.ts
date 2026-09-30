@@ -140,11 +140,10 @@ describe("Admin dashboard panels — populated", () => {
     );
     await page.click("[data-testid='login-submit']",);
     await loginRes;
-    // The login POST returning is not the same as the login navigation
-    // finishing — the client still has a redirect to /views/chat in flight.
-    // The goto() below is aborted if that competing navigation lands first,
-    // so wait for the redirect to actually settle.
-    await page.waitForURL((url,) => url.pathname === "/views/chat", { timeout: 30_000, },);
+    // The POST returning is not the login navigation finishing — the client still
+    // has the HX-Redirect to /views/chat in flight. A goto() issued now is
+    // aborted if that competing navigation lands first, so wait it out.
+    await page.waitForURL((url: URL,) => url.pathname === "/views/chat", { timeout: 30_000, },);
     // Now start tracking — all subsequent nav errors are captured.
     const errors = trackPageErrors(page, { allowlist: [/401 \(Unauthorized\)/, /Failed to load resource/,], },);
     try {
