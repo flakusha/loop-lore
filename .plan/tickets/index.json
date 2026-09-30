@@ -27344,6 +27344,19 @@
     "title": "Enhance preview shared draft store",
     "type": "TASK"
   },
+  "TASK-ENRICH-VECTOR-GEN-TICKET-CONTEXT-FROM-PLACEHOLDER-POINTERS": {
+    "hash": "efe3f61",
+    "git_issue": "efe3f61",
+    "extid": "TASK-ENRICH-VECTOR-GEN-TICKET-CONTEXT-FROM-PLACEHOLDER-POINTERS",
+    "type": "TASK",
+    "title": "Enrich vector-gen ticket Context from placeholder pointers",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-enrich-vector-gen-ticket-context-from-placeholder-pointers.md",
+    "status": "Not Started"
+  },
   "TASK-EPIC-36-LINT-COGNITIVE-COMPLEXITY-MISC": {
     "epic": "epic-crafting-professions",
     "extid": "TASK-EPIC-36-LINT-COGNITIVE-COMPLEXITY-MISC",
