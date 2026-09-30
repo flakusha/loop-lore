@@ -18,6 +18,10 @@ import type { HandlerOpts, } from "./types";
  */
 export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
+  // Test seam: defaults to the real asset-link writer. Mocking the module instead
+  // would be process-global (Bun's `mock.module` has no unmock) and silently
+  // disabled attachment linking for every later test file in the run.
+  const writeLink = opts.linkAsset ?? linkAsset;
 
   return new Elysia({ name: "characters-create", },)
     .post(
@@ -84,7 +88,7 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
           },)
           .execute();
         if (assetId) {
-          await linkAsset({
+          await writeLink({
             database,
             assetId,
             link: { entityType: AssetLinkEntity.Actor, entityId: id, label: "avatar", },
