@@ -23,6 +23,9 @@ The blast radius is wider than the 2 log lines. Any request whose completed body
 
 **Fix:** `spillFileStem(id)` — a SHA-256 hex digest — is the single source of truth for the filename. `spill()` and `offloadExists()` both route through it, so they cannot drift apart again. Reversal is unnecessary: the row's `offload_path` records the mapping.
 
+
+**Note on the checkmarks above (added 2026-09-30):** every acceptance criterion on this ticket was already ticked when it was picked up, but the implementation was not on `dev` — `spillFileStem()` existed only on the unmerged `spill-sweeper-age-floor` worktree, so the cited `spill-filename.test.ts` did not exist on the branch. The fix and its tests are now on `dev` (`fix(async): hash the spill filename instead of using the cache key`) and were re-verified before the status was corrected: `bun test src/async/spill-filename.test.ts src/async/spill.test.ts src/async/offload.test.ts src/async/offload-daemon.test.ts` → 32 pass / 0 fail. The criteria are accurate now; they were not when they were first ticked.
+
 **Acceptance Criteria:**
 - [x] The spill filename is derived so no id can escape `OFFLOAD_DIR` or name a path that does not exist. — `spillFileStem()` hashes to a 64-char hex segment; `spill-filename.test.ts` covers `../../etc/passwd`, an absolute path, `..`, and `""`.
 - [x] Distinct ids cannot collide onto one spill file (a route-pattern id and a plain-uuid id must not share a name). — asserted via `new Set([...]).size === 3`.
