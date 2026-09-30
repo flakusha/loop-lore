@@ -4,6 +4,7 @@
 # EPIC: Vector Graphics & Animated Image Generation
 
 **File:** `.plan/epics/epic-vector-graphics-generation.md`
+**Overview:** (see sections below)
 **Status:** Not Started
 **Type:** Feature Epic
 **Tags:** assets, svg, vector, animation, smil, image-generation, sanitization

@@ -3,11 +3,13 @@
 
 # TASK: Vector Gen — LLM SVG Pipeline
 
-**Status:** Draft
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Generate SVG via existing LLM text path with validation + sanitized persist
 **Epic:** epic-vector-graphics-generation
+**Context:** See ## Summary, ## Change, and ## Edge Cases below.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 **Tags:** assets, vector, svg, generation
 
 ## Summary
