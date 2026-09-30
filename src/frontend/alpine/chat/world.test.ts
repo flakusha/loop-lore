@@ -111,6 +111,7 @@ function makeSelectCtx(overrides: Record<string, unknown> = {},): Record<string,
     _chatCurrentLocationId: "old-loc",
     _chatRecentLocationChanged: true,
     _locationJoinableChats: [{ id: "ljc1", },],
+    _promptImproveHistory: ["draft from the outgoing chat",],
     isGroupChat: false,
     loadMessages: noop,
     loadSections: noop,
@@ -369,6 +370,9 @@ describe("chatWorld._selectChatInner happy path", () => {
     expect(ctx._chatCurrentLocationId,).toBeNull();
     expect(ctx._chatRecentLocationChanged,).toBe(false,);
     expect(ctx._locationJoinableChats,).toEqual([],);
+    // Composer-scoped improve history must not follow the user into a new
+    // chat — Undo there would write the previous chat's draft into this one.
+    expect(ctx._promptImproveHistory,).toEqual([],);
     // UI store flipped
     expect(uiStore.hasActiveChat,).toBe(true,);
     expect(uiStore.showChatList,).toBe(false,);
