@@ -3,7 +3,7 @@
 
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { type BrowserTestContext, createBrowserTest, } from "../../helpers/browser-server";
-import { trackPageErrors, waitForAlpineReady, } from "../../helpers/htmx-alpine";
+import { EXPECTED_404_NOISE_ALLOWLIST, trackPageErrors, waitForAlpineReady, } from "../../helpers/htmx-alpine";
 import { seedAll, } from "../../helpers/seed";
 
 describe("Navigation E2E", () => {
@@ -179,7 +179,9 @@ describe("Navigation E2E", () => {
 
     test("creates new chat and redirects to chat page", async () => {
       const page = await ctx.openPage();
-      const errors = trackPageErrors(page,);
+      // The game canvas fetches /api/v1/chats/:id/game-state, which 404s by
+      // design until the chat has an extracted state; the client handles it.
+      const errors = trackPageErrors(page, { allowlist: EXPECTED_404_NOISE_ALLOWLIST, },);
       try {
         await goto(page, "/views/new-chat",);
         await page.locator("[data-testid='create-chat-form']",).waitFor({ state: "attached", timeout: 15_000, },);
