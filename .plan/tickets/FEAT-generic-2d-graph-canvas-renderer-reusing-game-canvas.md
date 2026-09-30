@@ -7,16 +7,15 @@
 **Priority:** high
 **Effort:** Medium
 
-**Summary:**
+**Summary:** Extract a generic node/edge 2D canvas renderer from the existing game-canvas so every relationship-graph ticket in this batch shares one draw and interaction layer instead of forking it.
 
-<!-- SPDX-License-Identifier: Apache-2.0 --><!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors --><a name="summary"></a>## SummaryExtract a generic node/edge 2D canvas renderer from the existing game-canvas so every relationship-graph ticket in this batch shares one draw + interaction layer instead of forking it.<a name="context"></a>## ContextReuse: src/frontend/alpine/game-canvas/draw.ts (drawScene, drawPlaceholder, KIND_COLORS), src/frontend/alpine/game-canvas/index.ts (refresh/poll, click hit-test, selection), src/components/chat/game-canvas.html, docs/spec/game-canvas.md. Nothing generic exists today: TASK-relationship-map-visual-graph is Done but mock-only with no canvas; TASK-graph-view-of-plan-links is SVG/DOM; game-canvas draws grid tokens only, no edges.<a name="acceptance"></a>## Acceptance Criteria- [ ] New src/frontend/alpine/graph-canvas/{types,draw,index}.ts renders nodes {id,label,kind,color} + edges {from,to,label} from a JSON payload on 2D canvas.- [ ] Click hit-test selects node/edge, empty state shows placeholder, static layout (server-side or radial) suffices, no force-physics in v1.- [ ] game-canvas keeps working unchanged (import shared helpers or duplicate deliberately, one direction only).- [ ] bun run check green.
+**Context:** Reuse targets: `src/frontend/alpine/game-canvas/draw.ts` (`drawScene`, `drawPlaceholder`, `KIND_COLORS`), `src/frontend/alpine/game-canvas/index.ts` (poll/refresh, click hit-test, selection), `src/components/chat/game-canvas.html`, `docs/spec/game-canvas.md`.
 
-**Context:**
-
-(fill in before starting: why this change, constraints, alternatives considered.)
+Nothing generic exists today: TASK-relationship-map-visual-graph is Done but mock-only and never used a canvas; TASK-graph-view-of-plan-links is SVG/DOM; game-canvas draws grid tokens only, with no edges.
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [ ] New `src/frontend/alpine/graph-canvas/{types,draw,index}.ts` renders nodes (`id`, `label`, `kind`, `color`) and edges (`from`, `to`, `label`) from a JSON payload onto a 2D canvas.
+- [ ] Click hit-test selects a node or edge; empty state shows the placeholder; static layout (server-side or radial) suffices — no force-physics in v1.
+- [ ] game-canvas keeps working unchanged — shared helpers are imported in one direction only (graph-canvas may depend on game-canvas, not the reverse).
+- [ ] `bun run check` green.
