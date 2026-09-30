@@ -9,7 +9,13 @@
 const DEFAULT_MAX_SIZE = 10_485_760;
 /** Default max compression ratio (decompressed / compressed) */
 const DEFAULT_MAX_RATIO = 1000;
-/** Default max base64 input length (before decode) */
+/**
+ * Hard ceiling on base64 input length before decode, regardless of the
+ * caller's own cap: 20 MB encoded. The effective per-call limit is derived
+ * from `maxSize` and is usually far smaller (the default 10 MB cap allows
+ * ~14 MB encoded), so this only binds when a caller passes a very large
+ * `maxSize`.
+ */
 const DEFAULT_MAX_BASE64_LEN = 20_971_520; // 20 MB encoded
 
 /**

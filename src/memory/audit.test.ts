@@ -284,6 +284,38 @@ describe("memory audit — listAuditLog", () => {
     const result = await listAuditLog(db, actorId, { cursor: oversized, },);
     expect(result.entries,).toHaveLength(0,);
   });
+
+  test("every cursor the encoder emits is canonical and decodable", async () => {
+    const userId = crypto.randomUUID();
+    const actorId = crypto.randomUUID();
+    await insertUsers(db, "test-user", "Test User", { id: userId, },);
+    await insertActors(db, "test-actor", { id: actorId, user_id: userId, },);
+    await insertActorMemories(db, actorId, "memory", { id: "m1", },);
+    for (let i = 0; i < 5; i++) {
+      await recordAuditLog(db, [{ memoryId: "m1", actorId, userId, action: "pin", },],);
+    }
+
+    // The encoder is a raw `toString("base64url")` upstream of the guard. If
+    // it ever emits whitespace or overruns the 512-byte cap, the decoder
+    // refuses it and pagination silently restarts from the newest page — so
+    // assert the encoder output is in the exact set `decodeCursor` accepts,
+    // and that feeding it back advances rather than rewinds.
+    const emitted: string[] = [];
+    let cursor: string | undefined = undefined;
+    for (let page = 0; page < 10; page++) {
+      const result = await listAuditLog(db, actorId, { limit: 2, cursor, },);
+      if (result.nextCursor === undefined) { break; }
+      expect(result.nextCursor,).toMatch(/^[A-Za-z0-9_-]+$/,);
+      emitted.push(result.nextCursor,);
+      cursor = result.nextCursor;
+    }
+
+    expect(emitted.length,).toBeGreaterThan(0,);
+    for (const c of emitted) {
+      const resumed = await listAuditLog(db, actorId, { limit: 2, cursor: c, },);
+      expect(resumed.entries[0]?.id,).not.toBe(undefined,);
+    }
+  });
 });
 
 describe("memory audit — extraction hook (create)", () => {

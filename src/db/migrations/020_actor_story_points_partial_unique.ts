@@ -40,8 +40,10 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
   `.execute(database,);
 
   for (const dup of dupActors.rows) {
-    // eslint-disable-next-line no-console
-    console.warn(
+    // BUG-migration-020-logs-via-console-warn-with-eslint-disable: process.emitWarning
+    // is the repo's warning channel (config/templates-loader, entity-position.ts);
+    // console.warn would need an eslint-disable and bypasses the structured sink.
+    process.emitWarning(
       `[020_actor_story_points_partial_unique] actor ${dup.actor_id} has ${dup.n} duplicate NULL-world rows; collapsing to oldest.`,
     );
     const survivor = await sql<{ id: string }>`
