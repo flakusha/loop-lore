@@ -29,7 +29,12 @@ The prior batch asked whether frontend completions double-count against server `
 - Alternative (only if a client-side signal is wanted): add a first-class `frontend.generation_completed` member to `TelemetryEventBody` (provider/model optional, `chatId` server-derived) AND wire `ctx.chatId` derivation — both halves, with an ingest test proving the round-trip to `telemetry_events` with hashed IDs. Do not do the union half alone.
 - Out of scope: server-side `generation.completed` emitters (sibling BUGs), per-user hash fix (sibling ticket).
 
+
+## Resolution
+
+Resolved via the ticket's lazy default: both `trackTelemetry("generation.completed", { chatId })` calls deleted from `src/frontend/alpine/chat-generations.ts` (stream-done and poll-completion), plus the now-unused import. No ingest-union change. They shipped `{ chatId }` as `data`, which `TelemetryEventBody` rejects (that member requires provider/model/promptTokens/completionTokens/latencyMs) and which the ingest route rejects outright, since callers must not set actor identity. No test asserted them.
+
 ## Acceptance Criteria
 
-- [ ] Either both `trackTelemetry("generation.completed", …)` calls removed with no ingest-union change, or the new `frontend.generation_completed` shape round-trips through ingest to `telemetry_events` with hashed IDs
-- [ ] No test asserts the removed calls; touched suites green
+- [x] Either both `trackTelemetry("generation.completed", …)` calls removed with no ingest-union change, or the new `frontend.generation_completed` shape round-trips through ingest to `telemetry_events` with hashed IDs
+- [x] No test asserts the removed calls; touched suites green
