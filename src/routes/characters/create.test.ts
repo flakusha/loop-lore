@@ -6,37 +6,26 @@
  * Ensures `createRoutes` calls `linkAsset` after actor insert when
  * `assetId` is provided in the request body.
  *
- * Requires `--isolate` so `mock.module` can rebind the asset link service
- * before `createRoutes` is loaded.
+ * The asset-link writer is injected through `HandleOpts.linkAsset` rather than
+ * `mock.module`d: Bun's module registry is process-global and has no unmock, so a
+ * module-level stub also served every later test file that links assets for real.
  */
-import { afterEach, beforeEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertUsers, } from "../../test-utils/insert-helpers";
 
-import * as realLinks from "../../assets/service/links";
 import { createRoutes, } from "./create";
 
 interface LinkAssetCall {
   database: unknown;
   assetId: string;
-  link: { entityType: string; entityId: string; label: string | null };
+  link: { entityType: string; entityId: string; label?: string | null };
 }
 
 const linkAssetCalls: LinkAssetCall[] = [];
-mock.module("../../assets/service/links", () => {
-  const linkAssetMock = async (opts: LinkAssetCall,) => {
-    linkAssetCalls.push(opts,);
-  };
-  return {
-    ...realLinks,
-    linkAsset: linkAssetMock,
-    unlinkAsset: async () => {},
-    getAssetLinks: async () => [],
-  };
-},);
 
 /**
  * @param db
@@ -45,7 +34,14 @@ mock.module("../../assets/service/links", () => {
 function makeApp(db: Kysely<DB>, userId: string,): Elysia {
   const app = new Elysia({ name: "test-create", },);
   app.derive(() => ({ userId, userRole: "user", }));
-  return app.use(createRoutes({ database: db, }, "/api",),) as unknown as Elysia;
+  // Injected, not `mock.module`d: Bun's module registry is process-global with
+  // no unmock, so a module-level stub of linkAsset also served every later file
+  // that links assets for real (src/routes/messages/forward.test.ts wrote zero
+  // asset_links) and made the suite look order-dependent.
+  const linkAssetSpy = async (opts: LinkAssetCall,) => {
+    linkAssetCalls.push(opts,);
+  };
+  return app.use(createRoutes({ database: db, linkAsset: linkAssetSpy, }, "/api",),) as unknown as Elysia;
 }
 
 describe("createRoutes avatar asset linking", () => {

@@ -5,7 +5,7 @@
 // the draft starts from the LAYER's own values (so an untouched
 // inherited field is not written back as an override), and the save
 // path targets the layer's own endpoint.
-import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
+import { beforeEach, describe, expect, mock, test, } from "bun:test";
 import { autonomyPanelFactory, } from "./autonomy-panel";
 
 let calls: { url: string; method: string; body: string | null }[] = [];
