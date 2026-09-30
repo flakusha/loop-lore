@@ -270,3 +270,177 @@ describe("earnStoryPoints — concurrency", () => {
     expect(rows.n,).toBe(1,);
   });
 });
+
+describe("earnStoryPoints — cap semantics under the rewrite", () => {
+  // The pre-rewrite code refused an earn only at full cap saturation and
+  // silently clamped a partial overflow: at balance 3 under a cap of 5, an
+  // earn of 3 became balance 5 with earned_total 6. That clamping is a
+  // second way to break balance = earned - spent, since earned_total still
+  // counted the refused amount. The rewrite refuses any overflow instead.
+
+  test("a partial overflow is refused, not clamped to the cap", async () => {
+    await setStoryPointCap(db, ACTOR, null, 5,);
+    await earnStoryPoints(db, { actorId: ACTOR, amount: 3, },);
+
+    // Would be 6 against a cap of 5 — refused, and nothing is credited.
+    await expect(
+      earnStoryPoints(db, { actorId: ACTOR, amount: 3, },),
+    ).rejects.toBeInstanceOf(CapExceededError,);
+
+    const bal = await getStoryPointBalance(db, ACTOR, null,);
+    expect(bal.balance,).toBe(3,);
+    // The invariant the old clamp broke.
+    expect(bal.earned_total,).toBe(3,);
+    expect(bal.balance,).toBe(bal.earned_total - bal.spent_total,);
+  });
+
+  test("an earn that exactly reaches the cap still succeeds", async () => {
+    await setStoryPointCap(db, ACTOR, null, 5,);
+    await earnStoryPoints(db, { actorId: ACTOR, amount: 5, },);
+
+    const bal = await getStoryPointBalance(db, ACTOR, null,);
+    expect(bal.balance,).toBe(5,);
+    expect(bal.earned_total,).toBe(5,);
+  });
+
+  test("an overflow far past the cap is refused and credits nothing", async () => {
+    await setStoryPointCap(db, ACTOR, null, 5,);
+    await earnStoryPoints(db, { actorId: ACTOR, amount: 5, },);
+
+    await expect(
+      earnStoryPoints(db, { actorId: ACTOR, amount: 100, },),
+    ).rejects.toBeInstanceOf(CapExceededError,);
+
+    const bal = await getStoryPointBalance(db, ACTOR, null,);
+    expect(bal.balance,).toBe(5,);
+    expect(bal.earned_total,).toBe(5,);
+  });
+
+  test("parallel earns under a cap never overshoot it and keep the invariant", async () => {
+    await setStoryPointCap(db, ACTOR, null, 10,);
+
+    const results = await Promise.allSettled(
+      Array.from({ length: 8, }, () => earnStoryPoints(db, { actorId: ACTOR, amount: 3, },),),
+    );
+
+    const accepted = results.filter((r,) => r.status === "fulfilled").length;
+    const bal = await getStoryPointBalance(db, ACTOR, null,);
+
+    // The cap is a hard ceiling regardless of how the earns interleave.
+    expect(bal.balance,).toBeLessThanOrEqual(10,);
+    // Only accepted earns are counted, so the two totals stay consistent.
+    expect(bal.earned_total,).toBe(accepted * 3,);
+    expect(bal.balance,).toBe(bal.earned_total - bal.spent_total,);
+  });
+
+  test("an earn is scoped to its own world and never leaks across", async () => {
+    await earnStoryPoints(db, { actorId: ACTOR, worldId: WORLD, amount: 7, },);
+    await earnStoryPoints(db, { actorId: ACTOR, amount: 4, },);
+
+    const world = await getStoryPointBalance(db, ACTOR, WORLD,);
+    const global = await getStoryPointBalance(db, ACTOR, null,);
+    expect(world.balance,).toBe(7,);
+    expect(global.balance,).toBe(4,);
+  });
+
+  test("a second earn on an existing world row credits that world only", async () => {
+    // Exercises the UPDATE branch's `world_id IS ?` predicate for a non-NULL
+    // world, which the NULL-world path cannot cover.
+    await earnStoryPoints(db, { actorId: ACTOR, worldId: WORLD, amount: 5, },);
+    await earnStoryPoints(db, { actorId: ACTOR, worldId: WORLD, amount: 3, },);
+
+    const world = await getStoryPointBalance(db, ACTOR, WORLD,);
+    expect(world.balance,).toBe(8,);
+    expect(world.earned_total,).toBe(8,);
+  });
+});
+
+describe("spendStoryPoints — concurrency", () => {
+  // spendStoryPoints took the same SELECT-then-INSERT shape against the same
+  // 020 partial unique index that earnStoryPoints had, so concurrent
+  // first-time spends all reached the INSERT and every loser but one raised a
+  // raw `SQLiteError: UNIQUE constraint failed` instead of the intended
+  // InsufficientStoryPointsError. Same table, same index, same defect class.
+
+  test("parallel first-time spends report insufficiency, not a raw UNIQUE error", async () => {
+    const results = await Promise.allSettled(
+      Array.from({ length: 6, }, () => spendStoryPoints(db, { actorId: ACTOR, amount: 1, },),),
+    );
+
+    // Every rejection must be the domain error. A SQLiteError here means the
+    // conflict clause regressed.
+    for (const r of results) {
+      expect(r.status,).toBe("rejected",);
+      expect((r as PromiseRejectedResult).reason,).toBeInstanceOf(InsufficientStoryPointsError,);
+    }
+  });
+
+  test("a refused first-time spend leaves no phantom row behind", async () => {
+    await expect(
+      spendStoryPoints(db, { actorId: ACTOR, amount: 1, },),
+    ).rejects.toBeInstanceOf(InsufficientStoryPointsError,);
+
+    // The seeded zero row is rolled back with the failed transaction, so a
+    // read still reports an actor that has never been seen.
+    const rows = raw
+      .query("SELECT COUNT(*) AS n FROM actor_story_points WHERE actor_id = ?",)
+      .get(ACTOR,) as { n: number };
+    expect(rows.n,).toBe(0,);
+  });
+
+  test("a spend racing a concurrent earn on a fresh actor leaves one row", async () => {
+    const results = await Promise.allSettled([
+      earnStoryPoints(db, { actorId: ACTOR, amount: 5, },),
+      spendStoryPoints(db, { actorId: ACTOR, amount: 1, },),
+    ],);
+
+    const rows = raw
+      .query("SELECT COUNT(*) AS n FROM actor_story_points WHERE actor_id = ?",)
+      .get(ACTOR,) as { n: number };
+    expect(rows.n,).toBe(1,);
+    // Whichever order the two took, the row's totals stay consistent.
+    const bal = await getStoryPointBalance(db, ACTOR, null,);
+    expect(bal.balance,).toBe(bal.earned_total - bal.spent_total,);
+    expect(results.some((r,) => r.status === "fulfilled"),).toBe(true,);
+  });
+
+  test("parallel spends cannot overdraw the balance", async () => {
+    await earnStoryPoints(db, { actorId: ACTOR, amount: 10, },);
+
+    // Three spends of 4 against a balance of 10: two fit (8), the third
+    // cannot. The balance must never go negative, and the losers must report
+    // the domain error rather than a raw constraint violation.
+    const results = await Promise.allSettled(
+      Array.from({ length: 3, }, () => spendStoryPoints(db, { actorId: ACTOR, amount: 4, },),),
+    );
+
+    const ok = results.filter((r,) => r.status === "fulfilled").length;
+    expect(ok,).toBe(2,);
+    for (const r of results) {
+      if (r.status === "rejected") {
+        expect(r.reason,).toBeInstanceOf(InsufficientStoryPointsError,);
+      }
+    }
+
+    const bal = await getStoryPointBalance(db, ACTOR, null,);
+    expect(bal.balance,).toBe(2,);
+    expect(bal.spent_total,).toBe(8,);
+    expect(bal.balance,).toBeGreaterThanOrEqual(0,);
+  });
+
+  test("parallel spends that all fit debit every one of them", async () => {
+    await earnStoryPoints(db, { actorId: ACTOR, amount: 10, },);
+
+    // Three spends of 3 total 9, which the balance covers: all three land
+    // and the total is exact. This is the case a naive "only one concurrent
+    // write wins" guard would wrongly refuse.
+    const results = await Promise.allSettled(
+      Array.from({ length: 3, }, () => spendStoryPoints(db, { actorId: ACTOR, amount: 3, },),),
+    );
+
+    expect(results.filter((r,) => r.status === "fulfilled").length,).toBe(3,);
+    const bal = await getStoryPointBalance(db, ACTOR, null,);
+    expect(bal.balance,).toBe(1,);
+    expect(bal.spent_total,).toBe(9,);
+  });
+});
