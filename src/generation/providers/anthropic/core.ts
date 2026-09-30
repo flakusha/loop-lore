@@ -32,6 +32,7 @@ function stringifyToolInput(input: Record<string, unknown> | undefined,): string
 /**
  * @param state
  * @param req
+ * @returns {Promise<GenerateResponse>}
  */
 export async function completeDispatch(
   state: AnthropicState,

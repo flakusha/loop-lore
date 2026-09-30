@@ -20,6 +20,7 @@ import { handleDeleteWorld, } from "./worlds-delete";
 /**
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { worlds: { get: { body: unknown; params: {}; query: unknown; headers: unknown; response: { ...; }; }; }; }; } & ... ...}
  */
 export function worldRoutes(opts: HandleOpts, prefix = "/api",) {
   const { database, } = opts;

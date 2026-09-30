@@ -78,6 +78,7 @@ const ChatModerateBody = t.Union([
  * @param opts - Shared route options.
  * @param prefix - Mount prefix; defaults to `/api` so the route is
  *   `/api/chats/:id/moderate` — matching the v1 chats subplugin shape.
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { chats: { ":id": { moderate: { ...; }; }; }; }; }, { ...; }, { ...; }>}
  */
 export function moderationRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;

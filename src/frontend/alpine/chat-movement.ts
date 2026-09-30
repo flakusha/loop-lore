@@ -10,6 +10,9 @@ import type { ChatState, } from "./types";
 export type ChatMovement = Partial<ChatState> & ThisType<ChatState>;
 
 export const chatMovement: ChatMovement = {
+  /**
+   * @returns {Promise<void>}
+   */
   async loadMovementEvents() {
     if (!this.activeChat) { return; }
     this.loadingMovementEvents = true;
@@ -25,6 +28,10 @@ export const chatMovement: ChatMovement = {
     }
   },
 
+  /**
+   * @param {string} pattern
+   * @returns {string}
+   */
   getMovementIcon(pattern: string,) {
     const icons: Record<string, string> = {
       patrol: "🔄",

@@ -12,6 +12,10 @@ const log = rootLog.child({ module: "chat-actions", },);
 export type MessageAiAction = "summarize" | "action-items" | "explain";
 
 export const messageTools: Partial<ChatState> & ThisType<ChatState> = {
+  /**
+   * @param {string} msgId
+   * @returns {Promise<void>}
+   */
   async forwardMessage(msgId: string,) {
     log.info("forwardMessage", { messageId: msgId, },);
     const sourceChat = this.activeChat;
@@ -49,6 +53,11 @@ export const messageTools: Partial<ChatState> & ThisType<ChatState> = {
       this.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkErrorForwarding",), },);
     }
   },
+  /**
+   * @param {string} msgId
+   * @param {MessageAiAction} action
+   * @returns {Promise<void>}
+   */
   async runMessageAiAction(msgId: string, action: MessageAiAction,) {
     log.info("runMessageAiAction", { messageId: msgId, action, },);
     if (!this.activeChat) {

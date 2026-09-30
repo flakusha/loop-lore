@@ -25,11 +25,17 @@ export class WsHandler extends TransportBase<WsOptions> {
   }
 
   /** */
+  /**
+   * @returns {TransportProtocol}
+   */
   protected getProtocol(): TransportProtocol {
     return TransportProtocol.WebSocket;
   }
 
   /** */
+  /**
+   * @returns {Record<string, unknown>}
+   */
   protected getMetadata(): Record<string, unknown> {
     return {
       pingPong: true,
@@ -38,6 +44,9 @@ export class WsHandler extends TransportBase<WsOptions> {
   }
 
   /** */
+  /**
+   * @returns {Connection}
+   */
   protected override createConnection(): Connection {
     const id = randomUUID();
     const remoteAddr = this.options.url ?? `${this.options.host ?? "localhost"}:${this.options.port ?? 3000}`;
@@ -51,6 +60,9 @@ export class WsHandler extends TransportBase<WsOptions> {
   }
 
   /** */
+  /**
+   * @returns {Promise<Connection>}
+   */
   override async connect(): Promise<Connection> {
     const conn = await super.connect();
     if (this.options.url) {
@@ -63,6 +75,10 @@ export class WsHandler extends TransportBase<WsOptions> {
 
   /**
    * @param ws
+   */
+  /**
+   * @param {WebSocket} ws
+   * @returns {void}
    */
   attach(ws: WebSocket,): void {
     this.ws = ws;
@@ -78,6 +94,10 @@ export class WsHandler extends TransportBase<WsOptions> {
   }
 
   /** Drain pendingMessages into the current socket and clear the queue. */
+  /**
+   * @throws {Error}
+   * @returns {void}
+   */
   private flushPending(): void {
     if (!this.ws) { return; }
     const queue = this.pendingMessages;
@@ -95,6 +115,10 @@ export class WsHandler extends TransportBase<WsOptions> {
 
   /**
    * @param data
+   */
+  /**
+   * @param {string | Uint8Array} data
+   * @returns {Promise<void>}
    */
   send(data: string | Uint8Array,): Promise<void> {
     this.ensureConnected();
@@ -115,6 +139,9 @@ export class WsHandler extends TransportBase<WsOptions> {
   }
 
   /** */
+  /**
+   * @returns {Promise<void>}
+   */
   override close(): Promise<void> {
     if (this.pingInterval) {
       clearInterval(this.pingInterval,);
@@ -128,6 +155,7 @@ export class WsHandler extends TransportBase<WsOptions> {
 
 /**
  * @param options
+ * @returns {WsHandler}
  */
 export function createWsHandler(options: WsOptions = {},): WsHandler {
   return new WsHandler(options,);

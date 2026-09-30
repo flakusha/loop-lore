@@ -33,6 +33,7 @@ import { updateRoutes, } from "./update";
  * @param opts
  * @param opts.database
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { admin: { "comfyui-workflows": { ...; }; }; }; } & ... 5 more ... & { ...; }, { ...; }, { ...; } & { ...; }>}
  */
 export function adminComfyuiWorkflowRoutes(
   opts: { database: Kysely<DB> },

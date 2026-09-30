@@ -63,6 +63,9 @@ function assertValidSchedule(name: string, schedule: string,): void {
  * Publishes itself via `setScheduler` so admin routes can reach it.
  * @param deps
  * @returns void
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
  */
 export function startScheduler(deps: SchedulerDeps,): Scheduler {
   const { database, config, logger, } = deps;
@@ -140,6 +143,9 @@ export function startScheduler(deps: SchedulerDeps,): Scheduler {
     }),);
 
   const scheduler: Scheduler = {
+    /**
+     * @returns {void}
+     */
     stop(): void {
       for (const job of live.values()) {
         job.handle?.stop();
@@ -148,6 +154,11 @@ export function startScheduler(deps: SchedulerDeps,): Scheduler {
       if (getScheduler() === scheduler) { setScheduler(null,); }
     },
     getStatus,
+    /**
+     * @param {string} name
+     * @throws {Error}
+     * @returns {Promise<unknown>}
+     */
     async runOnce(name: string,): Promise<unknown> {
       const job = live.get(name,);
       if (!job) { throw new Error(`Unknown cron job: ${name}`,); }
@@ -173,7 +184,10 @@ export function setScheduler(scheduler: Scheduler | null,): void {
   activeScheduler = scheduler;
 }
 
-/** Scheduler handle for admin status/trigger endpoints (null when not booted). */
+/**
+ * Scheduler handle for admin status/trigger endpoints (null when not booted).
+ * @returns {Scheduler | null}
+ */
 export function getScheduler(): Scheduler | null {
   return activeScheduler;
 }

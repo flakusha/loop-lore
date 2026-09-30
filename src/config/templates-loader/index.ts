@@ -45,6 +45,7 @@ import {
  * Also loads character files from configs/characters/ directory.
  * @param cwd - Working directory to search from (default: process.cwd())
  * @returns Merged template configuration
+ * @throws {Error}
  */
 export function loadTemplateConfig(cwd?: string,): TemplatesConfig {
   const directory = cwd ?? process.cwd();

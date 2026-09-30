@@ -15,6 +15,7 @@ import type { RunnerState, SyntheticTestStatus, } from "./types";
 /**
  * @param state
  * @param c
+ * @returns {CaseResult}
  */
 export function runTurnSequence(state: RunnerState, c: SyntheticCase,): CaseResult {
   if (!state.turnManagerFactory) {
@@ -33,6 +34,7 @@ export function runTurnSequence(state: RunnerState, c: SyntheticCase,): CaseResu
 /**
  * @param _state
  * @param c
+ * @returns {{ status: SyntheticTestStatus; expected: Record<string, unknown>; actual: Record<string, unknown>; reason?: string | undefined; }}
  */
 export function runWorldStateTransition(_state: RunnerState, c: SyntheticCase,): {
   status: SyntheticTestStatus;
@@ -70,6 +72,7 @@ export function runWorldStateTransition(_state: RunnerState, c: SyntheticCase,):
  * @param computed.expected
  * @param computed.actual
  * @param computed.reason
+ * @returns {{ status: SyntheticTestStatus; expected: Record<string, unknown>; actual: Record<string, unknown>; reason?: string | undefined; }}
  */
 export function runGeneric(
   c: SyntheticCase,

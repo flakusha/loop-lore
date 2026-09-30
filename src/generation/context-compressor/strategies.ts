@@ -14,6 +14,7 @@ import type { StrategyResult, } from "./types";
  * @param budget
  * @param tokenCountFn
  * @param summarizeFn
+ * @returns {StrategyResult}
  */
 export function applyStrategy(
   system: ContextMessage[],

@@ -37,6 +37,7 @@ function escapeHtml(str: string,): string {
  * @param opts
  * @param opts.messageId
  * @param opts.thinking
+ * @returns {string}
  */
 export function renderStreamMessageWithSanitizer(
   actorName: string,
@@ -80,6 +81,7 @@ export function renderStreamMessageWithSanitizer(
  * @param opts.messageId
  * @param opts.isFinal
  * @param opts.thinking
+ * @returns {string}
  */
 export function renderStreamMessage(
   actorName: string,

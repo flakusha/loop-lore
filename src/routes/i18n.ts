@@ -28,6 +28,7 @@ export interface I18nRoutesOpts {
  * @param root0
  * @param root0.database
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { i18n: { locales: { ...; }; }; }; } & { ...; }, { ...; }, { ...; }>}
  */
 export function i18nRoutes({ database, }: I18nRoutesOpts, prefix = "/api",) {
   return new Elysia({ name: "i18n", },)

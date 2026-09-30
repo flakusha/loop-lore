@@ -41,6 +41,11 @@ export class PriorityQueue<T,> {
   }
 
   /** Insert. Throws `RangeError` when `cap` is set and the queue is full. */
+  /**
+   * @param {T} item
+   * @throws {Error}
+   * @returns {void}
+   */
   push(item: T,): void {
     if (this.cap !== undefined && this.heap.length >= this.cap) {
       throw new RangeError(`PriorityQueue: cap ${this.cap} reached`,);
@@ -52,6 +57,9 @@ export class PriorityQueue<T,> {
   }
 
   /** Remove and return the highest-priority item, or `undefined` if empty. */
+  /**
+   * @returns {T | undefined}
+   */
   pop(): T | undefined {
     if (this.heap.length === 0) { return undefined; }
     const top = this.heap[0]!;
@@ -66,6 +74,9 @@ export class PriorityQueue<T,> {
   }
 
   /** Peek at the highest-priority item without removing it. */
+  /**
+   * @returns {T | undefined}
+   */
   peek(): T | undefined {
     return this.heap[0];
   }
@@ -76,22 +87,37 @@ export class PriorityQueue<T,> {
   }
 
   /** Drop all items. */
+  /**
+   * @returns {void}
+   */
   clear(): void {
     this.heap.length = 0;
     this.entrySeq.length = 0;
   }
 
   /** Iterate in heap order (not sorted). */
+  /**
+   * @returns {Generator<T, void, void>}
+   */
   *[Symbol.iterator](): Generator<T, void, void> {
     for (let i = 0; i < this.heap.length; i++) { yield this.heap[i]!; }
   }
 
+  /**
+   * @param {number} i
+   * @param {number} j
+   * @returns {boolean}
+   */
   private higher(i: number, j: number,): boolean {
     const cmp = this.compare(this.heap[i]!, this.heap[j]!,);
     if (cmp !== 0) { return cmp < 0; }
     return (this.entrySeq[i] ?? 0) < (this.entrySeq[j] ?? 0);
   }
 
+  /**
+   * @param {number} i
+   * @returns {void}
+   */
   private siftUp(i: number,): void {
     while (i > 0) {
       const parent = (i - 1) >> 1;
@@ -101,6 +127,10 @@ export class PriorityQueue<T,> {
     }
   }
 
+  /**
+   * @param {number} i
+   * @returns {void}
+   */
   private siftDown(i: number,): void {
     const n = this.heap.length;
     for (;;) {
@@ -115,6 +145,11 @@ export class PriorityQueue<T,> {
     }
   }
 
+  /**
+   * @param {number} i
+   * @param {number} j
+   * @returns {void}
+   */
   private swap(i: number, j: number,): void {
     const t = this.heap[i]!;
     const hp = this.heap[j]!;

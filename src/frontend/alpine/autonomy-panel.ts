@@ -72,10 +72,16 @@ const panelState: AutonomyPanelState = {
   autoSaving: false,
   autoError: "",
 
+  /**
+   * @returns {Promise<void>}
+   */
   async init() {
     await this.load();
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async load() {
     if (!this._autoWorldId) { return; }
     this.autoLoading = true;
@@ -101,6 +107,9 @@ const panelState: AutonomyPanelState = {
     }
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async save() {
     if (!this._autoWorldId) { return; }
     this.autoSaving = true;
@@ -124,6 +133,9 @@ const panelState: AutonomyPanelState = {
     }
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async saveActor() {
     if (!this._autoActorId || !this._autoWorldId) { return; }
     this.autoSaving = true;
@@ -146,6 +158,10 @@ const panelState: AutonomyPanelState = {
     }
   },
 
+  /**
+   * @param {unknown} action
+   * @returns {Promise<void>}
+   */
   async control(action,) {
     if (!this._autoWorldId) { return; }
     this.autoError = "";
@@ -162,25 +178,42 @@ const panelState: AutonomyPanelState = {
     }
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async selectActor() {
     // Reread so the per-actor draft and the inherited hints describe the
     // character now selected, not the one selected when the page loaded.
     await this.load();
   },
 
+  /**
+   * @returns {boolean}
+   */
   autoDirty() {
     return sameFields(this.autoData?.layers[this._autoLayer] ?? EMPTY_DRAFT, this.autoDraft,);
   },
 
+  /**
+   * @returns {boolean}
+   */
   actorDirty() {
     return sameFields(this.autoData?.layers.actor ?? EMPTY_DRAFT, this.autoActorDraft,);
   },
 
+  /**
+   * @param {unknown} field
+   * @returns {string}
+   */
   ownValue(field,) {
     const v = this.autoData?.layers[this._autoLayer]?.[field];
     return v === undefined ? "" : String(v,);
   },
 
+  /**
+   * @param {unknown} field
+   * @returns {string}
+   */
   inheritedValue(field,) {
     const v = this.autoData?.resolved[field];
     if (v === null || v === undefined) { return "unlimited"; }
@@ -188,6 +221,9 @@ const panelState: AutonomyPanelState = {
     return String(v,);
   },
 
+  /**
+   * @returns {string[]}
+   */
   presetNames() {
     return Object.keys(this.autoData?.presets ?? {},);
   },

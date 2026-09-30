@@ -57,6 +57,7 @@ export function rollMultiple(count: number, sides: DiceSides,): number[] {
  * Disadvantage: roll 2d20, take the lower result.
  * Natural 20/1 are only flagged on the *kept* die.
  * @param mode
+ * @returns {{ value: number; natural20: boolean; natural1: boolean; advantageMode: AdvantageMode; rawRolls: [number] | [number, number]; }}
  */
 export function rollD20WithAdvantage(mode: AdvantageMode = AdvantageMode.Normal,): {
   value: number;

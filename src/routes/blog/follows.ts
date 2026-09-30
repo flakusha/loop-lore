@@ -17,6 +17,7 @@ import { extractAuth, HttpStatus, jsonError, jsonResponse, requireUserId, } from
 /**
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { blog: { follow: { ...; }; }; }; } & { ...; } & { ...; } & { ...; }, { ...; }, { ...; }>}
  */
 export function blogFollowRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;

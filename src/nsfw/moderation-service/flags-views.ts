@@ -25,6 +25,7 @@ import type { ContentFlag, } from "./types";
  * @param row.resolved_by
  * @param row.resolved_at
  * @param row.created_at
+ * @returns {ContentFlag}
  */
 export function mapFlag(
   row: {
@@ -98,6 +99,7 @@ const FLAG_DESCRIPTION_MAX = 1000;
  * Prefers an explicit per-call config (route `opts.config.nsfw`) so values
  * from `configs/env.yaml` are honored; falls back to env-only otherwise.
  * @param configured Value from the merged Config (`nsfw.piiSecret` / `nsfw.reporterHashSecret`).
+ * @returns {string}
  */
 export function resolveReporterHashSecret(configured?: { piiSecret?: string; reporterHashSecret?: string },): string {
   return resolveSharedReporterHashSecret(configured,);
@@ -109,7 +111,10 @@ function reporterSecret(configured?: { piiSecret?: string; reporterHashSecret?: 
   cachedReporterSecret ??= resolveSharedReporterHashSecret();
   return cachedReporterSecret;
 }
-/** Bust the memoized reporter secret. Test-only; called when env flips mid-process. */
+/**
+ * Bust the memoized reporter secret. Test-only; called when env flips mid-process.
+ * @returns {void}
+ */
 export function resetReporterHashSecretCache(): void {
   cachedReporterSecret = null;
 }
@@ -136,6 +141,7 @@ export function hashReporterId(
 /**
  * Project a ContentFlag to the queue-view shape (no reporter PII).
  * @param row
+ * @returns {FlagQueueView}
  */
 export function toQueueView(
   row: ContentFlag,
@@ -157,6 +163,7 @@ export function toQueueView(
 /**
  * Project a ContentFlag to the minimal resolved view returned to admins.
  * @param row
+ * @returns {ResolvedFlagView}
  */
 export function toResolvedView(row: ContentFlag,): ResolvedFlagView {
   return {
@@ -171,6 +178,8 @@ export function toResolvedView(row: ContentFlag,): ResolvedFlagView {
 /**
  * Enforce the maximum `description` length on flag creation.
  * @param description
+ * @throws {Error}
+ * @returns {void}
  */
 export function checkDescriptionLength(description: string | null | undefined,): void {
   if (description && description.length > FLAG_DESCRIPTION_MAX) {
@@ -183,6 +192,7 @@ export function checkDescriptionLength(description: string | null | undefined,):
 /**
  * Server-side cap on `limit` for the flag queue (max 100).
  * @param limit
+ * @returns {number}
  */
 export function clampFlagLimit(limit: number | undefined,): number {
   if (!limit || !Number.isFinite(limit,) || limit <= 0) { return 50; }

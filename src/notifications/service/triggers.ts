@@ -40,6 +40,7 @@ async function worldParticipantActorIds(db: Kysely<DB>, worldId: string,): Promi
  * @param opts.senderId
  * @param opts.mentionedActorIds
  * @param opts.messageId
+ * @returns {Promise<void>}
  */
 export async function notifyMention(
   db: Kysely<DB>,
@@ -72,6 +73,7 @@ export async function notifyMention(
  * @param opts.chatId
  * @param opts.invitedUserId
  * @param opts.inviterId
+ * @returns {Promise<void>}
  */
 export async function notifyChatInvite(
   db: Kysely<DB>,
@@ -99,6 +101,7 @@ export async function notifyChatInvite(
  * @param opts.worldId
  * @param opts.chatId
  * @param opts.questName
+ * @returns {Promise<void>}
  */
 export async function notifyQuestUpdate(
   db: Kysely<DB>,
@@ -126,6 +129,7 @@ export async function notifyQuestUpdate(
  * @param opts
  * @param opts.worldId
  * @param opts.description
+ * @returns {Promise<void>}
  */
 export async function notifyGmAction(
   db: Kysely<DB>,
@@ -151,6 +155,7 @@ export async function notifyGmAction(
  * @param opts.userId
  * @param opts.title
  * @param opts.body
+ * @returns {Promise<void>}
  */
 export async function notifySystem(
   db: Kysely<DB>,
@@ -170,6 +175,7 @@ export async function notifySystem(
  * @param opts.userId
  * @param opts.postId
  * @param opts.title
+ * @returns {Promise<void>}
  */
 export async function notifyBlogPost(
   db: Kysely<DB>,
@@ -189,6 +195,7 @@ export async function notifyBlogPost(
  * @param opts.userId
  * @param opts.postId
  * @param opts.commenterName
+ * @returns {Promise<void>}
  */
 export async function notifyBlogComment(
   db: Kysely<DB>,

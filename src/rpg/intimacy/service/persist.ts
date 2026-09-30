@@ -20,6 +20,7 @@ export const TIER_MOOD_DELTA = 3;
  * when the row is missing.
  * @param db
  * @param actorId
+ * @returns {Promise<StatBlock>}
  */
 export async function getActorStatBlock(db: Kysely<DB>, actorId: string,): Promise<StatBlock> {
   const row = await db
@@ -48,6 +49,7 @@ type ModuleLog = ReturnType<typeof getLogger>;
  * `intimacy.level_changed` surfaced through Character Core (TASK-041).
  * Best-effort: a missing mood row must not fail the intimacy update.
  * @param args
+ * @returns {Promise<void>}
  */
 export async function logLevelChangeMood(args: {
   db: Kysely<DB>;
@@ -85,6 +87,7 @@ export async function logLevelChangeMood(args: {
 /**
  * Persist the pair score, history, and unlocked thresholds.
  * @param args
+ * @returns {Promise<void>}
  */
 export async function persistPairScore(args: {
   db: Kysely<DB>;

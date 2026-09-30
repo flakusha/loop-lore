@@ -20,6 +20,9 @@ function getLog() {
  * @param endingId
  * @param endingType
  * @param completionTime
+ * @throws {Error}
+ * @throws {Error}
+ * @returns {Promise<Playthrough>}
  */
 export async function completePlaythrough(
   db: Kysely<DB>,

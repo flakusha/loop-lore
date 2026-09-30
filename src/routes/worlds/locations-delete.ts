@@ -12,6 +12,7 @@ import { requireWorldOwner, } from "./access";
  * @param locId
  * @param userId
  * @param userRole
+ * @returns {Promise<Response>}
  */
 export async function handleDeleteLocation(
   database: Kysely<DB>,

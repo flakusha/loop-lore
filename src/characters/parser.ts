@@ -52,6 +52,8 @@ function isZipMagic(data: Buffer,): boolean {
  * @param input
  * @param _filename
  * @returns void
+ * @throws {Error}
+ * @throws {Error}
  */
 export async function parseCharacterCard(input: Buffer | string, _filename?: string,): Promise<ParseResult> {
   const warnings: string[] = [];

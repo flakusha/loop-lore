@@ -34,6 +34,7 @@ export interface MeshRouteOpts {
  * Mount the mesh reserve/deliver routes on a federation app.
  * @param app Elysia app under construction.
  * @param opts Server config + database.
+ * @returns {void}
  */
 export function mountMeshApi(app: Elysia, opts: MeshRouteOpts,): void {
   const { config, } = opts;

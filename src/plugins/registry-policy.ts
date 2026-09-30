@@ -10,7 +10,15 @@ export const PLUGIN_ORIGIN_CAPABILITIES = {
   local: ["routes", "tools", "agentRoles", "uiComponents", "eventHandlers", "migrations"],
 } as const satisfies Record<PluginOrigin, readonly PluginCapability[]>;
 
-/** Assert that a registered plugin may register an extension point. */
+/**
+ * Assert that a registered plugin may register an extension point.
+ * @param {ReadonlyMap<string, LoadedPlugin>} plugins
+ * @param {string} pluginName
+ * @param {PluginCapability} capability
+ * @throws {Error}
+ * @throws {Error}
+ * @returns {void}
+ */
 export function assertPluginCanRegister(
   plugins: ReadonlyMap<string, LoadedPlugin>,
   pluginName: string,

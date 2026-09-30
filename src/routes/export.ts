@@ -34,6 +34,7 @@ interface HandlerOpts {
  * @param root0
  * @param root0.database
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, {}, { derive: {}; resolve: {}; schema: {}; standaloneSchema: {}; response: {}; }, { ...; }>}
  */
 export function exportRoutes({ database, }: HandlerOpts, prefix = "/api",): Elysia {
   return new Elysia({ name: "export", },).post(`${prefix}/export`, async (ctx: any,) => {

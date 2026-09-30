@@ -30,6 +30,8 @@ export interface UpdateMoodArgs {
  * @param root0.worldId
  * @param args.opts - Update options
  * @param root0.opts
+ * @throws {Error}
+ * @returns {Promise<void>}
  */
 export async function updateMood(
   { thisL, actorId, worldId, opts, }: UpdateMoodArgs,

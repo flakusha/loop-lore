@@ -27,6 +27,7 @@ const AvatarListResponse = t.Array(AvatarResponse,);
 /**
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { actors: { ":actorId": { ...; }; }; }; } & ... 5 more ... & { ...; }, { ...; }, { ...; }>}
  */
 export function characterAvatarsRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;

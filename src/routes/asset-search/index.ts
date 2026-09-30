@@ -28,6 +28,7 @@ export type { HandlerOpts, } from "./types";
 /**
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { assets: { search: { ...; }; }; }; }, { ...; }, { ...; }>}
  */
 export function assetSearchRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;

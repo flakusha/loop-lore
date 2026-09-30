@@ -33,6 +33,7 @@ export interface RpgRouteContext {
  *   }, "Failed to roll dice"),
  *   rpgRouteConfig(DiceRollBody, "Roll dice", "...", "Dice"),
  * )
+ * @returns {(ctx: RpgRouteContext) => Promise<Response | T>}
  */
 export function rpgHandler<T = unknown,>(
   fn: (userId: string, ctx: RpgRouteContext,) => Promise<T | Response>,
@@ -58,6 +59,7 @@ export function rpgHandler<T = unknown,>(
  * @param summary
  * @param description
  * @param category
+ * @returns {{ body: unknown; response: Record<number, unknown>; detail: { summary: string; description: string; tags: readonly string[]; }; }}
  */
 export function rpgRouteConfig(
   body: unknown,

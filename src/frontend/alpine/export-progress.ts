@@ -118,10 +118,17 @@ export const exportProgress: ExportProgressState = {
   _sse: null,
   _pollTimer: null,
 
+  /**
+   * @returns {boolean}
+   */
   isTerminal() {
     return this.status === "completed" || this.status === "failed";
   },
 
+  /**
+   * @param {ExportSseEvent} event
+   * @returns {void}
+   */
   applyEvent(event: ExportSseEvent,) {
     if (event.jobId) { this.jobId = event.jobId; }
     if (typeof event.progress === "number") { this.progress = event.progress; }
@@ -147,6 +154,10 @@ export const exportProgress: ExportProgressState = {
     if (this.isTerminal()) { this.stopTracking(); }
   },
 
+  /**
+   * @param {JobStatusSnapshot} snapshot
+   * @returns {boolean}
+   */
   applySnapshot(snapshot: JobStatusSnapshot,) {
     this.jobId = snapshot.id;
     this.status = snapshot.status;
@@ -164,6 +175,9 @@ export const exportProgress: ExportProgressState = {
     return this.isTerminal();
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async startExport() {
     if (this.busy) { return; }
     this.reset();
@@ -223,6 +237,9 @@ export const exportProgress: ExportProgressState = {
     }
   },
 
+  /**
+   * @returns {void}
+   */
   startPolling() {
     this.stopTracking();
     if (!this.jobId) { return; }
@@ -247,6 +264,9 @@ export const exportProgress: ExportProgressState = {
     }, POLL_INTERVAL_MS,);
   },
 
+  /**
+   * @returns {void}
+   */
   stopTracking() {
     if (this._sse) {
       this._sse.close();
@@ -258,6 +278,9 @@ export const exportProgress: ExportProgressState = {
     }
   },
 
+  /**
+   * @returns {void}
+   */
   reset() {
     this.stopTracking();
     const fresh = initialState();
@@ -275,7 +298,10 @@ export const exportProgress: ExportProgressState = {
   },
 };
 
-/** Build the Alpine scope for the export-progress panel. */
+/**
+ * Build the Alpine scope for the export-progress panel.
+ * @returns {ExportProgressState}
+ */
 export function exportProgressFactory(): ExportProgressState {
   const state = Object.create(exportProgress,) as ExportProgressState;
   Object.assign(state, initialState(),);

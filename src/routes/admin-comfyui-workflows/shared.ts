@@ -16,7 +16,9 @@ import { ErrorCode, HttpStatus, jsonError, } from "../http-utils";
 /** Every endpoint on this surface is admin-only. */
 export const workflowGuard = requirePermission("admin.settings",);
 
-/** */
+/**
+ * @returns {Logger}
+ */
 export function log(): Logger {
   return getLogger().child({ module: "admin-comfyui-workflows", },);
 }
@@ -25,6 +27,7 @@ export function log(): Logger {
  * 404 for an id that is missing, or that exists under another modality — the
  * surface must never look like it can reach an LLM or image template row.
  * @param id
+ * @returns {Response}
  */
 export function workflowNotFound(id: string,): Response {
   return jsonError({
@@ -38,6 +41,7 @@ export function workflowNotFound(id: string,): Response {
  * 400 carrying the whole ingest error list, so the operator fixes every
  * problem in one pass instead of one round trip per error.
  * @param errors
+ * @returns {Response}
  */
 export function workflowInvalid(errors: string[],): Response {
   return jsonError({

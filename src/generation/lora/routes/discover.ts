@@ -19,6 +19,7 @@ const DiscoverBody = t.Object({
 /**
  * POST /api/lora/discover — Trigger LoRA discovery for a backend.
  * @param config
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { lora: { discover: { ...; }; }; }; }, { ...; }, { ...; }>}
  */
 export function discoverRoutes(config: Config, prefix = "/api",) {
   return new Elysia({ name: "lora-discover", },)

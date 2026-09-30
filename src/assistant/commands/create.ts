@@ -77,6 +77,7 @@ async function resolveWorldContext(
  * @param complete
  * @param model
  * @returns the command result (preview action or usage/system message)
+ * @throws {Error}
  */
 export async function runCreateGeneration(
   args: string[],

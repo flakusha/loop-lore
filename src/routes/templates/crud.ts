@@ -46,6 +46,7 @@ const ListQuery = Type.Object({ modality: Type.Optional(Type.String(),), },);
  * @param root0 - Handler options
  * @param root0.database - Kysely database handle
  * @param prefix - Route prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { templates: { get: { ...; }; }; }; } & { ...; } & { ...; } & { ...; } & { ...; }, { ...; }, { ...; }>}
  */
 export function templateCrudRoutes(
   { database, }: { database: Kysely<DB> },

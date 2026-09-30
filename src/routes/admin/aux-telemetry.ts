@@ -78,7 +78,10 @@ function secret(configured?: string,): string {
   cachedSecret ??= effectiveSecret();
   return cachedSecret;
 }
-/** Bust the memoized secret + key. Test-only; called when env flips mid-process. */
+/**
+ * Bust the memoized secret + key. Test-only; called when env flips mid-process.
+ * @returns {void}
+ */
 export function resetTelemetryPiiSecretCache(): void {
   cachedSecret = null;
   hmacKeyPromise = null;
@@ -123,6 +126,7 @@ async function hashId(value: string, configured?: string,): Promise<string> {
 /**
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { admin: { telemetry: { ...; }; }; }; }, { ...; }, { ...; }>}
  */
 export function auxTelemetryRoutes(opts: AdminRouteOpts, prefix = "/api",) {
   const db = opts.database;

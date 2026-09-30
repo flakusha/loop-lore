@@ -57,6 +57,10 @@ export class ReplayabilityService {
    * Start a new playthrough
    * @param input
    */
+  /**
+   * @param {CreatePlaythroughInput} input
+   * @returns {Promise<Playthrough>}
+   */
   async startPlaythrough(input: CreatePlaythroughInput,): Promise<Playthrough> {
     return startPlaythroughDispatch(this.db, input,);
   }
@@ -64,6 +68,10 @@ export class ReplayabilityService {
   /**
    * Get playthrough by ID
    * @param playthroughId
+   */
+  /**
+   * @param {string} playthroughId
+   * @returns {Promise<Playthrough | null>}
    */
   async getPlaythrough(playthroughId: string,): Promise<Playthrough | null> {
     return getPlaythroughDispatch(this.db, playthroughId,);
@@ -73,6 +81,11 @@ export class ReplayabilityService {
    * Get all playthroughs for a player
    * @param playerId
    * @param worldId
+   */
+  /**
+   * @param {string} playerId
+   * @param {string} worldId
+   * @returns {Promise<Playthrough[]>}
    */
   async getPlayerPlaythroughs(playerId: string, worldId?: string,): Promise<Playthrough[]> {
     return getPlayerPlaythroughsDispatch(this.db, playerId, worldId,);
@@ -84,6 +97,13 @@ export class ReplayabilityService {
    * @param endingId
    * @param endingType
    * @param completionTime
+   */
+  /**
+   * @param {string} playthroughId
+   * @param {string} endingId
+   * @param {EndingType} endingType
+   * @param {number} completionTime
+   * @returns {Promise<Playthrough>}
    */
   async completePlaythrough(
     playthroughId: string,
@@ -98,6 +118,10 @@ export class ReplayabilityService {
    * Start new game plus
    * @param input
    */
+  /**
+   * @param {NewGamePlusInput} input
+   * @returns {Promise<Playthrough>}
+   */
   async startNewGamePlus(input: NewGamePlusInput,): Promise<Playthrough> {
     return startNewGamePlusDispatch(this.db, input,);
   }
@@ -105,6 +129,10 @@ export class ReplayabilityService {
   /**
    * Record a choice made during playthrough
    * @param playthroughId
+   */
+  /**
+   * @param {string} playthroughId
+   * @returns {Promise<void>}
    */
   async recordChoice(playthroughId: string,): Promise<void> {
     return recordChoiceDispatch(this.db, playthroughId,);
@@ -115,6 +143,11 @@ export class ReplayabilityService {
    * @param playthroughId
    * @param secretId
    */
+  /**
+   * @param {string} playthroughId
+   * @param {string} secretId
+   * @returns {Promise<void>}
+   */
   async recordSecretFound(playthroughId: string, secretId: string,): Promise<void> {
     return recordSecretFoundDispatch(this.db, playthroughId, secretId,);
   }
@@ -122,6 +155,10 @@ export class ReplayabilityService {
   /**
    * Get meta-progression for a player
    * @param playerId
+   */
+  /**
+   * @param {string} playerId
+   * @returns {Promise<MetaProgression>}
    */
   async getMetaProgression(playerId: string,): Promise<MetaProgression> {
     return getMetaProgressionDispatch(this.db, playerId,);

@@ -9,6 +9,7 @@ import type { TurnManagerHost, } from "./types";
  * Fetch participants eligible for turn selection.
  * @param host
  * @param mode - "story" filters to ai/narrator/npc; "group" includes all non-user agents
+ * @returns {Promise<TurnParticipant[]>}
  */
 export async function fetchTurnParticipants(
   host: TurnManagerHost,
@@ -61,6 +62,7 @@ export async function fetchTurnParticipants(
 /**
  * @param host
  * @param mode
+ * @returns {Promise<void>}
  */
 export async function refreshTurnOrder(
   host: TurnManagerHost,
@@ -81,6 +83,7 @@ export async function refreshTurnOrder(
  * Update turn order (e.g., participant added/removed)
  * @param host
  * @param mode
+ * @returns {Promise<void>}
  */
 export async function refreshOrderPublic(
   host: TurnManagerHost,

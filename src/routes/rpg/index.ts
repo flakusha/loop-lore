@@ -64,6 +64,7 @@ import { xpLootTablesRoutes, } from "./xp-loot-tables";
  *     /api/rpg/world-location-traits/actors/:actorId — aggregate
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { rpg: { dice: { roll: { ...; }; }; }; }; } & ... 7 more ... & { ...; }, { ...; }, { ...; } & { ...; }>}
  */
 export function rpgRoutes(opts: HandlerOpts, prefix = "/api",) {
   return (

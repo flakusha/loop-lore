@@ -11,6 +11,7 @@ import { ProficiencyLevel, } from "./types";
 /**
  * Get the skills module logger.
  * Delegates to the shared RPG logger factory.
+ * @returns {Logger}
  */
 export function getLog(): Logger {
   return getRpgLog("skills",);
@@ -29,6 +30,7 @@ const PROFICIENCY_THRESHOLDS: Record<ProficiencyLevel, number> = {
 /**
  * Calculate level from XP
  * @param xp
+ * @returns {number}
  */
 export function calculateLevel(xp: number,): number {
   // Simple quadratic scaling: level = sqrt(xp / 50)
@@ -38,6 +40,7 @@ export function calculateLevel(xp: number,): number {
 /**
  * Calculate proficiency from XP
  * @param xp
+ * @returns {ProficiencyLevel}
  */
 export function calculateProficiency(xp: number,): ProficiencyLevel {
   if (xp >= PROFICIENCY_THRESHOLDS[ProficiencyLevel.Grandmaster]) {
@@ -61,6 +64,7 @@ export function calculateProficiency(xp: number,): ProficiencyLevel {
 /**
  * Convert database row to Skill interface
  * @param row
+ * @returns {Skill}
  */
 export function rowToSkill(row: Selectable<CharacterSkills>,): Skill {
   return {

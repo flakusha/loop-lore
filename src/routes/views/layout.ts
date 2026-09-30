@@ -149,6 +149,7 @@ function loadView(viewName: string,): string {
 /**
  * @param content
  * @param t
+ * @returns {string}
  */
 export function applyI18n(content: string, t?: (key: string,) => string,): string {
   if (!t) { return content; }

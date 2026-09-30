@@ -14,6 +14,7 @@ import { type HandlerOpts, OptionalNullableString, } from "./types";
  * the per-message `assign` route for the story-map "move all here" action.
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { chats: { ":id": { sections: { ...; }; }; }; }; }, { ...; }, { ...; }>}
  */
 export function bulkAssignRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;

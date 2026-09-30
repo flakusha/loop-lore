@@ -9,6 +9,8 @@ import type { TurnManagerHost, } from "./types";
  * @param host
  * @param turnId
  * @param reason
+ * @throws {Error}
+ * @returns {Promise<boolean>}
  */
 export async function requestRegeneration(
   host: TurnManagerHost,
@@ -31,6 +33,7 @@ export async function requestRegeneration(
 /**
  * Clear pending regeneration (accepted)
  * @param host
+ * @returns {Promise<void>}
  */
 export async function clearRegeneration(host: TurnManagerHost,): Promise<void> {
   if (!host.state) { return; }
@@ -43,6 +46,8 @@ export async function clearRegeneration(host: TurnManagerHost,): Promise<void> {
 /**
  * Pause turn generation
  * @param host
+ * @throws {Error}
+ * @returns {Promise<void>}
  */
 export async function pause(host: TurnManagerHost,): Promise<void> {
   if (!host.state) { throw new Error("TurnManager not initialized",); }
@@ -55,6 +60,8 @@ export async function pause(host: TurnManagerHost,): Promise<void> {
 /**
  * Resume turn generation
  * @param host
+ * @throws {Error}
+ * @returns {Promise<void>}
  */
 export async function resume(host: TurnManagerHost,): Promise<void> {
   if (!host.state) { throw new Error("TurnManager not initialized",); }
@@ -67,6 +74,8 @@ export async function resume(host: TurnManagerHost,): Promise<void> {
 /**
  * Reset turn counter (e.g., new scene)
  * @param host
+ * @throws {Error}
+ * @returns {Promise<void>}
  */
 export async function resetTurnCounter(host: TurnManagerHost,): Promise<void> {
   if (!host.state) { throw new Error("TurnManager not initialized",); }

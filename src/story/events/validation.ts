@@ -79,6 +79,7 @@ function validateSingleEvent(
  * @param root0.db
  * @param root0.worldId
  * @param root0.events
+ * @returns {Promise<ValidationResult>}
  */
 export async function validateEvents({ db, worldId, events, }: ValidateEventsOpts,): Promise<ValidationResult> {
   const filteredEvents: WorldEvent[] = [];

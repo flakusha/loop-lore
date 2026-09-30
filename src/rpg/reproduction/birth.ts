@@ -16,6 +16,7 @@ import { getPregnancy, getPregnancyMeta, PREGNANCY_EFFECT, } from "./store";
  * @param db
  * @param characterId - the pregnant actor (carrier)
  * @param childName
+ * @returns {Promise<string | null>}
  */
 export async function birthChild(
   db: Kysely<DB>,

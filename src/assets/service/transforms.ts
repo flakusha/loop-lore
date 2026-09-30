@@ -59,6 +59,7 @@ function assertValidTransform(values: TransformValues,): void {
  * @param context
  * @param values
  * @returns the persisted transform row
+ * @throws {Error}
  */
 export async function upsertAssetTransform(
   db: Kysely<DB>,

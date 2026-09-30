@@ -27,6 +27,7 @@ function validateTestConnection(body: unknown,): { provider: string } | null {
  * @param body
  * @param _config
  * @param userId
+ * @returns {Promise<Response>}
  */
 export async function handleTestConnection(body: unknown, _config?: Config, userId?: string,): Promise<Response> {
   // Authenticated-only: provider test hits the caller's BYO key resolution.

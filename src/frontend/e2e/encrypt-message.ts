@@ -61,6 +61,8 @@ export interface EncryptedPayload {
  * Throws if the recipient has no registered public key (`fetchRecipientPublicKey`
  * returns null) or if any WebCrypto operation fails.
  * @param opts
+ * @throws {Error}
+ * @returns {Promise<EncryptedPayload>}
  */
 export async function encryptMessage(opts: EncryptMessageOpts,): Promise<EncryptedPayload> {
   const recipientPub = await fetchRecipientPublicKey(opts.recipientActorId,);
@@ -112,6 +114,8 @@ export async function encryptMessage(opts: EncryptMessageOpts,): Promise<Encrypt
  * `chainKey` for use on the next call to `encryptMessage`.
  * @param senderActorId
  * @param recipientActorId
+ * @throws {Error}
+ * @returns {Promise<Uint8Array<ArrayBufferLike>>}
  */
 export async function bootstrapChainKey(senderActorId: string, recipientActorId: string,): Promise<Uint8Array> {
   const { cryptoKeyPair, } = await loadOrCreateKeyPair({ actorId: senderActorId, },);

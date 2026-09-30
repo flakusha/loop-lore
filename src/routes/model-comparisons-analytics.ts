@@ -23,7 +23,10 @@ interface ComparisonBody {
 
 const VALID_PREFERENCES = ["better", "worse", "same",] as const;
 
-/** @param root0 @param prefix */
+/**
+ * @param root0 @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, {}, { derive: {}; resolve: {}; schema: {}; standaloneSchema: {}; response: {}; }, { ...; }>}
+ */
 export function modelComparisonsAnalyticsRoutes(
   { database, }: HandleOpts,
   prefix = "/api",

@@ -58,10 +58,16 @@ const log = rootLog.child({ module: "story-state", },);
     _locationId: null,
     ...loaders,
 
+    /**
+     * @returns {Promise<void>}
+     */
     init(): Promise<void> {
       return this.refresh();
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async refresh(): Promise<void> {
       const chatId = this._activeChatId();
       if (!chatId) { return; }
@@ -85,10 +91,18 @@ const log = rootLog.child({ module: "story-state", },);
       }
     },
 
+    /**
+     * @param {string} messageId
+     * @returns {StoryTurnMeta | null}
+     */
     turnForMessage(messageId: string,): StoryTurnMeta | null {
       return this.turnMeta[messageId] ?? null;
     },
 
+    /**
+     * @param {StoryQuest} quest
+     * @returns {number}
+     */
     questProgressPct(quest: StoryQuest,): number {
       return questProgressPercent(quest,);
     },
@@ -97,10 +111,17 @@ const log = rootLog.child({ module: "story-state", },);
      * CSS tier for a quality score: good (≥70) / mid (≥40) / low.
      * @param score
      */
+    /**
+     * @param {number} score
+     * @returns {string}
+     */
     qualityClass(score: number,): string {
       return qualityClassTier(score,);
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async togglePause(): Promise<void> {
       const id = this.chatId;
       if (!id) { return; }
@@ -112,24 +133,37 @@ const log = rootLog.child({ module: "story-state", },);
       this.running = !this.running;
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async stepTurn(): Promise<void> {
       if (!this.chatId) { return; }
       const result = await storyControl(this.chatId, "step",);
       if (!result.ok) { this.notify(result.message ?? "step unavailable", "error",); }
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async escalateToMe(): Promise<void> {
       if (!this.chatId) { return; }
       const result = await storyControl(this.chatId, "escalate",);
       if (!result.ok) { this.notify(result.message ?? "escalation unavailable", "error",); }
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async injectNarration(): Promise<void> {
       if (!this.chatId) { return; }
       const result = await storyControl(this.chatId, "narration",);
       if (!result.ok) { this.notify(result.message ?? "narration unavailable", "error",); }
     },
 
+    /**
+     * @param {string} name
+     * @returns {Promise<void>}
+     */
     async createQuest(name: string,): Promise<void> {
       const worldId = this._worldId;
       if (!worldId || !name.trim()) { return; }
@@ -151,6 +185,10 @@ const log = rootLog.child({ module: "story-state", },);
       }
     },
 
+    /**
+     * @param {string} questId
+     * @returns {Promise<void>}
+     */
     async deleteQuest(questId: string,): Promise<void> {
       try {
         const res = await apiFetch(`/api/v1/quests/${questId}`, { method: "DELETE", },);
@@ -170,14 +208,26 @@ const log = rootLog.child({ module: "story-state", },);
       }
     },
 
+    /**
+     * @param {string} message
+     * @param {unknown} type
+     * @returns {void}
+     */
     notify(message: string, type = "info",): void {
       toast(message, type,);
     },
 
+    /**
+     * @returns {string | null}
+     */
     _activeChatId(): string | null {
       return activeChatId();
     },
 
+    /**
+     * @param {string} raw
+     * @returns {QuestBanner[]}
+     */
     _parseQuestBanners(raw: string,): QuestBanner[] {
       return parseQuestBanners(raw,);
     },

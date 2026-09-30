@@ -32,6 +32,7 @@ import type { HandlerOpts, } from "./types";
 /**
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { chats: { ":id": { migrate: { ...; }; }; }; }; } & ... 9 more ... & { ...; }, { ...; }, { ...; } & { ...; }>}
  */
 export function manageRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;

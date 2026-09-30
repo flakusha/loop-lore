@@ -25,6 +25,7 @@ type ListFilters = Parameters<InstanceType<typeof BlogService>["listPosts"]>[0];
 /**
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { blog: { posts: { post: { ...; }; }; }; }; } & { ...; } & { ...; } & { ...; } & { ...; }, { ...; }, { ...; }>}
  */
 export function blogPostRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;

@@ -7,9 +7,15 @@ import type { LocaleInfoArray, SettingsState, } from "./types";
 
 const log = rootLog.child({ module: "settings", },);
 
-/** */
+/**
+ * @throws {Error}
+ * @returns {Partial<SettingsState> & ThisType<SettingsState>}
+ */
 export function general(): Partial<SettingsState> & ThisType<SettingsState> {
   return {
+    /**
+     * @returns {Promise<void>}
+     */
     async init() {
       const savedTheme = localStorage.getItem("theme-reference",);
       if (savedTheme) { this.theme = savedTheme; }
@@ -31,6 +37,9 @@ export function general(): Partial<SettingsState> & ThisType<SettingsState> {
       await this.loadPendingRestart();
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async loadLocales() {
       try {
         const res = await apiFetch("/api/v1/i18n/locales", { headers: { Accept: "application/json", }, },);
@@ -56,6 +65,9 @@ export function general(): Partial<SettingsState> & ThisType<SettingsState> {
       }
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async loadSettings() {
       try {
         const res = await apiFetch("/api/v1/settings", { headers: { Accept: "application/json", }, },);
@@ -89,6 +101,9 @@ export function general(): Partial<SettingsState> & ThisType<SettingsState> {
     },
 
     /** Fetch the acting user's stored NSFW consent (enabled state, rating, restrictions). */
+    /**
+     * @returns {Promise<void>}
+     */
     async loadNsfwConsent() {
       const userId = (globalThis as any).__USER_ID as string | undefined;
       if (!userId) { return; }
@@ -115,6 +130,9 @@ export function general(): Partial<SettingsState> & ThisType<SettingsState> {
     },
 
     /** Human-readable summary of any NSFW access restrictions on this account. */
+    /**
+     * @returns {string}
+     */
     nsfwRestrictionText() {
       if (!this.nsfwConsent) { return ""; }
       const g = globalThis as { t?: (key: string,) => string };
@@ -130,6 +148,9 @@ export function general(): Partial<SettingsState> & ThisType<SettingsState> {
       return t("settings.nsfwNone",);
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async loadProviders() {
       try {
         const res = await apiFetch("/api/v1/providers", { headers: { Accept: "application/json", }, },);
@@ -147,6 +168,9 @@ export function general(): Partial<SettingsState> & ThisType<SettingsState> {
       }
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async saveGeneral() {
       await this.persistSettings({
         displayName: this.displayName,
@@ -161,6 +185,9 @@ export function general(): Partial<SettingsState> & ThisType<SettingsState> {
      * Persists the choice, sets the server-side locale cookie, then reloads so
      * the server re-serves views rendered in the new locale.
      */
+    /**
+     * @returns {Promise<void>}
+     */
     async onLocaleChange() {
       await this.saveGeneral();
       // Cookie is read by server-side locale detection on reload.
@@ -169,6 +196,9 @@ export function general(): Partial<SettingsState> & ThisType<SettingsState> {
       globalThis.location.reload();
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async exportAllData() {
       try {
         const res = await apiFetch("/api/v1/settings/export",);
@@ -192,11 +222,18 @@ export function general(): Partial<SettingsState> & ThisType<SettingsState> {
       }
     },
 
+    /**
+     * @returns {void}
+     */
     onConfirmDeleteInput() {
       const btn = document.querySelector("#delete-all-btn",) as HTMLButtonElement | null;
       if (btn) { btn.disabled = this.confirmDeleteText !== "DELETE"; }
     },
 
+    /**
+     * @throws {Error}
+     * @returns {Promise<void>}
+     */
     async deleteAllData() {
       if (this.confirmDeleteText !== "DELETE") { return; }
       if (!confirm("This will permanently delete ALL your data. Continue?",)) { return; }

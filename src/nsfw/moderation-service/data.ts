@@ -30,6 +30,7 @@ export const EXPORT_PREVIEW_MAX = 200;
 /**
  * Truncate a free-text field to a length-capped preview.
  * @param value
+ * @returns {string}
  */
 export function previewText(value: string | null | undefined,): string {
   if (typeof value !== "string" || value.length === 0) { return ""; }
@@ -52,6 +53,7 @@ export function previewText(value: string | null | undefined,): string {
  * @param root0.userId
  * @param root0.exportedBy
  * @param root0.clientIp
+ * @returns {Promise<{ preferences: NsfwUserPrefs | null; actions: ModAction[]; flags: ContentFlag[]; }>}
  */
 export async function exportUserData(
   { thisL, userId, exportedBy, clientIp, }: ExportUserDataArgs,
@@ -119,6 +121,7 @@ export interface DeleteUserDataArgs {
  * @param root0.thisL
  * @param root0.userId
  * @param root0.deletedBy
+ * @returns {Promise<void>}
  */
 export async function deleteUserData(
   { thisL, userId, deletedBy, }: DeleteUserDataArgs,

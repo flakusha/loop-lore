@@ -26,6 +26,10 @@ import { log, } from "./helpers";
  * @param actorId
  * @param effectiveContent
  * @param transitionSource
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @returns {Promise<void>}
  */
 export async function applyContextCut(
   database: Kysely<DB>,

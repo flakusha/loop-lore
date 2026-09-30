@@ -26,7 +26,13 @@ interface ValidateOpts {
 /**
  * Validate required fields and authorize the caller against `chatId`.
  * @returns the error Response to send, or null when the request may proceed
- */
+  * @param {ValidateOpts} {
+  input,
+  database,
+  userId,
+  userRole,
+}
+*/
 export async function validateGenerateRequest({
   input,
   database,

@@ -72,15 +72,28 @@ export const variantPicker: VariantPicker = {
   selectedVariant: null,
   variants: CHAT_VARIANTS,
 
+  /**
+   * @returns {void}
+   */
   openPicker() {
     this.pickerOpen = true;
   },
+  /**
+   * @returns {void}
+   */
   closePicker() {
     this.pickerOpen = false;
   },
+  /**
+   * @param {unknown} variant
+   * @returns {void}
+   */
   selectVariant(variant,) {
     this.selectedVariant = variant;
   },
+  /**
+   * @returns {{ variant: ChatVariant; chat_type: ChatType; chat_mode: ChatMode; chat_purpose: ChatPurpose; max_turns: number | null; auto_advance: 0 | 1; gm_config: GmConfig; talkativity: number | null; prompt_override_default: string | null; } | null}
+   */
   triple() {
     if (!this.selectedVariant) { return null; }
     const d = VARIANT_DEFAULTS[this.selectedVariant];
@@ -96,6 +109,10 @@ export const variantPicker: VariantPicker = {
       prompt_override_default: d.prompt_override_default,
     };
   },
+  /**
+   * @param {unknown} variant
+   * @returns {string}
+   */
   labelFor(variant,) {
     return LABELS[variant];
   },

@@ -29,6 +29,7 @@ const ActorIdWorldTraitParams = t.Object({
 /**
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { actors: { ":actorId": { ...; }; }; }; } & { ...; } & { ...; }, { ...; }, { ...; }>}
  */
 export function worldTraitRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;

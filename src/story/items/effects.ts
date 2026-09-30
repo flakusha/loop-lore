@@ -42,7 +42,13 @@ function parseEffect(value: unknown,): ItemEffect | null {
   return null;
 }
 
-/** Validate and return the effects declared by an item definition. */
+/**
+ * Validate and return the effects declared by an item definition.
+ * @param {unknown} value
+ * @throws {Error}
+ * @throws {Error}
+ * @returns {ItemEffect[]}
+ */
 export function parseItemEffects(value: unknown,): ItemEffect[] {
   if (value === undefined) { return []; }
   if (!Array.isArray(value,)) { throw new InvalidItemEffectsError("properties.effects must be an array",); }
@@ -53,7 +59,11 @@ export function parseItemEffects(value: unknown,): ItemEffect[] {
   },);
 }
 
-/** Resolve effects carried by an item instance. */
+/**
+ * Resolve effects carried by an item instance.
+ * @param {ItemInstance} item
+ * @returns {ItemEffect[]}
+ */
 export function resolveItemEffects(item: ItemInstance,): ItemEffect[] {
   return parseItemEffects(item.properties.effects,);
 }

@@ -32,6 +32,7 @@ interface HandlerOpts {
  * viewer (human or AI) with a recorded state on this message.
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { messages: { ":id": { ...; }; }; }; } & { ...; } & { ...; }, { ...; }, { ...; }>}
  */
 export function messageSeenRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;

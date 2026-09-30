@@ -24,6 +24,7 @@ function escapeHtml(text: string,): string {
  * @param chat.type
  * @param chat.mode
  * @param messages
+ * @returns {string}
  */
 export function formatMarkdown(chat: { name: string; type: string; mode: string }, messages: MessageData[],): string {
   const lines: string[] = [
@@ -59,6 +60,7 @@ export function formatMarkdown(chat: { name: string; type: string; mode: string 
  * @param chat.mode
  * @param chat.created_at
  * @param messages
+ * @returns {string}
  */
 export function formatJson(
   chat: { id: string; name: string; type: string; mode: string; created_at: string },
@@ -95,6 +97,7 @@ export function formatJson(
  * @param chat.type
  * @param chat.mode
  * @param messages
+ * @returns {string}
  */
 export function formatHtml(chat: { name: string; type: string; mode: string }, messages: MessageData[],): string {
   const messageHtml = Array.from(messages, (msg,) => {
@@ -207,6 +210,7 @@ export function formatHtml(chat: { name: string; type: string; mode: string }, m
  * @param chat.type
  * @param chat.mode
  * @param messages
+ * @returns {string}
  */
 export function formatPlainText(
   chat: { name: string; type: string; mode: string },

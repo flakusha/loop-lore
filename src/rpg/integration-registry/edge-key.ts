@@ -13,6 +13,7 @@ import type { SystemId, } from "./types";
  * Internally canonical key for a source→target pair.
  * @param a
  * @param b
+ * @returns {string}
  */
 export function edgeKey(a: SystemId, b: SystemId,): string {
   return `${a}→${b}`;

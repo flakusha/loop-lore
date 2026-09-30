@@ -21,6 +21,9 @@ import type { LogEntry, } from "./types";
 /** */
 export class AsyncLogQueue extends AsyncLogQueueBase {
   /** */
+  /**
+   * @returns {Promise<void>}
+   */
   override async flush(): Promise<void> {
     if (this.flushing || this.buffer.length === 0) { return; }
 
@@ -36,6 +39,10 @@ export class AsyncLogQueue extends AsyncLogQueueBase {
 
   /**
    * @param results
+   */
+  /**
+   * @param {PromiseSettledResult<Awaited<void>[]>[]} results
+   * @returns {void}
    */
   protected handleTransportFailure(results: PromiseSettledResult<Awaited<void>[]>[],): void {
     for (const result of results) {
@@ -58,6 +65,9 @@ export class AsyncLogQueue extends AsyncLogQueueBase {
   }
 
   /** */
+  /**
+   * @returns {void}
+   */
   protected override setupTimerUnref(): void {
     // Don't let the timer keep the process alive
     if (this.timer && "unref" in this.timer) {
@@ -66,6 +76,9 @@ export class AsyncLogQueue extends AsyncLogQueueBase {
   }
 
   /** Sync fallback for emergency shutdown — writes directly to stderr. */
+  /**
+   * @returns {void}
+   */
   flushSync(): void {
     const batch = [...this.buffer,];
     this.buffer.length = 0;

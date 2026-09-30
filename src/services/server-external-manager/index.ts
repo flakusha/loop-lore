@@ -74,6 +74,10 @@ export class ServerExternalManager implements ServerExternalHost {
    * Skips (returns null) if binary not found or port unavailable.
    * @param opts
    */
+  /**
+   * @param {LlamaCppOptions} opts
+   * @returns {Promise<ServerInstance | null>}
+   */
   async startLlamaCpp(opts: LlamaCppOptions,): Promise<ServerInstance | null> {
     return startLlamaCppDispatch(this, opts,);
   }
@@ -81,6 +85,10 @@ export class ServerExternalManager implements ServerExternalHost {
   /**
    * Start llama-swap proxy with a config file.
    * @param opts
+   */
+  /**
+   * @param {LlamaSwapOptions} opts
+   * @returns {Promise<ServerInstance | null>}
    */
   async startLlamaSwap(opts: LlamaSwapOptions,): Promise<ServerInstance | null> {
     return startLlamaSwapDispatch(this, opts,);
@@ -94,6 +102,10 @@ export class ServerExternalManager implements ServerExternalHost {
    * - diffusion: --diffusion-model modelPath — requires --llm (text encoder), --vae optional
    * @param opts
    */
+  /**
+   * @param {SdCppOptions} opts
+   * @returns {Promise<ServerInstance | null>}
+   */
   async startSdCpp(opts: SdCppOptions,): Promise<ServerInstance | null> {
     return startSdCppDispatch(this, opts,);
   }
@@ -102,11 +114,18 @@ export class ServerExternalManager implements ServerExternalHost {
    * Stop a specific instance by type + port
    * @param instance
    */
+  /**
+   * @param {ServerInstance} instance
+   * @returns {Promise<void>}
+   */
   async stop(instance: ServerInstance,): Promise<void> {
     return stopDispatch(this, instance,);
   }
 
   /** Stop all managed servers */
+  /**
+   * @returns {Promise<void>}
+   */
   async stopAll(): Promise<void> {
     return stopAllDispatch(this,);
   }
@@ -114,6 +133,9 @@ export class ServerExternalManager implements ServerExternalHost {
   /**
    * Synchronous kill of all instances — for process.on('exit') handler.
    * Does not await, does not log (no event loop).
+   */
+  /**
+   * @returns {void}
    */
   killAllSync(): void {
     return killAllSyncDispatch(this,);
@@ -125,11 +147,17 @@ export class ServerExternalManager implements ServerExternalHost {
    * Start periodic health checks on all managed servers.
    * Logs warning on first failure, error on repeated failures.
    */
+  /**
+   * @returns {void}
+   */
   startLivenessProbes(): void {
     return startLivenessProbesDispatch(this,);
   }
 
   /** Stop periodic health checks */
+  /**
+   * @returns {void}
+   */
   stopLivenessProbes(): void {
     return stopLivenessProbesDispatch(this,);
   }

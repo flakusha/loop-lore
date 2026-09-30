@@ -124,6 +124,7 @@ function payloadShapeErrors(value: unknown,): string[] | null {
  * Callers store `result.payload` (not the input) so what lands in the DB is
  * the same shape that was checked.
  * @param value - Untrusted, already JSON-parsed value
+ * @returns {ValidationResult}
  */
 export function validateWorkflowPayload(value: unknown,): ValidationResult {
   const shapeErrors = payloadShapeErrors(value,);

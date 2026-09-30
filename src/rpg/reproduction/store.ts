@@ -30,6 +30,7 @@ export const PREGNANCY_EFFECT = "pregnancy";
  * no active row).
  * @param db
  * @param characterId
+ * @returns {Promise<PregnancyStatus>}
  */
 export async function getPregnancy(
   db: Kysely<DB>,
@@ -67,6 +68,7 @@ export async function getPregnancy(
  * Raw meta carrier (sire + week counters) for the active row.
  * @param db
  * @param characterId
+ * @returns {Promise<PregnancyMeta>}
  */
 export async function getPregnancyMeta(
   db: Kysely<DB>,

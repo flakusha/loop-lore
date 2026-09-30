@@ -16,6 +16,7 @@ import type { ItemInstance, ItemState, } from "./types";
  * Get items carried by an NPC
  * @param state
  * @param actorId
+ * @returns {Promise<ItemInstance[]>}
  */
 export async function getNpcInventory(state: ItemState, actorId: string, worldId: string,): Promise<ItemInstance[]> {
   const rows = await state.db
@@ -68,6 +69,7 @@ export async function getNpcInventory(state: ItemState, actorId: string, worldId
  * BUG-n-1-queries-in-story-world-state-context-per-participant.
  * @param state
  * @param actorIds
+ * @returns {Promise<Map<string, ItemInstance[]>>}
  */
 export async function getNpcInventoryBatch(
   state: ItemState,

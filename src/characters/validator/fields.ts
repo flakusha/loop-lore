@@ -17,6 +17,7 @@ import { CONSTRAINTS, } from "./constants";
  * @param character
  * @param field
  * @param errors
+ * @returns {void}
  */
 export function validateRequiredString(
   character: CanonicalCharacter,
@@ -40,6 +41,7 @@ export function validateRequiredString(
  * @param errors
  * @param warnings
  * @param mode
+ * @returns {void}
  */
 export function validateStringLength(
   character: CanonicalCharacter,
@@ -80,6 +82,7 @@ export function validateStringLength(
  * @param errors
  * @param warnings
  * @param mode
+ * @returns {void}
  */
 export function validateArrayConstraints(
   character: CanonicalCharacter,
@@ -148,6 +151,7 @@ export function validateArrayConstraints(
  * @param character
  * @param errors
  * @param _warnings
+ * @returns {void}
  */
 export function validateOptionalFields(
   character: CanonicalCharacter,
@@ -216,6 +220,7 @@ const VALID_GROWTH_MODES: Readonly<Record<GrowthMode, true>> = {
  *
  * @param character
  * @param errors
+ * @returns {void}
  */
 export function validateGrowthFields(
   character: CanonicalCharacter,

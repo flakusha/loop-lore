@@ -11,6 +11,7 @@ import type { AdminRouteOpts, } from "./types";
 /**
  * @param _opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { admin: { cron: { jobs: { ...; }; }; }; }; } & { ...; }, { ...; }, { ...; }>}
  */
 export function cronRoutes(_opts: AdminRouteOpts, prefix = "/api",) {
   const requireAdmin = (ctx: any,) => {

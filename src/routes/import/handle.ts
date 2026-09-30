@@ -108,6 +108,7 @@ async function importFromStandard(
  * @param database
  * @param userId
  * @param uploadDir
+ * @returns {Promise<Response>}
  */
 export async function handleImport(
   request: Request,

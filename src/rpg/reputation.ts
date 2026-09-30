@@ -56,6 +56,13 @@ export class ReputationService {
    * @param delta
    * @param axis - social context axis (`private` | `public` | `group`)
    */
+  /**
+   * @param {string} actorId
+   * @param {string} source
+   * @param {number} delta
+   * @param {"private" | "public" | "group"} axis
+   * @returns {Promise<ReputationScore>}
+   */
   async applyDelta(
     actorId: string,
     source: string,
@@ -107,6 +114,12 @@ export class ReputationService {
    * @param axis
    * @param source
    */
+  /**
+   * @param {string} actorId
+   * @param {"private" | "public" | "group"} axis
+   * @param {ReputationSource} source
+   * @returns {Promise<ReputationScore>}
+   */
   async getScore(
     actorId: string,
     axis: "private" | "public" | "group" = "private",
@@ -137,6 +150,10 @@ export class ReputationService {
    * group axes, or deltas with |delta| ≥ 10).
    * @param actorId
    */
+  /**
+   * @param {string} actorId
+   * @returns {Promise<string[]>}
+   */
   async deriveRumors(actorId: string,): Promise<string[]> {
     const rows = await getActiveEffects(this.db, actorId, { category: "reputation", },);
     const rumors: string[] = [];
@@ -163,6 +180,14 @@ export class ReputationService {
    * @param success
    * @param socialContext
    * @param intimacyLevel
+   */
+  /**
+   * @param {string} encounterId
+   * @param {string} actorId
+   * @param {boolean} success
+   * @param {"public" | "private" | "group"} socialContext
+   * @param {number} intimacyLevel
+   * @returns {Promise<ReputationScore>}
    */
   async applyEncounterReputation(
     encounterId: string,

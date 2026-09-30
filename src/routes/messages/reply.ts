@@ -36,6 +36,7 @@ import { log, } from "./helpers";
  * violation (e.g. `idx_messages_idempotency` on a colliding idempotency_key —
  * that is a real conflict and must NOT trigger a swipe_index retry).
  * @param err
+ * @returns {boolean}
  */
 export function isSwipeIndexUniqueViolation(err: unknown,): boolean {
   if (!(err instanceof Error)) { return false; }
@@ -56,6 +57,8 @@ export function isSwipeIndexUniqueViolation(err: unknown,): boolean {
  * @param userMessage
  * @param request
  * @param asyncStore
+ * @throws {Error}
+ * @returns {Promise<{ replied: boolean; response?: Response | undefined; }>}
  */
 export async function maybeAutoReply(
   database: Kysely<DB>,

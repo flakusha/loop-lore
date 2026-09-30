@@ -125,6 +125,7 @@ export async function getOwnedTemplate(
  * @param userId - Owning user
  * @param input - Validated creation input
  * @returns the created row
+ * @throws {Error}
  */
 export async function createTemplate(
   db: Kysely<DB>,
@@ -158,6 +159,7 @@ export async function createTemplate(
  * @param userId - Requesting user (ownership enforced)
  * @param patch - Partial update; payload must re-match the modality shape
  * @returns the updated row, or null when not found/owned
+ * @throws {Error}
  */
 export async function updateTemplate(
   db: Kysely<DB>,

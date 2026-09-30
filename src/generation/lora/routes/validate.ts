@@ -14,7 +14,11 @@ const ValidateBody = t.Object({
   backend: t.UnionEnum(["comfyui", "sd-server",],),
 },);
 
-/** POST /api/lora/validate — Validate a LoRA configuration. */
+/**
+ * POST /api/lora/validate — Validate a LoRA configuration.
+ * @param {unknown} prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { lora: { validate: { ...; }; }; }; }, { ...; }, { ...; }>}
+ */
 export function loraValidateRoutes(prefix = "/api",) {
   return new Elysia({ name: "lora-validate", },)
     .post(`${prefix}/lora/validate`, (ctx,) => {

@@ -24,6 +24,11 @@
  * @param selector
  * @param root
  */
+/**
+ * @param {string} selector
+ * @param {ParentNode} root
+ * @returns {T | null}
+ */
 export function $<T extends HTMLElement,>(
   selector: string,
   root: ParentNode = document,
@@ -35,6 +40,7 @@ export function $<T extends HTMLElement,>(
  * Query all matching elements by CSS selector, typed (NodeListOf).
  * @param selector
  * @param root
+ * @returns {NodeListOf<T>}
  */
 export function $all<T extends HTMLElement,>(
   selector: string,
@@ -57,6 +63,10 @@ export function $all<T extends HTMLElement,>(
 /**
  * @param e
  */
+/**
+ * @param {Event} e
+ * @returns {T | null}
+ */
 export function eventTarget<T extends HTMLElement,>(e: Event,): T | null {
   return e.target as T | null;
 }
@@ -68,6 +78,10 @@ export function eventTarget<T extends HTMLElement,>(e: Event,): T | null {
 
 /**
  * @param e
+ */
+/**
+ * @param {Event} e
+ * @returns {T | null}
  */
 export function eventCurrentTarget<T extends HTMLElement,>(e: Event,): T | null {
   return e.currentTarget as T | null;

@@ -29,6 +29,10 @@ export class ConsoleTransport implements Transport {
   /**
    * @param entry
    */
+  /**
+   * @param {LogEntry} entry
+   * @returns {Promise<void>}
+   */
   write(entry: LogEntry,): Promise<void> {
     try {
       const line = formatConsole(entry, this.isColor,);
@@ -41,6 +45,9 @@ export class ConsoleTransport implements Transport {
   }
 
   /** */
+  /**
+   * @returns {Promise<void>}
+   */
   flush(): Promise<void> {
     return Promise.resolve();
   }

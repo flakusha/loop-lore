@@ -47,10 +47,16 @@ function worldTimelineBarImpl(
     newName: "",
     newDesc: "",
 
+    /**
+     * @returns {Promise<void>}
+     */
     async init() {
       await this.loadTimelines();
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async loadTimelines() {
       try {
         const res = await feFetch(`/api/v1/worlds/${this.worldId}/timelines`,);
@@ -67,6 +73,9 @@ function worldTimelineBarImpl(
       }
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async switchTimeline() {
       const tl = this.timelines.find((t,) => t.id === this.selectedTimeline);
       if (!tl) { return; }
@@ -77,6 +86,9 @@ function worldTimelineBarImpl(
       htmx.ajax("GET", url, { target: "#world-detail", swap: "innerHTML", },);
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async createTimeline() {
       if (!this.newName.trim()) { return; }
       try {

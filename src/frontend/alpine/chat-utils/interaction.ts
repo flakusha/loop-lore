@@ -10,6 +10,11 @@ import { _anonymousModeEnabled, } from "./anonymous";
 export type ChatUtilsInteraction = Partial<ChatState> & ThisType<ChatState>;
 
 export const chatUtilsInteraction: ChatUtilsInteraction = {
+  /**
+   * @param {MouseEvent} event
+   * @param {string} msgId
+   * @returns {void}
+   */
   openContextMenu(event: MouseEvent, msgId: string,) {
     event.preventDefault();
     event.stopPropagation();
@@ -21,20 +26,35 @@ export const chatUtilsInteraction: ChatUtilsInteraction = {
     };
   },
 
+  /**
+   * @returns {void}
+   */
   closeContextMenu() {
     this._contextMenu = { visible: false, messageId: null, x: 0, y: 0, };
   },
 
+  /**
+   * @param {"message" | "asset"} contentType
+   * @param {string} contentId
+   * @param {string | null} chatId
+   * @returns {void}
+   */
   openFlagDialog(contentType: "message" | "asset", contentId: string, chatId: string | null,) {
     this._flagDialog = { open: true, contentType, contentId, chatId, };
     this._flagReason = "";
     this._flagOther = "";
   },
 
+  /**
+   * @returns {void}
+   */
   closeFlagDialog() {
     this._flagDialog.open = false;
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async submitFlag() {
     const { contentType, contentId, chatId, } = this._flagDialog;
     if (!contentId) { return; }
@@ -73,6 +93,11 @@ export const chatUtilsInteraction: ChatUtilsInteraction = {
     }
   },
 
+  /**
+   * @param {string} msgId
+   * @param {Event} event
+   * @returns {void}
+   */
   showReactionPicker(msgId: string, event: Event,) {
     const rect = (event.target as HTMLElement).getBoundingClientRect();
     this._reactionPicker = {
@@ -83,10 +108,17 @@ export const chatUtilsInteraction: ChatUtilsInteraction = {
     };
   },
 
+  /**
+   * @returns {void}
+   */
   closeReactionPicker() {
     this._reactionPicker.visible = false;
   },
 
+  /**
+   * @param {{ role: string; actor_name?: string; actor_id?: string }} msg
+   * @returns {string}
+   */
   displayName(msg: { role: string; actor_name?: string; actor_id?: string },): string {
     if (msg.role === "user") { return "You"; }
     if (msg.role === "system") { return "System"; }

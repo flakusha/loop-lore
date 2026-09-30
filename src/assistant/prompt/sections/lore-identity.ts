@@ -24,6 +24,8 @@ export interface LoreIdentityRow {
  * @param actorId
  * @param worldId
  * @returns void
+ * @throws {Error}
+ * @throws {Error}
  */
 export async function resolveActorIdentity(
   db: Kysely<DB>,

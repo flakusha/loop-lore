@@ -10,7 +10,9 @@ import { getLogger, type Logger, } from "../../logger";
 import { can, } from "../../users/permissions";
 import { forbiddenResponse, requireUserId, } from "../http-utils";
 
-/** */
+/**
+ * @returns {Logger}
+ */
 export function log(): Logger {
   return getLogger().child({ module: "nsfw-moderation-routes", },);
 }
@@ -18,6 +20,7 @@ export function log(): Logger {
 /**
  * Require an authenticated admin caller. Returns userId on success, else a Response.
  * @param ctx
+ * @returns {string | Response}
  */
 export function requireAdmin(ctx: any,): string | Response {
   const userId = requireUserId(ctx,);
@@ -35,6 +38,7 @@ export function requireAdmin(ctx: any,): string | Response {
  *
  * Returns userId on success, else a 403 Response.
  * @param ctx
+ * @returns {string | Response}
  */
 export function requireAdminUsers(ctx: any,): string | Response {
   const userId = requireUserId(ctx,);
@@ -55,6 +59,7 @@ export function requireAdminUsers(ctx: any,): string | Response {
  *
  * Returns userId on success, else a 403 Response.
  * @param ctx
+ * @returns {string | Response}
  */
 export function requireModerationReview(ctx: any,): string | Response {
   const userId = requireUserId(ctx,);
@@ -76,6 +81,7 @@ export function requireModerationReview(ctx: any,): string | Response {
  *
  * Returns userId on success, else a 403 Response.
  * @param ctx
+ * @returns {string | Response}
  */
 export function requireModerationAction(ctx: any,): string | Response {
   const userId = requireUserId(ctx,);
@@ -90,6 +96,7 @@ export function requireModerationAction(ctx: any,): string | Response {
  * Require the caller to be the target user themselves, or an admin.
  * @param ctx
  * @param targetUserId
+ * @returns {string | Response}
  */
 export function requireOwnOrAdmin(ctx: any, targetUserId: string,): string | Response {
   const userId = requireUserId(ctx,);

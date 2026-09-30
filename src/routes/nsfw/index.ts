@@ -16,6 +16,7 @@ import type { HandlerOpts, } from "./types";
  * `elysia-app.ts` wiring is unchanged.
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { nsfw: { intimacy: { ...; }; }; }; } & ... 19 more ... & { ...; }, { ...; }, { ...; } & { ...; }>}
  */
 export function nsfwRoutes(opts: HandlerOpts, prefix = "/api",) {
   return (

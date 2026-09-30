@@ -39,6 +39,7 @@ async function databaseReady(database: Db,): Promise<boolean> {
 
 /**
  * @param opts
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, {}, { derive: {}; resolve: {}; schema: {}; standaloneSchema: {}; response: {}; }, { ...; }>}
  */
 export function livenessRoutes(opts: LivenessOpts,): Elysia {
   const { database, config, } = opts;

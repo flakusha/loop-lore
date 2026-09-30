@@ -58,6 +58,10 @@ export class FantasyService {
    * Create a fantasy for an actor.
    * @param opts
    */
+  /**
+   * @param {CreateFantasyOpts} opts
+   * @returns {Promise<Fantasy>}
+   */
   async createFantasy(opts: CreateFantasyOpts,): Promise<Fantasy> {
     assertNsfwConfigEnabled();
     return createFantasyDispatch(this.db, opts,);
@@ -67,6 +71,10 @@ export class FantasyService {
    * Get all fantasies for an actor.
    * @param actorId
    */
+  /**
+   * @param {string} actorId
+   * @returns {Promise<Fantasy[]>}
+   */
   async getActorFantasies(actorId: string,): Promise<Fantasy[]> {
     return getActorFantasiesDispatch(this.db, actorId,);
   }
@@ -75,6 +83,11 @@ export class FantasyService {
    * Get fantasies by category.
    * @param actorId
    * @param category
+   */
+  /**
+   * @param {string} actorId
+   * @param {FantasyCategory} category
+   * @returns {Promise<Fantasy[]>}
    */
   async getByCategory(
     actorId: string,
@@ -88,6 +101,12 @@ export class FantasyService {
    * @param actorId
    * @param context
    * @param discoveryChance
+   */
+  /**
+   * @param {string} actorId
+   * @param {string} context
+   * @param {unknown} discoveryChance
+   * @returns {Promise<DiscoveryResult>}
    */
   async attemptDiscovery(
     actorId: string,
@@ -103,6 +122,11 @@ export class FantasyService {
    * @param fantasyId
    * @param feeling
    */
+  /**
+   * @param {string} fantasyId
+   * @param {string} feeling
+   * @returns {Promise<boolean>}
+   */
   async recordExploration(
     fantasyId: string,
     feeling?: string,
@@ -116,6 +140,11 @@ export class FantasyService {
    * counts the exploration, returns the fulfillment effects.
    * @param fantasyId
    * @param forTarget
+   */
+  /**
+   * @param {string} fantasyId
+   * @param {{ actorId: string; worldId?: string | null }} forTarget
+   * @returns {Promise<FulfillmentEffects | null>}
    */
   async fulfill(
     fantasyId: string,
@@ -135,6 +164,11 @@ export class FantasyService {
    * @param actorId
    * @param worldId
    */
+  /**
+   * @param {string} actorId
+   * @param {string} worldId
+   * @returns {Promise<MoodState | undefined>}
+   */
   async getMood(actorId: string, worldId?: string,): Promise<MoodState | undefined> {
     return MoodService(this.db,).getMood(actorId, worldId,);
   }
@@ -150,6 +184,13 @@ export class FantasyService {
    * @param source
    * @param delta
    * @param worldId
+   */
+  /**
+   * @param {string} actorId
+   * @param {string} source
+   * @param {number} delta
+   * @param {string} worldId
+   * @returns {Promise<string>}
    */
   async applyDelta(
     actorId: string,
@@ -171,6 +212,10 @@ export class FantasyService {
   /**
    * Delete a fantasy.
    * @param fantasyId
+   */
+  /**
+   * @param {string} fantasyId
+   * @returns {Promise<boolean>}
    */
   async deleteFantasy(fantasyId: string,): Promise<boolean> {
     assertNsfwConfigEnabled();

@@ -28,6 +28,9 @@ export * from "./battles/types.js";
 /**
  * @param deps
  * @param params
+ * @throws {Error}
+ * @throws {Error}
+ * @returns {Promise<BattleWithRoster>}
  */
 export async function startBattle(
   deps: RpgServiceDeps,
@@ -92,6 +95,13 @@ export async function startBattle(
  * @param deps
  * @param battleId
  * @param status
+ */
+/**
+ * @param {RpgServiceDeps} deps
+ * @param {string} battleId
+ * @param {Exclude<BattleStatus, "active">} status
+ * @throws {Error}
+ * @returns {Promise<void>}
  */
 export async function endBattle(
   deps: RpgServiceDeps,

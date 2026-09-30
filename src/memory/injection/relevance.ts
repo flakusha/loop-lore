@@ -12,6 +12,7 @@ import type { InjectionContext, } from "./types";
  * Uses keyword overlap as a simple relevance signal.
  * @param memory
  * @param ctx
+ * @returns {boolean}
  */
 export function isContextRelevant(
   memory: MemoryEntry,

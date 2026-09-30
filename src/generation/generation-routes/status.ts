@@ -18,6 +18,7 @@ import { isChatGenerating, } from "../index";
  * @param database
  * @param userId
  * @param userRole
+ * @returns {Promise<Response>}
  */
 export async function handleGenerationStatus(
   chatId: string,

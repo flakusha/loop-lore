@@ -43,6 +43,7 @@ async function checkChatOwnership(
  * @param opts.database
  * @param opts.config
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, {}, { derive: {}; resolve: {}; schema: {}; standaloneSchema: {}; response: {}; }, { ...; }>}
  */
 export function storyTurnsRoutes(opts: { database: Db; config: Config }, prefix = "/api",): Elysia {
   return new Elysia({ name: "story-turns", },)

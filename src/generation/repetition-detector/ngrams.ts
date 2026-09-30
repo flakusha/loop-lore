@@ -67,6 +67,7 @@ function computeNGramSimilarity(positions: number[], windowSize: number, _textLe
 /**
  * @param text
  * @param config
+ * @returns {RepetitionPattern[]}
  */
 export function detectPatterns(text: string, config: RepetitionDetectionConfig,): RepetitionPattern[] {
   const fingerprints = extractNGrams(text, NGRAM_SIZE,);

@@ -18,6 +18,7 @@ import type { DeleteAssetLinkOpts, LinkAssetOpts, UnlinkAssetOpts, } from "./typ
  * @param root0.assetId
  * @param root0.link
  * @returns Promise<unknown>
+ * @throws {Error}
  */
 export async function linkAsset({ database, assetId, link, }: LinkAssetOpts,): Promise<void> {
   try {

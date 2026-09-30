@@ -28,6 +28,7 @@ export type { StoryModeOpts, };
  * Stores the AI's `response` text (the assistant message the user should see),
  * NOT the LLM-bound `prompt` text — see BUG-story-mode-prompt-stored-as-content.
  * @param opts
+ * @returns {Promise<void>}
  */
 export async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<void> {
   const { database, config, chatId, parentMessageId, userId, gmConfig, worldId, deps, } = opts;

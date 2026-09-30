@@ -6,7 +6,9 @@ import { SuccessResponse, } from "../../validation/schemas";
 import { applyI18n, htmlResponse, } from "./layout";
 import { serveStaticPartial, } from "./static-partials";
 
-/** */
+/**
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { partials: { ":page": { ":section": { ...; }; }; }; }, { ...; }, { ...; }>}
+ */
 export function staticRoutes() {
   return new Elysia({ name: "views-static", },)
     .get("/partials/:page/:section", (ctx: any,) => {

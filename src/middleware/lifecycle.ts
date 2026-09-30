@@ -80,6 +80,7 @@ async function capture(response: Response,): Promise<CapturedResponse> {
 /**
  * Build the lifecycle afterHandle hook bound to a concrete store.
  * @param asyncStore - The async request-result store written to on completion.
+ * @returns {(ctx: { request: Request; route: string; requestId?: string | undefined; response?: unknown; }) => Promise<void>}
  */
 export function recordLifecycle(asyncStore: AsyncStore,) {
   return async (ctx: {

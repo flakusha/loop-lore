@@ -43,6 +43,7 @@ export interface ComfyMattingProviderOpts {
  * subject mask inverted to alpha, then joined back onto the source image.
  * @param imageName - filename in the ComfyUI input directory
  * @param model - background-removal weights file name
+ * @returns {ComfyUIWorkflow}
  */
 export function buildMattingWorkflow(imageName: string, model: string,): ComfyUIWorkflow {
   return {
@@ -70,6 +71,7 @@ export function buildMattingWorkflow(imageName: string, model: string,): ComfyUI
 /**
  * Whether a `/object_info` payload exposes the background-removal nodes.
  * @param info - node-info payload keyed by class_type
+ * @returns {boolean}
  */
 export function hasMattingNodes(info: Record<string, unknown>,): boolean {
   return MATTING_REQUIRED_NODES.every((node,) => node in info);
@@ -78,12 +80,25 @@ export function hasMattingNodes(info: Record<string, unknown>,): boolean {
 /**
  * Create a matting provider executing the native ComfyUI pipeline.
  * @param opts
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @returns {MattingProvider}
  */
 export function createComfyMattingProvider(opts: ComfyMattingProviderOpts,): MattingProvider {
   const model = opts.model ?? "birefnet.safetensors";
   const { client, } = opts;
   return {
     name: `comfy:${model}`,
+    /**
+     * @param {Buffer} buffer
+     * @throws {Error}
+     * @throws {Error}
+     * @throws {Error}
+     * @throws {Error}
+     * @returns {Promise<Buffer<ArrayBufferLike>>}
+     */
     async removeBackground(buffer: Buffer,): Promise<Buffer> {
       const nodes = await client.getNodeInfo();
       if (!hasMattingNodes(nodes,)) {

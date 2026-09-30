@@ -37,6 +37,7 @@ export const GM_CONFIG_PRESENTATION_KEYS = [
  * an online chat (the backend 409s on any other key). Keeps the backend
  * authoritative while the online path forwards only mutable display state.
  * @param gmConfig
+ * @returns {Record<string, unknown>}
  */
 export function presentationGmConfig(
   gmConfig: Record<string, unknown>,

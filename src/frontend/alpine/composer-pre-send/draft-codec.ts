@@ -18,6 +18,7 @@ export interface StoredDraft {
  * check is consistent under frozen-clock test harnesses.
  * @param raw
  * @param now
+ * @returns {StoredDraft | null}
  */
 export function decodeStoredDraft(
   raw: string | null,

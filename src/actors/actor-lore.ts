@@ -50,7 +50,15 @@ export interface ListLoreOpts extends ActorListOpts {
   enabled?: LoreEntryStatus;
 }
 
-/** List an actor's lore entries (sort order, then insertion order). */
+/**
+ * List an actor's lore entries (sort order, then insertion order).
+ * @param {Kysely<DB>} database
+ * @param {string} actorId
+ * @param {string} userId
+ * @param {string | null | undefined} userRole
+ * @param {ListLoreOpts} opts
+ * @returns {Promise<ActorListResult<{ id: string; actor_id: string; name: string | null; content: string; keys: string; secondary_keys: string | null; selective: number; case_sensitive: number; enabled: LoreEntryStatus; ... 15 more ...; activation_chance: number | null; }>>}
+ */
 export async function listActorLoreEntries(
   database: Kysely<DB>,
   actorId: string,
@@ -88,7 +96,15 @@ export async function listActorLoreEntries(
   return { ok: true, items, total: Number(countResult?.total ?? 0,), page, pageSize, };
 }
 
-/** Create a lore entry for an actor. `content` is required. */
+/**
+ * Create a lore entry for an actor. `content` is required.
+ * @param {Kysely<DB>} database
+ * @param {string} actorId
+ * @param {string} userId
+ * @param {string | null | undefined} userRole
+ * @param {CreateLoreInput} input
+ * @returns {Promise<ActorMutationResult<{ id: string; actor_id: string; name: string | null; content: string; keys: string; secondary_keys: string | null; selective: number; case_sensitive: number; enabled: LoreEntryStatus; ... 15 more ...; activation_chance: number | null; }>>}
+ */
 export async function createActorLoreEntry(
   database: Kysely<DB>,
   actorId: string,
@@ -138,7 +154,16 @@ export async function createActorLoreEntry(
   return { ok: true, entity, };
 }
 
-/** Update a lore entry in place; the entry must belong to the given actor. */
+/**
+ * Update a lore entry in place; the entry must belong to the given actor.
+ * @param {Kysely<DB>} database
+ * @param {string} actorId
+ * @param {string} loreId
+ * @param {string} userId
+ * @param {string | null | undefined} userRole
+ * @param {UpdateLoreInput} patch
+ * @returns {Promise<ActorMutationResult<{ id: string; actor_id: string; name: string | null; content: string; keys: string; secondary_keys: string | null; selective: number; case_sensitive: number; enabled: LoreEntryStatus; ... 15 more ...; activation_chance: number | null; }>>}
+ */
 export async function updateActorLoreEntry(
   database: Kysely<DB>,
   actorId: string,
@@ -197,7 +222,15 @@ export async function updateActorLoreEntry(
   return { ok: true, entity, };
 }
 
-/** Delete a lore entry; the entry must belong to the given actor. */
+/**
+ * Delete a lore entry; the entry must belong to the given actor.
+ * @param {Kysely<DB>} database
+ * @param {string} actorId
+ * @param {string} loreId
+ * @param {string} userId
+ * @param {string | null | undefined} userRole
+ * @returns {Promise<ActorDeleteResult>}
+ */
 export async function deleteActorLoreEntry(
   database: Kysely<DB>,
   actorId: string,

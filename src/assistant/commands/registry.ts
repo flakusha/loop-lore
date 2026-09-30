@@ -99,6 +99,7 @@ export function satisfiesRole(actual: ChatParticipantRole, required: ChatPartici
  * @param name - Command name (lowercased automatically)
  * @param handler - Handler function
  * @param opts - Optional registration options (e.g. `requiredRole`)
+ * @returns {void}
  */
 export function registerCommand(
   name: string,

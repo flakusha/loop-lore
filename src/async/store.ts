@@ -139,6 +139,10 @@ export function createAsyncStore(database: Kysely<DB>, config: AsyncStoreConfig 
   }
 
   return {
+    /**
+     * @param {unknown} args
+     * @returns {void}
+     */
     track(args,) {
       enqueue({
         kind: "upsert",
@@ -157,6 +161,12 @@ export function createAsyncStore(database: Kysely<DB>, config: AsyncStoreConfig 
      * @param owner
      * @param update
      */
+    /**
+     * @param {string} id
+     * @param {OwnerRef} owner
+     * @param {ProgressUpdate} update
+     * @returns {void}
+     */
     progress(id: string, owner: OwnerRef, update: ProgressUpdate,) {
       enqueue({
         kind: "progress",
@@ -174,6 +184,12 @@ export function createAsyncStore(database: Kysely<DB>, config: AsyncStoreConfig 
      * @param owner
      * @param response
      */
+    /**
+     * @param {string} id
+     * @param {OwnerRef} owner
+     * @param {CapturedResponse} response
+     * @returns {void}
+     */
     complete(id: string, owner: OwnerRef, response: CapturedResponse,) {
       enqueue({ kind: "complete", id, userId: owner.userId, response, },);
     },
@@ -184,9 +200,18 @@ export function createAsyncStore(database: Kysely<DB>, config: AsyncStoreConfig 
      * @param owner
      * @param error
      */
+    /**
+     * @param {string} id
+     * @param {OwnerRef} owner
+     * @param {string} error
+     * @returns {void}
+     */
     fail(id: string, owner: OwnerRef, error: string,) {
       enqueue({ kind: "fail", id, userId: owner.userId, error, },);
     },
+    /**
+     * @returns {Promise<void>}
+     */
     async flush(): Promise<void> {
       // Spin until the queue is empty. Used by tests + graceful shutdown.
       while (queue.length > 0 || draining) {
@@ -197,6 +222,10 @@ export function createAsyncStore(database: Kysely<DB>, config: AsyncStoreConfig 
         await promise;
       }
     },
+    /**
+     * @param {string} id
+     * @returns {Promise<RequestResultRow | null>}
+     */
     async read(id: string,): Promise<RequestResultRow | null> {
       const row = await database
         .selectFrom("request_results",)
@@ -206,6 +235,9 @@ export function createAsyncStore(database: Kysely<DB>, config: AsyncStoreConfig 
       return row ? rowToResult(row,) : null;
     },
     config: cfg,
+    /**
+     * @returns {void}
+     */
     destroy(): void {
       destroyed = true;
       void drain();

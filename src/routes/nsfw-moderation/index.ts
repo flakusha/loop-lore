@@ -23,6 +23,7 @@ export type { HandlerOpts, } from "./types";
 /**
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { nsfw: { moderation: { ...; }; }; }; } & ... 20 more ... & { ...; }, { ...; }, { ...; } & ... 1 more ... & { ...; }>}
  */
 export function nsfwModerationRoutes(opts: HandlerOpts, prefix = "/api",) {
   return new Elysia({ name: "nsfw-moderation", },)

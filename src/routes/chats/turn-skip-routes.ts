@@ -32,6 +32,7 @@ function log(): Logger {
  * (fire-and-forget, same convention as message reply).
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { chats: { ":id": { "turn-skip": { ...; }; }; }; }; }, { ...; }, { ...; }>}
  */
 export function turnSkipRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, config, } = opts;

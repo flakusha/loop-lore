@@ -27,6 +27,7 @@ const DEFAULT_PHASE: RegexTransformPhase = "output";
  * preserved. Each tracks match count.
  * @param text
  * @param transforms
+ * @returns {TransformResult}
  */
 export function applyRegexTransforms(
   text: string,

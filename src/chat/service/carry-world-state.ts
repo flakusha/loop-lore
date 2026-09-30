@@ -22,6 +22,7 @@ import type { DB, } from "../../db/schema";
  * @param database
  * @param sourceWorldId
  * @param targetWorldId
+ * @returns {Promise<void>}
  */
 export async function carryWorldState(
   database: Kysely<DB>,

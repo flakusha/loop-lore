@@ -46,6 +46,7 @@ export async function resolveMessageAccess(
 /**
  * `seen_at` is recorded when state first reaches "seen" or "processing".
  * @param state
+ * @returns {string | null}
  */
 export function seenAtFor(state: string,): string | null {
   return state === "seen" || state === "processing" ? new Date().toISOString() : null;

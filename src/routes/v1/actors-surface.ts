@@ -40,6 +40,10 @@ import { tradeRoutes, } from "../trade";
 import { worldLoreEntriesRoutes, } from "../world-lore-entries";
 import { worldsRoutes, } from "../worlds";
 
+/**
+ * @param {RegisterPluginsOpts} opts
+ * @returns {Elysia<"", { decorator: {}; store: any; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { actors: { get: { ...; }; }; }; } & ... 148 more ... & { ...; }, { ...; }, { ...; } & { ...; }>}
+ */
 export function actorsSurface(opts: RegisterPluginsOpts,) {
   const { database, config, } = opts;
   const handleOpts = { database, config, };

@@ -21,6 +21,7 @@ type AutonomyUpdateResult =
  * tick resolver silently ignore the override.
  *
  * @param raw - the request field, if present
+ * @returns {AutonomyUpdateResult}
  */
 export function autonomyUpdate(raw: unknown,): AutonomyUpdateResult {
   if (raw === undefined) { return { ok: true, value: undefined, }; }

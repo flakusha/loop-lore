@@ -29,7 +29,10 @@ function gauge(name: string, value: number, help: string,): string {
   return `# HELP ${name} ${help}\n# TYPE ${name} gauge\n${name} ${value}\n`;
 }
 
-/** Collect process metrics and render Prometheus text format. */
+/**
+ * Collect process metrics and render Prometheus text format.
+ * @returns {string}
+ */
 export function renderMetrics(): string {
   const mem = process.memoryUsage();
   const cpu = process.cpuUsage();
@@ -88,7 +91,10 @@ export function renderMetrics(): string {
   return lines.join("",);
 }
 
-/** @param opts */
+/**
+ * @param opts
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, {}, { derive: {}; resolve: {}; schema: {}; standaloneSchema: {}; response: {}; }, { ...; }>}
+ */
 export function metricsRoutes(opts: MetricsOpts,): Elysia {
   const { config, } = opts;
   const app = new Elysia();

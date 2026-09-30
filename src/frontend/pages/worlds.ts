@@ -83,6 +83,9 @@ globalThis.worldDetail = function(initial: {
     editLocName: "",
     editLocDesc: "",
 
+    /**
+     * @returns {Promise<void>}
+     */
     async init() {
       // Load chat setup templates (falls back to the seeded `world` default).
       if (this.templates.length === 0) {
@@ -102,6 +105,9 @@ globalThis.worldDetail = function(initial: {
       this.onTemplateChange();
     },
 
+    /**
+     * @returns {void}
+     */
     onTemplateChange() {
       const t = this.templates.find((x,) => x.id === this.newLocationTemplateId);
       this.newLocationTemplateFeatures = t?.features ?? [];
@@ -111,6 +117,10 @@ globalThis.worldDetail = function(initial: {
       return this.locations.length;
     },
 
+    /**
+     * @param {string} locId
+     * @returns {void}
+     */
     expandLoc(locId: string,) {
       if (this.expandedLoc === locId) {
         this.expandedLoc = "";
@@ -124,6 +134,10 @@ globalThis.worldDetail = function(initial: {
       }
     },
 
+    /**
+     * @param {string} locId
+     * @returns {Promise<void>}
+     */
     async saveLocation(locId: string,) {
       try {
         const res = await feFetch(`/api/v1/worlds/${this.worldId}/locations/${locId}`, {
@@ -151,6 +165,9 @@ globalThis.worldDetail = function(initial: {
       }
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async createLocation() {
       if (!this.newLocationName.trim()) { return; }
       try {
@@ -184,6 +201,10 @@ globalThis.worldDetail = function(initial: {
       }
     },
 
+    /**
+     * @param {string} locId
+     * @returns {Promise<void>}
+     */
     async deleteLocation(locId: string,) {
       try {
         const res = await feFetch(`/api/v1/worlds/${this.worldId}/locations/${locId}`, { method: "DELETE", },);
@@ -203,6 +224,9 @@ globalThis.worldDetail = function(initial: {
       }
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async initializeStates() {
       try {
         const res = await feFetch(`/api/v1/worlds/${this.worldId}/initialize-states`, { method: "POST", },);

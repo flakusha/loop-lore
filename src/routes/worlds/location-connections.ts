@@ -14,6 +14,7 @@ import { ErrorCode, HttpStatus, jsonError, } from "../http-utils";
  * @param worldId
  * @param connections
  * @param excludeLocationId
+ * @returns {Promise<Response | null>}
  */
 export async function validateConnections(
   database: Kysely<DB>,

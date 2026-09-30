@@ -21,6 +21,7 @@ import {
 
 /**
  * @param database
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { character: { ":slug": { get: { ...; }; }; }; } & ... 8 more ... & { ...; }, { ...; }, { ...; }>}
  */
 export function pagesRoutes(database: Kysely<DB>,) {
   const nsfwGuard = requirePermission("admin.system",);

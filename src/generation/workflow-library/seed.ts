@@ -70,7 +70,10 @@ export interface SeedOutcome {
  */
 let ownerId: string | null = null;
 
-/** Test seam: forget the cached owner id. */
+/**
+ * Test seam: forget the cached owner id.
+ * @returns {void}
+ */
 export function resetSeedOwnerForTests(): void {
   ownerId = null;
 }
@@ -124,6 +127,7 @@ async function readPayload(
  * skipped so one bad JSON cannot stop the server from booting.
  * @param database - Kysely handle
  * @param dir - Directory to scan; defaults to configs/workflows
+ * @returns {Promise<SeedOutcome>}
  */
 export async function seedWorkflowLibrary(
   database: Kysely<DB>,

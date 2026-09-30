@@ -19,6 +19,7 @@ export type NsfwLevel = "none" | "mild" | "moderate" | "intense" | "extreme";
  * Keyword-based NSFW classifier.
  * Deterministic, fast — runs before any LLM check.
  * @param content
+ * @returns {NsfwLevel}
  */
 export function detectNsfwLevel(content: string,): NsfwLevel {
   // No keyword extreme tier: "extreme" is LLM-only (detectNsfwWithLlm), reachable

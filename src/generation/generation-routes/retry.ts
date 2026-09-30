@@ -37,6 +37,7 @@ function validateRetryFromPoint(body: unknown,): { chatId: string; attemptId?: s
  * @param database
  * @param userId
  * @param userRole
+ * @returns {Promise<Response>}
  */
 export async function handleRetryGeneration(
   body: unknown,

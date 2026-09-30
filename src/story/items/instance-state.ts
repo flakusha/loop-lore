@@ -43,7 +43,15 @@ function encodeProperties(properties: Record<string, unknown>,): string {
   return result.ok ? result.value : "{}";
 }
 
-/** Apply durability wear and mark broken instances inactive. */
+/**
+ * Apply durability wear and mark broken instances inactive.
+ * @param {ItemState} state
+ * @param {string} worldItemId
+ * @param {string} worldId
+ * @param {number} amount
+ * @param {Transaction<DB>} trx
+ * @returns {Promise<DurabilityResult>}
+ */
 export async function decrementDurability(
   state: ItemState,
   worldItemId: string,
@@ -72,7 +80,15 @@ export async function decrementDurability(
   return { remaining, broken: remaining === 0, };
 }
 
-/** Apply a capped stat drift event to a world-item instance. */
+/**
+ * Apply a capped stat drift event to a world-item instance.
+ * @param {ItemState} state
+ * @param {string} worldItemId
+ * @param {string} worldId
+ * @param {ItemDriftEvent} event
+ * @param {Transaction<DB>} trx
+ * @returns {Promise<ItemDrift | null>}
+ */
 export async function applyDrift(
   state: ItemState,
   worldItemId: string,
@@ -110,7 +126,13 @@ export async function applyDrift(
   return drift;
 }
 
-/** Return the world's single instance of a unique definition, if present. */
+/**
+ * Return the world's single instance of a unique definition, if present.
+ * @param {ItemState} state
+ * @param {string} itemId
+ * @param {string} worldId
+ * @returns {Promise<{ id: string; created_at: string; updated_at: string; world_id: string; properties: string; visibility: ItemVisibility; location_id: string | null; item_id: string; owner_actor_id: string | null; ... 5 more ...; is_active: number; } | null>}
+ */
 export async function getUniqueItem(state: ItemState, itemId: string, worldId: string,) {
   return (
     await state.db

@@ -23,6 +23,7 @@ import type { HandleOpts, } from "./types";
 /**
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { worlds: { ":worldId": { ...; }; }; }; } & ... 5 more ... & { ...; }, { ...; }, { ...; }>}
  */
 export function fractalTravelRoutes(opts: HandleOpts, prefix = "/api",) {
   const { database, } = opts;

@@ -9,6 +9,7 @@ import type { DB, } from "../../../db";
  * Uses location_states table to find nearby locations
  * @param db
  * @param locationId
+ * @returns {Promise<string[]>}
  */
 export async function getLocationConnections(db: Kysely<DB>, locationId: string,): Promise<string[]> {
   // For now, get all locations in the same world

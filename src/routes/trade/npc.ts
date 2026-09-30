@@ -15,6 +15,7 @@ import { executeResponse, tradeLineSchema, } from "./shared";
  * transfer of items + gold. The caller must own the player side.
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { worlds: { ":worldId": { ...; }; }; }; } & { ...; }, { ...; }, { ...; }>}
  */
 export function npcTradeRoutes(opts: TradeRoutesOptions, prefix = "/api",) {
   return (

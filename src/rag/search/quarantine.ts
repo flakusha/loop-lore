@@ -36,6 +36,7 @@ function ensure(provider: string,): void {
  * Record a captcha block and open a long quarantine.
  * @param provider - Blocked provider
  * @param quarantineMs - Quarantine duration
+ * @returns {void}
  */
 export function quarantineOnCaptcha(provider: string, quarantineMs: number = DEFAULT_CAPTCHA_QUARANTINE_MS,): void {
   ensure(provider,);
@@ -48,6 +49,7 @@ export function quarantineOnCaptcha(provider: string, quarantineMs: number = DEF
  * Record a rate-limit with server-directed cooldown.
  * @param provider - Limited provider
  * @param retryAfterMs - Cooldown from header or backoff
+ * @returns {void}
  */
 export function quarantineOnRateLimit(
   provider: string,
@@ -60,6 +62,7 @@ export function quarantineOnRateLimit(
 /**
  * Whether a provider may receive a search request now.
  * @param provider - Provider name
+ * @returns {boolean}
  */
 export function maySearch(provider: string,): boolean {
   return searchBreaker.allowRequest(provider,);
@@ -68,6 +71,8 @@ export function maySearch(provider: string,): boolean {
 /**
  * Re-throw helper: captcha errors quarantine as a side effect.
  * @param error
+ * @throws {Error}
+ * @returns {never}
  */
 export function trackSearchError(error: unknown,): never {
   if (error instanceof CaptchaBlockedError) {
@@ -95,6 +100,7 @@ export function trackSearchError(error: unknown,): never {
  * @param database
  * @param chatIds Candidate chat ids to filter
  * @param includeArchived When true, return the original set unchanged
+ * @returns {Promise<string[]>}
  */
 export async function excludeArchivedChats(
   database: Kysely<DB>,

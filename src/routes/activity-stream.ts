@@ -58,6 +58,9 @@ export class ActivityStreamer {
   ) {}
 
   /** Open the SSE stream as a Response. */
+  /**
+   * @returns {Response}
+   */
   open(): Response {
     const encoder = new TextEncoder();
     let timer: ReturnType<typeof setInterval> | undefined;
@@ -130,6 +133,7 @@ export class ActivityStreamer {
  * @param root0
  * @param root0.database
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { activity: { stream: { ...; }; }; }; }, { ...; }, { ...; }>}
  */
 export function activityStreamRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
   return new Elysia({ name: "activity-stream", },).get(`${prefix}/activity/stream`, (ctx,) => {

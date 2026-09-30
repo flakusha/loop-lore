@@ -45,11 +45,17 @@ globalThis.notificationsBell = function(): NotificationBellState {
     unreadCount: 0,
     items: [],
 
+    /**
+     * @returns {void}
+     */
     init() {
       void this.refresh();
       this.connect();
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async refresh() {
       try {
         const res = await apiFetch("/api/v1/notifications?unread=true",);
@@ -64,6 +70,9 @@ globalThis.notificationsBell = function(): NotificationBellState {
       }
     },
 
+    /**
+     * @returns {void}
+     */
     connect() {
       if (bellStream) { return; }
       bellStream = new EventSource("/api/v1/notifications/stream",);
@@ -88,15 +97,26 @@ globalThis.notificationsBell = function(): NotificationBellState {
       },);
     },
 
+    /**
+     * @returns {void}
+     */
     toggle() {
       this.open = !this.open;
       if (this.open) { void this.refresh(); }
     },
 
+    /**
+     * @param {string} type
+     * @returns {string}
+     */
     iconFor(type: string,): string {
       return TYPE_ICONS[type] ?? "i";
     },
 
+    /**
+     * @param {string} id
+     * @returns {Promise<void>}
+     */
     async markRead(id: string,) {
       await apiFetch(`/api/v1/notifications/${id}`, {
         method: "PATCH",
@@ -109,12 +129,19 @@ globalThis.notificationsBell = function(): NotificationBellState {
       this.unreadCount = unread;
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async markAllRead() {
       await apiFetch("/api/v1/notifications/read-all", { method: "PATCH", },);
       this.items = Array.from(this.items, (i,) => ({ ...i, read: 1, }),);
       this.unreadCount = 0;
     },
 
+    /**
+     * @param {string} id
+     * @returns {Promise<void>}
+     */
     async dismiss(id: string,) {
       await apiFetch(`/api/v1/notifications/${id}`, { method: "DELETE", },);
       const filteredItems: typeof this.items = [];
@@ -125,6 +152,10 @@ globalThis.notificationsBell = function(): NotificationBellState {
       this.unreadCount = unread;
     },
 
+    /**
+     * @param {string | null} link
+     * @returns {void}
+     */
     goTo(link: string | null,) {
       if (link) { globalThis.location.assign(link,); }
       this.open = false;
@@ -140,10 +171,16 @@ globalThis.notificationPrefs = function(): NotificationPrefsState {
     mutedWorlds: [] as string[],
     types: Array.from(Object.keys(TYPE_LABELS,), (key,) => ({ key, label: TYPE_LABELS[key] ?? key, }),),
 
+    /**
+     * @returns {void}
+     */
     init() {
       void this.refresh();
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async refresh() {
       try {
         const res = await apiFetch("/api/v1/notifications/preferences",);
@@ -160,11 +197,19 @@ globalThis.notificationPrefs = function(): NotificationPrefsState {
       }
     },
 
+    /**
+     * @param {string} key
+     * @returns {Promise<void>}
+     */
     async toggleType(key: string,) {
       this.enabled = { ...this.enabled, [key]: !this.enabled[key], };
       await this.save();
     },
 
+    /**
+     * @param {string} worldId
+     * @returns {Promise<void>}
+     */
     async toggleMuteWorld(worldId: string,) {
       const has = this.mutedWorlds.includes(worldId,);
       if (has) {
@@ -177,6 +222,9 @@ globalThis.notificationPrefs = function(): NotificationPrefsState {
       await this.save();
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async save() {
       this.saving = true;
       try {

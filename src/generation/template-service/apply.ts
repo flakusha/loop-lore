@@ -15,6 +15,7 @@ import type { ImageTemplatePayload, SimpleTemplatePayload, } from "../template-t
  * `resolveTemplate` in `./prompt-templates/templates.ts`.
  * @param payload - Parsed image payload
  * @param ctx - Variable map (TemplateContext-compatible)
+ * @returns {{ prompt: string; negativePrompt: string | undefined; }}
  */
 export function applyImageTemplate(
   payload: ImageTemplatePayload,
@@ -34,6 +35,7 @@ export function applyImageTemplate(
  * and default params.
  * @param payload - Parsed simple payload
  * @param vars - Variable overrides on top of `params`
+ * @returns {string}
  */
 export function applySimpleTemplate(
   payload: SimpleTemplatePayload,

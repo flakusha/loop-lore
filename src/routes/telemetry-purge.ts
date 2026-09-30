@@ -17,6 +17,7 @@ import { ErrorCode, HttpStatus, jsonError, jsonResponse, } from "./http-utils";
  * action is traceable from the admin audit log.
  * @param database
  * @param ctx
+ * @returns {Promise<Response>}
  */
 export async function purgeTelemetryEvents(
   database: Kysely<DB>,

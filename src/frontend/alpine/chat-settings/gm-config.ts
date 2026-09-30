@@ -55,6 +55,7 @@ export interface GmSettingsFields {
 /**
  * Read the editable GM/VN settings out of a chat's persisted GmConfig.
  * @param config
+ * @returns {GmSettingsFields}
  */
 export function readGmSettings(config: GmConfig,): GmSettingsFields {
   const tuning = readAssistantTuning(config,);
@@ -94,6 +95,7 @@ export function readGmSettings(config: GmConfig,): GmSettingsFields {
  * @param existing
  * @param fields
  * @param actorModels
+ * @returns {Record<string, unknown>}
  */
 export function buildGmConfig(
   existing: GmConfig,
@@ -176,6 +178,7 @@ export function buildGmConfig(
 /**
  * Drop per-actor overrides whose model is blank.
  * @param actorModels
+ * @returns {Record<string, { model: string; provider: string; }>}
  */
 export function buildActorModels(
   actorModels: Record<string, { model: string; provider: string }>,
@@ -194,6 +197,7 @@ export function buildActorModels(
  * @param chat
  * @param chat.story_state
  * @param isPaused
+ * @returns {void}
  */
 export function setStoryPaused(chat: { story_state?: string }, isPaused: boolean,): void {
   if (chat.story_state) {

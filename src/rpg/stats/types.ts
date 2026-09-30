@@ -178,6 +178,7 @@ export interface ActiveEffect {
  * - otherwise → active
  * @param hp
  * @param maxHp
+ * @returns {CharacterState}
  */
 export function computeCharacterState(hp: number, maxHp: number,): CharacterState {
   if (hp <= -maxHp) { return "dead"; }

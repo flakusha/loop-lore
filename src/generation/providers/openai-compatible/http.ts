@@ -64,6 +64,7 @@ function applyLlamaParams(body: Record<string, unknown>, params: GenerateRequest
  * @param state
  * @param req
  * @param stream
+ * @returns {Record<string, unknown>}
  */
 export function buildBody(
   state: OpenAiCompatibleState,
@@ -105,6 +106,7 @@ export function buildBody(
 
 /**
  * @param signals
+ * @returns {AbortSignal}
  */
 export function combineAbortSignals(...signals: AbortSignal[]): AbortSignal {
   const controller = new AbortController();
@@ -130,6 +132,7 @@ export function combineAbortSignals(...signals: AbortSignal[]): AbortSignal {
  * @param body
  * @param signal
  * @param apiKeyOverride
+ * @returns {Promise<Response>}
  */
 export async function fetchRaw(
   state: OpenAiCompatibleState,
@@ -170,6 +173,7 @@ export async function fetchRaw(
  * @param body
  * @param signal
  * @param apiKey
+ * @returns {Promise<unknown>}
  */
 export async function fetchWithRetry(
   state: OpenAiCompatibleState,
@@ -193,6 +197,13 @@ export async function fetchWithRetry(
 
 /**
  * @param response
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @returns {Promise<never>}
  */
 export async function handleErrorResponse(response: Response,): Promise<never> {
   let errorBody: { error?: { message?: string; code?: string } } | undefined;
@@ -231,6 +242,7 @@ export async function handleErrorResponse(response: Response,): Promise<never> {
 
 /**
  * @param reason
+ * @returns {"error" | "cancelled" | "length" | "stop"}
  */
 export function mapFinishReason(
   reason: string | null | undefined,

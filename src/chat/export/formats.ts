@@ -192,6 +192,7 @@ const FORMATTERS: Record<ExportFormat, (payload: ExportPayload,) => string> = {
  * @param payload
  * @param format
  * @returns A serialized string (empty for an empty message list).
+ * @throws {Error}
  */
 export function exportChat(
   payload: ExportPayload,

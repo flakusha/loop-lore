@@ -9,6 +9,7 @@ import type { ServerExternalHost, ServerInstance, } from "./types";
  * Start periodic health checks on all managed servers.
  * Logs warning on first failure, error on repeated failures.
  * @param host
+ * @returns {void}
  */
 export function startLivenessProbes(host: ServerExternalHost,): void {
   if (host.probeTimer) { return; }
@@ -27,6 +28,7 @@ export function startLivenessProbes(host: ServerExternalHost,): void {
 /**
  * Stop periodic health checks
  * @param host
+ * @returns {void}
  */
 export function stopLivenessProbes(host: ServerExternalHost,): void {
   if (!host.probeTimer) {
@@ -41,6 +43,7 @@ export function stopLivenessProbes(host: ServerExternalHost,): void {
 /**
  * Run a single liveness check against all managed instances
  * @param host
+ * @returns {Promise<void>}
  */
 export async function checkAllLiveliness(host: ServerExternalHost,): Promise<void> {
   for (const instance of host.instances) {

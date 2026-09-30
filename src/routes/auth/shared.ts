@@ -46,6 +46,7 @@ const demoLoginLimiter = createRateLimiter({ windowMs: 60_000, maxRequests: DEMO
 /**
  * Build an isolated login limiter (same policy as the production default).
  * Tests call this per-file so resets never cross file boundaries.
+ * @returns {{ check: (key: string) => boolean; clear: () => void; consume: (key: string, now?: number) => RateLimitResult; destroy: () => void; peek: (key: string, now?: number) => RateLimitResult; record: (key: string, now?: number) => void; refund: (key: string) => void; reset: (key: string) => void; }}
  */
 export function createLoginLimiter(): RateLimiter {
   return createRateLimiter({ windowMs: 60_000, maxRequests: LOGIN_MAX_ATTEMPTS, },);
@@ -53,6 +54,7 @@ export function createLoginLimiter(): RateLimiter {
 
 /**
  * Build an isolated register limiter (same policy as the production default).
+ * @returns {{ check: (key: string) => boolean; clear: () => void; consume: (key: string, now?: number) => RateLimitResult; destroy: () => void; peek: (key: string, now?: number) => RateLimitResult; record: (key: string, now?: number) => void; refund: (key: string) => void; reset: (key: string) => void; }}
  */
 export function createRegisterLimiter(): RateLimiter {
   return createRateLimiter({ windowMs: 60 * 60 * 1000, maxRequests: REGISTER_MAX_ATTEMPTS, },);
@@ -60,6 +62,7 @@ export function createRegisterLimiter(): RateLimiter {
 
 /**
  * Build an isolated demo-login limiter (same policy as the production default).
+ * @returns {{ check: (key: string) => boolean; clear: () => void; consume: (key: string, now?: number) => RateLimitResult; destroy: () => void; peek: (key: string, now?: number) => RateLimitResult; record: (key: string, now?: number) => void; refund: (key: string) => void; reset: (key: string) => void; }}
  */
 export function createDemoLoginLimiter(): RateLimiter {
   return createRateLimiter({ windowMs: 60_000, maxRequests: DEMO_LOGIN_MAX_ATTEMPTS, },);
@@ -143,17 +146,23 @@ function getClientIp(request: Request, config: Config, peerIp?: string | null,):
 
 // ── Test utilities ───────────────────────────────────────────
 
-/** */
+/**
+ * @returns {void}
+ */
 export function resetLoginRateLimiter(): void {
   loginLimiter.clear();
 }
 
-/** */
+/**
+ * @returns {void}
+ */
 export function resetRegisterRateLimiter(): void {
   registerLimiter.clear();
 }
 
-/** */
+/**
+ * @returns {void}
+ */
 export function resetDemoLoginRateLimiter(): void {
   demoLoginLimiter.clear();
 }

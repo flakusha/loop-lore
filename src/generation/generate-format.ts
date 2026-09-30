@@ -22,6 +22,11 @@
 import type { ChatFormatTemplate, } from "../config/sections/templates";
 import type { GenerationMessage, } from "./types";
 
+/**
+ * @param {readonly GenerationMessage[]} messages
+ * @param {ChatFormatTemplate} template
+ * @returns {GenerationMessage[]}
+ */
 export function applyChatFormat(
   messages: readonly GenerationMessage[],
   template: ChatFormatTemplate,

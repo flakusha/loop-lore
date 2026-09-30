@@ -57,6 +57,10 @@ export const inpaint: WorkflowTemplate = {
     { name: "cfg_scale", type: "number", label: "CFG Scale", default: 7, min: 1, max: 30, step: 0.5, },
     { name: "seed", type: "number", label: "Seed", default: -1, min: -1, max: 2_147_483_647, },
   ],
+  /**
+   * @param {unknown} params
+   * @returns {{ "6": { inputs: { pixels: (string | number)[]; mask: (string | number)[]; vae: (string | number)[]; grow_mask_by: number; }; class_type: string; _meta: { title: string; }; }; }}
+   */
   build(params,) {
     const seed = resolveSeed(params.seed,);
     return {

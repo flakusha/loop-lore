@@ -53,6 +53,8 @@ export interface SemanticMatch {
  * @param memoryId  Primary key of actor_memories
  * @param vector    Normalised float32 vector (any dimension)
  * @param model     Embedding model name
+ * @throws {Error}
+ * @returns {Promise<void>}
  */
 export async function storeEmbedding(
   db: Kysely<DB>,
@@ -89,6 +91,7 @@ export async function storeEmbedding(
  * Delete the vector row for a memory.
  * @param db
  * @param memoryId
+ * @returns {Promise<void>}
  */
 export async function deleteEmbedding(
   db: Kysely<DB>,
@@ -111,6 +114,7 @@ export async function deleteEmbedding(
  * @param queryVec   Unit-normalised query embedding
  * @param topK      Max results to return
  * @param minScore  Minimum cosine similarity [0..1]; default 0.5
+ * @returns {SemanticMatch[]}
  */
 export function rankBySimilarity(
   candidates: { memoryId: string; vector: Float32Array }[],
@@ -129,6 +133,8 @@ export function rankBySimilarity(
  * Load stored vectors for a list of memory ids (batch fetch).
  * @param db
  * @param memoryIds
+ * @throws {Error}
+ * @returns {Promise<Map<string, Float32Array<ArrayBufferLike>>>}
  */
 export async function getStoredVectors(
   db: Kysely<DB>,
@@ -166,6 +172,8 @@ export async function getStoredVectors(
  * @param queryText
  * @param topK
  * @param minScore
+ * @throws {Error}
+ * @returns {Promise<SemanticMatch[]>}
  */
 export async function semanticRecall(
   db: Kysely<DB>,

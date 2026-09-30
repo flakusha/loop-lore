@@ -46,13 +46,26 @@ function sanitizeConsoleText(text: string,): string {
  * @param entry
  * @param isColor
  * @param mode
+ * @returns {string}
  */
 export function formatConsole(entry: LogEntry, isColor?: boolean, mode?: "ansi",): string;
+/**
+ * @param {LogEntry} entry
+ * @param {boolean} isColor
+ * @param {"css"} mode
+ * @returns {{ formatted: string; css: string; }}
+ */
 export function formatConsole(
   entry: LogEntry,
   isColor?: boolean,
   mode?: "css",
 ): { formatted: string; css: string };
+/**
+ * @param {LogEntry} entry
+ * @param {unknown} isColor
+ * @param {"ansi" | "css"} mode
+ * @returns {string | { formatted: string; css: string; }}
+ */
 export function formatConsole(
   entry: LogEntry,
   isColor = false,
@@ -98,6 +111,7 @@ const LEVEL_CSS: Record<number, string> = {
  * Serialize entry as one JSON line for JSONL output.
  * Strips undefined fields, keeps nulls for schema alignment.
  * @param entry
+ * @returns {string}
  */
 export function formatJSONL(entry: LogEntry,): string {
   const msgResult = safeJsonStringify(entry.message,);

@@ -31,6 +31,9 @@ export const chatBackgrounds: Partial<ChatState> & ThisType<ChatState> = {
   _backgroundsLoading: false,
   _backgroundsOpen: false,
 
+  /**
+   * @returns {void}
+   */
   toggleBackgroundPanel() {
     this._backgroundsOpen = !this._backgroundsOpen;
     if (this._backgroundsOpen && this.activeChat) {
@@ -38,6 +41,9 @@ export const chatBackgrounds: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async loadBackground() {
     if (!this.activeChat) { return; }
     try {
@@ -50,6 +56,9 @@ export const chatBackgrounds: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async loadBackgrounds() {
     if (!this.activeChat) { return; }
     this._backgroundsLoading = true;
@@ -68,6 +77,10 @@ export const chatBackgrounds: Partial<ChatState> & ThisType<ChatState> = {
     this._backgroundsLoading = false;
   },
 
+  /**
+   * @param {string} backgroundId
+   * @returns {Promise<void>}
+   */
   async setBackground(backgroundId: string,) {
     if (!this.activeChat) { return; }
     try {
@@ -85,6 +98,9 @@ export const chatBackgrounds: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async removeBackground() {
     if (!this.activeChat) { return; }
     try {

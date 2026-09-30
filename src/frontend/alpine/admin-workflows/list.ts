@@ -25,6 +25,9 @@ export const workflowListState: Partial<AdminWorkflows> & ThisType<AdminWorkflow
   workflowFilter: "",
   confirmDeleteWorkflow: "",
 
+  /**
+   * @returns {Promise<void>}
+   */
   async loadWorkflows() {
     this.loadingWorkflows = true;
     try {
@@ -51,6 +54,10 @@ export const workflowListState: Partial<AdminWorkflows> & ThisType<AdminWorkflow
 
   // ── Row actions ─────────────────────────────────────
 
+  /**
+   * @param {string} id
+   * @returns {Promise<void>}
+   */
   async setWorkflowDefault(id: string,) {
     try {
       const res = await apiFetch(`${WORKFLOWS_PATH}/${id}/default`, { method: "POST", },);
@@ -66,6 +73,10 @@ export const workflowListState: Partial<AdminWorkflows> & ThisType<AdminWorkflow
     }
   },
 
+  /**
+   * @param {string} id
+   * @returns {Promise<void>}
+   */
   async toggleWorkflowEnabled(id: string,) {
     try {
       const res = await apiFetch(`${WORKFLOWS_PATH}/${id}/enabled`, { method: "POST", },);
@@ -80,6 +91,10 @@ export const workflowListState: Partial<AdminWorkflows> & ThisType<AdminWorkflow
     }
   },
 
+  /**
+   * @param {string} id
+   * @returns {Promise<void>}
+   */
   async deleteWorkflow(id: string,) {
     try {
       const res = await apiFetch(`${WORKFLOWS_PATH}/${id}`, { method: "DELETE", },);
@@ -96,6 +111,10 @@ export const workflowListState: Partial<AdminWorkflows> & ThisType<AdminWorkflow
     }
   },
 
+  /**
+   * @param {unknown} value
+   * @returns {string}
+   */
   formatWorkflowJson(value: unknown,): string {
     const pretty = safeJsonStringify(value, 2,);
     return pretty.ok ? pretty.value : "";

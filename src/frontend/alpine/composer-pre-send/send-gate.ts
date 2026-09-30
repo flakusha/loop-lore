@@ -75,6 +75,7 @@ export interface SendGateInputs {
  * Decide whether send is blocked under client-known state. Returns `null`
  * when send is allowed, or a `SendBlockedReason` describing why.
  * @param inputs
+ * @returns {SendBlockedReason | null}
  */
 export function computeSendBlocked(inputs: SendGateInputs,): SendBlockedReason | null {
   if (!inputs.activeChat) { return "no_active_chat"; }
@@ -95,6 +96,7 @@ export function computeSendBlocked(inputs: SendGateInputs,): SendBlockedReason |
  * aria-label. Caller picks the locale catalogue key — this function returns
  * a stable English fallback.
  * @param reason
+ * @returns {string}
  */
 export function sendBlockedReasonText(reason: SendBlockedReason,): string {
   switch (reason) {

@@ -12,6 +12,7 @@ const PARTIALS_HEADERS = { "HX-Request": "true", } as const;
 
 /**
  * @param path
+ * @returns {Promise<string | null>}
  */
 export async function fetchPartial(path: string,): Promise<string | null> {
   const resp = await feFetch(path, { headers: PARTIALS_HEADERS, },);
@@ -24,6 +25,7 @@ export async function fetchPartial(path: string,): Promise<string | null> {
 
 /**
  * @param str
+ * @returns {string}
  */
 export function escapeHtml(str: string,): string {
   const div = document.createElement("div",);
@@ -33,6 +35,7 @@ export function escapeHtml(str: string,): string {
 
 /**
  * @param bytes
+ * @returns {string}
  */
 export function formatSize(bytes: number,): string {
   if (!bytes) { return ""; }
@@ -61,6 +64,7 @@ export interface FilterCardsOptions {
 
 /**
  * @param opts
+ * @returns {void}
  */
 export function filterCards(opts: FilterCardsOptions,): void {
   const query = opts.query.toLowerCase().trim();
@@ -95,6 +99,7 @@ export function filterCards(opts: FilterCardsOptions,): void {
  * @param actors
  * @param q
  * @param limit
+ * @returns {any[]}
  */
 export function filterActors(actors: any[], q: string, limit = 20,): any[] {
   const query = q.toLowerCase().trim();
@@ -118,6 +123,7 @@ export function filterActors(actors: any[], q: string, limit = 20,): any[] {
 /**
  * @param res
  * @param fallback
+ * @returns {Promise<string>}
  */
 export async function getErrorMessage(res: Response, fallback: string,): Promise<string> {
   try {
@@ -163,6 +169,9 @@ globalThis.filterBar = function() {
     sortBy: "name",
     tagFilter: "all",
     tagOptions: [] as string[],
+    /**
+     * @returns {void}
+     */
     init(): void {
       const el = (this as unknown as { $el: HTMLElement }).$el;
       if (el.closest<HTMLElement>("[data-show-tag-filter]",)?.dataset.showTagFilter !== "true") { return; }
@@ -185,6 +194,9 @@ globalThis.filterBar = function() {
       if (this.tagFilter !== "all") { chips.push({ key: "tag", label: this.tagFilter, },); }
       return chips;
     },
+    /**
+     * @returns {void}
+     */
     triggerSearch(): void {
       const el = (this as unknown as { $el: HTMLElement }).$el;
       const searchUrl = el.closest<HTMLElement>("[data-search-url]",)?.dataset.searchUrl ?? "/dynamic/gallery/search";
@@ -197,6 +209,10 @@ globalThis.filterBar = function() {
       const url = `${searchUrl}?${params.toString()}`;
       globalThis.htmx.ajax("GET", url, { target: `#${targetId}`, swap: "innerHTML", },);
     },
+    /**
+     * @param {string} key
+     * @returns {void}
+     */
     removeChip(key: string,): void {
       if (key === "q") { this.query = ""; }
       if (key === "type") { this.typeFilter = "all"; }
@@ -204,6 +220,9 @@ globalThis.filterBar = function() {
       if (key === "tag") { this.tagFilter = "all"; }
       this.triggerSearch();
     },
+    /**
+     * @returns {void}
+     */
     clearAll(): void {
       this.query = "";
       this.typeFilter = "all";

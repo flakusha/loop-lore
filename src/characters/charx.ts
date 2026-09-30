@@ -21,6 +21,8 @@ interface CharxResult {
  * Extract character card and assets from CHARX buffer.
  * @param buffer
  * @returns Promise<unknown>
+ * @throws {Error}
+ * @throws {Error}
  */
 export async function extractCharx(buffer: Buffer,): Promise<CharxResult> {
   const zip = await JSZip.loadAsync(buffer,);
@@ -79,6 +81,7 @@ export async function extractCharx(buffer: Buffer,): Promise<CharxResult> {
  * @param card
  * @param assets
  * @returns void
+ * @throws {Error}
  */
 export async function createCharx(
   card: Record<string, unknown>,

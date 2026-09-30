@@ -28,6 +28,7 @@ const registry = new Map<string, LLMProvider>();
 /**
  * @param name
  * @param provider
+ * @returns {void}
  */
 export function registerProvider(name: string, provider: LLMProvider,): void {
   if (registry.has(name,)) {
@@ -38,6 +39,7 @@ export function registerProvider(name: string, provider: LLMProvider,): void {
 
 /**
  * @param name
+ * @returns {LLMProvider | undefined}
  */
 export function getProvider(name: string,): LLMProvider | undefined {
   return registry.get(name,);
@@ -49,12 +51,15 @@ export function getProvider(name: string,): LLMProvider | undefined {
  * provider silently flips isLlmGenerationConfigured() to true in every
  * later test file sharing the process.
  * @param name
+ * @returns {void}
  */
 export function unregisterProvider(name: string,): void {
   registry.delete(name,);
 }
 
-/** */
+/**
+ * @returns {{ name: string; capabilities: ProviderCapabilities; }[]}
+ */
 export function listProviders(): { name: string; capabilities: LLMProvider["capabilities"] }[] {
   return Array.from(registry, ([name, provider,],) => ({
     name,
@@ -96,6 +101,8 @@ export interface ResolveProviderOpts {
  * @param root0.userId
  * @param root0.config
  * @param root0.db
+ * @throws {Error}
+ * @returns {Promise<ResolvedProvider>}
  */
 export async function resolveProvider({
   provider,
@@ -169,6 +176,7 @@ export async function resolveProvider({
  * registered providers — only those explicitly configured.
  * @param primaryName
  * @param config
+ * @returns {{ name: string; provider: LLMProvider; }[]}
  */
 export function buildFailoverList(
   primaryName: string,
@@ -203,6 +211,7 @@ export function buildFailoverList(
 /**
  * Initialize providers from config on startup
  * @param config
+ * @returns {void}
  */
 export function initializeProviders(config: Config,): void {
   for (const instance of config.generation.providers.openaiCompatible) {

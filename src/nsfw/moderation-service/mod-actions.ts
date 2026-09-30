@@ -30,6 +30,8 @@ export interface BlockUserArgs {
  * @param root0.targetUserId
  * @param root0.performedBy
  * @param root0.reason
+ * @throws {Error}
+ * @returns {Promise<ModAction>}
  */
 export async function blockUser({ thisL, targetUserId, performedBy, reason, }: BlockUserArgs,): Promise<ModAction> {
   const now = new Date().toISOString();
@@ -71,6 +73,7 @@ export interface UnblockUserArgs {
  * @param root0.targetUserId
  * @param root0.performedBy
  * @param root0.reason
+ * @returns {Promise<ModAction>}
  */
 export async function unblockUser({ thisL, targetUserId, performedBy, reason, }: UnblockUserArgs,): Promise<ModAction> {
   const now = new Date().toISOString();
@@ -105,6 +108,9 @@ export interface BanUserArgs {
  * @param root0.targetUserId
  * @param root0.performedBy
  * @param root0.reason
+ * @throws {Error}
+ * @throws {Error}
+ * @returns {Promise<ModAction>}
  */
 export async function banUser({ thisL, targetUserId, performedBy, reason, }: BanUserArgs,): Promise<ModAction> {
   const now = new Date().toISOString();
@@ -139,6 +145,7 @@ export interface UnbanUserArgs {
  * @param root0.targetUserId
  * @param root0.performedBy
  * @param root0.reason
+ * @returns {Promise<ModAction>}
  */
 export async function unbanUser({ thisL, targetUserId, performedBy, reason, }: UnbanUserArgs,): Promise<ModAction> {
   const now = new Date().toISOString();
@@ -175,6 +182,7 @@ export interface ShadowUserArgs {
  * @param root0.targetUserId
  * @param root0.performedBy
  * @param root0.reason
+ * @returns {Promise<ModAction>}
  */
 export async function shadowUser({ thisL, targetUserId, performedBy, reason, }: ShadowUserArgs,): Promise<ModAction> {
   const now = new Date().toISOString();
@@ -209,6 +217,7 @@ export interface UnshadowUserArgs {
  * @param root0.targetUserId
  * @param root0.performedBy
  * @param root0.reason
+ * @returns {Promise<ModAction>}
  */
 export async function unshadowUser(
   { thisL, targetUserId, performedBy, reason, }: UnshadowUserArgs,

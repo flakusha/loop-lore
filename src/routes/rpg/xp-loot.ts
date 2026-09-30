@@ -35,6 +35,7 @@ import { AwardBody, GenerateBody, LevelBody, NextBody, PersistBody, } from "./xp
  * @param root0
  * @param root0.database
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, {}, { derive: {}; resolve: {}; schema: {}; standaloneSchema: {}; response: {}; }, { ...; }>}
  */
 export function xpLootRoutes({ database, }: HandlerOpts, prefix = "/api",): Elysia {
   const deps = { database: database, };

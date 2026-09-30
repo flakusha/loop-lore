@@ -38,14 +38,26 @@ function formatTimeOnly(iso: string,): string {
 }
 
 export const chatUtilsTime: ChatUtilsTime = {
+  /**
+   * @param {string} iso
+   * @returns {string}
+   */
   formatTime(iso: string,) {
     return formatTimeOnly(iso,);
   },
 
+  /**
+   * @param {string} iso
+   * @returns {string}
+   */
   formatTimeShort(iso: string,) {
     return formatTimeOnly(iso,);
   },
 
+  /**
+   * @param {string} iso
+   * @returns {string}
+   */
   formatDate(iso: string,) {
     if (!iso) { return ""; }
     const d = toDate(iso,);
@@ -63,6 +75,7 @@ export const chatUtilsTime: ChatUtilsTime = {
  * call sites). Mirrors the logic already applied to formatTime/formatDate.
  * @param iso
  * @param humanStyle
+ * @returns {string}
  */
 export function formatDisplayDate(
   iso: string | null | undefined,

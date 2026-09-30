@@ -80,6 +80,7 @@ function toCategory(type: string, fallback: ItemCategory,): ItemCategory {
  * @param db
  * @param result
  * @param dest
+ * @returns {Promise<LootResult>}
  */
 export async function persistLoot(
   db: Kysely<DB>,

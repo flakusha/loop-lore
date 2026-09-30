@@ -80,6 +80,7 @@ export function rollStats4d6(): number[] {
 /**
  * Roll stats using standard array (15, 14, 13, 12, 10, 8).
  * Returns the standard array for assignment.
+ * @returns {number[]}
  */
 export function standardArray(): number[] {
   return [15, 14, 13, 12, 10, 8,];
@@ -88,6 +89,7 @@ export function standardArray(): number[] {
 /**
  * Create a stat block from an array of 6 values assigned to abilities in order.
  * @param values
+ * @returns {StatBlock}
  */
 export function statBlockFromArray(values: number[],): StatBlock {
   return {

@@ -18,7 +18,10 @@ import { HOUSING_EDGES, } from "./housing";
 import { NSFW_EDGES, } from "./nsfw";
 import { SOCIAL_CRAFTING_EDGES, } from "./social-crafting";
 
-/** The complete list of integration edges between RPG sub-systems. */
+/**
+ * The complete list of integration edges between RPG sub-systems.
+ * @returns {IntegrationEdge[]}
+ */
 export function buildEdges(): IntegrationEdge[] {
   return [
     ...BATTLE_EDGES,

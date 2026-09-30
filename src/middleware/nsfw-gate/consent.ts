@@ -117,6 +117,7 @@ export interface CheckNsfwWithConsentResult {
  * the legacy shape: always-present enforcement object plus a `ConsentState`
  * marked `given` only when the ledger holds an active grant.
  * @param args
+ * @returns {Promise<CheckNsfwWithConsentResult>}
  */
 export async function checkNsfwWithConsent(
   args: CheckNsfwWithConsentArgs,

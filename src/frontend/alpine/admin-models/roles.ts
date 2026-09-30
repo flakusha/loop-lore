@@ -14,6 +14,9 @@ export const roleState: Partial<ModelsState> & ThisType<ModelsState> = {
   >,
   roleTuning: {} as Record<string, { temperature: string; maxTokens: string }>,
 
+  /**
+   * @returns {Promise<void>}
+   */
   async loadModelRoles() {
     try {
       const res = await apiFetch("/api/v1/admin/model-roles", { headers: { Accept: "application/json", }, },);
@@ -44,10 +47,18 @@ export const roleState: Partial<ModelsState> & ThisType<ModelsState> = {
       log.warn("Failed to load model roles",);
     }
   },
+  /**
+   * @param {string} role
+   * @returns {void}
+   */
   onRoleProviderChange(role: string,) {
     const entry = this.modelRoleList.find((e,) => e.role === role);
     if (entry) { entry.model = ""; }
   },
+  /**
+   * @param {string} role
+   * @returns {Promise<void>}
+   */
   async saveModelRole(role: string,) {
     const entry = this.modelRoleList.find((e,) => e.role === role);
     if (!entry?.provider || !entry.model) { return; }
@@ -74,6 +85,10 @@ export const roleState: Partial<ModelsState> & ThisType<ModelsState> = {
       showToast("error", t("toasts.networkError",),);
     }
   },
+  /**
+   * @param {string} role
+   * @returns {Promise<void>}
+   */
   async clearModelRole(role: string,) {
     try {
       const res = await apiFetch(`/api/v1/admin/model-roles/${role}`, { method: "DELETE", },);

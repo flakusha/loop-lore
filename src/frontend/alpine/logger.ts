@@ -52,6 +52,13 @@ class LightLogger implements Logger {
    * @param error
    * @param meta
    */
+  /**
+   * @param {LogLevel} level
+   * @param {string | Record<string, unknown>} message
+   * @param {Error} error
+   * @param {Record<string, unknown>} meta
+   * @returns {void}
+   */
   private log(
     level: LogLevel,
     message: string | Record<string, unknown>,
@@ -100,6 +107,11 @@ class LightLogger implements Logger {
    * @param message
    * @param meta
    */
+  /**
+   * @param {string | Record<string, unknown>} message
+   * @param {Record<string, unknown>} meta
+   * @returns {void}
+   */
   trace(message: string | Record<string, unknown>, meta?: Record<string, unknown>,): void {
     this.log("trace", message, undefined, meta,);
   }
@@ -107,6 +119,11 @@ class LightLogger implements Logger {
   /**
    * @param message
    * @param meta
+   */
+  /**
+   * @param {string | Record<string, unknown>} message
+   * @param {Record<string, unknown>} meta
+   * @returns {void}
    */
   debug(message: string | Record<string, unknown>, meta?: Record<string, unknown>,): void {
     this.log("debug", message, undefined, meta,);
@@ -116,6 +133,11 @@ class LightLogger implements Logger {
    * @param message
    * @param meta
    */
+  /**
+   * @param {string | Record<string, unknown>} message
+   * @param {Record<string, unknown>} meta
+   * @returns {void}
+   */
   info(message: string | Record<string, unknown>, meta?: Record<string, unknown>,): void {
     this.log("info", message, undefined, meta,);
   }
@@ -123,6 +145,11 @@ class LightLogger implements Logger {
   /**
    * @param message
    * @param meta
+   */
+  /**
+   * @param {string | Record<string, unknown>} message
+   * @param {Record<string, unknown>} meta
+   * @returns {void}
    */
   warn(message: string | Record<string, unknown>, meta?: Record<string, unknown>,): void {
     this.log("warn", message, undefined, meta,);
@@ -133,6 +160,12 @@ class LightLogger implements Logger {
    * @param error
    * @param meta
    */
+  /**
+   * @param {string | Record<string, unknown>} message
+   * @param {Error} error
+   * @param {Record<string, unknown>} meta
+   * @returns {void}
+   */
   error(message: string | Record<string, unknown>, error?: Error, meta?: Record<string, unknown>,): void {
     this.log("error", message, error, meta,);
   }
@@ -142,12 +175,22 @@ class LightLogger implements Logger {
    * @param error
    * @param meta
    */
+  /**
+   * @param {string | Record<string, unknown>} message
+   * @param {Error} error
+   * @param {Record<string, unknown>} meta
+   * @returns {void}
+   */
   fatal(message: string | Record<string, unknown>, error?: Error, meta?: Record<string, unknown>,): void {
     this.log("fatal", message, error, meta,);
   }
 
   /**
    * @param bindings
+   */
+  /**
+   * @param {LoggerBindings} bindings
+   * @returns {Logger}
    */
   child(bindings: LoggerBindings,): Logger {
     return new LightLogger(
@@ -157,6 +200,9 @@ class LightLogger implements Logger {
   }
 
   /** */
+  /**
+   * @returns {Promise<void>}
+   */
   async flush(): Promise<void> {
     await this.queue?.flush();
   }
@@ -164,11 +210,19 @@ class LightLogger implements Logger {
   /**
    * @param transport
    */
+  /**
+   * @param {Transport} transport
+   * @returns {void}
+   */
   addTransport(transport: Transport,): void {
     this.transports.push(transport,);
   }
   /**
    * @param partial
+   */
+  /**
+   * @param {LoggerBindings} partial
+   * @returns {void}
    */
   setBindings(partial: LoggerBindings,): void {
     Object.assign(this.bindings, partial,);
@@ -182,6 +236,7 @@ const _root: { instance: Logger | null } = { instance: null, };
 /**
  * @param config
  * @param config.level
+ * @returns {Logger}
  */
 export function createLogger(config?: { level?: LogLevel },): Logger {
   const transports: Transport[] = [new BrowserConsoleTransport(),];
@@ -190,7 +245,10 @@ export function createLogger(config?: { level?: LogLevel },): Logger {
   return instance;
 }
 
-/** */
+/**
+ * @throws {Error}
+ * @returns {Logger}
+ */
 export function getLogger(): Logger {
   if (!_root.instance) { throw new Error("Logger not initialized — call createLogger() first",); }
   return _root.instance;
@@ -198,6 +256,7 @@ export function getLogger(): Logger {
 
 /**
  * @param logger
+ * @returns {void}
  */
 export function setGlobalLogger(logger: Logger,): void {
   _root.instance = logger;

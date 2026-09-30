@@ -8,6 +8,7 @@ import type { EmotionDefinition, EmotionLogEntry, MoodState, } from "./types";
 
 /**
  * @param actorId
+ * @returns {Promise<MoodState | null>}
  */
 export async function fetchMood(actorId: string,): Promise<MoodState | null> {
   try {
@@ -21,6 +22,7 @@ export async function fetchMood(actorId: string,): Promise<MoodState | null> {
 
 /**
  * @param actorId
+ * @returns {Promise<EmotionLogEntry[]>}
  */
 export async function fetchEmotions(actorId: string,): Promise<EmotionLogEntry[]> {
   try {
@@ -32,7 +34,9 @@ export async function fetchEmotions(actorId: string,): Promise<EmotionLogEntry[]
   }
 }
 
-/** */
+/**
+ * @returns {Promise<EmotionDefinition[]>}
+ */
 export async function fetchEmotionDefs(): Promise<EmotionDefinition[]> {
   try {
     const res = await apiFetch("/api/v1/emotions",);
@@ -47,6 +51,7 @@ export async function fetchEmotionDefs(): Promise<EmotionDefinition[]> {
  * @param actorId
  * @param delta
  * @param worldId
+ * @returns {Promise<number | null>}
  */
 export async function applyHappinessDelta(
   actorId: string,

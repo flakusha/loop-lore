@@ -12,6 +12,11 @@ export const chatKeys = {
   _keyId: null as string | null,
   _activeChatEncryptionLevel: null as string | null,
 
+  /**
+   * @param {string} chatId
+   * @param {string | null} encryptionLevel
+   * @returns {Promise<void>}
+   */
   async loadChatKey(chatId: string, encryptionLevel?: string | null,) {
     // Tier guard: only `standard` chats have a server-derived key. `none`
     // (plaintext) and `at-rest` (client E2E keys) 404 by design — skip the

@@ -132,6 +132,7 @@ export interface UpdateLocationTraitArgs {
  * @param root0.locationId
  * @param root0.opts
  * @returns void
+ * @throws {Error}
  */
 export async function updateLocationTrait(
   { thisL, actorId, locationId, opts, }: UpdateLocationTraitArgs,

@@ -15,6 +15,7 @@ export interface EntityPaths {
 /**
  * @param config
  * @param basePathPrefix
+ * @returns {EntityPaths}
  */
 export function entityPaths(config: EntityConfig, basePathPrefix = "/api",): EntityPaths {
   const parentParam = config.parentParam == null ? "id" : config.parentParam;
@@ -29,6 +30,7 @@ export function entityPaths(config: EntityConfig, basePathPrefix = "/api",): Ent
  * @param parentId
  * @param userId
  * @param userRole
+ * @returns {Promise<boolean>}
  */
 export async function checkOwnership(
   database: Db,

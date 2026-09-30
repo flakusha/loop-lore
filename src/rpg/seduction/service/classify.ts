@@ -44,6 +44,7 @@ export const SKILL_PRETTY: Record<SocialSkillForNSFW, string> = {
  * @param db
  * @param actorId - Seduction actor
  * @param skillCategory - The physical category attempted (for the bonus proxy)
+ * @returns {Promise<Record<SocialSkillForNSFW, number>>}
  */
 export async function buildSkillLevels(
   db: Kysely<DB>,

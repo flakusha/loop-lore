@@ -18,6 +18,7 @@ import type { SeductionSkill, } from "./types";
  * Best-effort on the mood event — a missing mood row must not fail the
  * attempt outcome.
  * @param args
+ * @returns {Promise<void>}
  */
 export async function settleAttempt(args: {
   db: Kysely<DB>;

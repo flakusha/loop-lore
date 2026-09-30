@@ -9,6 +9,7 @@
  * sub-module that declares `get`/`set` accessors consumed by templates.
  * @param target
  * @param source
+ * @returns {void}
  */
 export function mergeReactiveSource(target: Record<string, unknown>, source: object,): void {
   for (const name of Object.getOwnPropertyNames(source,)) {

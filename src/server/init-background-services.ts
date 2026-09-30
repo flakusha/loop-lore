@@ -17,6 +17,7 @@ import type { ServerExternalManager, } from "../services/server-external-manager
  * @param config
  * @param logger
  * @param serverManager
+ * @returns {Promise<void>}
  */
 export async function initBackgroundServices(
   database: Db,

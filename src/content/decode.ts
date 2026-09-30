@@ -8,6 +8,8 @@ import type { ContentEncoding, } from "./types";
  * @param stored
  * @param encoding
  * @returns string
+ * @throws {Error}
+ * @throws {Error}
  */
 export function decodeContent(stored: string, encoding: ContentEncoding,): string {
   if (encoding === "identity" || !stored) {

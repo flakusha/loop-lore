@@ -18,7 +18,9 @@ import { CURATED_EVENTS, TelemetryTransport, } from "./transports/telemetry";
 
 let _initialized = false;
 
-/** */
+/**
+ * @returns {void}
+ */
 export function initTelemetry(): void {
   if (_initialized) { return; }
   _initialized = true;
@@ -70,7 +72,9 @@ export function initTelemetry(): void {
   },);
 }
 
-/** */
+/**
+ * @returns {boolean}
+ */
 export function isTelemetryEnabled(): boolean {
   return [true, "true", 1,].includes(globalThis.__TELEMETRY_FRONTEND_ENABLED,);
 }
@@ -81,6 +85,7 @@ export function isTelemetryEnabled(): boolean {
  * logger also carries unrelated control-flow logs.
  * @param event
  * @param data
+ * @returns {void}
  */
 export function trackTelemetry(event: string, data?: Record<string, unknown>,): void {
   if (!isTelemetryEnabled()) { return; }

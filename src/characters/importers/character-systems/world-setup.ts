@@ -21,6 +21,7 @@ import type { CharacterSystemsImportResult, } from "./types";
  * @param data
  * @param result
  * @param worldId
+ * @returns {Promise<void>}
  */
 export async function importWorldSetup(
   db: Kysely<DB>,

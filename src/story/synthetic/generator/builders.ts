@@ -16,6 +16,7 @@ import type { GeneratorState, } from "./types";
  * @param state
  * @param type
  * @param source
+ * @returns {SyntheticCase[]}
  */
 export function build(state: GeneratorState, type: SyntheticDataType, source: SyntheticSource,): SyntheticCase[] {
   switch (type) {

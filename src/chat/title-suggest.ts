@@ -23,6 +23,7 @@ const AUX_MAX = 60;
  * Rule-based fallback title: trim, collapse whitespace, slice to 40 chars
  * with an ellipsis when longer, "New chat" on empty.
  * @param text - First message text (or any raw input)
+ * @returns {string}
  */
 export function deriveChatTitleFallback(text: string,): string {
   const collapsed = text.replace(/\s+/g, " ",).trim();
@@ -35,6 +36,7 @@ export function deriveChatTitleFallback(text: string,): string {
  * content (capped at 60 chars) or the rule-based fallback on null/throw.
  * Advisory-only: never throws.
  * @param args - Config, db, optional user/chat ids, and the first message
+ * @returns {Promise<string>}
  */
 export async function suggestChatTitle(args: {
   config: Config;
@@ -68,7 +70,11 @@ export async function suggestChatTitle(args: {
   }
 }
 
-/** Placeholder names marking a chat as untitled. Mirrors transitions.autoRenameChat. */
+/**
+ * Placeholder names marking a chat as untitled. Mirrors transitions.autoRenameChat.
+ * @param {string | null} name
+ * @returns {boolean}
+ */
 export function isUntitledChatName(name: string | null,): boolean {
   return name === null || name === "New Chat" || name === "";
 }
@@ -79,6 +85,7 @@ export function isUntitledChatName(name: string | null,): boolean {
  * otherwise keep the placeholder forever. Never throws — skips titled or
  * direct chats, logs update failures.
  * @param args - Config, db, chat/user ids, the chat record, first message
+ * @returns {Promise<void>}
  */
 export async function titleUntitledChatFromFirstMessage(args: {
   config: Config;

@@ -9,6 +9,7 @@ import { uid, } from "../../../utils.js";
  * @param db
  * @param postId
  * @param tags
+ * @returns {Promise<void>}
  */
 export async function addTags(
   db: Kysely<any>,
@@ -26,6 +27,7 @@ export async function addTags(
 /**
  * @param db
  * @param postId
+ * @returns {Promise<void>}
  */
 export async function clearTags(db: Kysely<any>, postId: string,): Promise<void> {
   await db
@@ -37,6 +39,7 @@ export async function clearTags(db: Kysely<any>, postId: string,): Promise<void>
 /**
  * @param db
  * @param postId
+ * @returns {Promise<string[]>}
  */
 export async function getTags(db: Kysely<any>, postId: string,): Promise<string[]> {
   const rows = await db

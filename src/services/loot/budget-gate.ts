@@ -125,6 +125,10 @@ function makeItemProps(row: LootRow,): ItemProps {
  *   1. Filter by encounter budget (greedy: take the costliest rows first).
  *   2. For each kept row: rare-band gate → affordance gate.
  *   3. If either denies, try rare-downshift; if that fails, move to `dropped`.
+ * @param {readonly LootRow[]} dropTable
+ * @param {EncounterBudget} encounterBudget
+ * @param {PartyCapabilities} party
+ * @returns {LootGateResult}
  */
 export function enforceLootBudget(
   dropTable: readonly LootRow[],

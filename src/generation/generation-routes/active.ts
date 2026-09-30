@@ -18,6 +18,7 @@ import { listActiveGenerations, } from "../cancellation-manager";
  * @param _database
  * @param userId
  * @param userRole
+ * @returns {Response}
  */
 export function handleListActiveGenerations(
   _database?: Kysely<DB>,

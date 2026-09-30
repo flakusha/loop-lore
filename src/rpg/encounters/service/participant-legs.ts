@@ -14,6 +14,7 @@ import type { EncounterOutcome, NsfwEncounter, } from "./types";
  * First participant that is not `self` (pair leg needs a target).
  * @param participants
  * @param self
+ * @returns {string | null}
  */
 export function firstOtherParticipant(participants: string[], self: string,): string | null {
   for (const id of participants) { if (id !== self) { return id; } }
@@ -35,6 +36,7 @@ export interface LegContext {
  * Intimacy score leg: pair delta via the canonical action path.
  * @param db
  * @param ctx
+ * @returns {Promise<void>}
  */
 export async function applyIntimacyLeg(db: Kysely<DB>, ctx: LegContext,): Promise<void> {
   const { intimacy, log, encounter, outcome, intimacyDelta, participant, } = ctx;
@@ -66,6 +68,7 @@ export async function applyIntimacyLeg(db: Kysely<DB>, ctx: LegContext,): Promis
 /**
  * Mood event leg: one source-tagged `encounter.completed` event.
  * @param ctx
+ * @returns {Promise<void>}
  */
 export async function applyMoodLeg(ctx: LegContext,): Promise<void> {
   const { mood, log, encounter, outcome, participant, } = ctx;
@@ -89,6 +92,7 @@ export async function applyMoodLeg(ctx: LegContext,): Promise<void> {
  * Shared XP ledger leg (TASK-040): satisfaction bonus mirrors as XP.
  * @param db
  * @param ctx
+ * @returns {Promise<void>}
  */
 export async function applyXpLeg(db: Kysely<DB>, ctx: LegContext,): Promise<void> {
   const { log, encounter, outcome, participant, } = ctx;
@@ -119,6 +123,7 @@ export async function applyXpLeg(db: Kysely<DB>, ctx: LegContext,): Promise<void
  * row uses the manual kind (authored by a system, not the LLM).
  * @param db
  * @param ctx
+ * @returns {Promise<void>}
  */
 export async function applyMemoryLeg(db: Kysely<DB>, ctx: LegContext,): Promise<void> {
   const { log, encounter, outcome, participant, } = ctx;
@@ -161,6 +166,7 @@ export async function applyMemoryLeg(db: Kysely<DB>, ctx: LegContext,): Promise<
  * the shared sweep). Best-effort like every other leg.
  * @param db
  * @param ctx
+ * @returns {Promise<void>}
  */
 export async function applyTraumaLeg(db: Kysely<DB>, ctx: LegContext,): Promise<void> {
   const { log, encounter, outcome, participant, } = ctx;
@@ -186,6 +192,7 @@ export async function applyTraumaLeg(db: Kysely<DB>, ctx: LegContext,): Promise<
  * service. Best-effort like every other leg.
  * @param db
  * @param ctx
+ * @returns {Promise<void>}
  */
 export async function applyPregnancyLeg(db: Kysely<DB>, ctx: LegContext,): Promise<void> {
   const { log, encounter, participant, } = ctx;
@@ -209,6 +216,7 @@ export async function applyPregnancyLeg(db: Kysely<DB>, ctx: LegContext,): Promi
  * pregnancy, memory.
  * @param db
  * @param ctx
+ * @returns {Promise<void>}
  */
 export async function applyParticipantLegs(db: Kysely<DB>, ctx: LegContext,): Promise<void> {
   await applyIntimacyLeg(db, ctx,);

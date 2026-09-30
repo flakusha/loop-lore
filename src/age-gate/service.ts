@@ -104,6 +104,7 @@ export function getStatus(
  * @param minimumAge
  * @throws {UnderageError} if the user is below the minimum age
  * @throws {AgeGateError} if birthDate is not a valid ISO date
+ * @returns {void}
  */
 export function validateAge(birthDate: string, minimumAge: number,): void {
   const parsed = parseExpiryMs(birthDate,);
@@ -136,6 +137,7 @@ export function validateAge(birthDate: string, minimumAge: number,): void {
  * @param root0.input
  * @throws {UnderageError} if the user is below the minimum age
  * @throws {AgeGateError} if birth date is invalid
+ * @returns {Promise<void>}
  */
 export async function acceptAgeGate({ database, config, userId, input, }: AcceptAgeGateOpts,): Promise<void> {
   if (!config.enabled || config.mode === "none") {

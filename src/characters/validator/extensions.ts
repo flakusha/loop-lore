@@ -16,6 +16,7 @@ import type {
  * @param errors
  * @param warnings
  * @param mode
+ * @returns {void}
  */
 export function validateExtensions(
   character: CanonicalCharacter,
@@ -172,6 +173,7 @@ function validateRelationships(
  * @param errors
  * @param warnings
  * @param mode
+ * @returns {void}
  */
 export function validateFeatureFlags(
   flags: CharacterFeatureFlags,

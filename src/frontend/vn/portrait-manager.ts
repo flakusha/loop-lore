@@ -26,6 +26,7 @@ export interface PortraitConfig {
 /**
  * Determine portrait position based on message role.
  * @param role
+ * @returns {PortraitPosition}
  */
 export function getPortraitPosition(
   role: "assistant" | "user" | "system" | "narration",
@@ -50,6 +51,7 @@ export function getPortraitPosition(
 /**
  * Build a portrait URL from an asset ID.
  * @param assetId
+ * @returns {string | undefined}
  */
 export function getPortraitUrl(assetId?: string | null,): string | undefined {
   if (!assetId) { return undefined; }
@@ -62,6 +64,7 @@ export function getPortraitUrl(assetId?: string | null,): string | undefined {
 /**
  * Create a portrait element positioned in the scene.
  * @param config
+ * @returns {HTMLElement}
  */
 export function createPortraitElement(config: PortraitConfig,): HTMLElement {
   const el = document.createElement("div",);
@@ -92,6 +95,7 @@ export function createPortraitElement(config: PortraitConfig,): HTMLElement {
  * @param sceneEl
  * @param position
  * @param splitRatio
+ * @returns {void}
  */
 export function applyPortraitLayout(
   sceneEl: HTMLElement,

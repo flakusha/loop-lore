@@ -67,11 +67,16 @@ export interface IdempotencyBackendApi {
 /**
  * Build a fresh memory backend bound to a TTL.
  * @param ttlMs - TTL for completed entries in ms.
+ * @returns {IdempotencyBackendApi}
  */
 export function createMemoryBackend(ttlMs: number,): IdempotencyBackendApi {
   const cache = new Map<string, InMemoryEntry>();
 
   return {
+    /**
+     * @param {unknown} key
+     * @returns {InMemoryEntry | null}
+     */
     get(key,) {
       const entry = cache.get(key,);
       if (!entry) { return null; }
@@ -82,6 +87,10 @@ export function createMemoryBackend(ttlMs: number,): IdempotencyBackendApi {
       }
       return entry;
     },
+    /**
+     * @param {unknown} key
+     * @returns {InMemoryEntry}
+     */
     markInFlight(key,) {
       const entry: InMemoryEntry = {
         status: 0,
@@ -94,6 +103,12 @@ export function createMemoryBackend(ttlMs: number,): IdempotencyBackendApi {
       cache.set(key, entry,);
       return entry;
     },
+    /**
+     * @param {unknown} key
+     * @param {unknown} _meta
+     * @param {unknown} args
+     * @returns {void}
+     */
     recordResponse(key, _meta, args,) {
       cache.set(key, {
         status: args.status,
@@ -104,9 +119,16 @@ export function createMemoryBackend(ttlMs: number,): IdempotencyBackendApi {
         completedAt: Date.now(),
       },);
     },
+    /**
+     * @param {unknown} key
+     * @returns {void}
+     */
     release(key,) {
       cache.delete(key,);
     },
+    /**
+     * @returns {void}
+     */
     clear() {
       cache.clear();
     },

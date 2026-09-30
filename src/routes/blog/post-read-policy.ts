@@ -18,6 +18,7 @@ type PolicyPost = Pick<BlogPostRow, "visibility" | "status" | "author_id">;
  * @param post
  * @param userId
  * @param isAdmin
+ * @returns {boolean}
  */
 export function isReadablePost(
   post: PolicyPost,

@@ -50,6 +50,9 @@ export class ComfyUIEditProvider implements ImageEditProvider {
   private installedNodes: Set<string> | null = null;
 
   /** */
+  /**
+   * @returns {ComfyUIClient}
+   */
   private getClient(): ComfyUIClient {
     if (!this.client) {
       const config = loadConfig();
@@ -66,6 +69,9 @@ export class ComfyUIEditProvider implements ImageEditProvider {
   }
 
   /** */
+  /**
+   * @returns {Promise<boolean>}
+   */
   async healthCheck(): Promise<boolean> {
     try {
       const client = this.getClient();
@@ -77,6 +83,9 @@ export class ComfyUIEditProvider implements ImageEditProvider {
   }
 
   /** */
+  /**
+   * @returns {Promise<ImageEditCategory[]>}
+   */
   async listCapabilities(): Promise<ImageEditCategory[]> {
     const nodes = await this.getInstalledNodes();
     const capabilities: ImageEditCategory[] = [];
@@ -92,6 +101,9 @@ export class ComfyUIEditProvider implements ImageEditProvider {
   }
 
   /** */
+  /**
+   * @returns {Promise<Set<string>>}
+   */
   async getInstalledNodes(): Promise<Set<string>> {
     if (this.installedNodes) { return this.installedNodes; }
 
@@ -108,12 +120,18 @@ export class ComfyUIEditProvider implements ImageEditProvider {
   }
 
   /** */
+  /**
+   * @returns {Promise<Record<string, ComfyUINodeInfo>>}
+   */
   async getNodeInfo() {
     const client = this.getClient();
     return client.getNodeInfo();
   }
 
   /** Force re-discovery of nodes */
+  /**
+   * @returns {void}
+   */
   refreshNodes(): void {
     this.installedNodes = null;
   }
@@ -122,6 +140,12 @@ export class ComfyUIEditProvider implements ImageEditProvider {
    * @param request
    * @param template
    * @param onProgress
+   */
+  /**
+   * @param {ImageEditRequest} request
+   * @param {WorkflowTemplate} template
+   * @param {(progress: ImageEditProgress,) => void} onProgress
+   * @returns {Promise<ImageEditResult[]>}
    */
   async execute(
     request: ImageEditRequest,
@@ -211,6 +235,10 @@ export class ComfyUIEditProvider implements ImageEditProvider {
    * Get emotion-based prompt modifier for ComfyUI workflow.
    * Maps emotion types to descriptive prompt suffixes for conditioning nodes.
    * @param emotion
+   */
+  /**
+   * @param {string} emotion
+   * @returns {string}
    */
   private getEmotionModifier(emotion: string,): string {
     const modifiers: Record<string, string> = {

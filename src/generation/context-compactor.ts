@@ -18,6 +18,7 @@ import type { GenerationMessage, } from "./gen-types-options";
 /**
  * char→token heuristic (plan: chars * 0.3)
  * @param text
+ * @returns {number}
  */
 export function estimateTokens(text: string,): number {
   return Math.ceil(text.length * 0.3,);
@@ -71,6 +72,10 @@ export class ContextCompactor {
    * Total estimated tokens across a message list.
    * @param messages
    */
+  /**
+   * @param {GenerationMessage[]} messages
+   * @returns {number}
+   */
   totalTokens(messages: GenerationMessage[],): number {
     let sum = 0;
     for (const m of messages) { sum += estimateTokens(m.content ?? "",); }
@@ -82,6 +87,11 @@ export class ContextCompactor {
    * returned unchanged (compacted: false).
    * @param messages
    * @param tokenBudget
+   */
+  /**
+   * @param {GenerationMessage[]} messages
+   * @param {number} tokenBudget
+   * @returns {Promise<CompactResult>}
    */
   async compact(messages: GenerationMessage[], tokenBudget: number,): Promise<CompactResult> {
     const total = this.totalTokens(messages,);

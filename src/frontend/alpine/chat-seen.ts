@@ -10,6 +10,10 @@ import type { ChatState, Message, } from "./types";
  * Extracted from chat-messages.ts to keep the main file under the 250L limit.
  */
 export const chatSeenMethods: Partial<ChatState> & ThisType<ChatState> = {
+  /**
+   * @param {string} msgId
+   * @returns {Promise<void>}
+   */
   async loadMessageSeen(msgId: string,) {
     try {
       const res = await apiFetch(`/api/v1/messages/${msgId}/seen`,);
@@ -23,12 +27,20 @@ export const chatSeenMethods: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async loadAllSeen() {
     if (!this.activeChat || this.messages.length === 0) { return; }
     const ids = Array.from(this.messages, (m,) => m.id,);
     await Promise.allSettled(Array.from(ids, (id,) => this.loadMessageSeen(id,),),);
   },
 
+  /**
+   * @param {string} msgId
+   * @param {"seen" | "processing"} state
+   * @returns {Promise<void>}
+   */
   async markSeen(msgId: string, state: "seen" | "processing" = "seen",) {
     if (!this.activeChat) { return; }
     try {
@@ -50,6 +62,11 @@ export const chatSeenMethods: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @param {string} msgId
+   * @param {Event} event
+   * @returns {void}
+   */
   openSeenPopover(msgId: string, event: Event,) {
     const msg = this.messages.find((m,) => m.id === msgId);
     if (!msg) { return; }
@@ -64,6 +81,10 @@ export const chatSeenMethods: Partial<ChatState> & ThisType<ChatState> = {
     },);
   },
 
+  /**
+   * @param {Array<{ actorId: string; state: string; seenAt: string | null }>} seenState
+   * @returns {string}
+   */
   seenTitle(seenState: Array<{ actorId: string; state: string; seenAt: string | null }>,) {
     const seen = seenState.filter((s,) => s.state === "seen").length;
     const processing = seenState.filter((s,) => s.state === "processing").length;
@@ -73,10 +94,17 @@ export const chatSeenMethods: Partial<ChatState> & ThisType<ChatState> = {
     return parts.join(", ",) || "No viewers";
   },
 
+  /**
+   * @param {Array<{ actorId: string; state: string; seenAt: string | null }>} seenState
+   * @returns {number}
+   */
   seenCount(seenState: Array<{ actorId: string; state: string; seenAt: string | null }>,) {
     return seenState.length;
   },
 
+  /**
+   * @returns {void}
+   */
   initSeenPopover() {
     document.addEventListener("show-seen-popover", (e: Event,) => {
       const detail = (e as CustomEvent).detail;
@@ -91,6 +119,9 @@ export const chatSeenMethods: Partial<ChatState> & ThisType<ChatState> = {
     },);
   },
 
+  /**
+   * @returns {void}
+   */
   startSeenPolling() {
     if (this._seenPollTimer) { return; }
     this._seenPollTimer = setInterval(() => {
@@ -100,6 +131,9 @@ export const chatSeenMethods: Partial<ChatState> & ThisType<ChatState> = {
     }, 5000,);
   },
 
+  /**
+   * @returns {void}
+   */
   stopSeenPolling() {
     if (this._seenPollTimer) {
       clearInterval(this._seenPollTimer,);

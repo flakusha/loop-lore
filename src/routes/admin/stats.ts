@@ -15,6 +15,7 @@ import type { AdminRouteOpts, } from "./types";
  * default used by the schema.
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { admin: { stats: { get: { ...; }; }; }; }; }, { ...; }, { ...; }>}
  */
 export function statsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
   const db = opts.database;

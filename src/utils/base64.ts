@@ -17,6 +17,10 @@
  * @param bytes - input bytes
  * @returns base64-encoded string (standard alphabet, no URL-safe).
  */
+/**
+ * @param {Uint8Array} bytes
+ * @returns {string}
+ */
 export function toBase64(bytes: Uint8Array,): string {
   let binary = "";
   for (let i = 0; i < bytes.byteLength; i++) { binary += String.fromCharCode(bytes[i]!,); }

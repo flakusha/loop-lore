@@ -13,6 +13,7 @@ export let _anonymousModeEnabled = false;
 /**
  * Check if anonymous mode is enabled on the server.
  * Caches the result after first check.
+ * @returns {Promise<void>}
  */
 export async function initAnonymousModeCheck(): Promise<void> {
   try {
@@ -30,6 +31,7 @@ export async function initAnonymousModeCheck(): Promise<void> {
 
 /**
  * Get cached anonymous mode status.
+ * @returns {boolean}
  */
 export function isAnonymousMode(): boolean {
   return _anonymousModeEnabled;

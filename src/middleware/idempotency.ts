@@ -88,6 +88,7 @@ const DEFAULT_TTL_MS = 24 * 60 * 60 * 1000; // 24h — matches messages.idempote
  *   .guard({ beforeHandle: idempotent({ backend: "table", asyncStore, }), },
  *     (app,) => app.post("/api/...", handler,),)
  * @param config - Backend selection + TTL + store binding.
+ * @returns {IdempotencyBeforeHandle}
  */
 export function idempotent(config: IdempotencyConfig = {},): IdempotencyBeforeHandle {
   const cfg: Required<Pick<IdempotencyConfig, "backend" | "ttlMs" | "enabled" | "bypassHeader">> = {
@@ -103,6 +104,10 @@ export function idempotent(config: IdempotencyConfig = {},): IdempotencyBeforeHa
   return {
     backend: cfg.backend,
     ttlMs: cfg.ttlMs,
+    /**
+     * @param {IdempotencyCtx} ctx
+     * @returns {Response | undefined}
+     */
     beforeHandle(ctx: IdempotencyCtx,): Response | undefined {
       if (!cfg.enabled) { return undefined; } // disabled ⇒ pass-through
       if (cfg.bypassHeader && ctx.request.headers.get(IDEMPOTENCY_BYPASS_HEADER,) === "1") {
@@ -153,6 +158,10 @@ export function idempotent(config: IdempotencyConfig = {},): IdempotencyBeforeHa
      * @param args.requestId
      * @param args.userId
      * @param args.response
+     */
+    /**
+     * @param {{ method: string; route: string; requestId: string; userId?: string | null; response: Response }} args
+     * @returns {void}
      */
     recordResponse(
       args: { method: string; route: string; requestId: string; userId?: string | null; response: Response },
@@ -209,6 +218,10 @@ export function idempotent(config: IdempotencyConfig = {},): IdempotencyBeforeHa
      * @param args.requestId
      * @param args.userId
      */
+    /**
+     * @param {{ method: string; route: string; requestId: string; userId?: string | null }} args
+     * @returns {void}
+     */
     release(args: { method: string; route: string; requestId: string; userId?: string | null },): void {
       const method = args.method.toUpperCase();
       const route = args.route;
@@ -217,6 +230,9 @@ export function idempotent(config: IdempotencyConfig = {},): IdempotencyBeforeHa
       backend.release(makeKey(method, route, args.requestId, userId,), meta,);
     },
     /** Test seam: clear all in-flight + completed entries. */
+    /**
+     * @returns {void}
+     */
     clear(): void {
       backend.clear();
     },

@@ -31,6 +31,7 @@ export const INBOUND_KEY_BYTES = 32;
  * No size guard here: the input length is the compile-time constant
  * `INBOUND_KEY_BYTES` (32), so a 10 MB cap could never fire and the check
  * could only obscure the code it claimed to protect.
+ * @returns {string}
  */
 export function generateInboundKey(): string {
   return Buffer.from(crypto.getRandomValues(new Uint8Array(INBOUND_KEY_BYTES,),),).toString("base64",);
@@ -43,6 +44,12 @@ export function generateInboundKey(): string {
  * @param smk Server master key for at-rest wrapping.
  * @param senderOrigin Canonical sender origin.
  * @returns Base64 key for the reserve response.
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
  */
 export async function getOrCreateInboundKey(
   database: Kysely<DB>,
@@ -92,6 +99,10 @@ export async function getOrCreateInboundKey(
  * @param smk Server master key for at-rest wrapping.
  * @param senderOrigin Canonical sender origin.
  * @returns New base64 key.
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
+ * @throws {Error}
  */
 export async function rotateInboundKey(
   database: Kysely<DB>,
@@ -142,6 +153,8 @@ export async function rotateInboundKey(
  * Revoking an unknown peer is a no-op success (idempotent).
  * @param database
  * @param senderOrigin Canonical sender origin.
+ * @throws {Error}
+ * @returns {Promise<void>}
  */
 export async function revokeInboundKey(
   database: Kysely<DB>,
@@ -162,6 +175,9 @@ export async function revokeInboundKey(
  * @param database
  * @param smk Server master key for at-rest wrapping.
  * @param senderOrigin Canonical sender origin.
+ * @throws {Error}
+ * @throws {Error}
+ * @returns {Promise<ContentCipher[]>}
  */
 export async function inboundCiphers(
   database: Kysely<DB>,
@@ -197,6 +213,7 @@ export async function inboundCiphers(
  * @param senderOrigin Envelope origin (self-asserted; must be trusted).
  * @param pskFallback Shared-PSK cipher for keyless operation.
  * @param smk Server master key, or null when encryption is disabled.
+ * @returns {Promise<ContentCipher[]>}
  */
 export async function ciphersForSender(
   database: Kysely<DB>,

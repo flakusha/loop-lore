@@ -100,6 +100,10 @@ export const actorSystems: ActorSystemsState = {
   importUrl: "",
   importResult: null,
 
+  /**
+   * @param {string} actorId
+   * @returns {void}
+   */
   setActorId(actorId: string,) {
     if (this._sysActorId === actorId) { return; }
     this._sysActorId = actorId;
@@ -113,6 +117,9 @@ export const actorSystems: ActorSystemsState = {
     this.importResult = null;
   },
 
+  /**
+   * @returns {Record<string, unknown>}
+   */
   buildExportBody() {
     const body: Record<string, unknown> = {};
     for (const key of EXPORT_SECTIONS) {
@@ -122,6 +129,9 @@ export const actorSystems: ActorSystemsState = {
     return body;
   },
 
+  /**
+   * @returns {Promise<Blob | null>}
+   */
   async exportAsBlob() {
     const actorId = this._sysActorId;
     if (!actorId) { return null; }
@@ -139,6 +149,9 @@ export const actorSystems: ActorSystemsState = {
     }
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async triggerDownload() {
     const actorId = this._sysActorId;
     if (!actorId || this.busy) { return; }
@@ -164,10 +177,17 @@ export const actorSystems: ActorSystemsState = {
     }
   },
 
+  /**
+   * @param {string} section
+   * @returns {string}
+   */
   describeSection(section: string,) {
     return SECTION_LABELS[section] ?? section;
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async importFromPayload() {
     const actorId = this._sysActorId;
     if (!actorId || this.busy) { return; }
@@ -208,6 +228,9 @@ export const actorSystems: ActorSystemsState = {
     }
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async importFromUrl() {
     const actorId = this._sysActorId;
     const url = this.importUrl.trim();
@@ -242,6 +265,9 @@ export const actorSystems: ActorSystemsState = {
     }
   },
 
+  /**
+   * @returns {void}
+   */
   resetImport() {
     this.importPreview = "";
     this.importUrl = "";
@@ -251,7 +277,11 @@ export const actorSystems: ActorSystemsState = {
   },
 };
 
-/** Build the Alpine scope for the systems panel partial. */
+/**
+ * Build the Alpine scope for the systems panel partial.
+ * @param {string} actorId
+ * @returns {ActorSystemsState}
+ */
 export function actorSystemsFactory(actorId: string,): ActorSystemsState {
   const state = Object.create(actorSystems,) as ActorSystemsState;
   state._sysActorId = null;

@@ -61,6 +61,7 @@ async function executeRowCases(
  * @param mutationParams
  * @param mutationParams.temperatureVariance
  * @param mutationParams.promptVariations
+ * @returns {Promise<SyntheticTestRunResult>}
  */
 export async function run(
   state: RunnerState,

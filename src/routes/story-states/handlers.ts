@@ -18,6 +18,7 @@ import { HttpStatus, jsonCreated, jsonError, jsonPaginated, jsonResponse, } from
  * @param userId
  * @param userRole
  * @param body
+ * @returns {Promise<Response>}
  */
 export async function handleNpcState(
   database: Kysely<DB>,
@@ -94,6 +95,7 @@ export async function handleNpcState(
  * @param locationId
  * @param userId
  * @param userRole
+ * @returns {Promise<Response>}
  */
 export async function handleNpcsAtLocation(
   database: Kysely<DB>,
@@ -123,6 +125,7 @@ export async function handleNpcsAtLocation(
  * @param userId
  * @param userRole
  * @param body
+ * @returns {Promise<Response>}
  */
 export async function handleLocationState(
   database: Kysely<DB>,
@@ -198,6 +201,7 @@ export async function handleLocationState(
  * @param page
  * @param pageSize
  * @param body
+ * @returns {Promise<Response>}
  */
 export async function handleWorldStates(
   database: Kysely<DB>,

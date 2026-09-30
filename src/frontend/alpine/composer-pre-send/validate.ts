@@ -18,6 +18,7 @@ import type { PreSendValidation, } from "./send-gate";
  * @param text
  * @param participants
  * @param pendingAssetIds
+ * @returns {PreSendValidation}
  */
 export function validatePreSend(
   text: string,

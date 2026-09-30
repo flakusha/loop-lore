@@ -15,6 +15,10 @@ export const chatVariants: Partial<ChatState> & ThisType<ChatState> = {
   _variantsFor: null as string | null,
   _variants: [] as { id: string; content: string }[],
 
+  /**
+   * @param {string} messageId
+   * @returns {Promise<void>}
+   */
   async openVariants(messageId: string,) {
     log.info("openVariants", { messageId, },);
     this._variantsFor = messageId;
@@ -40,6 +44,9 @@ export const chatVariants: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @returns {void}
+   */
   closeVariants() {
     this._variantsOpen = false;
     this._variantsLoading = false;
@@ -50,6 +57,11 @@ export const chatVariants: Partial<ChatState> & ThisType<ChatState> = {
   // BE PUT /messages/:id/variant is stateless (returns the sibling at
   // index, persists nothing), so apply the selection locally as a preview
   // swap on the originating bubble instead of reloading the list.
+  /**
+   * @param {string} messageId
+   * @param {number} index
+   * @returns {Promise<void>}
+   */
   async selectVariantByIndex(messageId: string, index: number,) {
     log.info("selectVariantByIndex", { messageId, index, },);
     try {
@@ -76,6 +88,9 @@ export const chatVariants: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async regenerateResponse() {
     log.info("regenerateResponse", { chatId: this.activeChat, },);
     if (!this.activeChat) {
@@ -97,6 +112,11 @@ export const chatVariants: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @param {string} messageId
+   * @param {string | null} style
+   * @returns {Promise<void>}
+   */
   async regenerateVariant(messageId: string, style?: string | null,) {
     log.info("regenerateVariant", { messageId, style, },);
     if (!this.activeChat) { return; }
@@ -122,6 +142,11 @@ export const chatVariants: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @param {string} messageId
+   * @param {number} direction
+   * @returns {Promise<void>}
+   */
   async switchVariant(messageId: string, direction: number,) {
     log.info("switchVariant", { messageId, direction, },);
     const msg = this.messages.find((m,) => m.id === messageId);
@@ -130,6 +155,10 @@ export const chatVariants: Partial<ChatState> & ThisType<ChatState> = {
     await this.selectVariantByIndex(messageId, newIdx,);
   },
 
+  /**
+   * @param {string} messageId
+   * @returns {Promise<void>}
+   */
   async continueMessage(messageId: string,) {
     log.info("continueMessage", { messageId, chatId: this.activeChat, },);
     if (!this.activeChat) {
@@ -162,6 +191,11 @@ export const chatVariants: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  /**
+   * @param {string} attemptId
+   * @param {number} step
+   * @returns {Promise<void>}
+   */
   async retryFromPoint(attemptId: string, step: number,) {
     log.info("retryFromPoint", { attemptId, step, chatId: this.activeChat, },);
     if (!this.activeChat) {

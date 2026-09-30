@@ -74,6 +74,10 @@ export function safeFromUint8Array(
 /**
  * Encode a string to a Buffer or throw `SafeBufferError`.
  * @throws {SafeBufferError} when the string exceeds `maxSize` or the encoding fails
+ * @param {string} text
+ * @param {BufferEncoding} encoding
+ * @param {unknown} maxSize
+ * @returns {Buffer<ArrayBufferLike>}
  */
 export function mustFromString(
   text: string,
@@ -86,6 +90,9 @@ export function mustFromString(
 /**
  * Size-check and adopt a Uint8Array, or throw `SafeBufferError`.
  * @throws {SafeBufferError} when the array exceeds `maxSize`
+ * @param {Uint8Array} uint8
+ * @param {unknown} maxSize
+ * @returns {Buffer<ArrayBufferLike>}
  */
 export function mustFromUint8Array(uint8: Uint8Array, maxSize = DEFAULT_MAX_SIZE,): Buffer {
   return unwrapGuard(safeFromUint8Array(uint8, maxSize,),);

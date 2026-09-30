@@ -122,6 +122,7 @@ export async function handleRun(request: Request, opts?: HandleRunAuth,): Promis
  *   backend  — filter by backend (comfyui | sd-server)
  *   category — filter by category (txt2img | img2img | inpaint | upscale | controlnet)
  * @param request
+ * @returns {Response}
  */
 export function handleTemplates(request: Request,): Response {
   const url = new URL(request.url,);
@@ -146,6 +147,7 @@ export function handleTemplates(request: Request,): Response {
 
 /**
  * GET /api/v1/image-edit/nodes — Discover installed ComfyUI nodes
+ * @returns {Promise<Response>}
  */
 export async function handleNodes(): Promise<Response> {
   try {
@@ -159,6 +161,7 @@ export async function handleNodes(): Promise<Response> {
 
 /**
  * GET /api/v1/image-edit/capabilities — List backend capabilities
+ * @returns {Promise<Response>}
  */
 export async function handleCapabilities(): Promise<Response> {
   const capabilities: Record<string, { healthy: boolean; features: string[] }> = {};
@@ -186,6 +189,7 @@ export async function handleCapabilities(): Promise<Response> {
 
 /**
  * GET /api/v1/image-edit/health — Quick health check for all backends
+ * @returns {Promise<Response>}
  */
 export async function handleHealth(): Promise<Response> {
   const [comfyuiHealthy, sdServerHealthy,] = await Promise.allSettled([
@@ -206,6 +210,7 @@ export async function handleHealth(): Promise<Response> {
  * exposes the unified ComfyUI / sd-server image-edit endpoints.
  * @param opts
  * @param opts.database
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { "image-edit": { templates: { ...; }; }; }; } & { ...; } & { ...; } & { ...; } & { ...; }, { ...; }, { ...; }>}
  */
 export function imageEditRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
   registerBuiltinTemplates();

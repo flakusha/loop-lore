@@ -91,6 +91,7 @@ const actorQuery = t.Object({ actorId: t.String(), },);
 /**
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { get: { body: unknown; params: {}; query: { ...; }; headers: unknown; response: { ...; }; }; }; } & { ...; } & { ......}
  */
 export function characterInternalTraitsRoutes(opts: HandlerOpts, prefix = "/api",) {
   const svc = () => new CharacterInternalTraitsService(opts.database,);

@@ -13,6 +13,7 @@ import { type Combatant, } from "./types.js";
  * @param ability - Which ability to save with
  * @param dc - Difficulty class to beat
  * @param advantage - Advantage mode
+ * @returns {{ roll: DiceRollResult; total: number; success: boolean; abilityMod: number; }}
  */
 export function makeSavingThrow(
   combatant: Combatant,

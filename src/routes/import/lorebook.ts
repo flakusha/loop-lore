@@ -14,6 +14,7 @@ import { safeJsonStringify, uid, } from "../../utils";
  * @param actorId
  * @param lorebook
  * @param warnings
+ * @returns {Promise<number>}
  */
 export async function importLorebook(
   database: Kysely<DB>,

@@ -26,6 +26,7 @@ export const EV_ERROR = "scheduler.world_tick.error";
  * @param db
  * @param eventType
  * @param data
+ * @returns {void}
  */
 export function emitSchedulerEvent(
   db: Kysely<DB>,

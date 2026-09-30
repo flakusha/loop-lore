@@ -29,6 +29,10 @@ export const blogStore: BlogState = {
 
   $dispatch: dispatch,
 
+  /**
+   * @throws {Error}
+   * @returns {Promise<void>}
+   */
   async loadPosts() {
     this._blogLoading = true;
     this._blogError = "";
@@ -46,6 +50,10 @@ export const blogStore: BlogState = {
     }
   },
 
+  /**
+   * @param {string} query
+   * @returns {Promise<void>}
+   */
   async searchPosts(query: string,) {
     this._blogFilter = query;
     if (this._blogPosts.length === 0) {
@@ -54,6 +62,9 @@ export const blogStore: BlogState = {
     this.$dispatch("blog-posts-loaded", { posts: this.visiblePosts(), },);
   },
 
+  /**
+   * @returns {BlogPost[]}
+   */
   visiblePosts() {
     const q = this._blogFilter.trim().toLowerCase();
     return this._blogPosts.filter((p,) => {
@@ -63,6 +74,11 @@ export const blogStore: BlogState = {
     },);
   },
 
+  /**
+   * @param {string} id
+   * @throws {Error}
+   * @returns {Promise<void>}
+   */
   async loadPost(id: string,) {
     this._blogLoading = true;
     this._blogError = "";
@@ -78,6 +94,11 @@ export const blogStore: BlogState = {
     }
   },
 
+  /**
+   * @param {unknown} input
+   * @throws {Error}
+   * @returns {Promise<void>}
+   */
   async createPost(input,) {
     this._blogLoading = true;
     this._blogError = "";
@@ -101,6 +122,13 @@ export const blogStore: BlogState = {
     }
   },
 
+  /**
+   * @param {string} postId
+   * @param {string} body
+   * @param {string} parent_comment_id
+   * @throws {Error}
+   * @returns {Promise<void>}
+   */
   async createComment(postId: string, body: string, parent_comment_id?: string,) {
     this._blogError = "";
     try {
@@ -118,6 +146,11 @@ export const blogStore: BlogState = {
     }
   },
 
+  /**
+   * @param {string} postId
+   * @throws {Error}
+   * @returns {Promise<void>}
+   */
   async listComments(postId: string,) {
     try {
       const res = await apiFetch(`/api/v1/blog/posts/${postId}/comments`,);
@@ -131,6 +164,11 @@ export const blogStore: BlogState = {
     }
   },
 
+  /**
+   * @param {string} authorId
+   * @throws {Error}
+   * @returns {Promise<void>}
+   */
   async followAuthor(authorId: string,) {
     this._blogError = "";
     try {
@@ -143,6 +181,11 @@ export const blogStore: BlogState = {
     }
   },
 
+  /**
+   * @param {string} authorId
+   * @throws {Error}
+   * @returns {Promise<void>}
+   */
   async unfollowAuthor(authorId: string,) {
     this._blogError = "";
     try {
@@ -155,6 +198,10 @@ export const blogStore: BlogState = {
     }
   },
 
+  /**
+   * @param {string} authorId
+   * @returns {Promise<boolean>}
+   */
   async getFollowStatus(authorId: string,) {
     try {
       const res = await apiFetch(`/api/v1/blog/follow/${authorId}/status`,);
@@ -168,6 +215,11 @@ export const blogStore: BlogState = {
     }
   },
 
+  /**
+   * @param {string} postId
+   * @throws {Error}
+   * @returns {Promise<void>}
+   */
   async loadSources(postId: string,) {
     try {
       const res = await apiFetch(`/api/v1/blog/posts/${postId}/sources`,);

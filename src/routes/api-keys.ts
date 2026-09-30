@@ -27,6 +27,7 @@ import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "./http-util
  * @param root0.database
  * @param root0.config
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { "user-api-keys": { ...; }; }; } & { ...; } & { ...; }, { ...; }, { ...; }>}
  */
 export function apiKeysRoutes({ database, config: cfg, }: { database: Kysely<DB>; config: Config }, prefix = "/api",) {
   const config = cfg;

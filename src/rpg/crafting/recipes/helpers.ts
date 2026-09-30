@@ -47,6 +47,7 @@ export interface RecipeMaterialDbRow {
  * Convert a recipe row + material rows to a RecipeWithMaterials.
  * @param recipe
  * @param materials
+ * @returns {RecipeWithMaterials}
  */
 export function rowToRecipeWithMaterials(
   recipe: RecipeRow,
@@ -90,6 +91,7 @@ export function rowToRecipeWithMaterials(
  * @param recipeId
  * @param materials
  * @param now
+ * @returns {{ id: string; recipe_id: string; item_id: string; quantity: number; slot_type: "required" | "optional" | "catalyst"; quality_requirement: QualityLevel | null; bonus_effect: string | null; sort_order: number; created_at: string; }[]}
  */
 export function recipeMaterialInsertRows(
   recipeId: string,

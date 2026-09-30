@@ -16,6 +16,7 @@ import { DOCS_PATH, walkDirectorySync, } from "./static-files";
  *
  * All paths are resolved relative to this module's location in the built tree.
  * @param logger
+ * @returns {Promise<void>}
  */
 export async function initAssetCompression(logger: Logger,): Promise<void> {
   const distPublic = join(import.meta.dir, "..", "..", "dist", "public",);

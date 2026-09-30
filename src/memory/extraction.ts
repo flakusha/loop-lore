@@ -109,6 +109,7 @@ function parseExtractionResponse(content: string,): ExtractedMemory[] | null {
  * Non-blocking: fires and forgets, errors are logged but don't propagate.
  * @param db
  * @param opts
+ * @returns {Promise<void>}
  */
 export async function extractAndStoreMemories(
   db: Kysely<DB>,

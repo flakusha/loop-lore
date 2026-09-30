@@ -39,6 +39,7 @@ export interface ConsentStateRow {
  * @param database
  * @param chatId
  * @param userId
+ * @returns {Promise<ConsentStateRow | null>}
  */
 export async function getLatestConsent(
   database: Kysely<DB>,
@@ -70,6 +71,7 @@ export async function getLatestConsent(
 /**
  * Pure predicate: row is a `given` action with no `revoked_at` stamp.
  * @param row
+ * @returns {boolean}
  */
 export function hasActiveConsent(row: ConsentStateRow | null,): boolean {
   return row?.action === "given" && row.revokedAt === null;
@@ -99,6 +101,7 @@ export interface RecordNsfwConsentOptions {
  * and stamps `revoked_at` on prior open `given` rows so `hasActiveConsent`
  * has a unique source-of-truth row.
  * @param options
+ * @returns {Promise<ConsentStateRow>}
  */
 export async function recordNsfwConsent(
   options: RecordNsfwConsentOptions,

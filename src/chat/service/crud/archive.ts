@@ -97,6 +97,7 @@ export type ArchiveChatResult = { ok: true; chatId: string } | ServiceError;
  * @param chatId
  * @param requesterId Authenticated user id
  * @param userRole Optional role for admin bypass (`can("admin.chat")`)
+ * @returns {Promise<ArchiveChatResult>}
  */
 export async function archiveChat(
   database: Kysely<DB>,
@@ -148,6 +149,7 @@ export async function archiveChat(
  * @param chatId
  * @param requesterId Authenticated user id
  * @param userRole Optional role for admin bypass
+ * @returns {Promise<ArchiveChatResult>}
  */
 export async function unarchiveChat(
   database: Kysely<DB>,
@@ -192,6 +194,7 @@ export async function unarchiveChat(
  * branch.
  * @param database
  * @param chatId
+ * @returns {Promise<boolean>}
  */
 export async function isChatArchived(
   database: Kysely<DB>,

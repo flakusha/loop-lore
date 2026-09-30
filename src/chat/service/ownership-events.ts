@@ -26,6 +26,8 @@ export interface OwnershipTransferEvent {
 /**
  * Build the `log_entries.meta` JSON for a transfer.
  * Falls back to "{}" when stringification fails.
+ * @param {OwnershipTransferEvent} event
+ * @returns {string}
  */
 export function buildOwnershipAuditMeta(event: OwnershipTransferEvent,): string {
   const result = safeJsonStringify({
@@ -43,6 +45,9 @@ export function buildOwnershipAuditMeta(event: OwnershipTransferEvent,): string 
 /**
  * Emit the two transfer notifications (fire-and-forget: `emit` swallows
  * errors internally; do not wrap it here) + the success info log.
+ * @param {Kysely<DB>} db
+ * @param {OwnershipTransferEvent} event
+ * @returns {void}
  */
 export function emitOwnershipTransferNotifications(
   db: Kysely<DB>,

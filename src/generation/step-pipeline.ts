@@ -39,6 +39,7 @@ export interface CompleteStepOpts {
  * @param root0.attemptId
  * @param root0.stepIndex
  * @param root0.db
+ * @returns {Promise<void>}
  */
 export async function completeStep({ attemptId, stepIndex, db, }: CompleteStepOpts,): Promise<void> {
   const active = activeGenerations.get(attemptId,);
@@ -83,6 +84,7 @@ export interface FailStepOpts {
  * @param root0.stepIndex
  * @param root0.error
  * @param root0.db
+ * @returns {Promise<void>}
  */
 export async function failStep({ attemptId, stepIndex, error, db, }: FailStepOpts,): Promise<void> {
   try {

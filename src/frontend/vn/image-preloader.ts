@@ -37,6 +37,7 @@ const MAX_CACHE_SIZE = 50;
 
 /**
  * @param url
+ * @returns {Promise<PreloadResult>}
  */
 export function preloadImage(url: string,): Promise<PreloadResult> {
   // Check cache first
@@ -88,6 +89,7 @@ export function preloadImage(url: string,): Promise<PreloadResult> {
 
 /**
  * @param urls
+ * @returns {Promise<PreloadResult[]>}
  */
 export async function preloadImages(urls: string[],): Promise<PreloadResult[]> {
   const settled = await Promise.allSettled(
@@ -135,6 +137,7 @@ function collectSceneUrls(scenes: SceneImages[], currentIndex: number, preloadCo
  * @param scenes
  * @param currentIndex
  * @param preloadCount
+ * @returns {Promise<PreloadStats>}
  */
 export async function preloadSceneImages(
   scenes: SceneImages[],
@@ -185,12 +188,16 @@ function manageCacheSize(): void {
   }
 }
 
-/** */
+/**
+ * @returns {void}
+ */
 export function clearCache(): void {
   imageCache.clear();
 }
 
-/** */
+/**
+ * @returns {number}
+ */
 export function getCacheSize(): number {
   return imageCache.size;
 }
@@ -199,6 +206,7 @@ export function getCacheSize(): number {
 
 /**
  * @param url
+ * @returns {boolean}
  */
 export function isImageCached(url: string,): boolean {
   return imageCache.has(url,);
@@ -206,6 +214,7 @@ export function isImageCached(url: string,): boolean {
 
 /**
  * @param url
+ * @returns {HTMLImageElement | undefined}
  */
 export function getCachedImage(url: string,): HTMLImageElement | undefined {
   return imageCache.get(url,);
@@ -216,6 +225,7 @@ export function getCachedImage(url: string,): HTMLImageElement | undefined {
 /**
  * @param url
  * @param fallback
+ * @returns {string}
  */
 export function getImageWithFallback(
   url: string | undefined,
@@ -236,6 +246,7 @@ export interface LoadingIndicator {
 
 /**
  * @param container
+ * @returns {LoadingIndicator}
  */
 export function createLoadingIndicator(
   container: HTMLElement,

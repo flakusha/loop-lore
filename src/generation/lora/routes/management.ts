@@ -17,7 +17,11 @@ const ClearCacheBody = t.Object({
   backend: t.Optional(t.UnionEnum(["comfyui", "sd-server",],),),
 },);
 
-/** GET /api/lora/list, /status and POST /api/lora/clear. */
+/**
+ * GET /api/lora/list, /status and POST /api/lora/clear.
+ * @param {unknown} prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { lora: { list: { get: { ...; }; }; }; }; } & { ...; } & { ...; }, { ...; }, { ...; }>}
+ */
 export function loraManagementRoutes(prefix = "/api",) {
   return new Elysia({ name: "lora-management", },)
     // GET /api/lora/list

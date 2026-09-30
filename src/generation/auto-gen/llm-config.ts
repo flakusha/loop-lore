@@ -6,6 +6,7 @@ import { listProviders, } from "../providers/registry";
 
 /**
  * @param config
+ * @returns {boolean}
  */
 export function isLlmGenerationConfigured(config: Config,): boolean {
   return (

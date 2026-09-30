@@ -18,6 +18,7 @@ import { canonicalOrigin, } from "./peer-fetch";
  * push carries a known world id, otherwise the top-level policy.
  * @param policy Configured duplication policy.
  * @param worldId World id carried by the push, if any.
+ * @returns {WorldDuplicationPolicy}
  */
 export function resolveDuplicationPolicy(
   policy: DuplicationPolicy,
@@ -39,6 +40,7 @@ export function resolveDuplicationPolicy(
  * @param policy
  * @param except Origin to exclude (usually the push source).
  * @param worldId World id carried by the push, if any.
+ * @returns {Promise<string[]>}
  */
 export async function selectDuplicationTargets(
   database: Kysely<DB>,
@@ -77,6 +79,7 @@ export interface FanOutSkip {
  * @param database Sender database handle (peer registry read).
  * @param candidates Policy-selected target origins.
  * @param sizeBytes Payload byte length.
+ * @returns {Promise<{ targets: string[]; skipped: FanOutSkip[]; }>}
  */
 export async function selectTargetsWithCapacity(
   database: Kysely<DB>,

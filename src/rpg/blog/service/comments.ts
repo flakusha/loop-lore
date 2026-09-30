@@ -16,6 +16,7 @@ import type {
 /**
  * @param db
  * @param input
+ * @returns {Promise<BlogCommentRow>}
  */
 export async function createComment(
   db: Kysely<any>,
@@ -61,6 +62,7 @@ export async function createComment(
  * @param opts
  * @param opts.limit
  * @param opts.offset
+ * @returns {Promise<BlogCommentRow[]>}
  */
 export async function listComments(
   db: Kysely<any>,
@@ -84,6 +86,7 @@ export async function listComments(
  * @param opts
  * @param opts.limit
  * @param opts.offset
+ * @returns {Promise<BlogCommentWithChildren[]>}
  */
 export async function listCommentsThreaded(
   db: Kysely<any>,
@@ -128,6 +131,7 @@ export async function listCommentsThreaded(
 /**
  * @param db
  * @param id
+ * @returns {Promise<BlogCommentRow | undefined>}
  */
 export async function getComment(
   db: Kysely<any>,
@@ -158,6 +162,7 @@ export interface ModerateCaller {
  * @param id
  * @param status
  * @param caller
+ * @returns {Promise<boolean>}
  */
 export async function moderateComment(
   db: Kysely<any>,

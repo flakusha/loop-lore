@@ -9,6 +9,7 @@ import { ChatSearchQuery, type HandlerOpts, SEARCH_PRIORITY_VALUES, type SearchP
 /**
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { chats: { search: { get: { ...; }; }; }; }; }, { ...; }, { ...; }>}
  */
 export function searchRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;

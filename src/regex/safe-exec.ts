@@ -34,6 +34,11 @@ export class RegexInputTooLargeError extends Error {
 /**
  * Pipeline-entry guard. Reject inputs larger than {@link MAX_INPUT_CHARS}.
  * Throws {@link RegexInputTooLargeError} (typed error) — never a generic Error.
+ * @param {string} input
+ * @param {number} limit
+ * @throws {Error}
+ * @throws {Error}
+ * @returns {void}
  */
 export function assertInputSize(input: string, limit: number = MAX_INPUT_CHARS,): void {
   if (typeof input !== "string") {
@@ -54,6 +59,9 @@ export function assertInputSize(input: string, limit: number = MAX_INPUT_CHARS,)
  *
  * ponytail: Bun regex timeout isn't exposed to JS yet. If a runtime lands a
  * pattern-level abort path, thread it through here. Add when Bun ships it.
+ * @param {RegExp} pattern
+ * @param {string} input
+ * @returns {RegExpExecArray | null}
  */
 export function safeRegexExec(pattern: RegExp, input: string,): RegExpExecArray | null {
   pattern.lastIndex = 0;
@@ -63,6 +71,9 @@ export function safeRegexExec(pattern: RegExp, input: string,): RegExpExecArray 
 /**
  * String-returning variant: matches `String.prototype.match` semantics.
  * Resets `lastIndex` and returns the raw `match` array (or null).
+ * @param {RegExp} pattern
+ * @param {string} input
+ * @returns {RegExpMatchArray | null}
  */
 export function safeRegexMatch(pattern: RegExp, input: string,): RegExpMatchArray | null {
   pattern.lastIndex = 0;

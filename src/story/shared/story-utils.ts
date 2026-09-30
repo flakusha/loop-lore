@@ -20,6 +20,7 @@ export interface CaseResult {
  * @param expected
  * @param reason
  * @param actual
+ * @returns {CaseResult}
  */
 export function skippedResult(
   expected: Record<string, unknown>,
@@ -34,6 +35,7 @@ export function skippedResult(
  * the score array and the variance (max − min).
  * @param evaluate
  * @param iterations
+ * @returns {{ scores: number[]; variance: number; }}
  */
 export function collectScoresAndVariance(
   evaluate: (i: number,) => number,
@@ -54,6 +56,7 @@ export function collectScoresAndVariance(
  * @param passed   - whether the check passed
  * @param expected - the case's expected map
  * @param reason   - failure reason string (omit when passed)
+ * @returns {CaseResult}
  */
 export function varianceResult(
   scores: number[],
@@ -73,6 +76,7 @@ export function varianceResult(
 /**
  * Count results by status, returning `{ passed, failed, skipped }`.
  * @param results
+ * @returns {{ passed: number; failed: number; skipped: number; }}
  */
 export function countByStatus(results: { status: string }[],): {
   passed: number;

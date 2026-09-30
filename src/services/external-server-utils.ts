@@ -33,6 +33,7 @@ function getBinaryNameWithSuffix(name: string,): string[] {
 
 /**
  * @param type
+ * @returns {string | null}
  */
 export function findBinary(type: keyof typeof BINARY_CANDIDATES,): string | null {
   const candidates = BINARY_CANDIDATES[type];
@@ -49,6 +50,7 @@ export function findBinary(type: keyof typeof BINARY_CANDIDATES,): string | null
 
 /**
  * @param port
+ * @returns {boolean}
  */
 export function isPortFree(port: number,): boolean {
   try {
@@ -84,6 +86,7 @@ export interface WaitForPortOptions {
 /**
  * @param url
  * @param opts
+ * @returns {Promise<boolean>}
  */
 export async function waitForHealth(url: string, opts: WaitForHealthOptions,): Promise<boolean> {
   const intervalMs = opts.intervalMs ?? 500;
@@ -100,6 +103,7 @@ export async function waitForHealth(url: string, opts: WaitForHealthOptions,): P
 /**
  * @param port
  * @param opts
+ * @returns {Promise<boolean>}
  */
 export async function waitForPort(port: number, opts: WaitForPortOptions,): Promise<boolean> {
   const deadline = Date.now() + opts.timeoutMs;
@@ -114,6 +118,7 @@ export async function waitForPort(port: number, opts: WaitForPortOptions,): Prom
 
 /**
  * @param path
+ * @returns {boolean}
  */
 export function isHuggingFaceRef(path: string,): boolean {
   return /^[\w-]+\/[\w.-]+:\w+$/i.test(path,);

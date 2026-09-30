@@ -94,6 +94,7 @@ export async function encryptValue(plaintext: string, secret: string,): Promise<
  * @param encrypted
  * @param secret
  * @returns void
+ * @throws {Error}
  */
 export async function decryptValue(encrypted: string, secret: string,): Promise<string> {
   const parts = encrypted.split(":",);

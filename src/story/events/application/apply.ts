@@ -21,6 +21,7 @@ import type { AppliedEvent, ApplyEventsOpts, } from "./types";
  * @param root0.events
  * @param root0.trx
  * @param root0.storyId
+ * @returns {Promise<AppliedEvent[]>}
  */
 export async function applyEvents({ db, worldId, events, trx, storyId, }: ApplyEventsOpts,): Promise<AppliedEvent[]> {
   const database = trx ?? db;

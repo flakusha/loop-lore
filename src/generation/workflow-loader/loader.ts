@@ -46,6 +46,9 @@ class WorkflowLoader {
    * their names (filename without extension).
    * @returns Array of workflow names
    */
+  /**
+   * @returns {Promise<string[]>}
+   */
   async listWorkflows(): Promise<string[]> {
     await this.ensureLoaded();
     return [...this.cache.keys(),];
@@ -56,6 +59,11 @@ class WorkflowLoader {
    * @param options - Workflow name and substitution parameters
    * @returns ComfyUI-ready workflow with placeholders replaced
    * @throws If workflow not found
+   */
+  /**
+   * @param {LoadWorkflowOptions} options
+   * @throws {Error}
+   * @returns {Promise<ComfyUIWorkflow>}
    */
   async loadWorkflow(options: LoadWorkflowOptions,): Promise<ComfyUIWorkflow> {
     await this.ensureLoaded();
@@ -87,6 +95,9 @@ class WorkflowLoader {
   /**
    * Reload workflows from disk (invalidates cache).
    */
+  /**
+   * @returns {Promise<void>}
+   */
   async reload(): Promise<void> {
     this.cache.clear();
     this.dirMtime = 0;
@@ -97,6 +108,10 @@ class WorkflowLoader {
    * Get raw workflow JSON without substitution (for inspection/debugging).
    * @param name
    */
+  /**
+   * @param {string} name
+   * @returns {Promise<ComfyUIWorkflow | null>}
+   */
   async getRawWorkflow(name: string,): Promise<ComfyUIWorkflow | null> {
     await this.ensureLoaded();
     const entry = this.cache.get(name,);
@@ -106,6 +121,9 @@ class WorkflowLoader {
   // ── Internal ──────────────────────────────────────────────
 
   /** */
+  /**
+   * @returns {Promise<void>}
+   */
   private async ensureLoaded(): Promise<void> {
     const dirPath = this.resolveWorkflowsDir();
 
@@ -129,6 +147,10 @@ class WorkflowLoader {
 
   /**
    * @param dirPath
+   */
+  /**
+   * @param {string} dirPath
+   * @returns {Promise<void>}
    */
   private async loadFromDisk(dirPath: string,): Promise<void> {
     let filenames: string[];
@@ -196,6 +218,9 @@ class WorkflowLoader {
   }
 
   /** */
+  /**
+   * @returns {string}
+   */
   private resolveWorkflowsDir(): string {
     // Resolve relative to project root
     const root = process.cwd();
@@ -209,6 +234,7 @@ let _instance: WorkflowLoader | null = null;
 /**
  * Get or create the singleton workflow loader.
  * @param workflowsDir - Optional custom workflows directory
+ * @returns {WorkflowLoader}
  */
 export function getWorkflowLoader(workflowsDir?: string,): WorkflowLoader {
   if (!_instance) {
@@ -223,6 +249,7 @@ export function getWorkflowLoader(workflowsDir?: string,): WorkflowLoader {
  * Mirrors resetHealthCache in admin/provider-health: the singleton binds the
  * first workflowsDir process-wide, so each test file resets before binding
  * its own directory in shared-process runs.
+ * @returns {void}
  */
 export function resetWorkflowLoaderForTests(): void {
   _instance = null;

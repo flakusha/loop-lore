@@ -62,6 +62,10 @@ export class MattingService {
    * @param root0.assetId
    * @param root0.ownerId
    */
+  /**
+   * @param {StartMattingOpts} { assetId, ownerId, }
+   * @returns {Promise<StartMattingResult>}
+   */
   async startMatting({ assetId, ownerId, }: StartMattingOpts,): Promise<StartMattingResult> {
     const asset = await this.#loadAsset(assetId,);
     if (!asset) { return { ok: false, error: "asset_not_found", }; }
@@ -100,6 +104,10 @@ export class MattingService {
    * Get a job by id.
    * @param jobId
    */
+  /**
+   * @param {MattingJobId} jobId
+   * @returns {MattingJob | undefined}
+   */
   getJob(jobId: MattingJobId,): MattingJob | undefined {
     return getJob(jobId,);
   }
@@ -107,6 +115,10 @@ export class MattingService {
   /**
    * List this owner's matting jobs, newest first.
    * @param ownerId
+   */
+  /**
+   * @param {string} ownerId
+   * @returns {MattingJob[]}
    */
   listJobs(ownerId: string,): MattingJob[] {
     return listJobs(ownerId,);
@@ -116,6 +128,11 @@ export class MattingService {
    * Execute the job: provider call → derivative asset + link → status update.
    * @param job
    * @param provider
+   */
+  /**
+   * @param {MattingJob} job
+   * @param {MattingProvider} provider
+   * @returns {Promise<void>}
    */
   async #run(job: MattingJob, provider: MattingProvider,): Promise<void> {
     job.status = "running";
@@ -144,6 +161,10 @@ export class MattingService {
    * Load an asset row.
    * @param assetId
    */
+  /**
+   * @param {string} assetId
+   * @returns {Promise<AssetRecord | null>}
+   */
   async #loadAsset(assetId: string,): Promise<AssetRecord | null> {
     const row = await this.#database
       .selectFrom("assets",)
@@ -156,6 +177,13 @@ export class MattingService {
   /**
    * Read the raw source bytes; encrypted assets are not supported yet.
    * @param assetId
+   */
+  /**
+   * @param {string} assetId
+   * @throws {Error}
+   * @throws {Error}
+   * @throws {Error}
+   * @returns {Promise<Buffer<ArrayBufferLike>>}
    */
   async #readSourceFile(assetId: string,): Promise<Buffer> {
     const asset = await this.#loadAsset(assetId,);
@@ -174,6 +202,12 @@ export class MattingService {
    * Store the matted PNG as a new asset and link it to the raw asset.
    * @param job
    * @param matted
+   */
+  /**
+   * @param {MattingJob} job
+   * @param {Buffer} matted
+   * @throws {Error}
+   * @returns {Promise<AssetRecord>}
    */
   async #storeDerivative(job: MattingJob, matted: Buffer,): Promise<AssetRecord> {
     const source = await this.#loadAsset(job.assetId,);
@@ -209,6 +243,11 @@ export class MattingService {
    * Transition an asset's alpha_status.
    * @param assetId
    * @param status
+   */
+  /**
+   * @param {string} assetId
+   * @param {AssetAlphaStatus} status
+   * @returns {Promise<void>}
    */
   async #setAlphaStatus(assetId: string, status: AssetAlphaStatus,): Promise<void> {
     await this.#database

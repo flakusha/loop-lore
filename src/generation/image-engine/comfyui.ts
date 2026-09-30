@@ -16,6 +16,7 @@ import type { ImageGenOptions, ImageGenOutcome, } from "./types";
  * Generate images via a ComfyUI workflow (loaded + substituted from disk).
  * @param sdConfig
  * @param opts
+ * @returns {Promise<ImageGenOutcome>}
  */
 export async function generateComfyUI(
   sdConfig: ImageProviderConfig,

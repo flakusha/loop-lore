@@ -118,6 +118,10 @@ export class TUIApp {
   /**
    * @param msg
    */
+  /**
+   * @param {string} msg
+   * @returns {void}
+   */
   private updateStatus(msg: string,): void {
     this.statusBar.setContent(` {bold}Loop Lore{/bold}  |  ${msg}  |  API: ${API_BASE}  `,);
     this.screen.render();
@@ -126,6 +130,9 @@ export class TUIApp {
   // ── Shutdown ───────────────────────────────────────────────
 
   /** */
+  /**
+   * @returns {void}
+   */
   shutdown(): void {
     this.screen.destroy();
     process.exit(0,);

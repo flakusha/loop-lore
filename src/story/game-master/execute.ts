@@ -17,6 +17,8 @@ import type { GmState, GmTurnResult, } from "./types";
  * Execute one full story turn
  * @param state
  * @param debugActorId
+ * @throws {Error}
+ * @returns {Promise<GmTurnResult>}
  */
 export async function executeTurn(state: GmState, debugActorId?: string,): Promise<GmTurnResult> {
   const context = await state.worldState.buildContext(state.chatId,);

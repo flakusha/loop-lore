@@ -17,6 +17,7 @@ import type { GmConfig, Message, } from "../types";
 /**
  * Map a chat-page message to the VN renderer's message shape.
  * @param m
+ * @returns {VnMessage}
  */
 export function toVnMessage(m: Message,): VnMessage {
   const role = m.role as VnMessage["role"];
@@ -38,6 +39,7 @@ export function toVnMessage(m: Message,): VnMessage {
  * re-entry a fresh scene attach.
  * @param container
  * @param chatId
+ * @returns {void}
  */
 export function syncSceneId(
   container: HTMLElement | null,
@@ -71,6 +73,7 @@ export interface VnRendererBridge {
  * @param vnEnabled
  * @param chatId
  * @param renderer Renderer bridge; defaults to the real scene renderer.
+ * @returns {void}
  */
 export function syncVnRenderer(
   messages: Message[],

@@ -24,6 +24,7 @@ export interface ChatRecord {
  * @param chatId
  * @param effectiveContent
  * @param chatRecord
+ * @returns {Promise<void>}
  */
 export async function autoRenameChat(
   database: Kysely<DB>,

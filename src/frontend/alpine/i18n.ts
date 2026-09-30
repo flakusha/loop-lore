@@ -23,6 +23,7 @@ globalThis.__ = function(key: string, fallback?: string,): string {
  * keeps components renderable while still surfacing missing keys.
  * @param key
  * @param params
+ * @returns {string}
  */
 export function t(key: string, params?: Record<string, string>,): string {
   const map = (globalThis.__localeStrings ?? {}) as TranslationMap;

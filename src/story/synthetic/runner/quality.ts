@@ -20,6 +20,7 @@ import type { RunnerState, SyntheticTestStatus, } from "./types";
  * @param mutationParams
  * @param mutationParams.temperatureVariance
  * @param mutationParams.promptVariations
+ * @returns {CaseResult}
  */
 export function runQuality(
   state: RunnerState,
@@ -83,6 +84,7 @@ export function runQuality(
 /**
  * @param state
  * @param c
+ * @returns {{ status: SyntheticTestStatus; expected: Record<string, unknown>; actual: Record<string, unknown>; reason?: string | undefined; }}
  */
 export function regenerationLogic(state: RunnerState, c: SyntheticCase,): {
   status: SyntheticTestStatus;

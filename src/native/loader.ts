@@ -107,6 +107,7 @@ let cachedModule:
  * Reset the cached load state — test seam so unit tests can exercise each
  * load path (success, ABI drift, dlopen failure) in sequence.
  * @internal Test-only; never call from application code.
+ * @returns {void}
  */
 export function __resetNativeModuleCache(): void {
   cachedModule = undefined;

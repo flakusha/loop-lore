@@ -91,6 +91,12 @@ export class SyntheticTestRunner {
    * @param mutationParams.temperatureVariance
    * @param mutationParams.promptVariations
    */
+  /**
+   * @param {string[]} scenarioIds
+   * @param {SyntheticTestMode} mode
+   * @param {{ temperatureVariance?: number; promptVariations?: number }} mutationParams
+   * @returns {Promise<SyntheticTestRunResult>}
+   */
   async run(
     scenarioIds: string[],
     mode: SyntheticTestMode,

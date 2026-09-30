@@ -37,6 +37,9 @@ globalThis.questsPage = function() {
       return Math.ceil(this.total / this.pageSize,) || 1;
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async init() {
       const params = new URLSearchParams(globalThis.location.search,);
       this.worldId = params.get("worldId",) || "";
@@ -62,6 +65,9 @@ globalThis.questsPage = function() {
       }
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async loadWorlds() {
       try {
         const res = await feFetch("/api/v1/worlds?pageSize=100", { headers: { Accept: "application/json", }, },);
@@ -74,11 +80,18 @@ globalThis.questsPage = function() {
       }
     },
 
+    /**
+     * @param {string} id
+     * @returns {void}
+     */
     goToWorld(id: string,) {
       if (!id) { return; }
       globalThis.location.search = `?worldId=${id}`;
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async loadQuests() {
       this.loading = true;
       try {
@@ -107,11 +120,18 @@ globalThis.questsPage = function() {
       }
     },
 
+    /**
+     * @param {number} p
+     * @returns {Promise<void>}
+     */
     async goPage(p: number,) {
       this.page = p;
       await this.loadQuests();
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async createQuest() {
       if (!this.createName.trim()) { return; }
       try {
@@ -141,6 +161,10 @@ globalThis.questsPage = function() {
       }
     },
 
+    /**
+     * @param {string} questId
+     * @returns {Promise<void>}
+     */
     async deleteQuest(questId: string,) {
       if (this.confirmDeleteQuest !== questId) { return; }
       try {
@@ -163,16 +187,28 @@ globalThis.questsPage = function() {
     editPriority: 5,
     advanceDelta: 1,
 
+    /**
+     * @param {string | null} iso
+     * @returns {string}
+     */
     formatDate(iso: string | null,): string {
       if (!iso) { return "-"; }
       return formatDisplayDate(iso, "date",);
     },
 
+    /**
+     * @param {QuestRow} q
+     * @returns {number}
+     */
     progressPct(q: QuestRow,): number {
       if (!q.target || q.target <= 0) { return 0; }
       return Math.min(100, Math.round(((q.progress ?? 0) / q.target) * 100,),);
     },
 
+    /**
+     * @param {string} questId
+     * @returns {void}
+     */
     expandQuest(questId: string,) {
       if (this.expandedQuest === questId) {
         this.expandedQuest = "";
@@ -187,6 +223,10 @@ globalThis.questsPage = function() {
       }
     },
 
+    /**
+     * @param {string} questId
+     * @returns {Promise<void>}
+     */
     async saveQuest(questId: string,) {
       try {
         const res = await feFetch(`/api/v1/quests/${questId}`, {
@@ -210,6 +250,10 @@ globalThis.questsPage = function() {
       }
     },
 
+    /**
+     * @param {string} questId
+     * @returns {Promise<void>}
+     */
     async advanceQuest(questId: string,) {
       try {
         const res = await feFetch(`/api/v1/quests/${questId}/progress`, {

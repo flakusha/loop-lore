@@ -83,12 +83,16 @@ export function nextStepId(session: WorkflowSession,): string | undefined {
  * Overwrites any active run for the chat.
  * @param chatId - Chat owning the session
  * @param session - Session to restore
+ * @returns {void}
  */
 export function restoreSession(chatId: string, session: WorkflowSession,): void {
   sessions[chatId] = session;
 }
 
-/** Clear all sessions (tests only). */
+/**
+ * Clear all sessions (tests only).
+ * @returns {void}
+ */
 export function clearSessions(): void {
   for (const key of Object.keys(sessions,)) { delete sessions[key]; }
 }

@@ -12,6 +12,7 @@ import type { SkillTreeNode, } from "./types";
  * @param actorId
  * @param prerequisites
  * @param worldId
+ * @returns {Promise<{ met: boolean; missing: string[]; }>}
  */
 export async function checkPrerequisites(
   db: Kysely<DB>,
@@ -40,6 +41,7 @@ export async function checkPrerequisites(
  * @param db
  * @param actorId
  * @param worldId
+ * @returns {Promise<SkillTreeNode[]>}
  */
 export async function buildSkillTree(
   db: Kysely<DB>,

@@ -36,6 +36,7 @@ export interface ContentEnvelope {
  * @param input.type
  * @param input.content
  * @param input.cipher
+ * @returns {Promise<ContentEnvelope>}
  */
 export async function sealContent(input: {
   id: string;
@@ -65,6 +66,7 @@ export async function sealContent(input: {
  * @param envelope
  * @param cipher
  * @throws On decrypt failure or hash mismatch.
+ * @returns {Promise<Uint8Array<ArrayBufferLike>>}
  */
 export async function openEnvelope(
   envelope: ContentEnvelope,

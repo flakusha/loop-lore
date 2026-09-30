@@ -23,6 +23,7 @@ export interface SubmitAppealArgs {
  * @param root0.userId
  * @param root0.actionId
  * @param root0.reason
+ * @returns {Promise<{ id: string; status: string; }>}
  */
 export async function submitAppeal(
   { thisL, userId, actionId, reason, }: SubmitAppealArgs,
@@ -52,6 +53,7 @@ export interface GetUserAppealsArgs {
  * @param root0
  * @param root0.thisL
  * @param root0.userId
+ * @returns {Promise<{ id: string; actionId: string; reason: string; status: string; reviewedBy: string | null; reviewNote: string | null; createdAt: string; }[]>}
  */
 export async function getUserAppeals(
   { thisL, userId, }: GetUserAppealsArgs,
@@ -105,6 +107,7 @@ export interface GetPendingAppealsArgs {
  * @param root0
  * @param root0.thisL
  * @param root0.limit
+ * @returns {Promise<{ id: string; userId: string; actionId: string; reason: string; createdAt: string; }[]>}
  */
 export async function getPendingAppeals(
   { thisL, limit = 50, }: GetPendingAppealsArgs,
@@ -148,6 +151,7 @@ export interface ReviewAppealArgs {
  * @param root0.reviewedBy
  * @param root0.status
  * @param root0.reviewNote
+ * @returns {Promise<void>}
  */
 export async function reviewAppeal(
   { thisL, appealId, reviewedBy, status, reviewNote, }: ReviewAppealArgs,

@@ -19,6 +19,7 @@ import type { GenDeps, } from "./deps";
  * @param userId
  * @param attemptId
  * @param context - optional model/provider for failure attribution
+ * @returns {Promise<void>}
  */
 export async function handleGenerationError(
   error: unknown,

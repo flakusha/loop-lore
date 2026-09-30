@@ -17,6 +17,9 @@ function getLog() {
  * Start new game plus
  * @param db
  * @param input
+ * @throws {Error}
+ * @throws {Error}
+ * @returns {Promise<Playthrough>}
  */
 export async function startNewGamePlus(
   db: Kysely<DB>,

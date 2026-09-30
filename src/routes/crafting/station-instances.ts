@@ -55,6 +55,7 @@ const updateStationInstanceBody = t.Partial(stationInstanceBody,);
  * @param root0
  * @param root0.database
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, {}, { derive: {}; resolve: {}; schema: {}; standaloneSchema: {}; response: {}; }, { ...; }>}
  */
 export function craftingStationInstancesRoutes({ database, }: { database: Db }, prefix = "/api",): Elysia {
   const svc = () => new StationsService(database,);

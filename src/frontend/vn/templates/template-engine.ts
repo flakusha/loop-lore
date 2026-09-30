@@ -75,6 +75,8 @@ export interface VnCompositeStep {
 /**
  * @param template
  * @param context
+ * @throws {Error}
+ * @returns {Record<string, unknown>}
  */
 export function resolveVariables(
   template: VnTemplate,
@@ -100,6 +102,7 @@ export function resolveVariables(
 /**
  * @param text
  * @param variables
+ * @returns {string}
  */
 export function substituteTemplate(
   text: string,
@@ -123,6 +126,7 @@ export function substituteTemplate(
 /**
  * @param template
  * @param templates
+ * @returns {VnTemplate}
  */
 export function resolveTemplate(
   template: VnTemplate,
@@ -160,6 +164,7 @@ const STORAGE_PREFIX = "vn-templates-";
 
 /**
  * @param worldId
+ * @returns {VnTemplate[]}
  */
 export function getTemplatesForWorld(worldId: string,): VnTemplate[] {
   const key = `${STORAGE_PREFIX}${worldId}`;
@@ -171,6 +176,7 @@ export function getTemplatesForWorld(worldId: string,): VnTemplate[] {
 
 /**
  * @param template
+ * @returns {void}
  */
 export function saveTemplate(template: VnTemplate,): void {
   const templates = getTemplatesForWorld(template.worldId,);
@@ -195,6 +201,7 @@ export function saveTemplate(template: VnTemplate,): void {
 /**
  * @param worldId
  * @param templateId
+ * @returns {void}
  */
 export function deleteTemplate(worldId: string, templateId: string,): void {
   const templates = getTemplatesForWorld(worldId,);
@@ -209,6 +216,7 @@ export function deleteTemplate(worldId: string, templateId: string,): void {
 /**
  * @param worldId
  * @param templateId
+ * @returns {VnTemplate | null}
  */
 export function getTemplate(worldId: string, templateId: string,): VnTemplate | null {
   const templates = getTemplatesForWorld(worldId,);
@@ -219,6 +227,7 @@ export function getTemplate(worldId: string, templateId: string,): VnTemplate | 
 
 /**
  * @param template
+ * @returns {string}
  */
 export function exportTemplate(template: VnTemplate,): string {
   const r = safeJsonStringify(template, 2,);
@@ -227,6 +236,7 @@ export function exportTemplate(template: VnTemplate,): string {
 
 /**
  * @param json
+ * @returns {VnTemplate | null}
  */
 export function importTemplate(json: string,): VnTemplate | null {
   const template = jsonParseOr<VnTemplate | null>(json, null,);

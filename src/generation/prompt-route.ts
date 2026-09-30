@@ -52,6 +52,7 @@ interface PromptBody {
  * @param database
  * @param userId
  * @param userRole
+ * @returns {Promise<Response>}
  */
 export async function handlePromptImprove(
   body: unknown,

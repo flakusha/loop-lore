@@ -39,6 +39,7 @@ const UpdateBody = t.Object(
  * @param opts
  * @param opts.database
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { admin: { "comfyui-workflows": { ...; }; }; }; }, { ...; }, { ...; }>}
  */
 export function updateRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
   const { database, } = opts;

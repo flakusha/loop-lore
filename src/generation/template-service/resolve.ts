@@ -19,6 +19,7 @@ import { getOwnedTemplate, } from "./crud";
  * @param db - Kysely database handle
  * @param id - Template or preset id
  * @param userId - Requesting user (row ownership enforced)
+ * @returns {Promise<{ row: PromptTemplateRow; preset: null; } | { row: null; preset: LlmTemplatePreset; } | null>}
  */
 export async function resolveTemplateDef(
   db: Kysely<DB>,
@@ -37,6 +38,7 @@ export async function resolveTemplateDef(
  * @param db - Kysely database handle
  * @param chatId - Chat to resolve
  * @param actorId - Actor generating (settings fallback)
+ * @returns {Promise<string | null>}
  */
 export async function resolveLlmTemplateOverrideId(
   db: Kysely<DB>,

@@ -21,6 +21,7 @@ const NSFW_INTIMACY_THRESHOLD = 40;
 /**
  * Whether a content rating is considered NSFW.
  * @param rating
+ * @returns {boolean}
  */
 export function isNsfwRating(rating: ContentRating,): boolean {
   return NSFW_RATINGS.includes(rating,);

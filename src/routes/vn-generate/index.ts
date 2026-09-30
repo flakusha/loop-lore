@@ -19,6 +19,7 @@ export type { VnGenerateRouteOpts, } from "./types";
 
 /**
  * @param opts
+ * @returns {Elysia<`${string}/chats`, { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { chats: { ...; }; }; } & { ...; }, { ...; }, { ...; } & { ...; }>}
  */
 export function vnGenerateRoutes(opts: VnGenerateRouteOpts, prefix = "/api",) {
   return new Elysia({ prefix: `${prefix}/chats`, },)

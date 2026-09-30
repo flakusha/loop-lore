@@ -48,6 +48,8 @@ import { log, } from "./helpers";
  * @param actorId
  * @param chatId
  * @param content
+ * @throws {Error}
+ * @returns {Promise<{ handled: true; response: Response; } | { handled: false; }>}
  */
 export async function dispatchCommand(
   database: Kysely<DB>,

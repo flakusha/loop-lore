@@ -91,6 +91,7 @@ export interface ListTimelineOpts {
  * @param root0.worldId
  * @param root0.storyId
  * @param root0.events
+ * @returns {Promise<void>}
  */
 export async function appendTimelineEvents(
   { db, worldId, storyId, events, }: AppendTimelineOpts,
@@ -128,6 +129,7 @@ export async function appendTimelineEvents(
  * @param root0.data
  * @param root0.storyId
  * @param root0.audienceScope
+ * @returns {Promise<string>}
  */
 export async function seedBackstory(
   { db, worldId, description, occurredAt, eventType, actorId, data, storyId, audienceScope, }: SeedBackstoryOpts,
@@ -176,6 +178,7 @@ export async function seedBackstory(
  * @param root0.occurredBefore
  * @param root0.occurredAfter
  * @param root0.limit
+ * @returns {Promise<TimelineEntry[]>}
  */
 export async function listTimelineEntries(
   { db, worldId, occurredBefore, occurredAfter, limit, }: ListTimelineOpts,
@@ -207,6 +210,7 @@ export async function listTimelineEntries(
  * @param root0.worldId
  * @param root0.since
  * @param root0.limit
+ * @returns {Promise<TimelineEntry[]>}
  */
 export async function getEstablishedHistory(
   { db, worldId, since, limit, }: EstablishedHistoryOpts,

@@ -16,6 +16,7 @@ import { executeResponse, tradeLineSchema, } from "./shared";
  * a countered offer by the buyer; only the creator cancels.
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { worlds: { ":worldId": { ...; }; }; }; } & { ...; } & { ...; } & { ...; } & { ...; }, { ...; }, { ...; }>}
  */
 export function tradeOfferRoutes(opts: TradeRoutesOptions, prefix = "/api",) {
   return (

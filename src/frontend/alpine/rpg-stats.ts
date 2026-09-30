@@ -17,6 +17,9 @@ export const rpgStats: Partial<ChatState> & ThisType<ChatState> = {
   statusEffects: [],
   equipment: [],
 
+  /**
+   * @returns {Promise<void>}
+   */
   async loadRpgStats() {
     const activeChat = this.activeChat;
     if (!activeChat) {
@@ -79,6 +82,10 @@ export const rpgStats: Partial<ChatState> & ThisType<ChatState> = {
    * Calculate D&D-style modifier: floor((stat - 10) / 2)
    * @param stat
    */
+  /**
+   * @param {number} stat
+   * @returns {number}
+   */
   getModifier(stat: number,): number {
     return Math.floor((stat - 10) / 2,);
   },
@@ -88,6 +95,11 @@ export const rpgStats: Partial<ChatState> & ThisType<ChatState> = {
    * Note: Equipment bonuses applied at use time, not stored.
    * @param base
    * @param effects
+   */
+  /**
+   * @param {number} base
+   * @param {StatusEffect[]} effects
+   * @returns {number}
    */
   effectiveStat(base: number, effects: StatusEffect[],): number {
     let total = base;

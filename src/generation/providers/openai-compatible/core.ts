@@ -20,6 +20,8 @@ import type { OpenAiCompatibleState, OpenAIResponse, OpenAIStreamChunk, } from "
 /**
  * @param state
  * @param req
+ * @throws {Error}
+ * @returns {Promise<GenerateResponse>}
  */
 export async function completeDispatch(
   state: OpenAiCompatibleState,
@@ -59,6 +61,9 @@ export async function completeDispatch(
  * @param state
  * @param req
  * @param handler
+ * @throws {Error}
+ * @throws {Error}
+ * @returns {Promise<GenerateResponse>}
  */
 export async function streamDispatch(
   state: OpenAiCompatibleState,

@@ -7,6 +7,7 @@ import { safeJsonParse, } from "../../../utils";
 
 /**
  * @param line
+ * @returns {Record<string, string> | null}
  */
 export function parseSSELine(line: string,): Record<string, string> | null {
   if (!line.startsWith("data: ",)) { return null; }

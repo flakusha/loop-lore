@@ -56,6 +56,7 @@ export async function requireActorAccess(
  * @param actorId
  * @param userId
  * @param userRole
+ * @returns {Promise<boolean>}
  */
 export async function checkActorOwnership(
   database: Kysely<DB>,

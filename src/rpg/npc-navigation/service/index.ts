@@ -48,6 +48,11 @@ export class NpcNavigationService {
    * @param actorId
    * @param worldId
    */
+  /**
+   * @param {string} actorId
+   * @param {string} worldId
+   * @returns {Promise<NpcMovementState | null>}
+   */
   async getMovementState(actorId: string, worldId: string,): Promise<NpcMovementState | null> {
     return getMovementStateDispatch(this.db, actorId, worldId,);
   }
@@ -57,6 +62,12 @@ export class NpcNavigationService {
    * @param actorId
    * @param worldId
    * @param updates
+   */
+  /**
+   * @param {string} actorId
+   * @param {string} worldId
+   * @param {Partial<NpcMovementState>} updates
+   * @returns {Promise<void>}
    */
   async updateMovementState(
     actorId: string,
@@ -77,6 +88,18 @@ export class NpcNavigationService {
    * @param config.followTargetId
    * @param config.speed
    */
+  /**
+ * @param {string} actorId
+ * @param {string} worldId
+ * @param {MovementPattern} pattern
+ * @param {{
+      patrolRoute?: string[];
+      wanderRadius?: number;
+      followTargetId?: string;
+      speed?: number;
+    }} config
+ * @returns {Promise<void>}
+ */
   async setMovementPattern(
     actorId: string,
     worldId: string,
@@ -97,6 +120,12 @@ export class NpcNavigationService {
    * @param worldId
    * @param targetLocationId
    */
+  /**
+   * @param {string} actorId
+   * @param {string} worldId
+   * @param {string} targetLocationId
+   * @returns {Promise<MovementResult>}
+   */
   async moveToLocation(
     actorId: string,
     worldId: string,
@@ -108,6 +137,10 @@ export class NpcNavigationService {
   /**
    * Process NPC movement tick — advance NPCs based on their movement patterns
    * @param worldId
+   */
+  /**
+   * @param {string} worldId
+   * @returns {Promise<MovementResult[]>}
    */
   async processMovementTick(worldId: string,): Promise<MovementResult[]> {
     return processMovementTickDispatch(this.db, worldId,);

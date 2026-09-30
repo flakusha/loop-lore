@@ -65,6 +65,9 @@ export type ListBranchesResult =
  * Create a branch rooted at `messageId`. Returns the branch record and
  * the root-to-fork-point message path. Caller must have chat access
  * (owner/participant/admin). The fork point's chat must match.
+ * @param {Kysely<DB>} db
+ * @param {ForkBranchParams} params
+ * @returns {Promise<ForkBranchResult>}
  */
 export async function forkBranch(
   db: Kysely<DB>,
@@ -125,6 +128,9 @@ export async function forkBranch(
 /**
  * Set `chats.active_branch_id`. Caller must have chat access; branchId
  * must belong to this chat.
+ * @param {Kysely<DB>} db
+ * @param {SwitchActiveBranchParams} params
+ * @returns {Promise<SwitchActiveBranchResult>}
  */
 export async function switchActiveBranch(
   db: Kysely<DB>,
@@ -171,6 +177,11 @@ export async function switchActiveBranch(
 /**
  * Resolve the message chain for a branch: walk from the branch tip
  * (parent_message_id) to the root. Returns root-to-tip message ids.
+ * @param {Kysely<DB>} db
+ * @param {string} chatId
+ * @param {string} branchId
+ * @param {string} actorId
+ * @returns {Promise<string[]>}
  */
 export async function getMessagesForBranch(
   db: Kysely<DB>,
@@ -193,6 +204,10 @@ export async function getMessagesForBranch(
  * List all branches in a chat with computed metadata. Caller must have
  * chat access (owner/participant/admin). `isActive` mirrors the per-row
  * `is_active` flag; the displayed branch equals `chats.active_branch_id`.
+ * @param {Kysely<DB>} db
+ * @param {string} chatId
+ * @param {string} actorId
+ * @returns {Promise<ListBranchesResult>}
  */
 export async function listBranches(
   db: Kysely<DB>,

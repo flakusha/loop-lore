@@ -21,6 +21,7 @@ const log = rootLog.child({ module: "story-state-api", },);
 /**
  * Fetch the chat detail row for a story chat.
  * @param chatId
+ * @returns {Promise<StoryChatDetail | null>}
  */
 export async function fetchChatDetail(chatId: string,): Promise<StoryChatDetail | null> {
   const res = await apiFetch(`/api/v1/chats/${chatId}`, { headers: { Accept: "application/json", }, },);
@@ -31,6 +32,7 @@ export async function fetchChatDetail(chatId: string,): Promise<StoryChatDetail 
 /**
  * Fetch the world's display name (best-effort).
  * @param worldId
+ * @returns {Promise<string | null>}
  */
 export async function fetchWorldName(worldId: string,): Promise<string | null> {
   try {
@@ -47,6 +49,7 @@ export async function fetchWorldName(worldId: string,): Promise<string | null> {
 /**
  * Fetch the latest story turns for a chat.
  * @param chatId
+ * @returns {Promise<StoryTurnRow[]>}
  */
 export async function fetchStoryTurns(chatId: string,): Promise<StoryTurnRow[]> {
   const res = await apiFetch(`/api/v1/chats/${chatId}/story-turns?pageSize=50`,);
@@ -58,6 +61,7 @@ export async function fetchStoryTurns(chatId: string,): Promise<StoryTurnRow[]> 
 /**
  * Fetch world quest rows.
  * @param worldId
+ * @returns {Promise<StoryQuest[]>}
  */
 export async function fetchQuests(worldId: string,): Promise<StoryQuest[]> {
   const res = await apiFetch(`/api/v1/worlds/${worldId}/quests?pageSize=100`,);
@@ -77,6 +81,7 @@ export interface LocationState {
 /**
  * Fetch a location's story state, tolerating response shape drift.
  * @param locationId
+ * @returns {Promise<LocationState | null>}
  */
 export async function fetchLocationState(locationId: string,): Promise<LocationState | null> {
   try {
@@ -100,6 +105,7 @@ export async function fetchLocationState(locationId: string,): Promise<LocationS
  * Fetch NPCs present at a location within a world.
  * @param worldId
  * @param locationId
+ * @returns {Promise<{ actorId: string; displayName: string; }[] | null>}
  */
 export async function fetchNpcsAt(
   worldId: string,
@@ -118,6 +124,7 @@ export async function fetchNpcsAt(
 /**
  * Fetch chat participants for turn-order display.
  * @param chatId
+ * @returns {Promise<ParticipantRow[] | null>}
  */
 export async function fetchParticipants(chatId: string,): Promise<ParticipantRow[] | null> {
   try {

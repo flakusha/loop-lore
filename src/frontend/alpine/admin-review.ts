@@ -37,6 +37,9 @@ export const adminReview = {
   loadingReview: false,
   reviewResolution: {} as Record<string, string>,
 
+  /**
+   * @returns {Promise<void>}
+   */
   async loadReview() {
     this.loadingReview = true;
     try {
@@ -61,6 +64,11 @@ export const adminReview = {
     }
   },
 
+  /**
+   * @param {string} flagId
+   * @param {"resolved" | "dismissed" | "confirmed"} status
+   * @returns {Promise<void>}
+   */
   async resolveFlag(flagId: string, status: "resolved" | "dismissed" | "confirmed",) {
     try {
       const res = await apiFetch(`/api/v1/nsfw/moderation/flags/${flagId}`, {

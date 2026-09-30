@@ -71,6 +71,10 @@ export class BodySystemService {
    * Get or create a body profile for an actor.
    * @param actorId
    */
+  /**
+   * @param {string} actorId
+   * @returns {Promise<BodyProfile>}
+   */
   async getProfile(actorId: string,): Promise<BodyProfile> {
     return getProfileDispatch(this.db, actorId,);
   }
@@ -79,6 +83,11 @@ export class BodySystemService {
    * Update a body profile.
    * @param actorId
    * @param updates
+   */
+  /**
+   * @param {string} actorId
+   * @param {UpdateBodyProfileOpts} updates
+   * @returns {Promise<boolean>}
    */
   async updateProfile(
     actorId: string,
@@ -92,6 +101,11 @@ export class BodySystemService {
    * @param actorId
    * @param modification
    */
+  /**
+   * @param {string} actorId
+   * @param {BodyModification} modification
+   * @returns {Promise<void>}
+   */
   async addModification(
     actorId: string,
     modification: BodyModification,
@@ -104,6 +118,11 @@ export class BodySystemService {
    * @param actorId
    * @param index
    */
+  /**
+   * @param {string} actorId
+   * @param {number} index
+   * @returns {Promise<boolean>}
+   */
   async removeModification(actorId: string, index: number,): Promise<boolean> {
     return removeModificationDispatch(this.db, actorId, index,);
   }
@@ -114,6 +133,11 @@ export class BodySystemService {
    * Get or create a heat cycle for an actor.
    * @param actorId
    * @param species
+   */
+  /**
+   * @param {string} actorId
+   * @param {string} species
+   * @returns {Promise<HeatCycleState>}
    */
   async getHeatCycle(
     actorId: string,
@@ -127,6 +151,11 @@ export class BodySystemService {
    * @param actorId
    * @param days
    */
+  /**
+   * @param {string} actorId
+   * @param {number} days
+   * @returns {Promise<{ newPhase: HeatPhase; daysUntilNext: number; }>}
+   */
   async advanceHeatCycle(
     actorId: string,
     days: number,
@@ -138,6 +167,10 @@ export class BodySystemService {
    * Get the current heat effects for an actor.
    * Returns nullified effects for non-heat species.
    * @param actorId
+   */
+  /**
+   * @param {string} actorId
+   * @returns {Promise<HeatEffects>}
    */
   async getHeatEffects(actorId: string,): Promise<HeatEffects> {
     return getHeatEffectsDispatch(this.db, actorId,);
@@ -155,6 +188,10 @@ export class BodySystemService {
    * modifier arrives from the unified stat path, defaulting to 0 when
    * no `character_stats` row exists.
    * @param actorId
+   */
+  /**
+   * @param {string} actorId
+   * @returns {Promise<{ profile: BodyProfile; arousal: number; exhaustion: number; aphrodisiac: number; effectiveStamina: number; effectiveDuration: number; }>}
    */
   async getPhysicalStatus(actorId: string,): Promise<{
     profile: BodyProfile;
@@ -196,6 +233,11 @@ export class BodySystemService {
    * @param profile
    * @param conModifier - CON modifier from the unified stat path (default 0)
    */
+  /**
+   * @param {BodyProfile} profile
+   * @param {unknown} conModifier
+   * @returns {number}
+   */
   static calculateEncounterDuration(profile: BodyProfile, conModifier = 0,): number {
     return calculateEncounterDurationDispatch(profile, conModifier,);
   }
@@ -204,6 +246,10 @@ export class BodySystemService {
    * Calculate available positions/actions based on flexibility + build.
    * @param profile
    */
+  /**
+   * @param {BodyProfile} profile
+   * @returns {number}
+   */
   static calculateAvailableActions(profile: BodyProfile,): number {
     return calculateAvailableActionsDispatch(profile,);
   }
@@ -211,6 +257,10 @@ export class BodySystemService {
   /**
    * Calculate arousal buildup modifier from sensitivity + body.
    * @param profile
+   */
+  /**
+   * @param {BodyProfile} profile
+   * @returns {number}
    */
   static calculateArousalModifier(profile: BodyProfile,): number {
     return calculateArousalModifierDispatch(profile,);

@@ -10,6 +10,7 @@ import type { NewChatCtx, } from "./state";
 /**
  * @param ctx
  * @param actorId
+ * @returns {Promise<void>}
  */
 export async function loadMemoriesForActor(ctx: NewChatCtx, actorId: string,): Promise<void> {
   try {
@@ -41,6 +42,7 @@ export async function loadMemoriesForActor(ctx: NewChatCtx, actorId: string,): P
 
 /**
  * @param ctx
+ * @returns {void}
  */
 export function renderMemoryList(ctx: NewChatCtx,): void {
   if (!ctx.memoryCheckboxList || !ctx.memoryCountLabel) { return; }
@@ -97,6 +99,7 @@ export function renderMemoryList(ctx: NewChatCtx,): void {
 
 /**
  * @param ctx
+ * @returns {void}
  */
 export function bindMemoryHandlers(ctx: NewChatCtx,): void {
   (globalThis as any)._toggleMemorySelect = function(id: string, checked: boolean,) {

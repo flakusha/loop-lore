@@ -17,6 +17,7 @@ import { extractAuth, HttpStatus, jsonError, jsonResponse, } from "../http-utils
 /**
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { blog: { comments: { ...; }; }; }; } & { ...; }, { ...; }, { ...; }>}
  */
 export function blogModerationRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;

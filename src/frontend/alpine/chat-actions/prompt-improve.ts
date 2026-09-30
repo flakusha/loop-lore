@@ -46,13 +46,6 @@ async function tryLocalImprove(text: string, level: string,): Promise<LocalInfer
 }
 
 export const promptImproveActions: Partial<ChatState> & ThisType<ChatState> = {
-  // Reactive defaults — input-area.html binds `:disabled="!activeChat ||
-  // _improving"`; without an initial value the binding throws
-  // "_improving is not defined" as soon as a chat is selected (the
-  // `!activeChat` short-circuit hides it while no chat is open).
-  _improving: false,
-  _promptImproveHistory: [] as string[],
-
   /**
    * Push the current draft onto the undo stack, dropping the oldest level
    * once the bounded depth is reached.
@@ -65,6 +58,10 @@ export const promptImproveActions: Partial<ChatState> & ThisType<ChatState> = {
    * Improve the current draft through the shared prompt-improvement service.
    * Pushes the previous draft onto `_promptImproveHistory` for multi-level undo.
    * @param level - Gradation level; group chats default to `style-group`
+   */
+  /**
+   * @param {string} level
+   * @returns {Promise<void>}
    */
   async improvePrompt(level?: string,) {
     const input = this.$refs.messageInput as HTMLTextAreaElement | undefined;

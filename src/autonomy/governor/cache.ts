@@ -44,6 +44,11 @@ export class BudgetCache {
    * @param root0.nowMs
    * @returns the budget row, or `null` when unseeded
    */
+  /**
+   * @param {Kysely<DB>} db
+   * @param {{ scope: AutonomyScope; limitName: GovernorLimitName; nowMs: number }} { scope, limitName, nowMs, }
+   * @returns {Promise<BudgetRow | null>}
+   */
   async load(
     db: Kysely<DB>,
     { scope, limitName, nowMs, }: { scope: AutonomyScope; limitName: GovernorLimitName; nowMs: number },
@@ -81,6 +86,13 @@ export class BudgetCache {
    * @param row
    * @param nowMs
    */
+  /**
+   * @param {AutonomyScope} scope
+   * @param {GovernorLimitName} limitName
+   * @param {BudgetRow} row
+   * @param {number} nowMs
+   * @returns {void}
+   */
   write(
     scope: AutonomyScope,
     limitName: GovernorLimitName,
@@ -94,6 +106,9 @@ export class BudgetCache {
   }
 
   /** Drop every entry — used when a budget row is reset out of band. */
+  /**
+   * @returns {void}
+   */
   clear(): void {
     this.#entries.clear();
   }

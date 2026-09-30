@@ -25,6 +25,9 @@ export const memoryPanelAudit: Partial<ChatState> & ThisType<ChatState> = {
   auditActions: AUDIT_ACTIONS,
 
   /** Audit entries after the current action filter is applied. */
+  /**
+   * @returns {AuditEntry[]}
+   */
   getFilteredAudit() {
     return auditEntriesForFilter(this.memoryPanel.auditEntries, this.memoryPanel.auditActionFilter,);
   },
@@ -34,6 +37,11 @@ export const memoryPanelAudit: Partial<ChatState> & ThisType<ChatState> = {
    * Returns null when no actor can be resolved (panel hidden).
    * @param cursor - pagination cursor (omit for first page)
    * @param action - action filter (omit for unfiltered)
+   */
+  /**
+   * @param {string | null} cursor
+   * @param {AuditAction | null} action
+   * @returns {string | null}
    */
   _auditUrl(cursor: string | null, action: AuditAction | null,): string | null {
     const actorId = this._getCharacterActorId();
@@ -50,6 +58,11 @@ export const memoryPanelAudit: Partial<ChatState> & ThisType<ChatState> = {
    * Load (or reload) the audit log, replacing any existing entries. Called
    * when the audit tab opens or the action filter changes.
    * @param action - optional action filter override
+   */
+  /**
+   * @param {AuditAction | null} action
+   * @throws {Error}
+   * @returns {Promise<void>}
    */
   async loadAudit(action?: AuditAction | null,) {
     const filter = action === undefined ? this.memoryPanel.auditActionFilter : action;
@@ -81,6 +94,10 @@ export const memoryPanelAudit: Partial<ChatState> & ThisType<ChatState> = {
   },
 
   /** Append the next page of audit entries to the current list. */
+  /**
+   * @throws {Error}
+   * @returns {Promise<void>}
+   */
   async loadMoreAudit() {
     if (!this.memoryPanel.auditHasMore || this.memoryPanel.auditLoading) { return; }
     this.memoryPanel.auditLoading = true;
@@ -108,17 +125,29 @@ export const memoryPanelAudit: Partial<ChatState> & ThisType<ChatState> = {
    * Set the action filter and reload the first page.
    * @param action - action to filter by, or null to clear
    */
+  /**
+   * @param {AuditAction | null} action
+   * @returns {Promise<void>}
+   */
   async setAuditActionFilter(action: AuditAction | null,) {
     if (this.memoryPanel.auditActionFilter === action) { return; }
     await this.loadAudit(action,);
   },
 
   /** Resolve the icon/emoji for an audit action badge. */
+  /**
+   * @param {AuditAction} action
+   * @returns {string}
+   */
   _auditActionIcon(action: AuditAction,): string {
     return auditActionIcon(action,);
   },
 
   /** Resolve the human-readable label for an audit action badge. */
+  /**
+   * @param {AuditAction} action
+   * @returns {string}
+   */
   _auditActionLabel(action: AuditAction,): string {
     return auditActionLabel(action,);
   },
@@ -127,6 +156,10 @@ export const memoryPanelAudit: Partial<ChatState> & ThisType<ChatState> = {
    * True when the entry's details block is expanded.
    * @param id - audit entry id
    */
+  /**
+   * @param {string} id
+   * @returns {boolean}
+   */
   isAuditExpanded(id: string,): boolean {
     return this.memoryPanel.auditExpandedIds.includes(id,);
   },
@@ -134,6 +167,10 @@ export const memoryPanelAudit: Partial<ChatState> & ThisType<ChatState> = {
   /**
    * Toggle the expanded/collapsed state of an entry's details block.
    * @param id - audit entry id
+   */
+  /**
+   * @param {string} id
+   * @returns {void}
    */
   toggleAuditExpanded(id: string,): void {
     const ids = this.memoryPanel.auditExpandedIds;
@@ -149,6 +186,10 @@ export const memoryPanelAudit: Partial<ChatState> & ThisType<ChatState> = {
    * True when the entry has details worth expanding.
    * @param entry
    */
+  /**
+   * @param {AuditEntry} entry
+   * @returns {boolean}
+   */
   _auditDetailsExpandable(entry: AuditEntry,): boolean {
     return auditDetailsExpandable(entry,);
   },
@@ -156,6 +197,10 @@ export const memoryPanelAudit: Partial<ChatState> & ThisType<ChatState> = {
   /**
    * Formatted (pretty-printed) details JSON for the expanded block.
    * @param entry
+   */
+  /**
+   * @param {AuditEntry} entry
+   * @returns {string}
    */
   _formatAuditDetails(entry: AuditEntry,): string {
     return formatAuditDetails(entry.details,);

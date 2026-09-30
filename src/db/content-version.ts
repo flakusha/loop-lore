@@ -45,6 +45,7 @@ const REGISTRY = new Map<string, Map<number, ContentVersion>>();
  * @param columns - Tracked columns (lowercase). Order matters: hashes are
  *   sensitive to the projection order via the canonical JSON envelope.
  * @throws {Error} when the same `(table, data_version)` is re-registered with a different `columns` array.
+ * @returns {void}
  */
 export function registerContentVersion(
   table: string,
@@ -222,7 +223,10 @@ function projectionColumns(projection: Map<number, ContentVersion>,): string[] {
   return [...seen,];
 }
 
-/** Test seam: clear the registry. NOT FOR PRODUCTION. */
+/**
+ * Test seam: clear the registry. NOT FOR PRODUCTION.
+ * @returns {void}
+ */
 export function __resetContentVersionRegistry(): void {
   REGISTRY.clear();
 }

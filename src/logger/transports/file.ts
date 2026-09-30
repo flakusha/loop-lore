@@ -51,6 +51,10 @@ export class FileTransport implements Transport {
   /**
    * @param entry
    */
+  /**
+   * @param {LogEntry} entry
+   * @returns {Promise<void>}
+   */
   async write(entry: LogEntry,): Promise<void> {
     // Chain writes through a mutex: a size-check-then-append is not atomic,
     // so concurrent writes can race the rotate() step and lose/misplace lines.
@@ -66,6 +70,10 @@ export class FileTransport implements Transport {
 
   /**
    * @param entry
+   */
+  /**
+   * @param {LogEntry} entry
+   * @returns {Promise<void>}
    */
   private async writeLocked(entry: LogEntry,): Promise<void> {
     try {
@@ -84,11 +92,17 @@ export class FileTransport implements Transport {
   }
 
   /** */
+  /**
+   * @returns {Promise<void>}
+   */
   async flush(): Promise<void> {
     // appendFile is awaited per write, so there is no buffered tail to flush.
   }
 
   /** Rotate the active file: shift `path.N` → `path.(N+1)`, drop oldest. */
+  /**
+   * @returns {Promise<void>}
+   */
   private async rotate(): Promise<void> {
     // Remove oldest first so renames never collide with an existing target.
     if (this.maxFiles > 0) {
@@ -107,6 +121,10 @@ export class FileTransport implements Transport {
 
   /**
    * @param path
+   */
+  /**
+   * @param {string} path
+   * @returns {Promise<number>}
    */
   private async fileSize(path: string,): Promise<number> {
     try {

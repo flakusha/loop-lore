@@ -17,6 +17,7 @@ import { forbidden, notFound, } from "../../validation/middleware";
  * @param worldId
  * @param userId
  * @param userRole
+ * @returns {Promise<Response | null>}
  */
 export async function requireWorldAccess(
   database: Kysely<DB>,

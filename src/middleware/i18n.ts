@@ -20,6 +20,7 @@ import type { I18nConfig, Locale, } from "../i18n/types";
  * @example
  * parseAcceptLanguage("ja,en-US;q=0.9,en;q=0.8")
  * // => ["ja", "en-US", "en"]
+ * @returns {string[]}
  */
 export function parseAcceptLanguage(header: string,): string[] {
   const parsed: { lang: string; q: number }[] = [];
@@ -48,6 +49,7 @@ export function parseAcceptLanguage(header: string,): string[] {
  * 3. Server default
  * @param request
  * @param config
+ * @returns {Locale}
  */
 export function detectLocale(
   request: Request,
@@ -116,6 +118,7 @@ function detectFromAcceptLanguage(
  * Loads translations and creates translator function.
  * @param locale
  * @param config
+ * @returns {{ locale: Locale; t: TranslatorFn; }}
  */
 export function createI18nContext(
   locale: Locale,

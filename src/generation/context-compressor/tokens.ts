@@ -14,6 +14,7 @@ const STRUCTURAL_OVERHEAD_CHARS = 60;
  * Estimate tokens for a single message (role + content overhead).
  * @param msg
  * @param fn
+ * @returns {number}
  */
 export function tokensForMessage(msg: ContextMessage, fn: TokenCountFn,): number {
   let text = msg.content;
@@ -25,6 +26,7 @@ export function tokensForMessage(msg: ContextMessage, fn: TokenCountFn,): number
  * Sum token count across all messages
  * @param messages
  * @param tokenCountFn
+ * @returns {number}
  */
 export function calculateTotalTokens(
   messages: ContextMessage[],
@@ -38,6 +40,7 @@ export function calculateTotalTokens(
 /**
  * @param tokens
  * @param count
+ * @returns {CompressionMetadata}
  */
 export function zeroMetadata(tokens: number, count: number,): CompressionMetadata {
   return {

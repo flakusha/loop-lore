@@ -106,6 +106,10 @@ export class CharacterInternalTraitsService {
    * @param actorId
    * @returns The actor's internal traits, or null when none exist.
    */
+  /**
+   * @param {string} actorId
+   * @returns {Promise<CharacterInternalTraits | null>}
+   */
   async get(actorId: string,): Promise<CharacterInternalTraits | null> {
     const row = await this.db
       .selectFrom("character_internal_traits",)
@@ -121,6 +125,13 @@ export class CharacterInternalTraitsService {
    * @param actorId
    * @param input
    * @returns The persisted internal-traits row.
+   */
+  /**
+   * @param {string} actorId
+   * @param {CharacterInternalTraitsInput} input
+   * @throws {Error}
+   * @throws {Error}
+   * @returns {Promise<CharacterInternalTraits>}
    */
   async upsert(actorId: string, input: CharacterInternalTraitsInput,): Promise<CharacterInternalTraits> {
     const existing = await this.get(actorId,);
@@ -185,6 +196,10 @@ export class CharacterInternalTraitsService {
    * @param actorId - The actor whose traits should be deleted.
    * @returns True when a row was deleted.
    */
+  /**
+   * @param {string} actorId
+   * @returns {Promise<boolean>}
+   */
   async delete(actorId: string,): Promise<boolean> {
     const result = await this.db
       .deleteFrom("character_internal_traits",)
@@ -202,6 +217,11 @@ export class CharacterInternalTraitsService {
    * @param actorId - The character's actor ID
    * @param includeHidden - If true, include ALL traits regardless of visibility (for GM/system use)
    * @returns The prompt section, or null when the actor has no traits.
+   */
+  /**
+   * @param {string} actorId
+   * @param {unknown} includeHidden
+   * @returns {Promise<string | null>}
    */
   async buildPromptSection(actorId: string, includeHidden = false,): Promise<string | null> {
     const traits = await this.get(actorId,);

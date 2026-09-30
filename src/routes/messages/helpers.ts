@@ -16,7 +16,10 @@ import { safeJsonParse, } from "../../utils";
 import { ErrorCode, HttpStatus, jsonError, } from "../http-utils";
 import { resolveMessageContentForRender, } from "./render-message-content";
 
-/** Logger bound to the messages module namespace. */
+/**
+ * Logger bound to the messages module namespace.
+ * @returns {Logger}
+ */
 export function log(): Logger {
   return getLogger().child({ module: "messages", },);
 }
@@ -24,6 +27,7 @@ export function log(): Logger {
 /**
  * Convert a ServiceError into an HTTP Response
  * @param error
+ * @returns {Response}
  */
 export function serviceErrorToResponse(error: ServiceError,): Response {
   switch (error.code) {
@@ -55,6 +59,7 @@ export function serviceErrorToResponse(error: ServiceError,): Response {
 /**
  * Type guard: check if a value is a ServiceError (not a message record)
  * @param value
+ * @returns {boolean}
  */
 export function isServiceError(
   value: Record<string, unknown> | ServiceError,
@@ -62,7 +67,12 @@ export function isServiceError(
   return "code" in value && typeof (value as ServiceError).code === "string";
 }
 
-/** Resolve asset metadata for a message's stored attachment JSON payload. */
+/**
+ * Resolve asset metadata for a message's stored attachment JSON payload.
+ * @param {Kysely<DB>} database
+ * @param {string | null} attachmentsJson
+ * @returns {Promise<object | null>}
+ */
 export async function enrichAttachments(
   database: Kysely<DB>,
   attachmentsJson: string | null,
@@ -122,6 +132,7 @@ export type ToolCallRecord = { id: string; type: "function"; function: { name: s
 /**
  * Parse a message's stored `tool_calls` JSON payload into a typed array (null when empty/invalid).
  * @param toolCallsJson
+ * @returns {ToolCallRecord[] | null}
  */
 export function parseToolCalls(toolCallsJson: string | null | undefined,): ToolCallRecord[] | null {
   if (!toolCallsJson) { return null; }
@@ -139,6 +150,7 @@ export type ToolResultMeta = { toolName: string | null; toolError: boolean };
  * Parse a `tool_result` row's `metadata` JSON into bubble fields (fail-closed
  * defaults when missing/invalid — old rows predate the metadata contract).
  * @param metadataJson
+ * @returns {ToolResultMeta}
  */
 export function parseToolResultMeta(metadataJson: string | null | undefined,): ToolResultMeta {
   if (!metadataJson) { return { toolName: null, toolError: false, }; }
@@ -163,6 +175,7 @@ export function parseToolResultMeta(metadataJson: string | null | undefined,): T
  *   Defaults to [] so test stubs that lack a config stay trivial.
  *   Production callers pass `config.generation.regexTransforms` to keep
  *   list/single-message rendering consistent.
+ * @returns {Promise<Record<string, unknown>>}
  */
 export async function enrichMessageForList(
   database: Kysely<DB>,
@@ -217,6 +230,7 @@ export async function enrichMessageForList(
  * @param message.content_encoding
  * @param message.key_id
  * @param message.chat_id
+ * @returns {Promise<string>}
  */
 export async function resolveMessageContent(
   database: Kysely<DB>,

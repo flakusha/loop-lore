@@ -64,6 +64,9 @@ import { apiFetch, } from "./htmx";
     ...adminWorkflows,
 
     // ── Lifecycle ───────────────────────────────────────
+    /**
+     * @returns {Promise<void>}
+     */
     async init() {
       await this.loadOverview();
       this._overviewPollTimer = setInterval(() => {
@@ -71,12 +74,19 @@ import { apiFetch, } from "./htmx";
       }, 30_000,);
     },
 
+    /**
+     * @returns {void}
+     */
     destroy() {
       if (!this._overviewPollTimer) { return; }
       clearInterval(this._overviewPollTimer,);
       this._overviewPollTimer = null;
     },
 
+    /**
+     * @param {string} tab
+     * @returns {void}
+     */
     showTab(tab: string,) {
       this.activeTab = tab;
       if (this.tabsLoaded[tab]) { return; }
@@ -143,16 +153,28 @@ import { apiFetch, } from "./htmx";
       }
     },
 
+    /**
+     * @param {string | null} iso
+     * @returns {string}
+     */
     formatDate(iso: string | null,): string {
       if (!iso) { return "-"; }
       return formatDisplayDate(iso, "date",);
     },
 
+    /**
+     * @param {string} key
+     * @returns {string}
+     */
     displayKey(key: string,): string {
       return key.replaceAll("_", " ",).replaceAll(/\b\w/g, (c,) => c.toUpperCase(),);
     },
 
     // ── Overview ────────────────────────────────────────
+    /**
+     * @throws {Error}
+     * @returns {Promise<void>}
+     */
     async loadOverview() {
       try {
         const params = new URLSearchParams({ page: "1", pageSize: "20", },);
@@ -175,6 +197,10 @@ import { apiFetch, } from "./htmx";
       }
     },
 
+    /**
+     * @param {string} tab
+     * @returns {void}
+     */
     goToSection(tab: string,) {
       this.showTab(tab,);
     },

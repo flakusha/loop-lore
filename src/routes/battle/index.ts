@@ -25,6 +25,7 @@ import { weatherRoutes, } from "./weather";
  *   Morale:    /api/battle/morale/{compute,apply,break}
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { battle: { equipment: { ...; }; }; }; } & ... 24 more ... & { ...; }, { ...; }, { ...; } & { ...; }>}
  */
 export function battleRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database: _database, } = opts;

@@ -13,6 +13,7 @@ import type { HookContext, } from "./types";
  * @param action
  * @param reason
  * @param metadata
+ * @returns {Promise<void>}
  */
 export async function logGateDecision(
   context: HookContext,

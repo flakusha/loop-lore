@@ -36,15 +36,24 @@ export const gifPicker: Partial<GifPickerState> & ThisType<GifCtx> = {
   _gifActiveIndex: 0,
   _gifLoading: false,
 
+  /**
+   * @returns {void}
+   */
   openGifPicker() {
     this._gifOpen = true;
     this._gifActiveIndex = 0;
   },
 
+  /**
+   * @returns {void}
+   */
   closeGifPicker() {
     this._gifOpen = false;
   },
 
+  /**
+   * @returns {void}
+   */
   toggleGifPicker() {
     if (this._gifOpen) {
       this.closeGifPicker();
@@ -53,6 +62,9 @@ export const gifPicker: Partial<GifPickerState> & ThisType<GifCtx> = {
     }
   },
 
+  /**
+   * @returns {Promise<void>}
+   */
   async searchGifs() {
     const query = this._gifQuery.trim();
     if (!query || this._gifLoading) {
@@ -83,6 +95,10 @@ export const gifPicker: Partial<GifPickerState> & ThisType<GifCtx> = {
     }
   },
 
+  /**
+   * @param {1 | -1} delta
+   * @returns {void}
+   */
   moveGifSelection(delta: 1 | -1,) {
     const count = this._gifResults.length;
     if (count === 0) {
@@ -91,6 +107,10 @@ export const gifPicker: Partial<GifPickerState> & ThisType<GifCtx> = {
     this._gifActiveIndex = (this._gifActiveIndex + delta + count) % count;
   },
 
+  /**
+   * @param {KeyboardEvent} event
+   * @returns {void}
+   */
   handleGifKey(event: KeyboardEvent,) {
     if (!this._gifOpen) {
       return;
@@ -109,6 +129,10 @@ export const gifPicker: Partial<GifPickerState> & ThisType<GifCtx> = {
     }
   },
 
+  /**
+   * @param {number} index
+   * @returns {Promise<void>}
+   */
   async insertGifAtIndex(index: number,) {
     const result = this._gifResults[index];
     if (!result) {
@@ -117,6 +141,10 @@ export const gifPicker: Partial<GifPickerState> & ThisType<GifCtx> = {
     await this.insertGif(result,);
   },
 
+  /**
+   * @param {GifResult} result
+   * @returns {Promise<void>}
+   */
   async insertGif(result: GifResult,) {
     const filename = `${result.id}.gif`;
     if (!this.activeChat) {

@@ -107,13 +107,24 @@ export async function validateProtocol(
 /**
  * Build a default test suite for any ProtocolHandler.
  * Returns test functions that exercise the common interface.
+ * @throws {Error}
+ * @throws {Error}
+ * @returns {TransportTestSuite}
  */
 export function buildDefaultTests(): TransportTestSuite {
   return {
+    /**
+     * @returns {Promise<void>}
+     */
     async connect() {
       // Connection lifecycle tested by the caller with a fresh handler
     },
 
+    /**
+     * @param {string[]} payloads
+     * @throws {Error}
+     * @returns {Promise<void>}
+     */
     sendRecv(payloads: string[],): Promise<void> {
       // Send/receive tested by the caller with a connected handler
       for (const payload of payloads) {
@@ -125,6 +136,11 @@ export function buildDefaultTests(): TransportTestSuite {
       return Promise.resolve();
     },
 
+    /**
+     * @param {number} size
+     * @throws {Error}
+     * @returns {Promise<void>}
+     */
     backpressure(size: number,): Promise<void> {
       // Backpressure test: send a large payload and verify it doesn't throw
       if (size <= 0) {
@@ -133,15 +149,27 @@ export function buildDefaultTests(): TransportTestSuite {
       return Promise.resolve();
     },
 
+    /**
+     * @returns {Promise<void>}
+     */
     async reconnect() {
       // Reconnection tested by the caller (close + connect cycle)
     },
 
+    /**
+     * @param {CompressionAlgorithm} _algo
+     * @returns {Promise<void>}
+     */
     async compression(_algo: CompressionAlgorithm,) {
       // Compression round-trip tested by the caller with compressed handler
       // no-op for no-op default
     },
 
+    /**
+     * @param {TransportProtocol} _from
+     * @param {TransportProtocol} _to
+     * @returns {Promise<void>}
+     */
     async upgrade(_from: TransportProtocol, _to: TransportProtocol,) {
       // Upgrade tested by the caller with upgradeConnection()
     },

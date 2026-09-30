@@ -13,6 +13,9 @@ import { AsyncLogQueueBase, } from "../../logger/queue-base";
 /** */
 export class AsyncLogQueue extends AsyncLogQueueBase {
   /** */
+  /**
+   * @returns {Promise<void>}
+   */
   override async flush(): Promise<void> {
     if (this.flushing || this.buffer.length === 0) { return; }
 
@@ -29,6 +32,10 @@ export class AsyncLogQueue extends AsyncLogQueueBase {
   /**
    * @param results
    */
+  /**
+   * @param {PromiseSettledResult<Awaited<void>[]>[]} results
+   * @returns {void}
+   */
   protected override handleTransportFailure(results: PromiseSettledResult<Awaited<void>[]>[],): void {
     for (const result of results) {
       if (result.status !== "rejected") { continue; }
@@ -41,11 +48,17 @@ export class AsyncLogQueue extends AsyncLogQueueBase {
   }
 
   /** */
+  /**
+   * @returns {void}
+   */
   protected override setupTimerUnref(): void {
     // No-op in browser
   }
 
   /** */
+  /**
+   * @returns {void}
+   */
   flushSync(): void {
     // No-op in browser — not supported
   }

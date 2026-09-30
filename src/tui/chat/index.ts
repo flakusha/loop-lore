@@ -124,6 +124,10 @@ export class ChatWidget implements ChatHost {
   /**
    * @param token
    */
+  /**
+   * @param {string} token
+   * @returns {void}
+   */
   setSessionToken(token: string,): void {
     this.sessionToken = token;
   }
@@ -132,6 +136,10 @@ export class ChatWidget implements ChatHost {
 
   /**
    * @param chatId
+   */
+  /**
+   * @param {string} chatId
+   * @returns {void}
    */
   setChatId(chatId: string,): void {
     this.chatId = chatId;
@@ -143,6 +151,9 @@ export class ChatWidget implements ChatHost {
   /**
    * @returns currently-scoped chat id, or `null` when none.
    */
+  /**
+   * @returns {string | null}
+   */
   getChatId(): string | null {
     return this.chatId;
   }
@@ -151,6 +162,10 @@ export class ChatWidget implements ChatHost {
 
   /**
    * @param message - chat message to append to the list
+   */
+  /**
+   * @param {ChatMessage} message
+   * @returns {void}
    */
   addMessage(message: ChatMessage,): void {
     this.messages.push(message,);
@@ -162,6 +177,10 @@ export class ChatWidget implements ChatHost {
   /**
    * @param messages - replacement message list (cursor page or empty)
    */
+  /**
+   * @param {ChatMessage[]} messages
+   * @returns {void}
+   */
   setMessages(messages: ChatMessage[],): void {
     this.messages = messages;
     const items = Array.from(messages, (msg,) => formatMessageLine(msg,),);
@@ -171,6 +190,9 @@ export class ChatWidget implements ChatHost {
   }
 
   /** Clear the message list and item counter. */
+  /**
+   * @returns {void}
+   */
   clearMessages(): void {
     this.messages = [];
     this.itemCount = 0;
@@ -178,6 +200,9 @@ export class ChatWidget implements ChatHost {
   }
 
   /** Scroll the message list to the last item and re-render the screen. */
+  /**
+   * @returns {void}
+   */
   scrollToBottom(): void {
     if (this.itemCount > 0) {
       this.messageList.select(this.itemCount - 1,);
@@ -186,6 +211,9 @@ export class ChatWidget implements ChatHost {
   }
 
   /** Append a "…typing" placeholder and re-render. */
+  /**
+   * @returns {void}
+   */
   showTyping(): void {
     this.messageList.addItem("{italic}{yellow}... typing{/yellow}{/italic}",);
     this.itemCount++;
@@ -193,6 +221,9 @@ export class ChatWidget implements ChatHost {
   }
 
   /** Remove the "…typing" placeholder if present, then re-render. */
+  /**
+   * @returns {void}
+   */
   hideTyping(): void {
     if (this.itemCount > 0) {
       this.messageList.popItem();
@@ -203,6 +234,10 @@ export class ChatWidget implements ChatHost {
 
   /**
    * @param message - error text to append in red
+   */
+  /**
+   * @param {string} message
+   * @returns {void}
    */
   showError(message: string,): void {
     this.messageList.addItem(`{red-fg}⚠ Error: ${message}{/red-fg}`,);
@@ -217,6 +252,10 @@ export class ChatWidget implements ChatHost {
    * @param text - user message body
    * @returns resolves after dispatching to the API and updating local state.
    */
+  /**
+   * @param {string} text
+   * @returns {Promise<void>}
+   */
   async handleSend(text: string,): Promise<void> {
     return handleSendDispatch(this, text,);
   }
@@ -224,6 +263,9 @@ export class ChatWidget implements ChatHost {
   /**
    * Load messages from GET /api/chats/:id/messages with cursor-based pagination.
    * @returns resolves after updating the local message cache.
+   */
+  /**
+   * @returns {Promise<void>}
    */
   async loadMessages(): Promise<void> {
     return loadMessagesDispatch(this,);

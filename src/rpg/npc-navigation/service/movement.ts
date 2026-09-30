@@ -30,6 +30,7 @@ function getLog() {
  * @param config.wanderRadius
  * @param config.followTargetId
  * @param config.speed
+ * @returns {Promise<void>}
  */
 export async function setMovementPattern(
   db: Kysely<DB>,
@@ -60,6 +61,7 @@ export async function setMovementPattern(
  * @param actorId
  * @param worldId
  * @param targetLocationId
+ * @returns {Promise<MovementResult>}
  */
 export async function moveToLocation(
   db: Kysely<DB>,

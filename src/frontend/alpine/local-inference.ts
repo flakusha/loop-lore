@@ -73,6 +73,7 @@ export function isLocalInferenceOptedIn(): boolean {
 /**
  * Persist the opt-in flag.
  * @param optedIn - True to run eligible tasks locally.
+ * @returns {void}
  */
 export function setLocalInferenceOptIn(optedIn: boolean,): void {
   try {
@@ -88,6 +89,7 @@ export function setLocalInferenceOptIn(optedIn: boolean,): void {
  * Set by explicit downloads (model manager UI) and by the engine itself on
  * first successful load; cleared when the user deletes the model.
  * @param modelId
+ * @returns {string}
  */
 export function modelReadyKey(modelId: string,): string {
   return `local-inference-model:${modelId}`;
@@ -96,6 +98,7 @@ export function modelReadyKey(modelId: string,): string {
 /**
  * Whether a model finished at least one successful load.
  * @param modelId
+ * @returns {boolean}
  */
 export function isModelReady(modelId: string,): boolean {
   try {
@@ -108,6 +111,7 @@ export function isModelReady(modelId: string,): boolean {
 /**
  * Persist a successful model load.
  * @param modelId
+ * @returns {void}
  */
 export function markModelReady(modelId: string,): void {
   try {
@@ -120,6 +124,7 @@ export function markModelReady(modelId: string,): void {
 /**
  * Forget a model (used when the user deletes it).
  * @param modelId
+ * @returns {void}
  */
 export function clearModelReady(modelId: string,): void {
   try {

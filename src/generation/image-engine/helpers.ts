@@ -7,6 +7,7 @@ import type { ImageGenFailure, ImageGenOutcome, ImageGenSuccess, } from "./types
 /**
  * @param error
  * @param status
+ * @returns {ImageGenFailure}
  */
 export function failure(error: string, status: number,): ImageGenFailure {
   return { ok: false, error, status, };
@@ -15,6 +16,7 @@ export function failure(error: string, status: number,): ImageGenFailure {
 /**
  * @param images
  * @param mimeType
+ * @returns {ImageGenSuccess}
  */
 export function ok(images: Buffer[], mimeType: string,): ImageGenSuccess {
   return { ok: true, images, mimeType, };
@@ -23,6 +25,8 @@ export function ok(images: Buffer[], mimeType: string,): ImageGenSuccess {
 /**
  * Decode a provider-returned base64 image.
  * @throws {SafeBufferError} when the provider returned undecodable image data
+ * @param {string} value
+ * @returns {Buffer<ArrayBufferLike>}
  */
 export function decodeB64(value: string,): Buffer {
   // A provider that returns undecodable base64 is a generation failure, not
@@ -37,6 +41,7 @@ export function decodeB64(value: string,): Buffer {
  * contract or yielding 0-byte images.
  * @param values - base64 image payloads from the provider
  * @param mimeType - MIME type recorded on success
+ * @returns {ImageGenOutcome}
  */
 export function decodeImages(values: string[], mimeType: string,): ImageGenOutcome {
   try {

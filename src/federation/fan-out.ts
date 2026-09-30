@@ -127,6 +127,7 @@ export async function requestReservation(
  * @param policy Configured duplication policy.
  * @param encryption Cipher selection (probe seal + per-target content keys).
  * @param content Payload to replicate.
+ * @returns {Promise<FanOutResult>}
  */
 export async function fanOutContent(
   database: Kysely<DB>,

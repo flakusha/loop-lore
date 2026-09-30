@@ -9,6 +9,7 @@ import type { ExportContext, } from "./types";
  * Export the user's chats (optionally filtered by chat ids) into
  * `zip/chats/` as JSON. Populates `ctx.counts.chats`.
  * @param ctx
+ * @returns {Promise<void>}
  */
 export async function exportChatsToZip(ctx: ExportContext,): Promise<void> {
   let query = ctx.database

@@ -23,6 +23,8 @@ import { vnChoiceRoutes, } from "./vn-choices";
 /**
  * @param opts
  * @param prefix
+ * @throws {Error}
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { chats: { get: { body: unknown; params: {}; query: { ...; }; headers: unknown; response: { ...; }; }; }; }; } & ... ...}
  */
 export function chatsRoutes(opts: HandlerOpts, prefix = "/api",) {
   return (

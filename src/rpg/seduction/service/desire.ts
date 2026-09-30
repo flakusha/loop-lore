@@ -11,6 +11,7 @@ import type { DesireProfile, } from "./types";
  * Get or create a desire profile for an actor.
  * @param db
  * @param actorId
+ * @returns {Promise<DesireProfile>}
  */
 export async function getDesireProfile(db: Kysely<DB>, actorId: string,): Promise<DesireProfile> {
   const row = await db
@@ -64,6 +65,7 @@ export async function getDesireProfile(db: Kysely<DB>, actorId: string,): Promis
  * @param db
  * @param actorId
  * @param updates
+ * @returns {Promise<boolean>}
  */
 export async function updateDesireProfile(
   db: Kysely<DB>,

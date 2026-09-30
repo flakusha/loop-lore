@@ -36,6 +36,9 @@ export function createSqliteDialect(database: Database,): SqliteDialect {
   database.run("PRAGMA foreign_keys = ON",);
 
   const wrapped: BunSqliteWrapper = {
+    /**
+     * @returns {void}
+     */
     close() {
       database.close();
     },

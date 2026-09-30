@@ -12,7 +12,11 @@ function escapeLabel(v: string,): string {
   return v.replace(/\\/g, "\\\\",).replace(/"/g, '\\"',).replace(/\n/g, "\\n",);
 }
 
-/** Render a MetricsCollector snapshot as Prometheus text format. */
+/**
+ * Render a MetricsCollector snapshot as Prometheus text format.
+ * @param {MetricsCollector} collector
+ * @returns {string}
+ */
 export function renderPrometheus(collector: MetricsCollector,): string {
   const snap = collector.snapshot();
   const lines: string[] = [];

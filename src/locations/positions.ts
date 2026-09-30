@@ -32,6 +32,14 @@ export class ActorPositionService {
   constructor(private readonly db: Kysely<DB>,) {}
 
   /** Set or replace an actor's position. Updates `entered_at` to now. */
+  /**
+   * @param {string} actorId
+   * @param {string} physicalLocationId
+   * @param {string} spatialLocationId
+   * @throws {Error}
+   * @throws {Error}
+   * @returns {Promise<void>}
+   */
   async setPosition(
     actorId: string,
     physicalLocationId: string,
@@ -73,6 +81,10 @@ export class ActorPositionService {
   }
 
   /** Get current position, or null if the actor has none. */
+  /**
+   * @param {string} actorId
+   * @returns {Promise<ActorPosition | null>}
+   */
   async getPosition(actorId: string,): Promise<ActorPosition | null> {
     const row = await this.db
       .selectFrom("actor_locations",)
@@ -97,6 +109,10 @@ export class ActorPositionService {
   }
 
   /** Clear an actor's position (used when leaving the world). */
+  /**
+   * @param {string} actorId
+   * @returns {Promise<void>}
+   */
   async clearPosition(actorId: string,): Promise<void> {
     await this.db.deleteFrom("actor_locations",).where("actor_id", "=", actorId,).execute();
   }
@@ -105,6 +121,16 @@ export class ActorPositionService {
    * Derive a position from context for actors on a moving transport.
    * physical = transport, spatial = current stop on transport's route.
    * Caller passes the routeId; if absent, falls back to locations.current_route_id.
+   */
+  /**
+   * @param {string} actorId
+   * @param {string} transportLocationId
+   * @param {string} routeId
+   * @throws {Error}
+   * @throws {Error}
+   * @throws {Error}
+   * @throws {Error}
+   * @returns {Promise<void>}
    */
   async deriveForTransport(
     actorId: string,

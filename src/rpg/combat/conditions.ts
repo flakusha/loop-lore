@@ -8,6 +8,7 @@ import { type Combatant, } from "./types.js";
 /**
  * Check if a combatant is incapacitated (can't take actions).
  * @param combatant
+ * @returns {boolean}
  */
 export function isIncapacitated(combatant: Combatant,): boolean {
   return combatant.conditions.some((c,) => ["stunned", "paralyzed", "unconscious", "petrified",].includes(c,));
@@ -16,6 +17,7 @@ export function isIncapacitated(combatant: Combatant,): boolean {
 /**
  * Check if a combatant is dead (0 HP).
  * @param combatant
+ * @returns {boolean}
  */
 export function isDead(combatant: Combatant,): boolean {
   return combatant.hp <= 0;
@@ -24,6 +26,7 @@ export function isDead(combatant: Combatant,): boolean {
 /**
  * Check if combat is over (all of one side is defeated).
  * @param combatants
+ * @returns {{ over: boolean; winner: "player" | "enemy" | null; }}
  */
 export function isCombatOver(combatants: Combatant[],): {
   over: boolean;

@@ -30,6 +30,7 @@ const censor = new TextCensor().setStrategy(asteriskCensorStrategy(),);
  * Filter profanity from text using asterisk replacement.
  * Handles leetspeak, confusables, and case variants.
  * @param text
+ * @returns {string}
  */
 export function filter(text: string,): string {
   const matches = matcher.getAllMatches(text,);
@@ -40,6 +41,7 @@ export function filter(text: string,): string {
 /**
  * Check if text contains any profanity.
  * @param text
+ * @returns {boolean}
  */
 export function containsProfanity(text: string,): boolean {
   return matcher.hasMatch(text,);

@@ -53,6 +53,7 @@ export function parseDiceNotation(notation: string,): ParsedDice | null {
  * const result = rollFromNotation("2d6+3");
  * const advantage = rollFromNotation("d20+5 adv");
  * ```
+ * @returns {DiceRollResult | null}
  */
 export function rollFromNotation(notation: string,): DiceRollResult | null {
   const parsed = parseDiceNotation(notation,);

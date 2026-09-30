@@ -18,6 +18,7 @@ export interface AssistantToolCall {
  * Assistant tab. Pure helper kept out of `bootstrap.ts` so that file stays
  * under the 250-line size guard.
  * @param messages
+ * @returns {AssistantToolCall[]}
  */
 export function collectAssistantToolCalls(
   messages: readonly {
@@ -71,6 +72,9 @@ export const chatPanels: Partial<ChatState> & ThisType<ChatState> = {
   _keydownHandler: null as ((e: KeyboardEvent,) => void) | null,
   _observer: null as MutationObserver | null,
 
+  /**
+   * @returns {void}
+   */
   registerPanelHandlers() {
     this._toggleChatListHandler = () => {
       Alpine.store("ui",).showChatList = !Alpine.store("ui",).showChatList;
@@ -152,6 +156,9 @@ export const chatPanels: Partial<ChatState> & ThisType<ChatState> = {
     document.addEventListener("keydown", this._keydownHandler,);
   },
 
+  /**
+   * @returns {void}
+   */
   unregisterPanelHandlers() {
     if (this._toggleChatListHandler) {
       document.removeEventListener("toggle-chat-list", this._toggleChatListHandler,);

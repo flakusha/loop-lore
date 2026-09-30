@@ -28,7 +28,11 @@ export interface WorkflowRow {
   min_vram: number | null;
 }
 
-/** Parse a stored row's payload, or null when it no longer validates. */
+/**
+ * Parse a stored row's payload, or null when it no longer validates.
+ * @param {WorkflowRow} row
+ * @returns {WorkflowPayload | null}
+ */
 export function rowToPayload(row: WorkflowRow,): WorkflowPayload | null {
   const parsed = jsonParseOr<unknown>(row.payload, null,);
   if (!parsed || typeof parsed !== "object") { return null; }
@@ -60,6 +64,7 @@ export function rowToPayload(row: WorkflowRow,): WorkflowPayload | null {
  * @param payload - Validated workflow payload
  * @param params - Caller-supplied parameter values
  * @throws {Error} When a `{{placeholder}}` survives substitution
+ * @returns {ComfyUIWorkflow}
  */
 export function buildWorkflowGraph(
   payload: WorkflowPayload,
@@ -100,6 +105,7 @@ export function buildWorkflowGraph(
  * Returns null when the payload is unreadable or the row is disabled — a
  * disabled workflow must not appear in the picker at all.
  * @param row - Stored workflow row
+ * @returns {WorkflowTemplate | null}
  */
 export function rowToTemplate(row: WorkflowRow,): WorkflowTemplate | null {
   if (row.enabled !== "enabled") { return null; }
@@ -124,6 +130,7 @@ export function rowToTemplate(row: WorkflowRow,): WorkflowTemplate | null {
  * uses bare names, so both spellings are accepted.
  * @param row - Stored workflow row
  * @param installed - Node info as returned by the ComfyUI client
+ * @returns {string[]}
  */
 export function missingRequiredNodes(
   row: WorkflowRow,

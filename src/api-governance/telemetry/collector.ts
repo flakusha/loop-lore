@@ -26,6 +26,12 @@ export class MetricsCollector {
   private counters = new Map<string, number>();
 
   /** Record a request with status and latency. */
+  /**
+   * @param {string} route
+   * @param {number} status
+   * @param {number} latencyMs
+   * @returns {void}
+   */
   recordRequest(route: string, status: number, latencyMs: number,): void {
     const stats = this.routes.get(route,) ?? { requests: 0, errors: 0, latencies: [], };
     stats.requests += 1;
@@ -40,11 +46,19 @@ export class MetricsCollector {
   }
 
   /** Increment a named counter. */
+  /**
+   * @param {string} name
+   * @param {unknown} by
+   * @returns {void}
+   */
   increment(name: string, by = 1,): void {
     this.counters.set(name, (this.counters.get(name,) ?? 0) + by,);
   }
 
   /** Snapshot all metrics for export. */
+  /**
+   * @returns {{ uptimeSec: number; routes: { route: string; requests: number; errors: number; p50: number; p95: number; }[]; counters: Record<string, number>; }}
+   */
   snapshot(): {
     uptimeSec: number;
     routes: Array<{ route: string; requests: number; errors: number; p50: number; p95: number }>;
@@ -68,6 +82,9 @@ export class MetricsCollector {
   }
 
   /** Reset all metrics to zero. */
+  /**
+   * @returns {void}
+   */
   reset(): void {
     this.routes.clear();
     this.counters.clear();

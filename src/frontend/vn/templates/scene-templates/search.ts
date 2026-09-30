@@ -7,6 +7,7 @@ import { SCENE_TEMPLATES, } from "./scene-templates";
 
 /**
  * @param query
+ * @returns {VnTemplate[]}
  */
 export function searchTemplates(query: string,): VnTemplate[] {
   const lower = query.toLowerCase();

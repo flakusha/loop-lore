@@ -11,6 +11,7 @@ import { type HandlerOpts, MessageSectionAssignBody, MessageSectionAssignRespons
 /**
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { chats: { ":id": { messages: { ...; }; }; }; }; }, { ...; }, { ...; }>}
  */
 export function assignRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;

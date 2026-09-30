@@ -11,7 +11,9 @@ import { can, } from "../../users/permissions";
 import { jsonParseOr, } from "../../utils";
 import type { MessageSearchQuery, } from "../../validation/schemas";
 
-/** */
+/**
+ * @returns {Logger}
+ */
 export function log(): Logger {
   return getLogger().child({ module: "message-search", },);
 }
@@ -47,6 +49,7 @@ export const SNIPPET_LENGTH = 30;
  * Tokens are joined with a space (FTS5 default AND). This prevents FTS query
  * syntax errors and injection via operators like `->`, `*`, or `NEAR`.
  * @param raw
+ * @returns {string}
  */
 export function buildFtsQuery(raw: string,): string {
   const tokens: string[] = [];
@@ -61,6 +64,7 @@ export function buildFtsQuery(raw: string,): string {
 /**
  * Parse the stored `messages.attachments` JSON into the response attachment list.
  * @param raw
+ * @returns {unknown[]}
  */
 export function parseAttachments(raw: string | null,): unknown[] {
   if (!raw) { return []; }
@@ -71,6 +75,7 @@ export function parseAttachments(raw: string | null,): unknown[] {
  * Escape SQL LIKE metacharacters so a user-supplied `linkPattern` matches
  * literally (paired with `ESCAPE '\'` in the clause).
  * @param pattern
+ * @returns {string}
  */
 export function escapeLike(pattern: string,): string {
   return pattern.replaceAll("\\", "\\\\",).replaceAll("%", "\\%",).replaceAll("_", "\\_",);
@@ -86,6 +91,7 @@ export function escapeLike(pattern: string,): string {
  * @param userId
  * @param userRole
  * @param isSingleChat
+ * @returns {RawBuilder<unknown>}
  */
 export function extraWhere(
   query: typeof MessageSearchQuery.static,

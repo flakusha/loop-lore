@@ -14,23 +14,33 @@ import { getKeymap, } from "./shortcuts";
 /**
  * Alpine component for the keynav help overlay.
  * Reads shortcuts from the keymap registry.
+ * @returns {{ open: boolean; shortcuts: ShortcutEntry[]; init(): void; toggle(): void; close(): void; label(key: string): string; }}
  */
 export function keynavHelp() {
   return {
     open: false,
     shortcuts: getKeymap(),
 
+    /**
+     * @returns {void}
+     */
     init() {
       // Listen for ? key dispatched by shortcuts.ts
       window.addEventListener("keynav:toggle-help", () => this.toggle(),);
       // Also open from any help button in templates
     },
 
+    /**
+     * @returns {void}
+     */
     toggle() {
       this.open = !this.open;
       document.body.style.overflow = this.open ? "hidden" : "";
     },
 
+    /**
+     * @returns {void}
+     */
     close() {
       if (!this.open) { return; }
       this.open = false;
@@ -41,6 +51,10 @@ export function keynavHelp() {
      * Translate an i18n key via the global t() helper.
      * Falls back to the action name if no translation exists.
      * @param key
+     */
+    /**
+     * @param {string} key
+     * @returns {string}
      */
     label(key: string,): string {
       const fn = (globalThis as unknown as { t?: (k: string,) => string }).t;

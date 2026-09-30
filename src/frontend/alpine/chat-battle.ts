@@ -19,6 +19,9 @@ export const chatBattle: Partial<ChatState> & ThisType<ChatState> = {
   _battle: null as BattleView | null,
 
   /** Mount the battle panel into the input area on first use. */
+  /**
+   * @returns {void}
+   */
   mountBattlePanel() {
     if (this._battleRef) { return; }
     const el = this.$refs?.battlePanel as HTMLDivElement | undefined;
@@ -33,6 +36,9 @@ export const chatBattle: Partial<ChatState> & ThisType<ChatState> = {
   },
 
   /** Detach the battle panel and clear the mount. */
+  /**
+   * @returns {void}
+   */
   destroyBattlePanel() {
     if (this._battleRef) {
       destroyBattlePanel();
@@ -45,6 +51,10 @@ export const chatBattle: Partial<ChatState> & ThisType<ChatState> = {
   /**
    * Render (or update) the battle panel from a `battle-*` command action.
    * @param view
+   */
+  /**
+   * @param {BattleView | null} view
+   * @returns {void}
    */
   renderBattlePanel(view: BattleView | null,) {
     if (view) {
@@ -59,6 +69,9 @@ export const chatBattle: Partial<ChatState> & ThisType<ChatState> = {
   },
 
   /** Query the current chat's active battle for SSR/poll re-render. */
+  /**
+   * @returns {void}
+   */
   refreshBattlePanel() {
     if (!this._battleVisible || !this._battle) { return; }
     this.mountBattlePanel();

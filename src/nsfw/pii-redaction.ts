@@ -52,6 +52,7 @@ export type NsfwGateReason = typeof NSFW_GATE_REASONS[number];
 /**
  * Type guard for `NsfwGateReason`.
  * @param value
+ * @returns {boolean}
  */
 export function isNsfwGateReason(value: unknown,): value is NsfwGateReason {
   return typeof value === "string" && (NSFW_GATE_REASONS as readonly string[]).includes(value,);
@@ -76,7 +77,10 @@ function secret(configured?: string,): string {
   cachedSecret ??= effectiveSecret();
   return cachedSecret;
 }
-/** Bust the memoized secret + key. Test-only; called when env flips mid-process. */
+/**
+ * Bust the memoized secret + key. Test-only; called when env flips mid-process.
+ * @returns {void}
+ */
 export function resetNsfwPiiSecretCache(): void {
   cachedSecret = null;
   hmacKeyPromise = null;
@@ -133,6 +137,7 @@ export const NSFW_METADATA_MAX_BYTES = 1024;
  * Async because WebCrypto's HMAC `sign` is async; the key is cached
  * after the first call.
  * @param value
+ * @returns {Promise<string>}
  */
 export async function hashId(value: string, configured?: string,): Promise<string> {
   const key = await getHmacKey(configured,);
@@ -165,6 +170,7 @@ const PII_METADATA_KEYS = new Set<string>([
  * Also strips any key whose name ends in `Content`, `Message`, or `Text`
  * (case-insensitive) — same family of fields, different naming.
  * @param metadata
+ * @returns {Record<string, unknown>}
  */
 export function applyNsfwMetadataRedaction(
   metadata: Record<string, unknown> | undefined,
@@ -209,6 +215,7 @@ export const NOTIFICATION_BODY_MAX_CHARS = 500;
  * @param actionType
  * @param _adminReason
  * @param reasonOverride
+ * @returns {string}
  */
 export function buildUserNotificationBody(
   actionType: string,

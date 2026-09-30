@@ -15,6 +15,7 @@ import { can, } from "../users/permissions";
 
 /**
  * @param ctx
+ * @returns {Response | undefined}
  */
 export function adminViewGuard(ctx: any,): Response | undefined {
   if (!can(ctx.userRole, "admin.system",)) {

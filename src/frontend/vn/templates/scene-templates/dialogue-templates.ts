@@ -147,12 +147,15 @@ export const DIALOGUE_TEMPLATES: VnTemplate[] = [
 
 /**
  * @param id
+ * @returns {VnTemplate | undefined}
  */
 export function getDialogueTemplate(id: string,): VnTemplate | undefined {
   return DIALOGUE_TEMPLATES.find((t,) => t.id === id);
 }
 
-/** */
+/**
+ * @returns {VnTemplate[]}
+ */
 export function listDialogueTemplates(): VnTemplate[] {
   return [...DIALOGUE_TEMPLATES,];
 }

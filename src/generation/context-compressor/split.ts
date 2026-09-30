@@ -7,6 +7,7 @@ import type { SplitMessages, } from "./types";
 /**
  * Separate leading system messages from conversation messages
  * @param messages
+ * @returns {SplitMessages}
  */
 export function splitSystemMessages(messages: ContextMessage[],): SplitMessages {
   const system: ContextMessage[] = [];

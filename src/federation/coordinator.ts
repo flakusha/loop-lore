@@ -43,6 +43,8 @@ export interface ResyncSummary {
  * @param peer.capabilities
  * @param peer.capacityBytes
  * @returns Canonical origin stored.
+ * @throws {Error}
+ * @throws {Error}
  */
 export async function upsertPeer(
   database: Kysely<DB>,
@@ -82,6 +84,8 @@ export async function upsertPeer(
  * @param database
  * @param origin
  * @param state
+ * @throws {Error}
+ * @returns {Promise<void>}
  */
 export async function setPeerState(
   database: Kysely<DB>,
@@ -104,6 +108,7 @@ export async function setPeerState(
  * List registry peers, optionally filtered by state.
  * @param database
  * @param state
+ * @returns {Promise<{ created_at: string; origin: string; state: string; capabilities: string; last_seen: string | null; capacity_bytes: number | null; }[]>}
  */
 export async function listPeers(database: Kysely<DB>, state?: PeerState,) {
   let query = database.selectFrom("mesh_peers",).selectAll();
@@ -119,6 +124,8 @@ export async function listPeers(database: Kysely<DB>, state?: PeerState,) {
  * @param database
  * @param origin
  * @param advertisement
+ * @throws {Error}
+ * @returns {Promise<void>}
  */
 export async function touchPeer(
   database: Kysely<DB>,
@@ -152,6 +159,7 @@ export async function touchPeer(
  * @param opts
  * @param opts.trustByOrigin
  * @param opts.fetchImpl
+ * @returns {Promise<ResyncSummary>}
  */
 export async function runResyncPass(
   database: Kysely<DB>,

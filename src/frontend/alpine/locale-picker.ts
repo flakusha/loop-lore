@@ -10,16 +10,24 @@
 
 import { type Locale, LOCALE_REGISTRY, SUPPORTED_LOCALES, } from "../i18n";
 
-/** */
+/**
+ * @returns {{ open: boolean; currentLocale: string; init(): void; locales(): { id: Locale; name: string; nativeName: string; direction: "ltr" | "rtl"; }[]; currentLabel(): string; select(localeId: string): void; }}
+ */
 export function localePicker() {
   return {
     open: false,
     currentLocale: "en" as string,
 
+    /**
+     * @returns {void}
+     */
     init() {
       this.currentLocale = localStorage.getItem("locale",) || "en";
     },
 
+    /**
+     * @returns {{ id: Locale; name: string; nativeName: string; direction: "ltr" | "rtl"; }[]}
+     */
     locales() {
       return Array.from(SUPPORTED_LOCALES, (localeId,) => {
         const info = LOCALE_REGISTRY[localeId];
@@ -27,11 +35,18 @@ export function localePicker() {
       },);
     },
 
+    /**
+     * @returns {string}
+     */
     currentLabel() {
       const info = LOCALE_REGISTRY[this.currentLocale as Locale];
       return info ? `${info.nativeName} (${info.name})` : "English";
     },
 
+    /**
+     * @param {string} localeId
+     * @returns {void}
+     */
     select(localeId: string,) {
       this.currentLocale = localeId;
       this.open = false;

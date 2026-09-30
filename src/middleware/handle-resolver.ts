@@ -46,6 +46,7 @@ export interface HandleResolver {
  * @param opts - TTL + max entries overrides (testing only).
  * @param opts.ttlMs
  * @param opts.maxEntries
+ * @returns {HandleResolver}
  */
 export function createHandleResolver(
   database: Kysely<DB>,

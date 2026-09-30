@@ -47,6 +47,7 @@ function toWireItems(items: readonly NotificationRecord[],) {
  * transient failure must silently skip the beat and keep the stream alive.
  * @param database
  * @param userId
+ * @returns {Promise<NotificationSnapshot>}
  */
 export async function loadNotificationSnapshot(
   database: Kysely<DB>,
@@ -103,6 +104,9 @@ export class NotificationStreamer {
   ) {}
 
   /** */
+  /**
+   * @returns {Response}
+   */
   open(): Response {
     const encoder = new TextEncoder();
     let timer: ReturnType<typeof setInterval> | undefined;

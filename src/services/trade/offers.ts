@@ -21,6 +21,7 @@ export const TRADE_RECIPE_SENTINEL = "__trade_offer__";
  * so we need a real row to reference for trade offers.
  * @param db
  * @param worldId
+ * @returns {Promise<void>}
  */
 export async function ensureTradeSentinel(
   db: Kysely<DB>,
@@ -79,6 +80,7 @@ export async function ensureTradeSentinel(
  * @param opts.buyerItems
  * @param opts.price
  * @param opts.deadline
+ * @returns {Promise<string>}
  */
 export async function createOffer(
   db: Kysely<DB>,
@@ -120,6 +122,7 @@ export async function createOffer(
  * @param db
  * @param offerId
  * @param acceptorActorId
+ * @returns {Promise<TradeResult | { offer: { world_id: string; requester_actor_id: string; crafter_actor_id: string | null; offered_payment: number; offered_materials: string; requested_materials: string; }; buyerItems: TradeLine[]; sellerItems: TradeLine[]; }>}
  */
 export async function loadOfferForAccept(
   db: Kysely<DB>,
@@ -171,6 +174,7 @@ export async function loadOfferForAccept(
  * @param db
  * @param offerId
  * @param success
+ * @returns {Promise<void>}
  */
 export async function markOfferStatus(
   db: Kysely<DB>,
@@ -188,6 +192,7 @@ export async function markOfferStatus(
  * @param db
  * @param offerId
  * @param cancellerActorId
+ * @returns {Promise<{ success: boolean; reason?: string | undefined; }>}
  */
 export async function cancelOffer(
   db: Kysely<DB>,

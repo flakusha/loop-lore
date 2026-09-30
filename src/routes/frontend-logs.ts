@@ -36,6 +36,7 @@ interface LogBatch {
 
 /**
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { frontend: { logs: { ...; }; }; }; }, { ...; }, { ...; }>}
  */
 export function frontendLogsRoutes(prefix = "/api",) {
   return new Elysia({ name: "frontend-logs", },).post(`${prefix}/frontend/logs`, async ({ request, ...rest },) => {

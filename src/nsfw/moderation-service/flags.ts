@@ -46,6 +46,9 @@ export interface FlagContentArgs {
  * @param root0
  * @param root0.thisL
  * @param root0.params
+ * @throws {Error}
+ * @throws {Error}
+ * @returns {Promise<ContentFlag>}
  */
 export async function flagContent({ thisL, params, }: FlagContentArgs,): Promise<ContentFlag> {
   // BUG-flagcontent-toctou: race-free dedup via partial UNIQUE INDEX.
@@ -120,6 +123,7 @@ export interface GetFlagQueueArgs {
  * @param root0
  * @param root0.thisL
  * @param root0.params
+ * @returns {Promise<{ flags: ContentFlag[]; total: number; }>}
  */
 export async function getFlagQueue(
   { thisL, params, }: GetFlagQueueArgs,
@@ -157,6 +161,8 @@ export interface ResolveFlagArgs {
  * @param root0.resolvedBy
  * @param root0.resolution
  * @param root0.status
+ * @throws {Error}
+ * @returns {Promise<ContentFlag>}
  */
 export async function resolveFlag(
   { thisL, flagId, resolvedBy, resolution, status, }: ResolveFlagArgs,

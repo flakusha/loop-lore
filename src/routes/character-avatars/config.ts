@@ -20,6 +20,7 @@ import type { HandlerOpts, } from "./types";
  * Avatar config sub-plugin — actor and world avatar-selection configuration.
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { actors: { ":actorId": { ...; }; }; }; } & { ...; } & { ...; } & { ...; }, { ...; }, { ...; }>}
  */
 export function configRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;

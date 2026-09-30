@@ -20,6 +20,8 @@ import type { GeneratorState, } from "./types";
  * @param type
  * @param source
  * @param cases
+ * @throws {Error}
+ * @returns {Promise<string>}
  */
 export async function persist(
   state: GeneratorState,

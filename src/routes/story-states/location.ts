@@ -17,6 +17,7 @@ const locationStateResponse = t.Object({
  * @param root0
  * @param root0.database
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { locations: { ":id": { ...; }; }; }; } & { ...; }, { ...; }, { ...; }>}
  */
 export function storyLocationStateRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
   return new Elysia({ name: "story-states-location", },)

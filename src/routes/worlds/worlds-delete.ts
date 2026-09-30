@@ -11,6 +11,7 @@ import { requireWorldOwner, } from "./access";
  * @param worldId
  * @param userId
  * @param userRole
+ * @returns {Promise<Response>}
  */
 export async function handleDeleteWorld(
   database: Kysely<DB>,

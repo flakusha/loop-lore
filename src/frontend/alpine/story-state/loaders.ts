@@ -26,6 +26,10 @@ import type { StoryStateComponent, } from "./types";
 
 /** Backend loaders for the story-state component (bound via `this`). */
 export const loaders = {
+  /**
+   * @param {StoryStateComponent} this
+   * @returns {Promise<void>}
+   */
   async _loadChat(this: StoryStateComponent,): Promise<void> {
     const chatId = this.chatId;
     if (!chatId) { return; }
@@ -40,6 +44,10 @@ export const loaders = {
     }
   },
 
+  /**
+   * @param {StoryStateComponent} this
+   * @returns {Promise<void>}
+   */
   async _loadTurns(this: StoryStateComponent,): Promise<void> {
     if (!this.chatId) { return; }
     const summary = summarizeTurns(await fetchStoryTurns(this.chatId,),);
@@ -50,12 +58,20 @@ export const loaders = {
     this.banners = summary.banners;
   },
 
+  /**
+   * @param {StoryStateComponent} this
+   * @returns {Promise<void>}
+   */
   async _loadQuests(this: StoryStateComponent,): Promise<void> {
     const worldId = this._worldId;
     if (!worldId) { return; }
     this.quests = await fetchQuests(worldId,);
   },
 
+  /**
+   * @param {StoryStateComponent} this
+   * @returns {Promise<void>}
+   */
   async _loadWorldState(this: StoryStateComponent,): Promise<void> {
     const locationId = this._locationId;
     const worldId = this._worldId;
@@ -75,6 +91,10 @@ export const loaders = {
     }
   },
 
+  /**
+   * @param {StoryStateComponent} this
+   * @returns {Promise<void>}
+   */
   async _loadParticipants(this: StoryStateComponent,): Promise<void> {
     const chatId = this.chatId;
     if (!chatId) { return; }

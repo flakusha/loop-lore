@@ -30,6 +30,10 @@ export const img2img: WorkflowTemplate = {
     { name: "denoise_strength", type: "number", label: "Denoise Strength", default: 0.75, min: 0, max: 1, step: 0.05, },
     { name: "seed", type: "number", label: "Seed", default: -1, min: -1, max: 2_147_483_647, },
   ],
+  /**
+   * @param {unknown} params
+   * @returns {{ "5": { inputs: { pixels: (string | number)[]; vae: (string | number)[]; }; class_type: string; _meta: { title: string; }; }; }}
+   */
   build(params,) {
     const seed = resolveSeed(params.seed,);
     return {

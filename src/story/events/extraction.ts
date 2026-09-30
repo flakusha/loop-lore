@@ -77,6 +77,7 @@ export interface ExtractEventsOpts {
  * @param root0.messageContent
  * @param root0.actorId
  * @param root0.currentLocationId
+ * @returns {WorldEvent[]}
  */
 export function extractEvents({
   messageContent,

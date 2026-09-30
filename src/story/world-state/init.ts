@@ -15,6 +15,7 @@ import type { WorldState, } from "./types";
  * Initialize NPC dynamic states for all characters in a world
  * @param state
  * @param worldId
+ * @returns {Promise<number>}
  */
 export async function initializeNpcStates(state: WorldState, worldId: string,): Promise<number> {
   const characters = await state.db
@@ -60,6 +61,7 @@ export async function initializeNpcStates(state: WorldState, worldId: string,): 
  * Initialize per-world character setup rows for all characters in a world
  * @param state
  * @param worldId
+ * @returns {Promise<number>}
  */
 export async function initializeCharacterWorldSetup(state: WorldState, worldId: string,): Promise<number> {
   const characters = await state.db
@@ -110,6 +112,7 @@ export async function initializeCharacterWorldSetup(state: WorldState, worldId: 
  * author must create definitions before the seed resolves them).
  * @param state
  * @param worldId
+ * @returns {Promise<number>}
  */
 export async function seedStartingInventory(state: WorldState, worldId: string,): Promise<number> {
   const setups = await state.db
@@ -165,6 +168,7 @@ export async function seedStartingInventory(state: WorldState, worldId: string,)
  * Initialize location dynamic states for all locations in a world
  * @param state
  * @param worldId
+ * @returns {Promise<number>}
  */ export async function initializeLocationStates(
   state: WorldState,
   worldId: string,

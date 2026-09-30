@@ -36,6 +36,7 @@ export function spillFileStem(id: string,): string {
  * Exported so `apply.ts` can eagerly spill bodies that exceed the inline
  * threshold at completion time (rather than nulling them and losing the
  * data). BUG-bug-async-store-complete-drops-response-body-larger-than-max.
+// hint: Structural and logic conflict. Both design and behavior differ.
  * @param id - result row id (hashed into the filename stem)
  * @param body - raw response body text
  * @returns absolute path to the gzipped spill file.

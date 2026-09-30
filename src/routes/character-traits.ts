@@ -16,6 +16,7 @@ import { worldTraitRoutes, } from "./character-traits/world";
 /**
  * @param opts
  * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { actors: { ":actorId": { ...; }; }; }; } & ... 8 more ... & { ...; }, { ...; }, { ...; } & { ...; }>}
  */
 export function characterTraitsRoutes(opts: HandlerOpts, prefix = "/api",) {
   return new Elysia({ name: "character-traits", },)
