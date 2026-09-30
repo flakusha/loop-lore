@@ -7,16 +7,18 @@
 **Priority:** medium
 **Effort:** Large
 
-**Summary:**
+**Summary:** Render faction relations on the shared graph-canvas, adding the minimal factions backend the frontend needs first — no faction persistence exists today.
 
-<!-- SPDX-License-Identifier: Apache-2.0 --><!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors --><a name="summary"></a>## SummaryFaction relations graph on the shared graph-canvas. Prerequisite: no factions table exists today (grep confirms zero faction tables in src/db; npc.ts renders MOCK_FACTIONS only), so this ticket pairs a minimal factions backend slice with the graph frontend.<a name="context"></a>## ContextDepends on FEAT-generic-2d-graph-canvas-renderer-reusing-game-canvas. Today: src/frontend/alpine/npc-faction-mock.ts mock data, ChatNpcState.factions panel, no persistence. Backend slice: factions + faction_memberships (+ optional faction_standings) via new forward migration, following character_relationships precedent (uq actor/target/world). Frontend: nodes = factions, edges = standings/alliances, member counts as node weight.<a name="acceptance"></a>## Acceptance Criteria- [ ] New migration creates factions/membership tables; NPC faction panel reads real data with mock fallback removed or flagged.- [ ] Graph-canvas renders faction nodes + standing edges, capped at 200 nodes.- [ ] bun run check green (incl. db:sync-types regen).
+**Context:** Depends on FEAT-generic-2d-graph-canvas-renderer-reusing-game-canvas.
 
-**Context:**
+Today: `src/frontend/alpine/npc-faction-mock.ts` supplies mock data to the `ChatNpcState.factions` panel; a grep of `src/db` finds no faction tables at all.
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Backend slice: `factions` + `faction_memberships` (plus optional `faction_standings`) via a new forward migration, following the `character_relationships` precedent (`uq_relationships_actor_target_world`). Regenerate types with `db:sync-types`.
+
+Frontend: nodes = factions, edges = standings/alliances, member counts as node weight.
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [ ] New migration creates the faction tables; the NPC faction panel reads real data, and any mock fallback is removed or clearly flagged.
+- [ ] Graph-canvas renders faction nodes plus standing edges, capped at 200 nodes.
+- [ ] `bun run check` green, including `db:sync-types` regen.
