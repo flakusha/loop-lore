@@ -12,13 +12,8 @@
  * stub must not leak into shared-process runs.
  */
 
-import { describe, expect, mock, test, } from "bun:test";
-
-/** True only when each test file owns its module registry (`--isolate`). */
-const ISOLATED_RUN = ["test", "test:unit", "test:coverage", "check:parallel",].includes(
-  process.env.npm_lifecycle_event ?? "",
-);
-const describeOrSkipIsolated = ISOLATED_RUN ? describe : describe.skip;
+import { expect, mock, test, } from "bun:test";
+import { describeOrSkip as describeOrSkipIsolated, ISOLATED as ISOLATED_RUN, } from "../test-utils/isolate-only";
 
 const stub = { mode: "ok" as "ok" | "mismatch" | "throw", dlopenCalls: 0, };
 
