@@ -3,7 +3,7 @@
 
 # BUG: Async spill uses the idempotency cache key as a filename, so every routed id loses its body
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Small
 
