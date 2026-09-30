@@ -15,7 +15,9 @@
  * Alpine components (e.g. keynavHelp) subscribe to. Enabled only when
  * the `keynav` localStorage flag is set.
  */
+import { log as rootLog, } from "./logger";
 
+const log = rootLog.child({ module: "shortcuts", },);
 /** A single entry of the keyboard navigation keymap. */
 export interface ShortcutEntry {
   /** Key combo, e.g. "g g", "?", "j". */
@@ -119,9 +121,10 @@ export function dispatchKeynavActionToHandlers(action: string,): void {
     try {
       handler();
     } catch (err) {
-      // ponytail: console.error until the project's logger is wired into
-      // shortcuts.ts (no logger import here to keep this module leaf-level).
-      console.error(`[keynav] handler for "${action}" threw:`, err,);
+      log.error(
+        `[keynav] handler for "${action}" threw`,
+        err instanceof Error ? err : new Error(String(err,),),
+      );
     }
   }
 }
