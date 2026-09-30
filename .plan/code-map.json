@@ -27006,6 +27006,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-character-create-silently-drops-personality-scenario-welcome.md"
     }
   ],
@@ -27537,6 +27541,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-chat-setup-templates-edit-delete.md"
+    }
+  ],
+  "src/routes/chats/turn-skip-routes.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam.md"
     }
   ],
   "src/routes/chats/turn-skip-routes.ts": [
@@ -28783,6 +28793,12 @@
       "source": ".plan/tickets/TASK-turn-send-gate.md"
     }
   ],
+  "src/routes/messages/forward.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam.md"
+    }
+  ],
   "src/routes/messages/forward.ts": [
     {
       "kind": "ticket",
@@ -28925,6 +28941,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-db-read-path-benchmark-baseline.md"
+    }
+  ],
+  "src/routes/messages/reply-encrypted.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam.md"
     }
   ],
   "src/routes/messages/reply.test.ts": [
@@ -36961,6 +36983,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-gallery-user-tagging-propositions.md"
+    }
+  ],
+  "src/validation/schemas/chat.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam.md"
     }
   ],
   "src/validation/schemas/chat.ts": [
