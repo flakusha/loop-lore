@@ -7,13 +7,6 @@
  * Online-safe `gmConfig` sub-keys split from `gm-config.ts` to keep it
  * under the file-size guard.
  */
-
-/**
- * `gmConfig` sub-keys that are presentation (display) state, mirroring the
- * backend `GM_CONFIG_PRESENTATION_KEYS` in `src/chat/service/access.ts`. Only
- * these may be mutated once a chat is online; the GM-execution keys stay
- * immutable.
- */
 export const GM_CONFIG_PRESENTATION_KEYS = [
   "renderingOverride",
   "visualNovel",

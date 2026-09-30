@@ -50,12 +50,6 @@ export async function createDefinition(state: ItemState, def: ItemDefinition,): 
  * @param itemId
  * @param worldId
  */
-/**
- * @param {ItemState} state
- * @param {string} itemId
- * @param {string} worldId
- * @returns {Promise<{ id: string; name: string; created_at: string; updated_at: string; world_id: string; value: number; properties: string; description: string | null; category: ItemCategory; weight: number; rarity: ItemRarity; stackable: StackableState; max_stack: number; } | null>}
- */
 export async function getDefinition(state: ItemState, itemId: string, worldId: string,) {
   return (await state.db.selectFrom("items",).selectAll().where("id", "=", itemId,).where("world_id", "=", worldId,)
     .executeTakeFirst()) ?? null;

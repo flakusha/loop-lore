@@ -119,10 +119,6 @@ export class AssetView {
   /**
    * @param msg
    */
-  /**
-   * @param {string} msg
-   * @returns {void}
-   */
   private renderInfo(msg: string,): void {
     this.assetCountLabel.setContent("",);
     this.infoLabel.setContent(msg,);
@@ -132,10 +128,6 @@ export class AssetView {
   /**
    * @param bytes - raw byte count
    * @returns human-readable size (`B` / `KB` / `MB`).
-   */
-  /**
-   * @param {number} bytes
-   * @returns {string}
    */
   private formatSize(bytes: number,): string {
     if (bytes < 1024) { return `${bytes} B`; }
@@ -148,9 +140,6 @@ export class AssetView {
   /**
    * Show the asset-view box and re-render the screen.
    */
-  /**
-   * @returns {void}
-   */
   show(): void {
     this.box.show();
     this.screen.render();
@@ -159,9 +148,6 @@ export class AssetView {
   /**
    * Hide the asset-view box and re-render the screen.
    */
-  /**
-   * @returns {void}
-   */
   hide(): void {
     this.box.hide();
     this.screen.render();
@@ -169,9 +155,6 @@ export class AssetView {
 
   /**
    * @returns `true` when the box is currently visible.
-   */
-  /**
-   * @returns {void}
    */
   toggle(): void {
     if (this.box.visible) {
@@ -184,19 +167,12 @@ export class AssetView {
   /**
    * @returns `true` when the asset-view box is currently visible.
    */
-  /**
-   * @returns {boolean}
-   */
   isVisible(): boolean {
     return this.box.visible;
   }
 
   /**
    * @param chatId - chat whose assets should be displayed
-   */
-  /**
-   * @param {string} chatId
-   * @returns {void}
    */
   setChatId(chatId: string,): void {
     this.chatId = chatId;
@@ -207,9 +183,6 @@ export class AssetView {
 
   /**
    * @returns currently-scoped chat id, or `null` when none.
-   */
-  /**
-   * @returns {string | null}
    */
   getChatId(): string | null {
     return this.chatId;

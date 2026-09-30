@@ -15,10 +15,6 @@ export const memoryPanelActions: Partial<ChatState> & ThisType<ChatState> = {
    * Commit a pending extracted memory into prompt context.
    * @param id Memory id.
    */
-  /**
-   * @param {string} id
-   * @returns {void}
-   */
   approveMemory(id: string,): void {
     void this._setReviewStatus(id, "committed",);
   },
@@ -26,10 +22,6 @@ export const memoryPanelActions: Partial<ChatState> & ThisType<ChatState> = {
   /**
    * Discard a pending extracted memory.
    * @param id Memory id.
-   */
-  /**
-   * @param {string} id
-   * @returns {void}
    */
   rejectMemory(id: string,): void {
     void this._setReviewStatus(id, "rejected",);
@@ -39,11 +31,6 @@ export const memoryPanelActions: Partial<ChatState> & ThisType<ChatState> = {
    * PUT the review status, then refresh the visible list.
    * @param id Memory id.
    * @param status New review status.
-   */
-  /**
-   * @param {string} id
-   * @param {"committed" | "rejected"} status
-   * @returns {Promise<void>}
    */
   async _setReviewStatus(id: string, status: "committed" | "rejected",) {
     if (this.memoryPanel.busy) { return; }
@@ -69,10 +56,6 @@ export const memoryPanelActions: Partial<ChatState> & ThisType<ChatState> = {
    * Scroll the chat transcript to the message a memory was extracted from.
    * @param messageId
    */
-  /**
-   * @param {string} messageId
-   * @returns {void}
-   */
   jumpToMemorySource(messageId: string,) {
     if (!messageId) { return; }
     const el = document.querySelector<HTMLElement>(`[data-message-id="${CSS.escape(messageId,)}"]`,);
@@ -85,9 +68,6 @@ export const memoryPanelActions: Partial<ChatState> & ThisType<ChatState> = {
    * True when the active chat carries chat-scoped memory copies.
    * @returns whether any loaded memory is a copy for the active chat
    */
-  /**
-   * @returns {boolean}
-   */
   _chatHasCopies(): boolean {
     if (!this.activeChat) { return false; }
     return this.memoryPanel.characterMemories.some((m,) => m.sourceChatId === this.activeChat);
@@ -97,10 +77,6 @@ export const memoryPanelActions: Partial<ChatState> & ThisType<ChatState> = {
    * Whether a memory is injected into the active chat's context.
    * @param mem
    * @returns whether the memory is part of the active chat's context
-   */
-  /**
-   * @param {MemoryEntry} mem
-   * @returns {boolean}
    */
   _isInChat(mem: MemoryEntry,): boolean {
     if (!this.activeChat) { return true; }
@@ -112,10 +88,6 @@ export const memoryPanelActions: Partial<ChatState> & ThisType<ChatState> = {
    * chats: copies are added/removed; excluding from a legacy full-carry
    * chat converts it to selective via carry-except.
    * @param mem
-   */
-  /**
-   * @param {MemoryEntry} mem
-   * @returns {Promise<void>}
    */
   async toggleMemoryInChat(mem: MemoryEntry,) {
     const chatId = this.activeChat;
@@ -188,11 +160,6 @@ export const memoryPanelActions: Partial<ChatState> & ThisType<ChatState> = {
    * "Remember this" — store a message's content as a character memory.
    * @param messageId
    * @param content
-   */
-  /**
-   * @param {string} messageId
-   * @param {string} content
-   * @returns {Promise<void>}
    */
   async rememberMessage(messageId: string, content: string,) {
     const trimmed = (content ?? "").trim();

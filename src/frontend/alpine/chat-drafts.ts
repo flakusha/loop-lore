@@ -152,10 +152,6 @@ export const chatDraftMethods: Partial<ChatState> & ThisType<ChatState> = {
    * Debounced keystroke entry point, wired to the textarea `@input`.
    * @param store
    */
-  /**
-   * @param {DraftStore} store
-   * @returns {void}
-   */
   saveComposerDraft(store?: DraftStore,) {
     if (this._draftTimer) {
       clearTimeout(this._draftTimer,);
@@ -179,10 +175,6 @@ export const chatDraftMethods: Partial<ChatState> & ThisType<ChatState> = {
    * Synchronous write of the current input; safe to call on chat switch.
    * @param store
    */
-  /**
-   * @param {DraftStore} store
-   * @returns {void}
-   */
   flushComposerDraft(store?: DraftStore,) {
     if (this._draftTimer) {
       clearTimeout(this._draftTimer,);
@@ -199,10 +191,6 @@ export const chatDraftMethods: Partial<ChatState> & ThisType<ChatState> = {
    * Restore the active chat's draft into the textarea; clears when none.
    * @param store
    */
-  /**
-   * @param {DraftStore} store
-   * @returns {void}
-   */
   restoreComposerDraft(store?: DraftStore,) {
     if (!this.activeChat) { return; }
     const target = store ?? defaultDraftStore();
@@ -218,10 +206,6 @@ export const chatDraftMethods: Partial<ChatState> & ThisType<ChatState> = {
   /**
    * Drop the active chat's draft and cancel any pending debounced save.
    * @param store
-   */
-  /**
-   * @param {DraftStore} store
-   * @returns {void}
    */
   clearComposerDraft(store?: DraftStore,) {
     if (this._draftTimer) {

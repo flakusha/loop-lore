@@ -26,11 +26,6 @@ export class EmotionHook implements HookHandler {
    * @param content
    * @param context
    */
-  /**
-   * @param {string} content
-   * @param {HookContext} context
-   * @returns {Promise<boolean>}
-   */
   async canHandle(content: string, context: HookContext,): Promise<boolean> {
     // Private content opt-out: skip emotion detection entirely so private
     // conversations are never analyzed for emotional indicators.
@@ -41,11 +36,6 @@ export class EmotionHook implements HookHandler {
   /**
    * @param content
    * @param context
-   */
-  /**
-   * @param {string} content
-   * @param {HookContext} context
-   * @returns {Promise<HookResult>}
    */
   async execute(content: string, context: HookContext,): Promise<HookResult> {
     const log = getLogger();
@@ -81,10 +71,6 @@ export class EmotionHook implements HookHandler {
 
   /**
    * @param content
-   */
-  /**
-   * @param {string} content
-   * @returns {string[]}
    */
   private detectEmotions(content: string,): string[] {
     const indicators: string[] = [];
@@ -135,10 +121,6 @@ export class EmotionHook implements HookHandler {
 
   /**
    * @param indicators
-   */
-  /**
-   * @param {string[]} indicators
-   * @returns {string}
    */
   private determineDominantEmotion(indicators: string[],): string {
     const emotionCounts = new Map<string, number>();

@@ -48,9 +48,6 @@ export class ConcurrencyLimiter {
    * Acquire a slot. Resolves when one is free. `release()` MUST be called by
    * the caller once (use `run` to make this automatic).
    */
-  /**
-   * @returns {Promise<() => void>}
-   */
   async acquire(): Promise<() => void> {
     if (this.held < this.max) {
       this.held++;
@@ -67,10 +64,6 @@ export class ConcurrencyLimiter {
   /**
    * Run `fn` while holding a slot; releases on completion or throw.
    * @throws whatever `fn` throws.
-   */
-  /**
-   * @param {() => Promise<T>} fn
-   * @returns {Promise<T>}
    */
   async run<T,>(fn: () => Promise<T>,): Promise<T> {
     const release = await this.acquire();

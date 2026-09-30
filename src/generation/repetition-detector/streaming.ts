@@ -28,10 +28,6 @@ export class StreamingRepetitionDetector {
    * Returns an analysis if the minimum threshold is met.
    * @param chunk
    */
-  /**
-   * @param {string} chunk
-   * @returns {RepetitionAnalysis | null}
-   */
   addChunk(chunk: string,): RepetitionAnalysis | null {
     this.buffer.push(chunk,);
     this.totalChars += chunk.length;

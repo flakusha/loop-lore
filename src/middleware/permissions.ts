@@ -49,10 +49,6 @@ class HandleCache {
   /**
    * @param userId
    */
-  /**
-   * @param {string} userId
-   * @returns {Promise<string | null>}
-   */
   async get(userId: string,): Promise<string | null> {
     const hit = this.cache.get(userId,);
     if (hit !== undefined) { return hit; }

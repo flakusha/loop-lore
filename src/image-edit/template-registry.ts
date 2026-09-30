@@ -37,10 +37,6 @@ export class TemplateRegistry {
    * Register a workflow template
    * @param template
    */
-  /**
-   * @param {WorkflowTemplate} template
-   * @returns {void}
-   */
   register(template: WorkflowTemplate,): void {
     this.templates.set(template.id, template,);
   }
@@ -61,11 +57,6 @@ export class TemplateRegistry {
    * @param source - Ownership tag for the templates being replaced
    * @param templates - The full set `source` now owns
    */
-  /**
-   * @param {string} source
-   * @param {WorkflowTemplate[]} templates
-   * @returns {void}
-   */
   replaceManaged(source: string, templates: WorkflowTemplate[],): void {
     for (const id of this.managed.get(source,) ?? []) {
       this.templates.delete(id,);
@@ -80,10 +71,6 @@ export class TemplateRegistry {
   /**
    * Get a template by ID
    * @param id
-   */
-  /**
-   * @param {string} id
-   * @returns {WorkflowTemplate | undefined}
    */
   get(id: string,): WorkflowTemplate | undefined {
     return this.templates.get(id,);
@@ -101,10 +88,6 @@ export class TemplateRegistry {
    * Filter templates by category
    * @param category
    */
-  /**
-   * @param {ImageEditCategory} category
-   * @returns {WorkflowTemplate[]}
-   */
   listByCategory(category: ImageEditCategory,): WorkflowTemplate[] {
     const out: WorkflowTemplate[] = [];
     for (const t of this.listAll()) { if (t.category === category) { out.push(t,); } }
@@ -114,10 +97,6 @@ export class TemplateRegistry {
   /**
    * Filter templates available for a specific backend
    * @param backend
-   */
-  /**
-   * @param {ImageEditBackend} backend
-   * @returns {WorkflowTemplate[]}
    */
   listForBackend(backend: ImageEditBackend,): WorkflowTemplate[] {
     const out: WorkflowTemplate[] = [];
@@ -129,11 +108,6 @@ export class TemplateRegistry {
    * Filter templates that can run on the given backend AND have all required nodes installed
    * @param backend
    * @param installedNodes
-   */
-  /**
-   * @param {ImageEditBackend} backend
-   * @param {Set<string>} installedNodes
-   * @returns {WorkflowTemplate[]}
    */
   listAvailable(
     backend: ImageEditBackend,
@@ -154,10 +128,6 @@ export class TemplateRegistry {
   /**
    * Unregister a template by ID
    * @param id
-   */
-  /**
-   * @param {string} id
-   * @returns {boolean}
    */
   unregister(id: string,): boolean {
     return this.templates.delete(id,);

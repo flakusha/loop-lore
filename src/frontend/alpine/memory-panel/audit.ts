@@ -38,11 +38,6 @@ export const memoryPanelAudit: Partial<ChatState> & ThisType<ChatState> = {
    * @param cursor - pagination cursor (omit for first page)
    * @param action - action filter (omit for unfiltered)
    */
-  /**
-   * @param {string | null} cursor
-   * @param {AuditAction | null} action
-   * @returns {string | null}
-   */
   _auditUrl(cursor: string | null, action: AuditAction | null,): string | null {
     const actorId = this._getCharacterActorId();
     if (!actorId) { return null; }
@@ -58,11 +53,6 @@ export const memoryPanelAudit: Partial<ChatState> & ThisType<ChatState> = {
    * Load (or reload) the audit log, replacing any existing entries. Called
    * when the audit tab opens or the action filter changes.
    * @param action - optional action filter override
-   */
-  /**
-   * @param {AuditAction | null} action
-   * @throws {Error}
-   * @returns {Promise<void>}
    */
   async loadAudit(action?: AuditAction | null,) {
     const filter = action === undefined ? this.memoryPanel.auditActionFilter : action;
@@ -125,10 +115,6 @@ export const memoryPanelAudit: Partial<ChatState> & ThisType<ChatState> = {
    * Set the action filter and reload the first page.
    * @param action - action to filter by, or null to clear
    */
-  /**
-   * @param {AuditAction | null} action
-   * @returns {Promise<void>}
-   */
   async setAuditActionFilter(action: AuditAction | null,) {
     if (this.memoryPanel.auditActionFilter === action) { return; }
     await this.loadAudit(action,);
@@ -156,10 +142,6 @@ export const memoryPanelAudit: Partial<ChatState> & ThisType<ChatState> = {
    * True when the entry's details block is expanded.
    * @param id - audit entry id
    */
-  /**
-   * @param {string} id
-   * @returns {boolean}
-   */
   isAuditExpanded(id: string,): boolean {
     return this.memoryPanel.auditExpandedIds.includes(id,);
   },
@@ -167,10 +149,6 @@ export const memoryPanelAudit: Partial<ChatState> & ThisType<ChatState> = {
   /**
    * Toggle the expanded/collapsed state of an entry's details block.
    * @param id - audit entry id
-   */
-  /**
-   * @param {string} id
-   * @returns {void}
    */
   toggleAuditExpanded(id: string,): void {
     const ids = this.memoryPanel.auditExpandedIds;
@@ -186,10 +164,6 @@ export const memoryPanelAudit: Partial<ChatState> & ThisType<ChatState> = {
    * True when the entry has details worth expanding.
    * @param entry
    */
-  /**
-   * @param {AuditEntry} entry
-   * @returns {boolean}
-   */
   _auditDetailsExpandable(entry: AuditEntry,): boolean {
     return auditDetailsExpandable(entry,);
   },
@@ -197,10 +171,6 @@ export const memoryPanelAudit: Partial<ChatState> & ThisType<ChatState> = {
   /**
    * Formatted (pretty-printed) details JSON for the expanded block.
    * @param entry
-   */
-  /**
-   * @param {AuditEntry} entry
-   * @returns {string}
    */
   _formatAuditDetails(entry: AuditEntry,): string {
     return formatAuditDetails(entry.details,);

@@ -159,10 +159,6 @@ export interface GameCanvasComponent {
      * @param canvas - canvas whose client width drives the cell size
      * @returns cell size in px
      */
-    /**
-     * @param {HTMLCanvasElement} canvas
-     * @returns {number}
-     */
     _cellSize(canvas: HTMLCanvasElement,): number {
       const grid = component.gameState?.state.grid;
       if (!grid || grid.width <= 0) { return MIN_CELL; }
@@ -172,9 +168,6 @@ export interface GameCanvasComponent {
     /**
      * Locate the canvas element (raw closure scope has no Alpine $refs proxy).
      * @returns the game canvas element, or null when absent
-     */
-    /**
-     * @returns {HTMLCanvasElement | null}
      */
     _canvas(): HTMLCanvasElement | null {
       return document.querySelector<HTMLCanvasElement>("canvas[data-testid='game-canvas-grid']",);

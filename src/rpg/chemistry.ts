@@ -64,15 +64,6 @@ export class ChemistryService {
    * @param magnitude - overrides the effect default when given
    * @param source
    */
-  /**
-   * @param {string} targetActorId
-   * @param {string} effectId
-   * @param {number | null} durationSeconds
-   * @param {number | null} magnitude
-   * @param {unknown} source
-   * @throws {Error}
-   * @returns {Promise<string>}
-   */
   async applyEffect(
     targetActorId: string,
     effectId: string,
@@ -117,11 +108,6 @@ export class ChemistryService {
    * expired, or outside the chemistry family.
    * @param targetActorId
    * @param effectId
-   */
-  /**
-   * @param {string} targetActorId
-   * @param {string} effectId
-   * @returns {Promise<ChemistryEffectMetadata | null>}
    */
   async describeEffect(
     targetActorId: string,

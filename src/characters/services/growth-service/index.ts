@@ -58,10 +58,6 @@ export class CharacterGrowthService {
    * @param actorId
    * @returns the growth mode snapshot
    */
-  /**
-   * @param {string} actorId
-   * @returns {Promise<GrowthModeSnapshot>}
-   */
   async getGrowthMode(actorId: string,): Promise<GrowthModeSnapshot> {
     return getGrowthMode(this.db, actorId,);
   }
@@ -70,10 +66,6 @@ export class CharacterGrowthService {
    * Get the current arc for an actor, or null if none has been authored.
    * @param actorId
    * @returns the current arc, or null when unauthored
-   */
-  /**
-   * @param {string} actorId
-   * @returns {Promise<CharacterArc | null>}
    */
   async getArc(actorId: string,): Promise<CharacterArc | null> {
     return getArc(this.db, actorId,);
@@ -86,11 +78,6 @@ export class CharacterGrowthService {
    * @param confirmedBy - User id of the actor setting the stage.
    * @returns the upserted arc
    */
-  /**
-   * @param {UpsertArcInput} input
-   * @param {string} confirmedBy
-   * @returns {Promise<CharacterArc>}
-   */
   async upsertArc(input: UpsertArcInput, confirmedBy: string,): Promise<CharacterArc> {
     return upsertArc(this.db, input, confirmedBy,);
   }
@@ -101,10 +88,6 @@ export class CharacterGrowthService {
    * @param input
    * @returns the persisted growth-log entry
    */
-  /**
-   * @param {InsertGrowthLogInput} input
-   * @returns {Promise<GrowthLogEntry>}
-   */
   async insertGrowthLog(input: InsertGrowthLogInput,): Promise<GrowthLogEntry> {
     return insertGrowthLog(this.db, input,);
   }
@@ -114,11 +97,6 @@ export class CharacterGrowthService {
    * @param actorId
    * @param opts
    * @returns growth-log entries, most recent first
-   */
-  /**
-   * @param {string} actorId
-   * @param {ListGrowthLogOpts} opts
-   * @returns {Promise<GrowthLogEntry[]>}
    */
   async listGrowthLog(
     actorId: string,
@@ -132,10 +110,6 @@ export class CharacterGrowthService {
    * @param opts
    * @returns the confirmed entry
    */
-  /**
-   * @param {ConfirmGrowthEntryOpts} opts
-   * @returns {Promise<GrowthLogEntry>}
-   */
   async confirmGrowthEntry(opts: ConfirmGrowthEntryOpts,): Promise<GrowthLogEntry> {
     return confirmGrowthEntry(this.db, opts,);
   }
@@ -144,10 +118,6 @@ export class CharacterGrowthService {
    * Reject a pending growth_log entry (D6).
    * @param opts
    * @returns the rejected entry
-   */
-  /**
-   * @param {RejectGrowthEntryOpts} opts
-   * @returns {Promise<GrowthLogEntry>}
    */
   async rejectGrowthEntry(opts: RejectGrowthEntryOpts,): Promise<GrowthLogEntry> {
     return rejectGrowthEntry(this.db, opts,);

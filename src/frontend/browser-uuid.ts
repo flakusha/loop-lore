@@ -31,10 +31,6 @@
  *
  * Textual canonical form follows RFC 9562 §4 (lowercase hex, hyphenated).
  */
-
-/**
- * Options accepted by {@link browserRandomUUIDv7}.
- */
 export interface BrowserUUIDv7Options {
   /**
    * Override the unix-ms timestamp embedded in the id. Defaults to

@@ -25,10 +25,6 @@ export class BrowserConsoleTransport implements Transport {
   /**
    * @param entry
    */
-  /**
-   * @param {LogEntry} entry
-   * @returns {Promise<void>}
-   */
   write(entry: LogEntry,): Promise<void> {
     try {
       const { formatted, css, } = formatConsole(entry, this.isColor, "css",);
@@ -54,10 +50,6 @@ export class BrowserConsoleTransport implements Transport {
 
   /**
    * @param level
-   */
-  /**
-   * @param {number} level
-   * @returns {(...args: unknown[]) => void}
    */
   private consoleMethod(level: number,): (...args: unknown[]) => void {
     if (level >= 40) { return console.error; }

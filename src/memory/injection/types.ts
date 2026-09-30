@@ -4,11 +4,6 @@
 /**
  * Memory injection types — extended privacy, config, comfort, context.
  */
-
-/**
- * Extended privacy levels for memory injection.
- * Maps to the base MemoryPrivacy for backward compatibility.
- */
 export type InjectionPrivacyLevel =
   | "absolute"
   | "isolated"

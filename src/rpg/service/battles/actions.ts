@@ -97,17 +97,6 @@ export async function performAttack(
  * @param params - Heal resolution parameters
  * @returns The healed combatant + updated roster + amount healed
  */
-
-/**
- * @param deps
- * @param params
- */
-/**
- * @param {RpgServiceDeps} deps
- * @param {HealParams} params
- * @throws {Error}
- * @returns {Promise<ResolvedHeal>}
- */
 export async function performHeal(
   deps: RpgServiceDeps,
   params: HealParams,
@@ -153,16 +142,6 @@ export async function performHeal(
  * @param deps - Service dependencies
  * @param battleId - Battle to advance
  * @returns The battle after advancement
- */
-
-/**
- * @param deps
- * @param battleId
- */
-/**
- * @param {RpgServiceDeps} deps
- * @param {string} battleId
- * @returns {Promise<BattleWithRoster>}
  */
 export async function advanceTurn(
   deps: RpgServiceDeps,

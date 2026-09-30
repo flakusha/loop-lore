@@ -141,12 +141,6 @@ export class ComfyUIEditProvider implements ImageEditProvider {
    * @param template
    * @param onProgress
    */
-  /**
-   * @param {ImageEditRequest} request
-   * @param {WorkflowTemplate} template
-   * @param {(progress: ImageEditProgress,) => void} onProgress
-   * @returns {Promise<ImageEditResult[]>}
-   */
   async execute(
     request: ImageEditRequest,
     template: WorkflowTemplate,
@@ -235,10 +229,6 @@ export class ComfyUIEditProvider implements ImageEditProvider {
    * Get emotion-based prompt modifier for ComfyUI workflow.
    * Maps emotion types to descriptive prompt suffixes for conditioning nodes.
    * @param emotion
-   */
-  /**
-   * @param {string} emotion
-   * @returns {string}
    */
   private getEmotionModifier(emotion: string,): string {
     const modifiers: Record<string, string> = {

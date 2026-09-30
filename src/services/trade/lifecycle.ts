@@ -46,17 +46,6 @@ export class OfferService {
    * @param opts.price
    * @param opts.deadline
    */
-  /**
- * @param {{
-    worldId: string;
-    buyerActorId: string;
-    sellerActorId: string;
-    buyerItems: TradeLine[];
-    price: number;
-    deadline?: string;
-  }} opts
- * @returns {Promise<string>}
- */
   createOffer(opts: {
     worldId: string;
     buyerActorId: string;
@@ -73,11 +62,6 @@ export class OfferService {
    * a `countered` offer is accepted by the buyer. Expired deadlines reject.
    * @param offerId
    * @param acceptorActorId
-   */
-  /**
-   * @param {string} offerId
-   * @param {string} acceptorActorId
-   * @returns {Promise<TradeResult>}
    */
   async acceptOffer(
     offerId: string,
@@ -117,16 +101,6 @@ export class OfferService {
    * @param opts.sellerItems
    * @param opts.price
    */
-  /**
- * @param {{
-    offerId: string;
-    counterActorId: string;
-    buyerItems?: TradeLine[];
-    sellerItems?: TradeLine[];
-    price?: number;
-  }} opts
- * @returns {Promise<{ success: boolean; reason?: string | undefined; }>}
- */
   counterOffer(opts: {
     offerId: string;
     counterActorId: string;
@@ -142,11 +116,6 @@ export class OfferService {
    * @param offerId
    * @param cancellerActorId
    */
-  /**
-   * @param {string} offerId
-   * @param {string} cancellerActorId
-   * @returns {Promise<{ success: boolean; reason?: string | undefined; }>}
-   */
   cancelOffer(
     offerId: string,
     cancellerActorId: string,
@@ -158,11 +127,6 @@ export class OfferService {
    * List pending trade offers for an actor.
    * @param worldId
    * @param actorId
-   */
-  /**
-   * @param {string} worldId
-   * @param {string} actorId
-   * @returns {Promise<{ id: string; buyerActorId: string; sellerActorId: string | null; price: number; items: TradeLine[]; sellerItems: TradeLine[]; status: string; deadline: string | null; createdAt: string; }[]>}
    */
   listOffers(
     worldId: string,

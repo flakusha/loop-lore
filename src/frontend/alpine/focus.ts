@@ -7,16 +7,6 @@
  * Utilities for keyboard navigation and focus management.
  * Provides WCAG 2.1 compliant focus handling for interactive elements.
  */
-
-/**
- * Get the first focusable element within a container.
- * Supports tab, shift+tab, arrow keys, and enter/space activation.
- * @param container
- */
-/**
- * @param {Element} container
- * @returns {HTMLElement | null}
- */
 export function getFirstFocusable(container: Element,): HTMLElement | null {
   const focusables = container.querySelectorAll<HTMLElement>(
     'a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"]), [role="button"], [role="link"]',
@@ -179,10 +169,6 @@ export class FocusPortal {
 
   /**
    * @param container
-   */
-  /**
-   * @param {Element} container
-   * @returns {void}
    */
   enter(container: Element,): void {
     this.previousActiveElement = document.activeElement as HTMLElement | null;

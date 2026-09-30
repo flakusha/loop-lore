@@ -91,11 +91,6 @@ export class TurnManager {
    * @param context - Turn context (@mentions, recent actors, chat mode, or story context)
    * @returns Selected actor ID, or null if no participants
    */
-  /**
-   * @param {TurnStrategyType} strategy
-   * @param {GroupTurnContext | Record<string, unknown>} context
-   * @returns {Promise<string | null>}
-   */
   async selectNextActor(
     strategy?: TurnStrategyType,
     context?: GroupTurnContext | Record<string, unknown>,
@@ -115,11 +110,6 @@ export class TurnManager {
    * Request regeneration of a failed turn
    * @param turnId
    * @param reason
-   */
-  /**
-   * @param {string} turnId
-   * @param {string} reason
-   * @returns {Promise<boolean>}
    */
   async requestRegeneration(turnId: string, reason: string,): Promise<boolean> {
     return requestRegenerationDispatch(this, turnId, reason,);
@@ -160,10 +150,6 @@ export class TurnManager {
   /**
    * Update turn order (e.g., participant added/removed)
    * @param mode
-   */
-  /**
-   * @param {"story" | "group"} mode
-   * @returns {Promise<void>}
    */
   async refreshOrder(mode: "story" | "group" = "story",): Promise<void> {
     return refreshOrderPublic(this, mode,);

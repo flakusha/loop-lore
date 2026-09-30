@@ -98,11 +98,6 @@ export class ModerationHook implements HookHandler {
    * @param content
    * @param _context
    */
-  /**
-   * @param {string} content
-   * @param {HookContext} _context
-   * @returns {Promise<boolean>}
-   */
   async canHandle(content: string, _context: HookContext,): Promise<boolean> {
     // No length bypass: short content can carry moderation tokens. The
     // scanner inside execute is the actual filter; canHandle only answers
@@ -113,11 +108,6 @@ export class ModerationHook implements HookHandler {
   /**
    * @param content
    * @param context
-   */
-  /**
-   * @param {string} content
-   * @param {HookContext} context
-   * @returns {Promise<HookResult>}
    */
   async execute(content: string, context: HookContext,): Promise<HookResult> {
     const log = getLogger();
@@ -189,10 +179,6 @@ export class ModerationHook implements HookHandler {
    * severe keyword matched, otherwise "moderate".
    * @param content
    */
-  /**
-   * @param {string} content
-   * @returns {ModerationFlags | null}
-   */
   detectModerationFlags(content: string,): ModerationFlags | null {
     const tokenCounts = new Map<string, number>();
     for (const token of content.toLowerCase().split(/[^a-z0-9]+/,)) {
@@ -228,10 +214,6 @@ export class ModerationHook implements HookHandler {
   /**
    * @param context
    */
-  /**
-   * @param {HookContext} context
-   * @returns {ModerationAuditRecorder}
-   */
   private getAuditRecorder(context: HookContext,): ModerationAuditRecorder {
     if (!this.recorder) {
       this.recorder = this.auditRecorderFactory(context.db,);
@@ -243,12 +225,6 @@ export class ModerationHook implements HookHandler {
    * @param context
    * @param flags
    * @param suppressed
-   */
-  /**
-   * @param {HookContext} context
-   * @param {ModerationFlags} flags
-   * @param {boolean} suppressed
-   * @returns {Promise<void>}
    */
   private async recordAudit(
     context: HookContext,

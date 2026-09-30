@@ -10,18 +10,6 @@
  * per-mechanic flags; these helpers keep the stored columns consistent with
  * what the API caller asked for.
  */
-
-/**
- * Normalize an RPG opt-in flag (boolean or 0/1) to its stored 0/1 form.
- * @param value - Raw request-body value.
- * @returns 0, 1, or null when absent/invalid (caller applies the default).
- * @example
- * toRpgFlag(true) → 1
- */
-/**
- * @param {unknown} value
- * @returns {0 | 1 | null}
- */
 export function toRpgFlag(value: unknown,): 0 | 1 | null {
   if (value === true || value === 1) { return 1; }
   if (value === false || value === 0) { return 0; }

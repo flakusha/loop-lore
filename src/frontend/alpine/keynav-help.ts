@@ -52,10 +52,6 @@ export function keynavHelp() {
      * Falls back to the action name if no translation exists.
      * @param key
      */
-    /**
-     * @param {string} key
-     * @returns {string}
-     */
     label(key: string,): string {
       const fn = (globalThis as unknown as { t?: (k: string,) => string }).t;
       return fn ? fn(key,) : key;

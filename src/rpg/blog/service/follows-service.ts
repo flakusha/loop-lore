@@ -26,11 +26,6 @@ export class BlogFollowsService {
    * @param followerId
    * @param authorId
    */
-  /**
-   * @param {string} followerId
-   * @param {string} authorId
-   * @returns {Promise<BlogFollowRow>}
-   */
   async follow(
     followerId: string,
     authorId: string,
@@ -43,11 +38,6 @@ export class BlogFollowsService {
    * @param followerId
    * @param authorId
    */
-  /**
-   * @param {string} followerId
-   * @param {string} authorId
-   * @returns {Promise<boolean>}
-   */
   async unfollow(
     followerId: string,
     authorId: string,
@@ -59,10 +49,6 @@ export class BlogFollowsService {
    * Get followers for an author.
    * @param authorId
    */
-  /**
-   * @param {string} authorId
-   * @returns {Promise<string[]>}
-   */
   async getFollowers(authorId: string,): Promise<string[]> {
     return getFollowersDispatch(this.db, authorId,);
   }
@@ -71,11 +57,6 @@ export class BlogFollowsService {
    * Check if a user follows an author.
    * @param followerId
    * @param authorId
-   */
-  /**
-   * @param {string} followerId
-   * @param {string} authorId
-   * @returns {Promise<boolean>}
    */
   async isFollowing(
     followerId: string,
@@ -88,11 +69,6 @@ export class BlogFollowsService {
    * Get follow status for a user.
    * @param followerId
    * @param authorId
-   */
-  /**
-   * @param {string} followerId
-   * @param {string} authorId
-   * @returns {Promise<{ following: boolean; }>}
    */
   async getFollowStatus(
     followerId: string,
@@ -107,11 +83,6 @@ export class BlogFollowsService {
    * @param postId
    * @param source
    */
-  /**
-   * @param {string} postId
-   * @param {Omit<BlogRAGSourceRow, "id" | "created_at" | "post_id">} source
-   * @returns {Promise<BlogRAGSourceRow>}
-   */
   async addRAGSource(
     postId: string,
     source: Omit<BlogRAGSourceRow, "id" | "created_at" | "post_id">,
@@ -122,10 +93,6 @@ export class BlogFollowsService {
   /**
    * Get RAG sources for a post.
    * @param postId
-   */
-  /**
-   * @param {string} postId
-   * @returns {Promise<BlogRAGSourceRow[]>}
    */
   async getRAGSources(postId: string,): Promise<BlogRAGSourceRow[]> {
     return getRAGSourcesDispatch(this.db, postId,);

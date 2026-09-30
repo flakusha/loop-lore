@@ -126,10 +126,6 @@ export class GameMasterService {
    * Execute one full story turn
    * @param debugActorId
    */
-  /**
-   * @param {string} debugActorId
-   * @returns {Promise<GmTurnResult>}
-   */
   async executeTurn(debugActorId?: string,): Promise<GmTurnResult> {
     return executeTurnDispatch(this.state, debugActorId,);
   }
@@ -138,11 +134,6 @@ export class GameMasterService {
    * Accept a response and process it through the full pipeline
    * @param turnId
    * @param response
-   */
-  /**
-   * @param {string} turnId
-   * @param {string} response
-   * @returns {Promise<GmTurnResult>}
    */
   async acceptResponse(turnId: string, response: string,): Promise<GmTurnResult> {
     return acceptResponseDispatch(this.state, turnId, response,);
@@ -154,12 +145,6 @@ export class GameMasterService {
    * @param turnId
    * @param decision
    */
-  /**
-   * @param {string} _chatId
-   * @param {string} turnId
-   * @param {GameMasterDecision} decision
-   * @returns {Promise<void>}
-   */
   async humanOverride(_chatId: string, turnId: string, decision: GameMasterDecision,): Promise<void> {
     return humanOverrideDispatch(this.state, _chatId, turnId, decision,);
   }
@@ -168,11 +153,6 @@ export class GameMasterService {
    * Inject narration message into the story timeline
    * @param worldId
    * @param text
-   */
-  /**
-   * @param {string} worldId
-   * @param {string} text
-   * @returns {Promise<void>}
    */
   async injectNarration(worldId: string, text: string,): Promise<void> {
     return injectNarrationDispatch(this.state, worldId, text,);

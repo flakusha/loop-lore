@@ -60,10 +60,6 @@ export const locationExplorerControls = {
    * Method (not getter) because spreads eagerly invoke getters with
    * an empty `this` — calling sites use `state.statusOptions()`.
    */
-  /**
-   * @param {ExplorerControlState} this
-   * @returns {string[]}
-   */
   statusOptions(this: ExplorerControlState,): string[] {
     const seen = new Set<string>();
     for (const l of this.locations) { if (l.publication_status) { seen.add(l.publication_status,); } }
@@ -73,10 +69,6 @@ export const locationExplorerControls = {
   /**
    * True when any filter differs from its default.
    * Drives the "Clear filters" affordance in the UI.
-   */
-  /**
-   * @param {ExplorerControlState} this
-   * @returns {boolean}
    */
   hasActiveFilters(this: ExplorerControlState,): boolean {
     return Boolean(

@@ -46,9 +46,6 @@ class WorkflowLoader {
    * their names (filename without extension).
    * @returns Array of workflow names
    */
-  /**
-   * @returns {Promise<string[]>}
-   */
   async listWorkflows(): Promise<string[]> {
     await this.ensureLoaded();
     return [...this.cache.keys(),];
@@ -59,11 +56,6 @@ class WorkflowLoader {
    * @param options - Workflow name and substitution parameters
    * @returns ComfyUI-ready workflow with placeholders replaced
    * @throws If workflow not found
-   */
-  /**
-   * @param {LoadWorkflowOptions} options
-   * @throws {Error}
-   * @returns {Promise<ComfyUIWorkflow>}
    */
   async loadWorkflow(options: LoadWorkflowOptions,): Promise<ComfyUIWorkflow> {
     await this.ensureLoaded();
@@ -95,9 +87,6 @@ class WorkflowLoader {
   /**
    * Reload workflows from disk (invalidates cache).
    */
-  /**
-   * @returns {Promise<void>}
-   */
   async reload(): Promise<void> {
     this.cache.clear();
     this.dirMtime = 0;
@@ -107,10 +96,6 @@ class WorkflowLoader {
   /**
    * Get raw workflow JSON without substitution (for inspection/debugging).
    * @param name
-   */
-  /**
-   * @param {string} name
-   * @returns {Promise<ComfyUIWorkflow | null>}
    */
   async getRawWorkflow(name: string,): Promise<ComfyUIWorkflow | null> {
     await this.ensureLoaded();
@@ -147,10 +132,6 @@ class WorkflowLoader {
 
   /**
    * @param dirPath
-   */
-  /**
-   * @param {string} dirPath
-   * @returns {Promise<void>}
    */
   private async loadFromDisk(dirPath: string,): Promise<void> {
     let filenames: string[];

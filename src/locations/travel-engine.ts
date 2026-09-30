@@ -50,10 +50,6 @@ export class TravelTickEngine {
    * Run one tick. Returns counts; never throws on individual transport
    * failures — the tick continues so other transports still advance.
    */
-  /**
-   * @param {TickOptions} opts
-   * @returns {Promise<TickSummary>}
-   */
   async tick(opts: TickOptions = {},): Promise<TickSummary> {
     const elapsed = opts.elapsedSeconds ?? 60;
     const cap = opts.maxTransports ?? 1000;

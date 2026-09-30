@@ -47,11 +47,6 @@ export class H2Handler extends TransportBase<H2Options> {
    *   surface is served by Bun's server, not this handler. Fail loudly rather
    *   than silently dropping outbound data.
    */
-  /**
-   * @param {string | Uint8Array} _data
-   * @throws {Error}
-   * @returns {Promise<void>}
-   */
   send(_data: string | Uint8Array,): Promise<void> {
     this.ensureConnected();
     throw new TransportError("H2Handler.send is not supported (non-sending stub)", {

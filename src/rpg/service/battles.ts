@@ -90,19 +90,6 @@ export async function startBattle(
  * @param chatId - Chat to look up
  * @returns The active battle roster, or null when none active
  */
-
-/**
- * @param deps
- * @param battleId
- * @param status
- */
-/**
- * @param {RpgServiceDeps} deps
- * @param {string} battleId
- * @param {Exclude<BattleStatus, "active">} status
- * @throws {Error}
- * @returns {Promise<void>}
- */
 export async function endBattle(
   deps: RpgServiceDeps,
   battleId: string,

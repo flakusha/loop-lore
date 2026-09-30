@@ -52,10 +52,6 @@ export class PromptAssembler {
    * @param params - assistant prompt inputs (chat, message, history, rules, …)
    * @returns the assembled `AssembledPrompt` ready for the LLM call.
    */
-  /**
-   * @param {PromptParams} params
-   * @returns {Promise<AssembledPrompt>}
-   */
   async assemble(params: PromptParams,): Promise<AssembledPrompt> {
     const { actor, chat, } = await this.loadProjections(params,);
     const { ctx, resolvedResponseLength, } = await this.buildAssembleContext(params, actor, chat,);
@@ -115,12 +111,6 @@ export class PromptAssembler {
    * @returns The assembled prompt, or null when the id does not resolve to
    *   an LLM template owned by `userId`.
    */
-  /**
-   * @param {PromptParams} params
-   * @param {string} templateId
-   * @param {string} userId
-   * @returns {Promise<AssembledPrompt | null>}
-   */
   async assembleWithTemplateOverride(
     params: PromptParams,
     templateId: string,
@@ -135,12 +125,6 @@ export class PromptAssembler {
    * Load actor + chat projections for assembly.
    * @param params - prompt params carrying actorId/chatId
    * @returns the assembled actor and chat rows
-   */
-  /**
-   * @param {PromptParams} params
-   * @throws {Error}
-   * @throws {Error}
-   * @returns {Promise<{ actor: AssembleActor; chat: AssembleChat; }>}
    */
   private async loadProjections(params: PromptParams,): Promise<{ actor: AssembleActor; chat: AssembleChat }> {
     const projectionResults = await Promise.allSettled([
@@ -197,12 +181,6 @@ export class PromptAssembler {
    * @param actor - loaded actor projection
    * @param chat - loaded chat projection
    * @returns the assemble context and resolved response-length config
-   */
-  /**
-   * @param {PromptParams} params
-   * @param {AssembleActor} actor
-   * @param {AssembleChat} chat
-   * @returns {Promise<{ ctx: AssembleContext; resolvedResponseLength: ResponseLengthConfig; }>}
    */
   private async buildAssembleContext(
     params: PromptParams,
@@ -309,11 +287,6 @@ export class PromptAssembler {
    * @param chat - Assembled chat projection (provides the world scope)
    * @returns The persisted current mood string, or undefined when mood is
    *   absent/empty (in which case the emotionAvatar section stays off).
-   */
-  /**
-   * @param {PromptParams} params
-   * @param {AssembleChat} chat
-   * @returns {Promise<string | undefined>}
    */
   private async resolveCurrentEmotion(params: PromptParams, chat: AssembleChat,): Promise<string | undefined> {
     try {

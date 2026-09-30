@@ -75,10 +75,6 @@ export abstract class AsyncLogQueueBase {
   /**
    * @param entry
    */
-  /**
-   * @param {LogEntry} entry
-   * @returns {void}
-   */
   enqueue(entry: LogEntry,): void {
     if (this.buffer.length >= this.queueMaxSize) {
       this.droppedCount++;

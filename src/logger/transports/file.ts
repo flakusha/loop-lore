@@ -51,10 +51,6 @@ export class FileTransport implements Transport {
   /**
    * @param entry
    */
-  /**
-   * @param {LogEntry} entry
-   * @returns {Promise<void>}
-   */
   async write(entry: LogEntry,): Promise<void> {
     // Chain writes through a mutex: a size-check-then-append is not atomic,
     // so concurrent writes can race the rotate() step and lose/misplace lines.
@@ -70,10 +66,6 @@ export class FileTransport implements Transport {
 
   /**
    * @param entry
-   */
-  /**
-   * @param {LogEntry} entry
-   * @returns {Promise<void>}
    */
   private async writeLocked(entry: LogEntry,): Promise<void> {
     try {
@@ -121,10 +113,6 @@ export class FileTransport implements Transport {
 
   /**
    * @param path
-   */
-  /**
-   * @param {string} path
-   * @returns {Promise<number>}
    */
   private async fileSize(path: string,): Promise<number> {
     try {

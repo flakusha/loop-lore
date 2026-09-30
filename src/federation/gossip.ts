@@ -127,10 +127,6 @@ export class GossipService {
    * Get a peer entry by canonical origin.
    * @param origin
    */
-  /**
-   * @param {string} origin
-   * @returns {PeerEntry | undefined}
-   */
   getPeer(origin: string,): PeerEntry | undefined {
     return this.table.getPeer(origin,);
   }
@@ -140,9 +136,6 @@ export class GossipService {
    * heartbeats keyed by this poll's tick, and discover advertised peers.
    * Per-peer misses never abort the round — they just go stale.
    * @returns Per-poll summary.
-   */
-  /**
-   * @returns {Promise<GossipPollSummary>}
    */
   async pollOnce(): Promise<GossipPollSummary> {
     this.tick += 1;

@@ -103,11 +103,6 @@ export function adminImportWizard(this: ImportWizardHost,) {
      * @param content - Raw file text.
      * @returns Preview rows (possibly empty on unparsable input).
      */
-    /**
-     * @param {ImportWizardHost} this
-     * @param {string} content
-     * @returns {ImportPreviewRow[]}
-     */
     buildImportPreview(this: ImportWizardHost, content: string,): ImportPreviewRow[] {
       let parsed: unknown;
       if (this.importWizard.format === "yaml") {
@@ -133,10 +128,6 @@ export function adminImportWizard(this: ImportWizardHost,) {
      * Minimal YAML parser sufficient for flat `system_config: { key: value, … }` exports.
      * @param content - Raw file text.
      * @returns Parsed `system_config` mapping (possibly empty).
-     */
-    /**
-     * @param {string} content
-     * @returns {{ system_config?: Record<string, string> | undefined; }}
      */
     parseSimpleYaml(content: string,): { system_config?: Record<string, string> } {
       const lines = content.split("\n",);
@@ -165,10 +156,6 @@ export function adminImportWizard(this: ImportWizardHost,) {
      * Minimal TOML parser sufficient for the `[system_config]` table the export emits.
      * @param content - Raw file text.
      * @returns Parsed `system_config` mapping (possibly empty).
-     */
-    /**
-     * @param {string} content
-     * @returns {{ system_config?: Record<string, string> | undefined; }}
      */
     parseSimpleToml(content: string,): { system_config?: Record<string, string> } {
       const lines = content.split("\n",);
@@ -231,10 +218,6 @@ export function adminImportWizard(this: ImportWizardHost,) {
      * @param rows - Preview rows.
      * @returns YAML text under a `system_config:` root.
      */
-    /**
-     * @param {KeyValueRow[]} rows
-     * @returns {string}
-     */
     stringifySimpleYaml(rows: KeyValueRow[],): string {
       const lines = ["system_config:",];
       for (const { key, value, } of rows) {
@@ -247,10 +230,6 @@ export function adminImportWizard(this: ImportWizardHost,) {
      * Serialize preview rows back to the export TOML shape for the import POST.
      * @param rows - Preview rows.
      * @returns TOML text under a `[system_config]` table.
-     */
-    /**
-     * @param {KeyValueRow[]} rows
-     * @returns {string}
      */
     stringifySimpleToml(rows: KeyValueRow[],): string {
       const lines = ["[system_config]",];

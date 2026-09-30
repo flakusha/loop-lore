@@ -159,10 +159,6 @@ export function idempotent(config: IdempotencyConfig = {},): IdempotencyBeforeHa
      * @param args.userId
      * @param args.response
      */
-    /**
-     * @param {{ method: string; route: string; requestId: string; userId?: string | null; response: Response }} args
-     * @returns {void}
-     */
     recordResponse(
       args: { method: string; route: string; requestId: string; userId?: string | null; response: Response },
     ): void {
@@ -217,10 +213,6 @@ export function idempotent(config: IdempotencyConfig = {},): IdempotencyBeforeHa
      * @param args.route
      * @param args.requestId
      * @param args.userId
-     */
-    /**
-     * @param {{ method: string; route: string; requestId: string; userId?: string | null }} args
-     * @returns {void}
      */
     release(args: { method: string; route: string; requestId: string; userId?: string | null },): void {
       const method = args.method.toUpperCase();

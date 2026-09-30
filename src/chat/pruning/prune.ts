@@ -18,15 +18,6 @@ import type { MessageScore, PruneResult, PruningConfig, ScorableMessage, } from 
  * @param config - Pruning configuration
  * @returns Prune result with kept/promoted/pruned messages
  */
-
-/**
- * Choose which scored messages to prune to fit the token target.
- * @param messages
- * @param scores
- * @param sortedIndices
- * @param config
- * @returns void
- */
 function selectMessagesToPrune(
   messages: ScorableMessage[],
   scores: MessageScore[],
