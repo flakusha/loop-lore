@@ -3,7 +3,7 @@
 
 # BUG: Anthropic retry-after test covers missing header but not unparsable header
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 

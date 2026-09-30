@@ -1092,7 +1092,7 @@ Total tickets: **3069** — untagged: **2594** — unbound to epic: **1560**
 | yaml | 4 | 0 | 2 | 0 | 1 | 0 | 1 |
 | yaml-frontmatter | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| (untagged) | 2594 | 1016 | 59 | 1263 | 36 | 0 | 220 |
+| (untagged) | 2594 | 1020 | 59 | 1263 | 36 | 0 | 216 |
 
 ## By epic × status
 
@@ -1162,7 +1162,7 @@ Total tickets: **3069** — untagged: **2594** — unbound to epic: **1560**
 | epic-agency-story-points | 4 | 1 | 0 | 2 | 0 | 0 | 1 |
 | epic-agency-story-points, NPC/Actor System | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-ambient-music-sfx | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| epic-analytics-observability | 15 | 7 | 0 | 1 | 0 | 0 | 7 |
+| epic-analytics-observability | 15 | 8 | 0 | 1 | 0 | 0 | 6 |
 | epic-analytics-observability.md | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-anonymity-decentralization.md | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-api-first-foundation | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
@@ -1542,7 +1542,7 @@ Total tickets: **3069** — untagged: **2594** — unbound to epic: **1560**
 | Visual Novel Mode; Immersion & Presentation | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Wardrobe / Loadout Avatar Variants | 8 | 0 | 0 | 8 | 0 | 0 | 0 |
 | World & Locations | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| (unbound) | 1560 | 610 | 57 | 538 | 50 | 0 | 305 |
+| (unbound) | 1560 | 613 | 57 | 538 | 50 | 0 | 302 |
 
 ## Ticket detail
 
