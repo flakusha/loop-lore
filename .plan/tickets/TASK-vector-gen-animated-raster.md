@@ -54,3 +54,6 @@ only, not implemented here.
 - [ ] Gallery preview plays animation; thumb remains still WebP.
 - [ ] No video-model (Wan/LTX) code added; img2vid pointer documented only.
 - [ ] Failed assembly creates no asset row or orphan file.
+
+
+git issue: f156320
