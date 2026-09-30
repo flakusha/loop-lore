@@ -28,7 +28,15 @@ import {
  * is `ON CONFLICT DO NOTHING` against 020's partial unique index so a losing
  * concurrent earn falls through to the UPDATE instead of raising a raw
  * SQLITE UNIQUE violation. BUG-earnstorypoints-lost-update-race-and-raw-unique-violation-on
- * @throws CapExceededError when a cap is set and the earn cannot fit under it.
+ *
+ * Cap behaviour changed: an earn is now refused whenever
+ * `balance + amount > cap`, where before it was refused only at full
+ * saturation and a partial overflow was silently clamped to the cap. The
+ * clamp also left `earned_total` counting the refused amount, breaking
+ * `balance = earned - spent`; refusing keeps the invariant.
+ *
+ * @throws CapExceededError when a cap is set and the earn would exceed it.
+ * @throws InvalidAmountError when `amount` is not a positive integer.
  */
 export async function earnStoryPoints(
   db: Kysely<DB>,
@@ -80,16 +88,15 @@ export async function earnStoryPoints(
         throw new CapExceededError(params.actorId, params.amount, existing.cap,);
       }
 
-      // Relative update: the new balance is computed by SQLite from the value
-      // it holds at write time, not from a read that may already be stale.
-      // The cap is re-applied here so the relative add cannot overshoot it.
+      // Relative update: SQLite computes the new balance from the value it
+      // holds at write time, not from the read above, which a concurrent earn
+      // may already have moved. The cap needs no re-application here — the
+      // guard above refuses any earn where balance + amount > cap, so by the
+      // time this statement runs the add is known to fit.
       await sql`
         UPDATE actor_story_points
         SET
-          balance = MIN(
-            COALESCE(cap, balance + ${params.amount}),
-            balance + ${params.amount}
-          ),
+          balance = balance + ${params.amount},
           earned_total = earned_total + ${params.amount},
           last_earn_at = datetime('now'),
           last_earn_reason = ${params.reason ?? null},
@@ -112,7 +119,19 @@ export async function earnStoryPoints(
   };
 }
 
-/** Atomically debit story points; refuses when balance would go negative. */
+/**
+ * Atomically debit story points; refuses when balance would go negative.
+ *
+ * The first-time INSERT is `ON CONFLICT DO NOTHING` against 020's partial
+ * unique index for the same reason as in `earnStoryPoints`: concurrent
+ * first-time spends all reach the INSERT, and without the conflict clause
+ * the losers raised a raw `SQLITE_CONSTRAINT` instead of the intended
+ * `InsufficientStoryPointsError`. A losing INSERT falls through to the
+ * conditional UPDATE below, which reports the insufficiency properly.
+ * BUG-earnstorypoints-lost-update-race-and-raw-unique-violation-on
+ * @throws InsufficientStoryPointsError when the balance cannot cover the amount.
+ * @throws InvalidAmountError when `amount` is not a positive integer.
+ */
 export async function spendStoryPoints(
   db: Kysely<DB>,
   params: StoryPointChange,
@@ -121,15 +140,13 @@ export async function spendStoryPoints(
   const worldKey = params.worldId ?? null;
   const ledgerId = sql<string>`lower(hex(randomblob(16)))`;
 
-  const existing = await db
-    .selectFrom("actor_story_points",)
-    .select(["id", "balance",],)
-    .where("actor_id", "=", params.actorId,)
-    .where("world_id", "is", worldKey,)
-    .executeTakeFirst();
+  await db.transaction().execute(async (trx,) => {
+    const conflictTarget = worldKey === null
+      ? sql`(actor_id) WHERE world_id IS NULL`
+      : sql`(actor_id, world_id) WHERE world_id IS NOT NULL`;
 
-  if (existing === undefined) {
-    // First-time spend → zero balance → always insufficient.
+    // Seed the row when absent. A zero balance is correct here: the spend
+    // that follows decides whether it can proceed.
     await sql`
       INSERT INTO actor_story_points (
         id, actor_id, world_id, balance, earned_total, spent_total, cap,
@@ -139,35 +156,43 @@ export async function spendStoryPoints(
         ${ledgerId}, ${params.actorId}, ${worldKey}, 0, 0, 0, NULL,
         datetime('now'), datetime('now')
       )
-    `.execute(db,);
-    throw new InsufficientStoryPointsError(params.actorId, params.amount, 0,);
-  }
+      ON CONFLICT ${conflictTarget} DO NOTHING
+    `.execute(trx,);
 
-  // Conditional UPDATE: the WHERE clause includes `balance >= amount`
-  // so a concurrent spend that drains the balance will leave zero rows
-  // touched. Read numAffectedRows from the raw result -- 0 means the
-  // conditional UPDATE missed (insufficient or concurrent winner).
-  const updateResult = await sql`
-    UPDATE actor_story_points
-    SET
-      balance = balance - ${params.amount},
-      spent_total = spent_total + ${params.amount},
-      last_spend_at = datetime('now'),
-      last_spend_reason = ${params.reason ?? null},
-      updated_at = datetime('now')
-    WHERE id = ${existing.id}
-      AND balance >= ${params.amount}
-  `.execute(db,);
+    // Conditional UPDATE: `balance >= amount` means a concurrent spend that
+    // drained the balance leaves zero rows touched, so the debit cannot go
+    // negative. 0 affected rows means insufficient funds.
+    const debited = await sql`
+      UPDATE actor_story_points
+      SET
+        balance = balance - ${params.amount},
+        spent_total = spent_total + ${params.amount},
+        last_spend_at = datetime('now'),
+        last_spend_reason = ${params.reason ?? null},
+        updated_at = datetime('now')
+      WHERE actor_id = ${params.actorId}
+        AND world_id IS ${worldKey}
+        AND balance >= ${params.amount}
+    `.execute(trx,);
 
-  const affected = Number(updateResult.numAffectedRows ?? 0n,);
-  if (affected === 0) {
-    const bal = await getStoryPointBalance(db, params.actorId, worldKey,);
-    throw new InsufficientStoryPointsError(
-      params.actorId,
-      params.amount,
-      bal.balance,
-    );
-  }
+    if (Number(debited.numAffectedRows ?? 0n,) === 0) {
+      // The INSERT above guarantees a row exists, so its balance is the
+      // real figure to report — a first-time spend sees 0 here.
+      const current = await trx
+        .selectFrom("actor_story_points",)
+        .select("balance",)
+        .where("actor_id", "=", params.actorId,)
+        .where("world_id", "is", worldKey,)
+        .executeTakeFirst();
+      // Throwing rolls the transaction back, so the seeded zero row is
+      // undone along with the failed debit.
+      throw new InsufficientStoryPointsError(
+        params.actorId,
+        params.amount,
+        current?.balance ?? 0,
+      );
+    }
+  },);
 
   const after = await getStoryPointBalance(db, params.actorId, worldKey,);
   void refreshActorStoryPointsCache(db, params.actorId, worldKey,).catch(() => {/* swallow */},);
