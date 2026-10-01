@@ -69,8 +69,20 @@ export function createApp(deps: AppDeps,): Elysia {
   const scheduler = startAppScheduler({ database, config, },);
 
   const app = new Elysia({ adapter: BunAdapter, },)
-    // ── Validation error handler (must be first) ─────────────
-
+    // ── Error boundary: mark tracked requests as failed ───────
+    // MUST be registered BEFORE the validation handler: Elysia stops at the
+    // first onError returning a value, and onValidationError always returns
+    // one — a boundary registered after it never runs. BUG-middleware-
+    // asyncstore-fail-dead-code.
+    .onError((ctx: IdempotencyCtx & { error: unknown },) => {
+      const requestId = ctx.requestId;
+      if (requestId) {
+        // Scope the fail() by userId so a client that guesses another user's
+        // requestId cannot flip their row to "failed". BUG-bug-async-lifecycle-writes-request-results-unscoped-by-user.
+        asyncStore.fail(requestId, { userId: ctx.userId ?? null, }, String(ctx.error,),);
+      }
+    },)
+    // ── Validation error handler (second; terminates the chain) ──
     .onError((ctx: any,) => onValidationError(ctx.code, ctx.error, ctx.set,))
     // ── Request-id resolution ────────────────────────────────
     // Resolves, validates, and applies the request id BEFORE auth so
@@ -181,18 +193,8 @@ export function createApp(deps: AppDeps,): Elysia {
   // Runs AFTER the idempotency afterHandle so it sees the recorded response.
   app.onAfterHandle(recordLifecycle(asyncStore,),);
 
-  // ── Error boundary: mark tracked requests as failed
-  // Uncaught throws in handlers still resolve ctx.requestId (derive ran),
-  // so we can flip the result row to "failed" instead of leaving it pending.
-  app.onError((ctx: IdempotencyCtx & { error: unknown },) => {
-    const requestId = ctx.requestId;
-    if (requestId) {
-      // Scope the fail() by userId so a client that guesses another user's
-      // requestId cannot flip their row to "failed". BUG-bug-async-lifecycle-writes-request-results-unscoped-by-user.
-      asyncStore.fail(requestId, { userId: ctx.userId ?? null, }, String(ctx.error,),);
-    }
-  },);
-
+  // Error boundary is registered at the top of this builder (before the
+  // validation handler) — see the ordering note there.
   // ── Graceful shutdown: flush pending async-store writes + stop scheduler
   app.onStop(() => {
     void asyncStore.flush();
