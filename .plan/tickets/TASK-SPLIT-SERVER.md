@@ -6,8 +6,8 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-frontend-backend-integration.md
-**Tags:** frontend-backend-integration
+**Epic:** epic-file-splitting.md
+**Tags:** file-split, god-module, server
 **Summary:** (none captured)
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)
