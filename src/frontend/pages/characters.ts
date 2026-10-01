@@ -13,6 +13,7 @@ import { escapeHtml, fetchPartial, filterCards, } from "./shared";
 // Initialize traits + proactive messaging modules
 import { initProactive, } from "./characters-proactive";
 import "./characters-edit-form";
+import "./characters-journal-keyphrases";
 import { initTraits, } from "./characters-traits";
 import "../character-growth-editor";
 
