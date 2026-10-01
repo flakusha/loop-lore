@@ -165,6 +165,10 @@ export class ComfyUIEditProvider implements ImageEditProvider {
           sizeBytes: buffer.length,
           buffer,
           altText: `ComfyUI ${template.name}: ${meta.width}x${meta.height} ${meta.format}`,
+          // Each ComfyUI run is a new item. Without this, a run that returns
+          // bytes matching an earlier one collapses onto that row and inherits
+          // its id, visibility and shares.
+          dedupe: false,
         },
         uploadDir,
       },);

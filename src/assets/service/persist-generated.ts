@@ -57,6 +57,9 @@ export async function persistGeneratedImages(
         sizeBytes: buffer.length,
         buffer,
         altText: opts.altText,
+        // Every generation run is its own item, even when the provider returns
+        // bytes identical to an earlier run.
+        dedupe: false,
       },
       uploadDir: opts.uploadDir,
     },);

@@ -190,6 +190,9 @@ export class MattingService {
         sizeBytes: matted.length,
         buffer: matted,
         altText: source.alt_text ?? undefined,
+        // A matted derivative is a new item; reusing an existing row would hand
+        // it that row's id, visibility and shares.
+        dedupe: false,
       },
     },);
 
