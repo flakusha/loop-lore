@@ -9,6 +9,7 @@
 
 
 **Status:** Done
+**Status Note:** All 6 ACs green — final AC (moderator/GM re-eval) verified against src + scoped tests 2026-10-01.
 **Priority:** High
 **Effort:** Medium
 **Epic:** epic-chat-product-features
@@ -22,7 +23,7 @@ Add explicit chat-ownership transfer as a first-class action: an owner can hand 
 - [x] Owner can transfer ownership to any current participant from a UI affordance and a backend endpoint
 - [x] Previous owner loses owner-scoped capabilities on success; new owner gains them
 - [x] Concurrent transfer attempts resolve to a single winner with audit evidence for the loser (proven by service `concurrent transfers` test: exactly one wins, loser leaves no partial writes, single audit row; loser evidence is an app-log warn without its own assertion)
-- [ ] Moderator / GM grants are re-evaluated and reconciled post-transfer (no moderator/GM logic in service; no scoped test covers it)
+- [x] Moderator / GM grants are re-evaluated and reconciled post-transfer (proven by `reconcileModeratorGrants` wired at `src/chat/service/ownership.ts:115` best-effort after the flip; behavior tests demote non-owner GMs and keep the new owner's GM seat in `access.test.ts`; `ownership.test.ts` pins invoked-exactly-once with correct ids + failure logged without rollback)
 - [x] Transfer requires a confirmation step on the frontend and an explicit `confirm: true` on the backend
 - [x] Audit trail records previous owner, new owner, timestamp, and any revocations (proven by service audit-row test: `chat_ownership_transferred` row with previous/new owner + reason, timestamp-ordered)
 
@@ -44,10 +45,9 @@ Add explicit chat-ownership transfer as a first-class action: an owner can hand 
 - `bun test src/routes/chats/ownership.test.ts`: 12 pass / 0 fail (32 expects)
 - `bun test src/frontend/alpine/chat-settings/ownership-actions.test.ts`: 14 pass / 0 fail (31 expects)
 - `bun test src/chat/service/ownership.test.ts`: 10 pass / 0 fail (38 expects) — covers audit row + concurrent single-winner
-- 36 tests total. Only the moderator/GM AC remains unchecked: no such logic exists (spec `gm` role unlanded per `src/chat/service/access.ts`).
+- 2026-10-01 re-verify (evidence-first close): all 6 ACs ticked. Scoped green: `bun test --parallel=4 --isolate src/chat/service/access.test.ts src/chat/service/ownership.test.ts src/routes/chats/ownership.test.ts src/frontend/alpine/chat-settings/ownership-actions.test.ts` → 65 pass / 1 skip / 0 fail. The moderator/GM AC is satisfied by `reconcileModeratorGrants` (wired post-flip at `src/chat/service/ownership.ts:115`; behavior tests in `access.test.ts`, wiring/tolerance tests in `ownership.test.ts`) — no new test needed, coverage was already real.
 
 ## Open Questions
 
 - Resolved: yes — non-participants are auto-invited with `role_in_chat = owner` before the flip.
 - Is there a cooling-off window where the previous owner can revoke?
-

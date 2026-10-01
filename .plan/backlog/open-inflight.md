@@ -44,7 +44,7 @@ linking) · G4 (authoring ownership indicators) — see `open-deferred.md`.
 - `TASK-sessions-api-routes` — `/api/sessions` pending (P3 #2 remainder)
 - `PERF-gallery-uploadChatAssets-sequential` — ✅ Done 2026-09-19 (already parallel via `Promise.allSettled`; 3 regression tests on dev)
 - World/location search (P3 filtering row remainder)
-- Detailed tuning frontend (P3 #13 remainder)
+- Detailed tuning frontend (P3 #13 remainder) — ✅ Done 2026-10-01 (settings modal inputs + component state → `buildGmConfig` → `gm_config.assistantTuning`; backend resolves via `parseAssistantTuning` in `generate-route/handler.ts` and `resolveAutoGenSamplingParams` in `auto-gen/call-llm.ts`, beating the 0.9/2048 defaults and the short-reply heuristic)
 
 ### F2 — feature remainders (medium, ticket-backed)
 
