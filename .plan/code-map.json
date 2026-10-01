@@ -972,6 +972,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/FEAT-background.md"
     },
     {
@@ -5271,6 +5275,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst.md"
     },
     {
       "kind": "ticket",
