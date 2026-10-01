@@ -15,15 +15,14 @@ import type { GmConfig, } from "../types";
  *
  * Channel: the existing `gm_config` JSON column (`assistantTuning` sub-key),
  * persisted through the chat PUT `gmConfig` payload — no new migration, no new
- * column. How generation resolves params today (backend, out of scope here):
- * the manual route (`src/generation/generate-route/handler.ts`) passes
- * `input.temperature`/`input.maxTokens` straight through with no chat-level
- * fallback, and the regular auto-gen path (`src/generation/auto-gen/call-llm.ts`)
- * hardcodes `temperature: 0.9` / `maxTokens: 2048` (512 for short replies).
- * So this slice delivers the editable-override ceiling on the persistence side:
- * the override round-trips through `gm_config` and is validated at this
- * boundary; a backend consumer (resolve `assistantTuning` into the generate
- * options) is the remaining half. Floor guaranteed regardless: every chat —
+ * column. Backend consumption: the manual route
+ * (`src/generation/generate-route/handler.ts`) resolves the override into the
+ * generate options (`parseAssistantTuning` + `resolveAssistant*`), and the
+ * regular auto-gen path (`src/generation/auto-gen/call-llm.ts`) resolves it
+ * via `resolveAutoGenSamplingParams` — a per-chat override beats both the
+ * auto-gen defaults (0.9 / 2048) and the short-reply heuristic (512).
+ * The override also round-trips through `gm_config` and is validated at this
+ * boundary. Floor guaranteed regardless: every chat —
  * even one whose stored blob predates tuning — renders effective values via
  * `effectiveAssistantParams` below.
  *

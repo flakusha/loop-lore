@@ -26,8 +26,13 @@
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
-import { getLogger, } from "../../logger";
+import { getLogger, type Logger, } from "../../logger";
 import { createStreamingSanitizer, } from "../../regex/html-sanitize";
+import {
+  AUTO_GEN_SHORT_REPLY_MAX_TOKENS,
+  resolveAutoGenSamplingParams,
+  type AssistantTuningOverride,
+} from "../assistant-tuning";
 import { activeGenerations, processStreamingChunk, } from "../cancellation-manager";
 import type { ChunkEvent, } from "../providers/types";
 import type { GenerationMessage, } from "../types";
@@ -44,6 +49,8 @@ export interface CallLlmOpts {
   /** Null for initial greeting (no parent message → no render buffer). */
   parentMessageId: string | null;
   userMessage?: string;
+  /** Validated per-chat `gm_config.assistantTuning` override (null axis = no override). */
+  assistantTuning?: AssistantTuningOverride;
   /** Resolved provider/request context. */
   resolved: {
     resolvedModel: string;
@@ -82,6 +89,33 @@ function bumpLastRendered(attemptId: string | undefined, seq: number,): void {
 }
 
 /**
+ * Detect an intent-classifier-predicted short reply for this turn.
+ *
+ * Skipped when the per-chat tuning override pins `maxTokens` — an explicit
+ * user value beats the heuristic, and skipping avoids a pointless aux call.
+ * @param opts - Classifier inputs + the validated per-chat override.
+ * @returns {Promise<boolean>}
+ */
+async function detectShortReply(opts: {
+  assistantTuning?: AssistantTuningOverride;
+  userMessage?: string;
+  config: Config;
+  database: Kysely<DB>;
+  log: Logger;
+}): Promise<boolean> {
+  if ((opts.assistantTuning?.maxTokens ?? null) !== null) { return false; }
+  if (!opts.userMessage) { return false; }
+  const intent = await classifyIntent(opts.userMessage, opts.config, opts.database,);
+  if (!intent?.shortReply || intent.confidence <= 0.7) { return false; }
+  opts.log.info("Auxiliary model: short reply detected", {
+    intent: intent.intent,
+    confidence: intent.confidence,
+    maxTokens: AUTO_GEN_SHORT_REPLY_MAX_TOKENS,
+  },);
+  return true;
+}
+
+/**
  * Run the LLM call for a generated message.
  * @param opts
  * @returns The accumulated content, thinking, token usage, and finish reason.
@@ -95,6 +129,7 @@ export async function callLlm(opts: CallLlmOpts,): Promise<CallLlmResult> {
     chatId,
     parentMessageId,
     userMessage,
+    assistantTuning,
     resolved,
     prompt,
     tracking,
@@ -104,18 +139,8 @@ export async function callLlm(opts: CallLlmOpts,): Promise<CallLlmResult> {
   } = opts;
   const log = getLogger().child({ module: "auto-gen", },);
 
-  let maxTokens = 2048;
-  if (userMessage) {
-    const intent = await classifyIntent(userMessage, config, database,);
-    if (intent?.shortReply && intent.confidence > 0.7) {
-      maxTokens = 512;
-      log.info("Auxiliary model: short reply detected", {
-        intent: intent.intent,
-        confidence: intent.confidence,
-        maxTokens,
-      },);
-    }
-  }
+  const shortReply = await detectShortReply({ assistantTuning, userMessage, config, database, log, });
+  const { temperature, maxTokens, } = resolveAutoGenSamplingParams({ tuning: assistantTuning, shortReply, });
 
   let accumulatedContent = "";
   let accumulatedThinking: string | undefined;
@@ -134,7 +159,7 @@ export async function callLlm(opts: CallLlmOpts,): Promise<CallLlmResult> {
     model: resolved.resolvedModel,
     messages: prompt.messages,
     apiKey: resolved.resolvedApiKey,
-    params: { temperature: 0.9, maxTokens, },
+    params: { temperature, maxTokens, },
     signal: tracking?.abortSignal,
   };
 
