@@ -1384,6 +1384,7 @@
     "wardrobeCreated": "Outfit created.",
     "wardrobeUpdated": "Outfit updated.",
     "wardrobeDeleteFailed": "Failed to delete outfit.",
+    "emotionAvatarsProgress": "{done} of {total} variants",
     "generationTimedOut": "Generation timed out.",
     "generationOutcome": "Generation {status}.",
     "resumingFromStep": "Resuming from step {step} of {total}..."

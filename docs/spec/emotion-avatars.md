@@ -25,6 +25,8 @@ builds a prompt from a base avatar so a usable image is still produced.
 | `src/characters/services/emotion-avatar-service/generation.ts` | Batch + single generation dispatch |
 | `src/characters/services/emotion-avatar-service/emotions.ts` | Emotion → prompt-modifier mapping |
 | `src/characters/services/emotion-avatar-service/job-store.ts` | Job state persistence |
+| `src/characters/services/emotion-avatar-service/job-events.ts` | In-process per-job progress pub/sub |
+| `src/routes/character-emotion-avatars-stream.ts` | SSE stream for per-variant job progress |
 | `src/characters/services/emotion-avatar-service/types.ts` | `BatchJobId`, `GenerateEmotionAvatarsOpts`, `BatchGenerationJob`, … |
 | `src/characters/services/emotion-avatar-fallback.ts` | Metadata extraction + fallback prompt |
 | `src/assistant/prompt/sections/emotion-avatar.ts` | Assistant prompt section injection |
@@ -96,3 +98,43 @@ active visual state.
   multi-provider fan-out is not yet implemented in code.
 - No dedicated UI document yet — see `frontend/characters.md` for the character
   surface that hosts avatars.
+
+## 7. Progress Streaming (SSE) & Job-Store Volatility
+
+### SSE progress stream
+
+`GET /api/v1/actors/:actorId/emotion-avatars/jobs/:jobId/stream` streams
+per-variant progress for a batch job as `text/event-stream`. Authorization is
+identical to the other job endpoints (`requireUserId` +
+`checkActorOwnership`); the job must also belong to the `:actorId` in the path,
+otherwise the endpoint answers 404. No new auth surface is introduced.
+
+Event protocol:
+
+- `event: progress` — JSON payload `{ jobId, done, total, status }`. An initial
+  snapshot is sent immediately on connect; this is the reconnect/stale-job
+  guard, so a client that reconnects — or connects to a job that already
+  finished — learns the current state without waiting for the next variant.
+- `event: progress` — re-sent after every variant settles and once more when the
+  job reaches a terminal status (`completed` / `failed` / `cancelled`).
+- `event: done` — sent on terminal status; the stream then closes.
+- `: keepalive` — comment ping every 15s while the job is still running.
+
+Progress is derived in-process (`job-events.ts`): `done` counts results with
+status `completed` or `failed`, `total` is the number of requested variants.
+
+### Polling fallback
+
+`GET /jobs/:jobId` polling remains the fallback for clients that cannot hold an
+SSE connection. The frontend (`actor-emotion-avatars.ts`) opens an
+`EventSource` per active job and keeps the 2s polling loop as a safety net;
+streams close on terminal status and on actor switch, and late events after an
+actor switch are ignored.
+
+### Job-store volatility
+
+Jobs live in an in-memory store (`job-store.ts`) and survive only as long as the
+server process. A restart loses every job: stream clients receive a 404 and
+polling clients see the job disappear. There is no persistence or replay — after
+a restart, clients must re-poll (and re-create) jobs rather than expect the old
+job IDs to resolve.

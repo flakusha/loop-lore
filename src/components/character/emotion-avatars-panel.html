@@ -70,6 +70,7 @@
       <tr>
         <th>Job</th>
         <th>Status</th>
+        <th>Progress</th>
         <th>Emotions</th>
         <th>Actions</th>
       </tr>
@@ -79,6 +80,19 @@
         <tr>
           <td x-text="job.id"></td>
           <td x-text="job.status"></td>
+          <td>
+            <template x-if="isJobActive(job) && job.progress && job.progress.total > 0">
+              <span class="emotion-avatars-progress">
+                <progress
+                  :value="job.progress.done"
+                  :max="job.progress.total"
+                  :title="t('status.emotionAvatarsProgress', { done: String(job.progress.done), total: String(job.progress.total), })"
+                >
+                </progress>
+                <span x-text="job.progress.done + '/' + job.progress.total"></span>
+              </span>
+            </template>
+          </td>
           <td x-text="(job.emotions || []).join(', ')"></td>
           <td>
             <button type="button" x-show="isJobActive(job)" @click="cancelJob(job.id)">
