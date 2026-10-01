@@ -2820,6 +2820,66 @@ html {
   border-color: var(--accent-primary);
   color: var(--accent-primary);
 }
+
+/* --- Message attach asset picker (component-buttons) --- */
+.asset-picker {
+  margin-top: 8px;
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  padding: 8px;
+  max-width: 420px;
+}
+.asset-picker-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+.asset-picker-close {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 16px;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0 4px;
+}
+.asset-picker-status {
+  font-size: 12px;
+  color: var(--text-secondary);
+  padding: 6px 0;
+}
+.asset-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+  gap: 6px;
+  max-height: 220px;
+  overflow-y: auto;
+}
+.asset-picker-item {
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--bg-tertiary);
+  cursor: pointer;
+  aspect-ratio: 1;
+}
+.asset-picker-item:hover,
+.asset-picker-item:focus-visible {
+  border-color: var(--accent-primary);
+}
+.asset-picker-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
 .reaction-picker {
   position: fixed;
   z-index: 100;

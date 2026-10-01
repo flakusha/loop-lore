@@ -8,6 +8,7 @@ import type { GifPickerState, } from "./gif-picker-state";
 import type { ChatLocationState, } from "./location-state";
 import type { ChatMemoryState, } from "./memory-state";
 import type { ChatMessageSearchState, } from "./message-search-state";
+import type { MessageActionsState, } from "./message-actions-state";
 import type { ChatMoodState, } from "./mood-state";
 import type { ChatMovementState, } from "./movement-state";
 import type { ChatMusicLinksState, } from "./music-links-state";
@@ -46,5 +47,6 @@ export interface ChatState
     ChatPromptAnalyzeState,
     ChatPromptTemplateState,
     GifPickerState,
-    TurnSkipState
+    TurnSkipState,
+    MessageActionsState
 {}

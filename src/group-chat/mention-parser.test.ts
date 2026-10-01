@@ -3,9 +3,11 @@ import { createLogger, } from "../logger";
 import {
   detectPassToken,
   extractMentionedActorIds,
+  parseAssetMentions,
   parseInitiativeFlag,
   parseMentions,
   resolveMention,
+  stripAssetMentions,
   stripLeadingMention,
 } from "./mention-parser";
 
@@ -228,5 +230,41 @@ describe("stripLeadingMention", () => {
   test("mid-message mentions and bare text are untouched", () => {
     expect(stripLeadingMention("hey @Luna hi",),).toBe("hey @Luna hi",);
     expect(stripLeadingMention("just talking",),).toBe("just talking",);
+  });
+
+  test("does not strip an @asset: token (attachment, not addressing)", () => {
+    expect(stripLeadingMention("@asset:abc123 look at this",),).toBe("@asset:abc123 look at this",);
+  });
+});
+
+describe("parseAssetMentions / stripAssetMentions (component-buttons AC6)", () => {
+  test("extracts a single asset id", () => {
+    expect(parseAssetMentions("see @asset:abc-123 ok",),).toEqual(["abc-123",],);
+  });
+
+  test("extracts multiple ids in order, deduplicating repeats", () => {
+    expect(
+      parseAssetMentions("@asset:a1 then @asset:a2 then @asset:a1",),
+    ).toEqual(["a1", "a2"],);
+  });
+
+  test("returns empty when there is no asset token", () => {
+    expect(parseAssetMentions("@Luna hello",),).toEqual([],);
+    expect(parseAssetMentions("mail me at user@example.com",),).toEqual([],);
+  });
+
+  test("ignores @asset without a colon-separated id", () => {
+    expect(parseAssetMentions("I am an asset",).length,).toBe(0,);
+    expect(parseAssetMentions("@asset",).length,).toBe(0,);
+  });
+
+  test("strip removes every token and collapses leftover spaces", () => {
+    expect(
+      stripAssetMentions("compare @asset:a1  with @asset:a2 please",),
+    ).toBe("compare with please",);
+  });
+
+  test("strip leaves plain text untouched", () => {
+    expect(stripAssetMentions("no tokens here",),).toBe("no tokens here",);
   });
 });

@@ -4,6 +4,7 @@
 import { Elysia, } from "elysia";
 import { aiActionRoutes, } from "./ai-action";
 import { archivingRoutes, } from "./archiving";
+import { attachRoutes, } from "./attach";
 import { createRoutes, } from "./create";
 import { forwardRoutes, } from "./forward";
 import { readRoutes, } from "./read";
@@ -25,5 +26,6 @@ export function messagesRoutes(opts: HandlerOpts, prefix = "/api",) {
     .use(createRoutes(opts, prefix,),)
     .use(forwardRoutes(opts, prefix,),)
     .use(aiActionRoutes(opts, prefix,),)
-    .use(archivingRoutes(opts, prefix,),);
+    .use(archivingRoutes(opts, prefix,),)
+    .use(attachRoutes(opts, prefix,),);
 }
