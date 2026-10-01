@@ -11611,6 +11611,23 @@
     "title": "Non-Standard Browser Encryption",
     "type": "EPIC"
   },
+  "EPIC-NPC-BDI-AUTONOMY": {
+    "hash": "pending",
+    "extid": "EPIC-NPC-BDI-AUTONOMY",
+    "type": "EPIC",
+    "title": "Character-Level Goal-Pursuit & Between-Session Continuity",
+    "label": "epic",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [
+      "npc-autonomy",
+      "bdi",
+      "generative-agents",
+      "cross-cutting"
+    ],
+    "source": ".plan/epics/epic-npc-bdi-autonomy.md",
+    "status": "Not Started"
+  },
   "EPIC-NPC-MANAGEMENT-UI": {
     "epic": "",
     "extid": "EPIC-NPC-MANAGEMENT-UI",
@@ -11648,6 +11665,22 @@
     ],
     "title": "NPC Navigation",
     "type": "EPIC"
+  },
+  "EPIC-NPC-TO-NPC-SOCIAL": {
+    "hash": "pending",
+    "extid": "EPIC-NPC-TO-NPC-SOCIAL",
+    "type": "EPIC",
+    "title": "Autonomous NPC-to-NPC Social Simulation",
+    "label": "epic",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [
+      "npc-social",
+      "generative-agents",
+      "cross-cutting"
+    ],
+    "source": ".plan/epics/epic-npc-to-npc-social.md",
+    "status": "Not Started"
   },
   "EPIC-NPCS": {
     "epic": "",
@@ -13065,6 +13098,22 @@
     ],
     "title": "Timeline System",
     "type": "EPIC"
+  },
+  "EPIC-TOOL-CALLING-MCP": {
+    "hash": "pending",
+    "extid": "EPIC-TOOL-CALLING-MCP",
+    "type": "EPIC",
+    "title": "Agent Tool-Calling & MCP Connector Surface",
+    "label": "epic",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [
+      "tool-calling",
+      "mcp",
+      "cross-cutting"
+    ],
+    "source": ".plan/epics/epic-tool-calling-mcp.md",
+    "status": "Not Started"
   },
   "EPIC-TOOLING-IMPROVEMENT": {
     "epic": "",
