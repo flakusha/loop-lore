@@ -109,65 +109,66 @@ describe("offload helpers", () => {
  * same idempotency-cache key resolve the SAME filename, and whichever writes
  * last silently replaces the other's body.
  *
- * Two isolation seams must both hold, and each is checked separately:
- * `SPILL_ROOT/<pid>` separates processes that keep the default namespace, and
- * `setOffloadDir()` lets a caller (or a test) claim its own area wholesale.
- * This test exercises the seam: each child installs its own `mkdtemp` root, so
- * the namespace is chosen rather than inherited, and the shared-`SPILL_ROOT`
- * case is exactly what the differing directories rule out.
+ * Two isolation seams must both hold, and each gets its own test below:
+ * `SPILL_ROOT/<pid>` (the production default, which is what protects a running
+ * app) and `setOffloadDir()` (a caller claiming its own area). Testing only the
+ * seam would miss a revert of `DEFAULT_DIR` back to a flat shared path.
  *
- * String inequality alone would prove nothing — `setOffloadDir` replaces the
- * namespace wholesale, so a regression could leave two distinct paths that
- * still resolve to the same directory. Only the files-on-disk result is
- * load-bearing: both children spill the SAME id, so a shared path would
- * collapse the two payloads into one file and one would read back the other's
- * body.
- *
- * Resource contract (parallel-safe): children are pointed at `mkdtemp` roots,
- * never at the repo's `.tmp/async-store`, so this writes nothing into the
- * running app's spill dir. `Bun.spawnSync` is synchronous and leaves no
- * lingering child when an assertion fails; both roots are removed in `finally`.
+ * String inequality alone proves little in either case, so both children spill
+ * the SAME id — identical filenames — and the load-bearing assertion is always
+ * files-on-disk: a shared path would collapse the two payloads into one file
+ * and one would read back the other's body.
  */
 describe("two independent stores on one database do not share a spill path", () => {
   /**
-   * Run one real child process against this worktree's spill module.
+   * Run one real child process against this worktree's spill module and have
+   * it spill under the isolation mode named by `mode`.
    * `bun -e` has no script slot in argv (argv[0] is the binary), so the module
    * path lands on argv[1].
    * @param id - row id both children spill
-   * @param root - spill root to install via `setOffloadDir`
-   * @returns the child's resolved spill dir, the file it wrote, and its pid
+   * @param mode - `default` keeps the production `SPILL_ROOT/<pid>` namespace;
+   *               `override` installs `cwd` as the whole spill area
+   * @param cwd - child working directory; `SPILL_ROOT` resolves against it
+   * @returns the child's resolved spill root, spill dir, written file and pid
    * @throws If the child exits non-zero.
    */
-  function runChild(id: string, root: string,): { dir: string; file: string; pid: number } {
+  function runChild(
+    id: string,
+    mode: "default" | "override",
+    cwd: string,
+  ): { root: string; dir: string; file: string; pid: number } {
     const script = `
       const m = await import(process.argv[1]);
-      m.setOffloadDir(process.argv[3]);
+      if (process.argv[4] === "override") { m.setOffloadDir(process.argv[3]); }
+      else { m.resetOffloadDir(); }
       const dir = m.offloadDir();
       const file = await m.spill(process.argv[2], "payload-for-pid-" + process.pid);
-      console.log(JSON.stringify({ dir, file, pid: process.pid }));
+      console.log(JSON.stringify({ root: m.SPILL_ROOT, dir, file, pid: process.pid }));
     `;
     const proc = Bun.spawnSync({
-      cmd: [process.execPath, "-e", script, path.join(import.meta.dir, "spill.ts",), id, root,],
-      // Anchor the child's cwd at `src/async/` so the module path resolves the
-      // way the suite does; the child never inherits the parent's spill dir.
-      cwd: import.meta.dir,
+      cmd: [process.execPath, "-e", script, path.join(import.meta.dir, "spill.ts",), id, cwd, mode,],
+      // The child's cwd decides where `SPILL_ROOT` (a CWD-relative
+      // `path.resolve`) lands, so an unrelated cwd keeps every byte of spill
+      // state out of the repo's `.tmp/async-store` and away from a running
+      // dev server's namespace.
+      cwd,
       timeout: 10_000,
     },);
     if (proc.exitCode !== 0) {
       throw new Error(`child spill process failed: ${proc.stderr.toString()}`,);
     }
-    return JSON.parse(proc.stdout.toString().trim(),) as { dir: string; file: string; pid: number };
+    return JSON.parse(proc.stdout.toString().trim(),) as { root: string; dir: string; file: string; pid: number };
   }
 
-  test("each process writes its own copy and neither sees the other's file", () => {
+  test("two processes claiming their own root with setOffloadDir stay isolated", () => {
     const rootA = mkdtempSync(path.join(tmpdir(), "loop-lore-c4-a-",),);
     const rootB = mkdtempSync(path.join(tmpdir(), "loop-lore-c4-b-",),);
     try {
       // The SAME row id in both processes: with a shared spill path the
       // filenames would be identical and one payload would clobber the other.
       const id = "criterion-4-same-row-id";
-      const a = runChild(id, rootA,);
-      const b = runChild(id, rootB,);
+      const a = runChild(id, "override", rootA,);
+      const b = runChild(id, "override", rootB,);
 
       expect(a.pid, "children must be distinct processes",).not.toBe(b.pid,);
       expect(a.dir, "independent stores must resolve different spill dirs",).not.toBe(b.dir,);
@@ -193,6 +194,53 @@ describe("two independent stores on one database do not share a spill path", () 
     } finally {
       rmSync(rootA, { recursive: true, force: true, },);
       rmSync(rootB, { recursive: true, force: true, },);
+    }
+  });
+
+  test("two processes on the production default land in different pid namespaces", () => {
+    // This is the seam that protects a running app: no `setOffloadDir`, just
+    // `resetOffloadDir()` and the `SPILL_ROOT/<pid>` default. Reverting
+    // `DEFAULT_DIR` to a flat `SPILL_ROOT` would put both children in one
+    // directory and both assertions below would fail.
+    //
+    // Hermetic by construction: the child's cwd is a fresh `mkdtemp`, and
+    // `SPILL_ROOT` is `path.resolve('.tmp', 'async-store')` resolved against
+    // the CWD AT IMPORT TIME — so the whole tree, root included, is created
+    // inside the sandbox and removed with it. The repo's `.tmp/async-store` is
+    // never written, so this cannot collide with a concurrent dev server.
+    const sandbox = mkdtempSync(path.join(tmpdir(), "loop-lore-c4-default-",),);
+    try {
+      const id = "criterion-4-default-namespace";
+      const a = runChild(id, "default", sandbox,);
+      const b = runChild(id, "default", sandbox,);
+
+      // Both resolve the SAME root — that is the whole premise — and separate
+      // only by pid. If the root itself differed the isolation would be the
+      // sandbox's doing, not the namespace's.
+      expect(a.root,).toBe(b.root,);
+      expect(a.pid, "children must be distinct processes",).not.toBe(b.pid,);
+      expect(a.dir, "the pid namespace must separate the two processes",).not.toBe(b.dir,);
+
+      // The exact production shape, pinned: `SPILL_ROOT/<pid>`.
+      expect(a.dir,).toBe(path.join(a.root, String(a.pid,),),);
+      expect(b.dir,).toBe(path.join(b.root, String(b.pid,),),);
+      expect(a.root.startsWith(sandbox + path.sep,), "SPILL_ROOT must resolve inside the sandbox",).toBe(true,);
+
+      // Same id, same filename — so the pid namespace is the only separator
+      // standing between the two payloads.
+      expect(path.basename(a.file,),).toBe(path.basename(b.file,),);
+      expect(path.basename(a.file,),).toBe(`${spillFileStem(id,)}.json.gz`,);
+
+      // Each write landed in its own pid directory, both survived, and each
+      // directory holds exactly one file.
+      expect(a.file.startsWith(a.dir + path.sep,),).toBe(true,);
+      expect(b.file.startsWith(b.dir + path.sep,),).toBe(true,);
+      expect(readOffloadedBody(a.file,),).toBe(`payload-for-pid-${a.pid}`,);
+      expect(readOffloadedBody(b.file,),).toBe(`payload-for-pid-${b.pid}`,);
+      expect(readdirSync(a.dir,),).toEqual([path.basename(a.file,),],);
+      expect(readdirSync(b.dir,),).toEqual([path.basename(b.file,),],);
+    } finally {
+      rmSync(sandbox, { recursive: true, force: true, },);
     }
   });
 });
