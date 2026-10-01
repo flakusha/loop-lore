@@ -39,6 +39,8 @@ coverage. Patterns are compiled once at module load and exported as constants.
 | `dice.ts` | `DICE_SIMPLE`, `DICE_EXTENDED`, `DICE_ROLL_EXTRACT` | Dice notation |
 | `code-fence.ts` | `CODE_FENCE_JSON`, `FENCE_OPEN`, `JSON_ARRAY` | Code-fence / JSON extraction |
 | `placeholders.ts` | `DOUBLE_BRACE`, `SINGLE_BRACE`, `MENTION`, `MENTION_AT_END`, `OBJECT_TYPE`, `WORKFLOW_TAG` | Placeholder / i18n directives |
+| `telemetry.ts` | `recordRegexCall`, `getRegexTelemetrySnapshot`, `resetRegexTelemetry`, `setRegexTelemetryEnabled` | Opt-in per-pattern match counters |
+| `telemetry-flush.ts` | `flushRegexTelemetry` | Counter → telemetry-sink flush |
 
 ## 2. Story-Event Detail
 
@@ -70,3 +72,35 @@ submodule source for those beyond the pattern constants listed above.
   rendering.
 - The library is pattern/extractor-only — it does not own higher-level
   pipeline orchestration (that lives in the calling services).
+
+## 5. Usage Notes — Regex Precision Telemetry
+
+Opt-in per-pattern match counters (calls vs matches) surface regex
+false-positive/precision regressions in telemetry. **Off by default** — the
+counter hook early-returns when disabled, so there is zero per-call cost
+unless explicitly enabled.
+
+Enable with `TELEMETRY_REGEX_PRECISION=1`. While enabled, counters
+accumulate per stable pattern label and flush every 60s to the telemetry
+sink as one `regex.precision` event per pattern:
+
+```json
+{
+  "eventType": "regex.precision",
+  "source": "regex",
+  "data": { "pattern": "intent:generate:character", "calls": 12, "matches": 9 }
+}
+```
+
+No PII is logged — pattern labels and aggregate counts only. Message
+content, targets, and match text never leave the process.
+
+Instrumented production match sites:
+
+- `action-parser.ts` — verb patterns (`action-parser:verb:<verb>`) and
+  target extraction (`action-parser:target`).
+- `workflow-routing.ts` — `INTENT_PATTERNS` (`intent:<intent>:<target>`).
+
+`memory-classification.ts` patterns have **no production consumer** (only
+re-exported via `regex/index.ts` and exercised by tests), so they are
+deliberately not instrumented.
