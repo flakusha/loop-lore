@@ -24,6 +24,18 @@ export interface TurnParticipant {
 
 // ─── Turn Manager State ───────────────────────────────────────
 
+/** One GM-forced turn-skip override, captured at the state transition. */
+export interface TurnForcedSkip {
+  /** Participant whose pending turn was force-skipped. */
+  actorId: string;
+  /** The GM/owner user who forced the override. */
+  byUserId: string;
+  /** ISO timestamp of the forced transition. */
+  at: string;
+  /** Mode of the underlying turn_skip event. */
+  mode: "hold" | "advance";
+}
+
 /** Persisted state for turn orchestration (stored in chats.story_state JSON) */
 export interface TurnManagerState {
   currentTurn: number;
@@ -46,6 +58,13 @@ export interface TurnManagerState {
    * "main" (BUG-chat-persist-init-hardcoded-scene).
    */
   currentSceneId: string;
+  /**
+   * GM-forced turn-skip overrides (audit trail — AC5 of
+   * TASK-chat-feature-turn-talkativity-skip). Append-only ring written
+   * through persistState, so each override is an auditable state
+   * transition; capped to keep story_state bounded.
+   */
+  forcedSkips?: TurnForcedSkip[];
 }
 
 // ─── Group Chat Turn Context ──────────────────────────────────
