@@ -17668,6 +17668,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-characters-flow-browser-e2e-flakes-on-a-game-state-404-and-o.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-frontend-ok-toast-branches-unreachable-fefetch-throws-on-non.md"
     },
     {
@@ -27717,6 +27721,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-content-assets-gallery-hashing-validation.md"
+    }
+  ],
+  "src/routes/game-state.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-characters-flow-browser-e2e-flakes-on-a-game-state-404-and-o.md"
     }
   ],
   "src/routes/games.ts": [
