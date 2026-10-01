@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small-Medium (survey + validation + gap tickets)
+**Epic:** epic-frontend-gallery.md
 **Summary:** Survey + validate how generated images (sd.cpp, ComfyUI standalone/proxy, external OpenAI-compatible) surface in gallery. Ground state: gallery FE is search + type filter only (src/frontend/pages/gallery.ts, 29L — no backend awareness); server view (src/routes/views/gallery.ts) enforces G6 visibility inheritance (private-character assets hidden from non-owners, admin.character bypass).
 **Context:** Image-backends cross-cutting audit (2026-09-25). Open: (1) no provenance filter (prompt-generated vs uploaded vs edited indistinguishable in grid); (2) no backend attribution (which provider/model/workflow produced the asset — needed to debug quality + reproduce); (3) G6 inheritance covers actor-linked assets — verify chat/message-linked generated assets inherit the same hide-from-non-participant rule (checkChatAccess parity).
 

@@ -15,7 +15,8 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic**:
+**Epic:** epic-relationships.md
+**Tags:** character, relationships
 **Related**: TASK-character-relationships.md
 
 ## Summary

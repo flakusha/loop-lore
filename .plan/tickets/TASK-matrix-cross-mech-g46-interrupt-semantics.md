@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-matrix-integration.md
 **Type:** Task
 **Summary:** Define and ship the interrupt semantics for in-flight generations. Stop → story truncates at last seen line; pending jobs (TTS, image, side-effects) cancelled end-to-end; billing hooks respect delivery (never bill undelivered tokens or uncompleted side-effects). Touches Transport/Streaming × Queued Side-Effects.
 **Context:** `matrix-cross-mechanics.md` G46 is 🟡 Medium (from the second emergent sweep 2026-08-31). Matrix says: "Stop → story truncates at last seen line, pending jobs cancelled end-to-end, billing hooks respect delivery." Inspiration: DreamRunner/Neta Studio interrupt handling. Stream abort already exists at a low level; the truncate, cancel-everything, never-bill behaviour is unspecified.

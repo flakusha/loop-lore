@@ -10,6 +10,7 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Small
+**Epic:** epic-asset-platform-capabilities.md
 **Type:** Bug
 **Tags:** routes, rpg, database, silent-regression
 

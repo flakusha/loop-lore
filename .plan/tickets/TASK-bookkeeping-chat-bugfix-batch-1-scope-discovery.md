@@ -11,6 +11,8 @@
 **Status:** Not Started
 **Priority:** Low
 **Effort:** Trivial
+**Epic:** epic-worktree-plan-tooling.md
+**Tags:** backlog, meta
 
 While preparing `chat-bugfix-batch-1`, the 3 proposed tickets were audited against the current `dev` state. Findings:
 

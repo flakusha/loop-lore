@@ -11,6 +11,8 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Medium
+**Epic:** epic-config-file-separation.md
+**Tags:** config-file-separation
 
 ## Summary
 

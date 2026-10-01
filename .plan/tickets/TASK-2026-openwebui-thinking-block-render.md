@@ -6,6 +6,8 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-platform-research.md
+**Tags:** openwebui, parity
 **Labels:** frontend, streaming, thinking
 **Summary:** Render SSE `event: thinking` payloads as a `<details class="thinking-block">` prepended to the streaming message bubble. Collapse by default when the response finishes; honor the character-level `thinking_visibility` setting to decide whether the block is rendered at all.
 

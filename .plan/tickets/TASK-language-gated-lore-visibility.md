@@ -10,6 +10,8 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small–Medium
+**Epic:** epic-character-internal-traits.md
+**Tags:** character, traits
 
 **References:**
 - Epic: .plan/epics/epic-character-world-integration.md

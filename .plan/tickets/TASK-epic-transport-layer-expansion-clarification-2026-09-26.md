@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small
+**Epic:** epic-worktree-plan-tooling.md
 **Type:** Task
 **Summary:** `epic-transport-layer-expansion.md` (30 lines, 3 commits, last touch 2026-09-18, ID `EPIC-2026-35`) is a placeholder referencing `future-features-plan.md`. Three siblings cover related territory: `epic-transport-expansion.md` (88 lines, transport-layer architecture), `epic-realtime-transports.md` (now 98 lines after this audit's IP addition — WebSocket / WebTransport), and `docs/spec/transport-unified.md`.
 **Context:** The 2026-09-25 docs-vs-plan audit flagged redundant transport-layer epics. The `epic-realtime-transports.md` parent (`epic-headless-alternative-frontends.md`) is the natural umbrella for WS / WebTransport; `epic-transport-layer-expansion.md` and `epic-transport-expansion.md` describe architecture without owning concrete tickets. Source row: 2026-09-26 epic audit.

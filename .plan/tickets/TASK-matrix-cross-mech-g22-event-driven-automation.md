@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Small
+**Epic:** epic-matrix-integration.md
 **Type:** Task
 **Summary:** Ship event-triggered slash-command/regex automation — a frontend quick-reply system that fires on startup/user-message/assistant-message and runs a configured chain of commands. Cheap, pure frontend, 0.1.0 quick-win.
 **Context:** `matrix-cross-mechanics.md` G22 is 🟢 Low and an explicit 0.1.0 quick-win candidate. Inspiration: SillyTavern Quick Replies, RisuAI dynamic-* events. The matrix notes "all (cross-cutting)" — every system benefits from triggered automation without needing new state.

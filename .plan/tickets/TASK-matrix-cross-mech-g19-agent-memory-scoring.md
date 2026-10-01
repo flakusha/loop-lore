@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-matrix-integration.md
 **Type:** Task
 **Summary:** Upgrade the memory purge/decay model toward a scored retrieval layer shared by every character-facing system: recency × importance × relevance with periodic reflection synthesis. Touches RPG, Social, Narrative, CharCore.
 **Context:** `matrix-cross-mechanics.md` G19 is 🟡 Medium (future), P6+ deferred. Inspiration: generative-agents (Stanford), RisuAI HypaMemory, Kindroid. Existing tickets `TASK-agent-memory-scoring.md` and `TASK-memory-emotion-impact.md` cover pieces; this ticket closes the cross-system wiring so all character-facing systems query the same scorer.

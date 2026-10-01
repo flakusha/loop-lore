@@ -6,6 +6,8 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-schema.md
+**Tags:** db, schema, audit-columns
 
 ## Summary
 

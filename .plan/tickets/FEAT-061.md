@@ -15,7 +15,8 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic**:
+**Epic:** epic-memory-knowledge-systems.md
+**Tags:** memory, visualization
 **Related**:
 
 Git issue: `3ec3a73`

@@ -6,6 +6,8 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small
+**Epic:** epic-code-quality.md
+**Tags:** tooling, quality
 **Type:** Task
 **Summary:** Persist a committed `.jscpd-baseline.json`, gate the check on rising clones or dup-%, expose `bun run jscpd:baseline` as the only sanctioned way to raise the bar.
 **Context:** `scripts/check-parallel.mjs:1167-1231` overwrites `.tmp/jscpd/prev.json` every run (git-ignored); observed 3003 → 3005 silent creep between 2026-09-25 and 2026-09-26 with no gate trip.

@@ -11,6 +11,8 @@
 **Status:** Not Started
 **Priority:** Medium
 **Effort:** Medium
+**Epic:** epic-code-quality.md
+**Tags:** tooling, plan-hygiene
 **Related:** .plan/backlog/open-untriaged.md (advisory orphans)
 
 ## Summary

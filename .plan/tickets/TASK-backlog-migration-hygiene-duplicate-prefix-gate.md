@@ -6,6 +6,7 @@
 **Status:** In Progress
 **Priority:** medium
 **Effort:** Small
+**Epic:** epic-worktree-plan-tooling.md
 **Type:** Task
 **Summary:** Duplicate-prefix detection and the `migrations - ordering` gate are DONE; the live `021` collision they caught is RESOLVED. What remains is narrow: cross-reference the 5 ghost `migrations/parts/` pointers in .plan/code-map.json against the filesystem, and document the gate in `src/db/migrations/README.md` § Migration hygiene. See ## RESOLVED for what changed and which earlier premises in this ticket were wrong.
 **Context:** Open-debt.md § Migration hygiene #1 documents that `migrations/parts/` is the real schema source (`001_init.ts:11-40` ESM-imports every `parts/NNN_*.ts`), while `migrate.ts` readdirSync loader intentionally ignores `parts/`. code-map.json contains 5 keys referencing non-existent parts files (004_chats_actors, 005_actor_data, 006_messages_keys, 007_story_generation, 016_telemetry_events). #3 (combine-applied-migrations) is closed (append-only holds); #2 (duplicate prefixes) is open.

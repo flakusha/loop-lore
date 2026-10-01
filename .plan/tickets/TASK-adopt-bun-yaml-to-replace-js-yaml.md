@@ -12,6 +12,8 @@
 **Status Note:** Postponed (lean-ctx gap; `adopt-bun-features` commit `255ef74c`)
 **Priority:** low
 **Effort:** Medium
+**Epic:** epic-platform-research.md
+**Tags:** platform-adoption, bun, runtime
 
 ## Summary
 

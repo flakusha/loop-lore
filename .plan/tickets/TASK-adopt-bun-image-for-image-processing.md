@@ -11,6 +11,8 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-platform-research.md
+**Tags:** platform-adoption, bun, runtime
 
 ## Summary
 

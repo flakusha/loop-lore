@@ -6,6 +6,8 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Small
+**Epic:** epic-memory-knowledge-systems.md
+**Tags:** memory
 
 **Summary:**
 

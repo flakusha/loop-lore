@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small-Medium (validation + UX decision + wiring)
+**Epic:** epic-frontend-gallery.md
 **Summary:** Validate the assistant-to-backend path for image generation across sd.cpp, ComfyUI (standalone/proxy), external OpenAI-compatible. Ground state: `/image` (src/assistant/commands/image.ts) returns a generate-image action dispatched by FE (chat-actions/dispatch.ts:65) to `POST /api/v1/generation/image` with `{prompt, chatId}` — backend selection happens server-side via `pickSdProvider` purpose=generate (first-match/both fallback, NOT user-visible).
 **Context:** Image-backends cross-cutting audit (2026-09-25). Open questions: (1) user cannot choose/see which backend serves the request — validate whether actionPayload should carry a backend hint + whether the server should echo the resolved backend in the response; (2) failure UX differs per backend (ComfyUI queue wait vs sd.cpp load vs external 429) — validate error shapes and surfaced messages.
 

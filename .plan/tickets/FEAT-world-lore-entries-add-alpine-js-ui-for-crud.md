@@ -6,6 +6,8 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-chat-product-features.md
+**Tags:** features
 **Summary:** World Lore Entries: add Alpine.js UI for CRUD
 **Context:** Epic unspecified; tags unspecified.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

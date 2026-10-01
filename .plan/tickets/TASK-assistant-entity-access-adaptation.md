@@ -11,6 +11,7 @@
 **Status:** Not Started
 **Priority:** High
 **Effort:** High
+**Epic:** epic-assistant-entity-access.md
 **Type:** Task
 **Tags:** assistant, adaptation, context, outfit, knowledge, background
 **Related:** `epic-assistant-entity-access.md`, `epic-lore-knowledge.md`, `epic-character-npc-lore-access.md`

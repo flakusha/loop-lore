@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small
+**Epic:** epic-matrix-integration.md
 **Type:** Task
 **Summary:** Close `matrix-authentication-channels.md` open decision `[WAC4]`: should the per-role minimum factor count live in `config.toml` (`[auth].minimum_factors_by_role`) or in a `factor_policy` DB table that admins can edit at runtime? Pick one and ship the consumer.
 **Context:** AC12 (provisioning × admin/config) is doc-resolved except for `[WAC4]`. The matrix recommends the DB-table shape ("per-role minimum count policy shape (static config vs DB policy table)") but leaves the call to the human planner. Both have UX tradeoffs: config = reproducible across instances, table = admin-tweakable without redeploy.

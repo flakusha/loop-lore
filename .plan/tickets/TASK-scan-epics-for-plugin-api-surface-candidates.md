@@ -11,6 +11,8 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Medium
+**Epic:** epic-plugin-system.md
+**Tags:** plugin-system
 
 ## Summary
 

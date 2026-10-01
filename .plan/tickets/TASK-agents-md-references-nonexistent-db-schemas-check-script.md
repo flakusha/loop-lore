@@ -11,6 +11,8 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Medium
+**Epic:** epic-worktree-plan-tooling.md
+**Tags:** worktree-plan-tooling
 
 ## Summary
 

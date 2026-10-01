@@ -11,6 +11,7 @@
 **Status:** Not Started
 **Priority:** High
 **Effort:** Medium
+**Epic:** epic-assistant-entity-access.md
 **Type:** Task
 **Tags:** assistant, entity, schema, access, adapter
 **Related:** `epic-assistant-entity-access.md`, `epic-assistant-gm-flows.md`

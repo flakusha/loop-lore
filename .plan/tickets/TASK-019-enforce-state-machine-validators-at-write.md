@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium (one helper + 6 service wire-ups + tests)
+**Epic:** epic-schema.md
 **Summary:** The validators added by `cc4b39ed4` (`feat(db): state-machine composite validators + write-path guards`) are defined and unit-tested but never consulted at runtime — write paths still use raw Kysely `insertInto`/`updateTable`. Add a single `assertValidWrite(table, row)` helper that picks the right `CompositeValidator` or `StateMachine`, and wire it into the 6 affected service entry points. No column changes.
 **Context:** DB schema-gate audit (2026-09-25, `db-migration-fixes` session, scout report) flagged 6 validators that are defined but unenforced: `messagesStatusVisibility`, `loreDisputedInvariant`, `shadowNotesStatusVisibility`, `shareAlikeDerivatives`, `branchesDisplayInvariant`, `ItemInstanceState`. Each lives only in migration comments or in the validator module today. Adding `assertValid` to every write path is the missing backstop that closes the gap between "type-safe enum" and "actually enforced invariant".
 

@@ -11,6 +11,8 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-lore-knowledge.md
+**Tags:** lore-knowledge
 
 ## Summary
 

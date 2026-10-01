@@ -12,6 +12,8 @@
 **Priority:** high
 **Priority Tier:** P4
 **Effort:** Medium
+**Epic:** epic-e2e-integration-testing.md
+**Tags:** e2e, browser
 **Area:** users (auth)
 **Source:** reconcile review (Scout Batch B — ISSUE-006)
 
