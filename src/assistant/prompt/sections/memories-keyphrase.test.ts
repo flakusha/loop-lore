@@ -268,6 +268,11 @@ describe("memorySection — keyphrase recall end-to-end", () => {
   // tests are actually about.
 
   test("match injects the journal entry into the prompt; cooldown blocks the re-inject", async () => {
+    // Pin the prompt-selection coin flip: unstubbed, Math.random sometimes
+    // picks the competing importance-5 entry, dedupe then drops the keyphrase
+    // audit row, and this test flakes (~2/3).
+    const originalRandom = Math.random;
+    Math.random = () => 0.99;
     const f = await setup({ withMatchMessage: true, },);
     try {
       const first = await memorySection.build(f.assembleCtx,);
@@ -280,6 +285,7 @@ describe("memorySection — keyphrase recall end-to-end", () => {
       expect(second,).toBeDefined();
       expect(await keyphraseAuditCount(f.ctx,),).toBe(1,);
     } finally {
+      Math.random = originalRandom;
       f.sqlite.close();
     }
   });

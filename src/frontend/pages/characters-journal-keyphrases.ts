@@ -72,8 +72,9 @@ globalThis.initJournalKeyphrases = async function(characterId: string,) {
   try {
     const res = await feFetch(`/api/v1/actors/${characterId}/memories`,);
     if (!res.ok) { throw new Error(`status ${res.status}`,); }
-    const data = await res.json() as { items?: JournalMemoryRow[] };
-    const items = data.items ?? [];
+    // jsonPaginated envelope: { data, pagination, meta }.
+    const body = await res.json() as { data?: JournalMemoryRow[] };
+    const items = body.data ?? [];
     if (items.length === 0) {
       el.innerHTML = `<p style="color:var(--text-secondary)">${escapeHtml(t("journalKeyphrases.empty",),)}</p>`;
       return;
