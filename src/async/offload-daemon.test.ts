@@ -782,38 +782,48 @@ describe("pruneOrphanSpills — retention cap for unreferenced spill files", () 
   });
 
   test("a default sweep stays inside the directory this test owns", async () => {
-    // The sentinel is stale and unreferenced, and it lives INSIDE the sweep
-    // root — `setOffloadDir` in the file-scope `beforeEach` points BOTH
-    // `offloadDir()` and `spillRootDir()` at this test's own `mkdtemp`, and
-    // `pruneOrphanSpills` with no `dir` resolves the same root. So the sweep
-    // genuinely sees the sentinel and genuinely chooses to keep it: it is
-    // referenced by the seeded row, or too fresh to prune. Reachability is
-    // what makes this assertion load-bearing — a sweep that escaped to the
-    // shared `SPILL_ROOT` would find no sentinel here and pass vacuously.
+    // Two files, both stale, both INSIDE this test's own spill area — the
+    // file-scope `beforeEach` points BOTH `offloadDir()` and `spillRootDir()`
+    // at its `mkdtemp`, and `pruneOrphanSpills` with no `dir` resolves that
+    // same root. Only the reference check distinguishes them:
+    //   - `referenced` is named by a seeded row, so the sweep must KEEP it;
+    //   - `orphan` is named by nothing, so the sweep MUST delete it.
     //
-    // Writing the sentinel under the repo's `SPILL_ROOT` instead (the old
-    // shape) tested nothing: the sweep never read that directory, so
-    // `pruned === 0` held for the wrong reason, and the flat `.json.gz` was
-    // transient residue in the shared repo dir.
-    const sentinel = path.join(spillDirForTest, `sentinel-${crypto.randomUUID()}.json.gz`,);
-    writeFileSync(sentinel, "x",);
+    // The orphan is the positive control. Without it `pruned === 0` is
+    // satisfiable twice over — by a sweep that spared the referenced file, and
+    // by a sweep that looked nowhere at all — so the assertion would not
+    // distinguish "confined to my own dir" from "did not run". Requiring
+    // `pruned === 1` pins the confinement: a sweep that escaped to the shared
+    // `SPILL_ROOT` would find neither file here, prune nothing, and fail.
+    //
+    // The sentinel stays inside the swept directory on purpose. The previous
+    // shape wrote it under the repo's shared `SPILL_ROOT`, which this sweep
+    // never reads — the file was unreachable, `pruned === 0` held for the
+    // wrong reason, and the flat `.json.gz` was residue in the shared repo dir.
+    const referenced = path.join(spillDirForTest, `referenced-${crypto.randomUUID()}.json.gz`,);
+    const orphan = path.join(spillDirForTest, `orphan-${crypto.randomUUID()}.json.gz`,);
     const oldTs = new Date(Date.now() - 4 * TTL_MS,);
     const { utimesSync, } = await import("node:fs");
-    utimesSync(sentinel, oldTs, oldTs,);
+    for (const p of [referenced, orphan,]) {
+      writeFileSync(p, "x",);
+      utimesSync(p, oldTs, oldTs,);
+    }
     const ctx = await createTestDb();
     try {
       await seedRequest(ctx.db, {
         id: "sentinel-row",
         status: "complete",
         completedAt: minutesAgo(1,),
-        offloadPath: sentinel,
+        offloadPath: referenced,
       },);
 
       // No `dir` — this is the production call shape from runOffloadPass.
       const pruned = await pruneOrphanSpills(ctx.db, { ttlMs: TTL_MS, },);
 
-      expect(pruned,).toBe(0,);
-      expect(existsSync(sentinel,),).toBe(true,);
+      // Exactly one: the orphan went, the referenced file stayed.
+      expect(pruned, "the sweep must find and delete the unreferenced orphan in this test's own dir",).toBe(1,);
+      expect(existsSync(orphan,), "the unreferenced orphan must be swept",).toBe(false,);
+      expect(existsSync(referenced,), "a file any row references must survive the sweep",).toBe(true,);
     } finally {
       await ctx.db.destroy();
       ctx.sqlite.close();
