@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { beforeEach, describe, expect, test, } from "bun:test";
-import { mkdtempSync, readdirSync, readFileSync, } from "node:fs";
+import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
+import { mkdtempSync, readdirSync, readFileSync, rmSync, } from "node:fs";
+import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 import { storeFile, } from "./service/file-system";
 
@@ -10,7 +11,14 @@ describe("storeFile path traversal", () => {
   let uploadDir: string;
 
   beforeEach(() => {
-    uploadDir = mkdtempSync(join("/tmp", "ll-assets-",),);
+    // tmpdir(), not a hardcoded "/tmp" — TMPDIR may point elsewhere.
+    uploadDir = mkdtempSync(join(tmpdir(), "ll-assets-",),);
+  },);
+
+  // One dir per test, so one rm per test: without this the suite leaked a
+  // fresh OS temp dir on every run, forever.
+  afterEach(() => {
+    rmSync(uploadDir, { recursive: true, force: true },);
   },);
 
   test("benign filename keeps its extension", () => {

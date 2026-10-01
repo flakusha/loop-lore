@@ -7,9 +7,9 @@
  * Covers: seed-on-create for images (no seed for non-images), upsert
  * idempotency, context→default fallback resolution, and range validation.
  */
-import { describe, expect, test, } from "bun:test";
+import { afterAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
-import { mkdtempSync, } from "node:fs";
+import { mkdtempSync, rmSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 import { AssetType, TransformContext, } from "../../db/enums";
@@ -25,8 +25,15 @@ import {
   upsertAssetTransform,
 } from "./transforms";
 
-const uploadDir = join(tmpdir(), `transforms-${Date.now()}`,);
-mkdtempSync(uploadDir,);
+// One mkdtempSync, and keep its return value. The previous form built the
+// path twice: a `Date.now()` prefix that mkdtempSync then suffixed again, so the
+// tests wrote into `transforms-<ms>` while `transforms-<ms>XXXXXX` was created
+// and abandoned beside it — one unnameable OS temp dir leaked per run.
+const uploadDir = mkdtempSync(join(tmpdir(), "ll-transforms-",),);
+
+afterAll(() => {
+  rmSync(uploadDir, { recursive: true, force: true },);
+},);
 
 async function ownerIdFor(db: Kysely<DB>, username: string,): Promise<string> {
   return (await db.selectFrom("users",).select("id",).where("username", "=", username,).executeTakeFirstOrThrow()).id;
