@@ -12,6 +12,8 @@ export interface TelemetryConfig {
   frontendEnabled: boolean;
   retentionDays: number;
   playwrightEnabled?: boolean;
+  /** Opt-in per-pattern regex match counters (TELEMETRY_REGEX_PRECISION). */
+  regexPrecision: boolean;
 }
 
 const isDev = process.env.NODE_ENV !== "production";
@@ -41,5 +43,7 @@ export function loadTelemetryConfig(): TelemetryConfig {
     frontendEnabled: resolveFlag(process.env.TELEMETRY_FRONTEND_ENABLED, isDev,) || master,
     retentionDays: Number(process.env.TELEMETRY_RETENTION_DAYS,) || 90,
     playwrightEnabled: resolveFlag(process.env.TELEMETRY_PLAYWRIGHT_ENABLED, isDev,),
+    // Opt-in: off unless explicitly enabled, even in dev.
+    regexPrecision: resolveFlag(process.env.TELEMETRY_REGEX_PRECISION, false,),
   };
 }
