@@ -50,6 +50,19 @@ Frontend implementation of the Gallery & Media Viewer for the loop-lore web UI. 
 - [`TASK-config-gallery-attachment-idempotent.md`](../tickets/TASK-config-gallery-attachment-idempotent.md) — ✅ Done — hash-based duplicate detection + frontend toast
 - [`TASK-character-avatar-gallery-binding.md`](../tickets/TASK-character-avatar-gallery-binding.md) — 🟡 Backend + entity filter + tab done; visibility inheritance (G6) done
 
+- Asset dedup defects found 2026-10-01 — owned by `epic-asset-platform-capabilities.md`
+  (B1 Defect tickets), not here. The gallery's Phase 1 idempotency and the
+  `TASK-config-gallery-attachment-idempotent` guarantee above are undermined by:
+  - [`BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat.md`](../tickets/BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat.md)
+  - [`BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-.md`](../tickets/BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-.md)
+  - [`BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst.md`](../tickets/BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst.md)
+  - [`BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return.md`](../tickets/BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return.md)
+  - [`BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with.md`](../tickets/BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with.md)
+  - [`BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty.md`](../tickets/BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty.md)
+  Gallery-visible consequences: an edit iteration can silently inherit an old
+  row's public visibility (so a new item appears already shared), and a
+  concurrent double-upload produces two identical grid cards.
+
 ## File Structure (verified 2026-08-01)
 
 ```
