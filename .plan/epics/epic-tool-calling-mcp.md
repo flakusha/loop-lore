@@ -9,6 +9,7 @@
 **Type:** Feature Epic
 **Tags:** tool-calling, mcp, cross-cutting
 **Related:** epic-platform-integrations.md, epic-workflow-engine.md, epic-assistant-gm-flows.md, epic-actor-autonomy-story-drive.md, epic-byok-api-keys.md, epic-plugin-system.md
+**Overview:** A cross-cutting tool schema and runtime that lets LLM-driven agents — assistant, GM, NPC autonomy, operator workspace — invoke loop-lore subsystems (inventory, combat, quest, social, asset, lore, memory) through structured function calls, closing matrix gap G42, the broadest integration gap in the matrix. Ships a TypeBox tool registry, a validating dispatch runtime, MCP client and server surfaces so external MCP servers can plug in as tool providers, and a tool-palette UI for auditing and revoking agent access.
 
 ## Summary
 
