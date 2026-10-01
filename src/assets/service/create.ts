@@ -27,57 +27,62 @@ export async function createAsset({ database, input, uploadDir, }: CreateAssetOp
   hasher.update(input.buffer,);
   const contentHash = hasher.digest("hex",);
 
-  // Check for existing asset with same content and owner
-  const existing = await database
-    .selectFrom("assets",)
-    .select([
-      "id",
-      "filename",
-      "mime_type",
-      "asset_type",
-      "size_bytes",
-      "storage_backend",
-      "alt_text",
-      "visibility",
-      "created_at",
-      "encryption_tier",
-      "encrypted_key_id",
-      "storage_path",
-      "width",
-      "height",
-      "duration_secs",
-      "alpha_status",
-      "owner_id",
-      "thumbnail_path",
-    ],)
-    .where("content_hash", "=", contentHash,)
-    .where("owner_id", "=", input.ownerId,)
-    .executeTakeFirst();
+  // Check for existing asset with same content and owner. Derivative-creating
+  // callers opt out with `dedupe: false` — a new iteration that happens to
+  // reproduce existing bytes is still a distinct item, and collapsing it onto the
+  // old row would silently inherit that row's id, visibility and share set.
+  if (input.dedupe !== false) {
+    const existing = await database
+      .selectFrom("assets",)
+      .select([
+        "id",
+        "filename",
+        "mime_type",
+        "asset_type",
+        "size_bytes",
+        "storage_backend",
+        "alt_text",
+        "visibility",
+        "created_at",
+        "encryption_tier",
+        "encrypted_key_id",
+        "storage_path",
+        "width",
+        "height",
+        "duration_secs",
+        "alpha_status",
+        "owner_id",
+        "thumbnail_path",
+      ],)
+      .where("content_hash", "=", contentHash,)
+      .where("owner_id", "=", input.ownerId,)
+      .executeTakeFirst();
 
-  if (existing) {
-    return {
-      asset: {
-        id: existing.id,
-        owner_id: existing.owner_id,
-        filename: existing.filename,
-        mime_type: existing.mime_type,
-        asset_type: existing.asset_type,
-        size_bytes: existing.size_bytes,
-        storage_path: existing.storage_path,
-        storage_backend: existing.storage_backend,
-        visibility: existing.visibility,
-        width: existing.width,
-        height: existing.height,
-        duration_secs: existing.duration_secs,
-        alt_text: existing.alt_text,
-        created_at: existing.created_at,
-        encryption_tier: existing.encryption_tier,
-        encrypted_key_id: existing.encrypted_key_id,
-        alpha_status: existing.alpha_status,
-        thumbnail_path: existing.thumbnail_path,
-      },
-      duplicate: true,
-    };
+    if (existing) {
+      return {
+        asset: {
+          id: existing.id,
+          owner_id: existing.owner_id,
+          filename: existing.filename,
+          mime_type: existing.mime_type,
+          asset_type: existing.asset_type,
+          size_bytes: existing.size_bytes,
+          storage_path: existing.storage_path,
+          storage_backend: existing.storage_backend,
+          visibility: existing.visibility,
+          width: existing.width,
+          height: existing.height,
+          duration_secs: existing.duration_secs,
+          alt_text: existing.alt_text,
+          created_at: existing.created_at,
+          encryption_tier: existing.encryption_tier,
+          encrypted_key_id: existing.encrypted_key_id,
+          alpha_status: existing.alpha_status,
+          thumbnail_path: existing.thumbnail_path,
+        },
+        duplicate: true,
+      };
+    }
   }
 
   const id = uid();

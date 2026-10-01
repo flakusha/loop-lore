@@ -53,6 +53,14 @@ export interface CreateAssetInput {
   chatKey?: ChatKey | null;
   keyId?: string | null;
   pipelineConfig?: PipelineConfig;
+  /**
+   * Whether to reuse a pre-existing asset with identical content+owner instead
+   * of inserting a new row. Defaults to true. Derivative-creating callers (edits,
+   * matting, generated output) MUST pass `false`: a new iteration that happens to
+   * reproduce existing bytes is still a distinct item, and collapsing it onto the
+   * old row would silently inherit that row's id, visibility and share set.
+   */
+  dedupe?: boolean;
 }
 
 /** */

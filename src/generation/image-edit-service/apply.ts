@@ -200,6 +200,9 @@ export async function applyEdit(
         sizeBytes: buffer.length,
         buffer,
         altText: `Edited: ${opts.parsed.intent}`,
+        // Each edit is a new iteration, even when the model returns bytes that
+        // already exist — collapsing onto the old row would leak its access.
+        dedupe: false,
       },
       uploadDir: thisL.uploadDir,
     },);
