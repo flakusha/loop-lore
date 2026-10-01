@@ -1236,6 +1236,19 @@
     "title": "buildStylePrompt result returned but never consumed",
     "type": "BUG"
   },
+  "BUG-BUN-TEST-ISOLATE-SILENTLY-SKIPS-EVERY-DESCRIBEORSKIP-SUITE": {
+    "hash": "86d3b69",
+    "git_issue": "86d3b69",
+    "extid": "BUG-BUN-TEST-ISOLATE-SILENTLY-SKIPS-EVERY-DESCRIBEORSKIP-SUITE",
+    "type": "BUG",
+    "title": "bun test --isolate silently skips every describeOrSkip suite",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-bun-test-isolate-silently-skips-every-describeorskip-suite.md",
+    "status": "Not Started"
+  },
   "BUG-BUN-TEST-SRC-FULL-SUITE-IS-ORDER-DEPENDENT-CROSS-FILE-CONTAM": {
     "epic": "",
     "extid": "BUG-BUN-TEST-SRC-FULL-SUITE-IS-ORDER-DEPENDENT-CROSS-FILE-CONTAM",
@@ -2385,6 +2398,19 @@
     "tags": [],
     "title": "Diff-scoped coverage gate floors whole modules on partial lcov",
     "type": "BUG"
+  },
+  "BUG-DIFF-SCOPED-GATES-MISS-TEST-FILES-THAT-ONLY-COLLIDE-WHEN-RUN": {
+    "hash": "2d6dcf3",
+    "git_issue": "2d6dcf3",
+    "extid": "BUG-DIFF-SCOPED-GATES-MISS-TEST-FILES-THAT-ONLY-COLLIDE-WHEN-RUN",
+    "type": "BUG",
+    "title": "Diff-scoped gates miss test files that only collide when run in the same process",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-diff-scoped-gates-miss-test-files-that-only-collide-when-run.md",
+    "status": "Not Started"
   },
   "BUG-DOCS-SITE-BUILD-EMITS-DANGLING-VP-ICONS-CSS-LINK-FAILING-EVE": {
     "epic": "",
@@ -4455,6 +4481,32 @@
     "tags": [],
     "title": "negotiate() falls back to CompressionAlgorithm.None when client requests an algorithm the server supports but the serverCaps order does not match",
     "type": "BUG"
+  },
+  "BUG-NEW-CHAT-E2E-READS-CHAT-PARTICIPANTS-ONCE-BEFORE-THE-BEST-EF": {
+    "hash": "9498418",
+    "git_issue": "9498418",
+    "extid": "BUG-NEW-CHAT-E2E-READS-CHAT-PARTICIPANTS-ONCE-BEFORE-THE-BEST-EF",
+    "type": "BUG",
+    "title": "New-chat e2e reads chat_participants once before the best-effort persona PUT completes",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-new-chat-e2e-reads-chat-participants-once-before-the-best-ef.md",
+    "status": "Not Started"
+  },
+  "BUG-NEW-CHAT-E2E-READS-THE-CREATE-RESPONSE-BODY-AFTER-NAVIGATION": {
+    "hash": "15b3750",
+    "git_issue": "15b3750",
+    "extid": "BUG-NEW-CHAT-E2E-READS-THE-CREATE-RESPONSE-BODY-AFTER-NAVIGATION",
+    "type": "BUG",
+    "title": "New-chat e2e reads the create response body after navigation has already committed",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-new-chat-e2e-reads-the-create-response-body-after-navigation.md",
+    "status": "Not Started"
   },
   "BUG-NEW-CHAT-VN-TOGGLE-SENDS-VISUALNOVEL-BUT-BACKEND-READS-RENDE": {
     "epic": "",
@@ -20910,6 +20962,19 @@
     "tags": [],
     "title": "Audit follow-up: worktree finalize reapStale() void dead code",
     "type": "TASK"
+  },
+  "TASK-AUDIT-NEW-TEST-FILES-FOR-CROSS-FILE-PROCESS-COLLISIONS-BEFOR": {
+    "hash": "b6c8aa8",
+    "git_issue": "b6c8aa8",
+    "extid": "TASK-AUDIT-NEW-TEST-FILES-FOR-CROSS-FILE-PROCESS-COLLISIONS-BEFOR",
+    "type": "TASK",
+    "title": "Audit new test files for cross-file process collisions before they reach dev",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-audit-new-test-files-for-cross-file-process-collisions-befor.md",
+    "status": "Not Started"
   },
   "TASK-AUDIT-T-UNIONENUM-SCHEMA-FIELDS-ABSENT-VALUE-SILENTLY-DEFAUL": {
     "epic": "",
@@ -40935,8 +41000,8 @@
   "TASK-TMP-JANITOR-AND-STALENESS-MARKERS": {
     "epic": "",
     "extid": "TASK-TMP-JANITOR-AND-STALENESS-MARKERS",
-    "git_issue": "f6100ba",
-    "hash": "f6100ba",
+    "git_issue": "df4c473",
+    "hash": "df4c473",
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-tmp-janitor-and-staleness-markers.md",
