@@ -9,74 +9,25 @@
 //   PUT    /api/v1/actors/:actorId/traits/:traitName
 //   DELETE /api/v1/actors/:actorId/traits/:traitName
 // Pairs with `src/components/character/traits-panel.html`.
+import { TRAIT_CATEGORIES, } from "./actor-traits-types";
+import type {
+  ActorTraitsState,
+  PermanentTrait,
+  TraitDraft,
+} from "./actor-traits-types";
 import { apiFetch, } from "./htmx";
 import { t, } from "./i18n";
 import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";
 
+export { TRAIT_CATEGORIES, } from "./actor-traits-types";
+export type {
+  ActorTraitsState,
+  PermanentTrait,
+  TraitDraft,
+} from "./actor-traits-types";
+
 const log = rootLog.child({ module: "actor-traits", },);
-
-/** Default categories surfaced in the editor dropdown. */
-export const TRAIT_CATEGORIES = [
-  "personality",
-  "physical",
-  "background",
-  "skill",
-  "weakness",
-  "custom",
-] as const;
-
-/** A single permanent trait row. */
-export interface PermanentTrait {
-  id: string;
-  actor_id: string;
-  trait_category: string;
-  trait_name: string;
-  value: unknown;
-  created_at: string;
-}
-
-/** Draft state for the new/edit form. */
-export interface TraitDraft {
-  category: string;
-  name: string;
-  value: string;
-  editingName: string | null;
-}
-
-/**
- * State plugin for the permanent-traits panel. Bound to a single actor via
- * `setActorId`. Supports list/create/update/delete of permanent traits with a
- * search filter and category dropdown.
- */
-export interface ActorTraitsState {
-  _trActorId: string | null;
-  traits: PermanentTrait[];
-  traitsLoading: boolean;
-  traitsError: string;
-  search: string;
-  categoryFilter: string;
-  draft: TraitDraft;
-  busy: boolean;
-  message: string;
-  error: string;
-  setActorId(actorId: string,): void;
-  loadTraits(): Promise<void>;
-  /** Filter `traits` by `search` + `categoryFilter`. */
-  filteredTraits(): PermanentTrait[];
-  /** Start editing a trait (copies values into the draft). */
-  startEdit(trait: PermanentTrait,): void;
-  /** Clear the draft and reset to "create" mode. */
-  cancelEdit(): void;
-  /** Save the draft (create if `editingName` is null, update otherwise). */
-  save(): Promise<void>;
-  /** DELETE a trait by name. */
-  remove(traitName: string,): Promise<void>;
-  /** Build the POST/PUT payload from the draft. */
-  buildPayload(): Record<string, unknown>;
-  /** Resolve a human label for a trait category code. */
-  describeCategory(category: string,): string;
-}
 
 const emptyDraft = (): TraitDraft => ({
   category: "personality",
@@ -106,10 +57,6 @@ export const actorTraits: ActorTraitsState = {
   message: "",
   error: "",
 
-  /**
-   * @param {string} actorId
-   * @returns {void}
-   */
   setActorId(actorId: string,) {
     if (this._trActorId === actorId) { return; }
     this._trActorId = actorId;
@@ -123,9 +70,6 @@ export const actorTraits: ActorTraitsState = {
     this.error = "";
   },
 
-  /**
-   * @returns {Promise<void>}
-   */
   async loadTraits() {
     const actorId = this._trActorId;
     if (!actorId) { return; }
@@ -147,9 +91,6 @@ export const actorTraits: ActorTraitsState = {
     }
   },
 
-  /**
-   * @returns {PermanentTrait[]}
-   */
   filteredTraits() {
     const q = this.search.trim().toLowerCase();
     return this.traits.filter((trait,) => {
@@ -161,10 +102,6 @@ export const actorTraits: ActorTraitsState = {
     },);
   },
 
-  /**
-   * @param {PermanentTrait} trait
-   * @returns {void}
-   */
   startEdit(trait: PermanentTrait,) {
     this.draft = {
       category: trait.trait_category,
@@ -174,16 +111,10 @@ export const actorTraits: ActorTraitsState = {
     };
   },
 
-  /**
-   * @returns {void}
-   */
   cancelEdit() {
     this.draft = emptyDraft();
   },
 
-  /**
-   * @returns {{ trait_category: string; trait_name: string; value: string; }}
-   */
   buildPayload() {
     return {
       trait_category: this.draft.category,
@@ -192,9 +123,6 @@ export const actorTraits: ActorTraitsState = {
     };
   },
 
-  /**
-   * @returns {Promise<void>}
-   */
   async save() {
     const actorId = this._trActorId;
     if (!actorId || this.busy) { return; }
@@ -234,10 +162,6 @@ export const actorTraits: ActorTraitsState = {
     }
   },
 
-  /**
-   * @param {string} traitName
-   * @returns {Promise<void>}
-   */
   async remove(traitName: string,) {
     const actorId = this._trActorId;
     if (!actorId || this.busy || !traitName) { return; }
@@ -263,20 +187,12 @@ export const actorTraits: ActorTraitsState = {
     }
   },
 
-  /**
-   * @param {string} category
-   * @returns {string}
-   */
   describeCategory(category: string,) {
     return CATEGORY_LABELS[category] ?? category;
   },
 };
 
-/**
- * Build the Alpine scope for the permanent-traits panel.
- * @param {string} actorId
- * @returns {ActorTraitsState}
- */
+/** Build the Alpine scope for the permanent-traits panel. */
 export function actorTraitsFactory(actorId: string,): ActorTraitsState {
   const state = Object.create(actorTraits,) as ActorTraitsState;
   state._trActorId = null;

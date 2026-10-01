@@ -8,8 +8,7 @@
  * via the preview modal, the metadata tag-proposition feed, and autocomplete.
  *
  * Split from `asset-preview.ts` to keep the preview bundle under the file-size
- * gate; `renderTagsPanel` is the single entry point called from
- * `openAssetPreview`.
+ * gate; `renderTagsPanel` is the entry point called from `openAssetPreview`.
  */
 import { jsonStringifyOr, } from "../utils";
 import { feFetch, } from "./fe-fetch";
@@ -26,9 +25,6 @@ interface TagProposition {
   provenance: "alt_text" | "filename";
 }
 
-/**
- * @param s
- */
 function escapeHtml(s: string,): string {
   return s.replace(/[&<>"']/g, (c,) => {
     switch (c) {
@@ -48,11 +44,7 @@ function escapeHtml(s: string,): string {
   },);
 }
 
-/**
- * Render the tag chips, input, and proposition feed into the preview modal.
- * @param {string} assetId
- * @returns {Promise<void>}
- */
+/** Render the tag chips, input, and proposition feed into the preview modal. */
 export async function renderTagsPanel(assetId: string,): Promise<void> {
   const panel = document.querySelector<HTMLElement>("[data-field='tags-panel']",);
   if (!panel) { return; }
@@ -146,9 +138,6 @@ export async function renderTagsPanel(assetId: string,): Promise<void> {
 /**
  * Swap the edit slot to an inline rename form for `oldTag`. Submitting posts
  * the rename and re-renders the panel (which resets the slot).
- * @param assetId
- * @param oldTag
- * @param slot
  */
 function showRenameEditor(assetId: string, oldTag: string, slot: HTMLElement,): void {
   slot.style.display = "flex";
@@ -168,10 +157,6 @@ function showRenameEditor(assetId: string, oldTag: string, slot: HTMLElement,): 
   },);
 }
 
-/**
- * @param query
- * @param container
- */
 async function renderAutocomplete(query: string, container: HTMLElement,): Promise<void> {
   const q = query.trim();
   if (q === "") {
@@ -203,11 +188,6 @@ async function renderAutocomplete(query: string, container: HTMLElement,): Promi
   }
 }
 
-/**
- * @param assetId
- * @param tag
- * @param scope
- */
 async function submitTag(assetId: string, tag: string, scope: "user" | "global",): Promise<void> {
   const { showToast, } = await import("./ui");
   try {
@@ -223,11 +203,6 @@ async function submitTag(assetId: string, tag: string, scope: "user" | "global",
   }
 }
 
-/**
- * @param assetId
- * @param tag
- * @param scope
- */
 async function removeTag(assetId: string, tag: string, scope: "user" | "global",): Promise<void> {
   const { showToast, } = await import("./ui");
   try {
@@ -246,9 +221,6 @@ async function removeTag(assetId: string, tag: string, scope: "user" | "global",
 /**
  * Rename a user-scoped tag; the panel re-renders so chips, item detail, and
  * (on next gallery render) filter facets all reflect the new name.
- * @param assetId
- * @param oldTag
- * @param newTag
  */
 async function renameTag(assetId: string, oldTag: string, newTag: string,): Promise<void> {
   const { showToast, } = await import("./ui");
@@ -265,10 +237,6 @@ async function renameTag(assetId: string, oldTag: string, newTag: string,): Prom
   }
 }
 
-/**
- * @param assetId
- * @param tag
- */
 async function dismissTag(assetId: string, tag: string,): Promise<void> {
   const { showToast, } = await import("./ui");
   try {

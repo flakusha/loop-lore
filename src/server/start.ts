@@ -28,7 +28,6 @@ import { serve, } from "bun";
 /**
  * Bootstrap the Loop Lore HTTP/HTTPS server: init subsystems, seed the DB,
  * pre-compress static assets, load plugins, and wire graceful shutdown.
- * @returns {Promise<void>}
  */
 export async function start() {
   // Bootstrap logger before config load (template expansion needs it)

@@ -15,12 +15,15 @@ import type {
   NpcRelationship,
 } from "./chat-types/npc";
 
+import { npcDisplay, } from "./npc-display";
 import { MOCK_FACTIONS, MOCK_KARMA, } from "./npc-faction-mock.js";
 import { MOCK_NPCS, MOCK_RELATIONSHIPS, STANDING_TIERS, } from "./npc-mock.js";
 
 // ── Component Registration ──────────────────────────────────
 (globalThis as any).npcManagementState = function() {
   return {
+    ...npcDisplay,
+
     // NPC Viewer
     npcs: [] as NpcData[],
     selectedNpcId: null as string | null,
@@ -47,9 +50,6 @@ import { MOCK_NPCS, MOCK_RELATIONSHIPS, STANDING_TIERS, } from "./npc-mock.js";
     // Standing tiers
     standingTiers: STANDING_TIERS,
 
-    /**
-     * @returns {void}
-     */
     init() {
       this.loadNpcs();
       this.loadRelationships();
@@ -58,9 +58,6 @@ import { MOCK_NPCS, MOCK_RELATIONSHIPS, STANDING_TIERS, } from "./npc-mock.js";
     },
 
     // ── NPC Viewer ──────────────────────────────────────────
-    /**
-     * @returns {Promise<void>}
-     */
     async loadNpcs() {
       this.loadingNpcs = true;
       // Mock data — replace with API call when backend is ready
@@ -72,10 +69,6 @@ import { MOCK_NPCS, MOCK_RELATIONSHIPS, STANDING_TIERS, } from "./npc-mock.js";
       this.loadingNpcs = false;
     },
 
-    /**
-     * @param {string} id
-     * @returns {void}
-     */
     selectNpc(id: string,) {
       this.selectedNpcId = id;
     },
@@ -102,51 +95,7 @@ import { MOCK_NPCS, MOCK_RELATIONSHIPS, STANDING_TIERS, } from "./npc-mock.js";
       return result;
     },
 
-    /**
-     * @param {string} disposition
-     * @returns {string}
-     */
-    getDispositionColor(disposition: string,): string {
-      switch (disposition) {
-        case "hostile": {
-          return "var(--accent-red)";
-        }
-        case "unfriendly": {
-          return "var(--accent-orange)";
-        }
-        case "neutral": {
-          return "var(--text-muted)";
-        }
-        case "friendly": {
-          return "var(--accent-green)";
-        }
-        case "honored": {
-          return "var(--accent-blue)";
-        }
-        case "revered": {
-          return "var(--accent-purple)";
-        }
-        case "exalted": {
-          return "var(--accent-gold)";
-        }
-        default: {
-          return "var(--text-muted)";
-        }
-      }
-    },
-
-    /**
-     * @param {string} disposition
-     * @returns {string}
-     */
-    getDispositionLabel(disposition: string,): string {
-      return disposition.charAt(0,).toUpperCase() + disposition.slice(1,);
-    },
-
     // ── Relationships ───────────────────────────────────────
-    /**
-     * @returns {Promise<void>}
-     */
     async loadRelationships() {
       this.loadingRelationships = true;
       await new Promise((r,) => setTimeout(r, 200,));
@@ -154,71 +103,15 @@ import { MOCK_NPCS, MOCK_RELATIONSHIPS, STANDING_TIERS, } from "./npc-mock.js";
       this.loadingRelationships = false;
     },
 
-    /**
-     * @param {string} type
-     * @returns {string}
-     */
-    getRelationshipColor(type: string,): string {
-      switch (type) {
-        case "friend": {
-          return "var(--accent-green)";
-        }
-        case "ally": {
-          return "var(--accent-blue)";
-        }
-        case "rival": {
-          return "var(--accent-orange)";
-        }
-        case "enemy": {
-          return "var(--accent-red)";
-        }
-        case "mentor": {
-          return "var(--accent-purple)";
-        }
-        default: {
-          return "var(--text-muted)";
-        }
-      }
-    },
-
-    /**
-     * @param {number} strength
-     * @returns {string}
-     */
-    getStrengthLabel(strength: number,): string {
-      const abs = Math.abs(strength,);
-      if (abs >= 75) { return "Strong"; }
-      if (abs >= 50) { return "Moderate"; }
-      if (abs >= 25) { return "Weak"; }
-      return "Minimal";
-    },
-
-    /**
-     * @returns {NpcRelationship[]}
-     */
     playerRelationships(): NpcRelationship[] {
-      const result: NpcRelationship[] = [];
-      for (const r of this.relationships) {
-        if (r.fromId === "player" || r.toId === "player") { result.push(r,); }
-      }
-      return result;
+      return npcDisplay.playerRelationships(this.relationships,);
     },
 
-    /**
-     * @returns {NpcRelationship[]}
-     */
     npcRelationships(): NpcRelationship[] {
-      const result: NpcRelationship[] = [];
-      for (const r of this.relationships) {
-        if (r.fromId !== "player" && r.toId !== "player") { result.push(r,); }
-      }
-      return result;
+      return npcDisplay.npcRelationships(this.relationships,);
     },
 
     // ── Factions ────────────────────────────────────────────
-    /**
-     * @returns {Promise<void>}
-     */
     async loadFactions() {
       this.loadingFactions = true;
       await new Promise((r,) => setTimeout(r, 200,));
@@ -229,10 +122,6 @@ import { MOCK_NPCS, MOCK_RELATIONSHIPS, STANDING_TIERS, } from "./npc-mock.js";
       this.loadingFactions = false;
     },
 
-    /**
-     * @param {string} id
-     * @returns {void}
-     */
     selectFaction(id: string,) {
       this.selectedFactionId = id;
     },
@@ -241,69 +130,12 @@ import { MOCK_NPCS, MOCK_RELATIONSHIPS, STANDING_TIERS, } from "./npc-mock.js";
       return this.factions.find((f,) => f.id === this.selectedFactionId) ?? null;
     },
 
-    /**
-     * @param {number} standing
-     * @returns {string}
-     */
-    getFactionStandingColor(standing: number,): string {
-      for (const tier of STANDING_TIERS) {
-        if (standing >= tier.min && standing <= tier.max) { return tier.color; }
-      }
-      return "var(--text-muted)";
-    },
-
-    /**
-     * @param {number} standing
-     * @returns {string}
-     */
-    getFactionTier(standing: number,): string {
-      for (const tier of STANDING_TIERS) {
-        if (standing >= tier.min && standing <= tier.max) { return tier.name; }
-      }
-      return "Neutral";
-    },
-
     // ── Karma ───────────────────────────────────────────────
-    /**
-     * @returns {Promise<void>}
-     */
     async loadKarma() {
       this.loadingKarma = true;
       await new Promise((r,) => setTimeout(r, 200,));
       this.karma = MOCK_KARMA;
       this.loadingKarma = false;
-    },
-
-    /**
-     * @param {number} value
-     * @returns {string}
-     */
-    getKarmaLabel(value: number,): string {
-      if (value >= 75) { return "Saintly"; }
-      if (value >= 50) { return "Good"; }
-      if (value >= 25) { return "Fair"; }
-      if (value >= 0) { return "Neutral"; }
-      if (value >= -25) { return "Dubious"; }
-      if (value >= -50) { return "Wicked"; }
-      return "Evil";
-    },
-
-    /**
-     * @param {number} value
-     * @returns {string}
-     */
-    getKarmaColor(value: number,): string {
-      if (value >= 50) { return "var(--accent-green)"; }
-      if (value >= 0) { return "var(--text-muted)"; }
-      return "var(--accent-red)";
-    },
-
-    /**
-     * @param {number} value
-     * @returns {number}
-     */
-    karmaPercent(value: number,): number {
-      return Math.round(((value + 100) / 200) * 100,);
     },
   };
 };

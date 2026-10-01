@@ -210,9 +210,6 @@ export function createLocalEngine(opts: LocalEngineOptions = {},): LocalEngine {
       return loaded;
     },
 
-    /**
-     * @returns {void}
-     */
     terminate(): void {
       dropWorker("engine terminated",);
     },
@@ -238,7 +235,6 @@ export function getLocalEngine(opts?: LocalEngineOptions,): LocalEngine {
 
 /**
  * Drop the shared instance (tests, opt-out).
- * @returns {void}
  */
 export function resetLocalEngine(): void {
   try {

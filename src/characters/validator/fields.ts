@@ -13,12 +13,6 @@ import type { GrowthMode, } from "../spec/growth";
 import { GrowthMode as GrowthModeEnum, } from "../spec/growth";
 import { CONSTRAINTS, } from "./constants";
 
-/**
- * @param character
- * @param field
- * @param errors
- * @returns {void}
- */
 export function validateRequiredString(
   character: CanonicalCharacter,
   field: keyof CanonicalCharacter,
@@ -35,14 +29,6 @@ export function validateRequiredString(
   }
 }
 
-/**
- * @param character
- * @param field
- * @param errors
- * @param warnings
- * @param mode
- * @returns {void}
- */
 export function validateStringLength(
   character: CanonicalCharacter,
   field: string,
@@ -76,14 +62,6 @@ export function validateStringLength(
   }
 }
 
-/**
- * @param character
- * @param field
- * @param errors
- * @param warnings
- * @param mode
- * @returns {void}
- */
 export function validateArrayConstraints(
   character: CanonicalCharacter,
   field: string,
@@ -147,12 +125,6 @@ export function validateArrayConstraints(
   }
 }
 
-/**
- * @param character
- * @param errors
- * @param _warnings
- * @returns {void}
- */
 export function validateOptionalFields(
   character: CanonicalCharacter,
   errors: ValidationError[],
@@ -213,14 +185,9 @@ const VALID_GROWTH_MODES: Readonly<Record<GrowthMode, true>> = {
 /**
  * Validate the character growth-mode + llm-assist toggle fields.
  *
- * Per `.plan/epics/epic-character-growth.md`:
- * - `growth_mode` must be one of `'dynamic' | 'static'` when provided
- * - `llm_assist_enabled` must be a boolean when provided
- * - Both fields are optional: relaxed mode accepts their absence
- *
- * @param character
- * @param errors
- * @returns {void}
+ * Per `.plan/epics/epic-character-growth.md`: `growth_mode` must be one of
+ * `'dynamic' | 'static'` and `llm_assist_enabled` a boolean, when provided.
+ * Both are optional: relaxed mode accepts their absence.
  */
 export function validateGrowthFields(
   character: CanonicalCharacter,

@@ -55,11 +55,6 @@ export class LocationTreeService {
   constructor(private readonly db: Kysely<DB>,) {}
 
   /** Compute the canonical path for a location, given its parent's path. */
-  /**
-   * @param {string | null} parentPath
-   * @param {string} childId
-   * @returns {string}
-   */
   static computeChildPath(parentPath: string | null, childId: string,): string {
     // Strip trailing '/' from parent, then format as '/parent/child/' (canonical: leading + trailing).
     const base = parentPath === null ? "" : parentPath.replace(/\/$/, "",);
@@ -67,10 +62,6 @@ export class LocationTreeService {
   }
 
   /** Depth (separator count in path) of a given location. */
-  /**
-   * @param {string | null} parentPath
-   * @returns {number}
-   */
   static depth(parentPath: string | null,): number {
     if (parentPath === null || parentPath === "") { return 1; }
     return parentPath.split("/",).length - 2; // '/a/' → 1 separator
@@ -162,10 +153,6 @@ export class LocationTreeService {
   }
 
   /** Walk down — direct children first. */
-  /**
-   * @param {string} locationId
-   * @returns {Promise<LocationTreeNode[]>}
-   */
   async getDescendants(locationId: string,): Promise<LocationTreeNode[]> {
     const result = await sql<LocationTreeNode>`
       WITH RECURSIVE tree(id, parent_location_id, path, depth) AS (

@@ -5,15 +5,13 @@
 // ── Character extension editor panel state.
 //
 // Owns the per-actor draft of the canonical character's rich extension
-// Fields (abilities, inventory, vitals, equipment, motivations,
-// relationships, appearance_details, speech_patterns, plugin_bundle). The
-// panel is generic over any bundle — fantasy-rpg ships with required
-// fields, but the factory composes optional requirements at runtime
-// (see `bundles.ts` in `src/plugins`).
+// fields (abilities, inventory, vitals, equipment, motivations,
+// relationships, appearance_details, speech_patterns, plugin_bundle).
+// Generic over any bundle — the factory composes optional requirements at
+// runtime (see `bundles.ts` in `src/plugins`).
 //
 // Ponytail note: the editor holds the canonical draft and serializes to
-// the existing `PUT /api/actors/:actorId` `settings` payload rather than
-// adding per-field endpoints. One save, one round-trip.
+// the existing `PUT /api/actors/:actorId` `settings` payload. One round-trip.
 import type { BundleCharacterRequirements, } from "../../plugins";
 import { safeJsonParse, safeJsonStringify, } from "../../utils/safe-json";
 import { apiFetch, } from "./htmx";
@@ -22,9 +20,7 @@ import { log as rootLog, } from "./logger";
 
 const log = rootLog.child({ module: "character-extension-editor", },);
 
-/** The rich-extension payload edited by the panel. Mirrors the
- * `CharacterExtensions` surface in `src/characters/spec/character.ts` —
- * kept as plain Record so the editor can round-trip arbitrary JSON. */
+/** Rich-extension payload; plain Record so the editor round-trips arbitrary JSON. */
 export interface CharacterExtensionsPayload {
   abilities?: Record<string, number | string>;
   inventory?: Array<Record<string, unknown>>;
@@ -43,7 +39,7 @@ export interface CharacterExtensionsPayload {
   [key: string]: unknown;
 }
 
-/** Activity log line emitted on save (one per requirement failure). */
+/** Bundle requirement check result (one `missing` entry per failure). */
 export interface BundleValidationReport {
   valid: boolean;
   missing: string[];
@@ -79,13 +75,7 @@ export interface CharacterExtensionEditorState {
 
 const emptyPayload = (): CharacterExtensionsPayload => ({});
 
-/**
- * Pure: build the JSON string posted to `PUT /api/actors/:actorId`.
- * Lives at module scope so the test suite can verify the wire shape
- * without standing up an Alpine factory.
- * @param {CharacterExtensionsPayload} draft
- * @returns {string}
- */
+/** Pure: build the JSON string posted to `PUT /api/actors/:actorId`. */
 export function serializeExtensions(
   draft: CharacterExtensionsPayload,
 ): string {
@@ -93,14 +83,7 @@ export function serializeExtensions(
   return result.ok ? result.value : "{}";
 }
 
-/**
- * Pure: validate a draft against bundle requirements and return a
- * human-readable failure list. Pure so the editor's draft can be checked
- * at any time and so the requirement integration is easy to test.
- * @param {CharacterExtensionsPayload} draft
- * @param {BundleCharacterRequirements | undefined} requirements
- * @returns {BundleValidationReport}
- */
+/** Pure: validate a draft against bundle requirements. */
 export function checkBundle(
   draft: CharacterExtensionsPayload,
   requirements: BundleCharacterRequirements | undefined,
@@ -133,10 +116,6 @@ const seed: CharacterExtensionEditorState = {
   message: "",
   validation: { valid: true, missing: [], },
 
-  /**
-   * @param {unknown} actorId
-   * @returns {void}
-   */
   setActorId(actorId,) {
     if (this._cxActorId === actorId) { return; }
     this._cxActorId = actorId;
@@ -148,18 +127,11 @@ const seed: CharacterExtensionEditorState = {
     this.validation = { valid: true, missing: [], };
   },
 
-  /**
-   * @param {unknown} reqs
-   * @returns {void}
-   */
   setBundleRequirements(reqs,) {
     this._cxRequirements = reqs;
     this.validation = checkBundle(this.draft, reqs,);
   },
 
-  /**
-   * @returns {Promise<void>}
-   */
   async load() {
     const actorId = this._cxActorId;
     if (!actorId || this.loading) { return; }
@@ -188,9 +160,6 @@ const seed: CharacterExtensionEditorState = {
     }
   },
 
-  /**
-   * @returns {void}
-   */
   reset() {
     this.draft = structuredClone(this.current,) as CharacterExtensionsPayload;
     this.validation = checkBundle(this.draft, this._cxRequirements,);
@@ -198,24 +167,15 @@ const seed: CharacterExtensionEditorState = {
     this.error = "";
   },
 
-  /**
-   * @returns {BundleValidationReport}
-   */
   validateAgainstBundle() {
     this.validation = checkBundle(this.draft, this._cxRequirements,);
     return this.validation;
   },
 
-  /**
-   * @returns {string}
-   */
   serialize() {
     return serializeExtensions(this.draft,);
   },
 
-  /**
-   * @returns {Promise<void>}
-   */
   async save() {
     const actorId = this._cxActorId;
     if (!actorId || this.saving) { return; }
@@ -261,13 +221,7 @@ function safeParse(raw: string,): CharacterExtensionsPayload {
   return emptyPayload();
 }
 
-/**
- * Build a fresh editor instance bound to an actor.
- * @param {string} actorId
- * @param {BundleCharacterRequirements | undefined} requirements
- * @param {(url: string, init?: RequestInit,) => Promise<Response>} fetcher
- * @returns {CharacterExtensionEditorState}
- */
+/** Build a fresh editor instance bound to an actor. */
 export function characterExtensionEditorFactory(
   actorId: string,
   requirements: BundleCharacterRequirements | undefined,

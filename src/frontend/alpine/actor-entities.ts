@@ -3,9 +3,8 @@
 // size-allow: 285
 
 // ── Actor entity CRUD panel state.
-// Generic plugin for `/api/v1/actors/:actorId/{notes,items,lore-entries}` plus
-// per-kind UI shaping. One factory instance per panel; the kind is bound at
-// construction.
+// Generic plugin for `/api/v1/actors/:actorId/{notes,items,lore-entries}`.
+// One factory instance per panel; the kind is bound at construction.
 import { apiFetch, } from "./htmx";
 import { t, } from "./i18n";
 import { jsonBody, } from "./json";
@@ -76,11 +75,7 @@ const KIND_CONFIG: Record<EntityKind, EntityKindConfig> = {
   },
 };
 
-/**
- * State plugin for a single actor entity panel (notes | items | lore-entries).
- * Bound to an actor + entity kind at construction. CRUD-only — no gameplay
- * side-effects (equip/carry/etc. are owned by `actor-items/service.ts`).
- */
+/** State plugin for one entity panel; CRUD-only (no gameplay side-effects). */
 export interface ActorEntitiesState {
   _entActorId: string | null;
   _entKind: EntityKind;
@@ -129,9 +124,6 @@ export const stateFromKind = (kind: EntityKind,): ActorEntitiesState => ({
   search: "",
   busy: false,
 
-  /**
-   * @returns {ActorEntityRow[]}
-   */
   filteredRows() {
     const q = this.search.trim().toLowerCase();
     if (!q) { return this.rows; }
@@ -139,25 +131,15 @@ export const stateFromKind = (kind: EntityKind,): ActorEntitiesState => ({
     return this.rows.filter((r,) => String(r[titleKey] ?? "",).toLowerCase().includes(q,));
   },
 
-  /**
-   * @returns {EntityKindConfig}
-   */
   config() {
     return KIND_CONFIG[this._entKind];
   },
 
-  /**
-   * @returns {void}
-   */
   resetForm() {
     this.form = emptyForm(this._entKind,);
     this.editingId = null;
   },
 
-  /**
-   * @param {ActorEntityRow} row
-   * @returns {void}
-   */
   loadIntoForm(row: ActorEntityRow,) {
     const next: Record<string, string> = {};
     for (const f of this.config().fields) {
@@ -168,9 +150,6 @@ export const stateFromKind = (kind: EntityKind,): ActorEntitiesState => ({
     this.editingId = row.id;
   },
 
-  /**
-   * @returns {Promise<void>}
-   */
   async load() {
     const actorId = this._entActorId;
     if (!actorId) { return; }
@@ -192,9 +171,6 @@ export const stateFromKind = (kind: EntityKind,): ActorEntitiesState => ({
     }
   },
 
-  /**
-   * @returns {Promise<void>}
-   */
   async create() {
     const actorId = this._entActorId;
     if (!actorId || this.busy) { return; }
@@ -232,9 +208,6 @@ export const stateFromKind = (kind: EntityKind,): ActorEntitiesState => ({
     }
   },
 
-  /**
-   * @returns {Promise<void>}
-   */
   async save() {
     const actorId = this._entActorId;
     const editingId = this.editingId;
@@ -270,10 +243,6 @@ export const stateFromKind = (kind: EntityKind,): ActorEntitiesState => ({
     }
   },
 
-  /**
-   * @param {string} id
-   * @returns {Promise<void>}
-   */
   async remove(id: string,) {
     const actorId = this._entActorId;
     if (!actorId || this.busy) { return; }
@@ -289,20 +258,12 @@ export const stateFromKind = (kind: EntityKind,): ActorEntitiesState => ({
     }
   },
 
-  /**
-   * @returns {void}
-   */
   cancelEdit() {
     this.resetForm();
   },
 });
 
-/**
- * Build a notes/items/lore panel bound to a specific actor.
- * @param {string} actorId
- * @param {EntityKind} kind
- * @returns {ActorEntitiesState}
- */
+/** Build a notes/items/lore panel bound to a specific actor. */
 export function actorEntitiesFactory(actorId: string, kind: EntityKind,): ActorEntitiesState {
   const state = stateFromKind(kind,);
   state._entActorId = actorId;

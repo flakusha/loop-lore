@@ -12,13 +12,7 @@ import type {
   ProgressUpdateResult,
 } from "./types";
 
-/**
- * Get player achievement progress
- * @param db
- * @param playerId
- * @param achievementId
- * @returns {Promise<PlayerAchievement | null>}
- */
+/** Get player achievement progress. */
 export async function getPlayerAchievement(
   db: Kysely<DB>,
   playerId: string,
@@ -34,12 +28,7 @@ export async function getPlayerAchievement(
   return row ? rowToPlayerAchievement(row,) : null;
 }
 
-/**
- * Get all achievements for a player
- * @param db
- * @param playerId
- * @returns {Promise<PlayerAchievement[]>}
- */
+/** Get all achievements for a player. */
 export async function getPlayerAchievements(db: Kysely<DB>, playerId: string,): Promise<PlayerAchievement[]> {
   const rows = await (db as any)
     .selectFrom("player_achievements",)
@@ -52,13 +41,8 @@ export async function getPlayerAchievements(db: Kysely<DB>, playerId: string,): 
 }
 
 /**
- * Update achievement progress for a player
- * @param db
- * @param playerId
- * @param achievementId
- * @param progressIncrement
- * @throws {Error}
- * @returns {Promise<ProgressUpdateResult>}
+ * Update achievement progress for a player.
+ * @throws {Error} When the achievement does not exist.
  */
 export async function updateProgress(
   db: Kysely<DB>,
@@ -140,16 +124,9 @@ export async function updateProgress(
 }
 
 /**
- * Claim achievement rewards
- * @param db
- * @param playerId
- * @param achievementId
- * @throws {Error}
- * @throws {Error}
- * @throws {Error}
- * @throws {Error}
- * @throws {Error}
- * @returns {Promise<AchievementReward[]>}
+ * Claim achievement rewards. Claim + payout are one atomic unit, so a
+ * concurrent second claim touches 0 rows and throws rather than double-credit.
+ * @throws {Error} On missing/locked player achievement, prior claim, or missing achievement.
  */
 export async function claimRewards(
   db: Kysely<DB>,
@@ -208,24 +185,13 @@ export async function claimRewards(
   return achievement.rewards;
 }
 
-/**
- * Check if achievement is unlocked for player
- * @param db
- * @param playerId
- * @param achievementId
- * @returns {Promise<boolean>}
- */
+/** Check if achievement is unlocked for player. */
 export async function isUnlocked(db: Kysely<DB>, playerId: string, achievementId: string,): Promise<boolean> {
   const playerAchievement = await getPlayerAchievement(db, playerId, achievementId,);
   return playerAchievement?.isUnlocked ?? false;
 }
 
-/**
- * Get achievement statistics for a player
- * @param db
- * @param playerId
- * @returns {Promise<{ totalUnlocked: number; totalAvailable: number; byCategory: Record<string, number>; byTier: Record<string, number>; }>}
- */
+/** Get achievement statistics (unlock totals, per-category and per-tier) for a player. */
 export async function getPlayerStats(db: Kysely<DB>, playerId: string,): Promise<{
   totalUnlocked: number;
   totalAvailable: number;

@@ -66,7 +66,6 @@ export const ageGateConfig = new AgeGateConfigStore();
 /**
  * Seed the runtime config. Called once during server start.
  * @param config - Age-gate configuration.
- * @returns {void}
  */
 export function initAgeGate(config: AgeGateConfig,): void {
   ageGateConfig.init(config,);

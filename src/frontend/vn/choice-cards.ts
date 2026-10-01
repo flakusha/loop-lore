@@ -49,13 +49,7 @@ let container: HTMLElement | null = null;
 let chatId: string | null = null;
 let sceneIndex = 0;
 
-/**
- * Initialize the choice cards component.
- * @param containerEl
- * @param currentChatId
- * @param currentSceneIndex
- * @returns {void}
- */
+/** Initialize the choice cards component. */
 export function initChoiceCards(
   containerEl: HTMLElement,
   currentChatId: string,
@@ -66,10 +60,7 @@ export function initChoiceCards(
   sceneIndex = currentSceneIndex;
 }
 
-/**
- * Destroy the choice cards component.
- * @returns {void}
- */
+/** Destroy the choice cards component. */
 export function destroyChoiceCards(): void {
   container = null;
   chatId = null;

@@ -12,26 +12,13 @@ import { safeJsonStringify, } from "../../utils";
 import { notFound, } from "../../validation/middleware";
 import { HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonPaginated, jsonResponse, } from "../http-utils";
 
-/**
- * Validate a value against an enum's values. Returns the value if valid, fallback otherwise.
- * @param value
- * @param validValues
- * @param fallback
- * @returns {T}
- */
+/** Validate a value against an enum's values. Returns the value if valid, fallback otherwise. */
 export function enumOr<T extends string,>(value: unknown, validValues: readonly T[], fallback: T,): T {
   return typeof value === "string" && (validValues as readonly string[]).includes(value,)
     ? (value as T)
     : fallback;
 }
 
-/**
- * @param database
- * @param worldId
- * @param userId
- * @param userRole
- * @returns {Promise<boolean>}
- */
 export async function checkWorldOwnership(
   database: Kysely<DB>,
   worldId: string,
@@ -46,14 +33,6 @@ export async function checkWorldOwnership(
   return !(!worldCheck || (!can(userRole, "admin.world",) && worldCheck.owner_id !== userId));
 }
 
-/**
- * @param database
- * @param worldId
- * @param itemId
- * @param userId
- * @param userRole
- * @returns {Promise<Response>}
- */
 export async function handleInstances(
   database: Kysely<DB>,
   worldId: string,
@@ -74,16 +53,6 @@ export async function handleInstances(
   return jsonResponse(instances,);
 }
 
-/**
- * @param database
- * @param method
- * @param worldId
- * @param itemId
- * @param userId
- * @param userRole
- * @param body
- * @returns {Promise<Response>}
- */
 export async function handleDefinition(
   database: Kysely<DB>,
   method: string,
@@ -128,14 +97,6 @@ export async function handleDefinition(
   return jsonResponse(updated,);
 }
 
-/**
- * @param database
- * @param worldId
- * @param itemId
- * @param userId
- * @param userRole
- * @returns {Promise<Response>}
- */
 export async function handleDeleteDefinition(
   database: Kysely<DB>,
   worldId: string,
@@ -152,18 +113,6 @@ export async function handleDeleteDefinition(
   return jsonNoContent();
 }
 
-/**
- * @param database
- * @param method
- * @param worldId
- * @param userId
- * @param userRole
- * @param page
- * @param pageSize
- * @param category
- * @param body
- * @returns {Promise<Response>}
- */
 export async function handleDefinitions(
   database: Kysely<DB>,
   method: string,
@@ -206,15 +155,6 @@ export async function handleDefinitions(
   return jsonCreated({ id, },);
 }
 
-/**
- * @param database
- * @param worldId
- * @param instanceId
- * @param userId
- * @param userRole
- * @param body
- * @returns {Promise<Response>}
- */
 export async function handleTransfer(
   database: Kysely<DB>,
   worldId: string,
@@ -239,14 +179,6 @@ export async function handleTransfer(
   return jsonResponse(result,);
 }
 
-/**
- * @param database
- * @param worldId
- * @param instanceId
- * @param userId
- * @param userRole
- * @returns {Promise<Response>}
- */
 export async function handleInstance(
   database: Kysely<DB>,
   worldId: string,

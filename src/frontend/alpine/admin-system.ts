@@ -32,34 +32,20 @@ export const adminSystem = {
   confirmDeleteConfig: "",
 
   // ── Restart-required keys (TASK-restart-required-indicator) ──
-  // Static set populated from GET /api/v1/admin/config-schema. Per-row `requires_restart`
-  // is the authoritative signal on each row; this set is used for the global banner.
+  // Per-row `requires_restart` is authoritative; the banner keys come from the config schema.
   requiresRestartKeys: {} as Record<string, true>,
   dismissedRestartKeys: {} as Record<string, true>,
   restartBannerDismissed: false,
-  /**
-   * @param {string} key
-   * @returns {boolean}
-   */
   requiresRestart(key: string,): boolean {
     return this.systemConfig.find((c,) => c.key === key)?.requires_restart === true;
   },
-  /**
-   * @returns {boolean}
-   */
   hasPendingRestart(): boolean {
     return Object.keys(this.sysConfigDirty,).some((k,) => this.requiresRestart(k,));
   },
-  /**
-   * @returns {void}
-   */
   dismissRestartBanner() {
     this.restartBannerDismissed = true;
     for (const k of Object.keys(this.sysConfigDirty,)) { this.dismissedRestartKeys[k] = true; }
   },
-  /**
-   * @returns {void}
-   */
   clearRestartDismissals() {
     this.restartBannerDismissed = false;
     this.dismissedRestartKeys = {};
@@ -86,9 +72,6 @@ export const adminSystem = {
   // ── Health + NSFW (from admin-health.ts) ────────────────
   ...healthPanelMethods(),
 
-  /**
-   * @returns {Promise<void>}
-   */
   async loadSystemConfig() {
     this.loadingSystemConfig = true;
     try {
@@ -100,10 +83,6 @@ export const adminSystem = {
       this.loadingSystemConfig = false;
     }
   },
-  /**
-   * @param {string} key
-   * @returns {Promise<void>}
-   */
   async saveSystemConfig(key: string,) {
     const value = this.sysConfigDirty[key];
     if (value === undefined) { return; }
@@ -125,10 +104,6 @@ export const adminSystem = {
       showToast("error", t("toasts.networkError",),);
     }
   },
-  /**
-   * @param {string} key
-   * @returns {Promise<void>}
-   */
   async deleteSystemConfig(key: string,) {
     if (this.confirmDeleteConfig !== key) { return; }
     try {
@@ -145,10 +120,6 @@ export const adminSystem = {
       showToast("error", t("toasts.networkError",),);
     }
   },
-  /**
-   * @param {"yaml" | "toml"} format
-   * @returns {Promise<void>}
-   */
   async exportSystemConfig(format: "yaml" | "toml",) {
     try {
       const res = await apiFetch(`/api/v1/admin/system-config/export?format=${format}`, {
@@ -174,10 +145,6 @@ export const adminSystem = {
     }
   },
 
-  /**
-   * @throws {Error}
-   * @returns {Promise<void>}
-   */
   async loadAnalytics() {
     this.loadingAnalytics = true;
     try {
@@ -203,9 +170,6 @@ export const adminSystem = {
       this.loadingAnalytics = false;
     }
   },
-  /**
-   * @returns {Promise<void>}
-   */
   async purgeAnalytics() {
     if (this.purgingAnalytics) { return; }
     this.purgingAnalytics = true;
@@ -229,10 +193,6 @@ export const adminSystem = {
   dangerConfirm: { purge: "", reset: "", factory: "", },
   dangerBusy: { purge: false, reset: false, factory: false, },
 
-  /**
-   * @param {"purge" | "reset" | "factory"} action
-   * @returns {Promise<void>}
-   */
   async runDangerAction(action: "purge" | "reset" | "factory",) {
     const confirmMap = {
       purge: { string: "PURGE", url: "/api/v1/admin/audit/purge", },

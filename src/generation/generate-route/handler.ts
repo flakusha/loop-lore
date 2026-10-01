@@ -47,12 +47,6 @@ export interface HandleGenerateOpts {
 }
 
 /**
- * @param root0
- * @param root0.body
- * @param root0.database
- * @param root0.config
- * @param root0.userId
- * @param root0.userRole
  * @throws {Error}
  * @returns {Promise<Response>}
  */

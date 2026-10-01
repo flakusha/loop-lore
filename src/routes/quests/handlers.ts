@@ -14,13 +14,6 @@ import { safeJsonStringify, } from "../../utils";
 import { notFound, } from "../../validation/middleware";
 import { HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonPaginated, jsonResponse, } from "../http-utils";
 
-/**
- * @param database
- * @param questId
- * @param userId
- * @param userRole
- * @returns {Promise<{ world_id: string; } | null>}
- */
 export async function checkQuestAccess(
   database: Kysely<DB>,
   questId: string,
@@ -42,13 +35,6 @@ export async function checkQuestAccess(
   return questRow;
 }
 
-/**
- * @param database
- * @param worldId
- * @param userId
- * @param userRole
- * @returns {Promise<boolean>}
- */
 export async function checkWorldAccess(
   database: Kysely<DB>,
   worldId: string,
@@ -63,15 +49,6 @@ export async function checkWorldAccess(
   return !(!worldCheck || (!can(userRole, "admin.world",) && worldCheck.owner_id !== userId));
 }
 
-/**
- * @param database
- * @param worldId
- * @param page
- * @param pageSize
- * @param userId
- * @param userRole
- * @returns {Promise<Response>}
- */
 export async function handleListQuests(
   database: Kysely<DB>,
   worldId: string,
@@ -106,14 +83,6 @@ export async function handleListQuests(
   return jsonPaginated({ data: quests, total, page, pageSize, },);
 }
 
-/**
- * @param database
- * @param worldId
- * @param userId
- * @param userRole
- * @param body
- * @returns {Promise<Response>}
- */
 export async function handleCreateQuest(
   database: Kysely<DB>,
   worldId: string,
@@ -145,15 +114,6 @@ export async function handleCreateQuest(
   return jsonCreated({ id: questId, },);
 }
 
-/**
- * @param database
- * @param method
- * @param questId
- * @param userId
- * @param userRole
- * @param body
- * @returns {Promise<Response>}
- */
 export async function handleQuest(
   database: Kysely<DB>,
   method: string,
@@ -204,13 +164,6 @@ export async function handleQuest(
   return jsonResponse(updated,);
 }
 
-/**
- * @param database
- * @param questId
- * @param userId
- * @param userRole
- * @returns {Promise<Response>}
- */
 export async function handleAbandonQuest(
   database: Kysely<DB>,
   questId: string,
@@ -225,15 +178,6 @@ export async function handleAbandonQuest(
   return jsonNoContent();
 }
 
-/**
- * @param database
- * @param questId
- * @param chatId
- * @param userId
- * @param userRole
- * @param body
- * @returns {Promise<Response>}
- */
 export async function handleProgress(
   database: Kysely<DB>,
   questId: string,

@@ -49,7 +49,6 @@ import type {
 /**
  * Create an in-memory moderation action record. Pure — does not persist.
  * @param params
- * @returns {ModerationAction}
  */
 export function createModerationAction(params: {
   type: ModerationActionType;
