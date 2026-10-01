@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Large
+**Epic:** epic-matrix-integration.md
 **Type:** Task
 **Summary:** Move NPC/actor behaviour from scripted trees toward goal/memory-driven autonomy. Touches Battle (enemy AI), Social (interaction choice), Narrative (story awareness), CharCore (coping/mood), Companion (mount/pet intent). Folded into existing actor/NPC epics — no new epic.
 **Context:** `matrix-cross-mechanics.md` G18 is 🔴 High (future), P6+ deferred. Inspiration: Inworld AI, Convai, generative-agents. Battle NPC AI is currently scripted (see G3 ticket for the gap); no autonomous NPC goal stack exists. The matrix says "turn npcs/battle NPC-AI from scripted toward goal/memory-driven. P6+, fold into existing actor/NPC epics (no new epic)."

@@ -12,6 +12,8 @@
 **Priority:** low
 **Priority Tier:** P5
 **Effort:** Small
+**Epic:** epic-testing-qa.md
+**Tags:** testing-qa
 **Area:** admin
 **Source:** reconcile review (Scout Batch B — ISSUE-005)
 

@@ -10,6 +10,8 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-chat-product-features.md
+**Tags:** faction, chat
 
 **References:**
 - Epic: .plan/epics/epic-character-world-integration.md

@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small (one migration, 9 tables × 2 columns + default values + backfill)
+**Epic:** epic-schema.md
 **Summary:** Append `created_at` and `updated_at` to 9 tables that the DBAudit (2026-09-25) found lacking both audit columns: `recipe_discoveries`, `travel_route_stops`, `blog_tags`, `chat_random_events`, `chat_pins`, `growth_log`, `status_effect`, `trade_history`, `nsfw_consent_state`. Backfill existing rows with `datetime('now')` defaults; non-destructive.
 **Context:** DB field-audit 2026-09-25 cross-referenced every table against the audit-field baseline. The 9 tables in this ticket are either pure event/append-only logs (`growth_log`, `status_effect`, `trade_history`, `chat_random_events`), pure joins/pivot data (`chat_pins`, `blog_tags`, `travel_route_stops`, `recipe_discoveries`), or domain entities missing the baseline (`nsfw_consent_state`). Each loses operational visibility: no "last touched" timestamp, no debug-friendly row creation ordering, no diff-friendly export. Purely additive migration; existing rows get `datetime('now')` defaults rather than NULL — keeps NOT NULL semantics consistent with the rest of the schema.
 

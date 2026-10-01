@@ -6,6 +6,8 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-npcs.md
+**Tags:** npc, social
 **Summary:** Persist NPC conversation outcomes as episodic memory via the existing actor-memories service (`memory_type: episodic`), retrievable for future social decisions.
 
 **Context:** `src/actors/actor-memories.ts` already stores episodic rows; this ticket is the social write/read path on top (what to store per encounter, recall query shape), not new storage. Distinct from `TASK-social-interaction.md` reputation tracking.

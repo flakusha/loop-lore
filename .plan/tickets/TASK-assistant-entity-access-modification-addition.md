@@ -11,6 +11,7 @@
 **Status:** Not Started
 **Priority:** High
 **Effort:** High
+**Epic:** epic-assistant-entity-access.md
 **Type:** Task
 **Tags:** assistant, modification, addition, import, quality-gates
 **Related:** `epic-assistant-entity-access.md`, `src/assistant/quality/entity-creation.ts`

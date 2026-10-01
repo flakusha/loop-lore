@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small (composite validator + unit test)
+**Epic:** epic-rpg-mechanics.md
 **Summary:** `shadow_notes` `status` (player reveal) × `visibility` (LLM gate, migration `002`) need a `CompositeValidator` mirroring `messagesStatusVisibility` (`src/db/enums-core/messages.ts:88`). `author_type` stays an orthogonal plain enum. Unit test. No column changes.
 **Context:** DB schema-gate audit (2026-09-25, db-migration-fixes session). The two columns interact (reveal state × LLM visibility) but are validated independently today; the composite mirrors the established messages pattern.
 

@@ -12,6 +12,8 @@
 **Status Note:** investigate later
 **Priority:** Low
 **Effort:** High (estimated)
+**Epic:** epic-testing-qa.md
+**Tags:** e2e, test-gap
 
 > **Update (2026-08):** Browser-test + Alpine directives split out into dedicated tickets linked from `epic-testing-qa.md`:
 > `TASK-alpine-state-testing`, `TASK-browser-console-assert`, `TASK-browser-test-isolation`, `TASK-resolve-playwright-cfg`, `TASK-chat-state-contract`, and `BUG-alpine-init-hydration`. This ticket's API/asset/import failure investigation (below) remains valid but is de-prioritized vs. the Alpine state-testing work.

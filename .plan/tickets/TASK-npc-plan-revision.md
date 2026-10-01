@@ -6,6 +6,8 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-npcs.md
+**Tags:** npc, social
 **Summary:** Dynamic plan adjustment on goal-achieved / goal-blocked / new-opportunity / external-event / mood-shift, writing `actor_plan_revisions` rows (migration 011, shipped).
 
 **Context:** Revision storage exists; `src/services/agency/bdi-reflection.ts` (`applyReflectionCheckpoint`) emits revisions on priority shifts. Remaining work is the live revision trigger (event-driven, not just nightly) plus revision-vs-full-replan policy.

@@ -11,6 +11,8 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-chat-lifecycle-moderation.md
+**Tags:** chat-lifecycle-moderation
 
 ## Summary
 

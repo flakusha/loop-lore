@@ -15,7 +15,8 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic**:
+**Epic:** epic-code-quality.md
+**Tags:** tooling, plan-hygiene
 **Related**:
 
 Git issue: `e95b520`

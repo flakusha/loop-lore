@@ -11,6 +11,8 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-character-internal-traits.md
+**Tags:** character, traits
 
 ## Summary
 

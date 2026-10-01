@@ -11,6 +11,8 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-npcs.md
+**Tags:** npc, rpg
 
 ## Summary
 

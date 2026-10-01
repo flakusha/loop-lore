@@ -11,6 +11,8 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-llm-request-scheduler.md
+**Tags:** llm, llama-swap
 
 ## Summary
 

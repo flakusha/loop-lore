@@ -4,6 +4,7 @@
 # TASK: Moderator permission gating for read-only review surface
 
 **Effort:** Medium
+**Epic:** epic-chat-lifecycle-moderation.md
 **Summary:** (none captured)
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)

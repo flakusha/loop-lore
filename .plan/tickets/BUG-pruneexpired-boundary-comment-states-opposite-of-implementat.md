@@ -6,6 +6,8 @@
 **Status:** Done
 **Priority:** low
 **Effort:** Medium
+**Epic:** epic-testing-qa.md
+**Tags:** testing
 
 **Summary:** pruneexpired boundary comment states opposite of implementat
 **Context:** Context: fba9dbcd8/3f6329b02.

@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-matrix-integration.md
 **Type:** Task
 **Summary:** Keep a character or scene's look stable across generated images via reference conditioning. Add an in-chat asset-edit flow that re-uses prior outputs as conditioning inputs. Touches CharCore, Exploration, Narrative, Housing, Weather.
 **Context:** `matrix-cross-mechanics.md` G21 is 🟢 Low (severity) but the matrix calls it "Med difficulty, do not defer — clean pull candidate". Inspiration: Luma, Runway, Krea, RisuAI dynamic-assets. Reference conditioning is the cheapest path to character/scene consistency; in-chat edit unlocks iterative storytelling without regenerating from scratch.

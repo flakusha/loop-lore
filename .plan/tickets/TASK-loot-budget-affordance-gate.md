@@ -7,6 +7,8 @@
 **Status Note:** commit 625e36bd — `feat(agency): ship action-parser + affordance + scorer + budget-gate`; `enforceLootBudget(dropTable, encounterBudget, party)` pure-function landed in `src/services/loot/budget-gate.ts` + 11/11 tests green; pending wiring into `src/battle/` resolution path
 **Priority:** P2 (within EPIC-RESEARCH-AGENCY-AFFORDANCE)
 **Effort:** 1-2 days
+**Epic:** epic-rpg-mechanics.md
+**Tags:** rpg-mechanics
 **Parent epic:** `epic-research-agency-affordance.md`
 **Related:** `TASK-affordance-lookup-table` (upstream dependency), prior-batch `TASK-math-position-effect-columns` (encounter budget side), `src/services/actor-items.ts`, `src/characters/spec/enums.ts` (rarity), `epic-battle-action-systems.md`
 

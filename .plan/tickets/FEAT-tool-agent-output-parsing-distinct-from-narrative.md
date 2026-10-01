@@ -10,6 +10,8 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-tool-calling-mcp.md
+**Tags:** mcp, tools
 
 ## Summary
 

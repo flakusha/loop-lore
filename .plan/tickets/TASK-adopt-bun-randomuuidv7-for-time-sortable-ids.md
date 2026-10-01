@@ -12,6 +12,8 @@
 **Status Note:** Postponed (test-contract dependency)
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-platform-research.md
+**Tags:** platform-adoption, bun, runtime
 
 ## Summary
 

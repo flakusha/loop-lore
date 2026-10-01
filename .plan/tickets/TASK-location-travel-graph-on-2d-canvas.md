@@ -6,6 +6,8 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-2d-sprite-world.md
+**Tags:** 2d-graph, canvas
 
 **Summary:** Render locations and travel routes as a node/edge graph on the shared graph-canvas: locations as nodes, routes/connections as edges. Read-only v1; graph cases beyond this batch reuse the same renderer rather than forking it.
 
