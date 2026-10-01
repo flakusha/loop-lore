@@ -1099,7 +1099,7 @@ Total tickets: **3110** — untagged: **2625** — unbound to epic: **1578**
 | yaml | 4 | 0 | 2 | 0 | 1 | 0 | 1 |
 | yaml-frontmatter | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| (untagged) | 2625 | 1037 | 59 | 1262 | 36 | 0 | 231 |
+| (untagged) | 2625 | 1038 | 59 | 1262 | 36 | 0 | 230 |
 
 ## By epic × status
 
@@ -1183,7 +1183,7 @@ Total tickets: **3110** — untagged: **2625** — unbound to epic: **1578**
 | epic-api-versioning | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-architecture | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
 | epic-archival-workflow | 7 | 6 | 0 | 1 | 0 | 0 | 0 |
-| epic-asset-platform-capabilities | 6 | 0 | 0 | 0 | 0 | 0 | 6 |
+| epic-asset-platform-capabilities | 6 | 1 | 0 | 0 | 0 | 0 | 5 |
 | epic-asset-support-expansion | 4 | 3 | 0 | 1 | 0 | 0 | 0 |
 | epic-assets-attribution | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | epic-assets-media-pipeline | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
