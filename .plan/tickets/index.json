@@ -31250,6 +31250,19 @@
     "title": "llama-swap recipe: embed + rerank + guard helpers + comfyui_auto",
     "type": "TASK"
   },
+  "TASK-LLAMA-SWAP-SAMPLE-CONFIG-FINALIZATION-UNBLOCKS-ROTATION-POLI": {
+    "hash": "4ae409b",
+    "git_issue": "4ae409b",
+    "extid": "TASK-LLAMA-SWAP-SAMPLE-CONFIG-FINALIZATION-UNBLOCKS-ROTATION-POLI",
+    "type": "TASK",
+    "title": "llama-swap sample config finalization (unblocks rotation policy)",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-llama-swap-sample-config-finalization-unblocks-rotation-poli.md",
+    "status": "Not Started"
+  },
   "TASK-LLM-ENHANCE-LORE-STYLE-GROUNDING": {
     "epic": "",
     "extid": "TASK-LLM-ENHANCE-LORE-STYLE-GROUNDING",
@@ -31262,6 +31275,19 @@
     "tags": [],
     "title": "LLM-enhance lore style grounding",
     "type": "TASK"
+  },
+  "TASK-LLM-GENERATION-BENCH-VIA-LOCAL-LLAMA-SWAP-OPT-IN": {
+    "hash": "f420ff1",
+    "git_issue": "f420ff1",
+    "extid": "TASK-LLM-GENERATION-BENCH-VIA-LOCAL-LLAMA-SWAP-OPT-IN",
+    "type": "TASK",
+    "title": "LLM generation bench via local llama-swap (opt-in)",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-llm-generation-bench-via-local-llama-swap-opt-in.md",
+    "status": "Not Started"
   },
   "TASK-LLM-MOCK-INTEGRATION-SUITE": {
     "epic": "epic-testing-qa.md (see also epic-prompt-improvement.md)",
@@ -38804,6 +38830,19 @@
     "tags": [],
     "title": "Scheduler Implementation (Internal Cron Jobs)",
     "type": "TASK"
+  },
+  "TASK-SCHEDULER-LOAD-SOAK-BENCH-QUEUED-LLM-TRAFFIC": {
+    "hash": "56d9315",
+    "git_issue": "56d9315",
+    "extid": "TASK-SCHEDULER-LOAD-SOAK-BENCH-QUEUED-LLM-TRAFFIC",
+    "type": "TASK",
+    "title": "Scheduler load-soak bench (queued LLM traffic)",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-scheduler-load-soak-bench-queued-llm-traffic.md",
+    "status": "Not Started"
   },
   "TASK-SCHEMA": {
     "epic": "epic-schema",
