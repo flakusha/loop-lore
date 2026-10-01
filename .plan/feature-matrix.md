@@ -77,6 +77,7 @@ Total tickets: **3127** — untagged: **2636** — unbound to epic: **1589**
 | alerting | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | alignment | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | alpha | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+// hint: Logic changed on both sides. Requires understanding intent of each change.
 | alpine | 4 | 1 | 0 | 2 | 0 | 0 | 1 |
 | alpn | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | alternate-paths | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
@@ -1242,6 +1243,7 @@ Total tickets: **3127** — untagged: **2636** — unbound to epic: **1589**
 | epic-chat-lifecycle-moderation, epic-assistant-gm-flows | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
 | epic-chat-lifecycle-moderation, epic-chat-context-optimization | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
 | epic-chat-privacy.md | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+// hint: Logic changed on both sides. Requires understanding intent of each change.
 | epic-chat-product-features | 32 | 9 | 0 | 22 | 0 | 0 | 1 |
 | epic-chat-product-features.md | 3 | 1 | 0 | 0 | 0 | 0 | 2 |
 | epic-chat-rich-engagement.md | 1 | 1 | 0 | 0 | 0 | 0 | 0 |

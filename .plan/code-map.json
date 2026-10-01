@@ -2924,6 +2924,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-notes-shadow-carriage.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-gm-shadow-note-steering-into-workflow-dispatch-prompts.md"
     },
     {
@@ -6319,6 +6323,13 @@
       "source": ".plan/epics/epic-worlds-extension.md"
     }
   ],
+
+  "src/chat/moderation.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-moderation.md"
+    }
+  ],
   "src/chat/moderation.ts": [
     {
       "kind": "epic",
@@ -6401,6 +6412,20 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/IDEA-chat-composer-predictive-inline-text-suggestions.md"
+    }
+  ],
+
+  "src/chat/proactive/annotations.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-notes-shadow-carriage.md"
+    }
+  ],
+
+  "src/chat/proactive/annotations.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-notes-shadow-carriage.md"
     }
   ],
   "src/chat/proactive/db-helpers.ts": [
@@ -6645,6 +6670,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-no-role-restriction-for-changing-chat-settings.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-moderation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-ownership-transfer.md"
     }
   ],
   "src/chat/service/access.ts": [
@@ -6663,10 +6696,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-vn-mode-locked-once-chat-has-confirmed-messages.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-chat-feature-ownership-transfer.md"
     },
     {
       "kind": "ticket",
@@ -6769,6 +6798,20 @@
     {
       "kind": "spec",
       "source": "docs/spec/graph-cluster-chat-history.md"
+    }
+  ],
+
+  "src/chat/service/carriage.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-notes-shadow-carriage.md"
+    }
+  ],
+
+  "src/chat/service/carriage.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-notes-shadow-carriage.md"
     }
   ],
   "src/chat/service/carry-": [
@@ -6965,7 +7008,25 @@
       "source": ".plan/tickets/TASK-gm-guided-story-creation.md"
     }
   ],
+
+  "src/chat/service/crud/turn-skip-forced.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-turn-talkativity-skip.md"
+    }
+  ],
+
+  "src/chat/service/crud/turn-skip.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-turn-talkativity-skip.md"
+    }
+  ],
   "src/chat/service/crud/turn-skip.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-turn-talkativity-skip.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-matrix-story-coherence-gate-pass2-qa-decide-whether-gate-ver.md"
@@ -8381,6 +8442,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-external-music-linking.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-component-buttons.md"
     },
     {
       "kind": "ticket",
@@ -10762,6 +10827,13 @@
       "kind": "ticket",
       "source": ".plan/tickets/BUG-key-rotation-noop-orphans-history.md"
     },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-encryption-key-rotation.md"
+    }
+  ],
+
+  "src/crypto/key-rotation/rotation-restart.test.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-encryption-key-rotation.md"
@@ -15409,6 +15481,20 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-attachment-content-analysis-pipeline.md"
+    }
+  ],
+
+  "src/frontend/alpine/chat-actions/message-actions.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-component-buttons.md"
+    }
+  ],
+
+  "src/frontend/alpine/chat-actions/message-actions.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-component-buttons.md"
     }
   ],
   "src/frontend/alpine/chat-actions/prompt-improve-local.test.ts": [
@@ -21916,6 +22002,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-component-buttons.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-group-chat-mention-routing.md"
     }
   ],
@@ -21983,6 +22073,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-world-chat-channels-invites.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-turn-talkativity-skip.md"
     }
   ],
   "src/group-chat/turn-selector.ts": [
@@ -23203,6 +23297,20 @@
       "source": "docs/spec/integrations/llm-serving.md"
     }
   ],
+
+  "src/memory/events.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-notes-shadow-carriage.md"
+    }
+  ],
+
+  "src/memory/events.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-notes-shadow-carriage.md"
+    }
+  ],
   "src/memory/extraction.test.ts": [
     {
       "kind": "ticket",
@@ -23435,6 +23543,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-matrix-cross-mech-g19-agent-memory-scoring.md"
+    }
+  ],
+
+  "src/memory/shadow-recall.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-notes-shadow-carriage.md"
     }
   ],
   "src/memory/shareability.ts": [
@@ -25444,6 +25559,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-component-buttons.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-flow-section-navigation.md"
     },
     {
@@ -26703,6 +26822,20 @@
       "source": "docs/spec/observability.md"
     }
   ],
+
+  "src/routes/admin/carriage.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-notes-shadow-carriage.md"
+    }
+  ],
+
+  "src/routes/admin/carriage.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-notes-shadow-carriage.md"
+    }
+  ],
   "src/routes/admin/chats.ts": [
     {
       "kind": "epic",
@@ -27865,7 +27998,18 @@
       "source": "docs/frontend/chat/visual-novel-mode.md"
     }
   ],
+
+  "src/routes/chats/annotations": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-notes-shadow-carriage.md"
+    }
+  ],
   "src/routes/chats/annotations.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-notes-shadow-carriage.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-chat-annotations.md"
@@ -28015,7 +28159,18 @@
       "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
     }
   ],
+
+  "src/routes/chats/moderation.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-moderation.md"
+    }
+  ],
   "src/routes/chats/moderation.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-moderation.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-chat-moderate-action.md"
@@ -29209,6 +29364,20 @@
       "source": ".plan/tickets/TASK-archival-workflow.md"
     }
   ],
+
+  "src/routes/messages/attach.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-component-buttons.md"
+    }
+  ],
+
+  "src/routes/messages/attach.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-component-buttons.md"
+    }
+  ],
   "src/routes/messages/command.test.ts": [
     {
       "kind": "ticket",
@@ -29271,6 +29440,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-create-entity-confirm-bypasses-world-ownership.md"
+    }
+  ],
+
+  "src/routes/messages/create.coverage.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-component-buttons.md"
     }
   ],
   "src/routes/messages/create.test.ts": [
@@ -29353,6 +29529,13 @@
       "source": ".plan/tickets/TASK-tmp-janitor-and-staleness-markers.md"
     }
   ],
+
+  "src/routes/messages/guards.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-moderation.md"
+    }
+  ],
   "src/routes/messages/handle-scene-transitions.ts": [
     {
       "kind": "ticket",
@@ -29391,6 +29574,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-safedecompress-pre-check-rejects-compressed-payloads-over-10.md"
+    }
+  ],
+
+  "src/routes/messages/mute-gate.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-moderation.md"
     }
   ],
   "src/routes/messages/nsfw-user-flag.ts": [
@@ -36077,6 +36267,13 @@
       "source": "docs/spec/quests-encounters.md"
     }
   ],
+
+  "src/story/shared/quest-engine-utils.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-notes-shadow-carriage.md"
+    }
+  ],
   "src/story/shared/story-utils.ts": [
     {
       "kind": "ticket",
@@ -36891,6 +37088,27 @@
       "source": ".plan/epics/epic-rpg-patterns.md"
     }
   ],
+
+  "src/turning/skip-cooldown.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-turn-talkativity-skip.md"
+    }
+  ],
+
+  "src/turning/skip-cooldown.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-turn-talkativity-skip.md"
+    }
+  ],
+
+  "src/turning/talkativity.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-turn-talkativity-skip.md"
+    }
+  ],
   "src/turning/turn-manager.test.ts": [
     {
       "kind": "ticket",
@@ -36967,6 +37185,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-group-cascade-consecutive-turn-guard.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-turn-talkativity-skip.md"
     }
   ],
   "src/turning/turn-strategies.ts": [
