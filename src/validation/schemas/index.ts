@@ -32,6 +32,7 @@ export * from "./story-items";
 export * from "./lore";
 export * from "./world-state";
 export * from "./world-setup";
+export * from "./wardrobe";
 export * from "./api-keys";
 export * from "./notifications";
 export * from "./telemetry";

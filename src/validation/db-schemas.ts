@@ -898,6 +898,7 @@ export const WorldAvatarConfigSchema = t.Object({
   updated_at: t.String(),
   selection_rule_override: t.Optional(AvatarSelectionRuleSchema,),
   weights_override: t.Optional(t.String(),),
+  outfit_bindings: t.Optional(t.String(),),
 },);
 
 // ── world_invites ────────────────────────────────────────────
@@ -1268,6 +1269,7 @@ export const CharacterAvatarsSchema = t.Object({
   tags: t.Optional(t.String(),),
   is_primary: t.Optional(t.Number(),),
   sort_order: t.Optional(t.Number(),),
+  outfit_id: t.Optional(t.String(),),
 },);
 
 // ── character_body_profile ────────────────────────────────────────────
@@ -2964,4 +2966,34 @@ export const CarriageRecordsSchema = t.Object({
   payload: t.String(),
   created_at: t.String(),
   source_chat_id: t.Optional(t.String(),),
+},);
+
+// ── wardrobe_items ────────────────────────────────────────────
+export const WardrobeItemsSchema = t.Object({
+  name: t.String(),
+  actor_id: t.Optional(t.String(),),
+  world_id: t.Optional(t.String(),),
+  descriptor: t.Optional(t.String(),),
+  tags: t.Optional(t.String(),),
+  sort_order: t.Optional(t.Number(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── actor_wardrobe ────────────────────────────────────────────
+export const ActorWardrobeSchema = t.Object({
+  actor_id: t.String(),
+  wardrobe_item_id: t.String(),
+  item_instance_id: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── chat_wardrobe_overrides ────────────────────────────────────────────
+export const ChatWardrobeOverridesSchema = t.Object({
+  chat_id: t.String(),
+  actor_id: t.String(),
+  outfit_id: t.String(),
+  changed_by: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
 },);
