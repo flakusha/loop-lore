@@ -7,8 +7,8 @@
  * Event-based progress calculation, milestone detection, reward
  * distribution, and the public processEvent / advanceProgress paths.
  */
-import type { QuestType, } from "../../db/enums";
-import { QuestStatus, } from "../../db/enums";
+import { QuestStatus, type QuestType, } from "../../db/enums";
+import { emitMemoryEvent, MEMORY_EVENT_QUEST_COMPLETED, } from "../../memory/events";
 import { jsonParseOr, } from "../../utils";
 import { applyEvents, } from "../events";
 import { PROGRESS_CALCULATORS, } from "../quests/registry";
@@ -130,8 +130,8 @@ async function applyProgress(
   const newProgress = Math.min(quest.progress + delta, quest.target,);
   const completed = newProgress >= quest.target;
 
-  // Completion is a status transition — validate it against the machine so a
-  // quest in a terminal/abandoned state cannot silently flip to completed.
+  // Completion is a status transition — validate against the machine so a
+  // terminal/abandoned quest cannot silently flip to completed.
   if (completed) {
     await requireQuestTransition(state.db, quest.id, QuestStatus.Completed,);
   }
@@ -146,6 +146,11 @@ async function applyProgress(
     .execute();
 
   await upsertQuestProgress(state.db, quest.id, chatId, newProgress, completed, sourceMessageId,);
+
+  // AC5: completion surfaces on the memory event stream (fire-and-forget).
+  if (completed) {
+    emitMemoryEvent(state.db, MEMORY_EVENT_QUEST_COMPLETED, { questId: quest.id, chatId, progress: newProgress, },);
+  }
 
   const hooks = jsonParseOr(quest.narrative_hooks, [],) as { progress: number; narrative: string }[];
   let oldMilestone: { progress: number; narrative: string } | undefined;
