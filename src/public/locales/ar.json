@@ -1325,6 +1325,7 @@
     "failedToStartGeneration": "فشل بدء التوليد.",
     "generationNoJobId": "بدأ التوليد لكن لم يتم إرجاع معرّف المهمة.",
     "emotionAvatarsGenerated": "تم توليد الصور التعبيرية للشخصية.",
+    "emotionAvatarsProgress": "{done} من {total} من المتغيرات",
     "generationTimedOut": "انتهت مهلة التوليد.",
     "generationOutcome": "التوليد: {status}.",
     "resumingFromStep": "جاري الاستئناف من الخطوة {step} من {total}...",

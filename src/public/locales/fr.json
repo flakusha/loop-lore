@@ -1325,6 +1325,7 @@
     "failedToStartGeneration": "Échec du démarrage de la génération.",
     "generationNoJobId": "La génération a démarré mais aucun identifiant de tâche n'a été renvoyé.",
     "emotionAvatarsGenerated": "Avatars d'émotion générés.",
+    "emotionAvatarsProgress": "{done} sur {total} variantes",
     "generationTimedOut": "Délai de génération dépassé.",
     "generationOutcome": "Génération {status}.",
     "resumingFromStep": "Reprise à l'étape {step} sur {total}...",

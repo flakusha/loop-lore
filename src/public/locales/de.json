@@ -1325,6 +1325,7 @@
     "failedToStartGeneration": "Start der Generierung fehlgeschlagen.",
     "generationNoJobId": "Generierung gestartet, aber keine Job-ID zurückgegeben.",
     "emotionAvatarsGenerated": "Emotions-Avatare generiert.",
+    "emotionAvatarsProgress": "{done} von {total} Varianten",
     "generationTimedOut": "Zeitüberschreitung bei der Generierung.",
     "generationOutcome": "Generierungsstatus: {status}.",
     "resumingFromStep": "Fortsetzen bei Schritt {step} von {total}...",

@@ -1325,6 +1325,7 @@
     "failedToStartGeneration": "Falha ao iniciar a geração.",
     "generationNoJobId": "A geração começou, mas nenhum ID de trabalho foi retornado.",
     "emotionAvatarsGenerated": "Avatares de emoção gerados.",
+    "emotionAvatarsProgress": "{done} de {total} variantes",
     "generationTimedOut": "A geração expirou.",
     "generationOutcome": "Geração {status}.",
     "resumingFromStep": "Retomando da etapa {step} de {total}...",

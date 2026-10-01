@@ -4,17 +4,18 @@
  * The EmotionAvatarService is mocked (it drives real image generation in
  * production), so job state is scripted per scenario. Requires `--isolate`.
  */
-import type { Database, } from "bun:sqlite";
-import { afterAll, beforeAll, expect, mock, test, } from "bun:test";
-import { Elysia, } from "elysia";
-import type { Kysely, } from "kysely";
-import { EmotionType, } from "../db/enums";
 import type { DB, } from "../db/schema";
+import type { Database, } from "bun:sqlite";
+import type { Kysely, } from "kysely";
+import { Elysia, } from "elysia";
+import { EmotionType, } from "../db/enums";
+import { afterAll, beforeAll, expect, mock, test, } from "bun:test";
 import { createTestDb, } from "../test-utils/create-test-db";
-import { insertActors, insertUsers, } from "../test-utils/insert-helpers";
 import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
+import { insertActors, insertUsers, } from "../test-utils/insert-helpers";
 
 import { characterEmotionAvatarsRoutes, } from "./character-emotion-avatars";
+import { emitJobProgress, } from "../characters/services/emotion-avatar-service/job-events";
 
 if (ISOLATED) {
   mock.module("../characters/services/emotion-avatar-service", () => {
@@ -46,9 +47,14 @@ if (ISOLATED) {
        * @param opts
        * @param opts.actorId
        */
-      async startBatchGeneration(opts: { actorId: string },) {
+      async startBatchGeneration(opts: { actorId: string; emotions?: string[] },) {
         const jobId = `job-${jobs.size + 1}`;
-        jobs.set(jobId, { jobId, actorId: opts.actorId, status: "running", },);
+        jobs.set(jobId, {
+          id: jobId,
+          actorId: opts.actorId,
+          status: "running",
+          results: (opts.emotions ?? []).map((emotion,) => ({ emotion, status: "pending", })),
+        },);
         return jobId;
       }
       /**
@@ -404,6 +410,128 @@ describeOrSkip("character-emotion-avatars routes", () => {
     expect(body[0]?.value,).toBeDefined();
     expect(body[0]?.displayName,).toBeDefined();
   });
+
+  beforeAll(async () => {
+    ({ db, sqlite, } = await createTestDb());
+    await insertUsers(db, "owner", "Owner", { id: "owner" as never, },);
+    await insertActors(db, "Hero", { id: ACTOR as never, owner_id: "owner", },);
+    await insertActors(db, "Second", { id: SECOND as never, owner_id: "owner", },);
+  },);
+
+  /**
+   * @param response
+   */
+  async function readAll(response: Response,): Promise<string> {
+    const reader = response.body?.getReader();
+    if (!reader) { return ""; }
+    const decoder = new TextDecoder();
+    let out = "";
+    for (;;) {
+      const { done, value, } = await reader.read();
+      if (done) { break; }
+      out += decoder.decode(value, { stream: true, },);
+    }
+    out += decoder.decode();
+    return out;
+  }
+  const sleep = (ms: number,) => new Promise((resolve,) => setTimeout(resolve, ms,));
+
+  /**
+   * Create a running two-emotion job for ACTOR.
+   * @returns {Promise<string>}
+   */
+  async function createJob(): Promise<string> {
+    const res = await makeApp(db, "owner", "user",).handle(
+      new Request(`http://localhost/api/actors/${ACTOR}/emotion-avatars`, {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ baseAvatarId: "av-1", emotions: ["happy", "sad",], },),
+      },),
+    );
+    const body = await res.json() as JobBody;
+    if (!body.jobId) { throw new Error("expected jobId",); }
+    return body.jobId;
+  }
+
+  test("requires auth", async () => {
+    const res = await makeApp(db,).handle(
+      new Request(`http://localhost/api/actors/${ACTOR}/emotion-avatars/jobs/job-1/stream`,),
+    );
+    expect(res.status,).toBe(401,);
+  });
+
+  test("returns 404 for an unknown job", async () => {
+    const res = await makeApp(db, "owner", "user",).handle(
+      new Request(`http://localhost/api/actors/${ACTOR}/emotion-avatars/jobs/unknown-job/stream`,),
+    );
+    expect(res.status,).toBe(404,);
+  });
+
+  test("returns 404 for a job owned by another actor", async () => {
+    const jobId = await createJob();
+    const res = await makeApp(db, "owner", "user",).handle(
+      new Request(`http://localhost/api/actors/${SECOND}/emotion-avatars/jobs/${jobId}/stream`,),
+    );
+    expect(res.status,).toBe(404,);
+  });
+
+  test("sends a terminal snapshot and done immediately for a finished job", async () => {
+    const jobId = await createJob();
+    await makeApp(db, "owner", "user",).handle(
+      new Request(`http://localhost/api/actors/${ACTOR}/emotion-avatars/jobs/${jobId}/cancel`, {
+        method: "POST",
+      },),
+    );
+
+    const res = await makeApp(db, "owner", "user",).handle(
+      new Request(`http://localhost/api/actors/${ACTOR}/emotion-avatars/jobs/${jobId}/stream`,),
+    );
+    expect(res.status,).toBe(200,);
+    const body = await readAll(res,);
+    expect(body,).toContain('"status":"cancelled"',);
+    expect(body,).toContain("event: done",);
+  });
+
+  test("streams an initial snapshot, live events, and done on terminal", async () => {
+    const jobId = await createJob();
+
+    const res = await makeApp(db, "owner", "user",).handle(
+      new Request(`http://localhost/api/actors/${ACTOR}/emotion-avatars/jobs/${jobId}/stream`,),
+    );
+    expect(res.status,).toBe(200,);
+    expect(res.headers.get("Content-Type",),).toBe("text/event-stream",);
+    expect(res.headers.get("Cache-Control",),).toBe("no-cache",);
+    expect(res.headers.get("Connection",),).toBe("keep-alive",);
+    expect(res.headers.get("X-Accel-Buffering",),).toBe("no",);
+
+    const reader = res.body?.getReader();
+    if (!reader) { throw new Error("expected a response body",); }
+    const decoder = new TextDecoder();
+    let body = "";
+    while (!body.includes("event: progress",)) {
+      const chunk = await reader.read();
+      if (chunk.done) { break; }
+      body += decoder.decode(chunk.value, { stream: true, },);
+    }
+    expect(body,).toContain(`"jobId":"${jobId}"`,);
+    expect(body,).toContain('"done":0',);
+    expect(body,).toContain('"total":2',);
+    expect(body,).toContain('"status":"running"',);
+
+    // Let the stream subscribe before driving the job to a terminal state
+    // through the real in-process pub/sub.
+    await sleep(50,);
+    emitJobProgress({ jobId, done: 2, total: 2, status: "completed", },);
+
+    for (;;) {
+      const chunk = await reader.read();
+      if (chunk.done) { break; }
+      body += decoder.decode(chunk.value, { stream: true, },);
+    }
+    expect(body,).toContain('"done":2',);
+    expect(body,).toContain("event: done",);
+  }, 20_000,);
+  afterAll(() => sqlite.close());
 },);
 
 describeOrSkip("Emotion avatars — admin/solo bypass", () => {

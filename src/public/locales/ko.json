@@ -1325,6 +1325,7 @@
     "failedToStartGeneration": "생성을 시작하지 못했습니다.",
     "generationNoJobId": "생성이 시작되었지만 작업 ID가 반환되지 않았습니다.",
     "emotionAvatarsGenerated": "감정 아바타가 생성되었습니다.",
+    "emotionAvatarsProgress": "{total}개 중 {done}개",
     "generationTimedOut": "생성 시간이 초과되었습니다.",
     "generationOutcome": "생성 {status}.",
     "resumingFromStep": "{total}단계 중 {step}단계에서 재개 중...",
