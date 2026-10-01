@@ -144,4 +144,31 @@ describeOrSkip("callLlm — generation-error-handling gaps", () => {
       ),
     ).rejects.toThrow(/empty content/,);
   });
+
+  test("assistantTuning drives provider sampling params", async () => {
+    const seen: { params?: { temperature: number; maxTokens: number } }[] = [];
+    const driver = async (_providers: unknown, req: unknown,) => {
+      seen.push(req as { params?: { temperature: number; maxTokens: number } },);
+      return { content: "ok", thinking: undefined, finishReason: "stop", usage, } as never;
+    };
+    const opts = {
+      ...makeOpts({ driver: driver as never, chatStreaming: 0, }),
+      assistantTuning: { temperature: 0.2, maxTokens: 64, },
+    } as Parameters<typeof callLlm>[0];
+    const result = await callLlm(opts,);
+    expect(result.content,).toBe("ok",);
+    expect(seen[0]?.params,).toEqual({ temperature: 0.2, maxTokens: 64, },);
+  });
+
+  test("absent tuning falls back to auto-gen defaults (0.9 / 2048)", async () => {
+    const seen: { params?: { temperature: number; maxTokens: number } }[] = [];
+    const driver = async (_providers: unknown, req: unknown,) => {
+      seen.push(req as { params?: { temperature: number; maxTokens: number } },);
+      return { content: "ok", thinking: undefined, finishReason: "stop", usage, } as never;
+    };
+    const opts = { ...makeOpts({ driver: driver as never, chatStreaming: 0, }), } as Parameters<typeof callLlm>[0];
+    const result = await callLlm(opts,);
+    expect(result.content,).toBe("ok",);
+    expect(seen[0]?.params,).toEqual({ temperature: 0.9, maxTokens: 2048, },);
+  });
 },);

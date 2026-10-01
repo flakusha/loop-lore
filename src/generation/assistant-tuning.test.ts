@@ -6,6 +6,7 @@ import {
   parseAssistantTuning,
   resolveAssistantMaxTokens,
   resolveAssistantTemperature,
+  resolveAutoGenSamplingParams,
 } from "./assistant-tuning";
 
 describe("parseAssistantTuning", () => {
@@ -35,5 +36,27 @@ describe("resolve precedence", () => {
   });
   test("out-of-range explicit degrades to override", () => {
     expect(resolveAssistantTemperature(99, 0.5,),).toBe(0.5,);
+  });
+});
+
+describe("resolveAutoGenSamplingParams (auto-gen)", () => {
+  test("no override falls back to auto-gen defaults", () => {
+    expect(resolveAutoGenSamplingParams({ shortReply: false, },),).toEqual({ temperature: 0.9, maxTokens: 2048, },);
+  });
+  test("short-reply heuristic drops maxTokens to 512", () => {
+    expect(resolveAutoGenSamplingParams({ shortReply: true, },).maxTokens,).toBe(512,);
+  });
+  test("per-chat override beats defaults AND the short-reply heuristic", () => {
+    expect(
+      resolveAutoGenSamplingParams({ tuning: { temperature: 0.2, maxTokens: 64, }, shortReply: true, },),
+    ).toEqual({ temperature: 0.2, maxTokens: 64, },);
+  });
+  test("partial override keeps heuristic/default on the null axis", () => {
+    expect(
+      resolveAutoGenSamplingParams({ tuning: { temperature: 0.1, maxTokens: null, }, shortReply: true, },),
+    ).toEqual({ temperature: 0.1, maxTokens: 512, },);
+    expect(
+      resolveAutoGenSamplingParams({ tuning: { temperature: null, maxTokens: null, }, shortReply: false, },),
+    ).toEqual({ temperature: 0.9, maxTokens: 2048, },);
   });
 });
