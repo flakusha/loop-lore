@@ -15,7 +15,6 @@ export { pruneOrphanSpills, } from "./spill-retention";
 /** Node's setInterval returns `Timeout` on Node and `number` on Bun — name it. */
 type IntervalHandle = ReturnType<typeof setInterval>;
 
-/** */
 export interface OffloadDaemonConfig {
   /** Scan interval when cron trigger is active. */
   intervalMs?: number;
@@ -29,7 +28,6 @@ export interface OffloadDaemonConfig {
   shouldRun?: (state: DaState,) => boolean | Promise<boolean>;
 }
 
-/** */
 export interface DaState {
   rowCount: number;
   lastWriteAt: number;
@@ -47,12 +45,7 @@ const DEFAULT_INTERVAL_MS = 5 * 60 * 1000;
 const DEFAULT_MIN_AGE_MS = 5 * 60 * 1000;
 const DEFAULT_TTL_MS = 24 * 60 * 60 * 1000;
 
-/**
- * Lazy default — pulled from `AsyncStoreConfig` defaults to keep parity.
- * @param override - explicit override (when undefined, falls back)
- * @param fallback - config carrying the default
- * @returns `override` when defined; otherwise `fallback.maxInlineBytes` (or `1 MiB` when that's also missing).
- */
+// Lazy default — pulled from `AsyncStoreConfig` defaults to keep parity.
 function getMaxInlineBytes(override: number | undefined, fallback: AsyncStoreConfig,): number {
   if (override !== undefined) { return override; }
   return fallback.maxInlineBytes ?? 1024 * 1024;
@@ -166,10 +159,7 @@ export async function runOffloadPass(
   return { offloaded, expired, pruned, };
 }
 
-/**
- * Offload daemon handle — owns the interval timer, the re-entrancy guard,
- * and the live {@link DaState}. Constructed via {@link startOffloadDaemon}.
- */
+/** Offload daemon handle — owns the timer, the re-entrancy guard, and the live {@link DaState}. */
 export class OffloadDaemon {
   private readonly log = getLogger().child({ module: "async-offload", },);
   private timer: IntervalHandle | null = null;

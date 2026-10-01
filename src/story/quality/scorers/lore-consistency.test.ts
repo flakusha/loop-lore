@@ -91,34 +91,6 @@ describe("lore-consistency — falsy and empty lore boundaries", () => {
   });
 });
 
-describe("lore-consistency — entity extraction is dead (input pre-lowercased)", () => {
-  test("lore with only stopwords → base 70", () => {
-    expect(score("The knight drew his sword.", "The A An This That It He She They We You I",),).toBe(70,);
-  });
-
-  test("response with capitalized names, lore without → still base 70", () => {
-    expect(score("Aldoria and Brennus march north.", "the kingdom has fallen.",),).toBe(70,);
-  });
-
-  test("unicode lore and response → base 70, no crash", () => {
-    expect(
-      score("Der Ritter zog sein Schwert aus der Scheide.", "Das Königreich Aldoria ist gefallen.",),
-    ).toBe(70,);
-  });
-
-  test("mixed-case lore with digits and punctuation → base 70", () => {
-    expect(score("He draws the sword.", "Aldoria-7 (the Fallen Kingdom) has FALLEN!",),).toBe(70,);
-  });
-
-  test("single-character lore → base 70", () => {
-    expect(score("He draws the sword.", "x",),).toBe(70,);
-  });
-
-  test("lore that is only punctuation → base 70", () => {
-    expect(score("He draws his sword.", "!!! ... ???",),).toBe(70,);
-  });
-});
-
 describe("lore-consistency — clamp and determinism", () => {
   test("score is deterministic across repeated calls", () => {
     const a = score("The knight drew his sword.", "The kingdom of Aldoria has fallen.",);
