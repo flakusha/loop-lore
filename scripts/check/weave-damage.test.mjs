@@ -49,17 +49,19 @@ test("no duplicates and degenerate input count zero", () => {
  * `commit.gpgsign = true` can block the fixture commit on a signer prompt.
  */
 function isolatedGitEnv() {
-  const env = { ...process.env, };
-  const repoPointingKeys = [
-    "GIT_DIR",
-    "GIT_WORK_TREE",
-    "GIT_INDEX_FILE",
-    "GIT_COMMON_DIR",
-    "GIT_OBJECT_DIRECTORY",
-    "GIT_ALTERNATE_OBJECT_DIRECTORIES",
-    "GIT_PREFIX",
-  ];
-  for (const key of repoPointingKeys) { delete env[key]; }
+  const env = {};
+  for (const [key, value] of Object.entries(process.env)) {
+    if (value === undefined) { continue; }
+    // Prefix-match rather than an allowlist: the caller can set a GIT_ var
+    // this list never enumerates. `GIT_CONFIG_COUNT` + `GIT_CONFIG_KEY_n`
+    // inject config straight from the environment, so a hostile
+    // `core.hooksPath` or `commit.gpgsign` rides past the
+    // GIT_CONFIG_GLOBAL=/dev/null below and breaks the fixture commit for
+    // reasons unrelated to the gate. Mirrors
+    // scripts/worktree/utils/git.ts.
+    if (key.startsWith("GIT_")) { continue; }
+    env[key] = value;
+  }
   env.GIT_CONFIG_GLOBAL = "/dev/null";
   env.GIT_CONFIG_SYSTEM = "/dev/null";
   env.GIT_CONFIG_NOSYSTEM = "1";
