@@ -13,6 +13,8 @@
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
+import { getLogger, } from "../../logger";
+import { recordCarriage, } from "./carriage";
 import { archiveChat, } from "./crud/archive";
 import { copyMessagesToPrimary, createBranchChat, mergeParticipantsIntoPrimary, } from "./split-utils";
 import { injectNarration, } from "./transitions";
@@ -130,6 +132,21 @@ export async function splitParty(
     chatId,
     `The party splits into separate groups: ${allNames.join(", ",)}.`,
   );
+
+  // Carriage record: party-scope evidence attached to the initiating
+  // chat; branch destinations live in the payload. Best-effort — never
+  // fail a completed split.
+  try {
+    await recordCarriage(database, {
+      chatId,
+      scope: "party",
+      payload: { branches: branchResults, },
+    },);
+  } catch (error: unknown) {
+    getLogger()
+      .child({ module: "chat.split", },)
+      .warn("carriage record failed", { chatId, error: String(error,), },);
+  }
 
   return {
     ok: true,

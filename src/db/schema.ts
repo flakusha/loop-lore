@@ -186,4 +186,5 @@ export interface DB {
   game_states: import("./schema-core").GameStates;
   autonomy_budget: import("./schema-core").AutonomyBudget;
   world_simulation_state: import("./schema-core").WorldSimulationState;
+  carriage_records: import("./schema-core").CarriageRecords;
 }

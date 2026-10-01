@@ -315,7 +315,7 @@ describe("chats/annotations - GET", () => {
   test("merges persisted shadow rows with in-memory note/quest annotations", async () => {
     const { db, } = await createTestDb();
     await seed(db,);
-    const app = makeApp(db, PARTICIPANT_ID,);
+    const app = makeApp(db, OWNER_ID,);
 
     const shadowRes = await postAnnotation(app, CHAT_ID, {
       kind: "shadow",
@@ -339,6 +339,33 @@ describe("chats/annotations - GET", () => {
     expect(shadows[0]!.ttlUntil,).toBeNull();
     expect(body.data.filter((a,) => a.kind === "note"),).toHaveLength(1,);
     expect(body.data.filter((a,) => a.kind === "quest"),).toHaveLength(1,);
+    await db.destroy();
+  });
+
+  test("AC2: a plain member never sees shadow notes", async () => {
+    const { db, } = await createTestDb();
+    await seed(db,);
+    const gmApp = makeApp(db, OWNER_ID,);
+
+    await postAnnotation(gmApp, CHAT_ID, { kind: "shadow", body: "The duke is a doppelganger", },);
+    await postAnnotation(makeApp(db, PARTICIPANT_ID,), CHAT_ID, { kind: "note", body: "Player note", },);
+
+    const memberView = await getAnnotations(makeApp(db, PARTICIPANT_ID,), CHAT_ID,);
+    const memberBody = await memberView.json() as ListBody;
+    expect(memberView.status,).toBe(200,);
+    expect(
+      memberBody.data.some((a,) => a.kind === "shadow"),
+    ).toBe(false,);
+    expect(
+      memberBody.data.some((a,) => a.kind === "note"),
+    ).toBe(true,);
+
+    // The chat creator (GM tier) still sees the shadow note.
+    const gmView = await getAnnotations(gmApp, CHAT_ID,);
+    const gmBody = await gmView.json() as ListBody;
+    expect(
+      gmBody.data.some((a,) => a.kind === "shadow"),
+    ).toBe(true,);
     await db.destroy();
   });
 

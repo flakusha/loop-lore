@@ -8,6 +8,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
 import { jsonStringifyOr, safeJsonParse, } from "../../utils";
+import { recordCarriage, } from "./carriage";
 import { carryHistory, } from "./carry-history";
 import { carryLocation, } from "./carry-location";
 import { carryMemory, } from "./carry-memory";
@@ -150,6 +151,22 @@ export async function migrateChat(
   // new chat's world differs from the source's.
   if (params.carry?.worldState === true && template.world_id && template.world_id !== source.world_id) {
     await carryWorldState(database, source.world_id ?? "", template.world_id,);
+  }
+
+  // Carriage record: dev/admin-visible evidence of this session carry
+  // (never surfaced to participants). Best-effort — a carriage insert
+  // failure must not fail the migration itself.
+  try {
+    await recordCarriage(database, {
+      chatId: newChatId,
+      sourceChatId: chatId,
+      scope: "session",
+      payload: { carry: params.carry ?? {}, },
+    },);
+  } catch (error: unknown) {
+    getLogger()
+      .child({ module: "chat.transitions", },)
+      .warn("carriage record failed", { chatId, newChatId, error: String(error,), },);
   }
 
   return { ok: true, newChatId, sourceChatId: chatId, };

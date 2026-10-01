@@ -19,6 +19,7 @@ import {
 import type { DB, } from "../../db/schema";
 import { TransitionError, } from "../../db/state";
 import { getLogger, } from "../../logger";
+import { emitMemoryEvent, } from "../../memory/events";
 import { safeJsonStringify, } from "../../utils";
 // ── Quest Engine Helpers ─────────────────────────────────────
 
@@ -90,7 +91,7 @@ export async function transitionQuestStatus(
   questStatus: QuestStatus,
   progressStatus: QuestProgressStatus,
 ): Promise<void> {
-  await requireQuestTransition(db, questId, questStatus,);
+  const from = await requireQuestTransition(db, questId, questStatus,);
   questProgressValidator.assertValid(questStatus, progressStatus,);
 
   await db
@@ -104,6 +105,14 @@ export async function transitionQuestStatus(
     .set({ status: progressStatus, },)
     .where("quest_id", "=", questId,)
     .execute();
+
+  // Memory event (AC5): surface every completed transition on the memory
+  // event stream — fire-and-forget (emitMemoryEvent swallows failures).
+  emitMemoryEvent(db, `memory.quest.${questStatus}`, {
+    questId,
+    from,
+    to: questStatus,
+  },);
 }
 
 /**

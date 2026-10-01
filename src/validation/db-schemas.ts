@@ -2955,3 +2955,12 @@ export const WorldSimulationStateSchema = t.Object({
   tick_count: t.Optional(t.Number(),),
   updated_at: t.Optional(t.String(),),
 },);
+
+// ── carriage_records ────────────────────────────────────────────
+export const CarriageRecordsSchema = t.Object({
+  chat_id: t.String(),
+  scope: t.String(),
+  payload: t.String(),
+  created_at: t.String(),
+  source_chat_id: t.Optional(t.String(),),
+},);
