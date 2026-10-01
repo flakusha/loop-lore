@@ -188,7 +188,8 @@ describe("audit — getAuditLog", () => {
 
   test("respects offset option", async () => {
     const targetId = "audit-log-target-4";
-    for (const type of ["block", "unblock", "ban",]) {
+    const types = ["block", "unblock", "ban",];
+    for (const type of types) {
       await recordAction({
         thisL: { db, log: svc["log"], } as any,
         params: {
@@ -200,6 +201,17 @@ describe("audit — getAuditLog", () => {
           scopeId: "chat-w",
         },
       },);
+    }
+    // recordAction stamps created_at with millisecond precision, so three
+    // back-to-back inserts can share a timestamp and `orderBy created_at desc`
+    // leaves their relative order to the storage engine. Pin distinct stamps so
+    // the offset window is deterministic: desc order is ban, unblock, block.
+    for (const [i, type,] of types.entries()) {
+      await db.updateTable("moderation_actions",)
+        .set({ created_at: `2026-01-01T00:00:0${i + 1}Z`, },)
+        .where("target_user_id", "=", targetId,)
+        .where("action_type", "=", type,)
+        .execute();
     }
     const log = await getAuditLog({
       thisL: { db, log: svc["log"], } as any,
