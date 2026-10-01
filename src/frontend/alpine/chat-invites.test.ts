@@ -2,20 +2,23 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import "./i18n.test-helper";
-import { afterEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, expect, mock, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { chatInvites, } from "./chat-invites";
 import type { ChatState, } from "./types";
 
 let fetchCalls: { url: string; opts: RequestInit }[] = [];
 let fetchHandler: ((url: string, opts: RequestInit,) => Response) | null = null;
 
-mock.module("./htmx", () => ({
-  apiFetch: async (url: string, opts?: RequestInit,) => {
-    fetchCalls.push({ url, opts: opts ?? {}, },);
-    if (!fetchHandler) { return new Response("{}", { status: 200, },); }
-    return fetchHandler(url, opts ?? {},);
-  },
-}),);
+if (ISOLATED) {
+  mock.module("./htmx", () => ({
+    apiFetch: async (url: string, opts?: RequestInit,) => {
+      fetchCalls.push({ url, opts: opts ?? {}, },);
+      if (!fetchHandler) { return new Response("{}", { status: 200, },); }
+      return fetchHandler(url, opts ?? {},);
+    },
+  }),);
+}
 
 interface Toast {
   type: string;
@@ -61,8 +64,8 @@ afterEach(() => {
   globalThis.confirm = () => true;
 },);
 
-describe("chatInvites", () => {
-  describe("loadChatInvites", () => {
+describeOrSkip("chatInvites", () => {
+  describeOrSkip("loadChatInvites", () => {
     test("returns early without an active chat", async () => {
       const ctx = buildCtx({ activeChat: null, },);
       await chatInvites.loadChatInvites!.call(ctx,);
@@ -78,9 +81,9 @@ describe("chatInvites", () => {
       expect(ctx._chatInvitesLoaded,).toBe(true,);
       expect(ctx._chatInvitesLoading,).toBe(false,);
     });
-  });
+  },);
 
-  describe("createChatInvite", () => {
+  describeOrSkip("createChatInvite", () => {
     test("rejects non-positive maxUses without a fetch", async () => {
       const toasts: Toast[] = [];
       const ctx = buildCtx({ toasts, },);
@@ -103,9 +106,9 @@ describe("chatInvites", () => {
       expect(ctx._showChatInviteForm,).toBe(false,);
       expect(toasts,).toEqual([{ type: "success", message: "Invite XYZ created and copied", },],);
     });
-  });
+  },);
 
-  describe("revokeChatInvite", () => {
+  describeOrSkip("revokeChatInvite", () => {
     test("removes the row on 204 and toasts", async () => {
       mockFetch(204, {},);
       const toasts: Toast[] = [];
@@ -116,9 +119,9 @@ describe("chatInvites", () => {
       expect(ctx._chatInvites,).toEqual([],);
       expect(toasts,).toEqual([{ type: "success", message: "Invite revoked", },],);
     });
-  });
+  },);
 
-  describe("joinChatByCode", () => {
+  describeOrSkip("joinChatByCode", () => {
     test("warns on a blank code without a fetch", async () => {
       const toasts: Toast[] = [];
       const ctx = buildCtx({ toasts, },);
@@ -160,5 +163,5 @@ describe("chatInvites", () => {
       expect(toasts,).toEqual([{ type: "error", message: "Invite revoked", },],);
       expect(ctx._chatJoinCode,).toBe("BROKEN00",);
     });
-  });
-});
+  },);
+},);

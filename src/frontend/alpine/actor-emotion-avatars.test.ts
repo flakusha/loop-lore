@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { afterEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, expect, mock, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import {
   actorEmotionAvatars,
   actorEmotionAvatarsFactory,
@@ -14,12 +15,14 @@ type ApiFetchMock = (url: string, opts?: RequestInit,) => Promise<Response>;
 let calls: { url: string; opts: RequestInit }[] = [];
 let handler: ApiFetchMock = async () => Response.json({},);
 
-mock.module("./htmx", () => ({
-  apiFetch: ((url: string, opts?: RequestInit,) => {
-    calls.push({ url, opts: opts ?? {}, },);
-    return handler(url, opts,);
-  }) satisfies ApiFetchMock,
-}),);
+if (ISOLATED) {
+  mock.module("./htmx", () => ({
+    apiFetch: ((url: string, opts?: RequestInit,) => {
+      calls.push({ url, opts: opts ?? {}, },);
+      return handler(url, opts,);
+    }) satisfies ApiFetchMock,
+  }),);
+}
 
 const baseCtx = (): ActorEmotionAvatarsState => {
   const state = Object.create(actorEmotionAvatars,) as ActorEmotionAvatarsState;
@@ -56,7 +59,7 @@ const sampleJob = (over: Partial<EmotionAvatarJob> = {},): EmotionAvatarJob => (
   ...over,
 });
 
-describe("actorEmotionAvatars.setActorId", () => {
+describeOrSkip("actorEmotionAvatars.setActorId", () => {
   test("binds and clears prior state", () => {
     const ctx = baseCtx();
     ctx.setActorId("actor-1",);
@@ -71,9 +74,9 @@ describe("actorEmotionAvatars.setActorId", () => {
     ctx.setActorId("actor-1",);
     expect(ctx.error,).toBe("old",);
   });
-});
+},);
 
-describe("actorEmotionAvatars.isJobActive", () => {
+describeOrSkip("actorEmotionAvatars.isJobActive", () => {
   test("returns true for queued/running", () => {
     const ctx = baseCtx();
     expect(ctx.isJobActive(sampleJob({ status: "queued", },),),).toBe(true,);
@@ -86,9 +89,9 @@ describe("actorEmotionAvatars.isJobActive", () => {
     expect(ctx.isJobActive(sampleJob({ status: "failed", },),),).toBe(false,);
     expect(ctx.isJobActive(sampleJob({ status: "cancelled", },),),).toBe(false,);
   });
-});
+},);
 
-describe("actorEmotionAvatars.listJobs", () => {
+describeOrSkip("actorEmotionAvatars.listJobs", () => {
   test("no-op without actor", async () => {
     const ctx = baseCtx();
     await ctx.listJobs();
@@ -130,9 +133,9 @@ describe("actorEmotionAvatars.listJobs", () => {
     await ctx.listJobs();
     expect(ctx.jobsError,).toBeTruthy();
   });
-});
+},);
 
-describe("actorEmotionAvatars.toggleEmotion", () => {
+describeOrSkip("actorEmotionAvatars.toggleEmotion", () => {
   test("adds emotion to empty selection", () => {
     const ctx = baseCtx();
     ctx.toggleEmotion("happy",);
@@ -152,9 +155,9 @@ describe("actorEmotionAvatars.toggleEmotion", () => {
     ctx.toggleEmotion("sad",);
     expect(ctx.selectedEmotions,).toEqual(["happy", "sad",],);
   });
-});
+},);
 
-describe("actorEmotionAvatars.startGeneration", () => {
+describeOrSkip("actorEmotionAvatars.startGeneration", () => {
   test("no-op without actor", async () => {
     const ctx = baseCtx();
     ctx.baseAvatarId = "av-1";
@@ -209,9 +212,9 @@ describe("actorEmotionAvatars.startGeneration", () => {
     expect(await ctx.startGeneration(),).toBe(false,);
     expect(ctx.error,).toBeTruthy();
   });
-});
+},);
 
-describe("actorEmotionAvatars.cancelJob", () => {
+describeOrSkip("actorEmotionAvatars.cancelJob", () => {
   test("no-op without actor", async () => {
     const ctx = baseCtx();
     await ctx.cancelJob("job-1",);
@@ -254,9 +257,9 @@ describe("actorEmotionAvatars.cancelJob", () => {
     await ctx.cancelJob("job-1",);
     expect(ctx.error,).toBe("forbidden",);
   });
-});
+},);
 
-describe("actorEmotionAvatars.refreshJob", () => {
+describeOrSkip("actorEmotionAvatars.refreshJob", () => {
   test("no-op without actor", async () => {
     const ctx = baseCtx();
     await ctx.refreshJob("job-1",);
@@ -288,9 +291,9 @@ describe("actorEmotionAvatars.refreshJob", () => {
     await ctx.refreshJob("job-1",);
     expect(ctx.jobs,).toEqual([],);
   });
-});
+},);
 
-describe("actorEmotionAvatars.startPolling / stopPolling", () => {
+describeOrSkip("actorEmotionAvatars.startPolling / stopPolling", () => {
   test("stopPolling is idempotent", () => {
     const ctx = baseCtx();
     ctx.stopPolling();
@@ -307,9 +310,9 @@ describe("actorEmotionAvatars.startPolling / stopPolling", () => {
     expect(ctx._pollHandle,).toBeNull();
     expect(ctx._pollInterval,).toBeNull();
   });
-});
+},);
 
-describe("actorEmotionAvatarsFactory", () => {
+describeOrSkip("actorEmotionAvatarsFactory", () => {
   test("returns a fresh state bound to the actor", () => {
     const a = actorEmotionAvatarsFactory("actor-a",);
     const b = actorEmotionAvatarsFactory("actor-b",);
@@ -317,4 +320,4 @@ describe("actorEmotionAvatarsFactory", () => {
     expect(a._eaActorId,).toBe("actor-a",);
     expect(b._eaActorId,).toBe("actor-b",);
   });
-});
+},);

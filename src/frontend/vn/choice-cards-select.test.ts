@@ -8,7 +8,8 @@
  * (chat-location.test.ts convention); DOM is a minimal fake sufficient for
  * renderChoiceCards.
  */
-import { afterEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, expect, mock, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { destroyChoiceCards, getAccumulatedImpacts, initChoiceCards, loadChoices, selectChoice, } from "./choice-cards";
 
 // ── Mock apiFetch / feFetch ─────────────────────────────────────────────────
@@ -16,19 +17,21 @@ import { destroyChoiceCards, getAccumulatedImpacts, initChoiceCards, loadChoices
 let apiCalls: { url: string; opts: RequestInit }[] = [];
 let apiHandler: ((url: string, opts: RequestInit,) => Response) | null = null;
 
-mock.module("../alpine/htmx", () => ({
-  apiFetch: async (url: string, opts?: RequestInit,) => {
-    apiCalls.push({ url, opts: opts ?? {}, },);
-    if (!apiHandler) { return new Response("{}", { status: 200, },); }
-    return apiHandler(url, opts ?? {},);
-  },
-}),);
-// choice-cards.ts imports feFetch directly (split/reunite); mock the seam so
-// the real fe-fetch → utils barrel never loads in this suite.
-mock.module("../fe-fetch", () => ({
-  feFetch: async () => new Response("{}", { status: 200, },),
-  getCsrfToken: () => "",
-}),);
+if (ISOLATED) {
+  mock.module("../alpine/htmx", () => ({
+    apiFetch: async (url: string, opts?: RequestInit,) => {
+      apiCalls.push({ url, opts: opts ?? {}, },);
+      if (!apiHandler) { return new Response("{}", { status: 200, },); }
+      return apiHandler(url, opts ?? {},);
+    },
+  }),);
+  // choice-cards.ts imports feFetch directly (split/reunite); mock the seam so
+  // the real fe-fetch → utils barrel never loads in this suite.
+  mock.module("../fe-fetch", () => ({
+    feFetch: async () => new Response("{}", { status: 200, },),
+    getCsrfToken: () => "",
+  }),);
+}
 
 /** */
 function jsonRes(body: unknown, status = 200,): Response {
@@ -128,7 +131,7 @@ afterEach(() => {
 
 // ── Tests ───────────────────────────────────────────────────────────────────
 
-describe("selectChoice", () => {
+describeOrSkip("selectChoice", () => {
   test("returns null before init or for an unknown choice id", async () => {
     expect(await selectChoice("c1",),).toBeNull();
     expect(apiCalls.length,).toBe(0,);
@@ -198,4 +201,4 @@ describe("selectChoice", () => {
     // The mocked apiFetch records the POST synchronously when invoked.
     expect(apiCalls.some((c,) => c.url.endsWith("/c1/select",)),).toBe(true,);
   });
-});
+},);

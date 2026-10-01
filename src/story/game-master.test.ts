@@ -12,7 +12,8 @@ import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
 import type { GmGuidance, } from "../chat/types/config";
 import type { Config, } from "../config/schema";
-import { GameMasterType, } from "../db/enums";
+import { decryptMessageContent, getSmk, initSmk, } from "../crypto";
+import { GameMasterType, WorldEventType, } from "../db/enums";
 import { setTestDatabase, } from "../db/index";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
@@ -916,5 +917,282 @@ describe("GameMasterService — per-actor multi-LLM model assignment", () => {
     await gm.initialize();
     await gm.executeTurn(actorId,);
     expect(captured[0]!.model,).toBe("gm-model",);
+  });
+});
+
+describe("GameMasterService — executeTurn NPC movement tick", () => {
+  /**
+   * @param worldId
+   * @param locationId
+   * @param schedule
+   */
+  async function seedNpc(worldId: string, locationId: string | null, schedule: unknown,): Promise<string> {
+    const npcId = await seedActor(testDb, {
+      actor_type: "character",
+      agent_type: "npc",
+      display_name: "Guard",
+    },);
+    await testDb
+      .insertInto("npc_states",)
+      .values({
+        id: randomUUID(),
+        actor_id: npcId,
+        world_id: worldId,
+        location_id: locationId,
+        schedule: JSON.stringify(schedule,),
+      },)
+      .execute();
+    return npcId;
+  }
+
+  test("patrol NPC movement emits a LocationChange world event", async () => {
+    const worldId = await seedWorld(testDb,);
+    const locA = await seedLocation(testDb, worldId,);
+    const locB = await seedLocation(testDb, worldId, { name: "Gate", },);
+    const chatId = await seedChat(testDb, { world_id: worldId, current_location_id: locA, },);
+    const actorId = await seedActor(testDb,);
+    await seedParticipant(testDb, chatId, actorId,);
+    const npcId = await seedNpc(worldId, locA, {
+      movementPattern: "patrol",
+      patrolRoute: [locA, locB,],
+      patrolIndex: 0,
+    },);
+
+    const generateText: GenerateTextFn = () => Promise.resolve("*He acts.*",);
+    const gm = new GameMasterService({
+      db: testDb,
+      chatId,
+      gmConfig: makeLlmConfig(),
+      generateText,
+    },);
+    const result = await gm.executeTurn(actorId,);
+
+    const move = result.worldEvents.find((e,) => e.type === WorldEventType.LocationChange);
+    expect(move,).toBeDefined();
+    expect(move!.actorId,).toBe(npcId,);
+    expect(move!.locationId,).toBe(locB,);
+    expect(move!.data.fromLocationId,).toBe(locA,);
+    expect(move!.data.toLocationId,).toBe(locB,);
+    expect(move!.data.pattern,).toBe("patrol",);
+
+    const npcRow = await testDb
+      .selectFrom("npc_states",)
+      .selectAll()
+      .where("actor_id", "=", npcId,)
+      .executeTakeFirstOrThrow();
+    expect(npcRow.location_id,).toBe(locB,);
+    const schedule = JSON.parse(npcRow.schedule,) as { patrolIndex: number };
+    expect(schedule.patrolIndex,).toBe(1,);
+  });
+
+  test("stationary NPC produces no movement events", async () => {
+    const worldId = await seedWorld(testDb,);
+    const locId = await seedLocation(testDb, worldId,);
+    const chatId = await seedChat(testDb, { world_id: worldId, current_location_id: locId, },);
+    const actorId = await seedActor(testDb,);
+    await seedParticipant(testDb, chatId, actorId,);
+    await seedNpc(worldId, locId, { movementPattern: "stationary", },);
+
+    const generateText: GenerateTextFn = () => Promise.resolve("*He acts.*",);
+    const gm = new GameMasterService({
+      db: testDb,
+      chatId,
+      gmConfig: makeLlmConfig(),
+      generateText,
+    },);
+    const result = await gm.executeTurn(actorId,);
+
+    expect(result.worldEvents,).toEqual([],);
+  });
+
+  test("damaged schedule JSON skips the NPC", async () => {
+    const worldId = await seedWorld(testDb,);
+    const locId = await seedLocation(testDb, worldId,);
+    const chatId = await seedChat(testDb, { world_id: worldId, current_location_id: locId, },);
+    const actorId = await seedActor(testDb,);
+    await seedParticipant(testDb, chatId, actorId,);
+    const npcId = await seedActor(testDb, {
+      actor_type: "character",
+      agent_type: "npc",
+      display_name: "Guard",
+    },);
+    await testDb
+      .insertInto("npc_states",)
+      .values({
+        id: randomUUID(),
+        actor_id: npcId,
+        world_id: worldId,
+        location_id: locId,
+        schedule: "{{{",
+      },)
+      .execute();
+
+    const generateText: GenerateTextFn = () => Promise.resolve("*He acts.*",);
+    const gm = new GameMasterService({
+      db: testDb,
+      chatId,
+      gmConfig: makeLlmConfig(),
+      generateText,
+    },);
+    const result = await gm.executeTurn(actorId,);
+
+    expect(result.worldEvents,).toEqual([],);
+  });
+
+  test("patrol with empty route produces no movement events", async () => {
+    const worldId = await seedWorld(testDb,);
+    const locId = await seedLocation(testDb, worldId,);
+    const chatId = await seedChat(testDb, { world_id: worldId, current_location_id: locId, },);
+    const actorId = await seedActor(testDb,);
+    await seedParticipant(testDb, chatId, actorId,);
+    await seedNpc(worldId, locId, { movementPattern: "patrol", patrolRoute: [], patrolIndex: 0, },);
+
+    const generateText: GenerateTextFn = () => Promise.resolve("*He acts.*",);
+    const gm = new GameMasterService({
+      db: testDb,
+      chatId,
+      gmConfig: makeLlmConfig(),
+      generateText,
+    },);
+    const result = await gm.executeTurn(actorId,);
+
+    expect(result.worldEvents,).toEqual([],);
+  });
+
+  test("patrol route pointing back at the current location produces no movement", async () => {
+    const worldId = await seedWorld(testDb,);
+    const locId = await seedLocation(testDb, worldId,);
+    const chatId = await seedChat(testDb, { world_id: worldId, current_location_id: locId, },);
+    const actorId = await seedActor(testDb,);
+    await seedParticipant(testDb, chatId, actorId,);
+    await seedNpc(worldId, locId, { movementPattern: "patrol", patrolRoute: [locId,], patrolIndex: 0, },);
+
+    const generateText: GenerateTextFn = () => Promise.resolve("*He acts.*",);
+    const gm = new GameMasterService({
+      db: testDb,
+      chatId,
+      gmConfig: makeLlmConfig(),
+      generateText,
+    },);
+    const result = await gm.executeTurn(actorId,);
+
+    expect(result.worldEvents,).toEqual([],);
+  });
+
+  test("mixed fleet: only the patrolling NPC emits a movement event", async () => {
+    const worldId = await seedWorld(testDb,);
+    const locA = await seedLocation(testDb, worldId,);
+    const locB = await seedLocation(testDb, worldId, { name: "Gate", },);
+    const chatId = await seedChat(testDb, { world_id: worldId, current_location_id: locA, },);
+    const actorId = await seedActor(testDb,);
+    await seedParticipant(testDb, chatId, actorId,);
+    const patrolId = await seedNpc(worldId, locA, {
+      movementPattern: "patrol",
+      patrolRoute: [locA, locB,],
+      patrolIndex: 0,
+    },);
+    await seedNpc(worldId, locA, { movementPattern: "stationary", },);
+
+    const generateText: GenerateTextFn = () => Promise.resolve("*He acts.*",);
+    const gm = new GameMasterService({
+      db: testDb,
+      chatId,
+      gmConfig: makeLlmConfig(),
+      generateText,
+    },);
+    const result = await gm.executeTurn(actorId,);
+
+    expect(result.worldEvents,).toHaveLength(1,);
+    expect(result.worldEvents[0]!.type,).toBe(WorldEventType.LocationChange,);
+    expect(result.worldEvents[0]!.actorId,).toBe(patrolId,);
+  });
+});
+
+describe("GameMasterService — injectNarration encryption", () => {
+  const VALID_64_HEX = "a".repeat(64,);
+  const BASE_ENCRYPTION_CONFIG = { compressThreshold: 128, compressAlgorithm: "gzip" as const, };
+
+  test("encrypts narration bodies when server-side encryption is enabled", async () => {
+    const worldId = await seedWorld(testDb,);
+    const chatId = await seedChat(testDb, {
+      world_id: worldId,
+      mode: "story",
+      encryption_level: "standard",
+    },);
+    const narratorId = await seedActor(testDb, {
+      actor_type: "narrator",
+      agent_type: "narrator",
+      display_name: "Narrator",
+    },);
+    const generateText: GenerateTextFn = () => Promise.resolve("test",);
+    const gm = new GameMasterService({
+      db: testDb,
+      chatId,
+      gmConfig: makeLlmConfig(),
+      generateText,
+    },);
+
+    try {
+      await initSmk({ serverEncryptionKey: VALID_64_HEX, required: false, ...BASE_ENCRYPTION_CONFIG, },);
+      await gm.injectNarration(worldId, "The wind howls through the valley.",);
+
+      const messages = await testDb
+        .selectFrom("messages",)
+        .selectAll()
+        .where("actor_id", "=", narratorId,)
+        .execute();
+      expect(messages,).toHaveLength(1,);
+      expect(messages[0]!.content,).not.toBe("The wind howls through the valley.",);
+      expect(messages[0]!.key_id,).not.toBeNull();
+
+      // Round-trip: the encrypted body decrypts back to the original narration.
+      const plain = await decryptMessageContent(
+        testDb,
+        {
+          content: messages[0]!.content,
+          content_encoding: messages[0]!.content_encoding,
+          key_id: messages[0]!.key_id,
+          chat_id: chatId,
+        },
+        getSmk()!,
+      );
+      expect(plain,).toBe("The wind howls through the valley.",);
+    } finally {
+      // Reset SMK so other test files in the same bun process see encryption disabled.
+      await initSmk({ required: false, ...BASE_ENCRYPTION_CONFIG, },);
+    }
+  });
+
+  test("narration stays plaintext for standard-tier chats when encryption is disabled", async () => {
+    const worldId = await seedWorld(testDb,);
+    const chatId = await seedChat(testDb, {
+      world_id: worldId,
+      mode: "story",
+      encryption_level: "standard",
+    },);
+    const narratorId = await seedActor(testDb, {
+      actor_type: "narrator",
+      agent_type: "narrator",
+      display_name: "Narrator",
+    },);
+    const generateText: GenerateTextFn = () => Promise.resolve("test",);
+    const gm = new GameMasterService({
+      db: testDb,
+      chatId,
+      gmConfig: makeLlmConfig(),
+      generateText,
+    },);
+
+    await initSmk({ required: false, ...BASE_ENCRYPTION_CONFIG, },);
+    await gm.injectNarration(worldId, "The wind howls through the valley.",);
+
+    const messages = await testDb
+      .selectFrom("messages",)
+      .selectAll()
+      .where("actor_id", "=", narratorId,)
+      .execute();
+    expect(messages,).toHaveLength(1,);
+    expect(messages[0]!.content,).toBe("The wind howls through the valley.",);
+    expect(messages[0]!.key_id,).toBeNull();
   });
 });

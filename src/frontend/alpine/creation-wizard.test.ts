@@ -1,19 +1,22 @@
 import "./i18n.test-helper";
-import { afterEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, expect, mock, test, } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { creationWizard, } from "./creation-wizard";
 
 let fetchCalls: { url: string; opts: RequestInit }[] = [];
 let fetchHandler: ((url: string, opts: RequestInit,) => Response) | null = null;
 
-mock.module("./htmx", () => ({
-  apiFetch: async (url: string, opts?: RequestInit,) => {
-    fetchCalls.push({ url, opts: opts ?? {}, },);
-    if (!fetchHandler) { return new Response("{}", { status: 200, },); }
-    return fetchHandler(url, opts ?? {},);
-  },
-}),);
+if (ISOLATED) {
+  mock.module("./htmx", () => ({
+    apiFetch: async (url: string, opts?: RequestInit,) => {
+      fetchCalls.push({ url, opts: opts ?? {}, },);
+      if (!fetchHandler) { return new Response("{}", { status: 200, },); }
+      return fetchHandler(url, opts ?? {},);
+    },
+  }),);
+}
 
 /**
  * @param status
@@ -21,6 +24,13 @@ mock.module("./htmx", () => ({
  */
 function mockFetch(status: number, body: unknown = {},) {
   fetchHandler = (_url, _opts,) => Response.json(body, { status, },);
+}
+
+/** */
+function mockFetchNetworkError() {
+  fetchHandler = () => {
+    throw new Error("network",);
+  };
 }
 
 afterEach(() => {
@@ -52,7 +62,7 @@ function buildCtx(): { ctx: Record<string, unknown>; toasts: { type: string; mes
   return { ctx, toasts, };
 }
 
-describe("creationWizard.confirmWizard", () => {
+describeOrSkip("creationWizard.confirmWizard", () => {
   test("rejects when wizardId does not match the current draft (cross-talk guard)", async () => {
     const { ctx, toasts, } = buildCtx();
     ctx.wizardDraft = {
@@ -92,9 +102,9 @@ describe("creationWizard.confirmWizard", () => {
     expect(ctx.wizardStep,).toBe(1,);
     expect(toasts.some((t,) => t.type === "success"),).toBe(true,);
   });
-});
+},);
 
-describe("creationWizard.cancelWizard", () => {
+describeOrSkip("creationWizard.cancelWizard", () => {
   test("clears draft regardless of wizardId argument", async () => {
     const { ctx, } = buildCtx();
     ctx.wizardDraft = {
@@ -110,7 +120,7 @@ describe("creationWizard.cancelWizard", () => {
     expect(ctx.wizardDraft,).toBeNull();
     expect(ctx.wizardPreviewOpen,).toBe(false,);
   });
-});
+},);
 
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
@@ -123,7 +133,7 @@ describe("creationWizard.cancelWizard", () => {
  * callers call `cancelWizard()` with no argument.
  */
 
-describe("creation-wizard.cancelWizard signature", () => {
+describeOrSkip("creation-wizard.cancelWizard signature", () => {
   test("impl no longer takes a wizardId parameter", () => {
     const src = fs.readFileSync(
       path.join(import.meta.dir, "creation-wizard.ts",),
@@ -169,4 +179,77 @@ describe("creation-wizard.cancelWizard signature", () => {
     );
     expect(src,).toContain("BUG-character-creation-wizard-bug-wizardid-unused",);
   });
-});
+},);
+
+describeOrSkip("creation-wizard — step navigation", () => {
+  test("wizardNextStep advances and clamps at the last step", () => {
+    const { ctx, } = buildCtx();
+    ctx.wizardStep = 1;
+    creationWizard.wizardNextStep!.call(ctx as never,);
+    expect(ctx.wizardStep,).toBe(2,);
+    ctx.wizardStep = 3;
+    creationWizard.wizardNextStep!.call(ctx as never,);
+    expect(ctx.wizardStep,).toBe(3,);
+  });
+
+  test("wizardPrevStep goes back and clamps at the first step", () => {
+    const { ctx, } = buildCtx();
+    ctx.wizardStep = 2;
+    creationWizard.wizardPrevStep!.call(ctx as never,);
+    expect(ctx.wizardStep,).toBe(1,);
+    ctx.wizardStep = 1;
+    creationWizard.wizardPrevStep!.call(ctx as never,);
+    expect(ctx.wizardStep,).toBe(1,);
+  });
+
+  test("wizardResetSteps returns to the first step", () => {
+    const { ctx, } = buildCtx();
+    ctx.wizardStep = 3;
+    creationWizard.wizardResetSteps!.call(ctx as never,);
+    expect(ctx.wizardStep,).toBe(1,);
+  });
+},);
+
+describeOrSkip("creation-wizard — updateWizardField", () => {
+  test("updates a field on the draft", () => {
+    const { ctx, } = buildCtx();
+    ctx.wizardDraft = { wizardId: "wiz-A", fields: { name: "Alice", }, };
+    creationWizard.updateWizardField!.call(ctx as never, "name", "Bob",);
+    expect((ctx.wizardDraft as { fields: Record<string, string> }).fields.name,).toBe("Bob",);
+  });
+
+  test("no-ops without a draft", () => {
+    const { ctx, } = buildCtx();
+    ctx.wizardDraft = null;
+    creationWizard.updateWizardField!.call(ctx as never, "name", "Bob",);
+    expect(ctx.wizardDraft,).toBeNull();
+  });
+},);
+
+describeOrSkip("creation-wizard — confirmWizard guards and errors", () => {
+  test("no-ops without an active chat", async () => {
+    const { ctx, } = buildCtx();
+    ctx.wizardDraft = { wizardId: "wiz-A", fields: {}, };
+    ctx.activeChat = null;
+    await creationWizard.confirmWizard!.call(ctx as never, "wiz-A",);
+    expect(fetchCalls,).toEqual([],);
+  });
+
+  test("surfaces the server error message on non-ok", async () => {
+    mockFetch(422, { error: "bad data", },);
+    const { ctx, toasts, } = buildCtx();
+    ctx.wizardDraft = { wizardId: "wiz-A", fields: { name: "Bob", }, };
+    await creationWizard.confirmWizard!.call(ctx as never, "wiz-A",);
+    expect(toasts[0]?.type,).toBe("error",);
+    expect(toasts[0]?.message,).toBe("bad data",);
+  });
+
+  test("shows a network error toast when the request throws", async () => {
+    mockFetchNetworkError();
+    const { ctx, toasts, } = buildCtx();
+    ctx.wizardDraft = { wizardId: "wiz-A", fields: { name: "Bob", }, };
+    await creationWizard.confirmWizard!.call(ctx as never, "wiz-A",);
+    expect(toasts[0]?.type,).toBe("error",);
+    expect(toasts[0]?.message,).toBe("Network error — could not create entity",);
+  });
+},);

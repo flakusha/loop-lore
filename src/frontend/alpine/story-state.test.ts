@@ -1,18 +1,22 @@
-import { afterEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, expect, mock, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import "./story-state";
 import type { StoryStateComponent, } from "./story-state";
 
 // ── Mock apiFetch (must override the real one set by htmx.ts at import) ──
 let fetchCalls: { url: string; opts: RequestInit }[] = [];
 let fetchHandler: ((url: string, opts: RequestInit,) => Response) | null = null;
+const realAlpine = (globalThis as { Alpine?: unknown }).Alpine;
 
-mock.module("./htmx", () => ({
-  apiFetch: async (url: string, opts?: RequestInit,) => {
-    fetchCalls.push({ url, opts: opts ?? {}, },);
-    if (!fetchHandler) { return new Response("{}", { status: 200, },); }
-    return fetchHandler(url, opts ?? {},);
-  },
-}),);
+if (ISOLATED) {
+  mock.module("./htmx", () => ({
+    apiFetch: async (url: string, opts?: RequestInit,) => {
+      fetchCalls.push({ url, opts: opts ?? {}, },);
+      if (!fetchHandler) { return new Response("{}", { status: 200, },); }
+      return fetchHandler(url, opts ?? {},);
+    },
+  }),);
+}
 
 /**
  * @param status
@@ -30,11 +34,11 @@ function makeState(): StoryStateComponent {
 afterEach(() => {
   fetchCalls = [];
   fetchHandler = null;
-  (globalThis as { Alpine?: unknown }).Alpine = undefined;
+  (globalThis as { Alpine?: unknown }).Alpine = realAlpine;
 },);
 
-describe("storyState", () => {
-  describe("derived state", () => {
+describeOrSkip("storyState", () => {
+  describeOrSkip("derived state", () => {
     test("qualityClass tiers: good ≥70, mid ≥40, low below", () => {
       const s = makeState();
       expect(s.qualityClass(85,),).toBe("is-good",);
@@ -63,9 +67,9 @@ describe("storyState", () => {
       },);
       expect(s.turnForMessage("nope",),).toBeNull();
     });
-  });
+  },);
 
-  describe("_parseQuestBanners", () => {
+  describeOrSkip("_parseQuestBanners", () => {
     test("parses quest_name/progress entries (progress is 0-100)", () => {
       const s = makeState();
       const banners = s._parseQuestBanners(JSON.stringify([
@@ -83,9 +87,9 @@ describe("storyState", () => {
       expect(s._parseQuestBanners(JSON.stringify([{ quest_name: "x", },],),),).toEqual([],);
       expect(s._parseQuestBanners("not json",),).toEqual([],);
     });
-  });
+  },);
 
-  describe("_loadChat", () => {
+  describeOrSkip("_loadChat", () => {
     test("detects story mode from mode field and loads world name", async () => {
       const s = makeState();
       s.chatId = "chat-1";
@@ -119,9 +123,9 @@ describe("storyState", () => {
       await s._loadChat();
       expect(s.isStoryMode,).toBe(false,);
     });
-  });
+  },);
 
-  describe("_loadTurns", () => {
+  describeOrSkip("_loadTurns", () => {
     test("indexes turns by parent message id and derives latest-turn state", async () => {
       const s = makeState();
       s.chatId = "chat-1";
@@ -172,9 +176,9 @@ describe("storyState", () => {
       expect(s.running,).toBe(false,);
       expect(s.banners,).toEqual([],);
     });
-  });
+  },);
 
-  describe("_loadQuests", () => {
+  describeOrSkip("_loadQuests", () => {
     test("stores quest rows from the world quests endpoint", async () => {
       const s = makeState();
       s.chatId = "chat-1";
@@ -194,9 +198,9 @@ describe("storyState", () => {
       await s._loadQuests();
       expect(fetchCalls,).toEqual([],);
     });
-  });
+  },);
 
-  describe("_loadParticipants", () => {
+  describeOrSkip("_loadParticipants", () => {
     test("maps participants to turn order with GM role", async () => {
       const s = makeState();
       s.chatId = "chat-1";
@@ -211,9 +215,9 @@ describe("storyState", () => {
       ],);
       expect(s.nextActorName,).toBe("Narrator",);
     });
-  });
+  },);
 
-  describe("_loadWorldState", () => {
+  describeOrSkip("_loadWorldState", () => {
     test("parses location state + NPCs, tolerating shape drift", async () => {
       const s = makeState();
       s.chatId = "chat-1";
@@ -252,9 +256,9 @@ describe("storyState", () => {
       await s._loadWorldState();
       expect(s.worldState.timeOfDay,).toBe("dawn",);
     });
-  });
+  },);
 
-  describe("controls", () => {
+  describeOrSkip("controls", () => {
     test("togglePause flips running on success", async () => {
       const s = makeState();
       s.chatId = "chat-1";
@@ -316,9 +320,9 @@ describe("storyState", () => {
       expect(fetchCalls[0]?.opts.method,).toBe("DELETE",);
       expect(s.quests,).toEqual([],);
     });
-  });
+  },);
 
-  describe("refresh", () => {
+  describeOrSkip("refresh", () => {
     test("no-ops without an active chat", async () => {
       const s = makeState();
       (s as { _activeChatId(): string | null })._activeChatId = () => null;
@@ -380,5 +384,192 @@ describe("storyState", () => {
       expect(s.worldName,).toBe("Eldoria",);
       expect(s.loading,).toBe(false,);
     });
+  },);
+},);
+
+describeOrSkip("storyState.init", () => {
+  test("init delegates to refresh", async () => {
+    const s = makeState();
+    (s as { _activeChatId(): string | null })._activeChatId = () => null;
+    let calls = 0;
+    s.refresh = mock(async () => {
+      calls++;
+    },) as unknown as StoryStateComponent["refresh"];
+    await s.init();
+    expect(calls,).toBe(1,);
   });
-});
+},);
+
+describeOrSkip("storyState.refresh error path", () => {
+  test("stores the error and clears loading when _loadChat throws", async () => {
+    const s = makeState();
+    (s as { _activeChatId(): string | null })._activeChatId = () => "chat-1";
+    s._loadChat = mock(async () => {
+      throw new Error("boom",);
+    },) as unknown as StoryStateComponent["_loadChat"];
+    await s.refresh();
+    expect(s.error,).toBe("boom",);
+    expect(s.loading,).toBe(false,);
+  });
+},);
+
+describeOrSkip("storyState controls (step/escalate/narration)", () => {
+  test("stepTurn posts the step action", async () => {
+    const s = makeState();
+    s.chatId = "chat-1";
+    mockFetch(200, { ok: true, },);
+    await s.stepTurn();
+    expect(fetchCalls[0]?.url,).toBe("/api/v1/chats/chat-1/story/step",);
+    expect(fetchCalls[0]?.opts.method,).toBe("POST",);
+  });
+
+  test("stepTurn notifies with the server message on failure", async () => {
+    const s = makeState();
+    s.chatId = "chat-1";
+    const toasts: string[] = [];
+    s.notify = (message: string,) => {
+      toasts.push(message,);
+    };
+    mockFetch(404, { message: "step unavailable", },);
+    await s.stepTurn();
+    expect(toasts[0],).toBe("step unavailable",);
+  });
+
+  test("stepTurn no-ops without a chat id", async () => {
+    const s = makeState();
+    s.chatId = null;
+    await s.stepTurn();
+    expect(fetchCalls,).toEqual([],);
+  });
+
+  test("escalateToMe posts the escalate action", async () => {
+    const s = makeState();
+    s.chatId = "chat-1";
+    mockFetch(200, { ok: true, },);
+    await s.escalateToMe();
+    expect(fetchCalls[0]?.url,).toBe("/api/v1/chats/chat-1/story/escalate",);
+  });
+
+  test("escalateToMe notifies on failure", async () => {
+    const s = makeState();
+    s.chatId = "chat-1";
+    const toasts: string[] = [];
+    s.notify = (message: string,) => {
+      toasts.push(message,);
+    };
+    mockFetch(500, {},);
+    await s.escalateToMe();
+    expect(toasts[0],).toContain("escalate",);
+  });
+
+  test("escalateToMe no-ops without a chat id", async () => {
+    const s = makeState();
+    s.chatId = null;
+    await s.escalateToMe();
+    expect(fetchCalls,).toEqual([],);
+  });
+
+  test("injectNarration posts the narration action", async () => {
+    const s = makeState();
+    s.chatId = "chat-1";
+    mockFetch(200, { ok: true, },);
+    await s.injectNarration();
+    expect(fetchCalls[0]?.url,).toBe("/api/v1/chats/chat-1/story/narration",);
+  });
+
+  test("injectNarration notifies on failure", async () => {
+    const s = makeState();
+    s.chatId = "chat-1";
+    const toasts: string[] = [];
+    s.notify = (message: string,) => {
+      toasts.push(message,);
+    };
+    mockFetch(500, {},);
+    await s.injectNarration();
+    expect(toasts[0],).toContain("narration",);
+  });
+
+  test("injectNarration no-ops without a chat id", async () => {
+    const s = makeState();
+    s.chatId = null;
+    await s.injectNarration();
+    expect(fetchCalls,).toEqual([],);
+  });
+
+  test("togglePause no-ops without a chat id", async () => {
+    const s = makeState();
+    s.chatId = null;
+    await s.togglePause();
+    expect(fetchCalls,).toEqual([],);
+  });
+},);
+
+describeOrSkip("storyState quest error paths", () => {
+  test("createQuest notifies an error on non-ok without reloading", async () => {
+    const s = makeState();
+    s.chatId = "chat-1";
+    (s as unknown as { _worldId: string | null })._worldId = "world-1";
+    const toasts: string[] = [];
+    s.notify = (message: string,) => {
+      toasts.push(message,);
+    };
+    mockFetch(422, {},);
+    await s.createQuest("Side quest",);
+    expect(toasts[0],).toBe("Quest creation failed",);
+    expect(fetchCalls,).toHaveLength(1,);
+  });
+
+  test("createQuest notifies an error on network failure", async () => {
+    const s = makeState();
+    s.chatId = "chat-1";
+    (s as unknown as { _worldId: string | null })._worldId = "world-1";
+    const toasts: string[] = [];
+    s.notify = (message: string,) => {
+      toasts.push(message,);
+    };
+    fetchHandler = () => {
+      throw new Error("offline",);
+    };
+    await s.createQuest("Side quest",);
+    expect(toasts[0],).toBe("Quest creation failed",);
+  });
+
+  test("deleteQuest notifies an error on non-ok and keeps the quest", async () => {
+    const s = makeState();
+    s.chatId = "chat-1";
+    s.quests = [{ id: "q1", name: "A", type: "composite", status: "active", progress: 10, },];
+    const toasts: string[] = [];
+    s.notify = (message: string,) => {
+      toasts.push(message,);
+    };
+    mockFetch(404, {},);
+    await s.deleteQuest("q1",);
+    expect(toasts[0],).toBe("Quest deletion failed",);
+    expect(s.quests,).toHaveLength(1,);
+  });
+
+  test("deleteQuest notifies an error on network failure", async () => {
+    const s = makeState();
+    s.chatId = "chat-1";
+    s.quests = [{ id: "q1", name: "A", type: "composite", status: "active", progress: 10, },];
+    const toasts: string[] = [];
+    s.notify = (message: string,) => {
+      toasts.push(message,);
+    };
+    fetchHandler = () => {
+      throw new Error("offline",);
+    };
+    await s.deleteQuest("q1",);
+    expect(toasts[0],).toBe("Quest deletion failed",);
+    expect(s.quests,).toHaveLength(1,);
+  });
+
+  test("deleteQuest keeps other quests when the id is unknown", async () => {
+    const s = makeState();
+    s.chatId = "chat-1";
+    s.quests = [{ id: "q1", name: "A", type: "composite", status: "active", progress: 10, },];
+    mockFetch(200, { ok: true, },);
+    await s.deleteQuest("q-other",);
+    expect(s.quests,).toHaveLength(1,);
+  });
+},);

@@ -16,7 +16,7 @@
  * affects this file's view of the barrel.
  */
 import type { Database, } from "bun:sqlite";
-import { afterEach, beforeEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, beforeEach, expect, mock, test, } from "bun:test";
 import { Kysely, } from "kysely";
 import type { DB, } from "../../../db";
 import { createInMemoryDb, } from "../../../services/agency/__helpers/in-mem-db";
@@ -272,9 +272,7 @@ describeOrSkip("claimRewards — story_points reward dispatch", () => {
     );
     expect(earnMock,).not.toHaveBeenCalled();
   });
-},);
 
-describe("updateProgress — validation and lifecycle branches", () => {
   test("throws when the achievement definition is missing", async () => {
     await setup();
     await makeUser("update-no-ach",);
@@ -311,9 +309,7 @@ describe("updateProgress — validation and lifecycle branches", () => {
     expect(rAfter.unlocked,).toBe(false,);
     expect(rAfter.rewards,).toEqual([],);
   });
-});
 
-describe("getPlayerStats", () => {
   test("aggregates unlocked counts per category and tier", async () => {
     await setup();
 
@@ -361,4 +357,4 @@ describe("getPlayerStats", () => {
     expect(stats.byTier.bronze,).toBe(1,);
     expect(stats.byTier.silver,).toBe(1,);
   });
-});
+},);

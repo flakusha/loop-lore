@@ -1,11 +1,12 @@
-import { afterAll, beforeAll, describe, expect, mock, test, } from "bun:test";
+import { afterAll, beforeAll, expect, mock, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { chatActions, } from "./chat-actions";
 import { chatGenerations, } from "./chat-generations";
 import { createLogger, } from "./logger";
 import type { ChatState, } from "./types";
 
-describe("chatActions utility functions", () => {
-  describe("formattedGenerationTime", () => {
+describeOrSkip("chatActions utility functions", () => {
+  describeOrSkip("formattedGenerationTime", () => {
     test("returns empty string for undefined", () => {
       expect(chatActions.formattedGenerationTime!(undefined,),).toBe("",);
     });
@@ -32,9 +33,9 @@ describe("chatActions utility functions", () => {
       expect(chatActions.formattedGenerationTime!(120_000,),).toBe("2.0m",);
       expect(chatActions.formattedGenerationTime!(3_600_000,),).toBe("60.0m",);
     });
-  });
+  },);
 
-  describe("formattedTokensPerSecond", () => {
+  describeOrSkip("formattedTokensPerSecond", () => {
     test("returns empty string for undefined message", () => {
       expect(chatActions.formattedTokensPerSecond!({},),).toBe("",);
     });
@@ -60,9 +61,9 @@ describe("chatActions utility functions", () => {
       const result = chatActions.formattedTokensPerSecond!({ generation_time_ms: 1000, },);
       expect(result,).toBe("",);
     });
-  });
+  },);
 
-  describe("statsLine", () => {
+  describeOrSkip("statsLine", () => {
     test("returns empty string for empty message", () => {
       expect(chatActions.statsLine!({},),).toBe("",);
     });
@@ -113,8 +114,8 @@ describe("chatActions utility functions", () => {
       },);
       expect(result,).toBe("gpt-4 · 150t",);
     });
-  });
-});
+  },);
+},);
 
 /** Minimal host exercising `sendWithPreferredMode` without a server. */
 function buildPreferredModeHost(stream: boolean,) {
@@ -138,7 +139,7 @@ function buildPreferredModeHost(stream: boolean,) {
   };
 }
 
-describe("sendWithPreferredMode", () => {
+describeOrSkip("sendWithPreferredMode", () => {
   test("streaming on connects SSE without polling", async () => {
     const host = buildPreferredModeHost(true,);
     await chatGenerations.sendWithPreferredMode!.call(host as unknown as ChatState, "chat-1",);
@@ -155,17 +156,19 @@ describe("sendWithPreferredMode", () => {
     expect(host.calls.join(" ",),).not.toContain("sse:",);
     expect(done,).toBe(true,);
   });
-});
+},);
 
 // ── Generation SSE lifecycle (stale-guard + status poll + cancel) ──
 let genHandler: ((url: string,) => Response) | null = null;
 // Hoisted: chat-generations binds the stubbed apiFetch for the tests below.
-mock.module("./htmx", () => ({
-  apiFetch: async (url: string,) => {
-    if (genHandler) { return genHandler(url,); }
-    return new Response("{}", { status: 200, },);
-  },
-}),);
+if (ISOLATED) {
+  mock.module("./htmx", () => ({
+    apiFetch: async (url: string,) => {
+      if (genHandler) { return genHandler(url,); }
+      return new Response("{}", { status: 200, },);
+    },
+  }),);
+}
 
 function jsonRes(body: unknown, status = 200,): Response {
   return new Response(JSON.stringify(body,), { status, },);
@@ -287,7 +290,7 @@ afterAll(() => {
   genHandler = null;
 },);
 
-describe("connectGenerationSSE", () => {
+describeOrSkip("connectGenerationSSE", () => {
   test("streams updates and tool calls into the container", () => {
     const container = { innerHTML: "", };
     const seen: string[] = [];
@@ -350,9 +353,9 @@ describe("connectGenerationSSE", () => {
     es.emit("error",);
     expect(host.isGenerating,).toBe(false,);
   });
-});
+},);
 
-describe("checkGenerationStatus", () => {
+describeOrSkip("checkGenerationStatus", () => {
   test("marks an active attempt with a progress label", async () => {
     stubGlobals(null,);
     genHandler = () =>
@@ -401,9 +404,9 @@ describe("checkGenerationStatus", () => {
     await chatGenerations.checkGenerationStatus!.call(asState(host,), "chat-1",);
     expect(host.isGenerating,).toBe(false,);
   });
-});
+},);
 
-describe("cancelGeneration", () => {
+describeOrSkip("cancelGeneration", () => {
   test("warns without an active chat", async () => {
     stubGlobals(null,);
     const host = genHost();
@@ -439,9 +442,9 @@ describe("cancelGeneration", () => {
     await chatGenerations.cancelGeneration!.call(asState(host,),);
     expect(host.toasts.length,).toBe(1,);
   });
-});
+},);
 
-describe("renderStreamContainer", () => {
+describeOrSkip("renderStreamContainer", () => {
   test("no-ops without a container", () => {
     stubGlobals(null, (html,) => html,);
     const host = genHost();
@@ -462,9 +465,9 @@ describe("renderStreamContainer", () => {
     chatGenerations.renderStreamContainer!.call(asState(host,),);
     expect(added.length,).toBe(1,);
   });
-});
+},);
 
-describe("cleanupSSE", () => {
+describeOrSkip("cleanupSSE", () => {
   test("closes and clears stream state", () => {
     stubGlobals(null,);
     const host = genHost();
@@ -478,4 +481,4 @@ describe("cleanupSSE", () => {
     expect(host._streamToolCalls,).toEqual([],);
     expect(host._streamContent,).toBe("",);
   });
-});
+},);

@@ -8,20 +8,23 @@
  * module stub — Bun permanently binds bare `fetch`, so the module seam is the
  * only available hook.
  */
-import { afterEach, beforeEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, beforeEach, expect, mock, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
 
 // Importing the module registers the asset-preview globals as a side effect.
 import "./asset-preview";
 
 let calls: { url: string; opts: RequestInit }[] = [];
 let feHandler: ((url: string, opts: RequestInit,) => Response) | null = null;
-mock.module("./fe-fetch", () => ({
-  feFetch: async (url: string, opts: RequestInit = {},) => {
-    calls.push({ url, opts, },);
-    return feHandler ? feHandler(url, opts,) : new Response("{}", { status: 404, },);
-  },
-  getCsrfToken: () => "",
-}),);
+if (ISOLATED) {
+  mock.module("./fe-fetch", () => ({
+    feFetch: async (url: string, opts: RequestInit = {},) => {
+      calls.push({ url, opts, },);
+      return feHandler ? feHandler(url, opts,) : new Response("{}", { status: 404, },);
+    },
+    getCsrfToken: () => "",
+  }),);
+}
 
 // ── Minimal fake DOM ────────────────────────────────────────
 
@@ -238,7 +241,7 @@ afterEach(() => {
 
 const IMAGE = { id: "a1", filename: "cat.png", mime_type: "image/png", size_bytes: 2048, asset_type: "image", };
 
-describe("openAssetPreview", () => {
+describeOrSkip("openAssetPreview", () => {
   test("registers globals; fills the mounted modal; renders a signed image", async () => {
     expect(typeof previewHost.openAssetPreview,).toBe("function",);
     expect(typeof previewHost.copyAssetUrl,).toBe("function",);
@@ -321,9 +324,9 @@ describe("openAssetPreview", () => {
     expect(previewHost.__previewAsset?.id,).toBe("a1",); // recorded before bailing
     expect(calls.map((c,) => c.url),).toEqual(["/api/v1/assets/a1",],); // no modal fetch
   });
-});
+},);
 
-describe("previewEscape", () => {
+describeOrSkip("previewEscape", () => {
   test("Escape closes the modal and restores focus; non-Escape keys ignored", async () => {
     serveAsset(IMAGE,);
     const trigger = makeEl();
@@ -342,9 +345,9 @@ describe("previewEscape", () => {
     expect(modal.classList.contains("open",),).toBe(false,);
     expect(focused.el,).toBe(trigger,);
   });
-});
+},);
 
-describe("copyAssetUrl", () => {
+describeOrSkip("copyAssetUrl", () => {
   test("copies origin-prefixed signed URL; no-ops without asset; errors on failure", async () => {
     await previewHost.copyAssetUrl!();
     expect(clipboardWrites,).toEqual([],); // no asset recorded yet
@@ -357,9 +360,9 @@ describe("copyAssetUrl", () => {
     await previewHost.copyAssetUrl!();
     expect(doc.querySelector("#toast-container",)!.children[1]!.className,).toBe("toast error",);
   });
-});
+},);
 
-describe("downloadAsset", () => {
+describeOrSkip("downloadAsset", () => {
   test("clicks a detached anchor; signed URL preferred, endpoint fallback", async () => {
     serveAsset(IMAGE,);
     await previewHost.openAssetPreview!("a1",);
@@ -386,9 +389,9 @@ describe("downloadAsset", () => {
     await previewHost.downloadAsset!();
     expect(doc.querySelector("#toast-container",)!.children[0]!.className,).toBe("toast error",);
   });
-});
+},);
 
-describe("deleteAssetPreview", () => {
+describeOrSkip("deleteAssetPreview", () => {
   test("deletes after confirm and closes the modal; guards and errors otherwise", async () => {
     expect(await previewHost.deleteAssetPreview!(),).toBe(false,); // no asset → nothing sent
     serveAsset(IMAGE,);
@@ -412,4 +415,4 @@ describe("deleteAssetPreview", () => {
     expect(previewHost.__previewAsset,).toBeNull();
     expect(htmxTriggers,).toEqual(["load",],);
   });
-});
+},);

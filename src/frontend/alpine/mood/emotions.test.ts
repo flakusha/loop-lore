@@ -1,4 +1,5 @@
-import { afterEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, expect, mock, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../../../test-utils/isolate-only";
 import { moodStateEmotions, } from "./emotions";
 
 // ── Mock ../htmx (must precede importing ./emotions) ──
@@ -6,12 +7,14 @@ type ApiFetchMock = (url: string, opts?: RequestInit,) => Promise<Response>;
 let calls: string[] = [];
 let handler: ApiFetchMock = async () => Response.json([],);
 
-mock.module("../htmx", () => ({
-  apiFetch: (async (url: string, opts?: RequestInit,) => {
-    calls.push(url,);
-    return handler(url, opts,);
-  }) satisfies ApiFetchMock,
-}),);
+if (ISOLATED) {
+  mock.module("../htmx", () => ({
+    apiFetch: (async (url: string, opts?: RequestInit,) => {
+      calls.push(url,);
+      return handler(url, opts,);
+    }) satisfies ApiFetchMock,
+  }),);
+}
 
 /** Minimal ChatState slice loadEmotions touches. */
 interface EmotionsCtx {
@@ -33,7 +36,7 @@ afterEach(() => {
   handler = async () => Response.json([],);
 },);
 
-describe("moodStateEmotions.loadEmotions", () => {
+describeOrSkip("moodStateEmotions.loadEmotions", () => {
   test("returns early when the chat has no character actor", async () => {
     const ctx = buildCtx(null,);
     await moodStateEmotions.loadEmotions!.call(ctx as never,);
@@ -97,12 +100,12 @@ describe("moodStateEmotions.loadEmotions", () => {
     expect(ctx._activeEmotions,).toEqual([],);
     expect(ctx._activeEmotionsLoading,).toBe(false,);
   });
-});
+},);
 
-describe("moodStateEmotions.getActiveEmotions", () => {
+describeOrSkip("moodStateEmotions.getActiveEmotions", () => {
   test("returns the stored list", () => {
     const ctx = buildCtx("a",);
     ctx._activeEmotions = [{ def: { id: "joy", icon: null, display_name: "Joy", }, intensity: 1, },];
     expect(moodStateEmotions.getActiveEmotions!.call(ctx as never,),).toEqual(ctx._activeEmotions,);
   });
-});
+},);

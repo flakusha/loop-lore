@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { afterEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, beforeEach, expect, mock, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import "./context-window";
 
 type CtxWindowState = {
@@ -24,6 +25,9 @@ type CtxWindowState = {
   sectionGrow(name: string,): number;
   load(chatId: string,): Promise<void>;
   refresh(): Promise<void>;
+  init(): void;
+  destroy(): void;
+  checkWarning(): void;
 };
 
 const factory = (globalThis as unknown as { contextWindow?: () => CtxWindowState }).contextWindow!;
@@ -36,13 +40,15 @@ function fresh(): CtxWindowState {
 let fetchCalls: { url: string; opts: RequestInit }[] = [];
 let fetchHandler: ((url: string, opts: RequestInit,) => Response) | null = null;
 
-mock.module("./htmx", () => ({
-  apiFetch: async (url: string, opts?: RequestInit,) => {
-    fetchCalls.push({ url, opts: opts ?? {}, },);
-    if (!fetchHandler) { return new Response("{}", { status: 200, },); }
-    return fetchHandler(url, opts ?? {},);
-  },
-}),);
+if (ISOLATED) {
+  mock.module("./htmx", () => ({
+    apiFetch: async (url: string, opts?: RequestInit,) => {
+      fetchCalls.push({ url, opts: opts ?? {}, },);
+      if (!fetchHandler) { return new Response("{}", { status: 200, },); }
+      return fetchHandler(url, opts ?? {},);
+    },
+  }),);
+}
 
 function mockFetch(status: number, body: unknown = {},): void {
   fetchHandler = () => Response.json(body, { status, },);
@@ -53,7 +59,7 @@ afterEach(() => {
   fetchHandler = null;
 },);
 
-describe("contextWindow display getters", () => {
+describeOrSkip("contextWindow display getters", () => {
   test("statusColor maps every status", () => {
     const s = fresh();
     s.status = "healthy";
@@ -111,9 +117,9 @@ describe("contextWindow display getters", () => {
     s.sections = [{ name: "history", tokens: 5, pct: 1, },];
     expect(s.hasSections,).toBe(true,);
   });
-});
+},);
 
-describe("contextWindow.load", () => {
+describeOrSkip("contextWindow.load", () => {
   test("returns early without a chat id", async () => {
     const s = fresh();
     await s.load("",);
@@ -177,9 +183,9 @@ describe("contextWindow.load", () => {
     expect(s.currentTokens,).toBe(0,);
     expect(s.loading,).toBe(false,);
   });
-});
+},);
 
-describe("contextWindow.refresh", () => {
+describeOrSkip("contextWindow.refresh", () => {
   test("skips the network without a chat id", async () => {
     const s = fresh();
     s.chatId = null;
@@ -202,4 +208,191 @@ describe("contextWindow.refresh", () => {
     s.load = mock(async () => {},) as unknown as CtxWindowState["load"];
     await expect(s.refresh(),).resolves.toBeUndefined();
   });
-});
+},);
+
+describeOrSkip("contextWindow.load field fallbacks", () => {
+  test("derives available from max-current when missing", async () => {
+    mockFetch(200, { currentTokens: 500, maxTokens: 8000, },);
+    const s = fresh();
+    await s.load("c1",);
+    expect(s.available,).toBe(7500,);
+  });
+
+  test("keeps the previous percentage when missing", async () => {
+    mockFetch(200, { currentTokens: 10, },);
+    const s = fresh();
+    s.percentage = 42;
+    await s.load("c1",);
+    expect(s.percentage,).toBe(42,);
+  });
+
+  test("falls back to status when only status is provided", async () => {
+    mockFetch(200, { status: "critical", },);
+    const s = fresh();
+    await s.load("c1",);
+    expect(s.status,).toBe("critical",);
+    expect(s.threshold,).toBe("critical",);
+  });
+
+  test("defaults both status and threshold to healthy", async () => {
+    mockFetch(200, {},);
+    const s = fresh();
+    await s.load("c1",);
+    expect(s.status,).toBe("healthy",);
+    expect(s.threshold,).toBe("healthy",);
+  });
+
+  test("keeps defaults when fields are missing", async () => {
+    mockFetch(200, {},);
+    const s = fresh();
+    s.currentTokens = 42;
+    s.maxTokens = 999;
+    await s.load("c1",);
+    expect(s.currentTokens,).toBe(42,);
+    expect(s.maxTokens,).toBe(999,);
+  });
+},);
+
+describeOrSkip("contextWindow.init/destroy", () => {
+  const listeners: { type: string; handler: (evt: Event,) => void }[] = [];
+  const removed: { type: string; handler: (evt: Event,) => void }[] = [];
+  let realDocument: unknown;
+
+  beforeEach(() => {
+    realDocument = (globalThis as Record<string, unknown>).document;
+    (globalThis as Record<string, unknown>).document = {
+      addEventListener: (type: string, handler: (evt: Event,) => void,) => {
+        listeners.push({ type, handler, },);
+      },
+      removeEventListener: (type: string, handler: (evt: Event,) => void,) => {
+        removed.push({ type, handler, },);
+      },
+      querySelector: () => null,
+    };
+  },);
+
+  afterEach(() => {
+    (globalThis as Record<string, unknown>).document = realDocument;
+    listeners.length = 0;
+    removed.length = 0;
+  },);
+
+  test("subscribes to chat-context-refresh and reloads on the event", async () => {
+    const s = fresh();
+    s.init();
+    expect(listeners,).toHaveLength(1,);
+    expect(listeners[0]!.type,).toBe("chat-context-refresh",);
+    mockFetch(200, { currentTokens: 9, },);
+    listeners[0]!.handler(new CustomEvent("chat-context-refresh", { detail: { chatId: "c7", }, },),);
+    await new Promise<void>((resolve,) => setTimeout(resolve, 10,));
+    expect(s.chatId,).toBe("c7",);
+    expect(fetchCalls[0]!.url,).toBe("/api/v1/chats/c7/context",);
+    expect(s.currentTokens,).toBe(9,);
+  });
+
+  test("cold-restores the active chat via Alpine.$data", async () => {
+    const el = {};
+    (globalThis as Record<string, unknown>).document = {
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      querySelector: () => el,
+    };
+    (globalThis as Record<string, unknown>).Alpine = {
+      $data: () => ({ activeChat: "c5", }),
+    };
+    mockFetch(200, { currentTokens: 3, },);
+    const s = fresh();
+    s.init();
+    await new Promise<void>((resolve,) => setTimeout(resolve, 10,));
+    expect(fetchCalls[0]!.url,).toBe("/api/v1/chats/c5/context",);
+    expect(s.chatId,).toBe("c5",);
+  });
+
+  test("skips the cold restore without a chat root", () => {
+    const s = fresh();
+    s.init();
+    expect(fetchCalls,).toHaveLength(0,);
+  });
+
+  test("skips the cold restore when Alpine is undefined", () => {
+    const el = {};
+    (globalThis as Record<string, unknown>).document = {
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      querySelector: () => el,
+    };
+    delete (globalThis as Record<string, unknown>).Alpine;
+    const s = fresh();
+    s.init();
+    expect(fetchCalls,).toHaveLength(0,);
+  });
+
+  test("skips the cold restore when there is no active chat", async () => {
+    const el = {};
+    (globalThis as Record<string, unknown>).document = {
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      querySelector: () => el,
+    };
+    (globalThis as Record<string, unknown>).Alpine = {
+      $data: () => ({ activeChat: null, }),
+    };
+    const s = fresh();
+    s.init();
+    await new Promise<void>((resolve,) => setTimeout(resolve, 10,));
+    expect(fetchCalls,).toHaveLength(0,);
+  });
+
+  test("destroy removes the refresh listener", () => {
+    const s = fresh();
+    s.init();
+    s.destroy();
+    expect(removed,).toHaveLength(1,);
+    expect(removed[0]!.type,).toBe("chat-context-refresh",);
+    expect(removed[0]!.handler,).toBe(listeners[0]!.handler,);
+  });
+
+  test("destroy no-ops without a handler", () => {
+    const s = fresh();
+    s.destroy();
+    expect(removed,).toHaveLength(0,);
+  });
+},);
+
+describeOrSkip("contextWindow.checkWarning", () => {
+  const dispatched: Event[] = [];
+  let realDocument: unknown;
+
+  beforeEach(() => {
+    realDocument = (globalThis as Record<string, unknown>).document;
+    (globalThis as Record<string, unknown>).document = {
+      dispatchEvent: (evt: Event,) => {
+        dispatched.push(evt,);
+        return true;
+      },
+    };
+  },);
+
+  afterEach(() => {
+    (globalThis as Record<string, unknown>).document = realDocument;
+    dispatched.length = 0;
+  },);
+
+  test("dispatches a warning toast at the warning threshold", () => {
+    const s = fresh();
+    s.status = "warning";
+    s.percentage = 81;
+    s.checkWarning();
+    expect(dispatched,).toHaveLength(1,);
+    const detail = (dispatched[0] as CustomEvent<{ type: string; message: string }>).detail;
+    expect(detail.type,).toBe("warning",);
+    expect(detail.message,).toContain("81",);
+  });
+
+  test("no-ops unless the status is warning", () => {
+    const s = fresh();
+    s.status = "healthy";
+    s.checkWarning();
+    expect(dispatched,).toHaveLength(0,);
+  });
+},);

@@ -2,7 +2,8 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import "../i18n.test-helper";
-import { afterEach, beforeEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, beforeEach, expect, mock, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../../../test-utils/isolate-only";
 import { gifPicker, type GifResult, } from "./gif-picker";
 
 import type { ApiFetchMock, Toast, } from "../../tests/test-types";
@@ -11,12 +12,14 @@ import type { ApiFetchMock, Toast, } from "../../tests/test-types";
 let calls: { url: string; opts: RequestInit }[] = [];
 let handler: ApiFetchMock = async () => Response.json({},);
 
-mock.module("../htmx", () => ({
-  apiFetch: (async (url: string, opts?: RequestInit,) => {
-    calls.push({ url, opts: opts ?? {}, },);
-    return handler(url, opts,);
-  }) satisfies ApiFetchMock,
-}),);
+if (ISOLATED) {
+  mock.module("../htmx", () => ({
+    apiFetch: (async (url: string, opts?: RequestInit,) => {
+      calls.push({ url, opts: opts ?? {}, },);
+      return handler(url, opts,);
+    }) satisfies ApiFetchMock,
+  }),);
+}
 
 interface GifCtx {
   activeChat: string | null;
@@ -82,7 +85,7 @@ afterEach(() => {
   globalThis.fetch = originalFetch;
 },);
 
-describe("gifPicker.searchGifs", () => {
+describeOrSkip("gifPicker.searchGifs", () => {
   test("renders results and resets the selection", async () => {
     const ctx = buildCtx({ _gifQuery: "cats", _gifActiveIndex: 2, },);
     handler = async () => Response.json({ data: [gif("a",), gif("b",),], },);
@@ -122,9 +125,9 @@ describe("gifPicker.searchGifs", () => {
     expect(ctx.toasts,).toEqual([{ type: "error", message: "GIF search failed. Try again.", },],);
     expect(ctx._gifLoading,).toBe(false,);
   });
-});
+},);
 
-describe("gifPicker keyboard navigation", () => {
+describeOrSkip("gifPicker keyboard navigation", () => {
   test("arrows wrap around the result list", () => {
     const ctx = buildCtx({ _gifOpen: true, _gifResults: [gif("a",), gif("b",), gif("c",),], _gifActiveIndex: 0, },);
     gifPicker.handleGifKey!.call(ctx as never, keyEvent("ArrowUp",),);
@@ -156,9 +159,9 @@ describe("gifPicker keyboard navigation", () => {
     expect(ctx._gifOpen,).toBe(false,);
     expect(ctx.toasts[0]!.type,).toBe("success",);
   });
-});
+},);
 
-describe("gifPicker.insertGif", () => {
+describeOrSkip("gifPicker.insertGif", () => {
   test("warns without an active chat and fetches nothing", async () => {
     const ctx = buildCtx({ activeChat: null, },);
     await gifPicker.insertGif!.call(ctx as never, gif("a",),);
@@ -190,4 +193,4 @@ describe("gifPicker.insertGif", () => {
     await gifPicker.insertGif!.call(ctx as never, gif("a",),);
     expect(ctx.toasts,).toEqual([{ type: "error", message: "Could not attach a.gif.", },],);
   });
-});
+},);

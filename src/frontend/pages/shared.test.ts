@@ -9,21 +9,24 @@
  * `./fe-fetch` is the module seam (mocked — no network); htmx and the DOM are
  * stubbed on globalThis with listener-stashing fakes.
  */
-import { afterEach, beforeEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, beforeEach, expect, mock, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 
 import type { FilterBarState, } from "./shared";
 
 let calls: { url: string; opts?: RequestInit }[] = [];
 let feHandler: ((url: string, opts?: RequestInit,) => Response) | null = null;
 
-mock.module("../fe-fetch", () => ({
-  feFetch: async (url: string, opts: RequestInit = {},) => {
-    calls.push({ url, opts, },);
-    if (!feHandler) { return new Response("{}", { status: 404, },); }
-    return feHandler(url, opts,);
-  },
-  getCsrfToken: () => "",
-}),);
+if (ISOLATED) {
+  mock.module("../fe-fetch", () => ({
+    feFetch: async (url: string, opts: RequestInit = {},) => {
+      calls.push({ url, opts, },);
+      if (!feHandler) { return new Response("{}", { status: 404, },); }
+      return feHandler(url, opts,);
+    },
+    getCsrfToken: () => "",
+  }),);
+}
 
 const jsonResponse = (body: unknown, status = 200,): Response => new Response(JSON.stringify(body,), { status, },);
 
@@ -137,7 +140,7 @@ function installDocument(doc: FakeDoc,): void {
 
 // ── pure helpers ────────────────────────────────────────────
 
-describe("formatSize", () => {
+describeOrSkip("formatSize", () => {
   test("formats bytes, KB, and MB; empty for zero", async () => {
     const { formatSize, } = await import("./shared");
     expect(formatSize(0,),).toBe("",);
@@ -145,9 +148,9 @@ describe("formatSize", () => {
     expect(formatSize(2048,),).toBe("2.0 KB",);
     expect(formatSize(3_145_728,),).toBe("3.0 MB",);
   });
-});
+},);
 
-describe("filterActors", () => {
+describeOrSkip("filterActors", () => {
   test("empty query returns nothing; matches name or description", async () => {
     const { filterActors, } = await import("./shared");
     const actors = [
@@ -166,18 +169,18 @@ describe("filterActors", () => {
     const actors = Array.from({ length: 5, }, (_, i,) => ({ name: `a${i}`, description: "", }),);
     expect(filterActors(actors, "a", 3,).length,).toBe(3,);
   });
-});
+},);
 
-describe("getErrorMessage", () => {
+describeOrSkip("getErrorMessage", () => {
   test("prefers message, then error, then fallback", async () => {
     const { getErrorMessage, } = await import("./shared");
     expect(await getErrorMessage(jsonResponse({ message: "m", error: "e", },), "fb",),).toBe("m",);
     expect(await getErrorMessage(jsonResponse({ error: "e", },), "fb",),).toBe("e",);
     expect(await getErrorMessage(new Response("not json", { status: 500, },), "fb",),).toBe("fb",);
   });
-});
+},);
 
-describe("fetchPartial", () => {
+describeOrSkip("fetchPartial", () => {
   test("returns text on success and null on failure", async () => {
     const { fetchPartial, } = await import("./shared");
     feHandler = (url,) => url === "/partials/ok" ? new Response("<div/>",) : new Response("{}", { status: 500, },);
@@ -185,9 +188,9 @@ describe("fetchPartial", () => {
     expect(await fetchPartial("/partials/bad",),).toBeNull();
     expect(calls[0]!.opts!.headers,).toEqual({ "HX-Request": "true", },);
   });
-});
+},);
 
-describe("escapeHtml / filterCards", () => {
+describeOrSkip("escapeHtml / filterCards", () => {
   test("escapeHtml escapes via textContent round-trip", async () => {
     const { escapeHtml, } = await import("./shared");
     installDocument({ createElement: () => makeEl(), },);
@@ -299,7 +302,7 @@ describe("escapeHtml / filterCards", () => {
 
     expect(container.children[0]!.style.cssText,).toBe("color: red",);
   });
-});
+},);
 
 // ── filterBar Alpine component ──────────────────────────────
 
@@ -321,7 +324,7 @@ async function newState(dataset: Record<string, string>,): Promise<FilterBarStat
   return state;
 }
 
-describe("filterBar", () => {
+describeOrSkip("filterBar", () => {
   test("init fetches the vocabulary only when the tag facet is enabled", async () => {
     feHandler = (
       url,
@@ -401,4 +404,4 @@ describe("filterBar", () => {
     expect(state.tagFilter,).toBe("all",);
     expect(htmxCalls.length,).toBe(1,);
   });
-});
+},);
