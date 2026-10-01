@@ -19,9 +19,9 @@ import {
   offloadDiskBytes,
   offloadExists,
   readOffloadedBody,
+  resetOffloadDir,
   setOffloadDir,
   spill,
-  SPILL_ROOT,
   spillFileStem,
 } from "./spill";
 
@@ -32,7 +32,7 @@ describe("spill", () => {
     setOffloadDir(dir,);
   },);
   afterEach(() => {
-    setOffloadDir(path.join(SPILL_ROOT, String(process.pid,),),);
+    resetOffloadDir();
     rmSync(dir, { recursive: true, force: true, },);
   },);
   test("round-trips a body through disk", async () => {
