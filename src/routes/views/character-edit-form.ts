@@ -13,6 +13,7 @@ import { readFileSync, } from "node:fs";
 import { join, } from "node:path";
 import { avatarFocusSection, } from "./avatar-focus-section";
 import { panelsSection, } from "./character-panels-section";
+import { journalKeyphraseSection, } from "./journal-keyphrase-section";
 import { escapeHtml, } from "./layout";
 
 /** Stricter escape for values interpolated inside single- or double-quoted attributes
@@ -247,6 +248,7 @@ ${avatarFocusSection(v,)}
 ${extensionEditorSection(v.characterId, loadPanelBody, escapeAttr,)}
 ${INTERNAL_TRAITS_SECTION}
 ${PROACTIVE_SECTION}
+${journalKeyphraseSection(v.characterId, escapeAttr, nonceAttr,)}
 ${panelsSection(v.characterId, loadPanelBody, escapeAttr,)}
         <div style="display:flex;gap:var(--space-3);justify-content:flex-end;margin-top:var(--space-6)">
           <a href="/views/characters" class="btn btn-secondary" data-testid="cancel-edit-character">Cancel</a>
