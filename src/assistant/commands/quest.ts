@@ -11,10 +11,25 @@
  *   /quest complete   — Mark a quest as complete
  */
 
+import { registerContentVersion, } from "../../db/content-version";
 import { QuestStatus, QuestType, } from "../../db/enums-story";
 import { requireQuestTransition, } from "../../story/shared/story-utils";
 import { uid, } from "../../utils";
 import { type CommandResult, registerCommand, } from "./registry";
+
+
+// Base `data_version` 0 projection for `quests` (columns added by migration
+// 031). Declared beside the module that creates and completes quests.
+registerContentVersion("quests", 0, [
+  "world_id",
+  "name",
+  "description",
+  "type",
+  "category",
+  "rewards",
+  "narrative_hooks",
+  "config",
+],);
 
 registerCommand("quest", async (args, ctx,): Promise<CommandResult> => {
   const action = (args[0] || "list").toLowerCase();

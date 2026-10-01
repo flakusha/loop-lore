@@ -942,6 +942,8 @@ export interface ChatPins {
   message_id: string;
   pinned_by: string;
   pinned_at: Generated<string>;
+  created_at: Generated<string>;
+  updated_at: string | null;
 }
 
 // ── message_translations ────────────────────────────────────────────
@@ -980,6 +982,8 @@ export interface GrowthLog {
   recorded_at: string;
   confirmed_at: string | null;
   confirmed_by: string | null;
+  created_at: Generated<string>;
+  updated_at: string | null;
 }
 
 // ── character_internal_traits ────────────────────────────────────────────
@@ -1377,6 +1381,7 @@ export interface TradeHistory {
   items_requested: Generated<string>;
   trade_type: Generated<string>;
   created_at: string;
+  updated_at: string | null;
 }
 
 // ── memory_audit_log ────────────────────────────────────────────
@@ -1464,6 +1469,8 @@ export interface TravelRouteStops {
   coord_x: number | null;
   coord_y: number | null;
   coord_z: number | null;
+  created_at: Generated<string>;
+  updated_at: string | null;
 }
 
 // ── actor_locations ────────────────────────────────────────────
@@ -1641,6 +1648,8 @@ export interface StatusEffect {
   started_at: string;
   expires_at: string | null;
   meta: string | null;
+  created_at: Generated<string>;
+  updated_at: string | null;
 }
 
 // ── interaction_logs ────────────────────────────────────────────

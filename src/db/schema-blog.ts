@@ -43,6 +43,8 @@ export interface BlogPosts {
   metadata: Generated<string>;
   created_at: Generated<string>;
   updated_at: Generated<string>;
+  data_version: Generated<number>;
+  record_hash: Generated<string>;
 }
 
 // ── blog_rag_sources ────────────────────────────────────────────
@@ -62,4 +64,6 @@ export interface BlogTags {
   id: Generated<string>;
   post_id: string;
   tag: string;
+  created_at: Generated<string>;
+  updated_at: string | null;
 }
