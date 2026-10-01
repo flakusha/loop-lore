@@ -52,6 +52,9 @@
         <button class="world-edit-tab" :class="{ active: activeTab === 'workflows' }" @click="showTab('workflows')">
           Workflows
         </button>
+        <button class="world-edit-tab" :class="{ active: activeTab === 'builder' }" @click="showTab('builder')">
+          Builder
+        </button>
         <button class="world-edit-tab" :class="{ active: activeTab === 'plugins' }" @click="showTab('plugins')">
           Plugins
         </button>
@@ -2729,6 +2732,248 @@
           </div>
         </template>
       </div>
+      <!-- Builder Tab (nested x-data: initializes lazily when first shown) -->
+      <template x-if="activeTab === 'builder'">
+        <div x-data="comfyuiBuilder()" x-init="init()" style="padding: var(--space-6)">
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); margin-bottom: var(--space-4)">
+            <div>
+              <div style="font-size: 16px; font-weight: 600">ComfyUI builder</div>
+              <div style="font-size: 12px; color: var(--text-secondary)">
+                Preset chains: template → params → order → run
+              </div>
+            </div>
+            <div style="display: flex; gap: var(--space-2)">
+              <button
+                class="btn btn-secondary btn-xs"
+                @click="loadPalette()"
+                :disabled="loadingPalette"
+                x-text="loadingPalette ? 'Loading…' : 'Node palette'"
+              >
+              </button>
+              <button class="btn btn-primary btn-xs" @click="openCreate()">New chain</button>
+            </div>
+          </div>
+
+          <!-- Run status -->
+          <div
+            x-show="runState.jobId"
+            style="margin-bottom: var(--space-4); padding: var(--space-3); background: var(--bg-secondary, #f8f9fa); border: 1px solid var(--border-default, #e9ecef); border-radius: 6px; font-size: 12px"
+          >
+            <div style="display: flex; gap: var(--space-3); align-items: center">
+              <span style="font-weight: 600" x-text="'Run: ' + runState.status"></span>
+              <span x-text="runState.completedSteps + ' / ' + runState.totalSteps + ' steps'"></span>
+            </div>
+            <div
+              x-show="runState.error"
+              style="color: var(--color-danger, #dc3545)"
+              x-text="runState.error"
+            >
+            </div>
+          </div>
+
+          <!-- Editor -->
+          <div
+            x-show="showEditor"
+            style="margin-bottom: var(--space-4); padding: var(--space-4); background: var(--bg-secondary, #f8f9fa); border: 1px solid var(--border-default, #e9ecef); border-radius: 6px"
+          >
+            <div
+              style="font-weight: 600; margin-bottom: var(--space-3)"
+              x-text="editingId ? 'Edit chain' : 'New chain'"
+            >
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); margin-bottom: var(--space-3)">
+              <div>
+                <label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 4px">Name</label>
+                <input
+                  class="form-input"
+                  style="font-size: 13px"
+                  x-model="editName"
+                  placeholder="e.g. SDXL portrait chain"
+                />
+              </div>
+              <div>
+                <label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 4px">Description</label>
+                <input
+                  class="form-input"
+                  style="font-size: 13px"
+                  x-model="editDescription"
+                  placeholder="What this chain does"
+                />
+              </div>
+            </div>
+            <div style="display: flex; gap: var(--space-2); margin-bottom: var(--space-3)">
+              <select class="form-input" style="font-size: 13px; flex: 1" x-model="pickedTemplateId">
+                <option value="">Pick a template…</option>
+                <template x-for="t in templates" :key="t.id">
+                  <option :value="t.id" x-text="t.name"></option>
+                </template>
+              </select>
+              <button class="btn btn-secondary btn-xs" @click="addStep()" :disabled="!pickedTemplateId">
+                Add step
+              </button>
+            </div>
+            <template x-if="steps.length === 0">
+              <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: var(--space-3)">
+                No steps yet — pick a template and add one.
+              </div>
+            </template>
+            <template x-for="(step, index) in steps" :key="step.id">
+              <div style="padding: var(--space-3); border: 1px solid var(--border-default, #e9ecef); border-radius: 6px; margin-bottom: var(--space-2)">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-2)">
+                  <div style="font-size: 12px; font-weight: 600">
+                    <span x-text="'Step ' + (index + 1) + ': '"></span>
+                    <span x-text="(templates.find(t => t.id === step.templateId) || {}).name || step.templateId"></span>
+                  </div>
+                  <div style="display: flex; gap: 4px">
+                    <button
+                      class="btn btn-secondary btn-xs"
+                      @click="moveStep(index, -1)"
+                      :disabled="index === 0"
+                      aria-label="Move step up"
+                    >
+                      ↑
+                    </button>
+                    <button
+                      class="btn btn-secondary btn-xs"
+                      @click="moveStep(index, 1)"
+                      :disabled="index === steps.length - 1"
+                      aria-label="Move step down"
+                    >
+                      ↓
+                    </button>
+                    <button class="btn btn-secondary btn-xs" @click="removeStep(index)">Remove</button>
+                  </div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: var(--space-2)">
+                  <template x-for="(value, name) in step.params" :key="name">
+                    <div>
+                      <label
+                        style="display: block; font-size: 11px; color: var(--text-secondary)"
+                        x-text="name"
+                      ></label>
+                      <template x-if="typeof step.params[name] === 'boolean'">
+                        <input type="checkbox" x-model="step.params[name]" />
+                      </template>
+                      <template x-if="typeof step.params[name] !== 'boolean'">
+                        <input
+                          class="form-input"
+                          style="font-size: 12px"
+                          :type="typeof step.params[name] === 'number' ? 'number' : 'text'"
+                          :value="step.params[name]"
+                          @input="setStepParam(index, name, $event.target.value)"
+                        />
+                      </template>
+                    </div>
+                  </template>
+                </div>
+              </div>
+            </template>
+            <div
+              x-show="saveError"
+              style="padding: var(--space-3); background: #dc354522; border: 1px solid #dc354544; border-radius: 4px; font-size: 12px; color: var(--color-danger, #dc3545); margin-bottom: var(--space-3)"
+              x-text="saveError"
+            >
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: var(--space-2)">
+              <button class="btn btn-secondary btn-xs" @click="closeEditor()">Cancel</button>
+              <button
+                class="btn btn-primary btn-xs"
+                @click="saveChain()"
+                :disabled="savingChain"
+                x-text="savingChain ? 'Saving…' : 'Save chain'"
+              >
+              </button>
+            </div>
+          </div>
+
+          <!-- Chains -->
+          <div x-show="loadingChains" class="empty-state" style="padding: var(--space-8)">
+            <div class="icon">⏳</div>
+            <div class="title">Loading chains…</div>
+          </div>
+          <template x-if="!loadingChains">
+            <div style="display: grid; gap: var(--space-3)">
+              <template x-if="chains.length === 0">
+                <div class="empty-state" style="padding: var(--space-8)">
+                  <div class="title">No chains yet</div>
+                </div>
+              </template>
+              <template x-for="chain in chains" :key="chain.id">
+                <div style="padding: var(--space-4); background: var(--bg-secondary, #f8f9fa); border-radius: 6px; border: 1px solid var(--border-default, #e9ecef)">
+                  <div style="display: flex; justify-content: space-between; align-items: center; gap: var(--space-3)">
+                    <div>
+                      <div style="font-weight: 600" x-text="chain.name"></div>
+                      <div style="font-size: 12px; color: var(--text-secondary)">
+                        <span x-text="chain.steps.length + ' steps'"></span>
+                        <span x-show="chain.description" x-text="' · ' + (chain.description ?? '')"></span>
+                      </div>
+                    </div>
+                    <div style="display: flex; gap: var(--space-2)">
+                      <button
+                        class="btn btn-primary btn-xs"
+                        @click="startRun(chain.id)"
+                        :disabled="runState.status === 'starting' || runState.status === 'running'"
+                        x-text="runState.status === 'starting' || runState.status === 'running' ? 'Running…' : 'Run'"
+                      >
+                      </button>
+                      <button class="btn btn-secondary btn-xs" @click="openEdit(chain.id)">Edit</button>
+                      <button
+                        x-show="confirmDeleteChain !== chain.id"
+                        class="btn btn-secondary btn-xs"
+                        @click="confirmDeleteChain = chain.id"
+                      >
+                        Delete
+                      </button>
+                      <button
+                        x-show="confirmDeleteChain === chain.id"
+                        class="btn btn-secondary btn-xs"
+                        style="color: var(--color-danger, #dc3545)"
+                        @click="deleteChain(chain.id)"
+                      >
+                        Confirm delete
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </template>
+              <div
+                x-show="chainsError"
+                style="color: var(--color-danger, #dc3545); font-size: 12px"
+                x-text="chainsError"
+              >
+              </div>
+            </div>
+          </template>
+
+          <!-- Palette -->
+          <div
+            x-show="paletteError || Object.keys(palette).length > 0"
+            style="margin-top: var(--space-4)"
+          >
+            <div
+              x-show="paletteError"
+              style="color: var(--color-danger, #dc3545); font-size: 12px; margin-bottom: var(--space-2)"
+              x-text="paletteError"
+            >
+            </div>
+            <template x-if="Object.keys(palette).length > 0">
+              <div>
+                <div style="font-size: 12px; font-weight: 600; margin-bottom: 4px">
+                  <span x-text="'Node palette (' + Object.keys(palette).length + ')' "></span>
+                </div>
+                <div style="max-height: 220px; overflow: auto; font-size: 11px; font-family: monospace; display: flex; flex-wrap: wrap; gap: 4px">
+                  <template x-for="(info, name) in palette" :key="name">
+                    <span
+                      style="padding: 2px 6px; border: 1px solid var(--border-default, #e9ecef); border-radius: 4px"
+                      x-text="name + ' — ' + info.display_name"
+                    ></span>
+                  </template>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+      </template>
     </div>
 
     <!-- Harness Tab (TASK-harness-frontend-consolidation) -->
