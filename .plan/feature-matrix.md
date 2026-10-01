@@ -58,7 +58,7 @@ Total tickets: **3101** — untagged: **2616** — unbound to epic: **1575**
 | admission-control | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | adult | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | advantage | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| advisory-orphan | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
+| advisory-orphan | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
 | aes-256-gcm | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | age-gate | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | agency | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -132,7 +132,7 @@ Total tickets: **3101** — untagged: **2616** — unbound to epic: **1575**
 | backlog | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | backlog-md | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | backstory | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
-| backup | 5 | 0 | 0 | 0 | 2 | 0 | 3 |
+| backup | 5 | 1 | 0 | 0 | 2 | 0 | 2 |
 | badges | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | balance | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | banking | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -283,7 +283,7 @@ Total tickets: **3101** — untagged: **2616** — unbound to epic: **1575**
 | data-integrity | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | data-lifecycle | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | data-model | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| database | 13 | 0 | 0 | 0 | 2 | 0 | 11 |
+| database | 13 | 2 | 0 | 0 | 2 | 0 | 9 |
 | day-night | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | db | 10 | 1 | 0 | 7 | 0 | 0 | 2 |
 | db-types | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -338,7 +338,7 @@ Total tickets: **3101** — untagged: **2616** — unbound to epic: **1575**
 | duckduckgo | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | dupe-protection | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | duplication | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
-| durability | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
+| durability | 2 | 1 | 0 | 0 | 0 | 0 | 1 |
 | dynamic | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | dynamic-image | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | e2e | 6 | 3 | 0 | 1 | 0 | 0 | 2 |
@@ -475,7 +475,7 @@ Total tickets: **3101** — untagged: **2616** — unbound to epic: **1575**
 | hygiene | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | i18n | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | i2p | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| idempotency | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
+| idempotency | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | identity | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | im | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | image | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -602,7 +602,7 @@ Total tickets: **3101** — untagged: **2616** — unbound to epic: **1575**
 | metrics | 2 | 0 | 0 | 0 | 1 | 0 | 1 |
 | mfa | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | mid-response | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| middleware | 2 | 0 | 0 | 1 | 0 | 0 | 1 |
+| middleware | 2 | 1 | 0 | 0 | 0 | 0 | 1 |
 | migration | 5 | 0 | 0 | 1 | 0 | 0 | 4 |
 | migrations | 6 | 1 | 0 | 1 | 1 | 0 | 3 |
 | milestones | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
@@ -828,9 +828,9 @@ Total tickets: **3101** — untagged: **2616** — unbound to epic: **1575**
 | role-contract | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | romance | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | rotation | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| routes | 8 | 0 | 3 | 1 | 0 | 0 | 4 |
+| routes | 8 | 1 | 3 | 1 | 0 | 0 | 3 |
 | routing | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| rpg | 24 | 0 | 3 | 1 | 5 | 0 | 15 |
+| rpg | 24 | 1 | 3 | 1 | 5 | 0 | 14 |
 | rpg-chat | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | rsi | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | rss | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -887,7 +887,7 @@ Total tickets: **3101** — untagged: **2616** — unbound to epic: **1575**
 | side-effects | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | sidecar | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | signal | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| silent-regression | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| silent-regression | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | simulation | 4 | 1 | 0 | 0 | 0 | 0 | 3 |
 | single-source-of-truth | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | size-strict | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
@@ -1037,7 +1037,7 @@ Total tickets: **3101** — untagged: **2616** — unbound to epic: **1575**
 | unit-tests | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | unity | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | unlock | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| untriaged | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
+| untriaged | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
 | uploads | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | urc-rsi-survey | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | user-message | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
@@ -1099,14 +1099,14 @@ Total tickets: **3101** — untagged: **2616** — unbound to epic: **1575**
 | yaml | 4 | 0 | 2 | 0 | 1 | 0 | 1 |
 | yaml-frontmatter | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| (untagged) | 2616 | 1020 | 59 | 1263 | 36 | 0 | 238 |
+| (untagged) | 2616 | 1036 | 59 | 1262 | 36 | 0 | 223 |
 
 ## By epic × status
 
 | Epic | Total | done | in_progress | open | draft | cancelled | other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | (none — no dedicated frontend epic tracks this spec) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| (none) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
+| (none) | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | (optional, e.g. epic-plugin-system) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | `, `**Related:**`) live only in the `.md` frontmatter — the index doesn't know which tickets belong to which epic beyond `epic: "epic-foo"` (and only some tickets have that field). Future features (`/find-work`, admin panel filtering, agent routing by tag) need a queryable, parseable source of truth. The validator already accepts the inline format (`**Tags:** rpg, math, dice, …`), so the spec is parseable; the missing piece is round-tripping to the index. | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | `.plan/epics/epic-llm-request-scheduler.md` | 6 | 0 | 0 | 0 | 0 | 0 | 6 |
@@ -1279,7 +1279,7 @@ Total tickets: **3101** — untagged: **2616** — unbound to epic: **1575**
 | epic-db-asset-snapshot-recovery | 4 | 0 | 0 | 4 | 0 | 0 | 0 |
 | epic-db-cold-storage-high-perf | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | epic-db-content-versioning | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
-| epic-db-growth-tiered-storage | 7 | 0 | 0 | 0 | 0 | 0 | 7 |
+| epic-db-growth-tiered-storage | 7 | 1 | 0 | 0 | 0 | 0 | 6 |
 | epic-db-migration-compaction | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | epic-deno-support | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-deno-support (future Deno parity) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
@@ -1556,7 +1556,7 @@ Total tickets: **3101** — untagged: **2616** — unbound to epic: **1575**
 | Visual Novel Mode; Immersion & Presentation | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Wardrobe / Loadout Avatar Variants | 8 | 0 | 0 | 8 | 0 | 0 | 0 |
 | World & Locations | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| (unbound) | 1575 | 613 | 57 | 538 | 50 | 0 | 317 |
+| (unbound) | 1575 | 630 | 57 | 537 | 50 | 0 | 301 |
 
 ## Ticket detail
 
