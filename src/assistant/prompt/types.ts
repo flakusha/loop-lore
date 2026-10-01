@@ -48,6 +48,13 @@ export interface PromptParams {
   emotion?: string;
   /** Emotion avatar asset ID to use for this generation (if pre-selected) */
   emotionAvatar?: string;
+  /**
+   * Current wardrobe outfit name for narration context (resolved by the
+   * assembler from chat override > location rule > default outfit).
+   */
+  outfit?: string;
+  /** Where `outfit` came from (`chat_override` | `location_rule` | `default`). */
+  outfitSource?: string;
   /** Application config — enables config-driven prompt sections (e.g. NSFW policy). */
   config?: Config;
   /**
@@ -183,6 +190,7 @@ export const PRIORITY = {
   groupTalkativity: 0,
   userPersona: 0,
   emotionAvatar: 0,
+  outfitContext: 0,
   internalTraits: 1,
   /** Behavior-critical for both static and dynamic characters. */
   actorGrowth: 1,

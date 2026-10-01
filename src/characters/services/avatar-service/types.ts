@@ -11,6 +11,8 @@ export interface CreateAvatarOpts {
   tags?: Partial<Record<AvatarTagType, string>>;
   isPrimary?: boolean;
   sortOrder?: number;
+  /** Outfit variant dimension; omit for base/outfitless variants. */
+  outfitId?: string;
 }
 
 /** Options for updating an avatar */
@@ -19,6 +21,8 @@ export interface UpdateAvatarOpts {
   tags?: Partial<Record<AvatarTagType, string>>;
   isPrimary?: boolean;
   sortOrder?: number;
+  /** Re-point the variant at another outfit; null detaches it. */
+  outfitId?: string | null;
 }
 
 /** Avatar with parsed tags */
@@ -30,6 +34,8 @@ export interface Avatar {
   tags: Partial<Record<AvatarTagType, string>>;
   isPrimary: boolean;
   sortOrder: number;
+  /** Outfit variant dimension; null = base/outfitless variant. */
+  outfitId?: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -53,4 +59,10 @@ export interface AvatarSelectionContext {
   location?: string;
   time?: string;
   outfit?: string;
+  /** Explicit outfit id; null forces base (outfitless) mode. */
+  outfitId?: string | null;
+  /** Chat id for chat-scoped outfit override lookup. */
+  chatId?: string;
+  /** Location id for location→outfit rule lookup. */
+  locationId?: string;
 }

@@ -1410,3 +1410,36 @@ export interface CarriageRecords {
   payload: string;
   created_at: string;
 }
+
+// ── wardrobe_items ────────────────────────────────────────────
+export interface WardrobeItems {
+  id: Generated<string>;
+  actor_id: string | null;
+  world_id: string | null;
+  name: string;
+  descriptor: Generated<string>;
+  tags: Generated<string>;
+  sort_order: Generated<number>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── actor_wardrobe ────────────────────────────────────────────
+export interface ActorWardrobe {
+  id: Generated<string>;
+  actor_id: string;
+  wardrobe_item_id: string;
+  item_instance_id: string | null;
+  created_at: Generated<string>;
+}
+
+// ── chat_wardrobe_overrides ────────────────────────────────────────────
+export interface ChatWardrobeOverrides {
+  id: Generated<string>;
+  chat_id: string;
+  actor_id: string;
+  outfit_id: string;
+  changed_by: string | null;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}

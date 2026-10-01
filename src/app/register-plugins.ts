@@ -106,6 +106,10 @@ import { worldImportRoutes, } from "../routes/world-import";
 import { worldInvitesRoutes, } from "../routes/world-invites";
 import { worldLoreEntriesRoutes, } from "../routes/world-lore-entries";
 import { worldsRoutes, } from "../routes/worlds";
+import { outfitOverrideRoutes, } from "../routes/wardrobe-overrides";
+import { wardrobeAvatarRoutes, } from "../routes/wardrobe-avatars";
+import { wardrobeBindingRoutes, } from "../routes/wardrobe-bindings";
+import { wardrobeRoutes, } from "../routes/wardrobe";
 
 /** */
 export interface RegisterPluginsOpts {
@@ -186,6 +190,10 @@ export function registerPlugins(app: Elysia<any>, opts: RegisterPluginsOpts,): v
   app.use(characterAvatarsRoutes(handleOpts,),);
   app.use(characterEmotionsRoutes(handleOpts,),);
   app.use(characterEmotionAvatarsRoutes(handleOpts,),);
+  app.use(wardrobeRoutes(handleOpts,),);
+  app.use(wardrobeAvatarRoutes(handleOpts,),);
+  app.use(wardrobeBindingRoutes(handleOpts,),);
+  app.use(outfitOverrideRoutes(handleOpts,),);
   app.use(characterAvailabilityRoutes(handleOpts,),);
   app.use(characterLicensingRoutes(handleOpts,),);
   app.use(adminCharacterOverridesRoutes(handleOpts,),);

@@ -670,7 +670,12 @@ export async function insertWorldAvatarConfig(
   actor_id: string,
   created_at: string,
   updated_at: string,
-  opts?: { id?: string; selection_rule_override?: AvatarSelectionRule | null; weights_override?: string | null },
+  opts?: {
+    id?: string;
+    selection_rule_override?: AvatarSelectionRule | null;
+    weights_override?: string | null;
+    outfit_bindings?: string | null;
+  },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
   const id = providedId ?? crypto.randomUUID();
@@ -1358,7 +1363,7 @@ export async function insertCharacterAvatars(
   label: string,
   created_at: string,
   updated_at: string,
-  opts?: { id?: string; tags?: string; is_primary?: number; sort_order?: number },
+  opts?: { id?: string; tags?: string; is_primary?: number; sort_order?: number; outfit_id?: string | null },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
   const id = providedId ?? crypto.randomUUID();
@@ -4698,6 +4703,69 @@ export async function insertWorldSimulationState(
   const id = providedId ?? crypto.randomUUID();
   await db.insertInto("world_simulation_state",).values({
     next_tick_at,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a wardrobe_items row. */
+export async function insertWardrobeItems(
+  db: Db,
+  name: string,
+  opts?: {
+    id?: string;
+    actor_id?: string | null;
+    world_id?: string | null;
+    descriptor?: string;
+    tags?: string;
+    sort_order?: number;
+    created_at?: string;
+    updated_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("wardrobe_items",).values({
+    id,
+    name,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a actor_wardrobe row. */
+export async function insertActorWardrobe(
+  db: Db,
+  actor_id: string,
+  wardrobe_item_id: string,
+  opts?: { id?: string; item_instance_id?: string | null; created_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("actor_wardrobe",).values({
+    id,
+    actor_id,
+    wardrobe_item_id,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a chat_wardrobe_overrides row. */
+export async function insertChatWardrobeOverrides(
+  db: Db,
+  chat_id: string,
+  actor_id: string,
+  outfit_id: string,
+  opts?: { id?: string; changed_by?: string | null; created_at?: string; updated_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("chat_wardrobe_overrides",).values({
+    id,
+    chat_id,
+    actor_id,
+    outfit_id,
     ...restOpts,
   } as any,).execute();
   return id;

@@ -156,6 +156,58 @@ describe("PromptAssembler per-chat prompt override", () => {
   });
 });
 
+describe("PromptAssembler outfit wiring", () => {
+  let db: Kysely<DB>;
+  let sqlite: Database;
+  let userId: string;
+  let actorId: string;
+  let chatId: string;
+
+  beforeAll(async () => {
+    createLogger({ level: "error", },);
+    ({ db, sqlite, } = await createTestDb());
+    userId = uid();
+    actorId = uid();
+    chatId = uid();
+    await insertUsers(db, "tester-outfit", "Tester", { id: userId, } as never,);
+    await insertActors(db, "Alice", { id: actorId, user_id: userId, } as never,);
+    await insertChats(db, "Outfit chat", userId, { id: chatId, } as never,);
+    await insertChatParticipants(db, chatId, actorId,);
+  },);
+
+  afterAll(async () => {
+    await db.destroy();
+    sqlite.close();
+  },);
+
+  test("injects the default outfit as params.outfit (outfitContext section fires)", async () => {
+    await db
+      .updateTable("actors",)
+      .set({ default_outfit: "armor", outfits: JSON.stringify([{ id: "armor", name: "Plate Armor", },],), },)
+      .where("id", "=", actorId,)
+      .execute();
+    const assembler = new PromptAssembler(db,);
+    const assembled = await assembler.assemble({ actorId, chatId, modelId: "mock", },);
+    const outfitMsg = assembled.messages.find(
+      (m,) => typeof m.content === "string" && m.content.includes("outfit_context",),
+    );
+    expect(outfitMsg,).toBeDefined();
+    expect(String(outfitMsg?.content,),).toContain("Plate Armor",);
+    expect(assembled.sections.some((s,) => s.name === "outfitContext" && !s.dropped),).toBe(true,);
+  });
+
+  test("stays inert for emotion-only characters (no outfit bound)", async () => {
+    const otherActor = uid();
+    await insertActors(db, "Bob", { id: otherActor, user_id: userId, } as never,);
+    await insertChatParticipants(db, chatId, otherActor,);
+    const assembler = new PromptAssembler(db,);
+    const assembled = await assembler.assemble({ actorId: otherActor, chatId, modelId: "mock", },);
+    expect(
+      assembled.messages.some((m,) => typeof m.content === "string" && m.content.includes("outfit_context",)),
+    ).toBe(false,);
+  });
+});
+
 describe("PromptAssembler template override entry", () => {
   test("assembleWithTemplateOverride resolves an owned LLM row and rejects strangers", async () => {
     createLogger({ level: "error", },);
