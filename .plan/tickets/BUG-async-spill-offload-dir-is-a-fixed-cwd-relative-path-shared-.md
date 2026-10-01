@@ -40,3 +40,13 @@ ticket carries the full write-up. In short:
 Restart safety is unchanged: `readOffloadedBody()` resolves the absolute
 `request_results.offload_path`, so a row written before a restart still reads
 back afterwards.
+
+The sweep also removes emptied per-process namespace directories, so the root's
+entry count stays bounded rather than growing one directory per process that
+ever spilled.
+
+Note on the full unit suite: its failure count is nondeterministic (27 / 55 /
+53 across three identical `bun test src/` runs on unmodified `dev`), so a
+single-run-per-tree comparison cannot attribute those failures to this change.
+`BUG-test-async-store-offload-dir-fixed-path-race` records the control
+experiment that rules it out.

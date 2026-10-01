@@ -80,14 +80,26 @@ The shared constant is gone rather than guarded, so this ticket and
   `request_results.offload_path`, so a row written by a previous pid still
   reads back after a restart.
 
-Verified: `bun test src/async/` 55 pass; `src/middleware/ src/routes/requests/
-src/async/` 407 pass; spill-file count under `.tmp/async-store` unchanged
+Verified: `bun test src/async/` 57 pass; `src/middleware/ src/routes/requests/
+src/async/` 409 pass; spill-file count under `.tmp/async-store` unchanged
 across a green run (0 leaked). Criterion 3's `e2e-matrix2.sh` harness is not
-checked in, so it was replaced by a direct before/after spill-file count.
+checked in, so it was replaced by a direct before/after spill-file count. Four
+concurrent `bun test src/async/` arms pass 57/57 each.
 
-Not done: empty `<pid>` namespace directories are left behind (one inode per
-process that ever spilled). `.tmp/` is gitignored scratch, so this was left
-alone rather than adding rmdir logic the retention sweep does not need.
+On the full-suite failures (the `auth`, `admin`, `autonomy-panel`, `lora`,
+`tunnel-connector` groups): these are pre-existing and NOT attributable by
+comparing one run per tree, because the suite is nondeterministic. Three
+identical `bun test src/` runs on unmodified `dev` produced 27, 55 and 53
+failures. Against dev's worst run (55) the worktree also fails 55, split
+14-only-here / 14-only-on-dev, and the dev-only side includes `image-edit`,
+`AutonomyScheduler`, `ChatCreateBody` and `asyncStore.fail` suites this change
+cannot reach. So the failures are cross-file global-state pollution whose
+victims shift run to run, not a regression from this diff.
+
+Empty `<pid>` namespace directories were originally left behind (one per
+process that ever spilled). That was unbounded growth once the sweep started
+scanning the root, so `pruneOrphanSpills` now drops emptied namespace
+directories on both exit paths — see the second commit on the branch.
 
 ## Cross-references
 
