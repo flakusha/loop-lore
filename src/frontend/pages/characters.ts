@@ -151,7 +151,7 @@ export async function selectCharacterCard(id: string,) {
     char = await resp.json();
   } catch (error) {
     log.error("Failed to fetch actor", undefined, {
-      status: (error as Error & { status?: number }).status,
+      status: error instanceof Error && "status" in error ? error.status : undefined,
       id,
     },);
     showToast("error", "Failed to load character",);
