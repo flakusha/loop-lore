@@ -42,22 +42,25 @@ export const chatEditing: Partial<ChatState> & ThisType<ChatState> = {
     log.info("saveEdit", { messageId: msgId, },);
     if (!this.activeChat || !this.editContent.trim()) { return; }
     try {
-      const res = await apiFetch(`/api/v1/messages/${msgId}`, {
+      await apiFetch(`/api/v1/messages/${msgId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ content: this.editContent.trim(), },),
       },);
-      if (res.ok) {
-        const msgs = this.messages;
-        const msg = msgs.find((m,) => m.id === msgId);
-        if (msg) { msg.content = this.editContent.trim(); }
-        this.$dispatch?.("show-toast", { type: "success", message: t("toasts.messageEdited",), },);
-      } else {
-        const err = await res.json();
-        this.$dispatch?.("show-toast", { type: "error", message: err.error || t("toasts.failedSaveEdit",), },);
-      }
-    } catch {
-      this.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkErrorSavingEdit",), },);
+      const msgs = this.messages;
+      const msg = msgs.find((m,) => m.id === msgId);
+      if (msg) { msg.content = this.editContent.trim(); }
+      this.$dispatch?.("show-toast", { type: "success", message: t("toasts.messageEdited",), },);
+    } catch (error) {
+      // A non-2xx PATCH rejects with the status attached (not a network fault);
+      // msg.content is only assigned on the success path, so a failed save
+      // leaves the stored message matching what the server still holds.
+      this.$dispatch?.("show-toast", {
+        type: "error",
+        message: (error as Error & { status?: number }).status
+          ? t("toasts.failedSaveEdit",)
+          : t("toasts.networkErrorSavingEdit",),
+      },);
     } finally {
       this.editingMessageId = null;
       this.editContent = "";
@@ -75,19 +78,21 @@ export const chatEditing: Partial<ChatState> & ThisType<ChatState> = {
     if (!confirm(t("modals.deleteMessage",),)) { return; }
     event.stopImmediatePropagation();
     try {
-      const res = await apiFetch(`/api/v1/messages/${msgId}`, { method: "DELETE", },);
-      if (res.ok) {
-        const msgs = this.messages;
-        const filtered: typeof msgs = [];
-        for (const m of msgs) { if (m.id !== msgId) { filtered.push(m,); } }
-        this.messages = filtered;
-        this.$dispatch?.("show-toast", { type: "success", message: t("toasts.messageRemoved",), },);
-      } else {
-        const err = await res.json();
-        this.$dispatch?.("show-toast", { type: "error", message: err.error || t("toasts.failedRemove",), },);
-      }
-    } catch {
-      this.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkErrorRemovingMessage",), },);
+      await apiFetch(`/api/v1/messages/${msgId}`, { method: "DELETE", },);
+      const msgs = this.messages;
+      const filtered: typeof msgs = [];
+      for (const m of msgs) { if (m.id !== msgId) { filtered.push(m,); } }
+      this.messages = filtered;
+      this.$dispatch?.("show-toast", { type: "success", message: t("toasts.messageRemoved",), },);
+    } catch (error) {
+      // A non-2xx delete rejects with the status attached (not a network
+      // fault); the message list is left untouched so the row stays visible.
+      this.$dispatch?.("show-toast", {
+        type: "error",
+        message: (error as Error & { status?: number }).status
+          ? t("toasts.failedRemove",)
+          : t("toasts.networkErrorRemovingMessage",),
+      },);
     }
   },
 
@@ -132,24 +137,21 @@ export const chatEditing: Partial<ChatState> & ThisType<ChatState> = {
 
       try {
         const res = await apiFetch("/api/v1/assets", { method: "POST", body: formData, },);
-        if (res.ok) {
-          const asset = await res.json();
-          this.pendingAssets = [...this.pendingAssets, { assetId: asset.id, filename: file.name, },];
-          this.$dispatch?.("show-toast", {
-            type: "success",
-            message: t("toasts.readyToAttach", { filename: file.name, },),
-          },);
-        } else {
-          const err = await res.json();
-          this.$dispatch?.("show-toast", {
-            type: "error",
-            message: err.error || t("toasts.failedUpload", { filename: file.name, },),
-          },);
-        }
-      } catch {
+        const asset = await res.json();
+        this.pendingAssets = [...this.pendingAssets, { assetId: asset.id, filename: file.name, },];
+        this.$dispatch?.("show-toast", {
+          type: "success",
+          message: t("toasts.readyToAttach", { filename: file.name, },),
+        },);
+      } catch (error) {
+        // feFetch rejects every non-2xx with the status attached and drops the
+        // response body, so a rejected upload is not a network fault.
+        const key = (error as Error & { status?: number }).status
+          ? "toasts.failedUpload"
+          : "toasts.networkErrorUploading";
         this.$dispatch?.("show-toast", {
           type: "error",
-          message: t("toasts.networkErrorUploading", { filename: file.name, },),
+          message: t(key, { filename: file.name, },),
         },);
       }
     }
