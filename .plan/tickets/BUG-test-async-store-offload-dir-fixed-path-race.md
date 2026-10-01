@@ -101,6 +101,16 @@ process that ever spilled). That was unbounded growth once the sweep started
 scanning the root, so `pruneOrphanSpills` now drops emptied namespace
 directories on both exit paths — see the second commit on the branch.
 
+Resource contract, which the sweep made load-bearing: all FIVE `src/async/*`
+test files own a unique `mkdtemp` spill directory, released in `afterEach`.
+`setOffloadDir` moves both the directory a process writes to AND the root the
+retention sweep scans, so a test's `runOnce()` cannot sweep the shared
+`SPILL_ROOT` and delete a concurrent process's spill files. `resetOffloadDir()`
+is the inverse. Production never calls `setOffloadDir`, so the sweep root stays
+`SPILL_ROOT` and dead-process namespaces are still collected. A test pins this:
+planting a stale unreferenced sentinel directly in `SPILL_ROOT` and asserting a
+default-dir sweep returns `pruned: 0`.
+
 ## Cross-references
 
 - `.tmp/scratchpad-pattern-analysis-2026-09-26.md` §D-03 (OFFLOAD_DIR race)
