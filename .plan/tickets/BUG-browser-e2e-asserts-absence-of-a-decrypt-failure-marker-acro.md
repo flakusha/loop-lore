@@ -3,7 +3,7 @@
 
 # BUG: Browser e2e asserts absence of a decrypt-failure marker across the whole page body
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 

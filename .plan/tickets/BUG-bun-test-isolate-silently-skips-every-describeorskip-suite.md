@@ -3,7 +3,7 @@
 
 # BUG: bun test --isolate silently skips every describeOrSkip suite
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 

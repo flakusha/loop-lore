@@ -3,7 +3,7 @@
 
 # BUG: Characters flow browser e2e flakes on a game-state 404 and on browser-process death
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 
