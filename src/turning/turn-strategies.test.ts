@@ -138,3 +138,44 @@ describe("Turn Strategies", () => {
     });
   });
 });
+
+describe("deterministic replay + talkativity weighting (turn-talkativity-skip AC1/AC2)", () => {
+  test("round-robin is deterministic across calls and blind to talkativity", () => {
+    const first = roundRobinSelect(participants, "a1", 1, turnOrder,);
+    const second = roundRobinSelect(participants, "a1", 1, turnOrder,);
+    expect(first,).toBe("a2",);
+    expect(second,).toBe(first,);
+
+    // Talkativity must not perturb a non-weighted strategy: zero out every
+    // weight and the same slot still wins.
+    const reweighted = participants.map((p) => {
+      return { ...p, talkativity: 0, };
+    },);
+    expect(roundRobinSelect(reweighted, "a1", 1, turnOrder,)).toBe(first,);
+  });
+
+  test("scene-based selection is pure (same inputs, same output)", () => {
+    const ctx = { chatMode: "group" as const, isPaused: false, };
+    const a = sceneBasedSelect(participants, "a1", 1, turnOrder, ctx,);
+    const b = sceneBasedSelect(participants, "a1", 1, turnOrder, ctx,);
+    expect(a,).toBe(b,);
+  });
+
+  test("talkativity weights shift hybrid group selection probability", () => {
+    const loud: TurnParticipant = { actorId: "loud", type: "character", agentType: "ai", talkativity: 100, };
+    const quiet: TurnParticipant = { actorId: "quiet", type: "character", agentType: "ai", talkativity: 1, };
+    const ctx = { chatMode: "group" as const, isPaused: false, };
+    let loudCount = 0;
+    for (let attempt = 0; attempt < 50; attempt++) {
+      const picked = hybridSelect([loud, quiet,], null, attempt, [], ctx,);
+      expect(["loud", "quiet",],).toContain(picked,);
+      if (picked === "loud") {
+        loudCount++;
+      }
+    }
+    // 100:1 weight → expected loud picks ≈ 49.5/50; the assertion floor
+    // (40) still fails with overwhelming probability if weights are ignored
+    // (fair coin → P(≥40 of 50) ≈ 2.6e-10).
+    expect(loudCount,).toBeGreaterThanOrEqual(40,);
+  });
+});

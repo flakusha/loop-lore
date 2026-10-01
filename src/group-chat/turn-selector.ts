@@ -15,8 +15,10 @@
  * It does NOT handle prompt assembly — callers do that after selection.
  */
 import type { Kysely, } from "kysely";
+import { isMuted, } from "../chat/moderation";
 import type { DB, } from "../db/schema";
 import { getLogger, type Logger, } from "../logger";
+import { fetchSkipCooldowns, } from "../turning/skip-cooldown";
 import { TurnManager, } from "../turning/turn-manager";
 import type { GroupTurnContext, } from "../turning/types";
 import { safeJsonParse, } from "../utils";
@@ -76,14 +78,20 @@ export async function selectNextGroupActor(options: TurnSelectorOptions,): Promi
       "actors.agent_type",
       "actors.display_name",
       "chat_participants.talkativity",
+      "chat_participants.muted_until",
     ],)
     .where("chat_participants.chat_id", "=", chatId,)
     .where("actors.agent_type", "!=", "none",)
     .execute();
 
   const aiParticipants: (typeof participants)[number][] = [];
+  const now = Date.now();
   for (const p of participants) {
-    if (p.actor_type !== "user") { aiParticipants.push(p,); }
+    // Outbound mute enforcement (TASK-chat-feature-moderation AC3): a
+    // muted actor never generates, so they are not mention-eligible.
+    if (p.actor_type !== "user" && !isMuted({ muted_until: p.muted_until, }, now,)) {
+      aiParticipants.push(p,);
+    }
   }
   if (aiParticipants.length === 0) { return null; }
 
@@ -95,10 +103,17 @@ export async function selectNextGroupActor(options: TurnSelectorOptions,): Promi
     );
 
     if (mentionedIds.length > 0) {
-      // Pick the first mentioned actor (or could cycle through them)
-      const selectedId = mentionedIds[0]!;
-      log.info("@mention override", { selectedActorId: selectedId, mentioned: mentionedIds, },);
-      return selectedId;
+      // Skip cooldown parity with the per-chat manager (AC6): a mentioned
+      // actor sitting out their cooldown must not win the override — fall
+      // through to manager selection, which applies the same filter.
+      const cooling = await fetchSkipCooldowns(db, chatId,);
+      const eligibleIds = mentionedIds.filter((id,) => !cooling.has(id,),);
+      if (eligibleIds.length > 0) {
+        // Pick the first eligible mentioned actor (or could cycle through them).
+        const selectedId = eligibleIds[0]!;
+        log.info("@mention override", { selectedActorId: selectedId, mentioned: eligibleIds, },);
+        return selectedId;
+      }
     }
   }
 
