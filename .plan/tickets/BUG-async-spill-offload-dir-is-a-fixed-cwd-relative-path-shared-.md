@@ -18,3 +18,25 @@
 - [ ] Implementation complete.
 - [ ] Tests passing.
 - [ ] Documentation updated.
+
+## Fix landed — worktree `fix-embeddings-orphan-cascade`
+
+Fixed together with `BUG-test-async-store-offload-dir-fixed-path-race`; that
+ticket carries the full write-up. In short:
+
+- Criteria 1 and 2: `src/async/spill.ts` no longer exports a fixed `OFFLOAD_DIR`.
+  It exports `SPILL_ROOT` (repo-local `.tmp/async-store`, still CWD-relative so
+  worktrees stay separated) and `offloadDir()`, whose default is the per-process
+  namespace `SPILL_ROOT/<pid>`. Concurrent runs therefore cannot collide on a
+  path. `setOffloadDir()` is the test seam that lets each suite claim its own.
+- Criterion 3: `pruneOrphanSpills` sweeps `SPILL_ROOT` and descends one level
+  into every `<pid>` namespace, collecting files a dead process left behind —
+  a scan of only the current namespace would never see them. Spilled bodies are
+  already unlinked when their row is nulled, so that path needed no change.
+- Criterion 4: a test asserts two independent namespaces cannot resolve to the
+  same spill path, and all four `src/async/*test*.ts` files now own a unique
+  `mkdtemp` directory with `afterEach` teardown.
+
+Restart safety is unchanged: `readOffloadedBody()` resolves the absolute
+`request_results.offload_path`, so a row written before a restart still reads
+back afterwards.

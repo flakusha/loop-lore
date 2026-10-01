@@ -8,11 +8,13 @@
 
 export type { DaState, OffloadDaemon, OffloadDaemonConfig, OffloadPassOpts, } from "./offload";
 export {
-  OFFLOAD_DIR,
+  offloadDir,
   offloadDiskBytes,
   offloadExists,
   readOffloadedBody,
   runOffloadPass,
+  setOffloadDir,
+  SPILL_ROOT,
   startOffloadDaemon,
 } from "./offload";
 export type {

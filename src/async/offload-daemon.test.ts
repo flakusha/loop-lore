@@ -14,21 +14,43 @@
 import type { Database, } from "bun:sqlite";
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
-import { existsSync, mkdirSync, rmSync, writeFileSync, } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
+import { tmpdir, } from "node:os";
 import path from "node:path";
 import type { DB, } from "../db/schema";
 import { createTestDb, } from "../test-utils/create-test-db";
 import {
-  OFFLOAD_DIR,
   type OffloadDaemon,
+  offloadDir,
   offloadDiskBytes,
   offloadExists,
   pruneOrphanSpills,
   readOffloadedBody,
+  setOffloadDir,
   spill,
+  SPILL_ROOT,
   spillFileStem,
   startOffloadDaemon,
 } from "./offload";
+
+/** Restore point for the process-wide spill namespace after each test. */
+const DEFAULT_DIR = path.join(SPILL_ROOT, String(process.pid,),);
+
+/**
+ * Resource contract (parallel-safe): every test owns a unique `mkdtemp` spill
+ * directory installed via `setOffloadDir`; teardown runs in `afterEach` so a
+ * failing test never leaks files into the shared process default or another
+ * suite. BUG-test-async-store-offload-dir-fixed-path-race.
+ */
+let spillDirForTest = "";
+beforeEach(() => {
+  spillDirForTest = mkdtempSync(path.join(tmpdir(), "loop-lore-daemon-",),);
+  setOffloadDir(spillDirForTest,);
+},);
+afterEach(() => {
+  setOffloadDir(DEFAULT_DIR,);
+  rmSync(spillDirForTest, { recursive: true, force: true, },);
+},);
 
 /** Seed a `request_results` row with explicit lifecycle fields. */
 async function seedRequest(
@@ -87,7 +109,7 @@ describe("spill() disk round-trip", () => {
     const body = JSON.stringify({ id: "msg-1", content: "spill me", },);
     const filePath = await spill(id, body,);
 
-    expect(filePath,).toBe(path.join(OFFLOAD_DIR, `${spillFileStem(id,)}.json.gz`,),);
+    expect(filePath,).toBe(path.join(offloadDir(), `${spillFileStem(id,)}.json.gz`,),);
     expect(offloadExists(id,),).toBe(true,);
     expect(readOffloadedBody(filePath,),).toBe(body,);
     expect(offloadDiskBytes(),).toBeGreaterThan(0,);
@@ -292,8 +314,8 @@ describe("OffloadDaemon.runOnce — phase 1: offload ripe rows", () => {
       expect(row?.response_body,).toBeNull();
       expect(row?.offload_path,).toBeTypeOf("string",);
       if (row?.offload_path) {
-        // The stored path stays inside OFFLOAD_DIR — no traversal.
-        expect(row.offload_path.startsWith(OFFLOAD_DIR,),).toBe(true,);
+        // The stored path stays inside the spill namespace — no traversal.
+        expect(row.offload_path.startsWith(offloadDir(),),).toBe(true,);
         expect(readOffloadedBody(row.offload_path,),).toBe("x".repeat(64,),);
         rmSync(row.offload_path, { force: true, },);
       }
@@ -426,7 +448,7 @@ describe("OffloadDaemon.runOnce — phase 3: expired spill cleanup", () => {
     db = ctx.db;
     sqlite = ctx.sqlite;
     filePaths = [];
-    mkdirSync(OFFLOAD_DIR, { recursive: true, },);
+    mkdirSync(offloadDir(), { recursive: true, },);
   },);
 
   afterEach(async () => {
@@ -436,11 +458,11 @@ describe("OffloadDaemon.runOnce — phase 3: expired spill cleanup", () => {
   },);
 
   test("unlinks spill files of long-expired rows and nulls their paths", async () => {
-    const goneFile = path.join(OFFLOAD_DIR, "cleanup-gone.json.gz",);
+    const goneFile = path.join(offloadDir(), "cleanup-gone.json.gz",);
     writeFileSync(goneFile, "pretend-gzip",);
     filePaths.push(goneFile,);
 
-    const staysFile = path.join(OFFLOAD_DIR, "cleanup-stays.json.gz",);
+    const staysFile = path.join(offloadDir(), "cleanup-stays.json.gz",);
     writeFileSync(staysFile, "pretend-gzip",);
     filePaths.push(staysFile,);
 
@@ -488,7 +510,7 @@ describe("OffloadDaemon.runOnce — phase 3: expired spill cleanup", () => {
   });
 
   test("tolerates an already-vanished spill file (still nulls the path)", async () => {
-    const missingFile = path.join(OFFLOAD_DIR, "cleanup-missing.json.gz",);
+    const missingFile = path.join(offloadDir(), "cleanup-missing.json.gz",);
     await seedRequest(db, {
       id: "expired-missing-file",
       status: "expired",
@@ -509,7 +531,7 @@ describe("OffloadDaemon.runOnce — phase 3: expired spill cleanup", () => {
   });
 
   test("keeps the file and DB path consistent when the path-nulling UPDATE fails (BUG-runoffloadpass-phase3-unlink-and-db-update-not-atomic)", async () => {
-    const keptFile = path.join(OFFLOAD_DIR, "cleanup-tx-fail.json.gz",);
+    const keptFile = path.join(offloadDir(), "cleanup-tx-fail.json.gz",);
     writeFileSync(keptFile, "pretend-gzip",);
     filePaths.push(keptFile,);
 
@@ -568,7 +590,7 @@ describe("OffloadDaemon lifecycle", () => {
       responseBody: "w".repeat(32,),
     },);
 
-    mkdirSync(OFFLOAD_DIR, { recursive: true, },);
+    mkdirSync(offloadDir(), { recursive: true, },);
     const daemon: OffloadDaemon = startOffloadDaemon(db, {}, {
       intervalMs: 25,
       minAgeMs: 0,
