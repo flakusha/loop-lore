@@ -3,7 +3,7 @@
 
 # BUG: New edit iterations collapse onto an existing asset row instead of spawning a new item
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-asset-platform-capabilities
