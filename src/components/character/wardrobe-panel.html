@@ -73,13 +73,11 @@
   <p class="form-hint">Avatar variants grouped by outfit, then emotion tag.</p>
   <div data-testid="wardrobe-variant-grid">
     <template x-for="group in variantGrid()" :key="group.outfitName">
-      <section class="wardrobe-variant-group" style="margin-bottom:var(--space-4)">
+      <section class="wardrobe-variant-group" style="margin-bottom: var(--space-4)">
         <h5 x-text="group.outfitName"></h5>
-        <ul style="list-style:none;padding:0;display:flex;flex-wrap:wrap;gap:var(--space-2)">
+        <ul style="list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-2)">
           <template x-for="variant in group.variants" :key="variant.id">
-            <li
-              style="border:1px solid var(--border-default);border-radius:var(--radius-md);padding:var(--space-1) var(--space-2)"
-            >
+            <li style="border: 1px solid var(--border-default); border-radius: var(--radius-md); padding: var(--space-1) var(--space-2)">
               <span x-text="variant.tags?.emotion || variant.label || '—'"></span>
             </li>
           </template>

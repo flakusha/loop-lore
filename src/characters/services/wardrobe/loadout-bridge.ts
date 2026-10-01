@@ -58,7 +58,7 @@ export async function resolveEquippedOutfit(
   const rows = await db
     .selectFrom("actor_wardrobe",)
     .innerJoin("actor_items", "actor_items.id", "actor_wardrobe.item_instance_id",)
-    .select(["actor_wardrobe.wardrobe_item_id", "actor_wardrobe.created_at", "actor_wardrobe.id",])
+    .select(["actor_wardrobe.wardrobe_item_id", "actor_wardrobe.created_at", "actor_wardrobe.id",],)
     .where("actor_wardrobe.actor_id", "=", actorId,)
     .where("actor_items.equipped", "=", EquipState.Equipped,)
     .orderBy("actor_wardrobe.created_at", "desc",)

@@ -9,16 +9,16 @@
  * require world write access + actor ownership (default-deny).
  */
 import { Elysia, t, } from "elysia";
-import { checkChatAccess, } from "../chat/service/access";
 import {
-  requestOutfitChange,
-  OutfitChangeInitiator,
   type OutfitChangeGate,
+  OutfitChangeInitiator,
+  requestOutfitChange,
 } from "../characters/services/wardrobe/change-gate";
 import {
-  setLocationOutfitBindings,
   setChatOutfitOverride,
+  setLocationOutfitBindings,
 } from "../characters/services/wardrobe/overrides";
+import { checkChatAccess, } from "../chat/service/access";
 import {
   ChatOutfitOverrideBody,
   ErrorResponse,
@@ -28,16 +28,16 @@ import {
   WorldActorParams,
 } from "../validation/schemas";
 import { checkActorOwnership, } from "./actor-auth";
+import type { HandlerOpts, } from "./actor-auth";
 import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "./http-utils";
 import { requireWorldAccess, } from "./worlds/access";
-import type { HandlerOpts } from "./actor-auth";
 
 /**
  * @param opts
  * @param prefix
  * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { chats: { ":chatId": { ...; }; }; }; } & ... 2 more ... & { ...; }, { ...; }, { ...; }>}
  */
-export function outfitOverrideRoutes(opts: HandlerOpts & { outfitChangeGate?: OutfitChangeGate; }, prefix = "/api",) {
+export function outfitOverrideRoutes(opts: HandlerOpts & { outfitChangeGate?: OutfitChangeGate }, prefix = "/api",) {
   const { database, outfitChangeGate, } = opts;
 
   return new Elysia({ name: "outfit-overrides", },)

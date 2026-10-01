@@ -54,8 +54,9 @@ export async function listWardrobeItems(
     .where((eb,) =>
       eb.or([
         eb("actor_id", "=", actorId,),
-        ...(opts.worldId ? [eb("world_id", "=", opts.worldId,)] : []),
-      ]),)
+        ...(opts.worldId ? [eb("world_id", "=", opts.worldId,),] : []),
+      ],)
+    )
     .orderBy("sort_order", "asc",)
     .selectAll()
     .execute();

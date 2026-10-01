@@ -37,9 +37,13 @@ const emptyDraft = (): OutfitDraft => ({
   editingId: null,
 });
 
-/** Split the comma-separated tag input into trimmed non-empty tags. */
+/**
+ * Split the comma-separated tag input into trimmed non-empty tags.
+ * @param input
+ * @returns {string[]}
+ */
 export function parseTagsInput(input: string,): string[] {
-  return input.split(",",).map((tag,) => tag.trim(),).filter((tag,) => tag.length > 0,);
+  return input.split(",",).map((tag,) => tag.trim()).filter((tag,) => tag.length > 0);
 }
 
 export const actorWardrobe: ActorWardrobeState = {
@@ -70,17 +74,20 @@ export const actorWardrobe: ActorWardrobeState = {
     this.loading = true;
     this.loadError = "";
     try {
-      const [itemsRes, avatarsRes,] = await Promise.all([
+      const [itemsRes, avatarsRes,] = await Promise.allSettled([
         apiFetch(`/api/v1/actors/${actorId}/wardrobe`,),
         apiFetch(`/api/v1/actors/${actorId}/avatars`,),
-      ]);
-      if (!itemsRes.ok) {
+      ],);
+      // Rejections keep the old Promise.all semantics: surface loadError.
+      if (itemsRes.status === "rejected") { throw itemsRes.reason; }
+      if (avatarsRes.status === "rejected") { throw avatarsRes.reason; }
+      if (!itemsRes.value.ok) {
         this.loadError = t("status.wardrobeLoadFailed",);
         return;
       }
-      this.outfits = (await itemsRes.json()) as WardrobeOutfit[];
-      if (avatarsRes.ok) {
-        this.variants = (await avatarsRes.json()) as WardrobeVariant[];
+      this.outfits = (await itemsRes.value.json()) as WardrobeOutfit[];
+      if (avatarsRes.value.ok) {
+        this.variants = (await avatarsRes.value.json()) as WardrobeVariant[];
       } else {
         this.variants = [];
       }
@@ -132,7 +139,7 @@ export const actorWardrobe: ActorWardrobeState = {
         body: jsonBody(payload,),
       },);
       if (!res.ok) {
-        const body = (await res.json().catch(() => ({}),)) as { message?: string };
+        const body = (await res.json().catch(() => ({}))) as { message?: string };
         this.error = body.message ?? t("status.wardrobeSaveFailed",);
         return;
       }
@@ -170,26 +177,31 @@ export const actorWardrobe: ActorWardrobeState = {
   },
 
   variantGrid() {
-    const nameById = new Map(this.outfits.map((o,) => [o.id, o.name,],),);
+    const nameById = new Map(this.outfits.map((o,) => [o.id, o.name,]),);
     const groups = new Map<string | null, WardrobeVariant[]>();
     for (const variant of this.variants) {
       const key = variant.outfitId ?? null;
-      const bucket = groups.get(key);
-      if (bucket) { bucket.push(variant,); } else { groups.set(key, [variant,],); }
+      const bucket = groups.get(key,);
+      if (bucket) { bucket.push(variant,); }
+      else { groups.set(key, [variant,],); }
     }
     return Array.from(groups.entries(),)
-      .map(([outfitId, variants,]) => ({
+      .map(([outfitId, variants,],) => ({
         outfitId,
         outfitName: outfitId === null
           ? t("wardrobe.baseOutfit",)
-          : nameById.get(outfitId) ?? outfitId,
+          : nameById.get(outfitId,) ?? outfitId,
         variants,
-      }),)
-      .sort((a, b,) => a.outfitName.localeCompare(b.outfitName,),);
+      }))
+      .sort((a, b,) => a.outfitName.localeCompare(b.outfitName,));
   },
 };
 
-/** Build the Alpine scope for the wardrobe manager panel. */
+/**
+ * Build the Alpine scope for the wardrobe manager panel.
+ * @param actorId
+ * @returns {ActorWardrobeState}
+ */
 export function actorWardrobeFactory(actorId: string,): ActorWardrobeState {
   const state = Object.create(actorWardrobe,) as ActorWardrobeState;
   state.setActorId(actorId,);

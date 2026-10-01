@@ -33,10 +33,10 @@ const court = "outfit-court";
 describe("runOutfitLadder", () => {
   it("rung 1: exact (outfit, emotion) wins over everything", () => {
     const avatars = [
-      avatar({ id: "base-joy", tags: { emotion: "joy", }, }),
-      avatar({ id: "armor-neutral", outfitId: armor, tags: { emotion: "neutral", }, }),
-      avatar({ id: "armor-joy", outfitId: armor, tags: { emotion: "joy", }, }),
-      avatar({ id: "court-joy", outfitId: court, tags: { emotion: "joy", }, }),
+      avatar({ id: "base-joy", tags: { emotion: "joy", }, },),
+      avatar({ id: "armor-neutral", outfitId: armor, tags: { emotion: "neutral", }, },),
+      avatar({ id: "armor-joy", outfitId: armor, tags: { emotion: "joy", }, },),
+      avatar({ id: "court-joy", outfitId: court, tags: { emotion: "joy", }, },),
     ];
     const picked = runOutfitLadder(avatars, { outfitId: armor, emotion: "joy", },);
     expect(picked?.id,).toBe("armor-joy",);
@@ -44,8 +44,8 @@ describe("runOutfitLadder", () => {
 
   it("rung 2: falls back to (outfit, neutral) before leaving the outfit", () => {
     const avatars = [
-      avatar({ id: "base-joy", tags: { emotion: "joy", }, }),
-      avatar({ id: "armor-neutral", outfitId: armor, tags: { emotion: "neutral", }, }),
+      avatar({ id: "base-joy", tags: { emotion: "joy", }, },),
+      avatar({ id: "armor-neutral", outfitId: armor, tags: { emotion: "neutral", }, },),
     ];
     const picked = runOutfitLadder(avatars, {
       outfitId: armor,
@@ -57,8 +57,8 @@ describe("runOutfitLadder", () => {
 
   it("rung 3: default outfit's emotion variant beats outfitless base", () => {
     const avatars = [
-      avatar({ id: "base-joy", tags: { emotion: "joy", }, }),
-      avatar({ id: "court-joy", outfitId: court, tags: { emotion: "joy", }, }),
+      avatar({ id: "base-joy", tags: { emotion: "joy", }, },),
+      avatar({ id: "court-joy", outfitId: court, tags: { emotion: "joy", }, },),
     ];
     const picked = runOutfitLadder(avatars, {
       outfitId: armor,
@@ -70,8 +70,8 @@ describe("runOutfitLadder", () => {
 
   it("rung 4: outfitless emotion variants (today's behavior) survive", () => {
     const avatars = [
-      avatar({ id: "base-joy", tags: { emotion: "joy", }, }),
-      avatar({ id: "base-neutral", tags: { emotion: "neutral", }, }),
+      avatar({ id: "base-joy", tags: { emotion: "joy", }, },),
+      avatar({ id: "base-neutral", tags: { emotion: "neutral", }, },),
     ];
     const picked = runOutfitLadder(avatars, { outfitId: armor, emotion: "joy", },);
     expect(picked?.id,).toBe("base-joy",);
@@ -79,8 +79,8 @@ describe("runOutfitLadder", () => {
 
   it("rung 4 prefers exact emotion over outfitless neutral", () => {
     const avatars = [
-      avatar({ id: "base-neutral", tags: { emotion: "neutral", }, sortOrder: 0, }),
-      avatar({ id: "base-joy", tags: { emotion: "joy", }, sortOrder: 5, }),
+      avatar({ id: "base-neutral", tags: { emotion: "neutral", }, sortOrder: 0, },),
+      avatar({ id: "base-joy", tags: { emotion: "joy", }, sortOrder: 5, },),
     ];
     const picked = runOutfitLadder(avatars, { outfitId: armor, emotion: "joy", },);
     expect(picked?.id,).toBe("base-joy",);
@@ -88,8 +88,8 @@ describe("runOutfitLadder", () => {
 
   it("returns null when every rung misses (caller falls to base portrait)", () => {
     const avatars = [
-      avatar({ id: "armor-sad", outfitId: armor, tags: { emotion: "sad", }, }),
-      avatar({ id: "base-sad", tags: { emotion: "sad", }, }),
+      avatar({ id: "armor-sad", outfitId: armor, tags: { emotion: "sad", }, },),
+      avatar({ id: "base-sad", tags: { emotion: "sad", }, },),
     ];
     const picked = runOutfitLadder(avatars, { outfitId: court, emotion: "joy", },);
     expect(picked,).toBeNull();
@@ -97,8 +97,8 @@ describe("runOutfitLadder", () => {
 
   it("without an emotion, prefers the outfit's neutral variant", () => {
     const avatars = [
-      avatar({ id: "armor-joy", outfitId: armor, tags: { emotion: "joy", }, sortOrder: 0, }),
-      avatar({ id: "armor-neutral", outfitId: armor, tags: { emotion: "neutral", }, sortOrder: 5, }),
+      avatar({ id: "armor-joy", outfitId: armor, tags: { emotion: "joy", }, sortOrder: 0, },),
+      avatar({ id: "armor-neutral", outfitId: armor, tags: { emotion: "neutral", }, sortOrder: 5, },),
     ];
     const picked = runOutfitLadder(avatars, { outfitId: armor, },);
     expect(picked?.id,).toBe("armor-neutral",);
@@ -106,15 +106,15 @@ describe("runOutfitLadder", () => {
 
   it("tie-break within a rung: primary first, then sort order", () => {
     const pool = [
-      avatar({ id: "armor-joy-a", outfitId: armor, tags: { emotion: "joy", }, sortOrder: 1, }),
+      avatar({ id: "armor-joy-a", outfitId: armor, tags: { emotion: "joy", }, sortOrder: 1, },),
       avatar({
         id: "armor-joy-primary",
         outfitId: armor,
         tags: { emotion: "joy", },
         sortOrder: 9,
         isPrimary: true,
-      }),
-      avatar({ id: "armor-joy-b", outfitId: armor, tags: { emotion: "joy", }, sortOrder: 2, }),
+      },),
+      avatar({ id: "armor-joy-b", outfitId: armor, tags: { emotion: "joy", }, sortOrder: 2, },),
     ];
     const picked = runOutfitLadder(pool, { outfitId: armor, emotion: "joy", },);
     expect(picked?.id,).toBe("armor-joy-primary",);
@@ -122,7 +122,7 @@ describe("runOutfitLadder", () => {
 
   it("emotion match is case-insensitive", () => {
     const avatars = [
-      avatar({ id: "armor-joy", outfitId: armor, tags: { emotion: "Joy", }, }),
+      avatar({ id: "armor-joy", outfitId: armor, tags: { emotion: "Joy", }, },),
     ];
     const picked = runOutfitLadder(avatars, { outfitId: armor, emotion: "JOY", },);
     expect(picked?.id,).toBe("armor-joy",);
@@ -130,7 +130,7 @@ describe("runOutfitLadder", () => {
 
   it("never picks another outfit's variants on any rung", () => {
     const avatars = [
-      avatar({ id: "court-joy", outfitId: court, tags: { emotion: "joy", }, isPrimary: true, }),
+      avatar({ id: "court-joy", outfitId: court, tags: { emotion: "joy", }, isPrimary: true, },),
     ];
     // court is neither resolved outfit nor declared default.
     const picked = runOutfitLadder(avatars, { outfitId: armor, emotion: "joy", },);

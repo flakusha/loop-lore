@@ -16,7 +16,7 @@
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../../db/schema";
-import { jsonParseOr, } from "../../../utils";
+import { jsonParseOr, jsonStringifyOr, } from "../../../utils";
 import { isLoadoutBridgeEnabled, resolveEquippedOutfit, } from "./loadout-bridge";
 import type { OutfitResolutionContext, ResolvedOutfit, } from "./types";
 
@@ -56,7 +56,7 @@ async function ensureCatalogOutfit(
   if (!actor?.outfits) { return null; }
 
   const catalog = jsonParseOr<CatalogOutfit[]>(actor.outfits, [],);
-  const entry = catalog.find((o,) => o?.id === catalogId,);
+  const entry = catalog.find((o,) => o?.id === catalogId);
   if (!entry) { return null; }
 
   const now = new Date().toISOString();
@@ -68,7 +68,7 @@ async function ensureCatalogOutfit(
       world_id: null,
       name: entry.name,
       descriptor: entry.descriptor ?? "",
-      tags: JSON.stringify(entry.tags ?? []),
+      tags: jsonStringifyOr(entry.tags ?? [], "[]",),
       sort_order: 0,
       created_at: now,
       updated_at: now,
@@ -100,7 +100,7 @@ export async function resolveDefaultOutfit(
     .selectFrom("wardrobe_items",)
     .select(["id",],)
     .where("id", "=", ref,)
-    .where((eb,) => eb.or([eb("actor_id", "=", actorId,), eb("actor_id", "is", null,)]),)
+    .where((eb,) => eb.or([eb("actor_id", "=", actorId,), eb("actor_id", "is", null,),],))
     .executeTakeFirst();
   if (direct) { return direct.id; }
 
@@ -154,4 +154,3 @@ export async function resolveOutfit(
 
   return { outfitId: null, source: "none", };
 }
-

@@ -8,18 +8,18 @@
  * Generation itself is service-level (provider-driven); routes are
  * pinned here for access control and payload validation only.
  */
-import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import type { Database, } from "bun:sqlite";
+import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
-import type { DB, } from "../db/schema";
 import type { OutfitChangeGate, } from "../characters/services/wardrobe/change-gate";
+import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
-import { insertActors, insertUsers, } from "../test-utils/insert-helpers";
-import { outfitOverrideRoutes, } from "./wardrobe-overrides";
-import { wardrobeAvatarRoutes, } from "./wardrobe-avatars";
+import { insertActors, insertUsers, insertWorlds, } from "../test-utils/insert-helpers";
 import { wardrobeRoutes, } from "./wardrobe";
+import { wardrobeAvatarRoutes, } from "./wardrobe-avatars";
+import { outfitOverrideRoutes, } from "./wardrobe-overrides";
 
 const OWNER = "00000000-0000-4000-8000-000000000021";
 const OWNER_USER = "00000000-0000-4000-8000-000000000031";
@@ -97,7 +97,7 @@ describe("Wardrobe routes — auth & ownership", () => {
     );
     expect(res.status,).toBe(200,);
     const items = await res.json() as Array<{ id: string; name: string }>;
-    expect(items.some((i,) => i.id === itemId,),).toBe(true,);
+    expect(items.some((i,) => i.id === itemId),).toBe(true,);
   });
 
   test("cross-user update is blocked (404)", async () => {
@@ -196,6 +196,69 @@ describe("Wardrobe routes — auth & ownership", () => {
       },),
     );
     expect(res.status,).toBe(404,);
+  });
+});
+
+describe("Wardrobe world template scope", () => {
+  let db: Kysely<DB>;
+  let sqlite: Database;
+  const FOREIGN_WORLD = "00000000-0000-4000-8000-000000000051";
+  const OWNED_WORLD = "00000000-0000-4000-8000-000000000052";
+
+  beforeAll(async () => {
+    createLogger({ level: "warn", },);
+    ({ db, sqlite, } = await createTestDb());
+    await insertUsers(db, "owner", "Owner", { id: OWNER_USER as never, },);
+    await insertUsers(db, "other", "Other", { id: OTHER_USER as never, },);
+    await insertActors(db, "World Scope Actor", {
+      id: OWNER as never,
+      owner_id: OWNER_USER,
+      user_id: OWNER_USER,
+    },);
+    await insertWorlds(db, OTHER_USER, "Foreign World", { id: FOREIGN_WORLD as never, },);
+    await insertWorlds(db, OWNER_USER, "Own World", { id: OWNED_WORLD as never, },);
+  },);
+
+  afterAll(async () => {
+    await db.destroy();
+    sqlite.close();
+  },);
+
+  test("create into a world you do not own is forbidden (403)", async () => {
+    const res = await makeApp(db, OWNER_USER, "user",).handle(
+      new Request(`http://localhost/api/actors/${OWNER}/wardrobe`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ name: "Intruder Garb", world_id: FOREIGN_WORLD, },),
+      },),
+    );
+    expect(res.status,).toBe(403,);
+  });
+
+  test("listing templates of a world you do not own is forbidden (403)", async () => {
+    const res = await makeApp(db, OWNER_USER, "user",).handle(
+      new Request(`http://localhost/api/actors/${OWNER}/wardrobe?worldId=${FOREIGN_WORLD}`,),
+    );
+    expect(res.status,).toBe(403,);
+  });
+
+  test("world owner creates and lists templates (201 then 200)", async () => {
+    const create = await makeApp(db, OWNER_USER, "user",).handle(
+      new Request(`http://localhost/api/actors/${OWNER}/wardrobe`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ name: "Own Guard Uniform", world_id: OWNED_WORLD, },),
+      },),
+    );
+    expect(create.status,).toBe(201,);
+    const { id, } = await create.json() as { id: string };
+
+    const list = await makeApp(db, OWNER_USER, "user",).handle(
+      new Request(`http://localhost/api/actors/${OWNER}/wardrobe?worldId=${OWNED_WORLD}`,),
+    );
+    expect(list.status,).toBe(200,);
+    const items = await list.json() as Array<{ id: string }>;
+    expect(items.some((i,) => i.id === id),).toBe(true,);
   });
 });
 

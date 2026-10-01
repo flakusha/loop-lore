@@ -32,16 +32,16 @@ export interface OutfitLadderInput {
 
 /** Primary-first, then input (sort_order asc) pick. */
 function pickOne(pool: Avatar[],): Avatar | null {
-  return pool.find((a,) => a.isPrimary,) ?? pool[0] ?? null;
+  return pool.find((a,) => a.isPrimary) ?? pool[0] ?? null;
 }
 
 function byEmotion(pool: Avatar[], emotion: string | undefined,): Avatar[] {
   if (!emotion) { return []; }
-  return pool.filter((a,) => a.tags.emotion?.toLowerCase() === emotion,);
+  return pool.filter((a,) => a.tags.emotion?.toLowerCase() === emotion);
 }
 
 function byNeutral(pool: Avatar[],): Avatar[] {
-  return pool.filter((a,) => a.tags.emotion?.toLowerCase() === "neutral",);
+  return pool.filter((a,) => a.tags.emotion?.toLowerCase() === "neutral");
 }
 
 /**
@@ -59,7 +59,7 @@ export function runOutfitLadder(
   input: OutfitLadderInput,
 ): Avatar | null {
   const emotion = input.emotion?.toLowerCase();
-  const resolvedPool = avatars.filter((a,) => a.outfitId === input.outfitId,);
+  const resolvedPool = avatars.filter((a,) => a.outfitId === input.outfitId);
 
   // Rung 1: exact (outfit, emotion); without an emotion, prefer the
   // outfit's neutral variant, then any variant of that outfit.
@@ -83,7 +83,7 @@ export function runOutfitLadder(
   // Rung 3: (default outfit, emotion) — when a distinct default exists.
   const defaultId = input.defaultOutfitId ?? null;
   if (defaultId && defaultId !== input.outfitId) {
-    const defaultPool = avatars.filter((a,) => a.outfitId === defaultId,);
+    const defaultPool = avatars.filter((a,) => a.outfitId === defaultId);
     const hit = emotion
       ? pickOne(byEmotion(defaultPool, emotion,),) ?? pickOne(byNeutral(defaultPool,),)
       : pickOne(byNeutral(defaultPool,),) ?? pickOne(defaultPool,);
@@ -91,7 +91,7 @@ export function runOutfitLadder(
   }
 
   // Rung 4: base/outfitless emotion variants (today's behavior).
-  const basePool = avatars.filter((a,) => a.outfitId == null,);
+  const basePool = avatars.filter((a,) => a.outfitId == null);
   const baseHit = emotion
     ? pickOne(byEmotion(basePool, emotion,),) ?? pickOne(byNeutral(basePool,),)
     : pickOne(byNeutral(basePool,),);
