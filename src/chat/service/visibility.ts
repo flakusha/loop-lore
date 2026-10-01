@@ -15,6 +15,7 @@ import type { Kysely, } from "kysely";
 import type { MessageVisibility, } from "../../db/enums";
 import { NotificationType, } from "../../db/enums-core";
 import type { DB, } from "../../db/schema";
+import { assertValidWrite, } from "../../db/validators/enforce";
 import { getLogger, } from "../../logger";
 import { NotificationService, } from "../../notifications/service/service";
 import { checkChatSettingsAccess, } from "./access";
@@ -35,6 +36,15 @@ export async function updateMessageVisibility(
   visibility: MessageVisibility,
   reason: string | null,
 ): Promise<{ ok: true }> {
+  const current = await database
+    .selectFrom("messages",)
+    .select("status",)
+    .where("id", "=", messageId,)
+    .executeTakeFirst();
+  if (!current) { return { ok: true, }; }
+
+  assertValidWrite("messages", { status: current.status, visibility, },);
+
   await database
     .updateTable("messages",)
     .set({ visibility, hidden_reason: reason, },)
