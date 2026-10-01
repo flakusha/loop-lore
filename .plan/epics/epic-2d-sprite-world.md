@@ -132,7 +132,7 @@ Presence = actor_locations + group-chat membership for co-travelers; joinable/le
 | **Battle/encounter reconcile** | Shared entrance rule table; position-aware random events | Medium |
 | **Procgen + location sync** | Seeded universe setup; stub-then-populate flow; location types | Medium |
 | **Boarding + levels** | Transport interiors, floor/parallax via fractal tree | Low |
-| **RAG/biz spike** | Game→business-process mapping evaluation | Low |
+| **RAG/biz spike** | Defer — locations=zones strong fit, actors=agents partial, events=signals partial; no process graph; revisit when quest/plot epic lands. See `IDEA-2d-world-rag-business-process-mapping-spike.md` | Low |
 
 ## Sequencing
 
