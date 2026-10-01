@@ -15193,6 +15193,12 @@
       "source": ".plan/tickets/TASK-analytics-frontend-dashboard.md"
     }
   ],
+  "src/frontend/alpine/app.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-tests-delete-app-installed-globals-breaking-every-later-test.md"
+    }
+  ],
   "src/frontend/alpine/audio.ts": [
     {
       "kind": "epic",
@@ -15744,6 +15750,10 @@
   "src/frontend/alpine/chat-utils/gallery.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-tests-delete-app-installed-globals-breaking-every-later-test.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TEST-gallery-frontend-utils-untested.md"
     }
   ],
@@ -15751,6 +15761,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-assistant-creative-studio-workflows.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-tests-delete-app-installed-globals-breaking-every-later-test.md"
     },
     {
       "kind": "ticket",
@@ -15771,6 +15785,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TEST-gallery-frontend-utils-untested.md"
+    }
+  ],
+  "src/frontend/alpine/chat-utils/render.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-tests-delete-app-installed-globals-breaking-every-later-test.md"
     }
   ],
   "src/frontend/alpine/chat-utils/time.ts": [
@@ -15971,6 +15991,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/federation-instance-switcher.md"
+    }
+  ],
+  "src/frontend/alpine/composer-pre-send.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-tests-delete-app-installed-globals-breaking-every-later-test.md"
     }
   ],
   "src/frontend/alpine/context-window.ts": [
@@ -16213,6 +16239,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-frontend-html-dedup-htmx-reuse.md"
+    }
+  ],
+  "src/frontend/alpine/htmx.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-tests-delete-app-installed-globals-breaking-every-later-test.md"
     }
   ],
   "src/frontend/alpine/htmx.ts": [
@@ -16933,6 +16965,12 @@
       "source": ".plan/tickets/WIRE-frontend-touch-swipe-gestures.md"
     }
   ],
+  "src/frontend/alpine/theme.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-tests-delete-app-installed-globals-breaking-every-later-test.md"
+    }
+  ],
   "src/frontend/alpine/trading-interface.ts": [
     {
       "kind": "ticket",
@@ -17077,6 +17115,12 @@
       "source": ".plan/epics/epic-error-envelope.md"
     }
   ],
+  "src/frontend/app-globals.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-tests-delete-app-installed-globals-breaking-every-later-test.md"
+    }
+  ],
   "src/frontend/app.ts": [
     {
       "kind": "epic",
@@ -17119,6 +17163,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-stored-xss-unescaped-server-derived-asset-ids-labels-in-inne.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-tests-delete-app-installed-globals-breaking-every-later-test.md"
     },
     {
       "kind": "ticket",
@@ -17489,6 +17537,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-frontend-bundle-optimization.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-tests-delete-app-installed-globals-breaking-every-later-test.md"
     },
     {
       "kind": "ticket",
@@ -18192,6 +18244,10 @@
   "src/frontend/pages/new-chat/index.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-tests-delete-app-installed-globals-breaking-every-later-test.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/FEAT-world-template-chat-lifecycle.md"
     }
   ],
@@ -18623,10 +18679,20 @@
       "source": ".plan/tickets/WIRE-frontend-touch-swipe-gestures.md"
     }
   ],
+  "src/frontend/ui.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-tests-delete-app-installed-globals-breaking-every-later-test.md"
+    }
+  ],
   "src/frontend/ui.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-tests-delete-app-installed-globals-breaking-every-later-test.md"
     },
     {
       "kind": "ticket",
@@ -30749,6 +30815,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-raw-json-parse-outside-safe-json-3-sites.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-tests-delete-app-installed-globals-breaking-every-later-test.md"
     },
     {
       "kind": "ticket",

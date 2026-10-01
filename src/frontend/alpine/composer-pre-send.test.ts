@@ -11,7 +11,7 @@
  *  - validator (mentions, [PASS], initiative prefix, asset refs)
  *  - decodeStoredDraft malformed-input handling
  */
-import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
+import { afterAll, afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { TurnStrategy, } from "../../db/enums-core/users";
 import { createLogger, } from "../../logger";
 import {
@@ -405,6 +405,12 @@ describe("isSendBlocked side-effects", () => {
 
 type PreviewGlobals = { __DOMPurify?: { sanitize(html: string,): string } };
 
+// `__DOMPurify` is installed app-wide by src/frontend/chat-vendor.ts.
+// clearPreviewSanitizer() must keep deleting it (the fallback test below asserts
+// the no-sanitizer path), so snapshot the load-time value and put it back once
+// this file is done, or every later file in a shared process loses it.
+const realDOMPurify = (globalThis as unknown as PreviewGlobals).__DOMPurify;
+
 function setPreviewSanitizer(): void {
   (globalThis as unknown as PreviewGlobals).__DOMPurify = {
     sanitize(html: string,): string {
@@ -416,6 +422,10 @@ function setPreviewSanitizer(): void {
 function clearPreviewSanitizer(): void {
   delete (globalThis as unknown as PreviewGlobals).__DOMPurify;
 }
+
+afterAll(() => {
+  (globalThis as unknown as PreviewGlobals).__DOMPurify = realDOMPurify;
+},);
 
 /** Attach a fake `$refs.messageInput` to a factory-built composer. */
 function withMessageInput(

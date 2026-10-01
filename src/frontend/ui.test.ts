@@ -34,6 +34,15 @@ if (ISOLATED) {
 // their full integration path.
 type FetchOpts = Record<string, unknown>;
 const realFetch = globalThis.fetch;
+// `CSS`/`Alpine` are never installed by src/ (Alpine is a CDN global), but
+// `__localeStrings` and `__THEMES` ARE set app-wide by src/frontend/ui.ts and
+// src/frontend/alpine/theme.ts. beforeEach deletes them to force the unloaded
+// path, so snapshot them here and restore in afterEach - otherwise a later
+// test file in a shared process inherits them missing.
+const realLocaleStrings = (globalThis as { __localeStrings?: unknown }).__localeStrings;
+const realThemes = (globalThis as { __THEMES?: unknown }).__THEMES;
+const realCSS = (globalThis as { CSS?: unknown }).CSS;
+const realAlpine = (globalThis as { Alpine?: unknown }).Alpine;
 
 // ── fake DOM ────────────────────────────────────────────────
 
@@ -247,6 +256,10 @@ beforeEach(async () => {
 afterEach(() => {
   (globalThis as { document: unknown }).document = realDoc;
   (globalThis as { fetch: unknown }).fetch = realFetch;
+  (globalThis as { CSS?: unknown }).CSS = realCSS;
+  (globalThis as { Alpine?: unknown }).Alpine = realAlpine;
+  (globalThis as { __localeStrings?: unknown }).__localeStrings = realLocaleStrings;
+  (globalThis as { __THEMES?: unknown }).__THEMES = realThemes;
 },);
 
 // ── sidebar ────────────────────────────────────────────────
