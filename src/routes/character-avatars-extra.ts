@@ -32,6 +32,7 @@ import {
 } from "../validation/schemas";
 import { type HandlerOpts, requireActorAccess, } from "./actor-auth";
 import { HttpStatus, jsonError, jsonNoContent, jsonResponse, } from "./http-utils";
+import { requireWorldAccess, requireWorldOwner, } from "./worlds/access";
 
 /**
  * Single-avatar read, asset unlink, and world avatar-config routes.
@@ -50,9 +51,13 @@ export function characterAvatarsExtraRoutes(opts: HandlerOpts, prefix = "/api",)
       const userId = await requireActorAccess(ctx, database,);
       if (userId instanceof Response) { return userId; }
 
-      const { avatarId, } = ctx.params;
+      const { actorId, avatarId, } = ctx.params;
       const avatar = await avatarService.getAvatar(avatarId,);
-      if (!avatar) {
+      // requireActorAccess only proves the caller owns the actor in the PATH.
+      // The avatar row carries its own actor, so a caller who owns any actor
+      // could read someone else's avatar by guessing its id (IDOR). Deny
+      // unless the row actually belongs to the actor that was authorized.
+      if (!avatar || avatar.actorId !== actorId) {
         return jsonError({ message: "Avatar not found", status: HttpStatus.NotFound, },);
       }
       return jsonResponse(avatar,);
@@ -106,6 +111,12 @@ export function characterAvatarsExtraRoutes(opts: HandlerOpts, prefix = "/api",)
       if (userId instanceof Response) { return userId; }
 
       const { worldId, actorId, } = ctx.params;
+      // requireActorAccess only proves ownership of the ACTOR. These rows are
+      // scoped to a world too, so gate on the world as well: actor ownership
+      // alone let any caller read another tenant's world-scoped config.
+      const worldErr = await requireWorldAccess(database, worldId, userId, ctx.userRole as string | null,);
+      if (worldErr) { return worldErr; }
+
       const config = await avatarService.getWorldAvatarConfig(actorId, worldId,);
       if (!config) {
         return jsonError({ message: "World avatar config not found", status: HttpStatus.NotFound, },);
@@ -130,6 +141,12 @@ export function characterAvatarsExtraRoutes(opts: HandlerOpts, prefix = "/api",)
 
       const { worldId, actorId, } = ctx.params;
       const { selection_rule_override, } = ctx.body ?? {};
+
+      // Mutation: world ownership, not actor ownership, is the gate. Without
+      // this any caller who owned the actor could write into a world they do
+      // not belong to.
+      const worldErr = await requireWorldOwner(database, worldId, userId, ctx.userRole as string | null,);
+      if (worldErr) { return worldErr; }
 
       // The body schema types this as a free string; an unrecognised rule
       // would persist and silently degrade every later avatar selection

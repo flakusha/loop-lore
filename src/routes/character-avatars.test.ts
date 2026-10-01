@@ -5,6 +5,7 @@ import type { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
+import { AvatarService, } from "../characters/services/avatar-service";
 import { AssetLinkEntity, } from "../db/enums-content";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
@@ -37,6 +38,7 @@ const OTHER_USER = "00000000-0000-4000-8000-000000000012";
 const ASSET = "00000000-0000-4000-8000-000000000101";
 const ASSET2 = "00000000-0000-4000-8000-000000000102";
 const WORLD = "00000000-0000-4000-8000-000000000201";
+const WORLD2 = "00000000-0000-4000-8000-000000000202";
 
 /**
  * @param db
@@ -456,5 +458,128 @@ describe("Prefix parameterisation", () => {
       const keys = routeKeys(characterAvatarsRoutes({ database: db, }, prefix,),);
       expect(new Set(keys,).size,).toBe(keys.length,);
     }
+  });
+});
+
+describe("Authorization — resource-level (IDOR)", () => {
+  let db: Kysely<DB>;
+  let sqlite: Database;
+  let avatarService: AvatarService;
+  let victimAvatarId: string;
+
+  beforeAll(async () => {
+    createLogger({ level: "warn", },);
+    ({ db, sqlite, } = await createTestDb());
+    avatarService = new AvatarService(db,);
+    await insertUsers(db, "owner", "Owner", { id: OWNER_USER as never, },);
+    await insertUsers(db, "other", "Other", { id: OTHER_USER as never, },);
+    await insertActors(db, "Owner Actor", {
+      id: OWNER as never,
+      owner_id: OWNER_USER,
+      user_id: OWNER_USER,
+    },);
+    // Actor owned by OTHER_USER, carrying a private avatar.
+    await insertActors(db, "Other Actor", {
+      id: OTHER as never,
+      owner_id: OTHER_USER,
+      user_id: OTHER_USER,
+    },);
+    await insertAssets(db, OTHER_USER, "v.png", "image/png", "image", 1024, "/v.png", {
+      id: ASSET as never,
+    },);
+    await insertAssets(db, OWNER_USER, "m.png", "image/png", "image", 1024, "/m.png", {
+      id: ASSET2 as never,
+    },);
+    await insertWorlds(db, OWNER_USER, "Owner World", { id: WORLD as never, },);
+    await insertWorlds(db, OTHER_USER, "Other World", { id: WORLD2 as never, },);
+
+    victimAvatarId = await avatarService.createAvatar({
+      actorId: OTHER,
+      assetId: ASSET,
+      label: "private",
+      tags: { emotion: "secret-emotion", },
+      isPrimary: true,
+    },);
+  },);
+
+  afterAll(async () => {
+    await db.destroy();
+    sqlite.close();
+  },);
+
+  test("cannot read another actor's avatar through an actor it owns (IDOR)", async () => {
+    // Caller owns OWNER but asks for an avatar that belongs to OTHER.
+    const app = makeApp(db, OWNER_USER, "user",);
+    const res = await app.handle(
+      new Request(`http://localhost/api/actors/${OWNER}/avatars/${victimAvatarId}`,),
+    );
+    expect(res.status,).toBe(404,);
+    expect(await res.text(),).not.toContain("secret-emotion",);
+  });
+
+  test("can read an avatar belonging to an actor it owns", async () => {
+    const own = await avatarService.createAvatar({
+      actorId: OWNER,
+      assetId: ASSET2,
+      label: "mine",
+      tags: { emotion: "happy", },
+      isPrimary: false,
+    },);
+    const app = makeApp(db, OWNER_USER, "user",);
+    const res = await app.handle(
+      new Request(`http://localhost/api/actors/${OWNER}/avatars/${own}`,),
+    );
+    expect(res.status,).toBe(200,);
+  });
+
+  test("cannot write world config into a world it does not own", async () => {
+    const app = makeApp(db, OWNER_USER, "user",);
+    const res = await app.handle(
+      new Request(`http://localhost/api/worlds/${WORLD2}/avatars/config/${OWNER}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ selection_rule_override: "mood_first", },),
+      },),
+    );
+    expect(res.status,).toBe(403,);
+
+    const rows = await db
+      .selectFrom("world_avatar_config",)
+      .selectAll()
+      .where("world_id", "=", WORLD2,)
+      .execute();
+    expect(rows.length,).toBe(0,);
+  });
+
+  test("cannot read world config from a world it does not own", async () => {
+    const app = makeApp(db, OWNER_USER, "user",);
+    const res = await app.handle(
+      new Request(`http://localhost/api/worlds/${WORLD2}/avatars/config/${OWNER}`,),
+    );
+    expect(res.status,).toBe(404,);
+  });
+
+  test("can read and write world config in a world it owns", async () => {
+    const app = makeApp(db, OWNER_USER, "user",);
+    const put = await app.handle(
+      new Request(`http://localhost/api/worlds/${WORLD}/avatars/config/${OWNER}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ selection_rule_override: "action_first", },),
+      },),
+    );
+    expect(put.status,).toBe(200,);
+    const get = await app.handle(
+      new Request(`http://localhost/api/worlds/${WORLD}/avatars/config/${OWNER}`,),
+    );
+    expect(get.status,).toBe(200,);
+  });
+
+  test("admin role is not denied by the world owner check", async () => {
+    const app = makeApp(db, "admin", "admin",);
+    const res = await app.handle(
+      new Request(`http://localhost/api/worlds/${WORLD2}/avatars/config/${OTHER}`,),
+    );
+    expect(res.status,).not.toBe(403,);
   });
 });
