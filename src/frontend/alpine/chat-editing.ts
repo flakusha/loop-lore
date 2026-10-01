@@ -55,11 +55,12 @@ export const chatEditing: Partial<ChatState> & ThisType<ChatState> = {
       // A non-2xx PATCH rejects with the status attached (not a network fault);
       // msg.content is only assigned on the success path, so a failed save
       // leaves the stored message matching what the server still holds.
+      // feFetch assigns .status on every failure path, but it is undefined
+      // when the request never reached the server — branch on the value.
+      const status = error instanceof Error && "status" in error ? error.status : undefined;
       this.$dispatch?.("show-toast", {
         type: "error",
-        message: (error as Error & { status?: number }).status
-          ? t("toasts.failedSaveEdit",)
-          : t("toasts.networkErrorSavingEdit",),
+        message: status ? t("toasts.failedSaveEdit",) : t("toasts.networkErrorSavingEdit",),
       },);
     } finally {
       this.editingMessageId = null;
@@ -87,11 +88,10 @@ export const chatEditing: Partial<ChatState> & ThisType<ChatState> = {
     } catch (error) {
       // A non-2xx delete rejects with the status attached (not a network
       // fault); the message list is left untouched so the row stays visible.
+      const status = error instanceof Error && "status" in error ? error.status : undefined;
       this.$dispatch?.("show-toast", {
         type: "error",
-        message: (error as Error & { status?: number }).status
-          ? t("toasts.failedRemove",)
-          : t("toasts.networkErrorRemovingMessage",),
+        message: status ? t("toasts.failedRemove",) : t("toasts.networkErrorRemovingMessage",),
       },);
     }
   },
@@ -146,9 +146,8 @@ export const chatEditing: Partial<ChatState> & ThisType<ChatState> = {
       } catch (error) {
         // feFetch rejects every non-2xx with the status attached and drops the
         // response body, so a rejected upload is not a network fault.
-        const key = (error as Error & { status?: number }).status
-          ? "toasts.failedUpload"
-          : "toasts.networkErrorUploading";
+        const status = error instanceof Error && "status" in error ? error.status : undefined;
+        const key = status ? "toasts.failedUpload" : "toasts.networkErrorUploading";
         this.$dispatch?.("show-toast", {
           type: "error",
           message: t(key, { filename: file.name, },),

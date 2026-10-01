@@ -269,6 +269,16 @@ describe("chatEditing API flows", () => {
       await chatEditing.saveEdit!.call(state, "msg-1",);
       expect(toasts,).toEqual([{ type: "error", message: "toasts.networkErrorSavingEdit", },],);
     });
+
+    test("a non-Error rejection still toasts instead of throwing again", async () => {
+      // Reading .status off a null/undefined rejection via an unchecked cast
+      // throws *inside* the catch, turning one handled failure into a second.
+      fetchImpl = () => Promise.reject(null,);
+      const { state, toasts, } = makeStateWithToasts(makeState({ editContent: "text", },),);
+      await chatEditing.saveEdit!.call(state, "msg-1",);
+      expect(toasts,).toEqual([{ type: "error", message: "toasts.networkErrorSavingEdit", },],);
+      expect(state.messages[0]?.content,).toBe("Hello world",);
+    });
   });
 
   describe("removeMessage", () => {
