@@ -90,6 +90,8 @@ export interface CraftingRecipes {
   tags: Generated<string>;
   created_at: string;
   updated_at: string;
+  data_version: Generated<number>;
+  record_hash: Generated<string>;
 }
 
 // ── crafting_station_defs ────────────────────────────────────────────
@@ -200,4 +202,6 @@ export interface RecipeDiscoveries {
   discovery_method: DiscoveryMethod;
   discovered_at: string;
   mastery_level: Generated<number>;
+  created_at: Generated<string>;
+  updated_at: string | null;
 }
