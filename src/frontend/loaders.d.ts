@@ -68,6 +68,8 @@ declare global {
   var deleteCharacter: typeof import("./pages/characters").deleteCharacter;
   var exportCharacter: typeof import("./pages/characters").exportCharacter;
   var saveCharacterEdit: (characterId: string,) => Promise<void>;
+  var initJournalKeyphrases: (characterId: string,) => Promise<void>;
+  var saveJournalKeyphrases: (characterId: string,) => Promise<void>;
   var updateAvatarFocusPreview: () => void;
   var uploadAvatar: (input: HTMLInputElement,) => Promise<void>;
   var clearAvatar: () => void;

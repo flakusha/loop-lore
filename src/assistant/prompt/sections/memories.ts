@@ -25,6 +25,7 @@ import type { MemoryEntry, } from "../../../memory/types";
 import { wrapSection, } from "../../xml-utils";
 import type { SectionBuilder, } from "../types";
 import { buildProvisionContext, chatHasMemoryCopies, fetchActorMemories, } from "./memories-helpers";
+import { applyKeyphraseRecalls, collectKeyphraseHits, } from "./memories-keyphrase";
 
 export const memorySection: SectionBuilder = {
   name: "memories",
@@ -76,6 +77,12 @@ export const memorySection: SectionBuilder = {
     const allAccepted: MemoryEntry[] = [];
     for (const list of provisioned) { for (const m of list) { allAccepted.push(m,); } }
     if (allAccepted.length === 0) { return []; }
+
+    // Keyphrase-triggered journal recall (TASK-KEYPHRASE-RECALL): matched
+    // entries are forced into this prompt below, past the probabilistic
+    // injection filter — never past provision/privacy (they came from
+    // allAccepted). Cooldown lives in the keyphrase-recall module.
+    const keyphraseHits = await collectKeyphraseHits(ctx, allAccepted,);
 
     // ── Phase 1b: Semantic re-ranking ─────────────────────────────────────
     // If Ollama is reachable, use cosine similarity to re-rank non-pinned
@@ -150,9 +157,10 @@ export const memorySection: SectionBuilder = {
       DEFAULT_COMFORT,
     );
 
-    if (injectionResult.selected.length === 0) { return []; }
+    const injected = await applyKeyphraseRecalls(ctx, injectionResult.selected, keyphraseHits,);
+    if (injected.length === 0) { return []; }
 
-    const memoryText = injectionResult.selected
+    const memoryText = injected
       .map((m,) => `- [${m.memoryType}] ${m.content}`)
       .join("\n",);
 
@@ -160,7 +168,7 @@ export const memorySection: SectionBuilder = {
     // the full set of included memory IDs. This centralizes injection
     // tracking at the single point that decides what was actually injected.
     const auditByActor = new Map<string, string[]>();
-    const selectedWithActor = injectionResult.selected.filter((m,) => typeof m.actorId === "string");
+    const selectedWithActor = injected.filter((m,) => typeof m.actorId === "string");
     for (const mem of selectedWithActor) {
       const list = auditByActor.get(mem.actorId as string,) ?? [];
       list.push(mem.id,);
