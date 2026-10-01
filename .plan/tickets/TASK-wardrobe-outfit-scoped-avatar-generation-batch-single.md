@@ -9,6 +9,7 @@
 
 
 **Status:** Done
+**Status Note:** completed 2026-10-01
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-wardrobe-avatar-variants.md
@@ -19,6 +20,6 @@ Generation: outfit-scoped batch/single jobs. Prompt composition slot = identity-
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated

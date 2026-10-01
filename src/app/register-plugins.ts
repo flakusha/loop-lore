@@ -108,7 +108,6 @@ import { worldLoreEntriesRoutes, } from "../routes/world-lore-entries";
 import { worldsRoutes, } from "../routes/worlds";
 import { outfitOverrideRoutes, } from "../routes/wardrobe-overrides";
 import { wardrobeAvatarRoutes, } from "../routes/wardrobe-avatars";
-import { wardrobeBindingRoutes, } from "../routes/wardrobe-bindings";
 import { wardrobeRoutes, } from "../routes/wardrobe";
 
 /** */
@@ -192,7 +191,6 @@ export function registerPlugins(app: Elysia<any>, opts: RegisterPluginsOpts,): v
   app.use(characterEmotionAvatarsRoutes(handleOpts,),);
   app.use(wardrobeRoutes(handleOpts,),);
   app.use(wardrobeAvatarRoutes(handleOpts,),);
-  app.use(wardrobeBindingRoutes(handleOpts,),);
   app.use(outfitOverrideRoutes(handleOpts,),);
   app.use(characterAvailabilityRoutes(handleOpts,),);
   app.use(characterLicensingRoutes(handleOpts,),);

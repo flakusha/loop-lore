@@ -62,7 +62,12 @@ export interface OutfitResolutionContext {
 }
 
 /** Where a resolved outfit came from (for tests + prompt context). */
-export type OutfitResolutionSource = "chat_override" | "location_rule" | "default" | "none";
+export type OutfitResolutionSource =
+  | "chat_override"
+  | "location_rule"
+  | "equipped_loadout"
+  | "default"
+  | "none";
 
 /** Result of outfit resolution for one actor in one context. */
 export interface ResolvedOutfit {

@@ -17,6 +17,7 @@ import type { SectionBuilder, } from "../types";
 const SOURCE_LABELS: Record<string, string> = {
   chat_override: "scene override",
   location_rule: "location rule",
+  equipped_loadout: "equipped loadout",
   default: "character default",
 };
 
