@@ -80,3 +80,38 @@ primary → fallback → raw key, with the rule function selecting the variant.
 Git issue: filed 2026-09-23 — decomposed from TASK-010 (`9dd6fbf`).
 
 **Resolved:** 2026-10-06 registry-driven close: git issue fc3b325 (registry tip: 2c9a5d1bc Konstantin Fedotov Auto-closed: appended .md marker marks TASK-010-PLURALS done)
+
+## Resolution
+
+Plural selection now comes from the runtime's `Intl.PluralRules`; no category
+list is hand-rolled and the locale is the one the translator is already
+configured with.
+
+- `src/i18n/plurals.ts:30` — `pluralRuleFor(locale)` returns a cached
+  `Intl.PluralRules.select` for that locale (42L file).
+- `src/i18n/types.ts:14` — `PluralCategory` = `Intl.LDMLPluralRule`.
+- `src/i18n/types.ts:21` — `PluralTranslation` per-key variant table; `other`
+  required. `src/i18n/types.ts:31` — `TranslationNode` = string | variants.
+- `src/i18n/translator.ts:32` — `isPluralNode` guard. A node is plural data only
+  when ALL of its keys are CLDR categories, so the shipped enumeration
+  `chats.flagReason` (which merely contains an `other` key) stays a subtree.
+- `src/i18n/translator.ts:50` — `flattenTranslations` stores a plural object as
+  a leaf under its own key instead of descending into `.one` / `.other`.
+- `src/i18n/translator.ts:109` — `resolveKey` takes an options object
+  (`translations`/`key`/`count`/`rule`) and returns the selected variant; an
+  absent category falls back to `other`.
+- `src/i18n/translator.ts:151` — `TranslatorOptions.pluralRule` override;
+  defaults to `pluralRuleFor(locale)` at `src/i18n/translator.ts:170`.
+- `src/i18n/translator.ts:170` — `createTranslator` reads a NUMERIC `params.count`
+  and applies the same selection to the primary and fallback catalogs.
+- `src/frontend/i18n.ts:35` — same leaf rule in the frontend flattener, which
+  shares `TranslationMap` (`src/frontend/i18n.ts:101`).
+- `src/i18n/__tests/translator.test.ts` — 14 plural cases (262L, excluded from
+  the size gate): `en` one/other, `ru` one/few/many, `ar` zero/one/two/many,
+  missing-category → `other`, zero, no-count, string-count, interpolate
+  interaction, fallback-catalog lookup, `pluralRule` override.
+
+Contract note: only a NUMERIC `count` drives selection. The shipped
+`{count} chat(s)`-style strings are reached with `String(ids.length)`, so they
+keep rendering exactly as before — verified against the real `src/public/locales`
+catalogs, which are unchanged.
