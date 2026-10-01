@@ -283,6 +283,8 @@ export const SCHEMA = new SchemaManifest()
     tags: col("text", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
+    data_version: col("integer", { notNull: true, hasDefault: true, },),
+    record_hash: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("crafting_station_defs", {
     id: col("text", { primaryKey: true, },),
@@ -502,6 +504,8 @@ export const SCHEMA = new SchemaManifest()
     recorded_at: col("text", { notNull: true, },),
     confirmed_at: col("text",),
     confirmed_by: col("text",),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text",),
   },)
   .table("interaction_logs", {
     id: col("text", { primaryKey: true, hasDefault: true, },),
@@ -788,6 +792,8 @@ export const SCHEMA = new SchemaManifest()
     discovery_method: col("text", { notNull: true, },),
     discovered_at: col("text", { notNull: true, },),
     mastery_level: col("integer", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text",),
   },)
   .table("request_results", {
     id: col("text", { primaryKey: true, },),
@@ -855,6 +861,8 @@ export const SCHEMA = new SchemaManifest()
     visibility: col("text", { notNull: true, hasDefault: true, },),
     expires_at: col("text",),
     author_type: col("text", { notNull: true, hasDefault: true, },),
+    data_version: col("integer", { notNull: true, hasDefault: true, },),
+    record_hash: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("status_effect", {
     id: col("text", { primaryKey: true, },),
@@ -868,6 +876,8 @@ export const SCHEMA = new SchemaManifest()
     started_at: col("text", { notNull: true, },),
     expires_at: col("text",),
     meta: col("text",),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text",),
   },)
   .table("synthetic_data", {
     id: col("text", { primaryKey: true, },),
@@ -910,6 +920,7 @@ export const SCHEMA = new SchemaManifest()
     items_requested: col("text", { notNull: true, hasDefault: true, },),
     trade_type: col("text", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, },),
+    updated_at: col("text",),
   },)
   .table("travel_route_stops", {
     id: col("text", { primaryKey: true, },),
@@ -920,6 +931,8 @@ export const SCHEMA = new SchemaManifest()
     coord_x: col("real",),
     coord_y: col("real",),
     coord_z: col("real",),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text",),
   },)
   .table("travel_routes", {
     id: col("text", { primaryKey: true, },),
@@ -965,6 +978,8 @@ export const SCHEMA = new SchemaManifest()
     scope: col("text", { notNull: true, hasDefault: true, },),
     expires_at: col("text",),
     created_at: col("text", { notNull: true, },),
+    data_version: col("integer", { notNull: true, hasDefault: true, },),
+    record_hash: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("workflow_sessions", {
     chat_id: col("text", { primaryKey: true, },),
@@ -1104,6 +1119,8 @@ export const SCHEMA = new SchemaManifest()
     key_groups: col("text",),
     scan_depth: col("integer",),
     activation_chance: col("real",),
+    data_version: col("integer", { notNull: true, hasDefault: true, },),
+    record_hash: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("actor_memories", {
     id: col("text", { primaryKey: true, },),
@@ -1667,6 +1684,8 @@ export const SCHEMA = new SchemaManifest()
     metadata: col("text", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
+    data_version: col("integer", { notNull: true, hasDefault: true, },),
+    record_hash: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("blog_rag_sources", {
     id: col("text", { primaryKey: true, },),
@@ -1682,6 +1701,8 @@ export const SCHEMA = new SchemaManifest()
     id: col("text", { primaryKey: true, },),
     post_id: col("text", { notNull: true, },),
     tag: col("text", { notNull: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text",),
   },)
   // ── Core: Chats & Messages ──────────────────────────────────────────────
   .table("chat_background_assignments", {
@@ -1761,6 +1782,8 @@ export const SCHEMA = new SchemaManifest()
     message_id: col("text", { notNull: true, },),
     pinned_by: col("text", { notNull: true, },),
     pinned_at: col("text", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text",),
   },)
   .table("chat_random_events", {
     id: col("text", { primaryKey: true, },),
@@ -1772,6 +1795,8 @@ export const SCHEMA = new SchemaManifest()
     fired_at: col("integer", { notNull: true, },),
     expires_at: col("integer", { notNull: true, },),
     fired_count: col("integer", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text",),
   },)
   .table("chat_sections", {
     id: col("text", { primaryKey: true, },),
@@ -1939,6 +1964,7 @@ export const SCHEMA = new SchemaManifest()
     reason: col("text",),
     created_at: col("text", { notNull: true, },),
     revoked_at: col("text",),
+    updated_at: col("text",),
   },)
   .table("nsfw_encounters", {
     id: col("text", { primaryKey: true, },),
@@ -1983,6 +2009,8 @@ export const SCHEMA = new SchemaManifest()
     weight: col("real", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
+    data_version: col("integer", { notNull: true, hasDefault: true, },),
+    record_hash: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("location_nsfw_config", {
     id: col("text", { primaryKey: true, },),
@@ -2028,6 +2056,8 @@ export const SCHEMA = new SchemaManifest()
     coord_z: col("real",),
     current_route_id: col("text",),
     travel_progress: col("real", { notNull: true, hasDefault: true, },),
+    data_version: col("integer", { notNull: true, hasDefault: true, },),
+    record_hash: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("quest_progress", {
     id: col("text", { primaryKey: true, },),
@@ -2069,6 +2099,8 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
     completed_at: col("text",),
+    data_version: col("integer", { notNull: true, hasDefault: true, },),
+    record_hash: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("world_avatar_config", {
     id: col("text", { primaryKey: true, },),
@@ -2151,6 +2183,8 @@ export const SCHEMA = new SchemaManifest()
     source_count: col("integer", { notNull: true, hasDefault: true, },),
     distortion_level: col("real", { notNull: true, hasDefault: true, },),
     disputed: col("integer", { notNull: true, hasDefault: true, },),
+    data_version: col("integer", { notNull: true, hasDefault: true, },),
+    record_hash: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("world_members", {
     world_id: col("text", { notNull: true, },),

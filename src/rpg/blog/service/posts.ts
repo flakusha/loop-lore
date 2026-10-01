@@ -2,6 +2,22 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { Kysely, } from "kysely";
+import { registerContentVersion, } from "../../../db/content-version";
+
+// Base `data_version` 0 projection for `blog_posts` (columns added by
+// migration 031). Declared beside the module that creates and edits posts.
+registerContentVersion("blog_posts", 0, [
+  "author_id",
+  "title",
+  "body",
+  "visibility",
+  "author_type",
+  "status",
+  "category",
+  "world_id",
+  "character_id",
+  "metadata",
+],);
 import { notifyBlogPost, } from "../../../notifications/service";
 import { jsonStringifyOr, uid, } from "../../../utils.js";
 import { addTags, clearTags, getTags, } from "./tags";

@@ -66,6 +66,8 @@ export interface Locations {
   coord_z: number | null;
   current_route_id: string | null;
   travel_progress: Generated<number>;
+  data_version: Generated<number>;
+  record_hash: Generated<string>;
 }
 
 // ── world_items ────────────────────────────────────────────
@@ -118,6 +120,8 @@ export interface WorldLoreEntries {
   source_count: Generated<number>;
   distortion_level: Generated<number>;
   disputed: Generated<number>;
+  data_version: Generated<number>;
+  record_hash: Generated<string>;
 }
 
 // ── world_states ────────────────────────────────────────────
@@ -189,6 +193,8 @@ export interface ActorLoreEntries {
   key_groups: string | null;
   scan_depth: number | null;
   activation_chance: number | null;
+  data_version: Generated<number>;
+  record_hash: Generated<string>;
 }
 
 // ── story_turns ────────────────────────────────────────────
@@ -228,6 +234,8 @@ export interface Items {
   weight: Generated<number>;
   created_at: Generated<string>;
   updated_at: Generated<string>;
+  data_version: Generated<number>;
+  record_hash: Generated<string>;
 }
 
 // ── npc_states ────────────────────────────────────────────
@@ -282,6 +290,8 @@ export interface Quests {
   created_at: Generated<string>;
   updated_at: Generated<string>;
   completed_at: string | null;
+  data_version: Generated<number>;
+  record_hash: Generated<string>;
 }
 
 // ── actor_memories ────────────────────────────────────────────

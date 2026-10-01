@@ -17,11 +17,34 @@
 import type { Kysely, } from "kysely";
 import { createChat, getChatSetupTemplate, } from "../../chat/service";
 import { DifficultyReroll, DifficultyState, } from "../../db/enums-story";
+import { registerContentVersion, } from "../../db/content-version";
 import type { DB, } from "../../db/schema";
 import { jsonStringifyOr, safeJsonParse, uid, } from "../../utils";
 import type { EntityKind, } from "../prompt/templates/entity-generation";
 import type { GeneratedEntity, } from "../quality/entity-creation";
 import { insertEntityLore, } from "./create-entity-lore";
+
+
+// Base `data_version` 0 projections for the two entity tables this module
+// inserts (columns added by migration 031). Content-defining columns only.
+registerContentVersion("items", 0, [
+  "world_id",
+  "name",
+  "description",
+  "category",
+  "rarity",
+  "properties",
+  "value",
+  "weight",
+],);
+registerContentVersion("locations", 0, [
+  "world_id",
+  "name",
+  "description",
+  "connections",
+  "kind",
+  "parent_location_id",
+],);
 
 /** A confirmed entity draft ready for persistence. */
 export interface EntityDraft {

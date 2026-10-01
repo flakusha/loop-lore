@@ -650,6 +650,8 @@ export async function insertLocations(
     coord_z?: number | null;
     current_route_id?: string | null;
     travel_progress?: number;
+    data_version?: number;
+    record_hash?: string;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
@@ -781,6 +783,8 @@ export async function insertWorldLoreEntries(
     source_count?: number;
     distortion_level?: number;
     disputed?: number;
+    data_version?: number;
+    record_hash?: string;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
@@ -1106,6 +1110,8 @@ export async function insertActorLoreEntries(
     key_groups?: string | null;
     scan_depth?: number | null;
     activation_chance?: number | null;
+    data_version?: number;
+    record_hash?: string;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
@@ -1264,6 +1270,8 @@ export async function insertGrowthLog(
     source_event_id?: string | null;
     confirmed_at?: string | null;
     confirmed_by?: string | null;
+    created_at?: string;
+    updated_at?: string | null;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
@@ -2144,7 +2152,7 @@ export async function insertChatPins(
   chat_id: string,
   message_id: string,
   pinned_by: string,
-  opts?: { id?: string; pinned_at?: string },
+  opts?: { id?: string; pinned_at?: string; created_at?: string; updated_at?: string | null },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
   const id = providedId ?? crypto.randomUUID();
@@ -2275,7 +2283,7 @@ export async function insertChatRandomEvents(
   token_count: number,
   fired_at: number,
   expires_at: number,
-  opts?: { id?: string; fired_count?: number },
+  opts?: { id?: string; fired_count?: number; created_at?: string; updated_at?: string | null },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
   const id = providedId ?? crypto.randomUUID();
@@ -2621,6 +2629,8 @@ export async function insertItems(
     weight?: number;
     created_at?: string;
     updated_at?: string;
+    data_version?: number;
+    record_hash?: string;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
@@ -2715,6 +2725,8 @@ export async function insertQuests(
     created_at?: string;
     updated_at?: string;
     completed_at?: string | null;
+    data_version?: number;
+    record_hash?: string;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
@@ -2744,6 +2756,8 @@ export async function insertShadowNotes(
     visibility?: ShadowNoteVisibility;
     expires_at?: string | null;
     author_type?: ShadowNoteAuthorType;
+    data_version?: number;
+    record_hash?: string;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
@@ -2766,7 +2780,14 @@ export async function insertWhitenotes(
   type: WhiteneoteType,
   content: string,
   created_at: string,
-  opts?: { id?: string; priority?: number; scope?: WhiteneoteScope; expires_at?: string | null },
+  opts?: {
+    id?: string;
+    priority?: number;
+    scope?: WhiteneoteScope;
+    expires_at?: string | null;
+    data_version?: number;
+    record_hash?: string;
+  },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
   const id = providedId ?? crypto.randomUUID();
@@ -2901,6 +2922,8 @@ export async function insertCraftingRecipes(
     station_type_required?: CraftingStationType | null;
     discovered_by_default?: number;
     tags?: string;
+    data_version?: number;
+    record_hash?: string;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
@@ -3119,7 +3142,7 @@ export async function insertRecipeDiscoveries(
   recipe_id: string,
   discovery_method: DiscoveryMethod,
   discovered_at: string,
-  opts?: { id?: string; mastery_level?: number },
+  opts?: { id?: string; mastery_level?: number; created_at?: string; updated_at?: string | null },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
   const id = providedId ?? crypto.randomUUID();
@@ -3361,6 +3384,7 @@ export async function insertTradeHistory(
     items_offered?: string;
     items_requested?: string;
     trade_type?: string;
+    updated_at?: string | null;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
@@ -3460,6 +3484,8 @@ export async function insertBlogPosts(
     metadata?: string;
     created_at?: string;
     updated_at?: string;
+    data_version?: number;
+    record_hash?: string;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
@@ -3497,7 +3523,12 @@ export async function insertBlogRagSources(
 }
 
 /** Insert a blog_tags row. */
-export async function insertBlogTags(db: Db, post_id: string, tag: string, opts?: { id?: string },): Promise<string> {
+export async function insertBlogTags(
+  db: Db,
+  post_id: string,
+  tag: string,
+  opts?: { id?: string; created_at?: string; updated_at?: string | null },
+): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
   const id = providedId ?? crypto.randomUUID();
   await db.insertInto("blog_tags",).values({
@@ -3843,7 +3874,13 @@ export async function insertNsfwConsentState(
   chat_id: string,
   action: string,
   created_at: string,
-  opts?: { id?: string; scope?: string; reason?: string | null; revoked_at?: string | null },
+  opts?: {
+    id?: string;
+    scope?: string;
+    reason?: string | null;
+    revoked_at?: string | null;
+    updated_at?: string | null;
+  },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
   const id = providedId ?? crypto.randomUUID();
@@ -4283,6 +4320,8 @@ export async function insertTravelRouteStops(
     coord_x?: number | null;
     coord_y?: number | null;
     coord_z?: number | null;
+    created_at?: string;
+    updated_at?: string | null;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
@@ -4386,6 +4425,8 @@ export async function insertStatusEffect(
     source_id?: string | null;
     expires_at?: string | null;
     meta?: string | null;
+    created_at?: string;
+    updated_at?: string | null;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };

@@ -13,6 +13,7 @@
  */
 
 import type { Kysely, } from "kysely";
+import { registerContentVersion, } from "../../db/content-version";
 import { LoreEntryStatus, LorePosition, } from "../../db/enums-story";
 import type { DB, } from "../../db/schema";
 import { normalizeAudienceScope, } from "../../story/events/promote-lore";
@@ -20,6 +21,45 @@ import { safeJsonStringify, } from "../../utils";
 import type { LoreScope, } from "../lore/audience";
 import type { EntityKind, } from "../prompt/templates/entity-generation";
 import type { GeneratedEntityLoreEntry, } from "../quality/entity-creation";
+
+
+// Base `data_version` 0 projections for both lore tables (columns added by
+// migration 031). Declared beside the writer so `computeRowHash` /
+// `runBatchRefresh` can hash generated lore rows. Projection is the
+// content-defining set this module actually populates — not every column.
+registerContentVersion("world_lore_entries", 0, [
+  "name",
+  "content",
+  "keys",
+  "secondary_keys",
+  "comment",
+  "enabled",
+  "constant",
+  "selective",
+  "case_sensitive",
+  "priority",
+  "insertion_order",
+  "cooldown_seconds",
+  "audience_scope",
+  "world_id",
+],);
+registerContentVersion("actor_lore_entries", 0, [
+  "name",
+  "content",
+  "keys",
+  "secondary_keys",
+  "comment",
+  "enabled",
+  "constant",
+  "selective",
+  "case_sensitive",
+  "priority",
+  "insertion_order",
+  "cooldown_seconds",
+  "audience_scope",
+  "actor_id",
+  "world_id",
+],);
 
 /**
  * Map an EntityKind to its target lore table.
