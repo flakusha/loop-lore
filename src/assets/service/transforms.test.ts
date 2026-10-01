@@ -32,7 +32,7 @@ import {
 const uploadDir = mkdtempSync(join(tmpdir(), "ll-transforms-",),);
 
 afterAll(() => {
-  rmSync(uploadDir, { recursive: true, force: true },);
+  rmSync(uploadDir, { recursive: true, force: true, },);
 },);
 
 async function ownerIdFor(db: Kysely<DB>, username: string,): Promise<string> {

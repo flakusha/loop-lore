@@ -18,7 +18,7 @@ describe("storeFile path traversal", () => {
   // One dir per test, so one rm per test: without this the suite leaked a
   // fresh OS temp dir on every run, forever.
   afterEach(() => {
-    rmSync(uploadDir, { recursive: true, force: true },);
+    rmSync(uploadDir, { recursive: true, force: true, },);
   },);
 
   test("benign filename keeps its extension", () => {
