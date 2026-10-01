@@ -108,13 +108,37 @@ directly, with no npm lifecycle var — so every guarded suite reported
 `ISOLATED` now keys on `BUN_TEST_WORKER_ID`, which Bun sets inside every
 `--parallel` worker. Measured on the CI invocation shape:
 
+Both rows below were measured on the SAME base commit (`51da6e19e`), in one
+worktree, flipping only the `ISOLATED` expression. An earlier revision of this
+ticket quoted a before/after pair taken on two different dev bases (other
+sessions landed commits between the runs), which is not a valid delta; the
+numbers are replaced.
+
 | invocation | before | after |
 | --- | --- | --- |
-| `bun test --parallel=4 src/ --isolate` (ci.yml) | 13100 pass / **213 skip** / 0 fail | 13211 pass / **89 skip** / 0 fail |
-| `bun run test:unit` (canonical gate) | 13295 pass / 2 skip / 0 fail | unchanged |
+| `bun test --parallel=4 src/ --isolate` (ci.yml) | 13105 pass / **213 skip** / 0 fail | 13216 pass / **89 skip** / 0 fail |
+| `bun run test:unit` (canonical gate) | 13295 pass / 2 skip / 0 fail | unchanged, 0 fail |
 | `bun test src/` (bare) | 57 fail | 57 fail (unchanged, correctly non-isolated) |
 
-111 previously-skipped tests now run in CI, with no new failures.
+Skips fall by 124 and passes rise by 111, with zero failures on both sides and
+the same 1209 files. The `after` variant is deterministic: two consecutive runs
+both reported 13216 pass / 89 skip / 0 fail / 13305 tests. A junit per-file diff
+attributes the change to 45 files, every one of them in the guarded
+`describeOrSkip` class, each finishing at zero skips and zero failures.
+
+One loose end, recorded rather than papered over: the collected test TOTAL moves
+13318 -> 13305, i.e. -13, and that does not balance against the -124 skips. The
+junit diff localises the -13 to exactly six files that go from wholly-skipped to
+wholly-run (`routes/character-emotion-avatars` -4, `generation/prompt-route` -2,
+`emotion-avatar-service/index` -2, `emotion-avatar-service/run-batch-generation`
+-1, `routes/telemetry-disabled` -2, `scripts/migrate-character-legacy` -2). Each
+of those files' skipped-suite junit record reports two more tests than the file
+actually declares — `telemetry-disabled.test.ts` declares exactly 6 `test()` calls
+and junit reports `tests=8` while skipped versus `tests=6` while running — so the
+gap looks like skipped-container accounting rather than tests that stopped being
+collected. That reading is consistent with a spot check on the guarded
+directories, which conserves exactly (78 tests before, 78 after, 28 skips becoming
+28 passes), but it is not independently proven and no test is reported missing.
 
 Three files under `src/native/` (`blake3-gaps`, `loader-dlopen`, `zstd-gaps`)
 reimplemented the same detection locally against a hardcoded allow-list of
