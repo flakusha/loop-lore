@@ -131,6 +131,10 @@
     // (bun run test:coverage && bun run scripts/check/coverage.mjs --floor=80),
     // not import-reachable — same class as check-db-schemas.ts above.
     "scripts/check/coverage.mjs",
+    // Weave-damage scan gate: run via check-parallel.mjs shell string
+    // (WEAVE_BASE=<ref> bun run check --gates "weave - damage scan"),
+    // not import-reachable — same class as coverage.mjs above.
+    "scripts/check/weave-damage.mjs",
     // Frontend audit scripts: standalone CLI reporters (bun run scripts/...),
     // not import-reachable. Promoted from .tmp/ investigation scripts.
     "scripts/check-frontend-banned-patterns.ts",
