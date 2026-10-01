@@ -26,15 +26,13 @@ import {
   offloadExists,
   pruneOrphanSpills,
   readOffloadedBody,
+  resetOffloadDir,
   setOffloadDir,
   spill,
   SPILL_ROOT,
   spillFileStem,
   startOffloadDaemon,
 } from "./offload";
-
-/** Restore point for the process-wide spill namespace after each test. */
-const DEFAULT_DIR = path.join(SPILL_ROOT, String(process.pid,),);
 
 /**
  * Resource contract (parallel-safe): every test owns a unique `mkdtemp` spill
@@ -48,7 +46,7 @@ beforeEach(() => {
   setOffloadDir(spillDirForTest,);
 },);
 afterEach(() => {
-  setOffloadDir(DEFAULT_DIR,);
+  resetOffloadDir();
   rmSync(spillDirForTest, { recursive: true, force: true, },);
 },);
 
@@ -746,6 +744,30 @@ describe("pruneOrphanSpills — retention cap for unreferenced spill files", () 
       expect(existsSync(live,),).toBe(true,);
       expect(existsSync(nsDir,),).toBe(true,);
     } finally {
+      await ctx.db.destroy();
+      ctx.sqlite.close();
+    }
+  });
+
+  test("a default sweep stays inside the directory this test owns", async () => {
+    // The sentinel lives directly under the shared SPILL_ROOT, stale and
+    // unreferenced — exactly what the sweep would delete if it escaped the
+    // test's own area. A concurrent arm's spill dir must survive this call.
+    mkdirSync(SPILL_ROOT, { recursive: true, },);
+    const sentinel = path.join(SPILL_ROOT, `sentinel-${crypto.randomUUID()}.json.gz`,);
+    writeFileSync(sentinel, "x",);
+    const oldTs = new Date(Date.now() - 4 * TTL_MS,);
+    const { utimesSync, } = await import("node:fs");
+    utimesSync(sentinel, oldTs, oldTs,);
+    const ctx = await createTestDb();
+    try {
+      // No `dir` — this is the production call shape from runOffloadPass.
+      const pruned = await pruneOrphanSpills(ctx.db, { ttlMs: TTL_MS, },);
+
+      expect(pruned,).toBe(0,);
+      expect(existsSync(sentinel,),).toBe(true,);
+    } finally {
+      rmSync(sentinel, { force: true, },);
       await ctx.db.destroy();
       ctx.sqlite.close();
     }

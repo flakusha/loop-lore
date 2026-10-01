@@ -1,11 +1,29 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { describe, expect, test, } from "bun:test";
-import { rmSync, } from "node:fs";
+import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
+import { mkdtempSync, rmSync, } from "node:fs";
+import { tmpdir, } from "node:os";
+import path from "node:path";
 import { apply, type Write, } from "./apply";
-import { readOffloadedBody, } from "./offload";
+import { readOffloadedBody, resetOffloadDir, setOffloadDir, } from "./offload";
 import type { AsyncStoreConfig, } from "./store";
+
+/**
+ * Resource contract (parallel-safe): every test owns a unique `mkdtemp` spill
+ * directory installed via `setOffloadDir`, so the oversized-body test below
+ * writes nothing into the shared process default or another suite's files;
+ * teardown runs in `afterEach` so a failing test never leaks a directory.
+ */
+let spillDirForTest = "";
+beforeEach(() => {
+  spillDirForTest = mkdtempSync(path.join(tmpdir(), "loop-lore-apply-",),);
+  setOffloadDir(spillDirForTest,);
+},);
+afterEach(() => {
+  resetOffloadDir();
+  rmSync(spillDirForTest, { recursive: true, force: true, },);
+},);
 
 /**
  * Minimal mock that satisfies the Kysely surface `apply()` actually uses:

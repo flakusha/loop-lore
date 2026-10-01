@@ -23,6 +23,7 @@ import {
   offloadDiskBytes,
   offloadExists,
   readOffloadedBody,
+  resetOffloadDir,
   setOffloadDir,
   SPILL_ROOT,
   spillFileStem,
@@ -37,7 +38,7 @@ describe("offload helpers", () => {
     setOffloadDir(dir,);
   },);
   afterEach(() => {
-    setOffloadDir(DEFAULT_DIR,);
+    resetOffloadDir();
     rmSync(dir, { recursive: true, force: true, },);
   },);
 

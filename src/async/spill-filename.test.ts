@@ -22,9 +22,9 @@ import {
   offloadDir,
   offloadExists,
   readOffloadedBody,
+  resetOffloadDir,
   setOffloadDir,
   spill,
-  SPILL_ROOT,
   spillFileStem,
 } from "./spill";
 
@@ -35,7 +35,7 @@ describe("spill filename safety", () => {
     setOffloadDir(dir,);
   },);
   afterEach(() => {
-    setOffloadDir(path.join(SPILL_ROOT, String(process.pid,),),);
+    resetOffloadDir();
     rmSync(dir, { recursive: true, force: true, },);
   },);
   test("round-trips a body under a real idempotency cache key id", async () => {

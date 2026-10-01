@@ -6,7 +6,7 @@ import { readdirSync, rmdirSync, statSync, unlinkSync, } from "node:fs";
 import path from "node:path";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
-import { SPILL_ROOT, } from "./spill";
+import { spillRootDir, } from "./spill";
 
 /**
  * Every `*.json.gz` spill file under `dir`, descending one level into
@@ -90,7 +90,10 @@ export async function pruneOrphanSpills(
   // Sweep the ROOT, not the current process namespace: spills are written to
   // `<SPILL_ROOT>/<pid>/`, so scanning one flat namespace would never collect
   // what a dead process left behind (BUG-test-async-store-offload-dir-fixed-path-race).
-  const dir = opts.dir ?? SPILL_ROOT;
+  // `spillRootDir()` is `SPILL_ROOT` in production; a test that called
+  // `setOffloadDir` gets its own root instead, so a test's sweep can never
+  // delete a concurrent process's spill files.
+  const dir = opts.dir ?? spillRootDir();
   const cutoffMs = (opts.now ?? Date.now()) - 2 * opts.ttlMs;
   const found = collectSpillFiles(dir,);
   const candidates: string[] = [];

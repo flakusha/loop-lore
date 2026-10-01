@@ -12,9 +12,11 @@ export {
   offloadDiskBytes,
   offloadExists,
   readOffloadedBody,
+  resetOffloadDir,
   runOffloadPass,
   setOffloadDir,
   SPILL_ROOT,
+  spillRootDir,
   startOffloadDaemon,
 } from "./offload";
 export type {
