@@ -1717,6 +1717,19 @@
     "title": "chat reunite secondary ownership check missing",
     "type": "BUG"
   },
+  "BUG-CHAT-SECTIONS-LOADSECTIONS-LEAVES-SECTIONSLOADING-TRUE-FOREV": {
+    "hash": "56f8dfc",
+    "git_issue": "56f8dfc",
+    "extid": "BUG-CHAT-SECTIONS-LOADSECTIONS-LEAVES-SECTIONSLOADING-TRUE-FOREV",
+    "type": "BUG",
+    "title": "chat-sections loadSections leaves _sectionsLoading=true forever on HTTP failure",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-chat-sections-loadsections-leaves-sectionsloading-true-forev.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-CHAT-SEEN-CURRENTACTORID-NEVER-ASSIGNED-MARKSEEN-SENDS-NULL": {
     "epic": "",
     "extid": "BUG-CHAT-SEEN-CURRENTACTORID-NEVER-ASSIGNED-MARKSEEN-SENDS-NULL",
@@ -2897,6 +2910,19 @@
     "tags": [],
     "title": "frontend: music-embed fallback esc() allows stored XSS via attribute breakout and javascript: URLs",
     "type": "BUG"
+  },
+  "BUG-FRONTEND-OK-TOAST-BRANCHES-UNREACHABLE-FEFETCH-THROWS-ON-NON": {
+    "hash": "5706b3a",
+    "git_issue": "5706b3a",
+    "extid": "BUG-FRONTEND-OK-TOAST-BRANCHES-UNREACHABLE-FEFETCH-THROWS-ON-NON",
+    "type": "BUG",
+    "title": "frontend !ok toast branches unreachable (feFetch throws on non-2xx)",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-frontend-ok-toast-branches-unreachable-fefetch-throws-on-non.md",
+    "status": "⬜ Not Started"
   },
   "BUG-FRONTEND-REGENERATEVARIANT-DOES-NOT-PASS-STYLE-TO-API": {
     "epic": "",

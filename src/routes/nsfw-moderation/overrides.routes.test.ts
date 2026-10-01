@@ -149,4 +149,127 @@ describe("moderation override routes — moderator gating", () => {
     const res = await app.handle(overrideRequest("/api/nsfw/moderation/world/w-1", worldBody,),);
     expect(res.status,).toBe(200,);
   });
+
+  // ── PUT chat override — value variants ─────────────────────
+
+  test("PUT chat override with null clears override", async () => {
+    const app = createApp(db, uid(), "admin",);
+    const res = await app.handle(overrideRequest("/api/nsfw/moderation/chat/c-1", { override: null, },),);
+    expect(res.status,).toBe(200,);
+  });
+
+  test("PUT chat override with disabled", async () => {
+    const app = createApp(db, uid(), "admin",);
+    const res = await app.handle(overrideRequest("/api/nsfw/moderation/chat/c-1", { override: "disabled", },),);
+    expect(res.status,).toBe(200,);
+  });
+
+  test("PUT chat override on non-existent chat → 404", async () => {
+    const app = createApp(db, uid(), "admin",);
+    const res = await app.handle(overrideRequest("/api/nsfw/moderation/chat/no-such-chat", chatBody,),);
+    expect(res.status,).toBe(404,);
+  });
+
+  test("PUT chat override with missing override field → 422", async () => {
+    const app = createApp(db, uid(), "admin",);
+    const res = await app.handle(overrideRequest("/api/nsfw/moderation/chat/c-1", {},),);
+    expect(res.status,).toBe(422,);
+  });
+
+  test("PUT chat override with invalid override value → 422", async () => {
+    const app = createApp(db, uid(), "admin",);
+    const res = await app.handle(overrideRequest("/api/nsfw/moderation/chat/c-1", { override: "maybe", },),);
+    expect(res.status,).toBe(422,);
+  });
+
+  // ── PUT world override — value variants ────────────────────
+
+  test("PUT world override with null clears override", async () => {
+    const app = createApp(db, uid(), "admin",);
+    const res = await app.handle(overrideRequest("/api/nsfw/moderation/world/w-1", { override: null, },),);
+    expect(res.status,).toBe(200,);
+  });
+
+  test("PUT world override with enabled", async () => {
+    const app = createApp(db, uid(), "admin",);
+    const res = await app.handle(overrideRequest("/api/nsfw/moderation/world/w-1", { override: "enabled", },),);
+    expect(res.status,).toBe(200,);
+  });
+
+  test("PUT world override with missing override field → 422", async () => {
+    const app = createApp(db, uid(), "admin",);
+    const res = await app.handle(overrideRequest("/api/nsfw/moderation/world/w-1", {},),);
+    expect(res.status,).toBe(422,);
+  });
+
+  // ── GET /api/nsfw/moderation/effective/:chatId ──────────────
+
+  test("GET effective requires auth", async () => {
+    const app = createApp(db, null, "user",);
+    const res = await app.handle(
+      new Request("http://localhost/api/nsfw/moderation/effective/c-1",),
+    );
+    expect(res.status,).toBe(401,);
+  });
+
+  test("GET effective for non-participant → 404", async () => {
+    const app = createApp(db, uid(), "user",);
+    const res = await app.handle(
+      new Request("http://localhost/api/nsfw/moderation/effective/c-1",),
+    );
+    expect(res.status,).toBe(404,);
+  });
+
+  test("GET effective for participant, no override → user_preference", async () => {
+    const participantId = "effective-participant-1";
+    await insertUsers(db, participantId, "Effective Participant", { id: participantId as never, },);
+    await insertActors(db, participantId, { id: participantId as never, user_id: participantId as never, },);
+    await insertChatParticipants(db, "c-1", participantId,);
+    // Clear any override set by earlier tests.
+    const adminApp = createApp(db, uid(), "admin",);
+    await adminApp.handle(overrideRequest("/api/nsfw/moderation/chat/c-1", { override: null, },),);
+    const app = createApp(db, participantId, "user",);
+    const res = await app.handle(
+      new Request("http://localhost/api/nsfw/moderation/effective/c-1",),
+    );
+    expect(res.status,).toBe(200,);
+    const body = await res.json() as { data: { enabled: boolean; source: string } };
+    expect(body.data.source,).toBe("user_preference",);
+    expect(body.data.enabled,).toBe(true,);
+  });
+
+  test("GET effective reflects chat override enabled", async () => {
+    const participantId = "effective-participant-2";
+    await insertUsers(db, participantId, "Effective Participant 2", { id: participantId as never, },);
+    await insertActors(db, participantId, { id: participantId as never, user_id: participantId as never, },);
+    await insertChatParticipants(db, "c-1", participantId,);
+    // Set chat override to enabled via admin.
+    const adminApp = createApp(db, uid(), "admin",);
+    await adminApp.handle(overrideRequest("/api/nsfw/moderation/chat/c-1", { override: "enabled", },),);
+    const app = createApp(db, participantId, "user",);
+    const res = await app.handle(
+      new Request("http://localhost/api/nsfw/moderation/effective/c-1",),
+    );
+    expect(res.status,).toBe(200,);
+    const body = await res.json() as { data: { enabled: boolean; source: string } };
+    expect(body.data.source,).toBe("chat_override",);
+    expect(body.data.enabled,).toBe(true,);
+  });
+
+  test("GET effective reflects chat override disabled", async () => {
+    const participantId = "effective-participant-3";
+    await insertUsers(db, participantId, "Effective Participant 3", { id: participantId as never, },);
+    await insertActors(db, participantId, { id: participantId as never, user_id: participantId as never, },);
+    await insertChatParticipants(db, "c-1", participantId,);
+    const adminApp = createApp(db, uid(), "admin",);
+    await adminApp.handle(overrideRequest("/api/nsfw/moderation/chat/c-1", { override: "disabled", },),);
+    const app = createApp(db, participantId, "user",);
+    const res = await app.handle(
+      new Request("http://localhost/api/nsfw/moderation/effective/c-1",),
+    );
+    expect(res.status,).toBe(200,);
+    const body = await res.json() as { data: { enabled: boolean; source: string } };
+    expect(body.data.source,).toBe("chat_override",);
+    expect(body.data.enabled,).toBe(false,);
+  });
 });

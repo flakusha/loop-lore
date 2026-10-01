@@ -2,19 +2,25 @@
  * Tests for chat section dividers — story-spanning navigation.
  */
 
-import { describe, expect, mock, test, } from "bun:test";
+import { beforeEach, expect, mock, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { chatSections, } from "./chat-sections";
 import { chatSectionsNav, } from "./chat-sections-nav";
 import { computeGroupedMessages, } from "./chat-utils/grouped";
+import { formatDisplayDate, } from "./chat-utils/time";
 
 // ── Mock apiFetch (bulk-assign + narrative calls) ──────────────────────
 const fetchCalls: { url: string; opts: RequestInit }[] = [];
-mock.module("./htmx", () => ({
-  apiFetch: async (url: string, opts?: RequestInit,) => {
-    fetchCalls.push({ url, opts: opts ?? {}, },);
-    return new Response("{}", { status: 200, },);
-  },
-}),);
+let fetchHandler: (url: string, opts?: RequestInit,) => Promise<Response> = async () =>
+  new Response("{}", { status: 200, },);
+if (ISOLATED) {
+  mock.module("./htmx", () => ({
+    apiFetch: async (url: string, opts?: RequestInit,) => {
+      fetchCalls.push({ url, opts: opts ?? {}, },);
+      return fetchHandler(url, opts,);
+    },
+  }),);
+}
 const emptyNarrative = " ".repeat(3,);
 
 const section = (id: string, label: string,) => ({
@@ -39,7 +45,7 @@ function msg(id: string, sectionId: string | null,) {
   };
 }
 
-describe("chatSections.sectionDividerFor", () => {
+describeOrSkip("chatSections.sectionDividerFor", () => {
   const ctx = Object.assign(Object.create(chatSections,), {
     _sections: [
       section("s1", "The Dark Forest",),
@@ -75,9 +81,9 @@ describe("chatSections.sectionDividerFor", () => {
     ctx.groupedMessages = [msg("m1", "nope",),];
     expect((chatSections as any).sectionDividerFor.call(ctx, 0, "nope",),).toBeNull();
   });
-});
+},);
 
-describe("computeGroupedMessages section breaks", () => {
+describeOrSkip("computeGroupedMessages section breaks", () => {
   const base = {
     role: "assistant",
     content: "x",
@@ -109,9 +115,9 @@ describe("computeGroupedMessages section breaks", () => {
   test("empty messages returns empty", () => {
     expect(computeGroupedMessages.call({ ...base, messages: [], } as any,),).toEqual([],);
   });
-});
+},);
 
-describe("chatSectionsNav.sectionMessageCounts", () => {
+describeOrSkip("chatSectionsNav.sectionMessageCounts", () => {
   const ctx = Object.assign(Object.create(chatSectionsNav,), {
     _sections: [section("s1", "Forest",), section("s2", "Tavern",),],
     groupedMessages: [
@@ -136,9 +142,9 @@ describe("chatSectionsNav.sectionMessageCounts", () => {
     },);
     expect(counts.size,).toBe(0,);
   });
-});
+},);
 
-describe("chatSectionsNav.sectionActors", () => {
+describeOrSkip("chatSectionsNav.sectionActors", () => {
   const ctx = Object.assign(Object.create(chatSectionsNav,), {
     groupedMessages: [
       { ...msg("m1", "s1",), actor_name: "Aria", },
@@ -158,9 +164,9 @@ describe("chatSectionsNav.sectionActors", () => {
   test("actor present in multiple sections", () => {
     expect((chatSectionsNav as any).sectionActors.call(ctx, "s2",),).toEqual(["Aria",],);
   });
-});
+},);
 
-describe("chatSectionsNav.partySplit", () => {
+describeOrSkip("chatSectionsNav.partySplit", () => {
   // Object.create avoids evaluating getters during spread (getters read `this`).
   const getter = () => Object.getOwnPropertyDescriptor(chatSectionsNav, "partySplit",)!;
   const ctxFor = (groupedMessages: unknown[],) => Object.assign(Object.create(chatSectionsNav,), { groupedMessages, },);
@@ -188,9 +194,9 @@ describe("chatSectionsNav.partySplit", () => {
     ],);
     expect(getter().get!.call(ctx,),).toBe(false,);
   });
-});
+},);
 
-describe("chatSectionsNav.currentSectionName", () => {
+describeOrSkip("chatSectionsNav.currentSectionName", () => {
   const getter = () => Object.getOwnPropertyDescriptor(chatSectionsNav, "currentSectionName",)!;
 
   test("resolves label for current section", () => {
@@ -206,9 +212,9 @@ describe("chatSectionsNav.currentSectionName", () => {
     const ctx = Object.assign(Object.create(chatSectionsNav,), { _currentSectionId: null, },);
     expect(getter().get!.call(ctx,),).toBeNull();
   });
-});
+},);
 
-describe("chatSectionsNav.transferToSection", () => {
+describeOrSkip("chatSectionsNav.transferToSection", () => {
   test("sets active, jumps, and syncs location when section has one", async () => {
     const jumped: string[] = [];
     const changed: { to: string | null } = { to: null, };
@@ -260,9 +266,9 @@ describe("chatSectionsNav.transferToSection", () => {
     await (chatSectionsNav as any).transferToSection.call(ctx, "s1",);
     expect(jumped,).toBe(false,);
   });
-});
+},);
 
-describe("chatSectionsNav.trackCurrentSection", () => {
+describeOrSkip("chatSectionsNav.trackCurrentSection", () => {
   // tests/setup-globals.ts installs a shared globalThis.document for all
   // frontend tests: save/restore it instead of deleting, so later files
   // (e.g. chat-seen.test.ts) keep their DOM shim.
@@ -300,9 +306,9 @@ describe("chatSectionsNav.trackCurrentSection", () => {
     expect(ctx._currentSectionId,).toBe("s1",);
     (globalThis as any).document = originalDocument;
   });
-});
+},);
 
-describe("chatSections.sectionDividerMeta", () => {
+describeOrSkip("chatSections.sectionDividerMeta", () => {
   test("counts messages and reports first message time", () => {
     const ctx = Object.assign(Object.create(chatSections,), {
       groupedMessages: [
@@ -328,9 +334,9 @@ describe("chatSections.sectionDividerMeta", () => {
     expect((chatSections as any).formatSectionTime.call(ctx, null,),).toBe("",);
     expect((chatSections as any).formatSectionTime.call(ctx, "not-a-date",),).toBe("",);
   });
-});
+},);
 
-describe("chatSectionsNav.bulkAssignToSection", () => {
+describeOrSkip("chatSectionsNav.bulkAssignToSection", () => {
   test("posts assign-all and reloads stream + sections", async () => {
     let loaded = 0;
     const ctx = Object.assign(Object.create(chatSectionsNav,), {
@@ -353,9 +359,9 @@ describe("chatSectionsNav.bulkAssignToSection", () => {
     await (chatSectionsNav as any).bulkAssignToSection.call(ctx, "s1",);
     expect(fetchCalls.length,).toBe(calls,);
   });
-});
+},);
 
-describe("chatSectionsNav.insertNarrative", () => {
+describeOrSkip("chatSectionsNav.insertNarrative", () => {
   test("posts narrative and reloads stream", async () => {
     let loaded = 0;
     const ctx = Object.assign(Object.create(chatSectionsNav,), {
@@ -375,9 +381,9 @@ describe("chatSectionsNav.insertNarrative", () => {
     await (chatSectionsNav as any).insertNarrative.call(ctx, "s1", emptyNarrative,);
     expect(fetchCalls.length,).toBe(calls,);
   });
-});
+},);
 
-describe("chatSectionsNav.transition + narrative transfer", () => {
+describeOrSkip("chatSectionsNav.transition + narrative transfer", () => {
   test("setTransitionType stores the pick", () => {
     const ctx = Object.create(chatSectionsNav,);
     (chatSectionsNav as any).setTransitionType.call(ctx, "teleport",);
@@ -422,4 +428,303 @@ describe("chatSectionsNav.transition + narrative transfer", () => {
     await (chatSectionsNav as any).transferToSection.call(ctx, "s1",);
     expect(inserted,).toBe(false,);
   });
-});
+},);
+
+// ── chatSections.ts: panel + CRUD + assign (uncovered lines) ──────────
+
+describeOrSkip("chatSections panel + CRUD", () => {
+  const rows = [section("s1", "Forest",), section("s2", "Cave",), section("s3", "Town",),];
+
+  const makeCtx = (overrides: Record<string, unknown> = {},) =>
+    Object.assign(Object.create(chatSections,), {
+      activeChat: "chat-1",
+      _sections: rows.map((s,) => ({ ...s, })),
+      _sectionsLoading: false,
+      _sectionsOpen: false,
+      _activeSectionId: null as string | null,
+      _newSectionLabel: "",
+      _newSectionDesc: "",
+      groupedMessages: [] as unknown[],
+      $el: undefined,
+      ...overrides,
+    },);
+
+  beforeEach(() => {
+    fetchCalls.length = 0;
+    fetchHandler = async () => new Response("{}", { status: 200, },);
+  },);
+
+  describeOrSkip("toggleSectionsPanel", () => {
+    test("opens the panel and loads sections when a chat is active", () => {
+      const ctx = makeCtx();
+      chatSections.toggleSectionsPanel!.call(ctx,);
+      expect(ctx._sectionsOpen,).toBe(true,);
+      expect(fetchCalls.length,).toBe(1,);
+    });
+
+    test("closes the panel without loading when no chat is active", () => {
+      const ctx = makeCtx({ activeChat: null, _sectionsOpen: true, },);
+      chatSections.toggleSectionsPanel!.call(ctx,);
+      expect(ctx._sectionsOpen,).toBe(false,);
+      expect(fetchCalls.length,).toBe(0,);
+    });
+  },);
+
+  describeOrSkip("loadSections", () => {
+    test("does nothing without an active chat", async () => {
+      const ctx = makeCtx({ activeChat: null, },);
+      await chatSections.loadSections!.call(ctx,);
+      expect(fetchCalls.length,).toBe(0,);
+      expect(ctx._sectionsLoading,).toBe(false,);
+    });
+
+    test("loads sections and activates the first", async () => {
+      fetchHandler = async () => new Response(JSON.stringify({ data: rows, },), { status: 200, },);
+      const ctx = makeCtx();
+      await chatSections.loadSections!.call(ctx,);
+      expect(ctx._sections.map((s: { id: string },) => s.id),).toEqual(["s1", "s2", "s3",],);
+      expect(ctx._activeSectionId,).toBe("s1",);
+      expect(ctx._sectionsLoading,).toBe(false,);
+    });
+
+    test("keeps a still-valid active section id", async () => {
+      fetchHandler = async () => new Response(JSON.stringify({ data: rows, },), { status: 200, },);
+      const ctx = makeCtx({ _activeSectionId: "s2", },);
+      await chatSections.loadSections!.call(ctx,);
+      expect(ctx._activeSectionId,).toBe("s2",);
+    });
+
+    test("resets a stale active section id to the first row", async () => {
+      fetchHandler = async () => new Response(JSON.stringify({ data: rows, },), { status: 200, },);
+      const ctx = makeCtx({ _activeSectionId: "gone", },);
+      await chatSections.loadSections!.call(ctx,);
+      expect(ctx._activeSectionId,).toBe("s1",);
+    });
+
+    test("falls back to null when the list is empty", async () => {
+      fetchHandler = async () => new Response(JSON.stringify({ data: [], },), { status: 200, },);
+      const ctx = makeCtx({ _activeSectionId: "s1", },);
+      await chatSections.loadSections!.call(ctx,);
+      expect(ctx._activeSectionId,).toBe(null,);
+    });
+
+    test("tolerates a missing data field", async () => {
+      const ctx = makeCtx();
+      await chatSections.loadSections!.call(ctx,);
+      expect(ctx._sections,).toEqual([],);
+      expect(ctx._activeSectionId,).toBe(null,);
+    });
+
+    test("KNOWN BUG: leaves the loading flag set on !ok (early return inside try skips cleanup)", async () => {
+      fetchHandler = async () => new Response("nope", { status: 500, },);
+      const ctx = makeCtx();
+      await chatSections.loadSections!.call(ctx,);
+      expect(ctx._sections,).toEqual(rows,);
+      // The !ok path returns from inside the try block, so the cleanup line
+      // never runs and _sectionsLoading stays true. Pinned for visibility.
+      expect(ctx._sectionsLoading,).toBe(true,);
+    });
+
+    test("clears the loading flag when fetch throws", async () => {
+      fetchHandler = () => Promise.reject(new Error("boom",),);
+      const ctx = makeCtx();
+      await chatSections.loadSections!.call(ctx,);
+      expect(ctx._sectionsLoading,).toBe(false,);
+    });
+  },);
+
+  describeOrSkip("createSection", () => {
+    test("does nothing without an active chat", async () => {
+      const ctx = makeCtx({ activeChat: null, _newSectionLabel: "New", },);
+      await chatSections.createSection!.call(ctx,);
+      expect(fetchCalls.length,).toBe(0,);
+    });
+
+    test("ignores a blank label", async () => {
+      const ctx = makeCtx({ _newSectionLabel: "   ", },);
+      await chatSections.createSection!.call(ctx,);
+      expect(fetchCalls.length,).toBe(0,);
+    });
+
+    test("posts the trimmed label and clears the fields on ok", async () => {
+      const ctx = makeCtx({ _newSectionLabel: "  New  ", _newSectionDesc: "d", },);
+      await chatSections.createSection!.call(ctx,);
+      expect(fetchCalls.length,).toBe(2,);
+      expect(fetchCalls[0]?.url,).toBe("/api/v1/chats/chat-1/sections",);
+      expect(fetchCalls[0]?.opts.method,).toBe("POST",);
+      expect(JSON.parse(String(fetchCalls[0]?.opts.body,),),).toEqual({ label: "New", description: "d", },);
+      expect(ctx._newSectionLabel,).toBe("",);
+      expect(ctx._newSectionDesc,).toBe("",);
+    });
+
+    test("sends a null description when none is given", async () => {
+      const ctx = makeCtx({ _newSectionLabel: "New", },);
+      await chatSections.createSection!.call(ctx,);
+      expect(JSON.parse(String(fetchCalls[0]?.opts.body,),),).toEqual({ label: "New", description: null, },);
+    });
+
+    test("keeps the fields on !ok", async () => {
+      fetchHandler = async () => new Response("nope", { status: 400, },);
+      const ctx = makeCtx({ _newSectionLabel: "New", },);
+      await chatSections.createSection!.call(ctx,);
+      expect(ctx._newSectionLabel,).toBe("New",);
+      expect(fetchCalls.length,).toBe(1,);
+    });
+  },);
+
+  describeOrSkip("deleteSection", () => {
+    test("does nothing without an active chat", async () => {
+      const ctx = makeCtx({ activeChat: null, },);
+      await chatSections.deleteSection!.call(ctx, "s1",);
+      expect(fetchCalls.length,).toBe(0,);
+    });
+
+    test("deletes, clears the active id, and reloads on ok", async () => {
+      const ctx = makeCtx({ _activeSectionId: "s2", },);
+      await chatSections.deleteSection!.call(ctx, "s2",);
+      expect(fetchCalls[0]?.url,).toBe("/api/v1/chats/chat-1/sections/s2",);
+      expect(fetchCalls[0]?.opts.method,).toBe("DELETE",);
+      expect(ctx._activeSectionId,).toBe(null,);
+      expect(fetchCalls.length,).toBe(2,);
+    });
+
+    test("keeps the active id when deleting another section", async () => {
+      // The post-delete reload must still see s1 as valid, or it would reset.
+      fetchHandler = async () => new Response(JSON.stringify({ data: rows, },), { status: 200, },);
+      const ctx = makeCtx({ _activeSectionId: "s1", },);
+      await chatSections.deleteSection!.call(ctx, "s3",);
+      expect(ctx._activeSectionId,).toBe("s1",);
+    });
+  },);
+
+  describeOrSkip("moveSection", () => {
+    test("does nothing without an active chat", async () => {
+      const ctx = makeCtx({ activeChat: null, },);
+      await chatSections.moveSection!.call(ctx, "s1", 1,);
+      expect(fetchCalls.length,).toBe(0,);
+    });
+
+    test("ignores an unknown section id", async () => {
+      const ctx = makeCtx();
+      await chatSections.moveSection!.call(ctx, "nope", 1,);
+      expect(fetchCalls.length,).toBe(0,);
+    });
+
+    test("ignores moves that would leave the bounds", async () => {
+      const ctx = makeCtx();
+      await chatSections.moveSection!.call(ctx, "s1", -1,);
+      await chatSections.moveSection!.call(ctx, "s3", 1,);
+      expect(fetchCalls.length,).toBe(0,);
+    });
+
+    test("posts the reordered id list and reloads on ok", async () => {
+      const ctx = makeCtx();
+      await chatSections.moveSection!.call(ctx, "s2", -1,);
+      expect(fetchCalls[0]?.url,).toBe("/api/v1/chats/chat-1/sections/reorder",);
+      expect(JSON.parse(String(fetchCalls[0]?.opts.body,),),).toEqual({ sectionIds: ["s2", "s1", "s3",], },);
+      expect(fetchCalls.length,).toBe(2,);
+    });
+
+    test("does not reload on !ok", async () => {
+      fetchHandler = async () => new Response("nope", { status: 500, },);
+      const ctx = makeCtx();
+      await chatSections.moveSection!.call(ctx, "s2", 1,);
+      expect(fetchCalls.length,).toBe(1,);
+    });
+  },);
+
+  describeOrSkip("sectionLabel", () => {
+    test("returns Unassigned for null", () => {
+      const ctx = makeCtx();
+      expect(chatSections.sectionLabel!.call(ctx, null,),).toBe("Unassigned",);
+    });
+
+    test("returns Unknown for a missing section", () => {
+      const ctx = makeCtx();
+      expect(chatSections.sectionLabel!.call(ctx, "nope",),).toBe("Unknown",);
+    });
+
+    test("returns the label for a known section", () => {
+      const ctx = makeCtx();
+      expect(chatSections.sectionLabel!.call(ctx, "s2",),).toBe("Cave",);
+    });
+  },);
+
+  describeOrSkip("jumpToSection", () => {
+    test("does nothing when no message is in the section", () => {
+      const ctx = makeCtx({ groupedMessages: [msg("m1", "s1",),], },);
+      chatSections.jumpToSection!.call(ctx, "s2",);
+    });
+
+    test("scrolls to the first message of the section", () => {
+      let scrolled = false;
+      let selector = "";
+      const el = {
+        scrollIntoView: () => {
+          scrolled = true;
+        },
+      };
+      const ctx = makeCtx({
+        groupedMessages: [msg("m1", "s1",), msg("m2", "s2",),],
+        $el: {
+          querySelector: (sel: string,) => {
+            selector = sel;
+            return el;
+          },
+        },
+      },);
+      // bun has no CSS global — stub the escape used for the selector.
+      const realCSS = (globalThis as Record<string, unknown>).CSS;
+      (globalThis as Record<string, unknown>).CSS = { escape: (s: string,) => s, };
+      try {
+        chatSections.jumpToSection!.call(ctx, "s2",);
+      } finally {
+        (globalThis as Record<string, unknown>).CSS = realCSS;
+      }
+      expect(selector,).toBe('[data-message-id="m2"]',);
+      expect(scrolled,).toBe(true,);
+    });
+  },);
+
+  describeOrSkip("formatSectionTime", () => {
+    test("returns an empty string for null", () => {
+      const ctx = makeCtx();
+      expect(chatSections.formatSectionTime!.call(ctx, null,),).toBe("",);
+    });
+
+    test("formats an ISO timestamp as a time", () => {
+      const ctx = makeCtx();
+      expect(
+        chatSections.formatSectionTime!.call(ctx, "2024-03-05T14:30:00Z",),
+      ).toBe(formatDisplayDate("2024-03-05T14:30:00Z", "time",),);
+    });
+  },);
+
+  describeOrSkip("assignMessageToSection", () => {
+    test("does nothing without an active chat", async () => {
+      const ctx = makeCtx({ activeChat: null, },);
+      await chatSections.assignMessageToSection!.call(ctx, "m1", "s1",);
+      expect(fetchCalls.length,).toBe(0,);
+    });
+
+    test("posts the section id", async () => {
+      const ctx = makeCtx();
+      await chatSections.assignMessageToSection!.call(ctx, "m1", "s2",);
+      expect(fetchCalls[0]?.url,).toBe("/api/v1/chats/chat-1/messages/m1/section",);
+      expect(fetchCalls[0]?.opts.method,).toBe("POST",);
+      expect(JSON.parse(String(fetchCalls[0]?.opts.body,),),).toEqual({ sectionId: "s2", },);
+    });
+
+    test("posts a null section id to unassign", async () => {
+      const ctx = makeCtx();
+      await chatSections.assignMessageToSection!.call(ctx, "m1", null,);
+      expect(JSON.parse(String(fetchCalls[0]?.opts.body,),),).toEqual({ sectionId: null, },);
+    });
+
+    test("swallows fetch errors", async () => {
+      fetchHandler = () => Promise.reject(new Error("boom",),);
+      const ctx = makeCtx();
+      await chatSections.assignMessageToSection!.call(ctx, "m1", "s1",);
+    });
+  },);
+},);

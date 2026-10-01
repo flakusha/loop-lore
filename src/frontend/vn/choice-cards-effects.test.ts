@@ -5,7 +5,8 @@
  * Tests for frontend/vn/choice-cards.ts selectChoice effects — location change
  * dispatch and split/reunite consequences (mock-module seam convention).
  */
-import { afterEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, expect, mock, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { destroyChoiceCards, initChoiceCards, loadChoices, selectChoice, } from "./choice-cards";
 
 // ── Mock apiFetch / feFetch ─────────────────────────────────────────────────
@@ -14,20 +15,22 @@ let apiHandler: ((url: string, opts: RequestInit,) => Response) | null = null;
 let feCalls: { url: string; opts: RequestInit }[] = [];
 let feHandler: ((url: string, opts: RequestInit,) => Response) | null = null;
 
-mock.module("../alpine/htmx", () => ({
-  apiFetch: async (url: string, opts?: RequestInit,) => {
-    if (!apiHandler) { return new Response("{}", { status: 200, },); }
-    return apiHandler(url, opts ?? {},);
-  },
-}),);
-mock.module("../fe-fetch", () => ({
-  feFetch: async (url: string, opts?: RequestInit,) => {
-    feCalls.push({ url, opts: opts ?? {}, },);
-    if (!feHandler) { return new Response("{}", { status: 200, },); }
-    return feHandler(url, opts ?? {},);
-  },
-  getCsrfToken: () => "",
-}),);
+if (ISOLATED) {
+  mock.module("../alpine/htmx", () => ({
+    apiFetch: async (url: string, opts?: RequestInit,) => {
+      if (!apiHandler) { return new Response("{}", { status: 200, },); }
+      return apiHandler(url, opts ?? {},);
+    },
+  }),);
+  mock.module("../fe-fetch", () => ({
+    feFetch: async (url: string, opts?: RequestInit,) => {
+      feCalls.push({ url, opts: opts ?? {}, },);
+      if (!feHandler) { return new Response("{}", { status: 200, },); }
+      return feHandler(url, opts ?? {},);
+    },
+    getCsrfToken: () => "",
+  }),);
+}
 
 /** */
 function jsonRes(body: unknown, status = 200,): Response {
@@ -115,7 +118,7 @@ afterEach(() => {
 
 // ── Tests ───────────────────────────────────────────────────────────────────
 
-describe("selectChoice effects", () => {
+describeOrSkip("selectChoice effects", () => {
   test("location change PUT dispatches chat:location-changed on success", async () => {
     await boot();
     apiHandler = (url,) =>
@@ -246,4 +249,4 @@ describe("selectChoice effects", () => {
     expect((await selectChoice("c1",))?.reunionTriggered,).toBe(false,);
     expect(feCalls.length,).toBe(0,);
   });
-});
+},);

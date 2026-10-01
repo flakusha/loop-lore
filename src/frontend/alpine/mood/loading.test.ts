@@ -1,4 +1,5 @@
-import { afterEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, expect, mock, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../../../test-utils/isolate-only";
 import { moodStateLoading, } from "./loading";
 
 // ── Mock ../htmx (must precede importing ./loading) ──
@@ -6,12 +7,14 @@ type ApiFetchMock = (url: string, opts?: RequestInit,) => Promise<Response>;
 let calls: { url: string; opts: RequestInit }[] = [];
 let handler: ApiFetchMock = async () => Response.json([],);
 
-mock.module("../htmx", () => ({
-  apiFetch: (async (url: string, opts?: RequestInit,) => {
-    calls.push({ url, opts: opts ?? {}, },);
-    return handler(url, opts,);
-  }) satisfies ApiFetchMock,
-}),);
+if (ISOLATED) {
+  mock.module("../htmx", () => ({
+    apiFetch: (async (url: string, opts?: RequestInit,) => {
+      calls.push({ url, opts: opts ?? {}, },);
+      return handler(url, opts,);
+    }) satisfies ApiFetchMock,
+  }),);
+}
 
 interface Mood {
   happiness: number;
@@ -93,7 +96,7 @@ afterEach(() => {
   handler = async () => Response.json([],);
 },);
 
-describe("moodStateLoading.loadMood", () => {
+describeOrSkip("moodStateLoading.loadMood", () => {
   test("returns early without an active chat", async () => {
     const ctx = buildCtx({ activeChat: null, },);
     await moodStateLoading.loadMood!.call(ctx,);
@@ -192,9 +195,9 @@ describe("moodStateLoading.loadMood", () => {
     expect(ctx._mood,).toBeNull();
     expect(ctx._moodLoading,).toBe(false,);
   });
-});
+},);
 
-describe("moodStateLoading.updateMoodHappiness", () => {
+describeOrSkip("moodStateLoading.updateMoodHappiness", () => {
   test("is a no-op without a loaded mood", async () => {
     const ctx = buildCtx();
     await moodStateLoading.updateMoodHappiness!.call(ctx, 66,);
@@ -227,9 +230,9 @@ describe("moodStateLoading.updateMoodHappiness", () => {
     await moodStateLoading.updateMoodHappiness!.call(ctx, 66,);
     expect(ctx._mood!.happiness,).toBe(50,);
   });
-});
+},);
 
-describe("moodStateLoading.applyMoodDelta", () => {
+describeOrSkip("moodStateLoading.applyMoodDelta", () => {
   test("is a no-op without a loaded mood", async () => {
     const ctx = buildCtx();
     await moodStateLoading.applyMoodDelta!.call(ctx, 5,);
@@ -257,9 +260,9 @@ describe("moodStateLoading.applyMoodDelta", () => {
     await moodStateLoading.applyMoodDelta!.call(ctx, 5,);
     expect(ctx._mood!.happiness,).toBe(30,);
   });
-});
+},);
 
-describe("mood display helpers", () => {
+describeOrSkip("mood display helpers", () => {
   test("_happinessToMood boundaries", () => {
     expect(moodStateLoading._happinessToMood!.call({} as never, 100,),).toBe("ecstatic",);
     expect(moodStateLoading._happinessToMood!.call({} as never, 60,),).toBe("happy",);
@@ -282,7 +285,7 @@ describe("mood display helpers", () => {
     expect(moodStateLoading._getMoodColor!.call({} as never, 25,),).toBe("#f97316",);
     expect(moodStateLoading._getMoodColor!.call({} as never, 10,),).toBe("#ef4444",);
   });
-});
+},);
 
 function mood(happiness: number,): Mood {
   return {

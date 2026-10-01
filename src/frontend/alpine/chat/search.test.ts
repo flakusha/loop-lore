@@ -2,20 +2,23 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import "../i18n.test-helper";
-import { afterEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, expect, mock, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../../../test-utils/isolate-only";
 import { chatSearch, } from "./search";
 
 // ── Mock apiFetch (chat/search imports ../htmx; keep the real i18n) ──
 let fetchCalls: { url: string; opts: RequestInit }[] = [];
 let fetchHandler: ((url: string, opts: RequestInit,) => Response) | null = null;
 
-mock.module("../htmx", () => ({
-  apiFetch: async (url: string, opts?: RequestInit,) => {
-    fetchCalls.push({ url, opts: opts ?? {}, },);
-    if (!fetchHandler) { return new Response("{}", { status: 200, },); }
-    return fetchHandler(url, opts ?? {},);
-  },
-}),);
+if (ISOLATED) {
+  mock.module("../htmx", () => ({
+    apiFetch: async (url: string, opts?: RequestInit,) => {
+      fetchCalls.push({ url, opts: opts ?? {}, },);
+      if (!fetchHandler) { return new Response("{}", { status: 200, },); }
+      return fetchHandler(url, opts ?? {},);
+    },
+  }),);
+}
 
 function mockFetch(status: number, body: unknown = {},): void {
   fetchHandler = () => Response.json(body, { status, },);
@@ -37,7 +40,7 @@ function searchCtx(overrides: Record<string, unknown> = {},): Record<string, unk
   };
 }
 
-describe("chatSearch.searchChats", () => {
+describeOrSkip("chatSearch.searchChats", () => {
   test("clears results on a blank query without fetching", async () => {
     const ctx = searchCtx();
     await chatSearch.searchChats!.call(ctx, "   ",);
@@ -86,9 +89,9 @@ describe("chatSearch.searchChats", () => {
     await chatSearch.searchChats!.call(ctx, "酒場",);
     expect(fetchCalls[0]!.url,).toContain(encodeURIComponent("酒場",),);
   });
-});
+},);
 
-describe("chatSearch.loadJoinableChats", () => {
+describeOrSkip("chatSearch.loadJoinableChats", () => {
   test("keeps existing rows on non-ok responses", async () => {
     mockFetch(500, {},);
     const ctx = searchCtx({ _joinableChats: [{ chatId: "keep", },], },);
@@ -124,9 +127,9 @@ describe("chatSearch.loadJoinableChats", () => {
     await chatSearch.loadJoinableChats!.call(ctx,);
     expect(ctx._joinableChats,).toEqual([],);
   });
-});
+},);
 
-describe("chatSearch.joinChat", () => {
+describeOrSkip("chatSearch.joinChat", () => {
   test("toasts an error when the join fails", async () => {
     mockFetch(403, { error: "no", },);
     const toasts: { type: string; message: string }[] = [];
@@ -179,4 +182,4 @@ describe("chatSearch.joinChat", () => {
     await chatSearch.joinChat!.call(ctx, "c4",);
     expect(toasts[toasts.length - 1]?.type,).toBe("error",);
   });
-});
+},);

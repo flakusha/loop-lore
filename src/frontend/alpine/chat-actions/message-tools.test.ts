@@ -1,4 +1,5 @@
-import { afterEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, expect, mock, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../../../test-utils/isolate-only";
 import { messageTools, } from "./message-tools";
 
 import type { ApiFetchMock, Toast, } from "../../tests/test-types";
@@ -7,12 +8,14 @@ import type { ApiFetchMock, Toast, } from "../../tests/test-types";
 let calls: { url: string; opts: RequestInit }[] = [];
 let handler: ApiFetchMock = async () => Response.json({},);
 
-mock.module("../htmx", () => ({
-  apiFetch: (async (url: string, opts?: RequestInit,) => {
-    calls.push({ url, opts: opts ?? {}, },);
-    return handler(url, opts,);
-  }) satisfies ApiFetchMock,
-}),);
+if (ISOLATED) {
+  mock.module("../htmx", () => ({
+    apiFetch: (async (url: string, opts?: RequestInit,) => {
+      calls.push({ url, opts: opts ?? {}, },);
+      return handler(url, opts,);
+    }) satisfies ApiFetchMock,
+  }),);
+}
 
 interface ToolsCtx {
   activeChat: string | null;
@@ -39,7 +42,7 @@ afterEach(() => {
   handler = async () => Response.json({},);
 },);
 
-describe("messageTools.forwardMessage", () => {
+describeOrSkip("messageTools.forwardMessage", () => {
   test("warns when there is no active chat", async () => {
     const ctx = buildCtx({ activeChat: null, },);
     await messageTools.forwardMessage!.call(ctx as never, "m1",);
@@ -87,9 +90,9 @@ describe("messageTools.forwardMessage", () => {
     }
     expect(ctx.toasts[0]?.type,).toBe("warning",);
   });
-});
+},);
 
-describe("messageTools.runMessageAiAction", () => {
+describeOrSkip("messageTools.runMessageAiAction", () => {
   test("warns when there is no active chat", async () => {
     const ctx = buildCtx({ activeChat: null, },);
     await messageTools.runMessageAiAction!.call(ctx as never, "m1", "summarize",);
@@ -112,4 +115,4 @@ describe("messageTools.runMessageAiAction", () => {
     await messageTools.runMessageAiAction!.call(ctx as never, "m1", "explain",);
     expect(ctx.toasts[0]?.type,).toBe("info",);
   });
-});
+},);
