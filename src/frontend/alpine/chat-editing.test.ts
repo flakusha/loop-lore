@@ -240,24 +240,27 @@ describe("chatEditing API flows", () => {
       expect(toasts.length,).toBe(0,);
     });
 
-    test("routes a !ok response through the catch branch (feFetch throws on non-2xx)", async () => {
+    test("a 400 rejection shows the save-failed toast, not a network error", async () => {
       fetchImpl = () =>
         Promise.resolve(
           new Response(JSON.stringify({ error: "nope", },), { status: 400, },),
         );
       const { state, toasts, } = makeStateWithToasts(makeState({ editContent: "text", },),);
       await chatEditing.saveEdit!.call(state, "msg-1",);
-      expect(toasts,).toEqual([{ type: "error", message: "toasts.networkErrorSavingEdit", },],);
+      expect(toasts,).toEqual([{ type: "error", message: "toasts.failedSaveEdit", },],);
     });
 
-    test("a !ok response without an error field still lands in the catch branch", async () => {
+    test("a failed save does not half-update the stored message", async () => {
       fetchImpl = () =>
         Promise.resolve(
-          new Response(JSON.stringify({ other: 1, },), { status: 400, },),
+          new Response(JSON.stringify({ error: "nope", },), { status: 400, },),
         );
       const { state, toasts, } = makeStateWithToasts(makeState({ editContent: "text", },),);
       await chatEditing.saveEdit!.call(state, "msg-1",);
-      expect(toasts,).toEqual([{ type: "error", message: "toasts.networkErrorSavingEdit", },],);
+      // The server still holds "Hello world"; local state must not claim "text".
+      expect(state.messages[0]?.content,).toBe("Hello world",);
+      expect(state.editingMessageId,).toBe(null,);
+      expect(toasts[0]?.type,).toBe("error",);
     });
 
     test("shows the network error toast when fetch throws", async () => {
@@ -306,7 +309,7 @@ describe("chatEditing API flows", () => {
       expect(toasts.length,).toBe(0,);
     });
 
-    test("routes a !ok response through the catch branch (feFetch throws on non-2xx)", async () => {
+    test("a 403 rejection keeps the message and shows the remove-failed toast", async () => {
       (globalThis as { confirm?: unknown }).confirm = () => true;
       fetchImpl = () =>
         Promise.resolve(
@@ -317,7 +320,7 @@ describe("chatEditing API flows", () => {
         stopImmediatePropagation: () => {},
       } as unknown as Event,);
       expect(state.messages.length,).toBe(1,);
-      expect(toasts,).toEqual([{ type: "error", message: "toasts.networkErrorRemovingMessage", },],);
+      expect(toasts,).toEqual([{ type: "error", message: "toasts.failedRemove", },],);
     });
 
     test("shows the network error toast when fetch throws", async () => {
@@ -438,17 +441,21 @@ describe("chatEditing API flows", () => {
       expect(toasts.length,).toBe(0,);
     });
 
-    test("routes an upload failure through the catch branch (feFetch throws on non-2xx)", async () => {
+    test("a 413 rejection shows the upload-failed toast, not a network error", async () => {
       fetchImpl = () =>
         Promise.resolve(
           new Response(JSON.stringify({ error: "too large", },), { status: 413, },),
         );
       const { state, toasts, } = makeStateWithToasts(makeState(),);
+      (globalThis as Record<string, unknown>).__localeStrings = {
+        toasts: { failedUpload: "Failed to upload {filename}", },
+      };
       await chatEditing.handleAttach!.call(state, {
         target: { files: [new File(["a",], "big.png",),], value: "", },
       } as unknown as Event,);
+      // A rejected upload must not leave a phantom pending asset behind.
       expect(state.pendingAssets.length,).toBe(0,);
-      expect(toasts,).toEqual([{ type: "error", message: "toasts.networkErrorUploading", },],);
+      expect(toasts,).toEqual([{ type: "error", message: "Failed to upload big.png", },],);
     });
 
     test("shows the network error toast when fetch throws", async () => {
