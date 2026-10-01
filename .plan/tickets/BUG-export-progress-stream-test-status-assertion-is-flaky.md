@@ -67,3 +67,13 @@ handler = async (_url, init?) => { captured = init; return stream.response; };
 
 - The other 19 pre-existing frontend test failures (toast-key mismatches in `gif-picker`, `chat-group`, `chat/world`, etc.) are independent bugs and will need their own tickets. Out of scope here.
 - A repo-wide convention for mock placement (always mock `./htmx`, never `globalThis.fetch`, for SSE-streaming tests) would be worth documenting; not blocking this fix.
+
+
+## Verification Notes (2026-10-01)
+
+Re-verified against current `dev`; the defect described in this ticket is
+already fixed. The ticket was left open past the fix.
+
+Evidence: `src/frontend/alpine/export-progress.stream.test.ts:28-40`
+
+- The suite installs its own `mock.module("./htmx", ...)` driven by a handler variable and is guarded by `ISOLATED`, so it no longer depends on file order.

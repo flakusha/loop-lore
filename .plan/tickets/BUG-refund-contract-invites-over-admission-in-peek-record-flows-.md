@@ -20,3 +20,13 @@ Context: fba9dbcd8. Severity: nit. rate-limit.ts:200-213 refund() docs prescribe
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+
+## Verification Notes (2026-10-01)
+
+Re-verified against current `dev`; the defect described in this ticket is
+already fixed. The ticket was left open past the fix.
+
+Evidence: `src/middleware/rate-limit.ts:201-203`
+
+- The contract is now documented at the definition: a peek-only flow has recorded nothing, so refunding there would pop an unrelated successful request's timestamp and hand that client free budget.

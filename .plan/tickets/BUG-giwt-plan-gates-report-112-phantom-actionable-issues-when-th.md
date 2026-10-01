@@ -34,3 +34,13 @@
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+
+## Verification Notes (2026-10-01)
+
+Re-verified against current `dev`; the defect described in this ticket is
+already fixed. The ticket was left open past the fix.
+
+Evidence: `scripts/check-parallel.mjs:812,1012`
+
+- A gate whose output contains `GIWT_ISSUE_CLI_UNAVAILABLE` is recorded as `skipped` rather than failed, and `summary.skipped` counts it, so the phantom findings are no longer reported as actionable red gates.

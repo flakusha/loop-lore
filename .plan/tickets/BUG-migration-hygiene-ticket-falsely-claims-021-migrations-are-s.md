@@ -31,3 +31,13 @@ $ bun run scripts/check-migration-ordering.ts
   ok loader scope: unique prefixes (24 prefixes across 24 files)
 Migration ordering gate PASSED.
 ```
+
+
+## Verification Notes (2026-10-01)
+
+Re-verified against current `dev`; the defect this ticket describes is
+already fixed. The ticket was left open past the fix.
+
+Evidence: `.plan/tickets/TASK-backlog-migration-hygiene-duplicate-prefix-gate.md:44,77`
+
+- The linked TASK ticket now states the queried evidence ("four applied migrations and nothing at any `02x` prefix") instead of the false "both shipped" claim, and its no-impact checkbox is ticked.
