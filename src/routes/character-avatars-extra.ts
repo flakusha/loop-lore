@@ -19,6 +19,7 @@
 import { Elysia, } from "elysia";
 import { unlinkAsset, } from "../assets/service";
 import { AvatarService, } from "../characters/services/avatar-service";
+import { AvatarSelectionRule, } from "../db/enums";
 import { AssetLinkEntity, } from "../db/enums-content";
 import {
   ActorIdAssetIdParams,
@@ -130,8 +131,19 @@ export function characterAvatarsExtraRoutes(opts: HandlerOpts, prefix = "/api",)
       const { worldId, actorId, } = ctx.params;
       const { selection_rule_override, } = ctx.body ?? {};
 
+      // The body schema types this as a free string; an unrecognised rule
+      // would persist and silently degrade every later avatar selection
+      // (calculateAvatarScore has no default branch), so reject it here.
+      const RULES: string[] = Object.values(AvatarSelectionRule,);
+      if (selection_rule_override !== undefined && !RULES.includes(selection_rule_override,)) {
+        return jsonError({
+          message: `selection_rule_override must be one of: ${RULES.join(", ",)}`,
+          status: HttpStatus.BadRequest,
+        },);
+      }
+
       await avatarService.upsertWorldAvatarConfig(actorId, worldId, {
-        selectionRuleOverride: selection_rule_override as never,
+        selectionRuleOverride: selection_rule_override as AvatarSelectionRule | undefined,
       },);
       return jsonResponse({ ok: true, },);
     }, {
