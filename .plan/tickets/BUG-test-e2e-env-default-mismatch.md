@@ -23,8 +23,10 @@ Canonical shape (worktree root):
 bun test --parallel=4 --isolate tests/e2e/
 ```
 
-- `E2E_SAFEGUARD=1` → **277 pass / 0 fail** (matches the check-runner e2e gate at `scripts/check-parallel.mjs:471-473`).
-- **Unset → 248 pass / 29 fail**. Every failure is `Received: 429` with body `{"error":"Rate limit exceeded","code":"TOO_MANY_REQUESTS","meta":{"api_version":"1"}}` (no other failure mode). Verified output at `.tmp/scratchpad-audit/e2e-canonical-bare.txt` (in the dev checkout; also available in this worktree at the same path).
+> **Historical measurement, taken 2026-09-26.** The pass/fail tallies below are a record of the suite's state on that date, not a claim about current behaviour, and the raw capture they came from is not committed — `.tmp/` is scratch and does not survive. The reproducible evidence for this fix is the `package.json` script diff and the untouched guard (see `## Resolution`); re-derive the tallies by running the canonical shape rather than trusting these numbers.
+
+- `E2E_SAFEGUARD=1` → **277 pass / 0 fail** (matches the check-runner e2e gate at `scripts/check-parallel.mjs:486`).
+- **Unset → 248 pass / 29 fail**. Every failure is `Received: 429` with body `{"error":"Rate limit exceeded","code":"TOO_MANY_REQUESTS","meta":{"api_version":"1"}}` (no other failure mode).
 
 Failing-file breakdown (29 total):
 
@@ -42,7 +44,7 @@ Cascading failures in `chats-participants.test.ts`, `chats.test.ts`, `edge-cases
 
 ## Root cause
 
-`src/routes/v1/index.ts:53-56`:
+`src/routes/v1/index.ts:54-57`:
 
 ```ts
 // Synthetic burst client: the e2e harness fires hundreds of requests per
@@ -55,14 +57,13 @@ The `enabled` predicate flips **on** when the env var is unset. Combined with th
 
 **Already correct (do not change):**
 
-- `package.json:65` `test:coverage` — exports `E2E_SAFEGUARD=1`.
-- `package.json:118` `ci` — exports `E2E_SAFEGUARD=1` before `test:e2e` and `test:e2e:browser`.
-- `scripts/check-parallel.mjs:471-473` — prefixes the e2e gate command with `E2E_SAFEGUARD=1`.
-
+- `package.json:66` `test:coverage` — exports `E2E_SAFEGUARD=1`.
+- `package.json:120` `ci` — exports `E2E_SAFEGUARD=1` before `test:e2e` and `test:e2e:browser`.
+- `scripts/check-parallel.mjs:486` — prefixes the e2e gate command with `E2E_SAFEGUARD=1`.
 
 ## Resolution
 
-The rate-limit guard at `src/routes/v1/index.ts:53-56` was deliberately **not** relaxed. Its `enabled` predicate (`process.env.E2E_SAFEGUARD !== "1"`) encodes the documented design intent — the e2e harness fires hundreds of requests per user in milliseconds, so the per-user window 429s every flow. The defect was never the guard; it was the developer-facing scripts never exporting the opt-out. The guard and its design comment stand exactly as they were.
+The rate-limit guard at `src/routes/v1/index.ts:54-57` was deliberately **not** relaxed. Its `enabled` predicate (`process.env.E2E_SAFEGUARD !== "1"`) encodes the documented design intent — the e2e harness fires hundreds of requests per user in milliseconds, so the per-user window 429s every flow. The defect was never the guard; it was the developer-facing scripts never exporting the opt-out. The guard and its design comment stand exactly as they were.
 
 The four developer-facing scripts now export `E2E_SAFEGUARD=1`: `test:e2e`, `test:e2e:browser`, `test:e2e:smoke`, and `test:all` (`package.json:68-71`). `scripts/run-browser-tests.ts:26-33` independently hardcodes `E2E_SAFEGUARD: "1"` in its `Bun.spawn` child env, so the browser suite was already safe on its own.
 
@@ -70,13 +71,13 @@ The four developer-facing scripts now export `E2E_SAFEGUARD=1`: `test:e2e`, `tes
 
 The correction prefixes each e2e-reaching command individually — the bare `bun test` and the `test:e2e:browser` invocation — matching the convention already used by `ci` (`package.json:120`), which prefixes `test:e2e` and `test:e2e:browser` separately for the same reason. `bun run build:frontend` is left unprefixed because it never reaches the server.
 
-Verification: `bun run test:e2e` invoked from a shell with `E2E_SAFEGUARD` unset yields the canonical e2e shape green with the variable exported by the script itself — the script supplies it, not the caller's environment. That the guard is untouched is evidenced by the change being confined to `package.json` and this ticket, leaving `src/routes/v1/index.ts:53-56` out of the diff entirely.
+Verification: `bun run test:e2e` invoked from a shell with `E2E_SAFEGUARD` unset yields the canonical e2e shape green with the variable exported by the script itself — the script supplies it, not the caller's environment. That the guard is untouched is evidenced by `src/routes/v1/index.ts:54-57` being absent from this change's diff entirely — the commit touches only `package.json`, this ticket, its `index.json` status field, and a `CHANGELOG.md` entry, with no edit under `src/`.
 
 ## Acceptance Criteria
 
 1. With `E2E_SAFEGUARD` unset, the canonical shape `bun test --parallel=4 --isolate tests/e2e/` passes **277 / 0** (no 429 cascades) **OR** each of the four affected npm scripts exports `E2E_SAFEGUARD=1` so local invocations match the gate.
-2. The check-runner e2e gate (`scripts/check-parallel.mjs:471-473`) remains green — no regression on the canonical shape.
-3. The fix does **not** silently relax the rate-limit guard in `src/routes/v1/index.ts:53-56`; the design intent ("per-user windows would 429 every flow") must remain documented.
+2. The check-runner e2e gate (`scripts/check-parallel.mjs:486`) remains green — no regression on the canonical shape.
+3. The fix does **not** silently relax the rate-limit guard in `src/routes/v1/index.ts:54-57`; the design intent ("per-user windows would 429 every flow") must remain documented.
 4. One of these two options is implemented:
    - **(a)** Prefix each of the four scripts (`test:e2e`, `test:e2e:browser`, `test:e2e:smoke`, `test:all`) with `E2E_SAFEGUARD=1`, matching the convention already used by `test:coverage` and `ci`.
    - **(b)** Single-source the default: introduce one helper (or import) read by both `src/routes/v1/index.ts` and `tests/e2e/helpers/server.ts`, so the server guard and the test harness default to the same shape.
@@ -86,14 +87,13 @@ Verification: `bun run test:e2e` invoked from a shell with `E2E_SAFEGUARD` unset
 
 - Reproduce with the canonical `--parallel=4 --isolate` shape **only**. Sequential, never concurrent with `bun run check` — two concurrent `bun test` processes OOM on this host (per `AGENTS.md`).
 - **Non-isolated shapes give worse numbers (e.g. 69 fail when `--isolate` is dropped) and must NOT be quoted as the failure count.** The 248 / 29 split is the canonical measurement.
-- `E2E_SAFEGUARD=1` reproducing green (277 / 0) is the same gate `scripts/check-parallel.mjs:471-473` runs in CI — so this ticket is about wiring the same env in the developer-facing scripts, not about raising or lowering the rate-limit threshold.
+- `E2E_SAFEGUARD=1` reproducing green (277 / 0) is the same gate `scripts/check-parallel.mjs:486` runs in CI — so this ticket is about wiring the same env in the developer-facing scripts, not about raising or lowering the rate-limit threshold.
 
 ## Cross-references
 
-- `.tmp/scratchpad-pattern-analysis-2026-09-26.md` §3 D-01 (in the dev checkout; also available in this worktree at the same path).
-- `.tmp/scratchpad-audit/e2e-canonical-bare.txt` — canonical reproduction output (277 / 248-29, all `Received: 429`).
-- `src/routes/v1/index.ts:53-56` — design comment + `enabled` predicate.
-- `scripts/check-parallel.mjs:471-473` — already-correct canonical invocation.
-- `package.json:65` (`test:coverage`) and `package.json:118` (`ci`) — already-correct script-level prefixes.
+- `.tmp/scratchpad-pattern-analysis-2026-09-26.md` §3 D-01 and `.tmp/scratchpad-audit/e2e-canonical-bare.txt` — scratchpad working notes and the raw 277 / 248-29 capture. Both live under `.tmp/`, which is uncommitted scratch, so neither survives in a clean checkout; they are cited for provenance only and must not be treated as available evidence.
+- `src/routes/v1/index.ts:54-57` — design comment + `enabled` predicate.
+- `scripts/check-parallel.mjs:486` — already-correct canonical invocation.
+- `package.json:66` (`test:coverage`) and `package.json:120` (`ci`) — already-correct script-level prefixes.
 
 git issue: f511378

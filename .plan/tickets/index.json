@@ -6470,7 +6470,7 @@
     "label": "bug",
     "priority": "high",
     "source": ".plan/tickets/BUG-test-e2e-env-default-mismatch.md",
-    "status": "done",
+    "status": "Done",
     "tags": [],
     "title": "# e2e suite fails 29 tests with E2E_SAFEGUARD unset (canonical shape)",
     "type": "BUG"
