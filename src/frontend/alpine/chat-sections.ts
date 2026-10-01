@@ -59,8 +59,9 @@ export const chatSections: Partial<ChatState> & ThisType<ChatState> = {
       }
     } catch (error) {
       log.warn("loadSections failed", { error: String(error,), },);
+    } finally {
+      this._sectionsLoading = false;
     }
-    this._sectionsLoading = false;
   },
 
   /**
