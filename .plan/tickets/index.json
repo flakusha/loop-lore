@@ -24553,7 +24553,7 @@
       "validation"
     ],
     "source": ".plan/tickets/TASK-comfyui-builder-routes-chain-crud-run-palette-proxy-graph-va.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-COMFYUI-BUILDER-TRACK-A-ALPINE-PRESET-CHAIN-FORM": {
     "hash": "2d03749",
@@ -24571,7 +24571,7 @@
       "frontend"
     ],
     "source": ".plan/tickets/TASK-comfyui-builder-track-a-alpine-preset-chain-form.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-COMFYUI-BUILDER-TRACK-A-CHAIN-MODEL-PROMPT-TEMPLATES-WORKFLO": {
     "hash": "f021379",
@@ -24589,7 +24589,7 @@
       "prompt-templates"
     ],
     "source": ".plan/tickets/TASK-comfyui-builder-track-a-chain-model-prompt-templates-workflo.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-COMFYUI-BUILDER-TRACK-B-LITEGRAPH-CANVAS-WRAPPER-LAZY-BUNDLE": {
     "hash": "df1261a",
