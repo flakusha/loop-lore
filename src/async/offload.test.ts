@@ -27,9 +27,8 @@ import {
   setOffloadDir,
   SPILL_ROOT,
   spillFileStem,
+  spillRootDir,
 } from "./offload";
-
-const DEFAULT_DIR = path.join(SPILL_ROOT, String(process.pid,),);
 
 describe("offload helpers", () => {
   let dir = "";
@@ -43,22 +42,29 @@ describe("offload helpers", () => {
   },);
 
   test("the default spill dir is a per-process namespace under the repo's .tmp/ root", () => {
-    setOffloadDir(DEFAULT_DIR,);
-    expect(DEFAULT_DIR,).toBe(path.join(SPILL_ROOT, String(process.pid,),),);
+    // `resetOffloadDir()` restores the PRODUCTION default, so `offloadDir()`
+    // below is the value the running app uses — not one this file chose.
+    resetOffloadDir();
     expect(SPILL_ROOT,).toContain(".tmp",);
     expect(SPILL_ROOT,).toContain("async-store",);
-  });
+    // Structure, not a re-derived constant: the pre-fix flat shared
+    // `OFFLOAD_DIR` returns `SPILL_ROOT` itself here and fails both.
+    expect(path.dirname(offloadDir(),),).toBe(SPILL_ROOT,);
+    expect(path.basename(offloadDir(),),).toBe(String(process.pid,),);
+  },);
 
-  test("setOffloadDir redirects the spill namespace away from the shared default", () => {
+  test("setOffloadDir moves both the spill namespace and the sweep root", () => {
     const other = mkdtempSync(path.join(tmpdir(), "loop-lore-offload-alt-",),);
     try {
       setOffloadDir(other,);
       expect(offloadDir(),).toBe(other,);
-      expect(offloadDir(),).not.toBe(DEFAULT_DIR,);
+      // The sweep root follows, so a test's `runOnce()` can never sweep the
+      // shared SPILL_ROOT and delete a concurrent process's spill files.
+      expect(spillRootDir(),).toBe(other,);
     } finally {
       rmSync(other, { recursive: true, force: true, },);
     }
-  });
+  },);
 
   test("offloadExists + readOffloadedBody round-trip a gzip-spilled body", () => {
     // The daemon writes via `spill()` (not exported); emulate the on-disk
@@ -87,10 +93,9 @@ describe("offload helpers", () => {
     expect(readOffloadedBody(filePath,),).toBeNull();
   });
 
-  test("offloadDiskBytes reports zero before any spills", () => {
-    // The spill namespace is empty at test start; assert
-    // non-negative rather than zero to keep the assertion robust.
-    const bytes = offloadDiskBytes();
-    expect(bytes,).toBeGreaterThanOrEqual(0,);
+  test("offloadDiskBytes reports zero in a freshly created namespace", () => {
+    // `beforeEach` hands this test an empty `mkdtemp` dir, so zero is exact —
+    // the old `>= 0` bound only existed because the directory was shared.
+    expect(offloadDiskBytes(),).toBe(0,);
   });
 });
