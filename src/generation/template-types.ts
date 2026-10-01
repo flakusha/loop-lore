@@ -11,6 +11,7 @@
 import type { TemplateDetailLevel, TemplateModality, } from "../db/enums";
 import type { ImageEditCategory, TemplateParameter, } from "../image-edit/types";
 import { safeJsonParse, } from "../utils";
+import { type ChainPayload, isChainPayloadShape, } from "./builder/chain-types";
 import type { ComfyUIWorkflow, } from "./providers/comfyui";
 
 /** One ordered section of an LLM prompt template. */
@@ -84,7 +85,8 @@ export type TemplatePayload =
   | LlmTemplatePayload
   | ImageTemplatePayload
   | SimpleTemplatePayload
-  | WorkflowPayload;
+  | WorkflowPayload
+  | ChainPayload;
 
 /** Full DB row shape for a user-created prompt template. */
 export interface PromptTemplateRow {
@@ -132,25 +134,30 @@ export function parseTemplatePayload(
     if (!Array.isArray(record.sections,)) { return null; }
     return value as LlmTemplatePayload;
   }
-
   if (modality === "image") {
     if (typeof record.templateBody !== "string") { return null; }
     return value as ImageTemplatePayload;
   }
-
   // `workflow.body` is a graph object, not a template string — it must be
   // branched on before the generic `body` string check below, or a graph
   // would fail the string probe and a workflow row would be unreadable.
   if (modality === "workflow") {
+    // Two payload variants share the modality: an inline graph (`body`) and
+    // a builder chain (`kind: "chain"` + `steps`). Probe the chain first —
+    // a chain has no `body`, so the graph probe alone would reject it.
+    if (isChainPayloadShape(record,)) { return value as ChainPayload; }
     if (!isWorkflowPayloadShape(record,)) { return null; }
     return value as WorkflowPayload;
   }
-
   if (typeof record.body !== "string") { return null; }
   return value as SimpleTemplatePayload;
 }
 
-/** Structural probe for a `workflow` payload. Deeper ingest validation lives in `src/generation/workflow-library/`. */
+/**
+ * Structural probe for a `workflow` payload. Deeper ingest validation lives in `src/generation/workflow-library/`.
+ * @param record - parsed payload object
+ * @returns `true` when the record has the workflow payload shape.
+ */
 function isWorkflowPayloadShape(record: Record<string, unknown>,): boolean {
   return typeof record.body === "object" && record.body !== null &&
     typeof record.category === "string" &&

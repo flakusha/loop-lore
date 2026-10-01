@@ -8,6 +8,7 @@ import type { TemplateDetailLevel, TemplateModality, } from "../../db/enums";
 import { TEMPLATE_MODALITIES, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { jsonStringifyOr, uid, } from "../../utils";
+import { isChainPayloadShape, validateChainPayload, } from "../builder/chain-types";
 import {
   parseTemplatePayload,
   type PromptTemplateRow,
@@ -43,34 +44,38 @@ export function serializeTemplateInput(
   if (!MODALITIES.includes(input.modality,)) {
     return { ok: false, error: `Invalid modality: ${String(input.modality,)}`, };
   }
-
   const detail = input.detail_level ?? "balanced";
   if (!DETAIL_LEVELS.includes(detail,)) {
     return { ok: false, error: `Invalid detail_level: ${String(detail,)}`, };
   }
-
   if (typeof input.name !== "string" || input.name.trim().length === 0) {
     return { ok: false, error: "name is required", };
   }
-
   if (typeof input.payload !== "object" || input.payload === null) {
     return { ok: false, error: "payload object is required", };
   }
-
   const probe = parseTemplatePayload(jsonStringifyOr(input.payload,), input.modality,);
   if (!probe) {
     return { ok: false, error: `payload does not match the ${input.modality} template shape`, };
   }
-
   if (input.modality === "workflow") {
     // The shape probe above cannot see a dead node or a parameter that has no
     // placeholder, and either one fails later inside a generation queue.
+    // Chain payloads get their own gate — graph checks do not apply to a
+    // list of steps, and step checks do not apply to a graph.
+    const candidate = input.payload as Record<string, unknown>;
+    if (isChainPayloadShape(candidate,)) {
+      const chain = validateChainPayload(input.payload,);
+      if (!chain.ok) {
+        return { ok: false, error: chain.errors.join("; ",), };
+      }
+      return { ok: true, payload: jsonStringifyOr(chain.payload,), };
+    }
     const ingested = validateWorkflowPayload(input.payload,);
     if (!ingested.ok) {
       return { ok: false, error: ingested.errors.join("; ",), };
     }
   }
-
   return { ok: true, payload: jsonStringifyOr(input.payload,), };
 }
 
