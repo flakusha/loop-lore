@@ -1103,7 +1103,7 @@ Total tickets: **3126** — untagged: **2635** — unbound to epic: **1588**
 | yaml | 4 | 0 | 2 | 0 | 1 | 0 | 1 |
 | yaml-frontmatter | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| (untagged) | 2635 | 1044 | 59 | 1259 | 36 | 0 | 237 |
+| (untagged) | 2635 | 1057 | 59 | 1246 | 36 | 0 | 237 |
 
 ## By epic × status
 
@@ -1242,7 +1242,7 @@ Total tickets: **3126** — untagged: **2635** — unbound to epic: **1588**
 | epic-chat-lifecycle-moderation, epic-assistant-gm-flows | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
 | epic-chat-lifecycle-moderation, epic-chat-context-optimization | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
 | epic-chat-privacy.md | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| epic-chat-product-features | 32 | 5 | 0 | 26 | 0 | 0 | 1 |
+| epic-chat-product-features | 32 | 6 | 0 | 25 | 0 | 0 | 1 |
 | epic-chat-product-features.md | 3 | 1 | 0 | 0 | 0 | 0 | 2 |
 | epic-chat-rich-engagement.md | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-chat-rich-engagement.md (proposed) | 4 | 0 | 0 | 4 | 0 | 0 | 0 |
@@ -1482,7 +1482,7 @@ Total tickets: **3126** — untagged: **2635** — unbound to epic: **1588**
 | epic-vector-graphics-generation | 4 | 0 | 0 | 0 | 2 | 0 | 2 |
 | epic-visual-novel-mode | 5 | 2 | 0 | 3 | 0 | 0 | 0 |
 | epic-visual-novel-mode.md | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| epic-wardrobe-avatar-variants.md | 8 | 0 | 0 | 8 | 0 | 0 | 0 |
+| epic-wardrobe-avatar-variants.md | 8 | 8 | 0 | 0 | 0 | 0 | 0 |
 | epic-weather-environment | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
 | epic-workflow-engine | 10 | 1 | 0 | 7 | 0 | 0 | 2 |
 | epic-world-chat-channels-invites | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
@@ -1559,7 +1559,7 @@ Total tickets: **3126** — untagged: **2635** — unbound to epic: **1588**
 | RPG Mechanics & Extensible Game Systems | 7 | 2 | 0 | 5 | 0 | 0 | 0 |
 | RPG Mechanics, Battle & Action Systems, Social Interaction, Magic & Spell Systems | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | Visual Novel Mode; Immersion & Presentation | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| Wardrobe / Loadout Avatar Variants | 8 | 0 | 0 | 8 | 0 | 0 | 0 |
+| Wardrobe / Loadout Avatar Variants | 8 | 4 | 0 | 4 | 0 | 0 | 0 |
 | World & Locations | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | (unbound) | 1588 | 634 | 57 | 537 | 50 | 0 | 310 |
 
