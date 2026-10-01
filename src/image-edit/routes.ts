@@ -33,7 +33,8 @@ import type { DB, } from "../db/schema";
 
 // ── Provider instances ───────────────────────────────────────
 
-const comfyuiProvider = new ComfyUIEditProvider();
+/** Shared ComfyUI edit provider — also the builder palette's upstream. */
+export const comfyuiProvider = new ComfyUIEditProvider();
 const sdServerProvider = new SDServerEditProvider();
 
 /**

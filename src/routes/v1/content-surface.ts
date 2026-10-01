@@ -18,6 +18,7 @@ import { analyticsRoutes, } from "../analytics";
 import { assetSearchRoutes, } from "../asset-search";
 import { assetTagRoutes, } from "../asset-tags";
 import { blogRoutes, } from "../blog";
+import { comfyuiBuilderRoutes, } from "../comfyui-builder";
 import { comparisonsExportRoutes, } from "../comparisons-export";
 import { generationCompareRoutes, } from "../generation/compare";
 import { gifSearchRoutes, } from "../gifs/search";
@@ -47,6 +48,7 @@ export function contentSurface(opts: RegisterPluginsOpts,) {
     .use(assetTagRoutes({ database, }, prefix,),)
     .use(gifSearchRoutes(handleOpts, prefix,),)
     .use(imageEditRoutes({ database, }, prefix,),)
+    .use(comfyuiBuilderRoutes({ database, }, prefix,),)
     // ── Social / content ─────────────────────────────────────
     .use(personaRoutes({ database, }, prefix,),)
     .use(nsfwRoutes(handleOpts, prefix,),)
