@@ -4924,6 +4924,19 @@
     "title": "PII redaction hardcoded dev fallback secret, no prod guard",
     "type": "BUG"
   },
+  "BUG-PLAN-BACKLOG-SYNC-INVOKES-REMOVED-GIWT-SUBCOMMAND-FAILING-BU": {
+    "hash": "404adc9",
+    "git_issue": "404adc9",
+    "extid": "BUG-PLAN-BACKLOG-SYNC-INVOKES-REMOVED-GIWT-SUBCOMMAND-FAILING-BU",
+    "type": "BUG",
+    "title": "plan:backlog:sync invokes removed giwt subcommand, failing bun run check for every branch",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-plan-backlog-sync-invokes-removed-giwt-subcommand-failing-bu.md",
+    "status": "Not Started"
+  },
   "BUG-PLAN-SYNC-FIX-MASS-CREATES-ORPHAN-GIT-ISSUES-FOR-PLACEHOLDER": {
     "epic": "",
     "extid": "BUG-PLAN-SYNC-FIX-MASS-CREATES-ORPHAN-GIT-ISSUES-FOR-PLACEHOLDER",
