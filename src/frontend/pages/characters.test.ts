@@ -467,12 +467,14 @@ describe("characters.ts page actions", () => {
       expect(modal._qs["[data-field='mood-happiness']"]!.textContent,).toBe("80%",);
     });
 
-    test("actor fetch failure → rejects with HTTP error, no toast", async () => {
+    test("actor fetch 404 → error toast, modal left closed", async () => {
       const modal = makeModal();
       doc.selectors.set("#character-detail-modal", modal,);
       routeFetch({ "/api/v1/actors/a1": () => jsonResponse({}, 404,), },);
-      await expect(mod.selectCharacterCard("a1",),).rejects.toThrow("HTTP 404",);
-      expect(toasts(doc,),).toEqual([],);
+      // feFetch throws on the 404, so selectCharacterCard handles it in its
+      // catch — the user gets the toast instead of an unhandled rejection.
+      await mod.selectCharacterCard("a1",);
+      expect(toasts(doc,),).toEqual([{ type: "error", message: "Failed to load character", },],);
       expect(modal.classList.contains("open",),).toBe(false,);
     });
 
