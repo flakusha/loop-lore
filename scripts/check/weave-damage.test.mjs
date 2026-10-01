@@ -36,10 +36,50 @@ test("no duplicates and degenerate input count zero", () => {
   expect(countConsecutiveDupes(`${sixteen}\nother content here\n`,),).toBe(0,);
 });
 
+/**
+ * Resource contract — every `withRepo` call owns exactly one OS temp
+ * directory (`mkdtempSync`, so unique per test and per parallel run) holding
+ * a private git repo, and removes it in `finally`: a failed assertion cannot
+ * leak either. The tests share no process-global state, never change `cwd`,
+ * and do not depend on one another's order.
+ *
+ * Git runs with repo-pointing env stripped and global/system config
+ * disabled. Otherwise a host `GIT_DIR`/`GIT_WORK_TREE` (plausible under the
+ * finalize hooks) redirects the fixture into the caller's repo, and a global
+ * `commit.gpgsign = true` can block the fixture commit on a signer prompt.
+ */
+function isolatedGitEnv() {
+  const env = { ...process.env, };
+  const repoPointingKeys = [
+    "GIT_DIR",
+    "GIT_WORK_TREE",
+    "GIT_INDEX_FILE",
+    "GIT_COMMON_DIR",
+    "GIT_OBJECT_DIRECTORY",
+    "GIT_ALTERNATE_OBJECT_DIRECTORIES",
+    "GIT_PREFIX",
+  ];
+  for (const key of repoPointingKeys) { delete env[key]; }
+  env.GIT_CONFIG_GLOBAL = "/dev/null";
+  env.GIT_CONFIG_SYSTEM = "/dev/null";
+  env.GIT_CONFIG_NOSYSTEM = "1";
+  return env;
+}
+
+/** Run git inside the fixture repo, insulated from the host environment. */
+function spawnGit(dir, args,) {
+  return Bun.spawnSync(["git", ...args,], {
+    cwd: dir,
+    stdout: "pipe",
+    stderr: "pipe",
+    env: isolatedGitEnv(),
+  },);
+}
+
 /** Run the gate against a throwaway repo, then remove it. */
 function withRepo(fn,) {
   const dir = mkdtempSync(join(tmpdir(), "weave-damage-test-",),);
-  const git = args => Bun.spawnSync(["git", ...args,], { cwd: dir, stdout: "pipe", stderr: "pipe", },);
+  const git = args => spawnGit(dir, args,);
   try {
     mkdirSync(join(dir, "scripts", "check",), { recursive: true, },);
     // The gate resolves its repo root from its own location, so the copy has
@@ -62,7 +102,7 @@ function runGate(dir,) {
     cwd: dir,
     stdout: "pipe",
     stderr: "pipe",
-    env: { ...process.env, WEAVE_BASE: "HEAD", },
+    env: { ...isolatedGitEnv(), WEAVE_BASE: "HEAD", },
   },);
   return { code: proc.exitCode, out: new TextDecoder().decode(proc.stdout,), };
 }
@@ -83,7 +123,7 @@ test("a new file is skipped, not scored against a zero baseline", () => {
     // because `git diff` never lists untracked paths — a rebase-resolved file
     // is tracked, which is the case this gate actually meets.
     writeFileSync(join(dir, "brand-new.ts",), `${sixteen}\n${sixteen}\n`,);
-    Bun.spawnSync(["git", "add", "brand-new.ts",], { cwd: dir, stdout: "pipe", stderr: "pipe", },);
+    spawnGit(dir, ["add", "brand-new.ts",],);
     const { code, out, } = runGate(dir,);
     expect(out,).toContain("1 new (no baseline)",);
     expect(out,).not.toContain("brand-new.ts",);
