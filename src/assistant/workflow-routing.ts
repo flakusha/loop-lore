@@ -10,6 +10,7 @@
 
 import type { AssistantWorkflowConfig, } from "../config/sections/templates";
 import { INTENT_PATTERNS, SLASH_COMMAND, } from "../regex/intent";
+import { safeRegexExec, } from "../regex/safe-exec";
 
 /** Where a non-command message goes after routing */
 export type RouteTarget =
@@ -100,12 +101,13 @@ export function matchWorkflowIntent(
   let best: { readonly target: string; readonly confidence: number } | undefined;
   for (const group of INTENT_PATTERNS) {
     if (group.intent !== "generate") { continue; }
-    if (!group.patterns.some((p,) => p.test(message,))) { continue; }
+    if (
+      !group.patterns.some((p,) => safeRegexExec(p, message, `intent:${group.intent}:${group.target}`,) !== null)
+    ) { continue; }
     if (best === undefined || group.confidence > best.confidence) {
       best = { target: group.target, confidence: group.confidence, };
     }
   }
-
   if (best === undefined) { return undefined; }
   return routed.find((w,) => w.intent?.target === best.target);
 }

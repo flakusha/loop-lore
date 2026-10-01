@@ -11,9 +11,13 @@
  * - `safeRegexExec(pattern, input)` — wraps `pattern.exec(input)` and resets
  *   `pattern.lastIndex` to 0 on every call so global-flagged patterns reused
  *   from a shared module don't carry stale cursors between invocations.
+ * - Opt-in precision counters — pass a `patternName` label to
+ *   `safeRegexExec`/`safeRegexMatch` to count calls vs matches (see
+ *   `./telemetry`); no-op unless enabled.
  *
  * @module regex/safe-exec
  */
+import { recordRegexCall, } from "./telemetry";
 
 /** Hard cap on pipeline inputs (characters). Above this we reject eagerly. */
 export const MAX_INPUT_CHARS = 100_000;
@@ -62,11 +66,14 @@ export function assertInputSize(input: string, limit: number = MAX_INPUT_CHARS,)
  * pattern-level abort path, thread it through here. Add when Bun ships it.
  * @param {RegExp} pattern
  * @param {string} input
+ * @param {string} [patternName] — opt-in precision-telemetry label; omit to skip counting
  * @returns {RegExpExecArray | null}
  */
-export function safeRegexExec(pattern: RegExp, input: string,): RegExpExecArray | null {
+export function safeRegexExec(pattern: RegExp, input: string, patternName?: string,): RegExpExecArray | null {
   pattern.lastIndex = 0;
-  return pattern.exec(input,);
+  const result = pattern.exec(input,);
+  if (patternName !== undefined) { recordRegexCall(patternName, result != null,); }
+  return result;
 }
 
 /**
@@ -74,9 +81,12 @@ export function safeRegexExec(pattern: RegExp, input: string,): RegExpExecArray 
  * Resets `lastIndex` and returns the raw `match` array (or null).
  * @param {RegExp} pattern
  * @param {string} input
+ * @param {string} [patternName] — opt-in precision-telemetry label; omit to skip counting
  * @returns {RegExpMatchArray | null}
  */
-export function safeRegexMatch(pattern: RegExp, input: string,): RegExpMatchArray | null {
+export function safeRegexMatch(pattern: RegExp, input: string, patternName?: string,): RegExpMatchArray | null {
   pattern.lastIndex = 0;
-  return input.match(pattern,);
+  const result = input.match(pattern,);
+  if (patternName !== undefined) { recordRegexCall(patternName, result != null,); }
+  return result;
 }

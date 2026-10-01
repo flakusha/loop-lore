@@ -5,7 +5,10 @@ import type { Config, } from "../config/schema/config";
 import type { Db, } from "../db/index";
 import { OpenAiCompatibleProvider, registerProvider, } from "../generation";
 import type { Logger, } from "../logger/types";
+import { setRegexTelemetryEnabled, } from "../regex/telemetry";
+import { flushRegexTelemetry, } from "../regex/telemetry-flush";
 import type { ServerExternalManager, } from "../services/server-external-manager";
+import { loadTelemetryConfig, } from "../telemetry/config";
 
 /**
  * Run non-blocking background initialization: character-template seeding and
@@ -51,7 +54,6 @@ export async function initBackgroundServices(
             skipped: result.skipped,
           },);
         }
-
         if (result.errors.length > 0) {
           logger.warn("character template seeding had errors", { module: "server", errors: result.errors, },);
         }
@@ -83,24 +85,20 @@ export async function initBackgroundServices(
                 models: {},
               },),
             );
-
             if (!config.generation.defaultProvider) {
               config.generation.defaultProvider = name;
             }
-
             config.generation.defaultModels[name] ??= name;
           }
         })(),
       );
     }
-
     const llamaSwapCfg = autoStart?.llamaSwap;
     if (llamaSwapCfg?.enabled) {
       logger.info("auto-starting llama-swap", {
         module: "server",
         configPath: llamaSwapCfg.configPath,
       },);
-
       initPromises.push(
         (async () => {
           const instance = await serverManager.startLlamaSwap({ configPath: llamaSwapCfg.configPath, },);
@@ -112,7 +110,6 @@ export async function initBackgroundServices(
         })(),
       );
     }
-
     const sdCppCfg = autoStart?.sdCpp;
     if (sdCppCfg?.enabled) {
       logger.info("auto-starting sd-cpp", { module: "server", port: sdCppCfg.port, },);
@@ -127,6 +124,17 @@ export async function initBackgroundServices(
     }
   } else {
     logger.debug("autoStart not configured — skipping external server launch", { module: "server", },);
+  }
+
+  // Opt-in regex precision counters (TELEMETRY_REGEX_PRECISION=1)
+  if (loadTelemetryConfig().regexPrecision) {
+    setRegexTelemetryEnabled(true,);
+    const flushTimer = setInterval(() => {
+      void flushRegexTelemetry(database,).catch((error: unknown,) => {
+        logger.warn("regex telemetry flush failed", { module: "server", error: String(error,), },);
+      },);
+    }, 60_000,);
+    flushTimer.unref();
   }
 
   // Resolve all background init before proceeding to rest
