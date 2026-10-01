@@ -29,7 +29,7 @@ git issue: dc95659
 - 🟡 **Registry hardening** — tracked in `TASK-prompt-template-registry.md`, design `.plan/epics/epic-config-templates.md`.
 - ✅ **Video/audio scaffolds shipped (2026-10-01)** — `src/generation/video-prompt-templates.ts` + `video-prompt-profiles.ts` and `src/generation/audio-prompt-templates.ts` + `audio-prompt-profiles.ts` (registries, model matching, `{{var}}` substitution, `buildXPromptMessages`); per-modality routes `/api/templates/video|audio` in `src/routes/templates/modality.ts` (CRUD 200, apply 501 until a provider lands); shared mechanics in `src/generation/modality-templates/shared.ts`. Deviation from sub-ticket migration AC: no `video_prompt_templates`/`audio_prompt_templates` tables — video/audio rows persist as `SimpleTemplatePayload` through the unified `prompt_templates` table (modality check already includes video/audio). Both tickets marked Done.
 - 📌 **Follow-up tickets:**
-  - `TASK-public-templates-routes.md` — **Partially Shipped — Stale**. Flat routes at `/api/v1/templates` exist; remaining gap is per-modality nesting + modality guards.
+  - `TASK-public-templates-routes.md` — **In Progress**. Flat routes at `/api/v1/templates` exist; remaining gap is per-modality nesting + modality guards.
   - `FEAT-065-sub-video.md` — **Done 2026-10-01** (commit `e209fd55a`).
   - `FEAT-065-sub-audio.md` — **Done 2026-10-01** (commit `e209fd55a`).
   - `TASK-template-unified-variable-engine.md` — **Not Started**. Gap confirmed: config-layer `{{var}}` not resolved.
