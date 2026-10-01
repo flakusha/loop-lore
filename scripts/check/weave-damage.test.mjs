@@ -50,7 +50,7 @@ test("no duplicates and degenerate input count zero", () => {
  */
 function isolatedGitEnv() {
   const env = {};
-  for (const [key, value] of Object.entries(process.env)) {
+  for (const [key, value,] of Object.entries(process.env,)) {
     if (value === undefined) { continue; }
     // Prefix-match rather than an allowlist: the caller can set a GIT_ var
     // this list never enumerates. `GIT_CONFIG_COUNT` + `GIT_CONFIG_KEY_n`
@@ -59,7 +59,7 @@ function isolatedGitEnv() {
     // GIT_CONFIG_GLOBAL=/dev/null below and breaks the fixture commit for
     // reasons unrelated to the gate. Mirrors
     // scripts/worktree/utils/git.ts.
-    if (key.startsWith("GIT_")) { continue; }
+    if (key.startsWith("GIT_",)) { continue; }
     env[key] = value;
   }
   env.GIT_CONFIG_GLOBAL = "/dev/null";
