@@ -4454,7 +4454,7 @@
     "epic": "epic-asset-platform-capabilities",
     "tags": [],
     "source": ".plan/tickets/BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-NEW-MIGRATION-PARTS-NEVER-APPLY-TO-EXISTING-DATABASES": {
     "epic": "",
