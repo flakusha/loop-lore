@@ -10,16 +10,42 @@
 /** Supported locales */
 export type Locale = "en" | "es" | "fr" | "de" | "ja" | "ko" | "zh" | "pt" | "ru" | "ar";
 
-/** Nested translation map structure */
-export interface TranslationMap {
-  [key: string]: string | TranslationMap;
+/** CLDR plural category, as produced by `Intl.PluralRules.select`. */
+export type PluralCategory = Intl.LDMLPluralRule;
+
+/**
+ * Per-key plural variants. `other` is the CLDR catch-all and is therefore
+ * required; the rest are locale-dependent (`en` uses `one`/`other`; `ru` and
+ * `pl` add `few`/`many`; `ar` adds `zero`/`two`).
+ */
+export interface PluralTranslation {
+  zero?: string;
+  one?: string;
+  two?: string;
+  few?: string;
+  many?: string;
+  other: string;
 }
 
-/** Flat translation cache (dot-notation keys) */
-export type FlatTranslationMap = Map<string, string>;
+/** A translation node: either a plain string or a plural-variant object. */
+export type TranslationNode = string | PluralTranslation;
 
-/** Translator function signature */
-export type TranslatorFn = (key: string, params?: Record<string, string>,) => string;
+/** Nested translation map structure */
+export interface TranslationMap {
+  [key: string]: TranslationNode | TranslationMap;
+}
+
+/** Flat translation cache (dot-notation keys). */
+export type FlatTranslationMap = Map<string, TranslationNode>;
+
+/**
+ * Translator function signature.
+ *
+ * `params.count` (a number) drives plural selection: when a numeric `count` and
+ * a plural-variant entry for the key are both present, `count` picks the CLDR
+ * category. String-only keys are unaffected.
+ */
+export type TranslatorFn = (key: string, params?: Record<string, string | number>,) => string;
 
 /** Locale metadata */
 export interface LocaleInfo {

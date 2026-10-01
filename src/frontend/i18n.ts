@@ -8,7 +8,7 @@
  * Used by both Alpine app (chat pages) and vanilla UI (non-chat pages).
  */
 
-import type { Locale, LocaleInfo, TranslationMap, } from "../i18n/types";
+import type { Locale, LocaleInfo, PluralTranslation, TranslationMap, TranslationNode, } from "../i18n/types";
 import { TranslationMapSchema, } from "../validation/schemas/responses";
 import { parseOr, } from "./alpine/validation";
 import { feFetch, } from "./fe-fetch";
@@ -88,6 +88,12 @@ export function flattenTranslations(
     if (typeof value === "string") {
       result.set(fullKey, value,);
     } else if (typeof value === "object" && value !== null) {
+      // A plural-variant node is a LEAF, not a subtree: descending into it would
+      // publish `key.one` / `key.other` as if they were nested keys.
+      if (isPluralNode(value,)) {
+        result.set(fullKey, value.other,);
+        continue;
+      }
       for (const [nestedKey, nestedValue,] of flattenTranslations(value, fullKey,)) {
         result.set(nestedKey, nestedValue,);
       }
@@ -208,4 +214,27 @@ export function createFrontendTranslator(
 
     return value;
   };
+}
+
+/** Every CLDR plural category a plural-variant node may be keyed by. */
+const PLURAL_CATEGORIES: Record<string, true> = {
+  zero: true,
+  one: true,
+  two: true,
+  few: true,
+  many: true,
+  other: true,
+};
+
+/**
+ * A node is plural-variant data when every one of its keys is a CLDR category.
+ * Requiring ALL keys to be categories keeps a plain enumeration that merely
+ * CONTAINS `other` (e.g. `chats.flagReason`) a normal subtree.
+ * @param node - candidate translation node
+ * @returns true when the node is a plural-variant object.
+ */
+function isPluralNode(node: TranslationNode | TranslationMap,): node is PluralTranslation {
+  if (typeof node !== "object" || node === null) { return false; }
+  const keys = Object.keys(node,);
+  return keys.length > 0 && keys.every((key,) => PLURAL_CATEGORIES[key] === true,);
 }
