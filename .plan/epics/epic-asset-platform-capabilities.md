@@ -37,7 +37,11 @@ renditions row for baked crops, a pHash for sprite dedup, a backlink query for
   **no server-side rendition ladder**.
 - `ModelRole.Captioning` exists in config but is a **dead role** (documented in
   `epic-aux-enrichment-pipeline.md` — nothing resolves it).
-- No dedup/content-hash, no orphan GC, no alt/caption field, no albums, no
+- `content_hash` (SHA-256) exists and `createAsset` dedups on it, but only per
+  `(content_hash, owner_id)`, with no unique index, no cross-user dedup, and no
+  blob/refcount layer — the B1 content-addressed store is still unbuilt. A
+  2026-10-01 review filed the blocking defects against the current dedup under
+  **B1 Defect tickets** below. No orphan GC, no alt/caption field, no albums, no
   sticker concept, no storage budget, no "recent assets" picker.
 
 ## Batches (each independently shippable)
@@ -57,6 +61,38 @@ renditions row for baked crops, a pHash for sprite dedup, a backlink query for
   WhatsApp/Signal): keep original bytes for own gallery metadata view; serve
   stripped derivative to other users. `has_location` flag from `metadata.ts`
   extraction decides when the strip path fires.
+
+#### B1 Defect tickets (filed 2026-10-01, gallery/dedup review)
+
+Blocking defects in the *existing* per-owner `content_hash` dedup. These are
+prerequisites for the B1 content-addressed store: the B1 design assumes the
+current dedup is at least correct, and it is not. Fix in this order — each is
+independently shippable.
+
+- [`BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat.md`](../tickets/BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat.md)
+  — ComfyUI image-edit passes `ownerId: "system"`, violating the
+  `assets.owner_id` FK. The provider cannot persist a result at all. Fix first;
+  it is one line and unblocks the provider.
+- [`BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-.md`](../tickets/BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-.md)
+  — with ownership fixed, a shared system owner makes every user's
+  byte-identical output resolve to one row carrying the first user's chat
+  links. Cross-tenant content mixup. Requires real per-user ownership on the
+  write path, which is also what B1's blob layer needs.
+- [`BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst.md`](../tickets/BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst.md)
+  — an edit whose bytes match an existing asset collapses onto that row,
+  inheriting its visibility and shares. This is the copy-on-write contract the
+  gallery needs; the dedup must not run on derivative-creating paths.
+- [`BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return.md`](../tickets/BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return.md)
+  — dedup keys on hash + owner only, so an encrypted-chat upload receives the
+  existing unencrypted row. Determines the final dedup key columns.
+- [`BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with.md`](../tickets/BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with.md)
+  — 8 concurrent identical uploads produced 8 rows. Needs a partial unique
+  index (new forward migration) + upsert. Sequence after the dedup key is
+  settled, since the index must cover the final columns.
+- [`BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty.md`](../tickets/BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty.md)
+  — derivative link uses `entity_type=actor` with an asset id, so
+  `deleteAsset`'s derivative GC never collects it. Latent: the module has no
+  external importer today.
 
 ### B2 — Chat/upload UX patterns
 
@@ -141,6 +177,10 @@ renditions row for baked crops, a pHash for sprite dedup, a backlink query for
 - [ ] B1: `assets.blake3` + dedup-on-store; `asset_renditions` table + thumb/LQIP
       pipeline (Bun.image) + gallery/bubble switch; EXIF strip path on
       external serve
+
+- [ ] B1 defects (see B1 Defect tickets): ComfyUI ownerId FK, cross-user dedup
+      collapse, edit-iteration collapse, encryption-tier blindness, TOCTOU race,
+      derivative-link entity_type — all before the B1 content-addressed store
 - [ ] B2: optimistic upload state machine + retry queue; client downscale;
       album message kind; recent-picker; shared-media tab
 - [ ] B3: ref-count view + GC sweep job; soft-delete column + restore; budget

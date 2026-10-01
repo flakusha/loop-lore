@@ -303,6 +303,32 @@
     "title": "Archive retention hardcoded 30 days — should be configurable 90-day default",
     "type": "BUG"
   },
+  "BUG-ASSET-DEDUP-COLLAPSES-ALL-USERS-EDITS-ONTO-ONE-SYSTEM-OWNED-": {
+    "hash": "53f50a8",
+    "git_issue": "53f50a8",
+    "extid": "BUG-ASSET-DEDUP-COLLAPSES-ALL-USERS-EDITS-ONTO-ONE-SYSTEM-OWNED-",
+    "type": "BUG",
+    "title": "Asset dedup collapses all users' edits onto one system-owned row",
+    "label": "bug",
+    "priority": "critical",
+    "epic": "epic-asset-platform-capabilities",
+    "tags": [],
+    "source": ".plan/tickets/BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-.md",
+    "status": "Not Started"
+  },
+  "BUG-ASSET-DEDUP-IGNORES-REQUESTED-ENCRYPTION-TIER-AND-KEY-RETURN": {
+    "hash": "708fba5",
+    "git_issue": "708fba5",
+    "extid": "BUG-ASSET-DEDUP-IGNORES-REQUESTED-ENCRYPTION-TIER-AND-KEY-RETURN",
+    "type": "BUG",
+    "title": "Asset dedup ignores requested encryption tier and key, returning an unencrypted row",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-asset-platform-capabilities",
+    "tags": [],
+    "source": ".plan/tickets/BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return.md",
+    "status": "Not Started"
+  },
   "BUG-ASSET-LINK-SHARE-HANDLERS-AND-GALLERY-GRID-PARAM-LACK-VALIDA": {
     "epic": "",
     "extid": "BUG-ASSET-LINK-SHARE-HANDLERS-AND-GALLERY-GRID-PARAM-LACK-VALIDA",
@@ -1900,6 +1926,19 @@
     "title": "classifyIntent / parseGmToolDetection accept LLM confidence without numeric bounds check",
     "type": "BUG"
   },
+  "BUG-COMFYUI-EDIT-PROVIDER-PERSISTS-NOTHING-OWNERID-SYSTEM-VIOLAT": {
+    "hash": "713ef5c",
+    "git_issue": "713ef5c",
+    "extid": "BUG-COMFYUI-EDIT-PROVIDER-PERSISTS-NOTHING-OWNERID-SYSTEM-VIOLAT",
+    "type": "BUG",
+    "title": "ComfyUI edit provider persists nothing: ownerId 'system' violates assets.owner_id FK",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-asset-platform-capabilities",
+    "tags": [],
+    "source": ".plan/tickets/BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat.md",
+    "status": "Not Started"
+  },
   "BUG-COMMAND-DISPATCH-ASYNC-HANDLER-UNCAUGHT": {
     "epic": "epic-chat-lifecycle-moderation",
     "extid": "BUG-COMMAND-DISPATCH-ASYNC-HANDLER-UNCAUGHT",
@@ -2068,6 +2107,19 @@
     "tags": [],
     "title": "create-test-db-custom-dialect-can-bypass-setTestDatabase",
     "type": "BUG"
+  },
+  "BUG-CREATEASSET-CONTENT-HASH-DEDUP-IS-A-CHECK-THEN-ACT-RACE-WITH": {
+    "hash": "a3e13f1",
+    "git_issue": "a3e13f1",
+    "extid": "BUG-CREATEASSET-CONTENT-HASH-DEDUP-IS-A-CHECK-THEN-ACT-RACE-WITH",
+    "type": "BUG",
+    "title": "createAsset content-hash dedup is a check-then-act race with no unique index",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-asset-platform-capabilities",
+    "tags": [],
+    "source": ".plan/tickets/BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with.md",
+    "status": "Not Started"
   },
   "BUG-CRITICAL-HIT-ROLLS-IGNORE-ADVANTAGE": {
     "epic": "",
@@ -3515,6 +3567,19 @@
     "title": "idempotency table backend — verify reproducer or close (advisory orphan)",
     "type": "BUG"
   },
+  "BUG-IMAGE-EDIT-DERIVATIVE-LINK-FILES-AN-ASSET-ID-UNDER-ENTITY-TY": {
+    "hash": "cfa6d6a",
+    "git_issue": "cfa6d6a",
+    "extid": "BUG-IMAGE-EDIT-DERIVATIVE-LINK-FILES-AN-ASSET-ID-UNDER-ENTITY-TY",
+    "type": "BUG",
+    "title": "Image-edit derivative link files an asset id under entity_type=actor, hiding it from derivative GC",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-asset-platform-capabilities",
+    "tags": [],
+    "source": ".plan/tickets/BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty.md",
+    "status": "Not Started"
+  },
   "BUG-IMAGE-EDIT-SUITE-RELEASES-ITS-DEAD-PORT-BEFORE-PROBING-IT-TO": {
     "hash": "11b117b",
     "git_issue": "11b117b",
@@ -4364,6 +4429,19 @@
     "tags": [],
     "title": "New-chat VN toggle sends visualNovel but backend reads renderingOverride",
     "type": "BUG"
+  },
+  "BUG-NEW-EDIT-ITERATIONS-COLLAPSE-ONTO-AN-EXISTING-ASSET-ROW-INST": {
+    "hash": "7de9b84",
+    "git_issue": "7de9b84",
+    "extid": "BUG-NEW-EDIT-ITERATIONS-COLLAPSE-ONTO-AN-EXISTING-ASSET-ROW-INST",
+    "type": "BUG",
+    "title": "New edit iterations collapse onto an existing asset row instead of spawning a new item",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-asset-platform-capabilities",
+    "tags": [],
+    "source": ".plan/tickets/BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst.md",
+    "status": "Not Started"
   },
   "BUG-NEW-MIGRATION-PARTS-NEVER-APPLY-TO-EXISTING-DATABASES": {
     "epic": "",
