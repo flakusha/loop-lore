@@ -357,7 +357,7 @@ export default [
       "src/chat/proactive/timing.ts",
       "src/chat/proactive/index.ts",
       "src/chat/proactive/annotations.ts",
-      "src/async/offload.ts",
+      "src/async/offload-pass.ts",
       "src/telemetry/cleanup.ts",
       "src/memory/purge.ts",
       "src/middleware/auth/authenticate.ts",
