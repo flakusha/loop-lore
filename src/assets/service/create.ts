@@ -144,7 +144,12 @@ export async function createAsset({ database, input, uploadDir, }: CreateAssetOp
   // of the conflict target, not a filter on the statement. The two indexes are
   // mutually exclusive on encrypted_key_id (IS NOT NULL vs IS NULL), so the
   // matching one is selected here rather than left to SQLite to infer.
-  const conflictColumns: ReadonlyArray<AnyColumn<DB, "assets">> = encryptedKeyId === null
+  // One branch decides the key shape, and BOTH the conflict target and the
+  // loser re-read below consume it. A re-read filtered more loosely than the
+  // conflict target is a bug: when one owner holds the same bytes at two tiers,
+  // an unfiltered re-read can return the other tier's row, handing the caller
+  // a foreign-tier asset id whose storage_path it just deleted from disk.
+  const dedupeKeyColumns: ReadonlyArray<AnyColumn<DB, "assets">> = encryptedKeyId === null
     ? ["owner_id", "content_hash", "encryption_tier",]
     : ["owner_id", "content_hash", "encryption_tier", "encrypted_key_id",];
 
@@ -154,7 +159,7 @@ export async function createAsset({ database, input, uploadDir, }: CreateAssetOp
       .values(values,)
       .onConflict((oc,) =>
         oc
-          .columns(conflictColumns,)
+          .columns(dedupeKeyColumns,)
           .where("content_hash", "is not", null,)
           .where("encrypted_key_id", encryptedKeyId === null ? "is" : "is not", null,)
           .doNothing()
@@ -173,7 +178,13 @@ export async function createAsset({ database, input, uploadDir, }: CreateAssetOp
     if (thumbnailPath !== null) { deleteFile(uploadDir, thumbnailPath,); }
     deleteFile(uploadDir, storagePath,);
 
-    const existing = await database
+    // Re-read on the SAME key as the conflict target. Filtering more loosely
+    // here is a real bug: when one owner holds identical bytes at two tiers, an
+    // unfiltered re-read returns the other tier's row, handing the caller a
+    // foreign-tier asset id whose storage_path this call just deleted. The
+    // branch mirrors the conflict target's, including `is null` for the public
+    // path where `= NULL` would never match.
+    const base = database
       .selectFrom("assets",)
       .select([
         "id",
@@ -197,7 +208,11 @@ export async function createAsset({ database, input, uploadDir, }: CreateAssetOp
       ],)
       .where("content_hash", "=", contentHash,)
       .where("owner_id", "=", input.ownerId,)
-      .executeTakeFirst();
+      .where("encryption_tier", "=", encryptionTier,);
+
+    const existing = await (encryptedKeyId === null
+      ? base.where("encrypted_key_id", "is", null,)
+      : base.where("encrypted_key_id", "=", encryptedKeyId,)).executeTakeFirst();
 
     if (existing) {
       return {
