@@ -68,7 +68,7 @@ function removeEmptyNamespaces(dir: string,): void {
       if (!statSync(child,).isDirectory()) { continue; }
       if (readdirSync(child,).length > 0) { continue; }
       rmdirSync(child,);
-    } catch { /* raced with a live writer — harmless, it re-creates on demand */ }
+    } catch { /* a sibling sweep already took it — nothing left to clean */ }
   }
 }
 
