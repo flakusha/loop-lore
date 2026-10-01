@@ -35,6 +35,7 @@ export const HttpStatus = {
   NotImplemented: 501,
   BadGateway: 502,
   ServiceUnavailable: 503,
+  GatewayTimeout: 504,
 } as const;
 
 /** */
