@@ -300,6 +300,26 @@
                 📋
               </button>
               <button class="btn-icon-action" @click="startEdit(msg.id)" x-bind:title="t('common.edit')">✏️</button>
+              <!-- Component-buttons AC1: per-message Improve (user-authored) + Attach -->
+              <template x-if="msg.role === 'user'">
+                <button
+                  class="btn-icon-action"
+                  @click="improveMessage(msg.id)"
+                  :disabled="_improvingMessageId === msg.id"
+                  x-bind:title="t('chats.improveMessage')"
+                  data-testid="improve-message"
+                >
+                  ✨
+                </button>
+              </template>
+              <button
+                class="btn-icon-action"
+                @click="openAssetPicker(msg.id)"
+                x-bind:title="t('chats.attachAsset')"
+                data-testid="attach-asset"
+              >
+                📎
+              </button>
               <button
                 class="btn-icon-action"
                 @click="rememberMessage(msg.id, msg.content)"
@@ -463,6 +483,51 @@
               </div>
             </template>
 
+            <!-- Attach asset picker (component-buttons AC3/AC7): renders only
+                 for the message it was opened for; kinds come from the
+                 registered ASSET_PICKER_KINDS registry. -->
+            <template x-if="_assetPickerFor === msg.id">
+              <div class="asset-picker" data-testid="asset-picker">
+                <div class="asset-picker-header">
+                  <span x-text="t('chats.assetPickerTitle')"></span>
+                  <button
+                    class="asset-picker-close"
+                    @click="closeAssetPicker()"
+                    x-bind:title="t('common.cancel')"
+                    aria-label="Close"
+                  >
+                    ×
+                  </button>
+                </div>
+                <div
+                  class="asset-picker-status"
+                  x-show="_assetPickerLoading"
+                  x-text="t('chats.assetPickerLoading')"
+                ></div>
+                <div
+                  class="asset-picker-status"
+                  x-show="!_assetPickerLoading && _assetPickerAssets.length === 0"
+                  x-text="t('chats.assetPickerEmpty')"
+                ></div>
+                <div class="asset-picker-grid" x-show="!_assetPickerLoading">
+                  <template x-for="asset in _assetPickerAssets" :key="asset.id">
+                    <button
+                      class="asset-picker-item"
+                      @click="attachAssetToMessage(msg.id, asset.id)"
+                      :title="asset.filename || asset.id"
+                      :aria-label="asset.filename || asset.id"
+                    >
+                      <img
+                        :src="'/api/v1/assets/' + asset.id + '/raw'"
+                        :alt="asset.filename || ''"
+                        loading="lazy"
+                      />
+                    </button>
+                  </template>
+                </div>
+              </div>
+            </template>
+
             <!-- Compact mode (Immersion + Basic): hamburger menus -->
             <div class="actions-compact" x-show="detailLevel !== 'Detailed'" :data-detail="detailLevel">
               <!-- Actions hamburger -->
@@ -485,6 +550,14 @@
                   </button>
                   <button @click="startEdit(msg.id); _hamburgerOpen[msg.id] = false">
                     ✏️ {{{t("common.edit")}}}
+                  </button>
+                  <template x-if="msg.role === 'user'">
+                    <button @click="improveMessage(msg.id); _hamburgerOpen[msg.id] = false">
+                      ✨ {{{t("chats.improveMessage")}}}
+                    </button>
+                  </template>
+                  <button @click="openAssetPicker(msg.id); _hamburgerOpen[msg.id] = false">
+                    📎 {{{t("chats.attachAsset")}}}
                   </button>
                   <template x-if="msg.role === 'assistant'">
                     <button @click="regenerateVariant(msg.id); _hamburgerOpen[msg.id] = false">
@@ -577,6 +650,16 @@
   >
     <button @click="copyMessage(_contextMenu.messageId, $event); closeContextMenu()">📋 {{{t("chats.copy")}}}</button>
     <button @click="startEdit(_contextMenu.messageId); closeContextMenu()">✏️ {{{t("common.edit")}}}</button>
+    <template
+      x-if="(() => { const m = messages.find(msg => msg.id === _contextMenu.messageId); return m && m.role === 'user'; })()"
+    >
+      <button @click="improveMessage(_contextMenu.messageId); closeContextMenu()">
+        ✨ {{{t("chats.improveMessage")}}}
+      </button>
+    </template>
+    <button @click="openAssetPicker(_contextMenu.messageId); closeContextMenu()">
+      📎 {{{t("chats.attachAsset")}}}
+    </button>
     <template
       x-if="(() => { const m = messages.find(msg => msg.id === _contextMenu.messageId); return m && m.role === 'assistant'; })()"
     >

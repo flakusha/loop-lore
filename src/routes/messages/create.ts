@@ -7,7 +7,7 @@ import { computeContextStats, } from "../../chat";
 import { ProactiveMessagingService, } from "../../chat/proactive";
 import { checkChatAccess, updateMessageVisibility, } from "../../chat/service";
 import type { ContentEncoding, } from "../../db/enums";
-import { parseInitiativeFlag, } from "../../group-chat/mention-parser";
+import { parseAssetMentions, parseInitiativeFlag, stripAssetMentions, } from "../../group-chat/mention-parser";
 import { containsProfanity, filter as filterProfanity, } from "../../profanity/service";
 import { uid, } from "../../utils";
 import { ChatIdParams, ErrorResponse, MessageCreateBody, } from "../../validation/schemas";
@@ -53,14 +53,20 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
         // Must run before NSFW flagging / profanity filtering so a
         // non-participant cannot trigger moderation writes scoped to an
         // arbitrary chatId (BUG-nsfw-flag-side-effect-runs-before-access-check).
+        // Moderation AC3: mute gate rejects muted senders before side effects.
         const access = await checkChatAccess(database, chatId, actorId, ctx.userRole as string | null,);
         if (!access.ok) { return serviceErrorToResponse(access.error,); }
 
-        // ── Mute enforcement (TASK-chat-feature-moderation AC3) ──────
-        // Inbound traffic for a muted participant is suppressed before
-        // any side effect (NSFW flag, command dispatch, insert).
         const muteRejection = await enforceMuteGate(database, chatId, actorId,);
         if (muteRejection) { return muteRejection; }
+
+        // ── `@asset:<id>` attachment mentions (component-buttons AC6/AC4) ──
+        // Capture the ids before translation/moderation see the text, then
+        // strip the tokens so the timeline never renders raw `@asset:` markup.
+        const assetMentionIds = parseAssetMentions(effectiveBody.content,);
+        if (assetMentionIds.length > 0) {
+          effectiveBody.content = stripAssetMentions(effectiveBody.content,);
+        }
 
         const filteredContent = filterProfanity(effectiveBody.content,);
         const hasProfanity = containsProfanity(effectiveBody.content,);
@@ -176,7 +182,11 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
           }
           throw err;
         }
-        const attachments = body.attachments;
+        const explicitAttachments = body.attachments ?? [];
+        const mentionedAttachments = assetMentionIds
+          .filter((assetId,) => !explicitAttachments.some((a,) => a.assetId === assetId,),)
+          .map((assetId,) => ({ assetId, }));
+        const attachments = [...explicitAttachments, ...mentionedAttachments,];
 
         // ── Profanity moderation gate ─────────────────────────
         if (hasProfanity) {

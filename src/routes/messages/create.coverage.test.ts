@@ -12,7 +12,7 @@ import { MessageRole, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
-import { insertChats, insertMessages, insertUsers, } from "../../test-utils/insert-helpers";
+import { insertAssets, insertChats, insertMessages, insertUsers, } from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
 import { createRoutes, } from "./create";
 
@@ -291,4 +291,47 @@ describe("createRoutes coverage", () => {
   // unknown assetId), which is covered by attachment-ownership.test.ts.
   // Schema-level contracts (minItems/maxItems) are pinned via the pure
   // validation tests in validation/schemas/chat.test.ts + messages.test.ts.
+
+  test("@asset mention attaches the asset and strips the token (component-buttons AC6/AC4)", async () => {
+    const assetId = "asset-mention-1";
+    await insertAssets(db, owner, "m.png", "image/png", "image", 10, "/m.png", { id: assetId, },);
+    const app = makeApp(db, owner, "user",);
+    const res = await postMessage(app, chatA, { content: `look @asset:${assetId} please`, },);
+    expect(res.status,).toBe(201,);
+    const body: { id: string } = await res.json();
+    const row = await db
+      .selectFrom("messages",)
+      .select(["content_plaintext", "attachments",],)
+      .where("id", "=", body.id,)
+      .executeTakeFirst();
+    expect(row?.content_plaintext,).toBe("look please",);
+    const attachments = JSON.parse(row?.attachments ?? "[]",) as { assetId: string }[];
+    expect(attachments.map((a,) => a.assetId,),).toEqual([assetId,],);
+    const links = await db
+      .selectFrom("asset_links",)
+      .select("asset_id",)
+      .where("asset_id", "=", assetId,)
+      .execute();
+    expect(links.length,).toBe(1,);
+  });
+
+  test("explicit attachment plus an @asset mention of the same asset dedupe to one row", async () => {
+    const assetId = "asset-mention-2";
+    await insertAssets(db, owner, "n.png", "image/png", "image", 10, "/n.png", { id: assetId, },);
+    const app = makeApp(db, owner, "user",);
+    const res = await postMessage(app, chatA, {
+      content: `both ways @asset:${assetId}`,
+      attachments: [{ assetId, }],
+    },);
+    expect(res.status,).toBe(201,);
+    const body: { id: string } = await res.json();
+    const row = await db
+      .selectFrom("messages",)
+      .select("attachments",)
+      .where("id", "=", body.id,)
+      .executeTakeFirst();
+    const attachments = JSON.parse(row?.attachments ?? "[]",) as { assetId: string }[];
+    expect(attachments,).toHaveLength(1,);
+    expect(attachments[0]?.assetId,).toBe(assetId,);
+  });
 });

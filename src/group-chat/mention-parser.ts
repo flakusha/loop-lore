@@ -180,7 +180,51 @@ export function detectPassToken(text: string,): boolean {
  * @returns Text after the leading mention, trimmed; original when absent
  */
 export function stripLeadingMention(text: string,): string {
-  const match = /^@[A-Za-z0-9_-]+\s*/.exec(text.trimStart(),);
+  // `@asset:<id>` is an attachment token, not actor addressing — the colon
+  // disambiguates it, and stripping would leave a dangling ":<id>" fragment.
+  const match = /^@(?!asset:)[A-Za-z0-9_-]+\s*/.exec(text.trimStart(),);
   if (!match) { return text; }
   return text.trimStart().slice(match[0].length,).trimStart();
+}
+
+/** Asset mention token: `@asset:<id>` where id is a gallery asset id. */
+const ASSET_MENTION_REGEX = /@asset:([A-Za-z0-9_-]+)/g;
+
+/**
+ * Extract `@asset:<id>` attachment mentions from message text
+ * (TASK-chat-feature-component-buttons AC6).
+ *
+ * The ids are resolved to attachments by the message-write path; the parser
+ * itself stays pure (no DB access), matching the actor-mention design.
+ * @param text - User message content
+ * @returns Distinct asset ids in order of appearance (may be empty)
+ */
+export function parseAssetMentions(text: string,): string[] {
+  const ids: string[] = [];
+  const seen = new Set<string,>();
+  ASSET_MENTION_REGEX.lastIndex = 0;
+  let match = ASSET_MENTION_REGEX.exec(text,);
+  while (match !== null) {
+    const id = match[1]!;
+    if (!seen.has(id,)) {
+      seen.add(id,);
+      ids.push(id,);
+    }
+    match = ASSET_MENTION_REGEX.exec(text,);
+  }
+  return ids;
+}
+
+/**
+ * Remove every `@asset:<id>` token from message text, collapsing the
+ * double spaces they leave behind. Used after the ids have been captured
+ * as attachments so the timeline does not render raw tokens.
+ * @param text - Raw message content
+ * @returns Content without asset mention tokens
+ */
+export function stripAssetMentions(text: string,): string {
+  return text
+    .replace(ASSET_MENTION_REGEX, "",)
+    .replace(/[ \t]{2,}/g, " ",)
+    .trim();
 }
