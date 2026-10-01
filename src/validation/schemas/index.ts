@@ -38,3 +38,4 @@ export * from "./notifications";
 export * from "./telemetry";
 export * from "./admin-templates";
 export * from "./templates";
+export * from "./comfyui-builder";
