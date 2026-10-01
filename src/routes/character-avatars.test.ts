@@ -5,27 +5,49 @@ import type { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
+import { AssetLinkEntity, } from "../db/enums-content";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
-import { insertActors, insertAssets, insertUsers, } from "../test-utils/insert-helpers";
+import {
+  insertActors,
+  insertAssetLinks,
+  insertAssets,
+  insertUsers,
+  insertWorlds,
+} from "../test-utils/insert-helpers";
 import { characterAvatarsRoutes, } from "./character-avatars";
+
+/** Minimal shape of the route table Elysia builds, for duplicate checks. */
+interface RouteRow {
+  method: string;
+  path: string;
+}
+
+/** Flatten a plugin's registered routes to `METHOD path` keys. */
+function routeKeys(app: unknown,): string[] {
+  const { routes, } = app as { routes: RouteRow[] };
+  return routes.map((r,) => `${r.method} ${r.path}`);
+}
 
 const OWNER = "00000000-0000-4000-8000-000000000001";
 const OWNER_USER = "00000000-0000-4000-8000-000000000011";
 const OTHER = "00000000-0000-4000-8000-000000000002";
 const OTHER_USER = "00000000-0000-4000-8000-000000000012";
 const ASSET = "00000000-0000-4000-8000-000000000101";
+const ASSET2 = "00000000-0000-4000-8000-000000000102";
+const WORLD = "00000000-0000-4000-8000-000000000201";
 
 /**
  * @param db
  * @param userId
  * @param userRole
+ * @param prefix
  */
-function makeApp(db: Kysely<DB>, userId?: string, userRole?: string,) {
+function makeApp(db: Kysely<DB>, userId?: string, userRole?: string, prefix = "/api",) {
   return new Elysia({ name: "test-avatars", },)
     .derive(() => ({ userId, userRole, }))
-    .use(characterAvatarsRoutes({ database: db, },),) as unknown as Elysia;
+    .use(characterAvatarsRoutes({ database: db, }, prefix,),) as unknown as Elysia;
 }
 
 describe("characterAvatarsRoutes", () => {
@@ -217,5 +239,191 @@ describe("Avatar config", () => {
       },),
     );
     expect(res.status,).toBe(404,);
+  });
+});
+
+describe("Routes recovered from the shadowed character-avatars/ directory", () => {
+  let db: Kysely<DB>;
+  let sqlite: Database;
+
+  beforeAll(async () => {
+    createLogger({ level: "warn", },);
+    ({ db, sqlite, } = await createTestDb());
+    await insertUsers(db, "owner", "Owner", { id: OWNER_USER as never, },);
+    await insertUsers(db, "other", "Other", { id: OTHER_USER as never, },);
+    await insertActors(db, "Owner Actor", {
+      id: OWNER as never,
+      owner_id: OWNER_USER,
+      user_id: OWNER_USER,
+    },);
+    await insertAssets(db, OWNER_USER, "a.png", "image/png", "image", 1024, "/a.png", {
+      id: ASSET as never,
+    },);
+    await insertAssets(db, OWNER_USER, "b.png", "image/png", "image", 1024, "/b.png", {
+      id: ASSET2 as never,
+    },);
+    await insertWorlds(db, OWNER_USER, "Test World", { id: WORLD as never, },);
+  },);
+
+  afterAll(async () => {
+    await db.destroy();
+    sqlite.close();
+  },);
+
+  test("DELETE /actors/:actorId/assets/:assetId unlinks the asset link row", async () => {
+    await insertAssetLinks(db, ASSET, AssetLinkEntity.Actor, OWNER,);
+    const app = makeApp(db, OWNER_USER, "user",);
+    const res = await app.handle(
+      new Request(`http://localhost/api/actors/${OWNER}/assets/${ASSET}`, { method: "DELETE", },),
+    );
+    expect(res.status,).toBe(204,);
+
+    // The link row is gone, but the asset itself is preserved.
+    const links = await db
+      .selectFrom("asset_links",)
+      .selectAll()
+      .where("asset_id", "=", ASSET,)
+      .where("entity_id", "=", OWNER,)
+      .execute();
+    expect(links.length,).toBe(0,);
+    const asset = await db.selectFrom("assets",).selectAll().where("id", "=", ASSET,).executeTakeFirst();
+    expect(asset,).toBeDefined();
+  });
+
+  test("DELETE asset link leaves other links on the same asset alone", async () => {
+    await insertAssetLinks(db, ASSET2, AssetLinkEntity.Actor, OWNER,);
+    await insertAssetLinks(db, ASSET2, AssetLinkEntity.World, WORLD,);
+    const app = makeApp(db, OWNER_USER, "user",);
+    const res = await app.handle(
+      new Request(`http://localhost/api/actors/${OWNER}/assets/${ASSET2}`, { method: "DELETE", },),
+    );
+    expect(res.status,).toBe(204,);
+
+    const remaining = await db
+      .selectFrom("asset_links",)
+      .select("entity_type",)
+      .where("asset_id", "=", ASSET2,)
+      .execute();
+    expect(remaining.map((r,) => r.entity_type),).toEqual([AssetLinkEntity.World,],);
+  });
+
+  test("DELETE asset returns 401 without auth", async () => {
+    const app = makeApp(db,);
+    const res = await app.handle(
+      new Request(`http://localhost/api/actors/${OWNER}/assets/${ASSET}`, { method: "DELETE", },),
+    );
+    expect(res.status,).toBe(401,);
+  });
+
+  test("DELETE asset returns 404 for another user's actor", async () => {
+    const app = makeApp(db, OTHER_USER, "user",);
+    const res = await app.handle(
+      new Request(`http://localhost/api/actors/${OWNER}/assets/${ASSET}`, { method: "DELETE", },),
+    );
+    expect(res.status,).toBe(404,);
+  });
+
+  test("GET single avatar returns the avatar", async () => {
+    const app = makeApp(db, OWNER_USER, "user",);
+    const created = await app.handle(
+      new Request(`http://localhost/api/actors/${OWNER}/avatars`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ image_url: ASSET, mood: "calm", },),
+      },),
+    );
+    const { id, } = await created.json() as { id: string };
+
+    const res = await app.handle(new Request(`http://localhost/api/actors/${OWNER}/avatars/${id}`,),);
+    expect(res.status,).toBe(200,);
+  });
+
+  test("GET single avatar returns 404 for an unknown avatar id", async () => {
+    const app = makeApp(db, OWNER_USER, "user",);
+    const res = await app.handle(
+      new Request(`http://localhost/api/actors/${OWNER}/avatars/00000000-0000-4000-8000-000000000999`,),
+    );
+    expect(res.status,).toBe(404,);
+  });
+
+  test("PUT then GET world avatar config round-trips the override", async () => {
+    const app = makeApp(db, OWNER_USER, "user",);
+    const put = await app.handle(
+      new Request(`http://localhost/api/worlds/${WORLD}/avatars/config/${OWNER}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ selection_rule_override: "mood_first", },),
+      },),
+    );
+    expect(put.status,).toBe(200,);
+
+    const get = await app.handle(new Request(`http://localhost/api/worlds/${WORLD}/avatars/config/${OWNER}`,),);
+    expect(get.status,).toBe(200,);
+    const config = await get.json() as { selectionRuleOverride: string };
+    expect(config.selectionRuleOverride,).toBe("mood_first",);
+  });
+
+  test("GET world avatar config returns 404 when unset", async () => {
+    const app = makeApp(db, OWNER_USER, "user",);
+    const res = await app.handle(new Request(`http://localhost/api/worlds/${WORLD}/avatars/config/${OTHER}`,),);
+    expect(res.status,).toBe(404,);
+  });
+
+  test("world avatar config returns 404 for another user's actor", async () => {
+    const app = makeApp(db, OTHER_USER, "user",);
+    const res = await app.handle(new Request(`http://localhost/api/worlds/${WORLD}/avatars/config/${OWNER}`,),);
+    expect(res.status,).toBe(404,);
+  });
+});
+
+describe("Prefix parameterisation", () => {
+  let db: Kysely<DB>;
+  let sqlite: Database;
+
+  beforeAll(async () => {
+    createLogger({ level: "warn", },);
+    ({ db, sqlite, } = await createTestDb());
+    await insertUsers(db, "owner", "Owner", { id: OWNER_USER as never, },);
+    await insertActors(db, "Owner Actor", {
+      id: OWNER as never,
+      owner_id: OWNER_USER,
+      user_id: OWNER_USER,
+    },);
+    await insertAssets(db, OWNER_USER, "a.png", "image/png", "image", 1024, "/a.png", {
+      id: ASSET as never,
+    },);
+  },);
+
+  afterAll(async () => {
+    await db.destroy();
+    sqlite.close();
+  },);
+
+  test("/api/v1 prefix mounts the recovered DELETE asset route", async () => {
+    await insertAssetLinks(db, ASSET, AssetLinkEntity.Actor, OWNER,);
+    const app = makeApp(db, OWNER_USER, "user", "/api/v1",);
+    const res = await app.handle(
+      new Request(`http://localhost/api/v1/actors/${OWNER}/assets/${ASSET}`, { method: "DELETE", },),
+    );
+    expect(res.status,).toBe(204,);
+  });
+
+  test("/api/v1 prefix does not serve the unprefixed path", async () => {
+    const app = makeApp(db, OWNER_USER, "user", "/api/v1",);
+    const res = await app.handle(new Request(`http://localhost/api/actors/${OWNER}/avatars`,),);
+    expect(res.status,).toBe(404,);
+  });
+
+  test("/api/v1 prefix mounts the original CRUD route", async () => {
+    const app = makeApp(db, OWNER_USER, "user", "/api/v1",);
+    const res = await app.handle(new Request(`http://localhost/api/v1/actors/${OWNER}/avatars`,),);
+    expect(res.status,).toBe(200,);
+  });
+
+  test("no route is registered twice under either prefix", () => {
+    for (const prefix of ["/api", "/api/v1",]) {
+      const keys = routeKeys(characterAvatarsRoutes({ database: db, }, prefix,),);
+      expect(new Set(keys,).size,).toBe(keys.length,);
+    }
   });
 });

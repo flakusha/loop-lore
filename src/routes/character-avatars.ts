@@ -11,7 +11,6 @@ import { AvatarService, } from "../characters/services/avatar-service";
 import {
   ActorIdAvatarIdParams,
   ActorIdParams,
-  AvatarConfigBody,
   AvatarCreateBody,
   AvatarResponse,
   AvatarSelectBody,
@@ -20,6 +19,8 @@ import {
   SuccessResponse,
 } from "../validation/schemas";
 import { type HandlerOpts, requireActorAccess, } from "./actor-auth";
+import { characterAvatarsConfigRoutes, } from "./character-avatars-config";
+import { characterAvatarsExtraRoutes, } from "./character-avatars-extra";
 import { HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonResponse, } from "./http-utils";
 
 const AvatarListResponse = t.Array(AvatarResponse,);
@@ -191,56 +192,9 @@ export function characterAvatarsRoutes(opts: HandlerOpts, prefix = "/api",) {
       },
     },)
     // ── Avatar config ──────────────────────────────────────────
+    // Extracted to stay under the 250L gate; also mounts the world-scoped
+    // overrides that only existed in the shadowed directory.
 
-    .get(`${prefix}/actors/:actorId/avatars/config`, async (ctx: any,) => {
-      const userId = await requireActorAccess(ctx, database,);
-      if (userId instanceof Response) { return userId; }
-
-      const { actorId, } = ctx.params;
-      const config = await avatarService.getAvatarConfig(actorId,);
-      if (!config) {
-        return jsonError({
-          message: "Avatar config not found",
-          status: HttpStatus.NotFound,
-        },);
-      }
-      return jsonResponse(config,);
-    }, {
-      params: ActorIdParams,
-      response: {
-        200: t.Any(),
-        401: ErrorResponse,
-        404: ErrorResponse,
-      },
-      detail: {
-        summary: "Get avatar config",
-        description: "Get the avatar selection configuration for a character.",
-        tags: ["Character Avatars",],
-      },
-    },)
-    .put(`${prefix}/actors/:actorId/avatars/config`, async (ctx: any,) => {
-      const userId = await requireActorAccess(ctx, database,);
-      if (userId instanceof Response) { return userId; }
-
-      const { actorId, } = ctx.params;
-      const { selection_rule_override, } = ctx.body ?? {};
-
-      const configId = await avatarService.upsertAvatarConfig(actorId, {
-        selectionRule: selection_rule_override as any,
-      },);
-      return jsonCreated({ id: configId, },);
-    }, {
-      params: ActorIdParams,
-      body: AvatarConfigBody,
-      response: {
-        201: t.Object({ id: t.String(), },),
-        401: ErrorResponse,
-        404: ErrorResponse,
-      },
-      detail: {
-        summary: "Update avatar config",
-        description: "Create or update the avatar selection configuration for a character.",
-        tags: ["Character Avatars",],
-      },
-    },);
+    .use(characterAvatarsConfigRoutes(opts, avatarService, prefix,),)
+    .use(characterAvatarsExtraRoutes(opts, prefix,),);
 }
