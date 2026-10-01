@@ -8,6 +8,7 @@
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../../db/schema";
+import { jsonStringifyOr, } from "../../../utils";
 
 /**
  * Set (or clear, with outfitId null) the chat/scene outfit override.
@@ -43,7 +44,7 @@ export async function setChatOutfitOverride(
     .selectFrom("wardrobe_items",)
     .select(["id",],)
     .where("id", "=", outfitId,)
-    .where((eb,) => eb.or([eb("actor_id", "=", opts.actorId,), eb("actor_id", "is", null,)]),)
+    .where((eb,) => eb.or([eb("actor_id", "=", opts.actorId,), eb("actor_id", "is", null,),],))
     .executeTakeFirst();
   if (!outfit) { throw new Error("Wardrobe item not found",); }
 
@@ -63,7 +64,8 @@ export async function setChatOutfitOverride(
         outfit_id: outfitId,
         changed_by: opts.changedBy,
         updated_at: now,
-      }),)
+      },)
+    )
     .execute();
 }
 
@@ -90,13 +92,14 @@ export async function setLocationOutfitBindings(
         eb.or([
           eb("actor_id", "=", opts.actorId,),
           eb("world_id", "=", opts.worldId,),
-        ]),)
+        ],)
+      )
       .executeTakeFirst();
     if (!visible) { throw new Error(`Wardrobe item ${outfitId} not visible in world`,); }
   }
 
   const now = new Date().toISOString();
-  const serialized = JSON.stringify(opts.bindings,);
+  const serialized = jsonStringifyOr(opts.bindings,);
   const existing = await db
     .selectFrom("world_avatar_config",)
     .select(["id",],)

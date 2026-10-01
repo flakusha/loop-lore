@@ -50,16 +50,17 @@ describeOrSkip("outfitSwitcher.load", () => {
   test("fetches wardrobe + override when chat and actor resolve", async () => {
     const s = fresh();
     mockChatScope("c1", "a1",);
-    fetchHandler = (url,) => url.includes("/wardrobe-override/")
-      ? Response.json({ outfit_id: "o2", },)
-      : Response.json([{ id: "o1", name: "Travel Cloak", }, { id: "o2", name: "Court Dress", },],);
+    fetchHandler = (url,) =>
+      url.includes("/wardrobe-override/",)
+        ? Response.json({ outfit_id: "o2", },)
+        : Response.json([{ id: "o1", name: "Travel Cloak", }, { id: "o2", name: "Court Dress", },],);
     await s.load();
     expect(s.chatId,).toBe("c1",);
     expect(s.actorId,).toBe("a1",);
     expect(s.overrideId,).toBe("o2",);
     expect(s.outfits,).toHaveLength(2,);
     expect(s.loading,).toBe(false,);
-    expect(fetchCalls.map((c,) => c.url,),).toEqual([
+    expect(fetchCalls.map((c,) => c.url),).toEqual([
       "/api/v1/actors/a1/wardrobe",
       "/api/v1/chats/c1/wardrobe-override/a1",
     ],);
@@ -88,26 +89,27 @@ describeOrSkip("outfitSwitcher.load", () => {
   test("override fetch failing leaves overrideId null", async () => {
     const s = fresh();
     mockChatScope("c1", "a1",);
-    fetchHandler = (url,) => url.includes("/wardrobe-override/")
-      ? Response.json({}, { status: 500, },)
-      : Response.json([{ id: "o1", name: "Cloak", },],);
+    fetchHandler = (url,) =>
+      url.includes("/wardrobe-override/",)
+        ? Response.json({}, { status: 500, },)
+        : Response.json([{ id: "o1", name: "Cloak", },],);
     await s.load();
     expect(s.outfits,).toHaveLength(1,);
     expect(s.overrideId,).toBeNull();
   });
-});
+},);
 
 describeOrSkip("outfitSwitcher.select", () => {
   test("persists override and updates state", async () => {
     const s = fresh();
     mockChatScope("c1", "a1",);
-    await s.load().catch(() => undefined,);
+    await s.load().catch(() => undefined);
     s.chatId = "c1";
     s.actorId = "a1";
     s.open = true;
     fetchHandler = () => Response.json({ outfit_id: "o9", },);
     await s.select("o9",);
-    const put = fetchCalls.find((c,) => c.opts.method === "PUT",);
+    const put = fetchCalls.find((c,) => c.opts.method === "PUT");
     expect(put?.url,).toBe("/api/v1/chats/c1/wardrobe-override",);
     expect(JSON.parse(put!.opts.body as string,),).toEqual({
       actor_id: "a1",
@@ -124,7 +126,7 @@ describeOrSkip("outfitSwitcher.select", () => {
     s.actorId = "a1";
     fetchHandler = () => Response.json({ outfit_id: null, },);
     await s.select(null,);
-    const put = fetchCalls.find((c,) => c.opts.method === "PUT",);
+    const put = fetchCalls.find((c,) => c.opts.method === "PUT");
     expect(JSON.parse(put!.opts.body as string,).outfit_id,).toBeNull();
     expect(s.overrideId,).toBeNull();
   });
@@ -146,19 +148,19 @@ describeOrSkip("outfitSwitcher.select", () => {
     await s.select("o1",);
     expect(fetchCalls,).toHaveLength(0,);
   });
-});
+},);
 
 describeOrSkip("outfitSwitcher.currentLabel", () => {
   test("resolves outfit name, falls back to scene default", () => {
     const s = fresh();
     expect(s.currentLabel,).toBe("wardrobe.sceneDefault",);
-    s.outfits = [{ id: "o1", name: "Court Dress", }];
+    s.outfits = [{ id: "o1", name: "Court Dress", },];
     s.overrideId = "o1";
     expect(s.currentLabel,).toBe("Court Dress",);
     s.overrideId = "ghost";
     expect(s.currentLabel,).toBe("wardrobe.sceneDefault",);
   });
-});
+},);
 
 describeOrSkip("outfitSwitcher.init/destroy", () => {
   test("subscribes to chat-context-refresh, reloads, then unsubscribes", async () => {
@@ -172,19 +174,20 @@ describeOrSkip("outfitSwitcher.init/destroy", () => {
     };
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (document as any).removeEventListener = (type: string, handler: EventListener,) => {
-      const idx = listeners.findIndex((l,) => l.type === type && l.handler === handler,);
+      const idx = listeners.findIndex((l,) => l.type === type && l.handler === handler);
       if (idx >= 0) { listeners.splice(idx, 1,); }
     };
     try {
       mockChatScope(null, null,);
       s.init();
-      expect(listeners.map((l,) => l.type,),).toContain("chat-context-refresh",);
+      expect(listeners.map((l,) => l.type),).toContain("chat-context-refresh",);
       mockChatScope("c7", "a7",);
-      fetchHandler = (url,) => url.includes("/wardrobe-override/")
-        ? Response.json({ outfit_id: null, },)
-        : Response.json([{ id: "ox", name: "Armor", },],);
+      fetchHandler = (url,) =>
+        url.includes("/wardrobe-override/",)
+          ? Response.json({ outfit_id: null, },)
+          : Response.json([{ id: "ox", name: "Armor", },],);
       listeners[0]!.handler(new CustomEvent("chat-context-refresh",),);
-      await new Promise<void>((resolve,) => setTimeout(resolve, 10,),);
+      await new Promise<void>((resolve,) => setTimeout(resolve, 10,));
       expect(s.chatId,).toBe("c7",);
       expect(s.outfits,).toHaveLength(1,);
       s.destroy();
@@ -196,7 +199,7 @@ describeOrSkip("outfitSwitcher.init/destroy", () => {
       (document as any).removeEventListener = originalRemove;
     }
   });
-});
+},);
 
 // ── Helpers ──
 interface ChatScopeShape {

@@ -14,9 +14,9 @@
  */
 import { beforeAll, describe, expect, it, } from "bun:test";
 import type { Kysely, } from "kysely";
-import { AvatarService, } from "../avatar-service";
 import type { DB, } from "../../../db/schema";
 import { createTestDb, } from "../../../test-utils/create-test-db";
+import { AvatarService, } from "../avatar-service";
 import { deleteOutfitEmotionVariants, } from "../emotion-avatar-service/generation";
 import { createTestActors, createTestLocation, createTestWorld, } from "../test-helpers";
 import { resolveOutfit, } from "./resolve";
@@ -98,7 +98,7 @@ describe("Wardrobe selection v2", () => {
 
     // Assets for variants.
     await db.insertInto("assets",).values(
-      ["armor-joy", "armor-neutral", "court-joy", "robes-joy", "base-joy"].map((name,) => ({
+      ["armor-joy", "armor-neutral", "court-joy", "robes-joy", "base-joy",].map((name,) => ({
         id: `asset-${name}`,
         owner_id: "test-user",
         filename: `${name}.png`,
@@ -108,7 +108,8 @@ describe("Wardrobe selection v2", () => {
         storage_path: `/test/${name}.png`,
         storage_backend: "local",
         visibility: "private",
-      })),)
+      })),
+    )
       .execute();
 
     // Variant matrix: (outfit × emotion) + outfitless legacy.
@@ -139,7 +140,7 @@ describe("Wardrobe selection v2", () => {
         actor_id: actorId,
         selection_rule_override: null,
         weights_override: null,
-        outfit_bindings: JSON.stringify({ [locationB]: courtId, }),
+        outfit_bindings: JSON.stringify({ [locationB]: courtId, },),
         created_at: now,
         updated_at: now,
       },)
@@ -283,7 +284,7 @@ describe("Outfit-scoped regen isolation", () => {
     courtId = "regen-court";
 
     await db.insertInto("assets",).values(
-      ["old-armor-joy", "old-armor-sad", "old-court-joy", "fresh-armor-joy"].map((name,) => ({
+      ["old-armor-joy", "old-armor-sad", "old-court-joy", "fresh-armor-joy",].map((name,) => ({
         id: `asset-${name}`,
         owner_id: "test-user",
         filename: `${name}.png`,
@@ -293,7 +294,8 @@ describe("Outfit-scoped regen isolation", () => {
         storage_path: `/test/${name}.png`,
         storage_backend: "local",
         visibility: "private",
-      })),)
+      })),
+    )
       .execute();
   },);
 

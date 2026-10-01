@@ -40,10 +40,13 @@ interface SwitcherOutfit {
     open: false,
     _refreshHandler: null as ((evt: Event,) => void) | null,
 
-    /** Human label for the currently active selection. */
+    /**
+     * Human label for the currently active selection.
+     * @returns {string}
+     */
     get currentLabel(): string {
       if (this.overrideId) {
-        const found = this.outfits.find((o,) => o.id === this.overrideId,);
+        const found = this.outfits.find((o,) => o.id === this.overrideId);
         if (found) { return found.name; }
       }
       return t("wardrobe.sceneDefault",);
@@ -72,15 +75,18 @@ interface SwitcherOutfit {
       this.loading = true;
       this.error = "";
       try {
-        const [itemsRes, overrideRes,] = await Promise.all([
+        const [itemsRes, overrideRes,] = await Promise.allSettled([
           apiFetch(`/api/v1/actors/${actorId}/wardrobe`,),
           apiFetch(`/api/v1/chats/${chatId}/wardrobe-override/${actorId}`,),
-        ]);
-        this.outfits = itemsRes.ok
-          ? ((await itemsRes.json()) as SwitcherOutfit[]).map((o,) => ({ id: o.id, name: o.name, }),)
+        ],);
+        // Rejections keep the old Promise.all semantics: surface error.
+        if (itemsRes.status === "rejected") { throw itemsRes.reason; }
+        if (overrideRes.status === "rejected") { throw overrideRes.reason; }
+        this.outfits = itemsRes.value.ok
+          ? ((await itemsRes.value.json()) as SwitcherOutfit[]).map((o,) => ({ id: o.id, name: o.name, }))
           : [];
-        this.overrideId = overrideRes.ok
-          ? ((await overrideRes.json()) as { outfit_id: string | null }).outfit_id
+        this.overrideId = overrideRes.value.ok
+          ? ((await overrideRes.value.json()) as { outfit_id: string | null }).outfit_id
           : null;
       } catch (error) {
         log.error("Failed to load outfit switcher", error instanceof Error ? error : undefined, {},);
@@ -106,7 +112,7 @@ interface SwitcherOutfit {
           body: jsonBody({ actor_id: this.actorId, outfit_id: outfitId, },),
         },);
         if (!res.ok) {
-          const body = (await res.json().catch(() => ({}),)) as { message?: string };
+          const body = (await res.json().catch(() => ({}))) as { message?: string };
           this.error = body.message ?? t("status.wardrobeSaveFailed",);
           return;
         }

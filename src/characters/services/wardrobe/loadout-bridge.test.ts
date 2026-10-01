@@ -16,7 +16,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../../db/schema";
 import { createTestDb, } from "../../../test-utils/create-test-db";
 import { createTestActors, createTestLocation, createTestWorld, } from "../test-helpers";
-import { LOADOUT_BRIDGE_FLAG, isLoadoutBridgeEnabled, resolveEquippedOutfit, } from "./loadout-bridge";
+import { isLoadoutBridgeEnabled, LOADOUT_BRIDGE_FLAG, resolveEquippedOutfit, } from "./loadout-bridge";
 import { resolveOutfit, } from "./resolve";
 
 describe("Loadout bridge (flag-gated equipped-items → outfit)", () => {
@@ -130,7 +130,7 @@ describe("Loadout bridge (flag-gated equipped-items → outfit)", () => {
     await db.deleteFrom("actor_wardrobe",).execute();
     await db.updateTable("actor_items",).set({ equipped: "unequipped", },).execute();
     await setFlag(null,);
-  });
+  },);
 
   // ── Flag contract ─────────────────────────────────────────
 
@@ -239,7 +239,7 @@ describe("Loadout bridge (flag-gated equipped-items → outfit)", () => {
         actor_id: actorId,
         selection_rule_override: null,
         weights_override: null,
-        outfit_bindings: JSON.stringify({ [locationId]: courtId, }),
+        outfit_bindings: JSON.stringify({ [locationId]: courtId, },),
         created_at: now,
         updated_at: now,
       },)

@@ -53,7 +53,7 @@ describeOrSkip("parseTagsInput", () => {
     expect(parseTagsInput(" formal , royal ,, ",),).toEqual(["formal", "royal",],);
     expect(parseTagsInput("",),).toEqual([],);
   });
-});
+},);
 
 describeOrSkip("actorWardrobeFactory", () => {
   test("isolates state per instance", () => {
@@ -74,20 +74,21 @@ describeOrSkip("actorWardrobeFactory", () => {
     expect(s.message,).toBe("",);
     expect(s.outfits,).toEqual([],);
   });
-});
+},);
 
 describeOrSkip("actorWardrobe.load", () => {
   test("loads outfits and variants together", async () => {
     const s = actorWardrobeFactory("a1",);
-    fetchHandler = (url,) => url.endsWith("/avatars")
-      ? Response.json([variant("v1", "o1", "happy",),],)
-      : Response.json([outfit("o1", "Court Dress",),],);
+    fetchHandler = (url,) =>
+      url.endsWith("/avatars",)
+        ? Response.json([variant("v1", "o1", "happy",),],)
+        : Response.json([outfit("o1", "Court Dress",),],);
     await s.load();
     expect(s.outfits,).toHaveLength(1,);
     expect(s.variants,).toHaveLength(1,);
     expect(s.loading,).toBe(false,);
     expect(s.loadError,).toBe("",);
-    expect(fetchCalls.map((c,) => c.url,),).toEqual([
+    expect(fetchCalls.map((c,) => c.url),).toEqual([
       "/api/v1/actors/a1/wardrobe",
       "/api/v1/actors/a1/avatars",
     ],);
@@ -95,9 +96,10 @@ describeOrSkip("actorWardrobe.load", () => {
 
   test("wardrobe 5xx sets loadError, variants failure yields empty grid", async () => {
     const s = actorWardrobeFactory("a1",);
-    fetchHandler = (url,) => url.endsWith("/avatars")
-      ? Response.json({}, { status: 500, },)
-      : Response.json({}, { status: 500, },);
+    fetchHandler = (url,) =>
+      url.endsWith("/avatars",)
+        ? Response.json({}, { status: 500, },)
+        : Response.json({}, { status: 500, },);
     await s.load();
     expect(s.loadError,).not.toBe("",);
     expect(s.variants,).toEqual([],);
@@ -109,7 +111,7 @@ describeOrSkip("actorWardrobe.load", () => {
     await s.load();
     expect(fetchCalls,).toHaveLength(0,);
   });
-});
+},);
 
 describeOrSkip("actorWardrobe.save", () => {
   test("rejects blank name without a network call", async () => {
@@ -126,7 +128,7 @@ describeOrSkip("actorWardrobe.save", () => {
     s.draft.tagsInput = " formal ";
     fetchHandler = () => Response.json([outfit("o1", "Court Dress",),],);
     await s.save();
-    const post = fetchCalls.find((c,) => c.opts.method === "POST",);
+    const post = fetchCalls.find((c,) => c.opts.method === "POST");
     expect(post?.url,).toBe("/api/v1/actors/a1/wardrobe",);
     expect(JSON.parse(post!.opts.body as string,),).toEqual({
       name: "Court Dress",
@@ -142,20 +144,21 @@ describeOrSkip("actorWardrobe.save", () => {
     s.draft = { name: "Gown", descriptor: "", tagsInput: "", editingId: "o7", };
     fetchHandler = () => Response.json({ message: "name conflict", }, { status: 409, },);
     await s.save();
-    const put = fetchCalls.find((c,) => c.opts.method === "PUT",);
+    const put = fetchCalls.find((c,) => c.opts.method === "PUT");
     expect(put?.url,).toBe("/api/v1/actors/a1/wardrobe/o7",);
     expect(s.error,).toContain("conflict",);
     expect(s.draft.editingId,).toBe("o7",);
   });
-});
+},);
 
 describeOrSkip("actorWardrobe.remove", () => {
   test("deletes and reloads; 404 treated as success", async () => {
     const s = actorWardrobeFactory("a1",);
     s.draft.editingId = "o1";
-    fetchHandler = (_url, opts,) => opts.method === "DELETE"
-      ? Response.json({}, { status: 404, },)
-      : Response.json([],);
+    fetchHandler = (_url, opts,) =>
+      opts.method === "DELETE"
+        ? Response.json({}, { status: 404, },)
+        : Response.json([],);
     await s.remove("o1",);
     expect(fetchCalls[0]!.opts.method,).toBe("DELETE",);
     expect(s.error,).toBe("",);
@@ -168,7 +171,7 @@ describeOrSkip("actorWardrobe.remove", () => {
     await s.remove("o1",);
     expect(s.error,).toBe("status.wardrobeDeleteFailed",);
   });
-});
+},);
 
 describeOrSkip("actorWardrobe.variantGrid", () => {
   test("groups by outfit with base label for null outfit", () => {
@@ -182,11 +185,11 @@ describeOrSkip("actorWardrobe.variantGrid", () => {
     ];
     const grid = s.variantGrid();
     expect(grid,).toHaveLength(3,);
-    const names = grid.map((g,) => g.outfitName,);
+    const names = grid.map((g,) => g.outfitName);
     expect(names,).toContain("Court Dress",);
     expect(names,).toContain("wardrobe.baseOutfit",);
     expect(names,).toContain("missing-outfit",);
-    const dress = grid.find((g,) => g.outfitName === "Court Dress",);
+    const dress = grid.find((g,) => g.outfitName === "Court Dress");
     expect(dress!.variants,).toHaveLength(2,);
   });
 
@@ -194,4 +197,4 @@ describeOrSkip("actorWardrobe.variantGrid", () => {
     const s = actorWardrobeFactory("a1",);
     expect(s.variantGrid(),).toEqual([],);
   });
-});
+},);

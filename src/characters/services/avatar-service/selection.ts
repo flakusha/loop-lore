@@ -4,12 +4,12 @@
 import type { Kysely, } from "kysely";
 import type { AvatarSelectionRule, AvatarTagType, } from "../../../db/enums";
 import type { DB, } from "../../../db/schema";
+import { resolveDefaultOutfit, resolveOutfit, } from "../wardrobe/resolve";
+import { runOutfitLadder, } from "../wardrobe/selection-ladder";
 import { getAvatarConfig, } from "./config";
 import { getAvatars, } from "./crud";
 import type { Avatar, AvatarSelectionContext, } from "./types";
 import { getWorldAvatarConfig, } from "./world-config";
-import { resolveDefaultOutfit, resolveOutfit, } from "../wardrobe/resolve";
-import { runOutfitLadder, } from "../wardrobe/selection-ladder";
 
 /** All tag types for iteration */
 const ALL_TAG_TYPES: AvatarTagType[] = ["emotion", "mood", "action", "location", "time", "outfit",];
@@ -131,7 +131,7 @@ export async function selectAvatar(
   // ── Outfit axis (v2) ───────────────────────────────────────────
   const wardrobeInPlay = context.outfitId !== undefined ||
     context.chatId !== undefined || context.locationId !== undefined ||
-    avatars.some((a,) => a.outfitId != null,);
+    avatars.some((a,) => a.outfitId != null);
   if (wardrobeInPlay) {
     const outfit = await resolveSelectionOutfit(db, actorId, context, worldId,);
     if (outfit) {
@@ -144,7 +144,7 @@ export async function selectAvatar(
     }
     // No outfit active (or ladder miss): only outfitless variants and
     // the base portrait remain eligible — never another outfit's variants.
-    avatars = avatars.filter((a,) => a.outfitId == null,);
+    avatars = avatars.filter((a,) => a.outfitId == null);
   }
 
   const worldConfig = worldId

@@ -23,8 +23,8 @@ import {
   WardrobeItemParams,
 } from "../validation/schemas";
 import { requireActorAccess, } from "./actor-auth";
+import type { HandlerOpts, } from "./actor-auth";
 import { HttpStatus, jsonCreated, jsonError, jsonResponse, } from "./http-utils";
-import type { HandlerOpts } from "./actor-auth";
 
 /**
  * @param opts
@@ -51,7 +51,7 @@ export function wardrobeAvatarRoutes(opts: HandlerOpts, prefix = "/api",) {
 
       const { base_avatar_id: baseAvatarId, emotions, prompt_prefix, negative_prompt, replace, } = ctx.body;
       if (emotions) {
-        const invalid = (emotions as string[]).find((e: string,) => !isEmotion(e,),);
+        const invalid = (emotions as string[]).find((e: string,) => !isEmotion(e,));
         if (invalid) {
           return jsonError({ message: `Invalid emotion: ${invalid}`, status: HttpStatus.BadRequest, },);
         }
