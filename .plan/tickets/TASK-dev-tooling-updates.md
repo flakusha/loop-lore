@@ -11,6 +11,8 @@
 **Status:** Done
 **Priority:** Medium (chore)
 **Effort:** Low
+**Epic:** epic-worktree-plan-tooling.md
+**Tags:** worktree-plan-tooling
 
 ## Summary
 

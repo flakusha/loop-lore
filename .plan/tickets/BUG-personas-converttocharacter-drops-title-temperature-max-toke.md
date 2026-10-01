@@ -7,6 +7,8 @@
 **Status Note:** p3-bugfix-batch, 2026-09-18
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-character-core-system.md
+**Tags:** character-core-system
 **Summary:** (see ## Summary)
 **Context:** (see ## Observed / ## Evidence)
 **Acceptance Criteria:** (see ## Acceptance Criteria)

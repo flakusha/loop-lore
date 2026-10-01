@@ -12,6 +12,8 @@
 **Status Note:** verified landed on dev — asset files are re-encrypted BEFORE the transaction opens; DB rollback no longer affects already-written files
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-crypto.md
+**Tags:** crypto
 
 ## Summary
 

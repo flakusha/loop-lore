@@ -11,6 +11,8 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-i18n.md
+**Tags:** i18n
 
 ## Summary
 

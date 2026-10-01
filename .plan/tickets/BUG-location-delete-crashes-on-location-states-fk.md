@@ -12,6 +12,8 @@
 **Status Note:** fixed 2026-09-05
 **Priority:** high
 **Effort:** Small
+**Epic:** epic-world-locations.md
+**Tags:** world-locations
 
 ## Summary
 

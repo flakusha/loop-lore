@@ -11,6 +11,8 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-world-diplomacy-karma.md
+**Tags:** world-diplomacy-karma
 **Branch:** npc-management-ui
 **Commit:** dc19c9e
 

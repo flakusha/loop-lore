@@ -12,6 +12,8 @@
 **Status Note:** backend + frontend 2026-08-16
 **Priority:** Medium
 **Effort:** Medium
+**Epic:** epic-actor-autonomy-story-drive.md
+**Tags:** actor-autonomy-story-drive
 **Created:** 2026-08-14
 **Source:** Platform research deep-dive (Nomi.ai, Kindroid)
 

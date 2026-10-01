@@ -12,6 +12,8 @@
 **Status Note:** bc78ca36, 2026-08-16
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-prompt-improvement.md
+**Tags:** prompt-improvement
 
 ## Summary
 

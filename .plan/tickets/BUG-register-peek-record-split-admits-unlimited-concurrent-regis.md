@@ -6,6 +6,8 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-auth-access.md
+**Tags:** auth-access
 
 **Summary:** register peek record split admits unlimited concurrent regis
 **Context:** Context: fba9dbcd8 (09-27).

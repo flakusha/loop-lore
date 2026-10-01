@@ -10,6 +10,8 @@
 **Status Note:** (closed 2026-09-20) — case-insensitive per RFC 9110 §6.1
 **Priority:** medium
 **Effort:** Small
+**Epic:** epic-middleware-request-lifecycle.md
+**Tags:** middleware-request-lifecycle
 
 ## Summary
 

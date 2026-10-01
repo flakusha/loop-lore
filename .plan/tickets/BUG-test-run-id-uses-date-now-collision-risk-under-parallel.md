@@ -6,6 +6,8 @@
 **Status:** Done
 **Priority:** Medium
 **Effort:** Medium
+**Epic:** epic-core-testing-frameworks.md
+**Tags:** core-testing-frameworks
 **Summary:** e2e testRunId uses Date.now()+Math.random() — collision under parallel workers shares/deletes upload dirs
 **Context:** Test-infra parallel-safety — tests/e2e/helpers/server.ts:353, tests/e2e/helpers/browser-server.ts:88
 **Acceptance Criteria:** See ## Acceptance Criteria below.

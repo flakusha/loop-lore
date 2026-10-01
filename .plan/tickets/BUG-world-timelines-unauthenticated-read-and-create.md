@@ -12,6 +12,8 @@
 **Status Note:** commit 88544034 — GET list/POST create GET-by-id gated on extractAuth + requireWorldAccess/Owner
 **Priority:** critical
 **Effort:** Small
+**Epic:** epic-worlds-extension.md
+**Tags:** worlds-extension
 
 ## Summary
 

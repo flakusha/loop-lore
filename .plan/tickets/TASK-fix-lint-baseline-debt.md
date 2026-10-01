@@ -12,6 +12,8 @@
 **Status Note:** 2026-09-05, fix-lint-baseline-debt worktree
 **Priority:** low
 **Effort:** Small
+**Epic:** epic-code-quality.md
+**Tags:** code-quality
 
 ## Summary
 

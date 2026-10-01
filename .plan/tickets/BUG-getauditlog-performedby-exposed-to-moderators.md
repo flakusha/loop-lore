@@ -9,6 +9,8 @@ git issue: b0e78c5
 **Acceptance Criteria:** none — DOWNGRADED to design discussion (2026-09-24): inter-moderator transparency is an intentional, test-pinned design choice; the user-self-export exposure is speculative until a GDPR user-self route exists on this surface. Reclassify as IDEA/design-RFC if redaction is wanted.
 **Priority:** n/a (design)
 **Effort:** n/a (design)
+**Epic:** epic-frontend-admin.md
+**Tags:** frontend-admin
 
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->

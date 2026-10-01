@@ -12,6 +12,8 @@
 **Status Note:** already on dev (commit 1b967a2ee "fix(admin): model-roles tests, scanAllProviders typing, seedDefaults null guards"); verified 2026-09-19
 **Priority:** Medium
 **Effort:** Medium
+**Epic:** epic-llm-request-scheduler.md
+**Tags:** llm-request-scheduler
 
 ## Summary
 

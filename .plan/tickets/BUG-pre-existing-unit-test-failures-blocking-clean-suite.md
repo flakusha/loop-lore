@@ -12,6 +12,8 @@
 **Status Note:** all listed failures resolved on dev prior to this batch.
 **Priority:** Medium
 **Effort:** Medium
+**Epic:** epic-core-testing-frameworks.md
+**Tags:** core-testing-frameworks
 
 ## Summary
 

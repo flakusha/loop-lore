@@ -5,6 +5,8 @@
 
 **Status:** Done
 **Status Note:** duplicate
+**Epic:** epic-exploration-discovery.md
+**Tags:** exploration-discovery
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

@@ -12,6 +12,8 @@
 **Status Note:** 2026-08-25 — route already uses server-derived ctx.userId (verified on dev); no body trust remains
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-observability-telemetry.md
+**Tags:** observability-telemetry
 
 ## Summary
 

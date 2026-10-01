@@ -7,6 +7,8 @@
 **Severity:** medium
 **Priority:** medium
 **Effort:** small
+**Epic:** epic-battle-action-systems.md
+**Tags:** battle-action-systems
 **Type:** BUG
 **Files:** src/battle/resolution-integration/attacks.ts:36
 

@@ -6,6 +6,8 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-transport-expansion.md
+**Tags:** transport-expansion
 **Summary:** Markdown reference for transport-layer config schema, observability hooks, runtime tunables.
 **Context:** SRE/operator runbook for connection-level diagnostics.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

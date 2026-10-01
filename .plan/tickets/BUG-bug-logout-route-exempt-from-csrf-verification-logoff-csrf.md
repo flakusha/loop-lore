@@ -12,6 +12,8 @@
 **Status Note:** ccac5b9d server + fix-review-quickwins clients
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-auth-access.md
+**Tags:** auth-access
 
 ## Summary
 

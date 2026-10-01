@@ -5,6 +5,8 @@
 
 **Status:** Done
 **Status Note:** duplicate
+**Epic:** epic-disease-poison.md
+**Tags:** disease-poison
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

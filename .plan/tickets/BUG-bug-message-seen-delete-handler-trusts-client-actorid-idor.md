@@ -12,6 +12,8 @@
 **Resolution:** Fixed in `5b080b4d0c013f04faa88076ac3abd47cab481ca`
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-message-seen-state.md
+**Tags:** message-seen-state
 
 ## Summary
 

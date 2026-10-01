@@ -12,6 +12,8 @@
 **Status Note:** fixed 2026-09-05
 **Priority:** medium
 **Effort:** Small
+**Epic:** epic-worlds-extension.md
+**Tags:** worlds-extension
 
 ## Summary
 
