@@ -6986,6 +6986,19 @@
     "title": "workflow confirm session treats optional steps as required",
     "type": "BUG"
   },
+  "BUG-WORKTREE-COMMAND-SCRIPTS-SPAWN-GIT-WITH-NO-ISOLATED-ENV": {
+    "hash": "90793fc",
+    "git_issue": "90793fc",
+    "extid": "BUG-WORKTREE-COMMAND-SCRIPTS-SPAWN-GIT-WITH-NO-ISOLATED-ENV",
+    "type": "BUG",
+    "title": "worktree command scripts spawn git with no isolated env",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-worktree-command-scripts-spawn-git-with-no-isolated-env.md",
+    "status": "done"
+  },
   "BUG-WORKTREE-FINALIZE-MUST-HARD-FAIL-ON-NON-MERGEABLE-OR-MULTI-M": {
     "epic": "epic-tooling-improvement",
     "extid": "BUG-WORKTREE-FINALIZE-MUST-HARD-FAIL-ON-NON-MERGEABLE-OR-MULTI-M",
