@@ -143,13 +143,13 @@ describe("ComfyUI edit asset ownership", () => {
       new Request("http://localhost/api/v1/image-edit/run", {
         method: "POST",
         headers: { "content-type": "application/json", },
-        body: JSON.stringify({ template_id: "owner-probe", backend: "comfyui", params: {}, }),
-      }),
+        body: JSON.stringify({ template_id: "owner-probe", backend: "comfyui", params: {}, },),
+      },),
       { database: db, userId: bob, userRole: "user", },
     );
 
     expect(res.status,).toBe(200,);
-    const body = await res.json() as { data: { id: string; }[]; };
+    const body = await res.json() as { data: { id: string }[] };
     const row = await db
       .selectFrom("assets",)
       .select("owner_id",)
