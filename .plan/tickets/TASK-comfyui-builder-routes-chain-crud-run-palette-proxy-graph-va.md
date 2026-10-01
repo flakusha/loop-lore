@@ -3,7 +3,7 @@
 
 # TASK: ComfyUI builder routes: chain CRUD/run, palette proxy, graph validate endpoint
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-comfyui-first-class-citizen
