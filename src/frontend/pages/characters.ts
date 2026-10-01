@@ -87,10 +87,6 @@ async function loadCharacterGallery(modal: HTMLElement, id: string,): Promise<vo
   if (!container) { return; }
   try {
     const resp = await feFetch(`/api/v1/actors/${id}/avatars`,);
-    if (!resp.ok) {
-      container.innerHTML = "<div data-field='gallery-empty'>Failed to load gallery.</div>";
-      return;
-    }
     const avatars = await resp.json() as Array<{ id: string; assetId: string; label: string }>;
     if (!Array.isArray(avatars,) || avatars.length === 0) {
       container.innerHTML = "<div data-field='gallery-empty'>No linked assets.</div>";
@@ -147,13 +143,20 @@ export async function selectCharacterCard(id: string,) {
     return;
   }
 
-  const resp = await feFetch(`/api/v1/actors/${id}`,);
-  if (!resp.ok) {
-    log.error("Failed to fetch actor", undefined, { status: resp.status, id, },);
+  // feFetch rejects every non-2xx, so a failed actor fetch lands in the catch
+  // below rather than an !resp.ok branch.
+  let char: Record<string, unknown>;
+  try {
+    const resp = await feFetch(`/api/v1/actors/${id}`,);
+    char = await resp.json();
+  } catch (error) {
+    log.error("Failed to fetch actor", undefined, {
+      status: (error as Error & { status?: number }).status,
+      id,
+    },);
     showToast("error", "Failed to load character",);
     return;
   }
-  const char = await resp.json();
 
   try {
     await populateModal(modal, char, id,);
