@@ -68,7 +68,7 @@
     "test:e2e": "E2E_SAFEGUARD=1 HTTP_PROXY= NO_PROXY=* bun test tests/e2e/",
     "test:e2e:browser": "E2E_SAFEGUARD=1 bun run scripts/run-browser-tests.ts",
     "test:e2e:smoke": "E2E_SAFEGUARD=1 bun test ./tests/e2e/flows/browser/smoke.browser.ts",
-    "test:all": "E2E_SAFEGUARD=1 bun run build:frontend && bun test && bun run test:e2e:browser",
+    "test:all": "bun run build:frontend && E2E_SAFEGUARD=1 bun test && E2E_SAFEGUARD=1 bun run test:e2e:browser",
     "jscpd": "jscpd src/ --min-lines 8 --min-tokens 100 --ignore '**/*.test.ts,**/migrations/*,**/public/**,**/schema-manifest.ts,**/db-schemas.ts,**/insert-helpers.ts'",
     "jscpd:full": "jscpd src/ --min-lines 4 --min-tokens 30 --ignore '**/*.test.ts,**/migrations/*,**/public/**,**/schema-manifest.ts,**/db-schemas.ts,**/insert-helpers.ts' --reporters console,json --output .tmp/jscpd",
     "jscpd:ratchet": "bun scripts/check/jscpd-ratchet.mjs",
