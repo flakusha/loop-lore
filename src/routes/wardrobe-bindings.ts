@@ -22,8 +22,8 @@ import {
   WardrobeItemParams,
 } from "../validation/schemas";
 import { requireActorAccess, } from "./actor-auth";
+import type { HandlerOpts, } from "./actor-auth";
 import { HttpStatus, jsonCreated, jsonError, jsonResponse, } from "./http-utils";
-import type { HandlerOpts } from "./actor-auth";
 
 /**
  * @param opts

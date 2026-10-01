@@ -102,13 +102,13 @@ import { tradeRoutes, } from "../routes/trade";
 import { usersRoutes, } from "../routes/users";
 import { viewRoutes, } from "../routes/views";
 import { vnGenerateRoutes, } from "../routes/vn-generate";
+import { wardrobeRoutes, } from "../routes/wardrobe";
+import { wardrobeAvatarRoutes, } from "../routes/wardrobe-avatars";
+import { outfitOverrideRoutes, } from "../routes/wardrobe-overrides";
 import { worldImportRoutes, } from "../routes/world-import";
 import { worldInvitesRoutes, } from "../routes/world-invites";
 import { worldLoreEntriesRoutes, } from "../routes/world-lore-entries";
 import { worldsRoutes, } from "../routes/worlds";
-import { outfitOverrideRoutes, } from "../routes/wardrobe-overrides";
-import { wardrobeAvatarRoutes, } from "../routes/wardrobe-avatars";
-import { wardrobeRoutes, } from "../routes/wardrobe";
 
 /** */
 export interface RegisterPluginsOpts {

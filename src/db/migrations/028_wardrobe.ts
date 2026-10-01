@@ -64,7 +64,11 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .createTable("actor_wardrobe",)
     .addColumn("id", "text", (col,) => col.primaryKey().defaultTo(sql`(lower(hex(randomblob(16))))`,),)
     .addColumn("actor_id", "text", (col,) => col.notNull().references("actors.id",).onDelete("cascade",),)
-    .addColumn("wardrobe_item_id", "text", (col,) => col.notNull().references("wardrobe_items.id",).onDelete("cascade",),)
+    .addColumn(
+      "wardrobe_item_id",
+      "text",
+      (col,) => col.notNull().references("wardrobe_items.id",).onDelete("cascade",),
+    )
     .addColumn("item_instance_id", "text", (col,) => col.references("actor_items.id",).onDelete("set null",),)
     .addColumn("created_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
     .execute();

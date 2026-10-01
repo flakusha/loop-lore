@@ -5,9 +5,10 @@
  * Wardrobe item CRUD + inventory-instance binding routes.
  *
  * All routes are actor-ownership gated (404 for non-owners — no existence
- * oracle). World template items are visible through the actor's world
- * scope via `?worldId=` on list and through resource-level checks in the
- * service layer.
+ * oracle). World template paths (create `world_id` / list `?worldId=`)
+ * additionally require world ownership or an admin role — actor ownership
+ * alone must not let callers write templates into or read descriptors from
+ * a world they do not own.
  */
 import { Elysia, t, } from "elysia";
 import {
@@ -25,9 +26,10 @@ import {
   WardrobeItemUpdateBody,
 } from "../validation/schemas";
 import { requireActorAccess, } from "./actor-auth";
+import type { HandlerOpts, } from "./actor-auth";
 import { HttpStatus, jsonCreated, jsonError, jsonResponse, } from "./http-utils";
-import type { HandlerOpts } from "./actor-auth";
 import { wardrobeBindingRoutes, } from "./wardrobe-bindings";
+import { requireWorldOwner, } from "./worlds/access";
 
 const WardrobeItemListResponse = t.Array(t.Any(),);
 
@@ -48,6 +50,10 @@ export function wardrobeRoutes(opts: HandlerOpts, prefix = "/api",) {
 
       const { actorId, } = ctx.params;
       const worldId = (ctx.query?.worldId as string | undefined) ?? undefined;
+      if (worldId) {
+        const worldErr = await requireWorldOwner(database, worldId, userId, ctx.userRole as string | null,);
+        if (worldErr) { return worldErr; }
+      }
       const items = await listWardrobeItems(database, actorId, { worldId, },);
       return jsonResponse(items,);
     }, {
@@ -56,6 +62,7 @@ export function wardrobeRoutes(opts: HandlerOpts, prefix = "/api",) {
       response: {
         200: WardrobeItemListResponse,
         401: ErrorResponse,
+        403: ErrorResponse,
         404: ErrorResponse,
       },
       detail: {
@@ -72,6 +79,10 @@ export function wardrobeRoutes(opts: HandlerOpts, prefix = "/api",) {
 
       const { actorId, } = ctx.params;
       const { name, descriptor, tags, sort_order, world_id, } = ctx.body;
+      if (world_id) {
+        const worldErr = await requireWorldOwner(database, world_id, userId, ctx.userRole as string | null,);
+        if (worldErr) { return worldErr; }
+      }
       const id = await createWardrobeItem(database, {
         actorId: world_id ? undefined : actorId,
         worldId: world_id,
@@ -87,6 +98,7 @@ export function wardrobeRoutes(opts: HandlerOpts, prefix = "/api",) {
       response: {
         201: t.Object({ id: t.String(), },),
         401: ErrorResponse,
+        403: ErrorResponse,
         404: ErrorResponse,
         422: ErrorResponse,
       },
