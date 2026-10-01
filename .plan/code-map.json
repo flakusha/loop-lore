@@ -15849,6 +15849,12 @@
       "source": ".plan/tickets/BUG-tests-delete-app-installed-globals-breaking-every-later-test.md"
     }
   ],
+  "src/frontend/alpine/chat-utils/render.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-tests-delete-app-installed-globals-breaking-every-later-test.md"
+    }
+  ],
   "src/frontend/alpine/chat-utils/time.ts": [
     {
       "kind": "ticket",
@@ -17587,6 +17593,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-fe-be-character-growth-arc-confirm-reject-declare-unsatisfia.md"
+    }
+  ],
+  "src/frontend/chat-vendor": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-tests-delete-app-installed-globals-breaking-every-later-test.md"
     }
   ],
   "src/frontend/chat-vendor.ts": [
