@@ -107,7 +107,7 @@ export async function selectNextGroupActor(options: TurnSelectorOptions,): Promi
       // actor sitting out their cooldown must not win the override — fall
       // through to manager selection, which applies the same filter.
       const cooling = await fetchSkipCooldowns(db, chatId,);
-      const eligibleIds = mentionedIds.filter((id,) => !cooling.has(id,),);
+      const eligibleIds = mentionedIds.filter((id,) => !cooling.has(id,));
       if (eligibleIds.length > 0) {
         // Pick the first eligible mentioned actor (or could cycle through them).
         const selectedId = eligibleIds[0]!;

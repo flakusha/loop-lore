@@ -11,12 +11,12 @@
  * file — including a fresh `runMigrations` pass, exactly what boot does — and
  * asserts the `rotation_history` row reads back intact.
  */
-import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Database, } from "bun:sqlite";
+import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
+import { Kysely, } from "kysely";
 import { mkdirSync, mkdtempSync, rmSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
-import { Kysely, } from "kysely";
 import { createSqliteDialect, } from "../../db/index";
 import { runMigrations, } from "../../db/migrate";
 import type { DB, } from "../../db/schema";
@@ -102,12 +102,12 @@ beforeAll(async () => {
   restartDir = mkdtempSync(join(tmpdir(), "ll-rotation-restart-",),);
   mkdirSync(join(restartDir, "data",), { recursive: true, },);
   dbPath = join(restartDir, "data", "loop-lore.db",);
-});
+},);
 
 afterAll(async () => {
   await closeDb();
   rmSync(restartDir, { recursive: true, force: true, },);
-});
+},);
 
 describe("rotation history survives a restart (AC7)", () => {
   test("audit row written before restart is intact after reopening the file DB", async () => {
@@ -171,7 +171,7 @@ describe("rotation history survives a restart (AC7)", () => {
       .orderBy("created_at", "asc",)
       .execute();
     expect(rows,).toHaveLength(2,);
-    expect(rows.every((r,) => r.reason === "leave",),).toBe(true,);
-    expect(rows.map((r,) => r.messages_re_encrypted,),).toEqual([3, 1,],);
+    expect(rows.every((r,) => r.reason === "leave"),).toBe(true,);
+    expect(rows.map((r,) => r.messages_re_encrypted),).toEqual([3, 1,],);
   }, 30_000,);
 });
