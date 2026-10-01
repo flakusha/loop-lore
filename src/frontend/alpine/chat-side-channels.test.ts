@@ -1,5 +1,6 @@
 import "./i18n.test-helper";
-import { afterEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, expect, mock, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { chatSideChannels, } from "./chat-side-channels";
 import type { ChatState, } from "./types";
 
@@ -11,13 +12,15 @@ import type { ChatState, } from "./types";
 let fetchCalls: { url: string; args: RequestInit }[] = [];
 let fetchHandler: ((url: string, opts: RequestInit,) => Response) | null = null;
 
-mock.module("./htmx", () => ({
-  apiFetch: async (url: string, opts?: RequestInit,) => {
-    fetchCalls.push({ url, args: opts ?? {}, },);
-    if (!fetchHandler) { return new Response("{}", { status: 200, },); }
-    return fetchHandler(url, opts ?? {},);
-  },
-}),);
+if (ISOLATED) {
+  mock.module("./htmx", () => ({
+    apiFetch: async (url: string, opts?: RequestInit,) => {
+      fetchCalls.push({ url, args: opts ?? {}, },);
+      if (!fetchHandler) { return new Response("{}", { status: 200, },); }
+      return fetchHandler(url, opts ?? {},);
+    },
+  }),);
+}
 
 /**
  * @param status
@@ -82,8 +85,8 @@ afterEach(() => {
   fetchHandler = null;
 },);
 
-describe("chatSideChannels", () => {
-  describe("loadSideChannels", () => {
+describeOrSkip("chatSideChannels", () => {
+  describeOrSkip("loadSideChannels", () => {
     test("fetches and stores side-channels into $store.ui", async () => {
       mockFetch(200, {
         sideChannels: [
@@ -110,9 +113,9 @@ describe("chatSideChannels", () => {
       await chatSideChannels.loadSideChannels!.call(state,);
       expect(fetchCalls,).toEqual([],);
     });
-  });
+  },);
 
-  describe("createSideChannel", () => {
+  describeOrSkip("createSideChannel", () => {
     test("POSTs, reloads, and switches to the new channel", async () => {
       mockFetch(201, { id: "s9", },);
       const selectChat = mock(async () => {},);
@@ -131,14 +134,127 @@ describe("chatSideChannels", () => {
       await chatSideChannels.createSideChannel!.call(state, "Notes",);
       expect(toasts.some((t,) => t.type === "error"),).toBe(true,);
     });
-  });
+  },);
 
-  describe("switchSideChannel", () => {
+  describeOrSkip("switchSideChannel", () => {
     test("delegates to selectChat", async () => {
       const selectChat = mock(async () => {},);
       const state = buildCtx({ selectChat, },);
       await chatSideChannels.switchSideChannel!.call(state, "s1",);
       expect(selectChat,).toHaveBeenCalledWith("s1",);
     });
+  },);
+},);
+
+describeOrSkip("chatSideChannels — isGroupChat", () => {
+  test("true for a group chat", () => {
+    const state = buildCtx({ chatType: "group", },);
+    expect(state.isGroupChat,).toBe(true,);
   });
-});
+
+  test("false for a direct chat", () => {
+    const state = buildCtx({ chatType: "direct", },);
+    expect(state.isGroupChat,).toBe(false,);
+  });
+},);
+
+describeOrSkip("chatSideChannels — loadSideChannels boundaries", () => {
+  afterEach(() => {
+    fetchCalls = [];
+    fetchHandler = null;
+    delete uiStore.sideChannels;
+  },);
+
+  test("no-ops for a non-group chat", async () => {
+    const state = buildCtx({ chatType: "direct", },);
+    await chatSideChannels.loadSideChannels!.call(state,);
+    expect(fetchCalls,).toEqual([],);
+  });
+
+  test("stores an empty list when the body has no sideChannels key", async () => {
+    mockFetch(200, { count: 0, },);
+    const state = buildCtx();
+    await chatSideChannels.loadSideChannels!.call(state,);
+    expect(uiStore.sideChannels,).toEqual([],);
+  });
+
+  test("swallows network errors", async () => {
+    fetchHandler = () => {
+      throw new Error("offline",);
+    };
+    const state = buildCtx();
+    await chatSideChannels.loadSideChannels!.call(state,);
+    expect(uiStore.sideChannels,).toBeUndefined();
+  });
+},);
+
+describeOrSkip("chatSideChannels — createSideChannel boundaries", () => {
+  afterEach(() => {
+    fetchCalls = [];
+    fetchHandler = null;
+    delete uiStore.newSideChannelName;
+  },);
+
+  test("no-ops on a blank name", async () => {
+    const state = buildCtx();
+    await chatSideChannels.createSideChannel!.call(state, "   ",);
+    expect(fetchCalls,).toEqual([],);
+  });
+
+  test("resets newSideChannelName after a successful create", async () => {
+    mockFetch(201, { id: "s9", },);
+    uiStore.newSideChannelName = "Notes";
+    const state = buildCtx();
+    await chatSideChannels.createSideChannel!.call(state, "Notes",);
+    expect(uiStore.newSideChannelName,).toBe("",);
+  });
+
+  test("toasts an error on a network exception", async () => {
+    fetchHandler = () => {
+      throw new Error("offline",);
+    };
+    const toasts: Toast[] = [];
+    const state = buildCtx({ toasts, },);
+    await chatSideChannels.createSideChannel!.call(state, "Notes",);
+    expect(toasts.some((t,) => t.type === "error"),).toBe(true,);
+  });
+},);
+
+describeOrSkip("chatSideChannels — switchSideChannel closes the dropdown", () => {
+  afterEach(() => {
+    delete uiStore.showSideChannels;
+  },);
+
+  test("sets showSideChannels to false before switching", async () => {
+    uiStore.showSideChannels = true;
+    const selectChat = mock(async () => {},);
+    const state = buildCtx({ selectChat, },);
+    await chatSideChannels.switchSideChannel!.call(state, "s1",);
+    expect(uiStore.showSideChannels,).toBe(false,);
+    expect(selectChat,).toHaveBeenCalledWith("s1",);
+  });
+},);
+
+describeOrSkip("chatSideChannels — toggleSideChannels", () => {
+  afterEach(() => {
+    fetchCalls = [];
+    fetchHandler = null;
+    delete uiStore.showSideChannels;
+  },);
+
+  test("opens the dropdown and loads side-channels", async () => {
+    mockFetch(200, { sideChannels: [], },);
+    const state = buildCtx();
+    await chatSideChannels.toggleSideChannels!.call(state,);
+    expect(uiStore.showSideChannels,).toBe(true,);
+    expect(fetchCalls,).toHaveLength(1,);
+  });
+
+  test("closes the dropdown without loading", async () => {
+    uiStore.showSideChannels = true;
+    const state = buildCtx();
+    await chatSideChannels.toggleSideChannels!.call(state,);
+    expect(uiStore.showSideChannels,).toBe(false,);
+    expect(fetchCalls,).toEqual([],);
+  });
+},);

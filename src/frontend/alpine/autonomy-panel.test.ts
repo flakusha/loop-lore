@@ -11,6 +11,7 @@ import { autonomyPanelFactory, } from "./autonomy-panel";
 let calls: { url: string; method: string; body: string | null }[] = [];
 let nextStatus = 200;
 let nextPayload: unknown = {};
+let originalFetch: typeof fetch;
 
 const LAYERS = {
   world: { preset: "brisk", },
@@ -42,6 +43,7 @@ beforeEach(() => {
   calls = [];
   nextStatus = 200;
   nextPayload = PAYLOAD;
+  originalFetch ??= globalThis.fetch as typeof fetch;
   globalThis.fetch = ((input: string | URL | Request, init?: RequestInit,) => {
     const url = typeof input === "string" ? input : input.toString();
     calls.push({ url, method: init?.method ?? "GET", body: (init?.body as string) ?? null, },);
@@ -55,7 +57,7 @@ beforeEach(() => {
 },);
 
 afterEach(() => {
-  delete (globalThis as { fetch?: unknown }).fetch;
+  globalThis.fetch = originalFetch;
 },);
 
 describe("autonomyPanelFactory", () => {

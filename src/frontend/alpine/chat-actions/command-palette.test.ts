@@ -1,4 +1,5 @@
-import { afterEach, beforeEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, beforeEach, expect, mock, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../../../test-utils/isolate-only";
 import { commandPalette, } from "./command-palette";
 
 import type { ApiFetchMock, } from "../../tests/test-types";
@@ -7,12 +8,14 @@ import type { ApiFetchMock, } from "../../tests/test-types";
 let calls: { url: string; opts: RequestInit }[] = [];
 let handler: ApiFetchMock = async () => Response.json({},);
 
-mock.module("../htmx", () => ({
-  apiFetch: (async (url: string, opts?: RequestInit,) => {
-    calls.push({ url, opts: opts ?? {}, },);
-    return handler(url, opts,);
-  }) satisfies ApiFetchMock,
-}),);
+if (ISOLATED) {
+  mock.module("../htmx", () => ({
+    apiFetch: (async (url: string, opts?: RequestInit,) => {
+      calls.push({ url, opts: opts ?? {}, },);
+      return handler(url, opts,);
+    }) satisfies ApiFetchMock,
+  }),);
+}
 
 beforeEach(() => {
   calls = [];
@@ -53,7 +56,7 @@ const listFixture = [
   { name: "insult", descriptionKey: "k2", description: "d2", },
 ];
 
-describe("commandPalette._loadCommandList", () => {
+describeOrSkip("commandPalette._loadCommandList", () => {
   test("maps server entries into the command list", async () => {
     handler = async () =>
       Response.json({
@@ -95,9 +98,9 @@ describe("commandPalette._loadCommandList", () => {
     await commandPalette._loadCommandList!();
     expect(commandPalette._commandList,).toEqual([],);
   });
-});
+},);
 
-describe("commandPalette.handleCommandInput", () => {
+describeOrSkip("commandPalette.handleCommandInput", () => {
   function inputEvent(value: string,): Event {
     return { target: { value, }, } as unknown as Event;
   }
@@ -129,9 +132,9 @@ describe("commandPalette.handleCommandInput", () => {
     expect(ctx._showCommandPalette,).toBe(true,);
     expect(ctx._filteredCommands,).toEqual([],);
   });
-});
+},);
 
-describe("commandPalette.selectCommand", () => {
+describeOrSkip("commandPalette.selectCommand", () => {
   test("fills the input and closes the palette", () => {
     const ctx = buildCtx(true,);
     commandPalette.selectCommand!.call(ctx as never, "roll",);
@@ -144,9 +147,9 @@ describe("commandPalette.selectCommand", () => {
     commandPalette.selectCommand!.call(ctx as never, "roll",);
     expect(ctx._showCommandPalette,).toBe(false,);
   });
-});
+},);
 
-describe("commandPalette palette selection", () => {
+describeOrSkip("commandPalette palette selection", () => {
   test("filtering resets the active index", () => {
     const ctx = buildCtx();
     ctx._commandList = listFixture.map((c,) => ({ ...c, }));
@@ -180,4 +183,4 @@ describe("commandPalette palette selection", () => {
     commandPalette.movePaletteSelection!.call(ctx as never, 1,);
     expect(ctx._paletteActiveIndex,).toBe(0,);
   });
-});
+},);

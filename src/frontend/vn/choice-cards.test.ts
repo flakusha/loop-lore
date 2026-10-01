@@ -7,7 +7,8 @@
  * seam (chat-location.test.ts convention); DOM is a minimal fake sufficient
  * for renderChoiceCards.
  */
-import { afterEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, expect, mock, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { destroyChoiceCards, getAccumulatedImpacts, initChoiceCards, loadChoices, } from "./choice-cards";
 
 // ── Mock apiFetch ───────────────────────────────────────────────────────────
@@ -15,20 +16,21 @@ import { destroyChoiceCards, getAccumulatedImpacts, initChoiceCards, loadChoices
 let apiCalls: { url: string; opts: RequestInit }[] = [];
 let apiHandler: ((url: string, opts: RequestInit,) => Response) | null = null;
 
-mock.module("../alpine/htmx", () => ({
-  apiFetch: async (url: string, opts?: RequestInit,) => {
-    apiCalls.push({ url, opts: opts ?? {}, },);
-    if (!apiHandler) { return new Response("{}", { status: 200, },); }
-    return apiHandler(url, opts ?? {},);
-  },
-}),);
-
-// choice-cards.ts imports feFetch directly (split/reunite); mock the seam so
-// the real fe-fetch → utils barrel never loads in this suite.
-mock.module("../fe-fetch", () => ({
-  feFetch: async () => new Response("{}", { status: 200, },),
-  getCsrfToken: () => "",
-}),);
+if (ISOLATED) {
+  mock.module("../alpine/htmx", () => ({
+    apiFetch: async (url: string, opts?: RequestInit,) => {
+      apiCalls.push({ url, opts: opts ?? {}, },);
+      if (!apiHandler) { return new Response("{}", { status: 200, },); }
+      return apiHandler(url, opts ?? {},);
+    },
+  }),);
+  // choice-cards.ts imports feFetch directly (split/reunite); mock the seam so
+  // the real fe-fetch → utils barrel never loads in this suite.
+  mock.module("../fe-fetch", () => ({
+    feFetch: async () => new Response("{}", { status: 200, },),
+    getCsrfToken: () => "",
+  }),);
+}
 
 /** */
 function jsonRes(body: unknown, status = 200,): Response {
@@ -120,7 +122,7 @@ afterEach(() => {
 
 // ── Tests ───────────────────────────────────────────────────────────────────
 
-describe("initChoiceCards / destroyChoiceCards", () => {
+describeOrSkip("initChoiceCards / destroyChoiceCards", () => {
   test("loadChoices before init never fetches", async () => {
     await loadChoices();
     expect(apiCalls.length,).toBe(0,);
@@ -137,9 +139,9 @@ describe("initChoiceCards / destroyChoiceCards", () => {
     expect(apiCalls.length,).toBe(callsBefore,);
     expect(container.children.length,).toBe(1,); // untouched by the no-op load
   });
-});
+},);
 
-describe("loadChoices", () => {
+describeOrSkip("loadChoices", () => {
   test("fetches scene choices, derives selected/label, and renders", async () => {
     const container = boot();
     apiHandler = () =>
@@ -218,4 +220,4 @@ describe("loadChoices", () => {
     await loadChoices();
     expect(getAccumulatedImpacts(),).toEqual({ relationships: {}, moods: {}, },);
   });
-});
+},);

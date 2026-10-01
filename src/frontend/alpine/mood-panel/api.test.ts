@@ -1,4 +1,5 @@
-import { afterEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, expect, mock, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../../../test-utils/isolate-only";
 import {
   applyHappinessDelta,
   fetchEmotionDefs,
@@ -11,19 +12,21 @@ type ApiFetchMock = (url: string, opts?: RequestInit,) => Promise<Response>;
 let calls: { url: string; opts: RequestInit }[] = [];
 let handler: ApiFetchMock = async () => Response.json({},);
 
-mock.module("../htmx", () => ({
-  apiFetch: (async (url: string, opts?: RequestInit,) => {
-    calls.push({ url, opts: opts ?? {}, },);
-    return handler(url, opts,);
-  }) satisfies ApiFetchMock,
-}),);
+if (ISOLATED) {
+  mock.module("../htmx", () => ({
+    apiFetch: (async (url: string, opts?: RequestInit,) => {
+      calls.push({ url, opts: opts ?? {}, },);
+      return handler(url, opts,);
+    }) satisfies ApiFetchMock,
+  }),);
+}
 
 afterEach(() => {
   calls = [];
   handler = async () => Response.json({},);
 },);
 
-describe("fetchMood", () => {
+describeOrSkip("fetchMood", () => {
   test("returns parsed mood on ok", async () => {
     handler = async () => Response.json({ happiness: 77, currentMood: "happy", },);
     await expect(fetchMood("a1",),).resolves.toEqual({ happiness: 77, currentMood: "happy", } as never,);
@@ -41,9 +44,9 @@ describe("fetchMood", () => {
     };
     await expect(fetchMood("a1",),).resolves.toBeNull();
   });
-});
+},);
 
-describe("fetchEmotions", () => {
+describeOrSkip("fetchEmotions", () => {
   test("returns parsed entries on ok", async () => {
     handler = async () => Response.json([{ emotion_id: "e1", intensity: 0.9, },],);
     await expect(fetchEmotions("a2",),).resolves.toEqual([{ emotion_id: "e1", intensity: 0.9, },] as never,);
@@ -58,9 +61,9 @@ describe("fetchEmotions", () => {
     };
     await expect(fetchEmotions("a2",),).resolves.toEqual([],);
   });
-});
+},);
 
-describe("fetchEmotionDefs", () => {
+describeOrSkip("fetchEmotionDefs", () => {
   test("returns parsed definitions on ok", async () => {
     handler = async () => Response.json([{ id: "joy", display_name: "Joy", icon: "i", },],);
     await expect(fetchEmotionDefs(),).resolves.toEqual([{ id: "joy", display_name: "Joy", icon: "i", },] as never,);
@@ -75,9 +78,9 @@ describe("fetchEmotionDefs", () => {
     };
     await expect(fetchEmotionDefs(),).resolves.toEqual([],);
   });
-});
+},);
 
-describe("applyHappinessDelta", () => {
+describeOrSkip("applyHappinessDelta", () => {
   test("POSTs delta and worldId and returns the new happiness", async () => {
     handler = async () => Response.json(72,);
     await expect(applyHappinessDelta("a3", 5, "w1",),).resolves.toBe(72,);
@@ -100,4 +103,4 @@ describe("applyHappinessDelta", () => {
     };
     await expect(applyHappinessDelta("a3", 1,),).resolves.toBeNull();
   });
-});
+},);

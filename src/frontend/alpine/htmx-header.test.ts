@@ -86,3 +86,140 @@ describe("normalizeHeaderSlot", () => {
     expect(() => normalizeHeaderSlot()).not.toThrow();
   });
 });
+
+/** A header-slot double that records removals and hides from later queries. */
+function slot(children: number, removed: any[],): any {
+  return {
+    _id: "header-slot",
+    _removed: false,
+    children: Array.from({ length: children, }, () => ({}),),
+    remove() {
+      this._removed = true;
+      removed.push(this,);
+    },
+  };
+}
+
+/** app-root double recording insertBefore calls. */
+function appRoot(contains: (h: any,) => boolean, moved: { h: any; ref: any }[],): any {
+  return {
+    _id: "app-root",
+    children: [],
+    contains,
+    parentElement: {
+      insertBefore(h: any, ref: any,) {
+        moved.push({ h, ref, },);
+      },
+    },
+  };
+}
+
+/** querySelectorAll that no longer returns removed slots, like a real DOM. */
+function liveSlots(live: any[],): (sel: string,) => any[] {
+  return (sel: string,) => (sel === "#header-slot" ? live.filter((s: any,) => !s._removed) : []);
+}
+
+describe("normalizeHeaderSlot — multi-slot resolution", () => {
+  test("moves the last remaining slot before app-root after empties are removed", () => {
+    const removed: any[] = [];
+    const empty = slot(0, removed,);
+    const full = slot(1, removed,);
+    const live = [empty, full,];
+    const moved: { h: any; ref: any }[] = [];
+    const root = appRoot(() => true, moved,);
+    const doc = mockDoc({
+      querySelectorAll: liveSlots(live,),
+      querySelector: (sel: string,) => (sel === "#app-root" ? root : null),
+    },);
+    globalThis.document = doc as any;
+    normalizeHeaderSlot();
+    expect(removed,).toEqual([empty,],);
+    expect(moved,).toEqual([{ h: full, ref: root, },],);
+  });
+
+  test("keeps zero remaining slots without crashing", () => {
+    const removed: any[] = [];
+    const a = slot(0, removed,);
+    const b = slot(0, removed,);
+    const live = [a, b,];
+    const moved: { h: any; ref: any }[] = [];
+    const root = appRoot(() => false, moved,);
+    const doc = mockDoc({
+      querySelectorAll: liveSlots(live,),
+      querySelector: (sel: string,) => (sel === "#app-root" ? root : null),
+    },);
+    globalThis.document = doc as any;
+    normalizeHeaderSlot();
+    expect(removed,).toEqual([a, b,],);
+    expect(moved,).toEqual([],);
+  });
+
+  test("keeps the slot with the most content and removes the rest", () => {
+    const removed: any[] = [];
+    const small = slot(1, removed,);
+    const big = slot(3, removed,);
+    const live = [small, big,];
+    const moved: { h: any; ref: any }[] = [];
+    const root = appRoot(() => true, moved,);
+    const doc = mockDoc({
+      querySelectorAll: liveSlots(live,),
+      querySelector: (sel: string,) => (sel === "#app-root" ? root : null),
+    },);
+    globalThis.document = doc as any;
+    normalizeHeaderSlot();
+    expect(removed,).toEqual([small,],);
+    expect(moved,).toEqual([{ h: big, ref: root, },],);
+  });
+
+  test("keeps the first slot when in-app slots have equal content", () => {
+    const removed: any[] = [];
+    const first = slot(2, removed,);
+    const second = slot(2, removed,);
+    const live = [first, second,];
+    const moved: { h: any; ref: any }[] = [];
+    const root = appRoot(() => true, moved,);
+    const doc = mockDoc({
+      querySelectorAll: liveSlots(live,),
+      querySelector: (sel: string,) => (sel === "#app-root" ? root : null),
+    },);
+    globalThis.document = doc as any;
+    normalizeHeaderSlot();
+    expect(removed,).toEqual([second,],);
+    expect(moved,).toEqual([{ h: first, ref: root, },],);
+  });
+
+  test("prefers the in-app slot even when an out-of-app slot has more children", () => {
+    const removed: any[] = [];
+    const inApp = slot(1, removed,);
+    const outApp = slot(5, removed,);
+    const live = [inApp, outApp,];
+    const moved: { h: any; ref: any }[] = [];
+    const root = appRoot((h: any,) => h === inApp, moved,);
+    const doc = mockDoc({
+      querySelectorAll: liveSlots(live,),
+      querySelector: (sel: string,) => (sel === "#app-root" ? root : null),
+    },);
+    globalThis.document = doc as any;
+    normalizeHeaderSlot();
+    expect(removed,).toEqual([outApp,],);
+    expect(moved,).toEqual([{ h: inApp, ref: root, },],);
+  });
+
+  test("falls back to the out-of-app slot with the most content without moving it", () => {
+    const removed: any[] = [];
+    const small = slot(1, removed,);
+    const big = slot(2, removed,);
+    const live = [small, big,];
+    const moved: { h: any; ref: any }[] = [];
+    const root = appRoot(() => false, moved,);
+    const doc = mockDoc({
+      querySelectorAll: liveSlots(live,),
+      querySelector: (sel: string,) => (sel === "#app-root" ? root : null),
+    },);
+    globalThis.document = doc as any;
+    normalizeHeaderSlot();
+    expect(removed,).toEqual([small,],);
+    // Not in-app: kept in place, never relocated.
+    expect(moved,).toEqual([],);
+  });
+});

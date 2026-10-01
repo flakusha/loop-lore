@@ -81,15 +81,19 @@ if (STRICTLY_ISOLATED) {
 // faithfully here instead of stubbing a constant.
 if (STRICTLY_ISOLATED) {
   mock.module("./persist", () => ({
-    buildGenerationResult: (response: {
-      content: string;
-      finishReason: string;
-      usage: { promptTokens: number; completionTokens: number; totalTokens: number };
-    },) => ({
+    buildGenerationResult: (
+      response: {
+        content: string;
+        finishReason: string;
+        usage: { promptTokens: number; completionTokens: number; totalTokens: number };
+      },
+      cancelled: boolean,
+    ) => ({
       content: response.content,
       thinking: null,
       tokenUsage: response.usage,
       finishReason: response.finishReason,
+      cancelled,
     }),
     storeGenerationResult: async () => "msg-id-1",
   }),);
