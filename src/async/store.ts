@@ -4,24 +4,18 @@
 // size-allow: 277
 
 /**
- * Async request-response result store.
+ * Async request-response result store — persists tracked async request outcomes
+ * to `request_results` so the frontend can poll `GET /api/requests/:id/status`
+ * and the idempotency layer can replay a completed response verbatim.
  *
- * Persists the outcome of tracked async requests to `request_results` so:
- *   - the frontend can poll `GET /api/requests/:id/status` for completion,
- *   - the idempotency layer can replay a previously-completed response
- *     verbatim when a duplicate request arrives.
+ * Writes are **non-blocking**: every public function returns synchronously
+ * after queueing, and a single background writer drains the queue, keeping DB
+ * latency off the request hot path.
  *
- * Writes are intentionally **non-blocking**: every public function returns
- * synchronously after queueing the write. A single background writer drains
- * the queue via Kysely `insertInto`/`updateTable`. This keeps the request
- * hot path free of DB latency.
- *
- * Offload: rows whose `response_body` exceeds `MAX_INLINE_BYTES` are
- * compressed (gzip) and spilled to disk by `src/async/offload.ts`; the
- * store is unaware of the offload path and just reports the inlined body.
- * The status endpoint joins with `offload.ts` to resolve the spill.
+ * Offload: rows whose `response_body` exceeds `MAX_INLINE_BYTES` are gzipped
+ * and spilled to disk by `src/async/offload.ts`; the store just reports the
+ * inlined body and the status endpoint joins with `offload.ts` to resolve it.
  * @see TASK-async-request-response-result-store-separate-table-offload.md
- * @see epic-middleware-request-lifecycle.md
  */
 
 import type { Kysely, } from "kysely";
@@ -85,14 +79,9 @@ const DEFAULT_TTL_MS = 24 * 60 * 60 * 1000;
 const DEFAULT_QUEUE_LIMIT = 10_000;
 
 /**
- * Build a store bound to the given Kysely instance.
- *
- * The returned API is **fire-and-forget**: every method returns immediately.
- * Errors are logged but never thrown on the hot path. Drain `destroy()` at
- * shutdown to flush the in-flight queue.
- * @param database - Kysely handle
- * @param config - thresholds (`maxInlineBytes`, `defaultTtlMs`, `queueLimit`)
- * @returns `AsyncStore` facade.
+ * Build a store bound to the given Kysely instance. Every method is
+ * **fire-and-forget**: errors are logged, never thrown on the hot path.
+ * Drain `destroy()` at shutdown to flush the in-flight queue.
  */
 export function createAsyncStore(database: Kysely<DB>, config: AsyncStoreConfig = {},): AsyncStore {
   const cfg: Required<AsyncStoreConfig> = {
@@ -105,10 +94,7 @@ export function createAsyncStore(database: Kysely<DB>, config: AsyncStoreConfig 
   let draining = false;
   let destroyed = false;
 
-  /**
-   * Enqueue a write. Drops on overflow (logs at warn).
-   * @param write
-   */
+  /** Enqueue a write. Drops on overflow (logs at warn). */
   const enqueue = (write: Write,): void => {
     if (destroyed) { return; }
     if (queue.length >= cfg.queueLimit) {
@@ -139,10 +125,6 @@ export function createAsyncStore(database: Kysely<DB>, config: AsyncStoreConfig 
   }
 
   return {
-    /**
-     * @param {unknown} args
-     * @returns {void}
-     */
     track(args,) {
       enqueue({
         kind: "upsert",
@@ -155,11 +137,8 @@ export function createAsyncStore(database: Kysely<DB>, config: AsyncStoreConfig 
     },
     /**
      * Push a progress update. The owner must match the `track()` caller —
-     * a client that guesses another user's requestId cannot push progress
-     * on their row. BUG-bug-async-lifecycle-writes-request-results-unscoped-by-user.
-     * @param id
-     * @param owner
-     * @param update
+     * a client guessing another user's requestId cannot push progress on
+     * their row. BUG-bug-async-lifecycle-writes-request-results-unscoped-by-user.
      */
     progress(id: string, owner: OwnerRef, update: ProgressUpdate,) {
       enqueue({
@@ -171,29 +150,20 @@ export function createAsyncStore(database: Kysely<DB>, config: AsyncStoreConfig 
       },);
     },
     /**
-     * Mark a request complete. Scoped by `owner.userId` so a client that
-     * guesses another user's requestId cannot overwrite their cached
-     * response. BUG-bug-async-lifecycle-writes-request-results-unscoped-by-user.
-     * @param id
-     * @param owner
-     * @param response
+     * Mark a request complete. Scoped by `owner.userId` so a client guessing
+     * another user's requestId cannot overwrite their cached response.
+     * BUG-bug-async-lifecycle-writes-request-results-unscoped-by-user.
      */
     complete(id: string, owner: OwnerRef, response: CapturedResponse,) {
       enqueue({ kind: "complete", id, userId: owner.userId, response, },);
     },
     /**
-     * Mark a request failed. Scoped by `owner.userId` for the same reason
-     * as `complete()`. BUG-bug-async-lifecycle-writes-request-results-unscoped-by-user.
-     * @param id
-     * @param owner
-     * @param error
+     * Mark a request failed. Owner-scoped for the same reason as `complete()`.
+     * BUG-bug-async-lifecycle-writes-request-results-unscoped-by-user.
      */
     fail(id: string, owner: OwnerRef, error: string,) {
       enqueue({ kind: "fail", id, userId: owner.userId, error, },);
     },
-    /**
-     * @returns {Promise<void>}
-     */
     async flush(): Promise<void> {
       // Spin until the queue is empty. Used by tests + graceful shutdown.
       while (queue.length > 0 || draining) {
@@ -204,10 +174,6 @@ export function createAsyncStore(database: Kysely<DB>, config: AsyncStoreConfig 
         await promise;
       }
     },
-    /**
-     * @param {string} id
-     * @returns {Promise<RequestResultRow | null>}
-     */
     async read(id: string,): Promise<RequestResultRow | null> {
       const row = await database
         .selectFrom("request_results",)
@@ -217,9 +183,6 @@ export function createAsyncStore(database: Kysely<DB>, config: AsyncStoreConfig 
       return row ? rowToResult(row,) : null;
     },
     config: cfg,
-    /**
-     * @returns {void}
-     */
     destroy(): void {
       destroyed = true;
       void drain();
@@ -244,11 +207,7 @@ export interface AsyncStore {
   destroy(): void;
 }
 
-/**
- * Translate a DB row to the public `RequestResultRow`.
- * @param row - raw DB row (snake_case columns)
- * @returns camelCase `RequestResultRow` with JSON columns parsed.
- */
+/** Translate a raw snake_case DB row to camelCase `RequestResultRow`. */
 function rowToResult(row: RequestResultsRow,): RequestResultRow {
   return {
     id: row.id,

@@ -9,67 +9,22 @@
 //   GET    /api/v1/actors/:actorId/emotion-avatars/jobs/:jobId
 //   POST   /api/v1/actors/:actorId/emotion-avatars/jobs/:jobId/cancel
 // Pairs with `src/components/chat/emotion-avatars-panel.html`.
+import type {
+  ActorEmotionAvatarsState,
+  EmotionAvatarJob,
+} from "./actor-emotion-avatars-types";
 import { apiFetch, } from "./htmx";
 import { t, } from "./i18n";
 import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";
 
+export type {
+  ActorEmotionAvatarsState,
+  EmotionAvatarJob,
+  JobStatus,
+} from "./actor-emotion-avatars-types";
+
 const log = rootLog.child({ module: "actor-emotion-avatars", },);
-
-/** Server-side job status values. */
-export type JobStatus = "queued" | "running" | "completed" | "failed" | "cancelled";
-
-/** A single batch-generation job. */
-export interface EmotionAvatarJob {
-  id: string;
-  actorId: string;
-  status: JobStatus;
-  baseAvatarId: string;
-  emotions: string[];
-  progress?: number;
-  createdAt: string;
-  updatedAt: string;
-  error?: string;
-}
-
-/**
- * State plugin for the emotion-avatar batch-generation panel. Bound to a
- * single actor via `setActorId`.
- */
-export interface ActorEmotionAvatarsState {
-  _eaActorId: string | null;
-  jobs: EmotionAvatarJob[];
-  jobsLoading: boolean;
-  jobsError: string;
-  baseAvatarId: string;
-  selectedEmotions: string[];
-  promptPrefix: string;
-  negativePrompt: string;
-  busy: boolean;
-  message: string;
-  error: string;
-  pollIntervalMs: number;
-  /** Internal handle for the polling timer (private). */
-  _pollHandle: ReturnType<typeof setTimeout> | null;
-  /** Internal handle for the polling interval (private). */
-  _pollInterval: ReturnType<typeof setInterval> | null;
-  setActorId(actorId: string,): void;
-  listJobs(): Promise<void>;
-  /** Toggle a single emotion in the `selectedEmotions` set. */
-  toggleEmotion(emotion: string,): void;
-  /** Start a new batch job. Returns true on POST success. */
-  startGeneration(): Promise<boolean>;
-  /** Cancel a running job. */
-  cancelJob(jobId: string,): Promise<void>;
-  /** Refresh a single job's status (poll on demand). */
-  refreshJob(jobId: string,): Promise<void>;
-  /** Start background polling for any non-terminal job. */
-  startPolling(): void;
-  /** Stop the polling loop. */
-  stopPolling(): void;
-  /** True when the job has not reached a terminal state. */
-  isJobActive(job: EmotionAvatarJob,): boolean;
-}
 
 const emptySelection = (): string[] => [];
 
@@ -89,10 +44,6 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
   _pollHandle: null,
   _pollInterval: null,
 
-  /**
-   * @param {string} actorId
-   * @returns {void}
-   */
   setActorId(actorId: string,) {
     if (this._eaActorId === actorId) { return; }
     this._eaActorId = actorId;
@@ -108,17 +59,10 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
     this.stopPolling();
   },
 
-  /**
-   * @param {EmotionAvatarJob} job
-   * @returns {boolean}
-   */
   isJobActive(job: EmotionAvatarJob,) {
     return job.status === "queued" || job.status === "running";
   },
 
-  /**
-   * @returns {Promise<void>}
-   */
   async listJobs() {
     const actorId = this._eaActorId;
     if (!actorId) { return; }
@@ -140,19 +84,12 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
     }
   },
 
-  /**
-   * @param {string} emotion
-   * @returns {void}
-   */
   toggleEmotion(emotion: string,) {
     const i = this.selectedEmotions.indexOf(emotion,);
     if (i >= 0) { this.selectedEmotions.splice(i, 1,); }
     else { this.selectedEmotions.push(emotion,); }
   },
 
-  /**
-   * @returns {Promise<boolean>}
-   */
   async startGeneration() {
     const actorId = this._eaActorId;
     if (!actorId || this.busy) { return false; }
@@ -194,10 +131,6 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
     }
   },
 
-  /**
-   * @param {string} jobId
-   * @returns {Promise<void>}
-   */
   async cancelJob(jobId: string,) {
     const actorId = this._eaActorId;
     if (!actorId || this.busy || !jobId) { return; }
@@ -227,10 +160,6 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
     }
   },
 
-  /**
-   * @param {string} jobId
-   * @returns {Promise<void>}
-   */
   async refreshJob(jobId: string,) {
     const actorId = this._eaActorId;
     if (!actorId || !jobId) { return; }
@@ -249,9 +178,6 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
     }
   },
 
-  /**
-   * @returns {void}
-   */
   startPolling() {
     this.stopPolling();
     const tick = async () => {
@@ -274,9 +200,6 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
     }, 100,);
   },
 
-  /**
-   * @returns {void}
-   */
   stopPolling() {
     if (this._pollHandle) {
       clearTimeout(this._pollHandle,);
@@ -289,11 +212,7 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
   },
 };
 
-/**
- * Build the Alpine scope for the emotion avatars panel.
- * @param {string} actorId
- * @returns {ActorEmotionAvatarsState}
- */
+/** Build the Alpine scope for the emotion avatars panel. */
 export function actorEmotionAvatarsFactory(actorId: string,): ActorEmotionAvatarsState {
   const state = Object.create(actorEmotionAvatars,) as ActorEmotionAvatarsState;
   state._eaActorId = null;

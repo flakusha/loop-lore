@@ -41,26 +41,16 @@ const RE_ENCRYPT_LIMIT = Number.MAX_SAFE_INTEGER;
 const inflightRotations = new Map<string, Promise<ChatKey>>();
 let rotationEventCount = 0;
 
-/**
- * @returns {number}
- */
 export function getRotationEventCount(): number {
   return rotationEventCount;
 }
 
-/**
- * @returns {void}
- */
 export function resetRotationEventCount(): void {
   rotationEventCount = 0;
   inflightRotations.clear();
 }
 
-/**
- * @throws When the in-flight rotation rejects — callers must fail closed.
- * @param {string} chatId
- * @returns {Promise<void>}
- */
+/** @throws When the in-flight rotation rejects — callers must fail closed. */
 export async function awaitChatKeyLock(chatId: string,): Promise<void> {
   const inflight = inflightRotations.get(chatId,);
   if (!inflight) { return; }
@@ -70,25 +60,14 @@ function log(): Logger {
   return getLogger().child({ module: "key-distribution", },);
 }
 
-/**
- * @param database
- * @param chatId
- * @returns string
- * @throws {Error}
- */
+/** @throws {Error} When encryption is not configured. */
 export async function getChatKey(database: Kysely<DB>, chatId: string,): Promise<ChatKey> {
   const smk = getSmk();
   if (!smk) { throw new Error("Encryption not configured — set SERVER_ENCRYPTION_KEY",); }
   return deriveChatKeyForChat(database, chatId, smk,);
 }
 
-/**
- * @param database
- * @param chatId
- * @param newParticipantId
- * @returns void
- * @throws {Error}
- */
+/** @throws {Error} When encryption is not configured. */
 export async function distributeKeysOnJoin(
   database: Kysely<DB>,
   chatId: string,
@@ -106,13 +85,7 @@ export async function distributeKeysOnJoin(
   return chatKey;
 }
 
-/**
- * @param database
- * @param chatId
- * @param departedParticipantId
- * @returns void
- * @throws When no participants remain or any re-encrypt step fails.
- */
+/** @throws When no participants remain or any re-encrypt step fails. */
 export async function rotateKeyOnLeave(
   database: Kysely<DB>,
   chatId: string,
@@ -245,11 +218,6 @@ async function doRotate(
   return newChatKey;
 }
 
-/**
- * @param database
- * @param chatId
- * @returns void
- */
 export async function resolveChatKey(database: Kysely<DB>, chatId: string,): Promise<ChatKey> {
   return getChatKey(database, chatId,);
 }

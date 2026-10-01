@@ -51,7 +51,6 @@ export interface ExpandedMemoryContext {
 // compaction chains approach it.
 export const MAX_CHAIN_IDS = 500;
 
-/** */
 function getLog() {
   return getLogger().child({ module: "memory-history-search", },);
 }

@@ -27,7 +27,6 @@ import type {
 } from "../types";
 
 let _log: ReturnType<typeof getLogger> | null = null;
-/** */
 function log() {
   _log ??= getLogger();
   return _log;
@@ -42,17 +41,12 @@ const CAPABILITY_NODE_MAP: Record<ImageEditCategory, string[]> = {
   controlnet: ["ControlNetLoader", "ControlNetApply",],
 };
 
-/** */
 export class ComfyUIEditProvider implements ImageEditProvider {
   readonly name: ImageEditBackend = "comfyui";
 
   private client: ComfyUIClient | null = null;
   private installedNodes: Set<string> | null = null;
 
-  /** */
-  /**
-   * @returns {ComfyUIClient}
-   */
   private getClient(): ComfyUIClient {
     if (!this.client) {
       const config = loadConfig();
@@ -68,10 +62,6 @@ export class ComfyUIEditProvider implements ImageEditProvider {
     return this.client;
   }
 
-  /** */
-  /**
-   * @returns {Promise<boolean>}
-   */
   async healthCheck(): Promise<boolean> {
     try {
       const client = this.getClient();
@@ -82,10 +72,6 @@ export class ComfyUIEditProvider implements ImageEditProvider {
     }
   }
 
-  /** */
-  /**
-   * @returns {Promise<ImageEditCategory[]>}
-   */
   async listCapabilities(): Promise<ImageEditCategory[]> {
     const nodes = await this.getInstalledNodes();
     const capabilities: ImageEditCategory[] = [];
@@ -100,10 +86,6 @@ export class ComfyUIEditProvider implements ImageEditProvider {
     return capabilities;
   }
 
-  /** */
-  /**
-   * @returns {Promise<Set<string>>}
-   */
   async getInstalledNodes(): Promise<Set<string>> {
     if (this.installedNodes) { return this.installedNodes; }
 
@@ -119,10 +101,6 @@ export class ComfyUIEditProvider implements ImageEditProvider {
     }
   }
 
-  /** */
-  /**
-   * @returns {Promise<Record<string, ComfyUINodeInfo>>}
-   */
   async getNodeInfo() {
     const client = this.getClient();
     return client.getNodeInfo();

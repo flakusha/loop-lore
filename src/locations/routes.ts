@@ -44,11 +44,6 @@ export interface AddStopInput {
 export class TravelRouteService {
   constructor(private readonly db: Kysely<DB>,) {}
 
-  /** Create a travel route. worldId is required; loop + seconds_per_unit default sensibly. */
-  /**
-   * @param {CreateTravelRouteInput} input
-   * @returns {Promise<string>}
-   */
   async createRoute(input: CreateTravelRouteInput,): Promise<string> {
     const id = randomUUID();
     await this.db
@@ -66,14 +61,6 @@ export class TravelRouteService {
     return id;
   }
 
-  /** Append an ordered stop. stop_order is unique per route. */
-  /**
-   * @param {AddStopInput} input
-   * @throws {Error}
-   * @throws {Error}
-   * @throws {Error}
-   * @returns {Promise<string>}
-   */
   async addStop(input: AddStopInput,): Promise<string> {
     // Validate route scope: the location must be in the same world as the route.
     const route = await this.db
@@ -109,11 +96,6 @@ export class TravelRouteService {
     return id;
   }
 
-  /** Get ordered stops for a route. */
-  /**
-   * @param {string} routeId
-   * @returns {Promise<{ id: string; location_id: string; stop_order: number; dwell_seconds: number; coord_x: number | null; coord_y: number | null; coord_z: number | null; }[]>}
-   */
   async getStops(routeId: string,): Promise<
     Array<{
       id: string;
@@ -133,17 +115,6 @@ export class TravelRouteService {
       .execute();
   }
 
-  /** Attach a transport location to a route (sets current_route_id). */
-  /**
-   * @param {string} locationId
-   * @param {string} routeId
-   * @throws {Error}
-   * @throws {Error}
-   * @throws {Error}
-   * @throws {Error}
-   * @throws {Error}
-   * @returns {Promise<void>}
-   */
   async attachTransport(locationId: string, routeId: string,): Promise<void> {
     const route = await this.db
       .selectFrom("travel_routes",)
@@ -166,12 +137,6 @@ export class TravelRouteService {
     } as never,).execute();
   }
 
-  /** Detach a transport (clears current_route_id and travel_progress). */
-  /**
-   * @param {string} locationId
-   * @param {string} _routeId
-   * @returns {Promise<void>}
-   */
   async detachTransport(locationId: string, _routeId?: string,): Promise<void> {
     await this.db.updateTable("locations",).where("id", "=", locationId,).set({
       current_route_id: null,
@@ -179,11 +144,6 @@ export class TravelRouteService {
     } as never,).execute();
   }
 
-  /** List routes that pass through a given location (i.e. it appears as a stop). */
-  /**
-   * @param {string} locationId
-   * @returns {Promise<{ id: string; name: string; kind: TransportKind; }[]>}
-   */
   async getRoutesThroughLocation(
     locationId: string,
   ): Promise<Array<{ id: string; name: string; kind: TransportKind }>> {
@@ -196,11 +156,6 @@ export class TravelRouteService {
     return rows.map((r,) => ({ id: r.id, name: r.name, kind: r.kind, }));
   }
 
-  /** Compute which stop the transport is between, given travel_progress ∈ [0, segments). */
-  /**
-   * @param {string} locationId
-   * @returns {Promise<{ stopOrder: number; stopLocationId: string; } | null>}
-   */
   async progressToLocation(locationId: string,): Promise<{ stopOrder: number; stopLocationId: string } | null> {
     const loc = await this.db
       .selectFrom("locations",)
@@ -214,11 +169,6 @@ export class TravelRouteService {
     return { stopOrder: stops[idx]!.stop_order, stopLocationId: stops[idx]!.location_id, };
   }
 
-  /** List routes in a world. */
-  /**
-   * @param {string} worldId
-   * @returns {Promise<{ id: string; name: string; kind: TransportKind; loop: number; seconds_per_unit: number; }[]>}
-   */
   async listRoutes(
     worldId: string,
   ): Promise<Array<{ id: string; name: string; kind: TransportKind; loop: number; seconds_per_unit: number }>> {
@@ -231,12 +181,6 @@ export class TravelRouteService {
     return rows as Array<{ id: string; name: string; kind: TransportKind; loop: number; seconds_per_unit: number }>;
   }
 
-  /** Get a single route, scoped by world. Returns undefined if not found or in another world. */
-  /**
-   * @param {string} worldId
-   * @param {string} routeId
-   * @returns {Promise<{ id: string; name: string; kind: TransportKind; loop: number; seconds_per_unit: number; world_id: string; } | undefined>}
-   */
   async getRoute(
     worldId: string,
     routeId: string,
@@ -260,21 +204,10 @@ export class TravelRouteService {
     } | undefined;
   }
 
-  /** Remove a stop by id (no-op if missing). */
-  /**
-   * @param {string} _routeId
-   * @param {string} stopId
-   * @returns {Promise<void>}
-   */
   async removeStop(_routeId: string, stopId: string,): Promise<void> {
     await this.db.deleteFrom("travel_route_stops",).where("id", "=", stopId,).execute();
   }
 
-  /** List ordered stops for a route. (Same as getStops but renamed for the API surface.) */
-  /**
-   * @param {string} routeId
-   * @returns {Promise<{ id: string; location_id: string; stop_order: number; dwell_seconds: number; coord_x: number | null; coord_y: number | null; coord_z: number | null; }[]>}
-   */
   async listStops(routeId: string,): Promise<
     Array<{
       id: string;
