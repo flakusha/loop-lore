@@ -10,6 +10,7 @@
 import { randomUUID, } from "node:crypto";
 import { QuestCategory, QuestProgressStatus, QuestStatus, QuestType, } from "../../db/enums";
 import { questStatusMachine, } from "../../db/enums-story/quests";
+import { emitMemoryEvent, MEMORY_EVENT_QUEST_OPENED, } from "../../memory/events";
 import { serializeOrThrow, transitionQuestStatus, } from "../shared/story-utils";
 import type { QuestConfig, QuestReward, } from "../types";
 import type { QuestState, } from "./types";
@@ -71,6 +72,13 @@ export async function createQuest(
       narrative_hooks: serializeOrThrow(params.narrativeHooks ?? [], "narrative_hooks",),
     },)
     .execute();
+  // Memory event (AC5): a created quest opens on the memory event stream
+  // — fire-and-forget (emitMemoryEvent swallows failures).
+  emitMemoryEvent(state.db, MEMORY_EVENT_QUEST_OPENED, {
+    questId: id,
+    worldId: params.worldId,
+    name: params.name,
+  },);
   return id;
 }
 

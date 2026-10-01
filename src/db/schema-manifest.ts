@@ -210,6 +210,14 @@ export const SCHEMA = new SchemaManifest()
     updated_at: col("text", { notNull: true, hasDefault: true, },),
     ended_at: col("text",),
   },)
+  .table("carriage_records", {
+    id: col("text", { primaryKey: true, },),
+    chat_id: col("text", { notNull: true, },),
+    source_chat_id: col("text",),
+    scope: col("text", { notNull: true, },),
+    payload: col("text", { notNull: true, },),
+    created_at: col("text", { notNull: true, },),
+  },)
   .table("crafting_attempts", {
     id: col("text", { primaryKey: true, },),
     actor_id: col("text", { notNull: true, },),

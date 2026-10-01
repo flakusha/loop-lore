@@ -20,7 +20,7 @@ import {
   createAnnotation,
   listMemoryAnnotations,
 } from "../../chat/proactive/annotations";
-import { checkChatAccess, } from "../../chat/service";
+import { checkChatAccess, checkChatSettingsAccess, } from "../../chat/service";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
 import {
   badRequestResponse as badRequest,
@@ -120,11 +120,21 @@ export function annotationRoutes(opts: HandlerOpts, prefix = "/api",) {
         );
         if (!access.ok) { return notFound("Chat not found",); }
 
-        const shadowRows = await database
-          .selectFrom("shadow_notes",)
-          .select(["id", "chat_id", "content", "created_at",],)
-          .where("chat_id", "=", chatId,)
-          .execute();
+        // AC2 (notes-shadow-carriage): shadow notes are a GM-tier surface —
+        // members/observers/guests never see them at this render site.
+        const gmAccess = await checkChatSettingsAccess(
+          database,
+          chatId,
+          userId,
+          ctx.userRole as string | null,
+        );
+        const shadowRows = gmAccess.ok
+          ? await database
+            .selectFrom("shadow_notes",)
+            .select(["id", "chat_id", "content", "created_at",],)
+            .where("chat_id", "=", chatId,)
+            .execute()
+          : [];
         const shadowAnnotations = shadowRows.map((row,) => ({
           id: row.id,
           chatId: row.chat_id,
