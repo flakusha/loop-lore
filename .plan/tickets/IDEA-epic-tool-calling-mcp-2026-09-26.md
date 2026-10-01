@@ -3,8 +3,14 @@
 
 # IDEA-epic-tool-calling-mcp-2026-09-26: Tool-Calling / MCP Connectors — cross-cutting epic proposal
 
-**Status:** Not Started
+**Status:** Resolved — promoted to epic
 **Priority:** medium (P6+ per matrix, but 🔴 High future impact)
+
+## Resolution (2026-10-01)
+
+Promoted to `.plan/epics/epic-tool-calling-mcp.md`. The proposal's "Suggested epic description" is reproduced verbatim as the canonical epic file, preserving all Open Questions.
+
+Related: `epic-npc-bdi-autonomy.md` (G27/G28/G32 sibling), `epic-npc-to-npc-social.md` (G29/G30 sibling).
 **Effort:** Large
 **Type:** Research
 **Summary:** `matrix-cross-mechanics.md` G42 names Tool-Calling / MCP as the "broadest integration gap — touches entire matrix." No epic owns the cross-cutting tool schema, the agent runtime, or the MCP client/server surfaces. `epic-platform-integrations.md` covers provider adapters (LLM/image/voice) but **not** agent-facing tool schemas (inventory, combat, quest, social, asset). This ticket proposes a new epic to close the gap.
