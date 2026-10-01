@@ -146,7 +146,6 @@
               </template>
               <span
                 class="time"
-                x-text="msg.group ? formatTimeShort(msg.created_at) : formatTime(msg.created_at)"
               ></span>
               <span class="edited-label" x-show="msg.edited_at" data-testid="edited-indicator"
               >{{{t("chats.edited")}}}</span>

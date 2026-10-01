@@ -76,7 +76,6 @@ describe("chat branches (FEAT-045)", () => {
       "middle",
       { parent_id: rootId, } as never,
     );
-
     leafId = await insertMessages(db, chatId, ownerId, MessageRole.User, "leaf", { parent_id: midId, } as never,);
     otherChatMessageId = await insertMessages(db, otherChatId, ownerId, MessageRole.User, "other",);
   },);
@@ -91,7 +90,6 @@ describe("chat branches (FEAT-045)", () => {
       messageId: midId,
       actorId: ownerId,
     },);
-
     if ("code" in result) { throw new Error(`Unexpected error: ${result.code} ${result.message}`,); }
     expect(result.branch.name,).toBe("Branch 1",);
     expect(result.branch.parentMessageId,).toBe(midId,);
@@ -105,7 +103,6 @@ describe("chat branches (FEAT-045)", () => {
       messageId: leafId,
       actorId: ownerId,
     },);
-
     if ("code" in second) { throw new Error(`Unexpected error: ${second.code} ${second.message}`,); }
     expect(second.branch.name,).toBe("Branch 2",);
     expect(second.messagePath,).toEqual([rootId, midId, leafId,],);
@@ -118,9 +115,32 @@ describe("chat branches (FEAT-045)", () => {
       actorId: ownerId,
       name: "What if I had said no",
     },);
-
     if ("code" in named) { throw new Error(`Unexpected error: ${named.code} ${named.message}`,); }
     expect(named.branch.name,).toBe("What if I had said no",);
+  });
+
+  test("fork moves the display: chats.active_branch_id + single active row", async () => {
+    const forked = await forkBranch(tdb.db, {
+      chatId,
+      messageId: midId,
+      actorId: ownerId,
+      name: "Active sync",
+    },);
+    if ("code" in forked) { throw new Error(`Unexpected error: ${forked.code} ${forked.message}`,); }
+    const row = await tdb.db
+      .selectFrom("chats",)
+      .select(["active_branch_id",],)
+      .where("id", "=", chatId,)
+      .executeTakeFirst();
+    expect(row?.active_branch_id,).toBe(forked.branch.id,);
+    const activeRows = await tdb.db
+      .selectFrom("chat_branches",)
+      .select(["id",],)
+      .where("chat_id", "=", chatId,)
+      .where("is_active", "=", 1,)
+      .execute();
+    expect(activeRows,).toHaveLength(1,);
+    expect(activeRows[0]?.id,).toBe(forked.branch.id,);
   });
 
   test("switch active branch updates chats.active_branch_id", async () => {
@@ -132,7 +152,6 @@ describe("chat branches (FEAT-045)", () => {
       branchId: firstBranch.id,
       actorId: ownerId,
     },);
-
     if ("code" in result) { throw new Error(`Unexpected error: ${result.code} ${result.message}`,); }
     expect(result.activeBranchId,).toBe(firstBranch.id,);
     const row = await tdb.db
@@ -140,7 +159,6 @@ describe("chat branches (FEAT-045)", () => {
       .select(["active_branch_id" as never,],)
       .where("id", "=", chatId,)
       .executeTakeFirst() as Record<string, unknown> | undefined;
-
     expect(String(row?.["active_branch_id" as never],),).toBe(firstBranch.id,);
   });
 
@@ -175,7 +193,6 @@ describe("chat branches (FEAT-045)", () => {
       messageId: otherChatMessageId,
       actorId: ownerId,
     },);
-
     expect("code" in result && result.code === "not_found",).toBe(true,);
   });
 
@@ -188,7 +205,6 @@ describe("chat branches (FEAT-045)", () => {
       branchId: target,
       actorId: ownerId,
     },);
-
     expect("code" in result && result.code === "not_found",).toBe(true,);
   });
 
@@ -198,7 +214,6 @@ describe("chat branches (FEAT-045)", () => {
       messageId: rootId,
       actorId: memberId,
     },);
-
     if ("code" in result) { throw new Error(`Unexpected error: ${result.code} ${result.message}`,); }
     expect(result.branch.chatId,).toBe(chatId,);
   });
@@ -228,7 +243,6 @@ describe("chat branches (FEAT-045)", () => {
       .where("chat_id", "=", invChatId,)
       .where("is_active", "=", 1,)
       .execute();
-
     expect(actives.map((r,) => r.id),).toEqual([second.branch.id,],);
   });
 
@@ -241,7 +255,6 @@ describe("chat branches (FEAT-045)", () => {
       branchId: target.id,
       actorId: ownerId,
     },);
-
     expect("code" in result,).toBe(false,);
 
     const actives = await tdb.db
@@ -250,7 +263,6 @@ describe("chat branches (FEAT-045)", () => {
       .where("chat_id", "=", chatId,)
       .where("is_active", "=", 1,)
       .execute();
-
     expect(actives.map((r,) => r.id),).toEqual([target.id,],);
   });
 });

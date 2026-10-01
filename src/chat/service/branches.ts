@@ -84,7 +84,6 @@ export async function forkBranch(
     .select(["id", "chat_id",],)
     .where("id", "=", messageId,)
     .executeTakeFirst();
-
   if (!message || message.chat_id !== chatId) {
     return { code: "not_found", message: "Fork point message not found in chat", };
   }
@@ -93,6 +92,14 @@ export async function forkBranch(
   const inserted = await insertForkRow(db, { chatId, branchId, parentMessageId: messageId, name: params.name, },);
   if ("code" in inserted) { return inserted; }
   const name = inserted.name;
+  // Sync chats.active_branch_id so the display invariant holds:
+  // both representations of "displayed branch" stay consistent (same lockstep
+  // that switchActiveBranch keeps).
+  await db
+    .updateTable("chats",)
+    .set({ active_branch_id: branchId, },)
+    .where("id", "=", chatId,)
+    .execute();
 
   const path = await walkMessagePath(db, chatId, messageId,);
   return {
