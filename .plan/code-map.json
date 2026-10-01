@@ -2582,6 +2582,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-giwt-abort-runs-unscoped-git-reset-hard-that-destroys-unrela.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
     },
     {
