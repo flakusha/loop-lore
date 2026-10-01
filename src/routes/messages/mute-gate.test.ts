@@ -28,7 +28,7 @@ import { enforceMuteGate, } from "./guards";
 
 const BASE = "http://localhost";
 
-const createModule: unknown = await import("./create").catch(() => null,);
+const createModule: unknown = await import("./create").catch(() => null);
 const createPristine = !!createModule &&
   typeof (createModule as Record<string, unknown>).createRoutes === "function";
 const { createRoutes, } = (createPristine ? createModule : {}) as typeof import("./create");
@@ -91,7 +91,6 @@ describe("enforceMuteGate", () => {
       .execute();
   },);
 
-
   test("unmuted participant passes (null)", async () => {
     await unmuteParticipant();
     const res = await enforceMuteGate(db, chatId, ownerId,);
@@ -117,7 +116,7 @@ describe("enforceMuteGate", () => {
 
 describeRoute("POST /messages mute wiring", () => {
   beforeAll(async () => {
-    await unmuteParticipant().catch(() => undefined,);
+    await unmuteParticipant().catch(() => undefined);
   },);
 
   function makeApp(): Elysia {
@@ -168,7 +167,7 @@ describeRoute("POST /messages mute wiring", () => {
       .execute();
     expect(userRows,).toHaveLength(1,);
   });
-});
+},);
 
 // File-level: both describes share one db — destroy only after all tests.
 afterAll(async () => {

@@ -108,13 +108,14 @@ export async function enforceMuteGate(
   chatId: string,
   actorId: string,
 ): Promise<Response | null> {
-  const sender = await database
+  const mutedRows = await database
     .selectFrom("chat_participants",)
     .select("muted_until",)
     .where("chat_id", "=", chatId,)
     .where("actor_id", "=", actorId,)
-    .executeTakeFirst();
-  if (!isMuted(sender ?? null, Date.now(),)) { return null; }
+    .limit(1,)
+    .execute();
+  if (!isMuted(mutedRows[0] ?? null, Date.now(),)) { return null; }
   getLogger().child({ module: "messages/create", },).info(
     "Message rejected: sender is muted",
     { chatId, actorId, },

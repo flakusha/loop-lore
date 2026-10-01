@@ -15,9 +15,10 @@
  * have already produced activity after sitting out, so the anti-reselection
  * guard no longer applies.
  */
-import { sql, type Kysely, } from "kysely";
+import { type Kysely, sql, } from "kysely";
 import { MessageContentType, } from "../db/enums";
 import type { DB, } from "../db/schema";
+import { parseExpiryMs, sqliteUtcToIso, } from "../utils/date";
 
 /** Cooldown window: a skipped actor is re-eligible after this long. */
 export const SKIP_COOLDOWN_MS = 60_000;
@@ -32,15 +33,14 @@ const SCAN_LIMIT = 200;
 /**
  * Parse `messages.created_at` into epoch ms. The column mixes SQLite's
  * default `datetime('now')` format ("YYYY-MM-DD HH:MM:SS", UTC) with
- * ISO-8601 rows written by app code, so normalise the space format to
- * ISO with an explicit UTC marker before Date.parse.
+ * ISO-8601 rows written by app code; `sqliteUtcToIso` normalises both to
+ * a zone-qualified ISO string and `parseExpiryMs` turns it into ms.
  * @param value
- * @returns {number}
+ * @returns {number} Epoch ms, or 0 when unparseable (row never cools down).
  */
 function parseCreatedAt(value: string,): number {
-  const normalised = value.includes("T",) ? value : `${value.replace(" ", "T",)}Z`;
-  const ms = Date.parse(normalised,);
-  return Number.isNaN(ms,) ? 0 : ms;
+  const ms = parseExpiryMs(sqliteUtcToIso(value,),);
+  return ms ?? 0;
 }
 
 /**
@@ -65,8 +65,8 @@ export async function fetchSkipCooldowns(
     .select(["actor_id", "created_at",],)
     .where("chat_id", "=", chatId,)
     .where("content_type", "=", MessageContentType.TurnSkip,)
-    .orderBy(sql`rowid`, "desc",)
     .limit(SCAN_LIMIT,)
+    .orderBy(sql`rowid`, "desc",)
     .execute();
 
   const cooling = new Map<string, number>();
@@ -76,7 +76,7 @@ export async function fetchSkipCooldowns(
     if (skippedAt > cutoff) { cooling.set(row.actor_id, skippedAt,); }
   }
 
-  for (const [actorId, skippedAt] of cooling) {
+  for (const [actorId, skippedAt,] of cooling) {
     const activity = await db
       .selectFrom("messages",)
       .select("created_at",)

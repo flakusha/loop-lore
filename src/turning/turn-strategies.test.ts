@@ -148,10 +148,10 @@ describe("deterministic replay + talkativity weighting (turn-talkativity-skip AC
 
     // Talkativity must not perturb a non-weighted strategy: zero out every
     // weight and the same slot still wins.
-    const reweighted = participants.map((p) => {
+    const reweighted = participants.map((p,) => {
       return { ...p, talkativity: 0, };
     },);
-    expect(roundRobinSelect(reweighted, "a1", 1, turnOrder,)).toBe(first,);
+    expect(roundRobinSelect(reweighted, "a1", 1, turnOrder,),).toBe(first,);
   });
 
   test("scene-based selection is pure (same inputs, same output)", () => {

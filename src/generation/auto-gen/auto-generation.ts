@@ -119,9 +119,6 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       .select(["type", "turn_strategy", "mode", "gm_config", "world_id", "streaming",],)
       .where("id", "=", chatId,)
       .executeTakeFirst();
-
-    const assistantTuning = parseAssistantTuning(chat?.gm_config ?? null,);
-
     const mode = await resolveMode({
       d,
       database,
@@ -211,7 +208,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       tracking,
       actorName,
       chatStreaming: chat?.streaming,
-      assistantTuning,
+      assistantTuning: parseAssistantTuning(chat?.gm_config ?? null,),
       requestId,
     },);
 

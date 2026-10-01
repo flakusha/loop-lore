@@ -152,7 +152,7 @@ describeOrSkip("callLlm — generation-error-handling gaps", () => {
       return { content: "ok", thinking: undefined, finishReason: "stop", usage, } as never;
     };
     const opts = {
-      ...makeOpts({ driver: driver as never, chatStreaming: 0, }),
+      ...makeOpts({ driver: driver as never, chatStreaming: 0, },),
       assistantTuning: { temperature: 0.2, maxTokens: 64, },
     } as Parameters<typeof callLlm>[0];
     const result = await callLlm(opts,);
@@ -166,7 +166,7 @@ describeOrSkip("callLlm — generation-error-handling gaps", () => {
       seen.push(req as { params?: { temperature: number; maxTokens: number } },);
       return { content: "ok", thinking: undefined, finishReason: "stop", usage, } as never;
     };
-    const opts = { ...makeOpts({ driver: driver as never, chatStreaming: 0, }), } as Parameters<typeof callLlm>[0];
+    const opts = { ...makeOpts({ driver: driver as never, chatStreaming: 0, },), } as Parameters<typeof callLlm>[0];
     const result = await callLlm(opts,);
     expect(result.content,).toBe("ok",);
     expect(seen[0]?.params,).toEqual({ temperature: 0.9, maxTokens: 2048, },);
