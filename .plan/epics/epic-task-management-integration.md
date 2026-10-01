@@ -102,6 +102,8 @@ a `.tmp/tasks/` task? When do they cross-reference? What's the source of truth?
 
 ## Related
 
+- `epic-project-spaces-pm-integration.md` — project spaces consume the ticket↔task granularity contract; space-scoped queries + cross-space links ride this mapping
+
 - `epic-docs-reconciliation.md` — docs ↔ code alignment (similar reconciliation spirit)
 - `epic-logic-reconciliation.md` — logic drift detection
 - `.agents/skills/sync-tickets/` — ticket ↔ git issue sync
