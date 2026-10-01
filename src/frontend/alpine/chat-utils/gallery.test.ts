@@ -7,6 +7,8 @@
 import { afterEach, describe, expect, test, } from "bun:test";
 import { chatUtilsGallery, } from "./gallery";
 
+const realPreviewAsset = (globalThis as { __previewAsset?: unknown }).__previewAsset;
+
 describe("getMediaStyle", () => {
   test("returns empty style for non-image asset", () => {
     const style = (chatUtilsGallery as any).getMediaStyle({ type: "video", }, 1,);
@@ -420,7 +422,10 @@ describe("openAssetPreview — fallbacks", () => {
     expect(mirror.mime_type,).toBe("image/png",);
     expect(mirror.size_bytes,).toBe(10,);
     expect(mirror.asset_type,).toBeUndefined(); // mirror carries no width/height
-    delete (globalThis as any).__previewAsset;
+    // __previewAsset is installed app-wide by src/frontend/asset-preview.ts and
+    // src/frontend/alpine/chat-utils/gallery.ts. Restore the load-time value
+    // rather than deleting it, so later files in a shared process keep it.
+    (globalThis as { __previewAsset?: unknown }).__previewAsset = realPreviewAsset;
   });
 });
 

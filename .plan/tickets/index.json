@@ -6019,6 +6019,19 @@
     "title": "BUG-TEST-SUITE-FLAKY-44-ON-DEV-2026-08-22: Closeout — Resolved by post-Aug-22 commits",
     "type": "BUG"
   },
+  "BUG-TESTS-DELETE-APP-INSTALLED-GLOBALS-BREAKING-EVERY-LATER-TEST": {
+    "hash": "8bb511f",
+    "git_issue": "8bb511f",
+    "extid": "BUG-TESTS-DELETE-APP-INSTALLED-GLOBALS-BREAKING-EVERY-LATER-TEST",
+    "type": "BUG",
+    "title": "Tests delete app-installed globals, breaking every later test file",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-tests-delete-app-installed-globals-breaking-every-later-test.md",
+    "status": "Not Started"
+  },
   "BUG-TOOL-CALL-ARG-PARSE-SILENT-FALLBACK": {
     "epic": "epic-plugin-system, epic-assistant-gm-flows",
     "extid": "BUG-TOOL-CALL-ARG-PARSE-SILENT-FALLBACK",
