@@ -3185,6 +3185,19 @@
     "source": ".plan/tickets/BUG-giwt-sync-fix-writes-an-out-of-vocabulary-status.md",
     "status": "Not Started"
   },
+  "BUG-GIWT-SYNC-FIX-WRITES-LOWERCASE-GIT-STATUSES-INTO-TICKET-MD-F": {
+    "hash": "ac9a5ec",
+    "git_issue": "ac9a5ec",
+    "extid": "BUG-GIWT-SYNC-FIX-WRITES-LOWERCASE-GIT-STATUSES-INTO-TICKET-MD-F",
+    "type": "BUG",
+    "title": "giwt sync --fix writes lowercase git statuses into ticket .md files, breaking the status-vocab gate",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-giwt-sync-fix-writes-lowercase-git-statuses-into-ticket-md-f.md",
+    "status": "Not Started"
+  },
   "BUG-GIWT-TICKET-EXTID-DOUBLE-PREFIX-ON-DUPLICATE-TYPE-SLUG": {
     "epic": "",
     "extid": "BUG-GIWT-TICKET-EXTID-DOUBLE-PREFIX-ON-DUPLICATE-TYPE-SLUG",
