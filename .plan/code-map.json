@@ -15355,6 +15355,18 @@
       "source": ".plan/tickets/TASK-composer-draft-persistence.md"
     }
   ],
+  "src/frontend/alpine/chat-editing.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-frontend-ok-toast-branches-unreachable-fefetch-throws-on-non.md"
+    }
+  ],
+  "src/frontend/alpine/chat-editing.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-frontend-ok-toast-branches-unreachable-fefetch-throws-on-non.md"
+    }
+  ],
   "src/frontend/alpine/chat-filters.ts": [
     {
       "kind": "ticket",
@@ -15473,6 +15485,18 @@
     {
       "kind": "frontend",
       "source": "docs/frontend/chat/search-and-filter.md"
+    }
+  ],
+  "src/frontend/alpine/chat-sections.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-sections-loadsections-leaves-sectionsloading-true-forev.md"
+    }
+  ],
+  "src/frontend/alpine/chat-sections.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-sections-loadsections-leaves-sectionsloading-true-forev.md"
     }
   ],
   "src/frontend/alpine/chat-seen.test.ts": [
@@ -17748,6 +17772,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-frontend-ok-toast-branches-unreachable-fefetch-throws-on-non.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-tui-app-never-threads-sessiontoken-into-chatwidget.md"
     },
     {
@@ -18049,6 +18077,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-character-export-broken-export-modal-missing-data-character-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-frontend-ok-toast-branches-unreachable-fefetch-throws-on-non.md"
     }
   ],
   "src/frontend/pages/characters.ts": [
@@ -18059,6 +18091,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-character-export-broken-export-modal-missing-data-character-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-frontend-ok-toast-branches-unreachable-fefetch-throws-on-non.md"
     },
     {
       "kind": "ticket",
