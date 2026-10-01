@@ -1103,7 +1103,7 @@ Total tickets: **3127** — untagged: **2636** — unbound to epic: **1589**
 | yaml | 4 | 0 | 2 | 0 | 1 | 0 | 1 |
 | yaml-frontmatter | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| (untagged) | 2636 | 1059 | 59 | 1246 | 36 | 0 | 236 |
+| (untagged) | 2636 | 1065 | 59 | 1243 | 36 | 0 | 233 |
 
 ## By epic × status
 
@@ -1242,7 +1242,7 @@ Total tickets: **3127** — untagged: **2636** — unbound to epic: **1589**
 | epic-chat-lifecycle-moderation, epic-assistant-gm-flows | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
 | epic-chat-lifecycle-moderation, epic-chat-context-optimization | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
 | epic-chat-privacy.md | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| epic-chat-product-features | 32 | 6 | 0 | 25 | 0 | 0 | 1 |
+| epic-chat-product-features | 32 | 8 | 0 | 23 | 0 | 0 | 1 |
 | epic-chat-product-features.md | 3 | 1 | 0 | 0 | 0 | 0 | 2 |
 | epic-chat-rich-engagement.md | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-chat-rich-engagement.md (proposed) | 4 | 0 | 0 | 4 | 0 | 0 | 0 |
@@ -1561,7 +1561,7 @@ Total tickets: **3127** — untagged: **2636** — unbound to epic: **1589**
 | Visual Novel Mode; Immersion & Presentation | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Wardrobe / Loadout Avatar Variants | 8 | 4 | 0 | 4 | 0 | 0 | 0 |
 | World & Locations | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| (unbound) | 1589 | 636 | 57 | 537 | 50 | 0 | 309 |
+| (unbound) | 1589 | 640 | 57 | 536 | 50 | 0 | 306 |
 
 ## Ticket detail
 

@@ -882,7 +882,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-browser-e2e-asserts-absence-of-a-decrypt-failure-marker-acro.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-BROWSER-E2E-SUITE-FLAKES-UNDER-CONCURRENT-RUNS": {
     "hash": "c7d2800",
@@ -1247,7 +1247,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-bun-test-isolate-silently-skips-every-describeorskip-suite.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-BUN-TEST-SRC-FULL-SUITE-IS-ORDER-DEPENDENT-CROSS-FILE-CONTAM": {
     "epic": "",
@@ -1468,7 +1468,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-characters-flow-browser-e2e-flakes-on-a-game-state-404-and-o.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-CHARACTERS-RESOLVECHARACTERTRAITS-SILENTLY-DROPS-WORLD-LAYER": {
     "epic": "",
@@ -6206,7 +6206,7 @@
     "label": "bug",
     "priority": "high",
     "source": ".plan/tickets/BUG-test-e2e-env-default-mismatch.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "# e2e suite fails 29 tests with E2E_SAFEGUARD unset (canonical shape)",
     "type": "BUG"
@@ -23635,7 +23635,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-chat-feature-component-buttons.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Chat Component Buttons — Improve & Attach Asset",
     "type": "TASK"
@@ -23882,7 +23882,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-chat-feature-turn-talkativity-skip.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Turn Management, Talkativity, Skip Turns",
     "type": "TASK"
