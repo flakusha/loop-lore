@@ -3,7 +3,7 @@
 
 # TASK: ComfyUI builder Track A: chain model + prompt_templates workflow-modality persistence
 
-**Status:** Done
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-comfyui-first-class-citizen
