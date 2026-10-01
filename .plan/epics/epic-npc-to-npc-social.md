@@ -9,6 +9,7 @@
 **Type:** Feature Epic
 **Tags:** npc-social, generative-agents, cross-cutting
 **Related:** epic-relationships.md, epic-memory-knowledge-systems.md, epic-group-chat.md, epic-npc-bdi-autonomy.md, epic-npc-management-ui.md, epic-time-scale.md, epic-social-interaction.md
+**Overview:** Autonomous NPC-to-NPC social simulation — the NPC-driven counterpart to the player-driven social systems in `epic-group-chat.md` and `epic-social-interaction.md`, closing matrix gaps G29/G30. A runtime lets NPCs converse without the player present, anchored to each NPC's BDI intentions, relationship strength, and shared episodic memory; conversations drive relationship evolution and write new episodic memories, surfaced to the returning player as a life-log entry.
 
 ## Summary
 
