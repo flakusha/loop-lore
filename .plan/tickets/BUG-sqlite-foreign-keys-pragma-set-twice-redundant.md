@@ -6,6 +6,8 @@
 **Status:** Done
 **Priority:** Medium
 **Effort:** Medium
+**Epic:** epic-db-migration-compaction.md
+**Tags:** db-migration-compaction
 **Summary:** PRAGMA foreign_keys set redundantly in two test files; createSqliteDialect is the single enforcement point
 **Context:** Test hygiene — src/db/index.ts:36, src/db/migrations.test.ts:52, src/db/migration-roundtrip.test.ts:63
 **Acceptance Criteria:** See ## Acceptance Criteria below.

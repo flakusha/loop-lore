@@ -11,6 +11,8 @@
 **Status:** Done
 **Priority:** High
 **Effort:** Small
+**Epic:** epic-e2e-integration-testing.md
+**Tags:** e2e-integration-testing
 **Type:** Bugfix / Infrastructure
 **Tags:** e2e, testing, routes, schemas, infrastructure
 

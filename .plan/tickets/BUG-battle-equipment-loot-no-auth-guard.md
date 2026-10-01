@@ -13,6 +13,8 @@
 **Priority:** critical
 **Priority Tier:** P0
 **Effort:** Small
+**Epic:** epic-battle-action-systems.md
+**Tags:** battle-action-systems
 **Area:** security, rpg/battle
 **Source:** trust-boundary audit (`docs/audit/trust-boundary.md` finding #1, commit `e16e34bd`)
 

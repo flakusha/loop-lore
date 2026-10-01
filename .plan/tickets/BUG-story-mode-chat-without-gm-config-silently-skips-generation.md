@@ -11,6 +11,8 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Small
+**Epic:** epic-story-mode-ui.md
+**Tags:** story-mode-ui
 
 ## Summary
 

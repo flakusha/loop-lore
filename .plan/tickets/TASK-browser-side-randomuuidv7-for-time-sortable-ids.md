@@ -11,6 +11,8 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** small
+**Epic:** epic-e2e-integration-testing.md
+**Tags:** e2e-integration-testing
 
 ## Summary
 

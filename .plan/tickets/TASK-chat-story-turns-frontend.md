@@ -3,16 +3,17 @@
 
 # TASK: Chat Story Turns Frontend
 
-**Status:** In Progress
+**Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Status Note:** 2026-10-04 audit — turn-list endpoint wired: `story-state/api.ts:55` fetches `/api/v1/chats/:id/story-turns`, rendered in `gm-story-panel.html`; single-turn navigation open.
+**Epic:** epic-frontend-backend-integration.md
+**Tags:** frontend-backend-integration
 **Summary:** (none captured)
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: In Progress
+**Status**: Not Started
 **Priority**: medium
 **Labels**:
 **Assignee**:

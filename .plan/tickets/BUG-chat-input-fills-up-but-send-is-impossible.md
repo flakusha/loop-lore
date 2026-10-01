@@ -11,6 +11,8 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-group-chat.md
+**Tags:** group-chat
 
 ## Summary
 

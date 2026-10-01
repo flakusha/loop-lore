@@ -5,6 +5,8 @@
 
 **Status:** Done
 **Status Note:** duplicate
+**Epic:** epic-memory-knowledge-systems.md
+**Tags:** memory-knowledge-systems
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

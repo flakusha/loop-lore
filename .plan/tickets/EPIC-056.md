@@ -5,6 +5,8 @@
 
 **Status:** Done
 **Status Note:** duplicate
+**Epic:** epic-worlds-extension.md
+**Tags:** worlds-extension
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

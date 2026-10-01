@@ -6,6 +6,8 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-world-locations.md
+**Tags:** world-locations
 **Summary:** (none captured)
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)

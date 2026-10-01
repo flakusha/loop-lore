@@ -11,6 +11,8 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-frontend-chat-commands.md
+**Tags:** frontend-chat-commands
 
 ## Summary
 

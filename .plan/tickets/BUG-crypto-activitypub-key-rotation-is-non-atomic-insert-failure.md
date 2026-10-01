@@ -12,6 +12,8 @@
 **Status Note:** verified landed on dev — expire + insert wrapped in a single `database.transaction()`
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-crypto.md
+**Tags:** crypto
 
 ## Summary
 

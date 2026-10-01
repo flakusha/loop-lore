@@ -12,6 +12,8 @@
 **Status Note:** already on dev, 2026-09-14
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-fe-be-harmonization.md
+**Tags:** fe-be-harmonization
 
 ## Summary
 

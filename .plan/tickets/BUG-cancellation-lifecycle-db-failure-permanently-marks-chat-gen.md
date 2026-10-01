@@ -4,6 +4,8 @@
 # BUG: Cancellation lifecycle: DB failure permanently marks chat generating; state machine advisory only
 
 **Effort:** Medium
+**Epic:** epic-generation-flow-control.md
+**Tags:** generation-flow-control
 **Summary:** (none captured)
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)

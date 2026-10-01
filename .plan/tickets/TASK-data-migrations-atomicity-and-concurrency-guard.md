@@ -11,6 +11,8 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-db-migration-compaction.md
+**Tags:** db-migration-compaction
 **Related:** TASK-format-version-migration, TASK-runtime-migration-staleness-guard
 
 ## Summary

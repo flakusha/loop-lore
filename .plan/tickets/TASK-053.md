@@ -6,6 +6,8 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-items.md
+**Tags:** items
 **Summary:** Item stats drift stored on ItemInstance.properties.drift; per-rarity caps.
 **Context:** Stat evolution over item lifetime.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

@@ -11,6 +11,8 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-frontend-bundle-optimization.md
+**Tags:** frontend-bundle-optimization
 
 ## Summary
 

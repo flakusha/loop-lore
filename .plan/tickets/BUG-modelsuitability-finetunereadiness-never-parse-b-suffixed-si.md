@@ -11,6 +11,8 @@
 **Status:** Done
 **Priority:** Medium
 **Effort:** Medium
+**Epic:** epic-byok-local-models.md
+**Tags:** byok-local-models
 
 ## Summary
 

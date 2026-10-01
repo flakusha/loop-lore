@@ -5,6 +5,8 @@
 
 **Status:** Done
 **Status Note:** duplicate
+**Epic:** epic-economy-trading.md
+**Tags:** economy-trading
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

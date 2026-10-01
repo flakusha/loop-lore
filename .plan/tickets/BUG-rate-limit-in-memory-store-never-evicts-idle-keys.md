@@ -6,6 +6,8 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-api-rate-limiting.md
+**Tags:** api-rate-limiting
 **Resolved:** 2026-09-26 — landed in c860a74b2. Verified by `src/api-governance/rate-limiting/store.test.ts` (sweep-after-1024-saves) and `src/api-governance/rate-limiting/store.ts:103-113` (maybeSweep). Ticket flagged stale.
 
 **Summary:** InMemoryRateLimitStore (src/api-governance/rate-limiting/store.ts:27-30) keeps windows and buckets Maps keyed per user+policy with no eviction or prune, unlike middleware/rate-limit.ts which prunes; unbounded memory growth under churn. Fix: prune stale windows lazily on access plus a bounded periodic sweep. Verify: unit test inserting many keys and asserting map size stays bounded.

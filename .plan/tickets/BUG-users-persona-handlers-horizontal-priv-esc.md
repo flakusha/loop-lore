@@ -13,6 +13,8 @@
 **Priority:** high
 **Priority Tier:** P2
 **Effort:** Small
+**Epic:** epic-character-multi-personality.md
+**Tags:** character-multi-personality
 **Area:** users/personas
 **Source:** reconcile review (Scout Batch B — ISSUE-001)
 **Resolved:** 2026-08-21 (analysis) / 2026-08-22 (verification on `dev`)

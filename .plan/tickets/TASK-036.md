@@ -7,6 +7,8 @@
 **Status Note:** on dev, 2026-09-27 (NSFW game-mechanics batch closeout)
 **Priority:** high
 **Effort:** Very High
+**Epic:** epic-nsfw-game-mechanics.md
+**Tags:** nsfw-game-mechanics
 **Summary:** Encounter state machine on NsfwEncounterType + HeatPhase; encounter_completed event.
 **Context:** Gameplay-layer encounter phases + skill checks + outcomes.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

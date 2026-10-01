@@ -6,6 +6,8 @@
 **Status:** Done
 **Priority:** low
 **Effort:** Medium
+**Epic:** epic-world-locations.md
+**Tags:** world-locations
 **Summary:** Fix tree.ts header naming nonexistent triggers.
 **Context:** 001_init creates 4 triggers; depth/cycle enforced app-layer.
 **Acceptance Criteria:** Header describes the real enforcement split.

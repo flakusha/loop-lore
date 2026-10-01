@@ -10,6 +10,8 @@
 **Status Note:** already on dev, 2026-09-21
 **Priority:** high
 **Effort:** Small
+**Epic:** epic-blog-system.md
+**Tags:** blog-system
 
 ## Summary
 

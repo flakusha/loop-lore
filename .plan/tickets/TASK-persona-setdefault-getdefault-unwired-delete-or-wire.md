@@ -12,6 +12,8 @@
 **Status Note:** getDefault deleted; update() isDefault:true now delegates to setDefault so PATCH unsets the previous default
 **Priority:** low
 **Effort:** Medium
+**Epic:** epic-character-multi-personality.md
+**Tags:** character-multi-personality
 
 ## Summary
 

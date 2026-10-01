@@ -7,6 +7,8 @@
 **Status Note:** sign fixed: adjustedRoll = roll + luckModifier clamped to [1,100]
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-rpg-content-systems.md
+**Tags:** rpg-content-systems
 **Summary:** (see ## Summary)
 **Context:** (see ## Observed / ## Evidence)
 **Acceptance Criteria:** (see ## Acceptance Criteria)

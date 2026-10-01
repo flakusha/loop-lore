@@ -11,6 +11,8 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-relationships.md
+**Tags:** relationships
 **Branch:** npc-management-ui
 **Commit:** dc19c9e
 

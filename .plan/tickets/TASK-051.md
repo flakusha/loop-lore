@@ -6,6 +6,8 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-items.md
+**Tags:** items
 **Summary:** Item durability tracking — wear on use, repair paths, breakage thresholds.
 **Context:** Mirrors crafting_station_instances durability contract.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

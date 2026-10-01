@@ -12,6 +12,8 @@
 **Status Note:** commit `4a1f56b8`
 **Priority:** high
 **Effort:** Small
+**Epic:** epic-prompt-improvement.md
+**Tags:** prompt-improvement
 
 ## Summary
 

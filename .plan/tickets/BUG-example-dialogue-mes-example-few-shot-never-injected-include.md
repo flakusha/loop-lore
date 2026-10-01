@@ -11,6 +11,8 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-prompt-improvement.md
+**Tags:** prompt-improvement
 
 ## Summary
 

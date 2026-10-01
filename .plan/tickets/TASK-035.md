@@ -7,6 +7,8 @@
 **Status Note:** on dev, 2026-09-27 (NSFW game-mechanics batch closeout)
 **Priority:** medium
 **Effort:** Large
+**Epic:** epic-nsfw-game-mechanics.md
+**Tags:** nsfw-game-mechanics
 **Summary:** Body/physical on BodyBuild + SizeCategory via shared StatusEffect.
 **Context:** Gameplay-layer physique; stamina/endurance mechanics.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

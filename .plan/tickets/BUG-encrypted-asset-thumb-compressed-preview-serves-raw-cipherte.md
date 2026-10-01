@@ -11,6 +11,8 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-crypto.md
+**Tags:** crypto
 
 ## Resolution
 
