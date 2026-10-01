@@ -19,7 +19,7 @@
 **Status:** Not Started
 **Priority:** P3
 **Effort:** Medium
-**Epic:** epic-memory-knowledge-systems.md
+**Epic:** epic-aux-enrichment-pipeline.md
 **Summary:** `src/regex/` has no visibility into false-positive rates in production; intent hijacks (git issue 9bb9cbf) are found by accident. Add opt-in per-pattern match counters so precision problems show up in telemetry before users report them.
 **Acceptance Criteria:** (see below)
 **Tags:** idea, regex, observability

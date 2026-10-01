@@ -19,7 +19,7 @@
 **Status:** Not Started
 **Priority:** P3
 **Effort:** Medium
-**Epic:** epic-memory-knowledge-systems.md
+**Epic:** epic-emotion-avatar-message-binding.md
 **Summary:** Emotion-avatar batch generation runs server-side with an in-memory job store the client must poll; surface per-variant progress over the existing generation SSE channel so the character sheet shows live progress.
 **Acceptance Criteria:** (see below)
 **Tags:** idea, frontend, avatars, sse

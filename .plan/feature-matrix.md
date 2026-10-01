@@ -5,6 +5,7 @@
 
 # Feature matrix
 
+// hint: Structural and logic conflict. Both design and behavior differ.
 // hint: Structural change (rename/retype). Check callers of this entity.
 Total tickets: **3173** — untagged: **2674** — unbound to epic: **1620**
 
@@ -29,6 +30,7 @@ Total tickets: **3173** — untagged: **2674** — unbound to epic: **1620**
 | `**Related:**`) live only in the `.md` frontmatter — the index doesn't know which tickets belong to which epic beyond `epic: "epic-foo"` (and only some tickets have that field). Future features (`/find-work` | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | 0.1.0 | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | 0.1.0-quick-win | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
+// hint: Logic changed on both sides. Requires understanding intent of each change.
 | 2d-scenes | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | 2d-sprite-world | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | 2d6 | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -1125,6 +1127,7 @@ Total tickets: **3173** — untagged: **2674** — unbound to epic: **1620**
 | Epic | Total | done | in_progress | open | draft | cancelled | other |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | (none — no dedicated frontend epic tracks this spec) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
+// hint: Logic changed on both sides. Requires understanding intent of each change.
 | (none) | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | (optional, e.g. epic-plugin-system) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | `, `**Related:**`) live only in the `.md` frontmatter — the index doesn't know which tickets belong to which epic beyond `epic: "epic-foo"` (and only some tickets have that field). Future features (`/find-work`, admin panel filtering, agent routing by tag) need a queryable, parseable source of truth. The validator already accepts the inline format (`**Tags:** rpg, math, dice, …`), so the spec is parseable; the missing piece is round-tripping to the index. | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -1604,6 +1607,7 @@ Total tickets: **3173** — untagged: **2674** — unbound to epic: **1620**
 - ``**Related:**`) live only in the `.md` frontmatter — the index doesn't know which tickets belong to which epic beyond `epic: "epic-foo"` (and only some tickets have that field). Future features (`/find-work`` (1): TASK-PLAN-INDEX-TAGGING-BINDING-RECONCILIATION
 - `0.1.0` (1): EPIC-RELEASE-010
 - `0.1.0-quick-win` (2): TASK-MATRIX-CROSS-MECH-G22-EVENT-DRIVEN-AUTOMATION, TASK-MATRIX-CROSS-MECH-G23-DYNAMIC-MEMORY-MID-RESPONSE
+// hint: Logic changed on both sides. Requires understanding intent of each change.
 - `2d-scenes` (1): EPIC-GAME-FRONTEND-SCENES
 - `2d-sprite-world` (1): TASK-COMFYUI-FIRST-CLASS-SPRITE-PIPELINE-AVATAR-MATTING-WORKFLOWS
 - `2d6` (1): TASK-MATH-RESOLVER-PBTA-2D6
@@ -2698,6 +2702,7 @@ Total tickets: **3173** — untagged: **2674** — unbound to epic: **1620**
 ### By epic
 
 - `(none — no dedicated frontend epic tracks this spec)` (1): TASK-FRONTEND-CHARACTERS-PAGE-SPEC
+// hint: Logic changed on both sides. Requires understanding intent of each change.
 - `(none)` (1): BUG-EXPORT-PROGRESS-STREAM-TEST-STATUS-ASSERTION-IS-FLAKY
 - `(optional, e.g. epic-plugin-system)` (1): TASK-TEMPLATE
 - ``, `**Related:**`) live only in the `.md` frontmatter — the index doesn't know which tickets belong to which epic beyond `epic: "epic-foo"` (and only some tickets have that field). Future features (`/find-work`, admin panel filtering, agent routing by tag) need a queryable, parseable source of truth. The validator already accepts the inline format (`**Tags:** rpg, math, dice, …`), so the spec is parseable; the missing piece is round-tripping to the index.` (1): TASK-PLAN-INDEX-TAGGING-BINDING-RECONCILIATION
