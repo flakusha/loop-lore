@@ -20,3 +20,13 @@ Context: fba9dbcd8/3f6329b02. Severity: nit. rate-limit.ts:78-82 comment says a 
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+
+## Verification Notes (2026-10-01)
+
+Re-verified against current `dev`; the defect described in this ticket is
+already fixed. The ticket was left open past the fix.
+
+Evidence: `src/middleware/rate-limit.ts:77-80`
+
+- The boundary comment now states the rule correctly: a timestamp exactly at the cutoff is still in-window and kept; only strictly older ones are dropped. The implementation (`queue[0]! < cutoff`) agrees with the comment.

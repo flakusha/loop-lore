@@ -20,3 +20,13 @@ Context: 93e957dd4/36c26b1e2. Severity: high. recordTurnSkip (chat/service/crud/
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+
+## Verification Notes (2026-10-01)
+
+Re-verified against current `dev`; the defect this ticket describes is
+already fixed. The ticket was left open past the fix.
+
+Evidence: `src/routes/chats/turn-skip-routes.test.ts:155-166`
+
+- A test fires two simultaneous `mode=advance` posts and asserts the insert and the generation trigger each happen once; it names this ticket.

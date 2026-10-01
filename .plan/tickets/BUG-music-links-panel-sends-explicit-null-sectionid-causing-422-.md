@@ -13,3 +13,12 @@
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Verification command from ticket executed green
+
+## Verification Notes (2026-10-01)
+
+Re-verified against current `dev`; the defect described in this ticket is
+already fixed. The ticket was left open past the fix.
+
+Evidence: `src/frontend/alpine/chat-music-links.ts`
+
+- The add path posts `{ url }` only; `sectionId` is no longer sent as an explicit `null`, so the request no longer trips the `t.Optional(uuid)` schema and 422. Removed in `97e26cd02`.

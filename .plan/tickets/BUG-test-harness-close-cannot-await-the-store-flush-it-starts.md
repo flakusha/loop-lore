@@ -35,3 +35,13 @@ Evidence: the browser harness path is verified 30 -> 0 swallowed `async-store wr
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+
+## Verification Notes (2026-10-01)
+
+Re-verified against current `dev`; the defect this ticket describes is
+already fixed. The ticket was left open past the fix.
+
+Evidence: `tests/e2e/helpers/server.ts:418-426`
+
+- `close` is now `async` and awaits `flushActiveStore()` after stopping the server and before clearing globals, so the queue cannot outlive the call.
