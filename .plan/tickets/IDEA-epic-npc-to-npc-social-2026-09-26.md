@@ -13,7 +13,7 @@ Promoted to `.plan/epics/epic-npc-to-npc-social.md`. The proposal's "Suggested e
 Related: `epic-npc-bdi-autonomy.md` (BDI prerequisite), `epic-tool-calling-mcp.md` (G42 sibling).
 **Effort:** Medium
 **Type:** Research
-**Summary:** Matrix gaps G29 and G30 describe a single missing system: **NPC-to-NPC social simulation**. `TASK-npc-to-npc-social.md` exists as an orphan ticket, but no epic owns the integration with `epic-character-relationships.md` (relationship strength), `epic-memory-knowledge-systems.md` (episodic memory for conversation topics), and the planned BDI loop from `IDEA-epic-bdi-npc-autonomy`. Inspiration: generative-agents (Stanford), RisuAI NPC-to-NPC, AI Town.
+**Summary:** Matrix gaps G29 and G30 describe a single missing system: **NPC-to-NPC social simulation**. `TASK-npc-to-npc-social.md` exists as an orphan ticket, but no epic owns the integration with `epic-relationships.md` (relationship strength), `epic-memory-knowledge-systems.md` (episodic memory for conversation topics), and the planned BDI loop from `IDEA-epic-bdi-npc-autonomy`. Inspiration: generative-agents (Stanford), RisuAI NPC-to-NPC, AI Town.
 **Context:** Source row: 2026-09-26 epic audit; matrix reference: `matrix-cross-mechanics.md` G29, G30 (2026-08-14 research sweep). The current `epic-group-chat.md` and `epic-social-interaction.md` cover *player-driven* social systems; this proposal covers **NPC-driven** social simulation — NPCs talk to each other without the player in the room, generating relationship drift and memory entries that the player later observes.
 
 ## Suggested epic description
@@ -31,13 +31,13 @@ Related: `epic-npc-bdi-autonomy.md` (BDI prerequisite), `epic-tool-calling-mcp.m
 
 ### Summary
 
-A runtime that lets two (or more) NPCs converse autonomously when the player isn't present, modulated by their BDI intentions (from `IDEA-epic-bdi-npc-autonomy`), relationship strength (from `epic-character-relationships.md`), and shared episodic memory (from `epic-memory-knowledge-systems.md`). Conversations affect relationship evolution and generate new episodic memories, surfaced to the player as a "life log" entry when they return.
+A runtime that lets two (or more) NPCs converse autonomously when the player isn't present, modulated by their BDI intentions (from `IDEA-epic-bdi-npc-autonomy`), relationship strength (from `epic-relationships.md`), and shared episodic memory (from `epic-memory-knowledge-systems.md`). Conversations affect relationship evolution and generate new episodic memories, surfaced to the player as a "life log" entry when they return.
 
 ### Scope
 
 1. **Conversation trigger** — BDI runtime (when shipped) or world-event scheduler decides "NPC A wants to talk to NPC B"; epic-consumes that trigger.
 2. **Conversation runtime** — LLM-mediated two-party (or N-party) dialogue, anchored to each NPC's BDI state, mood, and recent memories. Generates a chat log similar to `epic-group-chat.md`'s output, but persisted as NPC-to-NPC interaction history.
-3. **Relationship evolution** — post-conversation, each NPC's relationship delta is computed (positive if shared interests / resolved conflict; negative if betrayal / disagreement) and written to `epic-character-relationships.md`'s store.
+3. **Relationship evolution** — post-conversation, each NPC's relationship delta is computed (positive if shared interests / resolved conflict; negative if betrayal / disagreement) and written to `epic-relationships.md`'s store.
 4. **Memory write-through** — each NPC generates episodic memories from the conversation (e.g. "I argued with X about Y") written to `epic-memory-knowledge-systems.md`.
 5. **Catch-up surfacing** — when the player returns, the NPC(s) can reference the conversation in their next interaction with the player (paraphrased, not full transcript; full transcript lives in their life log).
 6. **Rate limiting** — to bound LLM cost, NPC-to-NPC conversations run at most N per in-world day per NPC-pair; operator-configurable.
@@ -45,7 +45,7 @@ A runtime that lets two (or more) NPCs converse autonomously when the player isn
 ### Tasks
 
 - [ ] Conversation runtime (`src/npc/social/{runtime,trigger,log-store}.ts`)
-- [ ] Relationship evolution bridge (read+write `epic-character-relationships.md`)
+- [ ] Relationship evolution bridge (read+write `epic-relationships.md`)
 - [ ] Memory write-through bridge (read+write `epic-memory-knowledge-systems.md`)
 - [ ] BDI integration (consume triggers from `IDEA-epic-bdi-npc-autonomy`; gracefully no-op if not yet shipped)
 - [ ] Catch-up surfacing (life-log entry + in-conversation paraphrase)
@@ -62,7 +62,7 @@ A runtime that lets two (or more) NPCs converse autonomously when the player isn
 
 ### Related Epics
 
-- `epic-character-relationships.md` — relationship strength (read+write)
+- `epic-relationships.md` — relationship strength (read+write)
 - `epic-memory-knowledge-systems.md` — episodic memory (read+write)
 - `epic-group-chat.md` — turn-taking + log-store shape (reused)
 - `epic-social-interaction.md` — player-driven social systems (sibling; NPC-driven is the gap)
@@ -91,6 +91,6 @@ The dependency chain is clean: traits → BDI (separate epic) → relationships 
 7. **Quality of generated conversation** — generative-agents can produce repetitive or nonsensical NPC dialogue. Quality bar is hard to enforce. Manual review of generated logs as part of acceptance?
 
 **Tags:** idea, matrix-gap, g29, g30, npc-social, generative-agents, ai-town, risuai, cross-cutting
-**Related:** .plan/matrix-cross-mechanics.md (G29, G30), .plan/epics/epic-character-relationships.md, .plan/epics/epic-memory-knowledge-systems.md, .plan/epics/epic-group-chat.md, .plan/tickets/TASK-npc-to-npc-social.md, .plan/epics/IDEA-epic-bdi-npc-autonomy.md
+**Related:** .plan/matrix-cross-mechanics.md (G29, G30), .plan/epics/epic-relationships.md, .plan/epics/epic-memory-knowledge-systems.md, .plan/epics/epic-group-chat.md, .plan/tickets/TASK-npc-to-npc-social.md, .plan/epics/IDEA-epic-bdi-npc-autonomy.md
 
 git issue: 00000000
