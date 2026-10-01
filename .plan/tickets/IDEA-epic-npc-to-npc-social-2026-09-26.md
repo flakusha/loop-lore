@@ -3,8 +3,14 @@
 
 # IDEA-epic-npc-to-npc-social-2026-09-26: NPC-to-NPC Social Simulation (matrix gaps G29/G30)
 
-**Status:** Not Started
+**Status:** Resolved — promoted to epic
 **Priority:** medium (matrix 🟡 Medium severity, P6+ deferred)
+
+## Resolution (2026-10-01)
+
+Promoted to `.plan/epics/epic-npc-to-npc-social.md`. The proposal's "Suggested epic description" is reproduced verbatim as the canonical epic file, preserving all Open Questions.
+
+Related: `epic-npc-bdi-autonomy.md` (BDI prerequisite), `epic-tool-calling-mcp.md` (G42 sibling).
 **Effort:** Medium
 **Type:** Research
 **Summary:** Matrix gaps G29 and G30 describe a single missing system: **NPC-to-NPC social simulation**. `TASK-npc-to-npc-social.md` exists as an orphan ticket, but no epic owns the integration with `epic-character-relationships.md` (relationship strength), `epic-memory-knowledge-systems.md` (episodic memory for conversation topics), and the planned BDI loop from `IDEA-epic-bdi-npc-autonomy`. Inspiration: generative-agents (Stanford), RisuAI NPC-to-NPC, AI Town.
