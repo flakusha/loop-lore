@@ -10,7 +10,7 @@
 **Effort:** Large
 **Type:** Feature Epic
 **Tags:** assistant, planning, todo, kanban, graph, visualization
-**Related:** epic-workflow-engine.md, epic-assistant-creative-studio-workflows.md, epic-assistant-gm-flows.md, epic-rag-context-sources.md, epic-analytics-observability.md
+**Related:** epic-workflow-engine.md, epic-assistant-creative-studio-workflows.md, epic-assistant-gm-flows.md, epic-rag-context-sources.md, epic-analytics-observability.md, epic-project-spaces-pm-integration.md
 
 ## Summary
 
