@@ -7,7 +7,7 @@
 **Context:** The reachable `permanent.ts` owns the same method+path but returns permanent-layer traits only. Callers get HTTP 200 with permanently-filtered results instead of an error, so the loss is invisible. No test covers the bulk surface.
 **Acceptance Criteria:** A decision is made on the aggregated lookup (restore it, or confirm it is intentionally retired and remove the reference), and the outcome is covered by a test that asserts GET semantics with and without `?worldId=`/`?locationId=`.
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Small
 **Type:** Bug
