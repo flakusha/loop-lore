@@ -167,7 +167,82 @@ export async function runOffloadPass(
 }
 
 /**
- * Start the offload daemon. Returns a handle exposing `stop()` + `runOnce()`.
+ * Offload daemon handle — owns the interval timer, the re-entrancy guard,
+ * and the live {@link DaState}. Constructed via {@link startOffloadDaemon}.
+ */
+export class OffloadDaemon {
+  private readonly log = getLogger().child({ module: "async-offload", },);
+  private timer: IntervalHandle | null = null;
+  private running = false;
+  private stopping = false;
+  private readonly intervalMs: number;
+  private readonly minAgeMs: number;
+  private readonly ttlMs: number;
+  private readonly maxInlineBytes: number;
+  readonly state: DaState;
+
+  constructor(
+    private database: Kysely<DB>,
+    asyncStoreConfig: AsyncStoreConfig,
+    config: OffloadDaemonConfig = {},
+  ) {
+    this.intervalMs = config.intervalMs ?? DEFAULT_INTERVAL_MS;
+    this.minAgeMs = config.minAgeMs ?? DEFAULT_MIN_AGE_MS;
+    this.ttlMs = config.ttlMs ?? DEFAULT_TTL_MS;
+    this.maxInlineBytes = getMaxInlineBytes(config.maxInlineBytes, asyncStoreConfig,);
+    this.state = { rowCount: 0, lastWriteAt: Date.now(), eventLoopLagMs: 0, };
+    mkdirSync(OFFLOAD_DIR, { recursive: true, },);
+  }
+
+  /** Start the interval timer. No-op when already started. */
+  start(): void {
+    if (this.timer !== null) { return; }
+    this.timer = setInterval(() => {
+      if (this.stopping) { return; }
+      void this.runOnce().catch((error: unknown,) => {
+        this.log.error("offload daemon tick failed", undefined, { error: String(error,), },);
+      },);
+    }, this.intervalMs,);
+    this.log.info("offload daemon started", {
+      intervalMs: this.intervalMs,
+      ttlMs: this.ttlMs,
+      maxInlineBytes: this.maxInlineBytes,
+    },);
+  }
+
+  /** Stop the interval timer. Idempotent. */
+  stop(): void {
+    this.stopping = true;
+    if (this.timer !== null) {
+      clearInterval(this.timer,);
+      this.timer = null;
+    }
+    this.log.info("offload daemon stopped",);
+  }
+
+  /**
+   * Run a single offload pass (re-entrancy guarded; returns zeros if already running).
+   * @returns counts `{ offloaded, expired, pruned }` for this pass.
+   */
+  async runOnce(): Promise<{ offloaded: number; expired: number; pruned: number }> {
+    if (this.running) { return { offloaded: 0, expired: 0, pruned: 0, }; }
+    this.running = true;
+    try {
+      return await runOffloadPass(this.database, {
+        minAgeMs: this.minAgeMs,
+        ttlMs: this.ttlMs,
+        maxInlineBytes: this.maxInlineBytes,
+      },);
+    } finally {
+      this.running = false;
+      this.state.lastWriteAt = Date.now();
+    }
+  }
+}
+
+/**
+ * Start the offload daemon. Returns a handle exposing `start()`, `stop()`
+ * and `runOnce()`.
  * @param database - Kysely handle
  * @param asyncStoreConfig - default config (used for `maxInlineBytes` fallback)
  * @param config - daemon-specific config (intervals, TTL override)
@@ -178,69 +253,5 @@ export function startOffloadDaemon(
   asyncStoreConfig: AsyncStoreConfig,
   config: OffloadDaemonConfig = {},
 ): OffloadDaemon {
-  const log = getLogger().child({ module: "async-offload", },);
-  const intervalMs = config.intervalMs ?? DEFAULT_INTERVAL_MS;
-  const minAgeMs = config.minAgeMs ?? DEFAULT_MIN_AGE_MS;
-  const ttlMs = config.ttlMs ?? DEFAULT_TTL_MS;
-  const maxInlineBytes = getMaxInlineBytes(config.maxInlineBytes, asyncStoreConfig,);
-
-  mkdirSync(OFFLOAD_DIR, { recursive: true, },);
-
-  let timer: IntervalHandle | null = null;
-  let running = false;
-  let stopping = false;
-
-  const state: DaState = { rowCount: 0, lastWriteAt: Date.now(), eventLoopLagMs: 0, };
-
-  /**
-   * Run a single offload pass (re-entrancy guarded; returns zeros if already running).
-   * @returns counts `{ offloaded, expired, pruned }` for this pass.
-   */
-  async function runOnce(): Promise<{ offloaded: number; expired: number; pruned: number }> {
-    if (running) { return { offloaded: 0, expired: 0, pruned: 0, }; }
-    running = true;
-    try {
-      return await runOffloadPass(database, { minAgeMs, ttlMs, maxInlineBytes, },);
-    } finally {
-      running = false;
-      state.lastWriteAt = Date.now();
-    }
-  }
-
-  return {
-    /**
-     * @returns {void}
-     */
-    start(): void {
-      if (timer !== null) { return; }
-      timer = setInterval(() => {
-        if (stopping) { return; }
-        void runOnce().catch((error: unknown,) => {
-          log.error("offload daemon tick failed", undefined, { error: String(error,), },);
-        },);
-      }, intervalMs,);
-      log.info("offload daemon started", { intervalMs, ttlMs, maxInlineBytes, },);
-    },
-    /**
-     * @returns {void}
-     */
-    stop(): void {
-      stopping = true;
-      if (timer !== null) {
-        clearInterval(timer,);
-        timer = null;
-      }
-      log.info("offload daemon stopped",);
-    },
-    runOnce,
-    state,
-  };
-}
-
-/** */
-export interface OffloadDaemon {
-  start(): void;
-  stop(): void;
-  runOnce(): Promise<{ offloaded: number; expired: number; pruned: number }>;
-  readonly state: DaState;
+  return new OffloadDaemon(database, asyncStoreConfig, config,);
 }
