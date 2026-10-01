@@ -46,14 +46,6 @@ const RETRY_BACKOFF_MS = 5_000;
 /** `last_error` column budget; telemetry carries the full text. */
 const ERROR_MAX_CHARS = 500;
 
-/** Constructor options. */
-export interface AutonomySchedulerOptions {
-  /** Shared governor instance. Omitted → the tick driver builds one. */
-  governor?: AutonomyGovernor;
-  /** Deterministic RNG for the tick driver's jitter coin flip. */
-  rng?: () => number;
-}
-
 /** Flatten an outcome to a stable telemetry/log token.
  * @param outcome
  * @returns `skipped:<why>` or `dispatched:<n>`
@@ -72,7 +64,12 @@ export class AutonomyScheduler {
   readonly #rng: () => number;
   readonly #governor: AutonomyGovernor | undefined;
 
-  constructor(db: Kysely<DB>, opts: AutonomySchedulerOptions = {},) {
+  constructor(db: Kysely<DB>, opts: {
+    /** Shared governor instance. Omitted → the tick driver builds one. */
+    governor?: AutonomyGovernor;
+    /** Deterministic RNG for the tick driver's jitter coin flip. */
+    rng?: () => number;
+  } = {},) {
     this.#db = db;
     this.#store = new SimulationStore(db,);
     this.#rng = opts.rng ?? Math.random;
@@ -246,3 +243,6 @@ export class AutonomyScheduler {
     return { worldId, nextTickAt, outcome: { skipped: "error", }, error: message, };
   }
 }
+
+/** Scheduler options — derived from the class ctor (single source). */
+export type AutonomySchedulerOptions = NonNullable<ConstructorParameters<typeof AutonomyScheduler>[1]>;
