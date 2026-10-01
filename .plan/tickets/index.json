@@ -40780,7 +40780,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-tmp-janitor-and-staleness-markers.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [],
     "title": ".tmp janitor gate + verified-at staleness markers",
     "type": "TASK"
