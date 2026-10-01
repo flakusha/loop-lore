@@ -25439,6 +25439,19 @@
     "title": "Cross-story event propagation logic",
     "type": "TASK"
   },
+  "TASK-CROSS-SYNC-SHARED-WORLD-LOCATION-STATE-GATED-FUTURE": {
+    "hash": "838f5dc",
+    "git_issue": "838f5dc",
+    "extid": "TASK-CROSS-SYNC-SHARED-WORLD-LOCATION-STATE-GATED-FUTURE",
+    "type": "TASK",
+    "title": "Cross-sync shared world/location state (gated future)",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-instance-federation.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-cross-sync-shared-world-location-state-gated-future.md",
+    "status": "Not Started"
+  },
   "TASK-CROSS-TOOL-DATA-PORTABILITY-REVIEW": {
     "epic": "",
     "extid": "TASK-CROSS-TOOL-DATA-PORTABILITY-REVIEW",
@@ -26950,6 +26963,19 @@
     ],
     "title": "Effect v4 scoped concurrency and interruption spike",
     "type": "TASK"
+  },
+  "TASK-EMAIL-DEPS-AS-OPT-IN-LAZY-IMPORT-NODEMAILER-IMAPFLOW-OPENPGP": {
+    "hash": "e0155d5",
+    "git_issue": "e0155d5",
+    "extid": "TASK-EMAIL-DEPS-AS-OPT-IN-LAZY-IMPORT-NODEMAILER-IMAPFLOW-OPENPGP",
+    "type": "TASK",
+    "title": "Email deps as opt-in: lazy import nodemailer/imapflow/openpgp",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-email-integration.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-email-deps-as-opt-in-lazy-import-nodemailer-imapflow-openpgp.md",
+    "status": "Not Started"
   },
   "TASK-EMAIL-INTEGRATION": {
     "epic": "epic-communications-integrations.md",
@@ -30601,6 +30627,19 @@
     "title": "Instance state advertisement endpoint (mesh/federation)",
     "type": "TASK"
   },
+  "TASK-INSTANCE-SWITCHING-BACKEND-INSTANCES-HANDLES-ACTOR-MAP": {
+    "hash": "d8ebc35",
+    "git_issue": "d8ebc35",
+    "extid": "TASK-INSTANCE-SWITCHING-BACKEND-INSTANCES-HANDLES-ACTOR-MAP",
+    "type": "TASK",
+    "title": "Instance switching backend: instances, handles, actor-map",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-instance-federation.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-instance-switching-backend-instances-handles-actor-map.md",
+    "status": "Not Started"
+  },
   "TASK-INTEGRATION-INFRASTRUCTURE": {
     "epic": "epic-communications-integrations.md",
     "extid": "TASK-INTEGRATION-INFRASTRUCTURE",
@@ -30613,6 +30652,19 @@
     "tags": [],
     "title": "Integration Infrastructure",
     "type": "TASK"
+  },
+  "TASK-INTEGRATIONS-SHARED-SEAMS-ENCRYPTIONPROVIDER-MESSAGEBRIDGE-B": {
+    "hash": "2dbd2f3",
+    "git_issue": "2dbd2f3",
+    "extid": "TASK-INTEGRATIONS-SHARED-SEAMS-ENCRYPTIONPROVIDER-MESSAGEBRIDGE-B",
+    "type": "TASK",
+    "title": "Integrations shared seams: EncryptionProvider, MessageBridge, BridgeRegistry",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-integrations-core.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-integrations-shared-seams-encryptionprovider-messagebridge-b.md",
+    "status": "Not Started"
   },
   "TASK-INTELLECT-GROWTH-INTERACTIONS": {
     "epic": "epic-character-growth",
@@ -32542,6 +32594,19 @@
     "tags": [],
     "title": "Mesh Coordinator Server — Knowledge DB, Addresses, Trusted Keys, Negotiations, Resync Cron",
     "type": "TASK"
+  },
+  "TASK-MESH-COORDINATOR-VS-SWARM-GOSSIP-TRANSPORT-CONTRACT": {
+    "hash": "dd87987",
+    "git_issue": "dd87987",
+    "extid": "TASK-MESH-COORDINATOR-VS-SWARM-GOSSIP-TRANSPORT-CONTRACT",
+    "type": "TASK",
+    "title": "Mesh coordinator vs swarm gossip transport contract",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-mesh-federation-content-sharing.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-mesh-coordinator-vs-swarm-gossip-transport-contract.md",
+    "status": "Not Started"
   },
   "TASK-MESH-ENCRYPTED-CONTENT-SHARING-RESERVATION-DUPLICATION": {
     "epic": "epic-mesh-federation-content-sharing",
@@ -36538,6 +36603,19 @@
     "status": "Done",
     "title": "reconcile leftover finalize stash 0 random events post store"
   },
+  "TASK-RECONCILE-SOCIAL-HUB-NOTIFICATIONS-BLOCK-WITH-PROTOCOLADAPTE": {
+    "hash": "eb54e89",
+    "git_issue": "eb54e89",
+    "extid": "TASK-RECONCILE-SOCIAL-HUB-NOTIFICATIONS-BLOCK-WITH-PROTOCOLADAPTE",
+    "type": "TASK",
+    "title": "Reconcile social-hub notifications block with ProtocolAdapter",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-social-hub.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-reconcile-social-hub-notifications-block-with-protocoladapte.md",
+    "status": "Not Started"
+  },
   "TASK-RECONCILE-TS-IMPORT-EXTENSIONS-USER-SEEDING-SESSION": {
     "epic": "epic-deno-support (future Deno parity)",
     "extid": "TASK-RECONCILE-TS-IMPORT-EXTENSIONS-USER-SEEDING-SESSION",
@@ -39792,6 +39870,19 @@
     "tags": [],
     "title": "Swarm Supervisor — generalize ServerExternalManager",
     "type": "TASK"
+  },
+  "TASK-SWARM-VS-LEADER-WRITE-DOMAIN-PARTITION-AND-CROSS-TOPOLOGY-CO": {
+    "hash": "54326dd",
+    "git_issue": "54326dd",
+    "extid": "TASK-SWARM-VS-LEADER-WRITE-DOMAIN-PARTITION-AND-CROSS-TOPOLOGY-CO",
+    "type": "TASK",
+    "title": "Swarm-vs-leader write-domain partition and cross-topology contract",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-multi-instance-reconciliation.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-swarm-vs-leader-write-domain-partition-and-cross-topology-co.md",
+    "status": "Not Started"
   },
   "TASK-TALKATIVITY-INFLUENCE-RESPONSE-VERBOSITY": {
     "epic": "epic-chat-context-optimization",
