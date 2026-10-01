@@ -35,6 +35,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-npc-social-memory.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/graph-cluster-memory-social.md"
     }
   ],
   "src/actors/autonomy.test.ts": [
@@ -1319,6 +1323,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-item-asset-avatar-display-in-inventory-trading-and-provision.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/graph-cluster-documents-assets-creative.md"
     }
   ],
   "src/assets/service/persist-generated.ts": [
@@ -1333,6 +1341,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-vector-gen-llm-svg-pipeline.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/graph-cluster-documents-assets-creative.md"
     }
   ],
   "src/assets/service/read.ts": [
@@ -6103,6 +6115,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-adopt-bun-yaml-to-replace-js-yaml.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/graph-cluster-chat-history.md"
     }
   ],
   "src/chat/feature-permissions.ts": [
@@ -6665,6 +6681,12 @@
       "source": ".plan/tickets/BUG-hsts-header-missing-from-response-policy.md"
     }
   ],
+  "src/chat/service/branch-helpers.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/graph-cluster-chat-history.md"
+    }
+  ],
   "src/chat/service/branches.ts": [
     {
       "kind": "ticket",
@@ -6673,6 +6695,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-gate-branches-display-invariant-item-instance-state.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/graph-cluster-chat-history.md"
     }
   ],
   "src/chat/service/carry-": [
@@ -6955,6 +6981,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-transfer-location.md"
+    }
+  ],
+  "src/chat/service/message-history.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/graph-cluster-chat-history.md"
     }
   ],
   "src/chat/service/messages.ts": [
@@ -11223,6 +11255,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-vn-alpha-extraction-matting-job-for-opaque-character-images.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/graph-cluster-documents-assets-creative.md"
     }
   ],
   "src/db/enums-core.ts": [
@@ -14451,6 +14487,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-federation-instance-switcher-in-frontend-travel-between-inst.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-instance-switching-backend-instances-handles-actor-map.md"
     }
   ],
   "src/federation/audit.ts": [
@@ -14499,6 +14539,12 @@
       "source": "docs/spec/federation-trust-mechanism.md"
     }
   ],
+  "src/federation/encryption.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-integrations-shared-seams-encryptionprovider-messagebridge-b.md"
+    }
+  ],
   "src/federation/gossip.test.ts": [
     {
       "kind": "ticket",
@@ -14521,6 +14567,18 @@
     {
       "kind": "spec",
       "source": "docs/spec/headless-alternative-frontends.md"
+    }
+  ],
+  "src/federation/handles.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-instance-switching-backend-instances-handles-actor-map.md"
+    }
+  ],
+  "src/federation/instances.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-instance-switching-backend-instances-handles-actor-map.md"
     }
   ],
   "src/federation/peer-fetch.ts": [
@@ -20661,6 +20719,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-vn-alpha-extraction-matting-job-for-opaque-character-images.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/graph-cluster-documents-assets-creative.md"
     }
   ],
   "src/generation/node-id.test.ts": [
@@ -22018,6 +22080,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-integrations-shared-seams-encryptionprovider-messagebridge-b.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-matrix-auth-adapter-auth-approval-scope-decide-per-adapter-i.md"
     },
     {
@@ -22031,6 +22097,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-matrix-auth-per-role-factor-policy-shape-decide-per-role-min.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-reconcile-social-hub-notifications-block-with-protocoladapte.md"
     }
   ],
   "src/integrations/bridge.ts": [
@@ -22041,6 +22111,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-integration-infrastructure.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-integrations-shared-seams-encryptionprovider-messagebridge-b.md"
     }
   ],
   "src/integrations/capabilities.ts": [
@@ -22095,6 +22169,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-integrations-core.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-integrations-shared-seams-encryptionprovider-messagebridge-b.md"
     }
   ],
   "src/integrations/encryption/matrix.ts": [
@@ -23963,6 +24041,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/EPIC-2026-21.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-reconcile-social-hub-notifications-block-with-protocoladapte.md"
     }
   ],
   "src/notifications/service/triggers.ts": [

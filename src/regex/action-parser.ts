@@ -163,24 +163,8 @@ export async function parseAction(
 ): Promise<Action | null> {
   const trimmed = input.trim();
   if (!trimmed) { return null; }
-  const lower = trimmed.toLowerCase();
-
-  for (const { verb, patterns, confidence, } of VERB_PATTERNS) {
-    for (const pat of patterns) {
-      const m = pat.exec(lower,);
-      if (!m) { continue; }
-      const action: Action = {
-        verb,
-        agency_mode: "free",
-        confidence,
-        parser_stage: "stage1",
-        raw: trimmed,
-      };
-      const target = extractTarget(trimmed, m.index + m[0].length - (m[1]?.length ?? 0) || m.index,);
-      if (target) { action.target = target; }
-      return action;
-    }
-  }
+  const stage1 = parseActionStage1(trimmed,);
+  if (stage1) { return stage1; }
 
   if (stage2) {
     const fallback = await stage2(trimmed, ctx,);
