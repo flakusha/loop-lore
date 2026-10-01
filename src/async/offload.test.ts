@@ -1,47 +1,69 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
-import { existsSync, mkdirSync, rmSync, } from "node:fs";
-import path from "node:path";
-import {
-  OFFLOAD_DIR,
-  offloadDiskBytes,
-  offloadExists,
-  readOffloadedBody,
-  spillFileStem,
-} from "./offload";
-
 /**
  * Smoke tests for the offload helpers — covers the disk round-trip
  * (gzip-spill → gunzip-restore) without spinning up the full daemon
  * (the daemon is exercised end-to-end via integration tests against a
  * real DB in the e2e suite).
+ *
+ * Resource contract (parallel-safe): every test owns a unique `mkdtemp` spill
+ * directory installed via `setOffloadDir`, so nothing here writes into the
+ * shared process default or another suite's files; teardown runs in
+ * `afterEach`. These tests used to create a `tmpRoot` and then write straight
+ * into the shared `OFFLOAD_DIR` anyway, leaking residue into the running app's
+ * spill dir — BUG-test-async-store-offload-dir-fixed-path-race.
  */
+import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
+import { mkdtempSync, rmSync, } from "node:fs";
+import { tmpdir, } from "node:os";
+import path from "node:path";
+import {
+  offloadDir,
+  offloadDiskBytes,
+  offloadExists,
+  readOffloadedBody,
+  setOffloadDir,
+  SPILL_ROOT,
+  spillFileStem,
+} from "./offload";
 
-const tmpRoot = path.resolve(".tmp", "async-store-test",);
+const DEFAULT_DIR = path.join(SPILL_ROOT, String(process.pid,),);
 
 describe("offload helpers", () => {
+  let dir = "";
   beforeEach(() => {
-    if (existsSync(tmpRoot,)) { rmSync(tmpRoot, { recursive: true, force: true, },); }
-    mkdirSync(tmpRoot, { recursive: true, },);
+    dir = mkdtempSync(path.join(tmpdir(), "loop-lore-offload-",),);
+    setOffloadDir(dir,);
   },);
-
   afterEach(() => {
-    if (existsSync(tmpRoot,)) { rmSync(tmpRoot, { recursive: true, force: true, },); }
+    setOffloadDir(DEFAULT_DIR,);
+    rmSync(dir, { recursive: true, force: true, },);
   },);
 
-  test("OFFLOAD_DIR lives under the repo's .tmp/ scratch root", () => {
-    expect(OFFLOAD_DIR,).toContain(".tmp",);
-    expect(OFFLOAD_DIR,).toContain("async-store",);
+  test("the default spill dir is a per-process namespace under the repo's .tmp/ root", () => {
+    setOffloadDir(DEFAULT_DIR,);
+    expect(DEFAULT_DIR,).toBe(path.join(SPILL_ROOT, String(process.pid,),),);
+    expect(SPILL_ROOT,).toContain(".tmp",);
+    expect(SPILL_ROOT,).toContain("async-store",);
+  });
+
+  test("setOffloadDir redirects the spill namespace away from the shared default", () => {
+    const other = mkdtempSync(path.join(tmpdir(), "loop-lore-offload-alt-",),);
+    try {
+      setOffloadDir(other,);
+      expect(offloadDir(),).toBe(other,);
+      expect(offloadDir(),).not.toBe(DEFAULT_DIR,);
+    } finally {
+      rmSync(other, { recursive: true, force: true, },);
+    }
   });
 
   test("offloadExists + readOffloadedBody round-trip a gzip-spilled body", () => {
     // The daemon writes via `spill()` (not exported); emulate the on-disk
     // shape here so the readers are covered without spinning up cron.
     const id = "req-roundtrip";
-    const filePath = path.join(OFFLOAD_DIR, `${spillFileStem(id,)}.json.gz`,);
-    mkdirSync(OFFLOAD_DIR, { recursive: true, },);
+    const filePath = path.join(offloadDir(), `${spillFileStem(id,)}.json.gz`,);
     const { gzipSync, } = require("node:zlib",) as typeof import("node:zlib");
     const body = JSON.stringify({ id: "msg-99", content: "hello, world", },);
     require("node:fs",) as typeof import("node:fs");
@@ -54,19 +76,18 @@ describe("offload helpers", () => {
   });
 
   test("readOffloadedBody returns null for an unknown id", () => {
-    expect(readOffloadedBody(path.join(OFFLOAD_DIR, "nope.json.gz",),),).toBeNull();
+    expect(readOffloadedBody(path.join(offloadDir(), "nope.json.gz",),),).toBeNull();
   });
 
   test("readOffloadedBody returns null when the file is corrupt", () => {
-    const filePath = path.join(OFFLOAD_DIR, "corrupt.json.gz",);
-    mkdirSync(OFFLOAD_DIR, { recursive: true, },);
+    const filePath = path.join(offloadDir(), "corrupt.json.gz",);
     const fs = require("node:fs",) as typeof import("node:fs");
     fs.writeFileSync(filePath, Buffer.from("not-gzip-data",),);
     expect(readOffloadedBody(filePath,),).toBeNull();
   });
 
   test("offloadDiskBytes reports zero before any spills", () => {
-    // OFFLOAD_DIR may have stale content from prior runs; assert
+    // The spill namespace is empty at test start; assert
     // non-negative rather than zero to keep the assertion robust.
     const bytes = offloadDiskBytes();
     expect(bytes,).toBeGreaterThanOrEqual(0,);

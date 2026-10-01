@@ -6,7 +6,43 @@ import { readdirSync, statSync, unlinkSync, } from "node:fs";
 import path from "node:path";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
-import { OFFLOAD_DIR, } from "./spill";
+import { SPILL_ROOT, } from "./spill";
+
+/**
+ * Every `*.json.gz` spill file under `dir`, descending one level into
+ * per-process namespace directories (`<SPILL_ROOT>/<pid>/`) so leftovers from a
+ * dead process are collectable. Unreadable entries are skipped, not thrown on:
+ * a sweep racing another sweep is normal.
+ * @param dir - spill root to scan.
+ * @returns absolute paths to the spill files found.
+ */
+function collectSpillFiles(dir: string,): string[] {
+  let names: string[];
+  try {
+    names = readdirSync(dir,);
+  } catch {
+    return []; // no spill dir yet — nothing to sweep
+  }
+  const found: string[] = [];
+  for (const name of names) {
+    const entry = path.join(dir, name,);
+    if (name.endsWith(".json.gz",)) {
+      found.push(entry,);
+      continue;
+    }
+    let inner: string[];
+    try {
+      if (!statSync(entry,).isDirectory()) { continue; }
+      inner = readdirSync(entry,);
+    } catch {
+      continue;
+    }
+    for (const leaf of inner) {
+      if (leaf.endsWith(".json.gz",)) { found.push(path.join(entry, leaf,),); }
+    }
+  }
+  return found;
+}
 
 /**
  * Retention cap for spill files nothing references any more. Phase 3 of
@@ -14,8 +50,9 @@ import { OFFLOAD_DIR, } from "./spill";
  * files orphaned by DB resets, deleted rows, or aborted runs would otherwise
  * grow unbounded (observed: 279 never-pruned `.json.gz` files in a dev
  * checkout). This sweep removes any `*.json.gz` older than 2× TTL that no
- * `request_results.offload_path` references. Files still referenced by any
- * row — regardless of row status — are always kept.
+ * `request_results.offload_path` references, across every per-process namespace
+ * under `SPILL_ROOT`. Files still referenced by any row — regardless of row
+ * status — are always kept.
  * @param database - Kysely handle
  * @param opts - ttlMs sets the 2× age cutoff; `now`/`dir` are test seams.
  * @returns number of orphaned spill files removed.
@@ -25,18 +62,14 @@ export async function pruneOrphanSpills(
   opts: { ttlMs: number; now?: number; dir?: string },
 ): Promise<number> {
   const log = getLogger().child({ module: "async-offload", },);
-  const dir = opts.dir ?? OFFLOAD_DIR;
+  // Sweep the ROOT, not the current process namespace: spills are written to
+  // `<SPILL_ROOT>/<pid>/`, so scanning one flat namespace would never collect
+  // what a dead process left behind (BUG-test-async-store-offload-dir-fixed-path-race).
+  const dir = opts.dir ?? SPILL_ROOT;
   const cutoffMs = (opts.now ?? Date.now()) - 2 * opts.ttlMs;
-  let names: string[];
-  try {
-    names = readdirSync(dir,);
-  } catch {
-    return 0; // no spill dir yet — nothing to sweep
-  }
+  const found = collectSpillFiles(dir,);
   const candidates: string[] = [];
-  for (const name of names) {
-    if (!name.endsWith(".json.gz",)) { continue; }
-    const filePath = path.join(dir, name,);
+  for (const filePath of found) {
     let mtimeMs: number;
     try {
       mtimeMs = statSync(filePath,).mtimeMs;
