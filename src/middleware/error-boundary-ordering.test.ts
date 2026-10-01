@@ -53,6 +53,10 @@ describe("asyncStore.fail error boundary ordering", () => {
   },);
 
   afterAll(async () => {
+    // Exercises the graceful-shutdown hook: onStop flushes the async store's
+    // queue and stops the scheduler. Without this the pending writes from the
+    // tests above would be lost when the DB handle closes.
+    await app.stop();
     await flushActiveStore();
     await db.destroy();
   },);
@@ -132,5 +136,51 @@ describe("asyncStore.fail error boundary ordering", () => {
     const body = (await res.json()) as { error: string; code: string };
     expect(body.error,).toBe("Validation failed",);
     expect(body.code,).toBe("VALIDATION_ERROR",);
+  });
+});
+
+/**
+ * The unauthenticated branch of the auth derive: it must strip a
+ * client-supplied `x-user-id` so a spoofed header cannot be attributed to
+ * another user in the access log.
+ */
+describe("unauthenticated x-user-id spoofing", () => {
+  let db2: Kysely<DB>;
+  let app2: ReturnType<typeof createApp>;
+
+  beforeAll(async () => {
+    ({ db: db2, } = await createTestDb());
+    const config = loadConfig();
+    config.auth.required = true;
+    config.assets.uploadDir = ".tmp/";
+    app2 = createApp({
+      database: db2,
+      config,
+      handleNonApiRequest: async () => new Response("nf", { status: 404, },),
+      handleApiRequest: async () => new Response("nf", { status: 404, },),
+    },);
+  },);
+
+  afterAll(async () => {
+    await app2.stop();
+    await db2.destroy();
+  },);
+
+  test("a spoofed x-user-id is dropped, so the request cannot borrow another identity", async () => {
+    let seenUserId: string | null = "unset";
+    const spy = app2.get("/spy-actor", ({ request, }: { request: Request },) => {
+      // The access-log handler reads the same (mutated) Request object.
+      seenUserId = request.headers.get("x-user-id",);
+      return { ok: true, };
+    },);
+
+    const res = await spy.handle(
+      new Request("http://localhost/spy-actor", {
+        headers: { "x-user-id": "attacker-claimed-id", },
+      },),
+    );
+
+    expect(res.status,).toBe(200,);
+    expect(seenUserId,).toBeNull();
   });
 });
