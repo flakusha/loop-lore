@@ -24,7 +24,9 @@ const reset = Bun.spawnSync(
 );
 ```
 
-There is no `--` separator and no pathspec argument. The comment block at `abort.ts:180-182` states the intent was cleanup of "the failed merge's own state"; the implementation is repo-wide.
+There is no `--` separator and no pathspec argument, and the reset carries **no comment at all** explaining its scope. The nearest merge-state rationale is at `abort.ts:48-51` — "Order matters: abort merge before pop stash, so a stash entry created for a merge doesn't get pulled onto a conflicted tree" — which covers the in-progress-merge abort loop at `abort.ts:163-178`, *not* the post-conflict reset. Step 2's own comment at `abort.ts:180-182` says only that the pure helpers keep stash selection testable. So the reset is repo-wide with nothing claiming otherwise.
+
+> **Correction (2026-10-02).** An earlier revision of this ticket claimed the reset's intent was documented at `abort.ts:180-182`. That was wrong: `:180-182` is the step-2 stash-selection comment and says nothing about merge state. The technical claim is unchanged — the reset still has no pathspec and is still repo-wide — only the provenance of the "documented intent" was misattributed.
 
 ## Why it is worse than expected
 
