@@ -9,6 +9,7 @@
  * Row composer + audit recorder live in `./character-licensing-helpers`.
  */
 import { Elysia, t, } from "elysia";
+import { assertValidWrite, } from "../db/validators/enforce";
 import { ActorIdParams, ErrorResponse, LicensingBody, SuccessResponse, } from "../validation/schemas";
 import { checkActorOwnership, type HandlerOpts, } from "./actor-auth";
 import {
@@ -52,7 +53,6 @@ export function characterLicensingRoutes(opts: HandlerOpts, prefix = "/api",) {
           status: HttpStatus.NotFound,
         },);
       }
-
       return jsonResponse(licensing,);
     }, {
       params: ActorIdParams,
@@ -126,7 +126,6 @@ export function characterLicensingRoutes(opts: HandlerOpts, prefix = "/api",) {
         .select("actor_type",)
         .where("id", "=", actorId,)
         .executeTakeFirst();
-
       if (!actorRow || actorRow.actor_type !== "character") {
         return jsonError({
           message: "Licenses are only issued to character actors",
@@ -152,6 +151,7 @@ export function characterLicensingRoutes(opts: HandlerOpts, prefix = "/api",) {
 
       if (existing) {
         const effective = composeLicenseRow(existing, body,);
+        assertValidWrite("character_licensing", { ...effective, },);
         await database
           .updateTable("character_licensing",)
           .set({
@@ -160,13 +160,13 @@ export function characterLicensingRoutes(opts: HandlerOpts, prefix = "/api",) {
           },)
           .where("id", "=", existing.id,)
           .execute();
-
         await recordLicenseHistory(database, actorId, effective, userId,);
         return jsonResponse({ id: existing.id, updated: true, },);
       }
 
       const id = crypto.randomUUID();
       const created = composeLicenseRow(undefined, body,);
+      assertValidWrite("character_licensing", { ...created, },);
       await database
         .insertInto("character_licensing",)
         .values({

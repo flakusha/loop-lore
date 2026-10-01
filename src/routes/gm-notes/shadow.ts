@@ -44,6 +44,19 @@ registerContentVersion("shadow_notes", 0, [
   "author_type",
 ],);
 
+import { ShadowNoteStatus, ShadowNoteVisibility, } from "../../db/enums-gm";
+import { assertValidWrite, } from "../../db/validators/enforce";
+
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+/**
+ * GM Notes — shadow notes CRUD.
+ */
+// Base `data_version` 0 projection for `shadow_notes` (columns added by
+// migration 034). GM-authored content, so integrity tracking matters.
+registerContentVersion("shadow_notes", 0, [
+],);
+
 /**
  * Inject a narrator system message into the chat when a shadow note is revealed.
  * Reveals are rare and high-impact — the narration makes the moment memorable
@@ -142,7 +155,6 @@ export function shadowRoutes(opts: HandlerOpts, prefix = "/api",) {
             .limit(pageSize,)
             .offset(offset,)
             .execute();
-
           const countResult = await database
             .selectFrom("shadow_notes",)
             .select(database.fn.countAll<number>().as("total",),)
@@ -169,22 +181,22 @@ export function shadowRoutes(opts: HandlerOpts, prefix = "/api",) {
           const noteId = uid();
           const now = new Date().toISOString();
 
-          await database
-            .insertInto("shadow_notes",)
-            .values({
-              id: noteId,
-              chat_id: id,
-              type: body.type as never,
-              content: body.content,
-              status: "hidden",
-              created_at: now,
-              // author_type is optional in the body; the DB column defaults
-              // to "user" for legacy callers. We forward the explicit value
-              // when present so GM-panel callers can tag gm/system notes.
-              author_type: (body.authorType ?? "user") as never,
-              expires_at: body.expiresAt ?? null,
-            },)
-            .execute();
+          const noteRow = {
+            id: noteId,
+            chat_id: id,
+            type: body.type as never,
+            content: body.content,
+            status: ShadowNoteStatus.Hidden,
+            visibility: ShadowNoteVisibility.UserVisible,
+            created_at: now,
+            // author_type is optional in the body; the DB column defaults
+            // to "user" for legacy callers. We forward the explicit value
+            // when present so GM-panel callers can tag gm/system notes.
+            author_type: (body.authorType ?? "user") as never,
+            expires_at: body.expiresAt ?? null,
+          };
+          assertValidWrite("shadow_notes", noteRow,);
+          await database.insertInto("shadow_notes",).values(noteRow).execute();
 
           return jsonCreated({ id: noteId, },);
         },
@@ -204,20 +216,21 @@ export function shadowRoutes(opts: HandlerOpts, prefix = "/api",) {
           // Fetch content before update so we can use it in narration.
           const note = await database
             .selectFrom("shadow_notes",)
-            .select(["content",],)
+            .select(["content", "visibility",],)
             .where("id", "=", noteId,)
             .where("chat_id", "=", id,)
             .executeTakeFirst();
 
           if (!note) { return notFound("Shadow note not found",); }
 
+          assertValidWrite("shadow_notes", { status: ShadowNoteStatus.Revealed, visibility: note.visibility, },);
+
           const result = await database
             .updateTable("shadow_notes",)
-            .set({ status: "revealed", },)
+            .set({ status: ShadowNoteStatus.Revealed, },)
             .where("id", "=", noteId,)
             .where("chat_id", "=", id,)
             .executeTakeFirst();
-
           if (Number(result?.numUpdatedRows ?? 0,) === 0) {
             return notFound("Shadow note not found",);
           }

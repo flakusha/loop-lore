@@ -1,0 +1,147 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
+/**
+ * Write-time enforcement of the state-machine + composite invariants that
+ * already exist in the enum modules (TASK-019).
+ *
+ * The validators were defined and unit-tested but never consulted at runtime,
+ * so write paths could still persist a state the machine forbids. This module
+ * is the single dispatch point: `assertValidWrite(table, row)` looks the table
+ * up in a small map and runs the matching `CompositeValidator`.
+ *
+ * Scope - deliberately narrow:
+ * - Only invariants decidable from a single row are enforced. The branch
+ *   display invariant (`chat_branches.is_active` x `chats.active_branch_id`)
+ *   spans two tables and stays enforced by its own transaction.
+ * - `assertValidWrite` runs at the service write site, so a caller must pass
+ *   the *composite* state it is about to persist. A partial write must merge
+ *   the persisted counterpart axis into `row`; a missing axis column is a
+ *   programming error and throws rather than silently passing.
+ */
+import { shareAlikeDerivatives, } from "../../characters/license-enforcement";
+import { messagesStatusVisibility, shadowNotesStatusVisibility, } from "../enums";
+import type { TableName, } from "../schema-manifest";
+
+/** Structural minimum of `CompositeValidator` - only the allowed-pairs set. */
+interface PairSet {
+  readonly allowed: ReadonlySet<string>;
+}
+
+/** A per-table row check. Throws on an illegal combination. */
+type RowGuard = (row: Record<string, unknown>) => void;
+
+/** Tables carrying a write-time invariant. Adding a table = adding a key. */
+type GuardedTable =
+  | "messages"
+  | "shadow_notes"
+  | "character_licensing";
+
+/**
+ * Read a text axis column.
+ * @throws {Error} when the column is absent or not a string.
+ */
+function readAxis(row: Record<string, unknown>, table: string, column: string): string {
+  const value = row[column];
+  if (typeof value !== "string") {
+    throw new Error(
+      `assertValidWrite: ${table}.${column} must be a string on the write, got ${typeof value}`,
+    );
+  }
+  return value;
+}
+
+/**
+ * Read a 0/1 integer axis column.
+ * @throws {Error} when the column is absent or not 0/1.
+ */
+function readFlag(row: Record<string, unknown>, table: string, column: string): 0 | 1 {
+  const value = row[column];
+  if (value !== 0 && value !== 1) {
+    throw new Error(
+      `assertValidWrite: ${table}.${column} must be 0 or 1 on the write, got ${JSON.stringify(value)}`,
+    );
+  }
+  return value;
+}
+
+/**
+ * Assert a two-axis pair against the validator's allowed set.
+ * @throws {Error} when the pair is not in the allowed set.
+ */
+function assertPair(
+  table: string,
+  validator: PairSet,
+  axisA: string,
+  axisB: string,
+  label: string,
+): void {
+  if (!validator.allowed.has(`${axisA}:${axisB}`)) {
+    throw new Error(
+      `assertValidWrite: ${table} ${label} ${axisA}:${axisB} is not a legal state pair`,
+    );
+  }
+}
+
+/** `messages.status` x `messages.visibility`. */
+const guardMessages: RowGuard = (row) => {
+  assertPair(
+    "messages",
+    messagesStatusVisibility,
+    readAxis(row, "messages", "status"),
+    readAxis(row, "messages", "visibility"),
+    "status x visibility",
+  );
+};
+
+/** `shadow_notes.status` x `shadow_notes.visibility`. */
+const guardShadowNotes: RowGuard = (row) => {
+  assertPair(
+    "shadow_notes",
+    shadowNotesStatusVisibility,
+    readAxis(row, "shadow_notes", "status"),
+    readAxis(row, "shadow_notes", "visibility"),
+    "status x visibility",
+  );
+};
+
+/** `character_licensing.allow_derivatives` x `character_licensing.share_alike`. */
+const guardCharacterLicensing: RowGuard = (row) => {
+  const derivatives = readFlag(row, "character_licensing", "allow_derivatives") === 1
+    ? "allowed"
+    : "forbidden";
+  const shareAlike = readFlag(row, "character_licensing", "share_alike") === 1 ? "yes" : "no";
+  assertPair(
+    "character_licensing",
+    shareAlikeDerivatives,
+    derivatives,
+    shareAlike,
+    "allow_derivatives x share_alike",
+  );
+};
+
+/**
+ * Table -> row check. Typing the record against `GuardedTable` makes a missing
+ * key a compile error, so a new guarded table cannot be added without a guard.
+ */
+const GUARDS: Record<GuardedTable, RowGuard> = {
+  messages: guardMessages,
+  shadow_notes: guardShadowNotes,
+  character_licensing: guardCharacterLicensing,
+};
+
+/**
+ * Assert a pending write against its table's state-machine invariant.
+ * No-op for tables without a guard.
+ * @param table - table the row is destined for
+ * @param row - the composite state about to be persisted; every axis column of
+ *   the table's guard must be present, including values the write does not
+ *   change (a partial update must merge the persisted counterpart in).
+ * @throws {Error} when a required axis column is missing or the state pair is
+ *   not permitted by the table's validator.
+ * @returns {void}
+ */
+export function assertValidWrite(table: TableName, row: Record<string, unknown>): void {
+  const guard = (GUARDS as Partial<Record<TableName, RowGuard>>)[table];
+  if (guard) { guard(row,); }
+}

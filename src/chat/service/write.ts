@@ -10,6 +10,7 @@
 import type { Kysely, } from "kysely";
 import { MessageStatus, MessageVisibility, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import { assertValidWrite, } from "../../db/validators/enforce";
 import { emitPluginEvent, } from "../../plugins/event-bus";
 import { registry, } from "../../plugins/registry";
 import { can, } from "../../users/permissions";
@@ -128,32 +129,29 @@ export async function regenerateMessageVariant(
       .where("chat_id", "=", chatId,)
       .where("parent_id", "=", parentId,)
       .executeTakeFirst();
-
     swipeIndex = (maxRow?.max_idx ?? -1) + 1;
   }
 
   const variantMessageId = crypto.randomUUID();
-  await database
-    .insertInto("messages",)
-    .values({
-      id: variantMessageId,
-      chat_id: chatId,
-      actor_id: message.actor_id,
-      parent_id: parentId,
-      role: message.role,
-      content: message.content,
-      key_id: message.key_id,
-      content_type: message.content_type,
-      content_format: message.content_format,
-      content_encoding: message.content_encoding,
-      emotion: message.emotion,
-      status: MessageStatus.Sending,
-      visibility: MessageVisibility.Visible,
-      swipe_index: swipeIndex,
-      idempotency_key: regenKey,
-    },)
-    .execute();
-
+  const variantRow = {
+    id: variantMessageId,
+    chat_id: chatId,
+    actor_id: message.actor_id,
+    parent_id: parentId,
+    role: message.role,
+    content: message.content,
+    key_id: message.key_id,
+    content_type: message.content_type,
+    content_format: message.content_format,
+    content_encoding: message.content_encoding,
+    emotion: message.emotion,
+    status: MessageStatus.Sending,
+    visibility: MessageVisibility.Visible,
+    swipe_index: swipeIndex,
+    idempotency_key: regenKey,
+  };
+  assertValidWrite("messages", variantRow,);
+  await database.insertInto("messages",).values(variantRow).execute();
   // FEAT-048: notify plugin event handlers that a sibling variant was created.
   await emitPluginEvent(
     registry.getAllEventHandlers(),

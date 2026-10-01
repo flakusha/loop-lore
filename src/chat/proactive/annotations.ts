@@ -15,8 +15,9 @@
  */
 
 import type { Kysely, } from "kysely";
-import { ShadowNoteStatus, ShadowNoteType, } from "../../db/enums-gm";
+import { ShadowNoteStatus, ShadowNoteType, ShadowNoteVisibility, } from "../../db/enums-gm";
 import type { DB, } from "../../db/schema";
+import { assertValidWrite, } from "../../db/validators/enforce";
 import { uid, } from "../../utils";
 import { parseExpiryMs, } from "../../utils/date";
 
@@ -101,7 +102,6 @@ export async function createAnnotation(
   if (!VALID_KINDS.includes(input.kind,)) {
     throw new Error(`Invalid annotation kind: ${input.kind}`,);
   }
-
   const createdAt = new Date().toISOString();
   const ttlUntil = typeof input.ttlMs === "number" && input.ttlMs > 0
     ? new Date((parseExpiryMs(createdAt,) ?? 0) + input.ttlMs,).toISOString()
@@ -118,23 +118,22 @@ export async function createAnnotation(
   };
 
   if (input.kind === "shadow") {
-    await db
-      .insertInto("shadow_notes",)
-      .values({
-        id: annotation.id,
-        chat_id: annotation.chatId,
-        type: ShadowNoteType.HiddenFact,
-        content: annotation.body,
-        status: ShadowNoteStatus.Hidden,
-        created_at: annotation.createdAt,
-        // Extraction-pipeline writes are tagged as "extracted" so the
-        // GM panel + audit row can distinguish platform-derived notes
-        // from human-authored ones. TTL flows through too.
-        author_type: "extracted" as never,
-        expires_at: annotation.ttlUntil,
-      },)
-      .execute();
-
+    const noteRow = {
+      id: annotation.id,
+      chat_id: annotation.chatId,
+      type: ShadowNoteType.HiddenFact,
+      content: annotation.body,
+      status: ShadowNoteStatus.Hidden,
+      visibility: ShadowNoteVisibility.UserVisible,
+      created_at: annotation.createdAt,
+      // Extraction-pipeline writes are tagged as "extracted" so the
+      // GM panel + audit row can distinguish platform-derived notes
+      // from human-authored ones. TTL flows through too.
+      author_type: "extracted" as never,
+      expires_at: annotation.ttlUntil,
+    };
+    assertValidWrite("shadow_notes", noteRow,);
+    await db.insertInto("shadow_notes",).values(noteRow).execute();
     return annotation;
   }
 
