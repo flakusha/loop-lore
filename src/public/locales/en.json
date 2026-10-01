@@ -1429,6 +1429,8 @@
   "branches": {
     "title": "Branches",
     "none": "No branches yet",
+<<<<<<< ours — object `branches` (S+F, confidence: low)
+// hint: Structural and logic conflict. Both design and behavior differ.
     "manage": "Manage branches",
     "fork": "Branch here",
     "forkPoint": "Branched from here",
@@ -1453,6 +1455,16 @@
     "failedSwitch": "Failed to switch branch",
     "failedDelete": "Failed to delete branch",
     "failedMerge": "Failed to merge branch"
+=======
+    "fromHere": "Branch from here",
+    "forkPrompt": "Branch name (leave empty for auto-name)",
+    "forked": "Branched from message",
+    "failedFork": "Failed to create branch",
+    "switched": "Switched branch",
+    "failedSwitch": "Failed to switch branch",
+    "failedLoad": "Failed to load branches",
+    "forkPoint": "Branch point"
+>>>>>>> theirs — object `branches` (S+F, confidence: low)
   },
   "wardrobe": {
     "baseOutfit": "Base outfit",
