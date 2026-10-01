@@ -22,7 +22,7 @@
  */
 import { afterAll, beforeAll, describe, expect, mock, test, } from "bun:test";
 import type { Kysely, } from "kysely";
-import { mkdtempSync, } from "node:fs";
+import { mkdtempSync, rmSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 import { makeMinimalPng, } from "../../assets/test-helpers";
@@ -104,6 +104,7 @@ afterAll(async () => {
   mock.module("../../config/load", () => realConfigLoad,);
   setTestDatabase(null,);
   await db.destroy();
+  rmSync(uploadDir, { recursive: true, force: true, },);
 },);
 
 describe("ComfyUI edit asset ownership", () => {
