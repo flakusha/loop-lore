@@ -1315,7 +1315,13 @@
     "emotionAvatarsGenerated": "Avatares de emoção gerados.",
     "generationTimedOut": "A geração expirou.",
     "generationOutcome": "Geração {status}.",
-    "resumingFromStep": "Retomando da etapa {step} de {total}..."
+    "resumingFromStep": "Retomando da etapa {step} de {total}...",
+    "wardrobeLoadFailed": "Failed to load wardrobe.",
+    "wardrobeNameRequired": "Outfit name is required.",
+    "wardrobeSaveFailed": "Failed to save outfit.",
+    "wardrobeCreated": "Outfit created.",
+    "wardrobeUpdated": "Outfit updated.",
+    "wardrobeDeleteFailed": "Failed to delete outfit."
   },
   "commands": {
     "help": "Mostrar comandos disponíveis",
@@ -1402,5 +1408,12 @@
     "refused": "Skip refused — the current beat can't be skipped right now.",
     "rateLimited": "Too many skips — try again in a minute.",
     "failed": "Could not skip the turn."
+  },
+
+  "wardrobe": {
+    "baseOutfit": "Base outfit",
+    "sceneDefault": "Scene default",
+    "outfitSwitcher": "Outfit",
+    "empty": "No outfits yet"
   }
 }

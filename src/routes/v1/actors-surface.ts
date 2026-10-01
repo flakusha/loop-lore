@@ -39,6 +39,9 @@ import { storyTurnsRoutes, } from "../story-turns";
 import { tradeRoutes, } from "../trade";
 import { worldLoreEntriesRoutes, } from "../world-lore-entries";
 import { worldsRoutes, } from "../worlds";
+import { outfitOverrideRoutes, } from "../wardrobe-overrides";
+import { wardrobeAvatarRoutes, } from "../wardrobe-avatars";
+import { wardrobeRoutes, } from "../wardrobe";
 
 /**
  * @param {RegisterPluginsOpts} opts
@@ -65,6 +68,9 @@ export function actorsSurface(opts: RegisterPluginsOpts,) {
     .use(characterAvatarsRoutes(handleOpts, prefix,),)
     .use(characterEmotionsRoutes(handleOpts, prefix,),)
     .use(characterEmotionAvatarsRoutes(handleOpts, prefix,),)
+    .use(wardrobeRoutes(handleOpts, prefix,),)
+    .use(wardrobeAvatarRoutes(handleOpts, prefix,),)
+    .use(outfitOverrideRoutes(handleOpts, prefix,),)
     .use(characterAvailabilityRoutes(handleOpts, prefix,),)
     .use(characterLicensingRoutes(handleOpts, prefix,),)
     .use(characterIoRoutes(handleOpts, prefix,),)

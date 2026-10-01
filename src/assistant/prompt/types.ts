@@ -50,10 +50,11 @@ export interface PromptParams {
   emotionAvatar?: string;
   /**
    * Current wardrobe outfit name for narration context (resolved by the
-   * assembler from chat override > location rule > default outfit).
+   * assembler from chat override > location rule > equipped loadout >
+   * default outfit).
    */
   outfit?: string;
-  /** Where `outfit` came from (`chat_override` | `location_rule` | `default`). */
+  /** Where `outfit` came from (`chat_override` | `location_rule` | `equipped_loadout` | `default`). */
   outfitSource?: string;
   /** Application config — enables config-driven prompt sections (e.g. NSFW policy). */
   config?: Config;

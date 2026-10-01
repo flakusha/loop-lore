@@ -1,0 +1,91 @@
+<!--
+  SPDX-License-Identifier: LGPL-3.0-or-later
+  SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+-->
+
+<!--
+  Wardrobe manager for character info: outfit CRUD + variant grid grouped
+  by outfit × emotion. Bound to the `actorWardrobeFactory` Alpine plugin.
+-->
+<div
+  x-data="actorWardrobeFactory(actorId,)"
+  x-init="setActorId(actorId,); load()"
+  class="wardrobe-panel"
+>
+  <h3>Wardrobe</h3>
+
+  <button type="button" :disabled="loading" @click="load()">Refresh</button>
+  <p x-show="loading">Loading…</p>
+  <p x-show="loadError" x-text="loadError" class="wardrobe-error"></p>
+
+  <h4 x-text="draft.editingId ? 'Edit outfit' : 'New outfit'"></h4>
+  <form @submit.prevent="save()">
+    <label>
+      Name
+      <input type="text" x-model="draft.name" placeholder="e.g. Court Dress" />
+    </label>
+    <label>
+      Descriptor
+      <input
+        type="text"
+        x-model="draft.descriptor"
+        placeholder="prompt fragment, e.g. silk gown with silver embroidery"
+      />
+    </label>
+    <label>
+      Tags (comma-separated)
+      <input type="text" x-model="draft.tagsInput" placeholder="formal, summer" />
+    </label>
+    <button type="submit" :disabled="busy || !draft.name.trim()">
+      <span x-text="draft.editingId ? 'Update' : 'Create'"></span>
+    </button>
+    <button type="button" x-show="draft.editingId" @click="cancelEdit()">Cancel</button>
+  </form>
+
+  <p x-show="message" x-text="message" class="wardrobe-message"></p>
+  <p x-show="error" x-text="error" class="wardrobe-error"></p>
+
+  <table data-testid="wardrobe-items-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Descriptor</th>
+        <th>Tags</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <template x-for="outfit in outfits" :key="outfit.id">
+        <tr>
+          <td x-text="outfit.name"></td>
+          <td x-text="outfit.descriptor"></td>
+          <td x-text="(outfit.tags || []).join(', ')"></td>
+          <td>
+            <button type="button" @click="startEdit(outfit)">Edit</button>
+            <button type="button" @click="remove(outfit.id)" :disabled="busy">Delete</button>
+          </td>
+        </tr>
+      </template>
+    </tbody>
+  </table>
+
+  <h4>Variant grid</h4>
+  <p class="form-hint">Avatar variants grouped by outfit, then emotion tag.</p>
+  <div data-testid="wardrobe-variant-grid">
+    <template x-for="group in variantGrid()" :key="group.outfitName">
+      <section class="wardrobe-variant-group" style="margin-bottom:var(--space-4)">
+        <h5 x-text="group.outfitName"></h5>
+        <ul style="list-style:none;padding:0;display:flex;flex-wrap:wrap;gap:var(--space-2)">
+          <template x-for="variant in group.variants" :key="variant.id">
+            <li
+              style="border:1px solid var(--border-default);border-radius:var(--radius-md);padding:var(--space-1) var(--space-2)"
+            >
+              <span x-text="variant.tags?.emotion || variant.label || '—'"></span>
+            </li>
+          </template>
+        </ul>
+      </section>
+    </template>
+    <p x-show="variantGrid().length === 0" class="form-hint">No avatar variants yet.</p>
+  </div>
+</div>

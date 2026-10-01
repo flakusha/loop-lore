@@ -5,7 +5,8 @@
  * Outfit resolution — the context half of the selection ladder.
  *
  * Precedence (deterministic, documented): chat/scene override >
- * location/world rule > character default outfit > none (null = base
+ * location/world rule > equipped-loadout bridge (flag-gated, default
+ * off) > character default outfit > none (null = base
  * behavior, i.e. today's emotion-only selection).
  *
  * The character default outfit reuses the pre-existing `actors.outfits`
@@ -16,6 +17,7 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../../db/schema";
 import { jsonParseOr, } from "../../../utils";
+import { isLoadoutBridgeEnabled, resolveEquippedOutfit, } from "./loadout-bridge";
 import type { OutfitResolutionContext, ResolvedOutfit, } from "./types";
 
 interface CatalogOutfit {
@@ -138,6 +140,13 @@ export async function resolveOutfit(
       : {};
     const mapped = bindings[ctx.locationId];
     if (mapped) { return { outfitId: mapped, source: "location_rule", }; }
+  }
+
+  // Rung 3 (flag-gated): equipped-items → outfit loadout bridge.
+  // Off (default) = manual behavior preserved: fall straight to default.
+  if (await isLoadoutBridgeEnabled(db,)) {
+    const equipped = await resolveEquippedOutfit(db, ctx.actorId,);
+    if (equipped) { return { outfitId: equipped, source: "equipped_loadout", }; }
   }
 
   const defaultOutfit = await resolveDefaultOutfit(db, ctx.actorId,);

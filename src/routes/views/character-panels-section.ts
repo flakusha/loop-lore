@@ -45,6 +45,9 @@ export function panelsSection(
             <section x-data="actorEmotionAvatarsFactory(actorId)" data-testid="character-emotion-avatars" style="margin-top:var(--space-4)">${
     loadBody("emotion-avatars-panel.html",)
   }</section>
+            <section x-data="actorWardrobeFactory(actorId)" data-testid="character-wardrobe" style="margin-top:var(--space-4)">${
+    loadBody("wardrobe-panel.html",)
+  }</section>
           </div>
         </details>`;
 }
