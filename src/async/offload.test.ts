@@ -51,7 +51,7 @@ describe("offload helpers", () => {
     // `OFFLOAD_DIR` returns `SPILL_ROOT` itself here and fails both.
     expect(path.dirname(offloadDir(),),).toBe(SPILL_ROOT,);
     expect(path.basename(offloadDir(),),).toBe(String(process.pid,),);
-  },);
+  });
 
   test("setOffloadDir moves both the spill namespace and the sweep root", () => {
     const other = mkdtempSync(path.join(tmpdir(), "loop-lore-offload-alt-",),);
@@ -64,7 +64,7 @@ describe("offload helpers", () => {
     } finally {
       rmSync(other, { recursive: true, force: true, },);
     }
-  },);
+  });
 
   test("offloadExists + readOffloadedBody round-trip a gzip-spilled body", () => {
     // The daemon writes via `spill()` (not exported); emulate the on-disk
