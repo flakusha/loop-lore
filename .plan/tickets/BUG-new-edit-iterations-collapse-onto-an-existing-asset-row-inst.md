@@ -22,10 +22,12 @@ Acceptance: applying an edit whose output bytes match an existing asset creates 
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Fixed in commit 320aa05 by adding a `dedupe?: boolean` field to `CreateAssetInput` (defaults to true) and gating the content-hash lookup in `createAsset` on it. The upload path (src/assets/controller.ts) and template seeding (src/characters/seed/templates.ts) keep the default and still collapse a genuine re-upload of identical bytes. The five derivative-creating call sites pass `dedupe: false`: image-edit-service/apply.ts, matting/service.ts, persist-generated.ts (which also covers emotion-avatar generation), image-gen-route.ts, and image-edit/providers/comfyui-provider.ts.
+
+Constraints: the dedup short-circuit also serves idempotency for re-imports and template seeding, so it must stay on by default rather than being inverted or removed. A required `dedupe` field would force every caller to state intent and re-litigate the decision each time; the documented default keeps the common upload path a one-word call and confines the flag to the paths where it means something.
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
