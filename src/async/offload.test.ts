@@ -11,7 +11,7 @@
  * directory installed via `setOffloadDir`, so nothing here writes into the
  * shared process default or another suite's files; teardown runs in
  * `afterEach`. These tests used to create a `tmpRoot` and then write straight
- * into the shared `OFFLOAD_DIR` anyway, leaking residue into the running app's
+ * into the shared flat spill dir anyway, leaking residue into the running app's
  * spill dir — BUG-test-async-store-offload-dir-fixed-path-race.
  */
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";

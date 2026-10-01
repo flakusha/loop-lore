@@ -650,16 +650,19 @@ describe("OffloadDaemon.runOnce — reentrancy", () => {
 });
 
 describe("pruneOrphanSpills — retention cap for unreferenced spill files", () => {
-  const sweepDir = path.resolve(".tmp", "async-store-orphan-test",);
   const TTL_MS = 60 * 60 * 1000;
+  // Resource contract (parallel-safe): a unique `mkdtemp` sweep root per test.
+  // A fixed CWD-relative path here let two parallel processes `rmSync` each
+  // other's files mid-assert — the same defect the shared spill dir had.
+  // BUG-test-async-store-offload-dir-fixed-path-race.
+  let sweepDir = "";
 
   beforeEach(() => {
-    if (existsSync(sweepDir,)) { rmSync(sweepDir, { recursive: true, force: true, },); }
-    mkdirSync(sweepDir, { recursive: true, },);
+    sweepDir = mkdtempSync(path.join(tmpdir(), "loop-lore-sweep-",),);
   },);
 
   afterEach(() => {
-    if (existsSync(sweepDir,)) { rmSync(sweepDir, { recursive: true, force: true, },); }
+    rmSync(sweepDir, { recursive: true, force: true, },);
   },);
 
   test("deletes stale unreferenced files; keeps referenced and fresh files", async () => {
@@ -700,6 +703,48 @@ describe("pruneOrphanSpills — retention cap for unreferenced spill files", () 
         dir: path.join(sweepDir, "missing",),
       },);
       expect(pruned,).toBe(0,);
+    } finally {
+      await ctx.db.destroy();
+      ctx.sqlite.close();
+    }
+  });
+
+  test("removes a per-process namespace dir once its last orphan is pruned", async () => {
+    const { utimesSync, } = await import("node:fs");
+    const ctx = await createTestDb();
+    try {
+      const nsDir = path.join(sweepDir, "4242",);
+      mkdirSync(nsDir, { recursive: true, },);
+      const stale = path.join(nsDir, "orphan.json.gz",);
+      writeFileSync(stale, "x",);
+      const oldTs = new Date(Date.now() - 4 * TTL_MS,);
+      utimesSync(stale, oldTs, oldTs,);
+
+      const pruned = await pruneOrphanSpills(ctx.db, { ttlMs: TTL_MS, dir: sweepDir, },);
+
+      expect(pruned,).toBe(1,);
+      expect(existsSync(stale,),).toBe(false,);
+      expect(existsSync(nsDir,),).toBe(false,);
+    } finally {
+      await ctx.db.destroy();
+      ctx.sqlite.close();
+    }
+  });
+
+  test("keeps a namespace dir that still holds a live spill", async () => {
+    const ctx = await createTestDb();
+    try {
+      const nsDir = path.join(sweepDir, "777",);
+      mkdirSync(nsDir, { recursive: true, },);
+      // Fresh, so not a prune candidate — the directory must survive.
+      const live = path.join(nsDir, "live.json.gz",);
+      writeFileSync(live, "x",);
+
+      const pruned = await pruneOrphanSpills(ctx.db, { ttlMs: TTL_MS, dir: sweepDir, },);
+
+      expect(pruned,).toBe(0,);
+      expect(existsSync(live,),).toBe(true,);
+      expect(existsSync(nsDir,),).toBe(true,);
     } finally {
       await ctx.db.destroy();
       ctx.sqlite.close();

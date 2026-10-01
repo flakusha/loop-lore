@@ -66,7 +66,7 @@ export function spillFileStem(id: string,): string {
  * Exported so `apply.ts` can eagerly spill bodies that exceed the inline
  * threshold at completion time (rather than nulling them and losing the
  * data). BUG-bug-async-store-complete-drops-response-body-larger-than-max.
-// hint: Structural and logic conflict. Both design and behavior differ.
+ *
  * @param id - result row id (hashed into the filename stem)
  * @param body - raw response body text
  * @returns absolute path to the gzipped spill file.
@@ -115,8 +115,8 @@ export function offloadExists(id: string,): boolean {
  */
 export function offloadDiskBytes(): number {
   if (!existsSync(spillDir,)) { return 0; }
-  // Bun's `Glob` is overkill; a flat scan is fine for the `.tmp/async-store/`
-  // directory (only `*.json.gz` files; no recursion).
+  // Bun's `Glob` is overkill; a flat scan is fine for one process namespace
+  // (only `*.json.gz` files directly inside it; no recursion).
   let total = 0;
   for (const name of readdirSync(spillDir,)) {
     if (!name.endsWith(".json.gz",)) { continue; }
