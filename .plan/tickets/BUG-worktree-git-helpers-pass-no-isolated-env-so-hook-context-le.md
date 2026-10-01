@@ -87,6 +87,7 @@ isolate git env, harden finalize/rebase targets") landed this on `dev`; only the
 - Mutation check: replacing the prefix test with `if (false)` turns that into
   **1 pass / 3 fail**. The discriminating tests really do observe the resolved
   result diverging, so they are load-bearing.
+
 ## Resolution (2026-09-29)
 
 `isolatedGitEnv()` added to `scripts/worktree/utils/git.ts` and wired into
