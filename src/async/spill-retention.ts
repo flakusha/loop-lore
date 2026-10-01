@@ -47,9 +47,12 @@ function collectSpillFiles(dir: string,): string[] {
 /**
  * Drop per-process namespace directories the sweep has emptied, so the root's
  * entry count stays bounded instead of growing one dir per process that ever
- * spilled. Never removes `dir` itself, and never a non-empty child (a live
- * process may still be spilling into it — `spill()` re-creates the directory on
- * demand, so racing a live writer is harmless).
+ * spilled. Never removes `dir` itself, and never a non-empty child.
+ *
+ * RACE: a sibling process can be mid-`spill()` in a directory that is empty at
+ * this instant (it creates the dir, compresses, then writes), so this CAN
+ * rmdir a live namespace out from under it. `spill()` absorbs that with a
+ * single ENOENT retry; do not "optimise" the retry away without re-reading it.
  * @param dir - spill root whose child namespaces are candidates for removal.
  */
 function removeEmptyNamespaces(dir: string,): void {
