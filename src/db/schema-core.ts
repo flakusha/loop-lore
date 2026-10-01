@@ -1399,3 +1399,13 @@ export interface WorldSimulationState {
   tick_count: Generated<number>;
   updated_at: Generated<string>;
 }
+
+// ── carriage_records ────────────────────────────────────────────
+export interface CarriageRecords {
+  id: Generated<string>;
+  chat_id: string;
+  source_chat_id: string | null;
+  scope: string;
+  payload: string;
+  created_at: string;
+}

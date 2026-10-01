@@ -6,6 +6,7 @@ import type { Config, } from "../../config/schema";
 import type { Db, } from "../../db";
 import { auditRoutes, } from "./audit";
 import { auxTelemetryRoutes, } from "./aux-telemetry";
+import { carriageRoutes, } from "./carriage";
 import { chatsRoutes, } from "./chats";
 import { cronRoutes, } from "./cron";
 import { dangerZoneRoutes, } from "./danger-zone";
@@ -56,6 +57,7 @@ export function adminRoutes(opts: { database: Db; config: Config }, prefix = "/a
       .use(systemConfigRoutes(opts, prefix,),)
       .use(worldsRoutes(opts, prefix,),)
       .use(chatsRoutes(opts, prefix,),)
+      .use(carriageRoutes(opts, prefix,),)
       .use(cronRoutes(opts, prefix,),)
       .use(auditRoutes(opts, prefix,),)
       .use(dangerZoneRoutes(opts, prefix,),)

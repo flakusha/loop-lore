@@ -10,6 +10,8 @@
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
+import { getLogger, } from "../../logger";
+import { recordCarriage, } from "./carriage";
 
 // ── Carry location context ────────────────────────────────────
 
@@ -60,5 +62,21 @@ export async function carryLocation(
       .where("chat_id", "=", newChatId,)
       .where("section_id", "=", oldSectionId,)
       .execute();
+  }
+
+  // Carriage record: section-boundary evidence of the carried journey
+  // context. Best-effort — a carriage insert failure must not break the
+  // location carry itself.
+  try {
+    await recordCarriage(database, {
+      chatId: newChatId,
+      sourceChatId,
+      scope: "section",
+      payload: { sectionsCarried: sections.length, },
+    },);
+  } catch (error: unknown) {
+    getLogger()
+      .child({ module: "chat.carry-location", },)
+      .warn("carriage record failed", { sourceChatId, newChatId, error: String(error,), },);
   }
 }
