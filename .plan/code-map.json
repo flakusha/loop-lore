@@ -3753,6 +3753,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-in-progress-status-endpoint-for-long-running-requ.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tmp-janitor-and-staleness-markers.md"
     }
   ],
   "src/async/retention.test.ts": [
@@ -3771,6 +3775,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-async-orphan-spill-retention-sweep-silently-deleted-by-workt.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tmp-janitor-and-staleness-markers.md"
     }
   ],
   "src/async/spill.test.ts": [
@@ -37193,6 +37201,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-input-hardening-batch.md"
+    }
+  ],
+
+  "src/utils/scratch.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tmp-janitor-and-staleness-markers.md"
     }
   ],
   "src/utils/seeded-rng.ts": [

@@ -3,13 +3,13 @@
 
 # .tmp janitor gate + verified-at staleness markers
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Small
 **Type:** Task
-**Summary:** Add a read-only `.tmp` janitor (4 advisory metrics) inside `runNonBlockingChecks` plus a `<!-- verified-at: <sha> -->` staleness convention for `.tmp` analysis markdown.
-**Context:** `.tmp/` holds 99 MB / 1177 files (baseline 2026-09-26); 49.1 MB in 47 orphan `*.lcov.info.*.tmp`, oldest artifact 16d, 16 `.tmp/*.md` documents have zero inbound references, stale logs steer conclusions (P-13).
-**Acceptance Criteria:** [see body — advisory janitor step wired between license and md:links; verified-at header parser; staleness warning at > 100 commits behind HEAD]
+**Summary:** Superseded before implementation - re-measurement found 3 of the 4 metrics at zero, and the one real growth bucket is already GC'd by the app.
+**Context:** Premise measured stale. Re-measured 2026-10-01 on the dev checkout: 0 orphan `*.lcov.info.*.tmp` (was 47 / 49.1 MB), oldest artifact 0.1d (was 16d), 1 unreferenced `.tmp/*.md` (was 16). The growth is in `.tmp/async-store/`, swept by `pruneOrphanSpills` on a 24h TTL. The deletion side this ticket deferred to (`giwt clean`) has shipped and reports 0 candidates here.
+**Acceptance Criteria:** AC #5 is unsatisfiable as written - it requires the rollup to reproduce figures that no longer exist. See Resolution.
 
 ## Summary
 
@@ -79,13 +79,70 @@ It runs as a separate `bun run check:staleness` script (matches the `bun run md:
 
 The janitor is read-only. The actual deletion is `giwt clean [--dry-run]` (G-3 in `.tmp/scratchpad-pattern-analysis-2026-09-26.md` §4.1), a separate opt-in tool that needs a documented default config (loop-lore has no `giwt.toml`). This ticket **only** reports the numbers; it never `rm`s anything.
 
+
+## Resolution (2026-10-01)
+
+Re-measured the four metrics on the dev checkout before implementing. Three
+no longer exist, and the fourth is owned elsewhere:
+
+| Metric | Ticket baseline (2026-09-26) | Measured (2026-10-01) |
+|---|---:|---:|
+| Total `.tmp/` | 99 MB | ~165 MB |
+| Orphan `*.lcov.info.*.tmp` (P-01) | 47 files / 49.1 MB | **0** |
+| Oldest `.tmp` artifact | 16 days | **0.1 days** |
+| `.tmp` md unreferenced by `.plan/` | 16 | **1** |
+
+**The growth is in `.tmp/async-store/`, and it is already GC'd.** That is the
+spill directory for the async response store. It is swept by
+`pruneOrphanSpills` (`src/async/spill-retention.ts`), reached from
+`runOffloadPass` (`src/async/offload.ts:158`) on a 24h TTL. Every file in it
+was under an hour old at measurement time - live writes, not accumulation.
+
+It is deliberately invisible to `giwt clean`. `scanScratch`
+(`giwt/src/utils/scratch.ts:176`) classifies only `*.tmp` files, `cov-*`
+dirs, `jscpd-report.json`, and root-level `check-report*.json`; spill files
+are `<id>.json.gz` and match no class. **That is correct, not a gap** - a
+spill file is only garbage once no DB row references it, and
+`pruneOrphanSpills` is the only thing that can make that call. A
+name-pattern janitor over the same tree would delete live spill files and
+reproduce the data loss in
+BUG-async-spill-uses-cache-key-as-filename-so-routed-ids-lose.
+
+**The deletion side this ticket deferred to has shipped.** `giwt clean`
+exists with dry-run-by-default, `--apply`, per-class age/size caps, and tests.
+Against this checkout it reports 0 candidates, which is the correct state.
+
+### Why not implement
+
+- AC #5 is unsatisfiable as written: it requires the rollup to read
+  `47 orphan *.lcov.info.*.tmp ... oldest artifact 16d, 16 markdown docs`.
+  Those are now 0, 0.1d, and 1. A gate that can no longer be verified against
+  its own acceptance criteria is a gate nobody trusts.
+- A read-only advisory step reporting zeros costs a gate slot and a
+  `runNonBlockingChecks` branch forever. The signal it would carry is that
+  nothing is wrong.
+- The `verified-at:` convention has no candidate population: one depth-1
+  `.tmp` markdown file exists, and it is the active batch-verification note,
+  not a stale artifact.
+
+If `.tmp/async-store/` ever does accumulate past its 24h TTL, that is a bug
+in `pruneOrphanSpills` or in the daemon's `runOnce` wiring, not a missing
+janitor. File it there.
+
+## Follow-up ruled out
+
+`giwt clean` does not enumerate `.tmp/async-store/`. Do not "fix" this by
+adding a spill-file class to `scanScratch` - see the data-loss note above.
+That directory belongs to the app, under the app's GC, with
+row-reference semantics `giwt` has no way to see.
+
 ## Acceptance Criteria
 
 1. **Janitor step runs and reports all four metrics**: trigger via `bun run check`; grep the output for the four info lines above (or the equivalent `.tmp janitor: …` single-line rollup); none of them block.
 2. **Janitor is read-only**: confirm no `unlinkSync` / `rmSync` / `rm` calls added; `git status` after a check run shows no `.tmp` files removed.
 3. **`verified-at:` header is parsed**: place a `<!-- verified-at: $(git rev-parse --short HEAD~200) -->` in a temporary `.tmp/_test-stale.md`; run `bun run check:staleness`; it emits `warn: stale .tmp/_test-stale.md: verified at <sha>, now 200 commits behind`. Remove the file after.
 4. **Missing header is non-blocking**: an unannotated `.tmp` markdown file produces an `info:` (not `warn:`) line and does not affect exit code.
-5. **Numbers match the baseline**: on the parent checkout, the rollup line reads `99.0 MB total, 47 orphan *.lcov.info.*.tmp, oldest artifact 16d, 16 markdown docs unreferenced by .plan/` (the four P-01/P-03/P-05 figures from the scratchpad).
+5. **Numbers match the baseline**: on the parent checkout, the rollup line reads `99.0 MB total, 47 orphan *.lcov.info.*.tmp, oldest artifact 16d, 16 markdown docs unreferenced by .plan/` (the four P-01/P-03/P-05 figures from the scratchpad). **Not satisfiable as of 2026-10-01** - those figures no longer hold; see Resolution.
 6. **CI-safe — no deletion**: `git status` after running the new step reports zero modifications outside `.tmp/_test-stale.md` (the throwaway test artifact from criterion 3, which the test cleans up itself).
 
 ## Cross-references
