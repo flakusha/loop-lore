@@ -515,14 +515,11 @@ describeOrSkip("chatSections panel + CRUD", () => {
       expect(ctx._activeSectionId,).toBe(null,);
     });
 
-    test("KNOWN BUG: leaves the loading flag set on !ok (early return inside try skips cleanup)", async () => {
+    test("clears the loading flag on non-ok response", async () => {
       fetchHandler = async () => new Response("nope", { status: 500, },);
       const ctx = makeCtx();
       await chatSections.loadSections!.call(ctx,);
-      expect(ctx._sections,).toEqual(rows,);
-      // The !ok path returns from inside the try block, so the cleanup line
-      // never runs and _sectionsLoading stays true. Pinned for visibility.
-      expect(ctx._sectionsLoading,).toBe(true,);
+      expect(ctx._sectionsLoading,).toBe(false,);
     });
 
     test("clears the loading flag when fetch throws", async () => {
