@@ -25,6 +25,68 @@ The current plan only covers Matrix as a fediverse-style transport (`epic-commun
 - No ActivityPub code, schema, or ticket exists.
 - Research: **Fedify** is a maintained TypeScript ActivityPub framework that runs on Bun/Node/Deno and ships threadiverse (Lemmy/Mastodon-compatible) and content-sharing tutorials; used in production by Ghost and Hollo.
 
+
+## Naming Collision — `src/federation/` Is NOT ActivityPub
+
+`src/federation/` exists and looks like the home for this ticket. **It is not.** It is a
+server-to-server **mesh envelope** subsystem, and the shared directory name is the single
+biggest trap for anyone scoping this work. Verify against these facts before assuming an
+AP implementation is available to extend.
+
+What `src/federation/` actually is:
+
+- A sealed-blob envelope, not a JSON-LD activity object. `ContentEnvelope` is
+  `{id, origin, clock, type, hash, size, ciphertext}` (`src/federation/envelope.ts:13`)
+  with AES-GCM ciphertext and hash+size integrity verification
+  (`src/federation/envelope.ts:71`). No `@context`, no AS2 type vocabulary, no activity
+  JSON anywhere in the module.
+- Two PSK-gated HTTP endpoints, not an inbox/outbox: `POST /api/mesh-reserve`
+  (`src/routes/federation-mesh.ts:46`) and `POST /api/mesh-deliver`
+  (`src/routes/federation-mesh.ts:121`).
+- NodeInfo discovery (`src/routes/federation.ts:59`, `src/routes/federation.ts:80`,
+  `src/routes/federation.ts:105`) — `/.well-known/nodeinfo`, `/nodeinfo/2.1`,
+  `/api/instance-state`. NodeInfo is server-to-server reachability, not actor documents.
+- Opt-in and off by default: `FEDERATION_DEFAULTS.enabled = false`
+  (`src/config/schema-class/federation.ts:8`), and `federationRoutes` mounts nothing when
+  disabled (`src/routes/federation.ts:51`).
+
+What is genuinely absent (each is a prerequisite for this ticket, not a detail):
+
+- **No AP library.** No Fedify (or equivalent) in `package.json`.
+- **No HTTP-signature verification module.** `src/crypto/` has no signature/HTTP
+  signing file; the only mention of HTTP Signatures in `src/` is a comment at
+  `src/crypto/activitypub-keys.ts:13`. This ticket's AC requires it on every inbox POST.
+- **No inbox/outbox.** No route, no `OrderedCollection` document, no pagination.
+- **No WebFinger or actor-document resolution** for local or remote actors.
+- **No remote-identity mapping.** No `federated_identities`, `ap_id`, or `actor_uri`
+  table. `BUG-federation-identity-mapping-to-local-users-undefined` records this gap and
+  states it blocks all federation.
+- **No object persistence with ownership metadata.** The only AP-named artifact is key
+  storage: `activitypub_actor_keys` (`src/db/schema-manifest.ts:968`, created at
+  `src/db/migrations/001_init.ts:793`). That is a keypair table with no reader in any live
+  code path — it is not the protocol.
+
+## Threading Dependency Chain
+
+Implement in this order; neither threading ticket may start before this FEAT.
+
+1. `FEAT-activitypub-federation` (this ticket) — **Not Started**. Owns actors, inbox,
+   signature verification, authorized fetch, and object persistence.
+2. `BUG-federation-identity-mapping-to-local-users-undefined` — Not Started. Maps a
+   remote actor URI to a local user/actor; without it no remote activity has a local
+   identity to attach to and no ownership check can be made.
+3. `IDEA-cross-instance-conversation-threading-mention-inreplyto` — `Mention` /
+   `inReplyTo` resolution. **Postponed**: it extends an inbox and identity model that do
+   not exist yet.
+4. `BUG-activitypub-federation-does-not-leverage-the-blog-system-lem` and
+   `FEAT-federate-blog-system-via-activitypub-lemmy-mastodon-reddit` — Not Started and
+   explicitly blocked. `blog_comments.parent_comment_id` (`src/db/schema-blog.ts:17`) is
+   the natural local thread tree for federated replies, which is why threading belongs
+   after that FEAT rather than beside it.
+
+Verified while investigating item 3: `src/federation/` contains no AP protocol
+implementation, so items 3 and 4 have no host code to extend.
+
 ## Acceptance Criteria
 
 - A World or Channel can be published as a fediverse `Group` actor with a resolvable WebFinger (`@world@host`).
