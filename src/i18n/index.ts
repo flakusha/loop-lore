@@ -13,7 +13,10 @@ export type {
   I18nConfig,
   Locale,
   LocaleInfo,
+  PluralCategory,
+  PluralTranslation,
   TranslationMap,
+  TranslationNode,
   TranslatorFn,
 } from "./types";
 
@@ -30,7 +33,10 @@ export {
   interpolate,
   resolveKey,
 } from "./translator";
-export type { TranslatorOptions, } from "./translator";
+export type { ResolveKeyOptions, TranslatorOptions, } from "./translator";
+
+export { pluralRuleFor, } from "./plurals";
+export type { PluralRuleFn, } from "./plurals";
 
 // Re-export locale loading (server-side only)
 export { clearLocaleCache, getRawTranslations, loadLocale, loadLocaleSync, } from "./locale-loader";
