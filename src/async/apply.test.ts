@@ -242,7 +242,7 @@ describe("apply()", () => {
       const restored = readOffloadedBody(set?.offload_path as string,);
       expect(restored,).toBe(bigBody,);
     } finally {
-      // Remove the spill file so this test does not pollute OFFLOAD_DIR.
+      // Remove the spill file so this test does not pollute the spill namespace.
       rmSync(set?.offload_path as string, { force: true, },);
     }
   });
