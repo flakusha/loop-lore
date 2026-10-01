@@ -23726,7 +23726,7 @@
     "label": "task",
     "priority": "High",
     "source": ".plan/tickets/TASK-chat-feature-moderation.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Moderation — Ban, Kick, Mute, NSFW & Non-NSFW Point Flags",
     "type": "TASK"
@@ -42060,7 +42060,7 @@
     "label": "task",
     "priority": "low",
     "source": ".plan/tickets/TASK-wardrobe-deferred-equipped-items-outfit-auto-mapping-flag-ga.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Wardrobe deferred: equipped-items -> outfit auto-mapping (flag-gated)",
     "type": "TASK"
@@ -42073,7 +42073,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-wardrobe-frontend-manager-on-character-sheet-outfit-switcher.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Wardrobe frontend: manager on character sheet + outfit switcher",
     "type": "TASK"
@@ -42086,7 +42086,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-wardrobe-manager-ui-and-chat-outfit-switcher.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Wardrobe manager UI and chat outfit switcher",
     "type": "TASK"
@@ -42099,7 +42099,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-wardrobe-outfit-scoped-avatar-generation-batch-single.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Wardrobe outfit-scoped avatar generation (batch + single)",
     "type": "TASK"
@@ -42112,7 +42112,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-wardrobe-routes-validation-and-per-outfit-avatar-endpoints.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Wardrobe routes validation and per-outfit avatar endpoints",
     "type": "TASK"
@@ -42125,7 +42125,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-wardrobe-routes-validation-crud-outfit-override-endpoints.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Wardrobe routes + validation (CRUD + outfit override endpoints)",
     "type": "TASK"
@@ -42138,7 +42138,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-wardrobe-schema-items-bindings-outfit-id.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Wardrobe schema items bindings outfit_id",
     "type": "TASK"
@@ -42151,7 +42151,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-wardrobe-schema-wardrobe-items-actor-wardrobe-avatar-outfit-.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Wardrobe schema: wardrobe_items, actor_wardrobe, avatar outfit_id",
     "type": "TASK"
@@ -42164,7 +42164,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-wardrobe-selection-algorithm-v2-outfit-emotion-resolution-la.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Wardrobe selection algorithm v2 (outfit, emotion) resolution ladder",
     "type": "TASK"
@@ -42177,7 +42177,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-wardrobe-story-gm-integration-outfit-change-events.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Wardrobe story/GM integration (outfit change events)",
     "type": "TASK"
@@ -42190,7 +42190,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-wardrobe-tests-fallback-ladder-override-precedence-outfit-sc.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Wardrobe tests: fallback ladder, override precedence, outfit-scoped regen isolation",
     "type": "TASK"
@@ -42203,7 +42203,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-wardrobe-tests-ladder-precedence-scoped-regen.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Wardrobe tests ladder precedence scoped regen",
     "type": "TASK"
