@@ -25,9 +25,6 @@ import type {
  * left by the DB-only pre-check in the generate route.
  */
 export class IdempotencyKeyConflictError extends Error {
-  /**
-   * @param existingAttemptId
-   */
   constructor(public readonly existingAttemptId: string,) {
     super("A generation with this idempotencyKey is already in flight",);
     this.name = "IdempotencyKeyConflictError";

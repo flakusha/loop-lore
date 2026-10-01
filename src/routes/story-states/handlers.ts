@@ -10,16 +10,6 @@ import { safeJsonStringify, } from "../../utils";
 import { notFound, } from "../../validation/middleware";
 import { HttpStatus, jsonCreated, jsonError, jsonPaginated, jsonResponse, } from "../http-utils";
 
-/**
- * @param database
- * @param method
- * @param worldId
- * @param actorId
- * @param userId
- * @param userRole
- * @param body
- * @returns {Promise<Response>}
- */
 export async function handleNpcState(
   database: Kysely<DB>,
   method: string,
@@ -89,14 +79,6 @@ export async function handleNpcState(
   return jsonResponse(updated,);
 }
 
-/**
- * @param database
- * @param worldId
- * @param locationId
- * @param userId
- * @param userRole
- * @returns {Promise<Response>}
- */
 export async function handleNpcsAtLocation(
   database: Kysely<DB>,
   worldId: string,
@@ -118,15 +100,6 @@ export async function handleNpcsAtLocation(
   return jsonResponse(npcs,);
 }
 
-/**
- * @param database
- * @param method
- * @param locationId
- * @param userId
- * @param userRole
- * @param body
- * @returns {Promise<Response>}
- */
 export async function handleLocationState(
   database: Kysely<DB>,
   method: string,
@@ -192,17 +165,6 @@ export async function handleLocationState(
   return jsonResponse(updated,);
 }
 
-/**
- * @param database
- * @param method
- * @param worldId
- * @param userId
- * @param userRole
- * @param page
- * @param pageSize
- * @param body
- * @returns {Promise<Response>}
- */
 export async function handleWorldStates(
   database: Kysely<DB>,
   method: string,

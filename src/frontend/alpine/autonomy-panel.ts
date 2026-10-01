@@ -18,16 +18,10 @@ const log = rootLog.child({ module: "autonomy-panel", },);
 const EMPTY_DRAFT: AutonomyOverride = {};
 
 /**
- * Field-by-field compare of a layer against a draft.
- *
- * Key-set rather than serialise-and-compare: a field the user cleared is
- * `undefined` in the draft and may be absent from the stored layer too,
- * and a stringify compare would call those different and arm Save on a
- * form nobody touched.
- *
- * @param stored the layer as the server has it
- * @param draft the layer as the form currently holds it
- * @returns true when any field differs
+ * Field-by-field compare of a layer against a draft. Key-set rather than
+ * serialise-and-compare: a field the user cleared is `undefined` in the draft
+ * and may be absent from the stored layer, and stringify compare would call
+ * those different and arm Save on a form nobody touched.
  */
 function sameFields(stored: AutonomyOverride, draft: AutonomyOverride,): boolean {
   const keys = new Set([...Object.keys(stored,), ...Object.keys(draft,),],);
@@ -38,15 +32,7 @@ function sameFields(stored: AutonomyOverride, draft: AutonomyOverride,): boolean
   return false;
 }
 
-/**
- * Build the GET url for the panel's scope.
- *
- * @param worldId the world the panel is mounted on
- * @param chatId chat context, empty when the layer is the world itself
- * @param actorId character context, empty to omit the actor layer
- * @param scopeId the budget scope to report, empty to omit the budget
- * @returns the autonomy read url, with a query string when non-empty
- */
+/** Autonomy read url for the panel's scope, with a query string when non-empty. */
 function readUrl(worldId: string, chatId: string, actorId: string, scopeId: string,): string {
   const qs = new URLSearchParams();
   if (chatId) { qs.set("chatId", chatId,); }
@@ -72,16 +58,10 @@ const panelState: AutonomyPanelState = {
   autoSaving: false,
   autoError: "",
 
-  /**
-   * @returns {Promise<void>}
-   */
   async init() {
     await this.load();
   },
 
-  /**
-   * @returns {Promise<void>}
-   */
   async load() {
     if (!this._autoWorldId) { return; }
     this.autoLoading = true;
@@ -94,9 +74,9 @@ const panelState: AutonomyPanelState = {
       );
       const data = (await res.json()) as AutonomyPayload;
       this.autoData = data;
-      // Editing starts from this layer's own values, not the merged
-      // ones: pre-filling the form with inherited values would turn an
-      // inherited field into an override the moment anyone saved.
+      // Editing starts from this layer's own values, not the merged ones:
+      // pre-filling with inherited values would turn an inherited field into
+      // an override the moment anyone saved.
       this.autoDraft = { ...data.layers[this._autoLayer], };
       this.autoActorDraft = { ...data.layers.actor, };
     } catch (error) {
@@ -107,16 +87,12 @@ const panelState: AutonomyPanelState = {
     }
   },
 
-  /**
-   * @returns {Promise<void>}
-   */
   async save() {
     if (!this._autoWorldId) { return; }
     this.autoSaving = true;
     this.autoError = "";
     try {
-      // The world and chat layers already accept this field on their
-      // existing PUTs, so the panel needs no save route of its own.
+      // The world and chat layers already accept this on their existing PUTs.
       const isChat = this._autoLayer === "chat";
       const url = isChat ? `/api/v1/chats/${this._autoChatId}` : `/api/worlds/${this._autoWorldId}`;
       await apiFetch(url, {
@@ -133,9 +109,6 @@ const panelState: AutonomyPanelState = {
     }
   },
 
-  /**
-   * @returns {Promise<void>}
-   */
   async saveActor() {
     if (!this._autoActorId || !this._autoWorldId) { return; }
     this.autoSaving = true;
@@ -158,10 +131,6 @@ const panelState: AutonomyPanelState = {
     }
   },
 
-  /**
-   * @param {unknown} action
-   * @returns {Promise<void>}
-   */
   async control(action,) {
     if (!this._autoWorldId) { return; }
     this.autoError = "";
@@ -178,42 +147,25 @@ const panelState: AutonomyPanelState = {
     }
   },
 
-  /**
-   * @returns {Promise<void>}
-   */
+  // Reread so the per-actor draft and inherited hints describe the character
+  // now selected, not the one selected when the page loaded.
   async selectActor() {
-    // Reread so the per-actor draft and the inherited hints describe the
-    // character now selected, not the one selected when the page loaded.
     await this.load();
   },
 
-  /**
-   * @returns {boolean}
-   */
   autoDirty() {
     return sameFields(this.autoData?.layers[this._autoLayer] ?? EMPTY_DRAFT, this.autoDraft,);
   },
 
-  /**
-   * @returns {boolean}
-   */
   actorDirty() {
     return sameFields(this.autoData?.layers.actor ?? EMPTY_DRAFT, this.autoActorDraft,);
   },
 
-  /**
-   * @param {unknown} field
-   * @returns {string}
-   */
   ownValue(field,) {
     const v = this.autoData?.layers[this._autoLayer]?.[field];
     return v === undefined ? "" : String(v,);
   },
 
-  /**
-   * @param {unknown} field
-   * @returns {string}
-   */
   inheritedValue(field,) {
     const v = this.autoData?.resolved[field];
     if (v === null || v === undefined) { return "unlimited"; }
@@ -221,25 +173,12 @@ const panelState: AutonomyPanelState = {
     return String(v,);
   },
 
-  /**
-   * @returns {string[]}
-   */
   presetNames() {
     return Object.keys(this.autoData?.presets ?? {},);
   },
 };
 
-/**
- * Build the Alpine scope for the autonomy panel partial.
- *
- * @param opts the panel's mount: world, optional chat, layer, budget scope
- * @param opts.worldId the world to read config and caps from
- * @param opts.chatId chat context; its presence implies the chat layer
- * @param opts.layer which layer this mount edits and writes back
- * @param opts.scopeId budget scope to report, empty to omit the budget
- * @param opts.actorId character preselected in the per-actor editor
- * @returns a fresh panel state bound to that scope
- */
+/** Fresh panel state bound to the given mount scope (world, chat, layer, budget, actor). */
 export function autonomyPanelFactory(
   opts: { worldId: string; chatId?: string; layer?: AutonomyLayer; scopeId?: string; actorId?: string },
 ): AutonomyPanelState {

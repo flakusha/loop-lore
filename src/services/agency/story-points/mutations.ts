@@ -21,14 +21,13 @@ import {
 
 /**
  * Atomically credit story points to an actor; `earned_total` is monotonic.
-// hint: Structural and logic conflict. Both design and behavior differ.
  *
  * Concurrency: the whole read-decide-write runs in one transaction, the
  * UPDATE is relative (`balance = balance + ?`) rather than an absolute write
  * of a value computed from a possibly-stale read, and the first-time INSERT
  * is `ON CONFLICT DO NOTHING` against 020's partial unique index so a losing
  * concurrent earn falls through to the UPDATE instead of raising a raw
- * SQLITE UNIQUE violation. BUG-earnstorypoints-lost-update-race-and-raw-unique-violation-on
+ * SQLITE UNIQUE violation.
  *
  * Cap behaviour changed: an earn is now refused whenever
  * `balance + amount > cap`, where before it was refused only at full
@@ -122,7 +121,6 @@ export async function earnStoryPoints(
 
 /**
  * Atomically debit story points; refuses when balance would go negative.
-// hint: Structural and logic conflict. Both design and behavior differ.
  *
  * The first-time INSERT is `ON CONFLICT DO NOTHING` against 020's partial
  * unique index for the same reason as in `earnStoryPoints`: concurrent
@@ -130,7 +128,6 @@ export async function earnStoryPoints(
  * the losers raised a raw `SQLITE_CONSTRAINT` instead of the intended
  * `InsufficientStoryPointsError`. A losing INSERT falls through to the
  * conditional UPDATE below, which reports the insufficiency properly.
- * BUG-earnstorypoints-lost-update-race-and-raw-unique-violation-on
  * @throws InsufficientStoryPointsError when the balance cannot cover the amount.
  * @throws InvalidAmountError when `amount` is not a positive integer.
  */

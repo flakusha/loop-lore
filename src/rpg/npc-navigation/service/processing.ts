@@ -13,12 +13,7 @@ import { parseSchedule, updateMovementState, } from "./state";
 import type { MovementResult, } from "./types";
 import { MovementPattern, } from "./types";
 
-/**
- * Process NPC movement tick — advance NPCs based on their movement patterns
- * @param db
- * @param worldId
- * @returns {Promise<MovementResult[]>}
- */
+/** Process NPC movement tick — advance NPCs based on their movement patterns. */
 export async function processMovementTick(
   db: Kysely<DB>,
   worldId: string,
@@ -55,15 +50,7 @@ export async function processMovementTick(
   return results;
 }
 
-/**
- * Process individual NPC movement based on pattern
- * @param db
- * @param actorId
- * @param worldId
- * @param currentLocationId
- * @param schedule
- * @returns {Promise<MovementResult | null>}
- */
+/** Process individual NPC movement based on pattern. */
 export async function processNpcMovement(
   db: Kysely<DB>,
   actorId: string,
@@ -96,15 +83,7 @@ export async function processNpcMovement(
   }
 }
 
-/**
- * Process patrol movement — follow patrol route
- * @param db
- * @param actorId
- * @param worldId
- * @param currentLocationId
- * @param schedule
- * @returns {Promise<MovementResult | null>}
- */
+/** Process patrol movement — follow patrol route. */
 export async function processPatrolMovement(
   db: Kysely<DB>,
   actorId: string,
@@ -137,15 +116,7 @@ export async function processPatrolMovement(
   };
 }
 
-/**
- * Process wander movement — random movement within radius
- * @param db
- * @param actorId
- * @param worldId
- * @param currentLocationId
- * @param _schedule
- * @returns {Promise<MovementResult | null>}
- */
+/** Process wander movement — random movement within radius. */
 export async function processWanderMovement(
   db: Kysely<DB>,
   actorId: string,
@@ -180,15 +151,7 @@ export async function processWanderMovement(
   };
 }
 
-/**
- * Process follow movement — follow target NPC/player
- * @param db
- * @param actorId
- * @param worldId
- * @param currentLocationId
- * @param schedule
- * @returns {Promise<MovementResult | null>}
- */
+/** Process follow movement — follow target NPC/player. */
 export async function processFollowMovement(
   db: Kysely<DB>,
   actorId: string,
@@ -225,15 +188,7 @@ export async function processFollowMovement(
   };
 }
 
-/**
- * Process flee movement — move away from threat
- * @param db
- * @param actorId
- * @param worldId
- * @param currentLocationId
- * @param _schedule
- * @returns {Promise<MovementResult | null>}
- */
+/** Process flee movement — move away from threat. */
 export async function processFleeMovement(
   db: Kysely<DB>,
   actorId: string,

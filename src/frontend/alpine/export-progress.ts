@@ -3,10 +3,9 @@
 // size-allow: 290
 
 // ── Export progress panel.
-// Drives:
-//   POST  /api/v1/export/progress (SSE-streamed)
-//   GET   /api/v1/export/status/:jobId (polled status snapshot)
-//   GET   /api/v1/export/download/:jobId (final download)
+//   POST /api/v1/export/progress (SSE-streamed)
+//   GET  /api/v1/export/status/:jobId (polled snapshot)
+//   GET  /api/v1/export/download/:jobId (final download)
 // Pairs with `src/components/export/export-progress-panel.html`.
 import { apiFetch, } from "./htmx";
 import { t, } from "./i18n";
@@ -47,11 +46,7 @@ export interface ExportSseEvent {
   message?: string;
 }
 
-/**
- * State plugin for the export-progress panel. Tracks a single export job's
- * progress via SSE (preferred) or polling (fallback) and exposes a download
- * link when the job completes.
- */
+/** State plugin tracking one export job via SSE (preferred) or polling. */
 export interface ExportProgressState {
   jobId: string;
   status: JobStatus;
@@ -118,17 +113,10 @@ export const exportProgress: ExportProgressState = {
   _sse: null,
   _pollTimer: null,
 
-  /**
-   * @returns {boolean}
-   */
   isTerminal() {
     return this.status === "completed" || this.status === "failed";
   },
 
-  /**
-   * @param {ExportSseEvent} event
-   * @returns {void}
-   */
   applyEvent(event: ExportSseEvent,) {
     if (event.jobId) { this.jobId = event.jobId; }
     if (typeof event.progress === "number") { this.progress = event.progress; }
@@ -154,10 +142,6 @@ export const exportProgress: ExportProgressState = {
     if (this.isTerminal()) { this.stopTracking(); }
   },
 
-  /**
-   * @param {JobStatusSnapshot} snapshot
-   * @returns {boolean}
-   */
   applySnapshot(snapshot: JobStatusSnapshot,) {
     this.jobId = snapshot.id;
     this.status = snapshot.status;
@@ -175,9 +159,6 @@ export const exportProgress: ExportProgressState = {
     return this.isTerminal();
   },
 
-  /**
-   * @returns {Promise<void>}
-   */
   async startExport() {
     if (this.busy) { return; }
     this.reset();
@@ -237,9 +218,6 @@ export const exportProgress: ExportProgressState = {
     }
   },
 
-  /**
-   * @returns {void}
-   */
   startPolling() {
     this.stopTracking();
     if (!this.jobId) { return; }
@@ -264,9 +242,6 @@ export const exportProgress: ExportProgressState = {
     }, POLL_INTERVAL_MS,);
   },
 
-  /**
-   * @returns {void}
-   */
   stopTracking() {
     if (this._sse) {
       this._sse.close();
@@ -278,9 +253,6 @@ export const exportProgress: ExportProgressState = {
     }
   },
 
-  /**
-   * @returns {void}
-   */
   reset() {
     this.stopTracking();
     const fresh = initialState();
@@ -298,10 +270,7 @@ export const exportProgress: ExportProgressState = {
   },
 };
 
-/**
- * Build the Alpine scope for the export-progress panel.
- * @returns {ExportProgressState}
- */
+/** Build the Alpine scope for the export-progress panel. */
 export function exportProgressFactory(): ExportProgressState {
   const state = Object.create(exportProgress,) as ExportProgressState;
   Object.assign(state, initialState(),);

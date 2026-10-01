@@ -5,15 +5,9 @@ import { t, } from "../i18n";
 import { jsonBody, } from "../json";
 import type { ChatState, } from "../types";
 
-/** */
 export type ChatUtilsGallery = Partial<ChatState> & ThisType<ChatState>;
 
 export const chatUtilsGallery: ChatUtilsGallery = {
-  /**
-   * @param {any} asset
-   * @param {number} totalCount
-   * @returns {Record<string, string>}
-   */
   getMediaStyle(asset: any, totalCount: number,): Record<string, string> {
     const style: Record<string, string> = {};
     if (asset.type === "image" && asset.width && asset.height) {
@@ -40,31 +34,12 @@ export const chatUtilsGallery: ChatUtilsGallery = {
     return style;
   },
 
-  /**
-   * @param {any} asset
-   * @returns {void}
-   */
   openMediaPreview(asset: any,) {
     if (asset.type === "image") {
       window.open(asset.url, "_blank", "noopener,noreferrer",);
     }
   },
 
-  /**
- * @param {{
-      id: string;
-      asset_type?: string;
-      filename?: string;
-      name?: string;
-      mime_type?: string;
-      size_bytes?: number;
-      width?: number;
-      height?: number;
-      alt_text?: string;
-      visibility?: string;
-    }} asset
- * @returns {void}
- */
   openAssetPreview(
     asset: {
       id: string;
@@ -107,9 +82,6 @@ export const chatUtilsGallery: ChatUtilsGallery = {
   },
 
   /** Delete the previewed asset, then close + refresh the sidebar. */
-  /**
-   * @returns {Promise<void>}
-   */
   async deletePreviewAsset() {
     const deleted = await globalThis.deleteAssetPreview?.();
     if (!deleted) { return; }
@@ -117,9 +89,6 @@ export const chatUtilsGallery: ChatUtilsGallery = {
     await this.loadGalleryAssets();
   },
 
-  /**
-   * @returns {Promise<void>}
-   */
   async loadGalleryAssets() {
     const activeChat = this.activeChat;
     if (!activeChat) { return; }
@@ -142,9 +111,6 @@ export const chatUtilsGallery: ChatUtilsGallery = {
   },
 
   /** Append the next gallery page; a no-op when everything is loaded. */
-  /**
-   * @returns {Promise<void>}
-   */
   async loadMoreGalleryAssets() {
     const activeChat = this.activeChat;
     if (!activeChat || this.galleryAssets.length >= this.galleryTotal) { return; }
@@ -168,7 +134,6 @@ export const chatUtilsGallery: ChatUtilsGallery = {
    * Upload file(s) and link them to the active chat in parallel, then refresh
    * the in-chat gallery list. Errors on individual files are reported via
    * toast but do not cancel sibling uploads.
-   * @param event The change event from the sidebar's file input.
    */
   async uploadChatAssets(event: Event,) {
     const activeChat = this.activeChat;
@@ -229,9 +194,6 @@ export const chatUtilsGallery: ChatUtilsGallery = {
     await this.loadGalleryAssets();
   },
 
-  /**
-   * @returns {Promise<void>}
-   */
   async loadCharacterInfo() {
     const activeChat = this.activeChat;
     if (!activeChat) { return; }

@@ -3,10 +3,7 @@
 
 // size-allow: 285
 
-/**
- * Vanilla UI helpers — replaces Alpine for sidebar, toast, theme on non-chat pages.
- * Chat page still uses Alpine for its complex state.
- */
+/** Vanilla UI helpers — sidebar, toast, theme, modals on non-chat pages. */
 import { trapFocus, } from "./alpine/focus";
 import { eventCurrentTarget, eventTarget, } from "./dom";
 
@@ -23,9 +20,6 @@ import {
   type TranslationMap,
 } from "./i18n";
 
-/**
- * @returns {void}
- */
 export function toggleSidebar(): void {
   const sidebar = document.querySelector<HTMLElement>("#layout-sidebar",);
   const backdrop = document.querySelector<HTMLElement>("#sidebar-backdrop",);
@@ -41,9 +35,6 @@ export function toggleSidebar(): void {
   }
 }
 
-/**
- * @returns {void}
- */
 export function closeSidebar(): void {
   const sidebar = document.querySelector<HTMLElement>("#layout-sidebar",);
   const backdrop = document.querySelector<HTMLElement>("#sidebar-backdrop",);
@@ -67,11 +58,6 @@ const ICONS: Record<string, string> = {
   warning: "⚠",
 };
 
-/**
- * @param type
- * @param message
- * @returns {void}
- */
 export function showToast(type: string, message: string,): void {
   const container = document.querySelector("#toast-container",);
   if (!container) { return; }
@@ -127,20 +113,13 @@ if (typeof doc.addEventListener === "function" && !doc[LISTENER_KEY]) {
 let modalFocusCleanup: (() => void) | null = null;
 let previousFocusElement: HTMLElement | null = null;
 
-/**
- * @param id
- * @returns {void}
- */
 export function openModal(id: string,): void {
   const modal = document.querySelector(`#${CSS.escape(id,)}`,);
   if (!modal) { return; }
 
-  // Store current focus to restore later
   previousFocusElement = document.activeElement as HTMLElement | null;
-
   modal.classList.add("open",);
 
-  // Set role=dialog if not already set
   if (!modal.getAttribute("role",)) {
     modal.setAttribute("role", "dialog",);
   }
@@ -148,20 +127,13 @@ export function openModal(id: string,): void {
     modal.setAttribute("aria-modal", "true",);
   }
 
-  // Trap focus inside modal
   modalFocusCleanup = trapFocus(modal,);
-
-  // Focus first focusable element inside modal
   const first = modal.querySelector<HTMLElement>(
     'a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])',
   );
   first?.focus();
 }
 
-/**
- * @param el
- * @returns {void}
- */
 export function closeModal(el: Element,): void {
   const overlay = el.closest(".modal-overlay",);
   overlay?.classList.remove("open",);
@@ -181,10 +153,6 @@ export function closeModal(el: Element,): void {
   }
 }
 
-/**
- * @param event
- * @returns {void}
- */
 export function closeModalOnBackdrop(event: Event,): void {
   if (event.target !== event.currentTarget) {
     return;
@@ -206,10 +174,6 @@ export function closeModalOnBackdrop(event: Event,): void {
 
 // ── Theme ────────────────────────────────────────────────────
 
-/**
- * @param themeId
- * @returns {void}
- */
 export function applyTheme(themeId: string,): void {
   const themes: { id: string; file: string }[] = globalThis.__THEMES ?? [];
   if (!themeId || themes.every((t,) => t.id !== themeId)) { return; }
@@ -221,20 +185,11 @@ export function applyTheme(themeId: string,): void {
   localStorage.setItem("theme-preference", themeId,);
 }
 
-/**
- * @returns {string}
- */
 export function getTheme(): string {
   return localStorage.getItem("theme-preference",) || "default";
 }
 
-/**
- * Resolve a translation key against the global locale strings.
- * Falls back to key display if not found.
- * @param key
- * @param params
- * @returns {string}
- */
+/** Resolve a translation key against the global locale strings; falls back to the key. */
 export function t(key: string, params?: Record<string, string>,): string {
   if (typeof key !== "string") { return ""; }
   const map = (globalThis.__localeStrings ?? {}) as TranslationMap;
@@ -246,10 +201,6 @@ export function t(key: string, params?: Record<string, string>,): string {
   return value;
 }
 
-/**
- * @param locale
- * @returns {Promise<void>}
- */
 export async function loadLocale(locale: string,): Promise<void> {
   const strings = await loadTranslations(locale,);
   if (strings) {
@@ -258,10 +209,6 @@ export async function loadLocale(locale: string,): Promise<void> {
   }
 }
 
-/**
- * @param localeId
- * @returns {void}
- */
 export function setLocale(localeId: string,): void {
   saveLocale(localeId as any,);
   loadLocale(localeId,);

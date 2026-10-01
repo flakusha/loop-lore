@@ -63,9 +63,6 @@ export type {
 export class ItemsService {
   private readonly db: Kysely<DB>;
 
-  /**
-   * @param db
-   */
   constructor(db: Kysely<DB>,) {
     this.db = db;
   }
@@ -83,12 +80,7 @@ export class ItemsService {
     return createDefinitionDispatch(this.state, def,);
   }
 
-  /** Get item definition by ID */
-  /**
-   * Get item definition by ID. Requires worldId to prevent cross-world IDOR.
-   * @param itemId
-   * @param worldId
-   */
+  /** Get item definition by ID. Requires worldId to prevent cross-world IDOR. */
   async getDefinition(itemId: string, worldId: string,) {
     return getDefinitionDispatch(this.state, itemId, worldId,);
   }
