@@ -3,7 +3,7 @@
 
 # BUG: pruneExpired boundary comment states opposite of implementation
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 

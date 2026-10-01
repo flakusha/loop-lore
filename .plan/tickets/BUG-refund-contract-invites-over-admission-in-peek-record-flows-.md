@@ -3,7 +3,7 @@
 
 # BUG: refund() contract invites over-admission in peek/record flows; vacuous test pins it
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 

@@ -3,7 +3,7 @@
 
 # BUG: idempotency table backend — verify reproducer or close (advisory orphan)
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Trivial
 **Type:** Bug

@@ -3,7 +3,7 @@
 
 # BUG: backup-sqlite copies a live WAL database without checkpointing
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-db-growth-tiered-storage

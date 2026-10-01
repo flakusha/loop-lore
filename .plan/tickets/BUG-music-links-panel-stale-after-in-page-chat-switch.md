@@ -3,7 +3,7 @@
 
 # BUG: music links panel stale after in-page chat switch
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 

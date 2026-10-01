@@ -3,7 +3,7 @@
 
 # BUG: safe-buffer: base64url guard accepts whitespace variants and the per-call cap does not bound decode work
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Five defects in the safe-buffer base64url work on dev. Two behavioural: `safeFromBase64Url` silently accepts ASCII whitespace, so a value has more than one valid encoded form, and the per-call `maxSize` cap bounds the decoded result rather than the decode work. Three structural: the audit cursor encoder was left unmigrated, three of the four new `mustFrom*` exports have no production caller, and the barrel omits the size constants.

@@ -3,7 +3,7 @@
 
 # BUG: Story-points mutations double-swallow cache-refresh failures silently
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 
