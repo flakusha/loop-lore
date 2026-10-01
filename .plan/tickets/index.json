@@ -11406,6 +11406,27 @@
     "title": "Pre-Compiled Hot Binary Modules",
     "type": "EPIC"
   },
+  "EPIC-PROJECT-SPACES-PM-INTEGRATION": {
+    "hash": "pending",
+    "extid": "EPIC-PROJECT-SPACES-PM-INTEGRATION",
+    "type": "EPIC",
+    "title": "Project Spaces — World-Like Business Project Isolation + Cross-Space Linking",
+    "label": "epic",
+    "priority": "High",
+    "epic": "",
+    "tags": [
+      "projects",
+      "spaces",
+      "worlds",
+      "planning",
+      "giwt",
+      "assistant",
+      "memory",
+      "linking"
+    ],
+    "source": ".plan/tickets/epic-project-spaces-pm-integration.md",
+    "status": "Not Started"
+  },
   "EPIC-PROMPT-IMPROVEMENT": {
     "epic": "",
     "extid": "EPIC-PROMPT-IMPROVEMENT",
@@ -20389,6 +20410,22 @@
     "title": "Assistant Personality Selector UI",
     "type": "TASK"
   },
+  "TASK-ASSISTANT-PM-WORKFLOW-TEMPLATES-PM-SPACE-CREATE-PM-TRIAGE-PM": {
+    "hash": "15b74c6",
+    "git_issue": "15b74c6",
+    "extid": "TASK-ASSISTANT-PM-WORKFLOW-TEMPLATES-PM-SPACE-CREATE-PM-TRIAGE-PM",
+    "type": "TASK",
+    "title": "Assistant PM workflow templates (pm-space-create, pm-triage, pm-status)",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-project-spaces-pm-integration",
+    "tags": [
+      "assistant",
+      "workflows"
+    ],
+    "source": ".plan/tickets/TASK-assistant-pm-workflow-templates-pm-space-create-pm-triage-pm.md",
+    "status": "Not Started"
+  },
   "TASK-ASSISTANT-SCENARIO-SOURCE": {
     "epic": "epic-assistant-generation-extensions (Phase 4), epic-blog-system",
     "extid": "TASK-ASSISTANT-SCENARIO-SOURCE",
@@ -25452,6 +25489,38 @@
     "title": "Single-Binary Build (bun build --compile)",
     "type": "TASK"
   },
+  "TASK-CROSS-SPACE-MEMORY-CARRY-EXPLICIT-SHARED-ENTRY-WITH-PROVENAN": {
+    "hash": "55dccb9",
+    "git_issue": "55dccb9",
+    "extid": "TASK-CROSS-SPACE-MEMORY-CARRY-EXPLICIT-SHARED-ENTRY-WITH-PROVENAN",
+    "type": "TASK",
+    "title": "Cross-space memory carry (explicit shared entry with provenance)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-project-spaces-pm-integration",
+    "tags": [
+      "memory",
+      "projects"
+    ],
+    "source": ".plan/tickets/TASK-cross-space-memory-carry-explicit-shared-entry-with-provenan.md",
+    "status": "Not Started"
+  },
+  "TASK-CROSS-SPACE-REFERENCES-LINKS-VISIBILITY-CHECKED-GRAPH-EXPANS": {
+    "hash": "e8a338f",
+    "git_issue": "e8a338f",
+    "extid": "TASK-CROSS-SPACE-REFERENCES-LINKS-VISIBILITY-CHECKED-GRAPH-EXPANS",
+    "type": "TASK",
+    "title": "Cross-space references links + visibility-checked graph expansion",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-project-spaces-pm-integration",
+    "tags": [
+      "planning",
+      "linking"
+    ],
+    "source": ".plan/tickets/TASK-cross-space-references-links-visibility-checked-graph-expans.md",
+    "status": "Not Started"
+  },
   "TASK-CROSS-STORY-PROPAGATION": {
     "epic": "`epic-timeline-system.md`",
     "extid": "TASK-CROSS-STORY-PROPAGATION",
@@ -29829,6 +29898,22 @@
     "tags": [],
     "title": "Harmonize Quest Type Taxonomy",
     "type": "TASK"
+  },
+  "TASK-HARNESS-SKILL-DOCS-PROJECT-SPACES-ROW-SCOPING-NOTE": {
+    "hash": "c173261",
+    "git_issue": "c173261",
+    "extid": "TASK-HARNESS-SKILL-DOCS-PROJECT-SPACES-ROW-SCOPING-NOTE",
+    "type": "TASK",
+    "title": "Harness skill docs: project-spaces row + scoping note",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-project-spaces-pm-integration",
+    "tags": [
+      "docs",
+      "harness"
+    ],
+    "source": ".plan/tickets/TASK-harness-skill-docs-project-spaces-row-scoping-note.md",
+    "status": "Not Started"
   },
   "TASK-HASH-MENTION-RETRIEVAL-UX-FOR-CHAT-CONTEXT": {
     "epic": "epic-rag-assets-unified-storage-and-assistant-flows",
@@ -35712,6 +35797,22 @@
     "title": "Professions Service & Routes (Crafting Disciplines)",
     "type": "TASK"
   },
+  "TASK-PROJECT-SPACE-KIND-WORLDKIND-PROJECT-SCOPING-CONTRACT": {
+    "hash": "87ac3b9",
+    "git_issue": "87ac3b9",
+    "extid": "TASK-PROJECT-SPACE-KIND-WORLDKIND-PROJECT-SCOPING-CONTRACT",
+    "type": "TASK",
+    "title": "Project space kind: WorldKind project + scoping contract",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-project-spaces-pm-integration",
+    "tags": [
+      "projects",
+      "worlds"
+    ],
+    "source": ".plan/tickets/TASK-project-space-kind-worldkind-project-scoping-contract.md",
+    "status": "Not Started"
+  },
   "TASK-PROMETHEUS-METRICS-ENDPOINT-OPT-IN": {
     "epic": "epic-api-telemetry.md",
     "extid": "TASK-PROMETHEUS-METRICS-ENDPOINT-OPT-IN",
@@ -39441,6 +39542,22 @@
     "tags": [],
     "title": "Solo-user cold-start race caches phantom uid",
     "type": "TASK"
+  },
+  "TASK-SPACE-AWARE-ADMIN-TASKS-FILTER-MOVE-ITEM-DERIVES-LINK-OP": {
+    "hash": "18fdd30",
+    "git_issue": "18fdd30",
+    "extid": "TASK-SPACE-AWARE-ADMIN-TASKS-FILTER-MOVE-ITEM-DERIVES-LINK-OP",
+    "type": "TASK",
+    "title": "Space-aware admin tasks filter + move-item derives-link op",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-project-spaces-pm-integration",
+    "tags": [
+      "admin",
+      "giwt"
+    ],
+    "source": ".plan/tickets/TASK-space-aware-admin-tasks-filter-move-item-derives-link-op.md",
+    "status": "Not Started"
   },
   "TASK-SPKI-PIN-VERIFICATION-FOR-FEDERATION-PEERS": {
     "epic": "epic-certificate-and-tls-management.md",
