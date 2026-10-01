@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
+import "../comfyui-builder";
 import { comfyuiBuilderState, } from "./index";
 import { type BuilderTemplate, emptyEditor, } from "./types";
 
@@ -48,6 +49,9 @@ afterEach(() => {
     completedSteps: 0,
     totalSteps: 0,
   };
+  comfyuiBuilderState.palette = {};
+  comfyuiBuilderState.loadingPalette = false;
+  comfyuiBuilderState.paletteError = "";
 },);
 
 const chainRow = {
@@ -256,5 +260,225 @@ describe("startRun / pollRun", () => {
     await comfyuiBuilderState.startRun("chain-1",);
     expect(comfyuiBuilderState.runState.status,).toBe("failed",);
     expect(comfyuiBuilderState.runState.error,).toContain("Unknown template",);
+  });
+});
+
+describe("list actions", () => {
+  test("loadChains records a network failure", async () => {
+    handler = async () => {
+      throw new Error("offline",);
+    };
+    await comfyuiBuilderState.loadChains();
+    expect(comfyuiBuilderState.chainsError,).toBe("Network error loading chains",);
+    expect(comfyuiBuilderState.loadingChains,).toBe(false,);
+  });
+
+  test("loadTemplates swallows network failures", async () => {
+    handler = async () => {
+      throw new Error("offline",);
+    };
+    await expect(comfyuiBuilderState.loadTemplates(),).resolves.toBeUndefined();
+    expect(comfyuiBuilderState.templates,).toEqual([],);
+  });
+
+  test("deleteChain clears the confirm, toasts, and reloads", async () => {
+    comfyuiBuilderState.confirmDeleteChain = "chain-1";
+    const deleted: string[] = [];
+    handler = async (url, opts,) => {
+      if (opts?.method === "DELETE") {
+        deleted.push(url,);
+        return Response.json({ ok: true, },);
+      }
+      return Response.json({ chains: [chainRow,], },);
+    };
+    await comfyuiBuilderState.deleteChain("chain-1",);
+    expect(deleted,).toEqual(["/api/v1/comfyui-builder/chains/chain-1",],);
+    expect(comfyuiBuilderState.confirmDeleteChain,).toBe("",);
+    expect(toasts,).toEqual([{ type: "success", message: "Chain deleted", },],);
+    expect(comfyuiBuilderState.chains,).toHaveLength(1,);
+  });
+
+  test("deleteChain reports server and network failures", async () => {
+    comfyuiBuilderState.confirmDeleteChain = "chain-1";
+    handler = async () => Response.json({ error: "nope", }, { status: 404, },);
+    await comfyuiBuilderState.deleteChain("chain-1",);
+    expect(comfyuiBuilderState.confirmDeleteChain,).toBe("chain-1",);
+    expect(toasts.at(-1,)?.message,).toContain("Failed to delete",);
+
+    handler = async () => {
+      throw new Error("offline",);
+    };
+    await comfyuiBuilderState.deleteChain("chain-1",);
+    expect(toasts.at(-1,)?.message,).toContain("Network error",);
+  });
+});
+
+describe("loadPalette", () => {
+  test("stores the palette on success", async () => {
+    handler = async () =>
+      Response.json(
+        { data: { KSampler: { display_name: "KSampler", category: "sampling", }, }, },
+      );
+    await comfyuiBuilderState.loadPalette();
+    expect(comfyuiBuilderState.palette["KSampler"]?.display_name,).toBe("KSampler",);
+    expect(comfyuiBuilderState.paletteError,).toBe("",);
+    expect(comfyuiBuilderState.loadingPalette,).toBe(false,);
+  });
+
+  test("maps non-ok and network failures to paletteError", async () => {
+    handler = async () => Response.json({ error: "boom", }, { status: 500, },);
+    await comfyuiBuilderState.loadPalette();
+    expect(comfyuiBuilderState.paletteError,).toBe("Palette load failed",);
+
+    handler = async () => {
+      throw new Error("offline",);
+    };
+    await comfyuiBuilderState.loadPalette();
+    expect(comfyuiBuilderState.paletteError,).toBe("Network error loading palette",);
+    expect(comfyuiBuilderState.loadingPalette,).toBe(false,);
+  });
+});
+
+describe("pollRun failure branches", () => {
+  beforeEach(() => {
+    comfyuiBuilderState.runState = {
+      jobId: "job-9",
+      status: "running",
+      error: "",
+      completedSteps: 0,
+      totalSteps: 0,
+    };
+  },);
+
+  test("a response without a job status fails the run", async () => {
+    handler = async () => Response.json({},);
+    await comfyuiBuilderState.pollRun();
+    expect(comfyuiBuilderState.runState.status,).toBe("failed",);
+    expect(comfyuiBuilderState.runState.error,).toBe("Run status unavailable",);
+  });
+
+  test("a non-ok poll reads as unavailable", async () => {
+    handler = async () => Response.json({ error: "gone", }, { status: 404, },);
+    await comfyuiBuilderState.pollRun();
+    expect(comfyuiBuilderState.runState.error,).toBe("Run status unavailable",);
+  });
+
+  test("a network failure during polling fails the run", async () => {
+    handler = async () => {
+      throw new Error("offline",);
+    };
+    await comfyuiBuilderState.pollRun();
+    expect(comfyuiBuilderState.runState.status,).toBe("failed",);
+    expect(comfyuiBuilderState.runState.error,).toBe("Network error polling run",);
+  });
+
+  test("a network failure during start records an error", async () => {
+    handler = async () => {
+      throw new Error("offline",);
+    };
+    await comfyuiBuilderState.startRun("chain-1",);
+    expect(comfyuiBuilderState.runState.status,).toBe("failed",);
+    expect(comfyuiBuilderState.runState.error,).toBe("Network error starting run",);
+  });
+
+  test("polling continues while the job is live", async () => {
+    let polls = 0;
+    handler = async () => {
+      polls += 1;
+      const job = polls === 1
+        ? { status: "running", completedSteps: 1, totalSteps: 2, }
+        : { status: "completed", completedSteps: 2, totalSteps: 2, };
+      return Response.json({ job, },);
+    };
+    await comfyuiBuilderState.pollRun();
+    expect(polls,).toBe(2,);
+    expect(comfyuiBuilderState.runState.status,).toBe("completed",);
+    expect(comfyuiBuilderState.runState.completedSteps,).toBe(2,);
+  });
+});
+
+describe("editor open/close and step fallbacks", () => {
+  test("openCreate resets the editor", () => {
+    comfyuiBuilderState.editName = "stale";
+    comfyuiBuilderState.editingId = "old";
+    comfyuiBuilderState.saveError = "boom";
+    comfyuiBuilderState.openCreate();
+    expect(comfyuiBuilderState.editName,).toBe("",);
+    expect(comfyuiBuilderState.editingId,).toBe("",);
+    expect(comfyuiBuilderState.saveError,).toBe("",);
+    expect(comfyuiBuilderState.showEditor,).toBe(true,);
+    expect(comfyuiBuilderState.savingChain,).toBe(false,);
+  });
+
+  test("openEdit copies a chain into the editor without aliasing steps", () => {
+    comfyuiBuilderState.chains = [chainRow,];
+    comfyuiBuilderState.openEdit("chain-1",);
+    expect(comfyuiBuilderState.editingId,).toBe("chain-1",);
+    expect(comfyuiBuilderState.editName,).toBe("Portrait chain",);
+    expect(comfyuiBuilderState.editDescription,).toBe("",);
+    expect(comfyuiBuilderState.steps,).toHaveLength(1,);
+    expect(comfyuiBuilderState.showEditor,).toBe(true,);
+    comfyuiBuilderState.steps[0]!.params.steps = 99;
+    expect(comfyuiBuilderState.chains[0]!.steps[0]!.params.steps,).toBe(20,);
+  });
+
+  test("closeEditor hides the form", () => {
+    comfyuiBuilderState.showEditor = true;
+    comfyuiBuilderState.closeEditor();
+    expect(comfyuiBuilderState.showEditor,).toBe(false,);
+  });
+
+  test("addStep handles null, missing, and non-primitive defaults", () => {
+    comfyuiBuilderState.templates = [{
+      id: "tpl-x",
+      name: "Fallbacks",
+      description: "",
+      category: "txt2img",
+      backends: ["comfyui",],
+      parameters: [
+        { name: "mask", type: "boolean", label: "Mask", default: null, },
+        { name: "style", type: "string", label: "Style", default: undefined, },
+        { name: "weird", type: "string", label: "Weird", default: { nested: 1, }, },
+      ],
+    },];
+    comfyuiBuilderState.pickedTemplateId = "tpl-x";
+    comfyuiBuilderState.addStep();
+    expect(comfyuiBuilderState.steps,).toHaveLength(1,);
+    expect(comfyuiBuilderState.steps[0]!.params,).toEqual(
+      { mask: false, style: "", weird: "[object Object]", },
+    );
+  });
+
+  test("setStepParam assigns primitives and stringifies the rest", () => {
+    comfyuiBuilderState.templates = [template,];
+    comfyuiBuilderState.pickedTemplateId = "tpl-1";
+    comfyuiBuilderState.addStep();
+    comfyuiBuilderState.setStepParam(0, "prompt", true,);
+    expect(comfyuiBuilderState.steps[0]!.params.prompt,).toBe(true,);
+    comfyuiBuilderState.setStepParam(0, "prompt", { deep: 1, },);
+    expect(comfyuiBuilderState.steps[0]!.params.prompt,).toBe("[object Object]",);
+    comfyuiBuilderState.setStepParam(0, "prompt", undefined,);
+    expect(comfyuiBuilderState.steps[0]!.params.prompt,).toBe("",);
+  });
+
+  test("a network failure during save records an error", async () => {
+    comfyuiBuilderState.editName = "Net";
+    handler = async () => {
+      throw new Error("offline",);
+    };
+    await comfyuiBuilderState.saveChain();
+    expect(comfyuiBuilderState.saveError,).toBe("Network error saving chain",);
+    expect(comfyuiBuilderState.savingChain,).toBe(false,);
+  });
+});
+
+describe("comfyuiBuilder factory", () => {
+  test("returns a fresh state object per call", () => {
+    const factory = globalThis.comfyuiBuilder;
+    expect(factory,).toBeDefined();
+    const first = factory!();
+    const second = factory!();
+    expect(first,).not.toBe(second,);
+    expect(first.chains,).toEqual([],);
   });
 });
