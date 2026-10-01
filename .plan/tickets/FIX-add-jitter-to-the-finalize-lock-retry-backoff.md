@@ -74,6 +74,7 @@ targets") landed both this jitter fix and the sibling isolated-env fix on `dev`.
 
 The stale part was only the `Status:` line — the Resolution heading also said
 "uncommitted", which had been wrong since `f28c3ca24`. Heading corrected.
+
 ## Resolution (2026-09-29)
 
 `lockRetryDelayMs()` (full jitter over `[0, 20ms]`) replaces the fixed
