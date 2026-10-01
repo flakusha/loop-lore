@@ -769,6 +769,12 @@
       "source": ".plan/tickets/BUG-rate-limit-in-memory-store-never-evicts-idle-keys.md"
     }
   ],
+  "src/api-governance/telemetry/collector.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-nothing-tests-that-api-v1-actually-mounts-the-governance-gua.md"
+    }
+  ],
   "src/api-governance/telemetry/collector.ts": [
     {
       "kind": "epic",
@@ -30811,12 +30817,26 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-governance-429s-double-counted-in-telemetry.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-nothing-tests-that-api-v1-actually-mounts-the-governance-gua.md"
+    }
+  ],
+  "src/routes/v1/governance.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-nothing-tests-that-api-v1-actually-mounts-the-governance-gua.md"
     }
   ],
   "src/routes/v1/index.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-api-versioning.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-nothing-tests-that-api-v1-actually-mounts-the-governance-gua.md"
     },
     {
       "kind": "ticket",

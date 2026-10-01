@@ -871,6 +871,19 @@
     "title": "Blog post GET bypasses visibility policy (IDOR)",
     "type": "BUG"
   },
+  "BUG-BROWSER-E2E-ASSERTS-ABSENCE-OF-A-DECRYPT-FAILURE-MARKER-ACRO": {
+    "hash": "8b4b4c1",
+    "git_issue": "8b4b4c1",
+    "extid": "BUG-BROWSER-E2E-ASSERTS-ABSENCE-OF-A-DECRYPT-FAILURE-MARKER-ACRO",
+    "type": "BUG",
+    "title": "Browser e2e asserts absence of a decrypt-failure marker across the whole page body",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-browser-e2e-asserts-absence-of-a-decrypt-failure-marker-acro.md",
+    "status": "Not Started"
+  },
   "BUG-BROWSER-E2E-SUITE-FLAKES-UNDER-CONCURRENT-RUNS": {
     "hash": "c7d2800",
     "git_issue": "c7d2800",
@@ -3970,6 +3983,19 @@
     "title": "logNsfwEvent has zero callers: no NSFW gate decision ever audited",
     "type": "BUG"
   },
+  "BUG-LOGOUT-BROWSER-E2E-RACES-ITS-OWN-NAVIGATION-AND-NEEDS-RETRY-": {
+    "hash": "e845b8e",
+    "git_issue": "e845b8e",
+    "extid": "BUG-LOGOUT-BROWSER-E2E-RACES-ITS-OWN-NAVIGATION-AND-NEEDS-RETRY-",
+    "type": "BUG",
+    "title": "Logout browser e2e races its own navigation and needs retry-on-abort",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-logout-browser-e2e-races-its-own-navigation-and-needs-retry-.md",
+    "status": "Not Started"
+  },
   "BUG-LOGOUT-DELETES-SESSION-WITHOUT-SIGNATURE-OR-OWNERSHIP-CHECK": {
     "epic": "",
     "extid": "BUG-LOGOUT-DELETES-SESSION-WITHOUT-SIGNATURE-OR-OWNERSHIP-CHECK",
@@ -4494,6 +4520,19 @@
     "tags": [],
     "title": "No role restriction for changing chat settings",
     "type": "BUG"
+  },
+  "BUG-NOTHING-TESTS-THAT-API-V1-ACTUALLY-MOUNTS-THE-GOVERNANCE-GUA": {
+    "hash": "7d17b06",
+    "git_issue": "7d17b06",
+    "extid": "BUG-NOTHING-TESTS-THAT-API-V1-ACTUALLY-MOUNTS-THE-GOVERNANCE-GUA",
+    "type": "BUG",
+    "title": "Nothing tests that /api/v1 actually mounts the governance guard end to end",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-nothing-tests-that-api-v1-actually-mounts-the-governance-gua.md",
+    "status": "Not Started"
   },
   "BUG-NOTIFICATION-STREAM-ERROR-UNREACHABLE": {
     "epic": "",
@@ -5494,6 +5533,19 @@
     "tags": [],
     "title": "safeDecompress pre-check rejects compressed payloads over ~10KB (silent garbage reads)",
     "type": "BUG"
+  },
+  "BUG-SCOPED-COVERAGE-GATE-OMITS-THE-E2E-SAFEGUARD-PREFIX-ITS-PLAI": {
+    "hash": "9efafa4",
+    "git_issue": "9efafa4",
+    "extid": "BUG-SCOPED-COVERAGE-GATE-OMITS-THE-E2E-SAFEGUARD-PREFIX-ITS-PLAI",
+    "type": "BUG",
+    "title": "Scoped coverage gate omits the E2E_SAFEGUARD prefix its plain-mode sibling sets",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-scoped-coverage-gate-omits-the-e2e-safeguard-prefix-its-plai.md",
+    "status": "Not Started"
   },
   "BUG-SCRIPTS-WORKTREE-TICKET-WRITES-TO-CWD-INSTEAD-OF-WORKTREE-PA": {
     "epic": "",
@@ -23518,7 +23570,7 @@
     "label": "task",
     "priority": "High",
     "source": ".plan/tickets/TASK-chat-feature-encryption-key-rotation.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Effective & Reliable Encryption + Membership-Triggered Key Rotation",
     "type": "TASK"
@@ -23609,7 +23661,7 @@
     "label": "task",
     "priority": "Low",
     "source": ".plan/tickets/TASK-chat-feature-notes-shadow-carriage.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "GM Notes, Shadow Notes, Quests, Dev-Visible Carriage",
     "type": "TASK"
@@ -23622,7 +23674,7 @@
     "label": "task",
     "priority": "High",
     "source": ".plan/tickets/TASK-chat-feature-ownership-transfer.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Chat Ownership Transfer — Frontend & Backend",
     "type": "TASK"
