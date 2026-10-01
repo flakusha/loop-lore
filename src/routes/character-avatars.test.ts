@@ -363,6 +363,37 @@ describe("Routes recovered from the shadowed character-avatars/ directory", () =
     expect(config.selectionRuleOverride,).toBe("mood_first",);
   });
 
+  test("PUT world avatar config rejects an unknown selection rule and persists nothing", async () => {
+    const app = makeApp(db, OWNER_USER, "user",);
+    const res = await app.handle(
+      new Request(`http://localhost/api/worlds/${WORLD}/avatars/config/${OWNER}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ selection_rule_override: "TOTALLY_BOGUS_RULE", },),
+      },),
+    );
+    expect(res.status,).toBe(400,);
+
+    const stored = await db
+      .selectFrom("world_avatar_config",)
+      .selectAll()
+      .where("actor_id", "=", OWNER,)
+      .execute();
+    expect(stored.map((row,) => String(row.selection_rule_override ?? "",)),).not.toContain("TOTALLY_BOGUS_RULE",);
+  });
+
+  test("PUT world avatar config accepts an omitted rule", async () => {
+    const app = makeApp(db, OWNER_USER, "user",);
+    const res = await app.handle(
+      new Request(`http://localhost/api/worlds/${WORLD}/avatars/config/${OWNER}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({},),
+      },),
+    );
+    expect(res.status,).toBe(200,);
+  });
+
   test("GET world avatar config returns 404 when unset", async () => {
     const app = makeApp(db, OWNER_USER, "user",);
     const res = await app.handle(new Request(`http://localhost/api/worlds/${WORLD}/avatars/config/${OTHER}`,),);
