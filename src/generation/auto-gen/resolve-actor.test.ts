@@ -221,3 +221,45 @@ describe("resolveActor turn selection and single-chat", () => {
     expect(resolved,).toBeNull();
   });
 });
+
+describe("resolveActor outbound mute enforcement (moderation AC3)", () => {
+  let db: Kysely<DB>;
+
+  beforeEach(async () => {
+    const created = await createTestDb();
+    db = created.db;
+  },);
+
+  afterAll(async () => {
+    await db?.destroy();
+  },);
+
+  /** Mute an existing participant row. */
+  async function muteParticipant(db: Kysely<DB>, chatId: string, actorId: string,): Promise<void> {
+    await db
+      .updateTable("chat_participants",)
+      .set({ muted_until: new Date(Date.now() + 3_600_000,).toISOString(), },)
+      .where("chat_id", "=", chatId,)
+      .where("actor_id", "=", actorId,)
+      .execute();
+  }
+
+  test("muted group cascade actor returns null", async () => {
+    const { chatId, actorId, } = await seedChatWithActor(db, { chatType: "group", },);
+    await muteParticipant(db, chatId, actorId,);
+    const resolved = await resolveActor(db, {
+      type: "group",
+      cascadeActorId: actorId,
+      chatId,
+      userId: "user-1",
+    },);
+    expect(resolved,).toBeNull();
+  });
+
+  test("muted single-chat partner returns null", async () => {
+    const { chatId, actorId, } = await seedChatWithActor(db, { chatType: "direct", },);
+    await muteParticipant(db, chatId, actorId,);
+    const resolved = await resolveActor(db, { type: "solo", chatId, userId: "user-1", },);
+    expect(resolved,).toBeNull();
+  });
+});
