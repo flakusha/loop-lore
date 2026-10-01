@@ -47,7 +47,7 @@ No `/ws` usage anywhere in the file — progress is poll-only today.
 2. **Form-based composable preset chains (recommended first).** Linear
    pipeline of named stages: template pick → params → LoRA stack → run.
    Driven by existing `TemplateParameter` (`src/image-edit/types.ts:59-70`)
-   + `GET /object_info` via `handleNodes` (`src/image-edit/routes.ts:152-160`).
+   plus `GET /object_info` via `handleNodes` (`src/image-edit/routes.ts:152-160`).
    No canvas, smallest effort, covers ~80% of operator needs (txt2img /
    img2img / upscale with tuned params). This is Track A.
 3. **XYFlow / Svelte Flow — rejected unless LiteGraph fails.** MIT,
