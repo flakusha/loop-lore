@@ -15,7 +15,7 @@ import { badRequestResponse, jsonCreated, jsonResponse, requireUserId, } from ".
 import type { HttpStatusCode, } from "../http-utils";
 import { dispatchCommand, } from "./command";
 import { createEntityConfirmRoutes, } from "./create-entity-confirm";
-import { attachAttachmentsOrForbidden, enforceInjectionGate, } from "./guards";
+import { attachAttachmentsOrForbidden, enforceInjectionGate, enforceMuteGate, } from "./guards";
 import { serviceErrorToResponse, } from "./helpers";
 import { persistInitiative, } from "./initiative";
 import { flagNsfwUserMessage, } from "./nsfw-user-flag";
@@ -55,6 +55,12 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
         // arbitrary chatId (BUG-nsfw-flag-side-effect-runs-before-access-check).
         const access = await checkChatAccess(database, chatId, actorId, ctx.userRole as string | null,);
         if (!access.ok) { return serviceErrorToResponse(access.error,); }
+
+        // ── Mute enforcement (TASK-chat-feature-moderation AC3) ──────
+        // Inbound traffic for a muted participant is suppressed before
+        // any side effect (NSFW flag, command dispatch, insert).
+        const muteRejection = await enforceMuteGate(database, chatId, actorId,);
+        if (muteRejection) { return muteRejection; }
 
         const filteredContent = filterProfanity(effectiveBody.content,);
         const hasProfanity = containsProfanity(effectiveBody.content,);

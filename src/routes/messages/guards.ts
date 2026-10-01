@@ -5,6 +5,7 @@
  */
 
 import type { Kysely, } from "kysely";
+import { isMuted, } from "../../chat/moderation";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
@@ -91,4 +92,35 @@ export async function attachAttachmentsOrForbidden(
     }
     throw err;
   }
+}
+
+/**
+ * Mute gate (TASK-chat-feature-moderation AC3): suppress a muted
+ * participant's inbound traffic. Reads the live `muted_until` stamp on
+ * `chat_participants` and defers to the pure `isMuted` predicate.
+ * @param database
+ * @param chatId
+ * @param actorId Sending actor (session user).
+ * @returns 403 response while the sender is muted; null to proceed.
+ */
+export async function enforceMuteGate(
+  database: Kysely<DB>,
+  chatId: string,
+  actorId: string,
+): Promise<Response | null> {
+  const sender = await database
+    .selectFrom("chat_participants",)
+    .select("muted_until",)
+    .where("chat_id", "=", chatId,)
+    .where("actor_id", "=", actorId,)
+    .executeTakeFirst();
+  if (!isMuted(sender ?? null, Date.now(),)) { return null; }
+  getLogger().child({ module: "messages/create", },).info(
+    "Message rejected: sender is muted",
+    { chatId, actorId, },
+  );
+  return jsonResponse(
+    { error: "forbidden", message: "You are muted in this chat", },
+    403 as HttpStatusCode,
+  );
 }

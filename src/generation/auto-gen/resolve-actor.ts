@@ -10,8 +10,10 @@
  * (caller bails out of generation).
  */
 import type { Kysely, } from "kysely";
+import { isMuted, } from "../../chat/moderation";
 import type { DB, } from "../../db/schema";
 import { selectNextGroupActor, } from "../../group-chat/turn-selector";
+import { getLogger, } from "../../logger";
 
 /** */
 export interface ResolveActorOpts {
@@ -51,11 +53,17 @@ export async function resolveActor(
       // stale (actor left) or forged (direct triggerAutoGeneration call).
       const membership = await database
         .selectFrom("chat_participants",)
-        .select("actor_id",)
+        .select(["actor_id", "muted_until",],)
         .where("chat_id", "=", chatId,)
         .where("actor_id", "=", cascadeActorId,)
         .executeTakeFirst();
       if (!membership) { return null; }
+      // Outbound mute enforcement (TASK-chat-feature-moderation AC3): a
+      // muted actor must not generate even when pre-selected by a cascade.
+      if (isMuted(membership, Date.now(),)) {
+        logMuteSuppress(chatId, cascadeActorId,);
+        return null;
+      }
       const selected = await database
         .selectFrom("actors",)
         .select(["display_name",],)
@@ -82,8 +90,27 @@ export async function resolveActor(
     .innerJoin("actors", "actors.id", "chat_participants.actor_id",)
     .where("chat_participants.chat_id", "=", chatId,)
     .where("chat_participants.actor_id", "!=", userId,)
-    .select(["actors.id", "actors.display_name",],)
+    .select(["actors.id", "actors.display_name", "chat_participants.muted_until",],)
     .executeTakeFirst();
   if (!character) { return null; }
+  // Outbound mute enforcement (TASK-chat-feature-moderation AC3): a muted
+  // chat partner must not generate until muted_until elapses.
+  if (isMuted(character, Date.now(),)) {
+    logMuteSuppress(chatId, character.id,);
+    return null;
+  }
   return { characterId: character.id, characterName: character.display_name, };
+}
+
+/**
+ * Structured log for an outbound-mute suppression (audit trail for the
+ * moderation AC — generation deliberately did not run).
+ * @param chatId
+ * @param actorId
+ */
+function logMuteSuppress(chatId: string, actorId: string,): void {
+  getLogger().child({ module: "auto-gen", },).info(
+    "muted actor — outbound generation suppressed",
+    { chatId, actorId, },
+  );
 }
