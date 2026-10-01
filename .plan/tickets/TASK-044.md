@@ -6,6 +6,8 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-nsfw-game-mechanics.md
+**Tags:** nsfw-game-mechanics
 **Summary:** Trauma/recovery as shared StatusEffect with consent-violation severity escalation.
 **Context:** Gameplay-layer consequence system for non-consensual interactions.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

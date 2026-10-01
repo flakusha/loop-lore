@@ -12,6 +12,8 @@
 **Status Note:** already on dev, 2026-09-03
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-code-quality.md
+**Tags:** code-quality
 
 ## Summary
 

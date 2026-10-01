@@ -12,6 +12,8 @@
 **Status Note:** commit `4a1f56b8`, follow-up `1cddba36`
 **Priority:** high
 **Effort:** Small
+**Epic:** epic-auth-access.md
+**Tags:** auth-access
 
 ## Summary
 

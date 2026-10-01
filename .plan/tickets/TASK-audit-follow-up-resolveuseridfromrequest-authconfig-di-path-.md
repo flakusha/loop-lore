@@ -12,6 +12,8 @@
 **Status Note:** commit `00d5e0f2`
 **Priority:** low
 **Effort:** Medium
+**Epic:** epic-code-quality.md
+**Tags:** code-quality
 
 ## Summary
 

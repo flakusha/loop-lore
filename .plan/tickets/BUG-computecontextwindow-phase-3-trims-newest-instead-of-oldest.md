@@ -11,6 +11,8 @@
 **Status:** Done
 **Priority:** low
 **Effort:** Medium
+**Epic:** epic-chat-context-optimization.md
+**Tags:** chat-context-optimization
 
 ## Summary
 

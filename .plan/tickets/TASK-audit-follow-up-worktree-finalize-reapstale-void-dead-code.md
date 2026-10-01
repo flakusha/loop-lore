@@ -12,6 +12,8 @@
 **Status Note:** verified stale (no code change required)
 **Priority:** low
 **Effort:** Medium
+**Epic:** epic-code-quality.md
+**Tags:** code-quality
 
 ## Summary
 

@@ -12,6 +12,8 @@
 **Status Note:** 2026-09-06
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-actor-turn-skip.md
+**Tags:** actor-turn-skip
 
 ## Summary
 

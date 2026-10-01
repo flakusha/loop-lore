@@ -12,6 +12,8 @@
 **Status Note:** fix-review-quickwins
 **Priority:** low
 **Effort:** Medium
+**Epic:** epic-prompt-improvement.md
+**Tags:** prompt-improvement
 
 ## Summary
 

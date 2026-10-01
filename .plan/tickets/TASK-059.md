@@ -6,6 +6,8 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-transport-expansion.md
+**Tags:** transport-expansion
 **Summary:** Markdown reference for external protocols (WebSocket, SSE, future WebTransport/QUIC).
 **Context:** Integrator-facing; auth, signing, retry semantics.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

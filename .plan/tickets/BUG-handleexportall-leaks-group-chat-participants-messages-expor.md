@@ -11,6 +11,8 @@
 **Status Note:** (closed 2026-09-20) — INNER JOIN chat_participants
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-import-export-io.md
+**Tags:** import-export-io
 
 ## Summary
 

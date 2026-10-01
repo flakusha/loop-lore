@@ -12,6 +12,8 @@
 **Status Note:** 4835dcaf, 2026-09-04
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-assistant-gm-flows.md
+**Tags:** assistant-gm-flows
 
 ## Summary
 

@@ -12,6 +12,8 @@
 **Status Note:** commit `771e8b34`
 **Priority:** Medium
 **Effort:** Small
+**Epic:** epic-security-sandboxing.md
+**Tags:** security-sandboxing
 
 ## Summary
 

@@ -38,6 +38,8 @@ attribute, not a column change; `bun run db:sync-types` produced no
 diff.
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-db-migration-compaction.md
+**Tags:** db-migration-compaction
 
 ## Summary
 

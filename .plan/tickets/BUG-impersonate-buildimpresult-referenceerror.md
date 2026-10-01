@@ -12,6 +12,8 @@
 **Priority:** high
 **Priority Tier:** P2
 **Effort:** Small
+**Epic:** epic-impersonation.md
+**Tags:** impersonation
 **Area:** impersonation
 **Source:** reconcile review (Scout Batch C — IMP-1)
 **Resolved:** 2026-08-21

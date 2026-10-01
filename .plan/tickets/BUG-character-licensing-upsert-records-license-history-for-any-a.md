@@ -11,6 +11,8 @@
 **Status Note:** (closed 2026-09-20) — actor_type guard added after checkActorOwnership
 **Priority:** medium
 **Effort:** Small
+**Epic:** epic-character-core-system.md
+**Tags:** character-core-system
 
 ## Summary
 

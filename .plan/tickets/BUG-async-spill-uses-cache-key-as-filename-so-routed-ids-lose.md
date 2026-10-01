@@ -6,6 +6,8 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Small
+**Epic:** epic-api-task-offloading.md
+**Tags:** api-task-offloading
 
 **Summary:** `spill()` joins the result-row id straight into a path, but that id is an idempotency cache key containing `/` and spaces, so the write lands in a directory that does not exist and the body is lost.
 

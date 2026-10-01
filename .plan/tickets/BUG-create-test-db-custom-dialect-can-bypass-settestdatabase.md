@@ -6,6 +6,8 @@
 **Status:** Done
 **Priority:** Medium
 **Effort:** Medium
+**Epic:** epic-data-integrity-acid.md
+**Tags:** data-integrity-acid
 **Summary:** Migration/roundtrip tests create raw Database handles without setTestDatabase — getDatabase() resolves the real on-disk DB
 **Context:** Test isolation — src/db/migrations.test.ts:51, src/db/migration-roundtrip.test.ts:62, src/db/schema-manifest.ts
 **Acceptance Criteria:** See ## Acceptance Criteria below.

@@ -12,6 +12,8 @@
 **Status Note:** already on dev, 2026-09-06
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-visual-novel-mode.md
+**Tags:** visual-novel-mode
 
 ## Summary
 

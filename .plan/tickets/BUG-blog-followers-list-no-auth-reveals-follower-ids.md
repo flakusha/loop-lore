@@ -16,6 +16,8 @@ git issue: 5ccf305
 **Status:** Done
 **Priority:** High
 **Effort:** Small
+**Epic:** epic-blog-system.md
+**Tags:** blog-system
 
 ## Summary
 

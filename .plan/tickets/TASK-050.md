@@ -6,6 +6,8 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-items.md
+**Tags:** items
 **Summary:** Items-scoped world binding — world_items scoped to world_id; cross-world IDOR prevention.
 **Context:** Items-slice of world engine; full world engine lives in epic-world-locations.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

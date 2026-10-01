@@ -12,6 +12,8 @@
 **Status Note:** commit 04411f8 — selectChat state guard
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-frontend-components.md
+**Tags:** frontend-components
 
 ## Summary
 

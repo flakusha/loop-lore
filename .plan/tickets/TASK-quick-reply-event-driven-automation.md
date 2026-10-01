@@ -12,6 +12,8 @@
 **Status Note:** 2026-08-16 — core (buttons + persistence + startup trigger, ac5b2545) **+ user/ai event triggers & loop-guard** (`chat-quick-replies.ts` `fireAutoQuickReplies`, `_autoFired` human-send discrimination, 3s min-interval, consecutive cap 5; wired into `sendMessage` + SSE `stream-done`). Tests green (`chat-quick-replies.test.ts` 9 cases).
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-frontend-components.md
+**Tags:** frontend-components
 
 ## Summary
 

@@ -11,6 +11,8 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-rpg-content-systems.md
+**Tags:** rpg-content-systems
 **Related:** TASK-adopt-state-machine-framework-in-runtime-status-writes
 
 ## Summary

@@ -5,6 +5,8 @@
 
 **Status:** Done
 **Status Note:** duplicate
+**Epic:** epic-assistant-generation-extensions.md
+**Tags:** assistant-generation-extensions
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

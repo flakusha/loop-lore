@@ -6,6 +6,8 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-blog-system.md
+**Tags:** blog-system
 
 **Summary:** `POST /api/blog/posts/:id/comments` passes a raw `getPost()` existence check, so any authed user gets a 404-vs-200 existence oracle for non-public posts and can comment on them.
 **Context:** `src/routes/blog/comments.ts:27` — follow-up from the BUG-blog-post-get-bypasses-visibility-policy fix in worktree src-audit-2026-09-24.

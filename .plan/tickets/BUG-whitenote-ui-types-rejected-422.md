@@ -12,6 +12,8 @@
 **Status Note:** fixed 2026-09-05
 **Priority:** medium
 **Effort:** Small
+**Epic:** epic-gm-shadow-notes.md
+**Tags:** gm-shadow-notes
 
 ## Summary
 

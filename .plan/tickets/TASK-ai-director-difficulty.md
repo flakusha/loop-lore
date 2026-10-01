@@ -6,6 +6,8 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-assistant-gm-flows.md
+**Tags:** assistant-gm-flows
 **Summary:** DifficultyAdjustment derived from player_performance: event_intensity, npc_aggression, resource_scarcity, mystery_level modifiers (each -50..+50). adjustment_type ∈ {increase, decrease, maintain}.
 **Context:** Source: epic-assistant-gm-flows.md § AI Director → Dynamic Difficulty Adjustment.
 **Acceptance Criteria:** [ ] player_performance → adjustment_type thresholds; [ ] struggling player reduces intensity + helpful NPCs; [ ] succeeding player increases intensity + complications; [ ] bored player injects mysteries.

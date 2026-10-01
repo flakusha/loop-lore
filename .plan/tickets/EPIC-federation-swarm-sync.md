@@ -5,6 +5,8 @@
 
 **Status:** Done
 **Status Note:** duplicate
+**Epic:** epic-federation-swarm-sync.md
+**Tags:** federation-swarm-sync
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

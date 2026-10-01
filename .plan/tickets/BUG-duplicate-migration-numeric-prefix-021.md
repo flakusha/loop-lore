@@ -10,6 +10,8 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Small
+**Epic:** epic-frontend-gallery.md
+**Tags:** frontend-gallery
 **Type:** Bug
 **Tags:** database, migrations, build, tooling
 

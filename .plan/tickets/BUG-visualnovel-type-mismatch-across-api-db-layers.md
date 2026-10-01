@@ -11,6 +11,8 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-visual-novel-mode.md
+**Tags:** visual-novel-mode
 **Resolution:** Commit 1b9b0cdf ("refactor(chat): unify visualNovel state into gm_config.renderingOverride (drop chats.visual_novel column)"). Source evidence: src/validation/schemas/chat.ts:33 now declares `renderingOverride: t.Optional(t.Union([t.Literal("text"), t.Literal("visual_novel"), t.Null()]))` (typed state, no Boolean/Number coercion). src/chat/service/types.ts::CreateChatParams and UpdateChatParams carry `renderingOverride: ChatRenderingOverride | null` instead of `visualNovel: boolean`. src/db/enums-core/chat.ts::ChatRenderingOverride is the new single typed contract consumed by FE/BE/DB layers. Follow-up: `017_drop_template_visual_novel.ts:63-76` also dropped `chat_setup_templates.visual_novel` with backfill to `renderingOverride` (verified 2026-09-06; no `visual_novel` in generated schemas). Close-out work: merged to dev via `bun run scripts/worktree/index.mjs finalize fix-bucket-y-…
 
 ## Summary

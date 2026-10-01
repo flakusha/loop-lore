@@ -11,6 +11,8 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Small
+**Epic:** epic-asset-platform-capabilities.md
+**Tags:** asset-platform-capabilities
 **Labels:** backend, assets, elysia, e2e
 **Regression introduced by:** c78e5466 (`fix(auth): close remaining access-control gaps in admin, assets, chat, world routes`)
 

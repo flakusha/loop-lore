@@ -13,6 +13,8 @@
 **Priority:** high
 **Priority Tier:** P2
 **Effort:** Trivial
+**Epic:** epic-frontend-gallery.md
+**Tags:** frontend-gallery
 **Area:** gallery
 **Source:** reconcile review (Scout Batch C — GAL-1)
 **Resolved:** 2026-08-21 (analysis) / 2026-08-22 (verification on `dev`)

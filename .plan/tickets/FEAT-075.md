@@ -9,6 +9,8 @@ related: [FEAT-059, FEAT-066]
 
 
 **Status:** Done
+**Epic:** epic-memory-knowledge-systems.md
+**Tags:** memory-knowledge-systems
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

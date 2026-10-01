@@ -10,6 +10,8 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-chat-product-features.md
+**Tags:** chat-product-features
 
 ## Summary
 

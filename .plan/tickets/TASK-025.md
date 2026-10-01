@@ -6,6 +6,8 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-frontend-components.md
+**Tags:** frontend-components
 **Summary:** Reusable text-effects primitives (shake, glow, typewriter, fade) plus overlay stack.
 **Context:** Pure presentation layer; composes on existing surfaces without altering backend schema.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

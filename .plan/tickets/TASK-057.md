@@ -6,6 +6,8 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-transport-expansion.md
+**Tags:** transport-expansion
 **Summary:** Markdown deep-dive into HTTP/2 framing, multiplexing, ALPN, upgrade.
 **Context:** Cited against src/transport/h2.ts and upgrade.ts.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

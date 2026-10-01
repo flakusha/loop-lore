@@ -12,6 +12,8 @@
 **Status Note:** verified 2026-09-07; documented dual-injection contract
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-prompt-improvement.md
+**Tags:** prompt-improvement
 
 ## Summary
 

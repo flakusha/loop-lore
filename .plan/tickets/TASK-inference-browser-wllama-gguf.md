@@ -4,6 +4,8 @@
 # TASK: feat(inference): browser wllama GGUF inference infrastructure
 
 **Effort:** Medium
+**Epic:** epic-byok-local-models.md
+**Tags:** byok-local-models
 **Summary:** (none captured)
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)

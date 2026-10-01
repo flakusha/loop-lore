@@ -12,6 +12,8 @@
 **Status Note:** worktree `css-dedup`, commit pending
 **Priority:** Medium
 **Effort:** Medium
+**Epic:** epic-frontend-bundle-optimization.md
+**Tags:** frontend-bundle-optimization
 
 ## Summary
 

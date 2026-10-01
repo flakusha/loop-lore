@@ -11,6 +11,8 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-frontend-settings.md
+**Tags:** frontend-settings
 
 ## Summary
 

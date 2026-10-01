@@ -12,6 +12,8 @@
 **Status Note:** verified 2026-09-07; bookkeeping
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-messages.md
+**Tags:** messages
 
 ## Summary
 

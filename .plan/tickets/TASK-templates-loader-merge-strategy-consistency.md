@@ -11,6 +11,8 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-config-templates.md
+**Tags:** config-templates
 **Related:** TASK-config-file-separation-domain-extraction
 
 ## Summary

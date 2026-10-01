@@ -11,6 +11,8 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-asset-platform-capabilities.md
+**Tags:** asset-platform-capabilities
 
 ## Summary
 

@@ -11,6 +11,8 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-worlds-extension.md
+**Tags:** worlds-extension
 
 ## Summary
 

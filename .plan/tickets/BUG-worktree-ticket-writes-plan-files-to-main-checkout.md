@@ -12,6 +12,8 @@
 **Status Note:** duplicate of `BUG-scripts-worktree-ticket-writes-to-cwd-instead-of-worktree-pa` (issue 81dc8f9); root-cause analysis posted there (2026-08-31)
 **Priority:** medium
 **Effort:** low
+**Epic:** epic-worktree-plan-tooling.md
+**Tags:** worktree-plan-tooling
 
 ## Summary
 

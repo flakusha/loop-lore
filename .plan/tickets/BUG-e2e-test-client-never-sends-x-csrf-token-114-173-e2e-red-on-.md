@@ -12,6 +12,8 @@
 **Status Note:** fix-review-quickwins; client wiring for ccac5b9d
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-e2e-integration-testing.md
+**Tags:** e2e-integration-testing
 
 ## Summary
 

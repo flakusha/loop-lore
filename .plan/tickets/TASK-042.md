@@ -7,6 +7,8 @@
 **Status Note:** on dev, 2026-09-27 (NSFW game-mechanics batch closeout)
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-nsfw-game-mechanics.md
+**Tags:** nsfw-game-mechanics
 **Summary:** Reputation on shared ReputationScore + reputation_changed event.
 **Context:** Gameplay-layer social consequences feeding faction/crime.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

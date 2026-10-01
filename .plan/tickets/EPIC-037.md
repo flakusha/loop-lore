@@ -5,6 +5,8 @@
 
 **Status:** Done
 **Status Note:** duplicate
+**Epic:** epic-companion-pet-mount.md
+**Tags:** companion-pet-mount
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

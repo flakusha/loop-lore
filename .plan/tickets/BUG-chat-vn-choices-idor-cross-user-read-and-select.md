@@ -12,6 +12,8 @@
 **Status Note:** guard fixed + compiles in worktree merge-review-followups, 2026-08-27
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-group-chat.md
+**Tags:** group-chat
 
 ## Summary
 

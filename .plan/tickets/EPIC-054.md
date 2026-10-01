@@ -5,6 +5,8 @@
 
 **Status:** Done
 **Status Note:** duplicate
+**Epic:** epic-embeddable-engine-game-frontend.md
+**Tags:** embeddable-engine-game-frontend
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

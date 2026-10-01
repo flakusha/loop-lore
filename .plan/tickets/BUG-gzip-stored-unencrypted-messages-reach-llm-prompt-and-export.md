@@ -11,6 +11,8 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Small
+**Epic:** epic-crypto.md
+**Tags:** crypto
 
 ## Summary
 

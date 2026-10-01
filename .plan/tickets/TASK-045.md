@@ -6,6 +6,8 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Very High
+**Epic:** epic-nsfw-game-mechanics.md
+**Tags:** nsfw-game-mechanics
 **Summary:** Species variants gated by config.toml cross-species pairs matrix.
 **Context:** Gameplay-layer species-specific reproduction/attraction.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

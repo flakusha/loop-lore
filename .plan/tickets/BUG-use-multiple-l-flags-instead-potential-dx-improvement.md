@@ -12,6 +12,8 @@
 **Status Note:** fixed: comma lists + single-edit application
 **Priority:** low
 **Effort:** Medium
+**Epic:** epic-worktree-plan-tooling.md
+**Tags:** worktree-plan-tooling
 
 ## Summary
 

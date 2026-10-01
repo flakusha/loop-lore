@@ -13,6 +13,8 @@
 **Priority:** medium
 **Priority Tier:** P3
 **Effort:** Medium
+**Epic:** epic-assistant-step-planning.md
+**Tags:** assistant-step-planning
 **Area:** assistant
 **Source:** reconcile review (Scout Batch A — ISSUE-7)
 

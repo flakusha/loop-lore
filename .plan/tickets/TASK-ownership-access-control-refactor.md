@@ -12,6 +12,8 @@
 **Status Note:** 2026-08-18
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-chat-privacy.md
+**Tags:** chat-privacy
 
 ## Summary
 

@@ -12,6 +12,8 @@
 **Status Note:** service + route + message metadata column (migration 042) + frontend types shipped (`4809f056`, `c76b0ef5`); lint/typecheck cleanup `44e22069`
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-npc-bdi-autonomy.md
+**Tags:** npc-bdi-autonomy
 
 **Summary:**
 Persist NPC movement events in message metadata and render movement indicators in chat UI. Backend: store movement events (actorId, fromLocationId, toLocationId, pattern) in message metadata JSON field. Frontend: display movement events as distinct visual indicators in chat message stream.

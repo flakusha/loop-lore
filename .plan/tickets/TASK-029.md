@@ -7,6 +7,8 @@
 **Status Note:** on dev, 2026-09-23
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-rpg-content-systems.md
+**Tags:** rpg-content-systems
 **Summary:** Question-driven RPG chat mode — GM emits structured inline questions, answers drive quest/inventory state.
 **Context:** Question UI + answer orchestration; backend quest/inventory hooks already exist.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

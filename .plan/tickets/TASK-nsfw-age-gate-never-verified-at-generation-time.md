@@ -11,6 +11,8 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-nsfw-moderation-priority.md
+**Tags:** nsfw-moderation-priority
 
 ## Summary
 

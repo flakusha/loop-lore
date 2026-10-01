@@ -6,6 +6,8 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Medium (layering API + UI affordances + pacing presets)
+**Epic:** epic-actor-autonomy-story-drive.md
+**Tags:** actor-autonomy-story-drive
 **Summary:** Provide the layered configuration surface for actor autonomy pacing: world default → chat override → per-actor override, with pacing presets (serene / organic / brisk), an unlimited stress preset gated to dev builds, and UI affordances in chat + world settings pages.
 **Context:** Referenced by `epic-actor-autonomy-story-drive.md` Work Item list as `TASK-autonomy-config-surface` (line 72) and Concrete Implementation table row 6 (line 106). Listed as `TBD — needs filing` in the gap-audit (2026-09-23). The autonomy subsystem already has `NpcNavigationService` and the story auto-drive scheduler; this ticket supplies the user-facing config knobs that tune it.
 
