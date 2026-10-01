@@ -3,7 +3,7 @@
 
 # BUG: Migration 020 logs via console.warn with eslint-disable instead of emitWarning
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 

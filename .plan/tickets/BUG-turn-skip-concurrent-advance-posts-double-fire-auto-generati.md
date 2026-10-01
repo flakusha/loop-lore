@@ -3,7 +3,7 @@
 
 # BUG: Turn-skip concurrent advance POSTs double-fire auto-generation
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 
