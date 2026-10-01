@@ -12325,6 +12325,12 @@
       "source": ".plan/tickets/TASK-019-users-encryption-secret.md"
     }
   ],
+  "src/db/migrations/020_actor_story_points_partial_unique.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-migration-020-logs-via-console-warn-with-eslint-disable-inst.md"
+    }
+  ],
   "src/db/migrations/021_": [
     {
       "kind": "epic",
@@ -24026,7 +24032,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-pruneexpired-boundary-comment-states-opposite-of-implementat.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-rate-limit-sliding-window-expiry-uses-cutoff-off-by-one-reta.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-refund-contract-invites-over-admission-in-peek-record-flows-.md"
     },
     {
       "kind": "ticket",
@@ -27991,6 +28005,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-turn-skip-concurrent-advance-posts-double-fire-auto-generati.md"
     }
   ],
   "src/routes/chats/turn-skip-routes.ts": [
@@ -37085,6 +37103,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-audit-follow-up-maxratio-silently-raised-10x-without-regress.md"
+    }
+  ],
+  "src/utils/safe-buffer/base64.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-safe-buffer-base64url-guard-accepts-whitespace-variants-and-.md"
     }
   ],
   "src/utils/safe-buffer/compression.test.ts": [

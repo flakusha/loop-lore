@@ -6564,7 +6564,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-worktree-git-helpers-pass-no-isolated-env-so-hook-context-le.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-WORKTREE-REPORT-CRASHES-ON-MALFORMED-OR-MISSING-CHECK-REPORT": {
     "epic": "",
@@ -16229,7 +16229,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/FIX-add-jitter-to-the-finalize-lock-retry-backoff.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "FIX-PARALLELIZE-BUN-TEST-INVOCATIONS-ISOLATE-PINS-SUITE-TO-ONE-C": {
     "epic": "",
