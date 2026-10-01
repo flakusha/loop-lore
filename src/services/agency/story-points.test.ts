@@ -10,6 +10,7 @@ import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { Kysely, } from "kysely";
 import type { DB, } from "../../db";
 import { createInMemoryDb, } from "./__helpers/in-mem-db";
+import { refreshActorStoryPointsCache, } from "./actor-story-points-cache";
 import {
   CapExceededError,
   earnStoryPoints,
@@ -442,5 +443,24 @@ describe("spendStoryPoints — concurrency", () => {
     const bal = await getStoryPointBalance(db, ACTOR, null,);
     expect(bal.balance,).toBe(1,);
     expect(bal.spent_total,).toBe(9,);
+  });
+});
+
+describe("refreshActorStoryPointsCache - best-effort contract", () => {
+  test("resolves instead of rejecting when the denormalization fails", async () => {
+    // A closed handle makes getStoryPointBalance throw. The refresh is
+    // best-effort: the canonical ledger is already committed by the time it
+    // runs, so the failure is logged and absorbed rather than propagated.
+    //
+    // This is exactly what lets earn/spend call it as a bare `void` with no
+    // .catch() - without the internal try/catch those call sites would emit
+    // an unhandled rejection.
+    // BUG-story-points-mutations-double-swallow-cache-refresh-failures.
+    const { db: dead, raw: deadRaw, } = await createInMemoryDb();
+    deadRaw.close();
+
+    await expect(
+      refreshActorStoryPointsCache(dead, ACTOR, null,),
+    ).resolves.toBeUndefined();
   });
 });
