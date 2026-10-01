@@ -8,7 +8,7 @@
 **Effort:** Medium
 **Type:** Feature Epic
 **Tags:** npc-social, generative-agents, cross-cutting
-**Related:** epic-character-relationships.md, epic-memory-knowledge-systems.md, epic-group-chat.md, epic-npc-bdi-autonomy.md, epic-npc-management-ui.md, epic-time-scale.md, epic-social-interaction.md
+**Related:** epic-relationships.md, epic-memory-knowledge-systems.md, epic-group-chat.md, epic-npc-bdi-autonomy.md, epic-npc-management-ui.md, epic-time-scale.md, epic-social-interaction.md
 
 ## Summary
 
@@ -65,7 +65,7 @@ The dependency chain is clean: traits → BDI (separate epic) → relationships 
 ## Dependencies
 
 - `epic-npc-bdi-autonomy.md` — BDI triggers (consume when shipped; gracefully no-op if not)
-- `epic-character-relationships.md` — relationship strength (read+write)
+- `epic-relationships.md` — relationship strength (read+write)
 - `epic-memory-knowledge-systems.md` — episodic memory (read+write)
 - `epic-group-chat.md` — turn-taking + log-store shape (reused)
 - `epic-social-interaction.md` — player-driven social systems (sibling; NPC-driven is the gap)
