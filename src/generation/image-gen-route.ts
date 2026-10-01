@@ -170,6 +170,9 @@ export async function handleImageGeneration(
         sizeBytes: buffer.length,
         buffer,
         altText: `Generated: ${meta.width}x${meta.height} ${meta.format}`,
+        // Each generation run is a distinct item, even when the provider happens
+        // to return bytes that already exist on the server.
+        dedupe: false,
       },
       uploadDir: config.assets.uploadDir,
     },);
