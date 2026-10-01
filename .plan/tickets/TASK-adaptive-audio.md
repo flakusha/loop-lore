@@ -15,7 +15,8 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic**:
+**Epic:** epic-chat-product-features.md
+**Tags:** features
 **Related**: TASK-cross-tool-data-portability-review.md
 
 ## Summary

@@ -11,6 +11,8 @@
 **Status:** Not Started
 **Priority:** Medium
 **Effort:** Small
+**Epic:** epic-testing-qa.md
+**Tags:** testing, coverage-waiver
 
 `scripts/check/coverage.mjs` floors `src/chat/service/ownership.ts` at 60 (per-file waiver under key `chat:src/chat/service/ownership.ts`) because bun's coverage tool cannot reliably track hits on lines inside async function bodies. The 16-test suite (`bun test ./src/chat/service/ownership.test.ts`) exercises every branch (concurrent loser, autoInvite true/false, settings-check failure, actorExists probe, etc.) but bun counts the trx-body lines as uncovered. Refactor extracted helpers (`executeTransferTx`, `runPostTransferHooks`, `interpretTransferError`) and flattened multi-line returns to single-line consts — coverage improved 62.5% → 64.97% but the structural limit caps further gains. Floor 60 matches the achieved coverage with headroom; remove the waiver if bun coverage ever tracks async-body lines correctly.
 

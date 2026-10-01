@@ -15,7 +15,8 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic**:
+**Epic:** epic-character-internal-traits.md
+**Tags:** character, traits
 **Related**: TASK-cross-tool-data-portability-review.md
 
 ## Summary

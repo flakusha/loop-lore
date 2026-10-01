@@ -6,6 +6,8 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-memory-knowledge-systems.md
+**Tags:** memory-knowledge-systems
 
 **Summary:** Render an actor's memories as a node/edge graph on the shared graph-canvas: memories as nodes, same `source_chat_id` / shared keywords as edges. Read-only v1.
 

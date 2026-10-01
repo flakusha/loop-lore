@@ -11,6 +11,8 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-config-templates.md
+**Tags:** config-templates
 
 ## Summary
 

@@ -11,6 +11,8 @@
 **Status:** Not Started
 **Priority:** Medium
 **Effort:** Medium
+**Epic:** epic-tool-calling-mcp.md
+**Tags:** mcp, tools
 **Created:** 2026-08-14
 **Source:** Platform research deep-dive (Convai, SillyTavern)
 

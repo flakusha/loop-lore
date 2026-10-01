@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-worktree-plan-tooling.md
 **Type:** Task
 **Summary:** The 5-issue Workflow / GM Routing cluster (open-untriaged.md § New clusters) covers persist run sessions, strip mention prefix, assistant-GM handoff, shadow-note steering, and WorkflowRunner reuse. Each has an existing epic home (epic-workflow-engine.md for runner/session persistence; epic-assistant-gm-flows.md for GM handoff and shadow-note steering). This ticket captures the batch.
 **Context:** Per open-untriaged.md § Suggested home, suggested home is P2-C/P2-D. Per open-untriaged.md § 2026-09-25, the workflow engine already owns runner/session persistence; GM handoff and shadow-note steering stay with the assistant/GM epic. No duplicate epic justified.

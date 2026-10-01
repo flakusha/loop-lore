@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small (one migration, 16 CREATE INDEX statements)
+**Epic:** epic-schema.md
 **Summary:** Append 16 hot-path indexes that the DBAudit (2026-09-25) flagged as missing. Purely additive `CREATE INDEX` statements; no rewrites, no column changes, no renumber. Append-only policy per `src/db/migrations/README.md`.
 **Context:** DB field-audit 2026-09-25 (`db-migration-fixes` session, scout report) cross-referenced every table's hot read paths against existing indexes. 15 tables lack a covering index for at least one common lookup: notifications unread scan, world timeline feed, per-actor memory audit, GM shadow/whitenote GC + LLM gate filter, asset share listing, crafting attempt outcomes, crafting station listing, dice roll chat feed, world invite listing + GC, session listing, telemetry per-user/per-chart panels, blog author profile + comment threads, crafting recipe browser, and quest active-vs-done split. All indexes are read-path accelerators that the schema already implies via FK columns.
 

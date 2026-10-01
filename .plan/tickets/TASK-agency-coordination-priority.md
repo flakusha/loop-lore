@@ -6,6 +6,8 @@
 **Status:** Not Started
 **Priority:** P1 (within EPIC-RESEARCH-AGENCY-QUALITY)
 **Effort:** 1 day
+**Epic:** epic-agency-story-points.md
+**Tags:** agency, bdi
 **Parent epic:** `epic-research-agency-quality.md`
 **Related:** `epic-actor-autonomy-story-drive.md` (scheduler), `src/turning/turn-manager/` (`participants.ts`, `selection.ts`), `src/generation/auto-gen/pass-filter.ts`
 

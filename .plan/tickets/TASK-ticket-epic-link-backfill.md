@@ -11,6 +11,8 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Medium
+**Epic:** epic-code-quality.md
+**Tags:** tooling, plan-hygiene
 
 ## Summary
 

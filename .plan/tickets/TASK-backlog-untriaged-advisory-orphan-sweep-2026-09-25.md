@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small
+**Epic:** epic-worktree-plan-tooling.md
 **Type:** Task
 **Summary:** open-untriaged.md § 2026-09-25 epic linkage review applied high-confidence Epic: field attachments to 5 tickets, identified 9 source-already-declares-an-epic rows that need index-regeneration, and listed 11 RPG opt-in / 5 workflow-GM routing / 7 mesh-federation items with explicit existing-epic homes. This ticket is the bookkeeping pass that closes the 2 hold-or-close rows (e12566a idempotency, dd6158e TASK-unified placeholder, c667507 ticket-epic-link backfill) and confirms the index reflects all attachments after a plan:sync:fix run.
 **Context:** Per the 2026-09-25 review, the index metadata is intentionally not bulk-linked. Five source files now carry the correct Epic: field (assistant-lorebook-tools, browser test fixtures, capability-disclosure, regex-pipeline-hardening, conversation-branching). The current plan:sync:fix updates status links but does not backfill body-level Epic: fields; a fresh index regeneration is required after the source-level edits land.

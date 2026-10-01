@@ -6,6 +6,8 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-chat-product-features.md
+**Tags:** chat-product-features
 **Summary:** TypeScript classifier inference via transformers.js/ONNX reusing the browser local-engine and server seams; extend ELIGIBLE_TASKS with classify/rerank ops.
 **Context:** Browser path grounded in local-engine.ts workers; server side needs an ONNX-vs-sidecar spike before any new dependency. Details in ## Summary below.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

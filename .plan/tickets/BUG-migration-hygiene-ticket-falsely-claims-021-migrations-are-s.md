@@ -6,6 +6,8 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Small
+**Epic:** epic-db-migration-compaction.md
+**Tags:** db, migration
 **Type:** Bug
 **Summary:** `TASK-backlog-migration-hygiene-duplicate-prefix-gate.md` asserts the two `021` migrations are "both shipped", making the fix "not a free renumber". That is false: the production DB has 4 applied migrations and zero at any `02x` prefix, so the renumber was free. The ticket also still reads "Not Started" and "currently RED on `dev`" for a collision that is now resolved with the gate green.
 **Context:** Found while reviewing the DB-split plan filing. The append-only rule in `src/db/migrations/README.md` forbids renumbering because *the filename is the identity stored in `kysely_migration`* — that binds only names that have actually run. Note the premise is easy to get wrong: a repo glob for `*.db` returns nothing because `loop-lore-data/` is gitignored, so absence of a DB in the tree is NOT evidence a migration is unshipped; you must query the file on disk.

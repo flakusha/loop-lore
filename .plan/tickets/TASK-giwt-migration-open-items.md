@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Small
+**Epic:** epic-worktree-plan-tooling.md
 **Summary:** Close the three open decisions in the giwt migration try-log: gpg-unlock wrapping, legacy scripts/worktree CLI deletion, giwt-report schema-drift revisit
 **Context:** Found 2026-09-19 docs-gap sweep; source docs/giwt-scripts-map.md try-log open items; no .plan artifact tracks them
 **Acceptance Criteria:** See ## Acceptance Criteria below.

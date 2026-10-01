@@ -15,7 +15,8 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic**:
+**Epic:** epic-chat-product-features.md
+**Tags:** features
 **Related**: TASK-nsfw-frontend-integration.md
 
 ## Summary

@@ -11,6 +11,8 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Small
+**Epic:** epic-asset-platform-capabilities.md
+**Tags:** assets
 
 ## Summary
 

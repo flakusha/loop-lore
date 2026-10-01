@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Large
+**Epic:** epic-matrix-integration.md
 **Type:** Task
 **Summary:** Make the world keep moving when the player isn't looking: weather cycles, economy ticks, factions react, NPC relationships drift, narrative beats schedule themselves. Touches Weather, Economy, Faction, Social, Narrative, Exploration.
 **Context:** `matrix-cross-mechanics.md` G20 is 🟡 Medium (future), P6+ deferred. Inspiration: AI Town, Nomi, AI Dungeon. The matrix says "extend world_events/timeline + 'world continues without you' (#14)." This is the cross-cutting stitching that ties existing systems into a continuous world clock rather than per-session state.

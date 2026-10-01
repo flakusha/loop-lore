@@ -6,6 +6,8 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-2d-sprite-world.md
+**Tags:** 2d-graph, canvas
 
 **Summary:** Render `world_timeline_events` as a chronological lane layout on the shared graph-canvas: events as time-ordered nodes, `timeline_id` branches as parallel lanes. Read-only v1.
 

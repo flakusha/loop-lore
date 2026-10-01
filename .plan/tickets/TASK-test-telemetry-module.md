@@ -15,7 +15,8 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic**:
+**Epic:** epic-testing-qa.md
+**Tags:** e2e, test-gap
 **Related**: TASK-reconciliation-plan.md
 
 ## Summary

@@ -6,6 +6,8 @@
 **Status:** Done
 **Priority:** low
 **Effort:** Medium
+**Epic:** epic-db-migration-compaction.md
+**Tags:** db, migration
 
 **Summary:** migration 020 logs via console warn with eslint disable inst
 **Context:** Context: 020_actor_story_points_partial_unique.ts:44 (this week).

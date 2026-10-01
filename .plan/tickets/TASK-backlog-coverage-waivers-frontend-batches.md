@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-code-quality.md
 **Type:** Task
 **Summary:** The 5-issue Coverage waivers + frontend batches cluster (open-untriaged.md § New clusters) groups 2 coverage-waiver tickets (sub-floor waiver, raise below-floor modules) and 3 frontend batches (alpine admin/npc/settings clusters, VN pages/new-chat/quests/worlds). This ticket captures the batch under release-010 hardening so the work lands with the size-strict and size-gate ceiling recovery.
 **Context:** Per open-untriaged.md § Suggested home, suggested home is release-010 hardening. The 2 coverage-waiver tickets are linked to TASK-waiver-coverage-floor-below-80-for-plugins-frontend-native-i.md and a fresh ticket for raising below-floor modules.

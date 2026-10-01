@@ -6,6 +6,8 @@
 **Status:** Not Started
 **Priority:** P1 (within EPIC-RESEARCH-AGENCY-DECISION)
 **Effort:** 1 week
+**Epic:** epic-agency-story-points.md
+**Tags:** agency, bdi
 **Parent epic:** `epic-research-agency-decision.md`
 **Related:** `epic-agency-story-points.md` (`DailyPlan`, `PlannedActivity`, `ReactionDecision`, `PlanRevision`, `ChatBuffer` types - all drafted, not materialised), `epic-actor-autonomy-story-drive.md` (scheduler), `src/memory/` (memory budget / provisioning / purge), `epic-character-internal-traits.md` (aspirations)
 

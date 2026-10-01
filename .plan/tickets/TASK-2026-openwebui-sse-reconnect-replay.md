@@ -6,6 +6,8 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small
+**Epic:** epic-platform-research.md
+**Tags:** openwebui, parity
 **Labels:** frontend, streaming
 **Summary:** Persist the last SSE sequence number per chat in `sessionStorage` and on `EventSource` error/close reconnect with the `Last-Event-ID` header so the server replays buffered events via `StreamBuffer.replay(fromSeq)`. Reconcile `isGenerating` against the server's `/api/generation/status/:chatId` rather than a stale local flag.
 

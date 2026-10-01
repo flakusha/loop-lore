@@ -11,6 +11,8 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Small
+**Epic:** epic-code-quality.md
+**Tags:** cleanup
 
 ## Summary
 

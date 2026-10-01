@@ -6,6 +6,7 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Trivial
+**Epic:** epic-chat-lifecycle-moderation.md
 **Type:** Bug
 **Summary:** Advisory orphan `e12566a` (idempotency-table-backend) reported by `bun run plan:sync` 2026-09-10. Bucket A landed the table backend as the default; the original ticket must be reproduced against current code, otherwise closed as stale.
 **Context:** `.plan/backlog/open-untriaged.md` § 2026-09-10 re-triage flags this advisory orphan with the explicit instruction: reproduce before linking; the backlog says the table backend is now the default, so close if the defect no longer exists. Bucket A shipped the idempotency user-scope fix (c1cd4d8b); the table backend landed as part of that wave. No further symptoms have been reported since the gate turned green.

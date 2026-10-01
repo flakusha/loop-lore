@@ -11,6 +11,8 @@
 **Status:** Not Started
 **Priority:** Low
 **Effort:** Med
+**Epic:** epic-avatar-regeneration-control.md
+**Tags:** avatar-regeneration-control
 **Related:** TASK-3d-character-avatars, TASK-emotions-avatar-edit-model
 
 ## Summary

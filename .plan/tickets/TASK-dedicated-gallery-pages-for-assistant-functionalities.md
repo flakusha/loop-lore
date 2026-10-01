@@ -11,6 +11,8 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Medium
+**Epic:** epic-frontend-gallery.md
+**Tags:** assets
 
 ## Summary
 

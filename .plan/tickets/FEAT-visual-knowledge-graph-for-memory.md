@@ -10,6 +10,8 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Medium
+**Epic:** epic-2d-sprite-world.md
+**Tags:** 2d-graph, canvas
 
 ## Summary
 

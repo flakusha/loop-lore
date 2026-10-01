@@ -15,7 +15,8 @@
 **Priority**: medium
 **Labels**:
 **Assignee**:
-**Epic**:
+**Epic:** epic-db-migration-compaction.md
+**Tags:** db, migration
 **Related**:
 
 Git issue: `f77863b`

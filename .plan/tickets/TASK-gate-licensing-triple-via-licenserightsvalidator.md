@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Small (validator map + unit test)
+**Epic:** epic-rpg-mechanics.md
 **Summary:** `character_licensing` `allow_derivatives`/`allow_commercial`/`share_alike` (migration `001:1291-1293`) are a cache of `license_type`. Add `licenseRightsValidator` mapping `LicenseType` to the allowed triple, next to `licensing.test.ts`, with a unit test. No column changes.
 **Context:** DB schema-gate audit (2026-09-25, db-migration-fixes session). The cached triple can drift from `license_type` without a single source of truth; the validator centralizes the mapping.
 
