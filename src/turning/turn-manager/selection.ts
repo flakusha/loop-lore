@@ -36,7 +36,7 @@ export async function selectNextActor(
   // again immediately. Fall back to the full set when EVERY candidate is
   // cooling — a solo/small cast must still be able to take its turn.
   const cooling = await fetchSkipCooldowns(host.db, host.chatId,);
-  const eligible = participants.filter((p,) => !cooling.has(p.actorId,),);
+  const eligible = participants.filter((p,) => !cooling.has(p.actorId,));
   const candidates = eligible.length > 0 ? eligible : participants;
 
   // Selection happens inside persistState's mutation closure: on a CAS

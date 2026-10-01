@@ -29,9 +29,9 @@ import type { DB, } from "../../db/schema";
 import { getLogger, type Logger, } from "../../logger";
 import { createStreamingSanitizer, } from "../../regex/html-sanitize";
 import {
+  type AssistantTuningOverride,
   AUTO_GEN_SHORT_REPLY_MAX_TOKENS,
   resolveAutoGenSamplingParams,
-  type AssistantTuningOverride,
 } from "../assistant-tuning";
 import { activeGenerations, processStreamingChunk, } from "../cancellation-manager";
 import type { ChunkEvent, } from "../providers/types";
@@ -88,21 +88,14 @@ function bumpLastRendered(attemptId: string | undefined, seq: number,): void {
   if (active) { active.lastRenderedChunkIndex = seq; }
 }
 
-/**
- * Detect an intent-classifier-predicted short reply for this turn.
- *
- * Skipped when the per-chat tuning override pins `maxTokens` — an explicit
- * user value beats the heuristic, and skipping avoids a pointless aux call.
- * @param opts - Classifier inputs + the validated per-chat override.
- * @returns {Promise<boolean>}
- */
+/** Intent-classifier short-reply heuristic; skipped when the per-chat override pins maxTokens. */
 async function detectShortReply(opts: {
   assistantTuning?: AssistantTuningOverride;
   userMessage?: string;
   config: Config;
   database: Kysely<DB>;
   log: Logger;
-}): Promise<boolean> {
+},): Promise<boolean> {
   if ((opts.assistantTuning?.maxTokens ?? null) !== null) { return false; }
   if (!opts.userMessage) { return false; }
   const intent = await classifyIntent(opts.userMessage, opts.config, opts.database,);
@@ -139,8 +132,8 @@ export async function callLlm(opts: CallLlmOpts,): Promise<CallLlmResult> {
   } = opts;
   const log = getLogger().child({ module: "auto-gen", },);
 
-  const shortReply = await detectShortReply({ assistantTuning, userMessage, config, database, log, });
-  const { temperature, maxTokens, } = resolveAutoGenSamplingParams({ tuning: assistantTuning, shortReply, });
+  const shortReply = await detectShortReply({ assistantTuning, userMessage, config, database, log, },);
+  const { temperature, maxTokens, } = resolveAutoGenSamplingParams({ tuning: assistantTuning, shortReply, },);
 
   let accumulatedContent = "";
   let accumulatedThinking: string | undefined;
