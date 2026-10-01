@@ -8,11 +8,11 @@
  */
 import { describe, expect, it, } from "bun:test";
 import {
-  OutfitChangeInitiator,
   allowAllOutfitChangeGate,
-  requestOutfitChange,
   type OutfitChangeGate,
+  OutfitChangeInitiator,
   type OutfitChangeRequest,
+  requestOutfitChange,
 } from "./change-gate";
 
 const BASE: OutfitChangeRequest = {

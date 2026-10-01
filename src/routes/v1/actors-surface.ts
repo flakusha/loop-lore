@@ -37,11 +37,11 @@ import { storyItemsRoutes, } from "../story-items";
 import { storyStatesRoutes, } from "../story-states";
 import { storyTurnsRoutes, } from "../story-turns";
 import { tradeRoutes, } from "../trade";
+import { wardrobeRoutes, } from "../wardrobe";
+import { wardrobeAvatarRoutes, } from "../wardrobe-avatars";
+import { outfitOverrideRoutes, } from "../wardrobe-overrides";
 import { worldLoreEntriesRoutes, } from "../world-lore-entries";
 import { worldsRoutes, } from "../worlds";
-import { outfitOverrideRoutes, } from "../wardrobe-overrides";
-import { wardrobeAvatarRoutes, } from "../wardrobe-avatars";
-import { wardrobeRoutes, } from "../wardrobe";
 
 /**
  * @param {RegisterPluginsOpts} opts
