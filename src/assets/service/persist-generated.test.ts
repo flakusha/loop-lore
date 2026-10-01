@@ -9,7 +9,7 @@ import { afterAll, expect, test, } from "bun:test";
 import { mkdtempSync, rmSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
-import { AssetLinkEntity, } from "../../db/enums";
+import { AssetLinkEntity, AssetVisibility, } from "../../db/enums";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertUsers, } from "../../test-utils/insert-helpers";
 import { describePristine, } from "../../test-utils/pristine";
@@ -65,7 +65,7 @@ describeReal("persistGeneratedImages", () => {
     }
   });
 
-  test("flags duplicate content on repeat persist", async () => {
+  test("repeat persist of identical bytes creates a distinct item", async () => {
     const { db, sqlite, } = await createTestDb();
     try {
       await insertUsers(db, "dup-owner", "Dup Owner",);
@@ -86,8 +86,16 @@ describeReal("persistGeneratedImages", () => {
       } as const;
       const first = await persistGeneratedImages({ ...opts, images: [...opts.images,], },);
       const second = await persistGeneratedImages({ ...opts, images: [...opts.images,], },);
+
+      // Identical bytes, but a generated run is a new iteration — it must not
+      // collapse onto the earlier row and inherit its id or visibility.
       expect(first[0]!.duplicate,).toBe(false,);
-      expect(second[0]!.duplicate,).toBe(true,);
+      expect(second[0]!.duplicate,).toBe(false,);
+      expect(second[0]!.asset.id,).not.toBe(first[0]!.asset.id,);
+      expect(second[0]!.asset.visibility,).toBe(AssetVisibility.Private,);
+
+      const rows = await db.selectFrom("assets",).select("id",).execute();
+      expect(rows.length,).toBe(2,);
     } finally {
       sqlite.close();
     }
