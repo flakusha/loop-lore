@@ -44,22 +44,23 @@ const CAPABILITY_NODE_MAP: Record<ImageEditCategory, string[]> = {
 export class ComfyUIEditProvider implements ImageEditProvider {
   readonly name: ImageEditBackend = "comfyui";
 
-  private client: ComfyUIClient | null = null;
   private installedNodes: Set<string> | null = null;
 
+  /**
+   * Built per call rather than memoized: `ComfyUIClient` holds no session state
+   * (only baseUrl/timeout/pollInterval), and caching it pinned the provider to
+   * whichever `loadConfig()` happened to answer first, so a later config change
+   * — or a test pointing the backend elsewhere — was silently ignored.
+   */
   private getClient(): ComfyUIClient {
-    if (!this.client) {
-      const config = loadConfig();
-      const sdConfig = pickSdProvider(config.generation.providers.sd, "edit",);
-      const baseUrl = sdConfig?.baseUrl ?? "http://127.0.0.1:8188";
+    const config = loadConfig();
+    const sdConfig = pickSdProvider(config.generation.providers.sd, "edit",);
 
-      this.client = new ComfyUIClient({
-        baseUrl,
-        timeout: sdConfig?.generationTimeout ?? 120_000,
-        pollIntervalMs: 500,
-      },);
-    }
-    return this.client;
+    return new ComfyUIClient({
+      baseUrl: sdConfig?.baseUrl ?? "http://127.0.0.1:8188",
+      timeout: sdConfig?.generationTimeout ?? 120_000,
+      pollIntervalMs: 500,
+    },);
   }
 
   async healthCheck(): Promise<boolean> {
