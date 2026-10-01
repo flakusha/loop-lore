@@ -115,8 +115,18 @@ const blessedDefaultExport: Record<string, unknown> = {
   default: blessedStub,
   ...blessedStub,
 };
+// ── API dispatcher mock ────────────────────────────────────────
+// ChatWidget.handleSend/loadMessages delegate to ./api; stub the module so
+// delegation is observable without network access.
 const handleSendMock = mock(() => Promise.resolve());
 const loadMessagesMock = mock(() => Promise.resolve());
+if (ISOLATED) {
+  mock.module("./api", () => ({
+    API_BASE: "http://test.local",
+    handleSend: handleSendMock,
+    loadMessages: loadMessagesMock,
+  }),);
+}
 if (ISOLATED) {
   mock.module("blessed", () => blessedDefaultExport,);
 }
