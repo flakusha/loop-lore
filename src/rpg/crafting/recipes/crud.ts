@@ -2,6 +2,26 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { Kysely, } from "kysely";
+import { registerContentVersion, } from "../../../db/content-version";
+
+// Base `data_version` 0 projection for `crafting_recipes` (columns added by
+// migration 031). Declared beside the module that creates recipes.
+registerContentVersion("crafting_recipes", 0, [
+  "world_id",
+  "name",
+  "description",
+  "discipline",
+  "tier",
+  "output_item_id",
+  "output_quantity",
+  "crafting_time_seconds",
+  "base_success_chance",
+  "base_quality_min",
+  "base_quality_max",
+  "perfect_threshold",
+  "station_type_required",
+  "tags",
+],);
 import type { CraftingDiscipline, } from "../../../db/enums";
 import type { DB, } from "../../../db/schema";
 import { jsonStringifyOr, uid, } from "../../../utils";

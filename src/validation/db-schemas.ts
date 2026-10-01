@@ -888,6 +888,8 @@ export const LocationsSchema = t.Object({
   coord_z: t.Optional(t.Number(),),
   current_route_id: t.Optional(t.String(),),
   travel_progress: t.Optional(t.Number(),),
+  data_version: t.Optional(t.Number(),),
+  record_hash: t.Optional(t.String(),),
 },);
 
 // ── world_avatar_config ────────────────────────────────────────────
@@ -961,6 +963,8 @@ export const WorldLoreEntriesSchema = t.Object({
   source_count: t.Optional(t.Number(),),
   distortion_level: t.Optional(t.Number(),),
   disputed: t.Optional(t.Number(),),
+  data_version: t.Optional(t.Number(),),
+  record_hash: t.Optional(t.String(),),
 },);
 
 // ── world_members ────────────────────────────────────────────
@@ -1134,6 +1138,8 @@ export const ActorLoreEntriesSchema = t.Object({
   key_groups: t.Optional(t.String(),),
   scan_depth: t.Optional(t.Number(),),
   activation_chance: t.Optional(t.Number(),),
+  data_version: t.Optional(t.Number(),),
+  record_hash: t.Optional(t.String(),),
 },);
 
 // ── actor_notes ────────────────────────────────────────────
@@ -1222,6 +1228,8 @@ export const GrowthLogSchema = t.Object({
   source_event_id: t.Optional(t.String(),),
   confirmed_at: t.Optional(t.String(),),
   confirmed_by: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
 },);
 
 // ── character_arousal ────────────────────────────────────────────
@@ -1656,6 +1664,8 @@ export const ChatPinsSchema = t.Object({
   message_id: t.String(),
   pinned_by: t.String(),
   pinned_at: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
 },);
 
 // ── chat_sections ────────────────────────────────────────────
@@ -1733,6 +1743,8 @@ export const ChatRandomEventsSchema = t.Object({
   fired_at: t.Number(),
   expires_at: t.Number(),
   fired_count: t.Optional(t.Number(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
 },);
 
 // ── group_initiatives ────────────────────────────────────────────
@@ -1921,6 +1933,8 @@ export const ItemsSchema = t.Object({
   weight: t.Optional(t.Number(),),
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
+  data_version: t.Optional(t.Number(),),
+  record_hash: t.Optional(t.String(),),
 },);
 
 // ── npc_states ────────────────────────────────────────────
@@ -1972,6 +1986,8 @@ export const QuestsSchema = t.Object({
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
   completed_at: t.Optional(t.String(),),
+  data_version: t.Optional(t.Number(),),
+  record_hash: t.Optional(t.String(),),
 },);
 
 // ── shadow_notes ────────────────────────────────────────────
@@ -1984,6 +2000,8 @@ export const ShadowNotesSchema = t.Object({
   visibility: t.Optional(ShadowNoteVisibilitySchema,),
   expires_at: t.Optional(t.String(),),
   author_type: t.Optional(ShadowNoteAuthorTypeSchema,),
+  data_version: t.Optional(t.Number(),),
+  record_hash: t.Optional(t.String(),),
 },);
 
 // ── whitenotes ────────────────────────────────────────────
@@ -1995,6 +2013,8 @@ export const WhitenotesSchema = t.Object({
   priority: t.Optional(t.Number(),),
   scope: t.Optional(WhiteneoteScopeSchema,),
   expires_at: t.Optional(t.String(),),
+  data_version: t.Optional(t.Number(),),
+  record_hash: t.Optional(t.String(),),
 },);
 
 // ── crafting_attempts ────────────────────────────────────────────
@@ -2065,6 +2085,8 @@ export const CraftingRecipesSchema = t.Object({
   station_type_required: t.Optional(CraftingStationTypeSchema,),
   discovered_by_default: t.Optional(t.Number(),),
   tags: t.Optional(t.String(),),
+  data_version: t.Optional(t.Number(),),
+  record_hash: t.Optional(t.String(),),
 },);
 
 // ── crafting_station_defs ────────────────────────────────────────────
@@ -2167,6 +2189,8 @@ export const RecipeDiscoveriesSchema = t.Object({
   discovery_method: DiscoveryMethodSchema,
   discovered_at: t.String(),
   mastery_level: t.Optional(t.Number(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
 },);
 
 // ── achievements ────────────────────────────────────────────
@@ -2287,6 +2311,7 @@ export const TradeHistorySchema = t.Object({
   items_offered: t.Optional(t.String(),),
   items_requested: t.Optional(t.String(),),
   trade_type: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
 },);
 
 // ── xp_ledger ────────────────────────────────────────────
@@ -2334,6 +2359,8 @@ export const BlogPostsSchema = t.Object({
   metadata: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
+  data_version: t.Optional(t.Number(),),
+  record_hash: t.Optional(t.String(),),
 },);
 
 // ── blog_rag_sources ────────────────────────────────────────────
@@ -2351,6 +2378,8 @@ export const BlogRagSourcesSchema = t.Object({
 export const BlogTagsSchema = t.Object({
   post_id: t.String(),
   tag: t.String(),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
 },);
 
 // ── actor_memories ────────────────────────────────────────────
@@ -2542,6 +2571,7 @@ export const NsfwConsentStateSchema = t.Object({
   scope: t.Optional(t.String(),),
   reason: t.Optional(t.String(),),
   revoked_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
 },);
 
 // ── nsfw_encounters ────────────────────────────────────────────
@@ -2753,6 +2783,8 @@ export const TravelRouteStopsSchema = t.Object({
   coord_x: t.Optional(t.Number(),),
   coord_y: t.Optional(t.Number(),),
   coord_z: t.Optional(t.Number(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
 },);
 
 // ── actor_locations ────────────────────────────────────────────
@@ -2805,6 +2837,8 @@ export const StatusEffectSchema = t.Object({
   source_id: t.Optional(t.String(),),
   expires_at: t.Optional(t.String(),),
   meta: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
 },);
 
 // ── interaction_logs ────────────────────────────────────────────
