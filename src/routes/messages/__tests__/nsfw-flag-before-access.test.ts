@@ -20,24 +20,27 @@ import type { DB, } from "../../../db/schema";
 import { createLogger, } from "../../../logger";
 import { createTestDb, } from "../../../test-utils/create-test-db";
 import { insertChats, insertUsers, } from "../../../test-utils/insert-helpers";
+import { ISOLATED, } from "../../../test-utils/isolate-only";
 import { uid, } from "../../../utils";
 
 const flagCalls: Array<{ userId: string; chatId: string; content: string }> = [];
-mock.module("../../../nsfw/moderation-service", () => {
-  return {
-    NsfwModerationService: class {
-      async recordAction() {/* noop */}
-    },
-  };
-},);
-mock.module("../nsfw-user-flag", () => {
-  return {
-    flagNsfwUserMessage: async (_database: unknown, userId: string, chatId: string, content: string,) => {
-      flagCalls.push({ userId, chatId, content, },);
-      throw new Error("flagNsfwUserMessage must not run before the access check",);
-    },
-  };
-},);
+if (ISOLATED) {
+  mock.module("../../../nsfw/moderation-service", () => {
+    return {
+      NsfwModerationService: class {
+        async recordAction() {/* noop */}
+      },
+    };
+  },);
+  mock.module("../nsfw-user-flag", () => {
+    return {
+      flagNsfwUserMessage: async (_database: unknown, userId: string, chatId: string, content: string,) => {
+        flagCalls.push({ userId, chatId, content, },);
+        throw new Error("flagNsfwUserMessage must not run before the access check",);
+      },
+    };
+  },);
+}
 
 // Dynamic import (after this file's mock.module calls above) + pristine
 // probe: without --isolate, an earlier file's incomplete mock of a module
@@ -50,7 +53,10 @@ const createModule: unknown = await import("../create").catch(() => null);
 const createPristine = !!createModule &&
   typeof (createModule as Record<string, unknown>).createRoutes === "function";
 const { createRoutes, } = (createPristine ? createModule : {}) as typeof import("../create");
-const describeReal = createPristine ? describe : describe.skip;
+// Both guards are required: `createPristine` for the pristine-module probe,
+// `ISOLATED` because the flagNsfwUserMessage mock above only registers there —
+// without it the real flagger runs and the sentinel-throws-500 assertions break.
+const describeReal = createPristine && ISOLATED ? describe : describe.skip;
 
 const BASE = "http://localhost";
 
