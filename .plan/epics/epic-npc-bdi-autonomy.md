@@ -9,6 +9,7 @@
 **Type:** Feature Epic
 **Tags:** npc-autonomy, bdi, generative-agents, cross-cutting
 **Related:** epic-character-internal-traits.md, epic-memory-knowledge-systems.md, epic-time-scale.md, epic-actor-autonomy-story-drive.md, epic-npc-management-ui.md, epic-npc-to-npc-social.md
+**Overview:** A daily BDI (Belief-Desire-Intention) goal-pursuit loop for NPCs at character level, closing matrix gaps G27/G28/G32. Unifies three disconnected systems — aspirations from `epic-character-internal-traits.md`, mood from `TASK-character-mood-happiness.md`, and BDI planning from `TASK-npc-bdi-planning.md` — into one scheduler that turns aspirations into executable plans, modulates them by mood, anchors them to game-time ticks, and advances them between sessions so NPC lives continue while the player is offline.
 
 ## Summary
 
