@@ -15,7 +15,11 @@
  * chats; online saves forward the presentation subset and drops it.
  */
 
-import { clampAssistantMaxTokens, clampAssistantTemperature, } from "../frontend/alpine/chat-settings/gm-config-tuning";
+import {
+  ASSISTANT_TUNING_DEFAULTS,
+  clampAssistantMaxTokens,
+  clampAssistantTemperature,
+} from "../frontend/alpine/chat-settings/gm-config-tuning";
 import { safeJsonParse, } from "../utils";
 
 /** Validated per-chat override; null = no override on that axis. */
@@ -70,4 +74,29 @@ export function resolveAssistantMaxTokens(
   override: number | null,
 ): number | undefined {
   return clampAssistantMaxTokens(explicit,) ?? override ?? undefined;
+}
+
+/** Auto-gen maxTokens default when neither override nor heuristic applies. */
+export const AUTO_GEN_DEFAULT_MAX_TOKENS = 2048;
+
+/** Auto-gen maxTokens for an intent-classifier-predicted short reply. */
+export const AUTO_GEN_SHORT_REPLY_MAX_TOKENS = 512;
+
+/**
+ * Resolve sampling params for the auto-gen path (`call-llm`): per-chat
+ * override → short-reply heuristic → auto-gen defaults. The override is an
+ * explicit user-set value, so it beats BOTH defaults — including the
+ * short-reply heuristic (TASK P3 #13 / gm-config-tuning consumer).
+ * @param opts - Validated per-chat override + whether the intent classifier
+ *   predicted a short reply for this turn.
+ * @returns {{ temperature: number; maxTokens: number }}
+ */
+export function resolveAutoGenSamplingParams(
+  opts: { tuning?: AssistantTuningOverride; shortReply: boolean },
+): { temperature: number; maxTokens: number } {
+  const fallbackMaxTokens = opts.shortReply ? AUTO_GEN_SHORT_REPLY_MAX_TOKENS : AUTO_GEN_DEFAULT_MAX_TOKENS;
+  return {
+    temperature: opts.tuning?.temperature ?? ASSISTANT_TUNING_DEFAULTS.temperature,
+    maxTokens: opts.tuning?.maxTokens ?? fallbackMaxTokens,
+  };
 }

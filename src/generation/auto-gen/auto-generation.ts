@@ -16,6 +16,7 @@ import type { Config, } from "../../config/schema";
 import { CancelReason, CancelSource, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
+import { parseAssistantTuning, } from "../assistant-tuning";
 import { callLlm, } from "./call-llm";
 import { combineTrackingAbortSignal, } from "./cascade-pause-watcher";
 import { checkNsfwEligibility, runContentHooks, } from "./content-hooks";
@@ -119,6 +120,8 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       .where("id", "=", chatId,)
       .executeTakeFirst();
 
+    const assistantTuning = parseAssistantTuning(chat?.gm_config ?? null,);
+
     const mode = await resolveMode({
       d,
       database,
@@ -208,6 +211,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       tracking,
       actorName,
       chatStreaming: chat?.streaming,
+      assistantTuning,
       requestId,
     },);
 
