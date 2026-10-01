@@ -12,6 +12,8 @@
 **Status Note:** verified 2026-09-18 — all listed changes landed on `dev` HEAD `80b11e372`; ticket left open as bookkeeping
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-core-testing-frameworks.md
+**Tags:** core-testing-frameworks
 
 ## Summary
 

@@ -12,6 +12,8 @@
 **Status Note:** 11c88484 chat-switch + fix-review-quickwins destroy
 **Priority:** low
 **Effort:** Medium
+**Epic:** epic-group-chat.md
+**Tags:** group-chat
 
 ## Summary
 

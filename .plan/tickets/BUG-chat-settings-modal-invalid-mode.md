@@ -6,6 +6,8 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-story-mode-ui.md
+**Tags:** story-mode-ui
 **Summary:** (none captured)
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)

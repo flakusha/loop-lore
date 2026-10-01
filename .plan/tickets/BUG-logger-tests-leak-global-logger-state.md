@@ -23,6 +23,8 @@ hash: 396b5e3
 
 **Priority:** Medium
 **Effort:** Medium
+**Epic:** epic-logging-telemetry.md
+**Tags:** logging-telemetry
 
 ## Summary
 

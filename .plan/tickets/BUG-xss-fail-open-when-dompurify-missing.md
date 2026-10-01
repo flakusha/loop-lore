@@ -12,6 +12,8 @@
 **Status Note:** commit f9d21c8b — sanitize fallbacks escape instead of raw HTML when DOMPurify absent
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-security-sandboxing.md
+**Tags:** security-sandboxing
 
 ## Summary
 

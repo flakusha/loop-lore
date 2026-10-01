@@ -6,6 +6,8 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-config-templates.md
+**Tags:** config-templates
 **Summary:** (none captured)
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)

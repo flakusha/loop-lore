@@ -10,6 +10,8 @@
 **Status Note:** (closed 2026-09-20) — closed allowlist enforced
 **Priority:** medium
 **Effort:** Small
+**Epic:** epic-frontend-settings.md
+**Tags:** frontend-settings
 
 ## Summary
 

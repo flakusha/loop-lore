@@ -11,6 +11,8 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-middleware-request-lifecycle.md
+**Tags:** middleware-request-lifecycle
 **Related:** TASK-data-migrations-atomicity-and-concurrency-guard
 
 ## Summary

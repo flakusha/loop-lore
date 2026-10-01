@@ -11,6 +11,8 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Small
+**Epic:** epic-logging-telemetry.md
+**Tags:** logging-telemetry
 
 ## Summary
 

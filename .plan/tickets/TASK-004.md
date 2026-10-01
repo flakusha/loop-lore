@@ -3,6 +3,8 @@
 
 # TASK-004: Chat message search
 
+**Epic:** epic-messages.md
+**Tags:** messages
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

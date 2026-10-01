@@ -12,6 +12,8 @@
 **Status Note:** 2026-09-04
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-api-task-offloading.md
+**Tags:** api-task-offloading
 
 ## Summary
 

@@ -5,6 +5,8 @@
 
 **Status:** Done
 **Status Note:** duplicate
+**Epic:** epic-platform-integrations.md
+**Tags:** platform-integrations
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

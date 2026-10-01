@@ -7,6 +7,8 @@
 **Status Note:** commit adds nosniff centrally in serveFile; encrypted branch keeps its own explicit header
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-asset-platform-capabilities.md
+**Tags:** asset-platform-capabilities
 **Summary:** (see ## Summary)
 **Context:** (see ## Observed / ## Evidence)
 **Acceptance Criteria:** (see ## Acceptance Criteria)

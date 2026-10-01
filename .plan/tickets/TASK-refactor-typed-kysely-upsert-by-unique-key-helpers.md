@@ -12,6 +12,8 @@
 **Status Note:** helpers landed as `upsertByUnique` + `upsertByUniqueWith` + `insertUnique` (`src/db/upsert-helpers.ts` with motivating `@see BUG-chat-swipe-index-race`)
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-code-quality.md
+**Tags:** code-quality
 
 ## Summary
 

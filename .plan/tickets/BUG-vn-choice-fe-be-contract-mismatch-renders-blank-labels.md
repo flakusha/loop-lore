@@ -11,6 +11,8 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Small
+**Epic:** epic-visual-novel-mode.md
+**Tags:** visual-novel-mode
 
 ## Resolution
 

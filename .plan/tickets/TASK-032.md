@@ -7,6 +7,8 @@
 **Status Note:** Shipped — script + matrix + role-change audit in commits c6f2a6b / 5f49431; admin user-list UI already existed in pre-batch code (no new file created)
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-auth-access.md
+**Tags:** auth-access
 **Summary:** Seed Command provisions demo accounts; role enum + capability matrix enforced in middleware.
 **Context:** User bootstrap + RBAC expansion.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

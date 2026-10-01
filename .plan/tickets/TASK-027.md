@@ -3,6 +3,8 @@
 
 # TASK-027: Crafting System Implementation
 
+**Epic:** epic-crafting-professions.md
+**Tags:** crafting-professions
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

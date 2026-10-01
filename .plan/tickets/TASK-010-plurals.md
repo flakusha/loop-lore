@@ -6,6 +6,8 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-frontend-internationalization.md
+**Tags:** frontend-internationalization
 **Summary:** Add `Intl.PluralRules` (CLDR) integration to the i18n runtime so the `zero` / `one` / `other` plural categories resolve correctly per locale, gated by an e2e test.
 **Context:** Decomposed from TASK-010 on 2026-09-23 — the plural AC could not be covered alongside the locale-switch task: `src/i18n/translator.ts:68` currently uses plain `{param}` interpolation with no plural rule infra.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

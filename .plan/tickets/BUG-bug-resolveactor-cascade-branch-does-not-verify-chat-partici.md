@@ -11,6 +11,8 @@
 **Status:** Done
 **Priority:** low
 **Effort:** Medium
+**Epic:** epic-chat-privacy.md
+**Tags:** chat-privacy
 
 ## Summary
 

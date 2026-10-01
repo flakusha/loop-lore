@@ -10,6 +10,8 @@
 **Status Note:** closed 2026-09-20) — strict boundary (sliding-window math
 **Priority:** medium
 **Effort:** Small
+**Epic:** epic-api-rate-limiting.md
+**Tags:** api-rate-limiting
 
 ## Summary
 

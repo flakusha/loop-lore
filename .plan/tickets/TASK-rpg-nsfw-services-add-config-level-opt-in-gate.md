@@ -6,6 +6,8 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Small
+**Epic:** epic-rpg-content-systems.md
+**Tags:** rpg-content-systems
 
 **Summary:** Five of the ten NSFW RPG service modules do not currently route through assertNsfwCapability. Setting `nsfw.allowNsfw=false` only blocks the HTTP middleware path; the RPG NSFW service methods (seduction, encounter, fantasy, body, reproduction, mood, chemistry, reputation) still execute mutations. Add a single throw-on-disabled helper and call it at the top of each NSFW RPG service public method.
 

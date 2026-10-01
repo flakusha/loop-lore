@@ -5,6 +5,8 @@
 
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-e2e-integration-testing.md
+**Tags:** e2e-integration-testing
 **Summary:** (none captured)
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)

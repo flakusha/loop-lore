@@ -6,6 +6,8 @@
 **Status:** Done
 **Priority:** low
 **Effort:** Medium
+**Epic:** epic-provider-plugin-ecosystem.md
+**Tags:** provider-plugin-ecosystem
 
 **Summary:** anthropic retry after test covers missing header but not unp
 **Context:** Context: dca8b3483.

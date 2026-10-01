@@ -12,6 +12,8 @@
 **Status Note:** closed 2026-09-14
 **Priority:** Medium
 **Effort:** Medium
+**Epic:** epic-core-testing-frameworks.md
+**Tags:** core-testing-frameworks
 
 ## Summary
 

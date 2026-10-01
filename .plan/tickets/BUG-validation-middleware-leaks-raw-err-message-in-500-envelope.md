@@ -4,6 +4,8 @@
 # BUG: Validation middleware leaks raw err.message in 500 envelope
 
 **Effort:** Medium
+**Epic:** epic-api-validation-guardrails.md
+**Tags:** api-validation-guardrails
 **Summary:** (none captured)
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)

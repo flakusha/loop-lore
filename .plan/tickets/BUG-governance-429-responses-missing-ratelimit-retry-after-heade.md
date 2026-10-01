@@ -6,6 +6,8 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-api-rate-limiting.md
+**Tags:** api-rate-limiting
 **Resolved:** 2026-09-26 — landed in c860a74b2 (fix: resolve 13 week-review BUG tickets). Verified by `src/routes/v1/governance.test.ts:55-71` ("throttled request carries standard RateLimit headers"). Ticket flagged stale (filed 2026-09-26 after the fix had already merged on the same day).
 
 **Summary:** Governance 429s do not set RateLimit / RateLimit-Remaining / Retry-After headers although policies.ts:13 documents the name as surfaced in RateLimit headers and the status endpoint. Clients cannot back off. Fix: set standard headers on throttle responses from the matched policy. Verify: unit test asserting headers on a throttled request.

@@ -12,6 +12,8 @@
 **Status Note:** fixed 2026-09-05
 **Priority:** medium
 **Effort:** Small
+**Epic:** epic-memory-knowledge-systems.md
+**Tags:** memory-knowledge-systems
 
 ## Summary
 

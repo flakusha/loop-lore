@@ -7,6 +7,8 @@
 **Severity:** high
 **Priority:** high
 **Effort:** medium
+**Epic:** epic-generation-flow-control.md
+**Tags:** generation-flow-control
 **Type:** BUG
 **Files:** src/generation/auto-gen/group-cascade.ts:202-214; src/generation/auto-gen/auto-generation.ts:69-269
 

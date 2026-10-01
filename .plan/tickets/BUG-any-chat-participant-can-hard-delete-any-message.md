@@ -12,6 +12,8 @@
 **Status Note:** already on dev, 2026-09-05
 **Priority:** high
 **Effort:** Small
+**Epic:** epic-chat-privacy.md
+**Tags:** chat-privacy
 
 ## Summary
 

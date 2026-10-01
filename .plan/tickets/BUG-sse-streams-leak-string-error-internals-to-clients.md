@@ -1,6 +1,19 @@
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
+
+# BUG: SSE streams leak String(error) internals to clients
+
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
+**Status:** Done
+**Priority:** medium
+**Effort:** Small
+**Epic:** epic-frontend-backend-integration.md
+**Tags:** frontend-backend-integration
 # BUG: SSE streams leak string error internals to clients via "Generation failed" wire message
 
 **Status:** Done

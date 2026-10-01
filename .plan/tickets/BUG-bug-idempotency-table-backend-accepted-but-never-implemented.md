@@ -12,6 +12,8 @@
 **Status Note:** closed 2026-09-14
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-data-integrity-acid.md
+**Tags:** data-integrity-acid
 
 ## Summary
 

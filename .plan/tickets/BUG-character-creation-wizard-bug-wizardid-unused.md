@@ -11,6 +11,8 @@
 **Status:** Done
 **Priority:** low
 **Effort:** Trivial
+**Epic:** epic-character-core-system.md
+**Tags:** character-core-system
 **Area:** characters, frontend
 
 ## Symptom

@@ -4,6 +4,8 @@
 # FEAT-056: Memory selection UI
 
 **Status:** Done
+**Epic:** epic-memory-knowledge-systems.md
+**Tags:** memory-knowledge-systems
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Memory selection UI for mid-chat pinning, manual memory choice, and audit visibility.

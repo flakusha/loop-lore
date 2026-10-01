@@ -15,6 +15,8 @@ git issue: e8d02e4
 
 **Status:** Done
 **Reason:** `queue.slice(queue.indexOf(data))` correctly includes the failed item — it was never successfully sent (its `send` threw) and must be retried. After `unshift([data, ...rest])` the failed item is positioned at the front of `pendingMessages` exactly ONCE, not duplicated. No reorder or duplication. See `src/transport/ws.ts:83-94`. No defect.
+**Epic:** epic-transport-expansion.md
+**Tags:** transport-expansion
 **Priority:** n/a  **Effort:** n/a
 
 ## Summary

@@ -12,6 +12,8 @@
 **Status Note:** already on dev, 2026-09-03
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-api-validation-guardrails.md
+**Tags:** api-validation-guardrails
 
 ## Summary
 

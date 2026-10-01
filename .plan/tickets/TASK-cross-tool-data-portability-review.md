@@ -11,6 +11,8 @@ Related: docs/ideas/index.md (gap summary refreshed 2026-08-12)
 
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-import-export-io.md
+**Tags:** import-export-io
 **Summary:** (none captured)
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)

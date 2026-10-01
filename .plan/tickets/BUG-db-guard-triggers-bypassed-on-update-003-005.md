@@ -6,6 +6,8 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Small (twin triggers + abort tests)
+**Epic:** epic-data-integrity-acid.md
+**Tags:** data-integrity-acid
 **Summary:** `BEFORE INSERT`-only guard triggers in `003_memory_audit_log_action_check` and `005_world_lore_lifecycle` are bypassed by `UPDATE` statements. Add a migration with `BEFORE UPDATE` twins of both triggers + abort tests.
 **Context:** DB schema-gate audit (2026-09-25, db-migration-fixes session). Guards that only fire on INSERT let UPDATE writes violate the same invariants silently. Numbering: the audit's '017' is taken (`017_asset_links_archived_at`) — use the next free migration number at implementation time.
 

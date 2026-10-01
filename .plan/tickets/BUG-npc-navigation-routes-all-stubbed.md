@@ -12,6 +12,8 @@
 **Priority:** high
 **Priority Tier:** P2
 **Effort:** Large
+**Epic:** epic-npcs.md
+**Tags:** npcs
 **Area:** npcs
 **Source:** reconcile review (Scout Batch C — NPC-1)
 **Resolved:** 2026-08-21

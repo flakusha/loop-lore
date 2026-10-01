@@ -12,6 +12,8 @@
 **Status Note:** verified 2026-09-07; bookkeeping
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-chat-context-optimization.md
+**Tags:** chat-context-optimization
 
 ## Summary
 

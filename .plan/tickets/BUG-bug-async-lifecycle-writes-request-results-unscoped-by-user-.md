@@ -12,6 +12,8 @@
 **Status Note:** already on dev, 2026-09-04
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-api-task-offloading.md
+**Tags:** api-task-offloading
 
 ## Summary
 

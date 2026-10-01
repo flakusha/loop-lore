@@ -6,6 +6,8 @@
 **Status:** Done
 **Priority:** low
 **Effort:** Small
+**Epic:** epic-worktree-plan-tooling.md
+**Tags:** worktree-plan-tooling
 **Summary:** Forward `git issue ls --state open|closed|all` through `giwt issues` and validate the value.
 **Context:** Current switch in `giwt/src/commands/issues.ts:9-25` has no `--state` branch and silently swallows unknown flags (verified: `giwt issues --state=closed` returns 50 open issues).
 **Acceptance Criteria:** `giwt issues --state=closed` returns only closed; `--state=open`/`--state=all` honored; default unchanged; invalid values rejected; --all and --format still work.

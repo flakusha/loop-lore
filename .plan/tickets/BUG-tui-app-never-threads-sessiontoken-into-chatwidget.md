@@ -11,6 +11,8 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** small
+**Epic:** epic-terminal-ui.md
+**Tags:** terminal-ui
 
 ## Summary
 

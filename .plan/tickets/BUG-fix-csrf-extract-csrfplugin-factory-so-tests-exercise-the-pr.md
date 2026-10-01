@@ -12,6 +12,8 @@
 **Status Note:** commits a4ae0e30 + 427d9344 on dev
 **Priority:** Medium
 **Effort:** Medium
+**Epic:** epic-security-sandboxing.md
+**Tags:** security-sandboxing
 
 ## Summary
 

@@ -11,6 +11,8 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-frontend-components.md
+**Tags:** frontend-components
 **Resolution:** Commit 0c39d4f3 (`fix(alpine): default chat-view store fields`). Safe defaults added to the `$store.chat` registration (children: [], visibility: "visible") and a defensive guard inside `chatLifecycle.init()` ensures the same shape even when the store is recreated.
 
 ## Summary

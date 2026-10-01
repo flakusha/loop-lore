@@ -11,6 +11,8 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-observability-telemetry.md
+**Tags:** observability-telemetry
 
 ## Summary
 

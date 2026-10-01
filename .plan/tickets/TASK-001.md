@@ -6,6 +6,8 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-frontend-components.md
+**Tags:** frontend-components
 **Summary:** Modal-based asset preview with a centered avatar viewport.
 **Context:** Frontend (Vue/Alpine) extension to the asset gallery; centered modal portal with keyboard dismiss and focus restore.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

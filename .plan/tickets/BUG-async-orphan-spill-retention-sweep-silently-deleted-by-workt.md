@@ -6,6 +6,8 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-api-task-offloading.md
+**Tags:** api-task-offloading
 
 **Summary:** async orphan spill retention sweep silently deleted by workt
 **Context:** Context: 81343b060 (09-26 fold) removed src/async/spill-retention.ts (75 lines), the pruneOrphanSpills phase in runOffloadPass, its tests and CHANGELOG entry — undoing bdd0b66d3 landed hours earlier.

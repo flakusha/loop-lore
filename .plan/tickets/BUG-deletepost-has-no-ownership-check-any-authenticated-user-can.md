@@ -10,6 +10,8 @@
 **Status Note:** (closed 2026-09-20) — author_id ownership check added
 **Priority:** high
 **Effort:** Small
+**Epic:** epic-blog-system.md
+**Tags:** blog-system
 
 ## Summary
 

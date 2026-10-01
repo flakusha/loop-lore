@@ -3,6 +3,8 @@
 
 # TASK-028: Item Specification & Parameters System
 
+**Epic:** epic-items.md
+**Tags:** items
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

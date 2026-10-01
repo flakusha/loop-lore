@@ -12,6 +12,8 @@
 
 **Priority Tier:** P2
 **Effort:** Medium
+**Epic:** epic-character-world-integration.md
+**Tags:** character-world-integration
 **Source:** reconcile review (Scout Batch C — CHAR-1)
 `src/routes/characters/create.ts` — `createRoutes` inserts the actor via `.values({...})`. No `asset_id` is set, no `linkAsset` call is made. The character creation flow does not link the uploaded avatar asset to the new actor.
 Avatar upload flow: user uploads in creation wizard → `asset_id` returned to FE → character is created → no linking call made.

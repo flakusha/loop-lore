@@ -6,6 +6,8 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-auth-access.md
+**Tags:** auth-access
 **Summary:** POST /register runs three DB writes without a transaction; partial failures orphan the user row.
 **Context:** Caught from post-merge audit of commit ba2871422 (register path). Three sequential DB writes (insertUnique(users) → insertInto(actors) → ensureActorKey) can leave a user row without its actor/key counterpart on a partial failure, orphaning the account.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

@@ -6,6 +6,8 @@
 **Status:** Done
 **Priority:** P0 (within EPIC-RESEARCH-AGENCY-AFFORDANCE)
 **Effort:** 2-3 days
+**Epic:** epic-research-agency-affordance.md
+**Tags:** research-agency-affordance
 **Parent epic:** `epic-research-agency-affordance.md`
 **Related:** `src/regex/intent.ts` (keyword router - **superseded by this ticket**), `src/assistant/intent.ts` (avatar intent detection - must not regress), `src/services/actor-items.ts`, `src/validation/schemas/responses.ts`
 

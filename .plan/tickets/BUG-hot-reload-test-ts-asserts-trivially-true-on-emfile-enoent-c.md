@@ -16,6 +16,8 @@
 `src/config/hot-reload.test.ts` already stubs `node:fs.watch` with a controllable `stubWatch` (lines 35-50), registers `mock.module("node:fs", …)`, and exercises the reload callback path with a domain config file change (test at line 93). Coverage is non-trivial; the trivially-true assertion concern is moot.
 **Priority:** low
 **Effort:** Medium
+**Epic:** epic-core-testing-frameworks.md
+**Tags:** core-testing-frameworks
 
 ## Summary
 

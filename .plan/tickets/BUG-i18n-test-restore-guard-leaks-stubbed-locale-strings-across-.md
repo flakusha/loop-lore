@@ -6,6 +6,8 @@
 **Status:** Done
 **Priority:** low
 **Effort:** Medium
+**Epic:** epic-i18n.md
+**Tags:** i18n
 
 **Summary:** i18n test restore guard leaks stubbed locale strings across
 **Context:** Context: 223285960/c41bbb186.
