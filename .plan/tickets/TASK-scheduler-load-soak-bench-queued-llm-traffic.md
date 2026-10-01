@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** Medium
 **Effort:** Medium
+**Epic:** epic-llm-request-scheduler
 
 **Summary:**
 
