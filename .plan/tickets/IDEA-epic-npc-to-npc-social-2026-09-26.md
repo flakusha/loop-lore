@@ -3,12 +3,12 @@
 
 # IDEA-epic-npc-to-npc-social-2026-09-26: NPC-to-NPC Social Simulation (matrix gaps G29/G30)
 
-**Status:** Resolved — promoted to epic
+**Status:** Done
 **Priority:** medium (matrix 🟡 Medium severity, P6+ deferred)
 
 ## Resolution (2026-10-01)
 
-Promoted to `.plan/epics/epic-npc-to-npc-social.md`. The proposal's "Suggested epic description" is reproduced verbatim as the canonical epic file, preserving all Open Questions.
+Promoted to `.plan/epics/epic-npc-to-npc-social.md` — this ticket is `Done` on the strength of that promotion. The proposal's "Suggested epic description" is reproduced verbatim as the canonical epic file, preserving all Open Questions.
 
 Related: `epic-npc-bdi-autonomy.md` (BDI prerequisite), `epic-tool-calling-mcp.md` (G42 sibling).
 **Effort:** Medium

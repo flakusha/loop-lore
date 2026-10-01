@@ -3,12 +3,12 @@
 
 # IDEA-epic-tool-calling-mcp-2026-09-26: Tool-Calling / MCP Connectors — cross-cutting epic proposal
 
-**Status:** Resolved — promoted to epic
+**Status:** Done
 **Priority:** medium (P6+ per matrix, but 🔴 High future impact)
 
 ## Resolution (2026-10-01)
 
-Promoted to `.plan/epics/epic-tool-calling-mcp.md`. The proposal's "Suggested epic description" is reproduced verbatim as the canonical epic file, preserving all Open Questions.
+Promoted to `.plan/epics/epic-tool-calling-mcp.md` — this ticket is `Done` on the strength of that promotion. The proposal's "Suggested epic description" is reproduced verbatim as the canonical epic file, preserving all Open Questions.
 
 Related: `epic-npc-bdi-autonomy.md` (G27/G28/G32 sibling), `epic-npc-to-npc-social.md` (G29/G30 sibling).
 **Effort:** Large

@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 313 epics
+**Total:** 315 epics
 
 ## Summary
 
@@ -20,6 +20,7 @@
 | Done | Actors & Entity System | High | High | 12 | [epic-actors.md](/.plan/epics/epic-actors.md) |
 | Done | Admin Panel & Dashboard | Medium | Medium | 0 | [epic-frontend-admin.md](/.plan/epics/epic-frontend-admin.md) |
 | Not Started | Age Gate & Content Warnings | Medium | Medium | 0 | [epic-frontend-age-gate.md](/.plan/epics/epic-frontend-age-gate.md) |
+| Not Started | Agent Tool-Calling & MCP Connector Surface | Medium | Large | 13 | [epic-tool-calling-mcp.md](/.plan/epics/epic-tool-calling-mcp.md) |
 | Not Started | Anonymity & Decentralization — Epic | medium | Medium | 27 | [epic-anonymity-decentralization.md](/.plan/epics/epic-anonymity-decentralization.md) |
 | Not Started | Anonymity & Decentralization — Quick Reference | High | High | 0 | [epic-anonymity-decentralization-quickref.md](/.plan/epics/epic-anonymity-decentralization-quickref.md) |
 | Not Started | API Governance — Epic | High | Very High (split into 5 sub-epics) | 0 | [epic-api-governance.md](/.plan/epics/epic-api-governance.md) |
@@ -40,6 +41,7 @@
 | Not Started | Authentication Channel Provisioning — Messenger / E-mail / Federated Login & Unlock | High (security-critical provisioning) | High | 19 | [epic-auth-channel-provisioning.md](/.plan/epics/epic-auth-channel-provisioning.md) |
 | Not Started | Authoring & Creation Tools | Medium | Medium | 0 | [epic-authoring-creation.md](/.plan/epics/epic-authoring-creation.md) |
 | Not Started | Authorization & Access Control | High | High | 12 | [epic-auth-access.md](/.plan/epics/epic-auth-access.md) |
+| Not Started | Autonomous NPC-to-NPC Social Simulation | Medium | Medium | 13 | [epic-npc-to-npc-social.md](/.plan/epics/epic-npc-to-npc-social.md) |
 | In Progress | AUX LLM Enrichment Pipeline | P2-B | Medium | 10 | [epic-aux-enrichment-pipeline.md](/.plan/epics/epic-aux-enrichment-pipeline.md) |
 | Not Started | Avatar Alpha Channel + VN Layering | Medium | Medium | 7 | [epic-avatar-alpha-vn-layering.md](/.plan/epics/epic-avatar-alpha-vn-layering.md) |
 | Not Started | Battle & Action Systems | Medium | Very High (split into 5 sub-epics) | 20 | [epic-battle-action-systems.md](/.plan/epics/epic-battle-action-systems.md) |
@@ -56,6 +58,7 @@
 | Not Started | Character Growth & Arc Progression | High | High | 0 | [epic-character-growth.md](/.plan/epics/epic-character-growth.md) |
 | Not Started | Character Internal Traits, Aspirations & Moral Disposition | High | Medium | 0 | [epic-character-internal-traits.md](/.plan/epics/epic-character-internal-traits.md) |
 | In Progress | Character Specification & Unified API | High | High | 0 | [epic-character-spec.md](/.plan/epics/epic-character-spec.md) |
+| Not Started | Character-Level Goal-Pursuit & Between-Session Continuity | Medium | Large | 13 | [epic-npc-bdi-autonomy.md](/.plan/epics/epic-npc-bdi-autonomy.md) |
 | Not Started | Chat Composer Flows (draft for new worktree) | High — messenger parity gap | Medium | 0 | [epic-chat-composer-flows.md](/.plan/epics/epic-chat-composer-flows.md) |
 | Done | Chat Lifecycle, Transitions & Moderation | High | High | 8 | [epic-chat-lifecycle-moderation.md](/.plan/epics/epic-chat-lifecycle-moderation.md) |
 | Not Started | Chat Product Features | High | High | 24 | [epic-chat-product-features.md](/.plan/epics/epic-chat-product-features.md) |
@@ -215,7 +218,6 @@
 | Not Started | Integrations Core | Medium | Medium | 7 | [epic-integrations-core.md](/.plan/epics/epic-integrations-core.md) |
 | Not Started | Internationalization (i18n) | Medium | Medium | 0 | [epic-frontend-internationalization.md](/.plan/epics/epic-frontend-internationalization.md) |
 | Not Started | Inventory & Trading UI | P1 — High | Medium | 14 | [epic-inventory-ui.md](/.plan/epics/epic-inventory-ui.md) |
-| Not Started | Inventory System (Hub) | High | High | 5 | [epic-inventory-system.md](/.plan/epics/epic-inventory-system.md) |
 | Not Started | Item System Extensions | High | High | 0 | [epic-item-system-extensions.md](/.plan/epics/epic-item-system-extensions.md) |
 | In Progress | Item Systems Unification & Gap Closure | High | High | 6 | [epic-item-systems-unification.md](/.plan/epics/epic-item-systems-unification.md) |
 | Not Started | Licensing | Low | Medium | 6 | [epic-licensing.md](/.plan/epics/epic-licensing.md) |
@@ -323,7 +325,7 @@
 | Not Started | World & Locations | Medium | Very High total (split across 4 sub-epics: travel-time High, npcs High, encounters High, diplomacy-karma High) | 0 | [epic-world-locations.md](/.plan/epics/epic-world-locations.md) |
 | Done | World Chat Channels & Invite-Driven Membership | Medium | Medium | 0 | [epic-world-chat-channels-invites.md](/.plan/epics/epic-world-chat-channels-invites.md) |
 | Not Started | World Shaping & Divine Intervention | Low | Medium | 0 | [epic-world-shaping-divine.md](/.plan/epics/epic-world-shaping-divine.md) |
-| Not Started | Worlds Extension (Shareability, Epochs, Maps, Mode Switches) | Medium | High | 13 | [epic-worlds-extension.md](/.plan/epics/epic-worlds-extension.md) |
+| Not Started | Worlds Extension (Shareability, Epochs, Maps, Mode Switches) | Medium | High | 8 | [epic-worlds-extension.md](/.plan/epics/epic-worlds-extension.md) |
 | Not Started | XMPP Integration | Medium | Medium | 11 | [epic-xmpp-integration.md](/.plan/epics/epic-xmpp-integration.md) |
 
 ---
@@ -403,6 +405,16 @@ Long-horizon vision for 3D asset generation and rendering. This epic covers:
 - **Type:** epic
 - **Tags:** (none)
 - **File:** `.plan/epics/epic-frontend-age-gate.md`
+
+
+### Agent Tool-Calling & MCP Connector Surface
+
+- **Status:** Not Started
+- **Priority:** Medium
+- **Effort:** Large
+- **Type:** Feature Epic
+- **Tags:** tool-calling, mcp, cross-cutting
+- **File:** `.plan/epics/epic-tool-calling-mcp.md`
 
 ### Anonymity & Decentralization — Epic
 
@@ -592,6 +604,16 @@ Add atmospheric audio/video generation to enhance chat immersion. This epic
 - **Tags:** auth, access, authorization, mfa, security, frontend
 - **File:** `.plan/epics/epic-auth-access.md`
 
+
+### Autonomous NPC-to-NPC Social Simulation
+
+- **Status:** Not Started
+- **Priority:** Medium
+- **Effort:** Medium
+- **Type:** Feature Epic
+- **Tags:** npc-social, generative-agents, cross-cutting
+- **File:** `.plan/epics/epic-npc-to-npc-social.md`
+
 ### AUX LLM Enrichment Pipeline
 
 - **Status:** In Progress
@@ -636,6 +658,10 @@ Add atmospheric audio/video generation to enhance chat immersion. This epic
 - **Type:** Feature Epic
 - **Tags:** battle, items, social, npc, weather, resolution, integration
 - **File:** `.plan/epics/epic-battle-integration-gaps.md`
+
+### Current State Assessment
+
+### Current State Assessment
 
 ### Current State Assessment
 
@@ -741,6 +767,16 @@ A blog subsystem supporting both **LLM-authored** and **human-authored** posts.
 - **Type:** Feature Epic
 - **Tags:** character, spec, api, validation, format-conversion
 - **File:** `.plan/epics/epic-character-spec.md`
+
+
+### Character-Level Goal-Pursuit & Between-Session Continuity
+
+- **Status:** Not Started
+- **Priority:** Medium
+- **Effort:** Large
+- **Type:** Feature Epic
+- **Tags:** npc-autonomy, bdi, generative-agents, cross-cutting
+- **File:** `.plan/epics/epic-npc-bdi-autonomy.md`
 
 ### Chat Composer Flows (draft for new worktree)
 
@@ -2283,15 +2319,6 @@ Player housing and base building system — personal homes, guild halls, craftin
 - **Tags:** inventory, trading, items, ui, frontend
 - **File:** `.plan/epics/epic-inventory-ui.md`
 
-### Inventory System (Hub)
-
-- **Status:** Not Started
-- **Priority:** High
-- **Effort:** High
-- **Type:** Feature Epic (hub)
-- **Tags:** inventory, items, ownership, transfer, trading
-- **File:** `.plan/epics/epic-inventory-system.md`
-
 ### Item System Extensions
 
 - **Status:** Not Started
@@ -2589,6 +2616,10 @@ Benchmarks for the native module system (`epic-precompiled-hot-binaries`). Measu
 - **Type:** Feature Epic
 - **Tags:** nsfw, integration, housing, weather, social, disease, cross-system
 - **File:** `.plan/epics/epic-nsfw-integration-gaps.md`
+
+### Current State Assessment
+
+### Current State Assessment
 
 ### Current State Assessment
 
@@ -3016,6 +3047,10 @@ LLM sandboxing, edge case automated testing, static asset escape prevention, and
 
 ### Current State Assessment
 
+### Current State Assessment
+
+### Current State Assessment
+
 ### Social Hub — Epic
 
 - **Status:** Not Started
@@ -3313,4 +3348,3 @@ Extends the World & Locations foundation (see `epic-world-locations.md`, which
 ## Backlog
 
 Full backlog with prioritized tasks: [.plan/backlog/](/.plan/backlog/)
-

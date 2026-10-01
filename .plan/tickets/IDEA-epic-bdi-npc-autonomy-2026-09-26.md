@@ -3,12 +3,12 @@
 
 # IDEA-epic-bdi-npc-autonomy-2026-09-26: NPC BDI Goal-Pursuit Loop (matrix gaps G27/G28/G32)
 
-**Status:** Resolved — promoted to epic
+**Status:** Done
 **Priority:** medium (P6+ per matrix, but 🔴 High future severity)
 
 ## Resolution (2026-10-01)
 
-Promoted to `.plan/epics/epic-npc-bdi-autonomy.md`. The proposal's "Suggested epic description" is reproduced verbatim as the canonical epic file, preserving all Open Questions.
+Promoted to `.plan/epics/epic-npc-bdi-autonomy.md` — this ticket is `Done` on the strength of that promotion. The proposal's "Suggested epic description" is reproduced verbatim as the canonical epic file, preserving all Open Questions.
 
 Related: `epic-npc-to-npc-social.md` (G29/G30 sibling), `epic-tool-calling-mcp.md` (G42 sibling).
 **Effort:** Large

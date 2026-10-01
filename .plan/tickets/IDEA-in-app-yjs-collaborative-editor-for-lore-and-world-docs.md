@@ -3,11 +3,14 @@
 
 # IDEA: In-app Yjs collaborative editor for lore and world docs
 
-**Status:** Deferred — blocked on FEAT-swarm-mode-reconciliation landing
+**Status:** Postponed
 **Priority:** low
 **Effort:** Medium
 **Summary:** Real-time multiplayer authoring of lore or world documents in-app, extending FEAT-swarm-mode-reconciliation beyond Radicle git-based definitions.
 **Context:** Extends `FEAT-swarm-mode-reconciliation.md` and `FEAT-radicle-integration.md` (both verified on disk). Scoped as a future FEAT.
+**Acceptance Criteria:**
+- [x] Product decision recorded: defer, with rationale
+- [x] `FEAT-swarm-mode-reconciliation` and `FEAT-radicle-integration` verified on disk
 
 ## Summary
 
@@ -15,7 +18,7 @@ Extension: build on FEAT-swarm-mode-reconciliation to offer real-time multiplaye
 
 ## Resolution (2026-10-01)
 
-**Decision: Defer.**
+**Decision: Defer.** The ticket is `Postponed`: blocked on `FEAT-swarm-mode-reconciliation` landing.
 
 ### Rationale
 
