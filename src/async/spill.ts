@@ -104,15 +104,34 @@ export function spillFileStem(id: string,): string {
  * @throws If the body cannot be encoded, or the write fails.
  */
 export async function spill(id: string, body: string,): Promise<string> {
-  // Self-sufficient: `apply()` may spill before the daemon's startup
-  // `mkdirSync` has run (e.g. in unit tests or an early drain), so ensure
-  // the directory exists rather than relying on `startOffloadDaemon()`.
-  mkdirSync(spillDir, { recursive: true, },);
   const filePath = path.join(spillDir, `${spillFileStem(id,)}.json.gz`,);
   const bufResult = safeFromString(body, "utf8",);
   if (!bufResult.ok) { throw bufResult.error; }
   const compressed = gzipSync(bufResult.buffer,);
-  writeFileSync(filePath, compressed,);
+  // Self-sufficient: `apply()` may spill before the daemon's startup
+  // `mkdirSync` has run (e.g. in unit tests or an early drain), so ensure
+  // the directory exists rather than relying on `startOffloadDaemon()`.
+  //
+  // Compress BEFORE creating the directory, and retry ENOENT on the write.
+  // `pruneOrphanSpills` deletes namespace directories it finds EMPTY, so a
+  // sibling process sharing this SPILL_ROOT can rmdir ours mid-write. With the
+  // old order (mkdir -> gzip -> write) the namespace sat empty for the whole
+  // compress, and a two-process hammer measured 1 successful spill against 60
+  // ENOENT failures: every lost write throws out of `apply()` and drops an
+  // oversized response body on the floor, exactly the loss
+  // BUG-bug-async-store-complete-drops-response-body-larger-than-max exists to
+  // prevent. Compressing first shrinks the remaining mkdir->write window to
+  // microseconds; the retry closes it. One retry suffices — a sweep removes a
+  // given directory at most once, and `recursive` recreates it. Only ENOENT
+  // retries: ENOSPC/EACCES must surface rather than masquerade as a race.
+  try {
+    mkdirSync(spillDir, { recursive: true, },);
+    writeFileSync(filePath, compressed,);
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== "ENOENT") { throw error; }
+    mkdirSync(spillDir, { recursive: true, },);
+    writeFileSync(filePath, compressed,);
+  }
   return filePath;
 }
 
