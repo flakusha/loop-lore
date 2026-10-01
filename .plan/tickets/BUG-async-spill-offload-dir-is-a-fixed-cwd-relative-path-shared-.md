@@ -3,7 +3,7 @@
 
 # BUG: Async spill offload dir is a fixed CWD-relative path shared by every worktree
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 
