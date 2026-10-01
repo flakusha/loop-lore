@@ -1325,6 +1325,7 @@
     "failedToStartGeneration": "生成の開始に失敗しました。",
     "generationNoJobId": "生成は開始されましたが、ジョブIDが返されませんでした。",
     "emotionAvatarsGenerated": "感情アバターを生成しました。",
+    "emotionAvatarsProgress": "{total}件中{done}件",
     "generationTimedOut": "生成がタイムアウトしました。",
     "generationOutcome": "生成: {status}。",
     "resumingFromStep": "ステップ {step}/{total} から再開中...",

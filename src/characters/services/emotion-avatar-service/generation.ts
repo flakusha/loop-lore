@@ -17,6 +17,20 @@ import type { AvatarService, } from "../avatar-service";
 import { recordBatchFinish, recordBatchStart, } from "./job-records";
 import type { BatchGenerationJob, GenerateEmotionAvatarsOpts, } from "./types";
 
+import { randomUUID, } from "node:crypto";
+import { persistGeneratedImages, } from "../../../assets/service";
+import { generateImages, } from "../../../generation/image-engine";
+import { enqueueAutoMatting, } from "../../../generation/matting/auto-matte";
+import {
+  buildEmotionPrompt,
+  extractAvatarMetadata,
+} from "../emotion-avatar-fallback";
+import { emitJobProgress, jobProgress, } from "./job-events";
+
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// src/characters/services/emotion-avatar-service/generation.ts — Batch generation logic
+
 /**
  * Minimal structural handle onto the owning service, threading the state the
  * generation logic needs (`db`, `avatarService`, `resolveEmotionPromptModifier`).
@@ -135,6 +149,7 @@ export async function runBatchGeneration(
     if ((job.status as string) === "cancelled") {
       job.completedAt = new Date().toISOString();
       await recordBatchFinish(svc.db, job,);
+      emitJobProgress(jobProgress(job,),);
       return;
     }
 
@@ -179,9 +194,12 @@ export async function runBatchGeneration(
         { jobId: job.id, emotion: result.emotion, },
       );
     }
+
+    emitJobProgress(jobProgress(job,),);
   }
 
   job.status = job.results.every((r,) => r.status === "completed") ? "completed" : "failed";
   job.completedAt = new Date().toISOString();
   await recordBatchFinish(svc.db, job,);
+  emitJobProgress(jobProgress(job,),);
 }

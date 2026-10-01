@@ -22,6 +22,17 @@ import {
   requireUserId,
 } from "./http-utils";
 
+import { handleJobStream, } from "./character-emotion-avatars-stream";
+
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+/**
+ * Character Emotion Avatars Routes
+ *
+ * API endpoints for emotion avatar batch generation and management.
+ * Exposes the EmotionAvatarService for character-specific emotion variants.
+ */
+
 interface HandlerOpts {
   database: Kysely<DB>;
 }
@@ -47,7 +58,6 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
           status: HttpStatus.NotFound,
         },);
       }
-
       const jobs = emotionAvatarService.listJobs(actorId,);
       return jsonResponse(jobs,);
     },)
@@ -62,7 +72,6 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
           status: HttpStatus.NotFound,
         },);
       }
-
       const { jobId, } = ctx.params as { jobId: string };
       const job = emotionAvatarService.getJobStatus(jobId as any,);
       // checkActorOwnership only proves the caller owns the actor in the PATH.
@@ -73,6 +82,24 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
       }
 
       return jsonResponse(job,);
+    },)
+    // ── Stream job progress over SSE ────────────────────────────
+    .get(`${prefix}/actors/:actorId/emotion-avatars/jobs/:jobId/stream`, async (ctx: any,) => {
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
+      const actorId = ctx.params.actorId as string;
+      if (!await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,)) {
+        return jsonError({
+          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+          status: HttpStatus.NotFound,
+        },);
+      }
+      const { jobId, } = ctx.params as { jobId: string };
+      const job = emotionAvatarService.getJobStatus(jobId as any,);
+      if (!job || job.actorId !== actorId) {
+        return jsonError({ message: "Job not found", status: HttpStatus.NotFound, },);
+      }
+      return handleJobStream(job,);
     },)
     // ── Cancel a running job ──────────────────────────────────────
     .post(`${prefix}/actors/:actorId/emotion-avatars/jobs/:jobId/cancel`, async (ctx: any,) => {
@@ -85,7 +112,6 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
           status: HttpStatus.NotFound,
         },);
       }
-
       const { jobId, } = ctx.params as { jobId: string };
       // ORDER IS LOAD-BEARING: cancelJob returns only a boolean and
       // irreversibly destroys the job, so a foreign caller must be rejected
@@ -102,7 +128,6 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
           status: HttpStatus.NotFound,
         },);
       }
-
       return jsonResponse({ ok: true, cancelled: true, },);
     },)
     // ── Start batch generation ───────────────────────────────────
@@ -116,7 +141,6 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
           status: HttpStatus.NotFound,
         },);
       }
-
       const body = ctx.body as Record<string, unknown>;
 
       const baseAvatarId = body.baseAvatarId as string | undefined;
@@ -164,7 +188,6 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
           promptPrefix,
           negativePrompt,
         },);
-
         return jsonCreated({ jobId, },);
       } catch (error) {
         const message = error instanceof Error ? error.message : "Failed to start generation";
@@ -181,7 +204,6 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
       if (!validEmotions.includes(emotion,)) {
         return jsonError({ message: `Invalid emotion: ${emotion}`, status: HttpStatus.BadRequest, },);
       }
-
       const modifier = emotionAvatarService.getEmotionPromptModifier(emotion as EmotionType,);
       return jsonResponse({ emotion, modifier, },);
     },)
@@ -194,7 +216,6 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
         value: emotion,
         displayName: emotion.charAt(0,).toUpperCase() + emotion.slice(1,),
       }),);
-
       return jsonResponse(emotions,);
     },);
 }

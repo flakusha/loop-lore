@@ -24,6 +24,39 @@ if (ISOLATED) {
   }),);
 }
 
+// ── Fake EventSource (no real network; connectJobStream only needs the shape) ──
+type StreamListener = (event: MessageEvent,) => void;
+
+class FakeEventSource {
+  static instances: FakeEventSource[] = [];
+  url: string;
+  closed = false;
+  onerror: (() => void) | null = null;
+  private listeners: Record<string, StreamListener[]> = {};
+
+  constructor(url: string,) {
+    this.url = url;
+    FakeEventSource.instances.push(this,);
+  }
+
+  addEventListener(type: string, listener: StreamListener,) {
+    (this.listeners[type] ??= []).push(listener,);
+  }
+
+  close() {
+    this.closed = true;
+  }
+
+  /** Test helper: dispatch a synthetic event to registered listeners. */
+  emit(type: string, data: string,) {
+    for (const listener of this.listeners[type] ?? []) {
+      listener({ data, } as MessageEvent,);
+    }
+  }
+}
+
+(globalThis as { EventSource?: unknown }).EventSource = FakeEventSource;
+
 const baseCtx = (): ActorEmotionAvatarsState => {
   const state = Object.create(actorEmotionAvatars,) as ActorEmotionAvatarsState;
   state._eaActorId = null;
@@ -40,12 +73,14 @@ const baseCtx = (): ActorEmotionAvatarsState => {
   state.pollIntervalMs = 2_000;
   state._pollHandle = null;
   state._pollInterval = null;
+  state._eaStreams = new Map();
   return state;
 };
 
 afterEach(() => {
   calls = [];
   handler = async () => Response.json({},);
+  FakeEventSource.instances = [];
 },);
 
 const sampleJob = (over: Partial<EmotionAvatarJob> = {},): EmotionAvatarJob => ({
@@ -128,7 +163,6 @@ describeOrSkip("actorEmotionAvatars.listJobs", () => {
     handler = async () => {
       throw new Error("net",);
     };
-
     const ctx = baseCtx();
     ctx._eaActorId = "actor-1";
     await ctx.listJobs();
@@ -207,7 +241,6 @@ describeOrSkip("actorEmotionAvatars.startGeneration", () => {
     handler = async () => {
       throw new Error("net",);
     };
-
     const ctx = baseCtx();
     ctx._eaActorId = "actor-1";
     ctx.baseAvatarId = "av-1";
@@ -237,18 +270,14 @@ describeOrSkip("actorEmotionAvatars.cancelJob", () => {
       if (url.endsWith("/cancel",) && callIdx === 1) {
         return Response.json({ ok: true, },);
       }
-
       if (url.endsWith("/jobs/job-1",)) {
         return Response.json(sampleJob({ status: "cancelled", },),);
       }
-
       if (url.endsWith("/jobs",)) {
         return Response.json([sampleJob({ status: "cancelled", },),],);
       }
-
       return Response.json({},);
     };
-
     const ctx = baseCtx();
     ctx._eaActorId = "actor-1";
     ctx.jobs = [sampleJob(),];
@@ -325,5 +354,89 @@ describeOrSkip("actorEmotionAvatarsFactory", () => {
     expect(a,).not.toBe(b,);
     expect(a._eaActorId,).toBe("actor-a",);
     expect(b._eaActorId,).toBe("actor-b",);
+  });
+},);
+
+describeOrSkip("actorEmotionAvatars.connectJobStream", () => {
+  const sleep = (ms: number,) => new Promise((resolve,) => setTimeout(resolve, ms,));
+
+  /**
+   * @returns {FakeEventSource}
+   */
+  function lastSource(): FakeEventSource {
+    const source = FakeEventSource.instances[FakeEventSource.instances.length - 1];
+    if (!source) { throw new Error("no EventSource opened",); }
+    return source;
+  }
+
+  test("opens an EventSource for the job and applies progress events", () => {
+    const ctx = baseCtx();
+    ctx._eaActorId = "actor-1";
+    ctx.jobs = [sampleJob(),];
+    ctx.connectJobStream("job-1",);
+
+    const source = lastSource();
+    expect(source.url,).toBe("/api/v1/actors/actor-1/emotion-avatars/jobs/job-1/stream",);
+    expect(ctx._eaStreams.get("job-1",),).toBe(source as unknown as EventSource,);
+
+    source.emit("progress", JSON.stringify({ jobId: "job-1", done: 1, total: 2, status: "running", },),);
+    expect(ctx.jobs[0]?.progress,).toEqual(
+      { jobId: "job-1", done: 1, total: 2, status: "running", },
+    );
+  });
+
+  test("closes the stream and refreshes when the job reaches a terminal state", async () => {
+    const ctx = baseCtx();
+    ctx._eaActorId = "actor-1";
+    ctx.jobs = [sampleJob(),];
+    handler = async () => Response.json(sampleJob({ status: "completed", },),);
+    ctx.connectJobStream("job-1",);
+    const source = lastSource();
+
+    source.emit("progress", JSON.stringify({ jobId: "job-1", done: 2, total: 2, status: "completed", },),);
+    expect(source.closed,).toBe(true,);
+    expect(ctx._eaStreams.has("job-1",),).toBe(false,);
+
+    await sleep(10,);
+    expect(ctx.jobs[0]?.status,).toBe("completed",);
+  });
+
+  test("closes the stream on the done event", () => {
+    const ctx = baseCtx();
+    ctx._eaActorId = "actor-1";
+    ctx.jobs = [sampleJob(),];
+    ctx.connectJobStream("job-1",);
+    const source = lastSource();
+
+    source.emit("done", "{}",);
+    expect(source.closed,).toBe(true,);
+    expect(ctx._eaStreams.has("job-1",),).toBe(false,);
+  });
+
+  test("ignores events that arrive after the actor switched", () => {
+    const ctx = baseCtx();
+    ctx._eaActorId = "actor-1";
+    ctx.jobs = [sampleJob(),];
+    ctx.connectJobStream("job-1",);
+    const source = lastSource();
+
+    ctx.setActorId("actor-2",);
+    expect(source.closed,).toBe(true,);
+
+    source.emit("progress", JSON.stringify({ jobId: "job-1", done: 1, total: 2, status: "running", },),);
+    expect(ctx.jobs.length,).toBe(0,);
+  });
+
+  test("replaces an existing stream for the same job", () => {
+    const ctx = baseCtx();
+    ctx._eaActorId = "actor-1";
+    ctx.jobs = [sampleJob(),];
+    ctx.connectJobStream("job-1",);
+    const first = lastSource();
+    ctx.connectJobStream("job-1",);
+    const second = lastSource();
+
+    expect(first.closed,).toBe(true,);
+    expect(ctx._eaStreams.get("job-1",),).toBe(second as unknown as EventSource,);
   });
 },);

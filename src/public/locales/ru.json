@@ -1325,6 +1325,7 @@
     "failedToStartGeneration": "Не удалось запустить генерацию.",
     "generationNoJobId": "Генерация запущена, но идентификатор задания не получен.",
     "emotionAvatarsGenerated": "Эмоциональные аватары сгенерированы.",
+    "emotionAvatarsProgress": "{done} из {total} вариантов",
     "generationTimedOut": "Время генерации истекло.",
     "generationOutcome": "Генерация: {status}.",
     "resumingFromStep": "Продолжение с шага {step} из {total}...",
