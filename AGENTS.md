@@ -31,6 +31,9 @@ bun run check && bun test src/
 # Check runner modes (`scripts/check-parallel.mjs`):
 # - Heavy test gates (unit, e2e, coverage) always run serialized after the
 #   light gates — two concurrent bun-test processes OOM on this host.
+# - Gate concurrency defaults to 1 (serial): agents finalize worktrees
+#   concurrently and co-scheduled gates OOM this host. Pass `--jobs N` (or
+#   `CHECK_JOBS=N`) when you want a faster run and own the memory risk.
 # - `bun run check --diff-base <ref>` scopes unit + coverage gates to the
 #   branch diff (test files adjacent to changed src files; coverage floored
 #   only for modules the diff touches). `giwt finalize` Step 2 passes

@@ -11,14 +11,15 @@
  *   bun run scripts/check-parallel.mjs [--diff-base <ref>] [--gates <csv>] [--skip-gates <csv>]
  *
  * Concurrency cap (added to keep peak RSS sane across multiple worktrees):
- *   --jobs N    Override per-run concurrency cap (default: CHECK_JOBS env, or 4).
+ *   --jobs N    Override per-run concurrency cap (default: CHECK_JOBS env, or 1).
  *   CHECK_JOBS  Env override for the same value. The cap controls how many
  *               checks run in parallel; the script still launches all checks,
  *               but processes them in chunks of `jobs` at a time. The default
- *               of 4 is the observed-safe ceiling on this host: repeated OOM
- *               kills when a second worktree ran its own heavy gates at the
- *               same time. Raise it with --jobs N / CHECK_JOBS=N when running a
- *               single worktree with headroom to spare.
+ *               of 1 is serial: agents finalize worktrees concurrently, and
+ *               co-scheduled gates OOM-killed this host (observed kills when a
+ *               second worktree ran its own heavy gates at the same time).
+ *               Raise it with --jobs N / CHECK_JOBS=N when you want a faster
+ *               run and know the box has the headroom to spare.
  *
  * Per-gate timeout (every gate is bounded; the child is killed on expiry):
  *   Default   15 min -- DEFAULT_GATE_TIMEOUT_MS in scripts/check/gate-timeout.mjs.
@@ -677,17 +678,17 @@ async function ensureGpgWarm() {
 
 // ── Concurrency cap ────────────────────────────────────────────
 // Resolve the per-run concurrency cap with priority: --jobs flag > CHECK_JOBS
-// env > default 4. We refuse values < 1 (would deadlock) and cap at the check
-// count to avoid the Promise.all-of-empty-array footgun. The cap exists so
-// multiple worktrees can run `bun run check` simultaneously without the host
-// hitting OOM — peak RSS scales ~linearly with concurrent checks.
+// env > default 1 (serial). We refuse values < 1 (would deadlock) and cap at
+// the check count to avoid the Promise.all-of-empty-array footgun. The cap
+// exists so several worktrees (or several repos on the box) can run `bun run
+// check` at once without the host hitting OOM — peak RSS scales ~linearly
+// with concurrent checks.
 //
-// ponytail: 4 is an observed-safe ceiling on this host, not a measured one —
-// repeated OOM kills when a second worktree ran its own heavy gates
-// concurrently. Raise it with --jobs N / CHECK_JOBS=N once per-worktree
-// heavy-gate serialization is guaranteed; the number is a guess we can revise,
-// not a constant to tune.
-const DEFAULT_JOBS = 4;
+// ponytail: 1 is the conservative default, not a measured optimum — agents
+// finalize worktrees concurrently and co-scheduled heavy gates OOM-killed
+// this host. An agent that wants a faster run passes --jobs N (or
+// CHECK_JOBS=N) and owns the memory risk it takes on; the default never does.
+const DEFAULT_JOBS = 1;
 function parseJobs() {
   const flagIdx = process.argv.indexOf("--jobs",);
   let raw;
@@ -707,9 +708,9 @@ function parseJobs() {
   }
   if (parsed > DEFAULT_JOBS) {
     console.error(
-      `warn: concurrency ${parsed} exceeds the default ceiling of ${DEFAULT_JOBS}; ` +
-        `peak RSS scales with concurrent checks and this OOMs when another worktree ` +
-        `runs heavy gates at the same time.`,
+      `note: concurrency ${parsed} is above the default of ${DEFAULT_JOBS}; ` +
+        `peak RSS scales with concurrent checks, and a second worktree running ` +
+        `heavy gates at the same time OOMs this host.`,
     );
   }
   return parsed;
