@@ -11792,6 +11792,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-diff-scoped-gates-miss-test-files-that-only-collide-when-run.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-eager-db-init-creates-on-disk-db-on-test-import.md"
     },
     {
@@ -15600,6 +15604,10 @@
   "src/frontend/alpine/chat-sections.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-bun-test-isolate-silently-skips-every-describeorskip-suite.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-sections-loadsections-leaves-sectionsloading-true-forev.md"
     }
   ],
@@ -18364,6 +18372,14 @@
     }
   ],
   "src/frontend/pages/new-chat/submit.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-new-chat-e2e-reads-chat-participants-once-before-the-best-ef.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-new-chat-e2e-reads-the-create-response-body-after-navigation.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-chat-template-config-lifecycle.md"
@@ -22099,6 +22115,12 @@
       "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
     }
   ],
+  "src/image-edit/providers/comfyui-owner.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-audit-new-test-files-for-cross-file-process-collisions-befor.md"
+    }
+  ],
   "src/image-edit/providers/comfyui-provider.ts": [
     {
       "kind": "epic",
@@ -22131,6 +22153,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-creative-studio-workflow-gallery-edit.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-audit-new-test-files-for-cross-file-process-collisions-befor.md"
     },
     {
       "kind": "ticket",
@@ -36347,6 +36373,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/migrations.md"
+    }
+  ],
+  "src/test-utils/isolate-only.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bun-test-isolate-silently-skips-every-describeorskip-suite.md"
     }
   ],
   "src/test-utils/mock-provider.ts": [
