@@ -1,5 +1,6 @@
 import "./i18n.test-helper";
-import { afterEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, expect, mock, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { chatParticipants, } from "./chat-participants";
 import type { ChatState, } from "./types";
 
@@ -11,13 +12,15 @@ import type { ChatState, } from "./types";
 let fetchCalls: { url: string; opts: RequestInit }[] = [];
 let fetchHandler: ((url: string, opts: RequestInit,) => Response) | null = null;
 
-mock.module("./htmx", () => ({
-  apiFetch: async (url: string, opts?: RequestInit,) => {
-    fetchCalls.push({ url, opts: opts ?? {}, },);
-    if (!fetchHandler) { return new Response("{}", { status: 200, },); }
-    return fetchHandler(url, opts ?? {},);
-  },
-}),);
+if (ISOLATED) {
+  mock.module("./htmx", () => ({
+    apiFetch: async (url: string, opts?: RequestInit,) => {
+      fetchCalls.push({ url, opts: opts ?? {}, },);
+      if (!fetchHandler) { return new Response("{}", { status: 200, },); }
+      return fetchHandler(url, opts ?? {},);
+    },
+  }),);
+}
 
 /**
  * @param status
@@ -75,8 +78,8 @@ afterEach(() => {
   fetchHandler = null;
 },);
 
-describe("chatParticipants", () => {
-  describe("loadParticipants", () => {
+describeOrSkip("chatParticipants", () => {
+  describeOrSkip("loadParticipants", () => {
     test("populates _participants and syncs _chatParticipants for mentions", async () => {
       mockFetch(200, [
         {
@@ -119,9 +122,9 @@ describe("chatParticipants", () => {
       await chatParticipants.loadParticipants!.call(state,);
       expect(fetchCalls,).toEqual([],);
     });
-  });
+  },);
 
-  describe("loadAvailableActors", () => {
+  describeOrSkip("loadAvailableActors", () => {
     test("skips loading for non-group chats", async () => {
       const state = buildCtx({ chatType: "direct", },);
       await chatParticipants.loadAvailableActors!.call(state,);
@@ -140,9 +143,9 @@ describe("chatParticipants", () => {
       expect(fetchCalls[0]?.url,).toBe("/api/v1/actors",);
       expect(state._availableActors.length,).toBe(1,);
     });
-  });
+  },);
 
-  describe("loadTurnOrder", () => {
+  describeOrSkip("loadTurnOrder", () => {
     test("fetches and stores the group-chat turn order", async () => {
       mockFetch(200, {
         turnOrder: {
@@ -183,9 +186,9 @@ describe("chatParticipants", () => {
       await chatParticipants.loadTurnOrder!.call(state,);
       expect(fetchCalls,).toEqual([],);
     });
-  });
+  },);
 
-  describe("addParticipant", () => {
+  describeOrSkip("addParticipant", () => {
     test("POSTs and reloads the participant list", async () => {
       mockFetch(201, { id: "a3", },);
       const reload = mock(async () => {},);
@@ -205,9 +208,9 @@ describe("chatParticipants", () => {
       await chatParticipants.addParticipant!.call(state, "a3",);
       expect(toasts[0]?.type,).toBe("error",);
     });
-  });
+  },);
 
-  describe("removeParticipant", () => {
+  describeOrSkip("removeParticipant", () => {
     test("DELETEs the participant", async () => {
       mockFetch(204, {},);
       const state = buildCtx();
@@ -230,9 +233,9 @@ describe("chatParticipants", () => {
       expect(fetchCalls[0]?.url,).toBe("/api/v1/chats/chat-1/participants/a1",);
       expect(fetchCalls[0]?.opts.method,).toBe("DELETE",);
     });
-  });
+  },);
 
-  describe("updateParticipantTalkativity", () => {
+  describeOrSkip("updateParticipantTalkativity", () => {
     test("PUTs a clamped talkativity value and updates local state", async () => {
       mockFetch(200, { ok: true, },);
       const state = buildCtx();
@@ -255,9 +258,9 @@ describe("chatParticipants", () => {
       expect(JSON.parse(fetchCalls[0]?.opts.body as string,),).toEqual({ talkativity: 10, },);
       expect(state._participants[0]?.talkativity,).toBe(10,);
     });
-  });
+  },);
 
-  describe("updateParticipantInitiative", () => {
+  describeOrSkip("updateParticipantInitiative", () => {
     test("PUTs the initiative value and updates local state", async () => {
       mockFetch(200, { ok: true, },);
       const state = buildCtx();
@@ -280,9 +283,9 @@ describe("chatParticipants", () => {
       expect(JSON.parse(fetchCalls[0]?.opts.body as string,),).toEqual({ initiative: 7, },);
       expect(state._participants[0]?.initiative,).toBe(7,);
     });
-  });
+  },);
 
-  describe("filteredAvailableActors", () => {
+  describeOrSkip("filteredAvailableActors", () => {
     test("excludes current members and filters by query", async () => {
       const state = buildCtx();
       state._participants = [
@@ -309,5 +312,5 @@ describe("chatParticipants", () => {
       const result = state.filteredAvailableActors;
       expect(result.map((a,) => a.id),).toEqual(["a3",],);
     });
-  });
-});
+  },);
+},);

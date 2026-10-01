@@ -1,4 +1,5 @@
-import { afterEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, expect, mock, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { useRequestStatus, } from "./use-request-status";
 
 // ── Mock ../fe-fetch (must precede importing ./use-request-status) ──
@@ -6,12 +7,14 @@ type FeFetchMock = (url: string, opts?: RequestInit,) => Promise<Response>;
 let seenUrls: string[] = [];
 let handler: FeFetchMock = async () => Response.json({ requestId: "r1", status: "complete", },);
 
-mock.module("../fe-fetch", () => ({
-  feFetch: (async (url: string, opts?: RequestInit,) => {
-    seenUrls.push(url,);
-    return handler(url, opts,);
-  }) satisfies FeFetchMock,
-}),);
+if (ISOLATED) {
+  mock.module("../fe-fetch", () => ({
+    feFetch: (async (url: string, opts?: RequestInit,) => {
+      seenUrls.push(url,);
+      return handler(url, opts,);
+    }) satisfies FeFetchMock,
+  }),);
+}
 
 afterEach(() => {
   seenUrls = [];
@@ -28,7 +31,7 @@ function record(): Recorder {
   return rec;
 }
 
-describe("useRequestStatus", () => {
+describeOrSkip("useRequestStatus", () => {
   test("polls the status endpoint and terminates on complete", async () => {
     const rec = record();
     const { subscribe, cancel, } = useRequestStatus({
@@ -115,9 +118,9 @@ describe("useRequestStatus", () => {
     expect(rec.updates,).toEqual(["in_progress",],);
     expect(rec.terminals,).toEqual([],);
   });
-});
+},);
 
-describe("useRequestStatus — odd failure payloads", () => {
+describeOrSkip("useRequestStatus — odd failure payloads", () => {
   test("stringifies a non-Error rejection into the error channel", async () => {
     const rec: { updates: string[]; terminals: string[] } = { updates: [], terminals: [], };
     handler = async () => {
@@ -133,4 +136,4 @@ describe("useRequestStatus — odd failure payloads", () => {
     expect(rec.terminals,).toEqual(["failed",],);
     cancel();
   });
-});
+},);

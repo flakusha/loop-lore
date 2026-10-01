@@ -68,3 +68,66 @@ describe("lore-consistency gaps — reachable behavior", () => {
     expect(s,).toBeLessThanOrEqual(100,);
   });
 });
+
+describe("lore-consistency — falsy and empty lore boundaries", () => {
+  test("empty lore string is falsy → neutral default 75", () => {
+    expect(score("The knight drew his sword.", "",),).toBe(75,);
+  });
+
+  test("empty response with non-empty lore → base 70", () => {
+    expect(score("", "The kingdom of Aldoria has fallen.",),).toBe(70,);
+  });
+
+  test("both empty → lore falsy wins → 75", () => {
+    expect(score("", "",),).toBe(75,);
+  });
+
+  test("whitespace-only lore is truthy → base 70", () => {
+    expect(score("The knight drew his sword.", "   ",),).toBe(70,);
+  });
+
+  test("newline/tab-only lore is truthy → base 70", () => {
+    expect(score("The knight drew his sword.", "\n\t",),).toBe(70,);
+  });
+});
+
+describe("lore-consistency — entity extraction is dead (input pre-lowercased)", () => {
+  test("lore with only stopwords → base 70", () => {
+    expect(score("The knight drew his sword.", "The A An This That It He She They We You I",),).toBe(70,);
+  });
+
+  test("response with capitalized names, lore without → still base 70", () => {
+    expect(score("Aldoria and Brennus march north.", "the kingdom has fallen.",),).toBe(70,);
+  });
+
+  test("unicode lore and response → base 70, no crash", () => {
+    expect(
+      score("Der Ritter zog sein Schwert aus der Scheide.", "Das Königreich Aldoria ist gefallen.",),
+    ).toBe(70,);
+  });
+
+  test("mixed-case lore with digits and punctuation → base 70", () => {
+    expect(score("He draws the sword.", "Aldoria-7 (the Fallen Kingdom) has FALLEN!",),).toBe(70,);
+  });
+
+  test("single-character lore → base 70", () => {
+    expect(score("He draws the sword.", "x",),).toBe(70,);
+  });
+
+  test("lore that is only punctuation → base 70", () => {
+    expect(score("He draws his sword.", "!!! ... ???",),).toBe(70,);
+  });
+});
+
+describe("lore-consistency — clamp and determinism", () => {
+  test("score is deterministic across repeated calls", () => {
+    const a = score("The knight drew his sword.", "The kingdom of Aldoria has fallen.",);
+    const b = score("The knight drew his sword.", "The kingdom of Aldoria has fallen.",);
+    expect(a,).toBe(b,);
+  });
+
+  test("null lore always yields exactly 75 regardless of response", () => {
+    expect(score("", null,),).toBe(75,);
+    expect(score("word ".repeat(1000,), null,),).toBe(75,);
+  });
+});

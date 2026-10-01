@@ -1,18 +1,21 @@
 import "./i18n.test-helper";
-import { afterEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, expect, mock, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { chatProactive, } from "./chat-proactive";
 
 // ── Mock apiFetch (must override the real one set by htmx.ts at import) ──
 let fetchCalls: { url: string; opts: RequestInit }[] = [];
 let fetchHandler: ((url: string, opts: RequestInit,) => Response) | null = null;
 
-mock.module("./htmx", () => ({
-  apiFetch: async (url: string, opts?: RequestInit,) => {
-    fetchCalls.push({ url, opts: opts ?? {}, },);
-    if (!fetchHandler) { return new Response("{}", { status: 200, },); }
-    return fetchHandler(url, opts ?? {},);
-  },
-}),);
+if (ISOLATED) {
+  mock.module("./htmx", () => ({
+    apiFetch: async (url: string, opts?: RequestInit,) => {
+      fetchCalls.push({ url, opts: opts ?? {}, },);
+      if (!fetchHandler) { return new Response("{}", { status: 200, },); }
+      return fetchHandler(url, opts ?? {},);
+    },
+  }),);
+}
 
 /**
  * Queue endpoint responses: each handler consumes configs then check then send.
@@ -62,7 +65,7 @@ function buildCtx(overrides: {
   return ctx;
 }
 
-describe("chatProactive — scheduler", () => {
+describeOrSkip("chatProactive — scheduler", () => {
   afterEach(() => {
     fetchCalls = [];
     fetchHandler = null;
@@ -129,4 +132,4 @@ describe("chatProactive — scheduler", () => {
     await ctx.tickProactive();
     expect(fetchCalls.length,).toBe(0,);
   });
-});
+},);

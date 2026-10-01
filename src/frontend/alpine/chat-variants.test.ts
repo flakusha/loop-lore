@@ -2,7 +2,8 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import "./i18n.test-helper";
-import { afterEach, beforeEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, beforeEach, expect, mock, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { chatVariants, } from "./chat-variants";
 
 import type { ApiFetchMock, Toast, } from "../tests/test-types";
@@ -10,12 +11,14 @@ import type { ApiFetchMock, Toast, } from "../tests/test-types";
 let calls: { url: string; opts: RequestInit }[] = [];
 let handler: ApiFetchMock = async () => Response.json({},);
 
-mock.module("./htmx", () => ({
-  apiFetch: (async (url: string, opts?: RequestInit,) => {
-    calls.push({ url, opts: opts ?? {}, },);
-    return handler(url, opts,);
-  }) satisfies ApiFetchMock,
-}),);
+if (ISOLATED) {
+  mock.module("./htmx", () => ({
+    apiFetch: (async (url: string, opts?: RequestInit,) => {
+      calls.push({ url, opts: opts ?? {}, },);
+      return handler(url, opts,);
+    }) satisfies ApiFetchMock,
+  }),);
+}
 
 interface VariantsCtx {
   messages: { id: string; content: string; variantIndex?: number; totalVariants?: number }[];
@@ -78,7 +81,7 @@ afterEach(() => {
   messageEl = null;
 },);
 
-describe("chatVariants.openVariants", () => {
+describeOrSkip("chatVariants.openVariants", () => {
   test("GETs siblings and opens the browser", async () => {
     const ctx = buildCtx();
     handler = async () => Response.json([{ id: "v1", content: "A", }, { id: "v2", content: "B", },],);
@@ -98,9 +101,9 @@ describe("chatVariants.openVariants", () => {
     expect(ctx._variantsFor,).toBeNull();
     expect(ctx.toasts[0]?.type,).toBe("error",);
   });
-});
+},);
 
-describe("chatVariants.selectVariantByIndex", () => {
+describeOrSkip("chatVariants.selectVariantByIndex", () => {
   test("PUTs stateless select and swaps bubble content locally", async () => {
     const ctx = buildCtx();
     Object.assign(ctx, chatVariants,);
@@ -146,9 +149,9 @@ describe("chatVariants.selectVariantByIndex", () => {
     await chatVariants.selectVariantByIndex!.call(ctx as never, "m1", 1,);
     expect(ctx.toasts[0]?.type,).toBe("error",);
   });
-});
+},);
 
-describe("chatVariants.closeVariants", () => {
+describeOrSkip("chatVariants.closeVariants", () => {
   test("clears the browser state", () => {
     const ctx = buildCtx({
       _variantsOpen: true,
@@ -162,9 +165,9 @@ describe("chatVariants.closeVariants", () => {
     expect(ctx._variantsFor,).toBeNull();
     expect(ctx._variants,).toEqual([],);
   });
-});
+},);
 
-describe("chatVariants.switchVariant", () => {
+describeOrSkip("chatVariants.switchVariant", () => {
   test("routes through stateless select with wrapped index", async () => {
     const ctx = buildCtx();
     Object.assign(ctx, chatVariants,);
@@ -173,9 +176,9 @@ describe("chatVariants.switchVariant", () => {
     expect(JSON.parse(calls[0]?.opts.body as string,),).toEqual({ variantIndex: 1, },);
     expect(ctx.messages[0]?.content,).toBe("B",);
   });
-});
+},);
 
-describe("chatVariants.regenerateResponse", () => {
+describeOrSkip("chatVariants.regenerateResponse", () => {
   test("warns and skips the request without an active chat", async () => {
     const ctx = buildCtx({ activeChat: null, },);
     await chatVariants.regenerateResponse!.call(ctx as never,);
@@ -207,9 +210,9 @@ describe("chatVariants.regenerateResponse", () => {
     await chatVariants.regenerateResponse!.call(ctx as never,);
     expect(ctx.toasts,).toEqual([{ type: "error", message: "Failed to regenerate", },],);
   });
-});
+},);
 
-describe("chatVariants.regenerateVariant", () => {
+describeOrSkip("chatVariants.regenerateVariant", () => {
   test("ignores the click without an active chat", async () => {
     const ctx = buildCtx({ activeChat: null, },);
     await chatVariants.regenerateVariant!.call(ctx as never, "m1",);
@@ -241,9 +244,9 @@ describe("chatVariants.regenerateVariant", () => {
     expect(ctx.isGenerating,).toBe(false,);
     expect(ctx.toasts,).toEqual([{ type: "error", message: "Failed to regenerate variant", },],);
   });
-});
+},);
 
-describe("chatVariants.continueMessage", () => {
+describeOrSkip("chatVariants.continueMessage", () => {
   test("warns without an active chat", async () => {
     const ctx = buildCtx({ activeChat: null, },);
     await chatVariants.continueMessage!.call(ctx as never, "m1",);
@@ -290,9 +293,9 @@ describe("chatVariants.continueMessage", () => {
     await chatVariants.continueMessage!.call(ctx as never, "m1",);
     expect(ctx.toasts,).toEqual([{ type: "error", message: "Network error continuing message", },],);
   });
-});
+},);
 
-describe("chatVariants.retryFromPoint", () => {
+describeOrSkip("chatVariants.retryFromPoint", () => {
   test("warns without an active chat", async () => {
     const ctx = buildCtx({ activeChat: null, },);
     await chatVariants.retryFromPoint!.call(ctx as never, "a1", 1,);
@@ -332,4 +335,4 @@ describe("chatVariants.retryFromPoint", () => {
     await chatVariants.retryFromPoint!.call(ctx as never, "a1", 1,);
     expect(ctx.toasts[0]?.type,).toBe("error",);
   });
-});
+},);

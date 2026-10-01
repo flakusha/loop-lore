@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { beforeAll, describe, expect, test, } from "bun:test";
+import { beforeAll, expect, test, } from "bun:test";
 import { getSmk, initSmk, } from "../crypto/smk";
 import { createTestDb, } from "../test-utils/create-test-db";
+import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
 import { pskCipher, } from "./cipher";
 import { createMeshEncryption, } from "./encryption";
 import { getOrCreateInboundKey, } from "./peer-keys";
@@ -11,16 +12,18 @@ import { getOrCreateInboundKey, } from "./peer-keys";
 const SECRET = "mesh-test-psk";
 const KEY = Buffer.from("k".repeat(32,),).toString("base64",);
 
-beforeAll(async () => {
-  await initSmk({
-    serverEncryptionKey: "b".repeat(64,),
-    required: false,
-    compressThreshold: 128,
-    compressAlgorithm: "gzip",
+if (ISOLATED) {
+  beforeAll(async () => {
+    await initSmk({
+      serverEncryptionKey: "b".repeat(64,),
+      required: false,
+      compressThreshold: 128,
+      compressAlgorithm: "gzip",
+    },);
   },);
-},);
+}
 
-describe("mesh encryption provider", () => {
+describeOrSkip("mesh encryption provider", () => {
   test("contentCipher prefers the issued key over the PSK", async () => {
     const encryption = createMeshEncryption(SECRET,);
     const sealed = await encryption.contentCipher(KEY,).seal(
@@ -56,4 +59,4 @@ describe("mesh encryption provider", () => {
     const ciphers = await encryption.receiverCiphers(db, "https://a.example", null,);
     expect(ciphers,).toEqual([encryption.psk,],);
   });
-});
+},);

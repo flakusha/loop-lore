@@ -34,7 +34,7 @@ createLogger({ level: "error", },);
 const state = {
   active: new Map<string, { lastRenderedChunkIndex: number; deliveryConfirmed: boolean }>(),
   telemetryEnabled: false,
-  telemetryEvents: [] as { eventType: string; data: Record<string, unknown> }[],
+  telemetryEvents: [] as { eventType: string; data?: unknown }[],
   telemetryReject: false,
   memoryCalls: [] as unknown[],
   memoryReject: false,

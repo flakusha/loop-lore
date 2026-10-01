@@ -1,5 +1,6 @@
 import "./i18n.test-helper";
-import { afterEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, expect, mock, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import {
   AUTO_FIRE_MAX_CONSECUTIVE,
   AUTO_FIRE_MIN_INTERVAL_MS,
@@ -10,13 +11,15 @@ import {
 let fetchCalls: { url: string; opts: RequestInit }[] = [];
 let fetchHandler: ((url: string, opts: RequestInit,) => Response) | null = null;
 
-mock.module("./htmx", () => ({
-  apiFetch: async (url: string, opts?: RequestInit,) => {
-    fetchCalls.push({ url, opts: opts ?? {}, },);
-    if (!fetchHandler) { return new Response("{}", { status: 200, },); }
-    return fetchHandler(url, opts ?? {},);
-  },
-}),);
+if (ISOLATED) {
+  mock.module("./htmx", () => ({
+    apiFetch: async (url: string, opts?: RequestInit,) => {
+      fetchCalls.push({ url, opts: opts ?? {}, },);
+      if (!fetchHandler) { return new Response("{}", { status: 200, },); }
+      return fetchHandler(url, opts ?? {},);
+    },
+  }),);
+}
 
 /**
  * @param status
@@ -89,7 +92,7 @@ afterEach(() => {
 
 // ── fireAutoQuickReplies — loop guard + event triggers ──────
 
-describe("chatQuickReplies.fireAutoQuickReplies", () => {
+describeOrSkip("chatQuickReplies.fireAutoQuickReplies", () => {
   test("fires user-triggered commands when invoked from a human send", async () => {
     const { ctx, sends, } = buildCtx({
       quickReplies: [
@@ -153,11 +156,11 @@ describe("chatQuickReplies.fireAutoQuickReplies", () => {
     await chatQuickReplies.fireAutoQuickReplies!.call(ctx, "ai",);
     expect(sends,).toEqual(["/p", "/q",],); // capped — the feedback iteration emits nothing
   });
-});
+},);
 
 // ── executeQuickReply — marks automated sends ───────────────
 
-describe("chatQuickReplies.executeQuickReply", () => {
+describeOrSkip("chatQuickReplies.executeQuickReply", () => {
   test("sets _autoFired so the produced send does not re-trigger user events", async () => {
     const { ctx, sends, } = buildCtx();
     await chatQuickReplies.executeQuickReply!.call(ctx, "/greet",);
@@ -166,11 +169,11 @@ describe("chatQuickReplies.executeQuickReply", () => {
     // during the send it was true (verified via the stub's counter branch).
     expect(ctx._consecutiveAutoFires,).toBe(1,);
   });
-});
+},);
 
 // ── saveQuickReplies — persists the button set ──────────────
 
-describe("chatQuickReplies.saveQuickReplies", () => {
+describeOrSkip("chatQuickReplies.saveQuickReplies", () => {
   test("PUTs quickReplies and clears the dirty flag on success", async () => {
     mockFetch(200, { ok: true, },);
     const { ctx, } = buildCtx();
@@ -190,4 +193,179 @@ describe("chatQuickReplies.saveQuickReplies", () => {
     await chatQuickReplies.saveQuickReplies!.call(ctx,);
     expect(ctx._quickRepliesDirty,).toBe(true,);
   });
-});
+},);
+
+// ── loadQuickReplies — parse the active chat's button set ──
+
+describeOrSkip("chatQuickReplies.loadQuickReplies", () => {
+  test("parses the active chat's quick_replies JSON into state", () => {
+    const { ctx, } = buildCtx({ quickReplies: [{ label: "greet", command: "/hello", },], },);
+    chatQuickReplies.loadQuickReplies!.call(ctx,);
+    expect(ctx._quickReplies,).toEqual([{ label: "greet", command: "/hello", },],);
+  });
+
+  test("falls back to [] when quick_replies is null", () => {
+    const { ctx, } = buildCtx();
+    ctx.chats[0]!.quick_replies = null;
+    chatQuickReplies.loadQuickReplies!.call(ctx,);
+    expect(ctx._quickReplies,).toEqual([],);
+  });
+
+  test("falls back to [] when the chat is not in the list", () => {
+    const { ctx, } = buildCtx({ quickReplies: [{ label: "g", command: "/g", },], },);
+    ctx.activeChat = "missing";
+    chatQuickReplies.loadQuickReplies!.call(ctx,);
+    expect(ctx._quickReplies,).toEqual([],);
+  });
+
+  test("falls back to [] when the JSON is corrupt", () => {
+    const { ctx, } = buildCtx();
+    ctx.chats[0]!.quick_replies = "{not json";
+    chatQuickReplies.loadQuickReplies!.call(ctx,);
+    expect(ctx._quickReplies,).toEqual([],);
+  });
+},);
+
+// ── executeQuickReply — guard edges ──────────────────────────
+
+describeOrSkip("chatQuickReplies.executeQuickReply — guards", () => {
+  test("ignores an empty command", async () => {
+    const { ctx, sends, } = buildCtx();
+    await chatQuickReplies.executeQuickReply!.call(ctx, "",);
+    expect(sends,).toEqual([],);
+  });
+
+  test("ignores the call when there is no active chat", async () => {
+    const { ctx, sends, } = buildCtx();
+    ctx.activeChat = "";
+    await chatQuickReplies.executeQuickReply!.call(ctx, "/greet",);
+    expect(sends,).toEqual([],);
+  });
+
+  test("still sends when $refs is undefined", async () => {
+    const { ctx, sends, } = buildCtx();
+    ctx.$refs = undefined as unknown as QuickReplyCtx["$refs"];
+    // The shared stub reads $refs.messageInput; this test needs a $refs-free send.
+    ctx.sendMessage = async function() {
+      sends.push("/greet",);
+    };
+    await chatQuickReplies.executeQuickReply!.call(ctx, "/greet",);
+    expect(sends,).toEqual(["/greet",],);
+  });
+},);
+
+// ── fireStartupQuickReplies — once-per-chat startup batch ────
+
+describeOrSkip("chatQuickReplies.fireStartupQuickReplies", () => {
+  test("runs startup commands once per chat open", async () => {
+    const { ctx, sends, } = buildCtx({
+      quickReplies: [{ label: "s", command: "/start", trigger: "startup", },],
+    },);
+    await chatQuickReplies.fireStartupQuickReplies!.call(ctx,);
+    expect(sends,).toEqual(["/start",],);
+    expect(ctx._startupFiredChat,).toBe("chat-1",);
+    await chatQuickReplies.fireStartupQuickReplies!.call(ctx,);
+    expect(sends,).toEqual(["/start",],); // already fired for this chat
+  });
+
+  test("skips non-startup triggers and empty commands", async () => {
+    const { ctx, sends, } = buildCtx({
+      quickReplies: [
+        { label: "u", command: "/u", trigger: "user", },
+        { label: "e", command: "", trigger: "startup", },
+      ],
+    },);
+    await chatQuickReplies.fireStartupQuickReplies!.call(ctx,);
+    expect(sends,).toEqual([],);
+  });
+
+  test("no-ops without an active chat", async () => {
+    const { ctx, sends, } = buildCtx({
+      quickReplies: [{ label: "s", command: "/start", trigger: "startup", },],
+    },);
+    ctx.activeChat = "";
+    await chatQuickReplies.fireStartupQuickReplies!.call(ctx,);
+    expect(sends,).toEqual([],);
+    expect(ctx._startupFiredChat,).toBeNull();
+  });
+},);
+
+// ── fireAutoQuickReplies — remaining guard edges ────────────
+
+describeOrSkip("chatQuickReplies.fireAutoQuickReplies — guards", () => {
+  test("no-ops without an active chat", async () => {
+    const { ctx, sends, } = buildCtx({
+      quickReplies: [{ label: "p", command: "/p", trigger: "user", },],
+    },);
+    ctx.activeChat = "";
+    await chatQuickReplies.fireAutoQuickReplies!.call(ctx, "user",);
+    expect(sends,).toEqual([],);
+  });
+
+  test("sends nothing when no quick reply matches the trigger", async () => {
+    const { ctx, sends, } = buildCtx({
+      quickReplies: [{ label: "p", command: "/p", trigger: "ai", },],
+    },);
+    await chatQuickReplies.fireAutoQuickReplies!.call(ctx, "user",);
+    expect(sends,).toEqual([],);
+  });
+},);
+
+// ── saveQuickReplies — dirty guard, null body, toasts ────────
+
+describeOrSkip("chatQuickReplies.saveQuickReplies — edges", () => {
+  test("no-ops when the set is not dirty", async () => {
+    const { ctx, } = buildCtx();
+    ctx.$dispatch = () => {};
+    await chatQuickReplies.saveQuickReplies!.call(ctx,);
+    expect(fetchCalls,).toEqual([],);
+  });
+
+  test("no-ops without an active chat", async () => {
+    const { ctx, } = buildCtx();
+    ctx._quickRepliesDirty = true;
+    ctx.activeChat = "";
+    ctx.$dispatch = () => {};
+    await chatQuickReplies.saveQuickReplies!.call(ctx,);
+    expect(fetchCalls,).toEqual([],);
+  });
+
+  test("PUTs null quickReplies when the list is empty", async () => {
+    mockFetch(200, { ok: true, },);
+    const { ctx, } = buildCtx();
+    ctx._quickRepliesDirty = true;
+    ctx.$dispatch = () => {};
+    await chatQuickReplies.saveQuickReplies!.call(ctx,);
+    const body = JSON.parse(fetchCalls[0]!.opts.body as string,) as { quickReplies: unknown };
+    expect(body.quickReplies,).toBeNull();
+  });
+
+  test("updates the chat column and dispatches a success toast", async () => {
+    mockFetch(200, { ok: true, },);
+    const { ctx, } = buildCtx({ quickReplies: [{ label: "greet", command: "/hello", },], },);
+    ctx._quickRepliesDirty = true;
+    const toasts: { event: string; detail?: unknown }[] = [];
+    ctx.$dispatch = (event: string, detail?: unknown,) => {
+      toasts.push({ event, detail, },);
+    };
+    await chatQuickReplies.saveQuickReplies!.call(ctx,);
+    expect(ctx.chats[0]!.quick_replies,).toBe(JSON.stringify([{ label: "greet", command: "/hello", },],),);
+    expect(toasts.length,).toBe(1,);
+    expect(toasts[0]!.event,).toBe("show-toast",);
+    expect((toasts[0]!.detail as { type: string }).type,).toBe("success",);
+  });
+
+  test("dispatches an error toast on failure", async () => {
+    mockFetch(500, { error: "boom", },);
+    const { ctx, } = buildCtx({ quickReplies: [{ label: "greet", command: "/hello", },], },);
+    ctx._quickRepliesDirty = true;
+    const toasts: { event: string; detail?: unknown }[] = [];
+    ctx.$dispatch = (event: string, detail?: unknown,) => {
+      toasts.push({ event, detail, },);
+    };
+    await chatQuickReplies.saveQuickReplies!.call(ctx,);
+    expect(toasts.length,).toBe(1,);
+    expect(toasts[0]!.event,).toBe("show-toast",);
+    expect((toasts[0]!.detail as { type: string }).type,).toBe("error",);
+  });
+},);

@@ -1,4 +1,5 @@
-import { afterEach, beforeEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, beforeEach, expect, mock, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../../../test-utils/isolate-only";
 import { chatUtilsInteraction, } from "./interaction";
 
 // ── Mock ../htmx (interaction.ts imports apiFetch from it) ──
@@ -6,12 +7,14 @@ type ApiFetchMock = (url: string, opts?: RequestInit,) => Promise<Response>;
 let calls: { url: string; opts: RequestInit }[] = [];
 let handler: ApiFetchMock = async () => Response.json({},);
 
-mock.module("../htmx", () => ({
-  apiFetch: (async (url: string, opts?: RequestInit,) => {
-    calls.push({ url, opts: opts ?? {}, },);
-    return handler(url, opts,);
-  }) satisfies ApiFetchMock,
-}),);
+if (ISOLATED) {
+  mock.module("../htmx", () => ({
+    apiFetch: (async (url: string, opts?: RequestInit,) => {
+      calls.push({ url, opts: opts ?? {}, },);
+      return handler(url, opts,);
+    }) satisfies ApiFetchMock,
+  }),);
+}
 
 // Ambient globals used by interaction.ts (bare `window`, `t`, `showToast`).
 const g = globalThis as unknown as {
@@ -65,7 +68,7 @@ function buildCtx(overrides?: Partial<InteractionCtx>,): InteractionCtx {
   } as InteractionCtx;
 }
 
-describe("chatUtilsInteraction context menu", () => {
+describeOrSkip("chatUtilsInteraction context menu", () => {
   test("clamps the menu inside the viewport", () => {
     const ctx = buildCtx();
     const event = {
@@ -79,9 +82,9 @@ describe("chatUtilsInteraction context menu", () => {
     chatUtilsInteraction.closeContextMenu!.call(ctx as never,);
     expect(ctx._contextMenu,).toEqual({ visible: false, messageId: null, x: 0, y: 0, },);
   });
-});
+},);
 
-describe("chatUtilsInteraction flag dialog", () => {
+describeOrSkip("chatUtilsInteraction flag dialog", () => {
   test("open resets reason fields, close only hides", () => {
     const ctx = buildCtx({ _flagReason: "stale", _flagOther: "junk", },);
     chatUtilsInteraction.openFlagDialog!.call(ctx as never, "asset", "a1", "chat-1",);
@@ -166,9 +169,9 @@ describe("chatUtilsInteraction flag dialog", () => {
     expect(toasts[1]!.message,).toBe("chats.flagFailed",);
     expect(ctx._flagBusy,).toBe(false,);
   });
-});
+},);
 
-describe("chatUtilsInteraction reaction picker", () => {
+describeOrSkip("chatUtilsInteraction reaction picker", () => {
   test("positions the picker above the target and clamps to the viewport", () => {
     const ctx = buildCtx();
     const event = {
@@ -179,9 +182,9 @@ describe("chatUtilsInteraction reaction picker", () => {
     chatUtilsInteraction.closeReactionPicker!.call(ctx as never,);
     expect(ctx._reactionPicker.visible,).toBe(false,);
   });
-});
+},);
 
-describe("chatUtilsInteraction.displayName", () => {
+describeOrSkip("chatUtilsInteraction.displayName", () => {
   test("maps roles to stable labels", () => {
     const ctx = {} as never;
     expect(chatUtilsInteraction.displayName!.call(ctx, { role: "user", },),).toBe("You",);
@@ -190,4 +193,4 @@ describe("chatUtilsInteraction.displayName", () => {
     expect(chatUtilsInteraction.displayName!.call(ctx, { role: "assistant", actor_name: "Lyra", },),).toBe("Lyra",);
     expect(chatUtilsInteraction.displayName!.call(ctx, { role: "assistant", actor_id: "a1", },),).toBe("Assistant",);
   });
-});
+},);

@@ -1,18 +1,21 @@
 import "./i18n.test-helper";
-import { afterEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, expect, mock, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { chatActions, } from "./chat-actions";
 
 // ── Mock apiFetch (must override the real one set by htmx.ts at import) ──
 let fetchCalls: { url: string; opts: RequestInit }[] = [];
 let fetchHandler: ((url: string, opts: RequestInit,) => Response) | null = null;
 
-mock.module("./htmx", () => ({
-  apiFetch: async (url: string, opts?: RequestInit,) => {
-    fetchCalls.push({ url, opts: opts ?? {}, },);
-    if (!fetchHandler) { return new Response("{}", { status: 200, },); }
-    return fetchHandler(url, opts ?? {},);
-  },
-}),);
+if (ISOLATED) {
+  mock.module("./htmx", () => ({
+    apiFetch: async (url: string, opts?: RequestInit,) => {
+      fetchCalls.push({ url, opts: opts ?? {}, },);
+      if (!fetchHandler) { return new Response("{}", { status: 200, },); }
+      return fetchHandler(url, opts ?? {},);
+    },
+  }),);
+}
 
 /**
  * @param status
@@ -62,8 +65,8 @@ afterEach(() => {
 
 // ── dispatchCommandAction ────────────────────────────────────
 
-describe("dispatchCommandAction", () => {
-  describe("generate-image", () => {
+describeOrSkip("dispatchCommandAction", () => {
+  describeOrSkip("generate-image", () => {
     test("fires POST to /api/v1/generation/image with prompt + chatId", async () => {
       mockFetch(200,);
       const ctx = buildCtx();
@@ -162,9 +165,9 @@ describe("dispatchCommandAction", () => {
       expect(fetchCalls.length,).toBe(0,);
       expect(ctx.toasts[0]?.type,).toBe("warning",);
     });
-  });
+  },);
 
-  describe("generate-caption", () => {
+  describeOrSkip("generate-caption", () => {
     test("fires POST to /api/v1/generation/caption with assetIds + chatId", async () => {
       mockFetch(200,);
       const ctx = buildCtx();
@@ -221,9 +224,9 @@ describe("dispatchCommandAction", () => {
       expect(fetchCalls.length,).toBe(0,);
       expect(ctx.toasts[0]?.type,).toBe("warning",);
     });
-  });
+  },);
 
-  describe("unimplemented generation actions", () => {
+  describeOrSkip("unimplemented generation actions", () => {
     test("generate-music shows not-implemented toast", async () => {
       const ctx = buildCtx();
       await chatActions.dispatchCommandAction!.call(
@@ -261,9 +264,9 @@ describe("dispatchCommandAction", () => {
 
       expect(ctx.toasts[0]?.message,).toContain("not yet implemented",);
     });
-  });
+  },);
 
-  describe("create-quest", () => {
+  describeOrSkip("create-quest", () => {
     test("fetches chat world_id then fires POST to /api/v1/worlds/:wid/quests", async () => {
       let callCount = 0;
       fetchHandler = (url, _opts,) => {
@@ -370,9 +373,9 @@ describe("dispatchCommandAction", () => {
       expect(fetchCalls.length,).toBe(0,);
       expect(ctx.toasts[0]?.type,).toBe("warning",);
     });
-  });
+  },);
 
-  describe("review-entity", () => {
+  describeOrSkip("review-entity", () => {
     test("does not fire any fetch", async () => {
       const ctx = buildCtx();
       await chatActions.dispatchCommandAction!.call(
@@ -385,9 +388,9 @@ describe("dispatchCommandAction", () => {
       expect(fetchCalls.length,).toBe(0,);
       expect(ctx.toasts.length,).toBe(0,);
     });
-  });
+  },);
 
-  describe("unknown action", () => {
+  describeOrSkip("unknown action", () => {
     test("shows warning toast for unrecognized action", async () => {
       const ctx = buildCtx();
       await chatActions.dispatchCommandAction!.call(
@@ -400,12 +403,12 @@ describe("dispatchCommandAction", () => {
       expect(fetchCalls.length,).toBe(0,);
       expect(ctx.toasts,).toEqual([{ type: "warning", message: "Unknown action: do-something-else", },],);
     });
-  });
-});
+  },);
+},);
 
 // ── handleCommandInput ───────────────────────────────────────
 
-describe("handleCommandInput", () => {
+describeOrSkip("handleCommandInput", () => {
   // _commandList is hydrated at runtime from GET /api/v1/commands; tests need a
   // populated list to exercise the filter logic.
   type CommandEntry = { name: string; descriptionKey: string; description: string };
@@ -465,11 +468,11 @@ describe("handleCommandInput", () => {
     expect(state._showCommandPalette,).toBe(true,);
     expect(state._filteredCommands.length,).toBe(seededCommandList.length,);
   });
-});
+},);
 
 // ── selectCommand ────────────────────────────────────────────
 
-describe("selectCommand", () => {
+describeOrSkip("selectCommand", () => {
   test("sets input value to /name and hides palette", () => {
     const inputEl = { value: "", focus() {}, };
     const state = {
@@ -496,9 +499,9 @@ describe("selectCommand", () => {
     expect(() => chatActions.selectCommand!.call(state as any, "image",)).not.toThrow();
     expect(state._showCommandPalette,).toBe(false,);
   });
-});
+},);
 
-describe("dispatchCommandAction link-asset", () => {
+describeOrSkip("dispatchCommandAction link-asset", () => {
   const priorConfirm = (globalThis as { confirm?: (message?: string,) => boolean }).confirm;
   afterEach(() => {
     (globalThis as { confirm?: (message?: string,) => boolean }).confirm = priorConfirm;
@@ -559,9 +562,9 @@ describe("dispatchCommandAction link-asset", () => {
     );
     expect(ctx.toasts,).toEqual([{ type: "error", message: "Failed to link castle.png", },],);
   });
-});
+},);
 
-describe("dispatchCommandAction impersonate", () => {
+describeOrSkip("dispatchCommandAction impersonate", () => {
   test("impersonate-toggle off PUTs null and clears flags", async () => {
     mockFetch(200, {},);
     const ctx = buildCtx() as any;
@@ -631,4 +634,4 @@ describe("dispatchCommandAction impersonate", () => {
     await chatActions.dispatchCommandAction!.call(ctx as any, "review-entity", { id: "e1", }, "chat-1",);
     expect(fetchCalls.length,).toBe(0,);
   });
-});
+},);

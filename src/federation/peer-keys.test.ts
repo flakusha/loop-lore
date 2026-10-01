@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { beforeAll, describe, expect, test, } from "bun:test";
+import { beforeAll, expect, test, } from "bun:test";
 import { initSmk, } from "../crypto/smk";
 import { createTestDb, } from "../test-utils/create-test-db";
+import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
 import { pskCipher, } from "./cipher";
 import { openEnvelope, sealContent, } from "./envelope";
 import {
@@ -17,14 +18,16 @@ import {
 
 const SMK_HEX = "b".repeat(64,);
 
-beforeAll(async () => {
-  await initSmk({
-    serverEncryptionKey: SMK_HEX,
-    required: false,
-    compressThreshold: 128,
-    compressAlgorithm: "gzip",
+if (ISOLATED) {
+  beforeAll(async () => {
+    await initSmk({
+      serverEncryptionKey: SMK_HEX,
+      required: false,
+      compressThreshold: 128,
+      compressAlgorithm: "gzip",
+    },);
   },);
-},);
+}
 
 async function smk(): Promise<CryptoKey> {
   const { getSmk, } = await import("../crypto/smk");
@@ -33,7 +36,7 @@ async function smk(): Promise<CryptoKey> {
   return key;
 }
 
-describe("per-sender inbound keys", () => {
+describeOrSkip("per-sender inbound keys", () => {
   test("provision is stable; rotation keeps a grace key", async () => {
     const { db, } = await createTestDb();
     const key = await smk();
@@ -107,4 +110,4 @@ describe("per-sender inbound keys", () => {
     );
     expect(generateInboundKey(),).toHaveLength(44,);
   });
-});
+},);

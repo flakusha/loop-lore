@@ -21,6 +21,7 @@
 // startExport passed to the request layer; we assert `signal === undefined`
 // to prove the 30s timeout is NOT armed in stream mode.
 import { afterEach, expect, mock, test, } from "bun:test";
+import { ISOLATED, } from "../../test-utils/isolate-only";
 import { exportProgressFactory, } from "./export-progress";
 
 type ApiFetchMock = (url: string, opts?: RequestInit,) => Promise<Response>;
@@ -30,11 +31,13 @@ let handler: ApiFetchMock = async () => new Response(null, { status: 404, },);
 // the ./htmx module cache via mock.module. Bun looks up cached modules at
 // call-time, so the mock takes effect for startExport's apiFetch call even
 // though the static import resolved before mock.module ran.
-mock.module("./htmx", () => ({
-  apiFetch: ((url: string, opts?: RequestInit,) => {
-    return handler(url, opts,);
-  }) satisfies ApiFetchMock,
-}),);
+if (ISOLATED) {
+  mock.module("./htmx", () => ({
+    apiFetch: ((url: string, opts?: RequestInit,) => {
+      return handler(url, opts,);
+    }) satisfies ApiFetchMock,
+  }),);
+}
 
 afterEach(() => {
   handler = async () => new Response(null, { status: 404, },);
@@ -63,7 +66,7 @@ function openSse(frames: string[],): { response: Response; closed: boolean } {
   };
 }
 
-test("startExport streams the SSE body and disarms the fetch timeout", async () => {
+test.skipIf(!ISOLATED,)("startExport streams the SSE body and disarms the fetch timeout", async () => {
   let captured: RequestInit | undefined;
   const stream = openSse([
     `data: {"type":"job_created","jobId":"j1","status":"queued"}\n\n`,
@@ -90,4 +93,4 @@ test("startExport streams the SSE body and disarms the fetch timeout", async () 
   // The SSE contract: startExport must request a streaming response.
   expect((captured as { stream?: unknown } | undefined)?.stream,).toBe(true,);
   expect(stream.closed,).toBe(true,);
-});
+},);
