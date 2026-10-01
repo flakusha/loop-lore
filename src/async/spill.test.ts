@@ -4,16 +4,37 @@
 /**
  * Tests for async-store disk offload (spill + read-back).
  *
- * Spills use unique ids under the repo `.tmp/async-store/` (git-ignored)
- * and delete their files afterwards, so the suite leaves no trace.
+ * Resource contract (parallel-safe): every test owns a unique `mkdtemp` spill
+ * directory installed via `setOffloadDir`, so no test touches the process
+ * default or another suite's files; teardown runs in `afterEach` so a failing
+ * test never leaks a directory. BUG-test-async-store-offload-dir-fixed-path-race.
  */
-import { describe, expect, test, } from "bun:test";
-import { rmSync, writeFileSync, } from "node:fs";
+import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
+import { mkdtempSync, rmSync, writeFileSync, } from "node:fs";
+import { tmpdir, } from "node:os";
 import path from "node:path";
 import { uid, } from "../utils";
-import { OFFLOAD_DIR, offloadDiskBytes, offloadExists, readOffloadedBody, spill, spillFileStem, } from "./spill";
+import {
+  offloadDir,
+  offloadDiskBytes,
+  offloadExists,
+  readOffloadedBody,
+  setOffloadDir,
+  spill,
+  SPILL_ROOT,
+  spillFileStem,
+} from "./spill";
 
 describe("spill", () => {
+  let dir = "";
+  beforeEach(() => {
+    dir = mkdtempSync(path.join(tmpdir(), "loop-lore-spill-",),);
+    setOffloadDir(dir,);
+  },);
+  afterEach(() => {
+    setOffloadDir(path.join(SPILL_ROOT, String(process.pid,),),);
+    rmSync(dir, { recursive: true, force: true, },);
+  },);
   test("round-trips a body through disk", async () => {
     const id = `test-${uid()}`;
     const body = '{"status":"done","n":42}';
@@ -23,7 +44,7 @@ describe("spill", () => {
       // The stem is a hash of the id, not the id itself: real ids are
       // idempotency cache keys containing `/` and spaces.
       // BUG-async-spill-uses-cache-key-as-filename-so-routed-ids-lose
-      expect(filePath,).toBe(path.join(OFFLOAD_DIR, `${spillFileStem(id,)}.json.gz`,),);
+      expect(filePath,).toBe(path.join(offloadDir(), `${spillFileStem(id,)}.json.gz`,),);
       expect(offloadExists(id,),).toBe(true,);
       expect(readOffloadedBody(filePath,),).toBe(body,);
       expect(offloadDiskBytes(),).toBeGreaterThan(before,);
@@ -34,11 +55,11 @@ describe("spill", () => {
   });
 
   test("readOffloadedBody returns null for a missing file", () => {
-    expect(readOffloadedBody(path.join(OFFLOAD_DIR, `missing-${uid()}.json.gz`,),),).toBeNull();
+    expect(readOffloadedBody(path.join(offloadDir(), `missing-${uid()}.json.gz`,),),).toBeNull();
   });
 
   test("readOffloadedBody returns null for a corrupt file", () => {
-    const filePath = path.join(OFFLOAD_DIR, `corrupt-${uid()}.json.gz`,);
+    const filePath = path.join(offloadDir(), `corrupt-${uid()}.json.gz`,);
     writeFileSync(filePath, "not gzip",);
     try {
       expect(readOffloadedBody(filePath,),).toBeNull();

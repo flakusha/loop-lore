@@ -58,6 +58,37 @@ This is a parallel-safety defect: violates the project rule that tests must own 
 4. Resource contract (per `rule://parallel-safe-tests`): each test owns a unique `os.tmpdir()/loop-lore-test-<uuid>/` OFFLOAD_DIR; release in `afterEach` (per-test) or `finally` (per-test) — never `afterAll`-only, because a fail-mid-file otherwise leaks; no shared globals; passes alone, in any order. Document the contract in the test file's header comment ("Resource contract (parallel-safe): …"), matching the canonical wording in `scripts/worktree/finalize-signal-safety.test.ts:7`, `src/assets/serve-handlers.coverage.test.ts:14`, and `scripts/worktree/find-worktree.test.ts:8`. End goal: seconds-fast pre-commit hook under `--parallel=4 --isolate`; serial minute-long suites are unacceptable.
 5. Verification-execution note (mandatory): running this test fix verification MUST NOT be concurrent with another test suite or `bun run check`. The repo host OOMs on two parallel bun-test processes (AGENTS.md). Run arms sequentially; `-j 1` is acceptable for shakeout only — the committed fix MUST be fast under the project's verify gate.
 
+
+## Fix landed — worktree `fix-embeddings-orphan-cascade`
+
+The shared constant is gone rather than guarded, so this ticket and
+`BUG-async-spill-offload-dir-is-a-fixed-cwd-relative-path-shared-` are one fix:
+
+- `src/async/spill.ts` exports `SPILL_ROOT` (repo-local `.tmp/async-store`,
+  still CWD-relative so each worktree stays separate) plus `offloadDir()` and a
+  `setOffloadDir()` test seam. The default namespace is `SPILL_ROOT/<pid>`, so
+  the app, every suite and every parallel process no longer share one directory.
+  The `OFFLOAD_DIR` const is removed outright — no shim.
+- `pruneOrphanSpills` now defaults to `SPILL_ROOT` and descends one level into
+  each `<pid>` namespace, so files left by a dead process are still collected
+  (a flat scan of the current namespace would never see them).
+- All four `src/async/*test*.ts` files install a unique `mkdtempSync`
+  namespace in `beforeEach`, restore the default in `afterEach`, and rm -rf the
+  directory — satisfying criteria 2 and 4. `offload.test.ts` had a `tmpRoot`
+  that was created but never used for the actual paths; that dead code is gone.
+- Restart safety is unchanged: `readOffloadedBody()` resolves the absolute
+  `request_results.offload_path`, so a row written by a previous pid still
+  reads back after a restart.
+
+Verified: `bun test src/async/` 55 pass; `src/middleware/ src/routes/requests/
+src/async/` 407 pass; spill-file count under `.tmp/async-store` unchanged
+across a green run (0 leaked). Criterion 3's `e2e-matrix2.sh` harness is not
+checked in, so it was replaced by a direct before/after spill-file count.
+
+Not done: empty `<pid>` namespace directories are left behind (one inode per
+process that ever spilled). `.tmp/` is gitignored scratch, so this was left
+alone rather than adding rmdir logic the retention sweep does not need.
+
 ## Cross-references
 
 - `.tmp/scratchpad-pattern-analysis-2026-09-26.md` §D-03 (OFFLOAD_DIR race)

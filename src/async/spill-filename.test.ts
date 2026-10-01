@@ -13,13 +13,31 @@
  * BUG-async-spill-uses-cache-key-as-filename-so-routed-ids-lose
  */
 
-import { describe, expect, test, } from "bun:test";
-import { rmSync, } from "node:fs";
+import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
+import { mkdtempSync, rmSync, } from "node:fs";
+import { tmpdir, } from "node:os";
 import path from "node:path";
 import { makeKey, } from "../middleware/idempotency-utils";
-import { OFFLOAD_DIR, offloadExists, readOffloadedBody, spill, spillFileStem, } from "./spill";
+import {
+  offloadDir,
+  offloadExists,
+  readOffloadedBody,
+  setOffloadDir,
+  spill,
+  SPILL_ROOT,
+  spillFileStem,
+} from "./spill";
 
 describe("spill filename safety", () => {
+  let dir = "";
+  beforeEach(() => {
+    dir = mkdtempSync(path.join(tmpdir(), "loop-lore-spillfn-",),);
+    setOffloadDir(dir,);
+  },);
+  afterEach(() => {
+    setOffloadDir(path.join(SPILL_ROOT, String(process.pid,),),);
+    rmSync(dir, { recursive: true, force: true, },);
+  },);
   test("round-trips a body under a real idempotency cache key id", async () => {
     // Exactly what makeKey() produces for a routed GET.
     const id = makeKey(
@@ -33,8 +51,8 @@ describe("spill filename safety", () => {
 
     const filePath = await spill(id, body,);
     try {
-      // The file lands directly in OFFLOAD_DIR, not a nested path.
-      expect(path.dirname(filePath,),).toBe(OFFLOAD_DIR,);
+      // The file lands directly in the spill namespace, not a nested path.
+      expect(path.dirname(filePath,),).toBe(offloadDir(),);
       expect(readOffloadedBody(filePath,),).toBe(body,);
       expect(offloadExists(id,),).toBe(true,);
     } finally {
@@ -60,12 +78,12 @@ describe("spill filename safety", () => {
     expect(new Set([a, b, c,],).size,).toBe(3,);
   });
 
-  test("a traversal-shaped id cannot escape OFFLOAD_DIR", () => {
+  test("a traversal-shaped id cannot escape the spill namespace", () => {
     for (const id of ["../../etc/passwd", "/absolute/path", "..", "",]) {
       const stem = spillFileStem(id,);
       expect(stem,).not.toContain("/",);
       expect(stem,).not.toContain("..",);
-      expect(path.join(OFFLOAD_DIR, `${stem}.json.gz`,).startsWith(OFFLOAD_DIR,),).toBe(true,);
+      expect(path.join(offloadDir(), `${stem}.json.gz`,).startsWith(offloadDir(),),).toBe(true,);
     }
   });
 

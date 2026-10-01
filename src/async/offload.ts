@@ -5,11 +5,20 @@ import type { Kysely, } from "kysely";
 import { mkdirSync, unlinkSync, } from "node:fs";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
-import { OFFLOAD_DIR, spill, } from "./spill";
+import { offloadDir, spill, } from "./spill";
 import { pruneOrphanSpills, } from "./spill-retention";
 import type { AsyncStoreConfig, } from "./store";
 
-export { OFFLOAD_DIR, offloadDiskBytes, offloadExists, readOffloadedBody, spill, spillFileStem, } from "./spill";
+export {
+  offloadDir,
+  offloadDiskBytes,
+  offloadExists,
+  readOffloadedBody,
+  setOffloadDir,
+  spill,
+  SPILL_ROOT,
+  spillFileStem,
+} from "./spill";
 export { pruneOrphanSpills, } from "./spill-retention";
 
 /** Node's setInterval returns `Timeout` on Node and `number` on Bun — name it. */
@@ -181,7 +190,7 @@ export class OffloadDaemon {
     this.ttlMs = config.ttlMs ?? DEFAULT_TTL_MS;
     this.maxInlineBytes = getMaxInlineBytes(config.maxInlineBytes, asyncStoreConfig,);
     this.state = { rowCount: 0, lastWriteAt: Date.now(), eventLoopLagMs: 0, };
-    mkdirSync(OFFLOAD_DIR, { recursive: true, },);
+    mkdirSync(offloadDir(), { recursive: true, },);
   }
 
   /** Start the interval timer. No-op when already started. */
