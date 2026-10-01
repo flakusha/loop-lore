@@ -13,3 +13,12 @@
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Verification command from ticket executed green
+
+## Verification Notes (2026-10-01)
+
+Re-verified against current `dev`; the defect this ticket describes is
+already fixed. The ticket was left open past the fix.
+
+Evidence: `src/routes/chats/turn-skip-routes.ts:81-92`
+
+- The trigger is gated on `!result.deduped`, so a replayed advance does not cue a second generation, and the fire-and-forget promise carries a `.catch` that reports through the structured logger.

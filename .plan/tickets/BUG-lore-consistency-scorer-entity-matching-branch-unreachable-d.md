@@ -21,3 +21,13 @@ src/story/quality/scorers/lore-consistency.ts:18-32: scoreLoreConsistency lowerc
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+
+## Verification Notes (2026-10-01)
+
+Re-verified against current `dev`; the defect this ticket describes is
+already fixed. The ticket was left open past the fix.
+
+Evidence: `src/story/quality/scorers/lore-consistency.ts:12-19`
+
+- Lowercasing now happens after `extractEntities` (which lowercases each hit itself), so the `matchRatio` block is reachable instead of scoring every non-null lore at exactly 70.
