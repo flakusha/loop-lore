@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done (2026-10-01)
 **Priority:** Low-Medium
 **Effort:** Low-Medium
 **Created:** 2026-08-14
@@ -35,11 +35,11 @@ Implement keyphrase-triggered memory recall system where specific memories can b
 
 ## Acceptance Criteria
 
-- [ ] Memories can have keyphrases assigned
-- [ ] Keyphrase match triggers reliable recall
-- [ ] Per-message recall limit configurable (default 3)
-- [ ] Global vs character keyphrase separation
-- [ ] UI for managing keyphrases
+- [x] Memories can have keyphrases assigned (up to 8, stored on the memory `keywords` JSON column — no dedicated table)
+- [x] Keyphrase match triggers reliable recall (matched during prompt assembly in `memorySection` via `memories-keyphrase.ts`; cooldown suppresses repeat injections)
+- [x] Per-message recall limit configurable (default 3, `memory_keyphrase_*` system config, feature flag `memory_keyphrase_recall` default ON)
+- [x] Global vs character keyphrase separation (inherits existing memory `scope`/`privacy` selection in memorySection)
+- [x] UI for managing keyphrases (Journal Keyphrases section in the character edit form)
 
 ## References
 

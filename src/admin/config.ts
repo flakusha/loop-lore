@@ -142,6 +142,16 @@ export async function seedDefaults(db: Kysely<DB>, config: Config,): Promise<voi
   }
 
   defaults.push(
+    {
+      key: "memory_keyphrase_recall",
+      value: "true",
+      description: "Inject journal memories on keyphrase match (false/0/off/no disables)",
+    },
+    {
+      key: "memory_keyphrase_recall_limit",
+      value: "3",
+      description: "Max keyphrase-triggered memory recalls per message",
+    },
     { key: "auto_moderation", value: "false", description: "Enable auto-moderation rules", },
     { key: "profanity_filter", value: "false", description: "Enable profanity filter", },
     { key: "spam_detection", value: "false", description: "Enable spam detection", },
