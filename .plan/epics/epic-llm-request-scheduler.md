@@ -214,6 +214,9 @@ once:
 | `FEAT-llm-resource-aware-admission-control` | Admission gate: local slot budget, external in-flight cap + windowed token budget, reactive learning from 429s | wire, config |
 | `FEAT-llama-swap-rotation-exclusion-policy` | Parse model set from the llama-swap config; define the config contract; rotation + exclusion policy for scheduled traffic | wire, config |
 | `TASK-llm-scheduler-observability` | Queue depth / wait time / admission-denial / rotation metrics on the existing telemetry surface | wire |
+| `TASK-llm-generation-bench-via-local-llama-swap-opt-in` | Opt-in `tests/benchmarks/` LLM bench (p50/p95/p99, token rate, rotation cost) vs local llama-swap; default-off `LL_BENCH_LLM=1` | — (standalone numbers first; queue-wait attribution after wire) |
+| `TASK-scheduler-load-soak-bench-queued-llm-traffic` | Soak bench: queued traffic vs wired `ResourceManager` (queueWaitMs/denial/starvation); mock variant first, llama-swap variant after LLM bench | wire |
+| `TASK-llama-swap-sample-config-finalization-unblocks-rotation-poli` | Finalize user sample config vs Part-1 contract; unblocks rotation/exclusion parser | — (blocks `FEAT-llama-swap-rotation-exclusion-policy` Part 2) |
 
 `TASK-wire-llm-resource-manager-into-generation-dispatch` is deliberately first and
 deliberately behavior-preserving: it makes an existing island reachable with no
@@ -246,5 +249,7 @@ scheduling policy attached, so each subsequent ticket is independently revertibl
 | `epic-federation-swarm-sync.md` | downstream | Owns the cross-instance ceiling this epic deliberately does not cross |
 | `src/llm/` | internal | The existing slice this epic wires rather than rewrites |
 
+
+> **Host note (2026-10-01):** `llama-swap` + `llama-server` binaries present on dev host (`~/.local/bin`); no `configs/config.llama-swap.yaml` committed yet, only `configs/config.llama-swap.example.yaml`. Opt-in benches/fixtures viable locally once a model path is set.
 
 git issue: 04ef186
