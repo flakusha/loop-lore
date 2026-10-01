@@ -5,6 +5,7 @@
 
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../../db/schema";
+import { assertValidWrite, } from "../../../db/validators/enforce";
 import type { CharacterSystemsExport, } from "../../exporters/character-systems";
 import { errMsg, } from "../../shared/character-systems-utils";
 import type { CharacterSystemsImportResult, } from "./types";
@@ -28,10 +29,9 @@ export async function importLicensing(
   try {
     const existing = await db.selectFrom("character_licensing",).where("actor_id", "=", actorId,).select("id",)
       .executeTakeFirst();
-
     const now = new Date().toISOString();
     if (existing) {
-      await db.updateTable("character_licensing",).set({
+      const licensingRow = {
         license_type: data.licenseType as any,
         custom_license_text: (data.customLicenseText as string) ?? null,
         attribution: (data.attribution as string) ?? null,
@@ -39,11 +39,12 @@ export async function importLicensing(
         allow_commercial: (data.allowCommercial as number) ?? 1,
         share_alike: (data.shareAlike as number) ?? 0,
         updated_at: now,
-      },).where("actor_id", "=", actorId,).execute();
+      };
+      assertValidWrite("character_licensing", licensingRow,);
+      await db.updateTable("character_licensing",).set(licensingRow,).where("actor_id", "=", actorId,)
+        .execute();
     } else {
-      await db.insertInto("character_licensing",).values({
-        id: crypto.randomUUID(),
-        actor_id: actorId,
+      const licensingRow = {
         license_type: data.licenseType as any,
         custom_license_text: (data.customLicenseText as string) ?? null,
         attribution: (data.attribution as string) ?? null,
@@ -52,9 +53,14 @@ export async function importLicensing(
         share_alike: (data.shareAlike as number) ?? 0,
         created_at: now,
         updated_at: now,
+      };
+      assertValidWrite("character_licensing", licensingRow,);
+      await db.insertInto("character_licensing",).values({
+        id: crypto.randomUUID(),
+        actor_id: actorId,
+        ...licensingRow,
       },).execute();
     }
-
     result.licensingImported = true;
   } catch (error: unknown) {
     result.errors.push(`Failed to import licensing: ${errMsg(error,)}`,);
