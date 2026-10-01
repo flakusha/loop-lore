@@ -8,10 +8,40 @@ import { gunzipSync, gzipSync, } from "node:zlib";
 import { safeFromString, } from "../utils/safe-buffer";
 
 /**
- * Root directory for spilled bodies. Lives under the repo's `.tmp/` to keep
- *  per-AGENTS.md scratch discipline and avoid stray repo-root files.
+ * Repo-local root holding every spill namespace. Under the repo's `.tmp/` to
+ * keep per-AGENTS.md scratch discipline; CWD-relative, so each worktree has
+ * its own. The retention sweep scans this root, not the current namespace, so
+ * files left behind by a dead process are still collected.
  */
-export const OFFLOAD_DIR = path.resolve(".tmp", "async-store",);
+export const SPILL_ROOT = path.resolve(".tmp", "async-store",);
+
+/**
+ * This process's spill namespace under `SPILL_ROOT`.
+ *
+ * BUG-async-spill-offload-dir-is-a-fixed-cwd-relative-path-shared-: the app,
+ * every test file and every parallel test process used to share ONE flat
+ * directory, so concurrent runs raced on `mkdirSync`/`writeFileSync` and
+ * leaked residue into each other. The pid suffix makes the namespace unique
+ * per process; tests override it with `setOffloadDir`.
+ */
+let spillDir = path.join(SPILL_ROOT, String(process.pid,),);
+
+/**
+ * Directory this process spills into.
+ * @returns absolute path to the current process spill namespace.
+ */
+export function offloadDir(): string {
+  return spillDir;
+}
+
+/**
+ * Point this process at a different spill directory. Test seam: each test
+ * owns a unique `mkdtemp` root, so parallel suites cannot collide.
+ * @param dir - absolute path to use as the spill namespace.
+ */
+export function setOffloadDir(dir: string,): void {
+  spillDir = dir;
+}
 
 /**
  * Map a result-row id to a filesystem-safe stem.
@@ -31,7 +61,7 @@ export function spillFileStem(id: string,): string {
 }
 
 /**
- * Compress + write a body to disk under OFFLOAD_DIR.
+ * Compress + write a body to disk under the process spill namespace.
  *
  * Exported so `apply.ts` can eagerly spill bodies that exceed the inline
  * threshold at completion time (rather than nulling them and losing the
@@ -46,8 +76,8 @@ export async function spill(id: string, body: string,): Promise<string> {
   // Self-sufficient: `apply()` may spill before the daemon's startup
   // `mkdirSync` has run (e.g. in unit tests or an early drain), so ensure
   // the directory exists rather than relying on `startOffloadDaemon()`.
-  mkdirSync(OFFLOAD_DIR, { recursive: true, },);
-  const filePath = path.join(OFFLOAD_DIR, `${spillFileStem(id,)}.json.gz`,);
+  mkdirSync(spillDir, { recursive: true, },);
+  const filePath = path.join(spillDir, `${spillFileStem(id,)}.json.gz`,);
   const bufResult = safeFromString(body, "utf8",);
   if (!bufResult.ok) { throw bufResult.error; }
   const compressed = gzipSync(bufResult.buffer,);
@@ -73,25 +103,25 @@ export function readOffloadedBody(filePath: string,): string | null {
 /**
  * Test seam: report whether a spill file exists for a given id.
  * @param id - result row id
- * @returns `true` when the file for that id exists under `OFFLOAD_DIR`.
+ * @returns `true` when the file for that id exists in the process spill namespace.
  */
 export function offloadExists(id: string,): boolean {
-  return existsSync(path.join(OFFLOAD_DIR, `${spillFileStem(id,)}.json.gz`,),);
+  return existsSync(path.join(spillDir, `${spillFileStem(id,)}.json.gz`,),);
 }
 
 /**
- * Test seam: total bytes under OFFLOAD_DIR.
- * @returns sum of `*.json.gz` file sizes under `OFFLOAD_DIR`, or `0` when the directory does not exist.
+ * Test seam: total bytes under the process spill namespace.
+ * @returns sum of `*.json.gz` file sizes in the process spill namespace, or `0` when the directory does not exist.
  */
 export function offloadDiskBytes(): number {
-  if (!existsSync(OFFLOAD_DIR,)) { return 0; }
+  if (!existsSync(spillDir,)) { return 0; }
   // Bun's `Glob` is overkill; a flat scan is fine for the `.tmp/async-store/`
   // directory (only `*.json.gz` files; no recursion).
   let total = 0;
-  for (const name of readdirSync(OFFLOAD_DIR,)) {
+  for (const name of readdirSync(spillDir,)) {
     if (!name.endsWith(".json.gz",)) { continue; }
     try {
-      total += statSync(path.join(OFFLOAD_DIR, name,),).size;
+      total += statSync(path.join(spillDir, name,),).size;
     } catch { /* raced with another writer */ }
   }
   return total;
