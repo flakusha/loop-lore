@@ -214,7 +214,7 @@ export async function applyEdit(
       database: db,
       assetId: asset.id,
       link: {
-        entityType: AssetLinkEntity.Actor,
+        entityType: AssetLinkEntity.Asset,
         entityId: opts.sourceAssetId,
         label: `edit:${opts.parsed.intent}`,
       },
