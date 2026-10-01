@@ -53,7 +53,7 @@ const SSML_TTS_BODIES: Record<"instant" | "balanced" | "detailed", string> = {
 };
 
 /** JSON bodies override SFX/music for JSON-format profiles. */
-const JSON_BODIES: Partial<Record<AudioSubtype, Record<"instant" | "balanced" | "detailed", string>>> = {
+const JSON_BODIES: Record<"sfx" | "music", Record<"instant" | "balanced" | "detailed", string>> = {
   sfx: {
     instant: 'Output JSON: {"description": "{{text}}", "mood": "{{mood}}"}',
     balanced: 'Output JSON: {"description": "{{text}}", "mood": "{{mood}}", "duration_seconds": 5}',
@@ -85,8 +85,8 @@ function templatesFor(
   };
   if (format === "ssml") { templates.tts = { ...SSML_TTS_BODIES, }; }
   if (format === "json") {
-    templates.sfx = { ...JSON_BODIES.sfx!, };
-    templates.music = { ...JSON_BODIES.music!, };
+    templates.sfx = { ...JSON_BODIES.sfx, };
+    templates.music = { ...JSON_BODIES.music, };
   }
   const empty = { instant: "", balanced: "", detailed: "", };
   for (const subtype of ["tts", "sfx", "music", "voice-clone",] as const) {

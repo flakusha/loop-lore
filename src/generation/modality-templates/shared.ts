@@ -58,7 +58,8 @@ export function matchModalityProfile<P,>(
  * Substitute `{{key}}` tokens in a template body from a variable map.
  * Unknown tokens are left verbatim — same contract as `applySimpleTemplate`.
  * @param body - Template body containing `{{variables}}`
- * @param vars - Variable values; empty/missing values render as empty text
+ * @param vars - Variable values; a provided empty string renders empty, and
+ *   variables absent from the map are left verbatim
  * @returns {string}
  */
 export function resolveModalityTemplate(
