@@ -12,6 +12,8 @@
 **Priority:** medium
 **Priority Tier:** P5
 **Effort:** Medium
+**Epic:** epic-testing-qa.md
+**Tags:** testing-qa
 **Area:** npcs
 **Source:** reconcile review (Scout Batch C — NPC-2)
 

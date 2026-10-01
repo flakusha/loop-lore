@@ -11,6 +11,8 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-local-process-swarm.md
+**Tags:** local-process-swarm
 
 ## Summary
 

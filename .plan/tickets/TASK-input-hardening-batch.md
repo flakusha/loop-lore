@@ -11,6 +11,7 @@
 **Status:** Not Started
 **Priority:** medium-high (HIGH-adjacent ReDoS in `b465b08`)
 **Effort:** Medium
+**Epic:** epic-frontend-backend-integration.md
 **Type:** Bug-fix batch
 **Tags:** security, hardening, input-validation, logger, telemetry, regex
 

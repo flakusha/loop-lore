@@ -29,7 +29,7 @@ and mid-describe inserts are discovered in this environment.
 
 **Type:** BUG
 
-**Epic:** epic-assets-media-pipeline
+**Epic:** epic-asset-platform-capabilities.md
 
 **Files:** src/assets/metadata.ts (VP8X parse)
 

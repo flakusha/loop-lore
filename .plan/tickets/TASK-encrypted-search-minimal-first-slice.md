@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium (depends on `TASK-019-users-encryption-secret.md` landing first)
+**Epic:** epic-memory-knowledge-systems.md
 **Summary:** Wire `reindexMessageTokens` into `encryptMessageContent` behind an `ENABLE_TOKEN_INDEXING` env flag, and ship a one-shot backfill CLI that derives tokens for every existing `messages` row with `content_plaintext IS NULL` (i.e. client-pre-encrypted). This is the minimal proof that the existing 70%-built blind-index pipeline works end-to-end on a real chat. After it ships for one user/chat, the pattern extends to all users.
 **Context:** Crypto + searchable-encryption flow audit (2026-09-25, `db-migration-fixes` session, scout report) named this slice as the recommended first step. Approach 1 (blind HMAC per-tenant token sidecar) was selected over approach 2 (deterministic nonce) and approach 3 (homomorphic / OPE) for fit. The seam is `messages.content_plaintext` — once `message_search_tokens` is reliably populated and `providers/messages.ts` resolves per-user keys, the column can be dropped without breaking search.
 

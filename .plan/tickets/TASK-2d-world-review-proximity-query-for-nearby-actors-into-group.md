@@ -6,6 +6,8 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-2d-sprite-world.md
+**Tags:** 2d-world, review
 **Summary:** Radius/zone proximity lookup for nearby actors + group chats.
 **Context:** FEAT click-to-move; joinable filters exact location only.
 **Acceptance Criteria:** Nearby actors listed with one-tap join.

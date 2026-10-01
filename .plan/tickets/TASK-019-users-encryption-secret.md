@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Small (one migration + key generation in user-create flow)
+**Epic:** epic-schema.md
 **Summary:** Add `users.encryption_secret TEXT` (32-byte hex) so the existing `deriveSearchTokens(plaintext, userKey)` primitive (HMAC-SHA256, 16-hex truncated) has a real per-user key. Currently the token-indexing column `message_search_tokens` exists but has no key source, so the feature is dead code. The column holds a per-user secret independent from `users.password_hash` and from chat keys.
 **Context:** Crypto + searchable-encryption flow audit (2026-09-25, `db-migration-fixes` session, scout report) found that 70% of the encrypted-search plumbing is already in place: `src/search/encrypted-tokens.ts` exports `deriveSearchTokens`, `tokenizeForSearch`; `src/search/token-store.ts` exports `reindexMessageTokens`, `matchMessageIdsByTokens`; `message_search_tokens(message_id, token, scope)` exists. The missing piece is the per-user HMAC key — without it, the provider tier `token` in `src/search/providers/messages.ts` cannot resolve `key` for query derivation. The key is server-side (this is HMAC-blind-index, not client-side E2E); per-user key isolation gives us "token equality leaks across messages of the same user only" — the explicit tradeoff accepted 2026-09-07.
 

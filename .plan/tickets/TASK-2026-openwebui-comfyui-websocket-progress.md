@@ -6,6 +6,8 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small
+**Epic:** epic-platform-research.md
+**Tags:** openwebui, parity
 **Labels:** generation, image-engine, comfyui
 **Summary:** When the active image backend is ComfyUI, replace the blocking HTTP poll with a WebSocket subscription on `{baseUrl}/ws?clientId={clientId}` after `queue_prompt`, draining messages until the `{"type":"executing","data":{"node":null}}` sentinel signals completion. Final outputs are fetched via `GET {baseUrl}/history/{prompt_id}`. Progress messages emit as `image-progress` SSE events through the existing `StreamBuffer`. Falls back to the current blocking HTTP path if the WS handshake fails.
 

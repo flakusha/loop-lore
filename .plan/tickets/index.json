@@ -8152,6 +8152,22 @@
     "title": "Archival Workflow",
     "type": "EPIC"
   },
+  "EPIC-ASSET-CONSISTENCY-GENERATION": {
+    "hash": "pending",
+    "extid": "EPIC-ASSET-CONSISTENCY-GENERATION",
+    "type": "EPIC",
+    "title": "Asset Consistency Generation — Reference-Conditioned Re-Generation and In-Chat Image Edit",
+    "label": "epic",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [
+      "image-generation",
+      "reference-conditioning",
+      "comfyui"
+    ],
+    "source": ".plan/tickets/epic-asset-consistency-generation.md",
+    "status": "Not Started"
+  },
   "EPIC-ASSET-PLATFORM-CAPABILITIES": {
     "epic": "",
     "extid": "EPIC-ASSET-PLATFORM-CAPABILITIES",
@@ -11630,6 +11646,22 @@
     "title": "Non-Standard Browser Encryption",
     "type": "EPIC"
   },
+  "EPIC-NPC-BDI-AUTONOMY": {
+    "hash": "pending",
+    "extid": "EPIC-NPC-BDI-AUTONOMY",
+    "type": "EPIC",
+    "title": "NPC BDI Autonomy — Character-Level Goal-Pursuit and Between-Session Continuity",
+    "label": "epic",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [
+      "npc",
+      "bdi",
+      "autonomy"
+    ],
+    "source": ".plan/tickets/epic-npc-bdi-autonomy.md",
+    "status": "Not Started"
+  },
   "EPIC-NPC-MANAGEMENT-UI": {
     "epic": "",
     "extid": "EPIC-NPC-MANAGEMENT-UI",
@@ -13085,6 +13117,22 @@
     "title": "Timeline System",
     "type": "EPIC"
   },
+  "EPIC-TOOL-CALLING-MCP": {
+    "hash": "pending",
+    "extid": "EPIC-TOOL-CALLING-MCP",
+    "type": "EPIC",
+    "title": "Tool Calling and MCP Integration — External Tool Calling Surface",
+    "label": "epic",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [
+      "tool-calling",
+      "mcp",
+      "agents"
+    ],
+    "source": ".plan/tickets/epic-tool-calling-mcp.md",
+    "status": "Not Started"
+  },
   "EPIC-TOOLING-IMPROVEMENT": {
     "epic": "",
     "extid": "EPIC-TOOLING-IMPROVEMENT",
@@ -13358,6 +13406,22 @@
     ],
     "title": "Workflow Engine",
     "type": "EPIC"
+  },
+  "EPIC-WORKTREE-PLAN-TOOLING": {
+    "hash": "pending",
+    "extid": "EPIC-WORKTREE-PLAN-TOOLING",
+    "type": "EPIC",
+    "title": "Worktree Plan Tooling — Finalize, Validation, and Ticket Hygiene",
+    "label": "epic",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [
+      "tooling",
+      "giwt",
+      "worktree"
+    ],
+    "source": ".plan/tickets/epic-worktree-plan-tooling.md",
+    "status": "Not Started"
   },
   "EPIC-WORLD-CHAT-CHANNELS-INVITES": {
     "epic": "",

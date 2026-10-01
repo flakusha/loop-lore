@@ -11,6 +11,8 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Large
+**Epic:** epic-chat-product-features.md
+**Tags:** features
 
 ## Summary
 

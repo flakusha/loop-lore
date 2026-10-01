@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** medium (matrix 🟡 Medium severity, P6+ deferred)
 **Effort:** Medium
+**Epic:** epic-npc-bdi-autonomy.md
 **Type:** Research
 **Summary:** Matrix gaps G29 and G30 describe a single missing system: **NPC-to-NPC social simulation**. `TASK-npc-to-npc-social.md` exists as an orphan ticket, but no epic owns the integration with `epic-character-relationships.md` (relationship strength), `epic-memory-knowledge-systems.md` (episodic memory for conversation topics), and the planned BDI loop from `IDEA-epic-bdi-npc-autonomy`. Inspiration: generative-agents (Stanford), RisuAI NPC-to-NPC, AI Town.
 **Context:** Source row: 2026-09-26 epic audit; matrix reference: `matrix-cross-mechanics.md` G29, G30 (2026-08-14 research sweep). The current `epic-group-chat.md` and `epic-social-interaction.md` cover *player-driven* social systems; this proposal covers **NPC-driven** social simulation — NPCs talk to each other without the player in the room, generating relationship drift and memory entries that the player later observes.

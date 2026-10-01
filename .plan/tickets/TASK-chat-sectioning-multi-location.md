@@ -12,6 +12,8 @@
 **Status Note:** Needed
 **Priority:** Medium
 **Effort:** High
+**Epic:** epic-chat-lifecycle-moderation.md
+**Tags:** chat
 **Related:** TASK-chat-backgrounds-location-sync, TASK-chat-transfer-location, TASK-travel-party-migration, TASK-transition-aux-llm-fallback
 
 ## Summary

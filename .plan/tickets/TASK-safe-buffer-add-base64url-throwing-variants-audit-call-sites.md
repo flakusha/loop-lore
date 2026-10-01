@@ -9,6 +9,8 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-crypto.md
+**Tags:** crypto
 
 ## Summary
 

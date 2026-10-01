@@ -6,6 +6,8 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small
+**Epic:** epic-platform-research.md
+**Tags:** openwebui, parity
 **Labels:** generation, tools, mcp
 **Summary:** Add a new `src/plugins/mcp/client.ts` that wraps `@modelcontextprotocol/sdk`'s `streamablehttp_client` + `ClientSession` and exposes `listTools()`, `callTool(name, args)`, `disconnect()`. Lifecycle managed via `AsyncExitStack` (LIFO — required by the MCP SDK). OAuth token storage is mocked initially. Extend `src/plugins/registry.ts` with a `mcpServers: Map<string, MCPClient>` and route to MCP when a tool's `apiFamily === 'mcp'`.
 

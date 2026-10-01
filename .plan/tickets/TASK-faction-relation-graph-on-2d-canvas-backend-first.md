@@ -6,6 +6,8 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Large
+**Epic:** epic-2d-sprite-world.md
+**Tags:** 2d-graph, canvas
 
 **Summary:** Render faction relations on the shared graph-canvas, adding the minimal factions backend the frontend needs first — no faction persistence exists today.
 

@@ -11,6 +11,8 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-multimodal-asset-reuse.md
+**Tags:** assets
 
 ## Summary
 

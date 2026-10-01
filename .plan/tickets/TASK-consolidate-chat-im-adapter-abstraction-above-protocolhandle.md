@@ -12,6 +12,8 @@
 **Status Note:** decision recorded, seam landed
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-federation-swarm-sync.md
+**Tags:** federation
 
 ## Summary
 

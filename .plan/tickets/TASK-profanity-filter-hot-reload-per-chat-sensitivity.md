@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Medium
+**Epic:** epic-nsfw-moderation-priority.md
 **Summary:** Runtime configurability for the shipped profanity filter: hot reload, per-chat sensitivity, moderation audit trail
 **Context:** Extracted 2026-09-19 docs-gap reconcile (remainder of closed TASK-profanity-filter-runtime-per-chat; core runtime shipped — src/profanity/service.ts + profanity_filter config gate + hidden_by_moderator in src/routes/messages/create.ts)
 **Acceptance Criteria:** See ## Acceptance Criteria below.
