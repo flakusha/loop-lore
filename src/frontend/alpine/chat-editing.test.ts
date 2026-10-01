@@ -143,6 +143,11 @@ describe("chatEditing", () => {
 // These methods delegate to apiFetch (./htmx) → feFetch → globalThis.fetch,
 // so the tests stub fetch and let the real request chain run.
 
+interface SwappedGlobals {
+  confirm?: unknown;
+  navigator?: unknown;
+}
+
 type MockApiState = {
   activeChat: string | null;
   messages: { id: string; content: string; role: string; created_at: string }[];
@@ -175,7 +180,10 @@ function makeStateWithToasts(state: MockApiState,): { state: MockApiState; toast
 
 describe("chatEditing API flows", () => {
   const realFetch = globalThis.fetch;
-  const realNavigator = (globalThis as { navigator?: unknown }).navigator;
+  // Capture and restore, never `delete`. Six production modules call the bare
+  // global `confirm`, and `delete` would strip it from every later test file.
+  const realConfirm = (globalThis as SwappedGlobals).confirm;
+  const realNavigator = (globalThis as SwappedGlobals).navigator;
   const realLocaleStrings = (globalThis as Record<string, unknown>).__localeStrings;
   let fetchCalls: { url: string; init?: RequestInit }[] = [];
   let fetchImpl: (url: string, init?: RequestInit,) => Promise<Response> = () =>
@@ -193,7 +201,7 @@ describe("chatEditing API flows", () => {
 
   afterEach(() => {
     globalThis.fetch = realFetch;
-    delete (globalThis as { confirm?: unknown }).confirm;
+    (globalThis as SwappedGlobals).confirm = realConfirm;
     (globalThis as { navigator?: unknown }).navigator = realNavigator;
     (globalThis as Record<string, unknown>).__localeStrings = realLocaleStrings;
   },);
