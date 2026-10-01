@@ -87,3 +87,13 @@ should close once a concurrent-write backup test exists.
 
 
 git issue: 5055a30
+
+
+## Verification Notes (2026-10-01)
+
+Re-verified against current `dev`; the defect described in this ticket is
+already fixed. The ticket was left open past the fix.
+
+Evidence: `scripts/backup-sqlite.ts`
+
+- The backup path uses `VACUUM INTO`, which produces a consistent snapshot from a live WAL database instead of copying the files underneath it.

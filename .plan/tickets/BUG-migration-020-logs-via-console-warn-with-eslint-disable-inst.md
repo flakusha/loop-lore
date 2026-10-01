@@ -20,3 +20,13 @@ Context: 020_actor_story_points_partial_unique.ts:44 (this week). Severity: nit.
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+
+## Verification Notes (2026-10-01)
+
+Re-verified against current `dev`; the defect described in this ticket is
+already fixed. The ticket was left open past the fix.
+
+Evidence: `src/db/migrations/020_actor_story_points_partial_unique.ts`
+
+- The migration already calls `process.emitWarning(...)`; the `console.warn` + `eslint-disable` pattern the ticket describes is absent.

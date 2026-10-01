@@ -74,3 +74,13 @@ This is not hypothetical. During review, `safeBuffer.DEFAULT_MAX_SIZE` resolved 
 All five acceptance criteria on the base64 helper ticket are met; these are defects within the shipped implementation, not gaps in that ticket.
 
 The original `decodedResult.ok` pattern this replaced was rejected for substituting a silent default. Silent whitespace stripping is the same class of problem at the decode layer.
+
+
+## Verification Notes (2026-10-01)
+
+Re-verified against current `dev`; the defect this ticket describes is
+already fixed. The ticket was left open past the fix.
+
+Evidence: `src/utils/safe-buffer/base64.ts:53-54`
+
+- A whitespace guard rejects all ASCII whitespace variants, and the `maxEncodedLen` cap is derived from the caller's `limit`, bounding decode work before any allocation.

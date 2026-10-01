@@ -13,3 +13,12 @@
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Verification command from ticket executed green
+
+## Verification Notes (2026-10-01)
+
+Re-verified against current `dev`; the defect this ticket describes is
+already fixed. The ticket was left open past the fix.
+
+Evidence: `src/frontend/alpine/slash-autocomplete.ts:40-43`
+
+- `findCaretToken` only returns a match ending at the caret, so the popover closes once arguments are typed and Enter is not swallowed.

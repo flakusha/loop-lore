@@ -29,3 +29,13 @@
 
 
 git issue: 4ddc410
+
+
+## Verification Notes (2026-10-01)
+
+Re-verified against current `dev`; the defect this ticket describes is
+already fixed. The ticket was left open past the fix.
+
+Evidence: `src/middleware/idempotency.ts:37,101`
+
+- The table backend is implemented and wired via `createTableBackend(...)`. The default backend remains `memory`; the table backend is selected explicitly. The advisory question this orphan asked is answered.

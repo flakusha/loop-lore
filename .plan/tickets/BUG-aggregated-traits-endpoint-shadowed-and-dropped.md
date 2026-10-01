@@ -101,3 +101,13 @@ loss happened earlier, when the two modules collided.
 
 
 git issue: 22f20a2
+
+
+## Verification Notes (2026-10-01)
+
+Re-verified against current `dev`; the defect described in this ticket is
+already fixed. The ticket was left open past the fix.
+
+Evidence: `src/routes/character-traits/`
+
+- The subdir barrel was removed in `08038e2c1`; the directory now holds only `location.ts`, `permanent.ts`, and `world.ts`. The aggregated endpoint is intentionally retired, which is the option this ticket's own 2026-09-29 update asked to be made explicit.
