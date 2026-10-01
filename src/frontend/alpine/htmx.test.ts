@@ -138,6 +138,7 @@ const globalObj = globalThis as unknown as {
   fetch?: unknown;
   location?: unknown;
   apiFetch?: unknown;
+  loadNewChatPage?: unknown;
 };
 
 const originalGlobalAdd = globalObj.addEventListener;
@@ -152,6 +153,10 @@ const originalConsoleInfo = console.info;
 const originalConsoleDebug = console.debug;
 const originalConsoleError = console.error;
 const originalLocaleStrings = (globalThis as Record<string, unknown>).__localeStrings;
+// src/frontend/pages/new-chat/index.ts installs this app-wide; the two
+// load-pageloader tests below `delete` it, which would strip it for every later
+// file in a shared process.
+const originalLoadNewChatPage = (globalThis as Record<string, unknown>).loadNewChatPage;
 
 function fireDoc(type: string, detail?: unknown,): void {
   // Merge detail onto the event: CustomEvent handlers read e.detail, while
@@ -271,6 +276,7 @@ afterEach(() => {
   console.debug = originalConsoleDebug;
   console.error = originalConsoleError;
   (globalThis as Record<string, unknown>).__localeStrings = originalLocaleStrings;
+  (globalThis as Record<string, unknown>).loadNewChatPage = originalLoadNewChatPage;
   vi.useRealTimers();
 },);
 

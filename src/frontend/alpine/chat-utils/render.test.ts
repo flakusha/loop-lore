@@ -10,8 +10,18 @@
  * (& < > escaped; quotes left as-is).
  */
 
-import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
+import { afterAll, afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import { chatUtilsRender, } from "./render";
+
+type VendorGlobals = { __marked?: unknown; __DOMPurify?: unknown };
+
+// `clearMarkdownLibs` deletes these, and it must keep doing so: the fail-safe
+// tests below assert renderMarkdown's behaviour when the libs are ABSENT. But
+// `__marked`/`__DOMPurify` are installed by src/frontend/chat-vendor.ts for the
+// whole app, so deleting them here destroys a global later test files read.
+// Snapshot at module load and restore the exact load-time state in afterAll.
+const realMarked = (globalThis as VendorGlobals).__marked;
+const realDOMPurify = (globalThis as VendorGlobals).__DOMPurify;
 
 /** Browser text-node serialization: only &, <, > are escaped in text nodes. */
 function browserEscape(text: string,): string {
@@ -66,6 +76,11 @@ beforeEach(() => {
 afterEach(() => {
   doc.createElement = originalCreateElement;
   clearMarkdownLibs();
+},);
+
+afterAll(() => {
+  (globalThis as VendorGlobals).__marked = realMarked;
+  (globalThis as VendorGlobals).__DOMPurify = realDOMPurify;
 },);
 
 describe("chatUtilsRender.renderMarkdown", () => {
