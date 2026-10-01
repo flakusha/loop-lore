@@ -669,6 +669,16 @@
   font-size: 0.8rem;
 }
 
+/* ── Conversation branches (FEAT-047) ──
+   The header branch dropdown reuses the .side-channels-* classes above;
+   only the per-message fork-point indicator needs its own rule. */
+.branch-indicator {
+  cursor: help;
+  opacity: 0.7;
+  font-size: 0.85em;
+  margin-left: var(--space-1);
+}
+
 .participant-add {
   margin-top: var(--space-3);
   border-top: 1px solid var(--border-default);
