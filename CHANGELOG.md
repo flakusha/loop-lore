@@ -27,7 +27,8 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 
 ### Fixed
 
-- **E2E test safeguard (developer scripts)** — `test:e2e`, `test:e2e:browser`, `test:e2e:smoke`, and `test:all` now export `E2E_SAFEGUARD=1`, disabling the governance rate-limit guard when run directly (matches the behavior already in `ci`, `test:coverage`, and `check-parallel.mjs`).
+- **E2E test safeguard (developer scripts)** — `test:e2e`, `test:e2e:browser`, `test:e2e:smoke`, and `test:all` now export `E2E_SAFEGUARD=1`, disabling the governance rate-limit guard when run directly (matches the behavior already in `ci`, `test:coverage`, and `check-parallel.mjs`). In `test:all` each e2e-reaching command carries its own prefix rather than one chain-wide prefix: `VAR=x cmd1 && cmd2` binds the assignment to `cmd1` alone, so a single prefix left the bare `bun test` running the whole suite with the variable unset — the exact 429 cascade the guard is meant to avoid.
+
 - **Non-retryable provider errors keep their identity when the request is cancelled** — `withProviderRetry` classified an aborted signal before checking whether the failure was already a non-retryable `ProviderError`, so a 401 raised in the same tick as a user cancel surfaced as `Request cancelled` (no status) instead of the auth error. `callWithFailover` maps the two down different paths, which would have swallowed auth failures. Precedence now matches the hand-rolled loops these call sites replaced, and `retry.test.ts` pins it.
 
 ## [0.1.0] - 2026-08-15
