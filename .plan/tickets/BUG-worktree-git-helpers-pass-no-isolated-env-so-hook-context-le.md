@@ -34,7 +34,60 @@ Evidence: scripts/worktree/utils/git.ts:121-134. Upstream reference: giwt/src/ut
 - [x] A test seeds GIT_INDEX_FILE and asserts the child git resolves against repoRoot, not the seeded path
 - [x] Tracked against the fork-retirement migration ticket (c6f5f7868) so the divergence closes rather than being ported forward
 
-## Resolution (2026-09-29, implemented in-repo, uncommitted)
+
+## Resolution (2026-09-29)
+
+`isolatedGitEnv()` added to `scripts/worktree/utils/git.ts` and wired into
+`gitSync`/`gitSyncQuiet` plus every git-child spawn across the fork — audited
+mechanically, not by eye: 40 git spawns carry an isolated env, 0 do not. That
+covers `finalize`, `rebase`, `abort`, `merge`, `remove`, `cleanup`, `create`,
+`new-branch`, `prs`, `commit`, and `commit-branch`.
+
+Two spawn classes deliberately keep the inherited env: `gpg --list-secret-keys`
+(gpg reads no `GIT_`/`OMP_` var) and the `gh`/`which` calls in `prs.ts`.
+
+`commit.ts` and `commit-branch.ts` were the sharpest case: both forwarded
+`...process.env` wholesale while setting `GIT_COMMITTER_NAME`/`_EMAIL`. They now
+spread `isolatedGitEnv()` and re-set only the identity the command owns, so the
+committer override survives while a hook's `GIT_INDEX_FILE` cannot redirect the
+commit to another index.
+
+Tests: `scripts/worktree/utils/git.test.ts` — 4 cases. The load-bearing ones
+seed `GIT_INDEX_FILE`/`GIT_DIR` at a foreign location and assert the *resolved
+result* diverges: the inheriting child answers from the seeded location, the
+isolated child from `repoRoot`. Both were verified to fail when the filter is
+neutered (mutation-checked), so neither is self-skipping.
+
+`bun test scripts/worktree/` green. Note these tests are outside `test:unit`
+(scope is `src/` only) — see the coverage-gap note on the fork-retirement ticket.
+
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated (`docs/giwt-scripts-map.md` try-8, AGENTS.md)
+
+
+## Verification Notes (2026-10-01)
+
+Re-verified against `dev` before closing. Commit `f28c3ca24` ("fix(worktree):
+isolate git env, harden finalize/rebase targets") landed this on `dev`; only the
+`Status:` line was stale.
+
+- `gitSync` (`git.ts:158`) and `gitSyncQuiet` (`:172`) both spawn with
+  `env: isolatedGitEnv()`. The filter strips five prefixes — `GIT_`, `OMP_`,
+  `PI_`, `ENGRAM_`, `MNEMO_` — a superset of what the ticket asks for, covering
+  the OMP/PI/ENGRAM/MNEMO "compounding factor" the ticket raised.
+- Re-ran the mechanical spawn audit rather than trusting the Resolution's count:
+  **42 git spawns found, 42 carry an isolated env, 0 without.** The Resolution
+  says 40; `dev` has grown by two since, so the claim holds but its number is
+  stale.
+- `isolatedGitEnv(source = process.env)` takes an injectable source. That is
+  load-bearing for parallel safety: a test seeding `process.env` directly would
+  race every other test in the file.
+- `bun test scripts/worktree/utils/git.test.ts` → 4 pass / 0 fail.
+- Mutation check: replacing the prefix test with `if (false)` turns that into
+  **1 pass / 3 fail**. The discriminating tests really do observe the resolved
+  result diverging, so they are load-bearing.
+## Resolution (2026-09-29)
 
 `isolatedGitEnv()` added to `scripts/worktree/utils/git.ts` and wired into
 `gitSync`/`gitSyncQuiet` plus every git-child spawn across the fork — audited
