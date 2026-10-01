@@ -2,7 +2,9 @@ import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
+import { MessageContentType, MessageRole, } from "../db/enums";
 import { createTestDb, } from "../test-utils/create-test-db";
+import { insertMessages, } from "../test-utils/insert-helpers";
 import { TurnManager, } from "./turn-manager";
 
 let db: Kysely<DB>;
@@ -369,5 +371,44 @@ describe("TurnManager", () => {
       expect(tm1.currentTurn,).toBeLessThanOrEqual(2,);
       expect(tm2.currentTurn,).toBeLessThanOrEqual(2,);
     });
+  });
+});
+
+describe("skip cooldown (TASK-chat-feature-turn-talkativity-skip AC4)", () => {
+  /** Persist a fresh turn_skip event (default created_at = now). */
+  async function recordSkip(chatId: string, actorId: string,): Promise<void> {
+    await insertMessages(
+      db,
+      chatId,
+      actorId,
+      MessageRole.System,
+      "skips this beat (hold)",
+      { content_type: MessageContentType.TurnSkip, },
+    );
+  }
+
+  test("cooling actor is never re-selected while the slot keeps advancing", async () => {
+    const { chatId, tm, } = await makeChat();
+    await recordSkip(chatId, "actor-ai-1",);
+    await tm.initialize();
+
+    const first = await tm.selectNextActor();
+    expect(first,).not.toBe("actor-ai-1",);
+    expect(tm.currentTurn,).toBe(1,); // the slot is consumed despite the exclusion
+
+    const second = await tm.selectNextActor();
+    expect(second,).not.toBe("actor-ai-1",);
+  });
+
+  test("when every candidate is cooling selection falls back to the full set (no stall)", async () => {
+    const { chatId, tm, } = await makeChat();
+    for (const actorId of ["actor-ai-1", "actor-ai-2", "actor-narrator",]) {
+      await recordSkip(chatId, actorId,);
+    }
+    await tm.initialize();
+
+    const picked = await tm.selectNextActor();
+    expect(picked,).not.toBeNull();
+    expect(["actor-ai-1", "actor-ai-2", "actor-narrator",],).toContain(picked!,);
   });
 });

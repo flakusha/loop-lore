@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { isMuted, } from "../../chat/moderation";
 import { TurnStrategy, } from "../../db/enums";
 import type { TurnParticipant, } from "../types";
 import type { TurnManagerHost, } from "./types";
@@ -23,14 +24,20 @@ export async function fetchTurnParticipants(
       "actors.actor_type",
       "actors.agent_type",
       "chat_participants.talkativity",
+      "chat_participants.muted_until",
     ],)
     .where("chat_participants.chat_id", "=", host.chatId,);
 
-  const filtered = mode === "story"
+  const eligible = mode === "story"
     ? await query.where("actors.agent_type", "in", ["ai", "narrator", "npc",],).execute()
     : await query.where("actors.agent_type", "!=", "none",).execute();
 
-  const participants: TurnParticipant[] = Array.from(filtered, (p,) => ({
+  // Outbound mute enforcement (TASK-chat-feature-moderation AC3): a muted
+  // participant is never selectable until muted_until elapses.
+  const now = Date.now();
+  const candidates = eligible.filter((p,) => !isMuted({ muted_until: p.muted_until, }, now,));
+
+  const participants: TurnParticipant[] = Array.from(candidates, (p,) => ({
     actorId: p.actor_id,
     type: p.actor_type,
     agentType: p.agent_type,

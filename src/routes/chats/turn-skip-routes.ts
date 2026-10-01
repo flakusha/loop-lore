@@ -52,7 +52,7 @@ export function turnSkipRoutes(opts: HandlerOpts, prefix = "/api",) {
           if (typeof userId !== "string") { return userId; }
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
-          const body = ctx.body as { mode: "hold" | "advance"; reason?: string };
+          const body = ctx.body as { mode: "hold" | "advance"; reason?: string; actorId?: string };
 
           const limit = turnSkipLimiter.consume(`${userId}:${id}`,);
           if (!limit.allowed) {
@@ -61,7 +61,7 @@ export function turnSkipRoutes(opts: HandlerOpts, prefix = "/api",) {
 
           const result = await recordTurnSkip(database, {
             chatId: id,
-            actorId: userId,
+            actorId: body.actorId ?? userId,
             mode: body.mode,
             reason: body.reason ?? null,
             userId,
