@@ -945,6 +945,17 @@ export const SCHEMA = new SchemaManifest()
     selected_at: col("text",),
     created_at: col("text", { notNull: true, },),
   },)
+  .table("wardrobe_items", {
+    id: col("text", { primaryKey: true, },),
+    actor_id: col("text",),
+    world_id: col("text",),
+    name: col("text", { notNull: true, },),
+    descriptor: col("text", { notNull: true, hasDefault: true, },),
+    tags: col("text", { notNull: true, hasDefault: true, },),
+    sort_order: col("integer", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("whitenotes", {
     id: col("text", { primaryKey: true, },),
     chat_id: col("text", { notNull: true, },),
@@ -1167,6 +1178,13 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("actor_wardrobe", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    actor_id: col("text", { notNull: true, },),
+    wardrobe_item_id: col("text", { notNull: true, },),
+    item_instance_id: col("text",),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("character_arc", {
     id: col("text", { primaryKey: true, },),
     actor_id: col("text", { notNull: true, },),
@@ -1216,6 +1234,7 @@ export const SCHEMA = new SchemaManifest()
     sort_order: col("integer", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
+    outfit_id: col("text",),
   },)
   .table("character_body_profile", {
     id: col("text", { primaryKey: true, },),
@@ -1779,6 +1798,15 @@ export const SCHEMA = new SchemaManifest()
     features: col("text", { hasDefault: true, },),
     visibility: col("text", { hasDefault: true, },),
   },)
+  .table("chat_wardrobe_overrides", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    chat_id: col("text", { notNull: true, },),
+    actor_id: col("text", { notNull: true, },),
+    outfit_id: col("text", { notNull: true, },),
+    changed_by: col("text",),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("chats", {
     id: col("text", { primaryKey: true, },),
     name: col("text", { notNull: true, },),
@@ -2050,6 +2078,7 @@ export const SCHEMA = new SchemaManifest()
     weights_override: col("text", { hasDefault: true, },),
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
+    outfit_bindings: col("text",),
   },)
   .table("world_event_steerings", {
     id: col("text", { primaryKey: true, },),

@@ -187,4 +187,7 @@ export interface DB {
   autonomy_budget: import("./schema-core").AutonomyBudget;
   world_simulation_state: import("./schema-core").WorldSimulationState;
   carriage_records: import("./schema-core").CarriageRecords;
+  wardrobe_items: import("./schema-core").WardrobeItems;
+  actor_wardrobe: import("./schema-core").ActorWardrobe;
+  chat_wardrobe_overrides: import("./schema-core").ChatWardrobeOverrides;
 }

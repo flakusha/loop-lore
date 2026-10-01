@@ -31,6 +31,7 @@ export interface WorldAvatarConfig {
   weights_override: string | null;
   created_at: string;
   updated_at: string;
+  outfit_bindings: string | null;
 }
 
 // ── admin_character_overrides ────────────────────────────────────────────
@@ -95,6 +96,7 @@ export interface CharacterAvatars {
   sort_order: Generated<number>;
   created_at: string;
   updated_at: string;
+  outfit_id: string | null;
 }
 
 // ── character_body_profile ────────────────────────────────────────────

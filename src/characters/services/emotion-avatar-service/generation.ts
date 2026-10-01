@@ -53,6 +53,38 @@ export interface GenerateEmotionAvatarOpts {
   avatarEmotions?: Record<string, EmotionEntry>;
   /** When set, opaque generated sprites are auto-enqueued for matting. */
   mattingProvider?: MattingProvider;
+  /** Outfit scope: the created avatar variant's outfit FK + prompt slot. */
+  outfitId?: string;
+}
+
+/**
+ * Delete prior variants for one (emotion, outfit scope) slot, keeping the
+ * freshly generated avatar. Outfit-scoped regen isolation: a re-roll of
+ * angry-in-armor deletes only angry-in-armor rows — angry-in-court-dress
+ * and other emotions of the same outfit are never touched.
+ *
+ * Exported as the unit that owns slot-replace isolation (behavior-pinned
+ * by outfit-scope tests).
+ * @param svc
+ * @param opts
+ * @param opts.actorId
+ * @param opts.emotion
+ * @param opts.outfitId - undefined = outfitless (base) slot
+ * @param opts.exceptAvatarId - the surviving fresh variant
+ * @returns void
+ */
+export async function deleteOutfitEmotionVariants(
+  svc: GenerationDispatchHandle,
+  opts: { actorId: string; emotion: string; outfitId?: string; exceptAvatarId: string },
+): Promise<void> {
+  const avatars = await svc.avatarService.getAvatars(opts.actorId,);
+  for (const avatar of avatars) {
+    if (avatar.id === opts.exceptAvatarId) { continue; }
+    if (avatar.tags.emotion?.toLowerCase() !== opts.emotion.toLowerCase()) { continue; }
+    const sameScope = (avatar.outfitId ?? undefined) === opts.outfitId;
+    if (!sameScope) { continue; }
+    await svc.avatarService.deleteAvatar(avatar.id,);
+  }
 }
 
 /**
@@ -130,7 +162,20 @@ export async function runBatchGeneration(
         fallbackMode,
         avatarEmotions,
         mattingProvider: opts.mattingProvider,
+        outfitId: opts.outfitId,
       },);
+
+      // Replace mode: drop prior variants for this exact (emotion, outfit)
+      // slot AFTER the new one landed — failed re-rolls keep the old
+      // variant, and sibling outfits are never in scope.
+      if (opts.replace) {
+        await deleteOutfitEmotionVariants(svc, {
+          actorId: opts.actorId,
+          emotion: result.emotion,
+          outfitId: opts.outfitId,
+          exceptAvatarId: generated.avatarId,
+        },);
+      }
 
       result.avatarId = generated.avatarId;
       result.assetId = generated.assetId;
@@ -173,12 +218,25 @@ export async function generateEmotionAvatar(
 ): Promise<{ avatarId: string; assetId: string }> {
   const emotionModifier = svc.resolveEmotionPromptModifier(opts.emotion, opts.avatarEmotions,);
 
+  // Outfit descriptor slot: prompt = identity-anchor + outfit-descriptor
+  // + emotion-descriptor (wardrobe ticket's composition contract).
+  let outfitDescriptor = "";
+  if (opts.outfitId) {
+    const item = await svc.db
+      .selectFrom("wardrobe_items",)
+      .select(["descriptor",],)
+      .where("id", "=", opts.outfitId,)
+      .executeTakeFirst();
+    outfitDescriptor = item?.descriptor ?? "";
+  }
+  const outfitSlot = outfitDescriptor ? `${outfitDescriptor}, ` : "";
+
   // Build prompt: use explicit prefix if provided, otherwise use metadata fallback
   let prompt: string;
   let usedFallback = false;
 
   if (opts.promptPrefix) {
-    prompt = `${opts.promptPrefix}, ${emotionModifier}`;
+    prompt = `${opts.promptPrefix}, ${outfitSlot}${emotionModifier}`;
   } else if (opts.baseAvatarId && opts.fallbackMode !== "none") {
     // Extract metadata from base avatar for fallback prompt construction.
     // Pass `actorId` so the character description anchors the prompt when
@@ -186,10 +244,14 @@ export async function generateEmotionAvatar(
     const metadata = await extractAvatarMetadata(svc.db, opts.baseAvatarId, {
       actorId: opts.actorId,
     },);
-    prompt = buildEmotionPrompt(metadata, opts.emotion, emotionModifier,);
+    // Identity anchor first, then the outfit descriptor slot, then the
+    // emotion descriptor (buildEmotionPrompt appends emotion + quality).
+    const anchor = metadata.caption ?? metadata.altText ?? "character portrait";
+    const anchorWithOutfit = outfitDescriptor ? `${anchor}, ${outfitDescriptor}` : anchor;
+    prompt = buildEmotionPrompt({ ...metadata, caption: anchorWithOutfit, }, opts.emotion, emotionModifier,);
     usedFallback = true;
   } else {
-    prompt = `character portrait, ${emotionModifier}, detailed face, high quality`;
+    prompt = `character portrait, ${outfitSlot}${emotionModifier}, detailed face, high quality`;
   }
 
   if (usedFallback) {
@@ -231,7 +293,7 @@ export async function generateEmotionAvatar(
   for (const { asset, } of persisted) {
     assetId = asset.id;
 
-    // Create avatar with emotion tag
+    // Create avatar with emotion tag (+ outfit scope when in play)
     avatarId = await svc.avatarService.createAvatar({
       actorId: opts.actorId,
       assetId: asset.id,
@@ -239,6 +301,7 @@ export async function generateEmotionAvatar(
       tags: { emotion: opts.emotion, },
       isPrimary: false,
       sortOrder: EMOTION_ORDINAL[opts.emotion],
+      outfitId: opts.outfitId,
     },);
     // Auto-enqueue matting for generated sprites. Providers typically emit
     // RGBA PNGs with fully opaque pixels, so header-level detection marks the

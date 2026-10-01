@@ -16,6 +16,8 @@ export type GenerationJobStatus = "pending" | "running" | "completed" | "failed"
 export interface GenerationJobPayload {
   emotions: EmotionType[];
   baseAvatarId: string;
+  /** Outfit scope of the batch; absent = outfitless (base) generation. */
+  outfitId?: string;
 }
 
 /** A persisted generation job with parsed JSON columns. */
@@ -193,6 +195,7 @@ export async function recordBatchStart(
     payload: {
       emotions: job.results.map((result,) => result.emotion),
       baseAvatarId: opts.baseAvatarId,
+      ...(opts.outfitId ? { outfitId: opts.outfitId, } : {}),
     },
     startedAt: job.startedAt,
   },);

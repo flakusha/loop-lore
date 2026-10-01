@@ -31,6 +31,7 @@ export function rowToAvatar(row: {
   tags: string;
   is_primary: number;
   sort_order: number;
+  outfit_id?: string | null;
   created_at: string;
   updated_at: string;
 },): Avatar {
@@ -42,6 +43,7 @@ export function rowToAvatar(row: {
     tags: jsonParseOr(row.tags, {},),
     isPrimary: row.is_primary === 1,
     sortOrder: row.sort_order,
+    outfitId: row.outfit_id ?? null,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
@@ -109,6 +111,7 @@ export async function createAvatar(db: Kysely<DB>, opts: CreateAvatarOpts,): Pro
       tags: jsonStringifyOr(opts.tags ?? {},),
       is_primary: opts.isPrimary ? 1 : 0,
       sort_order: opts.sortOrder ?? 0,
+      outfit_id: opts.outfitId ?? null,
       created_at: now,
       updated_at: now,
     },)
@@ -170,6 +173,9 @@ export async function updateAvatar(
   }
   if (opts.sortOrder !== undefined) {
     updateData.sort_order = opts.sortOrder;
+  }
+  if (opts.outfitId !== undefined) {
+    updateData.outfit_id = opts.outfitId;
   }
 
   await db

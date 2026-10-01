@@ -28,6 +28,14 @@ export interface GenerateEmotionAvatarsOpts {
    * generated sprites are auto-enqueued for matting after storage.
    */
   mattingProvider?: MattingProvider;
+  /** Outfit scope: variants land on this wardrobe item (outfit axis). */
+  outfitId?: string;
+  /**
+   * Replace mode: after each successful generation, delete prior variants
+   * for the SAME (emotion, outfit scope) only — a re-roll of angry-in-armor
+   * never touches angry-in-court-dress (outfit-scoped regen isolation).
+   */
+  replace?: boolean;
 }
 
 /** Status of a single emotion generation */
