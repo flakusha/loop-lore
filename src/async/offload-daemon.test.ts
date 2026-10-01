@@ -29,7 +29,6 @@ import {
   resetOffloadDir,
   setOffloadDir,
   spill,
-  SPILL_ROOT,
   spillFileStem,
   startOffloadDaemon,
 } from "./offload";
@@ -733,7 +732,6 @@ describe("pruneOrphanSpills — retention cap for unreferenced spill files", () 
         ttlMs: TTL_MS,
         dir: path.join(sweepDir, "missing",),
       },);
-
       expect(pruned,).toBe(0,);
     } finally {
       await ctx.db.destroy();
@@ -784,24 +782,39 @@ describe("pruneOrphanSpills — retention cap for unreferenced spill files", () 
   });
 
   test("a default sweep stays inside the directory this test owns", async () => {
-    // The sentinel lives directly under the shared SPILL_ROOT, stale and
-    // unreferenced — exactly what the sweep would delete if it escaped the
-    // test's own area. A concurrent arm's spill dir must survive this call.
-    mkdirSync(SPILL_ROOT, { recursive: true, },);
-    const sentinel = path.join(SPILL_ROOT, `sentinel-${crypto.randomUUID()}.json.gz`,);
+    // The sentinel is stale and unreferenced, and it lives INSIDE the sweep
+    // root — `setOffloadDir` in the file-scope `beforeEach` points BOTH
+    // `offloadDir()` and `spillRootDir()` at this test's own `mkdtemp`, and
+    // `pruneOrphanSpills` with no `dir` resolves the same root. So the sweep
+    // genuinely sees the sentinel and genuinely chooses to keep it: it is
+    // referenced by the seeded row, or too fresh to prune. Reachability is
+    // what makes this assertion load-bearing — a sweep that escaped to the
+    // shared `SPILL_ROOT` would find no sentinel here and pass vacuously.
+    //
+    // Writing the sentinel under the repo's `SPILL_ROOT` instead (the old
+    // shape) tested nothing: the sweep never read that directory, so
+    // `pruned === 0` held for the wrong reason, and the flat `.json.gz` was
+    // transient residue in the shared repo dir.
+    const sentinel = path.join(spillDirForTest, `sentinel-${crypto.randomUUID()}.json.gz`,);
     writeFileSync(sentinel, "x",);
     const oldTs = new Date(Date.now() - 4 * TTL_MS,);
     const { utimesSync, } = await import("node:fs");
     utimesSync(sentinel, oldTs, oldTs,);
     const ctx = await createTestDb();
     try {
+      await seedRequest(ctx.db, {
+        id: "sentinel-row",
+        status: "complete",
+        completedAt: minutesAgo(1,),
+        offloadPath: sentinel,
+      },);
+
       // No `dir` — this is the production call shape from runOffloadPass.
       const pruned = await pruneOrphanSpills(ctx.db, { ttlMs: TTL_MS, },);
 
       expect(pruned,).toBe(0,);
       expect(existsSync(sentinel,),).toBe(true,);
     } finally {
-      rmSync(sentinel, { force: true, },);
       await ctx.db.destroy();
       ctx.sqlite.close();
     }
