@@ -3,7 +3,8 @@
 
 # TASK: ComfyUI builder Track A: chain model + prompt_templates workflow-modality persistence
 
-**Status:** Not Started
+**Status:** Done
+**Status Note:** Done 2026-10-01 — commit a8e01ade (chain model, graph validation, run jobs)
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-comfyui-first-class-citizen
@@ -17,10 +18,10 @@ Implements Track A phase 1 of docs/meta/research/comfyui-graph-builder-frontend-
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+No new migration: chains persist as prompt_templates rows with modality `workflow`, payload `{ kind: "chain", steps: [...] }` (kind discriminates chain vs graph rows; graph rows are skipped by chain listing). Validation lives in chain-types.ts (validateChainPayload); async runs are in-memory jobs (run-job-store.ts) delegating each step to handleRun.
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated

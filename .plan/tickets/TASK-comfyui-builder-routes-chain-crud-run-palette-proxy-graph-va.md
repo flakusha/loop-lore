@@ -3,7 +3,8 @@
 
 # TASK: ComfyUI builder routes: chain CRUD/run, palette proxy, graph validate endpoint
 
-**Status:** Not Started
+**Status:** Done
+**Status Note:** Done 2026-10-01 — commit 0ee740e7 (builder routes + validation schemas)
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-comfyui-first-class-citizen
@@ -17,10 +18,10 @@ Implements Track A/B server seam of docs/meta/research/comfyui-graph-builder-fro
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Routes live in src/routes/comfyui-builder/, mounted in content-surface.ts beside imageEditRoutes. Chain CRUD is owner-scoped through getOwnedTemplate/chain-store; run POST starts an in-memory job and returns { jobId } with GET polling (owner-checked). Palette proxy calls the shared ComfyUI provider and maps failures to 502/504 (configured base URL only, no user-controlled hosts). Graph validate is static: duplicate ids, acyclic check via Kahn sweep, missing-input edges, dead non-sink nodes (findDeadNodes + TERMINAL_SINK_CLASSES reuse).
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
