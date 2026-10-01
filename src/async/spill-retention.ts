@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { Kysely, } from "kysely";
-import { readdirSync, statSync, unlinkSync, } from "node:fs";
+import { readdirSync, rmdirSync, statSync, unlinkSync, } from "node:fs";
 import path from "node:path";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
@@ -45,6 +45,31 @@ function collectSpillFiles(dir: string,): string[] {
 }
 
 /**
+ * Drop per-process namespace directories the sweep has emptied, so the root's
+ * entry count stays bounded instead of growing one dir per process that ever
+ * spilled. Never removes `dir` itself, and never a non-empty child (a live
+ * process may still be spilling into it — `spill()` re-creates the directory on
+ * demand, so racing a live writer is harmless).
+ * @param dir - spill root whose child namespaces are candidates for removal.
+ */
+function removeEmptyNamespaces(dir: string,): void {
+  let names: string[];
+  try {
+    names = readdirSync(dir,);
+  } catch {
+    return;
+  }
+  for (const name of names) {
+    const child = path.join(dir, name,);
+    try {
+      if (!statSync(child,).isDirectory()) { continue; }
+      if (readdirSync(child,).length > 0) { continue; }
+      rmdirSync(child,);
+    } catch { /* raced with a live writer — harmless, it re-creates on demand */ }
+  }
+}
+
+/**
  * Retention cap for spill files nothing references any more. Phase 3 of
  * `runOffloadPass` only deletes spills it can map back to an `expired` row;
  * files orphaned by DB resets, deleted rows, or aborted runs would otherwise
@@ -78,7 +103,12 @@ export async function pruneOrphanSpills(
     }
     if (mtimeMs <= cutoffMs) { candidates.push(filePath,); }
   }
-  if (candidates.length === 0) { return 0; }
+  // Clean namespaces on BOTH exit paths: a dead process's namespace can be empty
+  // (or emptied by an earlier sweep) while still leaving its directory behind.
+  if (candidates.length === 0) {
+    removeEmptyNamespaces(dir,);
+    return 0;
+  }
   // Chunked IN query (SQLite host-parameter limit) — anything referenced by
   // any row survives, so a chunking race can only over-retain, never delete.
   const referenced = new Set<string>();
@@ -104,5 +134,6 @@ export async function pruneOrphanSpills(
   if (pruned > 0) {
     log.info("pruned orphaned spill files", { pruned, scanned: candidates.length, },);
   }
+  removeEmptyNamespaces(dir,);
   return pruned;
 }
