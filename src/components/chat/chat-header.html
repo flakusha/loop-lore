@@ -297,6 +297,60 @@
       </div>
     </div>
 
+    <!-- Outfit switcher (TASK-wardrobe-manager-ui-and-chat-outfit-switcher) -->
+    <div
+      class="outfit-switcher-wrap"
+      x-data="outfitSwitcher()"
+      x-init="init()"
+      x-show="$store.ui.hasActiveChat && outfits.length >= 0"
+      data-testid="outfit-switcher"
+    >
+      <button
+        class="btn-icon"
+        x-bind:title="t('wardrobe.outfitSwitcher')"
+        x-bind:aria-label="t('wardrobe.outfitSwitcher')"
+        @click="open = !open"
+        data-testid="outfit-switcher-toggle"
+      >
+        👔
+      </button>
+      <div
+        class="side-channels-dropdown-menu"
+        x-show="open"
+        x-cloak
+        @click.outside="open = false"
+        data-testid="outfit-switcher-menu"
+      >
+        <div class="side-channels-header">
+          <span x-text="t('wardrobe.outfitSwitcher')"></span>
+        </div>
+        <div
+          class="side-channel-row"
+          :class="{ 'is-active': overrideId === null }"
+          @click="select(null)"
+          data-testid="outfit-switcher-default"
+        >
+          <span class="side-channel-name" x-text="t('wardrobe.sceneDefault')"></span>
+        </div>
+        <template x-for="outfit in outfits" :key="outfit.id">
+          <div
+            class="side-channel-row"
+            :class="{ 'is-active': overrideId === outfit.id }"
+            @click="select(outfit.id)"
+            data-testid="outfit-switcher-option"
+          >
+            <span class="side-channel-name" x-text="outfit.name"></span>
+          </div>
+        </template>
+        <div
+          class="side-channel-empty"
+          x-show="outfits.length === 0"
+          x-text="t('wardrobe.empty')"
+          data-testid="outfit-switcher-empty"
+        ></div>
+        <div class="side-channel-empty" x-show="error" x-text="error" data-testid="outfit-switcher-error"></div>
+      </div>
+    </div>
     <!-- Context Window Monitor -->
     <div
       x-data="contextWindow()"

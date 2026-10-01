@@ -9,6 +9,7 @@
 
 
 **Status:** Done
+**Status Note:** completed 2026-10-01
 **Priority:** medium
 **Effort:** Medium
 **Epic:** Wardrobe / Loadout Avatar Variants
@@ -19,6 +20,6 @@ Character-sheet wardrobe manager + chat header outfit switcher. Part of epic War
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated

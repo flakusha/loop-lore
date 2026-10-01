@@ -9,6 +9,7 @@
 
 
 **Status:** Done
+**Status Note:** completed 2026-10-01 — flag `system_config.wardrobe_loadout_bridge` default off; read-side rung, no equip-time writes
 **Priority:** low
 **Effort:** Large
 **Epic:** epic-wardrobe-avatar-variants.md
@@ -19,6 +20,6 @@ Deferred phase: equipped-items -> outfit auto-mapping (flag-gated). Map equipped
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated

@@ -9,6 +9,7 @@
 
 
 **Status:** Done
+**Status Note:** completed 2026-10-01
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-wardrobe-avatar-variants.md
@@ -19,6 +20,6 @@ Selection algorithm v2 — (outfit, emotion) resolution with fallback ladder: (o
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated

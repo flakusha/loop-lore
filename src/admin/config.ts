@@ -146,6 +146,11 @@ export async function seedDefaults(db: Kysely<DB>, config: Config,): Promise<voi
     { key: "profanity_filter", value: "false", description: "Enable profanity filter", },
     { key: "spam_detection", value: "false", description: "Enable spam detection", },
     { key: "max_flags_before_hide", value: "3", description: "Auto-hide content after N flags", },
+    {
+      key: "wardrobe_loadout_bridge",
+      value: "false",
+      description: "Auto-switch outfit from equipped items (loadout bridge)",
+    },
   );
 
   for (const d of defaults) {
