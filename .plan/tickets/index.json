@@ -3211,6 +3211,19 @@
     "source": ".plan/tickets/BUG-getstorypointbalance-mutates-db-on-read-and-500s-on-concurre.md",
     "status": "Done"
   },
+  "BUG-GIWT-ABORT-RUNS-UNSCOPED-GIT-RESET-HARD-THAT-DESTROYS-UNRELA": {
+    "hash": "369910b",
+    "git_issue": "369910b",
+    "extid": "BUG-GIWT-ABORT-RUNS-UNSCOPED-GIT-RESET-HARD-THAT-DESTROYS-UNRELA",
+    "type": "BUG",
+    "title": "giwt abort runs unscoped git reset --hard that destroys unrelated tracked work",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-giwt-abort-runs-unscoped-git-reset-hard-that-destroys-unrela.md",
+    "status": "Not Started"
+  },
   "BUG-GIWT-PLAN-GATES-REPORT-112-PHANTOM-ACTIONABLE-ISSUES-WHEN-TH": {
     "epic": "",
     "extid": "BUG-GIWT-PLAN-GATES-REPORT-112-PHANTOM-ACTIONABLE-ISSUES-WHEN-TH",
