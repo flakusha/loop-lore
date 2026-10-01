@@ -186,16 +186,30 @@ describe("per-modality template routes", () => {
     expect(deleted.status,).toBe(404,);
   });
 
-  test("cross-modality rows 404 on the wrong modality route", async () => {
+  test("cross-modality rows 404 on the wrong modality route without mutation", async () => {
     const audioId = await insertPromptTemplates(db, userId, "Audio only", {
       modality: "audio",
-      payload: JSON.stringify({ body: "x", },),
+      payload: JSON.stringify({ body: "original body", },),
     },);
     const app = makeApp(db, userId,);
     const got = await app.handle(new Request(`http://localhost/api/templates/video/${audioId}`,),);
     expect(got.status,).toBe(404,);
     const patched = await patch(app, `/api/templates/video/${audioId}`, { name: "X", },);
     expect(patched.status,).toBe(404,);
+    // The 404 must not have mutated the row (write happens only after the
+    // owned+matching pre-check passes).
+    const reRead = await app.handle(new Request(`http://localhost/api/templates/audio/${audioId}`,),);
+    expect(reRead.status,).toBe(200,);
+    const body = (await reRead.json()) as TemplatePayloadBody;
+    expect(body.template.name,).toBe("Audio only",);
+    expect(body.template.payload.body,).toBe("original body",);
+  });
+
+  test("patch with a payload that breaks the modality shape answers 400", async () => {
+    const app = makeApp(db, userId,);
+    const id = await createVideoId(app,);
+    const res = await patch(app, `/api/templates/video/${id}`, { payload: {}, },);
+    expect(res.status,).toBe(400,);
   });
 
   test("patch rejects a modality move via body", async () => {
