@@ -956,6 +956,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-asset-link-share-json-routes-500-body-already-used-elysia-su.md"
     },
     {
@@ -1236,7 +1240,23 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-emotion-avatar-fallback-metadata-incomplete.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst.md"
     },
     {
       "kind": "ticket",
@@ -1263,6 +1283,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-assets-delete-fk-constraint-fails.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty.md"
     },
     {
       "kind": "ticket",
@@ -1302,6 +1326,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-cross-platform-filesystem-path-guard.md"
     },
     {
@@ -1333,6 +1361,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-vector-graphics-generation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst.md"
     },
     {
       "kind": "ticket",
@@ -5224,6 +5256,10 @@
   "src/characters/seed/avatar.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-npc-character-edit-stack-parity.md"
     }
   ],
@@ -5231,6 +5267,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-skills-professions-config.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat.md"
     },
     {
       "kind": "ticket",
@@ -11844,6 +11884,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-migration-ordering-ambiguous-via-localecompare-duplicate-num.md"
     },
     {
@@ -11983,6 +12027,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-activitypub-actor-signing-keys-and-rotation-undefined-no-cry.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with.md"
     },
     {
       "kind": "ticket",
@@ -12587,6 +12639,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-create-test-db-custom-dialect-can-bypass-settestdatabase.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with.md"
     },
     {
       "kind": "ticket",
@@ -20511,6 +20567,16 @@
       "source": ".plan/tickets/TASK-hook-result-payload-carry-context.md"
     }
   ],
+  "src/generation/image-edit-service/apply.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst.md"
+    }
+  ],
   "src/generation/image-engine/comfyui.test.ts": [
     {
       "kind": "epic",
@@ -20596,7 +20662,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-generation-control-plane-routes-lack-authorization.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst.md"
     },
     {
       "kind": "ticket",
@@ -20834,6 +20908,14 @@
     }
   ],
   "src/generation/matting/service.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-vn-alpha-extraction-matting-job-for-opaque-character-images.md"
@@ -21959,6 +22041,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-comfyui-plugin.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat.md"
     }
   ],
   "src/image-edit/routes.coverage.test.ts": [
@@ -30628,6 +30714,10 @@
     }
   ],
   "src/routes/v1/content-surface.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-analytics-observability.md"
