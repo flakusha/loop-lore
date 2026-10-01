@@ -22,8 +22,13 @@
  *
  * Compares every file that differs from <base> (committed or unstaged) and
  * exits 1 when its consecutive-duplicate-line count grew vs the base
- * version. Without a base ref it reports skipped and exits 0, so the gate
- * entry in check-parallel.mjs is a no-op on normal runs.
+ * version. Paths absent at <base> are skipped rather than scored against a
+ * zero baseline: a new file has no growth to measure, and the resolver only
+ * rewrites paths present on both sides of a conflict, so new files are
+ * outside its damage surface.
+ *
+ * Without a base ref it reports skipped and exits 0, so the gate entry in
+ * check-parallel.mjs is a no-op on normal runs.
  */
 import { readFileSync, } from "node:fs";
 import path from "node:path";
@@ -34,7 +39,7 @@ const PROJECT_ROOT = path.resolve(import.meta.dir, "..", "..",);
 const MIN_DUPE_LENGTH = 15;
 
 /** Consecutive identical lines — the weave's duplication fingerprint. */
-function countConsecutiveDupes(text,) {
+export function countConsecutiveDupes(text,) {
   const lines = text.split("\n",);
   let dupes = 0;
   for (let i = 1; i < lines.length; i++) {
@@ -57,11 +62,16 @@ function changedFiles(base,) {
   return out.split("\n",).map((line,) => line.trim()).filter(Boolean,);
 }
 
+/**
+ * Content of `file` at `base`, or null when the path is absent from that
+ * tree. `main` verifies the ref before the loop, so a `git show` failure
+ * here can only mean absence — it is not standing in for an unusable ref.
+ */
 function readAtBase(base, file,) {
   try {
     return spawnStdout(["git", "show", `${base}:${file}`,],);
   } catch {
-    return null; // file did not exist at base
+    return null; // absent at base
   }
 }
 
@@ -72,8 +82,15 @@ function main() {
     return;
   }
 
+  // Fail fast on an unusable ref. Without this, every `git show` below would
+  // fail exactly as an absent path does, and each file would be scored
+  // against a zero baseline instead of reporting the real problem.
+  spawnStdout(["git", "rev-parse", "--verify", `${base}^{commit}`,],);
+
+  const files = changedFiles(base,);
   const offenders = [];
-  for (const file of changedFiles(base,)) {
+  let newFiles = 0;
+  for (const file of files) {
     let current;
     try {
       current = readFileSync(path.join(PROJECT_ROOT, file,), "utf8",);
@@ -81,13 +98,18 @@ function main() {
       continue; // deleted in the working tree
     }
     const atBase = readAtBase(base, file,);
-    const before = atBase === null ? 0 : countConsecutiveDupes(atBase,);
+    if (atBase === null) {
+      newFiles++;
+      continue;
+    } // no baseline: growth undefined
+    const before = countConsecutiveDupes(atBase,);
     const after = countConsecutiveDupes(current,);
     if (after > before) { offenders.push({ file, before, after, },); }
   }
 
   if (offenders.length === 0) {
-    console.log(`weave - damage scan: clean (${changedFiles(base,).length} file(s) vs ${base})`,);
+    const newNote = newFiles > 0 ? `, ${newFiles} new (no baseline)` : "";
+    console.log(`weave - damage scan: clean (${files.length} file(s) vs ${base}${newNote})`,);
     return;
   }
 
@@ -99,9 +121,13 @@ function main() {
   process.exit(1,);
 }
 
-try {
-  main();
-} catch (error) {
-  console.error("weave - damage scan failed:", error.message,);
-  process.exit(1,);
+// Guarded so importing this module (the test below) cannot run the scan
+// against the importer's argv and call process.exit out from under it.
+if (import.meta.main) {
+  try {
+    main();
+  } catch (error) {
+    console.error("weave - damage scan failed:", error.message,);
+    process.exit(1,);
+  }
 }
