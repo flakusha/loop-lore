@@ -21,20 +21,17 @@ export interface RateLimitVerdict {
   retryAfterSec?: number;
 }
 
-/** Options for constructing a GovernanceRateLimiter. */
-export interface GovernanceRateLimiterOpts {
-  store?: RateLimitStore;
-  /** Injectable clock (ms epoch) — defaults to Date.now. */
-  now?: () => number;
-}
-
 /** Governance rate limiter with sliding window + optional token bucket. */
 export class GovernanceRateLimiter {
   private store: RateLimitStore;
   private now: () => number;
 
   /** Create a new rate limiter with optional store and clock. */
-  constructor(opts: GovernanceRateLimiterOpts = {},) {
+  constructor(opts: {
+    store?: RateLimitStore;
+    /** Injectable clock (ms epoch) — defaults to Date.now. */
+    now?: () => number;
+  } = {},) {
     this.store = opts.store ?? new InMemoryRateLimitStore();
     this.now = opts.now ?? (() => Date.now());
   }
@@ -100,3 +97,6 @@ export class GovernanceRateLimiter {
     this.store.destroy();
   }
 }
+
+/** Limiter options — derived from the class ctor (single source). */
+export type GovernanceRateLimiterOpts = NonNullable<ConstructorParameters<typeof GovernanceRateLimiter>[0]>;
