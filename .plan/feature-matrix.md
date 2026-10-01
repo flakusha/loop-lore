@@ -77,7 +77,7 @@ Total tickets: **3126** — untagged: **2635** — unbound to epic: **1588**
 | alerting | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | alignment | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | alpha | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| alpine | 4 | 0 | 0 | 2 | 0 | 0 | 2 |
+| alpine | 4 | 1 | 0 | 2 | 0 | 0 | 1 |
 | alpn | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | alternate-paths | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | alternative-flows | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
@@ -177,7 +177,7 @@ Total tickets: **3126** — untagged: **2635** — unbound to epic: **1588**
 | build-hash | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | build-integrity | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | build-pipeline | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| builder | 6 | 0 | 0 | 0 | 0 | 0 | 6 |
+| builder | 6 | 3 | 0 | 0 | 0 | 0 | 3 |
 | bun | 2 | 1 | 0 | 0 | 0 | 0 | 1 |
 | bundle | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | bundling | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
@@ -227,7 +227,7 @@ Total tickets: **3126** — untagged: **2635** — unbound to epic: **1588**
 | code-splitting | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | cold-storage | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | combat | 4 | 0 | 2 | 0 | 0 | 0 | 2 |
-| comfyui | 17 | 1 | 1 | 7 | 0 | 0 | 8 |
+| comfyui | 17 | 4 | 1 | 7 | 0 | 0 | 5 |
 | comments | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | commit | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | communication | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
@@ -419,7 +419,7 @@ Total tickets: **3126** — untagged: **2635** — unbound to epic: **1588**
 | free-will | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | fresh | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | friends | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
-| frontend | 22 | 3 | 3 | 3 | 0 | 0 | 13 |
+| frontend | 22 | 4 | 3 | 3 | 0 | 0 | 12 |
 | future | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | fuzzing | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | gallery | 5 | 1 | 0 | 1 | 0 | 0 | 3 |
@@ -749,7 +749,7 @@ Total tickets: **3126** — untagged: **2635** — unbound to epic: **1588**
 | prompt-formatting | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | prompt-improve | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | prompt-injection | 3 | 0 | 0 | 0 | 0 | 0 | 3 |
-| prompt-templates | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| prompt-templates | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | propagation | 2 | 0 | 0 | 0 | 2 | 0 | 0 |
 | protocols | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | provenance | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
@@ -832,7 +832,7 @@ Total tickets: **3126** — untagged: **2635** — unbound to epic: **1588**
 | role-contract | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | romance | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | rotation | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| routes | 9 | 1 | 3 | 1 | 0 | 0 | 4 |
+| routes | 9 | 2 | 3 | 1 | 0 | 0 | 3 |
 | routing | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | rpg | 24 | 1 | 3 | 1 | 5 | 0 | 14 |
 | rpg-chat | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -1046,7 +1046,7 @@ Total tickets: **3126** — untagged: **2635** — unbound to epic: **1588**
 | urc-rsi-survey | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | user-message | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | ux | 3 | 1 | 0 | 1 | 0 | 0 | 1 |
-| validation | 7 | 0 | 2 | 0 | 0 | 0 | 5 |
+| validation | 7 | 1 | 2 | 0 | 0 | 0 | 4 |
 | validator | 5 | 0 | 0 | 4 | 0 | 0 | 1 |
 | validators | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | variants | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -1085,7 +1085,7 @@ Total tickets: **3126** — untagged: **2635** — unbound to epic: **1588**
 | windows | 2 | 0 | 1 | 0 | 0 | 0 | 1 |
 | wiring | 4 | 1 | 2 | 0 | 0 | 0 | 1 |
 | workers | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| workflow | 6 | 0 | 1 | 0 | 1 | 0 | 4 |
+| workflow | 6 | 1 | 1 | 0 | 1 | 0 | 3 |
 | workflow-templates | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | workflows | 6 | 0 | 1 | 0 | 1 | 0 | 4 |
 | worktree | 3 | 0 | 0 | 0 | 0 | 0 | 3 |
@@ -1254,7 +1254,7 @@ Total tickets: **3126** — untagged: **2635** — unbound to epic: **1588**
 | epic-code-quality | 14 | 5 | 0 | 9 | 0 | 0 | 0 |
 | epic-code-quality-and-standards.md | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-code-quality.md | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
-| epic-comfyui-first-class-citizen | 16 | 0 | 0 | 0 | 0 | 0 | 16 |
+| epic-comfyui-first-class-citizen | 16 | 3 | 0 | 0 | 0 | 0 | 13 |
 | epic-comfyui-plugin | 10 | 3 | 0 | 7 | 0 | 0 | 0 |
 | epic-communications-integrations.md | 6 | 0 | 0 | 6 | 0 | 0 | 0 |
 | epic-companion-pet-mount | 3 | 1 | 0 | 2 | 0 | 0 | 0 |
