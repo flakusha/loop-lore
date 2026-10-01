@@ -4,33 +4,35 @@
 # Template System — Unified Architecture Spec
 
 **Status:** In Progress
-**Status Note:** Reconciliation pass 2026-09-27 — Phases 1–3 effectively shipped with deviations from this spec. DB lives as a single `prompt_templates` table with a JSON `payload` column (no separate `template_variables` table — payload shape varies per modality). Service lives at `src/generation/template-service/{crud,apply,resolve}.ts`. HTTP routes live at `/api/admin/templates` (admin-scoped) rather than `/api/templates/:modality`. 33 tests pass: `template-service.test.ts` ×9, `routes/admin-templates.coverage.test.ts` + `admin-templates-gate.test.ts` ×17, `assistant/prompt/template-render.test.ts` ×7. Video/audio scaffolds still future.
+**Status Note:** Reconciliation pass 2026-10-01 — Phases 1–4 shipped (DB table, service, admin routes, image wiring). Public template routes shipped at `/api/templates` (flat, not per-modality nested). LLM static-content `{{var}}` substitution done in `template-render.ts:179-197`; user config (`llm.yaml`) variable substitution is not wired — tracked in `TASK-template-unified-variable-engine.md`. Video/audio scaffolds are in flight in `tree/feat-gen-templates-video-audio` (uncommitted). Migration path's `parts/` subdirectory reference is stale (actual: flat `NNN_name.ts` files in `src/db/migrations/`).
 **Priority:** medium
 **Effort:** Medium
 **Summary:** Unified prompt template system across LLM/Image/Video/Audio modalities — shared `TemplateRegistry` interface, DB-backed user templates, per-modality registries, model→template auto-matching.
-**Context:** Reconciliation passes 2026-09-13, 2026-09-23, 2026-09-27 — bookkeeping; sibling TASK tickets cross-linked below.
-**Acceptance Criteria:** LLM + image modality registries + per-modality `{{var}}` substitution shipped; DB-backed `prompt_templates` shipped (JSON payload, not separate variables table); admin `/api/admin/templates` CRUD shipped. Remaining: public `/api/templates/:modality` routes, video/audio scaffolds, LLM `{{var}}` interpolation in LLM section assembler.
-
+**Context:** Reconciliation passes 2026-09-13, 2026-09-23, 2026-09-27, 2026-10-01 — bookkeeping; sibling TASK tickets cross-linked below.
+**Acceptance Criteria:** LLM + image modality registries + per-modality `{{var}}` substitution shipped; DB-backed `prompt_templates` shipped (JSON payload, not separate variables table); admin `/api/admin/templates` CRUD shipped; public `/api/templates` routes shipped. Remaining: audio scaffold (in flight), LLM config-layer `{{var}}` substitution (TASK-template-unified-variable-engine.md).
 
 **Owner**: FEAT-065 (Prompt Library)
 **Scope**: LLM, Image, Video, Audio generation templates
 
-
 git issue: dc95659
 
-## Current State (verified against code 2026-09-27)
+## Current State (verified against code 2026-10-01)
 
-- ✅ **LLM-modality foundation shipped** — `src/prompts/registry.ts` (`LLM_PROMPT_DEFAULTS` + `resolveSystemPrompt()`), user overrides via `configs/templates/llm.yaml`; `src/assistant/prompt/template-render.ts` renders LLM templates with section assembly. `prompt_templates` DB table exists with modality='llm' rows; per-template LLM `{{var}}` interpolation in section assembler still future (TASK-template-unified-variable-engine.md).
-- ✅ **Image-modality foundation shipped** — `src/generation/prompt-templates/` (`profiles.ts`, `config.ts`, `templates.ts`), shared `resolveTemplate()` `{{variable}}` substitution, user overlay via `configs/templates/sd.yaml`. Wired through `src/generation/image-gen-route.ts` and `template-service/apply.ts` (`applyImageTemplate`).
-- ✅ **DB + service phases shipped (with deviations)** — `prompt_templates` table exists in `src/db/migrations/001_init.ts` (lines 3296–3330): one row per template, `modality` check-constrained to `('llm','image','video','audio')`, JSON `payload` column carries modality-specific shape (no separate `template_variables` table — payload IS the variables). Service at `src/generation/template-service/{crud,apply,resolve,index}.ts` covers CRUD + render + chat-level override resolution. 9 service tests pass.
-- ✅ **Admin routes shipped** — `src/routes/admin-templates/{create,update,remove,list,index,shared}.ts` mounted at `/api/admin/templates` (admin-scoped). 17 admin-templates tests pass.
-- 🟡 Registry hardening (typed purposes, single defaults source, llm.yaml validation): `TASK-prompt-template-registry.md`, design `.plan/epics/epic-config-templates.md`.
-- ⬜ Public per-modality routes (`/api/templates/:modality`), video scaffold, audio scaffold — future (see follow-up tickets below).
-- 📌 **Follow-up tickets (filed 2026-09-27):**
-  - `TASK-public-templates-routes.md` — Phase 3 (public `/api/templates/:modality`); no current duplicate.
-  - `FEAT-065-sub-video.md` — Phase 6 (video scaffold); already tracked.
-  - `FEAT-065-sub-audio.md` — Phase 7 (audio scaffold); already tracked.
-  - `TASK-template-unified-variable-engine.md` — Phase 5 (LLM `{{var}}` interpolation); already tracked.
+- ✅ **LLM-modality foundation shipped** — `src/prompts/registry.ts` (`LLM_PROMPT_DEFAULTS` + `resolveSystemPrompt()`), user overrides via `configs/templates/llm.yaml` (loaded via templates-loader); `src/assistant/prompt/template-render.ts` renders LLM templates with section assembly. `prompt_templates` DB table exists with modality='llm' rows. `substituteVars()` at `template-render.ts:179-197` performs `{{charName}}`, `{{userName}}`, etc. substitution on static section content. However, `resolveSystemPrompt()` does not call `substituteVars()` on user config strings — gap tracked in `TASK-template-unified-variable-engine.md`.
+- ✅ **Image-modality foundation shipped** — `src/generation/prompt-templates/` (`profiles.ts`, `config.ts`, `templates.ts`, `resolution.ts`, `messages.ts`, `types.ts`, `index.ts`), `resolveTemplate()` at `templates.ts:32`, user overlay via `configs/templates/sd.yaml`. Wired through `src/generation/image-gen-route.ts:94` (`applyImageTemplate`) and `template-service/apply.ts`.
+- ✅ **DB + service phases shipped (with deviations)** — `prompt_templates` table in `src/db/migrations/001_init.ts:3297-3330`; check constraint `ck_prompt_templates_modality` at `001_init.ts:3308-3311`; `modality` relaxed to include `'workflow'` in `022_prompt_templates_workflow_modality.ts:72-75`. JSON `payload` column carries modality-specific shape — no `template_variables` table exists (grep confirms zero matches). Service at `src/generation/template-service/{crud,apply,resolve,index}.ts`. Note: service is 4 files, not the single `template-service.ts` described in the old migration table.
+- ✅ **Admin routes shipped** — `src/routes/admin-templates/{create,update,remove,list,index,shared}.ts` mounted at `/api/admin/templates` (admin-scoped).
+- ✅ **Public template routes shipped** — `src/routes/templates/{crud,apply,transfer,index}.ts` + `templates.test.ts` mounted at `/api/templates` (flat routes). This contradicts the 2026-09-27 note that listed these as "future". `TASK-public-templates-routes.md` describes a planned per-modality nested shape (`/api/templates/:modality`) not yet implemented.
+- ✅ **LLM static-content `{{var}}` substitution shipped** — `substituteVars()` at `template-render.ts:179-197` substitutes `{{charName}}`, `{{userName}}`, `{{charPersonality}}`, `{{charScenario}}` on static section content. `resolveScalarVars()` at `template-render.ts:206-243` plumbs actor/persona data into the scalar map.
+- 🟡 **LLM config-layer `{{var}}` substitution NOT wired** — `configs/templates/llm.yaml` contains `{{charName}}` tokens (line 18 `chat: "You are {{charName}}. {{charDescription}}"`) but `resolveSystemPrompt()` does not route config-returned strings through `substituteVars()`. Tracked in `TASK-template-unified-variable-engine.md`.
+- 🟡 **Registry hardening** — tracked in `TASK-prompt-template-registry.md`, design `.plan/epics/epic-config-templates.md`.
+- 🟡 **Video scaffold in flight** — `tree/feat-gen-templates-video-audio/src/generation/video-prompt-profiles.ts` and `video-prompt-templates.ts` exist uncommitted; `src/generation/modality-templates/shared.ts` provides shared `resolveModalityTemplate()` + `ModalityProfileRegistry`. See `FEAT-065-sub-video.md`.
+- ⬜ **Audio scaffold** — not started. `FEAT-065-sub-audio.md` open.
+- 📌 **Follow-up tickets:**
+  - `TASK-public-templates-routes.md` — Status: Not Started. Planned shape (`/api/templates/:modality`) differs from current flat `/api/templates`.
+  - `FEAT-065-sub-video.md` — Status: Not Started. Code in progress (uncommitted in `tree/feat-gen-templates-video-audio`).
+  - `FEAT-065-sub-audio.md` — Status: Not Started. Not covered by the in-flight worktree.
+  - `TASK-template-unified-variable-engine.md` — Status: Not Started. Gap confirmed: config-layer `{{var}}` not resolved.
 
 ---
 
@@ -68,8 +70,8 @@ interface TemplateRegistry<TTemplate, TContext,> {
 | -------- | --------------------------------------------------------------------------------------- | ---------------------------------------------------- | ---------------------- |
 | LLM      | `src/prompts/registry.ts` (defaults) + `src/assistant/prompt/registry.ts` (sections)    | purpose defaults + `PROMPT_SECTIONS` builders        | `AssembleContext`      |
 | Image    | `src/generation/prompt-templates/` (`profiles.ts`, `config.ts`, `templates.ts`)         | `ImageModelProfile` (`types.ts`)                     | `Record<string, string>` (`resolveTemplate` ctx) |
-| Video    | `src/generation/video-prompt-templates.ts` (to create)                                  | `VideoPromptTemplate`                                | `VideoTemplateContext` |
-| Audio    | `src/generation/audio-prompt-templates.ts` (to create)                                  | `AudioPromptTemplate`                                | `AudioTemplateContext` |
+| Video    | `src/generation/video-prompt-templates.ts` (in flight, `tree/feat-gen-templates-video-audio`) | `VideoPromptTemplate`                                | `VideoTemplateContext` |
+| Audio    | `src/generation/audio-prompt-templates.ts` (to create)                                   | `AudioPromptTemplate`                                | `AudioTemplateContext` |
 
 ---
 
@@ -94,17 +96,11 @@ CREATE TABLE prompt_templates (
 
 ### `template_variables`
 
-```sql
-CREATE TABLE template_variables (
-  template_id TEXT NOT NULL,
-  key TEXT NOT NULL,
-  default_value TEXT,
-  description TEXT,
-  PRIMARY KEY (template_id, key)
-);
-```
+> **Superseded (2026-09-27 decision):** The separate `template_variables` table was not created. The JSON `payload` column carries modality-specific variable shapes directly. This was a deliberate deviation.
 
-> **Note**: Image/video/audio may use modality-specific extension tables (`image_prompt_templates`, `video_prompt_templates`, `audio_prompt_templates`) for format/mode-specific columns. LLM uses section-based storage; that decision is tracked with the parent task `FEAT-065-prompt-library-expanded.md`.
+```sql
+-- NOT CREATED — variables live inside the JSON `payload` column per modality
+```
 
 ---
 
@@ -118,16 +114,16 @@ function resolveTemplate(body: string, ctx: Record<string, string>,): string {
 }
 ```
 
-Shipped for the image modality (`src/generation/prompt-templates/templates.ts`, re-exported via `index.ts`); LLM/video/audio adopt it with their wiring phases.
+Shipped for the image modality (`src/generation/prompt-templates/templates.ts:32`). LLM static section content uses `substituteVars()` in `template-render.ts:179-197`. LLM config-layer (`llm.yaml`) substitution is not wired — tracked in `TASK-template-unified-variable-engine.md`.
 
 ### Cross-Modality Variables
 
 | Variable              | LLM | Image | Video | Audio         |
 | --------------------- | --- | ----- | ----- | ------------- |
-| `{{charName}}`        | ✅  | ✅    | ✅    | ✅            |
-| `{{charDescription}}` | ✅  | ✅    | ✅    | —             |
-| `{{userName}}`        | ✅  | ✅    | ✅    | —             |
-| `{{userDescription}}` | ✅  | ✅    | ✅    | —             |
+| `{{charName}}`        | ✅* | ✅    | ✅    | ✅            |
+| `{{charDescription}}` | ✅* | ✅    | ✅    | —             |
+| `{{userName}}`        | ✅* | ✅    | ✅    | —             |
+| `{{userDescription}}` | ✅* | ✅    | ✅    | —             |
 | `{{chatHistory}}`     | ✅  | ✅    | —     | —             |
 | `{{sceneSummary}}`    | ✅  | ✅    | ✅    | —             |
 | `{{lastMessage}}`     | ✅  | ✅    | ✅    | ✅ (TTS text) |
@@ -137,6 +133,8 @@ Shipped for the image modality (`src/generation/prompt-templates/templates.ts`, 
 | `{{speaker}}`         | —   | —     | —     | ✅            |
 | `{{emotion}}`         | —   | —     | —     | ✅            |
 | `{{genre}}`           | —   | —     | —     | ✅            |
+
+\* LLM: substitution on static section content only; config-layer (`llm.yaml`) not yet wired (`TASK-template-unified-variable-engine.md`).
 
 ---
 
@@ -153,6 +151,23 @@ Shipped for the image modality (`src/generation/prompt-templates/templates.ts`, 
 ---
 
 ## API Surface
+
+### Public routes (shipped)
+
+```
+GET    /api/templates             — list user templates + LLM presets
+POST   /api/templates             — create
+GET    /api/templates/:id         — retrieve (row or preset)
+PATCH  /api/templates/:id         — update (owner only)
+DELETE /api/templates/:id         — delete (owner only)
+POST   /api/templates/:id/apply   — render with context
+GET    /api/templates/export      — JSON pack export
+POST   /api/templates/import      — JSON pack import
+```
+
+### Planned per-modality routes (open)
+
+`TASK-public-templates-routes.md` tracks nested routes at `/api/templates/:modality`. Not yet implemented.
 
 ```
 POST   /api/templates/:modality        # create
@@ -187,15 +202,17 @@ Resolution order: explicit `profileId` → `modelName` pattern match (first matc
 
 ## Migration Path
 
-| Phase | Work                                                     | Files                                      |
-| ----- | -------------------------------------------------------- | ------------------------------------------ |
-| 1     | Unified `prompt_templates` + `template_variables` tables | `src/db/migrations/parts/NNN_templates.ts` (append-only `parts/` layout, orchestrated by `001_init.ts`) |
-| 2     | `template-service.ts` (CRUD + render)                    | `src/generation/template-service.ts`       |
-| 3     | API routes                                               | `src/routes/templates.ts`                  |
-| 4     | Image wiring                                             | `src/generation/image-gen-route.ts`        |
-| 5     | LLM wiring                                               | `src/assistant/prompt-assembler.ts`        |
-| 6     | Video scaffold                                           | `src/generation/video-prompt-templates.ts` |
-| 7     | Audio scaffold                                           | `src/generation/audio-prompt-templates.ts` |
+| Phase | Work                                                      | Actual Files (2026-10-01)                                      |
+| ----- | -------------------------------------------------------- | -------------------------------------------------------------- |
+| 1     | Unified `prompt_templates` + variables table             | `src/db/migrations/001_init.ts:3297-3330` (no `template_variables` table; JSON `payload` used instead) |
+| 2     | `template-service.ts` (CRUD + render)                    | `src/generation/template-service/{crud,apply,resolve,index}.ts` (4 files) |
+| 3     | API routes                                               | `src/routes/admin-templates/` + `src/routes/templates/` (flat `/api/templates`) |
+| 4     | Image wiring                                             | `src/generation/image-gen-route.ts:94` (`applyImageTemplate`)  |
+| 5     | LLM wiring                                               | `src/assistant/prompt/template-render.ts` — static section substitution done; config-layer not wired |
+| 6     | Video scaffold                                           | `src/generation/video-prompt-templates.ts` (in flight, `tree/feat-gen-templates-video-audio`, uncommitted) |
+| 7     | Audio scaffold                                           | Not started                                                    |
+
+> **Note:** The original migration path referenced `src/db/migrations/parts/NNN_templates.ts`. The `parts/` subdirectory does not exist. Migrations are flat `NNN_name.ts` files in `src/db/migrations/` (confirmed 2026-10-01).
 
 ---
 
