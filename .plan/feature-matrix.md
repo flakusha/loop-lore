@@ -1103,7 +1103,7 @@ Total tickets: **3127** — untagged: **2636** — unbound to epic: **1589**
 | yaml | 4 | 0 | 2 | 0 | 1 | 0 | 1 |
 | yaml-frontmatter | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| (untagged) | 2636 | 1057 | 59 | 1246 | 36 | 0 | 238 |
+| (untagged) | 2636 | 1059 | 59 | 1246 | 36 | 0 | 236 |
 
 ## By epic × status
 
@@ -1561,7 +1561,7 @@ Total tickets: **3127** — untagged: **2636** — unbound to epic: **1589**
 | Visual Novel Mode; Immersion & Presentation | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | Wardrobe / Loadout Avatar Variants | 8 | 4 | 0 | 4 | 0 | 0 | 0 |
 | World & Locations | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| (unbound) | 1589 | 634 | 57 | 537 | 50 | 0 | 311 |
+| (unbound) | 1589 | 636 | 57 | 537 | 50 | 0 | 309 |
 
 ## Ticket detail
 

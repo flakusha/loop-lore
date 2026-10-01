@@ -514,7 +514,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-async-spill-offload-dir-is-a-fixed-cwd-relative-path-shared-.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-ASYNC-SPILL-USES-CACHE-KEY-AS-FILENAME-SO-ROUTED-IDS-LOSE": {
     "hash": "33718af",
@@ -1793,7 +1793,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-chat-sections-loadsections-leaves-sectionsloading-true-forev.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-CHAT-SEEN-CURRENTACTORID-NEVER-ASSIGNED-MARKSEEN-SENDS-NULL": {
     "epic": "",

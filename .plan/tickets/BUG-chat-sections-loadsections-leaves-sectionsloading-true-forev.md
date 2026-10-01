@@ -3,7 +3,7 @@
 
 # BUG: chat-sections loadSections leaves _sectionsLoading=true forever on HTTP failure
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 
