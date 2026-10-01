@@ -1368,6 +1368,12 @@
     "failedToStartGeneration": "Failed to start generation.",
     "generationNoJobId": "Generation started but no job id returned.",
     "emotionAvatarsGenerated": "Emotion avatars generated.",
+    "wardrobeLoadFailed": "Failed to load wardrobe.",
+    "wardrobeNameRequired": "Outfit name is required.",
+    "wardrobeSaveFailed": "Failed to save outfit.",
+    "wardrobeCreated": "Outfit created.",
+    "wardrobeUpdated": "Outfit updated.",
+    "wardrobeDeleteFailed": "Failed to delete outfit.",
     "generationTimedOut": "Generation timed out.",
     "generationOutcome": "Generation {status}.",
     "resumingFromStep": "Resuming from step {step} of {total}..."
@@ -1416,5 +1422,12 @@
     "clear": "Clear chat",
     "stats": "Show chat statistics",
     "link": "Attach a gallery asset to this chat"
+  },
+
+  "wardrobe": {
+    "baseOutfit": "Base outfit",
+    "sceneDefault": "Scene default",
+    "outfitSwitcher": "Outfit",
+    "empty": "No outfits yet"
   }
 }

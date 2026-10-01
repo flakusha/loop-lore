@@ -9,6 +9,7 @@
 
 
 **Status:** Done
+**Status Note:** completed 2026-10-01
 **Priority:** medium
 **Effort:** Medium
 **Epic:** Wardrobe / Loadout Avatar Variants
@@ -19,6 +20,6 @@ Fallback ladder order, override precedence, outfit-scoped regen isolation. Part 
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
