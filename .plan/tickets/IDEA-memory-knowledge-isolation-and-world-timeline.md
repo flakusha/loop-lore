@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
+**Status Note:** design-complete — research published at `docs/research/memory-isolation-and-world-timeline.md`; implementation split into TASK-enforce-viewer-id-contract-in-memory-injection, TASK-audit-isolation-for-known-information-asymmetry-cases, TASK-link-memories-to-world-timeline-events, TASK-memory-snapshot-restore-with-world-state-version, TASK-npc-boss-retinue-lore-access-gating-test, TASK-visibility-report-for-chat-admins, TASK-document-memory-isolation-contract-in-docs-spec-memory-syste.
 **Priority:** Low
 **Effort:** Large
 **Epic:** epic-memory-knowledge-systems
