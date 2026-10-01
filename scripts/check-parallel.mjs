@@ -543,6 +543,17 @@ function jscpdGateCommand() {
 }
 checks["jscpd ratchet"] = jscpdGateCommand();
 
+/**
+ * Weave-damage scan gate: consecutive-duplicate growth vs a pre-rebase base
+ * ref. Opt-in via WEAVE_BASE — agents set it after a weave-driven rebase,
+ * whose resolver can duplicate lines or silently drop blocks (drops leave
+ * every static gate green; observed 2026-10-01 in tui/chat/index.test.ts).
+ * NOOP_OK keeps normal runs unaffected.
+ */
+checks["weave - damage scan"] = process.env.WEAVE_BASE
+  ? "bun run scripts/check/weave-damage.mjs"
+  : NOOP_OK;
+
 // ── Apply selective gate filter ────────────────────────────────
 // Runs after the `coverage - per-module line %` entry is registered so
 // the filter sees every check name. Validation: any unknown name in
