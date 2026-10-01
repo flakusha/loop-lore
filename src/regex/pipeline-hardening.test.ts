@@ -11,7 +11,7 @@
  *   3. Intent amplification cap — INTENT_PATTERNS no longer runs uncapped.
  */
 
-import { describe, expect, test, } from "bun:test";
+import { afterEach, describe, expect, test, } from "bun:test";
 import { INTENT_PATTERNS, REGEX_SPECIAL_CHARS, SLASH_COMMAND, } from "./intent";
 import { ENTITY_PATTERN, } from "./memory-classification";
 import {
@@ -22,6 +22,11 @@ import {
   safeRegexMatch,
 } from "./safe-exec";
 import { LOCATION_MOVEMENT, } from "./story-events";
+import {
+  getRegexTelemetrySnapshot,
+  resetRegexTelemetry,
+  setRegexTelemetryEnabled,
+} from "./telemetry";
 
 // ── Input size cap ─────────────────────────────────────────
 
@@ -208,5 +213,37 @@ describe("INTENT_PATTERNS — amplification cap", () => {
     // Bounded capture: the named-location capture must be short.
     expect(match![1]!.length,).toBeLessThanOrEqual(30,);
     expect(elapsed,).toBeLessThan(50,);
+  });
+});
+
+// ── Opt-in precision counters (labelled path) ──────────────
+
+describe("safeRegexExec/safeRegexMatch — opt-in pattern counters", () => {
+  afterEach(() => {
+    setRegexTelemetryEnabled(false,);
+    resetRegexTelemetry();
+  },);
+
+  test("records calls and matches per pattern label when enabled", () => {
+    setRegexTelemetryEnabled(true,);
+    safeRegexExec(/attack/i, "attack the goblin", "action-parser:verb:attack",);
+    safeRegexExec(/attack/i, "flee the goblin", "action-parser:verb:attack",);
+    safeRegexMatch(/\d+d\d+/, "roll 2d6", "intent:tool_exec:roll",);
+    expect(getRegexTelemetrySnapshot(),).toEqual([
+      { pattern: "action-parser:verb:attack", calls: 2, matches: 1, },
+      { pattern: "intent:tool_exec:roll", calls: 1, matches: 1, },
+    ],);
+  });
+
+  test("no patternName → no counting", () => {
+    setRegexTelemetryEnabled(true,);
+    safeRegexExec(/attack/i, "attack",);
+    safeRegexMatch(/\d+/, "2d6",);
+    expect(getRegexTelemetrySnapshot(),).toEqual([],);
+  });
+
+  test("disabled → no counting even with a label", () => {
+    safeRegexExec(/attack/i, "attack", "action-parser:verb:attack",);
+    expect(getRegexTelemetrySnapshot(),).toEqual([],);
   });
 });

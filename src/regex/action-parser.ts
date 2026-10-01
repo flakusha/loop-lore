@@ -6,6 +6,7 @@
  */
 
 import { type AssistantIntent, } from "./intent";
+import { safeRegexExec, } from "./safe-exec";
 
 export const VERB = {
   Use: "use",
@@ -148,7 +149,11 @@ const VERB_PATTERNS: readonly VerbPattern[] = [
 
 function extractTarget(input: string, verbMatchIndex: number,): TargetRef | undefined {
   const tail = input.slice(verbMatchIndex,).replace(/^[^\w]+/, "",);
-  const m = /^(?:with|using|on|at|to)?\s*(?:the\s+|a\s+)?([\w' -]{2,40})/i.exec(tail,);
+  const m = safeRegexExec(
+    /^(?:with|using|on|at|to)?\s*(?:the\s+|a\s+)?([\w' -]{2,40})/i,
+    tail,
+    "action-parser:target",
+  );
   if (!m) { return undefined; }
   const displayName = (m[1] ?? "").trim();
   if (!displayName || displayName.length < 2) { return undefined; }
@@ -232,7 +237,7 @@ export function parseActionStage1(input: string,): Action | null {
   const lower = trimmed.toLowerCase();
   for (const { verb, patterns, confidence, } of VERB_PATTERNS) {
     for (const pat of patterns) {
-      const m = pat.exec(lower,);
+      const m = safeRegexExec(pat, lower, `action-parser:verb:${verb}`,);
       if (!m) { continue; }
       const action: Action = {
         verb,
@@ -241,12 +246,10 @@ export function parseActionStage1(input: string,): Action | null {
         parser_stage: "stage1",
         raw: trimmed,
       };
-
       const target = extractTarget(trimmed, m.index + m[0].length - (m[1]?.length ?? 0) || m.index,);
       if (target) { action.target = target; }
       return action;
     }
   }
-
   return null;
 }
