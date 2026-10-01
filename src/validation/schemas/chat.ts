@@ -168,6 +168,8 @@ export const ChatRenameBody = t.Object({
 export const TurnSkipBody = t.Object({
   mode: t.Union([t.Literal("hold",), t.Literal("advance",),],),
   reason: t.Optional(t.String({ maxLength: 280, },),),
+  /** GM-forced override: skip ANOTHER participant's beat (authority-checked). */
+  actorId: t.Optional(t.String({ maxLength: 64, },),),
 },);
 
 export const ChatAutoTranslateBody = t.Object({

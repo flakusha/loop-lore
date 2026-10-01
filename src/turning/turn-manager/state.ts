@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { sql, } from "kysely";
+import { sql, type Kysely, } from "kysely";
 import { TurnStrategy, } from "../../db/enums";
+import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
 import { jsonParseOr, safeJsonStringify, } from "../../utils";
-import type { TurnManagerState, } from "../types";
+import type { TurnForcedSkip, TurnManagerState, } from "../types";
 import { refreshTurnOrder, } from "./participants";
 import { type TurnManagerHost, } from "./types";
 
@@ -168,5 +169,51 @@ export async function initializeTurnManager(host: TurnManagerHost,): Promise<voi
 
   if (host.state.turnOrder.length === 0) {
     await refreshTurnOrder(host,);
+  }
+}
+
+/** Cap on the forced-skip audit ring inside story_state. */
+const FORCED_SKIP_HISTORY_LIMIT = 20;
+
+/**
+ * Append a GM-forced turn-skip override to the chat's turn state — the
+ * auditable state transition for AC5 (TASK-chat-feature-turn-talkativity-skip).
+ * Initializes state when the chat has never had one, then rides the same
+ * CAS `persistState` path as every other transition, so a concurrent
+ * writer can never drop the entry silently.
+ * @param db
+ * @param chatId
+ * @param entry - The forced override to record.
+ * Never throws — best-effort: the skip event already landed as a message
+ * row, so a persist failure is logged, never surfaced to the caller.
+ * @returns {Promise<void>}
+ */
+export async function recordForcedSkip(
+  db: Kysely<DB>,
+  chatId: string,
+  entry: TurnForcedSkip,
+): Promise<void> {
+  const log = getLogger().child({ module: "turn-manager", },);
+  try {
+    const host: TurnManagerHost = { db, chatId, maxRegenerations: 0, state: null, };
+    await initializeTurnManager(host,);
+    await persistState(host, (state,) => {
+      const prior = state.forcedSkips ?? [];
+      state.forcedSkips = [...prior, entry,].slice(-FORCED_SKIP_HISTORY_LIMIT,);
+    },);
+    log.info("GM-forced turn-skip override recorded", {
+      chatId,
+      actorId: entry.actorId,
+      byUserId: entry.byUserId,
+      mode: entry.mode,
+    },);
+  } catch (err) {
+    // Best-effort audit: the skip event itself already landed as a
+    // message row, so a state-persist failure is logged, never surfaced.
+    log.error(
+      "GM-forced turn-skip audit write failed",
+      err instanceof Error ? err : new Error(String(err,),),
+      { chatId, actorId: entry.actorId, },
+    );
   }
 }

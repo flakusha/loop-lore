@@ -3,6 +3,7 @@
 
 import { TurnStrategy, } from "../../db/enums";
 import type { TurnStrategy as TurnStrategyType, } from "../../db/enums";
+import { fetchSkipCooldowns, } from "../skip-cooldown";
 import { STRATEGY_MAP, } from "../turn-strategies";
 import type { GroupTurnContext, } from "../types";
 import { fetchTurnParticipants, } from "./participants";
@@ -30,6 +31,14 @@ export async function selectNextActor(
 
   if (participants.length === 0) { return null; }
 
+  // Skip cooldown (TASK-chat-feature-turn-talkativity-skip AC4): a skipped
+  // actor is re-ineligible for a short window so selection cannot pick them
+  // again immediately. Fall back to the full set when EVERY candidate is
+  // cooling — a solo/small cast must still be able to take its turn.
+  const cooling = await fetchSkipCooldowns(host.db, host.chatId,);
+  const eligible = participants.filter((p,) => !cooling.has(p.actorId,),);
+  const candidates = eligible.length > 0 ? eligible : participants;
+
   // Selection happens inside persistState's mutation closure: on a CAS
   // conflict, the closure re-runs against the freshest committed state, so
   // currentTurn increments relative to (and currentActorId reads from) the
@@ -40,7 +49,7 @@ export async function selectNextActor(
   await persistState(host, (state,) => {
     state.currentTurn = state.currentTurn + 1;
     selectedId = selectFn(
-      participants,
+      candidates,
       state.currentActorId,
       state.currentTurn,
       state.turnOrder,

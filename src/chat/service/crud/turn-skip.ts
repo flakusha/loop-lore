@@ -28,6 +28,7 @@ import type { DB, } from "../../../db/schema";
 import { isTelemetryEnabled, record as recordTelemetryEvent, } from "../../../telemetry/service";
 import { safeJsonStringify, } from "../../../utils/safe-json";
 import { checkChatAccess, } from "../access";
+import { auditForcedSkip, checkForcedSkipAuthority, } from "./turn-skip-forced";
 
 /** Skip mode: hold keeps the beat as-is; advance cues the next beat. */
 export type TurnSkipMode = "hold" | "advance";
@@ -94,6 +95,13 @@ export async function recordTurnSkip(
   if (!participant) {
     return { ok: false, code: "not_found", message: "Actor is not a participant of this chat", };
   }
+
+  // GM-forced overrides (TASK-chat-feature-turn-talkativity-skip AC5):
+  // skipping ANOTHER participant's beat requires GM-tier authority;
+  // self-skips pass through. The forced flag drives the audit below.
+  const forced = input.actorId !== input.userId;
+  const denial = await checkForcedSkipAuthority(database, input,);
+  if (denial) { return denial; }
 
   // Serialize the read-then-insert per (chat, actor). `idempotency_key` is a
   // plain index, so two concurrent POSTs would otherwise both clear the
@@ -182,6 +190,10 @@ export async function recordTurnSkip(
         data: { actorId: input.actorId, mode: input.mode, messageId: id, },
       },);
     }
+
+    // AC5: a GM-forced override is audited as a turn-state transition
+    // through state.ts (best-effort — never fails the request).
+    if (forced) { await auditForcedSkip(database, input,); }
     return { ok: true, messageId: id, mode: input.mode, deduped: false, };
   };
   // Claim the slot before waiting so a third caller queues behind us.

@@ -278,3 +278,82 @@ describe("countTurnSkipsForActor (TASK-turn-skip-cascade)", () => {
     expect(ownerCount,).toBe(2,);
   });
 });
+
+describe("GM-forced skip overrides (TASK-chat-feature-turn-talkativity-skip AC5)", () => {
+  let db: Kysely<DB>;
+  const OWNER_ID = crypto.randomUUID();
+  const MEMBER_ID = crypto.randomUUID();
+  const CHAT_ID = crypto.randomUUID();
+
+  beforeEach(async () => {
+    createLogger({ level: "error", },);
+    ({ db, } = await createTestDb());
+    for (const [name, id,] of [["owner", OWNER_ID,], ["member", MEMBER_ID,],] as const) {
+      await insertUsers(db, name, name, { id, } as never,);
+      await insertActors(db, name, { id, user_id: id, owner_id: id, } as never,);
+    }
+    await insertChats(db, "Forced Skip Chat", OWNER_ID, { id: CHAT_ID, } as never,);
+    await insertChatParticipants(db, CHAT_ID, OWNER_ID, { role_in_chat: "owner", },);
+    await insertChatParticipants(db, CHAT_ID, MEMBER_ID, { role_in_chat: "member", },);
+  },);
+
+  afterEach(async () => {
+    await db.destroy();
+  },);
+
+  async function readStoryState(): Promise<Record<string, unknown>> {
+    const row = await db
+      .selectFrom("chats",)
+      .select("story_state",)
+      .where("id", "=", CHAT_ID,)
+      .executeTakeFirstOrThrow();
+    return JSON.parse(row.story_state ?? "{}",) as Record<string, unknown>;
+  }
+
+  test("member cannot force-skip another participant (forbidden)", async () => {
+    const res = await recordTurnSkip(db, {
+      chatId: CHAT_ID,
+      actorId: OWNER_ID,
+      mode: "advance",
+      userId: MEMBER_ID,
+      userRole: null,
+    },);
+    expect(res.ok,).toBe(false,);
+    if (res.ok) {
+      return;
+    }
+    expect(res.code,).toBe("forbidden",);
+    const skips = await countTurnSkipsForActor(db, CHAT_ID, OWNER_ID,);
+    expect(skips,).toBe(0,);
+  });
+
+  test("owner force-skip lands the audit trail in story_state", async () => {
+    const res = await recordTurnSkip(db, {
+      chatId: CHAT_ID,
+      actorId: MEMBER_ID,
+      mode: "advance",
+      userId: OWNER_ID,
+      userRole: null,
+    },);
+    expect(res.ok,).toBe(true,);
+    const state = await readStoryState();
+    const forced = state.forcedSkips as Array<Record<string, unknown>> | undefined;
+    expect(forced,).toHaveLength(1,);
+    expect(forced?.[0],).toMatchObject({ actorId: MEMBER_ID, byUserId: OWNER_ID, mode: "advance", },);
+    expect(typeof forced?.[0]?.at,).toBe("string",);
+  });
+
+  test("self-skip writes no forced-skip audit entry", async () => {
+    const res = await recordTurnSkip(db, {
+      chatId: CHAT_ID,
+      actorId: OWNER_ID,
+      mode: "hold",
+      userId: OWNER_ID,
+      userRole: null,
+    },);
+    expect(res.ok,).toBe(true,);
+    const state = await readStoryState();
+    const forced = state.forcedSkips as Array<unknown> | undefined;
+    expect(forced ?? [],).toHaveLength(0,);
+  });
+});
