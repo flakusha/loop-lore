@@ -108,8 +108,7 @@ export async function earnStoryPoints(
   },);
 
   const after = await getStoryPointBalance(db, params.actorId, worldKey,);
-  // Fire-and-forget cache refresh — caller never blocks on this.
-  void refreshActorStoryPointsCache(db, params.actorId, worldKey,).catch(() => {/* swallow */},);
+  void refreshActorStoryPointsCache(db, params.actorId, worldKey,); // never rejects; logs its own failures
   return {
     ...after,
     ledger_id: ledgerId.toString(),
@@ -194,7 +193,7 @@ export async function spendStoryPoints(
   },);
 
   const after = await getStoryPointBalance(db, params.actorId, worldKey,);
-  void refreshActorStoryPointsCache(db, params.actorId, worldKey,).catch(() => {/* swallow */},);
+  void refreshActorStoryPointsCache(db, params.actorId, worldKey,); // never rejects; logs its own failures
   return {
     ...after,
     ledger_id: ledgerId.toString(),

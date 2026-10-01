@@ -23,9 +23,19 @@
  */
 import { type Kysely, sql, } from "kysely";
 import type { DB, } from "../../db";
+import { createLogger, getLogger, } from "../../logger";
 // Import from the queries module (not the barrel) to avoid a circular
 // import: barrel -> mutations.ts -> actor-story-points-cache.
 import { getStoryPointBalance, } from "./story-points/queries";
+
+// Lazy logger init - the module body must not throw when the global logger
+// has not been initialized yet (e.g. a direct module import in tests).
+try {
+  getLogger();
+} catch {
+  createLogger({ level: "error", },);
+}
+const log = getLogger().child({ module: "agency/actor-story-points-cache", },);
 
 /**
  * Refresh the denormalized `actor.properties.storyPoints` cache for an
@@ -53,7 +63,11 @@ export async function refreshActorStoryPointsCache(
       // eslint-disable-next-line no-console
       console.debug("story_points_cache.refresh", { actorId, balance: bal.balance, },);
     }
-  } catch {
-    // swallow — cache is best-effort
+  } catch (error) {
+    // Best-effort: the canonical store (actor_story_points) is already
+    // committed, so a failed denormalization must not fail the caller.
+    // Logged rather than silently dropped - the JSDoc above promises this.
+    // BUG-story-points-mutations-double-swallow-cache-refresh-failures.
+    log.warn("story_points_cache.refresh_failed", { actorId, worldId: worldId ?? null, error: String(error,), },);
   }
 }
