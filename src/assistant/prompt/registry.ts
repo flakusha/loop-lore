@@ -24,6 +24,7 @@ import { internalTraitsSection, } from "./sections/internal-traits";
 import { loreSection, } from "./sections/lore";
 import { memorySection, } from "./sections/memories";
 import { nsfwPolicySection, } from "./sections/nsfw-policy";
+import { outfitContextSection, } from "./sections/outfit-context";
 import { styleSection, } from "./sections/output-style";
 import { pluginAgentRoleSection, } from "./sections/plugin-agent-role";
 import { postHistorySection, } from "./sections/post-history";
@@ -49,6 +50,7 @@ export const PROMPT_SECTIONS: SectionBuilder[] = [
   groupTalkativitySection,
   userPersonaSection,
   emotionAvatarSection,
+  outfitContextSection,
   internalTraitsSection,
   actorGrowthSection,
   loreSection,

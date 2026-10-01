@@ -1,0 +1,154 @@
+// SPDX-License-Identifier: Apache-2.0
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
+/**
+ * Wardrobe item CRUD + inventory-instance binding routes.
+ *
+ * All routes are actor-ownership gated (404 for non-owners — no existence
+ * oracle). World template items are visible through the actor's world
+ * scope via `?worldId=` on list and through resource-level checks in the
+ * service layer.
+ */
+import { Elysia, t, } from "elysia";
+import {
+  createWardrobeItem,
+  deleteWardrobeItem,
+  listWardrobeItems,
+  updateWardrobeItem,
+} from "../characters/services/wardrobe/crud";
+import {
+  ErrorResponse,
+  SuccessResponse,
+  WardrobeActorParams,
+  WardrobeItemCreateBody,
+  WardrobeItemParams,
+  WardrobeItemUpdateBody,
+} from "../validation/schemas";
+import { requireActorAccess, } from "./actor-auth";
+import { HttpStatus, jsonCreated, jsonError, jsonResponse, } from "./http-utils";
+import type { HandlerOpts } from "./actor-auth";
+import { wardrobeBindingRoutes, } from "./wardrobe-bindings";
+
+const WardrobeItemListResponse = t.Array(t.Any(),);
+
+/**
+ * @param opts
+ * @param prefix
+ * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { actors: { ":actorId": { ...; }; }; }; } & ... 3 more ... & { ...; }, { ...; }, { ...; }>}
+ */
+export function wardrobeRoutes(opts: HandlerOpts, prefix = "/api",) {
+  const { database, } = opts;
+
+  return new Elysia({ name: "wardrobe", },)
+    // ── List wardrobe items ───────────────────────────────────────
+
+    .get(`${prefix}/actors/:actorId/wardrobe`, async (ctx: any,) => {
+      const userId = await requireActorAccess(ctx, database,);
+      if (userId instanceof Response) { return userId; }
+
+      const { actorId, } = ctx.params;
+      const worldId = (ctx.query?.worldId as string | undefined) ?? undefined;
+      const items = await listWardrobeItems(database, actorId, { worldId, },);
+      return jsonResponse(items,);
+    }, {
+      params: WardrobeActorParams,
+      query: t.Object({ worldId: t.Optional(t.String(),), },),
+      response: {
+        200: WardrobeItemListResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
+      detail: {
+        summary: "List wardrobe items",
+        description: "List an actor's wardrobe items (plus world templates when worldId is given).",
+        tags: ["Wardrobe",],
+      },
+    },)
+    // ── Create wardrobe item ──────────────────────────────────────
+
+    .post(`${prefix}/actors/:actorId/wardrobe`, async (ctx: any,) => {
+      const userId = await requireActorAccess(ctx, database,);
+      if (userId instanceof Response) { return userId; }
+
+      const { actorId, } = ctx.params;
+      const { name, descriptor, tags, sort_order, world_id, } = ctx.body;
+      const id = await createWardrobeItem(database, {
+        actorId: world_id ? undefined : actorId,
+        worldId: world_id,
+        name,
+        descriptor,
+        tags,
+        sortOrder: sort_order,
+      },);
+      return jsonCreated({ id, },);
+    }, {
+      params: WardrobeActorParams,
+      body: WardrobeItemCreateBody,
+      response: {
+        201: t.Object({ id: t.String(), },),
+        401: ErrorResponse,
+        404: ErrorResponse,
+        422: ErrorResponse,
+      },
+      detail: {
+        summary: "Create wardrobe item",
+        description: "Create an actor-personal wardrobe item or a world template outfit.",
+        tags: ["Wardrobe",],
+      },
+    },)
+    // ── Update wardrobe item ──────────────────────────────────────
+
+    .put(`${prefix}/actors/:actorId/wardrobe/:itemId`, async (ctx: any,) => {
+      const userId = await requireActorAccess(ctx, database,);
+      if (userId instanceof Response) { return userId; }
+
+      const { actorId, itemId, } = ctx.params;
+      const ok = await updateWardrobeItem(database, itemId, actorId, ctx.body,);
+      if (!ok) {
+        return jsonError({ message: "Wardrobe item not found", status: HttpStatus.NotFound, },);
+      }
+      return jsonResponse({ ok: true, },);
+    }, {
+      params: WardrobeItemParams,
+      body: WardrobeItemUpdateBody,
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+        422: ErrorResponse,
+      },
+      detail: {
+        summary: "Update wardrobe item",
+        description: "Partially update a wardrobe item the actor owns.",
+        tags: ["Wardrobe",],
+      },
+    },)
+    // ── Delete wardrobe item ──────────────────────────────────────
+
+    .delete(`${prefix}/actors/:actorId/wardrobe/:itemId`, async (ctx: any,) => {
+      const userId = await requireActorAccess(ctx, database,);
+      if (userId instanceof Response) { return userId; }
+
+      const { actorId, itemId, } = ctx.params;
+      const ok = await deleteWardrobeItem(database, itemId, actorId,);
+      if (!ok) {
+        return jsonError({ message: "Wardrobe item not found", status: HttpStatus.NotFound, },);
+      }
+      return jsonResponse({ ok: true, },);
+    }, {
+      params: WardrobeItemParams,
+      response: {
+        200: SuccessResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+      },
+      detail: {
+        summary: "Delete wardrobe item",
+        description: "Delete a wardrobe item; bindings and overrides cascade away.",
+        tags: ["Wardrobe",],
+      },
+    },)
+    // ── Inventory-instance bindings (sub-plugin) ───────────────────
+
+    .use(wardrobeBindingRoutes({ database, }, prefix,),);
+}
