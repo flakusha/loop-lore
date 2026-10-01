@@ -12,6 +12,7 @@
 import { extractImageMetadata, } from "../../assets/metadata";
 import { createAsset, linkAsset, } from "../../assets/service";
 import { loadConfig, } from "../../config/load";
+import type { Config, } from "../../config/schema";
 import { pickSdProvider, } from "../../config/schema";
 import { getDatabase, } from "../../db";
 import { ComfyUIClient, } from "../../generation/providers/comfyui";
@@ -47,14 +48,13 @@ export class ComfyUIEditProvider implements ImageEditProvider {
   private installedNodes: Set<string> | null = null;
 
   /**
-   * Built per call rather than memoized: `ComfyUIClient` holds no session state
-   * (only baseUrl/timeout/pollInterval), and caching it pinned the provider to
-   * whichever `loadConfig()` happened to answer first, so a later config change
-   * — or a test pointing the backend elsewhere — was silently ignored.
+   * Deliberately not memoized: a cached client is immune to `mock.module`, which
+   * rebinds the export but cannot reach an already-built instance — and keying the
+   * cache on baseUrl is no better, since it still serves a stale instance when the
+   * config is unchanged but the client class is swapped.
    */
-  private getClient(): ComfyUIClient {
-    const config = loadConfig();
-    const sdConfig = pickSdProvider(config.generation.providers.sd, "edit",);
+  private getClient(config?: Config,): ComfyUIClient {
+    const sdConfig = pickSdProvider((config ?? loadConfig()).generation.providers.sd, "edit",);
 
     return new ComfyUIClient({
       baseUrl: sdConfig?.baseUrl ?? "http://127.0.0.1:8188",
@@ -127,7 +127,9 @@ export class ComfyUIEditProvider implements ImageEditProvider {
     opts: ImageEditExecuteOpts,
   ): Promise<ImageEditResult[]> {
     const onProgress = opts.onProgress;
-    const client = this.getClient();
+    // One `loadConfig()` for both the client and the upload dir below.
+    const config = loadConfig();
+    const client = this.getClient(config,);
 
     onProgress?.({ status: "pending", message: "Building workflow...", },);
 
@@ -150,7 +152,7 @@ export class ComfyUIEditProvider implements ImageEditProvider {
     onProgress?.({ status: "running", progress: 0.9, message: "Downloading images...", },);
 
     const database = getDatabase();
-    const uploadDir = loadConfig().assets.uploadDir;
+    const uploadDir = config.assets.uploadDir;
     const results: ImageEditResult[] = [];
 
     for (const filename of filenames) {
