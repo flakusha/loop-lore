@@ -103,14 +103,15 @@ describeOrSkip("characters-journal-keyphrases", () => {
     feHandler = () =>
       new Response(
         JSON.stringify({
-          items: [
+          // jsonPaginated envelope: the endpoint responds { data, pagination }.
+          data: [
             { id: "m9", content: "The moonstone rite", keywords: JSON.stringify(["moonstone", "rite",],), },
             { id: "m8", content: "Bare entry", keywords: null, },
           ],
+          pagination: { total: 2, page: 1, pageSize: 50, totalPages: 1, },
         },),
         { status: 200, },
       );
-
     // Dynamic import: the mocked module seams must be registered first.
     await import("./characters-journal-keyphrases");
     await page.initJournalKeyphrases("actor-9",);
