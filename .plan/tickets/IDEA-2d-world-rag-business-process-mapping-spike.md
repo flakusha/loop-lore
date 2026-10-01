@@ -4,6 +4,18 @@
 # IDEA: 2D world: RAG/business-process mapping spike
 
 **Status:** Done — defer pending 2D world MVP
+**Priority:** low
+**Effort:** Small
+**Epic:** epic-2d-sprite-world
+**Summary:** Time-boxed evaluation of game-to-business-process mapping; report only.
+**Context:** Epic epic-2d-sprite-world RAG/biz follow-up; candidate mapping locations=zones, actors=agents, events=signals.
+**Acceptance Criteria:**
+- [x] Written evaluation delivered
+- [x] Verdict recorded: defer pending 2D world MVP + quest/plot system
+
+## Summary
+
+Evaluate locations=zones, actors=agents, events=signals mapping for game-based business processes. Time-boxed spike, report only, no implementation.
 
 ## Resolution (2026-10-01)
 
@@ -28,22 +40,9 @@ The mapping `locations=zones, actors=agents, events=signals` holds structurally 
 
 ### Recommendation
 
-Keep this as a low-priority research thread inside `epic-2d-sprite-world` (already listed as Sub-Epic #9 in that epic's Sub-Epics table). If/when loop-lore adds a world-quest or world-plot system with defined NPC responsibilities and event-driven triggers, this mapping becomes worth revisiting. Until then, treating NPCs as process agents introduces a conceptual mismatch that would complicate the RAG index design.
-
-No new epic needed; no standalone file needed. Embed this verdict in the epic-2d-sprite-world Sub-Epics table note and revisit when quest/plot epic lands.
-**Priority:** low
-**Effort:** Small
-**Epic:** epic-2d-sprite-world
-**Summary:** Time-boxed evaluation of game-to-business-process mapping; report only.
-**Context:** Epic epic-2d-sprite-world RAG/biz follow-up; candidate mapping locations=zones, actors=agents, events=signals.
-**Acceptance Criteria:** Written evaluation; no implementation.
-
-## Summary
-
-Evaluate locations=zones, actors=agents, events=signals mapping for game-based business processes. Time-boxed spike, report only, no implementation.
+Keep this as a low-priority research thread inside `epic-2d-sprite-world` (already listed as Sub-Epic #9 in that epic's Sub-Epics table). Verdict embedded in the Sub-Epics table. Revisit when a world-quest or world-plot epic lands.
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Written evaluation delivered
+- [x] Verdict recorded: defer pending 2D world MVP + quest/plot system
