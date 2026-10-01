@@ -24407,6 +24407,114 @@
     "title": "Combined Filter Support",
     "type": "TASK"
   },
+  "TASK-COMFYUI-BUILDER-ROUTES-CHAIN-CRUD-RUN-PALETTE-PROXY-GRAPH-VA": {
+    "hash": "0760fe2",
+    "git_issue": "0760fe2",
+    "extid": "TASK-COMFYUI-BUILDER-ROUTES-CHAIN-CRUD-RUN-PALETTE-PROXY-GRAPH-VA",
+    "type": "TASK",
+    "title": "ComfyUI builder routes: chain CRUD/run, palette proxy, graph validate endpoint",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-comfyui-first-class-citizen",
+    "tags": [
+      "comfyui",
+      "builder",
+      "routes",
+      "validation"
+    ],
+    "source": ".plan/tickets/TASK-comfyui-builder-routes-chain-crud-run-palette-proxy-graph-va.md",
+    "status": "Not Started"
+  },
+  "TASK-COMFYUI-BUILDER-TRACK-A-ALPINE-PRESET-CHAIN-FORM": {
+    "hash": "2d03749",
+    "git_issue": "2d03749",
+    "extid": "TASK-COMFYUI-BUILDER-TRACK-A-ALPINE-PRESET-CHAIN-FORM",
+    "type": "TASK",
+    "title": "ComfyUI builder Track A Alpine preset-chain form",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-comfyui-first-class-citizen",
+    "tags": [
+      "comfyui",
+      "builder",
+      "alpine",
+      "frontend"
+    ],
+    "source": ".plan/tickets/TASK-comfyui-builder-track-a-alpine-preset-chain-form.md",
+    "status": "Not Started"
+  },
+  "TASK-COMFYUI-BUILDER-TRACK-A-CHAIN-MODEL-PROMPT-TEMPLATES-WORKFLO": {
+    "hash": "f021379",
+    "git_issue": "f021379",
+    "extid": "TASK-COMFYUI-BUILDER-TRACK-A-CHAIN-MODEL-PROMPT-TEMPLATES-WORKFLO",
+    "type": "TASK",
+    "title": "ComfyUI builder Track A: chain model + prompt_templates workflow-modality persistence",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-comfyui-first-class-citizen",
+    "tags": [
+      "comfyui",
+      "builder",
+      "workflow",
+      "prompt-templates"
+    ],
+    "source": ".plan/tickets/TASK-comfyui-builder-track-a-chain-model-prompt-templates-workflo.md",
+    "status": "Not Started"
+  },
+  "TASK-COMFYUI-BUILDER-TRACK-B-LITEGRAPH-CANVAS-WRAPPER-LAZY-BUNDLE": {
+    "hash": "df1261a",
+    "git_issue": "df1261a",
+    "extid": "TASK-COMFYUI-BUILDER-TRACK-B-LITEGRAPH-CANVAS-WRAPPER-LAZY-BUNDLE",
+    "type": "TASK",
+    "title": "ComfyUI builder Track B: LiteGraph canvas wrapper + lazy bundle",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-comfyui-first-class-citizen",
+    "tags": [
+      "comfyui",
+      "builder",
+      "litegraph",
+      "canvas"
+    ],
+    "source": ".plan/tickets/TASK-comfyui-builder-track-b-litegraph-canvas-wrapper-lazy-bundle.md",
+    "status": "Not Started"
+  },
+  "TASK-COMFYUI-BUILDER-TRACK-B-LITEGRAPH-SEPARABILITY-SPIKE": {
+    "hash": "6ca06a4",
+    "git_issue": "6ca06a4",
+    "extid": "TASK-COMFYUI-BUILDER-TRACK-B-LITEGRAPH-SEPARABILITY-SPIKE",
+    "type": "TASK",
+    "title": "ComfyUI builder Track B: LiteGraph separability spike",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-comfyui-first-class-citizen",
+    "tags": [
+      "comfyui",
+      "builder",
+      "litegraph",
+      "spike"
+    ],
+    "source": ".plan/tickets/TASK-comfyui-builder-track-b-litegraph-separability-spike.md",
+    "status": "Not Started"
+  },
+  "TASK-COMFYUI-BUILDER-UPLOAD-VALIDATION-ENDPOINT-OPERATOR-REFERENC": {
+    "hash": "14920d7",
+    "git_issue": "14920d7",
+    "extid": "TASK-COMFYUI-BUILDER-UPLOAD-VALIDATION-ENDPOINT-OPERATOR-REFERENC",
+    "type": "TASK",
+    "title": "ComfyUI builder: upload validation endpoint + operator reference-graph cleanup",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-comfyui-first-class-citizen",
+    "tags": [
+      "comfyui",
+      "builder",
+      "validation",
+      "workflow"
+    ],
+    "source": ".plan/tickets/TASK-comfyui-builder-upload-validation-endpoint-operator-referenc.md",
+    "status": "Not Started"
+  },
   "TASK-COMFYUI-FIRST-CLASS-ADMIN-WORKFLOWS": {
     "hash": "4baa39c",
     "extid": "TASK-COMFYUI-FIRST-CLASS-ADMIN-WORKFLOWS",

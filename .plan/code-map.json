@@ -15031,6 +15031,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-server-view-date-display-ignores-user-timezone-locale.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-builder-track-a-alpine-preset-chain-form.md"
     }
   ],
   "src/frontend/alpine/a11y.ts": [
@@ -16055,6 +16059,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-selectchat-resets-freshly-loaded-state-and-lacks-reentrancy-.md"
+    }
+  ],
+  "src/frontend/alpine/comfyui-builder.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-builder-track-a-alpine-preset-chain-form.md"
     }
   ],
   "src/frontend/alpine/command-buttons.ts": [
@@ -21238,6 +21248,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-builder-track-b-litegraph-canvas-wrapper-lazy-bundle.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-comfyui-template-registry.md"
     },
     {
@@ -21783,6 +21797,14 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-builder-routes-chain-crud-run-palette-proxy-graph-va.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-builder-upload-validation-endpoint-operator-referenc.md"
     }
   ],
   "src/generation/workflow-substitutor": [
@@ -22106,6 +22128,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-builder-routes-chain-crud-run-palette-proxy-graph-va.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-comfyui-first-class-admin-workflows.md"
     },
     {
@@ -22173,6 +22199,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-builder-track-a-alpine-preset-chain-form.md"
     },
     {
       "kind": "ticket",
@@ -30767,6 +30797,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-analytics-observability.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-builder-routes-chain-crud-run-palette-proxy-graph-va.md"
     }
   ],
   "src/routes/v1/governance.test.ts": [
@@ -37985,6 +38019,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-blog-frontend-authoring.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-builder-track-a-alpine-preset-chain-form.md"
     },
     {
       "kind": "ticket",
