@@ -16,7 +16,7 @@
 
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
-import { flushActiveStore, } from "../async/store-registry";
+import { flushActiveStore, setStore, } from "../async/store-registry";
 import { loadConfig, } from "../config/load";
 import type { DB, } from "../db/schema";
 import { createApp, } from "../elysia-app";
@@ -53,10 +53,12 @@ describe("asyncStore.fail error boundary ordering", () => {
   },);
 
   afterAll(async () => {
-    // Exercises the graceful-shutdown hook: onStop flushes the async store's
-    // queue and stops the scheduler. Without this the pending writes from the
-    // tests above would be lost when the DB handle closes.
-    await app.stop();
+    // Shutdown contract (BUG-browser-teardown-destroys-the-db-before-flushing-
+    // the-async-s): quiesce the async-store queue BEFORE closing the DB handle,
+    // otherwise queued writes hit a closed database.
+    //
+    // Do NOT call `app.stop()` here: BunAdapter.stop() runs the onStop hooks
+    // only when `app.server` exists and logs an unhandled error otherwise.
     await flushActiveStore();
     await db.destroy();
   },);
@@ -162,8 +164,11 @@ describe("unauthenticated x-user-id spoofing", () => {
   },);
 
   afterAll(async () => {
-    await app2.stop();
+    await flushActiveStore();
     await db2.destroy();
+    // createApp registered THIS app's store in the module-level registry.
+    // Clear it so a later suite cannot flush a store bound to a closed DB.
+    setStore(null,);
   },);
 
   test("a spoofed x-user-id is dropped, so the request cannot borrow another identity", async () => {
