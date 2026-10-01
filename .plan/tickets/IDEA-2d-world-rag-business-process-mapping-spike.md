@@ -23,7 +23,7 @@ Evaluate locations=zones, actors=agents, events=signals mapping for game-based b
 
 The spike itself is **complete** — this ticket is `Done`, because the written evaluation was delivered and the verdict recorded. What is deferred is the *implementation* of the RAG/business-process mapping, which stays pending the 2D world MVP and the quest/plot system. `Done` refers to the spike's scope only, never to building the mapping.
 
-The mapping `locations=zones, actors=agents, events=signals` holds structurally but its value depends on the game having a meaningful process model to map onto. Loop-lore's current world simulation (locations, NPCs, world events) is a _world-state_ model, not a _process_ model — there is no BPMN-style process graph, no defined actor roles with explicit responsibilities, and no event-driven state-machine with clear transitions. The mapping would require defining that process model first, which is a separate research effort with its own prerequisites.
+The mapping `locations=zones, actors=agents, events=signals` holds structurally but its value depends on the game having a meaningful process model to map onto. Loop-lore's current world simulation (locations, NPCs, world events) is a *world-state* model, not a *process* model — there is no BPMN-style process graph, no defined actor roles with explicit responsibilities, and no event-driven state-machine with clear transitions. The mapping would require defining that process model first, which is a separate research effort with its own prerequisites.
 
 ### Where the mapping holds
 
