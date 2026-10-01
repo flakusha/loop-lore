@@ -3,7 +3,7 @@
 
 # BUG: turn skip fires generation without catch and on deduped advance
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 

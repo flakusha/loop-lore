@@ -196,7 +196,7 @@
       "silent-regression"
     ],
     "source": ".plan/tickets/BUG-aggregated-traits-endpoint-shadowed-and-dropped.md",
-    "status": "Not Started",
+    "status": "done",
     "git_issue": "22f20a2"
   },
   "BUG-ALIGN-SEEDDEFAULTS-NULL-HANDLING-WITH-RESOLVEMODELROLE-DEFEN": {
@@ -687,7 +687,7 @@
       "durability"
     ],
     "source": ".plan/tickets/BUG-backup-sqlite-copies-live-db-without-checkpoint.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-BASE64-TOBASE64-COERCES-UNDEFINED-TO-0-VIA-BYTES-I-0": {
     "epic": "",
@@ -2633,7 +2633,7 @@
     "label": "bug",
     "priority": "medium",
     "source": ".plan/tickets/BUG-export-progress-stream-test-status-assertion-is-flaky.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "# BUG-export-progress-stream-test-status-assertion-is-flaky: Test asserted on terminal status immediately after startExport; hermetic mock required",
     "type": "BUG"
@@ -3115,7 +3115,7 @@
     "label": "bug",
     "priority": "high",
     "source": ".plan/tickets/BUG-giwt-plan-gates-report-112-phantom-actionable-issues-when-th.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [],
     "title": "giwt plan gates report ~112 phantom actionable issues when the git issue CLI is unreachable",
     "type": "BUG"
@@ -3505,7 +3505,7 @@
     "label": "bug",
     "priority": "medium",
     "source": ".plan/tickets/BUG-idempotency-table-backend-verify-reproduces.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "idempotency",
       "middleware",
@@ -3916,7 +3916,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-lore-consistency-scorer-entity-matching-branch-unreachable-d.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-LORE-DECAY-GATE-IS-DEAD-CODE-AT-RUNTIME-PASSESCONFIDENCEFLOO": {
     "epic": "epic-lore-knowledge",
@@ -4181,7 +4181,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-migration-020-logs-via-console-warn-with-eslint-disable-inst.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-MIGRATION-ACTIVITYPUB-ACTOR-KEYS-FK-MISSING-ONDELETE-CASCADE": {
     "epic": "",
@@ -4220,7 +4220,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-migration-hygiene-ticket-falsely-claims-021-migrations-are-s.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-MIGRATION-ORDERING-AMBIGUOUS-VIA-LOCALECOMPARE-DUPLICATE-NUM": {
     "epic": "",
@@ -4282,7 +4282,7 @@
     "label": "bug",
     "priority": "high",
     "source": ".plan/tickets/BUG-music-links-panel-sends-explicit-null-sectionid-causing-422-.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [],
     "title": "music links panel sends explicit null sectionId causing 422 on every add",
     "type": "BUG"
@@ -4295,7 +4295,7 @@
     "label": "bug",
     "priority": "medium",
     "source": ".plan/tickets/BUG-music-links-panel-stale-after-in-page-chat-switch.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [],
     "title": "music links panel stale after in-page chat switch",
     "type": "BUG"
@@ -4940,7 +4940,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-pruneexpired-boundary-comment-states-opposite-of-implementat.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-PUT-MESSAGES-ID-VARIANT-SILENTLY-RETURNS-200-WITH-NO-VARIANT": {
     "epic": "",
@@ -5104,7 +5104,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-refund-contract-invites-over-admission-in-peek-record-flows-.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-REGEX-TRANSFORM-RUNS-AT-STORE-TIME-NOT-RENDER-TIME": {
     "epic": "",
@@ -5376,7 +5376,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-safe-buffer-base64url-guard-accepts-whitespace-variants-and-.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-SAFEDECOMPRESS-PRE-CHECK-REJECTS-COMPRESSED-PAYLOADS-OVER-10": {
     "epic": "",
@@ -5607,7 +5607,7 @@
     "label": "bug",
     "priority": "medium",
     "source": ".plan/tickets/BUG-slash-autocomplete-regex-not-caret-anchored-swallows-enter.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [],
     "title": "slash autocomplete regex not caret anchored swallows enter",
     "type": "BUG"
@@ -5832,7 +5832,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-story-points-mutations-double-swallow-cache-refresh-failures.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-STRAY-INPUT-CLOSE-TAGS-CORRUPT-THREE-PLANNING-DOCS": {
     "epic": "",
@@ -5988,7 +5988,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-test-harness-close-cannot-await-the-store-flush-it-starts.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-TEST-RUN-ID-USES-DATE-NOW-COLLISION-RISK-UNDER-PARALLEL": {
     "epic": "",
@@ -6121,7 +6121,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-tui-showerror-desyncs-itemcount-from-messagelist-length.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-TURN-SKIP-CONCURRENT-ADVANCE-POSTS-DOUBLE-FIRE-AUTO-GENERATI": {
     "hash": "c4f570d",
@@ -6134,7 +6134,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-turn-skip-concurrent-advance-posts-double-fire-auto-generati.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "BUG-TURN-SKIP-FIRES-GENERATION-WITHOUT-CATCH-AND-ON-DEDUPED-ADVA": {
     "epic": "",
@@ -6144,7 +6144,7 @@
     "label": "bug",
     "priority": "medium",
     "source": ".plan/tickets/BUG-turn-skip-fires-generation-without-catch-and-on-deduped-adva.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [],
     "title": "turn skip fires generation without catch and on deduped advance",
     "type": "BUG"

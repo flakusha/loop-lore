@@ -3,7 +3,7 @@
 
 # BUG: migration-hygiene ticket falsely claims 021 migrations are shipped
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Small
 **Type:** Bug

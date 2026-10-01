@@ -3,7 +3,7 @@
 
 # BUG: music links panel sends explicit null sectionId causing 422 on every add
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 
