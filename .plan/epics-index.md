@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 311 epics
+**Total:** 312 epics
 
 ## Summary
 
@@ -260,6 +260,7 @@
 | Not Started | Plugin Management UI | P2 — Medium | Medium | 15 | [epic-plugin-management-ui.md](/.plan/epics/epic-plugin-management-ui.md) |
 | Not Started | Plugin System & Extensibility | High | Very High | 17 | [epic-plugin-system.md](/.plan/epics/epic-plugin-system.md) |
 | In Progress | Pre-Compiled Hot Binary Modules | Medium | High | 14 | [epic-precompiled-hot-binaries.md](/.plan/epics/epic-precompiled-hot-binaries.md) |
+| Not Started | Project Spaces — World-Like Business Project Isolation + Cross-Space Linking | High | Large | 5 | [epic-project-spaces-pm-integration.md](/.plan/epics/epic-project-spaces-pm-integration.md) |
 | Not Started | Prompt & Output Control | Medium | Medium | 0 | [epic-output-control-transforms.md](/.plan/epics/epic-output-control-transforms.md) |
 | In Progress | Prompt Improvement — Unified Text Enhancement | High | Medium | 0 | [epic-prompt-improvement.md](/.plan/epics/epic-prompt-improvement.md) |
 | In Progress | Provider & Plugin Ecosystem | Medium | Large | 16 | [epic-provider-plugin-ecosystem.md](/.plan/epics/epic-provider-plugin-ecosystem.md) |
@@ -2703,6 +2704,15 @@ Real-time observability dashboard combining benchmarking results, live telemetry
 - **Type:** Infrastructure Epic
 - **Tags:** native-modules, ffi, hot-reload, performance, binary-distribution
 - **File:** `.plan/epics/epic-precompiled-hot-binaries.md`
+
+### Project Spaces — World-Like Business Project Isolation + Cross-Space Linking
+
+- **Status:** Not Started
+- **Priority:** High
+- **Effort:** Large
+- **Type:** Feature Epic
+- **Tags:** projects, spaces, worlds, planning, giwt, assistant, memory, linking
+- **File:** `.plan/epics/epic-project-spaces-pm-integration.md`
 
 ### Prompt & Output Control
 

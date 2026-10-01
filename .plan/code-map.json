@@ -3435,6 +3435,10 @@
       "source": ".plan/epics/epic-assistant-creative-studio-workflows.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-project-spaces-pm-integration.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-assistant-intent-regexes-hijack-normal-chat-messages.md"
     },
@@ -11587,6 +11591,10 @@
   ],
   "src/db/enums-story/world.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-project-spaces-pm-integration.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-2026-003.md"
     },
@@ -11597,6 +11605,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-memory-history-search-bind-message-chain-reconstructable-con.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-project-space-kind-worldkind-project-scoping-contract.md"
     },
     {
       "kind": "spec",
@@ -13835,6 +13847,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-item-systems-unification.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-project-spaces-pm-integration.md"
     },
     {
       "kind": "ticket",
@@ -23069,6 +23085,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-crafting-professions.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-project-spaces-pm-integration.md"
     },
     {
       "kind": "ticket",
