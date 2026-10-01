@@ -12,7 +12,10 @@
  *
  *   1. assets land under the authenticated owner (no FK crash), and
  *   2. two different owners running the *same* workflow with the *same* bytes
- *      get two distinct asset rows — the cross-tenant collapse.
+ *      get two rows, each owned by the user who ran it — the cross-tenant
+ *      collapse. (Asserted on `owner_id`, not on a row count: `createAsset`
+ *      runs with `dedupe: false`, so the count is a property of the run count
+ *      and can no longer tell one owner apart from two.)
  *
  * Both run against the real `createAsset`, so a regression anywhere on the
  * write path fails here.
@@ -118,21 +121,28 @@ describe("ComfyUI edit asset ownership", () => {
     expect(row.owner_id,).toBe(alice,);
   });
 
-  test("two owners running identical bytes get distinct asset rows", async () => {
+  test("two owners running identical bytes keep their own ownership", async () => {
     const provider = new ComfyUIEditProvider();
     const a = await provider.execute(request, template, { ownerId: alice, },);
     const b = await provider.execute(request, template, { ownerId: bob, },);
 
+    // The two runs must not collapse onto one shared row...
     expect(a[0]!.id,).not.toBe(b[0]!.id,);
 
+    // ...and each of those rows must carry the owner that requested it.
+    // Asserted per row id, not via a count over `filename = FILENAME`:
+    // with `dedupe: false` every run writes a fresh row unconditionally, so
+    // a row count no longer distinguishes owners and only couples this test
+    // to whatever the sibling tests left in the table.
     const rows = await db
       .selectFrom("assets",)
       .select(["id", "owner_id",],)
-      .where("filename", "=", FILENAME,)
+      .where("id", "in", [a[0]!.id, b[0]!.id,],)
       .execute();
+    const byId = new Map(rows.map((r,) => [r.id, r.owner_id,]),);
 
-    expect(rows.length,).toBe(2,);
-    expect(rows.map((r,) => r.owner_id).sort(),).toEqual([alice, bob,].sort(),);
+    expect(byId.get(a[0]!.id,),).toBe(alice,);
+    expect(byId.get(b[0]!.id,),).toBe(bob,);
   });
 
   test("the run route threads the authenticated user through as the asset owner", async () => {
