@@ -14,10 +14,12 @@ export {
   offloadDiskBytes,
   offloadExists,
   readOffloadedBody,
+  resetOffloadDir,
   setOffloadDir,
   spill,
   SPILL_ROOT,
   spillFileStem,
+  spillRootDir,
 } from "./spill";
 export { pruneOrphanSpills, } from "./spill-retention";
 

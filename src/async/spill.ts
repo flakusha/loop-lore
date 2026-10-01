@@ -24,7 +24,15 @@ export const SPILL_ROOT = path.resolve(".tmp", "async-store",);
  * leaked residue into each other. The pid suffix makes the namespace unique
  * per process; tests override it with `setOffloadDir`.
  */
-let spillDir = path.join(SPILL_ROOT, String(process.pid,),);
+const DEFAULT_DIR = path.join(SPILL_ROOT, String(process.pid,),);
+let spillDir = DEFAULT_DIR;
+
+/**
+ * Root the retention sweep scans. Equals `SPILL_ROOT` in production, so the
+ * sweep reaches namespaces left by dead processes; `setOffloadDir` narrows it
+ * so a test's sweep stays inside the directory that test owns.
+ */
+let spillRoot = SPILL_ROOT;
 
 /**
  * Directory this process spills into.
@@ -35,12 +43,35 @@ export function offloadDir(): string {
 }
 
 /**
- * Point this process at a different spill directory. Test seam: each test
- * owns a unique `mkdtemp` root, so parallel suites cannot collide.
- * @param dir - absolute path to use as the spill namespace.
+ * Root directory the retention sweep scans, covering every process namespace.
+ * @returns absolute path to the sweep root.
+ */
+export function spillRootDir(): string {
+  return spillRoot;
+}
+
+/**
+ * Point this process at a different spill area. Test seam: each test owns a
+ * unique `mkdtemp` root, so parallel suites cannot collide. This moves BOTH the
+ * directory this process writes to and the root the retention sweep scans —
+ * otherwise every `runOnce()` in a test would sweep the shared `SPILL_ROOT` and
+ * could delete a concurrent process's spill files.
+ * @param dir - absolute path to use as this process's spill area.
  */
 export function setOffloadDir(dir: string,): void {
   spillDir = dir;
+  spillRoot = dir;
+}
+
+/**
+ * Restore this process's default spill area after a test narrowed it. Restores
+ * BOTH the namespace and the sweep root — calling `setOffloadDir` with the
+ * default namespace instead would leave the sweep root pointed at this
+ * process's own namespace rather than at `SPILL_ROOT`.
+ */
+export function resetOffloadDir(): void {
+  spillDir = DEFAULT_DIR;
+  spillRoot = SPILL_ROOT;
 }
 
 /**
