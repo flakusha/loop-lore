@@ -3,7 +3,8 @@
 
 # TASK: ComfyUI builder Track A Alpine preset-chain form
 
-**Status:** Not Started
+**Status:** Done
+**Status Note:** Done 2026-10-01 — commit d9851684 (admin Builder tab Alpine component)
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-comfyui-first-class-citizen
@@ -17,10 +18,10 @@ Implements Track A UI of docs/meta/research/comfyui-graph-builder-frontend-plan.
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+State splits across src/frontend/alpine/comfyui-builder/{list,form,run}.ts (admin-workflows spread-into-admin pattern) composed by index.ts; registered in alpine-init.ts and mounted as the admin Builder tab in src/views/admin.html. The LoRA stack sub-form is not part of this pass — per-stage params come from the template's TemplateParameter list, matching the txt2img/img2img/upscale operator flow.
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
