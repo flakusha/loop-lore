@@ -30,17 +30,26 @@ ticket carries the full write-up. In short:
   namespace `SPILL_ROOT/<pid>`. Concurrent runs therefore cannot collide on a
   path. `setOffloadDir()` is the test seam that lets each suite claim its own.
 - Criterion 3: `pruneOrphanSpills` sweeps `SPILL_ROOT` and descends one level
-- Criterion 4: met by `src/async/offload.test.ts`, test "each process writes
-  its own copy and neither sees the other's file" (describe "two independent
-  stores on one database do not share a spill path"). It spawns two real
-  child processes, points each at its own `mkdtemp` root via `setOffloadDir`,
-  and has both spill the SAME row id — the filename is a pure function of the
-  id (`spillFileStem()` hashes it), so a shared path would collapse two
-  payloads into one file. It asserts the dirs differ, each file sits under its
-  own namespace, both payloads read back intact, and neither namespace saw the
-  other's write. Mutation-checked: forcing both children onto one root turns
-  it red, and making the dirs differ while sharing the write path still turns
-  it red on the containment assertion.
+- Criterion 4: met by `src/async/offload.test.ts`, describe "two independent
+  stores on one database do not share a spill path", which now holds two tests
+  — one per isolation seam. Both spawn two real child processes that spill the
+  SAME row id, because the filename is a pure function of the id
+  (`spillFileStem()` hashes it), so a shared path collapses two payloads into
+  one file. Each asserts the dirs differ, each file sits under its own
+  namespace, both payloads read back intact, and neither namespace saw the
+  other's write.
+  - "two processes claiming their own root with setOffloadDir stay isolated"
+    covers the test seam: each child installs its own `mkdtemp` root.
+  - "two processes on the production default land in different pid namespaces"
+    covers what protects the running app: no `setOffloadDir`, just
+    `resetOffloadDir()` and the `SPILL_ROOT/<pid>` default. It asserts both
+    children share one root, differ only by pid, that each dir is exactly
+    `SPILL_ROOT/<pid>`, and that each write landed in its own pid directory.
+    Reverting `DEFAULT_DIR` to a flat `SPILL_ROOT` turns it red on the
+    namespace assertion.
+
+  Both are mutation-checked against the regression they exist to catch:
+  forcing both children onto one root, and flat `DEFAULT_DIR`, each fail.
   All four `src/async/*test*.ts` files additionally own a unique `mkdtemp`
   directory with `afterEach` teardown.
 
@@ -66,14 +75,13 @@ single-run-per-tree comparison cannot attribute those failures to this change.
 `BUG-test-async-store-offload-dir-fixed-path-race` records the control
 experiment that rules it out.
 
-
 ## Resolution
 
 Closed 2026-10-01 in worktree `fix-spill-criterion4-test` after an audit of the
 landed fix. Criteria 1-3 were already met; criterion 4 was claimed but not
 actually tested. Two changes:
 
-- Added the two-process non-sharing test described above
+- Added the two-process non-sharing tests described above
   (`src/async/offload.test.ts`).
 - Rewired `offload-daemon.test.ts` "a default sweep stays inside the directory
   this test owns". The sentinel was written under the repo's shared
@@ -81,9 +89,14 @@ actually tested. Two changes:
   points `spillRootDir()` at the test's own `mkdtemp` — scans the `mkdtemp`.
   The sentinel was unreachable, so `expect(pruned).toBe(0)` passed vacuously,
   and the flat `.json.gz` it created was transient residue in the shared repo
-  dir. The sentinel now lives inside the swept directory and is referenced by a
-  seeded row; un-referencing it makes the sweep prune it (`pruned === 1`),
-  which is what makes the assertion load-bearing.
+  dir. The sentinel now lives inside the swept directory.
+
+  A referenced sentinel alone was still a two-reason green — `pruned === 0`
+  could mean "spared the referenced file" or "looked nowhere at all" — so the
+  test now also writes an unreferenced stale orphan in the same directory. The
+  sweep must delete it while keeping the referenced file, so `pruned === 1`
+  pins the confinement: making the sweep escape to the shared `SPILL_ROOT`
+  yields `pruned === 0` and fails.
 
 Not landed: worktree `tree/fix-async-store-offload-dir` (3 commits) solved the
 same root cause with a different design — a single `LOOP_LORE_OFFLOAD_DIR` env
