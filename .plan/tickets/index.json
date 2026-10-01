@@ -6134,7 +6134,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-tests-delete-app-installed-globals-breaking-every-later-test.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-TOOL-CALL-ARG-PARSE-SILENT-FALLBACK": {
     "epic": "epic-plugin-system, epic-assistant-gm-flows",
