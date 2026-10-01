@@ -29,6 +29,8 @@ import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertUsers, } from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
+import { handleRun, } from "../routes";
+import { templateRegistry, } from "../template-registry";
 import type { ImageEditRequest, WorkflowTemplate, } from "../types";
 import { ComfyUIEditProvider, } from "./comfyui-provider";
 
@@ -87,6 +89,7 @@ beforeAll(async () => {
     }),
   }),);
 
+  templateRegistry.register(template,);
   const testDb = await createTestDb();
   db = testDb.db;
   setTestDatabase(db,);
@@ -130,5 +133,28 @@ describe("ComfyUI edit asset ownership", () => {
 
     expect(rows.length,).toBe(2,);
     expect(rows.map((r,) => r.owner_id).sort(),).toEqual([alice, bob,].sort(),);
+  });
+
+  test("the run route threads the authenticated user through as the asset owner", async () => {
+    // The provider-level tests above pass `ownerId` by hand, so they cannot
+    // catch a route that forwards the wrong user (or `""`). This drives the
+    // real handler end to end and reads the owner back off the persisted row.
+    const res = await handleRun(
+      new Request("http://localhost/api/v1/image-edit/run", {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ template_id: "owner-probe", backend: "comfyui", params: {}, }),
+      }),
+      { database: db, userId: bob, userRole: "user", },
+    );
+
+    expect(res.status,).toBe(200,);
+    const body = await res.json() as { data: { id: string; }[]; };
+    const row = await db
+      .selectFrom("assets",)
+      .select("owner_id",)
+      .where("id", "=", body.data[0]!.id,)
+      .executeTakeFirstOrThrow();
+    expect(row.owner_id,).toBe(bob,);
   });
 });
