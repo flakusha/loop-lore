@@ -19,7 +19,7 @@ import { getLogger, } from "../../logger";
 import type {
   ImageEditBackend,
   ImageEditCategory,
-  ImageEditProgress,
+  ImageEditExecuteOpts,
   ImageEditProvider,
   ImageEditRequest,
   ImageEditResult,
@@ -117,13 +117,15 @@ export class ComfyUIEditProvider implements ImageEditProvider {
   /**
    * @param request
    * @param template
-   * @param onProgress
+   * @param opts
+   * @throws {Error}
    */
   async execute(
     request: ImageEditRequest,
     template: WorkflowTemplate,
-    onProgress?: (progress: ImageEditProgress,) => void,
+    opts: ImageEditExecuteOpts,
   ): Promise<ImageEditResult[]> {
+    const onProgress = opts.onProgress;
     const client = this.getClient();
 
     onProgress?.({ status: "pending", message: "Building workflow...", },);
@@ -158,7 +160,7 @@ export class ComfyUIEditProvider implements ImageEditProvider {
       const { asset, } = await createAsset({
         database,
         input: {
-          ownerId: "system",
+          ownerId: opts.ownerId,
           filename,
           mimeType: `image/${ext === "jpg" ? "jpeg" : ext}`,
           assetType: "image",

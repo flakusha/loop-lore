@@ -107,7 +107,8 @@ export async function handleRun(request: Request, opts?: HandleRunAuth,): Promis
   }
 
   try {
-    const results = await provider.execute(body, template,);
+    // The gate above guarantees `userId`; the owner is never read from the body.
+    const results = await provider.execute(body, template, { ownerId: opts?.userId ?? "", },);
     return jsonResponse({ data: results, },);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error,);

@@ -113,6 +113,13 @@ export interface ImageEditProgress {
   message?: string;
 }
 
+/** Per-run context for `execute`, owned by the caller rather than the body. */
+export interface ImageEditExecuteOpts {
+  /** Authenticated user the run's assets belong to. Never read from the body. */
+  ownerId: string;
+  onProgress?: (progress: ImageEditProgress,) => void;
+}
+
 /** Provider that can execute image editing workflows */
 export interface ImageEditProvider {
   readonly name: ImageEditBackend;
@@ -123,11 +130,11 @@ export interface ImageEditProvider {
   /** List available operations this backend supports */
   listCapabilities(): Promise<ImageEditCategory[]>;
 
-  /** Execute an image edit operation */
+  /** Execute an image edit operation, persisting results under `opts.ownerId` */
   execute(
     request: ImageEditRequest,
     template: WorkflowTemplate,
-    onProgress?: (progress: ImageEditProgress,) => void,
+    opts: ImageEditExecuteOpts,
   ): Promise<ImageEditResult[]>;
 }
 

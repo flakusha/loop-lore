@@ -24,7 +24,7 @@ import { validateProviderUrl, } from "../../../utils/url-validation";
 import type {
   ImageEditBackend,
   ImageEditCategory,
-  ImageEditProgress,
+  ImageEditExecuteOpts,
   ImageEditProvider,
   ImageEditRequest,
   ImageEditResult,
@@ -134,13 +134,15 @@ export class SDServerEditProvider implements ImageEditProvider, SDServerHost {
   /**
    * @param request
    * @param template
-   * @param onProgress
+   * @param opts
+   * @throws {Error}
    */
   async execute(
     request: ImageEditRequest,
     template: WorkflowTemplate,
-    onProgress?: (progress: ImageEditProgress,) => void,
+    opts: ImageEditExecuteOpts,
   ): Promise<ImageEditResult[]> {
+    const onProgress = opts.onProgress;
     const cfg = this.getConfig();
     if (!cfg || !this.baseUrl) {
       throw new Error("sd-server not configured. Set config.generation.providers.sd",);
