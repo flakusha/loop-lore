@@ -42,6 +42,19 @@ bun run check && bun test src/
 #   accepts `--gates` / `--skip-gates` and forwards them to Step 2.
 ```
 
+### Weave-damage scan (post-rebase)
+
+`giwt rebase` resolves conflicts with the weave, which can silently **drop**
+code blocks: the file stays syntactically valid, so typecheck and lint stay
+green and only the unit suite notices. After any weave-driven rebase:
+
+```bash
+WEAVE_BASE=<pre-rebase-sha> bun run check --gates "weave - damage scan"
+git diff <pre-rebase-sha> -- <auto-resolved-file>   # expect only intended changes
+```
+
+The gate is a no-op unless `WEAVE_BASE` is set, so normal runs are unaffected.
+
 ## Source of Truth (Precedence Order)
 
 1. **`AGENTS.md`** — project conventions (this file)
