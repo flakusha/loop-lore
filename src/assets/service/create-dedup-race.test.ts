@@ -185,6 +185,71 @@ describe("createAsset concurrent dedup", () => {
     }
   });
 
+  test("concurrent loser is handed the asset at ITS OWN tier, never a foreign tier", async () => {
+    const { db, sqlite, } = await createTestDb();
+    const uploadDir = mkdtempSync(join(tmpdir(), "ll-asset-tier-race-",),);
+    await insertUsers(db, "tier-race-owner", "Tier Race Owner",);
+    const ownerId = await ownerIdFor(db, "tier-race-owner",);
+    const buffer = makeMinimalPng(3, 3,);
+    const base: Omit<CreateAssetInput, "ownerId"> = {
+      filename: "tier-race.png",
+      mimeType: "image/png",
+      assetType: AssetType.Image,
+      sizeBytes: buffer.length,
+      buffer,
+    };
+
+    try {
+      // This owner already holds identical bytes at two tiers, so a re-read
+      // keyed only on (content, owner) has a foreign row to return. The chat
+      // row is inserted first so it is earlier in scan order than the public
+      // one — the unfiltered re-read returns it first.
+      const chatRow = await createAsset({
+        database: db,
+        input: { ...base, ownerId, encryptionTier: "chat", },
+        uploadDir,
+      },);
+      const publicRow = await createAsset({
+        database: db,
+        input: { ...base, ownerId, encryptionTier: "public", },
+        uploadDir,
+      },);
+
+      // Both race at the public tier: one writes, one loses and re-reads.
+      const raced = await Promise.all([
+        createAsset({ database: db, input: { ...base, ownerId, encryptionTier: "public", }, uploadDir, },),
+        createAsset({ database: db, input: { ...base, ownerId, encryptionTier: "public", }, uploadDir, },),
+      ],);
+
+      // The loser must be handed the public row it collided with, not the chat
+      // row that shares its content hash. Handing back the chat row would send
+      // the caller to an asset encrypted under a different context.
+      for (const r of raced) {
+        if (!r.duplicate) { continue; }
+        expect(r.asset.encryption_tier, "loser must not be handed a foreign tier",).toBe("public",);
+        expect(r.asset.encrypted_key_id,).toBeNull();
+        expect(r.asset.id, "loser must get the public row, not the earlier chat row",).toBe(
+          publicRow.asset.id,
+        );
+      }
+      expect(raced.some((r,) => r.duplicate), "the race must actually produce a loser",).toBe(true,);
+
+      // The chat row is untouched by the public-tier race.
+      const chatAfter = await db
+        .selectFrom("assets",)
+        .select("id",)
+        .where("id", "=", chatRow.asset.id,)
+        .executeTakeFirst();
+      expect(chatAfter?.id,).toBe(chatRow.asset.id,);
+
+      const rows = await db.selectFrom("assets",).select("encryption_tier",).execute();
+      expect(rows.length,).toBe(2,);
+    } finally {
+      sqlite.close();
+      rmSync(uploadDir, { recursive: true, force: true, },);
+    }
+  });
+
   test("dedupe:false stores a NULL content_hash so repeated identical bytes never collide", async () => {
     const { db, sqlite, } = await createTestDb();
     const uploadDir = mkdtempSync(join(tmpdir(), "ll-asset-nodedupe-",),);
