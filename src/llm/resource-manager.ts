@@ -109,11 +109,7 @@ export class ResourceManager {
     return this.running.cancelById(id, reason ?? "cancelled",);
   }
 
-  /**
-   * Drop the queue + limiter for a provider (e.g. on provider removal).
-   * @param provider - provider key
-   * @returns void
-   */
+  /** Drop the queue + limiter for a provider (e.g. on provider removal). */
   forgetProvider(provider: string,): void {
     const queue = this.queues.get(provider,);
     if (queue) {

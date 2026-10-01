@@ -17,12 +17,7 @@ import { buildBody, fetchRaw, fetchWithRetry, handleErrorResponse, mapFinishReas
 import { parseSSELine, } from "./sse";
 import type { OpenAiCompatibleState, OpenAIResponse, OpenAIStreamChunk, } from "./types";
 
-/**
- * @param state
- * @param req
- * @throws {Error}
- * @returns {Promise<GenerateResponse>}
- */
+/** @throws {Error} When the provider rejects or returns a non-OK response. */
 export async function completeDispatch(
   state: OpenAiCompatibleState,
   req: GenerateRequest,
@@ -57,14 +52,7 @@ export async function completeDispatch(
   };
 }
 
-/**
- * @param state
- * @param req
- * @param handler
- * @throws {Error}
- * @throws {Error}
- * @returns {Promise<GenerateResponse>}
- */
+/** @throws {Error} When the provider rejects or returns a non-OK response. */
 export async function streamDispatch(
   state: OpenAiCompatibleState,
   req: GenerateRequest,
@@ -140,11 +128,7 @@ export async function streamDispatch(
   };
 }
 
-/**
- * Flatten accumulated per-index tool-call fragments into a sorted list.
- * @param accum - Tool-call fragments keyed by stream index
- * @returns Sorted tool calls, or `undefined` when none were accumulated
- */
+/** @returns Sorted tool calls, or `undefined` when none were accumulated. */
 function collectToolCalls(
   accum: Map<number, { id?: string; type?: "function"; function: { name?: string; arguments: string } }>,
 ): ToolCall[] | undefined {
@@ -159,17 +143,7 @@ function collectToolCalls(
   );
 }
 
-/**
- * Merge a delta tool-call fragment into the accumulator.
- * @param acc - Stream accumulator
- * @param tc - Tool-call delta fragment from the current SSE chunk
- * @param tc.index
- * @param tc.id
- * @param tc.type
- * @param tc.function
- * @param tc.function.name
- * @param tc.function.arguments
- */
+/** Merge a delta tool-call fragment from the current SSE chunk into the accumulator. */
 function accumulateToolCall(
   acc: StreamAccum,
   tc: { index: number; id?: string; type?: "function"; function?: { name?: string; arguments?: string } },
@@ -198,8 +172,6 @@ interface StreamAccum {
  * Process a single SSE line from a streaming chat-completions response.
  * @param line - Raw SSE line (event name or data payload)
  * @param signal - Abort signal; when aborted the stream is marked cancelled
- * @param handler - Stream event callback
- * @param acc - Mutable accumulators (content, tool calls, finish reason, usage)
  * @returns `true` when the caller should stop reading further lines
  */
 function applyStreamLine(

@@ -27,14 +27,6 @@ import { findByIdempotencyKey, insertUserMessageWithRetry, SwipeInsertExhaustedE
 import { translateInboundContent, } from "./translate-inbound";
 import type { HandlerOpts, } from "./types";
 
-/**
- * @param opts
- * @param prefix
- * @throws {Error}
- * @throws {Error}
- * @throws {Error}
- * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { chats: { ":id": { messages: { ...; }; }; }; }; } & { ...; }, { ...; }, { ...; } & { ...; }>}
- */
 export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, config, } = opts;
 

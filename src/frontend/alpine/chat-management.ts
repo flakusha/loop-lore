@@ -14,11 +14,6 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
   _renameChatName: "",
   selectedChats: [] as string[],
 
-  /**
-   * @param {string} chatId
-   * @param {Event} event
-   * @returns {Promise<void>}
-   */
   async deleteChat(chatId: string, event: Event,) {
     log.info("deleteChat", { chatId, },);
     if (!confirm("Delete this chat and all its messages?",)) { return; }
@@ -49,10 +44,6 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
     button?.blur();
   },
 
-  /**
-   * @param {string} chatId
-   * @returns {void}
-   */
   openRenameModal(chatId: string,) {
     log.info("openRenameModal", { chatId, },);
     const chat = this.chats.find((c,) => c.id === chatId);
@@ -61,9 +52,6 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
     Alpine.store("ui",).showRenameModal = true;
   },
 
-  /**
-   * @returns {Promise<void>}
-   */
   async confirmRenameChat() {
     log.info("confirmRenameChat", { chatId: this._renameChatId, },);
     const name = this._renameChatName.trim();
@@ -96,18 +84,10 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
-  /**
-   * @param {string} chatId
-   * @returns {Promise<void>}
-   */
   async renameChat(chatId: string,) {
     this.openRenameModal(chatId,);
   },
 
-  /**
-   * @param {string} chatId
-   * @returns {Promise<void>}
-   */
   async toggleChatPin(chatId: string,) {
     const chat = this.chats.find((c,) => c.id === chatId);
     if (!chat) { return; }
@@ -129,10 +109,6 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
-  /**
-   * @param {string} chatId
-   * @returns {void}
-   */
   toggleChatSelection(chatId: string,) {
     const idx = this.selectedChats.indexOf(chatId,);
     if (idx === -1) {
@@ -142,9 +118,6 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
-  /**
-   * @returns {Promise<void>}
-   */
   async batchArchive() {
     const ids = this.selectedChats;
     if (ids.length === 0) { return; }
@@ -172,9 +145,6 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
-  /**
-   * @returns {Promise<void>}
-   */
   async batchDelete() {
     const ids = this.selectedChats;
     if (ids.length === 0) { return; }
@@ -209,9 +179,6 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
-  /**
-   * @returns {Promise<void>}
-   */
   async batchExport() {
     const ids = this.selectedChats;
     if (ids.length === 0) { return; }
@@ -242,10 +209,6 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
-  /**
-   * @param {string} chatId
-   * @returns {Promise<void>}
-   */
   async unarchiveChat(chatId: string,) {
     log.info("unarchiveChat", { chatId, },);
     try {

@@ -16,19 +16,12 @@ import { safeJsonParse, } from "../../utils";
 import { ErrorCode, HttpStatus, jsonError, } from "../http-utils";
 import { resolveMessageContentForRender, } from "./render-message-content";
 
-/**
- * Logger bound to the messages module namespace.
- * @returns {Logger}
- */
+/** Logger bound to the messages module namespace. */
 export function log(): Logger {
   return getLogger().child({ module: "messages", },);
 }
 
-/**
- * Convert a ServiceError into an HTTP Response
- * @param error
- * @returns {Response}
- */
+/** Convert a ServiceError into an HTTP Response. */
 export function serviceErrorToResponse(error: ServiceError,): Response {
   switch (error.code) {
     case "forbidden": {
@@ -56,11 +49,7 @@ export function serviceErrorToResponse(error: ServiceError,): Response {
   }
 }
 
-/**
- * Type guard: check if a value is a ServiceError (not a message record)
- * @param value
- * @returns {boolean}
- */
+/** Type guard: check if a value is a ServiceError (not a message record). */
 export function isServiceError(
   value: Record<string, unknown> | ServiceError,
 ): value is ServiceError {

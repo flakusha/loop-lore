@@ -82,9 +82,6 @@ export class AutonomyGovernor {
   }
 
   /** Test helper: drop the in-memory cache (no-op on production deploy). */
-  /**
-   * @returns {void}
-   */
   resetCache(): void {
     this.#cache.clear();
   }

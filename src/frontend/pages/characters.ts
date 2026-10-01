@@ -18,9 +18,6 @@ import "../character-growth-editor";
 
 const log = rootLog.child({ module: "characters-page", },);
 
-/**
- * @returns {void}
- */
 export function filterCharacters() {
   const query = document.querySelector<HTMLInputElement>("#character-search",)?.value ?? "";
   filterCards({
@@ -48,12 +45,7 @@ async function ensureModal(): Promise<HTMLElement | null> {
   return document.querySelector<HTMLElement>("#character-detail-modal",);
 }
 
-/**
- * Fill modal with character data and mood.
- * @param modal
- * @param char
- * @param id
- */
+/** Fill modal with character data and mood. */
 async function populateModal(modal: HTMLElement, char: Record<string, unknown>, id: string,): Promise<void> {
   modal.querySelector("[data-field='name']",)!.textContent = (char.display_name || char.name || "") as string;
   modal.querySelector("[data-field='description']",)!.textContent = (char.description || "No description") as string;
@@ -89,11 +81,7 @@ async function populateModal(modal: HTMLElement, char: Record<string, unknown>, 
   if (happinessEl) { happinessEl.textContent = `${mood.happiness}%`; }
 }
 
-/**
- * Load the character's linked gallery assets (avatars) into the modal's Gallery tab.
- * @param modal
- * @param id
- */
+/** Load the character's linked gallery assets (avatars) into the modal's Gallery tab. */
 async function loadCharacterGallery(modal: HTMLElement, id: string,): Promise<void> {
   const container = modal.querySelector<HTMLElement>("[data-field='gallery']",);
   if (!container) { return; }
@@ -132,10 +120,6 @@ async function loadCharacterGallery(modal: HTMLElement, id: string,): Promise<vo
   }
 }
 
-/**
- * @param {HTMLElement} btn
- * @returns {Promise<void>}
- */
 export async function unlinkCharacterAsset(btn: HTMLElement,) {
   const actorId = btn.dataset.actorId;
   const assetId = btn.dataset.assetId;
@@ -156,10 +140,6 @@ export async function unlinkCharacterAsset(btn: HTMLElement,) {
   }
 }
 
-/**
- * @param {string} id
- * @returns {Promise<void>}
- */
 export async function selectCharacterCard(id: string,) {
   const modal = await ensureModal();
   if (!modal) {
@@ -182,10 +162,6 @@ export async function selectCharacterCard(id: string,) {
   }
 }
 
-/**
- * @param {HTMLElement} btn
- * @returns {Promise<void>}
- */
 export async function startChatFromChar(btn: HTMLElement,) {
   const id = btn.dataset.id;
   if (!id) {
@@ -209,19 +185,11 @@ export async function startChatFromChar(btn: HTMLElement,) {
   }
 }
 
-/**
- * @param {HTMLElement} btn
- * @returns {void}
- */
 export function editCharacter(btn: HTMLElement,) {
   const id = btn.dataset.id;
   if (id) { location.assign(`/character/${id}/edit`,); }
 }
 
-/**
- * @param {HTMLElement} btn
- * @returns {Promise<void>}
- */
 export async function deleteCharacter(btn: HTMLElement,) {
   const id = btn.dataset.id;
   if (!id || !confirm("Delete this character?",)) { return; }
@@ -239,10 +207,6 @@ export async function deleteCharacter(btn: HTMLElement,) {
   }
 }
 
-/**
- * @param {HTMLElement} btn
- * @returns {void}
- */
 export function exportCharacter(btn: HTMLElement,) {
   // The export modal partial does not carry data-character-id itself, but it
   // is rendered inside a context that does (e.g. #character-chat-list,

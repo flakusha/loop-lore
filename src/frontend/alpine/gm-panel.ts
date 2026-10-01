@@ -8,44 +8,37 @@
  * Manages shadow notes, whitenotes, turn order, and quest state.
  */
 
+import { gmPanelEntities, } from "./gm-panel-entities";
+import type { ShadowNote, Whiteneote, } from "./gm-panel-types";
 import { apiFetch, } from "./htmx";
 import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";
 
+export type { EntitySuggestion, ShadowNote, Whiteneote, } from "./gm-panel-types";
+
 const log = rootLog.child({ module: "gm-panel", },);
 
-/** Shadow note — hidden narrative influence. */
-export interface ShadowNote {
-  id: string;
-  chatId: string;
-  type: "foreshadowing" | "consequence" | "hidden_fact" | "player_motivation" | "world_secret" | "narrative_hook";
-  content: string;
-  revealed: boolean;
-  createdAt: string;
-}
-
-/** Whiteneote — visible GM annotation. */
-export interface Whiteneote {
-  id: string;
-  chatId: string;
-  messageId?: string;
-  type: "narrative_direction" | "character_context" | "world_state" | "tone" | "pacing" | "theme";
-  content: string;
-  priority: number;
-  scope: "scene" | "chapter" | "session" | "world";
-  expiresAt?: string;
-  createdAt: string;
-}
-
-/** In-story entity suggestion surfaced from narration scan. */
-export interface EntitySuggestion {
-  kind: string;
-  name: string;
-  seed: string;
+export interface GmPanel {
+  shadowNotes: ShadowNote[];
+  whitenotes: Whiteneote[];
+  newShadowContent: string;
+  newShadowType: ShadowNote["type"];
+  newWhiteneoteContent: string;
+  newWhiteneoteType: Whiteneote["type"];
+  newWhiteneotePriority: number;
+  init(): Promise<void>;
+  loadShadowNotes(chatId: string,): Promise<void>;
+  loadWhitenotes(chatId: string,): Promise<void>;
+  addShadowNote(): Promise<void>;
+  addWhiteneote(): Promise<void>;
+  revealShadowNote(noteId: string,): Promise<void>;
+  deleteShadowNote(noteId: string,): Promise<void>;
+  deleteWhiteneote(noteId: string,): Promise<void>;
 }
 
 (globalThis as unknown as Record<string, unknown>).gmPanel = function() {
   return {
+    ...gmPanelEntities,
     shadowNotes: [] as ShadowNote[],
     whitenotes: [] as Whiteneote[],
     newShadowContent: "",
@@ -53,14 +46,7 @@ export interface EntitySuggestion {
     newWhiteneoteContent: "",
     newWhiteneoteType: "narrative_direction" as Whiteneote["type"],
     newWhiteneotePriority: 5,
-    entityKind: "character" as "character" | "location" | "world" | "item",
-    entitySeed: "",
-    entityMessage: "",
-    entitySuggestions: [] as EntitySuggestion[],
 
-    /**
-     * @returns {Promise<void>}
-     */
     async init() {
       const chatId = (this as any).activeChat;
       if (!chatId) { return; }
@@ -70,10 +56,6 @@ export interface EntitySuggestion {
       ],);
     },
 
-    /**
-     * @param {string} chatId
-     * @returns {Promise<void>}
-     */
     async loadShadowNotes(chatId: string,) {
       try {
         const res = await apiFetch(`/api/v1/chats/${chatId}/shadow-notes`, {},);
@@ -86,10 +68,6 @@ export interface EntitySuggestion {
       }
     },
 
-    /**
-     * @param {string} chatId
-     * @returns {Promise<void>}
-     */
     async loadWhitenotes(chatId: string,) {
       try {
         const res = await apiFetch(`/api/v1/chats/${chatId}/whitenotes`, {},);
@@ -102,9 +80,6 @@ export interface EntitySuggestion {
       }
     },
 
-    /**
-     * @returns {Promise<void>}
-     */
     async addShadowNote() {
       if (!this.newShadowContent.trim()) { return; }
       const chatId = (this as any).activeChat;
@@ -128,9 +103,6 @@ export interface EntitySuggestion {
       }
     },
 
-    /**
-     * @returns {Promise<void>}
-     */
     async addWhiteneote() {
       if (!this.newWhiteneoteContent.trim()) { return; }
       const chatId = (this as any).activeChat;
@@ -156,10 +128,6 @@ export interface EntitySuggestion {
       }
     },
 
-    /**
-     * @param {string} noteId
-     * @returns {Promise<void>}
-     */
     async revealShadowNote(noteId: string,) {
       const chatId = (this as any).activeChat;
       if (!chatId) { return; }
@@ -176,10 +144,6 @@ export interface EntitySuggestion {
       }
     },
 
-    /**
-     * @param {string} noteId
-     * @returns {Promise<void>}
-     */
     async deleteShadowNote(noteId: string,) {
       const chatId = (this as any).activeChat;
       if (!chatId) { return; }
@@ -196,10 +160,6 @@ export interface EntitySuggestion {
       }
     },
 
-    /**
-     * @param {string} noteId
-     * @returns {Promise<void>}
-     */
     async deleteWhiteneote(noteId: string,) {
       const chatId = (this as any).activeChat;
       if (!chatId) { return; }
@@ -214,72 +174,6 @@ export interface EntitySuggestion {
       } catch (error) {
         log.warn("Failed to delete whiteneote", { error, },);
       }
-    },
-
-    /** Start an in-place entity creation chat (story handoff). */
-    /**
-     * @returns {Promise<void>}
-     */
-    async generateEntity() {
-      const chatId = (this as any).activeChat;
-      if (!chatId || !this.entitySeed.trim()) { return; }
-      this.entityMessage = "";
-      try {
-        const res = await apiFetch(`/api/v1/chats/${chatId}/generate-entity`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json", },
-          body: jsonBody({
-            kind: this.entityKind,
-            seed: this.entitySeed.trim(),
-          },),
-        },);
-        if (res.ok) {
-          const data = await res.json() as { chatId?: string };
-          this.entitySeed = "";
-          if (typeof data.chatId === "string") {
-            this.entityMessage = "Creation chat started.";
-            const navigate = (this as any).selectChat;
-            if (typeof navigate === "function") {
-              await navigate.call(this, data.chatId,);
-            }
-          }
-        } else {
-          const data = await res.json().catch(() => ({}) as { error?: string });
-          this.entityMessage = data.error ?? "Failed to start creation chat.";
-        }
-      } catch (error) {
-        log.warn("Failed to start entity creation chat", { error, },);
-        this.entityMessage = "Failed to start creation chat.";
-      }
-    },
-
-    /** Scan recent narration for in-story entity introductions. */
-    /**
-     * @returns {Promise<void>}
-     */
-    async loadEntitySuggestions() {
-      const chatId = (this as any).activeChat;
-      if (!chatId) { return; }
-      try {
-        const res = await apiFetch(`/api/v1/chats/${chatId}/entity-suggestions`, {},);
-        if (res.ok) {
-          const data = await res.json() as { items?: EntitySuggestion[] };
-          this.entitySuggestions = data.items ?? [];
-        }
-      } catch (error) {
-        log.warn("Failed to load entity suggestions", { error, },);
-      }
-    },
-
-    /** Prefill the seed from a suggestion and start the handoff. */
-    /**
-     * @param {{ kind: string; seed: string }} suggestion
-     * @returns {Promise<void>}
-     */
-    async useSuggestion(suggestion: { kind: string; seed: string },) {
-      this.entityKind = suggestion.kind as typeof this.entityKind;
-      this.entitySeed = suggestion.seed;
-      await this.generateEntity();
     },
   };
 };

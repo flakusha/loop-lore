@@ -73,56 +73,6 @@ import type { AssetRecord, } from "./service";
 import type { TransformValues, } from "./service/transforms";
 import { isSignedUrlAction, resolveSignedUrlSecret, signAssetUrl, } from "./signed-url";
 
-// SPDX-License-Identifier: LGPL-3.0-or-later
-// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 590
-
-// SPDX-License-Identifier: LGPL-3.0-or-later
-// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 590
-/**
- * Asset Controller
- *
- * Route handlers for asset CRUD operations.
- * Delegates to asset service for business logic.
- *
- *   GET    /api/assets              — list assets (paginated, filterable)
- *   POST   /api/assets              — upload new asset (multipart)
- *   GET    /api/assets/:id          — get asset metadata
- *   GET    /api/assets/:id/raw      — serve original file
- *   GET    /api/assets/:id/download — download file (attachment)
- *   GET    /api/assets/:id/thumb    — serve thumbnail
- *   GET    /api/assets/:id/compressed — serve compressed variant
- *   POST   /api/assets/:id/signed-url/:action — mint time-limited signed URL
- *   DELETE /api/assets/:id          — delete asset
- *   POST   /api/assets/:id/links    — link to entity
- *   DELETE /api/assets/:id/links/:linkId — unlink from entity
- *   GET    /api/assets/:id/transform — resolved framing metadata (?context=)
- *   PUT    /api/assets/:id/transform — upsert framing metadata (owner only)
- */
-// SPDX-License-Identifier: LGPL-3.0-or-later
-// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 590
-/**
- * Asset Controller
- *
- * Route handlers for asset CRUD operations.
- * Delegates to asset service for business logic.
- *
- *   GET    /api/assets              — list assets (paginated, filterable)
- *   POST   /api/assets              — upload new asset (multipart)
- *   GET    /api/assets/:id          — get asset metadata
- *   GET    /api/assets/:id/raw      — serve original file
- *   GET    /api/assets/:id/download — download file (attachment)
- *   GET    /api/assets/:id/thumb    — serve thumbnail
- *   GET    /api/assets/:id/compressed — serve compressed variant
- *   POST   /api/assets/:id/signed-url/:action — mint time-limited signed URL
- *   DELETE /api/assets/:id          — delete asset
- *   POST   /api/assets/:id/links    — link to entity
- *   DELETE /api/assets/:id/links/:linkId — unlink from entity
- *   GET    /api/assets/:id/transform — resolved framing metadata (?context=)
- *   PUT    /api/assets/:id/transform — upsert framing metadata (owner only)
- */
 /** Upload options — also used by elysia-app.ts for the standalone POST /api/assets route. */
 export interface UploadOpts {
   request: Request;

@@ -3,38 +3,18 @@
 // size-allow: 260
 
 /**
- * Table backend for the idempotency middleware.
+ * Table backend for the idempotency middleware — replays completed responses
+ * from `request_results` after a process restart or from a sibling instance.
  *
- * Persists completed responses to the `request_results` table via the async
- * store so that:
- *   - re-fires after a process restart replay the cached response, and
- *   - re-fires against a different instance (sharing the DB) replay the
- *     response that the originating instance wrote.
+ * In-memory fast path holds the in-flight slot + recent completed entries, so
+ * the beforeHandle hot path never awaits the DB; persistence is fire-and-forget
+ * via `asyncStore`, and a miss triggers a background `asyncStore.read()`
+ * hydrate visible on the next call.
  *
- * Architecture:
- *   - **In-memory fast path** keeps the in-flight slot + recent completed
- *     entries process-local (same as the memory backend). The beforeHandle
- *     hot path is fully synchronous — never awaits the DB on the same tick
- *     that called it, so two requests racing into `markInFlight` observe
- *     the in-memory entry and the second returns 409.
- *   - **Table persistence** is fire-and-forget via `asyncStore.complete()`
- *     after the handler finishes.
- *   - **Cache hydration** runs as a background `asyncStore.read()` when
- *     the fast path misses. The current request sees `null` (proceeds to
- *     run the handler). The hydrated entry is visible on the next call so
- *     re-fires replay even when the originating instance was a sibling.
- *
- * Row identity: rows are keyed by the **full idempotency cache key**
- * (`METHOD route userId requestId`) — NOT by the raw X-Request-Id. The
- * status endpoint at `GET /api/requests/:id/status` looks up by raw
- * requestId and therefore does not see these rows; the two features
- * share the table but address different row sets.
- *
- * Replaces the previous silent fallback where selecting `backend: "table"`
- * behaved identically to `backend: "memory"`.
- * BUG-bug-idempotency-table-backend-accepted-but-never-implemented.
+ * Rows are keyed by the full cache key (`METHOD route userId requestId`), not
+ * by raw X-Request-Id, so `GET /api/requests/:id/status` addresses a disjoint
+ * row set. BUG-bug-idempotency-table-backend-accepted-but-never-implemented.
  * @see TASK-middleware-global-idempotency-replay-for-re-fired-requests.md
- * @see epic-middleware-request-lifecycle.md
  */
 
 import type { AsyncStore, RequestResultRow, } from "../async/store";
@@ -43,16 +23,9 @@ import { parseExpiryMs, } from "../utils/date";
 import type { IdempotencyBackendApi, InMemoryEntry, } from "./idempotency-memory";
 
 /**
- * Module-scoped logger, fetched lazily on the first call. We use a
- * bare `getLogger()` (not `.child({ module: ... })`) so that test
- * code can register additional transports via `setGlobalLogger()` /
- * `addTransport()` and observe warn-log emissions. We re-fetch on every
- * call (no module-level cache) so test ordering does not lock the
- * logger to whichever was registered first. The `module` tag is
- * attached as warn-meta below so log consumers can still filter by
- * `meta.module === "idempotency-table"`. Same rationale as
- * `idempotency.ts`'s `getLog()`.
- * @returns
+ * Bare `getLogger()` (not `.child()`), re-fetched per call so test transports
+ * registered via `setGlobalLogger()` / `addTransport()` are always observed;
+ * the `module` tag rides on warn-meta. Same rationale as `idempotency.ts`.
  */
 function getLog() {
   try {
@@ -62,11 +35,7 @@ function getLog() {
   }
 }
 
-/**
- * Translate a `RequestResultRow` into the in-memory entry shape consumed by
- * the beforeHandle replay path.
- * @param row
- */
+/** Translate a `RequestResultRow` into the beforeHandle replay entry shape. */
 function rowToEntry(row: RequestResultRow,): InMemoryEntry {
   const headers = row.responseHeaders ?? {};
   // The async store's `started_at` / `completed_at` are ISO strings; parse
@@ -85,12 +54,7 @@ function rowToEntry(row: RequestResultRow,): InMemoryEntry {
   };
 }
 
-/**
- * Build a table backend.
- * @param ttlMs - TTL for completed entries in ms.
- * @param asyncStore - Async store bound to the same `request_results` table.
- * @returns {IdempotencyBackendApi}
- */
+/** Build a table backend. `asyncStore` must target the same `request_results` table. */
 export function createTableBackend(ttlMs: number, asyncStore: AsyncStore,): IdempotencyBackendApi {
   // Process-local fast path. Hydrated lazily from the table on first miss.
   const cache = new Map<string, InMemoryEntry>();
@@ -98,11 +62,7 @@ export function createTableBackend(ttlMs: number, asyncStore: AsyncStore,): Idem
   // misses (e.g. a fanout retry) issues one DB read per key, not N.
   const inflightHydrates = new Map<string, Promise<void>>();
 
-  /**
-   * Drop completed entries past their TTL.
-   * @param key
-   * @param entry
-   */
+  /** Drop completed entries past their TTL. */
   const liveEntry = (key: string, entry: InMemoryEntry,): InMemoryEntry | null => {
     if (entry.completedAt !== null && Date.now() - entry.completedAt > ttlMs) {
       cache.delete(key,);
@@ -112,10 +72,6 @@ export function createTableBackend(ttlMs: number, asyncStore: AsyncStore,): Idem
   };
 
   return {
-    /**
-     * @param {unknown} key
-     * @returns {InMemoryEntry | null}
-     */
     get(key,) {
       const cached = cache.get(key,);
       if (cached) { return liveEntry(key, cached,); }
@@ -134,11 +90,6 @@ export function createTableBackend(ttlMs: number, asyncStore: AsyncStore,): Idem
       }
       return null;
     },
-    /**
-     * @param {unknown} key
-     * @param {unknown} meta
-     * @returns {InMemoryEntry}
-     */
     markInFlight(key, meta,) {
       // Reserve the slot locally so concurrent same-process re-fires see the
       // in-flight marker immediately (no DB round-trip).
@@ -161,12 +112,6 @@ export function createTableBackend(ttlMs: number, asyncStore: AsyncStore,): Idem
       },);
       return entry;
     },
-    /**
-     * @param {unknown} key
-     * @param {unknown} meta
-     * @param {unknown} args
-     * @returns {void}
-     */
     recordResponse(key, meta, args,) {
       // Update the local fast path first so same-process re-fires replay
       // immediately without a DB round-trip.
@@ -187,11 +132,6 @@ export function createTableBackend(ttlMs: number, asyncStore: AsyncStore,): Idem
         { status: args.status, headers: args.headers, body: args.body, },
       );
     },
-    /**
-     * @param {unknown} key
-     * @param {unknown} _meta
-     * @returns {void}
-     */
     release(key, _meta,) {
       // Drop the local fast-path entry so the next call retries the handler.
       cache.delete(key,);
@@ -199,9 +139,6 @@ export function createTableBackend(ttlMs: number, asyncStore: AsyncStore,): Idem
       // abandons the in-flight slot. Future re-fires against the same key
       // will see no row on hydrate and proceed.
     },
-    /**
-     * @returns {void}
-     */
     clear() {
       cache.clear();
     },
@@ -209,14 +146,8 @@ export function createTableBackend(ttlMs: number, asyncStore: AsyncStore,): Idem
 }
 
 /**
- * Hydrate the in-memory cache from `request_results` for a single key.
- *
- * Background lookup; the caller does not await. Failures are swallowed so
- * a transient DB blip cannot crash the beforeHandle hot path.
- * @param key
- * @param asyncStore
- * @param cache
- * @param ttlMs
+ * Background hydrate for a single key. Failures are swallowed so a transient
+ * DB blip cannot crash the beforeHandle hot path.
  */
 async function hydrateFromTable(
   key: string,
@@ -261,17 +192,8 @@ async function hydrateFromTable(
 }
 
 /**
- * Build a PII-safe identifier for log output from a cache key.
- *
- * The cache key embeds userId + requestId; logging the full key would leak
- * user identity. The `METHOD ROUTE` prefix is sufficient to correlate
- * with the access log; the requestId in the access log line carries the
- * correlation.
- *
- * Exported for direct unit testing — the production code path is exercised
- * by the surrounding hydrate catch block.
- * @param key
- * @returns {string}
+ * PII-safe log identifier: the key embeds userId + requestId, so keep only the
+ * `METHOD ROUTE` prefix — the access log's requestId carries the correlation.
  */
 export function redactKeyForLog(key: string,): string {
   // Cache key format (fixed by `makeKey`):

@@ -43,7 +43,6 @@ export const KEY_MECHANIC_PARAMS = [
   "gmConfig",
 ] as const;
 
-/** */
 export type KeyMechanicParam = (typeof KEY_MECHANIC_PARAMS)[number];
 
 /**

@@ -12,7 +12,6 @@ import type { DB, } from "../db/schema";
 import { uid, } from "../utils";
 import { convertPersonaToCharacter, } from "./convert";
 
-/** */
 export interface CreatePersonaParams {
   userId: string;
   name: string;
@@ -24,7 +23,6 @@ export interface CreatePersonaParams {
   model?: string | null;
 }
 
-/** */
 export interface UpdatePersonaParams {
   name?: string;
   avatarAssetId?: string | null;
@@ -36,17 +34,10 @@ export interface UpdatePersonaParams {
   model?: string | null;
 }
 
-/** */
 export class PersonasService {
-  /**
-   * @param db
-   */
   constructor(private readonly db: Kysely<DB>,) {}
 
-  /**
-   * @param userId - owning user id
-   * @returns all personas owned by `userId`, default-first then newest.
-   */
+  /** All personas owned by `userId`, default-first then newest. */
   async listByUser(userId: string,) {
     return this.db
       .selectFrom("personas",)
@@ -57,11 +48,7 @@ export class PersonasService {
       .execute();
   }
 
-  /**
-   * @param id - persona id
-   * @param userId - owning user id
-   * @returns the persona row, or `undefined` if not found / not owned.
-   */
+  /** The persona row, or `undefined` if not found / not owned. */
   async getById(id: string, userId: string,) {
     return this.db
       .selectFrom("personas",)
@@ -71,10 +58,7 @@ export class PersonasService {
       .executeTakeFirst();
   }
 
-  /**
-   * @param params - persona fields (userId, name, avatarAssetId, description, title, temperature, maxTokens, model)
-   * @returns the inserted persona's id.
-   */
+  /** @returns the inserted persona's id. */
   async create(params: CreatePersonaParams,): Promise<string> {
     const id = uid();
     await this.db
@@ -95,13 +79,6 @@ export class PersonasService {
   }
 
   /** @throws {Error} `"Persona not found"` ⇒ 404 (matches getById/delete/convertToCharacter). */
-  /**
-   * @param {string} id
-   * @param {UpdatePersonaParams} params
-   * @param {string} userId
-   * @throws {Error}
-   * @returns {Promise<void>}
-   */
   async update(id: string, params: UpdatePersonaParams, userId: string,): Promise<void> {
     const { updates, defaultFlip, } = buildPersonaUpdate(params,);
     await this.db.transaction().execute(async (trx,) => {
@@ -129,10 +106,6 @@ export class PersonasService {
     },);
   }
 
-  /**
-   * @param id
-   * @param userId
-   */
   async delete(id: string, userId: string,): Promise<void> {
     // Ownership check first: only the persona's owner may delete it, and the
     // chat_participants cleanup below must never run for a persona that stays.
@@ -156,10 +129,6 @@ export class PersonasService {
     await this.db.deleteFrom("personas",).where("id", "=", id,).where("user_id", "=", userId,).execute();
   }
 
-  /**
-   * @param id
-   * @param userId
-   */
   async setDefault(id: string, userId: string,): Promise<void> {
     await this.db.transaction().execute(async (trx,) => {
       await applyDefault(trx, id, userId,);

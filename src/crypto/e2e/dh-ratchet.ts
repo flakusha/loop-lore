@@ -27,7 +27,6 @@ import {
   KEY_BYTES,
 } from "./dh-ratchet-primitives";
 
-/** */
 export interface DhRatchetState {
   rootKey: Uint8Array;
   sendingChainKey: Uint8Array;
@@ -39,7 +38,6 @@ export interface DhRatchetState {
   recvCount: number;
 }
 
-/** */
 export interface InitDhRatchetOpts {
   rootKey: Uint8Array;
 }
@@ -47,16 +45,11 @@ export interface InitDhRatchetOpts {
 // theirInitialPub was previously declared here but never used: the
 // ECDH agreement producing rootKey occurs upstream (deriveSharedSecret),
 // and the initial chain key is derived deterministically from rootKey.
-/** */
 export interface InitDhRatchetResult {
   state: DhRatchetState;
   myInitialPubJwk: JsonWebKey;
 }
-/**
- * @param opts
- * @returns Promise<unknown>
- * @throws {Error}
- */
+/** @throws {Error} When `rootKey` is not exactly `KEY_BYTES` long. */
 export async function initDhRatchet(opts: InitDhRatchetOpts,): Promise<InitDhRatchetResult> {
   if (opts.rootKey.byteLength !== KEY_BYTES) {
     throw new Error(`rootKey must be ${KEY_BYTES} bytes (got ${opts.rootKey.byteLength})`,);
@@ -84,22 +77,16 @@ export async function initDhRatchet(opts: InitDhRatchetOpts,): Promise<InitDhRat
   };
 }
 
-/** */
 export interface DhRatchetEncryptOpts {
   state: DhRatchetState;
   plaintext: string;
 }
 
-/** */
 export interface DhRatchetEncryptResult {
   state: DhRatchetState;
   payload: DhMessagePayload;
 }
 
-/**
- * @param opts
- * @returns void
- */
 export async function dhRatchetEncrypt(opts: DhRatchetEncryptOpts,): Promise<DhRatchetEncryptResult> {
   const step = await chainStep(opts.state.sendingChainKey,);
   opts.state.sendingChainKey.fill(0,);
@@ -125,7 +112,6 @@ export async function dhRatchetEncrypt(opts: DhRatchetEncryptOpts,): Promise<DhR
   };
 }
 
-/** */
 export interface DhRatchetDecryptOpts {
   state: DhRatchetState;
   payload: DhMessagePayload;
@@ -133,7 +119,6 @@ export interface DhRatchetDecryptOpts {
   maxSkip: number;
 }
 
-/** */
 export interface DhRatchetDecryptResult {
   plaintext: string;
   state: DhRatchetState;
@@ -142,12 +127,8 @@ export interface DhRatchetDecryptResult {
 }
 
 /**
- * @param opts
- * @returns void
- * @throws {Error}
- * @throws {Error}
- * @throws {Error}
- * @throws {Error}
+ * @throws {Error} When the payload is undecryptable, the message counter is out of
+ *   range, or more than `maxSkip` skipped keys would have to be retained.
  */
 export async function dhRatchetDecrypt(opts: DhRatchetDecryptOpts,): Promise<DhRatchetDecryptResult> {
   const { state, payload, } = opts;

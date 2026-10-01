@@ -1,12 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-/**
- * World Items mixin — item creation + item settings for a world's edit page.
- *
- * Mirrors the `worldLocations` mixin. Item definitions CRUD against
- * /api/v1/worlds/:worldId/items (world-level, owner/admin gated server-side).
- */
+/** World Items mixin — item CRUD for a world's edit page, mirroring the
+ * `worldLocations` mixin. CRUDs /api/v1/worlds/:worldId/items. */
 import { t, } from "./i18n";
 import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";
@@ -38,19 +34,12 @@ export const worldItems: Partial<WorldEditState> & ThisType<WorldEditState> = {
   placeLocationId: "",
   placeQuantity: "1",
 
-  /**
-   * @param {string | null} locId
-   * @returns {string}
-   */
   locName(locId: string | null,): string {
     if (!locId) { return "—"; }
     const loc = this.locations.find((l,) => l.id === locId);
     return loc ? loc.name : "(unknown)";
   },
 
-  /**
-   * @returns {Promise<void>}
-   */
   async loadItems() {
     this.loadingItems = true;
     this.itemsLoaded = false;
@@ -80,9 +69,6 @@ export const worldItems: Partial<WorldEditState> & ThisType<WorldEditState> = {
     this.loadingItems = false;
   },
 
-  /**
-   * @returns {Promise<void>}
-   */
   async addItem() {
     if (!this.newItemName.trim()) { return; }
     try {
@@ -116,10 +102,6 @@ export const worldItems: Partial<WorldEditState> & ThisType<WorldEditState> = {
     }
   },
 
-  /**
-   * @param {string} itemId
-   * @returns {void}
-   */
   expandItem(itemId: string,) {
     if (this.expandedItem === itemId) {
       this.expandedItem = "";
@@ -137,10 +119,6 @@ export const worldItems: Partial<WorldEditState> & ThisType<WorldEditState> = {
     }
   },
 
-  /**
-   * @param {string} itemId
-   * @returns {Promise<void>}
-   */
   async saveItem(itemId: string,) {
     try {
       const res = await apiFetch(`/api/v1/worlds/${this.worldId}/items/${itemId}`, {
@@ -168,10 +146,6 @@ export const worldItems: Partial<WorldEditState> & ThisType<WorldEditState> = {
     }
   },
 
-  /**
-   * @param {string} itemId
-   * @returns {Promise<void>}
-   */
   async deleteItem(itemId: string,) {
     if (!confirm(t("worlds.deleteItemConfirm",),)) {
       return;
@@ -187,10 +161,6 @@ export const worldItems: Partial<WorldEditState> & ThisType<WorldEditState> = {
     }
   },
 
-  /**
-   * @param {string} itemId
-   * @returns {Promise<void>}
-   */
   async loadInstances(itemId: string,) {
     this.loadingInstances = true;
     this.instancesLoaded = false;
@@ -227,10 +197,6 @@ export const worldItems: Partial<WorldEditState> & ThisType<WorldEditState> = {
     this.loadingInstances = false;
   },
 
-  /**
-   * @param {string} itemId
-   * @returns {Promise<void>}
-   */
   async placeInstance(itemId: string,) {
     const body: Record<string, unknown> = {
       itemId,
@@ -257,10 +223,6 @@ export const worldItems: Partial<WorldEditState> & ThisType<WorldEditState> = {
     }
   },
 
-  /**
-   * @param {string} instanceId
-   * @returns {Promise<void>}
-   */
   async destroyInstance(instanceId: string,) {
     if (!confirm(t("worlds.destroyInstanceConfirm",),)) { return; }
     try {

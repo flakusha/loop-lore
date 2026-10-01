@@ -2,18 +2,11 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Model manager UI component — browse the host catalog, download catalog
- * entries file-by-file or GGUF blobs from user-supplied URLs with progress
- * + resume, verify SHA-256, and manage browser storage (list, usage, delete).
+ * Model manager — browse the host catalog, download catalog entries or GGUF
+ * blobs from user-supplied URLs with progress + resume, verify SHA-256, and
+ * manage browser storage. Downloads honor the instance policy flag.
  *
- * Catalog entries download through `catalog-download` (per-file resume and
- * verify-or-record checksums); ad-hoc URL downloads go straight through
- * `model-downloader`. Both share the same byte store. Downloads honor the
- * instance policy flag — blocked downloads fail fast with an error.
- *
- * Alpine usage: `x-data="modelManager()"`. All dependencies injectable
- * for tests via {@link createModelManager}. The `modelManager` global is
- * declared in `src/frontend/loaders.d.ts` alongside other page loaders.
+ * Alpine usage: `x-data="modelManager()"`.
  *
  * @module alpine/model-manager
  */
@@ -65,11 +58,7 @@ export interface ModelManagerState {
   removeModel(modelId: string,): Promise<void>;
   formatSize(bytes: number,): string;
 }
-/**
- * Create the model manager component state.
- * @param deps - Injectable seams for tests.
- * @returns Alpine-compatible component state.
- */
+/** Alpine component state; `deps` are injectable seams for tests. */
 export function createModelManager(deps: ModelManagerDeps = {},): ModelManagerState {
   const loadCatalog = deps.loadCatalog ?? fetchCatalog;
   const loadCapability = deps.loadCapability ?? fetchCapability;
@@ -93,9 +82,6 @@ export function createModelManager(deps: ModelManagerDeps = {},): ModelManagerSt
     indexedDB: false,
     downloadsAllowed: true,
 
-    /**
-     * @returns {Promise<void>}
-     */
     async init(): Promise<void> {
       const support = detectLocalInferenceSupport();
       this.webgpu = support.webgpu;
@@ -113,9 +99,6 @@ export function createModelManager(deps: ModelManagerDeps = {},): ModelManagerSt
       }
     },
 
-    /**
-     * @returns {Promise<void>}
-     */
     async refresh(): Promise<void> {
       this.loading = true;
       try {
@@ -127,9 +110,6 @@ export function createModelManager(deps: ModelManagerDeps = {},): ModelManagerSt
       }
     },
 
-    /**
-     * @returns {Promise<void>}
-     */
     async downloadFromUrl(): Promise<void> {
       if (!this.downloadsAllowed) {
         this.error = "Model downloads are disabled on this instance.";
@@ -180,10 +160,6 @@ export function createModelManager(deps: ModelManagerDeps = {},): ModelManagerSt
       }
     },
 
-    /**
-     * @param {string} modelId
-     * @returns {Promise<void>}
-     */
     async downloadCatalogEntry(modelId: string,): Promise<void> {
       if (!this.downloadsAllowed) {
         this.error = "Model downloads are disabled on this instance.";
@@ -220,36 +196,21 @@ export function createModelManager(deps: ModelManagerDeps = {},): ModelManagerSt
       }
     },
 
-    /**
-     * @param {string} modelId
-     * @returns {number}
-     */
     storedFiles(modelId: string,): number {
       const prefix = `${modelId}/`;
       return this.stored.filter((entry,) => entry.id.startsWith(prefix,)).length;
     },
 
-    /**
-     * @returns {void}
-     */
     cancelDownload(): void {
       controller?.abort();
     },
 
-    /**
-     * @param {string} modelId
-     * @returns {Promise<void>}
-     */
     async removeModel(modelId: string,): Promise<void> {
       const store = deps.store ?? defaultModelStore();
       await store.remove(modelId,);
       await this.refresh();
     },
 
-    /**
-     * @param {number} bytes
-     * @returns {string}
-     */
     formatSize(bytes: number,): string {
       if (bytes < 1024) { return `${bytes} B`; }
       if (bytes < 1_048_576) { return `${(bytes / 1024).toFixed(1,)} KB`; }

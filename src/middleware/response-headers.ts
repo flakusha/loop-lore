@@ -11,13 +11,9 @@
  * once per server start from `config.headers`, then call `apply()` on every
  * outgoing Response at the top of the fetch handler.
  *
- * Design notes:
- *   - Route-aware: classifies each response as html | api | static and tailors
- *     the header set accordingly.
- *   - Additive: existing route headers (Content-Type, Cache-Control, SSE
- *     headers) always win; the policy only sets headers the route omitted.
- *   - Streaming-safe: re-wraps via `new Response(response.body, …)` — the body
- *     ReadableStream passes through without buffering, so SSE is unaffected.
+ * Route-aware (html | api | static), additive (route headers always win), and
+ * streaming-safe (re-wraps via `new Response(response.body, …)` without
+ * buffering, so SSE is unaffected).
  */
 
 import type { HeadersConfig, } from "../config/schema";
@@ -75,11 +71,7 @@ interface ReportingEndpointsValue {
   reportTo: string;
 }
 
-/**
- * Normalize header key to canonical casing for case-insensitive comparison.
- * @param key
- * @returns {string}
- */
+/** Normalize header key to canonical casing for case-insensitive comparison. */
 export function normalizeHeaderKey(key: string,): string {
   const lower = key.toLowerCase();
   return CANONICAL_HEADER_NAMES.get(lower,) ?? key;

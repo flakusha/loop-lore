@@ -60,16 +60,10 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
   // Two-tier custom instructions — story tier (TASK-two-tier-custom-instructions)
   _customInstructions: "",
   _chatAutoTranslateLang: "",
-  /**
-   * @returns {void}
-   */
   toggleDebugView() {
     this._debugView = !this._debugView;
   },
 
-  /**
-   * @returns {Promise<void>}
-   */
   async openChatSettings() {
     const chats = this.chats;
     const chat = chats.find((c,) => c.id === this.activeChat);
@@ -121,9 +115,6 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
   },
 
   /** Load chat participants for the human-GM actor selector. */
-  /**
-   * @returns {Promise<void>}
-   */
   async loadChatParticipants() {
     if (!this.activeChat) { return; }
     try {
@@ -138,17 +129,14 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
 
   /**
    * (Re)render the active chat as a VN scene when VN mode is enabled, or tear
-   * the renderer down when it is disabled. Reads the chat's persisted gm_config
-   * so the renderer and the settings modal stay in sync.
+   * the renderer down when it is disabled. Reads the chat's persisted
+   * gm_config so the renderer and the settings modal stay in sync.
    */
   updateVnMode() {
     const chat = this.chats.find((c: { id: string },) => c.id === this.activeChat);
     syncVnRenderer(this.messages, chat?.gm_config, this._vnEnabled, this.activeChat ?? undefined,);
   },
 
-  /**
-   * @returns {Promise<void>}
-   */
   async saveChatSettings() {
     log.info("saveChatSettings", { chatId: this.activeChat, },);
     if (!this.activeChat || !this._chatSettingsName.trim()) { return; }

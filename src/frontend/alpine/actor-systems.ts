@@ -3,10 +3,8 @@
 // size-allow: 275
 
 // ── Character systems export/import panel.
-// Drives:
 //   GET  /api/v1/actors/:actorId/systems/export
-//   POST /api/v1/actors/:actorId/systems/import
-//   POST /api/v1/actors/:actorId/systems/import/url
+//   POST /api/v1/actors/:actorId/systems/import[/url]
 // Pairs with `src/components/character/systems-panel.html`.
 import { apiFetch, } from "./htmx";
 import { t, } from "./i18n";
@@ -57,11 +55,7 @@ const emptySections = (): ExportSections => ({
 });
 const capitalize = (s: string,): string => s.charAt(0,).toUpperCase() + s.slice(1,);
 
-/**
- * State plugin for the character-systems export/import panel. Bound to a
- * single actor via `setActorId`. Owns the section-toggle state, the export
- * download trigger, and the import (payload + URL) form.
- */
+/** State plugin for the systems export/import panel, bound to one actor. */
 export interface ActorSystemsState {
   _sysActorId: string | null;
   sections: ExportSections;
@@ -100,10 +94,6 @@ export const actorSystems: ActorSystemsState = {
   importUrl: "",
   importResult: null,
 
-  /**
-   * @param {string} actorId
-   * @returns {void}
-   */
   setActorId(actorId: string,) {
     if (this._sysActorId === actorId) { return; }
     this._sysActorId = actorId;
@@ -117,9 +107,6 @@ export const actorSystems: ActorSystemsState = {
     this.importResult = null;
   },
 
-  /**
-   * @returns {Record<string, unknown>}
-   */
   buildExportBody() {
     const body: Record<string, unknown> = {};
     for (const key of EXPORT_SECTIONS) {
@@ -129,9 +116,6 @@ export const actorSystems: ActorSystemsState = {
     return body;
   },
 
-  /**
-   * @returns {Promise<Blob | null>}
-   */
   async exportAsBlob() {
     const actorId = this._sysActorId;
     if (!actorId) { return null; }
@@ -149,9 +133,6 @@ export const actorSystems: ActorSystemsState = {
     }
   },
 
-  /**
-   * @returns {Promise<void>}
-   */
   async triggerDownload() {
     const actorId = this._sysActorId;
     if (!actorId || this.busy) { return; }
@@ -177,17 +158,10 @@ export const actorSystems: ActorSystemsState = {
     }
   },
 
-  /**
-   * @param {string} section
-   * @returns {string}
-   */
   describeSection(section: string,) {
     return SECTION_LABELS[section] ?? section;
   },
 
-  /**
-   * @returns {Promise<void>}
-   */
   async importFromPayload() {
     const actorId = this._sysActorId;
     if (!actorId || this.busy) { return; }
@@ -228,9 +202,6 @@ export const actorSystems: ActorSystemsState = {
     }
   },
 
-  /**
-   * @returns {Promise<void>}
-   */
   async importFromUrl() {
     const actorId = this._sysActorId;
     const url = this.importUrl.trim();
@@ -265,9 +236,6 @@ export const actorSystems: ActorSystemsState = {
     }
   },
 
-  /**
-   * @returns {void}
-   */
   resetImport() {
     this.importPreview = "";
     this.importUrl = "";
@@ -277,11 +245,7 @@ export const actorSystems: ActorSystemsState = {
   },
 };
 
-/**
- * Build the Alpine scope for the systems panel partial.
- * @param {string} actorId
- * @returns {ActorSystemsState}
- */
+/** Build the Alpine scope for the systems panel partial. */
 export function actorSystemsFactory(actorId: string,): ActorSystemsState {
   const state = Object.create(actorSystems,) as ActorSystemsState;
   state._sysActorId = null;
