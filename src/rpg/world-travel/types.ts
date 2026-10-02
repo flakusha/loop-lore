@@ -57,12 +57,17 @@ export interface WorldTravelBudget {
   updated_at: Generated<string>;
 }
 
-/** The tables this module adds on top of the generated `DB`. */
-export interface TravelTables {
+/** The tables this module adds on top of the generated `DB`.
+ *
+ * A type alias, not an interface: `Kysely.withTables` constrains its
+ * argument to `Record<string, Record<string, any>>`, and only a type
+ * alias gets the implicit index signature an interface never has.
+ */
+export type TravelTables = {
   travel_parties: TravelParties;
   npc_migrations: NpcMigrations;
   world_travel_budget: WorldTravelBudget;
-}
+};
 
 /** A `Kysely<DB>` widened with the travel tables. */
 export type TravelDb = Kysely<DB & TravelTables>;

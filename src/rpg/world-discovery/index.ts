@@ -9,13 +9,13 @@
  * `discovery.ts` for the replay argument and `trade.ts` for the claims
  * decision.
  */
+export { runDiscoveryTick, } from "./discovery";
+export { discoveredKey, emitWorldEvent, listWorldEvents, tradeRouteKey, } from "./events";
 export {
   DECAY_PER_TICK,
   DISCOVERY_THRESHOLD,
   EXPLORE_GAIN,
-  runDiscoveryTick,
-} from "./discovery";
-export { discoveredKey, emitWorldEvent, listWorldEvents, tradeRouteKey, } from "./events";
+} from "./progress";
 export { runTradeTick, } from "./trade";
 export { discoveryDb, } from "./types";
 export type {
