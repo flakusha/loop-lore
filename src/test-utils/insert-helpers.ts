@@ -4708,6 +4708,28 @@ export async function insertWorldSimulationState(
   return id;
 }
 
+/** Insert a carriage_records row. */
+export async function insertCarriageRecords(
+  db: Db,
+  chat_id: string,
+  scope: string,
+  payload: string,
+  created_at: string,
+  opts?: { id?: string; source_chat_id?: string | null },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("carriage_records",).values({
+    id,
+    chat_id,
+    scope,
+    payload,
+    created_at,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
 /** Insert a wardrobe_items row. */
 export async function insertWardrobeItems(
   db: Db,
@@ -4766,28 +4788,6 @@ export async function insertChatWardrobeOverrides(
     chat_id,
     actor_id,
     outfit_id,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a carriage_records row. */
-export async function insertCarriageRecords(
-  db: Db,
-  chat_id: string,
-  scope: string,
-  payload: string,
-  created_at: string,
-  opts?: { id?: string; source_chat_id?: string | null },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("carriage_records",).values({
-    id,
-    chat_id,
-    scope,
-    payload,
-    created_at,
     ...restOpts,
   } as any,).execute();
   return id;
