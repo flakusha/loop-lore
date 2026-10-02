@@ -35,8 +35,8 @@
  * on this tick is reported one tick late. The composition root owns the
  * list; this only states the requirement.
  */
-import type { AutonomyDispatch, AutonomyDispatchContext, AutonomyDispatchResult, } from "../scheduler/types";
 import { discoveryDb, runDiscoveryTick, runTradeTick, } from "../../rpg/world-discovery";
+import type { AutonomyDispatch, AutonomyDispatchContext, AutonomyDispatchResult, } from "../scheduler/types";
 
 /** Options for {@link createDiscoveryTradeDispatch}. */
 export interface DiscoveryTradeDispatchOptions {

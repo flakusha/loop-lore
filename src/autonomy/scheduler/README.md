@@ -105,7 +105,7 @@ A new subsystem registers by implementing `AutonomyDispatch` — a
 — and passing it as `dispatch: [...]` to the constructor:
 
 ```ts
-new AutonomyScheduler(db, { dispatch: [bdiReflection, gmBeats], },);
+new AutonomyScheduler(db, { dispatch: [bdiReflection, gmBeats,], },);
 ```
 
 Nothing in the tick loop changes. Two properties the seam guarantees:
