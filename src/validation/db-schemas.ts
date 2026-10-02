@@ -1731,7 +1731,6 @@ export const ChatsSchema = t.Object({
   prompt_template_id: t.Optional(t.String(),),
   active_branch_id: t.Optional(t.String(),),
   autonomy_config: t.Optional(t.String(),),
-  federation_consented_at: t.Optional(t.String(),),
 },);
 
 // ── chat_random_events ────────────────────────────────────────────
@@ -3002,7 +3001,6 @@ export const CarriageRecordsSchema = t.Object({
   created_at: t.String(),
   source_chat_id: t.Optional(t.String(),),
 },);
-
 // ── wardrobe_items ────────────────────────────────────────────
 export const WardrobeItemsSchema = t.Object({
   name: t.String(),
@@ -3012,16 +3010,16 @@ export const WardrobeItemsSchema = t.Object({
   tags: t.Optional(t.String(),),
   sort_order: t.Optional(t.Number(),),
   created_at: t.Optional(t.String(),),
-  updated_at: t.Optional(t.String(),),
-},);
+  updated_at: t.Optional(t.String(),},
+});
 
 // ── actor_wardrobe ────────────────────────────────────────────
 export const ActorWardrobeSchema = t.Object({
   actor_id: t.String(),
   wardrobe_item_id: t.String(),
   item_instance_id: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-},);
+  created_at: t.Optional(t.String(),},
+});
 
 // ── chat_wardrobe_overrides ────────────────────────────────────────────
 export const ChatWardrobeOverridesSchema = t.Object({
@@ -3030,26 +3028,80 @@ export const ChatWardrobeOverridesSchema = t.Object({
   outfit_id: t.String(),
   changed_by: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
-  updated_at: t.Optional(t.String(),),
-},);
+  updated_at: t.Optional(t.String(),},
+);
 
-// ── mesh_dek_exports ────────────────────────────────────────────
-export const MeshDekExportsSchema = t.Object({
-  chat_id: t.String(),
-  key_id: t.String(),
-  peer_origin: t.String(),
-  sender_origin: t.String(),
-  created_at: t.Optional(t.String(),),
-  revoked_at: t.Optional(t.String(),),
-},);
+// ── task_dependencies ────────────────────────────────────────────
+export const TaskDependenciesSchema = t.Object({
+  task_id: t.String(),
+  depends_on_task_id: t.String(),
+  on_failure: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),},
+);
 
-// ── mesh_outbox ────────────────────────────────────────────
-export const MeshOutboxSchema = t.Object({
-  target_origin: t.String(),
-  content_id: t.String(),
-  envelope: t.String(),
-  next_attempt_at: t.String(),
-  attempts: t.Optional(t.Number(),),
+// ── travel_parties ────────────────────────────────────────────
+export const TravelPartiesSchema = t.Object({
+  world_id: t.String(),
+  name: t.String(),
+  kind: t.Optional(t.String(),),
+  cadence: t.Optional(t.String(),),
+  route: t.Optional(t.String(),),
+  route_index: t.Optional(t.Number(),),
+  steps_per_tick: t.Optional(t.Number(),),
+  travel_progress: t.Optional(t.Number(),),
+  current_location_id: t.Optional(t.String(),),
+  current_tick: t.Optional(t.Number(),),
   status: t.Optional(t.String(),),
+  blocked_until_tick: t.Optional(t.Number(),),
   created_at: t.Optional(t.String(),),
-},);
+  updated_at: t.Optional(t.String(),},
+);
+
+// ── npc_migrations ────────────────────────────────────────────
+export const NpcMigrationsSchema = t.Object({
+  world_id: t.String(),
+  actor_id: t.String(),
+  depart_tick: t.Number(),
+  arrive_tick: t.Number(),
+  origin_location_id: t.Optional(t.String(),),
+  destination_location_id: t.Optional(t.String(),),
+  cadence: t.Optional(t.String(),),
+  status: t.Optional(t.String(),),
+  last_depart_tick: t.Optional(t.Number(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),},
+});
+
+// ── world_travel_budget ────────────────────────────────────────────
+export const WorldTravelBudgetSchema = t.Object({
+  world_id: t.Optional(t.String(),),
+  spent: t.Optional(t.Number(),),
+  ceiling: t.Optional(t.Number(),),
+  window_start_tick: t.Optional(t.Number(),),
+  updated_at: t.Optional(t.String(),},
+});
+
+// ── world_event_log ────────────────────────────────────────────
+export const WorldEventLogSchema = t.Object({
+  world_id: t.String(),
+  event_type: t.String(),
+  tick_index: t.Number(),
+  dedupe_key: t.String(),
+  subject_id: t.Optional(t.String(),),
+  actor_id: t.Optional(t.String(),),
+  payload: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),},
+);
+
+// ── location_discovery ────────────────────────────────────────────
+export const LocationDiscoverySchema = t.Object({
+  world_id: t.String(),
+  location_id: t.String(),
+  actor_id: t.String(),
+  progress: t.Optional(t.Number(),),
+  last_explored_tick: t.Optional(t.Number(),),
+  discovered: t.Optional(t.Number(),),
+  discovered_tick: t.Optional(t.Number(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),},
+);
