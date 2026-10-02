@@ -50,3 +50,29 @@ Prevents the same `ItemDefinition` (template) from being silently duplicated whe
 - Conflict resolution when one user submits an LLM item that another user already created: default to "first wins"; revisit if UX demands merge.
 
 **Resolved:** 2026-10-04 registry-driven close: git issue c598f22 (registry tip: 1258a3a0b Konstantin Fedotov Auto-closed: appended .md marker marks TASK-055 done)
+
+## Resolution
+
+Duplicate item **templates** are now rejected at creation; duplicate
+**instances** were already handled by TASK-053/TASK-054 and are untouched.
+
+- `DuplicateItemDefinitionError` (carrying `existingItemId`) added at
+  `src/story/items/types.ts:77`.
+- `createDefinition` looks up `(worldId, name, category)` and throws before
+  inserting — `src/story/items/definitions.ts:27` (lookup) and
+  `src/story/items/definitions.ts:35` (throw).
+- LLM tool catches the error and returns `this item already exists` instead of
+  writing a second row — `src/generation/tools/create-item.ts:133`.
+- Anonymous loot drops reuse the existing definition rather than failing, so
+  repeatable drops still work — `src/rpg/loot/persist.ts:184`.
+- Quest rewards issue one template per tuple carrying the quantity (the previous
+  code created `quantity` identical rows) — `src/story/quest-engine/progress.ts:241`.
+- Tests: `src/story/items/definitions.test.ts` (6 tests, real DB) covers the
+  reject-with-existing-id path, no second row inserted, re-import idempotency,
+  and the two legitimate-allow cases (different world, different category).
+
+**Not done (deliberate):** the optional `content_hash` column for
+near-duplicate detection is not implemented — the ticket marks it speculative
+and the `(worldId, name, category)` gate satisfies the stated criteria. The
+`forceReplace: true` re-roll flag from Notes is also not implemented; the gate is
+currently reject-only, which is the safe default.

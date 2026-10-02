@@ -1,20 +1,21 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-
 /**
  * Quest Engine Service — Progress Dispatchers
  *
  * Event-based progress calculation, milestone detection, reward
  * distribution, and the public processEvent / advanceProgress paths.
  */
-import { QuestStatus, type QuestType, } from "../../db/enums";
-import { emitMemoryEvent, MEMORY_EVENT_QUEST_COMPLETED, } from "../../memory/events";
-import { jsonParseOr, } from "../../utils";
-import { applyEvents, } from "../events";
-import { PROGRESS_CALCULATORS, } from "../quests/registry";
-import { requireQuestTransition, selectActiveQuests, upsertQuestProgress, } from "../shared/story-utils";
-import type { QuestConfig, QuestReward, WorldEvent, } from "../types";
 import type { ProgressQuestRow, QuestProgressEntry, QuestState, } from "./types";
+import type { QuestConfig, QuestReward, WorldEvent, } from "../types";
+import { DuplicateItemDefinitionError, } from "../items";
+import { PROGRESS_CALCULATORS, } from "../quests/registry";
+import { QuestStatus, type QuestType, } from "../../db/enums";
+import { applyEvents, } from "../events";
+import { emitMemoryEvent, MEMORY_EVENT_QUEST_COMPLETED, } from "../../memory/events";
+import { getLogger, } from "../../logger";
+import { jsonParseOr, } from "../../utils";
+import { requireQuestTransition, selectActiveQuests, upsertQuestProgress, } from "../shared/story-utils";
 
 /**
  * Get completion percentage for a quest
@@ -199,12 +200,7 @@ async function applyProgress(
   };
 }
 
-/**
- * @param state
- * @param questId
- * @param worldId
- * @param rewardsJson
- */
+/** Apply a quest's reward payload: world changes, unlocked sub-quests, items. */
 async function distributeRewards(
   state: QuestState,
   questId: string,
@@ -231,7 +227,9 @@ async function distributeRewards(
 
   if (rewards.items && state.items) {
     for (const item of rewards.items) {
-      for (let i = 0; i < item.quantity; i++) {
+      // One template per (world, name, category) carrying the quantity, so a
+      // re-issued reward reuses the row (TASK-055).
+      try {
         await state.items.createDefinition({
           worldId,
           name: item.itemId,
@@ -239,11 +237,14 @@ async function distributeRewards(
           category: "quest_item",
           rarity: "uncommon",
           stackable: true,
-          maxStack: 99,
+          maxStack: Math.max(1, item.quantity,),
           properties: {},
           value: 0,
           weight: 0.1,
         },);
+      } catch (error) {
+        if (!(error instanceof DuplicateItemDefinitionError)) { throw error; }
+        getLogger().child({ module: "quest-engine", },).warn("reward item already defined", { worldId, name: item.itemId, },);
       }
     }
   }

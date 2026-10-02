@@ -73,6 +73,14 @@ export class ItemWorldMismatchError extends Error {
   }
 }
 
+/** Raised when a definition with the same (worldId, name, category) exists. */
+export class DuplicateItemDefinitionError extends Error {
+  constructor(public readonly existingItemId: string,) {
+    super(`Item definition already exists in this world: ${existingItemId}`,);
+    this.name = "DuplicateItemDefinitionError";
+  }
+}
+
 /** */
 export interface ItemInstance {
   worldItemId: string;

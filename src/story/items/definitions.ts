@@ -10,16 +10,30 @@ import { StackableState, } from "../../db/enums";
 import type { ItemCategory, } from "../../db/enums";
 import { safeJsonStringify, uid, } from "../../utils";
 import { parseItemEffects, } from "./effects";
+import { DuplicateItemDefinitionError, } from "./types";
 import type { ItemDefinition, ItemState, } from "./types";
 
 /**
- * Create a new item definition
+ * Create a new item definition. Rejects a duplicate `(worldId, name, category)`
+ * tuple with `DuplicateItemDefinitionError`, carrying the existing id.
  * @param state
  * @param def
  * @returns {Promise<string>}
+ * @throws {DuplicateItemDefinitionError} when the tuple already exists
  */
 export async function createDefinition(state: ItemState, def: ItemDefinition,): Promise<string> {
   parseItemEffects(def.properties.effects,);
+  const existing = await state.db
+    .selectFrom("items",)
+    .select("id",)
+    .where("world_id", "=", def.worldId,)
+    .where("name", "=", def.name,)
+    .where("category", "=", def.category,)
+    .orderBy("created_at", "asc",)
+    .executeTakeFirst();
+  if (existing) {
+    throw new DuplicateItemDefinitionError(existing.id,);
+  }
   const id = uid();
   await state.db
     .insertInto("items",)
@@ -40,7 +54,6 @@ export async function createDefinition(state: ItemState, def: ItemDefinition,): 
       weight: def.weight,
     },)
     .execute();
-
   return id;
 }
 

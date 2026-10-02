@@ -13,7 +13,7 @@
 import type { Kysely, } from "kysely";
 import { ItemCategory, ItemRarity, StackableState, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
-import { ItemsService, } from "../../story/items";
+import { DuplicateItemDefinitionError, ItemsService, } from "../../story/items";
 import { safeJsonParse, safeJsonStringify, uid, } from "../../utils";
 import type { LootDrop, LootResult, } from "./types";
 
@@ -165,10 +165,12 @@ async function persistDrop(
   dest: LootDestination,
   fallbackCategory: ItemCategory,
 ): Promise<string[]> {
-  // Resolve (or create) the item definition id.
+  // Resolve (or create) the item definition id. An anonymous drop whose
+  // (world, name, category) already exists reuses that definition instead of
+  // raising a duplicate — drops stay repeatable, the template stays single.
   let definitionId = drop.itemId;
   if (!definitionId) {
-    definitionId = await items.createDefinition({
+    const definition = {
       worldId: dest.worldId,
       name: drop.name,
       description: drop.description,
@@ -179,7 +181,13 @@ async function persistDrop(
       properties: { ...drop.metadata, loot: true, goldValue: drop.goldValue, },
       value: drop.goldValue,
       weight: 1,
-    },);
+    };
+    try {
+      definitionId = await items.createDefinition(definition,);
+    } catch (error) {
+      if (!(error instanceof DuplicateItemDefinitionError)) { throw error; }
+      definitionId = error.existingItemId;
+    }
   }
 
   // Reconcile quantity against the definition: stackable items split into
@@ -190,11 +198,9 @@ async function persistDrop(
       `persistLoot: item definition ${definitionId} not found in world ${dest.worldId}`,
     );
   }
-
   const maxStack = definition.stackable === StackableState.Stackable
     ? (definition.max_stack ?? 1)
     : 1;
-
   if (
     definition.stackable === StackableState.Unique &&
     (definition.rarity === ItemRarity.Unique || definition.rarity === ItemRarity.Artifact)
@@ -202,7 +208,6 @@ async function persistDrop(
     const existing = await items.getUniqueItem(definitionId, dest.worldId,);
     if (existing) { return [existing.id,]; }
   }
-
   const chunks = chunkQuantity(drop.quantity, maxStack,);
 
   // Grant to an NPC or place at a location — a destination is required so
@@ -217,7 +222,6 @@ async function persistDrop(
       throw new Error("persistLoot requires actorId or locationId",);
     }
   }
-
   return ids;
 }
 
