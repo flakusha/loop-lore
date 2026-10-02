@@ -20,6 +20,7 @@
 - [ ] `bun run check` green.
 
 **Epic:** epic-immersion-consistency-gate
+**Depends on:** epic-immersion-consistency-gate (gate engine not yet implemented — `Status: Not Started`; this ticket pre-designs the bypass so it ships with the epic)
 **Tags:** perspective, gate, narrator, bypass, actor-state, integration
 **Related:** epic-perspective-narration-voice.md, epic-narration-actor-separation.md, matrix-story-coherence.md:27, TASK-sc2-narrator-mode-kind-stamp, TASK-sc7-gate-separation-kind-semantics
 
