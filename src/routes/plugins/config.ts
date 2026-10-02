@@ -45,6 +45,7 @@ function resolvePlugin(ctx: any,): { plugin: LoadedPlugin } | { error: Response 
  * @param root0
  * @param root0.database
  * @param prefix
+ * @returns An Elysia plugin exposing the plugin config read/write routes.
  */
 export function pluginConfigRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
   return new Elysia({ name: "plugin-config", },)
