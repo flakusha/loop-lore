@@ -23,10 +23,13 @@ describe("assertValidWrite — messages", () => {
     }).toThrow(/not a legal state pair/);
   });
 
-  test("rejects an unknown status rather than passing it through", () => {
+  test("passes through the legacy 'visible' status default instead of throwing", () => {
+    // messages.status defaults to "visible" in the DB (001_init.ts:1864), which
+    // is not a MessageStatus. updateMessageVisibility is called on such rows by
+    // the profanity gate, so an unknown axis must not block a visibility write.
     expect(() => {
-      assertValidWrite("messages", { status: "visible", visibility: "visible", });
-    }).toThrow(/not a legal state pair/);
+      assertValidWrite("messages", { status: "visible", visibility: "hidden_by_moderator", });
+    }).not.toThrow();
   });
 
   test("rejects a partial write that omits the counterpart axis", () => {
