@@ -84,3 +84,34 @@ Reduce frontend JS bundle size from ~1.34MB to ~134KB (10x reduction) via code-s
 - Compression (gzip/brotli) is already handled by `src/build/compress.ts` — verify ratios
 - Bun's built-in bundler supports `splitting` and `lazy` imports — prefer these over manual chunking
 - Alpine.js components that are not immediately visible should use dynamic `import()` for lazy registration
+
+## Integration Points
+
+### Systems This Epic Depends On
+
+| System | What It Provides | How Used |
+| ------ | ---------------- | -------- |
+| Frontend Component Architecture | Lazy `import()` boundaries | Which components split (see `matrix-frontend-backend-integration.md` FB9) |
+| Routing | Route table | Per-route page chunks |
+| HTML Dedup & HTMX Reuse | JS dedup sibling | Shared-utility extraction |
+
+### Systems That Depend On This Epic
+
+| System | What It Consumes | How Used |
+| ------ | ---------------- | -------- |
+| Routing | Page chunk boundaries | Lazy page bundles |
+| Headless / Alternative Frontends | Bundle strategy | External client payload budget (see FB4) |
+
+### Shared Data Contracts
+
+| Contract | Shared With | Purpose |
+| -------- | ----------- | ------- |
+| Page bundle entry (`src/frontend/pages.ts`) | Routing | Code-split boundary |
+| Compression pipeline (`src/build/compress.ts`, `scripts/build-frontend.mjs`) | All bundles | gzip/brotli output |
+
+### Cross-System Events
+
+| Event | Direction | Purpose |
+| ----- | --------- | ------- |
+| — | — | Build-time optimization; no runtime events |
+

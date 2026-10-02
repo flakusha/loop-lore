@@ -52,3 +52,32 @@ No runtime validation, no OpenAPI codegen, no generated FE types. Add when the d
 - Findings name severity (blocking vs advisory) and the concrete fix direction.
 - Gate entry runs inside `bun run check` without new dependencies.
 - Script stays under the size gate; no `any`, no `console.*` (logger or stdout report only for findings).
+
+## Integration Points
+
+### Systems This Epic Depends On
+
+| System | What It Provides | How Used |
+| ------ | ---------------- | -------- |
+| Frontend ↔ Backend Integration | `feFetch`/`apiFetch`/`hx-*` call sites in `src/frontend/**` | Frontend side of the static join |
+| Routing | View-level `hx-*` route targets | Included in the gate's call-site extraction |
+
+### Systems That Depend On This Epic
+
+| System | What It Consumes | How Used |
+| ------ | ---------------- | -------- |
+| Every UI epic adding routes/calls | Drift findings (`.tmp/fe-be-harmony.json`) | Blocks unknown route / method / body-shape drift |
+
+### Shared Data Contracts
+
+| Contract | Shared With | Purpose |
+| -------- | ----------- | ------- |
+| Normalized `METHOD + path` join key | Frontend ↔ Backend Integration | Match FE calls to Elysia registrations |
+| Elysia `t.Object` required/optional key sets (`src/validation/schemas/`) | All route-adding epics | Body/query shape validation |
+
+### Cross-System Events
+
+| Event | Direction | Purpose |
+| ----- | --------- | ------- |
+| Gate report | emits | `.tmp/fe-be-harmony.json` findings consumed by `bun run check` |
+

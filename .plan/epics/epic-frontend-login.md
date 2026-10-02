@@ -28,3 +28,34 @@ _TBD — expand with frontend implementation tasks._
 ## Tickets
 
 _TBD — create implementation tickets._
+
+## Integration Points
+
+### Systems This Epic Depends On
+
+| System | What It Provides | How Used |
+| ------ | ---------------- | -------- |
+| Auth & Access | Login routes + session/token model | `src/routes/auth/` |
+| Encryption UI | Key unlock / passphrase surface | Session-bound key material (see `matrix-frontend-backend-integration.md` FB3) |
+| Age Gate | Entry verification gate | Pre-auth or per-session (see FB13) |
+
+### Systems That Depend On This Epic
+
+| System | What It Consumes | How Used |
+| ------ | ---------------- | -------- |
+| Admin Panel | Session identity | Revoke/reset/disable actions (see FB10) |
+| Encryption UI | Authenticated session | Unlock key material |
+
+### Shared Data Contracts
+
+| Contract | Shared With | Purpose |
+| -------- | ----------- | ------- |
+| Auth form fields (`src/components/auth-form-fields.html`) | Register/Age Gate | Shared credential inputs |
+| Session cookie/token | Encryption UI, Admin | Identity binding |
+
+### Cross-System Events
+
+| Event | Direction | Purpose |
+| ----- | --------- | ------- |
+| — | — | Server-rendered auth form; redirects only |
+

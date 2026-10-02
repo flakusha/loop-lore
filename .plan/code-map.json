@@ -263,6 +263,10 @@
   ],
   "src/age-gate/service.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-age-gate.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-untrusted-new-date-parse-without-invalid-date-guard.md"
     }
@@ -7931,6 +7935,12 @@
       "source": ".plan/tickets/BUG-giwt-ticket-extid-double-prefix-on-duplicate-type-slug.md"
     }
   ],
+  "src/components": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-extend-fe-be-harmonization-gate-to-cover-external-non-htmx-a.md"
+    }
+  ],
   "src/components/3d/ViewModeSwitcher.vue": [
     {
       "kind": "ticket",
@@ -7986,6 +7996,10 @@
     }
   ],
   "src/components/auth-form-fields.html": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-login.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-i18n-template-strings.md"
@@ -8290,6 +8304,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-frontend-gallery.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-gallery-batch-operations.md"
     },
     {
@@ -8372,6 +8390,18 @@
     }
   ],
   "src/components/chat/input-area.html": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-chat-commands.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-components.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-emoji-reactions.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/EPIC-2026-23.md"
@@ -8593,6 +8623,16 @@
       "source": ".plan/epics/epic-assistant-gm-flows.md"
     }
   ],
+  "src/components/header.html": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-headers-management.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-define-shared-nav-state-contract-between-client-side-routing.md"
+    }
+  ],
   "src/components/housing/crafting-panel.html": [
     {
       "kind": "ticket",
@@ -8629,6 +8669,10 @@
   ],
   "src/components/key-management.html": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-encryption.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-encryption-key-management-ui.md"
     }
@@ -8659,6 +8703,10 @@
   ],
   "src/components/modals/settings.html": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-settings.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-epic11-admin-settings-reconciliation.md"
     }
@@ -8682,6 +8730,10 @@
     }
   ],
   "src/components/overlay-stack.html": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-components.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-025.md"
@@ -8727,6 +8779,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-encryption-key-management-ui.md"
+    }
+  ],
+  "src/components/src/views": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-extend-fe-be-harmonization-gate-to-cover-external-non-htmx-a.md"
     }
   ],
   "src/components/story-map.html": [
@@ -15398,6 +15456,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-admin-user-management-ui-session-revoke-password-reset-accou.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-epic11-admin-settings-reconciliation.md"
     }
   ],
@@ -15518,6 +15580,10 @@
     }
   ],
   "src/frontend/alpine/chat-actions/command-palette.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-chat-commands.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/WIRE-assistant-command-palette-stale-static-list.md"
@@ -15701,6 +15767,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-frontend-components.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-emoji-reactions.md"
     },
     {
       "kind": "ticket",
@@ -16536,6 +16606,10 @@
   "src/frontend/alpine/htmx.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-frontend-components.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-frontend-html-dedup-htmx-reuse.md"
     },
     {
@@ -16606,6 +16680,10 @@
     }
   ],
   "src/frontend/alpine/index.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-component-architecture.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-finalize-notification-bell-header-wiring.md"
@@ -17704,6 +17782,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-frontend-encryption.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-non-standard-browser-crypto.md"
     },
     {
@@ -18127,6 +18209,10 @@
       "source": ".plan/epics/epic-auth-access.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-backend-integration.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-frontend-dead-csrf-bearer-header-machinery.md"
     },
@@ -18215,6 +18301,10 @@
   ],
   "src/frontend/i18n.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-internationalization.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-codemod-fetch-json-safe-utils.md"
     }
@@ -18283,6 +18373,12 @@
       "source": ".plan/tickets/TASK-trading-interface.md"
     }
   ],
+  "src/frontend/locale-init.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-internationalization.md"
+    }
+  ],
   "src/frontend/main.ts": [
     {
       "kind": "ticket",
@@ -18345,6 +18441,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-frontend-bundle-optimization.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-routing.md"
     },
     {
       "kind": "ticket",
@@ -18864,6 +18964,10 @@
     }
   ],
   "src/frontend/stores/ui-store.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-notifications.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-state-contract.md"
@@ -22263,6 +22367,10 @@
   ],
   "src/i18n/translator.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-internationalization.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-010-plurals.md"
     },
@@ -24345,6 +24453,12 @@
       "source": ".plan/tickets/BUG-untrusted-new-date-parse-without-invalid-date-guard.md"
     }
   ],
+  "src/middleware/nsfw-gate/index.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-age-gate.md"
+    }
+  ],
   "src/middleware/nsfw-gate/logging.ts": [
     {
       "kind": "epic",
@@ -25098,6 +25212,10 @@
     }
   ],
   "src/partials/gallery/preview-modal.html": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-gallery.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-gallery-fuzzy-search-pagination.md"
@@ -27197,6 +27315,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-032.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-admin-user-management-ui-session-revoke-password-reset-accou.md"
     }
   ],
   "src/routes/admin/watchdog.test.ts": [
@@ -31317,6 +31439,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-039.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-extend-fe-be-harmonization-gate-to-cover-external-non-htmx-a.md"
     }
   ],
   "src/routes/views.test.ts": [
@@ -31431,6 +31557,10 @@
   ],
   "src/routes/views/gallery.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-gallery.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-gallery-duplicate-serveGalleryGrid.md"
     },
@@ -31491,6 +31621,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/WIRE-nsfw-audit-page-missing-inline-authz.md"
+    }
+  ],
+  "src/routes/views/search.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-gallery.md"
     }
   ],
   "src/routes/views/worlds.ts": [
@@ -38177,6 +38313,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-frontend-minor-bugs-batch.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-extend-fe-be-harmonization-gate-to-cover-external-non-htmx-a.md"
     }
   ],
   "src/views/.../lore-entries.partial.html": [
@@ -38533,6 +38673,10 @@
       "source": ".plan/epics/epic-docs-reconciliation.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-headers-management.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-html-lang-hardcoded-no-dir-handling-for-i18n.md"
     },
@@ -38543,6 +38687,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-comfyui-builder-track-a-alpine-preset-chain-form.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-define-shared-nav-state-contract-between-client-side-routing.md"
     },
     {
       "kind": "ticket",
@@ -38734,6 +38882,10 @@
     }
   ],
   "src/views/settings.html": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-settings.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-emotion-intent-detection.md"

@@ -71,3 +71,33 @@ re-implementing it per view.
 - `epic-frontend-component-architecture.md` — HTMX vs Alpine responsibility boundaries (adjacent, distinct scope)
 - `epic-frontend-bundle-optimization.md` — JS bundle dedup (distinct from HTML dedup)
 - `epic-frontend-backend-integration.md` — shared components list, wiring patterns
+
+## Integration Points
+
+### Systems This Epic Depends On
+
+| System | What It Provides | How Used |
+| ------ | ---------------- | -------- |
+| Frontend Components | Shared partials/components | Extraction targets (see `matrix-frontend-backend-integration.md` FB12) |
+| Frontend Component Architecture | htmx/Alpine boundary | Swap/lifecycle ownership |
+| Bundle Optimization | JS dedup sibling | Distinct from HTML dedup |
+
+### Systems That Depend On This Epic
+
+| System | What It Consumes | How Used |
+| ------ | ---------------- | -------- |
+| Frontend ↔ Backend Integration | Shared partials + wiring pattern | Reuse across wired screens |
+
+### Shared Data Contracts
+
+| Contract | Shared With | Purpose |
+| -------- | ----------- | ------- |
+| Canonical htmx request helper (`src/frontend/alpine/htmx.ts`) | All views | Method/headers/swap/OOB config |
+| `src/components/loading-state.html` | Views/partials | Shared loading state |
+
+### Cross-System Events
+
+| Event | Direction | Purpose |
+| ----- | --------- | ------- |
+| htmx `afterSwap` | emits | `Alpine.initTree()` on extracted fragments |
+
