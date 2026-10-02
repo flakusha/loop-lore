@@ -10,7 +10,7 @@
 
 
 **Status:** In Progress
-**Status Note:** Core Built, Integration Pending
+**Status Note:** Rotation + asset encryption shipped (reconciled 2026-10-02); open gaps: rotation notifications, key-management re-auth gate, Phase 2d algorithm extensibility, Phases 3–4
 **Priority:** Medium
 **Spec:** `docs/spec/encryption-workflow.md`
 
@@ -45,27 +45,27 @@ The encryption workflow now supports future additions of new algorithms through:
 
 ## Remaining Tasks
 
-### Phase 2a: Auto-Key Rotation
+### Phase 2a: Auto-Key Rotation (shipped 2026-10-02 reconcile, except notifications)
 
-- [ ] `KEY_ROTATION_DAYS` config option
-- [ ] `src/crypto/key-rotation.ts` — standalone rotation module
-- [ ] Timer/cron-based auto-rotation trigger
-- [ ] Batch re-encryption pipeline for historical messages
-- [ ] Rotation notification to participants
+- [x] `KEY_ROTATION_DAYS` config option — shipped (`src/config/sections/encryption.ts`, wired in `src/config/schema-class/env-map.ts`, default 90)
+- [x] `src/crypto/key-rotation/` rotation module — shipped (`auto-run.ts`, `timer.ts`, `rotate.ts`, `find-expired.ts`, `re-encrypt.ts`, `rotation-history.ts`)
+- [x] Timer/cron-based auto-rotation trigger — shipped (`startAutoRotationTimer` in `src/crypto/key-rotation/timer.ts`, pinned by `timer.test.ts`)
+- [x] Batch re-encryption pipeline — superseded: post-054 stable per-chat keys removed the re-encrypt requirement (`src/crypto/key-rotation/rotate.ts`, `messagesReEncrypted` always 0 per `rotate.test.ts`); explicit re-encrypt retained for join/leave (`re-encrypt.ts`, incl. `reEncryptChatAssets` with per-asset HKDF subkeys)
+- [ ] Rotation notification to participants — still open (no notify/broadcast path in `src/crypto/key-rotation/` or `key-distribution.ts`)
 
-### Phase 2b: Asset Encryption
+### Phase 2b: Asset Encryption (shipped 2026-10-02 reconcile)
 
-- [ ] Wire `encryptAtRest`/`decryptAtRest` into `src/assets/service.ts`
-- [ ] Add `encryption_tier` + `encrypted_key_id` columns to `assets` table
-- [ ] Key derivation: parent key → asset key (HKDF)
-- [ ] Tests: encrypt on upload, decrypt on download
+- [x] Wire encryption into asset service — shipped (`encryptAssetBlob` in `src/assets/service/create.ts`, decrypt in `src/assets/service/read.ts`, serve path in `src/assets/serve-raw.ts`)
+- [x] Add `encryption_tier` + `encrypted_key_id` columns to `assets` table — shipped (written in `src/assets/service/create.ts`, read in `src/assets/service/read.ts`)
+- [x] Key derivation: parent key → asset key (HKDF) — shipped (`deriveAssetSubkey` in `src/crypto/asset-encryption.ts`, isolation pinned by `src/crypto/asset-encryption.test.ts`)
+- [x] Tests: encrypt on upload, decrypt on download — shipped (`src/assets/service/create.coverage.test.ts`, `src/assets/service/read.test.ts`)
 
-### Phase 2c: Key Management UI
+### Phase 2c: Key Management UI (routes + component shipped 2026-10-02 reconcile; re-auth gate open)
 
-- [ ] `src/frontend/alpine/key-management.ts` — Alpine.js component
-- [ ] `src/components/settings/key-management.html` — UI template
-- [ ] Wire into `/settings/keys` page
-- [ ] Re-auth gate for sensitive operations
+- [x] `src/frontend/alpine/key-management.ts` — Alpine.js component — shipped (imported in `src/frontend/alpine/index.ts`, keys tab in `src/views/settings.html`)
+- [x] Key-management UI template — shipped as keys tab in `src/views/settings.html` (`src/components/settings/key-management.html` does not exist)
+- [x] Wire into settings keys surface — shipped (keys tab + `keyManagementRoutes` in `src/routes/key-management.ts`)
+- [ ] Re-auth gate for sensitive operations — still open (no re-auth/confirm gate found in `src/routes/key-management.ts`)
 
 ### Phase 2d: Algorithm Extensibility
 
