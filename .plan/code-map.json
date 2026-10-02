@@ -27081,10 +27081,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-per-model-per-provider-cost-attribution-for-llm-execution-st.md"
-    },
-    {
-      "kind": "spec",
-      "source": "docs/spec/observability.md"
     }
   ],
   "src/routes/api-keys.ts": [
