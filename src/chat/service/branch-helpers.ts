@@ -9,7 +9,6 @@ import type { DB, } from "../../db/schema";
 import { checkChatAccess, } from "./access";
 import type { ChatBranchWithMeta, } from "./branches";
 import type { ServiceError, } from "./types";
-
 /** Shared 404 for a branch row that is missing or owned by another chat. */
 export const BRANCH_NOT_FOUND: ServiceError = {
   code: "not_found",
@@ -76,6 +75,76 @@ export async function nextAutoName(
     .executeTakeFirst();
 
   return `Branch ${Number(row?.n ?? 0,) + 1 + attempt}`;
+}
+
+/**
+ * Resolve the message chain for a branch: walk from the branch tip
+ * (parent_message_id) to the root. Returns root-to-tip message ids.
+ * @param {Kysely<DB>} db
+ * @param {string} chatId
+ * @param {string} branchId
+ * @param {string} actorId
+ * @returns {Promise<string[]>}
+ */
+export async function getMessagesForBranch(
+  db: Kysely<DB>,
+  chatId: string,
+  branchId: string,
+  actorId: string,
+): Promise<string[]> {
+  const access = await checkChatAccess(db, chatId, actorId, null,);
+  if (!access.ok) { return []; }
+  const branch = await db
+    .selectFrom("chat_branches",)
+    .select(["chat_id", "parent_message_id",],)
+    .where("id", "=", branchId,)
+    .executeTakeFirst();
+  if (!branch || branch.chat_id !== chatId) { return []; }
+  return walkMessagePath(db, chatId, branch.parent_message_id,);
+}
+
+/**
+ * List all branches in a chat with computed metadata.
+ * @param {Kysely<DB>} db
+ * @param {string} chatId
+ * @param {string} actorId
+ */
+export async function listBranches(
+  db: Kysely<DB>,
+  chatId: string,
+  actorId: string,
+): Promise<import("./branches").ListBranchesResult> {
+  const access = await checkChatAccess(db, chatId, actorId, null,);
+  if (!access.ok) { return access.error; }
+
+  const rows = await db
+    .selectFrom("chat_branches",)
+    .selectAll()
+    .where("chat_id", "=", chatId,)
+    .orderBy("created_at", "asc",)
+    .execute();
+
+  const out: import("./branches").ChatBranchWithMeta[] = [];
+  for (const row of rows) {
+    const tip = row.parent_message_id;
+    const tipRow = await db
+      .selectFrom("messages",)
+      .select(["created_at",],)
+      .where("id", "=", tip,)
+      .executeTakeFirst();
+    const path = await walkMessagePath(db, chatId, tip,);
+    out.push({
+      id: row.id,
+      chatId: row.chat_id,
+      parentMessageId: tip,
+      name: row.name,
+      createdAt: row.created_at,
+      isActive: Number(row.is_active,) === 1,
+      messageCount: path.length,
+      lastActivity: tipRow?.created_at ?? null,
+    },);
+  }
+  return { ok: true, branches: out, };
 }
 
 // ── FEAT-046: shared branch-row helpers ───────────────────────
@@ -203,3 +272,5 @@ export async function withMeta(
     lastActivity: tipRow?.created_at ?? null,
   };
 }
+
+export type { ChatBranchWithMeta, ListBranchesResult, } from "./branches";
