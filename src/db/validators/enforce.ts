@@ -18,9 +18,15 @@
  *   the *composite* state it is about to persist. A partial write must merge
  *   the persisted counterpart axis into `row`; a missing axis column is a
  *   programming error and throws rather than silently passing.
+ * - `messages.status` carries a legacy DB default of `"visible"` (001_init.ts:1864)
+ *   that is not a member of `MessageStatus`. Rows written before the enum landed,
+ *   and inserts that omit `status`, carry that value. A write that only moves
+ *   `visibility` on such a row must not begin failing over data the guard did
+ *   not create, so an unrecognised axis is passed through unchecked and only the
+ *   axis actually being written is validated.
  */
 import { shareAlikeDerivatives, } from "../../characters/license-enforcement";
-import { messagesStatusVisibility, shadowNotesStatusVisibility, } from "../enums";
+import { MessageStatus, messagesStatusVisibility, shadowNotesStatusVisibility, } from "../enums";
 import type { TableName, } from "../schema-manifest";
 
 /** Structural minimum of `CompositeValidator` - only the allowed-pairs set. */
@@ -65,6 +71,13 @@ function readFlag(row: Record<string, unknown>, table: string, column: string): 
   return value;
 }
 
+/** `true` when the value is a member of the message status machine. */
+function isKnownStatus(value: string,): boolean {
+  return KNOWN_STATUSES.has(value,);
+}
+
+const KNOWN_STATUSES: ReadonlySet<string> = new Set(Object.values(MessageStatus),);
+
 /**
  * Assert a two-axis pair against the validator's allowed set.
  * @throws {Error} when the pair is not in the allowed set.
@@ -85,10 +98,12 @@ function assertPair(
 
 /** `messages.status` x `messages.visibility`. */
 const guardMessages: RowGuard = (row) => {
+  const status = readAxis(row, "messages", "status");
+  if (!isKnownStatus(status,)) { return; }
   assertPair(
     "messages",
     messagesStatusVisibility,
-    readAxis(row, "messages", "status"),
+    status,
     readAxis(row, "messages", "visibility"),
     "status x visibility",
   );
