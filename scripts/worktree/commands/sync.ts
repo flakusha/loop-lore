@@ -10,7 +10,7 @@
  * through verbatim — giwt owns validation.
  */
 
-import { existsSync, } from "node:fs";
+import { statSync, } from "node:fs";
 import { resolve, } from "node:path";
 
 import { type WorktreeConfig, } from "../utils/config";
@@ -18,6 +18,23 @@ import { log, } from "../utils/output";
 
 /** Path of the pinned giwt entrypoint relative to a checkout root. */
 export const GIWT_CLI_RELATIVE = "node_modules/giwt/src/cli.ts";
+
+/**
+ * True when `path` resolves to a regular file, following symlinks.
+ *
+ * `existsSync` is not enough: a DIRECTORY at the entrypoint path (a partial
+ * or corrupt install) passes it, then hard-fails the spawn with "Module not
+ * found" — turning a recoverable condition into a crash. `statSync` (not
+ * `lstatSync`) follows symlinks on purpose: a worktree's `node_modules` is a
+ * symlink to the dev checkout, and the cli.ts behind it must be a real file.
+ */
+function isFile(path: string,): boolean {
+  try {
+    return statSync(path,).isFile();
+  } catch {
+    return false;
+  }
+}
 
 /**
  * argv for invoking the pinned `giwt`. Runs the TypeScript entrypoint through
@@ -31,13 +48,14 @@ export const GIWT_CLI_RELATIVE = "node_modules/giwt/src/cli.ts";
  * the same version as the `plan:*` scripts. Worktrees symlink `node_modules`
  * to the dev checkout, so the pinned copy is shared, not duplicated.
  *
- * Falls back to the bare `giwt` name when the pinned copy is absent (an
- * uninstalled or vendored checkout). Failing loudly instead would break the
- * documented recovery path for a condition the caller cannot fix.
+ * Falls back to the bare `giwt` name when the pinned copy is not a readable
+ * file (uninstalled, vendored, or a half-written checkout). Failing loudly
+ * instead would break the documented recovery path for a condition the caller
+ * cannot fix.
  */
 export function giwtArgv(repoRoot: string,): { cmd: string; args: string[] } {
   const pinned = resolve(repoRoot, GIWT_CLI_RELATIVE,);
-  if (existsSync(pinned,)) {
+  if (isFile(pinned,)) {
     return { cmd: process.execPath, args: [pinned,], };
   }
   return { cmd: "giwt", args: [], };
