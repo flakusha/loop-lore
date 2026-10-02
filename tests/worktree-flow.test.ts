@@ -16,6 +16,10 @@ let treeDir = "";
 
 interface RunResult {
   stdout: string;
+  // log("warn") and log("error") go to stderr (utils/output.ts:142), so
+  // warning assertions need this. `out` is the combined view.
+  stderr: string;
+  out: string;
   exitCode: number;
 }
 
@@ -29,7 +33,9 @@ function runWt(...args: string[]): RunResult {
       stderr: "pipe",
     },
   );
-  return { stdout: result.stdout.toString(), exitCode: result.exitCode ?? 0, };
+  const stdout = result.stdout.toString();
+  const stderr = result.stderr.toString();
+  return { stdout, stderr, out: stdout + stderr, exitCode: result.exitCode ?? 0, };
 }
 
 function git(repo: string, ...args: string[]): string {
@@ -288,12 +294,28 @@ describe("worktree CLI", () => {
     git(wt, "checkout", "--", "feature.txt",);
   });
 
-  test("33. finalize — no commits beyond base", () => {
+  test("33. finalize — no commits beyond base still tears down", () => {
+    // Regression: ahead === 0 used to `process.exit(0)` at step 4, ~130 lines
+    // before the step 6/7 teardown, leaking the worktree checkout, its
+    // .git/worktrees admin entry, and the branch ref while reporting success.
+    // The old test only asserted the warning substring, so it passed against
+    // the leak. These assertions are the contract.
     git(repoRoot, "checkout", "-b", "feat-no-commits", "master",);
     git(repoRoot, "checkout", "master",);
     runWt("create", "feat-no-commits",);
+    const wt = join(treeDir, "feat-no-commits",);
+    expect(existsSync(wt,),).toBe(true,);
+
     const r = runWt("finalize", "feat-no-commits",);
-    expect(r.stdout,).toContain("no commits beyond",);
+    // The warning is emitted on stderr, not stdout.
+    expect(r.out,).toContain("no commits beyond",);
+    expect(r.stdout,).toContain("Worktree removed",);
+    expect(r.stdout,).toContain("Branch deleted",);
+    expect(existsSync(wt,),).toBe(false,);
+    expect(git(repoRoot, "branch", "--list", "feat-no-commits",),).not.toContain("feat-no-commits",);
+    // The admin entry must be gone too, or `git worktree list` keeps a stale
+    // registration that later confuses finalize/abort.
+    expect(git(repoRoot, "worktree", "list",),).not.toContain("feat-no-commits",);
   });
 
   test("34. agent-merge — alias for finalize", () => {

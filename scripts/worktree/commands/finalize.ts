@@ -924,14 +924,21 @@ async function runFinalize(
   log("info", "Step 4: Checking commits...",);
   const aheadStr = gitSync(wtPath, "rev-list", "--count", `${targetBranch}..HEAD`,);
   const ahead = parseInt(aheadStr || "0", 10,);
-  if (ahead === 0) {
+  // ahead === 0 means the branch is ALREADY merged into the target (or never
+  // diverged). There is nothing to merge, but the teardown in steps 6-7 MUST
+  // still run: exiting here leaked the worktree checkout, its .git/worktrees
+  // admin entry, and the branch ref while reporting success.
+  const nothingToMerge = ahead === 0;
+  if (nothingToMerge) {
     log("warn", `Branch '${branch}' has no commits beyond ${targetBranch} - nothing to merge`,);
-    process.exit(0,);
+  } else {
+    log("success", `Branch has ${ahead} commit(s) beyond ${targetBranch}`,);
   }
-  log("success", `Branch has ${ahead} commit(s) beyond ${targetBranch}`,);
 
   // Step 5: Merge
-  if (mergeStrategy === "rebase" || mergeStrategy === "squash") {
+  if (nothingToMerge) {
+    // Skipped - the target already contains this branch.
+  } else if (mergeStrategy === "rebase" || mergeStrategy === "squash") {
     // 5a: Rebase
     log("info", `Step 5a: Rebasing '${branch}' onto ${targetBranch}...`,);
     const rebaseResult = Bun.spawnSync(
