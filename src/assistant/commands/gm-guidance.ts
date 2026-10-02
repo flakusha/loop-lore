@@ -16,11 +16,16 @@
 // call as `PUT /api/v1/chats/:id/gm-guidance`; `/skip` records the existing
 // turn-skip event (`recordTurnSkip`), the only backend concept for sitting a
 // character out.
+//
+// None of them register a `requiredRole`: that tier is `owner`-gated, which
+// would exclude the moderation-tier `gm` participant that
+// `checkChatSettingsAccess` deliberately admits. The shared access check is
+// the authority instead (see `loadGmTarget`).
 
 import type { Kysely, } from "kysely";
 import { checkChatSettingsAccess, updateGmGuidance, } from "../../chat/service";
 import { recordTurnSkip, } from "../../chat/service/crud/turn-skip";
-import type { GmGuidance, } from "../../chat/types/config";
+import type { GmConfig, GmGuidance, } from "../../chat/types/config";
 import type { DB, } from "../../db/schema";
 import { safeJsonParse, } from "../../utils";
 import { type CommandContext, type CommandResult, registerCommand, } from "./registry";
@@ -54,7 +59,10 @@ function isTurnPriority(value: string | undefined,): value is TurnPriority {
 /**
  * Resolve the caller's story chat and current GM guidance, or the error
  * result to return. Authority mirrors the HTTP gm-guidance route
- * (`checkChatSettingsAccess`): chat creator, owner/gm participant, or admin.
+ * (`checkChatSettingsAccess`): chat creator, owner or GM participant. The
+ * HTTP route additionally admits site admins via its `userRole` argument;
+ * `CommandContext` carries no site role, so that branch is unreachable here
+ * (fail-closed).
  * @param ctx
  */
 async function loadGmTarget(ctx: CommandContext,): Promise<GmTarget | CommandResult> {
@@ -62,9 +70,6 @@ async function loadGmTarget(ctx: CommandContext,): Promise<GmTarget | CommandRes
   if (!db) { return message("**GM guidance unavailable:** command context missing database.",); }
   const userId = ctx.userId;
   if (!userId) { return message("**GM guidance unavailable:** command context missing user.",); }
-  if (ctx.activeChat && ctx.activeChat.mode !== "story") {
-    return message("**GM guidance unavailable:** this is not a story chat.",);
-  }
 
   const access = await checkChatSettingsAccess(db, ctx.chatId, userId, null,);
   if (!access.ok) {
@@ -76,8 +81,16 @@ async function loadGmTarget(ctx: CommandContext,): Promise<GmTarget | CommandRes
     .select("gm_config",)
     .where("id", "=", ctx.chatId,)
     .executeTakeFirst();
-  const parsed = row?.gm_config ? safeJsonParse<{ gmGuidance?: GmGuidance }>(row.gm_config,) : null;
-  const existing = parsed?.ok ? parsed.value.gmGuidance : undefined;
+  const parsed = row?.gm_config ? safeJsonParse<GmConfig>(row.gm_config,) : null;
+  const config = parsed?.ok ? parsed.value : null;
+  // Story mode is signalled by `chats.mode = "story"` OR `gm_config.storyMode`
+  // (the story panel treats either signal as story mode), so accept both
+  // instead of rejecting a story chat whose `mode` column reads "direct".
+  if (ctx.activeChat?.mode !== "story" && config?.storyMode !== true) {
+    return message("**GM guidance unavailable:** this is not a story chat.",);
+  }
+
+  const existing = config?.gmGuidance;
   const guidance: GmGuidance = {
     constraints: existing?.constraints ?? [],
     turnPriority: existing?.turnPriority ?? {},

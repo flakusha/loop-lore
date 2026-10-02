@@ -13,6 +13,7 @@ import type { CommandContext, CommandResult, CommandHandler, } from "./registry"
 import { getCommand, } from "./registry";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
+import { updateGmGuidance, } from "../../chat/service";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertActors, insertChatParticipants, insertChats, insertUsers, } from "../../test-utils/insert-helpers";
 import "./gm-guidance";
@@ -46,12 +47,12 @@ function handler(name: string,): CommandHandler {
   return found;
 }
 
-function ctx(userId = OWNER, mode = "story",): CommandContext {
+function ctx(userId = OWNER, mode = "story", chatId = CHAT_ID,): CommandContext {
   return {
-    chatId: CHAT_ID,
+    chatId,
     db,
     userId,
-    activeChat: { id: CHAT_ID, mode, worldId: "world-1", },
+    activeChat: { id: chatId, mode, worldId: "world-1", },
   };
 }
 
@@ -88,7 +89,9 @@ describe("gm guidance commands", () => {
     await run("constraint", ["stay in character",],);
     await run("constraint", ["stay in character",],);
     const stored = await guidance();
-    expect(stored.constraints,).toEqual(["stay in character",],);
+    // Order-independent: /guide appends to the same list, so assert the
+    // occurrence count rather than the whole array.
+    expect(stored.constraints.filter((c,) => c === "stay in character").length,).toBe(1,);
   });
 
   test("/guide adds a narrative direction", async () => {
@@ -123,18 +126,41 @@ describe("gm guidance commands", () => {
   test("/skip records a turn-skip event for the character", async () => {
     const result = await run("skip", ["Drak",],);
     expect(result.systemMessage,).toContain("skips this beat",);
-    const skip = await db
+    const rows = await db
       .selectFrom("messages",)
       .select(["actor_id", "content_type",],)
       .where("chat_id", "=", CHAT_ID,)
-      .executeTakeFirst();
+      .execute();
+    const skip = rows.find((row,) => row.content_type === "turn_skip",);
     expect(skip?.actor_id,).toBe(VILLAIN,);
     expect(skip?.content_type,).toBe("turn_skip",);
+  });
+
+  test("/skip refuses a character that is not a participant", async () => {
+    const result = await run("skip", ["Nobody",],);
+    expect(result.systemMessage,).toContain("not a participant",);
   });
 
   test("commands are refused outside a story chat", async () => {
     const result = await run("scene", ["x",], ctx(OWNER, "group",),);
     expect(result.systemMessage,).toContain("not a story chat",);
+  });
+
+  test("accepts a chat whose mode is 'direct' but gm_config.storyMode is true", async () => {
+    const directId = "chat-direct";
+    await insertChats(db, "Direct Story", OWNER, { id: directId as never, mode: "direct" as never, },);
+    await insertChatParticipants(db, directId, OWNER, { role_in_chat: "owner" as never, },);
+    await updateGmGuidance(db, directId, { storyMode: true, },);
+
+    const result = await run("scene", ["Tense", "silence",], ctx(OWNER, "direct", directId,),);
+    expect(result.systemMessage,).toContain("scene set",);
+    const row = await db
+      .selectFrom("chats",)
+      .select("gm_config",)
+      .where("id", "=", directId,)
+      .executeTakeFirstOrThrow();
+    const parsed = JSON.parse(row.gm_config ?? "{}",) as { gmGuidance?: GmGuidance };
+    expect(parsed.gmGuidance?.sceneDescription,).toBe("Tense silence",);
   });
 
   test("non-owner participants are denied", async () => {
