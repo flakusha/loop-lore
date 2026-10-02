@@ -27,18 +27,25 @@ export const AUTH_NOISE_ALLOWLIST: readonly RegExp[] = [
 ];
 
 /**
- * Allowlist for endpoints that answer 404 *by design* on a fresh chat and
- * whose client already treats the 404 as an expected empty state.
+ * Allowlist for the one endpoint that answers 404 *by design* on a fresh
+ * chat and whose client already treats the 404 as an expected empty state.
  *
  * `GET /api/v1/chats/:id/game-state` returns 404 until the chat has an
- * extracted ```game-state block (routes/game-state.ts); the game canvas reads
+ * extracted game-state block (routes/game-state.ts); the game canvas reads
  * `res.status === 404` and renders a placeholder rather than an error. The
  * browser still logs the 404 to the console, which trips the blanket
  * `errors.assert()` in otherwise-green tests (BUG flaky
  * navigation.browser.ts "creates new chat and redirects to chat page").
+ *
+ * Endpoint-scoped, not a blanket /404/ match: the URL suffix is part of the
+ * pattern, so a 404 from any other resource — and any non-404 failure —
+ * still lands in `errors` and fails the spec
+ * (BUG-browser-e2e-404-allowlist-masks-real-404s). Matches both shapes the
+ * tracker records: the console line and the response-event line, each with
+ * the offending URL in brackets.
  */
 export const EXPECTED_404_NOISE_ALLOWLIST: readonly RegExp[] = [
-  /Failed to load resource: the server responded with a status of 404/,
+  /Failed to load resource: the server responded with a status of 404 \(Not Found\) \[[^\]]*\/api\/v1\/chats\/[^/?#[\]]+\/game-state/,
 ];
 
 // ── Page error tracking ─────────────────────────────────────
