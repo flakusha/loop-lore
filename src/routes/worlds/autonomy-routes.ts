@@ -2,15 +2,16 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Autonomy read + control surface for a world.
+ * Autonomy read surface for a world.
  *
- * One GET and one POST. The GET is what a settings page needs to show
- * inherited-vs-overridden: the resolved config alone cannot say which
- * layer set a value, so the per-layer overrides ride along. The POST
- * carries the human-in-loop controls (pause / resume / step) that
- * `AutonomyScheduler` already implements — the in-repo alternative to
- * the `giwt sim` CLI, which would have to reach across repositories
- * into this schema.
+ * The GET is what a settings page needs to show inherited-vs-overridden:
+ * the resolved config alone cannot say which layer set a value, so the
+ * per-layer overrides ride along.
+ *
+ * The two writes — the human-in-loop controls (pause / resume / step)
+ * that `AutonomyScheduler` already implements, and the per-actor pacing
+ * override — live in ./autonomy-control.ts, and are mounted here so the
+ * plugin still registers all three under one Elysia name.
  */
 
 import { Elysia, t, } from "elysia";
@@ -18,17 +19,22 @@ import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import { resolveAutonomyLayers, } from "../../autonomy/config";
 import { PRESETS, } from "../../autonomy/config/presets";
-import type { AutonomyConfigOverride, } from "../../autonomy/config/types";
 import { AutonomyGovernor, } from "../../autonomy/governor";
 import type { AutonomyScopeKind, } from "../../autonomy/governor/types";
 import { AutonomyScheduler, } from "../../autonomy/scheduler";
 import { NO_CHAT, } from "../../autonomy/scheduler/store";
-import { CharacterInternalTraitsService, } from "../../characters/services/internal-traits";
 import type { DB, } from "../../db/schema";
 import { ErrorResponse, } from "../../validation/schemas";
-import { requireActorAccess, } from "../actor-auth";
 import { extractAuth, jsonError, jsonResponse, } from "../http-utils";
 import { requireWorldOwner, } from "./access";
+import {
+  actorOverrideResponse,
+  actorOverrideSchema,
+  autonomyControl,
+  controlResponse,
+  controlSchema,
+  setActorAutonomy,
+} from "./autonomy-control";
 import type { HandleOpts, } from "./types";
 
 /** Query the read accepts: which layer to resolve, plus an optional
@@ -40,30 +46,6 @@ const autonomyQuery = t.Object({
   scopeKind: t.Optional(t.Union([t.Literal("actor",), t.Literal("user",),],),),
   scopeId: t.Optional(t.String(),),
 },);
-
-const controlBody = t.Object({
-  action: t.Union([t.Literal("pause",), t.Literal("resume",), t.Literal("step",),],),
-},);
-
-/**
- * A replay seed: an integer, or `null` to un-seed. `hashSeed` runs
- * `String(part)` and `mulberry32` runs `seed >>> 0`, so an unvalidated
- * seed *coerces* instead of failing - a string or float would silently
- * turn an organic world into a deterministic one. Constrained here so a
- * bad value is a 422 and the stored layer is left untouched.
- */
-const SeedSchema = t.Union([t.Integer(), t.Null(),],);
-
-/**
- * A layer override. Only `seed` is typed; the other pacing fields stay
- * open so this stays a pass-through rather than a second copy of
- * `AutonomyConfigOverride` that would drift out of sync. The open keys
- * still reach the handler - `seed` alone has to match.
- */
-const AutonomyOverrideBody = t.Object(
-  { seed: t.Optional(SeedSchema,), },
-  { additionalProperties: true, },
-);
 /**
  * The characters bound to a world, for the per-actor override picker.
  *
@@ -165,27 +147,10 @@ export function autonomyRoutes(opts: HandleOpts, prefix = "/api",) {
     )
     .post(
       `${prefix}/worlds/:worldId/autonomy/control`,
-      async (ctx: any,) => {
-        const { userId, userRole, } = extractAuth(ctx,);
-        const { worldId, } = ctx.params as { worldId: string };
-        const denied = await requireWorldOwner(database, worldId, userId, userRole,);
-        if (denied) { return denied; }
-
-        const scheduler = new AutonomyScheduler(database,);
-        const { action, } = ctx.body as { action: "pause" | "resume" | "step" };
-        try {
-          if (action === "pause") { return jsonResponse(await scheduler.pause(worldId,),); }
-          if (action === "resume") { return jsonResponse(await scheduler.resume(worldId,),); }
-          // `step` returns the tick outcome, not the cursor: the point
-          // of stepping is to see what the tick actually did.
-          return jsonResponse({ tick: await scheduler.stepOnce(worldId,), },);
-        } catch (err) {
-          return jsonError({ message: `Autonomy ${action} failed: ${String(err,)}`, status: 500, },);
-        }
-      },
+      async (ctx: any,) => autonomyControl(database, ctx,),
       {
-        body: controlBody,
-        response: { 200: t.Any(), 401: ErrorResponse, 403: ErrorResponse, },
+        ...controlSchema,
+        response: controlResponse,
         detail: {
           summary: "Pause, resume, or single-step a world's autonomy loop",
           description:
@@ -196,37 +161,10 @@ export function autonomyRoutes(opts: HandleOpts, prefix = "/api",) {
     )
     .put(
       `${prefix}/worlds/:worldId/autonomy/actor/:actorId`,
-      async (ctx: any,) => {
-        const { userId, userRole, } = extractAuth(ctx,);
-        const { worldId, actorId, } = ctx.params as { worldId: string; actorId: string };
-        const denied = await requireWorldOwner(database, worldId, userId, userRole,);
-        if (denied) { return denied; }
-
-        // Owning the world is not owning every actor in it: an admin can
-        // hold world ownership without owning the cast. Gate the actor
-        // layer on the same helper the traits route uses.
-        const access = await requireActorAccess(
-          { ...ctx, params: { actorId, }, } as Parameters<typeof requireActorAccess>[0],
-          database,
-        );
-        if (access instanceof Response) { return access; }
-
-        // `{}` is how the per-actor layer says "no override of my own" —
-        // that is also the clear, so the panel never sends null here.
-        const { autonomy, } = ctx.body as { autonomy?: AutonomyConfigOverride };
-        const svc = new CharacterInternalTraitsService(database,);
-        try {
-          await svc.upsert(actorId, { autonomyPreferences: { autonomy: autonomy ?? {}, }, },);
-          return jsonResponse(
-            await resolveAutonomyLayers(database, { worldId, chatId: NO_CHAT, actorId, },),
-          );
-        } catch (err) {
-          return jsonError({ message: `Failed to save actor autonomy: ${String(err,)}`, status: 500, },);
-        }
-      },
+      async (ctx: any,) => setActorAutonomy(database, ctx,),
       {
-        body: t.Object({ autonomy: t.Optional(AutonomyOverrideBody,), },),
-        response: { 200: t.Any(), 401: ErrorResponse, 403: ErrorResponse, 404: ErrorResponse, },
+        ...actorOverrideSchema,
+        response: actorOverrideResponse,
         detail: {
           summary: "Set a character's autonomy pacing override",
           description:

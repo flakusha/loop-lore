@@ -376,12 +376,12 @@ describe("PUT /api/worlds/:worldId/autonomy/actor/:actorId", () => {
  * an organic world into a deterministic one. `Infinity` is included
  * because it is JSON-reachable (`1e999`) and `Number.isInteger` rejects it.
  */
-const BAD_SEEDS: [string, string][] = [
-  ["a string", '"oops"'],
-  ["a boolean", "true"],
-  ["an object", '{"nested":1}'],
-  ["a float", "1.5"],
-  ["Infinity", "1e999"],
+const BAD_SEEDS: [string, string,][] = [
+  ["a string", '"oops"',],
+  ["a boolean", "true",],
+  ["an object", '{"nested":1}',],
+  ["a float", "1.5",],
+  ["Infinity", "1e999",],
 ];
 
 describe("PUT /api/worlds/:worldId/autonomy/actor/:actorId — seed validation", () => {
@@ -408,7 +408,7 @@ describe("PUT /api/worlds/:worldId/autonomy/actor/:actorId — seed validation",
     expect(data.resolved.seed,).toBeNull();
   });
 
-  test.each(BAD_SEEDS)("rejects %s as a seed with a 4xx", async (_label, rawSeed,) => {
+  test.each(BAD_SEEDS,)("rejects %s as a seed with a 4xx", async (_label, rawSeed,) => {
     const actorId = await addActor("Bad-" + _label, ownerId,);
 
     const res = await putActorRawSeed(actorId, rawSeed,);
@@ -423,7 +423,7 @@ describe("PUT /api/worlds/:worldId/autonomy/actor/:actorId — seed validation",
       .where("actor_id", "=", actorId,)
       .executeTakeFirst();
     expect(row,).toBeUndefined();
-  });
+  },);
 
   test("a rejected seed does not disturb a previously stored override", async () => {
     const actorId = await addActor("Keep", ownerId,);
