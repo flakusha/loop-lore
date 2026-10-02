@@ -66,29 +66,29 @@ Legend:
 
 | System | FBI | FBH | OVR | RTG | HDR | CMP | ARC | DED | BND | LOG | ENC | AGE | NTF | I18N | SET | ADM | GAL | CMD | EMO | HDL | FRS | EMB | SCN |
 | ------ | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| **FBI** | — | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ⬅️ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| **FBH** | ❌ | — | ❌ | ❌ | 🚫 | ❌ | 🚫 | 🚫 | ❌ | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | ❌ | ❌ | ❌ | ❌ |
-| **OVR** | ✅ | ❌ | — | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| **RTG** | ❌ | ❌ | ❌ | — | ❌ | ❌ | ❌ | ❌ | ❌ | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 |
-| **HDR** | ❌ | 🚫 | ❌ | ❌ | — | ❌ | ❌ | ❌ | ❌ | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 |
-| **CMP** | ❌ | ❌ | ❌ | ❌ | ❌ | — | ❌ | ❌ | ❌ | 🚫 | 🚫 | 🚫 | ❌ | ❌ | 🚫 | 🚫 | ⬅️ | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 |
-| **ARC** | ❌ | 🚫 | ❌ | ❌ | ❌ | ❌ | — | ⬅️ | ❌ | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 |
-| **DED** | ➡️ | 🚫 | ❌ | ❌ | ❌ | ❌ | ➡️ | — | ➡️ | 🚫 | 🚫 | 🚫 | 🚫 | ❌ | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 |
-| **BND** | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ⬅️ | — | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | ❌ | ❌ | ❌ | ❌ |
-| **LOG** | ❌ | 🚫 | ❌ | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | — | ❌ | ❌ | 🚫 | 🚫 | 🚫 | ❌ | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 |
-| **ENC** | ❌ | 🚫 | ❌ | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | ❌ | — | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | ⬅️ | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 |
-| **AGE** | ❌ | 🚫 | ❌ | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | ❌ | 🚫 | — | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 |
-| **NTF** | ❌ | 🚫 | ❌ | 🚫 | 🚫 | ❌ | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | — | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | ❌ | ❌ | ❌ | ❌ |
-| **I18N** | ❌ | 🚫 | ❌ | 🚫 | 🚫 | ❌ | 🚫 | ❌ | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | — | ❌ | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 |
-| **SET** | ❌ | 🚫 | ❌ | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | ❌ | — | ⬅️ | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 |
-| **ADM** | ❌ | 🚫 | ❌ | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | ❌ | 🚫 | 🚫 | 🚫 | 🚫 | ➡️ | — | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 |
-| **GAL** | ❌ | 🚫 | ❌ | 🚫 | 🚫 | ➡️ | 🚫 | 🚫 | 🚫 | 🚫 | ➡️ | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | — | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 |
-| **CMD** | ❌ | 🚫 | ❌ | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | — | ❌ | 🚫 | 🚫 | 🚫 | 🚫 |
-| **EMO** | ❌ | 🚫 | ❌ | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | ❌ | — | 🚫 | 🚫 | 🚫 | 🚫 |
-| **HDL** | ❌ | ❌ | ❌ | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | ❌ | 🚫 | 🚫 | 🚫 | ❌ | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | — | ✅ | ⬅️ | ⬅️ |
-| **FRS** | ❌ | ❌ | ❌ | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | ❌ | 🚫 | 🚫 | 🚫 | ❌ | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | ✅ | — | ❌ | ❌ |
-| **EMB** | ❌ | ❌ | ❌ | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | ❌ | 🚫 | 🚫 | 🚫 | ❌ | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | ➡️ | ❌ | — | ✅ |
-| **SCN** | ❌ | ❌ | ❌ | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | ❌ | 🚫 | 🚫 | 🚫 | ❌ | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | 🚫 | ➡️ | ❌ | ✅ | — |
+| **FBI** | — | ✅ | ✅ | ➡️ | ❌ | ➡️ | ❌ | ⬅️ | ❌ | ❌ | ❌ | ❌ | ➡️ | ❌ | ❌ | ➡️ | ➡️ | ➡️ | ➡️ | ❌ | ❌ | ❌ | ❌ |
+| **FBH** | ✅ | — | ❌ | ➡️ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ➡️ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| **OVR** | ✅ | ❌ | — | ⬅️ | ⬅️ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| **RTG** | ⬅️ | ⬅️ | ➡️ | — | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| **HDR** | ❌ | ❌ | ➡️ | ✅ | — | ➡️ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| **CMP** | ⬅️ | ❌ | ❌ | ✅ | ⬅️ | — | ⬅️ | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **ARC** | ❌ | ❌ | ❌ | ❌ | ❌ | ➡️ | — | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| **DED** | ➡️ | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ | — | ✅ | ❌ | ❌ | ❌ | ❌ | ⬅️ | ❌ | ❌ | ➡️ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| **BND** | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ | ✅ | ✅ | — | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ➡️ | ❌ | ❌ | ❌ |
+| **LOG** | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | — | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| **ENC** | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | — | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| **AGE** | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | — | ❌ | ❌ | ➡️ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| **NTF** | ⬅️ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | — | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ➡️ | ❌ | ❌ | ❌ |
+| **I18N** | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ➡️ | ❌ | ❌ | ❌ | ❌ | ❌ | — | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| **SET** | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ⬅️ | ❌ | ✅ | — | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| **ADM** | ⬅️ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ | — | ❌ | ⬅️ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| **GAL** | ⬅️ | ⬅️ | ❌ | ❌ | ❌ | ✅ | ❌ | ⬅️ | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | — | ❌ | ⬅️ | ❌ | ❌ | ❌ | ❌ |
+| **CMD** | ⬅️ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ➡️ | ❌ | — | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **EMO** | ⬅️ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ➡️ | ✅ | — | ❌ | ❌ | ❌ | ❌ |
+| **HDL** | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ⬅️ | ❌ | ❌ | ❌ | ⬅️ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | — | ✅ | ⬅️ | ⬅️ |
+| **FRS** | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | — | ❌ | ❌ |
+| **EMB** | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ➡️ | ❌ | — | ✅ |
+| **SCN** | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ➡️ | ❌ | ✅ | — |
 
 ## Identified Gaps (by severity)
 
@@ -99,30 +99,33 @@ that is missing today. Cells not listed are either ✅/one-way-acceptable or �
 
 | #   | System A | System B | Missing cross-system contract | Owning epics | `src/` surface |
 | --- | -------- | -------- | ----------------------------- | ------------ | -------------- |
-| FB1 | **FBI** (backend→UI wiring) | **FBH** (contract drift gate) | Neither epic references the other. The wiring epic's acceptance "no broken wiring (all frontend calls map to real backend routes)" is exactly what the harmonization gate statically proves — `feFetch`/`apiFetch`/`hx-*` call sites joined to Elysia route literals + TypeBox schemas. The gate must index every route the wiring phases add; the wiring epic must cite the gate as its enforcement. | `epic-frontend-backend-integration.md`, `epic-fe-be-harmonization.md` | `src/frontend/fe-fetch.ts`, `scripts/check-fe-be-harmonization.ts`, `src/routes/` |
-| FB2 | **CMD** (slash commands) | **EMO** (emoji/reactions) | Shared composer trigger registry: `/` command autocomplete and `:name:` emoji autocomplete are the same popup, same keyboard contract, and share the Tab-accept ticket — but neither epic references the other. Disallowed/unknown handling must be uniform across both registries. | `epic-frontend-chat-commands.md`, `epic-frontend-emoji-reactions.md` | `src/components/chat/input-area.html`, `src/frontend/alpine/chat-actions/command-palette.ts` |
-| FB3 | **ENC** (encryption UI) | **LOG** (login UI) | Encryption's open slice ("receive-decrypt + key-management UI pending") needs a session-bound identity and an unlock/passphrase surface owned by login; login never mentions key material. Define where the user's key unlock sits in the auth flow and how a locked session degrades. | `epic-frontend-encryption.md`, `epic-frontend-login.md` | `src/frontend/browser-crypto.ts`, `src/components/key-management.html`, `src/views/login.html`, `src/components/auth-form-fields.html` |
-| FB4 | **HDL** (headless / alt frontends) | **FBH** (contract drift gate) | The gate scans only in-repo `src/frontend/**` + `src/components`/`src/views` HTML. External clients (Fresh, framework SDKs, embeddable) consume `/api/*` with no contract gate — the class of drift the gate exists to catch is unguarded the moment a second frontend ships. Define the published API contract (OpenAPI/versioned types) as the gate for non-htmx clients. | `epic-headless-alternative-frontends.md`, `epic-fe-be-harmonization.md` | `scripts/check-fe-be-harmonization.ts`, `src/routes/`, proposed `packages/` |
+| FB1 | **HDL** (headless / alt frontends) | **FBH** (contract drift gate) | The gate scans only in-repo `src/frontend/**` + `src/components`/`src/views` HTML. External clients (Fresh, framework SDKs, embeddable) consume `/api/*` with no contract gate — the class of drift the gate exists to catch is unguarded the moment a second frontend ships. Define the published API contract (OpenAPI/versioned types) as the gate for non-htmx clients. | `epic-headless-alternative-frontends.md`, `epic-fe-be-harmonization.md` | `scripts/check-fe-be-harmonization.ts`, `src/routes/`, proposed `packages/` |
+| FB2 | **HDL** (headless / alt frontends) | **LOG** (login UI) | Headless clients need session auth (token provisioning, refresh, logout) but never reference the login epic. Define the auth flow for non-htmx clients: how tokens are obtained, stored, and refreshed outside the browser session. | `epic-headless-alternative-frontends.md`, `epic-frontend-login.md` | `src/routes/`, `src/views/login.html`, `src/components/auth-form-fields.html` |
 
 ### 🟡 Medium — one-way links or missing cross-references
 
 | #    | System A | System B | Missing cross-system contract | Owning epics | `src/` surface |
 | ---- | -------- | -------- | ----------------------------- | ------------ | -------------- |
-| FB5  | **RTG** (routing) | **HDR** (headers/nav) | Same navigation surface: route table and header/nav state are one contract (active link, breadcrumb, htmx-history). Neither epic references the other; both are unscoped stubs. | `epic-frontend-routing.md`, `epic-frontend-headers-management.md` | `src/components/header.html`, `src/views/layout.html` |
-| FB6  | **I18N** (i18n) | **CMP** / **DED** (components, htmx reuse) | Server-rendered partials must re-hydrate translations after every htmx swap (`Alpine.initTree()` path); i18n does not reference the component library or the htmx lifecycle owner. Define `data-i18n` hydration in the swap lifecycle. | `epic-frontend-internationalization.md`, `epic-frontend-components.md`, `epic-frontend-html-dedup-htmx-reuse.md` | `src/frontend/i18n.ts`, `src/frontend/locale-init.ts`, `src/frontend/alpine/htmx.ts`, `src/components/` |
-| FB7  | **NTF** (notifications UI) | **CMP** (components) | Notification toasts/overlays build on the shared overlay stack + UI store; the notifications epic has no scope at all and never names the component library. | `epic-frontend-notifications.md`, `epic-frontend-components.md` | `src/views/notifications.html`, `src/components/overlay-stack.html`, `src/frontend/stores/ui-store.ts` |
-| FB8  | **I18N** (i18n) | **SET** (settings) | Locale/language preference is a settings section; neither epic references the other. Define where locale is chosen, persisted, and applied to already-rendered pages. | `epic-frontend-internationalization.md`, `epic-frontend-settings.md` | `src/views/settings.html`, `src/components/modals/settings.html`, `src/frontend/locale-init.ts` |
-| FB9  | **ARC** (component architecture) | **BND** (bundle) | Lazy `import()` code-splitting of Alpine components is an architecture decision (which components register eagerly vs on demand); bundle optimization defines the splitting targets but component-architecture is an unscoped stub. | `epic-frontend-component-architecture.md`, `epic-frontend-bundle-optimization.md` | `src/frontend/pages.ts`, `src/frontend/app.ts`, `scripts/build-frontend.mjs` |
-| FB10 | **ADM** (admin) | **LOG** (login UI) | Admin user management revokes sessions / resets passwords / disables accounts — the auth surface the login epic owns; admin references settings one-way and never login. | `epic-frontend-admin.md`, `epic-frontend-login.md` | `src/routes/admin/users.ts`, `src/frontend/alpine/admin-users.ts`, `src/views/login.html` |
-| FB11 | **OVR** (frontend hub) | all FE subsystems | The declared hub references only the wiring epic. It should index the frontend subsystems (routing, headers, components, i18n, notifications, settings, admin, gallery, composer) so the domain has one entry point. | `epic-frontend-overview.md` | `src/views/layout.html` |
+| FB3  | **OVR** (frontend hub) | all FE subsystems | The declared hub references only the wiring epic. It should index the frontend subsystems (routing, headers, components, i18n, notifications, settings, admin, gallery, composer) so the domain has one entry point. | `epic-frontend-overview.md` | `src/views/layout.html` |
+| FB4  | **RTG** (routing) | **ARC** (component architecture) | Client-side routing and the htmx/Alpine responsibility boundary are related: route transitions trigger swaps that must respect the architecture's ownership rules. Neither epic references the other. | `epic-frontend-routing.md`, `epic-frontend-component-architecture.md` | `src/frontend/pages/`, `src/frontend/alpine/` |
+| FB5  | **RTG** (routing) | **DED** (html dedup / htmx reuse) | Route transitions trigger htmx swaps; the swap lifecycle (AfterSwap → Alpine.initTree()) is owned by DED. Routing must reference the swap lifecycle for OOB handling and dedup. | `epic-frontend-routing.md`, `epic-frontend-html-dedup-htmx-reuse.md` | `src/frontend/alpine/htmx.ts`, `src/frontend/pages/` |
+| FB6  | **HDR** (headers/nav) | **ARC** (component architecture) | Header/nav components are part of the component architecture; the architecture's ownership rules must cover them. Neither epic references the other. | `epic-frontend-headers-management.md`, `epic-frontend-component-architecture.md` | `src/components/header.html`, `src/frontend/alpine/` |
+| FB7  | **CMP** (components) | **BND** (bundle) | Shared components are the primary code-splitting targets; bundle optimization must reference the component library to define which components load eagerly vs on demand. | `epic-frontend-components.md`, `epic-frontend-bundle-optimization.md` | `src/components/`, `src/frontend/pages.ts` |
+| FB8  | **LOG** (login) | **NTF** (notifications) | Login success/failure should trigger notifications (welcome back, failed attempt alert); the login epic never references the notification system. | `epic-frontend-login.md`, `epic-frontend-notifications.md` | `src/views/login.html`, `src/views/notifications.html`, `src/frontend/stores/ui-store.ts` |
+| FB9  | **LOG** (login) | **GAL** (gallery) | Private gallery assets require auth; the gallery epic never references the login epic. Define how auth state gates gallery access. | `epic-frontend-login.md`, `epic-frontend-gallery.md` | `src/views/gallery.html`, `src/routes/views/gallery.ts`, `src/views/login.html` |
+| FB10 | **I18N** (i18n) | **NTF** (notifications) | Notification messages must be translatable; the i18n epic never references the notification system. Define the i18n key namespace for notifications. | `epic-frontend-internationalization.md`, `epic-frontend-notifications.md` | `src/frontend/i18n.ts`, `src/views/notifications.html` |
+| FB11 | **SET** (settings) | **NTF** (notifications) | Notification preferences (mute, quiet hours, channel selection) are a settings section; neither epic references the other. | `epic-frontend-settings.md`, `epic-frontend-notifications.md` | `src/views/settings.html`, `src/components/modals/settings.html`, `src/views/notifications.html` |
+| FB12 | **ADM** (admin) | **NTF** (notifications) | Admin actions (ban, delete, role change) should notify affected users; the admin epic never references the notification system. | `epic-frontend-admin.md`, `epic-frontend-notifications.md` | `src/views/admin.html`, `src/frontend/alpine/admin.ts`, `src/views/notifications.html` |
+| FB13 | **HDL** (headless / alt frontends) | **I18N** (i18n) | Headless clients need locale selection and translation hydration; the headless epic never references the i18n epic. | `epic-headless-alternative-frontends.md`, `epic-frontend-internationalization.md` | `src/routes/`, `src/frontend/i18n.ts`, `src/frontend/locale-init.ts` |
+| FB14 | **HDL** (headless / alt frontends) | **SET** (settings) | Headless clients need settings persistence and retrieval; the headless epic never references the settings epic. | `epic-headless-alternative-frontends.md`, `epic-frontend-settings.md` | `src/routes/`, `src/views/settings.html` |
 
 ### 🟢 Low — peripheral cross-references
 
 | #    | System A | System B | Missing cross-system contract | Owning epics | `src/` surface |
 | ---- | -------- | -------- | ----------------------------- | ------------ | -------------- |
-| FB12 | **DED** (html dedup) | **CMP** (components) | Dedup references component-architecture but not the component library where extracted partials actually land. | `epic-frontend-html-dedup-htmx-reuse.md`, `epic-frontend-components.md` | `src/components/`, `src/partials/`, `src/frontend/alpine/htmx.ts` |
-| FB13 | **AGE** (age gate) | **LOG** (login UI) | Age verification is an entry-flow gate adjacent to login; neither epic references the other. Define whether the age gate precedes auth or runs per-session. | `epic-frontend-age-gate.md`, `epic-frontend-login.md` | `src/age-gate/service.ts`, `src/views/login.html`, `src/routes/views/` |
-| FB14 | **GAL** (gallery) | **CMP** (components) | Gallery references the component library one-way (modals/buttons/badges); the component library never lists the gallery modals it hosts. One-way is acceptable; noted for completeness. | `epic-frontend-gallery.md`, `epic-frontend-components.md` | `src/partials/gallery/preview-modal.html`, `src/components/asset-preview-modal.html` |
+| FB15 | **FRS** (Fresh frontend) | **LOG** (login UI) | Fresh.js frontend needs auth; never references the login epic. | `epic-fresh-alternative-frontend.md`, `epic-frontend-login.md` | proposed `loop-lore-fresh-starter/`, `src/views/login.html` |
+| FB16 | **EMB** (embeddable engine) | **LOG** (login UI) | Embeddable engine may need auth for saved games; never references the login epic. | `epic-embeddable-engine-game-frontend.md`, `epic-frontend-login.md` | proposed `src/frontend/game/`, `src/views/login.html` |
+| FB17 | **SCN** (game scenes) | **LOG** (login UI) | Game scenes may need auth for saved state; never references the login epic. | `epic-game-frontend-scenes.md`, `epic-frontend-login.md` | proposed `src/frontend/game/`, `src/views/login.html` |
 
 ## Shared Data Contracts
 
@@ -143,7 +146,7 @@ GAL, CMD, EMO.
 Left without a new section (already carry an equivalent explicit dependency block, or
 are pointer hubs whose deps are their sub-epics):
 
-- `epic-frontend-overview.md` — pointer hub; indexes `epic-frontend-backend-integration.md` only (see FB11).
+- `epic-frontend-overview.md` — pointer hub; indexes `epic-frontend-backend-integration.md` only (see FB3).
 - `epic-headless-alternative-frontends.md` — hub with an explicit Sub-Epics table + shared-interface block.
 - `epic-fresh-alternative-frontend.md` — explicit Dependencies + Related Epics block.
 - `epic-embeddable-engine-game-frontend.md` — hub with Sub-Epics table + sequencing.
