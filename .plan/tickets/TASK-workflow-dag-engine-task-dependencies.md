@@ -3,7 +3,7 @@
 
 # TASK: Workflow DAG engine — task dependencies
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Large
 **Summary:** Task-dependency DAG execution engine for multi-step agentic workflows
@@ -25,3 +25,5 @@ Source: docs/meta/admin-visibility-research.md workflow-automation section; extr
 - [ ] Status surface: per-node state (blocked/ready/running/done/failed/skipped)
 - [ ] Unit tests: diamond DAG, cycle rejection, failure-skip, failure-retry
 - [ ] `bun run check` passes
+
+**Resolved:** 2026-10-02 registry-driven close: git issue 328dee7 (registry tip: d07beb65e Konstantin Fedotov Auto-closed: appended .md marker marks TASK-WORKFLOW-DAG-ENGINE-TASK-DE)
