@@ -27,3 +27,7 @@ Duplicate of existing plan artifact(s) — verified 2026-09-19 docs-gap reconcil
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Canonical ticket
+
+Canonical implementation ticket: `FEAT-memory-visualizer-knowledge-graph-over-asset-links.md` (Epic epic-analytics-observability) — the grounded `GET /api/memory/knowledge-graph` route + frontend component ticket backed by the `asset_links` table. This stub stays as a duplicate pointer only; do not implement here.
