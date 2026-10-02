@@ -48,36 +48,72 @@ const GENERATED_MARKER = "DO NOT EDIT MANUALLY";
 const SIZE_ALLOW_RE = /^\/\/\s*size-allow:\s*(\d+)\s*$/m;
 const HEADER_BYTES = 512;
 
-let errors = 0;
-let warnings = 0;
-for (const pattern of GLOBS) {
-  const glob = new Glob(pattern,);
-  for await (const file of glob.scan()) {
-    if (file.includes(".test.",) || file.includes("/migrations/",) || file.startsWith("scripts/worktree/",)) { continue; }
-    const text = await Bun.file(file,).text();
-    if (text.includes(GENERATED_MARKER,)) { continue; }
-    const allowMatch = text.slice(0, HEADER_BYTES,).match(SIZE_ALLOW_RE,);
-    const fileLimit = allowMatch ? parseInt(allowMatch[1], 10,) : LIMIT;
-    const lines = text.split("\n",).length;
-    if (lines > fileLimit) {
-      const msg = `[size] ${file}: ${lines}L exceeds ${fileLimit}L limit`;
-      if (STRICT) {
-        console.error(msg + " - must split (see 04)",);
-        errors++;
-      } else {
-        console.warn(msg + " - consider splitting (see 04)",);
-        warnings++;
+/**
+ * Count real content lines.
+ *
+ * A trailing newline TERMINATES the last line; it does not begin a new one.
+ * `split("\n").length` counts that empty tail as a line, so every
+ * newline-terminated file was reported one line over its true size and was
+ * failed even when it sat exactly at its declared `size-allow`.
+ *
+ * Stripping the single trailing newline — rather than counting "\n"
+ * occurrences the way `wc -l` does — also counts the final partial line of a
+ * file that has no trailing newline. `wc -l` under-reports those by one, which
+ * would only trade this bug for its mirror image.
+ *
+ * @param text - full file contents
+ * @returns number of lines of content
+ */
+export function countContentLines(text: string,): number {
+  if (text === "") { return 0; }
+  return text.split("\n",).length - (text.endsWith("\n",) ? 1 : 0);
+}
+
+/**
+ * Whether a file's content lines exceed its budget. A file sitting exactly at
+ * its limit is compliant; only going over fails.
+ *
+ * @param text - full file contents
+ * @param limit - the line budget to compare against
+ * @returns true when the file is over budget
+ */
+export function exceedsSizeAllow(text: string, limit: number,): boolean {
+  return countContentLines(text,) > limit;
+}
+
+// CLI guard: only scan when executed directly, so the helpers above stay
+// importable by check-file-size.test.ts.
+if (import.meta.main) {
+  let errors = 0;
+  let warnings = 0;
+  for (const pattern of GLOBS) {
+    const glob = new Glob(pattern,);
+    for await (const file of glob.scan()) {
+      if (file.includes(".test.",) || file.includes("/migrations/",) || file.startsWith("scripts/worktree/",)) { continue; }
+      const text = await Bun.file(file,).text();
+      if (text.includes(GENERATED_MARKER,)) { continue; }
+      const allowMatch = text.slice(0, HEADER_BYTES,).match(SIZE_ALLOW_RE,);
+      const fileLimit = allowMatch ? parseInt(allowMatch[1], 10,) : LIMIT;
+      if (exceedsSizeAllow(text, fileLimit,)) {
+        const msg = `[size] ${file}: ${countContentLines(text,)}L exceeds ${fileLimit}L limit`;
+        if (STRICT) {
+          console.error(msg + " - must split (see 04)",);
+          errors++;
+        } else {
+          console.warn(msg + " - consider splitting (see 04)",);
+          warnings++;
+        }
       }
     }
   }
-}
 
-if (STRICT && errors > 0) {
-  console.error(`[size] ${errors} file(s) over ${LIMIT}L - CI gate failed.`,);
-  process.exit(1,);
-}
+  if (STRICT && errors > 0) {
+    console.error(`[size] ${errors} file(s) over ${LIMIT}L - CI gate failed.`,);
+    process.exit(1,);
+  }
 
-if (warnings > 0) {
-  console.warn(`[size] ${warnings} file(s) over ${LIMIT}L. Non-blocking - split when convenient.`,);
+  if (warnings > 0) {
+    console.warn(`[size] ${warnings} file(s) over ${LIMIT}L. Non-blocking - split when convenient.`,);
+  }
+  process.exit(0,);
 }
-process.exit(0,);
