@@ -74,15 +74,36 @@ export const AvailabilityBody = t.Object({
   nsfw_policy: t.Optional(t.Nullable(t.String(),),),
 },);
 
-/**
- * Licensing upsert body — mirrors the `character_licensing` columns
- * (all optional: the endpoint upserts, keeping existing values for absent keys).
- */
-export const LicensingBody = t.Object({
+/** Licensing columns that take no part in the cross-field constraint below. */
+const LICENSING_SCALARS = {
   license_type: t.Optional(t.String(),),
   custom_license_text: t.Optional(t.Nullable(t.String(),),),
   attribution: t.Optional(t.Nullable(t.String(),),),
-  allow_derivatives: t.Optional(t.Boolean(),),
   allow_commercial: t.Optional(t.Boolean(),),
-  share_alike: t.Optional(t.Boolean(),),
-},);
+};
+
+/**
+ * Licensing upsert body — mirrors the `character_licensing` columns
+ * (all optional: the endpoint upserts, keeping existing values for absent keys).
+ *
+ * `share_alike` is only meaningful when derivatives are allowed, so the pair is
+ * declared as a union of the two legal shapes rather than two independent
+ * booleans. This is the same `shareAlikeDerivatives` invariant the write guard
+ * enforces (`src/characters/license-enforcement.ts`), stated at the validation
+ * boundary so a `forbidden:yes` body is rejected with a 422 instead of reaching
+ * `assertValidWrite`, where the guard's `throw` would surface as a 500.
+ */
+export const LicensingBody = t.Union([
+  // derivatives forbidden -> share_alike must not be yes
+  t.Object({
+    ...LICENSING_SCALARS,
+    allow_derivatives: t.Optional(t.Literal(false),),
+    share_alike: t.Optional(t.Literal(false),),
+  },),
+  // derivatives allowed (or unspecified) -> share_alike unconstrained
+  t.Object({
+    ...LICENSING_SCALARS,
+    allow_derivatives: t.Optional(t.Literal(true),),
+    share_alike: t.Optional(t.Boolean(),),
+  },),
+],);
