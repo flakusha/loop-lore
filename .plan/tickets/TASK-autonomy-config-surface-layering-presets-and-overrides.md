@@ -8,14 +8,14 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Wontfix
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-actor-autonomy-story-drive.md
+**Epic:** epic-actor-autonomy-story-drive
 
 ## Summary
 
-Configuration layering and UX affordances for autonomy pacing: world default, chat override, per-actor override; pacing presets; gated unlimited stress preset. Epic: epic-actor-autonomy-story-drive.md. Consumed by TASK-autonomy-rate-governor-for-llm-actors and TASK-story-auto-drive-scheduler.
+Configuration layering and UX affordances for autonomy pacing: world default, chat override, per-actor override; pacing presets; gated unlimited stress preset. Epic: epic-actor-autonomy-story-drive. Consumed by TASK-autonomy-rate-governor-for-llm-actors and TASK-story-auto-drive-scheduler.
 
 ## Direction
 
@@ -27,8 +27,36 @@ Configuration layering and UX affordances for autonomy pacing: world default, ch
 
 ## Acceptance
 
-- [ ] Precedence verified: per-actor > chat > world > preset defaults.
-- [ ] Unlimited preset refused outside dev builds (config validation test).
-- [ ] Preset switching changes observed cadence in a scheduler integration test.
-- [ ] Settings UI shows live budget consumption per actor.
+- [x] Precedence verified: per-actor > chat > world > preset defaults.
+- [x] Unlimited preset refused outside dev builds (config validation test).
+- [x] Preset switching changes observed cadence in a scheduler integration test.
+- [x] Settings UI shows live budget consumption per actor.
+
+## Duplicate of
+
+`TASK-autonomy-config-surface.md` (Status: **Done**, git issue `d08a0f2`) — the same
+work, filed twice in this epic. Every acceptance criterion above is already met
+and tested by the shipped config surface: `resolveAutonomyConfig`
+(`src/autonomy/config/resolver.ts`) implements the per-actor > per-chat > per-world >
+preset precedence, and `src/autonomy/config/resolver.test.ts` proves it in
+`describe("resolveAutonomyConfig — layering precedence")` (7 tests, including
+"actor override wins over chat and world" and "chat preset wins over world; world-set
+scalar survives"), while `describe("dev-only gating")` (4 tests) proves the
+unlimited-stress preset throws `UnboundedStressGatedError` under
+`NODE_ENV=production` at both the preset registry (`getPreset`) and the resolver
+(`resolveAutonomyConfig`, world layer). Preset switching is asserted end to end: `src/autonomy/config/config-api.test.ts`
+("a chat preset saved through updateChat overrides the world one") checks the
+resolved `cfg.tickIntervalMs` flips to `PRESETS.serene.tickIntervalMs`, and the
+scheduler advances the cursor by exactly that resolved value (the `#advance(...,
+cfg.tickIntervalMs)` call in `src/autonomy/scheduler/index.ts`, asserted in
+`src/autonomy/scheduler/index.test.ts`, "moves an NPC through the existing
+pipeline and advances the cursor"). The last box is covered by the Done
+ticket's routes and UI: `src/routes/worlds/autonomy-routes.test.ts` reads back
+the budget line from `GET /api/worlds/:worldId/autonomy`, and
+`tests/e2e/flows/browser/autonomy-panel.browser.ts` drives the per-character
+override save end to end. Nothing here is unimplemented, so this file is closed
+as a duplicate rather than worked.
+
+Wontfix recorded 2026-10-02; `**Epic:**` corrected from the non-existent id
+`epic-actor-autonomy-story-drive.md` to `epic-actor-autonomy-story-drive`.
 

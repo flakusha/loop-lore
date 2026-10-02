@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-
-import { Elysia, } from "elysia";
 import type { Config, } from "../../config/schema";
 import type { Db, } from "../../db";
+import { Elysia, } from "elysia";
 import { auditRoutes, } from "./audit";
 import { auxTelemetryRoutes, } from "./aux-telemetry";
 import { carriageRoutes, } from "./carriage";
@@ -19,6 +18,7 @@ import { sdStatusRoutes, } from "./sd-status";
 import { statsRoutes, } from "./stats";
 import { systemConfigRoutes, } from "./system-config";
 import { usersRoutes, } from "./users";
+import { worldEventsRoutes, } from "./world-events";
 import { worldsRoutes, } from "./worlds";
 
 /**
@@ -36,6 +36,7 @@ import { worldsRoutes, } from "./worlds";
  *   GET  /api/admin/model-roles    — get current role assignments
  *   PUT  /api/admin/model-roles/:role — set role override
  *   DELETE /api/admin/model-roles/:role — clear role override
+ *   GET  /api/admin/world-events?world_id=… — world simulation event log
  *   GET  /api/admin/cron/jobs      — list scheduled job statuses
  *   POST /api/admin/cron/jobs/:name/run — manually trigger a job
  * @param opts
@@ -56,6 +57,7 @@ export function adminRoutes(opts: { database: Db; config: Config }, prefix = "/a
       .use(sdStatusRoutes(opts, prefix,),)
       .use(systemConfigRoutes(opts, prefix,),)
       .use(worldsRoutes(opts, prefix,),)
+      .use(worldEventsRoutes(opts, prefix,),)
       .use(chatsRoutes(opts, prefix,),)
       .use(carriageRoutes(opts, prefix,),)
       .use(cronRoutes(opts, prefix,),)

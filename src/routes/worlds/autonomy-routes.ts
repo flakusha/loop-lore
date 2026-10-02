@@ -46,6 +46,25 @@ const controlBody = t.Object({
 },);
 
 /**
+ * A replay seed: an integer, or `null` to un-seed. `hashSeed` runs
+ * `String(part)` and `mulberry32` runs `seed >>> 0`, so an unvalidated
+ * seed *coerces* instead of failing - a string or float would silently
+ * turn an organic world into a deterministic one. Constrained here so a
+ * bad value is a 422 and the stored layer is left untouched.
+ */
+const SeedSchema = t.Union([t.Integer(), t.Null(),],);
+
+/**
+ * A layer override. Only `seed` is typed; the other pacing fields stay
+ * open so this stays a pass-through rather than a second copy of
+ * `AutonomyConfigOverride` that would drift out of sync. The open keys
+ * still reach the handler - `seed` alone has to match.
+ */
+const AutonomyOverrideBody = t.Object(
+  { seed: t.Optional(SeedSchema,), },
+  { additionalProperties: true, },
+);
+/**
  * The characters bound to a world, for the per-actor override picker.
  *
  * @param database the request's Kysely handle
@@ -93,7 +112,6 @@ export function autonomyRoutes(opts: HandleOpts, prefix = "/api",) {
           scopeKind?: AutonomyScopeKind;
           scopeId?: string;
         };
-
         const chatId = q.chatId || NO_CHAT;
         try {
           const { layers, resolved, } = await resolveAutonomyLayers(database, {
@@ -101,7 +119,6 @@ export function autonomyRoutes(opts: HandleOpts, prefix = "/api",) {
             chatId,
             actorId: q.actorId || undefined,
           },);
-
           return jsonResponse({
             layers,
             resolved,
@@ -192,7 +209,6 @@ export function autonomyRoutes(opts: HandleOpts, prefix = "/api",) {
           { ...ctx, params: { actorId, }, } as Parameters<typeof requireActorAccess>[0],
           database,
         );
-
         if (access instanceof Response) { return access; }
 
         // `{}` is how the per-actor layer says "no override of my own" —
@@ -209,7 +225,7 @@ export function autonomyRoutes(opts: HandleOpts, prefix = "/api",) {
         }
       },
       {
-        body: t.Object({ autonomy: t.Optional(t.Record(t.String(), t.Unknown(),),), },),
+        body: t.Object({ autonomy: t.Optional(AutonomyOverrideBody,), },),
         response: { 200: t.Any(), 401: ErrorResponse, 403: ErrorResponse, 404: ErrorResponse, },
         detail: {
           summary: "Set a character's autonomy pacing override",

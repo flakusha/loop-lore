@@ -12,7 +12,8 @@ runNpcMovementTick(db, worldId, opts)
   ├─ resolveAutonomyConfig(db)     ──► skipped: "disabled"
   ├─ rng() < cfg.jitterRatio?      ──► skipped: "jitter"
   ├─ governor.tryConsume(per_tick) ──► skipped: "budget"
-  └─ processMovementTick(db, w)    ──► { results, preset, jitterRatio }
+  └─ processMovementTick(db, w,
+       { rng, nowMs })               ──► { results, preset, jitterRatio }
 ```
 
 Checks are cheapest-first so a paused world never touches DB.
@@ -43,7 +44,7 @@ setInterval(async () => {
 | `paused`   | `boolean`          | `false`       | Skip without DB / governor work. |
 | `nowMs`    | `number`           | `Date.now()`  | Test determinism.                |
 | `governor` | `AutonomyGovernor` | `new`         | Inject shared instance.          |
-| `rng`      | `() => number`     | `Math.random` | Inject deterministic RNG.        |
+| `rng`      | `() => number`     | `Math.random` | Drives the jitter draw AND wander/flee choice. |
 
 ## Result
 
@@ -58,7 +59,8 @@ type RunNpcMovementTickResult =
 
 ## Acceptance (from TASK-world-simulation-npc-navigation-tick-driver)
 
-- ✅ Calls `processMovementTick(db, worldId)` once per scheduler tick.
+- ✅ Calls `processMovementTick(db, worldId, { rng, nowMs })` once per
+  scheduler tick, forwarding the resolved rng and clock.
 - ✅ Jittered (configurable via `cfg.jitterRatio` from layered config).
 - ✅ Governor denies on budget exhaustion — returns `skipped: "budget"`.
 - ✅ No scheduler added here (P4 owns that).
@@ -71,8 +73,11 @@ is below the ratio, the tick is skipped without touching NPC movement.
 This prevents NPCs from moving in lockstep across multiple worlds
 sharing the same scheduler beat.
 
-Per-NPC sampling would give finer granularity but requires modifying
-`processMovementTick` — out of scope for this ticket.
+Per-NPC sampling would give finer granularity but is not needed: the
+per-NPC destination draw (wander/flee) reads the SAME `rng` the jitter
+draw does, so one seed now spans both. `processMovementTick` takes
+`{ rng, nowMs }` and resolves `Math.random` / `Date.now` only when
+they are omitted, so unseeded worlds behave exactly as before.
 
 ## Pause semantics
 

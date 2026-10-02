@@ -81,6 +81,20 @@ export interface BuildResultOptions {
 
 // ── GM Decision Result ──────────────────────────────────────
 
+/**
+ * Per-call knobs for `executeTurn`. Defaults preserve the HTTP-route
+ * behaviour, so a caller that passes nothing still moves NPCs.
+ */
+export interface ExecuteTurnOptions {
+  /**
+   * Run the NPC movement tick as part of the turn. Default `true` — the
+   * HTTP story-step route owns movement. Pass `false` when the caller has
+   * already moved the world this tick (the autonomy scheduler's movement
+   * dispatch), so one tick advances every NPC exactly once.
+   */
+  moveNpcs?: boolean;
+}
+
 /** */
 export interface GmTurnResult {
   turnId: string;
