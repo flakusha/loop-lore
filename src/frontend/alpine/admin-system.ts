@@ -53,21 +53,7 @@ export const adminSystem = {
 
   // ── Setup wizard slice (TASK-frontend-setup-wizard; see admin-import-wizard.ts) ──
   ...adminImportWizard.call({} as never,) as Record<string, unknown> as object,
-  // ── Analytics ───────────────────────────────────────────
-  analyticsSummary: { total: 0, distinct_sessions: 0, distinct_users: 0, },
-  dailyStats: [] as { count: number; active_users: number; date: string }[],
-  errorEvents: [] as { id: string; event_type: string; session_id: string | null; created_at: string }[],
-  conversationOverview: {
-    totalMessages: 0,
-    totalTokens: 0,
-    averageSessionLength: 0,
-    totalGenerations: 0,
-    avgLatencyMs: 0,
-    costEstimate: 0,
-    topChats: [] as { id: string; name: string; totalMessages: number; totalTokens: number }[],
-  },
-  loadingAnalytics: false,
-  purgingAnalytics: false,
+  // Analytics state + loaders live in the `adminAnalytics` slice (admin-analytics.ts).
 
   // ── Health + NSFW (from admin-health.ts) ────────────────
   ...healthPanelMethods(),
@@ -142,50 +128,6 @@ export const adminSystem = {
       URL.revokeObjectURL(url,);
     } catch {
       showToast("error", t("toasts.networkError",),);
-    }
-  },
-
-  async loadAnalytics() {
-    this.loadingAnalytics = true;
-    try {
-      const [summaryRes, dailyRes, errorsRes, conversationRes,] = await Promise.allSettled([
-        apiFetch("/api/v1/telemetry/analytics/summary", { headers: { Accept: "application/json", }, },),
-        apiFetch("/api/v1/telemetry/analytics/daily?limit=30", { headers: { Accept: "application/json", }, },),
-        apiFetch("/api/v1/telemetry/analytics/errors", { headers: { Accept: "application/json", }, },),
-        apiFetch("/api/analytics/overview", { headers: { Accept: "application/json", }, },),
-      ],);
-      if (
-        summaryRes.status !== "fulfilled" || dailyRes.status !== "fulfilled" || errorsRes.status !== "fulfilled" ||
-        conversationRes.status !== "fulfilled"
-      ) {
-        throw new Error("analytics load failed",);
-      }
-      if (summaryRes.value.ok) { this.analyticsSummary = await summaryRes.value.json(); }
-      if (dailyRes.value.ok) { this.dailyStats = await dailyRes.value.json(); }
-      if (errorsRes.value.ok) { this.errorEvents = await errorsRes.value.json(); }
-      if (conversationRes.value.ok) { this.conversationOverview = await conversationRes.value.json(); }
-    } catch {
-      showToast("error", t("toasts.failedLoadAnalytics",),);
-    } finally {
-      this.loadingAnalytics = false;
-    }
-  },
-  async purgeAnalytics() {
-    if (this.purgingAnalytics) { return; }
-    this.purgingAnalytics = true;
-    try {
-      const res = await apiFetch("/api/v1/telemetry/analytics/purge?days=90", { method: "DELETE", },);
-      if (res.ok) {
-        showToast("success", t("toasts.telemetryPurged",),);
-        await this.loadAnalytics();
-      } else {
-        const err = await res.json();
-        showToast("error", err.message || t("toasts.failed",),);
-      }
-    } catch {
-      showToast("error", t("toasts.networkError",),);
-    } finally {
-      this.purgingAnalytics = false;
     }
   },
 
