@@ -178,5 +178,8 @@ export async function deleteWardrobeItem(
  * @returns {boolean} whether the item is visible to the actor
  */
 async function ownsItem(db: Kysely<DB>, itemId: string, actorId: string,): Promise<boolean> {
-  return (await getWardrobeItem(db, itemId, actorId,)) !== null;
+  // getWardrobeItem yields `undefined` for both "no such row" and "row not
+  // visible to this actor" — compare against undefined, never null, or the
+  // ownership check would pass for every caller.
+  return (await getWardrobeItem(db, itemId, actorId,)) !== undefined;
 }
