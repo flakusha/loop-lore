@@ -307,7 +307,7 @@ architecture:
 
 ### TUI Mode
 
-Located in `src/tui/` — detailed in [`docs/tui.md`](./tui.md)
+Located in `src/tui/` — detailed in [`docs/terminal-ui.md`](./terminal-ui.md)
 
 #### Main Application (`src/tui/app.ts`)
 

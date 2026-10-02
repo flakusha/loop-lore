@@ -6,7 +6,7 @@
 # SPEC: Federated Instance Switcher (Frontend) — Implementation
 
 **Companion to:** `TASK-federation-instance-switcher-in-frontend-travel-between-inst.md`
-**Status:** ready for implementation
+**Status:** design spec — `src/federation/switcher/` is aspirational. Alpine store lives at `src/frontend/stores/index.ts`. `src/routes/worlds/index.ts` is implemented.
 **Author:** research synthesis, 2026-09-24
 **Research basis:** `/.tmp/fed-research/topic-3-instance-switcher.md`
 

@@ -40,7 +40,7 @@ Partial Windows compatibility exists. Core runtime and database layers work; TUI
 #### ✅ Completed
 
 - `src/services/external-server-utils.ts:22` — Binary discovery handles `.exe` suffix on Windows
-- `src/services/server-external-manager.ts:333,364` — Process killing omits signal strings on Windows (SIGTERM/SIGKILL unsupported)
+- `src/services/server-external-manager/lifecycle.ts:17-27,58-63` — Windows `process.kill()` uses `terminate()` which omits signal strings (SIGTERM/SIGKILL unsupported); `start-sd.ts` / `start-llama.ts` only spawn processes and call `stop()`
 - `src/config/cert.ts:44-45` — TLS certificate generation tries `openssl.exe` on Windows
 
 #### ⚠️ TUI Limitations
@@ -49,7 +49,7 @@ Partial Windows compatibility exists. Core runtime and database layers work; TUI
 - TUI works in Windows Terminal/ConEmu but with reduced functionality
 - Consider documenting alternative: WSL2 for full TUI experience
 
-**Action:** Add Windows TUI caveat to `docs/spec/tui.md`:
+**Action:** Add Windows TUI caveat to `docs/spec/terminal-ui.md`:
 
 > TUI on Windows: Mouse and resize events are not supported. Use WSL2 or Windows Terminal for best experience.
 
@@ -132,7 +132,7 @@ All path operations use `node:path` which handles separators correctly. No hardc
 
 ### Signal Handling
 
-Unix signals are abstracted in `server-external-manager.ts`. Windows uses terminate() instead of signal strings.
+Windows signal-string omission is implemented in `src/services/server-external-manager/lifecycle.ts:17-27,58-63` (`stop()` + `killAllSync()`). `start-sd.ts` / `start-llama.ts` only spawn processes and call `stop()`; `index.ts` re-exports `killAllSync`.
 
 ### Process Management
 
@@ -187,7 +187,7 @@ Both Bun and Deno support WASM. Consider:
 
 ## Related Files
 
-- `src/services/server-external-manager.ts` — Platform-specific process handling
+- `src/services/server-external-manager/` — Process handling: `lifecycle.ts` contains platform-conditional Windows signal logic; `start-sd.ts` / `start-llama.ts` spawn; `index.ts` re-exports `killAllSync`
 - `src/config/cert.ts` — TLS generation with platform hints
 - `src/services/external-server-utils.ts` — Binary discovery with `.exe` suffix
 - `scripts/build-frontend.sh` — Build script requiring shell port
