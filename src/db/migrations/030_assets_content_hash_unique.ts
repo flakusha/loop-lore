@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * 028_assets_content_hash_unique
+ * 030_assets_content_hash_unique
  *
  * Backs the asset dedup key with a database constraint so the insert, not a
  * pre-read, arbitrates concurrent identical uploads. Before this migration
@@ -65,7 +65,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
 
   for (const dupe of dupes.rows) {
     process.emitWarning(
-      `[028_assets_content_hash_unique] owner ${dupe.owner_id} has ${dupe.n} rows with identical content at tier ${dupe.encryption_tier}; collapsing to the oldest.`,
+      `[030_assets_content_hash_unique] owner ${dupe.owner_id} has ${dupe.n} rows with identical content at tier ${dupe.encryption_tier}; collapsing to the oldest.`,
     );
     // Keep the oldest row: it owns the storage_path and asset_links that any
     // surviving reference already points at. Newer duplicates are orphans.
