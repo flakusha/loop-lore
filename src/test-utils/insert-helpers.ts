@@ -4772,6 +4772,146 @@ export async function insertCarriageRecords(
   return id;
 }
 
+/** Insert a task_dependencies row. */
+export async function insertTaskDependencies(
+  db: Db,
+  task_id: string,
+  depends_on_task_id: string,
+  opts?: { on_failure?: string; created_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("task_dependencies",).values({
+    task_id,
+    depends_on_task_id,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a travel_parties row. */
+export async function insertTravelParties(
+  db: Db,
+  world_id: string,
+  name: string,
+  opts?: {
+    id?: string;
+    kind?: string;
+    cadence?: string;
+    route?: string;
+    route_index?: number;
+    steps_per_tick?: number;
+    travel_progress?: number;
+    current_location_id?: string | null;
+    current_tick?: number;
+    status?: string;
+    blocked_until_tick?: number;
+    created_at?: string;
+    updated_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("travel_parties",).values({
+    id,
+    world_id,
+    name,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a npc_migrations row. */
+export async function insertNpcMigrations(
+  db: Db,
+  world_id: string,
+  actor_id: string,
+  depart_tick: number,
+  arrive_tick: number,
+  opts?: {
+    id?: string;
+    origin_location_id?: string | null;
+    destination_location_id?: string | null;
+    cadence?: string;
+    status?: string;
+    last_depart_tick?: number;
+    created_at?: string;
+    updated_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("npc_migrations",).values({
+    id,
+    world_id,
+    actor_id,
+    depart_tick,
+    arrive_tick,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a world_travel_budget row. */
+export async function insertWorldTravelBudget(
+  db: Db,
+  opts?: { world_id?: string; spent?: number; ceiling?: number; window_start_tick?: number; updated_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("world_travel_budget",).values({
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a world_event_log row. */
+export async function insertWorldEventLog(
+  db: Db,
+  world_id: string,
+  event_type: string,
+  tick_index: number,
+  dedupe_key: string,
+  opts?: { id?: string; subject_id?: string | null; actor_id?: string | null; payload?: string; created_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("world_event_log",).values({
+    id,
+    world_id,
+    event_type,
+    tick_index,
+    dedupe_key,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a location_discovery row. */
+export async function insertLocationDiscovery(
+  db: Db,
+  world_id: string,
+  location_id: string,
+  actor_id: string,
+  opts?: {
+    progress?: number;
+    last_explored_tick?: number;
+    discovered?: number;
+    discovered_tick?: number | null;
+    created_at?: string;
+    updated_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("location_discovery",).values({
+    world_id,
+    location_id,
+    actor_id,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
 /** Insert a wardrobe_items row. */
 export async function insertWardrobeItems(
   db: Db,
