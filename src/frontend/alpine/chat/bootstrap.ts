@@ -45,6 +45,7 @@ import { chatMusicEmbed, } from "./music-embed";
 import { chatWorld, } from "./world";
 
 import { chatMusicLinks, } from "../chat-music-links";
+import { transitionPicker, } from "../chat-transition-picker";
 import { slashAutocomplete, } from "../slash-autocomplete";
 import { mergeReactiveSource, } from "./merge-reactive";
 
@@ -87,6 +88,7 @@ export function chatState() {
     ...gifPicker,
     ...turnSkipActions,
     ...messageActions,
+    ...transitionPicker,
     ...chatMusicEmbed,
     ...chatPins,
     ...chatMusicLinks,

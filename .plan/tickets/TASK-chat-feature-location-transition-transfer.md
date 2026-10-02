@@ -9,6 +9,7 @@
 
 
 **Status:** Done
+**Status Note:** verified 2026-10-02 — AC1/AC6 (mode chooser + header affordance) shipped in this batch (`src/frontend/alpine/chat-transition-picker.ts`, `chat-header.html`); AC2–AC5 backend pre-shipped (carry-*, splitParty/reuniteChats, migrateChat session event)
 **Priority:** Medium
 **Effort:** High
 **Epic:** epic-chat-product-features
@@ -19,12 +20,12 @@ Support location transitions either by creating a new chat rooted in the destina
 
 ## Acceptance Criteria
 
-- [ ] User can choose between (a) create new chat at destination, (b) isolate current chat context, (c) update location in place
-- [ ] New-chat creation carries participants, world-state, and recent memory via `src/chat/service/carry-*`
-- [ ] Context isolation shards the chat into a destination-locked scope without losing continuity
-- [ ] Party members are atomically moved together — no orphan participants
-- [ ] Transfer emits a transition event consumed by `src/chat/service/transitions.ts`
-- [ ] Visible UI affordance in chat header / location panel
+- [x] User can choose between (a) create new chat at destination, (b) isolate current chat context, (c) update location in place
+- [x] New-chat creation carries participants, world-state, and recent memory via `src/chat/service/carry-*`
+- [x] Context isolation shards the chat into a destination-locked scope without losing continuity
+- [x] Party members are atomically moved together — no orphan participants
+- [x] Transfer emits a transition event consumed by `src/chat/service/transitions.ts`
+- [x] Visible UI affordance in chat header / location panel
 
 ## Related Tickets / Epics
 
@@ -49,4 +50,3 @@ Support location transitions either by creating a new chat rooted in the destina
 
 - Are carry-over memories deep copies or references?
 - When the user picks (b), is the original chat archived or retained?
-
