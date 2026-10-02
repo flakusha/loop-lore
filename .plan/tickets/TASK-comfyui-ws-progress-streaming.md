@@ -33,7 +33,7 @@ behind `POST /api/v1/image-edit/run` (`src/image-edit/routes.ts:69` `handleRun`)
 ## Acceptance Criteria
 
 - [ ] `ComfyUIClient.submitWorkflow` accepts optional `client_id` and sends it in the `/prompt` body; executions scope per client (multi-client disambiguation)
-- [ ] New `subscribeProgress(promptId, clientId, onEvent)` on the client opens `/ws?clientId=...`, routes execution events into the existing `ImageEditProgress` shape (`src/image-edit/types.ts:120`), closes on terminal state; poll remains as fallback when WS unavailable
+- [ ] New `subscribeProgress(promptId, clientId, onEvent)` on the client opens `/ws?clientId=...`, routes execution events into the existing `ImageEditProgress` shape (`src/image-edit/types.ts:110`; `onProgress` opt field at `:120` on `ImageEditExecuteOpts`), closes on terminal state; poll remains as fallback when WS unavailable
 - [ ] `ComfyUIEditProvider.execute` and `generateComfyUI` surface progress (percentage / node / preview image) to their callers without changing result shapes
 - [ ] `POST /api/v1/image-edit/run` exposes progress to the frontend (SSE or WS fan-out); gallery/template UI shows live progress instead of spinner
 - [ ] Tests: `src/generation/providers/comfyui.test.ts` covers `client_id` body + WS event routing (mock socket); fallback-to-poll covered when WS fails

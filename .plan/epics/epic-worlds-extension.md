@@ -33,7 +33,7 @@ Hub epic for the social / temporal / spatial / interaction layers on top of the 
 - [ ] Epoch + time-scale engine advances world time and drives NPC schedules + weather; scale size configurable per world
 - [ ] 2D/3D map data model persists per world with render hooks; locations anchor to map coordinates
 - [ ] Location asset / resource generation spawns items, unique items (world-scoped single-instance), and renewable/depletable pools with tracking
-- [ ] Chat mode-switch state machine routes normal / battle / question / inventory modes to the correct orchestration
+- [ ] `InteractionMode` switch state machine routes normal / battle / question / inventory modes to the correct orchestration
 
 ## Overview
 
@@ -108,7 +108,14 @@ interface LocationResource {
 }
 ```
 
-## Chat Mode Switches
+## Chat Interaction Modes
+
+> Naming note: `ChatMode` is taken at HEAD by `src/chat/types/config.ts:9`
+> (`"direct" | "group" | "story"`, mirroring the `ChatMode` DB enum in
+> `src/db/enums-core/users.ts`). The concept below is therefore named
+> `InteractionMode` to avoid colliding with the shipped chat-axis type and
+> its importers (`src/chat/types/context.ts`, `src/chat/types/variants.ts`,
+> `src/turning/types.ts`, prompt assembler, validators).
 
 | Mode      | Behavior                      |
 | --------- | ----------------------------- |
@@ -117,7 +124,7 @@ interface LocationResource {
 | Inventory | Item management interactions  |
 
 ```typescript
-type ChatMode = "normal" | "battle" | "question" | "inventory";
+type InteractionMode = "normal" | "battle" | "question" | "inventory";
 ```
 
 ## Tasks
@@ -130,14 +137,18 @@ type ChatMode = "normal" | "battle" | "question" | "inventory";
 - [ ] Unique-item world scoping
 - [ ] Chat mode switch state machine + routing
 
-## Files
+## Planned Files (not yet existing — Status: Not Started)
 
-- `src/worlds/license.ts` — shareability + licensing
-- `src/worlds/timescale.ts` — epochs + scale
-- `src/worlds/maps.ts` — 2D / 3D map model
-- `src/worlds/resources.ts` — location assets + resources
-- `src/chat/mode-switch.ts` — chat mode routing
-- `src/db/schema.ts` — world_license, world_timescale, location_resource tables
+> None of the paths below exist at HEAD (`src/worlds/` is absent entirely;
+> zero hits for `world_license`/`world_timescale`/`location_resource` in
+> `src/db/schema.ts`). Each is a planned task output, not an existing module.
+
+- `src/worlds/license.ts` (planned) — shareability + licensing
+- `src/worlds/timescale.ts` (planned) — epochs + scale
+- `src/worlds/maps.ts` (planned) — 2D / 3D map model
+- `src/worlds/resources.ts` (planned) — location assets + resources
+- `src/chat/mode-switch.ts` (planned) — `InteractionMode` routing (see naming note above)
+- `src/db/schema.ts` (planned tables) — world_license, world_timescale, location_resource tables
 
 ## Linked Tasks
 
