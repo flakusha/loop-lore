@@ -24,7 +24,7 @@
 | Templates | `admin-templates.ts`            | `admin-templates.ts`    | ✅ Complete — CRUD                        |
 | Plugins   | `admin.ts` plugin list          | —                       | ⚠️ Basic — no enable/disable UI            |
 | System    | `admin.ts` config CRUD          | `admin-system.ts`       | ✅ Complete — config, NSFW, analytics     |
-| Analytics | `analytics.ts` + `telemetry.ts` | `admin-system.ts`       | ⚠️ Partial — no charts, no per-user        |
+| Analytics | `src/routes/analytics/` + `telemetry.ts` | `admin-system.ts`, `admin-analytics.ts` | ⚠️ Partial — CSS-bar charts (volume, tokens by role, latency) + per-character comparison shipped (FEAT-059); no per-user/admin-wide breakdown |
 | Health    | `health.ts`                     | `admin-system.ts`       | ✅ Basic — provider status                |
 
 ### Analytics & Telemetry
@@ -32,11 +32,12 @@
 | Endpoint                                | Description                                             | Gap                                   |
 | --------------------------------------- | ------------------------------------------------------- | ------------------------------------- |
 | `GET /api/analytics/chats/:chatId`      | Per-chat stats (generations, tokens, latency, cost)     | No time-series, no breakdown by model |
+| `GET /api/analytics/characters`         | Per-character rollup for the caller (messages, tokens, avg response length, tokens/message) | No cost attribution, no per-model split |
 | `GET /api/analytics/overview`           | Aggregate stats (total messages, tokens, latency, cost) | No per-user breakdown, no trends      |
 | `GET /api/telemetry/analytics/summary`  | Total events, distinct sessions/users                   | No event type breakdown               |
 | `GET /api/telemetry/analytics/models`   | Event counts by type (started/completed/failed)         | No latency distribution               |
 | `GET /api/telemetry/analytics/errors`   | Recent error events (limit 50)                          | No error rate, no trends, no alerts   |
-| `GET /api/telemetry/analytics/daily`    | Daily event counts + active users                       | No charts, no export                  |
+| `GET /api/telemetry/analytics/daily`    | Daily event counts + active users                       | No export                             |
 | `DELETE /api/telemetry/analytics/purge` | Purge old events                                        | No retention policy automation        |
 
 ### Model Comparison Leaderboard
@@ -113,7 +114,7 @@
 | ---------------------------------------------------------------------------------- | ------------------------------------ | ------ | -------- |
 | **No error rate dashboard** — errors exist in telemetry but no trend visualization | High — can't detect error spikes     | Med    | P1       |
 | **No alert thresholds** — no way to set alerts for error rates                     | High — reactive instead of proactive | Med    | P1       |
-| **No request latency tracking** — analytics has avg latency but no distribution    | Med — can't identify slow endpoints  | Low    | P2       |
+| **No per-endpoint latency tracking** — generation latency is bucketed in `/api/analytics/overview` (`latencyBuckets`), but HTTP request latency is untracked | Med — can't identify slow endpoints  | Low    | P2       |
 | **No database performance monitoring** — no query latency tracking                 | Med — can't detect slow queries      | Med    | P2       |
 | **No memory/CPU usage tracking** — no resource monitoring                          | Low — can check manually             | Low    | P3       |
 
