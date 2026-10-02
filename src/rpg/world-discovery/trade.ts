@@ -5,7 +5,7 @@
  * src/rpg/world-discovery/trade.ts — `trade:route` per tick
  *
  * Reads the travel domain (`travel_parties`, `npc_migrations`, both from
- * `030_world_travel_simulation`) and leaves a `trade:route` event for every
+ * `036_world_travel_simulation`) and leaves a `trade:route` event for every
  * convoy that is in motion. No LLM call, no `Math.random()`: pure read plus
  * an idempotent insert, the deterministic tier of
  * `docs/spec/autonomy-determinism.md`. Nothing here draws from the tick RNG
@@ -55,6 +55,7 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { travelDb, } from "../../rpg/world-travel";
+import { jsonParseOr, } from "../../utils/safe-json";
 import { emitWorldEvent, tradeRouteKey, } from "./events";
 import { discoveryDb, TRADE_ROUTE, type TradeResult, } from "./types";
 
@@ -91,8 +92,8 @@ interface Convoy {
  */
 async function readMovingParties(db: Kysely<DB>, worldId: string,): Promise<Convoy[]> {
   const rows = await travelDb(db,)
-    .selectFrom("travel_parties")
-    .select(["id", "route", "route_index", "current_location_id", "status",])
+    .selectFrom("travel_parties",)
+    .select(["id", "route", "route_index", "current_location_id", "status",],)
     .where("world_id", "=", worldId,)
     .where("status", "in", MOVING,)
     .orderBy("id", "asc",)
@@ -116,8 +117,8 @@ async function readMovingParties(db: Kysely<DB>, worldId: string,): Promise<Conv
  */
 async function readMigrations(db: Kysely<DB>, worldId: string,): Promise<Convoy[]> {
   const rows = await travelDb(db,)
-    .selectFrom("npc_migrations")
-    .select(["id", "actor_id", "origin_location_id", "destination_location_id",])
+    .selectFrom("npc_migrations",)
+    .select(["id", "actor_id", "origin_location_id", "destination_location_id",],)
     .where("world_id", "=", worldId,)
     .where("status", "=", IN_TRANSIT,)
     .orderBy("id", "asc",)
@@ -143,14 +144,10 @@ async function readMigrations(db: Kysely<DB>, worldId: string,): Promise<Convoy[
  * just reports no destination rather than failing the whole world tick.
  */
 function edgeAhead(raw: string, routeIndex: number,): string | null {
-  try {
-    const parsed: unknown = JSON.parse(raw,);
-    if (!Array.isArray(parsed,)) { return null; }
-    const route = parsed.filter((id,): id is string => typeof id === "string",);
-    return route[routeIndex + 1] ?? null;
-  } catch {
-    return null;
-  }
+  const parsed: unknown = jsonParseOr(raw, null,);
+  if (!Array.isArray(parsed,)) { return null; }
+  const route = parsed.filter((id,): id is string => typeof id === "string");
+  return route[routeIndex + 1] ?? null;
 }
 
 /**
@@ -162,8 +159,8 @@ function edgeAhead(raw: string, routeIndex: number,): string | null {
  */
 async function tradeVolume(db: Kysely<DB>, worldId: string,): Promise<number> {
   const row = await db
-    .selectFrom("trade_history")
-    .select((eb,) => eb.fn.countAll<string>().as("total",),)
+    .selectFrom("trade_history",)
+    .select((eb,) => eb.fn.countAll<string>().as("total",))
     .where("world_id", "=", worldId,)
     .executeTakeFirst();
   return Number(row?.total ?? 0,);
@@ -178,11 +175,9 @@ async function tradeVolume(db: Kysely<DB>, worldId: string,): Promise<number> {
  * @returns how many convoys were in motion, and how many events landed
  */
 export async function runTradeTick(db: Kysely<DB>, worldId: string, currentTick: number,): Promise<TradeResult> {
-  const [parties, migrations, trades] = await Promise.all([
-    readMovingParties(db, worldId,),
-    readMigrations(db, worldId,),
-    tradeVolume(db, worldId,),
-  ]);
+  const parties = await readMovingParties(db, worldId,);
+  const migrations = await readMigrations(db, worldId,);
+  const trades = await tradeVolume(db, worldId,);
 
   // Sort the merged list by subject id so the INSERT order is total too —
   // the merge of two ordered queries is not otherwise ordered, and a log

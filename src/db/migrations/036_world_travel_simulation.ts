@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * 030_world_travel_simulation
+ * 036_world_travel_simulation
  *
  * Timeline-driven party travel + NPC migration state
  * (TASK-world-simulation-timeline-driven-travel-patrol).
