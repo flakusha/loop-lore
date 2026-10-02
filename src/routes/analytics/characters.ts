@@ -17,25 +17,30 @@ export async function charactersHandler(db: Kysely<DB>, ctx: AnalyticsCtx,): Pro
   const userId = requireUserId(ctx,);
   if (typeof userId !== "string") { return userId; }
 
-  // Ownership is enforced twice: the caller must own the chat and the
-  // character, so a shared chat cannot leak another user's character stats.
+  // Characters ARE actors (`actors.actor_type = 'character'`, messages.actor_id
+  // FKs actors.id). The `characters` side table is only ever UPDATEd in
+  // production (never inserted), so joining it returns nothing for real users —
+  // `actors` is the populated truth. Ownership is enforced twice: the caller
+  // must own the chat and the character, so a shared chat cannot leak another
+  // user's character stats.
   const rows = await db
     .selectFrom("messages",)
     .innerJoin("chats", "chats.id", "messages.chat_id",)
-    .innerJoin("characters", "characters.id", "messages.actor_id",)
+    .innerJoin("actors", "actors.id", "messages.actor_id",)
     .where("chats.created_by", "=", userId,)
-    .where("characters.owner_id", "=", userId,)
+    .where("actors.owner_id", "=", userId,)
+    .where("actors.actor_type", "=", "character",)
     .where("messages.role", "=", "assistant",)
-    .groupBy("characters.id",)
+    .groupBy("actors.id",)
     .select([
-      "characters.id",
-      "characters.name",
+      "actors.id",
+      "actors.display_name",
       sql<number>`count(messages.id)`.as("totalMessages",),
       sql<number>`coalesce(sum(messages.token_count_total), 0)`.as("totalTokens",),
       sql<number>`coalesce(avg(length(messages.content)), 0)`.as("avgResponseLength",),
     ],)
     .orderBy("totalTokens", "desc",)
-    .orderBy("characters.id", "asc",)
+    .orderBy("actors.id", "asc",)
     .limit(CHARACTER_LIMIT,)
     .execute();
 
@@ -44,7 +49,7 @@ export async function charactersHandler(db: Kysely<DB>, ctx: AnalyticsCtx,): Pro
     const totalTokens = Number(row.totalTokens ?? 0,);
     return {
       id: row.id,
-      name: row.name,
+      name: row.display_name,
       totalMessages,
       totalTokens,
       avgResponseLength: Math.round(Number(row.avgResponseLength ?? 0,),),
