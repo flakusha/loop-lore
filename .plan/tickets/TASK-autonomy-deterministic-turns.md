@@ -3,7 +3,7 @@
 
 # TASK: Deterministic and non-deterministic autonomy turns
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium (design draft below; seeding the movement RNG is the bulk)
 **Summary:** Decide, document, and implement how the autonomy scheduler separates the parts of a turn that must be reproducible from the parts that are allowed to vary, so a world can be replayed exactly for debugging while still running organically in production.
@@ -131,3 +131,5 @@ singleton.
 
 
 git issue: adb5001
+
+**Resolved:** 2026-10-02 registry-driven close: git issue adb5001 (registry tip: 9e05a7a4a Konstantin Fedotov Auto-closed: appended .md marker marks TASK-AUTONOMY-DETERMINISTIC-TURN)

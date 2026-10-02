@@ -7866,13 +7866,27 @@
   "src/commands/finalize.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-e2e-browser-baseline-gate-ignores-diff-base-while-the-covera.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/FIX-add-jitter-to-the-finalize-lock-retry-backoff.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-the-in-repo-scripts-worktree-fork-giwt-is-the-only-wo.md"
     }
   ],
   "src/commands/issues.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-giwt-issues-gains-state-open-closed-all-filter.md"
+    }
+  ],
+  "src/commands/rebase.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-the-in-repo-scripts-worktree-fork-giwt-is-the-only-wo.md"
     }
   ],
   "src/commands/resolver.ts": [

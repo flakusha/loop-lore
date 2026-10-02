@@ -3,7 +3,7 @@
 
 # TASK: World Simulation Discovery And Trade Events
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-actor-autonomy-story-drive
@@ -20,3 +20,5 @@ Trade routes and exploration should be organic - discovered by simulation, not s
 - Discovery: NPCs exploring uncharted location increase `discover_progress`; reaches threshold -> emit `location:discovered` event consumed by `epic-world-locations`.
 - Events written to `world_events` log; display in admin panel.
 - Tests: scheduled caravan fires trade event; exploration decays over time.
+
+**Resolved:** 2026-10-02 registry-driven close: git issue 42327b4 (registry tip: 8b44bf16c Konstantin Fedotov Auto-closed: appended .md marker marks TASK-WORLD-SIMULATION-DISCOVERY-)

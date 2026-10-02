@@ -68,10 +68,16 @@ Solution: SOL-2026-001
 
 `giwt` manages git worktrees so multiple branches can be worked on
 simultaneously without stashing. It is the canonical CLI for worktree ops,
-ticket creation, and git-issue flows. The legacy `scripts/worktree/` CLI is
-still in tree for backwards compatibility, but it is a full duplicate
-implementation rather than a thin shim — retiring it is tracked as a migration
-in `docs/giwt-scripts-map.md` (try-8).
+ticket creation, and git-issue flows, and all worktree work goes through it.
+
+The in-repo `scripts/worktree/` CLI is a retired duplicate still awaiting
+deletion. It is NOT equivalent to `giwt`: the three deltas where it was ahead
+landed in `giwt` (re-verified 2026-10-02), and `giwt` is now ahead on several
+features. It was once described here as a "full duplicate implementation" —
+that parity claim is false. Deletion is tracked in `docs/giwt-scripts-map.md`
+(try-8) and is blocked on re-pointing `scripts/lib/colors.ts`,
+`scripts/lib/assertions.ts`, and `scripts/gpg-unlock.mjs`, which still import
+from it, plus removing `tests/worktree-flow.test.ts`.
 
 ```bash
 # Create a worktree for an existing branch

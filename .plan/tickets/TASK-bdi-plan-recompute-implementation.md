@@ -3,7 +3,7 @@
 
 # TASK: BDI plan recompute implementation
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium (production decision fn + governor wiring + tests)
 **Summary:** A production `planRecompute` for the BDI reflection cycle, so `runNightlyReflectionCycle` can run outside tests and the scheduler can eventually dispatch it.
@@ -22,3 +22,5 @@
 **Related:** TASK-story-auto-drive-scheduler, epic-agency-story-points, epic-actor-autonomy-story-drive.md:110-121
 
 git issue: b43034d
+
+**Resolved:** 2026-10-02 registry-driven close: git issue b43034d (registry tip: ee311d3ce Konstantin Fedotov Auto-closed: appended .md marker marks TASK-BDI-PLAN-RECOMPUTE-IMPLEMEN)
