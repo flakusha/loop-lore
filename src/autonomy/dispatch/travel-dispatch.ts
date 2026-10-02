@@ -30,8 +30,8 @@
  * order is fixed (travel, then migration), so the outcome is a function of
  * ids alone.
  */
+import { advancePartyTravel, DEFAULT_CEILING, migrateNpc, type TravelContext, } from "../../rpg/world-travel";
 import type { AutonomyDispatch, AutonomyDispatchContext, AutonomyDispatchResult, } from "../scheduler/types";
-import { DEFAULT_CEILING, migrateNpc, advancePartyTravel, type TravelContext, } from "../../rpg/world-travel";
 
 /** Options for {@link createTravelDispatch}. */
 export interface TravelDispatchOptions {
@@ -68,8 +68,8 @@ export function createTravelDispatch(opts: TravelDispatchOptions = {},): Autonom
       const travel = await advancePartyTravel(ctx.db, ctx.worldId, tick, travelCtx,);
       const migration = await migrateNpc(ctx.db, ctx.worldId, tick, travelCtx,);
       const dispatched = travel.actions.length + migration.actions.length;
-      if (dispatched > 0) return { dispatched, };
-      if (travel.budgetExhausted || migration.budgetExhausted) return { skipped: "travel_budget", };
+      if (dispatched > 0) { return { dispatched, }; }
+      if (travel.budgetExhausted || migration.budgetExhausted) { return { skipped: "travel_budget", }; }
       return { skipped: "no_travel", };
     },
   };
