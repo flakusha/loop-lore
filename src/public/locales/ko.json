@@ -428,7 +428,19 @@
     "date": "Date",
     "events": "Events",
     "comfyuiEnabled": "Enabled",
-    "comfyuiUrl": "URL"
+    "comfyuiUrl": "URL",
+    "messageVolume": "Message Volume",
+    "tokenUsageByRole": "Token Usage by Role",
+    "latencyDistribution": "Latency Distribution",
+    "characterComparison": "Character Comparison",
+    "roleUser": "User",
+    "roleAssistant": "Assistant",
+    "roleSystem": "System",
+    "character": "Character",
+    "tokens": "Tokens",
+    "avgResponseLength": "Avg Response Length",
+    "tokensPerMessage": "Tokens/Message",
+    "noCharacterData": "No character data yet"
   },
   "errors": {
     "notFound": "Not found",
