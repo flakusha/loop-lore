@@ -33,10 +33,10 @@ export type {
 
 // Dispatch targets — gameplay subsystems the composition root registers on a
 // scheduler. Targets own their own gating; the scheduler only runs the list.
-export { createGmBeatDispatch, } from "./dispatch/gm-beat-dispatch";
-export type { GmBeatDispatchOptions, } from "./dispatch/gm-beat-dispatch";
 export { BDI_DISPATCH_NAME, BDI_SKIP, createBdiDispatch, } from "./dispatch/bdi-dispatch";
 export type { CreateBdiDispatchOptions, } from "./dispatch/bdi-dispatch";
+export { createGmBeatDispatch, } from "./dispatch/gm-beat-dispatch";
+export type { GmBeatDispatchOptions, } from "./dispatch/gm-beat-dispatch";
 export { createTravelDispatch, } from "./dispatch/travel-dispatch";
 export type { TravelDispatchOptions, } from "./dispatch/travel-dispatch";
 // Pure simulation, no LLM call — registers AFTER `travel`, whose party
@@ -51,7 +51,6 @@ export type {
   WorkflowDagDispatchOptions,
 } from "./dispatch/workflow-dag-dispatch";
 
-export { deriveTickRng, hashSeed, mulberry32, } from "./rng";
 export { getPreset, PRESETS, SHIPPED_PRESETS, UnboundedStressGatedError, } from "./config";
 export { resolveAutonomyConfig, } from "./config";
 export type {
@@ -61,3 +60,4 @@ export type {
   PresetDefinition,
   ResolveAutonomyScope,
 } from "./config";
+export { deriveTickRng, hashSeed, mulberry32, } from "./rng";

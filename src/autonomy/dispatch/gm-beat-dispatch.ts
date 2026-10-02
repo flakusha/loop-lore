@@ -31,7 +31,7 @@
 // same reason: a `perAgentCap` charge would let a world's beats exceed the
 // per-user ceiling.
 
-import { runGmBeat, type GmBeatFactory, } from "../../story/game-master/beat";
+import { type GmBeatFactory, runGmBeat, } from "../../story/game-master/beat";
 import { AutonomyGovernor, } from "../governor";
 import type { AutonomyScope, GovernorLimitName, } from "../governor";
 import type { AutonomyDispatch, AutonomyDispatchContext, AutonomyDispatchResult, } from "../scheduler";
