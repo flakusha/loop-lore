@@ -209,17 +209,6 @@ describe("plugin routes — edge cases", () => {
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as unknown[];
     expect(body.length,).toBeGreaterThanOrEqual(50,);
-    const cleanup: string[] = [];
-    for (let i = 0; i < 50; i++) {
-      const name = `bulk-${i}`;
-      registry.register({
-        manifest: { name, version: "1.0", description: "", author: "test", },
-        origin: "core",
-        directory: "/tmp",
-      },);
-      cleanup.push(name,);
-    }
-    void cleanup;
   });
 });
 

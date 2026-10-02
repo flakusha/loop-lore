@@ -58,9 +58,10 @@
         <div x-show="!_vnEnabled">{{> chat/message-list.html }} {{> chat/character-info-panel.html }}</div>
       </div>
 
+      <!-- Plugin mount point (FEAT-050): chat.composer components -->
       {{> chat/gallery-sidebar.html }} {{> chat/media-preview-modal.html }} {{> chat/rpg-questions.html }} {{>
-      chat/memory-panel.html }} {{plugin:chat.composer}} {{> chat/input-area.html }} {{> chat/story-points-chip.html }} {{>
-      chat/sections-panel.html }} {{> chat/background-panel.html }} {{> chat/location-panel.html }}
+      chat/memory-panel.html }} {{plugin:chat.composer}} {{> chat/input-area.html }} {{> chat/story-points-chip.html }}
+      {{> chat/sections-panel.html }} {{> chat/background-panel.html }} {{> chat/location-panel.html }}
 
       <!-- Chat Pins Panel -->
       {{> chat/pins-panel.html }}
