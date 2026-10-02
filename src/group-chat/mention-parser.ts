@@ -201,7 +201,7 @@ const ASSET_MENTION_REGEX = /@asset:([A-Za-z0-9_-]+)/g;
  */
 export function parseAssetMentions(text: string,): string[] {
   const ids: string[] = [];
-  const seen = new Set<string,>();
+  const seen = new Set<string>();
   ASSET_MENTION_REGEX.lastIndex = 0;
   let match = ASSET_MENTION_REGEX.exec(text,);
   while (match !== null) {
