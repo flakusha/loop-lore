@@ -30,7 +30,7 @@ cross-cutting acceptance criteria.
 | ----- | ---- | -------- |
 | Definitions | item definitions / stats / categories / rarity | `epic-items.md`, `epic-items-economy-crafting.md` |
 | Instances | per-actor `actor_items` rows, world `world_items` rows | `epic-item-systems-unification.md`, this hub |
-| Ownership | `requireActorOwnership` guard on every mutation | `src/actors/access.ts`, `src/actors/actor-items.ts` |
+| Ownership | `requireActorOwnership` guard on CRUD ops (`src/actors/actor-items.ts`); transfer enforced at route via `actorOwnerCheck` (`src/routes/actor-items/service.ts`) | `src/actors/access.ts`, `src/actors/actor-items.ts` |
 | Transfer | actor-to-actor `transferItems`, world-instance `transfer` | `src/services/actor-items/transfer.ts`, `src/story/items/instances.ts` |
 | Trading | offer/accept lifecycle, currency ledger, NPC counterparty | `epic-economy-trading.md`, `TASK-implement-trade.md`, `TASK-trade-history-npc-counterparty.md` |
 
@@ -52,7 +52,7 @@ cross-cutting acceptance criteria.
 ## Acceptance Criteria
 
 - [ ] `actor_items` CRUD (create/read/update/delete + actor-scoped list) enforces `requireActorOwnership`; strangers get 403, missing rows 404
-- [ ] Ownership transfer is atomic: actor-to-actor `transferItems` and world-instance `transfer` leave no orphans on partial failure
+- [ ] Ownership transfer is atomic on the actor side: actor-to-actor `transferItems` runs source-deduct + target-grant in a single transaction leaving no orphans on partial failure. World-instance `transfer` (`src/story/items/instances.ts`) is NOT transaction-wrapped at HEAD (uses `trx ?? state.db`, and `handleTransfer` passes no `trx`) — world-side atomicity is out of scope until that path is wrapped in `db.transaction()`.
 - [ ] Trade offer/accept/cancel lifecycle settles through the transfer primitives (no parallel transfer path)
 - [ ] Equipped items feed loadout/battle consumers via the `equipped` flag (`src/characters/services/wardrobe/loadout-bridge.ts`, `src/routes/battle/equipment-durability.ts`)
 - [ ] `TASK-actor-items-crud-ownership.md`, `TASK-actor-item-service.md` (done), `TASK-implement-trade.md` (done), `TASK-actors-child-tables-crud.md`, `TASK-actors-api-routes.md` linked as implementers

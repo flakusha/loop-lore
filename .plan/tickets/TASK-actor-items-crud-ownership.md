@@ -13,9 +13,10 @@
 ## Summary
 
 Own the `actor_items` instance layer: typed CRUD over `actor_items`
-(per-actor inventory) with the `requireActorOwnership` guard on every
-mutation, plus the actor-to-actor ownership-transfer primitive that trading
-settles through.
+(per-actor inventory) with the `requireActorOwnership` guard on CRUD ops
+(`src/actors/actor-items.ts`), plus the actor-to-actor ownership-transfer
+primitive (enforced at the route via `actorOwnerCheck`, `src/routes/actor-items/service.ts`)
+that trading settles through.
 
 ## Context
 
@@ -34,8 +35,8 @@ trade lifecycle in `TASK-implement-trade.md`, child-table lifecycle hooks in
 ## Acceptance Criteria
 
 - [ ] CRUD: create/read/update/delete + actor-scoped list/filter over `actor_items` via `src/actors/actor-items.ts`; `name` required on create
-- [ ] Ownership: every mutation calls `requireActorOwnership` (`src/actors/access.ts`); non-owner writes get 403, missing rows 404
-- [ ] Transfer: actor-to-actor `transferItems` (`src/services/actor-items/transfer.ts`) moves quantity atomically (single transaction, no orphans, idempotent re-run)
+- [ ] Ownership: CRUD ops call `requireActorOwnership` (`src/actors/actor-items.ts` via `src/actors/access.ts`, keyed on `actors.owner_id` with `admin.character` bypass); transfer is enforced at the route via `actorOwnerCheck` (`src/routes/actor-items/service.ts:46-68`, keyed on `actors.user_id` with no admin bypass — reconcile to `owner_id` + bypass when touching this path); non-owner writes get 403, missing rows 404
+- [ ] Transfer: actor-to-actor `transferItems` (`src/services/actor-items/transfer.ts`) moves quantity atomically in a single transaction with no orphans. Retry-safe within the single transaction only — NOT idempotent across re-runs (no idempotency key; a re-run double-moves). Add an idempotency key if re-run safety is required.
 - [ ] Boundary: world-instance `transfer` (`src/story/items/instances.ts`) reused, not duplicated; trade offer/accept settles through these primitives
 - [ ] Tests: unit coverage for CRUD guards + transfer atomicity; existing `src/routes/actor-items/service.test.ts` + `src/story/world-state` seed tests stay green
 
