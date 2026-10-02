@@ -28,7 +28,7 @@
  */
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { spawnSync, } from "node:child_process";
-import { mkdtempSync, rmSync, } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, resolve, } from "node:path";
 import {
@@ -192,14 +192,14 @@ describe("parseStashList", () => {
 describe("selectFinalizeStashes", () => {
   const mk = (ref: string, message: string,): StashEntry => ({ ref, message, });
 
-  test("returns only entries with the finalize prefix", () => {
+  test("returns only entries whose whole message is a finalize run label", () => {
     const entries = [
-      mk("stash@{0}", "WIP on dev: abc worktree-finalize-foo",),
+      mk("stash@{0}", "On dev: worktree-finalize-abc123",),
       mk("stash@{1}", "On main: user-stuff",),
-      mk("stash@{2}", "WIP on dev: def worktree-finalize-bar",),
+      mk("stash@{2}", "WIP on dev: def4567 worktree-finalize-bar",),
     ];
     const selected = selectFinalizeStashes(entries,);
-    expect(selected.map((e,) => e.ref),).toEqual(["stash@{0}", "stash@{2}",],);
+    expect(selected.map((e,) => e.ref),).toEqual(["stash@{0}",],);
   });
 
   test("returns empty array when no finalize stashes present", () => {
@@ -214,17 +214,18 @@ describe("selectFinalizeStashes", () => {
     expect(selectFinalizeStashes([],),).toEqual([],);
   });
 
-  test("never touches user-authored stashes", () => {
-    // Belt-and-braces: even if a user stash happens to contain the word
-    // "finalize" in its message, only entries with the exact prefix
-    // (worktree-finalize-) match.
+  test("never selects a user stash that merely mentions the prefix", () => {
+    // Shape-anchored: the finalize run label is the ENTIRE message after
+    // the branch context. Prose that embeds the prefix is user-authored
+    // and must never be popped (BUG-giwt-abort-runs-unscoped…).
     const entries = [
       mk("stash@{0}", "On main: do not finalize this",),
-      mk("stash@{1}", "WIP on dev: 9999 worktree-finalize-x",),
+      mk("stash@{1}", "On main: please check worktree-finalize-abc before merging",),
+      mk("stash@{2}", "On dev: worktree-finalize-9999",),
     ];
     const selected = selectFinalizeStashes(entries,);
     expect(selected.length,).toBe(1,);
-    expect(selected[0]?.ref,).toBe("stash@{1}",);
+    expect(selected[0]?.ref,).toBe("stash@{2}",);
   });
 });
 
@@ -331,5 +332,96 @@ describe("abort command (per-test fake git repo)", () => {
     expect(runAbort(repo.root, ["--dry-run",],).status,).toBe(0,);
     const exists = spawnSync("test", ["-f", lockPath,],).status;
     expect(exists,).toBe(0,); // file should still be there
+  });
+});
+
+// --------------------------------------------------------------------------
+// Conflict path (BUG-giwt-abort-runs-unscoped-git-reset-hard…)
+//
+// The regression this guards: a conflicting `git stash pop` used to fall
+// back to `git reset --hard HEAD` on the SHARED dev checkout, destroying
+// unrelated tracked work (other sessions' and other agents' uncommitted
+// changes). These tests run the real conflict branch and assert the
+// unrelated work SURVIVES — they do not grep the source for a string.
+// --------------------------------------------------------------------------
+
+describe("abort conflict path never hard-resets the dev tree", () => {
+  let repo: FakeRepo;
+
+  const git = (args: string[],): string =>
+    spawnSync("git", ["-C", repo.root, ...args,], { encoding: "utf8", },).stdout.trim();
+  const write = (rel: string, body: string,): void => writeFileSync(join(repo.root, rel,), body,);
+  const read = (rel: string,): string => readFileSync(join(repo.root, rel,), "utf8",);
+
+  beforeEach(() => {
+    repo = freshFakeRepo();
+    write("shared.txt", "base\n",);
+    git(["add", "shared.txt",],);
+    git(["commit", "-q", "-m", "add shared",],);
+  },);
+  afterEach(() => {
+    repo.cleanup();
+  },);
+
+  /** Leave a finalize stash whose pop will conflict with dirty work. */
+  const stageConflictingFinalizeStash = (): void => {
+    write("shared.txt", "stashed\n",);
+    git(["stash", "push", "-q", "-m", "worktree-finalize-abc123",],);
+  };
+
+  test("a conflicting pop leaves unrelated tracked work intact and exits 1", () => {
+    stageConflictingFinalizeStash();
+    // Uncommitted work belonging to some OTHER session on the shared tree.
+    write("shared.txt", "OTHER-AGENT-WIP\n",);
+
+    const res = runAbort(repo.root, [],);
+
+    // Exit non-zero: recovery stopped for manual resolution.
+    expect(res.status,).toBe(1,);
+    expect(res.stderr,).toContain("tree left untouched (no reset)",);
+    // The bug itself: that unrelated tracked modification must survive.
+    // Under the old `reset --hard HEAD` fallback this read "base".
+    expect(read("shared.txt",),).toBe("OTHER-AGENT-WIP\n",);
+    expect(git(["status", "--porcelain",],),).toContain("M shared.txt",);
+  });
+
+  test("a conflicting pop preserves the stash entry for a later retry", () => {
+    stageConflictingFinalizeStash();
+    write("shared.txt", "OTHER-AGENT-WIP\n",);
+
+    runAbort(repo.root, [],);
+
+    // git preserves the entry on conflict; abort must not drop it either,
+    // otherwise the finalize snapshot is unrecoverable.
+    expect(git(["stash", "list",],),).toContain("worktree-finalize-abc123",);
+  });
+
+  test("a conflicting pop still removes the finalize lockfile", () => {
+    // process.exit(1) fires after the lockfile step; cleanup must not be
+    // skipped by the early exit.
+    stageConflictingFinalizeStash();
+    write("shared.txt", "OTHER-AGENT-WIP\n",);
+    const lockPath = join(repo.root, LOCK_FILENAME,);
+    writeFileSync(lockPath, "9999999\n",);
+
+    expect(runAbort(repo.root, [],).status,).toBe(1,);
+    expect(spawnSync("test", ["-f", lockPath,],).status,).not.toBe(0,);
+  });
+
+  test("an unrelated stash that merely mentions the prefix is never popped", () => {
+    // Shape-anchored selection: prose embedding the prefix is user work.
+    write("shared.txt", "mine\n",);
+    git(["stash", "push", "-q", "-m", "please check worktree-finalize-abc before merging",],);
+    write("shared.txt", "base\n",);
+    git(["stash", "push", "-q", "-m", "worktree-finalize-real9",],);
+
+    const res = runAbort(repo.root, [],);
+
+    expect(res.status,).toBe(0,);
+    expect(res.stderr,).toContain("is not a finalize-run label",);
+    // The decoy survives; only the real run label was popped.
+    const remaining = git(["stash", "list",],);
+    expect(remaining,).toContain("please check worktree-finalize-abc",);
+    expect(remaining,).not.toContain("worktree-finalize-real9",);
   });
 });
