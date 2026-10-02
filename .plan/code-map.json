@@ -12202,6 +12202,10 @@
     },
     {
       "kind": "spec",
+      "source": "docs/spec/integrations-architecture.md"
+    },
+    {
+      "kind": "spec",
       "source": "docs/spec/inventory.md"
     },
     {
@@ -13279,6 +13283,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-scenario-source.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/integrations-architecture.md"
     }
   ],
   "src/db/schema-branches.ts": [
@@ -23789,6 +23797,10 @@
     {
       "kind": "spec",
       "source": "docs/spec/auth-middleware.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/integrations-architecture.md"
     }
   ],
   "src/middleware/auth/solo-user.ts": [
@@ -31236,6 +31248,10 @@
     }
   ],
   "src/routes/v1/integrations-surface.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-inbound-webhook-ingestion-surface-hmac-verified-default-deny.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-integrations-inbound-webhook-ingestion-endpoint.md"
