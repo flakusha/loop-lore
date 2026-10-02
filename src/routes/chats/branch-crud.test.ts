@@ -295,6 +295,38 @@ describe("branch merge consumes the source", () => {
     expect(sourceRow?.id,).toBe(sourceId,);
   },);
 
+  test("a desynced active pointer still blocks the merge", async () => {
+    const rootId = await insertMessages(tdb.db, CHAT_ID, OWNER_ID, MessageRole.User, "root",);
+    const targetId = await fork(CHAT_ID, rootId, "Main",);
+    const sourceId = await fork(CHAT_ID, rootId, "Alt",);
+    // The source row claims active while the chat pointer says otherwise —
+    // the same desync `deleteBranch` refuses to walk past.
+    await tdb.db
+      .updateTable("chat_branches",)
+      .set({ is_active: 1, },)
+      .where("id", "=", sourceId,)
+      .execute();
+    await tdb.db
+      .updateTable("chats",)
+      .set({ active_branch_id: targetId, },)
+      .where("id", "=", CHAT_ID,)
+      .execute();
+
+    const res = await makeApp(tdb.db, OWNER_ID,).handle(
+      new Request(
+        `http://localhost/api/chats/${CHAT_ID}/branches/${sourceId}/merge`,
+        body("POST", { intoBranchId: targetId, },),
+      ),
+    );
+    expect(res.status,).toBe(400,);
+    const row = await tdb.db
+      .selectFrom("chat_branches",)
+      .select(["id",],)
+      .where("id", "=", sourceId,)
+      .executeTakeFirst();
+    expect(row?.id,).toBe(sourceId,);
+  },);
+
   test("a subtree over the merge ceiling is rejected with zero messages re-parented", async () => {
     const rootId = await insertMessages(tdb.db, CHAT_ID, OWNER_ID, MessageRole.User, "root",);
     const targetId = await fork(CHAT_ID, rootId, "Main",);
