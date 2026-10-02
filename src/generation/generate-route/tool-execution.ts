@@ -30,6 +30,7 @@ import {
   MessageVisibility,
 } from "../../db/enums";
 import { registry, } from "../../plugins/registry";
+import { executePluginTool, } from "../../plugins/tool-executor";
 import type { ToolDefinition, ToolExecutionContext, } from "../../plugins/types";
 import {
   DANGEROUS_TAGS,
@@ -188,24 +189,17 @@ export async function executeToolCalls(
       continue;
     }
     const params = parsed.value;
-    try {
-      const toolResult = await def.handler(params, ctx,);
-      results.push({
-        role: "tool",
-        content: sanitizeToolOutput(toolResult.content,),
-        tool_call_id: tc.id,
-        toolName: tc.function.name,
-        toolError: false,
-      },);
-    } catch (error) {
-      results.push({
-        role: "tool",
-        content: sanitizeToolOutput(jsonStringifyOr({ error: (error as Error).message, },),),
-        tool_call_id: tc.id,
-        toolName: tc.function.name,
-        toolError: true,
-      },);
-    }
+    // FEAT-049: route every tool (plugin and builtin) through the ToolExecutor
+    // so the timeout + single failure contract is uniform. `executePluginTool`
+    // never rejects: handler throws and timeouts come back as `isError`.
+    const toolResult = await executePluginTool(def, params, ctx,);
+    results.push({
+      role: "tool",
+      content: sanitizeToolOutput(toolResult.content,),
+      tool_call_id: tc.id,
+      toolName: tc.function.name,
+      toolError: toolResult.isError === true,
+    },);
   }
   // BUG-tool-call-result-no-frontend-rendering: persist each tool result as a
   // chat-visible `messages` row so tool calls leave a record even when the

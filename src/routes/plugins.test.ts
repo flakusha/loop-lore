@@ -221,3 +221,100 @@ describe("plugin routes — edge cases", () => {
     void cleanup;
   });
 });
+
+describe("plugin config routes (FEAT-051)", () => {
+  let db: Kysely<DB>;
+
+  beforeAll(async () => {
+    ({ db, } = await createTestDb());
+    registry.register({
+      manifest: {
+        name: "cfg-plugin",
+        version: "1.0",
+        description: "",
+        author: "test",
+        config: { theme: "dark", },
+        configSchema: { type: "object", properties: {}, required: ["token",], },
+      },
+      origin: "core",
+      directory: "/tmp",
+    },);
+    registry.setEnabled("cfg-plugin", true,);
+  },);
+
+  afterAll(async () => {
+    registry.unregisterAll();
+    await db.destroy();
+  },);
+
+  test("GET returns 403 for non-admin", async () => {
+    const app = createPluginApp(db, "user",);
+    const res = await app.handle(
+      new Request("http://localhost/api/plugins/cfg-plugin/config",),
+    );
+    expect(res.status,).toBe(403,);
+  });
+
+  test("GET returns 404 for unknown plugin", async () => {
+    const app = createPluginApp(db, "admin",);
+    const res = await app.handle(
+      new Request("http://localhost/api/plugins/no-such-plugin/config",),
+    );
+    expect(res.status,).toBe(404,);
+  });
+
+  test("PUT returns 403 for non-admin", async () => {
+    const app = createPluginApp(db, "user",);
+    const res = await app.handle(
+      new Request("http://localhost/api/plugins/cfg-plugin/config", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ token: "x", },),
+      },),
+    );
+    expect(res.status,).toBe(403,);
+  });
+
+  test("PUT returns 404 for unknown plugin", async () => {
+    const app = createPluginApp(db, "admin",);
+    const res = await app.handle(
+      new Request("http://localhost/api/plugins/no-such-plugin/config", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ token: "x", },),
+      },),
+    );
+    expect(res.status,).toBe(404,);
+  });
+
+  test("PUT returns 400 when a required key is missing", async () => {
+    const app = createPluginApp(db, "admin",);
+    const res = await app.handle(
+      new Request("http://localhost/api/plugins/cfg-plugin/config", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({},),
+      },),
+    );
+    expect(res.status,).toBe(400,);
+  });
+
+  test("round-trips a valid config through PUT then GET", async () => {
+    const app = createPluginApp(db, "admin",);
+    const put = await app.handle(
+      new Request("http://localhost/api/plugins/cfg-plugin/config", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ token: "s3cret", },),
+      },),
+    );
+    expect(put.status,).toBe(200,);
+
+    const get = await app.handle(
+      new Request("http://localhost/api/plugins/cfg-plugin/config",),
+    );
+    expect(get.status,).toBe(200,);
+    const body = (await get.json()) as { config: Record<string, unknown> };
+    expect(body.config,).toEqual({ token: "s3cret" });
+  });
+});

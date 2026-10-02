@@ -470,4 +470,82 @@ describeReal("executeToolCalls — persists tool-result rows (BUG-tool-call-resu
     expect(errorSpy,).toHaveBeenCalled();
     errorSpy.mockRestore();
   });
+
+  test("a rejecting handler yields a toolError row and does not abort the batch", async () => {
+    registry.addTools("test-plugin", [
+      {
+        name: "boom_tool",
+        description: "rejects",
+        parameters: {},
+        handler: async () => { throw new Error("kaboom",); },
+      },
+      {
+        name: "after_tool",
+        description: "succeeds",
+        parameters: {},
+        handler: async () => ({ content: "after-ok", }),
+      },
+    ],);
+
+    const results = await executeToolCalls(
+      [
+        { id: "tc-reject", function: { name: "boom_tool", arguments: "{}", }, },
+        { id: "tc-after", function: { name: "after_tool", arguments: "{}", }, },
+      ],
+      { db, actorId, chatId, },
+    );
+
+    // The failing tool did not stop the second call from running.
+    expect(results.length,).toBe(2,);
+    expect(results[1]?.content,).toBe("after-ok",);
+
+    const rows = await db
+      .selectFrom("messages",)
+      .select(["metadata", "content",],)
+      .where("content_type", "=", "tool_result",)
+      .where("chat_id", "=", chatId,)
+      .execute();
+    const rejected = rows.find((r,) => JSON.parse(r.metadata ?? "{}",).tool_call_id === "tc-reject",);
+    expect(JSON.parse(rejected!.metadata ?? "{}",).tool_error,).toBe(true,);
+    expect(JSON.parse(rejected!.content,).error,).toBe("kaboom",);
+  });
+
+  test("a timed-out tool is marked toolError and the next call still runs", async () => {
+    registry.addTools("test-plugin", [
+      {
+        name: "slow_tool",
+        description: "never resolves",
+        parameters: {},
+        timeoutMs: 5,
+        handler: () => new Promise<never>(() => {},),
+      },
+      {
+        name: "quick_tool",
+        description: "succeeds",
+        parameters: {},
+        handler: async () => ({ content: "quick-ok", }),
+      },
+    ],);
+
+    const results = await executeToolCalls(
+      [
+        { id: "tc-slow", function: { name: "slow_tool", arguments: "{}", }, },
+        { id: "tc-quick", function: { name: "quick_tool", arguments: "{}", }, },
+      ],
+      { db, actorId, chatId, },
+    );
+
+    expect(results.length,).toBe(2,);
+    expect(results[1]?.content,).toBe("quick-ok",);
+
+    const rows = await db
+      .selectFrom("messages",)
+      .select(["metadata", "content",],)
+      .where("content_type", "=", "tool_result",)
+      .where("chat_id", "=", chatId,)
+      .execute();
+    const slow = rows.find((r,) => JSON.parse(r.metadata ?? "{}",).tool_call_id === "tc-slow",);
+    expect(JSON.parse(slow!.metadata ?? "{}",).tool_error,).toBe(true,);
+    expect(JSON.parse(slow!.content,).error,).toContain("timed out",);
+  });
 },);

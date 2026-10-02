@@ -8,17 +8,20 @@
  *   GET  /api/plugins              — list all plugins with status
  *   POST /api/plugins/:name/enable  — enable a plugin
  *   POST /api/plugins/:name/disable — disable a plugin
+ *
+ * Per-plugin config read/write lives in `./config` (FEAT-051).
  */
 
 import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
-import type { DB, } from "../db/schema";
-import { getLogger, } from "../logger";
-import { registry, } from "../plugins/registry";
-import { can, } from "../users/permissions";
-import { forbidden, } from "../validation/middleware";
-import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
-import { HttpStatus, jsonError, jsonResponse, } from "./http-utils";
+import type { DB, } from "../../db/schema";
+import { getLogger, } from "../../logger";
+import { registry, } from "../../plugins/registry";
+import { can, } from "../../users/permissions";
+import { forbidden, } from "../../validation/middleware";
+import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
+import { HttpStatus, jsonError, jsonResponse, } from "../http-utils";
+import { pluginConfigRoutes, } from "./config";
 
 /** */
 function log() {
@@ -161,5 +164,6 @@ export function pluginRoutes({ database, }: { database: Kysely<DB> }, prefix = "
           tags: ["Plugins",],
         },
       },
-    );
+    )
+    .use(pluginConfigRoutes({ database, }, prefix,),);
 }
