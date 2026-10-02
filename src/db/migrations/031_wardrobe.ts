@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * 028_wardrobe — wardrobe / appearance (avatar-variants) feature cluster.
+ * 031_wardrobe — wardrobe / appearance (avatar-variants) feature cluster.
  *
  * Adds the outfit axis to the (emotion × outfit) avatar variant key:
  *
