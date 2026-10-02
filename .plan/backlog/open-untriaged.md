@@ -101,9 +101,7 @@ Two new epics with 27 tickets filed together on 2026-09-11 awaiting triage. Tick
 - **Item-generation discoverability** — `0d771c9` subcommand docs, `0f840fd`
   describe-preview-confirm UI, `b95bbff` review parity, `219124a` shared draft store.
   Suggested home: P2-C assistant tooling.
-- **Workflow/GM routing** — `7637627` persist run sessions, `83622b7` strip mention
-  prefix, `f4fd21e` assistant-GM handoff, `becc58b` shadow-note steering, `30803ca`
-  reuse WorkflowRunner. Suggested home: P2-C/P2-D.
+- **Workflow/GM routing** — FILED 2026-10-02 as `TASK-assistant-gm-handoff.md` (creation-chat handoff gap only; the other four scopes — sessions, mention strip, steering, runner reuse — already shipped, see `TASK-backlog-workflow-gm-routing-batch.md` table). Suggested home: P2-C/P2-D.
 - **NSFW consent-surface follow-ups** — `d7c0253` consent gate wiring, `e0d7c5c`
   seduction preconditions, `e8f7a75` /api/nsfw authz. **CLOSED 2026-09-09** — all three
   resolved by the `nsfw-consent-gate-wiring` commit set; ticket statuses are Done and git
@@ -158,7 +156,7 @@ body-level fields into `tickets/index.json`; do not hand-edit the generated inde
   `d5506a5`, `c29e560`, `a8442ec`, `83e9718`, `4c37f99`, `baf7d71`,
   `1dd08b9`) belongs under existing `epic-mechanics-governance.md`, with the
   parent `epic-rpg-mechanics.md`; do not create `epic-rpg-mechanics-governance.md`.
-- Workflow/GM routing (`7637627`, `83622b7`, `f4fd21e`, `becc58b`, `30803ca`)
+- Workflow/GM routing (partially filed 2026-10-02 as `TASK-assistant-gm-handoff.md` for the creation-chat handoff gap; the other four scopes already shipped — see batch ticket below)
   belongs to existing `epic-workflow-engine.md` plus `epic-assistant-gm-flows.md`.
   The workflow engine already owns runner/session persistence; GM handoff and
   shadow-note steering stay with the assistant/GM epic.
