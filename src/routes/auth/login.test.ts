@@ -349,7 +349,15 @@ describe("handleLogin — Secure cookie", () => {
     }
   }
 
+  // BEFORE each test: a test never inherits the previous test's env.
   beforeEach(restoreEnv,);
+  // AFTER the block: the last test here sets NODE_ENV=production, and bun runs
+  // every test file in ONE worker process (confirmed: two files reported the
+  // same pid), so without this the value would outlive the file and flip
+  // `setTokenCookie`'s Secure flag (src/routes/auth/shared.ts:94) for every
+  // later file. This hook is load-bearing — do not drop it thinking the
+  // beforeEach covers it. See BUG-full-suite-failure-count-stable-failing-set-not
+  // for why the suite's failure SET, not its count, is the thing to trust.
   afterAll(restoreEnv,);
 
   test("omits Secure when neither NODE_ENV=production nor LL_COOKIE_SECURE is set", async () => {
@@ -363,7 +371,6 @@ describe("handleLogin — Secure cookie", () => {
       null,
       loginLimiter,
     );
-
     const cookie = res.headers.get("Set-Cookie",) ?? "";
     expect(cookie,).not.toContain("Secure",);
     expect(cookie,).toContain("HttpOnly",);
@@ -381,7 +388,6 @@ describe("handleLogin — Secure cookie", () => {
       null,
       loginLimiter,
     );
-
     expect(res.headers.get("Set-Cookie",),).toContain("Secure",);
   });
 
@@ -396,7 +402,6 @@ describe("handleLogin — Secure cookie", () => {
       null,
       loginLimiter,
     );
-
     expect(res.headers.get("Set-Cookie",),).toContain("Secure",);
   });
 
@@ -411,7 +416,6 @@ describe("handleLogin — Secure cookie", () => {
       null,
       loginLimiter,
     );
-
     expect(res.headers.get("Set-Cookie",),).not.toContain("Secure",);
   });
 });

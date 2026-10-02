@@ -50,7 +50,7 @@ export type PlanTextGenerator = (req: {
   actorId: string;
   actorName: string;
   messages: GenerationMessage[];
-}) => Promise<string>;
+},) => Promise<string>;
 
 export interface PlanRecomputeOptions {
   db: Kysely<DB>;
