@@ -204,6 +204,110 @@ describe("branch merge", () => {
   });
 });
 
+describe("branch merge default target", () => {
+  test("a bodyless merge lands on the chat's active branch", async () => {
+    const rootId = await insertMessages(tdb.db, CHAT_ID, OWNER_ID, MessageRole.User, "root",);
+    const targetId = await fork(CHAT_ID, rootId, "Main",);
+    const sourceId = await fork(CHAT_ID, rootId, "Alt",);
+    const altLeafId = await insertMessages(tdb.db, CHAT_ID, OWNER_ID, MessageRole.User, "alt leaf", {
+      parent_id: rootId,
+    },);
+    // `targetId` is now the active branch (the newest fork demoted it, so
+    // point the display back at it to exercise the default resolution).
+    await activate(targetId,);
+
+    // No body at all: the documented default is the active branch.
+    const res = await makeApp(tdb.db, OWNER_ID,).handle(
+      new Request(`http://localhost/api/chats/${CHAT_ID}/branches/${sourceId}/merge`, { method: "POST", },),
+    );
+    expect(res.status,).toBe(200,);
+    const parsed = await res.json() as { data: { targetBranchId: string; movedMessageIds: string[] } };
+    expect(parsed.data.targetBranchId,).toBe(targetId,);
+    expect(parsed.data.movedMessageIds,).toEqual([altLeafId,],);
+    const moved = await tdb.db
+      .selectFrom("messages",)
+      .select(["parent_id",],)
+      .where("id", "=", altLeafId,)
+      .executeTakeFirst();
+    expect(moved?.parent_id,).toBe(rootId,);
+  },);
+
+  test("merging a branch into itself by default is refused, not silently a no-op", async () => {
+    const rootId = await insertMessages(tdb.db, CHAT_ID, OWNER_ID, MessageRole.User, "root",);
+    const only = await fork(CHAT_ID, rootId, "Solo",);
+    const res = await makeApp(tdb.db, OWNER_ID,).handle(
+      new Request(`http://localhost/api/chats/${CHAT_ID}/branches/${only}/merge`, { method: "POST", },),
+    );
+    expect(res.status,).toBe(400,);
+  },);
+});
+
+describe("branch route error paths", () => {
+  test("every CRUD endpoint 404s on an unknown branchId", async () => {
+    const rootId = await insertMessages(tdb.db, CHAT_ID, OWNER_ID, MessageRole.User, "root",);
+    const survivor = await fork(CHAT_ID, rootId, "Survivor",);
+    const ghost = randomUUID();
+    const base = `http://localhost/api/chats/${CHAT_ID}/branches/${ghost}`;
+    const app = makeApp(tdb.db, OWNER_ID,);
+    for (const res of [
+      await app.handle(new Request(base, { method: "GET", },),),
+      await app.handle(new Request(base, body("PATCH", { name: "x", },),),),
+      await app.handle(new Request(base, { method: "DELETE", },),),
+    ]) {
+      expect(res.status,).toBe(404,);
+      const parsed = await res.json() as { code: string };
+      expect(parsed.code,).toBe("not_found",);
+    }
+    const merge = await app.handle(new Request(`${base}/merge`, { method: "POST", },),);
+    expect(merge.status,).toBe(404,);
+    // None of the 404s may have mutated the chat's branch set.
+    const only = await tdb.db
+      .selectFrom("chat_branches",)
+      .select(["id",],)
+      .where("chat_id", "=", CHAT_ID,)
+      .executeTakeFirst();
+    expect(only?.id,).toBe(survivor,);
+  },);
+});
+
+describe("branch list limit parsing", () => {
+  test("a non-numeric or non-positive limit falls back to the default page size", async () => {
+    const rootId = await insertMessages(tdb.db, CHAT_ID, OWNER_ID, MessageRole.User, "root",);
+    for (let i = 0; i < 25; i++) { await fork(CHAT_ID, rootId, `N${i}`,); }
+    const app = makeApp(tdb.db, OWNER_ID,);
+    for (const query of ["limit=abc", "limit=0", "limit=-5", "limit="]) {
+      const res = await app.handle(
+        new Request(`http://localhost/api/chats/${CHAT_ID}/branches?${query}`, { method: "GET", },),
+      );
+      expect(res.status,).toBe(200,);
+      const parsed = await res.json() as { data: { branches: unknown[] } };
+      expect(parsed.data.branches.length,).toBe(20,);
+    }
+  },);
+
+  test("limit is clamped to the 100-row ceiling, not honoured verbatim", async () => {
+    const rootId = await insertMessages(tdb.db, CHAT_ID, OWNER_ID, MessageRole.User, "root",);
+    for (let i = 0; i < 25; i++) { await fork(CHAT_ID, rootId, `C${i}`,); }
+    const res = await makeApp(tdb.db, OWNER_ID,).handle(
+      new Request(`http://localhost/api/chats/${CHAT_ID}/branches?limit=9999`, { method: "GET", },),
+    );
+    expect(res.status,).toBe(200,);
+    const parsed = await res.json() as { data: { branches: unknown[]; nextCursor: string | null } };
+    expect(parsed.data.branches.length,).toBe(25,);
+    expect(parsed.data.nextCursor,).toBeNull();
+  },);
+
+  test("a fractional limit truncates rather than rounding up", async () => {
+    const rootId = await insertMessages(tdb.db, CHAT_ID, OWNER_ID, MessageRole.User, "root",);
+    for (let i = 0; i < 5; i++) { await fork(CHAT_ID, rootId, `F${i}`,); }
+    const res = await makeApp(tdb.db, OWNER_ID,).handle(
+      new Request(`http://localhost/api/chats/${CHAT_ID}/branches?limit=2.9`, { method: "GET", },),
+    );
+    expect(res.status,).toBe(200,);
+    const parsed = await res.json() as { data: { branches: unknown[] } };
+    expect(parsed.data.branches.length,).toBe(2,);
+  },);
+});
 describe("branch list pagination", () => {
   test("the last page reports no cursor", async () => {
     const rootId = await msg(MessageRole.User, "root",);
