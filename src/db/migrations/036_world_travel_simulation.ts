@@ -51,8 +51,13 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     /** Fractional-edge carry between ticks, so a 0.5-edge speed still moves. */
     .addColumn("travel_progress", "real", (col,) => col.notNull().defaultTo(0,),)
     .addColumn("current_location_id", "text", (col,) => col.references("locations.id",).onDelete("set null",),)
-    /** Last tick this party's state was advanced on. */
-    .addColumn("current_tick", "integer", (col,) => col.notNull().defaultTo(0,),)
+    /** Last tick this party's state was advanced on — THE REPLAY LATCH.
+     *  `advancePartyTravel` writes under `WHERE current_tick < :tick`, so a
+     *  tick the scheduler replays after a crash matches no row and neither
+     *  moves the party twice nor bills the world twice. The default is -1, NOT
+     *  0: the scheduler's first tick IS tick 0 (`tick_count` starts at 0), so
+     *  a 0 default would latch every new party shut for exactly one tick. */
+    .addColumn("current_tick", "integer", (col,) => col.notNull().defaultTo(-1,),)
     .addColumn("status", "text", (col,) => col.notNull().defaultTo("idle",),)
     /** Collision deferral: earliest tick the party may try to arrive again. */
     .addColumn("blocked_until_tick", "integer", (col,) => col.notNull().defaultTo(0,),)
