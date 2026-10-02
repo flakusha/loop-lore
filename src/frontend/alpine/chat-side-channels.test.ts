@@ -1,5 +1,5 @@
 import "./i18n.test-helper";
-import { afterEach, expect, mock, test, } from "bun:test";
+import { afterEach, beforeEach, expect, mock, test, } from "bun:test";
 import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { chatSideChannels, } from "./chat-side-channels";
 import type { ChatState, } from "./types";
@@ -256,5 +256,69 @@ describeOrSkip("chatSideChannels — toggleSideChannels", () => {
     await chatSideChannels.toggleSideChannels!.call(state,);
     expect(uiStore.showSideChannels,).toBe(false,);
     expect(fetchCalls,).toEqual([],);
+  });
+},);
+
+/**
+ * The header-facing globals must no-op in the pre-Alpine-boot window. The
+ * `createSideChannel` global reads `$store.ui.newSideChannelName`, so it can
+ * only do that AFTER the chatState scope is known to exist — otherwise the
+ * read throws `ReferenceError: Alpine is not defined`.
+ */
+describeOrSkip("side-channel header globals — absent-Alpine no-op", () => {
+  const g = globalThis as Record<string, unknown>;
+  let realAlpine: unknown;
+  let realDocument: unknown;
+
+  beforeEach(() => {
+    realAlpine = g.Alpine;
+    realDocument = g.document;
+  },);
+
+  afterEach(() => {
+    if (realAlpine === undefined) {
+      delete g.Alpine;
+    } else {
+      g.Alpine = realAlpine;
+    }
+    g.document = realDocument;
+  },);
+
+  /** Point the chatState lookup at a stub element (null = no scope mounted). */
+  function stubScope(el: unknown,): void {
+    g.document = { querySelector: () => el, } as unknown as Document;
+  }
+
+  test("createSideChannel does not read $store.ui when Alpine is undefined", async () => {
+    stubScope({},);
+    delete g.Alpine;
+    // Threw `ReferenceError: Alpine is not defined` before the guard was added.
+    await (g.createSideChannel as () => Promise<void>)();
+  });
+
+  test("createSideChannel does not read $store.ui when the scope is absent", async () => {
+    stubScope(null,);
+    g.Alpine = { store: () => ({}), $data: () => ({}), };
+    await (g.createSideChannel as () => Promise<void>)();
+  });
+
+  test("createSideChannel passes the typed name through to the action", async () => {
+    const createSideChannel = mock(async () => {},);
+    const el = {};
+    stubScope(el,);
+    g.Alpine = {
+      store: () => ({ newSideChannelName: "Notes", }),
+      $data: (e: unknown,) => (e === el ? { createSideChannel, } : {}),
+    };
+    await (g.createSideChannel as () => Promise<void>)();
+    expect(createSideChannel,).toHaveBeenCalledTimes(1,);
+    expect(createSideChannel,).toHaveBeenCalledWith("Notes",);
+  });
+
+  test("toggle/switch globals no-op when Alpine is undefined", async () => {
+    stubScope({},);
+    delete g.Alpine;
+    (g.toggleSideChannels as () => void)();
+    await (g.switchSideChannel as (id: string,) => Promise<void>)("s1",);
   });
 },);
