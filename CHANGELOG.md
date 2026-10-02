@@ -15,28 +15,6 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 - **Shared interaction ledger** — dice-backed game interactions now persist roll math, ability and relationship modifiers, successful/failed/blocked outcomes, and state changes in `interaction_logs`; social reference commands update canonical character relationships and feed recent-interaction prompt context.
 - **Actor autonomy — story auto-drive scheduler** — `AutonomyScheduler` (`src/autonomy/scheduler/`) drives the world-tick loop: `tickOnce(nowMs)` selects due worlds, dispatches each through the existing `runNpcMovementTick` pipeline (no new dispatch path), and commits the per-world cursor from the resolved `AutonomyConfig.tickIntervalMs`. `pause(worldId)` / `resume(worldId)` / `stepOnce(worldId)` / `stateFor(worldId)` give ops human-in-loop control. Due-world ordering is `(next_tick_at ASC, world_id ASC)` — total and restart-stable, since `world_id` is unique. Cursor, pause flag, tick count and last error persist in the new `world_simulation_state` table (migration `023_world_simulation_state.ts`); the cursor write is the commit point, so a crash replays at most one world tick. Telemetry: `scheduler.world_tick.started` / `.completed` / `.error` with the world/payload envelope. Cadence is the caller's job — real-time, accelerated and manual sources all reduce to repeated `tickOnce`; the `giwt sim` CLI is a separate ticket.
 
-
-### Changed
-
-- **Provider retry deduplication (Effect v4, per-surface adoption)** — the three byte-identical backoff loops in the Anthropic, Ollama-native and OpenAI-compatible HTTP clients now share one policy in `src/generation/providers/retry.ts`, built on `Effect.retry` + `Schedule` from `effect@4.0.0-rc.117` (pinned exactly). Attempt count, delay sequence, retryability filter, abort/timeout classification and the surfaced error identity are unchanged; the triplicated loop bodies are gone.
-- **jscpd ratchet gate** — the advisory "N clones" warning is a blocking `jscpd ratchet` check again: the clone count is compared against a committed baseline (`scripts/check/jscpd-baseline.json`) and growth fails the gate; `--update` lowers the baseline only. Restored after a carry-over fold silently reverted the new gate three days after it landed (BUG-jscpd-ratchet-gate-silently-removed-without-ticket).
-- **DB v0 collapse** — replaced 23 forward migrations + 20 `parts/` sub-modules with a single atomic `001_init.ts` (~4 600 lines, all 154 tables + indexes + triggers). Dropped `parts/` orchestration, the `parts/`-vs-append strategy policy, the `schema_version` ledger, and the boot-time `schema-backfill` step. Regenerated `schema.ts`, `schema-*.ts`, `schema-manifest.ts`, `insert-helpers.ts`, `db-schemas.ts`. AGENTS.md updated: append-only policy retained, but with only two valid paths (new top-level `NNN_*.ts` or extend current HEAD if not yet shipped).
-
-- **Repo orchestration synced to the pinned `giwt`** — `scripts/worktree/commands/sync.ts` spawned a bare `giwt` off PATH, which resolves through `~/.local/bin/giwt` to a _mutable local checkout_ rather than the `bun.lock` pin; it now resolves the pinned `node_modules/giwt/src/cli.ts` (`giwtArgv`, with tests). `plan:backlog:sync{,fix}` call the dedicated `giwt backlog sync` instead of routing through `giwt plan validate --gates backlog`; new `plan:matrix{,check}` scripts and a `plan - matrix` freshness gate cover the generated `.plan/feature-matrix.md`. AGENTS.md documents the pin rule, the `status-vocab` gate's canonical `**Status:**` values, and the `matrix`/`status-vocab` gates.
-
-
-### Changed
-
-- **Provider retry deduplication (Effect v4, per-surface adoption)** — the three byte-identical backoff loops in the Anthropic, Ollama-native and OpenAI-compatible HTTP clients now share one policy in `src/generation/providers/retry.ts`, built on `Effect.retry` + `Schedule` from `effect@4.0.0-rc.117` (pinned exactly). Attempt count, delay sequence, retryability filter, abort/timeout classification and the surfaced error identity are unchanged; the triplicated loop bodies are gone.
-- **jscpd ratchet gate** — the advisory "N clones" warning is a blocking `jscpd ratchet` check again: the clone count is compared against a committed baseline (`scripts/check/jscpd-baseline.json`) and growth fails the gate; `--update` lowers the baseline only. Restored after a carry-over fold silently reverted the new gate three days after it landed (BUG-jscpd-ratchet-gate-silently-removed-without-ticket).
-- **DB v0 collapse** — replaced 23 forward migrations + 20 `parts/` sub-modules with a single atomic `001_init.ts` (~4 600 lines, all 154 tables + indexes + triggers). Dropped `parts/` orchestration, the `parts/`-vs-append strategy policy, the `schema_version` ledger, and the boot-time `schema-backfill` step. Regenerated `schema.ts`, `schema-*.ts`, `schema-manifest.ts`, `insert-helpers.ts`, `db-schemas.ts`. AGENTS.md updated: append-only policy retained, but with only two valid paths (new top-level `NNN_*.ts` or extend current HEAD if not yet shipped).
-
-
-### Fixed
-
-- **E2E test safeguard (developer scripts)** — `test:e2e`, `test:e2e:browser`, `test:e2e:smoke`, and `test:all` now export `E2E_SAFEGUARD=1`, disabling the governance rate-limit guard when run directly (matches the behavior already in `ci`, `test:coverage`, and `check-parallel.mjs`).
-- **Non-retryable provider errors keep their identity when the request is cancelled** — `withProviderRetry` classified an aborted signal before checking whether the failure was already a non-retryable `ProviderError`, so a 401 raised in the same tick as a user cancel surfaced as `Request cancelled` (no status) instead of the auth error. `callWithFailover` maps the two down different paths, which would have swallowed auth failures. Precedence now matches the hand-rolled loops these call sites replaced, and `retry.test.ts` pins it.
-
 ### Changed
 
 - **Provider retry deduplication (Effect v4, per-surface adoption)** — the three byte-identical backoff loops in the Anthropic, Ollama-native and OpenAI-compatible HTTP clients now share one policy in `src/generation/providers/retry.ts`, built on `Effect.retry` + `Schedule` from `effect@4.0.0-rc.117` (pinned exactly). Attempt count, delay sequence, retryability filter, abort/timeout classification and the surfaced error identity are unchanged; the triplicated loop bodies are gone.
@@ -49,7 +27,6 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 
 - **E2E test safeguard (developer scripts)** — `test:e2e`, `test:e2e:browser`, `test:e2e:smoke`, and `test:all` now export `E2E_SAFEGUARD=1`, disabling the governance rate-limit guard when run directly (matches the behavior already in `ci`, `test:coverage`, and `check-parallel.mjs`).
 - **Non-retryable provider errors keep their identity when the request is cancelled** — `withProviderRetry` classified an aborted signal before checking whether the failure was already a non-retryable `ProviderError`, so a 401 raised in the same tick as a user cancel surfaced as `Request cancelled` (no status) instead of the auth error. `callWithFailover` maps the two down different paths, which would have swallowed auth failures. Precedence now matches the hand-rolled loops these call sites replaced, and `retry.test.ts` pins it.
-
 
 ## [0.1.0] - 2026-08-15
 
@@ -68,18 +45,15 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 - **Auth & safety** — authentication + sessions, NSFW gate + moderation, profanity filter, age gate, rate limiting, solo-user mode.
 - **Plumbing** — Kysely + `bun:sqlite` (PG dialect-swappable), encrypted DB backup/recovery, plugin system, structured logging, telemetry, auxiliary LLM pipeline, wiring gate (`scripts/check-wiring.ts`), e2e browser suite (19 flows).
 
-
 ### Changed
 
 - Lint debt resolved across `src` (156 files), eslint config + example configs shipped.
 - In-range dependency bumps (kysely, smol-toml, js-yaml, alpine, eslint, unicorn, typescript-eslint, etc.).
 
-
 ### Fixed
 
 - `versionRedirect` double-prefix loop for `/api/v1/*` paths.
 - Browser e2e stabilization across 18 flows (timeout hardening, template-literal lint drift).
-
 
 ### Removed
 
