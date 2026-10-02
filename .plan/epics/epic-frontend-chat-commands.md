@@ -35,3 +35,32 @@
 
 - Same registry drives all three composers; disallowed commands hidden
   with explanation, not silent failure.
+
+## Integration Points
+
+### Systems This Epic Depends On
+
+| System | What It Provides | How Used |
+| ------ | ---------------- | -------- |
+| Emoji Reactions | `:name:` autocomplete registry | Shared composer popup (see `matrix-frontend-backend-integration.md` FB2) |
+| Frontend Components | Composer markup | `src/components/chat/input-area.html` |
+| Assistant / GM flows | Continuation commands | `/continue`, `/branch` |
+
+### Systems That Depend On This Epic
+
+| System | What It Consumes | How Used |
+| ------ | ---------------- | -------- |
+| Emoji Reactions | Shared trigger registry | One autocomplete popup |
+
+### Shared Data Contracts
+
+| Contract | Shared With | Purpose |
+| -------- | ----------- | ------- |
+| Command registry (`src/frontend/alpine/chat-actions/command-palette.ts`) | Emoji Reactions, group chat | Permission-gated command dispatch |
+
+### Cross-System Events
+
+| Event | Direction | Purpose |
+| ----- | --------- | ------- |
+| — | — | Frontend dispatch only; no backend command execution |
+

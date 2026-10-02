@@ -165,3 +165,31 @@ Each phase follows the pattern:
 - `epic-battle-integration-gaps.md` — Battle integration
 - `epic-nsfw-integration-gaps.md` — NSFW integration
 - `epic-frontend-overview.md` — Frontend overview
+
+## Integration Points
+
+### Systems This Epic Depends On
+
+| System | What It Provides | How Used |
+| ------ | ---------------- | -------- |
+| FE-BE Harmonization | Static `feFetch` ↔ route/schema contract index | Proves this epic's "no broken wiring" acceptance (see `matrix-frontend-backend-integration.md` FB1) |
+| Frontend Components | Shared composer/partial building blocks | Reused by each newly wired subsystem screen |
+
+### Systems That Depend On This Epic
+
+| System | What It Consumes | How Used |
+| ------ | ---------------- | -------- |
+| Routing, Gallery, Admin, Notifications, Settings, Chat Commands, Emoji Reactions | `feFetch` wiring pattern + backend route map | Each wires its UI to the routes this epic catalogues |
+
+### Shared Data Contracts
+
+| Contract | Shared With | Purpose |
+| -------- | ----------- | ------- |
+| `feFetch` call-site descriptor (`src/frontend/fe-fetch.ts`) | FE-BE Harmonization | Method + normalized path join key |
+
+### Cross-System Events
+
+| Event | Direction | Purpose |
+| ----- | --------- | ------- |
+| — | — | Server-rendered htmx request/response only; no cross-system event bus |
+
