@@ -78,3 +78,5 @@ Complete the moderation surface across chat scope: ban (full removal), kick (imm
 
 - Does mute affect only the active chat, or all chats the actor shares with the muter?
 - Are NSFW / non-NSFW point flags discrete counters, or a unified severity rubric?
+
+**Resolved:** 2026-10-02 registry-driven close: git issue 764761a (registry tip: f8944fadf gate Auto-closed: appended .md marker marks TASK-CHAT-FEATURE-MODERATION done)
