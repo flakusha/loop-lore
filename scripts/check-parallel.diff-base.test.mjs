@@ -16,6 +16,13 @@
  * Fixture: a temp git repo where `feature` forks from `main`, diverges, and
  * `main` then advances — independently reproducing one of the branch's edits
  * byte-for-byte. That converged file is the regression: it must NOT be floored.
+ *
+ * Resource contract: each test owns exactly one `mkdtemp` repo under the OS
+ * temp dir, rebuilt per test in `beforeEach` and removed in `afterEach`, so the
+ * suite is safe to run concurrently with itself and with other temp-repo suites
+ * (the `loop-lore-diff-base-` prefix keeps it clear of the `loop-lore-orphan-`
+ * repo the unrelated-histories test builds inline). Nothing is written outside
+ * that dir, no fixed path is shared, and no test reads another's fixture.
  */
 
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
