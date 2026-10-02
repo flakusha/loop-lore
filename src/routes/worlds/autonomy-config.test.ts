@@ -293,7 +293,7 @@ describe("autonomyUpdate — direct normaliser contract", () => {
       { seed: true, },
       { seed: { a: 1, }, },
       { seed: 1.5, },
-      { seed: JSON.parse("1e999") as unknown, },
+      { seed: JSON.parse("1e999",) as unknown, },
     ];
     for (const cfg of raws) {
       const r = autonomyUpdate(cfg,);
