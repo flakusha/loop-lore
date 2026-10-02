@@ -4491,6 +4491,10 @@
       "source": ".plan/epics/epic-immersion-consistency-gate.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-sc10-player-state-machine-adapters.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/social-interaction.md"
     }
@@ -7035,6 +7039,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-matrix-story-coherence-perspective-aware-draft-set-perspecti.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-sc2-narrator-mode-kind-stamp.md"
     }
   ],
   "src/chat/service/crud/update.test.ts": [
@@ -11601,6 +11609,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-gate-shadow-notes-status-x-visibility-composite.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-sc2-narrator-mode-kind-stamp.md"
     },
     {
       "kind": "spec",
@@ -34117,6 +34129,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-immersion-consistency-gate.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-sc10-player-state-machine-adapters.md"
     }
   ],
   "src/rpg/skills-sexual/categories.ts": [
@@ -36201,6 +36217,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-immersion-consistency-gate.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-sc10-player-state-machine-adapters.md"
     }
   ],
   "src/story/items.ts": [
