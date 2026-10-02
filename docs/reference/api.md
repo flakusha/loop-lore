@@ -567,7 +567,7 @@ All endpoints prefixed with `/api/v1/` (versioned; see `docs/spec/api-versioning
 
 ### Character Comparison
 
-`GET /api/v1/analytics/characters` — per-character rollup (messages, tokens, avg response length, tokens/message)
+`GET /api/v1/analytics/characters` — per-character rollup (messages, tokens, avg response length, tokens/message). Characters are `actors` rows with `actor_type='character'`; the caller must own both the chat and the character. Ordered by tokens desc, then id; capped at 50.
 
 ### Model Comparisons — Create
 
