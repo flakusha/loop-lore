@@ -64,6 +64,27 @@ export const AdminWorldRow = Type.Object({
  *
  */
 export type AdminWorldRow = Static<typeof AdminWorldRow>;
+
+/**
+ * One `world_event_log` row (admin/world-events.ts). `payload` stays a
+ * string: the log is an append-only record whose shape is owned by the
+ * simulation that wrote it, so the admin surface reports it verbatim
+ * rather than pretending to validate it.
+ */
+export const AdminWorldEventRow = Type.Object({
+  id: Type.String(),
+  world_id: Type.String(),
+  event_type: Type.String(),
+  subject_id: Type.Union([Type.String(), Type.Null(),]),
+  actor_id: Type.Union([Type.String(), Type.Null(),]),
+  payload: Type.String(),
+  tick_index: Type.Number(),
+  created_at: Type.String(),
+},);
+/**
+ *
+ */
+export type AdminWorldEventRow = Static<typeof AdminWorldEventRow>;
 export const AdminAuditRow = Type.Object({
   id: Type.String(),
   level: Type.Number(),

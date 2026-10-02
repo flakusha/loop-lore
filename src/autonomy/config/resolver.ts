@@ -93,6 +93,15 @@ function applyLayer(out: AutonomyConfig, layer: AutonomyConfigOverride,): void {
   if (layer.jitterRatio !== undefined) { out.jitterRatio = layer.jitterRatio; }
   if (layer.perAgentCap !== undefined) { out.perAgentCap = layer.perAgentCap; }
   if (layer.perUserCap !== undefined) { out.perUserCap = layer.perUserCap; }
+  // `!== undefined` (not `??`) so a layer can reset a seeded world back
+  // to unseeded with an explicit `null` — same as the null caps above.
+  // Defence in depth behind the route schemas: a value that is neither
+  // null nor an integer is DROPPED, keeping the lower layer's, because a
+  // layered config should fail predictably rather than let a bad seed
+  // coerce through `hashSeed`/`mulberry32` and quietly re-seed a world.
+  if (layer.seed !== undefined && (layer.seed === null || Number.isInteger(layer.seed))) {
+    out.seed = layer.seed;
+  }
 }
 
 /**
@@ -142,8 +151,8 @@ function mergeLayers(
     jitterRatio: preset.jitterRatio,
     perAgentCap: preset.perAgentCap,
     perUserCap: preset.perUserCap,
+    seed: preset.seed,
   };
-
   applyLayer(out, world,);
   applyLayer(out, chat,);
   applyLayer(out, actor,);

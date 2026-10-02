@@ -28,10 +28,11 @@ import { WorldStateService, } from "../world-state";
 import { acceptResponse as acceptResponseDispatch, humanOverride as humanOverrideDispatch, } from "./accept";
 import { executeTurn as executeTurnDispatch, } from "./execute";
 import { injectNarration as injectNarrationDispatch, } from "./narration";
-import type { GmState, GmTurnResult, } from "./types";
+import type { ExecuteTurnOptions, GmState, GmTurnResult, } from "./types";
 
 export type {
   BuildResultOptions,
+  ExecuteTurnOptions,
   GenerateTextFn,
   GmState,
   GmTurnResult,
@@ -123,11 +124,17 @@ export class GameMasterService {
   }
 
   /**
-   * Execute one full story turn
+   * Execute one full story turn.
+   *
+   * Defaults to moving NPCs (the HTTP story-step route owns movement).
+   * Pass `{ moveNpcs: false }` from a caller that already moved the world
+   * this tick — the autonomy scheduler's GM beat, which runs after the
+   * scheduler's own movement dispatch.
    * @param debugActorId
+   * @param options
    */
-  async executeTurn(debugActorId?: string,): Promise<GmTurnResult> {
-    return executeTurnDispatch(this.state, debugActorId,);
+  async executeTurn(debugActorId?: string, options: ExecuteTurnOptions = {},): Promise<GmTurnResult> {
+    return executeTurnDispatch(this.state, debugActorId, options,);
   }
 
   /**

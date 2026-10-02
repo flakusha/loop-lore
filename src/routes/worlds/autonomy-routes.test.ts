@@ -73,7 +73,13 @@ afterEach(async () => {
 /** The GET payload, as a settings page consumes it. */
 interface AutonomyPayload {
   layers: { world: unknown; chat: unknown; actor: unknown };
-  resolved: { preset: string; enabled: boolean; tickIntervalMs: number; perUserCap: number | null };
+  resolved: {
+    preset: string;
+    enabled: boolean;
+    tickIntervalMs: number;
+    perUserCap: number | null;
+    seed: number | null;
+  };
   presets: Record<string, { tickIntervalMs: number; perAgentCap: number | null }>;
   simulation: { paused: number; tick_count: number; next_tick_at: string };
   budget: { cap: number | null; remaining: number | null; count: number; resetAt: number } | null;
@@ -257,6 +263,23 @@ function putActor(actorId: string, body: unknown, as?: Elysia,): Promise<Respons
 }
 
 /**
+ * Send `seed` as a raw JSON fragment rather than via `JSON.stringify`, which
+ * rewrites `Infinity` to `null` and would silently turn a bad-seed case into
+ * the legitimate null-reset path.
+ * @param actorId the character to write the override for
+ * @param rawSeed a JSON literal for the seed value
+ * @returns the raw response
+ */
+function putActorRawSeed(actorId: string, rawSeed: string,): Promise<Response> {
+  return app.handle(
+    new Request(ACTOR_URL(worldId, actorId,), {
+      method: "PUT",
+      headers: { "content-type": "application/json", },
+      body: '{"autonomy":{"seed":' + rawSeed + "}}",
+    },),
+  );
+}
+/**
  * @param name the character's display name
  * @param ownerId the user who owns the character row
  * @returns a world member that `ownerId` may write an override for
@@ -343,5 +366,88 @@ describe("PUT /api/worlds/:worldId/autonomy/actor/:actorId", () => {
 
     const res = await putActor(actorId, { autonomy: { preset: "brisk", }, }, appAs(strangerId,),);
     expect(res.status,).toBe(403,);
+  });
+});
+
+/**
+ * A seed that is not an integer is the failure the schema must catch:
+ * `hashSeed` runs `String(part)` and `mulberry32` runs `seed >>> 0`, so a
+ * string or float would be COERCED rather than rejected, silently turning
+ * an organic world into a deterministic one. `Infinity` is included
+ * because it is JSON-reachable (`1e999`) and `Number.isInteger` rejects it.
+ */
+const BAD_SEEDS: [string, string][] = [
+  ["a string", '"oops"'],
+  ["a boolean", "true"],
+  ["an object", '{"nested":1}'],
+  ["a float", "1.5"],
+  ["Infinity", "1e999"],
+];
+
+describe("PUT /api/worlds/:worldId/autonomy/actor/:actorId — seed validation", () => {
+  test("an integer seed writes and layers above the world layer", async () => {
+    await setLayer("worlds", worldId, { preset: "serene", seed: 11, },);
+    const actorId = await addActor("Seed", ownerId,);
+
+    const res = await putActor(actorId, { autonomy: { seed: 4242, }, },);
+    expect(res.status,).toBe(200,);
+
+    const data = await readAutonomy(`?actorId=${actorId}`,);
+    expect(data.layers.actor,).toEqual({ seed: 4242, },);
+    expect(data.resolved.seed,).toBe(4242,);
+  });
+
+  test("seed: null resets a seeded world layer to unseeded", async () => {
+    await setLayer("worlds", worldId, { preset: "serene", seed: 11, },);
+    const actorId = await addActor("Unseed", ownerId,);
+
+    const res = await putActor(actorId, { autonomy: { seed: null, }, },);
+    expect(res.status,).toBe(200,);
+
+    const data = await readAutonomy(`?actorId=${actorId}`,);
+    expect(data.resolved.seed,).toBeNull();
+  });
+
+  test.each(BAD_SEEDS)("rejects %s as a seed with a 4xx", async (_label, rawSeed,) => {
+    const actorId = await addActor("Bad-" + _label, ownerId,);
+
+    const res = await putActorRawSeed(actorId, rawSeed,);
+    // Exactly 422: the schema rejection, not a 401/403/404 that a broken
+    // fixture would also produce.
+    expect(res.status,).toBe(422,);
+
+    // Rejected outright: no traits row may exist, so nothing half-applied.
+    const row = await db
+      .selectFrom("character_internal_traits",)
+      .select("autonomy_preferences",)
+      .where("actor_id", "=", actorId,)
+      .executeTakeFirst();
+    expect(row,).toBeUndefined();
+  });
+
+  test("a rejected seed does not disturb a previously stored override", async () => {
+    const actorId = await addActor("Keep", ownerId,);
+    await putActor(actorId, { autonomy: { preset: "brisk", seed: 7, }, },);
+
+    const res = await putActor(actorId, { autonomy: { preset: "serene", seed: "oops", }, },);
+    expect(res.status,).toBe(422,);
+
+    // Whole-body rejection, not a partial write: the good override survives.
+    const data = await readAutonomy(`?actorId=${actorId}`,);
+    expect(data.layers.actor,).toEqual({ preset: "brisk", seed: 7, },);
+  });
+
+  test("a rejected seed still rejects the other fields in the same body", async () => {
+    const actorId = await addActor("Mixed", ownerId,);
+
+    const res = await putActor(actorId, { autonomy: { preset: "brisk", seed: 1.5, }, },);
+    expect(res.status,).toBe(422,);
+
+    const row = await db
+      .selectFrom("character_internal_traits",)
+      .select("autonomy_preferences",)
+      .where("actor_id", "=", actorId,)
+      .executeTakeFirst();
+    expect(row,).toBeUndefined();
   });
 });

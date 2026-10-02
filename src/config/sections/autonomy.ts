@@ -26,6 +26,12 @@ export class AutonomySection implements AutonomyConfig {
   jitterRatio = 0;
   perAgentCap = AUTONOMY_DEFAULTS.perAgentCap;
   perUserCap = AUTONOMY_DEFAULTS.perUserCap;
+  // Unseeded by default, like every shipped preset — process-wide TOML
+  // does not set a replay seed. Not in `AUTONOMY_DEFAULTS` for the same
+  // reason `tickIntervalMs` / `jitterRatio` are not: the section carries
+  // the whole `AutonomyConfig` contract, TOML exposes only the subset an
+  // operator may override.
+  seed: number | null = null;
 
   /**
    * @param overrides

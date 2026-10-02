@@ -16,7 +16,7 @@ cursor has not arrived is skipped without being rescheduled.
 ```ts
 import { AutonomyScheduler, } from "../autonomy";
 
-const scheduler = new AutonomyScheduler(db, { rng: Math.random, },);
+const scheduler = new AutonomyScheduler(db,);
 
 // Real-time / accelerated / manual sources all reduce to this:
 setInterval(() => {
@@ -29,9 +29,12 @@ await scheduler.resume(worldId,); // admin resume
 const state = await scheduler.stateFor(worldId,);
 ```
 
-Constructor takes the Kysely handle plus optional `{ governor, rng }`.
-`governor` shares a `AutonomyGovernor` across the tick driver;
-`rng` makes the driver's jitter coin flip deterministic in tests.
+Constructor takes the Kysely handle plus optional
+`{ governor, rng, dispatch }`. `governor` shares a `AutonomyGovernor`
+across the tick driver. `rng` is a test seam: it overrides the
+per-tick derived stream for every world, so a test can pin the
+jitter coin flip without seeding the world. Omit it in production —
+the scheduler derives the stream from the config seed itself.
 
 A world that has **never ticked** is due immediately. The due set
 left-joins `worlds` against the cursor table rather than reading the
@@ -64,31 +67,76 @@ paused) — autonomy does not require an opt-in seed row per world.
 `stateFor` and `stepOnce` synthesize the same shape for it.
 
 That guarantee covers **which worlds are selected and in what order**
-only — not what a turn does. Wander/flee target choice calls
-`Math.random()` directly inside `processMovementTick`
-(`src/rpg/npc-navigation/service/processing.ts:160,246`), and the jitter
-drop consumes a seeded draw, so movement output is not reproducible yet.
-The tier split, the seed placement, and why the governor's TTL cache is
-excluded are drafted in `TASK-autonomy-deterministic-turns`.
+only — not what a turn does. Every turn is split into a deterministic
+tier (scheduling, selection, ordering, budget accounting) and a
+nondeterministic tier (jitter drop, wander/flee target choice, LLM
+dispatch). The guarantee is reproducibility, not sameness: the seed
+lives at `AutonomyConfig.seed` (`null` = unseeded, the production
+default) and each tick draws from its own stream,
+`mulberry32(hashSeed(seed, worldId, tickIndex))`, derived once in
+`#tickWorld` from the world's `tick_count` — the tick being computed,
+not the one just committed — and shared by every target on that tick —
+so a jitter drop in one tick cannot shift the next tick's draws, and
+one tick replays in isolation. `seed: null` (every shipped preset)
+derives `Math.random`, so the unseeded production path is unchanged.
+The RNG reaches the movement path through `runNpcMovementTick`'s
+`rng` option, which spends the tick's first draw on the jitter coin
+flip. Full source table, the seed's layering, and why the governor's
+TTL cache is excluded:
+[autonomy determinism](../../../docs/spec/autonomy-determinism.md).
 
 ## Dispatch
 
-Per due world, the scheduler resolves cadence from the layered
-`AutonomyConfig` (`tickIntervalMs`) and calls `runNpcMovementTick`
-(`src/rpg/npc-navigation/tick-driver.ts`) — the existing pipeline.
-The scheduler never moves an NPC itself and owns no dispatch path of
-its own. A short-circuit from the driver (`disabled`, `jitter`,
-`budget`) is recorded as the outcome but the cursor still advances,
-so a budget-denied world is rescheduled rather than dropped or
-re-selected on every pass.
+The scheduler owns **no dispatch logic of its own**. Per due world it
+resolves cadence from the layered `AutonomyConfig`, builds one
+`AutonomyDispatchContext` (`db`, `worldId`, `chatId`, `nowMs`, `cfg`,
+`rng`, optional shared `governor`), runs every registered dispatch
+target over it, and aggregates what they report. The scheduler never
+moves an NPC, never plans a GM beat, never recomputes a BDI plan — it
+only runs the list and folds the results.
+
+`movementDispatch` (wrapping `runNpcMovementTick`,
+`src/rpg/npc-navigation/tick-driver.ts`) is registered **first in every
+scheduler**, so `new AutonomyScheduler(db)` is movement-only and its
+behaviour is unchanged by anything that follows.
+
+A new subsystem registers by implementing `AutonomyDispatch` — a
+`name` plus `run(ctx)` returning `{dispatched: n}` or `{skipped: why}`
+— and passing it as `dispatch: [...]` to the constructor:
+
+```ts
+new AutonomyScheduler(db, { dispatch: [bdiReflection, gmBeats], },);
+```
+
+Nothing in the tick loop changes. Two properties the seam guarantees:
+
+- **A skip never aborts the tick.** A GM beat that is off-cadence does
+  not stop NPC movement. `aggregate()` sums dispatched work across
+  targets and reports `dispatched` whenever at least one target
+  returned `dispatched` — including a target that did zero work, since
+  it did run. Only an all-skip tick reports a reason: the first in
+  registration order.
+- **Each target charges its own governor.** The scheduler hands over
+  the governor instance but never calls `tryConsume` itself, so a
+  target cannot double-spend — `movementDispatch`'s charge stays inside
+  `runNpcMovementTick` (`TICK_LIMIT`). Targets own their own gating.
+
+A target that throws propagates to `#tickWorld`, which records the
+error on the world's row, backs the world off, and counts it in
+`TickResult.errors` — one broken target cannot stall the loop. A
+short-circuit (e.g. the driver's `disabled`, `jitter`, `budget`) is
+recorded as the outcome but the cursor still advances, so a
+budget-denied world is rescheduled rather than dropped or re-selected
+on every pass.
 
 BDI reflection and GM beat dispatch are **split out**, not deferred:
-`TASK-bdi-plan-recompute-implementation` and `TASK-gm-beat-scheduling`.
-The tick driver is the only dispatch target today, and that is a
-deliberate boundary rather than a gap — see the split-out ACs in
-`.plan/tickets/TASK-story-auto-drive-scheduler.md` for why neither could
-be wired here without double-moving NPCs (GM) or authoring the decision
-layer from scratch (BDI).
+`TASK-bdi-plan-recompute-implementation` and
+`TASK-gm-beat-scheduling`. They are **implemented as separate dispatch
+targets** — separate budgets, separate short-circuit reasons, separate
+failures — rather than folded into the movement path, because neither
+could ride along inside it without double-moving NPCs (GM) or authoring
+the decision layer from scratch (BDI). See the split-out ACs in
+`.plan/tickets/TASK-story-auto-drive-scheduler.md`.
 
 ## Persistence
 
