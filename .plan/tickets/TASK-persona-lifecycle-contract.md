@@ -19,7 +19,7 @@ Pin the persona lifecycle contract that `epic-impersonation.md` (persona-per-cha
 
 - Prior tickets `BUG-personas-setdefault-silently-succeeds-for-invalid-personaid-` and `TASK-persona-setdefault-getdefault-unwired-delete-or-wire` (both Done) reported `setDefault` as unchecked and unwired. Both premises are now stale: `applyDefault` enforces existence/ownership and `update(isDefault:true)` delegates to it.
 - There is no dedicated `POST /api/personas/:id/set-default` route and none is needed: `PATCH /api/personas/:id` with `{ isDefault: true }` is the single HTTP path, and it maps invalid ids to 404.
-- The precedent commit `249b379c1` was NOT found in this tree (`git log --all --grep=249b379` empty) and is therefore not cited as evidence; `src/personas/convert.ts:72-75` plus its regression tests serve instead.
+- Precedent `249b379c1` (`fix(personas): carry persona tuning into converted actor`, 2026-09-18) landed the `title`/`temperature`/`max_tokens`/`model` carry in `src/personas/convert.ts` with regression tests in `handlers.test.ts` + `service.missing.test.ts`.
 
 ## Evidence (grep-verified)
 
