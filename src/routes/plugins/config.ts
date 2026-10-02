@@ -19,10 +19,27 @@ import { getLogger, } from "../../logger";
 import { mergePluginConfig, } from "../../plugins/config-merge";
 import { readStoredPluginConfig, writeStoredPluginConfig, } from "../../plugins/config-store";
 import { registry, } from "../../plugins/registry";
+import type { LoadedPlugin, } from "../../plugins/types";
 import { can, } from "../../users/permissions";
 import { forbidden, } from "../../validation/middleware";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
 import { HttpStatus, jsonError, jsonResponse, } from "../http-utils";
+
+/**
+ * Resolve the admin gate and the target plugin for a config request.
+ * @param ctx - Elysia context (`userRole` + `params.name`).
+ * @returns The loaded plugin, or the error Response to short-circuit with.
+ */
+function resolvePlugin(ctx: any,): { plugin: LoadedPlugin } | { error: Response } {
+  if (!can(ctx.userRole, "admin.system",)) {
+    return { error: forbidden("Admin access required",), };
+  }
+  const plugin = registry.getPlugin(ctx.params.name as string,);
+  if (!plugin) {
+    return { error: jsonError({ message: "Plugin not found", status: HttpStatus.NotFound, },), };
+  }
+  return { plugin, };
+}
 
 /**
  * @param root0
@@ -33,17 +50,10 @@ export function pluginConfigRoutes({ database, }: { database: Kysely<DB> }, pref
   return new Elysia({ name: "plugin-config", },)
     .get(
       `${prefix}/plugins/:name/config`,
-      async ({ params, userRole, }: any,) => {
-        if (!can(userRole, "admin.system",)) {
-          return forbidden("Admin access required",);
-        }
-
-        const name = params.name as string;
-        if (!registry.getPlugin(name,)) {
-          return jsonError({ message: "Plugin not found", status: HttpStatus.NotFound, },);
-        }
-
-        const config = await readStoredPluginConfig(database, name,);
+      async (ctx: any,) => {
+        const resolved = resolvePlugin(ctx,);
+        if ("error" in resolved) { return resolved.error; }
+        const config = await readStoredPluginConfig(database, resolved.plugin.manifest.name,);
         return jsonResponse({ config, },);
       },
       {
@@ -61,16 +71,12 @@ export function pluginConfigRoutes({ database, }: { database: Kysely<DB> }, pref
     )
     .put(
       `${prefix}/plugins/:name/config`,
-      async ({ params, body, userRole, }: any,) => {
-        if (!can(userRole, "admin.system",)) {
-          return forbidden("Admin access required",);
-        }
-
-        const name = params.name as string;
-        const plugin = registry.getPlugin(name,);
-        if (!plugin) {
-          return jsonError({ message: "Plugin not found", status: HttpStatus.NotFound, },);
-        }
+      async (ctx: any,) => {
+        const resolved = resolvePlugin(ctx,);
+        if ("error" in resolved) { return resolved.error; }
+        const { plugin } = resolved;
+        const name = plugin.manifest.name;
+        const body = ctx.body;
 
         if (body === null || typeof body !== "object" || Array.isArray(body,)) {
           return jsonError({ message: "Plugin config must be a JSON object", status: HttpStatus.BadRequest, },);
