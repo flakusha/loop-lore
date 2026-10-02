@@ -55,6 +55,12 @@ Integrate Matrix protocol for federated, encrypted messaging with loop-lore char
 - [ ] Add bridge health monitoring
 - [ ] Document bridge setup
 
+### Server-to-server auth (appservice surface)
+
+- [ ] `PUT /_matrix/app/v1/transactions/:txnId` verifies the appservice `hs_token` (Authorization header) on every request — missing/invalid token → 401, transaction never processed (default-deny)
+- [ ] The remote homeserver is the only legitimate caller — explicit server-to-server trust boundary, documented in `docs/spec/integrations-architecture.md` §3
+- [ ] Client-side appservice registration stores the shared secret via the secret envelope (`TASK-adapter-secret-storage`), never in config plaintext
+
 ## Files
 
 - `src/integrations/matrix/client.ts`

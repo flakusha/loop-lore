@@ -29,7 +29,7 @@ The single implemented seam today is `ProtocolAdapter` (`src/integrations/adapte
 | NodeInfo 2.1 + `/.well-known/nodeinfo` + `/api/instance-state` (opt-in via `config.federation.enabled`, default off) | `src/routes/federation.ts` | Implemented |
 | Plugin runtime: manifest, loader, registry, 6 extension points, `onLoad`/`onUnload`, event bus dispatch (wired to chat lifecycle), tool executor, config merge, mount-point lookup, admin enable/disable API | `src/plugins/`, `src/routes/plugins.ts` | Implemented (registry API + event bus wired; see §2.3 for gaps) |
 | v1 REST surfaces + OpenAPI | `src/routes/v1/` (`openapi.ts`) | Implemented |
-| Blog system (posts, comments, follows, tags) | `src/db/schema-blog.ts`, `src/routes/blog/` | Implemented; comments now threaded (`075_blog_comments_threading.ts`) |
+| Blog system (posts, comments, follows, tags) | `src/db/schema-blog.ts`, `src/routes/blog/` | Implemented; comments now threaded (`src/db/migrations/001_init.ts` + `src/db/schema-blog.ts`) |
 | Build identity hash + `/.well-known/loop-lore/build-id` | `src/build/identity.ts`, `src/routes/build-id.ts` | Implemented |
 
 ### 2.2 Planning-only (no code)
@@ -131,7 +131,7 @@ Signal: **no bot API, no official SDK** — the only adoption path is the extern
 | [nostr-tools](https://github.com/nbd-wtf/nostr-tools) | Unlicense | Relay WebSocket client + NIP implementations |
 | NIP-28 (public chat) / NIP-29 (groups) | — | kind 40/41/42 channel events; NIP-29 is the recommended successor |
 
-Nostr is in-process (relay WebSocket, pure JS). It is the lightweight fediverse axis: no servers to run, no E2EE for public chat (NIP-04 DM is deprecated; NIP-44 is the E2EE variant `[UNVERIFIED]`). Tracked as `IDEA-consider-nostr-as-a-lightweight-fediverse-axis`.
+Nostr is in-process (relay WebSocket, pure JS). It is the lightweight fediverse axis: no servers to run, no E2EE for public chat (NIP-04 DM is deprecated; NIP-44 is the E2EE variant `[UNVERIFIED]`). Tracked as `IDEA-CONSIDER-NOSTR-AS-A-LIGHTWEIGHT-FEDIVERSE-AXIS`.
 
 ### 3.8 ActivityPub / fediverse (incl. Fedify)
 

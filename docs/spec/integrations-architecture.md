@@ -80,12 +80,14 @@ All new routes follow the existing mounting pattern: an Elysia sub-app factory i
 | ActivityPub outbox | `GET /users/:actor/outbox` (paginated `OrderedCollection`, newest-first, capped — C9) | same | same |
 | WebFinger | `GET /.well-known/webfinger?resource=acct:user@host` | same (NodeInfo already lives here) | `FEAT-activitypub-federation` |
 | NodeInfo | `GET /nodeinfo/2.1` + `/.well-known/nodeinfo` | `src/routes/federation.ts` — IMPLEMENTED | — |
-| Matrix appservice registration | `PUT /_matrix/app/v1/transactions/:txnId` (inbound) + client-side registration against the admin's homeserver | `src/routes/matrix.ts` (new) | `TASK-matrix-integration` |
-| Webhook ingestion | `POST /api/v1/integrations/webhooks/:adapter` (HMAC-verified, per-adapter secret) | `src/routes/v1/integrations-surface.ts` (new) | `TASK-integrations-inbound-webhook-ingestion` |
+| Matrix appservice registration | `PUT /_matrix/app/v1/transactions/:txnId` (inbound; caller = remote homeserver, authenticated via appservice `hs_token` in the Authorization header — default-deny, no token → 401) + client-side registration against the admin's homeserver | `src/routes/matrix.ts` (new) | `TASK-matrix-integration` |
+| Webhook ingestion | `POST /api/v1/integrations/webhooks/:adapter` (HMAC-verified, per-adapter secret; missing/invalid signature → 401, payload never processed — default-deny) | `src/routes/v1/integrations-surface.ts` (new) | `TASK-inbound-webhook-ingestion-surface-hmac-verified-default-deny` |
 | OpenAPI/REST for external tools | `/api/v1/*` + `/api/v1/openapi.json` | `src/routes/v1/` — IMPLEMENTED (`openapi.ts`) | — |
-| MCP bridge | MCP stdio/HTTP server exposing the tool registry | `src/integrations/mcp/` (new) | `TASK-workspace-mcp-bridge-on-openclaw-serve-registry-pattern` |
+| MCP bridge | MCP stdio/HTTP server exposing the tool registry (stdio = local-user trust boundary, no network auth needed; HTTP variant is loopback-only or authenticated — never exposed unauthenticated) | `src/integrations/mcp/` (new) | `TASK-workspace-mcp-bridge-on-openclaw-serve-registry-pattern` |
 
 Rule: unversioned spec-fixed paths (ActivityPub, WebFinger, NodeInfo) live in `src/routes/federation.ts` behind `config.federation.enabled`; versioned API paths live in the v1 surfaces; plugin-provided routes go through the plugin runtime.
+
+Authorization rule (every inbound endpoint): authenticate the caller server-side and default-deny — unknown/absent/unauthenticated is rejected, never accepted. User-facing v1 routes compose the existing `authenticate()` middleware (`src/middleware/auth/authenticate.ts` — JWT verified against the session table, `required` flag, 401 on missing/invalid). Machine-facing endpoints use their protocol's native proof: HTTP signatures (ActivityPub inbox — the signature binds the request to the actor, which is the resource), per-adapter HMAC secrets (webhooks), appservice `hs_token` (Matrix transactions — explicit server-to-server trust boundary; the remote homeserver is the only legitimate caller). Resource-level: a webhook authenticates the adapter, not a user — adapter-scoped secrets must not be usable across adapters; an ActivityPub actor may post only to its own inbox.
 
 ---
 
@@ -106,7 +108,7 @@ Per `matrix-protocol-chat-group-integration.md` (verified):
 ### 4.2 Thread identity
 
 - Chat-room protocols: thread = protocol-side id (Matrix `event_id` root, IRC flat, XMPP MUC thread id, Telegram topic id). Map to loop-lore `parent_message_id` where the protocol supports it; flat protocols (IRC) degrade to sequential context.
-- Blog/fediverse: thread = `inReplyTo` / `parent_comment_id` (blog comments now threaded — `075_blog_comments_threading.ts`).
+- Blog/fediverse: thread = `inReplyTo` / `parent_comment_id` (blog comments now threaded — `src/db/migrations/001_init.ts` + `src/db/schema-blog.ts`).
 - Cross-instance mentions: `IDEA-cross-instance-conversation-threading-mention-inreplyto`.
 
 ### 4.3 Idempotency / dedup
@@ -169,7 +171,7 @@ Rules:
 
 ### 8.1 Pattern
 
-Each integration registers a config section triple (`src/config/sections/<ns>.ts` schema + defaults + meta, mirrored in `schemas/config.<ns>.schema.json`) following `src/config/sections/transport.ts` + `schemas/config.config.transport.schema.json` precedent. Env overrides flatten to UPPER_SNAKE (`configs/env.example.yaml` + `src/config/schema-class/env-map.ts`).
+Each integration registers a config section triple (`src/config/sections/<ns>.ts` schema + defaults + meta, mirrored in `schemas/config.<ns>.schema.json`) following `src/config/sections/transport.ts` + `schemas/config.transport.schema.json` precedent. Env overrides flatten to UPPER_SNAKE (`configs/env.example.yaml` + `src/config/schema-class/env-map.ts`).
 
 ### 8.2 Keys to add
 
@@ -209,12 +211,18 @@ botToken = ""                        # ⚠ SECRET
 enabled = false
 botToken = ""                        # ⚠ SECRET
 
+[integrations.irc]
+enabled = false
+server = ""
+nick = ""
+# password = ""                 # ⚠ SECRET — optional SASL password
+
 [integrations.nostr]
 enabled = false
 relayUrls = []
 ```
 
-Env equivalents: `INTEGRATIONS_ENABLED`, `EMAIL_IMAP_HOST`, `EMAIL_SMTP_PASS`, `MATRIX_ACCESS_TOKEN`, `XMPP_JID`, `TELEGRAM_BOT_TOKEN`, `DISCORD_BOT_TOKEN`, `NOSTR_RELAY_URLS` (full map in `env-map.ts`).
+Env equivalents: `INTEGRATIONS_ENABLED`, `EMAIL_IMAP_HOST`, `EMAIL_SMTP_PASS`, `MATRIX_ACCESS_TOKEN`, `XMPP_JID`, `TELEGRAM_BOT_TOKEN`, `DISCORD_BOT_TOKEN`, `IRC_SERVER`, `IRC_NICK`, `IRC_PASSWORD`, `NOSTR_RELAY_URLS` (full map in `env-map.ts`).
 
 ### 8.3 Lazy-loading rule
 
@@ -241,7 +249,7 @@ Manifest (`PluginManifest`, `src/plugins/types.ts`): `name`, `version`, `descrip
 | UI component serving route | **Partial** | `getComponentsForMountPoint` lookup exists; no `GET /api/plugins/ui-components` route |
 | Inbound event bus for adapter events | **Partial** | bus is chat-lifecycle-only; no `adapter.message.received` emission |
 
-These gaps are tracked by `TASK-plugin-host-contract-for-integration-plugins`.
+These gaps are tracked by `TASK-PLUGIN-HOST-CONTRACT-FOR-THIRD-PARTY-INTEGRATION-PLUGINS`.
 
 ---
 
@@ -261,10 +269,10 @@ These gaps are tracked by `TASK-plugin-host-contract-for-integration-plugins`.
 ## 11. Linked tickets
 
 - `TASK-integrations-shared-seams-encryptionprovider-messagebridge-b` — the three planned seams
-- `TASK-integrations-config-surface` — §8 config keys + schemas
-- `TASK-adapter-secret-storage` — §7 credential envelope
-- `TASK-adapter-health-and-rate-limiting` — §4.4/§10
-- `TASK-integrations-inbound-webhook-ingestion` — §3 webhook surface
-- `TASK-plugin-host-contract-for-integration-plugins` — §9.2
-- `TASK-email-deliverability-and-spam-gate` — email channel spec
-- `TASK-bridge-daemon-adoption-matterbridge-slidge-mautrix` — interop daemon evaluation
+- `TASK-INTEGRATION-CONFIG-SURFACE-SCHEMAS-EXAMPLE-TOML-ENV-MAP` — §8 config keys + schemas
+- `TASK-ADAPTER-SECRET-STORAGE-ENCRYPTED-CREDENTIAL-ENVELOPE` — §7 credential envelope
+- `TASK-ADAPTER-HEALTH-MONITORING-AND-PER-PROTOCOL-RATE-LIMITING` — §4.4/§10
+- `TASK-INTEGRATIONS-INBOUND-WEBHOOK-INGESTION-ENDPOINT` — §3 webhook surface
+- `TASK-PLUGIN-HOST-CONTRACT-FOR-THIRD-PARTY-INTEGRATION-PLUGINS` — §9.2
+- `TASK-EMAIL-DELIVERABILITY-SPF-DKIM-DMARC-AND-INBOUND-SPAM-GATE` — email channel spec
+- `TASK-BRIDGE-DAEMON-ADOPTION-MATTERBRIDGE-SLIDGE-MAUTRIX-BIBOUMI-E` — interop daemon evaluation
