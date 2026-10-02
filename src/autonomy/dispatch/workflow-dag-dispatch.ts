@@ -27,18 +27,20 @@
  * bodies turn out to be uniformly expensive and unaccounted for.
  */
 
-import type { AutonomyDispatch, AutonomyDispatchContext, AutonomyDispatchResult, } from "../scheduler/types";
-import type { TaskRegistry, } from "../../cron/dag/types";
 import { WorkflowDagEngine, } from "../../cron/dag/engine";
+import type { TaskRegistry, } from "../../cron/dag/types";
+import type { AutonomyDispatch, AutonomyDispatchContext, AutonomyDispatchResult, } from "../scheduler/types";
 
 /** Stable target name, used in telemetry and outcome strings. */
 const DISPATCH_NAME = "workflow_dag";
 
 /** Options for {@link createWorkflowDagDispatch}. */
 export interface WorkflowDagDispatchOptions {
-  /** Task bodies this dispatch runs. Supplied per-pass by `tasks`, or
-   *  fixed for the engine's lifetime when omitted.
-    tasks?: TaskRegistry;
+  /** Task bodies this dispatch runs. Read fresh on every pass, so a caller
+   *  can swap the registry between ticks. Omitted → every pass skips with
+   *  `no_tasks` and the engine is never created.
+   */
+  tasks?: TaskRegistry;
   /** Pre-built engine. Omitted → one is created lazily from the first
    *  tick's `ctx.db` and reused, so node state survives across ticks.
    */

@@ -24,9 +24,10 @@ import type { DB, } from "../../db";
 import { runNightlyReflectionCycle, } from "../../services/agency/bdi-nightly";
 import type { PlanRecomputeFn, } from "../../services/agency/bdi-nightly";
 import { createPlanRecompute, } from "../../services/agency/bdi-plan-recompute";
-import type { AutonomyDispatch, AutonomyDispatchContext, AutonomyDispatchResult, } from "../scheduler";
+import { toDate, } from "../../utils/date";
 import { AutonomyGovernor, } from "../governor";
 import type { AutonomyScope, GovernorLimitName, } from "../governor";
+import type { AutonomyDispatch, AutonomyDispatchContext, AutonomyDispatchResult, } from "../scheduler";
 
 /** Stable name — appears verbatim in the scheduler's outcome telemetry. */
 export const BDI_DISPATCH_NAME = "bdi";
@@ -119,7 +120,7 @@ async function runBdiDispatch(
           worldId,
           nowMs,
         },)
-        .then((w,) => w.remaining === null || w.remaining > 0,),
+        .then((w,) => w.remaining === null || w.remaining > 0),
     planRecompute: args.planRecompute,
     maxActors: limit,
     today: planDate,
@@ -140,14 +141,14 @@ async function dueActors(
     .select("actor_id",)
     .where("plan_date", "=", planDate,)
     .execute();
-  const plannedIds = new Set(planned.map((p,) => p.actor_id,));
+  const plannedIds = new Set(planned.map((p,) => p.actor_id),);
   const members = await db
     .selectFrom("world_members",)
     .select("actor_id",)
     .where("world_id", "=", worldId,)
     .orderBy("actor_id", "asc",)
     .execute();
-  return members.map((m,) => m.actor_id,).filter((id,) => !plannedIds.has(id,)).slice(0, limit,);
+  return members.map((m,) => m.actor_id).filter((id,) => !plannedIds.has(id,)).slice(0, limit,);
 }
 
 /** Does this world have any members at all? */
@@ -168,7 +169,7 @@ function worldScope(worldId: string,): AutonomyScope {
 }
 
 function isoDate(nowMs: number,): string {
-  const d = new Date(nowMs,);
+  const d = toDate(nowMs,);
   const month = String(d.getUTCMonth() + 1,).padStart(2, "0",);
   const day = String(d.getUTCDate(),).padStart(2, "0",);
   return `${d.getUTCFullYear()}-${month}-${day}`;
