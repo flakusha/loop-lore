@@ -82,6 +82,7 @@ const NON_MOUNT_POINTS = new Set([
   "createEntityRoutes", // entity-routes helper
   "authPublicRoutes", // mounted via auth/ barrel (name preserved)
   "authProtectedRoutes", // mounted via auth/ barrel
+  "wardrobeBindingRoutes", // mounted via wardrobe.ts barrel
 ],);
 
 // Documented deferrals — intentionally not mounted.
