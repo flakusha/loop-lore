@@ -4,6 +4,22 @@
 import { describe, expect, test, } from "bun:test";
 import { countContentLines, exceedsSizeAllow, } from "./check-file-size";
 
+/**
+ * Resource contract: these tests own NOTHING.
+ *
+ * Both functions under test are pure — they take a string and return a
+ * number. No test allocates a tmp file, binds a port, opens a database or
+ * writes a shared global, so there is nothing to tear down and nothing for a
+ * parallel runner to interleave. Every test builds its own in-memory fixture
+ * via `fileOf`, so results do not depend on execution order or on any other
+ * suite. Any future test added here that DOES take a resource must own it
+ * uniquely and release it in afterEach.
+ *
+ * Importing check-file-size.ts is side-effect free: the gate body sits behind
+ * `import.meta.main`, so this file cannot trigger a repo-wide scan or exit the
+ * runner process.
+ */
+
 /** Build a newline-terminated file body of exactly `n` content lines. */
 function fileOf(n: number,): string {
   return `${Array.from({ length: n, }, (_, i,) => `line ${i + 1}`,).join("\n",)}\n`;
