@@ -613,9 +613,12 @@ export function parseFinalizeArgs(args: string[],): {
  * the target makes those files drop out, since landing the branch would not
  * change them.
  *
- * No effect size is asserted here: quantifying it needs a branch that actually
- * touches files under `src/` (the coverage gate no-ops without them), so
- * re-measure before quoting any figure.
+ * No effect size is quoted here on purpose: the floored-file count and the
+ * failure tally both depend on WHICH branch and WHICH target tip you diff, so
+ * a figure pasted into this comment is stale the moment either one moves (see
+ * the no-captured-numbers rule in AGENTS.md). What is fixed is the BEHAVIOUR
+ * below, and scripts/check-parallel.diff-base.test.mjs is what pins it. Measure
+ * a branch before putting a number on this anywhere.
  *
  * Throws when `target` is not a valid ref, so a bad target fails here with a
  * clear message instead of surfacing as a confusing stack trace from inside the
