@@ -5,19 +5,19 @@
  * Tests for resolveDiffBase — the helper that decides which git ref to
  * hand to `bun run check --diff-base` during `worktree finalize` Step 2.
  *
- * Regression target: previously finalize passed the live target branch
- * (e.g. `dev`) as the diff-base. When the target had moved past the
- * finalizing branch's base, the scoped diff included files the branch
- * never touched — and the coverage gate applied its 80% floor to those
- * unrelated modules. Fix: pass the merge-base so the diff is exactly
- * the branch's own contribution since forking from the target.
+ * Contract: return the TARGET BRANCH, validated. Not its merge-base with
+ * HEAD. The runner scopes to files whose content differs between the given ref
+ * and HEAD, so a merge-base SHA pins the comparison to the fork point and
+ * keeps every file the target has since reproduced identically in scope — the
+ * over-report that scoping fix removed. (resolveDiffBase previously returned
+ * the merge-base; under the old merge-base diff in the runner that was
+ * equivalent to passing the target, which is why the change was needed only
+ * once the runner moved to a two-dot diff.)
  *
- * Setup strategy: build a real tiny git history with a shared base
- * commit, then advance one branch (the "target") past the base while
- * leaving the "HEAD" branch untouched. Asserting on the resolved ref
- * proves the helper picks the stable ancestor instead of the moving
- * target. The fixture runs against /tmp/ so it cannot affect the
- * real repo.
+ * Setup strategy: build a real tiny git history with a shared base commit,
+ * then advance the target past the base. Asserting on the resolved ref proves
+ * the helper returns the live target rather than the moving ancestor. The
+ * fixture runs against the OS temp dir so it cannot affect the real repo.
  */
 
 import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
@@ -62,28 +62,38 @@ afterEach(() => {
 },);
 
 describe("resolveDiffBase", () => {
-  it("returns the merge-base when the target has moved past the branch's base", () => {
-    // from `feature` HEAD, the diff vs `master` should be empty —
-    // so resolveDiffBase must yield the stable ancestor (baseSha),
-    // not master's advanced HEAD.
+  it("returns the target branch even after it has moved past the fork", () => {
+    // Regression: returning the merge-base here pinned the scoped diff to the
+    // fork point, so every file `master` reproduced identically afterwards
+    // stayed floored. The runner needs the live target to drop those.
     const got = resolveDiffBase(workDir, "master",);
-    expect(got,).toBe(baseSha,);
+    expect(got,).toBe("master",);
+    expect(got,).not.toBe(baseSha,);
   });
 
-  it("returns the merge-base matching the target HEAD when HEAD == target", () => {
-    // from `master` HEAD, no work on top → merge-base == master HEAD.
+  it("returns the target when HEAD is already on it", () => {
     run(["git", "checkout", "master",], workDir,);
-    const masterHead = run(["git", "rev-parse", "HEAD",], workDir,);
     const got = resolveDiffBase(workDir, "master",);
-    expect(got,).toBe(masterHead,);
+    expect(got,).toBe("master",);
+  });
+
+  it("accepts a SHA, a tag, and a remote-tracking ref alike", () => {
+    // The helper forwards whatever ref form it is given; validation must not
+    // reject refs that are not literal branch names.
+    const sha = run(["git", "rev-parse", "master",], workDir,);
+    expect(resolveDiffBase(workDir, sha,),).toBe(sha,);
+
+    run(["git", "tag", "v1",], workDir,);
+    expect(resolveDiffBase(workDir, "v1",),).toBe("v1",);
+
+    run(["git", "update-ref", "refs/remotes/origin/master", "master",], workDir,);
+    expect(resolveDiffBase(workDir, "origin/master",),).toBe("origin/master",);
   });
 
   it("throws when the target is not a valid ref", () => {
-    // Strict-mode regression: the previous implementation silently
-    // returned the invalid `target`, which crashed check-parallel.mjs
-    // downstream with a confusing stack trace at changedFiles().
-    // Production callers always pass a valid ref, so this throw is
-    // unreachable in finalize flows but defensive against bad input.
+    // A typo must fail here with a clear message instead of surfacing as a
+    // confusing stack trace from inside the runner. Production callers always
+    // pass a valid ref, so this is defensive against bad input.
     const orphanDir = mkdtempSync(join(tmpdir(), "loop-lore-orphan-",),);
     try {
       run(["git", "init", "--initial-branch=main",], orphanDir,);
@@ -91,7 +101,7 @@ describe("resolveDiffBase", () => {
       run(["git", "config", "user.name", "Test",], orphanDir,);
       run(["git", "commit", "--allow-empty", "-m", "lonely",], orphanDir,);
       expect(() => resolveDiffBase(orphanDir, "does-not-exist",)).toThrow(
-        /merge-base/,
+        /rev-parse/,
       );
     } finally {
       rmSync(orphanDir, { recursive: true, force: true, },);
