@@ -8,6 +8,7 @@ import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { registry, } from "../plugins/registry";
 import { createTestDb, } from "../test-utils/create-test-db";
+import { jsonStringifyOr, } from "../utils";
 import { pluginRoutes, } from "./plugins";
 
 /**
@@ -269,7 +270,7 @@ describe("plugin config routes (FEAT-051)", () => {
       new Request("http://localhost/api/plugins/cfg-plugin/config", {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
-        body: JSON.stringify({ token: "x", },),
+        body: jsonStringifyOr({ token: "x", },),
       },),
     );
     expect(res.status,).toBe(403,);
@@ -281,7 +282,7 @@ describe("plugin config routes (FEAT-051)", () => {
       new Request("http://localhost/api/plugins/no-such-plugin/config", {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
-        body: JSON.stringify({ token: "x", },),
+        body: jsonStringifyOr({ token: "x", },),
       },),
     );
     expect(res.status,).toBe(404,);
@@ -293,7 +294,7 @@ describe("plugin config routes (FEAT-051)", () => {
       new Request("http://localhost/api/plugins/cfg-plugin/config", {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
-        body: JSON.stringify({},),
+        body: jsonStringifyOr({},),
       },),
     );
     expect(res.status,).toBe(400,);
@@ -305,7 +306,7 @@ describe("plugin config routes (FEAT-051)", () => {
       new Request("http://localhost/api/plugins/cfg-plugin/config", {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
-        body: JSON.stringify({ token: "s3cret", },),
+        body: jsonStringifyOr({ token: "s3cret", },),
       },),
     );
     expect(put.status,).toBe(200,);
@@ -315,6 +316,6 @@ describe("plugin config routes (FEAT-051)", () => {
     );
     expect(get.status,).toBe(200,);
     const body = (await get.json()) as { config: Record<string, unknown> };
-    expect(body.config,).toEqual({ token: "s3cret" });
+    expect(body.config,).toEqual({ token: "s3cret", },);
   });
 });
