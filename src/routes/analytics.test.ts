@@ -16,7 +16,6 @@ import { hashId, record, } from "../telemetry/service";
 import { createTestDb, } from "../test-utils/create-test-db";
 import {
   insertActors,
-  insertCharacters,
   insertChats,
   insertMessages,
   insertUsers,
@@ -217,8 +216,9 @@ describe("analyticsRoutes", () => {
 
   test("GET /api/analytics/characters rolls up owned characters and isolates other owners", async () => {
     await insertUsers(db, "other-user", "Other User", { id: "other-user", } as never,);
-    // Characters are actors, so each message actor_id needs an actors row with
-    // the same id, and characters.id mirrors actors.id.
+    // Characters ARE actors — the rollup joins `actors` (actor_type
+    // 'character'), because the `characters` side table is never inserted in
+    // production.
     await insertActors(db, "User One", { id: userId, actor_type: "user" as never, user_id: userId, },);
     await insertActors(db, "Char A", { id: charId, actor_type: "character" as never, owner_id: userId, },);
     await insertActors(db, "Other Char", {
@@ -226,8 +226,10 @@ describe("analyticsRoutes", () => {
       actor_type: "character" as never,
       owner_id: "other-user",
     },);
-    await insertCharacters(db, userId, "Char A", { id: charId, },);
-    await insertCharacters(db, "other-user", "Other Char", { id: otherCharId, },);
+    // Tie on totalTokens with Char A to pin the deterministic tie-break
+    // (tokens desc, then id asc).
+    const charBId = "test-char-2";
+    await insertActors(db, "Char B", { id: charBId, actor_type: "character" as never, owner_id: userId, },);
     await insertChats(db, "Char chat", userId, { id: charChatId, },);
     await insertChats(db, "Other owner chat", "other-user", { id: otherOwnerChatId, },);
     // Two assistant turns from the caller's character, plus one user turn in
@@ -237,6 +239,9 @@ describe("analyticsRoutes", () => {
       token_count_total: 300,
     },);
     await insertMessages(db, charChatId, userId, MessageRole.User, "hi", { token_count_total: 50, },);
+    // Char B matches Char A's 400 tokens so the tie-break is observable.
+    await insertMessages(db, charChatId, charBId, MessageRole.Assistant, "tie one", { token_count_total: 250, },);
+    await insertMessages(db, charChatId, charBId, MessageRole.Assistant, "tie two", { token_count_total: 150, },);
     // Caller's character used inside another owner's chat — the chat-ownership
     // filter must exclude it (regression guard for cross-owner leakage).
     await insertMessages(db, otherOwnerChatId, charId, MessageRole.Assistant, "cross owner", {
@@ -253,6 +258,7 @@ describe("analyticsRoutes", () => {
     const body = (await res.json()) as {
       characters: {
         id: string;
+        name: string;
         totalMessages: number;
         totalTokens: number;
         avgResponseLength: number;
@@ -265,24 +271,55 @@ describe("analyticsRoutes", () => {
     expect(charA?.totalTokens,).toBe(400,);
     expect(charA?.avgResponseLength,).toBe(14,);
     expect(charA?.tokensPerMessage,).toBe(200,);
+    expect(charA?.name,).toBe("Char A",);
     expect(body.characters.some((c,) => c.id === otherCharId),).toBe(false,);
+    // Deterministic order: 400/400 tie broken by id ascending.
+    expect(body.characters.map((c,) => c.id),).toEqual([charId, charBId,],);
   });
 
-  test("GET /api/analytics/overview exposes tokensByRole and latencyBuckets", async () => {
+  test("GET /api/analytics/overview exposes tokensByRole", async () => {
     const app = createApp(db, userId,);
     const res = await app.handle(new Request("http://localhost/api/analytics/overview",),);
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as {
       tokensByRole: { user: number; assistant: number; system: number };
-      latencyBuckets: { label: string; count: number }[];
     };
-    // The character test seeded a 50-token user turn and two assistant turns
-    // in the caller's chat, so the role split is non-zero and sums to 400+50.
+    // The character test seeded a 50-token user turn and 400 assistant tokens
+    // in the caller's chat, so the role split is non-zero.
     expect(body.tokensByRole.user,).toBeGreaterThanOrEqual(50,);
     expect(body.tokensByRole.assistant,).toBeGreaterThanOrEqual(400,);
     expect(body.tokensByRole.system,).toBe(0,);
-    expect(body.latencyBuckets.length,).toBe(5,);
-    const bucketed = body.latencyBuckets.reduce((sum, b,) => sum + b.count, 0,);
-    expect(bucketed,).toBeGreaterThanOrEqual(2,);
+  });
+
+  test("GET /api/analytics/overview buckets each generation by latency boundary", async () => {
+    // Isolated user so the bucket counts are exact and independent of the
+    // other tests' seeds. 499/500/1000/2000/5000 pin every boundary.
+    const bucketUser = "bucket-user";
+    await db
+      .insertInto("telemetry_events",)
+      .values(
+        [499, 500, 1000, 2000, 5000,].map((latencyMs,) => ({
+          id: crypto.randomUUID(),
+          event_type: "generation.completed",
+          chat_id: null,
+          user_id: hashId(bucketUser,),
+          event_data: JSON.stringify({ totalTokens: 10, latencyMs, },),
+          source: "server",
+          created_at: new Date().toISOString(),
+        })),
+      )
+      .execute();
+
+    const app = createApp(db, bucketUser,);
+    const res = await app.handle(new Request("http://localhost/api/analytics/overview",),);
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as { latencyBuckets: { label: string; count: number }[] };
+    expect(body.latencyBuckets,).toEqual([
+      { label: "<500ms", count: 1, },
+      { label: "500-1000ms", count: 1, },
+      { label: "1000-2000ms", count: 1, },
+      { label: "2000-5000ms", count: 1, },
+      { label: ">5000ms", count: 1, },
+    ],);
   });
 });
