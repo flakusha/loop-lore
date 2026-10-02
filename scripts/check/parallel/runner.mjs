@@ -8,10 +8,7 @@
  * `checks` table exported by gates.mjs.
  */
 
-import {
-  DEFAULT_GATE_TIMEOUT_MS,
-  runGateWithTimeout,
-} from "../gate-timeout.mjs";
+import { DEFAULT_GATE_TIMEOUT_MS, runGateWithTimeout, } from "../gate-timeout.mjs";
 import { PROJECT_ROOT, } from "./config.mjs";
 import { checks, } from "./gates.mjs";
 
