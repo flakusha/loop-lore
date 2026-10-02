@@ -14,6 +14,27 @@
 **Type:** Feature Epic
 **Tags:** worlds, shareability, license, epochs, maps, mode-switch
 
+## Summary
+
+Hub epic for the social / temporal / spatial / interaction layers on top of the World & Locations foundation (`epic-world-locations.md`): world shareability + licensing, epoch time-scale, 2D/3D maps, location asset / resource generation, and chat mode switches. World *creation* itself stays in the creative-studio `world-generation` workflow (`TASK-assistant-creative-studio-workflow-world.md`); this epic owns everything that makes an existing world shareable, navigable, and playable.
+
+## Scope
+
+| Area | Owns | Composes with, does not own |
+| ---- | ---- | --------------------------- |
+| Generation | world config-template coverage driving creation (`TASK-world-template-full-model-coverage.md`) | generation UX (`epic-assistant-creative-studio-workflows.md` \u00a77.6) |
+| Lore | location assets, unique items, resource pools; lorebook sharing refinements below | secret-lore access (`epic-lore-knowledge.md`) |
+| RAG | worldbook entries as decomposable docs (consumer of the pipeline) | decomposition + indexing (`epic-rag-assets-unified-storage-and-assistant-flows.md`) |
+| Templates | TS `WorkflowTemplate` / JSON workflow consumption for maps + assets | template registry (`src/image-edit/template-registry.ts` pattern) |
+
+## Acceptance Criteria
+
+- [ ] World share/export/import round-trips with SPDX-or-custom license + attribution intact; prohibited-use flags enforced on import
+- [ ] Epoch + time-scale engine advances world time and drives NPC schedules + weather; scale size configurable per world
+- [ ] 2D/3D map data model persists per world with render hooks; locations anchor to map coordinates
+- [ ] Location asset / resource generation spawns items, unique items (world-scoped single-instance), and renewable/depletable pools with tracking
+- [ ] Chat mode-switch state machine routes normal / battle / question / inventory modes to the correct orchestration
+
 ## Overview
 
 Extends the World & Locations foundation (see `epic-world-locations.md`, which

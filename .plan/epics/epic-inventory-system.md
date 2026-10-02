@@ -1,0 +1,58 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+# EPIC: Inventory System (Hub)
+
+**Status:** Not Started
+**Priority:** High
+**Effort:** High
+**Type:** Feature Epic (hub)
+**Tags:** inventory, items, ownership, transfer, trading
+
+## Summary
+
+Hub epic for the full inventory stack: item definitions, per-actor instances
+with ownership, ownership transfer, and trading. Implementation is split
+across member epics; this file owns the shared model, sequencing, and
+cross-cutting acceptance criteria.
+
+> **Note:** `epic-trading-inventory.md` (trading flows sub-epic of
+> `epic-battle-action-systems.md`) is referenced by `epic-items-economy-crafting.md`,
+> `epic-rpg-mechanics.md`, and `epic-inventory-ui.md` but does not exist as a
+> file at HEAD — trading backend coverage lives in `epic-item-systems-unification.md`
+> (`TASK-implement-trade`), `epic-economy-trading.md`, and
+> `TASK-trade-history-npc-counterparty.md`. If that file is created, link it
+> here as a member.
+
+## Scope
+
+| Layer | Owns | Lives in |
+| ----- | ---- | -------- |
+| Definitions | item definitions / stats / categories / rarity | `epic-items.md`, `epic-items-economy-crafting.md` |
+| Instances | per-actor `actor_items` rows, world `world_items` rows | `epic-item-systems-unification.md`, this hub |
+| Ownership | `requireActorOwnership` guard on every mutation | `src/actors/access.ts`, `src/actors/actor-items.ts` |
+| Transfer | actor-to-actor `transferItems`, world-instance `transfer` | `src/services/actor-items/transfer.ts`, `src/story/items/instances.ts` |
+| Trading | offer/accept lifecycle, currency ledger, NPC counterparty | `epic-economy-trading.md`, `TASK-implement-trade.md`, `TASK-trade-history-npc-counterparty.md` |
+
+## Related (member epics)
+
+- `epic-items.md` — item types, properties, loot tables, lifecycle
+- `epic-inventory-ui.md` — inventory + trading UI (depends on this hub's backend)
+- `epic-inventory.md` — inventory storage / equipment-slot spec stub (active work tracked in `epic-item-systems-unification.md`)
+- `epic-item-systems-unification.md` — unified types, trade service, actor item service
+- `epic-economy-trading.md` — currency, market, auction, banking
+
+## Shared Model
+
+- `actor_items` table (`src/db/migrations/001_init.ts`, `ck_actor_items_type` CHECK): per-actor instances, `equipped` flag, unified `ItemCategory`/`ItemRarity`
+- CRUD + ownership: `src/actors/actor-items.ts` (`requireActorOwnership` per op), routes `src/routes/actor-items.ts` (`tableName: "actor_items"`)
+- Actor-to-actor transfer: `transferItems` (`src/services/actor-items/transfer.ts`)
+- World-instance transfer: `transfer` (`src/story/items/instances.ts`), route `POST .../item-instances/:instanceId/transfer` (`src/routes/story-items/instances.ts:114`)
+
+## Acceptance Criteria
+
+- [ ] `actor_items` CRUD (create/read/update/delete + actor-scoped list) enforces `requireActorOwnership`; strangers get 403, missing rows 404
+- [ ] Ownership transfer is atomic: actor-to-actor `transferItems` and world-instance `transfer` leave no orphans on partial failure
+- [ ] Trade offer/accept/cancel lifecycle settles through the transfer primitives (no parallel transfer path)
+- [ ] Equipped items feed loadout/battle consumers via the `equipped` flag (`src/characters/services/wardrobe/loadout-bridge.ts`, `src/routes/battle/equipment-durability.ts`)
+- [ ] `TASK-actor-items-crud-ownership.md`, `TASK-actor-item-service.md` (done), `TASK-implement-trade.md` (done), `TASK-actors-child-tables-crud.md`, `TASK-actors-api-routes.md` linked as implementers
