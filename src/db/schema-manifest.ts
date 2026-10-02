@@ -2313,6 +2313,7 @@ export const SCHEMA = new SchemaManifest()
     disabled_at: col("text",),
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
+    config_json: col("text",),
   },)
   // ── Turn & Story ──────────────────────────────────────────────
   .table("story_turns", {

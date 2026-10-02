@@ -16,6 +16,7 @@ import type { DB, PluginState } from "../db/schema";
 import type { PluginLogger, PluginManifest, PluginOrigin } from "./types";
 import { registry } from "./registry";
 import { mergePluginConfig } from "./config-merge";
+import { readStoredPluginConfig } from "./config-store";
 import { getLogger } from "../logger";
 import { writeMemoryNoteTool, } from "../generation/tools/write-memory-note";
 import { characterCreationTool, } from "../generation/tools/create-character";
@@ -140,11 +141,15 @@ export async function loadSinglePlugin(
     registry.register({ manifest, origin, directory: pluginDir, });
     registerManifestExtensions(manifest,);
 
+    // FEAT-051: merge any admin-stored config over manifest defaults so the
+    // hook (and required-key enforcement) sees the effective config.
+    const storedConfig = await readStoredPluginConfig(db, manifest.name,);
+
     // Call onLoad hook — allows dynamic registration
     if (typeof manifest.onLoad === "function") {
       await manifest.onLoad({
         db,
-        config: mergePluginConfig(manifest.config ?? {}, {}, manifest.configSchema),
+        config: mergePluginConfig(manifest.config ?? {}, storedConfig, manifest.configSchema),
         logger: makeLogger(manifest.name,),
         registerTool: (def) => { registry.addTools(manifest.name, [def,],); },
         registerAgentRole: (def) => { registry.addAgentRoles(manifest.name, [def,],); },
