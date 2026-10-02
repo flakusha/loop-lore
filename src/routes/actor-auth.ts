@@ -50,6 +50,28 @@ export async function requireActorAccess(
   return userId;
 }
 
+/** Actor ids resolved by a successful `requireOwnedActor`. */
+export interface OwnedActor {
+  userId: string;
+  actorId: string;
+}
+
+/**
+ * `requireActorAccess` plus the `params.actorId` destructure every handler
+ * repeats, so the ownership check and the id read cannot drift apart.
+ * @param ctx - Elysia handler context (must carry `params.actorId`)
+ * @param database - Database handle used for the ownership check
+ * @returns The resolved ids, or a Response to short-circuit the handler
+ */
+export async function requireOwnedActor(
+  ctx: ActorAccessContext,
+  database: Kysely<DB>,
+): Promise<Response | OwnedActor> {
+  const userId = await requireActorAccess(ctx, database,);
+  if (userId instanceof Response) { return userId; }
+  return { userId, actorId: ctx.params.actorId, };
+}
+
 /**
  * Check if user owns the actor (or is admin/solo).
  * @param database
