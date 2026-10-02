@@ -155,7 +155,6 @@ export function outfitOverrideRoutes(opts: HandlerOpts & { outfitChangeGate?: Ou
     },);
 }
 
-
 /**
  * Chat-access + actor-ownership guard for the chat outfit-override routes.
  * @param ctx
