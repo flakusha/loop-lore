@@ -1221,10 +1221,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-world-location-encryption.md"
-    },
-    {
-      "kind": "spec",
-      "source": "docs/spec/crypto.md"
     }
   ],
   "src/assets/service/alpha-status.ts": [
@@ -1287,6 +1283,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-fe-be-db-record-content-hashing.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/crypto.md"
     }
   ],
   "src/assets/service/delete.ts": [
@@ -4457,6 +4457,12 @@
       "source": "docs/spec/battle-integration.md"
     }
   ],
+  "src/battle/npc-integration/memory.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/enemies-monsters.md"
+    }
+  ],
   "src/battle/resolution-adapters.ts": [
     {
       "kind": "ticket",
@@ -4693,12 +4699,6 @@
       "source": ".plan/epics/epic-blog-system.md"
     }
   ],
-  "src/build-identity/build-identity.test.ts": [
-    {
-      "kind": "spec",
-      "source": "docs/spec/federation-build-identity-hash.md"
-    }
-  ],
   "src/build/compress.ts": [
     {
       "kind": "epic",
@@ -4729,12 +4729,20 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-build-identity-hash-for-tamper-detection-searxng-style-commi.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/federation-build-identity-hash.md"
     }
   ],
   "src/build/identity.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-build-identity-hash-for-tamper-detection-searxng-style-commi.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/federation-build-identity-hash.md"
     }
   ],
   "src/character/characterLicense.ts": [
@@ -10267,6 +10275,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-encryption-backward-compatibility.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/crypto.md"
     }
   ],
   "src/crypto/at-rest.integration.test.ts": [
@@ -13273,10 +13285,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-battle-integration-gaps.md"
-    },
-    {
-      "kind": "spec",
-      "source": "docs/spec/battle-integration.md"
     }
   ],
   "src/db/schema-blog.ts": [
@@ -13343,6 +13351,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-prompt-relationships-section.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/nsfw-integration.md"
     }
   ],
   "src/db/schema-characters.ts": [
@@ -13606,6 +13618,10 @@
     },
     {
       "kind": "spec",
+      "source": "docs/spec/nsfw-integration.md"
+    },
+    {
+      "kind": "spec",
       "source": "docs/spec/schema.md"
     },
     {
@@ -13836,6 +13852,10 @@
     },
     {
       "kind": "spec",
+      "source": "docs/spec/battle-integration.md"
+    },
+    {
+      "kind": "spec",
       "source": "docs/spec/chat-privacy.md"
     },
     {
@@ -13891,6 +13911,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-agency-quality-metrics.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/nsfw-integration.md"
     }
   ],
   "src/db/schema-mood.ts": [
@@ -15779,6 +15803,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-slash-command-typed-token-autocomplete.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/crypto.md"
     }
   ],
   "src/frontend/alpine/chat-settings.ts": [
@@ -18803,6 +18831,12 @@
       "source": ".plan/tickets/TASK-resource-provision-quota-ui.md"
     }
   ],
+  "src/frontend/stores/index.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/federation-instance-switcher.md"
+    }
+  ],
   "src/frontend/stores/ui-store.ts": [
     {
       "kind": "ticket",
@@ -20101,12 +20135,6 @@
     {
       "kind": "spec",
       "source": "docs/spec/integrations/llm-serving.md"
-    }
-  ],
-  "src/generation/context-compressor.ts": [
-    {
-      "kind": "spec",
-      "source": "docs/spec/memory-system.md"
     }
   ],
   "src/generation/context-window-config.ts": [
@@ -24219,6 +24247,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-recordnsfwconsent-insert-update-not-wrapped-in-a-transa.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/nsfw-integration.md"
     }
   ],
   "src/middleware/nsfw-gate/consent.test.ts": [
@@ -24263,6 +24295,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-nsfw-wire-consent-gate-into-nsfw-surfaces.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/nsfw-integration.md"
     },
     {
       "kind": "spec",
@@ -24607,6 +24643,12 @@
       "source": ".plan/epics/epic-auth-channel-provisioning.md"
     }
   ],
+  "src/notifications/service/crud.ts": [
+    {
+      "kind": "frontend",
+      "source": "docs/frontend/notifications.md"
+    }
+  ],
   "src/notifications/service/service.ts": [
     {
       "kind": "epic",
@@ -24659,12 +24701,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-rpg-nsfw-services-add-config-level-opt-in-gate.md"
-    }
-  ],
-  "src/nsfw/consent.ts": [
-    {
-      "kind": "spec",
-      "source": "docs/spec/nsfw-integration.md"
     }
   ],
   "src/nsfw/disease-integration.ts": [
@@ -24877,12 +24913,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-nsfw-gate-gaps-performedby-spoof-audit-target-misconfig-disa.md"
-    }
-  ],
-  "src/nsfw/rating.ts": [
-    {
-      "kind": "spec",
-      "source": "docs/spec/nsfw-integration.md"
     }
   ],
   "src/nsfw/runtime-config.test.ts": [
@@ -30389,10 +30419,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-nsfw-frontend-integration.md"
-    },
-    {
-      "kind": "spec",
-      "source": "docs/spec/nsfw-integration.md"
     }
   ],
   "src/routes/nsfw/body.ts": [
@@ -31651,6 +31677,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-context-preference-per-scope.md"
+    }
+  ],
+  "src/routes/worlds/index.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/federation-instance-switcher.md"
     }
   ],
   "src/routes/worlds/location-chat.ts": [
@@ -35769,12 +35801,6 @@
       "source": ".plan/epics/epic-math-ledger.md"
     }
   ],
-  "src/services/server-external-manager.ts": [
-    {
-      "kind": "spec",
-      "source": "docs/spec/platform-support.md"
-    }
-  ],
   "src/services/server-external-manager/lifecycle.ts": [
     {
       "kind": "epic",
@@ -35791,6 +35817,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-swarm-supervisor.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/platform-support.md"
     }
   ],
   "src/services/server-external-manager/probes.ts": [
