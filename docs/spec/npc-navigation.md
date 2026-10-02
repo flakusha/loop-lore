@@ -13,7 +13,7 @@ NPC navigation moves NPCs between connected `location_states` locations over tim
 
 - Pure in-process pathfinding — no network sync.
 - Tick-based: NPC moves one step per processMovementTick.
-- Decisions route through NPC state machine (`src/story/npc-states.ts`).
+- Decisions route through NPC state machine (`src/rpg/npc-navigation/service/state.ts`).
 
 <!-- GAP: full graph pathfinding (A* over location graph) is partial; current implementation uses simple connection traversal. -->
 
