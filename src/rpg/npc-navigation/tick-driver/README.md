@@ -38,12 +38,12 @@ setInterval(async () => {
 
 ## Options
 
-| Field      | Type               | Default       | Purpose                          |
-| ---------- | ------------------ | ------------- | -------------------------------- |
-| `chatId`   | `string`           | `"__none__"`  | Governor cap scope resolution.   |
-| `paused`   | `boolean`          | `false`       | Skip without DB / governor work. |
-| `nowMs`    | `number`           | `Date.now()`  | Test determinism.                |
-| `governor` | `AutonomyGovernor` | `new`         | Inject shared instance.          |
+| Field      | Type               | Default       | Purpose                                        |
+| ---------- | ------------------ | ------------- | ---------------------------------------------- |
+| `chatId`   | `string`           | `"__none__"`  | Governor cap scope resolution.                 |
+| `paused`   | `boolean`          | `false`       | Skip without DB / governor work.               |
+| `nowMs`    | `number`           | `Date.now()`  | Test determinism.                              |
+| `governor` | `AutonomyGovernor` | `new`         | Inject shared instance.                        |
 | `rng`      | `() => number`     | `Math.random` | Drives the jitter draw AND wander/flee choice. |
 
 ## Result

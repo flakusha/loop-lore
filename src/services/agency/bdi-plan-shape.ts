@@ -104,7 +104,7 @@ export function buildPlanPrompt(facts: PlanFacts, today: string,): GenerationMes
  * @returns the plan, or `null` when the text is not one
  */
 export function parsePlan(raw: string, maxActivities: number,): DailyPlan | null {
-  const fenced = CODE_FENCE_JSON.exec(raw)?.[1] ?? raw;
+  const fenced = CODE_FENCE_JSON.exec(raw,)?.[1] ?? raw;
   const start = fenced.indexOf("{",);
   const end = fenced.lastIndexOf("}",);
   if (start < 0 || end <= start) { return null; }
@@ -116,7 +116,7 @@ export function parsePlan(raw: string, maxActivities: number,): DailyPlan | null
   if (!summary) { return null; }
 
   const rawPriority = typeof record.priority === "string" ? record.priority.toLowerCase().trim() : "";
-  const priority = Object.values(PLAN_PRIORITIES,).find((p,) => p === rawPriority,);
+  const priority = Object.values(PLAN_PRIORITIES,).find((p,) => p === rawPriority);
   if (priority === undefined) { return null; }
 
   const activities = normalizeActivities(record.activities, maxActivities,);
@@ -129,7 +129,7 @@ function normalizeActivities(
   value: unknown,
   maxActivities: number,
 ): Array<{ description: string; score: number }> {
-  if (!Array.isArray(value)) { return []; }
+  if (!Array.isArray(value,)) { return []; }
   const out: Array<{ description: string; score: number }> = [];
   for (const item of value) {
     if (typeof item !== "object" || item === null) { continue; }
