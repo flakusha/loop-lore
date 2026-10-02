@@ -9,7 +9,7 @@
  * rather than in `src/db/schema*.ts` because those files are GENERATED
  * from the migrations (`bun run db:sync-types`) — editing them by hand is
  * forbidden, and the orchestrator regenerates them after
- * `031_world_discovery_trade_events` lands.
+ * `037_world_discovery_trade_events` lands.
  */
 import type { Generated, Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
