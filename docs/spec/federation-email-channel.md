@@ -21,7 +21,7 @@ All pure JS/TS, no native addons, no separate process. JMAP (RFC 8620) is a futu
 
 ## 2. Interface
 
-`EmailAdapter implements ProtocolAdapter` (`src/integrations/email/adapter.ts`), `PgpEncryption implements EncryptionProvider` (`src/integrations/email/encryption.ts`). Deps are optional peer dependencies loaded via dynamic `import()` only when `integrations.email.enabled` — cold start with email unconfigured imports zero email libs (`TASK-email-deps-as-opt-in-lazy-import-nodemailer-imapflow-openpgp`).
+`EmailAdapter implements ProtocolAdapter` (`src/integrations/email/adapter.ts` — planned: `TASK-email-integration`), `PgpEncryption implements EncryptionProvider` (`src/integrations/email/encryption.ts` — planned). Deps are optional peer dependencies loaded via dynamic `import()` only when `integrations.email.enabled` — cold start with email unconfigured imports zero email libs (`TASK-email-deps-as-opt-in-lazy-import-nodemailer-imapflow-openpgp`).
 
 ## 3. Auth / secret storage
 
