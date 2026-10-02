@@ -6,7 +6,7 @@
 # SPEC: Federation Peer Audit Probe (Zero-Trust Cross-Instance Verification) — Implementation
 
 **Companion to:** `TASK-federation-peer-audit-probe-zero-trust-cross-instance-verifi.md`
-**Status:** ready for implementation
+**Status:** design spec — `src/federation/audit/` is aspirational.
 **Author:** research synthesis, 2026-09-24
 **Research basis:** `/.tmp/fed-research/topic-4-zero-trust.md`
 

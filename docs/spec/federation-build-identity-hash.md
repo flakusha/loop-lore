@@ -6,7 +6,7 @@
 # SPEC: Build Identity Hash for Tamper Detection — Implementation
 
 **Companion to:** `TASK-build-identity-hash-for-tamper-detection-searxng-style-commi.md`
-**Status:** ready for implementation
+**Status:** design spec — design is aspirational; the implementation is `src/build/identity.ts` (+ `identity.test.ts`). The function signatures and code examples in this doc describe a planned `src/build/` multi-file layout that does not match the single-file implementation.
 **Author:** research synthesis, 2026-09-24
 **Research basis:** `/.tmp/fed-research/topic-1-build-identity.md`
 
@@ -49,7 +49,7 @@ A short identifier (`buildHashShort`) is the first 16 hex chars of `buildHash`.
 ### 2.1 `gitHead` + `sourceTreeHash`
 
 ```ts
-// src/build-identity/git.ts
+// src/build/identity.ts  (readGitHead is defined at ~line 95)
 import { spawn } from "bun";
 
 export async function readGitHead(): Promise<{ gitHead: string; sourceTreeHash: string; available: boolean }> {
@@ -70,7 +70,7 @@ export async function readGitHead(): Promise<{ gitHead: string; sourceTreeHash: 
 ### 2.2 `depsHash` — locked dependency fingerprint
 
 ```ts
-// src/build-identity/deps.ts
+// src/build/identity.ts  (hashLockfiles is defined at ~line 212)
 import { sha256 } from "bun";
 import { readFileSync } from "fs";
 
@@ -93,7 +93,7 @@ The hash is over the raw bytes of `package.json + bun.lock + bunfig.toml` concat
 ### 2.3 `manifestHash` — build environment fingerprint
 
 ```ts
-// src/build-identity/manifest.ts
+// src/build/identity.ts  (buildManifest is defined at ~line 234)
 export interface BuildManifest {
   bun_version: string;            // Bun.version
   platform: NodeJS.Platform;       // process.platform
@@ -128,7 +128,7 @@ export async function computeManifestHash(): Promise<string> {
 ### 2.4 Final composition
 
 ```ts
-// src/build-identity/compute.ts
+// src/build/identity.ts  (computeBuildIdentity is defined at ~line 264)
 import { sha256 } from "bun";
 
 export interface BuildIdentity {
@@ -144,7 +144,7 @@ export interface BuildIdentity {
 
 let cached: Promise<BuildIdentity> | null = null;
 
-export function getBuildIdentity(): Promise<BuildIdentity> {
+export function computeBuildIdentity(): Promise<BuildIdentity> {
   if (cached) return cached;
   cached = (async () => {
     const [git, depsHash, manifestHash, manifest] = await Promise.all([
@@ -189,13 +189,13 @@ Always mounted (not gated by federation opt-in — tamper detection is a baselin
 ```ts
 // src/routes/build-id.ts
 import { Elysia, t } from "elysia";
-import { getBuildIdentity } from "../build-identity/compute";
+import { computeBuildIdentity } from "../build/identity";
 
 export function buildIdPublicRoute(): Elysia {
   return new Elysia().get(
     "/.well-known/loop-lore/build-id",
     async () => {
-      const id = await getBuildIdentity();
+      const id = await computeBuildIdentity();
       return {
         buildHash: id.buildHash,
         buildHashShort: id.buildHashShort,
@@ -224,7 +224,7 @@ export function buildIdAdminRoute(): Elysia {
   return new Elysia()
     .use(requireRole("admin"))
     .get("/api/admin/build-id", async () => {
-      const id = await getBuildIdentity();
+      const id = await computeBuildIdentity();
       return {
         buildHash: id.buildHash,
         buildHashShort: id.buildHashShort,
@@ -246,7 +246,7 @@ Modify `src/routes/federation.ts` to add `buildHash` + `buildHashShort` to the `
 ```ts
 // existing code at /api/instance-state in src/routes/federation.ts
 app.get("/api/instance-state", async () => {
-  const id = await getBuildIdentity();
+  const id = await computeBuildIdentity();
   return jsonResponse({
     // ... existing fields ...
     buildHash: id.buildHashShort,   // 16-char short; full hash available at /.well-known/loop-lore/build-id
@@ -262,11 +262,11 @@ app.get("/api/instance-state", async () => {
 ```ts
 // scripts/build-verify.ts — runnable via `bun run scripts/build-verify.ts`
 // Re-computes the build hash from a clean checkout and prints + optionally compares.
-import { getBuildIdentity } from "../src/build-identity/compute";
+import { computeBuildIdentity } from "../src/build/identity";
 import { argv } from "process";
 
 async function main() {
-  const id = await getBuildIdentity();
+  const id = await computeBuildIdentity();
   console.log(JSON.stringify(id, null, 2));
 
   const expected = argv.find((a) => a.startsWith("--expected="))?.split("=")[1];
@@ -297,13 +297,11 @@ The package.json script:
 ## 5. Module Layout
 
 ```
-src/build-identity/
-├── index.ts            # public: getBuildIdentity()
-├── compute.ts          # canonical hash composition (the formula in §1)
-├── git.ts              # readGitHead()
-├── deps.ts             # computeDepsHash()
-├── manifest.ts         # readManifest(), computeManifestHash()
-└── build-identity.test.ts
+src/build/
+├── compress.ts         # build-time asset compression
+├── copy-icons.ts       # icon copying
+├── identity.ts        # single file: readGitHead(), hashLockfiles(), buildManifest(), computeBuildIdentity()
+└── identity.test.ts   # unit tests
 
 src/routes/
 ├── build-id.ts         # public /.well-known/loop-lore/build-id
@@ -379,13 +377,13 @@ log.event({ event: "build_identity.computed", buildHashShort: id.buildHashShort,
 
 ## 9. Test Plan
 
-### Unit (`src/build-identity/build-identity.test.ts`)
+### Unit (`src/build/identity.test.ts`)
 
 - `computeDepsHash` deterministic — same files -> same hash; edit `bun.lock` -> hash changes; add a stray file to the bundle -> hash changes.
 - `computeManifestHash` deterministic when `SOURCE_DATE_EPOCH` is set; varies with `Bun.version`.
-- `getBuildIdentity` produces a hash matching the manual composition: take `v1` + gitHead + sourceTreeHash + depsHash + manifestHash, concat with `\n`, sha256, compare.
+- `computeBuildIdentity` produces a hash matching the manual composition: take `v1` + gitHead + sourceTreeHash + depsHash + manifestHash, concat with `\n`, sha256, compare.
 - Fallback when git is missing: `gitHead = "nogit"`, `sourceTreeHash = "nogit"`, `available: false`.
-- The hash is identical for two `getBuildIdentity()` calls in the same process (memoization).
+- The hash is identical for two `computeBuildIdentity()` calls in the same process (memoization).
 - `buildHashShort` is the first 16 hex chars of `buildHash` after the `sha256:` prefix.
 
 ### Endpoint (`src/routes/build-id.test.ts`)
@@ -409,7 +407,7 @@ log.event({ event: "build_identity.computed", buildHashShort: id.buildHashShort,
 
 ## 10. Acceptance Criteria (refined)
 
-- [ ] `getBuildIdentity()` returns deterministic hash across processes with identical source + deps + manifest.
+- [ ] `computeBuildIdentity()` returns deterministic hash across processes with identical source + deps + manifest.
 - [ ] `/.well-known/loop-lore/build-id` returns the public breakdown (always mounted).
 - [ ] `/api/admin/build-id` returns full breakdown behind admin authz.
 - [ ] `/api/instance-state` includes `buildHash` (short) + `buildHashFull`.

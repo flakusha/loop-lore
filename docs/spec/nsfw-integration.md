@@ -1,6 +1,8 @@
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
+**Status:** design spec — integration modules (`src/nsfw/housing-integration.ts`, `src/nsfw/weather-integration.ts`, `src/nsfw/disease-integration.ts`) are aspirational; `src/nsfw/social-integration.ts` (encounter reputation, seduction prerequisites) is implemented. `src/middleware/nsfw-gate/consent.ts`, `src/middleware/nsfw-gate/consent-ledger.ts`, and `src/routes/nsfw/` are implemented.
+
 # NSFW Integration Gaps — Housing, Weather, Social, Disease
 
 ## Overview
@@ -181,7 +183,10 @@ interface NSFWReputationChange {
 > Interface detail (reproductive-health fields, encounter disease-risk, transmission
 > probability, prevention methods) removed during rebase cleanup — see canonical
 > `NSFWContentRating` in `src/schemas/nsfw-rating.ts` and the Disease system schemas.
-> Reintroduce specific fields in the Disease schemas when wiring.
+> No dedicated `src/db/schema-nsfw.ts` is planned; NSFW tables live in
+> `src/db/schema-core.ts` (`nsfw_consent_state`), `src/db/schema-character.ts`
+> (`nsfw_encounters`, `location_nsfw_config`), `src/db/schema-moderation.ts`
+> (`nsfw_user_preferences`).
 
 **Integration Tasks**:
 
@@ -196,10 +201,10 @@ interface NSFWReputationChange {
 - `src/nsfw/weather-integration.ts` — Weather mood and pheromones
 - `src/nsfw/social-integration.ts` — Reputation and skills
 - `src/nsfw/disease-integration.ts` — Reproductive health and STDs
-- `src/nsfw/consent.ts` — Consent state tracking
-- `src/nsfw/rating.ts` — Content rating enforcement
-- `src/db/schema-nsfw.ts` — NSFW database tables
-- `src/routes/nsfw.ts` — NSFW API endpoints
+- `src/middleware/nsfw-gate/consent.ts` — Consent state tracking
+- `src/middleware/nsfw-gate/consent-ledger.ts` — Consent ledger for NSFW encounters
+- `src/schemas/nsfw-rating.ts` — Content rating enforcement
+- `src/routes/nsfw/` — NSFW API endpoints
 - `docs/spec/nsfw-integration.md` — Integration documentation
 
 ## Technical Considerations

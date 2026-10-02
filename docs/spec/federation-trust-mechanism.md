@@ -8,7 +8,7 @@
 **Companion to:**
 - `TASK-federation-interconnect-peer-config.md` (config section shape)
 - `TASK-federation-tls-peer-trust-custom-ca-pinning-and-optional-mtl.md` (TLS / SPKI / mTLS policy)
-**Status:** ready for implementation
+**Status:** design spec — `src/federation/trust-map.ts` and `src/federation/spki-pin.ts` are aspirational. `src/federation/peer-fetch.ts` is implemented. `src/config/sections/federation.ts` is aspirational.
 **Author:** spec synthesis, 2026-09-24
 
 ---
