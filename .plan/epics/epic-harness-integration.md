@@ -33,7 +33,7 @@ prompt assembler, no second TUI, no in-repo reimplementation of `giwt`. Where
 an external tool already does the job (`omp --mode rpc/json`, `engram`
 sidecar, `gh`), wrap it; build only the thin in-repo seam.
 
-Research inputs (read-only, in `.tmp/` — delete before merge):
+Research inputs (read-only, in repo-root `.tmp/` — intentionally uncommitted, not part of this change):
 `harness-research-internal.md`, `harness-research-pi-opencode.md`,
 `harness-research-claw-hermes.md`, `harness-research-dispatch-sync.md`,
 `harness-research-tui-memory.md`, `harness-research-wide-frontier.md`,
@@ -44,7 +44,7 @@ Research inputs (read-only, in `.tmp/` — delete before merge):
 | This epic owns | Sibling epic owns |
 |---|---|
 | Task-signal routing *policy* on top of the scheduler (`generation/routing/`) | Scheduler machinery itself (`epic-llm-request-scheduler.md`: `src/llm/` wiring into `callWithFailover`) |
-| Harness dispatch commands + run tracking (`assistant/commands/`) | Workflow runtime/state machine (`epic-workflow-engine.md`: `workflow-runner/session/store`) — harness emits plan steps, never a second runner |
+| Harness dispatch commands + run tracking (`assistant/commands/`) | Workflow runtime/state machine (`epic-workflow-engine.md`: `src/assistant/workflow-runner.ts`, `src/assistant/workflow-session.ts`, `src/assistant/workflow-session-store.ts`) — harness emits plan steps, never a second runner |
 | Persona presets for dispatch agents (`convertPersonaToCharacter` reuse) | Character/GM behavior (`epic-assistant-gm-flows.md`: GM handoff, shadow-note steering; `epic-character-multi-personality.md`) |
 | In-repo inbox event + wake/aside delivery contract | Turn order/mention UI (`epic-group-chat.md`: `turn-selector`, mention strip) |
 | Nightly/reflection BDI stays untouched (`services/agency/`) | Autonomy tick/budget (`epic-actor-autonomy-story-drive.md`: scheduler + governor) |
