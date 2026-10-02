@@ -12,7 +12,7 @@ One section per messenger family. All adapters implement `ProtocolAdapter` (`src
 
 ## 1. Matrix
 
-**Adopt:** [matrix-js-sdk](https://github.com/matrix-org/matrix-js-sdk) (Apache-2.0) + [@matrix-org/olm](https://github.com/matrix-org/olm) (Apache-2.0, WASM — no native addon). **Interface:** Client-Server API; `MatrixAdapter` (`src/integrations/matrix/adapter.ts`), `MatrixEncryption` (Olm/Megolm).
+**Adopt:** [matrix-js-sdk](https://github.com/matrix-org/matrix-js-sdk) (Apache-2.0) + [@matrix-org/olm](https://github.com/matrix-org/olm) (Apache-2.0, WASM — no native addon). **Interface:** Client-Server API; `MatrixAdapter` (`src/integrations/matrix/adapter.ts` — planned: `TASK-matrix-integration`), `MatrixEncryption` (Olm/Megolm).
 
 **Auth/secrets:** `integrations.matrix.homeserver` + `accessToken` (⚠ SECRET, encrypted at rest). Appservice mode: registration against the admin's external homeserver (`src/routes/matrix.ts`).
 
@@ -39,7 +39,7 @@ One section per messenger family. All adapters implement `ProtocolAdapter` (`src
 
 ## 2. XMPP
 
-**Adopt:** [@xmpp/client](https://github.com/xmppjs/xmpp.js) (ISC) + OMEMO (XEP-0384, pure-JS `[UNVERIFIED]`). **Interface:** XMPP stream; `XmppAdapter` (`src/integrations/xmpp/adapter.ts`), `OmemoEncryption`.
+**Adopt:** [@xmpp/client](https://github.com/xmppjs/xmpp.js) (ISC) + OMEMO (XEP-0384, pure-JS `[UNVERIFIED]`). **Interface:** XMPP stream; `XmppAdapter` (`src/integrations/xmpp/adapter.ts` — planned: `TASK-xmpp-integration`), `OmemoEncryption`.
 
 **Auth/secrets:** `integrations.xmpp.jid` + `password` (⚠ SECRET). MUC/federation requires an external XMPP server (Prosody/ejabberd) — loop-lore is a client.
 
@@ -66,7 +66,7 @@ One section per messenger family. All adapters implement `ProtocolAdapter` (`src
 
 ## 3. IRC
 
-**Adopt:** minimal ground-up RFC 1459/2812 client (tiny) or `irc-framework` (MIT `[UNVERIFIED]`). **Interface:** line protocol over TCP/TLS; `IrcAdapter` (`src/integrations/irc/adapter.ts`).
+**Adopt:** minimal ground-up RFC 1459/2812 client (tiny) or `irc-framework` (MIT `[UNVERIFIED]`). **Interface:** line protocol over TCP/TLS; `IrcAdapter` (`src/integrations/irc/adapter.ts` — planned: `FEAT-messaging-bridge-extensions`).
 
 **Auth/secrets:** `integrations.irc.server` + `nick` (+ optional SASL password ⚠ SECRET). No native auth model.
 
@@ -93,7 +93,7 @@ One section per messenger family. All adapters implement `ProtocolAdapter` (`src
 
 ## 4. Telegram
 
-**Adopt:** [grammY](https://github.com/grammyjs/grammY) (MIT). **Interface:** Bot API (HTTPS); `TelegramAdapter` (`src/integrations/telegram/adapter.ts`).
+**Adopt:** [grammY](https://github.com/grammyjs/grammY) (MIT). **Interface:** Bot API (HTTPS); `TelegramAdapter` (`src/integrations/telegram/adapter.ts` — planned: `FEAT-messaging-bridge-extensions`).
 
 **Auth/secrets:** `integrations.telegram.botToken` (⚠ SECRET). Bot accounts only (ToS).
 
@@ -120,7 +120,7 @@ One section per messenger family. All adapters implement `ProtocolAdapter` (`src
 
 ## 5. Discord
 
-**Adopt:** [discord.js](https://github.com/discordjs/discord.js) (Apache-2.0). **Interface:** Bot API (HTTPS/WSS gateway); `DiscordAdapter` (`src/integrations/discord/adapter.ts`).
+**Adopt:** [discord.js](https://github.com/discordjs/discord.js) (Apache-2.0). **Interface:** Bot API (HTTPS/WSS gateway); `DiscordAdapter` (`src/integrations/discord/adapter.ts` — planned: `FEAT-messaging-bridge-extensions`).
 
 **Auth/secrets:** `integrations.discord.botToken` (⚠ SECRET). Bot accounts only (ToS).
 
@@ -157,7 +157,7 @@ One section per messenger family. All adapters implement `ProtocolAdapter` (`src
 
 ## 7. Nostr
 
-**Adopt:** [nostr-tools](https://github.com/nbd-wtf/nostr-tools) (Unlicense). **Interface:** relay WebSocket; `NostrAdapter` (`src/integrations/nostr/adapter.ts`). NIP-28 (public chat, kind 40/41/42) + NIP-29 (groups, recommended successor).
+**Adopt:** [nostr-tools](https://github.com/nbd-wtf/nostr-tools) (Unlicense). **Interface:** relay WebSocket; `NostrAdapter` (`src/integrations/nostr/adapter.ts` — planned: `IDEA-consider-nostr-as-a-lightweight-fediverse-axis`). NIP-28 (public chat, kind 40/41/42) + NIP-29 (groups, recommended successor).
 
 **Auth/secrets:** `integrations.nostr.relayUrls[]` + user keypair (private key ⚠ SECRET, encrypted at rest; only if the user opts in).
 
@@ -184,7 +184,7 @@ One section per messenger family. All adapters implement `ProtocolAdapter` (`src
 
 ## 8. ActivityPub (fediverse)
 
-**Adopt:** [Fedify](https://github.com/fedify-dev/fedify) (MIT, Bun-compatible). **Interface:** ActivityPub S2S; `ActivityPubAdapter` (`src/integrations/activitypub/adapter.ts`). Inbox/actor/outbox/WebFinger routes in `src/routes/federation.ts` (§3 of `integrations-architecture.md`).
+**Adopt:** [Fedify](https://github.com/fedify-dev/fedify) (MIT, Bun-compatible). **Interface:** ActivityPub S2S; `ActivityPubAdapter` (`src/integrations/activitypub/adapter.ts` — planned: `FEAT-activitypub-federation`). Inbox/actor/outbox/WebFinger routes in `src/routes/federation.ts` (§3 of `integrations-architecture.md`).
 
 **Auth/secrets:** actor signing keys (RSA), encrypted at rest, rotated per C8 (`BUG-activitypub-actor-signing-keys-and-rotation-undefined-no-cry`); HTTP-signature verification on every inbound activity.
 
