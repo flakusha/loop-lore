@@ -223,8 +223,8 @@ describe("processMovementTick", () => {
       .select(["schedule", "updated_at",],)
       .executeTakeFirstOrThrow();
     const schedule = JSON.parse(row.schedule,) as Record<string, unknown>;
-    expect(schedule.lastMovedAt,).toBe(new Date(nowMs).toISOString(),);
-    expect(row.updated_at,).toBe(new Date(nowMs).toISOString(),);
+    expect(schedule.lastMovedAt,).toBe(new Date(nowMs,).toISOString(),);
+    expect(row.updated_at,).toBe(new Date(nowMs,).toISOString(),);
   });
 
   test("follow NPC moves to target when target is at different location", async () => {

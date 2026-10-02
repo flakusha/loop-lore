@@ -132,7 +132,7 @@ export async function processPatrolMovement(
   await updateMovementState(db, actorId, worldId, {
     currentLocationId: nextLocationId,
     patrolIndex: nextIndex,
-    lastMovedAt: toDate(ctx.nowMs).toISOString(),
+    lastMovedAt: toDate(ctx.nowMs,).toISOString(),
   }, ctx.nowMs,);
 
   return {
@@ -168,7 +168,7 @@ export async function processWanderMovement(
 
   await updateMovementState(db, actorId, worldId, {
     currentLocationId: nextLocationId,
-    lastMovedAt: toDate(ctx.nowMs).toISOString(),
+    lastMovedAt: toDate(ctx.nowMs,).toISOString(),
   }, ctx.nowMs,);
 
   return {
@@ -206,7 +206,7 @@ export async function processFollowMovement(
 
   await updateMovementState(db, actorId, worldId, {
     currentLocationId: targetState.location_id,
-    lastMovedAt: toDate(ctx.nowMs).toISOString(),
+    lastMovedAt: toDate(ctx.nowMs,).toISOString(),
   }, ctx.nowMs,);
 
   return {
@@ -242,7 +242,7 @@ export async function processFleeMovement(
 
   await updateMovementState(db, actorId, worldId, {
     currentLocationId: nextLocationId,
-    lastMovedAt: toDate(ctx.nowMs).toISOString(),
+    lastMovedAt: toDate(ctx.nowMs,).toISOString(),
   }, ctx.nowMs,);
 
   return {

@@ -94,7 +94,7 @@ export async function updateMovementState(
     .set({
       location_id: updates.currentLocationId ?? current.currentLocationId,
       schedule: jsonStringifyOr(schedule,),
-      updated_at: toDate(nowMs ?? Date.now()).toISOString(),
+      updated_at: toDate(nowMs ?? Date.now(),).toISOString(),
     },)
     .where("actor_id", "=", actorId,)
     .where("world_id", "=", worldId,)
