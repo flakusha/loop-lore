@@ -11,6 +11,7 @@
 //
 // Message bubbles carry `data-message-id` (see components/chat/message-list.html);
 // highlights are applied by toggling CSS classes on those elements.
+import { callChatStateAction, } from "./chat-state-global";
 import { apiFetch, } from "./htmx";
 import { log as rootLog, } from "./logger";
 import type { ChatState, } from "./types";
@@ -195,15 +196,8 @@ export const messageSearch: Partial<ChatState> & ThisType<ChatState> = {
 };
 
 // Expose a global toggle for the chat-header 🔍 button (header lives outside
-// the chatState x-data scope). Mirrors chat.ts's toggleGroupPause wiring.
+// the chatState x-data scope). See chat-state-global.ts.
 const g = globalThis as Record<string, unknown>;
 g.toggleMessageSearch = function() {
-  const el = document.querySelector<HTMLElement>("[x-data='chatState()']",);
-  if (el && typeof Alpine !== "undefined") {
-    const data = Alpine.$data(el,);
-    const fn = data.toggleMessageSearch as (() => void) | undefined;
-    if (typeof fn === "function") {
-      fn.call(data,);
-    }
-  }
+  callChatStateAction("toggleMessageSearch",);
 };

@@ -19,6 +19,7 @@ import { t, } from "../i18n";
 import { jsonBody, } from "../json";
 import { log as rootLog, } from "../logger";
 import type { ChatState, } from "../types";
+import { requestImprovedContent, } from "./prompt-request";
 
 const log = rootLog.child({ module: "chat", },);
 
@@ -79,29 +80,22 @@ export const messageActions: Partial<MessageActionsState> & ThisType<MessageActi
   async improveMessage(messageId: string,) {
     const msg = this.messages.find((m,) => m.id === messageId);
     if (!msg || msg.role !== "user" || msg.content.length === 0) { return; }
+    if (!this.activeChat) {
+      // No chat to attribute the prompt to. Pre-flight guard so we never send a
+      // null chatId, but the affordance is still user-visible — surface the same
+      // failure toast the server rejection produced before this guard existed.
+      this.$dispatch?.("show-toast", { type: "error", message: t("toasts.messageImproveFailed",), },);
+      return;
+    }
     if (this._improvingMessageId === messageId) { return; }
     this._improvingMessageId = messageId;
     try {
-      const res = await apiFetch(
-        "/api/v1/generation/prompt",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json", },
-          body: jsonBody({
-            mode: "improve",
-            level: this.isGroupChat ? "style-group" : "style-chat",
-            text: msg.content,
-            chatId: this.activeChat,
-          },),
-        } as Parameters<typeof apiFetch>[1],
-      );
-      if (!res.ok) {
-        this.$dispatch?.("show-toast", { type: "error", message: t("toasts.messageImproveFailed",), },);
-        return;
-      }
-      const data = await res.json();
-      const improved = data?.data?.content;
-      if (typeof improved !== "string" || improved.length === 0) {
+      const improved = await requestImprovedContent({
+        chatId: this.activeChat,
+        level: this.isGroupChat ? "style-group" : "style-chat",
+        text: msg.content,
+      },);
+      if (!improved) {
         this.$dispatch?.("show-toast", { type: "error", message: t("toasts.messageImproveFailed",), },);
         return;
       }

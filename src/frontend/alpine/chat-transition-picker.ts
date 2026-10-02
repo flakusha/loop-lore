@@ -21,6 +21,7 @@
  * Display state lives on `$store.ui` because the chat header sits outside
  * the chatState x-data scope — mirrors `chat-side-channels.ts`.
  */
+import { awaitChatStateAction, callChatStateAction, } from "./chat-state-global";
 import type { TransitionMode, TransitionPickerState, } from "./chat-types/transition-picker-state";
 import { apiFetch, } from "./htmx";
 import { t, } from "./i18n";
@@ -77,6 +78,15 @@ function uiField<T,>(name: string, fallback: T,): T {
   } catch {
     return fallback;
   }
+}
+
+/**
+ * Toast the generic transition failure. Used by every failure branch of
+ * `transitionPicker.runLocationTransition`.
+ * @param ctx - The chatState action context carrying `$dispatch`.
+ */
+function failTransition(ctx: { $dispatch?: (event: string, detail: Record<string, unknown>,) => void },): void {
+  ctx.$dispatch?.("show-toast", { type: "error", message: t("toasts.transitionFailed",), },);
 }
 
 export const transitionPicker: Partial<TransitionPickerState> & ThisType<TransitionCtx> = {
@@ -141,13 +151,13 @@ export const transitionPicker: Partial<TransitionPickerState> & ThisType<Transit
         },
       );
       if (!migrateRes.ok) {
-        this.$dispatch?.("show-toast", { type: "error", message: t("toasts.transitionFailed",), },);
+        failTransition(this,);
         return;
       }
       const created = await migrateRes.json() as { newChatId?: string };
       const newChatId = created.newChatId ?? "";
       if (!newChatId) {
-        this.$dispatch?.("show-toast", { type: "error", message: t("toasts.transitionFailed",), },);
+        failTransition(this,);
         return;
       }
 
@@ -175,7 +185,7 @@ export const transitionPicker: Partial<TransitionPickerState> & ThisType<Transit
       setUi({ showTransitionPicker: false, },);
     } catch (error) {
       log.warn("location transition failed", { mode, error: String(error,), },);
-      this.$dispatch?.("show-toast", { type: "error", message: t("toasts.transitionFailed",), },);
+      failTransition(this,);
     } finally {
       setUi({ transitionBusy: false, },);
     }
@@ -183,21 +193,11 @@ export const transitionPicker: Partial<TransitionPickerState> & ThisType<Transit
 };
 
 // Global helpers for the chat-header button (the header lives outside the
-// chatState x-data scope) — mirrors chat-side-channels.ts.
+// chatState x-data scope) — see chat-state-global.ts.
 const g = globalThis as Record<string, unknown>;
 g.toggleTransitionPicker = function() {
-  const el = document.querySelector<HTMLElement>("[x-data='chatState()']",);
-  if (el && typeof Alpine !== "undefined") {
-    const data = Alpine.$data(el,);
-    const fn = data.toggleTransitionPicker as (() => Promise<void>) | undefined;
-    if (typeof fn === "function") { void fn.call(data,); }
-  }
+  void callChatStateAction("toggleTransitionPicker",);
 };
 g.runLocationTransition = async function(mode: TransitionMode,) {
-  const el = document.querySelector<HTMLElement>("[x-data='chatState()']",);
-  if (el && typeof Alpine !== "undefined") {
-    const data = Alpine.$data(el,);
-    const fn = data.runLocationTransition as ((m: TransitionMode,) => Promise<void>) | undefined;
-    if (typeof fn === "function") { await fn.call(data, mode,); }
-  }
+  await awaitChatStateAction("runLocationTransition", mode,);
 };

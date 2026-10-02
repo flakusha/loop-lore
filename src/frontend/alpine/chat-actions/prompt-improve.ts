@@ -9,13 +9,13 @@
  * (the unified prompt-improvement service) and swaps the composer draft.
  */
 import { t, } from "../i18n";
-import { jsonBody, } from "../json";
 import { getLocalEngine, } from "../local-engine";
 import { LocalInferenceUnavailable, runLocalPromptImprove, shouldOffloadTask, } from "../local-inference";
 import type { LocalInferenceResult, } from "../local-inference";
 import { runLocalModelImprove, } from "../local-model-improve";
 import { log as rootLog, } from "../logger";
 import type { ChatState, } from "../types";
+import { promptContent, requestPrompt, } from "./prompt-request";
 
 const log = rootLog.child({ module: "chat", },);
 
@@ -92,31 +92,21 @@ export const promptImproveActions: Partial<ChatState> & ThisType<ChatState> = {
         this.$dispatch?.("show-toast", { type: "success", message: t("toasts.promptImproved",), },);
         return;
       }
-      const res = await apiFetch(
-        "/api/v1/generation/prompt",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json", },
-          body: jsonBody({
-            mode: "improve",
-            level: requestedLevel,
-            text,
-            chatId: this.activeChat,
-          },),
-        } as Parameters<typeof apiFetch>[1],
-      );
-      if (!res.ok) {
-        const error = await res.json().catch(() => ({ message: undefined, }));
-        const blocked = res.status === 403 && error?.error === "injection_detected";
-        const message = blocked
+      const result = await requestPrompt({
+        mode: "improve",
+        level: requestedLevel,
+        text,
+        chatId: this.activeChat,
+      },);
+      if (!result.ok) {
+        const message = result.injectionBlocked
           ? t("toasts.promptInjectionBlocked",)
-          : error?.message ?? t("toasts.promptImproveFailed",);
+          : result.message ?? t("toasts.promptImproveFailed",);
         this.$dispatch?.("show-toast", { type: "error", message, },);
         return;
       }
-      const data = await res.json();
-      const improved = data?.data?.content;
-      if (typeof improved !== "string" || improved.length === 0) {
+      const improved = promptContent(result.data,);
+      if (!improved) {
         this.$dispatch?.("show-toast", { type: "error", message: t("toasts.promptImproveFailed",), },);
         return;
       }
