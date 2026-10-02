@@ -25,7 +25,7 @@ import { HttpStatus, jsonCreated, jsonError, jsonResponse, } from "./http-utils"
  * @param prefix
  * @returns {Elysia}
  */
-export function characterAvatarsConfigRoutes(
+export function characterAvatarsConfigPlugin(
   opts: HandlerOpts,
   avatarService: AvatarService,
   prefix: string,
