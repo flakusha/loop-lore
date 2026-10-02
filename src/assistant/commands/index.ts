@@ -1,41 +1,40 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-
 // src/assistant/commands/index.ts
 //
 // Command system barrel — registers all commands and re-exports registry.
-
-import "./summarize";
-import "./impersonate";
-import "./narrate";
-import "./ooc";
-import "./debug";
-import "./detail";
-import "./context";
-import "./dice";
-import "./help";
-import "./improve";
-import "./image";
-import "./link";
-import "./quest";
-import "./stats";
-import "./video";
-import "./sfx";
-import "./music";
-import "./caption";
-import "./create";
-import "./review";
+import "./agency";
+import "./analyze";
 import "./attack";
 import "./battle";
-import "./heal";
-import "./rewrite";
-import "./translate";
-import "./analyze";
-import "./regen";
-import "./workflow";
+import "./caption";
+import "./context";
+import "./create";
+import "./debug";
+import "./detail";
+import "./dice";
+import "./gm-guidance";
 import "./harness-verbs";
+import "./heal";
+import "./help";
+import "./image";
+import "./impersonate";
+import "./improve";
 import "./interaction";
-import "./agency";
+import "./link";
+import "./music";
+import "./narrate";
+import "./ooc";
+import "./quest";
+import "./regen";
+import "./review";
+import "./rewrite";
+import "./sfx";
+import "./stats";
+import "./summarize";
+import "./translate";
+import "./video";
+import "./workflow";
 
 export { BUILTIN_COMMANDS, isBuiltinCommand, parseCommand, } from "../command-parser";
 export type { ParsedCommand, } from "../command-parser";
