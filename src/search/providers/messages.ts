@@ -11,6 +11,7 @@
  * chat creators, and admins — enforced in SQL, not by importing route code.
  */
 import { type Kysely, sql, } from "kysely";
+import { isUsableEncryptionSecret, } from "../../crypto/user-secret";
 import type { DB, } from "../../db";
 import { buildFtsQuery, } from "../../routes/message-search/helpers";
 import { deriveSearchTokens, } from "../encrypted-tokens";
@@ -38,11 +39,28 @@ export interface MessageHit {
 export interface MessageProviderOptions {
   /**
    * Load the owner's `users.encryption_secret` for the token tier.
-   * Absent → token tier returns no hits (plaintext-only deployment).
+   * Defaults to a `users` lookup keyed by the scope owner; a user with no
+   * usable secret resolves to null, so the token tier yields no hits rather
+   * than throwing. Tests override it to inject an out-of-band key.
    */
   resolveKey?: (userId: string,) => Promise<string | null>;
 }
 
+/**
+ * Production key resolver: read `users.encryption_secret` for the scope owner.
+ * @param db - typed Kysely instance
+ * @param userId - scope owner
+ * @returns the stored hex secret, or null when absent/malformed.
+ */
+async function loadEncryptionSecret(db: Kysely<DB>, userId: string,): Promise<string | null> {
+  const row = await db
+    .selectFrom("users",)
+    .select("encryption_secret",)
+    .where("id", "=", userId,)
+    .executeTakeFirst();
+  const secret = row?.encryption_secret ?? null;
+  return isUsableEncryptionSecret(secret) ? secret : null;
+}
 interface MessageRow {
   id: string;
   chat_id: string;
@@ -92,13 +110,14 @@ function toHit(row: MessageRow, score: number, snippet?: string,): SearchHit<Mes
 /**
  * Create DB-backed message tier providers.
  * @param db - typed Kysely instance
- * @param opts - optional key resolver enabling the token tier
+ * @param opts - optional key resolver override; defaults to the `users` lookup
  * @returns exact/keyword/token providers for the service
  */
 export function createMessageProviders(
   db: Kysely<DB>,
   opts?: MessageProviderOptions,
 ): { exact: TierProvider<MessageHit>; keyword: TierProvider<MessageHit>; token: TierProvider<MessageHit> } {
+  const resolveKey = opts?.resolveKey ?? ((userId: string,) => loadEncryptionSecret(db, userId));
   const exact: TierProvider<MessageHit> = async (query, scope,) => {
     if (scope.kind !== "messages") { return []; }
     const access = accessWhere(scope,);
@@ -106,7 +125,6 @@ export function createMessageProviders(
       SELECT m.id, m.chat_id, m.role, m.content_plaintext, m.created_at
       FROM messages m WHERE m.id = ${query.q} AND ${access} LIMIT 1
     `.execute(db,);
-
     const row = rows.rows[0];
     if (row === undefined) { return []; }
     return [{ ...toHit(row, 1,), source: "db", },];
@@ -127,13 +145,12 @@ export function createMessageProviders(
       WHERE messages_fts MATCH ${ftsQuery} AND ${access}
       ORDER BY rank ASC LIMIT ${topK}
     `.execute(db,);
-
     return rows.rows.map((row,) => toHit(row, bm25ToScore(-row.rank,), row.snippet,));
   };
 
   const token: TierProvider<MessageHit> = async (query, scope,) => {
-    if (scope.kind !== "messages" || opts?.resolveKey === undefined) { return []; }
-    const key = await opts.resolveKey(scope.userId,);
+    if (scope.kind !== "messages") { return []; }
+    const key = await resolveKey(scope.userId,);
     if (key === null) { return []; }
     const tokens = await deriveSearchTokens(query.q, key,);
     const topK = query.topK ?? 20;
@@ -147,7 +164,6 @@ export function createMessageProviders(
       SELECT m.id, m.chat_id, m.role, m.content_plaintext, m.created_at
       FROM messages m WHERE m.id IN (${idList}) AND ${access}
     `.execute(db,);
-
     const byId = new Map(rows.rows.map((row,) => [row.id, row,]),);
     const ceiling = matches[0]?.hits ?? 1;
     const hits: SearchHit<MessageHit>[] = [];
@@ -157,7 +173,6 @@ export function createMessageProviders(
         hits.push({ ...toHit(row, match.hits / ceiling,), source: "token", encryptedMatch: true, },);
       }
     }
-
     return hits;
   };
 

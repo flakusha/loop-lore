@@ -22,7 +22,8 @@ let chatId: string;
 let plainId: string;
 let encryptedId: string;
 
-const USER_KEY = "owner-encryption-secret";
+/** Real 32-byte hex secret: the DB-backed resolver rejects anything shorter. */
+const USER_KEY = "a".repeat(64,);
 
 const BASE_OPTS: { status: MessageStatus; visibility: MessageVisibility } = {
   status: MessageStatus.Confirmed,
@@ -111,21 +112,44 @@ describe("search/providers/messages (token)", () => {
     const { token, } = createMessageProviders(db, {
       resolveKey: async (userId,) => (userId === ownerId ? USER_KEY : null),
     },);
-
     const hits = await token(
       { q: "secret meeting", mode: "hybrid", includeEncrypted: true, },
       { kind: "messages" as const, userId: ownerId, },
     );
-
     expect(hits.map((h,) => h.id),).toContain(encryptedId,);
     expect(hits.find((h,) => h.id === encryptedId)?.encryptedMatch,).toBe(true,);
   });
-
-  test("missing resolver or key yields no hits", () => {
+  test("default resolver reads users.encryption_secret — no opts needed", async () => {
+    // No resolveKey passed: the provider must reach the `users` row itself.
+    const { token, } = createMessageProviders(db,);
+    const hits = await token(
+      { q: "secret meeting", mode: "hybrid", includeEncrypted: true, },
+      { kind: "messages" as const, userId: ownerId, },
+    );
+    expect(hits.map((h,) => h.id),).toContain(encryptedId,);
+  });
+  test("a user with no stored secret gets no hits, and never throws", async () => {
+    const { token, } = createMessageProviders(db,);
+    // outsiderId has encryption_secret NULL: deriveSearchTokens would throw on
+    // an empty key, so the resolver must return null and the tier yield [].
+    const hits = await token(
+      { q: "secret meeting", mode: "hybrid", includeEncrypted: true, },
+      { kind: "messages" as const, userId: outsiderId, },
+    );
+    expect(hits,).toEqual([],);
+  });
+  test("another user's key cannot read these tokens (cross-user isolation)", async () => {
+    const otherKey = "b".repeat(64,);
+    const { token, } = createMessageProviders(db, { resolveKey: async () => otherKey, },);
+    const hits = await token(
+      { q: "secret meeting", mode: "hybrid", includeEncrypted: true, },
+      { kind: "messages" as const, userId: ownerId, },
+    );
+    expect(hits,).toEqual([],);
+  });
+  test("explicit null resolver still yields no hits", () => {
     const scope = { kind: "messages" as const, userId: ownerId, };
     const query = { q: "secret", mode: "hybrid", includeEncrypted: true, } as const;
-    const { token, } = createMessageProviders(db,);
-    expect(token(query, scope,),).resolves.toEqual([],);
     const withResolver = createMessageProviders(db, { resolveKey: async () => null, },);
     expect(withResolver.token(query, scope,),).resolves.toEqual([],);
   });
