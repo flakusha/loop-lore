@@ -3222,7 +3222,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-giwt-abort-runs-unscoped-git-reset-hard-that-destroys-unrela.md",
-    "status": "Not Started"
+    "status": "duplicate-of giwt/.plan/tickets/BUG-abort-hard-resets-dev-when-a-stash-pop-conflicts-destroying-.md"
   },
   "BUG-GIWT-PLAN-GATES-REPORT-112-PHANTOM-ACTIONABLE-ISSUES-WHEN-TH": {
     "epic": "",
