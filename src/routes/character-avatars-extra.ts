@@ -40,7 +40,7 @@ import { requireWorldAccess, requireWorldOwner, } from "./worlds/access";
  * @param prefix
  * @returns {Elysia}
  */
-export function characterAvatarsExtraRoutes(opts: HandlerOpts, prefix = "/api",) {
+export function characterAvatarsExtraPlugin(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
   const avatarService = new AvatarService(database,);
 

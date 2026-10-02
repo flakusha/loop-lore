@@ -19,8 +19,8 @@ import {
   SuccessResponse,
 } from "../validation/schemas";
 import { type HandlerOpts, requireActorAccess, } from "./actor-auth";
-import { characterAvatarsConfigRoutes, } from "./character-avatars-config";
-import { characterAvatarsExtraRoutes, } from "./character-avatars-extra";
+import { characterAvatarsConfigPlugin, } from "./character-avatars-config";
+import { characterAvatarsExtraPlugin, } from "./character-avatars-extra";
 import { HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonResponse, } from "./http-utils";
 
 const AvatarListResponse = t.Array(AvatarResponse,);
@@ -195,6 +195,6 @@ export function characterAvatarsRoutes(opts: HandlerOpts, prefix = "/api",) {
     // Extracted to stay under the 250L gate; also mounts the world-scoped
     // overrides that only existed in the shadowed directory.
 
-    .use(characterAvatarsConfigRoutes(opts, avatarService, prefix,),)
-    .use(characterAvatarsExtraRoutes(opts, prefix,),);
+    .use(characterAvatarsConfigPlugin(opts, avatarService, prefix,),)
+    .use(characterAvatarsExtraPlugin(opts, prefix,),);
 }
