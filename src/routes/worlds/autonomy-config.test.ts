@@ -60,7 +60,6 @@ describe("PUT /api/worlds/:worldId — autonomyConfig", () => {
       settings: "{}",
       format_version: 0,
     } as never,);
-
     app = appWithAuth(db, ownerId, "user",);
   },);
 
@@ -80,7 +79,6 @@ describe("PUT /api/worlds/:worldId — autonomyConfig", () => {
         body: JSON.stringify({ name, },),
       },),
     );
-
     expect(res.status,).toBe(201,);
     return ((await res.json()) as { id: string }).id;
   }
@@ -110,7 +108,6 @@ describe("PUT /api/worlds/:worldId — autonomyConfig", () => {
       .select("autonomy_config",)
       .where("id", "=", worldId,)
       .executeTakeFirst();
-
     return row?.autonomy_config ?? null;
   }
 
@@ -174,6 +171,35 @@ describe("PUT /api/worlds/:worldId — autonomyConfig", () => {
     expect(JSON.parse((await readColumn(worldId,)) ?? "null",),).toEqual(cfg,);
   });
 
+  test("an integer seed is stored on the world layer", async () => {
+    const worldId = await createWorld("Autonomy Seeded",);
+    const cfg = { preset: "brisk", seed: 99, };
+
+    const res = await put(worldId, { autonomyConfig: cfg, },);
+    expect(res.status,).toBe(200,);
+    expect(JSON.parse((await readColumn(worldId,)) ?? "null",),).toEqual(cfg,);
+  });
+
+  test("a non-integer seed is a 400 and leaves the column unchanged", async () => {
+    const worldId = await createWorld("Autonomy Bad Seed",);
+    const cfg = { preset: "organic", seed: 5, };
+    await put(worldId, { autonomyConfig: cfg, },);
+
+    // A bad seed would coerce through hashSeed/mulberry32 instead of
+    // failing, silently making an organic world deterministic.
+    const res = await put(worldId, { autonomyConfig: { preset: "serene", seed: "oops", }, },);
+    expect(res.status,).toBe(400,);
+    // Rejecting the write must not destroy the previously stored value.
+    expect(JSON.parse((await readColumn(worldId,)) ?? "null",),).toEqual(cfg,);
+  });
+
+  test("a non-integer seed is a 400 inside a raw JSON string too", async () => {
+    const worldId = await createWorld("Autonomy Bad Seed String",);
+
+    const res = await put(worldId, { autonomyConfig: '{"seed":1.5}', },);
+    expect(res.status,).toBe(400,);
+  });
+
   test("a non-owner cannot alter the autonomy layer", async () => {
     const worldId = await createWorld("Autonomy Guarded",);
     const strangerId = uid();
@@ -196,7 +222,6 @@ describe("PUT /api/worlds/:worldId — autonomyConfig", () => {
         body: JSON.stringify({ autonomyConfig: { preset: "brisk", }, },),
       },),
     );
-
     expect(res.status,).toBe(403,);
     // Untouched default: no override was written by the rejected call.
     expect(await readColumn(worldId,),).toBe("{}",);
@@ -247,5 +272,51 @@ describe("autonomyUpdate — direct normaliser contract", () => {
 
   test("a boolean is a 400 for the same reason", async () => {
     expect(await statusOf(autonomyUpdate(true,),),).toBe(400,);
+  });
+
+  test("an integer seed is accepted, in object and string form", async () => {
+    expect(autonomyUpdate({ seed: 12, },).ok,).toBe(true,);
+    expect(autonomyUpdate('{"seed":12}',).ok,).toBe(true,);
+  });
+
+  test("seed: null is accepted: it is how a layer un-seeds", async () => {
+    expect(autonomyUpdate({ seed: null, },).ok,).toBe(true,);
+    expect(autonomyUpdate('{"seed":null}',).ok,).toBe(true,);
+  });
+
+  test("a non-integer seed is a 400 naming the field", async () => {
+    // Raw JSON for the Infinity case: `JSON.stringify({seed: Infinity})`
+    // emits `{"seed":null}`, which is the legitimate reset path, not a bad
+    // seed. `1e999` is how Infinity actually arrives over the wire.
+    const raws = [
+      { seed: "oops", },
+      { seed: true, },
+      { seed: { a: 1, }, },
+      { seed: 1.5, },
+      { seed: JSON.parse("1e999") as unknown, },
+    ];
+    for (const cfg of raws) {
+      const r = autonomyUpdate(cfg,);
+      expect(await statusOf(r,),).toBe(400,);
+      if (r.ok) { continue; }
+      const body = await r.error.json() as { error: string };
+      expect(body.error,).toBe("autonomyConfig.seed must be an integer or null",);
+    }
+  });
+
+  test("a raw JSON string carrying Infinity is a 400, not a null reset", async () => {
+    expect(await statusOf(autonomyUpdate('{"seed":1e999}',),),).toBe(400,);
+  });
+
+  test("a float seed is a 400 inside a raw JSON string too", async () => {
+    expect(await statusOf(autonomyUpdate('{"seed":1.5}',),),).toBe(400,);
+  });
+
+  test("unparseable JSON still reports the JSON error, not the seed error", async () => {
+    const r = autonomyUpdate("{not json",);
+    expect(await statusOf(r,),).toBe(400,);
+    if (r.ok) { return; }
+    const body = await r.error.json() as { error: string };
+    expect(body.error,).toBe("autonomyConfig must be valid JSON",);
   });
 });

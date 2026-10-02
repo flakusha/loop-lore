@@ -21,29 +21,35 @@ export const EMPTY_AUTONOMY_OVERRIDE = "{}";
  * Custom presets must be registered here in code, not via TOML config.
  */
 export const PRESETS: Readonly<Record<PacingPresetName, PresetDefinition>> = {
+  // Every shipped preset is UNSEEDED. A seeded preset would make organic
+  // worlds robotic; the seed exists for replay/debug, not for production.
   serene: {
     tickIntervalMs: 90_000,
     jitterRatio: 0.25,
     perAgentCap: 4,
     perUserCap: 12,
+    seed: null,
   },
   organic: {
     tickIntervalMs: 30_000,
     jitterRatio: 0.5,
     perAgentCap: 8,
     perUserCap: 24,
+    seed: null,
   },
   brisk: {
     tickIntervalMs: 10_000,
     jitterRatio: 0.2,
     perAgentCap: 12,
     perUserCap: 36,
+    seed: null,
   },
   "unlimited-stress": {
     tickIntervalMs: 1_000,
     jitterRatio: 0.0,
     perAgentCap: null,
     perUserCap: 1000,
+    seed: null,
   },
 };
 

@@ -46,6 +46,22 @@ exists solely for headless stress-testing and is explicitly gated.
   `GameMasterConfig.type: llm|human|hybrid` + per-actor model routing exist.
 - Group-chat cascade has max-turns / consecutive-turn guards — chat-scoped, not world-scoped,
   and the scheduler does not bypass them.
+- Scope corrected 2026-10-02. This epic was holding ten tickets in
+  `.plan/feature-matrix.md`, five of which it never wanted: two were duplicates of
+  Done work already listed above (now **Wontfix**), and three were greenfield
+  tickets naming symbols absent from `src/`, re-pointed at `epic-party-migration`,
+  `epic-world-locations` and `epic-workflow-engine`. See the "Re-filed out of this
+  epic" table under Linked Tickets. The epic's real open work is the three
+  remaining rows: BDI plan recompute, GM beat scheduling, and deterministic turns.
+- The scheduler's dispatch seam is the extension point for other subsystems: the
+  `AutonomyScheduler` constructor takes `opts.dispatch` — an
+  `AutonomyDispatch[]` appended after the built-in movement target, which always
+  runs so a new target can never silently stop NPCs moving
+  (`AutonomyScheduler` ctor, `this.#dispatchTargets = [movementDispatch, ...]` in
+  `src/autonomy/scheduler/index.ts`). Party travel, discovery/trade events
+  and any future world-simulation step are meant to arrive as targets through that
+  array, not as scope inside this epic. Each target owns its own gating and
+  governor charge.
 
 ## Architecture
 
@@ -117,5 +133,32 @@ The `autonomy_preferences` data schema (AutonomyProfile, D9) is owned by
 | NPC navigation tick driver | `TASK-world-simulation-npc-navigation-tick-driver.md` | yes | Done — `src/rpg/npc-navigation/tick-driver.ts` (`runNpcMovementTick`) is the scheduler's caller; jitter + `perUserCap` governor gate |
 | Autonomy config surface | `TASK-autonomy-config-surface.md` | yes | Done — layered resolver, presets, world/chat/per-actor write routes, Autonomy tab + chat settings modal |
 | Per-agent/user budget caps UI (gap-audit E15) | `TASK-autonomy-rate-governor.md` | yes | Done — `AutonomyGovernor.tryConsume` + budget-remaining and reset-window UI in both settings surfaces |
+| Config layering / presets / overrides (dup) | `TASK-autonomy-config-surface-layering-presets-and-overrides.md` | yes | Wontfix — duplicate of `TASK-autonomy-config-surface.md` (Done); all four ACs met and tested |
+| Rate governor for LLM actors (dup) | `TASK-autonomy-rate-governor-for-llm-actors.md` | yes | Wontfix — duplicate of `TASK-autonomy-rate-governor.md` (Done); cost ledger + global kill switch still unmet, filed forward |
 
 All referenced tickets are filed on disk. The scheduler's BDI and GM dispatch work was split into the two follow-up tickets above after scoping found neither had a callable, non-greenfield entry point. The 2026-09-23 gap-audit was stale — this table supersedes it.
+
+
+### Re-filed out of this epic (2026-10-02)
+
+Five tickets that carried `**Epic:** epic-actor-autonomy-story-drive` were audited
+against `src/`. Three named symbols that do not exist anywhere in the codebase, so
+they were re-pointed at the epics whose scopes actually claim that work:
+
+| Ticket | Was | Now | Why |
+| ------ | --- | --- | --- |
+| `TASK-world-simulation-timeline-driven-travel-patrol.md` | this epic | `epic-party-migration` | `advancePartyTravel` / `migrateNpc` are greenfield; party travel, patrol routes and world-tick integration are named in that epic's Scope, which already binds `TASK-party-schedule-and-patrol-routes` |
+| `TASK-world-simulation-discovery-and-trade-events.md` | this epic | `epic-world-locations` | `discover_progress` / `trade:route` / `location:discovered` are greenfield; `world_events` is a per-GM-turn JSON column on `story_turns`, not a table |
+| `TASK-workflow-dag-engine-task-dependencies.md` | this epic | `epic-workflow-engine` | `task_dependencies` is greenfield; a generic task DAG is not autonomy-loop work and `epic-cron-scheduler` (Done) scoped it out. **Contested** — the 2026-09-19 gap audit (line 148) deliberately parked agentic remainders in this epic; see the ticket's `## Filing note` for why this one is treated differently and how to revert |
+
+Two more were near-duplicates of Done work already in this epic and are now
+**Wontfix** with a `## Duplicate of` section naming the surviving ticket: the
+config-surface layering ticket (dup of `TASK-autonomy-config-surface.md`) and the
+LLM-actor rate-governor ticket (dup of `TASK-autonomy-rate-governor.md`). The two
+ACs the governor duplicate never met — a per-actor cost ledger and the global
+kill switch — are recorded as still open on that ticket rather than checked off,
+and belong in a fresh ticket.
+
+The two remaining open tickets in this table (BDI plan recompute, GM beat
+scheduling) are unchanged and still Not Started: they are real autonomy-loop work
+being implemented on this branch.
