@@ -34,74 +34,23 @@
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
+import { jsonParseOr, } from "../../utils/safe-json";
 import { ACTION_COST, chargeBudget, toSqlDate, } from "./budget";
-import { travelDb, type TravelContext, type TravelResult, } from "./types";
+import { type TravelContext, travelDb, type TravelResult, } from "./types";
+import { type Walk, walk, } from "./walk";
 
-/** Party status values that stop a party from moving. */
-const PARKED = ["disbanded",];
+/** Party status values that stop a party from moving.
+ *
+ * `resting` belongs here alongside `disbanded`, and its absence was a real
+ * bug: `parkParty` below stamps `PARKED_AT` ("resting"), so a party parked
+ * for a deleted location passed this filter, failed the same `alive` check
+ * on every later tick, and re-parked itself forever — one write per tick per
+ * dead party, growing without bound. A settled party is unaffected: it is
+ * already skipped by the `route_index >= route.length - 1` guard below. */
+const PARKED = ["disbanded", "resting",];
 
 /** Status given to a party whose route can no longer be walked. */
 const PARKED_AT = "resting";
-
-/** Party row as this module needs it. */
-interface PartyRow {
-  id: string;
-  route: string;
-  route_index: number;
-  steps_per_tick: number;
-  travel_progress: number;
-  blocked_until_tick: number;
-}
-
-/** Result of walking one party forward. */
-interface Walk {
-  /** Route edges actually traversed. */
-  edges: number;
-  /** Route index to persist. */
-  routeIndex: number;
-  /** Fractional-edge carry to persist. */
-  progress: number;
-  /** Location the party ended on. */
-  locationId: string;
-  /** True when the walk reached the end of the route. */
-  settled: boolean;
-}
-
-/**
- * Walk one party forward across `route`.
- *
- * Each edge crossing claims its destination. A destination that is
- * already claimed ends the walk where it is: the party holds the edge it
- * did reach, so next tick starts from a location it actually occupies.
- * The party's speed for this tick is folded into the carry first, so a
- * fractional speed accumulates and a speed above 1 walks several edges.
- * @param party the party row, read before this tick
- * @param route ordered location ids
- * @param claims locations taken earlier this tick; claimed here on success
- * @returns the index, carry, and final location to persist
- */
-function walk(party: PartyRow, route: string[], claims: Set<string>,): Walk {
-  let index = party.route_index;
-  let progress = party.travel_progress + party.steps_per_tick;
-  let edges = 0;
-
-  while (progress >= 1 && index < route.length - 1) {
-    const next = route[index + 1];
-    if (!next || claims.has(next,)) break;
-    claims.add(next,);
-    index += 1;
-    progress -= 1;
-    edges += 1;
-  }
-
-  return {
-    edges,
-    routeIndex: index,
-    progress,
-    locationId: route[index] ?? "",
-    settled: index >= route.length - 1,
-  };
-}
 
 /**
  * Park a party whose route can never be walked again.
@@ -116,11 +65,55 @@ function walk(party: PartyRow, route: string[], claims: Set<string>,): Walk {
  * @param stamp `updated_at` text for the write
  */
 async function parkParty(db: Kysely<DB>, partyId: string, currentTick: number, stamp: string,): Promise<void> {
-  await travelDb(db)
+  await travelDb(db,)
     .updateTable("travel_parties",)
     .set({ status: PARKED_AT, current_tick: currentTick, updated_at: stamp, },)
     .where("id", "=", partyId,)
     .execute();
+}
+
+/**
+ * Persist one party's step, guarded by the replay latch.
+ *
+ * The write carries `WHERE current_tick < :tick` — the column migration 036
+ * nominates as the party's replay guard, the same idea one column over from
+ * discovery's `last_explored_tick`. A tick the scheduler replays after a
+ * crash matches no row, so a replayed party neither moves a second time nor
+ * is billed a second time. Charging and claiming both hang off the write, so
+ * each is a consequence of the move rather than a bill for a move a replay
+ * would undo.
+ * @param db database handle
+ * @param partyId the party to advance
+ * @param step the walk to persist
+ * @param currentTick the tick being simulated
+ * @param stamp `updated_at` text for the write
+ * @returns true when the row actually advanced; false on a replay
+ */
+async function commitStep(
+  db: Kysely<DB>,
+  partyId: string,
+  step: Walk,
+  currentTick: number,
+  stamp: string,
+): Promise<boolean> {
+  const moved = await travelDb(db,)
+    .updateTable("travel_parties",)
+    .set(
+      step.edges === 0
+        ? { travel_progress: step.progress, current_tick: currentTick, status: "traveling", updated_at: stamp, }
+        : {
+          route_index: step.routeIndex,
+          travel_progress: step.progress,
+          current_location_id: step.locationId,
+          current_tick: currentTick,
+          status: step.settled ? "resting" : "traveling",
+          updated_at: stamp,
+        },
+    )
+    .where("id", "=", partyId,)
+    .where("current_tick", "<", currentTick,)
+    .executeTakeFirst();
+  return Number(moved?.numUpdatedRows ?? 0,) === 1;
 }
 
 /**
@@ -129,15 +122,12 @@ async function parkParty(db: Kysely<DB>, partyId: string, currentTick: number, s
  * @returns ordered location ids, empty when the column is unusable
  */
 function parseRoute(raw: string,): string[] {
-  try {
-    const parsed: unknown = JSON.parse(raw,);
-    if (!Array.isArray(parsed,)) return [];
-    return parsed.filter((id,): id is string => typeof id === "string",);
-  } catch {
-    // A route that will not parse is a data bug, not a tick bug: the party
-    // is skipped rather than failing the whole world tick.
-    return [];
-  }
+  // A route that will not parse is a data bug, not a tick bug: the party is
+  // skipped rather than failing the whole world tick. `jsonParseOr` swallows the
+  // throw, so the corrupt row and the non-array row take one path.
+  const parsed = jsonParseOr<unknown>(raw, [],);
+  if (!Array.isArray(parsed,)) { return []; }
+  return parsed.filter((id,): id is string => typeof id === "string");
 }
 
 /**
@@ -161,7 +151,7 @@ export async function advancePartyTravel(
   const result: TravelResult = { actions: [], deferred: 0, budgetExhausted: false, };
   const claims = ctx.claims ?? new Set<string>();
   const stamp = toSqlDate(ctx.nowMs,);
-  const parties = await travelDb(db)
+  const parties = await travelDb(db,)
     .selectFrom("travel_parties",)
     .select(["id", "route", "route_index", "steps_per_tick", "travel_progress", "blocked_until_tick",],)
     .where("world_id", "=", worldId,)
@@ -174,21 +164,21 @@ export async function advancePartyTravel(
   // per tick beats one per party, and this is the only place a route id is
   // ever checked against the world.
   const alive = new Set(
-    (await db.selectFrom("locations",).select(["id", "world_id",]).execute(),)
-      .map((loc) => loc.world_id + ":" + loc.id,),
+    (await db.selectFrom("locations",).select(["id", "world_id",],).execute())
+      .map((loc,) => loc.world_id + ":" + loc.id),
   );
 
   for (const party of parties) {
     const route = parseRoute(party.route,);
-    if (route.length < 2) continue;
-    if (party.route_index >= route.length - 1) continue;
-    if (!Number.isFinite(party.steps_per_tick,) || party.steps_per_tick <= 0) continue;
+    if (route.length < 2) { continue; }
+    if (party.route_index >= route.length - 1) { continue; }
+    if (!Number.isFinite(party.steps_per_tick,) || party.steps_per_tick <= 0) { continue; }
 
     // The next hop must be a location the world still has; a route that
     // names a deleted one is parked for good (see parkParty).
     const next = route[party.route_index + 1];
-    if (!next) continue;
-    if (!alive.has(worldId + ":" + next)) {
+    if (!next) { continue; }
+    if (!alive.has(worldId + ":" + next,)) {
       await parkParty(db, party.id, currentTick, stamp,);
       continue;
     }
@@ -197,46 +187,40 @@ export async function advancePartyTravel(
     // occupancy behind for the next party in the loop.
     const mine = new Set(claims,);
     const step = walk(party, route, mine,);
-    if (step.edges === 0 && step.progress === party.travel_progress) continue;
+    if (step.edges === 0 && step.progress === party.travel_progress) { continue; }
 
     if (step.edges === 0 && party.travel_progress + party.steps_per_tick >= 1) {
       // A whole edge of distance was available and its destination is
-      // taken: lose this tick and re-contest on the next one.
-      await travelDb(db)
+      // taken: lose this tick and re-contest on the next one. The latch
+      // guards this write too, or a replay would defer the party again and
+      // push `blocked_until_tick` one tick further out every replay.
+      const deferred = await travelDb(db,)
         .updateTable("travel_parties",)
         .set({ blocked_until_tick: currentTick + 1, current_tick: currentTick, updated_at: stamp, },)
         .where("id", "=", party.id,)
-        .execute();
-      result.deferred += 1;
+        .where("current_tick", "<", currentTick,)
+        .executeTakeFirst();
+      // A replay matched no row, so it defers nobody — counting it would
+      // make the tick report more deferrals than the world actually has.
+      if (Number(deferred?.numUpdatedRows ?? 0,) === 1) { result.deferred += 1; }
       continue;
     }
 
     // A slow party carries less than a whole edge. That carry is real
     // distance covered, so it is persisted and charged — a speed of 0.5
     // that never accumulated would never move at all.
-    const charged = await chargeBudget(db, worldId, currentTick, ACTION_COST, ctx.nowMs, ctx.ceiling,);
-    if (!charged) {
+    if (!(await commitStep(db, party.id, step, currentTick, stamp,))) {
+      // The write is the commit point: a party this tick cannot advance is a
+      // replay, and a replayed party must not re-claim the locations it
+      // already holds — nor re-bill the world for them.
+      continue;
+    }
+
+    for (const locationId of mine) { claims.add(locationId,); }
+    if (!(await chargeBudget(db, worldId, currentTick, ACTION_COST, ctx.nowMs, ctx.ceiling,))) {
       result.budgetExhausted = true;
       break;
     }
-
-    for (const locationId of mine) claims.add(locationId,);
-    await travelDb(db)
-      .updateTable("travel_parties",)
-      .set(
-        step.edges === 0
-          ? { travel_progress: step.progress, current_tick: currentTick, status: "traveling", updated_at: stamp, }
-          : {
-            route_index: step.routeIndex,
-            travel_progress: step.progress,
-            current_location_id: step.locationId,
-            current_tick: currentTick,
-            status: step.settled ? "resting" : "traveling",
-            updated_at: stamp,
-          },
-      )
-      .where("id", "=", party.id,)
-      .execute();
     result.actions.push({ kind: "party_step", subjectId: party.id, tick: currentTick, cost: ACTION_COST, },);
   }
 

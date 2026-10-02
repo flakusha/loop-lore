@@ -19,6 +19,7 @@
  *      events on one tick must never swap places between pages or between
  *      runs, and `id` is the only unique tie-break available.
  */
+import { jsonStringifyOr, } from "../../utils/safe-json";
 import type { DiscoveryDb, WorldEventInput, WorldEventListQuery, WorldEventPage, } from "./types";
 
 /** Hard ceiling on a page, so a caller cannot ask for the whole log. */
@@ -50,17 +51,17 @@ const LISTED_COLUMNS = [
  */
 export async function emitWorldEvent(db: DiscoveryDb, event: WorldEventInput,): Promise<boolean> {
   const result = await db
-    .insertInto("world_event_log")
+    .insertInto("world_event_log",)
     .values({
       world_id: event.worldId,
       event_type: event.eventType,
       subject_id: event.subjectId,
       actor_id: event.actorId,
       tick_index: event.tick,
-      payload: JSON.stringify(event.payload,),
+      payload: jsonStringifyOr(event.payload,),
       dedupe_key: event.dedupeKey,
-    })
-    .onConflict((oc,) => oc.column("dedupe_key").doNothing(),)
+    },)
+    .onConflict((oc,) => oc.column("dedupe_key",).doNothing())
     .executeTakeFirst();
 
   // SQLite reports 0 affected rows when the conflict clause fires, so this
@@ -99,18 +100,20 @@ export async function listWorldEvents(db: DiscoveryDb, query: WorldEventListQuer
   const page = Math.max(1, query.page,);
 
   // Total order: tick_index is not unique, so `id` breaks ties.
-  let rows = db.selectFrom("world_event_log").select(LISTED_COLUMNS,).where("world_id", "=", query.worldId,);
+  let rows = db.selectFrom("world_event_log",).select(LISTED_COLUMNS,).where("world_id", "=", query.worldId,);
   if (query.eventType) { rows = rows.where("event_type", "=", query.eventType,); }
 
-  const [data, counted] = await Promise.all([
-    rows
-      .orderBy("tick_index", "desc",)
-      .orderBy("id", "asc",)
-      .limit(pageSize,)
-      .offset((page - 1) * pageSize,)
-      .execute(),
-    rows.select((eb) => eb.fn.countAll<string>().as("total",),).executeTakeFirst(),
-  ]);
+  // Sequential, not Promise.all: both are read-only counts, so overlap buys
+  // nothing and Promise.all would leave the first rejection unobserved once
+  // the other branch also fails. Awaiting in order means a failed count
+  // throws to the caller instead of stranding the page query's rejection.
+  const data = await rows
+    .orderBy("tick_index", "desc",)
+    .orderBy("id", "asc",)
+    .limit(pageSize,)
+    .offset((page - 1) * pageSize,)
+    .execute();
+  const counted = await rows.select((eb,) => eb.fn.countAll<string>().as("total",)).executeTakeFirst();
 
   return { data, total: Number(counted?.total ?? 0,), page, pageSize, };
 }
