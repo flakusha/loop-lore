@@ -1651,6 +1651,128 @@
                 <div class="admin-stat-label">Avg Latency (ms)</div>
               </div>
             </div>
+            <h3
+              style="font-size: 14px; font-weight: 600; margin-bottom: var(--space-3)"
+              x-text="t('admin.messageVolume')"
+            >
+            </h3>
+            <div
+              style="display: flex; align-items: flex-end; gap: 2px; height: 120px; margin-bottom: var(--space-6)"
+              data-testid="analytics-message-volume"
+            >
+              <div
+                x-show="analyticsDailyBars.length === 0"
+                class="empty-state"
+                style="padding: var(--space-4); font-size: 13px; align-self: center"
+                x-text="t('admin.noDailyData')"
+              >
+              </div>
+              <template x-for="d in analyticsDailyBars" :key="d.date">
+                <div
+                  style="flex: 1 1 0; min-width: 4px; height: 100%; display: flex; flex-direction: column; justify-content: flex-end"
+                  :title="d.date + ': ' + d.count"
+                >
+                  <div
+                    style="width: 100%; background: var(--color-primary, #4f46e5); border-radius: 2px 2px 0 0"
+                    :style="'height: ' + d.pct + '%'"
+                  >
+                  </div>
+                </div>
+              </template>
+            </div>
+            <h3
+              style="font-size: 14px; font-weight: 600; margin-bottom: var(--space-3)"
+              x-text="t('admin.tokenUsageByRole')"
+            >
+            </h3>
+            <div data-testid="analytics-token-usage" style="margin-bottom: var(--space-6)">
+              <div style="display: flex; height: 24px; border-radius: 4px; overflow: hidden; background: var(--border-default, #e9ecef)">
+                <template x-for="seg in analyticsRoleSegments" :key="seg.role">
+                  <div
+                    :style="'width: ' + seg.pct + '%; background: ' + seg.color"
+                    :title="seg.label + ': ' + seg.tokens"
+                  >
+                  </div>
+                </template>
+              </div>
+              <div style="display: flex; gap: var(--space-4); margin-top: var(--space-2); font-size: 12px">
+                <template x-for="seg in analyticsRoleSegments" :key="seg.role + '-legend'">
+                  <span>
+                    <span
+                      :style="'display:inline-block;width:10px;height:10px;border-radius:2px;background:' + seg.color"
+                    ></span>
+                    <span x-text="seg.label"></span>
+                    <span x-text="seg.tokens"></span>
+                  </span>
+                </template>
+              </div>
+            </div>
+            <h3
+              style="font-size: 14px; font-weight: 600; margin-bottom: var(--space-3)"
+              x-text="t('admin.latencyDistribution')"
+            >
+            </h3>
+            <div
+              style="display: flex; align-items: flex-end; gap: var(--space-2); height: 120px; margin-bottom: var(--space-6)"
+              data-testid="analytics-latency-histogram"
+            >
+              <template x-for="b in analyticsLatencyBars" :key="b.label">
+                <div
+                  style="flex: 1 1 0; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center"
+                  :title="b.label + ': ' + b.count"
+                >
+                  <div
+                    style="width: 100%; background: #0891b2; border-radius: 2px 2px 0 0"
+                    :style="'height: ' + b.pct + '%'"
+                  >
+                  </div>
+                  <div
+                    style="font-size: 10px; color: var(--text-muted, #6b7280); margin-top: 4px; white-space: nowrap"
+                    x-text="b.label"
+                  >
+                  </div>
+                </div>
+              </template>
+            </div>
+            <h3
+              style="font-size: 14px; font-weight: 600; margin-bottom: var(--space-3)"
+              x-text="t('admin.characterComparison')"
+            >
+            </h3>
+            <div
+              x-show="analyticsCharacters.length === 0"
+              class="empty-state"
+              style="padding: var(--space-4); font-size: 13px"
+              x-text="t('admin.noCharacterData')"
+            >
+            </div>
+            <table
+              class="admin-table"
+              data-testid="analytics-character-table"
+              x-show="analyticsCharacters.length > 0"
+              style="margin-bottom: var(--space-6)"
+            >
+              <thead>
+                <tr>
+                  <th x-text="t('admin.character')"></th>
+                  <th x-text="t('admin.messages')"></th>
+                  <th x-text="t('admin.tokens')"></th>
+                  <th x-text="t('admin.avgResponseLength')"></th>
+                  <th x-text="t('admin.tokensPerMessage')"></th>
+                </tr>
+              </thead>
+              <tbody aria-busy="true">
+                <template x-for="c in analyticsCharacters" :key="c.id">
+                  <tr>
+                    <td x-text="c.name"></td>
+                    <td x-text="c.totalMessages"></td>
+                    <td x-text="c.totalTokens"></td>
+                    <td x-text="c.avgResponseLength"></td>
+                    <td x-text="c.tokensPerMessage"></td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
             <template x-if="conversationOverview.topChats.length > 0"><div style="margin-bottom: var(--space-6)">
                 <h3 style="font-size: 14px; font-weight: 600; margin-bottom: var(--space-3)">
                   Top Conversations by Tokens

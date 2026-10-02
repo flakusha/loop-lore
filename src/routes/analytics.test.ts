@@ -2,17 +2,25 @@
  * Tests for analytics routes.
  *
  * Tests the conversation analytics endpoints:
- *   GET /api/analytics/chat/:chatId — Per-chat stats
- *   GET /api/analytics/overview     — Aggregate stats
+ *   GET /api/analytics/chats/:chatId  — Per-chat stats
+ *   GET /api/analytics/overview       — Aggregate stats
+ *   GET /api/analytics/characters     — Per-character comparison
  */
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
+import { MessageRole, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { hashId, record, } from "../telemetry/service";
 import { createTestDb, } from "../test-utils/create-test-db";
-import { insertChats, insertUsers, } from "../test-utils/insert-helpers";
+import {
+  insertActors,
+  insertCharacters,
+  insertChats,
+  insertMessages,
+  insertUsers,
+} from "../test-utils/insert-helpers";
 import { analyticsRoutes, } from "./analytics";
 
 /**
@@ -48,9 +56,9 @@ describe("analyticsRoutes", () => {
 
   // ── Auth ─────────────────────────────────────────────────────
 
-  test("GET /api/analytics/chat/:chatId returns 401 without userId", async () => {
+  test("GET /api/analytics/chats/:chatId returns 401 without userId", async () => {
     const app = createApp(db, null,);
-    const res = await app.handle(new Request(`http://localhost/api/analytics/chat/${chatId}`,),);
+    const res = await app.handle(new Request(`http://localhost/api/analytics/chats/${chatId}`,),);
     expect(res.status,).toBe(401,);
   });
 
@@ -62,9 +70,9 @@ describe("analyticsRoutes", () => {
 
   // ── Empty state ──────────────────────────────────────────────
 
-  test("GET /api/analytics/chat/:chatId returns 404 when the user cannot access the chat", async () => {
+  test("GET /api/analytics/chats/:chatId returns 404 when the user cannot access the chat", async () => {
     const app = createApp(db, "other-user",);
-    const res = await app.handle(new Request(`http://localhost/api/analytics/chat/${chatId}`,),);
+    const res = await app.handle(new Request(`http://localhost/api/analytics/chats/${chatId}`,),);
     expect(res.status,).toBe(404,);
   });
 
@@ -82,7 +90,7 @@ describe("analyticsRoutes", () => {
 
   // ── With data ────────────────────────────────────────────────
 
-  test("GET /api/analytics/chat/:chatId returns correct stats", async () => {
+  test("GET /api/analytics/chats/:chatId returns correct stats", async () => {
     // Written through `record()` — the only path production uses, and the one
     // that hashes IDs — so raw-ID filters would read 0 here
     // (BUG-analytics-per-user-routes-filter-telemetry-events-by-raw-ids).
@@ -100,7 +108,7 @@ describe("analyticsRoutes", () => {
     },);
 
     const app = createApp(db, userId,);
-    const res = await app.handle(new Request(`http://localhost/api/analytics/chat/${chatId}`,),);
+    const res = await app.handle(new Request(`http://localhost/api/analytics/chats/${chatId}`,),);
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as Record<string, number>;
     expect(body.totalGenerations,).toBe(2,);
@@ -138,7 +146,7 @@ describe("analyticsRoutes", () => {
 
   // ── Date range filter (FEAT-059) ─────────────────────────────────
 
-  test("GET /api/analytics/chat/:chatId?from&to narrows by created_at", async () => {
+  test("GET /api/analytics/chats/:chatId?from&to narrows by created_at", async () => {
     // Insert a fresh in-window event, plus an old out-of-window event.
     const inWindowAt = Date.now();
     const outOfWindowAt = Date.now() - 7 * 86_400_000;
@@ -171,7 +179,7 @@ describe("analyticsRoutes", () => {
     const app = createApp(db, userId,);
     const fromIso = new Date(inWindowAt - 60_000,).toISOString();
     const toIso = new Date(inWindowAt + 60_000,).toISOString();
-    const url = `http://localhost/api/analytics/chat/${otherChatId}?from=${encodeURIComponent(fromIso,)}&to=${
+    const url = `http://localhost/api/analytics/chats/${otherChatId}?from=${encodeURIComponent(fromIso,)}&to=${
       encodeURIComponent(toIso,)
     }`;
     const res = await app.handle(new Request(url,),);
@@ -183,14 +191,98 @@ describe("analyticsRoutes", () => {
     expect(body.to,).toBe(toIso,);
   });
 
-  test("GET /api/analytics/chat/:chatId?from=garbage ignores unparseable from", async () => {
+  test("GET /api/analytics/chats/:chatId?from=garbage ignores unparseable from", async () => {
     const app = createApp(db, userId,);
-    const url = `http://localhost/api/analytics/chat/${chatId}?from=not-a-date`;
+    const url = `http://localhost/api/analytics/chats/${chatId}?from=not-a-date`;
     const res = await app.handle(new Request(url,),);
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { totalGenerations: number };
     // The seeded earlier tests inserted at least one row for chatId; just
     // assert the query did not 500 on bad input.
     expect(typeof body.totalGenerations,).toBe("number",);
+  });
+
+  // ── Character comparison (FEAT-059 AC5) ──────────────────────
+
+  const charId = "char-a";
+  const otherCharId = "char-other";
+  const charChatId = "char-chat-1";
+  const otherOwnerChatId = "other-owner-chat";
+
+  test("GET /api/analytics/characters returns 401 without userId", async () => {
+    const app = createApp(db, null,);
+    const res = await app.handle(new Request("http://localhost/api/analytics/characters",),);
+    expect(res.status,).toBe(401,);
+  });
+
+  test("GET /api/analytics/characters rolls up owned characters and isolates other owners", async () => {
+    await insertUsers(db, "other-user", "Other User", { id: "other-user", } as never,);
+    // Characters are actors, so each message actor_id needs an actors row with
+    // the same id, and characters.id mirrors actors.id.
+    await insertActors(db, "User One", { id: userId, actor_type: "user" as never, user_id: userId, },);
+    await insertActors(db, "Char A", { id: charId, actor_type: "character" as never, owner_id: userId, },);
+    await insertActors(db, "Other Char", {
+      id: otherCharId,
+      actor_type: "character" as never,
+      owner_id: "other-user",
+    },);
+    await insertCharacters(db, userId, "Char A", { id: charId, },);
+    await insertCharacters(db, "other-user", "Other Char", { id: otherCharId, },);
+    await insertChats(db, "Char chat", userId, { id: charChatId, },);
+    await insertChats(db, "Other owner chat", "other-user", { id: otherOwnerChatId, },);
+    // Two assistant turns from the caller's character, plus one user turn in
+    // the same chat (counts toward role tokens, not the character table).
+    await insertMessages(db, charChatId, charId, MessageRole.Assistant, "hello there", { token_count_total: 100, },);
+    await insertMessages(db, charChatId, charId, MessageRole.Assistant, "longer reply text", {
+      token_count_total: 300,
+    },);
+    await insertMessages(db, charChatId, userId, MessageRole.User, "hi", { token_count_total: 50, },);
+    // Caller's character used inside another owner's chat — the chat-ownership
+    // filter must exclude it (regression guard for cross-owner leakage).
+    await insertMessages(db, otherOwnerChatId, charId, MessageRole.Assistant, "cross owner", {
+      token_count_total: 777,
+    },);
+    // Another owner's character in their own chat — excluded by both filters.
+    await insertMessages(db, otherOwnerChatId, otherCharId, MessageRole.Assistant, "secret", {
+      token_count_total: 9999,
+    },);
+
+    const app = createApp(db, userId,);
+    const res = await app.handle(new Request("http://localhost/api/analytics/characters",),);
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as {
+      characters: {
+        id: string;
+        totalMessages: number;
+        totalTokens: number;
+        avgResponseLength: number;
+        tokensPerMessage: number;
+      }[];
+    };
+    const charA = body.characters.find((c,) => c.id === charId);
+    expect(charA,).toBeDefined();
+    expect(charA?.totalMessages,).toBe(2,);
+    expect(charA?.totalTokens,).toBe(400,);
+    expect(charA?.avgResponseLength,).toBe(14,);
+    expect(charA?.tokensPerMessage,).toBe(200,);
+    expect(body.characters.some((c,) => c.id === otherCharId),).toBe(false,);
+  });
+
+  test("GET /api/analytics/overview exposes tokensByRole and latencyBuckets", async () => {
+    const app = createApp(db, userId,);
+    const res = await app.handle(new Request("http://localhost/api/analytics/overview",),);
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as {
+      tokensByRole: { user: number; assistant: number; system: number };
+      latencyBuckets: { label: string; count: number }[];
+    };
+    // The character test seeded a 50-token user turn and two assistant turns
+    // in the caller's chat, so the role split is non-zero and sums to 400+50.
+    expect(body.tokensByRole.user,).toBeGreaterThanOrEqual(50,);
+    expect(body.tokensByRole.assistant,).toBeGreaterThanOrEqual(400,);
+    expect(body.tokensByRole.system,).toBe(0,);
+    expect(body.latencyBuckets.length,).toBe(5,);
+    const bucketed = body.latencyBuckets.reduce((sum, b,) => sum + b.count, 0,);
+    expect(bucketed,).toBeGreaterThanOrEqual(2,);
   });
 });

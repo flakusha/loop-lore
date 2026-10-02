@@ -31,7 +31,7 @@
 
 | Endpoint                                | Description                                             | Gap                                   |
 | --------------------------------------- | ------------------------------------------------------- | ------------------------------------- |
-| `GET /api/analytics/chat/:chatId`       | Per-chat stats (generations, tokens, latency, cost)     | No time-series, no breakdown by model |
+| `GET /api/analytics/chats/:chatId`      | Per-chat stats (generations, tokens, latency, cost)     | No time-series, no breakdown by model |
 | `GET /api/analytics/overview`           | Aggregate stats (total messages, tokens, latency, cost) | No per-user breakdown, no trends      |
 | `GET /api/telemetry/analytics/summary`  | Total events, distinct sessions/users                   | No event type breakdown               |
 | `GET /api/telemetry/analytics/models`   | Event counts by type (started/completed/failed)         | No latency distribution               |
@@ -463,7 +463,7 @@ Compliance-focused epic for data export, deletion, and privacy controls.
 | `src/chat/moderation.ts`                  | Epic 55     | Moderation primitives ready to build on |
 | `src/generation/hooks/moderation-hook.ts` | Epic 55     | Hook infrastructure for auto-moderation |
 | `src/telemetry/service.ts`                | Epic 54, 57 | Event recording infrastructure          |
-| `src/routes/analytics.ts`                 | Epic 54     | Analytics query patterns to extend      |
+| `src/routes/analytics/`                   | Epic 54     | Analytics query patterns to extend      |
 | `src/routes/model-comparisons.ts`         | Epic 56     | Leaderboard query patterns to reuse     |
 | `src/admin/provider-health.ts`            | Epic 57     | Health monitoring patterns to extend    |
 | `src/routes/frontend-logs.ts`             | Epic 57     | Log ingestion for error tracking        |

@@ -11,7 +11,7 @@ Status: Partially implemented — telemetry service, structured logging, and adm
 
 - Telemetry — `src/telemetry/` (service / cleanup / config): events recorded into `telemetry_events` (table created in `src/db/migrations/001_init.ts`; the previously cited `parts/016_telemetry_events.ts` path does not exist). Emitters: generation lifecycle (`generation.completed|failed|truncated` in `src/generation/`), aux-pipeline calls.
 - Structured logging — `src/logger/`: async queue (`queue.ts`), multi-target transports (`src/logger/transports/`), PII redaction (`censors/`), formatters, levels, limits.
-- Admin analytics — `src/routes/analytics.ts` + `src/routes/admin/aux-telemetry.ts` query `telemetry_events` for generation/aux stats.
+- Admin analytics — `src/routes/analytics/` + `src/routes/admin/aux-telemetry.ts` query `telemetry_events` for generation/aux stats.
 
 ## Not implemented / aspirational
 
