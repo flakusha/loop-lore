@@ -3,7 +3,7 @@
 
 # TASK: Delete the in-repo scripts/worktree fork; giwt is the only worktree CLI
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 
@@ -80,3 +80,5 @@ capable in-repo `report`) — that is backwards; `doctor` exists only in giwt an
 - [ ] No remaining `scripts/worktree` reference outside historical
       `docs/plan-gen/` records and `docs/meta/code-practices-improvements/`
       session write-ups, which are history and stay
+
+**Resolved:** 2026-10-02 registry-driven close: git issue 9cc8452 (registry tip: 361c6becf Konstantin Fedotov Close issue)
