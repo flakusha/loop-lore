@@ -36,7 +36,7 @@ Transport-level fetch (federation gossip `PeerFetch`, swarm sync) is NOT an adap
 
 ### 2.2 `MessageBridge` — PLANNED
 
-`src/integrations/bridge.ts` (tracked by `TASK-integrations-shared-seams-encryptionprovider-messagebridge-b`). Contract:
+`src/integrations/bridge.ts` (planned — `TASK-integrations-shared-seams-encryptionprovider-messagebridge-b`). Contract:
 
 ```ts
 export interface MessageBridge {
@@ -51,7 +51,7 @@ The bridge owns: chat ↔ adapter-target resolution, outbound moderation gate in
 
 ### 2.3 `EncryptionProvider` — PLANNED
 
-`src/integrations/encryption.ts` (same ticket). Contract per `epic-integrations-core.md`:
+`src/integrations/encryption.ts` (planned — same ticket). Contract per `epic-integrations-core.md`:
 
 ```ts
 export interface EncryptionProvider {
@@ -135,7 +135,7 @@ Per `matrix-federation-decisions.md` C5 and `BUG-federation-identity-mapping-to-
 - **Foreign auth is never trusted.** A verified-ownership proof issues a loop-lore session; the foreign assertion is only a factor rung (`epic-auth-channel-provisioning.md` invariant 6).
 - **Shadow account by default.** A foreign actor (`@user@origin`, `@bot@telegram`, email address) resolves to a shadow local account; linking to an existing user happens once proof is presented.
 - **Mapping store:** `federated_identities` (actor_uri ↔ local user_id, shadow-or-link) + `actor_mappings` (remote actor ↔ local graph-node for chats/group-chat/RPG invites) — `TASK-instance-switching-backend-instances-handles-actor-map`.
-- **Handle syntax:** `@user@instance` parsed/resolved via the origin server; bare handles resolve locally (`src/federation/handles.ts`).
+- **Handle syntax:** `@user@instance` parsed/resolved via the origin server; bare handles resolve locally (planned: `src/federation/handles.ts` — `TASK-instance-switching-backend-instances-handles-actor-map`).
 - **OIDC:** RP-only; assertion → verified binding → `federated-oidc` factor rung. Never an IdP for others.
 
 ---
