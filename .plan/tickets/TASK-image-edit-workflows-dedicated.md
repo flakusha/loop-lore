@@ -21,8 +21,11 @@ gallery UX on top lives elsewhere.
 
 `src/image-edit/` layout at HEAD (grep-verified): `template-registry.ts`
 (registry + `registerBuiltinTemplates` / `registerConfigWorkflows`),
-`templates/builtin/` (`txt2img`, `img2img`, `inpaint`, `upscale`,
-`controlnet`, `lora` + `_helpers`), `providers/comfyui-provider.ts`
+`templates/builtin/` (5 registered templates: `txt2img`, `img2img`, `inpaint`,
+`upscale`, `controlnet` — see `templates/builtin/index.ts`; `lora.ts` is NOT a
+registered template, it exports only `parseLoraString`/`buildLoraNodes` helpers
+consumed as a `loras` string param by `txt2img` — no `ImageEditCategory` member
+for lora, see `types.ts:19-24`), `providers/comfyui-provider.ts`
 (`ComfyUIEditProvider.execute` downloads + `createAsset`/`linkAsset`),
 `providers/sd-server-provider/`, `routes.ts` (`handleRun`, templates,
 nodes, capabilities, health — served at `/api/v1/image-edit/*`),
@@ -45,11 +48,11 @@ Epic gaps: FLUX.1 Kontext / Qwen Edit / Krea 2 templates pending
 
 ## Acceptance Criteria
 
-- [ ] Builtin templates (`txt2img`/`img2img`/`inpaint`/`upscale`/`controlnet`/`lora`) each build valid ComfyUI workflow JSON; missing-`required_nodes` backends filtered via node discovery (`/object_info`)
+- [ ] Builtin templates (`txt2img`/`img2img`/`inpaint`/`upscale`/`controlnet`) each build valid ComfyUI workflow JSON; missing-`required_nodes` backends filtered via node discovery (`/object_info`). LoRA covered as a parameter, not a template: `loras` string param on `txt2img` at HEAD via `buildLoraNodes`/`parseLoraString` (`templates/builtin/lora.ts`) inserts `LoraLoader` nodes (pinned by `templates.coverage.test.ts` lora-injection tests); extend the same param to `img2img`/`inpaint`
 - [ ] `ComfyUIEditProvider.execute` runs template → downloads output → `createAsset`/`linkAsset` with world scope / ownership; regression test pins persistence (epic 2026-09-25 correction)
 - [ ] `POST /api/v1/image-edit/run` validates (`template_id` + `backend` + params), enforces `authorizeRunLinkage`, returns typed error shapes (400/401/403) with regression coverage
 - [ ] `GET /api/v1/image-edit/templates|nodes|capabilities|health` reflect registry + installed nodes (template editor UI can render parameter forms)
-- [ ] Tests: `templates.coverage.test.ts` + `routes.coverage.test.ts` green; new coverage for error shapes + persist-pin + capability filtering
+- [ ] Tests: `src/image-edit/templates/builtin/templates.coverage.test.ts` + `src/image-edit/routes.coverage.test.ts` green; new coverage for error shapes + persist-pin + capability filtering
 
 ## Related
 
