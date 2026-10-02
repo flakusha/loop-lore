@@ -62,6 +62,9 @@ export type ListBranchesResult =
   | { ok: true; branches: ChatBranchWithMeta[] }
   | ServiceError;
 
+// Re-export from branch-helpers so callers' existing imports continue to work.
+export { getMessagesForBranch, listBranches, };
+
 /**
  * Create a branch rooted at `messageId`. Returns the branch record and
  * the root-to-fork-point message path. Caller must have chat access
@@ -88,7 +91,6 @@ export async function forkBranch(
     return { code: "not_found", message: "Fork point message not found in chat", };
   }
 
-// hint: Logic changed on both sides. Requires understanding intent of each change.
   const branchId = crypto.randomUUID();
   const inserted = await insertForkRow(db, { chatId, branchId, parentMessageId: messageId, name: params.name, },);
   if ("code" in inserted) { return inserted; }
@@ -159,80 +161,4 @@ export async function switchActiveBranch(
   },);
 
   return { ok: true, chatId, activeBranchId: branchId, };
-}
-
-/**
- * Resolve the message chain for a branch: walk from the branch tip
- * (parent_message_id) to the root. Returns root-to-tip message ids.
- * @param {Kysely<DB>} db
- * @param {string} chatId
- * @param {string} branchId
- * @param {string} actorId
- * @returns {Promise<string[]>}
- */
-export async function getMessagesForBranch(
-  db: Kysely<DB>,
-  chatId: string,
-  branchId: string,
-  actorId: string,
-): Promise<string[]> {
-  const access = await checkChatAccess(db, chatId, actorId, null,);
-  if (!access.ok) { return []; }
-  const branch = await db
-    .selectFrom("chat_branches",)
-    .select(["chat_id", "parent_message_id",],)
-    .where("id", "=", branchId,)
-    .executeTakeFirst();
-
-  if (!branch || branch.chat_id !== chatId) { return []; }
-  return walkMessagePath(db, chatId, branch.parent_message_id,);
-}
-
-/**
- * List all branches in a chat with computed metadata. Caller must have
- * chat access (owner/participant/admin). `isActive` mirrors the per-row
- * `is_active` flag; the displayed branch equals `chats.active_branch_id`.
- * @param {Kysely<DB>} db
- * @param {string} chatId
- * @param {string} actorId
- * @returns {Promise<ListBranchesResult>}
- */
-export async function listBranches(
-  db: Kysely<DB>,
-  chatId: string,
-  actorId: string,
-): Promise<ListBranchesResult> {
-  const access = await checkChatAccess(db, chatId, actorId, null,);
-  if (!access.ok) { return access.error; }
-
-  const rows = await db
-    .selectFrom("chat_branches",)
-    .selectAll()
-    .where("chat_id", "=", chatId,)
-    .orderBy("created_at", "asc",)
-    .execute();
-
-  const out: ChatBranchWithMeta[] = [];
-  for (const row of rows) {
-    const tip = row.parent_message_id;
-    const tipRow = await db
-      .selectFrom("messages",)
-      .select(["created_at",],)
-      .where("id", "=", tip,)
-      .executeTakeFirst();
-
-    const path = await walkMessagePath(db, chatId, tip,);
-    out.push({
-      id: row.id,
-      chatId: row.chat_id,
-      parentMessageId: tip,
-      name: row.name,
-      createdAt: row.created_at,
-      isActive: Number(row.is_active,) === 1,
-      messageCount: path.length,
-      lastActivity: tipRow?.created_at ?? null,
-    },);
-  }
-
-  return { ok: true, branches: out, };
 }
