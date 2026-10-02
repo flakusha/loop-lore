@@ -35,9 +35,19 @@ bun run check && bun test src/
 #   concurrently and co-scheduled gates OOM this host. Pass `--jobs N` (or
 #   `CHECK_JOBS=N`) when you want a faster run and own the memory risk.
 # - `bun run check --diff-base <ref>` scopes unit + coverage gates to the
-#   branch diff (test files adjacent to changed src files; coverage floored
-#   only for modules the diff touches). `giwt finalize` Step 2 passes
-#   this automatically; static gates always run project-wide.
+#   files whose CONTENT differs between `<ref>` and HEAD, plus uncommitted
+#   working-tree changes: test files adjacent to changed src files run under
+#   `test - unit`, and the coverage gate floors only those changed src files.
+#   A file holding identical content on both sides is NOT scoped in, even when
+#   the branch edited it earlier and `<ref>` has since reproduced the same
+#   content — landing the branch would not change it. `giwt finalize` Step 2
+#   passes the ref automatically; static gates always run project-wide.
+#   files whose CONTENT differs between `<ref>` and HEAD, plus uncommitted
+#   working-tree changes: test files adjacent to changed src files run under
+#   `test - unit`, and the coverage gate floors only those changed src files.
+#   files whose CONTENT differs between `<ref>` and HEAD, plus uncommitted
+#   working-tree changes: test files adjacent to changed src files run under
+#   `test - unit`, and the coverage gate floors only those changed src files.
 # - `bun run check --gates <csv>` / `--skip-gates <csv>` runs a subset of
 #   the registered gates. Names are matched verbatim against the runner's check
 #   registry; unknown names exit 2 and list available gates. `--gates`
