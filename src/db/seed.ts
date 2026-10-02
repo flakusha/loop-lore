@@ -5,6 +5,7 @@ import type { DB, } from "./schema";
 import type { Kysely, } from "kysely";
 import { ASSISTANT_SYSTEM_PROMPT, resolveSystemPrompt, } from "../prompts";
 import { ActorType, AgentType, UserRole, UserStatus, } from "./enums";
+import { generateEncryptionSecret, } from "../crypto/user-secret";
 import { getLogger, type Logger, } from "../logger";
 import { uid, } from "../utils";
 
@@ -82,9 +83,10 @@ export async function seedDefaultActors(database: Kysely<DB>, config?: Config,):
           role: UserRole.Solo,
           status: UserStatus.Active,
           settings: "{}",
+          // Per-user blind-index key for the token search tier (TASK-019).
+          encryption_secret: generateEncryptionSecret(),
         },)
         .execute();
-
       log.info("Demo solo user created (admin-equivalent in solo mode)",);
     }
   } else {
@@ -122,7 +124,6 @@ async function seedBootstrapAdmin(database: Kysely<DB>, config: Config, log: Log
       "auth.required=true but no bootstrap admin configured (auth.adminUsername / auth.adminPassword " +
         "or AUTH_ADMIN_USERNAME / AUTH_ADMIN_PASSWORD). Instance has no admin — set credentials or enable registration.",
     );
-
     return;
   }
 
@@ -138,6 +139,8 @@ async function seedBootstrapAdmin(database: Kysely<DB>, config: Config, log: Log
         role: UserRole.Admin,
         status: UserStatus.Active,
         settings: "{}",
+        // Per-user blind-index key for the token search tier (TASK-019).
+        encryption_secret: generateEncryptionSecret(),
       },)
       .execute();
 

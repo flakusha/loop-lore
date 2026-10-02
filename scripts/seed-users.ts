@@ -14,6 +14,7 @@ import { Database, } from "bun:sqlite";
 import { Kysely, } from "kysely";
 import path from "node:path";
 import { DATA_DIR, } from "../src/config/constants";
+import { generateEncryptionSecret, } from "../src/crypto/user-secret";
 import { ActorType, AgentType, UserRole, UserStatus, } from "../src/db/enums";
 import { createSqliteDialect, getDatabase, } from "../src/db/index";
 import { runMigrations, } from "../src/db/migrate";
@@ -73,6 +74,8 @@ export async function seedUsers(db: Kysely<DB>,): Promise<void> {
         role: u.role,
         status: UserStatus.Active,
         settings: "{}",
+        // Per-user blind-index key for the token search tier (TASK-019).
+        encryption_secret: generateEncryptionSecret(),
       })),
     )
     .onConflict((oc,) => oc.column("username",).doNothing())

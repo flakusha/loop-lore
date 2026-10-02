@@ -4,6 +4,7 @@
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
 import { ensureActorKey, getSmk, isEncryptionEnabled, } from "../../crypto";
+import { generateEncryptionSecret, } from "../../crypto/user-secret";
 import { UserRole, UserStatus, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { insertUnique, } from "../../db/upsert-helpers";
@@ -101,7 +102,6 @@ async function handleRegister(
       "Username and password are required.",
     );
   }
-
   if (username.length < 3 || username.length > 32) {
     limiter.refund(ip,);
     return errorResponse(
@@ -112,7 +112,6 @@ async function handleRegister(
       "Username must be 3–32 characters.",
     );
   }
-
   if (password.length < 6) {
     limiter.refund(ip,);
     return errorResponse(
@@ -154,10 +153,11 @@ async function handleRegister(
           role: UserRole.User,
           status: UserStatus.Active,
           settings: "{}",
+          // Per-user blind-index key for the token search tier (TASK-019).
+          encryption_secret: generateEncryptionSecret(),
         },
         ["username",] as const,
       );
-
       if (result === "skipped") { return "skipped" as const; }
 
       await trx
@@ -180,7 +180,6 @@ async function handleRegister(
       if (smk) {
         await ensureActorKey({ database: trx, actorId: userId, smk, },);
       }
-
       return "inserted" as const;
     },);
   } catch (error) {
@@ -193,7 +192,6 @@ async function handleRegister(
     limiter.refund(ip,);
     return errorResponse(request, HttpStatus.Conflict, "auth.usernameTaken", t, "Username already taken.",);
   }
-
   // Slot was reserved at the gate and the rows committed — keep it.
   return createSessionAndCookie(request, database, config, userId, UserRole.User, ip, t,);
 }
