@@ -12,7 +12,7 @@
 
 ## Summary
 
-Drive per-variant behavior from the taxonomy mapping: when a chat is created with a `variant`, persist its auxiliary defaults (`max_turns`, `auto_advance`, `talkativity`, `prompt_override_default`, `chat_purpose`) onto the row — not just the `(type, mode)` triple. Epic fit: `epic-chat-variants-taxonomy` (whose first 20 lines define the twelve canonical variants mapping onto existing `chats` columns) owns the mapping; `epic-group-chat` owns turn orchestration, which already reads the generic columns and needs no per-variant logic. Caveat: `chat_purpose` currently has no `chats` column (`schema-core.ts:652-688`) — triple `purpose` is validated but not persisted (see AC note); persisting it needs a schema or `gm_config` decision.
+Drive per-variant behavior from the taxonomy mapping: when a chat is created with a `variant`, persist its auxiliary defaults (`max_turns`, `auto_advance`, `talkativity`, `prompt_override_default`, `chat_purpose`) onto the row — not just the `(type, mode)` triple. Epic fit: `epic-chat-variants-taxonomy` (whose variant table at :28-41 defines the twelve canonical variants mapping onto existing `chats` columns) owns the mapping; `epic-group-chat` owns turn orchestration, which already reads the generic columns and needs no per-variant logic. Caveat: `chat_purpose` currently has no `chats` column (`schema-core.ts:652-688`) — triple `purpose` is validated but not persisted (see AC note); persisting it needs a schema or `gm_config` decision.
 
 ## Context
 
@@ -22,7 +22,7 @@ Grep-verified wiring gap — creation drops the auxiliary defaults:
 
 - `resolveVariantOverrides` (`src/routes/chats/create-variant.ts:26`) pins only `type`/`mode`/`gm_config`; it never reads `max_turns`, `auto_advance`, `talkativity`, `prompt_override_default`, or `purpose` from the variant table.
 - `CreateChatParams` (`src/chat/service/types.ts:39`) has no `maxTurns`/`autoAdvance`/`talkativity`/`promptOverride` fields, and the create route (`src/routes/chats/create.ts:202-227`) passes none of them — so a `variant: "rpg_group"` chat lands with `auto_advance=NULL` instead of `1`.
-- Runtime already honors the generic columns (no per-variant branching needed): `src/generation/auto-gen/group-cascade.ts:101-108` reads `max_turns`/`auto_advance`; turn state reads `max_turns` (`src/turning/turn-manager/state.ts:149-168`). Persisting variant defaults at creation is sufficient.
+- Runtime already honors the generic columns (no per-variant branching needed): `src/generation/auto-gen/group-cascade.ts:101-108` reads `max_turns`/`auto_advance`; turn state reads `max_turns` (`src/turning/turn-manager/state.ts:150-168`). Persisting variant defaults at creation is sufficient.
 
 ## Acceptance Criteria
 
