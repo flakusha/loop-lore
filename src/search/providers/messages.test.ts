@@ -147,6 +147,46 @@ describe("search/providers/messages (token)", () => {
     );
     expect(hits,).toEqual([],);
   });
+  test("SQL metacharacters in query text cannot alter the query", async () => {
+    // Query text reaches the DB only as HMAC output: tokenizeForSearch strips
+    // to [a-z0-9], then deriveSearchTokens returns 16 hex chars per word, so
+    // no attacker-supplied character can land in a bound parameter. The IN
+    // expansion at messages.ts:162 is parameterized (sql.join + sql`${id}`).
+    const payloads = [
+      "'; DROP TABLE users; --",
+      "' OR '1'='1",
+      "'; UPDATE users SET encryption_secret='pwned'; --",
+      "' UNION SELECT password_hash FROM users --",
+      "admin'--",
+    ];
+    // One hit is the ceiling: the chat holds a single indexed message, so a
+    // payload that widened the query (OR 1=1, UNION) would return more.
+    const { token, } = createMessageProviders(db,);
+    for (const q of payloads) {
+      const hits = await token(
+        { q, mode: "hybrid", includeEncrypted: true, },
+        { kind: "messages" as const, userId: ownerId, },
+      );
+      expect(hits.length,).toBeLessThanOrEqual(1,);
+      for (const hit of hits) { expect(hit.source,).toBe("token",); }
+    }
+    const owner = await db
+      .selectFrom("users",)
+      .select("encryption_secret",)
+      .where("id", "=", ownerId,)
+      .executeTakeFirst();
+    expect(owner?.encryption_secret,).toBe(USER_KEY,);
+  });
+  test("a malicious scope userId resolves to no key, not a SQL splice", async () => {
+    const { token, } = createMessageProviders(db,);
+    const hits = await token(
+      { q: "secret meeting", mode: "hybrid", includeEncrypted: true, },
+      { kind: "messages" as const, userId: "'; DROP TABLE users; --", },
+    );
+    expect(hits,).toEqual([],);
+    const still = await db.selectFrom("users",).select("id",).where("id", "=", ownerId,).executeTakeFirst();
+    expect(still?.id,).toBe(ownerId,);
+  });
   test("explicit null resolver still yields no hits", () => {
     const scope = { kind: "messages" as const, userId: ownerId, };
     const query = { q: "secret", mode: "hybrid", includeEncrypted: true, } as const;
