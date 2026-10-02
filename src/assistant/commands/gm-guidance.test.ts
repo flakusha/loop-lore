@@ -8,14 +8,14 @@
  */
 import { beforeAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
+import { updateGmGuidance, } from "../../chat/service";
 import type { GmGuidance, } from "../../chat/types/config";
-import type { CommandContext, CommandResult, CommandHandler, } from "./registry";
-import { getCommand, } from "./registry";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
-import { updateGmGuidance, } from "../../chat/service";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertActors, insertChatParticipants, insertChats, insertUsers, } from "../../test-utils/insert-helpers";
+import type { CommandContext, CommandHandler, CommandResult, } from "./registry";
+import { getCommand, } from "./registry";
 import "./gm-guidance";
 
 const CHAT_ID = "chat-1";
@@ -131,7 +131,7 @@ describe("gm guidance commands", () => {
       .select(["actor_id", "content_type",],)
       .where("chat_id", "=", CHAT_ID,)
       .execute();
-    const skip = rows.find((row,) => row.content_type === "turn_skip",);
+    const skip = rows.find((row,) => row.content_type === "turn_skip");
     expect(skip?.actor_id,).toBe(VILLAIN,);
     expect(skip?.content_type,).toBe("turn_skip",);
   });
