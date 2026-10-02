@@ -95,6 +95,7 @@ Story steering uses whitenotes and shadow notes to guide the LLM's narrative dir
 ## Docs-Gap Audit Remainders (2026-09-19)
 
 - [ ] [gap-audit E8] Story-notes panel: 3-tab structure + role-access matrix (GM notes panel core done)
+
 ## Integration Points
 
 ### Systems This Epic Depends On
