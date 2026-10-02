@@ -67,7 +67,7 @@ export function attachRoutes(opts: HandlerOpts, prefix = "/api",) {
         if (!access.ok) { return notFoundResponse("Message not found",); }
 
         try {
-          await verifyAttachmentsOwned(database, [{ assetId, }], userId,);
+          await verifyAttachmentsOwned(database, [{ assetId, },], userId,);
         } catch (err) {
           if (err instanceof AttachmentOwnershipError) {
             return badRequestResponse("Asset not found or not owned by you.",);
@@ -77,7 +77,7 @@ export function attachRoutes(opts: HandlerOpts, prefix = "/api",) {
 
         const current = jsonParseOr<MessageAttachment[]>(message.attachments ?? "[]", [],);
         const existing = Array.isArray(current,) ? current : [];
-        if (existing.some((a,) => a.assetId === assetId,)) {
+        if (existing.some((a,) => a.assetId === assetId)) {
           // Idempotent: a retried attach returns the unchanged list.
           return jsonResponse({ data: existing, },);
         }
@@ -103,7 +103,7 @@ export function attachRoutes(opts: HandlerOpts, prefix = "/api",) {
             .where("id", "=", id,)
             .execute();
         } catch (err) {
-          log().error("message attach failed", { messageId: id, assetId, error: String(err,), },);
+          log().error("message attach failed", undefined, { messageId: id, assetId, error: String(err,), },);
           throw err;
         }
 

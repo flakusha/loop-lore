@@ -25,4 +25,24 @@ export interface MessageActionsState {
   _assetPickerAssets: GalleryAsset[];
   /** True while the picker's gallery fetch is in flight. */
   _assetPickerLoading: boolean;
+
+  /**
+   * Improve a user-authored message in place via the shared prompt-improve
+   * service; splices the result back without reloading the thread.
+   * @param messageId - Target message id
+   */
+  improveMessage(messageId: string,): Promise<void>;
+  /**
+   * Open the attach picker for one message and load the chat gallery.
+   * @param messageId - Message the picker will attach to
+   */
+  openAssetPicker(messageId: string,): Promise<void>;
+  /** Close the attach picker and drop its loaded rows. */
+  closeAssetPicker(): void;
+  /**
+   * Attach a gallery asset to an already-sent message and refresh its row.
+   * @param messageId - Message to attach to
+   * @param assetId - Owned gallery asset id
+   */
+  attachAssetToMessage(messageId: string, assetId: string,): Promise<void>;
 }

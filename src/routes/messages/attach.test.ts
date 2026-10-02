@@ -59,7 +59,10 @@ function postAttach(app: Elysia, messageId: string, body: Record<string, unknown
  * @param messageId
  * @returns Parsed rows (empty list when null)
  */
-async function readAttachments(db: Kysely<DB>, messageId: string,): Promise<{ assetId?: string; order?: number; label?: string }[]> {
+async function readAttachments(
+  db: Kysely<DB>,
+  messageId: string,
+): Promise<{ assetId?: string; order?: number; label?: string }[]> {
   const row = await db
     .selectFrom("messages",)
     .select("attachments",)
@@ -122,12 +125,12 @@ describe("POST /messages/:id/attachments", () => {
 
   beforeAll(async () => {
     createLogger({ level: "error", },);
-    ({ db, sqlite, } = await createTestDb(),);
-  });
+    ({ db, sqlite, } = await createTestDb());
+  },);
 
   afterAll(async () => {
     await db.destroy();
-  });
+  },);
 
   beforeEach(async () => {
     resetTestDb(sqlite,);
@@ -143,7 +146,7 @@ describe("POST /messages/:id/attachments", () => {
       id: messageId,
       swipe_index: 0,
     } as never,);
-  });
+  },);
 
   test("401 without a user id", async () => {
     const app = makeApp(db, null, null,);
@@ -176,7 +179,7 @@ describe("POST /messages/:id/attachments", () => {
     const app = makeApp(db, owner, "user",);
     const res = await postAttach(app, messageId, { assetId: assetOwned, },);
     expect(res.status,).toBe(201,);
-    const body: { data: { assetId: string; order: number; label: string }[]; } = await res.json();
+    const body: { data: { assetId: string; order: number; label: string }[] } = await res.json();
     expect(body.data,).toHaveLength(1,);
     expect(body.data[0]?.assetId,).toBe(assetOwned,);
     expect(body.data[0]?.order,).toBe(0,);
@@ -193,7 +196,7 @@ describe("POST /messages/:id/attachments", () => {
     await postAttach(app, messageId, { assetId: assetOwned, },);
     const res = await postAttach(app, messageId, { assetId: assetOwned, },);
     expect(res.status,).toBe(200,);
-    const body: { data: { assetId: string }[]; } = await res.json();
+    const body: { data: { assetId: string }[] } = await res.json();
     expect(body.data,).toHaveLength(1,);
     expect(await readAttachments(db, messageId,),).toHaveLength(1,);
     expect(await countLinks(db, assetOwned,),).toBe(1,);

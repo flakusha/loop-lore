@@ -7,8 +7,8 @@
  * asset-picker kind registry (AC7), picker loading, and attach flow.
  */
 import { afterEach, expect, mock, test, } from "bun:test";
-import type { ApiFetchMock, Toast, } from "../../tests/test-types";
 import { describeOrSkip, ISOLATED, } from "../../../test-utils/isolate-only";
+import type { ApiFetchMock, Toast, } from "../../tests/test-types";
 import { ASSET_PICKER_KINDS, filterPickerAssets, messageActions, } from "./message-actions";
 
 // ── Mock ../htmx (must precede importing ./message-actions) ──
@@ -80,7 +80,7 @@ function buildCtx(overrides?: Partial<ActionCtx>,): ActionCtx {
 afterEach(() => {
   calls = [];
   handler = async () => Response.json({},);
-});
+},);
 
 describeOrSkip("messageActions.improveMessage", () => {
   test("improves a user message in place: prompt → PATCH → splice, no thread reload", async () => {
@@ -111,16 +111,17 @@ describeOrSkip("messageActions.improveMessage", () => {
     // In-place splice: same message object, mutated — no list fetch (AC2).
     expect(ctx.messages[0]?.content,).toBe("much better prompt",);
     expect(ctx.messages[0]?.edited_at?.length,).toBeGreaterThan(0,);
-    expect(calls.some((c,) => c.url.includes("/chats/chat-1/messages",),),).toBe(false,);
+    expect(calls.some((c,) => c.url.includes("/chats/chat-1/messages",)),).toBe(false,);
     expect(ctx.toasts[0]?.type,).toBe("success",);
     expect(ctx._improvingMessageId,).toBeNull();
   });
 
   test("uses the group level in group chats", async () => {
     const ctx = buildCtx({ isGroupChat: true, },);
-    handler = async (url,) => url === "/api/v1/generation/prompt"
-      ? Response.json({ data: { content: "improved", }, },)
-      : Response.json({ id: "m1", },);
+    handler = async (url,) =>
+      url === "/api/v1/generation/prompt"
+        ? Response.json({ data: { content: "improved", }, },)
+        : Response.json({ id: "m1", },);
 
     await messageActions.improveMessage!.call(ctx as never, "m1",);
 
@@ -148,9 +149,10 @@ describeOrSkip("messageActions.improveMessage", () => {
 
   test("PATCH failure keeps the original content and toasts an error", async () => {
     const ctx = buildCtx();
-    handler = async (url,) => url === "/api/v1/generation/prompt"
-      ? Response.json({ data: { content: "improved", }, },)
-      : Response.json({ message: "forbidden", }, { status: 403, },);
+    handler = async (url,) =>
+      url === "/api/v1/generation/prompt"
+        ? Response.json({ data: { content: "improved", }, },)
+        : Response.json({ message: "forbidden", }, { status: 403, },);
 
     await messageActions.improveMessage!.call(ctx as never, "m1",);
 
@@ -158,7 +160,7 @@ describeOrSkip("messageActions.improveMessage", () => {
     expect(ctx.messages[0]?.content,).toBe("draft prompt",);
     expect(ctx.toasts[0]?.type,).toBe("error",);
   });
-});
+},);
 
 describeOrSkip("asset picker kind registry (AC7)", () => {
   test("default registry keeps images and drops other media", () => {
@@ -167,7 +169,7 @@ describeOrSkip("asset picker kind registry (AC7)", () => {
       { id: "p1", mime_type: "image/png", },
       { id: "a1", type: "audio", mime_type: "audio/mpeg", },
     ];
-    expect(filterPickerAssets(rows,).map((r,) => r.id,),).toEqual(["i1", "p1"],);
+    expect(filterPickerAssets(rows,).map((r,) => r.id),).toEqual(["i1", "p1",],);
   });
 
   test("registering a new kind widens the picker without touching the flow", () => {
@@ -181,27 +183,28 @@ describeOrSkip("asset picker kind registry (AC7)", () => {
       matches: (asset: { type?: string },) => asset.type === "audio",
     };
     expect(
-      filterPickerAssets(rows, [...ASSET_PICKER_KINDS, audioKind,],).map((r,) => r.id,),
-    ).toEqual(["i1", "a1"],);
+      filterPickerAssets(rows, [...ASSET_PICKER_KINDS, audioKind,],).map((r,) => r.id),
+    ).toEqual(["i1", "a1",],);
   });
-});
+},);
 
 describeOrSkip("messageActions.openAssetPicker", () => {
   test("loads the chat gallery and filters through registered kinds", async () => {
     const ctx = buildCtx();
-    handler = async () => Response.json({
-      data: [
-        { id: "i1", type: "image", },
-        { id: "a1", type: "audio", },
-      ],
-    },);
+    handler = async () =>
+      Response.json({
+        data: [
+          { id: "i1", type: "image", },
+          { id: "a1", type: "audio", },
+        ],
+      },);
 
     await messageActions.openAssetPicker!.call(ctx as never, "m1",);
 
     expect(calls[0]?.url,).toBe("/api/v1/assets?entity_type=chat&entity_id=chat-1&pageSize=200",);
     expect(ctx._assetPickerFor,).toBe("m1",);
-    expect(ctx._assetPickerAssets.map((a,) => a.id,),).toEqual(["i1"],);
-    expect(ctx._assetPickerLoading,).toBe(false);
+    expect(ctx._assetPickerAssets.map((a,) => a.id),).toEqual(["i1",],);
+    expect(ctx._assetPickerLoading,).toBe(false,);
   });
 
   test("gallery failure closes the picker and toasts an error", async () => {
@@ -212,18 +215,18 @@ describeOrSkip("messageActions.openAssetPicker", () => {
 
     expect(ctx._assetPickerFor,).toBeNull();
     expect(ctx.toasts[0]?.type,).toBe("error",);
-    expect(ctx._assetPickerLoading,).toBe(false);
+    expect(ctx._assetPickerLoading,).toBe(false,);
   });
-});
+},);
 
 describeOrSkip("messageActions.attachAssetToMessage", () => {
   test("attaches, refreshes the message rows, closes the picker, toasts success", async () => {
     const ctx = buildCtx({ _assetPickerFor: "m1", },);
-    handler = async (url, opts,) => {
+    handler = async (_url, opts,) => {
       if (opts?.method === "POST") {
-        return Response.json({ data: [{ assetId: "a9", }], }, { status: 201, },);
+        return Response.json({ data: [{ assetId: "a9", },], }, { status: 201, },);
       }
-      return Response.json({ attachments: [{ assetId: "a9", }], },);
+      return Response.json({ attachments: [{ assetId: "a9", },], },);
     };
 
     await messageActions.attachAssetToMessage!.call(ctx as never, "m1", "a9",);
@@ -232,7 +235,7 @@ describeOrSkip("messageActions.attachAssetToMessage", () => {
     expect(calls[0]?.opts.method,).toBe("POST",);
     expect(JSON.parse(calls[0]?.opts.body as string,),).toEqual({ assetId: "a9", },);
     expect(calls[1]?.url,).toBe("/api/v1/messages/m1",);
-    expect(ctx.messages[0]?.attachments,).toEqual([{ assetId: "a9", }],);
+    expect(ctx.messages[0]?.attachments,).toEqual([{ assetId: "a9", },],);
     expect(ctx._assetPickerFor,).toBeNull();
     expect(ctx.toasts[0]?.type,).toBe("success",);
   });
@@ -248,4 +251,4 @@ describeOrSkip("messageActions.attachAssetToMessage", () => {
     expect(ctx.toasts[0]?.type,).toBe("error",);
     expect(ctx.toasts[0]?.message,).toContain("Asset not found",);
   });
-});
+},);
