@@ -306,7 +306,7 @@ describe("createRoutes coverage", () => {
       .executeTakeFirst();
     expect(row?.content_plaintext,).toBe("look please",);
     const attachments = JSON.parse(row?.attachments ?? "[]",) as { assetId: string }[];
-    expect(attachments.map((a,) => a.assetId,),).toEqual([assetId,],);
+    expect(attachments.map((a,) => a.assetId),).toEqual([assetId,],);
     const links = await db
       .selectFrom("asset_links",)
       .select("asset_id",)
@@ -321,7 +321,7 @@ describe("createRoutes coverage", () => {
     const app = makeApp(db, owner, "user",);
     const res = await postMessage(app, chatA, {
       content: `both ways @asset:${assetId}`,
-      attachments: [{ assetId, }],
+      attachments: [{ assetId, },],
     },);
     expect(res.status,).toBe(201,);
     const body: { id: string } = await res.json();

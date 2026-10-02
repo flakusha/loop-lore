@@ -184,7 +184,7 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
         }
         const explicitAttachments = body.attachments ?? [];
         const mentionedAttachments = assetMentionIds
-          .filter((assetId,) => !explicitAttachments.some((a,) => a.assetId === assetId,),)
+          .filter((assetId,) => !explicitAttachments.some((a,) => a.assetId === assetId))
           .map((assetId,) => ({ assetId, }));
         const attachments = [...explicitAttachments, ...mentionedAttachments,];
 

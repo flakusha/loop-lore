@@ -245,7 +245,7 @@ describe("parseAssetMentions / stripAssetMentions (component-buttons AC6)", () =
   test("extracts multiple ids in order, deduplicating repeats", () => {
     expect(
       parseAssetMentions("@asset:a1 then @asset:a2 then @asset:a1",),
-    ).toEqual(["a1", "a2"],);
+    ).toEqual(["a1", "a2",],);
   });
 
   test("returns empty when there is no asset token", () => {
