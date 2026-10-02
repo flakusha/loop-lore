@@ -19,14 +19,17 @@
  *   the persisted counterpart axis into `row`; a missing axis column is a
  *   programming error and throws rather than silently passing.
  * - `messages.status` carries a legacy DB default of `"visible"` (001_init.ts:1864)
- *   that is not a member of `MessageStatus`. Rows written before the enum landed,
- *   and inserts that omit `status`, carry that value. A write that only moves
- *   `visibility` on such a row must not begin failing over data the guard did
- *   not create, so an unrecognised axis is passed through unchecked and only the
- *   axis actually being written is validated.
+ *   that predates `MessageStatus` and is not a member of it. Inserts that omit
+ *   `status`, and rows written before the enum landed, persist that literal, and
+ *   `updateMessageVisibility` merges the persisted status back in on them — so
+ *   exactly that one value is exempted from the state-machine check. It is the
+ *   ONLY exemption: any other unrecognised status is rejected rather than passed
+ *   through unchecked, so a typo or a second legacy value cannot ride in
+ *   unvalidated.
  */
 import { shareAlikeDerivatives, } from "../../characters/license-enforcement";
-import { MessageStatus, messagesStatusVisibility, shadowNotesStatusVisibility, } from "../enums";
+import { safeJsonStringify, } from "../../utils";
+import { messagesStatusVisibility, MessageStatus, shadowNotesStatusVisibility, } from "../enums";
 import type { TableName, } from "../schema-manifest";
 
 /** Structural minimum of `CompositeValidator` - only the allowed-pairs set. */
@@ -35,7 +38,7 @@ interface PairSet {
 }
 
 /** A per-table row check. Throws on an illegal combination. */
-type RowGuard = (row: Record<string, unknown>) => void;
+type RowGuard = (row: Record<string, unknown>,) => void;
 
 /** Tables carrying a write-time invariant. Adding a table = adding a key. */
 type GuardedTable =
@@ -47,7 +50,7 @@ type GuardedTable =
  * Read a text axis column.
  * @throws {Error} when the column is absent or not a string.
  */
-function readAxis(row: Record<string, unknown>, table: string, column: string): string {
+function readAxis(row: Record<string, unknown>, table: string, column: string,): string {
   const value = row[column];
   if (typeof value !== "string") {
     throw new Error(
@@ -61,22 +64,39 @@ function readAxis(row: Record<string, unknown>, table: string, column: string): 
  * Read a 0/1 integer axis column.
  * @throws {Error} when the column is absent or not 0/1.
  */
-function readFlag(row: Record<string, unknown>, table: string, column: string): 0 | 1 {
+function readFlag(row: Record<string, unknown>, table: string, column: string,): 0 | 1 {
   const value = row[column];
   if (value !== 0 && value !== 1) {
+    // safeJsonStringify, not bare JSON.stringify: the latter is banned repo-wide.
+    const quoted = safeJsonStringify(value,);
     throw new Error(
-      `assertValidWrite: ${table}.${column} must be 0 or 1 on the write, got ${JSON.stringify(value)}`,
+      `assertValidWrite: ${table}.${column} must be 0 or 1 on the write, got ${quoted.ok ? quoted.value : value}`,
     );
   }
   return value;
 }
 
-/** `true` when the value is a member of the message status machine. */
-function isKnownStatus(value: string,): boolean {
-  return KNOWN_STATUSES.has(value,);
-}
+/** `001_init.ts:1864` — NOT NULL DEFAULT 'visible'; a MessageVisibility value, never a MessageStatus. */
+const LEGACY_MESSAGES_STATUS = "visible";
 
-const KNOWN_STATUSES: ReadonlySet<string> = new Set(Object.values(MessageStatus),);
+const KNOWN_STATUSES: ReadonlySet<string> = new Set(Object.values(MessageStatus,),);
+
+/**
+ * Assert a `messages.status` value is a MessageStatus or the known legacy default.
+ * @param value
+ * @throws {Error} when the value is neither a MessageStatus nor the known legacy default.
+ * @returns {void}
+ */
+function assertKnownStatus(value: string,): void {
+  if (value === LEGACY_MESSAGES_STATUS) { return; }
+  if (!KNOWN_STATUSES.has(value,)) {
+    // safeJsonStringify, not bare JSON.stringify: the latter is banned repo-wide.
+    const quoted = safeJsonStringify(value,);
+    throw new Error(
+      `assertValidWrite: messages.status ${quoted.ok ? quoted.value : value} is not a MessageStatus`,
+    );
+  }
+}
 
 /**
  * Assert a two-axis pair against the validator's allowed set.
@@ -89,7 +109,7 @@ function assertPair(
   axisB: string,
   label: string,
 ): void {
-  if (!validator.allowed.has(`${axisA}:${axisB}`)) {
+  if (!validator.allowed.has(`${axisA}:${axisB}`,)) {
     throw new Error(
       `assertValidWrite: ${table} ${label} ${axisA}:${axisB} is not a legal state pair`,
     );
@@ -97,35 +117,38 @@ function assertPair(
 }
 
 /** `messages.status` x `messages.visibility`. */
-const guardMessages: RowGuard = (row) => {
-  const status = readAxis(row, "messages", "status");
-  if (!isKnownStatus(status,)) { return; }
+const guardMessages: RowGuard = (row,) => {
+  const status = readAxis(row, "messages", "status",);
+  assertKnownStatus(status,);
+  // The legacy default has no place in the status machine, so there is no
+  // pair to check it against. Every other status was validated above.
+  if (status === LEGACY_MESSAGES_STATUS) { return; }
   assertPair(
     "messages",
     messagesStatusVisibility,
     status,
-    readAxis(row, "messages", "visibility"),
+    readAxis(row, "messages", "visibility",),
     "status x visibility",
   );
 };
 
 /** `shadow_notes.status` x `shadow_notes.visibility`. */
-const guardShadowNotes: RowGuard = (row) => {
+const guardShadowNotes: RowGuard = (row,) => {
   assertPair(
     "shadow_notes",
     shadowNotesStatusVisibility,
-    readAxis(row, "shadow_notes", "status"),
-    readAxis(row, "shadow_notes", "visibility"),
+    readAxis(row, "shadow_notes", "status",),
+    readAxis(row, "shadow_notes", "visibility",),
     "status x visibility",
   );
 };
 
 /** `character_licensing.allow_derivatives` x `character_licensing.share_alike`. */
-const guardCharacterLicensing: RowGuard = (row) => {
-  const derivatives = readFlag(row, "character_licensing", "allow_derivatives") === 1
+const guardCharacterLicensing: RowGuard = (row,) => {
+  const derivatives = readFlag(row, "character_licensing", "allow_derivatives",) === 1
     ? "allowed"
     : "forbidden";
-  const shareAlike = readFlag(row, "character_licensing", "share_alike") === 1 ? "yes" : "no";
+  const shareAlike = readFlag(row, "character_licensing", "share_alike",) === 1 ? "yes" : "no";
   assertPair(
     "character_licensing",
     shareAlikeDerivatives,
@@ -138,6 +161,22 @@ const guardCharacterLicensing: RowGuard = (row) => {
 /**
  * Table -> row check. Typing the record against `GuardedTable` makes a missing
  * key a compile error, so a new guarded table cannot be added without a guard.
+ *
+ * SCOPE — `assertValidWrite` is a service-write-site helper, NOT table-wide
+ * enforcement. It only checks a row at a call site that remembers to invoke it.
+ * Guarded pairs, and the only instrumented call sites:
+ * - `messages.status` x `messages.visibility`
+ *   write.ts:153, visibility.ts:46
+ * - `shadow_notes.status` x `shadow_notes.visibility`
+ *   shadow.ts:174, shadow.ts:202, annotations.ts:134
+ * - `character_licensing.allow_derivatives` x `.share_alike`
+ *   character-licensing.ts:154, character-licensing.ts:169,
+ *   importers/character-systems/licensing.ts:43, :57
+ *
+ * Writes to these same columns that do NOT call the guard, and so are unchecked:
+ * routes/messages/update.ts:196 (visibility), routes/messages/update.ts:220 (status),
+ * auto-gen/context-pruning.ts:82 (visibility), routes/messages/archiving.ts:55, :85.
+ * Do not read this module as a database-level invariant.
  */
 const GUARDS: Record<GuardedTable, RowGuard> = {
   messages: guardMessages,
@@ -156,7 +195,7 @@ const GUARDS: Record<GuardedTable, RowGuard> = {
  *   not permitted by the table's validator.
  * @returns {void}
  */
-export function assertValidWrite(table: TableName, row: Record<string, unknown>): void {
+export function assertValidWrite(table: TableName, row: Record<string, unknown>,): void {
   const guard = (GUARDS as Partial<Record<TableName, RowGuard>>)[table];
   if (guard) { guard(row,); }
 }
