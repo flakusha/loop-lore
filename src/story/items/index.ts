@@ -44,7 +44,9 @@ import type {
 
 export { InvalidItemEffectsError, } from "./effects";
 export type { ItemEffect, } from "./effects";
-export { ItemWorldMismatchError, UniqueItemAlreadyExistsError, } from "./types";
+export { ItemPowerBudgetError, ITEM_POWER_BUDGETS, powerBudgetFor, validateItemPower, } from "./balance";
+export type { ItemPowerBudget, ItemPowerResult, } from "./balance";
+export { DuplicateItemDefinitionError, ItemWorldMismatchError, UniqueItemAlreadyExistsError, } from "./types";
 
 export type {
   DurabilityOverride,
