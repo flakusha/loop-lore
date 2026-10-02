@@ -13,7 +13,6 @@ import {
   listWardrobeBindings,
   unbindWardrobeItemInstance,
 } from "../characters/services/wardrobe/bindings";
-import { getWardrobeItem, } from "../characters/services/wardrobe/crud";
 import {
   ErrorResponse,
   SuccessResponse,
@@ -21,9 +20,10 @@ import {
   WardrobeBindingParams,
   WardrobeItemParams,
 } from "../validation/schemas";
-import { requireActorAccess, } from "./actor-auth";
 import type { HandlerOpts, } from "./actor-auth";
+import { requireOwnedActor, } from "./actor-auth";
 import { HttpStatus, jsonCreated, jsonError, jsonResponse, } from "./http-utils";
+import { requireOwnedWardrobeItem, } from "./wardrobe-item-auth";
 
 /**
  * @param opts
@@ -35,14 +35,9 @@ export function wardrobeBindingRoutes(opts: HandlerOpts, prefix = "/api",) {
 
   return new Elysia({ name: "wardrobe-bindings", },)
     .get(`${prefix}/actors/:actorId/wardrobe/:itemId/bindings`, async (ctx: any,) => {
-      const userId = await requireActorAccess(ctx, database,);
-      if (userId instanceof Response) { return userId; }
-
-      const { actorId, itemId, } = ctx.params;
-      const item = await getWardrobeItem(database, itemId, actorId,);
-      if (!item) {
-        return jsonError({ message: "Wardrobe item not found", status: HttpStatus.NotFound, },);
-      }
+      const owned = await requireOwnedWardrobeItem(ctx, opts,);
+      if (owned instanceof Response) { return owned; }
+      const { actorId, itemId, } = owned;
       const bindings = await listWardrobeBindings(database, actorId, itemId,);
       return jsonResponse(bindings,);
     }, {
@@ -59,10 +54,9 @@ export function wardrobeBindingRoutes(opts: HandlerOpts, prefix = "/api",) {
       },
     },)
     .post(`${prefix}/actors/:actorId/wardrobe/:itemId/bindings`, async (ctx: any,) => {
-      const userId = await requireActorAccess(ctx, database,);
-      if (userId instanceof Response) { return userId; }
-
-      const { actorId, itemId, } = ctx.params;
+      const owned = await requireOwnedWardrobeItem(ctx, opts,);
+      if (owned instanceof Response) { return owned; }
+      const { actorId, itemId, } = owned;
       try {
         const id = await bindWardrobeItemInstance(
           database,
@@ -91,10 +85,10 @@ export function wardrobeBindingRoutes(opts: HandlerOpts, prefix = "/api",) {
       },
     },)
     .delete(`${prefix}/actors/:actorId/wardrobe/:itemId/bindings/:bindingId`, async (ctx: any,) => {
-      const userId = await requireActorAccess(ctx, database,);
-      if (userId instanceof Response) { return userId; }
-
-      const { actorId, bindingId, } = ctx.params;
+      const owned = await requireOwnedActor(ctx, database,);
+      if (owned instanceof Response) { return owned; }
+      const { actorId, } = owned;
+      const { bindingId, } = ctx.params;
       const ok = await unbindWardrobeItemInstance(database, actorId, bindingId,);
       if (!ok) {
         return jsonError({ message: "Binding not found", status: HttpStatus.NotFound, },);
