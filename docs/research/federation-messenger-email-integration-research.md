@@ -131,7 +131,7 @@ Signal: **no bot API, no official SDK** — the only adoption path is the extern
 | [nostr-tools](https://github.com/nbd-wtf/nostr-tools) | Unlicense | Relay WebSocket client + NIP implementations |
 | NIP-28 (public chat) / NIP-29 (groups) | — | kind 40/41/42 channel events; NIP-29 is the recommended successor |
 
-Nostr is in-process (relay WebSocket, pure JS). It is the lightweight fediverse axis: no servers to run, no E2EE for public chat (NIP-04 DM is deprecated; NIP-44 is the E2EE variant `[UNVERIFIED]`). Tracked as `IDEA-CONSIDER-NOSTR-AS-A-LIGHTWEIGHT-FEDIVERSE-AXIS`.
+Nostr is in-process (relay WebSocket, pure JS). It is the lightweight fediverse axis: no servers to run, no E2EE for public chat (NIP-04 DM is deprecated; NIP-44 is the E2EE variant `[UNVERIFIED]`). Tracked as `IDEA-consider-nostr-as-a-lightweight-fediverse-axis`.
 
 ### 3.8 ActivityPub / fediverse (incl. Fedify)
 

@@ -249,7 +249,7 @@ Manifest (`PluginManifest`, `src/plugins/types.ts`): `name`, `version`, `descrip
 | UI component serving route | **Partial** | `getComponentsForMountPoint` lookup exists; no `GET /api/plugins/ui-components` route |
 | Inbound event bus for adapter events | **Partial** | bus is chat-lifecycle-only; no `adapter.message.received` emission |
 
-These gaps are tracked by `TASK-PLUGIN-HOST-CONTRACT-FOR-THIRD-PARTY-INTEGRATION-PLUGINS`.
+These gaps are tracked by `TASK-plugin-host-contract-for-third-party-integration-plugins`.
 
 ---
 
@@ -269,10 +269,10 @@ These gaps are tracked by `TASK-PLUGIN-HOST-CONTRACT-FOR-THIRD-PARTY-INTEGRATION
 ## 11. Linked tickets
 
 - `TASK-integrations-shared-seams-encryptionprovider-messagebridge-b` — the three planned seams
-- `TASK-INTEGRATION-CONFIG-SURFACE-SCHEMAS-EXAMPLE-TOML-ENV-MAP` — §8 config keys + schemas
-- `TASK-ADAPTER-SECRET-STORAGE-ENCRYPTED-CREDENTIAL-ENVELOPE` — §7 credential envelope
-- `TASK-ADAPTER-HEALTH-MONITORING-AND-PER-PROTOCOL-RATE-LIMITING` — §4.4/§10
-- `TASK-INTEGRATIONS-INBOUND-WEBHOOK-INGESTION-ENDPOINT` — §3 webhook surface
-- `TASK-PLUGIN-HOST-CONTRACT-FOR-THIRD-PARTY-INTEGRATION-PLUGINS` — §9.2
-- `TASK-EMAIL-DELIVERABILITY-SPF-DKIM-DMARC-AND-INBOUND-SPAM-GATE` — email channel spec
-- `TASK-BRIDGE-DAEMON-ADOPTION-MATTERBRIDGE-SLIDGE-MAUTRIX-BIBOUMI-E` — interop daemon evaluation
+- `TASK-integration-config-surface-schemas-example-toml-env-map` — §8 config keys + schemas
+- `TASK-adapter-secret-storage-encrypted-credential-envelope` — §7 credential envelope
+- `TASK-adapter-health-monitoring-and-per-protocol-rate-limiting` — §4.4/§10
+- `TASK-integrations-inbound-webhook-ingestion-endpoint` — §3 webhook surface
+- `TASK-plugin-host-contract-for-third-party-integration-plugins` — §9.2
+- `TASK-email-deliverability-spf-dkim-dmarc-and-inbound-spam-gate` — email channel spec
+- `TASK-bridge-daemon-adoption-matterbridge-slidge-mautrix-biboumi-e` — interop daemon evaluation
