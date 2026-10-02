@@ -12,7 +12,6 @@
 import type { Kysely, } from "kysely";
 import { getContextWindowForModel, } from "../admin/model-capabilities";
 import { MoodService, } from "../characters/services/mood-service";
-import { resolveOutfit, } from "../characters/services/wardrobe/resolve";
 import { resolveOutputStyle, } from "../chat/output-style";
 import type { OutputStylePreset, } from "../chat/output-style";
 import {
@@ -27,6 +26,7 @@ import { defaultTokenCount, } from "../generation/context-window-config";
 import type { GenerationMessage, } from "../generation/gen-types-options";
 import { getLogger, } from "../logger";
 import { dropOverBudgetSections, reorderPromptMessages, } from "./prompt-budget";
+import { withResolvedOutfit, } from "./prompt-outfit";
 import { loadUserPromptPreferences, } from "./prompt-user-preferences";
 import { parseJsonOr, } from "./prompt-utils";
 import { PROMPT_SECTIONS, } from "./prompt/registry";
@@ -258,16 +258,11 @@ export class PromptAssembler {
     let efParams = currentEmotion ? { ...params, emotion: currentEmotion, } : params;
 
     // Wire the outfit narration loop (TASK-wardrobe-story-gm-integration):
-    // the outfitContext section fires only when params.outfit is set.
-    // Resolve it through the wardrobe ladder (chat override > location rule >
-    // default outfit) so narration sees situational appearance. Best-effort,
-    // like the mood lookup above.
-    if (efParams.outfit === undefined) {
-      const resolved = await this.resolveCurrentOutfit(params, chat,);
-      if (resolved) {
-        efParams = { ...efParams, outfit: resolved.name, outfitSource: resolved.source, };
-      }
-    }
+    // the outfitContext section fires only when params.outfit is set. Resolved
+    // through the wardrobe ladder (chat override > location rule > default
+    // outfit) so narration sees situational appearance. Best-effort, like the
+    // mood lookup above.
+    efParams = await withResolvedOutfit(this.db, efParams, chat,);
 
     const ctx: AssembleContext = {
       db: this.db,
@@ -309,39 +304,6 @@ export class PromptAssembler {
       // Mood lookup is best-effort — never fail or slow down generation when
       // the store is unavailable (e.g. mock DBs in tests/embedding contexts).
       getLogger().debug("prompt-assembler: mood lookup failed, skipping emotion injection", { err: error, },);
-      return undefined;
-    }
-  }
-
-  /**
-   * Resolve the character's current outfit for prompt narration context.
-   * @param params - Prompt params (provides actor + explicit chat scope)
-   * @param chat - Assembled chat projection (world/location scope)
-   * @returns The resolved outfit name + ladder source, or undefined when no
-   *   outfit is bound (emotion-only characters keep today's prompt).
-   */
-  private async resolveCurrentOutfit(
-    params: PromptParams,
-    chat: AssembleChat,
-  ): Promise<{ name: string; source: string } | undefined> {
-    try {
-      const resolved = await resolveOutfit(this.db, {
-        actorId: params.actorId,
-        chatId: chat.id,
-        worldId: chat.world_id ?? undefined,
-        locationId: chat.current_location_id ?? undefined,
-      },);
-      if (!resolved.outfitId) { return undefined; }
-      const item = await this.db
-        .selectFrom("wardrobe_items",)
-        .select(["name",],)
-        .where("id", "=", resolved.outfitId,)
-        .executeTakeFirst();
-      if (!item) { return undefined; }
-      return { name: item.name, source: resolved.source, };
-    } catch (error) {
-      // Wardrobe lookup is best-effort — same contract as the mood lookup.
-      getLogger().debug("prompt-assembler: outfit lookup failed, skipping outfit injection", { err: error, },);
       return undefined;
     }
   }
