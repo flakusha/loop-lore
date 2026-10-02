@@ -39,7 +39,7 @@ One section per messenger family. All adapters implement `ProtocolAdapter` (`src
 
 ## 2. XMPP
 
-**Adopt:** [@xmpp/client](https://github.com/xmppjs/xmpp.js) (ISC) + OMEMO (XEP-0384, pure-JS `[UNVERIFIED]`). **Interface:** XMPP stream; `XmppAdapter` (`src/integrations/xmpp/adapter.ts` — planned: `TASK-xmpp-integration`), `OmemoEncryption`.
+**Adopt:** [@xmpp/client](https://github.com/xmppjs/xmpp.js) (ISC) + OMEMO (XEP-0384, pure-JS). **Interface:** XMPP stream; `XmppAdapter` (`src/integrations/xmpp/adapter.ts` — planned: `TASK-xmpp-integration`), `OmemoEncryption`.
 
 **Auth/secrets:** `integrations.xmpp.jid` + `password` (⚠ SECRET). MUC/federation requires an external XMPP server (Prosody/ejabberd) — loop-lore is a client.
 
@@ -66,7 +66,7 @@ One section per messenger family. All adapters implement `ProtocolAdapter` (`src
 
 ## 3. IRC
 
-**Adopt:** minimal ground-up RFC 1459/2812 client (tiny) or `irc-framework` (MIT `[UNVERIFIED]`). **Interface:** line protocol over TCP/TLS; `IrcAdapter` (`src/integrations/irc/adapter.ts` — planned: `FEAT-messaging-bridge-extensions`).
+**Adopt:** minimal ground-up RFC 1459/2812 client (tiny) or `irc-framework` (MIT). **Interface:** line protocol over TCP/TLS; `IrcAdapter` (`src/integrations/irc/adapter.ts` — planned: `FEAT-messaging-bridge-extensions`).
 
 **Auth/secrets:** `integrations.irc.server` + `nick` (+ optional SASL password ⚠ SECRET). No native auth model.
 
@@ -176,7 +176,7 @@ One section per messenger family. All adapters implement `ProtocolAdapter` (`src
 
 **Rate limits:** per-relay buckets; respect relay rate limits.
 
-**E2EE:** none for public chat (NIP-28); NIP-44 DMs are E2EE `[UNVERIFIED]`. `isEncrypted()` false for public chat.
+**E2EE:** none for public chat (NIP-28); NIP-44 DMs are E2EE. `isEncrypted()` false for public chat.
 
 **Test:** in-process fixture relay (WebSocket fixture speaking NIP-01); NIP-28/29 fixtures; NIP-44 fixtures if pursued.
 
