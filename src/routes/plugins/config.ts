@@ -1,0 +1,116 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
+/**
+ * Plugin config routes (FEAT-051).
+ *
+ * Admin-only read/write of a plugin's stored config in
+ * `plugin_state.config_json`. The loader merges the stored object over the
+ * manifest defaults at load time and enforces `configSchema.required`.
+ *
+ *   GET /api/plugins/:name/config — read the stored config
+ *   PUT /api/plugins/:name/config — validate + persist the config
+ */
+
+import { Elysia, } from "elysia";
+import type { Kysely, } from "kysely";
+import type { DB, } from "../../db/schema";
+import { getLogger, } from "../../logger";
+import { mergePluginConfig, } from "../../plugins/config-merge";
+import { readStoredPluginConfig, writeStoredPluginConfig, } from "../../plugins/config-store";
+import { registry, } from "../../plugins/registry";
+import { can, } from "../../users/permissions";
+import { forbidden, } from "../../validation/middleware";
+import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
+import { HttpStatus, jsonError, jsonResponse, } from "../http-utils";
+
+/**
+ * @param root0
+ * @param root0.database
+ * @param prefix
+ */
+export function pluginConfigRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
+  return new Elysia({ name: "plugin-config", },)
+    .get(
+      `${prefix}/plugins/:name/config`,
+      async ({ params, userRole, }: any,) => {
+        if (!can(userRole, "admin.system",)) {
+          return forbidden("Admin access required",);
+        }
+
+        const name = params.name as string;
+        if (!registry.getPlugin(name,)) {
+          return jsonError({ message: "Plugin not found", status: HttpStatus.NotFound, },);
+        }
+
+        const config = await readStoredPluginConfig(database, name,);
+        return jsonResponse({ config, },);
+      },
+      {
+        response: {
+          200: SuccessResponse,
+          403: ErrorResponse,
+          404: ErrorResponse,
+        },
+        detail: {
+          summary: "Get plugin config",
+          description: "Read a plugin's stored config overrides. Admin only.",
+          tags: ["Plugins",],
+        },
+      },
+    )
+    .put(
+      `${prefix}/plugins/:name/config`,
+      async ({ params, body, userRole, }: any,) => {
+        if (!can(userRole, "admin.system",)) {
+          return forbidden("Admin access required",);
+        }
+
+        const name = params.name as string;
+        const plugin = registry.getPlugin(name,);
+        if (!plugin) {
+          return jsonError({ message: "Plugin not found", status: HttpStatus.NotFound, },);
+        }
+
+        if (body === null || typeof body !== "object" || Array.isArray(body,)) {
+          return jsonError({ message: "Plugin config must be a JSON object", status: HttpStatus.BadRequest, },);
+        }
+        const stored = body as Record<string, unknown>;
+
+        try {
+          // Enforce configSchema.required against defaults + stored before saving.
+          mergePluginConfig(plugin.manifest.config ?? {}, stored, plugin.manifest.configSchema,);
+        } catch (error) {
+          return jsonError({ message: (error as Error).message, status: HttpStatus.BadRequest, },);
+        }
+
+        try {
+          await writeStoredPluginConfig(database, name, stored,);
+        } catch (error) {
+          getLogger().error({
+            message: "Failed to persist plugin config",
+            plugin: name,
+            error: String(error,),
+          },);
+          return jsonError({ message: "Failed to persist plugin config", status: HttpStatus.InternalServerError, },);
+        }
+
+        getLogger().child({ module: "plugins", },).info("Plugin config updated", { plugin: name, },);
+        return jsonResponse({ config: stored, },);
+      },
+      {
+        response: {
+          200: SuccessResponse,
+          400: ErrorResponse,
+          403: ErrorResponse,
+          404: ErrorResponse,
+          500: ErrorResponse,
+        },
+        detail: {
+          summary: "Set plugin config",
+          description: "Validate and persist a plugin's config overrides. Admin only.",
+          tags: ["Plugins",],
+        },
+      },
+    );
+}

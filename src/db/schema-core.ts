@@ -838,6 +838,7 @@ export interface PluginState {
   disabled_at: string | null;
   created_at: Generated<string>;
   updated_at: Generated<string>;
+  config_json: string | null;
 }
 
 export interface Notifications {
