@@ -3,7 +3,7 @@
 
 # TASK: GM beat scheduling
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Large (beat entry point + double-movement fix + chat/world resolution + governor gate)
 **Summary:** Make the Game Master schedulable, so a world tick can produce narrative instead of only NPC movement. The GM is currently turn-driven: `GameMasterService.executeTurn` is driven only by `POST /api/chats/:id/story/step`.
@@ -22,3 +22,5 @@
 **Related:** TASK-story-auto-drive-scheduler, epic-assistant-gm-flows, epic-actor-autonomy-story-drive.md:110-121
 
 git issue: 0361710
+
+**Resolved:** 2026-10-02 registry-driven close: git issue 0361710 (registry tip: d1b6edaab Konstantin Fedotov Auto-closed: appended .md marker marks TASK-GM-BEAT-SCHEDULING done)
