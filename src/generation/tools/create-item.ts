@@ -17,7 +17,9 @@ import {
   StackableState,
 } from "../../db/enums";
 import type { ToolDefinition, ToolResult, } from "../../plugins/types";
-import { jsonStringifyOr, uid, } from "../../utils";
+import { jsonStringifyOr, } from "../../utils";
+import { DuplicateItemDefinitionError, ItemPowerBudgetError, validateItemPower, } from "../../story/items";
+import { createDefinition, } from "../../story/items/definitions";
 import { resolveWorldId, stringParam, } from "./create-wizard-utils";
 
 /** Canonical tool name. */
@@ -81,6 +83,12 @@ function enumParam<T extends string,>(
 /**
  * The builtin item-creation tool definition. Registered at plugin load time
  * (core origin); executed with per-request context.
+ *
+ * Two gates run before the row is written: `validateItemPower` rejects an
+ * over-budget draft, and a duplicate `(worldId, name, category)` is reported
+ * back as a tool error rather than inserting a second row (TASK-055/056).
+ * @returns {Promise<ToolResult>}
+ * @throws {ItemPowerBudgetError} when the draft exceeds its category budget
  */
 export const itemCreationTool: ToolDefinition = {
   name: CREATE_ITEM,
@@ -102,24 +110,39 @@ export const itemCreationTool: ToolDefinition = {
     const rarity = enumParam(params, "rarity", Object.values(ItemRarity,), ItemRarity.Common,);
     const stackable = enumParam(params, "stackable", ["unique", "stackable",] as const, StackableState.Unique,);
     const worldId = await resolveWorldId(ctx.db, ctx.chatId, stringParam(params, "worldId",),);
+    const definition = {
+      worldId,
+      name,
+      description: description ?? "",
+      category,
+      rarity,
+      stackable: stackable === StackableState.Stackable,
+      maxStack: stackable === StackableState.Stackable ? 99 : 1,
+      properties: {},
+      value: 0,
+      weight: 1,
+    };
 
-    const id = uid();
-    await ctx.db
-      .insertInto("items",)
-      .values({
-        id,
-        world_id: worldId,
-        name,
-        description: description ?? null,
-        category,
-        rarity,
-        stackable,
-        max_stack: 1,
-        properties: "{}",
-        value: 0,
-        weight: 1,
-      },)
-      .execute();
+    const power = validateItemPower(definition,);
+    if (!power.ok) { throw new ItemPowerBudgetError(power.field, power.reason,); }
+
+    let id: string;
+    try {
+      id = await createDefinition({ db: ctx.db, }, definition,);
+    } catch (error) {
+      if (error instanceof DuplicateItemDefinitionError) {
+        return {
+          content: jsonStringifyOr({
+            error: "this item already exists",
+            existingId: error.existingItemId,
+            name,
+            worldId,
+          },),
+          isError: true,
+        };
+      }
+      throw error;
+    }
 
     return {
       content: jsonStringifyOr({ ok: true, id, name, worldId, },),

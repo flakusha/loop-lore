@@ -3,20 +3,11 @@
 
 /** World-item durability, drift, and unique lookup. */
 import type { Transaction, } from "kysely";
+import { driftCapFor, } from "./balance";
 import { ItemRarity, StackableState, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { jsonParseOr, safeJsonStringify, } from "../../utils";
 import type { DurabilityResult, ItemDrift, ItemDriftEvent, ItemState, } from "./types";
-
-const DRIFT_CAPS: Record<ItemRarity, number> = {
-  [ItemRarity.Common]: 0.05,
-  [ItemRarity.Uncommon]: 0.1,
-  [ItemRarity.Rare]: 0.15,
-  [ItemRarity.Epic]: 0.2,
-  [ItemRarity.Legendary]: 0.3,
-  [ItemRarity.Unique]: Number.POSITIVE_INFINITY,
-  [ItemRarity.Artifact]: Number.POSITIVE_INFINITY,
-};
 
 function driftFrom(properties: string,): ItemDrift {
   const value = jsonParseOr<Record<string, unknown>>(properties, {},).drift;
@@ -104,20 +95,18 @@ export async function applyDrift(
   if (typeof event.stat !== "string" || event.stat.trim().length === 0 || !Number.isFinite(event.amount,)) {
     return null;
   }
-
   const db = trx ?? state.db;
   const row = await db
     .selectFrom("world_items",)
     .innerJoin("items", "items.id", "world_items.item_id",)
-    .select(["world_items.properties", "items.rarity",],)
+    .select(["world_items.properties", "items.rarity", "items.category",],)
     .where("world_items.id", "=", worldItemId,)
     .where("world_items.world_id", "=", worldId,)
     .executeTakeFirst();
-
   if (!row) { return null; }
   const properties = jsonParseOr<Record<string, unknown>>(row.properties, {},);
   const drift = driftFrom(row.properties,);
-  const cap = DRIFT_CAPS[row.rarity];
+  const cap = driftCapFor(row.rarity, row.category,);
   const previous = drift.statMultipliers[event.stat] ?? 0;
   const next = Math.min(cap, Math.max(-cap, previous + event.amount,),);
   drift.statMultipliers[event.stat] = next;
@@ -130,7 +119,6 @@ export async function applyDrift(
     .where("id", "=", worldItemId,)
     .where("world_id", "=", worldId,)
     .execute();
-
   return drift;
 }
 

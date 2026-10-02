@@ -52,3 +52,37 @@ Caps and audits item power so generated/imported items cannot break balance. Add
 - Audit endpoint must respect existing `requireUserId`/RBAC authz (see `src/middleware/`).
 
 **Resolved:** 2026-10-04 registry-driven close: git issue 78fd61b (registry tip: 782336168 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-056 done)
+
+## Resolution
+
+Per-category power budgets ship as the balance layer above TASK-052 (effects)
+and TASK-053 (drift), which were left untouched.
+
+- `ItemPowerBudget` + `ITEM_POWER_BUDGETS` keyed by `ItemCategory` at
+  `src/story/items/balance.ts:26`.
+- `validateItemPower` returns `{ ok: false, field, reason }` in a fixed check
+  order (statDelta, effectCount, maxDurability, drift) so `field` is
+  deterministic — `src/story/items/balance.ts:135`.
+- LLM tool calls `validateItemPower` before insert and throws
+  `ItemPowerBudgetError` carrying the offending field —
+  `src/generation/tools/create-item.ts:21` (import) and the gate in the handler.
+- Drift over-cap is enforced at the source: `DRIFT_CAPS` moved into
+  `balance.ts:47` and `driftCapFor` (`src/story/items/balance.ts:64`) returns the
+  tighter of the rarity cap and the category budget. `applyDrift` now clamps
+  through it — `src/story/items/instance-state.ts:104`. A unique item's rarity
+  cap is `Infinity` by design, so the category budget is what bounds it.
+- Admin audit endpoint `GET /api/admin/worlds/:worldId/items/power-audit`
+  (`requireUserId` + `can(role, "admin.system")` authz, matching sibling admin
+  routes) — `src/routes/admin/item-power.ts:57`; registered at
+  `src/routes/admin/index.ts`.
+- Ranking helper `rankItemPower` (score = `maxStatDelta + sum(drift) +
+  maxDurability`, ties broken on `worldItemId`) at `src/story/items/balance.ts:191`.
+  Definitions are resolved by `itemId`, never by name.
+- Tests: `src/story/items/balance.test.ts` (validator precedence, budget
+  boundaries, unique-item drift bound) and `src/story/items/rank-power.test.ts`
+  (ranking, tie-break, id-vs-name resolution).
+
+**Note on budget values:** defaults are conservative placeholders as the
+ticket's Notes anticipate; they need tuning during the epic balance pass.
+Per-rarity budget *overrides* (letting a unique item exceed the normal ceiling)
+are not implemented — the category budget is the single ceiling for now.

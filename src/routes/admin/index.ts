@@ -1,14 +1,15 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-import { Elysia, } from "elysia";
 import type { Config, } from "../../config/schema";
 import type { Db, } from "../../db";
+import { Elysia, } from "elysia";
 import { auditRoutes, } from "./audit";
 import { auxTelemetryRoutes, } from "./aux-telemetry";
 import { carriageRoutes, } from "./carriage";
 import { chatsRoutes, } from "./chats";
 import { cronRoutes, } from "./cron";
 import { dangerZoneRoutes, } from "./danger-zone";
+import { itemPowerRoutes, } from "./item-power";
 import { keyRotationRoutes, } from "./key-rotation";
 import { modelCapabilitiesRoutes, } from "./model-capabilities";
 import { modelRolesRoutes, } from "./model-roles";
@@ -58,6 +59,7 @@ export function adminRoutes(opts: { database: Db; config: Config }, prefix = "/a
       .use(systemConfigRoutes(opts, prefix,),)
       .use(worldsRoutes(opts, prefix,),)
       .use(worldEventsRoutes(opts, prefix,),)
+      .use(itemPowerRoutes(opts, prefix,),)
       .use(chatsRoutes(opts, prefix,),)
       .use(carriageRoutes(opts, prefix,),)
       .use(cronRoutes(opts, prefix,),)
