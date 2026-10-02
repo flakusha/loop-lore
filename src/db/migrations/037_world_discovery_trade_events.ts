@@ -99,8 +99,13 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     /** 0-100, matching epic-world-locations' `explorationProgress`. */
     .addColumn("progress", "real", (col,) => col.notNull().defaultTo(0,),)
     /** THE DECAY TIMESTAMP: the tick progress was last recomputed on. Also
-     * the replay latch — a tick at or below this writes nothing. */
-    .addColumn("last_explored_tick", "integer", (col,) => col.notNull().defaultTo(0,),)
+     *  the replay latch — a tick at or below this writes nothing.
+     *
+     *  The default is -1, NOT 0, for the same reason `travel_parties`
+     *  .current_tick is: the scheduler's first tick IS tick 0 (`tick_count`
+     *  starts at 0), so a 0 default reads as "recomputed on tick 0" and
+     *  locks every new (location, actor) pair out of exactly one tick. */
+    .addColumn("last_explored_tick", "integer", (col,) => col.notNull().defaultTo(-1,),)
     /** 1 = this actor has charted the location. Latches; never clears. */
     .addColumn("discovered", "integer", (col,) => col.notNull().defaultTo(0,),)
     .addColumn("discovered_tick", "integer",)
