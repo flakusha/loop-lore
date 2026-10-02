@@ -12,13 +12,13 @@
  */
 import type { ChatPromptAnalyzeState, PromptAnalysisProfile, } from "../chat-types/prompt-analyze-state";
 import { t, } from "../i18n";
-import { jsonBody, } from "../json";
 import { getLocalEngine, } from "../local-engine";
 import { LocalInferenceUnavailable, shouldOffloadTask, } from "../local-inference";
 import type { LocalInferenceResult, } from "../local-inference";
 import { runLocalModelImprove, } from "../local-model-improve";
 import { log as rootLog, } from "../logger";
 import type { ChatState, } from "../types";
+import { requestPrompt, } from "./prompt-request";
 
 export type { ChatPromptAnalyzeState, };
 
@@ -75,27 +75,21 @@ export const promptAnalyzeActions: Partial<AnalyzeCtx> & ThisType<AnalyzeCtx> = 
         this.$dispatch?.("show-toast", { type: "success", message: `${t("analyze.ready",)}: ${local.content}`, },);
         return;
       }
-      const res = await apiFetch(
-        "/api/v1/generation/prompt",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json", },
-          body: jsonBody({ mode: "analyze", text, chatId: this.activeChat, },),
-        } as Parameters<typeof apiFetch>[1],
-      );
-      if (!res.ok) {
-        const error = await res.json().catch(() => ({ message: undefined, }));
-        const blocked = res.status === 403 && error?.error === "injection_detected";
-        const message = blocked
+      const result = await requestPrompt({
+        mode: "analyze",
+        text,
+        chatId: this.activeChat,
+      },);
+      if (!result.ok) {
+        const message = result.injectionBlocked
           ? t("toasts.promptInjectionBlocked",)
-          : res.status === 503
+          : result.status === 503
           ? t("analyze.unavailable",)
-          : error?.message ?? t("analyze.failed",);
+          : result.message ?? t("analyze.failed",);
         this.$dispatch?.("show-toast", { type: "error", message, },);
         return;
       }
-      const data = await res.json();
-      const analysis: unknown = data?.data?.analysis;
+      const analysis: unknown = (result.data as { analysis?: unknown } | undefined)?.analysis;
       if (!isAnalysisProfile(analysis,)) {
         this.$dispatch?.("show-toast", { type: "error", message: t("analyze.failed",), },);
         return;

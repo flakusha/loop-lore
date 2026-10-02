@@ -11,19 +11,18 @@ import { parseAssetMentions, parseInitiativeFlag, stripAssetMentions, } from "..
 import { containsProfanity, filter as filterProfanity, } from "../../profanity/service";
 import { uid, } from "../../utils";
 import { ChatIdParams, ErrorResponse, MessageCreateBody, } from "../../validation/schemas";
-import { badRequestResponse, jsonCreated, jsonResponse, requireUserId, } from "../http-utils";
-import type { HttpStatusCode, } from "../http-utils";
+import { badRequestResponse, jsonCreated, requireUserId, } from "../http-utils";
 import { dispatchCommand, } from "./command";
 import { createEntityConfirmRoutes, } from "./create-entity-confirm";
 import { attachAttachmentsOrForbidden, enforceInjectionGate, enforceMuteGate, } from "./guards";
 import { serviceErrorToResponse, } from "./helpers";
 import { persistInitiative, } from "./initiative";
+import { insertUserMessageRow, } from "./insert-message";
 import { flagNsfwUserMessage, } from "./nsfw-user-flag";
-import { ParentMessageNotFoundError, ParentMessageNotInChatError, } from "./parent-message-errors";
 import { persistMentions, prepareContentStorage, } from "./post";
 import { runPostInsertChatEffects, } from "./post-insert";
 import { maybeAutoReply, } from "./reply";
-import { findByIdempotencyKey, insertUserMessageWithRetry, SwipeInsertExhaustedError, } from "./swipe-race-insert";
+import { findByIdempotencyKey, } from "./swipe-race-insert";
 import { translateInboundContent, } from "./translate-inbound";
 import type { HandlerOpts, } from "./types";
 
@@ -127,61 +126,26 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
         if (existingId) {
           return jsonCreated({ id: existingId, context: {}, },);
         }
-        // ── Cross-chat parentId IDOR guard (BUG-cross-chat-parentId-IDOR) ──
-        // Verify the parent message actually belongs to the target chat INSIDE
-        // the same transaction as the INSERT, eliminating the TOCTOU window
-        // between SELECT and INSERT. A parent from a different chat → 403;
-        // a missing parent → 404. Both return before any row is written.
-        try {
-          await database.transaction().execute(async (trx,) => {
-            if (parentId !== null) {
-              const parent = await trx
-                .selectFrom("messages",)
-                .select("chat_id",)
-                .where("id", "=", parentId,)
-                .executeTakeFirst();
-              if (!parent) {
-                ctx.set.status = 404;
-                throw new ParentMessageNotFoundError();
-              }
-              if (parent.chat_id !== chatId) {
-                ctx.set.status = 403;
-                throw new ParentMessageNotInChatError();
-              }
-            }
-            await insertUserMessageWithRetry(trx, {
-              id,
-              chatId,
-              actorId,
-              parentId,
-              storedContent,
-              storedKeyId,
-              storedPlaintext,
-              contentEncoding: contentEncoding as ContentEncoding,
-              idempotencyKey,
-            },);
-          },);
-        } catch (err) {
-          if (err instanceof ParentMessageNotFoundError) {
-            return jsonResponse(
-              { error: "parent_message_not_found", message: "parentId does not reference any message.", },
-              404 as HttpStatusCode,
-            );
-          }
-          if (err instanceof ParentMessageNotInChatError) {
-            return jsonResponse(
-              { error: "parent_message_not_in_chat", message: "parentId belongs to a different chat.", },
-              403 as HttpStatusCode,
-            );
-          }
-          if (err instanceof SwipeInsertExhaustedError) {
-            return jsonResponse(
-              { error: "service_busy", message: err.message, },
-              503 as HttpStatusCode,
-            );
-          }
-          throw err;
-        }
+        // ── Transactional insert + cross-chat parentId IDOR guard ──
+        // The guard runs INSIDE the INSERT transaction, and insert failures
+        // are mapped to their HTTP status inside the helper
+        // (BUG-cross-chat-parentId-IDOR).
+        const inserted = await insertUserMessageRow({
+          database,
+          chatId,
+          actorId,
+          id,
+          parentId,
+          storedContent,
+          storedKeyId,
+          storedPlaintext,
+          contentEncoding: contentEncoding as ContentEncoding,
+          idempotencyKey,
+          setStatus: (status,) => {
+            ctx.set.status = status;
+          },
+        },);
+        if (!inserted.ok) { return inserted.response; }
         const explicitAttachments = body.attachments ?? [];
         const mentionedAttachments = assetMentionIds
           .filter((assetId,) => !explicitAttachments.some((a,) => a.assetId === assetId))

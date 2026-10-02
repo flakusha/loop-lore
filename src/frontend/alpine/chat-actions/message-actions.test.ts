@@ -6,23 +6,33 @@
  * per-message Improve (prompt→PATCH→in-place splice, AC2), the extensible
  * asset-picker kind registry (AC7), picker loading, and attach flow.
  */
-import { afterEach, expect, mock, test, } from "bun:test";
+import { afterAll, afterEach, expect, mock, test, } from "bun:test";
 import { describeOrSkip, ISOLATED, } from "../../../test-utils/isolate-only";
 import type { ApiFetchMock, Toast, } from "../../tests/test-types";
 import { ASSET_PICKER_KINDS, filterPickerAssets, messageActions, } from "./message-actions";
 
-// ── Mock ../htmx (must precede importing ./message-actions) ──
+// ── Mock the apiFetch seam (must precede importing ./message-actions) ──
+// Both bindings are stubbed: modules that import `apiFetch` from "../htmx"
+// and prompt-request.ts, which resolves it off globalThis at call time.
+// apiFetch is a browser global wired at runtime via globalThis.apiFetch — stub
+// it, and hand the original back in afterAll so sibling files (e.g.
+// chat-editing.test.ts) keep driving the real htmx chain.
+const originalApiFetch = (globalThis as Record<string, unknown>).apiFetch;
 let calls: { url: string; opts: RequestInit }[] = [];
 let handler: ApiFetchMock = async () => Response.json({},);
 
 if (ISOLATED) {
-  mock.module("../htmx", () => ({
-    apiFetch: (async (url: string, opts?: RequestInit,) => {
-      calls.push({ url, opts: opts ?? {}, },);
-      return handler(url, opts,);
-    }) satisfies ApiFetchMock,
-  }),);
+  const stub = (async (url: string, opts?: RequestInit,) => {
+    calls.push({ url, opts: opts ?? {}, },);
+    return handler(url, opts,);
+  }) satisfies ApiFetchMock;
+  mock.module("../htmx", () => ({ apiFetch: stub, }),);
+  globalThis.apiFetch = stub;
 }
+
+afterAll(() => {
+  (globalThis as Record<string, unknown>).apiFetch = originalApiFetch;
+},);
 
 interface MsgRow {
   id: string;
@@ -126,6 +136,15 @@ describeOrSkip("messageActions.improveMessage", () => {
     await messageActions.improveMessage!.call(ctx as never, "m1",);
 
     expect(JSON.parse(calls[0]?.opts.body as string,).level,).toBe("style-group",);
+  });
+
+  test("surfaces the failure toast when there is no active chat to improve into", async () => {
+    const ctx = buildCtx({ activeChat: null, },);
+
+    await messageActions.improveMessage!.call(ctx as never, "m1",);
+
+    expect(calls,).toEqual([],);
+    expect(ctx.toasts,).toEqual([{ type: "error", message: "toasts.messageImproveFailed", },],);
   });
 
   test("ignores assistant messages", async () => {
