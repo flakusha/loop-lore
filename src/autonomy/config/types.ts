@@ -24,6 +24,9 @@ export interface PresetDefinition {
   perAgentCap: number | null;
   /** Hard cap on autonomous ticks per user-driven chat per rolling chat session. */
   perUserCap: number | null;
+  /** Replay seed. null = unseeded (production default; organic worlds stay varied).
+   *  A non-null seed makes a world's tick stream reproducible — see docs/spec/autonomy-determinism.md. */
+  seed: number | null;
 }
 
 /** Layered autonomy config, fully resolved. */
@@ -40,13 +43,16 @@ export interface AutonomyConfig {
   perAgentCap: number | null;
   /** Per-user tick cap (per chat session). null = unbounded. */
   perUserCap: number | null;
+  /** Replay seed. null = unseeded (production default; organic worlds stay varied).
+   *  A non-null seed makes a world's tick stream reproducible — see docs/spec/autonomy-determinism.md. */
+  seed: number | null;
 }
 
 /** Partial override at any single layer. */
 export type AutonomyConfigOverride = Partial<
   Pick<
     AutonomyConfig,
-    "preset" | "enabled" | "tickIntervalMs" | "jitterRatio" | "perAgentCap" | "perUserCap"
+    "preset" | "enabled" | "tickIntervalMs" | "jitterRatio" | "perAgentCap" | "perUserCap" | "seed"
   >
 >;
 

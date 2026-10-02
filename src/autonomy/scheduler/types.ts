@@ -9,8 +9,10 @@
  * scheduler never hand-casts a DB row.
  */
 
-import type { Selectable, } from "kysely";
+import type { Kysely, Selectable, } from "kysely";
 import type { DB, } from "../../db/schema";
+import type { AutonomyConfig, } from "../config";
+import type { AutonomyGovernor, } from "../governor";
 
 /** One world's simulation cursor, exactly as read back from the DB.
  *  `Selectable` unwraps Kysely's `Generated<T>` markers so the
@@ -38,11 +40,15 @@ export type TickSkipReason =
   | "budget"
   | "error";
 
-/** Result of dispatching one due world. Either a short-circuit
- *  reason (the tick-driver's own skip vocabulary, plus `error`
- *  which only the scheduler can produce) or the movement count.
+/** Result of dispatching one due world. Either a short-circuit reason
+ *  or the work dispatched this tick. The reason is open-ended by
+ *  design: `TickSkipReason` is the vocabulary the scheduler and the
+ *  tick driver use, and a dispatch target names its own short-circuits
+ *  (`gm_off_cadence`, `bdi_no_goal`). Pinning a union here would mean
+ *  editing this file per subsystem — the coupling the dispatch seam
+ *  exists to remove.
  */
-export type WorldTickOutcome = { skipped: TickSkipReason } | { dispatched: number };
+export type WorldTickOutcome = { skipped: TickSkipReason | (string & {}) } | { dispatched: number };
 
 /** Result of a single world tick. `nextTickAt` is the cursor the
  *  scheduler persisted, so callers can assert cadence without a
@@ -65,3 +71,42 @@ export interface TickResult {
   /** Due worlds whose dispatch threw. */
   errors: number;
 }
+
+/** Everything one dispatch target needs for a single world tick. The
+ *  scheduler resolves `cfg` once per tick and hands the same context to
+ *  every target, so no target re-resolves cadence or re-plans the RNG.
+ */
+export interface AutonomyDispatchContext {
+  db: Kysely<DB>;
+  worldId: string;
+  chatId: string;
+  nowMs: number;
+  /** Resolved autonomy config for this world (cadence, caps, seed). */
+  cfg: AutonomyConfig;
+  /** The scheduler's RNG for this tick, shared by every target in order. */
+  rng: () => number;
+  /** Shared governor. Targets charge their own budget — the scheduler
+   *  never charges on a target's behalf, so nothing double-spends.
+   */
+  governor?: AutonomyGovernor;
+}
+
+/** One dispatch target the scheduler runs per world tick. Adding a
+ *  subsystem is implementing this, not editing the tick loop.
+ */
+export interface AutonomyDispatch {
+  /** Stable name used in telemetry/outcome strings. */
+  name: string;
+  /** @throws Whatever the target throws. The scheduler catches per-world
+   *  and records the failure on that world's row — one broken target
+   *  cannot stall the loop.
+   */
+  run(ctx: AutonomyDispatchContext,): Promise<AutonomyDispatchResult>;
+}
+
+/** What a dispatch reports back. `skipped` explains a short-circuit;
+ *  `dispatched` is the work it did this tick.
+ */
+export type AutonomyDispatchResult =
+  | { skipped: string }
+  | { dispatched: number };

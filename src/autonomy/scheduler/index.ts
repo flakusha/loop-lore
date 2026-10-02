@@ -9,8 +9,8 @@
  * and manual sources all reduce to repeated `tickOnce(nowMs)`.
  *
  * One pass: select due worlds (predicate + ordering in store.ts), then
- * per world resolve cadence from AutonomyConfig, dispatch through
- * `runNpcMovementTick` (the scheduler never moves an NPC itself), and
+ * per world resolve cadence from AutonomyConfig, run the registered
+ * dispatch targets (the scheduler owns none of their logic), and
  * commit the advanced cursor — the commit point, so a crash replays at
  * most one world. See README.md for ordering, ops and telemetry.
  */
@@ -20,11 +20,22 @@ import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
 import { runNpcMovementTick, } from "../../rpg/npc-navigation/tick-driver";
 import { toDate, } from "../../utils/date";
+import type { AutonomyConfig, } from "../config";
 import { resolveAutonomyConfig, } from "../config";
 import type { AutonomyGovernor, } from "../governor";
+import { deriveTickRng, } from "../rng";
 import { SimulationStore, } from "./store";
 import { emitSchedulerEvent, EV_COMPLETED, EV_ERROR, EV_STARTED, } from "./telemetry";
-import type { SimulationState, TickResult, WorldScheduleEntry, WorldTickOutcome, WorldTickResult, } from "./types";
+import type {
+  AutonomyDispatch,
+  AutonomyDispatchContext,
+  AutonomyDispatchResult,
+  SimulationState,
+  TickResult,
+  WorldScheduleEntry,
+  WorldTickOutcome,
+  WorldTickResult,
+} from "./types";
 
 export type {
   SimulationState,
@@ -46,6 +57,53 @@ const RETRY_BACKOFF_MS = 5_000;
 /** `last_error` column budget; telemetry carries the full text. */
 const ERROR_MAX_CHARS = 500;
 
+/** The built-in dispatch target: NPC movement through the existing
+ *  pipeline. Registered first in every scheduler, so adding a target
+ *  is additive and never displaces movement.
+ */
+const movementDispatch: AutonomyDispatch = {
+  name: "movement",
+  run: async (ctx: AutonomyDispatchContext,): Promise<AutonomyDispatchResult> => {
+    const out = await runNpcMovementTick(ctx.db, ctx.worldId, {
+      chatId: ctx.chatId,
+      nowMs: ctx.nowMs,
+      rng: ctx.rng,
+      governor: ctx.governor,
+      paused: false,
+    },);
+    if ("skipped" in out) { return { skipped: out.skipped, }; }
+    return { dispatched: out.results.length, };
+  },
+};
+
+/** Fold per-target results into one tick outcome. A skip never aborts
+ *  the tick — a GM beat off-cadence must not stop NPC movement — so
+ *  dispatched work is summed and a tick that dispatched anything at
+ *  all reports `dispatched`, even when other targets skipped. Only an
+ *  all-skip tick reports a reason: the first in registration order.
+ * @param results one result per dispatch target, in run order
+ * @returns the tick's outcome
+ * @throws If no target produced a result. Unreachable in practice:
+ *  the constructor always registers `movementDispatch`, which always
+ *  returns one. Reported rather than faked so a future caller that
+ *  runs an empty list fails loudly instead of inventing a reason.
+ */
+function aggregate(results: AutonomyDispatchResult[],): WorldTickOutcome {
+  let dispatched = 0;
+  let ran = false;
+  let firstSkip: string | undefined;
+  for (const result of results) {
+    if ("skipped" in result) {
+      firstSkip ??= result.skipped;
+      continue;
+    }
+    ran = true;
+    dispatched += result.dispatched;
+  }
+  if (ran) { return { dispatched, }; }
+  if (firstSkip !== undefined) { return { skipped: firstSkip, }; }
+  throw new Error("aggregate: no dispatch target produced a result",);
+}
 /** Flatten an outcome to a stable telemetry/log token.
  * @param outcome
  * @returns `skipped:<why>` or `dispatched:<n>`
@@ -61,19 +119,35 @@ function describe(outcome: WorldTickOutcome,): string {
 export class AutonomyScheduler {
   readonly #db: Kysely<DB>;
   readonly #store: SimulationStore;
-  readonly #rng: () => number;
+  /** Explicit per-tick RNG override — the test seam. Undefined in
+   *  production, where the tick path derives the stream from
+   *  `AutonomyConfig.seed` instead (see #tickWorld).
+   */
+  readonly #rngOverride: (() => number) | undefined;
   readonly #governor: AutonomyGovernor | undefined;
+  readonly #dispatchTargets: AutonomyDispatch[];
 
   constructor(db: Kysely<DB>, opts: {
-    /** Shared governor instance. Omitted → the tick driver builds one. */
+    /** Shared governor instance. Omitted → each dispatch target builds one. */
     governor?: AutonomyGovernor;
-    /** Deterministic RNG for the tick driver's jitter coin flip. */
+    /** Overrides the per-tick derived RNG for every world and tick.
+     *  Test seam: production derives the stream from
+     *  `AutonomyConfig.seed` + tick index, so the injected generator
+     *  takes precedence over the seed and is the only way to pin
+     *  draws without seeding the world. Omitted → derive per tick.
+     */
     rng?: () => number;
+    /** Extra dispatch targets, appended after the built-in movement
+     *  target — movement always runs, so a new subsystem can never
+     *  silently stop NPCs moving.
+     */
+    dispatch?: AutonomyDispatch[];
   } = {},) {
     this.#db = db;
     this.#store = new SimulationStore(db,);
-    this.#rng = opts.rng ?? Math.random;
+    this.#rngOverride = opts.rng;
     this.#governor = opts.governor;
+    this.#dispatchTargets = [movementDispatch, ...(opts.dispatch ?? []),];
   }
 
   /**
@@ -90,7 +164,6 @@ export class AutonomyScheduler {
     for (const entry of due) {
       worlds.push(await this.#tickWorld(entry, nowMs,),);
     }
-
     return {
       nowMs,
       dueWorldIds: due.map((e,) => e.worldId),
@@ -153,7 +226,23 @@ export class AutonomyScheduler {
     try {
       const chatId = await this.#store.chatIdFor(worldId,);
       const cfg = await resolveAutonomyConfig(this.#db, { worldId, chatId, },);
-      const outcome = await this.#dispatch(worldId, chatId, nowMs,);
+      // One stream per world-tick, derived here so every target on
+      // this tick draws from the same one (the jitter coin flip in
+      // the movement driver and any target's own draws must be
+      // correlated, not independent). `state.tick_count` is the
+      // index of the tick being computed, not the one just
+      // completed: #advance writes `tick_count + 1` AFTER dispatch
+      // returns, so the value read here is N for the Nth tick. Using
+      // N+1 would make a replay of tick N derive the stream tick N+1
+      // used, and a jitter drop in one tick would shift the next.
+      // `seed: null` (every shipped preset) makes deriveTickRng
+      // return Math.random — the organic production path, unchanged.
+      const rng = this.#rngOverride ?? deriveTickRng({
+        seed: cfg.seed,
+        worldId,
+        tickIndex: state.tick_count,
+      },);
+      const outcome = await this.#dispatch(worldId, chatId, nowMs, cfg, rng,);
       const nextTickAt = await this.#advance(worldId, state, nowMs, cfg.tickIntervalMs,);
       emitSchedulerEvent(this.#db, EV_COMPLETED, {
         world_id: worldId,
@@ -161,31 +250,46 @@ export class AutonomyScheduler {
         next_tick_at: nextTickAt,
         tick_count: state.tick_count + 1,
       },);
-
       return { worldId, nextTickAt, outcome, };
     } catch (err) {
       return await this.#onWorldError(worldId, state, err, nowMs,);
     }
   }
 
-  /** Bridge the tick-driver result into the scheduler outcome shape.
-   *  Movement results are counted, not returned — callers wanting
-   *  detail call the driver directly.
+  /** Run every registered dispatch target for one world tick. The
+   *  scheduler owns no dispatch logic of its own: it builds the shared
+   *  context and aggregates what the targets report. Each target owns
+   *  its own gating and governor charge — the scheduler never charges
+   *  on a target's behalf, so nothing double-spends.
    * @param worldId
    * @param chatId
    * @param nowMs
+   * @param cfg resolved autonomy config, handed to every target
+   * @param rng the tick's stream, derived once by #tickWorld and
+   *  shared by every target in run order
+   * @returns the aggregated tick outcome
    */
-  async #dispatch(worldId: string, chatId: string, nowMs: number,): Promise<WorldTickOutcome> {
-    const out = await runNpcMovementTick(this.#db, worldId, {
+  async #dispatch(
+    worldId: string,
+    chatId: string,
+    nowMs: number,
+    cfg: AutonomyConfig,
+    rng: () => number,
+  ): Promise<WorldTickOutcome> {
+    const ctx: AutonomyDispatchContext = {
+      db: this.#db,
+      worldId,
       chatId,
       nowMs,
-      rng: this.#rng,
+      cfg,
+      rng,
       governor: this.#governor,
-      paused: false,
-    },);
-
-    if ("skipped" in out) { return { skipped: out.skipped, }; }
-    return { dispatched: out.results.length, };
+    };
+    const results: AutonomyDispatchResult[] = [];
+    for (const target of this.#dispatchTargets) {
+      results.push(await target.run(ctx,),);
+    }
+    return aggregate(results,);
   }
 
   /** Commit the advanced cursor. A skipped tick (budget, jitter,
@@ -211,7 +315,6 @@ export class AutonomyScheduler {
       last_error: null,
       tick_count: state.tick_count + 1,
     },);
-
     return nextTickAt;
   }
 
@@ -243,7 +346,6 @@ export class AutonomyScheduler {
         .child({ module: "autonomy.scheduler", },)
         .warn("Failed to persist scheduler error state", { worldId, error: String(writeErr,), },);
     }
-
     emitSchedulerEvent(this.#db, EV_ERROR, { world_id: worldId, error: message, next_tick_at: nextTickAt, },);
     return { worldId, nextTickAt, outcome: { skipped: "error", }, error: message, };
   }
@@ -251,3 +353,9 @@ export class AutonomyScheduler {
 
 /** Scheduler options — derived from the class ctor (single source). */
 export type AutonomySchedulerOptions = NonNullable<ConstructorParameters<typeof AutonomyScheduler>[1]>;
+
+  AutonomyDispatch,
+
+  AutonomyDispatchResult,
+
+  AutonomyDispatchContext,

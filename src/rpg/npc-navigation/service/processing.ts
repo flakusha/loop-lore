@@ -13,18 +13,39 @@ import { parseSchedule, updateMovementState, } from "./state";
 import type { MovementResult, } from "./types";
 import { MovementPattern, } from "./types";
 
+/** Options for `processMovementTick`. Both fields default to the
+ *  unseeded production sources; the tick driver injects the per-tick
+ *  stream from `AutonomyDispatchContext.rng` instead.
+ */
+export interface MovementTickOptions {
+  /** Injected RNG for destination choice. Defaults to Math.random. */
+  rng?: () => number;
+  /** Injected clock for movement timestamps. Defaults to Date.now. */
+  nowMs?: number;
+}
+
 /** Process NPC movement tick — advance NPCs based on their movement patterns. */
 export async function processMovementTick(
   db: Kysely<DB>,
   worldId: string,
+  opts: MovementTickOptions = {},
 ): Promise<MovementResult[]> {
+  // Resolve defaults once here; every leaf below takes resolved values.
+  const rng = opts.rng ?? Math.random;
+  const nowMs = opts.nowMs ?? Date.now();
   const results: MovementResult[] = [];
 
-  // Get all NPCs in the world
+  // Get all NPCs in the world. `orderBy(actor_id)` is load-bearing: the
+  // `idx_npc_states_world` scan returns rows in rowid (insertion) order,
+  // so without a total order the k-th draw from the tick rng lands on a
+  // different NPC after a restore/reinsert and a seeded tick stops
+  // replaying. actor_id is unique, so the order is total — the same
+  // reasoning the scheduler uses for `worlds.id ASC`.
   const npcs = await db
     .selectFrom("npc_states",)
     .where("world_id", "=", worldId,)
     .select(["actor_id", "location_id", "schedule",],)
+    .orderBy("actor_id", "asc",)
     .execute();
 
   for (const npc of npcs) {
@@ -39,6 +60,7 @@ export async function processMovementTick(
       worldId,
       npc.location_id,
       schedule,
+      { rng, nowMs, },
     );
 
     if (result) {
@@ -57,24 +79,25 @@ export async function processNpcMovement(
   worldId: string,
   currentLocationId: string | null,
   schedule: Record<string, unknown>,
+  opts: Required<MovementTickOptions>,
 ): Promise<MovementResult | null> {
   const pattern = (schedule.movementPattern as string) ?? MovementPattern.Stationary;
 
   switch (pattern) {
     case MovementPattern.Patrol: {
-      return processPatrolMovement(db, actorId, worldId, currentLocationId, schedule,);
+      return processPatrolMovement(db, actorId, worldId, currentLocationId, schedule, opts,);
     }
 
     case MovementPattern.Wander: {
-      return processWanderMovement(db, actorId, worldId, currentLocationId, schedule,);
+      return processWanderMovement(db, actorId, worldId, currentLocationId, schedule, opts,);
     }
 
     case MovementPattern.Follow: {
-      return processFollowMovement(db, actorId, worldId, currentLocationId, schedule,);
+      return processFollowMovement(db, actorId, worldId, currentLocationId, schedule, opts,);
     }
 
     case MovementPattern.Flee: {
-      return processFleeMovement(db, actorId, worldId, currentLocationId, schedule,);
+      return processFleeMovement(db, actorId, worldId, currentLocationId, schedule, opts,);
     }
 
     default: {
@@ -90,6 +113,7 @@ export async function processPatrolMovement(
   worldId: string,
   currentLocationId: string | null,
   schedule: Record<string, unknown>,
+  opts: Required<MovementTickOptions>,
 ): Promise<MovementResult | null> {
   const route = (schedule.patrolRoute as string[]) ?? [];
   const index = (schedule.patrolIndex as number) ?? 0;
@@ -104,7 +128,7 @@ export async function processPatrolMovement(
   await updateMovementState(db, actorId, worldId, {
     currentLocationId: nextLocationId,
     patrolIndex: nextIndex,
-    lastMovedAt: new Date().toISOString(),
+    lastMovedAt: new Date(opts.nowMs).toISOString(),
   },);
 
   return {
@@ -123,6 +147,7 @@ export async function processWanderMovement(
   worldId: string,
   currentLocationId: string | null,
   _schedule: Record<string, unknown>,
+  opts: Required<MovementTickOptions>,
 ): Promise<MovementResult | null> {
   if (!currentLocationId) { return null; }
 
@@ -132,14 +157,14 @@ export async function processWanderMovement(
   if (connections.length === 0) { return null; }
 
   // Pick random connected location
-  const randomIndex = Math.floor(Math.random() * connections.length,);
+  const randomIndex = Math.floor(opts.rng() * connections.length,);
   const nextLocationId = connections[randomIndex];
 
   if (!nextLocationId || nextLocationId === currentLocationId) { return null; }
 
   await updateMovementState(db, actorId, worldId, {
     currentLocationId: nextLocationId,
-    lastMovedAt: new Date().toISOString(),
+    lastMovedAt: new Date(opts.nowMs).toISOString(),
   },);
 
   return {
@@ -158,6 +183,7 @@ export async function processFollowMovement(
   worldId: string,
   currentLocationId: string | null,
   schedule: Record<string, unknown>,
+  opts: Required<MovementTickOptions>,
 ): Promise<MovementResult | null> {
   const followTargetId = schedule.followTargetId as string | null;
   if (!followTargetId) { return null; }
@@ -176,7 +202,7 @@ export async function processFollowMovement(
 
   await updateMovementState(db, actorId, worldId, {
     currentLocationId: targetState.location_id,
-    lastMovedAt: new Date().toISOString(),
+    lastMovedAt: new Date(opts.nowMs).toISOString(),
   },);
 
   return {
@@ -195,6 +221,7 @@ export async function processFleeMovement(
   worldId: string,
   currentLocationId: string | null,
   _schedule: Record<string, unknown>,
+  opts: Required<MovementTickOptions>,
 ): Promise<MovementResult | null> {
   if (!currentLocationId) { return null; }
 
@@ -204,14 +231,14 @@ export async function processFleeMovement(
   if (connections.length === 0) { return null; }
 
   // Pick random connected location (flee to any direction)
-  const randomIndex = Math.floor(Math.random() * connections.length,);
+  const randomIndex = Math.floor(opts.rng() * connections.length,);
   const nextLocationId = connections[randomIndex];
 
   if (!nextLocationId || nextLocationId === currentLocationId) { return null; }
 
   await updateMovementState(db, actorId, worldId, {
     currentLocationId: nextLocationId,
-    lastMovedAt: new Date().toISOString(),
+    lastMovedAt: new Date(opts.nowMs).toISOString(),
   },);
 
   return {

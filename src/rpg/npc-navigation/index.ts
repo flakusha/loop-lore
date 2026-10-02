@@ -7,6 +7,7 @@
  * Re-exports NPC navigation services for use by routes and other modules.
  */
 export { NpcNavigationService, } from "./service";
+export type { MovementTickOptions, } from "./service";
 export type {
   LocationConnection,
   MovementResult,

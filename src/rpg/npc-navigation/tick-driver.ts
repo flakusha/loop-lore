@@ -12,9 +12,12 @@
 //      movement.
 //   4. Applies jitterRatio as a probabilistic tick-level skip — drop
 //      a fraction of ticks at random so NPCs don't move in lockstep.
-//      (ponytail: per-tick Bernoulli drop; per-NPC sampling would
-//      require touching processMovementTick, owned by another ticket.)
-//   5. Delegates to processMovementTick and returns its results.
+//      (ponytail: per-tick Bernoulli drop; per-NPC sampling is not
+//      needed, and the per-NPC destination draw now shares this same
+//      stream — see step 5.)
+//   5. Delegates to processMovementTick, forwarding the SAME resolved
+//      rng and nowMs, and returns its results. One seed therefore spans
+//      both the jitter drop and every NPC destination choice.
 //
 // Pure function — no cron, no setInterval. The caller (scheduler P4
 // or the manual HTTP route) decides when to invoke this. One call
@@ -144,12 +147,13 @@ export async function runNpcMovementTick(
       nowMs,
     },
   );
-
   if (!gate.ok) {
     return { skipped: "budget", reason: gate, };
   }
 
-  const results = await processMovementTick(db, worldId,);
+  // Forward the resolved rng + clock so wander/flee destination choice
+  // and lastMovedAt come from the same per-tick stream as the jitter drop.
+  const results = await processMovementTick(db, worldId, { rng, nowMs, },);
   return {
     results,
     preset: cfg.preset,

@@ -153,6 +153,66 @@ describe("resolveAutonomyConfig — layering precedence", () => {
   });
 });
 
+describe("resolveAutonomyConfig — seed", () => {
+  test("an integer seed layers actor > chat > world", async () => {
+    const { worldId, chatId, actorId, } = await setupScope(
+      JSON.stringify({ autonomy: { seed: 3, }, },),
+    );
+    await setColumn("worlds", worldId, JSON.stringify({ seed: 1, },),);
+    await setColumn("chats", chatId, JSON.stringify({ seed: 2, },),);
+
+    const actor = await resolveAutonomyConfig(testDb.db, { worldId, chatId, actorId, },);
+    expect(actor.seed,).toBe(3,);
+
+    const chat = await resolveAutonomyConfig(testDb.db, { worldId, chatId, },);
+    expect(chat.seed,).toBe(2,);
+
+    await setColumn("chats", chatId, "{}",);
+    const world = await resolveAutonomyConfig(testDb.db, { worldId, chatId, },);
+    expect(world.seed,).toBe(1,);
+  });
+
+  test("no seed anywhere stays unseeded", async () => {
+    const { worldId, chatId, } = await setupScope();
+    const cfg = await resolveAutonomyConfig(testDb.db, { worldId, chatId, },);
+    expect(cfg.seed,).toBeNull();
+  });
+
+  test("null at a higher layer resets a seeded lower layer", async () => {
+    const { worldId, chatId, } = await setupScope();
+    await setColumn("worlds", worldId, JSON.stringify({ seed: 1, },),);
+    await setColumn("chats", chatId, JSON.stringify({ seed: null, },),);
+
+    const cfg = await resolveAutonomyConfig(testDb.db, { worldId, chatId, },);
+    expect(cfg.seed,).toBeNull();
+  });
+
+  test("a non-integer seed is dropped, keeping the lower layer's value", async () => {
+    const { worldId, chatId, } = await setupScope();
+    await setColumn("worlds", worldId, JSON.stringify({ seed: 1, },),);
+
+    // Defence in depth behind the route schemas: a value the write paths
+    // would have rejected must not silently re-seed the world here either.
+    // Raw JSON, not JSON.stringify: `JSON.stringify({seed: Infinity})`
+    // emits `{"seed":null}`, which is the legitimate reset path, not a bad
+    // seed. `1e999` is how Infinity actually reaches the column over the wire.
+    for (const raw of ['{"seed":"oops"}', '{"seed":true}', '{"seed":{"a":1}}', '{"seed":1.5}', '{"seed":1e999}',]) {
+      await setColumn("chats", chatId, raw,);
+      const cfg = await resolveAutonomyConfig(testDb.db, { worldId, chatId, },);
+      expect(cfg.seed,).toBe(1,);
+    }
+  });
+
+  test("a non-integer seed at the only layer leaves the config unseeded", async () => {
+    const { worldId, chatId, } = await setupScope();
+    await setColumn("worlds", worldId, JSON.stringify({ preset: "brisk", seed: "oops", },),);
+
+    const cfg = await resolveAutonomyConfig(testDb.db, { worldId, chatId, },);
+    expect(cfg.seed,).toBeNull();
+    // The rest of the layer still applies — the guard drops only the seed.
+    expect(cfg.preset,).toBe("brisk",);
+  });
+});
 describe("dev-only gating", () => {
   test("unlimited-stress preset returns definition outside production", () => {
     const prev = process.env.NODE_ENV;
