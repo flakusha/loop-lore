@@ -308,4 +308,61 @@ describe("chat branches (FEAT-045)", () => {
       .execute();
     expect(actives.map((r,) => r.id),).toEqual([target.id,],);
   });
+
+  test("the branch walk stops at a foreign chat's message — no cross-chat leak", async () => {
+    const foreignRoot = await insertMessages(tdb.db, otherChatId, ownerId, MessageRole.User, "foreign root",);
+    // Plant a messages row whose parent_id chain crosses into `otherChatId`.
+    // The FK permits any message id, so only the walk's own chat check stops
+    // it — without that check this id chain leaks the foreign message.
+    const crossing = await insertMessages(
+      tdb.db,
+      chatId,
+      ownerId,
+      MessageRole.User,
+      "crossing",
+      { parent_id: foreignRoot, } as never,
+    );
+    const forked = await forkBranch(tdb.db, { chatId, messageId: crossing, actorId: ownerId, },);
+    if ("code" in forked) { throw new Error("expected ok",); }
+
+    const path = await getMessagesForBranch(tdb.db, chatId, forked.branch.id, ownerId,);
+    expect(path,).toEqual([crossing,],);
+    expect(path.includes(foreignRoot,),).toBe(false,);
+    // The same guard must hold for the branch's advertised metadata.
+    const listed = await listBranches(tdb.db, chatId, ownerId,);
+    if ("code" in listed) { throw new Error("expected ok",); }
+    const row = listed.branches.find((b,) => b.id === forked.branch.id,);
+    expect(row?.messageCount,).toBe(1,);
+  });
+
+  test("listBranches reports exact messageCount and the tip's created_at", async () => {
+    const stamp = "2026-03-03T00:00:00.000Z";
+    const invChatId = randomUUID();
+    await insertChats(tdb.db, "Meta Chat", ownerId, { id: invChatId, type: "direct", mode: "direct", } as never,);
+    await insertChatParticipants(tdb.db, invChatId, ownerId, { role_in_chat: ChatParticipantRole.Owner, } as never,);
+    const m1 = await insertMessages(tdb.db, invChatId, ownerId, MessageRole.User, "m1", {
+      created_at: "2026-03-01T00:00:00.000Z",
+    });
+    const m2 = await insertMessages(tdb.db, invChatId, ownerId, MessageRole.Assistant, "m2", {
+      parent_id: m1,
+      created_at: "2026-03-02T00:00:00.000Z",
+    });
+    const m3 = await insertMessages(tdb.db, invChatId, ownerId, MessageRole.User, "m3", {
+      parent_id: m2,
+      created_at: stamp,
+    });
+
+    await forkBranch(tdb.db, { chatId: invChatId, messageId: m1, actorId: ownerId, },);
+    await forkBranch(tdb.db, { chatId: invChatId, messageId: m3, actorId: ownerId, },);
+
+    const result = await listBranches(tdb.db, invChatId, ownerId,);
+    if ("code" in result) { throw new Error(`Unexpected error: ${result.code} ${result.message}`,); }
+    const byTip = new Map(result.branches.map((b,) => [b.parentMessageId, b,],),);
+    expect(byTip.get(m1,)?.messageCount,).toBe(1,);
+    expect(byTip.get(m3,)?.messageCount,).toBe(3,);
+    // lastActivity is the TIP's created_at exactly — a hardcoded literal
+    // would sail through a `toBeTruthy()` check.
+    expect(byTip.get(m3,)?.lastActivity,).toBe(stamp,);
+    expect(byTip.get(m1,)?.lastActivity,).toBe("2026-03-01T00:00:00.000Z",);
+  });
 });

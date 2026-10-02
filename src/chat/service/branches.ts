@@ -62,9 +62,10 @@ export type ListBranchesResult =
   | { ok: true; branches: ChatBranchWithMeta[] }
   | ServiceError;
 
-// Re-export from branch-helpers so callers' existing imports continue to work.
-export { getMessagesForBranch, listBranches, };
-
+// `getMessagesForBranch` / `listBranches` live in branch-helpers.ts (split
+// to stay under the file-size gate); re-exported so existing importers of
+// `./branches` keep resolving.
+export { getMessagesForBranch, listBranches, } from "./branch-helpers";
 /**
  * Create a branch rooted at `messageId`. Returns the branch record and
  * the root-to-fork-point message path. Caller must have chat access
@@ -136,7 +137,6 @@ export async function switchActiveBranch(
     .select(["id", "chat_id",],)
     .where("id", "=", branchId,)
     .executeTakeFirst();
-
   if (!branch || branch.chat_id !== chatId) {
     return { code: "not_found", message: "Branch not found in chat", };
   }
@@ -145,14 +145,12 @@ export async function switchActiveBranch(
   // display invariant (exactly one active branch row per chat) holds.
   await db.transaction().execute(async (tx,) => {
     await setActiveBranchId(tx, chatId, branchId,);
-
     await tx
       .updateTable("chat_branches",)
       .set({ is_active: 0, },)
       .where("chat_id", "=", chatId,)
       .where("is_active", "=", 1,)
       .execute();
-
     await tx
       .updateTable("chat_branches",)
       .set({ is_active: 1, },)

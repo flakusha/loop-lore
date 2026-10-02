@@ -7,6 +7,7 @@
 import { type Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { checkChatAccess, } from "./access";
+// hint: Logic and cosmetic changes overlap. Resolve logic first, then reformat.
 import type { ChatBranchWithMeta, ListBranchesResult, } from "./branches";
 import type { ServiceError, } from "./types";
 /** Shared 404 for a branch row that is missing or owned by another chat. */
@@ -104,10 +105,13 @@ export async function getMessagesForBranch(
 }
 
 /**
- * List all branches in a chat with computed metadata.
- * @param {Kysely<DB>} db
- * @param {string} chatId
- * @param {string} actorId
+ * List all branches in a chat with computed metadata. Caller must have
+ * chat access (owner/participant/admin). `isActive` mirrors the per-row
+ * `is_active` flag; the displayed branch equals `chats.active_branch_id`.
+ * @param db
+ * @param chatId
+ * @param actorId
+ * @returns {Promise<ListBranchesResult>}
  */
 export async function listBranches(
   db: Kysely<DB>,
@@ -126,23 +130,7 @@ export async function listBranches(
 
   const out: ChatBranchWithMeta[] = [];
   for (const row of rows) {
-    const tip = row.parent_message_id;
-    const tipRow = await db
-      .selectFrom("messages",)
-      .select(["created_at",],)
-      .where("id", "=", tip,)
-      .executeTakeFirst();
-    const path = await walkMessagePath(db, chatId, tip,);
-    out.push({
-      id: row.id,
-      chatId: row.chat_id,
-      parentMessageId: tip,
-      name: row.name,
-      createdAt: row.created_at,
-      isActive: Number(row.is_active,) === 1,
-      messageCount: path.length,
-      lastActivity: tipRow?.created_at ?? null,
-    },);
+    out.push(await withMeta(db, chatId, row,),);
   }
   return { ok: true, branches: out, };
 }
