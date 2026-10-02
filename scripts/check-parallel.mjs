@@ -96,22 +96,61 @@ async function main() {
   console.log("\n=== All checks passed ===",);
 }
 
-main().catch((error,) => {
-  console.error("error: Check runner failed:", error.message,);
-  if (IS_REPORT_LS) { process.exit(1,); }
-  writeReport(buildReport({
-    exitCode: 1,
-    checks: [{
-      name: "check - runner",
-      command: "bun run scripts/check-parallel.mjs",
-      passed: false,
+// CLI guard: `main()` runs only when this file is executed directly, not when
+// a test imports it to unit-test `changedFiles` against a fixture repo.
+if (import.meta.main) {
+  main().catch((error,) => {
+    console.error("error: Check runner failed:", error.message,);
+    if (IS_REPORT_LS) { process.exit(1,); }
+    writeReport(buildReport({
       exitCode: 1,
-      durationMs: 0,
-      truncated: false,
-      output: error.message,
-    },],
-    nonBlocking: [],
-    gpgPrecheck: gpgPrecheck.state,
-  },),);
-  process.exit(1,);
-},);
+      checks: [{
+        name: "check - runner",
+        command: "bun run scripts/check-parallel.mjs",
+        passed: false,
+        exitCode: 1,
+        durationMs: 0,
+        truncated: false,
+        output: error.message,
+      },],
+      nonBlocking: [],
+      gpgPrecheck: GPG_PRECHECK_STATE,
+    },),);
+    process.exit(1,);
+  },);
+}
+
+/**
+ * Files whose CONTENT differs between `base` and `HEAD`, plus uncommitted
+ * working-tree changes. Empty when `base` is null.
+ *
+ * Two-dot (`base`..`HEAD`), not merge-base. The question this answers is
+ * "which files will this branch change when it lands on `base`", and only a
+ * tree-vs-tree diff answers that. A merge-base diff answers a different
+ * question — "which files did EITHER side touch since the fork" — so on a
+ * branch that forked a while back it also returns every file `base` moved
+ * independently. The coverage gate then floored whole files at the floor for
+ * churn this branch never authored, blocking it on debt it did not create.
+ *
+ * `git diff A B` needs no common ancestor, so dropping the merge-base lookup
+ * also removes a crash: `git merge-base` exits non-zero on unrelated
+ * histories, which took the whole runner down.
+ * @param base - Git ref to diff against, or null.
+ * @param cwd - Repo root to diff in; defaults to this repo. Exists so tests
+ *   can point the diff at a fixture repo.
+ * @returns Sorted list of changed paths (repo-relative).
+ */
+export function changedFiles(base, cwd = DIFF_ROOT,) {
+  if (!base) { return []; }
+  const committed = execFileSync(
+    "git",
+    ["diff", "--name-only", base, "HEAD",],
+    { cwd, encoding: "utf8", },
+  );
+  const dirty = execFileSync(
+    "git",
+    ["diff", "--name-only", "HEAD",],
+    { cwd, encoding: "utf8", },
+  );
+  return [...new Set(`${committed}\n${dirty}`.split("\n",).map((f,) => f.trim()).filter(Boolean,),),].sort();
+}
