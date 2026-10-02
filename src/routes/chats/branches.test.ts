@@ -74,7 +74,6 @@ describe("chatBranchRoutes", () => {
         body: JSON.stringify({ messageId: rootId, },),
       },),
     );
-
     expect(res.status,).toBe(401,);
   });
 
@@ -88,7 +87,6 @@ describe("chatBranchRoutes", () => {
         body: JSON.stringify({ messageId: rootId, },),
       },),
     );
-
     expect(res.status,).toBe(404,);
   });
 
@@ -97,7 +95,6 @@ describe("chatBranchRoutes", () => {
     const res = await app.handle(
       new Request(`http://localhost/api/chats/${CHAT_ID}/branches`, { method: "GET", },),
     );
-
     expect(res.status,).toBe(404,);
   });
 
@@ -111,7 +108,6 @@ describe("chatBranchRoutes", () => {
         body: JSON.stringify({ messageId: rootId, name: "Custom", },),
       },),
     );
-
     expect(res.status,).toBe(201,);
     const body = await res.json() as { data: { branch: { name: string }; messagePath: string[] } };
     expect(body.data.branch.name,).toBe("Custom",);
@@ -129,7 +125,6 @@ describe("chatBranchRoutes", () => {
           body: JSON.stringify({ messageId: rootId, },),
         },),
       );
-
       expect(res.status,).toBe(201,);
       const body = await res.json() as { data: { branch: { name: string } } };
       expect(body.data.branch.name,).toBe(`Branch ${i}`,);
@@ -146,7 +141,6 @@ describe("chatBranchRoutes", () => {
         body: JSON.stringify({ messageId: otherMsgId, },),
       },),
     );
-
     expect(res.status,).toBe(404,);
   });
 
@@ -160,7 +154,6 @@ describe("chatBranchRoutes", () => {
         body: JSON.stringify({ messageId: rootId, },),
       },),
     );
-
     expect(createRes.status,).toBe(201,);
     const createBody = await createRes.json() as { data: { branch: { id: string } } };
     const branchId = createBody.data.branch.id;
@@ -172,10 +165,17 @@ describe("chatBranchRoutes", () => {
         body: JSON.stringify({ branchId, },),
       },),
     );
-
     expect(switchRes.status,).toBe(200,);
     const switchBody = await switchRes.json() as { data: { activeBranchId: string } };
     expect(switchBody.data.activeBranchId,).toBe(branchId,);
+    // The response only echoes the request; the DB is the contract. Without
+    // this read, a no-op service that never persists still passes.
+    const chat = await tdb.db
+      .selectFrom("chats",)
+      .select(["active_branch_id",],)
+      .where("id", "=", CHAT_ID,)
+      .executeTakeFirst();
+    expect(chat?.active_branch_id,).toBe(branchId,);
   });
 
   test("switch rejects a branch from a different chat → 404", async () => {
@@ -188,7 +188,6 @@ describe("chatBranchRoutes", () => {
         body: JSON.stringify({ messageId: rootId, },),
       },),
     );
-
     const createBody = await createRes.json() as { data: { branch: { id: string } } };
     const branchId = createBody.data.branch.id;
 
@@ -199,29 +198,50 @@ describe("chatBranchRoutes", () => {
         body: JSON.stringify({ branchId, },),
       },),
     );
-
     expect(res.status,).toBe(404,);
   });
 
-  test("list returns branches with metadata → 200", async () => {
-    const rootId = await insertMessages(tdb.db, CHAT_ID, OWNER_ID, MessageRole.User, "hi",);
+  test("list returns exact per-branch metadata → 200", async () => {
+    const stamp = "2026-01-01T00:00:00.000Z";
+    const rootId = await insertMessages(tdb.db, CHAT_ID, OWNER_ID, MessageRole.User, "hi", {
+      created_at: stamp,
+    },);
+    const midId = await insertMessages(tdb.db, CHAT_ID, OWNER_ID, MessageRole.Assistant, "mid", {
+      parent_id: rootId,
+      created_at: stamp,
+    });
+    const tipId = await insertMessages(tdb.db, CHAT_ID, OWNER_ID, MessageRole.User, "tip", {
+      parent_id: midId,
+      created_at: stamp,
+    });
     const app = makeApp(tdb.db, OWNER_ID,);
-    await app.handle(
-      new Request(`http://localhost/api/chats/${CHAT_ID}/fork`, {
-        method: "POST",
-        headers: { "content-type": "application/json", },
-        body: JSON.stringify({ messageId: rootId, },),
-      },),
-    );
-
+    for (const messageId of [rootId, midId, tipId,]) {
+      const forkRes = await app.handle(
+        new Request(`http://localhost/api/chats/${CHAT_ID}/fork`, {
+          method: "POST",
+          headers: { "content-type": "application/json", },
+          body: JSON.stringify({ messageId, },),
+        },),
+      );
+      expect(forkRes.status,).toBe(201,);
+    }
     const res = await app.handle(
       new Request(`http://localhost/api/chats/${CHAT_ID}/branches`, { method: "GET", },),
     );
-
     expect(res.status,).toBe(200,);
-    const body = await res.json() as { data: { branches: { messageCount: number }[] } };
-    expect(body.data.branches.length,).toBeGreaterThan(0,);
-    expect(body.data.branches[0]!.messageCount,).toBeGreaterThan(0,);
+    const body = await res.json() as {
+      data: { branches: { id: string; parentMessageId: string; messageCount: number; lastActivity: string | null }[] };
+    };
+    // Exact counts, not "greater than zero": the walk is root→tip, so the
+    // fork at `tipId` sees all three messages and the one at `rootId` sees one.
+    const byTip = new Map(body.data.branches.map((b,) => [b.parentMessageId, b,],),);
+    expect(body.data.branches.length,).toBe(3,);
+    expect(byTip.get(rootId,)?.messageCount,).toBe(1,);
+    expect(byTip.get(midId,)?.messageCount,).toBe(2,);
+    expect(byTip.get(tipId,)?.messageCount,).toBe(3,);
+    // lastActivity is the TIP message's created_at, not merely present.
+    expect(byTip.get(tipId,)?.lastActivity,).toBe(stamp,);
+    expect(byTip.get(rootId,)?.lastActivity,).toBe(stamp,);
   });
 
   test("non-owner participant can fork → 201", async () => {
@@ -234,7 +254,6 @@ describe("chatBranchRoutes", () => {
         body: JSON.stringify({ messageId: rootId, },),
       },),
     );
-
     expect(res.status,).toBe(201,);
   });
 });
