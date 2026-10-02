@@ -36,7 +36,6 @@ import type { HandlerOpts, } from "./types";
 // chat's active branch, which is the documented default, and a bare PATCH is a
 // valid no-op. Requiring a body would 422 the primary merge path.
 const renameBody = t.Optional(t.Object({
-  name: t.Optional(BranchName,),
   activate: t.Optional(t.Boolean(),),
 },),);
 
@@ -82,6 +81,8 @@ function handleDetail(database: Kysely<DB>,) {
   );
 }
 
+/** PATCH /chats/:id/branches/:branchId */
+// hint: Structural and logic conflict. Both design and behavior differ.
 /**
  * PATCH /chats/:id/branches/:branchId
  * @param database
@@ -111,6 +112,8 @@ function handleDelete(database: Kysely<DB>,) {
   );
 }
 
+/** POST /chats/:id/branches/:branchId/merge */
+// hint: Structural and logic conflict. Both design and behavior differ.
 /**
  * POST /chats/:id/branches/:branchId/merge
  * @param database
