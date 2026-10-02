@@ -2,8 +2,8 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, } from "elysia";
-import { can, } from "../../users/permissions";
 import { discoveryDb, listWorldEvents, } from "../../rpg/world-discovery";
+import { can, } from "../../users/permissions";
 import { ErrorResponse, } from "../../validation/schemas";
 import { AdminPaginatedEnvelope, AdminWorldEventRow, } from "../../validation/schemas/responses";
 import {
@@ -47,7 +47,7 @@ export function worldEventsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
               status: HttpStatus.Forbidden,
               code: ErrorCode.Forbidden,
-            });
+            },);
           }
 
           const url = new URL(ctx.request.url,);
@@ -58,7 +58,7 @@ export function worldEventsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               message: "world_id is required",
               status: HttpStatus.BadRequest,
               code: ErrorCode.BadRequest,
-            });
+            },);
           }
 
           const result = await listWorldEvents(discoveryDb(database,), {
@@ -66,7 +66,7 @@ export function worldEventsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             eventType: url.searchParams.get("event_type",) ?? undefined,
             page,
             pageSize,
-          });
+          },);
           return jsonResponse(result,);
         },
         {
