@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { awaitChatStateAction, callChatStateAction, chatStateData, } from "./chat-state-global";
 import type { ChatSideChannelsState, SideChannel, } from "./chat-types/side-channels-state";
 import { apiFetch, } from "./htmx";
 import { t, } from "./i18n";
@@ -118,32 +119,18 @@ export const chatSideChannels: Partial<ChatSideChannelsState> & ThisType<ChatSta
 };
 
 // Expose global helpers for the chat-header side-channels button (the header
-// lives outside the chatState x-data scope). Mirrors message-search.ts.
+// lives outside the chatState x-data scope). See chat-state-global.ts.
 const g = globalThis as Record<string, unknown>;
 g.toggleSideChannels = function() {
-  const el = document.querySelector<HTMLElement>("[x-data='chatState()']",);
-  if (el && typeof Alpine !== "undefined") {
-    const data = Alpine.$data(el,);
-    const fn = data.toggleSideChannels as (() => void) | undefined;
-    // .call(data) preserves the Alpine instance as `this` — bare fn() runs
-    // with an undefined/global `this`, breaking this.loadSideChannels().
-    if (typeof fn === "function") { fn.call(data,); }
-  }
+  callChatStateAction("toggleSideChannels",);
 };
 g.switchSideChannel = async function(chatId: string,) {
-  const el = document.querySelector<HTMLElement>("[x-data='chatState()']",);
-  if (el && typeof Alpine !== "undefined") {
-    const data = Alpine.$data(el,);
-    const fn = data.switchSideChannel as ((id: string,) => Promise<void>) | undefined;
-    if (typeof fn === "function") { await fn.call(data, chatId,); }
-  }
+  await awaitChatStateAction("switchSideChannel", chatId,);
 };
 g.createSideChannel = async function() {
-  const el = document.querySelector<HTMLElement>("[x-data='chatState()']",);
-  if (el && typeof Alpine !== "undefined") {
-    const data = Alpine.$data(el,);
-    const name = (Alpine.store("ui",).newSideChannelName as string) ?? "";
-    const fn = data.createSideChannel as ((n: string,) => Promise<void>) | undefined;
-    if (typeof fn === "function") { await fn.call(data, name,); }
-  }
+  // Reading $store.ui requires a booted Alpine; the original inline version
+  // only reached this read inside the scope guard, so keep it guarded.
+  if (!chatStateData()) { return; }
+  const name = (Alpine.store("ui",).newSideChannelName as string) ?? "";
+  await callChatStateAction("createSideChannel", name,);
 };

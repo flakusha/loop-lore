@@ -7,6 +7,7 @@
  * Alpine.js component for displaying real-time token usage
  * in the chat header with color-coded thresholds.
  */
+import { chatStateData, } from "./chat-state-global";
 import { apiFetch, } from "./htmx";
 
 interface ContextWindowState {
@@ -174,15 +175,9 @@ interface ContextWindowState {
       document.addEventListener("chat-context-refresh", this._refreshHandler,);
       // Cold restore: on a full page load the header may mount after
       // loadMessages() already dispatched, so pick up the open chat here
-      // from the chatState Alpine scope (same selector chat-side-channels uses).
-      const chatRoot = document.querySelector<HTMLElement>("[x-data='chatState()']",);
-      if (chatRoot && typeof Alpine !== "undefined") {
-        const data = Alpine.$data(chatRoot,);
-        const activeChat = data.activeChat as string | null | undefined;
-        if (activeChat) {
-          void this.load(activeChat,);
-        }
-      }
+      // from the chatState Alpine scope.
+      const activeChat = chatStateData()?.activeChat as string | null | undefined;
+      if (activeChat) { void this.load(activeChat,); }
     },
 
     /** Remove the refresh listener (attached on unmount, belt-and-suspenders). */

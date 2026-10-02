@@ -64,25 +64,15 @@ export async function resolveActor(
         logMuteSuppress(chatId, cascadeActorId,);
         return null;
       }
-      const selected = await database
-        .selectFrom("actors",)
-        .select(["display_name",],)
-        .where("id", "=", cascadeActorId,)
-        .executeTakeFirst();
-      return {
-        characterId: cascadeActorId,
-        characterName: selected?.display_name ?? "Unknown",
-      };
+      // Participant row survived but its actor row did not — still generate.
+      const cascadeName = await actorName(database, cascadeActorId,);
+      return { characterId: cascadeActorId, characterName: cascadeName ?? "Unknown", };
     }
     const selectedId = await selectNextGroupActor({ db: database, chatId, userMessage, },);
     if (!selectedId) { return null; }
-    const selected = await database
-      .selectFrom("actors",)
-      .select(["display_name",],)
-      .where("id", "=", selectedId,)
-      .executeTakeFirst();
-    if (!selected) { return null; }
-    return { characterId: selectedId, characterName: selected.display_name, };
+    const selectedName = await actorName(database, selectedId,);
+    if (!selectedName) { return null; }
+    return { characterId: selectedId, characterName: selectedName, };
   }
 
   const character = await database
@@ -113,4 +103,19 @@ function logMuteSuppress(chatId: string, actorId: string,): void {
     "muted actor — outbound generation suppressed",
     { chatId, actorId, },
   );
+}
+
+/**
+ * Look up an actor's display name.
+ * @param database
+ * @param actorId
+ * @returns The display name, or null when the actor row is gone.
+ */
+async function actorName(database: Kysely<DB>, actorId: string,): Promise<string | null> {
+  const row = await database
+    .selectFrom("actors",)
+    .select("display_name",)
+    .where("id", "=", actorId,)
+    .executeTakeFirst();
+  return row?.display_name ?? null;
 }
