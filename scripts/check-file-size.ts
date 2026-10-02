@@ -30,7 +30,12 @@ const args = process.argv.slice(2,);
 const STRICT = args.includes("--strict",);
 const LIMIT_ARG = args.find((a,) => a.startsWith("--limit=",));
 const LIMIT = LIMIT_ARG ? parseInt(LIMIT_ARG.split("=",)[1], 10,) : 250;
-const glob = new Glob("src/**/*.ts",);
+// src is the original scope; scripts/ and plugins/ joined when their drift was
+// called out (see BUG-size-strict-pre-existing-dev-drift). tests/ stays exempt:
+// flows and helpers are test specifications. scripts/worktree/ is the giwt fork
+// pending deletion (AGENTS.md "Related: loop-lore's fork") — splitting it is
+// wasted work, the canonical giwt files carry the fix now.
+const GLOBS = ["src/**/*.ts", "scripts/**/*.ts", "scripts/**/*.mjs", "plugins/**/*.ts"];
 
 // Auto-generated files carry this banner (emitted by scripts/generate-db-types.ts
 // and scripts/generate-schema-manifest.ts). They are owned by their generator;
@@ -45,21 +50,24 @@ const HEADER_BYTES = 512;
 
 let errors = 0;
 let warnings = 0;
-for await (const file of glob.scan()) {
-  if (file.includes(".test.",) || file.includes("/migrations/",)) { continue; }
-  const text = await Bun.file(file,).text();
-  if (text.includes(GENERATED_MARKER,)) { continue; }
-  const allowMatch = text.slice(0, HEADER_BYTES,).match(SIZE_ALLOW_RE,);
-  const fileLimit = allowMatch ? parseInt(allowMatch[1], 10,) : LIMIT;
-  const lines = text.split("\n",).length;
-  if (lines > fileLimit) {
-    const msg = `[size] ${file}: ${lines}L exceeds ${fileLimit}L limit`;
-    if (STRICT) {
-      console.error(msg + " - must split (see 04)",);
-      errors++;
-    } else {
-      console.warn(msg + " - consider splitting (see 04)",);
-      warnings++;
+for (const pattern of GLOBS) {
+  const glob = new Glob(pattern,);
+  for await (const file of glob.scan()) {
+    if (file.includes(".test.",) || file.includes("/migrations/",) || file.startsWith("scripts/worktree/",)) { continue; }
+    const text = await Bun.file(file,).text();
+    if (text.includes(GENERATED_MARKER,)) { continue; }
+    const allowMatch = text.slice(0, HEADER_BYTES,).match(SIZE_ALLOW_RE,);
+    const fileLimit = allowMatch ? parseInt(allowMatch[1], 10,) : LIMIT;
+    const lines = text.split("\n",).length;
+    if (lines > fileLimit) {
+      const msg = `[size] ${file}: ${lines}L exceeds ${fileLimit}L limit`;
+      if (STRICT) {
+        console.error(msg + " - must split (see 04)",);
+        errors++;
+      } else {
+        console.warn(msg + " - consider splitting (see 04)",);
+        warnings++;
+      }
     }
   }
 }
