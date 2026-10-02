@@ -87,3 +87,6 @@ WorldKind { rpg, chat } → += project  # src/db/enums-story/world.ts
 - Assistant: `src/assistant/workflow-routing.ts`, `workflow-runner.ts`, `workflow-session-store.ts`, `configs/templates/workflows/`.
 - Worlds/memory: `src/db/enums-story/world.ts`, `src/db/schema-story.ts` (`worlds`), `src/memory/provision.ts` (`checkScope`), `asset_links` (`entity_type=world`).
 - Skills: `.agents/skills/loop-lore-tasks/SKILL.md`.
+
+
+git issue: 1b4c1bc
