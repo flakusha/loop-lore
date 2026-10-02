@@ -75,12 +75,76 @@ const customRestrictedSyntax = [
   },
 ];
 
+// Local rule: options-object parameters convention
+// (.agents/references/recommendations.md -- Code Structure section).
+// Flags functions with 3+ positional params; a destructured options object
+// (ObjectPattern) or RestElement params are exempt.
+const positionalParamTypes = new Set(["Identifier", "AssignmentPattern", "ArrayPattern"]);
+const functionLikeNodes = [
+  "FunctionDeclaration",
+  "FunctionExpression",
+  "ArrowFunctionExpression",
+];
+const optionsObjectParamsRule = {
+  meta: {
+    type: "suggestion",
+    docs: {
+      description:
+        "Functions with 3+ params should take a single destructured options object",
+    },
+    schema: false,
+    messages: {
+      optionsObject:
+        "Use a single destructured options object for 3+ params instead of positional args -- see .agents/references/recommendations.md (Options-object parameters).",
+    },
+  },
+  create(context) {
+    function checkFunction(fn) {
+      // Skip signatures: declarations without bodies (overloads, `declare`,
+      // abstract members) carry no implementation to refactor.
+      if (!fn.body || fn.type === "TSDeclareFunction" || fn.declare || fn.abstract) {
+        return;
+      }
+      const params = fn.params;
+      if (params.length < 3) return;
+      const positional = params.filter((p) => positionalParamTypes.has(p.type));
+      if (positional.length < 3) return;
+      context.report({ node: fn, messageId: "optionsObject" });
+    }
+    return {
+      ...Object.fromEntries(
+        functionLikeNodes.map((type) => [type, checkFunction]),
+      ),
+      // Class members: check the value function, not the definition node.
+      MethodDefinition(node) {
+        if (node.value && functionLikeNodes.includes(node.value.type)) {
+          checkFunction(node.value);
+        }
+      },
+      PropertyDefinition(node) {
+        if (node.value && functionLikeNodes.includes(node.value.type)) {
+          checkFunction(node.value);
+        }
+      },
+    };
+  },
+};
+
+// Local (inline) plugin -- no new dependency.
+const localPlugin = {
+  rules: {
+    "options-object-params": optionsObjectParamsRule,
+  },
+};
+
 // Shared plugins
 const tsPlugins = {
   "@typescript-eslint": tseslint.plugin,
   unicorn: unicorn.configs["flat/recommended"].plugins.unicorn,
   sonarjs: sonarjs.configs.recommended.plugins.sonarjs,
   import: importPlugin,
+  // Local (inline) plugin -- no new dependency; defined above.
+  local: localPlugin,
 };
 
 // Minimal rules -- oxlint handles most; ESLint only for what oxlint can't do
@@ -163,6 +227,8 @@ export default [
     plugins: tsPlugins,
     rules: {
       ...tsRules,
+      // Local convention rule (see .agents/references/recommendations.md).
+      "local/options-object-params": "warn",
       "unicorn/prefer-node-protocol": "off",
       "unicorn/no-process-exit": "off",
       "unicorn/no-uint8array-base64": "off",
@@ -220,6 +286,7 @@ export default [
       "no-empty": "off",
       "@typescript-eslint/no-empty-function": "off",
       "no-restricted-syntax": "off",
+      "local/options-object-params": "off",
     },
   },
   // Frontend TypeScript -- most rules disabled
@@ -282,6 +349,7 @@ export default [
       "no-restricted-syntax": "off",
       "no-empty": "off",
       "@typescript-eslint/no-empty-function": "off",
+      "local/options-object-params": "off",
       "jsdoc/require-param": "off",
       "jsdoc/require-returns": "off",
       "jsdoc/require-throws": "off",
