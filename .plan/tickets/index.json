@@ -18824,6 +18824,19 @@
     "title": "Admin system-config: surface missing schema sections",
     "type": "TASK"
   },
+  "TASK-ADMIN-USER-MANAGEMENT-UI-SESSION-REVOKE-PASSWORD-RESET-ACCOU": {
+    "hash": "452724b",
+    "git_issue": "452724b",
+    "extid": "TASK-ADMIN-USER-MANAGEMENT-UI-SESSION-REVOKE-PASSWORD-RESET-ACCOU",
+    "type": "TASK",
+    "title": "Admin user management UI: session revoke, password reset, account disable",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-frontend-admin.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-admin-user-management-ui-session-revoke-password-reset-accou.md",
+    "status": "Not Started"
+  },
   "TASK-ADOPT-BUN-ARRAYBUFFERSINK-FOR-BUFFER-BUILDING": {
     "epic": "",
     "extid": "TASK-ADOPT-BUN-ARRAYBUFFERSINK-FOR-BUFFER-BUILDING",
@@ -26748,6 +26761,19 @@
     "title": "Define BooleanState state machine for single-boolean fields",
     "type": "TASK"
   },
+  "TASK-DEFINE-SHARED-NAV-STATE-CONTRACT-BETWEEN-CLIENT-SIDE-ROUTING": {
+    "hash": "02d5d23",
+    "git_issue": "02d5d23",
+    "extid": "TASK-DEFINE-SHARED-NAV-STATE-CONTRACT-BETWEEN-CLIENT-SIDE-ROUTING",
+    "type": "TASK",
+    "title": "Define shared nav-state contract between client-side routing and headers/navigation",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-frontend-routing.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-define-shared-nav-state-contract-between-client-side-routing.md",
+    "status": "Not Started"
+  },
   "TASK-DEFINED-BUT-NOT-ENFORCED-DEBT-UNUSED-SCHEMAS-AND-DEAD-VALIDA": {
     "epic": "",
     "extid": "TASK-DEFINED-BUT-NOT-ENFORCED-DEBT-UNUSED-SCHEMAS-AND-DEAD-VALIDA",
@@ -28231,6 +28257,19 @@
     "tags": [],
     "title": "Export Frontend Progress UI",
     "type": "TASK"
+  },
+  "TASK-EXTEND-FE-BE-HARMONIZATION-GATE-TO-COVER-EXTERNAL-NON-HTMX-A": {
+    "hash": "229d7a3",
+    "git_issue": "229d7a3",
+    "extid": "TASK-EXTEND-FE-BE-HARMONIZATION-GATE-TO-COVER-EXTERNAL-NON-HTMX-A",
+    "type": "TASK",
+    "title": "Extend FE-BE harmonization gate to cover external/non-htmx API clients",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-headless-alternative-frontends.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-extend-fe-be-harmonization-gate-to-cover-external-non-htmx-a.md",
+    "status": "Not Started"
   },
   "TASK-EXTRACT-CHAT-ROUTE-BUSINESS-LOGIC": {
     "epic": "epic-crafting-professions",

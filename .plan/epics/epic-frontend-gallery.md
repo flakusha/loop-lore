@@ -139,3 +139,33 @@ Remaining polish (Phase 3) only:
 ## Docs-Gap Audit Remainders (2026-09-19)
 
 - [ ] [gap-audit E24] Attachment UX: batch upload, inline editing, comparison view
+
+## Integration Points
+
+### Systems This Epic Depends On
+
+| System | What It Provides | How Used |
+| ------ | ---------------- | -------- |
+| Frontend Components | Modals/buttons/badges | Preview/upload modals |
+| Encryption UI | Client decrypt | Private asset preview (gallery refs this epic) |
+| Asset Platform Capabilities | Upload/link/visibility | `src/assets/controller.ts` |
+
+### Systems That Depend On This Epic
+
+| System | What It Consumes | How Used |
+| ------ | ---------------- | -------- |
+| Chat Views | Gallery sidebar | `src/components/chat/gallery-sidebar.html` |
+
+### Shared Data Contracts
+
+| Contract | Shared With | Purpose |
+| -------- | ----------- | ------- |
+| Grid/search endpoints (`src/routes/views/gallery.ts`, `src/routes/views/search.ts`) | Chat/gallery views | HTMX grid + search |
+| Asset preview partial (`src/partials/gallery/preview-modal.html`) | Components | Shared preview modal |
+
+### Cross-System Events
+
+| Event | Direction | Purpose |
+| ----- | --------- | ------- |
+| htmx grid refresh | emits | Re-render after upload/delete |
+

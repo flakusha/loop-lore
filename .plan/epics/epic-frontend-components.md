@@ -39,3 +39,36 @@ Composer integration points (verified 2026-09):
 
 - `docs/frontend/components.md`
 - `epic-prompt-improvement.md` — unified prompt-improvement feature hosted in the composer.
+
+## Integration Points
+
+### Systems This Epic Depends On
+
+| System | What It Provides | How Used |
+| ------ | ---------------- | -------- |
+| Chat Commands | Composer command registry | `/` autocomplete hosted in the composer |
+| Emoji Reactions | `:name:` emoji autocomplete | Shared composer popup |
+| Frontend Gallery | Gallery modals | `src/partials/gallery/*` |
+| Notifications UI | Toast/overlay consumers | `src/components/overlay-stack.html` |
+| HTML Dedup & HTMX Reuse | Extracted shared partials | Land in `src/components/` |
+| Internationalization | Translated strings | Post-swap hydration |
+
+### Systems That Depend On This Epic
+
+| System | What It Consumes | How Used |
+| ------ | ---------------- | -------- |
+| Routing, Gallery, Notifications, Chat Commands, Emoji Reactions | Shared components | Composer, modals, toasts, badges |
+
+### Shared Data Contracts
+
+| Contract | Shared With | Purpose |
+| -------- | ----------- | ------- |
+| htmx swap lifecycle (`src/frontend/alpine/htmx.ts`) | HTML Dedup, I18N | `AfterSwap → Alpine.initTree()` + OOB |
+| Composer markup (`src/components/chat/input-area.html`) | Chat Commands, Emoji Reactions | One composer, multiple trigger registries |
+
+### Cross-System Events
+
+| Event | Direction | Purpose |
+| ----- | --------- | ------- |
+| htmx `afterSwap` | subscribes | Re-init Alpine on swapped partials |
+

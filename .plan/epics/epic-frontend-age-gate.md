@@ -28,3 +28,32 @@ _TBD — expand with frontend implementation tasks._
 ## Tickets
 
 _TBD — create implementation tickets._
+
+## Integration Points
+
+### Systems This Epic Depends On
+
+| System | What It Provides | How Used |
+| ------ | ---------------- | -------- |
+| Login & Authentication UI | Entry flow | Age verification ordering (see `matrix-frontend-backend-integration.md` FB13) |
+| NSFW Gate middleware | Content gating | `src/middleware/nsfw-gate/index.ts` |
+
+### Systems That Depend On This Epic
+
+| System | What It Consumes | How Used |
+| ------ | ---------------- | -------- |
+| Login & Authentication UI | Verification result | Gate the session |
+| Frontend Settings | Preference | Age/content-warning prefs |
+
+### Shared Data Contracts
+
+| Contract | Shared With | Purpose |
+| -------- | ----------- | ------- |
+| Age-gate service (`src/age-gate/service.ts`) | Login, NSFW gate | Verification state |
+
+### Cross-System Events
+
+| Event | Direction | Purpose |
+| ----- | --------- | ------- |
+| — | — | Server-rendered verification page |
+

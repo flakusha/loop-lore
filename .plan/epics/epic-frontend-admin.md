@@ -115,3 +115,32 @@ Frontend implementation for Admin Panel & Dashboard. See `docs/frontend/admin.md
 - `epic-auth-access.md` — admin role gating (`requirePermission("admin.system")` / `adminViewGuard`)
 - `epic-frontend-settings.md` — settings UI (adjacent surface)
 - `epic-logging-telemetry.md` — audit log data source
+
+## Integration Points
+
+### Systems This Epic Depends On
+
+| System | What It Provides | How Used |
+| ------ | ---------------- | -------- |
+| Auth & Access | Admin role gating | `requirePermission("admin.system")` |
+| Frontend Settings | Adjacent settings surface | Config parity |
+| Logging & Telemetry | Audit log data | `src/routes/admin/audit.ts` |
+| Login & Authentication UI | Session identity | Revoke/reset/disable (see `matrix-frontend-backend-integration.md` FB10) |
+
+### Systems That Depend On This Epic
+
+| System | What It Consumes | How Used |
+| ------ | ---------------- | -------- |
+| Frontend Settings | Admin config sections | System config UI |
+
+### Shared Data Contracts
+
+| Contract | Shared With | Purpose |
+| -------- | ----------- | ------- |
+| Admin view shell (`src/views/admin.html`, `src/frontend/alpine/admin.ts`) | All admin tabs | Tab shell + Alpine state |
+
+### Cross-System Events
+
+| Event | Direction | Purpose |
+| ----- | --------- | ------- |
+| Audit log entries | emits | Admin/user actions (logging epic) |
