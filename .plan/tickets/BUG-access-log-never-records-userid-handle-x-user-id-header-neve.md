@@ -3,14 +3,10 @@
 
 # BUG: Access log never records userId/handle (x-user-id header never set)
 
-**Summary:** (none captured)
-**Context:** (none captured)
-**Acceptance Criteria:** (none captured)
-
-
 **Status:** Done
 **Status Note:** (commit 6b3cadc6, plus follow-up d0a24be8 guard) — auth derive at src/elysia-app.ts:64-77 sets x-user-id on the request from the authenticated context, and clears any client-supplied value on the unauthenticated path. The ticket's root-cause description is stale: as of the d0a24be8 follow-up the derive DOES inject x-user-id. Verified by re-reading elysia-app.ts:64-77 and git log on the file.
 **Priority:** high
+**Epic:** epic-logging
 **Effort:** Medium
 
 ## Summary
@@ -25,6 +21,9 @@ Fix options: (a) set x-user-id on taggedRequest in createRequestHandler from the
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Authenticated derive injects `x-user-id` from context; unauthenticated path deletes client-supplied value anti-spoof (`src/elysia-app.ts` derive; commits 6b3cadc6 + d0a24be8)
+- [x] `logAccess` reads `x-user-id` off `taggedRequest` and resolves handle best-effort (`src/server/handler.ts:58-87`)
+- [x] Authenticated request produces access-log entry with non-null userId + resolved handle; unauthenticated logs anonymous
+- [x] Spoof attempt (client-set `x-user-id`, no session) cannot attribute another user — header cleared on unauth path
+- [ ] Regression test locking derive-injects/clears behavior (no `src/server/*` test covers it today)
+

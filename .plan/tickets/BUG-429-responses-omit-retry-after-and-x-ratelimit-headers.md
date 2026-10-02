@@ -3,14 +3,10 @@
 
 # BUG: 429 responses omit Retry-After and X-RateLimit headers
 
-**Summary:** (none captured)
-**Context:** (none captured)
-**Acceptance Criteria:** (none captured)
-
-
 **Status:** Done
 
 **Priority:** medium
+**Epic:** epic-api-rate-limiting
 **Effort:** Medium
 
 ## Summary
@@ -19,6 +15,9 @@ src/routes/auth/login.ts (L23-31) and src/routes/auth/register.ts (L70-78) retur
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] 429 on login/register/demo-login carries `Retry-After` + `X-RateLimit-Limit/Remaining/Reset` (`src/routes/auth/request.ts` `rateLimitHtml`; callers `src/routes/auth/login.ts`, `src/routes/auth/register.ts`)
+- [x] Limiter exposes `limit/remaining/resetSec` via `RateLimitResult` (`consume`/`peek`/`record`/`refund` in `src/middleware/rate-limit.ts`); boolean-only `check()` off gate paths
+- [x] Register skip paths refund slot: 409 duplicate-username, 422 bad form, 500 rollback cost no budget (`src/routes/auth/register.ts`)
+- [x] 200 path emits no `Retry-After` (informational headers only)
+- [x] `bun test src/routes/auth/login.test.ts` green incl 429-header cases (17 pass, verified in-worktree)
+
