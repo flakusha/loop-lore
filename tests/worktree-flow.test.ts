@@ -49,7 +49,12 @@ function gitOk(repo: string, ...args: string[]): boolean {
 }
 
 beforeAll(() => {
-  repoRoot = join(tmpdir(), `wt-flow-${Date.now()}`,);
+  // Unique per process AND per run: Date.now() alone collides when two runs
+  // start in the same millisecond (parallel runners, watch-mode re-runs), and
+  // a shared tmp dir means one run's `rmSync` tears down the other's repo.
+  // pid guards the cross-process case, the counter the within-process case.
+  const runId = `${process.pid}-${Date.now()}-${Math.random().toString(36,).slice(2, 8,)}`;
+  repoRoot = join(tmpdir(), `wt-flow-${runId}`,);
   treeDir = join(repoRoot, "tree",);
   mkdirSync(repoRoot, { recursive: true, },);
   git(repoRoot, "init", "--initial-branch=master",);
@@ -300,22 +305,41 @@ describe("worktree CLI", () => {
     // .git/worktrees admin entry, and the branch ref while reporting success.
     // The old test only asserted the warning substring, so it passed against
     // the leak. These assertions are the contract.
-    git(repoRoot, "checkout", "-b", "feat-no-commits", "master",);
+    //
+    // Resource contract: this test OWNS the branch `feat-no-commits`, its
+    // worktree dir, and its .git/worktrees admin entry inside the shared
+    // suite repo. The finally block force-releases all three, so a failing
+    // assertion here cannot poison the tests below (which read the same
+    // shared repo state). Order-independent, safe under `--rerun-each`.
+    const branch = "feat-no-commits";
+    const wt = join(treeDir, branch,);
+    git(repoRoot, "checkout", "-b", branch, "master",);
     git(repoRoot, "checkout", "master",);
-    runWt("create", "feat-no-commits",);
-    const wt = join(treeDir, "feat-no-commits",);
-    expect(existsSync(wt,),).toBe(true,);
+    runWt("create", branch,);
+    try {
+      expect(existsSync(wt,),).toBe(true,);
 
-    const r = runWt("finalize", "feat-no-commits",);
-    // The warning is emitted on stderr, not stdout.
-    expect(r.out,).toContain("no commits beyond",);
-    expect(r.stdout,).toContain("Worktree removed",);
-    expect(r.stdout,).toContain("Branch deleted",);
-    expect(existsSync(wt,),).toBe(false,);
-    expect(git(repoRoot, "branch", "--list", "feat-no-commits",),).not.toContain("feat-no-commits",);
-    // The admin entry must be gone too, or `git worktree list` keeps a stale
-    // registration that later confuses finalize/abort.
-    expect(git(repoRoot, "worktree", "list",),).not.toContain("feat-no-commits",);
+      const r = runWt("finalize", branch,);
+      // The warning is emitted on stderr, not stdout.
+      expect(r.out,).toContain("no commits beyond",);
+      expect(r.stdout,).toContain("Worktree removed",);
+      expect(r.stdout,).toContain("Branch deleted",);
+      expect(existsSync(wt,),).toBe(false,);
+      expect(git(repoRoot, "branch", "--list", branch,),).not.toContain(branch,);
+      // The admin entry must be gone too, or `git worktree list` keeps a stale
+      // registration that later confuses finalize/abort.
+      expect(git(repoRoot, "worktree", "list",),).not.toContain(branch,);
+    } finally {
+      // Best-effort release of every resource this test allocated. --force
+      // covers the leak case (checkout still present); the branch delete is
+      // -D because a leaked branch is not fully merged from git's view.
+      Bun.spawnSync(["git", "-C", repoRoot, "worktree", "remove", wt, "--force",], {
+        stdout: "pipe",
+        stderr: "pipe",
+      },);
+      git(repoRoot, "worktree", "prune",);
+      git(repoRoot, "branch", "-D", branch,);
+    }
   });
 
   test("34. agent-merge — alias for finalize", () => {
