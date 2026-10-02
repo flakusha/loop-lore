@@ -43,18 +43,10 @@ export function outfitOverrideRoutes(opts: HandlerOpts & { outfitChangeGate?: Ou
   return new Elysia({ name: "outfit-overrides", },)
     // ── Read the chat/scene override ──────────────────────────────
 
-    .get(`${prefix}/chats/:chatId/wardrobe-override/:actorId`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-
-      const { chatId, actorId, } = ctx.params;
-      const access = await checkChatAccess(database, chatId, userId, ctx.userRole as string | null,);
-      if (!access.ok) {
-        return jsonError({ message: "Chat not found", status: HttpStatus.NotFound, },);
-      }
-      if (!(await requireActorAccessOwnership(ctx, database, actorId,))) {
-        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
-      }
+    .get(`${prefix}/chats/:id/wardrobe-override/:actorId`, async (ctx: any,) => {
+      const guard = await requireChatActorAccess(ctx, opts,);
+      if (guard instanceof Response) { return guard; }
+      const { chatId, actorId, } = guard;
 
       const row = await database
         .selectFrom("chat_wardrobe_overrides",)
@@ -64,7 +56,7 @@ export function outfitOverrideRoutes(opts: HandlerOpts & { outfitChangeGate?: Ou
         .executeTakeFirst();
       return jsonResponse({ outfit_id: row?.outfit_id ?? null, updated_at: row?.updated_at ?? null, },);
     }, {
-      params: t.Object({ chatId: t.String(), actorId: t.String(), },),
+      params: t.Object({ id: t.String(), actorId: t.String(), },),
       response: {
         200: t.Any(),
         401: ErrorResponse,
@@ -78,19 +70,11 @@ export function outfitOverrideRoutes(opts: HandlerOpts & { outfitChangeGate?: Ou
     },)
     // ── Set / clear the chat/scene override ───────────────────────
 
-    .put(`${prefix}/chats/:chatId/wardrobe-override`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-
-      const { chatId, } = ctx.params;
-      const access = await checkChatAccess(database, chatId, userId, ctx.userRole as string | null,);
-      if (!access.ok) {
-        return jsonError({ message: "Chat not found", status: HttpStatus.NotFound, },);
-      }
-      const { actor_id: actorId, outfit_id: outfitId, } = ctx.body;
-      if (!(await requireActorAccessOwnership(ctx, database, actorId,))) {
-        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
-      }
+    .put(`${prefix}/chats/:id/wardrobe-override`, async (ctx: any,) => {
+      const { outfit_id: outfitId, } = ctx.body;
+      const guard = await requireChatActorAccess(ctx, opts, ctx.body.actor_id,);
+      if (guard instanceof Response) { return guard; }
+      const { chatId, actorId, userId, } = guard;
 
       // Immersion-gate routing (TASK-wardrobe-story-gm-integration): a
       // wardrobe change of the PLAYER actor is reviewed; NPC and world-rule
@@ -123,18 +107,10 @@ export function outfitOverrideRoutes(opts: HandlerOpts & { outfitChangeGate?: Ou
         },);
       }
 
-      try {
-        await setChatOutfitOverride(database, {
-          chatId,
-          actorId,
-          outfitId,
-          changedBy: userId,
-        },);
-      } catch (error) {
-        const message = error instanceof Error ? error.message : "Outfit not found";
-        return jsonError({ message, status: HttpStatus.NotFound, },);
-      }
-      return jsonResponse({ ok: true, },);
+      return await mutationResponse(
+        () => setChatOutfitOverride(database, { chatId, actorId, outfitId, changedBy: userId, },),
+        "Outfit not found",
+      );
     }, {
       params: WardrobeChatParams,
       body: ChatOutfitOverrideBody,
@@ -154,27 +130,14 @@ export function outfitOverrideRoutes(opts: HandlerOpts & { outfitChangeGate?: Ou
     // ── Location → outfit rules ───────────────────────────────────
 
     .put(`${prefix}/worlds/:worldId/actors/:actorId/outfit-bindings`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
+      const guard = await requireWorldActorAccess(ctx, opts,);
+      if (guard instanceof Response) { return guard; }
+      const { worldId, actorId, } = guard;
 
-      const { worldId, actorId, } = ctx.params;
-      const worldErr = await requireWorldAccess(database, worldId, userId, ctx.userRole as string | null,);
-      if (worldErr) { return worldErr; }
-      if (!(await requireActorAccessOwnership(ctx, database, actorId,))) {
-        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
-      }
-
-      try {
-        await setLocationOutfitBindings(database, {
-          worldId,
-          actorId,
-          bindings: ctx.body.bindings,
-        },);
-      } catch (error) {
-        const message = error instanceof Error ? error.message : "Outfit not visible";
-        return jsonError({ message, status: HttpStatus.NotFound, },);
-      }
-      return jsonResponse({ ok: true, },);
+      return await mutationResponse(
+        () => setLocationOutfitBindings(database, { worldId, actorId, bindings: ctx.body.bindings, },),
+        "Outfit not visible",
+      );
     }, {
       params: WorldActorParams,
       body: LocationOutfitBindingsBody,
@@ -192,20 +155,68 @@ export function outfitOverrideRoutes(opts: HandlerOpts & { outfitChangeGate?: Ou
     },);
 }
 
+
 /**
- * Actor-ownership check for routes where the actor id arrives in the body
- * (chat override) rather than the path.
+ * Chat-access + actor-ownership guard for the chat outfit-override routes.
  * @param ctx
- * @param database
- * @param actorId
- * @returns void
+ * @param opts
+ * @param bodyActorId - actor id from the body when the path omits it
+ * @returns the resolved ids, or a Response to short-circuit the handler
  */
-async function requireActorAccessOwnership(
-  ctx: { userRole?: string | null },
-  database: Parameters<typeof checkActorOwnership>[0],
-  actorId: string,
-): Promise<boolean> {
-  const userId = requireUserId(ctx as never,);
-  if (typeof userId !== "string") { return false; }
-  return checkActorOwnership(database, actorId, userId, ctx.userRole ?? null,);
+async function requireChatActorAccess(
+  ctx: { params: { id: string; actorId?: string }; body?: { actor_id?: string }; userRole?: string | null },
+  opts: HandlerOpts,
+  bodyActorId?: string,
+): Promise<Response | { chatId: string; actorId: string; userId: string }> {
+  const userId = requireUserId(ctx,);
+  if (typeof userId !== "string") { return userId; }
+
+  const actorId = ctx.params.actorId ?? bodyActorId;
+  const chatId = ctx.params.id;
+  const access = await checkChatAccess(opts.database, chatId, userId, ctx.userRole as string | null,);
+  if (!access.ok) {
+    return jsonError({ message: "Chat not found", status: HttpStatus.NotFound, },);
+  }
+  if (!(actorId && await checkActorOwnership(opts.database, actorId, userId, ctx.userRole ?? null,))) {
+    return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+  }
+  return { chatId, actorId, userId, };
+}
+
+/**
+ * World-write-access + actor-ownership guard for the location rule route.
+ * @param ctx
+ * @param opts
+ * @returns the resolved ids, or a Response to short-circuit the handler
+ */
+async function requireWorldActorAccess(
+  ctx: { params: { worldId: string; actorId: string }; userRole?: string | null },
+  opts: HandlerOpts,
+): Promise<Response | { worldId: string; actorId: string }> {
+  const userId = requireUserId(ctx,);
+  if (typeof userId !== "string") { return userId; }
+
+  const { worldId, actorId, } = ctx.params;
+  const worldErr = await requireWorldAccess(opts.database, worldId, userId, ctx.userRole as string | null,);
+  if (worldErr) { return worldErr; }
+  if (!(await checkActorOwnership(opts.database, actorId, userId, ctx.userRole ?? null,))) {
+    return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+  }
+  return { worldId, actorId, };
+}
+
+/**
+ * Run a wardrobe mutation, mapping a thrown service error to a 404 response.
+ * @param run
+ * @param fallbackMessage
+ * @returns 200 `{ok:true}`, or 404 carrying the service error message
+ */
+async function mutationResponse(run: () => Promise<void>, fallbackMessage: string,): Promise<Response> {
+  try {
+    await run();
+    return jsonResponse({ ok: true, },);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : fallbackMessage;
+    return jsonError({ message, status: HttpStatus.NotFound, },);
+  }
 }

@@ -10,12 +10,17 @@
  */
 import { t, } from "elysia";
 
-/** Body for creating a wardrobe item. */
-export const WardrobeItemCreateBody = t.Object({
-  name: t.String({ minLength: 1, },),
+/** Fields shared by the wardrobe item create + update bodies. */
+const ItemOptionalProps = {
   descriptor: t.Optional(t.String(),),
   tags: t.Optional(t.Array(t.String(),),),
   sort_order: t.Optional(t.Number(),),
+};
+
+/** Body for creating a wardrobe item. */
+export const WardrobeItemCreateBody = t.Object({
+  name: t.String({ minLength: 1, },),
+  ...ItemOptionalProps,
   /** World template scope; omitted = actor-personal item. */
   world_id: t.Optional(t.String(),),
 },);
@@ -23,9 +28,7 @@ export const WardrobeItemCreateBody = t.Object({
 /** Body for updating a wardrobe item (partial). */
 export const WardrobeItemUpdateBody = t.Object({
   name: t.Optional(t.String({ minLength: 1, },),),
-  descriptor: t.Optional(t.String(),),
-  tags: t.Optional(t.Array(t.String(),),),
-  sort_order: t.Optional(t.Number(),),
+  ...ItemOptionalProps,
 },);
 
 /** Body for binding an inventory item instance into an outfit. */
@@ -44,24 +47,26 @@ export const LocationOutfitBindingsBody = t.Object({
   bindings: t.Record(t.String(), t.String(),),
 },);
 
-/** Body for outfit-scoped batch emotion-avatar generation. */
-export const OutfitGenerateBody = t.Object({
-  base_avatar_id: t.String({ minLength: 1, },),
-  emotions: t.Optional(t.Array(t.String(),),),
+/** Prompt knobs shared by the batch and single outfit-generation bodies. */
+const OutfitGeneratePromptProps = {
   prompt_prefix: t.Optional(t.String(),),
   negative_prompt: t.Optional(t.String(),),
   /** Re-roll the (emotion, outfit) slots instead of appending. */
   replace: t.Optional(t.Boolean(),),
+};
+
+/** Body for outfit-scoped batch emotion-avatar generation. */
+export const OutfitGenerateBody = t.Object({
+  base_avatar_id: t.String({ minLength: 1, },),
+  emotions: t.Optional(t.Array(t.String(),),),
+  ...OutfitGeneratePromptProps,
 },);
 
 /** Body for a single (emotion, outfit) slot generation. */
 export const OutfitGenerateSingleBody = t.Object({
   base_avatar_id: t.String({ minLength: 1, },),
   emotion: t.String({ minLength: 1, },),
-  prompt_prefix: t.Optional(t.String(),),
-  negative_prompt: t.Optional(t.String(),),
-  /** Defaults to true for single-slot calls (a re-roll by nature). */
-  replace: t.Optional(t.Boolean(),),
+  ...OutfitGeneratePromptProps,
 },);
 
 /** Body for context-aware outfit + avatar resolution (selection v2). */
@@ -93,7 +98,7 @@ export const WardrobeBindingParams = t.Object({
 
 /** Params for chat override routes (wardrobe). */
 export const WardrobeChatParams = t.Object({
-  chatId: t.String({ minLength: 1, },),
+  id: t.String({ minLength: 1, },),
 },);
 
 /** Params for actor-only wardrobe routes (list/create/resolve). */
