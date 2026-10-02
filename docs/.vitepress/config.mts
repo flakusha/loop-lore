@@ -157,7 +157,6 @@ export default withMermaid(defineConfig({
           items: [
             { text: 'Chat Overview', link: '/frontend/chat/overview' },
             { text: 'Layout', link: '/frontend/chat/layout' },
-            { text: 'Messages', link: '/frontend/chat/messages' },
             { text: 'Input', link: '/frontend/chat/input' },
             { text: 'Generation', link: '/frontend/chat/generation' },
             { text: 'Archiving', link: '/frontend/chat/archiving' },
