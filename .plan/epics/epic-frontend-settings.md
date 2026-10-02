@@ -35,7 +35,7 @@ _TBD — create implementation tickets._
 
 | System | What It Provides | How Used |
 | ------ | ---------------- | -------- |
-| Internationalization | Locale registry | Language preference (see `matrix-frontend-backend-integration.md` FB8) |
+| Internationalization | Locale registry | Language preference |
 | Admin Panel | Settings↔admin parity | System config sections |
 
 ### Systems That Depend On This Epic

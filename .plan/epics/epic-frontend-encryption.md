@@ -35,7 +35,7 @@ _TBD — create implementation tickets._
 
 | System | What It Provides | How Used |
 | ------ | ---------------- | -------- |
-| Login & Authentication UI | Session identity + unlock surface | Key material is session-bound (see `matrix-frontend-backend-integration.md` FB3) |
+| Login & Authentication UI | Session identity + unlock surface | Key material is session-bound |
 | Frontend Gallery | Private asset preview | Decrypt for preview (gallery refs this epic) |
 
 ### Systems That Depend On This Epic

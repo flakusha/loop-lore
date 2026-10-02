@@ -26,4 +26,4 @@
 **Tags:** message-kind, narrator, actor_action, stamping, schema, integration
 **Related:** epic-perspective-narration-voice.md, epic-actor-turn-skip.md, epic-two-pass-delivery.md, matrix-story-coherence.md:28, TASK-sc1-perspective-gate-bypass, TASK-sc7-gate-separation-kind-semantics, epic-actor-turn-skip.md (SC8 IMPLEMENTED — `src/chat/service/crud/turn-skip.ts:7`)
 
-git issue: 5892992
+**Git Issue:** 5892992

@@ -42,7 +42,7 @@
 
 | System | What It Provides | How Used |
 | ------ | ---------------- | -------- |
-| Emoji Reactions | `:name:` autocomplete registry | Shared composer popup (see `matrix-frontend-backend-integration.md` FB2) |
+| Emoji Reactions | `:name:` autocomplete registry | Shared composer popup |
 | Frontend Components | Composer markup | `src/components/chat/input-area.html` |
 | Assistant / GM flows | Continuation commands | `/continue`, `/branch` |
 

@@ -23,4 +23,4 @@
 **Tags:** gate, adapters, player-state, skills, inventory, battle, integration, deferred
 **Related:** epic-immersion-consistency-gate.md, epic-player-state-machine.md, matrix-story-coherence.md:36, epic-two-pass-delivery.md, src/rpg/skills, src/story/items, src/battle/resolution-integration/checks.ts
 
-git issue: 8b088d4
+**Git Issue:** 8b088d4

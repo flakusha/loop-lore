@@ -23,4 +23,4 @@ epic-frontend-admin and epic-frontend-login now cross-reference each other in th
 - [ ] Each action emits an audit-log entry and surfaces a success/error toast via the shared UI store.
 - [ ] `bun run plan:validate` passes; `epic-frontend-admin.md` and `epic-frontend-login.md` cross-reference the admin auth-actions surface.
 
-git issue: 452724b
+**Git Issue:** 452724b
