@@ -18932,6 +18932,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/FEAT-llm-request-complexity-classification.md"
     },
     {
@@ -19357,10 +19361,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-bug-sse-stream-render-relies-on-weak-regex-html-sanitizer-re.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san.md"
     }
   ],
   "src/generation/auto-generation.ts": [
@@ -19672,6 +19672,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-sse-streams-leak-string-error-internals-to-clients.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-stream-cancel-leaves-attempt-stuck-processing-forever-no-cle.md"
     }
   ],
@@ -19738,10 +19742,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/BUG-tool-call-arg-parse-silent-fallback.md"
     },
     {
@@ -19765,6 +19765,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-response-validation-logic-additions.md"
+    }
+  ],
+
+  "src/generation/generation-actions/fail-generation.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-sse-streams-leak-string-error-internals-to-clients.md"
     }
   ],
   "src/generation/generation-routes/active.ts": [
@@ -25591,7 +25598,21 @@
       "source": ".plan/tickets/FEAT-game-state-extraction-and-analysis-pipeline.md"
     }
   ],
+
+  "src/regex/html-sanitize-core.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san.md"
+    }
+  ],
   "src/regex/html-sanitize-streaming.edge.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san.md"
+    }
+  ],
+
+  "src/regex/html-sanitize-streaming.test.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san.md"
@@ -25607,10 +25628,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-bug-sse-stream-render-relies-on-weak-regex-html-sanitizer-re.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san.md"
     }
   ],
   "src/regex/html-sanitize.ts": [
@@ -25624,10 +25641,6 @@
     }
   ],
   "src/regex/index.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-doc-spec-regex-extraction.md"
@@ -25799,10 +25812,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-transport-expansion.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-sse-streams-leak-string-error-internals-to-clients.md"
     },
     {
       "kind": "ticket",
@@ -26450,7 +26459,22 @@
   "src/routes/auth/get-client-ip.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-auth-rate-limiter-tests-seed-per-ip-buckets-via-getclientip-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-getclientip-is-untestable-without-a-live-bun-server-ip-sourcing.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-getclientip-trusts-spoofable-proxy-headers-unconditionally.md"
+    }
+  ],
+
+  "src/routes/auth/get-client-ip.unit.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-getclientip-is-untestable-without-a-live-bun-server-ip-sourcing.md"
     }
   ],
   "src/routes/auth/index.ts": [
@@ -26522,7 +26546,15 @@
   "src/routes/auth/shared.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-auth-rate-limiter-tests-seed-per-ip-buckets-via-getclientip-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-bug-csrf-cookie-secure-flag-hardcoded-true-breaks-over-plain.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-getclientip-is-untestable-without-a-live-bun-server-ip-sourcing.md"
     },
     {
       "kind": "ticket",
@@ -29351,10 +29383,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-notification-stream-error-unreachable.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-sse-streams-leak-string-error-internals-to-clients.md"
     },
     {
       "kind": "ticket",
@@ -36643,6 +36671,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-raw-json-parse-outside-safe-json-3-sites.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-raw-json-parse-outside-safe-json.md"
     },
     {
       "kind": "ticket",

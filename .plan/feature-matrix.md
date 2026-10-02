@@ -48,6 +48,7 @@ Total tickets: **3189** — untagged: **2678** — unbound to epic: **1625**
 | acme | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | action-economy | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | actor | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
+// hint: Logic changed on both sides. Requires understanding intent of each change.
 | actor_action | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | actor_items | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | actor-state | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
@@ -1188,6 +1189,7 @@ Total tickets: **3189** — untagged: **2678** — unbound to epic: **1625**
 | epic-accessibility-input | 5 | 1 | 2 | 2 | 0 | 0 | 0 |
 | epic-accessibility-input (Phase 2 Mobile Support, 🟡) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-achievements | 5 | 1 | 1 | 3 | 0 | 0 | 0 |
+// hint: Logic changed on both sides. Requires understanding intent of each change.
 | epic-actor-autonomy-story-drive | 8 | 8 | 0 | 0 | 0 | 0 | 0 |
 | epic-actor-autonomy-story-drive.md | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
 | epic-actor-turn-skip | 5 | 4 | 0 | 1 | 0 | 0 | 0 |
@@ -1631,6 +1633,7 @@ Total tickets: **3189** — untagged: **2678** — unbound to epic: **1625**
 - `acme` (1): EPIC-CERTIFICATE-AND-TLS-MANAGEMENT
 - `action-economy` (1): EPIC-MATH-ECONOMY
 - `actor` (1): TASK-MATRIX-CROSS-MECH-G18-AGENTIC-NPC-AUTONOMY
+// hint: Logic changed on both sides. Requires understanding intent of each change.
 - `actor_action` (1): TASK-SC2-NARRATOR-MODE-KIND-STAMP
 - `actor_items` (1): TASK-ACTOR-ITEMS-CRUD-OWNERSHIP
 - `actor-state` (2): EPIC-IMMERSION-CONSISTENCY-GATE, TASK-SC1-PERSPECTIVE-GATE-BYPASS
@@ -2783,9 +2786,11 @@ Total tickets: **3189** — untagged: **2678** — unbound to epic: **1625**
 - `epic-api-governance` (1): TASK-RATE-LIMIT-COVERAGE-EXPANSION
 - `epic-api-governance.md` (2): TASK-OPENAPI-SPECIFICATION, TASK-RATE-LIMITING-TELEMETRY
 - `epic-api-library-distribution.md` (3): TASK-API-FIRST-FOUNDATION, TASK-CREATE-LIBRARY-PACKAGE, TASK-RUNTIME-ABSTRACTION-LAYER
+- `epic-api-rate-limiting` (1): BUG-GETCLIENTIP-IS-UNTESTABLE-WITHOUT-A-LIVE-BUN-SERVER-IP-SOURCING
 - `epic-api-routes` (1): TASK-API-ROUTES
 - `epic-api-task-offloading` (1): TASK-OFFLOADING
 - `epic-api-telemetry.md` (3): FEAT-LIVENESS-READINESS-ENDPOINTS-OPT-IN-CONFIG, TASK-OBSERVABILITY-CONFIG-SECTION, TASK-PROMETHEUS-METRICS-ENDPOINT-OPT-IN
+- `epic-api-validation-guardrails` (2): BUG-RAW-BUFFER-FROM-ALLOC-INCONSISTENT-WITH-SAFE-BUFFER, BUG-RAW-JSON-PARSE-OUTSIDE-SAFE-JSON
 - `epic-api-validation-guardrails.md` (2): BUG-CONFIG-SCHEMA-DEFAULTS-LEAK-ABSOLUTE-PATHS, BUG-CONFIG-SCHEMA-EMITTER-MISSING-TOP-LEVEL-SECTIONS
 - `epic-api-versioning` (1): BUG-VERSION-RESOLVER-MIDDLEWARE-BUILT-NOT-WIRED
 - `epic-architecture` (2): BUG-ELYSIA-AUTH-TS-DEAD-SHIM-DUPLICATE-LOGIC, TASK-ARCHITECTURE

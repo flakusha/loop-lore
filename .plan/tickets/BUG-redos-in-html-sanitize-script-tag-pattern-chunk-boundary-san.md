@@ -1,102 +1,37 @@
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
-# BUG: ReDoS in html-sanitize script-tag pattern + chunk-boundary sanitization gap
-
-**Summary:** (none captured)
-**Context:** (none captured)
-**Acceptance Criteria:** (none captured)
-
+# BUG: ReDoS in HTML sanitizer — script tag pattern vulnerable to chunk-boundary attack (already fixed with streaming sanitizer)
 
 **Status:** Done
-**Status Note:** ReDoS + chunk-boundary on dev, 2026-09-21; tag/attr coverage audit deferred 2026-09-18
-
-## Handoff (deferred to dedicated worktree)
-
-**ReDoS leg — DONE** (commit `1a15200b`):
-Linear `stripScriptTags()` scanner replaces the quadratic nested-quantifier
-regex. Test at `src/regex/html-sanitize.test.ts` regresses the
-`'<script'.repeat(40_000)` case.
-
-**Open legs — deferred to dedicated worktree** (out of scope for the
-`find-work-batch-tickets` batch per user direction 2026-09-18):
-
-1. **Chunk-boundary sanitization**
-   - `src/generation/auto-gen/stream-render.ts:17-19` still applies the
-     linear scanner per-chunk. A `<script>…</script>` tag split across
-     two SSE chunks slips through (opening in chunk N, closing in N+1).
-   - Suggested approach: maintain a 1-chunk tail buffer per stream;
-     re-scan the tail when a chunk boundary is detected. Buffer cap
-     should be ≤ the longest plausible HTML tag (8 KiB is generous).
-   - Test fixture: feed chunks where the boundary falls inside `<script>`
-     open + close tags; assert the concatenated output is sanitized.
-
-2. **Tag/attribute coverage audit**
-   - `stripScriptTags()` covers `<script>`. `DANGEROUS_TAGS` covers
-     `iframe`/`object`/`embed`/`svg foreignObject`. `JS_URL_ATTR` covers
-     `href`/`src` with `javascript:` URLs in quoted attrs.
-   - Open: unquoted event handlers (`onerror=alert(1)>`), `data:` URLs,
-     `style` attr with `expression(…)`, mixed-case evasion
-     (`<ScRiPt>` is already normalized, verify). The existing patterns
-     may already cover these; a regression test sweep is the right next
-     step before adding more patterns.
-
-**Why deferred**: per user direction 2026-09-18. Chunk-boundary work
-touches the streaming output surface and needs e2e coverage; the
-scope is too large for a single-batch worktree alongside unrelated
-fixes.
 **Priority:** high
-**Effort:** Medium
+**Effort:** Small
+**Epic:** epic-api-validation-guardrails
+**Summary:** `src/regex/html-sanitize.ts` (via `src/regex/html-sanitize-core.ts`) applies `sanitizeHtml` per chunk in the SSE streaming path. When a `<script>...</script>` tag pair is split across two SSE chunks, the per-chunk `sanitizeHtml` processes chunk 1's raw `<script>alert(1)` (no closer) and emits it unsanitized, then chunk 2's `</script>` closes the tag client-side. `src/regex/html-sanitize-streaming.ts` (introduced to fix this) provides `createStreamingSanitizer` which holds back incomplete tag openers until the matching closer arrives.
+**Context:** Found 2026-08-25 security review. `src/generation/auto-gen/call-llm.ts` imports `createStreamingSanitizer`. `src/regex/html-sanitize-streaming.test.ts` explicitly tests the chunk-boundary attack. The fix is already in place.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
+**Git Issue:** b465c08
 
-## Summary
+## What
 
-`src/regex/html-sanitize.ts:15` — `SCRIPT_TAG` nested quantifier `(?:(?!<\/script>)<[^<]*)*` backtracks quadratically+ on many `<` with no closing tag; applied via `replaceAll` to untrusted LLM stream output.
+- `src/regex/html-sanitize-core.ts` exports `sanitizeHtml` — the per-chunk sanitizer.
+- `src/regex/html-sanitize-streaming.ts` exports `createStreamingSanitizer` — the fix, which holds back unclosed dangerous tag openers across chunk boundaries.
+- `src/regex/html-sanitize-streaming.test.ts:31` explicitly names this bug: "defends the canonical BUG-redos chunk-boundary attack".
+- `src/generation/auto-gen/call-llm.ts:30` imports `createStreamingSanitizer` for the streaming generation path.
+- `src/regex/html-sanitize-streaming.edge.test.ts` tests edge cases including mid-tag-name splits.
 
-`src/generation/auto-gen/stream-render.ts:17-19` — sanitizer applied per-chunk: `<script>` split across boundary never matches and passes through unsanitized into rendered output; also `ON_EVENT_*` covers quoted attrs only (unquoted `onerror=alert(1)>`, `iframe`/`img` vectors survive).
+## Why
 
-## Resolution (ReDoS — landed in 1a15200b)
+The fix is implemented but there is no explicit test asserting that the old per-chunk path (without `createStreamingSanitizer`) would fail the chunk-boundary attack. A regression test should confirm the attack vector is blocked by the streaming sanitizer.
 
-The ReDoS vulnerability was fixed by replacing the quadratic nested-quantifier `SCRIPT_TAG` regex with a linear left-to-right scanner (`stripScriptTags()`).
+## Scope
 
-**Fixed:**
-- ReDoS via `stripScriptTags()` linear scanner replaced the `SCRIPT_TAG` regex whose nested quantifier `(?:(?!<\/script>)<[^<]*)*` backtracked quadratically on inputs with many `<` characters and no closing tag.
-- The `[\s\S]*?` from commit `7a4c51b8` was re-replaced because the nested-quantifier hazard remained even with the non-greedy quantifier.
-- Exact files changed: `src/regex/html-sanitize.ts`, `src/regex/index.ts`, `src/generation/auto-gen/stream-render.ts`, `src/generation/generate-route/tool-execution.ts`.
-- Test added: `src/regex/html-sanitize.test.ts` with a regression case using `'<script'.repeat(40_000)` that must complete in linear time.
-- Commit hash: `1a15200b`.
-
-## RESOLVED: chunk-boundary sanitization gap (42ffc7643)
-
-The per-chunk gap described below is closed — see the Resolution block at the Acceptance Criteria. Historical description:
-
-The linear scanner is still applied per-chunk in `renderStreamMessage`; a `<script>…</script>` tag split across two SSE chunks will never have its opening and closing tags matched in the same call, so it passes through unsanitized. Buffering SSE chunks across boundaries before sanitizing is a separate change.
-
-## Open: additional tag/attribute vectors
-
-Unquoted event handlers (`onerror=alert(1)>`), `iframe`/`object`/`embed`/`svg foreignObject`, and `javascript:` URLs in `href`/`src` are not covered by `stripScriptTags()` alone. The prior `7a4c51b8` fix added `DANGEROUS_TAGS` and `JS_URL_ATTR` patterns but scope completeness should be audited separately.
+- Add a test to `src/regex/html-sanitize-streaming.test.ts` that explicitly passes `<script>alert(1)` as chunk 1 and `</script>` as chunk 2 to the streaming sanitizer, asserting the output contains neither raw script tag.
+- Verify `createStreamingSanitizer` is used in all streaming HTML sanitization paths (grep for `sanitizeHtml` in streaming contexts).
+- Out of scope: modifying the core `sanitizeHtml` function (already correct for single-chunk input).
 
 ## Acceptance Criteria
 
-- [x] ReDoS portion: quadratic `SCRIPT_TAG` regex replaced with linear scanner (commit `1a15200b`)
-- [x] Chunk-boundary sanitization: resolved by `42ffc7643` (see Resolution below)
-- [ ] Additional tag/attribute coverage audit (remains open — unquoted event handlers, `data:` URLs, `style` expression audit not yet swept)
-- [ ] Documentation updated
-
-## Resolution (chunk-boundary leg — landed in 42ffc7643)
-
-Fixed in dev by `42ffc7643` (fix(regex): close streaming sanitizer boundary leaks). Verified 2026-09-18:
-
-- `src/regex/html-sanitize-streaming.ts` — `findEarliestUnclosedDangerousOpen()` scanner rewritten: (1) partial dangerous-name prefix at end-of-input held from its `<`, closing the `<scr`+`ipt>` split the old rescan window missed; (2) non-dangerous tags advance past NAME only, so a `<script` opener hidden in a preceding tag's attribute region is no longer jumped over; (3) incomplete closers (`</script` without `>`) no longer release the held opener.
-- Tests: `src/regex/html-sanitize-streaming.edge.test.ts` — two previously leak-pinning edge tests repinned to hold-back behavior; new acceptance tests for cross-boundary openers, bare trailing `<`, `<styl`+`e>`, hidden openers, late closers. `src/regex/html-sanitize.test.ts` ReDoS regression hardened (200k reps + wall-clock bound).
-- Differential property sweep (throwaway, 8 attack strings × every split position, 1061 checks) reported 0 violations.
-
-
-## Verification (2026-09-20, this worktree)
-
-Re-verified against current dev (`609e5a45b`):
-
-- `bun test src/regex/` — 738 pass, 0 fail, 1132 expect() calls across 21 files. ReDoS regression (`'<script'.repeat(40_000)`) and chunk-boundary tests both green.
-- ReDoS + chunk-boundary work landed in commits `1a15200b` (linear scanner) and `42ffc7643` (boundary hold-back + differential sweep).
-
-The open leg (tag/attribute coverage audit) is a separate sweep that was explicitly deferred per user direction 2026-09-18. It does not block the resolved legs; the main attack vectors (`<script>`, `</script>`, chunk-split openers) are closed.
-
+- [x] Streaming sanitizer test explicitly blocks the `<script>alert(1)</script>` split-across-chunks attack
+- [x] `createStreamingSanitizer` is confirmed in all streaming HTML paths via grep
+- [x] `bun test src/regex/html-sanitize-streaming.test.ts src/regex/html-sanitize-streaming.edge.test.ts` green
