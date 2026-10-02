@@ -363,11 +363,27 @@ giwt abort              # recover (idempotent)
 giwt abort --dry-run   # preview what would happen
 ```
 
-> **Note**: The legacy in-repo CLI at `scripts/worktree/index.mjs` still
-> exists for backwards compatibility, but it is a **full implementation**, not
-> a shim: `rebase`, `finalize`, `abort` and the rest carry their own git logic.
-> `giwt` is canonical — new work should call `giwt` directly. Flag-style
-> differences worth noting:
+> **Note**: `giwt` is the canonical CLI — all worktree work goes through it.
+> The in-repo `scripts/worktree/` CLI is a **retired duplicate**, kept in-tree
+> only until its deletion lands. It is NOT equivalent to `giwt`, despite once
+> being described here as a "full implementation, not a shim": the three deltas
+> where it was ahead have since landed in `giwt` (detached-root finalize guard,
+> git env isolation 50/50 spawns, rebase default target — re-verified
+> 2026-10-02), so the remaining drift is `giwt`-ahead. `giwt` carries features
+> the fork lacks: Step 5.5 scoped-worktree reconciliation, the FIFO finalize
+> lock queue, `--jobs`, and `--gates`/`--skip-gates`/`--plan-gates`.
+>
+> **Deleting `scripts/worktree/` is NOT yet safe.** These non-fork files import
+> from it, so removing the directory as-is breaks them:
+> `scripts/lib/colors.ts`, `scripts/lib/assertions.ts`, and
+> `scripts/gpg-unlock.mjs` (the last imports `worktree/utils/credentials.mjs`).
+> Their `giwt` counterparts are not drop-in — `colors.ts` 93 vs 49 lines,
+> `credentials` 90 vs 134, `gpg.ts` 172 vs 165, all three diverged. Deletion
+> therefore means first re-pointing those imports at a preserved utility layer,
+> not just removing files. `tests/worktree-flow.test.ts` drives the fork
+> directly and must be removed or repointed in the same change.
+>
+> Flag-style differences worth noting:
 > `giwt ticket` uses `--label` / `--priority` (long-form), not `-l` / `-p`;
 > `giwt commit-wt` is the renamed `commit-branch`; `giwt merge` takes
 > `<target-branch> <source>` instead of the legacy `<base> <feature>`.
@@ -416,7 +432,11 @@ stashes, and removes a stale lockfile. It NEVER deletes user-authored
 stashes, NEVER runs `git reset --hard`, never force-deletes branches, and
 never resets to a remote ref. A stash that only _mentions_ the prefix is
 reported and left untouched; a pop that fails or conflicts STOPS the recovery
-(exit 1) with the stash preserved and the conflicted paths printed.
+(exit 1) with the stash preserved and the conflicted paths printed. A pop
+onto a clean tree applies the whole snapshot and drops the entry — inspect
+first with `giwt abort --dry-run` or `git stash show -p`, especially when the
+dev checkout may hold other agents' work; the printed dropped sha can be
+undone with `git stash apply <sha>`.
 
 ````
 ## Issue Tracking

@@ -2503,6 +2503,22 @@
     "title": "E2E: actor-import and asset endpoints return 500 where 4xx validation expected",
     "type": "BUG"
   },
+  "BUG-E2E-BROWSER-BASELINE-GATE-IGNORES-DIFF-BASE-WHILE-THE-COVERA": {
+    "hash": "5c4bf12",
+    "git_issue": "5c4bf12",
+    "extid": "BUG-E2E-BROWSER-BASELINE-GATE-IGNORES-DIFF-BASE-WHILE-THE-COVERA",
+    "type": "BUG",
+    "title": "e2e - browser (baseline) gate ignores --diff-base while the coverage gate honors it",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [
+      "check-gates",
+      "e2e"
+    ],
+    "source": ".plan/tickets/BUG-e2e-browser-baseline-gate-ignores-diff-base-while-the-covera.md",
+    "status": "Not Started"
+  },
   "BUG-E2E-NAVIGATION-NEW-CHAT-404-PAGE-ERROR": {
     "hash": "b99af61",
     "extid": "BUG-E2E-NAVIGATION-NEW-CHAT-404-PAGE-ERROR",
@@ -21228,7 +21244,7 @@
       "seed"
     ],
     "source": ".plan/tickets/TASK-autonomy-deterministic-turns.md",
-    "status": "Not Started",
+    "status": "done",
     "git_issue": "adb5001"
   },
   "TASK-AUTONOMY-RATE-GOVERNOR": {
@@ -21918,7 +21934,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-bdi-plan-recompute-implementation.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "TASK-BESTIARY-ADMIN-GM-FORCE-SPAWN-AND-CULL": {
     "epic": "epic-enemies-monsters",
@@ -26776,6 +26792,19 @@
     "title": "Delete unused, broken scenario-catalog tooling",
     "type": "TASK"
   },
+  "TASK-DELETE-THE-IN-REPO-SCRIPTS-WORKTREE-FORK-GIWT-IS-THE-ONLY-WO": {
+    "hash": "9cc8452",
+    "git_issue": "9cc8452",
+    "extid": "TASK-DELETE-THE-IN-REPO-SCRIPTS-WORKTREE-FORK-GIWT-IS-THE-ONLY-WO",
+    "type": "TASK",
+    "title": "Delete the in-repo scripts/worktree fork; giwt is the only worktree CLI",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-delete-the-in-repo-scripts-worktree-fork-giwt-is-the-only-wo.md",
+    "status": "Not Started"
+  },
   "TASK-DELETECHAT-RUNS-9-SEQUENTIAL-DELETES-WITHOUT-TRANSACTION-ORP": {
     "epic": "",
     "extid": "TASK-DELETECHAT-RUNS-9-SEQUENTIAL-DELETES-WITHOUT-TRANSACTION-ORP",
@@ -30076,7 +30105,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-gm-beat-scheduling.md",
-    "status": "⬜ Not Started"
+    "status": "done"
   },
   "TASK-GM-CHAT-ASSISTANT-GM-HANDOFF-VIA-INTENT-TO-WORKFLOW-ROUTING": {
     "epic": "",
@@ -42689,7 +42718,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-workflow-dag-engine-task-dependencies.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [],
     "title": "Workflow DAG engine — task dependencies",
     "type": "TASK"
@@ -42956,7 +42985,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-world-simulation-discovery-and-trade-events.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [
       "world",
       "simulation",
@@ -42990,7 +43019,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-world-simulation-timeline-driven-travel-patrol.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [
       "world",
       "simulation",

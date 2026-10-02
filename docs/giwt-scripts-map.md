@@ -94,16 +94,19 @@ implementation detail that callers stop invoking directly.
   - `commit-branch` → `commit-wt` (giwt command name).
   - `ticket -l / -p` flags → `--label / --priority` (giwt long-form).
   - `merge <base> <feature>` → `merge <target-branch> <source>` (giwt arg order).
-- The legacy `scripts/worktree/` CLI remains in-tree for backwards
-  compatibility (subshims and tests still reference it), but new work
-  should call `giwt` directly.
-- Open (next steps, post-try-6):
-  - Decide whether to delete `scripts/worktree/commands/*.ts` outright
-    (and let `giwt` be the only entry point), or keep as a thin wrapper
-    layer (`scripts/worktree/index.mjs` → `giwt <subcommand>`). The
-    `scripts/worktree/utils/*` helpers (credentials, GPG, git helpers)
-    are still load-bearing for `check-parallel.mjs` and must survive
-    either path.
+- The legacy `scripts/worktree/` CLI remains in-tree only until its deletion
+  lands. All worktree work goes through `giwt`.
+- Open (next steps, post-try-6) — **delete-vs-shim is settled: delete**
+  (2026-10-02):
+  - Delete `scripts/worktree/` so `giwt` is the only entry point. No thin
+    wrapper layer. **Blocked on re-pointing the live imports first:**
+    `scripts/lib/colors.ts`, `scripts/lib/assertions.ts`, and
+    `scripts/gpg-unlock.mjs` (via `worktree/utils/credentials.mjs`) import
+    from `scripts/worktree/utils/`, and the `giwt` equivalents are not
+    drop-in (`colors` 93 vs 49 lines, `credentials` 90 vs 134, `gpg` 172 vs
+    165). Either preserve the needed helpers under `scripts/lib/` or import
+    from the pinned `node_modules/giwt`. Same change must remove or repoint
+    `tests/worktree-flow.test.ts`.
   - `check:report-ls` → `giwt report` rewrite is still REJECTED on the
     schema-drift grounds from try-2; revisit if upstream `giwt report`
     gains the `gates` section.
@@ -148,11 +151,27 @@ implementation detail that callers stop invoking directly.
 
 ## Try-8 fork backport (three upstream fixes, applied in-repo)
 
-The in-repo CLI at `scripts/worktree/` is a **full implementation**, not the
+The in-repo CLI at `scripts/worktree/` is a **duplicate implementation**, not a
 shim try-6 described — `rebase.ts`, `finalize.ts`, `abort.ts` and friends each
 carry their own git logic. It had fallen three fixes behind upstream `giwt`.
-Backported rather than deleted, because the delete-vs-shim call above is still
+Backported rather than deleted, because the delete-vs-shim call above was still
 open and owner-gated.
+
+**Superseded (2026-10-02).** The delete-vs-shim question is settled: delete.
+All three backports above have since landed upstream in `giwt`, so the fork is
+no longer ahead — upstream re-verified: detached-root finalize guard at
+`finalize.ts:1215-1234`, git env isolation 50/50 spawns isolated (fork 39/39),
+rebase default target at `rebase.ts:25`, and `commit`/`commit-wt` spread the
+filtered env with only `GIT_COMMITTER_*` re-set (`commit.ts:99`,
+`commit-wt.ts:118`). Deletion is **blocked**, not by the parity question but by
+live imports: `scripts/lib/colors.ts`, `scripts/lib/assertions.ts`, and
+`scripts/gpg-unlock.mjs` (the last via `worktree/utils/credentials.mjs`) still
+import from the fork, and their `giwt` counterparts are not drop-in
+(`colors` 93 vs 49 lines, `credentials` 90 vs 134, `gpg` 172 vs 165 — all
+diverged). `tests/worktree-flow.test.ts` also drives the fork directly. The
+"Upstream divergence, deliberately not mirrored" note below is likewise stale:
+upstream now refuses protected rebase targets, and the fork's copy of that
+refusal is what upstream adopted.
 
 - `utils/git.ts`: added `isolatedGitEnv()` and wired it into `gitSync` /
   `gitSyncQuiet`, plus the git-child spawns in `finalize.ts` and `rebase.ts`.
@@ -216,7 +235,11 @@ agree (`51fddd5`), which is coincidence, not enforcement.
 
 ### Still open (unchanged, owner-gated)
 
-The `scripts/worktree/` fork still carries commands upstream does not
-(`doctor` is missing in-repo entirely; `report` is *more* capable in-repo with
-multi-container dedup scanning). Retire-vs-shim remains an owner decision —
-see the try-6 open-items list.
+**Corrected (2026-10-02).** This section previously claimed the fork still
+carried commands upstream lacked, citing a missing `doctor` and a more capable
+in-repo `report`. That is backwards: `doctor` is a giwt command with no
+in-repo counterpart, and giwt's `report` is the one with the multi-container
+scan (`giwt report`, added upstream). The fork has not been ahead since the
+try-8 backports landed upstream. Retire-vs-shim is no longer an owner
+decision — it is settled as delete, blocked only on the import re-pointing
+described in the try-6 open-items list.
