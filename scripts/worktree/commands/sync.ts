@@ -37,9 +37,7 @@ function isFile(path: string,): boolean {
 }
 
 /**
- * argv for invoking the pinned `giwt`. Runs the TypeScript entrypoint through
- * the current interpreter (`bun`) rather than executing it directly — giwt
- * ships unbundled `.ts` and is bun-only.
+ * argv for invoking the pinned `giwt`.
  *
  * Resolution is PIN-ANCHORED, not ambient: a bare `giwt` on PATH resolves to
  * whatever the operator has linked (~/.local/bin/giwt points at a mutable
@@ -52,6 +50,26 @@ function isFile(path: string,): boolean {
  * file (uninstalled, vendored, or a half-written checkout). Failing loudly
  * instead would break the documented recovery path for a condition the caller
  * cannot fix.
+ *
+ * The interpreter itself is env-specific, resolved in exactly one place here
+ * so the boundary stays visible instead of scattered across call sites:
+ * `process.execPath` ("bun") + the unbundled `.ts` entrypoint, and
+ * `Bun.spawnSync` below. Node/Deno cannot run either as-is — `execPath` would
+ * be the node/deno binary, which cannot execute a `.ts` file, and
+ * `Bun.spawnSync` has no counterpart. Both would need a runtime adapter
+ * (child_process / Deno.Command) selected once, not per call site.
+ *
+ * TODO(env): `scripts/` is bun-only by declaration (AGENTS.md Technology
+ * Constraints: Runtime = Bun) and by enforcement — `audit-runtime-compat.ts`
+ * scans `src/` only, so nothing here is gated for portability. This file is
+ * NOT the whole porting surface: `Bun.spawnSync` is the standard spawn
+ * primitive across `scripts/` (every worktree command, `check-parallel.mjs`,
+ * the build scripts), so a second runtime would need one adapter over spawn,
+ * not a per-file shim. Porting point for THIS file: `giwtArgv` (line 73) plus
+ * the `Bun.spawnSync` in `sync()` (line 85). Trigger: a second runtime
+ * becoming real for the tooling layer (not for `src/`, which is what that
+ * audit tracks). Until then a runtime adapter here would be a hypothetical
+ * environment — YAGNI.
  */
 export function giwtArgv(repoRoot: string,): { cmd: string; args: string[] } {
   const pinned = resolve(repoRoot, GIWT_CLI_RELATIVE,);
