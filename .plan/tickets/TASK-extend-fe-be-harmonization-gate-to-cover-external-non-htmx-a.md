@@ -10,7 +10,7 @@
 
 **Summary:**
 
-scripts/check-fe-be-harmonization.ts scans only in-repo src/frontend/** plus src/components/src/views HTML. External clients (Fresh, framework SDKs, embeddable engine) consume /api/* with no contract gate, so the drift class the gate exists to catch is unguarded the moment a second frontend ships. OpenAPI generation already ships (src/routes/v1/openapi.ts, FEAT-039). Define the published API contract (OpenAPI/versioned types) as the gate for non-htmx clients. See matrix-frontend-backend-integration.md FB4.
+scripts/check-fe-be-harmonization.ts scans only in-repo src/frontend/** plus src/components/src/views HTML. External clients (Fresh, framework SDKs, embeddable engine) consume /api/* with no contract gate, so the drift class the gate exists to catch is unguarded the moment a second frontend ships. OpenAPI generation already ships (src/routes/v1/openapi.ts, FEAT-039). Define the published API contract (OpenAPI/versioned types) as the gate for non-htmx clients. See the HDL<->FBH gap (FB1) in matrix-frontend-backend-integration.md.
 
 **Context:**
 
@@ -22,3 +22,5 @@ scripts/check-fe-be-harmonization.ts scans only in-repo src/frontend/** plus src
 - [ ] `scripts/check-fe-be-harmonization.ts` (or a new gate script) reports drift for external client call sites, not just in-repo `src/frontend/**`.
 - [ ] The gate is wired into `bun run check` (advisory or blocking, matching the existing promote-to-blocking decision).
 - [ ] `bun run plan:validate` passes; `epic-headless-alternative-frontends.md` and `epic-fe-be-harmonization.md` cross-reference the external-client contract.
+
+git issue: 229d7a3

@@ -125,7 +125,7 @@ Frontend implementation for Admin Panel & Dashboard. See `docs/frontend/admin.md
 | Auth & Access | Admin role gating | `requirePermission("admin.system")` |
 | Frontend Settings | Adjacent settings surface | Config parity |
 | Logging & Telemetry | Audit log data | `src/routes/admin/audit.ts` |
-| Login & Authentication UI | Session identity | Revoke/reset/disable (see `matrix-frontend-backend-integration.md` FB10) |
+| Login & Authentication UI | Session identity | Revoke/reset/disable |
 
 ### Systems That Depend On This Epic
 
