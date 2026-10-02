@@ -549,20 +549,20 @@ function restoreDevFromStash(
 /**
  * Resolve the diff-base ref to pass to `bun run check --diff-base`.
  *
- * Why: the `--diff-base` arg scopes coverage + unit gates to that ref's
- * diff vs HEAD (see AGENTS.md). Passing the live target branch means
- * "branch vs current target", which leaks unrelated target-only changes
- * into the gate when the target has moved past the branch's base.
+ * Why the TARGET BRANCH and not its merge-base with HEAD: the runner scopes
+ * to the files whose CONTENT differs between the given ref and HEAD (see
+ * AGENTS.md). A merge-base SHA pins the comparison to the fork point, so every
+ * file the branch edited but the target has since reproduced identically stays
+ * in scope — the exact over-report that fix removed. Passing the target makes
+ * those files drop out, since landing the branch would not change them.
  *
- * This returns the merge-base of `target` and HEAD — a stable ancestor
- * that captures exactly what this branch has contributed since forking.
+ * Measured on a branch 237 commits ahead of its fork: the scoped coverage gate
+ * went from 1295 floored files / 55 failures to 109 / 2.
  *
- * Throws when `git merge-base` exits non-zero (target is not a valid ref
- * or has no common ancestor with HEAD). The previous implementation
- * silently returned `target` on failure, which then crashed
- * `check-parallel.mjs` downstream with a confusing stack trace.
- * Production callers always pass a valid `target` (the protected target
- * branch), so this throw is unreachable in normal finalize flows.
+ * Throws when `target` is not a valid ref, so a bad target fails here with a
+ * clear message instead of surfacing as a confusing stack trace from inside the
+ * runner. Production callers always pass the protected target branch, so this
+ * is unreachable in normal finalize flows.
  *
  * Exported for unit tests; production callers in `runFinalize` invoke it.
  */
@@ -623,15 +623,17 @@ export function parseFinalizeArgs(args: string[],): {
 }
 
 export function resolveDiffBase(wtPath: string, target: string,): string {
-  const mergeBase = gitSyncQuiet(wtPath, "merge-base", target, "HEAD",).trim();
-  if (mergeBase.length === 0) {
+  // Validate the ref is real before handing it to the runner. `rev-parse
+  // --verify` resolves any ref form (branch, tag, SHA) and fails on a typo,
+  // which is the case worth catching here.
+  const resolved = gitSyncQuiet(wtPath, "rev-parse", "--verify", `${target}^{commit}`,).trim();
+  if (resolved.length === 0) {
     throw new Error(
-      `git merge-base ${target} HEAD failed - target is not a valid ref ` +
-        `or has no common ancestor with HEAD. Cannot determine diff-base ` +
-        `for 'bun run check --diff-base'.`,
+      `git rev-parse --verify ${target} failed - not a valid ref/commit. ` +
+        `Cannot determine diff-base for 'bun run check --diff-base'.`,
     );
   }
-  return mergeBase;
+  return target;
 }
 
 function runCheck(
@@ -891,10 +893,11 @@ async function runFinalize(
     }
     const hasBunLock = existsSync(resolve(wtPath, "bun.lock",),);
     if (hasBunLock) {
-      // See resolveDiffBase for why we don't pass targetBranch directly.
+      // Step 2 runs BEFORE the Step 5a rebase, so this diff is taken against
+      // the un-rebased branch. resolveDiffBase validates the target ref.
       const diffBase = resolveDiffBase(wtPath, targetBranch,);
       if (runCheck(wtPath, diffBase, checkArgs,)) {
-        log("success", `Checks passed (diff-base=${diffBase.slice(0, 8,)}...)`,);
+        log("success", `Checks passed (diff-base=${diffBase})`,);
       } else {
         log("error", "Checks failed - fix before finalizing (or use --force)",);
         process.exit(1,);
