@@ -57,6 +57,12 @@ export const uiStoreDefinition: Record<string, unknown> = {
   }[],
   newSideChannelName: "",
 
+  // ── Transition-mode picker (location-transition remainder) ──
+  showTransitionPicker: false,
+  transitionDestinationId: "",
+  transitionLocations: [] as { id: string; name: string }[],
+  transitionBusy: false,
+
   // ── Active entity refs ───────────────────────────────
   activePersona: null,
 

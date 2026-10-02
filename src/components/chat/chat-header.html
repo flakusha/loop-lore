@@ -234,6 +234,69 @@
         </div>
       </div>
     </div>
+    <!--
+      Transition-mode picker (location-transition AC6): choose a
+      destination + how to get there (in-place / new chat / isolate).
+    -->
+    <div
+      class="side-channels-wrap"
+      x-show="$store.ui.hasActiveChat"
+      data-testid="transition-picker-wrap"
+    >
+      <button
+        class="btn-icon"
+        x-bind:title="t('chats.transitionPicker')"
+        @click="window.toggleTransitionPicker()"
+        data-testid="transition-picker-toggle"
+      >
+        🧭
+      </button>
+      <div
+        class="side-channels-dropdown-menu"
+        x-show="$store.ui.showTransitionPicker"
+        x-cloak
+        @click.outside="$store.ui.showTransitionPicker = false"
+        data-testid="transition-picker-menu"
+      >
+        <div class="side-channels-header">
+          <span x-text="t('chats.transitionPicker')"></span>
+        </div>
+        <div class="side-channel-create">
+          <select
+            class="form-input"
+            x-model="$store.ui.transitionDestinationId"
+            data-testid="transition-destination"
+          >
+            <option value="" x-text="t('chats.transitionDestination')"></option>
+            <template x-for="loc in $store.ui.transitionLocations" :key="loc.id">
+              <option :value="loc.id" x-text="loc.name"></option>
+            </template>
+          </select>
+        </div>
+        <button
+          @click="window.runLocationTransition('in-place')"
+          :disabled="$store.ui.transitionBusy"
+          data-testid="transition-in-place"
+        >
+          ↳ <span x-text="t('chats.transitionInPlace')"></span>
+        </button>
+        <button
+          @click="window.runLocationTransition('new-chat')"
+          :disabled="$store.ui.transitionBusy"
+          data-testid="transition-new-chat"
+        >
+          ＋ <span x-text="t('chats.transitionNewChat')"></span>
+        </button>
+        <button
+          @click="window.runLocationTransition('isolate')"
+          :disabled="$store.ui.transitionBusy"
+          data-testid="transition-isolate"
+        >
+          ⛏ <span x-text="t('chats.transitionIsolate')"></span>
+        </button>
+      </div>
+    </div>
+
     <!-- Context Window Monitor -->
     <div
       x-data="contextWindow()"
