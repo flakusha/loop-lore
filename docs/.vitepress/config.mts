@@ -239,6 +239,39 @@ export default withMermaid(defineConfig({
           ],
         },
       ],
+
+      '/architecture/': [
+        {
+          text: 'Architecture',
+          collapsed: false,
+          items: [
+            { text: 'Character ↔ World Data Boundary', link: '/architecture/character-world-boundary' },
+          ],
+        },
+      ],
+
+      '/ops/': [
+        {
+          text: 'Ops',
+          collapsed: false,
+          items: [
+            { text: 'Bare-Metal Deployment Guide', link: '/ops/bare-metal-deploy' },
+            { text: 'Network, TLS, and Firewall Reference', link: '/ops/bare-metal/network' },
+          ],
+        },
+      ],
+
+      '/infrastructure/': [
+        {
+          text: 'Infrastructure',
+          collapsed: false,
+          items: [
+            { text: 'Hosting Provider Evaluation', link: '/infrastructure/evaluate-hostings' },
+            { text: 'GPU Instance Requirements — Sizing Matrix', link: '/infrastructure/gpu-requirements' },
+            { text: 'Hosting Provider Comparison — Qualitative', link: '/infrastructure/hosting-comparison' },
+          ],
+        },
+      ],
     },
 
     logo: '/logo.svg',
