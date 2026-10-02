@@ -23,4 +23,4 @@ Both epics are unscoped stubs. The route table (RTG) and the header/nav active-s
 - [ ] `src/components/header.html` derives its breadcrumb/title from the same nav-state source.
 - [ ] `bun run plan:validate` passes; both epics cite the contract.
 
-git issue: 02d5d23
+**Git Issue:** 02d5d23

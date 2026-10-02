@@ -24,4 +24,4 @@
 **Tags:** perspective, gate, narrator, bypass, actor-state, integration
 **Related:** epic-perspective-narration-voice.md, epic-narration-actor-separation.md, matrix-story-coherence.md:27, TASK-sc2-narrator-mode-kind-stamp, TASK-sc7-gate-separation-kind-semantics
 
-git issue: df1193e
+**Git Issue:** df1193e
