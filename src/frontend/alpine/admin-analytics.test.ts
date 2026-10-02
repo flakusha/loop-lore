@@ -7,12 +7,12 @@ const globalState = globalThis as unknown as {
 };
 const originalFetch = globalState.apiFetch;
 const originalToast = globalState.showToast;
-let handler: (url: string,) => Promise<Response> = () => Response.json({},);
+let handler: (url: string,) => Promise<Response> = async () => Response.json({},);
 let toasts: { type: string; message: string }[] = [];
 
 beforeEach(() => {
   toasts = [];
-  handler = () => Response.json({},);
+  handler = async () => Response.json({},);
   globalState.apiFetch = (url,) => handler(url,);
   globalState.showToast = (type, message,) => {
     toasts.push({ type, message, },);
@@ -30,10 +30,17 @@ function makeState() {
     ...adminAnalytics,
     dailyStats: [] as { count: number; active_users: number; date: string }[],
     errorEvents: [],
-    analyticsCharacters: [],
-    analyticsDailyBars: [],
-    analyticsLatencyBars: [],
-    analyticsRoleSegments: [],
+    analyticsCharacters: [] as {
+      id: string;
+      name: string;
+      totalMessages: number;
+      totalTokens: number;
+      avgResponseLength: number;
+      tokensPerMessage: number;
+    }[],
+    analyticsDailyBars: [] as { date: string; count: number; pct: number }[],
+    analyticsLatencyBars: [] as { label: string; count: number; pct: number }[],
+    analyticsRoleSegments: [] as { role: string; label: string; tokens: number; color: string; pct: number }[],
     conversationOverview: {
       ...adminAnalytics.conversationOverview,
       tokensByRole: { user: 0, assistant: 0, system: 0, },
@@ -44,7 +51,7 @@ function makeState() {
 }
 
 function routeResponses(): void {
-  handler = (url,) => {
+  handler = async (url,) => {
     if (url.startsWith("/api/v1/telemetry/analytics/summary",)) {
       return Response.json({ total: 5, distinct_sessions: 2, distinct_users: 1, },);
     }
@@ -130,10 +137,10 @@ describe("adminAnalytics.purgeAnalytics", () => {
     const state = makeState();
     routeResponses();
     const base = handler;
-    handler = (url,) =>
+    handler = async (url,) =>
       url.startsWith("/api/v1/telemetry/analytics/purge",)
         ? Response.json({ message: "nope", }, { status: 500, },)
-        : base(url,);
+        : await base(url,);
     await state.purgeAnalytics();
     expect(toasts,).toEqual([{ type: "error", message: "nope", },],);
     expect(state.purgingAnalytics,).toBe(false,);
