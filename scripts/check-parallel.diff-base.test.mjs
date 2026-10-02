@@ -31,7 +31,7 @@ let workDir;
 function git(args, cwd = workDir,) {
   const proc = spawnSync("git", args, { cwd, encoding: "utf8", },);
   if (proc.status !== 0) {
-    throw new Error(`git ${args.join(" ")} failed: ${proc.stderr}`,);
+    throw new Error(`git ${args.join(" ",)} failed: ${proc.stderr}`,);
   }
   return proc.stdout.trim();
 }
@@ -42,37 +42,37 @@ function write(relPath, content,) {
 
 /** The set the pre-fix merge-base diff produced over this same fixture. */
 function mergeBaseSet() {
-  return git(["diff", "--name-only", git(["merge-base", "main", "HEAD",]),],).split("\n",);
+  return git(["diff", "--name-only", git(["merge-base", "main", "HEAD",],),],).split("\n",);
 }
 
 beforeEach(() => {
   workDir = mkdtempSync(join(tmpdir(), "loop-lore-diff-base-",),);
-  git(["init", "--initial-branch=main", "-q",]);
-  git(["config", "user.email", "test@example.com",]);
-  git(["config", "user.name", "Test",]);
-  mkdirSync(join(workDir, "src",), { recursive: true, });
+  git(["init", "--initial-branch=main", "-q",],);
+  git(["config", "user.email", "test@example.com",],);
+  git(["config", "user.name", "Test",],);
+  mkdirSync(join(workDir, "src",), { recursive: true, },);
 
   // Fork point.
-  write("src/a.ts", "export const a = 1;\n");
-  write("src/converged.ts", "export const c = 1;\n");
-  git(["add", "."]);
-  git(["commit", "-q", "-m", "fork point"]);
+  write("src/a.ts", "export const a = 1;\n",);
+  write("src/converged.ts", "export const c = 1;\n",);
+  git(["add", ".",],);
+  git(["commit", "-q", "-m", "fork point",],);
 
   // Branch diverges on BOTH files.
-  git(["checkout", "-q", "-b", "feature"]);
-  write("src/a.ts", "export const a = 2;\n");
-  write("src/converged.ts", "export const c = 2;\n");
-  git(["add", "."]);
-  git(["commit", "-q", "-m", "feature work"]);
+  git(["checkout", "-q", "-b", "feature",],);
+  write("src/a.ts", "export const a = 2;\n",);
+  write("src/converged.ts", "export const c = 2;\n",);
+  git(["add", ".",],);
+  git(["commit", "-q", "-m", "feature work",],);
 
   // `main` advances and independently reproduces the `converged.ts` edit
   // byte-for-byte. `a.ts` is untouched on `main`, so it stays divergent.
-  git(["checkout", "-q", "main"]);
-  write("src/converged.ts", "export const c = 2;\n");
-  git(["add", "."]);
-  git(["commit", "-q", "-m", "base advances"]);
+  git(["checkout", "-q", "main",],);
+  write("src/converged.ts", "export const c = 2;\n",);
+  git(["add", ".",],);
+  git(["commit", "-q", "-m", "base advances",],);
 
-  git(["checkout", "-q", "feature"]);
+  git(["checkout", "-q", "feature",],);
 },);
 
 afterEach(() => {
@@ -83,38 +83,38 @@ describe("changedFiles — --diff-base scoping", () => {
   test("the fixture reproduces the pre-fix over-report", () => {
     // Guards the regression itself: if this stops holding, the merge-base diff
     // no longer over-reports here and the tests below prove nothing.
-    expect(mergeBaseSet(),).toEqual(["src/a.ts", "src/converged.ts",]);
-  },);
+    expect(mergeBaseSet(),).toEqual(["src/a.ts", "src/converged.ts",],);
+  });
 
   test("excludes a file the base reproduced identically", () => {
     // Identical content on both sides: landing this branch changes nothing
     // there, so flooring the whole file is the false red being fixed.
     expect(changedFiles("main", workDir,),).not.toContain("src/converged.ts",);
-  },);
+  });
 
   test("includes a file the branch genuinely diverged on", () => {
     expect(changedFiles("main", workDir,),).toContain("src/a.ts",);
-  },);
+  });
 
   test("returns exactly the divergent set", () => {
-    expect(changedFiles("main", workDir,),).toEqual(["src/a.ts",]);
-  },);
+    expect(changedFiles("main", workDir,),).toEqual(["src/a.ts",],);
+  });
 
   test("includes uncommitted working-tree changes", () => {
     // The dirty half of the union must survive the fix: a file edited but not
     // yet committed still has to be gated.
-    write("src/a.ts", "export const a = 3;\n");
-    write("src/new.ts", "export const n = 1;\n");
-    git(["add", "src/new.ts"]);
+    write("src/a.ts", "export const a = 3;\n",);
+    write("src/new.ts", "export const n = 1;\n",);
+    git(["add", "src/new.ts",],);
 
     const files = changedFiles("main", workDir,);
     expect(files,).toContain("src/new.ts",);
     expect(files,).toContain("src/a.ts",);
-  },);
+  });
 
   test("empty when no base is given", () => {
-    expect(changedFiles(null, workDir,),).toEqual([]);
-  },);
+    expect(changedFiles(null, workDir,),).toEqual([],);
+  });
 
   test("a base with no common ancestor does not throw", () => {
     // `git merge-base` exits non-zero on unrelated histories, which took the
@@ -123,18 +123,18 @@ describe("changedFiles — --diff-base scoping", () => {
     const orphan = mkdtempSync(join(tmpdir(), "loop-lore-orphan-",),);
     try {
       spawnSync("git", ["init", "-q", "--initial-branch=main", orphan,],);
-      spawnSync("git", ["-C", orphan, "config", "user.email", "test@example.com",]);
-      spawnSync("git", ["-C", orphan, "config", "user.name", "Test",]);
-      spawnSync("git", ["-C", orphan, "commit", "-q", "--allow-empty", "-m", "unrelated",]);
-      git(["fetch", "-q", orphan, "main:refs/remotes/orphan/main",]);
+      spawnSync("git", ["-C", orphan, "config", "user.email", "test@example.com",],);
+      spawnSync("git", ["-C", orphan, "config", "user.name", "Test",],);
+      spawnSync("git", ["-C", orphan, "commit", "-q", "--allow-empty", "-m", "unrelated",],);
+      git(["fetch", "-q", orphan, "main:refs/remotes/orphan/main",],);
 
       // Pins the pre-fix crash: merge-base finds no common ancestor here.
       expect(
         spawnSync("git", ["merge-base", "orphan/main", "HEAD",], { cwd: workDir, },).status,
       ).not.toBe(0,);
-      expect(() => changedFiles("orphan/main", workDir,),).not.toThrow();
+      expect(() => changedFiles("orphan/main", workDir,)).not.toThrow();
     } finally {
       rmSync(orphan, { recursive: true, force: true, },);
     }
-  },);
+  });
 });
