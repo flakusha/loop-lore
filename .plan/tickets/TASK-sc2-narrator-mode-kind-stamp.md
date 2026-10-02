@@ -22,6 +22,7 @@
 - [ ] `bun run check` green.
 
 **Epic:** epic-narration-actor-separation
+**Design note:** `src/db/enums-core/messages.ts:22` already defines `MessageContentType.Narration = 'narration'`. `MessageKind` is a *distinct* concept — `MessageContentType` classifies content *encoding* (text, action, narration, system…), while `MessageKind` classifies *authorship role* (narration = GM/scene narration, actor_action = character, system = OOC infrastructure). The overlap in the "narration" value is intentional: a `MessageContentType.Narration` message written by an actor has kind `actor_action`; a `MessageContentType.Narration` message written by GM has kind `narration`. These are orthogonal axes, not redundant enums — extend `MessageContentType` with a `kind` field on the message schema rather than parallel enum.
 **Tags:** message-kind, narrator, actor_action, stamping, schema, integration
 **Related:** epic-perspective-narration-voice.md, epic-actor-turn-skip.md, epic-two-pass-delivery.md, matrix-story-coherence.md:28, TASK-sc1-perspective-gate-bypass, TASK-sc7-gate-separation-kind-semantics, epic-actor-turn-skip.md (SC8 IMPLEMENTED — `src/chat/service/crud/turn-skip.ts:7`)
 
