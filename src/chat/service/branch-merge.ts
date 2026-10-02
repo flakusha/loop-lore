@@ -143,6 +143,7 @@ export interface MergeBranchParams {
  * subtree over `MAX_MERGE_NODES` is rejected before anything is re-parented.
  * @param db
 // hint: Logic and cosmetic changes overlap. Resolve logic first, then reformat.
+// hint: Logic and cosmetic changes overlap. Resolve logic first, then reformat.
  * @param params
  * @returns {Promise<MergeBranchResult>}
  */
