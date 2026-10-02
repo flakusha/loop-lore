@@ -4,6 +4,7 @@
 // size-allow: 268
 
 import type { Kysely, } from "kysely";
+import { QuestStatus, } from "../../db/enums";
 import type { QuestCategory as QuestCategoryEnum, QuestType as QuestTypeEnum, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { notifyQuestUpdate, } from "../../notifications/service";
@@ -52,6 +53,13 @@ export async function checkWorldAccess(
   return !(!worldCheck || (!can(userRole, "admin.world",) && worldCheck.owner_id !== userId));
 }
 
+/** Quest statuses accepted by the optional `status` list filter. */
+const QUEST_STATUS_VALUES: readonly string[] = [
+  QuestStatus.Active,
+  QuestStatus.Completed,
+  QuestStatus.Failed,
+  QuestStatus.Abandoned,
+];
 export async function handleListQuests(
   database: Kysely<DB>,
   worldId: string,
@@ -59,26 +67,34 @@ export async function handleListQuests(
   pageSize: number,
   userId: string | null,
   userRole: string | null,
+  status?: string,
 ) {
   if (!(await checkWorldAccess(database, worldId, userId, userRole,))) {
     return jsonError({ message: "World not found", status: HttpStatus.NotFound, },);
   }
+  if (status !== undefined && !QUEST_STATUS_VALUES.includes(status,)) {
+    return jsonError({ message: "Invalid quest status", status: HttpStatus.BadRequest, },);
+  }
 
+  // Explicit `status` selects exactly that status; omitted hides only
+  // `abandoned` (the soft-deleted state) so the log carries
+  // active/completed/failed history.
   const offset = (page - 1) * pageSize;
   const countResult = await database
     .selectFrom("quests",)
     .select(database.fn.countAll<number>().as("total",),)
     .where("world_id", "=", worldId,)
-    .where("status", "=", "active",)
+    .$if(status !== undefined, (qb,) => qb.where("status", "=", status as QuestStatus,),)
+    .$if(status === undefined, (qb,) => qb.where("status", "!=", QuestStatus.Abandoned,),)
     .executeTakeFirst();
-
   const total = countResult?.total ?? 0;
 
   const quests = await database
     .selectFrom("quests",)
     .selectAll()
     .where("world_id", "=", worldId,)
-    .where("status", "=", "active",)
+    .$if(status !== undefined, (qb,) => qb.where("status", "=", status as QuestStatus,),)
+    .$if(status === undefined, (qb,) => qb.where("status", "!=", QuestStatus.Abandoned,),)
     .orderBy("priority", "desc",)
     .limit(pageSize,)
     .offset(offset,)

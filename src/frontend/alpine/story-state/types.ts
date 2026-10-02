@@ -27,6 +27,20 @@ export interface StoryQuest {
   type: string;
   status: string;
   progress: number;
+  /** Progress target the quest must reach (absent on legacy rows). */
+  target?: number;
+  /** Rewards JSON (`{ xp, items }`) string. */
+  rewards?: string;
+  /** Narrative-hook milestone JSON (`{ progress, narrative }[]`) string. */
+  narrative_hooks?: string;
+  description?: string | null;
+  completed_at?: string | null;
+}
+
+/** A narrative-hook milestone parsed from a quest's `narrative_hooks`. */
+export interface QuestMilestone {
+  progress: number;
+  narrative: string;
 }
 
 /** Per-message story metadata (quality score, GM prompt) from story_turns. */
@@ -97,6 +111,8 @@ export interface StoryStateComponent {
   refresh(): Promise<void>;
   turnForMessage(messageId: string,): StoryTurnMeta | null;
   questProgressPct(quest: StoryQuest,): number;
+  questMilestones(quest: StoryQuest,): QuestMilestone[];
+  questRewardChips(quest: StoryQuest,): string[];
   qualityClass(score: number,): string;
   togglePause(): Promise<void>;
   stepTurn(): Promise<void>;

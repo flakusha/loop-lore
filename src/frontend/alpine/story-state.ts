@@ -22,13 +22,22 @@ import {
   activeChatId,
   parseQuestBanners,
   qualityClass as qualityClassTier,
+  questMilestones as questMilestonesOf,
   questProgressPct as questProgressPercent,
+  questRewardChips as questRewardChipsOf,
   toast,
 } from "./story-state/derived";
 import { loaders, } from "./story-state/loaders";
-import type { QuestBanner, StoryQuest, StoryStateComponent, StoryTurnMeta, } from "./story-state/types";
+import type {
+  QuestBanner,
+  QuestMilestone,
+  StoryQuest,
+  StoryStateComponent,
+  StoryTurnMeta,
+} from "./story-state/types";
 export type {
   QuestBanner,
+  QuestMilestone,
   StoryParticipant,
   StoryQuest,
   StoryStateComponent,
@@ -107,6 +116,13 @@ const log = rootLog.child({ module: "story-state", },);
       return questProgressPercent(quest,);
     },
 
+    questMilestones(quest: StoryQuest,): QuestMilestone[] {
+      return questMilestonesOf(quest,);
+    },
+
+    questRewardChips(quest: StoryQuest,): string[] {
+      return questRewardChipsOf(quest,);
+    },
     /**
      * CSS tier for a quality score: good (≥70) / mid (≥40) / low.
      * @param score

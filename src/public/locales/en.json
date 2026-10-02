@@ -1045,7 +1045,14 @@
     "waiting": "Waiting",
     "noActors": "No participants loaded yet.",
     "activeQuests": "Active Quests",
-    "noQuests": "No active quests.",
+    "noQuests": "No quests.",
+    "questRewards": "Rewards",
+    "questStatus": {
+      "active": "Active",
+      "completed": "Completed",
+      "failed": "Failed",
+      "abandoned": "Abandoned"
+    },
     "newQuestPlaceholder": "Quest name…",
     "newQuest": "New Quest",
     "deleteQuest": "Delete quest",
@@ -1424,8 +1431,14 @@
     "review": "Review entity data for completeness",
     "clear": "Clear chat",
     "stats": "Show chat statistics",
-    "link": "Attach a gallery asset to this chat"
-  },
+    "link": "Attach a gallery asset to this chat",
+    "guide": "GM: give narrative direction (/guide <direction>)",
+    "target": "GM: pick the character to respond next (/target <character>)",
+    "constraint": "GM: add a narrative constraint (/constraint <rule>)",
+    "scene": "GM: set the scene description (/scene <description>)",
+    "priority": "GM: set a character's turn priority (/priority <character> <high|medium|low>)",
+    "skip": "GM: skip a character's turn (/skip <character>)"
+  }
 
   "branches": {
     "title": "Branches",
