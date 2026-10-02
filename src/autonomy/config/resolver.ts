@@ -99,7 +99,7 @@ function applyLayer(out: AutonomyConfig, layer: AutonomyConfigOverride,): void {
   // null nor an integer is DROPPED, keeping the lower layer's, because a
   // layered config should fail predictably rather than let a bad seed
   // coerce through `hashSeed`/`mulberry32` and quietly re-seed a world.
-  if (layer.seed !== undefined && (layer.seed === null || Number.isInteger(layer.seed))) {
+  if (layer.seed !== undefined && (layer.seed === null || Number.isInteger(layer.seed,))) {
     out.seed = layer.seed;
   }
 }
