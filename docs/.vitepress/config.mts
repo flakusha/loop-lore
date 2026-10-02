@@ -124,6 +124,9 @@ export default withMermaid(defineConfig({
           items: [
             { text: 'Image Generation', link: '/spec/integrations/image-generation' },
             { text: 'LLM Serving', link: '/spec/integrations/llm-serving' },
+            { text: 'Integrations Architecture', link: '/spec/integrations-architecture' },
+            { text: 'Federation Email Channel', link: '/spec/federation-email-channel' },
+            { text: 'Federation Messenger Channels', link: '/spec/federation-messenger-channels' },
           ],
         },
         {
