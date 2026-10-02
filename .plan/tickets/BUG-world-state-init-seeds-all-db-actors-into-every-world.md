@@ -21,7 +21,7 @@ src/story/world-state/init.ts initializeNpcStates:19-55, initializeCharacterWorl
 - [x] `initializeNpcStates` + `initializeCharacterWorldSetup` (`src/story/world-state/init.ts:20,66`) scope via `innerJoin world_members` filtered to the target `world_id` — verified at HEAD
 - [x] `seedStartingInventory` (`src/story/world-state/init.ts:117`) scopes setups + item defs to the target `world_id`
 - [x] Regression pinned: `src/story/world-state/init.coverage.test.ts` (world-scoped seeding, empty world, FK-violating id) + `src/characters/world-setup/service.test.ts` (idempotent seed hook)
-- [x] Cross-world isolation: actors joined to world A are never seeded into world B
+- [x] Cross-world isolation by construction: both seed entry points filter on `world_members.world_id = worldId`, so actors joined only to world A are invisible to a world-B seed pass
 
 ## Resolution
 
