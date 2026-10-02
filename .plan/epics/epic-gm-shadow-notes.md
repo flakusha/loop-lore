@@ -114,7 +114,7 @@ Story steering uses whitenotes and shadow notes to guide the LLM's narrative dir
 || System | What It Consumes | How Used |
 || ------ | ---------------- | -------- |
 || epic-assistant-gm-flows.md | whitenotes + shadow notes | GM steering directives in prompt |
-|| epic-memory-injection.md | whitenotes with memory scope | scope = world/session/chapter drives memory propagation; corrected from epic-memory-injection.md (does not exist) → epic-memory-propagation.md (owns memory propagation) |
+|| epic-memory-propagation.md | whitenotes with memory scope | scope = world/session/chapter drives memory propagation |
 || epic-immersion-presentation.md | revealed shadow notes | player-visible reveal events |
 
 ### Shared Data Contracts
