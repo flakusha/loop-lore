@@ -7,7 +7,7 @@
 
 
 **Status:** Done
-**Status Note:** Code+tests+schema done (migration 035); UNWIRED — routes pending
+**Status Note:** Routes wired under `/api/rpg/achievements` (`achievementsRoutes` + `achievementsPlayerRoutes` via `rpgRoutes` in `src/app/register-plugins.ts`); epic metadata reconciled 2026-10-02
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Feature Epic
