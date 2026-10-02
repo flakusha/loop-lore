@@ -14,6 +14,7 @@ import type { DB, } from "../../db/schema";
 import { registry, } from "../../plugins/registry";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertActors, } from "../../test-utils/insert-helpers";
+import { jsonParseOr, } from "../../utils";
 import { WRITE_MEMORY_NOTE, writeMemoryNoteTool, } from "../tools/write-memory-note";
 import { executeToolCalls, } from "./tool-execution";
 
@@ -477,7 +478,9 @@ describeReal("executeToolCalls — persists tool-result rows (BUG-tool-call-resu
         name: "boom_tool",
         description: "rejects",
         parameters: {},
-        handler: async () => { throw new Error("kaboom",); },
+        handler: async () => {
+          throw new Error("kaboom",);
+        },
       },
       {
         name: "after_tool",
@@ -505,9 +508,11 @@ describeReal("executeToolCalls — persists tool-result rows (BUG-tool-call-resu
       .where("content_type", "=", "tool_result",)
       .where("chat_id", "=", chatId,)
       .execute();
-    const rejected = rows.find((r,) => JSON.parse(r.metadata ?? "{}",).tool_call_id === "tc-reject",);
-    expect(JSON.parse(rejected!.metadata ?? "{}",).tool_error,).toBe(true,);
-    expect(JSON.parse(rejected!.content,).error,).toBe("kaboom",);
+    const rejected = rows.find((r,) =>
+      jsonParseOr<Record<string, unknown>>(r.metadata ?? "{}", {},).tool_call_id === "tc-reject"
+    );
+    expect(jsonParseOr<Record<string, unknown>>(rejected!.metadata ?? "{}", {},).tool_error,).toBe(true,);
+    expect(jsonParseOr<Record<string, unknown>>(rejected!.content, {},).error,).toBe("kaboom",);
   });
 
   test("a timed-out tool is marked toolError and the next call still runs", async () => {
@@ -544,8 +549,10 @@ describeReal("executeToolCalls — persists tool-result rows (BUG-tool-call-resu
       .where("content_type", "=", "tool_result",)
       .where("chat_id", "=", chatId,)
       .execute();
-    const slow = rows.find((r,) => JSON.parse(r.metadata ?? "{}",).tool_call_id === "tc-slow",);
-    expect(JSON.parse(slow!.metadata ?? "{}",).tool_error,).toBe(true,);
-    expect(JSON.parse(slow!.content,).error,).toContain("timed out",);
+    const slow = rows.find((r,) =>
+      jsonParseOr<Record<string, unknown>>(r.metadata ?? "{}", {},).tool_call_id === "tc-slow"
+    );
+    expect(jsonParseOr<Record<string, unknown>>(slow!.metadata ?? "{}", {},).tool_error,).toBe(true,);
+    expect(jsonParseOr<Record<string, unknown>>(slow!.content, {},).error,).toContain("timed out",);
   });
 },);

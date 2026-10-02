@@ -13,6 +13,7 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
+import { jsonStringifyOr, } from "../utils";
 import { parseStoredPluginConfig, } from "./config-merge";
 
 /**
@@ -54,7 +55,7 @@ export async function writeStoredPluginConfig(
   name: string,
   stored: Record<string, unknown>,
 ): Promise<void> {
-  const configJson = JSON.stringify(stored,);
+  const configJson = jsonStringifyOr(stored,);
   await db
     .insertInto("plugin_state",)
     .values({ name, status: "active", config_json: configJson, },)

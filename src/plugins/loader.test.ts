@@ -18,6 +18,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import type { Logger, } from "../logger";
 import { createLogger, getLogger, setGlobalLogger, } from "../logger";
+import { jsonStringifyOr, } from "../utils";
 import { writeMemoryNoteTool, } from "../generation/tools/write-memory-note";
 import { dispatchPluginRoute, loadAllPlugins, loadSinglePlugin, registry, unloadAllPlugins, } from "./loader";
 
@@ -384,7 +385,7 @@ describe("loadSinglePlugin", () => {
   });
 
   test("merges a stored config override over manifest defaults into onLoad ctx.config", async () => {
-    const db = stubDb({ configRow: { config_json: JSON.stringify({ mode: "stored", },), }, });
+    const db = stubDb({ configRow: { config_json: jsonStringifyOr({ mode: "stored", },), }, });
     const dir = makePluginDir({ "plugin.ts": FULL_PLUGIN, });
 
     await loadSinglePlugin(db, "fixture-full", dir, "community",);
