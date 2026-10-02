@@ -78,7 +78,7 @@ re-implementing it per view.
 
 | System | What It Provides | How Used |
 | ------ | ---------------- | -------- |
-| Frontend Components | Shared partials/components | Extraction targets (see `matrix-frontend-backend-integration.md` FB12) |
+| Frontend Components | Shared partials/components | Extraction targets |
 | Frontend Component Architecture | htmx/Alpine boundary | Swap/lifecycle ownership |
 | Bundle Optimization | JS dedup sibling | Distinct from HTML dedup |
 

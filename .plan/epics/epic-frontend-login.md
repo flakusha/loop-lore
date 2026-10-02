@@ -37,13 +37,13 @@ _TBD — create implementation tickets._
 | ------ | ---------------- | -------- |
 | Auth & Access | Login routes + session/token model | `src/routes/auth/` |
 | Encryption UI | Key unlock / passphrase surface | Session-bound key material (see `matrix-frontend-backend-integration.md` FB3) |
-| Age Gate | Entry verification gate | Pre-auth or per-session (see FB13) |
+| Age Gate | Entry verification gate | Pre-auth or per-session |
 
 ### Systems That Depend On This Epic
 
 | System | What It Consumes | How Used |
 | ------ | ---------------- | -------- |
-| Admin Panel | Session identity | Revoke/reset/disable actions (see FB10) |
+| Admin Panel | Session identity | Revoke/reset/disable actions |
 | Encryption UI | Authenticated session | Unlock key material |
 
 ### Shared Data Contracts

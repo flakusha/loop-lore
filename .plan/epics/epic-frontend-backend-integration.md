@@ -172,7 +172,7 @@ Each phase follows the pattern:
 
 | System | What It Provides | How Used |
 | ------ | ---------------- | -------- |
-| FE-BE Harmonization | Static `feFetch` ↔ route/schema contract index | Proves this epic's "no broken wiring" acceptance (see `matrix-frontend-backend-integration.md` FB1) |
+| FE-BE Harmonization | Static `feFetch` ↔ route/schema contract index | Proves this epic's "no broken wiring" acceptance |
 | Frontend Components | Shared composer/partial building blocks | Reused by each newly wired subsystem screen |
 
 ### Systems That Depend On This Epic

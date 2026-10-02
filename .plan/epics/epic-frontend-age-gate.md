@@ -35,7 +35,7 @@ _TBD — create implementation tickets._
 
 | System | What It Provides | How Used |
 | ------ | ---------------- | -------- |
-| Login & Authentication UI | Entry flow | Age verification ordering (see `matrix-frontend-backend-integration.md` FB13) |
+| Login & Authentication UI | Entry flow | Age verification ordering |
 | NSFW Gate middleware | Content gating | `src/middleware/nsfw-gate/index.ts` |
 
 ### Systems That Depend On This Epic

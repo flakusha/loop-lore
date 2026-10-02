@@ -24,4 +24,4 @@
 **Tags:** gate, refusal, kind, soft-refuse, hard-block, narration, system, integration
 **Related:** epic-immersion-consistency-gate.md, epic-narration-actor-separation.md, matrix-story-coherence.md:33, TASK-turn-skip-gate-interlock, TASK-sc1-perspective-gate-bypass, TASK-sc2-narrator-mode-kind-stamp
 
-git issue: 51313c4
+**Git Issue:** 51313c4
