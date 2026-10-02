@@ -9122,11 +9122,19 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-integration-config-surface-schemas-example-toml-env-map.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-real-llm-sd-e2e-fixture-llama-cpp-llama-swap-sd-server.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-enabled-config-flag-never-read.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/integrations-architecture.md"
     }
   ],
   "src/config/schema-class/frontend.ts": [
@@ -9635,6 +9643,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-2026-irc-group-chat-integration.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-integration-config-surface-schemas-example-toml-env-map.md"
     }
   ],
   "src/config/sections/items/defaults.ts": [
@@ -9771,6 +9783,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-workflow-engine-schema-loader-template-types-workflow-discov.md"
+    }
+  ],
+  "src/config/sections/transport.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/integrations-architecture.md"
     }
   ],
   "src/config/sections/tui.ts": [
@@ -14602,6 +14620,10 @@
     },
     {
       "kind": "spec",
+      "source": "docs/spec/integrations-architecture.md"
+    },
+    {
+      "kind": "spec",
       "source": "docs/spec/openapi-reference.md"
     }
   ],
@@ -14715,6 +14737,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-integrations-shared-seams-encryptionprovider-messagebridge-b.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/integrations-architecture.md"
     }
   ],
   "src/federation/gossip.test.ts": [
@@ -14745,6 +14771,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-instance-switching-backend-instances-handles-actor-map.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/integrations-architecture.md"
     }
   ],
   "src/federation/instances.ts": [
@@ -22123,6 +22153,10 @@
     {
       "kind": "frontend",
       "source": "docs/frontend/chat/overview.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/integrations-architecture.md"
     }
   ],
   "src/hash/record-hash.test.ts": [
@@ -22441,6 +22475,12 @@
       "source": ".plan/tickets/FEAT-byok-local-models.md"
     }
   ],
+  "src/integrations/activitypub/adapter.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/federation-messenger-channels.md"
+    }
+  ],
   "src/integrations/adapter.test.ts": [
     {
       "kind": "ticket",
@@ -22495,6 +22535,20 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-reconcile-social-hub-notifications-block-with-protocoladapte.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/federation-messenger-channels.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/integrations-architecture.md"
+    }
+  ],
+  "src/integrations/bridge-daemon.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-bridge-daemon-adoption-matterbridge-slidge-mautrix-biboumi-e.md"
     }
   ],
   "src/integrations/bridge.ts": [
@@ -22504,17 +22558,37 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-adapter-health-monitoring-and-per-protocol-rate-limiting.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-integration-infrastructure.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-integrations-shared-seams-encryptionprovider-messagebridge-b.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/integrations-architecture.md"
     }
   ],
   "src/integrations/capabilities.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-matrix-auth-channel-ac3-capability-registry-naming.md"
+    }
+  ],
+  "src/integrations/discord/adapter.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/federation-messenger-channels.md"
+    }
+  ],
+  "src/integrations/email/adapter.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/federation-email-channel.md"
     }
   ],
   "src/integrations/email/auth.ts": [
@@ -22533,6 +22607,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-email-integration.md"
+    }
+  ],
+  "src/integrations/email/deliverability.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-email-deliverability-spf-dkim-dmarc-and-inbound-spam-gate.md"
+    }
+  ],
+  "src/integrations/email/encryption.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/federation-email-channel.md"
     }
   ],
   "src/integrations/email/imap.ts": [
@@ -22559,6 +22645,12 @@
       "source": ".plan/tickets/TASK-email-integration.md"
     }
   ],
+  "src/integrations/email/spam-gate.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-email-deliverability-spf-dkim-dmarc-and-inbound-spam-gate.md"
+    }
+  ],
   "src/integrations/encryption.ts": [
     {
       "kind": "epic",
@@ -22567,6 +22659,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-integrations-shared-seams-encryptionprovider-messagebridge-b.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/integrations-architecture.md"
     }
   ],
   "src/integrations/encryption/matrix.ts": [
@@ -22591,6 +22687,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-integration-infrastructure.md"
+    }
+  ],
+  "src/integrations/health.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-adapter-health-monitoring-and-per-protocol-rate-limiting.md"
     }
   ],
   "src/integrations/im/adapter.ts": [
@@ -22635,6 +22737,18 @@
       "source": ".plan/tickets/TASK-im-abstraction-layer.md"
     }
   ],
+  "src/integrations/irc/adapter.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/federation-messenger-channels.md"
+    }
+  ],
+  "src/integrations/matrix/adapter.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/federation-messenger-channels.md"
+    }
+  ],
   "src/integrations/matrix/auth.ts": [
     {
       "kind": "ticket",
@@ -22677,6 +22791,12 @@
       "source": ".plan/tickets/TASK-integration-infrastructure.md"
     }
   ],
+  "src/integrations/nostr/adapter.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/federation-messenger-channels.md"
+    }
+  ],
   "src/integrations/protocols/adapter.ts": [
     {
       "kind": "epic",
@@ -22697,6 +22817,24 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-integration-infrastructure.md"
+    }
+  ],
+  "src/integrations/secrets.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-adapter-secret-storage-encrypted-credential-envelope.md"
+    }
+  ],
+  "src/integrations/telegram/adapter.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/federation-messenger-channels.md"
+    }
+  ],
+  "src/integrations/xmpp/adapter.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/federation-messenger-channels.md"
     }
   ],
   "src/integrations/xmpp/auth.ts": [
@@ -25194,6 +25332,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-plugin-host-contract-for-third-party-integration-plugins.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-plugin-management-api.md"
     }
   ],
@@ -25348,7 +25490,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-plugin-host-contract-for-third-party-integration-plugins.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-plugin-management-api.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/integrations-architecture.md"
     }
   ],
   "src/polls/index.ts": [
@@ -28641,6 +28791,14 @@
     {
       "kind": "spec",
       "source": "docs/spec/federation-build-identity-hash.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/federation-messenger-channels.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/integrations-architecture.md"
     }
   ],
   "src/routes/gallery-search.test.ts": [
@@ -29055,6 +29213,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-prompt-lorebook-marketplace-community-shared.md"
+    }
+  ],
+  "src/routes/matrix.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/federation-messenger-channels.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/integrations-architecture.md"
     }
   ],
   "src/routes/memory/knowledge-graph.ts": [
@@ -31057,6 +31225,24 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-035.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-integrations-inbound-webhook-ingestion-endpoint.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/integrations-architecture.md"
+    }
+  ],
+  "src/routes/v1/integrations-surface.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-integrations-inbound-webhook-ingestion-endpoint.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/integrations-architecture.md"
     }
   ],
   "src/routes/v1/openapi.ts": [

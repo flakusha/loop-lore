@@ -11654,7 +11654,7 @@
     "type": "EPIC"
   },
   "EPIC-PROJECT-SPACES-PM-INTEGRATION": {
-    "hash": "pending",
+    "hash": "1b4c1bc",
     "extid": "EPIC-PROJECT-SPACES-PM-INTEGRATION",
     "type": "EPIC",
     "title": "Project Spaces — World-Like Business Project Isolation + Cross-Space Linking",
@@ -11671,8 +11671,9 @@
       "memory",
       "linking"
     ],
-    "source": ".plan/tickets/epic-project-spaces-pm-integration.md",
-    "status": "Not Started"
+    "source": ".plan/epics/epic-project-spaces-pm-integration.md",
+    "status": "Not Started",
+    "git_issue": "1b4c1bc"
   },
   "EPIC-PROMPT-IMPROVEMENT": {
     "epic": "",
@@ -18209,6 +18210,32 @@
     "title": "Actors — SillyTavern Import + V2 Export",
     "type": "TASK"
   },
+  "TASK-ADAPTER-HEALTH-MONITORING-AND-PER-PROTOCOL-RATE-LIMITING": {
+    "hash": "fe24ae2",
+    "git_issue": "fe24ae2",
+    "extid": "TASK-ADAPTER-HEALTH-MONITORING-AND-PER-PROTOCOL-RATE-LIMITING",
+    "type": "TASK",
+    "title": "Adapter health monitoring and per-protocol rate limiting",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-integrations-core",
+    "tags": [],
+    "source": ".plan/tickets/TASK-adapter-health-monitoring-and-per-protocol-rate-limiting.md",
+    "status": "Not Started"
+  },
+  "TASK-ADAPTER-SECRET-STORAGE-ENCRYPTED-CREDENTIAL-ENVELOPE": {
+    "hash": "0b3db58",
+    "git_issue": "0b3db58",
+    "extid": "TASK-ADAPTER-SECRET-STORAGE-ENCRYPTED-CREDENTIAL-ENVELOPE",
+    "type": "TASK",
+    "title": "Adapter secret storage: encrypted credential envelope",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-integrations-core",
+    "tags": [],
+    "source": ".plan/tickets/TASK-adapter-secret-storage-encrypted-credential-envelope.md",
+    "status": "Not Started"
+  },
   "TASK-ADAPTIVE-AUDIO": {
     "epic": "",
     "extid": "TASK-ADAPTIVE-AUDIO",
@@ -22142,6 +22169,19 @@
     "tags": [],
     "title": "Branch Workflow — dev → stg → master",
     "type": "TASK"
+  },
+  "TASK-BRIDGE-DAEMON-ADOPTION-MATTERBRIDGE-SLIDGE-MAUTRIX-BIBOUMI-E": {
+    "hash": "5c045da",
+    "git_issue": "5c045da",
+    "extid": "TASK-BRIDGE-DAEMON-ADOPTION-MATTERBRIDGE-SLIDGE-MAUTRIX-BIBOUMI-E",
+    "type": "TASK",
+    "title": "Bridge daemon adoption: Matterbridge/slidge/mautrix/biboumi evaluation",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-federation-swarm-sync",
+    "tags": [],
+    "source": ".plan/tickets/TASK-bridge-daemon-adoption-matterbridge-slidge-mautrix-biboumi-e.md",
+    "status": "Not Started"
   },
   "TASK-BROWSER-CHATFLOW-UPLOAD-DEFERRED": {
     "epic": "epic-testing-qa",
@@ -27427,6 +27467,19 @@
     "title": "Effect v4 scoped concurrency and interruption spike",
     "type": "TASK"
   },
+  "TASK-EMAIL-DELIVERABILITY-SPF-DKIM-DMARC-AND-INBOUND-SPAM-GATE": {
+    "hash": "89f510b",
+    "git_issue": "89f510b",
+    "extid": "TASK-EMAIL-DELIVERABILITY-SPF-DKIM-DMARC-AND-INBOUND-SPAM-GATE",
+    "type": "TASK",
+    "title": "Email deliverability (SPF/DKIM/DMARC) and inbound spam gate",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-email-integration",
+    "tags": [],
+    "source": ".plan/tickets/TASK-email-deliverability-spf-dkim-dmarc-and-inbound-spam-gate.md",
+    "status": "Not Started"
+  },
   "TASK-EMAIL-DEPS-AS-OPT-IN-LAZY-IMPORT-NODEMAILER-IMAPFLOW-OPENPGP": {
     "hash": "e0155d5",
     "git_issue": "e0155d5",
@@ -31119,6 +31172,19 @@
     "source": ".plan/tickets/TASK-instance-switching-backend-instances-handles-actor-map.md",
     "status": "Not Started"
   },
+  "TASK-INTEGRATION-CONFIG-SURFACE-SCHEMAS-EXAMPLE-TOML-ENV-MAP": {
+    "hash": "60115d0",
+    "git_issue": "60115d0",
+    "extid": "TASK-INTEGRATION-CONFIG-SURFACE-SCHEMAS-EXAMPLE-TOML-ENV-MAP",
+    "type": "TASK",
+    "title": "Integration config surface: schemas, example toml, env map",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-integrations-core",
+    "tags": [],
+    "source": ".plan/tickets/TASK-integration-config-surface-schemas-example-toml-env-map.md",
+    "status": "Not Started"
+  },
   "TASK-INTEGRATION-INFRASTRUCTURE": {
     "epic": "epic-communications-integrations.md",
     "extid": "TASK-INTEGRATION-INFRASTRUCTURE",
@@ -31131,6 +31197,19 @@
     "tags": [],
     "title": "Integration Infrastructure",
     "type": "TASK"
+  },
+  "TASK-INTEGRATIONS-INBOUND-WEBHOOK-INGESTION-ENDPOINT": {
+    "hash": "9d39ebf",
+    "git_issue": "9d39ebf",
+    "extid": "TASK-INTEGRATIONS-INBOUND-WEBHOOK-INGESTION-ENDPOINT",
+    "type": "TASK",
+    "title": "Integrations inbound webhook ingestion endpoint",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-integrations-core",
+    "tags": [],
+    "source": ".plan/tickets/TASK-integrations-inbound-webhook-ingestion-endpoint.md",
+    "status": "Not Started"
   },
   "TASK-INTEGRATIONS-SHARED-SEAMS-ENCRYPTIONPROVIDER-MESSAGEBRIDGE-B": {
     "hash": "2dbd2f3",
@@ -35943,6 +36022,19 @@
     "tags": [],
     "title": "Plugin Hook System",
     "type": "TASK"
+  },
+  "TASK-PLUGIN-HOST-CONTRACT-FOR-THIRD-PARTY-INTEGRATION-PLUGINS": {
+    "hash": "b6c1411",
+    "git_issue": "b6c1411",
+    "extid": "TASK-PLUGIN-HOST-CONTRACT-FOR-THIRD-PARTY-INTEGRATION-PLUGINS",
+    "type": "TASK",
+    "title": "Plugin-host contract for third-party integration plugins",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-plugin-extension-points",
+    "tags": [],
+    "source": ".plan/tickets/TASK-plugin-host-contract-for-third-party-integration-plugins.md",
+    "status": "Not Started"
   },
   "TASK-PLUGIN-MANAGEMENT-API": {
     "epic": "epic-provider-plugin-ecosystem",

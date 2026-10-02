@@ -171,6 +171,7 @@ Out of scope (owned by other epics): Matrix/XMPP/Email core adapters, Tor/I2P hi
 - `FEAT-swarm-mode-reconciliation`
 - `FEAT-radicle-integration`
 - `FEAT-messaging-bridge-extensions`
+- `TASK-bridge-daemon-adoption-matterbridge-slidge-mautrix-biboumi-e` — external bridge daemon evaluation (matterbridge/slidge/mautrix/biboumi) as alternative to native adapters (docs/spec/federation-messenger-channels.md §9)
 
 
 ## Protocol → Chat / Group-Chat / Blog Mapping (2026-08-25)

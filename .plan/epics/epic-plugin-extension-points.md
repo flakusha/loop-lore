@@ -41,3 +41,7 @@ Wire up registered-but-unwired plugin extension points. The plugin system has ty
 
 - Plugin system types (`src/plugins/types.ts`)
 - Plugin registry (`src/plugins/registry.ts`)
+
+## Linked Tasks (2026-10-02 research pass)
+
+- `TASK-plugin-host-contract-for-third-party-integration-plugins` — extends this epic's wiring for integration plugins: declared capabilities (adapter, webhook-receiver), granted scopes (channels), egress allowlist, secret-access tokens, background timers, ui-components route (docs/spec/integrations-architecture.md §9)

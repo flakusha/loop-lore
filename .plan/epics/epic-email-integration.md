@@ -88,3 +88,10 @@ Unlike chat protocols, email encryption is opportunistic: messages are stored un
 ## Related Epics
 
 - `epic-auth-channel-provisioning.md` — the SMTP send slice (`EmailAdapter`) unblocks e-mail OTP login/unlock factors (work item F5; see `matrix-authentication-channels.md` AC6). Address-change re-verification semantics are defined there.
+
+## Linked Tasks (2026-10-02 research pass)
+
+- `TASK-email-integration` — IMAP/SMTP/PGP adapter (this epic's core)
+- `TASK-email-deps-as-opt-in-lazy-import-nodemailer-imapflow-openpgp` — lazy dependency loading
+- `TASK-email-deliverability-spf-dkim-dmarc-and-inbound-spam-gate` — deliverability + spam gate (docs/spec/federation-email-channel.md §7)
+- `TASK-integration-config-surface-schemas-example-toml-env-map` — email config keys (docs/spec/integrations-architecture.md §8)
