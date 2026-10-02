@@ -296,8 +296,8 @@ describe("quest routes", () => {
 
     const all = await authed.handle(new Request(`http://localhost/api/worlds/${WORLD_ID}/quests`,),);
     const allBody = await all.json() as QuestList;
-    expect(allBody.data.some((quest,) => quest.status === "completed",),).toBe(true,);
-    expect(allBody.data.some((quest,) => quest.status === "failed",),).toBe(true,);
+    expect(allBody.data.some((quest,) => quest.status === "completed"),).toBe(true,);
+    expect(allBody.data.some((quest,) => quest.status === "failed"),).toBe(true,);
 
     const failed = await authed.handle(
       new Request(`http://localhost/api/worlds/${WORLD_ID}/quests?status=failed`,),

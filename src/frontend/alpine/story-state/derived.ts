@@ -138,9 +138,9 @@ export function questMilestones(quest: StoryQuest,): QuestMilestone[] {
 export function questRewardChips(quest: StoryQuest,): string[] {
   const rewards = jsonParseOr<QuestRewardShape>(quest.rewards ?? "{}", {},);
   const chips: string[] = [];
-  if (typeof rewards.xp === "number" && rewards.xp > 0) { chips.push(`+${rewards.xp} XP`); }
+  if (typeof rewards.xp === "number" && rewards.xp > 0) { chips.push(`+${rewards.xp} XP`,); }
   for (const item of rewards.items ?? []) {
-    chips.push(`${item.itemId} \u00d7${item.quantity}`);
+    chips.push(`${item.itemId} \u00d7${item.quantity}`,);
   }
   return chips;
 }

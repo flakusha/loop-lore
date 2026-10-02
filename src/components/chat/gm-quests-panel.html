@@ -47,7 +47,8 @@
                 class="gm-quest-milestone"
                 :class="milestone.progress <= quest.progress ? 'is-reached' : ''"
                 x-text="milestone.narrative"
-              ></li>
+              >
+              </li>
             </template>
           </ul>
           <div class="gm-quest-rewards" x-show="questRewardChips(quest).length > 0">
