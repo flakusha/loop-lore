@@ -27,7 +27,7 @@ Build/type/lint/test/format + code-generated artifacts + correctness gates:
 | `package.json` script | today | pilot (try 1) | phase 2 |
 |---|---|---|---|
 | `plan:sync` / `plan:sync:fix` | `giwt sync [--fix]` | `giwt sync [--fix]` | done (try-5: script + test + lib deleted, worktree `sync` shims to giwt) |
-| `plan:backlog:sync*` | `giwt plan backlog-sync [--fix]` | stays (try 1) | done (try-7: script deleted) |
+| `plan:backlog:sync*` | `giwt backlog sync [--fix]` | stays (try 1) | done (try-7: script deleted; re-pointed in try-9 — the `giwt plan backlog-sync` subcommand named here never existed) |
 | `plan:docs` | `giwt plan gen-docs [--check]` | stays (try 1) | done (try-7: script deleted) |
 | `plan:map*`, `plan:find` | `giwt plan code-map [--check \| --find <path>]` | stays (try 1) | done (try-7: script deleted; `extractSrcRefs` + `stripMarkdownCode` + `SRC_REF_RE` dropped from `scripts/lib/src-refs.ts`) |
 | worktree ops (`scripts/worktree/`) | local CLI | stays (try 1) | **not a shim** — a full duplicate implementation; retirement is a migration, tracked by the fork-retirement ticket (see try-8) |
@@ -118,7 +118,11 @@ implementation detail that callers stop invoking directly.
 ## Try-7 plan tooling (`giwt plan`)
 
 - Bumped giwt pin from `fe463f4` → `c53ffb5` (master HEAD). Adds `giwt plan <subcommand>`:
-  - `backlog-sync [--fix]` — replaces `scripts/sync-backlog-index.ts`
+  - `backlog-sync [--fix]` — replaces `scripts/sync-backlog-index.ts`.
+    **Correction (try-9):** `giwt plan backlog-sync` does not exist at the
+    current pin (`unknown plan subcommand 'backlog-sync'`); backlog
+    reconciliation lives under the top-level `giwt backlog sync`. The lines
+    below record what try-7 wired, not what resolves today.
   - `code-map [--check | --find <path> | --stale]` — replaces `scripts/plan-code-map.ts`
   - `gen-docs [--check]` — replaces `scripts/gen-plan-docs.ts`
   - `check-links` — new (markdown link + TASK ref validator)
