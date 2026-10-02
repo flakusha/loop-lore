@@ -35,7 +35,7 @@ _TBD — create implementation tickets._
 
 | System | What It Provides | How Used |
 | ------ | ---------------- | -------- |
-| Frontend Components | Overlay stack + UI store | Toasts/overlays (see `matrix-frontend-backend-integration.md` FB7) |
+| Frontend Components | Overlay stack + UI store | Toasts/overlays (see `matrix-frontend-backend-integration.md` FB10) |
 | Auth Channel Provisioning | Channel fan-out | In-app channel (per `matrix-authentication-channels.md` AC9) |
 
 ### Systems That Depend On This Epic

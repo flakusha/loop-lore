@@ -35,7 +35,7 @@ _TBD — create implementation tickets._
 
 | System | What It Provides | How Used |
 | ------ | ---------------- | -------- |
-| Routing | Route table + active route | Nav highlighting, breadcrumbs (see `matrix-frontend-backend-integration.md` FB5) |
+| Routing | Route table + active route | Nav highlighting, breadcrumbs |
 | Frontend Components | Header/nav markup | `src/components/header.html` |
 
 ### Systems That Depend On This Epic
