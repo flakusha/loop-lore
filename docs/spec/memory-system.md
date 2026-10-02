@@ -14,7 +14,7 @@
 
 ## Not implemented / aspirational
 
-- `src/generation/context-compressor.ts` — still absent.
+- `src/generation/context-compressor/` — `strategies.ts` implements `truncateStrategy` + `slidingStrategy`; config-driven lifecycle (YAML `memory:` block) remains aspirational.
 - Config-driven lifecycle (the YAML `memory:` block: maxAgeDays, confidenceThreshold, decay, consolidation) — design only.
 - Forgetting curves, consolidation, interference resolution; emotional/social/creative memory types; memory replay, memory-informed fine-tuning, cross-agent sharing, visualization tools.
 - Asset-backed polymorphic storage (memories as `assets` rows) — superseded by the `actor_memories` table design.

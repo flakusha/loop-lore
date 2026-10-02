@@ -6,7 +6,7 @@
 # SPEC: Federation Defederation Admin Operations — Implementation
 
 **Companion to:** `TASK-federation-defederation-admin-operations-peer-state-block-al.md`
-**Status:** ready for implementation
+**Status:** design spec — `src/federation/defederation/` is aspirational.
 **Author:** research synthesis, 2026-09-24
 **Research basis:** `/.tmp/fed-research/topic-2-defederation.md`
 

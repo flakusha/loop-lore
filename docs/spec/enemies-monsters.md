@@ -15,6 +15,7 @@
 - Dice: `src/rpg/service/dice-roll.ts` canonical roller; `src/rpg/dice/` notation parsing.
 - World opt-in: `src/rpg/service/world-gate.ts` (`worlds.rpg_enabled`).
 - Quest-driven encounters: `src/story/quest-engine/` (see `docs/spec/quests-encounters.md`).
+> ⚠️ **GAP:** Encounter→battle integration is **not wired**. `EncounterService` exists (`src/rpg/encounters/service/`); battle engine exists (`src/battle/`, `src/routes/battle/`); no route or state machine connects them (zero grep hits for encounter→battle wiring; only a stub JSDoc in `src/battle/npc-integration/memory.ts`).
 
 ## Not implemented / aspirational
 

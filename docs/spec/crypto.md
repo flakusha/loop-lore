@@ -5,7 +5,7 @@
 
 # Server-Side Crypto Architecture
 
-Status: Core built. Key management UI pending.
+Status: Core built.
 Source: `src/crypto/` (SMK, actor keys, chat keys, pipeline, BYOK, at-rest).
 
 Encryption model: chats use `public`/`standard`/`at-rest` tiers. See `docs/frontend/encryption.md`.
@@ -99,9 +99,6 @@ AES-256-GCM for API key encryption at rest. PBKDF2 from config secret (100k iter
 
 ### Medium Priority
 
-- [ ] **Key management UI** (`/settings/keys`) — routes exist, Alpine.js component + HTML template needed.
-- [ ] **Asset encryption** — wire `encryptAtRest`/`decryptAtRest` into `src/assets/service.ts`.
-- [ ] **Browser pre-encrypt integration** — wire `src/frontend/browser.ts` into chat UI with feature detection + fallbacks.
 - [ ] **Time-based access expiry** — `access_duration_days` column, expiry check on key retrieval.
 
 ### Low Priority
@@ -124,6 +121,9 @@ AES-256-GCM for API key encryption at rest. PBKDF2 from config secret (100k iter
 - [x] Key management routes (`src/routes/key-management.ts`)
 - [x] Chat key endpoint (`src/routes/message-encryption.ts`)
 - [x] Auth route actor key creation (`src/routes/auth.ts`)
+- [x] Key management UI (`src/routes/key-management.ts`)
+- [x] Asset encryption (`src/assets/service/create.ts` + `src/crypto/asset-encryption.ts`)
+- [x] Browser pre-encrypt (`src/frontend/alpine/chat-send.ts` + `src/frontend/browser.ts`)
 
 ---
 
