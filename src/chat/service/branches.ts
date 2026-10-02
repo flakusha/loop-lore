@@ -84,11 +84,11 @@ export async function forkBranch(
     .select(["id", "chat_id",],)
     .where("id", "=", messageId,)
     .executeTakeFirst();
-
   if (!message || message.chat_id !== chatId) {
     return { code: "not_found", message: "Fork point message not found in chat", };
   }
 
+// hint: Logic changed on both sides. Requires understanding intent of each change.
   const branchId = crypto.randomUUID();
   const inserted = await insertForkRow(db, { chatId, branchId, parentMessageId: messageId, name: params.name, },);
   if ("code" in inserted) { return inserted; }
