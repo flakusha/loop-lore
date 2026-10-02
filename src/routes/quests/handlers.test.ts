@@ -163,13 +163,13 @@ describe("quest handlers", () => {
         id: "quest-6" as never,
         status: "active" as never,
         progress: 4 as never,
-        rewards: JSON.stringify({ xp: 100, items: [{ itemId: "gem", quantity: 2 }], },),
-        narrative_hooks: JSON.stringify([{ progress: 5, narrative: "Halfway there" }],),
+        rewards: JSON.stringify({ xp: 100, items: [{ itemId: "gem", quantity: 2, },], },),
+        narrative_hooks: JSON.stringify([{ progress: 5, narrative: "Halfway there", },],),
       },);
       const res = await handleListQuests(db, "world-1", 1, 10, "owner", "user",);
       const body = await jsonOf(res,);
       type Row = { id: string; target: number; progress: number; rewards: string; narrative_hooks: string };
-      const quest = (body.data as Row[]).find(q => q.id === "quest-6",)!;
+      const quest = (body.data as Row[]).find(q => q.id === "quest-6")!;
       expect(quest.target,).toBe(10,);
       expect(quest.progress,).toBe(4,);
       expect((JSON.parse(quest.rewards,) as { xp: number }).xp,).toBe(100,);

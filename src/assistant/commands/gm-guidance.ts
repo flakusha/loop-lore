@@ -180,7 +180,7 @@ registerCommand("scene", async (args, ctx,): Promise<CommandResult> => {
   if (!("db" in target)) { return target; }
   const scene = args.join(" ",).trim();
   if (scene.length === 0) { return message("Usage: `/scene <description>`",); }
-  return await saveGuidance(target, { sceneDescription: scene, }, `**GM guidance:** scene set — ${scene}`);
+  return await saveGuidance(target, { sceneDescription: scene, }, `**GM guidance:** scene set — ${scene}`,);
 },);
 
 registerCommand("target", async (args, ctx,): Promise<CommandResult> => {
@@ -188,7 +188,7 @@ registerCommand("target", async (args, ctx,): Promise<CommandResult> => {
   if (!("db" in target)) { return target; }
   const character = args.join(" ",).trim();
   if (character.length === 0) { return message("Usage: `/target <character>`",); }
-  return await saveGuidance(target, { targetCharacter: character, }, `**GM guidance:** targeting ${character}.`);
+  return await saveGuidance(target, { targetCharacter: character, }, `**GM guidance:** targeting ${character}.`,);
 },);
 
 registerCommand("priority", async (args, ctx,): Promise<CommandResult> => {

@@ -67,8 +67,8 @@ describeOrSkip("storyState", () => {
       const quest = {
         progress: 4,
         narrative_hooks: JSON.stringify([
-          { progress: 5, narrative: "Halfway there" },
-          { progress: "6", narrative: "bad" },
+          { progress: 5, narrative: "Halfway there", },
+          { progress: "6", narrative: "bad", },
         ],),
       } as never;
       expect(s.questMilestones(quest,),).toEqual([{ progress: 5, narrative: "Halfway there", },],);
@@ -79,7 +79,7 @@ describeOrSkip("storyState", () => {
       const s = makeState();
       const quest = {
         progress: 0,
-        rewards: JSON.stringify({ xp: 100, items: [{ itemId: "gem", quantity: 2 }], }),
+        rewards: JSON.stringify({ xp: 100, items: [{ itemId: "gem", quantity: 2, },], },),
       } as never;
       expect(s.questRewardChips(quest,),).toEqual(["+100 XP", "gem ×2",],);
       expect(s.questRewardChips({ progress: 0, } as never,),).toEqual([],);
