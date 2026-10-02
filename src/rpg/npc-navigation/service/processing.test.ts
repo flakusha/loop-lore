@@ -98,12 +98,10 @@ describe("processMovementTick", () => {
       id: actorId,
       actor_type: "character",
     },);
-
     await insertNpcStates(db, actorId, worldId, {
       location_id: loc,
       schedule: "not valid json {{{",
     },);
-
     const results = await processMovementTick(db, worldId,);
     expect(results,).toEqual([],);
   });
@@ -117,7 +115,6 @@ describe("processMovementTick", () => {
       patrolRoute: [locA, locB,],
       patrolIndex: 0,
     },);
-
     const results = await processMovementTick(db, worldId,);
     expect(results,).toHaveLength(1,);
     expect(results[0]!.actorId,).toBe(actorId,);
@@ -156,7 +153,6 @@ describe("processMovementTick", () => {
     const actorId = await makeNpc(worldId, loc, {
       movementPattern: MovementPattern.Wander,
     },);
-
     const results = await processMovementTick(db, worldId,);
     expect(results,).toHaveLength(1,);
     expect(results[0]!.actorId,).toBe(actorId,);
@@ -166,6 +162,71 @@ describe("processMovementTick", () => {
     expect(results[0]!.toLocationId,).not.toBe(loc,);
   });
 
+  test("injected rng pins the wander destination — the draw is not global", async () => {
+    const { worldId, } = await makeWorld("rng-a",);
+    const loc = await makeLocation(worldId, "crossroads",);
+    await makeLocation(worldId, "forest",);
+    await makeLocation(worldId, "village",);
+    const actorId = await makeNpc(worldId, loc, {
+      movementPattern: MovementPattern.Wander,
+    },);
+
+    // rng()===0 always selects connection index 0, so two runs from
+    // the same starting location must agree. A reintroduced
+    // Math.random() draw in a leaf would break this.
+    const first = await processMovementTick(db, worldId, { rng: () => 0, },);
+    expect(first,).toHaveLength(1,);
+
+    await db.updateTable("npc_states",).set({ location_id: loc, },)
+      .where("actor_id", "=", actorId,)
+      .where("world_id", "=", worldId,)
+      .execute();
+    const second = await processMovementTick(db, worldId, { rng: () => 0, },);
+
+    expect(second[0]!.toLocationId,).toBe(first[0]!.toLocationId,);
+  });
+
+  test("injected rng selects a different destination when the draw differs", async () => {
+    const { worldId, } = await makeWorld("rng-b",);
+    const loc = await makeLocation(worldId, "crossroads",);
+    await makeLocation(worldId, "forest",);
+    await makeLocation(worldId, "village",);
+    const actorId = await makeNpc(worldId, loc, {
+      movementPattern: MovementPattern.Wander,
+    },);
+
+    const low = await processMovementTick(db, worldId, { rng: () => 0, },);
+    await db.updateTable("npc_states",).set({ location_id: loc, },)
+      .where("actor_id", "=", actorId,)
+      .where("world_id", "=", worldId,)
+      .execute();
+    const high = await processMovementTick(db, worldId, { rng: () => 0.99, },);
+
+    expect(high[0]!.toLocationId,).not.toBe(low[0]!.toLocationId,);
+  });
+
+  test("injected nowMs pins lastMovedAt for a pinned tick", async () => {
+    const { worldId, } = await makeWorld("now",);
+    const loc = await makeLocation(worldId, "gate",);
+    const actorId = await makeNpc(worldId, loc, {
+      movementPattern: MovementPattern.Wander,
+    },);
+    await makeLocation(worldId, "forest",);
+    const nowMs = 1_700_000_000_000;
+
+    await processMovementTick(db, worldId, { rng: () => 0, nowMs, },);
+
+    const row = await db
+      .selectFrom("npc_states",)
+      .where("actor_id", "=", actorId,)
+      .where("world_id", "=", worldId,)
+      .select(["schedule", "updated_at",],)
+      .executeTakeFirstOrThrow();
+    const schedule = JSON.parse(row.schedule,) as Record<string, unknown>;
+    expect(schedule.lastMovedAt,).toBe(new Date(nowMs).toISOString(),);
+    expect(row.updated_at,).toBe(new Date(nowMs).toISOString(),);
+  });
+
   test("follow NPC moves to target when target is at different location", async () => {
     const { worldId, } = await makeWorld("follow-success",);
     const locA = await makeLocation(worldId, "market",);
@@ -173,12 +234,10 @@ describe("processMovementTick", () => {
     const targetId = await makeNpc(worldId, locB, {
       movementPattern: MovementPattern.Stationary,
     },);
-
     const followerId = await makeNpc(worldId, locA, {
       movementPattern: MovementPattern.Follow,
       followTargetId: targetId,
     },);
-
     const results = await processMovementTick(db, worldId,);
     expect(results,).toHaveLength(1,);
     expect(results[0]!.actorId,).toBe(followerId,);
@@ -194,7 +253,6 @@ describe("processMovementTick", () => {
     await makeNpc(worldId, loc, {
       movementPattern: MovementPattern.Follow,
     },);
-
     const results = await processMovementTick(db, worldId,);
     expect(results,).toEqual([],);
   });
@@ -205,12 +263,10 @@ describe("processMovementTick", () => {
     const targetId = await makeNpc(worldId, loc, {
       movementPattern: MovementPattern.Stationary,
     },);
-
     await makeNpc(worldId, loc, {
       movementPattern: MovementPattern.Follow,
       followTargetId: targetId,
     },);
-
     const results = await processMovementTick(db, worldId,);
     expect(results,).toEqual([],);
   });
@@ -223,7 +279,6 @@ describe("processMovementTick", () => {
     const actorId = await makeNpc(worldId, loc, {
       movementPattern: MovementPattern.Flee,
     },);
-
     const results = await processMovementTick(db, worldId,);
     expect(results,).toHaveLength(1,);
     expect(results[0]!.actorId,).toBe(actorId,);

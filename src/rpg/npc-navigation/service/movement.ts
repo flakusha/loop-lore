@@ -84,6 +84,10 @@ export async function moveToLocation(
   const fromLocationId = state.currentLocationId;
 
   // Update location
+  // ponytail: clock is not pinned here. `moveToLocation` is reached
+  // only from the HTTP route (an explicit user command), never from
+  // processMovementTick, so it cannot affect tick reproducibility.
+  // Thread a nowMs through the route body if that ever changes.
   await updateMovementState(db, actorId, worldId, {
     currentLocationId: targetLocationId,
     lastMovedAt: new Date().toISOString(),
