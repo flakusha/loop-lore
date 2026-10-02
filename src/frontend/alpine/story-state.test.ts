@@ -56,6 +56,34 @@ describeOrSkip("storyState", () => {
       expect(s.questProgressPct({ progress: 49.6, } as never,),).toBe(50,);
     });
 
+    test("questProgressPct is a share of target when a target exists", () => {
+      const s = makeState();
+      expect(s.questProgressPct({ progress: 3, target: 10, } as never,),).toBe(30,);
+      expect(s.questProgressPct({ progress: 20, target: 10, } as never,),).toBe(100,);
+    });
+
+    test("questMilestones parses narrative hooks and drops malformed entries", () => {
+      const s = makeState();
+      const quest = {
+        progress: 4,
+        narrative_hooks: JSON.stringify([
+          { progress: 5, narrative: "Halfway there" },
+          { progress: "6", narrative: "bad" },
+        ],),
+      } as never;
+      expect(s.questMilestones(quest,),).toEqual([{ progress: 5, narrative: "Halfway there", },],);
+      expect(s.questMilestones({ progress: 0, } as never,),).toEqual([],);
+    });
+
+    test("questRewardChips lists xp and item rewards", () => {
+      const s = makeState();
+      const quest = {
+        progress: 0,
+        rewards: JSON.stringify({ xp: 100, items: [{ itemId: "gem", quantity: 2 }], }),
+      } as never;
+      expect(s.questRewardChips(quest,),).toEqual(["+100 XP", "gem ×2",],);
+      expect(s.questRewardChips({ progress: 0, } as never,),).toEqual([],);
+    });
     test("turnForMessage looks up by parent message id, null when absent", () => {
       const s = makeState();
       s.turnMeta["msg-1"] = { turnNumber: 3, qualityScore: 88, promptSent: "go", status: "completed", };

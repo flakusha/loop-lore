@@ -60,13 +60,11 @@ describe("quest handlers", () => {
     ) {
       await insertActors(db, name, { id: id as never, actor_type: "user" as never, },);
     }
-
     await insertWorlds(db, "owner", "Quest World", { id: "world-1" as never, },);
     await insertChats(db, "Quest Chat", "owner", {
       id: "chat-q" as never,
       world_id: "world-1",
     },);
-
     await insertChatParticipants(db, "chat-q", "owner",);
   },);
 
@@ -104,7 +102,6 @@ describe("quest handlers", () => {
         id: "quest-1" as never,
         status: "completed" as never,
       },);
-
       const owner = await checkQuestAccess(db, "quest-1", "owner", "user",);
       expect(owner!.world_id,).toBe("world-1",);
       expect(await checkQuestAccess(db, "quest-1", "admin", "admin",),).not.toBeNull();
@@ -121,33 +118,62 @@ describe("quest handlers", () => {
       expect(res.status,).toBe(404,);
     });
 
-    test("lists active quests with pagination", async () => {
+    test("lists non-abandoned quests (active/completed/failed) with pagination", async () => {
       await insertQuests(db, "world-1", "owner", "Quest A", "collection", 3, {
         id: "quest-2" as never,
         status: "active" as never,
         priority: 5 as never,
       },);
-
       await insertQuests(db, "world-1", "owner", "Quest B", "collection", 3, {
         id: "quest-3" as never,
         status: "active" as never,
         priority: 1 as never,
       },);
-
       await insertQuests(db, "world-1", "owner", "Quest C", "collection", 3, {
         id: "quest-4" as never,
         status: "completed" as never,
       },);
-
       const res = await handleListQuests(db, "world-1", 1, 10, "owner", "user",);
       const body = await jsonOf(res,);
-      expect(body.pagination!.total,).toBe(2,);
-      expect(body.data,).toHaveLength(2,);
+      // quest-1 (completed, seeded by the access tests) + Quest A/B/C.
+      expect(body.pagination!.total,).toBe(4,);
+      expect(body.data,).toHaveLength(4,);
       expect(body.pagination!.page,).toBe(1,);
       expect(body.pagination!.pageSize,).toBe(10,);
-      // highest priority first
+      // highest priority first, ahead of the zero-priority completed rows
       const names = (body.data as { name: string }[]).map(q => q.name);
-      expect(names,).toEqual(["Quest A", "Quest B",],);
+      expect(names.slice(0, 2,),).toEqual(["Quest A", "Quest B",],);
+      expect((body.data as { status: string }[]).map(q => q.status),).toContain("completed",);
+    });
+
+    test("filters to an explicit status", async () => {
+      const res = await handleListQuests(db, "world-1", 1, 10, "owner", "user", "completed",);
+      const body = await jsonOf(res,);
+      expect(body.pagination!.total,).toBe(2,);
+      expect((body.data as { status: string }[]).map(q => q.status),).toEqual(["completed", "completed",],);
+    });
+
+    test("rejects an invalid status", async () => {
+      const res = await handleListQuests(db, "world-1", 1, 10, "owner", "user", "bogus",);
+      expect(res.status,).toBe(400,);
+    });
+
+    test("payload carries progress/target, rewards and narrative hooks", async () => {
+      await insertQuests(db, "world-1", "owner", "Reward Quest", "collection", 10, {
+        id: "quest-6" as never,
+        status: "active" as never,
+        progress: 4 as never,
+        rewards: JSON.stringify({ xp: 100, items: [{ itemId: "gem", quantity: 2 }], },),
+        narrative_hooks: JSON.stringify([{ progress: 5, narrative: "Halfway there" }],),
+      },);
+      const res = await handleListQuests(db, "world-1", 1, 10, "owner", "user",);
+      const body = await jsonOf(res,);
+      type Row = { id: string; target: number; progress: number; rewards: string; narrative_hooks: string };
+      const quest = (body.data as Row[]).find(q => q.id === "quest-6",)!;
+      expect(quest.target,).toBe(10,);
+      expect(quest.progress,).toBe(4,);
+      expect((JSON.parse(quest.rewards,) as { xp: number }).xp,).toBe(100,);
+      expect((JSON.parse(quest.narrative_hooks,) as { narrative: string }[])[0]!.narrative,).toBe("Halfway there",);
     });
   });
 
@@ -168,7 +194,6 @@ describe("quest handlers", () => {
         type: "collection",
         target: 7,
       },);
-
       const body = await jsonOf(res,);
       expect(body.id,).toBeDefined();
       const row = await db.selectFrom("quests",).selectAll().where("id", "=", body.id as string,).executeTakeFirst();
@@ -195,7 +220,6 @@ describe("quest handlers", () => {
         priority: 9,
         rewards: { xp: 100, },
       },);
-
       const body = await jsonOf(res,);
       expect(body.name,).toBe("Renamed",);
       const row = await db.selectFrom("quests",).selectAll().where("id", "=", "quest-2",).executeTakeFirst();
@@ -248,7 +272,6 @@ describe("quest handlers", () => {
         id: "quest-5" as never,
         status: "active" as never,
       },);
-
       const res = await handleProgress(db, "quest-5", undefined, "owner", "user", { delta: 3, chatId: "chat-q", },);
       const body = await jsonOf(res,);
       expect(body.newProgress,).toBeGreaterThanOrEqual(3,);

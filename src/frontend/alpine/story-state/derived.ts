@@ -11,7 +11,14 @@
  */
 
 import { jsonParseOr, } from "../json";
-import type { QuestBanner, StoryParticipant, StoryQuest, StoryTurnMeta, StoryTurnRow, } from "./types";
+import type {
+  QuestBanner,
+  QuestMilestone,
+  StoryParticipant,
+  StoryQuest,
+  StoryTurnMeta,
+  StoryTurnRow,
+} from "./types";
 
 /** Participant row as returned by GET /api/v1/chats/:id/participants. */
 export interface ParticipantRow {
@@ -87,13 +94,56 @@ export function qualityClass(score: number,): string {
 
 /**
  * Quest progress clamped to 0..100.
+ *
+ * Percentage of `target` when one is present; falls back to the raw
+ * `progress` value for legacy rows without a target (progress is already a
+ * percentage in that shape).
  * @param quest
  * @returns {number}
  */
 export function questProgressPct(quest: StoryQuest,): number {
-  return Math.max(0, Math.min(100, Math.round(quest.progress,),),);
+  const pct = typeof quest.target === "number" && quest.target > 0
+    ? (quest.progress / quest.target) * 100
+    : quest.progress;
+  return Math.max(0, Math.min(100, Math.round(pct,),),);
 }
 
+/** Rewards JSON as stored on a quest row (`rewards` column). */
+interface QuestRewardShape {
+  xp?: number;
+  items?: { itemId: string; quantity: number }[];
+}
+
+/**
+ * Parse a quest's narrative-hook milestones (`narrative_hooks` JSON).
+ * @param quest
+ * @returns {QuestMilestone[]}
+ */
+export function questMilestones(quest: StoryQuest,): QuestMilestone[] {
+  const parsed = jsonParseOr<{ progress?: number; narrative?: string }[]>(quest.narrative_hooks ?? "[]", [],);
+  const milestones: QuestMilestone[] = [];
+  for (const entry of parsed) {
+    if (typeof entry.progress === "number" && typeof entry.narrative === "string") {
+      milestones.push({ progress: entry.progress, narrative: entry.narrative, },);
+    }
+  }
+  return milestones;
+}
+
+/**
+ * Human-readable reward chips from a quest's `rewards` JSON.
+ * @param quest
+ * @returns {string[]}
+ */
+export function questRewardChips(quest: StoryQuest,): string[] {
+  const rewards = jsonParseOr<QuestRewardShape>(quest.rewards ?? "{}", {},);
+  const chips: string[] = [];
+  if (typeof rewards.xp === "number" && rewards.xp > 0) { chips.push(`+${rewards.xp} XP`); }
+  for (const item of rewards.items ?? []) {
+    chips.push(`${item.itemId} \u00d7${item.quantity}`);
+  }
+  return chips;
+}
 /** Derived state from the latest story turn (or an empty default). */
 export interface TurnSummary {
   turnMeta: Record<string, StoryTurnMeta>;

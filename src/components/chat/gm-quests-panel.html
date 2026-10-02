@@ -8,15 +8,24 @@
 -->
 <div class="gm-quests-tab" data-testid="gm-quests-tab">
   <div class="gm-section">
-    <div class="gm-quests" x-show="quests.length > 0">
+    <div class="gm-quests" x-show="quests.length > 0" role="list">
       <template x-for="quest in quests" :key="quest.id">
-        <div class="gm-quest-row">
+        <div class="gm-quest-row" role="listitem">
           <div class="gm-quest-head">
             <span class="gm-quest-name" x-text="quest.name"></span>
-            <span class="gm-quest-pct" x-text="questProgressPct(quest) + '%'"></span>
+            <span
+              class="gm-quest-status"
+              :class="'is-' + quest.status"
+              x-text="t('story.questStatus.' + quest.status)"
+            ></span>
+            <span
+              class="gm-quest-pct"
+              x-text="quest.progress + '/' + (quest.target ?? '?') + ' · ' + questProgressPct(quest) + '%'"
+            ></span>
             <button
               class="btn-icon gm-quest-delete"
               :title="t('story.deleteQuest')"
+              :aria-label="t('story.deleteQuest')"
               @click="deleteQuest(quest.id)"
               :data-testid="'gm-quests-delete-' + quest.id"
             >
@@ -27,9 +36,25 @@
             <div
               class="gm-quest-bar-fill"
               :style="'width: ' + questProgressPct(quest) + '%'"
-              :class="quest.status === 'completed' ? 'is-complete' : ''"
+              :class="quest.status === 'completed' ? 'is-complete' : (quest.status === 'failed' ? 'is-failed' : '')"
             >
             </div>
+          </div>
+          <!-- Objectives/progress milestones from narrative_hooks (no dedicated objectives column exists). -->
+          <ul class="gm-quest-milestones" x-show="questMilestones(quest).length > 0">
+            <template x-for="milestone in questMilestones(quest)" :key="milestone.progress">
+              <li
+                class="gm-quest-milestone"
+                :class="milestone.progress <= quest.progress ? 'is-reached' : ''"
+                x-text="milestone.narrative"
+              ></li>
+            </template>
+          </ul>
+          <div class="gm-quest-rewards" x-show="questRewardChips(quest).length > 0">
+            <span class="gm-quest-rewards-label">{{{t("story.questRewards")}}}</span>
+            <template x-for="reward in questRewardChips(quest)" :key="reward">
+              <span class="gm-quest-reward-chip" x-text="reward"></span>
+            </template>
           </div>
         </div>
       </template>

@@ -30,6 +30,7 @@ export function questWorldRoutes({ database, }: { database: Kysely<DB> }, prefix
         Number(ctx.query?.pageSize,) || 20,
         userId,
         userRole,
+        typeof ctx.query?.status === "string" ? ctx.query.status : undefined,
       );
     }, {
       response: {
