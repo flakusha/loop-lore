@@ -40,7 +40,7 @@
 
 | System | What It Provides | How Used |
 | ------ | ---------------- | -------- |
-| Chat Commands | Shared trigger registry | `:` autocomplete in the composer (see `matrix-frontend-backend-integration.md` FB2) |
+| Chat Commands | Shared trigger registry | `:` autocomplete in the composer |
 | Frontend Components | Composer + message bubbles | `src/components/chat/input-area.html` |
 
 ### Systems That Depend On This Epic

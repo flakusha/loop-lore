@@ -23,4 +23,4 @@ scripts/check-fe-be-harmonization.ts scans only in-repo src/frontend/** plus src
 - [ ] The gate is wired into `bun run check` (advisory or blocking, matching the existing promote-to-blocking decision).
 - [ ] `bun run plan:validate` passes; `epic-headless-alternative-frontends.md` and `epic-fe-be-harmonization.md` cross-reference the external-client contract.
 
-git issue: 229d7a3
+**Git Issue:** 229d7a3
