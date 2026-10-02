@@ -48,12 +48,12 @@ function ok(id: string, order: string[],): TaskRunner {
 function boom(id: string, order: string[],): TaskRunner {
   return () => {
     order.push(id,);
-    return Promise.reject(new Error(`${id} exploded`,));
+    return Promise.reject(new Error(`${id} exploded`,),);
   };
 }
 
 /** Registry from id → runner, skipping absent entries. */
-function registry(...runners: [string, TaskRunner][]): TaskRegistry {
+function registry(...runners: [string, TaskRunner,][]): TaskRegistry {
   return new Map<string, TaskRunner>(runners,);
 }
 
@@ -80,19 +80,19 @@ describe("WorkflowDagEngine — hydrate from stored edges", () => {
     // Edges alone are enough to drive a pass, in dependency order.
     const order: string[] = [];
     const result = await second.runPass(
-      registry(["A", ok("A", order,)], ["B", ok("B", order,)], ["C", ok("C", order,)], ["D", ok("D", order,)],),
+      registry(["A", ok("A", order,),], ["B", ok("B", order,),], ["C", ok("C", order,),], ["D", ok("D", order,),],),
       T0,
       RNG,
     );
     expect(result.ran.toSorted(),).toEqual(["A", "B", "C", "D",],);
     expect(order.indexOf("A",),).toBeLessThan(order.indexOf("B",),);
     expect(order.indexOf("B",),).toBeLessThan(order.indexOf("D",),);
-  },);
+  });
 
   test("node state is NOT restored, so a rehydrated graph re-derives progress", async () => {
     const first = new WorkflowDagEngine(testDb.db,);
     await first.addDependency("B", "A",);
-    await first.runPass(registry(["A", ok("A", [],)], ["B", ok("B", [],)],), T0, RNG,);
+    await first.runPass(registry(["A", ok("A", [],),], ["B", ok("B", [],),],), T0, RNG,);
     expect(first.statusMap().nodes.A?.state,).toBe("done",);
 
     const second = new WorkflowDagEngine(testDb.db,);
@@ -100,7 +100,7 @@ describe("WorkflowDagEngine — hydrate from stored edges", () => {
     // `done` was never persisted, so the node reads as blocked rather
     // than falsely claiming its work survived the restart.
     expect(second.statusMap().nodes.A?.state,).toBe("blocked",);
-  },);
+  });
 });
 
 describe("WorkflowDagEngine — diamond DAG", () => {
@@ -113,7 +113,7 @@ describe("WorkflowDagEngine — diamond DAG", () => {
 
     const order: string[] = [];
     const result = await engine.runPass(
-      registry(["A", ok("A", order,)], ["B", ok("B", order,)], ["C", ok("C", order,)], [
+      registry(["A", ok("A", order,),], ["B", ok("B", order,),], ["C", ok("C", order,),], [
         "D",
         ok("D", order,),
       ],),
@@ -122,13 +122,13 @@ describe("WorkflowDagEngine — diamond DAG", () => {
     );
 
     // A before both branches; D last, after BOTH of its prerequisites.
-    expect(result.ran,).toEqual(["A", "B", "C", "D",]);
+    expect(result.ran,).toEqual(["A", "B", "C", "D",],);
     expect(order[0],).toBe("A",);
     expect(order[3],).toBe("D",);
     expect(result.failed,).toEqual([],);
     expect(result.skipped,).toEqual([],);
     expect(result.blocked,).toEqual([],);
-  },);
+  });
 
   test("D is not dispatched until both B and C are done", async () => {
     const engine = new WorkflowDagEngine(testDb.db,);
@@ -140,7 +140,7 @@ describe("WorkflowDagEngine — diamond DAG", () => {
     const order: string[] = [];
     // B fails, so D can never unblock on this pass.
     const result = await engine.runPass(
-      registry(["B", boom("B", order,)], ["C", ok("C", order,)], ["D", ok("D", order,)],),
+      registry(["B", boom("B", order,),], ["C", ok("C", order,),], ["D", ok("D", order,),],),
       T0,
       RNG,
     );
@@ -150,7 +150,7 @@ describe("WorkflowDagEngine — diamond DAG", () => {
     // B and C are independent, so both dispatch; only D is held back.
     expect(order.toSorted(),).toEqual(["B", "C",],);
     expect(result.blocked,).toEqual(["D",],);
-  },);
+  });
 });
 
 describe("WorkflowDagEngine — cycle rejection at insert", () => {
@@ -160,13 +160,13 @@ describe("WorkflowDagEngine — cycle rejection at insert", () => {
     expect(await edgeCount(),).toBe(1,);
 
     // A depends on B would close A→B→A.
-    await expect(engine.addDependency("A", "B",)).rejects.toThrow(/cycle rejected/,);
+    await expect(engine.addDependency("A", "B",),).rejects.toThrow(/cycle rejected/,);
 
     // The pre-existing edge survives the rejection.
     expect(await edgeCount(),).toBe(1,);
     expect(engine.dependsOn("B",),).toEqual(["A",],);
     expect(engine.dependsOn("A",),).toEqual([],);
-  },);
+  });
 
   test("a transitive back-edge is rejected", async () => {
     const engine = new WorkflowDagEngine(testDb.db,);
@@ -175,15 +175,15 @@ describe("WorkflowDagEngine — cycle rejection at insert", () => {
     expect(await edgeCount(),).toBe(2,);
 
     // A→B→C, so C→A closes the loop three hops down.
-    await expect(engine.addDependency("A", "C",)).rejects.toThrow(/cycle rejected/,);
+    await expect(engine.addDependency("A", "C",),).rejects.toThrow(/cycle rejected/,);
     expect(await edgeCount(),).toBe(2,);
-  },);
+  });
 
   test("a self-dependency is rejected", async () => {
     const engine = new WorkflowDagEngine(testDb.db,);
-    await expect(engine.addDependency("A", "A",)).rejects.toThrow(/cannot depend on itself/,);
+    await expect(engine.addDependency("A", "A",),).rejects.toThrow(/cannot depend on itself/,);
     expect(await edgeCount(),).toBe(0,);
-  },);
+  });
 
   test("a diamond is NOT mistaken for a cycle", async () => {
     const engine = new WorkflowDagEngine(testDb.db,);
@@ -193,20 +193,19 @@ describe("WorkflowDagEngine — cycle rejection at insert", () => {
     await engine.addDependency("D", "B",);
     await engine.addDependency("D", "C",);
     expect(await edgeCount(),).toBe(4,);
-  },);
+  });
 });
-
 
 describe("WorkflowDagEngine — SQL injection surface", () => {
   // Node ids are caller-supplied and reach the DB, so this pins that
   // they are carried as VALUES, never concatenated into SQL text. A
   // payload that could rewrite a statement must land inert in the
   // task_id column and leave the table otherwise untouched.
-  const INJECTION = ["A'; DROP TABLE task_dependencies; --", "B' OR 1=1 --", "`C`", "\"D\"",];
+  const INJECTION = ["A'; DROP TABLE task_dependencies; --", "B' OR 1=1 --", "`C`", '"D"',];
 
   test("hostile node ids are stored verbatim and do not alter the schema", async () => {
     const engine = new WorkflowDagEngine(testDb.db,);
-    await engine.addDependency(INJECTION[1]!, INJECTION[0]!);
+    await engine.addDependency(INJECTION[1]!, INJECTION[0]!,);
 
     const rows = await testDb.db.selectFrom("task_dependencies",).selectAll().execute();
     expect(rows,).toHaveLength(1,);
@@ -215,7 +214,7 @@ describe("WorkflowDagEngine — SQL injection surface", () => {
     expect(rows[0]?.depends_on_task_id,).toBe(INJECTION[0],);
     // The table still exists with its columns — nothing was dropped.
     expect(engine.dependsOn(INJECTION[1]!,),).toEqual([INJECTION[0]!,],);
-  },);
+  });
 
   test("an injection-shaped id cannot smuggle a cycle check past the engine", async () => {
     const engine = new WorkflowDagEngine(testDb.db,);
@@ -226,9 +225,9 @@ describe("WorkflowDagEngine — SQL injection surface", () => {
     await engine.addDependency(hostile, "B",);
     expect(engine.dependsOn(hostile,),).toEqual(["B",],);
     // And the real cycle A→B is still caught, unaffected by the odd key.
-    await expect(engine.addDependency("A", "B",)).rejects.toThrow(/cycle rejected/,);
+    await expect(engine.addDependency("A", "B",),).rejects.toThrow(/cycle rejected/,);
     expect(await edgeCount(),).toBe(2,);
-  },);
+  });
 
   test("on_failure cannot carry SQL through the upsert conflict clause", async () => {
     const engine = new WorkflowDagEngine(testDb.db,);
@@ -239,7 +238,7 @@ describe("WorkflowDagEngine — SQL injection surface", () => {
     ).rejects.toThrow();
     const rows = await testDb.db.selectFrom("task_dependencies",).selectAll().execute();
     expect(rows,).toHaveLength(0,);
-  },);
+  });
 });
 
 describe("WorkflowDagEngine — on_failure: skip", () => {
@@ -249,7 +248,7 @@ describe("WorkflowDagEngine — on_failure: skip", () => {
 
     const order: string[] = [];
     const result = await engine.runPass(
-      registry(["A", boom("A", order,)], ["B", ok("B", order,)],),
+      registry(["A", boom("A", order,),], ["B", ok("B", order,),],),
       T0,
       RNG,
     );
@@ -259,20 +258,20 @@ describe("WorkflowDagEngine — on_failure: skip", () => {
     expect(result.ran,).toEqual([],);
     expect(order,).toEqual(["A",],);
     expect(engine.statusMap().nodes["B"]?.state,).toBe("skipped",);
-  },);
+  });
 
   test("skip cascades transitively", async () => {
     const engine = new WorkflowDagEngine(testDb.db,);
     await engine.addDependency("B", "A", "skip",);
     await engine.addDependency("C", "B", "skip",);
 
-    const result = await engine.runPass(registry(["A", boom("A", [])],), T0, RNG,);
+    const result = await engine.runPass(registry(["A", boom("A", [],),],), T0, RNG,);
 
     // B is skipped by A's failure, and C by B's skip — C would
     // otherwise sit blocked behind a node that can never run.
     expect(result.skipped,).toEqual(["B", "C",],);
     expect(engine.statusMap().nodes["C"]?.state,).toBe("skipped",);
-  },);
+  });
 });
 
 describe("WorkflowDagEngine — on_failure: retry", () => {
@@ -282,7 +281,7 @@ describe("WorkflowDagEngine — on_failure: retry", () => {
 
     const order: string[] = [];
     const result = await engine.runPass(
-      registry(["A", boom("A", order,)], ["B", ok("B", order,)],),
+      registry(["A", boom("A", order,),], ["B", ok("B", order,),],),
       T0,
       RNG,
     );
@@ -292,7 +291,7 @@ describe("WorkflowDagEngine — on_failure: retry", () => {
     // B never ran, but it is not abandoned — it is waiting on A.
     expect(result.ran,).toEqual([],);
     expect(engine.statusMap().nodes["B"]?.state,).toBe("blocked",);
-  },);
+  });
 
   test("a retry dependent runs once its prerequisite succeeds", async () => {
     const engine = new WorkflowDagEngine(testDb.db,);
@@ -300,8 +299,8 @@ describe("WorkflowDagEngine — on_failure: retry", () => {
 
     let aFails = true;
     const tasks = registry(
-      ["A", () => (aFails ? Promise.reject(new Error("A down",)) : Promise.resolve())],
-      ["B", ok("B", [],)],
+      ["A", () => (aFails ? Promise.reject(new Error("A down",),) : Promise.resolve()),],
+      ["B", ok("B", [],),],
     );
 
     await engine.runPass(tasks, T0, RNG,);
@@ -314,28 +313,28 @@ describe("WorkflowDagEngine — on_failure: retry", () => {
 
     expect(second.ran,).toEqual(["A", "B",],);
     expect(engine.statusMap().nodes["B"]?.state,).toBe("done",);
-  },);
+  });
 
   test("a retry edge shields a downstream node from the skip cascade", async () => {
     const engine = new WorkflowDagEngine(testDb.db,);
     await engine.addDependency("B", "A", "retry",);
     await engine.addDependency("C", "B", "skip",);
 
-    const result = await engine.runPass(registry(["A", boom("A", [])],), T0, RNG,);
+    const result = await engine.runPass(registry(["A", boom("A", [],),],), T0, RNG,);
 
     // B survives A's failure (retry), so the skip cascade never starts
     // and C is not abandoned on a prerequisite that may still recover.
     expect(result.skipped,).toEqual([],);
     expect(engine.statusMap().nodes["B"]?.state,).toBe("blocked",);
     expect(engine.statusMap().nodes["C"]?.state,).toBe("blocked",);
-  },);
+  });
 });
 
 describe("WorkflowDagEngine — status surface", () => {
   test("statusMap reports every known node with state, error, and attempts", async () => {
     const engine = new WorkflowDagEngine(testDb.db,);
     await engine.addDependency("B", "A", "skip",);
-    await engine.runPass(registry(["A", boom("A", [])],), T0, RNG,);
+    await engine.runPass(registry(["A", boom("A", [],),],), T0, RNG,);
 
     const { nodes, } = engine.statusMap();
 
@@ -347,20 +346,20 @@ describe("WorkflowDagEngine — status surface", () => {
     expect(nodes["B"]?.lastError,).toBeNull();
     // B never ran, so it has no attempt and no error to report.
     expect(nodes["B"]?.attempts,).toBe(0,);
-  },);
+  });
 
   test("a node with no registered body is reported blocked, not failed", async () => {
     const engine = new WorkflowDagEngine(testDb.db,);
     await engine.addDependency("B", "A",);
 
     // A has a body; B does not.
-    const result = await engine.runPass(registry(["A", ok("A", [])],), T0, RNG,);
+    const result = await engine.runPass(registry(["A", ok("A", [],),],), T0, RNG,);
 
     expect(result.ran,).toEqual(["A",],);
     expect(result.failed,).toEqual([],);
     expect(result.blocked,).toEqual(["B",],);
     expect(engine.statusMap().nodes["B"]?.state,).toBe("blocked",);
-  },);
+  });
 
   test("a node whose body throws is recorded, never propagated", async () => {
     const engine = new WorkflowDagEngine(testDb.db,);
@@ -369,19 +368,19 @@ describe("WorkflowDagEngine — status surface", () => {
     // The rejection must not escape runPass — the scheduler's other
     // dispatch targets still have to run this tick.
     const result = await engine.runPass(
-      registry(["A", boom("A", [])], ["B", ok("B", [])],),
+      registry(["A", boom("A", [],),], ["B", ok("B", [],),],),
       T0,
       RNG,
     );
     expect(result.failed,).toEqual(["A",],);
-  },);
+  });
 
   test("attempts accumulate across passes for a re-run node", async () => {
     const engine = new WorkflowDagEngine(testDb.db,);
     let calls = 0;
     const tasks = registry(["A", () => {
       calls += 1;
-      return calls === 1 ? Promise.reject(new Error("first try fails",)) : Promise.resolve();
+      return calls === 1 ? Promise.reject(new Error("first try fails",),) : Promise.resolve();
     },],);
 
     await engine.runPass(tasks, T0, RNG,);
@@ -391,5 +390,5 @@ describe("WorkflowDagEngine — status surface", () => {
     await engine.runPass(tasks, T0 + 1, RNG,);
     expect(engine.statusMap().nodes["A"]?.attempts,).toBe(2,);
     expect(engine.statusMap().nodes["A"]?.state,).toBe("done",);
-  },);
+  });
 });
