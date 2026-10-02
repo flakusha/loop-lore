@@ -196,3 +196,13 @@ git merge --ff-only dev
 # 6. Promote stg → master — tag-only (see /meta/release-process), never direct push.
 #    Done by a human after release testing.
 ```
+
+## Generation scheduler seam
+
+One shared `ResourceManager` is injected at the `callWithFailover` sites
+(`src/generation/providers/call-with-failover.ts`). Requests enter with
+priority defaulting to Normal until classification lands; the manager routes
+them through the scheduler before any provider adapter, enforcing budget and
+rate-limit decisions upstream. See
+[`../spec/generation-scheduler.md`](../spec/generation-scheduler.md) for the
+scheduler's API surface and state transitions.
