@@ -319,3 +319,81 @@ describe("plugin config routes (FEAT-051)", () => {
     expect(body.config,).toEqual({ token: "s3cret", },);
   });
 });
+
+describe("GET /api/plugins/ui-components", () => {
+  let db: Kysely<DB>;
+
+  beforeAll(async () => {
+    ({ db, } = await createTestDb());
+    registry.register({
+      manifest: { name: "ui-plugin", version: "1.0", description: "", author: "test", },
+      origin: "core",
+      directory: "/tmp",
+    },);
+    registry.addUIComponents("ui-plugin", [
+      { type: "web", name: "sidebar-widget", location: "chat.sidebar", props: { label: "Hi", }, },
+      { type: "both", name: "composer-widget", location: "chat.composer", },
+      { type: "tui", name: "tui-widget", location: "chat.sidebar", },
+    ],);
+  },);
+
+  afterAll(async () => {
+    registry.unregisterAll();
+    await db.destroy();
+  },);
+
+  test("returns 403 for non-admin", async () => {
+    const app = createPluginApp(db, "user",);
+    const res = await app.handle(new Request("http://localhost/api/plugins/ui-components",),);
+    expect(res.status,).toBe(403,);
+  });
+
+  test("lists all registered components for admin (tui included by design)", async () => {
+    const app = createPluginApp(db, "admin",);
+    const res = await app.handle(new Request("http://localhost/api/plugins/ui-components",),);
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as {
+      name: string;
+      location: string;
+      type: string;
+      props: Record<string, unknown>;
+    }[];
+    const names = body.map((c,) => c.name);
+    expect(names,).toContain("sidebar-widget",);
+    expect(names,).toContain("composer-widget",);
+    expect(names,).toContain("tui-widget",);
+    const widget = body.find((c,) => c.name === "sidebar-widget");
+    expect(widget!.location,).toBe("chat.sidebar",);
+    expect(widget!.type,).toBe("web",);
+    expect(widget!.props,).toEqual({ label: "Hi", },);
+  });
+
+  test("filters by ?location=", async () => {
+    const app = createPluginApp(db, "admin",);
+    const res = await app.handle(
+      new Request("http://localhost/api/plugins/ui-components?location=chat.composer",),
+    );
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as { name: string }[];
+    expect(body.map((c,) => c.name),).toEqual(["composer-widget",],);
+  });
+
+  test("unknown location returns an empty list", async () => {
+    const app = createPluginApp(db, "admin",);
+    const res = await app.handle(
+      new Request("http://localhost/api/plugins/ui-components?location=nope.here",),
+    );
+    expect(res.status,).toBe(200,);
+    expect(await res.json(),).toEqual([],);
+  });
+
+  test("empty ?location= value is treated as no filter", async () => {
+    const app = createPluginApp(db, "admin",);
+    const res = await app.handle(
+      new Request("http://localhost/api/plugins/ui-components?location=",),
+    );
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as { name: string }[];
+    expect(body.map((c,) => c.name),).toContain("sidebar-widget",);
+  });
+});

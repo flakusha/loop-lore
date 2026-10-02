@@ -9,6 +9,8 @@
 
 <div class="app-layout" x-data="adminPage()" x-init="init()">
   <main class="main-content" style="padding-top: 0">
+    <!-- Plugin mount point (FEAT-050): admin.dashboard components -->
+    {{plugin:admin.dashboard}}
     <div class="chat-area" style="max-width: 960px; margin: 0 auto; width: 100%">
       <!-- Tab Bar -->
       <div class="world-edit-tabs" style="flex-wrap: wrap; gap: 2px">
