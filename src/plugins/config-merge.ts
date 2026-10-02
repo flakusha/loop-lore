@@ -50,3 +50,18 @@ export function mergePluginConfig(
   }
   return merged;
 }
+
+/**
+ * Parse a stored `plugin_state.config_json` value into an object.
+ * @param raw - Raw column value (null/blank means "no stored override").
+ * @returns The parsed object; `{}` when absent or blank.
+ * @throws When the value is not a JSON object (caller decides the fallback).
+ */
+export function parseStoredPluginConfig(raw: string | null | undefined,): Record<string, unknown> {
+  if (raw === null || raw === undefined || raw.trim() === "") { return {}; }
+  const parsed: unknown = JSON.parse(raw,);
+  if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed,)) {
+    throw new Error("stored plugin config must be a JSON object",);
+  }
+  return parsed as Record<string, unknown>;
+}

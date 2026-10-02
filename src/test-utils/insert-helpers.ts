@@ -312,6 +312,7 @@ export async function insertPluginState(
     disabled_at?: string | null;
     created_at?: string;
     updated_at?: string;
+    config_json?: string | null;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };

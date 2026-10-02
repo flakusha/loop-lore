@@ -134,6 +134,8 @@ interface StubDbOptions {
   inserts?: Array<Record<string, unknown>>;
   conflictCols?: string[];
   insertThrows?: boolean;
+  configRow?: { config_json: string | null } | undefined;
+  configError?: unknown;
 }
 
 /**
@@ -149,6 +151,14 @@ function stubDb(options: StubDbOptions = {},): Kysely<DB> {
           if (options.statesError !== undefined) { throw options.statesError; }
           return options.states ?? [];
         },
+      }),
+      select: () => ({
+        where: () => ({
+          executeTakeFirst: async () => {
+            if (options.configError !== undefined) { throw options.configError; }
+            return options.configRow;
+          },
+        }),
       }),
     }),
     insertInto: () => ({
@@ -371,6 +381,34 @@ describe("loadSinglePlugin", () => {
     await loadSinglePlugin(stubDb({ insertThrows: true, }), "fixture-static", dir, "local",);
 
     expect(registry.getPlugin("fixture-static"),).toBeDefined();
+  });
+
+  test("merges a stored config override over manifest defaults into onLoad ctx.config", async () => {
+    const db = stubDb({ configRow: { config_json: JSON.stringify({ mode: "stored", },), }, });
+    const dir = makePluginDir({ "plugin.ts": FULL_PLUGIN, });
+
+    await loadSinglePlugin(db, "fixture-full", dir, "community",);
+
+    const fixtureCtx = globals().__llFixtureCtx as { config: Record<string, unknown> };
+    expect(fixtureCtx.config,).toEqual({ mode: "stored" });
+  });
+
+  test("falls back to manifest defaults and warns when stored config_json is malformed", async () => {
+    const warns: unknown[] = [];
+    setGlobalLogger({
+      ...nullLogger,
+      warn: (entry: unknown,) => { warns.push(entry,); },
+    },);
+    const db = stubDb({ configRow: { config_json: "{ not json", }, });
+    const dir = makePluginDir({ "plugin.ts": FULL_PLUGIN, });
+
+    await loadSinglePlugin(db, "fixture-full", dir, "community",);
+
+    const fixtureCtx = globals().__llFixtureCtx as { config: Record<string, unknown> };
+    expect(fixtureCtx.config,).toEqual({ mode: "test" });
+    expect(
+      warns.some((w,) => (w as { message?: string }).message?.includes("Failed to read stored plugin config",)),
+    ).toBe(true,);
   });
 });
 
