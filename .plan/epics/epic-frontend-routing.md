@@ -35,7 +35,7 @@ _TBD — create implementation tickets._
 
 | System | What It Provides | How Used |
 | ------ | ---------------- | -------- |
-| Headers & Navigation Management | Header/nav active-state + breadcrumb contract | Route changes update nav state (see `matrix-frontend-backend-integration.md` FB5) |
+| Headers & Navigation Management | Header/nav active-state + breadcrumb contract | Route changes update nav state |
 | Frontend Components | Page-level components | Rendered per route |
 | Bundle Optimization | Per-route code-splitting | Lazy page bundles per route |
 

@@ -91,7 +91,7 @@ Reduce frontend JS bundle size from ~1.34MB to ~134KB (10x reduction) via code-s
 
 | System | What It Provides | How Used |
 | ------ | ---------------- | -------- |
-| Frontend Component Architecture | Lazy `import()` boundaries | Which components split (see `matrix-frontend-backend-integration.md` FB9) |
+| Frontend Component Architecture | Lazy `import()` boundaries | Which components split (see `matrix-frontend-backend-integration.md` FB8) |
 | Routing | Route table | Per-route page chunks |
 | HTML Dedup & HTMX Reuse | JS dedup sibling | Shared-utility extraction |
 

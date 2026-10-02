@@ -35,7 +35,7 @@ _TBD — create implementation tickets._
 
 | System | What It Provides | How Used |
 | ------ | ---------------- | -------- |
-| Frontend Components | Server-rendered partials | Post-swap translation hydration (see `matrix-frontend-backend-integration.md` FB6) |
+| Frontend Components | Server-rendered partials | Post-swap translation hydration (see `matrix-frontend-backend-integration.md` FB10) |
 | HTML Dedup & HTMX Reuse | htmx swap lifecycle | Hydrate after `Alpine.initTree()` |
 | Frontend Settings | Locale preference | Where locale is chosen (see FB8) |
 
