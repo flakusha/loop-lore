@@ -13,11 +13,7 @@
 
 ## Summary
 
-## What
-
 FEA-2026-058 (gap-audit 2026-09-19): no route or visualization component exists for the memory visualizer feature. The `asset_links` table provides the underlying relational data, but the user-facing knowledge graph view is missing.
-
-## Why
 
 The `asset_links` table is defined at `src/db/migrations/001_init.ts:385-449` and indexed at `src/db/migrations/001_init.ts:446-449`. FEA-2026-056 (per-chat cost + quality dashboard) and FEA-2026-057 (model comparison via `model_comparisons`) shipped as documented in `.plan/epics/epic-analytics-observability.md` (lines 25-29), but FEA-2026-058 is the remaining feature in the same epic that has neither route nor visualization component. The earlier duplicate ticket `FEAT-memory-knowledge-graph-visualizer` was closed as duplicate in the 2026-09-19 reconcile and explicitly cited `epic-analytics-observability.md (FEA-2026-058 memory visualizer)` as the owning artifact.
 
@@ -34,9 +30,3 @@ The `asset_links` table is defined at `src/db/migrations/001_init.ts:385-449` an
 - [ ] Frontend view renders an interactive knowledge graph (zoom/pan, node hover for asset metadata, edge hover for relationship)
 - [ ] Frontend view is reachable from the existing analytics dashboard navigation (or admin nav, whichever the spec dictates)
 - [ ] No new heavyweight dependency added without justification (YAGNI)
-
-## Acceptance Criteria
-
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
