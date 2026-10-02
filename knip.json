@@ -121,6 +121,9 @@
     // FE-BE harmonization gate: standalone CLI invoked via check-parallel.mjs
     // shell string, not import-reachable — same class as check-db-schemas.ts.
     "scripts/check-fe-be-harmonization.ts",
+    // Sub-modules of the harmonization gate: statically imported only by the
+    // ignored standalone CLI above, so unreachable from knip entrypoints.
+    "scripts/fe-be-harmonization/**",
     // Finalize-lock child-process fixture: spawned by
     // scripts/worktree/finalize-lock-cleanup.test.ts via path (not a static
     // import knip can trace) — same class as the chat-state-contract
