@@ -9,6 +9,7 @@
  * recurse; arrays and scalars are replaced (stored wins).
  */
 
+import { jsonParseOr, } from "../utils";
 import type { PluginConfigSchema } from "./types";
 
 /**
@@ -59,7 +60,7 @@ export function mergePluginConfig(
  */
 export function parseStoredPluginConfig(raw: string | null | undefined,): Record<string, unknown> {
   if (raw === null || raw === undefined || raw.trim() === "") { return {}; }
-  const parsed: unknown = JSON.parse(raw,);
+  const parsed = jsonParseOr<unknown>(raw, undefined,);
   if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed,)) {
     throw new Error("stored plugin config must be a JSON object",);
   }
