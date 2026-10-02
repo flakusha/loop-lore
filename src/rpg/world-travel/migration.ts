@@ -25,7 +25,7 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { ACTION_COST, chargeBudget, toSqlDate, } from "./budget";
-import { travelDb, type TravelContext, type TravelResult, } from "./types";
+import { type TravelContext, travelDb, type TravelResult, } from "./types";
 
 /** A hop that shuttles back and forth. */
 const CONTINUOUS = "continuous";
@@ -40,6 +40,9 @@ interface MigrationRow {
   arrive_tick: number;
   cadence: string;
   status: string;
+  /** Tick the current hop departed on; 0 = not departed yet. The span a
+   *  `continuous` hop keeps when it flips direction. */
+  last_depart_tick: number;
 }
 
 /**
@@ -64,7 +67,7 @@ export async function migrateNpc(
   const result: TravelResult = { actions: [], deferred: 0, budgetExhausted: false, };
   const claims = ctx.claims ?? new Set<string>();
   const stamp = toSqlDate(ctx.nowMs,);
-  const handle = travelDb(db);
+  const handle = travelDb(db,);
   const rows = await handle
     .selectFrom("npc_migrations",)
     .selectAll()
@@ -74,10 +77,12 @@ export async function migrateNpc(
     .execute();
 
   for (const row of rows) {
-    const kind = row.status === "planned" && currentTick >= row.depart_tick ? "npc_depart"
-      : row.status === "in_transit" && currentTick >= row.arrive_tick ? "npc_arrive"
+    const kind = row.status === "planned" && currentTick >= row.depart_tick
+      ? "npc_depart"
+      : row.status === "in_transit" && currentTick >= row.arrive_tick
+      ? "npc_arrive"
       : null;
-    if (!kind) continue;
+    if (!kind) { continue; }
 
     if (kind === "npc_arrive") {
       const destination = row.destination_location_id;
@@ -148,7 +153,14 @@ function reschedule(
   currentTick: number,
   arrivedAt: string | null,
   stamp: string,
-): { status: string; origin_location_id: string | null; destination_location_id: string | null; depart_tick: number; arrive_tick: number; updated_at: string } {
+): {
+  status: string;
+  origin_location_id: string | null;
+  destination_location_id: string | null;
+  depart_tick: number;
+  arrive_tick: number;
+  updated_at: string;
+} {
   if (row.cadence !== CONTINUOUS) {
     return {
       status: "arrived",
@@ -159,7 +171,13 @@ function reschedule(
       updated_at: stamp,
     };
   }
-  const span = Math.max(1, row.arrive_tick - row.last_depart_tick,);
+  // The span is the leg's own SCHEDULED length, `arrive - depart`.
+  // `last_depart_tick` is NOT the right anchor: the depart write lands a tick
+  // after arrival, so subtracting it shrinks every leg by one (10, 10, 9, 8,
+  // 7 ...) and a continuous migration degenerates into a jitter. Reading the
+  // row's own schedule keeps the cadence constant, which is the point of a
+  // shuttle.
+  const span = Math.max(1, row.arrive_tick - row.depart_tick,);
   return {
     status: "planned",
     origin_location_id: arrivedAt,

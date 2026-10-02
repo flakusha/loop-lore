@@ -44,11 +44,16 @@ export interface LocationDiscovery {
   updated_at: Generated<string>;
 }
 
-/** The tables this module adds on top of the generated `DB`. */
-export interface DiscoveryTables {
+/** The tables this module adds on top of the generated `DB`.
+ *
+ * A type alias, not an interface: `Kysely.withTables` constrains its
+ * argument to `Record<string, Record<string, any>>`, and only a type
+ * alias gets the implicit index signature an interface never has.
+ */
+export type DiscoveryTables = {
   world_event_log: WorldEventLog;
   location_discovery: LocationDiscovery;
-}
+};
 
 /** A `Kysely<DB>` widened with the discovery tables. */
 export type DiscoveryDb = Kysely<DB & DiscoveryTables>;

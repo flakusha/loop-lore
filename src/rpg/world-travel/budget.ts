@@ -29,6 +29,7 @@
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
+import { toDate, } from "../../utils/date";
 import { travelDb, } from "./types";
 
 /** Budget units charged per action. The ticket's 0.05. */
@@ -45,7 +46,7 @@ export const DEFAULT_CEILING = 1;
 const MICRO_UNITS_PER_UNIT = 1_000_000;
 
 function toMicro(units: number,): number {
-  return Math.round(units * MICRO_UNITS_PER_UNIT);
+  return Math.round(units * MICRO_UNITS_PER_UNIT,);
 }
 
 function toUnits(micro: number,): number {
@@ -81,9 +82,9 @@ export async function readBudget(
   tick: number,
   defaultCeiling: number,
 ): Promise<BudgetState> {
-  const handle = travelDb(db);
+  const handle = travelDb(db,);
   const row = await handle
-    .selectFrom("world_travel_budget")
+    .selectFrom("world_travel_budget",)
     .selectAll()
     .where("world_id", "=", worldId,)
     .executeTakeFirst();
@@ -124,15 +125,15 @@ export async function chargeBudget(
   nowMs: number,
   defaultCeiling: number,
 ): Promise<boolean> {
-  const handle = travelDb(db);
+  const handle = travelDb(db,);
   const row = await handle
-    .selectFrom("world_travel_budget")
+    .selectFrom("world_travel_budget",)
     .selectAll()
     .where("world_id", "=", worldId,)
     .executeTakeFirst();
 
   if (!row) {
-    if (toMicro(cost,) > toMicro(defaultCeiling,)) return false;
+    if (toMicro(cost,) > toMicro(defaultCeiling,)) { return false; }
     await handle
       .insertInto("world_travel_budget",)
       .values({
@@ -149,7 +150,7 @@ export async function chargeBudget(
   const windowStartTick = windowStart(row.window_start_tick, tick,);
   const spentMicro = windowStartTick === row.window_start_tick ? toMicro(row.spent,) : 0;
   const nextMicro = spentMicro + toMicro(cost,);
-  if (nextMicro > toMicro(row.ceiling,)) return false;
+  if (nextMicro > toMicro(row.ceiling,)) { return false; }
 
   await handle
     .updateTable("world_travel_budget",)
@@ -172,13 +173,11 @@ export async function chargeBudget(
 function windowStart(windowStartTick: number, tick: number,): number {
   // A replay may rewind; anchoring on `tick` keeps the roll monotone rather
   // than resuming a window the rewind already invalidated.
-  if (tick < windowStartTick) return tick;
+  if (tick < windowStartTick) { return tick; }
   const elapsed = tick - windowStartTick;
-  if (elapsed < BUDGET_WINDOW_TICKS) return windowStartTick;
+  if (elapsed < BUDGET_WINDOW_TICKS) { return windowStartTick; }
   return windowStartTick + Math.floor(elapsed / BUDGET_WINDOW_TICKS,) * BUDGET_WINDOW_TICKS;
 }
-
-
 
 /**
  * SQLite has no date type. The rest of the schema stores `datetime('now')`
@@ -188,6 +187,5 @@ function windowStart(windowStartTick: number, tick: number,): number {
  * @returns SQLite datetime text
  */
 export function toSqlDate(nowMs: number,): string {
-  return new Date(nowMs,).toISOString().replace("T", " ").replace(/\.\d+Z$/, "");
+  return toDate(nowMs,).toISOString().replace("T", " ",).replace(/\.\d+Z$/, "",);
 }
-
