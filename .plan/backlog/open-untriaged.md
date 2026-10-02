@@ -13,17 +13,9 @@
 
 | Git issue | Topic | Suggested home |
 | --------- | ----- | -------------- |
-| `a877274` BUG-auth-rate-limiter-tests-seed-per-ip-buckets-via-getclientip | Rate-limiter tests depend on `getClientIp` XFF spoofing | `security-review-2026-08-25.md` §MEDIUM (XFF trust) + rate-limit review |
-| `8d307ae` BUG-getclientip-is-untestable-without-a-live-bun-server-ip-sourcing | `getClientIp` untestable without live server | same as above (fix together) |
-| `adff874` TASK-browser-tests-weak-interaction-coverage-in-existing-flows | Browser e2e coverage gaps | `priority-release-010.md` § Hardening |
-| `30d0e69` TASK-browser-test-fixture-no-mock-llm-provider-stale-frontend-bui | Stale frontend build in browser fixture | same as above |
-| `1a3a97a` BUG-sse-streams-leak-string-error-internals-to-clients | SSE error leaks internals | chat pipeline hardening; overlaps `d14fd85` per security doc dedup notes |
 | `5842782` TASK-logging-hardening-minors-injection-rotation-races-sink-path | Logger injection/rotation races | logger hardening cluster (P6 candidate) |
-| `02a9092` BUG-raw-buffer-from-alloc-inconsistent-with-safe-buffer-65-sites | Raw buffer from alloc vs safeBuffer inconsistency | input-hardening batch |
-| `2984874` BUG-raw-json-parse-outside-safe-json-3-sites | Raw `JSON.parse` outside safeJson | input-hardening batch |
 | `a06b99e` BUG-telemetry-stores-raw-client-body-real-user-chat-session-ids | Telemetry PII (raw bodies, session ids) | `security-review-2026-08-25.md` + privacy hardening |
 | `b23b7fb` BUG-logger-censor-depth-cutoff-returns-subtree-untouched-nested | Censor depth cutoff bug | same cluster as logging hardening |
-| `b465b08` BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san | ReDoS in HTML sanitizer | sanitizer hardening; HIGH-adjacent |
 | `eafe79f` TASK-regex-pipeline-hardening-sweep-input-caps-lastindex-hazards | Regex pipeline lastIndex/caps hazards | regex hardening; relates to quick-wins item 4 (`transforms.ts`) |
 
 ## Date-handling correctness cluster (pairs with linked date-utils ticket)
@@ -144,8 +136,6 @@ owner; cross-cutting and blocked work should keep its dependency visible.
 | Git issue | Ticket | Epic | Basis |
 | --- | --- | --- | --- |
 | `1bedeb1` | `TASK-assistant-lorebook-tools` | `epic-assistant-entity-access` | Assistant read/write operations on world and actor lore; the ticket names the same feature area. |
-| `30d0e69` | `TASK-browser-test-fixture-no-mock-llm-provider-stale-frontend-bui` | `epic-testing-qa` | Browser fixture mock registration and frontend-build reuse are QA infrastructure. |
-| `adff874` | `TASK-browser-tests-weak-interaction-coverage-in-existing-flows` | `epic-testing-qa` | Browser interaction coverage and state-transition assertions are in the testing epic's documented scope. |
 | `c622d40` | `TASK-capability-disclosure-lore-ceiling` | `epic-lore-knowledge` | The ticket explicitly binds lore disclosure tiers to the lore knowledge system. |
 | `eafe79f` | `TASK-regex-pipeline-hardening-sweep-input-caps-lastindex-hazards-` | `epic-code-quality` | Shared regex performance/state hazards are code-quality hardening; security follow-up remains explicit in the ticket. |
 
