@@ -1103,7 +1103,7 @@ Total tickets: **3127** — untagged: **2636** — unbound to epic: **1589**
 | yaml | 4 | 0 | 2 | 0 | 1 | 0 | 1 |
 | yaml-frontmatter | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| (untagged) | 2636 | 1065 | 59 | 1243 | 36 | 0 | 233 |
+| (untagged) | 2636 | 1066 | 59 | 1242 | 36 | 0 | 233 |
 
 ## By epic × status
 
@@ -1242,7 +1242,7 @@ Total tickets: **3127** — untagged: **2636** — unbound to epic: **1589**
 | epic-chat-lifecycle-moderation, epic-assistant-gm-flows | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
 | epic-chat-lifecycle-moderation, epic-chat-context-optimization | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
 | epic-chat-privacy.md | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| epic-chat-product-features | 32 | 8 | 0 | 23 | 0 | 0 | 1 |
+| epic-chat-product-features | 32 | 9 | 0 | 22 | 0 | 0 | 1 |
 | epic-chat-product-features.md | 3 | 1 | 0 | 0 | 0 | 0 | 2 |
 | epic-chat-rich-engagement.md | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-chat-rich-engagement.md (proposed) | 4 | 0 | 0 | 4 | 0 | 0 | 0 |
