@@ -26803,7 +26803,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-delete-the-in-repo-scripts-worktree-fork-giwt-is-the-only-wo.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-DELETECHAT-RUNS-9-SEQUENTIAL-DELETES-WITHOUT-TRANSACTION-ORP": {
     "epic": "",
