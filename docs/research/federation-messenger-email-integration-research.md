@@ -70,8 +70,8 @@ Licenses verified against upstream repos/npm 2026-10-02 unless marked `[UNVERIFI
 |---|---|---|
 | [imapflow](https://github.com/postalsys/imapflow) | MIT | Modern promise-based IMAP client, built-in types, Node 20+ |
 | [nodemailer](https://nodemailer.com/) | MIT-0 | SMTP send; MIT-0 is permissive (no attribution requirement) |
-| [OpenPGP.js](https://github.com/openpgpjs/openpgpjs) | MIT-0 `[UNVERIFIED]` | Pure-JS PGP; no native addon |
-| [postal-mime](https://github.com/postalsys/postal-mime) | MIT `[UNVERIFIED]` | MIME parser (imapflow companion) |
+| [OpenPGP.js](https://github.com/openpgpjs/openpgpjs) | LGPL-3.0 | Pure-JS PGP; no native addon |
+| [postal-mime](https://github.com/postalsys/postal-mime) | MIT-0 | MIME parser (imapflow companion) |
 | JMAP (RFC 8620) | — | Alternative to IMAP; no mature TS client — ground-up if chosen |
 
 Email is the easiest adoption case: all libraries are pure JS/TS with permissive licenses, lazy-importable, no native addons, no separate process. The deciding factors are operational, not technical: inbound spam/abuse handling, deliverability (SPF/DKIM/DMARC) when sending from your own domain, and address-change re-verification (cross-link `epic-auth-channel-provisioning.md` F5: an e-mail address change must re-challenge on the new address before it gains recovery power).
@@ -92,7 +92,7 @@ Matrix is in-process: matrix-js-sdk is pure JS, Olm ships as WASM. E2EE key cust
 
 | Component | License | Notes |
 |---|---|---|
-| [@xmpp/client](https://github.com/xmppjs/xmpp.js) | MIT `[UNVERIFIED]` | xmpp.js — modern TS XMPP client |
+| [@xmpp/client](https://github.com/xmppjs/xmpp.js) | ISC | xmpp.js — modern TS XMPP client |
 | OMEMO (XEP-0384) | — | Pure-JS implementations exist (e.g. via libsignal-protocol) `[UNVERIFIED]` |
 | MUC (XEP-0045) | — | Server-side; requires an external XMPP server for federation |
 | Jingle (XEP-0166) | — | File transfer; HTTP Upload (XEP-0363) is the practical path |
@@ -118,17 +118,17 @@ Telegram and Discord are in-process (Bot API over HTTPS/WSS). Slack/Mattermost/R
 
 | Component | License | Notes |
 |---|---|---|
-| [signald](https://github.com/signalapp/signald) | AGPL-3.0 `[UNVERIFIED]` | Signal daemon; no official SDK; unofficial RPC wrappers |
+| [signald](https://gitlab.com/signald/signald) | GPL-3.0 | Signal daemon; no official SDK; unofficial RPC wrappers |
 | SimpleX | — | No bot API; client libraries only `[UNVERIFIED]` |
 | [whatsapp-web.js](https://github.com/pedroslopez/whatsapp-web.js) | MIT `[UNVERIFIED]` | Unofficial Web-protocol; breakage-prone, ToS risk |
 
-Signal: **no bot API, no official SDK** — the only adoption path is the external signald daemon (AGPL) or permanent deferral. `matrix-federation-decisions.md` C11 recommends permanent-defer until signald stabilizes or an official SDK appears. SimpleX same shape. WhatsApp Web is unofficial and ToS-risky — experimental only. These are the families where "adopt" means "run someone else's daemon," and the honest verdict is defer.
+Signal: **no bot API, no official SDK** — the only adoption path is the external signald daemon (GPL-3.0) or permanent deferral. `matrix-federation-decisions.md` C11 recommends permanent-defer until signald stabilizes or an official SDK appears. SimpleX same shape. WhatsApp Web is unofficial and ToS-risky — experimental only. These are the families where "adopt" means "run someone else's daemon," and the honest verdict is defer.
 
 ### 3.7 Nostr
 
 | Component | License | Notes |
 |---|---|---|
-| [nostr-tools](https://github.com/nbd-wtf/nostr-tools) | MIT `[UNVERIFIED]` | Relay WebSocket client + NIP implementations |
+| [nostr-tools](https://github.com/nbd-wtf/nostr-tools) | Unlicense | Relay WebSocket client + NIP implementations |
 | NIP-28 (public chat) / NIP-29 (groups) | — | kind 40/41/42 channel events; NIP-29 is the recommended successor |
 
 Nostr is in-process (relay WebSocket, pure JS). It is the lightweight fediverse axis: no servers to run, no E2EE for public chat (NIP-04 DM is deprecated; NIP-44 is the E2EE variant `[UNVERIFIED]`). Tracked as `IDEA-consider-nostr-as-a-lightweight-fediverse-axis`.
@@ -160,9 +160,9 @@ Swarm transport: libp2p or y-webrtc in-process (C3 in `matrix-federation-decisio
 | Component | License | Notes |
 |---|---|---|
 | [matterbridge](https://github.com/42wim/matterbridge) | Apache-2.0 | Go; 20+ protocols; REST API; single config file |
-| [slidge](https://codeberg.org/slidge/slidge) | GPL-3.0 `[UNVERIFIED]` | Python XMPP puppeting gateway library |
-| mautrix-* (Go) | AGPL-3.0 `[UNVERIFIED]` | Matrix bridges (WhatsApp/Telegram/Signal/Discord/…) |
-| [biboumi](https://biboumi.louiz.org/) | GPL-3.0 `[UNVERIFIED]` | C++ IRC/XMPP gateway |
+| [slidge](https://codeberg.org/slidge/slidge) | AGPL-3.0-or-later | Python XMPP puppeting gateway library |
+| mautrix-* (Go) | AGPL-3.0 | Matrix bridges (WhatsApp/Telegram/Signal/Discord/…) |
+| [biboumi](https://biboumi.louiz.org/) | Zlib | C++ IRC/XMPP gateway |
 
 These are **external daemons with REST/XMPP interfaces** — the adopt path when loop-lore should not embed a protocol natively. Matterbridge is the broadest (one daemon, many networks); mautrix is the Matrix-centric family; slidge/biboumi are XMPP-centric. All are separate processes; loop-lore talks to them over their HTTP APIs.
 
@@ -188,20 +188,20 @@ Verdicts: **(A)** in-process library, lazy-loaded by opt-in plugin · **(B)** ex
 
 | Family | Verdict | Adopt component (license) | Interface | In-process? | Effort | Risk | Ground-up remainder |
 |---|---|---|---|---|---|---|---|
-| Email (IMAP/SMTP/PGP) | **A** | imapflow (MIT), nodemailer (MIT-0), OpenPGP.js (MIT-0) | IMAP fetch + SMTP send + PGP ops | Yes | Med | Spam/abuse inbound; deliverability (SPF/DKIM/DMARC) if own MX; address re-verification | Threading (Message-ID/References), spam gate, mailbox mapping to chats |
+| Email (IMAP/SMTP/PGP) | **A** | imapflow (MIT), nodemailer (MIT-0), OpenPGP.js (LGPL-3.0) | IMAP fetch + SMTP send + PGP ops | Yes | Med | Spam/abuse inbound; deliverability (SPF/DKIM/DMARC) if own MX; address re-verification | Threading (Message-ID/References), spam gate, mailbox mapping to chats |
 | Matrix | **A** | matrix-js-sdk (Apache-2.0) + Olm WASM (Apache-2.0) | Client-Server API + Olm/Megolm | Yes | High | E2EE key custody (cross-signing, key backup); appservice registration is per-homeserver | Key backup/verification UX; room↔chat mapping; appservice config |
-| XMPP | **A** | @xmpp/client (MIT `[UNVERIFIED]`) + OMEMO | XMPP stream + MUC + Jingle | Yes | Med | External XMPP server required for MUC/federation | OMEMO device-key trust UI; MUC↔group-chat mapping |
+| XMPP | **A** | @xmpp/client (ISC) + OMEMO | XMPP stream + MUC + Jingle | Yes | Med | External XMPP server required for MUC/federation | OMEMO device-key trust UI; MUC↔group-chat mapping |
 | IRC | **A** | irc-framework (MIT `[UNVERIFIED]`) or minimal ground-up client | RFC 1459/2812 socket | Yes | Low | No E2EE, no auth; bouncer for persistence | Channel↔group-chat mapping; relay logging |
 | Telegram | **A** | grammY (MIT) | Bot API (HTTPS) | Yes | Low–Med | ToS: bot accounts only | Bot↔chat mapping; webhook or long-poll |
 | Discord | **A** | discord.js (Apache-2.0) | Bot API (HTTPS/WSS) | Yes | Low–Med | ToS: bot accounts only | Guild/channel↔group-chat mapping |
 | Slack/Mattermost/Rocket.Chat/Zulip | **A** (thin) or **B** (matterbridge) | Bot/Webhook REST APIs; matterbridge (Apache-2.0) as daemon | REST webhooks | Yes (thin) / No (daemon) | Low | ToS: bot tokens only | Thin REST clients; or matterbridge config |
-| Signal | **B** (defer) | signald (AGPL-3.0 `[UNVERIFIED]`) | daemon RPC | No | High | No official SDK; AGPL; C11 says permanent-defer | Nothing until activated |
+| Signal | **B** (defer) | signald (GPL-3.0) | daemon RPC | No | High | No official SDK; GPL-3.0; C11 says permanent-defer | Nothing until activated |
 | SimpleX / WhatsApp | **B** (defer) | — | — | No | High | No bot API; ToS risk (WhatsApp) | Nothing |
-| Nostr | **A** | nostr-tools (MIT `[UNVERIFIED]`) | Relay WebSocket (NIP-28/29) | Yes | Low | No E2EE on public chat; relay trust | Channel↔group-chat mapping; NIP-29 group handling |
+| Nostr | **A** | nostr-tools (Unlicense) | Relay WebSocket (NIP-28/29) | Yes | Low | No E2EE on public chat; relay trust | Channel↔group-chat mapping; NIP-29 group handling |
 | ActivityPub/fediverse | **A** | Fedify (MIT) | ActivityPub S2S + WebFinger + NodeInfo | Yes | High | Public HTTPS origin + stable domain required; no E2EE; actor-key custody | Inbox/outbox storage, actor model (blog primitive), HTTP-signature glue, moderation gate, key rotation |
 | P2P swarm | **A** | y-webrtc / libp2p (MIT) + cr-sqlite (Apache-2.0 `[UNVERIFIED]`) | Gossip transport + CRDT store | Yes | High | Untrusted-peer model; merge poisoning | CRDT schema, causality (HLC exists in `src/federation/clock.ts`), signature-checked merges |
 | Radicle | **B** | `rad` CLI (GPL-3.0 `[UNVERIFIED]`) | CLI spawn | No | Med | External process; git-based | World/character ↔ repo mapping; merge-on-pull |
-| Interop (many networks at once) | **B** | matterbridge (Apache-2.0) / mautrix (AGPL-3.0 `[UNVERIFIED]`) | daemon REST API | No | Med | AGPL for mautrix; daemon ops | Bridge config; message normalization |
+| Interop (many networks at once) | **B** | matterbridge (Apache-2.0) / mautrix (AGPL-3.0) | daemon REST API | No | Med | AGPL for mautrix; daemon ops | Bridge config; message normalization |
 | Identity (OIDC/DIDComm/WebFinger) | **C** (+A for OIDC RP lib) | openid-client (MIT `[UNVERIFIED]`) if OIDC | OIDC RP, DIDComm, WebFinger | Yes (RP lib) | Med | Foreign auth never trusted (C5) | `federated_identities` store, shadow accounts, verified-ownership proof, WebFinger route |
 | MCP bridge | **A** | @modelcontextprotocol/sdk (MIT `[UNVERIFIED]`) | MCP stdio/HTTP | Yes | Med | Tool surface exposure | Tool registry ↔ MCP tool mapping; registry verbs |
 
@@ -220,7 +220,7 @@ Verdicts: **(A)** in-process library, lazy-loaded by opt-in plugin · **(B)** ex
 | R7 | **Egress control** — a compromised or buggy adapter must not exfiltrate | All adapters | Plugin-host scopes + egress allowlist (missing today — §2.4); per-adapter rate limits |
 | R8 | **Identity spoofing** — foreign auth never trusted (C5); verified-ownership proof required | All federated | `federated_identities` + shadow accounts; signature verification on every inbound activity |
 | R9 | **Delivery reliability** — duplicate Create/Announce, retries, dead-letter | ActivityPub, swarm | Idempotency keys + delivery queue (`BUG-federation-delivery-reliability-queue-retry-idempotency-unde`) |
-| R10 | **Licensing contamination** — AGPL daemons (signald, mautrix) are separate processes; linking them into the LGPL app would matter, process isolation keeps them clean | Signal, interop | Run AGPL components as external daemons only; never link |
+| R10 | **Licensing contamination** — copyleft daemons (AGPL: slidge, mautrix; GPL: signald) are separate processes; linking them into the LGPL app would matter, process isolation keeps them clean | Signal, interop | Run copyleft components as external daemons only; never link |
 
 ---
 
@@ -241,5 +241,5 @@ Verdicts: **(A)** in-process library, lazy-loaded by opt-in plugin · **(B)** ex
 ## 7. Sources
 
 - In-repo: `src/integrations/adapter.ts`, `src/federation/*.ts`, `src/transport/protocol.unified.ts`, `src/plugins/types.ts`, `src/plugins/loader.ts`, `src/plugins/event-bus.ts`, `src/routes/federation.ts`, `src/routes/v1/index.ts`, `src/config/sections/transport.ts`, `configs/config.example.toml`, `configs/env.example.yaml`, `schemas/config.transport.schema.json`, `docs/spec/plugin-system.md`, `docs/spec/federation-*.md`, `.plan/epics/epic-*.md`, `.plan/matrix-federation-decisions.md`, `.plan/matrix-protocol-chat-group-integration.md`, `.plan/tickets/*`.
-- External (verified 2026-10-02): Fedify — https://fedify.dev/ · https://github.com/fedify-dev/fedify (MIT, Bun-compatible) · matrix-js-sdk — https://github.com/matrix-org/matrix-js-sdk (Apache-2.0) · imapflow — https://github.com/postalsys/imapflow (MIT) · nodemailer — https://nodemailer.com/license (MIT-0) · grammY — https://github.com/grammyjs/grammY (MIT) · discord.js — https://github.com/discordjs/discord.js (Apache-2.0) · matterbridge — https://github.com/42wim/matterbridge (Apache-2.0) · Nostr NIP-28 — https://nips.nostr.com/28 · slidge — https://codeberg.org/slidge/slidge (Python gateway) · Signal-Server (AGPL-3.0, reference for signald's upstream) — https://github.com/signalapp/Signal-Server.
+- External (verified 2026-10-02): Fedify — https://fedify.dev/ · https://github.com/fedify-dev/fedify (MIT, Bun-compatible) · matrix-js-sdk — https://github.com/matrix-org/matrix-js-sdk (Apache-2.0) · @matrix-org/olm — https://github.com/matrix-org/olm (Apache-2.0) · imapflow — https://github.com/postalsys/imapflow (MIT) · nodemailer — https://nodemailer.com/license (MIT-0) · postal-mime — https://github.com/postalsys/postal-mime (MIT-0) · OpenPGP.js — https://github.com/openpgpjs/openpgpjs (LGPL-3.0) · @xmpp/client — https://github.com/xmppjs/xmpp.js (ISC) · grammY — https://github.com/grammyjs/grammY (MIT) · discord.js — https://github.com/discordjs/discord.js (Apache-2.0) · nostr-tools — https://github.com/nbd-wtf/nostr-tools (Unlicense) · libp2p — https://github.com/libp2p/js-libp2p (MIT/Apache-2.0) · matterbridge — https://github.com/42wim/matterbridge (Apache-2.0) · mautrix — https://github.com/mautrix/signal (AGPL-3.0) · slidge — https://codeberg.org/slidge/slidge (AGPL-3.0-or-later) · biboumi — https://biboumi.louiz.org/ (Zlib) · signald — https://gitlab.com/signald/signald (GPL-3.0) · Nostr NIP-28 — https://nips.nostr.com/28 · Signal-Server (AGPL-3.0, reference for signald's upstream) — https://github.com/signalapp/Signal-Server.
 - `[UNVERIFIED]` marks claims not checked against a primary source at write time.

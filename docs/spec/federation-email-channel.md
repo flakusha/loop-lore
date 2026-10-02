@@ -14,8 +14,8 @@
 |---|---|---|
 | [imapflow](https://github.com/postalsys/imapflow) | MIT | IMAP fetch (in-process, lazy-imported) |
 | [nodemailer](https://nodemailer.com/) | MIT-0 | SMTP send (in-process, lazy-imported) |
-| [OpenPGP.js](https://github.com/openpgpjs/openpgpjs) | MIT-0 `[UNVERIFIED]` | PGP encrypt/decrypt/sign (in-process) |
-| [postal-mime](https://github.com/postalsys/postal-mime) | MIT `[UNVERIFIED]` | MIME parse (imapflow companion) |
+| [OpenPGP.js](https://github.com/openpgpjs/openpgpjs) | LGPL-3.0 | PGP encrypt/decrypt/sign (in-process) |
+| [postal-mime](https://github.com/postalsys/postal-mime) | MIT-0 | MIME parse (imapflow companion) |
 
 All pure JS/TS, no native addons, no separate process. JMAP (RFC 8620) is a future option — no mature TS client exists; IMAP is the V1 interface.
 

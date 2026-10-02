@@ -39,7 +39,7 @@ One section per messenger family. All adapters implement `ProtocolAdapter` (`src
 
 ## 2. XMPP
 
-**Adopt:** [@xmpp/client](https://github.com/xmppjs/xmpp.js) (MIT `[UNVERIFIED]`) + OMEMO (XEP-0384, pure-JS `[UNVERIFIED]`). **Interface:** XMPP stream; `XmppAdapter` (`src/integrations/xmpp/adapter.ts`), `OmemoEncryption`.
+**Adopt:** [@xmpp/client](https://github.com/xmppjs/xmpp.js) (ISC) + OMEMO (XEP-0384, pure-JS `[UNVERIFIED]`). **Interface:** XMPP stream; `XmppAdapter` (`src/integrations/xmpp/adapter.ts`), `OmemoEncryption`.
 
 **Auth/secrets:** `integrations.xmpp.jid` + `password` (⚠ SECRET). MUC/federation requires an external XMPP server (Prosody/ejabberd) — loop-lore is a client.
 
@@ -147,7 +147,7 @@ One section per messenger family. All adapters implement `ProtocolAdapter` (`src
 
 ## 6. Signal
 
-**Adopt (deferred):** [signald](https://github.com/signalapp/signald) (AGPL-3.0 `[UNVERIFIED]`) — external daemon, RPC interface. No official SDK; no bot API. **Verdict:** permanent-defer per `matrix-federation-decisions.md` C11; keep behind a feature flag. `SignalAdapter` would wrap the daemon RPC; nothing is built until an activation criterion is set (`BUG-signal-bridge-activation-trigger-undefined`).
+**Adopt (deferred):** [signald](https://gitlab.com/signald/signald) (GPL-3.0) — external daemon, RPC interface. No official SDK; no bot API. **Verdict:** permanent-defer per `matrix-federation-decisions.md` C11; keep behind a feature flag. `SignalAdapter` would wrap the daemon RPC; nothing is built until an activation criterion is set (`BUG-signal-bridge-activation-trigger-undefined`).
 
 **E2EE:** Signal Protocol — the host (signald) holds keys; loop-lore stores nothing.
 
@@ -157,7 +157,7 @@ One section per messenger family. All adapters implement `ProtocolAdapter` (`src
 
 ## 7. Nostr
 
-**Adopt:** [nostr-tools](https://github.com/nbd-wtf/nostr-tools) (MIT `[UNVERIFIED]`). **Interface:** relay WebSocket; `NostrAdapter` (`src/integrations/nostr/adapter.ts`). NIP-28 (public chat, kind 40/41/42) + NIP-29 (groups, recommended successor).
+**Adopt:** [nostr-tools](https://github.com/nbd-wtf/nostr-tools) (Unlicense). **Interface:** relay WebSocket; `NostrAdapter` (`src/integrations/nostr/adapter.ts`). NIP-28 (public chat, kind 40/41/42) + NIP-29 (groups, recommended successor).
 
 **Auth/secrets:** `integrations.nostr.relayUrls[]` + user keypair (private key ⚠ SECRET, encrypted at rest; only if the user opts in).
 
@@ -216,8 +216,8 @@ When one daemon should fan out to many networks instead of embedding each protoc
 | Daemon | License | Interface | Reaches |
 |---|---|---|---|
 | [matterbridge](https://github.com/42wim/matterbridge) | Apache-2.0 | REST API | 20+ protocols (Matrix, IRC, XMPP, Telegram, Discord, Slack, WhatsApp, …) |
-| mautrix-* | AGPL-3.0 `[UNVERIFIED]` | Matrix appservice API | WhatsApp/Telegram/Signal/Discord/… via Matrix |
-| [slidge](https://codeberg.org/slidge/slidge) | GPL-3.0 `[UNVERIFIED]` | XMPP puppeting | legacy networks via XMPP |
-| [biboumi](https://biboumi.louiz.org/) | GPL-3.0 `[UNVERIFIED]` | IRC/XMPP gateway | IRC ↔ XMPP |
+| mautrix-* | AGPL-3.0 | Matrix appservice API | WhatsApp/Telegram/Signal/Discord/… via Matrix |
+| [slidge](https://codeberg.org/slidge/slidge) | AGPL-3.0-or-later | XMPP puppeting | legacy networks via XMPP |
+| [biboumi](https://biboumi.louiz.org/) | Zlib | IRC/XMPP gateway | IRC ↔ XMPP |
 
 **Verdict:** external daemon + its API (B). loop-lore talks to the daemon over HTTP; the daemon is a separate process (AGPL components stay process-isolated — R10). Adopted per-network as needed, not built. Tracked by `TASK-bridge-daemon-adoption-matterbridge-slidge-mautrix`.
