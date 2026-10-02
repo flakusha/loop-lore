@@ -6,6 +6,7 @@
  *
  * Admin-only endpoints for plugin enable/disable at runtime:
  *   GET  /api/plugins              — list all plugins with status
+ *   GET  /api/plugins/ui-components — list plugin UI components (mount points)
  *   POST /api/plugins/:name/enable  — enable a plugin
  *   POST /api/plugins/:name/disable — disable a plugin
  *
@@ -16,6 +17,7 @@ import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
+import { getComponentsForMountPoint, } from "../../plugins/mount-points";
 import { registry, } from "../../plugins/registry";
 import { can, } from "../../users/permissions";
 import { forbidden, } from "../../validation/middleware";
@@ -63,6 +65,39 @@ export function pluginRoutes({ database, }: { database: Kysely<DB> }, prefix = "
         detail: {
           summary: "List plugins",
           description: "List all loaded plugins with their status. Admin only.",
+          tags: ["Plugins",],
+        },
+      },
+    )
+    .get(
+      `${prefix}/plugins/ui-components`,
+      (ctx: any,) => {
+        if (!can(ctx.userRole, "admin.system",)) {
+          return forbidden("Admin access required",);
+        }
+
+        const all = registry.getAllUIComponents();
+        const rawLocation: unknown = ctx.query?.location;
+        const location = typeof rawLocation === "string" && rawLocation.length > 0 ? rawLocation : undefined;
+        const components = location ? getComponentsForMountPoint(all, location,) : all;
+
+        return jsonResponse(
+          components.map((c,) => ({
+            name: c.name,
+            location: c.location,
+            type: c.type,
+            props: c.props ?? {},
+          })),
+        );
+      },
+      {
+        response: {
+          200: t.Array(t.Any(),),
+          403: ErrorResponse,
+        },
+        detail: {
+          summary: "List UI components",
+          description: "List plugin-declared UI components, optionally filtered by mount-point location. Admin only.",
           tags: ["Plugins",],
         },
       },

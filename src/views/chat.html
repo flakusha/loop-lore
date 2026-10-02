@@ -5,6 +5,9 @@
 <!-- Header: moved to #header-slot by htmx:load handler -->
 {{> chat/chat-header.html }}
 
+<!-- Plugin mount point (FEAT-050): chat.header components -->
+{{plugin:chat.header}}
+
 <!-- TASK-025: overlay stack lives ABOVE .chat-container so banners / toasts / -->
 <!-- tickers are position:fixed and never shift the chat scroll position. -->
 {{> overlay-stack.html }}
@@ -14,6 +17,9 @@
   <div class="story-layout" x-data="storyState()">
     <main class="main-content">
       {{> chat/message-search-bar.html }} {{> chat/chat-list-panel.html }}
+
+      <!-- Plugin mount point (FEAT-050): chat.sidebar components -->
+      {{plugin:chat.sidebar}}
 
       <!-- Story mode: header bar + GM selection + quest banners (hidden for non-story chats) -->
       {{> chat/story-view.html }}
@@ -53,7 +59,7 @@
       </div>
 
       {{> chat/gallery-sidebar.html }} {{> chat/media-preview-modal.html }} {{> chat/rpg-questions.html }} {{>
-      chat/memory-panel.html }} {{> chat/input-area.html }} {{> chat/story-points-chip.html }} {{>
+      chat/memory-panel.html }} {{plugin:chat.composer}} {{> chat/input-area.html }} {{> chat/story-points-chip.html }} {{>
       chat/sections-panel.html }} {{> chat/background-panel.html }} {{> chat/location-panel.html }}
 
       <!-- Chat Pins Panel -->
