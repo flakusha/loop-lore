@@ -359,6 +359,73 @@
   background: var(--success, #4caf50);
 }
 
+.gm-quest-bar-fill.is-failed {
+  background: var(--accent-red, #f44336);
+}
+
+.gm-quest-status {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 1px 6px;
+  border-radius: 999px;
+  border: 1px solid var(--border-default, #333);
+  color: var(--text-tertiary, #888);
+}
+
+.gm-quest-status.is-active {
+  color: var(--accent-primary, #4ec9b0);
+  border-color: var(--accent-primary, #4ec9b0);
+}
+
+.gm-quest-status.is-completed {
+  color: var(--success, #4caf50);
+  border-color: var(--success, #4caf50);
+}
+
+.gm-quest-status.is-failed {
+  color: var(--accent-red, #f44336);
+  border-color: var(--accent-red, #f44336);
+}
+
+.gm-quest-milestones {
+  list-style: none;
+  margin: 2px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.gm-quest-milestone {
+  font-size: 12px;
+  color: var(--text-tertiary, #888);
+}
+
+.gm-quest-milestone.is-reached {
+  color: var(--text-secondary, #bbb);
+}
+
+.gm-quest-rewards {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+}
+
+.gm-quest-rewards-label {
+  color: var(--text-tertiary, #888);
+}
+
+.gm-quest-reward-chip {
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--bg-primary, #1a1a2e);
+  border: 1px solid var(--border-default, #333);
+  color: var(--text-secondary, #bbb);
+}
+
 .gm-new-quest {
   display: flex;
   gap: 6px;
