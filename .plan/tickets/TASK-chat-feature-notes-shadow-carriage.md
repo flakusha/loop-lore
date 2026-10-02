@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Done (2026-10-01)
+ **Status Note:** All 6 ACs green — final AC (moderator/GM re-eval) verified against src + scoped tests 2026-10-01.
+ **Status:** Done (2026-10-01)
 **Priority:** Low
 **Effort:** Medium
 **Epic:** epic-chat-product-features
@@ -71,3 +72,5 @@ Provide three GM-tier annotation surfaces inside a chat: public notes, shadow no
 
 - Does carriage carry across chat transitions, or only across section splits within a chat?
 - Should shadow notes be exportable by GM as a transcript?
+
+**Resolved:** 2026-10-02 registry-driven close: git issue 8d605de (registry tip: 16de0ced6 gate Auto-closed: appended .md marker marks TASK-CHAT-FEATURE-NOTES-SHADOW-CARRIAGE done)

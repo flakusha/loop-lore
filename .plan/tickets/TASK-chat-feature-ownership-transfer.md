@@ -9,7 +9,8 @@
 
 
 **Status:** Done
-**Status Note:** All 6 ACs green — final AC (moderator/GM re-eval) verified against src + scoped tests 2026-10-01.
+ **Status Note:** All 6 ACs green — final AC (moderator/GM re-eval) verified against src + scoped tests 2026-10-01.
+ **Status:** Done (2026-10-01)
 **Priority:** High
 **Effort:** Medium
 **Epic:** epic-chat-product-features
@@ -51,3 +52,5 @@ Add explicit chat-ownership transfer as a first-class action: an owner can hand 
 
 - Resolved: yes — non-participants are auto-invited with `role_in_chat = owner` before the flip.
 - Is there a cooling-off window where the previous owner can revoke?
+
+**Resolved:** 2026-10-02 registry-driven close: git issue 0fb84d5 (registry tip: d93b51379 gate Auto-closed: appended .md marker marks TASK-CHAT-FEATURE-OWNERSHIP-TRANSFER done)
