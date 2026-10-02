@@ -25,10 +25,11 @@ import {
   WardrobeItemParams,
   WardrobeItemUpdateBody,
 } from "../validation/schemas";
-import { requireActorAccess, } from "./actor-auth";
 import type { HandlerOpts, } from "./actor-auth";
+import { requireOwnedActor, } from "./actor-auth";
 import { HttpStatus, jsonCreated, jsonError, jsonResponse, } from "./http-utils";
 import { wardrobeBindingRoutes, } from "./wardrobe-bindings";
+import { requireOwnedWardrobeItem, } from "./wardrobe-item-auth";
 import { requireWorldOwner, } from "./worlds/access";
 
 const WardrobeItemListResponse = t.Array(t.Any(),);
@@ -45,10 +46,9 @@ export function wardrobeRoutes(opts: HandlerOpts, prefix = "/api",) {
     // ── List wardrobe items ───────────────────────────────────────
 
     .get(`${prefix}/actors/:actorId/wardrobe`, async (ctx: any,) => {
-      const userId = await requireActorAccess(ctx, database,);
-      if (userId instanceof Response) { return userId; }
-
-      const { actorId, } = ctx.params;
+      const owned = await requireOwnedActor(ctx, database,);
+      if (owned instanceof Response) { return owned; }
+      const { userId, actorId, } = owned;
       const worldId = (ctx.query?.worldId as string | undefined) ?? undefined;
       if (worldId) {
         const worldErr = await requireWorldOwner(database, worldId, userId, ctx.userRole as string | null,);
@@ -74,10 +74,9 @@ export function wardrobeRoutes(opts: HandlerOpts, prefix = "/api",) {
     // ── Create wardrobe item ──────────────────────────────────────
 
     .post(`${prefix}/actors/:actorId/wardrobe`, async (ctx: any,) => {
-      const userId = await requireActorAccess(ctx, database,);
-      if (userId instanceof Response) { return userId; }
-
-      const { actorId, } = ctx.params;
+      const owned = await requireOwnedActor(ctx, database,);
+      if (owned instanceof Response) { return owned; }
+      const { userId, actorId, } = owned;
       const { name, descriptor, tags, sort_order, world_id, } = ctx.body;
       if (world_id) {
         const worldErr = await requireWorldOwner(database, world_id, userId, ctx.userRole as string | null,);
@@ -111,15 +110,10 @@ export function wardrobeRoutes(opts: HandlerOpts, prefix = "/api",) {
     // ── Update wardrobe item ──────────────────────────────────────
 
     .put(`${prefix}/actors/:actorId/wardrobe/:itemId`, async (ctx: any,) => {
-      const userId = await requireActorAccess(ctx, database,);
-      if (userId instanceof Response) { return userId; }
-
-      const { actorId, itemId, } = ctx.params;
-      const ok = await updateWardrobeItem(database, itemId, actorId, ctx.body,);
-      if (!ok) {
-        return jsonError({ message: "Wardrobe item not found", status: HttpStatus.NotFound, },);
-      }
-      return jsonResponse({ ok: true, },);
+      const owned = await requireOwnedWardrobeItem(ctx, opts,);
+      if (owned instanceof Response) { return owned; }
+      const { actorId, itemId, } = owned;
+      return mutationResult(await updateWardrobeItem(database, itemId, actorId, ctx.body,),);
     }, {
       params: WardrobeItemParams,
       body: WardrobeItemUpdateBody,
@@ -138,15 +132,10 @@ export function wardrobeRoutes(opts: HandlerOpts, prefix = "/api",) {
     // ── Delete wardrobe item ──────────────────────────────────────
 
     .delete(`${prefix}/actors/:actorId/wardrobe/:itemId`, async (ctx: any,) => {
-      const userId = await requireActorAccess(ctx, database,);
-      if (userId instanceof Response) { return userId; }
-
-      const { actorId, itemId, } = ctx.params;
-      const ok = await deleteWardrobeItem(database, itemId, actorId,);
-      if (!ok) {
-        return jsonError({ message: "Wardrobe item not found", status: HttpStatus.NotFound, },);
-      }
-      return jsonResponse({ ok: true, },);
+      const owned = await requireOwnedWardrobeItem(ctx, opts,);
+      if (owned instanceof Response) { return owned; }
+      const { actorId, itemId, } = owned;
+      return mutationResult(await deleteWardrobeItem(database, itemId, actorId,),);
     }, {
       params: WardrobeItemParams,
       response: {
@@ -163,4 +152,15 @@ export function wardrobeRoutes(opts: HandlerOpts, prefix = "/api",) {
     // ── Inventory-instance bindings (sub-plugin) ───────────────────
 
     .use(wardrobeBindingRoutes({ database, }, prefix,),);
+}
+
+/**
+ * Map a boolean-mutating wardrobe service call to its HTTP response.
+ * @param ok - whether the service applied the change
+ * @returns 200 `{ok:true}`, or 404 when the item no longer exists
+ */
+function mutationResult(ok: boolean,): Response {
+  return ok
+    ? jsonResponse({ ok: true, },)
+    : jsonError({ message: "Wardrobe item not found", status: HttpStatus.NotFound, },);
 }

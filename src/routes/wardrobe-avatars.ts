@@ -11,7 +11,6 @@
 import { Elysia, t, } from "elysia";
 import { AvatarService, } from "../characters/services/avatar-service";
 import { EmotionAvatarService, } from "../characters/services/emotion-avatar-service";
-import { getWardrobeItem, } from "../characters/services/wardrobe/crud";
 import { resolveOutfit, } from "../characters/services/wardrobe/resolve";
 import { EmotionType, } from "../db/enums";
 import {
@@ -22,9 +21,19 @@ import {
   WardrobeActorParams,
   WardrobeItemParams,
 } from "../validation/schemas";
-import { requireActorAccess, } from "./actor-auth";
 import type { HandlerOpts, } from "./actor-auth";
+import { requireOwnedActor, } from "./actor-auth";
 import { HttpStatus, jsonCreated, jsonError, jsonResponse, } from "./http-utils";
+import type { OwnedWardrobeItem, } from "./wardrobe-item-auth";
+import { requireOwnedWardrobeItem, } from "./wardrobe-item-auth";
+
+/** 4xx contract shared by the batch and single outfit-generation routes. */
+const OutfitGenerateResponses = {
+  201: t.Object({ jobId: t.String(), },),
+  401: ErrorResponse,
+  404: ErrorResponse,
+  422: ErrorResponse,
+};
 
 /**
  * @param opts
@@ -40,47 +49,24 @@ export function wardrobeAvatarRoutes(opts: HandlerOpts, prefix = "/api",) {
     // ── Outfit-scoped batch generation ────────────────────────────
 
     .post(`${prefix}/actors/:actorId/wardrobe/:itemId/emotion-avatars`, async (ctx: any,) => {
-      const userId = await requireActorAccess(ctx, database,);
-      if (userId instanceof Response) { return userId; }
-
-      const { actorId, itemId, } = ctx.params;
-      const item = await getWardrobeItem(database, itemId, actorId,);
-      if (!item) {
-        return jsonError({ message: "Wardrobe item not found", status: HttpStatus.NotFound, },);
+      const owned = await requireOwnedWardrobeItem(ctx, opts,);
+      if (owned instanceof Response) { return owned; }
+      const { base_avatar_id, emotions, prompt_prefix, negative_prompt, replace, } = ctx.body;
+      const invalid = (emotions as string[] | undefined)?.find((e: string,) => !isEmotion(e,));
+      if (invalid) {
+        return jsonError({ message: `Invalid emotion: ${invalid}`, status: HttpStatus.BadRequest, },);
       }
-
-      const { base_avatar_id: baseAvatarId, emotions, prompt_prefix, negative_prompt, replace, } = ctx.body;
-      if (emotions) {
-        const invalid = (emotions as string[]).find((e: string,) => !isEmotion(e,));
-        if (invalid) {
-          return jsonError({ message: `Invalid emotion: ${invalid}`, status: HttpStatus.BadRequest, },);
-        }
-      }
-
-      try {
-        const jobId = await emotionAvatars.startBatchGeneration({
-          actorId,
-          baseAvatarId,
-          emotions: emotions as EmotionType[] | undefined,
-          promptPrefix: prompt_prefix,
-          negativePrompt: negative_prompt,
-          outfitId: itemId,
-          replace,
-        },);
-        return jsonCreated({ jobId, },);
-      } catch (error) {
-        const message = error instanceof Error ? error.message : "Failed to start generation";
-        return jsonError({ message, status: HttpStatus.BadRequest, },);
-      }
+      return startGenerationJob(emotionAvatars, owned, {
+        baseAvatarId: base_avatar_id,
+        emotions: emotions as EmotionType[] | undefined,
+        promptPrefix: prompt_prefix,
+        negativePrompt: negative_prompt,
+        replace,
+      },);
     }, {
       params: WardrobeItemParams,
       body: OutfitGenerateBody,
-      response: {
-        201: t.Object({ jobId: t.String(), },),
-        401: ErrorResponse,
-        404: ErrorResponse,
-        422: ErrorResponse,
-      },
+      response: OutfitGenerateResponses,
       detail: {
         summary: "Generate outfit emotion avatars",
         description:
@@ -91,46 +77,25 @@ export function wardrobeAvatarRoutes(opts: HandlerOpts, prefix = "/api",) {
     // ── Single-slot (emotion, outfit) generation ──────────────────
 
     .post(`${prefix}/actors/:actorId/wardrobe/:itemId/emotion-avatars/single`, async (ctx: any,) => {
-      const userId = await requireActorAccess(ctx, database,);
-      if (userId instanceof Response) { return userId; }
-
-      const { actorId, itemId, } = ctx.params;
-      const item = await getWardrobeItem(database, itemId, actorId,);
-      if (!item) {
-        return jsonError({ message: "Wardrobe item not found", status: HttpStatus.NotFound, },);
-      }
-
-      const { base_avatar_id: baseAvatarId, emotion, prompt_prefix, negative_prompt, replace, } = ctx.body;
+      const owned = await requireOwnedWardrobeItem(ctx, opts,);
+      if (owned instanceof Response) { return owned; }
+      const { base_avatar_id, emotion, prompt_prefix, negative_prompt, replace, } = ctx.body;
       if (!isEmotion(emotion,)) {
         return jsonError({ message: `Invalid emotion: ${emotion}`, status: HttpStatus.BadRequest, },);
       }
-
-      try {
-        const jobId = await emotionAvatars.startBatchGeneration({
-          actorId,
-          baseAvatarId,
-          emotions: [emotion as EmotionType,],
-          promptPrefix: prompt_prefix,
-          negativePrompt: negative_prompt,
-          outfitId: itemId,
-          // A single-slot call is a re-roll by default: it replaces only
-          // THIS (emotion, outfit) slot — sibling slots/outfits untouched.
-          replace: replace ?? true,
-        },);
-        return jsonCreated({ jobId, },);
-      } catch (error) {
-        const message = error instanceof Error ? error.message : "Failed to start generation";
-        return jsonError({ message, status: HttpStatus.BadRequest, },);
-      }
+      // A single-slot call is a re-roll by default: it replaces only THIS
+      // (emotion, outfit) slot — sibling slots/outfits are untouched.
+      return startGenerationJob(emotionAvatars, owned, {
+        baseAvatarId: base_avatar_id,
+        emotions: [emotion as EmotionType,],
+        promptPrefix: prompt_prefix,
+        negativePrompt: negative_prompt,
+        replace: replace ?? true,
+      },);
     }, {
       params: WardrobeItemParams,
       body: OutfitGenerateSingleBody,
-      response: {
-        201: t.Object({ jobId: t.String(), },),
-        401: ErrorResponse,
-        404: ErrorResponse,
-        422: ErrorResponse,
-      },
+      response: OutfitGenerateResponses,
       detail: {
         summary: "Generate one outfit emotion avatar",
         description: "Re-roll a single (emotion, outfit) slot; other slots and outfits are untouched.",
@@ -140,10 +105,9 @@ export function wardrobeAvatarRoutes(opts: HandlerOpts, prefix = "/api",) {
     // ── Context resolution (outfit + avatar) ──────────────────────
 
     .post(`${prefix}/actors/:actorId/outfit-resolve`, async (ctx: any,) => {
-      const userId = await requireActorAccess(ctx, database,);
-      if (userId instanceof Response) { return userId; }
-
-      const { actorId, } = ctx.params;
+      const owned = await requireOwnedActor(ctx, database,);
+      if (owned instanceof Response) { return owned; }
+      const { actorId, } = owned;
       const body = ctx.body;
       const outfit = await resolveOutfit(database, {
         actorId,
@@ -196,4 +160,42 @@ export function wardrobeAvatarRoutes(opts: HandlerOpts, prefix = "/api",) {
  */
 function isEmotion(value: string,): boolean {
   return (Object.values(EmotionType,) as string[]).includes(value,);
+}
+
+/** Emotion-avatar job request shared by the batch and single-slot routes. */
+interface OutfitGenerationRequest {
+  baseAvatarId: string;
+  emotions?: EmotionType[];
+  promptPrefix?: string | null;
+  negativePrompt?: string | null;
+  replace?: boolean | null;
+}
+
+/**
+ * Start one outfit-scoped emotion-avatar batch job.
+ * @param emotionAvatars
+ * @param owned - resolved actor/item ids from `requireOwnedWardrobeItem`
+ * @param req
+ * @returns 201 with the job id, or 400 when the job cannot start
+ */
+async function startGenerationJob(
+  emotionAvatars: EmotionAvatarService,
+  owned: OwnedWardrobeItem,
+  req: OutfitGenerationRequest,
+): Promise<Response> {
+  try {
+    const jobId = await emotionAvatars.startBatchGeneration({
+      actorId: owned.actorId,
+      baseAvatarId: req.baseAvatarId,
+      emotions: req.emotions,
+      promptPrefix: req.promptPrefix ?? undefined,
+      negativePrompt: req.negativePrompt ?? undefined,
+      outfitId: owned.itemId,
+      replace: req.replace ?? undefined,
+    },);
+    return jsonCreated({ jobId, },);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Failed to start generation";
+    return jsonError({ message, status: HttpStatus.BadRequest, },);
+  }
 }
