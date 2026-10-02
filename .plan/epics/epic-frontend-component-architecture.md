@@ -37,7 +37,7 @@ _TBD — create implementation tickets._
 | ------ | ---------------- | -------- |
 | Frontend Components | Component library | Defines what is a component vs a view |
 | HTML Dedup & HTMX Reuse | htmx/partial boundary | HTMX vs Alpine responsibility split |
-| Bundle Optimization | Lazy `import()` targets | Eager vs on-demand registration (see `matrix-frontend-backend-integration.md` FB6) |
+| Bundle Optimization | Lazy `import()` targets | Eager vs on-demand registration (see `matrix-frontend-backend-integration.md` FB7) |
 
 ### Systems That Depend On This Epic
 
