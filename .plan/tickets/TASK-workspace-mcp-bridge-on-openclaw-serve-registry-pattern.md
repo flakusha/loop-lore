@@ -21,3 +21,4 @@ Design workspace-to-external-tool MCP bridge following OpenClaw mcp serve (conve
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+- [ ] Trust boundary explicit: stdio transport = local-user boundary (no network auth); any HTTP transport is loopback-only or authenticated — never exposed unauthenticated (`docs/spec/integrations-architecture.md` §3)

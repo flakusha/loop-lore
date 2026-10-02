@@ -25,7 +25,7 @@ All pure JS/TS, no native addons, no separate process. JMAP (RFC 8620) is a futu
 
 ## 3. Auth / secret storage
 
-- IMAP/SMTP credentials live in `integrations.email.*` config (`imapHost/imapPort/imapUser/imapPass`, `smtpHost/smtpPort/smtpUser/smtpPass`) — secrets marked `⚠ SECRET`, encrypted at rest via the adapter credential envelope (`TASK-adapter-secret-storage`), env-overridable (`EMAIL_IMAP_PASS`, `EMAIL_SMTP_PASS`).
+- IMAP/SMTP credentials live in `integrations.email.*` config (`imapHost/imapPort/imapUser/imapPass`, `smtpHost/smtpPort/smtpUser/smtpPass`) — secrets marked `⚠ SECRET`, encrypted at rest via the adapter credential envelope (`TASK-ADAPTER-SECRET-STORAGE-ENCRYPTED-CREDENTIAL-ENVELOPE`), env-overridable (`EMAIL_IMAP_PASS`, `EMAIL_SMTP_PASS`).
 - PGP private keys: user-managed keyring, encrypted at rest per `epic-crypto.md`; public keys stored per correspondent. PGP is opportunistic — mail is stored unencrypted unless the user configures PGP for a correspondent (`epic-email-integration.md`).
 
 ## 4. Protocol → `AdapterMessage` mapping
@@ -45,7 +45,7 @@ All pure JS/TS, no native addons, no separate process. JMAP (RFC 8620) is a futu
 | Path | Use | Requirement |
 |---|---|---|
 | **IMAP fetch** (default) | loop-lore polls the user's mailbox | IMAP credentials; spam gate (§7) |
-| **Webhook relay** | an external MX/relay (e.g. Mailgun, SendGrid, Cloudflare Email Routing) POSTs parsed mail to `POST /api/v1/integrations/webhooks/email` | HMAC-verified per-adapter secret (`TASK-integrations-inbound-webhook-ingestion`) |
+| **Webhook relay** | an external MX/relay (e.g. Mailgun, SendGrid, Cloudflare Email Routing) POSTs parsed mail to `POST /api/v1/integrations/webhooks/email` | HMAC-verified per-adapter secret (`TASK-INTEGRATIONS-INBOUND-WEBHOOK-INGESTION-ENDPOINT`) |
 | **Own MX** | running a full MX (Postfix etc.) | NOT recommended — deliverability + spam burden lands on the operator; webhook relay is the supported path |
 
 ## 6. Threading
@@ -54,7 +54,7 @@ All pure JS/TS, no native addons, no separate process. JMAP (RFC 8620) is a futu
 
 ## 7. Spam / abuse gate
 
-Inbound mail → chat passes the existing moderation/NSFW gate before persistence (same seam as all inbound adapters, `integrations-architecture.md` §6). Additional email-specific controls: sender allow/block lists, rate limit per sender, spam-score threshold (configurable), and a quarantine folder for mail that fails the gate. Outbound: SPF/DKIM/DMARC required when sending from the operator's own domain — `TASK-email-deliverability-and-spam-gate`.
+Inbound mail → chat passes the existing moderation/NSFW gate before persistence (same seam as all inbound adapters, `integrations-architecture.md` §6). Additional email-specific controls: sender allow/block lists, rate limit per sender, spam-score threshold (configurable), and a quarantine folder for mail that fails the gate. Outbound: SPF/DKIM/DMARC required when sending from the operator's own domain — `TASK-EMAIL-DELIVERABILITY-SPF-DKIM-DMARC-AND-INBOUND-SPAM-GATE`.
 
 ## 8. Address-change re-verification
 

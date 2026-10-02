@@ -31023,6 +31023,19 @@
     "title": "In-Place Generation Owner Backfill",
     "type": "TASK"
   },
+  "TASK-INBOUND-WEBHOOK-INGESTION-SURFACE-HMAC-VERIFIED-DEFAULT-DENY": {
+    "hash": "203199e",
+    "git_issue": "203199e",
+    "extid": "TASK-INBOUND-WEBHOOK-INGESTION-SURFACE-HMAC-VERIFIED-DEFAULT-DENY",
+    "type": "TASK",
+    "title": "Inbound webhook ingestion surface (HMAC-verified, default-deny)",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-integrations-core",
+    "tags": [],
+    "source": ".plan/tickets/TASK-inbound-webhook-ingestion-surface-hmac-verified-default-deny.md",
+    "status": "Not Started"
+  },
   "TASK-INFERENCE-BROWSER-WLLAMA-GGUF": {
     "epic": "",
     "extid": "TASK-INFERENCE-BROWSER-WLLAMA-GGUF",
