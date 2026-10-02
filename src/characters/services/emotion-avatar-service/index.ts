@@ -31,10 +31,7 @@ import {
   getEmotionPromptModifier as getEmotionPromptModifierDispatch,
   resolveEmotionPromptModifier as resolveEmotionPromptModifierDispatch,
 } from "./emotions";
-import {
-  generateEmotionAvatar as generateEmotionAvatarDispatch,
-  runBatchGeneration,
-} from "./generation";
+import { runBatchGeneration, } from "./generation";
 import {
   cancelJob as cancelJobDispatch,
   createJob,
@@ -42,6 +39,7 @@ import {
   listJobs as listJobsDispatch,
   storeJob,
 } from "./job-store";
+import { generateEmotionAvatar as generateEmotionAvatarDispatch, } from "./single-generation";
 import type {
   BatchGenerationJob,
   BatchJobId,
