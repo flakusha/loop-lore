@@ -84,3 +84,15 @@ per-chunk, and probe clean:
   a wrong or truncated first chunk fails before the entry is treated as
   ready. In the UI a chunked entry renders as a single model with aggregate
   progress (`storedFiles(model.id) + '/' + model.files.length`).
+
+## Scheduler config (llama-swap path)
+
+When running against `llama-swap`, generation requests are routed through a
+scheduler that enforces per-provider rate limits, priority classes, and token
+budgets. One `ResourceManager` instance is shared at the `callWithFailover`
+sites; requests enter through a priority class (defaulting to Normal) and
+are admitted based on budget and capacity. Field names are normative in
+[`docs/spec/generation-scheduler.md`](../spec/generation-scheduler.md).
+
+For the full scheduling model, see [`docs/spec/generation-scheduler.md`](../spec/generation-scheduler.md).
+For the epic driving this work, see [`epic-llm-request-scheduler.md`](../../.plan/epics/epic-llm-request-scheduler.md).
