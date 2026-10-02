@@ -29,7 +29,11 @@ Design source: `epic-rag-assets-unified-storage-and-assistant-flows.md`
 the web-search fallback orchestrator (`orchestrator.ts`: external providers
 + quarantine, unrelated to doc RAG). `epic-assistant-entity-access.md` §1
 specifies the command surface (`/rag-search`, `/rag-ask`, `/rag-preview`,
-`/rag-decompose`) with FTS5 fallback until this pipeline lands.
+`/rag-decompose`) with FTS5 fallback until this pipeline lands. `documents` /
+`chunks` tables do not exist at HEAD (no `createTable("documents"` in
+`src/db/migrations/001_init.ts`) — table creation is in scope here; the
+embedding transport exists (`ModelRole.Embeddings` in `src/db/enums-core/flags.ts`,
+`src/memory/embeddings.ts` for actor memories).
 
 ## Scope boundary (vs wrapper ticket — reference, don't duplicate)
 

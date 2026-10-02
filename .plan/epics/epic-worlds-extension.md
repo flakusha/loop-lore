@@ -22,7 +22,7 @@ Hub epic for the social / temporal / spatial / interaction layers on top of the 
 
 | Area | Owns | Composes with, does not own |
 | ---- | ---- | --------------------------- |
-| Generation | world config-template coverage driving creation (`TASK-world-template-full-model-coverage.md`) | generation UX (`epic-assistant-creative-studio-workflows.md` \u00a77.6) |
+| Generation | world config-template coverage driving creation (`TASK-world-template-full-model-coverage.md`) | generation UX (`epic-assistant-creative-studio-workflows.md` §7.6) |
 | Lore | location assets, unique items, resource pools; lorebook sharing refinements below | secret-lore access (`epic-lore-knowledge.md`) |
 | RAG | worldbook entries as decomposable docs (consumer of the pipeline) | decomposition + indexing (`epic-rag-assets-unified-storage-and-assistant-flows.md`) |
 | Templates | TS `WorkflowTemplate` / JSON workflow consumption for maps + assets | template registry (`src/image-edit/template-registry.ts` pattern) |
