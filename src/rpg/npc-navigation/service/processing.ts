@@ -8,6 +8,7 @@
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../../db";
+import { toDate, } from "../../../utils/date";
 import { getLocationConnections, } from "./pathfinding";
 import { parseSchedule, updateMovementState, } from "./state";
 import type { MovementResult, } from "./types";
@@ -128,7 +129,7 @@ export async function processPatrolMovement(
   await updateMovementState(db, actorId, worldId, {
     currentLocationId: nextLocationId,
     patrolIndex: nextIndex,
-    lastMovedAt: new Date(opts.nowMs).toISOString(),
+    lastMovedAt: toDate(opts.nowMs,).toISOString(),
   },);
 
   return {
@@ -164,7 +165,7 @@ export async function processWanderMovement(
 
   await updateMovementState(db, actorId, worldId, {
     currentLocationId: nextLocationId,
-    lastMovedAt: new Date(opts.nowMs).toISOString(),
+    lastMovedAt: toDate(opts.nowMs,).toISOString(),
   },);
 
   return {
@@ -202,7 +203,7 @@ export async function processFollowMovement(
 
   await updateMovementState(db, actorId, worldId, {
     currentLocationId: targetState.location_id,
-    lastMovedAt: new Date(opts.nowMs).toISOString(),
+    lastMovedAt: toDate(opts.nowMs,).toISOString(),
   },);
 
   return {
@@ -238,7 +239,7 @@ export async function processFleeMovement(
 
   await updateMovementState(db, actorId, worldId, {
     currentLocationId: nextLocationId,
-    lastMovedAt: new Date(opts.nowMs).toISOString(),
+    lastMovedAt: toDate(opts.nowMs,).toISOString(),
   },);
 
   return {

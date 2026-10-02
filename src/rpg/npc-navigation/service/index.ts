@@ -26,8 +26,8 @@ import {
 } from "./state";
 import type { MovementPattern, MovementResult, NpcMovementState, } from "./types";
 
-export { MovementPattern, } from "./types";
 export type { MovementTickOptions, } from "./processing";
+export { MovementPattern, } from "./types";
 export type {
   LocationConnection,
   MovementResult,
