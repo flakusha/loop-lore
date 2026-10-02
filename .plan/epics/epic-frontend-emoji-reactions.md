@@ -33,3 +33,31 @@
 
 - Typing `:fire:` renders 🔥 consistently in chat + group chat.
 - React/unreact round-trips without full message re-render.
+
+## Integration Points
+
+### Systems This Epic Depends On
+
+| System | What It Provides | How Used |
+| ------ | ---------------- | -------- |
+| Chat Commands | Shared trigger registry | `:` autocomplete in the composer (see `matrix-frontend-backend-integration.md` FB2) |
+| Frontend Components | Composer + message bubbles | `src/components/chat/input-area.html` |
+
+### Systems That Depend On This Epic
+
+| System | What It Consumes | How Used |
+| ------ | ---------------- | -------- |
+| Chat Commands | Shared autocomplete popup | Tab-accept parity |
+
+### Shared Data Contracts
+
+| Contract | Shared With | Purpose |
+| -------- | ----------- | ------- |
+| Reaction store (`src/frontend/alpine/chat-messages.ts`) | Chat/group views | Optimistic react/unreact, per-user dedup |
+
+### Cross-System Events
+
+| Event | Direction | Purpose |
+| ----- | --------- | ------- |
+| Reaction round-trip | emits | Message reactions API |
+
