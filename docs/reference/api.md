@@ -559,11 +559,15 @@ All endpoints prefixed with `/api/v1/` (versioned; see `docs/spec/api-versioning
 
 ### Chat Analytics
 
-`GET /api/v1/analytics/chat/:chatId` — analytics for specific chat
+`GET /api/v1/analytics/chats/:chatId` — analytics for specific chat (optional `from`/`to` ISO range)
 
 ### Overview
 
-`GET /api/v1/analytics/overview` — global analytics overview
+`GET /api/v1/analytics/overview` — global analytics overview (includes `tokensByRole` and `latencyBuckets`)
+
+### Character Comparison
+
+`GET /api/v1/analytics/characters` — per-character rollup (messages, tokens, avg response length, tokens/message)
 
 ### Model Comparisons — Create
 
