@@ -2,12 +2,12 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * 031_world_discovery_trade_events
+ * 037_world_discovery_trade_events
  *
  * World-scoped simulation log + exploration progress
  * (TASK-world-simulation-discovery-and-trade-events).
  *
- * Two tables, both world-scoped like 030:
+ * Two tables, both world-scoped like 036:
  *
  *   - `world_event_log`    — append-only event log for the tick.
  *   - `location_discovery` — per-(location, actor) exploration progress.
@@ -50,7 +50,7 @@
  * explored. A tick index is the only clock a replay reproduces exactly,
  * so a replay decays by precisely what the original decay did.
  *
- * Column conventions follow 027/030: `worlds.id` cascades,
+ * Column conventions follow 027/036: `worlds.id` cascades,
  * `locations.id` / `actors.id` cascade on `location_discovery` (the row
  * IS "this actor's progress at this location", meaningless without
  * both) and set null on `world_event_log.actor_id` (the event outlives
@@ -60,9 +60,9 @@ import { type Kysely, sql, } from "kysely";
 
 export async function up(database: Kysely<unknown>,): Promise<void> {
   await database.schema
-    .createTable("world_event_log")
-    .addColumn("id", "text", (col,) => col.primaryKey().defaultTo(sql`(lower(hex(randomblob(16))))`),)
-    .addColumn("world_id", "text", (col,) => col.notNull().references("worlds.id").onDelete("cascade"),)
+    .createTable("world_event_log",)
+    .addColumn("id", "text", (col,) => col.primaryKey().defaultTo(sql`(lower(hex(randomblob(16))))`,),)
+    .addColumn("world_id", "text", (col,) => col.notNull().references("worlds.id",).onDelete("cascade",),)
     /** Open vocabulary: `location:discovered` and `trade:route` today; later
      * migrations add types without an ALTER for a closed enum. */
     .addColumn("event_type", "text", (col,) => col.notNull(),)
@@ -71,14 +71,14 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("subject_id", "text",)
     /** WHO caused it, when that is an actor. Set null on delete — the event
      * outlives the actor who fired it. */
-    .addColumn("actor_id", "text", (col,) => col.references("actors.id").onDelete("set null"),)
+    .addColumn("actor_id", "text", (col,) => col.references("actors.id",).onDelete("set null",),)
     /** JSON text, like `locations.connections` and `story_turns.world_events`. */
-    .addColumn("payload", "text", (col,) => col.notNull().defaultTo("{}"),)
+    .addColumn("payload", "text", (col,) => col.notNull().defaultTo("{}",),)
     /** The tick that produced it — the log's natural ordering key. */
     .addColumn("tick_index", "integer", (col,) => col.notNull(),)
     /** UNIQUE idempotency key. See the REPLAY SAFETY note above. */
     .addColumn("dedupe_key", "text", (col,) => col.notNull().unique(),)
-    .addColumn("created_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`),)
+    .addColumn("created_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
     .execute();
 
   // The admin listing and every tick-time read are both
@@ -86,16 +86,16 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
   // access path. `id` rides along so the ORDER BY is total: two events on
   // one tick must never swap places between pages or between runs.
   await database.schema
-    .createIndex("idx_world_event_log_world_tick")
-    .on("world_event_log")
+    .createIndex("idx_world_event_log_world_tick",)
+    .on("world_event_log",)
     .columns(["world_id", "tick_index", "id",],)
     .execute();
 
   await database.schema
-    .createTable("location_discovery")
-    .addColumn("world_id", "text", (col,) => col.notNull().references("worlds.id").onDelete("cascade"),)
-    .addColumn("location_id", "text", (col,) => col.notNull().references("locations.id").onDelete("cascade"),)
-    .addColumn("actor_id", "text", (col,) => col.notNull().references("actors.id").onDelete("cascade"),)
+    .createTable("location_discovery",)
+    .addColumn("world_id", "text", (col,) => col.notNull().references("worlds.id",).onDelete("cascade",),)
+    .addColumn("location_id", "text", (col,) => col.notNull().references("locations.id",).onDelete("cascade",),)
+    .addColumn("actor_id", "text", (col,) => col.notNull().references("actors.id",).onDelete("cascade",),)
     /** 0-100, matching epic-world-locations' `explorationProgress`. */
     .addColumn("progress", "real", (col,) => col.notNull().defaultTo(0,),)
     /** THE DECAY TIMESTAMP: the tick progress was last recomputed on. Also
@@ -104,8 +104,8 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     /** 1 = this actor has charted the location. Latches; never clears. */
     .addColumn("discovered", "integer", (col,) => col.notNull().defaultTo(0,),)
     .addColumn("discovered_tick", "integer",)
-    .addColumn("created_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`),)
-    .addColumn("updated_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`),)
+    .addColumn("created_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
+    .addColumn("updated_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
     .addPrimaryKeyConstraint("pk_location_discovery", ["world_id", "location_id", "actor_id",],)
     .addCheckConstraint("ck_location_discovery_progress", sql`progress >= 0 AND progress <= 100`,)
     .execute();
@@ -114,15 +114,15 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
   // exactly-once guard) and per location by any fog-of-war view. It is
   // not the PK order, so it needs its own index.
   await database.schema
-    .createIndex("idx_location_discovery_location")
-    .on("location_discovery")
-    .columns(["world_id", "location_id"],)
+    .createIndex("idx_location_discovery_location",)
+    .on("location_discovery",)
+    .columns(["world_id", "location_id",],)
     .execute();
 }
 
 export async function down(database: Kysely<unknown>,): Promise<void> {
-  await database.schema.dropIndex("idx_location_discovery_location").execute();
-  await database.schema.dropTable("location_discovery").execute();
-  await database.schema.dropIndex("idx_world_event_log_world_tick").execute();
-  await database.schema.dropTable("world_event_log").execute();
+  await database.schema.dropIndex("idx_location_discovery_location",).execute();
+  await database.schema.dropTable("location_discovery",).execute();
+  await database.schema.dropIndex("idx_world_event_log_world_tick",).execute();
+  await database.schema.dropTable("world_event_log",).execute();
 }
