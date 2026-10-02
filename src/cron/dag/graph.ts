@@ -40,7 +40,7 @@ export function reaches(
   to: string,
 ): boolean {
   if (from === to) { return true; }
-  const seen = new Set<string>([from,]);
+  const seen = new Set<string>([from,],);
   const stack: string[] = [from,];
   let visited = 0;
   while (stack.length > 0) {
@@ -51,7 +51,7 @@ export function reaches(
         `DAG reachability probe exceeded ${MAX_PROBE_NODES} nodes from "${from}"; graph is corrupt`,
       );
     }
-    for (const next of edges.get(node) ?? []) {
+    for (const next of edges.get(node,) ?? []) {
       if (next === to) { return true; }
       if (seen.has(next,)) { continue; }
       seen.add(next,);
@@ -77,7 +77,7 @@ export class DagGraph {
 
   /** Every node in the graph, sorted for a stable pass order. */
   nodes(): string[] {
-    return [...this.#known,].toSorted((a, b,) => a.localeCompare(b,),);
+    return [...this.#known,].toSorted((a, b,) => a.localeCompare(b,));
   }
 
   /**
@@ -96,9 +96,8 @@ export class DagGraph {
 
   /** Nodes `taskId` waits on. Empty for a root. */
   dependsOn(taskId: string,): string[] {
-    return [...(this.#deps.get(taskId,) ?? new Set<string>(),),].toSorted(
-      (a, b,) => a.localeCompare(b,),
-    );
+    const deps = this.#deps.get(taskId,) ?? new Set<string>();
+    return [...deps,].toSorted((a, b,) => a.localeCompare(b,));
   }
 
   /** Would `taskId` running on `dependsOnTaskId` close a cycle? */
@@ -148,7 +147,7 @@ export class DagGraph {
       if (policy !== "skip" || isFinished(dependent,)) { continue; }
       out.push(dependent,);
     }
-    return out.toSorted((a, b,) => a.localeCompare(b,),);
+    return out.toSorted((a, b,) => a.localeCompare(b,));
   }
 
   /** True when every prerequisite of `taskId` is `done`. A root has no
