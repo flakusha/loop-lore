@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * 028_plugin_state_config
+ * 029_plugin_state_config
  *
  * Adds a nullable `config_json` TEXT column to `plugin_state` so an
  * admin can persist per-plugin config overrides (FEAT-051). The loader
