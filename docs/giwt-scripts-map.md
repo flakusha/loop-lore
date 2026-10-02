@@ -170,3 +170,49 @@ With `DEFAULT_SETTINGS.branches.protected = [master, main, stg, dev]` and
 `root = dev`, that makes the documented `giwt rebase <branch>` (no `onto`)
 fail on a default config. The fork keeps protected *sources* refused and allows
 protected targets.
+
+## Try-9 orchestration sync (pin enforcement + unwired surface)
+
+No dependency bump: the pin already tracked giwt master. This closes three
+gaps between the repo's wiring and what the pinned giwt actually provides.
+
+### Pin enforcement
+
+`~/.local/bin/giwt` is a symlink to a *mutable local checkout*, so a bare
+`giwt` can run a different commit than `bun.lock` pins — today they happen to
+agree (`51fddd5`), which is coincidence, not enforcement.
+
+- **`package.json` scripts need no change.** `bun run <script>` prepends
+  `node_modules/.bin` ahead of `~/.local/bin`, verified by probe: every
+  `giwt …` script resolves `node_modules/.bin/giwt` → the pinned
+  `node_modules/giwt/src/cli.ts`.
+- **`scripts/worktree/commands/sync.ts` DID.** It was the only bare-`giwt`
+  spawn in `scripts/`, `src/`, tests and `.githooks`, relying on ambient PATH.
+  It now resolves through an exported pure helper `giwtArgv(repoRoot)`, which
+  spawns `node_modules/giwt/src/cli.ts` under the current interpreter and
+  falls back to the bare name only when the pin is absent. Covered by
+  `scripts/worktree/commands/sync.test.ts` (pinned / PATH-shadow / no-pin).
+
+### Unwired giwt surface
+
+- `plan:backlog:sync{,fix}` routed through `giwt plan validate --gates
+  backlog`, a heavyweight indirection left over from when no dedicated
+  command existed. Now calls `giwt backlog sync [--fix]` directly.
+  **Behavioural difference**: the gate treats `outside` rows as warn-only,
+  while `backlog sync` counts them in `issueCount` and exits 1. The check
+  gate is therefore *stricter* for `outside` rows — acceptable (it is a
+  genuine index defect), and `plan:validate` still reports them as advisory.
+- `giwt plan matrix` (generates `.plan/feature-matrix.md`) had no script at
+  all, despite the `matrix` validate gate telling you to run it. Added
+  `plan:matrix` / `plan:matrix:check`; registered `plan - matrix` in
+  `check-parallel.mjs` as a freshness gate.
+- `plan validate` runs 11 gates, not the 10 AGENTS.md claimed — `status-vocab`
+  and `matrix` are new. AGENTS.md now lists them and documents the canonical
+  `**Status:**` vocabulary.
+
+### Still open (unchanged, owner-gated)
+
+The `scripts/worktree/` fork still carries commands upstream does not
+(`doctor` is missing in-repo entirely; `report` is *more* capable in-repo with
+multi-container dedup scanning). Retire-vs-shim remains an owner decision —
+see the try-6 open-items list.

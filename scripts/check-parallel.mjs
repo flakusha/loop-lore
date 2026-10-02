@@ -310,9 +310,12 @@ const checks = {
     // Ticket index reconciliation (index.json ↔ .md ↔ git issues)
     "plan - ticket index (sync)": "bun run plan:sync",
 
-    // Comprehensive .plan/ validation (10 gates: format, linkage, backlog,
-    // tickets, code-map, links, spdx, naming, epics-doc, all)
+    // Comprehensive .plan/ validation (format, linkage, backlog, tickets,
+    // code-map, links, spdx, naming, epics-doc, status-vocab, matrix)
     "plan - validate": "bun run plan:validate",
+
+    // Feature matrix freshness (.plan/feature-matrix.md vs a fresh rebuild)
+    "plan - matrix": "bun run plan:matrix:check",
 
     // Size check
     "size - check": "bun run scripts/check-file-size.ts",

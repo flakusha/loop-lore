@@ -334,6 +334,14 @@ linked at `~/.local/bin/giwt`. **Use `giwt <command>` for every worktree
 operation** — do not run raw `git worktree`/`git commit`/`git merge`/`git push`
 on the dev checkout.
 
+> **Version pin**: the `~/.local/bin/giwt` symlink points at a _mutable local
+> checkout_ of giwt, so a bare `giwt` may run a different commit than the repo
+> depends on. Prefer the pinned copy: `bun run <script>` (bun puts
+> `node_modules/.bin` ahead of `~/.local/bin`, so the `plan:*` scripts already
+> resolve the pin), or `bun node_modules/giwt/src/cli.ts <args>`. Repo code
+> that shells out to giwt MUST spawn the pinned path, not the bare name — see
+> `giwtArgv` in `scripts/worktree/commands/sync.ts`.
+
 ```bash
 # Create worktree (branch defaults to dev base)
 giwt new feature-name
@@ -402,10 +410,13 @@ lock, then `exit 130`.
 `kill -9` (SIGKILL) bypasses the handler and may leave dev mid-merge.
 Recover manually with `giwt abort` (see above).
 
-`giwt abort` aborts any in-progress merge/rebase/cherry-pick, pops leftover
-`worktree-finalize-*` stashes (preserving them if pop conflicts), and removes
-a stale lockfile. It NEVER deletes user-authored stashes, force-deletes
-branches, or resets to a remote ref.
+`giwt abort` aborts any in-progress merge/rebase/cherry-pick (and clears an
+orphan `REBASE_HEAD` left by a SIGKILL), pops leftover `worktree-finalize-*`
+stashes, and removes a stale lockfile. It NEVER deletes user-authored
+stashes, NEVER runs `git reset --hard`, never force-deletes branches, and
+never resets to a remote ref. A stash that only _mentions_ the prefix is
+reported and left untouched; a pop that fails or conflicts STOPS the recovery
+(exit 1) with the stash preserved and the conflicted paths printed.
 
 ````
 ## Issue Tracking
@@ -430,11 +441,19 @@ giwt state TASK-001 closed
 bun run plan:sync:fix                 # apply fixes (non-interactive) — runs giwt sync --fix
 bun run plan:sync                     # check — runs giwt sync
 
-# Comprehensive .plan/ validation (10 gates: format, linkage, backlog,
-# tickets, code-map, links, spdx, naming, epics-doc, all)
+# Comprehensive .plan/ validation (format, linkage, backlog, tickets, code-map,
+# links, spdx, naming, epics-doc, status-vocab, matrix)
 bun run plan:validate                 # check — exits non-zero on findings
 bun run plan:validate:fix             # apply auto-fixable findings (giwt plan validate --fix)
 bun run plan:status                   # health summary (open/closed counts, gate pass/fail)
+
+# Backlog index reconciliation (.plan/backlog/ index rows ↔ tier files)
+bun run plan:backlog:sync             # check — exits non-zero on orphans/phantoms/outside rows
+bun run plan:backlog:sync:fix         # add orphans, drop phantoms
+
+# Feature matrix (.plan/feature-matrix.md, generated from the ticket index)
+bun run plan:matrix                   # regenerate
+bun run plan:matrix:check             # freshness gate — committed matrix vs fresh rebuild
 
 # Direct git-issue
 giwt gi <command>
@@ -446,6 +465,7 @@ giwt gi <command>
 - **`.plan/tickets/`** — task tickets
 - **`.plan/epics-index.md`** — consolidated epic status (auto-generated from `.plan/epics/`)
 - **`.plan/backlog/`** — priority workstack and open/deferred items
+- **`.plan/feature-matrix.md`** — feature matrix generated from the ticket index (auto-generated)
 
 **`.plan/` is source of truth**; `docs/meta/` is reference only.
 
@@ -453,6 +473,17 @@ giwt gi <command>
 state qualitatively ("wired", "push pending") and recompute numbers at write
 time. Do not paste commit counts, ahead/behind tallies, or pass tallies that
 were captured in an earlier session — they are stale by definition.
+
+### Ticket status vocabulary
+
+`plan validate`'s `status-vocab` gate rejects any `**Status:**` value outside
+the canonical set: **Not Started**, **In Progress**, **Blocked**, **Done**,
+**Wontfix**, **Postponed**. Type it bare — an emoji prefix (`⬜ Not Started`)
+fails the gate, as does any invented variant. Extra freeform values map onto
+canonical ones via `[status.aliases]` in `giwt.toml`.
+
+Prefer `giwt ticket` / `giwt state` over hand-writing ticket `.md` files: the
+generator emits the exact `**Field:**` lines the `format` gate requires.
 
 ## Memory (Engram)
 
