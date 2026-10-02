@@ -33,6 +33,13 @@
         <button class="world-edit-tab" :class="{ active: activeTab === 'audit' }" @click="showTab('audit')">
           Audit
         </button>
+        <button
+          class="world-edit-tab"
+          :class="{ active: activeTab === 'worldEvents' }"
+          @click="showTab('worldEvents')"
+        >
+          World Events
+        </button>
         <button class="world-edit-tab" :class="{ active: activeTab === 'review' }" @click="showTab('review')">
           Review
         </button>
@@ -660,6 +667,107 @@
                   class="btn btn-secondary btn-xs"
                   :disabled="auditPage >= auditPages"
                   @click="goAuditPage(auditPage + 1)"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <!-- World Events Tab -->
+      <div x-show="activeTab === 'worldEvents'">
+        <div style="padding: var(--space-6)">
+          <div style="display: flex; gap: var(--space-3); margin-bottom: var(--space-4); flex-wrap: wrap">
+            <input
+              class="form-input"
+              type="search"
+              placeholder="World ID (required)..."
+              x-model="worldEventsWorldId"
+              @input.debounce.300ms="searchWorldEvents()"
+              style="flex: 1; min-width: 200px"
+            />
+            <select class="form-input" style="width: auto" x-model="worldEventsType" @change="searchWorldEvents()">
+              <option value="">All event types</option>
+              <template x-for="t in eventTypeOptions" :key="t">
+                <option :value="t" x-text="t"></option>
+              </template>
+            </select>
+            <button
+              class="btn btn-secondary btn-xs"
+              x-show="worldEventsType"
+              @click="clearWorldEventFilters()"
+            >
+              Clear
+            </button>
+          </div>
+          <div x-show="loadingWorldEvents" class="empty-state" style="padding: var(--space-8)">
+            <div class="icon">⏳</div>
+          </div>
+          <template x-if="!loadingWorldEvents">
+            <div>
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Time</th>
+                    <th>Tick</th>
+                    <th>Event</th>
+                    <th>Subject</th>
+                    <th>Actor</th>
+                    <th>Payload</th>
+                  </tr>
+                </thead>
+                <tbody aria-busy="true">
+                  <template x-if="worldEventsWorldId.trim() === ''">
+                    <tr>
+                      <td colspan="6" class="empty-state" style="padding: var(--space-8)">
+                        Enter a world ID to load its simulation log
+                      </td>
+                    </tr>
+                  </template>
+                  <template x-if="worldEventsWorldId.trim() !== '' && worldEvents.length === 0">
+                    <tr>
+                      <td colspan="6" class="empty-state" style="padding: var(--space-8)">
+                        No world events
+                      </td>
+                    </tr>
+                  </template>
+                  <template x-for="e in worldEvents" :key="e.id">
+                    <tr>
+                      <td x-text="formatDate(e.created_at)" style="white-space: nowrap; font-size: 12px"></td>
+                      <td x-text="e.tick_index" style="font-size: 12px"></td>
+                      <td x-text="e.event_type" style="font-size: 12px"></td>
+                      <td x-text="e.subject_id || '-'" style="font-size: 12px"></td>
+                      <td x-text="e.actor_id || '-'" style="font-size: 12px"></td>
+                      <td
+                        x-text="formatWorldEventPayload(e.payload)"
+                        style="font-size: 11px; max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap"
+                      >
+                      </td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+              <div
+                x-show="worldEventPages() > 1"
+                style="display: flex; justify-content: center; gap: var(--space-2); margin-top: var(--space-4)"
+              >
+                <button
+                  class="btn btn-secondary btn-xs"
+                  :disabled="worldEventsPage === 1"
+                  @click="goWorldEventPage(worldEventsPage - 1)"
+                >
+                  Prev
+                </button>
+                <span
+                  style="display: flex; align-items: center; font-size: 13px"
+                  x-text="'Page ' + worldEventsPage + ' of ' + worldEventPages()"
+                ></span>
+                <button
+                  class="btn btn-secondary btn-xs"
+                  :disabled="worldEventsPage >= worldEventPages()"
+                  @click="goWorldEventPage(worldEventsPage + 1)"
                 >
                   Next
                 </button>
