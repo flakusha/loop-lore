@@ -23700,7 +23700,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-chat-feature-location-transition-transfer.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Location Transition via New Chat or Context Isolation + Party Handoff",
     "type": "TASK"
