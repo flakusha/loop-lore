@@ -13,6 +13,13 @@ import { tmpdir, } from "node:os";
 import { dirname, join, } from "node:path";
 import { GIWT_CLI_RELATIVE, giwtArgv, } from "./sync";
 
+/** A DIRECTORY at the pin path: passes existsSync, breaks the spawn. */
+function checkoutWithDirAtPin(): string {
+  const root = mkdtempSync(join(tmpdir(), "ll-sync-dirpin-",),);
+  mkdirSync(join(root, GIWT_CLI_RELATIVE,), { recursive: true, },);
+  return root;
+}
+
 /** Create a fake checkout with the pinned giwt entrypoint in place. */
 function checkoutWithPinnedGiwt(): string {
   const root = mkdtempSync(join(tmpdir(), "ll-sync-pin-",),);
@@ -59,6 +66,17 @@ describe("giwtArgv", () => {
 
   it("falls back to the bare name when the pinned copy is absent", () => {
     const root = mkdtempSync(join(tmpdir(), "ll-sync-nopin-",),);
+    try {
+      expect(giwtArgv(root,),).toEqual({ cmd: "giwt", args: [], },);
+    } finally {
+      rmSync(root, { recursive: true, force: true, },);
+    }
+  });
+
+  it("falls back when a DIRECTORY sits at the pin path", () => {
+    // existsSync() accepts this, but spawning it exits 1 with "Module not
+    // found" — a corrupt/partial install must degrade, not crash.
+    const root = checkoutWithDirAtPin();
     try {
       expect(giwtArgv(root,),).toEqual({ cmd: "giwt", args: [], },);
     } finally {
