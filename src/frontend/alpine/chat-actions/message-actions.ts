@@ -59,7 +59,7 @@ export function filterPickerAssets(
   assets: GalleryAsset[],
   kinds: AssetPickerKind[] = ASSET_PICKER_KINDS,
 ): GalleryAsset[] {
-  return assets.filter((asset,) => kinds.some((k,) => k.matches(asset,),),);
+  return assets.filter((asset,) => kinds.some((k,) => k.matches(asset,)));
 }
 
 type MessageActionsCtx = ChatState & MessageActionsState;
@@ -77,7 +77,7 @@ export const messageActions: Partial<MessageActionsState> & ThisType<MessageActi
    * @param messageId - Target message id
    */
   async improveMessage(messageId: string,) {
-    const msg = this.messages.find((m,) => m.id === messageId,);
+    const msg = this.messages.find((m,) => m.id === messageId);
     if (!msg || msg.role !== "user" || msg.content.length === 0) { return; }
     if (this._improvingMessageId === messageId) { return; }
     this._improvingMessageId = messageId;
@@ -123,7 +123,7 @@ export const messageActions: Partial<MessageActionsState> & ThisType<MessageActi
       msg.edited_at = new Date().toISOString();
       this.$dispatch?.("show-toast", { type: "success", message: t("toasts.messageImproved",), },);
     } catch (err) {
-      log.error("message improve failed", { messageId, error: String(err,), },);
+      log.error("message improve failed", undefined, { messageId, error: String(err,), },);
       this.$dispatch?.("show-toast", { type: "error", message: t("toasts.messageImproveFailed",), },);
     } finally {
       this._improvingMessageId = null;
@@ -149,7 +149,7 @@ export const messageActions: Partial<MessageActionsState> & ThisType<MessageActi
       const rows: GalleryAsset[] = Array.isArray(data?.data,) ? data.data : [];
       this._assetPickerAssets = filterPickerAssets(rows,);
     } catch (err) {
-      log.error("asset picker load failed", { messageId, error: String(err,), },);
+      log.error("asset picker load failed", undefined, { messageId, error: String(err,), },);
       this.$dispatch?.("show-toast", { type: "error", message: t("toasts.assetPickerLoadFailed",), },);
       this.closeAssetPicker();
     } finally {
@@ -182,7 +182,7 @@ export const messageActions: Partial<MessageActionsState> & ThisType<MessageActi
         } as Parameters<typeof apiFetch>[1],
       );
       if (!res.ok) {
-        const err = await res.json().catch(() => ({ message: undefined, }),);
+        const err = await res.json().catch(() => ({ message: undefined, }));
         this.$dispatch?.("show-toast", {
           type: "error",
           message: err?.message ?? t("toasts.assetAttachFailed",),
@@ -192,7 +192,7 @@ export const messageActions: Partial<MessageActionsState> & ThisType<MessageActi
       const refreshed = await apiFetch(`/api/v1/messages/${messageId}`,);
       if (refreshed.ok) {
         const body = await refreshed.json();
-        const target = this.messages.find((m,) => m.id === messageId,);
+        const target = this.messages.find((m,) => m.id === messageId);
         if (target && Array.isArray(body?.attachments,)) {
           target.attachments = body.attachments as Message["attachments"];
         }
@@ -200,7 +200,7 @@ export const messageActions: Partial<MessageActionsState> & ThisType<MessageActi
       this.closeAssetPicker();
       this.$dispatch?.("show-toast", { type: "success", message: t("toasts.assetAttached",), },);
     } catch (err) {
-      log.error("message attach failed", { messageId, assetId, error: String(err,), },);
+      log.error("message attach failed", undefined, { messageId, assetId, error: String(err,), },);
       this.$dispatch?.("show-toast", { type: "error", message: t("toasts.assetAttachFailed",), },);
     }
   },
