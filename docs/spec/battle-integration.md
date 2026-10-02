@@ -152,7 +152,7 @@ The Battle epic is the most impactful gap in cross-system integration. It touche
 - `src/battle/environment.ts` — weather and terrain
 - `src/battle/resolution.ts` — unified dice system
 - `src/battle/loot.ts` — loot and inventory integration
-- `src/db/schema-battle.ts` — battle database tables
+- `src/db/schema-manifest.ts` — battle schema (generated; see the `battles` table in `src/db/schema-manifest.ts`)
 - `src/routes/battle.ts` — battle API endpoints
 - `docs/spec/battle-integration.md` — integration documentation
 

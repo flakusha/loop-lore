@@ -26,9 +26,9 @@ Notifications are per-user, per-device, and configurable.
 
 Each notification has:
 
-### Storage (Proposed)
+### Storage
 
-Table: `notifications`
+Table: `notifications` (exists in `001_init.ts:125`; CRUD in `src/notifications/service/crud.ts`)
 
 | Column     | Type    | Notes                     |
 | ---------- | ------- | ------------------------- |
