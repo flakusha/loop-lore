@@ -6,7 +6,7 @@
 **Status:** design spec
 **Companion:** [`docs/spec/integrations-architecture.md`](integrations-architecture.md) · [`docs/spec/federation-email-channel.md`](federation-email-channel.md)
 
-One section per messenger family. All adapters implement `ProtocolAdapter` (`src/integrations/adapter.ts`); all inbound passes the moderation gate before persistence (`integrations-architecture.md` §6); all outbound passes the NSFW gate; all credentials live in the adapter credential envelope (`TASK-ADAPTER-SECRET-STORAGE-ENCRYPTED-CREDENTIAL-ENVELOPE`); all deps are optional peer dependencies lazy-loaded only when the family's config section is enabled.
+One section per messenger family. All adapters implement `ProtocolAdapter` (`src/integrations/adapter.ts`); all inbound passes the moderation gate before persistence (`integrations-architecture.md` §6); all outbound passes the NSFW gate; all credentials live in the adapter credential envelope (`TASK-adapter-secret-storage-encrypted-credential-envelope`); all deps are optional peer dependencies lazy-loaded only when the family's config section is enabled.
 
 ---
 
@@ -220,4 +220,4 @@ When one daemon should fan out to many networks instead of embedding each protoc
 | [slidge](https://codeberg.org/slidge/slidge) | AGPL-3.0-or-later | XMPP puppeting | legacy networks via XMPP |
 | [biboumi](https://biboumi.louiz.org/) | Zlib | IRC/XMPP gateway | IRC ↔ XMPP |
 
-**Verdict:** external daemon + its API (B). loop-lore talks to the daemon over HTTP; the daemon is a separate process (AGPL components stay process-isolated — R10). Adopted per-network as needed, not built. Tracked by `TASK-BRIDGE-DAEMON-ADOPTION-MATTERBRIDGE-SLIDGE-MAUTRIX-BIBOUMI-E`.
+**Verdict:** external daemon + its API (B). loop-lore talks to the daemon over HTTP; the daemon is a separate process (AGPL components stay process-isolated — R10). Adopted per-network as needed, not built. Tracked by `TASK-bridge-daemon-adoption-matterbridge-slidge-mautrix-biboumi-e`.
