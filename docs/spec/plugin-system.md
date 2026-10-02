@@ -12,6 +12,7 @@ Status: Post-MVP (v0.2+). Plugin skeleton (`src/plugins/`) loads core/community/
 - Plugin types: core (`plugins/core/`, bundled read-only), community (`plugins/community/`, signature required), local (`plugins/local/`, no verification).
 - Plugin manifest: `plugin.ts`/`.js` exporting the `Plugin` interface; `PluginContext` provided on `onLoad()`.
 - Naming: plugins kebab-case, tools snake_case, agent roles kebab-case, events dot-separated (`chat.message.created`).
+- UI component mount points: web-capable components (`type` `web`/`both`) render as inert host containers (`data-plugin-component` / `data-plugin-location` plus HTML-escaped `props` JSON) at `chat.header` / `chat.sidebar` / `chat.composer` (`src/views/chat.html`) and `admin.dashboard` (`src/views/admin.html`); `GET /api/plugins/ui-components` (admin) lists them with an optional `?location=` filter. TUI-only components are never mounted into web views.
 
 ## Extension points (design)
 
