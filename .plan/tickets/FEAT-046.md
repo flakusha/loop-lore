@@ -35,22 +35,24 @@ The data model (FEAT-045) provides storage. This ticket provides the API surface
 
 ## Acceptance Criteria
 
-- [ ] **`GET /api/chats/:id/branches`** — list all branches with metadata (name, fork point message, message count, is_active, last_activity)
-- [ ] **`GET /api/chats/:id/branches/:branchId`** — branch detail with full message path from root to tip
-- [ ] **`POST /api/chats/:id/branches`** — create new branch (alias for fork operation)
-- [ ] **`PATCH /api/chats/:id/branches/:branchId`** — rename/activate branch
-- [ ] **`DELETE /api/chats/:id/branches/:branchId`** — delete branch (only if not active; must switch first)
-- [ ] **`POST /api/chats/:id/branches/:branchId/merge`** — merge branch messages into active branch (append fork-point descendants after current tip)
-- [ ] **Pagination** — branch list supports cursor-based pagination
-- [ ] Unit tests for all CRUD operations and merge logic
+- [x] **`GET /api/chats/:id/branches`** — list all branches with metadata (name, fork point message, message count, is_active, last_activity)
+- [x] **`GET /api/chats/:id/branches/:branchId`** — branch detail with full message path from root to tip
+- [x] **`POST /api/chats/:id/branches`** — create new branch (alias for fork operation)
+- [x] **`PATCH /api/chats/:id/branches/:branchId`** — rename/activate branch
+- [x] **`DELETE /api/chats/:id/branches/:branchId`** — delete branch (only if not active; must switch first)
+- [x] **`POST /api/chats/:id/branches/:branchId/merge`** — merge branch messages into the target branch (default: active branch); appends the source's exclusive fork-point descendants after the target's current tip, then demotes the source row
+- [x] **Pagination** — branch list supports cursor-based pagination (`?limit`, `?cursor`; keyset on `(created_at, id)`)
+- [x] Unit tests for all CRUD operations and merge logic
 
 ## Implementation Notes
 
-- Route file: `src/routes/chat-branches.ts` (new, <200L)
-- Merge: append-only (no conflict resolution) — branch messages become children of active branch tip
-- Delete guard: refuse to delete active branch (must PATCH to switch first)
-- Authorization: reuse existing `checkChatAccess` middleware
-- Size gate: branch route files <250L each
+- Route files: `src/routes/chats/branches.ts` (fork/switch/list) + `src/routes/chats/branch-crud.ts` (detail/create/rename/delete/merge), composed inside `chatBranchRoutes` so the barrel mount stays single
+- Service files: `src/chat/service/branch-crud.ts` (detail/rename/delete), `branch-merge.ts`, `branch-list.ts`; row helpers shared via `branch-helpers.ts`
+- Merge: append-only (no conflict resolution) — the source's exclusive descendants (subtree minus the target's path) become a chain under the target's tip, the target's tip advances past them, source row demoted to `is_active = 0`
+- Delete guard: refuse to delete the active branch, honouring BOTH `chat_branches.is_active` and `chats.active_branch_id` (must PATCH to switch first)
+- Authorization: reuse existing `checkChatAccess`; every handler derives the actor from the session user via `requireUserId`
+- Pagination: keyset on `(created_at, id)`, opaque base64url cursor, one-row lookahead for `nextCursor`
+- Size gate: branch route/service files <250L each
 
 ## Dependencies
 
