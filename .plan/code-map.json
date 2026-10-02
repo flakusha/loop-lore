@@ -6323,7 +6323,6 @@
       "source": ".plan/epics/epic-worlds-extension.md"
     }
   ],
-
   "src/chat/moderation.test.ts": [
     {
       "kind": "ticket",
@@ -6414,14 +6413,12 @@
       "source": ".plan/tickets/IDEA-chat-composer-predictive-inline-text-suggestions.md"
     }
   ],
-
   "src/chat/proactive/annotations.test.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-notes-shadow-carriage.md"
     }
   ],
-
   "src/chat/proactive/annotations.ts": [
     {
       "kind": "ticket",
@@ -6800,14 +6797,12 @@
       "source": "docs/spec/graph-cluster-chat-history.md"
     }
   ],
-
   "src/chat/service/carriage.test.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-notes-shadow-carriage.md"
     }
   ],
-
   "src/chat/service/carriage.ts": [
     {
       "kind": "ticket",
@@ -7008,14 +7003,12 @@
       "source": ".plan/tickets/TASK-gm-guided-story-creation.md"
     }
   ],
-
   "src/chat/service/crud/turn-skip-forced.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-turn-talkativity-skip.md"
     }
   ],
-
   "src/chat/service/crud/turn-skip.test.ts": [
     {
       "kind": "ticket",
@@ -10832,7 +10825,6 @@
       "source": ".plan/tickets/TASK-chat-feature-encryption-key-rotation.md"
     }
   ],
-
   "src/crypto/key-rotation/rotation-restart.test.ts": [
     {
       "kind": "ticket",
@@ -15483,14 +15475,12 @@
       "source": ".plan/tickets/FEAT-attachment-content-analysis-pipeline.md"
     }
   ],
-
   "src/frontend/alpine/chat-actions/message-actions.test.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-component-buttons.md"
     }
   ],
-
   "src/frontend/alpine/chat-actions/message-actions.ts": [
     {
       "kind": "ticket",
@@ -15839,6 +15829,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-transfer-frontend.md"
+    }
+  ],
+  "src/frontend/alpine/chat-transition-picker.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-location-transition-transfer.md"
     }
   ],
   "src/frontend/alpine/chat-types.ts": [
@@ -23297,14 +23293,12 @@
       "source": "docs/spec/integrations/llm-serving.md"
     }
   ],
-
   "src/memory/events.test.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-notes-shadow-carriage.md"
     }
   ],
-
   "src/memory/events.ts": [
     {
       "kind": "ticket",
@@ -23545,7 +23539,6 @@
       "source": ".plan/tickets/TASK-matrix-cross-mech-g19-agent-memory-scoring.md"
     }
   ],
-
   "src/memory/shadow-recall.test.ts": [
     {
       "kind": "ticket",
@@ -26822,14 +26815,12 @@
       "source": "docs/spec/observability.md"
     }
   ],
-
   "src/routes/admin/carriage.test.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-notes-shadow-carriage.md"
     }
   ],
-
   "src/routes/admin/carriage.ts": [
     {
       "kind": "ticket",
@@ -27998,7 +27989,6 @@
       "source": "docs/frontend/chat/visual-novel-mode.md"
     }
   ],
-
   "src/routes/chats/annotations": [
     {
       "kind": "ticket",
@@ -28159,7 +28149,6 @@
       "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
     }
   ],
-
   "src/routes/chats/moderation.test.ts": [
     {
       "kind": "ticket",
@@ -29364,14 +29353,12 @@
       "source": ".plan/tickets/TASK-archival-workflow.md"
     }
   ],
-
   "src/routes/messages/attach.test.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-component-buttons.md"
     }
   ],
-
   "src/routes/messages/attach.ts": [
     {
       "kind": "ticket",
@@ -29442,7 +29429,6 @@
       "source": ".plan/tickets/BUG-create-entity-confirm-bypasses-world-ownership.md"
     }
   ],
-
   "src/routes/messages/create.coverage.test.ts": [
     {
       "kind": "ticket",
@@ -29529,7 +29515,6 @@
       "source": ".plan/tickets/TASK-tmp-janitor-and-staleness-markers.md"
     }
   ],
-
   "src/routes/messages/guards.ts": [
     {
       "kind": "ticket",
@@ -29576,7 +29561,6 @@
       "source": ".plan/tickets/BUG-safedecompress-pre-check-rejects-compressed-payloads-over-10.md"
     }
   ],
-
   "src/routes/messages/mute-gate.test.ts": [
     {
       "kind": "ticket",
@@ -36267,7 +36251,6 @@
       "source": "docs/spec/quests-encounters.md"
     }
   ],
-
   "src/story/shared/quest-engine-utils.ts": [
     {
       "kind": "ticket",
@@ -37088,21 +37071,18 @@
       "source": ".plan/epics/epic-rpg-patterns.md"
     }
   ],
-
   "src/turning/skip-cooldown.test.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-turn-talkativity-skip.md"
     }
   ],
-
   "src/turning/skip-cooldown.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-turn-talkativity-skip.md"
     }
   ],
-
   "src/turning/talkativity.ts": [
     {
       "kind": "ticket",
