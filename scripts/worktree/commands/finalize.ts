@@ -547,26 +547,6 @@ function restoreDevFromStash(
   console.log(`  When ready: cd ${repoRoot} && git stash pop ${stashRef}`,);
 }
 /**
- * Resolve the diff-base ref to pass to `bun run check --diff-base`.
- *
- * Why the TARGET BRANCH and not its merge-base with HEAD: the runner scopes
- * to the files whose CONTENT differs between the given ref and HEAD (see
- * AGENTS.md). A merge-base SHA pins the comparison to the fork point, so every
- * file the branch edited but the target has since reproduced identically stays
- * in scope — the exact over-report that fix removed. Passing the target makes
- * those files drop out, since landing the branch would not change them.
- *
- * Measured on a branch 237 commits ahead of its fork: the scoped coverage gate
- * went from 1295 floored files / 55 failures to 109 / 2.
- *
- * Throws when `target` is not a valid ref, so a bad target fails here with a
- * clear message instead of surfacing as a confusing stack trace from inside the
- * runner. Production callers always pass the protected target branch, so this
- * is unreachable in normal finalize flows.
- *
- * Exported for unit tests; production callers in `runFinalize` invoke it.
- */
-/**
  * Parse the CLI args for `worktree finalize`.
  *
  * Returns a structured object that the finalize() entry point consumes.
@@ -622,6 +602,28 @@ export function parseFinalizeArgs(args: string[],): {
   };
 }
 
+/**
+ * Resolve the diff-base ref to pass to `bun run check --diff-base`.
+ *
+ * Returns the TARGET BRANCH, validated, not its merge-base with HEAD. The
+ * runner scopes to the files whose CONTENT differs between the given ref and
+ * HEAD (see AGENTS.md). A merge-base SHA pins the comparison to the fork point,
+ * so every file the branch edited but the target has since reproduced
+ * identically stays in scope — the exact over-report that fix removed. Passing
+ * the target makes those files drop out, since landing the branch would not
+ * change them.
+ *
+ * No effect size is asserted here: quantifying it needs a branch that actually
+ * touches files under `src/` (the coverage gate no-ops without them), so
+ * re-measure before quoting any figure.
+ *
+ * Throws when `target` is not a valid ref, so a bad target fails here with a
+ * clear message instead of surfacing as a confusing stack trace from inside the
+ * runner. Production callers always pass the protected target branch, so this
+ * is unreachable in normal finalize flows.
+ *
+ * Exported for unit tests; production callers in `runFinalize` invoke it.
+ */
 export function resolveDiffBase(wtPath: string, target: string,): string {
   // Validate the ref is real before handing it to the runner. `rev-parse
   // --verify` resolves any ref form (branch, tag, SHA) and fails on a typo,
