@@ -40,7 +40,7 @@ The data model (FEAT-045) provides storage. This ticket provides the API surface
 - [x] **`POST /api/chats/:id/branches`** — create new branch (alias for fork operation)
 - [x] **`PATCH /api/chats/:id/branches/:branchId`** — rename/activate branch
 - [x] **`DELETE /api/chats/:id/branches/:branchId`** — delete branch (only if not active; must switch first)
-- [x] **`POST /api/chats/:id/branches/:branchId/merge`** — merge branch messages into the target branch (default: active branch); appends the source's exclusive fork-point descendants after the target's current tip, then demotes the source row
+- [x] **`POST /api/chats/:id/branches/:branchId/merge`** — merge branch messages into the target branch (default: active branch); appends the source's exclusive fork-point descendants after the target's current tip, then **consumes** the source: its `chat_branches` row is deleted in the same transaction and the response echoes `deletedSourceBranchId`. Merging the chat's active branch is refused (`bad_request`) so the display pointer is never orphaned; a source subtree over the 2000-node merge ceiling is rejected before anything is re-parented
 - [x] **Pagination** — branch list supports cursor-based pagination (`?limit`, `?cursor`; keyset on `(created_at, id)`)
 - [x] Unit tests for all CRUD operations and merge logic
 
@@ -48,7 +48,9 @@ The data model (FEAT-045) provides storage. This ticket provides the API surface
 
 - Route files: `src/routes/chats/branches.ts` (fork/switch/list) + `src/routes/chats/branch-crud.ts` (detail/create/rename/delete/merge), composed inside `chatBranchRoutes` so the barrel mount stays single
 - Service files: `src/chat/service/branch-crud.ts` (detail/rename/delete), `branch-merge.ts`, `branch-list.ts`; row helpers shared via `branch-helpers.ts`
-- Merge: append-only (no conflict resolution) — the source's exclusive descendants (subtree minus the target's path) become a chain under the target's tip, the target's tip advances past them, source row demoted to `is_active = 0`
+- Merge: no conflict resolution — the source's exclusive descendants (subtree minus the target's path) become a chain under the target's tip and the target's tip advances past them. The `parent_id` rewrite is permanent, so the pre-merge path is unrecoverable and the source row is DELETED, not demoted: a surviving row would resolve to the target's line and report a main the branch never contained. Only messages move; no message row is ever deleted
+- Merge guards: refusing the chat's active branch (same rule as DELETE), refusing a source merged into itself, and rejecting a source subtree over `MAX_MERGE_NODES` (2000) *before* the transaction opens — an exhausted walk is never silently truncated
+- Branch names are length-capped (120) and control-character-free at the route schema; a malformed `?limit=` is a 400, not a silent fall back to the default page size
 - Delete guard: refuse to delete the active branch, honouring BOTH `chat_branches.is_active` and `chats.active_branch_id` (must PATCH to switch first)
 - Authorization: reuse existing `checkChatAccess`; every handler derives the actor from the session user via `requireUserId`
 - Pagination: keyset on `(created_at, id)`, opaque base64url cursor, one-row lookahead for `nextCursor`
