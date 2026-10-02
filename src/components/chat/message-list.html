@@ -483,9 +483,11 @@
               </div>
             </template>
 
-            <!-- Attach asset picker (component-buttons AC3/AC7): renders only
-                 for the message it was opened for; kinds come from the
-                 registered ASSET_PICKER_KINDS registry. -->
+            <!--
+              Attach asset picker (component-buttons AC3/AC7): renders only
+              for the message it was opened for; kinds come from the
+              registered ASSET_PICKER_KINDS registry.
+            -->
             <template x-if="_assetPickerFor === msg.id">
               <div class="asset-picker" data-testid="asset-picker">
                 <div class="asset-picker-header">
@@ -503,12 +505,14 @@
                   class="asset-picker-status"
                   x-show="_assetPickerLoading"
                   x-text="t('chats.assetPickerLoading')"
-                ></div>
+                >
+                </div>
                 <div
                   class="asset-picker-status"
                   x-show="!_assetPickerLoading && _assetPickerAssets.length === 0"
                   x-text="t('chats.assetPickerEmpty')"
-                ></div>
+                >
+                </div>
                 <div class="asset-picker-grid" x-show="!_assetPickerLoading">
                   <template x-for="asset in _assetPickerAssets" :key="asset.id">
                     <button
