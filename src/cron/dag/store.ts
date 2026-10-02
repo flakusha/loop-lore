@@ -40,9 +40,7 @@ export async function saveDependency(
   await db
     .insertInto("task_dependencies",)
     .values({ task_id: taskId, depends_on_task_id: dependsOnTaskId, on_failure: onFailure, },)
-    .onConflict((oc,) =>
-      oc.columns(["task_id", "depends_on_task_id",],).doUpdateSet({ on_failure: onFailure, },)
-    )
+    .onConflict((oc,) => oc.columns(["task_id", "depends_on_task_id",],).doUpdateSet({ on_failure: onFailure, },))
     .execute();
 }
 
@@ -57,7 +55,7 @@ export async function saveDependency(
  */
 export async function loadDependencies(
   db: Kysely<DB>,
-): Promise<{ taskId: string; dependsOnTaskId: string; onFailure: FailurePolicy; }[]> {
+): Promise<{ taskId: string; dependsOnTaskId: string; onFailure: FailurePolicy }[]> {
   const rows = await db
     .selectFrom("task_dependencies",)
     .select(["task_id", "depends_on_task_id", "on_failure",],)
@@ -68,5 +66,5 @@ export async function loadDependencies(
     taskId: row.task_id,
     dependsOnTaskId: row.depends_on_task_id,
     onFailure: row.on_failure as FailurePolicy,
-  },),);
+  }));
 }

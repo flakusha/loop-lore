@@ -1,40 +1,29 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-/**
- * src/cron/dag/engine.ts — Workflow DAG engine
- *
- * Sits ON TOP of the shipped cron scheduler, not beside it. The engine
- * owns no timer and no loop: `runPass()` is a plain call the existing
- * `autonomy.world-tick` job (src/cron/jobs.ts) reaches through the
- * `AutonomyDispatch` seam, so dependency-ordered dispatch inherits the
- * registry's single lifecycle, error wrapper, and status surface instead
- * of forking a second scheduler.
- *
- * Two responsibilities:
- *   1. Graph integrity — `addDependency` refuses an edge that would
- *      close a cycle, at insert time, so no caller can persist a
- *      circular graph the pass would then deadlock on.
- *   2. Execution — `runPass` dispatches only unblocked nodes, honors
- *      each edge's `on_failure` policy, and cascades `skip`
- *      transitively.
- *
- * Edges live in `task_dependencies`; per-node state is in memory. That
- * split is deliberate: the edges are the durable part worth querying,
- * while node state is the live progress of a workflow. ponytail: node
- * state is process-local — persist it only if a workflow must resume
- * across a restart.
- *
- * Traversal helpers live in ./graph.ts, edge persistence in ./store.ts,
- * and per-node state in ./nodes.ts; this file is the pass loop that
- * ties them together.
- */
+// src/cron/dag/engine.ts — Workflow DAG engine
+//
+// Sits ON TOP of the shipped cron scheduler, not beside it: `runPass()` is a
+// plain call the `autonomy.world-tick` job (src/cron/jobs.ts) reaches through
+// the `AutonomyDispatch` seam, so dependency-ordered dispatch inherits the
+// registry's lifecycle instead of forking a second scheduler.
+//
+// Two responsibilities:
+//   1. Graph integrity — `addDependency` refuses a cycle-closing edge at
+//      insert time, so no caller can persist a graph the pass deadlocks on.
+//   2. Execution — `runPass` dispatches only unblocked nodes, honors each
+//      edge's `on_failure` policy, and cascades `skip` transitively.
+//
+// Edges live in `task_dependencies`; per-node state is in memory. ponytail:
+// node state is process-local — persist it only if a workflow must resume
+// across a restart. Traversal in ./graph.ts, cycle-safe insert in ./edges.ts,
+// persistence in ./store.ts, node state in ./nodes.ts.
 
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
+import { addEdge, hydrateEdges, } from "./edges";
 import { DagGraph, } from "./graph";
 import { NodeStates, } from "./nodes";
-import { loadDependencies, saveDependency, } from "./store";
 import type {
   DagRunResult,
   DagStatus,
@@ -68,14 +57,9 @@ export class WorkflowDagEngine {
   /**
    * Record that `taskId` waits on `dependsOnTaskId`.
    *
-   * Rejects an insert that would close a cycle: if `dependsOnTaskId`
-   * already reaches `taskId`, the edge would leave both nodes with an
-   * unmet prerequisite and the pass would deadlock. Thrown BEFORE the
-   * insert, so existing rows are untouched — a rejected edge leaves the
-   * graph and the table exactly as they were.
-   *
-   * Re-adding an existing pair updates its policy rather than
-   * duplicating the row (the composite PK makes the edge unique).
+   * Rejects an insert that would close a cycle, before the insert, so a
+   * rejected edge leaves the graph and the table untouched. The check and
+   * the link live in ./edges.ts; this is the engine's door to it.
    *
    * @param taskId the blocked node
    * @param dependsOnTaskId the node it waits for
@@ -84,45 +68,25 @@ export class WorkflowDagEngine {
    *   ids are equal (the degenerate self-cycle)
    * @returns {Promise<void>}
    */
-  async addDependency(
+  addDependency(
     taskId: string,
     dependsOnTaskId: string,
     onFailure: FailurePolicy = "skip",
   ): Promise<void> {
-    if (taskId === dependsOnTaskId) {
-      throw new Error(`task ${JSON.stringify(taskId)} cannot depend on itself`,);
-    }
-    if (this.#graph.wouldCycle(taskId, dependsOnTaskId,)) {
-      throw new Error(
-        `cycle rejected: ${JSON.stringify(taskId)} -> ${JSON.stringify(dependsOnTaskId)} — ` +
-          `${JSON.stringify(dependsOnTaskId)} already depends on ` +
-          `${JSON.stringify(taskId)} (directly or transitively)`,
-      );
-    }
-
-    await saveDependency(this.#db, taskId, dependsOnTaskId, onFailure,);
-
-    this.#graph.link(taskId, dependsOnTaskId, onFailure,);
-    this.#states.touch(taskId,);
-    this.#states.touch(dependsOnTaskId,);
+    return addEdge(this.#db, this.#graph, this.#states, taskId, dependsOnTaskId, onFailure,);
   }
 
   /**
    * Load the persisted edges into this engine's graph.
    *
-   * Node state is deliberately NOT restored — only the edges. A
-   * restarted process has no memory of which nodes completed, so every
+   * Node state is deliberately NOT restored — only the edges, so every
    * node comes back `blocked` and the pass re-derives progress. That is
    * the safe direction: work may run twice, never silently never.
    *
    * @returns {Promise<void>}
    */
-  async hydrate(): Promise<void> {
-    for (const edge of await loadDependencies(this.#db,)) {
-      this.#graph.link(edge.taskId, edge.dependsOnTaskId, edge.onFailure,);
-      this.#states.touch(edge.taskId,);
-      this.#states.touch(edge.dependsOnTaskId,);
-    }
+  hydrate(): Promise<void> {
+    return hydrateEdges(this.#db, this.#graph, this.#states,);
   }
 
   /** Prerequisite ids for a node — its slice of the graph. */
@@ -161,20 +125,20 @@ export class WorkflowDagEngine {
     }
 
     for (const taskId of this.#graph.nodes()) {
-      if (!this.#dispatchable(taskId, tasks)) { continue; }
-      const ok = await this.#runNode(taskId, tasks, nowMs, rng);
+      if (!this.#dispatchable(taskId, tasks,)) { continue; }
+      const ok = await this.#runNode(taskId, tasks, nowMs, rng,);
       (ok ? ran : failed).push(taskId,);
       // A non-successful node is a non-success for its `skip`
       // dependents. A `retry` dependent is deliberately left alone so
       // it comes back when the prerequisite succeeds later.
-      this.#cascadeSkip(taskId, skipped);
+      this.#cascadeSkip(taskId, skipped,);
     }
 
-    return { ran, failed, skipped, blocked: this.#blockedIds() };
+    return { ran, failed, skipped, blocked: this.#blockedIds(), };
   }
 
-  /** Can this node be dispatched this pass? It must have a body, must
-   *  not have settled already, and must have every prerequisite `done`.
+  /** Can this node be dispatched this pass? A body, not yet settled,
+   *  every prerequisite `done`.
    * @param taskId
    * @param tasks the bodies available this pass
    */
@@ -203,9 +167,19 @@ export class WorkflowDagEngine {
   ): Promise<boolean> {
     const attempt = this.#states.begin(taskId,);
     if (attempt === null) { return false; }
+    // One lookup, not a re-`get` per call: `Map.get` is `| undefined` and
+    // `#dispatchable` already proved the key exists, but the compiler cannot
+    // carry that across the call boundary. A body that vanished anyway is
+    // marked failed (not left un-settled) so the node stays terminal rather
+    // than being re-dispatched every pass.
+    const body = tasks.get(taskId,);
+    if (body === undefined) {
+      this.#states.fail(taskId, `no task body registered for ${taskId}`,);
+      return false;
+    }
     const ctx: TaskRunContext = { taskId, nowMs, rng, attempt, };
     try {
-      await (tasks.get(taskId,))(ctx,);
+      await body(ctx,);
       this.#states.succeed(taskId,);
       return true;
     } catch (error: unknown) {
@@ -225,7 +199,7 @@ export class WorkflowDagEngine {
     for (const taskId of this.#graph.nodes()) {
       nodes[taskId] = this.#states.statusFor(taskId,);
     }
-    return { nodes };
+    return { nodes, };
   }
 
   /** Put a node back in play and clear its error, so failed work can be
@@ -240,21 +214,17 @@ export class WorkflowDagEngine {
 
   // ── internals ──────────────────────────────────────────────
 
-  /** Skip the `skip`-policy dependents of a non-successful node,
-   *  transitively. A skipped node is itself a non-success, so its own
-   *  `skip` dependents cascade too — otherwise D would sit `blocked`
-   *  forever behind a C that can never run. `retry` dependents are
-   *  never touched.
+  /** Cascade `skip` to the dependents of a non-successful node, transitively.
    * @param taskId the node that failed or was just skipped
    * @param skipped accumulator the pass reports
    */
-  #cascadeSkip(taskId: string, skipped: string[]): void {
+  #cascadeSkip(taskId: string, skipped: string[],): void {
     // Only a NON-successful node strands its dependents. A `done` node
     // unblocks them instead, so cascading from it would skip every
     // child of a successful parent. The recursive call below re-enters
     // here with a freshly-skipped node, whose state is `skipped` — not
     // `done` — so the cascade still propagates transitively.
-    if (this.#isDone(taskId)) { return; }
+    if (this.#isDone(taskId,)) { return; }
 
     const dependents = this.#graph.skipDependents(taskId, (dependent,) => {
       const state = this.#states.get(dependent,)?.state;
@@ -264,7 +234,7 @@ export class WorkflowDagEngine {
       if (this.#states.get(dependent,) === undefined) { continue; }
       this.#states.skip(dependent,);
       skipped.push(dependent,);
-      this.#cascadeSkip(dependent, skipped);
+      this.#cascadeSkip(dependent, skipped,);
     }
   }
 
@@ -273,6 +243,6 @@ export class WorkflowDagEngine {
    * @returns task ids, sorted
    */
   #blockedIds(): string[] {
-    return this.#graph.nodes().filter((taskId,) => this.#states.get(taskId,)?.state === "blocked",);
+    return this.#graph.nodes().filter((taskId,) => this.#states.get(taskId,)?.state === "blocked");
   }
 }
