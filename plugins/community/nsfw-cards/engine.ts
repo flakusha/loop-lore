@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 300
 
 /**
  * NSFW Card Game Engine
