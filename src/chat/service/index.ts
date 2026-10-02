@@ -92,6 +92,23 @@ export {
   type SwitchActiveBranchResult,
 } from "./branches";
 
+// ── Branch navigation (FEAT-046) ─────────────────────────────────
+export {
+  deleteBranch,
+  type DeleteBranchResult,
+  getBranch,
+  type GetBranchResult,
+  renameBranch,
+  type RenameBranchResult,
+} from "./branch-crud";
+export {
+  type BranchCursor,
+  encodeBranchCursor,
+  listBranchesPage,
+  type ListBranchesPageResult,
+} from "./branch-list";
+export { mergeBranch, type MergeBranchResult, } from "./branch-merge";
+
 // ── Messages ──────────────────────────────────────────────────
 export {
   getMessageVariants,
