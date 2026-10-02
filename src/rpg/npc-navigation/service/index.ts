@@ -18,21 +18,21 @@ import {
   moveToLocation as moveToLocationDispatch,
   setMovementPattern as setMovementPatternDispatch,
 } from "./movement";
-import { processMovementTick as processMovementTickDispatch, } from "./processing";
 import type { MovementTickOptions, } from "./processing";
+import { processMovementTick as processMovementTickDispatch, } from "./processing";
 import {
   getMovementState as getMovementStateDispatch,
   updateMovementState as updateMovementStateDispatch,
 } from "./state";
 import type { MovementPattern, MovementResult, NpcMovementState, } from "./types";
 
-export type { MovementTickOptions, } from "./processing";
 export { MovementPattern, } from "./types";
 export type {
   LocationConnection,
   MovementResult,
   NpcMovementState,
 } from "./types";
+export type { MovementTickOptions, } from "./processing";
 
 /**
  * NPC Navigation Service
@@ -110,9 +110,12 @@ export class NpcNavigationService {
   /**
    * Process NPC movement tick — advance NPCs based on their movement patterns
    * @param worldId
-   * @param opts Injected rng / clock; defaults to the unseeded sources
+   * @param opts Injected rng / clock for a reproducible tick.
    */
-  async processMovementTick(worldId: string, opts?: MovementTickOptions,): Promise<MovementResult[]> {
+  async processMovementTick(
+    worldId: string,
+    opts: MovementTickOptions = {},
+  ): Promise<MovementResult[]> {
     return processMovementTickDispatch(this.db, worldId, opts,);
   }
 }

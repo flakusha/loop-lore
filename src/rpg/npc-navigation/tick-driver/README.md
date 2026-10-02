@@ -12,8 +12,7 @@ runNpcMovementTick(db, worldId, opts)
   ├─ resolveAutonomyConfig(db)     ──► skipped: "disabled"
   ├─ rng() < cfg.jitterRatio?      ──► skipped: "jitter"
   ├─ governor.tryConsume(per_tick) ──► skipped: "budget"
-  └─ processMovementTick(db, w,
-       { rng, nowMs })               ──► { results, preset, jitterRatio }
+  └─ processMovementTick(db, w)    ──► { results, preset, jitterRatio }
 ```
 
 Checks are cheapest-first so a paused world never touches DB.
@@ -38,13 +37,13 @@ setInterval(async () => {
 
 ## Options
 
-| Field      | Type               | Default       | Purpose                                        |
-| ---------- | ------------------ | ------------- | ---------------------------------------------- |
-| `chatId`   | `string`           | `"__none__"`  | Governor cap scope resolution.                 |
-| `paused`   | `boolean`          | `false`       | Skip without DB / governor work.               |
-| `nowMs`    | `number`           | `Date.now()`  | Test determinism.                              |
-| `governor` | `AutonomyGovernor` | `new`         | Inject shared instance.                        |
-| `rng`      | `() => number`     | `Math.random` | Drives the jitter draw AND wander/flee choice. |
+| Field      | Type               | Default       | Purpose                          |
+| ---------- | ------------------ | ------------- | -------------------------------- |
+| `chatId`   | `string`           | `"__none__"`  | Governor cap scope resolution.   |
+| `paused`   | `boolean`          | `false`       | Skip without DB / governor work. |
+| `nowMs`    | `number`           | `Date.now()`  | Test determinism.                |
+| `governor` | `AutonomyGovernor` | `new`         | Inject shared instance.          |
+| `rng`      | `() => number`     | `Math.random` | Inject deterministic RNG.        |
 
 ## Result
 
@@ -59,8 +58,7 @@ type RunNpcMovementTickResult =
 
 ## Acceptance (from TASK-world-simulation-npc-navigation-tick-driver)
 
-- ✅ Calls `processMovementTick(db, worldId, { rng, nowMs })` once per
-  scheduler tick, forwarding the resolved rng and clock.
+- ✅ Calls `processMovementTick(db, worldId)` once per scheduler tick.
 - ✅ Jittered (configurable via `cfg.jitterRatio` from layered config).
 - ✅ Governor denies on budget exhaustion — returns `skipped: "budget"`.
 - ✅ No scheduler added here (P4 owns that).
@@ -73,11 +71,14 @@ is below the ratio, the tick is skipped without touching NPC movement.
 This prevents NPCs from moving in lockstep across multiple worlds
 sharing the same scheduler beat.
 
-Per-NPC sampling would give finer granularity but is not needed: the
-per-NPC destination draw (wander/flee) reads the SAME `rng` the jitter
-draw does, so one seed now spans both. `processMovementTick` takes
-`{ rng, nowMs }` and resolves `Math.random` / `Date.now` only when
-they are omitted, so unseeded worlds behave exactly as before.
+Per-NPC sampling would give finer granularity but needs a second draw
+per NPC inside the tick for no behavioural gain — the per-tick drop
+already breaks lockstep.
+
+The resolved `rng` is forwarded into `processMovementTick`, so one
+injected seed spans both the cadence draw here and every wander/flee
+destination choice inside the tick. `nowMs` rides along the same way,
+which pins `lastMovedAt` and `updated_at` too.
 
 ## Pause semantics
 
