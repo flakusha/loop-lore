@@ -64,3 +64,5 @@ Make encryption **and compression** effective and reliable across the chat pipel
 ## Open Questions
 
 - Resolved. The join/leave model is **prospective** key issuance, not full re-encrypt. LLM ACL is enforced by the chat-access layer (already in place: actor/participant-based ACL via `chat.allowed_actors`).
+
+**Resolved:** 2026-10-02 registry-driven close: git issue e8d401c (registry tip: b7f5bb2c2 gate Auto-closed: appended .md marker marks TASK-CHAT-FEATURE-ENCRYPTION-KEY-ROTATION done)
