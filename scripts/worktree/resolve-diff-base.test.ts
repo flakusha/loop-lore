@@ -16,8 +16,13 @@
  *
  * Setup strategy: build a real tiny git history with a shared base commit,
  * then advance the target past the base. Asserting on the resolved ref proves
- * the helper returns the live target rather than the moving ancestor. The
- * fixture runs against the OS temp dir so it cannot affect the real repo.
+ * the helper returns the live target rather than the moving ancestor.
+ *
+ * Resource contract: each test owns one `mkdtemp` repo under the OS temp dir
+ * (prefix `loop-lore-resolve-diff-base-`), rebuilt in `beforeEach` and removed in
+ * `afterEach`; the throws-case builds its own `loop-lore-orphan-` repo inline
+ * under `try`/`finally`. Nothing touches the real repo, no path is shared
+ * between tests, and the suite is safe to run concurrently with itself.
  */
 
 import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
