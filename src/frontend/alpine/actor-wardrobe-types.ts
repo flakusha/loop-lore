@@ -1,18 +1,10 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import type { WardrobeItem, } from "../../characters/services/wardrobe/types";
+
 /** One outfit row from the wardrobe CRUD API (camelCase projection). */
-export interface WardrobeOutfit {
-  id: string;
-  actorId: string | null;
-  worldId: string | null;
-  name: string;
-  descriptor: string;
-  tags: string[];
-  sortOrder: number;
-  createdAt: string;
-  updatedAt: string;
-}
+export type WardrobeOutfit = WardrobeItem;
 
 /** One avatar variant row (emotion × outfit dimension). */
 export interface WardrobeVariant {

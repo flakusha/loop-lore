@@ -139,8 +139,7 @@ export async function updateWardrobeItem(
   actorId: string,
   opts: UpdateWardrobeItemOpts,
 ): Promise<boolean> {
-  const existing = await getWardrobeItem(db, itemId, actorId,);
-  if (!existing) { return false; }
+  if (!await ownsItem(db, itemId, actorId,)) { return false; }
 
   const patch: Record<string, unknown> = { updated_at: new Date().toISOString(), };
   if (opts.name !== undefined) { patch.name = opts.name; }
@@ -165,8 +164,19 @@ export async function deleteWardrobeItem(
   itemId: string,
   actorId: string,
 ): Promise<boolean> {
-  const existing = await getWardrobeItem(db, itemId, actorId,);
-  if (!existing) { return false; }
+  if (!await ownsItem(db, itemId, actorId,)) { return false; }
   await db.deleteFrom("wardrobe_items",).where("id", "=", itemId,).execute();
   return true;
+}
+
+/**
+ * Whether the item exists and is visible to the actor (personal item or world
+ * template). Shared by the update + delete paths so ownership cannot drift.
+ * @param db
+ * @param itemId
+ * @param actorId
+ * @returns {boolean} whether the item is visible to the actor
+ */
+async function ownsItem(db: Kysely<DB>, itemId: string, actorId: string,): Promise<boolean> {
+  return (await getWardrobeItem(db, itemId, actorId,)) !== null;
 }

@@ -16,11 +16,9 @@ export interface CreateAvatarOpts {
 }
 
 /** Options for updating an avatar */
-export interface UpdateAvatarOpts {
-  label?: string;
-  tags?: Partial<Record<AvatarTagType, string>>;
-  isPrimary?: boolean;
-  sortOrder?: number;
+export interface UpdateAvatarOpts
+  extends Partial<Pick<CreateAvatarOpts, "label" | "tags" | "isPrimary" | "sortOrder">>
+{
   /** Re-point the variant at another outfit; null detaches it. */
   outfitId?: string | null;
 }
