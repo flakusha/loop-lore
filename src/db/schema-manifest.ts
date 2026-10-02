@@ -721,6 +721,20 @@ export const SCHEMA = new SchemaManifest()
     nsfw_hidden: col("integer", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("npc_migrations", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    world_id: col("text", { notNull: true, },),
+    actor_id: col("text", { notNull: true, },),
+    origin_location_id: col("text",),
+    destination_location_id: col("text",),
+    depart_tick: col("integer", { notNull: true, },),
+    arrive_tick: col("integer", { notNull: true, },),
+    cadence: col("text", { notNull: true, hasDefault: true, },),
+    status: col("text", { notNull: true, hasDefault: true, },),
+    last_depart_tick: col("integer", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("npc_states", {
     id: col("text", { primaryKey: true, },),
     actor_id: col("text", { notNull: true, },),
@@ -918,6 +932,12 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("task_dependencies", {
+    task_id: col("text", { notNull: true, },),
+    depends_on_task_id: col("text", { notNull: true, },),
+    on_failure: col("text", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("telemetry_events", {
     id: col("text", { primaryKey: true, },),
     session_id: col("text",),
@@ -940,6 +960,23 @@ export const SCHEMA = new SchemaManifest()
     trade_type: col("text", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, },),
     updated_at: col("text",),
+  },)
+  .table("travel_parties", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    world_id: col("text", { notNull: true, },),
+    name: col("text", { notNull: true, },),
+    kind: col("text", { notNull: true, hasDefault: true, },),
+    cadence: col("text", { notNull: true, hasDefault: true, },),
+    route: col("text", { notNull: true, hasDefault: true, },),
+    route_index: col("integer", { notNull: true, hasDefault: true, },),
+    steps_per_tick: col("real", { notNull: true, hasDefault: true, },),
+    travel_progress: col("real", { notNull: true, hasDefault: true, },),
+    current_location_id: col("text",),
+    current_tick: col("integer", { notNull: true, hasDefault: true, },),
+    status: col("text", { notNull: true, hasDefault: true, },),
+    blocked_until_tick: col("integer", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("travel_route_stops", {
     id: col("text", { primaryKey: true, },),
@@ -2032,6 +2069,17 @@ export const SCHEMA = new SchemaManifest()
     data_version: col("integer", { notNull: true, hasDefault: true, },),
     record_hash: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("location_discovery", {
+    world_id: col("text", { notNull: true, },),
+    location_id: col("text", { notNull: true, },),
+    actor_id: col("text", { notNull: true, },),
+    progress: col("real", { notNull: true, hasDefault: true, },),
+    last_explored_tick: col("integer", { notNull: true, hasDefault: true, },),
+    discovered: col("integer", { notNull: true, hasDefault: true, },),
+    discovered_tick: col("integer",),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("location_nsfw_config", {
     id: col("text", { primaryKey: true, },),
     location_id: col("text", { notNull: true, },),
@@ -2131,6 +2179,17 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
     outfit_bindings: col("text",),
+  },)
+  .table("world_event_log", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    world_id: col("text", { notNull: true, },),
+    event_type: col("text", { notNull: true, },),
+    subject_id: col("text",),
+    actor_id: col("text",),
+    payload: col("text", { notNull: true, hasDefault: true, },),
+    tick_index: col("integer", { notNull: true, },),
+    dedupe_key: col("text", { notNull: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("world_event_steerings", {
     id: col("text", { primaryKey: true, },),
@@ -2247,6 +2306,13 @@ export const SCHEMA = new SchemaManifest()
     description: col("text",),
     is_prime: col("integer", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
+  .table("world_travel_budget", {
+    world_id: col("text", { primaryKey: true, },),
+    spent: col("real", { notNull: true, hasDefault: true, },),
+    ceiling: col("real", { notNull: true, hasDefault: true, },),
+    window_start_tick: col("integer", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("worlds", {
     id: col("text", { primaryKey: true, },),
