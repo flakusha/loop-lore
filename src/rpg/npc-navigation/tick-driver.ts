@@ -12,12 +12,13 @@
 //      movement.
 //   4. Applies jitterRatio as a probabilistic tick-level skip — drop
 //      a fraction of ticks at random so NPCs don't move in lockstep.
-//      (ponytail: per-tick Bernoulli drop; per-NPC sampling is not
-//      needed, and the per-NPC destination draw now shares this same
-//      stream — see step 5.)
-//   5. Delegates to processMovementTick, forwarding the SAME resolved
-//      rng and nowMs, and returns its results. One seed therefore spans
-//      both the jitter drop and every NPC destination choice.
+//      (ponytail: per-tick Bernoulli drop; per-NPC sampling would
+//      need a second draw per NPC inside the tick for no behavioural
+//      gain.)
+//   5. Delegates to processMovementTick with the SAME resolved `rng`
+//      and `nowMs`, so one injected seed spans both the cadence draw
+//      and every wander/flee destination choice inside the tick.
+//      Returns its results.
 //
 // Pure function — no cron, no setInterval. The caller (scheduler P4
 // or the manual HTTP route) decides when to invoke this. One call
@@ -46,7 +47,6 @@ const TICK_LIMIT: GovernorLimitName = "per_tick_action";
  *  user counters in `autonomy_budget`.
  *  ponytail: synthetic scope — a future per-world policy ticket can
  *  replace this with a real world scope if needed.
- * @param worldId
  */
 function tickScope(worldId: string,): AutonomyScope {
   return { kind: "user", id: `world:${worldId}`, };
@@ -148,14 +148,14 @@ export async function runNpcMovementTick(
       nowMs,
     },
   );
-
   if (!gate.ok) {
     return { skipped: "budget", reason: gate, };
   }
 
-  // Forward the resolved rng + clock so wander/flee destination choice
-  // and lastMovedAt come from the same per-tick stream as the jitter drop.
-  const results = await processMovementTick(db, worldId, { rng, nowMs, },);
+  const results = await processMovementTick(db, worldId, {
+    rng,
+    nowMs,
+  },);
   return {
     results,
     preset: cfg.preset,

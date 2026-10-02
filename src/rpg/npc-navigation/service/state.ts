@@ -4,6 +4,7 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../../db";
 import { jsonParseOr, jsonStringifyOr, } from "../../../utils";
+import { toDate, } from "../../../utils/date";
 import { MovementPattern, } from "./types";
 import type { NpcMovementState, } from "./types";
 
@@ -62,6 +63,7 @@ export async function getMovementState(
  * @param actorId
  * @param worldId
  * @param updates
+ * @param nowMs Injected clock for `updated_at`. Defaults to Date.now.
  * @throws {Error}
  * @returns {Promise<void>}
  */
@@ -70,6 +72,7 @@ export async function updateMovementState(
   actorId: string,
   worldId: string,
   updates: Partial<NpcMovementState>,
+  nowMs?: number,
 ): Promise<void> {
   const current = await getMovementState(db, actorId, worldId,);
   if (!current) { throw new Error("NPC state not found",); }
@@ -91,7 +94,7 @@ export async function updateMovementState(
     .set({
       location_id: updates.currentLocationId ?? current.currentLocationId,
       schedule: jsonStringifyOr(schedule,),
-      updated_at: new Date().toISOString(),
+      updated_at: toDate(nowMs ?? Date.now()).toISOString(),
     },)
     .where("actor_id", "=", actorId,)
     .where("world_id", "=", worldId,)
