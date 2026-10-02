@@ -1,17 +1,16 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-
-import { existsSync, readFileSync, } from "node:fs";
-import { join, } from "node:path";
-import { getRawTranslations, } from "../../i18n/locale-loader";
-import { isLocale, LOCALE_REGISTRY, } from "../../i18n/locale-registry";
 import type { Locale, } from "../../i18n/types";
-import { getNonce, } from "../../middleware/csp-nonce";
-import { detectLocale, } from "../../middleware/i18n";
-import { isFrontendTelemetryEnabled, } from "../../telemetry/service";
-import { jsonStringifyOr, } from "../../utils";
 import { COMPONENTS_DIR, I18N_TEMPLATE_RE, ICONS_DIR, VIEWS_DIR, } from "./constants";
+import { detectLocale, } from "../../middleware/i18n";
 import { escapeHtml, } from "./escape-html";
+import { existsSync, readFileSync, } from "node:fs";
+import { getNonce, } from "../../middleware/csp-nonce";
+import { getRawTranslations, } from "../../i18n/locale-loader";
+import { isFrontendTelemetryEnabled, } from "../../telemetry/service";
+import { isLocale, LOCALE_REGISTRY, } from "../../i18n/locale-registry";
+import { join, } from "node:path";
+import { jsonStringifyOr, } from "../../utils";
 import { resolvePluginMounts, } from "./plugin-mounts";
 
 const viewCache = new Map<string, string>();
