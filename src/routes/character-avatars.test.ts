@@ -120,6 +120,18 @@ describe("Avatar CRUD — owner", () => {
     expect(id,).toBeDefined();
   });
 
+  test("POST avatar returns 400 when image_url is missing", async () => {
+    const app = makeApp(db, OWNER_USER, "user",);
+    const res = await app.handle(
+      new Request(`http://localhost/api/actors/${OWNER}/avatars`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ mood: "happy", },),
+      },),
+    );
+    expect(res.status,).toBe(400,);
+  });
+
   test("POST avatar returns 404 for another user's actor", async () => {
     const app = makeApp(db, OTHER_USER, "user",);
     const res = await app.handle(
@@ -581,5 +593,142 @@ describe("Authorization — resource-level (IDOR)", () => {
       new Request(`http://localhost/api/worlds/${WORLD2}/avatars/config/${OTHER}`,),
     );
     expect(res.status,).not.toBe(403,);
+  });
+});
+
+describe("Avatar select, update, delete", () => {
+  let db: Kysely<DB>;
+  let sqlite: Database;
+  let avatarService: AvatarService;
+  let ownAvatarId: string;
+  let foreignAvatarId: string;
+
+  beforeAll(async () => {
+    createLogger({ level: "warn", },);
+    ({ db, sqlite, } = await createTestDb());
+    avatarService = new AvatarService(db,);
+    await insertUsers(db, "owner", "Owner", { id: OWNER_USER as never, },);
+    await insertUsers(db, "other", "Other", { id: OTHER_USER as never, },);
+    await insertActors(db, "Owner Actor", {
+      id: OWNER as never,
+      owner_id: OWNER_USER,
+      user_id: OWNER_USER,
+    },);
+    await insertActors(db, "Other Actor", {
+      id: OTHER as never,
+      owner_id: OTHER_USER,
+      user_id: OTHER_USER,
+    },);
+    await insertAssets(db, OWNER_USER, "own.png", "image/png", "image", 1024, "/own.png", {
+      id: ASSET as never,
+    },);
+    await insertAssets(db, OWNER_USER, "other.png", "image/png", "image", 1024, "/other.png", {
+      id: ASSET2 as never,
+    },);
+
+    ownAvatarId = await avatarService.createAvatar({
+      actorId: OWNER,
+      assetId: ASSET,
+      label: "own-avatar",
+      tags: { emotion: "happy", },
+      isPrimary: false,
+    },);
+    // Belongs to OTHER — selecting it through OWNER must be refused.
+    foreignAvatarId = await avatarService.createAvatar({
+      actorId: OTHER,
+      assetId: ASSET2,
+      label: "foreign-avatar",
+      tags: { emotion: "secret-emotion", },
+      isPrimary: false,
+    },);
+  },);
+
+  afterAll(async () => {
+    await db.destroy();
+    sqlite.close();
+  },);
+
+  const select = (actorId: string, avatarId: string, userId?: string,) =>
+    makeApp(db, userId, "user",).handle(
+      new Request(`http://localhost/api/actors/${actorId}/avatars/select`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ avatar_id: avatarId, },),
+      },),
+    );
+
+  test("POST select returns 401 without auth", async () => {
+    const res = await select(OWNER, ownAvatarId,);
+    expect(res.status,).toBe(401,);
+  });
+
+  test("POST select returns 404 for another user's actor", async () => {
+    const res = await select(OWNER, ownAvatarId, OTHER_USER,);
+    expect(res.status,).toBe(404,);
+  });
+
+  test("POST select refuses an avatar owned by a different actor (IDOR)", async () => {
+    const res = await select(OWNER, foreignAvatarId, OWNER_USER,);
+    expect(res.status,).toBe(404,);
+    expect(await res.text(),).not.toContain("secret-emotion",);
+  });
+
+  test("POST select returns 404 for an unknown avatar id", async () => {
+    const res = await select(OWNER, "00000000-0000-4000-8000-00000000dead", OWNER_USER,);
+    expect(res.status,).toBe(404,);
+  });
+
+  test("POST select returns the avatar when the actor owns it", async () => {
+    const res = await select(OWNER, ownAvatarId, OWNER_USER,);
+    expect(res.status,).toBe(200,);
+    const body = await res.json() as { id: string; actorId: string };
+    expect(body.id,).toBe(ownAvatarId,);
+    expect(body.actorId,).toBe(OWNER,);
+  });
+
+  test("PUT avatar updates the emotion tag", async () => {
+    const app = makeApp(db, OWNER_USER, "user",);
+    const res = await app.handle(
+      new Request(`http://localhost/api/actors/${OWNER}/avatars/${ownAvatarId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ emotion: "calm", },),
+      },),
+    );
+    expect(res.status,).toBe(200,);
+    const updated = await avatarService.getAvatar(ownAvatarId,);
+    expect(updated?.label,).toBe("calm",);
+    expect(updated?.tags.emotion,).toBe("calm",);
+  });
+
+  test("PUT avatar falls back to mood when no emotion is given", async () => {
+    const app = makeApp(db, OWNER_USER, "user",);
+    const res = await app.handle(
+      new Request(`http://localhost/api/actors/${OWNER}/avatars/${ownAvatarId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ mood: "stoic", },),
+      },),
+    );
+    expect(res.status,).toBe(200,);
+    const updated = await avatarService.getAvatar(ownAvatarId,);
+    expect(updated?.label,).toBe("stoic",);
+    expect(updated?.tags.mood,).toBe("stoic",);
+  });
+
+  test("DELETE avatar removes it", async () => {
+    const doomed = await avatarService.createAvatar({
+      actorId: OWNER,
+      assetId: ASSET,
+      label: "doomed",
+      tags: { emotion: "meh", },
+      isPrimary: false,
+    },);
+    const app = makeApp(db, OWNER_USER, "user",);
+    const res = await app.handle(
+      new Request(`http://localhost/api/actors/${OWNER}/avatars/${doomed}`, { method: "DELETE", },),
+    );
+    expect(res.status,).toBe(204,);
+    expect(await avatarService.getAvatar(doomed,),).toBeUndefined();
   });
 });
