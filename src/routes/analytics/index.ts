@@ -29,8 +29,19 @@ interface HandleOpts {
 export function analyticsRoutes({ database, }: HandleOpts, prefix = "/api",): Elysia {
   const hooks = { response: { 200: SuccessResponse, 401: ErrorResponse, }, };
 
+  // `as unknown as AnalyticsCtx` is the sanctioned single boundary cast: the
+  // global derive populates `userId`, but a standalone plugin's ctx type does
+  // not carry it. See skill://route-ctx-typing.
   return new Elysia({ name: "analytics", },)
-    .get(`${prefix}/analytics/chats/:chatId`, (ctx,) => chatDetailHandler(database, ctx as AnalyticsCtx,), hooks,)
-    .get(`${prefix}/analytics/overview`, (ctx,) => overviewHandler(database, ctx as AnalyticsCtx,), hooks,)
-    .get(`${prefix}/analytics/characters`, (ctx,) => charactersHandler(database, ctx as AnalyticsCtx,), hooks,);
+    .get(
+      `${prefix}/analytics/chats/:chatId`,
+      (ctx,) => chatDetailHandler(database, ctx as unknown as AnalyticsCtx,),
+      hooks,
+    )
+    .get(`${prefix}/analytics/overview`, (ctx,) => overviewHandler(database, ctx as unknown as AnalyticsCtx,), hooks,)
+    .get(
+      `${prefix}/analytics/characters`,
+      (ctx,) => charactersHandler(database, ctx as unknown as AnalyticsCtx,),
+      hooks,
+    );
 }
