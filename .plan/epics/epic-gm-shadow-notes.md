@@ -95,3 +95,37 @@ Story steering uses whitenotes and shadow notes to guide the LLM's narrative dir
 ## Docs-Gap Audit Remainders (2026-09-19)
 
 - [ ] [gap-audit E8] Story-notes panel: 3-tab structure + role-access matrix (GM notes panel core done)
+## Integration Points
+
+### Systems This Epic Depends On
+
+|| System | What It Provides | How Used |
+|| ------ | ---------------- | -------- |
+|| epic-chat-lifecycle-moderation.md (ChatMode) | chat + message lifecycle | whitenotes attach to messages; reveal emits messages |
+|| epic-assistant-generation-extensions.md | prompt assembly hooks | whitenotes + shadow notes injected pre-generation |
+|| epic-immersion-consistency-gate.md | `GateVerdict` | soft-refuse/obstacle narration integrates with note types |
+|| epic-narration-actor-separation.md | `MessageKind` | reveal emits a `kind: narration` message |
+|| src/generation/hooks/ | hook system for note injection | whitenotes assembled pre-generation |
+|| src/assistant/prompt/ | prompt assembly with note context | GM notes section in prompt template |
+
+### Systems That Depend On This Epic
+
+|| System | What It Consumes | How Used |
+|| ------ | ---------------- | -------- |
+|| epic-assistant-gm-flows.md | whitenotes + shadow notes | GM steering directives in prompt |
+|| epic-memory-injection.md | whitenotes with memory scope | scope = world/session/chapter drives memory propagation |
+|| epic-immersion-presentation.md | revealed shadow notes | player-visible reveal events |
+
+### Shared Data Contracts
+
+|| Contract | Shared With | Purpose |
+|| -------- | ----------- | -------- |
+|| `Whitenote { id, messageId, type, content, priority, scope }` | memory, generation | narrative context |
+|| `ShadowNote { id, chatId, type, content, visibility, trigger, revealed }` | memory, presentation | hidden steering |
+
+### Cross-System Events
+
+|| Event | Direction | Purpose |
+|| ----- | --------- | ------- |
+|| `gm.note.reveal` | emits | player-visible narration (`kind: narration`) |
+|| `gm.note.expired` | emits | scope TTL expiry |

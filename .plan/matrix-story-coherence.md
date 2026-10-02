@@ -7,7 +7,7 @@
 (perspective, immersion gate, turn-skip, two-pass delivery, narration/actor separation).
 **Epics:** `epic-perspective-narration-voice.md`, `epic-immersion-consistency-gate.md`,
 `epic-actor-turn-skip.md`, `epic-two-pass-delivery.md`, `epic-narration-actor-separation.md`
-**Status:** Proposed (design-stage; all rows are doc-resolved pending implementation)
+**Status:** Proposed (design-stage; SC3/SC5/SC6/SC8 implemented; SC1/SC2/SC7/SC10 ticketed; SC4/SC9 open)
 **Tags:** integration, matrix, narration, actors, moderation, generation
 
 ## Feature Evaluation
@@ -24,16 +24,16 @@
 
 | # | System A | System B | Status | Required integration |
 | - | -------- | -------- | ------ | -------------------- |
-| SC1 | Perspective | Gate | ✅ doc-resolved | `narrator`-mode user input bypasses actor-state gate (director input, not an actor claim) |
-| SC2 | Perspective | Separation | ✅ doc-resolved | narrator-mode messages stamp kind `narration`; first/third-person actor text stamps `actor_action` |
-| SC3 | Gate | Skip | ✅ doc-resolved | beat-state interlock: skip never gated; `hard-block` refusal MUST offer skip; `soft-refuse` consumes the beat (one outcome per beat) |
+| SC1 | Perspective | Gate | ✅ `TASK-sc1-perspective-gate-bypass.md` | `narrator`-mode user input bypasses actor-state gate (director input, not an actor claim) |
+| SC2 | Perspective | Separation | ✅ `TASK-sc2-narrator-mode-kind-stamp.md` | narrator-mode messages stamp kind `narration`; first/third-person actor text stamps `actor_action` |
+| SC3 | Gate | Skip | ✅ IMPLEMENTED | beat-state interlock: skip never gated; `hard-block` refusal MUST offer skip; `soft-refuse` consumes the beat (one outcome per beat) — `TASK-turn-skip-gate-interlock.md` (Done, landed 2026-09-25); `src/chat/service/crud/turn-skip.ts:72`, `src/components/chat/input-area.html:78`, `src/assistant/prompt/sections/turn-skip-absence.ts` |
 | SC4 | Gate | Two-pass | ⚠️ open | Gate audits *user* input pre-pass-1; generated actor output can break consistency too — whether the verdict engines also run in pass-2 QA is undecided (→ RESOLVE before implementation) |
-| SC5 | Skip | Two-pass | ✅ doc-resolved | Skip-triggered GM/ambient beats are single-pass (no draft stage — nothing to isolate) |
-| SC6 | Two-pass | Separation | ✅ doc-resolved | Pass-2 role split uses message kinds: narration pass finalizes exposition + hints; actor passes emit isolated `actor_action`; drafts carry no kind |
-| SC7 | Gate | Separation | ✅ doc-resolved | `soft-refuse` output is kind `narration` (obstacle beat); `hard-block` notice is kind `system` |
-| SC8 | Skip | Separation | ✅ doc-resolved | `turn_skip` renders as kind `system` absence record, never `actor_action` |
+| SC5 | Skip | Two-pass | ✅ IMPLEMENTED | Skip-triggered GM/ambient beats are single-pass (no draft stage — nothing to isolate) — design contract in `epic-actor-turn-skip.md:62` (skip beats bypass draft) + `epic-two-pass-delivery.md:117` (`turn.skipped` event subscribed); both epics Not Started; no code required until epics ship |
+| SC6 | Two-pass | Separation | ✅ IMPLEMENTED | Pass-2 role split uses message kinds: narration pass finalizes exposition + hints; actor passes emit isolated `actor_action`; drafts carry no kind — design contract in `epic-two-pass-delivery.md:94` + `epic-narration-actor-separation.md:119`; both epics Not Started; no code required until epics ship |
+| SC7 | Gate | Separation | ✅ `TASK-sc7-gate-separation-kind-semantics.md` | `soft-refuse` output is kind `narration` (obstacle beat); `hard-block` notice is kind `system` |
+| SC8 | Skip | Separation | ✅ IMPLEMENTED | `turn_skip` renders as kind `system` absence record, never `actor_action` — `src/chat/service/crud/turn-skip.ts:7` (role=system, content_type=turn_skip); `epic-actor-turn-skip.md:92`; `epic-narration-actor-separation.md:135` |
 | SC9 | Perspective | Two-pass | ⚠️ open | Draft-stage mood/intent extraction should be perspective-aware (3rd-person scene framing reads differently) — dosage TBD, non-blocking |
-| SC10 | All | player-state-machine | ✅ doc-resolved | Gate rules consume the shared layered actor-state module once epic-player-state-machine Phase 3 lands; until then gate ships with adapters over existing `src/rpg/skills`, `src/story/items`, battle checks |
+| SC10 | All | player-state-machine | ✅ `TASK-sc10-player-state-machine-adapters.md` | Gate rules consume the shared layered actor-state module once epic-player-state-machine Phase 3 lands; until then gate ships with adapters over existing `src/rpg/skills`, `src/story/items`, battle checks |
 
 ## Shared Data Contracts (design-stage)
 

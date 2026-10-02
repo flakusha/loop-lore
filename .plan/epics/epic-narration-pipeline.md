@@ -84,3 +84,35 @@ full scope and slicing rationale.
 ## Linked Tasks
 
 - TASK-narration-pipeline.md
+## Integration Points
+
+### Systems This Epic Depends On
+
+|| System | What It Provides | How Used |
+|| ------ | ---------------- | -------- |
+|| epic-tts-foundation.md | voice presets + synthesis | character voice generation |
+|| epic-ambient-music-sfx.md | ambient backing + SFX library | scene ambience + action SFX |
+|| epic-narration-actor-separation.md | `MessageKind` | segments are classified by kind: narration vs actor_action vs system |
+|| epic-two-pass-delivery.md | finalized narration + reaction hints | narration pass output is the sounding input |
+|| src/assets/ | composite asset storage + linking | narration asset storage + version tracking |
+
+### Systems That Depend On This Epic
+
+|| System | What It Consumes | How Used |
+|| ------ | ---------------- | -------- |
+|| Frontend streaming | finalized audio + SFX | synchronized playback controller |
+|| epic-immersion-presentation.md | narrated segments | TTS rendering + ambient mixing |
+
+### Shared Data Contracts
+
+|| Contract | Shared With | Purpose |
+|| -------- | ----------- | -------- |
+|| `NarrationSegment { kind, text, timestamp, emotion }` | separation | segmentation by message kind |
+|| `NarrationAsset { messageId, audioUrl, sfxList, ambientTrack }` | assets | composite storage |
+
+### Cross-System Events
+
+|| Event | Direction | Purpose |
+|| ----- | --------- | ------- |
+|| `narration.segment.ready` | emits | TTS + ambient triggered |
+|| `scene.changed` | subscribes | auto-select ambient on scene transition |
