@@ -121,8 +121,8 @@ if (import.meta.main) {
 }
 
 /**
- * Files whose CONTENT differs between `base` and `HEAD`, plus uncommitted
- * working-tree changes. Empty when `base` is null.
+ * Paths `git diff --name-only base HEAD` reports, plus uncommitted working-tree
+ * changes. Empty when `base` is null.
  *
  * Two-dot (`base`..`HEAD`), not merge-base. The question this answers is
  * "which files will this branch change when it lands on `base`", and only a
@@ -135,10 +135,23 @@ if (import.meta.main) {
  * `git diff A B` needs no common ancestor, so dropping the merge-base lookup
  * also removes a crash: `git merge-base` exits non-zero on unrelated
  * histories, which took the whole runner down.
+ *
+ * Two limits worth knowing before reading scope off this list. It is a
+ * SUPERSET of what the merge actually changes, never a subset — a file the two
+ * tips hold identically is excluded, but one only `base` moved is still listed
+ * (over-scopes, which costs a false red, never a false green). And it only sees
+ * TRACKED working-tree changes: `git diff HEAD` omits untracked files, so a new
+ * source file that was never `git add`ed is not gated.
+ *
  * @param base - Git ref to diff against, or null.
  * @param cwd - Repo root to diff in; defaults to this repo. Exists so tests
  *   can point the diff at a fixture repo.
  * @returns Sorted list of changed paths (repo-relative).
+ * @throws {Error} when `base` does not resolve to a commit. This runs at module
+ *   init, before `main()`, so the throw is NOT caught by the runner's error
+ *   handler and no check report is written. `resolveDiffBase` in
+ *   `scripts/worktree/commands/finalize.ts` validates the ref first so the
+ *   finalize path fails with a message instead.
  */
 export function changedFiles(base, cwd = DIFF_ROOT,) {
   if (!base) { return []; }

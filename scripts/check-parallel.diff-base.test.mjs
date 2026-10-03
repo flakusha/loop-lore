@@ -27,7 +27,7 @@
 
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { spawnSync, } from "node:child_process";
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
+import { chmodSync, mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 
@@ -121,6 +121,73 @@ describe("changedFiles — --diff-base scoping", () => {
 
   test("empty when no base is given", () => {
     expect(changedFiles(null, workDir,),).toEqual([],);
+  });
+
+  test("an untracked working-tree file is NOT gated", () => {
+    // `git diff --name-only HEAD` only sees TRACKED changes, so a new source
+    // file that was never `git add`ed stays invisible to the scope. Pinned so
+    // the hole is a documented decision rather than a surprise: if a future fix
+    // folds `git ls-files --others` in, this goes red and the AGENTS.md note
+    // gets corrected with it.
+    write("src/never-added.ts", "export const n = 1;\n",);
+    expect(git(["status", "--porcelain",],),).toContain("?? src/never-added.ts",);
+    expect(changedFiles("main", workDir,),).not.toContain("src/never-added.ts",);
+  });
+
+  test("a missing base ref throws", () => {
+    // `execFileSync` propagates git's non-zero exit, and this runs at module
+    // init — before `main()` — so it is not caught by the runner's error
+    // handler. `resolveDiffBase` (finalize) validates the ref first, which is
+    // why the production path still gets a readable message.
+    expect(() => changedFiles("no-such-ref", workDir,)).toThrow();
+  });
+
+  test("a base equal to HEAD yields an empty diff", () => {
+    // Nothing to gate. Downstream this is the NOOP_OK path: the coverage gate
+    // reports `true # diff-scope: no matching files` rather than running.
+    expect(changedFiles("feature", workDir,),).toEqual([],);
+  });
+
+  test("rename-only, mode-only and whitespace-only changes are all in scope", () => {
+    // These three hold IDENTICAL content on both sides, yet `git diff
+    // --name-only` still lists them (rename shows the destination path only).
+    // That over-scopes rather than under-scopes, which costs a false red at
+    // worst — the safe direction — so it is pinned as known behaviour, not
+    // filtered. The filter that would remove them (`-w`, a whitespace-aware
+    // diff) would risk dropping a real change.
+    write("src/renamed-from.ts", "export const r = 1;\n",);
+    write("src/mode-only.ts", "export const m = 1;\n",);
+    write("src/ws-only.ts", "export const w = 1;\n",);
+    git(["add", "-A",],);
+    git(["commit", "-q", "-m", "seeds",],);
+    git(["mv", "src/renamed-from.ts", "src/renamed-to.ts",],);
+    // Mode has to change on disk and then be staged; `update-index --chmod`
+    // alone leaves the worktree copy at 644 and git sees no difference.
+    chmodSync(join(workDir, "src", "mode-only.ts",), 0o755,);
+    write("src/ws-only.ts", "export const w = 1;   \n\n",);
+    git(["add", "-A",],);
+    git(["commit", "-q", "-m", "non-content changes",],);
+    const files = changedFiles("HEAD~1", workDir,);
+    expect(files,).toContain("src/renamed-to.ts",);
+    expect(files,).toContain("src/mode-only.ts",);
+    expect(files,).toContain("src/ws-only.ts",);
+    // The rename SOURCE is not listed: with rename detection on, `--name-only`
+    // reports the destination alone, so the old path is not asked for.
+    expect(files,).not.toContain("src/renamed-from.ts",);
+  });
+
+  test("a deleted source file is listed without breaking the scope", () => {
+    // A deleted `src/x.ts` has no adjacent test to run and no module dir to
+    // scan. It is listed (it IS a change) but every downstream consumer must
+    // tolerate it: `scopedTestFiles` exists-checks before adding, and
+    // `coverage.mjs --files=` reports a file absent from lcov as SKIP rather
+    // than 0%. This pins the listing half; the tolerance halves are asserted by
+    // the coverage gate's own behaviour.
+    git(["rm", "-q", "src/converged.ts",],);
+    git(["commit", "-q", "-m", "delete a source file",],);
+    expect(changedFiles("HEAD~1", workDir,),).toContain("src/converged.ts",);
+    // The sibling `src/a.ts` module still scopes normally alongside it.
+    expect(changedFiles("main", workDir,),).toContain("src/a.ts",);
   });
 
   test("a base with no common ancestor does not throw", () => {
