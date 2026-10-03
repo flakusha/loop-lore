@@ -95,7 +95,7 @@ export function parseItemDrift(value: unknown,): ItemDrift {
   const statMultipliers: Record<string, number> = {};
   const rawMultipliers = raw.statMultipliers;
   if (typeof rawMultipliers === "object" && rawMultipliers !== null && !Array.isArray(rawMultipliers,)) {
-    for (const [stat, amount,] of Object.entries(rawMultipliers)) {
+    for (const [stat, amount,] of Object.entries(rawMultipliers,)) {
       if (typeof amount === "number" && Number.isFinite(amount,)) { statMultipliers[stat] = amount; }
     }
   }
@@ -110,7 +110,7 @@ export function parseItemDrift(value: unknown,): ItemDrift {
 export function statDeltaTotal(effects: ItemEffect[],): number {
   let total = 0;
   for (const effect of effects) {
-    if (effect.kind === "stat_delta") { total += Math.abs(effect.amount); }
+    if (effect.kind === "stat_delta") { total += Math.abs(effect.amount,); }
   }
   return total;
 }
@@ -118,7 +118,7 @@ export function statDeltaTotal(effects: ItemEffect[],): number {
 /** Sum of absolute drift multipliers carried by an instance. */
 export function driftTotal(drift: ItemDrift,): number {
   let total = 0;
-  for (const amount of Object.values(drift.statMultipliers)) { total += Math.abs(amount); }
+  for (const amount of Object.values(drift.statMultipliers,)) { total += Math.abs(amount,); }
   return total;
 }
 
@@ -209,8 +209,8 @@ export function rankItemPower(
       drift,
       maxDurability,
       score: maxStatDelta + drift + maxDurability,
-    });
+    },);
   }
-  scored.sort((a, b,) => (b.score - a.score) || a.worldItemId.localeCompare(b.worldItemId),);
+  scored.sort((a, b,) => (b.score - a.score) || a.worldItemId.localeCompare(b.worldItemId,));
   return scored;
 }

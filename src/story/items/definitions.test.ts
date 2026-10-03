@@ -41,7 +41,7 @@ afterAll(async () => {
   await db.destroy();
 },);
 
-function def(overrides: Partial<ItemDefinition> = {}): ItemDefinition {
+function def(overrides: Partial<ItemDefinition> = {},): ItemDefinition {
   return {
     worldId: worldA,
     name: "Iron Sword",
@@ -60,23 +60,23 @@ function def(overrides: Partial<ItemDefinition> = {}): ItemDefinition {
 describe("createDefinition dedupe", () => {
   test("rejects a repeated (worldId, name, category) with the existing id", async () => {
     const name = `Dagger ${uid()}`;
-    const first = await createDefinition(state, def({ name, }),);
+    const first = await createDefinition(state, def({ name, },),);
 
     let thrown: unknown;
     try {
-      await createDefinition(state, def({ name, }),);
+      await createDefinition(state, def({ name, },),);
     } catch (error) {
       thrown = error;
     }
 
-    expect(thrown).toBeInstanceOf(DuplicateItemDefinitionError);
-    expect((thrown as DuplicateItemDefinitionError).existingItemId).toBe(first);
+    expect(thrown,).toBeInstanceOf(DuplicateItemDefinitionError,);
+    expect((thrown as DuplicateItemDefinitionError).existingItemId,).toBe(first,);
   });
 
   test("a rejected duplicate does not insert a second row", async () => {
     const name = `Sceptre ${uid()}`;
-    await createDefinition(state, def({ name, category: ItemCategory.Tool, }),);
-    await expect(createDefinition(state, def({ name, category: ItemCategory.Tool, }),)).rejects.toThrow(
+    await createDefinition(state, def({ name, category: ItemCategory.Tool, },),);
+    await expect(createDefinition(state, def({ name, category: ItemCategory.Tool, },),),).rejects.toThrow(
       DuplicateItemDefinitionError,
     );
 
@@ -87,46 +87,49 @@ describe("createDefinition dedupe", () => {
       .where("name", "=", name,)
       .execute();
 
-    expect(rows).toHaveLength(1);
+    expect(rows,).toHaveLength(1,);
   });
 
   test("re-importing the same definition is idempotent (row count unchanged)", async () => {
     const name = `Relic ${uid()}`;
-    await createDefinition(state, def({ name, category: ItemCategory.Treasure, }),);
-    const before = await db.selectFrom("items",).select("id",).where("world_id", "=", worldA,).where("name", "=", name,).execute();
+    await createDefinition(state, def({ name, category: ItemCategory.Treasure, },),);
+    const before = await db.selectFrom("items",).select("id",).where("world_id", "=", worldA,).where("name", "=", name,)
+      .execute();
 
     for (let attempt = 0; attempt < 3; attempt++) {
       await expect(
-        createDefinition(state, def({ name, category: ItemCategory.Treasure, }),),
+        createDefinition(state, def({ name, category: ItemCategory.Treasure, },),),
       ).rejects.toThrow(DuplicateItemDefinitionError,);
     }
 
-    const after = await db.selectFrom("items",).select("id",).where("world_id", "=", worldA,).where("name", "=", name,).execute();
+    const after = await db.selectFrom("items",).select("id",).where("world_id", "=", worldA,).where("name", "=", name,)
+      .execute();
 
-    expect(after).toHaveLength(before.length);
-    expect(after).toHaveLength(1);
+    expect(after,).toHaveLength(before.length,);
+    expect(after,).toHaveLength(1,);
   });
 
   test("allows the same name in a different world", async () => {
     const name = `Shared Name ${uid()}`;
-    await createDefinition(state, def({ name, worldId: worldA, }),);
+    await createDefinition(state, def({ name, worldId: worldA, },),);
 
     // A different world is a different dedupe boundary — this must succeed.
-    const other = await createDefinition(state, def({ name, worldId: worldB, }),);
+    const other = await createDefinition(state, def({ name, worldId: worldB, },),);
 
-    expect(other).not.toBe(name);
+    expect(other,).not.toBe(name,);
   });
 
   test("allows the same name under a different category", async () => {
     const name = `Category Clash ${uid()}`;
-    await createDefinition(state, def({ name, category: ItemCategory.Weapon, }),);
+    await createDefinition(state, def({ name, category: ItemCategory.Weapon, },),);
 
     // Same world, same name, different category — must still insert.
-    const other = await createDefinition(state, def({ name, category: ItemCategory.Armor, }),);
+    const other = await createDefinition(state, def({ name, category: ItemCategory.Armor, },),);
 
-    const rows = await db.selectFrom("items",).select("id",).where("world_id", "=", worldA,).where("name", "=", name,).execute();
-    expect(rows).toHaveLength(2);
-    expect(other).toBeTruthy();
+    const rows = await db.selectFrom("items",).select("id",).where("world_id", "=", worldA,).where("name", "=", name,)
+      .execute();
+    expect(rows,).toHaveLength(2,);
+    expect(other,).toBeTruthy();
   });
 
   test("still rejects a definition whose effects are malformed", async () => {
@@ -135,7 +138,7 @@ describe("createDefinition dedupe", () => {
     // Effect validation runs before the dedupe lookup, so a malformed payload
     // must surface its own error rather than a duplicate error.
     await expect(
-      createDefinition(state, def({ name, properties: { effects: "not-an-array" }, }),),
-    ).rejects.toThrow("properties.effects must be an array");
+      createDefinition(state, def({ name, properties: { effects: "not-an-array", }, },),),
+    ).rejects.toThrow("properties.effects must be an array",);
   });
 });

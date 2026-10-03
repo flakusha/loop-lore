@@ -3,11 +3,11 @@
 
 import { Elysia, t, } from "elysia";
 import { ItemVisibility, } from "../../db/enums";
-import { can, } from "../../users/permissions";
-import { ErrorResponse, } from "../../validation/schemas";
 import { rankItemPower, } from "../../story/items/balance";
 import type { ItemDefinition, ItemInstance, } from "../../story/items/types";
+import { can, } from "../../users/permissions";
 import { jsonParseOr, } from "../../utils";
+import { ErrorResponse, } from "../../validation/schemas";
 import {
   ErrorCode,
   extractAuth,
@@ -109,7 +109,7 @@ export function itemPowerRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               value: 0,
               weight: 0,
             },
-          ],),);
+          ]),);
 
           const instances: ItemInstance[] = rows.map((row,) => ({
             worldItemId: row.worldItemId,
@@ -124,7 +124,7 @@ export function itemPowerRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             value: 0,
             weight: 0,
             maxDurability: row.maxDurability,
-          }),);
+          }));
 
           return jsonResponse({ worldId, limit, items: rankItemPower(definitionById, instances,).slice(0, limit,), },);
         },

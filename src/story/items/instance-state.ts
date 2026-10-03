@@ -3,10 +3,10 @@
 
 /** World-item durability, drift, and unique lookup. */
 import type { Transaction, } from "kysely";
-import { driftCapFor, } from "./balance";
 import { ItemRarity, StackableState, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { jsonParseOr, safeJsonStringify, } from "../../utils";
+import { driftCapFor, } from "./balance";
 import type { DurabilityResult, ItemDrift, ItemDriftEvent, ItemState, } from "./types";
 
 function driftFrom(properties: string,): ItemDrift {
