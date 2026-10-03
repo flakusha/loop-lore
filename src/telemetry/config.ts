@@ -12,7 +12,7 @@ export interface TelemetryConfig {
   frontendEnabled: boolean;
   retentionDays: number;
   playwrightEnabled?: boolean;
-  /** Opt-in per-pattern regex match counters (TELEMETRY_REGEX_PRECISION). */
+  /** Opt-in per-pattern regex match counters (TELEMETRY_REGEX_PRECISION); forced off when `eventsEnabled` is off. */
   regexPrecision: boolean;
 }
 
@@ -37,13 +37,15 @@ function resolveFlag(env: string | undefined, devDefault: boolean,): boolean {
  */
 export function loadTelemetryConfig(): TelemetryConfig {
   const master = resolveFlag(process.env.TELEMETRY_ENABLED, isDev,);
+  const events = resolveFlag(process.env.TELEMETRY_EVENTS_ENABLED, isDev,) || master;
   return {
     enabled: master,
-    eventsEnabled: resolveFlag(process.env.TELEMETRY_EVENTS_ENABLED, isDev,) || master,
+    eventsEnabled: events,
     frontendEnabled: resolveFlag(process.env.TELEMETRY_FRONTEND_ENABLED, isDev,) || master,
     retentionDays: Number(process.env.TELEMETRY_RETENTION_DAYS,) || 90,
     playwrightEnabled: resolveFlag(process.env.TELEMETRY_PLAYWRIGHT_ENABLED, isDev,),
-    // Opt-in: off unless explicitly enabled, even in dev.
-    regexPrecision: resolveFlag(process.env.TELEMETRY_REGEX_PRECISION, false,),
+    // Opt-in: off unless explicitly enabled, even in dev. Also off when the
+    // events sink is off — counters with nowhere to flush only grow forever.
+    regexPrecision: resolveFlag(process.env.TELEMETRY_REGEX_PRECISION, false,) && events,
   };
 }
