@@ -169,6 +169,28 @@ describe("actorMemoriesRoutes", () => {
     expect(JSON.parse(row.keywords as string,),).not.toContain("phrase-8",);
   });
 
+  test("POST keywords rejects an over-cap array at the trust boundary", async () => {
+    // The create body is the path commit 2c7d0e330f repaired, but only the PUT
+    // cap had an assertion. A regression that dropped `maxItems` from
+    // `EntityCreateBody.keywords` alone would store 9 triggers on the create
+    // path while PUT still rejected them.
+    const tooMany = Array.from({ length: 9 }, (_, i,) => `phrase-${i}`);
+    const res = await makeApp(db, "user1").handle(
+      new Request("http://localhost/api/actors/user1/memories", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ content: "Journal entry over the cap on create", keywords: tooMany, }),
+      }),
+    );
+    expect(res.status,).toBe(422,);
+    const rows = await db
+      .selectFrom("actor_memories",)
+      .select("id",)
+      .where("content", "=", "Journal entry over the cap on create",)
+      .execute();
+    expect(rows.length,).toBe(0,);
+  });
+
   it("expand endpoint reconstructs the bound chain", async () => {
     const { createTestDb, } = await import("../test-utils/create-test-db");
     const { insertChats, insertMessages, } = await import("../test-utils/insert-helpers");

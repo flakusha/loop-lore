@@ -114,9 +114,13 @@ export async function fetchActorMemories(
     memoryType: r.memory_type,
     confidence: r.confidence,
     importance: r.importance,
+    // The column is a JSON blob, so "parses" is not the same as "is a list".
+    // `findKeyphraseMatches` calls `.some()` on this, so a valid-JSON non-array
+    // (`"foo"`, `123`, `{…}`) would throw out of prompt assembly. Only the
+    // array shape survives; everything else degrades to "no triggers".
     keywords: (() => {
       const parsed = safeJsonParse<string[]>(r.keywords ?? "[]",);
-      return parsed.ok ? parsed.value : [];
+      return parsed.ok && Array.isArray(parsed.value) ? parsed.value : [];
     })(),
     sourceChatId: r.source_chat_id ?? undefined,
     sourceMessageId: r.source_message_id ?? undefined,
