@@ -178,6 +178,93 @@ describe("dispatchDue — scheduled messages", () => {
     expect(second.sent,).toBe(0,);
     expect(await messageCount("once",),).toBe(1,);
   });
+
+  test("a crash between insert and status-update does not deliver the message twice", async () => {
+    const rowId = await park({ body: "exactly once", minutes: -1, },);
+    // Stand in for the crash window: the message landed and carries the
+    // dispatcher's idempotency key, but the scheduled row is still pending.
+    await insertMessages(db, chatId, userId, "user", "exactly once", {
+      idempotency_key: `scheduled:${rowId}`,
+    },);
+
+    const summary = await dispatchDue(db, testConfig,);
+
+    // The key is already claimed, so nothing new is written and the row heals.
+    expect(summary.sent,).toBe(0,);
+    expect(summary.failed,).toBe(0,);
+    expect(await messageCount("exactly once",),).toBe(1,);
+    const row = await db
+      .selectFrom("scheduled_messages",)
+      .select("status",)
+      .where("id", "=", rowId,)
+      .executeTakeFirst();
+    expect(row?.status,).toBe("sent",);
+  });
+});
+
+describe("dispatchDue — per-row failure isolation", () => {
+  let db: Kysely<DB>;
+  let userId: string;
+  let chatId: string;
+
+  beforeEach(async () => {
+    createLogger({ level: "error", },);
+    ({ db, } = await createTestDb());
+
+    userId = uid();
+    await insertUsers(db, userId, "Deliverer", { id: userId as never, },);
+    await insertActors(db, "Deliverer Actor", { id: userId as never, actor_type: "user" as never, },);
+    chatId = uid();
+    await insertChats(db, "Isolation Chat", userId, { id: chatId as never, },);
+  },);
+
+  /** @param authorId @param body @param minutes */
+  async function parkAs(
+    authorId: string,
+    body: string,
+    minutes: number,
+  ): Promise<string> {
+    const result = await scheduleMessage(db, {
+      chatId,
+      authorId,
+      body,
+      sendAt: isoIn(minutes,),
+    },);
+    if (!("ok" in result)) { throw new Error(`park failed: ${result.message}`,); }
+    return result.scheduled.id;
+  }
+
+  test("a poison row does not starve the rows queued behind it", async () => {
+    // A user with no `actors` row: `messages.actor_id` is a foreign key, so
+    // the insert exhausts its retries and throws. That is the real-world
+    // poison case (an actor row removed mid-flight), not a stubbed failure.
+    const ghostId = uid();
+    await insertUsers(db, ghostId, "Ghost", { id: ghostId as never, },);
+    // Ordered first by send_at ASC, so it is the row that fails the pass.
+    const poisonId = await parkAs(ghostId, "poison", -5,);
+    const healthyId = await parkAs(userId, "healthy", -1,);
+
+    const summary = await dispatchDue(db, testConfig,);
+
+    // The pass survived the throw and went on to the next due row.
+    expect(summary.sent,).toBe(1,);
+    expect(summary.failed,).toBe(1,);
+    const delivered = await db
+      .selectFrom("messages",)
+      .select("content",)
+      .where("chat_id", "=", chatId,)
+      .execute();
+    expect(delivered.map((m,) => m.content),).toEqual(["healthy",],);
+
+    // The failed row is still pending — retried next tick, never dropped,
+    // never silently marked sent.
+    const statuses = await db
+      .selectFrom("scheduled_messages",)
+      .select(["id", "status",],)
+      .execute();
+    expect(statuses.find((r,) => r.id === poisonId)?.status,).toBe("pending",);
+    expect(statuses.find((r,) => r.id === healthyId)?.status,).toBe("sent",);
+  });
 });
 
 describe("dispatchDue — reminders", () => {

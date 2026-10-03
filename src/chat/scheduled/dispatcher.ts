@@ -20,7 +20,10 @@ import { getLogger, } from "../../logger";
 import type { Logger, } from "../../logger/types";
 import { NotificationService, } from "../../notifications/service";
 import { prepareContentStorage, } from "../../routes/messages/post";
-import { insertUserMessageWithRetry, } from "../../routes/messages/swipe-race-insert";
+import {
+  findByIdempotencyKey,
+  insertUserMessageWithRetry,
+} from "../../routes/messages/swipe-race-insert";
 import { isInQuietHours, } from "../proactive/timing";
 import { deleteFiredReminder, selectDueReminders, } from "./reminders";
 import { markScheduledSent, selectDueScheduledMessages, } from "./scheduled-messages";
@@ -33,6 +36,13 @@ export interface DispatchSummary {
   held: number;
   /** Reminders notified this pass. */
   reminded: number;
+  /**
+   * Rows this pass tried and failed on. A failed scheduled row stays
+   * `pending` and retries on the next tick; a failed reminder was already
+   * deleted, so it is dropped. Either way the attempt is counted here so
+   * the pass still reports what it lost.
+   */
+  failed: number;
 }
 
 /**
@@ -76,7 +86,7 @@ export async function dispatchDue(
 ): Promise<DispatchSummary> {
   const now = opts.now ?? new Date();
   const log = (opts.logger ?? getLogger()).child({ module: "scheduled-dispatch", },);
-  const summary: DispatchSummary = { sent: 0, held: 0, reminded: 0, };
+  const summary: DispatchSummary = { sent: 0, held: 0, reminded: 0, failed: 0, };
 
   // Quiet hours are per-chat; cache the verdict so N rows in one chat cost
   // one query rather than N.
@@ -94,50 +104,86 @@ export async function dispatchDue(
       summary.held += 1;
       continue;
     }
-    // The author IS the message's actor: the parked body was written by the
-    // same user who will appear as the speaker when it lands. Storage runs
-    // through prepareContentStorage so a chat with encryptAtRest persists an
-    // encrypted body, exactly as an interactively-typed message would.
-    const stored = await prepareContentStorage(
-      database,
-      config,
-      row.chat_id,
-      row.author_id,
-      row.body,
-    );
-    await insertUserMessageWithRetry(database, {
-      id: crypto.randomUUID(),
-      chatId: row.chat_id,
-      actorId: row.author_id,
-      parentId: null,
-      storedContent: stored.storedContent,
-      storedKeyId: stored.storedKeyId,
-      storedPlaintext: stored.storedPlaintext,
-      contentEncoding: stored.contentEncoding,
-      idempotencyKey: `scheduled:${row.id}`,
-    },);
-    await markScheduledSent(database, row.id,);
-    summary.sent += 1;
+    // Per-row isolation: a throw here (undecryptable body, actor row deleted
+    // mid-flight, encryption misconfig) must not abort the pass. Rows are
+    // selected send_at ASC, so an uncaught throw would put the same row first
+    // on every future tick and starve every later due row forever.
+    try {
+      // Claim the idempotency key BEFORE inserting. A crash between a
+      // successful insert and markScheduledSent leaves the row pending; the
+      // next pass finds the key already claimed and heals the status instead
+      // of inserting a second copy of the same delivery.
+      const key = `scheduled:${row.id}`;
+      if (await findByIdempotencyKey(database, row.chat_id, key,)) {
+        await markScheduledSent(database, row.id,);
+        continue;
+      }
+      // The author IS the message's actor: the parked body was written by the
+      // same user who will appear as the speaker when it lands. Storage runs
+      // through prepareContentStorage so a chat with encryptAtRest persists an
+      // encrypted body, exactly as an interactively-typed message would.
+      const stored = await prepareContentStorage(
+        database,
+        config,
+        row.chat_id,
+        row.author_id,
+        row.body,
+      );
+      await insertUserMessageWithRetry(database, {
+        id: crypto.randomUUID(),
+        chatId: row.chat_id,
+        actorId: row.author_id,
+        parentId: null,
+        storedContent: stored.storedContent,
+        storedKeyId: stored.storedKeyId,
+        storedPlaintext: stored.storedPlaintext,
+        contentEncoding: stored.contentEncoding,
+        idempotencyKey: key,
+      },);
+      await markScheduledSent(database, row.id,);
+      summary.sent += 1;
+    } catch (err) {
+      // Left `pending` on purpose: it retries next tick.
+      summary.failed += 1;
+      log.warn("scheduled dispatch failed; row stays pending for retry", {
+        scheduledId: row.id,
+        chatId: row.chat_id,
+        error: String(err,),
+      },);
+    }
   }
 
   const notifications = new NotificationService(database,);
   for (const reminder of await selectDueReminders(database, now,)) {
-    // Delete BEFORE notifying: a failed notification must not leave a row
-    // that re-fires forever, and a successful one must fire exactly once.
-    const removed = await deleteFiredReminder(database, reminder.id,);
-    if (removed === 0) { continue; }
-    await notifications.create({
-      userId: reminder.user_id,
-      type: NotificationType.System,
-      title: "Reminder",
-      body: "You asked to be reminded about this message.",
-      link: `/views/chat?chatid=${encodeURIComponent(reminder.chat_id,)}`,
-      data: { messageId: reminder.message_id, chatId: reminder.chat_id, },
-    },);
-    summary.reminded += 1;
+    // Same isolation as the scheduled loop: one undeliverable reminder must
+    // not stop the ones behind it.
+    try {
+      // Delete BEFORE notifying: a failed notification must not leave a row
+      // that re-fires forever, and a successful one must fire exactly once.
+      const removed = await deleteFiredReminder(database, reminder.id,);
+      if (removed === 0) { continue; }
+      await notifications.create({
+        userId: reminder.user_id,
+        type: NotificationType.System,
+        title: "Reminder",
+        body: "You asked to be reminded about this message.",
+        link: `/views/chat?chatid=${encodeURIComponent(reminder.chat_id,)}`,
+        data: { messageId: reminder.message_id, chatId: reminder.chat_id, },
+      },);
+      summary.reminded += 1;
+    } catch (err) {
+      // The row is already deleted, so this one is dropped, not retried —
+      // count it so the pass still reports what it lost.
+      summary.failed += 1;
+      log.warn("reminder dispatch failed", {
+        reminderId: reminder.id,
+        chatId: reminder.chat_id,
+        error: String(err,),
+      },);
+    }
   }
 
-  if (summary.sent > 0 || summary.held > 0 || summary.reminded > 0) {
+  if (summary.sent > 0 || summary.held > 0 || summary.reminded > 0 || summary.failed > 0) {
     log.info("scheduled dispatch complete", { ...summary, },);
   }
   return summary;
