@@ -14,8 +14,9 @@
  * - Auto-generated files (carry `DO NOT EDIT MANUALLY` banner emitted by
  *   the `db:sync-*` generators) are owned by their generator, not hand-split.
  * - Per-file override: a top-of-file `// size-allow: N` directive (within the
- *   first 5 lines, alongside the SPDX header) sets a larger line budget for
- *   that one file. Use sparingly — the default 250L is the AGENTS.md ceiling.
+ *   first 512 characters, alongside the SPDX header) REPLACES that file's
+ *   budget — any N, raise or lower, uncapped. Use sparingly — the default 250L
+ *   is the AGENTS.md default budget.
  *
  * Modes:
  * - Default (no flags): warns and exits 0 — non-blocking nudge
@@ -42,8 +43,8 @@ const GLOBS = ["src/**/*.ts", "scripts/**/*.ts", "scripts/**/*.mjs", "plugins/**
 // splitting them by hand would be overwritten on the next db:sync-* run.
 const GENERATED_MARKER = "DO NOT EDIT MANUALLY";
 
-// Per-file override: a `// size-allow: N` directive in the first 5 lines
-// bumps the budget for that file. Scoped to the file header (first 512 chars)
+// Per-file override: a `// size-allow: N` directive inside the header window
+// REPLACES that file's budget. Scoped to the first 512 CHARACTERS (not lines)
 // so it can sit next to the SPDX banner without polluting the body.
 const SIZE_ALLOW_RE = /^\/\/\s*size-allow:\s*(\d+)\s*$/m;
 const HEADER_BYTES = 512;
