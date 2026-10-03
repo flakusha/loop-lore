@@ -25,6 +25,7 @@ import {
   insertUsers,
   insertWorlds,
 } from "../../test-utils/insert-helpers";
+import { BUDGET_WINDOW_TICKS, } from "./budget";
 import { advancePartyTravel, } from "./travel";
 import { type TravelContext, travelDb, } from "./types";
 
@@ -38,6 +39,14 @@ const LOC_C = "loc-sim-c";
 /** Fixed instant — only ever written to `updated_at`. */
 const T0 = 1_800_000_000_000;
 
+/** Where every party stood at a tick that refused a charge. */
+interface FrozenFrame {
+  /** The tick that reported `budgetExhausted`. */
+  tick: number;
+  /** Every party's position at that tick, keyed by id. */
+  positions: Record<string, string | null>;
+}
+
 /** The per-tick trace a simulation run produces. */
 interface SimRun {
   /** `tick:partyId` for every action, in order. */
@@ -46,6 +55,15 @@ interface SimRun {
   exhausted: number[];
   /** Every party's position once the run ends. */
   final: { id: string; route_index: number; current_location_id: string | null }[];
+  /**
+   * Positions sampled at each refusal.
+   *
+   * The action log alone CANNOT see the commit-then-charge bug: that code
+   * moved the party and then broke before pushing the action, so the movement
+   * left no trace in `actions`. Sampling positions is what gives this file
+   * a surface on which the bug is observable.
+   */
+  frozen: FrozenFrame[];
 }
 
 /** A context with no shared claim set, so occupancy resets every tick. */
@@ -111,10 +129,14 @@ async function readLedger(): Promise<{ spent: number; window_start_tick: number 
 async function runTicks(ticks: number, ceiling: number,): Promise<SimRun> {
   const actions: string[] = [];
   const exhausted: number[] = [];
+  const frozen: FrozenFrame[] = [];
   for (let tick = 0; tick < ticks; tick++) {
     const result = await advancePartyTravel(db, WORLD_ID, tick, tickContext(ceiling,),);
     actions.push(...result.actions.map((a,) => `${a.tick}:${a.subjectId}`),);
-    if (result.budgetExhausted) { exhausted.push(tick,); }
+    if (result.budgetExhausted) {
+      exhausted.push(tick,);
+      frozen.push({ tick, positions: await readPositions(), },);
+    }
   }
   const final = await travelDb(db,)
     .selectFrom("travel_parties",)
@@ -122,7 +144,17 @@ async function runTicks(ticks: number, ceiling: number,): Promise<SimRun> {
     .where("world_id", "=", WORLD_ID,)
     .orderBy("id", "asc",)
     .execute();
-  return { actions, exhausted, final, };
+  return { actions, exhausted, final, frozen, };
+}
+
+/** Where every party stands, keyed by id. */
+async function readPositions(): Promise<Record<string, string | null>> {
+  const rows = await travelDb(db,)
+    .selectFrom("travel_parties",)
+    .select(["id", "current_location_id",],)
+    .where("world_id", "=", WORLD_ID,)
+    .execute();
+  return Object.fromEntries(rows.map((row,) => [row.id, row.current_location_id,]),);
 }
 
 /** The tick a `tick:partyId` entry belongs to. */
@@ -183,18 +215,43 @@ describe("a 100-tick world run is a function of state alone", () => {
     expect(await readLedger(),).toEqual(ledgerAfterFirst,);
   });
 
-  test("an exhausted budget halts the world and later ticks do no work", async () => {
+  test("an exhausted budget freezes the world for the rest of its window", async () => {
     await seedCorridor();
 
     // A ceiling of 0.15 funds three actions, so the corridor cannot pay for
-    // itself: the world runs dry well inside the hundred ticks.
+    // itself inside one window: the world runs dry well inside the hundred
+    // ticks and refills when the window rolls.
     const run = await runTicks(100, 0.15,);
 
     expect(run.exhausted.length,).toBeGreaterThan(0,);
-    // The loop breaks on a refused charge, so a refused tick never leaks a
-    // partial application into the tick after it.
-    const firstExhausted = run.exhausted[0] ?? 0;
-    expect(run.actions.filter((a,) => tickOf(a,) > firstExhausted),).toEqual([],);
+
+    // A window restores the ceiling, so "exhausted" is scoped to a window and
+    // never to the world. Per window: the tick it first refuses a charge is
+    // also the last tick it does work on. (The previous version of this test
+    // asserted "later ticks do no work" against the whole run, which a rolling
+    // window can never satisfy — see the concern file, concern 4.)
+    const windowOf = (tick: number,) => tick - tick % BUDGET_WINDOW_TICKS;
+    for (const entry of run.actions) {
+      const window = windowOf(tickOf(entry,),);
+      const refusals = run.exhausted.filter((t,) => windowOf(t,) === window);
+      if (refusals.length === 0) { continue; }
+      expect(tickOf(entry,),).toBeLessThanOrEqual(Math.min(...refusals,),);
+    }
+
+    // And the load-bearing one: a refused charge moves NOBODY — not even a
+    // move the action log never recorded. Under commit-then-charge the first
+    // party of every refused tick still committed its step and then broke
+    // before pushing the action, so the corridor finished itself for free over
+    // ticks 2-9 while `actions` stayed empty. That is why this samples
+    // positions rather than trusting the log, and why the old assertion passed
+    // against code that was handing out free travel.
+    for (let i = 1; i < run.frozen.length; i += 1) {
+      const previous = run.frozen[i - 1]!;
+      const current = run.frozen[i]!;
+      if (windowOf(previous.tick,) !== windowOf(current.tick,)) { continue; }
+      expect(current.positions,).toEqual(previous.positions,);
+    }
+
     // Spend stopped at the ceiling instead of drifting past it.
     expect((await readLedger())?.spent,).toBeLessThanOrEqual(0.15,);
   });
