@@ -7,7 +7,7 @@
  *   3. no match → no keyphrase injection
  * plus the config flag and per-message limit overrides.
  */
-import { afterEach, beforeEach, describe, expect, spyOn, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { MessageRole, MessageStatus, } from "../../../db/enums";
 import { createLogger, } from "../../../logger";
 import { clearKeyphraseRecallCooldowns, recordKeyphraseRecall, } from "../../../memory/keyphrase-recall";
@@ -54,7 +54,14 @@ interface Fixture {
   sqlite: { close: () => void };
 }
 
-async function setup(opts: { withMatchMessage: boolean; keywords?: string[] },): Promise<Fixture> {
+/**
+ * @param opts
+ * @param opts.withMatchMessage
+ * @param opts.keywords - stored `keywords` column value. An array is stored
+ *   as JSON; a bare string is written verbatim, so a test can plant a payload
+ *   that is valid JSON but NOT an array.
+ */
+async function setup(opts: { withMatchMessage: boolean; keywords?: string[] | string },): Promise<Fixture> {
   const { db, sqlite, } = await createTestDb();
   await insertUsers(db, "human", "Human",);
   await insertActors(db, "Character",);
@@ -100,6 +107,9 @@ async function setup(opts: { withMatchMessage: boolean; keywords?: string[] },):
     params: { actorId: charId, chatId: chat.id, modelId: "test-model", },
     isStory: false,
     tokenBudget: 4000,
+    // Deterministic injection filter: 0.999 keeps `decide.ts` from selecting
+    // the journal entry on its own, so only a keyphrase hit can inject it.
+    randomFn: () => 0.999,
   };
   return { ctx, assembleCtx, memoryId, sqlite, };
 }
@@ -234,24 +244,15 @@ describe("applyKeyphraseRecalls", () => {
 });
 
 describe("memorySection — keyphrase recall end-to-end", () => {
-  // `memorySection` builds its own InjectionContext with no `randomFn`, so the
-  // probabilistic filter in `injection/decide.ts` falls back to `Math.random`.
-  // When that filter happens to select the journal entry on its own, `forced`
-  // in `applyKeyphraseRecalls` is empty, no keyphrase audit row is written, and
-  // this suite measured ~25-35% failures on an UNMODIFIED tree (pre-fix 14/40,
-  // post-fix 10/40 — the rate predates the audit fix).
-  //
-  // Pin the roll high so the filter never selects the entry: then the keyphrase
-  // match is the ONLY thing that can put it in the prompt, which is what these
-  // tests are actually about. Same seam the rest of the injection suite uses.
-  let randomSpy: ReturnType<typeof spyOn> | null = null;
-  beforeEach(() => {
-    randomSpy = spyOn(Math, "random",).mockReturnValue(0.999,);
-  },);
-  afterEach(() => {
-    randomSpy?.mockRestore();
-    randomSpy = null;
-  },);
+  // Determinism comes from the REAL seam, not a `Math.random` spy: `setup()`
+  // puts `randomFn: () => 0.999` on the AssembleContext, `memories.ts` threads
+  // it into `InjectionContext.randomFn`, and `injection/decide.ts` consumes it.
+  // Before that seam existed this suite fell through to `Math.random` and
+  // measured ~25-35% failures (pre-fix 14/40, post-fix 10/40 — the rate
+  // predates the audit fix). Pinning the roll high keeps the probabilistic
+  // filter from selecting the journal entry on its own, so the keyphrase match
+  // is the ONLY thing that can put it in the prompt — which is what these
+  // tests are actually about.
 
   test("match injects the journal entry into the prompt; cooldown blocks the re-inject", async () => {
     const f = await setup({ withMatchMessage: true, },);
@@ -276,6 +277,25 @@ describe("memorySection — keyphrase recall end-to-end", () => {
       const built = await memorySection.build(f.assembleCtx,);
       expect(built,).toBeDefined();
       expect(await keyphraseAuditCount(f.ctx,),).toBe(0,);
+    } finally {
+      f.sqlite.close();
+    }
+  });
+
+  // The `keywords` column is a JSON blob, so any writer can put something
+  // that PARSES but is not an array in it. `memories-helpers` already defends
+  // against unparseable text (`safeJsonParse` → `[]`); it did not defend
+  // against valid-JSON-non-array, and `findKeyphraseMatches` calls `.some()` on
+  // the value — so one such row used to throw `keywords.some is not a
+  // function` out of prompt assembly and take the whole generation with it.
+  // An unusable column must degrade to "no triggers", never to a crash.
+  test("a keywords column that is valid JSON but not an array degrades, never throws", async () => {
+    const f = await setup({ withMatchMessage: true, keywords: JSON.stringify(KEY_PHRASE,), },);
+    try {
+      const built = await memorySection.build(f.assembleCtx,);
+      // No trigger list survived, so nothing is keyphrase-injected.
+      expect(await keyphraseAuditCount(f.ctx,),).toBe(0,);
+      expect(built,).toBeDefined();
     } finally {
       f.sqlite.close();
     }
