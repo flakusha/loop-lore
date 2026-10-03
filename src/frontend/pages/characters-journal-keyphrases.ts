@@ -89,9 +89,10 @@ globalThis.initJournalKeyphrases = async function(characterId: string,) {
       }" placeholder="${escapeHtml(t("journalKeyphrases.placeholder",),)}" />
       </div>`;
     },).join("",);
-    el.innerHTML = `${rows}<button type="button" class="btn btn-primary btn-sm" data-testid="save-keyphrases">${
-      escapeHtml(t("journalKeyphrases.save",),)
-    }</button>`;
+    el.innerHTML = rows +
+      `<button type="button" class="btn btn-primary btn-sm" data-testid="save-keyphrases">${
+        escapeHtml(t("journalKeyphrases.save",),)
+      }</button>`;
     el.querySelector<HTMLButtonElement>("[data-testid='save-keyphrases']",)?.addEventListener(
       "click",
       () => {
