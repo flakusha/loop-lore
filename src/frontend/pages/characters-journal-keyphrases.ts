@@ -12,7 +12,7 @@
 import { safeJsonParse, } from "../../utils";
 import { jsonBody, } from "../alpine/json";
 import { feFetch, } from "../fe-fetch";
-import { showToast, } from "../ui";
+import { showToast, t, } from "../ui";
 import { escapeHtml, } from "./shared";
 
 /** Ticket hard cap: up to 8 keyphrases per journal entry. */
@@ -71,7 +71,7 @@ globalThis.initJournalKeyphrases = async function(characterId: string,) {
     const data = await res.json() as { items?: JournalMemoryRow[] };
     const items = data.items ?? [];
     if (items.length === 0) {
-      el.innerHTML = '<p style="color:var(--text-secondary)">No journal entries yet.</p>';
+      el.innerHTML = `<p style="color:var(--text-secondary)">${escapeHtml(t("journalKeyphrases.empty",),)}</p>`;
       return;
     }
     const rows = items.map((memory,) => {
@@ -86,11 +86,12 @@ globalThis.initJournalKeyphrases = async function(characterId: string,) {
       }</span>
         <input type="text" class="form-input" data-testid="keyphrase-input" value="${
         escapeHtml(phrases,)
-      }" placeholder="phrase, another phrase" />
+      }" placeholder="${escapeHtml(t("journalKeyphrases.placeholder",),)}" />
       </div>`;
     },).join("",);
-    el.innerHTML =
-      `${rows}<button type="button" class="btn btn-primary btn-sm" data-testid="save-keyphrases">Save Keyphrases</button>`;
+    el.innerHTML = `${rows}<button type="button" class="btn btn-primary btn-sm" data-testid="save-keyphrases">${
+      escapeHtml(t("journalKeyphrases.save",),)
+    }</button>`;
     el.querySelector<HTMLButtonElement>("[data-testid='save-keyphrases']",)?.addEventListener(
       "click",
       () => {
@@ -98,7 +99,7 @@ globalThis.initJournalKeyphrases = async function(characterId: string,) {
       },
     );
   } catch {
-    el.innerHTML = '<p style="color:var(--accent-red)">Failed to load journal entries.</p>';
+    el.innerHTML = `<p style="color:var(--accent-red)">${escapeHtml(t("journalKeyphrases.loadFailed",),)}</p>`;
   }
 };
 
@@ -125,8 +126,8 @@ globalThis.saveJournalKeyphrases = async function(characterId: string,) {
     }
   }
   if (failed === 0) {
-    showToast("success", `Keyphrases saved (${saved})`,);
+    showToast("success", t("toasts.keyphrasesSaved", { count: String(saved,), },),);
   } else {
-    showToast("error", `Keyphrases: ${failed} failed, ${saved} saved`,);
+    showToast("error", t("toasts.keyphrasesSaveFailed", { failed: String(failed,), saved: String(saved,), },),);
   }
 };
