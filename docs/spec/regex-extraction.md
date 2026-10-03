@@ -80,14 +80,16 @@ false-positive/precision regressions in telemetry. **Off by default** — the
 counter hook early-returns when disabled, so there is zero per-call cost
 unless explicitly enabled.
 
-Enable with `TELEMETRY_REGEX_PRECISION=1`. While enabled, counters
-accumulate per stable pattern label and flush every 60s to the telemetry
-sink as one `regex.precision` event per pattern:
+Enable with `TELEMETRY_REGEX_PRECISION=1` **and** the events sink on
+(`TELEMETRY_EVENTS_ENABLED=1` or `TELEMETRY_ENABLED=1`); with the sink off
+there is nowhere to flush, so the flag resolves to off. While enabled,
+counters accumulate per stable pattern label and flush every 60s to the
+telemetry sink as one `regex.precision` event per pattern:
 
 ```json
 {
   "eventType": "regex.precision",
-  "source": "regex",
+  "source": "server",
   "data": { "pattern": "intent:generate:character", "calls": 12, "matches": 9 }
 }
 ```
