@@ -90,8 +90,16 @@ const LICENSING_SCALARS = {
  * declared as a union of the two legal shapes rather than two independent
  * booleans. This is the same `shareAlikeDerivatives` invariant the write guard
  * enforces (`src/characters/license-enforcement.ts`), stated at the validation
- * boundary so a `forbidden:yes` body is rejected with a 422 instead of reaching
- * `assertValidWrite`, where the guard's `throw` would surface as a 500.
+ * boundary so an explicit `allow_derivatives:false` + `share_alike:true` body is
+ * rejected with a 422 instead of reaching `assertValidWrite`, where the guard's
+ * `throw` would surface as a 500.
+ *
+ * It does NOT cover the upsert-merge case: this is a partial-update endpoint, so
+ * a body carrying only `share_alike:true` is legal here and the illegal pair is
+ * only formed after `composeLicenseRow` merges the persisted `allow_derivatives`.
+ * That write still reaches `assertValidWrite` and throws, i.e. it surfaces as a
+ * 500. Closing that needs the check to move after the compose and return a 4xx,
+ * which changes the endpoint's error contract — see the branch concern file.
  */
 export const LicensingBody = t.Union([
   // derivatives forbidden -> share_alike must not be yes
