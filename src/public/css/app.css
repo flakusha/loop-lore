@@ -3767,3 +3767,108 @@ html {
     animation: none;
   }
 }
+
+/* ============================================================
+   CONVERSATION BRANCHING (FEAT-047)
+   Fork-point marker on messages, branch rows in the header
+   dropdown + branch panel, merge/delete confirmation modals.
+   ============================================================ */
+
+/* --- Fork-point marker on a message (renders in .bubble .meta; the
+       tooltip comes from the template's :title binding) --- */
+.branch-indicator {
+  font-size: 11px;
+  line-height: 1;
+  opacity: 0.7;
+  cursor: help;
+  user-select: none;
+}
+.branch-indicator:hover {
+  opacity: 1;
+}
+
+/* --- Message count trailing a branch row (secondary to the name) --- */
+.branch-count {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-size: var(--fs-xs);
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Row carrying a branch: name + fork-point/meta on the left,
+       switch/merge/delete actions or the active flag on the right.
+       Scoped by data-testid because `.panel-item` is also used by the
+       sections/background/location panels and world-edit, which each
+       hand-roll their own layout inline. --- */
+[data-testid="branch-panel-row"] {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  border-radius: var(--radius-sm);
+}
+[data-testid="branch-panel-row"].is-active {
+  background: color-mix(in srgb, var(--accent-primary) 12%, transparent);
+  box-shadow: inset 2px 0 0 var(--accent-primary);
+}
+
+/* --- "active" pill on the current branch row — the label carries the
+       meaning, so the active row never depends on colour alone --- */
+.branch-active-flag {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px var(--space-2);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-full);
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+/* --- Merge confirmation: what lands in the target branch --- */
+.branch-merge-preview {
+  display: grid;
+  gap: 2px;
+  padding: var(--space-3);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  background: var(--bg-tertiary);
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+}
+
+/* --- Modal shell for the branch confirmations (mirrors .modal) --- */
+.modal-panel {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-default);
+  box-shadow: var(--shadow-xl);
+  width: 90%;
+  max-width: 500px;
+  max-height: 85vh;
+  overflow-y: auto;
+  animation: modalIn 0.2s ease-out;
+}
+.modal-hint {
+  margin: 0 0 var(--space-3);
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+}
+
+/* --- Touch targets for branch rows (same coarse-pointer query as the
+       shared 44px block above) --- */
+@media (hover: none) and (pointer: coarse) {
+  [data-testid="branch-row"] {
+    min-height: 44px;
+  }
+
+  [data-testid="branch-panel-row"] .btn-icon {
+    min-width: 44px;
+  }
+}
