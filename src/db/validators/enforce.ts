@@ -22,14 +22,19 @@
  *   that predates `MessageStatus` and is not a member of it. Inserts that omit
  *   `status`, and rows written before the enum landed, persist that literal, and
  *   `updateMessageVisibility` merges the persisted status back in on them — so
- *   exactly that one value is exempted from the state-machine check. It is the
- *   ONLY exemption: any other unrecognised status is rejected rather than passed
- *   through unchecked, so a typo or a second legacy value cannot ride in
- *   unvalidated.
+ *   exactly that one value is exempted from the PAIR check. The exemption is not
+ *   a hole in the guard: both axes are still validated against their own enum
+ *   first, so a typo in `visibility` cannot ride in behind it, and any other
+ *   unrecognised status is rejected rather than passed through unchecked.
  */
 import { shareAlikeDerivatives, } from "../../characters/license-enforcement";
 import { safeJsonStringify, } from "../../utils";
-import { messagesStatusVisibility, MessageStatus, shadowNotesStatusVisibility, } from "../enums";
+import {
+  messagesStatusVisibility,
+  MessageStatus,
+  MessageVisibility,
+  shadowNotesStatusVisibility,
+} from "../enums";
 import type { TableName, } from "../schema-manifest";
 
 /** Structural minimum of `CompositeValidator` - only the allowed-pairs set. */
@@ -80,20 +85,26 @@ function readFlag(row: Record<string, unknown>, table: string, column: string,):
 const LEGACY_MESSAGES_STATUS = "visible";
 
 const KNOWN_STATUSES: ReadonlySet<string> = new Set(Object.values(MessageStatus,),);
+const KNOWN_VISIBILITIES: ReadonlySet<string> = new Set(Object.values(MessageVisibility,),);
 
 /**
- * Assert a `messages.status` value is a MessageStatus or the known legacy default.
- * @param value
- * @throws {Error} when the value is neither a MessageStatus nor the known legacy default.
- * @returns {void}
+ * Assert a column value is a member of its own enum, tolerating one named
+ * legacy default that predates the enum.
+ * @throws {Error} when the value is neither an enum member nor `legacy`.
  */
-function assertKnownStatus(value: string,): void {
-  if (value === LEGACY_MESSAGES_STATUS) { return; }
-  if (!KNOWN_STATUSES.has(value,)) {
+function assertKnownAxis(
+  column: string,
+  enumName: string,
+  value: string,
+  known: ReadonlySet<string>,
+  legacy: string | null = null,
+): void {
+  if (value === legacy) { return; }
+  if (!known.has(value,)) {
     // safeJsonStringify, not bare JSON.stringify: the latter is banned repo-wide.
     const quoted = safeJsonStringify(value,);
     throw new Error(
-      `assertValidWrite: messages.status ${quoted.ok ? quoted.value : value} is not a MessageStatus`,
+      `assertValidWrite: ${column} ${quoted.ok ? quoted.value : value} is not a ${enumName}`,
     );
   }
 }
@@ -119,17 +130,15 @@ function assertPair(
 /** `messages.status` x `messages.visibility`. */
 const guardMessages: RowGuard = (row,) => {
   const status = readAxis(row, "messages", "status",);
-  assertKnownStatus(status,);
-  // The legacy default has no place in the status machine, so there is no
-  // pair to check it against. Every other status was validated above.
+  const visibility = readAxis(row, "messages", "visibility",);
+  assertKnownAxis("messages.status", "MessageStatus", status, KNOWN_STATUSES, LEGACY_MESSAGES_STATUS,);
+  assertKnownAxis("messages.visibility", "MessageVisibility", visibility, KNOWN_VISIBILITIES,);
+  // The legacy default is not a MessageStatus, so it has no place in the
+  // status machine and therefore no pair to check. The exemption covers the
+  // PAIR only — each axis is validated against its own enum above, so a typo
+  // in `visibility` cannot ride in behind it.
   if (status === LEGACY_MESSAGES_STATUS) { return; }
-  assertPair(
-    "messages",
-    messagesStatusVisibility,
-    status,
-    readAxis(row, "messages", "visibility",),
-    "status x visibility",
-  );
+  assertPair("messages", messagesStatusVisibility, status, visibility, "status x visibility",);
 };
 
 /** `shadow_notes.status` x `shadow_notes.visibility`. */
@@ -173,9 +182,15 @@ const guardCharacterLicensing: RowGuard = (row,) => {
  *   character-licensing.ts:154, character-licensing.ts:169,
  *   importers/character-systems/licensing.ts:43, :57
  *
- * Writes to these same columns that do NOT call the guard, and so are unchecked:
- * routes/messages/update.ts:196 (visibility), routes/messages/update.ts:220 (status),
- * auto-gen/context-pruning.ts:82 (visibility), routes/messages/archiving.ts:55, :85.
+ * Writes to these same columns that do NOT call the guard, and so are unchecked
+ * (re-derive with a grep for `updateTable("messages")` / `insertInto("messages")`
+ * over src/, keeping the sites whose .set()/.values() names a guarded column):
+ * routes/messages/update.ts:77, :198 (visibility), :220 (status),
+ * routes/messages/archiving.ts:56, :86, auto-gen/context-pruning.ts:82,
+ * chat/service/message-history.ts:76, chat/service/carry-history.ts:60,
+ * chat/service/split-utils.ts:147, chat/service/transitions.ts:189,
+ * chat/service/crud/turn-skip.ts:154, chat/service/party-narration.ts:70.
+ * `shadow_notes` and `character_licensing` have no unguarded write site.
  * Do not read this module as a database-level invariant.
  */
 const GUARDS: Record<GuardedTable, RowGuard> = {
