@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import type { Database, } from "bun:sqlite";
+import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import { isUsableEncryptionSecret, } from "../crypto/user-secret";
 import type { DB, } from "../db/schema";
@@ -25,7 +25,9 @@ beforeAll(async () => {
   emptySecretId = await insertUsers(db, "bf-empty", "Empty", { encryption_secret: "", },);
 },);
 
-afterAll(async () => { await sqlite.close(); },);
+afterAll(async () => {
+  await sqlite.close();
+},);
 
 /** Read the stored secret straight from the DB — no mock, no echo. */
 async function secretOf(userId: string,): Promise<string | null> {

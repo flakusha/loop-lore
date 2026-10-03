@@ -54,7 +54,7 @@ export function generateEncryptionSecret(): string {
  * @param secret - raw column value (may be null).
  * @returns true only for a full-length hex secret.
  */
-export function isUsableEncryptionSecret(secret: string | null): boolean {
+export function isUsableEncryptionSecret(secret: string | null,): boolean {
   if (secret === null || secret.length !== ENCRYPTION_SECRET_BYTES * HEX_PER_BYTE) { return false; }
-  return [...secret,].every((char,) => HEX_DIGIT.test(char,),);
+  return [...secret,].every((char,) => HEX_DIGIT.test(char,));
 }

@@ -12,14 +12,14 @@ describe("generateEncryptionSecret", () => {
     expect(secret,).toMatch(/^[0-9a-f]{64}$/,);
   });
   test("never repeats across calls — a shared key would leak cross-user equality", () => {
-    const secrets = new Set(Array.from({ length: 50, }, () => generateEncryptionSecret(),));
+    const secrets = new Set(Array.from({ length: 50, }, () => generateEncryptionSecret(),),);
     expect(secrets.size,).toBe(50,);
   });
   test("two users' keys derive different tokens for the same word", async () => {
     const alice = generateEncryptionSecret();
     const bob = generateEncryptionSecret();
-    const [aliceToken] = await deriveSearchTokens("tavern", alice,);
-    const [bobToken] = await deriveSearchTokens("tavern", bob,);
+    const [aliceToken,] = await deriveSearchTokens("tavern", alice,);
+    const [bobToken,] = await deriveSearchTokens("tavern", bob,);
     expect(aliceToken,).not.toBe(bobToken,);
   });
   test("the same user's key derives stable tokens across calls", async () => {
