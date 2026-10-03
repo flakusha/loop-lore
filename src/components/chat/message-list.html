@@ -701,6 +701,10 @@
     <button @click="pinMessage(_contextMenu.messageId); closeContextMenu()">
       📌 Pin
     </button>
+    <!-- Reminder ladder (TASK-scheduled-messages-reminders) -->
+    <button @click="openReminderPicker(_contextMenu.messageId); closeContextMenu()" data-testid="context-menu-remind">
+      ⏰ {{{t("reminders.menu")}}}
+    </button>
     <button
       @click="openFlagDialog('message', _contextMenu.messageId, activeChat); closeContextMenu()"
       data-testid="context-menu-flag"
@@ -717,6 +721,21 @@
     >
       🗑 {{{t("common.remove")}}}
     </button>
+  </div>
+
+  <!-- Reminder horizon ladder (TASK-scheduled-messages-reminders) -->
+  <div
+    class="dropdown-base reminder-picker"
+    x-show="_reminderFor !== null"
+    @click.outside="closeReminderPicker()"
+    data-testid="reminder-picker"
+    x-cloak
+  >
+    <template x-for="mins in [10, 60, 1440]" :key="mins">
+      <button class="reminder-option" @click="armReminder(mins)" :data-testid="'reminder-' + mins">
+        <span x-text="t('reminders.in' + mins)"></span>
+      </button>
+    </template>
   </div>
 
   <!-- Reaction quick-picker popover -->

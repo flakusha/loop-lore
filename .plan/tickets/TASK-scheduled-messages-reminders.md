@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Epic:** epic-chat-composer-flows.md (proposed)
+**Epic:** epic-chat-composer-flows.md
 **Type:** Feature | **Priority:** Medium | **Effort:** M
 
 ## Problem
@@ -37,3 +37,84 @@ scheduled delivery to gate. Common messenger expectation.
 - Full cron UI (epic-cron-scheduler owns recurrence infra).
 
 **Resolved:** 2026-10-03 registry-driven close: git issue 2afc68e (registry tip: bb20277a7 Konstantin Fedotov Close issue)
+
+## Implementation (2026-10-03, worktree chat-composer-flows)
+
+Migration `032_scheduled_messages_reminders.ts` adds `scheduled_messages`
+(id/chat_id/author_id/body/send_at/status) and `message_reminders`
+(id/message_id/user_id/remind_at) with cascade FKs, an `(status, send_at)`
+due index, a `(message_id, user_id)` unique index, and a `remind_at` due
+index. Append-only after 031; derived schema regenerated with
+`db:sync-types` + `db:sync-manifest`.
+
+Service layer `src/chat/scheduled/` (barrel re-exports; the dispatcher is
+the cron seam): `scheduled-messages.ts` (create/list/cancel plus the due
+select and the guarded sent-mark), `reminders.ts` (create/list/cancel plus
+due select and fired-delete), `dispatcher.ts` (`dispatchDue` — one pass
+that delivers due rows and fires due reminders), `types.ts`.
+
+Routes `src/routes/scheduled/index.ts` (guards and the service-error
+mapping split to `guards.ts` so the handler bodies stay under the 250L
+strict size limit):
+`POST|GET /api/chats/:id/scheduled`, `DELETE /api/chats/:id/scheduled/:scheduledId`,
+`POST|GET /api/reminders`, `DELETE /api/reminders/:id`. The chat param is
+`:id`, matching every other `chats/*` route — memoirist rejects a
+differing param name at an already-registered path, so `:chatId` broke
+the whole v1 barrel. Mounted twice on purpose: unversioned `/api` from
+`register-plugins.ts` (next to `proactiveMessagingRoutes`) and
+`/api/v1` via `routes/v1/chats-surface.ts`, because the Alpine actions
+call `/api/v1/...`. Chat-scoped endpoints gate
+on `checkChatAccess` and answer 404 on denial (codebase convention hides
+chat existence — same as the read paths). The reminder endpoints are
+user-scoped, and the arm path resolves the message's own chat so access
+is never checked against a body-supplied id.
+
+Cron: `chat.scheduled` added to the existing `defaultJobs()` catalog at
+`* * * * *` so a due message lands inside the ticket's 1min window.
+Delivery goes through the existing message write path
+(`insertUserMessageWithRetry`), the same helper the create route uses.
+
+Quiet hours reuse `isInQuietHours` from `src/chat/proactive/timing.ts` —
+no second helper. A row due inside the window is HELD (left `pending`,
+`send_at` untouched) and goes out on the first pass after the boundary;
+nothing is dropped.
+
+Alpine: one `chat-actions/scheduling.ts` module carrying both halves —
+the composer clock button + `datetime-local` picker (state in
+`chat-types/scheduled-state.ts`, markup in `components/chat/input-area.html`)
+and the message-context-menu reminder item on a 10min/1h/1day ladder
+(state in `chat-types/reminder-state.ts`, markup in
+`components/chat/message-list.html`). They ship together because they
+share the endpoints, the toast surface and the load-on-open lifecycle.
+Locale keys added to `en.json` and reconciled across all 10 locales.
+
+The `noActiveChat` toast-and-bail guard was extracted to
+`src/frontend/alpine/chat-guards.ts` (`requireActiveChat`, a type predicate
+so callers keep the same `activeChat: string` narrowing) and adopted at all
+9 same-key sites across `chat-actions/` and the chat root modules. The
+jscpd ratchet is one-way — the baseline can only be lowered, never raised —
+so a feature that merely repeats a copy-pasted guard would be permanently
+unlandable. `gif-picker.ts` (`gifPicker.noActiveChat`) and
+`chat-generations.ts` (`toasts.noActiveChatToCancel`) use different keys and
+were left untouched.
+
+Tests: dispatcher boundaries (due sends, not-yet-due stays pending,
+quiet-hours hold then delivery past the boundary, canceled never sends,
+no double-delivery, reminder fires exactly once, not-yet-due reminder
+stays armed, re-arm replaces) plus route contract (401 unauth, 404 for a
+non-participant rather than 403, author-only cancel, empty/unparseable
+input 400s, caller-scoped reminder list and cancel) and the picker's
+datetime-local conversion and guard clauses.
+
+Deviations from the ticket:
+
+- Reminder horizons in the context menu are a fixed 10min/1h/1day ladder
+  rather than a free-form instant — the menu has no room for a datetime
+  input; free-form scheduling lives in the composer picker.
+- Delivery routes through `prepareContentStorage` in `dispatcher.ts`, so a
+  chat with `encryptAtRest` persists an encrypted scheduled body exactly
+  as an interactively-typed message would; the parked row itself stays
+  plaintext in `scheduled_messages.body` until the dispatch pass stores
+  it. Covered by the at-rest encryption test in `scheduled.test.ts`.
+- `sendAt` in the past is accepted by design (AC2 past-due sends
+  immediately) rather than rejected as a validation error.

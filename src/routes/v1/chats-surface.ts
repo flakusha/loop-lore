@@ -19,6 +19,7 @@ import { messageSearchRoutes, } from "../message-search";
 import { messageSeenRoutes, } from "../message-seen";
 import { messagesRoutes, } from "../messages";
 import { musicLinksRoutes, } from "../music-links";
+import { scheduledRoutes, } from "../scheduled";
 import { vnGenerateRoutes, } from "../vn-generate";
 import { worldInvitesRoutes, } from "../world-invites";
 
@@ -34,6 +35,7 @@ export function chatsSurface(opts: RegisterPluginsOpts,) {
     // ── Chats & messages ─────────────────────────────────────
     .use(chatsRoutes(handleOpts, prefix,),)
     .use(messagesRoutes(handleOpts, prefix,),)
+    .use(scheduledRoutes(handleOpts, prefix,),)
     .use(messageReactionsRoutes(handleOpts, prefix,),)
     .use(messageSearchRoutes(handleOpts, prefix,),)
     .use(messageSeenRoutes({ database, }, prefix,),)

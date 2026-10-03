@@ -38,9 +38,9 @@ describe("cron default jobs", () => {
       "providers.health-rescan",
       "autonomy.world-tick",
       "locations.tick",
+      "chat.scheduled",
       "nsfw.status-sweep",
     ],);
-
     for (const job of jobs) {
       expect(Bun.cron.parse(job.schedule,),).not.toBeNull();
     }
@@ -55,12 +55,10 @@ describe("cron default jobs", () => {
       jobs: defaultJobs(),
       cronImpl: () => stubFactory(),
     },);
-
     try {
       for (const job of defaultJobs()) {
         await scheduler.runOnce(job.name,);
       }
-
       const statuses = scheduler.getStatus();
       expect(statuses.every((s,) => s.runCount === 1 && s.lastError === null),).toBe(true,);
     } finally {

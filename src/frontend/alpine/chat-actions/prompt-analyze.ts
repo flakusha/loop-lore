@@ -10,6 +10,7 @@
  * registration needed) and renders the intent/clarity/suggestions profile
  * into display-only state. The composer draft is never modified.
  */
+import { requireActiveChat, } from "../chat-guards";
 import type { ChatPromptAnalyzeState, PromptAnalysisProfile, } from "../chat-types/prompt-analyze-state";
 import { t, } from "../i18n";
 import { getLocalEngine, } from "../local-engine";
@@ -54,10 +55,7 @@ export const promptAnalyzeActions: Partial<AnalyzeCtx> & ThisType<AnalyzeCtx> = 
     const text = input?.value.trim() ?? "";
     if (!input || !text) { return; }
     if (this._analyzing) { return; }
-    if (!this.activeChat) {
-      this.$dispatch?.("show-toast", { type: "warning", message: t("toasts.noActiveChat",), },);
-      return;
-    }
+    if (!requireActiveChat(this,)) { return; }
 
     this._analyzing = true;
     try {
@@ -71,35 +69,29 @@ export const promptAnalyzeActions: Partial<AnalyzeCtx> & ThisType<AnalyzeCtx> = 
           suggestions: [local.content,],
           confidence: 0,
         };
-
         log.debug("Prompt analyzed locally, server bypassed", { engine: local.engine, },);
         this.$dispatch?.("show-toast", { type: "success", message: `${t("analyze.ready",)}: ${local.content}`, },);
         return;
       }
-
       const result = await requestPrompt({
         mode: "analyze",
         text,
         chatId: this.activeChat,
       },);
-
       if (!result.ok) {
         const message = result.injectionBlocked
           ? t("toasts.promptInjectionBlocked",)
           : result.status === 503
           ? t("analyze.unavailable",)
           : result.message ?? t("analyze.failed",);
-
         this.$dispatch?.("show-toast", { type: "error", message, },);
         return;
       }
-
       const analysis: unknown = (result.data as { analysis?: unknown } | undefined)?.analysis;
       if (!isAnalysisProfile(analysis,)) {
         this.$dispatch?.("show-toast", { type: "error", message: t("analyze.failed",), },);
         return;
       }
-
       // Display-only: the draft stays untouched; the panel reads this state.
       this._promptAnalysis = analysis;
       const detail = analysis.suggestions[0] ?? analysis.issues[0] ?? "";

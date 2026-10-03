@@ -1527,5 +1527,21 @@
     "sceneDefault": "Scene default",
     "outfitSwitcher": "Outfit",
     "empty": "No outfits yet"
+  },
+
+  "scheduled": {
+    "scheduled": "Scheduled — it'll send itself.",
+    "pickTime": "Pick a time to send at.",
+    "emptyDraft": "Type a message before scheduling.",
+    "failed": "Could not schedule that message."
+  },
+
+  "reminders": {
+    "menu": "Remind me",
+    "in10": "in 10 minutes",
+    "in60": "in 1 hour",
+    "in1440": "tomorrow",
+    "armed": "Reminder set.",
+    "failed": "Could not set that reminder."
   }
 }

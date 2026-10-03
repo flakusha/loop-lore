@@ -11,6 +11,8 @@
  *
  * Methods are merged into the chat state object at call time, so `this`
  * still resolves to the full ChatState.
+ *
+ * ponytail: local-only drafts, server sync if multi-device demand.
  */
 
 import { jsonParseOr, safeJsonStringify, } from "./json";
