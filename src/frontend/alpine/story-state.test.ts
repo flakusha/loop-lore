@@ -92,14 +92,14 @@ describeOrSkip("storyState", () => {
       // extractor) carried — no server-side shape validation — so a scalar /
       // array / null / unparseable column must yield no rows instead of
       // throwing inside the panel's x-for render.
-      for (const raw of ["{}", "[]", "null", "\"nope\"", "5", "{{{",]) {
+      for (const raw of ["{}", "[]", "null", '"nope"', "5", "{{{",]) {
         expect(s.questMilestones({ progress: 0, narrative_hooks: raw, } as never,),).toEqual([],);
         expect(s.questRewardChips({ progress: 0, rewards: raw, } as never,),).toEqual([],);
         expect(s._parseQuestBanners(raw,),).toEqual([],);
       }
-      const badItems = "{\"items\":{}}";
+      const badItems = '{"items":{}}';
       expect(s.questRewardChips({ progress: 0, rewards: badItems, } as never,),).toEqual([],);
-      const partialItem = "{\"items\":[{\"itemId\":1}]}";
+      const partialItem = '{"items":[{"itemId":1}]}';
       expect(s.questRewardChips({ progress: 0, rewards: partialItem, } as never,),).toEqual([],);
     });
     test("turnForMessage looks up by parent message id, null when absent", () => {
@@ -259,7 +259,7 @@ describeOrSkip("storyState", () => {
       // holds the rest, including active quest `q-final` that a capped
       // client never saw — silent truncation, no error and no empty state.
       fetchHandler = (url,) => {
-        const n = Number(new URL(url, "http://x",).searchParams.get("page") ?? "1");
+        const n = Number(new URL(url, "http://x",).searchParams.get("page",) ?? "1",);
         const data = n === 1 ? rows(1, 100,) : [{ ...rows(2, 1,)[0], id: "q-final", name: "Final boss", },];
         return Response.json({ data, pagination: { total: 101, page: n, pageSize: 100, }, },);
       };
@@ -268,7 +268,7 @@ describeOrSkip("storyState", () => {
       expect(fetchCalls[0]?.url,).toBe("/api/v1/worlds/world-1/quests?pageSize=100&page=1",);
       expect(fetchCalls[1]?.url,).toBe("/api/v1/worlds/world-1/quests?pageSize=100&page=2",);
       expect(s.quests.length,).toBe(101,);
-      expect(s.quests.some((q,) => q.id === "q-final",),).toBe(true,);
+      expect(s.quests.some((q,) => q.id === "q-final"),).toBe(true,);
     });
     test("no-ops without a world id", async () => {
       const s = makeState();
