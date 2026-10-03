@@ -2339,6 +2339,12 @@
       "source": ".plan/tickets/TASK-emotion-intent-detection.md"
     }
   ],
+  "src/assistant/entity-spec/handoff.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md"
+    }
+  ],
   "src/assistant/gm-tool-detection.test.ts": [
     {
       "kind": "ticket",
@@ -3669,6 +3675,12 @@
       "source": ".plan/tickets/BUG-table-backend-request-id-collision-overwrites-foreign-row.md"
     }
   ],
+  "src/async/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-guard-async-spill-namespace-survives-a-weave-driven-rebase.md"
+    }
+  ],
   "src/async/offload-daemon.test.ts": [
     {
       "kind": "ticket",
@@ -3701,6 +3713,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-async-store-tests-per-test-tmpdir.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-guard-async-spill-namespace-survives-a-weave-driven-rebase.md"
     },
     {
       "kind": "ticket",
@@ -3762,6 +3778,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-guard-async-spill-namespace-survives-a-weave-driven-rebase.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-logging-separate-database-research.md"
     },
     {
@@ -3787,12 +3807,20 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-async-spill-uses-cache-key-as-filename-so-routed-ids-lose.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-guard-async-spill-namespace-survives-a-weave-driven-rebase.md"
     }
   ],
   "src/async/spill-retention.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-async-orphan-spill-retention-sweep-silently-deleted-by-workt.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-guard-async-spill-namespace-survives-a-weave-driven-rebase.md"
     },
     {
       "kind": "ticket",
@@ -3811,6 +3839,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-async-store-tests-per-test-tmpdir.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-guard-async-spill-namespace-survives-a-weave-driven-rebase.md"
     }
   ],
   "src/async/spill.ts": [
@@ -3837,6 +3869,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-async-store-tests-per-test-tmpdir.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-guard-async-spill-namespace-survives-a-weave-driven-rebase.md"
     }
   ],
   "src/async/store.ts": [
@@ -4987,6 +5023,12 @@
       "source": ".plan/epics/epic-import-export-io.md"
     }
   ],
+  "src/characters/importers/character-systems/licensing.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md"
+    }
+  ],
   "src/characters/index.ts": [
     {
       "kind": "ticket",
@@ -5018,6 +5060,10 @@
     }
   ],
   "src/characters/license-enforcement.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-019-enforce-state-machine-validators-at-write.md"
@@ -5721,6 +5767,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-internal-traits.md"
+    }
+  ],
+  "src/characters/shared/character-systems-utils.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md"
     }
   ],
   "src/characters/spec.test.ts": [
@@ -6436,6 +6488,10 @@
     }
   ],
   "src/chat/proactive/annotations.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-notes-shadow-carriage.md"
@@ -7440,6 +7496,10 @@
   "src/chat/service/visibility.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-test-assertions-stale-gm-support-message.md"
     }
   ],
@@ -7451,6 +7511,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-product-features.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md"
     },
     {
       "kind": "ticket",
@@ -7511,6 +7575,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-product-features.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md"
     },
     {
       "kind": "ticket",
@@ -11660,6 +11728,10 @@
   "src/db/enums-core/messages.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-tool-call-result-no-frontend-rendering.md"
     },
     {
@@ -11752,6 +11824,10 @@
     }
   ],
   "src/db/enums-gm.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-whitenote-ui-types-rejected-422.md"
@@ -12004,6 +12080,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-sqlitedialect-reader-detection-classifies-sql-by-leading-key.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-data-integrity-phase1.md"
     },
     {
@@ -12252,6 +12332,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-memory-audit-log-action-column-typed-string-not-union.md"
     },
     {
@@ -12341,6 +12425,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/template-system.md"
+    }
+  ],
+  "src/db/migrations/002": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md"
     }
   ],
   "src/db/migrations/003_group_chat.ts": [
@@ -12553,6 +12643,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
+    }
+  ],
+  "src/db/migrations/022_prompt_templates_workflow_modality.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md"
     }
   ],
   "src/db/migrations/023_notifications.ts": [
@@ -14474,6 +14570,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-sqlitedialect-reader-detection-classifies-sql-by-leading-key.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-refactor-typed-kysely-upsert-by-unique-key-helpers.md"
     }
   ],
@@ -14483,7 +14583,17 @@
       "source": ".plan/tickets/TASK-achievements-enum-revival-promote-service-layer-to-db-barrel.md"
     }
   ],
+  "src/db/validators/enforce.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md"
+    }
+  ],
   "src/db/validators/enforce.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-019-enforce-state-machine-validators-at-write.md"
@@ -16670,6 +16780,10 @@
   "src/frontend/alpine/i18n.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-ispluralnode-duplicated-in-server-and-frontend-i18n-divergin.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-010.md"
     },
     {
@@ -18309,6 +18423,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-frontend-internationalization.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-ispluralnode-duplicated-in-server-and-frontend-i18n-divergin.md"
     },
     {
       "kind": "ticket",
@@ -20511,6 +20629,12 @@
       "source": ".plan/tickets/TASK-wire-llm-resource-manager-into-generation-dispatch.md"
     }
   ],
+  "src/generation/generate-route/persist.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md"
+    }
+  ],
   "src/generation/generate-route/sse-utils.ts": [
     {
       "kind": "ticket",
@@ -22375,6 +22499,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-frontend-internationalization.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-ispluralnode-duplicated-in-server-and-frontend-i18n-divergin.md"
     },
     {
       "kind": "ticket",
@@ -25401,6 +25529,12 @@
       "source": ".plan/tickets/TASK-retire-the-scripts-worktree-fork-of-giwt-migration-not-delet.md"
     }
   ],
+  "src/plan/validate.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-ticket-epic-triage-and-triage-p3-idea-tickets-assign.md"
+    }
+  ],
   "src/planning/service.ts": [
     {
       "kind": "epic",
@@ -27863,6 +27997,12 @@
       "source": "docs/spec/licensing.md"
     }
   ],
+  "src/routes/character-licensing-helpers.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md"
+    }
+  ],
   "src/routes/character-licensing.test.ts": [
     {
       "kind": "ticket",
@@ -27873,6 +28013,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-character-licensing-upsert-records-license-history-for-any-a.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md"
     },
     {
       "kind": "ticket",
@@ -29116,10 +29260,18 @@
   "src/routes/gm-notes/schemas.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-whitenote-ui-types-rejected-422.md"
     }
   ],
   "src/routes/gm-notes/shadow.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-shadow-and-whitenote-crud-open-to-any-chat-participant.md"
@@ -29834,6 +29986,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-flag-side-effect-runs-before-access-check.md"
     },
     {
@@ -29876,6 +30032,10 @@
     }
   ],
   "src/routes/messages/forward.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-msg-forward-across-chats.md"
@@ -30237,6 +30397,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-encrypted-payload-sniffing-misclassifies-user-json-as-pre-en.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md"
     }
   ],
   "src/routes/metrics.ts": [
@@ -33759,6 +33923,12 @@
       "source": ".plan/tickets/TASK-029.md"
     }
   ],
+  "src/rpg/questions/service.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md"
+    }
+  ],
   "src/rpg/questions/validation.ts": [
     {
       "kind": "ticket",
@@ -35311,6 +35481,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-user-seeding-role-expansion.md"
+    }
+  ],
+  "src/seeding/chats.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md"
     }
   ],
   "src/seeding/index.ts": [
@@ -37008,6 +37184,10 @@
   "src/tickets/sync-index.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-giwt-sync-fix-needs-two-passes-to-converge-when-an-index-ent.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-giwt-sync-fix-writes-an-out-of-vocabulary-status.md"
     },
     {
@@ -37966,6 +38146,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-validation-avatarselectionruleschema-missing-action-first-an.md"
     },
     {
@@ -38024,6 +38208,10 @@
     }
   ],
   "src/validation/middleware.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-validation-middleware-leaks-raw-err-message-in-500-envelope.md"
@@ -38209,6 +38397,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-gallery-user-tagging-propositions.md"
+    }
+  ],
+  "src/validation/schemas/character-relations.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md"
     }
   ],
   "src/validation/schemas/chat.test.ts": [

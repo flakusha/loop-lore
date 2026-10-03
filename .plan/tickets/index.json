@@ -3305,6 +3305,40 @@
     "title": "giwt plan gates report ~112 phantom actionable issues when the git issue CLI is unreachable",
     "type": "BUG"
   },
+  "BUG-GIWT-SYNC-FIX-MUTATES-REPO-WIDE-REFS-ISSUES-SHARED-ACROSS-AL": {
+    "hash": "68903ca",
+    "git_issue": "68903ca",
+    "extid": "BUG-GIWT-SYNC-FIX-MUTATES-REPO-WIDE-REFS-ISSUES-SHARED-ACROSS-AL",
+    "type": "BUG",
+    "title": "giwt sync --fix mutates repo-wide refs/issues/* shared across all worktrees with no worktree scoping",
+    "label": "bug",
+    "priority": "critical",
+    "epic": "",
+    "tags": [
+      "giwt",
+      "tooling",
+      "worktree-isolation"
+    ],
+    "source": ".plan/tickets/BUG-giwt-sync-fix-mutates-repo-wide-refs-issues-shared-across-al.md",
+    "status": "Not Started"
+  },
+  "BUG-GIWT-SYNC-FIX-NEEDS-TWO-PASSES-TO-CONVERGE-WHEN-AN-INDEX-ENT": {
+    "hash": "bd65207",
+    "git_issue": "bd65207",
+    "extid": "BUG-GIWT-SYNC-FIX-NEEDS-TWO-PASSES-TO-CONVERGE-WHEN-AN-INDEX-ENT",
+    "type": "BUG",
+    "title": "giwt sync --fix needs two passes to converge when an index entry points at a closed issue with an open same-extid duplicate",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [
+      "giwt",
+      "tooling",
+      "sync-index"
+    ],
+    "source": ".plan/tickets/BUG-giwt-sync-fix-needs-two-passes-to-converge-when-an-index-ent.md",
+    "status": "Not Started"
+  },
   "BUG-GIWT-SYNC-FIX-WRITES-AN-OUT-OF-VOCABULARY-STATUS": {
     "hash": "8a0e647",
     "git_issue": "8a0e647",
@@ -3538,6 +3572,19 @@
     "tags": [],
     "title": "Group participant injection absent on manual generate route",
     "type": "BUG"
+  },
+  "BUG-GUARDMESSAGES-BYPASS-PASSES-THROUGH-EVERY-UNKNOWN-STATUS-NOT-JUST": {
+    "hash": "fc37920",
+    "git_issue": "fc37920",
+    "extid": "BUG-GUARDMESSAGES-BYPASS-PASSES-THROUGH-EVERY-UNKNOWN-STATUS-NOT-JUST",
+    "type": "BUG",
+    "title": "guardMessages bypass passes through every unknown status, not just the legacy \"visible\" default",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md",
+    "status": "Not Started"
   },
   "BUG-GZIP-STORED-UNENCRYPTED-MESSAGES-REACH-LLM-PROMPT-AND-EXPORT": {
     "epic": "",
@@ -3881,6 +3928,19 @@
     "tags": [],
     "title": "isGenerating stuck true bricks chat switching",
     "type": "BUG"
+  },
+  "BUG-ISPLURALNODE-DUPLICATED-IN-SERVER-AND-FRONTEND-I18N-DIVERGIN": {
+    "hash": "5f8bbe7",
+    "git_issue": "5f8bbe7",
+    "extid": "BUG-ISPLURALNODE-DUPLICATED-IN-SERVER-AND-FRONTEND-I18N-DIVERGIN",
+    "type": "BUG",
+    "title": "isPluralNode duplicated in server and frontend i18n, diverging silently: a plural key renders as the raw key in the browser",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-ispluralnode-duplicated-in-server-and-frontend-i18n-divergin.md",
+    "status": "Not Started"
   },
   "BUG-JSCPD-RATCHET-GATE-SILENTLY-REMOVED-WITHOUT-TICKET": {
     "hash": "8b06f29",
@@ -5980,6 +6040,19 @@
     "title": "sqlite-wal-pragma-noop-on-in-memory-test-db",
     "type": "BUG"
   },
+  "BUG-SQLITEDIALECT-READER-DETECTION-CLASSIFIES-SQL-BY-LEADING-KEY": {
+    "hash": "5558811",
+    "git_issue": "5558811",
+    "extid": "BUG-SQLITEDIALECT-READER-DETECTION-CLASSIFIES-SQL-BY-LEADING-KEY",
+    "type": "BUG",
+    "title": "SqliteDialect reader detection classifies SQL by leading keywords, misrouting EXPLAIN/commented/CTE-DML",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-sqlitedialect-reader-detection-classifies-sql-by-leading-key.md",
+    "status": "Not Started"
+  },
   "BUG-SSE-STREAMS-LEAK-STRING-ERROR-INTERNALS-TO-CLIENTS": {
     "epic": "",
     "extid": "BUG-SSE-STREAMS-LEAK-STRING-ERROR-INTERNALS-TO-CLIENTS",
@@ -6346,6 +6419,32 @@
     "tags": [],
     "source": ".plan/tickets/BUG-the-roots-guard-on-project-root-diff-root-is-wired-to-no-gat.md",
     "status": "Not Started"
+  },
+  "BUG-TICKET-CLOSURE-CITES-NONEXISTENT-GIT-COMMIT-7A0F508C93": {
+    "hash": "83bdf58",
+    "git_issue": "83bdf58",
+    "extid": "BUG-TICKET-CLOSURE-CITES-NONEXISTENT-GIT-COMMIT-7A0F508C93",
+    "type": "BUG",
+    "title": "# Ticket closure cites nonexistent git commit (7a0f508c93)",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-ticket-closure-cites-nonexistent-git-commit-7a0f508c93.md",
+    "status": "Not Started"
+  },
+  "BUG-TICKET-EPIC-TRIAGE-AND-TRIAGE-P3-IDEA-TICKETS-ASSIGN": {
+    "hash": "e66db81",
+    "git_issue": "e66db81",
+    "extid": "BUG-TICKET-EPIC-TRIAGE-AND-TRIAGE-P3-IDEA-TICKETS-ASSIGN",
+    "type": "BUG",
+    "title": "ticket-epic-triage and triage-p3-idea-tickets assign mutually exclusive metadata to epic-npc-to-npc-social",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-ticket-epic-triage-and-triage-p3-idea-tickets-assign.md",
+    "status": "Blocked"
   },
   "BUG-TOOL-CALL-ARG-PARSE-SILENT-FALLBACK": {
     "epic": "epic-plugin-system, epic-assistant-gm-flows",
@@ -30387,6 +30486,19 @@
     "tags": [],
     "title": "Group Chat Turn Orchestration",
     "type": "TASK"
+  },
+  "TASK-GUARD-ASYNC-SPILL-NAMESPACE-SURVIVES-A-WEAVE-DRIVEN-REBASE": {
+    "hash": "65fbb96",
+    "git_issue": "65fbb96",
+    "extid": "TASK-GUARD-ASYNC-SPILL-NAMESPACE-SURVIVES-A-WEAVE-DRIVEN-REBASE",
+    "type": "TASK",
+    "title": "Async spill namespace has no automated guard against a weave-driven rebase dropping it",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-guard-async-spill-namespace-survives-a-weave-driven-rebase.md",
+    "status": "Not Started"
   },
   "TASK-GUARD-SQL-REF-IDENTIFIER-CONSTRUCTION-IN-OPTIMISTIC-LOCKING": {
     "epic": "",
