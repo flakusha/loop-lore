@@ -134,6 +134,56 @@ describeOrSkip("chatBranches — loadBranches", () => {
     await chatBranches.loadBranches!.call(buildCtx({ toasts, },),);
     expect(toasts.some((t,) => t.type === "error"),).toBe(true,);
   });
+
+  test("a slow response for the previous chat never overwrites the current chat's branches", async () => {
+    // Out-of-order fetch race: chat A's list resolves AFTER the user switched
+    // to chat B. Writing it would hand the user A's branches — which they can
+    // then delete or merge — while looking at B.
+    const bBranch = { ...BRANCH, id: "b9", chatId: "chat-2", };
+    uiStore.branches = [bBranch,];
+    let release: () => void = () => {};
+    const gate = new Promise<void>((resolve,) => {
+      release = resolve;
+    },);
+    fetchHandler = () => {
+      const res = Response.json({ data: { branches: [BRANCH,], }, }, { status: 200, },);
+      // Hold the body open so the chat switch lands mid-flight.
+      res.json = async () => {
+        await gate;
+        return { data: { branches: [BRANCH,], }, };
+      };
+      return res;
+    };
+    const ctx = buildCtx({ activeChat: "chat-1", },);
+    const pending = chatBranches.loadBranches!.call(ctx,);
+    ctx.activeChat = "chat-2";
+    release();
+    await pending;
+    expect(fetchCalls[0]?.url,).toBe("/api/v1/chats/chat-1/branches?limit=100",);
+    expect(uiStore.branches,).toEqual([bBranch,],);
+  });
+
+  test("a stale chat's failure does not toast over the current chat", async () => {
+    let release: () => void = () => {};
+    const gate = new Promise<void>((resolve,) => {
+      release = resolve;
+    },);
+    fetchHandler = () => {
+      const res = new Response("{}", { status: 200, },);
+      res.json = async () => {
+        await gate;
+        throw new Error("offline",);
+      };
+      return res;
+    };
+    const toasts: Toast[] = [];
+    const ctx = buildCtx({ toasts, },);
+    const pending = chatBranches.loadBranches!.call(ctx,);
+    ctx.activeChat = "chat-2";
+    release();
+    await pending;
+    expect(toasts,).toEqual([],);
+  });
 },);
 
 describeOrSkip("chatBranches — forkFromMessage", () => {

@@ -7,6 +7,7 @@
  * invariant cannot leak between cases.
  */
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
+import { type KyselyPlugin, type RootOperationNode, TableNode, } from "kysely";
 import { randomUUID, } from "node:crypto";
 import { ChatParticipantRole, MessageRole, } from "../../db/enums";
 import { createLogger, } from "../../logger";
@@ -141,6 +142,25 @@ describe("branch navigation (FEAT-046)", () => {
       .where("id", "=", branchId,)
       .executeTakeFirst();
     expect(row?.name,).toBe("Branch 1",);
+  });
+
+  test("rename onto a name already used in the chat is refused and changes nothing", async () => {
+    const chatId = await newChat("Rename dup",);
+    const rootId = await msg(chatId, "root",);
+    const first = await fork(chatId, rootId,);
+    const second = await fork(chatId, await msg(chatId, "alt", rootId,),);
+    ok(await renameBranch(tdb.db, { chatId, branchId: first, actorId: ownerId, name: "Alt", },),);
+
+    failsWith(
+      await renameBranch(tdb.db, { chatId, branchId: second, actorId: ownerId, name: "Alt", },),
+      "bad_request",
+    );
+    const row = await tdb.db
+      .selectFrom("chat_branches",)
+      .select(["name",],)
+      .where("id", "=", second,)
+      .executeTakeFirst();
+    expect(row?.name,).toBe("Branch 2",);
   });
 
   test("rename with activate switches the chat's displayed branch", async () => {
@@ -533,5 +553,338 @@ describe("branch navigation (FEAT-046)", () => {
     );
     expect(rest.branches.length,).toBe(1,);
     expect(rest.nextCursor,).toBeNull();
+  });
+
+  test("listBranchesPage treats a valid base64url cursor with invalid JSON as the first page", async () => {
+    const chatId = await newChat("BadJson",);
+    const rootId = await msg(chatId, "root",);
+    await fork(chatId, rootId,);
+    const first = ok(await listBranchesPage(tdb.db, { chatId, actorId: ownerId, },),);
+
+    // Valid base64url that decodes to something that is not JSON.
+    const badJson = Buffer.from("not json", "utf8",).toString("base64url",);
+    const page = ok(
+      await listBranchesPage(tdb.db, { chatId, actorId: ownerId, cursor: badJson, },),
+    );
+    expect(page.branches.map((b,) => b.id),).toEqual(first.branches.map((b,) => b.id),);
+    expect(page.nextCursor,).toBe(first.nextCursor,);
+  });
+
+  test("listBranchesPage treats a cursor with missing fields as the first page", async () => {
+    const chatId = await newChat("MissingFields",);
+    const rootId = await msg(chatId, "root",);
+    await fork(chatId, rootId,);
+    const first = ok(await listBranchesPage(tdb.db, { chatId, actorId: ownerId, },),);
+
+    // Valid base64url + valid JSON, but missing `createdAt` / `id`.
+    const missing = Buffer.from(JSON.stringify({ foo: "bar", },), "utf8",).toString("base64url",);
+    const page = ok(
+      await listBranchesPage(tdb.db, { chatId, actorId: ownerId, cursor: missing, },),
+    );
+    expect(page.branches.map((b,) => b.id),).toEqual(first.branches.map((b,) => b.id),);
+    expect(page.nextCursor,).toBe(first.nextCursor,);
+  });
+
+  test("merge refuses when the chat has no active branch", async () => {
+    const chatId = await newChat("NoActive",);
+    const rootId = await msg(chatId, "root",);
+    const aId = await msg(chatId, "a", rootId,);
+    const source = await fork(chatId, aId,);
+    // Simulate a chat with no active branch: clear both active signals.
+    await tdb.db.updateTable("chats",).set({ active_branch_id: null, },).where("id", "=", chatId,).execute();
+    await tdb.db.updateTable("chat_branches",).set({ is_active: 0, },).where("id", "=", source,).execute();
+
+    failsWith(
+      await mergeBranch(tdb.db, { chatId, branchId: source, actorId: ownerId, },),
+      "bad_request",
+    );
+  });
+
+  test("delete refuses a branch when is_active=1 but active_branch_id is NULL (desync)", async () => {
+    const chatId = await newChat("Desync",);
+    const rootId = await msg(chatId, "root",);
+    const branchId = await fork(chatId, rootId,);
+    // Simulate a desynced pair: row flag says active, chat pointer is NULL.
+    await tdb.db.updateTable("chats",).set({ active_branch_id: null, },).where("id", "=", chatId,).execute();
+
+    failsWith(await deleteBranch(tdb.db, { chatId, branchId, actorId: ownerId, },), "bad_request",);
+    const kept = await tdb.db
+      .selectFrom("chat_branches",)
+      .select(["id",],)
+      .where("id", "=", branchId,)
+      .executeTakeFirst();
+    expect(kept,).toBeDefined();
+  });
+
+  // ── concurrency regressions (FEAT-046 hardening) ──────────────
+  //
+  // The interleavings below are real writes against the real database, fired
+  // from a Kysely plugin at a real point in the query sequence — the code under
+  // test is not stubbed or mocked, only time is skewed. The writes go through
+  // the raw handle: a nested Kysely query would re-enter the driver the running
+  // transaction already holds.
+
+  /** True when `node` is a SELECT whose FROM includes `table`. */
+  function selectsFrom(node: RootOperationNode, table: string,): boolean {
+    if (node.kind !== "SelectQueryNode") { return false; }
+    return node.from?.froms.some((from,) => TableNode.is(from,) && JSON.stringify(from,).includes(table,)) ?? false;
+  }
+
+  /** True when `node` is a SELECT projecting `chats.active_branch_id`. */
+  function selectsActivePointer(node: RootOperationNode,): boolean {
+    return node.kind === "SelectQueryNode" && JSON.stringify(node.selections,).includes("active_branch_id",);
+  }
+
+  /**
+   * `sideEffect` runs immediately after the first query matching `match`
+   * completes — the deterministic stand-in for a concurrent client that
+   * commits in the window between a guard read and the write it protects.
+   */
+  function interleaveAfter(
+    match: (node: RootOperationNode,) => boolean,
+    sideEffect: () => void,
+  ): KyselyPlugin {
+    let armed = false;
+    let fired = false;
+    return {
+      transformQuery: (args,) => {
+        if (!fired && match(args.node,)) { armed = true; }
+        return args.node;
+      },
+      transformResult: (args,) => {
+        if (armed && !fired) {
+          fired = true;
+          sideEffect();
+        }
+        return Promise.resolve(args.result,);
+      },
+    };
+  }
+
+  /** Promote `branchId` to the chat's displayed branch (both active signals). */
+  function promoteActive(chatId: string, branchId: string,): void {
+    tdb.sqlite.run("UPDATE chats SET active_branch_id = ? WHERE id = ?", [branchId, chatId,],);
+    tdb.sqlite.run("UPDATE chat_branches SET is_active = 1 WHERE id = ?", [branchId,],);
+  }
+
+  /** Insert a competing `chat_branches` row straight through SQLite. */
+  function insertBranch(chatId: string, parentMessageId: string, name: string,): void {
+    tdb.sqlite.run(
+      "INSERT INTO chat_branches (id, chat_id, parent_message_id, name, is_active) VALUES (?, ?, ?, ?, 0)",
+      [randomUUID(), chatId, parentMessageId, name,],
+    );
+  }
+
+  /** Remove a `chat_branches` row straight through SQLite. */
+  function dropBranch(branchId: string,): void {
+    tdb.sqlite.run("DELETE FROM chat_branches WHERE id = ?", [branchId,],);
+  }
+
+  /** The `chat_branches` names in `chatId`, oldest first. */
+  async function branchNames(chatId: string,): Promise<string[]> {
+    const rows = await tdb.db
+      .selectFrom("chat_branches",)
+      .select(["name",],)
+      .where("chat_id", "=", chatId,)
+      .orderBy("created_at", "asc",)
+      .execute();
+    return rows.map((row,) => row.name);
+  }
+
+  test("the (chat_id, name) UNIQUE index rejects two branches sharing one name", async () => {
+    const chatId = await newChat("Unique",);
+    const rootId = await msg(chatId, "root",);
+    await fork(chatId, rootId,);
+
+    let rejected = false;
+    try {
+      await tdb.db
+        .insertInto("chat_branches",)
+        .values({
+          id: randomUUID(),
+          chat_id: chatId,
+          parent_message_id: rootId,
+          name: "Branch 1",
+          is_active: 0,
+        },)
+        .execute();
+    } catch (error) {
+      rejected = error instanceof Error && error.message.includes("UNIQUE constraint failed",);
+    }
+    expect(rejected,).toBe(true,);
+  });
+
+  test("the same name is free in a DIFFERENT chat (the index is per-chat)", async () => {
+    const chatA = await newChat("NameScope A",);
+    const chatB = await newChat("NameScope B",);
+    const rootA = await msg(chatA, "root",);
+    const rootB = await msg(chatB, "root",);
+
+    const first = ok(await forkBranch(tdb.db, { chatId: chatA, messageId: rootA, actorId: ownerId, name: "Alt", },),);
+    const second = ok(await forkBranch(tdb.db, { chatId: chatB, messageId: rootB, actorId: ownerId, name: "Alt", },),);
+    expect([first.branch.name, second.branch.name,],).toEqual(["Alt", "Alt",],);
+  });
+
+  test("a user-supplied name already taken in the chat is refused, never suffixed", async () => {
+    const chatId = await newChat("DupName",);
+    const rootId = await msg(chatId, "root",);
+    ok(await forkBranch(tdb.db, { chatId, messageId: rootId, actorId: ownerId, name: "Alt", },),);
+
+    failsWith(
+      await forkBranch(tdb.db, { chatId, messageId: rootId, actorId: ownerId, name: "  Alt  ", },),
+      "bad_request",
+    );
+    // Neither a silent overwrite nor a silent "Alt (2)".
+    expect(await branchNames(chatId,),).toEqual(["Alt",],);
+  });
+
+  test("an auto-named fork whose label lost the race lands on a free name", async () => {
+    const chatId = await newChat("AutoRace",);
+    const rootId = await msg(chatId, "root",);
+    // A concurrent fork commits "Branch 1" right after this fork counts the
+    // chat's branches — the exact window that used to produce two "Branch 1".
+    const raced = tdb.db.withPlugin(
+      interleaveAfter(
+        (node,) => selectsFrom(node, "chat_branches",),
+        () => insertBranch(chatId, rootId, "Branch 1",),
+      ),
+    );
+
+    const result = ok(await forkBranch(raced, { chatId, messageId: rootId, actorId: ownerId, },),);
+    expect(result.branch.name,).not.toBe("Branch 1",);
+    const names = await branchNames(chatId,);
+    expect(names.length,).toBe(2,);
+    expect(new Set(names,).size,).toBe(2,);
+  });
+
+  test("an auto-named fork resolves past a gap left by deleted branches", async () => {
+    const chatId = await newChat("NameGap",);
+    const rootId = await msg(chatId, "root",);
+    // Deleting branches leaves the count BELOW the highest label, so
+    // `count + 1` can be occupied. Branch 1..5 were deleted; 6..10 remain, so
+    // count + 1 === 6 and a candidate that only adds `attempt` walks straight
+    // through five occupied labels and gives up on an ordinary fork.
+    for (let n = 6; n <= 10; n++) { insertBranch(chatId, rootId, `Branch ${n}`,); }
+
+    const result = ok(await forkBranch(tdb.db, { chatId, messageId: rootId, actorId: ownerId, },),);
+    expect(result.branch.name,).toBe("Branch 11",);
+    expect(new Set(await branchNames(chatId,),).size,).toBe(6,);
+  });
+
+  test("merge refuses a source promoted to active after the guard read, and keeps the row", async () => {
+    // root ─┬─ a ─ a1      (source line)
+    //       └─ b ─ b1      (target line)
+    const chatId = await newChat("MergeRace",);
+    const rootId = await msg(chatId, "root",);
+    const aId = await msg(chatId, "a", rootId,);
+    const a1Id = await msg(chatId, "a1", aId,);
+    const bId = await msg(chatId, "b", rootId,);
+    const b1Id = await msg(chatId, "b1", bId,);
+    const target = await fork(chatId, b1Id,);
+    const source = await fork(chatId, aId,);
+    ok(await switchActiveBranch(tdb.db, { chatId, branchId: target, actorId: ownerId, },),);
+
+    // The promotion lands right after the guard reads the active pointer — a
+    // `PATCH /active-branch` winning the race with the merge.
+    const raced = tdb.db.withPlugin(
+      interleaveAfter(
+        (node,) => selectsFrom(node, "chats",) && selectsActivePointer(node,),
+        () => promoteActive(chatId, source,),
+      ),
+    );
+
+    failsWith(
+      await mergeBranch(raced, { chatId, branchId: source, actorId: ownerId, intoBranchId: target, },),
+      "bad_request",
+    );
+    const kept = await tdb.db
+      .selectFrom("chat_branches",)
+      .select(["id",],)
+      .where("id", "=", source,)
+      .executeTakeFirst();
+    expect(kept,).toBeDefined();
+    // Nothing was re-parented: the merge never partially happened.
+    const targetRow = await tdb.db
+      .selectFrom("chat_branches",)
+      .select(["parent_message_id",],)
+      .where("id", "=", target,)
+      .executeTakeFirst();
+    expect(targetRow?.parent_message_id,).toBe(b1Id,);
+    const a1Row = await tdb.db
+      .selectFrom("messages",)
+      .select(["parent_id",],)
+      .where("id", "=", a1Id,)
+      .executeTakeFirst();
+    expect(a1Row?.parent_id,).toBe(aId,);
+  });
+
+  test("delete refuses a branch promoted to active after the guard read", async () => {
+    const chatId = await newChat("DeleteRace",);
+    const rootId = await msg(chatId, "root",);
+    const stale = await fork(chatId, rootId,);
+    await fork(chatId, await msg(chatId, "alt", rootId,),);
+
+    const raced = tdb.db.withPlugin(
+      interleaveAfter(
+        (node,) => selectsFrom(node, "chats",) && selectsActivePointer(node,),
+        () => promoteActive(chatId, stale,),
+      ),
+    );
+
+    failsWith(await deleteBranch(raced, { chatId, branchId: stale, actorId: ownerId, },), "bad_request",);
+    const kept = await tdb.db
+      .selectFrom("chat_branches",)
+      .select(["id",],)
+      .where("id", "=", stale,)
+      .executeTakeFirst();
+    expect(kept,).toBeDefined();
+  });
+
+  test("delete reports not_found when the row disappears before the delete runs", async () => {
+    const chatId = await newChat("DeleteVanished",);
+    const rootId = await msg(chatId, "root",);
+    const stale = await fork(chatId, rootId,);
+    await fork(chatId, await msg(chatId, "alt", rootId,),);
+
+    // A concurrent client consumes the row in the guard/delete window. Kysely
+    // does not raise on an empty match, so only the affected-row count catches
+    // this — without it the caller is told a vanished branch was deleted.
+    const raced = tdb.db.withPlugin(
+      interleaveAfter(
+        (node,) => selectsFrom(node, "chats",) && selectsActivePointer(node,),
+        () => dropBranch(stale,),
+      ),
+    );
+
+    failsWith(await deleteBranch(raced, { chatId, branchId: stale, actorId: ownerId, },), "not_found",);
+  });
+
+  test("merge reports not_found when the source vanished before the delete runs", async () => {
+    const chatId = await newChat("MergeVanished",);
+    const rootId = await msg(chatId, "root",);
+    const aId = await msg(chatId, "a", rootId,);
+    const bId = await msg(chatId, "b", rootId,);
+    const target = await fork(chatId, bId,);
+    const source = await fork(chatId, aId,);
+    ok(await switchActiveBranch(tdb.db, { chatId, branchId: target, actorId: ownerId, },),);
+
+    const raced = tdb.db.withPlugin(
+      interleaveAfter(
+        (node,) => selectsFrom(node, "messages",),
+        () => dropBranch(source,),
+      ),
+    );
+
+    failsWith(
+      await mergeBranch(raced, { chatId, branchId: source, actorId: ownerId, intoBranchId: target, },),
+      "not_found",
+    );
+    // The re-parenting rolled back with the abort: `a` still hangs off `root`.
+    const aRow = await tdb.db
+      .selectFrom("messages",)
+      .select(["parent_id",],)
+      .where("id", "=", aId,)
+      .executeTakeFirst();
+    expect(aRow?.parent_id,).toBe(rootId,);
   });
 });

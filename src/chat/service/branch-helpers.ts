@@ -50,18 +50,29 @@ export async function walkMessagePath(
 }
 
 /**
- * Next auto-name: "Branch N" where N is the existing count + 1.
+ * Next auto-name: "Branch N" where N is the existing count + 1, advanced by
+ * `attempt` so a retry cannot land on the same taken label.
+ *
+ * The count read is unlocked, so two concurrent forks CAN compute the same
+ * name; the `(chat_id, name)` UNIQUE index (migration 032) is the real
+ * arbiter. Callers must retry the insert on a name conflict rather than trust
+ * this value.
  * @param db
  * @param chatId
+ * @param attempt
  * @returns {Promise<string>}
  */
-export async function nextAutoName(db: Kysely<DB>, chatId: string,): Promise<string> {
+export async function nextAutoName(
+  db: Kysely<DB>,
+  chatId: string,
+  attempt = 0,
+): Promise<string> {
   const row = await db
     .selectFrom("chat_branches",)
     .select((eb,) => eb.fn.count<number>("id",).as("n",))
     .where("chat_id", "=", chatId,)
     .executeTakeFirst();
-  return `Branch ${Number(row?.n ?? 0,) + 1}`;
+  return `Branch ${Number(row?.n ?? 0,) + 1 + attempt}`;
 }
 
 // ── FEAT-046: shared branch-row helpers ───────────────────────

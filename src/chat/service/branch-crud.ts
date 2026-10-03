@@ -13,8 +13,8 @@
  */
 import { type Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
+import { BranchTxAbort, isActiveBranch, } from "./branch-fork";
 import {
-  activeBranchId,
   BRANCH_NOT_FOUND,
   loadBranch,
   withBranch,
@@ -77,7 +77,14 @@ export async function renameBranch(
       return { code: "bad_request", message: "Branch name must not be blank", };
     }
     if (name !== undefined && name !== row.name) {
-      await db.updateTable("chat_branches",).set({ name, },).where("id", "=", branchId,).execute();
+      try {
+        await db.updateTable("chat_branches",).set({ name, },).where("id", "=", branchId,).execute();
+      } catch (error) {
+        // The `(chat_id, name)` UNIQUE index (migration 032) rejects a label
+        // already used in this chat; say so instead of surfacing a driver error.
+        if (!(error instanceof Error && error.message.includes("UNIQUE constraint failed",))) { throw error; }
+        return { code: "bad_request", message: `A branch named "${name}" already exists in this chat`, };
+      }
     }
     if (params.activate === true) {
       const switched = await switchActiveBranch(db, { chatId, branchId, actorId, },);
@@ -101,16 +108,34 @@ export async function deleteBranch(
   db: Kysely<DB>,
   params: BranchMutationParams,
 ): Promise<DeleteBranchResult> {
-  return withBranch(db, params, async (row,): Promise<DeleteBranchResult> => {
+  return withBranch(db, params, async (): Promise<DeleteBranchResult> => {
     const { chatId, branchId, } = params;
-    const activeId = await activeBranchId(db, chatId,);
-    if (Number(row.is_active,) === 1 || activeId === branchId) {
-      return {
-        code: "bad_request",
-        message: "Cannot delete the active branch; switch to another branch first",
-      };
+    try {
+      await db.transaction().execute(async (tx,) => {
+        // Re-read BOTH active signals through the transaction, immediately
+        // before the delete; a concurrent `PATCH /active-branch` between an
+        // outer read and this write would otherwise let the displayed branch be
+        // deleted. Throwing forces the rollback — returning from inside
+        // `execute` commits whatever the callback already wrote.
+        if (await isActiveBranch(tx, chatId, branchId,)) {
+          throw new BranchTxAbort({
+            code: "bad_request",
+            message: "Cannot delete the active branch; switch to another branch first",
+          },);
+        }
+        // Zero rows means a concurrent client deleted it first (double-submit,
+        // retry after a timeout). Kysely does not raise on an empty match, so
+        // the count is the only evidence — without it a retry reports success
+        // for a row that was already gone.
+        const deleted = await tx.deleteFrom("chat_branches",).where("id", "=", branchId,).executeTakeFirst();
+        if (Number(deleted?.numDeletedRows ?? 0,) === 0) {
+          throw new BranchTxAbort(BRANCH_NOT_FOUND,);
+        }
+      },);
+    } catch (error) {
+      if (error instanceof BranchTxAbort) { return error.error; }
+      throw error;
     }
-    await db.deleteFrom("chat_branches",).where("id", "=", branchId,).execute();
     return { ok: true, deletedBranchId: branchId, };
   },);
 }
