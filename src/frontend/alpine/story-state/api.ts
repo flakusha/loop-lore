@@ -58,16 +58,38 @@ export async function fetchStoryTurns(chatId: string,): Promise<StoryTurnRow[]> 
   return data.data ?? [];
 }
 
+/** Rows per request when walking the world quest log. */
+const QUEST_PAGE_SIZE = 100;
+
 /**
- * Fetch world quest rows.
+ * Fetch every world quest row, page by page.
+ *
+ * The quest log is a history view (status pills for completed/failed, "No
+ * quests." empty state), and `handleListQuests` defaults to every
+ * non-abandoned row ordered by `priority desc`. A single `?pageSize=100`
+ * request therefore truncated silently: past 100 quests the active ones could
+ * fall off the ordered page and simply be absent, with no error and no empty
+ * state. Walking the pages is correct at any quest count.
  * @param worldId
  * @returns {Promise<StoryQuest[]>}
  */
 export async function fetchQuests(worldId: string,): Promise<StoryQuest[]> {
-  const res = await apiFetch(`/api/v1/worlds/${worldId}/quests?pageSize=100`,);
-  if (!res.ok) { return []; }
-  const data = await res.json() as { data?: StoryQuest[] };
-  return data.data ?? [];
+  const quests: StoryQuest[] = [];
+  for (let page = 1; ; page++) {
+    const res = await apiFetch(
+      `/api/v1/worlds/${worldId}/quests?pageSize=${QUEST_PAGE_SIZE}&page=${page}`,
+    );
+    // A mid-walk failure keeps what was already collected rather than
+    // throwing away a partial log; the next refresh retries from page 1.
+    if (!res.ok) { return quests; }
+    const body = await res.json() as { data?: StoryQuest[]; pagination?: { total?: number } };
+    const rows = body.data ?? [];
+    quests.push(...rows,);
+    // Two independent stop conditions: a short page means the last page, and
+    // `total` bounds the walk so a server that ignores `page` cannot spin.
+    if (rows.length < QUEST_PAGE_SIZE) { return quests; }
+    if ((body.pagination?.total ?? 0) <= quests.length) { return quests; }
+  }
 }
 
 /** Location story-state (time/weather/atmosphere/description), best-effort. */

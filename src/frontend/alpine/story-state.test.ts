@@ -242,6 +242,34 @@ describeOrSkip("storyState", () => {
       expect(s.quests[0]?.name,).toBe("Slay the dragon",);
     });
 
+    test("walks every quest page — a quest past page 1 is still in the store", async () => {
+      const s = makeState();
+      s.chatId = "chat-1";
+      (s as unknown as { _worldId: string | null })._worldId = "world-1";
+      const rows = (n: number, size: number,) =>
+        Array.from({ length: size, }, (_, i,) => ({
+          id: `q${n}-${i}`,
+          name: `Quest ${n}-${i}`,
+          type: "collection",
+          status: "active",
+          progress: 0,
+        }),);
+      // Page 1 comes back exactly full, so a single ?pageSize=100 request
+      // looked like the whole log. The server reports 101 rows and page 2
+      // holds the rest, including active quest `q-final` that a capped
+      // client never saw — silent truncation, no error and no empty state.
+      fetchHandler = (url,) => {
+        const n = Number(new URL(url, "http://x",).searchParams.get("page") ?? "1");
+        const data = n === 1 ? rows(1, 100,) : [{ ...rows(2, 1,)[0], id: "q-final", name: "Final boss", },];
+        return Response.json({ data, pagination: { total: 101, page: n, pageSize: 100, }, },);
+      };
+      await s._loadQuests();
+      expect(fetchCalls.length,).toBe(2,);
+      expect(fetchCalls[0]?.url,).toBe("/api/v1/worlds/world-1/quests?pageSize=100&page=1",);
+      expect(fetchCalls[1]?.url,).toBe("/api/v1/worlds/world-1/quests?pageSize=100&page=2",);
+      expect(s.quests.length,).toBe(101,);
+      expect(s.quests.some((q,) => q.id === "q-final",),).toBe(true,);
+    });
     test("no-ops without a world id", async () => {
       const s = makeState();
       s.chatId = "chat-1";
