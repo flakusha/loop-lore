@@ -16,10 +16,11 @@
  * (`dupes.rows` is empty), so it is what this file forces.
  */
 import { Database, } from "bun:sqlite";
-import { afterEach, beforeEach, describe, expect, spyOn, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { Kysely, sql, } from "kysely";
 
 import { createLogger, } from "../logger";
+import { captureWarnings, } from "../test-utils/capture-warnings";
 import { createSqliteDialect, } from "./index";
 import { getMigrationFiles, } from "./migrate";
 import type { DB, } from "./schema";
@@ -119,18 +120,12 @@ describe(MIGRATION, () => {
     // Not part of a duplicate group — must keep its name verbatim.
     await insertBranch("e-unique", "chat-a", "Branch 9", "2026-01-01 00:00:00",);
 
-    const warnSpy = spyOn(process, "emitWarning",).mockImplementation(() => {},);
-    let warnings: string[] = [];
-    try {
+    const warnings = await captureWarnings(async () => {
       const migrations = await getMigrationFiles();
       const migration = migrations[MIGRATION];
       if (!migration) { throw new Error("migration 032 not registered",); }
       await migration.up(db,);
-      // Read the calls before restoring — mockRestore() clears them.
-      warnings = warnSpy.mock.calls.map((c,) => String(c[0],),);
-    } finally {
-      warnSpy.mockRestore();
-    }
+    },);
 
     // The oldest row keeps the name; the losers are RENAMED, not deleted —
     // dropping one would silently remove a fork point the user can see.
@@ -175,15 +170,14 @@ describe(MIGRATION, () => {
     await insertBranch("c-newest", "chat-a", "Branch 1", "2026-01-03 00:00:00",);
     await insertBranch("d-squatter", "chat-a", "Branch 1 (2)", "2026-01-01 00:00:00",);
 
-    const warnSpy = spyOn(process, "emitWarning",).mockImplementation(() => {},);
-    try {
+    // The rename loop warns about the collapsed group; this test is about the
+    // collision-walk, so the capture is there to keep the output readable.
+    await captureWarnings(async () => {
       const migrations = await getMigrationFiles();
       const migration = migrations[MIGRATION];
       if (!migration) { throw new Error("migration 032 not registered",); }
       await migration.up(db,);
-    } finally {
-      warnSpy.mockRestore();
-    }
+    },);
 
     // The squatter keeps `Branch 1 (2)`; the first duplicate lands on (3).
     expect(await idWithName("chat-a", "Branch 1 (2)",),).toBe("d-squatter",);
