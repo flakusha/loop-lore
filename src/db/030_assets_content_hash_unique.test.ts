@@ -107,12 +107,15 @@ describe(MIGRATION, () => {
     await insertAsset("g-nohash-a", "2026-01-01 00:00:00", null, null,);
     await insertAsset("h-nohash-b", "2026-01-02 00:00:00", null, null,);
 
+    // Scoped to this migration's own tag: `warning` is process-wide, so an
+    // unrelated emitter warning during this window would otherwise land in
+    // `warnings` and break the exact count asserted below.
     const warnings = await captureWarnings(async () => {
       const migrations = await getMigrationFiles();
       const migration = migrations[MIGRATION];
       if (!migration) { throw new Error("migration 030 not registered",); }
       await migration.up(db,);
-    },);
+    }, new RegExp(`^\\[${MIGRATION}\\]`,),);
 
     // Each duplicate group collapses to its oldest row — the one that owns the
     // storage_path any surviving reference points at.

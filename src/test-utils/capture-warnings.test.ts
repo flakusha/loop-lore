@@ -85,4 +85,29 @@ describe("captureWarnings", () => {
       spy.mockRestore();
     }
   });
+
+  test("a concurrent foreign emitter is excluded by the filter", async () => {
+    // `warning` is process-wide, so any other code warning during a capture
+    // dispatches to this listener too. Without a filter those land in the
+    // result and break callers that assert an exact warning count; with one,
+    // only the tag under test survives. This is why the migration tests scope
+    // every capture to their own migration tag.
+    let stop = false;
+    const noise = (async () => {
+      let i = 0;
+      while (!stop) {
+        process.emitWarning(`[noise] foreign warning ${i++}`,);
+        await new Promise((resolve,) => setImmediate(resolve,));
+      }
+    })();
+
+    const messages = await captureWarnings(async () => {
+      process.emitWarning("[032_migration] the warning under test",);
+    }, /^\[032_migration\]/,);
+
+    stop = true;
+    await noise;
+
+    expect(messages,).toEqual(["[032_migration] the warning under test",],);
+  });
 });
