@@ -75,7 +75,7 @@ const QUEST_PAGE_SIZE = 100;
  */
 export async function fetchQuests(worldId: string,): Promise<StoryQuest[]> {
   const quests: StoryQuest[] = [];
-  for (let page = 1; ; page++) {
+  for (let page = 1;; page++) {
     const res = await apiFetch(
       `/api/v1/worlds/${worldId}/quests?pageSize=${QUEST_PAGE_SIZE}&page=${page}`,
     );
