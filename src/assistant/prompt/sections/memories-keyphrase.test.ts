@@ -7,7 +7,7 @@
  *   3. no match → no keyphrase injection
  * plus the config flag and per-message limit overrides.
  */
-import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, spyOn, test, } from "bun:test";
 import { MessageRole, MessageStatus, } from "../../../db/enums";
 import { createLogger, } from "../../../logger";
 import { clearKeyphraseRecallCooldowns, recordKeyphraseRecall, } from "../../../memory/keyphrase-recall";
@@ -234,6 +234,25 @@ describe("applyKeyphraseRecalls", () => {
 });
 
 describe("memorySection — keyphrase recall end-to-end", () => {
+  // `memorySection` builds its own InjectionContext with no `randomFn`, so the
+  // probabilistic filter in `injection/decide.ts` falls back to `Math.random`.
+  // When that filter happens to select the journal entry on its own, `forced`
+  // in `applyKeyphraseRecalls` is empty, no keyphrase audit row is written, and
+  // this suite measured ~25-35% failures on an UNMODIFIED tree (pre-fix 14/40,
+  // post-fix 10/40 — the rate predates the audit fix).
+  //
+  // Pin the roll high so the filter never selects the entry: then the keyphrase
+  // match is the ONLY thing that can put it in the prompt, which is what these
+  // tests are actually about. Same seam the rest of the injection suite uses.
+  let randomSpy: ReturnType<typeof spyOn> | null = null;
+  beforeEach(() => {
+    randomSpy = spyOn(Math, "random",).mockReturnValue(0.999,);
+  },);
+  afterEach(() => {
+    randomSpy?.mockRestore();
+    randomSpy = null;
+  },);
+
   test("match injects the journal entry into the prompt; cooldown blocks the re-inject", async () => {
     const f = await setup({ withMatchMessage: true, },);
     try {
