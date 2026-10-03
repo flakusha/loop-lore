@@ -113,13 +113,14 @@ async function runBdiDispatch(
     // The dispatch charged `per_hour_beat_dispatch` above; this only peeks
     // at the per-actor cap. One charge per dispatch, never two.
     budgetApprove: async (actorId,) => {
-      const window = await args.governor.peek(db, { kind: "actor", id: actorId, }, BEAT_LIMIT, {
+      const peeked = await args.governor.peek(db, { kind: "actor", id: actorId, }, BEAT_LIMIT, {
         cap: cfg.perAgentCap,
         chatId: ctx.chatId,
         worldId,
         nowMs,
       },);
-      return window.remaining === null || window.remaining > 0;
+      // null = an unbounded cap, so there is nothing left to exhaust.
+      return peeked.remaining === null || peeked.remaining > 0;
     },
     planRecompute: args.planRecompute,
     maxActors: limit,
