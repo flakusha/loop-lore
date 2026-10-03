@@ -93,6 +93,72 @@ describe("recordTurnSkip", () => {
     expect(rows,).toHaveLength(1,);
   });
 
+  test("concurrent same-actor posts insert once; the loser reports deduped", async () => {
+    // BUG-turn-skip-concurrent-advance-posts-double-fire: without the
+    // per-(chat, actor) chain both reads see no turn_skip row, both insert,
+    // and both return deduped:false → the route cues two generation beats.
+    const [a, b,] = await Promise.all([
+      recordTurnSkip(db, {
+        chatId: CHAT_ID,
+        actorId: MEMBER_ID,
+        mode: "advance",
+        userId: MEMBER_ID,
+        userRole: null,
+      },),
+      recordTurnSkip(db, {
+        chatId: CHAT_ID,
+        actorId: MEMBER_ID,
+        mode: "advance",
+        userId: MEMBER_ID,
+        userRole: null,
+      },),
+    ],);
+    expect(a.ok && b.ok,).toBe(true,);
+    if (!a.ok || !b.ok) { return; }
+    // Exactly one winner; the loser replays the winner's row.
+    expect([a.deduped, b.deduped,].sort(),).toEqual([false, true,],);
+    const winner = a.deduped ? b : a;
+    const loser = a.deduped ? a : b;
+    expect(loser.messageId,).toBe(winner.messageId,);
+    const rows = await db.selectFrom("messages",).select("id",)
+      .where("chat_id", "=", CHAT_ID,).where("content_type", "=", MessageContentType.TurnSkip,).execute();
+    expect(rows,).toHaveLength(1,);
+  });
+
+  test("different actors in the same chat are not serialized against each other", async () => {
+    const [member, owner,] = await Promise.all([
+      recordTurnSkip(db, {
+        chatId: CHAT_ID,
+        actorId: MEMBER_ID,
+        mode: "advance",
+        userId: MEMBER_ID,
+        userRole: null,
+      },),
+      recordTurnSkip(db, {
+        chatId: CHAT_ID,
+        actorId: OWNER_ID,
+        mode: "advance",
+        userId: OWNER_ID,
+        userRole: null,
+      },),
+    ],);
+    // Distinct chain keys: neither actor dedups against the other.
+    //
+    // Assert `ok` on its own BEFORE touching `deduped`. The short-circuit shape
+    // `expect(member.ok && member.deduped).toBe(false)` is satisfied by
+    // `false && …`, which is exactly what a call that ERRORED also produces —
+    // so both recordTurnSkip calls could fail outright (not_found, forbidden, a
+    // thrown guard) and this test still reported green. Asserting `ok` alone
+    // first is what makes the assertion discriminate.
+    // (BUG-turn-skip-concurrency-assertion-passes-when-both-calls-error.)
+    expect(member.ok,).toBe(true,);
+    expect(owner.ok,).toBe(true,);
+    if (!member.ok || !owner.ok) { return; }
+    expect(member.deduped,).toBe(false,);
+    expect(owner.deduped,).toBe(false,);
+    expect(member.messageId,).not.toBe(owner.messageId,);
+  });
+
   test("unknown chat -> not_found", async () => {
     const res = await recordTurnSkip(db, {
       chatId: crypto.randomUUID(),
