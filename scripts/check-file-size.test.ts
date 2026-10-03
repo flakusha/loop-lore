@@ -90,9 +90,9 @@ describe("sizeAllowFor", () => {
   });
 
   test("a directive may also LOWER the budget below the default", () => {
-    // The gate's header comment says the directive "bumps" the budget, which
-    // reads as raise-only. It is not: the declared N REPLACES the default, so a
-    // file can opt into a tighter budget than everyone else gets.
+    // The directive REPLACES the budget rather than raising it, so a file can
+    // opt into a tighter limit than the 250L default. Raise-only is the reading
+    // this pins against.
     expect(sizeAllowFor("// size-allow: 100\nconst x = 1;\n", 250,),).toBe(100,);
   });
 
@@ -103,9 +103,9 @@ describe("sizeAllowFor", () => {
   });
 
   test("the window is 512 CHARACTERS, not the first 5 lines", () => {
-    // The code comment claimed "within the first 5 lines". The implementation
-    // slices the first 512 chars, so a short-line directive well past line 5 is
-    // still honoured. Pin the real window so the comment cannot drift again.
+    // The window is 512 CHARACTERS, not lines: a directive on a short line 8
+    // sits well inside the first 512 chars and IS honoured. Pin the real window
+    // so it cannot be silently narrowed to a line count.
     const pastLine5 = `${Array.from({ length: 7, }, () => "// x",).join("\n",)}\n// size-allow: 777\n`;
     expect(pastLine5.slice(0, pastLine5.indexOf("// size-allow",),).length,).toBeLessThan(512,);
     expect(sizeAllowFor(pastLine5, 250,),).toBe(777,);
