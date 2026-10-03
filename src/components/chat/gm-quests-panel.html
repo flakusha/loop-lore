@@ -42,7 +42,7 @@
           </div>
           <!-- Objectives/progress milestones from narrative_hooks (no dedicated objectives column exists). -->
           <ul class="gm-quest-milestones" x-show="questMilestones(quest).length > 0">
-            <template x-for="milestone in questMilestones(quest)" :key="milestone.progress + ':' + milestone.narrative">
+            <template x-for="(milestone, milestoneIdx) in questMilestones(quest)" :key="milestoneIdx">
               <li
                 class="gm-quest-milestone"
                 :class="milestone.progress <= quest.progress ? 'is-reached' : ''"
@@ -53,7 +53,7 @@
           </ul>
           <div class="gm-quest-rewards" x-show="questRewardChips(quest).length > 0">
             <span class="gm-quest-rewards-label">{{{t("story.questRewards")}}}</span>
-            <template x-for="reward in questRewardChips(quest)" :key="reward">
+            <template x-for="(reward, rewardIdx) in questRewardChips(quest)" :key="rewardIdx">
               <span class="gm-quest-reward-chip" x-text="reward"></span>
             </template>
           </div>
