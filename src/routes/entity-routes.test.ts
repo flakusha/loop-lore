@@ -220,6 +220,37 @@ describe("createEntityRoutes", () => {
     expect(body.title,).toBe("Before",); // unchanged
   });
 
+  // Regression: `EntityUpdateBody` once lost `content`/`name`/`type`/`data`/`pinned`
+  // to a botched edit. Elysia's `t.Object` ALLOWS extra properties but STRIPS
+  // them, so the update silently no-ops and still answers 200 — the client's
+  // edit is discarded with no error anywhere. Assert against the re-read ROW,
+  // not the response echo, so the check cannot pass on a stale body.
+  test("PUT does not silently drop a field the update schema omits", async () => {
+    const app = createApp(db, userId,);
+    const noteCreate = await app.handle(
+      new Request(`http://localhost/api/actors/${actorId}/notes`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ title: "Silent", content: "BEFORE", },),
+      },),
+    );
+    expect(noteCreate.status,).toBe(201,);
+    const { id, } = (await noteCreate.json()) as { id: string };
+
+    const res = await app.handle(
+      new Request(`http://localhost/api/actors/${actorId}/notes/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ content: "AFTER", },),
+      },),
+    );
+    expect(res.status,).toBe(200,);
+
+    const row = await db.selectFrom("actor_notes").select("content").where("id", "=", id,)
+      .executeTakeFirstOrThrow();
+    expect(row.content,).toBe("AFTER",);
+  });
+
   test("PUT returns 404 for nonexistent entity", async () => {
     const app = createApp(db, userId,);
     const res = await app.handle(
