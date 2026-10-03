@@ -151,7 +151,7 @@ export async function regenerateMessageVariant(
     idempotency_key: regenKey,
   };
   assertValidWrite("messages", variantRow,);
-  await database.insertInto("messages",).values(variantRow).execute();
+  await database.insertInto("messages",).values(variantRow,).execute();
   // FEAT-048: notify plugin event handlers that a sibling variant was created.
   await emitPluginEvent(
     registry.getAllEventHandlers(),
