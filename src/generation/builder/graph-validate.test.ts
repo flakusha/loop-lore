@@ -102,4 +102,54 @@ describe("validateGraph", () => {
     expect(result.ok,).toBe(false,);
     expect(kinds(result,),).toContain("invalid_shape",);
   });
+
+  test("reports a node whose input links back to itself", () => {
+    const result = validateGraph({ a: { class_type: "KSampler", inputs: { model: ["a", 0,], }, }, },);
+    expect(result.ok,).toBe(false,);
+    expect(kinds(result,),).toContain("cycle",);
+    expect(result.issues.find((issue,) => issue.kind === "cycle")?.message,).toContain("a",);
+  });
+
+  test("reports every node of a three-node cycle", () => {
+    const result = validateGraph({
+      a: { class_type: "A", inputs: { x: ["b", 0,], }, },
+      b: { class_type: "B", inputs: { x: ["c", 0,], }, },
+      c: { class_type: "C", inputs: { x: ["a", 0,], }, },
+    },);
+    expect(kinds(result,),).toContain("cycle",);
+    const message = result.issues.find((issue,) => issue.kind === "cycle")?.message ?? "";
+    expect(message,).toContain("a",);
+    expect(message,).toContain("b",);
+    expect(message,).toContain("c",);
+  });
+
+  test("reports one issue per distinct unknown source, not per edge", () => {
+    const result = validateGraph({ a: { class_type: "A", inputs: { x: ["zz", 0,], y: ["zz", 1,], }, }, },);
+    const dangling = result.issues.filter((issue,) => issue.message.includes("unknown node zz",),);
+    expect(dangling,).toHaveLength(1,);
+  });
+
+  test("accumulates independent problems instead of stopping at the first", () => {
+    const result = validateGraph({
+      cyc1: { class_type: "A", inputs: { x: ["cyc2", 0,], }, },
+      cyc2: { class_type: "B", inputs: { x: ["cyc1", 0,], }, },
+      bad: { class_type: "KSampler", inputs: { model: ["ghost", 0,], }, },
+      noClass: { inputs: {}, },
+    },);
+    const found = kinds(result,);
+    expect(found,).toContain("cycle",);
+    expect(found,).toContain("missing_input",);
+    expect(found,).toContain("invalid_shape",);
+  });
+
+  test("accepts two disconnected components that each end in a sink", () => {
+    const result = validateGraph({
+      a: { class_type: "CheckpointLoaderSimple", inputs: {}, },
+      b: { class_type: "KSampler", inputs: { model: ["a", 0,], }, },
+      c: { class_type: "SaveImage", inputs: { images: ["b", 0,], }, },
+      d: { class_type: "SaveImage", inputs: {}, },
+    },);
+    expect(result.ok,).toBe(true,);
+    expect(result.issues,).toEqual([],);
+  });
 });
