@@ -101,9 +101,11 @@ The count matters: an enumeration of all 21 production `insertInto("messages")` 
 - The enum's own history does not block it: `messages.status` was never a real state axis before `MessageStatus` landed — the column shipped with a *visibility* default in `001_init.ts:1864`, so no row written before the enum can carry a meaningful status. Every pre-enum value is either `"visible"` or a post-enum value the enum already covers. There is no third state to preserve.
 - Mapping target: `MessageStatus.Confirmed` is the only correct landing spot. `sending` is non-terminal and must pair with `visible`; `confirmed` pairs with every visibility (`src/db/enums-core/messages.ts:95-107` lists `confirmed:visible` … `confirmed:redacted`). A `"visible"`-status row is by definition a finished, displayable message, so `confirmed` is exact, not a compromise.
 - Migration shape (SQLite allows one `ALTER` per statement; a data-only remap needs no table rebuild, unlike the CHECK rebuild in `src/db/migrations/022_prompt_templates_workflow_modality.ts:19-22`):
+
   ```sql
   UPDATE messages SET status = 'confirmed' WHERE status = 'visible';
   ```
+
   then rebuild the default in the same migration, **or** leave the default alone and rely on the narrowed bypass. Preferred: rebuild `messages` with `DEFAULT 'confirmed'` so no *new* row is born legacy. `down()` re-maps `confirmed` → `visible` only for rows the `up()` touched — track that with a marker column or accept the documented lossy rollback (the pattern `022:114-117` already uses).
 - **Prefix is `032`.** `feat-db-019-sweep` holds `029_hot_path_indexes.ts`, `030_audit_columns_underdocumented_tables.ts`, `031_content_versioning_heavy_tables.ts`; three other branches claim `028`; `dev` HEAD is at `027_world_simulation_state.ts`. `032` is the next free prefix and must not reuse a claimed number. Re-check at implementation time — the `001_init.ts:20-21` header warns "do not skip ahead", and `BUG-duplicate-migration-numeric-prefix-021` records what a collision costs.
 - The migration is **optional** for the correctness fix. The one-line bypass narrowing is the fix; `032` removes the need for the bypass to exist at all. Land the narrowing regardless.
