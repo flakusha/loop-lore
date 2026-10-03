@@ -35,7 +35,7 @@ const LIMIT = LIMIT_ARG ? parseInt(LIMIT_ARG.split("=",)[1], 10,) : 250;
 // flows and helpers are test specifications. scripts/worktree/ is the giwt fork
 // pending deletion (AGENTS.md "Related: loop-lore's fork") — splitting it is
 // wasted work, the canonical giwt files carry the fix now.
-const GLOBS = ["src/**/*.ts", "scripts/**/*.ts", "scripts/**/*.mjs", "plugins/**/*.ts"];
+const GLOBS = ["src/**/*.ts", "scripts/**/*.ts", "scripts/**/*.mjs", "plugins/**/*.ts",];
 
 // Auto-generated files carry this banner (emitted by scripts/generate-db-types.ts
 // and scripts/generate-schema-manifest.ts). They are owned by their generator;
@@ -89,7 +89,9 @@ if (import.meta.main) {
   for (const pattern of GLOBS) {
     const glob = new Glob(pattern,);
     for await (const file of glob.scan()) {
-      if (file.includes(".test.",) || file.includes("/migrations/",) || file.startsWith("scripts/worktree/",)) { continue; }
+      if (
+        file.includes(".test.",) || file.includes("/migrations/",) || file.startsWith("scripts/worktree/",)
+      ) { continue; }
       const text = await Bun.file(file,).text();
       if (text.includes(GENERATED_MARKER,)) { continue; }
       const allowMatch = text.slice(0, HEADER_BYTES,).match(SIZE_ALLOW_RE,);
